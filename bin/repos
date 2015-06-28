@@ -3,11 +3,7 @@
 import sys
 import os
 
-import ev.build
 import ev.log
-import ev.config
-import ev.clean
-import ev.install
 
 # if the ev command is ran without any arguments, print some
 # helpful comments about its usage.
@@ -34,7 +30,7 @@ if len(sys.argv) == 1:
 
 
 
-# first, check if this is the first time the user is starting this 
+# first, check if this is the first time the user is starting this
 # script. If so, we need to ask them for some information which helps
 # with the operation of this script.
 home = os.path.expanduser('~')
@@ -52,7 +48,7 @@ if not os.path.isfile(evConf):
 
 d = ev.config.load()
 
-ev.log.toFile('\nStart ev command.')
+ev.log.toFile('\nStart repos command.')
 if sys.argv[1] == 'build':
     if len(sys.argv) == 3:
         ev.log.toFile('Starting build...')
