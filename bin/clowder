@@ -49,8 +49,8 @@ if not os.path.isfile(evConf):
 
 d = ev.config.load()
 
-ev.log.toFile('\nStart repos command.')
-if sys.argv[1] == 'build':
+ev.log.toFile('\nStart clowder command.')
+if sys.argv[1] == 'breed':
     if len(sys.argv) == 3:
         ev.log.toFile('Starting build...')
         ev.build.b(sys.argv[2])
@@ -63,7 +63,7 @@ if sys.argv[1] == 'build':
         ev.log.toFile('Aborting.\n\n')
         sys.exit()
 
-elif sys.argv[1] == 'cmake':
+elif sys.argv[1] == 'fix':
     if len(sys.argv) == 3:
         ev.config.status()
         ev.log.toFile('Generating cmake build trees...')
@@ -78,7 +78,7 @@ elif sys.argv[1] == 'cmake':
         ev.log.toFile('Aborting.\n\n')
         sys.exit()
 
-elif sys.argv[1] == 'clean':
+elif sys.argv[1] == 'groom':
     if len(sys.argv) == 3:
         ev.log.toFile('Cleaning up...')
         ev.clean.c(sys.argv[2])
@@ -91,7 +91,7 @@ elif sys.argv[1] == 'clean':
         ev.log.toFile('Aborting.\n\n')
         sys.exit()
 
-elif sys.argv[1] == 'rm':
+elif sys.argv[1] == 'herd':
     if len(sys.argv) == 3:
         ev.log.toFile('Removing things...')
         ev.rm.r(sys.argv[2])
@@ -104,7 +104,7 @@ elif sys.argv[1] == 'rm':
         ev.log.toFile('Aborting.\n\n')
         sys.exit()
 
-elif sys.argv[1] == 'install':
+elif sys.argv[1] == 'knead':
     if len(sys.argv) == 3:
         ev.log.toFile('Installing things...')
         ev.install.i(sys.argv[2])
@@ -117,7 +117,7 @@ elif sys.argv[1] == 'install':
         ev.log.toFile('Aborting.\n\n')
         sys.exit()
 
-elif sys.argv[1] == 'config':
+elif sys.argv[1] == 'litter':
     if len(sys.argv) == 3:
         ev.log.toFile('Configuring things...')
         ev.config.c(sys.argv[2])
@@ -130,7 +130,7 @@ elif sys.argv[1] == 'config':
         ev.log.toFile('Aborting.\n\n')
         sys.exit()
 
-elif sys.argv[1] == 'test':
+elif sys.argv[1] == 'meow':
     if len(sys.argv) == 3:
         ev.log.toFile('Running the test...')
         ev.test.t(sys.argv[2])
@@ -143,7 +143,20 @@ elif sys.argv[1] == 'test':
         ev.log.toFile('Aborting.\n\n')
         sys.exit()
 
-elif sys.argv[1] == 'copy':
+elif sys.argv[1] == 'play':
+    if len(sys.argv) == 3:
+        ev.log.toFile('Copying things...')
+        ev.test.t(sys.argv[2])
+    elif len(sys.argv) == 4:
+        ev.log.toFile('Copying things...')
+        ev.config.c(sys.argv[2], arg2 = sys.argv[3])
+    else:
+        ev.log.toFile('"ev copy" requires one or two  additional arguments.')
+        ev.log.toFile('However, I found: ' + str(len(sys.argv) - 1) + ' arg(s).')
+        ev.log.toFile('Aborting.\n\n')
+        sys.exit()
+
+elif sys.argv[1] == 'purr':
     if len(sys.argv) == 3:
         ev.log.toFile('Copying things...')
         ev.test.t(sys.argv[2])

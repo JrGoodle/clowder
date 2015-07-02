@@ -7,7 +7,7 @@ import ev.config
 import ev.log
 import ev.utilities
 
-def generate(arg1, arg2 = ''):
+def fix(arg1):
     if arg1 == 'core':
         genCmakeCore(arg2)
     elif arg1 == 'opencv':
