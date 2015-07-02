@@ -6,8 +6,8 @@ import sys
 # https://packaging.python.org/en/latest/distributing.html
 
 project_root = os.path.dirname(__file__)
-peru_sh_path = os.path.join(project_root, 'peru.sh')
-module_root = os.path.join(project_root, 'peru')
+peru_sh_path = os.path.join(project_root, 'clowder.sh')
+module_root = os.path.join(project_root, 'clowder')
 version_file = os.path.join(module_root, 'VERSION')
 
 
@@ -38,18 +38,17 @@ def get_install_requires():
 
 
 setuptools.setup(
-    name='peru',
-    description='A tool for fetching code',
+    name='clowder',
+    description='A tool for managing code',
     version=get_version(),
-    url='https://github.com/buildinspace/peru',
-    author="Jack O'Connor <oconnor663@gmail.com>, "
-           "Sean Olson <olson.sean.k@gmail.com>",
+    url='https://github.com/jrgoodle/clowder',
+    author="joe DeCapo <joe@polka.cat>,
     license='MIT',
-    packages=['peru'],
-    package_data={'peru': get_all_resources_filepaths()},
+    packages=['clowder'],
+    package_data={'clowder': get_all_resources_filepaths()},
     entry_points={
         'console_scripts': [
-            'peru=peru.main:main',
+            'clowder=clowder.main:main',
         ]
     },
     install_requires=get_install_requires(),
