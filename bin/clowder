@@ -9,21 +9,22 @@ import ev.log
 # helpful comments about its usage.
 if len(sys.argv) == 1:
     print
-    helpMsg = ('usage: ev <command> [<args>]'
+    helpMsg = ('usage: clowder <command> [<args>]'
                '\n'
-               'Build and Install:\n'
-               '   cmake       Generate CMake build trees\n'
-               '   build       Run build command in generated CMake build tree(s)\n'
-               '   install     Install build products\n'
+               'Syncing:\n'
+               '   breed      Clone repositories\n'
+               '   herd       Sync repositories\n'
                '\n'
-               'Cleaning:\n'
-               '   clean      Run CMake clean command in generated CMake build tree(s)\n'
-               '   rm         Remove directories containing build trees and build products\n'
+               'Working:\n'
+               '   play       Create new topic branches\n'
+               '   purr       Push new commits to remote branches\n'
+               '   meow       Print status of current repositories\n'
+               '   knead      Show diffs for current repositories\n'
                '\n'
                'Utilities:\n'
-               '   config     Environment configuration of build types and library types\n'
-               '   log        Logging\n'
-               '   test       Testing utility\n'
+               '   litter     Discard local changes\n'
+               '   groom      Prune obsolete remote branches\n'
+               '   fix        Save a version and tag it\n'
                '\n')
     print helpMsg
     sys.exit()
