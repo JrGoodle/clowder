@@ -93,6 +93,7 @@ Utilities:
             description='Print status of current repositories')
         args = parser.parse_args(sys.argv[2:])
         print('Running clowder meow')
+        clowder.meow.Meow()
 
     def knead(self):
         self.checkClowderDirectory()

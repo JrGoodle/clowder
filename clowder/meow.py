@@ -6,5 +6,8 @@ import subprocess
 import clowder.log
 import clowder.utilities
 
-def meow():
-    clowder.utilities.ex(command)
+class Meow(object):
+
+    def __init__(self):
+        command = 'repo status'
+        clowder.utilities.ex(command)
