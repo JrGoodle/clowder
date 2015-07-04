@@ -61,14 +61,13 @@ Utilities:
         parser.add_argument('url') # TODO: save parameter and validate url
         args = parser.parse_args(sys.argv[2:])
         print('Running clowder breed, url=%s' % args.url)
-        clowder.breed.Breed(args.url)
-        os.mkdir(self.clowderDirectory)
+        clowder.breed.Breed(args.url, self.clowderDirectory)
 
     def herd(self):
         self.checkClowderDirectory()
         parser = argparse.ArgumentParser(
             description='Sync repositories')
-        parser.add_argument('--version')
+        parser.add_argument('--version', '-v')
         args = parser.parse_args(sys.argv[2:])
         print('Running clowder herd, version=%s' % args.version)
 
