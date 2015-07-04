@@ -13,6 +13,7 @@ import clowder.litter
 import clowder.meow
 import clowder.play
 import clowder.purr
+import clowder.nest
 
 class Clowder(object):
 
@@ -35,6 +36,7 @@ Utilities:
   litter     Discard local changes
   groom      Prune obsolete remote branches
   fix        Save a version and tag it
+  nest       Delete directory contents for breeding
 
 ''')
         parser.add_argument('command', help='Subcommand to run')
@@ -128,6 +130,9 @@ Utilities:
         parser.add_argument('version')
         args = parser.parse_args(sys.argv[2:])
         print('Running clowder fix, version=%s' % args.version)
+    def nest(self):
+        print('Running clowder nest')
+        clowder.nest.Nest()
 
     def checkClowderDirectory(self):
         if not os.path.exists(self.clowderDirectory):
