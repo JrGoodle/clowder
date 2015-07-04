@@ -14,19 +14,27 @@ class Breed(object):
         command = 'repo init -u ' + url
         print("Running '" + command + "'")
         clowder.utilities.ex(command)
+        
         command = 'repo sync'
         print("Running '" + command + "'")
         clowder.utilities.ex(command)
+
         command = 'repo forall -c git checkout master'
         print("Running '" + command + "'")
         clowder.utilities.ex(command)
+
         os.mkdir(clowderDirectory)
         os.chdir(clowderDirectory)
+
         command = 'git clone ' + url + ' clowder'
         print("Running '" + command + "'")
         clowder.utilities.ex(command)
+
         os.chdir(os.path.join(os.getcwd(), 'clowder'))
-        self.configureSnapshotsBranch()
+
+        command = 'git fetch --all --prune --tags'
+        print("Running '" + command + "'")
+        clowder.utilities.ex(command)
 
     def configureSnapshotsBranch(self):
         repo = Repo(os.getcwd())

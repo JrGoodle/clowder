@@ -8,27 +8,20 @@ import clowder.utilities
 
 class Fix(object):
 
-    def __init__(self, version, clowderDirectory):
-        command = 'repo manifest -o snapshot.xml -r'
+    def __init__(self, version):
+        versionManifest = version + '.xml'
+
+        command = 'repo manifest -o .clowder/clowder/' + versionManifest + ' -r'
         print("Running '" + command + "'")
         clowder.utilities.ex(command)
 
-        os.chdir(os.path.join(clowderDirectory, 'clowder'))
+        os.chdir('.clowder/clowder')
 
-        command = 'git checkout snapshots'
+        command = 'git add ' + versionManifest
         print("Running '" + command + "'")
         clowder.utilities.ex(command)
 
-        print("Remove previous 'default.xml'")
-        os.remove('default.xml')
-        print("Move 'snapshot.xml' and rename to 'default.xml'")
-        shutil.move('../../snapshot.xml', 'default.xml')
-
-        command = 'git add default.xml'
-        print("Running '" + command + "'")
-        clowder.utilities.ex(command)
-
-        command = 'git commit -m "Update default.xml for version ' + version + '"'
+        command = 'git commit -m "Add manifest ' + version + '"'
         print("Running '" + command + "'")
         clowder.utilities.ex(command)
 
@@ -41,9 +34,5 @@ class Fix(object):
         clowder.utilities.ex(command)
 
         command = 'git push origin ' + version
-        print("Running '" + command + "'")
-        clowder.utilities.ex(command)
-
-        command = 'git checkout master'
         print("Running '" + command + "'")
         clowder.utilities.ex(command)

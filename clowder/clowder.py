@@ -72,7 +72,7 @@ Utilities:
         parser.add_argument('--version', '-v')
         args = parser.parse_args(sys.argv[2:])
         print('Running clowder herd, version=%s' % args.version)
-        clowder.herd.Herd()
+        clowder.herd.Herd(args.version)
 
     def play(self):
         self.checkClowderDirectory()
@@ -130,7 +130,7 @@ Utilities:
         parser.add_argument('version')
         args = parser.parse_args(sys.argv[2:])
         print('Running clowder fix, version=%s' % args.version)
-        clowder.fix.Fix(args.version, self.clowderDirectory)
+        clowder.fix.Fix(args.version)
 
     def nest(self):
         print('Running clowder nest')
