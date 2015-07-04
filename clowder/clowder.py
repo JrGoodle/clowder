@@ -130,6 +130,8 @@ Utilities:
         parser.add_argument('version')
         args = parser.parse_args(sys.argv[2:])
         print('Running clowder fix, version=%s' % args.version)
+        clowder.fix.Fix(args.version, self.clowderDirectory)
+
     def nest(self):
         print('Running clowder nest')
         clowder.nest.Nest()
