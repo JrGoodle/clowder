@@ -81,9 +81,10 @@ Utilities:
         parser = argparse.ArgumentParser(
             description='Create new topic branch(es)')
         parser.add_argument('branch')
+        parser.add_argument('projects', nargs='*', choices=self.getProjectNames())
         args = parser.parse_args(sys.argv[2:])
         print('Running clowder play, branch=%s' % args.branch)
-        clowder.play.Play(args.branch)
+        clowder.play.Play(args.branch, args.projects)
 
     # def purr(self):
     #     self.checkClowderDirectory()
@@ -144,7 +145,7 @@ Utilities:
             print("Clowder doesn't seem to exist in this directory")
             sys.exit()
 
-    def getRepositories(self):
+    def getProjects(self):
         projectList = os.path.join(self.rootDirectory, '.repo/project.list')
         # if os.path.isfile(projectList)
         projects = []
@@ -154,6 +155,12 @@ Utilities:
         for project in projects:
             print('Project name: ' + project.name)
         return projects
+
+    def getProjectNames(self):
+        projectNames = []
+        for project in self.getProjects():
+            projectNames.append(project.relativePath)
+        return projectNames
 
 if __name__ == '__main__':
     Clowder()
