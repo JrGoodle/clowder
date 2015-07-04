@@ -52,16 +52,17 @@ Utilities:
 
     def breed(self):
         if os.path.exists(self.clowderDirectory):
-            print('Clowder already bred in this directoyr, exiting...')
+            print('Clowder already bred in this directory, exiting...')
             sys.exit()
         else:
             print('Breeding clowder...')
-            os.mkdir(self.clowderDirectory)
         parser = argparse.ArgumentParser(
             description='Clone repositories')
         parser.add_argument('url') # TODO: save parameter and validate url
         args = parser.parse_args(sys.argv[2:])
         print('Running clowder breed, url=%s' % args.url)
+        clowder.breed.Breed(args.url)
+        os.mkdir(self.clowderDirectory)
 
     def herd(self):
         self.checkClowderDirectory()
