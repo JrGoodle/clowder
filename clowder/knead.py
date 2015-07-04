@@ -6,5 +6,8 @@ import subprocess
 import clowder.log
 import clowder.utilities
 
-def knead():
-    clowder.utilities.ex(command)
+class Knead(object):
+
+    def __init__(self):
+        command = 'repo diff'
+        clowder.utilities.ex(command)

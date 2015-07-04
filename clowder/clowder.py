@@ -101,6 +101,7 @@ Utilities:
             description='Show diffs for current repositories')
         args = parser.parse_args(sys.argv[2:])
         print('Running clowder knead')
+        clowder.knead.Knead()
 
     def litter(self):
         self.checkClowderDirectory()
