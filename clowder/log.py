@@ -1,19 +1,18 @@
 import os
 import time
-import config
 import sys
 
 def toFile(string):
     '''
     This function receives various login messages during a typical
-    'ev' invocation, prints them to the screen, and then puts the 
+    'ev' invocation, prints them to the screen, and then puts the
     messages in the log file for the day in addition to a time stamp.
-    If the log file for the day does not exist, which happens during 
+    If the log file for the day does not exist, which happens during
     the first invocation of any 'ev' commands, it is created by this
     function. Further, if the login directory does not exits, it
     is also created here.
     '''
-    print string
+    print(string)
     home = os.path.expanduser('~')
     logDir = home + '/.ev/logs'
     if not os.path.exists(logDir):
@@ -28,7 +27,7 @@ def toFile(string):
         f.write('\'ev\' command logs for ' + today + '\n\n')
     else:
         f = open(evLogFile, 'a')
-    
+
     timeStamp = time.strftime('%Y-%m-%d %H:%M:%S')
     f.write(timeStamp + '\t\t' + string + '\n')
     f.close()
@@ -42,13 +41,11 @@ def adb(arg1):
     if arg1 == 'all':
         r = subprocess.call(clear, shell=True)
         if r != 0:
-            ev.log.toFile('Command "' + command + '" returned:' + str(r))
-            ev.log.toFile('Aborting.\n\n')
+            clowder.log.toFile('Command "' + command + '" returned:' + str(r))
+            clowder.log.toFile('Aborting.\n\n')
             sys.exit()
         today = time.strftime('%Y-%m-%d_%H-%M-%S')
         command = 'adb logcat > ' + logDir + '/' + today + '.log'
-        ev.utilities.unknownArg(command)
+        clowder.utilities.unknownArg(command)
     else:
-        ev.utilities.unknownArg('ev log adb', arg1)
-
-
+        clowder.utilities.unknownArg('ev log adb', arg1)

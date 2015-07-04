@@ -48,7 +48,7 @@ setuptools.setup(
     package_data={'clowder': get_all_resources_filepaths()},
     entry_points={
         'console_scripts': [
-            'clowder=clowder.main:main',
+            'clowder=clowder.clowder',
         ]
     },
     install_requires=get_install_requires(),
