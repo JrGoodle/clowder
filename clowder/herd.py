@@ -23,6 +23,10 @@ class Herd(object):
         print("Running '" + command + "'")
         clowder.utilities.ex(command)
 
+        command = 'repo init -m default.xml'
+        print("Running '" + command + "'")
+        clowder.utilities.ex(command)
+
         command = 'repo sync'
         print("Running '" + command + "'")
         clowder.utilities.ex(command)
