@@ -6,5 +6,9 @@ import subprocess
 import clowder.log
 import clowder.utilities
 
-def purr():
-    clowder.utilities.ex(command)
+class Purr(object):
+
+    def __init__(self):
+        command = 'repo forall -c git push'
+        print("Running '" + command + "'")
+        clowder.utilities.ex(command)

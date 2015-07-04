@@ -89,6 +89,7 @@ Utilities:
             description='Push new commits to remote branch(es)')
         args = parser.parse_args(sys.argv[2:])
         print('Running clowder purr')
+        clowder.purr.Purr()
 
     def meow(self):
         self.checkClowderDirectory()
