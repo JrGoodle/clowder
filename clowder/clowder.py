@@ -12,6 +12,7 @@ import clowder.knead
 import clowder.litter
 import clowder.meow
 import clowder.play
+import clowder.project
 import clowder.purr
 import clowder.nest
 
@@ -47,7 +48,8 @@ Utilities:
             print('Unrecognized command')
             parser.print_help()
             exit(1)
-        self.clowderDirectory = os.path.join(os.getcwd(), '.clowder')
+        self.rootDirectory = os.getcwd()
+        self.clowderDirectory = os.path.join(self.rootDirectory, '.clowder')
         print(self.clowderDirectory)
         # use dispatch pattern to invoke method with same name
         getattr(self, args.command)()
@@ -141,6 +143,17 @@ Utilities:
         if not os.path.exists(self.clowderDirectory):
             print("Clowder doesn't seem to exist in this directory")
             sys.exit()
+
+    def getRepositories(self):
+        projectList = os.path.join(self.rootDirectory, '.repo/project.list')
+        # if os.path.isfile(projectList)
+        projects = []
+        with open(projectList) as file:
+            for line in file:
+                projects.append(clowder.project.Project(self.rootDirectory, line))
+        for project in projects:
+            print('Project name: ' + project.name)
+        return projects
 
 if __name__ == '__main__':
     Clowder()
