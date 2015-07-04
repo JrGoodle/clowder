@@ -12,28 +12,23 @@ class Breed(object):
 
     def __init__(self, url, clowderDirectory):
         command = 'repo init -u ' + url
-        print("Running '" + command + "'")
         clowder.utilities.ex(command)
-        
+
         command = 'repo sync'
-        print("Running '" + command + "'")
         clowder.utilities.ex(command)
 
         command = 'repo forall -c git checkout master'
-        print("Running '" + command + "'")
         clowder.utilities.ex(command)
 
         os.mkdir(clowderDirectory)
         os.chdir(clowderDirectory)
 
         command = 'git clone ' + url + ' clowder'
-        print("Running '" + command + "'")
         clowder.utilities.ex(command)
 
         os.chdir(os.path.join(os.getcwd(), 'clowder'))
 
         command = 'git fetch --all --prune --tags'
-        print("Running '" + command + "'")
         clowder.utilities.ex(command)
 
     def configureSnapshotsBranch(self):
@@ -60,7 +55,6 @@ class Breed(object):
                 print("Remote 'snapshots' branch exists")
                 print("Setting local 'snapshots' to point to existing upstream")
                 command = 'git branch --set-upstream snapshots origin/snapshots'
-                print("Running '" + command + "'")
                 clowder.utilities.ex(command)
                 break
         else:
@@ -70,5 +64,4 @@ class Breed(object):
             clowder.utilities.ex(command)
 
         command = 'git checkout master'
-        print("Running '" + command + "'")
         clowder.utilities.ex(command)

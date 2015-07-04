@@ -8,6 +8,7 @@ import sys
 import clowder.log
 
 def ex(command):
+    print("Running '" + command + "'")
     r = Popen(command, stderr=PIPE, shell=True)
     stdout, stderr = r.communicate()
     if r.poll() != 0:

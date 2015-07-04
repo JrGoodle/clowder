@@ -10,5 +10,4 @@ class Groom(object):
 
     def __init__(self):
         command = 'repo forall -c git fetch --all --prune'
-        print("Running '" + command + "'")
         clowder.utilities.ex(command)

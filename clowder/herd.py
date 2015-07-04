@@ -16,42 +16,32 @@ class Herd(object):
 
     def sync(self):
         command = 'repo forall -c git stash'
-        print("Running '" + command + "'")
         clowder.utilities.ex(command)
 
         command = 'repo forall -c git checkout master'
-        print("Running '" + command + "'")
         clowder.utilities.ex(command)
 
         command = 'repo init -m default.xml'
-        print("Running '" + command + "'")
         clowder.utilities.ex(command)
 
         command = 'repo sync'
-        print("Running '" + command + "'")
         clowder.utilities.ex(command)
 
         command = 'repo forall -c git checkout master'
-        print("Running '" + command + "'")
         clowder.utilities.ex(command)
 
     def syncVersion(self, version):
         command = 'repo forall -c git stash'
-        print("Running '" + command + "'")
         clowder.utilities.ex(command)
 
         command = 'repo init -m ' + version + '.xml'
-        print("Running '" + command + "'")
         clowder.utilities.ex(command)
 
         command = 'repo sync'
-        print("Running '" + command + "'")
         clowder.utilities.ex(command)
 
         command = 'repo forall -c git branch ' + version
-        print("Running '" + command + "'")
         clowder.utilities.ex(command)
 
         command = 'repo forall -c git checkout ' + version
-        print("Running '" + command + "'")
         clowder.utilities.ex(command)
