@@ -1,177 +1,99 @@
-#!/usr/bin/env python
+#! /usr/bin/env python3
 
+import argparse
 import sys
-import os
 
-import ev.log
+class Clowder(object):
 
-# if the ev command is ran without any arguments, print some
-# helpful comments about its usage.
-if len(sys.argv) == 1:
-    print
-    helpMsg = ('usage: clowder <command> [<args>]'
-               '\n'
-               'Syncing:\n'
-               '   breed      Clone repositories\n'
-               '   herd       Sync repositories\n'
-               '\n'
-               'Working:\n'
-               '   play       Create new topic branches\n'
-               '   purr       Push new commits to remote branches\n'
-               '   meow       Print status of current repositories\n'
-               '   knead      Show diffs for current repositories\n'
-               '\n'
-               'Utilities:\n'
-               '   litter     Discard local changes\n'
-               '   groom      Prune obsolete remote branches\n'
-               '   fix        Save a version and tag it\n'
-               '\n')
-    print helpMsg
-    sys.exit()
+    def __init__(self):
+        parser = argparse.ArgumentParser(
+            description='Manage multiple repositories',
+            usage='''clowder <command> [<args>]
 
+Syncing:
+  breed      Clone repositories
+  herd       Sync repositories
 
+Working:
+  play       Create new topic branch(es)
+  purr       Push new commits to remote branch(es)
+  meow       Print status of current repositories
+  knead      Show diffs for current repositories
 
-# first, check if this is the first time the user is starting this
-# script. If so, we need to ask them for some information which helps
-# with the operation of this script.
-home = os.path.expanduser('~')
-evConf = home + '/.ev/config/ev.conf'
-if not os.path.isfile(evConf):
-    print
-    ev.log.toFile('the eyeverify configuration file does not exit.')
-    print
-    ev.log.toFile('I will now guide you in creating it.')
-    print
-    ev.log.toFile('I will run your command after we\'ve created it')
-    # initialize the configuration which creates a JSON file with
-    # all the environmental variables this script needs.
-    ev.config.init()
+Utilities:
+  litter     Discard local changes
+  groom      Prune obsolete remote branches
+  fix        Save a version and tag it
+''')
+        parser.add_argument('command', help='Subcommand to run')
+        # parse_args defaults to [1:] for args, but you need to
+        # exclude the rest of the args too, or validation will fail
+        args = parser.parse_args(sys.argv[1:2])
+        if not hasattr(self, args.command):
+            print('Unrecognized command')
+            parser.print_help()
+            exit(1)
+        # use dispatch pattern to invoke method with same name
+        getattr(self, args.command)()
 
-d = ev.config.load()
+    def breed(self):
+        parser = argparse.ArgumentParser(
+            description='Clone repositories')
+        parser.add_argument('url') # TODO: save parameter and validate url
+        args = parser.parse_args(sys.argv[2:])
+        print('Running clowder breed, url=%s' % args.url)
 
-ev.log.toFile('\nStart clowder command.')
-if sys.argv[1] == 'breed':
-    if len(sys.argv) == 3:
-        ev.log.toFile('Starting build...')
-        ev.build.b(sys.argv[2])
-    elif len(sys.argv) == 4:
-        ev.log.toFile('Starting build...')
-        ev.build.b(sys.argv[2], arg2 = sys.argv[3])
-    else:
-        ev.log.toFile('"ev build" requires one or two additional arguments.')
-        ev.log.toFile('However, I found: ' + str(len(sys.argv) - 1) + ' arg(s).')
-        ev.log.toFile('Aborting.\n\n')
-        sys.exit()
+    def herd(self):
+        parser = argparse.ArgumentParser(
+            description='Sync repositories')
+        parser.add_argument('--version')
+        args = parser.parse_args(sys.argv[2:])
+        print('Running clowder herd, version=%s' % args.version)
 
-elif sys.argv[1] == 'fix':
-    if len(sys.argv) == 3:
-        ev.config.status()
-        ev.log.toFile('Generating cmake build trees...')
-        ev.cmake.generate(sys.argv[2])
-    elif len(sys.argv) == 4:
-        ev.config.status()
-        ev.log.toFile('Generating cmake build trees...')
-        ev.cmake.generate(sys.argv[2], arg2 = sys.argv[3])
-    else:
-        ev.log.toFile('"ev cmake" requires one or two additional arguments.')
-        ev.log.toFile('However, I found: ' + str(len(sys.argv) - 1) + ' arg(s).')
-        ev.log.toFile('Aborting.\n\n')
-        sys.exit()
+    def play(self):
+        parser = argparse.ArgumentParser(
+            description='Create new topic branch(es)')
+        parser.add_argument('branch')
+        args = parser.parse_args(sys.argv[2:])
+        print('Running clowder play, branch=%s' % args.branch)
 
-elif sys.argv[1] == 'groom':
-    if len(sys.argv) == 3:
-        ev.log.toFile('Cleaning up...')
-        ev.clean.c(sys.argv[2])
-    elif len(sys.argv) == 4:
-        ev.log.toFile('Cleaning up...')
-        ev.clean.c(sys.argv[2], arg2 = sys.argv[3])
-    else:
-        ev.log.toFile('"ev clean" requires one or two additional arguments.')
-        ev.log.toFile('However, I found: ' + str(len(sys.argv) - 1) + ' arg(s).')
-        ev.log.toFile('Aborting.\n\n')
-        sys.exit()
+    def purr(self):
+        parser = argparse.ArgumentParser(
+            description='Push new commits to remote branch(es)')
+        args = parser.parse_args(sys.argv[2:])
+        print('Running clowder purr')
 
-elif sys.argv[1] == 'herd':
-    if len(sys.argv) == 3:
-        ev.log.toFile('Removing things...')
-        ev.rm.r(sys.argv[2])
-    elif len(sys.argv) == 4:
-        ev.log.toFile('Removing things...')
-        ev.rm.r(sys.argv[2], arg2 = sys.argv[3])
-    else:
-        ev.log.toFile('"ev rm" requires one or two additional arguments.')
-        ev.log.toFile('However, I found: ' + str(len(sys.argv) - 1) + ' arg(s).')
-        ev.log.toFile('Aborting.\n\n')
-        sys.exit()
+    def meow(self):
+        parser = argparse.ArgumentParser(
+            description='Print status of current repositories')
+        args = parser.parse_args(sys.argv[2:])
+        print('Running clowder meow')
 
-elif sys.argv[1] == 'knead':
-    if len(sys.argv) == 3:
-        ev.log.toFile('Installing things...')
-        ev.install.i(sys.argv[2])
-    elif len(sys.argv) == 4:
-        ev.log.toFile('Installing things...')
-        ev.install.i(sys.argv[2], sys.argv[3])
-    else:
-        ev.log.toFile('"ev install" requires one or two additional arguments.')
-        ev.log.toFile('However, I found: ' + str(len(sys.argv) - 1) + ' arg(s).')
-        ev.log.toFile('Aborting.\n\n')
-        sys.exit()
+    def knead(self):
+        parser = argparse.ArgumentParser(
+            description='Show diffs for current repositories')
+        args = parser.parse_args(sys.argv[2:])
+        print('Running clowder knead')
 
-elif sys.argv[1] == 'litter':
-    if len(sys.argv) == 3:
-        ev.log.toFile('Configuring things...')
-        ev.config.c(sys.argv[2])
-    elif len(sys.argv) == 5:
-        ev.log.toFile('Setting things...')
-        ev.config.c(sys.argv[2], arg2 = sys.argv[3], arg3 = sys.argv[4])
-    else:
-        ev.log.toFile('"ev config" requires one or three additional argument.')
-        ev.log.toFile('However, I found: ' + str(len(sys.argv) - 1) + ' arg(s).')
-        ev.log.toFile('Aborting.\n\n')
-        sys.exit()
+    def litter(self):
+        parser = argparse.ArgumentParser(
+            description='Discard local changes')
+        parser.add_argument('project') # TODO: perform action for all projects
+        args = parser.parse_args(sys.argv[2:])
+        print('Running clowder litter, project=%s' % args.project)
 
-elif sys.argv[1] == 'meow':
-    if len(sys.argv) == 3:
-        ev.log.toFile('Running the test...')
-        ev.test.t(sys.argv[2])
-    elif len(sys.argv) == 4:
-        ev.log.toFile('Running the test...')
-        ev.config.c(sys.argv[2], arg2 = sys.argv[3])
-    else:
-        ev.log.toFile('"ev test" requires one or two  additional arguments.')
-        ev.log.toFile('However, I found: ' + str(len(sys.argv) - 1) + ' arg(s).')
-        ev.log.toFile('Aborting.\n\n')
-        sys.exit()
+    def groom(self):
+        parser = argparse.ArgumentParser(
+            description='Prune obsolete remote branches')
+        args = parser.parse_args(sys.argv[2:])
+        print('Running clowder groom')
 
-elif sys.argv[1] == 'play':
-    if len(sys.argv) == 3:
-        ev.log.toFile('Copying things...')
-        ev.test.t(sys.argv[2])
-    elif len(sys.argv) == 4:
-        ev.log.toFile('Copying things...')
-        ev.config.c(sys.argv[2], arg2 = sys.argv[3])
-    else:
-        ev.log.toFile('"ev copy" requires one or two  additional arguments.')
-        ev.log.toFile('However, I found: ' + str(len(sys.argv) - 1) + ' arg(s).')
-        ev.log.toFile('Aborting.\n\n')
-        sys.exit()
+    def fix(self):
+        parser = argparse.ArgumentParser(
+            description='Save a version and tag it')
+        parser.add_argument('version')
+        args = parser.parse_args(sys.argv[2:])
+        print('Running clowder fix, version=%s' % args.version)
 
-elif sys.argv[1] == 'purr':
-    if len(sys.argv) == 3:
-        ev.log.toFile('Copying things...')
-        ev.test.t(sys.argv[2])
-    elif len(sys.argv) == 4:
-        ev.log.toFile('Copying things...')
-        ev.config.c(sys.argv[2], arg2 = sys.argv[3])
-    else:
-        ev.log.toFile('"ev copy" requires one or two  additional arguments.')
-        ev.log.toFile('However, I found: ' + str(len(sys.argv) - 1) + ' arg(s).')
-        ev.log.toFile('Aborting.\n\n')
-        sys.exit()
-
-else:
-    ev.log.toFile('Unrecognized "ev" parameter:')
-    ev.log.toFile('>>>> ' + sys.argv[1])
-    print
-    ev.log.toFile('Aborting.\n\n')
-    sys.exit()
+if __name__ == '__main__':
+    Clowder()
