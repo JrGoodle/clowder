@@ -83,13 +83,13 @@ Utilities:
         print('Running clowder play, branch=%s' % args.branch)
         clowder.play.Play(args.branch)
 
-    def purr(self):
-        self.checkClowderDirectory()
-        parser = argparse.ArgumentParser(
-            description='Push new commits to remote branch(es)')
-        args = parser.parse_args(sys.argv[2:])
-        print('Running clowder purr')
-        clowder.purr.Purr()
+    # def purr(self):
+    #     self.checkClowderDirectory()
+    #     parser = argparse.ArgumentParser(
+    #         description='Push new commits to remote branch(es)')
+    #     args = parser.parse_args(sys.argv[2:])
+    #     print('Running clowder purr')
+    #     clowder.purr.Purr()
 
     def meow(self):
         self.checkClowderDirectory()
