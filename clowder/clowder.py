@@ -117,6 +117,7 @@ Utilities:
             description='Prune obsolete remote branches')
         args = parser.parse_args(sys.argv[2:])
         print('Running clowder groom')
+        clowder.groom.Groom()
 
     def fix(self):
         self.checkClowderDirectory()
