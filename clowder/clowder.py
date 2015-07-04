@@ -79,6 +79,7 @@ Utilities:
         parser.add_argument('branch')
         args = parser.parse_args(sys.argv[2:])
         print('Running clowder play, branch=%s' % args.branch)
+        clowder.play.Play(args.branch)
 
     def purr(self):
         self.checkClowderDirectory()
