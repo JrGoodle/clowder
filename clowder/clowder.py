@@ -13,6 +13,7 @@ import clowder.litter
 import clowder.meow
 import clowder.play
 import clowder.project
+import clowder.projectManager
 import clowder.purr
 import clowder.nest
 
@@ -74,14 +75,15 @@ Utilities:
         parser.add_argument('--version', '-v')
         args = parser.parse_args(sys.argv[2:])
         print('Running clowder herd, version=%s' % args.version)
-        clowder.herd.Herd(args.version)
+        clowder.herd.Herd(self.rootDirectory, args.version)
 
     def play(self):
         self.checkClowderDirectory()
         parser = argparse.ArgumentParser(
             description='Create new topic branch(es)')
         parser.add_argument('branch')
-        parser.add_argument('projects', nargs='*', choices=self.getProjectNames())
+        projectManager = clowder.projectManager.ProjectManager(self.rootDirectory)
+        parser.add_argument('projects', nargs='*', choices=projectManager.getProjectNames())
         args = parser.parse_args(sys.argv[2:])
         print('Running clowder play, branch=%s' % args.branch)
         clowder.play.Play(args.branch, args.projects)
@@ -114,7 +116,8 @@ Utilities:
         self.checkClowderDirectory()
         parser = argparse.ArgumentParser(
             description='Discard local changes')
-        parser.add_argument('projects', nargs='*', choices=self.getProjectNames())
+        projectManager = clowder.projectManager.ProjectManager(self.rootDirectory)
+        parser.add_argument('projects', nargs='*', choices=projectManager.getProjectNames())
         args = parser.parse_args(sys.argv[2:])
         print('Running clowder litter')
         clowder.litter.Litter(args.projects)
@@ -144,21 +147,6 @@ Utilities:
         if not os.path.exists(self.clowderDirectory):
             print("Clowder doesn't seem to exist in this directory")
             sys.exit()
-
-    def getProjects(self):
-        projectList = os.path.join(self.rootDirectory, '.repo/project.list')
-        # if os.path.isfile(projectList)
-        projects = []
-        with open(projectList) as file:
-            for line in file:
-                projects.append(clowder.project.Project(self.rootDirectory, line))
-        return projects
-
-    def getProjectNames(self):
-        projectNames = []
-        for project in self.getProjects():
-            projectNames.append(project.relativePath)
-        return projectNames
 
 if __name__ == '__main__':
     Clowder()

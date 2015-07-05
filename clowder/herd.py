@@ -4,20 +4,24 @@ import shutil
 import subprocess
 
 import clowder.log
+import clowder.projectManager
 import clowder.utilities
 
 class Herd(object):
 
-    def __init__(self, version):
+    def __init__(self, rootDirectory, version):
+        command = 'repo forall -c git stash'
+        clowder.utilities.ex(command)
+
+        self.projectManager = clowder.projectManager.ProjectManager(rootDirectory)
         if version == None:
             self.sync()
+            for project in self.projectManager.projects:
+                project.repo.git.checkout(project.currentBranch)
         else:
             self.syncVersion(version)
 
     def sync(self):
-        command = 'repo forall -c git stash'
-        clowder.utilities.ex(command)
-
         command = 'repo forall -c git checkout master'
         clowder.utilities.ex(command)
 
@@ -31,9 +35,6 @@ class Herd(object):
         clowder.utilities.ex(command)
 
     def syncVersion(self, version):
-        command = 'repo forall -c git stash'
-        clowder.utilities.ex(command)
-
         command = 'repo init -m ' + version + '.xml'
         clowder.utilities.ex(command)
 
