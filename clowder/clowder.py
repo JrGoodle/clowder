@@ -114,10 +114,10 @@ Utilities:
         self.checkClowderDirectory()
         parser = argparse.ArgumentParser(
             description='Discard local changes')
-        # parser.add_argument('project') # TODO: perform action for all projects
+        parser.add_argument('projects', nargs='*', choices=self.getProjectNames())
         args = parser.parse_args(sys.argv[2:])
-        print('Running clowder litter')# , project=%s' % args.project)
-        clowder.litter.Litter()
+        print('Running clowder litter')
+        clowder.litter.Litter(args.projects)
 
     def groom(self):
         self.checkClowderDirectory()
@@ -152,8 +152,6 @@ Utilities:
         with open(projectList) as file:
             for line in file:
                 projects.append(clowder.project.Project(self.rootDirectory, line))
-        for project in projects:
-            print('Project name: ' + project.name)
         return projects
 
     def getProjectNames(self):

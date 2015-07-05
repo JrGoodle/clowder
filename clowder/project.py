@@ -12,5 +12,3 @@ class Project(object):
         self.name = os.path.basename(os.path.normpath(projectPath.strip()))
         self.repo = Repo(self.absolutePath)
         self.url = self.repo.remotes.origin.url
-        print('Project name: ' + self.name)
-        print('Project url: ' + self.url)
