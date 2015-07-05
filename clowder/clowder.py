@@ -30,7 +30,7 @@ Syncing:
 
 Working:
   play       Create new topic branch(es)
-  purr       Push new commits to remote branch(es)
+  purr       Commit and upload current peru.yaml
   meow       Print status of current repositories
   knead      Show diffs for current repositories
 
@@ -87,13 +87,13 @@ Utilities:
         print('Running clowder play, branch=%s' % args.branch)
         clowder.play.Play(args.branch, args.projects)
 
-    # def purr(self):
-    #     self.checkClowderDirectory()
-    #     parser = argparse.ArgumentParser(
-    #         description='Push new commits to remote branch(es)')
-    #     args = parser.parse_args(sys.argv[2:])
-    #     print('Running clowder purr')
-    #     clowder.purr.Purr()
+    def purr(self):
+        self.checkClowderDirectory()
+        parser = argparse.ArgumentParser(
+            description='Commit and upload current peru.yaml')
+        args = parser.parse_args(sys.argv[2:])
+        print('Running clowder purr')
+        clowder.purr.Purr(self.rootDirectory)
 
     def meow(self):
         self.checkClowderDirectory()
