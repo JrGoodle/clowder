@@ -51,7 +51,6 @@ Utilities:
             exit(1)
         self.rootDirectory = os.getcwd()
         self.clowderDirectory = os.path.join(self.rootDirectory, '.clowder')
-        print(self.clowderDirectory)
         # use dispatch pattern to invoke method with same name
         getattr(self, args.command)()
 
@@ -66,7 +65,7 @@ Utilities:
         parser.add_argument('url') # TODO: save parameter and validate url
         args = parser.parse_args(sys.argv[2:])
         print('Running clowder breed, url=%s' % args.url)
-        clowder.breed.Breed(args.url, self.clowderDirectory)
+        clowder.breed.Breed(args.url, self.rootDirectory)
 
     def herd(self):
         self.checkClowderDirectory()

@@ -21,6 +21,11 @@ class Herd(object):
         else:
             self.syncVersion(version)
 
+        command = 'repo forall -c git submodule update --init --recursive'
+        clowder.utilities.ex(command)
+        
+        self.updatePeruFile(rootDirectory)
+
     def sync(self):
         command = 'repo forall -c git checkout master'
         clowder.utilities.ex(command)
@@ -46,3 +51,19 @@ class Herd(object):
 
         command = 'repo forall -c git checkout ' + version
         clowder.utilities.ex(command)
+
+    def updatePeruFile(self, rootDirectory):
+        print('Updating peru.yaml')
+        clowderDirectory = os.path.join(rootDirectory, '.clowder/clowder')
+        os.chdir(clowderDirectory)
+        command = 'git fetch --all --prune --tags'
+        clowder.utilities.ex(command)
+        command = 'git pull'
+        clowder.utilities.ex(command)
+        os.chdir(rootDirectory)
+        newPeruFile = os.path.join(clowderDirectory, 'peru.yaml')
+        if os.path.isfile(newPeruFile):
+            peruFile = os.path.join(rootDirectory, 'peru.yaml')
+            if os.path.isfile(peruFile):
+                os.remove(peruFile)
+            shutil.copy2(newPeruFile, peruFile)

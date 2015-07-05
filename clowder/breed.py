@@ -10,7 +10,9 @@ import clowder.utilities
 
 class Breed(object):
 
-    def __init__(self, url, clowderDirectory):
+    def __init__(self, url, rootDirectory):
+        self.rootDirectory = rootDirectory
+
         command = 'repo init -u ' + url
         clowder.utilities.ex(command)
 
@@ -20,48 +22,31 @@ class Breed(object):
         command = 'repo forall -c git checkout master'
         clowder.utilities.ex(command)
 
-        os.mkdir(clowderDirectory)
-        os.chdir(clowderDirectory)
+        command = 'repo forall -c git submodule update --init --recursive'
+        clowder.utilities.ex(command)
+
+        self.setupClowderDirectory(url)
+        self.configurePeru()
+
+    def setupClowderDirectory(self, url):
+        dotClowderDirectory = os.path.join(self.rootDirectory, '.clowder')
+        os.mkdir(dotClowderDirectory)
+        os.chdir(dotClowderDirectory)
 
         command = 'git clone ' + url + ' clowder'
         clowder.utilities.ex(command)
 
-        os.chdir(os.path.join(os.getcwd(), 'clowder'))
+        clowderDirectory = os.path.join(dotClowderDirectory, 'clowder')
+        os.chdir(clowderDirectory)
 
         command = 'git fetch --all --prune --tags'
         clowder.utilities.ex(command)
 
-    def configureSnapshotsBranch(self):
-        repo = Repo(os.getcwd())
-
-        for branch in repo.references:
-            print(branch.name)
-            if branch.name == 'snapshots':
-                print("Local 'snapshots' branch exists")
-                print("Checking out local 'snapshots' branch")
-                snapshotsBranch = branch
-                repo.head.reference = snapshotsBranch
-                break
-        else:
-            print("Local 'snapshots' branch doesn't exist")
-            print("Creating local 'snapshots' branch")
-            snapshotsBranch = repo.create_head('snapshots')
-            print("Checking out local 'snapshots' branch")
-            repo.head.reference = snapshotsBranch
-
-        for branch in repo.references:
-            print(branch.name)
-            if branch.name == 'origin/snapshots':
-                print("Remote 'snapshots' branch exists")
-                print("Setting local 'snapshots' to point to existing upstream")
-                command = 'git branch --set-upstream snapshots origin/snapshots'
-                clowder.utilities.ex(command)
-                break
-        else:
-            print("Remote 'snapshots' branch doesn't exist")
-            print("Pushing local 'snapshots' to remote")
-            command = 'git push -u origin snapshots'
-            clowder.utilities.ex(command)
-
-        command = 'git checkout master'
-        clowder.utilities.ex(command)
+    def configurePeru(self):
+        print('Updating peru.yaml')
+        clowderDirectory = os.path.join(self.rootDirectory, '.clowder/clowder')
+        os.chdir(self.rootDirectory)
+        newPeruFile = os.path.join(clowderDirectory, 'peru.yaml')
+        if os.path.isfile(newPeruFile):
+            peruFile = os.path.join(self.rootDirectory, 'peru.yaml')
+            shutil.copy2(newPeruFile, peruFile)
