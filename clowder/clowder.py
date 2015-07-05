@@ -10,6 +10,7 @@ import clowder.groom
 import clowder.herd
 import clowder.knead
 import clowder.litter
+import clowder.manifest
 import clowder.meow
 import clowder.play
 import clowder.project
@@ -52,6 +53,8 @@ Utilities:
         self.rootDirectory = os.getcwd()
         self.clowderDirectory = os.path.join(self.rootDirectory, '.clowder')
         # use dispatch pattern to invoke method with same name
+        manifest = clowder.manifest.Manifest(self.rootDirectory)
+        manifest.getGroups()
         getattr(self, args.command)()
 
     def breed(self):
@@ -63,9 +66,11 @@ Utilities:
         parser = argparse.ArgumentParser(
             description='Clone repositories')
         parser.add_argument('url') # TODO: save parameter and validate url
+        manifest = clowder.manifest.Manifest(self.rootDirectory)
+        parser.add_argument('--groups', '-g', nargs='*', choices=manifest.getGroups()))
         args = parser.parse_args(sys.argv[2:])
         print('Running clowder breed, url=%s' % args.url)
-        clowder.breed.Breed(args.url, self.rootDirectory)
+        clowder.breed.Breed(self.rootDirectory, args.url, args.groups)
 
     def herd(self):
         self.checkClowderDirectory()

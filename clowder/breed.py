@@ -10,10 +10,12 @@ import clowder.utilities
 
 class Breed(object):
 
-    def __init__(self, url, rootDirectory):
+    def __init__(self, rootDirectory, url, groups):
         self.rootDirectory = rootDirectory
 
         command = 'repo init -u ' + url
+        if groups != None
+            command += ' -g ' + ','.join(groups)
         clowder.utilities.ex(command)
 
         command = 'repo sync'
