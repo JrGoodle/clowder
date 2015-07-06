@@ -80,8 +80,10 @@ Utilities:
         self.checkClowderDirectory()
         parser = argparse.ArgumentParser(
             description='Sync repositories')
-        parser.add_argument('--version', '-v')
         manifest = clowder.manifest.Manifest(self.rootDirectory)
+        versions = manifest.getVersions()
+        versions += 'master'
+        parser.add_argument('--version', '-v', choices=versions)
         parser.add_argument('--groups', '-g', nargs='*', choices=manifest.getGroups())
         args = parser.parse_args(sys.argv[2:])
         print('Running clowder herd, version=%s' % args.version)
