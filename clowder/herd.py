@@ -63,7 +63,7 @@ class Herd(object):
 
     def restorePreviousBranches(self):
         for project in self.projectManager.projects:
-            if os.path.isdir(project.absolutePath)
+            if os.path.isdir(project.absolutePath):
                 project.repo.git.checkout(project.currentBranch)
 
     def updatePeruFile(self, rootDirectory):

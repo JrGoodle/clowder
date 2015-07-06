@@ -27,5 +27,5 @@ class Manifest(object):
             if file.endswith('.xml'):
                 name = clowder.utilities.rchop(file, '.xml')
                 if name != 'default':
-                    versions.append(file)
+                    versions.append(name)
         return versions

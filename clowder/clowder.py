@@ -57,8 +57,6 @@ Utilities:
         self.rootDirectory = os.getcwd()
         self.clowderDirectory = os.path.join(self.rootDirectory, '.clowder')
         # use dispatch pattern to invoke method with same name
-        manifest = clowder.manifest.Manifest(self.rootDirectory)
-        manifest.getGroups()
         getattr(self, args.command)()
 
     def breed(self):
