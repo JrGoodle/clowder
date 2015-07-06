@@ -21,21 +21,33 @@ class Herd(object):
         command = 'repo forall -c git checkout master'
         clowder.utilities.ex(command)
 
-        if version == None:
-            command = 'repo init -m default.xml'
+        if groups != None:
+            groupsCommand += ' -g all,-notdefault,' + ",".join(groups)
         else:
-            command = 'repo init -m ' + version + '.xml'
+            groupsCommand = ''
 
-        if not groups == None:
-            command += ' -g all,-notdefault,' + ",".join(groups)
+        if version == None and groups != None:
+            command = 'repo init -m default.xml' + groupsCommand
+            clowder.utilities.ex(command)
 
-        clowder.utilities.ex(command)
+        if version != None:
+            if version == 'master':
+                command = 'repo init -m default.xml' + groupsCommand
+                clowder.utilities.ex(command)
+            else:
+                command = 'repo init -m ' + version + '.xml' + groupsCommand
+                clowder.utilities.ex(command)
 
         command = 'repo sync'
         clowder.utilities.ex(command)
 
         if version == None:
+            command = 'repo forall -c git checkout master'
+            clowder.utilities.ex(command)
             self.restorePreviousBranches()
+        elif version == 'master':
+            command = 'repo forall -c git checkout master'
+            clowder.utilities.ex(command)
         else:
             self.createVersionBranch(version)
 
@@ -50,9 +62,6 @@ class Herd(object):
         clowder.utilities.ex(command)
 
     def restorePreviousBranches(self):
-        command = 'repo forall -c git checkout master'
-        clowder.utilities.ex(command)
-
         for project in self.projectManager.projects:
             project.repo.git.checkout(project.currentBranch)
 
