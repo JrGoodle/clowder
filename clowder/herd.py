@@ -9,48 +9,52 @@ import clowder.utilities
 
 class Herd(object):
 
-    def __init__(self, rootDirectory, version):
+    def __init__(self, rootDirectory, version, groups):
+        self.projectManager = clowder.projectManager.ProjectManager(rootDirectory)
+        self.sync(version, groups)
+        self.updatePeruFile(rootDirectory)
+
+    def sync(self, version, groups):
         command = 'repo forall -c git stash'
         clowder.utilities.ex(command)
 
-        self.projectManager = clowder.projectManager.ProjectManager(rootDirectory)
+        command = 'repo forall -c git checkout master'
+        clowder.utilities.ex(command)
+
         if version == None:
-            self.sync()
-            for project in self.projectManager.projects:
-                project.repo.git.checkout(project.currentBranch)
+            command = 'repo init -m default.xml'
         else:
-            self.syncVersion(version)
+            command = 'repo init -m ' + version + '.xml'
+
+        if not groups == None:
+            command += ' -g all,-notdefault,' + ",".join(groups)
+
+        clowder.utilities.ex(command)
+
+        command = 'repo sync'
+        clowder.utilities.ex(command)
+
+        if version == None:
+            self.restorePreviousBranches()
+        else:
+            self.createVersionBranch(version)
 
         command = 'repo forall -c git submodule update --init --recursive'
         clowder.utilities.ex(command)
-        
-        self.updatePeruFile(rootDirectory)
 
-    def sync(self):
-        command = 'repo forall -c git checkout master'
-        clowder.utilities.ex(command)
-
-        command = 'repo init -m default.xml'
-        clowder.utilities.ex(command)
-
-        command = 'repo sync'
-        clowder.utilities.ex(command)
-
-        command = 'repo forall -c git checkout master'
-        clowder.utilities.ex(command)
-
-    def syncVersion(self, version):
-        command = 'repo init -m ' + version + '.xml'
-        clowder.utilities.ex(command)
-
-        command = 'repo sync'
-        clowder.utilities.ex(command)
-
+    def createVersionBranch(self, version):
         command = 'repo forall -c git branch ' + version
         clowder.utilities.ex(command)
 
         command = 'repo forall -c git checkout ' + version
         clowder.utilities.ex(command)
+
+    def restorePreviousBranches(self):
+        command = 'repo forall -c git checkout master'
+        clowder.utilities.ex(command)
+
+        for project in self.projectManager.projects:
+            project.repo.git.checkout(project.currentBranch)
 
     def updatePeruFile(self, rootDirectory):
         print('Updating peru.yaml')

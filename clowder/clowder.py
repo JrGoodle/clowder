@@ -1,5 +1,9 @@
 #! /usr/bin/env python3
 
+if __name__ == '__main__':
+    import clowder
+    raise SystemExit(clowder.main())
+
 import argparse
 import sys
 import os
@@ -67,7 +71,7 @@ Utilities:
             description='Clone repositories')
         parser.add_argument('url') # TODO: save parameter and validate url
         manifest = clowder.manifest.Manifest(self.rootDirectory)
-        parser.add_argument('--groups', '-g', nargs='*', choices=manifest.getGroups()))
+        parser.add_argument('--groups', '-g', nargs='*', choices=manifest.getGroups())
         args = parser.parse_args(sys.argv[2:])
         print('Running clowder breed, url=%s' % args.url)
         clowder.breed.Breed(self.rootDirectory, args.url, args.groups)
@@ -77,9 +81,11 @@ Utilities:
         parser = argparse.ArgumentParser(
             description='Sync repositories')
         parser.add_argument('--version', '-v')
+        manifest = clowder.manifest.Manifest(self.rootDirectory)
+        parser.add_argument('--groups', '-g', nargs='*', choices=manifest.getGroups())
         args = parser.parse_args(sys.argv[2:])
         print('Running clowder herd, version=%s' % args.version)
-        clowder.herd.Herd(self.rootDirectory, args.version)
+        clowder.herd.Herd(self.rootDirectory, args.version, args.groups)
 
     def play(self):
         self.checkClowderDirectory()
@@ -152,5 +158,5 @@ Utilities:
             print("Clowder doesn't seem to exist in this directory")
             sys.exit()
 
-if __name__ == '__main__':
+def main():
     Clowder()

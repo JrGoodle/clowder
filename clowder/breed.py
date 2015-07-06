@@ -14,8 +14,8 @@ class Breed(object):
         self.rootDirectory = rootDirectory
 
         command = 'repo init -u ' + url
-        if groups != None
-            command += ' -g ' + ','.join(groups)
+        if not groups == None:
+            command += ' -g all,-notdefault,' + ','.join(groups)
         clowder.utilities.ex(command)
 
         command = 'repo sync'

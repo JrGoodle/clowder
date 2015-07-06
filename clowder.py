@@ -13,4 +13,4 @@ sys.path.insert(0, repo_root)
 
 import clowder.clowder
 
-clowder.clowder.Clowder()
+clowder.clowder.main()
