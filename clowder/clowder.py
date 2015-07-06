@@ -4,9 +4,8 @@ if __name__ == '__main__':
     import clowder
     raise SystemExit(clowder.main())
 
-import argparse
-import sys
-import os
+import argcomplete, argparse
+import os, sys
 
 import clowder.breed
 import clowder.fix
@@ -46,9 +45,13 @@ Utilities:
   nest       Delete directory contents for breeding
 
 ''')
-        parser.add_argument('command', help='Subcommand to run')
+        commands = ['breed', 'herd']
+        commands.extend(['play', 'purr', 'meow', 'knead'])
+        commands.extend(['litter', 'groom', 'fix', 'nest'])
+        parser.add_argument('command', help='Subcommand to run', choices=commands)
         # parse_args defaults to [1:] for args, but you need to
         # exclude the rest of the args too, or validation will fail
+        argcomplete.autocomplete(parser)
         args = parser.parse_args(sys.argv[1:2])
         if not hasattr(self, args.command):
             print('Unrecognized command')
@@ -70,6 +73,7 @@ Utilities:
         parser.add_argument('url') # TODO: save parameter and validate url
         manifest = clowder.manifest.Manifest(self.rootDirectory)
         parser.add_argument('--groups', '-g', nargs='*', choices=manifest.getGroups())
+        argcomplete.autocomplete(parser)
         args = parser.parse_args(sys.argv[2:])
         print('Running clowder breed, url=%s' % args.url)
         clowder.breed.Breed(self.rootDirectory, args.url, args.groups)
@@ -79,10 +83,11 @@ Utilities:
         parser = argparse.ArgumentParser(
             description='Sync repositories')
         manifest = clowder.manifest.Manifest(self.rootDirectory)
-        versions = manifest.getVersions()
-        versions += 'master'
+        versions = ['master']
+        versions.extend(manifest.getVersions())
         parser.add_argument('--version', '-v', choices=versions)
         parser.add_argument('--groups', '-g', nargs='*', choices=manifest.getGroups())
+        argcomplete.autocomplete(parser)
         args = parser.parse_args(sys.argv[2:])
         print('Running clowder herd, version=%s' % args.version)
         clowder.herd.Herd(self.rootDirectory, args.version, args.groups)
@@ -94,6 +99,7 @@ Utilities:
         parser.add_argument('branch')
         projectManager = clowder.projectManager.ProjectManager(self.rootDirectory)
         parser.add_argument('projects', nargs='*', choices=projectManager.getProjectNames())
+        argcomplete.autocomplete(parser)
         args = parser.parse_args(sys.argv[2:])
         print('Running clowder play, branch=%s' % args.branch)
         clowder.play.Play(args.branch, args.projects)
@@ -102,6 +108,7 @@ Utilities:
         self.checkClowderDirectory()
         parser = argparse.ArgumentParser(
             description='Commit and upload current peru.yaml')
+        argcomplete.autocomplete(parser)
         args = parser.parse_args(sys.argv[2:])
         print('Running clowder purr')
         clowder.purr.Purr(self.rootDirectory)
@@ -110,6 +117,7 @@ Utilities:
         self.checkClowderDirectory()
         parser = argparse.ArgumentParser(
             description='Print status of current repositories')
+        argcomplete.autocomplete(parser)
         args = parser.parse_args(sys.argv[2:])
         print('Running clowder meow')
         clowder.meow.Meow()
@@ -118,6 +126,7 @@ Utilities:
         self.checkClowderDirectory()
         parser = argparse.ArgumentParser(
             description='Show diffs for current repositories')
+        argcomplete.autocomplete(parser)
         args = parser.parse_args(sys.argv[2:])
         print('Running clowder knead')
         clowder.knead.Knead()
@@ -128,6 +137,7 @@ Utilities:
             description='Discard local changes')
         projectManager = clowder.projectManager.ProjectManager(self.rootDirectory)
         parser.add_argument('projects', nargs='*', choices=projectManager.getProjectNames())
+        argcomplete.autocomplete(parser)
         args = parser.parse_args(sys.argv[2:])
         print('Running clowder litter')
         clowder.litter.Litter(args.projects)
@@ -136,6 +146,7 @@ Utilities:
         self.checkClowderDirectory()
         parser = argparse.ArgumentParser(
             description='Prune obsolete remote branches')
+        argcomplete.autocomplete(parser)
         args = parser.parse_args(sys.argv[2:])
         print('Running clowder groom')
         clowder.groom.Groom()
@@ -145,6 +156,7 @@ Utilities:
         parser = argparse.ArgumentParser(
             description='Save a version and tag it')
         parser.add_argument('version')
+        argcomplete.autocomplete(parser)
         args = parser.parse_args(sys.argv[2:])
         print('Running clowder fix, version=%s' % args.version)
         clowder.fix.Fix(args.version)
