@@ -37,5 +37,5 @@ setup(
             'clowder=clowder.clowder:main',
         ]
     },
-    install_requires=['gitpython']
+    install_requires=['gitpython', 'peru']
 )
