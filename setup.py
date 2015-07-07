@@ -34,7 +34,7 @@ setup(
     packages=['clowder'],
     entry_points={
         'console_scripts': [
-            'clowder=clowder.clowder:main',
+            'clowder=clowder.main:main',
         ]
     },
     install_requires=['argcomplete', 'gitpython', 'peru']

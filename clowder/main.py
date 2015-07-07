@@ -2,7 +2,7 @@
 
 if __name__ == '__main__':
     import clowder
-    raise SystemExit(clowder.main())
+    raise SystemExit(main.main())
 
 import argcomplete, argparse
 import os, sys
@@ -109,7 +109,7 @@ Utilities:
         parser = argparse.ArgumentParser(
             description='Commit and upload current peru.yaml')
         argcomplete.autocomplete(parser)
-        args = parser.parse_args(sys.argv[2:])
+        # args = parser.parse_args(sys.argv[2:])
         print('Running clowder purr')
         clowder.purr.Purr(self.rootDirectory)
 
@@ -118,7 +118,7 @@ Utilities:
         parser = argparse.ArgumentParser(
             description='Print status of current repositories')
         argcomplete.autocomplete(parser)
-        args = parser.parse_args(sys.argv[2:])
+        # args = parser.parse_args(sys.argv[2:])
         print('Running clowder meow')
         clowder.meow.Meow()
 
@@ -127,7 +127,7 @@ Utilities:
         parser = argparse.ArgumentParser(
             description='Show diffs for current repositories')
         argcomplete.autocomplete(parser)
-        args = parser.parse_args(sys.argv[2:])
+        # args = parser.parse_args(sys.argv[2:])
         print('Running clowder knead')
         clowder.knead.Knead()
 
@@ -147,7 +147,7 @@ Utilities:
         parser = argparse.ArgumentParser(
             description='Prune obsolete remote branches')
         argcomplete.autocomplete(parser)
-        args = parser.parse_args(sys.argv[2:])
+        # args = parser.parse_args(sys.argv[2:])
         print('Running clowder groom')
         clowder.groom.Groom()
 
