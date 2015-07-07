@@ -1,7 +1,11 @@
 from setuptools import setup
+import sys
 
 # Written according to the docs at
 # https://packaging.python.org/en/latest/distributing.html
+
+if sys.version_info[0] < 3:
+    sys.exit('This script requires python 3.0 or higher to run.')
 
 setup(
     name='clowder',
