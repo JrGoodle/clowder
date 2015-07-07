@@ -1,9 +1,5 @@
-import sys
-import os
-import shutil
-import subprocess
+import os, shutil
 
-import clowder.log
 import clowder.projectManager
 import clowder.utilities
 
@@ -22,7 +18,7 @@ class Herd(object):
         clowder.utilities.ex(command)
 
         if groups != None:
-            groupsCommand += ' -g all,-notdefault,' + ",".join(groups)
+            groupsCommand = ' -g all,-notdefault,' + ",".join(groups)
         else:
             groupsCommand = ''
 

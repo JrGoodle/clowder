@@ -1,6 +1,4 @@
-import os
 from setuptools import setup
-import sys
 
 # Written according to the docs at
 # https://packaging.python.org/en/latest/distributing.html

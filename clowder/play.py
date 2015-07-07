@@ -1,9 +1,3 @@
-import sys
-import os
-import shutil
-import subprocess
-
-import clowder.log
 import clowder.utilities
 
 class Play(object):
@@ -17,6 +11,6 @@ class Play(object):
 
         command = 'repo sync'
         clowder.utilities.ex(command)
-        
+
         command = 'repo start ' + branch + " " + " ".join(projects)
         clowder.utilities.ex(command)

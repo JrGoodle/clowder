@@ -5,21 +5,19 @@ import os
 import shutil
 import sys
 
-import clowder.log
-
 def ex(command):
     print("Running '" + command + "'")
     r = Popen(command, stderr=PIPE, shell=True)
-    stdout, stderr = r.communicate()
+    stderr = r.communicate()
     if r.poll() != 0:
-        clowder.log.toFile('The command "{0}" failed: {1}'.format(command, stderr))
-        clowder.log.toFile('Aborting.\n')
+        print('The command "{0}" failed: {1}'.format(command, stderr))
+        print('Aborting.\n')
         sys.exit()
 
 def unknownArg(command, arg):
-    clowder.log.toFile('Unknown argument for "{0}": "{1}"\n'.format(command, arg))
-    clowder.log.toFile('\t ❓  Dunno what that means...  ¯\_(ツ)_/¯\n')
-    clowder.log.toFile('Aborting.\n')
+    print('Unknown argument for "{0}": "{1}"\n'.format(command, arg))
+    print(r'\t ❓  Dunno what that means...  ¯\_(ツ)_/¯\n')
+    print('Aborting.\n')
     sys.exit()
 
 def removeAllFilesInDirectory(folder):

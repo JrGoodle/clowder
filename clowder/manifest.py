@@ -1,10 +1,6 @@
-import sys
 import os
-import shutil
-import subprocess
 import xml.etree.ElementTree as ET
 
-import clowder.log
 import clowder.utilities
 
 class Manifest(object):

@@ -1,9 +1,5 @@
-import sys
-import os
-import shutil
-import subprocess
+import os, shutil
 
-import clowder.log
 import clowder.utilities
 
 class Purr(object):

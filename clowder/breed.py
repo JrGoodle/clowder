@@ -1,11 +1,5 @@
-import sys
-import os
-import shutil
-import subprocess
+import os, shutil
 
-from git import Repo
-
-import clowder.log
 import clowder.utilities
 
 class Breed(object):

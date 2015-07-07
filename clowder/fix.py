@@ -1,9 +1,5 @@
 import os
-import shutil
 
-from git import Repo
-
-import clowder.log
 import clowder.utilities
 
 class Fix(object):

@@ -1,8 +1,4 @@
-import argparse
 import os
-import sys
-
-from git import Repo
 
 import clowder.project
 
