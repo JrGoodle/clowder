@@ -1,6 +1,7 @@
 #! /bin/bash
 
-pip3 uninstall clowder
-rm -rf clowder.egg-info
-rm -rf dist
-rm -rf build
+cd "$( dirname "${BASH_SOURCE[0]}" )"
+sudo -H pip3 uninstall clowder
+sudo -H rm -rf clowder.egg-info
+sudo -H rm -rf dist
+sudo -H rm -rf build
