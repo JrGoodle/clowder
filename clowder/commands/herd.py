@@ -1,12 +1,12 @@
 import os, shutil
 
-import clowder.projectManager
+import clowder.model.projectManager as projectManager
 import clowder.utilities
 
 class Herd(object):
 
     def __init__(self, rootDirectory, version, groups):
-        self.projectManager = clowder.projectManager.ProjectManager(rootDirectory)
+        self.projectManager = projectManager.ProjectManager(rootDirectory)
         self.sync(version, groups)
         self.updatePeruFile(rootDirectory)
 
