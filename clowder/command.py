@@ -29,60 +29,29 @@ class Command(object):
         if os.path.exists(self.clowderPath):
             self.yamlParser = Parser(self.rootDirectory)
             self.clowder = Clowder(self.yamlParser)
-            allGroups = self.yamlParser.getGroups()
-            currentProjects = self.clowder.getProjects()
-            snapshots = self.yamlParser.getSnapshots()
+            self.allGroups = self.yamlParser.getGroups()
+            self.currentProjects = self.clowder.getProjects()
+            self.snapshots = self.yamlParser.getSnapshots()
         else:
             self.yamlParser = None
             self.clowder = None
-            allGroups = []
-            currentProjects = []
-            snapshots = []
+            self.allGroups = []
+            self.currentProjects = []
+            self.snapshots = []
 
-        # clowder
+        # clowder argparse setup
         parser = argparse.ArgumentParser(description='Manage multiple repositories')
-        subparsers = parser.add_subparsers(dest='command', help='sub-command help')
-
-        # clowder breed
-        parser_breed = subparsers.add_parser('breed', help='breed help', description='Clone repositories')
-        parser_breed.add_argument('url')
-        parser_breed.add_argument('--groups', '-g', nargs='+', choices=allGroups)
-
-        # clowder herd
-        parser_herd = subparsers.add_parser('herd', help='herd help', description='Sync repositories')
-        versions = ['master']
-        versions.extend(snapshots)
-        parser_herd.add_argument('--version', '-v', choices=versions)
-        parser_herd.add_argument('--groups', '-g', nargs='+', choices=allGroups)
-
-        # clowder play
-        parser_play = subparsers.add_parser('play', help='play help', description='Create new topic branch(es)')
-        parser_play.add_argument('branch')
-        parser_play.add_argument('projects', nargs='+', choices=currentProjects)
-
-        # clowder purr
-        subparsers.add_parser('purr', help='purr help', description='Commit and upload current peru.yaml')
-
-        # clowder meow
-        subparsers.add_parser('meow', help='meow help', description='Print status of current repositories')
-
-        # clowder knead
-        subparsers.add_parser('knead', help='knead help', description='Show diffs for current repositories')
-
-        # clowder litter
-        parser_litter = subparsers.add_parser('litter', help='litter help', description='Discard local changes')
-        parser_litter.add_argument('projects', nargs='*', choices=currentProjects)
-
-        # clowder groom
-        subparsers.add_parser('groom', help='groom help', description='Prune obsolete remote branches')
-
-        # clowder fix
-        parser_fix = subparsers.add_parser('fix', help='fix help', description='Save a version and tag it')
-        parser_fix.add_argument('version')
-
-        # clowder nest
-        subparsers.add_parser('nest', help='nest help')
-
+        self.subparsers = parser.add_subparsers(dest='command', help='clowder command help')
+        self.breedParser()
+        self.herdParser()
+        self.playParser()
+        self.purrParser()
+        self.meowParser()
+        self.kneadParser()
+        self.litterParser()
+        self.groomParser()
+        self.fixParser()
+        self.nestParser()
         argcomplete.autocomplete(parser)
         self.args = parser.parse_args()
 
@@ -93,6 +62,11 @@ class Command(object):
         # use dispatch pattern to invoke method with same name
         getattr(self, self.args.command)()
 
+    def breedParser(self):
+        parser_breed = self.subparsers.add_parser('breed', help='breed help', description='Clone repositories')
+        parser_breed.add_argument('url')
+        parser_breed.add_argument('--groups', '-g', nargs='+', choices=self.allGroups)
+
     def breed(self):
         if self.clowder == None:
             print('Breeding clowder...')
@@ -102,6 +76,13 @@ class Command(object):
             print('Clowder already bred in this directory, exiting...')
             sys.exit()
 
+    def herdParser(self):
+        parser_herd = self.subparsers.add_parser('herd', help='herd help', description='Sync repositories')
+        versions = ['master']
+        versions.extend(self.snapshots)
+        parser_herd.add_argument('--version', '-v', choices=versions)
+        parser_herd.add_argument('--groups', '-g', nargs='+', choices=self.allGroups)
+
     def herd(self):
         if self.clowder != None:
             print('Running clowder herd, version=%s' % self.args.version)
@@ -109,6 +90,11 @@ class Command(object):
         else:
             print('No .clowder found in the current directory, exiting...')
             sys.exit()
+
+    def playParser(self):
+        parser_play = self.subparsers.add_parser('play', help='play help', description='Create new topic branch(es)')
+        parser_play.add_argument('branch')
+        parser_play.add_argument('projects', nargs='+', choices=self.currentProjects)
 
     def play(self):
         if self.clowder != None:
@@ -118,6 +104,9 @@ class Command(object):
             print('No .clowder found in the current directory, exiting...')
             sys.exit()
 
+    def purrParser(self):
+        self.subparsers.add_parser('purr', help='purr help', description='Commit and upload current peru.yaml')
+
     def purr(self):
         if self.clowder != None:
             print('Running clowder purr')
@@ -125,6 +114,9 @@ class Command(object):
         else:
             print('No .clowder found in the current directory, exiting...')
             sys.exit()
+
+    def meowParser(self):
+        self.subparsers.add_parser('meow', help='meow help', description='Print status of current repositories')
 
     def meow(self):
         if self.clowder != None:
@@ -134,6 +126,9 @@ class Command(object):
             print('No .clowder found in the current directory, exiting...')
             sys.exit()
 
+    def kneadParser(self):
+        self.subparsers.add_parser('knead', help='knead help', description='Show diffs for current repositories')
+
     def knead(self):
         if self.clowder != None:
             print('Running clowder knead')
@@ -141,6 +136,10 @@ class Command(object):
         else:
             print('No .clowder found in the current directory, exiting...')
             sys.exit()
+
+    def litterParser(self):
+        parser_litter = self.subparsers.add_parser('litter', help='litter help', description='Discard local changes')
+        parser_litter.add_argument('projects', nargs='*', choices=self.currentProjects)
 
     def litter(self):
         if self.clowder != None:
@@ -150,6 +149,9 @@ class Command(object):
             print('No .clowder found in the current directory, exiting...')
             sys.exit()
 
+    def groomParser(self):
+        self.subparsers.add_parser('groom', help='groom help', description='Prune obsolete remote branches')
+
     def groom(self):
         if self.clowder != None:
             print('Running clowder groom')
@@ -158,6 +160,10 @@ class Command(object):
             print('No .clowder found in the current directory, exiting...')
             sys.exit()
 
+    def fixParser(self):
+        parser_fix = self.subparsers.add_parser('fix', help='fix help', description='Save a version and tag it')
+        parser_fix.add_argument('version')
+
     def fix(self):
         if self.clowder != None:
             print('Running clowder fix, version=%s' % self.args.version)
@@ -165,6 +171,9 @@ class Command(object):
         else:
             print('No .clowder found in the current directory, exiting...')
             sys.exit()
+
+    def nestParser(self):
+        self.subparsers.add_parser('nest', help='nest help')
 
     def nest(self):
         if self.clowder != None:
