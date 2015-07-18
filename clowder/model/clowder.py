@@ -1,12 +1,17 @@
+import os
 import yaml
 
 from group import Group
 from project import Project
 from remote import Remote
+import utilities
 
 class Clowder(object):
 
-    def __init__(self, file):
+    def __init__(self, rootDirectory, file):
+        self.rootDirectory = rootDirectory
+        self.clowderPath = os.path.join(self.rootDirectory, '.clowder')
+
         self.parsedYAML = yaml.safe_load(file)
 
         defaults = self.parsedYAML['defaults']
@@ -55,9 +60,20 @@ class Clowder(object):
         return names
 
     def getCurrentProjectNames(self):
-        # TODO: Read from file saved to disk
-        pass
+        configFile = os.path.join(self.rootDirectory, '.clowder/config.yaml')
+        if os.path.exists(configFile):
+            with open(configFile) as file:
+                yamlConfig = yaml.safe_load(file)
+                return yamlConfig["currentProjectNames"]
+        return None
+
 
     def getSnapshotNames(self):
-        # TODO: Read from file saved to disk
-        pass
+        snapshotsDir = os.path.join(self.rootDirectory, '.clowder/snapshots')
+        if os.path.exists(snapshotsDir):
+            files = os.listdir(snapshotsDir)
+            snapshots = []
+            for name in files:
+                snapshots.append(utilities.rchop(name, '.yaml'))
+            return snapshots
+        return None

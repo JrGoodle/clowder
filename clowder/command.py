@@ -18,17 +18,16 @@ class Command(object):
 
     def __init__(self):
         self.rootDirectory = os.getcwd()
-        self.clowderPath = os.path.join(self.rootDirectory, '.clowder')
 
-        self.yamlParser = None
         self.clowder = None
         self.allGroupNames = []
         self.currentProjectNames = []
         self.snapshotNames = []
 
-        if os.path.exists(self.clowderPath):
-            with open(self.clowderPath) as file:
-                self.clowder = Clowder(file)
+        yamlFile = os.path.join(self.rootDirectory, 'clowder.yaml')
+        if os.path.exists(yamlFile):
+            with open(yamlFile) as file:
+                self.clowder = Clowder(self.rootDirectory, file)
                 self.allGroupNames = self.clowder.getAllGroupNames()
                 self.currentProjectNames = self.clowder.getCurrentProjectNames()
                 self.snapshotNames = self.clowder.getSnapshotNames()
