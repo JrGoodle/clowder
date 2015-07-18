@@ -11,11 +11,9 @@ from clowder.commands.fix import Fix
 from clowder.commands.groom import Groom
 from clowder.commands.herd import Herd
 from clowder.commands.knead import Knead
-from clowder.commands.litter import Litter
 from clowder.commands.meow import Meow
 from clowder.commands.play import Play
 from clowder.commands.purr import Purr
-from clowder.commands.nest import Nest
 
 from clowder.model.clowder import Clowder
 
@@ -127,18 +125,6 @@ class Command(object):
             print('No .clowder found in the current directory, exiting...')
             sys.exit()
 
-    def litterParser(self):
-        parser_litter = self.subparsers.add_parser('litter', help='litter help', description='Discard local changes')
-        parser_litter.add_argument('projects', nargs='*', choices=self.currentProjectNames)
-
-    def litter(self):
-        if self.clowder != None:
-            print('Running clowder litter')
-            Litter(self.args.projects)
-        else:
-            print('No .clowder found in the current directory, exiting...')
-            sys.exit()
-
     def groomParser(self):
         self.subparsers.add_parser('groom', help='groom help', description='Prune obsolete remote branches')
 
@@ -162,28 +148,15 @@ class Command(object):
             print('No .clowder found in the current directory, exiting...')
             sys.exit()
 
-    def nestParser(self):
-        self.subparsers.add_parser('nest', help='nest help')
-
-    def nest(self):
-        if self.clowder != None:
-            print('Running clowder nest')
-            Nest()
-        else:
-            print('No .clowder found in the current directory, exiting...')
-            sys.exit()
-
     def setupSubparsers(self):
         self.breedParser()
+        self.fixParser()
+        self.groomParser()
         self.herdParser()
+        self.kneadParser()
+        self.meowParser()
         self.playParser()
         self.purrParser()
-        self.meowParser()
-        self.kneadParser()
-        self.litterParser()
-        self.groomParser()
-        self.fixParser()
-        self.nestParser()
 
 def main():
     Command()

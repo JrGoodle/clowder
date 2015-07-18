@@ -1,6 +1,5 @@
 import os, shutil
 
-import clowder.model.projectManager as projectManager
 import clowder.utilities
 
 class Herd(object):
@@ -15,6 +14,9 @@ class Herd(object):
         clowder.utilities.ex(command)
 
         command = 'repo forall -c git checkout master'
+        clowder.utilities.ex(command)
+
+        command = 'repo forall -c git fetch --all --prune'
         clowder.utilities.ex(command)
 
         if groups != None:
