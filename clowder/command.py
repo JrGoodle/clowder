@@ -66,7 +66,7 @@ class Command(object):
     def fix(self):
         if self.clowder != None:
             print('Running clowder fix, version=%s' % self.args.version)
-            Fix(self.args.version)
+            Fix(self.clowder, self.args.version)
         else:
             print('No .clowder found in the current directory, exiting...')
             sys.exit()
@@ -92,7 +92,7 @@ class Command(object):
     def meow(self):
         if self.clowder != None:
             print('Running clowder meow')
-            Meow()
+            Meow(self.clowder)
         else:
             print('No .clowder found in the current directory, exiting...')
             sys.exit()
@@ -105,7 +105,7 @@ class Command(object):
     def play(self):
         if self.clowder != None:
             print('Running clowder play, branch=%s' % self.args.branch)
-            Play(self.args.branch, self.args.projects)
+            Play(self.clowder, self.args.branch, self.args.projects)
         else:
             print('No .clowder found in the current directory, exiting...')
             sys.exit()

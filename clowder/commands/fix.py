@@ -1,28 +1,28 @@
 import os
 
-import clowder.utilities
+import utilities
 
 class Fix(object):
 
-    def __init__(self, version):
+    def __init__(self, clowder, version):
         versionManifest = version + '.xml'
 
         command = 'repo manifest -o .clowder/clowder/' + versionManifest + ' -r'
-        clowder.utilities.ex(command)
+        utilities.ex(command)
 
         os.chdir('.clowder/clowder')
 
         command = 'git add ' + versionManifest
-        clowder.utilities.ex(command)
+        utilities.ex(command)
 
         command = 'git commit -m "Add manifest ' + version + '"'
-        clowder.utilities.ex(command)
+        utilities.ex(command)
 
         command = 'git push'
-        clowder.utilities.ex(command)
+        utilities.ex(command)
 
         command = 'git tag ' + version
-        clowder.utilities.ex(command)
+        utilities.ex(command)
 
         command = 'git push origin ' + version
-        clowder.utilities.ex(command)
+        utilities.ex(command)

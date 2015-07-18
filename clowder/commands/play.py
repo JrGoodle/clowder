@@ -1,8 +1,8 @@
-import clowder.utilities
+import utilities
 
 class Play(object):
 
-    def __init__(self, branch, projects):
+    def __init__(self, clowder, branch, projectNames):
         command = 'repo forall -c  git stash'
         clowder.utilities.ex(command)
 
@@ -12,5 +12,5 @@ class Play(object):
         command = 'repo sync'
         clowder.utilities.ex(command)
 
-        command = 'repo start ' + branch + " " + " ".join(projects)
+        command = 'repo start ' + branch + " " + " ".join(projectNames)
         clowder.utilities.ex(command)

@@ -1,7 +1,7 @@
-import clowder.utilities
+import utilities
 
 class Meow(object):
 
-    def __init__(self):
+    def __init__(self, clowder):
         command = 'repo status'
-        clowder.utilities.ex(command)
+        utilities.ex(command)

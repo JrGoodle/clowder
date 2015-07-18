@@ -6,21 +6,6 @@ class Breed(object):
 
     def __init__(self, rootDirectory, url):
         self.rootDirectory = rootDirectory
-
-        command = 'repo init -u ' + url
-        # if not groups == None:
-            # command += ' -g all,-notdefault,' + ','.join(groups)
-        clowder.utilities.ex(command)
-
-        command = 'repo sync'
-        clowder.utilities.ex(command)
-
-        command = 'repo forall -c git checkout master'
-        clowder.utilities.ex(command)
-
-        command = 'repo forall -c git submodule update --init --recursive'
-        clowder.utilities.ex(command)
-
         self.setupClowderDirectory(url)
         self.configurePeru()
 
@@ -29,15 +14,18 @@ class Breed(object):
         os.mkdir(dotClowderDirectory)
         os.chdir(dotClowderDirectory)
 
-        command = 'git clone ' + url + ' clowder'
+        command = 'git clone ' + url + ' repo'
         clowder.utilities.ex(command)
 
-        clowderDirectory = os.path.join(dotClowderDirectory, 'clowder')
+        clowderDirectory = os.path.join(dotClowderDirectory, 'repo')
         os.chdir(clowderDirectory)
 
         command = 'git fetch --all --prune --tags'
         clowder.utilities.ex(command)
 
+    def createSymlinks(self):
+        pass
+        
     def configurePeru(self):
         print('Updating peru.yaml')
         clowderDirectory = os.path.join(self.rootDirectory, '.clowder/clowder')
