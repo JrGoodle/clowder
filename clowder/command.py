@@ -9,7 +9,6 @@ import os, sys
 from clowder.commands.breed import Breed
 from clowder.commands.fix import Fix
 from clowder.commands.herd import Herd
-from clowder.commands.knead import Knead
 from clowder.commands.meow import Meow
 from clowder.commands.play import Play
 
@@ -100,17 +99,6 @@ class Command(object):
             print('No .clowder found in the current directory, exiting...')
             sys.exit()
 
-    def kneadParser(self):
-        self.subparsers.add_parser('knead', help='knead help', description='Show diffs for current repositories')
-
-    def knead(self):
-        if self.clowder != None:
-            print('Running clowder knead')
-            Knead()
-        else:
-            print('No .clowder found in the current directory, exiting...')
-            sys.exit()
-
     def fixParser(self):
         parser_fix = self.subparsers.add_parser('fix', help='fix help', description='Save a version and tag it')
         parser_fix.add_argument('version')
@@ -127,7 +115,6 @@ class Command(object):
         self.breedParser()
         self.fixParser()
         self.herdParser()
-        self.kneadParser()
         self.meowParser()
         self.playParser()
 
