@@ -8,12 +8,10 @@ import os, sys
 
 from clowder.commands.breed import Breed
 from clowder.commands.fix import Fix
-from clowder.commands.groom import Groom
 from clowder.commands.herd import Herd
 from clowder.commands.knead import Knead
 from clowder.commands.meow import Meow
 from clowder.commands.play import Play
-from clowder.commands.purr import Purr
 
 from clowder.model.clowder import Clowder
 
@@ -91,17 +89,6 @@ class Command(object):
             print('No .clowder found in the current directory, exiting...')
             sys.exit()
 
-    def purrParser(self):
-        self.subparsers.add_parser('purr', help='purr help', description='Commit and upload current peru.yaml')
-
-    def purr(self):
-        if self.clowder != None:
-            print('Running clowder purr')
-            Purr(self.rootDirectory)
-        else:
-            print('No .clowder found in the current directory, exiting...')
-            sys.exit()
-
     def meowParser(self):
         self.subparsers.add_parser('meow', help='meow help', description='Print status of current repositories')
 
@@ -124,17 +111,6 @@ class Command(object):
             print('No .clowder found in the current directory, exiting...')
             sys.exit()
 
-    def groomParser(self):
-        self.subparsers.add_parser('groom', help='groom help', description='Prune obsolete remote branches')
-
-    def groom(self):
-        if self.clowder != None:
-            print('Running clowder groom')
-            Groom()
-        else:
-            print('No .clowder found in the current directory, exiting...')
-            sys.exit()
-
     def fixParser(self):
         parser_fix = self.subparsers.add_parser('fix', help='fix help', description='Save a version and tag it')
         parser_fix.add_argument('version')
@@ -150,12 +126,10 @@ class Command(object):
     def setupSubparsers(self):
         self.breedParser()
         self.fixParser()
-        self.groomParser()
         self.herdParser()
         self.kneadParser()
         self.meowParser()
         self.playParser()
-        self.purrParser()
 
 def main():
     Command()
