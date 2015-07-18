@@ -4,9 +4,9 @@ import yaml
 from group import Group
 from project import Project
 from remote import Remote
-import utilities
+import clowder.utilities
 
-class Clowder(object):
+class ClowderController(object):
 
     def __init__(self, rootDirectory, file):
         self.rootDirectory = rootDirectory
@@ -74,6 +74,6 @@ class Clowder(object):
             files = os.listdir(snapshotsDir)
             snapshots = []
             for name in files:
-                snapshots.append(utilities.rchop(name, '.yaml'))
+                snapshots.append(clowder.utilities.rchop(name, '.yaml'))
             return snapshots
         return None

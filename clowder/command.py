@@ -11,8 +11,7 @@ from clowder.commands.fix import Fix
 from clowder.commands.herd import Herd
 from clowder.commands.meow import Meow
 from clowder.commands.play import Play
-
-from clowder.model.clowder import Clowder
+from clowder.model.clowderController import ClowderController
 
 class Command(object):
 
@@ -27,7 +26,7 @@ class Command(object):
         yamlFile = os.path.join(self.rootDirectory, 'clowder.yaml')
         if os.path.exists(yamlFile):
             with open(yamlFile) as file:
-                self.clowder = Clowder(self.rootDirectory, file)
+                self.clowder = ClowderController(self.rootDirectory, file)
                 self.allGroupNames = self.clowder.getAllGroupNames()
                 self.currentProjectNames = self.clowder.getCurrentProjectNames()
                 self.snapshotNames = self.clowder.getSnapshotNames()
