@@ -1,3 +1,5 @@
+from clowder.project import Project
+
 class Group(object):
 
     def __init__(self, name, projects):

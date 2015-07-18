@@ -6,12 +6,12 @@ if __name__ == '__main__':
 import argcomplete, argparse
 import os, sys
 
-from clowder.commands.breed import Breed
-from clowder.commands.fix import Fix
-from clowder.commands.herd import Herd
-from clowder.commands.meow import Meow
-from clowder.commands.play import Play
-from clowder.model.clowderController import ClowderController
+from clowder.breed import Breed
+from clowder.fix import Fix
+from clowder.herd import Herd
+from clowder.meow import Meow
+from clowder.play import Play
+from clowder.clowderController import ClowderController
 
 class Command(object):
 

@@ -1,9 +1,10 @@
 import os
 import yaml
 
-from group import Group
-from project import Project
-from remote import Remote
+from clowder.group import Group
+from clowder.project import Project
+from clowder.remote import Remote
+
 import clowder.utilities
 
 class ClowderController(object):
