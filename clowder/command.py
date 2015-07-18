@@ -60,6 +60,18 @@ class Command(object):
             print('Clowder already bred in this directory, exiting...')
             sys.exit()
 
+    def fixParser(self):
+        parser_fix = self.subparsers.add_parser('fix', help='fix help', description='Save a version and tag it')
+        parser_fix.add_argument('version')
+
+    def fix(self):
+        if self.clowder != None:
+            print('Running clowder fix, version=%s' % self.args.version)
+            Fix(self.args.version)
+        else:
+            print('No .clowder found in the current directory, exiting...')
+            sys.exit()
+
     def herdParser(self):
         parser_herd = self.subparsers.add_parser('herd', help='herd help', description='Sync repositories')
         versions = ['master']
@@ -75,19 +87,6 @@ class Command(object):
             print('No .clowder found in the current directory, exiting...')
             sys.exit()
 
-    def playParser(self):
-        parser_play = self.subparsers.add_parser('play', help='play help', description='Create new topic branch(es)')
-        parser_play.add_argument('branch')
-        parser_play.add_argument('projects', nargs='+', choices=self.currentProjectNames)
-
-    def play(self):
-        if self.clowder != None:
-            print('Running clowder play, branch=%s' % self.args.branch)
-            Play(self.args.branch, self.args.projects)
-        else:
-            print('No .clowder found in the current directory, exiting...')
-            sys.exit()
-
     def meowParser(self):
         self.subparsers.add_parser('meow', help='meow help', description='Print status of current repositories')
 
@@ -99,14 +98,15 @@ class Command(object):
             print('No .clowder found in the current directory, exiting...')
             sys.exit()
 
-    def fixParser(self):
-        parser_fix = self.subparsers.add_parser('fix', help='fix help', description='Save a version and tag it')
-        parser_fix.add_argument('version')
+    def playParser(self):
+        parser_play = self.subparsers.add_parser('play', help='play help', description='Create new topic branch(es)')
+        parser_play.add_argument('branch')
+        parser_play.add_argument('projects', nargs='+', choices=self.currentProjectNames)
 
-    def fix(self):
+    def play(self):
         if self.clowder != None:
-            print('Running clowder fix, version=%s' % self.args.version)
-            Fix(self.args.version)
+            print('Running clowder play, branch=%s' % self.args.branch)
+            Play(self.args.branch, self.args.projects)
         else:
             print('No .clowder found in the current directory, exiting...')
             sys.exit()
