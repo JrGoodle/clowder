@@ -1,7 +1,7 @@
 class Project(object):
 
-    def __init__(self, name, projectPath):
+    def __init__(self, name, path, ref, remote):
         self.name = name
-        self.path = projectPath
+        self.path = path
         self.ref = ref
         self.remote = remote

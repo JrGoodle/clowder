@@ -1,6 +1,7 @@
 defaults:
     ref: refs/heads/master
     remote: github
+    groups: [cats]
 
 remotes:
     - name: github

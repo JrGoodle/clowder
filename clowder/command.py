@@ -17,7 +17,6 @@ from clowder.commands.play import Play
 from clowder.commands.purr import Purr
 from clowder.commands.nest import Nest
 
-from clowder.model.parser import Parser
 from clowder.model.clowder import Clowder
 
 class Command(object):
@@ -26,32 +25,23 @@ class Command(object):
         self.rootDirectory = os.getcwd()
         self.clowderPath = os.path.join(self.rootDirectory, '.clowder')
 
+        self.yamlParser = None
+        self.clowder = None
+        self.allGroupNames = []
+        self.currentProjectNames = []
+        self.snapshotNames = []
+
         if os.path.exists(self.clowderPath):
-            self.yamlParser = Parser(self.rootDirectory)
-            self.clowder = Clowder(self.yamlParser)
-            self.allGroups = self.yamlParser.getGroups()
-            self.currentProjects = self.clowder.getProjects()
-            self.snapshots = self.yamlParser.getSnapshots()
-        else:
-            self.yamlParser = None
-            self.clowder = None
-            self.allGroups = []
-            self.currentProjects = []
-            self.snapshots = []
+            with open(self.clowderPath) as file:
+                self.clowder = Clowder(file)
+                self.allGroupNames = self.clowder.getAllGroupNames()
+                self.currentProjectNames = self.clowder.getCurrentProjectNames()
+                self.snapshotNames = self.clowder.getSnapshotNames()
 
         # clowder argparse setup
         parser = argparse.ArgumentParser(description='Manage multiple repositories')
         self.subparsers = parser.add_subparsers(dest='command', help='clowder command help')
-        self.breedParser()
-        self.herdParser()
-        self.playParser()
-        self.purrParser()
-        self.meowParser()
-        self.kneadParser()
-        self.litterParser()
-        self.groomParser()
-        self.fixParser()
-        self.nestParser()
+        self.setupSubparsers()
         argcomplete.autocomplete(parser)
         self.args = parser.parse_args()
 
@@ -65,7 +55,7 @@ class Command(object):
     def breedParser(self):
         parser_breed = self.subparsers.add_parser('breed', help='breed help', description='Clone repositories')
         parser_breed.add_argument('url')
-        parser_breed.add_argument('--groups', '-g', nargs='+', choices=self.allGroups)
+        parser_breed.add_argument('--groups', '-g', nargs='+', choices=self.allGroupNames)
 
     def breed(self):
         if self.clowder == None:
@@ -79,9 +69,9 @@ class Command(object):
     def herdParser(self):
         parser_herd = self.subparsers.add_parser('herd', help='herd help', description='Sync repositories')
         versions = ['master']
-        versions.extend(self.snapshots)
+        versions.extend(self.snapshotNames)
         parser_herd.add_argument('--version', '-v', choices=versions)
-        parser_herd.add_argument('--groups', '-g', nargs='+', choices=self.allGroups)
+        parser_herd.add_argument('--groups', '-g', nargs='+', choices=self.allGroupNames)
 
     def herd(self):
         if self.clowder != None:
@@ -94,7 +84,7 @@ class Command(object):
     def playParser(self):
         parser_play = self.subparsers.add_parser('play', help='play help', description='Create new topic branch(es)')
         parser_play.add_argument('branch')
-        parser_play.add_argument('projects', nargs='+', choices=self.currentProjects)
+        parser_play.add_argument('projects', nargs='+', choices=self.currentProjectNames)
 
     def play(self):
         if self.clowder != None:
@@ -139,7 +129,7 @@ class Command(object):
 
     def litterParser(self):
         parser_litter = self.subparsers.add_parser('litter', help='litter help', description='Discard local changes')
-        parser_litter.add_argument('projects', nargs='*', choices=self.currentProjects)
+        parser_litter.add_argument('projects', nargs='*', choices=self.currentProjectNames)
 
     def litter(self):
         if self.clowder != None:
@@ -182,6 +172,18 @@ class Command(object):
         else:
             print('No .clowder found in the current directory, exiting...')
             sys.exit()
+
+    def setupSubparsers(self):
+        self.breedParser()
+        self.herdParser()
+        self.playParser()
+        self.purrParser()
+        self.meowParser()
+        self.kneadParser()
+        self.litterParser()
+        self.groomParser()
+        self.fixParser()
+        self.nestParser()
 
 def main():
     Command()
