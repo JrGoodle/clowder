@@ -20,11 +20,11 @@ class ClowderController(object):
         self.defaultRemote = defaults['remote']
         self.defaultGroups = defaults['groups']
 
-        self.allGroups = []
-        self.initGroups()
-
         self.remotes = []
         self.initRemotes()
+
+        self.allGroups = []
+        self.initGroups()
 
     def initGroups(self):
         for group in self.parsedYAML['groups']:
@@ -39,11 +39,13 @@ class ClowderController(object):
                     ref = self.defaultRef
 
                 if 'remote' in project:
-                    remote = project['remote']
+                    remoteName = project['remote']
                 else:
-                    ref = self.defaultRemote
+                    remoteName = self.defaultRemote
 
-                projects.append(Project(projectName, path, ref, remote))
+                for remote in self.remotes:
+                    if remote.name == remoteName:
+                        projects.append(Project(projectName, path, ref, remote))
 
             groupName = group['name']
             self.allGroups.append(Group(groupName, projects))
