@@ -1,6 +1,8 @@
 import os
 import yaml
 
+import git
+
 from clowder.group import Group
 from clowder.project import Project
 from clowder.remote import Remote
@@ -9,11 +11,12 @@ import clowder.utilities
 
 class ClowderController(object):
 
-    def __init__(self, rootDirectory, file):
+    def __init__(self, rootDirectory, clowderYAML):
         self.rootDirectory = rootDirectory
         self.clowderPath = os.path.join(self.rootDirectory, '.clowder')
+        self.clowderRepo = self.getClowderRepo()
 
-        self.parsedYAML = yaml.safe_load(file)
+        self.parsedYAML = yaml.safe_load(clowderYAML)
 
         defaults = self.parsedYAML['defaults']
         self.defaultRef = defaults['ref']
@@ -45,7 +48,7 @@ class ClowderController(object):
 
                 for remote in self.remotes:
                     if remote.name == remoteName:
-                        projects.append(Project(projectName, path, ref, remote))
+                        projects.append(Project(self.rootDirectory, projectName, path, ref, remote))
 
             groupName = group['name']
             self.allGroups.append(Group(groupName, projects))
@@ -79,4 +82,10 @@ class ClowderController(object):
             for name in files:
                 snapshots.append(clowder.utilities.rchop(name, '.yaml'))
             return snapshots
+        return None
+
+    def getClowderRepo(self):
+        repoDir = os.path.join(self.rootDirectory, '.clowder/repo')
+        if os.path.isdir(os.path.join(repoDir, '.git')):
+            return git.Repo(repoDir)
         return None

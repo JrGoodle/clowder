@@ -47,13 +47,15 @@ class Command(object):
 
     def breedParser(self):
         parser_breed = self.subparsers.add_parser('breed', help='breed help', description='Clone repositories')
-        parser_breed.add_argument('url')
+        source_group = parser_breed.add_mutually_exclusive_group(required=True)
+        source_group.add_argument('--url', '-u')
+        source_group.add_argument('--file', '-f')
 
     def breed(self):
         if self.clowder == None:
             print('Breeding clowder...')
-            print('Running clowder breed, url=%s' % self.args.url)
-            Breed(self.rootDirectory, self.args.url)
+            # print('Running clowder breed, url=%s' % self.args.url)
+            Breed(self.rootDirectory, self.args.url, self.args.file)
         else:
             print('Clowder already bred in this directory, exiting...')
             sys.exit()

@@ -1,11 +1,15 @@
+import os
+
+import git
+
 class Project(object):
 
-    def __init__(self, name, path, ref, remote):
+    def __init__(self, rootDirectory, name, path, ref, remote):
+        self.rootDirectory = rootDirectory
         self.name = name
         self.remote = remote
         self.path = path
         self.ref = ref
-        self.remoteURL = self.getRemoteURL()
 
     def cloneFromURL(self):
         pass
@@ -14,10 +18,12 @@ class Project(object):
         pass
 
     def create(self):
-        pass
+        fullPath = os.path.join(self.rootDirectory, self.path)
+        if not os.path.isdir(os.path.join(fullPath, '.git')):
+            git.Repo.clone_from(self.getRemoteURL(), fullPath)
 
-    def move(self):
-        pass
+    # def move(self):
+    #     pass
 
     def getRemoteURL(self):
         if self.remote.url.startswith('https://'):
