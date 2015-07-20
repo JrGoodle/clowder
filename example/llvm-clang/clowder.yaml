@@ -1,0 +1,38 @@
+defaults:
+    ref: refs/heads/master
+    remote: github
+    groups: [llvm, clang, compiler-rt]
+
+remotes:
+    - name: github
+      url: ssh://git@github.com
+
+groups:
+    - name: clang
+      projects:
+        - name: llvm-mirror/clang
+          path: llvm/tools/clang
+        - name: llvm-mirror/clang-tools-extra
+          path: llvm/tools/clang/tools/extra
+    - name: compiler-rt
+      projects:
+        - name: llvm-mirror/compiler-rt
+          path: llvm/projects/compiler-rt
+    - name: libcxx
+      projects:
+        - name: llvm-mirror/libcxx
+          path: llvm/projects/libcxx
+        - name: llvm-mirror/libcxxabi
+          path: llvm/projects/libcxxabi
+    - name: lld
+      projects:
+        - name: llvm-mirror/lld
+          path: llvm/tools/lld
+    - name: lldb
+      projects:
+        - name: llvm-mirror/lldb
+          path: lldb
+    - name: llvm
+      projects:
+        - name: llvm-mirror/llvm
+          path: llvm
