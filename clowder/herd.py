@@ -4,54 +4,31 @@ import clowder.utilities
 
 class Herd(object):
 
-    def __init__(self, theClowder, version, groups):
-        # self.projectManager = projectManager.ProjectManager(rootDirectory)
-        self.rootDirectory = theClowder.rootDirectory
+    def __init__(self, clowderController, version, groups):
+        self.clowderController = clowderController
+        self.rootDirectory = clowderController.rootDirectory
         self.sync(version, groups)
         self.updatePeruFile()
 
+    def update(self):
+        pass
+
     def sync(self, version, groups):
-        command = 'repo forall -c git stash'
-        clowder.utilities.ex(command)
-
-        command = 'repo forall -c git checkout master'
-        clowder.utilities.ex(command)
-
-        command = 'repo forall -c git fetch --all --prune'
-        clowder.utilities.ex(command)
-
-        if groups != None:
-            groupsCommand = ' -g all,-notdefault,' + ",".join(groups)
-        else:
-            groupsCommand = ''
+        # for all projects
+            # fetch -all --tags --prune
+            # check if current branch is default branch
+                # check if no changes in working tree
+                    # update branch to current upstream
 
         if version == None and groups != None:
-            command = 'repo init -m default.xml' + groupsCommand
-            clowder.utilities.ex(command)
-
-        if version != None:
-            if version == 'master':
-                command = 'repo init -m default.xml' + groupsCommand
-                clowder.utilities.ex(command)
-            else:
-                command = 'repo init -m ' + version + '.xml' + groupsCommand
-                clowder.utilities.ex(command)
-
-        command = 'repo sync'
-        clowder.utilities.ex(command)
+            pass
 
         if version == None:
-            command = 'repo forall -c git checkout master'
-            clowder.utilities.ex(command)
-            self.restorePreviousBranches()
-        elif version == 'master':
-            command = 'repo forall -c git checkout master'
-            clowder.utilities.ex(command)
+            pass
         else:
             self.createVersionBranch(version)
 
-        command = 'repo forall -c git submodule update --init --recursive'
-        clowder.utilities.ex(command)
+        # for all projects update submodules
 
     def createVersionBranch(self, version):
         command = 'repo forall -c git branch ' + version
@@ -66,11 +43,9 @@ class Herd(object):
             #     project.repo.git.checkout(project.currentBranch)
         pass
 
-    def updatePeruFile(self):
-        print('Updating peru.yaml')
-
-        clowderDirectory = os.path.join(self.rootDirectory, '.clowder/clowder')
-        os.chdir(clowderDirectory)
+    def updateClowderRepo(self):
+        repoDir = os.path.join(self.rootDirectory, '.clowder/repo')
+        os.chdir(repoDir)
 
         command = 'git fetch --all --prune --tags'
         clowder.utilities.ex(command)
@@ -78,7 +53,14 @@ class Herd(object):
         command = 'git pull'
         clowder.utilities.ex(command)
 
+    def updatePeruFile(self):
+        print('Updating peru.yaml')
+
+        self.updateClowderRepo()
+
         os.chdir(self.rootDirectory)
+        clowderDirectory = os.path.join(self.rootDirectory, '.clowder/clowder')
+
         newPeruFile = os.path.join(clowderDirectory, 'peru.yaml')
         peruFile = os.path.join(self.rootDirectory, 'peru.yaml')
         if os.path.isfile(newPeruFile):

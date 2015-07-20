@@ -1,3 +1,18 @@
+# Example files
+
+examples/cats/.clowder
+examples/cats/clowder.yaml
+examples/cats/peru.yaml
+examples/cats/black*
+examples/cats/mu
+examples/cats/duke
+examples/cats/polkabot
+examples/cats/videos
+examples/llvm-projects/ll*
+examples/llvm-projects/.clowder
+examples/llvm-projects/clowder.yaml
+examples/llvm-projects/peru.yaml
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

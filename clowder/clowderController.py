@@ -89,3 +89,6 @@ class ClowderController(object):
         if os.path.isdir(os.path.join(repoDir, '.git')):
             return git.Repo(repoDir)
         return None
+
+    def update(self):
+        pass

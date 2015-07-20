@@ -4,19 +4,13 @@ import clowder.utilities
 
 class Breed(object):
 
-    def __init__(self, rootDirectory, sourceURL, sourceFile):
+    def __init__(self, rootDirectory, url):
         self.rootDirectory = rootDirectory
-        if sourceURL != None:
-            self.setupClowderDirectoryFromURL(sourceURL)
-        elif sourceFile != None:
-            self.setupClowderDirectoryFromFile(sourceFile)
-        else:
-            print('No valid source for clowder.yaml file')
-            exit(1)
+        self.setupClowderDirectory(url)
         # self.configurePeru()
         self.createSymlinks()
 
-    def setupClowderDirectoryFromURL(self, url):
+    def setupClowderDirectory(self, url):
         dotClowderDirectory = os.path.join(self.rootDirectory, '.clowder')
         os.mkdir(dotClowderDirectory)
         os.chdir(dotClowderDirectory)
@@ -28,24 +22,6 @@ class Breed(object):
         os.chdir(clowderDirectory)
 
         command = 'git fetch --all --prune --tags'
-        clowder.utilities.ex(command)
-
-    def setupClowderDirectoryFromFile(self, clowderYAML):
-        clowderDir = os.path.join(self.rootDirectory, '.clowder')
-        os.mkdir(clowderDir)
-        repoDir = os.path.join(clowderDir, 'repo')
-        os.mkdir(repoDir)
-        os.chdir(repoDir)
-
-        command = 'git init'
-        clowder.utilities.ex(command)
-
-        shutil.copy2(clowderYAML, os.path.join(repoDir, 'clowder.yaml'))
-
-        command = 'git add clowder.yaml'
-        clowder.utilities.ex(command)
-
-        command = 'git commit -m "Add clowder.yaml"'
         clowder.utilities.ex(command)
 
     def createSymlinks(self):
