@@ -20,10 +20,12 @@ class Project(object):
     def status(self):
         self.create()
         git = sh.git.bake(_cwd=self.fullPath)
-        branch = git('rev-parse', '--abbrev-ref', 'HEAD')
         print(self.path)
-        print(str(branch))
-        # print(git.status())
+        print(git.status())
+
+    def getCurrentBranch(self):
+        git = sh.git.bake(_cwd=self.fullPath)
+        return str(git('rev-parse', '--abbrev-ref', 'HEAD')).rstrip('\n')
 
     def create(self):
         if not os.path.isdir(os.path.join(self.fullPath, '.git')):
