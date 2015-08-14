@@ -15,14 +15,19 @@ class Project(object):
     def sync(self):
         self.create()
         git = sh.git.bake(_cwd=self.fullPath)
+        print('Syncing ' + self.name)
         git.pull()
 
     def create(self):
         if not os.path.isdir(os.path.join(self.fullPath, '.git')):
             if not os.path.isdir(self.fullPath):
                 os.makedirs(self.fullPath)
+            print('Creating ' + self.name)
             git = sh.git.bake(_cwd=self.fullPath)
-            git.clone(self._getRemoteURL(), '.')
+            git.init()
+            git.remote('add', 'origin', self._getRemoteURL())
+            git.fetch()
+            git.checkout('-t', 'origin/master')
 
     def _getRemoteURL(self):
         if self.remote.url.startswith('https://'):
