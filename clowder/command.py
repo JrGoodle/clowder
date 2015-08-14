@@ -15,19 +15,17 @@ class Command(object):
     def __init__(self):
         self.rootDirectory = os.getcwd()
 
-        # Set argument 
+        # Set argument
         self.clowder = None
         self.allGroupNames = []
         self.currentProjectNames = []
-        self.snapshotNames = []
 
         yamlFile = os.path.join(self.rootDirectory, 'clowder.yaml')
         if os.path.exists(yamlFile):
             with open(yamlFile) as file:
                 self.clowder = ClowderController(self.rootDirectory, file)
-                self.allGroupNames = self.clowder.getAllGroupNames()
-                self.currentProjectNames = self.clowder.getCurrentProjectNames()
-                self.snapshotNames = self.clowder.getSnapshotNames()
+                # self.allGroupNames = self.clowder.getAllGroupNames()
+                # self.currentProjectNames = self.clowder.getCurrentProjectNames()
 
         # clowder argparse setup
         parser = argparse.ArgumentParser(description='Manage multiple repositories')
@@ -37,10 +35,6 @@ class Command(object):
         parser_breed.add_argument('url')
 
         parser_herd = self.subparsers.add_parser('herd', help='herd help', description='Sync repositories')
-        # versions = ['master']
-        # versions.extend(self.snapshotNames)
-        # parser_herd.add_argument('--version', '-v', choices=versions)
-        # parser_herd.add_argument('--groups', '-g', nargs='+', choices=self.allGroupNames)
 
         argcomplete.autocomplete(parser)
         self.args = parser.parse_args()
@@ -54,8 +48,7 @@ class Command(object):
 
     def breed(self):
         if self.clowder == None:
-            print('Breeding clowder...')
-            # print('Running clowder breed, url=%s' % self.args.url)
+            print('Running clowder breed, url=%s' % self.args.url)
             Breed(self.rootDirectory, self.args.url)
         else:
             print('Clowder already bred in this directory, exiting...')
@@ -63,7 +56,7 @@ class Command(object):
 
     def herd(self):
         if self.clowder != None:
-            print('Running clowder herd, version=%s' % self.args.version)
+            print('Running clowder herd')
             Herd(self.rootDirectory)
         else:
             print('No .clowder found in the current directory, exiting...')

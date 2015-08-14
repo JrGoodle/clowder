@@ -14,7 +14,6 @@ class ClowderController(object):
     def __init__(self, rootDirectory, clowderYAML):
         self.rootDirectory = rootDirectory
         self.clowderPath = os.path.join(self.rootDirectory, '.clowder')
-        self.clowderRepo = self.getClowderRepo()
 
         self.parsedYAML = yaml.safe_load(clowderYAML)
 
@@ -24,12 +23,12 @@ class ClowderController(object):
         self.defaultGroups = defaults['groups']
 
         self.remotes = []
-        self.initRemotes()
+        for remote in self.parsedYAML['remotes']:
+            name = remote['name']
+            url = remote['url']
+            self.remotes.append(Remote(name, url))
 
         self.allGroups = []
-        self.initGroups()
-
-    def initGroups(self):
         for group in self.parsedYAML['groups']:
             projects = []
             for project in group['projects']:
@@ -53,42 +52,30 @@ class ClowderController(object):
             groupName = group['name']
             self.allGroups.append(Group(groupName, projects))
 
-    def initRemotes(self):
-        for remote in self.parsedYAML['remotes']:
-            name = remote['name']
-            url = remote['url']
-            self.remotes.append(Remote(name, url))
-
     def getAllGroupNames(self):
         names = []
         for group in self.allGroups:
             names.append(group['name'])
         return names
 
-    def getCurrentProjectNames(self):
-        configFile = os.path.join(self.rootDirectory, '.clowder/config.yaml')
-        if os.path.exists(configFile):
-            with open(configFile) as file:
-                yamlConfig = yaml.safe_load(file)
-                return yamlConfig["currentProjectNames"]
-        return None
+    def sync(self):
+        for group in self.allGroups:
+            group.sync()
 
+    # def getCurrentProjectNames(self):
+    #     configFile = os.path.join(self.rootDirectory, '.clowder/config.yaml')
+    #     if os.path.exists(configFile):
+    #         with open(configFile) as file:
+    #             yamlConfig = yaml.safe_load(file)
+    #             return yamlConfig["currentProjectNames"]
+    #     return None
 
-    def getSnapshotNames(self):
-        snapshotsDir = os.path.join(self.rootDirectory, '.clowder/snapshots')
-        if os.path.exists(snapshotsDir):
-            files = os.listdir(snapshotsDir)
-            snapshots = []
-            for name in files:
-                snapshots.append(clowder.utilities.rchop(name, '.yaml'))
-            return snapshots
-        return None
-
-    def getClowderRepo(self):
-        repoDir = os.path.join(self.rootDirectory, '.clowder/repo')
-        if os.path.isdir(os.path.join(repoDir, '.git')):
-            return git.Repo(repoDir)
-        return None
-
-    def update(self):
-        pass
+    # def getSnapshotNames(self):
+    #     snapshotsDir = os.path.join(self.rootDirectory, '.clowder/snapshots')
+    #     if os.path.exists(snapshotsDir):
+    #         files = os.listdir(snapshotsDir)
+    #         snapshots = []
+    #         for name in files:
+    #             snapshots.append(clowder.utilities.rchop(name, '.yaml'))
+    #         return snapshots
+    #     return None

@@ -6,8 +6,6 @@ class Group(object):
         self.name = name
         self.projects = projects
 
-    def syncProjects(self):
-        pass
-
-    def updateProjects(self):
-        pass
+    def sync(self):
+        for project in self.projects:
+            project.sync()
