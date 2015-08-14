@@ -34,7 +34,11 @@ class Command(object):
         # clowder argparse setup
         parser = argparse.ArgumentParser(description='Manage multiple repositories')
         self.subparsers = parser.add_subparsers(dest='command', help='clowder command help')
-        self.setupSubparsers()
+        self.breedParser()
+        # self.fixParser()
+        self.herdParser()
+        # self.meowParser()
+        # self.playParser()
         argcomplete.autocomplete(parser)
         self.args = parser.parse_args()
 
@@ -80,7 +84,7 @@ class Command(object):
     def herd(self):
         if self.clowder != None:
             print('Running clowder herd, version=%s' % self.args.version)
-            Herd(self.rootDirectory, self.args.version, self.args.groups)
+            Herd(self.clowder, self.args.version, self.args.groups)
         else:
             print('No .clowder found in the current directory, exiting...')
             sys.exit()
@@ -108,13 +112,6 @@ class Command(object):
         else:
             print('No .clowder found in the current directory, exiting...')
             sys.exit()
-
-    def setupSubparsers(self):
-        self.breedParser()
-        self.fixParser()
-        self.herdParser()
-        self.meowParser()
-        self.playParser()
 
 def main():
     Command()

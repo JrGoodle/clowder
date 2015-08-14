@@ -1,7 +1,7 @@
 import os
 import yaml
 
-import git
+import sh
 
 from clowder.group import Group
 from clowder.project import Project

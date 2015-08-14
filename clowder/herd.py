@@ -7,8 +7,8 @@ class Herd(object):
     def __init__(self, clowderController, version, groups):
         self.clowderController = clowderController
         self.rootDirectory = clowderController.rootDirectory
-        self.sync(version, groups)
-        self.updatePeruFile()
+        self.sync(groups)
+        # self.updatePeruFile()
 
     def update(self):
         pass

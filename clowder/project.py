@@ -1,6 +1,6 @@
 import os
 
-import git
+import sh
 
 class Project(object):
 
