@@ -10,7 +10,7 @@ if sys.version_info[0] < 3:
 setup(
     name='clowder',
     description='A tool for managing code',
-    version='0.1.0',
+    version='0.2.0',
     url='https://github.com/jrgoodle/clowder',
     author='joe DeCapo',
     author_email='joe@polka.cat',
@@ -36,8 +36,8 @@ setup(
     packages=['clowder'],
     entry_points={
         'console_scripts': [
-            'clowder=clowder.main:main',
+            'clowder=clowder.command:main',
         ]
     },
-    install_requires=['argcomplete', 'gitpython', 'peru']
+    install_requires=['argcomplete', 'sh', 'peru', 'PyYAML']
 )

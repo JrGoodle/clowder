@@ -14,12 +14,6 @@ def ex(command):
         print('Aborting.\n')
         sys.exit()
 
-def unknownArg(command, arg):
-    print('Unknown argument for "{0}": "{1}"\n'.format(command, arg))
-    print(r'\t ❓  Dunno what that means...  ¯\_(ツ)_/¯\n')
-    print('Aborting.\n')
-    sys.exit()
-
 def removeAllFilesInDirectory(folder):
     for the_file in os.listdir(folder):
         file_path = os.path.join(folder, the_file)
