@@ -18,7 +18,6 @@ class Project(object):
         git.pull(_out=process_output)
 
     def status(self):
-        self.create()
         git = sh.git.bake(_cwd=self.fullPath)
         print(self.path)
         print(git.status())
@@ -35,14 +34,14 @@ class Project(object):
             git = sh.git.bake(_cwd=self.fullPath)
             git.init()
             git.remote('add', 'origin', self._getRemoteURL())
-            git.fetch()
+            git.fetch(_out=process_output)
             git.checkout('-t', 'origin/master')
 
     def _getRemoteURL(self):
         if self.remote.url.startswith('https://'):
-            remoteURL = self.remote.url + "/" + self.name
+            remoteURL = self.remote.url + "/" + self.name + ".git"
         elif self.remote.url.startswith('ssh://'):
-            remoteURL = self.remote.url[6:] + ":" + self.name
+            remoteURL = self.remote.url[6:] + ":" + self.name + ".git"
         else:
             remoteURL = None
         return remoteURL
