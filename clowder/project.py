@@ -22,7 +22,7 @@ class Project(object):
         if not os.path.isdir(os.path.join(self.fullPath, '.git')):
             if not os.path.isdir(self.fullPath):
                 os.makedirs(self.fullPath)
-            print('Creating ' + self.name)
+            print('Cloning ' + self.name + ' at ' + self.path)
             git = sh.git.bake(_cwd=self.fullPath)
             git.init()
             git.remote('add', 'origin', self._getRemoteURL())
