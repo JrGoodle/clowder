@@ -15,7 +15,7 @@ class Project(object):
         self.create()
         git = sh.git.bake(_cwd=self.fullPath)
         print('Syncing ' + self.name)
-        git.pull()
+        git.pull(_out=process_output)
 
     def status(self):
         self.create()
@@ -46,3 +46,6 @@ class Project(object):
         else:
             remoteURL = None
         return remoteURL
+
+def process_output(line):
+    print(line)
