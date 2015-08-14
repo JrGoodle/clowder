@@ -1,6 +1,5 @@
 import os, shutil
-
-import clowder.utilities
+import sh
 
 class Breed(object):
 
@@ -13,16 +12,13 @@ class Breed(object):
     def setupClowderDirectory(self, url):
         dotClowderDirectory = os.path.join(self.rootDirectory, '.clowder')
         os.mkdir(dotClowderDirectory)
-        os.chdir(dotClowderDirectory)
 
-        command = 'git clone ' + url + ' repo'
-        clowder.utilities.ex(command)
+        git = sh.git.bake(_cwd=dotClowderDirectory)
+        git.clone(url, 'repo')
 
         clowderDirectory = os.path.join(dotClowderDirectory, 'repo')
-        os.chdir(clowderDirectory)
-
-        command = 'git fetch --all --prune --tags'
-        clowder.utilities.ex(command)
+        git = sh.git.bake(_cwd=clowderDirectory)
+        git.fetch('--all', '--prune', '--tags')
 
     def createSymlinks(self):
         os.chdir(self.rootDirectory)

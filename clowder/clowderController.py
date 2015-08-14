@@ -7,8 +7,6 @@ from clowder.group import Group
 from clowder.project import Project
 from clowder.remote import Remote
 
-import clowder.utilities
-
 class ClowderController(object):
 
     def __init__(self, rootDirectory, clowderYAML):

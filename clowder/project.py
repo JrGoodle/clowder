@@ -1,5 +1,4 @@
 import os
-
 import sh
 
 class Project(object):

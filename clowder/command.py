@@ -7,7 +7,7 @@ import argcomplete, argparse
 import os, sys
 
 from clowder.breed import Breed
-from clowder.herd import Herd
+from clowder.herd import herd
 from clowder.clowderController import ClowderController
 
 class Command(object):
@@ -57,7 +57,7 @@ class Command(object):
     def herd(self):
         if self.clowder != None:
             print('Running clowder herd')
-            Herd(self.rootDirectory)
+            herd(self.rootDirectory)
         else:
             print('No .clowder found in the current directory, exiting...')
             sys.exit()
