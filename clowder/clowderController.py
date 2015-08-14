@@ -60,6 +60,10 @@ class ClowderController(object):
         for group in self.allGroups:
             group.sync()
 
+    def status(self):
+        for group in self.allGroups:
+            group.status()
+
     # def getCurrentProjectNames(self):
     #     configFile = os.path.join(self.rootDirectory, '.clowder/config.yaml')
     #     if os.path.exists(configFile):

@@ -9,3 +9,7 @@ class Group(object):
     def sync(self):
         for project in self.projects:
             project.sync()
+
+    def status(self):
+        for project in self.projects:
+            project.status()

@@ -17,6 +17,12 @@ class Project(object):
         print('Syncing ' + self.name)
         git.pull()
 
+    def status(self):
+        self.create()
+        git = sh.git.bake(_cwd=self.fullPath)
+        print(self.name + ' status')
+        print(git.status())
+
     def create(self):
         if not os.path.isdir(os.path.join(self.fullPath, '.git')):
             if not os.path.isdir(self.fullPath):

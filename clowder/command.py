@@ -8,6 +8,7 @@ import os, sys
 
 from clowder.breed import Breed
 from clowder.herd import herd
+from clowder.meow import meow
 from clowder.clowderController import ClowderController
 
 class Command(object):
@@ -36,6 +37,8 @@ class Command(object):
 
         parser_herd = self.subparsers.add_parser('herd', help='herd help', description='Sync repositories')
 
+        parser_meow = self.subparsers.add_parser('meow', help='meow help', description='Repository Status')
+
         argcomplete.autocomplete(parser)
         self.args = parser.parse_args()
 
@@ -58,6 +61,14 @@ class Command(object):
         if self.clowder != None:
             print('Running clowder herd')
             herd(self.rootDirectory)
+        else:
+            print('No .clowder found in the current directory, exiting...')
+            sys.exit()
+
+    def meow(self):
+        if self.clowder != None:
+            print('Running clowder meow')
+            meow(self.rootDirectory)
         else:
             print('No .clowder found in the current directory, exiting...')
             sys.exit()
