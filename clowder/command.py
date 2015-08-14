@@ -7,10 +7,7 @@ import argcomplete, argparse
 import os, sys
 
 from clowder.breed import Breed
-from clowder.fix import Fix
 from clowder.herd import Herd
-from clowder.meow import Meow
-from clowder.play import Play
 from clowder.clowderController import ClowderController
 
 class Command(object):
@@ -18,6 +15,7 @@ class Command(object):
     def __init__(self):
         self.rootDirectory = os.getcwd()
 
+        # Set argument 
         self.clowder = None
         self.allGroupNames = []
         self.currentProjectNames = []
@@ -34,11 +32,16 @@ class Command(object):
         # clowder argparse setup
         parser = argparse.ArgumentParser(description='Manage multiple repositories')
         self.subparsers = parser.add_subparsers(dest='command', help='clowder command help')
-        self.breedParser()
-        # self.fixParser()
-        self.herdParser()
-        # self.meowParser()
-        # self.playParser()
+
+        parser_breed = self.subparsers.add_parser('breed', help='breed help', description='Clone repositories')
+        parser_breed.add_argument('url')
+
+        parser_herd = self.subparsers.add_parser('herd', help='herd help', description='Sync repositories')
+        # versions = ['master']
+        # versions.extend(self.snapshotNames)
+        # parser_herd.add_argument('--version', '-v', choices=versions)
+        # parser_herd.add_argument('--groups', '-g', nargs='+', choices=self.allGroupNames)
+
         argcomplete.autocomplete(parser)
         self.args = parser.parse_args()
 
@@ -49,10 +52,6 @@ class Command(object):
         # use dispatch pattern to invoke method with same name
         getattr(self, self.args.command)()
 
-    def breedParser(self):
-        parser_breed = self.subparsers.add_parser('breed', help='breed help', description='Clone repositories')
-        parser_breed.add_argument('url')
-
     def breed(self):
         if self.clowder == None:
             print('Breeding clowder...')
@@ -62,53 +61,10 @@ class Command(object):
             print('Clowder already bred in this directory, exiting...')
             sys.exit()
 
-    def fixParser(self):
-        parser_fix = self.subparsers.add_parser('fix', help='fix help', description='Save a version and tag it')
-        parser_fix.add_argument('version')
-
-    def fix(self):
-        if self.clowder != None:
-            print('Running clowder fix, version=%s' % self.args.version)
-            Fix(self.clowder, self.args.version)
-        else:
-            print('No .clowder found in the current directory, exiting...')
-            sys.exit()
-
-    def herdParser(self):
-        parser_herd = self.subparsers.add_parser('herd', help='herd help', description='Sync repositories')
-        versions = ['master']
-        versions.extend(self.snapshotNames)
-        parser_herd.add_argument('--version', '-v', choices=versions)
-        parser_herd.add_argument('--groups', '-g', nargs='+', choices=self.allGroupNames)
-
     def herd(self):
         if self.clowder != None:
             print('Running clowder herd, version=%s' % self.args.version)
-            Herd(self.clowder, self.args.version, self.args.groups)
-        else:
-            print('No .clowder found in the current directory, exiting...')
-            sys.exit()
-
-    def meowParser(self):
-        self.subparsers.add_parser('meow', help='meow help', description='Print status of current repositories')
-
-    def meow(self):
-        if self.clowder != None:
-            print('Running clowder meow')
-            Meow(self.clowder)
-        else:
-            print('No .clowder found in the current directory, exiting...')
-            sys.exit()
-
-    def playParser(self):
-        parser_play = self.subparsers.add_parser('play', help='play help', description='Create new topic branch(es)')
-        parser_play.add_argument('branch')
-        parser_play.add_argument('projects', nargs='+', choices=self.currentProjectNames)
-
-    def play(self):
-        if self.clowder != None:
-            print('Running clowder play, branch=%s' % self.args.branch)
-            Play(self.clowder, self.args.branch, self.args.projects)
+            Herd(self.rootDirectory)
         else:
             print('No .clowder found in the current directory, exiting...')
             sys.exit()
