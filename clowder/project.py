@@ -12,7 +12,7 @@ class Project(object):
         self.remote = remote
 
     def sync(self):
-        self.create()
+        self._create()
         git = sh.git.bake(_cwd=self.fullPath)
         print('Syncing ' + self.name)
         git.pull(_out=process_output)
@@ -27,7 +27,7 @@ class Project(object):
         git = sh.git.bake(_cwd=self.fullPath)
         return str(git('rev-parse', '--abbrev-ref', 'HEAD')).rstrip('\n')
 
-    def create(self):
+    def _create(self):
         if not os.path.isdir(os.path.join(self.fullPath, '.git')):
             if not os.path.isdir(self.fullPath):
                 os.makedirs(self.fullPath)

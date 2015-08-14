@@ -6,7 +6,7 @@ if __name__ == '__main__':
 import argcomplete, argparse
 import os, sys
 
-from clowder.breed import Breed
+from clowder.breed import breed
 from clowder.herd import herd
 from clowder.meow import meow
 from clowder.clowderController import ClowderController
@@ -51,15 +51,15 @@ class Command(object):
 
     def breed(self):
         if self.clowder == None:
-            print('Breeding the cats..., url=%s' % self.args.url)
-            Breed(self.rootDirectory, self.args.url)
+            print('Breeding the cats..., url=%s\n' % self.args.url)
+            breed(self.rootDirectory, self.args.url)
         else:
             print('Clowder already bred in this directory, exiting...')
             sys.exit()
 
     def herd(self):
         if self.clowder != None:
-            print('Herding the cats...')
+            print('Herding the cats...\n')
             herd(self.rootDirectory)
         else:
             print('No .clowder found in the current directory, exiting...')
@@ -67,7 +67,7 @@ class Command(object):
 
     def meow(self):
         if self.clowder != None:
-            print('Meow...')
+            print('Meow...\n')
             meow(self.rootDirectory)
         else:
             print('No .clowder found in the current directory, exiting...')
