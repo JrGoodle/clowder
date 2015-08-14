@@ -51,7 +51,7 @@ class Command(object):
 
     def breed(self):
         if self.clowder == None:
-            print('Running clowder breed, url=%s' % self.args.url)
+            print('Breeding the cats..., url=%s' % self.args.url)
             Breed(self.rootDirectory, self.args.url)
         else:
             print('Clowder already bred in this directory, exiting...')
@@ -59,7 +59,7 @@ class Command(object):
 
     def herd(self):
         if self.clowder != None:
-            print('Running clowder herd')
+            print('Herding the cats...')
             herd(self.rootDirectory)
         else:
             print('No .clowder found in the current directory, exiting...')
@@ -67,7 +67,7 @@ class Command(object):
 
     def meow(self):
         if self.clowder != None:
-            print('Running clowder meow')
+            print('Meow...')
             meow(self.rootDirectory)
         else:
             print('No .clowder found in the current directory, exiting...')
