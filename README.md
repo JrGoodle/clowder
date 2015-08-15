@@ -20,5 +20,6 @@ All of these have their own approach, but many are based on submodules or subtre
 Google's `repo` tool takes a different approach, but is closely tied to Google's development workflow.
 
 `clowder` uses a similar approach as `repo`, but relies on a yaml file for specifying project layout, rather than xml.
+It also avoids the default rebasing behavior that `repo` uses.
 
 See the `examples` directory for a couple example projects.
