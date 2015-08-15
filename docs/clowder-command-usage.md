@@ -1,9 +1,8 @@
 clowder breed
 -------------
 
-**Clone from repository containing clowder.yaml config file**
+Clone from repository containing clowder.yaml config file
 
----
 ```bash
 $ clowder breed <url>
 ```
@@ -11,7 +10,7 @@ $ clowder breed <url>
 clowder herd
 ------------
 
-**Clone and sync latest changes for projects**
+Clone and sync latest changes for projects
 
 ```bash
 $ clowder herd
@@ -20,7 +19,7 @@ $ clowder herd
 clowder meow
 ------------
 
-**Print status for projects**
+Print status for projects
 
 ```bash
 $ clowder meow
