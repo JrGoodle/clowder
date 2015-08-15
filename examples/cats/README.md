@@ -1,3 +1,7 @@
 # cats Example
 
-Run `setup.sh` script to breed and herd example cat repos.
+Run `breed.sh` script to set up clowder directory for cat repos.
+
+Run `herd.sh` script to sync cat repos.
+
+`clean.sh` will clean up cloned files.

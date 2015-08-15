@@ -1,3 +1,7 @@
 # llvm-projects Example
 
-Run `setup.sh` script to breed and herd example LLVM project repos.
+Run `breed.sh` script to set up clowder directory for LLVM project repos.
+
+Run `herd.sh` script to sync LLVM project repos.
+
+`clean.sh` will clean up cloned files.
