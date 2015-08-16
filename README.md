@@ -23,3 +23,40 @@ Google's `repo` tool takes a different approach, but is closely tied to Google's
 It also avoids the default rebasing behavior that `repo` uses.
 
 See the `examples` directory for a couple example projects.
+
+## Brief Overview
+
+[Example clowder.yaml for LLVM projects](https://github.com/JrGoodle/llvm-projects/blob/master/clowder.yaml)
+
+### Defaults
+
+```yaml
+defaults:
+    ref: refs/heads/master
+    remote: github
+    groups: [llvm, clang, compiler-rt]
+```
+
+### Remotes
+
+```yaml
+remotes:
+    - name: github
+      url: ssh://git@github.com
+```
+
+### Groups and projects
+
+```yaml
+groups:
+    - name: clang
+      projects:
+        - name: llvm-mirror/clang
+          path: llvm/tools/clang
+        - name: llvm-mirror/clang-tools-extra
+          path: llvm/tools/clang/tools/extra
+    - name: compiler-rt
+      projects:
+        - name: llvm-mirror/compiler-rt
+          path: llvm/projects/compiler-rt
+```
