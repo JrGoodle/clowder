@@ -34,7 +34,9 @@ class Command(object):
         parser_herd = self.subparsers.add_parser('herd', help='herd help', description='Sync project repositories')
 
         parser_meow = self.subparsers.add_parser('meow', help='meow help', description='Repository Status')
+
         parser_fix = self.subparsers.add_parser('fix', help='fix help', description='Update clowder.yaml')
+        parser_fix.add_argument('--version', '-v')
 
         argcomplete.autocomplete(parser)
         self.args = parser.parse_args()
@@ -57,7 +59,7 @@ class Command(object):
     def fix(self):
         if self.clowder != None:
             print('Fixing...\n')
-            fix(self.rootDirectory)
+            fix(self.rootDirectory, self.args.version)
         else:
             print('No .clowder found in the current directory, exiting...')
             sys.exit()

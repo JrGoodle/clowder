@@ -3,6 +3,8 @@ import sh, yaml
 
 class ClowderYAML(object):
     def __init__(self, rootDirectory):
+        self.rootDirectory = rootDirectory
+
         self.defaults = None
         self.groups = []
         self.remotes = []
@@ -18,7 +20,7 @@ class ClowderYAML(object):
                     self.remotes.append(Remote(remote))
 
                 for group in parsedYAML['groups']:
-                    self.groups.append(Group(rootDirectory, group, self.defaults, self.remotes))
+                    self.groups.append(Group(self.rootDirectory, group, self.defaults, self.remotes))
 
     def getAllGroupNames(self):
         names = []
@@ -36,6 +38,28 @@ class ClowderYAML(object):
             for project in group.projects:
                 project.status()
 
+    def fixVersion(self, version):
+        versionsDirectory = os.path.join(self.rootDirectory, '.clowder/repo/versions')
+        if not os.path.exists(versionsDirectory):
+            os.mkdir(versionsDirectory)
+
+        yamlFile = os.path.join(versionsDirectory, version + '.yaml')
+        if not os.path.exists(yamlFile):
+            with open(yamlFile, 'w') as file:
+                yaml.dump(self.getYAML(), file, default_flow_style=False)
+
+    def getYAML(self):
+        groupsYAML = []
+        for group in self.groups:
+            groupsYAML.append(group.getYAML())
+
+        remotesYAML = []
+        for remote in self.remotes:
+            remotesYAML.append(remote.getYAML())
+
+        return {'defaults': self.defaults.getYAML(),
+                'remotes': remotesYAML,
+                'groups': groupsYAML}
 
 class Defaults(object):
     def __init__(self, defaults):
@@ -43,10 +67,16 @@ class Defaults(object):
         self.remote = defaults['remote']
         self.groups = defaults['groups']
 
+    def getYAML(self):
+        return {'ref': self.ref, 'remote': self.remote, 'groups':self.groups}
+
 class Remote(object):
     def __init__(self, remote):
         self.name = remote['name']
         self.url = remote['url']
+
+    def getYAML(self):
+        return {'name': self.name, 'url': self.url}
 
 class Group(object):
     def __init__(self, rootDirectory, group, defaults, remotes):
@@ -55,6 +85,13 @@ class Group(object):
 
         for project in group['projects']:
             self.projects.append(Project(rootDirectory, project, defaults, remotes))
+
+    def getYAML(self):
+        projectsYAML = []
+
+        for project in self.projects:
+            projectsYAML.append(project.getYAML())
+        return {'name': self.name, 'projects': projectsYAML}
 
 class Project(object):
     def __init__(self, rootDirectory, project, defaults, remotes):
@@ -68,13 +105,19 @@ class Project(object):
             self.ref = defaults.ref
 
         if 'remote' in project:
-            remoteName = project['remote']
+            self.remoteName = project['remote']
         else:
-            remoteName = defaults.remote
+            self.remoteName = defaults.remote
 
         for remote in remotes:
-            if remote.name == remoteName:
+            if remote.name == self.remoteName:
                 self.remote = remote
+
+    def getYAML(self):
+        return {'name': self.name,
+                'path': self.path,
+                'ref': self.getCurrentSHA(),
+                'remote': self.remoteName}
 
     def sync(self):
         self._create()
@@ -90,6 +133,10 @@ class Project(object):
     def getCurrentBranch(self):
         git = sh.git.bake(_cwd=self.fullPath)
         return str(git('rev-parse', '--abbrev-ref', 'HEAD')).rstrip('\n')
+
+    def getCurrentSHA(self):
+        git = sh.git.bake(_cwd=self.fullPath)
+        return str(git('rev-parse', 'HEAD')).rstrip('\n')
 
     def _create(self):
         if not os.path.isdir(os.path.join(self.fullPath, '.git')):

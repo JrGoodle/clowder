@@ -20,12 +20,20 @@ def breed(rootDirectory, url):
     if os.path.isfile(clowderYAML):
         os.symlink(clowderYAML, 'clowder.yaml')
 
-def fix(rootDirectory):
-    # Update repo containing clowder.yaml
+def fix(rootDirectory, version):
     repoDir = os.path.join(rootDirectory, '.clowder/repo')
     git = sh.git.bake(_cwd=repoDir)
-    git.add('clowder.yaml')
-    git.commit('-m', 'Update clowder.yaml')
+
+    if version == None:
+        # Update repo containing clowder.yaml
+        git.add('clowder.yaml')
+        git.commit('-m', 'Update clowder.yaml')
+    else:
+        clowder = ClowderYAML(rootDirectory)
+        clowder.fixVersion(version)
+        git.add('versions')
+        git.commit('-m', 'Fix version ' + version + '.yaml')
+
     git.pull()
     git.push()
 
