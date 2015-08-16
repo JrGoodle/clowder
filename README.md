@@ -1,8 +1,10 @@
 # clowder
 
-**clowder**: A group of cats
-
-**Herding cats**: An idiom that refers to a frustrating attempt to control or organize a class of entities which are uncontrollable or chaotic.
+> **clowder**  
+> A group of cats
+>
+> **herding cats**  
+> An idiom that refers to a frustrating attempt to control or organize a class of entities which are uncontrollable or chaotic.
 
 Managing multiple repositories of dependent code can be pretty frustrating.
 
