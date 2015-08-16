@@ -6,10 +6,8 @@ if __name__ == '__main__':
 import argcomplete, argparse
 import os, sys
 
-from clowder.breed import breed
-from clowder.herd import herd
-from clowder.meow import meow
-from clowder.clowderController import ClowderController
+from clowder.subcommands import breed, herd, meow, groom
+from clowder.clowderYAML import ClowderYAML
 
 class Command(object):
 
@@ -21,12 +19,8 @@ class Command(object):
         self.allGroupNames = []
         self.currentProjectNames = []
 
-        yamlFile = os.path.join(self.rootDirectory, 'clowder.yaml')
-        if os.path.exists(yamlFile):
-            with open(yamlFile) as file:
-                self.clowder = ClowderController(self.rootDirectory, file)
-                # self.allGroupNames = self.clowder.getAllGroupNames()
-                # self.currentProjectNames = self.clowder.getCurrentProjectNames()
+        if os.path.isdir(os.path.join(self.rootDirectory, '.clowder')):
+            self.clowder = ClowderYAML(self.rootDirectory)
 
         # clowder argparse setup
         parser = argparse.ArgumentParser(description='Manage multiple repositories')
@@ -35,7 +29,9 @@ class Command(object):
         parser_breed = self.subparsers.add_parser('breed', help='breed help', description='Clone repositories')
         parser_breed.add_argument('url')
 
-        parser_herd = self.subparsers.add_parser('herd', help='herd help', description='Sync repositories')
+        parser_groom = self.subparsers.add_parser('groom', help='groom help', description='Sync clowder repository')
+
+        parser_herd = self.subparsers.add_parser('herd', help='herd help', description='Sync project repositories')
 
         parser_meow = self.subparsers.add_parser('meow', help='meow help', description='Repository Status')
 
@@ -51,15 +47,23 @@ class Command(object):
 
     def breed(self):
         if self.clowder == None:
-            print('Breeding the cats..., url=%s\n' % self.args.url)
+            print('Breeding from %s\n' % self.args.url)
             breed(self.rootDirectory, self.args.url)
         else:
             print('Clowder already bred in this directory, exiting...')
             sys.exit()
 
+    def groom(self):
+        if self.clowder != None:
+            print('Grooming...\n')
+            groom(self.rootDirectory)
+        else:
+            print('No .clowder found in the current directory, exiting...')
+            sys.exit()
+
     def herd(self):
         if self.clowder != None:
-            print('Herding the cats...\n')
+            print('Herding...\n')
             herd(self.rootDirectory)
         else:
             print('No .clowder found in the current directory, exiting...')
