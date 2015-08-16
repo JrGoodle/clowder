@@ -6,7 +6,7 @@ if __name__ == '__main__':
 import argcomplete, argparse
 import os, sys
 
-from clowder.subcommands import breed, herd, meow, groom
+from clowder.subcommands import breed, herd, meow, groom, fix
 from clowder.clowderYAML import ClowderYAML
 
 class Command(object):
@@ -34,6 +34,7 @@ class Command(object):
         parser_herd = self.subparsers.add_parser('herd', help='herd help', description='Sync project repositories')
 
         parser_meow = self.subparsers.add_parser('meow', help='meow help', description='Repository Status')
+        parser_fix = self.subparsers.add_parser('fix', help='fix help', description='Update clowder.yaml')
 
         argcomplete.autocomplete(parser)
         self.args = parser.parse_args()
@@ -51,6 +52,14 @@ class Command(object):
             breed(self.rootDirectory, self.args.url)
         else:
             print('Clowder already bred in this directory, exiting...')
+            sys.exit()
+
+    def fix(self):
+        if self.clowder != None:
+            print('Fixing...\n')
+            fix(self.rootDirectory)
+        else:
+            print('No .clowder found in the current directory, exiting...')
             sys.exit()
 
     def groom(self):

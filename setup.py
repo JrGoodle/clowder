@@ -39,5 +39,5 @@ setup(
             'clowder=clowder.command:main',
         ]
     },
-    install_requires=['argcomplete', 'sh', 'peru', 'PyYAML']
+    install_requires=['argcomplete', 'sh', 'PyYAML']
 )

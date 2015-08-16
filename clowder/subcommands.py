@@ -17,11 +17,17 @@ def breed(rootDirectory, url):
     # Create symlinks
     os.chdir(rootDirectory)
     clowderYAML = '.clowder/repo/clowder.yaml'
-    peruYAML = '.clowder/repo/peru.yaml'
     if os.path.isfile(clowderYAML):
         os.symlink(clowderYAML, 'clowder.yaml')
-    if os.path.isfile(peruYAML):
-        os.symlink(peruYAML, 'peru.yaml')
+
+def fix(rootDirectory):
+    # Update repo containing clowder.yaml
+    repoDir = os.path.join(rootDirectory, '.clowder/repo')
+    git = sh.git.bake(_cwd=repoDir)
+    git.add('clowder.yaml')
+    git.commit('-m', 'Update clowder.yaml')
+    git.pull()
+    git.push()
 
 def groom(rootDirectory):
     # Update repo containing clowder.yaml
@@ -37,12 +43,3 @@ def herd(rootDirectory):
 def meow(rootDirectory):
     clowder = ClowderYAML(rootDirectory)
     clowder.status()
-
-# def configurePeru(rootDirectory):
-#     print('Updating peru.yaml')
-#     clowderDirectory = os.path.join(rootDirectory, '.clowder/clowder')
-#     os.chdir(rootDirectory)
-#     newPeruFile = os.path.join(clowderDirectory, 'peru.yaml')
-#     if os.path.isfile(newPeruFile):
-#         peruFile = os.path.join(rootDirectory, 'peru.yaml')
-#         shutil.copy2(newPeruFile, peruFile)
