@@ -16,9 +16,6 @@ class Command(object):
 
         # Set argument
         self.clowder = None
-        self.allGroupNames = []
-        self.currentProjectNames = []
-
         if os.path.isdir(os.path.join(self.rootDirectory, '.clowder')):
             self.clowder = ClowderYAML(self.rootDirectory)
 
@@ -32,6 +29,7 @@ class Command(object):
         parser_groom = self.subparsers.add_parser('groom', help='groom help', description='Sync clowder repository')
 
         parser_herd = self.subparsers.add_parser('herd', help='herd help', description='Sync project repositories')
+        parser_herd.add_argument('--version', '-v')
 
         parser_meow = self.subparsers.add_parser('meow', help='meow help', description='Repository Status')
 
@@ -75,7 +73,7 @@ class Command(object):
     def herd(self):
         if self.clowder != None:
             print('Herding...\n')
-            herd(self.rootDirectory)
+            herd(self.rootDirectory, self.args.version)
         else:
             print('No .clowder found in the current directory, exiting...')
             sys.exit()

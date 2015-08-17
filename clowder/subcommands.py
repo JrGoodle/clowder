@@ -44,7 +44,7 @@ def groom(rootDirectory):
     git.fetch('--all', '--prune', '--tags')
     git.pull()
 
-def herd(rootDirectory):
+def herd(rootDirectory, version):
     clowder = ClowderYAML(rootDirectory)
     clowder.sync()
 
