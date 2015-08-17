@@ -1,6 +1,6 @@
 # Example files
 
-examples/cats/.clowder
+examples/cats/clowder
 examples/cats/clowder.yaml
 examples/cats/peru.yaml
 examples/cats/black*
@@ -9,7 +9,7 @@ examples/cats/duke
 examples/cats/polkabot
 examples/cats/videos
 
-examples/llvm-projects/.clowder
+examples/llvm-projects/clowder
 examples/llvm-projects/clowder.yaml
 examples/llvm-projects/peru.yaml
 examples/llvm-projects/k*
