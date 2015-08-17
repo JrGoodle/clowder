@@ -1,7 +1,7 @@
 #! /bin/bash
 
 cd "$( dirname "${BASH_SOURCE[0]}" )"
-rm -rf .clowder
+rm -rf clowder
 rm -rf klee
 rm -rf libclc
 rm -rf lldb
