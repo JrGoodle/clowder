@@ -2,27 +2,18 @@ import os, shutil
 import sh
 
 from clowder.clowderYAML import ClowderYAML
+from clowder.utilities import *
 
 def breed(rootDirectory, url):
-    dotClowderDirectory = os.path.join(rootDirectory, '.clowder')
-    os.mkdir(dotClowderDirectory)
-
-    git = sh.git.bake(_cwd=dotClowderDirectory)
-    git.clone(url, 'repo')
-
-    clowderDirectory = os.path.join(dotClowderDirectory, 'repo')
-    git = sh.git.bake(_cwd=clowderDirectory)
-    git.fetch('--all', '--prune', '--tags')
-
-    # Create symlinks
-    os.chdir(rootDirectory)
-    clowderYAML = '.clowder/repo/clowder.yaml'
-    if os.path.isfile(clowderYAML):
-        os.symlink(clowderYAML, 'clowder.yaml')
+    clowderDir = os.path.join(rootDirectory, 'clowder')
+    cloneGitUrlAtPath(url, clowderDir)
+    # Create clowder.yaml symlink
+    yamlFile = os.path.join(clowderDir, 'clowder.yaml')
+    symlinkClowderYAML(rootDirectory, yamlFile)
 
 def fix(rootDirectory, version):
-    repoDir = os.path.join(rootDirectory, '.clowder/repo')
-    git = sh.git.bake(_cwd=repoDir)
+    clowderDir = os.path.join(rootDirectory, 'clowder')
+    git = sh.git.bake(_cwd=clowderDir)
 
     if version == None:
         # Update repo containing clowder.yaml
@@ -39,14 +30,23 @@ def fix(rootDirectory, version):
 
 def groom(rootDirectory):
     # Update repo containing clowder.yaml
-    repoDir = os.path.join(rootDirectory, '.clowder/repo')
-    git = sh.git.bake(_cwd=repoDir)
+    clowderDir = os.path.join(rootDirectory, 'clowder')
+    git = sh.git.bake(_cwd=clowderDir)
     git.fetch('--all', '--prune', '--tags')
     git.pull()
 
 def herd(rootDirectory, version):
-    clowder = ClowderYAML(rootDirectory)
-    clowder.sync()
+    if version == None:
+        yamlFile = os.path.join(rootDirectory, 'clowder/clowder.yaml')
+        symlinkClowderYAML(rootDirectory, yamlFile)
+        clowder = ClowderYAML(rootDirectory)
+        clowder.sync()
+    else:
+        yamlVersion = 'clowder/versions/' + version + '/clowder.yaml'
+        yamlFile = os.path.join(rootDirectory, yamlVersion)
+        symlinkClowderYAML(rootDirectory, yamlFile)
+        clowder = ClowderYAML(rootDirectory)
+        clowder.syncVersion(version)
 
 def meow(rootDirectory):
     clowder = ClowderYAML(rootDirectory)

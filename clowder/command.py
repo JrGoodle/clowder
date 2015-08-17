@@ -16,7 +16,7 @@ class Command(object):
 
         # Set argument
         self.clowder = None
-        if os.path.isdir(os.path.join(self.rootDirectory, '.clowder')):
+        if os.path.isdir(os.path.join(self.rootDirectory, 'clowder')):
             self.clowder = ClowderYAML(self.rootDirectory)
 
         # clowder argparse setup

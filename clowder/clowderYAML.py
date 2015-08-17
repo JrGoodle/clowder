@@ -38,17 +38,23 @@ class ClowderYAML(object):
             for project in group.projects:
                 project.sync()
 
+    def syncVersion(self):
+        for group in self.groups:
+            for project in group.projects:
+                project.syncVersion(version)
+
     def status(self):
         for group in self.groups:
             for project in group.projects:
                 project.status()
 
     def fixVersion(self, version):
-        versionsDirectory = os.path.join(self.rootDirectory, '.clowder/repo/versions')
-        if not os.path.exists(versionsDirectory):
-            os.mkdir(versionsDirectory)
+        versionsPath = os.path.join(self.rootDirectory, 'clowder/versions')
+        versionDirectory = os.path.join(versionsPath, version)
+        if not os.path.exists(versionDirectory):
+            os.makedirs(versionDirectory)
 
-        yamlFile = os.path.join(versionsDirectory, version + '.yaml')
+        yamlFile = os.path.join(versionDirectory, 'clowder.yaml')
         if not os.path.exists(yamlFile):
             with open(yamlFile, 'w') as file:
                 yaml.dump(self.getYAML(), file, default_flow_style=False)
@@ -65,6 +71,3 @@ class ClowderYAML(object):
         return {'defaults': self.defaults.getYAML(),
                 'remotes': remotesYAML,
                 'groups': groupsYAML}
-
-def process_output(line):
-    print(line)

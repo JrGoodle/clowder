@@ -1,6 +1,8 @@
 import os
 import sh, yaml
 
+from clowder.utilities import process_output, cloneGitUrlAtPath, truncateGitRef
+
 class Project(object):
     def __init__(self, rootDirectory, project, defaults, remotes):
         self.name = project['name']
@@ -28,10 +30,27 @@ class Project(object):
                 'remote': self.remoteName}
 
     def sync(self):
-        self._create()
+        gitPath = os.path.join(self.fullPath, '.git')
+        if not os.path.isdir(gitPath):
+            cloneGitUrlAtPath(self._getRemoteURL(), self.fullPath)
+        else:
+            git = sh.git.bake(_cwd=self.fullPath)
+            print('Syncing ' + self.name)
+            print('At Path ' + self.fullPath)
+            git.fetch('--all', '--prune', '--tags', _out=process_output)
+            projectRef = truncateGitRef(self.ref)
+            # print('currentBranch: ' + self.getCurrentBranch())
+            # print('projectRef: ' + projectRef)
+            if self.getCurrentBranch() == projectRef:
+                git.pull(_out=process_output)
+            else:
+                print('Not on default branch')
+
+    def syncVersion(self, version):
         git = sh.git.bake(_cwd=self.fullPath)
-        print('Syncing ' + self.name)
-        git.pull(_out=process_output)
+        print('Checking out fixed version of ' + self.name)
+        git.fetch('--all', '--prune', '--tags', _out=process_output)
+        git.checkout('-b', 'fix/' + version, self.ref, _out=process_output)
 
     def status(self):
         git = sh.git.bake(_cwd=self.fullPath)
@@ -46,17 +65,6 @@ class Project(object):
         git = sh.git.bake(_cwd=self.fullPath)
         return str(git('rev-parse', 'HEAD')).rstrip('\n')
 
-    def _create(self):
-        if not os.path.isdir(os.path.join(self.fullPath, '.git')):
-            if not os.path.isdir(self.fullPath):
-                os.makedirs(self.fullPath)
-            print('Cloning ' + self.name + ' at ' + self.path)
-            git = sh.git.bake(_cwd=self.fullPath)
-            git.init()
-            git.remote('add', 'origin', self._getRemoteURL())
-            git.fetch(_out=process_output)
-            git.checkout('-t', 'origin/master')
-
     def _getRemoteURL(self):
         if self.remote.url.startswith('https://'):
             remoteURL = self.remote.url + "/" + self.name + ".git"
@@ -65,6 +73,3 @@ class Project(object):
         else:
             remoteURL = None
         return remoteURL
-
-def process_output(line):
-    print(line)
