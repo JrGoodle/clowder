@@ -14,7 +14,7 @@ class ClowderYAML(object):
         self.groups = []
         self.remotes = []
 
-        yamlFile = os.path.join(rootDirectory, 'clowder.yaml')
+        yamlFile = os.path.join(self.rootDirectory, 'clowder.yaml')
         if os.path.exists(yamlFile):
             with open(yamlFile) as file:
                 parsedYAML = yaml.safe_load(file)
@@ -38,7 +38,7 @@ class ClowderYAML(object):
             for project in group.projects:
                 project.sync()
 
-    def syncVersion(self):
+    def syncVersion(self, version):
         for group in self.groups:
             for project in group.projects:
                 project.syncVersion(version)
