@@ -1,9 +1,10 @@
-import os
-import sh, yaml
+"""Model representation of clowder.yaml group"""
 
 from clowder.project import Project
 
 class Group(object):
+    """Model class for clowder.yaml group"""
+
     def __init__(self, rootDirectory, group, defaults, remotes):
         self.name = group['name']
         self.projects = []
@@ -11,9 +12,10 @@ class Group(object):
         for project in group['projects']:
             self.projects.append(Project(rootDirectory, project, defaults, remotes))
 
-    def getYAML(self):
-        projectsYAML = []
+    def get_yaml(self):
+        """Return python object representation for saving yaml"""
+        projects_yaml = []
 
         for project in self.projects:
-            projectsYAML.append(project.getYAML())
-        return {'name': self.name, 'projects': projectsYAML}
+            projects_yaml.append(project.get_yaml())
+        return {'name': self.name, 'projects': projects_yaml}

@@ -8,18 +8,18 @@ import argcomplete, argparse
 import os, sys
 
 from clowder.subcommands import breed, herd, meow, groom, fix
-from clowder.clowderYAML import ClowderYAML
+from clowder.clowder_yaml import ClowderYAML
 
 class Command(object):
     """Command class for parsing commandline options"""
 
     def __init__(self):
-        self.rootDirectory = os.getcwd()
+        self.root_directory = os.getcwd()
 
         # Set argument
         self.clowder = None
-        if os.path.isdir(os.path.join(self.rootDirectory, 'clowder')):
-            self.clowder = ClowderYAML(self.rootDirectory)
+        if os.path.isdir(os.path.join(self.root_directory, 'clowder')):
+            self.clowder = ClowderYAML(self.root_directory)
 
         # clowder argparse setup
         parser = argparse.ArgumentParser(description='Manage multiple repositories')
@@ -60,44 +60,50 @@ class Command(object):
         getattr(self, self.args.command)()
 
     def breed(self):
+        """clowder breed command"""
         if self.clowder == None:
             print('Breeding from %s\n' % self.args.url)
-            breed(self.rootDirectory, self.args.url)
+            breed(self.root_directory, self.args.url)
         else:
             print('Clowder already bred in this directory, exiting...')
             sys.exit()
 
     def fix(self):
+        """clowder fix command"""
         if self.clowder != None:
             print('Fixing...\n')
-            fix(self.rootDirectory, self.args.version)
+            fix(self.root_directory, self.args.version)
         else:
             print('No .clowder found in the current directory, exiting...')
             sys.exit()
 
     def groom(self):
+        """clowder groom command"""
         if self.clowder != None:
             print('Grooming...\n')
-            groom(self.rootDirectory)
+            groom(self.root_directory)
         else:
             print('No .clowder found in the current directory, exiting...')
             sys.exit()
 
     def herd(self):
+        """clowder herd command"""
         if self.clowder != None:
             print('Herding...\n')
-            herd(self.rootDirectory, self.args.version)
+            herd(self.root_directory, self.args.version)
         else:
             print('No .clowder found in the current directory, exiting...')
             sys.exit()
 
     def meow(self):
+        """clowder meow command"""
         if self.clowder != None:
             print('Meow...\n')
-            meow(self.rootDirectory)
+            meow(self.root_directory)
         else:
             print('No .clowder found in the current directory, exiting...')
             sys.exit()
 
 def main():
+    """Main entrypoint for clowder command"""
     Command()
