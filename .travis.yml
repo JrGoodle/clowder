@@ -1,0 +1,23 @@
+language: python
+
+python:
+  - "3.2"
+  - "3.3"
+  - "3.4"
+
+sudo: false # Enable container-based builds
+
+before_install: brew update
+
+install: python setup.py -q install
+
+script:
+- cd $TRAVIS_BUILD_DIR/examples/cats && ./breed.sh && clowder herd
+- cd $TRAVIS_BUILD_DIR/examples/llvm-projects && ./breed.sh && clowder herd
+
+branches:
+  only: # whitelist
+    - master
+
+notifications:
+  email: false
