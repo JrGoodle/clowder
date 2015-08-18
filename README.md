@@ -1,4 +1,4 @@
-# clowder [![Build Status](https://travis-ci.org/JrGoodle/clowder.svg?branch=master)](https://travis-ci.org/JrGoodle/clowder)
+# clowder [![Build Status](https://travis-ci.org/JrGoodle/clowder.svg)](https://travis-ci.org/JrGoodle/clowder)
 
 > **clowder**  
 > A group of cats

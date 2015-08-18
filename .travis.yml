@@ -1,15 +1,12 @@
-language: python
-
-python:
-  - "3.2"
-  - "3.3"
-  - "3.4"
+language: objective-c
 
 sudo: false # Enable container-based builds
 
 before_install: brew update
 
-install: python setup.py -q install
+install: brew install python3
+
+before_script: python setup.py -q install
 
 script:
 - cd $TRAVIS_BUILD_DIR/examples/cats && ./breed.sh && clowder herd
