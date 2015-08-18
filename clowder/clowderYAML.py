@@ -1,9 +1,9 @@
+"""clowder.yaml parsing and functionality"""
 import os
-import sh, yaml
+import yaml
 
 from clowder.defaults import Defaults
 from clowder.group import Group
-from clowder.project import Project
 from clowder.remote import Remote
 
 class ClowderYAML(object):
@@ -25,7 +25,10 @@ class ClowderYAML(object):
                     self.remotes.append(Remote(remote))
 
                 for group in parsedYAML['groups']:
-                    self.groups.append(Group(self.rootDirectory, group, self.defaults, self.remotes))
+                    self.groups.append(Group(self.rootDirectory,
+                                             group,
+                                             self.defaults,
+                                             self.remotes))
 
     def getAllGroupNames(self):
         names = []

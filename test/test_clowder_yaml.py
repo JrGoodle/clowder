@@ -1,6 +1,8 @@
+"""Test ClowderYAML class"""
 import unittest
 
-class ClowderYamlTest(unittest.TestCase):
+class ClowderYAMLTest(unittest.TestCase):
+    """ClowderYAML test subclass"""
     def setUp(self):
         pass
 

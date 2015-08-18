@@ -1,4 +1,5 @@
 #! /usr/bin/env python3
+"""Main entrypoint for clowder command"""
 
 if __name__ == '__main__':
     raise SystemExit(main())
@@ -10,6 +11,7 @@ from clowder.subcommands import breed, herd, meow, groom, fix
 from clowder.clowderYAML import ClowderYAML
 
 class Command(object):
+    """Command class for parsing commandline options"""
 
     def __init__(self):
         self.rootDirectory = os.getcwd()
@@ -21,19 +23,30 @@ class Command(object):
 
         # clowder argparse setup
         parser = argparse.ArgumentParser(description='Manage multiple repositories')
-        self.subparsers = parser.add_subparsers(dest='command', help='clowder command help')
+        self.subparsers = parser.add_subparsers(dest='command',
+                                                help='clowder command help')
 
-        parser_breed = self.subparsers.add_parser('breed', help='breed help', description='Clone repositories')
+        parser_breed = self.subparsers.add_parser('breed',
+                                                  help='breed help',
+                                                  description='Clone repositories')
         parser_breed.add_argument('url')
 
-        parser_groom = self.subparsers.add_parser('groom', help='groom help', description='Sync clowder repository')
+        self.subparsers.add_parser('groom',
+                                   help='groom help',
+                                   description='Sync clowder repository')
 
-        parser_herd = self.subparsers.add_parser('herd', help='herd help', description='Sync project repositories')
+        parser_herd = self.subparsers.add_parser('herd',
+                                                 help='herd help',
+                                                 description='Sync project repositories')
         parser_herd.add_argument('--version', '-v')
 
-        parser_meow = self.subparsers.add_parser('meow', help='meow help', description='Repository Status')
+        self.subparsers.add_parser('meow',
+                                   help='meow help',
+                                   description='Repository Status')
 
-        parser_fix = self.subparsers.add_parser('fix', help='fix help', description='Update clowder.yaml')
+        parser_fix = self.subparsers.add_parser('fix',
+                                                help='fix help',
+                                                description='Update clowder.yaml')
         parser_fix.add_argument('--version', '-v')
 
         argcomplete.autocomplete(parser)
