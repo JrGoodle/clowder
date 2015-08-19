@@ -41,8 +41,9 @@ class ClowderYAML(object):
     def sync(self):
         """Sync all projects with latest upstream changes"""
         for group in self.groups:
-            for project in group.projects:
-                project.sync()
+            if group.name in self.defaults.groups:
+                for project in group.projects:
+                    project.sync()
 
     def sync_version(self, version):
         """Sync all projects to fixed versions"""
