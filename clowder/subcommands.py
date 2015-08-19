@@ -41,19 +41,25 @@ def groom(root_directory):
     git.fetch('--all', '--prune', '--tags')
     git.pull()
 
-def herd(root_directory, version):
+def herd(root_directory, version, sync_all):
     """clowder herd subcommand"""
     if version == None:
         yaml_file = os.path.join(root_directory, 'clowder/clowder.yaml')
         symlink_clowder_yaml(root_directory, yaml_file)
         clowder = ClowderYAML(root_directory)
-        clowder.sync()
+        if sync_all:
+            clowder.sync_all()
+        else:
+            clowder.sync()
     else:
         yaml_version = 'clowder/versions/' + version + '/clowder.yaml'
         yaml_file = os.path.join(root_directory, yaml_version)
         symlink_clowder_yaml(root_directory, yaml_file)
         clowder = ClowderYAML(root_directory)
-        clowder.sync_version(version)
+        if sync_all:
+            clowder.sync_version_all(version)
+        else:
+            clowder.sync_version(version)
 
 def meow(root_directory):
     """clowder meow subcommand"""
