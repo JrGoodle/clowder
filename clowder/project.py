@@ -55,9 +55,13 @@ class Project(object):
 
     def sync_version(self, version):
         """Check out fixed version of project"""
+        git_path = os.path.join(self.full_path, '.git')
         git = sh.git.bake(_cwd=self.full_path)
+        if not os.path.isdir(git_path):
+            clone_git_url_at_path(self._get_remote_url(), self.full_path)
+        else:
+            git.fetch('--all', '--prune', '--tags', _out=process_output)
         print('Checking out fixed version of ' + self.name)
-        git.fetch('--all', '--prune', '--tags', _out=process_output)
         git.checkout('-b', 'fix/' + version, self.ref, _out=process_output)
 
     def status(self):
