@@ -2,15 +2,18 @@ language: objective-c
 
 sudo: false # Enable container-based builds
 
+env:
+  matrix:
+    - EXAMPLE="cats"
+    - EXAMPLE="llvm_projects"
+
 before_install: brew update
 
 install: brew install python3
 
 before_script: python3 setup.py -q install
 
-script:
-- ./test/test_cats_example.sh
-- ./test/test_llvm_projects_example.sh
+script: ./test/test_${EXAMPLE}_example.sh
 
 branches:
   only: # whitelist
