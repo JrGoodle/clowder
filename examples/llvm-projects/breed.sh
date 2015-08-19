@@ -1,3 +1,3 @@
 #! /bin/bash
 
-clowder breed git@github.com:jrgoodle/llvm-projects.git
+clowder breed https://github.com/jrgoodle/llvm-projects.git

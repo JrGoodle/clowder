@@ -1,3 +1,3 @@
 #! /bin/bash
 
-clowder breed git@github.com:jrgoodle/cats.git
+clowder breed https://github.com/jrgoodle/cats.git
