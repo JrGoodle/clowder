@@ -2,7 +2,10 @@ language: objective-c
 
 sudo: false # Enable container-based builds
 
-before_install: brew update
+before_install:
+    - brew update
+    - echo 'Host *' >> ~/.ssh/config
+    - echo '    StrictHostKeyChecking no' >> ~/.ssh/config
 
 install: brew install python3
 
