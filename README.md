@@ -51,6 +51,8 @@ Example [clowder.yaml](https://github.com/JrGoodle/llvm-projects/blob/master/clo
 
 ### Defaults
 
+The **defaults** specify the default branch and remote for projects, and groups to sync by default with `clowder herd`.
+
 ```yaml
 defaults:
     ref: refs/heads/master
@@ -58,9 +60,9 @@ defaults:
     groups: [llvm, clang, projects]
 ```
 
-The **defaults** specify the default branch and remote for projects, and groups to sync by default with `clowder herd`.
-
 ### Remotes
+
+Multiple **remotes** can be specified for use with different projects.
 
 ```yaml
 remotes:
@@ -70,9 +72,11 @@ remotes:
       url: https://github.com
 ```
 
-Multiple **remotes** can be specified for use with different projects.
+### Groups and Projects
 
-### Groups and projects
+**Groups** have a name and associated projects.
+At a minimum, **Projects** need the `name` from the project's url, and the `path` to clone relative to the root directory.
+The default `remote` and `ref` values can also be overridden on a per-project basis.
 
 ```yaml
 groups:
@@ -113,7 +117,3 @@ groups:
         - name: llvm-mirror/llvm
           path: llvm
 ```
-
-**Groups** have a name and associated projects.
-At a minimum, **Projects** need the `name` from the project's url, and the `path` to clone relative to the root directory.
-The default `remote` and `ref` values can also be overridden on a per-project basis.
