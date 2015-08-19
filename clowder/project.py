@@ -48,10 +48,15 @@ class Project(object):
             project_ref = truncate_git_ref(self.ref)
             # print('currentBranch: ' + self.get_current_branch())
             # print('project_ref: ' + project_ref)
-            if self.get_current_branch() == project_ref:
-                git.pull(_out=process_output)
-            else:
+            if self.get_current_branch() != project_ref:
                 print('Not on default branch')
+                print('Stashing current changes')
+                git.stash()
+                print('Checking out ' + project_ref)
+                git.checkout(project_ref)
+            print('Pulling latest changes')
+            git.pull(_out=process_output)
+
 
     def sync_version(self, version):
         """Check out fixed version of project"""
