@@ -47,6 +47,7 @@ class Project(object):
             print('Syncing ' + self.name)
             print('At Path ' + self.full_path)
             git_sync(self.full_path, self.ref)
+        print("")
 
     def sync_version(self, version):
         """Check out fixed version of project"""
@@ -58,11 +59,13 @@ class Project(object):
 
         print('Checking out fixed version of ' + self.name)
         git_sync_version(self.full_path, version, self.ref)
+        print("")
 
     def status(self):
         """Print git status of project"""
         print(self.path)
         git_status(self.full_path)
+        print("")
 
     def _get_remote_url(self):
         """Return full remote url for project"""
