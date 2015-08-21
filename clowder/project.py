@@ -1,10 +1,8 @@
 """Model representation of clowder.yaml project"""
 import os
-import sh
-# Disable errors shown by pylint for sh.git
-# pylint: disable=E1101
 
-from clowder.utilities import process_output, clone_git_url_at_path, truncate_git_ref
+from clowder.git_utilities import git_fix, git_sync, git_status
+from clowder.git_utilities import get_current_sha, clone_git_url_at_path
 
 class Project(object):
     """Model class for clowder.yaml project"""
@@ -32,7 +30,7 @@ class Project(object):
         """Return python object representation for saving yaml"""
         return {'name': self.name,
                 'path': self.path,
-                'ref': self.get_current_sha(),
+                'ref': get_current_sha(self.full_path),
                 'remote': self.remote_name}
 
     def sync(self):
@@ -41,49 +39,25 @@ class Project(object):
         if not os.path.isdir(git_path):
             clone_git_url_at_path(self._get_remote_url(), self.full_path)
         else:
-            git = sh.git.bake(_cwd=self.full_path)
             print('Syncing ' + self.name)
             print('At Path ' + self.full_path)
-            git.fetch('--all', '--prune', '--tags', _out=process_output)
-            project_ref = truncate_git_ref(self.ref)
-            # print('currentBranch: ' + self.get_current_branch())
-            # print('project_ref: ' + project_ref)
-            if self.get_current_branch() != project_ref:
-                print('Not on default branch')
-                print('Stashing current changes')
-                git.stash()
-                print('Checking out ' + project_ref)
-                git.checkout(project_ref)
-            print('Pulling latest changes')
-            git.pull(_out=process_output)
-
+            git_sync(self.full_path, self.ref)
 
     def sync_version(self, version):
         """Check out fixed version of project"""
         git_path = os.path.join(self.full_path, '.git')
-        git = sh.git.bake(_cwd=self.full_path)
         if not os.path.isdir(git_path):
             clone_git_url_at_path(self._get_remote_url(), self.full_path)
         else:
-            git.fetch('--all', '--prune', '--tags', _out=process_output)
+            git_sync(self.full_path, self.ref)
+
         print('Checking out fixed version of ' + self.name)
-        git.checkout('-b', 'fix/' + version, self.ref, _out=process_output)
+        git_fix(self.full_path, version, self.ref)
 
     def status(self):
         """Print git status of project"""
-        git = sh.git.bake(_cwd=self.full_path)
         print(self.path)
-        print(git.status())
-
-    def get_current_branch(self):
-        """Return currently checked out branch of project"""
-        git = sh.git.bake(_cwd=self.full_path)
-        return str(git('rev-parse', '--abbrev-ref', 'HEAD')).rstrip('\n')
-
-    def get_current_sha(self):
-        """Return current git sha for checked out commit"""
-        git = sh.git.bake(_cwd=self.full_path)
-        return str(git('rev-parse', 'HEAD')).rstrip('\n')
+        git_status(self.full_path)
 
     def _get_remote_url(self):
         """Return full remote url for project"""
