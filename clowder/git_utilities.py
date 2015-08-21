@@ -30,6 +30,22 @@ def clone_git_url_at_path(url, repo_path):
         git.fetch('--all', '--prune', '--tags', _out=process_output)
         git.checkout('-t', 'origin/master')
 
+def git_fix(repo_path):
+    """Commit new main clowder.yaml from current changes"""
+    git = sh.git.bake(_cwd=repo_path)
+    git.add('clowder.yaml')
+    git.commit('-m', 'Update clowder.yaml')
+    git.pull()
+    git.push()
+
+def git_fix_version(repo_path, version):
+    """Commit fixed version of clowder.yaml based on current branches"""
+    git = sh.git.bake(_cwd=repo_path)
+    git.add('versions')
+    git.commit('-m', 'Fix versions/' + version + '/clowder.yaml')
+    git.pull()
+    git.push()
+
 def git_sync(repo_path, ref):
     """Sync git repo with default branch"""
     git = sh.git.bake(_cwd=repo_path)
@@ -46,8 +62,8 @@ def git_sync(repo_path, ref):
     print('Pulling latest changes')
     git.pull(_out=process_output)
 
-def git_fix(repo_path, version, ref):
-    """Fix version of repo at path"""
+def git_sync_version(repo_path, version, ref):
+    """Sync fixed version of repo at path"""
     git = sh.git.bake(_cwd=repo_path)
     git.checkout('-b', 'fix/' + version, ref, _out=process_output)
 

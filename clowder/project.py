@@ -1,7 +1,7 @@
 """Model representation of clowder.yaml project"""
 import os
 
-from clowder.git_utilities import git_fix, git_sync, git_status
+from clowder.git_utilities import git_sync_version, git_sync, git_status
 from clowder.git_utilities import get_current_sha, clone_git_url_at_path
 
 class Project(object):
@@ -52,7 +52,7 @@ class Project(object):
             git_sync(self.full_path, self.ref)
 
         print('Checking out fixed version of ' + self.name)
-        git_fix(self.full_path, version, self.ref)
+        git_sync_version(self.full_path, version, self.ref)
 
     def status(self):
         """Print git status of project"""

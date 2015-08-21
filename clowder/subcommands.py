@@ -1,11 +1,10 @@
 """clowder subcommands"""
 import os
-import sh
-# Disable errors shown by pylint for sh.git
-# pylint: disable=E1101
 
 from clowder.clowder_yaml import ClowderYAML
-from clowder.utilities import clone_git_url_at_path, symlink_clowder_yaml
+from clowder.utilities import symlink_clowder_yaml
+from clowder.git_utilities import clone_git_url_at_path, git_sync
+from clowder.git_utilities import git_fix, git_fix_version
 
 def breed(root_directory, url):
     """clowder breed subcommand"""
@@ -18,28 +17,19 @@ def breed(root_directory, url):
 def fix(root_directory, version):
     """clowder fix subcommand"""
     clowder_dir = os.path.join(root_directory, 'clowder')
-    git = sh.git.bake(_cwd=clowder_dir)
-
     if version == None:
         # Update repo containing clowder.yaml
-        git.add('clowder.yaml')
-        git.commit('-m', 'Update clowder.yaml')
+        git_fix(clowder_dir)
     else:
         clowder = ClowderYAML(root_directory)
         clowder.fix_version(version)
-        git.add('versions')
-        git.commit('-m', 'Fix version ' + version + '.yaml')
-
-    git.pull()
-    git.push()
+        git_fix_version(clowder_dir, version)
 
 def groom(root_directory):
     """clowder groom subcommand"""
     # Update repo containing clowder.yaml
     clowder_dir = os.path.join(root_directory, 'clowder')
-    git = sh.git.bake(_cwd=clowder_dir)
-    git.fetch('--all', '--prune', '--tags')
-    git.pull()
+    git_sync(clowder_dir, 'refs/heads/master')
 
 def herd(root_directory, version, sync_all):
     """clowder herd subcommand"""
