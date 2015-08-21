@@ -95,3 +95,10 @@ class ClowderYAML(object):
         return {'defaults': self.defaults.get_yaml(),
                 'remotes': remotes_yaml,
                 'groups': groups_yaml}
+
+    def get_fixed_version_names(self):
+        """Return list of all fixed versions"""
+        versions_dir = os.path.join(self.root_directory, 'clowder/versions')
+        if os.path.exists(versions_dir):
+            return os.listdir(versions_dir)
+        return None
