@@ -8,7 +8,7 @@ import argcomplete, argparse
 import os, sys
 
 from clowder.subcommands import breed, herd, meow, groom, fix
-from clowder.clowder_yaml import ClowderYAML
+from clowder.model.clowder_yaml import ClowderYAML
 
 class Command(object):
     """Command class for parsing commandline options"""

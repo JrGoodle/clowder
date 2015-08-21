@@ -33,10 +33,10 @@ setup(
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
     ],
-    packages=['clowder'],
+    packages=['clowder', 'clowder.model'],
     entry_points={
         'console_scripts': [
-            'clowder=clowder.command:main',
+            'clowder=clowder.cmd:main',
         ]
     },
     install_requires=['argcomplete', 'sh', 'PyYAML']

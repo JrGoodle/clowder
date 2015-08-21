@@ -1,6 +1,6 @@
 """Model representation of clowder.yaml group"""
 
-from clowder.project import Project
+from clowder.model.project import Project
 
 class Group(object):
     """Model class for clowder.yaml group"""

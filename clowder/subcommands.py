@@ -1,10 +1,14 @@
 """clowder subcommands"""
 import os
 
-from clowder.clowder_yaml import ClowderYAML
+from clowder.model.clowder_yaml import ClowderYAML
 from clowder.utilities import symlink_clowder_yaml
-from clowder.git_utilities import clone_git_url_at_path, git_sync
-from clowder.git_utilities import git_fix, git_fix_version
+from clowder.git_utilities import (
+    clone_git_url_at_path,
+    git_sync,
+    git_fix,
+    git_fix_version
+)
 
 def breed(root_directory, url):
     """clowder breed subcommand"""

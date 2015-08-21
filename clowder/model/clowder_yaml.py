@@ -2,9 +2,9 @@
 import os
 import yaml
 
-from clowder.defaults import Defaults
-from clowder.group import Group
-from clowder.remote import Remote
+from clowder.model.defaults import Defaults
+from clowder.model.group import Group
+from clowder.model.remote import Remote
 
 class ClowderYAML(object):
     """Class encapsulating project information from clowder.yaml"""

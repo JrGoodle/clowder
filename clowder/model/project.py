@@ -1,8 +1,13 @@
 """Model representation of clowder.yaml project"""
 import os
 
-from clowder.git_utilities import git_sync_version, git_sync, git_status
-from clowder.git_utilities import get_current_sha, clone_git_url_at_path
+from clowder.git_utilities import (
+    git_sync_version,
+    git_sync,
+    git_status,
+    get_current_sha,
+    clone_git_url_at_path
+)
 
 class Project(object):
     """Model class for clowder.yaml project"""
