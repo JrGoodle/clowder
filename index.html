@@ -81,15 +81,17 @@ If the default branch isn't checked out, current changes will be stashed, the de
 <h3>
 <a id="defaults" class="anchor" href="#defaults" aria-hidden="true"><span class="octicon octicon-link"></span></a>Defaults</h3>
 
+<p>The <strong>defaults</strong> specify the default branch and remote for projects, and groups to sync by default with <code>clowder herd</code>.</p>
+
 <div class="highlight highlight-yaml"><pre><span class="pl-s"><span class="pl-ent">defaults:</span></span>
     <span class="pl-s"><span class="pl-ent">ref:</span> <span class="pl-s">refs/heads/master</span></span>
     <span class="pl-s"><span class="pl-ent">remote:</span> <span class="pl-s">github</span></span>
     <span class="pl-s"><span class="pl-ent">groups:</span> <span class="pl-s">[llvm, clang, projects]</span></span></pre></div>
 
-<p>The <strong>defaults</strong> specify the default branch and remote for projects, and groups to sync by default with <code>clowder herd</code>.</p>
-
 <h3>
 <a id="remotes" class="anchor" href="#remotes" aria-hidden="true"><span class="octicon octicon-link"></span></a>Remotes</h3>
+
+<p>Multiple <strong>remotes</strong> can be specified for use with different projects.</p>
 
 <div class="highlight highlight-yaml"><pre><span class="pl-s"><span class="pl-ent">remotes:</span></span>
     <span class="pl-s">- <span class="pl-ent">name:</span> <span class="pl-s">github-ssh</span></span>
@@ -97,10 +99,12 @@ If the default branch isn't checked out, current changes will be stashed, the de
     <span class="pl-s">- <span class="pl-ent">name:</span> <span class="pl-s">github</span></span>
       <span class="pl-s"><span class="pl-ent">url:</span> <span class="pl-s">https://github.com</span></span></pre></div>
 
-<p>Multiple <strong>remotes</strong> can be specified for use with different projects.</p>
-
 <h3>
-<a id="groups-and-projects" class="anchor" href="#groups-and-projects" aria-hidden="true"><span class="octicon octicon-link"></span></a>Groups and projects</h3>
+<a id="groups-and-projects" class="anchor" href="#groups-and-projects" aria-hidden="true"><span class="octicon octicon-link"></span></a>Groups and Projects</h3>
+
+<p><strong>Groups</strong> have a name and associated projects.
+At a minimum, <strong>Projects</strong> need the <code>name</code> from the project's url, and the <code>path</code> to clone relative to the root directory.
+The default <code>remote</code> and <code>ref</code> values can also be overridden on a per-project basis.</p>
 
 <div class="highlight highlight-yaml"><pre><span class="pl-s"><span class="pl-ent">groups:</span></span>
     <span class="pl-s">- <span class="pl-ent">name:</span> <span class="pl-s">clang</span></span>
@@ -139,10 +143,6 @@ If the default branch isn't checked out, current changes will be stashed, the de
       <span class="pl-s"><span class="pl-ent">projects:</span></span>
         <span class="pl-s">- <span class="pl-ent">name:</span> <span class="pl-s">llvm-mirror/llvm</span></span>
           <span class="pl-s"><span class="pl-ent">path:</span> <span class="pl-s">llvm</span></span></pre></div>
-
-<p><strong>Groups</strong> have a name and associated projects.
-At a minimum, <strong>Projects</strong> need the <code>name</code> from the project's url, and the <code>path</code> to clone relative to the root directory.
-The default <code>remote</code> and <code>ref</code> values can also be overridden on a per-project basis.</p>
         </section>
 
         <aside id="sidebar">
