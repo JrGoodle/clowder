@@ -2,8 +2,7 @@
 import os
 
 from clowder.model.clowder_yaml import ClowderYAML
-from clowder.utilities import symlink_clowder_yaml
-from clowder.git_utilities import (
+from clowder.utility.git_utilities import (
     clone_git_url_at_path,
     git_sync,
     git_fix,
@@ -59,3 +58,13 @@ def meow(root_directory):
     """clowder meow subcommand"""
     clowder = ClowderYAML(root_directory)
     clowder.status()
+
+def symlink_clowder_yaml(root_directory, clowder_yaml):
+    """Create clowder.yaml symlink in directory pointing to file"""
+    os.chdir(root_directory)
+    if os.path.isfile(clowder_yaml):
+        if os.path.isfile('clowder.yaml'):
+            os.remove('clowder.yaml')
+        os.symlink(clowder_yaml, 'clowder.yaml')
+    else:
+        print(clowder_yaml + " doesn't seem to exist")

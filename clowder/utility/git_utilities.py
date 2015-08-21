@@ -4,8 +4,6 @@ import sh
 # Disable errors shown by pylint for sh.git
 # pylint: disable=E1101
 
-from clowder.utilities import process_output
-
 def truncate_git_ref(ref):
     """Return bare branch, tag, or sha"""
     git_branch = "refs/heads/"
@@ -81,3 +79,8 @@ def get_current_sha(repo_path):
     """Return current git sha for checked out commit"""
     git = sh.git.bake(_cwd=repo_path)
     return str(git('rev-parse', 'HEAD')).rstrip('\n')
+
+def process_output(line):
+    """Utility function for command output callbacks"""
+    stripped_line = str(line).rstrip('\n')
+    print(stripped_line)

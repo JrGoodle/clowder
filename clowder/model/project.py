@@ -1,7 +1,7 @@
 """Model representation of clowder.yaml project"""
 import os
 
-from clowder.git_utilities import (
+from clowder.utility.git_utilities import (
     git_sync_version,
     git_sync,
     git_status,
