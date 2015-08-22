@@ -39,5 +39,5 @@ setup(
             'clowder=clowder.cmd:main',
         ]
     },
-    install_requires=['argcomplete', 'sh', 'PyYAML']
+    install_requires=['argcomplete', 'GitPython', 'PyYAML']
 )

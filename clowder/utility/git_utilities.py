@@ -1,6 +1,6 @@
 """Git utilities"""
 import os
-import sh
+from git import Repo
 # Disable errors shown by pylint for sh.git
 # pylint: disable=E1101
 
@@ -22,15 +22,17 @@ def clone_git_url_at_path(url, repo_path):
         if not os.path.isdir(repo_path):
             os.makedirs(repo_path)
         print('Cloning git repo at ' + repo_path)
-        git = sh.git.bake(_cwd=repo_path)
-        git.init()
-        git.remote('add', 'origin', url)
-        git.fetch('--all', '--prune', '--tags', _out=process_output)
-        git.checkout('-t', 'origin/master')
+        repo = Repo.init(repo_path, bare=True)
+        origin = repo.create_remote('origin', url)
+        origin.fetch()
+        master_branch = repo.create_head('master', origin.refs.master)
+        master_branch.set_tracking_branch(origin.refs.master)
+        repo.active_branch = master_branch
 
 def git_fix(repo_path):
     """Commit new main clowder.yaml from current changes"""
-    git = sh.git.bake(_cwd=repo_path)
+    repo = Repo(repo_path)
+    git = repo.git
     git.add('clowder.yaml')
     git.commit('-m', 'Update clowder.yaml')
     git.pull()
@@ -38,7 +40,8 @@ def git_fix(repo_path):
 
 def git_fix_version(repo_path, version):
     """Commit fixed version of clowder.yaml based on current branches"""
-    git = sh.git.bake(_cwd=repo_path)
+    repo = Repo(repo_path)
+    git = repo.git
     git.add('versions')
     git.commit('-m', 'Fix versions/' + version + '/clowder.yaml')
     git.pull()
@@ -46,11 +49,10 @@ def git_fix_version(repo_path, version):
 
 def git_sync(repo_path, ref):
     """Sync git repo with default branch"""
-    git = sh.git.bake(_cwd=repo_path)
-    git.fetch('--all', '--prune', '--tags', _out=process_output)
+    repo = Repo(repo_path)
+    git = repo.git
+    git.fetch('--all', '--prune', '--tags')
     project_ref = truncate_git_ref(ref)
-    # print('currentBranch: ' + self.get_current_branch())
-    # print('project_ref: ' + project_ref)
     if get_current_branch(repo_path) != project_ref:
         print('Not on default branch')
         print('Stashing current changes')
@@ -58,27 +60,36 @@ def git_sync(repo_path, ref):
         print('Checking out ' + project_ref)
         git.checkout(project_ref)
     print('Pulling latest changes')
-    git.pull(_out=process_output)
+    git.pull()
 
 def git_sync_version(repo_path, version, ref):
     """Sync fixed version of repo at path"""
-    git = sh.git.bake(_cwd=repo_path)
-    git.checkout('-b', 'fix/' + version, ref, _out=process_output)
+    repo = Repo(repo_path)
+    git = repo.git
+    fix_branch = 'fix/' + version
+    if repo.heads[fix_branch].exists():
+        if repo.active_branch != repo.heads[fix_branch]:
+            git.checkout(fix_branch)
+    else:
+        git.checkout('-b', fix_branch, ref)
 
 def git_status(repo_path):
     """Print status of repo at path"""
-    git = sh.git.bake(_cwd=repo_path)
-    print(git.status())
+    repo = Repo(repo_path)
+    git = repo.git
+    git.status()
 
 def get_current_branch(repo_path):
     """Return currently checked out branch of project"""
-    git = sh.git.bake(_cwd=repo_path)
-    return str(git('rev-parse', '--abbrev-ref', 'HEAD')).rstrip('\n')
+    repo = Repo(repo_path)
+    git = repo.git
+    return str(git.rev_parse('--abbrev-ref', 'HEAD')).rstrip('\n')
 
 def get_current_sha(repo_path):
     """Return current git sha for checked out commit"""
-    git = sh.git.bake(_cwd=repo_path)
-    return str(git('rev-parse', 'HEAD')).rstrip('\n')
+    repo = Repo(repo_path)
+    git = repo.git
+    return str(git.rev_parse('HEAD')).rstrip('\n')
 
 def process_output(line):
     """Utility function for command output callbacks"""
