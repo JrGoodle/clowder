@@ -27,7 +27,7 @@ def clone_git_url_at_path(url, repo_path):
         origin.fetch()
         master_branch = repo.create_head('master', origin.refs.master)
         master_branch.set_tracking_branch(origin.refs.master)
-        repo.active_branch = master_branch
+        master_branch.checkout()
 
 def git_fix(repo_path):
     """Commit new main clowder.yaml from current changes"""
