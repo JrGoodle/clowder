@@ -22,7 +22,12 @@ def clone_git_url_at_path(url, repo_path):
         if not os.path.isdir(repo_path):
             os.makedirs(repo_path)
         print('Cloning git repo at ' + repo_path)
-        repo = Repo.init(repo_path, bare=True)
+        # git = sh.git.bake(_cwd=repo_path)
+        # git.init()
+        # git.remote('add', 'origin', url)
+        # git.fetch('--all', '--prune', '--tags', _out=process_output)
+        # git.checkout('-t', 'origin/master')
+        repo = Repo.init(repo_path)
         origin = repo.create_remote('origin', url)
         origin.fetch()
         master_branch = repo.create_head('master', origin.refs.master)
