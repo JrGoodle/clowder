@@ -2,8 +2,6 @@
 
 Run `breed.sh` script to set up clowder directory for cat repos.
 
-Run `herd.sh` script to sync cat repos.
-
 `clean.sh` will clean up cloned files.
 
 ## Projects Directory Structure
@@ -16,4 +14,3 @@ Run `herd.sh` script to sync cat repos.
 | `black-cats/sasha` | https://github.com/JrGoodle/sasha |
 | `duke` | https://github.com/JrGoodle/duke |
 | `mu` | https://github.com/JrGoodle/mu |
-| `polkabot` | - |
