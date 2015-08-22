@@ -72,9 +72,12 @@ def git_sync_version(repo_path, version, ref):
     repo = Repo(repo_path)
     git = repo.git
     fix_branch = 'fix/' + version
-    if repo.heads[fix_branch].exists():
-        if repo.active_branch != repo.heads[fix_branch]:
-            git.checkout(fix_branch)
+    try:
+        if repo.heads[fix_branch].exists():
+            if repo.active_branch != repo.heads[fix_branch]:
+                git.checkout(fix_branch)
+    except:
+        pass
     else:
         git.checkout('-b', fix_branch, ref)
 
