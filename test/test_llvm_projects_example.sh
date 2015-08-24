@@ -1,7 +1,7 @@
 #! /bin/bash
 
 function setup_old_repos() {
-    CLANG_TOOLS_EXTRA_DIR="$LLVM_PROJECTS_DIR/llvm/tools/clang/tools/extra"
+    local CLANG_TOOLS_EXTRA_DIR="$LLVM_PROJECTS_DIR/llvm/tools/clang/tools/extra"
     rm -rf $CLANG_TOOLS_EXTRA_DIR
     mkdir -p $CLANG_TOOLS_EXTRA_DIR
     pushd $CLANG_TOOLS_EXTRA_DIR
@@ -12,7 +12,7 @@ function setup_old_repos() {
     git branch -u origin/master
     popd
 
-    CLANG_DIR="$LLVM_PROJECTS_DIR/llvm/tools/clang"
+    local CLANG_DIR="$LLVM_PROJECTS_DIR/llvm/tools/clang"
     rm -rf $CLANG_DIR
     mkdir -p $CLANG_DIR
     pushd $CLANG_DIR
@@ -23,7 +23,7 @@ function setup_old_repos() {
     git branch -u origin/master
     popd
 
-    COMPILER_RT_DIR="$LLVM_PROJECTS_DIR/llvm/projects/compiler-rt"
+    local COMPILER_RT_DIR="$LLVM_PROJECTS_DIR/llvm/projects/compiler-rt"
     rm -rf $COMPILER_RT_DIR
     mkdir -p $COMPILER_RT_DIR
     pushd $COMPILER_RT_DIR
@@ -35,7 +35,7 @@ function setup_old_repos() {
     popd
 }
 
-LLVM_PROJECTS_DIR="$TRAVIS_BUILD_DIR/examples/llvm-projects"
+export LLVM_PROJECTS_DIR="$TRAVIS_BUILD_DIR/examples/llvm-projects"
 pushd $LLVM_PROJECTS_DIR
 
 # Test breed and herding all
