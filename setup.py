@@ -1,3 +1,6 @@
+"""
+Setup file for clowder
+"""
 from setuptools import setup
 import sys
 

@@ -16,7 +16,7 @@ class Command(object):
     def __init__(self):
         self.root_directory = os.getcwd()
 
-        # Set argument
+        # Load current clowder.yml config if it exists
         self.clowder = None
         if os.path.isdir(os.path.join(self.root_directory, 'clowder')):
             self.clowder = ClowderYAML(self.root_directory)
@@ -25,31 +25,31 @@ class Command(object):
         parser = argparse.ArgumentParser(description='Manage multiple repositories')
         self.subparsers = parser.add_subparsers(dest='command',
                                                 help='clowder command help')
-
+        # clowder breed
         parser_breed = self.subparsers.add_parser('breed',
                                                   help='breed help',
                                                   description='Clone repositories')
         parser_breed.add_argument('url')
-
+        # clowder groom
         self.subparsers.add_parser('groom',
                                    help='groom help',
                                    description='Sync clowder repository')
-
+        # clowder herd
         parser_herd = self.subparsers.add_parser('herd',
                                                  help='herd help',
                                                  description='Sync project repositories')
         parser_herd.add_argument('--version', '-v')
         parser_herd.add_argument('--all', '-a', action='store_true')
-
+        # clowder meow
         self.subparsers.add_parser('meow',
                                    help='meow help',
                                    description='Repository Status')
-
+        # clowder fix
         parser_fix = self.subparsers.add_parser('fix',
                                                 help='fix help',
                                                 description='Update clowder.yaml')
         parser_fix.add_argument('--version', '-v')
-
+        # Argcomplete and arguments parsing
         argcomplete.autocomplete(parser)
         self.args = parser.parse_args()
 
