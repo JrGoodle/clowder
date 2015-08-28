@@ -74,8 +74,6 @@ def git_sync_version(repo_path, version, ref):
                 git.checkout(fix_branch)
     except:
         print('No existing ' + fix_branch + ' branch')
-        pass
-    else:
         print('Checking out new branch ' + fix_branch)
         git.checkout('-b', fix_branch, ref)
 
