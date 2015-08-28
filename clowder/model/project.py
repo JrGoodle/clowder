@@ -54,8 +54,6 @@ class Project(object):
         git_path = os.path.join(self.full_path, '.git')
         if not os.path.isdir(git_path):
             clone_git_url_at_path(self._get_remote_url(), self.full_path)
-        else:
-            git_sync(self.full_path, self.ref)
 
         print('Checking out fixed version of ' + self.name)
         git_sync_version(self.full_path, version, self.ref)
