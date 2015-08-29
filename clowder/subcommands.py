@@ -1,6 +1,6 @@
 """clowder subcommands"""
 import os
-
+from termcolor import colored
 from clowder.model.clowder_yaml import ClowderYAML
 from clowder.utility.git_utilities import (
     clone_git_url_at_path,
@@ -32,7 +32,10 @@ def groom(root_directory):
     """clowder groom subcommand"""
     # Update repo containing clowder.yaml
     clowder_dir = os.path.join(root_directory, 'clowder')
+    clowder_output = colored(clowder_dir, 'green')
+    print(clowder_output)
     git_sync(clowder_dir, 'refs/heads/master')
+    print('')
 
 def herd(root_directory, version, sync_all):
     """clowder herd subcommand"""

@@ -43,24 +43,23 @@ class Project(object):
 
     def sync(self):
         """Clone project or update latest from upstream"""
+        self.print_name()
         git_path = os.path.join(self.full_path, '.git')
         if not os.path.isdir(git_path):
             clone_git_url_at_path(self._get_remote_url(), self.full_path)
         else:
-            print('Syncing ' + self.name)
-            print('At Path ' + self.full_path)
+            print('Syncing...')
             git_sync(self.full_path, self.ref)
-        print("")
 
     def sync_version(self, version):
         """Check out fixed version of project"""
+        self.print_name()
         git_path = os.path.join(self.full_path, '.git')
         if not os.path.isdir(git_path):
             clone_git_url_at_path(self._get_remote_url(), self.full_path)
 
-        print('Checking out fixed version of ' + self.name)
+        print('Checking out fixed version ' + version)
         git_sync_version(self.full_path, version, self.ref)
-        print("")
 
     def status(self):
         """Print git status of project"""

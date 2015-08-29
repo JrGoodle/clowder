@@ -22,7 +22,7 @@ def clone_git_url_at_path(url, repo_path):
     if not os.path.isdir(os.path.join(repo_path, '.git')):
         if not os.path.isdir(repo_path):
             os.makedirs(repo_path)
-        print('Cloning git repo at ' + repo_path)
+        print(' - Cloning git repo at ' + repo_path)
         repo = Repo.init(repo_path)
         origin = repo.create_remote('origin', url)
         origin.fetch()
@@ -60,12 +60,12 @@ def git_sync(repo_path, ref):
     git.fetch('--all', '--prune', '--tags')
     project_ref = truncate_git_ref(ref)
     if get_current_branch(repo_path) != project_ref:
-        print('Not on default branch')
-        print('Stashing current changes')
+        print(' - Not on default branch')
+        print(' - Stashing current changes')
         git.stash()
-        print('Checking out ' + project_ref)
+        print(' - Checking out ' + project_ref)
         git.checkout(project_ref)
-    print('Pulling latest changes')
+    print(' - Pulling latest changes')
     git.pull()
 
 def git_sync_version(repo_path, version, ref):
@@ -76,11 +76,11 @@ def git_sync_version(repo_path, version, ref):
     try:
         if repo.heads[fix_branch].exists():
             if repo.active_branch != repo.heads[fix_branch]:
-                print('Checking out existing branch: ' + fix_branch)
+                # print('Checking out existing branch: ' + fix_branch)
                 git.checkout(fix_branch)
     except:
-        print('No existing branch: ' + fix_branch)
-        print('Checking out new branch: ' + fix_branch)
+        print(' - No existing branch: ' + fix_branch)
+        print(' - Checking out new branch: ' + fix_branch)
         git.checkout('-b', fix_branch, ref)
 
 def git_validate_repo_state(repo_path):
@@ -91,14 +91,14 @@ def git_validate_repo_state(repo_path):
     #     print('Exiting...')
     #     sys.exit()
     if git_is_detached(repo_path):
-        print(repo_path + ' HEAD is detached.')
-        print('Please point your HEAD to a branch before running clowder.')
-        print('Exiting...')
+        print(' - ' + repo_path + ' HEAD is detached.')
+        print(' - Please point your HEAD to a branch before running clowder.')
+        print(' - Exiting...')
         sys.exit()
     if git_is_dirty(repo_path):
-        print(repo_path + ' is dirty.')
-        print('Please stash or commit your changes before running clowder.')
-        print('Exiting...')
+        print(' - ' + repo_path + ' is dirty.')
+        print(' - Please stash or commit your changes before running clowder.')
+        print(' - Exiting...')
         sys.exit()
 
 def git_is_dirty(repo_path):
