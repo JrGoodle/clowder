@@ -57,6 +57,7 @@ cd $LLVM_PROJECTS_DIR
 setup_old_repos # configure repo's for testing pulling new commits
 clowder herd || exit 1
 clowder meow || exit 1
+clowder groom || exit 1
 clowder herd -v v0.1 || exit 1
 clowder meow || exit 1
 

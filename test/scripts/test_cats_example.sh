@@ -14,6 +14,7 @@ cd $TRAVIS_BUILD_DIR/examples/cats
 ./breed.sh  || exit 1
 clowder herd  || exit 1
 clowder meow || exit 1
+clowder groom || exit 1
 ./clean.sh || exit 1
 
 ./breed.sh || exit 1
@@ -62,6 +63,9 @@ do
     popd &>/dev/null
 done
 
+clowder meow || exit 1
+clowder herd || exit 1
+clowder liter || exit 1
 clowder meow || exit 1
 clowder herd || exit 1
 clowder meow || exit 1
