@@ -96,6 +96,8 @@ do
 done
 
 clowder meow || exit 1
+clowder herd || exit 1
+clowder meow || exit 1
 clowder litter || exit 1
 clowder meow || exit 1
 clowder herd -v v0.1 || exit 1
