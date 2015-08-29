@@ -92,16 +92,19 @@ def git_validate_repo_state(repo_path):
     #     print(repo_path + ' HEAD is detached.')
     #     print('Please point your HEAD to a branch before running clowder.')
     #     print('Exiting...')
+    #     print('')
     #     sys.exit()
     if git_is_detached(repo_path):
         print(' - ' + repo_path + ' HEAD is detached.')
         print(' - Please point your HEAD to a branch before running clowder.')
         print(' - Exiting...')
+        print('')
         sys.exit()
     if git_is_dirty(repo_path):
         print(' - ' + repo_path + ' is dirty.')
         print(' - Please stash or commit your changes before running clowder.')
         print(' - Exiting...')
+        print('')
         sys.exit()
 
 def git_is_dirty(repo_path):
