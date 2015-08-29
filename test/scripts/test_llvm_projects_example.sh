@@ -6,35 +6,35 @@ setup_old_repos()
     local CLANG_TOOLS_EXTRA_DIR="$LLVM_PROJECTS_DIR/llvm/tools/clang/tools/extra"
     rm -rf $CLANG_TOOLS_EXTRA_DIR
     mkdir -p $CLANG_TOOLS_EXTRA_DIR
-    pushd $CLANG_TOOLS_EXTRA_DIR
+    pushd $CLANG_TOOLS_EXTRA_DIR &>/dev/null
     git clone https://github.com/JrGoodle/clang-tools-extra.git . &>/dev/null
     git remote remove origin &>/dev/null
     git remote add origin https://github.com/llvm-mirror/clang-tools-extra.git &>/dev/null
     git fetch &>/dev/null
     git branch -u origin/master &>/dev/null
-    popd
+    popd &>/dev/null
 
     local CLANG_DIR="$LLVM_PROJECTS_DIR/llvm/tools/clang"
     rm -rf $CLANG_DIR
     mkdir -p $CLANG_DIR
-    pushd $CLANG_DIR
+    pushd $CLANG_DIR &>/dev/null
     git clone https://github.com/JrGoodle/clang.git . &>/dev/null
     git remote remove origin &>/dev/null
     git remote add origin https://github.com/llvm-mirror/clang.git &>/dev/null
     git fetch &>/dev/null
     git branch -u origin/master &>/dev/null
-    popd
+    popd &>/dev/null
 
     local COMPILER_RT_DIR="$LLVM_PROJECTS_DIR/llvm/projects/compiler-rt"
     rm -rf $COMPILER_RT_DIR
     mkdir -p $COMPILER_RT_DIR
-    pushd $COMPILER_RT_DIR
+    pushd $COMPILER_RT_DIR &>/dev/null
     git clone https://github.com/JrGoodle/compiler-rt.git . &>/dev/null
     git remote remove origin &>/dev/null
     git remote add origin https://github.com/llvm-mirror/compiler-rt.git &>/dev/null
     git fetch &>/dev/null
     git branch -u origin/master &>/dev/null
-    popd
+    popd &>/dev/null
 }
 
 test_branch()
@@ -58,59 +58,59 @@ clowder meow || exit 1
 clowder herd -v v0.1 || exit 1
 clowder meow || exit 1
 
-pushd llvm/tools/clang
+pushd llvm/tools/clang &>/dev/null
 test_branch clowder-fix/v0.1
-popd
-pushd llvm/tools/clang/tools/extra
+popd &>/dev/null
+pushd llvm/tools/clang/tools/extra &>/dev/null
 test_branch clowder-fix/v0.1
-popd
-pushd llvm/projects/compiler-rt
+popd &>/dev/null
+pushd llvm/projects/compiler-rt &>/dev/null
 test_branch clowder-fix/v0.1
-popd
-pushd llvm/projects/libunwind
+popd &>/dev/null
+pushd llvm/projects/libunwind &>/dev/null
 test_branch clowder-fix/v0.1
-popd
-pushd llvm/projects/dragonegg
+popd &>/dev/null
+pushd llvm/projects/dragonegg &>/dev/null
 test_branch clowder-fix/v0.1
-popd
-pushd llvm
+popd &>/dev/null
+pushd llvm &>/dev/null
 test_branch clowder-fix/v0.1
-popd
+popd &>/dev/null
 
 clowder herd || exit 1
 clowder meow || exit 1
 
-pushd llvm/tools/clang
+pushd llvm/tools/clang &>/dev/null
 test_branch master
-popd
-pushd llvm/tools/clang/tools/extra
+popd &>/dev/null
+pushd llvm/tools/clang/tools/extra &>/dev/null
 test_branch master
-popd
-pushd llvm/projects/compiler-rt
+popd &>/dev/null
+pushd llvm/projects/compiler-rt &>/dev/null
 test_branch master
-popd
-pushd llvm/projects/libunwind
+popd &>/dev/null
+pushd llvm/projects/libunwind &>/dev/null
 test_branch master
-popd
-pushd llvm/projects/dragonegg
+popd &>/dev/null
+pushd llvm/projects/dragonegg &>/dev/null
 test_branch master
-popd
-pushd llvm
+popd &>/dev/null
+pushd llvm &>/dev/null
 test_branch master
-popd
+popd &>/dev/null
 
-pushd llvm
+pushd llvm &>/dev/null
 touch newfile
 git add newfile
-popd
-pushd llvm/tools/clang
+popd &>/dev/null
+pushd llvm/tools/clang &>/dev/null
 touch newfile
 git add newfile
-popd
-pushd llvm/projects/compiler-rt
+popd &>/dev/null
+pushd llvm/projects/compiler-rt &>/dev/null
 touch newfile
 git add newfile
-popd
+popd &>/dev/null
 
 clowder meow || exit 1
 clowder litter || exit 1
