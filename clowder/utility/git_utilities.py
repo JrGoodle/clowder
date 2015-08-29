@@ -23,7 +23,7 @@ def clone_git_url_at_path(url, repo_path):
     if not os.path.isdir(os.path.join(repo_path, '.git')):
         if not os.path.isdir(repo_path):
             os.makedirs(repo_path)
-        print(' - Cloning git repo at ' + repo_path)
+        print(' - Cloning repo at: ' + repo_path)
         repo = Repo.init(repo_path)
         origin = repo.create_remote('origin', url)
         origin.fetch()
@@ -80,8 +80,7 @@ def git_sync_version(repo_path, version, ref):
                 # print('Checking out existing branch: ' + fix_branch)
                 git.checkout(fix_branch)
     except:
-        print(' - No existing branch: ' + fix_branch)
-        print(' - Checking out new branch: ' + fix_branch)
+        print(' - No existing branch, checking out: ' + fix_branch)
         git.checkout('-b', fix_branch, ref)
 
 def git_validate_repo_state(repo_path):
