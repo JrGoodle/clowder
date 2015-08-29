@@ -101,9 +101,11 @@ def git_validate_repo_state(repo_path):
         print('')
         sys.exit()
     if git_is_dirty(repo_path):
-        print(' - ' + repo_path + ' is dirty.')
+        repo_output = colored(repo_path, 'cyan')
+        print(' - ' + repo_output + ' is dirty.')
         print(' - Please stash or commit your changes before running clowder.')
-        print(' - Exiting...')
+        exit_output = colored('Exiting...', 'red')
+        print(exit_output)
         print('')
         sys.exit()
 
