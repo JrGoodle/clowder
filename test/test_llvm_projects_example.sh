@@ -67,22 +67,22 @@ setup_old_repos # configur repo's for testing pulling new commits
 clowder herd -v v0.1 || exit 1
 
 pushd llvm/tools/clang
-test_branch fix/v0.1
+test_branch clowder-fix/v0.1
 popd
 pushd llvm/tools/clang/tools/extra
-test_branch fix/v0.1
+test_branch clowder-fix/v0.1
 popd
 pushd llvm/projects/compiler-rt
-test_branch fix/v0.1
+test_branch clowder-fix/v0.1
 popd
 pushd llvm/projects/libunwind
-test_branch fix/v0.1
+test_branch clowder-fix/v0.1
 popd
 pushd llvm/projects/dragonegg
-test_branch fix/v0.1
+test_branch clowder-fix/v0.1
 popd
 pushd llvm
-test_branch fix/v0.1
+test_branch clowder-fix/v0.1
 popd
 
 clowder herd || exit 1

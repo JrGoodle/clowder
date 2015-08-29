@@ -66,7 +66,7 @@ def git_sync_version(repo_path, version, ref):
     """Sync fixed version of repo at path"""
     repo = Repo(repo_path)
     git = repo.git
-    fix_branch = 'fix/' + version
+    fix_branch = 'clowder-fix/' + version
     try:
         if repo.heads[fix_branch].exists():
             if repo.active_branch != repo.heads[fix_branch]:
