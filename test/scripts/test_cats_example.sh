@@ -81,7 +81,7 @@ echo ''
 for project in "${projects[@]}"
 do
 	pushd $project &>/dev/null
-    git checkout master~10
+    git checkout master~2
     popd &>/dev/null
 done
 
