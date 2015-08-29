@@ -3,7 +3,7 @@ import os
 from termcolor import colored
 from clowder.model.clowder_yaml import ClowderYAML
 from clowder.utility.git_utilities import (
-    clone_git_url_at_path,
+    git_clone_url_at_path,
     git_sync,
     git_fix,
     git_fix_version
@@ -14,7 +14,7 @@ def breed(root_directory, url):
     clowder_dir = os.path.join(root_directory, 'clowder')
     clowder_output = colored(clowder_dir, 'green')
     print(clowder_output)
-    clone_git_url_at_path(url, clowder_dir)
+    git_clone_url_at_path(url, clowder_dir)
     # Create clowder.yaml symlink
     yaml_file = os.path.join(clowder_dir, 'clowder.yaml')
     symlink_clowder_yaml(root_directory, yaml_file)

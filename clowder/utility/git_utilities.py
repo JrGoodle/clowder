@@ -6,7 +6,7 @@ from termcolor import colored
 # Disable errors shown by pylint for sh.git
 # pylint: disable=E1101
 
-def truncate_git_ref(ref):
+def git_truncate_ref(ref):
     """Return bare branch, tag, or sha"""
     git_branch = "refs/heads/"
     git_tag = "refs/tags/"
@@ -18,7 +18,7 @@ def truncate_git_ref(ref):
         length = 0
     return ref[length:]
 
-def clone_git_url_at_path(url, repo_path):
+def git_clone_url_at_path(url, repo_path):
     """Clone git repo from url at path"""
     if not os.path.isdir(os.path.join(repo_path, '.git')):
         if not os.path.isdir(repo_path):
@@ -60,7 +60,7 @@ def git_sync(repo_path, ref):
     repo = Repo(repo_path)
     git = repo.git
     git.fetch('--all', '--prune', '--tags')
-    project_ref = truncate_git_ref(ref)
+    project_ref = git_truncate_ref(ref)
     if git_current_branch(repo_path) != project_ref:
         print(' - Not on default branch, stashing current changes')
         git.stash()
@@ -121,12 +121,6 @@ def git_untracked_files(repo_path):
     else:
         return False
 
-def git_status(repo_path):
-    """Print status of repo at path"""
-    repo = Repo(repo_path)
-    git = repo.git
-    git.status()
-
 def git_current_branch(repo_path):
     """Return currently checked out branch of project"""
     repo = Repo(repo_path)
@@ -151,3 +145,25 @@ def process_output(line):
     """Utility function for command output callbacks"""
     stripped_line = str(line).rstrip('\n')
     print(stripped_line)
+
+def git_status(repo_path, name):
+    git_path = os.path.join(repo_path, '.git')
+    if not os.path.isdir(git_path):
+        return
+
+    if git_is_dirty(repo_path):
+        color = 'red'
+        symbol = '*'
+    else:
+        color = 'green'
+        symbol = ''
+    project_output = colored(symbol + name, color)
+
+    if git_is_detached(repo_path):
+        current_ref = git_current_sha(repo_path)
+        current_ref_output = colored('(' + current_ref + ')', 'magenta')
+    else:
+        current_branch = git_current_branch(repo_path)
+        current_ref_output = colored('(' + current_branch + ')', 'magenta')
+
+    print(project_output + ' ' + current_ref_output)
