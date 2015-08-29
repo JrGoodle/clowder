@@ -73,6 +73,7 @@ class ClowderYAML(object):
         for group in self.groups:
             for project in group.projects:
                 project.status()
+        print('')
 
     def fix_version(self, version):
         """Fix current commits to versioned clowder.yaml"""

@@ -1,5 +1,6 @@
 """Model representation of clowder.yaml project"""
 import os
+from termcolor import colored
 
 from clowder.utility.git_utilities import (
     git_sync_version,
@@ -7,6 +8,7 @@ from clowder.utility.git_utilities import (
     git_status,
     get_current_sha,
     git_validate_repo_state,
+    git_is_dirty,
     clone_git_url_at_path
 )
 
@@ -62,9 +64,13 @@ class Project(object):
 
     def status(self):
         """Print git status of project"""
-        print(self.path)
-        git_status(self.full_path)
-        print("")
+        if git_is_dirty(self.full_path):
+            color = 'red'
+        else:
+            color = 'green'
+
+        project_output = colored(self.path, color)
+        print(project_output)
 
     def _get_remote_url(self):
         """Return full remote url for project"""

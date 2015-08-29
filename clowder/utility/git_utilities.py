@@ -1,6 +1,7 @@
 """Git utilities"""
 import os, sys
 from git import Repo
+
 # Disable errors shown by pylint for sh.git
 # pylint: disable=E1101
 
@@ -79,17 +80,39 @@ def git_sync_version(repo_path, version, ref):
 
 def git_validate_repo_state(repo_path):
     """Validate repo state"""
-    repo = Repo(repo_path)
-    if repo.is_dirty():
-        print(repo_path + ' is dirty.')
-        print('Please stash or commit your changes before running clowder.')
-        print('Exiting...')
-        sys.exit()
-    if repo.head.is_detached():
+    # if git_untracked_files(repo_path):
+    #     print(repo_path + ' HEAD is detached.')
+    #     print('Please point your HEAD to a branch before running clowder.')
+    #     print('Exiting...')
+    #     sys.exit()
+    if git_is_detached(repo_path):
         print(repo_path + ' HEAD is detached.')
         print('Please point your HEAD to a branch before running clowder.')
         print('Exiting...')
         sys.exit()
+    if git_is_dirty(repo_path):
+        print(repo_path + ' is dirty.')
+        print('Please stash or commit your changes before running clowder.')
+        print('Exiting...')
+        sys.exit()
+
+def git_is_dirty(repo_path):
+    """Check if repo is dirty"""
+    repo = Repo(repo_path)
+    return repo.is_dirty()
+
+def git_is_detached(repo_path):
+    """Check if HEAD is detached"""
+    repo = Repo(repo_path)
+    return repo.head.is_detached
+
+def git_untracked_files(repo_path):
+    """Check if there are untracked files"""
+    repo = Repo(repo_path)
+    if repo.untracked_files:
+        return True
+    else:
+        return False
 
 def git_status(repo_path):
     """Print status of repo at path"""
