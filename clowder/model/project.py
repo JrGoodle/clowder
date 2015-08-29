@@ -6,6 +6,7 @@ from clowder.utility.git_utilities import (
     git_sync,
     git_status,
     get_current_sha,
+    git_validate_repo_state,
     clone_git_url_at_path
 )
 
@@ -74,3 +75,7 @@ class Project(object):
         else:
             remote_url = None
         return remote_url
+
+    def validate(self):
+        """Validate status of project's repository"""
+        git_validate_repo_state(self.full_path)

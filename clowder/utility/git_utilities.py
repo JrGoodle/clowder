@@ -1,5 +1,5 @@
 """Git utilities"""
-import os
+import os, sys
 from git import Repo
 # Disable errors shown by pylint for sh.git
 # pylint: disable=E1101
@@ -70,12 +70,26 @@ def git_sync_version(repo_path, version, ref):
     try:
         if repo.heads[fix_branch].exists():
             if repo.active_branch != repo.heads[fix_branch]:
-                print('Checking out existing ' + fix_branch + ' branch')
+                print('Checking out existing branch: ' + fix_branch)
                 git.checkout(fix_branch)
     except:
-        print('No existing ' + fix_branch + ' branch')
-        print('Checking out new branch ' + fix_branch)
+        print('No existing branch: ' + fix_branch)
+        print('Checking out new branch: ' + fix_branch)
         git.checkout('-b', fix_branch, ref)
+
+def git_validate_repo_state(repo_path):
+    """Validate repo state"""
+    repo = Repo(repo_path)
+    if repo.is_dirty():
+        print(repo_path + ' is dirty.')
+        print('Please stash or commit your changes before running clowder.')
+        print('Exiting...')
+        sys.exit()
+    if repo.head.is_detached():
+        print(repo_path + ' HEAD is detached.')
+        print('Please point your HEAD to a branch before running clowder.')
+        print('Exiting...')
+        sys.exit()
 
 def git_status(repo_path):
     """Print status of repo at path"""
