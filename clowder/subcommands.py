@@ -37,25 +37,19 @@ def groom(root_directory):
     git_sync(clowder_dir, 'refs/heads/master')
     print('')
 
-def herd(root_directory, version, sync_all):
+def herd(root_directory, version):
     """clowder herd subcommand"""
     if version == None:
         yaml_file = os.path.join(root_directory, 'clowder/clowder.yaml')
         symlink_clowder_yaml(root_directory, yaml_file)
         clowder = ClowderYAML(root_directory)
-        if sync_all:
-            clowder.sync_all()
-        else:
-            clowder.sync()
+        clowder.sync_all()
     else:
         yaml_version = 'clowder/versions/' + version + '/clowder.yaml'
         yaml_file = os.path.join(root_directory, yaml_version)
         symlink_clowder_yaml(root_directory, yaml_file)
         clowder = ClowderYAML(root_directory)
-        if sync_all:
-            clowder.sync_version_all(version)
-        else:
-            clowder.sync_version(version)
+        clowder.sync_version_all(version)
 
 def litter(root_directory):
     """clowder litter subcommand"""

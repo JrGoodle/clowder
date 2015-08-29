@@ -48,18 +48,12 @@ test_branch()
 export LLVM_PROJECTS_DIR="$TRAVIS_BUILD_DIR/examples/llvm-projects"
 pushd $LLVM_PROJECTS_DIR
 
-# Test breed and herding all
-./breed.sh && clowder herd -a && clowder meow && ./clean.sh || exit 1
-
-# Test breed and herding defaults
+# Test breed and herding
 ./breed.sh && clowder herd || exit 1
 setup_old_repos # configur repo's for testing pulling new commits
 clowder herd || exit 1
 clowder meow || exit 1
 ./clean.sh
-
-# Test breed and herding all for a version
-# ./breed.sh && clowder herd -a -v v0.1 && clowder herd -a && ./clean.sh || exit 1
 
 # Test breed and herding defaults for a version
 ./breed.sh || exit 1

@@ -39,7 +39,7 @@ class Command(object):
                                                  help='herd help',
                                                  description='Sync project repositories')
         parser_herd.add_argument('--version', '-v')
-        parser_herd.add_argument('--all', '-a', action='store_true')
+
         # clowder meow
         self.subparsers.add_parser('meow',
                                    help='meow help',
@@ -95,7 +95,7 @@ class Command(object):
         """clowder herd command"""
         if self.clowder != None:
             print('Herding...\n')
-            herd(self.root_directory, self.args.version, self.args.all)
+            herd(self.root_directory, self.args.version)
         else:
             print('No .clowder found in the current directory, exiting...')
             sys.exit()
