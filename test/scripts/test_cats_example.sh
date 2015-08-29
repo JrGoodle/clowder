@@ -18,7 +18,6 @@ clowder meow || exit 1
 
 ./breed.sh || exit 1
 clowder herd -v v0.1 || exit 1
-
 clowder meow || exit 1
 
 projects=( 'black-cats/kit' \
@@ -38,7 +37,24 @@ echo ''
 
 clowder meow || exit 1
 
-for project in "${projects[@]}"
+black_cat_projects=( 'black-cats/kit' \
+                    'black-cats/kishka' \
+                    'black-cats/sasha' \
+                    'black-cats/jules' )
+
+for project in "${black_cat_projects[@]}"
+do
+	pushd $project &>/dev/null
+    touch newfile
+    git add newfile
+    popd &>/dev/null
+done
+
+clowder meow || exit 1
+clowder litter || exit 1
+clowder meow || exit 1
+
+for project in "${black_cat_projects[@]}"
 do
 	pushd $project &>/dev/null
     touch newfile
@@ -48,6 +64,7 @@ done
 
 clowder meow || exit 1
 clowder herd || exit 1
+clowder meow || exit 1
 
 for project in "${projects[@]}"
 do
@@ -55,6 +72,5 @@ do
     test_branch master
     popd &>/dev/null
 done
-echo ''
 
-clowder meow || exit 1
+echo ''
