@@ -34,6 +34,7 @@ do
     test_branch clowder-fix/v0.1
     popd &>/dev/null
 done
+echo ''
 
 clowder meow || exit 1
 
@@ -54,5 +55,6 @@ do
     test_branch master
     popd &>/dev/null
 done
+echo ''
 
 clowder meow || exit 1
