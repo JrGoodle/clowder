@@ -40,7 +40,9 @@ test_branch()
 {
     local git_branch
     git_branch=$(git rev-parse --abbrev-ref HEAD)
-    [[ "$0" = "$git_branch" ]] && echo "On correct branch: $0" || exit 1
+    echo "Current branch: $git_branch"
+    echo "Test branch: $1"
+    [[ "$1" = "$git_branch" ]] && echo "On correct branch: $1" || exit 1
 }
 
 export LLVM_PROJECTS_DIR="$TRAVIS_BUILD_DIR/examples/llvm-projects"
