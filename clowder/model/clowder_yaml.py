@@ -10,11 +10,13 @@ class ClowderYAML(object):
     """Class encapsulating project information from clowder.yaml"""
     def __init__(self, rootDirectory):
         self.root_directory = rootDirectory
-
         self.defaults = None
         self.groups = []
         self.remotes = []
+        self.load_yaml()
 
+    def load_yaml(self):
+        """Load clowder from yaml file"""
         yaml_file = os.path.join(self.root_directory, 'clowder.yaml')
         if os.path.exists(yaml_file):
             with open(yaml_file) as file:
