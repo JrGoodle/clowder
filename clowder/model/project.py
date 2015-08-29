@@ -63,11 +63,13 @@ class Project(object):
 
     def status(self):
         """Print git status of project"""
+        git_path = os.path.join(self.full_path, '.git')
+        if not os.path.isdir(git_path):
+            return
         if git_is_dirty(self.full_path):
             color = 'red'
         else:
             color = 'green'
-
         project_output = colored(self.path, color)
         print(project_output)
 
