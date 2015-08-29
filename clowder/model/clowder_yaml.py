@@ -52,7 +52,6 @@ class ClowderYAML(object):
             if group.name in self.defaults.groups:
                 for project in group.projects:
                     project.sync()
-        print('')
 
     def sync_all(self):
         """Sync all projects with latest upstream changes"""
@@ -60,7 +59,6 @@ class ClowderYAML(object):
         for group in self.groups:
             for project in group.projects:
                 project.sync()
-        print('')
 
     def sync_version(self, version):
         """Sync default projects to fixed versions"""
@@ -69,7 +67,6 @@ class ClowderYAML(object):
             if group.name in self.defaults.groups:
                 for project in group.projects:
                     project.sync_version(version)
-        print('')
 
     def sync_version_all(self, version):
         """Sync all projects to fixed versions"""
@@ -77,14 +74,12 @@ class ClowderYAML(object):
         for group in self.groups:
             for project in group.projects:
                 project.sync_version(version)
-        print('')
 
     def status(self):
         """Print git status for all projects"""
         for group in self.groups:
             for project in group.projects:
                 project.status()
-        print('')
 
     def fix_version(self, version):
         """Fix current commits to versioned clowder.yaml"""
@@ -97,7 +92,6 @@ class ClowderYAML(object):
         if not os.path.exists(yaml_file):
             with open(yaml_file, 'w') as file:
                 yaml.dump(self.get_yaml(), file, default_flow_style=False)
-        print('')
 
     def get_yaml(self):
         """Return python object representation for saving yaml"""
