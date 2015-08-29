@@ -104,3 +104,20 @@ popd
 pushd llvm
 test_branch master
 popd
+
+pushd llvm
+touch newfile
+git add newfile
+popd
+pushd llvm/tools/clang
+touch newfile
+git add newfile
+popd
+pushd llvm/projects/compiler-rt
+touch newfile
+git add newfile
+popd
+
+clowder meow
+clowder litter
+clowder meow
