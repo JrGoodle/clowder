@@ -80,7 +80,8 @@ def git_sync_version(repo_path, version, ref):
                 # print('Checking out existing branch: ' + fix_branch)
                 git.checkout(fix_branch)
     except:
-        print(' - No existing branch, checking out: ' + fix_branch)
+        branch_output = colored(fix_branch, 'cyan')
+        print(' - No existing branch, checking out: ' + branch_output)
         git.checkout('-b', fix_branch, ref)
 
 def git_validate_repo_state(repo_path):
