@@ -87,6 +87,9 @@ def git_sync_version(repo_path, version, ref):
 
 def git_validate_repo_state(repo_path):
     """Validate repo state"""
+    git_path = os.path.join(repo_path, '.git')
+    if not os.path.isdir(git_path):
+        return
     # if git_untracked_files(repo_path):
     #     print(repo_path + ' HEAD is detached.')
     #     print('Please point your HEAD to a branch before running clowder.')

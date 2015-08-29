@@ -9,7 +9,7 @@ from clowder.utility.git_utilities import (
     git_status,
     git_sync,
     git_sync_version,
-    # git_validate_repo_state
+    git_validate_repo_state
 )
 
 class Project(object):
@@ -84,4 +84,4 @@ class Project(object):
 
     def validate(self):
         """Validate status of project's repository"""
-        # git_validate_repo_state(self.full_path)
+        git_validate_repo_state(self.full_path)
