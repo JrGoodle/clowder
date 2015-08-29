@@ -58,59 +58,37 @@ clowder meow || exit 1
 clowder herd -v v0.1 || exit 1
 clowder meow || exit 1
 
-pushd llvm/tools/clang &>/dev/null
-test_branch clowder-fix/v0.1
-popd &>/dev/null
-pushd llvm/tools/clang/tools/extra &>/dev/null
-test_branch clowder-fix/v0.1
-popd &>/dev/null
-pushd llvm/projects/compiler-rt &>/dev/null
-test_branch clowder-fix/v0.1
-popd &>/dev/null
-pushd llvm/projects/libunwind &>/dev/null
-test_branch clowder-fix/v0.1
-popd &>/dev/null
-pushd llvm/projects/dragonegg &>/dev/null
-test_branch clowder-fix/v0.1
-popd &>/dev/null
-pushd llvm &>/dev/null
-test_branch clowder-fix/v0.1
-popd &>/dev/null
+projects=( 'llvm' \
+            'llvm/tools/clang' \
+            'llvm/tools/clang/tools/extra' \
+            'llvm/projects/compiler-rt' \
+            'llvm/projects/libunwind' \
+            'llvm/projects/dragonegg' )
+            
+for project in "${projects[@]}"
+do
+	pushd $project &>/dev/null
+    test_branch clowder-fix/v0.1
+    popd &>/dev/null
+done
 
 clowder herd || exit 1
 clowder meow || exit 1
 
-pushd llvm/tools/clang &>/dev/null
-test_branch master
-popd &>/dev/null
-pushd llvm/tools/clang/tools/extra &>/dev/null
-test_branch master
-popd &>/dev/null
-pushd llvm/projects/compiler-rt &>/dev/null
-test_branch master
-popd &>/dev/null
-pushd llvm/projects/libunwind &>/dev/null
-test_branch master
-popd &>/dev/null
-pushd llvm/projects/dragonegg &>/dev/null
-test_branch master
-popd &>/dev/null
-pushd llvm &>/dev/null
-test_branch master
-popd &>/dev/null
+for project in "${projects[@]}"
+do
+	pushd $project &>/dev/null
+    test_branch master
+    popd &>/dev/null
+done
 
-pushd llvm &>/dev/null
-touch newfile
-git add newfile
-popd &>/dev/null
-pushd llvm/tools/clang &>/dev/null
-touch newfile
-git add newfile
-popd &>/dev/null
-pushd llvm/projects/compiler-rt &>/dev/null
-touch newfile
-git add newfile
-popd &>/dev/null
+for project in "${projects[@]}"
+do
+	pushd $project &>/dev/null
+    touch newfile
+    git add newfile
+    popd &>/dev/null
+done
 
 clowder meow || exit 1
 clowder litter || exit 1
