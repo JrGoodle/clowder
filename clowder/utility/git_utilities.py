@@ -23,7 +23,8 @@ def clone_git_url_at_path(url, repo_path):
     if not os.path.isdir(os.path.join(repo_path, '.git')):
         if not os.path.isdir(repo_path):
             os.makedirs(repo_path)
-        print(' - Cloning repo at: ' + repo_path)
+        repo_path_output = colored('(' + repo_path + ')', 'cyan')
+        print(' - Cloning repo at: ' + repo_path_output)
         repo = Repo.init(repo_path)
         origin = repo.create_remote('origin', url)
         origin.fetch()
@@ -63,7 +64,7 @@ def git_sync(repo_path, ref):
     if git_current_branch(repo_path) != project_ref:
         print(' - Not on default branch, stashing current changes')
         git.stash()
-        project_output = colored(project_ref, 'cyan')
+        project_output = colored(project_ref, 'magenta')
         print(' - Checking out ' + project_output)
         git.checkout(project_ref)
     print(' - Pulling latest changes')
@@ -80,7 +81,7 @@ def git_sync_version(repo_path, version, ref):
                 # print('Checking out existing branch: ' + fix_branch)
                 git.checkout(fix_branch)
     except:
-        branch_output = colored(fix_branch, 'cyan')
+        branch_output = colored(fix_branch, 'magenta')
         print(' - No existing branch, checking out: ' + branch_output)
         git.checkout('-b', fix_branch, ref)
 

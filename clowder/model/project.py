@@ -77,10 +77,10 @@ class Project(object):
 
         if git_is_detached(self.full_path):
             current_ref = git_current_sha(self.full_path)
-            current_ref_output = colored('(' + current_ref + ')', 'cyan')
+            current_ref_output = colored('(' + current_ref + ')', 'magenta')
         else:
             current_branch = git_current_branch(self.full_path)
-            current_ref_output = colored('(' + current_branch + ')', 'cyan')
+            current_ref_output = colored('(' + current_branch + ')', 'magenta')
 
         print(project_output + ' ' + current_ref_output)
 
