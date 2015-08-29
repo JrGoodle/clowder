@@ -79,7 +79,7 @@ def git_sync_version(repo_path, version, ref):
     try:
         if repo.heads[fix_branch]:
             if repo.active_branch != repo.heads[fix_branch]:
-                print('Checking out existing branch: ' + branch_output)
+                print(' - Checking out existing branch: ' + branch_output)
                 git.checkout(fix_branch)
     except:
         print(' - No existing branch, checking out: ' + branch_output)
