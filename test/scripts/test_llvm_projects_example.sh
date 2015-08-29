@@ -53,13 +53,6 @@ pushd $LLVM_PROJECTS_DIR
 setup_old_repos # configur repo's for testing pulling new commits
 clowder herd || exit 1
 clowder meow || exit 1
-./clean.sh
-
-# Test breed and herding defaults for a version
-./breed.sh || exit 1
-
-setup_old_repos # configur repo's for testing pulling new commits
-# clowder meow || exit 1
 
 clowder herd -v v0.1 || exit 1
 clowder meow || exit 1
