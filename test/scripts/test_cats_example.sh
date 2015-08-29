@@ -65,7 +65,7 @@ done
 
 clowder meow || exit 1
 clowder herd || exit 1
-clowder liter || exit 1
+clowder litter || exit 1
 clowder meow || exit 1
 clowder herd || exit 1
 clowder meow || exit 1
