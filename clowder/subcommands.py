@@ -54,6 +54,11 @@ def herd(root_directory, version, sync_all):
         else:
             clowder.sync_version(version)
 
+def litter(root_directory):
+    """clowder litter subcommand"""
+    clowder = ClowderYAML(root_directory)
+    clowder.litter()
+
 def meow(root_directory):
     """clowder meow subcommand"""
     clowder = ClowderYAML(root_directory)

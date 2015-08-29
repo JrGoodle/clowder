@@ -48,6 +48,11 @@ def git_fix_version(repo_path, version):
     git.pull()
     git.push()
 
+def git_litter(repo_path):
+    """Discard current changes in repository"""
+    repo = Repo(repo_path)
+    repo.head.reset(index=True, working_tree=True)
+
 def git_sync(repo_path, ref):
     """Sync git repo with default branch"""
     repo = Repo(repo_path)

@@ -3,9 +3,9 @@ import os
 from termcolor import colored
 
 from clowder.utility.git_utilities import (
+    git_litter,
     git_sync_version,
     git_sync,
-    git_status,
     get_current_sha,
     git_validate_repo_state,
     git_is_dirty,
@@ -71,6 +71,16 @@ class Project(object):
 
         project_output = colored(self.path, color)
         print(project_output)
+
+    def print_name(self):
+        """Project relative project path in green"""
+        project_output = colored(self.path, 'green')
+        print(project_output)
+
+    def litter(self):
+        """Discard changes in project's repository"""
+        self.print_name()
+        git_litter(self.full_path)
 
     def _get_remote_url(self):
         """Return full remote url for project"""

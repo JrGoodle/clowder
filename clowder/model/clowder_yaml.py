@@ -38,6 +38,13 @@ class ClowderYAML(object):
             names.append(group['name'])
         return names
 
+    def litter(self):
+        """Discard changes for all projects"""
+        for group in self.groups:
+            for project in group.projects:
+                project.litter()
+        print('')
+
     def sync(self):
         """Sync default projects with latest upstream changes"""
         self.validate()

@@ -7,7 +7,7 @@ if __name__ == '__main__':
 import argcomplete, argparse
 import os, sys
 
-from clowder.subcommands import breed, herd, meow, groom, fix
+from clowder.subcommands import breed, herd, meow, groom, fix, litter
 from clowder.model.clowder_yaml import ClowderYAML
 
 class Command(object):
@@ -49,6 +49,10 @@ class Command(object):
                                                 help='fix help',
                                                 description='Update clowder.yaml')
         parser_fix.add_argument('--version', '-v')
+        # clowder litter
+        self.subparsers.add_parser('litter',
+                                   help='litter help',
+                                   description='Discard current changes')
         # Argcomplete and arguments parsing
         argcomplete.autocomplete(parser)
         self.args = parser.parse_args()
@@ -92,6 +96,15 @@ class Command(object):
         if self.clowder != None:
             print('Herding...\n')
             herd(self.root_directory, self.args.version, self.args.all)
+        else:
+            print('No .clowder found in the current directory, exiting...')
+            sys.exit()
+
+    def litter(self):
+        """clowder litter command"""
+        if self.clowder != None:
+            print('Litter...\n')
+            litter(self.root_directory)
         else:
             print('No .clowder found in the current directory, exiting...')
             sys.exit()
