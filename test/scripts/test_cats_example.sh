@@ -80,7 +80,7 @@ do
 done
 echo ''
 
-for project in "${projects[@]}"
+for project in "${black_cat_projects[@]}"
 do
 	pushd $project &>/dev/null
     git checkout master~2
@@ -93,7 +93,7 @@ clowder meow || exit 1
 clowder litter || exit 1
 clowder meow || exit 1
 
-for project in "${projects[@]}"
+for project in "${black_cat_projects[@]}"
 do
 	pushd $project &>/dev/null
     git checkout master
