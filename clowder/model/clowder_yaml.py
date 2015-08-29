@@ -10,11 +10,13 @@ class ClowderYAML(object):
     """Class encapsulating project information from clowder.yaml"""
     def __init__(self, rootDirectory):
         self.root_directory = rootDirectory
-
         self.defaults = None
         self.groups = []
         self.remotes = []
+        self.load_yaml()
 
+    def load_yaml(self):
+        """Load clowder from yaml file"""
         yaml_file = os.path.join(self.root_directory, 'clowder.yaml')
         if os.path.exists(yaml_file):
             with open(yaml_file) as file:
@@ -37,6 +39,12 @@ class ClowderYAML(object):
         for group in self.groups:
             names.append(group['name'])
         return names
+
+    def litter(self):
+        """Discard changes for all projects"""
+        for group in self.groups:
+            for project in group.projects:
+                project.litter()
 
     def sync(self):
         """Sync default projects with latest upstream changes"""

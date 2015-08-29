@@ -1,12 +1,16 @@
 """Model representation of clowder.yaml project"""
 import os
+from termcolor import colored
 
 from clowder.utility.git_utilities import (
+    git_litter,
+    git_is_detached,
+    git_current_branch,
     git_sync_version,
     git_sync,
-    git_status,
-    get_current_sha,
-    git_validate_repo_state,
+    git_current_sha,
+    # git_validate_repo_state,
+    git_is_dirty,
     clone_git_url_at_path
 )
 
@@ -36,35 +40,58 @@ class Project(object):
         """Return python object representation for saving yaml"""
         return {'name': self.name,
                 'path': self.path,
-                'ref': get_current_sha(self.full_path),
+                'ref': git_current_sha(self.full_path),
                 'remote': self.remote_name}
 
     def sync(self):
         """Clone project or update latest from upstream"""
+        self.print_name()
         git_path = os.path.join(self.full_path, '.git')
         if not os.path.isdir(git_path):
             clone_git_url_at_path(self._get_remote_url(), self.full_path)
         else:
-            print('Syncing ' + self.name)
-            print('At Path ' + self.full_path)
             git_sync(self.full_path, self.ref)
-        print("")
 
     def sync_version(self, version):
         """Check out fixed version of project"""
+        self.print_name()
         git_path = os.path.join(self.full_path, '.git')
         if not os.path.isdir(git_path):
             clone_git_url_at_path(self._get_remote_url(), self.full_path)
 
-        print('Checking out fixed version of ' + self.name)
         git_sync_version(self.full_path, version, self.ref)
-        print("")
 
     def status(self):
         """Print git status of project"""
-        print(self.path)
-        git_status(self.full_path)
-        print("")
+        git_path = os.path.join(self.full_path, '.git')
+        if not os.path.isdir(git_path):
+            return
+
+        if git_is_dirty(self.full_path):
+            color = 'red'
+            symbol = '*'
+        else:
+            color = 'green'
+            symbol = ''
+        project_output = colored(symbol + self.path, color)
+
+        if git_is_detached(self.full_path):
+            current_ref = git_current_sha(self.full_path)
+            current_ref_output = colored('(' + current_ref + ')', 'magenta')
+        else:
+            current_branch = git_current_branch(self.full_path)
+            current_ref_output = colored('(' + current_branch + ')', 'magenta')
+
+        print(project_output + ' ' + current_ref_output)
+
+    def print_name(self):
+        """Project relative project path in green"""
+        project_output = colored(self.path, 'green')
+        print(project_output)
+
+    def litter(self):
+        """Discard changes in project's repository"""
+        git_litter(self.full_path)
 
     def _get_remote_url(self):
         """Return full remote url for project"""

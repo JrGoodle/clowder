@@ -39,8 +39,7 @@ $ clowder breed https://github.com/jrgoodle/llvm-projects.git
 The `clowder breed` command will clone the [llvm-projects](https://github.com/jrgoodle/llvm-projects.git) repository in the `llvm-projects/clowder` directory. A symlink is created at `llvm-projects/clowder.yaml` pointing to `llvm-projects/clowder/clowder.yaml`.
 
 ```bash
-$ clowder herd # herd default groups
-$ clowder herd -a # herd all groups
+$ clowder herd # herd all groups
 ```
 
 Herding clones the project repository if it didn't previously exist.
