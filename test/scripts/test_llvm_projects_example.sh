@@ -41,8 +41,8 @@ test_branch()
 {
     local git_branch
     git_branch=$(git rev-parse --abbrev-ref HEAD)
-    echo "TEST: Current branch: $git_branch"
-    echo "TEST: Test branch: $1"
+    # echo "TEST: Current branch: $git_branch"
+    # echo "TEST: Test branch: $1"
     [[ "$1" = "$git_branch" ]] && echo "TEST: On correct branch: $1" || exit 1
 }
 
@@ -64,7 +64,7 @@ projects=( 'llvm' \
             'llvm/projects/compiler-rt' \
             'llvm/projects/libunwind' \
             'llvm/projects/dragonegg' )
-            
+
 for project in "${projects[@]}"
 do
 	pushd $project &>/dev/null
