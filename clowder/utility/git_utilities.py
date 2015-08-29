@@ -75,13 +75,13 @@ def git_sync_version(repo_path, version, ref):
     repo = Repo(repo_path)
     git = repo.git
     fix_branch = 'clowder-fix/' + version
+    branch_output = colored(fix_branch, 'magenta')
     try:
         if repo.heads[fix_branch]:
             if repo.active_branch != repo.heads[fix_branch]:
-                # print('Checking out existing branch: ' + fix_branch)
+                print('Checking out existing branch: ' + branch_output)
                 git.checkout(fix_branch)
     except:
-        branch_output = colored(fix_branch, 'magenta')
         print(' - No existing branch, checking out: ' + branch_output)
         git.checkout('-b', fix_branch, ref)
 

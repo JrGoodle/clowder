@@ -91,7 +91,6 @@ class Project(object):
 
     def litter(self):
         """Discard changes in project's repository"""
-        self.print_name()
         git_litter(self.full_path)
 
     def _get_remote_url(self):
