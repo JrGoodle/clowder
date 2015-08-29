@@ -3,16 +3,6 @@
 setup_old_repos()
 {
     echo 'TEST: Setting up older copies of repos'
-    local CLANG_TOOLS_EXTRA_DIR="$LLVM_PROJECTS_DIR/llvm/tools/clang/tools/extra"
-    rm -rf $CLANG_TOOLS_EXTRA_DIR
-    mkdir -p $CLANG_TOOLS_EXTRA_DIR
-    pushd $CLANG_TOOLS_EXTRA_DIR &>/dev/null
-    git clone https://github.com/JrGoodle/clang-tools-extra.git . &>/dev/null
-    git remote remove origin &>/dev/null
-    git remote add origin https://github.com/llvm-mirror/clang-tools-extra.git &>/dev/null
-    git fetch &>/dev/null
-    git branch -u origin/master &>/dev/null
-    popd &>/dev/null
 
     local CLANG_DIR="$LLVM_PROJECTS_DIR/llvm/tools/clang"
     rm -rf $CLANG_DIR
@@ -21,6 +11,17 @@ setup_old_repos()
     git clone https://github.com/JrGoodle/clang.git . &>/dev/null
     git remote remove origin &>/dev/null
     git remote add origin https://github.com/llvm-mirror/clang.git &>/dev/null
+    git fetch &>/dev/null
+    git branch -u origin/master &>/dev/null
+    popd &>/dev/null
+
+    local CLANG_TOOLS_EXTRA_DIR="$LLVM_PROJECTS_DIR/llvm/tools/clang/tools/extra"
+    rm -rf $CLANG_TOOLS_EXTRA_DIR
+    mkdir -p $CLANG_TOOLS_EXTRA_DIR
+    pushd $CLANG_TOOLS_EXTRA_DIR &>/dev/null
+    git clone https://github.com/JrGoodle/clang-tools-extra.git . &>/dev/null
+    git remote remove origin &>/dev/null
+    git remote add origin https://github.com/llvm-mirror/clang-tools-extra.git &>/dev/null
     git fetch &>/dev/null
     git branch -u origin/master &>/dev/null
     popd &>/dev/null
