@@ -5,8 +5,8 @@ from clowder.model.clowder_yaml import ClowderYAML
 from clowder.utility.git_utilities import (
     git_clone_url_at_path,
     git_sync,
-    git_fix,
-    git_fix_version
+    # git_fix,
+    # git_fix_version,
     git_validate_repo_state
 )
 
@@ -26,11 +26,12 @@ def fix(root_directory, version):
     clowder_dir = os.path.join(root_directory, 'clowder')
     if version == None:
         # Update repo containing clowder.yaml
-        git_fix(clowder_dir)
+        # git_fix(clowder_dir)
+        pass
     else:
         clowder = ClowderYAML(root_directory)
         clowder.fix_version(version)
-        git_fix_version(clowder_dir, version)
+        # git_fix_version(clowder_dir, version)
     print('')
 
 def groom(root_directory):

@@ -50,7 +50,7 @@ class Command(object):
         parser_fix = self.subparsers.add_parser('fix',
                                                 help='fix help',
                                                 description='Update clowder.yaml')
-        parser_fix.add_argument('--version', '-v')
+        parser_fix.add_argument('--version', '-v', required=True)
         # clowder litter
         self.subparsers.add_parser('litter',
                                    help='litter help',
