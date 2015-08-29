@@ -150,6 +150,7 @@ def process_output(line):
     print(stripped_line)
 
 def git_status(repo_path, name):
+    """Print repo status"""
     git_path = os.path.join(repo_path, '.git')
     if not os.path.isdir(git_path):
         return
