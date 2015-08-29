@@ -13,7 +13,7 @@ install: brew install python3
 
 before_script: python3 setup.py -q install
 
-script: ./test/test_${EXAMPLE}_example.sh
+script: ./test/scripts/test_${EXAMPLE}_example.sh
 
 branches:
   only: # whitelist
