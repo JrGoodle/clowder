@@ -50,7 +50,6 @@ class Project(object):
         if not os.path.isdir(git_path):
             clone_git_url_at_path(self._get_remote_url(), self.full_path)
         else:
-            print('Syncing...')
             git_sync(self.full_path, self.ref)
 
     def sync_version(self, version):
