@@ -62,10 +62,8 @@ def git_sync(repo_path, ref):
     git.fetch('--all', '--prune', '--tags')
     project_ref = git_truncate_ref(ref)
     if git_current_branch(repo_path) != project_ref:
-        print(' - Not on default branch, stashing current changes')
-        git.stash()
         project_output = colored(project_ref, 'magenta')
-        print(' - Checking out ' + project_output)
+        print(' - Not on default branch, checking out ' + project_output)
         git.checkout(project_ref)
     print(' - Pulling latest changes')
     git.pull()
