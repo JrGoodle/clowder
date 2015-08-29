@@ -36,6 +36,8 @@ setup_old_repos()
     git fetch &>/dev/null
     git branch -u origin/master &>/dev/null
     popd &>/dev/null
+
+    echo ''
 }
 
 test_branch()
