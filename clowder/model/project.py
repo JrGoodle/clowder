@@ -78,4 +78,4 @@ class Project(object):
 
     def validate(self):
         """Validate status of project's repository"""
-        git_validate_repo_state(self.full_path)
+        # git_validate_repo_state(self.full_path)
