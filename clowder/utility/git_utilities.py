@@ -1,6 +1,7 @@
 """Git utilities"""
 import os, sys
 from git import Repo
+from termcolor import colored
 
 # Disable errors shown by pylint for sh.git
 # pylint: disable=E1101
@@ -59,11 +60,11 @@ def git_sync(repo_path, ref):
     git = repo.git
     git.fetch('--all', '--prune', '--tags')
     project_ref = truncate_git_ref(ref)
-    if get_current_branch(repo_path) != project_ref:
-        print(' - Not on default branch')
-        print(' - Stashing current changes')
+    if git_current_branch(repo_path) != project_ref:
+        print(' - Not on default branch, stashing current changes')
         git.stash()
-        print(' - Checking out ' + project_ref)
+        project_output = colored(project_ref, 'cyan')
+        print(' - Checking out ' + project_output)
         git.checkout(project_ref)
     print(' - Pulling latest changes')
     git.pull()
@@ -74,7 +75,7 @@ def git_sync_version(repo_path, version, ref):
     git = repo.git
     fix_branch = 'clowder-fix/' + version
     try:
-        if repo.heads[fix_branch].exists():
+        if repo.heads[fix_branch]:
             if repo.active_branch != repo.heads[fix_branch]:
                 # print('Checking out existing branch: ' + fix_branch)
                 git.checkout(fix_branch)
@@ -125,13 +126,21 @@ def git_status(repo_path):
     git = repo.git
     git.status()
 
-def get_current_branch(repo_path):
+def git_current_branch(repo_path):
     """Return currently checked out branch of project"""
     repo = Repo(repo_path)
     git = repo.git
     return str(git.rev_parse('--abbrev-ref', 'HEAD')).rstrip('\n')
 
-def get_current_sha(repo_path):
+def git_current_ref(repo_path):
+    """Return current ref of project"""
+    repo = Repo(repo_path)
+    if repo.head.is_detached:
+        return git_current_sha(repo_path)
+    else:
+        return git_current_sha(repo_path)
+
+def git_current_sha(repo_path):
     """Return current git sha for checked out commit"""
     repo = Repo(repo_path)
     git = repo.git

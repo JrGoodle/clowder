@@ -43,7 +43,6 @@ class ClowderYAML(object):
         for group in self.groups:
             for project in group.projects:
                 project.litter()
-        print('')
 
     def sync(self):
         """Sync default projects with latest upstream changes"""

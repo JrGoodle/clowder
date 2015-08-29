@@ -4,10 +4,12 @@ from termcolor import colored
 
 from clowder.utility.git_utilities import (
     git_litter,
+    git_is_detached,
+    git_current_branch,
     git_sync_version,
     git_sync,
-    get_current_sha,
-    git_validate_repo_state,
+    git_current_sha,
+    # git_validate_repo_state,
     git_is_dirty,
     clone_git_url_at_path
 )
@@ -38,7 +40,7 @@ class Project(object):
         """Return python object representation for saving yaml"""
         return {'name': self.name,
                 'path': self.path,
-                'ref': get_current_sha(self.full_path),
+                'ref': git_current_sha(self.full_path),
                 'remote': self.remote_name}
 
     def sync(self):
@@ -66,12 +68,23 @@ class Project(object):
         git_path = os.path.join(self.full_path, '.git')
         if not os.path.isdir(git_path):
             return
+
         if git_is_dirty(self.full_path):
             color = 'red'
+            symbol = '*'
         else:
             color = 'green'
-        project_output = colored(self.path, color)
-        print(project_output)
+            symbol = ''
+        project_output = colored(symbol + self.path, color)
+
+        if git_is_detached(self.full_path):
+            current_ref = git_current_sha(self.full_path)
+            current_ref_output = colored('(' + current_ref + ')', 'cyan')
+        else:
+            current_branch = git_current_branch(self.full_path)
+            current_ref_output = colored('(' + current_branch + ')', 'cyan')
+
+        print(project_output + ' ' + current_ref_output)
 
     def print_name(self):
         """Project relative project path in green"""
