@@ -1,5 +1,7 @@
 #! /bin/bash
 
+set -xv
+
 test_branch()
 {
     local git_branch

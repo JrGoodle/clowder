@@ -1,5 +1,7 @@
 #! /bin/bash
 
+set -xv
+
 setup_old_repos()
 {
     echo 'TEST: Setting up older copies of repos'
