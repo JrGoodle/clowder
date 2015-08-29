@@ -118,6 +118,6 @@ touch newfile
 git add newfile
 popd
 
-clowder meow
-clowder litter
-clowder meow
+clowder meow || exit 1
+clowder litter || exit 1
+clowder meow || exit 1
