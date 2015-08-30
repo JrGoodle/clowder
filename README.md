@@ -1,12 +1,8 @@
-[![Build Status](https://travis-ci.org/JrGoodle/clowder.svg)](https://travis-ci.org/JrGoodle/clowder)
+# `clowder` [![Build Status](https://travis-ci.org/JrGoodle/clowder.svg)](https://travis-ci.org/JrGoodle/clowder)
 
----
+> **clowder** - A group of cats
 
-**clowder**  
-> A group of cats
-
-**herding cats**  
-> An idiom that refers to a frustrating attempt to control or organize a class of entities which are uncontrollable or chaotic.
+> **herding cats** - An idiom that refers to a frustrating attempt to control or organize a class of entities which are uncontrollable or chaotic.
 
 Managing multiple repositories of dependent code can be pretty frustrating. There are a number of existing options:
 
@@ -26,13 +22,13 @@ URL information and project locations on disk are specified in a `clowder.yaml` 
 This file is checked into its own repository, so the project structure's history is saved under version control.
 You can `fix` specific versions with current commit hashes saved for later restoration.
 
-See the [examples](https://github.com/JrGoodle/clowder/tree/master/examples) directory for a couple example projects.
+For a couple example projects, see the [examples directory](https://github.com/JrGoodle/clowder/tree/master/examples).
 
 ## Getting Started
 
-This example is based on the LLVM project. See [the example clowder.yaml](https://github.com/JrGoodle/llvm-projects/blob/master/clowder.yaml).
+This example is based on the LLVM project. See [the full clowder.yaml](https://github.com/JrGoodle/llvm-projects/blob/master/clowder.yaml).
 
-To try it out, first create directory to contain projects.
+First create directory to contain all the projects.
 
 ```bash
 $ mkdir llvm-projects
@@ -85,7 +81,7 @@ $ clowder herd -v v0.1 # Check out fixed version
 $ clowder forall "$COMMAND" # Run "$COMMAND" in all project directories
 ```
 
-## `clowder.yaml` Format
+## The `clowder.yaml` File
 
 ### Defaults
 
