@@ -1,7 +1,7 @@
 """Print utilities"""
 import os
 import emoji
-from termcolor import colored
+from termcolor import colored, cprint
 from clowder.utility.git_utilities import (
     git_current_sha,
     git_current_branch,
@@ -14,6 +14,7 @@ def print_project_status(root_directory, path, name):
     repo_path = os.path.join(root_directory, path)
     git_path = os.path.join(repo_path, '.git')
     if not os.path.isdir(git_path):
+        cprint(name, 'green')
         return
 
     if git_is_dirty(repo_path):
