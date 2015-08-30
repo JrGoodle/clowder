@@ -72,12 +72,18 @@ clowder meow || exit 1
 clowder herd || exit 1
 clowder meow || exit 1
 
-for project in "${projects[@]}"
+for project in "${black_cat_projects[@]}"
 do
 	pushd $project &>/dev/null
     test_branch master
     popd &>/dev/null
 done
+pushd mu &>/dev/null
+test_branch knead
+popd &>/dev/null
+pushd duke &>/dev/null
+test_branch purr
+popd &>/dev/null
 echo ''
 
 for project in "${black_cat_projects[@]}"
