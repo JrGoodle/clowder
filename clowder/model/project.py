@@ -74,12 +74,8 @@ class Project(object):
 
     def _get_remote_url(self):
         """Return full remote url for project"""
-        if self.remote.url.startswith('https://'):
-            remote_url = self.remote.url + "/" + self.name + ".git"
-        elif self.remote.url.startswith('ssh://'):
-            remote_url = self.remote.url[6:] + ":" + self.name + ".git"
-        else:
-            remote_url = None
+        url_prefix = self.remote.get_url_prefix
+        remote_url = url_prefix + self.name + ".git"
         return remote_url
 
     def validate(self):

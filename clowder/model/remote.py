@@ -10,3 +10,13 @@ class Remote(object):
     def get_yaml(self):
         """Return python object representation for saving yaml"""
         return {'name': self.name, 'url': self.url}
+
+    def get_url_prefix(self):
+        """Return full remote url for project"""
+        if self.url.startswith('https://'):
+            remote_url_prefix = self.url + "/"
+        elif self.url.startswith('ssh://'):
+            remote_url_prefix = self.url[6:] + ":"
+        else:
+            remote_url_prefix = None
+        return remote_url_prefix
