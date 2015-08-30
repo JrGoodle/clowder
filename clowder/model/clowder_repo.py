@@ -1,6 +1,6 @@
 """Clowder repo management"""
 import os
-from clowder.utility.print_utilities import print_project_status
+from clowder.utility.print_utilities import print_clowder_repo_status
 from clowder.utility.git_utilities import (
     git_clone_url_at_path,
     git_herd,
@@ -20,5 +20,5 @@ class ClowderRepo(object):
     def groom(self):
         """Groom clowder repo"""
         git_validate_repo_state(self.clowder_path)
-        print_project_status(self.root_directory, 'clowder', 'clowder')
+        print_clowder_repo_status(self.root_directory)
         git_herd(self.clowder_path, 'refs/heads/master') # TODO: Replace with git_groom

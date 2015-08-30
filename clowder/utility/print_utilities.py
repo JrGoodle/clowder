@@ -36,6 +36,9 @@ def print_project_status(root_directory, path, name):
 
     print(project_output + ' ' + current_ref_output + ' ' + path_output)
 
+def print_clowder_repo_status(root_directory):
+    print_project_status(root_directory, 'clowder', 'clowder')
+    
 def print_group(name):
     name_output = colored(name, attrs=['bold'])
     print(get_cat() + '  ' + name_output)

@@ -3,7 +3,11 @@ import os, subprocess
 from termcolor import colored
 import yaml
 from clowder.utility.git_utilities import git_litter, git_validate_repo_state
-from clowder.utility.print_utilities import print_group, print_project_status
+from clowder.utility.print_utilities import (
+    print_clowder_repo_status,
+    print_group,
+    print_project_status
+)
 from clowder.model.group import Group
 from clowder.model.remote import Remote
 
@@ -78,7 +82,7 @@ class ClowderYAML(object):
     def herd_all(self):
         """Sync all projects with latest upstream changes"""
         self.validate_all()
-        print_project_status(self.root_directory, 'clowder', 'clowder')
+        print_clowder_repo_status(self.root_directory)
         for group in self.groups:
             print_group(group.name)
             for project in group.projects:
@@ -88,7 +92,7 @@ class ClowderYAML(object):
     def herd_version_all(self, version):
         """Sync all projects to fixed versions"""
         self.validate_all()
-        print_project_status(self.root_directory, 'clowder', 'clowder')
+        print_clowder_repo_status(self.root_directory)
         for group in self.groups:
             print_group(group.name)
             for project in group.projects:
@@ -97,7 +101,7 @@ class ClowderYAML(object):
 
     def meow(self):
         """Print git status for all projects"""
-        print_project_status(self.root_directory, 'clowder', 'clowder')
+        print_clowder_repo_status(self.root_directory)
         print('')
         for group in self.groups:
             print_group(group.name)
