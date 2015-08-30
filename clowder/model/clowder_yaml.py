@@ -125,7 +125,9 @@ class ClowderYAML(object):
                 yaml.dump(self.get_yaml(), file, default_flow_style=False)
         else:
             print('Version ' + version_output + ' already exists at ' + yaml_file_output)
-            cprint('\nExiting...\n', 'red')
+            print('')
+            cprint('Exiting...', 'red')
+            print('')
             sys.exit()
 
     def get_yaml(self):
