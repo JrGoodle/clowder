@@ -28,34 +28,47 @@ See the [examples](https://github.com/JrGoodle/clowder/tree/master/examples) dir
 
 ## Getting Started
 
-This example is based on the LLVM project.
+This example is based on the LLVM project. See [the example clowder.yaml](https://github.com/JrGoodle/llvm-projects/blob/master/clowder.yaml).
+
+To try it out, first create directory to contain projects.
 
 ```bash
 $ mkdir llvm-projects
 $ cd llvm-projects
+```
+
+Clone `clowder` repository containing `clowder.yaml` file.
+
+```bash
 $ clowder breed https://github.com/jrgoodle/llvm-projects.git
 ```
 
-The `clowder breed` command will clone the [llvm-projects](https://github.com/jrgoodle/llvm-projects.git) repository in the `llvm-projects/clowder` directory. A symlink is created at `llvm-projects/clowder.yaml` pointing to `llvm-projects/clowder/clowder.yaml`.
+This command will clone the [llvm-projects](https://github.com/jrgoodle/llvm-projects.git) repository in the `llvm-projects/clowder` directory and create a symlink at `llvm-projects/clowder.yaml`.
 
 ```bash
-$ clowder herd # herd all groups
+$ clowder herd
 ```
 
-Herding clones the project repository if it didn't previously exist.
-Otherwise, each project will pull the latest changes.
-If the default branch isn't checked out, the default branch checked out, and latest changes pulled.
+This command syncs the projects. Projects are cloned if they don't currently exist. Otherwise, each project will pull the latest changes. If the current branch isn't the default, it'll be checked out, and latest changes pulled.
 
 ```bash
 $ clowder groom # Update clowder repository
 ```
 
+This command is like `clowder herd`, but for syncing the `clowder` repository.
+
+### Further Commands
+
 ```bash
-$ clowder meow # print status of repositories
+$ clowder meow # print status of projects
 ```
 
 ```bash
-$ clowder litter # Discard any changes in current repositories
+$ clowder litter # Discard any changes in projects
+```
+
+```bash
+$ clowder stash # Stash any changes in projects
 ```
 
 ```bash
@@ -66,7 +79,11 @@ $ clowder fix -v v0.1 # Fix new version of clowder.yaml
 $ clowder herd -v v0.1 # Check out fixed version
 ```
 
-Example [clowder.yaml](https://github.com/JrGoodle/llvm-projects/blob/master/clowder.yaml) for LLVM projects.
+```bash
+$ clowder forall "$COMMAND" # Run "$COMMAND" in all project directories
+```
+
+## `clowder.yaml` Format
 
 ### Defaults
 
@@ -76,7 +93,6 @@ The **defaults** specify the default branch and remote for projects, and groups 
 defaults:
     ref: refs/heads/master
     remote: github
-    groups: [llvm, clang, projects]
 ```
 
 ### Remotes

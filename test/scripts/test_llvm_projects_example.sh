@@ -1,6 +1,6 @@
 #! /bin/bash
 
-set -xv
+# set -xv
 
 setup_old_repos()
 {
@@ -104,16 +104,15 @@ clowder meow || exit 1
 clowder litter || exit 1
 clowder meow || exit 1
 
-for project in "${projects[@]}"
-do
-	pushd $project &>/dev/null
-    git checkout master~2
-    popd &>/dev/null
-done
-echo ''
+pushd clowder &>/dev/null
+touch newfile
+git add newfile
+popd &>/dev/null
 
 clowder meow || exit 1
 clowder herd || exit 1
+clowder meow || exit 1
+clowder groom || exit 1
 clowder meow || exit 1
 clowder litter || exit 1
 clowder meow || exit 1
@@ -121,11 +120,34 @@ clowder meow || exit 1
 for project in "${projects[@]}"
 do
 	pushd $project &>/dev/null
-    git checkout master
+    git checkout master~2 &>/dev/null
     popd &>/dev/null
 done
-echo ''
 
+clowder meow || exit 1
+clowder herd || exit 1
+clowder meow || exit 1
+clowder herd -v v0.1 || exit 1
+clowder meow || exit 1
+clowder herd || exit 1
+clowder meow || exit 1
+clowder forall 'git status' || exit 1
+clowder fix -v v0.1 || exit 1
+clowder fix -v v0.11 || exit 1
+clowder herd -v v0.11 || exit 1
+clowder meow || exit 1
+
+for project in "${projects[@]}"
+do
+	pushd $project &>/dev/null
+    touch newfile
+    git add newfile
+    popd &>/dev/null
+done
+
+clowder meow || exit 1
+clowder herd || exit 1
+clowder stash || exit 1
 clowder meow || exit 1
 clowder herd || exit 1
 clowder meow || exit 1

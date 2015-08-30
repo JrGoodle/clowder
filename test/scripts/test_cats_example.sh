@@ -1,6 +1,6 @@
 #! /bin/bash
 
-set -xv
+# set -xv
 
 test_branch()
 {
@@ -72,35 +72,64 @@ clowder meow || exit 1
 clowder herd || exit 1
 clowder meow || exit 1
 
-for project in "${projects[@]}"
+for project in "${black_cat_projects[@]}"
 do
 	pushd $project &>/dev/null
     test_branch master
     popd &>/dev/null
 done
+pushd mu &>/dev/null
+test_branch knead
+popd &>/dev/null
+pushd duke &>/dev/null
+test_branch purr
+popd &>/dev/null
 echo ''
 
 for project in "${black_cat_projects[@]}"
 do
 	pushd $project &>/dev/null
-    git checkout master~2
+    git checkout master~2 &>/dev/null
     popd &>/dev/null
 done
 
 clowder meow || exit 1
 clowder herd || exit 1
 clowder meow || exit 1
+clowder herd -v v0.1 || exit 1
+clowder meow || exit 1
+clowder herd || exit 1
+clowder meow || exit 1
+
+pushd clowder &>/dev/null
+touch newfile
+git add newfile
+popd &>/dev/null
+
+clowder meow || exit 1
+clowder herd || exit 1
+clowder meow || exit 1
+clowder groom || exit 1
+clowder meow || exit 1
 clowder litter || exit 1
+clowder meow || exit 1
+clowder forall 'git status' || exit 1
+clowder fix -v v0.1 || exit 1
+clowder fix -v v0.11 || exit 1
+clowder herd -v v0.11 || exit 1
 clowder meow || exit 1
 
 for project in "${black_cat_projects[@]}"
 do
 	pushd $project &>/dev/null
-    git checkout master
+    touch newfile
+    git add newfile
     popd &>/dev/null
 done
-echo ''
 
+clowder meow || exit 1
+clowder herd || exit 1
+clowder stash || exit 1
 clowder meow || exit 1
 clowder herd || exit 1
 clowder meow || exit 1

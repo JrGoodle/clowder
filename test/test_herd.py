@@ -4,10 +4,10 @@ class HerdTest(unittest.TestCase):
     def setUp(self):
         pass
 
-    def test_clean_sync(self):
+    def test_clean_herd(self):
         pass
 
-    def test_dirty_sync(self):
+    def test_dirty_herd(self):
         pass
 
     def test_new_project(self):
