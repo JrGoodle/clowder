@@ -107,3 +107,4 @@ clowder groom || exit 1
 clowder meow || exit 1
 clowder litter || exit 1
 clowder meow || exit 1
+clowder forall 'git status' || exit 1

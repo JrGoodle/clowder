@@ -132,3 +132,4 @@ clowder herd -v v0.1 || exit 1
 clowder meow || exit 1
 clowder herd || exit 1
 clowder meow || exit 1
+clowder forall 'git status' || exit 1
