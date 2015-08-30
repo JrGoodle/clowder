@@ -57,14 +57,15 @@ class Command(object):
         argcomplete.autocomplete(parser)
         self.args = parser.parse_args()
 
+        print('')
         try:
             if not hasattr(self, self.args.command):
-                cprint('\nUnrecognized command\n', 'red')
+                cprint('Unrecognized command\n', 'red')
                 parser.print_help()
                 print('')
                 exit(1)
         except:
-            cprint('\nUnrecognized command\n', 'red')
+            cprint('Unrecognized command\n', 'red')
             parser.print_help()
             print('')
             exit(1)
