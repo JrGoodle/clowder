@@ -31,6 +31,11 @@ class Command(object):
                                                   help=('Clone repository to clowder directory '
                                                         'and create clowder.yaml symlink'))
         parser_breed.add_argument('url', help='URL to clone repo with clowder.yaml from')
+        # clowder fix
+        parser_fix = self.subparsers.add_parser('fix',
+                                                help=('Create version of clowder.yaml'
+                                                      ' for current repos'))
+        parser_fix.add_argument('--version', '-v', required=True, help='Version name to fix')
         # clowder forall
         parser_forall = self.subparsers.add_parser('forall',
                                                    help='Run command in all clowder projects')
@@ -42,17 +47,12 @@ class Command(object):
         parser_herd = self.subparsers.add_parser('herd',
                                                  help='Clone and sync latest changes for projects')
         parser_herd.add_argument('--version', '-v', choices=versions, help='Version name to herd')
-        # clowder meow
-        self.subparsers.add_parser('meow',
-                                   help='Print status for projects')
-        # clowder fix
-        parser_fix = self.subparsers.add_parser('fix',
-                                                help=('Create version of clowder.yaml'
-                                                      ' for current repos'))
-        parser_fix.add_argument('--version', '-v', required=True, help='Version name to fix')
         # clowder litter
         self.subparsers.add_parser('litter',
                                    help='Discard current changes in all projects and clowder repo')
+        # clowder meow
+        self.subparsers.add_parser('meow',
+                                   help='Print status for projects')
         # Argcomplete and arguments parsing
         argcomplete.autocomplete(parser)
         self.args = parser.parse_args()

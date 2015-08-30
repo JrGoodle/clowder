@@ -6,18 +6,6 @@ from termcolor import colored, cprint
 # Disable errors shown by pylint for sh.git
 # pylint: disable=E1101
 
-def git_truncate_ref(ref):
-    """Return bare branch, tag, or sha"""
-    git_branch = "refs/heads/"
-    git_tag = "refs/tags/"
-    if ref.startswith(git_branch):
-        length = len(git_branch)
-    elif ref.startswith(git_tag):
-        length = len(git_tag)
-    else:
-        length = 0
-    return ref[length:]
-
 def git_clone_url_at_path(url, repo_path):
     """Clone git repo from url at path"""
     if not os.path.isdir(os.path.join(repo_path, '.git')):
@@ -32,6 +20,26 @@ def git_clone_url_at_path(url, repo_path):
         master_branch.set_tracking_branch(origin.refs.master)
         master_branch.checkout()
 
+def git_current_branch(repo_path):
+    """Return currently checked out branch of project"""
+    repo = Repo(repo_path)
+    git = repo.git
+    return str(git.rev_parse('--abbrev-ref', 'HEAD')).rstrip('\n')
+
+def git_current_ref(repo_path):
+    """Return current ref of project"""
+    repo = Repo(repo_path)
+    if repo.head.is_detached:
+        return git_current_sha(repo_path)
+    else:
+        return git_current_sha(repo_path)
+
+def git_current_sha(repo_path):
+    """Return current git sha for checked out commit"""
+    repo = Repo(repo_path)
+    git = repo.git
+    return str(git.rev_parse('HEAD')).rstrip('\n')
+    
 def git_fix(repo_path):
     """Commit new main clowder.yaml from current changes"""
     repo = Repo(repo_path)
@@ -49,11 +57,6 @@ def git_fix_version(repo_path, version):
     git.commit('-m', 'Fix versions/' + version + '/clowder.yaml')
     git.pull()
     git.push()
-
-def git_litter(repo_path):
-    """Discard current changes in repository"""
-    repo = Repo(repo_path)
-    repo.head.reset(index=True, working_tree=True)
 
 def git_herd(repo_path, ref):
     """Sync git repo with default branch"""
@@ -82,6 +85,33 @@ def git_herd_version(repo_path, version, ref):
     except:
         print(' - No existing branch, checking out: ' + branch_output)
         git.checkout('-b', fix_branch, ref)
+
+def git_is_detached(repo_path):
+    """Check if HEAD is detached"""
+    repo = Repo(repo_path)
+    return repo.head.is_detached
+
+def git_is_dirty(repo_path):
+    """Check if repo is dirty"""
+    repo = Repo(repo_path)
+    return repo.is_dirty()
+
+def git_litter(repo_path):
+    """Discard current changes in repository"""
+    repo = Repo(repo_path)
+    repo.head.reset(index=True, working_tree=True)
+
+def git_truncate_ref(ref):
+    """Return bare branch, tag, or sha"""
+    git_branch = "refs/heads/"
+    git_tag = "refs/tags/"
+    if ref.startswith(git_branch):
+        length = len(git_branch)
+    elif ref.startswith(git_tag):
+        length = len(git_tag)
+    else:
+        length = 0
+    return ref[length:]
 
 def git_validate_repo_state(repo_path):
     """Validate repo state"""
@@ -112,16 +142,6 @@ def git_validate_repo_state(repo_path):
     #     print('')
     #     sys.exit()
 
-def git_is_dirty(repo_path):
-    """Check if repo is dirty"""
-    repo = Repo(repo_path)
-    return repo.is_dirty()
-
-def git_is_detached(repo_path):
-    """Check if HEAD is detached"""
-    repo = Repo(repo_path)
-    return repo.head.is_detached
-
 def git_untracked_files(repo_path):
     """Check if there are untracked files"""
     repo = Repo(repo_path)
@@ -129,26 +149,6 @@ def git_untracked_files(repo_path):
         return True
     else:
         return False
-
-def git_current_branch(repo_path):
-    """Return currently checked out branch of project"""
-    repo = Repo(repo_path)
-    git = repo.git
-    return str(git.rev_parse('--abbrev-ref', 'HEAD')).rstrip('\n')
-
-def git_current_ref(repo_path):
-    """Return current ref of project"""
-    repo = Repo(repo_path)
-    if repo.head.is_detached:
-        return git_current_sha(repo_path)
-    else:
-        return git_current_sha(repo_path)
-
-def git_current_sha(repo_path):
-    """Return current git sha for checked out commit"""
-    repo = Repo(repo_path)
-    git = repo.git
-    return str(git.rev_parse('HEAD')).rstrip('\n')
 
 def process_output(line):
     """Utility function for command output callbacks"""

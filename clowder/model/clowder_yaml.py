@@ -22,27 +22,27 @@ class ClowderYAML(object):
         self.load_yaml()
         self.clowder_path = os.path.join(self.root_directory, 'clowder')
 
-    def load_yaml(self):
-        """Load clowder from yaml file"""
-        yaml_file = os.path.join(self.root_directory, 'clowder.yaml')
-        if os.path.exists(yaml_file):
-            with open(yaml_file) as file:
-                parsed_yaml = yaml.safe_load(file)
+    def fix_version(self, version):
+        """Fix current commits to versioned clowder.yaml"""
+        self.validate_all()
+        versions_dir = os.path.join(self.root_directory, 'clowder/versions')
+        version_dir = os.path.join(versions_dir, version)
+        if not os.path.exists(version_dir):
+            os.makedirs(version_dir)
 
-                self.default_ref = parsed_yaml['defaults']['ref']
-                self.default_remote = parsed_yaml['defaults']['remote']
-
-                for remote in parsed_yaml['remotes']:
-                    self.remotes.append(Remote(remote))
-
-                defaults = {'ref': self.default_ref, 'remote': self.default_remote}
-
-                for group in parsed_yaml['groups']:
-                    self.groups.append(Group(self.root_directory,
-                                             group,
-                                             defaults,
-                                             self.remotes))
-                self.groups.sort(key=lambda group: group.name)
+        yaml_file = os.path.join(version_dir, 'clowder.yaml')
+        yaml_file_output = colored(yaml_file, 'cyan')
+        version_output = colored(version, attrs=['bold'])
+        if not os.path.exists(yaml_file):
+            with open(yaml_file, 'w') as file:
+                print('Fixing version ' + version_output + ' at ' + yaml_file_output)
+                yaml.dump(self.get_yaml(), file, default_flow_style=False)
+        else:
+            print('Version ' + version_output + ' already exists at ' + yaml_file_output)
+            print('')
+            cprint('Exiting...', 'red')
+            print('')
+            sys.exit()
 
     def forall(self, command):
         """Runs command in all projects"""
@@ -71,64 +71,6 @@ class ClowderYAML(object):
             names.extend(group.get_all_project_names())
         return names
 
-    def litter(self):
-        """Discard changes for all projects"""
-        print('Discarding all changes')
-        git_litter(self.clowder_path)
-        for group in self.groups:
-            for project in group.projects:
-                git_litter(project.full_path)
-
-    def herd_all(self):
-        """Sync all projects with latest upstream changes"""
-        self.validate_all()
-        print_clowder_repo_status(self.root_directory)
-        for group in self.groups:
-            print_group(group.name)
-            for project in group.projects:
-                print_project_status(self.root_directory, project.path, project.name)
-                project.herd()
-
-    def herd_version_all(self, version):
-        """Sync all projects to fixed versions"""
-        self.validate_all()
-        print_clowder_repo_status(self.root_directory)
-        for group in self.groups:
-            print_group(group.name)
-            for project in group.projects:
-                print_project_status(self.root_directory, project.path, project.name)
-                project.herd_version(version)
-
-    def meow(self):
-        """Print git status for all projects"""
-        print_clowder_repo_status(self.root_directory)
-        for group in self.groups:
-            print_group(group.name)
-            for project in group.projects:
-                print_project_status(self.root_directory, project.path, project.name)
-
-    def fix_version(self, version):
-        """Fix current commits to versioned clowder.yaml"""
-        self.validate_all()
-        versions_dir = os.path.join(self.root_directory, 'clowder/versions')
-        version_dir = os.path.join(versions_dir, version)
-        if not os.path.exists(version_dir):
-            os.makedirs(version_dir)
-
-        yaml_file = os.path.join(version_dir, 'clowder.yaml')
-        yaml_file_output = colored(yaml_file, 'cyan')
-        version_output = colored(version, attrs=['bold'])
-        if not os.path.exists(yaml_file):
-            with open(yaml_file, 'w') as file:
-                print('Fixing version ' + version_output + ' at ' + yaml_file_output)
-                yaml.dump(self.get_yaml(), file, default_flow_style=False)
-        else:
-            print('Version ' + version_output + ' already exists at ' + yaml_file_output)
-            print('')
-            cprint('Exiting...', 'red')
-            print('')
-            sys.exit()
-
     def get_yaml(self):
         """Return python object representation for saving yaml"""
         groups_yaml = []
@@ -151,6 +93,64 @@ class ClowderYAML(object):
         if os.path.exists(versions_dir):
             return os.listdir(versions_dir)
         return None
+
+    def herd_all(self):
+        """Sync all projects with latest upstream changes"""
+        self.validate_all()
+        print_clowder_repo_status(self.root_directory)
+        for group in self.groups:
+            print_group(group.name)
+            for project in group.projects:
+                print_project_status(self.root_directory, project.path, project.name)
+                project.herd()
+
+    def herd_version_all(self, version):
+        """Sync all projects to fixed versions"""
+        self.validate_all()
+        print_clowder_repo_status(self.root_directory)
+        for group in self.groups:
+            print_group(group.name)
+            for project in group.projects:
+                print_project_status(self.root_directory, project.path, project.name)
+                project.herd_version(version)
+
+    def litter(self):
+        """Discard changes for all projects"""
+        print('Discarding all changes')
+        git_litter(self.clowder_path)
+        for group in self.groups:
+            for project in group.projects:
+                git_litter(project.full_path)
+
+    def load_yaml(self):
+        """Load clowder from yaml file"""
+        yaml_file = os.path.join(self.root_directory, 'clowder.yaml')
+        if os.path.exists(yaml_file):
+            with open(yaml_file) as file:
+                parsed_yaml = yaml.safe_load(file)
+
+                self.default_ref = parsed_yaml['defaults']['ref']
+                self.default_remote = parsed_yaml['defaults']['remote']
+
+                for remote in parsed_yaml['remotes']:
+                    self.remotes.append(Remote(remote))
+
+                defaults = {'ref': self.default_ref, 'remote': self.default_remote}
+
+                for group in parsed_yaml['groups']:
+                    self.groups.append(Group(self.root_directory,
+                                             group,
+                                             defaults,
+                                             self.remotes))
+                self.groups.sort(key=lambda group: group.name)
+
+    def meow(self):
+        """Print git status for all projects"""
+        print_clowder_repo_status(self.root_directory)
+        for group in self.groups:
+            print_group(group.name)
+            for project in group.projects:
+                print_project_status(self.root_directory, project.path, project.name)
 
     def validate_all(self):
         """Validate status of all projects"""

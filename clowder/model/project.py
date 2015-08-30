@@ -51,5 +51,4 @@ class Project(object):
         git_path = os.path.join(self.full_path, '.git')
         if not os.path.isdir(git_path):
             git_clone_url_at_path(self.remote_url, self.full_path)
-
         git_herd_version(self.full_path, version, self.ref)
