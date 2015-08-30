@@ -44,12 +44,13 @@ def print_clowder_repo_status(root_directory):
     if not os.path.isdir(git_path):
         return
     output = format_repo_string(repo_path, 'clowder', 'clowder')
-    print(get_cat() + '  ' + output)
+    print(get_cat_face() + '  ' + output)
     print('')
 
 def print_group(name):
     name_output = colored(name, attrs=['bold'])
-    print(get_cat_face() + '  ' + name_output)
+    # print(get_cat_face() + '  ' + name_output)
+    print(name_output)
 
 def get_cat_face():
     """Return a cat emoji"""
