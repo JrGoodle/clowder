@@ -20,5 +20,5 @@ class ClowderRepo(object):
     def groom(self):
         """Groom clowder repo"""
         git_validate_repo_state(self.clowder_path)
-        print_project_status(root_directory, 'clowder', 'clowder')
+        print_project_status(self.root_directory, 'clowder', 'clowder')
         git_herd(self.clowder_path, 'refs/heads/master') # TODO: Replace with git_groom
