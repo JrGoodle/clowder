@@ -23,12 +23,12 @@ class Project(object):
         if 'ref' in project:
             self.ref = project['ref']
         else:
-            self.ref = defaults.ref
+            self.ref = defaults['ref']
 
         if 'remote' in project:
             self.remote_name = project['remote']
         else:
-            self.remote_name = defaults.remote
+            self.remote_name = defaults['remote']
 
         for remote in remotes:
             if remote.name == self.remote_name:

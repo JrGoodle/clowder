@@ -4,7 +4,6 @@ import yaml
 
 from clowder.utility.git_utilities import git_status
 
-from clowder.model.defaults import Defaults
 from clowder.model.group import Group
 from clowder.model.remote import Remote
 
@@ -12,7 +11,8 @@ class ClowderYAML(object):
     """Class encapsulating project information from clowder.yaml"""
     def __init__(self, rootDirectory):
         self.root_directory = rootDirectory
-        self.defaults = None
+        self.default_ref = None
+        self.default_remote = None
         self.groups = []
         self.remotes = []
         self.load_yaml()
@@ -24,15 +24,18 @@ class ClowderYAML(object):
             with open(yaml_file) as file:
                 parsed_yaml = yaml.safe_load(file)
 
-                self.defaults = Defaults(parsed_yaml['defaults'])
+                self.default_ref = parsed_yaml['defaults']['ref']
+                self.default_remote = parsed_yaml['defaults']['remote']
 
                 for remote in parsed_yaml['remotes']:
                     self.remotes.append(Remote(remote))
 
+                defaults = {'ref': self.default_ref, 'remote': self.default_remote}
+
                 for group in parsed_yaml['groups']:
                     self.groups.append(Group(self.root_directory,
                                              group,
-                                             self.defaults,
+                                             defaults,
                                              self.remotes))
 
     def get_all_group_names(self):
@@ -109,7 +112,9 @@ class ClowderYAML(object):
         for remote in self.remotes:
             remotes_yaml.append(remote.get_yaml())
 
-        return {'defaults': self.defaults.get_yaml(),
+        defaults_yaml = {'ref': self.default_ref, 'remote': self.default_remote}
+
+        return {'defaults': defaults_yaml,
                 'remotes': remotes_yaml,
                 'groups': groups_yaml}
 
