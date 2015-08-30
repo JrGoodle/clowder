@@ -20,8 +20,10 @@ class Command(object):
 
         # Load current clowder.yml config if it exists
         self.clowder = None
+        versions = None
         if os.path.isdir(os.path.join(self.root_directory, 'clowder')):
             self.clowder = ClowderYAML(self.root_directory)
+            versions = self.clowder.get_fixed_version_names()
 
         # clowder argparse setup
         parser = argparse.ArgumentParser(description='Manage multiple repositories')
@@ -40,7 +42,7 @@ class Command(object):
         parser_herd = self.subparsers.add_parser('herd',
                                                  help='herd help',
                                                  description='Sync project repositories')
-        parser_herd.add_argument('--version', '-v')
+        parser_herd.add_argument('--version', '-v', choices=versions)
 
         # clowder meow
         self.subparsers.add_parser('meow',
