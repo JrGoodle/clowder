@@ -29,11 +29,9 @@
       <div class="inner clearfix">
         <section id="main-content">
           <blockquote>
-<p><strong>clowder</strong><br>
-A group of cats</p>
+<p><strong>clowder</strong> - A group of cats</p>
 
-<p><strong>herding cats</strong><br>
-An idiom that refers to a frustrating attempt to control or organize a class of entities which are uncontrollable or chaotic.</p>
+<p><strong>herding cats</strong> - An idiom that refers to a frustrating attempt to control or organize a class of entities which are uncontrollable or chaotic.</p>
 </blockquote>
 
 <p>Managing multiple repositories of dependent code can be pretty frustrating. There are a number of existing options:</p>
@@ -56,27 +54,49 @@ URL information and project locations on disk are specified in a <code>clowder.y
 This file is checked into its own repository, so the project structure's history is saved under version control.
 You can <code>fix</code> specific versions with current commit hashes saved for later restoration.</p>
 
-<p>See the <a href="https://github.com/JrGoodle/clowder/tree/master/examples">examples</a> directory for a couple example projects.</p>
+<p>For a couple example projects, see the <a href="https://github.com/JrGoodle/clowder/tree/master/examples">examples directory</a>.</p>
 
 <h2>
 <a id="getting-started" class="anchor" href="#getting-started" aria-hidden="true"><span class="octicon octicon-link"></span></a>Getting Started</h2>
 
-<p>This example is based on the LLVM project.</p>
+<p>This example is based on the LLVM project. See <a href="https://github.com/JrGoodle/llvm-projects/blob/master/clowder.yaml">the full clowder.yaml</a>.</p>
+
+<p>First create directory to contain all the projects.</p>
 
 <div class="highlight highlight-bash"><pre>$ mkdir llvm-projects
-$ <span class="pl-c1">cd</span> llvm-projects
-$ clowder breed https://github.com/jrgoodle/llvm-projects.git</pre></div>
+$ <span class="pl-c1">cd</span> llvm-projects</pre></div>
 
-<p>The <code>clowder breed</code> command will clone the <a href="https://github.com/jrgoodle/llvm-projects.git">llvm-projects</a> repository in the <code>llvm-projects/clowder</code> directory. A symlink is created at <code>llvm-projects/clowder.yaml</code> pointing to <code>llvm-projects/clowder/clowder.yaml</code>.</p>
+<p>Clone <code>clowder</code> repository containing <code>clowder.yaml</code> file.</p>
 
-<div class="highlight highlight-bash"><pre>$ clowder herd <span class="pl-c"># herd default groups</span>
-$ clowder herd -a <span class="pl-c"># herd all groups</span></pre></div>
+<div class="highlight highlight-bash"><pre>$ clowder breed https://github.com/jrgoodle/llvm-projects.git</pre></div>
 
-<p>Herding clones the project repository if it didn't previously exist.
-Otherwise, each project will pull the latest changes.
-If the default branch isn't checked out, current changes will be stashed, the default branch checked out, and latest changes pulled.</p>
+<p>This command will clone the <a href="https://github.com/jrgoodle/llvm-projects.git">llvm-projects</a> repository in the <code>llvm-projects/clowder</code> directory and create a symlink at <code>llvm-projects/clowder.yaml</code>.</p>
 
-<p>Example <a href="https://github.com/JrGoodle/llvm-projects/blob/master/clowder.yaml">clowder.yaml</a> for LLVM projects.</p>
+<div class="highlight highlight-bash"><pre>$ clowder herd</pre></div>
+
+<p>This command syncs the projects. Projects are cloned if they don't currently exist. Otherwise, each project will pull the latest changes. If the current branch isn't the default, it'll be checked out, and latest changes pulled.</p>
+
+<div class="highlight highlight-bash"><pre>$ clowder groom <span class="pl-c"># Update clowder repository</span></pre></div>
+
+<p>This command is like <code>clowder herd</code>, but for syncing the <code>clowder</code> repository.</p>
+
+<h3>
+<a id="further-commands" class="anchor" href="#further-commands" aria-hidden="true"><span class="octicon octicon-link"></span></a>Further Commands</h3>
+
+<div class="highlight highlight-bash"><pre>$ clowder meow <span class="pl-c"># print status of projects</span></pre></div>
+
+<div class="highlight highlight-bash"><pre>$ clowder litter <span class="pl-c"># Discard any changes in projects</span></pre></div>
+
+<div class="highlight highlight-bash"><pre>$ clowder stash <span class="pl-c"># Stash any changes in projects</span></pre></div>
+
+<div class="highlight highlight-bash"><pre>$ clowder fix -v v0.1 <span class="pl-c"># Fix new version of clowder.yaml</span></pre></div>
+
+<div class="highlight highlight-bash"><pre>$ clowder herd -v v0.1 <span class="pl-c"># Check out fixed version</span></pre></div>
+
+<div class="highlight highlight-bash"><pre>$ clowder forall <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$COMMAND</span><span class="pl-pds">"</span></span> <span class="pl-c"># Run "$COMMAND" in all project directories</span></pre></div>
+
+<h2>
+<a id="the-clowderyaml-file" class="anchor" href="#the-clowderyaml-file" aria-hidden="true"><span class="octicon octicon-link"></span></a>The <code>clowder.yaml</code> File</h2>
 
 <h3>
 <a id="defaults" class="anchor" href="#defaults" aria-hidden="true"><span class="octicon octicon-link"></span></a>Defaults</h3>
@@ -85,8 +105,7 @@ If the default branch isn't checked out, current changes will be stashed, the de
 
 <div class="highlight highlight-yaml"><pre><span class="pl-s"><span class="pl-ent">defaults:</span></span>
     <span class="pl-s"><span class="pl-ent">ref:</span> <span class="pl-s">refs/heads/master</span></span>
-    <span class="pl-s"><span class="pl-ent">remote:</span> <span class="pl-s">github</span></span>
-    <span class="pl-s"><span class="pl-ent">groups:</span> <span class="pl-s">[llvm, clang, projects]</span></span></pre></div>
+    <span class="pl-s"><span class="pl-ent">remote:</span> <span class="pl-s">github</span></span></pre></div>
 
 <h3>
 <a id="remotes" class="anchor" href="#remotes" aria-hidden="true"><span class="octicon octicon-link"></span></a>Remotes</h3>
@@ -113,32 +132,6 @@ The default <code>remote</code> and <code>ref</code> values can also be overridd
           <span class="pl-s"><span class="pl-ent">path:</span> <span class="pl-s">llvm/tools/clang</span></span>
         <span class="pl-s">- <span class="pl-ent">name:</span> <span class="pl-s">llvm-mirror/clang-tools-extra</span></span>
           <span class="pl-s"><span class="pl-ent">path:</span> <span class="pl-s">llvm/tools/clang/tools/extra</span></span>
-    <span class="pl-s">- <span class="pl-ent">name:</span> <span class="pl-s">projects</span></span>
-      <span class="pl-s"><span class="pl-ent">projects:</span></span>
-        <span class="pl-s">- <span class="pl-ent">name:</span> <span class="pl-s">llvm-mirror/compiler-rt</span></span>
-          <span class="pl-s"><span class="pl-ent">path:</span> <span class="pl-s">llvm/projects/compiler-rt</span></span>
-        <span class="pl-s">- <span class="pl-ent">name:</span> <span class="pl-s">llvm-mirror/libunwind</span></span>
-          <span class="pl-s"><span class="pl-ent">path:</span> <span class="pl-s">llvm/projects/libunwind</span></span>
-        <span class="pl-s">- <span class="pl-ent">name:</span> <span class="pl-s">llvm-mirror/dragonegg</span></span>
-          <span class="pl-s"><span class="pl-ent">path:</span> <span class="pl-s">llvm/projects/dragonegg</span></span>
-    <span class="pl-s">- <span class="pl-ent">name:</span> <span class="pl-s">libcxx</span></span>
-      <span class="pl-s"><span class="pl-ent">projects:</span></span>
-        <span class="pl-s">- <span class="pl-ent">name:</span> <span class="pl-s">llvm-mirror/libcxx</span></span>
-          <span class="pl-s"><span class="pl-ent">path:</span> <span class="pl-s">llvm/projects/libcxx</span></span>
-        <span class="pl-s">- <span class="pl-ent">name:</span> <span class="pl-s">llvm-mirror/libcxxabi</span></span>
-          <span class="pl-s"><span class="pl-ent">path:</span> <span class="pl-s">llvm/projects/libcxxabi</span></span>
-    <span class="pl-s">- <span class="pl-ent">name:</span> <span class="pl-s">lld</span></span>
-      <span class="pl-s"><span class="pl-ent">projects:</span></span>
-        <span class="pl-s">- <span class="pl-ent">name:</span> <span class="pl-s">llvm-mirror/lld</span></span>
-          <span class="pl-s"><span class="pl-ent">path:</span> <span class="pl-s">llvm/tools/lld</span></span>
-    <span class="pl-s">- <span class="pl-ent">name:</span> <span class="pl-s">lldb</span></span>
-      <span class="pl-s"><span class="pl-ent">projects:</span></span>
-        <span class="pl-s">- <span class="pl-ent">name:</span> <span class="pl-s">llvm-mirror/lldb</span></span>
-          <span class="pl-s"><span class="pl-ent">path:</span> <span class="pl-s">lldb</span></span>
-    <span class="pl-s">- <span class="pl-ent">name:</span> <span class="pl-s">libclc</span></span>
-      <span class="pl-s"><span class="pl-ent">projects:</span></span>
-        <span class="pl-s">- <span class="pl-ent">name:</span> <span class="pl-s">llvm-mirror/libclc</span></span>
-          <span class="pl-s"><span class="pl-ent">path:</span> <span class="pl-s">libclc</span></span>
     <span class="pl-s">- <span class="pl-ent">name:</span> <span class="pl-s">llvm</span></span>
       <span class="pl-s"><span class="pl-ent">projects:</span></span>
         <span class="pl-s">- <span class="pl-ent">name:</span> <span class="pl-s">llvm-mirror/llvm</span></span>
