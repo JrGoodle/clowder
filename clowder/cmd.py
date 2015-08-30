@@ -7,7 +7,7 @@ if __name__ == '__main__':
 import os, sys
 import argcomplete, argparse
 from termcolor import cprint
-from clowder.subcommands import breed, herd, meow, groom, fix, litter
+from clowder.subcommands import breed, herd, meow, groom, fix, forall, litter
 from clowder.model.clowder_yaml import ClowderYAML
 
 class Command(object):
@@ -31,6 +31,10 @@ class Command(object):
                                                   help=('Clone repository to clowder directory '
                                                         'and create clowder.yaml symlink'))
         parser_breed.add_argument('url', help='URL to clone repo with clowder.yaml from')
+        # clowder forall
+        parser_forall = self.subparsers.add_parser('forall',
+                                                   help='Run command in all clowder projects')
+        parser_forall.add_argument('run_command', help='Command to run in clowder projects')
         # clowder groom
         self.subparsers.add_parser('groom',
                                    help='Update clowder repository with latest changes')
@@ -81,6 +85,15 @@ class Command(object):
         if self.clowder != None:
             cprint('Fixing...\n', 'yellow')
             fix(self.root_directory, self.args.version)
+        else:
+            cprint('No .clowder found in the current directory, exiting...\n', 'red')
+            sys.exit()
+
+    def forall(self):
+        """clowder forall command"""
+        if self.clowder != None:
+            cprint('Forall...\n', 'yellow')
+            forall(self.root_directory, self.args.run_command)
         else:
             cprint('No .clowder found in the current directory, exiting...\n', 'red')
             sys.exit()

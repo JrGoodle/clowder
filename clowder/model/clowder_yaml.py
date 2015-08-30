@@ -1,5 +1,6 @@
 """clowder.yaml parsing and functionality"""
-import os
+import os, subprocess
+from termcolor import colored, cprint
 import yaml
 from clowder.utility.git_utilities import (
     git_litter,
@@ -40,6 +41,18 @@ class ClowderYAML(object):
                                              group,
                                              defaults,
                                              self.remotes))
+
+    def forall(self, command):
+        """Runs command in all projects"""
+        for group in self.groups:
+            for project in group.projects:
+                if os.path.isdir(project.full_path):
+                    cprint(project.path, 'green')
+                    running_output = colored('Running command: ', 'red')
+                    print(running_output + command)
+                    subprocess.call(command.split(),
+                                    cwd=project.full_path)
+                    print('')
 
     def get_all_group_names(self):
         """Returns all group names for current clowder.yaml"""

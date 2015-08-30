@@ -22,6 +22,11 @@ def fix(root_directory, version):
         clowder.fix_version(version)
     print('')
 
+def forall(root_directory, command):
+    """clowder forall subcommand"""
+    clowder = ClowderYAML(root_directory)
+    clowder.forall(command)
+
 def groom(root_directory):
     """clowder groom subcommand"""
     # Update repo containing clowder.yaml
