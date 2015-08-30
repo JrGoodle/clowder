@@ -55,9 +55,16 @@ class Command(object):
         argcomplete.autocomplete(parser)
         self.args = parser.parse_args()
 
-        if not hasattr(self, self.args.command):
-            cprint('Unrecognized command', 'red')
+        try:
+            if not hasattr(self, self.args.command):
+                cprint('\nUnrecognized command\n', 'red')
+                parser.print_help()
+                print('')
+                exit(1)
+        except:
+            cprint('\nUnrecognized command\n', 'red')
             parser.print_help()
+            print('')
             exit(1)
         # use dispatch pattern to invoke method with same name
         getattr(self, self.args.command)()
