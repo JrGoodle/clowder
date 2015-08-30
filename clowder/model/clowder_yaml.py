@@ -95,6 +95,7 @@ class ClowderYAML(object):
         for group in self.groups:
             for project in group.projects:
                 print_repo_status(project.full_path, project.name)
+                cprint(project.path, 'cyan')
 
     def fix_version(self, version):
         """Fix current commits to versioned clowder.yaml"""
