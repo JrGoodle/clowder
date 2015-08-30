@@ -174,7 +174,7 @@ def git_status(repo_path, name):
 
     if git_is_detached(repo_path):
         current_ref = git_current_sha(repo_path)
-        current_ref_output = colored('(' + current_ref + ')', 'magenta')
+        current_ref_output = colored('(HEAD @ ' + current_ref + ')', 'magenta')
     else:
         current_branch = git_current_branch(repo_path)
         current_ref_output = colored('(' + current_branch + ')', 'magenta')
