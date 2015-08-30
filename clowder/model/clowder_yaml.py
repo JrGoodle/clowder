@@ -2,11 +2,8 @@
 import os, subprocess
 from termcolor import colored, cprint
 import yaml
-from clowder.utility.git_utilities import (
-    git_litter,
-    git_status,
-    git_validate_repo_state
-)
+from clowder.utility.git_utilities import git_litter, git_validate_repo_state
+from clowder.utility.print_utilities import print_repo_status
 from clowder.model.group import Group
 from clowder.model.remote import Remote
 
@@ -47,9 +44,11 @@ class ClowderYAML(object):
         for group in self.groups:
             for project in group.projects:
                 if os.path.isdir(project.full_path):
-                    cprint(project.path, 'green')
+                    cprint(project.name, 'green')
+                    cprint(project.path, 'cyan')
                     running_output = colored('Running command: ', 'red')
-                    print(running_output + command)
+                    command_output = colored(command, attrs=['bold'])
+                    print(running_output + command_output)
                     subprocess.call(command.split(),
                                     cwd=project.full_path)
                     print('')
@@ -91,11 +90,11 @@ class ClowderYAML(object):
 
     def status(self):
         """Print git status for all projects"""
-        git_status(self.clowder_path, 'clowder')
+        print_repo_status(self.clowder_path, 'clowder')
         print('')
         for group in self.groups:
             for project in group.projects:
-                git_status(project.full_path, project.path)
+                print_repo_status(project.full_path, project.name)
 
     def fix_version(self, version):
         """Fix current commits to versioned clowder.yaml"""

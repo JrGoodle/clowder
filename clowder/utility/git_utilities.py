@@ -88,6 +88,15 @@ def git_validate_repo_state(repo_path):
     git_path = os.path.join(repo_path, '.git')
     if not os.path.isdir(git_path):
         return
+    if git_is_dirty(repo_path):
+        repo_output = colored(repo_path, 'cyan')
+        print(repo_output + ' is dirty')
+        print('Please stash or commit your changes before running clowder')
+        print('')
+        exit_output = colored('Exiting...', 'red')
+        print(exit_output)
+        print('')
+        sys.exit()
     # if git_untracked_files(repo_path):
     #     print(repo_path + ' has untracked files.')
     #     print('Please remove these files or add to .gitignore')
@@ -105,15 +114,6 @@ def git_validate_repo_state(repo_path):
     #     print(exit_output)
     #     print('')
     #     sys.exit()
-    if git_is_dirty(repo_path):
-        repo_output = colored(repo_path, 'cyan')
-        print(repo_output + ' is dirty')
-        print('Please stash or commit your changes before running clowder')
-        print('')
-        exit_output = colored('Exiting...', 'red')
-        print(exit_output)
-        print('')
-        sys.exit()
 
 def git_is_dirty(repo_path):
     """Check if repo is dirty"""
@@ -157,26 +157,3 @@ def process_output(line):
     """Utility function for command output callbacks"""
     stripped_line = str(line).rstrip('\n')
     print(stripped_line)
-
-def git_status(repo_path, name):
-    """Print repo status"""
-    git_path = os.path.join(repo_path, '.git')
-    if not os.path.isdir(git_path):
-        return
-
-    if git_is_dirty(repo_path):
-        color = 'red'
-        symbol = '*'
-    else:
-        color = 'green'
-        symbol = ''
-    project_output = colored(symbol + name, color)
-
-    if git_is_detached(repo_path):
-        current_ref = git_current_sha(repo_path)
-        current_ref_output = colored('(HEAD @ ' + current_ref + ')', 'magenta')
-    else:
-        current_branch = git_current_branch(repo_path)
-        current_ref_output = colored('(' + current_branch + ')', 'magenta')
-
-    print(project_output + ' ' + current_ref_output)
