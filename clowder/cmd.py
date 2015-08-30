@@ -86,7 +86,7 @@ class Command(object):
             cprint('Fixing...\n', 'yellow')
             fix(self.root_directory, self.args.version)
         else:
-            cprint('No .clowder found in the current directory, exiting...\n', 'red')
+            print_clowder_not_found_message()
             sys.exit()
 
     def forall(self):
@@ -95,7 +95,7 @@ class Command(object):
             cprint('Forall...\n', 'yellow')
             forall(self.root_directory, self.args.run_command)
         else:
-            cprint('No .clowder found in the current directory, exiting...\n', 'red')
+            print_clowder_not_found_message()
             sys.exit()
 
     def groom(self):
@@ -104,7 +104,7 @@ class Command(object):
             cprint('Grooming...\n', 'yellow')
             groom(self.root_directory)
         else:
-            cprint('No .clowder found in the current directory, exiting...\n', 'red')
+            print_clowder_not_found_message()
             sys.exit()
 
     def herd(self):
@@ -113,7 +113,7 @@ class Command(object):
             cprint('Herding...\n', 'yellow')
             herd(self.root_directory, self.args.version)
         else:
-            cprint('No .clowder found in the current directory, exiting...\n', 'red')
+            print_clowder_not_found_message()
             sys.exit()
 
     def litter(self):
@@ -122,7 +122,7 @@ class Command(object):
             cprint('Litter...\n', 'yellow')
             litter(self.root_directory)
         else:
-            cprint('No .clowder found in the current directory, exiting...\n', 'red')
+            print_clowder_not_found_message()
             sys.exit()
 
     def meow(self):
@@ -131,8 +131,12 @@ class Command(object):
             cprint('Meow...\n', 'yellow')
             meow(self.root_directory)
         else:
-            cprint('No .clowder found in the current directory, exiting...\n', 'red')
+            print_clowder_not_found_message()
             sys.exit()
+
+def print_clowder_not_found_message():
+    """Print error message when clowder not found"""
+    cprint('No clowder found in the current directory, exiting...\n', 'red')
 
 def main():
     """Main entrypoint for clowder command"""
