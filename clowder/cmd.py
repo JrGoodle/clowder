@@ -27,36 +27,30 @@ class Command(object):
 
         # clowder argparse setup
         parser = argparse.ArgumentParser(description='Manage multiple repositories')
-        self.subparsers = parser.add_subparsers(dest='command',
-                                                help='clowder command help')
+        self.subparsers = parser.add_subparsers(dest='command')
         # clowder breed
         parser_breed = self.subparsers.add_parser('breed',
-                                                  help='breed help',
-                                                  description='Clone repositories')
-        parser_breed.add_argument('url')
+                                                  help=('Clone repository to clowder directory '
+                                                        'and create clowder.yaml symlink'))
+        parser_breed.add_argument('url', help='URL to clone repo with clowder.yaml from')
         # clowder groom
         self.subparsers.add_parser('groom',
-                                   help='groom help',
-                                   description='Sync clowder repository')
+                                   help='Update clowder repository with latest changes')
         # clowder herd
         parser_herd = self.subparsers.add_parser('herd',
-                                                 help='herd help',
-                                                 description='Sync project repositories')
-        parser_herd.add_argument('--version', '-v', choices=versions)
+                                                 help='Clone and sync latest changes for projects')
+        parser_herd.add_argument('--version', '-v', choices=versions, help='Version name to herd')
 
         # clowder meow
         self.subparsers.add_parser('meow',
-                                   help='meow help',
-                                   description='Repository Status')
+                                   help='Print status for projects')
         # clowder fix
         parser_fix = self.subparsers.add_parser('fix',
-                                                help='fix help',
-                                                description='Update clowder.yaml')
-        parser_fix.add_argument('--version', '-v', required=True)
+                                                help='Create version of clowder.yaml for current repos')
+        parser_fix.add_argument('--version', '-v', required=True, help='Version name to fix')
         # clowder litter
         self.subparsers.add_parser('litter',
-                                   help='litter help',
-                                   description='Discard current changes')
+                                   help='Discard current changes in all projects and clowder repo')
         # Argcomplete and arguments parsing
         argcomplete.autocomplete(parser)
         self.args = parser.parse_args()
