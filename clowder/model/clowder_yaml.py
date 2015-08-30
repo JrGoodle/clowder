@@ -2,7 +2,7 @@
 import os
 import yaml
 
-from clowder.utility.git_utilities import git_status
+from clowder.utility.git_utilities import git_status, git_litter
 
 from clowder.model.group import Group
 from clowder.model.remote import Remote
@@ -16,6 +16,7 @@ class ClowderYAML(object):
         self.groups = []
         self.remotes = []
         self.load_yaml()
+        self.clowder_path = os.path.join(self.root_directory, 'clowder')
 
     def load_yaml(self):
         """Load clowder from yaml file"""
@@ -47,9 +48,10 @@ class ClowderYAML(object):
 
     def litter(self):
         """Discard changes for all projects"""
+        git_litter(self.clowder_path)
         for group in self.groups:
             for project in group.projects:
-                project.litter()
+                git_litter(project.full_path)
 
     # def sync(self):
     #     """Sync default projects with latest upstream changes"""
@@ -83,8 +85,7 @@ class ClowderYAML(object):
 
     def status(self):
         """Print git status for all projects"""
-        clowder_path = os.path.join(self.root_directory, 'clowder')
-        git_status(clowder_path, 'clowder')
+        git_status(self.clowder_path, 'clowder')
         print('')
         for group in self.groups:
             for project in group.projects:
