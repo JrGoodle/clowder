@@ -3,15 +3,13 @@ import os
 from termcolor import colored
 
 from clowder.utility.git_utilities import (
-    git_litter,
-    git_is_detached,
-    git_current_branch,
-    git_sync_version,
-    git_sync,
+    git_clone_url_at_path,
     git_current_sha,
-    # git_validate_repo_state,
-    git_is_dirty,
-    clone_git_url_at_path
+    git_litter,
+    git_status,
+    git_sync,
+    git_sync_version,
+    git_validate_repo_state
 )
 
 class Project(object):
@@ -48,7 +46,7 @@ class Project(object):
         self.print_name()
         git_path = os.path.join(self.full_path, '.git')
         if not os.path.isdir(git_path):
-            clone_git_url_at_path(self._get_remote_url(), self.full_path)
+            git_clone_url_at_path(self._get_remote_url(), self.full_path)
         else:
             git_sync(self.full_path, self.ref)
 
@@ -57,32 +55,13 @@ class Project(object):
         self.print_name()
         git_path = os.path.join(self.full_path, '.git')
         if not os.path.isdir(git_path):
-            clone_git_url_at_path(self._get_remote_url(), self.full_path)
+            git_clone_url_at_path(self._get_remote_url(), self.full_path)
 
         git_sync_version(self.full_path, version, self.ref)
 
     def status(self):
         """Print git status of project"""
-        git_path = os.path.join(self.full_path, '.git')
-        if not os.path.isdir(git_path):
-            return
-
-        if git_is_dirty(self.full_path):
-            color = 'red'
-            symbol = '*'
-        else:
-            color = 'green'
-            symbol = ''
-        project_output = colored(symbol + self.path, color)
-
-        if git_is_detached(self.full_path):
-            current_ref = git_current_sha(self.full_path)
-            current_ref_output = colored('(' + current_ref + ')', 'magenta')
-        else:
-            current_branch = git_current_branch(self.full_path)
-            current_ref_output = colored('(' + current_branch + ')', 'magenta')
-
-        print(project_output + ' ' + current_ref_output)
+        git_status(self.full_path, self.path)
 
     def print_name(self):
         """Project relative project path in green"""
@@ -105,4 +84,4 @@ class Project(object):
 
     def validate(self):
         """Validate status of project's repository"""
-        # git_validate_repo_state(self.full_path)
+        git_validate_repo_state(self.full_path)

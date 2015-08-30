@@ -46,6 +46,30 @@ Herding clones the project repository if it didn't previously exist.
 Otherwise, each project will pull the latest changes.
 If the default branch isn't checked out, current changes will be stashed, the default branch checked out, and latest changes pulled.
 
+```bash
+$ clowder groom # Update clowder repository
+```
+
+```bash
+$ clowder meow # print status of repositories
+```
+
+```bash
+$ clowder litter # Discard any changes in current repositories
+```
+
+```bash
+$ clowder fix # Fix changes in clowder.yaml
+```
+
+```bash
+$ clowder fix -v v0.1 # Fix new version of clowder.yaml
+```
+
+```bash
+$ clowder herd -v v0.1 # Check out fixed version
+```
+
 Example [clowder.yaml](https://github.com/JrGoodle/llvm-projects/blob/master/clowder.yaml) for LLVM projects.
 
 ### Defaults
@@ -85,32 +109,6 @@ groups:
           path: llvm/tools/clang
         - name: llvm-mirror/clang-tools-extra
           path: llvm/tools/clang/tools/extra
-    - name: projects
-      projects:
-        - name: llvm-mirror/compiler-rt
-          path: llvm/projects/compiler-rt
-        - name: llvm-mirror/libunwind
-          path: llvm/projects/libunwind
-        - name: llvm-mirror/dragonegg
-          path: llvm/projects/dragonegg
-    - name: libcxx
-      projects:
-        - name: llvm-mirror/libcxx
-          path: llvm/projects/libcxx
-        - name: llvm-mirror/libcxxabi
-          path: llvm/projects/libcxxabi
-    - name: lld
-      projects:
-        - name: llvm-mirror/lld
-          path: llvm/tools/lld
-    - name: lldb
-      projects:
-        - name: llvm-mirror/lldb
-          path: lldb
-    - name: libclc
-      projects:
-        - name: llvm-mirror/libclc
-          path: libclc
     - name: llvm
       projects:
         - name: llvm-mirror/llvm

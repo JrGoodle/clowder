@@ -4,8 +4,10 @@
 if __name__ == '__main__':
     raise SystemExit(main())
 
-import argcomplete, argparse
 import os, sys
+
+import argcomplete, argparse
+from termcolor import cprint
 
 from clowder.subcommands import breed, herd, meow, groom, fix, litter
 from clowder.model.clowder_yaml import ClowderYAML
@@ -48,7 +50,7 @@ class Command(object):
         parser_fix = self.subparsers.add_parser('fix',
                                                 help='fix help',
                                                 description='Update clowder.yaml')
-        parser_fix.add_argument('--version', '-v')
+        parser_fix.add_argument('--version', '-v', required=True)
         # clowder litter
         self.subparsers.add_parser('litter',
                                    help='litter help',
@@ -58,7 +60,7 @@ class Command(object):
         self.args = parser.parse_args()
 
         if not hasattr(self, self.args.command):
-            print('Unrecognized command')
+            cprint('Unrecognized command', 'red')
             parser.print_help()
             exit(1)
         # use dispatch pattern to invoke method with same name
@@ -67,55 +69,55 @@ class Command(object):
     def breed(self):
         """clowder breed command"""
         if self.clowder == None:
-            print('Breeding from %s\n' % self.args.url)
+            cprint('Breeding from %s\n' % self.args.url, 'yellow')
             breed(self.root_directory, self.args.url)
         else:
-            print('Clowder already bred in this directory, exiting...')
+            cprint('Clowder already bred in this directory, exiting...\n', 'red')
             sys.exit()
 
     def fix(self):
         """clowder fix command"""
         if self.clowder != None:
-            print('Fixing...\n')
+            cprint('Fixing...\n', 'yellow')
             fix(self.root_directory, self.args.version)
         else:
-            print('No .clowder found in the current directory, exiting...')
+            cprint('No .clowder found in the current directory, exiting...\n', 'red')
             sys.exit()
 
     def groom(self):
         """clowder groom command"""
         if self.clowder != None:
-            print('Grooming...\n')
+            cprint('Grooming...\n', 'yellow')
             groom(self.root_directory)
         else:
-            print('No .clowder found in the current directory, exiting...')
+            cprint('No .clowder found in the current directory, exiting...\n', 'red')
             sys.exit()
 
     def herd(self):
         """clowder herd command"""
         if self.clowder != None:
-            print('Herding...\n')
+            cprint('Herding...\n', 'yellow')
             herd(self.root_directory, self.args.version)
         else:
-            print('No .clowder found in the current directory, exiting...')
+            cprint('No .clowder found in the current directory, exiting...\n', 'red')
             sys.exit()
 
     def litter(self):
         """clowder litter command"""
         if self.clowder != None:
-            print('Litter...\n')
+            cprint('Litter...\n', 'yellow')
             litter(self.root_directory)
         else:
-            print('No .clowder found in the current directory, exiting...')
+            cprint('No .clowder found in the current directory, exiting...\n', 'red')
             sys.exit()
 
     def meow(self):
         """clowder meow command"""
         if self.clowder != None:
-            print('Meow...\n')
+            cprint('Meow...\n', 'yellow')
             meow(self.root_directory)
         else:
-            print('No .clowder found in the current directory, exiting...')
+            cprint('No .clowder found in the current directory, exiting...\n', 'red')
             sys.exit()
 
 def main():

@@ -3,10 +3,11 @@ import os
 from termcolor import colored
 from clowder.model.clowder_yaml import ClowderYAML
 from clowder.utility.git_utilities import (
-    clone_git_url_at_path,
+    git_clone_url_at_path,
     git_sync,
-    git_fix,
-    git_fix_version
+    # git_fix,
+    # git_fix_version,
+    git_validate_repo_state
 )
 
 def breed(root_directory, url):
@@ -14,7 +15,7 @@ def breed(root_directory, url):
     clowder_dir = os.path.join(root_directory, 'clowder')
     clowder_output = colored(clowder_dir, 'green')
     print(clowder_output)
-    clone_git_url_at_path(url, clowder_dir)
+    git_clone_url_at_path(url, clowder_dir)
     # Create clowder.yaml symlink
     yaml_file = os.path.join(clowder_dir, 'clowder.yaml')
     symlink_clowder_yaml(root_directory, yaml_file)
@@ -25,20 +26,22 @@ def fix(root_directory, version):
     clowder_dir = os.path.join(root_directory, 'clowder')
     if version == None:
         # Update repo containing clowder.yaml
-        git_fix(clowder_dir)
+        # git_fix(clowder_dir)
+        pass
     else:
         clowder = ClowderYAML(root_directory)
         clowder.fix_version(version)
-        git_fix_version(clowder_dir, version)
+        # git_fix_version(clowder_dir, version)
     print('')
 
 def groom(root_directory):
     """clowder groom subcommand"""
     # Update repo containing clowder.yaml
-    clowder_dir = os.path.join(root_directory, 'clowder')
-    clowder_output = colored(clowder_dir, 'green')
+    clowder_path = os.path.join(root_directory, 'clowder')
+    clowder_output = colored(clowder_path, 'green')
     print(clowder_output)
-    git_sync(clowder_dir, 'refs/heads/master')
+    git_validate_repo_state(clowder_path)
+    git_sync(clowder_path, 'refs/heads/master')
     print('')
 
 def herd(root_directory, version):

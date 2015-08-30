@@ -1,5 +1,7 @@
 #! /bin/bash
 
+set -xv
+
 test_branch()
 {
     local git_branch
@@ -14,6 +16,7 @@ cd $TRAVIS_BUILD_DIR/examples/cats
 ./breed.sh  || exit 1
 clowder herd  || exit 1
 clowder meow || exit 1
+clowder groom || exit 1
 ./clean.sh || exit 1
 
 ./breed.sh || exit 1
@@ -64,6 +67,9 @@ done
 
 clowder meow || exit 1
 clowder herd || exit 1
+clowder litter || exit 1
+clowder meow || exit 1
+clowder herd || exit 1
 clowder meow || exit 1
 
 for project in "${projects[@]}"
@@ -72,5 +78,29 @@ do
     test_branch master
     popd &>/dev/null
 done
-
 echo ''
+
+for project in "${black_cat_projects[@]}"
+do
+	pushd $project &>/dev/null
+    git checkout master~2
+    popd &>/dev/null
+done
+
+clowder meow || exit 1
+clowder herd || exit 1
+clowder meow || exit 1
+clowder litter || exit 1
+clowder meow || exit 1
+
+for project in "${black_cat_projects[@]}"
+do
+	pushd $project &>/dev/null
+    git checkout master
+    popd &>/dev/null
+done
+echo ''
+
+clowder meow || exit 1
+clowder herd || exit 1
+clowder meow || exit 1

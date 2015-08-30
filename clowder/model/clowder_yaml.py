@@ -2,6 +2,8 @@
 import os
 import yaml
 
+from clowder.utility.git_utilities import git_status
+
 from clowder.model.defaults import Defaults
 from clowder.model.group import Group
 from clowder.model.remote import Remote
@@ -78,6 +80,9 @@ class ClowderYAML(object):
 
     def status(self):
         """Print git status for all projects"""
+        clowder_path = os.path.join(self.root_directory, 'clowder')
+        git_status(clowder_path, 'clowder')
+        print('')
         for group in self.groups:
             for project in group.projects:
                 project.status()

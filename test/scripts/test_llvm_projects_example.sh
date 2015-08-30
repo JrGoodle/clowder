@@ -1,5 +1,7 @@
 #! /bin/bash
 
+set -xv
+
 setup_old_repos()
 {
     echo 'TEST: Setting up older copies of repos'
@@ -57,6 +59,7 @@ cd $LLVM_PROJECTS_DIR
 setup_old_repos # configure repo's for testing pulling new commits
 clowder herd || exit 1
 clowder meow || exit 1
+clowder groom || exit 1
 clowder herd -v v0.1 || exit 1
 clowder meow || exit 1
 
@@ -93,9 +96,36 @@ do
     git add newfile
     popd &>/dev/null
 done
+echo ''
 
+clowder meow || exit 1
+clowder herd || exit 1
 clowder meow || exit 1
 clowder litter || exit 1
 clowder meow || exit 1
-clowder herd -v v0.1 || exit 1
+
+for project in "${projects[@]}"
+do
+	pushd $project &>/dev/null
+    git checkout master~2
+    popd &>/dev/null
+done
+echo ''
+
+clowder meow || exit 1
+clowder herd || exit 1
+clowder meow || exit 1
+clowder litter || exit 1
+clowder meow || exit 1
+
+for project in "${projects[@]}"
+do
+	pushd $project &>/dev/null
+    git checkout master
+    popd &>/dev/null
+done
+echo ''
+
+clowder meow || exit 1
+clowder herd || exit 1
 clowder meow || exit 1
