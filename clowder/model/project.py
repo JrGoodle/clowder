@@ -1,7 +1,6 @@
 """Model representation of clowder.yaml project"""
 import os
 from termcolor import cprint
-
 from clowder.utility.git_utilities import (
     git_clone_url_at_path,
     git_current_sha,

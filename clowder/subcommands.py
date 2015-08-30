@@ -1,20 +1,14 @@
 """clowder subcommands"""
 import os
-from termcolor import cprint
+from clowder.model.clowder_repo import ClowderRepo
 from clowder.model.clowder_yaml import ClowderYAML
-from clowder.utility.git_utilities import (
-    git_clone_url_at_path,
-    git_herd,
-    git_validate_repo_state
-)
 
 def breed(root_directory, url):
     """clowder breed subcommand"""
-    clowder_dir = os.path.join(root_directory, 'clowder')
-    cprint('clowder', 'green')
-    git_clone_url_at_path(url, clowder_dir)
+    clowder_repo = ClowderRepo(root_directory)
+    clowder_repo.clone(url)
     # Create clowder.yaml symlink
-    yaml_file = os.path.join(clowder_dir, 'clowder.yaml')
+    yaml_file = os.path.join(root_directory, 'clowder/clowder.yaml')
     symlink_clowder_yaml(root_directory, yaml_file)
     print('')
 
@@ -31,10 +25,8 @@ def fix(root_directory, version):
 def groom(root_directory):
     """clowder groom subcommand"""
     # Update repo containing clowder.yaml
-    clowder_path = os.path.join(root_directory, 'clowder')
-    cprint('clowder', 'green')
-    git_validate_repo_state(clowder_path)
-    git_herd(clowder_path, 'refs/heads/master')
+    clowder_repo = ClowderRepo(root_directory)
+    clowder_repo.herd()
     print('')
 
 def herd(root_directory, version):

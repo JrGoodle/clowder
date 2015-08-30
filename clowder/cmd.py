@@ -5,10 +5,8 @@ if __name__ == '__main__':
     raise SystemExit(main())
 
 import os, sys
-
 import argcomplete, argparse
 from termcolor import cprint
-
 from clowder.subcommands import breed, herd, meow, groom, fix, litter
 from clowder.model.clowder_yaml import ClowderYAML
 

@@ -1,13 +1,11 @@
 """clowder.yaml parsing and functionality"""
 import os
 import yaml
-
 from clowder.utility.git_utilities import (
     git_litter,
     git_status,
     git_validate_repo_state
 )
-
 from clowder.model.group import Group
 from clowder.model.remote import Remote
 
@@ -88,8 +86,9 @@ class ClowderYAML(object):
 
     def fix_version(self, version):
         """Fix current commits to versioned clowder.yaml"""
-        versions = os.path.join(self.root_directory, 'clowder/versions')
-        version_dir = os.path.join(versions, version)
+        self.validate_all()
+        versions_dir = os.path.join(self.root_directory, 'clowder/versions')
+        version_dir = os.path.join(versions_dir, version)
         if not os.path.exists(version_dir):
             os.makedirs(version_dir)
 
