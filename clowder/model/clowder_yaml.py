@@ -56,7 +56,6 @@ class ClowderYAML(object):
                     print(running_output + ': ' + command_output)
                     subprocess.call(command.split(),
                                     cwd=project.full_path)
-                    print('')
 
     def get_all_group_names(self):
         """Returns all group names for current clowder.yaml"""
