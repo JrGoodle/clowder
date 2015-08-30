@@ -105,6 +105,7 @@ def git_stash(repo_path):
     """Stash current changes in repository"""
     repo = Repo(repo_path)
     if repo.is_dirty():
+        print(' - Stashing current changes')
         repo.git.stash()
 
 def git_truncate_ref(ref):
