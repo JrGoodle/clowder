@@ -32,5 +32,5 @@ def print_project_status(root_directory, path, name):
 
     path_output = colored(path, 'cyan')
 
-    print(project_output + ' @ ' + path_output)
-    print(current_ref_output)
+    print(project_output)
+    print(current_ref_output + ' ' + path_output)
