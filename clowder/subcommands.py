@@ -29,20 +29,22 @@ def groom(root_directory):
     """clowder groom subcommand"""
     # Update repo containing clowder.yaml
     clowder_repo = ClowderRepo(root_directory)
-    clowder_repo.herd()
+    clowder_repo.groom()
 
 def herd(root_directory, version):
     """clowder herd subcommand"""
     if version == None:
         yaml_file = os.path.join(root_directory, 'clowder/clowder.yaml')
-        symlink_clowder_yaml(root_directory, yaml_file)
-        clowder = ClowderYAML(root_directory)
-        clowder.herd_all()
     else:
         yaml_version = 'clowder/versions/' + version + '/clowder.yaml'
         yaml_file = os.path.join(root_directory, yaml_version)
-        symlink_clowder_yaml(root_directory, yaml_file)
-        clowder = ClowderYAML(root_directory)
+
+    symlink_clowder_yaml(root_directory, yaml_file)
+    clowder = ClowderYAML(root_directory)
+
+    if version == None:
+        clowder.herd_all()
+    else:
         clowder.herd_version_all(version)
 
 def litter(root_directory):
@@ -53,7 +55,7 @@ def litter(root_directory):
 def meow(root_directory):
     """clowder meow subcommand"""
     clowder = ClowderYAML(root_directory)
-    clowder.status()
+    clowder.meow()
 
 def symlink_clowder_yaml(root_directory, clowder_yaml):
     """Create clowder.yaml symlink in directory pointing to file"""

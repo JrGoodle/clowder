@@ -1,6 +1,6 @@
 """Clowder repo management"""
 import os
-from termcolor import cprint
+from clowder.utility.print_utilities import print_project_status
 from clowder.utility.git_utilities import (
     git_clone_url_at_path,
     git_herd,
@@ -9,17 +9,16 @@ from clowder.utility.git_utilities import (
 
 class ClowderRepo(object):
     """Class encapsulating clowder repo information"""
-    def __init__(self, rootDirectory):
-        self.root_directory = rootDirectory
+    def __init__(self, root_directory):
+        self.root_directory = root_directory
         self.clowder_path = os.path.join(self.root_directory, 'clowder')
 
     def clone(self, url):
         """Clone clowder repo from url"""
-        cprint('clowder', 'green')
         git_clone_url_at_path(url, self.clowder_path)
 
-    def herd(self):
-        """Herd clowder repo"""
-        cprint('clowder', 'green')
+    def groom(self):
+        """Groom clowder repo"""
         git_validate_repo_state(self.clowder_path)
-        git_herd(self.clowder_path, 'refs/heads/master')
+        print_project_status(root_directory, 'clowder', 'clowder')
+        git_herd(self.clowder_path, 'refs/heads/master') # TODO: Replace with git_groom

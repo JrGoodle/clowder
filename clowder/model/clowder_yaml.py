@@ -78,6 +78,7 @@ class ClowderYAML(object):
     def herd_all(self):
         """Sync all projects with latest upstream changes"""
         self.validate_all()
+        print_project_status(self.root_directory, 'clowder', 'clowder')
         for group in self.groups:
             print_group(group.name)
             for project in group.projects:
@@ -87,13 +88,14 @@ class ClowderYAML(object):
     def herd_version_all(self, version):
         """Sync all projects to fixed versions"""
         self.validate_all()
+        print_project_status(self.root_directory, 'clowder', 'clowder')
         for group in self.groups:
             print_group(group.name)
             for project in group.projects:
                 print_project_status(self.root_directory, project.path, project.name)
                 project.herd_version(version)
 
-    def status(self):
+    def meow(self):
         """Print git status for all projects"""
         print_project_status(self.root_directory, 'clowder', 'clowder')
         print('')
