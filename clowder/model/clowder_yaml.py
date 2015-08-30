@@ -1,6 +1,6 @@
 """clowder.yaml parsing and functionality"""
 import os, subprocess
-from termcolor import colored
+from termcolor import colored, cprint
 import yaml
 from clowder.utility.git_utilities import git_litter, git_validate_repo_state
 from clowder.utility.print_utilities import print_project_status
@@ -43,6 +43,7 @@ class ClowderYAML(object):
     def forall(self, command):
         """Runs command in all projects"""
         for group in self.groups:
+            cprint(group.name, attrs=['bold'])
             for project in group.projects:
                 if os.path.isdir(project.full_path):
                     print_project_status(self.root_directory, project.path, project.name)
@@ -78,6 +79,7 @@ class ClowderYAML(object):
         """Sync all projects with latest upstream changes"""
         self.validate_all()
         for group in self.groups:
+            cprint(group.name, attrs=['bold'])
             for project in group.projects:
                 print_project_status(self.root_directory, project.path, project.name)
                 project.herd()
@@ -86,6 +88,7 @@ class ClowderYAML(object):
         """Sync all projects to fixed versions"""
         self.validate_all()
         for group in self.groups:
+            cprint(group.name, attrs=['bold'])
             for project in group.projects:
                 print_project_status(self.root_directory, project.path, project.name)
                 project.herd_version(version)
@@ -95,6 +98,7 @@ class ClowderYAML(object):
         print_project_status(self.root_directory, 'clowder', 'clowder')
         print('')
         for group in self.groups:
+            cprint(group.name, attrs=['bold'])
             for project in group.projects:
                 print_project_status(self.root_directory, project.path, project.name)
 
