@@ -138,26 +138,3 @@ class ClowderYAML(object):
         for group in self.groups:
             for project in group.projects:
                 git_validate_repo_state(project.full_path)
-
-    # def herd(self):
-    #     """Sync default projects with latest upstream changes"""
-    #     self.validate()
-    #     for group in self.groups:
-    #         if group.name in self.defaults.groups:
-    #             for project in group.projects:
-    #                 project.herd()
-
-    # def validate(self):
-    #     """Validate status of default projects"""
-    #     for group in self.groups:
-    #         if group.name in self.defaults.groups:
-    #             for project in group.projects:
-    #                 project.validate()
-
-    # def herd_version(self, version):
-    #     """Sync default projects to fixed versions"""
-    #     self.validate()
-    #     for group in self.groups:
-    #         if group.name in self.defaults.groups:
-    #             for project in group.projects:
-    #                 project.herd_version(version)
