@@ -159,7 +159,6 @@ class ClowderYAML(object):
 
     def stash(self):
         """Stash changes for all projects with changes"""
-        print('Stashing changes')
         print_clowder_repo_status(self.root_directory)
         git_stash(self.clowder_path)
         for group in self.groups:
