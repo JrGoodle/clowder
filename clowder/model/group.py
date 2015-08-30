@@ -19,3 +19,10 @@ class Group(object):
         for project in self.projects:
             projects_yaml.append(project.get_yaml())
         return {'name': self.name, 'projects': projects_yaml}
+
+    def get_all_project_names(self):
+        """Return all project names"""
+        project_names = []
+        for project in self.projects:
+            project_names.append(project.name)
+        return project_names
