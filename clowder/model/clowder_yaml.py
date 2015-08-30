@@ -1,9 +1,9 @@
 """clowder.yaml parsing and functionality"""
 import os, subprocess
-from termcolor import colored, cprint
+from termcolor import colored
 import yaml
 from clowder.utility.git_utilities import git_litter, git_validate_repo_state
-from clowder.utility.print_utilities import print_repo_status
+from clowder.utility.print_utilities import print_project_status
 from clowder.model.group import Group
 from clowder.model.remote import Remote
 
@@ -44,8 +44,7 @@ class ClowderYAML(object):
         for group in self.groups:
             for project in group.projects:
                 if os.path.isdir(project.full_path):
-                    cprint(project.name, 'green')
-                    cprint(project.path, 'cyan')
+                    print_project_status(self.root_directory, project.path, project.name)
                     running_output = colored('Running command: ', 'red')
                     command_output = colored(command, attrs=['bold'])
                     print(running_output + command_output)
@@ -79,6 +78,7 @@ class ClowderYAML(object):
         self.validate_all()
         for group in self.groups:
             for project in group.projects:
+                print_project_status(self.root_directory, project.path, project.name)
                 project.herd()
 
     def herd_version_all(self, version):
@@ -86,16 +86,16 @@ class ClowderYAML(object):
         self.validate_all()
         for group in self.groups:
             for project in group.projects:
+                print_project_status(self.root_directory, project.path, project.name)
                 project.herd_version(version)
 
     def status(self):
         """Print git status for all projects"""
-        print_repo_status(self.clowder_path, 'clowder')
+        print_project_status(self.root_directory, 'clowder', 'clowder')
         print('')
         for group in self.groups:
             for project in group.projects:
-                print_repo_status(project.full_path, project.name)
-                cprint(project.path, 'cyan')
+                print_project_status(self.root_directory, project.path, project.name)
 
     def fix_version(self, version):
         """Fix current commits to versioned clowder.yaml"""

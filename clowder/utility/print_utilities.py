@@ -8,8 +8,9 @@ from clowder.utility.git_utilities import (
     git_is_dirty
 )
 
-def print_repo_status(repo_path, name):
+def print_project_status(root_directory, path, name):
     """Print repo status"""
+    repo_path = os.path.join(root_directory, path)
     git_path = os.path.join(repo_path, '.git')
     if not os.path.isdir(git_path):
         return
@@ -29,4 +30,7 @@ def print_repo_status(repo_path, name):
         current_branch = git_current_branch(repo_path)
         current_ref_output = colored('(' + current_branch + ')', 'magenta')
 
-    print(project_output + ' ' + current_ref_output)
+    path_output = colored(path, 'cyan')
+
+    print(project_output + ' @ ' + path_output)
+    print(current_ref_output)
