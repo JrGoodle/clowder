@@ -25,7 +25,6 @@ def print_clowder_repo_status(root_directory):
         return
     output = format_repo_string(repo_path, 'clowder', 'clowder')
     print(get_cat_face() + '  ' + output)
-    print('')
 
 def print_project_status(root_directory, path, name):
     """Print repo status"""
