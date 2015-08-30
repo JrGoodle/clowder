@@ -5,7 +5,7 @@ sudo: false # Enable container-based builds
 env:
   matrix:
     - EXAMPLE="cats"
-    - EXAMPLE="llvm_projects"
+    # - EXAMPLE="llvm_projects"
 
 before_install: brew update
 
