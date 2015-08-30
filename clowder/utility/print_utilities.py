@@ -33,8 +33,12 @@ def print_project_status(root_directory, path, name):
 
     path_output = colored(path, 'cyan')
 
-    print(get_cat() + '  ' + project_output)
+    print(project_output)
     print(current_ref_output + ' ' + path_output)
+
+def print_group(name):
+    name_output = colored(name, attrs=['bold'])
+    print(get_cat() + '  ' + name_output)
 
 def get_cat():
     """Return a cat emoji"""
