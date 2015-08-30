@@ -20,15 +20,12 @@ def breed(root_directory, url):
 
 def fix(root_directory, version):
     """clowder fix subcommand"""
-    # clowder_dir = os.path.join(root_directory, 'clowder')
     if version == None:
-        # Update repo containing clowder.yaml
-        # git_fix(clowder_dir)
         pass
     else:
         clowder = ClowderYAML(root_directory)
+        clowder.validate_all()
         clowder.fix_version(version)
-        # git_fix_version(clowder_dir, version)
     print('')
 
 def groom(root_directory):
