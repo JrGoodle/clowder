@@ -99,7 +99,11 @@ def git_is_dirty(repo_path):
 def git_litter(repo_path):
     """Discard current changes in repository"""
     repo = Repo(repo_path)
-    repo.head.reset(index=True, working_tree=True)
+    if repo.is_dirty():
+        print(' - Discarding current changes')
+        repo.head.reset(index=True, working_tree=True)
+    else:
+        print(' - No changes to discard')
 
 def git_stash(repo_path):
     """Stash current changes in repository"""
@@ -107,6 +111,8 @@ def git_stash(repo_path):
     if repo.is_dirty():
         print(' - Stashing current changes')
         repo.git.stash()
+    else:
+        print(' - No changes to stash')
 
 def git_truncate_ref(ref):
     """Return bare branch, tag, or sha"""

@@ -120,10 +120,11 @@ class ClowderYAML(object):
 
     def litter(self):
         """Discard changes for all projects"""
-        print('Discarding all changes')
+        print_clowder_repo_status(self.root_directory)
         git_litter(self.clowder_path)
         for group in self.groups:
             for project in group.projects:
+                print_project_status(self.root_directory, project.path, project.name)
                 git_litter(project.full_path)
 
     def load_yaml(self):
