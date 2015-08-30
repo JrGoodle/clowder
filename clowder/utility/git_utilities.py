@@ -55,7 +55,7 @@ def git_litter(repo_path):
     repo = Repo(repo_path)
     repo.head.reset(index=True, working_tree=True)
 
-def git_sync(repo_path, ref):
+def git_herd(repo_path, ref):
     """Sync git repo with default branch"""
     repo = Repo(repo_path)
     git = repo.git
@@ -68,7 +68,7 @@ def git_sync(repo_path, ref):
     print(' - Pulling latest changes')
     git.pull()
 
-def git_sync_version(repo_path, version, ref):
+def git_herd_version(repo_path, version, ref):
     """Sync fixed version of repo at path"""
     repo = Repo(repo_path)
     git = repo.git

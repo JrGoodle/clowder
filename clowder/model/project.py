@@ -1,13 +1,12 @@
 """Model representation of clowder.yaml project"""
 import os
-from termcolor import colored
+from termcolor import cprint
 
 from clowder.utility.git_utilities import (
     git_clone_url_at_path,
     git_current_sha,
-    git_status,
-    git_sync,
-    git_sync_version,
+    git_herd,
+    git_herd_version,
     git_validate_repo_state
 )
 
@@ -40,28 +39,23 @@ class Project(object):
                 'ref': git_current_sha(self.full_path),
                 'remote': self.remote_name}
 
-    def sync(self):
+    def herd(self):
         """Clone project or update latest from upstream"""
-        self.print_name()
+        cprint(self.path, 'green')
         git_path = os.path.join(self.full_path, '.git')
         if not os.path.isdir(git_path):
             git_clone_url_at_path(self._get_remote_url(), self.full_path)
         else:
-            git_sync(self.full_path, self.ref)
+            git_herd(self.full_path, self.ref)
 
-    def sync_version(self, version):
+    def herd_version(self, version):
         """Check out fixed version of project"""
-        self.print_name()
+        cprint(self.path, 'green')
         git_path = os.path.join(self.full_path, '.git')
         if not os.path.isdir(git_path):
             git_clone_url_at_path(self._get_remote_url(), self.full_path)
 
-        git_sync_version(self.full_path, version, self.ref)
-
-    def print_name(self):
-        """Project relative project path in green"""
-        project_output = colored(self.path, 'green')
-        print(project_output)
+        git_herd_version(self.full_path, version, self.ref)
 
     def _get_remote_url(self):
         """Return full remote url for project"""

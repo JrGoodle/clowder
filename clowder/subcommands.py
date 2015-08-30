@@ -4,7 +4,7 @@ from termcolor import colored
 from clowder.model.clowder_yaml import ClowderYAML
 from clowder.utility.git_utilities import (
     git_clone_url_at_path,
-    git_sync,
+    git_herd,
     # git_fix,
     # git_fix_version,
     git_validate_repo_state
@@ -41,7 +41,7 @@ def groom(root_directory):
     clowder_output = colored(clowder_path, 'green')
     print(clowder_output)
     git_validate_repo_state(clowder_path)
-    git_sync(clowder_path, 'refs/heads/master')
+    git_herd(clowder_path, 'refs/heads/master')
     print('')
 
 def herd(root_directory, version):
@@ -50,13 +50,13 @@ def herd(root_directory, version):
         yaml_file = os.path.join(root_directory, 'clowder/clowder.yaml')
         symlink_clowder_yaml(root_directory, yaml_file)
         clowder = ClowderYAML(root_directory)
-        clowder.sync_all()
+        clowder.herd_all()
     else:
         yaml_version = 'clowder/versions/' + version + '/clowder.yaml'
         yaml_file = os.path.join(root_directory, yaml_version)
         symlink_clowder_yaml(root_directory, yaml_file)
         clowder = ClowderYAML(root_directory)
-        clowder.sync_version_all(version)
+        clowder.herd_version_all(version)
     print('')
 
 def litter(root_directory):

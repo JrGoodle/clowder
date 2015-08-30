@@ -53,35 +53,35 @@ class ClowderYAML(object):
             for project in group.projects:
                 git_litter(project.full_path)
 
-    # def sync(self):
+    # def herd(self):
     #     """Sync default projects with latest upstream changes"""
     #     self.validate()
     #     for group in self.groups:
     #         if group.name in self.defaults.groups:
     #             for project in group.projects:
-    #                 project.sync()
+    #                 project.herd()
 
-    def sync_all(self):
+    def herd_all(self):
         """Sync all projects with latest upstream changes"""
         self.validate_all()
         for group in self.groups:
             for project in group.projects:
-                project.sync()
+                project.herd()
 
-    # def sync_version(self, version):
+    # def herd_version(self, version):
     #     """Sync default projects to fixed versions"""
     #     self.validate()
     #     for group in self.groups:
     #         if group.name in self.defaults.groups:
     #             for project in group.projects:
-    #                 project.sync_version(version)
+    #                 project.herd_version(version)
 
-    def sync_version_all(self, version):
+    def herd_version_all(self, version):
         """Sync all projects to fixed versions"""
         self.validate_all()
         for group in self.groups:
             for project in group.projects:
-                project.sync_version(version)
+                project.herd_version(version)
 
     def status(self):
         """Print git status for all projects"""
