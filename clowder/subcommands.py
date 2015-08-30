@@ -23,7 +23,7 @@ def breed(root_directory, url):
 
 def fix(root_directory, version):
     """clowder fix subcommand"""
-    clowder_dir = os.path.join(root_directory, 'clowder')
+    # clowder_dir = os.path.join(root_directory, 'clowder')
     if version == None:
         # Update repo containing clowder.yaml
         # git_fix(clowder_dir)

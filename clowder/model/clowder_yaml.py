@@ -48,13 +48,13 @@ class ClowderYAML(object):
             for project in group.projects:
                 project.litter()
 
-    def sync(self):
-        """Sync default projects with latest upstream changes"""
-        self.validate()
-        for group in self.groups:
-            if group.name in self.defaults.groups:
-                for project in group.projects:
-                    project.sync()
+    # def sync(self):
+    #     """Sync default projects with latest upstream changes"""
+    #     self.validate()
+    #     for group in self.groups:
+    #         if group.name in self.defaults.groups:
+    #             for project in group.projects:
+    #                 project.sync()
 
     def sync_all(self):
         """Sync all projects with latest upstream changes"""
@@ -63,13 +63,13 @@ class ClowderYAML(object):
             for project in group.projects:
                 project.sync()
 
-    def sync_version(self, version):
-        """Sync default projects to fixed versions"""
-        self.validate()
-        for group in self.groups:
-            if group.name in self.defaults.groups:
-                for project in group.projects:
-                    project.sync_version(version)
+    # def sync_version(self, version):
+    #     """Sync default projects to fixed versions"""
+    #     self.validate()
+    #     for group in self.groups:
+    #         if group.name in self.defaults.groups:
+    #             for project in group.projects:
+    #                 project.sync_version(version)
 
     def sync_version_all(self, version):
         """Sync all projects to fixed versions"""
@@ -120,12 +120,12 @@ class ClowderYAML(object):
             return os.listdir(versions_dir)
         return None
 
-    def validate(self):
-        """Validate status of default projects"""
-        for group in self.groups:
-            if group.name in self.defaults.groups:
-                for project in group.projects:
-                    project.validate()
+    # def validate(self):
+    #     """Validate status of default projects"""
+    #     for group in self.groups:
+    #         if group.name in self.defaults.groups:
+    #             for project in group.projects:
+    #                 project.validate()
 
     def validate_all(self):
         """Validate status of all projects"""

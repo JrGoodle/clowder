@@ -6,8 +6,7 @@ class Defaults(object):
     def __init__(self, defaults):
         self.ref = defaults['ref']
         self.remote = defaults['remote']
-        self.groups = defaults['groups']
 
     def get_yaml(self):
         """Return python object representation for saving yaml"""
-        return {'ref': self.ref, 'remote': self.remote, 'groups':self.groups}
+        return {'ref': self.ref, 'remote': self.remote}
