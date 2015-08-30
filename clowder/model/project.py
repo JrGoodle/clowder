@@ -1,6 +1,7 @@
 """Model representation of clowder.yaml project"""
 import os
 from termcolor import cprint
+from clowder.utility.print_utilities import print_repo_status
 from clowder.utility.git_utilities import (
     git_clone_url_at_path,
     git_current_sha,
@@ -30,6 +31,8 @@ class Project(object):
             if remote.name == self.remote_name:
                 self.remote = remote
 
+        self.remote_url = self.remote.get_url_prefix() + self.name + ".git"
+
     def get_yaml(self):
         """Return python object representation for saving yaml"""
         return {'name': self.name,
@@ -39,26 +42,20 @@ class Project(object):
 
     def herd(self):
         """Clone project or update latest from upstream"""
-        cprint(self.name, 'green')
+        print_repo_status(self.full_path, self.name)
         cprint(self.path, 'cyan')
         git_path = os.path.join(self.full_path, '.git')
         if not os.path.isdir(git_path):
-            git_clone_url_at_path(self._get_remote_url(), self.full_path)
+            git_clone_url_at_path(self.remote_url, self.full_path)
         else:
             git_herd(self.full_path, self.ref)
 
     def herd_version(self, version):
         """Check out fixed version of project"""
-        cprint(self.name, 'green')
+        print_repo_status(self.full_path, self.name)
         cprint(self.path, 'cyan')
         git_path = os.path.join(self.full_path, '.git')
         if not os.path.isdir(git_path):
-            git_clone_url_at_path(self._get_remote_url(), self.full_path)
+            git_clone_url_at_path(self.remote_url, self.full_path)
 
         git_herd_version(self.full_path, version, self.ref)
-
-    def _get_remote_url(self):
-        """Return full remote url for project"""
-        url_prefix = self.remote.get_url_prefix()
-        remote_url = url_prefix + self.name + ".git"
-        return remote_url
