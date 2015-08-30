@@ -1,5 +1,6 @@
 """Print utilities"""
 import os
+import emoji
 from termcolor import colored
 from clowder.utility.git_utilities import (
     git_current_sha,
@@ -32,5 +33,9 @@ def print_project_status(root_directory, path, name):
 
     path_output = colored(path, 'cyan')
 
-    print(project_output)
+    print(get_cat() + ' ' + project_output)
     print(current_ref_output + ' ' + path_output)
+
+def get_cat():
+    """Return a cat emoji"""
+    return emoji.emojize(':cat:', use_aliases=True)
