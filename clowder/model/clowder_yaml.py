@@ -1,6 +1,6 @@
 """clowder.yaml parsing and functionality"""
-import os, subprocess
-from termcolor import colored
+import os, subprocess, sys
+from termcolor import colored, cprint
 import yaml
 from clowder.utility.git_utilities import git_litter, git_validate_repo_state
 from clowder.utility.print_utilities import (
@@ -116,9 +116,16 @@ class ClowderYAML(object):
             os.makedirs(version_dir)
 
         yaml_file = os.path.join(version_dir, 'clowder.yaml')
+        yaml_file_output = colored(yaml_file, 'cyan')
+        version_output = colored(version, attrs=['bold'])
         if not os.path.exists(yaml_file):
             with open(yaml_file, 'w') as file:
+                print('Fixing version ' + version_output + ' at ' + yaml_file_output)
                 yaml.dump(self.get_yaml(), file, default_flow_style=False)
+        else:
+            print('Version ' + version_output + ' already exists at ' + yaml_file_output)
+            cprint('\nExiting...\n', 'red')
+            sys.exit()
 
     def get_yaml(self):
         """Return python object representation for saving yaml"""

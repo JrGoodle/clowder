@@ -1,7 +1,7 @@
 """Git utilities"""
 import os, sys
 from git import Repo
-from termcolor import colored
+from termcolor import colored, cprint
 
 # Disable errors shown by pylint for sh.git
 # pylint: disable=E1101
@@ -92,27 +92,18 @@ def git_validate_repo_state(repo_path):
         repo_output = colored(repo_path, 'cyan')
         print(repo_output + ' is dirty')
         print('Please stash or commit your changes before running clowder')
-        print('')
-        exit_output = colored('Exiting...', 'red')
-        print(exit_output)
-        print('')
+        cprint('\nExiting...\n', 'red')
         sys.exit()
     # if git_untracked_files(repo_path):
     #     print(repo_path + ' has untracked files.')
     #     print('Please remove these files or add to .gitignore')
-    #     print('')
-    #     exit_output = colored('Exiting...', 'red')
-    #     print(exit_output)
-    #     print('')
+    #     cprint('\nExiting...\n', 'red')
     #     sys.exit()
     # if git_is_detached(repo_path):
     #     repo_output = colored(repo_path, 'cyan')
     #     print(repo_output  + ' HEAD is detached')
     #     print('Please point your HEAD to a branch before running clowder')
-    #     print('')
-    #     exit_output = colored('Exiting...', 'red')
-    #     print(exit_output)
-    #     print('')
+    #     cprint('\nExiting...\n', 'red')
     #     sys.exit()
 
 def git_is_dirty(repo_path):
