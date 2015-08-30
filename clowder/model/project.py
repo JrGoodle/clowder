@@ -58,10 +58,6 @@ class Project(object):
 
         git_sync_version(self.full_path, version, self.ref)
 
-    def status(self):
-        """Print git status of project"""
-        git_status(self.full_path, self.path)
-
     def print_name(self):
         """Project relative project path in green"""
         project_output = colored(self.path, 'green')
