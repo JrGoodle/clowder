@@ -90,17 +90,20 @@ done
 clowder meow || exit 1
 clowder herd || exit 1
 clowder meow || exit 1
-clowder litter || exit 1
+clowder herd -v v0.1 || exit 1
+clowder meow || exit 1
+clowder herd || exit 1
 clowder meow || exit 1
 
-for project in "${black_cat_projects[@]}"
-do
-	pushd $project &>/dev/null
-    git checkout master
-    popd &>/dev/null
-done
-echo ''
+pushd clowder &>/dev/null
+touch newfile
+git add newfile
+popd &>/dev/null
 
 clowder meow || exit 1
 clowder herd || exit 1
+clowder meow || exit 1
+clowder groom || exit 1
+clowder meow || exit 1
+clowder litter || exit 1
 clowder meow || exit 1
