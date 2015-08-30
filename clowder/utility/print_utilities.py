@@ -16,7 +16,9 @@ def print_project_status(root_directory, path, name):
     if not os.path.isdir(git_path):
         cprint(name, 'green')
         return
+    print(format_repo_string(repo_path, path, name))
 
+def format_repo_string(repo_path, path, name):
     if git_is_dirty(repo_path):
         color = 'red'
         symbol = '*'
@@ -33,17 +35,26 @@ def print_project_status(root_directory, path, name):
         current_ref_output = colored('(' + current_branch + ')', 'magenta')
 
     path_output = colored(path, 'cyan')
-
-    print(project_output + ' ' + current_ref_output + ' ' + path_output)
+    return project_output + ' ' + current_ref_output + ' ' + path_output
 
 def print_clowder_repo_status(root_directory):
-    print_project_status(root_directory, 'clowder', 'clowder')
+    """Print clowder repo status"""
+    repo_path = os.path.join(root_directory, 'clowder')
+    git_path = os.path.join(repo_path, '.git')
+    if not os.path.isdir(git_path):
+        return
+    output = format_repo_string(repo_path, 'clowder', 'clowder')
+    print(get_cat() + '  ' + output)
     print('')
 
 def print_group(name):
     name_output = colored(name, attrs=['bold'])
-    print(get_cat() + '  ' + name_output)
+    print(get_cat_face() + '  ' + name_output)
+
+def get_cat_face():
+    """Return a cat emoji"""
+    return emoji.emojize(':cat:', use_aliases=True)
 
 def get_cat():
     """Return a cat emoji"""
-    return emoji.emojize(':cat:', use_aliases=True)
+    return emoji.emojize(':cat2:', use_aliases=True)
