@@ -1,9 +1,9 @@
 # clowder [![Build Status](https://travis-ci.org/JrGoodle/clowder.svg)](https://travis-ci.org/JrGoodle/clowder)
 
-> **clowder**  
+**clowder**  
 > A group of cats
 
-> **herding cats**  
+**herding cats**  
 > An idiom that refers to a frustrating attempt to control or organize a class of entities which are uncontrollable or chaotic.
 
 Managing multiple repositories of dependent code can be pretty frustrating. There are a number of existing options:
