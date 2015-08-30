@@ -74,7 +74,7 @@ class Project(object):
 
     def _get_remote_url(self):
         """Return full remote url for project"""
-        url_prefix = self.remote.get_url_prefix
+        url_prefix = self.remote.get_url_prefix()
         remote_url = url_prefix + self.name + ".git"
         return remote_url
 
