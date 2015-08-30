@@ -123,6 +123,7 @@ class ClowderYAML(object):
         print_clowder_repo_status(self.root_directory)
         git_litter(self.clowder_path)
         for group in self.groups:
+            print_group(group.name)
             for project in group.projects:
                 print_project_status(self.root_directory, project.path, project.name)
                 git_litter(project.full_path)
@@ -162,6 +163,7 @@ class ClowderYAML(object):
         print_clowder_repo_status(self.root_directory)
         git_stash(self.clowder_path)
         for group in self.groups:
+            print_group(group.name)
             for project in group.projects:
                 print_project_status(self.root_directory, project.path, project.name)
                 git_stash(project.full_path)
