@@ -123,7 +123,6 @@ do
     git checkout master~2 &>/dev/null
     popd &>/dev/null
 done
-echo ''
 
 clowder meow || exit 1
 clowder herd || exit 1
