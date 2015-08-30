@@ -7,7 +7,7 @@ if __name__ == '__main__':
 import os, sys
 import argcomplete, argparse
 from termcolor import cprint
-from clowder.subcommands import breed, herd, meow, groom, fix, forall, litter
+from clowder.subcommands import breed, herd, meow, groom, fix, forall, litter, stash
 from clowder.model.clowder_yaml import ClowderYAML
 
 class Command(object):
@@ -53,6 +53,9 @@ class Command(object):
         # clowder meow
         self.subparsers.add_parser('meow',
                                    help='Print status for projects')
+        # clowder stash
+        self.subparsers.add_parser('stash',
+                                   help='Stash current changes in all projects and clowder repo')
         # Argcomplete and arguments parsing
         argcomplete.autocomplete(parser)
         self.args = parser.parse_args()
@@ -132,6 +135,15 @@ class Command(object):
         if self.clowder != None:
             cprint('Meow...\n', 'yellow')
             meow(self.root_directory)
+        else:
+            print_clowder_not_found_message()
+            sys.exit()
+
+    def stash(self):
+        """clowder stash command"""
+        if self.clowder != None:
+            cprint('Stash...\n', 'yellow')
+            stash(self.root_directory)
         else:
             print_clowder_not_found_message()
             sys.exit()

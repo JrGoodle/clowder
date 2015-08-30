@@ -2,7 +2,11 @@
 import os, subprocess, sys
 from termcolor import colored, cprint
 import yaml
-from clowder.utility.git_utilities import git_litter, git_validate_repo_state
+from clowder.utility.git_utilities import (
+    git_litter,
+    git_stash,
+    git_validate_repo_state
+)
 from clowder.utility.print_utilities import (
     print_clowder_repo_status,
     print_group,
@@ -151,6 +155,14 @@ class ClowderYAML(object):
             print_group(group.name)
             for project in group.projects:
                 print_project_status(self.root_directory, project.path, project.name)
+
+    def stash(self):
+        """Stash changes for all projects with changes"""
+        print('Stashing changes')
+        git_stash(self.clowder_path)
+        for group in self.groups:
+            for project in group.projects:
+                git_stash(project.full_path)
 
     def validate_all(self):
         """Validate status of all projects"""

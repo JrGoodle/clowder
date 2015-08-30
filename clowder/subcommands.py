@@ -57,6 +57,11 @@ def meow(root_directory):
     clowder = ClowderYAML(root_directory)
     clowder.meow()
 
+def stash(root_directory):
+    """clowder stash subcommand"""
+    clowder = ClowderYAML(root_directory)
+    clowder.stash()
+
 def symlink_clowder_yaml(root_directory, clowder_yaml):
     """Create clowder.yaml symlink in directory pointing to file"""
     os.chdir(root_directory)

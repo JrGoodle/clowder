@@ -39,7 +39,7 @@ def git_current_sha(repo_path):
     repo = Repo(repo_path)
     git = repo.git
     return str(git.rev_parse('HEAD')).rstrip('\n')
-    
+
 def git_fix(repo_path):
     """Commit new main clowder.yaml from current changes"""
     repo = Repo(repo_path)
@@ -100,6 +100,12 @@ def git_litter(repo_path):
     """Discard current changes in repository"""
     repo = Repo(repo_path)
     repo.head.reset(index=True, working_tree=True)
+
+def git_stash(repo_path):
+    """Stash current changes in repository"""
+    repo = Repo(repo_path)
+    if repo.is_dirty():
+        repo.git.stash()
 
 def git_truncate_ref(ref):
     """Return bare branch, tag, or sha"""
