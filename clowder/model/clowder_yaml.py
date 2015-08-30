@@ -50,6 +50,13 @@ class ClowderYAML(object):
             names.append(group['name'])
         return names
 
+    def get_all_project_names(self):
+        """Returns all project names for current clowder.yaml"""
+        names = []
+        for group in self.groups:
+            names.extend(group.get_all_project_names())
+        return names
+
     def litter(self):
         """Discard changes for all projects"""
         git_litter(self.clowder_path)
