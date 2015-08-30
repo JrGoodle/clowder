@@ -102,7 +102,6 @@ class ClowderYAML(object):
     def meow(self):
         """Print git status for all projects"""
         print_clowder_repo_status(self.root_directory)
-        print('')
         for group in self.groups:
             print_group(group.name)
             for project in group.projects:
