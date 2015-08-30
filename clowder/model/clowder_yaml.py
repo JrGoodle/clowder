@@ -47,7 +47,7 @@ class ClowderYAML(object):
             for project in group.projects:
                 if os.path.isdir(project.full_path):
                     print_project_status(self.root_directory, project.path, project.name)
-                    running_output = colored('Running command: ', 'red')
+                    running_output = colored('Running command: ', attrs=['underline'])
                     command_output = colored(command, attrs=['bold'])
                     print(running_output + command_output)
                     subprocess.call(command.split(),
