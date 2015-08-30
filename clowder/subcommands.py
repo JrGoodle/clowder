@@ -10,7 +10,6 @@ def breed(root_directory, url):
     # Create clowder.yaml symlink
     yaml_file = os.path.join(root_directory, 'clowder/clowder.yaml')
     symlink_clowder_yaml(root_directory, yaml_file)
-    print('')
 
 def fix(root_directory, version):
     """clowder fix subcommand"""
@@ -20,7 +19,6 @@ def fix(root_directory, version):
         clowder = ClowderYAML(root_directory)
         clowder.validate_all()
         clowder.fix_version(version)
-    print('')
 
 def forall(root_directory, command):
     """clowder forall subcommand"""
@@ -32,7 +30,6 @@ def groom(root_directory):
     # Update repo containing clowder.yaml
     clowder_repo = ClowderRepo(root_directory)
     clowder_repo.herd()
-    print('')
 
 def herd(root_directory, version):
     """clowder herd subcommand"""
@@ -47,19 +44,16 @@ def herd(root_directory, version):
         symlink_clowder_yaml(root_directory, yaml_file)
         clowder = ClowderYAML(root_directory)
         clowder.herd_version_all(version)
-    print('')
 
 def litter(root_directory):
     """clowder litter subcommand"""
     clowder = ClowderYAML(root_directory)
     clowder.litter()
-    print('')
 
 def meow(root_directory):
     """clowder meow subcommand"""
     clowder = ClowderYAML(root_directory)
     clowder.status()
-    print('')
 
 def symlink_clowder_yaml(root_directory, clowder_yaml):
     """Create clowder.yaml symlink in directory pointing to file"""

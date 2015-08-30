@@ -70,6 +70,7 @@ class Command(object):
             exit(1)
         # use dispatch pattern to invoke method with same name
         getattr(self, self.args.command)()
+        print('')
 
     def breed(self):
         """clowder breed command"""
