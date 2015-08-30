@@ -11,6 +11,7 @@ class Group(object):
 
         for project in group['projects']:
             self.projects.append(Project(rootDirectory, project, defaults, remotes))
+        self.projects.sort(key=lambda project: project.path)
 
     def get_yaml(self):
         """Return python object representation for saving yaml"""

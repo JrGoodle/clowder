@@ -38,6 +38,7 @@ class ClowderYAML(object):
                                              group,
                                              defaults,
                                              self.remotes))
+                self.groups.sort(key=lambda group: group.name)
 
     def forall(self, command):
         """Runs command in all projects"""
