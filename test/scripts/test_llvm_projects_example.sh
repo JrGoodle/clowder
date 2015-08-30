@@ -107,7 +107,7 @@ clowder meow || exit 1
 for project in "${projects[@]}"
 do
 	pushd $project &>/dev/null
-    git checkout master~2
+    git checkout master~2 &>/dev/null
     popd &>/dev/null
 done
 echo ''

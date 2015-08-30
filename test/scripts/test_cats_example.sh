@@ -83,7 +83,7 @@ echo ''
 for project in "${black_cat_projects[@]}"
 do
 	pushd $project &>/dev/null
-    git checkout master~2
+    git checkout master~2 &>/dev/null
     popd &>/dev/null
 done
 
