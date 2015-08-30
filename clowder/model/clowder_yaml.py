@@ -2,7 +2,11 @@
 import os
 import yaml
 
-from clowder.utility.git_utilities import git_status, git_litter
+from clowder.utility.git_utilities import (
+    git_litter,
+    git_status,
+    git_validate_repo_state
+)
 
 from clowder.model.group import Group
 from clowder.model.remote import Remote
@@ -53,28 +57,12 @@ class ClowderYAML(object):
             for project in group.projects:
                 git_litter(project.full_path)
 
-    # def herd(self):
-    #     """Sync default projects with latest upstream changes"""
-    #     self.validate()
-    #     for group in self.groups:
-    #         if group.name in self.defaults.groups:
-    #             for project in group.projects:
-    #                 project.herd()
-
     def herd_all(self):
         """Sync all projects with latest upstream changes"""
         self.validate_all()
         for group in self.groups:
             for project in group.projects:
                 project.herd()
-
-    # def herd_version(self, version):
-    #     """Sync default projects to fixed versions"""
-    #     self.validate()
-    #     for group in self.groups:
-    #         if group.name in self.defaults.groups:
-    #             for project in group.projects:
-    #                 project.herd_version(version)
 
     def herd_version_all(self, version):
         """Sync all projects to fixed versions"""
@@ -126,6 +114,20 @@ class ClowderYAML(object):
             return os.listdir(versions_dir)
         return None
 
+    def validate_all(self):
+        """Validate status of all projects"""
+        for group in self.groups:
+            for project in group.projects:
+                git_validate_repo_state(project.full_path)
+
+    # def herd(self):
+    #     """Sync default projects with latest upstream changes"""
+    #     self.validate()
+    #     for group in self.groups:
+    #         if group.name in self.defaults.groups:
+    #             for project in group.projects:
+    #                 project.herd()
+
     # def validate(self):
     #     """Validate status of default projects"""
     #     for group in self.groups:
@@ -133,8 +135,10 @@ class ClowderYAML(object):
     #             for project in group.projects:
     #                 project.validate()
 
-    def validate_all(self):
-        """Validate status of all projects"""
-        for group in self.groups:
-            for project in group.projects:
-                project.validate()
+    # def herd_version(self, version):
+    #     """Sync default projects to fixed versions"""
+    #     self.validate()
+    #     for group in self.groups:
+    #         if group.name in self.defaults.groups:
+    #             for project in group.projects:
+    #                 project.herd_version(version)
