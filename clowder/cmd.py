@@ -40,13 +40,13 @@ class Command(object):
         parser_herd = self.subparsers.add_parser('herd',
                                                  help='Clone and sync latest changes for projects')
         parser_herd.add_argument('--version', '-v', choices=versions, help='Version name to herd')
-
         # clowder meow
         self.subparsers.add_parser('meow',
                                    help='Print status for projects')
         # clowder fix
         parser_fix = self.subparsers.add_parser('fix',
-                                                help='Create version of clowder.yaml for current repos')
+                                                help=('Create version of clowder.yaml'
+                                                      ' for current repos'))
         parser_fix.add_argument('--version', '-v', required=True, help='Version name to fix')
         # clowder litter
         self.subparsers.add_parser('litter',
