@@ -58,6 +58,17 @@ def git_fix_version(repo_path, version):
     git.pull()
     git.push()
 
+def git_groom(repo_path):
+    """Sync clowder repo with current branch"""
+    repo = Repo(repo_path)
+    git = repo.git
+    git.fetch('--all', '--prune', '--tags')
+    if not git_is_detached(repo_path):
+        print(' - Pulling latest changes')
+        git.pull()
+    else:
+        print(' - HEAD is detached, nothing to pull')
+
 def git_herd(repo_path, ref):
     """Sync git repo with default branch"""
     repo = Repo(repo_path)
