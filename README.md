@@ -44,7 +44,7 @@ $ clowder herd # herd all groups
 
 Herding clones the project repository if it didn't previously exist.
 Otherwise, each project will pull the latest changes.
-If the default branch isn't checked out, current changes will be stashed, the default branch checked out, and latest changes pulled.
+If the default branch isn't checked out, the default branch checked out, and latest changes pulled.
 
 ```bash
 $ clowder groom # Update clowder repository
@@ -56,10 +56,6 @@ $ clowder meow # print status of repositories
 
 ```bash
 $ clowder litter # Discard any changes in current repositories
-```
-
-```bash
-$ clowder fix # Fix changes in clowder.yaml
 ```
 
 ```bash
