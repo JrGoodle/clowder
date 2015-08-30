@@ -15,6 +15,7 @@ class ClowderRepo(object):
 
     def clone(self, url):
         """Clone clowder repo from url"""
+        print_clowder_repo_status(self.root_directory)
         git_clone_url_at_path(url, self.clowder_path)
 
     def groom(self):
