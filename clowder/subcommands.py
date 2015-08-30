@@ -1,20 +1,17 @@
 """clowder subcommands"""
 import os
-from termcolor import colored
+from termcolor import colored, cprint
 from clowder.model.clowder_yaml import ClowderYAML
 from clowder.utility.git_utilities import (
     git_clone_url_at_path,
     git_herd,
-    # git_fix,
-    # git_fix_version,
     git_validate_repo_state
 )
 
 def breed(root_directory, url):
     """clowder breed subcommand"""
     clowder_dir = os.path.join(root_directory, 'clowder')
-    clowder_output = colored(clowder_dir, 'green')
-    print(clowder_output)
+    cprint('clowder', 'green')
     git_clone_url_at_path(url, clowder_dir)
     # Create clowder.yaml symlink
     yaml_file = os.path.join(clowder_dir, 'clowder.yaml')
