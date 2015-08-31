@@ -49,6 +49,10 @@ def format_ref_string(repo_path):
         current_branch = git_current_branch(repo_path)
         return colored('(' + current_branch + ')', 'magenta')
 
+def print_clowder_not_found_message():
+    """Print error message when clowder not found"""
+    cprint('No clowder found in the current directory, exiting...\n', 'red')
+    
 def print_clowder_repo_status(root_directory):
     """Print clowder repo status"""
     repo_path = os.path.join(root_directory, 'clowder')

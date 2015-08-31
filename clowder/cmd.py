@@ -13,6 +13,9 @@ from clowder.utility.clowder_utilities import (
     get_yaml_path,
     symlink_clowder_yaml
 )
+from clowder.utility.print_utilities import (
+    print_clowder_not_found_message
+)
 
 class Command(object):
     """Command class for parsing commandline options"""
@@ -172,10 +175,6 @@ def main():
     """Main entrypoint for clowder command"""
     signal.signal(signal.SIGINT, signal_handler)
     Command()
-
-def print_clowder_not_found_message():
-    """Print error message when clowder not found"""
-    cprint('No clowder found in the current directory, exiting...\n', 'red')
 
 # Disable errors shown by pylint for unused arguments
 # pylint: disable=W0613
