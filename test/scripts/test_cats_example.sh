@@ -122,10 +122,11 @@ clowder meow || exit 1
 echo "TEST: Fail groom with dirty clowder repo"
 clowder groom || exit 1
 clowder meow || exit 1
-echo "TEST: Discard changes with litter"
-clowder litter || exit 1
-clowder meow || exit 1
-echo "TEST: Successfully groom after litter"
+echo "TEST: Discard changes in clowder repo"
+pushd clowder &>/dev/null
+git checkout -- .
+popd &>/dev/null
+echo "TEST: Successfully groom after discarding changes"
 clowder groom || exit 1
 clowder meow || exit 1
 
