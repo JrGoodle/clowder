@@ -65,7 +65,7 @@ def git_groom(repo_path):
     git.fetch('--all', '--prune', '--tags')
     if not git_is_detached(repo_path):
         print(' - Pulling latest changes')
-        git.pull()
+        print(git.pull())
     else:
         print(' - HEAD is detached, nothing to pull')
 
@@ -80,7 +80,7 @@ def git_herd(repo_path, ref):
         print(' - Not on default branch, checking out ' + project_output)
         git.checkout(project_ref)
     print(' - Pulling latest changes')
-    git.pull()
+    print(git.pull())
 
 def git_herd_version(repo_path, version, ref):
     """Sync fixed version of repo at path"""
