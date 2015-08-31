@@ -76,12 +76,14 @@ def git_herd(repo_path, ref):
     if git_current_branch(repo_path) != project_ref:
         try:
             if repo.heads[project_ref]:
-                print(' - Not on default branch. Checking out ' + branch_output)
+                # print(' - Not on default branch.')
+                print(' - Checkout ' + branch_output)
                 git.checkout(project_ref)
                 print(' - Pulling latest changes')
                 print(git.pull())
         except:
-            print(' - No existing default branch. Create and check out ' + branch_output)
+            # print(' - No existing default branch.')
+            print(' - Create and checkout ' + branch_output)
             origin = repo.remotes.origin
             branch = repo.create_head(project_ref, origin.refs[project_ref])
             branch.set_tracking_branch(origin.refs[project_ref])
@@ -96,10 +98,11 @@ def git_herd_version(repo_path, version, ref):
     try:
         if repo.heads[fix_branch]:
             if repo.active_branch != repo.heads[fix_branch]:
-                print(' - Checking out ' + branch_output)
+                print(' - Checkout ' + branch_output)
                 git.checkout(fix_branch)
     except:
-        print(' - No existing branch. Create and check out ' + branch_output)
+        # print(' - No existing branch.')
+        print(' - Create and checkout ' + branch_output)
         git.checkout('-b', fix_branch, ref)
 
 def git_is_detached(repo_path):
