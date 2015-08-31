@@ -164,3 +164,15 @@ clowder meow || exit 1
 echo "TEST: Herd only specific group"
 clowder herd -g cats || exit 1
 clowder meow || exit 1
+
+echo "TEST: Delete default branches locally"
+pushd mu &>/dev/null
+git branch -D knead
+popd &>/dev/null
+pushd duke &>/dev/null
+git branch -D purr
+popd &>/dev/null
+
+echo "TEST: Herd existing repo's with no default branch locally"
+clowder herd || exit 1
+clowder meow || exit 1
