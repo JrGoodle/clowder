@@ -15,7 +15,6 @@ class Command(object):
 
     def __init__(self):
         self.root_directory = os.getcwd()
-
         # Load current clowder.yml config if it exists
         self.clowder = None
         groups = None
@@ -27,39 +26,39 @@ class Command(object):
 
         # clowder argparse setup
         parser = argparse.ArgumentParser(description='Manage multiple repositories')
-        self.subparsers = parser.add_subparsers(dest='command')
+        subparsers = parser.add_subparsers(dest='command')
         # clowder breed
-        parser_breed = self.subparsers.add_parser('breed',
-                                                  help=('Clone repository to clowder directory '
-                                                        'and create clowder.yaml symlink'))
+        parser_breed = subparsers.add_parser('breed',
+                                             help=('Clone repository to clowder directory '
+                                                   'and create clowder.yaml symlink'))
         parser_breed.add_argument('url', help='URL to clone repo with clowder.yaml from')
-        # clowder fix
-        parser_fix = self.subparsers.add_parser('fix',
-                                                help=('Create version of clowder.yaml'
-                                                      ' for current repos'))
-        parser_fix.add_argument('--version', '-v', required=True, help='Version name to fix')
-        # clowder forall
-        parser_forall = self.subparsers.add_parser('forall',
-                                                   help='Run command in all clowder projects')
-        parser_forall.add_argument('run_command', help='Command to run in clowder projects')
-        # clowder groom
-        self.subparsers.add_parser('groom',
-                                   help='Update clowder repository with latest changes')
         # clowder herd
-        parser_herd = self.subparsers.add_parser('herd',
-                                                 help='Clone and sync latest changes for projects')
+        parser_herd = subparsers.add_parser('herd',
+                                            help='Clone and sync latest changes for projects')
         group = parser_herd.add_mutually_exclusive_group()
         group.add_argument('--version', '-v', choices=versions, help='Version name to herd')
         group.add_argument('--groups', '-g', choices=groups, nargs='+', help='Groups to herd')
+        # clowder fix
+        parser_fix = subparsers.add_parser('fix',
+                                           help=('Create version of clowder.yaml'
+                                                 ' for current repos'))
+        parser_fix.add_argument('--version', '-v', required=True, help='Version name to fix')
+        # clowder forall
+        parser_forall = subparsers.add_parser('forall',
+                                              help='Run command in all clowder projects')
+        parser_forall.add_argument('cmd', help='Command to run in clowder projects')
+        # clowder groom
+        subparsers.add_parser('groom', add_help=False,
+                              help='Update clowder repository with latest changes')
         # clowder litter
-        self.subparsers.add_parser('litter',
-                                   help='Discard current changes in all projects and clowder repo')
+        subparsers.add_parser('litter', add_help=False,
+                              help='Discard current changes in all projects and clowder repo')
         # clowder meow
-        self.subparsers.add_parser('meow',
-                                   help='Print status for projects')
+        subparsers.add_parser('meow', add_help=False,
+                              help='Print status for projects')
         # clowder stash
-        self.subparsers.add_parser('stash',
-                                   help='Stash current changes in all projects and clowder repo')
+        subparsers.add_parser('stash', add_help=False,
+                              help='Stash current changes in all projects and clowder repo')
         # Argcomplete and arguments parsing
         argcomplete.autocomplete(parser)
         self.args = parser.parse_args()
@@ -102,7 +101,7 @@ class Command(object):
         """clowder forall command"""
         if self.clowder != None:
             cprint('Forall...\n', 'yellow')
-            forall(self.root_directory, self.args.run_command)
+            forall(self.root_directory, self.args.cmd)
         else:
             print_clowder_not_found_message()
             sys.exit()
