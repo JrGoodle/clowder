@@ -23,16 +23,39 @@ class Command(object):
     def __init__(self):
         self.root_directory = os.getcwd()
         # Load current clowder.yml config if it exists
-        self.clowder = None
-        groups = None
-        versions = None
         if os.path.isdir(os.path.join(self.root_directory, 'clowder')):
             self.clowder = ClowderYAML(self.root_directory)
-            versions = self.clowder.get_fixed_version_names()
-            groups = self.clowder.get_all_group_names()
-
+            self.versions = self.clowder.get_fixed_version_names()
+            self.groups = self.clowder.get_all_group_names()
+        else:
+            self.clowder = None
+            self.groups = None
+            self.versions = None
         # clowder argparse setup
         parser = argparse.ArgumentParser(description='Manage multiple repositories')
+        self._configure_subparsers(parser)
+        # Argcomplete and arguments parsing
+        argcomplete.autocomplete(parser)
+        self.args = parser.parse_args()
+
+        print('')
+        try:
+            if not hasattr(self, self.args.command):
+                cprint('Unrecognized command\n', 'red')
+                parser.print_help()
+                print('')
+                exit(1)
+        except:
+            cprint('Unrecognized command\n', 'red')
+            parser.print_help()
+            print('')
+            exit(1)
+        # use dispatch pattern to invoke method with same name
+        getattr(self, self.args.command)()
+        print('')
+
+    def _configure_subparsers(self, parser):
+        """Configure all clowder command subparsers and arguments"""
         subparsers = parser.add_subparsers(dest='command')
         # clowder breed
         parser_breed = subparsers.add_parser('breed',
@@ -43,8 +66,8 @@ class Command(object):
         parser_herd = subparsers.add_parser('herd',
                                             help='Clone and sync latest changes for projects')
         group = parser_herd.add_mutually_exclusive_group()
-        group.add_argument('--version', '-v', choices=versions, help='Version name to herd')
-        group.add_argument('--groups', '-g', choices=groups, nargs='+', help='Groups to herd')
+        group.add_argument('--version', '-v', choices=self.versions, help='Version name to herd')
+        group.add_argument('--groups', '-g', choices=self.groups, nargs='+', help='Groups to herd')
         # clowder fix
         parser_fix = subparsers.add_parser('fix',
                                            help=('Create version of clowder.yaml'
@@ -66,25 +89,6 @@ class Command(object):
         # clowder stash
         subparsers.add_parser('stash', add_help=False,
                               help='Stash current changes in all projects and clowder repo')
-        # Argcomplete and arguments parsing
-        argcomplete.autocomplete(parser)
-        self.args = parser.parse_args()
-
-        print('')
-        try:
-            if not hasattr(self, self.args.command):
-                cprint('Unrecognized command\n', 'red')
-                parser.print_help()
-                print('')
-                exit(1)
-        except:
-            cprint('Unrecognized command\n', 'red')
-            parser.print_help()
-            print('')
-            exit(1)
-        # use dispatch pattern to invoke method with same name
-        getattr(self, self.args.command)()
-        print('')
 
     def breed(self):
         """clowder breed command"""
