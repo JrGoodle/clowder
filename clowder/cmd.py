@@ -22,6 +22,7 @@ class Command(object):
         if os.path.isdir(os.path.join(self.root_directory, 'clowder')):
             self.clowder = ClowderYAML(self.root_directory)
             versions = self.clowder.get_fixed_version_names()
+            groups = self.clowder.get_all_group_names()
 
         # clowder argparse setup
         parser = argparse.ArgumentParser(description='Manage multiple repositories')
@@ -46,7 +47,9 @@ class Command(object):
         # clowder herd
         parser_herd = self.subparsers.add_parser('herd',
                                                  help='Clone and sync latest changes for projects')
-        parser_herd.add_argument('--version', '-v', choices=versions, help='Version name to herd')
+        group = parser_herd.add_mutually_exclusive_group()
+        group.add_argument('--version', '-v', choices=versions, help='Version name to herd')
+        group.add_argument('--groups', '-g', choices=groups, nargs='+', help='Groups to herd')
         # clowder litter
         self.subparsers.add_parser('litter',
                                    help='Discard current changes in all projects and clowder repo')
@@ -116,7 +119,7 @@ class Command(object):
         """clowder herd command"""
         if self.clowder != None:
             cprint('Herding...\n', 'yellow')
-            herd(self.root_directory, self.args.version)
+            herd(self.root_directory, self.args.version, self.args.groups)
         else:
             print_clowder_not_found_message()
             sys.exit()

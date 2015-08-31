@@ -7,18 +7,14 @@ def breed(root_directory, url):
     """clowder breed subcommand"""
     clowder_repo = ClowderRepo(root_directory)
     clowder_repo.clone(url)
-    # Create clowder.yaml symlink
     yaml_file = os.path.join(root_directory, 'clowder/clowder.yaml')
     symlink_clowder_yaml(root_directory, yaml_file)
 
 def fix(root_directory, version):
     """clowder fix subcommand"""
-    if version == None:
-        pass
-    else:
-        clowder = ClowderYAML(root_directory)
-        clowder.validate_all()
-        clowder.fix_version(version)
+    clowder = ClowderYAML(root_directory)
+    clowder.validate_all()
+    clowder.fix_version(version)
 
 def forall(root_directory, command):
     """clowder forall subcommand"""
@@ -27,23 +23,24 @@ def forall(root_directory, command):
 
 def groom(root_directory):
     """clowder groom subcommand"""
-    # Update repo containing clowder.yaml
     clowder_repo = ClowderRepo(root_directory)
     clowder_repo.groom()
 
-def herd(root_directory, version):
+def herd(root_directory, version, groups):
     """clowder herd subcommand"""
     if version == None:
         yaml_file = os.path.join(root_directory, 'clowder/clowder.yaml')
     else:
         yaml_version = 'clowder/versions/' + version + '/clowder.yaml'
         yaml_file = os.path.join(root_directory, yaml_version)
-
     symlink_clowder_yaml(root_directory, yaml_file)
-    clowder = ClowderYAML(root_directory)
 
+    clowder = ClowderYAML(root_directory)
     if version == None:
-        clowder.herd_all()
+        if groups == None:
+            clowder.herd_all()
+        else:
+            clowder.herd_groups(groups)
     else:
         clowder.herd_version_all(version)
 
