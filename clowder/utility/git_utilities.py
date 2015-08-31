@@ -9,7 +9,7 @@ def git_clone_url_at_path(url, repo_path):
         if not os.path.isdir(repo_path):
             os.makedirs(repo_path)
         repo_path_output = colored(repo_path, 'cyan')
-        print(' - Cloning repo at: ' + repo_path_output)
+        print(' - Cloning repo at ' + repo_path_output)
         repo = Repo.init(repo_path)
         origin = repo.create_remote('origin', url)
         origin.fetch()
