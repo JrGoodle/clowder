@@ -121,7 +121,8 @@ def git_litter(repo_path):
         print(' - Discarding current changes')
         repo.head.reset(index=True, working_tree=True)
     else:
-        print(' - No changes to discard')
+        pass
+        # print(' - No changes to discard')
 
 def git_stash(repo_path):
     """Stash current changes in repository"""
@@ -130,7 +131,8 @@ def git_stash(repo_path):
         print(' - Stashing current changes')
         repo.git.stash()
     else:
-        print(' - No changes to stash')
+        pass
+        # print(' - No changes to stash')
 
 def git_truncate_ref(ref):
     """Return bare branch, tag, or sha"""

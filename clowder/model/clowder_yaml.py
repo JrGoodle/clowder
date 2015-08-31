@@ -129,8 +129,7 @@ class ClowderYAML(object):
             print_group(group.name)
             for project in group.projects:
                 print_project_status(self.root_directory, project.path, project.name)
-                if git_is_dirty(project.full_path):
-                    git_litter(project.full_path)
+                git_litter(project.full_path)
 
     def meow(self):
         """Print git status for all projects"""
@@ -149,8 +148,7 @@ class ClowderYAML(object):
             print_group(group.name)
             for project in group.projects:
                 print_project_status(self.root_directory, project.path, project.name)
-                if git_is_dirty(project.full_path):
-                    git_stash(project.full_path)
+                git_stash(project.full_path)
 
     def _get_yaml(self):
         """Return python object representation for saving yaml"""
