@@ -7,8 +7,12 @@ if __name__ == '__main__':
 import os, signal, sys
 import argcomplete, argparse
 from termcolor import cprint
-from clowder.subcommands import breed, herd, meow, groom, fix, forall, litter, stash
+from clowder.model.clowder_repo import ClowderRepo
 from clowder.model.clowder_yaml import ClowderYAML
+from clowder.utility.clowder_utilities import (
+    get_yaml_path,
+    symlink_clowder_yaml
+)
 
 class Command(object):
     """Command class for parsing commandline options"""
@@ -83,7 +87,10 @@ class Command(object):
         """clowder breed command"""
         if self.clowder == None:
             cprint('Breeding from %s\n' % self.args.url, 'yellow')
-            breed(self.root_directory, self.args.url)
+            clowder_repo = ClowderRepo(self.root_directory)
+            clowder_repo.clone(self.args.url)
+            yaml_file = os.path.join(self.root_directory, 'clowder/clowder.yaml')
+            symlink_clowder_yaml(self.root_directory, yaml_file)
         else:
             cprint('Clowder already bred in this directory, exiting...\n', 'red')
             sys.exit()
@@ -92,7 +99,7 @@ class Command(object):
         """clowder fix command"""
         if self.clowder != None:
             cprint('Fixing...\n', 'yellow')
-            fix(self.root_directory, self.args.version)
+            self.clowder.fix_version(self.args.version)
         else:
             print_clowder_not_found_message()
             sys.exit()
@@ -101,7 +108,7 @@ class Command(object):
         """clowder forall command"""
         if self.clowder != None:
             cprint('Forall...\n', 'yellow')
-            forall(self.root_directory, self.args.cmd)
+            self.clowder.forall(self.args.cmd)
         else:
             print_clowder_not_found_message()
             sys.exit()
@@ -110,7 +117,8 @@ class Command(object):
         """clowder groom command"""
         if self.clowder != None:
             cprint('Grooming...\n', 'yellow')
-            groom(self.root_directory)
+            clowder_repo = ClowderRepo(self.root_directory)
+            clowder_repo.groom()
         else:
             print_clowder_not_found_message()
             sys.exit()
@@ -119,7 +127,16 @@ class Command(object):
         """clowder herd command"""
         if self.clowder != None:
             cprint('Herding...\n', 'yellow')
-            herd(self.root_directory, self.args.version, self.args.groups)
+            yaml_file = get_yaml_path(self.root_directory, self.args.version)
+            symlink_clowder_yaml(self.root_directory, yaml_file)
+            clowder = ClowderYAML(self.root_directory)
+            if self.args.version == None:
+                if self.args.groups == None:
+                    clowder.herd_all()
+                else:
+                    clowder.herd_groups(self.args.groups)
+            else:
+                clowder.herd_version_all(self.args.version)
         else:
             print_clowder_not_found_message()
             sys.exit()
@@ -128,7 +145,7 @@ class Command(object):
         """clowder litter command"""
         if self.clowder != None:
             cprint('Litter...\n', 'yellow')
-            litter(self.root_directory)
+            self.clowder.litter()
         else:
             print_clowder_not_found_message()
             sys.exit()
@@ -137,7 +154,7 @@ class Command(object):
         """clowder meow command"""
         if self.clowder != None:
             cprint('Meow...\n', 'yellow')
-            meow(self.root_directory)
+            self.clowder.meow()
         else:
             print_clowder_not_found_message()
             sys.exit()
@@ -146,7 +163,7 @@ class Command(object):
         """clowder stash command"""
         if self.clowder != None:
             cprint('Stash...\n', 'yellow')
-            stash(self.root_directory)
+            self.clowder.stash()
         else:
             print_clowder_not_found_message()
             sys.exit()
