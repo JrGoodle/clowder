@@ -149,6 +149,8 @@ clowder meow || exit 1
 clowder herd || exit 1
 clowder stash || exit 1
 clowder meow || exit 1
+rm -rf 'llvm/tools/clang/tools/extra'
+rm -rf 'llvm/projects/dragonegg'
 clowder herd || exit 1
 clowder meow || exit 1
 clowder herd -v v0.11 || exit 1

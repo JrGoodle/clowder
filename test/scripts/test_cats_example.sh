@@ -131,6 +131,7 @@ clowder meow || exit 1
 clowder herd || exit 1
 clowder stash || exit 1
 clowder meow || exit 1
+rm -rf duke mu
 clowder herd || exit 1
 clowder meow || exit 1
 clowder herd -v v0.11 || exit 1
