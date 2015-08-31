@@ -56,7 +56,7 @@ do
 done
 clowder meow || exit 1
 
-echo "TEST: Litter"
+echo "TEST: Groom"
 clowder groom || exit 1
 clowder meow || exit 1
 
@@ -72,10 +72,10 @@ clowder meow || exit 1
 
 echo "TEST: Fail herd with dirty repos"
 clowder herd || exit 1
-echo "TEST: Discard changes with litter"
+echo "TEST: Discard changes with groom"
 clowder groom || exit 1
 clowder meow || exit 1
-echo "TEST: Successfully herd after litter"
+echo "TEST: Successfully herd after groom"
 clowder herd || exit 1
 clowder meow || exit 1
 
@@ -119,14 +119,14 @@ git add newfile
 popd &>/dev/null
 clowder meow || exit 1
 
-echo "TEST: Fail groom with dirty clowder repo"
+echo "TEST: Fail herd with dirty clowder repo"
 clowder herd -c || exit 1
 clowder meow || exit 1
 echo "TEST: Discard changes in clowder repo"
 pushd clowder &>/dev/null
 git reset --hard
 popd &>/dev/null
-echo "TEST: Successfully groom after discarding changes"
+echo "TEST: Successfully herd after discarding changes"
 clowder herd -c || exit 1
 clowder meow || exit 1
 
