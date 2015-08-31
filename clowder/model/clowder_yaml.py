@@ -92,12 +92,12 @@ class ClowderYAML(object):
                 print_project_status(self.root_directory, project.path, project.name)
                 project.herd()
 
-    def herd_groups(self, groups):
+    def herd_groups(self, group_names):
         """Sync all projects with latest upstream changes"""
-        self._validate_groups(groups)
+        self._validate_groups(group_names)
         print_clowder_repo_status(self.root_directory)
         for group in self.groups:
-            if group in self.get_all_group_names():
+            if group.name in group_names:
                 print_group(group.name)
                 for project in group.projects:
                     print_project_status(self.root_directory, project.path, project.name)
@@ -185,9 +185,9 @@ class ClowderYAML(object):
             for project in group.projects:
                 git_validate_repo_state(project.full_path)
 
-    def _validate_groups(self, groups):
+    def _validate_groups(self, group_names):
         """Validate status of all projects"""
         for group in self.groups:
-            if group in self.get_all_group_names():
+            if group.name in group_names:
                 for project in group.projects:
                     git_validate_repo_state(project.full_path)
