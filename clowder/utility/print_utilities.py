@@ -38,7 +38,7 @@ def format_project_string(repo_path, name):
     else:
         color = 'green'
         symbol = ''
-    return colored(symbol + name, color)
+    return colored(name + symbol, color)
 
 def format_ref_string(repo_path):
     """Return formatted repo ref name"""
