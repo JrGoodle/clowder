@@ -72,16 +72,16 @@ def git_herd(repo_path, ref):
     git = repo.git
     git.fetch('--all', '--prune', '--tags')
     project_ref = git_truncate_ref(ref)
-    branch_output = colored(project_ref, 'magenta')
+    branch_output = colored('(' + project_ref + ')', 'magenta')
     if git_current_branch(repo_path) != project_ref:
         try:
             if repo.heads[project_ref]:
-                print(' - Not on default branch. Checking out branch: ' + branch_output)
+                print(' - Not on default branch. Checking out ' + branch_output)
                 git.checkout(project_ref)
                 print(' - Pulling latest changes')
                 print(git.pull())
         except:
-            print(' - No existing branch. Create and check out branch: ' + branch_output)
+            print(' - No existing default branch. Create and check out ' + branch_output)
             origin = repo.remotes.origin
             branch = repo.create_head(project_ref, origin.refs[project_ref])
             branch.set_tracking_branch(origin.refs[project_ref])
@@ -92,14 +92,14 @@ def git_herd_version(repo_path, version, ref):
     repo = Repo(repo_path)
     git = repo.git
     fix_branch = 'clowder-fix/' + version
-    branch_output = colored(fix_branch, 'magenta')
+    branch_output = colored('(' + fix_branch + ')', 'magenta')
     try:
         if repo.heads[fix_branch]:
             if repo.active_branch != repo.heads[fix_branch]:
-                print(' - Checking out existing branch: ' + branch_output)
+                print(' - Checking out ' + branch_output)
                 git.checkout(fix_branch)
     except:
-        print(' - No existing branch. Create and check out branch: ' + branch_output)
+        print(' - No existing branch. Create and check out ' + branch_output)
         git.checkout('-b', fix_branch, ref)
 
 def git_is_detached(repo_path):
