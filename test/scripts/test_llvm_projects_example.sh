@@ -121,7 +121,7 @@ clowder groom || exit 1
 clowder meow || exit 1
 echo "TEST: Discard changes in clowder repo"
 pushd clowder &>/dev/null
-git checkout -- .
+git reset --hard
 popd &>/dev/null
 echo "TEST: Successfully groom after discarding changes"
 clowder groom || exit 1
