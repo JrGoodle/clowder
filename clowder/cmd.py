@@ -58,37 +58,44 @@ class Command(object):
         """Configure all clowder command subparsers and arguments"""
         subparsers = parser.add_subparsers(dest='command')
         # clowder breed
-        parser_breed = subparsers.add_parser('breed',
-                                             help=('Clone repository to clowder directory '
-                                                   'and create clowder.yaml symlink'))
-        parser_breed.add_argument('url', help='URL of repo containing clowder.yaml')
+        breed_help = 'Clone repository to clowder directory and create clowder.yaml symlink'
+        parser_breed = subparsers.add_parser('breed', help=breed_help)
+        breed_url_help = 'URL of repo containing clowder.yaml'
+        parser_breed.add_argument('url', help=breed_url_help)
         # clowder herd
-        parser_herd = subparsers.add_parser('herd',
-                                            help='Clone and sync latest changes for projects')
+        herd_help = 'Clone and sync latest changes for projects'
+        parser_herd = subparsers.add_parser('herd', help=herd_help)
         group = parser_herd.add_mutually_exclusive_group()
-        group.add_argument('--version', '-v', choices=self.versions, help='Version name to herd')
-        group.add_argument('--groups', '-g', choices=self.groups, nargs='+', help='Groups to herd')
+        group.add_argument('-v', dest='version',
+                           choices=self.versions,
+                           help='Version name to herd')
+        group.add_argument('-g', dest='groups',
+                           choices=self.groups,
+                           nargs='+',
+                           help='Groups to herd')
         # clowder fix
-        parser_fix = subparsers.add_parser('fix',
-                                           help=('Create version of clowder.yaml'
-                                                 ' for current repos'))
-        parser_fix.add_argument('--version', '-v', required=True, help='Version name to fix')
+        fix_help = 'Create version of clowder.yaml for current repos'
+        parser_fix = subparsers.add_parser('fix', help=fix_help)
+        parser_fix.add_argument('-v', dest='version',
+                                required=True,
+                                help='Version name to fix')
         # clowder forall
-        parser_forall = subparsers.add_parser('forall',
-                                              help='Run command in all clowder projects')
-        parser_forall.add_argument('cmd', help='Command to run in clowder projects')
+        forall_help = 'Run command in all clowder projects'
+        parser_forall = subparsers.add_parser('forall', help=forall_help)
+        forall_cmd_help = 'Command to run in clowder projects'
+        parser_forall.add_argument('cmd', help=forall_cmd_help)
         # clowder groom
-        subparsers.add_parser('groom', add_help=False,
-                              help='Update clowder repository with latest changes')
+        groom_help = 'Update clowder repository with latest changes'
+        subparsers.add_parser('groom', add_help=False, help=groom_help)
         # clowder litter
-        subparsers.add_parser('litter', add_help=False,
-                              help='Discard current changes in all projects and clowder repo')
+        litter_help = 'Discard current changes in all projects and clowder repo'
+        subparsers.add_parser('litter', add_help=False, help=litter_help)
         # clowder meow
-        subparsers.add_parser('meow', add_help=False,
-                              help='Print status for projects')
+        meow_help = 'Print status for projects'
+        subparsers.add_parser('meow', add_help=False, help=meow_help)
         # clowder stash
-        subparsers.add_parser('stash', add_help=False,
-                              help='Stash current changes in all projects and clowder repo')
+        stash_help = 'Stash current changes in all projects and clowder repo'
+        subparsers.add_parser('stash', add_help=False, help=stash_help)
 
     def breed(self):
         """clowder breed command"""
