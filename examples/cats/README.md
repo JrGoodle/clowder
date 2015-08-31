@@ -1,6 +1,6 @@
 # cats Example
 
-Run `breed.sh` script to set up clowder directory for cat repos.
+Run `breed.sh` script to set up clowder directory for cat repos. Clones from https://github.com/jrgoodle/cats.git
 
 `clean.sh` will clean up cloned files.
 
