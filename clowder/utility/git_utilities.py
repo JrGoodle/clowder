@@ -3,9 +3,6 @@ import os, sys
 from git import Repo
 from termcolor import colored, cprint
 
-# Disable errors shown by pylint for sh.git
-# pylint: disable=E1101
-
 def git_clone_url_at_path(url, repo_path):
     """Clone git repo from url at path"""
     if not os.path.isdir(os.path.join(repo_path, '.git')):

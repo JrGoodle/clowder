@@ -160,6 +160,8 @@ def print_clowder_not_found_message():
     """Print error message when clowder not found"""
     cprint('No clowder found in the current directory, exiting...\n', 'red')
 
+# Disable errors shown by pylint for unused arguments
+# pylint: disable=W0613
 def signal_handler(sig, frame):
     """Signal handler for Ctrl+C trap"""
     print('')
