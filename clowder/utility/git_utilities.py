@@ -77,7 +77,7 @@ def git_herd(repo_path, ref):
     project_ref = git_truncate_ref(ref)
     if git_current_branch(repo_path) != project_ref:
         project_output = colored(project_ref, 'magenta')
-        print(' - Not on default branch, checking out ' + project_output)
+        print(' - Not on default branch. Create and check out branch: ' + project_output)
         git.checkout(project_ref)
     print(' - Pulling latest changes')
     print(git.pull())
