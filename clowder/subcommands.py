@@ -2,11 +2,16 @@
 import os
 from clowder.model.clowder_repo import ClowderRepo
 from clowder.model.clowder_yaml import ClowderYAML
+from clowder.utility.clowder_utilities import (
+    get_yaml_path,
+    symlink_clowder_yaml
+)
 
 def breed(root_directory, url):
     """clowder breed subcommand"""
     clowder_repo = ClowderRepo(root_directory)
     clowder_repo.clone(url)
+    
     yaml_file = os.path.join(root_directory, 'clowder/clowder.yaml')
     symlink_clowder_yaml(root_directory, yaml_file)
 
@@ -27,11 +32,7 @@ def groom(root_directory):
 
 def herd(root_directory, version, groups):
     """clowder herd subcommand"""
-    if version == None:
-        yaml_file = os.path.join(root_directory, 'clowder/clowder.yaml')
-    else:
-        yaml_version = 'clowder/versions/' + version + '/clowder.yaml'
-        yaml_file = os.path.join(root_directory, yaml_version)
+    yaml_file = get_yaml_path(root_directory, version)
     symlink_clowder_yaml(root_directory, yaml_file)
 
     clowder = ClowderYAML(root_directory)
@@ -57,13 +58,3 @@ def stash(root_directory):
     """clowder stash subcommand"""
     clowder = ClowderYAML(root_directory)
     clowder.stash()
-
-def symlink_clowder_yaml(root_directory, clowder_yaml):
-    """Create clowder.yaml symlink in directory pointing to file"""
-    os.chdir(root_directory)
-    if os.path.isfile(clowder_yaml):
-        if os.path.isfile('clowder.yaml'):
-            os.remove('clowder.yaml')
-        os.symlink(clowder_yaml, 'clowder.yaml')
-    else:
-        print(clowder_yaml + " doesn't seem to exist")
