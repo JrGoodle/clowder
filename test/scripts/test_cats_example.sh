@@ -135,5 +135,5 @@ clowder herd || exit 1
 clowder meow || exit 1
 clowder herd -v v0.11 || exit 1
 clowder meow || exit 1
-clowder herd -g jrgoodle/duke JrGoodle/mu || exit 1
+clowder herd -g cats || exit 1
 clowder meow || exit 1
