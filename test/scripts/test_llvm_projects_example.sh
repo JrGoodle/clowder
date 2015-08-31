@@ -67,7 +67,7 @@ echo "TEST: Normal herd with out of date repos"
 clowder herd || exit 1
 clowder meow || exit 1
 echo "TEST: Successfully groom with no current changes in clowder repo"
-clowder groom || exit 1
+clowder herd -c || exit 1
 echo "TEST: Herd a previously fixed version"
 clowder herd -v v0.1 || exit 1
 clowder meow || exit 1
@@ -106,7 +106,7 @@ echo "TEST: Fail herd with dirty repos"
 clowder herd || exit 1
 clowder meow || exit 1
 echo "TEST: Discard changes with litter"
-clowder litter || exit 1
+clowder groom || exit 1
 clowder meow || exit 1
 
 echo "TEST: Make dirty clowder repo"
@@ -117,14 +117,14 @@ popd &>/dev/null
 clowder meow || exit 1
 
 echo "TEST: Fail groom with dirty clowder repo"
-clowder groom || exit 1
+clowder herd -c || exit 1
 clowder meow || exit 1
 echo "TEST: Discard changes in clowder repo"
 pushd clowder &>/dev/null
 git reset --hard
 popd &>/dev/null
 echo "TEST: Successfully groom after discarding changes"
-clowder groom || exit 1
+clowder herd -c || exit 1
 clowder meow || exit 1
 
 echo "TEST: Create detached HEADs"
