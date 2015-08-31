@@ -86,6 +86,7 @@ class ClowderYAML(object):
         """Sync all projects with latest upstream changes"""
         self._validate_all()
         print_clowder_repo_status(self.root_directory)
+        print('')
         for group in self.groups:
             print_group(group.name)
             for project in group.projects:
@@ -96,6 +97,7 @@ class ClowderYAML(object):
         """Sync all projects with latest upstream changes"""
         self._validate_groups(group_names)
         print_clowder_repo_status(self.root_directory)
+        print('')
         for group in self.groups:
             if group.name in group_names:
                 print_group(group.name)
@@ -107,6 +109,7 @@ class ClowderYAML(object):
         """Sync all projects to fixed versions"""
         self._validate_all()
         print_clowder_repo_status(self.root_directory)
+        print('')
         for group in self.groups:
             print_group(group.name)
             for project in group.projects:
@@ -116,6 +119,7 @@ class ClowderYAML(object):
     def litter(self):
         """Discard changes for all projects"""
         print_clowder_repo_status(self.root_directory)
+        print('')
         git_litter(self.clowder_path)
         for group in self.groups:
             print_group(group.name)
@@ -126,6 +130,7 @@ class ClowderYAML(object):
     def meow(self):
         """Print git status for all projects"""
         print_clowder_repo_status(self.root_directory)
+        print('')
         for group in self.groups:
             print_group(group.name)
             for project in group.projects:
@@ -134,6 +139,7 @@ class ClowderYAML(object):
     def stash(self):
         """Stash changes for all projects with changes"""
         print_clowder_repo_status(self.root_directory)
+        print('')
         git_stash(self.clowder_path)
         for group in self.groups:
             print_group(group.name)
