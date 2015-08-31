@@ -72,12 +72,20 @@ def git_herd(repo_path, ref):
     git = repo.git
     git.fetch('--all', '--prune', '--tags')
     project_ref = git_truncate_ref(ref)
+    branch_output = colored(project_ref, 'magenta')
     if git_current_branch(repo_path) != project_ref:
-        project_output = colored(project_ref, 'magenta')
-        print(' - Not on default branch. Create and check out branch: ' + project_output)
-        git.checkout(project_ref)
-    print(' - Pulling latest changes')
-    print(git.pull())
+        try:
+            if repo.heads[project_ref]:
+                print(' - Not on default branch. Checking out branch: ' + branch_output)
+                git.checkout(project_ref)
+                print(' - Pulling latest changes')
+                print(git.pull())
+        except:
+            print(' - No existing branch. Create and check out branch: ' + branch_output)
+            origin = repo.remotes.origin
+            branch = repo.create_head(project_ref, origin.refs[project_ref])
+            branch.set_tracking_branch(origin.refs[project_ref])
+            branch.checkout()
 
 def git_herd_version(repo_path, version, ref):
     """Sync fixed version of repo at path"""
@@ -91,7 +99,7 @@ def git_herd_version(repo_path, version, ref):
                 print(' - Checking out existing branch: ' + branch_output)
                 git.checkout(fix_branch)
     except:
-        print(' - No existing branch, checking out: ' + branch_output)
+        print(' - No existing branch. Create and check out branch: ' + branch_output)
         git.checkout('-b', fix_branch, ref)
 
 def git_is_detached(repo_path):
