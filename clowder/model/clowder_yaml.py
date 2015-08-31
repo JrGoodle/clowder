@@ -3,6 +3,7 @@ import os, subprocess, sys
 from termcolor import colored, cprint
 import yaml
 from clowder.utility.git_utilities import (
+    git_is_dirty,
     git_litter,
     git_stash,
     git_validate_repo_state
@@ -125,7 +126,8 @@ class ClowderYAML(object):
             print_group(group.name)
             for project in group.projects:
                 print_project_status(self.root_directory, project.path, project.name)
-                git_litter(project.full_path)
+                if git_is_dirty(project.full_path):
+                    git_litter(project.full_path)
 
     def meow(self):
         """Print git status for all projects"""
@@ -145,7 +147,8 @@ class ClowderYAML(object):
             print_group(group.name)
             for project in group.projects:
                 print_project_status(self.root_directory, project.path, project.name)
-                git_stash(project.full_path)
+                if git_is_dirty(project.full_path):
+                    git_stash(project.full_path)
 
     def _get_yaml(self):
         """Return python object representation for saving yaml"""
