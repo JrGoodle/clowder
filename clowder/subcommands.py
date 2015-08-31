@@ -13,7 +13,6 @@ def breed(root_directory, url):
 def fix(root_directory, version):
     """clowder fix subcommand"""
     clowder = ClowderYAML(root_directory)
-    clowder.validate_all()
     clowder.fix_version(version)
 
 def forall(root_directory, command):
