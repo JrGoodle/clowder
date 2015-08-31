@@ -97,7 +97,7 @@ class ClowderYAML(object):
         self._validate_groups(groups)
         print_clowder_repo_status(self.root_directory)
         for group in self.groups:
-            if group in groups:
+            if group in self.get_all_group_names():
                 print_group(group.name)
                 for project in group.projects:
                     print_project_status(self.root_directory, project.path, project.name)
@@ -188,6 +188,6 @@ class ClowderYAML(object):
     def _validate_groups(self, groups):
         """Validate status of all projects"""
         for group in self.groups:
-            if group in groups:
+            if group in self.get_all_group_names():
                 for project in group.projects:
                     git_validate_repo_state(project.full_path)
