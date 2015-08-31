@@ -183,7 +183,7 @@ class ClowderYAML(object):
                                              group,
                                              defaults,
                                              self.remotes))
-                self.groups.sort(key=lambda group: group.name)
+                # self.groups.sort(key=lambda group: group.name)
 
     def _validate_all(self):
         """Validate status of all projects"""
