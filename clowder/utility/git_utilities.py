@@ -93,17 +93,16 @@ def git_herd_version(repo_path, version, ref):
     """Sync fixed version of repo at path"""
     repo = Repo(repo_path)
     git = repo.git
-    fix_branch = 'clowder-fix/' + version
-    branch_output = colored('(' + fix_branch + ')', 'magenta')
+    branch_output = colored('(' + version + ')', 'magenta')
     try:
-        if repo.heads[fix_branch]:
-            if repo.active_branch != repo.heads[fix_branch]:
+        if repo.heads[version]:
+            if repo.active_branch != repo.heads[version]:
                 print(' - Checkout ' + branch_output)
-                git.checkout(fix_branch)
+                git.checkout(version)
     except:
         # print(' - No existing branch.')
         print(' - Create and checkout ' + branch_output)
-        git.checkout('-b', fix_branch, ref)
+        git.checkout('-b', version, ref)
 
 def git_is_detached(repo_path):
     """Check if HEAD is detached"""

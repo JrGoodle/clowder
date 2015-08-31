@@ -41,7 +41,7 @@ echo "TEST: Check current branches"
 for project in "${projects[@]}"
 do
 	pushd $project &>/dev/null
-    test_branch clowder-fix/v0.1
+    test_branch v0.1
     popd &>/dev/null
 done
 clowder meow || exit 1
