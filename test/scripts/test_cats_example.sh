@@ -167,9 +167,11 @@ clowder meow || exit 1
 
 echo "TEST: Delete default branches locally"
 pushd mu &>/dev/null
+git checkout clowder-fix/v0.1
 git branch -D knead
 popd &>/dev/null
 pushd duke &>/dev/null
+git checkout clowder-fix/v0.1
 git branch -D purr
 popd &>/dev/null
 
