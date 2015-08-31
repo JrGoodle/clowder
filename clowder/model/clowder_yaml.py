@@ -47,7 +47,7 @@ class ClowderYAML(object):
                                              defaults,
                                              self.remotes))
                 self.groups.sort(key=lambda group: group.name)
-                
+
     def fix_version(self, version):
         """Fix current commits to versioned clowder.yaml"""
         self.validate_all()
@@ -87,7 +87,7 @@ class ClowderYAML(object):
         """Returns all group names for current clowder.yaml"""
         names = []
         for group in self.groups:
-            names.append(group['name'])
+            names.append(group.name)
         return names
 
     def get_all_project_names(self):

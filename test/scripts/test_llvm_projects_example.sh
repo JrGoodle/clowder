@@ -151,3 +151,7 @@ clowder stash || exit 1
 clowder meow || exit 1
 clowder herd || exit 1
 clowder meow || exit 1
+clowder herd -v v0.11 || exit 1
+clowder meow || exit 1
+clowder herd -g llvm-mirror/clang llvm-mirror/llvm || exit 1
+clowder meow || exit 1

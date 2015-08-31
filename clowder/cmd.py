@@ -18,6 +18,7 @@ class Command(object):
 
         # Load current clowder.yml config if it exists
         self.clowder = None
+        groups = None
         versions = None
         if os.path.isdir(os.path.join(self.root_directory, 'clowder')):
             self.clowder = ClowderYAML(self.root_directory)
