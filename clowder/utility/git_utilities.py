@@ -60,11 +60,11 @@ def git_groom(repo_path):
     repo = Repo(repo_path)
     git = repo.git
     git.fetch('--all', '--prune', '--tags')
-    if not git_is_detached(repo_path):
+    if git_is_detached(repo_path):
+        print(' - HEAD is detached, nothing to pull')
+    else:
         print(' - Pulling latest changes')
         print(git.pull())
-    else:
-        print(' - HEAD is detached, nothing to pull')
 
 def git_herd(repo_path, ref):
     """Sync git repo with default branch"""

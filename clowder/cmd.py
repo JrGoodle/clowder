@@ -33,7 +33,8 @@ class Command(object):
             self.versions = None
         # clowder argparse setup
         parser = argparse.ArgumentParser(description='Manage multiple repositories')
-        self._configure_subparsers(parser)
+        subparsers = parser.add_subparsers(dest='command')
+        self._configure_subparsers(subparsers)
         # Argcomplete and arguments parsing
         argcomplete.autocomplete(parser)
         self.args = parser.parse_args()
@@ -54,14 +55,12 @@ class Command(object):
         getattr(self, self.args.command)()
         print('')
 
-    def _configure_subparsers(self, parser):
+    def _configure_subparsers(self, subparsers):
         """Configure all clowder command subparsers and arguments"""
-        subparsers = parser.add_subparsers(dest='command')
         # clowder breed
         breed_help = 'Clone repository to clowder directory and create clowder.yaml symlink'
         parser_breed = subparsers.add_parser('breed', help=breed_help)
-        breed_url_help = 'URL of repo containing clowder.yaml'
-        parser_breed.add_argument('url', help=breed_url_help)
+        parser_breed.add_argument('url', help='URL of repo containing clowder.yaml')
         # clowder herd
         herd_help = 'Clone and sync latest changes for projects'
         parser_herd = subparsers.add_parser('herd', help=herd_help)
@@ -91,8 +90,7 @@ class Command(object):
         litter_help = 'Discard current changes in all projects and clowder repo'
         subparsers.add_parser('litter', add_help=False, help=litter_help)
         # clowder meow
-        meow_help = 'Print status for projects'
-        subparsers.add_parser('meow', add_help=False, help=meow_help)
+        subparsers.add_parser('meow', add_help=False, help='Print status for projects')
         # clowder stash
         stash_help = 'Stash current changes in all projects and clowder repo'
         subparsers.add_parser('stash', add_help=False, help=stash_help)
