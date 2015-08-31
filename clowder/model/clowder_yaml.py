@@ -124,7 +124,6 @@ class ClowderYAML(object):
     def litter(self):
         """Discard changes for all projects"""
         print_clowder_repo_status(self.root_directory)
-        git_litter(self.clowder_path)
         print('')
         for group in self.groups:
             print_group(group.name)
@@ -145,7 +144,6 @@ class ClowderYAML(object):
     def stash(self):
         """Stash changes for all projects with changes"""
         print_clowder_repo_status(self.root_directory)
-        git_stash(self.clowder_path)
         print('')
         for group in self.groups:
             print_group(group.name)
