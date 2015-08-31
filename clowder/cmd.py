@@ -98,7 +98,7 @@ class Command(object):
     def breed(self):
         """clowder breed command"""
         if self.clowder == None:
-            cprint('Breeding from %s\n' % self.args.url, 'yellow')
+            cprint('Breed from %s\n' % self.args.url, 'yellow')
             clowder_repo = ClowderRepo(self.root_directory)
             clowder_repo.clone(self.args.url)
             yaml_file = os.path.join(self.root_directory, 'clowder/clowder.yaml')
@@ -110,7 +110,7 @@ class Command(object):
     def fix(self):
         """clowder fix command"""
         if self.clowder != None:
-            cprint('Fixing...\n', 'yellow')
+            cprint('Fix...\n', 'yellow')
             self.clowder.fix_version(self.args.version)
         else:
             print_clowder_not_found_message()
@@ -128,7 +128,7 @@ class Command(object):
     def groom(self):
         """clowder groom command"""
         if self.clowder != None:
-            cprint('Grooming...\n', 'yellow')
+            cprint('Groom...\n', 'yellow')
             clowder_repo = ClowderRepo(self.root_directory)
             clowder_repo.groom()
         else:
@@ -138,7 +138,7 @@ class Command(object):
     def herd(self):
         """clowder herd command"""
         if self.clowder != None:
-            cprint('Herding...\n', 'yellow')
+            cprint('Herd...\n', 'yellow')
             yaml_file = get_yaml_path(self.root_directory, self.args.version)
             symlink_clowder_yaml(self.root_directory, yaml_file)
             clowder = ClowderYAML(self.root_directory)
