@@ -3,8 +3,7 @@ import os, subprocess, sys
 from termcolor import colored, cprint
 import yaml
 from clowder.utility.git_utilities import (
-    git_is_dirty,
-    git_litter,
+    git_groom,
     git_stash,
     git_validate_repo_state
 )
@@ -121,7 +120,7 @@ class ClowderYAML(object):
                 print_project_status(self.root_directory, project.path, project.name)
                 project.herd_version(version)
 
-    def litter(self):
+    def groom(self):
         """Discard changes for all projects"""
         print_clowder_repo_status(self.root_directory)
         print('')
@@ -129,7 +128,7 @@ class ClowderYAML(object):
             print_group(group.name)
             for project in group.projects:
                 print_project_status(self.root_directory, project.path, project.name)
-                git_litter(project.full_path)
+                git_groom(project.full_path)
 
     def meow(self):
         """Print git status for all projects"""

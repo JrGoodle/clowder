@@ -65,6 +65,8 @@ class Command(object):
         herd_help = 'Clone and sync latest changes for projects'
         parser_herd = subparsers.add_parser('herd', help=herd_help)
         group = parser_herd.add_mutually_exclusive_group()
+        herd_clowder_help = 'Update clowder repository with latest changes'
+        group.add_argument('--clowder', '-c', action='store_true', help=herd_clowder_help)
         group.add_argument('-v', dest='version',
                            choices=self.versions,
                            help='Version name to herd')
@@ -84,11 +86,8 @@ class Command(object):
         forall_cmd_help = 'Command to run in clowder projects'
         parser_forall.add_argument('cmd', help=forall_cmd_help)
         # clowder groom
-        groom_help = 'Update clowder repository with latest changes'
+        groom_help = 'Discard current changes in all projects and clowder repo'
         subparsers.add_parser('groom', add_help=False, help=groom_help)
-        # clowder litter
-        litter_help = 'Discard current changes in all projects and clowder repo'
-        subparsers.add_parser('litter', add_help=False, help=litter_help)
         # clowder meow
         subparsers.add_parser('meow', add_help=False, help='Print status for projects')
         # clowder stash
@@ -129,8 +128,7 @@ class Command(object):
         """clowder groom command"""
         if self.clowder != None:
             cprint('Groom...\n', 'yellow')
-            clowder_repo = ClowderRepo(self.root_directory)
-            clowder_repo.groom()
+            self.clowder.groom()
         else:
             print_clowder_not_found_message()
             sys.exit()
@@ -139,25 +137,20 @@ class Command(object):
         """clowder herd command"""
         if self.clowder != None:
             cprint('Herd...\n', 'yellow')
-            yaml_file = get_yaml_path(self.root_directory, self.args.version)
-            symlink_clowder_yaml(self.root_directory, yaml_file)
-            clowder = ClowderYAML(self.root_directory)
-            if self.args.version == None:
-                if self.args.groups == None:
-                    clowder.herd_all()
-                else:
-                    clowder.herd_groups(self.args.groups)
+            if self.args.clowder:
+                clowder_repo = ClowderRepo(self.root_directory)
+                clowder_repo.herd()
             else:
-                clowder.herd_version_all(self.args.version)
-        else:
-            print_clowder_not_found_message()
-            sys.exit()
-
-    def litter(self):
-        """clowder litter command"""
-        if self.clowder != None:
-            cprint('Litter...\n', 'yellow')
-            self.clowder.litter()
+                yaml_file = get_yaml_path(self.root_directory, self.args.version)
+                symlink_clowder_yaml(self.root_directory, yaml_file)
+                clowder = ClowderYAML(self.root_directory)
+                if self.args.version == None:
+                    if self.args.groups == None:
+                        clowder.herd_all()
+                    else:
+                        clowder.herd_groups(self.args.groups)
+                else:
+                    clowder.herd_version_all(self.args.version)
         else:
             print_clowder_not_found_message()
             sys.exit()

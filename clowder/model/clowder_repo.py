@@ -3,7 +3,7 @@ import os
 from clowder.utility.print_utilities import print_clowder_repo_status
 from clowder.utility.git_utilities import (
     git_clone_url_at_path,
-    git_groom,
+    git_herd_clowder,
     git_validate_repo_state
 )
 
@@ -18,8 +18,8 @@ class ClowderRepo(object):
         print_clowder_repo_status(self.root_directory)
         git_clone_url_at_path(url, self.clowder_path)
 
-    def groom(self):
-        """Groom clowder repo"""
+    def herd(self):
+        """Herd clowder repo"""
         git_validate_repo_state(self.clowder_path)
         print_clowder_repo_status(self.root_directory)
-        git_groom(self.clowder_path)
+        git_herd_clowder(self.clowder_path)

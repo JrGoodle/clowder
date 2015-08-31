@@ -55,17 +55,6 @@ def git_fix_version(repo_path, version):
     git.pull()
     git.push()
 
-def git_groom(repo_path):
-    """Sync clowder repo with current branch"""
-    repo = Repo(repo_path)
-    git = repo.git
-    git.fetch('--all', '--prune', '--tags')
-    if git_is_detached(repo_path):
-        print(' - HEAD is detached, nothing to pull')
-    else:
-        print(' - Pulling latest changes')
-        print(git.pull())
-
 def git_herd(repo_path, ref):
     """Sync git repo with default branch"""
     repo = Repo(repo_path)
@@ -88,6 +77,17 @@ def git_herd(repo_path, ref):
             branch = repo.create_head(project_ref, origin.refs[project_ref])
             branch.set_tracking_branch(origin.refs[project_ref])
             branch.checkout()
+
+def git_herd_clowder(repo_path):
+    """Sync clowder repo with current branch"""
+    repo = Repo(repo_path)
+    git = repo.git
+    git.fetch('--all', '--prune', '--tags')
+    if git_is_detached(repo_path):
+        print(' - HEAD is detached, nothing to pull')
+    else:
+        print(' - Pulling latest changes')
+        print(git.pull())
 
 def git_herd_version(repo_path, version, ref):
     """Sync fixed version of repo at path"""
@@ -114,7 +114,7 @@ def git_is_dirty(repo_path):
     repo = Repo(repo_path)
     return repo.is_dirty()
 
-def git_litter(repo_path):
+def git_groom(repo_path):
     """Discard current changes in repository"""
     repo = Repo(repo_path)
     if repo.is_dirty():
