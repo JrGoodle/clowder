@@ -10,6 +10,7 @@ from clowder.utility.git_utilities import (
 from clowder.utility.print_utilities import (
     print_clowder_repo_status,
     print_group,
+    print_verbose_status,
     print_project_status
 )
 from clowder.model.group import Group
@@ -131,13 +132,23 @@ class ClowderYAML(object):
                 git_groom(project.full_path)
 
     def meow(self):
-        """Print git status for all projects"""
+        """Print status for all projects"""
         print_clowder_repo_status(self.root_directory)
         print('')
         for group in self.groups:
             print_group(group.name)
             for project in group.projects:
                 print_project_status(self.root_directory, project.path, project.name)
+
+    def meow_verbose(self):
+        """Print git status for all projects with changes"""
+        print_clowder_repo_status(self.root_directory)
+        print('')
+        for group in self.groups:
+            print_group(group.name)
+            for project in group.projects:
+                print_project_status(self.root_directory, project.path, project.name)
+                print_verbose_status(project.full_path)
 
     def stash(self):
         """Stash changes for all projects with changes"""

@@ -155,6 +155,11 @@ def git_stash(repo_path):
         pass
         # print(' - No changes to stash')
 
+def git_status(repo_path):
+    """Print git status"""
+    repo = Repo(repo_path)
+    print(repo.git.status())
+
 def git_truncate_ref(ref):
     """Return bare branch, tag, or sha"""
     git_branch = "refs/heads/"

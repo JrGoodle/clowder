@@ -89,7 +89,10 @@ class Command(object):
         groom_help = 'Discard current changes in all projects and clowder repo'
         subparsers.add_parser('groom', add_help=False, help=groom_help)
         # clowder meow
-        subparsers.add_parser('meow', add_help=False, help='Print status for projects')
+        meow_help = 'Print status for projects'
+        parser_meow = subparsers.add_parser('meow', add_help=False, help=meow_help)
+        meow_v_help = 'Print detailed diff status'
+        parser_meow.add_argument('--verbose', '-v', action='store_true', help=meow_v_help)
         # clowder stash
         stash_help = 'Stash current changes in all projects and clowder repo'
         subparsers.add_parser('stash', add_help=False, help=stash_help)
@@ -159,7 +162,10 @@ class Command(object):
         """clowder meow command"""
         if self.clowder != None:
             cprint('Meow...\n', 'yellow')
-            self.clowder.meow()
+            if self.args.verbose:
+                self.clowder.meow_verbose()
+            else:
+                self.clowder.meow()
         else:
             print_clowder_not_found_message()
             sys.exit()

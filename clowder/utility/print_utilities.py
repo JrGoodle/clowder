@@ -6,7 +6,8 @@ from clowder.utility.git_utilities import (
     git_current_sha,
     git_current_branch,
     git_is_detached,
-    git_is_dirty
+    git_is_dirty,
+    git_status
 )
 
 def get_cat_face():
@@ -77,3 +78,7 @@ def print_project_status(root_directory, path, name):
         cprint(name, 'green')
         return
     print(format_repo_string(repo_path, path, name))
+
+def print_verbose_status(repo_path):
+    if git_is_dirty(repo_path):
+        git_status(repo_path)
