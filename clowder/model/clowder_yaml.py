@@ -67,21 +67,22 @@ class ClowderYAML(object):
         names = []
         for group in self.groups:
             names.append(group.name)
-        return names
+        return names.sort()
 
     def get_all_project_names(self):
         """Returns all project names for current clowder.yaml"""
         names = []
         for group in self.groups:
             names.extend(group.get_all_project_names())
-        return names
+        return names.sort()
 
     def get_fixed_version_names(self):
         """Return list of all fixed versions"""
         versions_dir = os.path.join(self.root_directory, 'clowder/versions')
         if os.path.exists(versions_dir):
             return os.listdir(versions_dir)
-        return None
+        else:
+            return None
 
     def herd_all(self):
         """Sync all projects with latest upstream changes"""
