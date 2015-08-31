@@ -37,6 +37,27 @@ def git_current_sha(repo_path):
     git = repo.git
     return str(git.rev_parse('HEAD')).rstrip('\n')
 
+def git_diff_index_head(repo_path):
+    """Print diff of index and HEAD"""
+    repo = Repo(repo_path)
+    print('repo.index.diff(repo.head.commit)')
+    print('A diff between the index and the commit’s tree your HEAD points to')
+    print(repo.index.diff(repo.head.commit))
+
+def git_diff_index_working_tree(repo_path):
+    """Print diff of index and working tree"""
+    repo = Repo(repo_path)
+    print('repo.index.diff(None)')
+    print('A diff between the index and the working tree')
+    print(repo.index.diff(None))
+
+def git_diff_untracked_files(repo_path):
+    """Print diff of untracked files"""
+    repo = Repo(repo_path)
+    print('repo.untracked_files')
+    print('A list of untracked files')
+    print(repo.untracked_files)
+
 def git_fix(repo_path):
     """Commit new main clowder.yaml from current changes"""
     repo = Repo(repo_path)
