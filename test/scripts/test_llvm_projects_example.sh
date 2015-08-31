@@ -101,7 +101,7 @@ do
     git add newfile
     popd &>/dev/null
 done
-clowder meow || exit 1
+clowder meow -v || exit 1
 echo "TEST: Fail herd with dirty repos"
 clowder herd || exit 1
 clowder meow || exit 1
