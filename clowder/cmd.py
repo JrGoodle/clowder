@@ -4,7 +4,7 @@
 if __name__ == '__main__':
     raise SystemExit(main())
 
-import os, sys
+import os, signal, sys
 import argcomplete, argparse
 from termcolor import cprint
 from clowder.subcommands import breed, herd, meow, groom, fix, forall, litter, stash
@@ -152,10 +152,16 @@ class Command(object):
             print_clowder_not_found_message()
             sys.exit()
 
+def main():
+    """Main entrypoint for clowder command"""
+    signal.signal(signal.SIGINT, signal_handler)
+    Command()
+
 def print_clowder_not_found_message():
     """Print error message when clowder not found"""
     cprint('No clowder found in the current directory, exiting...\n', 'red')
 
-def main():
-    """Main entrypoint for clowder command"""
-    Command()
+def signal_handler(sig, frame):
+    """Signal handler for Ctrl+C trap"""
+    print('')
+    sys.exit(0)
