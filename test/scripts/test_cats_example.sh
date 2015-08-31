@@ -179,14 +179,26 @@ echo "TEST: Herd existing repo's with no default branch locally"
 clowder herd || exit 1
 clowder meow || exit 1
 
+echo ""
+echo ""
 echo "TEST: Help output"
+echo ""
+echo ""
 echo "TEST: clowder -h"
 clowder -h
+echo ""
+echo ""
 echo "TEST: clowder breed -h"
 clowder breed -h
+echo ""
+echo ""
 echo "TEST: clowder herd -h"
 clowder herd -h
+echo ""
+echo ""
 echo "TEST: clowder fix -h"
 clowder fix -h
+echo ""
+echo ""
 echo "TEST: clowder forall -h"
 clowder forall -h

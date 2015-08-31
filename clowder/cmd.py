@@ -38,7 +38,7 @@ class Command(object):
         parser_breed = subparsers.add_parser('breed',
                                              help=('Clone repository to clowder directory '
                                                    'and create clowder.yaml symlink'))
-        parser_breed.add_argument('url', help='URL to clone repo with clowder.yaml from')
+        parser_breed.add_argument('url', help='URL of repo containing clowder.yaml')
         # clowder herd
         parser_herd = subparsers.add_parser('herd',
                                             help='Clone and sync latest changes for projects')
