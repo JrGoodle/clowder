@@ -147,7 +147,7 @@ clowder herd || exit 1
 clowder meow || exit 1
 
 echo "TEST: Run forall command"
-clowder forall 'git status' || exit 1
+clowder forall -c 'git status' || exit 1
 echo "TEST: Fail fixing a previously fixed version"
 clowder fix -v v0.1 || exit 1
 echo "TEST: Successfully fix a new version"

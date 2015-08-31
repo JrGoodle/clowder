@@ -84,7 +84,8 @@ class Command(object):
         forall_help = 'Run command in all clowder projects'
         parser_forall = subparsers.add_parser('forall', help=forall_help)
         forall_cmd_help = 'Command to run in clowder projects'
-        parser_forall.add_argument('cmd', help=forall_cmd_help)
+        parser_forall.add_argument('--command', '-c', dest='cmd', required=True,
+                                   help=forall_cmd_help)
         # clowder groom
         groom_help = 'Discard current changes in all projects and clowder repo'
         subparsers.add_parser('groom', add_help=False, help=groom_help)
