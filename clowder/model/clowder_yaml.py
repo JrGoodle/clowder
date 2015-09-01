@@ -1,7 +1,8 @@
 """clowder.yaml parsing and functionality"""
-import os, subprocess, sys
+import os, subprocess, sys, yaml
 from termcolor import colored, cprint
-import yaml
+from clowder.model.group import Group
+from clowder.model.remote import Remote
 from clowder.utility.git_utilities import (
     git_groom,
     git_stash,
@@ -14,8 +15,6 @@ from clowder.utility.print_utilities import (
     print_running_command,
     print_verbose_status
 )
-from clowder.model.group import Group
-from clowder.model.remote import Remote
 
 class ClowderYAML(object):
     """Class encapsulating project information from clowder.yaml"""

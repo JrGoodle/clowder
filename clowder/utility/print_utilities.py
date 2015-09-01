@@ -1,6 +1,5 @@
 """Print utilities"""
-import os
-import emoji
+import os, emoji
 from termcolor import colored, cprint
 from clowder.utility.git_utilities import (
     git_current_sha,

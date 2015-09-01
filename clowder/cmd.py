@@ -4,8 +4,7 @@
 if __name__ == '__main__':
     raise SystemExit(main())
 
-import os, signal, sys
-import argcomplete, argparse
+import os, signal, sys, argcomplete, argparse
 from termcolor import cprint
 from clowder.model.clowder_repo import ClowderRepo
 from clowder.model.clowder_yaml import ClowderYAML
