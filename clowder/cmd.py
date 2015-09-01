@@ -71,12 +71,6 @@ class Command(object):
                            choices=self.group_names,
                            nargs='+',
                            help='Groups to herd')
-        # clowder fix
-        fix_help = 'Create version of clowder.yaml for current repos'
-        parser_fix = subparsers.add_parser('fix', help=fix_help)
-        parser_fix.add_argument('-v', dest='version',
-                                required=True,
-                                help='Version name to fix')
         # clowder forall
         forall_help = 'Run command in all clowder projects'
         parser_forall = subparsers.add_parser('forall', help=forall_help)
@@ -87,14 +81,20 @@ class Command(object):
                                    choices=self.group_names,
                                    nargs='+',
                                    help='Groups to herd')
-        # clowder groom
-        groom_help = 'Discard current changes in all projects and clowder repo'
-        subparsers.add_parser('groom', add_help=False, help=groom_help)
         # clowder meow
         parser_meow = subparsers.add_parser('meow', add_help=False,
                                             help='Print status for projects')
         parser_meow.add_argument('--verbose', '-v', action='store_true',
                                  help='Print detailed diff status')
+        # clowder fix
+        fix_help = 'Create version of clowder.yaml for current repos'
+        parser_fix = subparsers.add_parser('fix', help=fix_help)
+        parser_fix.add_argument('-v', dest='version',
+                                required=True,
+                                help='Version name to fix')
+        # clowder groom
+        groom_help = 'Discard current changes in all projects and clowder repo'
+        subparsers.add_parser('groom', add_help=False, help=groom_help)
         # clowder stash
         stash_help = 'Stash current changes in all projects and clowder repo'
         subparsers.add_parser('stash', add_help=False, help=stash_help)
