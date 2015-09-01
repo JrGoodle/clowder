@@ -105,7 +105,7 @@ class Command(object):
         """clowder forall command"""
         if self.clowder is not None:
             cprint('Forall...\n', 'yellow')
-            if self.args.groups == None:
+            if self.args.groups is None:
                 self.clowder.forall(self.args.cmd)
             else:
                 self.clowder.forall_groups(self.args.cmd, self.args.groups)

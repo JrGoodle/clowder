@@ -20,7 +20,6 @@ class ClowderYAML(object):
     """Class encapsulating project information from clowder.yaml"""
     def __init__(self, rootDirectory):
         self.root_directory = rootDirectory
-        self.clowder_path = os.path.join(self.root_directory, 'clowder')
         self.default_ref = None
         self.default_remote = None
         self.groups = []
