@@ -78,6 +78,8 @@ def git_groom(repo_path):
     if repo.is_dirty():
         print(' - Discarding current changes')
         repo.head.reset(index=True, working_tree=True)
+    else:
+        print(' - No changes to discard')
 
 def git_herd(repo_path, ref):
     """Sync git repo with default branch"""
@@ -137,8 +139,7 @@ def git_stash(repo_path):
         print(' - Stashing current changes')
         repo.git.stash()
     else:
-        pass
-        # print(' - No changes to stash')
+        print(' - No changes to stash')
 
 def git_status(repo_path):
     """Print git status"""
