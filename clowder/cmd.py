@@ -17,18 +17,15 @@ class Command(object):
 
     def __init__(self):
         self.root_directory = os.getcwd()
+        self.clowder = None
+        self.versions = None
+        self.group_names = ''
         # Load current clowder.yml config if it exists
         if os.path.isdir(os.path.join(self.root_directory, 'clowder')):
             self.clowder = ClowderYAML(self.root_directory)
             self.versions = self.clowder.get_fixed_version_names()
-            if self.clowder.group_names == None:
-                self.group_names = ''
-            else:
+            if self.clowder.group_names is not None:
                 self.group_names = self.clowder.group_names
-        else:
-            self.clowder = None
-            self.versions = None
-            self.group_names = ''
         # clowder argparse setup
         command_description = 'Utility for managing multiple git repositories'
         parser = argparse.ArgumentParser(description=command_description)
