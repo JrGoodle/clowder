@@ -86,5 +86,4 @@ def print_running_command(command):
 
 def print_verbose_status(repo_path):
     """Print git status"""
-    if git_is_dirty(repo_path):
-        git_status(repo_path)
+    git_status(repo_path)
