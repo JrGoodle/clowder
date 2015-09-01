@@ -89,6 +89,9 @@ def git_herd(repo_path, ref):
             branch = repo.create_head(project_ref, origin.refs[project_ref])
             branch.set_tracking_branch(origin.refs[project_ref])
             branch.checkout()
+    else:
+        print(' - Pulling latest changes')
+        print(git.pull())
 
 def git_herd_version(repo_path, version, ref):
     """Sync fixed version of repo at path"""
