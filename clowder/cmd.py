@@ -30,7 +30,8 @@ class Command(object):
             self.versions = None
             self.group_names = ''
         # clowder argparse setup
-        parser = argparse.ArgumentParser(description='Manage multiple repositories')
+        command_description = 'Utility for managing multiple git repositories'
+        parser = argparse.ArgumentParser(description=command_description)
         subparsers = parser.add_subparsers(dest='command')
         self._configure_subparsers(subparsers)
         # Argcomplete and arguments parsing
@@ -54,23 +55,18 @@ class Command(object):
         herd_help = 'Clone and sync latest changes for projects'
         parser_herd = subparsers.add_parser('herd', help=herd_help)
         group = parser_herd.add_mutually_exclusive_group()
-        group.add_argument('--version', '-v',
-                           choices=self.versions,
+        group.add_argument('--version', '-v', choices=self.versions,
                            help='Version name to herd')
-        group.add_argument('--groups', '-g',
-                           choices=self.group_names,
-                           nargs='+',
-                           help='Groups to herd')
+        group.add_argument('--groups', '-g', choices=self.group_names,
+                           nargs='+', help='Groups to herd')
         # clowder forall
         forall_help = 'Run command in all clowder projects'
         parser_forall = subparsers.add_parser('forall', help=forall_help)
         forall_cmd_help = 'Command to run in clowder projects'
         parser_forall.add_argument('--command', '-c', dest='cmd', required=True,
                                    help=forall_cmd_help)
-        parser_forall.add_argument('--groups', '-g',
-                                   choices=self.group_names,
-                                   nargs='+',
-                                   help='Groups to herd')
+        parser_forall.add_argument('--groups', '-g', choices=self.group_names,
+                                   nargs='+', help='Groups to herd')
         # clowder meow
         parser_meow = subparsers.add_parser('meow', add_help=False,
                                             help='Print status for projects')
@@ -79,9 +75,8 @@ class Command(object):
         # clowder fix
         fix_help = 'Create version of clowder.yaml for current repos'
         parser_fix = subparsers.add_parser('fix', help=fix_help)
-        parser_fix.add_argument('-v', dest='version',
-                                required=True,
-                                help='Version name to fix')
+        parser_fix.add_argument('-version', '-v',
+                                required=True, help='Version name to fix')
         # clowder groom
         groom_help = 'Discard current changes in all projects and clowder repo'
         subparsers.add_parser('groom', add_help=False, help=groom_help)
