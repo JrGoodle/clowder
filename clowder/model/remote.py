@@ -9,12 +9,11 @@ class Remote(object):
 
     def get_url_prefix(self):
         """Return full remote url for project"""
+        remote_url_prefix = None
         if self.url.startswith('https://'):
             remote_url_prefix = self.url + "/"
         elif self.url.startswith('ssh://'):
             remote_url_prefix = self.url[6:] + ":"
-        else:
-            remote_url_prefix = None
         return remote_url_prefix
 
     def get_yaml(self):

@@ -50,7 +50,7 @@ $ clowder herd
 This command syncs the projects. Projects are cloned if they don't currently exist. Otherwise, each project will pull the latest changes. If the current branch isn't the default, it'll be checked out, and latest changes pulled.
 
 ```bash
-$ clowder groom # Update clowder repository
+$ clowder sync
 ```
 
 This command is like `clowder herd`, but for syncing the `clowder` repository.
@@ -62,7 +62,7 @@ $ clowder meow # print status of projects
 ```
 
 ```bash
-$ clowder litter # Discard any changes in projects
+$ clowder groom # Discard any changes in projects
 ```
 
 ```bash
@@ -85,7 +85,7 @@ $ clowder forall "$COMMAND" # Run "$COMMAND" in all project directories
 
 ### Defaults
 
-The **defaults** specify the default branch and remote for projects, and groups to sync by default with `clowder herd`.
+The **defaults** specify the default branch and remote for projects.
 
 ```yaml
 defaults:
