@@ -72,6 +72,13 @@ def git_fix_version(repo_path, version):
     git.pull()
     git.push()
 
+def git_groom(repo_path):
+    """Discard current changes in repository"""
+    repo = Repo(repo_path)
+    if repo.is_dirty():
+        print(' - Discarding current changes')
+        repo.head.reset(index=True, working_tree=True)
+
 def git_herd(repo_path, ref):
     """Sync git repo with default branch"""
     repo = Repo(repo_path)
@@ -122,13 +129,6 @@ def git_is_dirty(repo_path):
     """Check if repo is dirty"""
     repo = Repo(repo_path)
     return repo.is_dirty()
-
-def git_groom(repo_path):
-    """Discard current changes in repository"""
-    repo = Repo(repo_path)
-    if repo.is_dirty():
-        print(' - Discarding current changes')
-        repo.head.reset(index=True, working_tree=True)
 
 def git_stash(repo_path):
     """Stash current changes in repository"""

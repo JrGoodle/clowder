@@ -94,6 +94,16 @@ class ClowderYAML(object):
         else:
             return None
 
+    def groom(self):
+        """Discard changes for all projects"""
+        print_clowder_repo_status(self.root_directory)
+        print('')
+        for group in self.groups:
+            print_group(group.name)
+            for project in group.projects:
+                print_project_status(self.root_directory, project.path, project.name)
+                git_groom(project.full_path)
+
     def herd_all(self):
         """Sync all projects with latest upstream changes"""
         self._validate_all()
@@ -127,16 +137,6 @@ class ClowderYAML(object):
             for project in group.projects:
                 print_project_status(self.root_directory, project.path, project.name)
                 project.herd_version(version)
-
-    def groom(self):
-        """Discard changes for all projects"""
-        print_clowder_repo_status(self.root_directory)
-        print('')
-        for group in self.groups:
-            print_group(group.name)
-            for project in group.projects:
-                print_project_status(self.root_directory, project.path, project.name)
-                git_groom(project.full_path)
 
     def meow(self):
         """Print status for all projects"""
