@@ -79,6 +79,11 @@ def print_project_status(root_directory, path, name):
         return
     print(format_repo_string(repo_path, path, name))
 
+def print_running_command(command):
+    running_output = colored('Running command', attrs=['underline'])
+    command_output = colored(command, attrs=['bold'])
+    print(running_output + ': ' + command_output)
+
 def print_verbose_status(repo_path):
     """Print git status"""
     if git_is_dirty(repo_path):

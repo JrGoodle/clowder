@@ -10,8 +10,9 @@ from clowder.utility.git_utilities import (
 from clowder.utility.print_utilities import (
     print_clowder_repo_status,
     print_group,
-    print_verbose_status,
-    print_project_status
+    print_project_status,
+    print_running_command,
+    print_verbose_status
 )
 from clowder.model.group import Group
 from clowder.model.remote import Remote
@@ -62,9 +63,7 @@ class ClowderYAML(object):
             for project in group.projects:
                 if os.path.isdir(project.full_path):
                     print_project_status(self.root_directory, project.path, project.name)
-                    running_output = colored('Running command', attrs=['underline'])
-                    command_output = colored(command, attrs=['bold'])
-                    print(running_output + ': ' + command_output)
+                    print_running_command(command)
                     subprocess.call(command.split(),
                                     cwd=project.full_path)
 
@@ -76,9 +75,7 @@ class ClowderYAML(object):
                 for project in group.projects:
                     if os.path.isdir(project.full_path):
                         print_project_status(self.root_directory, project.path, project.name)
-                        running_output = colored('Running command', attrs=['underline'])
-                        command_output = colored(command, attrs=['bold'])
-                        print(running_output + ': ' + command_output)
+                        print_running_command(command)
                         subprocess.call(command.split(),
                                         cwd=project.full_path)
 
