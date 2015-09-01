@@ -26,11 +26,14 @@ class Command(object):
         if os.path.isdir(os.path.join(self.root_directory, 'clowder')):
             self.clowder = ClowderYAML(self.root_directory)
             self.versions = self.clowder.get_fixed_version_names()
-            self.groups = self.clowder.get_all_group_names()
+            if self.clowder.group_names == None:
+                self.group_names = ''
+            else:
+                self.group_names = self.clowder.group_names
         else:
             self.clowder = None
-            self.groups = None
             self.versions = None
+            self.group_names = ''
         # clowder argparse setup
         parser = argparse.ArgumentParser(description='Manage multiple repositories')
         subparsers = parser.add_subparsers(dest='command')
@@ -65,12 +68,11 @@ class Command(object):
         herd_help = 'Clone and sync latest changes for projects'
         parser_herd = subparsers.add_parser('herd', help=herd_help)
         group = parser_herd.add_mutually_exclusive_group()
-        herd_clowder_help = 'Update clowder repository with latest changes'
         group.add_argument('--version', '-v',
                            choices=self.versions,
                            help='Version name to herd')
         group.add_argument('--groups', '-g',
-                           choices=self.groups,
+                           choices=self.group_names,
                            nargs='+',
                            help='Groups to herd')
         # clowder fix
@@ -86,17 +88,17 @@ class Command(object):
         parser_forall.add_argument('--command', '-c', dest='cmd', required=True,
                                    help=forall_cmd_help)
         parser_forall.add_argument('--groups', '-g',
-                                   choices=self.groups,
+                                   choices=self.group_names,
                                    nargs='+',
                                    help='Groups to herd')
         # clowder groom
         groom_help = 'Discard current changes in all projects and clowder repo'
         subparsers.add_parser('groom', add_help=False, help=groom_help)
         # clowder meow
-        meow_help = 'Print status for projects'
-        parser_meow = subparsers.add_parser('meow', add_help=False, help=meow_help)
-        meow_v_help = 'Print detailed diff status'
-        parser_meow.add_argument('--verbose', '-v', action='store_true', help=meow_v_help)
+        parser_meow = subparsers.add_parser('meow', add_help=False,
+                                            help='Print status for projects')
+        parser_meow.add_argument('--verbose', '-v', action='store_true',
+                                 help='Print detailed diff status')
         # clowder stash
         stash_help = 'Stash current changes in all projects and clowder repo'
         subparsers.add_parser('stash', add_help=False, help=stash_help)

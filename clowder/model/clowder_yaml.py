@@ -20,12 +20,18 @@ class ClowderYAML(object):
     """Class encapsulating project information from clowder.yaml"""
     def __init__(self, rootDirectory):
         self.root_directory = rootDirectory
+        self.clowder_path = os.path.join(self.root_directory, 'clowder')
         self.default_ref = None
         self.default_remote = None
         self.groups = []
         self.remotes = []
+
         self._load_yaml()
-        self.clowder_path = os.path.join(self.root_directory, 'clowder')
+
+        self.group_names = []
+        for group in self.groups:
+            self.group_names.append(group.name)
+        self.group_names.sort()
 
     def fix_version(self, version):
         """Fix current commits to versioned clowder.yaml"""
@@ -75,13 +81,6 @@ class ClowderYAML(object):
                         print(running_output + ': ' + command_output)
                         subprocess.call(command.split(),
                                         cwd=project.full_path)
-
-    def get_all_group_names(self):
-        """Returns all group names for current clowder.yaml"""
-        names = []
-        for group in self.groups:
-            names.append(group.name)
-        return names.sort()
 
     def get_all_project_names(self):
         """Returns all project names for current clowder.yaml"""
