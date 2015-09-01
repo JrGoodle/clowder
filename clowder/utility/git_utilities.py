@@ -199,7 +199,7 @@ def git_validate_dirty(repo_path):
 
 def git_validate_untracked(repo_path):
     """Validate repo untracked files"""
-    if git_untracked_files(repo_path):
+    if git_has_untracked_files(repo_path):
         print(repo_path + ' has untracked files.')
         print('Please remove these files or add to .gitignore')
         print('')
@@ -207,7 +207,7 @@ def git_validate_untracked(repo_path):
         print('')
         sys.exit()
 
-def git_untracked_files(repo_path):
+def git_has_untracked_files(repo_path):
     """Check if there are untracked files"""
     repo = Repo(repo_path)
     if repo.untracked_files:
