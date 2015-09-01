@@ -66,7 +66,6 @@ class Command(object):
         parser_herd = subparsers.add_parser('herd', help=herd_help)
         group = parser_herd.add_mutually_exclusive_group()
         herd_clowder_help = 'Update clowder repository with latest changes'
-        group.add_argument('--clowder', '-c', action='store_true', help=herd_clowder_help)
         group.add_argument('--version', '-v',
                            choices=self.versions,
                            help='Version name to herd')
@@ -148,20 +147,16 @@ class Command(object):
         """clowder herd command"""
         if self.clowder != None:
             cprint('Herd...\n', 'yellow')
-            if self.args.clowder:
-                clowder_repo = ClowderRepo(self.root_directory)
-                clowder_repo.herd()
-            else:
-                yaml_file = get_yaml_path(self.root_directory, self.args.version)
-                symlink_clowder_yaml(self.root_directory, yaml_file)
-                clowder = ClowderYAML(self.root_directory)
-                if self.args.version == None:
-                    if self.args.groups == None:
-                        clowder.herd_all()
-                    else:
-                        clowder.herd_groups(self.args.groups)
+            yaml_file = get_yaml_path(self.root_directory, self.args.version)
+            symlink_clowder_yaml(self.root_directory, yaml_file)
+            clowder = ClowderYAML(self.root_directory)
+            if self.args.version == None:
+                if self.args.groups == None:
+                    clowder.herd_all()
                 else:
-                    clowder.herd_version_all(self.args.version)
+                    clowder.herd_groups(self.args.groups)
+            else:
+                clowder.herd_version_all(self.args.version)
         else:
             print_clowder_not_found_message()
             sys.exit()

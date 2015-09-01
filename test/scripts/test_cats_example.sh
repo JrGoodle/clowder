@@ -29,7 +29,6 @@ echo "TEST: Golden path. Normal herd after breed"
 ./breed.sh  || exit 1
 clowder herd  || exit 1
 clowder meow || exit 1
-clowder herd -c || exit 1
 ./clean.sh || exit 1
 
 echo "TEST: Herd version after breed"
@@ -119,16 +118,10 @@ git add newfile
 popd &>/dev/null
 clowder meow || exit 1
 
-echo "TEST: Fail herd with dirty clowder repo"
-clowder herd -c || exit 1
-clowder meow || exit 1
 echo "TEST: Discard changes in clowder repo"
 pushd clowder &>/dev/null
 git reset --hard
 popd &>/dev/null
-echo "TEST: Successfully herd after discarding changes"
-clowder herd -c || exit 1
-clowder meow || exit 1
 
 echo "TEST: Run forall command"
 clowder forall -c 'git status' || exit 1
