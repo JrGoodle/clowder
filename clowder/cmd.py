@@ -67,10 +67,10 @@ class Command(object):
         group = parser_herd.add_mutually_exclusive_group()
         herd_clowder_help = 'Update clowder repository with latest changes'
         group.add_argument('--clowder', '-c', action='store_true', help=herd_clowder_help)
-        group.add_argument('-v', dest='version',
+        group.add_argument('--version', '-v',
                            choices=self.versions,
                            help='Version name to herd')
-        group.add_argument('-g', dest='groups',
+        group.add_argument('--groups', '-g',
                            choices=self.groups,
                            nargs='+',
                            help='Groups to herd')
