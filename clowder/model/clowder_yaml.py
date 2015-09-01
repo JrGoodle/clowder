@@ -127,7 +127,7 @@ class ClowderYAML(object):
                     print_project_status(self.root_directory, project.path, project.name)
                     project.herd()
 
-    def herd_version_all(self, version):
+    def herd_version(self, version):
         """Sync all projects to fixed versions"""
         self._validate_all()
         print_clowder_repo_status(self.root_directory)

@@ -154,7 +154,7 @@ class Command(object):
                 else:
                     clowder.herd_groups(self.args.groups)
             else:
-                clowder.herd_version_all(self.args.version)
+                clowder.herd_version(self.args.version)
         else:
             print_clowder_not_found_message()
             sys.exit()
