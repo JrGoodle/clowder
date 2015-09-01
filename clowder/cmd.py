@@ -86,6 +86,10 @@ class Command(object):
         forall_cmd_help = 'Command to run in clowder projects'
         parser_forall.add_argument('--command', '-c', dest='cmd', required=True,
                                    help=forall_cmd_help)
+        parser_forall.add_argument('--groups', '-g',
+                                   choices=self.groups,
+                                   nargs='+',
+                                   help='Groups to herd')
         # clowder groom
         groom_help = 'Discard current changes in all projects and clowder repo'
         subparsers.add_parser('groom', add_help=False, help=groom_help)
@@ -123,7 +127,10 @@ class Command(object):
         """clowder forall command"""
         if self.clowder != None:
             cprint('Forall...\n', 'yellow')
-            self.clowder.forall(self.args.cmd)
+            if self.args.groups == None:
+                self.clowder.forall(self.args.cmd)
+            else:
+                self.clowder.forall_groups(self.args.cmd, self.args.groups)
         else:
             print_clowder_not_found_message()
             sys.exit()

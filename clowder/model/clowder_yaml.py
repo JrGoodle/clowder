@@ -62,6 +62,20 @@ class ClowderYAML(object):
                     subprocess.call(command.split(),
                                     cwd=project.full_path)
 
+    def forall_groups(self, command, group_names):
+        """Runs command in all projects"""
+        for group in self.groups:
+            if group.name in group_names:
+                print_group(group.name)
+                for project in group.projects:
+                    if os.path.isdir(project.full_path):
+                        print_project_status(self.root_directory, project.path, project.name)
+                        running_output = colored('Running command', attrs=['underline'])
+                        command_output = colored(command, attrs=['bold'])
+                        print(running_output + ': ' + command_output)
+                        subprocess.call(command.split(),
+                                        cwd=project.full_path)
+
     def get_all_group_names(self):
         """Returns all group names for current clowder.yaml"""
         names = []
