@@ -111,14 +111,11 @@ class ClowderYAML(object):
         print_clowder_repo_status(self.root_directory)
         print('')
         for group in self.groups:
-            print_group(group.name)
             if group.name in group_names:
+                print_group(group.name)
                 for project in group.projects:
                     print_project_status(self.root_directory, project.path, project.name)
                     project.herd()
-            else:
-                for project in group.projects:
-                    print_project_status(self.root_directory, project.path, project.name)
 
     def herd_version_all(self, version):
         """Sync all projects to fixed versions"""
