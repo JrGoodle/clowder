@@ -77,6 +77,7 @@ def print_project_status(root_directory, path, name):
     print(format_repo_string(repo_path, path, name))
 
 def print_running_command(command):
+    """Print message about command being run"""
     running_output = colored('Running command', attrs=['underline'])
     command_output = colored(command, attrs=['bold'])
     print(running_output + ': ' + command_output)
