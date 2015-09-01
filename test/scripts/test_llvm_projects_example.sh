@@ -92,7 +92,6 @@ do
     test_branch v0.1
     popd &>/dev/null
 done
-clowder meow || exit 1
 
 print_separator
 
