@@ -57,8 +57,7 @@ def print_clowder_not_found_message():
 def print_clowder_repo_status(root_directory):
     """Print clowder repo status"""
     repo_path = os.path.join(root_directory, 'clowder')
-    git_path = os.path.join(repo_path, '.git')
-    if not os.path.isdir(git_path):
+    if not os.path.isdir(os.path.join(repo_path, '.git')):
         cprint('clowder', 'green')
         return
     output = format_clowder_string(repo_path, 'clowder')
@@ -73,8 +72,7 @@ def print_group(name):
 def print_project_status(root_directory, path, name):
     """Print repo status"""
     repo_path = os.path.join(root_directory, path)
-    git_path = os.path.join(repo_path, '.git')
-    if not os.path.isdir(git_path):
+    if not os.path.isdir(os.path.join(repo_path, '.git')):
         cprint(name, 'green')
         return
     print(format_repo_string(repo_path, path, name))

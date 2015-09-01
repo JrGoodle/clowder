@@ -37,7 +37,7 @@ class ClowderYAML(object):
     def fix_version(self, version):
         """Fix current commits to versioned clowder.yaml"""
         self._validate_all()
-        versions_dir = os.path.join(self.root_directory, 'clowder/versions')
+        versions_dir = os.path.join(self.root_directory, 'clowder', 'versions')
         version_dir = os.path.join(versions_dir, version)
         if not os.path.exists(version_dir):
             os.makedirs(version_dir)
@@ -88,7 +88,7 @@ class ClowderYAML(object):
 
     def get_fixed_version_names(self):
         """Return list of all fixed versions"""
-        versions_dir = os.path.join(self.root_directory, 'clowder/versions')
+        versions_dir = os.path.join(self.root_directory, 'clowder', 'versions')
         if os.path.exists(versions_dir):
             return os.listdir(versions_dir)
         else:

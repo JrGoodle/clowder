@@ -169,8 +169,7 @@ def git_truncate_ref(ref):
 
 def git_validate_repo_state(repo_path):
     """Validate repo state"""
-    git_path = os.path.join(repo_path, '.git')
-    if not os.path.isdir(git_path):
+    if not os.path.isdir(os.path.join(repo_path, '.git')):
         return
     git_validate_dirty(repo_path)
     # git_validate_detached(repo_path)

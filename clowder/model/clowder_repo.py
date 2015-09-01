@@ -29,10 +29,11 @@ class ClowderRepo(object):
     def symlink_yaml(self, version=None):
         """Create symlink pointing to clowder.yaml file"""
         if version == None:
-            yaml_file = os.path.join(self.root_directory, 'clowder/clowder.yaml')
+            yaml_file = os.path.join(self.root_directory, 'clowder', 'clowder.yaml')
         else:
-            yaml_version = 'clowder/versions/' + version + '/clowder.yaml'
-            yaml_file = os.path.join(self.root_directory, yaml_version)
+            yaml_file = os.path.join(self.root_directory,
+                                     'clowder', 'versions',
+                                     version, 'clowder.yaml')
         os.chdir(self.root_directory)
         if os.path.isfile(yaml_file):
             if os.path.isfile('clowder.yaml'):
