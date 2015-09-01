@@ -31,8 +31,7 @@ class ClowderRepo(object):
         if version == None:
             yaml_file = os.path.join(self.root_directory, 'clowder', 'clowder.yaml')
         else:
-            yaml_file = os.path.join(self.root_directory,
-                                     'clowder', 'versions',
+            yaml_file = os.path.join(self.root_directory, 'clowder', 'versions',
                                      version, 'clowder.yaml')
         os.chdir(self.root_directory)
         if os.path.isfile(yaml_file):
