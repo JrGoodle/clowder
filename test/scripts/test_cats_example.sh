@@ -2,6 +2,13 @@
 
 # set -xv
 
+print_separator()
+{
+    echo ''
+    echo '--------------------------------------------------------------------------------'
+    echo ''
+}
+
 test_branch()
 {
     local git_branch
@@ -25,11 +32,15 @@ black_cat_projects=( 'black-cats/kit' \
 
 cd $TRAVIS_BUILD_DIR/examples/cats
 
-echo "TEST: Golden path. Normal herd after breed"
+print_separator
+
+echo "TEST: Normal herd after breed"
 ./breed.sh  || exit 1
 clowder herd  || exit 1
 clowder meow || exit 1
 ./clean.sh || exit 1
+
+print_separator
 
 echo "TEST: Herd version after breed"
 ./breed.sh || exit 1
@@ -45,6 +56,8 @@ do
 done
 clowder meow || exit 1
 
+print_separator
+
 echo "TEST: Make dirty repos"
 for project in "${black_cat_projects[@]}"
 do
@@ -58,6 +71,8 @@ clowder meow || exit 1
 echo "TEST: Groom"
 clowder groom || exit 1
 clowder meow || exit 1
+
+print_separator
 
 echo "TEST: Make dirty repos"
 for project in "${black_cat_projects[@]}"
@@ -93,6 +108,8 @@ test_branch purr
 popd &>/dev/null
 echo ''
 
+print_separator
+
 echo "TEST: Create detached HEADs"
 for project in "${black_cat_projects[@]}"
 do
@@ -110,6 +127,8 @@ clowder meow || exit 1
 echo "TEST: Normal herd after herding a previously fixed version"
 clowder herd || exit 1
 clowder meow || exit 1
+
+print_separator
 
 echo "TEST: Make dirty clowder repo"
 pushd clowder &>/dev/null
@@ -129,15 +148,22 @@ echo "TEST: Successfully sync after discarding changes"
 clowder sync || exit 1
 clowder meow || exit 1
 
+print_separator
+
 echo "TEST: Run forall command"
 clowder forall -c 'git status' || exit 1
 echo "TEST: Run forall command for specific groups"
 clowder forall -g cats -c 'git status' || exit 1
+
+print_separator
+
 echo "TEST: Fail fixing a previously fixed version"
 clowder fix -v v0.1 || exit 1
 echo "TEST: Successfully fix a new version"
 clowder fix -v v0.11 || exit 1
 clowder meow || exit 1
+
+print_separator
 
 echo "TEST: Make dirty repos"
 for project in "${black_cat_projects[@]}"
@@ -155,17 +181,27 @@ echo "TEST: Stash changes"
 clowder stash || exit 1
 clowder meow || exit 1
 
+print_separator
+
 echo "TEST: Remove directories"
 rm -rf duke mu
 echo "TEST: Herd with 2 missing directories"
 clowder herd || exit 1
 clowder meow || exit 1
+
+print_separator
+
 echo "TEST: Herd fixed version to test herding select groups"
 clowder herd -v v0.11 || exit 1
 clowder meow || exit 1
+
+print_separator
+
 echo "TEST: Herd only specific group"
 clowder herd -g cats || exit 1
 clowder meow || exit 1
+
+print_separator
 
 echo "TEST: Herd v0.1 to test missing default branches"
 clowder herd -v v0.1 || exit 1
@@ -181,26 +217,21 @@ echo "TEST: Herd existing repo's with no default branch locally"
 clowder herd || exit 1
 clowder meow || exit 1
 
-echo ""
-echo ""
+print_separator
+
 echo "TEST: Help output"
-echo ""
-echo ""
+print_separator
 echo "TEST: clowder -h"
 clowder -h
-echo ""
-echo ""
+print_separator
 echo "TEST: clowder breed -h"
 clowder breed -h
-echo ""
-echo ""
+print_separator
 echo "TEST: clowder herd -h"
 clowder herd -h
-echo ""
-echo ""
+print_separator
 echo "TEST: clowder fix -h"
 clowder fix -h
-echo ""
-echo ""
+print_separator
 echo "TEST: clowder forall -h"
 clowder forall -h

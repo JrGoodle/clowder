@@ -2,6 +2,13 @@
 
 # set -xv
 
+print_separator()
+{
+    echo ''
+    echo '--------------------------------------------------------------------------------'
+    echo ''
+}
+
 setup_old_repos()
 {
     local CLANG_DIR="$LLVM_PROJECTS_DIR/llvm/tools/clang"
@@ -59,13 +66,21 @@ projects=( 'llvm' \
 export LLVM_PROJECTS_DIR="$TRAVIS_BUILD_DIR/examples/llvm-projects"
 cd $LLVM_PROJECTS_DIR
 
-echo "TEST: Golden path. Normal herd after breed"
+print_separator
+
+echo "TEST: Normal herd after breed"
 ./breed.sh && clowder herd || exit 1
+
+print_separator
+
 echo 'TEST: Set up older copies of repos'
 setup_old_repos # configure repo's for testing pulling new commits
 echo "TEST: Normal herd with out of date repos"
 clowder herd || exit 1
 clowder meow || exit 1
+
+print_separator
+
 echo "TEST: Herd a previously fixed version"
 clowder herd -v v0.1 || exit 1
 clowder meow || exit 1
@@ -79,6 +94,8 @@ do
 done
 clowder meow || exit 1
 
+print_separator
+
 echo "TEST: Successfully herd with no current changes"
 clowder herd || exit 1
 clowder meow || exit 1
@@ -90,6 +107,8 @@ do
     test_branch master
     popd &>/dev/null
 done
+
+print_separator
 
 echo "TEST: Make dirty repos"
 for project in "${projects[@]}"
@@ -106,6 +125,8 @@ clowder meow || exit 1
 echo "TEST: Discard changes with groom"
 clowder groom || exit 1
 clowder meow || exit 1
+
+print_separator
 
 echo "TEST: Make dirty clowder repo"
 pushd clowder &>/dev/null
@@ -125,6 +146,8 @@ echo "TEST: Successfully sync after discarding changes"
 clowder sync || exit 1
 clowder meow || exit 1
 
+print_separator
+
 echo "TEST: Create detached HEADs"
 for project in "${projects[@]}"
 do
@@ -137,6 +160,9 @@ clowder meow || exit 1
 echo "TEST: Successfully herd with detached HEADs"
 clowder herd || exit 1
 clowder meow || exit 1
+
+print_separator
+
 echo "TEST: Herd a previously fixed version"
 clowder herd -v v0.1 || exit 1
 clowder meow || exit 1
@@ -144,15 +170,22 @@ echo "TEST: Normal herd after herding a previously fixed version"
 clowder herd || exit 1
 clowder meow || exit 1
 
+print_separator
+
 echo "TEST: Run forall command"
 clowder forall -c 'git status' || exit 1
 echo "TEST: Run forall command for specific groups"
 clowder forall -g clang llvm -c 'git status' || exit 1
+
+print_separator
+
 echo "TEST: Fail fixing a previously fixed version"
 clowder fix -v v0.1 || exit 1
 echo "TEST: Successfully fix a new version"
 clowder fix -v v0.11 || exit 1
 clowder meow || exit 1
+
+print_separator
 
 echo "TEST: Make dirty repos"
 for project in "${projects[@]}"
@@ -170,12 +203,17 @@ echo "TEST: Stash changes"
 clowder stash || exit 1
 clowder meow || exit 1
 
+print_separator
+
 echo "TEST: Remove directories"
 rm -rf 'llvm/tools/clang/tools/extra'
 rm -rf 'llvm/projects/dragonegg'
 echo "TEST: Herd with 2 missing directories"
 clowder herd || exit 1
 clowder meow || exit 1
+
+print_separator
+
 echo "TEST: Herd fixed version to test herding select groups"
 clowder herd -v v0.11 || exit 1
 clowder meow || exit 1
@@ -183,26 +221,20 @@ echo "TEST: Herd only specific groups"
 clowder herd -g clang llvm projects || exit 1
 clowder meow || exit 1
 
-echo ""
-echo ""
+print_separator
 echo "TEST: Help output"
-echo ""
-echo ""
+print_separator
 echo "TEST: clowder -h"
 clowder -h
-echo ""
-echo ""
+print_separator
 echo "TEST: clowder breed -h"
 clowder breed -h
-echo ""
-echo ""
+print_separator
 echo "TEST: clowder herd -h"
 clowder herd -h
-echo ""
-echo ""
+print_separator
 echo "TEST: clowder fix -h"
 clowder fix -h
-echo ""
-echo ""
+print_separator
 echo "TEST: clowder forall -h"
 clowder forall -h
