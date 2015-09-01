@@ -58,15 +58,6 @@ def git_diff_untracked_files(repo_path):
     print('A list of untracked files')
     print(repo.untracked_files)
 
-def git_fix(repo_path):
-    """Commit new main clowder.yaml from current changes"""
-    repo = Repo(repo_path)
-    git = repo.git
-    git.add('clowder.yaml')
-    git.commit('-m', 'Update clowder.yaml')
-    git.pull()
-    git.push()
-
 def git_fix_version(repo_path, version):
     """Commit fixed version of clowder.yaml based on current branches"""
     repo = Repo(repo_path)
@@ -99,17 +90,6 @@ def git_herd(repo_path, ref):
             branch.set_tracking_branch(origin.refs[project_ref])
             branch.checkout()
 
-def git_herd_clowder(repo_path):
-    """Sync clowder repo with current branch"""
-    repo = Repo(repo_path)
-    git = repo.git
-    git.fetch('--all', '--prune', '--tags')
-    if git_is_detached(repo_path):
-        print(' - HEAD is detached, nothing to pull')
-    else:
-        print(' - Pulling latest changes')
-        print(git.pull())
-
 def git_herd_version(repo_path, version, ref):
     """Sync fixed version of repo at path"""
     repo = Repo(repo_path)
@@ -141,9 +121,6 @@ def git_groom(repo_path):
     if repo.is_dirty():
         print(' - Discarding current changes')
         repo.head.reset(index=True, working_tree=True)
-    else:
-        pass
-        # print(' - No changes to discard')
 
 def git_stash(repo_path):
     """Stash current changes in repository"""
@@ -159,6 +136,15 @@ def git_status(repo_path):
     """Print git status"""
     repo = Repo(repo_path)
     print(repo.git.status())
+
+def git_sync(repo_path):
+    """Sync clowder repo with current branch"""
+    repo = Repo(repo_path)
+    git = repo.git
+    git.fetch('--all', '--prune', '--tags')
+    if not git_is_detached(repo_path):
+        print(' - Pulling latest changes')
+        print(git.pull())
 
 def git_truncate_ref(ref):
     """Return bare branch, tag, or sha"""
@@ -177,6 +163,23 @@ def git_validate_repo_state(repo_path):
     git_path = os.path.join(repo_path, '.git')
     if not os.path.isdir(git_path):
         return
+    git_validate_dirty(repo_path)
+    # git_validate_detached(repo_path)
+    # git_validate_untracked(repo_path)
+
+def git_validate_detached(repo_path):
+    """Validate repo detached HEAD"""
+    if git_is_detached(repo_path):
+        repo_output = colored(repo_path, 'cyan')
+        print(repo_output  + ' HEAD is detached')
+        print('Please point your HEAD to a branch before running clowder')
+        print('')
+        cprint('Exiting...', 'red')
+        print('')
+        sys.exit()
+
+def git_validate_dirty(repo_path):
+    """Validate repo dirty files"""
     if git_is_dirty(repo_path):
         repo_output = colored(repo_path, 'cyan')
         print(repo_output + ' is dirty')
@@ -185,21 +188,16 @@ def git_validate_repo_state(repo_path):
         cprint('Exiting...', 'red')
         print('')
         sys.exit()
-    # if git_untracked_files(repo_path):
-    #     print(repo_path + ' has untracked files.')
-    #     print('Please remove these files or add to .gitignore')
-    #     print('')
-    #     cprint('Exiting...', 'red')
-    #     print('')
-    #     sys.exit()
-    # if git_is_detached(repo_path):
-    #     repo_output = colored(repo_path, 'cyan')
-    #     print(repo_output  + ' HEAD is detached')
-    #     print('Please point your HEAD to a branch before running clowder')
-    #     print('')
-    #     cprint('Exiting...', 'red')
-    #     print('')
-    #     sys.exit()
+
+def git_validate_untracked(repo_path):
+    """Validate repo untracked files"""
+    if git_untracked_files(repo_path):
+        print(repo_path + ' has untracked files.')
+        print('Please remove these files or add to .gitignore')
+        print('')
+        cprint('Exiting...', 'red')
+        print('')
+        sys.exit()
 
 def git_untracked_files(repo_path):
     """Check if there are untracked files"""
@@ -208,8 +206,3 @@ def git_untracked_files(repo_path):
         return True
     else:
         return False
-
-def process_output(line):
-    """Utility function for command output callbacks"""
-    stripped_line = str(line).rstrip('\n')
-    print(stripped_line)

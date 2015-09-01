@@ -3,7 +3,7 @@ import os
 from clowder.utility.print_utilities import print_clowder_repo_status
 from clowder.utility.git_utilities import (
     git_clone_url_at_path,
-    git_herd_clowder,
+    git_sync,
     git_validate_repo_state
 )
 
@@ -23,7 +23,7 @@ class ClowderRepo(object):
         """Sync clowder repo"""
         git_validate_repo_state(self.clowder_path)
         print_clowder_repo_status(self.root_directory)
-        git_herd_clowder(self.clowder_path)
+        git_sync(self.clowder_path)
         self.symlink_yaml()
 
     def symlink_yaml(self, version=None):
