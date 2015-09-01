@@ -9,10 +9,6 @@ import argcomplete, argparse
 from termcolor import cprint
 from clowder.model.clowder_repo import ClowderRepo
 from clowder.model.clowder_yaml import ClowderYAML
-from clowder.utility.clowder_utilities import (
-    get_yaml_path,
-    symlink_clowder_yaml
-)
 from clowder.utility.print_utilities import (
     print_clowder_not_found_message
 )
@@ -102,15 +98,15 @@ class Command(object):
         # clowder stash
         stash_help = 'Stash current changes in all projects and clowder repo'
         subparsers.add_parser('stash', add_help=False, help=stash_help)
+        # clowder sync
+        subparsers.add_parser('sync', add_help=False, help='Sync clowder repo')
 
     def breed(self):
         """clowder breed command"""
         if self.clowder == None:
             cprint('Breed from %s\n' % self.args.url, 'yellow')
             clowder_repo = ClowderRepo(self.root_directory)
-            clowder_repo.clone(self.args.url)
-            yaml_file = os.path.join(self.root_directory, 'clowder/clowder.yaml')
-            symlink_clowder_yaml(self.root_directory, yaml_file)
+            clowder_repo.breed(self.args.url)
         else:
             cprint('Clowder already bred in this directory, exiting...\n', 'red')
             sys.exit()
@@ -149,8 +145,8 @@ class Command(object):
         """clowder herd command"""
         if self.clowder != None:
             cprint('Herd...\n', 'yellow')
-            yaml_file = get_yaml_path(self.root_directory, self.args.version)
-            symlink_clowder_yaml(self.root_directory, yaml_file)
+            clowder_repo = ClowderRepo(self.root_directory)
+            clowder_repo.symlink_yaml(self.args.version)
             clowder = ClowderYAML(self.root_directory)
             if self.args.version == None:
                 if self.args.groups == None:
@@ -180,6 +176,16 @@ class Command(object):
         if self.clowder != None:
             cprint('Stash...\n', 'yellow')
             self.clowder.stash()
+        else:
+            print_clowder_not_found_message()
+            sys.exit()
+
+    def sync(self):
+        """clowder sync command"""
+        if self.clowder != None:
+            cprint('Sync...\n', 'yellow')
+            clowder_repo = ClowderRepo(self.root_directory)
+            clowder_repo.sync()
         else:
             print_clowder_not_found_message()
             sys.exit()

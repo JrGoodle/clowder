@@ -118,10 +118,16 @@ git add newfile
 popd &>/dev/null
 clowder meow || exit 1
 
+echo "TEST: Fail sync with dirty clowder repo"
+clowder sync || exit 1
+clowder meow || exit 1
 echo "TEST: Discard changes in clowder repo"
 pushd clowder &>/dev/null
 git reset --hard
 popd &>/dev/null
+echo "TEST: Successfully sync after discarding changes"
+clowder sync || exit 1
+clowder meow || exit 1
 
 echo "TEST: Run forall command"
 clowder forall -c 'git status' || exit 1

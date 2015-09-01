@@ -80,5 +80,6 @@ def print_project_status(root_directory, path, name):
     print(format_repo_string(repo_path, path, name))
 
 def print_verbose_status(repo_path):
+    """Print git status"""
     if git_is_dirty(repo_path):
         git_status(repo_path)
