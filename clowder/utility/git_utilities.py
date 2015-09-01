@@ -88,7 +88,7 @@ def git_herd(repo_path, ref):
     git.fetch('--all', '--prune', '--tags')
     project_ref = git_truncate_ref(ref)
     branch_output = colored('(' + project_ref + ')', 'magenta')
-    if git_current_branch(repo_path) != project_ref:
+    if git_current_branch(repo_path) is not project_ref:
         try:
             if repo.heads[project_ref]:
                 # print(' - Not on default branch.')
@@ -114,7 +114,7 @@ def git_herd_version(repo_path, version, ref):
     branch_output = colored('(' + version + ')', 'magenta')
     try:
         if repo.heads[version]:
-            if repo.active_branch != repo.heads[version]:
+            if repo.active_branch is not repo.heads[version]:
                 print(' - Checkout ' + branch_output)
                 git.checkout(version)
     except:

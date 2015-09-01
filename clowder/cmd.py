@@ -39,17 +39,8 @@ class Command(object):
         self.args = parser.parse_args()
 
         print('')
-        try:
-            if not hasattr(self, self.args.command):
-                cprint('Unrecognized command\n', 'red')
-                parser.print_help()
-                print('')
-                exit(1)
-        except:
-            cprint('Unrecognized command\n', 'red')
-            parser.print_help()
-            print('')
-            exit(1)
+        if not hasattr(self, self.args.command):
+            exit_unrecognized_command(parser)
         # use dispatch pattern to invoke method with same name
         getattr(self, self.args.command)()
         print('')
@@ -103,7 +94,7 @@ class Command(object):
 
     def breed(self):
         """clowder breed command"""
-        if self.clowder == None:
+        if self.clowder is None:
             cprint('Breed from %s\n' % self.args.url, 'yellow')
             clowder_repo = ClowderRepo(self.root_directory)
             clowder_repo.breed(self.args.url)
@@ -113,82 +104,75 @@ class Command(object):
 
     def fix(self):
         """clowder fix command"""
-        if self.clowder != None:
+        if self.clowder is not None:
             cprint('Fix...\n', 'yellow')
             self.clowder.fix_version(self.args.version)
         else:
-            print_clowder_not_found_message()
-            sys.exit()
+            exit_clowder_not_found()
 
     def forall(self):
         """clowder forall command"""
-        if self.clowder != None:
+        if self.clowder is not None:
             cprint('Forall...\n', 'yellow')
             if self.args.groups == None:
                 self.clowder.forall(self.args.cmd)
             else:
                 self.clowder.forall_groups(self.args.cmd, self.args.groups)
         else:
-            print_clowder_not_found_message()
-            sys.exit()
+            exit_clowder_not_found()
 
     def groom(self):
         """clowder groom command"""
-        if self.clowder != None:
+        if self.clowder is not None:
             cprint('Groom...\n', 'yellow')
             self.clowder.groom()
         else:
-            print_clowder_not_found_message()
-            sys.exit()
+            exit_clowder_not_found()
 
     def herd(self):
         """clowder herd command"""
-        if self.clowder != None:
+        if self.clowder is not None:
             cprint('Herd...\n', 'yellow')
             clowder_repo = ClowderRepo(self.root_directory)
             clowder_repo.symlink_yaml(self.args.version)
             clowder = ClowderYAML(self.root_directory)
-            if self.args.version == None:
-                if self.args.groups == None:
+            if self.args.version is None:
+                if self.args.groups is None:
                     clowder.herd_all()
                 else:
                     clowder.herd_groups(self.args.groups)
             else:
                 clowder.herd_version(self.args.version)
         else:
-            print_clowder_not_found_message()
-            sys.exit()
+            exit_clowder_not_found()
 
     def meow(self):
         """clowder meow command"""
-        if self.clowder != None:
+        if self.clowder is not None:
             cprint('Meow...\n', 'yellow')
             if self.args.verbose:
                 self.clowder.meow_verbose()
             else:
                 self.clowder.meow()
         else:
-            print_clowder_not_found_message()
-            sys.exit()
+            exit_clowder_not_found()
 
     def stash(self):
         """clowder stash command"""
-        if self.clowder != None:
+        if self.clowder is not None:
             cprint('Stash...\n', 'yellow')
             self.clowder.stash()
         else:
-            print_clowder_not_found_message()
-            sys.exit()
+            exit_clowder_not_found()
 
     def sync(self):
         """clowder sync command"""
-        if self.clowder != None:
+        if self.clowder is not None:
             cprint('Sync...\n', 'yellow')
             clowder_repo = ClowderRepo(self.root_directory)
             clowder_repo.sync()
         else:
-            print_clowder_not_found_message()
-            sys.exit()
+            exit_clowder_not_found()
 
 def main():
     """Main entrypoint for clowder command"""
@@ -201,3 +185,15 @@ def signal_handler(sig, frame):
     """Signal handler for Ctrl+C trap"""
     print('')
     sys.exit(0)
+
+def exit_unrecognized_command(parser):
+    """Print unrecognized command message and exit"""
+    cprint('Unrecognized command\n', 'red')
+    parser.print_help()
+    print('')
+    sys.exit(1)
+
+def exit_clowder_not_found():
+    """Print clowder not found message and exit"""
+    print_clowder_not_found_message()
+    sys.exit(1)
