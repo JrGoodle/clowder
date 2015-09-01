@@ -12,7 +12,12 @@ def git_clone_url_at_path(url, repo_path):
         print(' - Cloning repo at ' + repo_path_output)
         repo = Repo.init(repo_path)
         origin = repo.create_remote('origin', url)
-        origin.fetch()
+        try:
+            origin.fetch()
+        except:
+            print(' - Failed to fetch. Removing ' + repo_path_output)
+            os.rmdir(repo_path)
+            return
         master_branch = repo.create_head('master', origin.refs.master)
         master_branch.set_tracking_branch(origin.refs.master)
         master_branch.checkout()
