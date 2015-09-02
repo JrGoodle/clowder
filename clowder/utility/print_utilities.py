@@ -93,6 +93,9 @@ def print_running_command(command):
 
 def print_validation(repo_path):
     """Print validation messages"""
+    if not os.path.isdir(os.path.join(repo_path, '.git')):
+        print(" - Repo is missing")
+        return
     # if not git_validate_detached(repo_path):
     #     print(' - HEAD is detached. Please point your HEAD to a branch before running clowder')
     if not git_validate_dirty(repo_path):
