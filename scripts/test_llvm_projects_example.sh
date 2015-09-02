@@ -121,8 +121,11 @@ clowder meow -v || exit 1
 echo "TEST: Fail herd with dirty repos"
 clowder herd || exit 1
 clowder meow || exit 1
-echo "TEST: Discard changes with groom"
-clowder groom || exit 1
+echo "TEST: Groom when dirty"
+clowder stash || exit 1
+clowder meow || exit 1
+echo "TEST: Groom when clean"
+clowder stash || exit 1
 clowder meow || exit 1
 
 print_separator
@@ -198,7 +201,10 @@ clowder meow || exit 1
 
 echo "TEST: Fail herd with dirty repos"
 clowder herd || exit 1
-echo "TEST: Stash changes"
+echo "TEST: Stash changes when dirty"
+clowder stash || exit 1
+clowder meow || exit 1
+echo "TEST: Stash changes when clean"
 clowder stash || exit 1
 clowder meow || exit 1
 
