@@ -42,5 +42,5 @@ setup(
             'clowder=clowder.cmd:main',
         ]
     },
-    install_requires=['argcomplete', 'emoji', 'GitPython', 'PyYAML', 'termcolor']
+    install_requires=['argcomplete', 'colorama', 'emoji', 'GitPython', 'PyYAML', 'termcolor']
 )
