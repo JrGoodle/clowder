@@ -97,10 +97,11 @@ class ClowderYAML(object):
         print_clowder_repo_status(self.root_directory)
         print('')
         for group in self.groups:
-            print_group(group.name)
-            for project in group.projects:
-                print_project_status(self.root_directory, project.path, project.name)
-                git_groom(project.full_path)
+            if group.is_dirty:
+                print_group(group.name)
+                for project in group.projects:
+                    print_project_status(self.root_directory, project.path, project.name)
+                    git_groom(project.full_path)
 
     def herd_all(self):
         """Sync all projects with latest upstream changes"""
@@ -160,10 +161,11 @@ class ClowderYAML(object):
         print_clowder_repo_status(self.root_directory)
         print('')
         for group in self.groups:
-            print_group(group.name)
-            for project in group.projects:
-                print_project_status(self.root_directory, project.path, project.name)
-                git_stash(project.full_path)
+            if group.is_dirty:
+                print_group(group.name)
+                for project in group.projects:
+                    print_project_status(self.root_directory, project.path, project.name)
+                    git_stash(project.full_path)
 
     def _get_yaml(self):
         """Return python object representation for saving yaml"""

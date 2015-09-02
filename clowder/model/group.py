@@ -1,6 +1,7 @@
 """Model representation of clowder.yaml group"""
 
 from clowder.model.project import Project
+from clowder.utility.git_utilities import git_is_dirty
 
 class Group(object):
     """Model class for clowder.yaml group"""
@@ -25,3 +26,11 @@ class Group(object):
         for project in self.projects:
             projects_yaml.append(project.get_yaml())
         return {'name': self.name, 'projects': projects_yaml}
+
+    def is_dirty(self):
+        """Check if group has dirty project(s)"""
+        is_dirty = False
+        for project in self.projects:
+            if git_is_dirty(project.full_path):
+                is_dirty = True
+        return is_dirty
