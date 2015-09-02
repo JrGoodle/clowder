@@ -87,20 +87,21 @@ $ clowder forall -c "$COMMAND" # Run "$COMMAND" in all project directories
 
 ### Defaults
 
-The **defaults** specify the default branch and remote for projects.
+The **defaults** specify the default `ref`, `source`, and `remote` for projects.
 
 ```yaml
 defaults:
     ref: refs/heads/master
-    remote: github
+    remote: origin
+    source: github
 ```
 
-### Remotes
+### Sources
 
-Multiple **remotes** can be specified for use with different projects.
+Multiple **sources** can be specified for use with different projects.
 
 ```yaml
-remotes:
+sources:
     - name: github-ssh
       url: ssh://git@github.com
     - name: github
@@ -109,9 +110,9 @@ remotes:
 
 ### Groups and Projects
 
-**Groups** have a name and associated projects.
+**Groups** have a `name` and associated `projects`.
 At a minimum, **Projects** need the `name` from the project's url, and the `path` to clone relative to the root directory.
-The default `remote` and `ref` values can also be overridden on a per-project basis.
+The default `remote`, `source`, and `ref` values can also be overridden on a per-project basis.
 
 ```yaml
 groups:
