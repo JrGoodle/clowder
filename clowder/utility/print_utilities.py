@@ -98,7 +98,7 @@ def print_validation(repo_path):
     # if not git_validate_detached(repo_path):
     #     print(' - HEAD is detached. Please point your HEAD to a branch before running clowder')
     if not git_validate_dirty(repo_path):
-        print(' - Repo is dirty. Please stash, commit, or discard your changes before running clowder')
+        print(' - Dirty repo. Please stash, commit, or discard your changes')
     # if not git_validate_untracked(repo_path):
     #     print(' - There are untracked files. Please remove these files or add to .gitignore')
 

@@ -72,7 +72,7 @@ class Project(object):
         """Check out fixed version of project"""
         self._print_status()
         if not os.path.isdir(os.path.join(self.full_path, '.git')):
-            git_clone_url_at_path(self.url, self.full_path, self.remote_name)
+            git_clone_url_at_path(self.url, self.full_path, self.ref, self.remote_name)
         git_herd_version(self.full_path, version, self.ref)
 
     def is_dirty(self):
