@@ -3,7 +3,10 @@ import os
 from git import Repo
 from termcolor import colored
 
-def git_clone_url_at_path(url, repo_path):
+# Disable errors shown by pylint for unused arguments
+# pylint: disable=W0702
+
+def git_clone_url_at_path(url, repo_path, remote):
     """Clone git repo from url at path"""
     if not os.path.isdir(os.path.join(repo_path, '.git')):
         if not os.path.isdir(repo_path):
@@ -11,7 +14,7 @@ def git_clone_url_at_path(url, repo_path):
         repo_path_output = colored(repo_path, 'cyan')
         print(' - Cloning repo at ' + repo_path_output)
         repo = Repo.init(repo_path)
-        origin = repo.create_remote('origin', url)
+        origin = repo.create_remote(remote, url)
         try:
             origin.fetch()
         except:
@@ -81,27 +84,27 @@ def git_groom(repo_path):
     else:
         print(' - No changes to discard')
 
-def git_herd(repo_path, ref):
+def git_herd(repo_path, branch_ref, remote):
     """Sync git repo with default branch"""
     repo = Repo(repo_path)
     git = repo.git
     git.fetch('--all', '--prune', '--tags')
-    project_ref = git_truncate_ref(ref)
-    branch_output = colored('(' + project_ref + ')', 'magenta')
-    if git_current_branch(repo_path) is not project_ref:
+    branch = git_truncate_ref(branch_ref)
+    branch_output = colored('(' + branch + ')', 'magenta')
+    if git_current_branch(repo_path) is not branch:
         try:
-            if repo.heads[project_ref]:
+            if repo.heads[branch]:
                 # print(' - Not on default branch.')
                 print(' - Checkout ' + branch_output)
-                git.checkout(project_ref)
+                git.checkout(branch)
                 print(' - Pulling latest changes')
-                print(git.pull())
+                print(git.pull(remote, branch))
         except:
             # print(' - No existing default branch.')
             print(' - Create and checkout ' + branch_output)
             origin = repo.remotes.origin
-            branch = repo.create_head(project_ref, origin.refs[project_ref])
-            branch.set_tracking_branch(origin.refs[project_ref])
+            branch = repo.create_head(branch, origin.refs[branch])
+            branch.set_tracking_branch(origin.refs[branch])
             branch.checkout()
     else:
         print(' - Pulling latest changes')
