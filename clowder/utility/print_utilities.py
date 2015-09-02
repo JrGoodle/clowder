@@ -1,21 +1,14 @@
 """Print utilities"""
-import os, emoji
+import emoji, os, sys
 from termcolor import colored, cprint
 from clowder.utility.git_utilities import (
     git_current_sha,
     git_current_branch,
     git_is_detached,
     git_is_dirty,
-    git_status
+    git_status,
+    git_validate_dirty
 )
-
-def get_cat_face():
-    """Return a cat emoji"""
-    return emoji.emojize(':cat:', use_aliases=True)
-
-def get_cat():
-    """Return a cat emoji"""
-    return emoji.emojize(':cat2:', use_aliases=True)
 
 def format_clowder_string(repo_path, name):
     """Return formatted string for clowder repo"""
@@ -49,6 +42,14 @@ def format_ref_string(repo_path):
         current_branch = git_current_branch(repo_path)
         return colored('(' + current_branch + ')', 'magenta')
 
+def get_cat_face():
+    """Return a cat emoji"""
+    return emoji.emojize(':cat:', use_aliases=True)
+
+def get_cat():
+    """Return a cat emoji"""
+    return emoji.emojize(':cat2:', use_aliases=True)
+
 def print_clowder_not_found_message():
     """Print error message when clowder not found"""
     cprint('No clowder found in the current directory, exiting...\n', 'red')
@@ -62,6 +63,13 @@ def print_clowder_repo_status(root_directory):
         return
     output = format_clowder_string(repo_path, 'clowder')
     print(get_cat_face() + ' ' + output)
+
+def print_exiting():
+    """Print Exiting and exit"""
+    print('')
+    cprint('Exiting...', 'red')
+    print('')
+    sys.exit()
 
 def print_group(name):
     """Print formatted group name"""
@@ -82,6 +90,15 @@ def print_running_command(command):
     running_output = colored('Running command', attrs=['underline'])
     command_output = colored(command, attrs=['bold'])
     print(running_output + ': ' + command_output)
+
+def print_validation(repo_path):
+    """Print validation messages"""
+    # if not git_validate_detached(repo_path):
+    #     print(' - HEAD is detached. Please point your HEAD to a branch before running clowder')
+    if not git_validate_dirty(repo_path):
+        print(' - Repo is dirty. Please stash, commit, or discard your changes before running clowder')
+    # if not git_validate_untracked(repo_path):
+    #     print(' - There are untracked files. Please remove these files or add to .gitignore')
 
 def print_verbose_status(repo_path):
     """Print git status"""

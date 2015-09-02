@@ -3,7 +3,10 @@ import os, sys, yaml
 from termcolor import colored, cprint
 from clowder.model.group import Group
 from clowder.model.remote import Remote
-from clowder.utility.print_utilities import print_clowder_repo_status
+from clowder.utility.print_utilities import (
+    print_clowder_repo_status,
+    print_exiting
+)
 
 class ClowderYAML(object):
     """Class encapsulating project information from clowder.yaml"""
@@ -176,11 +179,21 @@ class ClowderYAML(object):
 
     def _validate_all(self):
         """Validate status of all projects"""
+        valid = True
         for group in self.groups:
-            group.validate()
+            group.print_validation()
+            if not group.is_valid():
+                valid = False
+        if not valid:
+            print_exiting()
 
     def _validate_groups(self, group_names):
         """Validate status of all projects for specified groups"""
+        valid = True
         for group in self.groups:
             if group.name in group_names:
-                group.validate()
+                group.print_validation()
+                if not group.is_valid():
+                    valid = False
+        if not valid:
+            print_exiting()

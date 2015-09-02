@@ -79,7 +79,17 @@ class Group(object):
             for project in self.projects:
                 project.stash()
 
-    def validate(self):
+    def is_valid(self):
         """Validate status of all projects"""
+        valid = True
         for project in self.projects:
-            project.validate()
+            if not project.is_valid():
+                valid = False
+        return valid
+
+    def print_validation(self):
+        """Print validation message for projects in group"""
+        if not self.is_valid():
+            print_group(self.name)
+            for project in self.projects:
+                project.print_validation()

@@ -3,6 +3,7 @@ import os, subprocess
 from clowder.utility.print_utilities import (
     print_project_status,
     print_running_command,
+    print_validation,
     print_verbose_status
 )
 from clowder.utility.git_utilities import (
@@ -99,6 +100,12 @@ class Project(object):
             print_project_status(self.root_directory, self.path, self.name)
             git_stash(self.full_path)
 
-    def validate(self):
+    def is_valid(self):
         """Validate status of project"""
-        git_validate_repo_state(self.full_path)
+        return git_validate_repo_state(self.full_path)
+
+    def print_validation(self):
+        """Print validation message for project"""
+        if not self.is_valid():
+            print_project_status(self.root_directory, self.path, self.name)
+            print_validation(self.full_path)
