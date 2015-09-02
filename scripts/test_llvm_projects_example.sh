@@ -223,7 +223,7 @@ echo "TEST: Herd fixed version to test herding select groups"
 clowder herd -v v0.11 || exit 1
 clowder meow || exit 1
 echo "TEST: Herd only specific groups"
-clowder herd -g clang llvm projects || exit 1
+clowder herd -g clang llvm || exit 1
 clowder meow || exit 1
 
 print_separator
