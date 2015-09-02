@@ -78,7 +78,7 @@ $ clowder herd -v v0.1 # Check out fixed version
 ```
 
 ```bash
-$ clowder forall "$COMMAND" # Run "$COMMAND" in all project directories
+$ clowder forall -c "$COMMAND" # Run "$COMMAND" in all project directories
 ```
 
 ## The `clowder.yaml` File
