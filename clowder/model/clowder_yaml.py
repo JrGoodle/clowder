@@ -225,5 +225,6 @@ def _validate_yaml(parsed_yaml):
                 project['name']
                 project['path']
     except:
+        print('')
         print('clowder.yaml appears to be invalid')
-        sys.exit(1)
+        print_exiting()
