@@ -6,11 +6,11 @@ from clowder.utility.print_utilities import print_group
 class Group(object):
     """Model class for clowder.yaml group"""
 
-    def __init__(self, rootDirectory, group, defaults, remotes):
+    def __init__(self, rootDirectory, group, defaults, sources):
         self.name = group['name']
         self.projects = []
         for project in group['projects']:
-            self.projects.append(Project(rootDirectory, project, defaults, remotes))
+            self.projects.append(Project(rootDirectory, project, defaults, sources))
         self.projects.sort(key=lambda project: project.path)
 
     def forall(self, command):
@@ -88,6 +88,7 @@ class Group(object):
         return valid
 
     def _print_name(self):
+        """Print formatted group name"""
         print_group(self.name)
 
     def print_validation(self):
