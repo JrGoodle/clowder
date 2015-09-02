@@ -21,10 +21,13 @@ def git_clone_url_at_path(url, repo_path, branch, remote):
             print(' - Failed to fetch. Removing ' + repo_path_output)
             os.rmdir(repo_path)
             return
-        default_branch = repo.create_head(branch, origin.refs[branch])
-        default_branch.set_tracking_branch(origin.refs[branch])
-        default_branch.checkout()
-
+        try:
+            default_branch = repo.create_head(branch, origin.refs[branch])
+            default_branch.set_tracking_branch(origin.refs[branch])
+            default_branch.checkout()
+        except:
+            pass
+            
 def git_current_branch(repo_path):
     """Return currently checked out branch of project"""
     repo = Repo(repo_path)
