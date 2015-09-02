@@ -181,7 +181,7 @@ class ClowderYAML(object):
         """Check if there are any dirty projects"""
         is_dirty = False
         for group in self.groups:
-            if group.is_dirty:
+            if group.is_dirty():
                 is_dirty = True
         return is_dirty
 
