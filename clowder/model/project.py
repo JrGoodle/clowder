@@ -1,7 +1,8 @@
 """Model representation of clowder.yaml project"""
-import os
+import os, subprocess
 from clowder.utility.print_utilities import (
     print_project_status,
+    print_running_command,
     print_verbose_status
 )
 from clowder.utility.git_utilities import (
@@ -80,6 +81,14 @@ class Project(object):
         """Print verbose status for project"""
         print_project_status(self.root_directory, self.path, self.name)
         print_verbose_status(self.full_path)
+
+    def run_command(self, command):
+        """Run command in project directory"""
+        if os.path.isdir(self.full_path):
+            print_project_status(self.root_directory, self.path, self.name)
+            print_running_command(command)
+            subprocess.call(command.split(),
+                            cwd=self.full_path)
 
     def stash(self):
         """Stash changes for project if dirty"""

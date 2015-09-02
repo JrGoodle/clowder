@@ -13,6 +13,12 @@ class Group(object):
             self.projects.append(Project(rootDirectory, project, defaults, remotes))
         self.projects.sort(key=lambda project: project.path)
 
+    def forall(self, command):
+        """Runs command in all projects"""
+        print_group(self.name)
+        for project in self.projects:
+            project.run_command(command)
+
     def get_all_project_names(self):
         """Return all project names"""
         project_names = []

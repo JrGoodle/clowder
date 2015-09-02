@@ -1,5 +1,5 @@
 """clowder.yaml parsing and functionality"""
-import os, subprocess, sys, yaml
+import os, sys, yaml
 from termcolor import colored, cprint
 from clowder.model.group import Group
 from clowder.model.remote import Remote
@@ -7,8 +7,7 @@ from clowder.utility.git_utilities import git_validate_repo_state
 from clowder.utility.print_utilities import (
     print_clowder_repo_status,
     print_group,
-    print_project_status,
-    print_running_command
+    print_project_status
 )
 
 class ClowderYAML(object):
@@ -52,25 +51,13 @@ class ClowderYAML(object):
     def forall(self, command):
         """Runs command in all projects"""
         for group in self.groups:
-            print_group(group.name)
-            for project in group.projects:
-                if os.path.isdir(project.full_path):
-                    print_project_status(self.root_directory, project.path, project.name)
-                    print_running_command(command)
-                    subprocess.call(command.split(),
-                                    cwd=project.full_path)
+            group.forall(command)
 
     def forall_groups(self, command, group_names):
-        """Runs command in all projects"""
+        """Runs command in all projects of groups specified"""
         for group in self.groups:
             if group.name in group_names:
-                print_group(group.name)
-                for project in group.projects:
-                    if os.path.isdir(project.full_path):
-                        print_project_status(self.root_directory, project.path, project.name)
-                        print_running_command(command)
-                        subprocess.call(command.split(),
-                                        cwd=project.full_path)
+                group.forall(command)
 
     def get_all_project_names(self):
         """Returns all project names for current clowder.yaml"""
