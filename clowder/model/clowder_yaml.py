@@ -8,8 +8,7 @@ from clowder.utility.print_utilities import (
     print_clowder_repo_status,
     print_group,
     print_project_status,
-    print_running_command,
-    print_verbose_status
+    print_running_command
 )
 
 class ClowderYAML(object):
@@ -137,19 +136,14 @@ class ClowderYAML(object):
         print_clowder_repo_status(self.root_directory)
         print('')
         for group in self.groups:
-            print_group(group.name)
-            for project in group.projects:
-                print_project_status(self.root_directory, project.path, project.name)
+            group.meow()
 
     def meow_verbose(self):
         """Print git status for all projects with changes"""
         print_clowder_repo_status(self.root_directory)
         print('')
         for group in self.groups:
-            print_group(group.name)
-            for project in group.projects:
-                print_project_status(self.root_directory, project.path, project.name)
-                print_verbose_status(project.full_path)
+            group.meow_verbose()
 
     def stash(self):
         """Stash changes for all projects with changes"""

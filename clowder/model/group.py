@@ -42,6 +42,18 @@ class Group(object):
                 is_dirty = True
         return is_dirty
 
+    def meow(self):
+        """Print status for all projects"""
+        print_group(self.name)
+        for project in self.projects:
+            project.meow()
+
+    def meow_verbose(self):
+        """Print verbose status for all projects"""
+        print_group(self.name)
+        for project in self.projects:
+            project.meow_verbose()
+
     def stash(self):
         """Stash changes for all projects with changes"""
         if self.is_dirty():

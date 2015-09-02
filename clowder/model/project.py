@@ -1,6 +1,9 @@
 """Model representation of clowder.yaml project"""
 import os
-from clowder.utility.print_utilities import print_project_status
+from clowder.utility.print_utilities import (
+    print_project_status,
+    print_verbose_status
+)
 from clowder.utility.git_utilities import (
     git_groom,
     git_stash,
@@ -68,6 +71,15 @@ class Project(object):
     def is_dirty(self):
         """Check if project is dirty"""
         return git_is_dirty(self.full_path)
+
+    def meow(self):
+        """Print status for project"""
+        print_project_status(self.root_directory, self.path, self.name)
+
+    def meow_verbose(self):
+        """Print verbose status for project"""
+        print_project_status(self.root_directory, self.path, self.name)
+        print_verbose_status(self.full_path)
 
     def stash(self):
         """Stash changes for project if dirty"""
