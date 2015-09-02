@@ -1,7 +1,7 @@
 """Git utilities"""
-import os, sys
+import os
 from git import Repo
-from termcolor import colored, cprint
+from termcolor import colored
 
 def git_clone_url_at_path(url, repo_path):
     """Clone git repo from url at path"""
@@ -167,45 +167,25 @@ def git_truncate_ref(ref):
         length = 0
     return ref[length:]
 
-def git_validate_repo_state(repo_path):
-    """Validate repo state"""
-    if not os.path.isdir(os.path.join(repo_path, '.git')):
-        return
-    git_validate_dirty(repo_path)
-    # git_validate_detached(repo_path)
-    # git_validate_untracked(repo_path)
-
 def git_validate_detached(repo_path):
     """Validate repo detached HEAD"""
-    if git_is_detached(repo_path):
-        repo_output = colored(repo_path, 'cyan')
-        print(repo_output  + ' HEAD is detached')
-        print('Please point your HEAD to a branch before running clowder')
-        print('')
-        cprint('Exiting...', 'red')
-        print('')
-        sys.exit()
+    return not git_is_detached(repo_path)
 
 def git_validate_dirty(repo_path):
     """Validate repo dirty files"""
-    if git_is_dirty(repo_path):
-        repo_output = colored(repo_path, 'cyan')
-        print(repo_output + ' is dirty')
-        print('Please stash, commit, or discard your changes before running clowder')
-        print('')
-        cprint('Exiting...', 'red')
-        print('')
-        sys.exit()
+    return not git_is_dirty(repo_path)
+
+def git_validate_repo_state(repo_path):
+    """Validate repo state"""
+    if not os.path.isdir(os.path.join(repo_path, '.git')):
+        return True
+    return git_validate_dirty(repo_path)
+    # and git_validate_detached(repo_path)
+    # and git_validate_untracked(repo_path)
 
 def git_validate_untracked(repo_path):
     """Validate repo untracked files"""
-    if git_has_untracked_files(repo_path):
-        print(repo_path + ' has untracked files.')
-        print('Please remove these files or add to .gitignore')
-        print('')
-        cprint('Exiting...', 'red')
-        print('')
-        sys.exit()
+    return not git_has_untracked_files(repo_path)
 
 def git_has_untracked_files(repo_path):
     """Check if there are untracked files"""

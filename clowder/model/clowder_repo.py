@@ -1,6 +1,10 @@
 """Clowder repo management"""
 import os
-from clowder.utility.print_utilities import print_clowder_repo_status
+from clowder.utility.print_utilities import (
+    print_clowder_repo_status,
+    print_exiting,
+    print_validation
+)
 from clowder.utility.git_utilities import (
     git_clone_url_at_path,
     git_sync,
@@ -21,7 +25,7 @@ class ClowderRepo(object):
 
     def sync(self):
         """Sync clowder repo"""
-        git_validate_repo_state(self.clowder_path)
+        self._validate()
         print_clowder_repo_status(self.root_directory)
         git_sync(self.clowder_path)
         self.symlink_yaml()
@@ -40,3 +44,10 @@ class ClowderRepo(object):
             os.symlink(yaml_file, 'clowder.yaml')
         else:
             print(yaml_file + " doesn't seem to exist")
+
+    def _validate(self):
+        """Validate status of clowder repo"""
+        if not git_validate_repo_state(self.clowder_path):
+            print_clowder_repo_status(self.root_directory)
+            print_validation(self.clowder_path)
+            print_exiting()

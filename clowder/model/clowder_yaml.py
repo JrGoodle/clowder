@@ -1,19 +1,11 @@
 """clowder.yaml parsing and functionality"""
-import os, subprocess, sys, yaml
+import os, sys, yaml
 from termcolor import colored, cprint
 from clowder.model.group import Group
 from clowder.model.remote import Remote
-from clowder.utility.git_utilities import (
-    git_groom,
-    git_stash,
-    git_validate_repo_state
-)
 from clowder.utility.print_utilities import (
     print_clowder_repo_status,
-    print_group,
-    print_project_status,
-    print_running_command,
-    print_verbose_status
+    print_exiting
 )
 
 class ClowderYAML(object):
@@ -57,25 +49,13 @@ class ClowderYAML(object):
     def forall(self, command):
         """Runs command in all projects"""
         for group in self.groups:
-            print_group(group.name)
-            for project in group.projects:
-                if os.path.isdir(project.full_path):
-                    print_project_status(self.root_directory, project.path, project.name)
-                    print_running_command(command)
-                    subprocess.call(command.split(),
-                                    cwd=project.full_path)
+            group.forall(command)
 
     def forall_groups(self, command, group_names):
-        """Runs command in all projects"""
+        """Runs command in all projects of groups specified"""
         for group in self.groups:
             if group.name in group_names:
-                print_group(group.name)
-                for project in group.projects:
-                    if os.path.isdir(project.full_path):
-                        print_project_status(self.root_directory, project.path, project.name)
-                        print_running_command(command)
-                        subprocess.call(command.split(),
-                                        cwd=project.full_path)
+                group.forall(command)
 
     def get_all_project_names(self):
         """Returns all project names for current clowder.yaml"""
@@ -96,11 +76,11 @@ class ClowderYAML(object):
         """Discard changes for all projects"""
         print_clowder_repo_status(self.root_directory)
         print('')
-        for group in self.groups:
-            print_group(group.name)
-            for project in group.projects:
-                print_project_status(self.root_directory, project.path, project.name)
-                git_groom(project.full_path)
+        if self._is_dirty():
+            for group in self.groups:
+                group.groom()
+        else:
+            print('No changes to discard')
 
     def herd_all(self):
         """Sync all projects with latest upstream changes"""
@@ -108,10 +88,7 @@ class ClowderYAML(object):
         print_clowder_repo_status(self.root_directory)
         print('')
         for group in self.groups:
-            print_group(group.name)
-            for project in group.projects:
-                print_project_status(self.root_directory, project.path, project.name)
-                project.herd()
+            group.herd()
 
     def herd_groups(self, group_names):
         """Sync all projects with latest upstream changes"""
@@ -120,10 +97,7 @@ class ClowderYAML(object):
         print('')
         for group in self.groups:
             if group.name in group_names:
-                print_group(group.name)
-                for project in group.projects:
-                    print_project_status(self.root_directory, project.path, project.name)
-                    project.herd()
+                group.herd()
 
     def herd_version(self, version):
         """Sync all projects to fixed versions"""
@@ -131,39 +105,31 @@ class ClowderYAML(object):
         print_clowder_repo_status(self.root_directory)
         print('')
         for group in self.groups:
-            print_group(group.name)
-            for project in group.projects:
-                print_project_status(self.root_directory, project.path, project.name)
-                project.herd_version(version)
+            group.herd_version(version)
 
     def meow(self):
         """Print status for all projects"""
         print_clowder_repo_status(self.root_directory)
         print('')
         for group in self.groups:
-            print_group(group.name)
-            for project in group.projects:
-                print_project_status(self.root_directory, project.path, project.name)
+            group.meow()
 
     def meow_verbose(self):
         """Print git status for all projects with changes"""
         print_clowder_repo_status(self.root_directory)
         print('')
         for group in self.groups:
-            print_group(group.name)
-            for project in group.projects:
-                print_project_status(self.root_directory, project.path, project.name)
-                print_verbose_status(project.full_path)
+            group.meow_verbose()
 
     def stash(self):
         """Stash changes for all projects with changes"""
         print_clowder_repo_status(self.root_directory)
         print('')
-        for group in self.groups:
-            print_group(group.name)
-            for project in group.projects:
-                print_project_status(self.root_directory, project.path, project.name)
-                git_stash(project.full_path)
+        if self._is_dirty():
+            for group in self.groups:
+                group.stash()
+        else:
+            print('No changes to stash')
 
     def _get_yaml(self):
         """Return python object representation for saving yaml"""
@@ -180,6 +146,14 @@ class ClowderYAML(object):
         return {'defaults': defaults_yaml,
                 'remotes': remotes_yaml,
                 'groups': groups_yaml}
+
+    def _is_dirty(self):
+        """Check if there are any dirty projects"""
+        is_dirty = False
+        for group in self.groups:
+            if group.is_dirty():
+                is_dirty = True
+        return is_dirty
 
     def _load_yaml(self):
         """Load clowder from yaml file"""
@@ -205,13 +179,21 @@ class ClowderYAML(object):
 
     def _validate_all(self):
         """Validate status of all projects"""
+        valid = True
         for group in self.groups:
-            for project in group.projects:
-                git_validate_repo_state(project.full_path)
+            group.print_validation()
+            if not group.is_valid():
+                valid = False
+        if not valid:
+            print_exiting()
 
     def _validate_groups(self, group_names):
-        """Validate status of all projects"""
+        """Validate status of all projects for specified groups"""
+        valid = True
         for group in self.groups:
             if group.name in group_names:
-                for project in group.projects:
-                    git_validate_repo_state(project.full_path)
+                group.print_validation()
+                if not group.is_valid():
+                    valid = False
+        if not valid:
+            print_exiting()

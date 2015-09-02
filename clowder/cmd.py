@@ -4,7 +4,7 @@
 if __name__ == '__main__':
     raise SystemExit(main())
 
-import os, signal, sys, argcomplete, argparse
+import argcomplete, argparse, colorama, os, signal, sys
 from termcolor import cprint
 from clowder.model.clowder_repo import ClowderRepo
 from clowder.model.clowder_yaml import ClowderYAML
@@ -168,6 +168,7 @@ class Command(object):
 def main():
     """Main entrypoint for clowder command"""
     signal.signal(signal.SIGINT, signal_handler)
+    colorama.init()
     Command()
 
 # Disable errors shown by pylint for unused arguments

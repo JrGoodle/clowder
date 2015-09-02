@@ -121,7 +121,10 @@ clowder meow -v || exit 1
 echo "TEST: Fail herd with dirty repos"
 clowder herd || exit 1
 clowder meow || exit 1
-echo "TEST: Discard changes with groom"
+echo "TEST: Groom when dirty"
+clowder groom || exit 1
+clowder meow || exit 1
+echo "TEST: Groom when clean"
 clowder groom || exit 1
 clowder meow || exit 1
 
@@ -198,7 +201,10 @@ clowder meow || exit 1
 
 echo "TEST: Fail herd with dirty repos"
 clowder herd || exit 1
-echo "TEST: Stash changes"
+echo "TEST: Stash changes when dirty"
+clowder stash || exit 1
+clowder meow || exit 1
+echo "TEST: Stash changes when clean"
 clowder stash || exit 1
 clowder meow || exit 1
 
@@ -217,7 +223,7 @@ echo "TEST: Herd fixed version to test herding select groups"
 clowder herd -v v0.11 || exit 1
 clowder meow || exit 1
 echo "TEST: Herd only specific groups"
-clowder herd -g clang llvm projects || exit 1
+clowder herd -g clang llvm || exit 1
 clowder meow || exit 1
 
 print_separator
