@@ -95,12 +95,10 @@ def git_herd(repo_path, branch_ref, remote, url):
         git.fetch('--all', '--prune', '--tags')
         branch_output = colored('(' + branch + ')', 'magenta')
         try:
-            if not repo.remotes[remote]:
-                origin = repo.create_remote(remote, url)
+            repo.remotes[remote]
         except:
+            print("Remote doesn't exist. Creating remote.")
             origin = repo.create_remote(remote, url)
-            print('Failed to create the remote')
-            return
         if git_current_branch(repo_path) is not branch:
             if repo.heads[branch]:
                 try:
