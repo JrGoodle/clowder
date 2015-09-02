@@ -27,7 +27,7 @@ def git_clone_url_at_path(url, repo_path, branch, remote):
             default_branch.checkout()
         except:
             pass
-            
+
 def git_current_branch(repo_path):
     """Return currently checked out branch of project"""
     repo = Repo(repo_path)
@@ -95,7 +95,11 @@ def git_herd(repo_path, branch_ref, remote, url):
     else:
         repo = Repo(repo_path)
         git = repo.git
-        git.fetch('--all', '--prune', '--tags')
+        try:
+            git.fetch('--all', '--prune', '--tags')
+        except:
+            print('Failed to fetch')
+            return
         branch_output = colored('(' + branch + ')', 'magenta')
         try:
             repo.remotes[remote]
