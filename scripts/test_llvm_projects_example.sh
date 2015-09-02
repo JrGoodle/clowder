@@ -122,10 +122,10 @@ echo "TEST: Fail herd with dirty repos"
 clowder herd || exit 1
 clowder meow || exit 1
 echo "TEST: Groom when dirty"
-clowder stash || exit 1
+clowder groom || exit 1
 clowder meow || exit 1
 echo "TEST: Groom when clean"
-clowder stash || exit 1
+clowder groom || exit 1
 clowder meow || exit 1
 
 print_separator
