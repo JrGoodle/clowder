@@ -87,11 +87,12 @@ def git_groom(repo_path):
     else:
         print(' - No changes to discard')
 
-def git_herd(repo_path, branch_ref, remote, url):
+def git_herd(repo_path, branch_ref, remote_name, url):
     """Sync git repo with default branch"""
-    branch = git_truncate_ref(branch_ref)
+    branch_name = git_truncate_ref(branch_ref)
+    branch_output = colored('(' + branch_name + ')', 'magenta')
     if not os.path.isdir(os.path.join(repo_path, '.git')):
-        git_clone_url_at_path(url, repo_path, branch, remote)
+        git_clone_url_at_path(url, repo_path, branch_name, remote_name)
     else:
         repo = Repo(repo_path)
         git = repo.git
@@ -100,42 +101,29 @@ def git_herd(repo_path, branch_ref, remote, url):
         except:
             print('Failed to fetch')
             return
-        branch_output = colored('(' + branch + ')', 'magenta')
         try:
-            repo.remotes[remote]
+            repo.remotes[remote_name]
         except:
             print("Remote doesn't exist. Creating remote.")
-            origin = repo.create_remote(remote, url)
-        if git_current_branch(repo_path) is not branch:
-            if repo.heads[branch]:
-                try:
-                    print(' - Checkout ' + branch_output)
-                    git.checkout(branch)
-                except:
-                    print('Failed to checkout branch')
-                    return
-                try:
-                    print(' - Pulling latest changes')
-                    print(git.pull(remote, branch))
-                except:
-                    print('Failed to pull latest changes')
-                    return
-            else:
-                try:
-                    print(' - Create and checkout ' + branch_output)
-                    origin = repo.remotes[remote]
-                    branch = repo.create_head(branch, origin.refs[branch])
-                    branch.set_tracking_branch(origin.refs[branch])
-                    branch.checkout()
-                except:
-                    print('Failed to create and checkout branch')
-                    return
-        else:
-            print(' - Pulling latest changes')
+            repo.create_remote(remote_name, url)
+        if git_current_branch(repo_path) is not branch_name:
             try:
-                print(git.pull(remote, branch))
+                branch = repo.heads[branch_name]
+                print(' - Checkout ' + branch_output)
+                branch.checkout()
             except:
-                print('Failed to pull latest changes')
+                print(' - Create and checkout ' + branch_output)
+                remote = repo.remotes[remote_name]
+                remote.fetch()
+                branch = repo.create_head(branch_name, remote.refs[branch_name])
+                branch.set_tracking_branch(remote.refs[branch_name])
+                branch.checkout()
+
+        print(' - Pulling latest changes')
+        try:
+            print(git.pull(remote_name, branch_name))
+        except:
+            print('Failed to pull latest changes')
 
 def git_herd_version(repo_path, version, ref):
     """Sync fixed version of repo at path"""
