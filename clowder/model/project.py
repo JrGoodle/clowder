@@ -58,6 +58,7 @@ class Project(object):
 
     def herd(self):
         """Clone project or update latest from upstream"""
+        print_project_status(self.root_directory, self.path, self.name)
         if not os.path.isdir(os.path.join(self.full_path, '.git')):
             git_clone_url_at_path(self.remote_url, self.full_path)
         else:
@@ -65,6 +66,7 @@ class Project(object):
 
     def herd_version(self, version):
         """Check out fixed version of project"""
+        print_project_status(self.root_directory, self.path, self.name)
         if not os.path.isdir(os.path.join(self.full_path, '.git')):
             git_clone_url_at_path(self.remote_url, self.full_path)
         git_herd_version(self.full_path, version, self.ref)

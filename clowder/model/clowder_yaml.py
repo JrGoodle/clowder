@@ -4,11 +4,7 @@ from termcolor import colored, cprint
 from clowder.model.group import Group
 from clowder.model.remote import Remote
 from clowder.utility.git_utilities import git_validate_repo_state
-from clowder.utility.print_utilities import (
-    print_clowder_repo_status,
-    print_group,
-    print_project_status
-)
+from clowder.utility.print_utilities import print_clowder_repo_status
 
 class ClowderYAML(object):
     """Class encapsulating project information from clowder.yaml"""
@@ -90,10 +86,7 @@ class ClowderYAML(object):
         print_clowder_repo_status(self.root_directory)
         print('')
         for group in self.groups:
-            print_group(group.name)
-            for project in group.projects:
-                print_project_status(self.root_directory, project.path, project.name)
-                project.herd()
+            group.herd()
 
     def herd_groups(self, group_names):
         """Sync all projects with latest upstream changes"""
@@ -102,10 +95,7 @@ class ClowderYAML(object):
         print('')
         for group in self.groups:
             if group.name in group_names:
-                print_group(group.name)
-                for project in group.projects:
-                    print_project_status(self.root_directory, project.path, project.name)
-                    project.herd()
+                group.herd()
 
     def herd_version(self, version):
         """Sync all projects to fixed versions"""
@@ -113,10 +103,7 @@ class ClowderYAML(object):
         print_clowder_repo_status(self.root_directory)
         print('')
         for group in self.groups:
-            print_group(group.name)
-            for project in group.projects:
-                print_project_status(self.root_directory, project.path, project.name)
-                project.herd_version(version)
+            group.herd_version(version)
 
     def meow(self):
         """Print status for all projects"""
