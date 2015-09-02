@@ -99,24 +99,38 @@ def git_herd(repo_path, branch_ref, remote, url):
                 origin = repo.create_remote(remote, url)
         except:
             origin = repo.create_remote(remote, url)
+            print('Failed to create the remote')
+            return
         if git_current_branch(repo_path) is not branch:
-            try:
-                if repo.heads[branch]:
-                    # print(' - Not on default branch.')
+            if repo.heads[branch]:
+                try:
                     print(' - Checkout ' + branch_output)
                     git.checkout(branch)
+                except:
+                    print('Failed to checkout branch')
+                    return
+                try:
                     print(' - Pulling latest changes')
                     print(git.pull(remote, branch))
-            except:
-                # print(' - No existing default branch.')
-                print(' - Create and checkout ' + branch_output)
-                origin = repo.remotes.origin
-                branch = repo.create_head(branch, origin.refs[branch])
-                branch.set_tracking_branch(origin.refs[branch])
-                branch.checkout()
+                except:
+                    print('Failed to pull latest changes')
+                    return
+            else:
+                try:
+                    print(' - Create and checkout ' + branch_output)
+                    origin = repo.remotes[remote]
+                    branch = repo.create_head(branch, origin.refs[branch])
+                    branch.set_tracking_branch(origin.refs[branch])
+                    branch.checkout()
+                except:
+                    print('Failed to create and checkout branch')
+                    return
         else:
             print(' - Pulling latest changes')
-            print(git.pull())
+            try:
+                print(git.pull(remote, branch))
+            except:
+                print('Failed to pull latest changes')
 
 def git_herd_version(repo_path, version, ref):
     """Sync fixed version of repo at path"""
