@@ -66,10 +66,7 @@ class Project(object):
     def herd(self):
         """Clone project or update latest from upstream"""
         self._print_status()
-        if not os.path.isdir(os.path.join(self.full_path, '.git')):
-            git_clone_url_at_path(self.url, self.full_path, self.remote_name)
-        else:
-            git_herd(self.full_path, self.ref, self.remote_name)
+        git_herd(self.full_path, self.ref, self.remote_name, self.url)
 
     def herd_version(self, version):
         """Check out fixed version of project"""
