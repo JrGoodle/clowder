@@ -34,12 +34,12 @@ class Project(object):
             self.ref = defaults['ref']
 
         if 'remote' in project:
-            self.remote_name = project['remote']
+            remote_name = project['remote']
         else:
-            self.remote_name = defaults['remote']
+            remote_name = defaults['remote']
 
         for remote in remotes:
-            if remote.name == self.remote_name:
+            if remote.name == remote_name:
                 self.remote = remote
 
         self.remote_url = self.remote.get_url_prefix() + self.name + ".git"
@@ -49,7 +49,7 @@ class Project(object):
         return {'name': self.name,
                 'path': self.path,
                 'ref': git_current_sha(self.full_path),
-                'remote': self.remote_name}
+                'remote': self.remote.name}
 
     def groom(self):
         """Discard changes for project"""
