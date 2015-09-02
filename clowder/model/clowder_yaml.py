@@ -164,6 +164,7 @@ class ClowderYAML(object):
         if os.path.exists(yaml_file):
             with open(yaml_file) as file:
                 parsed_yaml = yaml.safe_load(file)
+                _validate_yaml(parsed_yaml)
 
                 self.default_ref = parsed_yaml['defaults']['ref']
                 self.default_remote = parsed_yaml['defaults']['remote']
@@ -203,3 +204,26 @@ class ClowderYAML(object):
                     valid = False
         if not valid:
             print_exiting()
+
+# Disable errors shown by pylint for unused arguments
+# pylint: disable=W0104
+# pylint: disable=W0702
+def _validate_yaml(parsed_yaml):
+    """Load clowder from yaml file"""
+    try:
+        parsed_yaml['defaults']['ref']
+        parsed_yaml['defaults']['remote']
+        parsed_yaml['defaults']['source']
+
+        for source in parsed_yaml['sources']:
+            source['name']
+            source['url']
+
+        for group in parsed_yaml['groups']:
+            group['name']
+            for project in group['projects']:
+                project['name']
+                project['path']
+    except:
+        print('clowder.yaml appears to be invalid')
+        sys.exit(1)
