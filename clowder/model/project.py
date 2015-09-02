@@ -3,6 +3,7 @@ import os
 from clowder.utility.print_utilities import print_project_status
 from clowder.utility.git_utilities import (
     git_groom,
+    git_stash,
     git_is_dirty
 )
 from clowder.utility.git_utilities import (
@@ -67,3 +68,9 @@ class Project(object):
     def is_dirty(self):
         """Check if project is dirty"""
         return git_is_dirty(self.full_path)
+
+    def stash(self):
+        """Stash changes for project if dirty"""
+        if self.is_dirty:
+            print_project_status(self.root_directory, self.path, self.name)
+            git_stash(self.full_path)

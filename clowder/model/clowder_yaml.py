@@ -3,10 +3,7 @@ import os, subprocess, sys, yaml
 from termcolor import colored, cprint
 from clowder.model.group import Group
 from clowder.model.remote import Remote
-from clowder.utility.git_utilities import (
-    git_stash,
-    git_validate_repo_state
-)
+from clowder.utility.git_utilities import git_validate_repo_state
 from clowder.utility.print_utilities import (
     print_clowder_repo_status,
     print_group,
@@ -95,8 +92,11 @@ class ClowderYAML(object):
         """Discard changes for all projects"""
         print_clowder_repo_status(self.root_directory)
         print('')
-        for group in self.groups:
-            group.groom()
+        if self._is_dirty():
+            for group in self.groups:
+                group.groom()
+        else:
+            print('No changes to discard')
 
     def herd_all(self):
         """Sync all projects with latest upstream changes"""
@@ -155,12 +155,11 @@ class ClowderYAML(object):
         """Stash changes for all projects with changes"""
         print_clowder_repo_status(self.root_directory)
         print('')
-        for group in self.groups:
-            if group.is_dirty:
-                print_group(group.name)
-                for project in group.projects:
-                    print_project_status(self.root_directory, project.path, project.name)
-                    git_stash(project.full_path)
+        if self._is_dirty():
+            for group in self.groups:
+                group.stash()
+        else:
+            print('No changes to stash')
 
     def _get_yaml(self):
         """Return python object representation for saving yaml"""
@@ -177,6 +176,14 @@ class ClowderYAML(object):
         return {'defaults': defaults_yaml,
                 'remotes': remotes_yaml,
                 'groups': groups_yaml}
+
+    def _is_dirty(self):
+        """Check if there are any dirty projects"""
+        is_dirty = False
+        for group in self.groups:
+            if group.is_dirty:
+                is_dirty = True
+        return is_dirty
 
     def _load_yaml(self):
         """Load clowder from yaml file"""

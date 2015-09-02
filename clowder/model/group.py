@@ -1,7 +1,6 @@
 """Model representation of clowder.yaml group"""
 
 from clowder.model.project import Project
-from clowder.utility.git_utilities import git_is_dirty
 from clowder.utility.print_utilities import print_group
 
 class Group(object):
@@ -39,6 +38,13 @@ class Group(object):
         """Check if group has dirty project(s)"""
         is_dirty = False
         for project in self.projects:
-            if git_is_dirty(project.full_path):
+            if project.is_dirty():
                 is_dirty = True
         return is_dirty
+
+    def stash(self):
+        """Stash changes for all projects with changes"""
+        if self.is_dirty():
+            print_group(self.name)
+            for project in self.projects:
+                project.stash()
