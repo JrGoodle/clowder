@@ -4,7 +4,6 @@ from termcolor import colored, cprint
 from clowder.model.group import Group
 from clowder.model.remote import Remote
 from clowder.utility.git_utilities import (
-    git_groom,
     git_stash,
     git_validate_repo_state
 )
@@ -97,11 +96,7 @@ class ClowderYAML(object):
         print_clowder_repo_status(self.root_directory)
         print('')
         for group in self.groups:
-            if group.is_dirty:
-                print_group(group.name)
-                for project in group.projects:
-                    print_project_status(self.root_directory, project.path, project.name)
-                    git_groom(project.full_path)
+            group.groom()
 
     def herd_all(self):
         """Sync all projects with latest upstream changes"""

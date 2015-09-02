@@ -2,6 +2,7 @@
 
 from clowder.model.project import Project
 from clowder.utility.git_utilities import git_is_dirty
+from clowder.utility.print_utilities import print_group
 
 class Group(object):
     """Model class for clowder.yaml group"""
@@ -26,6 +27,13 @@ class Group(object):
         for project in self.projects:
             projects_yaml.append(project.get_yaml())
         return {'name': self.name, 'projects': projects_yaml}
+
+    def groom(self):
+        """Discard changes for all projects"""
+        if self.is_dirty():
+            print_group(self.name)
+            for project in self.projects:
+                project.groom()
 
     def is_dirty(self):
         """Check if group has dirty project(s)"""
