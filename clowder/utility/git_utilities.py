@@ -178,7 +178,7 @@ def git_validate_dirty(repo_path):
 def git_validate_repo_state(repo_path):
     """Validate repo state"""
     if not os.path.isdir(os.path.join(repo_path, '.git')):
-        return False
+        return True
     return git_validate_dirty(repo_path)
     # and git_validate_detached(repo_path)
     # and git_validate_untracked(repo_path)
