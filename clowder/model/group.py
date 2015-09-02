@@ -15,7 +15,7 @@ class Group(object):
 
     def forall(self, command):
         """Runs command in all projects"""
-        print_group(self.name)
+        self._print_name()
         for project in self.projects:
             project.run_command(command)
 
@@ -36,19 +36,19 @@ class Group(object):
     def groom(self):
         """Discard changes for all projects"""
         if self.is_dirty():
-            print_group(self.name)
+            self._print_name()
             for project in self.projects:
                 project.groom()
 
     def herd(self):
         """Sync all projects with latest upstream changes"""
-        print_group(self.name)
+        self._print_name()
         for project in self.projects:
             project.herd()
 
     def herd_version(self, version):
         """Sync all projects to fixed versions"""
-        print_group(self.name)
+        self._print_name()
         for project in self.projects:
             project.herd_version(version)
 
@@ -62,20 +62,20 @@ class Group(object):
 
     def meow(self):
         """Print status for all projects"""
-        print_group(self.name)
+        self._print_name()
         for project in self.projects:
             project.meow()
 
     def meow_verbose(self):
         """Print verbose status for all projects"""
-        print_group(self.name)
+        self._print_name()
         for project in self.projects:
             project.meow_verbose()
 
     def stash(self):
         """Stash changes for all projects with changes"""
         if self.is_dirty():
-            print_group(self.name)
+            self._print_name()
             for project in self.projects:
                 project.stash()
 
@@ -87,9 +87,12 @@ class Group(object):
                 valid = False
         return valid
 
+    def _print_name(self):
+        print_group(self.name)
+
     def print_validation(self):
         """Print validation message for projects in group"""
         if not self.is_valid():
-            print_group(self.name)
+            self._print_name()
             for project in self.projects:
                 project.print_validation()
