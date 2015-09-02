@@ -171,13 +171,6 @@ def main():
     colorama.init()
     Command()
 
-# Disable errors shown by pylint for unused arguments
-# pylint: disable=W0613
-def signal_handler(sig, frame):
-    """Signal handler for Ctrl+C trap"""
-    print('')
-    sys.exit(0)
-
 def exit_unrecognized_command(parser):
     """Print unrecognized command message and exit"""
     cprint('Unrecognized command\n', 'red')
@@ -189,3 +182,10 @@ def exit_clowder_not_found():
     """Print clowder not found message and exit"""
     print_clowder_not_found_message()
     sys.exit(1)
+
+# Disable errors shown by pylint for unused arguments
+# pylint: disable=W0613
+def signal_handler(sig, frame):
+    """Signal handler for Ctrl+C trap"""
+    print('')
+    sys.exit(0)
