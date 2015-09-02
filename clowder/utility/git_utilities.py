@@ -3,7 +3,10 @@ import os
 from git import Repo
 from termcolor import colored
 
-def git_clone_url_at_path(url, repo_path):
+# Disable errors shown by pylint for unused arguments
+# pylint: disable=W0702
+
+def git_clone_url_at_path(url, repo_path, branch, remote):
     """Clone git repo from url at path"""
     if not os.path.isdir(os.path.join(repo_path, '.git')):
         if not os.path.isdir(repo_path):
@@ -11,16 +14,19 @@ def git_clone_url_at_path(url, repo_path):
         repo_path_output = colored(repo_path, 'cyan')
         print(' - Cloning repo at ' + repo_path_output)
         repo = Repo.init(repo_path)
-        origin = repo.create_remote('origin', url)
+        origin = repo.create_remote(remote, url)
         try:
             origin.fetch()
         except:
             print(' - Failed to fetch. Removing ' + repo_path_output)
             os.rmdir(repo_path)
             return
-        master_branch = repo.create_head('master', origin.refs.master)
-        master_branch.set_tracking_branch(origin.refs.master)
-        master_branch.checkout()
+        try:
+            default_branch = repo.create_head(branch, origin.refs[branch])
+            default_branch.set_tracking_branch(origin.refs[branch])
+            default_branch.checkout()
+        except:
+            pass
 
 def git_current_branch(repo_path):
     """Return currently checked out branch of project"""
@@ -81,31 +87,43 @@ def git_groom(repo_path):
     else:
         print(' - No changes to discard')
 
-def git_herd(repo_path, ref):
+def git_herd(repo_path, branch_ref, remote_name, url):
     """Sync git repo with default branch"""
-    repo = Repo(repo_path)
-    git = repo.git
-    git.fetch('--all', '--prune', '--tags')
-    project_ref = git_truncate_ref(ref)
-    branch_output = colored('(' + project_ref + ')', 'magenta')
-    if git_current_branch(repo_path) is not project_ref:
-        try:
-            if repo.heads[project_ref]:
-                # print(' - Not on default branch.')
-                print(' - Checkout ' + branch_output)
-                git.checkout(project_ref)
-                print(' - Pulling latest changes')
-                print(git.pull())
-        except:
-            # print(' - No existing default branch.')
-            print(' - Create and checkout ' + branch_output)
-            origin = repo.remotes.origin
-            branch = repo.create_head(project_ref, origin.refs[project_ref])
-            branch.set_tracking_branch(origin.refs[project_ref])
-            branch.checkout()
+    branch_name = git_truncate_ref(branch_ref)
+    branch_output = colored('(' + branch_name + ')', 'magenta')
+    if not os.path.isdir(os.path.join(repo_path, '.git')):
+        git_clone_url_at_path(url, repo_path, branch_name, remote_name)
     else:
+        repo = Repo(repo_path)
+        git = repo.git
+        try:
+            git.fetch('--all', '--prune', '--tags')
+        except:
+            print('Failed to fetch')
+            return
+        try:
+            repo.remotes[remote_name]
+        except:
+            print("Remote doesn't exist. Creating remote.")
+            repo.create_remote(remote_name, url)
+        if git_current_branch(repo_path) is not branch_name:
+            try:
+                branch = repo.heads[branch_name]
+                print(' - Checkout ' + branch_output)
+                branch.checkout()
+            except:
+                print(' - Create and checkout ' + branch_output)
+                remote = repo.remotes[remote_name]
+                remote.fetch()
+                branch = repo.create_head(branch_name, remote.refs[branch_name])
+                branch.set_tracking_branch(remote.refs[branch_name])
+                branch.checkout()
+
         print(' - Pulling latest changes')
-        print(git.pull())
+        try:
+            print(git.pull(remote_name, branch_name))
+        except:
+            print('Failed to pull latest changes')
 
 def git_herd_version(repo_path, version, ref):
     """Sync fixed version of repo at path"""

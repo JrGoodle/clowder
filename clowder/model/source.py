@@ -1,7 +1,7 @@
-"""Model representation of clowder.yaml remote"""
+"""Model representation of clowder.yaml source"""
 
-class Remote(object):
-    """Model class for clowder.yaml remote"""
+class Source(object):
+    """Model class for clowder.yaml source"""
 
     def __init__(self, remote):
         self.name = remote['name']
@@ -9,12 +9,12 @@ class Remote(object):
 
     def get_url_prefix(self):
         """Return full remote url for project"""
-        remote_url_prefix = None
+        source_url_prefix = None
         if self.url.startswith('https://'):
-            remote_url_prefix = self.url + "/"
+            source_url_prefix = self.url + "/"
         elif self.url.startswith('ssh://'):
-            remote_url_prefix = self.url[6:] + ":"
-        return remote_url_prefix
+            source_url_prefix = self.url[6:] + ":"
+        return source_url_prefix
 
     def get_yaml(self):
         """Return python object representation for saving yaml"""

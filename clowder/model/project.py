@@ -23,7 +23,7 @@ from clowder.utility.git_utilities import (
 class Project(object):
     """Model class for clowder.yaml project"""
 
-    def __init__(self, root_directory, project, defaults, remotes):
+    def __init__(self, root_directory, project, defaults, sources):
         self.root_directory = root_directory
         self.name = project['name']
         self.path = project['path']
@@ -35,22 +35,27 @@ class Project(object):
             self.ref = defaults['ref']
 
         if 'remote' in project:
-            remote_name = project['remote']
+            self.remote_name = project['remote']
         else:
-            remote_name = defaults['remote']
+            self.remote_name = defaults['remote']
 
-        for remote in remotes:
-            if remote.name == remote_name:
-                self.remote = remote
+        if 'source' in project:
+            source_name = project['source']
+        else:
+            source_name = defaults['source']
 
-        self.remote_url = self.remote.get_url_prefix() + self.name + ".git"
+        for source in sources:
+            if source.name == source_name:
+                self.source = source
+
+        self.url = self.source.get_url_prefix() + self.name + ".git"
 
     def get_yaml(self):
         """Return python object representation for saving yaml"""
         return {'name': self.name,
                 'path': self.path,
                 'ref': git_current_sha(self.full_path),
-                'remote': self.remote.name}
+                'remote': self.source.name}
 
     def groom(self):
         """Discard changes for project"""
@@ -61,16 +66,13 @@ class Project(object):
     def herd(self):
         """Clone project or update latest from upstream"""
         self._print_status()
-        if not os.path.isdir(os.path.join(self.full_path, '.git')):
-            git_clone_url_at_path(self.remote_url, self.full_path)
-        else:
-            git_herd(self.full_path, self.ref)
+        git_herd(self.full_path, self.ref, self.remote_name, self.url)
 
     def herd_version(self, version):
         """Check out fixed version of project"""
         self._print_status()
         if not os.path.isdir(os.path.join(self.full_path, '.git')):
-            git_clone_url_at_path(self.remote_url, self.full_path)
+            git_clone_url_at_path(self.url, self.full_path, self.ref, self.remote_name)
         git_herd_version(self.full_path, version, self.ref)
 
     def is_dirty(self):
@@ -105,6 +107,7 @@ class Project(object):
         return git_validate_repo_state(self.full_path)
 
     def _print_status(self):
+        """Print formatted project status"""
         print_project_status(self.root_directory, self.path, self.name)
 
     def print_validation(self):

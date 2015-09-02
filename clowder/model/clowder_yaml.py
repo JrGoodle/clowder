@@ -2,7 +2,7 @@
 import os, sys, yaml
 from termcolor import colored, cprint
 from clowder.model.group import Group
-from clowder.model.remote import Remote
+from clowder.model.source import Source
 from clowder.utility.print_utilities import (
     print_clowder_repo_status,
     print_exiting
@@ -14,8 +14,9 @@ class ClowderYAML(object):
         self.root_directory = rootDirectory
         self.default_ref = None
         self.default_remote = None
+        self.default_source = None
         self.groups = []
-        self.remotes = []
+        self.sources = []
 
         self._load_yaml()
 
@@ -137,14 +138,16 @@ class ClowderYAML(object):
         for group in self.groups:
             groups_yaml.append(group.get_yaml())
 
-        remotes_yaml = []
-        for remote in self.remotes:
-            remotes_yaml.append(remote.get_yaml())
+        sources_yaml = []
+        for source in self.sources:
+            sources_yaml.append(source.get_yaml())
 
-        defaults_yaml = {'ref': self.default_ref, 'remote': self.default_remote}
+        defaults_yaml = {'ref': self.default_ref,
+                         'remote': self.default_remote,
+                         'source': self.default_source}
 
         return {'defaults': defaults_yaml,
-                'remotes': remotes_yaml,
+                'sources': sources_yaml,
                 'groups': groups_yaml}
 
     def _is_dirty(self):
@@ -164,17 +167,20 @@ class ClowderYAML(object):
 
                 self.default_ref = parsed_yaml['defaults']['ref']
                 self.default_remote = parsed_yaml['defaults']['remote']
+                self.default_source = parsed_yaml['defaults']['source']
 
-                for remote in parsed_yaml['remotes']:
-                    self.remotes.append(Remote(remote))
+                for source in parsed_yaml['sources']:
+                    self.sources.append(Source(source))
 
-                defaults = {'ref': self.default_ref, 'remote': self.default_remote}
+                defaults = {'ref': self.default_ref,
+                            'remote': self.default_remote,
+                            'source': self.default_source}
 
                 for group in parsed_yaml['groups']:
                     self.groups.append(Group(self.root_directory,
                                              group,
                                              defaults,
-                                             self.remotes))
+                                             self.sources))
                 # self.groups.sort(key=lambda group: group.name)
 
     def _validate_all(self):
