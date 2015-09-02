@@ -14,7 +14,8 @@ from clowder.utility.git_utilities import (
     git_clone_url_at_path,
     git_current_sha,
     git_herd,
-    git_herd_version
+    git_herd_version,
+    git_validate_repo_state
 )
 
 
@@ -97,3 +98,7 @@ class Project(object):
         if self.is_dirty:
             print_project_status(self.root_directory, self.path, self.name)
             git_stash(self.full_path)
+
+    def validate(self):
+        """Validate status of project"""
+        git_validate_repo_state(self.full_path)

@@ -78,3 +78,8 @@ class Group(object):
             print_group(self.name)
             for project in self.projects:
                 project.stash()
+
+    def validate(self):
+        """Validate status of all projects"""
+        for project in self.projects:
+            project.validate()

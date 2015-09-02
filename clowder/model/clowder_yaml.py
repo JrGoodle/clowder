@@ -3,7 +3,6 @@ import os, sys, yaml
 from termcolor import colored, cprint
 from clowder.model.group import Group
 from clowder.model.remote import Remote
-from clowder.utility.git_utilities import git_validate_repo_state
 from clowder.utility.print_utilities import print_clowder_repo_status
 
 class ClowderYAML(object):
@@ -178,12 +177,10 @@ class ClowderYAML(object):
     def _validate_all(self):
         """Validate status of all projects"""
         for group in self.groups:
-            for project in group.projects:
-                git_validate_repo_state(project.full_path)
+            group.validate()
 
     def _validate_groups(self, group_names):
-        """Validate status of all projects"""
+        """Validate status of all projects for specified groups"""
         for group in self.groups:
             if group.name in group_names:
-                for project in group.projects:
-                    git_validate_repo_state(project.full_path)
+                group.validate()
