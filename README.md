@@ -15,9 +15,11 @@ Managing multiple repositories of dependent code can be pretty frustrating. Ther
 - [git-subrepo](https://github.com/ingydotnet/git-subrepo)
 
 All of these have their own approach, but many are based on submodules or subtrees.
+The problem with submodules and subtrees is that a tight coupling is created between repositories because dependencies are part of each repository.
 Google's `repo` tool takes a different approach, but is closely tied to Google's development workflow.
+The use of a separate file for tracking projects means that there's detailed information about the dependencies between them, but each repository is still essentially independent.
 
-`clowder` uses a similar approach as `repo` but with a yaml file instead of xml.
+`clowder` uses a similar approach as `repo` but with a yaml file instead of xml (and without the default rebasing behavior of `repo`).
 URL information and project locations on disk are specified in a `clowder.yaml` file.
 This file is checked into its own repository, so the project structure's history is saved under version control.
 You can `fix` specific versions with current commit hashes saved for later restoration.
