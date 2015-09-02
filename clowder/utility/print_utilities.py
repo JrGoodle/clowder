@@ -57,7 +57,8 @@ def print_clowder_repo_status(root_directory):
     """Print clowder repo status"""
     repo_path = os.path.join(root_directory, 'clowder')
     if not os.path.isdir(os.path.join(repo_path, '.git')):
-        cprint('clowder', 'green')
+        output = colored('clowder', 'green')
+        print(get_cat_face() + ' ' + output)
         return
     output = format_clowder_string(repo_path, 'clowder')
     print(get_cat_face() + ' ' + output)
