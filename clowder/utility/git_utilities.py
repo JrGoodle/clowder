@@ -1,5 +1,5 @@
 """Git utilities"""
-import os
+import os, shutil
 from git import Repo
 from termcolor import colored
 
@@ -19,7 +19,7 @@ def git_clone_url_at_path(url, repo_path, branch, remote):
             origin.fetch()
         except:
             print(' - Failed to fetch. Removing ' + repo_path_output)
-            os.rmdir(repo_path)
+            shutil.rmtree(repo_path)
             return
         try:
             default_branch = repo.create_head(branch, origin.refs[branch])
