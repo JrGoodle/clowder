@@ -87,37 +87,45 @@ def git_groom(repo_path):
     else:
         print(' - No changes to discard')
 
-def git_herd(repo_path, branch_ref, remote_name, url):
+def git_herd(repo_path, ref, remote_name, url):
     """Sync git repo with default branch"""
-    branch_name = git_truncate_ref(branch_ref)
+    branch_name = git_truncate_ref(ref)
     branch_output = colored('(' + branch_name + ')', 'magenta')
     if not os.path.isdir(os.path.join(repo_path, '.git')):
         git_clone_url_at_path(url, repo_path, branch_name, remote_name)
     else:
         repo = Repo(repo_path)
         git = repo.git
+
         try:
             git.fetch('--all', '--prune', '--tags')
         except:
             print('Failed to fetch')
             return
+
         try:
             repo.remotes[remote_name]
         except:
             print("Remote doesn't exist. Creating remote.")
             repo.create_remote(remote_name, url)
+
         if git_current_branch(repo_path) is not branch_name:
             try:
                 branch = repo.heads[branch_name]
                 print(' - Checkout ' + branch_output)
                 branch.checkout()
             except:
+                if git_ref_type(ref) is not 'branch':
+                    return
                 print(' - Create and checkout ' + branch_output)
                 remote = repo.remotes[remote_name]
                 remote.fetch()
                 branch = repo.create_head(branch_name, remote.refs[branch_name])
                 branch.set_tracking_branch(remote.refs[branch_name])
                 branch.checkout()
+
+        if git_ref_type(ref) is not 'branch':
+            return
 
         print(' - Pulling latest changes')
         try:
