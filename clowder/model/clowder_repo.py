@@ -20,7 +20,7 @@ class ClowderRepo(object):
     def breed(self, url):
         """Clone clowder repo from url"""
         print_clowder_repo_status(self.root_directory)
-        git_clone_url_at_path(url, self.clowder_path, 'master', 'origin')
+        git_clone_url_at_path(url, self.clowder_path, 'refs/heads/master', 'origin')
         self.symlink_yaml()
 
     def sync(self):
