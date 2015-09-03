@@ -57,13 +57,13 @@ class Command(object):
         group.add_argument('--groups', '-g', choices=self.group_names,
                            nargs='+', help='Groups to herd')
         # clowder forall
-        forall_help = 'Run command in all clowder projects'
+        forall_help = 'Run command in project directories'
         parser_forall = subparsers.add_parser('forall', help=forall_help)
-        forall_cmd_help = 'Command to run in clowder projects'
+        forall_cmd_help = 'Command to run in project directories'
         parser_forall.add_argument('--command', '-c', dest='cmd', required=True,
                                    help=forall_cmd_help)
         parser_forall.add_argument('--groups', '-g', choices=self.group_names,
-                                   nargs='+', help='Groups to herd')
+                                   nargs='+', help='Groups to run command for')
         # clowder meow
         parser_meow = subparsers.add_parser('meow', add_help=False,
                                             help='Print status for projects')
@@ -75,10 +75,10 @@ class Command(object):
         parser_fix.add_argument('-version', '-v',
                                 required=True, help='Version name to fix')
         # clowder groom
-        groom_help = 'Discard current changes in all projects and clowder repo'
+        groom_help = 'Discard current changes in all projects'
         subparsers.add_parser('groom', add_help=False, help=groom_help)
         # clowder stash
-        stash_help = 'Stash current changes in all projects and clowder repo'
+        stash_help = 'Stash current changes in all projects'
         subparsers.add_parser('stash', add_help=False, help=stash_help)
         # clowder sync
         subparsers.add_parser('sync', add_help=False, help='Sync clowder repo')
