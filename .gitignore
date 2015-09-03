@@ -20,6 +20,14 @@ examples/llvm-projects/t*
 examples/llvm-projects/v*
 examples/llvm-projects/z*
 
+examples/srclib/clowder
+examples/srclib/clowder.yaml
+examples/srclib/samples
+examples/srclib/sourcegraph-talks
+examples/srclib/srcco
+examples/srclib/srclib
+examples/srclib/toolchains
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
