@@ -95,9 +95,8 @@ $ <span class="pl-c1">cd</span> llvm-projects</pre></div>
 <h3>
 <a id="further-commands" class="anchor" href="#further-commands" aria-hidden="true"><span class="octicon octicon-link"></span></a>Further Commands</h3>
 
-<div class="highlight highlight-bash"><pre>$ clowder meow <span class="pl-c"># print status of projects</span></pre></div>
-
-<div class="highlight highlight-bash"><pre>$ clowder meow -v <span class="pl-c"># print more verbose status of projects</span></pre></div>
+<div class="highlight highlight-bash"><pre>$ clowder meow <span class="pl-c"># print status of projects</span>
+$ clowder meow -v <span class="pl-c"># print more verbose status of projects</span></pre></div>
 
 <div class="highlight highlight-bash"><pre>$ clowder groom <span class="pl-c"># Discard any changes in projects</span></pre></div>
 
@@ -105,11 +104,11 @@ $ <span class="pl-c1">cd</span> llvm-projects</pre></div>
 
 <div class="highlight highlight-bash"><pre>$ clowder fix -v v0.1 <span class="pl-c"># Fix new version of clowder.yaml</span></pre></div>
 
-<div class="highlight highlight-bash"><pre>$ clowder herd -v v0.1 <span class="pl-c"># Check out fixed version</span></pre></div>
+<div class="highlight highlight-bash"><pre>$ clowder herd -g clang llvm <span class="pl-c"># Only herd projects in clang and llvm groups</span>
+$ clowder herd -v v0.1 <span class="pl-c"># Check out fixed version</span></pre></div>
 
-<div class="highlight highlight-bash"><pre>$ clowder forall -c <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$COMMAND</span><span class="pl-pds">"</span></span> <span class="pl-c"># Run "$COMMAND" in all project directories</span></pre></div>
-
-<div class="highlight highlight-bash"><pre>$ clowder forall -g clang -c <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$COMMAND</span><span class="pl-pds">"</span></span> <span class="pl-c"># Run "$COMMAND" only for projects in clang group</span></pre></div>
+<div class="highlight highlight-bash"><pre>$ clowder forall -c <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$COMMAND</span><span class="pl-pds">"</span></span> <span class="pl-c"># Run "$COMMAND" in all project directories</span>
+$ clowder forall -g clang -c <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$COMMAND</span><span class="pl-pds">"</span></span> <span class="pl-c"># Run "$COMMAND" only for projects in clang group</span></pre></div>
 
 <h2>
 <a id="the-clowderyaml-file" class="anchor" href="#the-clowderyaml-file" aria-hidden="true"><span class="octicon octicon-link"></span></a>The <code>clowder.yaml</code> File</h2>
@@ -143,16 +142,31 @@ At a minimum, <strong>Projects</strong> need the <code>name</code> from the proj
 The default <code>remote</code>, <code>source</code>, and <code>ref</code> values can also be overridden on a per-project basis.</p>
 
 <div class="highlight highlight-yaml"><pre><span class="pl-s"><span class="pl-ent">groups:</span></span>
+    <span class="pl-s">- <span class="pl-ent">name:</span> <span class="pl-s">llvm</span></span>
+      <span class="pl-s"><span class="pl-ent">projects:</span></span>
+        <span class="pl-s">- <span class="pl-ent">name:</span> <span class="pl-s">llvm-mirror/llvm</span></span>
+          <span class="pl-s"><span class="pl-ent">path:</span> <span class="pl-s">llvm</span></span>
     <span class="pl-s">- <span class="pl-ent">name:</span> <span class="pl-s">clang</span></span>
       <span class="pl-s"><span class="pl-ent">projects:</span></span>
         <span class="pl-s">- <span class="pl-ent">name:</span> <span class="pl-s">llvm-mirror/clang</span></span>
           <span class="pl-s"><span class="pl-ent">path:</span> <span class="pl-s">llvm/tools/clang</span></span>
+          <span class="pl-s"><span class="pl-ent">remote:</span> <span class="pl-s">upstream</span></span>
         <span class="pl-s">- <span class="pl-ent">name:</span> <span class="pl-s">llvm-mirror/clang-tools-extra</span></span>
           <span class="pl-s"><span class="pl-ent">path:</span> <span class="pl-s">llvm/tools/clang/tools/extra</span></span>
-    <span class="pl-s">- <span class="pl-ent">name:</span> <span class="pl-s">llvm</span></span>
+          <span class="pl-s"><span class="pl-ent">remote:</span> <span class="pl-s">upstream</span></span>
+    <span class="pl-s">- <span class="pl-ent">name:</span> <span class="pl-s">forks</span></span>
       <span class="pl-s"><span class="pl-ent">projects:</span></span>
-        <span class="pl-s">- <span class="pl-ent">name:</span> <span class="pl-s">llvm-mirror/llvm</span></span>
-          <span class="pl-s"><span class="pl-ent">path:</span> <span class="pl-s">llvm</span></span></pre></div>
+        <span class="pl-s">- <span class="pl-ent">name:</span> <span class="pl-s">jrgoodle/clang</span></span>
+          <span class="pl-s"><span class="pl-ent">path:</span> <span class="pl-s">llvm/tools/clang</span></span>
+        <span class="pl-s">- <span class="pl-ent">name:</span> <span class="pl-s">jrgoodle/clang-tools-extra</span></span>
+          <span class="pl-s"><span class="pl-ent">path:</span> <span class="pl-s">llvm/tools/clang/tools/extra</span></span>
+        <span class="pl-s">- <span class="pl-ent">name:</span> <span class="pl-s">jrgoodle/compiler-rt</span></span>
+          <span class="pl-s"><span class="pl-ent">path:</span> <span class="pl-s">llvm/projects/compiler-rt</span></span>
+    <span class="pl-s">- <span class="pl-ent">name:</span> <span class="pl-s">projects</span></span>
+      <span class="pl-s"><span class="pl-ent">projects:</span></span>
+        <span class="pl-s">- <span class="pl-ent">name:</span> <span class="pl-s">llvm-mirror/compiler-rt</span></span>
+          <span class="pl-s"><span class="pl-ent">path:</span> <span class="pl-s">llvm/projects/compiler-rt</span></span>
+          <span class="pl-s"><span class="pl-ent">remote:</span> <span class="pl-s">upstream</span></span></pre></div>
         </section>
 
         <aside id="sidebar">
