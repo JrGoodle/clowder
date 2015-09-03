@@ -11,18 +11,18 @@ def git_checkout_default_branch(repo_path, branch, remote):
     branch_output = colored('(' + branch + ')', 'magenta')
     repo = Repo(repo_path)
     if git_current_branch(repo_path) is not branch:
-        try:
-            branch = repo.heads[branch]
+        if branch in repo.heads:
+            default_branch = repo.heads[branch]
             print(' - Checkout ' + branch_output)
-            branch.checkout()
-        except:
+            default_branch.checkout()
+        else:
             # try:
             print(' - Create and checkout ' + branch_output)
             origin = repo.remotes[remote]
             origin.fetch()
-            branch = repo.create_head(branch, origin.refs[branch])
-            branch.set_tracking_branch(origin.refs[branch])
-            branch.checkout()
+            default_branch = repo.create_head(branch, origin.refs[branch])
+            default_branch.set_tracking_branch(origin.refs[branch])
+            default_branch.checkout()
             # except:
                 # print(' - Failed to create and checkout ' + branch_output)
 
@@ -106,12 +106,11 @@ def git_herd(repo_path, ref, remote, url):
         print("Ref isn't a branch: " + ref)
         return
 
-    branch = git_truncate_ref(ref)
-
     if not os.path.isdir(os.path.join(repo_path, '.git')):
         git_clone_url_at_path(url, repo_path, ref, remote)
     else:
         git_create_remote(repo_path, remote, url)
+        branch = git_truncate_ref(ref)
         git_fetch(repo_path)
         git_checkout_default_branch(repo_path, branch, remote)
         git_pull(repo_path, remote, branch)
