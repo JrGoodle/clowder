@@ -18,19 +18,27 @@ test_branch()
     [[ "$1" = "$git_branch" ]] && echo "TEST: On correct branch: $1" || exit 1
 }
 
-projects=( 'black-cats/kit' \
-           'black-cats/kishka' \
-           'black-cats/sasha' \
-           'black-cats/jules' \
-           'mu' \
-           'duke' )
+projects=( 'samples/srclib-sample' \
+           'sourcegraph-talks' \
+           'srcco' \
+           'srclib' \
+           'toolchains/srclib-c' \
+           'toolchains/srclib-cpp' \
+           'toolchains/srclib-csharp' \
+           'toolchains/srclib-go' \
+           'toolchains/srclib-haskell' \
+           'toolchains/srclib-java' \
+           'toolchains/srclib-javascript' \
+           'toolchains/srclib-php' \
+           'toolchains/srclib-python' \
+           'toolchains/srclib-ruby' \
+           'toolchains/srclib-scala' )
 
-black_cat_projects=( 'black-cats/kit' \
-                     'black-cats/kishka' \
-                     'black-cats/sasha' \
-                     'black-cats/jules' )
-
-cd $TRAVIS_BUILD_DIR/examples/cats
+selected_projects=( 'samples/srclib-sample' \
+                    'sourcegraph-talks' \
+                    'srcco' \
+                    'srclib' )
+cd $TRAVIS_BUILD_DIR/examples/srclib
 
 print_separator
 
@@ -58,7 +66,7 @@ done
 print_separator
 
 echo "TEST: Make dirty repos"
-for project in "${black_cat_projects[@]}"
+for project in "${selected_projects[@]}"
 do
 	pushd $project &>/dev/null
     touch newfile
@@ -77,7 +85,7 @@ clowder meow || exit 1
 print_separator
 
 echo "TEST: Make dirty repos"
-for project in "${black_cat_projects[@]}"
+for project in "${selected_projects[@]}"
 do
 	pushd $project &>/dev/null
     touch newfile
@@ -96,24 +104,17 @@ clowder herd || exit 1
 clowder meow || exit 1
 
 echo "TEST: Check current branches"
-for project in "${black_cat_projects[@]}"
+for project in "${selected_projects[@]}"
 do
 	pushd $project &>/dev/null
     test_branch master
     popd &>/dev/null
 done
-pushd mu &>/dev/null
-test_branch knead
-popd &>/dev/null
-pushd duke &>/dev/null
-test_branch purr
-popd &>/dev/null
-echo ''
 
 print_separator
 
 echo "TEST: Create detached HEADs"
-for project in "${black_cat_projects[@]}"
+for project in "${selected_projects[@]}"
 do
 	pushd $project &>/dev/null
     git checkout master~2 &>/dev/null
@@ -155,7 +156,7 @@ print_separator
 echo "TEST: Run forall command"
 clowder forall -c 'git status' || exit 1
 echo "TEST: Run forall command for specific groups"
-clowder forall -g cats -c 'git status' || exit 1
+clowder forall -g toolchains -c 'git status' || exit 1
 
 print_separator
 
@@ -168,7 +169,7 @@ clowder meow || exit 1
 print_separator
 
 echo "TEST: Make dirty repos"
-for project in "${black_cat_projects[@]}"
+for project in "${selected_projects[@]}"
 do
 	pushd $project &>/dev/null
     touch newfile
@@ -189,7 +190,7 @@ clowder meow || exit 1
 print_separator
 
 echo "TEST: Remove directories"
-rm -rf duke mu
+rm -rf srclib srcco
 echo "TEST: Herd with 2 missing directories"
 clowder herd || exit 1
 clowder meow || exit 1
@@ -203,7 +204,7 @@ clowder meow || exit 1
 print_separator
 
 echo "TEST: Herd only specific group"
-clowder herd -g cats || exit 1
+clowder herd -g toolchains || exit 1
 clowder meow || exit 1
 
 print_separator
@@ -211,11 +212,11 @@ print_separator
 echo "TEST: Herd v0.1 to test missing default branches"
 clowder herd -v v0.1 || exit 1
 echo "TEST: Delete default branches locally"
-pushd mu &>/dev/null
-git branch -D knead
+pushd srclib &>/dev/null
+git branch -D master
 popd &>/dev/null
-pushd duke &>/dev/null
-git branch -D purr
+pushd srcco &>/dev/null
+git branch -D master
 popd &>/dev/null
 
 echo "TEST: Herd existing repo's with no default branch locally"
