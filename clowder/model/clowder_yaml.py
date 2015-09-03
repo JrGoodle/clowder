@@ -53,7 +53,7 @@ class ClowderYAML(object):
         directories = []
         for group in self.groups:
             for project in group.projects:
-                directories.append(project.full_path)
+                directories.append(project.full_path())
         _forall_run(command, directories)
 
     def forall_groups(self, command, group_names):
@@ -62,7 +62,7 @@ class ClowderYAML(object):
         for group in self.groups:
             if group.name in group_names:
                 for project in group.projects:
-                    directories.append(project.full_path)
+                    directories.append(project.full_path())
         _forall_run(command, directories)
 
     def get_all_project_names(self):

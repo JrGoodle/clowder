@@ -26,7 +26,6 @@ class Project(object):
         self.root_directory = root_directory
         self.name = project['name']
         self.path = project['path']
-        self.full_path = os.path.join(root_directory, self.path)
 
         if 'ref' in project:
             self.ref = project['ref']
@@ -49,34 +48,38 @@ class Project(object):
 
         self.url = self.source.get_url_prefix() + self.name + ".git"
 
+    def full_path(self):
+        """Return full path to project"""
+        return os.path.join(self.root_directory, self.path)
+
     def get_yaml(self):
         """Return python object representation for saving yaml"""
         return {'name': self.name,
                 'path': self.path,
-                'ref': git_current_sha(self.full_path),
+                'ref': git_current_sha(self.full_path()),
                 'remote': self.source.name}
 
     def groom(self):
         """Discard changes for project"""
         if self.is_dirty():
             self._print_status()
-            git_groom(self.full_path)
+            git_groom(self.full_path())
 
     def herd(self):
         """Clone project or update latest from upstream"""
         self._print_status()
-        git_herd(self.full_path, self.ref, self.remote_name, self.url)
+        git_herd(self.full_path(), self.ref, self.remote_name, self.url)
 
     def herd_version(self, version):
         """Check out fixed version of project"""
         self._print_status()
-        if not os.path.isdir(os.path.join(self.full_path, '.git')):
-            git_clone_url_at_path(self.url, self.full_path, self.ref, self.remote_name)
-        git_herd_version(self.full_path, version, self.ref)
+        if not os.path.isdir(os.path.join(self.full_path(), '.git')):
+            git_clone_url_at_path(self.url, self.full_path(), self.ref, self.remote_name)
+        git_herd_version(self.full_path(), version, self.ref)
 
     def is_dirty(self):
         """Check if project is dirty"""
-        return git_is_dirty(self.full_path)
+        return git_is_dirty(self.full_path())
 
     def meow(self):
         """Print status for project"""
@@ -85,17 +88,17 @@ class Project(object):
     def meow_verbose(self):
         """Print verbose status for project"""
         self._print_status()
-        print_verbose_status(self.full_path)
+        print_verbose_status(self.full_path())
 
     def stash(self):
         """Stash changes for project if dirty"""
         if self.is_dirty:
             self._print_status()
-            git_stash(self.full_path)
+            git_stash(self.full_path())
 
     def is_valid(self):
         """Validate status of project"""
-        return git_validate_repo_state(self.full_path)
+        return git_validate_repo_state(self.full_path())
 
     def _print_status(self):
         """Print formatted project status"""
@@ -105,4 +108,4 @@ class Project(object):
         """Print validation message for project"""
         if not self.is_valid():
             self._print_status()
-            print_validation(self.full_path)
+            print_validation(self.full_path())
