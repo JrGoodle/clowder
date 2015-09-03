@@ -68,12 +68,16 @@ You can <code>fix</code> specific versions with current commit hashes saved for 
 $ <span class="pl-c1">cd</span> clowder
 $ ./install.sh</pre></div>
 
+<p>For terminal autocompletion, add the following to your shell profile:</p>
+
+<div class="highlight highlight-bash"><pre>[[ <span class="pl-k">-f</span> <span class="pl-s"><span class="pl-pds">"</span>/usr/local/bin/clowder<span class="pl-pds">"</span></span> ]] <span class="pl-k">&amp;&amp;</span> <span class="pl-c1">eval</span> <span class="pl-s"><span class="pl-pds">"</span><span class="pl-s"><span class="pl-pds">$(</span>register-python-argcomplete clowder<span class="pl-pds">)</span></span><span class="pl-pds">"</span></span></pre></div>
+
 <h3>
 <a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h3>
 
 <p>This example is based on the LLVM project. See <a href="https://github.com/JrGoodle/llvm-projects/blob/master/clowder.yaml">the full clowder.yaml</a>.</p>
 
-<p>First create directory to contain all the projects.</p>
+<p>First create a directory to contain all the projects.</p>
 
 <div class="highlight highlight-bash"><pre>$ mkdir llvm-projects
 $ <span class="pl-c1">cd</span> llvm-projects</pre></div>
