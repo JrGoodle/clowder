@@ -6,28 +6,33 @@ from termcolor import colored
 # Disable errors shown by pylint for unused arguments
 # pylint: disable=W0702
 
-def git_checkout_default_branch(repo_path, branch, remote):
+def git_checkout_default_ref(repo_path, ref, remote):
     """Checkout default branch. Create if doesn't exist"""
-    branch_output = colored('(' + branch + ')', 'magenta')
     repo = Repo(repo_path)
-    if branch in repo.heads:
-        default_branch = repo.heads[branch]
-        if repo.head.is_detached:
-            print(' - Checkout ' + branch_output)
-            default_branch.checkout()
-        elif repo.head.ref != default_branch:
-            print(' - Checkout ' + branch_output)
-            default_branch.checkout()
+    if git_ref_type(ref) is 'branch':
+        branch = git_truncate_ref(ref)
+        branch_output = colored('(' + branch + ')', 'magenta')
+        if branch in repo.heads:
+            default_branch = repo.heads[branch]
+            if repo.head.is_detached:
+                print(' - Checkout ' + branch_output)
+                default_branch.checkout()
+            elif repo.head.ref != default_branch:
+                print(' - Checkout ' + branch_output)
+                default_branch.checkout()
+        else:
+            try:
+                print(' - Create and checkout ' + branch_output)
+                origin = repo.remotes[remote]
+                origin.fetch()
+                default_branch = repo.create_head(branch, origin.refs[branch])
+                default_branch.set_tracking_branch(origin.refs[branch])
+                default_branch.checkout()
+            except:
+                print(' - Failed to create and checkout ' + branch_output)
     else:
-        try:
-            print(' - Create and checkout ' + branch_output)
-            origin = repo.remotes[remote]
-            origin.fetch()
-            default_branch = repo.create_head(branch, origin.refs[branch])
-            default_branch.set_tracking_branch(origin.refs[branch])
-            default_branch.checkout()
-        except:
-            print(' - Failed to create and checkout ' + branch_output)
+        print(' - Checkout ref ' + ref)
+        repo.git.checkout(ref)
 
 def git_clone_url_at_path(url, repo_path, branch, remote):
     """Clone git repo from url at path"""
@@ -113,9 +118,9 @@ def git_herd(repo_path, ref, remote, url):
         git_clone_url_at_path(url, repo_path, ref, remote)
     else:
         git_create_remote(repo_path, remote, url)
-        branch = git_truncate_ref(ref)
         git_fetch(repo_path)
-        git_checkout_default_branch(repo_path, branch, remote)
+        git_checkout_default_ref(repo_path, ref, remote)
+        branch = git_truncate_ref(ref)
         git_pull(repo_path, remote, branch)
 
 def git_herd_version(repo_path, version, ref):
@@ -154,10 +159,11 @@ def git_pull(repo_path, remote, branch):
     """Pull from remote branch"""
     repo = Repo(repo_path)
     print(' - Pulling latest changes')
-    try:
-        print(repo.git.pull(remote, branch))
-    except:
-        print(' - Failed to pull latest changes')
+    if not repo.head.is_detached:
+        try:
+            print(repo.git.pull(remote, branch))
+        except:
+            print(' - Failed to pull latest changes')
 
 def git_ref_type(ref):
     """Return branch, tag, or sha"""
