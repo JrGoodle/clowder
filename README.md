@@ -4,7 +4,7 @@
 
 > **herding cats** - An idiom that refers to a frustrating attempt to control or organize a class of entities which are uncontrollable or chaotic.
 
-Managing multiple repositories of dependent code can be pretty frustrating. There are a number of existing options:
+Managing multiple repositories can be pretty frustrating. There are a number of existing options:
 
 - [git submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules)
 - [subtree merging](https://git-scm.com/book/en/v1/Git-Tools-Subtree-Merging)
@@ -28,9 +28,25 @@ For a couple example projects, see the [examples directory](https://github.com/J
 
 ## Getting Started
 
+### Installation
+
+```bash
+$ git clone https://github.com/JrGoodle/clowder.git
+$ cd clowder
+$ ./install.sh
+```
+
+For terminal autocompletion, add the following to your shell profile:
+
+```bash
+[[ -f "/usr/local/bin/clowder" ]] && eval "$(register-python-argcomplete clowder)"
+```
+
+### Usage
+
 This example is based on the LLVM project. See [the full clowder.yaml](https://github.com/JrGoodle/llvm-projects/blob/master/clowder.yaml).
 
-First create directory to contain all the projects.
+First create a directory to contain all the projects.
 
 ```bash
 $ mkdir llvm-projects
@@ -61,6 +77,7 @@ This command is like `clowder herd`, but for syncing the `clowder` repository.
 
 ```bash
 $ clowder meow # print status of projects
+$ clowder meow -v # print more verbose status of projects
 ```
 
 ```bash
@@ -76,11 +93,13 @@ $ clowder fix -v v0.1 # Fix new version of clowder.yaml
 ```
 
 ```bash
+$ clowder herd -g clang llvm # Only herd projects in clang and llvm groups
 $ clowder herd -v v0.1 # Check out fixed version
 ```
 
 ```bash
 $ clowder forall -c "$COMMAND" # Run "$COMMAND" in all project directories
+$ clowder forall -g clang -c "$COMMAND" # Run "$COMMAND" only for projects in clang group
 ```
 
 ## The `clowder.yaml` File
@@ -116,14 +135,29 @@ The default `remote`, `source`, and `ref` values can also be overridden on a per
 
 ```yaml
 groups:
-    - name: clang
-      projects:
-        - name: llvm-mirror/clang
-          path: llvm/tools/clang
-        - name: llvm-mirror/clang-tools-extra
-          path: llvm/tools/clang/tools/extra
     - name: llvm
       projects:
         - name: llvm-mirror/llvm
           path: llvm
+    - name: clang
+      projects:
+        - name: llvm-mirror/clang
+          path: llvm/tools/clang
+          remote: upstream
+        - name: llvm-mirror/clang-tools-extra
+          path: llvm/tools/clang/tools/extra
+          remote: upstream
+    - name: forks
+      projects:
+        - name: jrgoodle/clang
+          path: llvm/tools/clang
+        - name: jrgoodle/clang-tools-extra
+          path: llvm/tools/clang/tools/extra
+        - name: jrgoodle/compiler-rt
+          path: llvm/projects/compiler-rt
+    - name: projects
+      projects:
+        - name: llvm-mirror/compiler-rt
+          path: llvm/projects/compiler-rt
+          remote: upstream
 ```
