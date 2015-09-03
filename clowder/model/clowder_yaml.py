@@ -1,11 +1,12 @@
 """clowder.yaml parsing and functionality"""
-import os, sys, yaml
+import os, subprocess, sys, yaml
 from termcolor import colored, cprint
 from clowder.model.group import Group
 from clowder.model.source import Source
 from clowder.utility.print_utilities import (
     print_clowder_repo_status,
-    print_exiting
+    print_exiting,
+    print_running_command
 )
 
 class ClowderYAML(object):
@@ -49,14 +50,20 @@ class ClowderYAML(object):
 
     def forall(self, command):
         """Runs command in all projects"""
+        directories = []
         for group in self.groups:
-            group.forall(command)
+            for project in group.projects:
+                directories.append(project.full_path())
+        _forall_run(command, directories)
 
     def forall_groups(self, command, group_names):
         """Runs command in all projects of groups specified"""
+        directories = []
         for group in self.groups:
             if group.name in group_names:
-                group.forall(command)
+                for project in group.projects:
+                    directories.append(project.full_path())
+        _forall_run(command, directories)
 
     def get_all_project_names(self):
         """Returns all project names for current clowder.yaml"""
@@ -228,3 +235,14 @@ def _validate_yaml(parsed_yaml):
         print('')
         print('clowder.yaml appears to be invalid')
         print_exiting()
+
+def _forall_run(command, directories):
+    """Run command in all directories"""
+    directories_set = set(directories)
+    sorted_paths = sorted(directories_set)
+    for path in sorted_paths:
+        if os.path.isdir(path):
+            cprint(path, 'cyan')
+            print_running_command(command)
+            subprocess.call(command.split(),
+                            cwd=path)
