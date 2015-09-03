@@ -1,6 +1,6 @@
-# llvm-projects Example
+# srclib Example
 
-Run `breed.sh` script to set up clowder directory for LLVM project repos.
+Run `breed.sh` script to set up clowder directory for srclib project repos.
 
 `clean.sh` will clean up cloned files.
 
@@ -8,22 +8,18 @@ Run `breed.sh` script to set up clowder directory for LLVM project repos.
 
 | Directory | Repository |
 |-----------|------------|
-| `klee` | https://github.com/llvm-mirror/klee |
-| `libclc` | https://github.com/llvm-mirror/libclc |
-| `lldb` | https://github.com/llvm-mirror/lldb |
-| `llvm` | https://github.com/llvm-mirror/llvm |
-| `llvm/projects/compiler-rt` | https://github.com/llvm-mirror/compiler-rt |
-| `llvm/projects/dragonegg` | https://github.com/llvm-mirror/dragonegg |
-| `llvm/projects/libcxx` | https://github.com/llvm-mirror/libcxx |
-| `llvm/projects/libcxxabi` | https://github.com/llvm-mirror/libcxxabi |
-| `llvm/projects/libunwind` | https://github.com/llvm-mirror/libunwind |
-| `llvm/tools/clang` | https://github.com/llvm-mirror/clang |
-| `llvm/tools/clang/tools/extra` | https://github.com/llvm-mirror/clang-tools-extra |
-| `llvm/tools/lld` | https://github.com/llvm-mirror/lld |
-| `lnt` | https://github.com/llvm-mirror/lnt |
-| `openmp` | https://github.com/llvm-mirror/openmp |
-| `polly` | https://github.com/llvm-mirror/polly |
-| `poolalloc` | https://github.com/llvm-mirror/poolalloc |
-| `test-suite` | https://github.com/llvm-mirror/test-suite |
-| `vmkit` | https://github.com/llvm-mirror/vmkit |
-| `zorg` | https://github.com/llvm-mirror/zorg |
+| `samples/srclib-sample` | https://github.com/sourcegraph/srclib-sample |
+| `sourcegraph-talks` | https://github.com/sourcegraph/talks |
+| `srcco` | https://github.com/sourcegraph/srcco |
+| `srclib` | https://github.com/sourcegraph/srclib |
+| `toolchains/srclib-c` | https://github.com/sourcegraph/srclib-c |
+| `toolchains/srclib-cpp` | https://github.com/sourcegraph/srclib-cpp |
+| `toolchains/srclib-csharp` | https://github.com/sourcegraph/srclib-csharp |
+| `toolchains/srclib-go` | https://github.com/sourcegraph/srclib-go |
+| `toolchains/srclib-haskell` | https://github.com/sourcegraph/srclib-haskell |
+| `toolchains/srclib-java` | https://github.com/sourcegraph/srclib-java |
+| `toolchains/srclib-javascript` | https://github.com/sourcegraph/srclib-javascript |
+| `toolchains/srclib-php` | https://github.com/sourcegraph/srclib-php |
+| `toolchains/srclib-python` | https://github.com/sourcegraph/srclib-python |
+| `toolchains/srclib-ruby` | https://github.com/sourcegraph/srclib-ruby |
+| `toolchains/srclib-scala` | https://github.com/sourcegraph/srclib-scala |
