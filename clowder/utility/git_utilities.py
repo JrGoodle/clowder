@@ -8,12 +8,14 @@ from termcolor import colored
 
 def git_clone_url_at_path(url, repo_path, branch, remote):
     """Clone git repo from url at path"""
+    ref = git_truncate_ref(branch)
     if not os.path.isdir(os.path.join(repo_path, '.git')):
         if not os.path.isdir(repo_path):
             os.makedirs(repo_path)
         repo_path_output = colored(repo_path, 'cyan')
         print(' - Cloning repo at ' + repo_path_output)
         repo = Repo.init(repo_path)
+        git = repo.git
         origin = repo.create_remote(remote, url)
         try:
             origin.fetch()
@@ -21,12 +23,21 @@ def git_clone_url_at_path(url, repo_path, branch, remote):
             print(' - Failed to fetch. Removing ' + repo_path_output)
             shutil.rmtree(repo_path)
             return
+
+        if git_ref_type(ref) is not 'branch':
+            try:
+                git.checkout(ref)
+                return
+            except:
+                print('Failed to checkout ' + branch)
+                return
+
         try:
-            default_branch = repo.create_head(branch, origin.refs[branch])
-            default_branch.set_tracking_branch(origin.refs[branch])
+            default_branch = repo.create_head(ref, origin.refs[ref])
+            default_branch.set_tracking_branch(origin.refs[ref])
             default_branch.checkout()
         except:
-            pass
+            print('Failed to checkout branch ' + ref)
 
 def git_current_branch(repo_path):
     """Return currently checked out branch of project"""
@@ -109,14 +120,20 @@ def git_herd(repo_path, ref, remote_name, url):
             print("Remote doesn't exist. Creating remote.")
             repo.create_remote(remote_name, url)
 
+        if git_ref_type(ref) is not 'branch':
+            try:
+                git.checkout(branch_name)
+                return
+            except:
+                print('Failed to checkout ' + branch_name)
+                return
+
         if git_current_branch(repo_path) is not branch_name:
             try:
                 branch = repo.heads[branch_name]
                 print(' - Checkout ' + branch_output)
                 branch.checkout()
             except:
-                if git_ref_type(ref) is not 'branch':
-                    return
                 print(' - Create and checkout ' + branch_output)
                 remote = repo.remotes[remote_name]
                 remote.fetch()
