@@ -185,6 +185,19 @@ def git_truncate_ref(ref):
         length = 0
     return ref[length:]
 
+def git_ref_type(ref):
+    """Return branch, tag, or sha"""
+    git_branch = "refs/heads/"
+    git_tag = "refs/tags/"
+    if ref.startswith(git_branch):
+        return 'branch'
+    elif ref.startswith(git_tag):
+        return 'tag'
+    elif len(ref) is 40:
+        return 'sha'
+    else:
+        return 'unknown'
+
 def git_validate_detached(repo_path):
     """Validate repo detached HEAD"""
     return not git_is_detached(repo_path)
