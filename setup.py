@@ -14,7 +14,7 @@ setup(
     name='clowder',
     description='A tool for managing code',
     version='0.4.0',
-    url='https://github.com/jrgoodle/clowder',
+    url='http://clowder.cat',
     author='joe DeCapo',
     author_email='joe@polka.cat',
     license='MIT',
