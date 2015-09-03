@@ -1,10 +1,30 @@
 """Git utilities"""
-import os, shutil
+import os #, shutil
 from git import Repo
 from termcolor import colored
 
 # Disable errors shown by pylint for unused arguments
 # pylint: disable=W0702
+
+def git_checkout_default_branch(repo_path, branch, remote):
+    """Checkout default branch. Create if doesn't exist"""
+    branch_output = colored('(' + branch + ')', 'magenta')
+    repo = Repo(repo_path)
+    if git_current_branch(repo_path) is not branch:
+        try:
+            branch = repo.heads[branch]
+            print(' - Checkout ' + branch_output)
+            branch.checkout()
+        except:
+            # try:
+            print(' - Create and checkout ' + branch_output)
+            origin = repo.remotes[remote]
+            origin.fetch()
+            branch = repo.create_head(branch, origin.refs[branch])
+            branch.set_tracking_branch(origin.refs[branch])
+            branch.checkout()
+            # except:
+                # print(' - Failed to create and checkout ' + branch_output)
 
 def git_clone_url_at_path(url, repo_path, branch, remote):
     """Clone git repo from url at path"""
@@ -13,30 +33,37 @@ def git_clone_url_at_path(url, repo_path, branch, remote):
     if not os.path.isdir(os.path.join(repo_path, '.git')):
         if not os.path.isdir(repo_path):
             os.makedirs(repo_path)
+
         print(' - Cloning repo at ' + repo_path_output)
         repo = Repo.init(repo_path)
-        origin = repo.create_remote(remote, url)
-        try:
-            repo.git.fetch('--all', '--prune', '--tags')
-        except:
-            print(' - Failed to fetch. Removing ' + repo_path_output)
-            shutil.rmtree(repo_path)
-            return
+        git_create_remote(repo_path, remote, url)
+        git_fetch(repo_path)
 
-        if git_ref_type(ref) is not 'branch':
+        if git_ref_type(branch) is not 'branch':
             try:
                 repo.git.checkout(ref)
                 return
             except:
-                print('Failed to checkout ' + ref)
+                print('Failed to checkout ref ' + ref)
                 return
+        else:
+            try:
+                origin = repo.remotes[remote]
+                default_branch = repo.create_head(ref, origin.refs[ref])
+                default_branch.set_tracking_branch(origin.refs[ref])
+                default_branch.checkout()
+            except:
+                print('Failed to checkout branch ' + ref)
 
-        try:
-            default_branch = repo.create_head(ref, origin.refs[ref])
-            default_branch.set_tracking_branch(origin.refs[ref])
-            default_branch.checkout()
-        except:
-            print('Failed to checkout branch ' + ref)
+def git_create_remote(repo_path, remote, url):
+    """Create new remote"""
+    repo = Repo(repo_path)
+    try:
+        repo.remotes[remote]
+    except:
+        print(" - Creating remote " + remote)
+        origin = repo.create_remote(remote, url)
+        origin.fetch()
 
 def git_current_branch(repo_path):
     """Return currently checked out branch of project"""
@@ -56,6 +83,14 @@ def git_current_sha(repo_path):
     repo = Repo(repo_path)
     return str(repo.git.rev_parse('HEAD')).rstrip('\n')
 
+def git_fetch(repo_path):
+    """Fetch all remotes, tags, and prune"""
+    repo = Repo(repo_path)
+    try:
+        repo.git.fetch('--all', '--prune', '--tags')
+    except:
+        print(' - Failed to fetch.')
+
 def git_groom(repo_path):
     """Discard current changes in repository"""
     repo = Repo(repo_path)
@@ -65,55 +100,21 @@ def git_groom(repo_path):
     else:
         print(' - No changes to discard')
 
-def git_herd(repo_path, ref, remote_name, url):
+def git_herd(repo_path, ref, remote, url):
     """Sync git repo with default branch"""
-    branch_name = git_truncate_ref(ref)
-    branch_output = colored('(' + branch_name + ')', 'magenta')
+    if git_ref_type(ref) is not 'branch':
+        print("Ref isn't a branch: " + ref)
+        return
+
+    branch = git_truncate_ref(ref)
+
     if not os.path.isdir(os.path.join(repo_path, '.git')):
-        git_clone_url_at_path(url, repo_path, branch_name, remote_name)
+        git_clone_url_at_path(url, repo_path, ref, remote)
     else:
-        repo = Repo(repo_path)
-        try:
-            repo.git.fetch('--all', '--prune', '--tags')
-        except:
-            print('Failed to fetch')
-            return
-
-        try:
-            repo.remotes[remote_name]
-        except:
-            print("Remote doesn't exist. Creating remote.")
-            repo.create_remote(remote_name, url)
-
-        if git_ref_type(ref) is not 'branch':
-            try:
-                repo.git.checkout(branch_name)
-                return
-            except:
-                print('Failed to checkout ' + branch_name)
-                return
-
-        if git_current_branch(repo_path) is not branch_name:
-            try:
-                branch = repo.heads[branch_name]
-                print(' - Checkout ' + branch_output)
-                branch.checkout()
-            except:
-                print(' - Create and checkout ' + branch_output)
-                remote = repo.remotes[remote_name]
-                remote.fetch()
-                branch = repo.create_head(branch_name, remote.refs[branch_name])
-                branch.set_tracking_branch(remote.refs[branch_name])
-                branch.checkout()
-
-        if git_ref_type(ref) is not 'branch':
-            return
-
-        print(' - Pulling latest changes')
-        try:
-            print(repo.git.pull(remote_name, branch_name))
-        except:
-            print('Failed to pull latest changes')
+        git_create_remote(repo_path, remote, url)
+        git_fetch(repo_path)
+        git_checkout_default_branch(repo_path, branch, remote)
+        git_pull(repo_path, remote, branch)
 
 def git_herd_version(repo_path, version, ref):
     """Sync fixed version of repo at path"""
@@ -146,6 +147,15 @@ def git_is_dirty(repo_path):
     """Check if repo is dirty"""
     repo = Repo(repo_path)
     return repo.is_dirty()
+
+def git_pull(repo_path, remote, branch):
+    """Pull from remote branch"""
+    repo = Repo(repo_path)
+    print(' - Pulling latest changes')
+    try:
+        print(repo.git.pull(remote, branch))
+    except:
+        print(' - Failed to pull latest changes')
 
 def git_ref_type(ref):
     """Return branch, tag, or sha"""
