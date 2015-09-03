@@ -14,4 +14,3 @@ rm -rf test-suite
 rm -rf vmkit
 rm -rf zorg
 rm -f clowder.yaml
-rm -f peru.yaml

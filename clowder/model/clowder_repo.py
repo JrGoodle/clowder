@@ -44,6 +44,7 @@ class ClowderRepo(object):
             os.symlink(yaml_file, 'clowder.yaml')
         else:
             print(yaml_file + " doesn't seem to exist")
+            print_exiting()
 
     def _validate(self):
         """Validate status of clowder repo"""

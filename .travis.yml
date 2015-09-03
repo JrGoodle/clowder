@@ -6,6 +6,7 @@ env:
   matrix:
     - EXAMPLE="cats"
     - EXAMPLE="llvm_projects"
+    - EXAMPLE="srclib"
 
 before_install: brew update
 

@@ -2,8 +2,9 @@
 
 cd "$( dirname "${BASH_SOURCE[0]}" )"
 rm -rf clowder
-rm -rf black-cats
-rm -rf duke
-rm -rf mu
-rm -rf polkabot
+rm -rf samples
+rm -rf sourcegraph-talks
+rm -rf srcco
+rm -rf srclib
+rm -rf toolchains
 rm -f clowder.yaml
