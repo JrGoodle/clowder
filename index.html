@@ -47,9 +47,11 @@
 </ul>
 
 <p>All of these have their own approach, but many are based on submodules or subtrees.
-Google's <code>repo</code> tool takes a different approach, but is closely tied to Google's development workflow.</p>
+The problem with submodules and subtrees is that a tight coupling is created between repositories because dependencies are part of each repository.
+Google's <code>repo</code> tool takes a different approach, but is closely tied to Google's development workflow.
+The use of a separate file for tracking projects means that there's detailed information about the dependencies between them, but each repository is still essentially independent.</p>
 
-<p><code>clowder</code> uses a similar approach as <code>repo</code> but with a yaml file instead of xml.
+<p><code>clowder</code> uses a similar approach as <code>repo</code> but with a yaml file instead of xml (and without the default rebasing behavior of <code>repo</code>).
 URL information and project locations on disk are specified in a <code>clowder.yaml</code> file.
 This file is checked into its own repository, so the project structure's history is saved under version control.
 You can <code>fix</code> specific versions with current commit hashes saved for later restoration.</p>
@@ -58,6 +60,16 @@ You can <code>fix</code> specific versions with current commit hashes saved for 
 
 <h2>
 <a id="getting-started" class="anchor" href="#getting-started" aria-hidden="true"><span class="octicon octicon-link"></span></a>Getting Started</h2>
+
+<h3>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h3>
+
+<div class="highlight highlight-bash"><pre>$ git clone https://github.com/JrGoodle/clowder.git
+$ <span class="pl-c1">cd</span> clowder
+$ ./install.sh</pre></div>
+
+<h3>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h3>
 
 <p>This example is based on the LLVM project. See <a href="https://github.com/JrGoodle/llvm-projects/blob/master/clowder.yaml">the full clowder.yaml</a>.</p>
 
@@ -101,18 +113,19 @@ $ <span class="pl-c1">cd</span> llvm-projects</pre></div>
 <h3>
 <a id="defaults" class="anchor" href="#defaults" aria-hidden="true"><span class="octicon octicon-link"></span></a>Defaults</h3>
 
-<p>The <strong>defaults</strong> specify the default branch and remote for projects.</p>
+<p>The <strong>defaults</strong> specify the default <code>ref</code>, <code>source</code>, and <code>remote</code> for projects.</p>
 
 <div class="highlight highlight-yaml"><pre><span class="pl-s"><span class="pl-ent">defaults:</span></span>
     <span class="pl-s"><span class="pl-ent">ref:</span> <span class="pl-s">refs/heads/master</span></span>
-    <span class="pl-s"><span class="pl-ent">remote:</span> <span class="pl-s">github</span></span></pre></div>
+    <span class="pl-s"><span class="pl-ent">remote:</span> <span class="pl-s">origin</span></span>
+    <span class="pl-s"><span class="pl-ent">source:</span> <span class="pl-s">github</span></span></pre></div>
 
 <h3>
-<a id="remotes" class="anchor" href="#remotes" aria-hidden="true"><span class="octicon octicon-link"></span></a>Remotes</h3>
+<a id="sources" class="anchor" href="#sources" aria-hidden="true"><span class="octicon octicon-link"></span></a>Sources</h3>
 
-<p>Multiple <strong>remotes</strong> can be specified for use with different projects.</p>
+<p>Multiple <strong>sources</strong> can be specified for use with different projects.</p>
 
-<div class="highlight highlight-yaml"><pre><span class="pl-s"><span class="pl-ent">remotes:</span></span>
+<div class="highlight highlight-yaml"><pre><span class="pl-s"><span class="pl-ent">sources:</span></span>
     <span class="pl-s">- <span class="pl-ent">name:</span> <span class="pl-s">github-ssh</span></span>
       <span class="pl-s"><span class="pl-ent">url:</span> <span class="pl-s">ssh://git@github.com</span></span>
     <span class="pl-s">- <span class="pl-ent">name:</span> <span class="pl-s">github</span></span>
@@ -121,9 +134,9 @@ $ <span class="pl-c1">cd</span> llvm-projects</pre></div>
 <h3>
 <a id="groups-and-projects" class="anchor" href="#groups-and-projects" aria-hidden="true"><span class="octicon octicon-link"></span></a>Groups and Projects</h3>
 
-<p><strong>Groups</strong> have a name and associated projects.
+<p><strong>Groups</strong> have a <code>name</code> and associated <code>projects</code>.
 At a minimum, <strong>Projects</strong> need the <code>name</code> from the project's url, and the <code>path</code> to clone relative to the root directory.
-The default <code>remote</code> and <code>ref</code> values can also be overridden on a per-project basis.</p>
+The default <code>remote</code>, <code>source</code>, and <code>ref</code> values can also be overridden on a per-project basis.</p>
 
 <div class="highlight highlight-yaml"><pre><span class="pl-s"><span class="pl-ent">groups:</span></span>
     <span class="pl-s">- <span class="pl-ent">name:</span> <span class="pl-s">clang</span></span>
