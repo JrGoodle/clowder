@@ -10,21 +10,24 @@ def git_checkout_default_branch(repo_path, branch, remote):
     """Checkout default branch. Create if doesn't exist"""
     branch_output = colored('(' + branch + ')', 'magenta')
     repo = Repo(repo_path)
-    if git_current_branch(repo_path) is not branch:
-        if branch in repo.heads:
-            default_branch = repo.heads[branch]
+    if branch in repo.heads:
+        default_branch = repo.heads[branch]
+        if repo.head.is_detached:
             print(' - Checkout ' + branch_output)
             default_branch.checkout()
-        else:
-            # try:
+        elif repo.head.ref != default_branch:
+            print(' - Checkout ' + branch_output)
+            default_branch.checkout()
+    else:
+        try:
             print(' - Create and checkout ' + branch_output)
             origin = repo.remotes[remote]
             origin.fetch()
             default_branch = repo.create_head(branch, origin.refs[branch])
             default_branch.set_tracking_branch(origin.refs[branch])
             default_branch.checkout()
-            # except:
-                # print(' - Failed to create and checkout ' + branch_output)
+        except:
+            print(' - Failed to create and checkout ' + branch_output)
 
 def git_clone_url_at_path(url, repo_path, branch, remote):
     """Clone git repo from url at path"""
