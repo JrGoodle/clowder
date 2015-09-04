@@ -44,17 +44,17 @@ else
         --tag "${TAG}" \
         --name "${TAG}" \
 		--description "Release ${TAG}"
+
+    cd "${TRAVIS_BUILD_DIR}/dist"
+
+    artifacts=( "clowder-${VERSION}-py3-none-any.whl" \
+                 "clowder-${VERSION}.tar.gz" )
+
+    for artifact in "${artifacts[@]}"; do
+        echo "Upload ${artifact} to GitHub Release"
+        github-release upload \
+            --tag "${TAG}" \
+            --name "${artifact}" \
+            --file "${artifact}"
+    done
 fi
-
-cd "${TRAVIS_BUILD_DIR}/dist"
-
-artifacts=( "clowder-${VERSION}-py3-none-any.whl" \
-             "clowder-${VERSION}.tar.gz" )
-
-for artifact in "${artifacts[@]}"; do
-    echo "Upload ${artifact} to GitHub Release"
-    github-release upload \
-        --tag "${TAG}" \
-        --name "${artifact}" \
-        --file "${artifact}"
-done
