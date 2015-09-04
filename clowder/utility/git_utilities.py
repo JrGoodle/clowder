@@ -133,22 +133,22 @@ def git_groom(repo_path):
 
 def git_herd(repo_path, ref, remote, url):
     """Sync git repo with default branch"""
-    if git_ref_type(ref) is not 'branch':
-        if not os.path.isdir(os.path.join(repo_path, '.git')):
-            git_clone_url_at_path(url, repo_path, ref, remote)
-        else:
-            git_create_remote(repo_path, remote, url)
-            git_fetch(repo_path)
-            git_checkout_default_ref(repo_path, ref, remote)
+    if not os.path.isdir(os.path.join(repo_path, '.git')):
+        git_clone_url_at_path(url, repo_path, ref, remote)
+        return
+    ref_type = git_ref_type(ref)
+    if ref_type is 'branch':
+        git_create_remote(repo_path, remote, url)
+        git_fetch(repo_path)
+        git_checkout_default_ref(repo_path, ref, remote)
+        branch = git_truncate_ref(ref)
+        git_pull(repo_path, remote, branch)
+    elif ref_type is 'tag' or ref_type is 'sha':
+        git_create_remote(repo_path, remote, url)
+        git_fetch(repo_path)
+        git_checkout_default_ref(repo_path, ref, remote)
     else:
-        if not os.path.isdir(os.path.join(repo_path, '.git')):
-            git_clone_url_at_path(url, repo_path, ref, remote)
-        else:
-            git_create_remote(repo_path, remote, url)
-            git_fetch(repo_path)
-            git_checkout_default_ref(repo_path, ref, remote)
-            branch = git_truncate_ref(ref)
-            git_pull(repo_path, remote, branch)
+        print('Unknown ref ' + ref)
 
 def git_herd_version(repo_path, version, ref):
     """Sync fixed version of repo at path"""
