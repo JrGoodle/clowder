@@ -9,7 +9,8 @@ from termcolor import colored
 def git_checkout_default_ref(repo_path, ref, remote):
     """Checkout default branch. Create if doesn't exist"""
     repo = Repo(repo_path)
-    if git_ref_type(ref) is 'branch':
+    ref_type = git_ref_type(ref)
+    if ref_type is 'branch':
         branch = git_truncate_ref(ref)
         branch_output = colored('(' + branch + ')', 'magenta')
         if branch in repo.heads:
@@ -30,10 +31,16 @@ def git_checkout_default_ref(repo_path, ref, remote):
                 default_branch.checkout()
             except:
                 print(' - Failed to create and checkout ' + branch_output)
-    else:
+    elif ref_type is 'tag':
+        tag_output = colored('(' + ref + ')', 'magenta')
+        print(' - Checkout tag ' + tag_output)
+        repo.git.checkout(ref)
+    elif ref_type is 'sha':
         ref_output = colored('(' + ref + ')', 'magenta')
         print(' - Checkout ref ' + ref_output)
         repo.git.checkout(ref)
+    else:
+        print('Unknown ref type')
 
 def git_clone_url_at_path(url, repo_path, branch, remote):
     """Clone git repo from url at path"""
@@ -48,13 +55,17 @@ def git_clone_url_at_path(url, repo_path, branch, remote):
         git_create_remote(repo_path, remote, url)
         git_fetch(repo_path)
 
-        if git_ref_type(branch) is not 'branch':
+        ref_type = git_ref_type(branch)
+        if ref_type is not 'branch':
             try:
                 repo.git.checkout(ref)
-                return
             except:
-                print('Failed to checkout ref ' + ref)
-                return
+                if ref_type is 'tag':
+                    print('Failed to checkout tag ' + ref)
+                elif ref_type is 'sha':
+                    print('Failed to checkout ref ' + ref)
+                else:
+                    print('Failed to checkout unknown ref ' + ref)
         else:
             try:
                 origin = repo.remotes[remote]
