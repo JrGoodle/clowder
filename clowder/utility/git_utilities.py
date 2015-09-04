@@ -63,28 +63,35 @@ def git_clone_url_at_path(url, repo_path, branch, remote):
         git_fetch(repo_path)
 
         ref_type = git_ref_type(branch)
-        if ref_type is not 'branch':
+        if ref_type is 'branch':
             try:
-                repo.git.checkout(ref)
-            except:
-                if ref_type is 'tag':
-                    tag = git_truncate_ref(ref)
-                    tag_output = colored('(' + tag + ')', 'magenta')
-                    print('Failed to checkout tag ' + tag_output)
-                elif ref_type is 'sha':
-                    ref_output = colored('(' + ref + ')', 'magenta')
-                    print('Failed to checkout ref ' + ref_output)
-                else:
-                    ref_output = colored('(' + ref + ')', 'magenta')
-                    print('Failed to checkout unknown ref ' + ref_output)
-        else:
-            try:
+                branch = git_truncate_ref(ref)
+                branch_output = colored('(' + branch + ')', 'magenta')
+                print(' - Checkout ' + branch_output)
                 origin = repo.remotes[remote]
                 default_branch = repo.create_head(ref, origin.refs[ref])
                 default_branch.set_tracking_branch(origin.refs[ref])
                 default_branch.checkout()
             except:
                 print('Failed to create and checkout branch ' + ref)
+        elif ref_type is 'tag':
+            tag = git_truncate_ref(ref)
+            tag_output = colored('(' + tag + ')', 'magenta')
+            try:
+                print(' - Checkout tag ' + tag_output)
+                repo.git.checkout(ref)
+            except:
+                print('Failed to checkout tag ' + tag_output)
+        elif ref_type is 'sha':
+            ref_output = colored('(' + ref + ')', 'magenta')
+            try:
+                print(' - Checkout ref ' + ref_output)
+                repo.git.checkout(ref)
+            except:
+                print('Failed to checkout ref ' + ref_output)
+        else:
+            ref_output = colored('(' + ref + ')', 'magenta')
+            print('Failed to checkout unknown ref ' + ref_output)
 
 def git_create_remote(repo_path, remote, url):
     """Create new remote"""
