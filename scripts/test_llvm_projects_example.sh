@@ -68,6 +68,9 @@ cd $LLVM_PROJECTS_DIR
 
 print_separator
 
+echo "TEST: Fail herd with missing clowder.yaml"
+clowder herd && exit 1
+
 echo "TEST: Normal herd after breed"
 ./breed.sh && clowder herd || exit 1
 
@@ -119,7 +122,7 @@ do
 done
 clowder meow -v || exit 1
 echo "TEST: Fail herd with dirty repos"
-clowder herd || exit 1
+clowder herd && exit 1
 clowder meow || exit 1
 echo "TEST: Groom when dirty"
 clowder groom || exit 1
@@ -138,7 +141,7 @@ popd &>/dev/null
 clowder meow || exit 1
 
 echo "TEST: Fail sync with dirty clowder repo"
-clowder sync || exit 1
+clowder sync && exit 1
 clowder meow || exit 1
 echo "TEST: Discard changes in clowder repo"
 pushd clowder &>/dev/null
@@ -181,8 +184,10 @@ clowder forall -g clang llvm -c 'git status' || exit 1
 
 print_separator
 
+echo "TEST: Fail herding a previously fixed version"
+clowder herd -v v100 && exit 1
 echo "TEST: Fail fixing a previously fixed version"
-clowder fix -v v0.1 || exit 1
+clowder fix -v v0.1 && exit 1
 echo "TEST: Successfully fix a new version"
 clowder fix -v v0.11 || exit 1
 clowder meow || exit 1
@@ -200,7 +205,7 @@ done
 clowder meow || exit 1
 
 echo "TEST: Fail herd with dirty repos"
-clowder herd || exit 1
+clowder herd && exit 1
 echo "TEST: Stash changes when dirty"
 clowder stash || exit 1
 clowder meow || exit 1
@@ -225,6 +230,9 @@ clowder meow || exit 1
 echo "TEST: Herd only specific groups"
 clowder herd -g clang llvm || exit 1
 clowder meow || exit 1
+
+echo "TEST: Fail with unrecognized command"
+clowder cat && exit 1
 
 print_separator
 echo "TEST: Help output"

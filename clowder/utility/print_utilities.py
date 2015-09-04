@@ -69,7 +69,7 @@ def print_exiting():
     print('')
     cprint('Exiting...', 'red')
     print('')
-    sys.exit()
+    sys.exit(1)
 
 def print_group(name):
     """Print formatted group name"""
