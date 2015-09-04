@@ -87,6 +87,7 @@ print_separator
 echo "TEST: Herd a previously fixed version"
 clowder herd -v v0.1 || exit 1
 clowder meow || exit 1
+clowder forall -c 'git checkout -b v0.1'
 
 echo "TEST: Check current branches"
 for project in "${projects[@]}"

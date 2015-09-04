@@ -40,12 +40,6 @@ class Group(object):
         for project in self.projects:
             project.herd()
 
-    def herd_version(self, version):
-        """Sync all projects to fixed versions"""
-        self._print_name()
-        for project in self.projects:
-            project.herd_version(version)
-
     def is_dirty(self):
         """Check if group has dirty project(s)"""
         is_dirty = False

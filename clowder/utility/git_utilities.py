@@ -45,19 +45,25 @@ def git_checkout_sha(repo_path, sha):
     """Checkout commit sha"""
     repo = Repo(repo_path)
     ref_output = colored('(' + sha + ')', 'magenta')
-    print(' - Checkout ref ' + ref_output)
     try:
-        repo.git.checkout(sha)
+        if repo.head.commit.hexsha == sha:
+            print(' - Already on correct commit')
+            return
     except:
-        print(' - Failed to checkout ref ' + ref_output)
+        print(' - Checkout ref ' + ref_output)
+        try:
+            repo.git.checkout(sha)
+        except:
+            print(' - Failed to checkout ref ' + ref_output)
 
 def git_checkout_tag(repo_path, tag):
     """Checkout tag"""
     repo = Repo(repo_path)
     tag_output = colored('(' + tag + ')', 'magenta')
-    print(' - Checkout tag ' + tag_output)
     try:
-        repo.git.checkout(tag)
+        if repo.head.ref != repo.tags[tag]:
+            print(' - Checkout tag ' + tag_output)
+            repo.git.checkout(tag)
     except:
         print(' - Failed to checkout tag ' + tag_output)
 
@@ -155,24 +161,6 @@ def git_herd(repo_path, ref, remote, url):
             git_checkout_default_ref(repo_path, ref, remote)
         else:
             print('Unknown ref ' + ref)
-
-def git_herd_version(repo_path, version, ref):
-    """Sync fixed version of repo at path"""
-    repo = Repo(repo_path)
-    branch_output = colored('(' + version + ')', 'magenta')
-    if version in repo.heads:
-        if repo.active_branch is not repo.heads[version]:
-            print(' - Checkout branch ' + branch_output)
-            try:
-                repo.git.checkout(version)
-            except:
-                print(' - Failed to checkout branch ' + branch_output)
-    else:
-        print(' - Create and checkout branch ' + branch_output)
-        try:
-            repo.git.checkout('-b', version, ref)
-        except:
-            print(' - Failed to create and checkout branch ' + branch_output)
 
 def git_has_untracked_files(repo_path):
     """Check if there are untracked files"""

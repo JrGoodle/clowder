@@ -11,10 +11,8 @@ from clowder.utility.git_utilities import (
     git_is_dirty
 )
 from clowder.utility.git_utilities import (
-    git_clone_url_at_path,
     git_current_sha,
     git_herd,
-    git_herd_version,
     git_validate_repo_state
 )
 
@@ -70,13 +68,6 @@ class Project(object):
         """Clone project or update latest from upstream"""
         self._print_status()
         git_herd(self.full_path(), self.ref, self.remote_name, self.url)
-
-    def herd_version(self, version):
-        """Check out fixed version of project"""
-        self._print_status()
-        if not os.path.isdir(os.path.join(self.full_path(), '.git')):
-            git_clone_url_at_path(self.url, self.full_path(), self.ref, self.remote_name)
-        git_herd_version(self.full_path(), version, self.ref)
 
     def is_dirty(self):
         """Check if project is dirty"""

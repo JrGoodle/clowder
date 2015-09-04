@@ -104,14 +104,6 @@ class ClowderYAML(object):
             if group.name in group_names:
                 group.herd()
 
-    def herd_version(self, version):
-        """Sync all projects to fixed versions"""
-        self._validate_all()
-        print_clowder_repo_status(self.root_directory)
-        print('')
-        for group in self.groups:
-            group.herd_version(version)
-
     def meow(self):
         """Print status for all projects"""
         print_clowder_repo_status(self.root_directory)
