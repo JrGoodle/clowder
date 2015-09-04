@@ -6,6 +6,9 @@ from termcolor import colored
 # Disable errors shown by pylint for no specified exception types
 # pylint: disable=W0702
 
+# def git_checkout_branch(repo_path, branch, remote):
+#     pass
+
 def git_checkout_default_ref(repo_path, ref, remote):
     """Checkout default branch. Create if doesn't exist"""
     repo = Repo(repo_path)
@@ -30,21 +33,32 @@ def git_checkout_default_ref(repo_path, ref, remote):
                 print(' - Failed to create and checkout branch ' + branch_output)
     elif ref_type is 'tag':
         tag = git_truncate_ref(ref)
-        tag_output = colored('(' + tag + ')', 'magenta')
-        print(' - Checkout tag ' + tag_output)
-        try:
-            repo.git.checkout(ref)
-        except:
-            print(' - Failed to checkout tag ' + tag_output)
+        git_checkout_tag(repo_path, tag)
     elif ref_type is 'sha':
-        ref_output = colored('(' + ref + ')', 'magenta')
-        print(' - Checkout ref ' + ref_output)
-        try:
-            repo.git.checkout(ref)
-        except:
-            print(' - Failed to checkout ref ' + ref_output)
+        git_checkout_sha(repo_path, ref)
     else:
-        print('Unknown ref type')
+        ref_output = colored('(' + ref + ')', 'magenta')
+        print('Failed to checkout unknown ref ' + ref_output)
+
+def git_checkout_sha(repo_path, sha):
+    """Checkout commit sha"""
+    repo = Repo(repo_path)
+    ref_output = colored('(' + sha + ')', 'magenta')
+    print(' - Checkout ref ' + ref_output)
+    try:
+        repo.git.checkout(sha)
+    except:
+        print(' - Failed to checkout ref ' + ref_output)
+
+def git_checkout_tag(repo_path, tag):
+    """Checkout tag"""
+    repo = Repo(repo_path)
+    tag_output = colored('(' + tag + ')', 'magenta')
+    print(' - Checkout tag ' + tag_output)
+    try:
+        repo.git.checkout(tag)
+    except:
+        print(' - Failed to checkout tag ' + tag_output)
 
 def git_clone_url_at_path(url, repo_path, branch, remote):
     """Clone git repo from url at path"""
@@ -73,19 +87,9 @@ def git_clone_url_at_path(url, repo_path, branch, remote):
                 print('Failed to create and checkout branch ' + ref)
         elif ref_type is 'tag':
             tag = git_truncate_ref(ref)
-            tag_output = colored('(' + tag + ')', 'magenta')
-            try:
-                print(' - Checkout tag ' + tag_output)
-                repo.git.checkout(ref)
-            except:
-                print('Failed to checkout tag ' + tag_output)
+            git_checkout_tag(repo_path, tag)
         elif ref_type is 'sha':
-            ref_output = colored('(' + ref + ')', 'magenta')
-            try:
-                print(' - Checkout ref ' + ref_output)
-                repo.git.checkout(ref)
-            except:
-                print('Failed to checkout ref ' + ref_output)
+            git_checkout_sha(repo_path, ref)
         else:
             ref_output = colored('(' + ref + ')', 'magenta')
             print('Failed to checkout unknown ref ' + ref_output)
