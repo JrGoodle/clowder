@@ -15,15 +15,12 @@ def git_checkout_default_ref(repo_path, ref, remote):
         branch_output = colored('(' + branch + ')', 'magenta')
         if branch in repo.heads:
             default_branch = repo.heads[branch]
-            if repo.head.is_detached:
-                print(' - Checkout ' + branch_output)
-                default_branch.checkout()
-            elif repo.head.ref != default_branch:
-                print(' - Checkout ' + branch_output)
+            if repo.head.is_detached or repo.head.ref is not default_branch:
+                print(' - Checkout branch ' + branch_output)
                 default_branch.checkout()
         else:
             try:
-                print(' - Create and checkout ' + branch_output)
+                print(' - Create and checkout branch ' + branch_output)
                 origin = repo.remotes[remote]
                 origin.fetch()
                 default_branch = repo.create_head(branch, origin.refs[branch])
@@ -67,7 +64,7 @@ def git_clone_url_at_path(url, repo_path, branch, remote):
             try:
                 branch = git_truncate_ref(ref)
                 branch_output = colored('(' + branch + ')', 'magenta')
-                print(' - Checkout ' + branch_output)
+                print(' - Create and checkout branch ' + branch_output)
                 origin = repo.remotes[remote]
                 default_branch = repo.create_head(ref, origin.refs[ref])
                 default_branch.set_tracking_branch(origin.refs[ref])
@@ -127,7 +124,7 @@ def git_fetch(repo_path):
     try:
         repo.git.fetch('--all', '--prune', '--tags')
     except:
-        print(' - Failed to fetch.')
+        print(' - Failed to fetch')
 
 def git_groom(repo_path):
     """Discard current changes in repository"""
@@ -142,20 +139,20 @@ def git_herd(repo_path, ref, remote, url):
     """Sync git repo with default branch"""
     if not os.path.isdir(os.path.join(repo_path, '.git')):
         git_clone_url_at_path(url, repo_path, ref, remote)
-        return
-    ref_type = git_ref_type(ref)
-    if ref_type is 'branch':
-        git_create_remote(repo_path, remote, url)
-        git_fetch(repo_path)
-        git_checkout_default_ref(repo_path, ref, remote)
-        branch = git_truncate_ref(ref)
-        git_pull(repo_path, remote, branch)
-    elif ref_type is 'tag' or ref_type is 'sha':
-        git_create_remote(repo_path, remote, url)
-        git_fetch(repo_path)
-        git_checkout_default_ref(repo_path, ref, remote)
     else:
-        print('Unknown ref ' + ref)
+        ref_type = git_ref_type(ref)
+        if ref_type is 'branch':
+            git_create_remote(repo_path, remote, url)
+            git_fetch(repo_path)
+            git_checkout_default_ref(repo_path, ref, remote)
+            branch = git_truncate_ref(ref)
+            git_pull(repo_path, remote, branch)
+        elif ref_type is 'tag' or ref_type is 'sha':
+            git_create_remote(repo_path, remote, url)
+            git_fetch(repo_path)
+            git_checkout_default_ref(repo_path, ref, remote)
+        else:
+            print('Unknown ref ' + ref)
 
 def git_herd_version(repo_path, version, ref):
     """Sync fixed version of repo at path"""
@@ -164,7 +161,7 @@ def git_herd_version(repo_path, version, ref):
     try:
         if repo.heads[version]:
             if repo.active_branch is not repo.heads[version]:
-                print(' - Checkout ' + branch_output)
+                print(' - Checkout branch ' + branch_output)
                 repo.git.checkout(version)
     except:
         # print(' - No existing branch.')
