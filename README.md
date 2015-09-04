@@ -32,8 +32,7 @@ For a couple example projects, see the [examples directory](https://github.com/J
 
 ```bash
 $ git clone https://github.com/JrGoodle/clowder.git
-$ cd clowder
-$ ./install.sh
+$ cd clowder && ./install.sh
 ```
 
 For terminal autocompletion, add the following to your shell profile:
@@ -49,8 +48,7 @@ This example is based on the LLVM project. See [the full clowder.yaml](https://g
 First create a directory to contain all the projects.
 
 ```bash
-$ mkdir llvm-projects
-$ cd llvm-projects
+$ mkdir llvm-projects && cd llvm-projects
 ```
 
 Clone `clowder` repository containing `clowder.yaml` file.
