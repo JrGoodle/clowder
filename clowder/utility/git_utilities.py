@@ -6,31 +6,32 @@ from termcolor import colored
 # Disable errors shown by pylint for no specified exception types
 # pylint: disable=W0702
 
-# def git_checkout_branch(repo_path, branch, remote):
-#     pass
+def git_checkout_branch(repo_path, branch, remote):
+    """Checkout branch"""
+    repo = Repo(repo_path)
+    branch_output = colored('(' + branch + ')', 'magenta')
+    if branch in repo.heads:
+        default_branch = repo.heads[branch]
+        if repo.head.is_detached or repo.head.ref is not default_branch:
+            print(' - Checkout branch ' + branch_output)
+            default_branch.checkout()
+    else:
+        try:
+            print(' - Create and checkout branch ' + branch_output)
+            origin = repo.remotes[remote]
+            origin.fetch()
+            default_branch = repo.create_head(branch, origin.refs[branch])
+            default_branch.set_tracking_branch(origin.refs[branch])
+            default_branch.checkout()
+        except:
+            print(' - Failed to create and checkout branch ' + branch_output)
 
 def git_checkout_default_ref(repo_path, ref, remote):
     """Checkout default branch. Create if doesn't exist"""
-    repo = Repo(repo_path)
     ref_type = git_ref_type(ref)
     if ref_type is 'branch':
         branch = git_truncate_ref(ref)
-        branch_output = colored('(' + branch + ')', 'magenta')
-        if branch in repo.heads:
-            default_branch = repo.heads[branch]
-            if repo.head.is_detached or repo.head.ref is not default_branch:
-                print(' - Checkout branch ' + branch_output)
-                default_branch.checkout()
-        else:
-            try:
-                print(' - Create and checkout branch ' + branch_output)
-                origin = repo.remotes[remote]
-                origin.fetch()
-                default_branch = repo.create_head(branch, origin.refs[branch])
-                default_branch.set_tracking_branch(origin.refs[branch])
-                default_branch.checkout()
-            except:
-                print(' - Failed to create and checkout branch ' + branch_output)
+        git_checkout_branch(repo_path, branch, remote)
     elif ref_type is 'tag':
         tag = git_truncate_ref(ref)
         git_checkout_tag(repo_path, tag)
@@ -69,30 +70,26 @@ def git_clone_url_at_path(url, repo_path, branch, remote):
             os.makedirs(repo_path)
 
         print(' - Cloning repo at ' + repo_path_output)
-        repo = Repo.init(repo_path)
-        git_create_remote(repo_path, remote, url)
-        git_fetch(repo_path)
-
-        ref_type = git_ref_type(branch)
-        if ref_type is 'branch':
-            try:
-                branch = git_truncate_ref(ref)
-                branch_output = colored('(' + branch + ')', 'magenta')
-                print(' - Create and checkout branch ' + branch_output)
-                origin = repo.remotes[remote]
-                default_branch = repo.create_head(ref, origin.refs[ref])
-                default_branch.set_tracking_branch(origin.refs[ref])
-                default_branch.checkout()
-            except:
-                print('Failed to create and checkout branch ' + ref)
-        elif ref_type is 'tag':
-            tag = git_truncate_ref(ref)
-            git_checkout_tag(repo_path, tag)
-        elif ref_type is 'sha':
-            git_checkout_sha(repo_path, ref)
+        try:
+            Repo.init(repo_path)
+        except:
+            print(' - Failed to initialize repository')
         else:
-            ref_output = colored('(' + ref + ')', 'magenta')
-            print('Failed to checkout unknown ref ' + ref_output)
+            git_create_remote(repo_path, remote, url)
+            git_fetch(repo_path)
+
+            ref_type = git_ref_type(branch)
+            if ref_type is 'branch':
+                branch = git_truncate_ref(ref)
+                git_checkout_branch(repo_path, branch, remote)
+            elif ref_type is 'tag':
+                tag = git_truncate_ref(ref)
+                git_checkout_tag(repo_path, tag)
+            elif ref_type is 'sha':
+                git_checkout_sha(repo_path, ref)
+            else:
+                ref_output = colored('(' + ref + ')', 'magenta')
+                print('Failed to checkout unknown ref ' + ref_output)
 
 def git_create_remote(repo_path, remote, url):
     """Create new remote"""
