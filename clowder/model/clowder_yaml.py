@@ -1,5 +1,5 @@
 """clowder.yaml parsing and functionality"""
-import os, subprocess, yaml
+import os, subprocess, sys, yaml
 from termcolor import colored
 from clowder.model.group import Group
 from clowder.model.source import Source
@@ -246,3 +246,5 @@ def _forall_run(command, directories):
             print(directory_output + ': ' + path_output)
             subprocess.call(command.split(),
                             cwd=path)
+            print('')
+    sys.exit()
