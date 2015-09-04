@@ -231,6 +231,16 @@ echo "TEST: Fail with unrecognized command"
 clowder cat && exit 1
 
 print_separator
+echo "TEST: Fail herd with invalid yaml"
+pushd clowder &>/dev/null
+git checkout invalid-yaml
+popd &>/dev/null
+clowder herd && exit 1
+
+print_separator
+pushd clowder &>/dev/null
+git checkout master
+popd &>/dev/null
 echo "TEST: Help output"
 print_separator
 echo "TEST: clowder -h"
