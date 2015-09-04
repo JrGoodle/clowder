@@ -97,7 +97,8 @@ def git_create_remote(repo_path, remote, url):
     try:
         repo.remotes[remote]
     except:
-        print(" - Creating remote " + remote)
+        remote_output = colored(remote, attrs=['bold'])
+        print(" - Create remote " + remote_output)
         origin = repo.create_remote(remote, url)
         origin.fetch()
 
