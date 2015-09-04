@@ -68,7 +68,7 @@ This command syncs the projects. Projects are cloned if they don't currently exi
 $ clowder sync
 ```
 
-This command is like `clowder herd`, but for syncing the `clowder` repository.
+This command is like `clowder herd`, but for syncing the repository containing the `clowder.yaml` file (located in the `clowder` directory).
 
 ### Further Commands
 
@@ -127,7 +127,7 @@ sources:
 ### Groups and Projects
 
 **Groups** have a `name` and associated `projects`.
-At a minimum, **Projects** need the `name` from the project's url, and the `path` to clone relative to the root directory.
+At a minimum, **projects** need the `name` from the project's url, and the `path` to clone relative to the root directory.
 The default `remote`, `source`, and `ref` values can also be overridden on a per-project basis.
 
 ```yaml
