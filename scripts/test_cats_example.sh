@@ -238,6 +238,14 @@ popd &>/dev/null
 clowder herd && exit 1
 
 print_separator
+echo "TEST: Test herd of static commit hashes as refs"
+pushd clowder &>/dev/null
+git checkout static-refs
+popd &>/dev/null
+clowder herd || exit 1
+clowder meow || exit 1
+
+print_separator
 pushd clowder &>/dev/null
 git checkout master
 popd &>/dev/null
