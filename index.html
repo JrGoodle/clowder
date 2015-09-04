@@ -91,7 +91,7 @@ $ <span class="pl-c1">cd</span> clowder <span class="pl-k">&amp;&amp;</span> ./i
 
 <div class="highlight highlight-bash"><pre>$ clowder sync</pre></div>
 
-<p>This command is like <code>clowder herd</code>, but for syncing the <code>clowder</code> repository.</p>
+<p>This command is like <code>clowder herd</code>, but for syncing the repository containing the <code>clowder.yaml</code> file (located in the <code>clowder</code> directory).</p>
 
 <h3>
 <a id="further-commands" class="anchor" href="#further-commands" aria-hidden="true"><span class="octicon octicon-link"></span></a>Further Commands</h3>
@@ -139,7 +139,7 @@ $ clowder forall -g clang -c <span class="pl-s"><span class="pl-pds">"</span><sp
 <a id="groups-and-projects" class="anchor" href="#groups-and-projects" aria-hidden="true"><span class="octicon octicon-link"></span></a>Groups and Projects</h3>
 
 <p><strong>Groups</strong> have a <code>name</code> and associated <code>projects</code>.
-At a minimum, <strong>Projects</strong> need the <code>name</code> from the project's url, and the <code>path</code> to clone relative to the root directory.
+At a minimum, <strong>projects</strong> need the <code>name</code> from the project's url, and the <code>path</code> to clone relative to the root directory.
 The default <code>remote</code>, <code>source</code>, and <code>ref</code> values can also be overridden on a per-project basis.</p>
 
 <div class="highlight highlight-yaml"><pre><span class="pl-s"><span class="pl-ent">groups:</span></span>
