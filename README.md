@@ -68,7 +68,7 @@ This command syncs the projects. Projects are cloned if they don't currently exi
 $ clowder sync
 ```
 
-This command is like `clowder herd`, but for syncing the `clowder` repository.
+This command is like `clowder herd`, but for syncing the repository containing the `clowder.yaml` file (located in the `clowder` directory).
 
 ### Further Commands
 
