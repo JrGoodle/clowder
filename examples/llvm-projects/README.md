@@ -1,6 +1,6 @@
 # llvm-projects Example
 
-Run `breed.sh` script to set up clowder directory for LLVM project repos.
+Run `breed.sh` script to set up clowder directory for LLVM project repos. Clones from https://github.com/jrgoodle/llvm-projects.git
 
 `clean.sh` will clean up cloned files.
 

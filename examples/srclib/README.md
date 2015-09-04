@@ -1,6 +1,6 @@
 # srclib Example
 
-Run `breed.sh` script to set up clowder directory for srclib project repos.
+Run `breed.sh` script to set up clowder directory for srclib project repos. Clones from https://github.com/jrgoodle/srclib-clowder.git
 
 `clean.sh` will clean up cloned files.
 

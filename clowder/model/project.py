@@ -57,7 +57,8 @@ class Project(object):
         return {'name': self.name,
                 'path': self.path,
                 'ref': git_current_sha(self.full_path()),
-                'remote': self.source.name}
+                'remote': self.remote_name,
+                'source': self.source.name}
 
     def groom(self):
         """Discard changes for project"""
