@@ -9,30 +9,42 @@ from termcolor import colored
 def git_checkout_default_ref(repo_path, ref, remote):
     """Checkout default branch. Create if doesn't exist"""
     repo = Repo(repo_path)
-    if git_ref_type(ref) is 'branch':
+    ref_type = git_ref_type(ref)
+    if ref_type is 'branch':
         branch = git_truncate_ref(ref)
         branch_output = colored('(' + branch + ')', 'magenta')
         if branch in repo.heads:
             default_branch = repo.heads[branch]
-            if repo.head.is_detached:
-                print(' - Checkout ' + branch_output)
-                default_branch.checkout()
-            elif repo.head.ref != default_branch:
-                print(' - Checkout ' + branch_output)
+            if repo.head.is_detached or repo.head.ref is not default_branch:
+                print(' - Checkout branch ' + branch_output)
                 default_branch.checkout()
         else:
             try:
-                print(' - Create and checkout ' + branch_output)
+                print(' - Create and checkout branch ' + branch_output)
                 origin = repo.remotes[remote]
                 origin.fetch()
                 default_branch = repo.create_head(branch, origin.refs[branch])
                 default_branch.set_tracking_branch(origin.refs[branch])
                 default_branch.checkout()
             except:
-                print(' - Failed to create and checkout ' + branch_output)
+                print(' - Failed to create and checkout branch ' + branch_output)
+    elif ref_type is 'tag':
+        tag = git_truncate_ref(ref)
+        tag_output = colored('(' + tag + ')', 'magenta')
+        print(' - Checkout tag ' + tag_output)
+        try:
+            repo.git.checkout(ref)
+        except:
+            print(' - Failed to checkout tag ' + tag_output)
+    elif ref_type is 'sha':
+        ref_output = colored('(' + ref + ')', 'magenta')
+        print(' - Checkout ref ' + ref_output)
+        try:
+            repo.git.checkout(ref)
+        except:
+            print(' - Failed to checkout ref ' + ref_output)
     else:
-        print(' - Checkout ref ' + ref)
-        repo.git.checkout(ref)
+        print('Unknown ref type')
 
 def git_clone_url_at_path(url, repo_path, branch, remote):
     """Clone git repo from url at path"""
@@ -47,21 +59,36 @@ def git_clone_url_at_path(url, repo_path, branch, remote):
         git_create_remote(repo_path, remote, url)
         git_fetch(repo_path)
 
-        if git_ref_type(branch) is not 'branch':
+        ref_type = git_ref_type(branch)
+        if ref_type is 'branch':
             try:
-                repo.git.checkout(ref)
-                return
-            except:
-                print('Failed to checkout ref ' + ref)
-                return
-        else:
-            try:
+                branch = git_truncate_ref(ref)
+                branch_output = colored('(' + branch + ')', 'magenta')
+                print(' - Create and checkout branch ' + branch_output)
                 origin = repo.remotes[remote]
                 default_branch = repo.create_head(ref, origin.refs[ref])
                 default_branch.set_tracking_branch(origin.refs[ref])
                 default_branch.checkout()
             except:
-                print('Failed to checkout branch ' + ref)
+                print('Failed to create and checkout branch ' + ref)
+        elif ref_type is 'tag':
+            tag = git_truncate_ref(ref)
+            tag_output = colored('(' + tag + ')', 'magenta')
+            try:
+                print(' - Checkout tag ' + tag_output)
+                repo.git.checkout(ref)
+            except:
+                print('Failed to checkout tag ' + tag_output)
+        elif ref_type is 'sha':
+            ref_output = colored('(' + ref + ')', 'magenta')
+            try:
+                print(' - Checkout ref ' + ref_output)
+                repo.git.checkout(ref)
+            except:
+                print('Failed to checkout ref ' + ref_output)
+        else:
+            ref_output = colored('(' + ref + ')', 'magenta')
+            print('Failed to checkout unknown ref ' + ref_output)
 
 def git_create_remote(repo_path, remote, url):
     """Create new remote"""
@@ -97,7 +124,7 @@ def git_fetch(repo_path):
     try:
         repo.git.fetch('--all', '--prune', '--tags')
     except:
-        print(' - Failed to fetch.')
+        print(' - Failed to fetch')
 
 def git_groom(repo_path):
     """Discard current changes in repository"""
@@ -110,32 +137,40 @@ def git_groom(repo_path):
 
 def git_herd(repo_path, ref, remote, url):
     """Sync git repo with default branch"""
-    if git_ref_type(ref) is not 'branch':
-        print("Ref isn't a branch: " + ref)
-        return
-
     if not os.path.isdir(os.path.join(repo_path, '.git')):
         git_clone_url_at_path(url, repo_path, ref, remote)
     else:
-        git_create_remote(repo_path, remote, url)
-        git_fetch(repo_path)
-        git_checkout_default_ref(repo_path, ref, remote)
-        branch = git_truncate_ref(ref)
-        git_pull(repo_path, remote, branch)
+        ref_type = git_ref_type(ref)
+        if ref_type is 'branch':
+            git_create_remote(repo_path, remote, url)
+            git_fetch(repo_path)
+            git_checkout_default_ref(repo_path, ref, remote)
+            branch = git_truncate_ref(ref)
+            git_pull(repo_path, remote, branch)
+        elif ref_type is 'tag' or ref_type is 'sha':
+            git_create_remote(repo_path, remote, url)
+            git_fetch(repo_path)
+            git_checkout_default_ref(repo_path, ref, remote)
+        else:
+            print('Unknown ref ' + ref)
 
 def git_herd_version(repo_path, version, ref):
     """Sync fixed version of repo at path"""
     repo = Repo(repo_path)
     branch_output = colored('(' + version + ')', 'magenta')
-    try:
-        if repo.heads[version]:
-            if repo.active_branch is not repo.heads[version]:
-                print(' - Checkout ' + branch_output)
+    if version in repo.heads:
+        if repo.active_branch is not repo.heads[version]:
+            print(' - Checkout branch ' + branch_output)
+            try:
                 repo.git.checkout(version)
-    except:
-        # print(' - No existing branch.')
-        print(' - Create and checkout ' + branch_output)
-        repo.git.checkout('-b', version, ref)
+            except:
+                print(' - Failed to checkout branch ' + branch_output)
+    else:
+        print(' - Create and checkout branch ' + branch_output)
+        try:
+            repo.git.checkout('-b', version, ref)
+        except:
+            print(' - Failed to create and checkout branch ' + branch_output)
 
 def git_has_untracked_files(repo_path):
     """Check if there are untracked files"""
@@ -194,8 +229,8 @@ def git_status(repo_path):
 
 def git_sync(repo_path):
     """Sync clowder repo with current branch"""
+    git_fetch(repo_path)
     repo = Repo(repo_path)
-    repo.git.fetch('--all', '--prune', '--tags')
     if not git_is_detached(repo_path):
         print(' - Pulling latest changes')
         print(repo.git.pull())
@@ -225,8 +260,6 @@ def git_validate_repo_state(repo_path):
     if not os.path.isdir(os.path.join(repo_path, '.git')):
         return True
     return git_validate_dirty(repo_path)
-    # and git_validate_detached(repo_path)
-    # and git_validate_untracked(repo_path)
 
 def git_validate_untracked(repo_path):
     """Validate repo untracked files"""
