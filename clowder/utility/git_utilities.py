@@ -31,7 +31,8 @@ def git_checkout_default_ref(repo_path, ref, remote):
             except:
                 print(' - Failed to create and checkout ' + branch_output)
     else:
-        print(' - Checkout ref ' + ref)
+        ref_output = colored('(' + ref + ')', 'magenta')
+        print(' - Checkout ref ' + ref_output)
         repo.git.checkout(ref)
 
 def git_clone_url_at_path(url, repo_path, branch, remote):
@@ -111,17 +112,21 @@ def git_groom(repo_path):
 def git_herd(repo_path, ref, remote, url):
     """Sync git repo with default branch"""
     if git_ref_type(ref) is not 'branch':
-        print("Ref isn't a branch: " + ref)
-        return
-
-    if not os.path.isdir(os.path.join(repo_path, '.git')):
-        git_clone_url_at_path(url, repo_path, ref, remote)
+        if not os.path.isdir(os.path.join(repo_path, '.git')):
+            git_clone_url_at_path(url, repo_path, ref, remote)
+        else:
+            git_create_remote(repo_path, remote, url)
+            git_fetch(repo_path)
+            git_checkout_default_ref(repo_path, ref, remote)
     else:
-        git_create_remote(repo_path, remote, url)
-        git_fetch(repo_path)
-        git_checkout_default_ref(repo_path, ref, remote)
-        branch = git_truncate_ref(ref)
-        git_pull(repo_path, remote, branch)
+        if not os.path.isdir(os.path.join(repo_path, '.git')):
+            git_clone_url_at_path(url, repo_path, ref, remote)
+        else:
+            git_create_remote(repo_path, remote, url)
+            git_fetch(repo_path)
+            git_checkout_default_ref(repo_path, ref, remote)
+            branch = git_truncate_ref(ref)
+            git_pull(repo_path, remote, branch)
 
 def git_herd_version(repo_path, version, ref):
     """Sync fixed version of repo at path"""
