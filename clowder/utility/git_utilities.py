@@ -34,11 +34,17 @@ def git_checkout_default_ref(repo_path, ref, remote):
     elif ref_type is 'tag':
         tag_output = colored('(' + ref + ')', 'magenta')
         print(' - Checkout tag ' + tag_output)
-        repo.git.checkout(ref)
+        try:
+            repo.git.checkout(ref)
+        except:
+            print(' - Failed to checkout tag ' + tag_output)
     elif ref_type is 'sha':
         ref_output = colored('(' + ref + ')', 'magenta')
         print(' - Checkout ref ' + ref_output)
-        repo.git.checkout(ref)
+        try:
+            repo.git.checkout(ref)
+        except:
+            print(' - Failed to checkout ref ' + ref_output)
     else:
         print('Unknown ref type')
 
@@ -73,7 +79,7 @@ def git_clone_url_at_path(url, repo_path, branch, remote):
                 default_branch.set_tracking_branch(origin.refs[ref])
                 default_branch.checkout()
             except:
-                print('Failed to checkout branch ' + ref)
+                print('Failed to create and checkout branch ' + ref)
 
 def git_create_remote(repo_path, remote, url):
     """Create new remote"""
@@ -210,8 +216,8 @@ def git_status(repo_path):
 
 def git_sync(repo_path):
     """Sync clowder repo with current branch"""
+    git_fetch(repo_path)
     repo = Repo(repo_path)
-    repo.git.fetch('--all', '--prune', '--tags')
     if not git_is_detached(repo_path):
         print(' - Pulling latest changes')
         print(repo.git.pull())
@@ -241,8 +247,6 @@ def git_validate_repo_state(repo_path):
     if not os.path.isdir(os.path.join(repo_path, '.git')):
         return True
     return git_validate_dirty(repo_path)
-    # and git_validate_detached(repo_path)
-    # and git_validate_untracked(repo_path)
 
 def git_validate_untracked(repo_path):
     """Validate repo untracked files"""
