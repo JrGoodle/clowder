@@ -65,7 +65,7 @@ def print_clowder_repo_status(root_directory):
     print(get_cat_face() + ' ' + output)
 
 def print_exiting():
-    """Print Exiting and exit"""
+    """Print Exiting and exit with error code"""
     print('')
     cprint('Exiting...', 'red')
     print('')

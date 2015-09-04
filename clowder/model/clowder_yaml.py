@@ -1,5 +1,5 @@
 """clowder.yaml parsing and functionality"""
-import os, subprocess, sys, yaml
+import os, subprocess, yaml
 from termcolor import colored, cprint
 from clowder.model.group import Group
 from clowder.model.source import Source
@@ -43,10 +43,7 @@ class ClowderYAML(object):
                 yaml.dump(self._get_yaml(), file, default_flow_style=False)
         else:
             print('Version ' + version_output + ' already exists at ' + yaml_file_output)
-            print('')
-            cprint('Exiting...', 'red')
-            print('')
-            sys.exit()
+            print_exiting()
 
     def forall(self, command):
         """Runs command in all projects"""
@@ -212,9 +209,10 @@ class ClowderYAML(object):
         if not valid:
             print_exiting()
 
-# Disable errors shown by pylint for unused arguments
-# pylint: disable=W0104
+# Disable errors shown by pylint for no specified exception types
 # pylint: disable=W0702
+# Disable errors shown by pylint for statements which appear to have no effect
+# pylint: disable=W0104
 def _validate_yaml(parsed_yaml):
     """Load clowder from yaml file"""
     try:
