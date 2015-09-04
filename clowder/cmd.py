@@ -128,13 +128,10 @@ class Command(object):
             clowder_repo = ClowderRepo(self.root_directory)
             clowder_repo.symlink_yaml(self.args.version)
             clowder = ClowderYAML(self.root_directory)
-            if self.args.version is None:
-                if self.args.groups is None:
-                    clowder.herd_all()
-                else:
-                    clowder.herd_groups(self.args.groups)
+            if self.args.groups is not None:
+                clowder.herd_groups(self.args.groups)
             else:
-                clowder.herd_version(self.args.version)
+                clowder.herd_all()
         else:
             exit_clowder_not_found()
 
