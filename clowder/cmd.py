@@ -9,7 +9,8 @@ from termcolor import cprint
 from clowder.model.clowder_repo import ClowderRepo
 from clowder.model.clowder_yaml import ClowderYAML
 from clowder.utility.print_utilities import (
-    print_clowder_not_found_message
+    print_clowder_not_found_message,
+    print_exiting
 )
 
 class Command(object):
@@ -175,13 +176,12 @@ def exit_unrecognized_command(parser):
     """Print unrecognized command message and exit"""
     cprint('Unrecognized command\n', 'red')
     parser.print_help()
-    print('')
-    sys.exit(1)
+    print_exiting()
 
 def exit_clowder_not_found():
     """Print clowder not found message and exit"""
     print_clowder_not_found_message()
-    sys.exit(1)
+    print_exiting()
 
 # Disable errors shown by pylint for unused arguments
 # pylint: disable=W0613

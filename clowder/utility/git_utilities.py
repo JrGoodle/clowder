@@ -1,9 +1,9 @@
 """Git utilities"""
-import os #, shutil
+import os
 from git import Repo
 from termcolor import colored
 
-# Disable errors shown by pylint for unused arguments
+# Disable errors shown by pylint for no specified exception types
 # pylint: disable=W0702
 
 def git_checkout_default_ref(repo_path, ref, remote):
