@@ -32,7 +32,8 @@ def git_checkout_default_ref(repo_path, ref, remote):
             except:
                 print(' - Failed to create and checkout ' + branch_output)
     elif ref_type is 'tag':
-        tag_output = colored('(' + ref + ')', 'magenta')
+        tag = git_truncate_ref(ref)
+        tag_output = colored('(' + tag + ')', 'magenta')
         print(' - Checkout tag ' + tag_output)
         try:
             repo.git.checkout(ref)
@@ -67,11 +68,15 @@ def git_clone_url_at_path(url, repo_path, branch, remote):
                 repo.git.checkout(ref)
             except:
                 if ref_type is 'tag':
-                    print('Failed to checkout tag ' + ref)
+                    tag = git_truncate_ref(ref)
+                    tag_output = colored('(' + tag + ')', 'magenta')
+                    print('Failed to checkout tag ' + tag_output)
                 elif ref_type is 'sha':
-                    print('Failed to checkout ref ' + ref)
+                    ref_output = colored('(' + ref + ')', 'magenta')
+                    print('Failed to checkout ref ' + ref_output)
                 else:
-                    print('Failed to checkout unknown ref ' + ref)
+                    ref_output = colored('(' + ref + ')', 'magenta')
+                    print('Failed to checkout unknown ref ' + ref_output)
         else:
             try:
                 origin = repo.remotes[remote]
