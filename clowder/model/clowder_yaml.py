@@ -231,7 +231,8 @@ def _validate_yaml(parsed_yaml):
                 project['path']
     except:
         print('')
-        print('clowder.yaml appears to be invalid')
+        clowder_output = colored('clowder.yaml', 'cyan')
+        print(clowder_output + ' appears to be invalid')
         print_exiting()
 
 def _forall_run(command, directories):
