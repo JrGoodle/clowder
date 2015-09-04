@@ -51,7 +51,7 @@ First create a directory to contain all the projects.
 $ mkdir llvm-projects && cd llvm-projects
 ```
 
-Clone `clowder` repository containing `clowder.yaml` file.
+Clone repository containing `clowder.yaml` file.
 
 ```bash
 $ clowder breed https://github.com/jrgoodle/llvm-projects.git
