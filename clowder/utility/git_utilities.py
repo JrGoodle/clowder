@@ -45,14 +45,16 @@ def git_checkout_sha(repo_path, sha):
     """Checkout commit sha"""
     repo = Repo(repo_path)
     ref_output = colored('(' + sha + ')', 'magenta')
-    if repo.head.commit.hexsha != sha:
+    try:
+        if repo.head.commit.hexsha == sha:
+            print(' - Already on correct commit')
+            return
+    except:
+        print(' - Checkout ref ' + ref_output)
         try:
-            print(' - Checkout ref ' + ref_output)
             repo.git.checkout(sha)
         except:
             print(' - Failed to checkout ref ' + ref_output)
-    else:
-        print(' - Already on correct commit')
 
 def git_checkout_tag(repo_path, tag):
     """Checkout tag"""
