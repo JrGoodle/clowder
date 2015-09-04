@@ -27,7 +27,7 @@ def git_checkout_default_ref(repo_path, ref, remote):
                 default_branch.set_tracking_branch(origin.refs[branch])
                 default_branch.checkout()
             except:
-                print(' - Failed to create and checkout ' + branch_output)
+                print(' - Failed to create and checkout branch ' + branch_output)
     elif ref_type is 'tag':
         tag = git_truncate_ref(ref)
         tag_output = colored('(' + tag + ')', 'magenta')
@@ -158,15 +158,19 @@ def git_herd_version(repo_path, version, ref):
     """Sync fixed version of repo at path"""
     repo = Repo(repo_path)
     branch_output = colored('(' + version + ')', 'magenta')
-    try:
-        if repo.heads[version]:
-            if repo.active_branch is not repo.heads[version]:
-                print(' - Checkout branch ' + branch_output)
+    if version in repo.heads:
+        if repo.active_branch is not repo.heads[version]:
+            print(' - Checkout branch ' + branch_output)
+            try:
                 repo.git.checkout(version)
-    except:
-        # print(' - No existing branch.')
-        print(' - Create and checkout ' + branch_output)
-        repo.git.checkout('-b', version, ref)
+            except:
+                print(' - Failed to checkout branch ' + branch_output)
+    else:
+        print(' - Create and checkout branch ' + branch_output)
+        try:
+            repo.git.checkout('-b', version, ref)
+        except:
+            print(' - Failed to create and checkout branch ' + branch_output)
 
 def git_has_untracked_files(repo_path):
     """Check if there are untracked files"""
