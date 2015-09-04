@@ -1,6 +1,6 @@
 """clowder.yaml parsing and functionality"""
 import os, subprocess, yaml
-from termcolor import colored, cprint
+from termcolor import colored
 from clowder.model.group import Group
 from clowder.model.source import Source
 from clowder.utility.print_utilities import (
@@ -240,7 +240,9 @@ def _forall_run(command, directories):
     sorted_paths = sorted(directories_set)
     for path in sorted_paths:
         if os.path.isdir(path):
-            cprint(path, 'cyan')
             print_running_command(command)
+            directory_output = colored('Directory', attrs=['underline'])
+            path_output = colored(path, 'cyan')
+            print(directory_output + ': ' + path_output)
             subprocess.call(command.split(),
                             cwd=path)
