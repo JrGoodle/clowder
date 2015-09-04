@@ -47,16 +47,15 @@
 </ul>
 
 <p>All of these have their own approach, but many are based on submodules or subtrees.
-The problem with submodules and subtrees is that a tight coupling is created between repositories because dependencies are part of each repository.
+The problem with submodules and subtrees is that a tight coupling is created because dependencies are part of each repository.
 Google's <code>repo</code> tool takes a different approach, but is closely tied to Google's development workflow.
-The use of a separate file for tracking projects means that there's detailed information about the dependencies between them, but each repository is still essentially independent.</p>
-
-<p><code>clowder</code> uses a similar approach as <code>repo</code> but with a yaml file instead of xml (and without the default rebasing behavior of <code>repo</code>).
+<code>clowder</code> uses a similar approach as <code>repo</code> but with a yaml file instead of xml (and without the default rebasing behavior of <code>repo</code>).
 URL information and project locations on disk are specified in a <code>clowder.yaml</code> file.
+The use of a separate file for tracking projects means that there's detailed information about the dependencies between them, but each repository is still essentially independent.
 This file is checked into its own repository, so the project structure's history is saved under version control.
 You can <code>fix</code> specific versions with current commit hashes saved for later restoration.</p>
 
-<p>For a couple example projects, see the <a href="https://github.com/JrGoodle/clowder/tree/master/examples">examples directory</a>.</p>
+<p>For a few example projects, see the <a href="https://github.com/JrGoodle/clowder/tree/master/examples">examples directory</a>.</p>
 
 <h2>
 <a id="getting-started" class="anchor" href="#getting-started" aria-hidden="true"><span class="octicon octicon-link"></span></a>Getting Started</h2>
