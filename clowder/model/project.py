@@ -92,7 +92,7 @@ class Project(object):
 
     def stash(self):
         """Stash changes for project if dirty"""
-        if self.is_dirty:
+        if self.is_dirty():
             self._print_status()
             git_stash(self.full_path())
 
