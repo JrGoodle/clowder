@@ -97,11 +97,15 @@ $ <span class="pl-c1">cd</span> clowder <span class="pl-k">&amp;&amp;</span> ./i
 <a id="further-commands" class="anchor" href="#further-commands" aria-hidden="true"><span class="octicon octicon-link"></span></a>Further Commands</h3>
 
 <div class="highlight highlight-bash"><pre>$ clowder meow <span class="pl-c"># print status of projects</span>
-$ clowder meow -v <span class="pl-c"># print more verbose status of projects</span></pre></div>
+$ clowder meow -v <span class="pl-c"># print more verbose status of projects</span>
+$ clowder meow -g clang llvm <span class="pl-c"># print status of projects in clang and llvm groups</span>
+$ clowder meow -g clang llvm -v <span class="pl-c"># print verbose status of projects in clang and llvm groups</span></pre></div>
 
-<div class="highlight highlight-bash"><pre>$ clowder groom <span class="pl-c"># Discard any changes in projects</span></pre></div>
+<div class="highlight highlight-bash"><pre>$ clowder groom <span class="pl-c"># Discard any changes in projects</span>
+$ clowder groom -g clang llvm <span class="pl-c"># Discard any changes in projects in clang and llvm groups</span></pre></div>
 
-<div class="highlight highlight-bash"><pre>$ clowder stash <span class="pl-c"># Stash any changes in projects</span></pre></div>
+<div class="highlight highlight-bash"><pre>$ clowder stash <span class="pl-c"># Stash any changes in projects</span>
+$ clowder stash -g clang llvm <span class="pl-c"># Stash any changes in projects in clang and llvm groups</span></pre></div>
 
 <div class="highlight highlight-bash"><pre>$ clowder fix v0.1 <span class="pl-c"># Fix new version of clowder.yaml</span></pre></div>
 
