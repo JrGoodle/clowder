@@ -105,20 +105,12 @@ def git_create_remote(repo_path, remote, url):
 def git_current_branch(repo_path):
     """Return currently checked out branch of project"""
     repo = Repo(repo_path)
-    return str(repo.git.rev_parse('--abbrev-ref', 'HEAD')).rstrip('\n')
-
-def git_current_ref(repo_path):
-    """Return current ref of project"""
-    repo = Repo(repo_path)
-    if repo.head.is_detached:
-        return git_current_sha(repo_path)
-    else:
-        return git_current_sha(repo_path)
+    return repo.head.ref.name
 
 def git_current_sha(repo_path):
     """Return current git sha for checked out commit"""
     repo = Repo(repo_path)
-    return str(repo.git.rev_parse('HEAD')).rstrip('\n')
+    return repo.head.commit.hexsha
 
 def git_fetch(repo_path):
     """Fetch all remotes, tags, and prune"""
