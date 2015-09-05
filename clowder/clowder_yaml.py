@@ -3,7 +3,7 @@ import os, subprocess, sys, yaml
 from termcolor import colored
 from clowder.group import Group
 from clowder.source import Source
-from clowder.utility.print_utilities import (
+from clowder.utility.clowder_utilities import (
     print_clowder_repo_status,
     print_exiting
 )

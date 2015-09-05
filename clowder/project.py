@@ -1,14 +1,12 @@
 """Representation of clowder.yaml project"""
 import os
 from termcolor import colored, cprint
-from clowder.utility.print_utilities import (
+from clowder.utility.clowder_utilities import (
     format_project_string,
     format_ref_string,
-    print_validation
-)
-from clowder.utility.clowder_utilities import (
     groom,
     herd,
+    print_validation,
     validate_repo_state
 )
 from clowder.utility.git_utilities import (

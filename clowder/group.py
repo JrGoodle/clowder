@@ -1,7 +1,7 @@
 """Representation of clowder.yaml group"""
 
+from termcolor import colored
 from clowder.project import Project
-from clowder.utility.print_utilities import print_group
 
 class Group(object):
     """clowder.yaml group class"""
@@ -72,7 +72,8 @@ class Group(object):
 
     def _print_name(self):
         """Print formatted group name"""
-        print_group(self.name)
+        name_output = colored(self.name, attrs=['bold', 'underline'])
+        print(name_output)
 
     def print_validation(self):
         """Print validation message for projects in group"""

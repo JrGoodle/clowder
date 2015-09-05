@@ -8,7 +8,7 @@ import argcomplete, argparse, colorama, os, signal, sys
 from termcolor import cprint
 from clowder.clowder_repo import ClowderRepo
 from clowder.clowder_yaml import ClowderYAML
-from clowder.utility.print_utilities import print_exiting
+from clowder.utility.clowder_utilities import print_exiting
 
 class Command(object):
     """Command class for parsing commandline options"""
