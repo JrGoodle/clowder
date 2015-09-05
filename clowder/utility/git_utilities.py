@@ -26,7 +26,7 @@ def git_checkout_branch(repo_path, branch, remote):
         except:
             print(' - Failed to create and checkout branch ' + branch_output)
 
-def git_checkout_default_ref(repo_path, ref, remote):
+def git_checkout_ref(repo_path, ref, remote):
     """Checkout default branch. Create if doesn't exist"""
     ref_type = git_ref_type(ref)
     if ref_type is 'branch':
@@ -141,34 +141,6 @@ def git_fetch(repo_path):
     except:
         print(' - Failed to fetch')
 
-def git_groom(repo_path):
-    """Discard current changes in repository"""
-    repo = Repo(repo_path)
-    if repo.is_dirty():
-        print(' - Discarding current changes')
-        repo.head.reset(index=True, working_tree=True)
-    else:
-        print(' - No changes to discard')
-
-def git_herd(repo_path, ref, remote, url):
-    """Sync git repo with default branch"""
-    if not os.path.isdir(os.path.join(repo_path, '.git')):
-        git_clone_url_at_path(url, repo_path, ref, remote)
-    else:
-        ref_type = git_ref_type(ref)
-        if ref_type is 'branch':
-            git_create_remote(repo_path, remote, url)
-            git_fetch(repo_path)
-            git_checkout_default_ref(repo_path, ref, remote)
-            branch = git_truncate_ref(ref)
-            git_pull(repo_path, remote, branch)
-        elif ref_type is 'tag' or ref_type is 'sha':
-            git_create_remote(repo_path, remote, url)
-            git_fetch(repo_path)
-            git_checkout_default_ref(repo_path, ref, remote)
-        else:
-            print('Unknown ref ' + ref)
-
 def git_has_untracked_files(repo_path):
     """Check if there are untracked files"""
     repo = Repo(repo_path)
@@ -224,14 +196,6 @@ def git_status(repo_path):
     repo = Repo(repo_path)
     print(repo.git.status())
 
-def git_sync(repo_path):
-    """Sync clowder repo with current branch"""
-    git_fetch(repo_path)
-    repo = Repo(repo_path)
-    if not git_is_detached(repo_path):
-        print(' - Pulling latest changes')
-        print(repo.git.pull())
-
 def git_truncate_ref(ref):
     """Return bare branch, tag, or sha"""
     git_branch = "refs/heads/"
@@ -243,21 +207,3 @@ def git_truncate_ref(ref):
     else:
         length = 0
     return ref[length:]
-
-def git_validate_detached(repo_path):
-    """Validate repo detached HEAD"""
-    return not git_is_detached(repo_path)
-
-def git_validate_dirty(repo_path):
-    """Validate repo dirty files"""
-    return not git_is_dirty(repo_path)
-
-def git_validate_repo_state(repo_path):
-    """Validate repo state"""
-    if not os.path.isdir(os.path.join(repo_path, '.git')):
-        return True
-    return git_validate_dirty(repo_path)
-
-def git_validate_untracked(repo_path):
-    """Validate repo untracked files"""
-    return not git_has_untracked_files(repo_path)

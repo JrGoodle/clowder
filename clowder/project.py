@@ -5,15 +5,15 @@ from clowder.utility.print_utilities import (
     print_validation,
     print_verbose_status
 )
-from clowder.utility.git_utilities import (
-    git_groom,
-    git_stash,
-    git_is_dirty
+from clowder.utility.clowder_utilities import (
+    groom,
+    herd,
+    validate_repo_state
 )
 from clowder.utility.git_utilities import (
     git_current_sha,
-    git_herd,
-    git_validate_repo_state
+    git_is_dirty,
+    git_stash,
 )
 
 
@@ -62,12 +62,12 @@ class Project(object):
         """Discard changes for project"""
         if self.is_dirty():
             self._print_status()
-            git_groom(self.full_path())
+            groom(self.full_path())
 
     def herd(self):
         """Clone project or update latest from upstream"""
         self._print_status()
-        git_herd(self.full_path(), self.ref, self.remote_name, self.url)
+        herd(self.full_path(), self.ref, self.remote_name, self.url)
 
     def is_dirty(self):
         """Check if project is dirty"""
@@ -90,7 +90,7 @@ class Project(object):
 
     def is_valid(self):
         """Validate status of project"""
-        return git_validate_repo_state(self.full_path())
+        return validate_repo_state(self.full_path())
 
     def _print_status(self):
         """Print formatted project status"""
