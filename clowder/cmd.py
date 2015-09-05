@@ -8,10 +8,7 @@ import argcomplete, argparse, colorama, os, signal, sys
 from termcolor import cprint
 from clowder.clowder_repo import ClowderRepo
 from clowder.clowder_yaml import ClowderYAML
-from clowder.utility.print_utilities import (
-    print_clowder_not_found_message,
-    print_exiting
-)
+from clowder.utility.print_utilities import print_exiting
 
 class Command(object):
     """Command class for parsing commandline options"""
@@ -73,8 +70,7 @@ class Command(object):
         # clowder fix
         fix_help = 'Create version of clowder.yaml for current repos'
         parser_fix = subparsers.add_parser('fix', help=fix_help)
-        parser_fix.add_argument('-version', '-v',
-                                required=True, help='Version name to fix')
+        parser_fix.add_argument('version', help='Version name to fix')
         # clowder groom
         groom_help = 'Discard current changes in all projects'
         subparsers.add_parser('groom', add_help=False, help=groom_help)
@@ -177,7 +173,7 @@ def exit_unrecognized_command(parser):
 
 def exit_clowder_not_found():
     """Print clowder not found message and exit"""
-    print_clowder_not_found_message()
+    cprint('No clowder found in the current directory, exiting...\n', 'red')
     print_exiting()
 
 # Disable errors shown by pylint for unused arguments

@@ -86,7 +86,7 @@ $ clowder stash # Stash any changes in projects
 ```
 
 ```bash
-$ clowder fix -v v0.1 # Fix new version of clowder.yaml
+$ clowder fix v0.1 # Fix new version of clowder.yaml
 ```
 
 ```bash
@@ -95,6 +95,7 @@ $ clowder herd -v v0.1 # Check out fixed version
 ```
 
 ```bash
+$ COMMAND='git status'
 $ clowder forall -c "$COMMAND" # Run "$COMMAND" in all project directories
 $ clowder forall -g clang -c "$COMMAND" # Run "$COMMAND" only for projects in clang group
 ```

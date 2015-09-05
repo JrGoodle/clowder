@@ -5,8 +5,7 @@ from clowder.utility.git_utilities import (
     git_current_sha,
     git_current_branch,
     git_is_detached,
-    git_is_dirty,
-    git_status
+    git_is_dirty
 )
 
 def format_clowder_string(repo_path, name):
@@ -49,10 +48,6 @@ def get_cat():
     """Return a cat emoji"""
     return emoji.emojize(':cat2:', use_aliases=True)
 
-def print_clowder_not_found_message():
-    """Print error message when clowder not found"""
-    cprint('No clowder found in the current directory, exiting...\n', 'red')
-
 def print_clowder_repo_status(root_directory):
     """Print clowder repo status"""
     repo_path = os.path.join(root_directory, 'clowder')
@@ -73,7 +68,6 @@ def print_exiting():
 def print_group(name):
     """Print formatted group name"""
     name_output = colored(name, attrs=['bold', 'underline'])
-    # print(get_cat_face() + '  ' + name_output)
     print(name_output)
 
 def print_project_status(root_directory, path, name):
@@ -94,13 +88,5 @@ def print_validation(repo_path):
     """Print validation messages"""
     if not os.path.isdir(os.path.join(repo_path, '.git')):
         return
-    # if not git_validate_detached(repo_path):
-    #     print(' - HEAD is detached. Please point your HEAD to a branch before running clowder')
     if git_is_dirty(repo_path):
         print(' - Dirty repo. Please stash, commit, or discard your changes')
-    # if not git_validate_untracked(repo_path):
-    #     print(' - There are untracked files. Please remove these files or add to .gitignore')
-
-def print_verbose_status(repo_path):
-    """Print git status"""
-    git_status(repo_path)

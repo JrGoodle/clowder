@@ -98,6 +98,9 @@ clowder meow || exit 1
 echo "TEST: Successfully herd after groom"
 clowder herd || exit 1
 clowder meow || exit 1
+echo "TEST: Successfully herd twice"
+clowder herd || exit 1
+clowder meow || exit 1
 
 echo "TEST: Check current branches"
 for project in "${black_cat_projects[@]}"
@@ -153,6 +156,9 @@ popd &>/dev/null
 echo "TEST: Successfully sync after discarding changes"
 clowder sync || exit 1
 clowder meow || exit 1
+echo "TEST: Successfully sync twice"
+clowder sync || exit 1
+clowder meow || exit 1
 
 print_separator
 
@@ -166,9 +172,9 @@ print_separator
 echo "TEST: Fail herding a previously fixed version"
 clowder herd -v v100 && exit 1
 echo "TEST: Fail fixing a previously fixed version"
-clowder fix -v v0.1 && exit 1
+clowder fix v0.1 && exit 1
 echo "TEST: Successfully fix a new version"
-clowder fix -v v0.11 || exit 1
+clowder fix v0.11 || exit 1
 clowder meow || exit 1
 
 print_separator
