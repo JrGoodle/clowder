@@ -46,9 +46,14 @@ def git_checkout_sha(repo_path, sha):
     repo = Repo(repo_path)
     ref_output = colored('(' + sha + ')', 'magenta')
     try:
-        if repo.head.commit.hexsha == sha:
+        if repo.head.commit.hexsha == sha and repo.head.is_detached:
             print(' - Already on correct commit')
-            return
+        else:
+            print(' - Checkout ref ' + ref_output)
+            try:
+                repo.git.checkout(sha)
+            except:
+                print(' - Failed to checkout ref ' + ref_output)
     except:
         print(' - Checkout ref ' + ref_output)
         try:
@@ -61,7 +66,9 @@ def git_checkout_tag(repo_path, tag):
     repo = Repo(repo_path)
     tag_output = colored('(' + tag + ')', 'magenta')
     try:
-        if repo.head.ref != repo.tags[tag]:
+        if repo.head.commit == repo.tags[tag] and repo.head.is_detached:
+            print(' - Already on correct commit')
+        else:
             print(' - Checkout tag ' + tag_output)
             repo.git.checkout(tag)
     except:

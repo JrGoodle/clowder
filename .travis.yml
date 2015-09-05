@@ -22,7 +22,7 @@ after_success: scripts/deploy.sh
 
 branches:
   only: # whitelist
-    # - deploy
+    - deploy
     - master
 
 notifications:
