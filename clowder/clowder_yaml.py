@@ -26,7 +26,7 @@ class ClowderYAML(object):
 
     def fix_version(self, version):
         """Fix current commits to versioned clowder.yaml"""
-        self._validate_all()
+        self._validate(self.group_names)
         versions_dir = os.path.join(self.root_directory, 'clowder', 'versions')
         version_dir = os.path.join(versions_dir, version)
         if not os.path.exists(version_dir):
@@ -78,7 +78,7 @@ class ClowderYAML(object):
 
     def herd_all(self):
         """Sync all projects with latest upstream changes"""
-        self._validate_all()
+        self._validate(self.group_names)
         print_clowder_repo_status(self.root_directory)
         print('')
         for group in self.groups:
@@ -86,7 +86,7 @@ class ClowderYAML(object):
 
     def herd_groups(self, group_names):
         """Sync all projects with latest upstream changes"""
-        self._validate_groups(group_names)
+        self._validate(group_names)
         print_clowder_repo_status(self.root_directory)
         print('')
         for group in self.groups:
@@ -164,17 +164,7 @@ class ClowderYAML(object):
                                              self.sources))
                 # self.groups.sort(key=lambda group: group.name)
 
-    def _validate_all(self):
-        """Validate status of all projects"""
-        valid = True
-        for group in self.groups:
-            group.print_validation()
-            if not group.is_valid():
-                valid = False
-        if not valid:
-            print_exiting()
-
-    def _validate_groups(self, group_names):
+    def _validate(self, group_names):
         """Validate status of all projects for specified groups"""
         valid = True
         for group in self.groups:
