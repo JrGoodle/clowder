@@ -66,7 +66,9 @@ def git_checkout_tag(repo_path, tag):
     repo = Repo(repo_path)
     tag_output = colored('(' + tag + ')', 'magenta')
     try:
-        if repo.head.ref != repo.tags[tag]:
+        if repo.head.commit == repo.tags[tag] and repo.head.is_detached:
+            print(' - Already on correct commit')
+        else:
             print(' - Checkout tag ' + tag_output)
             repo.git.checkout(tag)
     except:
