@@ -6,7 +6,6 @@ from clowder.utility.git_utilities import (
     git_clone_url_at_path,
     git_create_remote,
     git_fetch,
-    git_has_untracked_files,
     git_is_detached,
     git_is_dirty,
     git_pull,
@@ -53,20 +52,8 @@ def sync(repo_path):
         print(' - Pulling latest changes')
         print(repo.git.pull())
 
-def validate_detached(repo_path):
-    """Validate repo detached HEAD"""
-    return not git_is_detached(repo_path)
-
-def validate_dirty(repo_path):
-    """Validate repo dirty files"""
-    return not git_is_dirty(repo_path)
-
 def validate_repo_state(repo_path):
     """Validate repo state"""
     if not os.path.isdir(os.path.join(repo_path, '.git')):
         return True
-    return validate_dirty(repo_path)
-
-def validate_untracked(repo_path):
-    """Validate repo untracked files"""
-    return not git_has_untracked_files(repo_path)
+    return not git_is_dirty(repo_path)
