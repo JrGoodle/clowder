@@ -46,9 +46,14 @@ def git_checkout_sha(repo_path, sha):
     repo = Repo(repo_path)
     ref_output = colored('(' + sha + ')', 'magenta')
     try:
-        if repo.head.commit.hexsha == sha:
+        if repo.head.commit.hexsha == sha and repo.head.is_detached:
             print(' - Already on correct commit')
-            return
+        else:
+            print(' - Checkout ref ' + ref_output)
+            try:
+                repo.git.checkout(sha)
+            except:
+                print(' - Failed to checkout ref ' + ref_output)
     except:
         print(' - Checkout ref ' + ref_output)
         try:
