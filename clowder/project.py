@@ -2,8 +2,7 @@
 import os
 from clowder.utility.print_utilities import (
     print_project_status,
-    print_validation,
-    print_verbose_status
+    print_validation
 )
 from clowder.utility.clowder_utilities import (
     groom,
@@ -14,6 +13,7 @@ from clowder.utility.git_utilities import (
     git_current_sha,
     git_is_dirty,
     git_stash,
+    git_status
 )
 
 
@@ -80,7 +80,7 @@ class Project(object):
     def meow_verbose(self):
         """Print verbose status for project"""
         self._print_status()
-        print_verbose_status(self.full_path())
+        git_status(self.full_path())
 
     def stash(self):
         """Stash changes for project if dirty"""

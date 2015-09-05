@@ -5,8 +5,7 @@ from clowder.utility.git_utilities import (
     git_current_sha,
     git_current_branch,
     git_is_detached,
-    git_is_dirty,
-    git_status
+    git_is_dirty
 )
 
 def format_clowder_string(repo_path, name):
@@ -48,10 +47,6 @@ def get_cat_face():
 def get_cat():
     """Return a cat emoji"""
     return emoji.emojize(':cat2:', use_aliases=True)
-
-def print_clowder_not_found_message():
-    """Print error message when clowder not found"""
-    cprint('No clowder found in the current directory, exiting...\n', 'red')
 
 def print_clowder_repo_status(root_directory):
     """Print clowder repo status"""
@@ -95,7 +90,3 @@ def print_validation(repo_path):
         return
     if git_is_dirty(repo_path):
         print(' - Dirty repo. Please stash, commit, or discard your changes')
-
-def print_verbose_status(repo_path):
-    """Print git status"""
-    git_status(repo_path)
