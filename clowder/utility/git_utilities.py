@@ -12,19 +12,37 @@ def git_checkout_branch(repo_path, branch, remote):
     branch_output = colored('(' + branch + ')', 'magenta')
     if branch in repo.heads:
         default_branch = repo.heads[branch]
-        if repo.head.is_detached or repo.head.ref is not default_branch:
-            print(' - Checkout branch ' + branch_output)
-            default_branch.checkout()
-    else:
         try:
-            print(' - Create and checkout branch ' + branch_output)
-            origin = repo.remotes[remote]
-            origin.fetch()
-            default_branch = repo.create_head(branch, origin.refs[branch])
-            default_branch.set_tracking_branch(origin.refs[branch])
-            default_branch.checkout()
+            if not repo.head.is_detached and repo.head.ref.commit == default_branch.commit:
+                print(' - Already on correct branch')
+            else:
+                try:
+                    print(' - Checkout branch ' + branch_output)
+                    default_branch.checkout()
+                except:
+                    print(' - Failed to checkout branch ' + branch_output)
         except:
-            print(' - Failed to create and checkout branch ' + branch_output)
+            try:
+                print(' - Checkout branch ' + branch_output)
+                default_branch.checkout()
+            except:
+                print(' - Failed to checkout branch ' + branch_output)
+    else:
+        git_create_checkout_branch(repo_path, branch, remote)
+
+def git_create_checkout_branch(repo_path, branch, remote):
+    """Create and checkout tracking branch"""
+    repo = Repo(repo_path)
+    branch_output = colored('(' + branch + ')', 'magenta')
+    try:
+        print(' - Create and checkout branch ' + branch_output)
+        origin = repo.remotes[remote]
+        origin.fetch()
+        default_branch = repo.create_head(branch, origin.refs[branch])
+        default_branch.set_tracking_branch(origin.refs[branch])
+        default_branch.checkout()
+    except:
+        print(' - Failed to create and checkout branch ' + branch_output)
 
 def git_checkout_ref(repo_path, ref, remote):
     """Checkout default branch. Create if doesn't exist"""
