@@ -53,30 +53,38 @@ class Command(object):
         group.add_argument('--version', '-v', choices=self.versions,
                            help='Version name to herd')
         group.add_argument('--groups', '-g', choices=self.group_names,
-                           nargs='+', help='Groups to herd')
+                           default=self.group_names, nargs='+', help='Groups to herd')
         # clowder forall
         forall_help = 'Run command in project directories'
         parser_forall = subparsers.add_parser('forall', help=forall_help)
-        forall_cmd_help = 'Command to run in project directories'
         parser_forall.add_argument('--command', '-c', dest='cmd', required=True,
-                                   help=forall_cmd_help)
+                                   help='Command to run in project directories')
         parser_forall.add_argument('--groups', '-g', choices=self.group_names,
-                                   nargs='+', help='Groups to run command for')
+                                   default=self.group_names, nargs='+',
+                                   help='Groups to run command for')
         # clowder meow
-        parser_meow = subparsers.add_parser('meow', add_help=False,
-                                            help='Print status for projects')
+        parser_meow = subparsers.add_parser('meow', help='Print status for projects')
         parser_meow.add_argument('--verbose', '-v', action='store_true',
                                  help='Print detailed diff status')
+        parser_meow.add_argument('--groups', '-g', choices=self.group_names,
+                                 default=self.group_names, nargs='+',
+                                 help='Groups to print status for')
         # clowder fix
         fix_help = 'Create version of clowder.yaml for current repos'
         parser_fix = subparsers.add_parser('fix', help=fix_help)
         parser_fix.add_argument('version', help='Version name to fix')
         # clowder groom
         groom_help = 'Discard current changes in all projects'
-        subparsers.add_parser('groom', add_help=False, help=groom_help)
+        parser_groom = subparsers.add_parser('groom', help=groom_help)
+        parser_groom.add_argument('--groups', '-g', choices=self.group_names,
+                                  default=self.group_names, nargs='+',
+                                  help='Groups to groom')
         # clowder stash
-        stash_help = 'Stash current changes in all projects'
-        subparsers.add_parser('stash', add_help=False, help=stash_help)
+        parser_stash = subparsers.add_parser('stash',
+                                             help='Stash current changes in all projects')
+        parser_stash.add_argument('--groups', '-g', choices=self.group_names,
+                                  default=self.group_names, nargs='+',
+                                  help='Groups to stash')
         # clowder sync
         subparsers.add_parser('sync', add_help=False, help='Sync clowder repo')
 
@@ -102,10 +110,7 @@ class Command(object):
         """clowder forall command"""
         if self.clowder is not None:
             cprint('Forall...\n', 'yellow')
-            if self.args.groups is None:
-                self.clowder.forall(self.args.cmd)
-            else:
-                self.clowder.forall_groups(self.args.cmd, self.args.groups)
+            self.clowder.forall(self.args.cmd, self.args.groups)
         else:
             exit_clowder_not_found()
 
@@ -113,7 +118,7 @@ class Command(object):
         """clowder groom command"""
         if self.clowder is not None:
             cprint('Groom...\n', 'yellow')
-            self.clowder.groom()
+            self.clowder.groom(self.args.groups)
         else:
             exit_clowder_not_found()
 
@@ -124,10 +129,7 @@ class Command(object):
             clowder_repo = ClowderRepo(self.root_directory)
             clowder_repo.symlink_yaml(self.args.version)
             clowder = ClowderYAML(self.root_directory)
-            if self.args.groups is not None:
-                clowder.herd_groups(self.args.groups)
-            else:
-                clowder.herd_all()
+            clowder.herd(self.args.groups)
         else:
             exit_clowder_not_found()
 
@@ -136,9 +138,9 @@ class Command(object):
         if self.clowder is not None:
             cprint('Meow...\n', 'yellow')
             if self.args.verbose:
-                self.clowder.meow_verbose()
+                self.clowder.meow_verbose(self.args.groups)
             else:
-                self.clowder.meow()
+                self.clowder.meow(self.args.groups)
         else:
             exit_clowder_not_found()
 
@@ -146,7 +148,7 @@ class Command(object):
         """clowder stash command"""
         if self.clowder is not None:
             cprint('Stash...\n', 'yellow')
-            self.clowder.stash()
+            self.clowder.stash(self.args.groups)
         else:
             exit_clowder_not_found()
 

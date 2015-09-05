@@ -81,6 +81,8 @@ setup_old_repos # configure repo's for testing pulling new commits
 echo "TEST: Normal herd with out of date repos"
 clowder herd || exit 1
 clowder meow || exit 1
+echo "TEST: Test meow for specific groups"
+clowder meow -g projects || exit 1
 
 print_separator
 
@@ -128,7 +130,10 @@ clowder meow -v || exit 1
 echo "TEST: Fail herd with dirty repos"
 clowder herd && exit 1
 clowder meow || exit 1
-echo "TEST: Groom when dirty"
+echo "TEST: Groom specific group when dirty"
+clowder groom -g projects || exit 1
+clowder meow || exit 1
+echo "TEST: Groom all when dirty"
 clowder groom || exit 1
 clowder meow || exit 1
 echo "TEST: Groom when clean"
@@ -213,7 +218,10 @@ clowder meow || exit 1
 
 echo "TEST: Fail herd with dirty repos"
 clowder herd && exit 1
-echo "TEST: Stash changes when dirty"
+echo "TEST: Stash specific groups when dirty"
+clowder stash -g projects || exit 1
+clowder meow || exit 1
+echo "TEST: Stash all changes when dirty"
 clowder stash || exit 1
 clowder meow || exit 1
 echo "TEST: Stash changes when clean"
@@ -258,3 +266,12 @@ clowder fix -h
 print_separator
 echo "TEST: clowder forall -h"
 clowder forall -h
+print_separator
+echo "TEST: clowder groom -h"
+clowder groom -h
+print_separator
+echo "TEST: clowder meow -h"
+clowder meow -h
+print_separator
+echo "TEST: clowder stash -h"
+clowder stash -h

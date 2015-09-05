@@ -26,7 +26,7 @@ class ClowderYAML(object):
 
     def fix_version(self, version):
         """Fix current commits to versioned clowder.yaml"""
-        self._validate_all()
+        self._validate(self.group_names)
         versions_dir = os.path.join(self.root_directory, 'clowder', 'versions')
         version_dir = os.path.join(versions_dir, version)
         if not os.path.exists(version_dir):
@@ -43,15 +43,7 @@ class ClowderYAML(object):
             print('Version ' + version_output + ' already exists at ' + yaml_file_output)
             print_exiting()
 
-    def forall(self, command):
-        """Runs command in all projects"""
-        directories = []
-        for group in self.groups:
-            for project in group.projects:
-                directories.append(project.full_path())
-        _forall_run(command, directories)
-
-    def forall_groups(self, command, group_names):
+    def forall(self, command, group_names):
         """Runs command in all projects of groups specified"""
         directories = []
         for group in self.groups:
@@ -73,54 +65,50 @@ class ClowderYAML(object):
         else:
             return None
 
-    def groom(self):
+    def groom(self, group_names):
         """Discard changes for all projects"""
         print_clowder_repo_status(self.root_directory)
         print('')
         if self._is_dirty():
             for group in self.groups:
-                group.groom()
+                if group.name in group_names:
+                    group.groom()
         else:
             print('No changes to discard')
 
-    def herd_all(self):
+    def herd(self, group_names):
         """Sync all projects with latest upstream changes"""
-        self._validate_all()
-        print_clowder_repo_status(self.root_directory)
-        print('')
-        for group in self.groups:
-            group.herd()
-
-    def herd_groups(self, group_names):
-        """Sync all projects with latest upstream changes"""
-        self._validate_groups(group_names)
+        self._validate(group_names)
         print_clowder_repo_status(self.root_directory)
         print('')
         for group in self.groups:
             if group.name in group_names:
                 group.herd()
 
-    def meow(self):
+    def meow(self, group_names):
         """Print status for all projects"""
         print_clowder_repo_status(self.root_directory)
         print('')
         for group in self.groups:
-            group.meow()
+            if group.name in group_names:
+                group.meow()
 
-    def meow_verbose(self):
+    def meow_verbose(self, group_names):
         """Print git status for all projects with changes"""
         print_clowder_repo_status(self.root_directory)
         print('')
         for group in self.groups:
-            group.meow_verbose()
+            if group.name in group_names:
+                group.meow_verbose()
 
-    def stash(self):
+    def stash(self, group_names):
         """Stash changes for all projects with changes"""
         print_clowder_repo_status(self.root_directory)
         print('')
         if self._is_dirty():
             for group in self.groups:
-                group.stash()
+                if group.name in group_names:
+                    group.stash()
         else:
             print('No changes to stash')
 
@@ -168,17 +156,7 @@ class ClowderYAML(object):
                                              self.sources))
                 # self.groups.sort(key=lambda group: group.name)
 
-    def _validate_all(self):
-        """Validate status of all projects"""
-        valid = True
-        for group in self.groups:
-            group.print_validation()
-            if not group.is_valid():
-                valid = False
-        if not valid:
-            print_exiting()
-
-    def _validate_groups(self, group_names):
+    def _validate(self, group_names):
         """Validate status of all projects for specified groups"""
         valid = True
         for group in self.groups:
