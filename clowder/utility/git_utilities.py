@@ -37,15 +37,28 @@ def git_create_checkout_branch(repo_path, branch, remote):
     """Create and checkout tracking branch"""
     repo = Repo(repo_path)
     branch_output = colored('(' + branch + ')', 'magenta')
+    remote_output = colored(remote, attrs=['underline'])
+    print(' - Create and checkout branch ' + branch_output)
     try:
-        print(' - Create and checkout branch ' + branch_output)
         origin = repo.remotes[remote]
         origin.fetch()
-        default_branch = repo.create_head(branch, origin.refs[branch])
-        default_branch.set_tracking_branch(origin.refs[branch])
-        default_branch.checkout()
     except:
-        print(' - Failed to create and checkout branch ' + branch_output)
+        print(' - Failed to fetch from remote ' + remote_output)
+    else:
+        try:
+            default_branch = repo.create_head(branch, origin.refs[branch])
+        except:
+            print(' - Failed to create branch ' + branch_output)
+        else:
+            try:
+                default_branch.set_tracking_branch(origin.refs[branch])
+            except:
+                print(' - Failed to set tracking branch ' + branch_output)
+            else:
+                try:
+                    default_branch.checkout()
+                except:
+                    print(' - Failed to checkout branch ' + branch_output)
 
 def git_checkout_ref(repo_path, ref, remote):
     """Checkout default branch. Create if doesn't exist"""
