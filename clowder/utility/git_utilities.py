@@ -74,10 +74,9 @@ def git_checkout_tag(repo_path, tag):
     except:
         print(' - Failed to checkout tag ' + tag_output)
 
-def git_clone_url_at_path(url, repo_path, branch, remote):
+def git_clone_url_at_path(url, repo_path, ref, remote):
     """Clone git repo from url at path"""
     repo_path_output = colored(repo_path, 'cyan')
-    ref = git_truncate_ref(branch)
     if not os.path.isdir(os.path.join(repo_path, '.git')):
         if not os.path.isdir(repo_path):
             os.makedirs(repo_path)
@@ -90,19 +89,7 @@ def git_clone_url_at_path(url, repo_path, branch, remote):
         else:
             git_create_remote(repo_path, remote, url)
             git_fetch(repo_path)
-
-            ref_type = git_ref_type(branch)
-            if ref_type is 'branch':
-                branch = git_truncate_ref(ref)
-                git_checkout_branch(repo_path, branch, remote)
-            elif ref_type is 'tag':
-                tag = git_truncate_ref(ref)
-                git_checkout_tag(repo_path, tag)
-            elif ref_type is 'sha':
-                git_checkout_sha(repo_path, ref)
-            else:
-                ref_output = colored('(' + ref + ')', 'magenta')
-                print('Failed to checkout unknown ref ' + ref_output)
+            git_checkout_ref(repo_path, ref, remote)
 
 def git_create_remote(repo_path, remote, url):
     """Create new remote"""
