@@ -36,7 +36,7 @@ setup(
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
     ],
-    packages=['clowder', 'clowder.model', 'clowder.utility'],
+    packages=['clowder', 'clowder.utility'],
     entry_points={
         'console_scripts': [
             'clowder=clowder.cmd:main',

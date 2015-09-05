@@ -6,8 +6,8 @@ if __name__ == '__main__':
 
 import argcomplete, argparse, colorama, os, signal, sys
 from termcolor import cprint
-from clowder.model.clowder_repo import ClowderRepo
-from clowder.model.clowder_yaml import ClowderYAML
+from clowder.clowder_repo import ClowderRepo
+from clowder.clowder_yaml import ClowderYAML
 from clowder.utility.print_utilities import (
     print_clowder_not_found_message,
     print_exiting
