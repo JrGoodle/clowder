@@ -1,12 +1,10 @@
 """Clowder repo management"""
 import os
 from clowder.utility.git_utilities import git_clone_url_at_path
-from clowder.utility.print_utilities import (
+from clowder.utility.clowder_utilities import (
     print_clowder_repo_status,
     print_exiting,
-    print_validation
-)
-from clowder.utility.clowder_utilities import (
+    print_validation,
     sync,
     validate_repo_state
 )

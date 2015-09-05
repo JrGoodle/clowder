@@ -3,10 +3,9 @@ import os, subprocess, sys, yaml
 from termcolor import colored
 from clowder.group import Group
 from clowder.source import Source
-from clowder.utility.print_utilities import (
+from clowder.utility.clowder_utilities import (
     print_clowder_repo_status,
-    print_exiting,
-    print_running_command
+    print_exiting
 )
 
 class ClowderYAML(object):
@@ -198,7 +197,9 @@ def _forall_run(command, directories):
     sorted_paths = sorted(set(directories))
     paths = [p for p in sorted_paths if os.path.isdir(p)]
     for path in paths:
-        print_running_command(command)
+        running_output = colored('Running command', attrs=['underline'])
+        command_output = colored(command, attrs=['bold'])
+        print(running_output + ': ' + command_output)
         directory_output = colored('Directory', attrs=['underline'])
         path_output = colored(path, 'cyan')
         print(directory_output + ': ' + path_output)
