@@ -13,9 +13,6 @@ from clowder.utility.git_utilities import (
     git_truncate_ref
 )
 
-# Disable errors shown by pylint for no specified exception types
-# pylint: disable=W0702
-
 def groom(repo_path):
     """Discard current changes in repository"""
     repo = Repo(repo_path)

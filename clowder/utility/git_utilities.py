@@ -14,10 +14,10 @@ def git_checkout_branch(repo_path, branch, remote):
         default_branch = repo.heads[branch]
         try:
             not_detached = not repo.head.is_detached
-            # same_commit = repo.head.ref.commit == default_branch.commit
             same_branch = repo.head.ref == default_branch
+            # same_commit = repo.head.ref.commit == default_branch.commit
             if not_detached and same_branch:
-                print(' - Already on correct branch')
+                print(' - On correct branch')
             else:
                 try:
                     print(' - Checkout branch ' + branch_output)
@@ -68,7 +68,7 @@ def git_checkout_sha(repo_path, sha):
     ref_output = colored('(' + sha + ')', 'magenta')
     try:
         if repo.head.commit.hexsha == sha and repo.head.is_detached:
-            print(' - Already on correct commit')
+            print(' - On correct commit')
         else:
             try:
                 print(' - Checkout ref ' + ref_output)
@@ -89,7 +89,7 @@ def git_checkout_tag(repo_path, tag):
     if tag in repo.tags:
         try:
             if repo.head.commit == repo.tags[tag].commit and repo.head.is_detached:
-                print(' - Already on correct commit')
+                print(' - On correct commit for tag')
             else:
                 try:
                     print(' - Checkout tag ' + tag_output)
