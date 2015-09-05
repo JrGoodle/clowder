@@ -38,6 +38,8 @@ echo "TEST: Normal herd after breed"
 ./breed.sh  || exit 1
 clowder herd  || exit 1
 clowder meow || exit 1
+echo "TEST: Test meow for specific groups"
+clowder meow -g cats || exit 1
 ./clean.sh || exit 1
 
 print_separator

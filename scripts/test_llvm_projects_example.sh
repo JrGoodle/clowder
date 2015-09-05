@@ -81,6 +81,8 @@ setup_old_repos # configure repo's for testing pulling new commits
 echo "TEST: Normal herd with out of date repos"
 clowder herd || exit 1
 clowder meow || exit 1
+echo "TEST: Test meow for specific groups"
+clowder meow -g projects || exit 1
 
 print_separator
 

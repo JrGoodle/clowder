@@ -92,19 +92,21 @@ class ClowderYAML(object):
             if group.name in group_names:
                 group.herd()
 
-    def meow(self):
+    def meow(self, group_names):
         """Print status for all projects"""
         print_clowder_repo_status(self.root_directory)
         print('')
         for group in self.groups:
-            group.meow()
+            if group.name in group_names:
+                group.meow()
 
-    def meow_verbose(self):
+    def meow_verbose(self, group_names):
         """Print git status for all projects with changes"""
         print_clowder_repo_status(self.root_directory)
         print('')
         for group in self.groups:
-            group.meow_verbose()
+            if group.name in group_names:
+                group.meow_verbose()
 
     def stash(self):
         """Stash changes for all projects with changes"""
