@@ -65,13 +65,14 @@ class ClowderYAML(object):
         else:
             return None
 
-    def groom(self):
+    def groom(self, group_names):
         """Discard changes for all projects"""
         print_clowder_repo_status(self.root_directory)
         print('')
         if self._is_dirty():
             for group in self.groups:
-                group.groom()
+                if group.name in group_names:
+                    group.groom()
         else:
             print('No changes to discard')
 
@@ -108,13 +109,14 @@ class ClowderYAML(object):
             if group.name in group_names:
                 group.meow_verbose()
 
-    def stash(self):
+    def stash(self, group_names):
         """Stash changes for all projects with changes"""
         print_clowder_repo_status(self.root_directory)
         print('')
         if self._is_dirty():
             for group in self.groups:
-                group.stash()
+                if group.name in group_names:
+                    group.stash()
         else:
             print('No changes to stash')
 

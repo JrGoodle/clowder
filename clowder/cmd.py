@@ -74,10 +74,14 @@ class Command(object):
         parser_fix.add_argument('version', help='Version name to fix')
         # clowder groom
         groom_help = 'Discard current changes in all projects'
-        subparsers.add_parser('groom', add_help=False, help=groom_help)
+        parser_groom = subparsers.add_parser('groom', help=groom_help)
+        parser_groom.add_argument('--groups', '-g', choices=self.group_names,
+                                  nargs='+', help='Groups to groom')
         # clowder stash
         stash_help = 'Stash current changes in all projects'
-        subparsers.add_parser('stash', add_help=False, help=stash_help)
+        parser_stash = subparsers.add_parser('stash', help=stash_help)
+        parser_stash.add_argument('--groups', '-g', choices=self.group_names,
+                                  nargs='+', help='Groups to stash')
         # clowder sync
         subparsers.add_parser('sync', add_help=False, help='Sync clowder repo')
 
@@ -114,7 +118,10 @@ class Command(object):
         """clowder groom command"""
         if self.clowder is not None:
             cprint('Groom...\n', 'yellow')
-            self.clowder.groom()
+            if self.args.groups is None:
+                self.clowder.groom(self.clowder.group_names)
+            else:
+                self.clowder.groom(self.args.groups)
         else:
             exit_clowder_not_found()
 
@@ -153,7 +160,10 @@ class Command(object):
         """clowder stash command"""
         if self.clowder is not None:
             cprint('Stash...\n', 'yellow')
-            self.clowder.stash()
+            if self.args.groups is None:
+                self.clowder.stash(self.clowder.group_names)
+            else:
+                self.clowder.stash(self.args.groups)
         else:
             exit_clowder_not_found()
 

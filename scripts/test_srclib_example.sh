@@ -81,7 +81,10 @@ do
 done
 clowder meow || exit 1
 
-echo "TEST: Groom when dirty"
+echo "TEST: Groom specific group when dirty"
+clowder groom -g toolchains || exit 1
+clowder meow || exit 1
+echo "TEST: Groom all when dirty"
 clowder groom || exit 1
 clowder meow || exit 1
 echo "TEST: Groom when clean"
@@ -194,7 +197,10 @@ clowder meow -v || exit 1
 
 echo "TEST: Fail herd with dirty repos"
 clowder herd && exit 1
-echo "TEST: Stash changes when dirty"
+echo "TEST: Stash specific groups when dirty"
+clowder stash -g toolchains || exit 1
+clowder meow || exit 1
+echo "TEST: Stash all changes when dirty"
 clowder stash || exit 1
 clowder meow || exit 1
 echo "TEST: Stash changes when clean"
@@ -257,3 +263,12 @@ clowder fix -h
 print_separator
 echo "TEST: clowder forall -h"
 clowder forall -h
+print_separator
+echo "TEST: clowder groom -h"
+clowder groom -h
+print_separator
+echo "TEST: clowder meow -h"
+clowder meow -h
+print_separator
+echo "TEST: clowder stash -h"
+clowder stash -h
