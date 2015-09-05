@@ -75,14 +75,18 @@ This command is like `clowder herd`, but for syncing the repository containing t
 ```bash
 $ clowder meow # print status of projects
 $ clowder meow -v # print more verbose status of projects
+$ clowder meow -g clang llvm # print status of projects in clang and llvm groups
+$ clowder meow -g clang llvm -v # print verbose status of projects in clang and llvm groups
 ```
 
 ```bash
 $ clowder groom # Discard any changes in projects
+$ clowder groom -g clang llvm # Discard any changes in projects in clang and llvm groups
 ```
 
 ```bash
 $ clowder stash # Stash any changes in projects
+$ clowder stash -g clang llvm # Stash any changes in projects in clang and llvm groups
 ```
 
 ```bash
