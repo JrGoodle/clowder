@@ -76,15 +76,7 @@ class ClowderYAML(object):
         else:
             print('No changes to discard')
 
-    def herd_all(self):
-        """Sync all projects with latest upstream changes"""
-        self._validate(self.group_names)
-        print_clowder_repo_status(self.root_directory)
-        print('')
-        for group in self.groups:
-            group.herd()
-
-    def herd_groups(self, group_names):
+    def herd(self, group_names):
         """Sync all projects with latest upstream changes"""
         self._validate(group_names)
         print_clowder_repo_status(self.root_directory)

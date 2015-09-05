@@ -53,7 +53,7 @@ class Command(object):
         group.add_argument('--version', '-v', choices=self.versions,
                            help='Version name to herd')
         group.add_argument('--groups', '-g', choices=self.group_names,
-                           nargs='+', help='Groups to herd')
+                           default=self.group_names, nargs='+', help='Groups to herd')
         # clowder forall
         forall_help = 'Run command in project directories'
         parser_forall = subparsers.add_parser('forall', help=forall_help)
@@ -129,10 +129,7 @@ class Command(object):
             clowder_repo = ClowderRepo(self.root_directory)
             clowder_repo.symlink_yaml(self.args.version)
             clowder = ClowderYAML(self.root_directory)
-            if self.args.groups is not None:
-                clowder.herd_groups(self.args.groups)
-            else:
-                clowder.herd_all()
+            clowder.herd(self.args.groups)
         else:
             exit_clowder_not_found()
 
