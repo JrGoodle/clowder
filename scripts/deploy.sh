@@ -32,6 +32,7 @@ VERSION=$(awk "/version='/" "${SETUP_PY}" | sed -n -e "s/^.*version='//p" | tr -
 echo "VERSION=${VERSION}"
 TAG="v${VERSION}"
 
+git fetch --tags
 if git rev-list "${TAG}" >/dev/null; then
 	echo "${TAG} tag exists."
 else
