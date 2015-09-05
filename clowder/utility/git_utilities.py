@@ -10,6 +10,7 @@ def git_checkout_branch(repo_path, branch, remote):
     """Checkout branch"""
     repo = Repo(repo_path)
     branch_output = colored('(' + branch + ')', 'magenta')
+    correct_branch = False
     if branch in repo.heads:
         default_branch = repo.heads[branch]
         try:
@@ -17,15 +18,13 @@ def git_checkout_branch(repo_path, branch, remote):
             same_branch = repo.head.ref == default_branch
             # same_commit = repo.head.ref.commit == default_branch.commit
         except:
-            try:
-                print(' - Checkout branch ' + branch_output)
-                default_branch.checkout()
-            except:
-                print(' - Failed to checkout branch ' + branch_output)
+            pass
         else:
             if not_detached and same_branch:
                 print(' - On correct branch')
-            else:
+                correct_branch = True
+        finally:
+            if not correct_branch:
                 try:
                     print(' - Checkout branch ' + branch_output)
                     default_branch.checkout()
@@ -67,19 +66,18 @@ def git_checkout_sha(repo_path, sha):
     """Checkout commit sha"""
     repo = Repo(repo_path)
     ref_output = colored('(' + sha + ')', 'magenta')
+    correct_commit = False
     try:
         same_sha = repo.head.commit.hexsha == sha
         is_detached = repo.head.is_detached
     except:
-        try:
-            print(' - Checkout ref ' + ref_output)
-            repo.git.checkout(sha)
-        except:
-            print(' - Failed to checkout ref ' + ref_output)
+        pass
     else:
         if same_sha and is_detached:
             print(' - On correct commit')
-        else:
+            correct_commit = True
+    finally:
+        if not correct_commit:
             try:
                 print(' - Checkout ref ' + ref_output)
                 repo.git.checkout(sha)
@@ -90,20 +88,19 @@ def git_checkout_tag(repo_path, tag):
     """Checkout tag"""
     repo = Repo(repo_path)
     tag_output = colored('(' + tag + ')', 'magenta')
+    correct_commit = False
     if tag in repo.tags:
         try:
             same_commit = repo.head.commit == repo.tags[tag].commit
             is_detached = repo.head.is_detached
         except:
-            try:
-                print(' - Checkout tag ' + tag_output)
-                repo.git.checkout(tag)
-            except:
-                print(' - Failed to checkout tag ' + tag_output)
+            pass
         else:
             if same_commit and is_detached:
                 print(' - On correct commit for tag')
-            else:
+                correct_commit = True
+        finally:
+            if not correct_commit:
                 try:
                     print(' - Checkout tag ' + tag_output)
                     repo.git.checkout(tag)
