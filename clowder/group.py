@@ -1,6 +1,6 @@
 """Model representation of clowder.yaml group"""
 
-from clowder.model.project import Project
+from clowder.project import Project
 from clowder.utility.print_utilities import print_group
 
 class Group(object):

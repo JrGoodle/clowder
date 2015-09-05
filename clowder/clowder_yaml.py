@@ -1,8 +1,8 @@
 """clowder.yaml parsing and functionality"""
 import os, subprocess, sys, yaml
 from termcolor import colored
-from clowder.model.group import Group
-from clowder.model.source import Source
+from clowder.group import Group
+from clowder.source import Source
 from clowder.utility.print_utilities import (
     print_clowder_repo_status,
     print_exiting,
