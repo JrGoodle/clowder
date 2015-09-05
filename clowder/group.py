@@ -15,16 +15,11 @@ class Group(object):
 
     def get_all_project_names(self):
         """Return all project names"""
-        project_names = []
-        for project in self.projects:
-            project_names.append(project.name)
-        return project_names
+        return [p.name for p in self.projects]
 
     def get_yaml(self):
         """Return python object representation for saving yaml"""
-        projects_yaml = []
-        for project in self.projects:
-            projects_yaml.append(project.get_yaml())
+        projects_yaml = [p.get_yaml() for p in self.projects]
         return {'name': self.name, 'projects': projects_yaml}
 
     def groom(self):

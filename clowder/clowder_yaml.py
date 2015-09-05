@@ -21,9 +21,7 @@ class ClowderYAML(object):
 
         self._load_yaml()
 
-        self.group_names = []
-        for group in self.groups:
-            self.group_names.append(group.name)
+        self.group_names = [g.name for g in self.groups]
         self.group_names.sort()
 
     def fix_version(self, version):
@@ -64,9 +62,7 @@ class ClowderYAML(object):
 
     def get_all_project_names(self):
         """Returns all project names for current clowder.yaml"""
-        names = []
-        for group in self.groups:
-            names.extend(group.get_all_project_names())
+        names = [g.get_all_project_names() for g in self.groups]
         return names.sort()
 
     def get_fixed_version_names(self):
@@ -130,18 +126,11 @@ class ClowderYAML(object):
 
     def _get_yaml(self):
         """Return python object representation for saving yaml"""
-        groups_yaml = []
-        for group in self.groups:
-            groups_yaml.append(group.get_yaml())
-
-        sources_yaml = []
-        for source in self.sources:
-            sources_yaml.append(source.get_yaml())
-
+        groups_yaml = [g.get_yaml() for g in self.groups]
+        sources_yaml = [s.get_yaml() for s in self.sources]
         defaults_yaml = {'ref': self.default_ref,
                          'remote': self.default_remote,
                          'source': self.default_source}
-
         return {'defaults': defaults_yaml,
                 'sources': sources_yaml,
                 'groups': groups_yaml}
@@ -166,8 +155,7 @@ class ClowderYAML(object):
                 self.default_remote = parsed_yaml['defaults']['remote']
                 self.default_source = parsed_yaml['defaults']['source']
 
-                for source in parsed_yaml['sources']:
-                    self.sources.append(Source(source))
+                self.sources = [Source(s) for s in parsed_yaml['sources']]
 
                 defaults = {'ref': self.default_ref,
                             'remote': self.default_remote,
@@ -229,15 +217,14 @@ def _validate_yaml(parsed_yaml):
 
 def _forall_run(command, directories):
     """Run command in all directories"""
-    directories_set = set(directories)
-    sorted_paths = sorted(directories_set)
-    for path in sorted_paths:
-        if os.path.isdir(path):
-            print_running_command(command)
-            directory_output = colored('Directory', attrs=['underline'])
-            path_output = colored(path, 'cyan')
-            print(directory_output + ': ' + path_output)
-            subprocess.call(command.split(),
-                            cwd=path)
-            print('')
+    sorted_paths = sorted(set(directories))
+    paths = [p for p in sorted_paths if os.path.isdir(p)]
+    for path in paths:
+        print_running_command(command)
+        directory_output = colored('Directory', attrs=['underline'])
+        path_output = colored(path, 'cyan')
+        print(directory_output + ': ' + path_output)
+        subprocess.call(command.split(),
+                        cwd=path)
+        print('')
     sys.exit()
