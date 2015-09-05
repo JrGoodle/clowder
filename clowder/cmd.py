@@ -70,8 +70,7 @@ class Command(object):
         # clowder fix
         fix_help = 'Create version of clowder.yaml for current repos'
         parser_fix = subparsers.add_parser('fix', help=fix_help)
-        parser_fix.add_argument('-version', '-v',
-                                required=True, help='Version name to fix')
+        parser_fix.add_argument('version', help='Version name to fix')
         # clowder groom
         groom_help = 'Discard current changes in all projects'
         subparsers.add_parser('groom', add_help=False, help=groom_help)
