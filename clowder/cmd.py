@@ -103,9 +103,9 @@ class Command(object):
         if self.clowder is not None:
             cprint('Forall...\n', 'yellow')
             if self.args.groups is None:
-                self.clowder.forall(self.args.cmd)
+                self.clowder.forall(self.args.cmd, self.clowder.group_names)
             else:
-                self.clowder.forall_groups(self.args.cmd, self.args.groups)
+                self.clowder.forall(self.args.cmd, self.args.groups)
         else:
             exit_clowder_not_found()
 
