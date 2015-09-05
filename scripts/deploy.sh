@@ -4,14 +4,14 @@ cd "$( dirname "${BASH_SOURCE[0]}" )"
 
 echo "deploy-ios.sh"
 
-if [[ "$TRAVIS_PULL_REQUEST" != "false" ]]; then
-  echo "This is a pull request. No deployment will be done."
-  exit 0
-fi
-if [[ "$TRAVIS_BRANCH" != "deploy" ]]; then
-  echo "Testing on a branch other than deploy. No deployment will be done."
-  exit 0
-fi
+# if [[ "$TRAVIS_PULL_REQUEST" != "false" ]]; then
+#   echo "This is a pull request. No deployment will be done."
+#   exit 0
+# fi
+# if [[ "$TRAVIS_BRANCH" != "master" ]]; then
+#   echo "Testing on a branch other than master. No deployment will be done."
+#   exit 0
+# fi
 
 export GITHUB_USER='JrGoodle'
 export GITHUB_REPO='clowder'
