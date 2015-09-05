@@ -35,7 +35,7 @@ TAG="v${VERSION}"
 if git rev-list "${TAG}" >/dev/null; then
 	echo "${TAG} tag exists."
 else
-    echo "${TAG_NAME} tag not found. Creating new tag and GitHub Release"
+    echo "${TAG} tag not found. Creating new tag and GitHub Release"
     # Create new tag
     git tag "${TAG}"
     git push origin "${TAG}"
