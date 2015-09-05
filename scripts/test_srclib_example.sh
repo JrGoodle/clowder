@@ -134,6 +134,9 @@ clowder meow || exit 1
 echo "TEST: Normal herd after herding a previously fixed version"
 clowder herd || exit 1
 clowder meow || exit 1
+echo "TEST: Successfully herd twice"
+clowder herd || exit 1
+clowder meow || exit 1
 
 print_separator
 
@@ -152,6 +155,9 @@ pushd clowder &>/dev/null
 git reset --hard
 popd &>/dev/null
 echo "TEST: Successfully sync after discarding changes"
+clowder sync || exit 1
+clowder meow || exit 1
+echo "TEST: Successfully sync twice"
 clowder sync || exit 1
 clowder meow || exit 1
 

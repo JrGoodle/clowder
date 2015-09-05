@@ -102,6 +102,9 @@ print_separator
 echo "TEST: Successfully herd with no current changes"
 clowder herd || exit 1
 clowder meow || exit 1
+echo "TEST: Successfully herd twice"
+clowder herd || exit 1
+clowder meow || exit 1
 
 echo "TEST: Check current branches"
 for project in "${projects[@]}"
@@ -149,6 +152,9 @@ pushd clowder &>/dev/null
 git reset --hard
 popd &>/dev/null
 echo "TEST: Successfully sync after discarding changes"
+clowder sync || exit 1
+clowder meow || exit 1
+echo "TEST: Successfully sync twice"
 clowder sync || exit 1
 clowder meow || exit 1
 
