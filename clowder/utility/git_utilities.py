@@ -39,7 +39,7 @@ def git_checkout_ref(repo_path, ref, remote):
         git_checkout_sha(repo_path, ref)
     else:
         ref_output = colored('(' + ref + ')', 'magenta')
-        print('Failed to checkout unknown ref ' + ref_output)
+        print('Unknown ref ' + ref_output)
 
 def git_checkout_sha(repo_path, sha):
     """Checkout commit sha"""
@@ -49,14 +49,14 @@ def git_checkout_sha(repo_path, sha):
         if repo.head.commit.hexsha == sha and repo.head.is_detached:
             print(' - Already on correct commit')
         else:
-            print(' - Checkout ref ' + ref_output)
             try:
+                print(' - Checkout ref ' + ref_output)
                 repo.git.checkout(sha)
             except:
                 print(' - Failed to checkout ref ' + ref_output)
     except:
-        print(' - Checkout ref ' + ref_output)
         try:
+            print(' - Checkout ref ' + ref_output)
             repo.git.checkout(sha)
         except:
             print(' - Failed to checkout ref ' + ref_output)
@@ -70,14 +70,14 @@ def git_checkout_tag(repo_path, tag):
             if repo.head.commit == repo.tags[tag] and repo.head.is_detached:
                 print(' - Already on correct commit')
             else:
-                print(' - Checkout tag ' + tag_output)
                 try:
+                    print(' - Checkout tag ' + tag_output)
                     repo.git.checkout(tag)
                 except:
                     print(' - Failed to checkout tag ' + tag_output)
         except:
-            print(' - Checkout tag ' + tag_output)
             try:
+                print(' - Checkout tag ' + tag_output)
                 repo.git.checkout(tag)
             except:
                 print(' - Failed to checkout tag ' + tag_output)
@@ -90,9 +90,8 @@ def git_clone_url_at_path(url, repo_path, ref, remote):
     if not os.path.isdir(os.path.join(repo_path, '.git')):
         if not os.path.isdir(repo_path):
             os.makedirs(repo_path)
-
-        print(' - Cloning repo at ' + repo_path_output)
         try:
+            print(' - Cloning repo at ' + repo_path_output)
             Repo.init(repo_path)
         except:
             print(' - Failed to initialize repository')
@@ -107,8 +106,8 @@ def git_create_remote(repo_path, remote, url):
     remote_names = [r.name for r in repo.remotes]
     if remote not in remote_names:
         remote_output = colored(remote, attrs=['bold'])
-        print(" - Create remote " + remote_output)
         try:
+            print(" - Create remote " + remote_output)
             origin = repo.create_remote(remote, url)
             origin.fetch()
         except:
@@ -126,8 +125,8 @@ def git_current_sha(repo_path):
 
 def git_fetch(repo_path):
     """Fetch all remotes, tags, and prune"""
-    repo = Repo(repo_path)
     try:
+        repo = Repo(repo_path)
         repo.git.fetch('--all', '--prune', '--tags')
     except:
         print(' - Failed to fetch')
@@ -153,9 +152,9 @@ def git_is_dirty(repo_path):
 def git_pull(repo_path, remote, branch):
     """Pull from remote branch"""
     repo = Repo(repo_path)
-    print(' - Pulling latest changes')
     if not repo.head.is_detached:
         try:
+            print(' - Pulling latest changes')
             print(repo.git.pull(remote, branch))
         except:
             print(' - Failed to pull latest changes')
