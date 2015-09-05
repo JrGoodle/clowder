@@ -13,7 +13,10 @@ def git_checkout_branch(repo_path, branch, remote):
     if branch in repo.heads:
         default_branch = repo.heads[branch]
         try:
-            if not repo.head.is_detached and repo.head.ref.commit == default_branch.commit:
+            not_detached = not repo.head.is_detached
+            # same_commit = repo.head.ref.commit == default_branch.commit
+            same_branch = repo.head.ref == default_branch
+            if not_detached and same_branch:
                 print(' - Already on correct branch')
             else:
                 try:
