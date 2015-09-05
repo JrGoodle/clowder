@@ -94,13 +94,15 @@ def git_clone_url_at_path(url, repo_path, ref, remote):
 def git_create_remote(repo_path, remote, url):
     """Create new remote"""
     repo = Repo(repo_path)
-    try:
-        repo.remotes[remote]
-    except:
+    remote_names = [r.name for r in repo.remotes]
+    if remote not in remote_names:
         remote_output = colored(remote, attrs=['bold'])
         print(" - Create remote " + remote_output)
-        origin = repo.create_remote(remote, url)
-        origin.fetch()
+        try:
+            origin = repo.create_remote(remote, url)
+            origin.fetch()
+        except:
+            print(" - Failed to create remote " + remote_output)
 
 def git_current_branch(repo_path):
     """Return currently checked out branch of project"""

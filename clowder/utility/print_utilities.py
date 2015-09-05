@@ -1,7 +1,6 @@
 """Print utilities"""
 import emoji, os, sys
 from termcolor import colored, cprint
-from clowder.utility.clowder_utilities import validate_dirty
 from clowder.utility.git_utilities import (
     git_current_sha,
     git_current_branch,
@@ -97,7 +96,7 @@ def print_validation(repo_path):
         return
     # if not git_validate_detached(repo_path):
     #     print(' - HEAD is detached. Please point your HEAD to a branch before running clowder')
-    if not validate_dirty(repo_path):
+    if git_is_dirty(repo_path):
         print(' - Dirty repo. Please stash, commit, or discard your changes')
     # if not git_validate_untracked(repo_path):
     #     print(' - There are untracked files. Please remove these files or add to .gitignore')
