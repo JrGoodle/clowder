@@ -1,10 +1,10 @@
-"""Model representation of clowder.yaml group"""
+"""Representation of clowder.yaml group"""
 
 from clowder.project import Project
 from clowder.utility.print_utilities import print_group
 
 class Group(object):
-    """Model class for clowder.yaml group"""
+    """clowder.yaml group class"""
 
     def __init__(self, rootDirectory, group, defaults, sources):
         self.name = group['name']

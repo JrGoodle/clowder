@@ -1,7 +1,7 @@
-"""Model representation of clowder.yaml source"""
+"""Representation of clowder.yaml source"""
 
 class Source(object):
-    """Model class for clowder.yaml source"""
+    """clowder.yaml source class"""
 
     def __init__(self, remote):
         self.name = remote['name']

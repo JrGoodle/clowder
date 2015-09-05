@@ -8,19 +8,6 @@ from clowder.utility.git_utilities import (
     git_is_dirty
 )
 
-def format_clowder_string(repo_path, name):
-    """Return formatted string for clowder repo"""
-    project_output = format_project_string(repo_path, name)
-    current_ref_output = format_ref_string(repo_path)
-    return project_output + ' ' + current_ref_output
-
-def format_repo_string(repo_path, path, name):
-    """Return formatted string for project"""
-    project_output = format_project_string(repo_path, name)
-    current_ref_output = format_ref_string(repo_path)
-    path_output = colored(path, 'cyan')
-    return project_output + ' ' + current_ref_output + ' ' + path_output
-
 def format_project_string(repo_path, name):
     """Return formatted project name"""
     if git_is_dirty(repo_path):
@@ -55,8 +42,9 @@ def print_clowder_repo_status(root_directory):
         output = colored('clowder', 'green')
         print(get_cat_face() + ' ' + output)
         return
-    output = format_clowder_string(repo_path, 'clowder')
-    print(get_cat_face() + ' ' + output)
+    project_output = format_project_string(repo_path, 'clowder')
+    current_ref_output = format_ref_string(repo_path)
+    print(get_cat_face() + ' ' + project_output + ' ' + current_ref_output)
 
 def print_exiting():
     """Print Exiting and exit with error code"""
@@ -69,20 +57,6 @@ def print_group(name):
     """Print formatted group name"""
     name_output = colored(name, attrs=['bold', 'underline'])
     print(name_output)
-
-def print_project_status(root_directory, path, name):
-    """Print repo status"""
-    repo_path = os.path.join(root_directory, path)
-    if not os.path.isdir(os.path.join(repo_path, '.git')):
-        cprint(name, 'green')
-        return
-    print(format_repo_string(repo_path, path, name))
-
-def print_running_command(command):
-    """Print message about command being run"""
-    running_output = colored('Running command', attrs=['underline'])
-    command_output = colored(command, attrs=['bold'])
-    print(running_output + ': ' + command_output)
 
 def print_validation(repo_path):
     """Print validation messages"""

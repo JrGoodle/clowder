@@ -1,7 +1,9 @@
-"""Model representation of clowder.yaml project"""
+"""Representation of clowder.yaml project"""
 import os
+from termcolor import colored, cprint
 from clowder.utility.print_utilities import (
-    print_project_status,
+    format_project_string,
+    format_ref_string,
     print_validation
 )
 from clowder.utility.clowder_utilities import (
@@ -18,7 +20,7 @@ from clowder.utility.git_utilities import (
 
 
 class Project(object):
-    """Model class for clowder.yaml project"""
+    """clowder.yaml project class"""
 
     def __init__(self, root_directory, project, defaults, sources):
         self.root_directory = root_directory
@@ -94,7 +96,14 @@ class Project(object):
 
     def _print_status(self):
         """Print formatted project status"""
-        print_project_status(self.root_directory, self.path, self.name)
+        repo_path = os.path.join(self.root_directory, self.path)
+        if not os.path.isdir(os.path.join(repo_path, '.git')):
+            cprint(self.name, 'green')
+            return
+        project_output = format_project_string(repo_path, self.name)
+        current_ref_output = format_ref_string(repo_path)
+        path_output = colored(self.path, 'cyan')
+        print(project_output + ' ' + current_ref_output + ' ' + path_output)
 
     def print_validation(self):
         """Print validation message for project"""
