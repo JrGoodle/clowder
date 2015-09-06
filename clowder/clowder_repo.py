@@ -42,7 +42,7 @@ class ClowderRepo(object):
             print(' - Symlink ' + path_output)
             os.symlink(yaml_file, 'clowder.yaml')
         else:
-            print(path_output + r" doesn't seem to exist ¯\_(ツ)_/¯")
+            print(path_output + " doesn't seem to exist")
             print_exiting()
 
     def _validate(self):
