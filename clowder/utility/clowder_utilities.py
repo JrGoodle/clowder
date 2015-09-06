@@ -76,11 +76,11 @@ def print_clowder_repo_status(root_directory):
     repo_path = os.path.join(root_directory, 'clowder')
     if not os.path.isdir(os.path.join(repo_path, '.git')):
         output = colored('clowder', 'green')
-        print(cat_face() + ' ' + output)
+        print(cat_face() + '  ' + output)
         return
     project_output = format_project_string(repo_path, 'clowder')
     current_ref_output = format_ref_string(repo_path)
-    print(cat_face() + ' ' + project_output + ' ' + current_ref_output)
+    print(cat_face() + '  ' + project_output + ' ' + current_ref_output)
 
 def print_exiting():
     """Print Exiting and exit with error code"""
