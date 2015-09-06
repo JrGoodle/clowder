@@ -19,6 +19,7 @@ class SourceTest(unittest.TestCase):
         self.assertEqual(self.https_source.get_url_prefix(), 'https://github.com/')
 
     def test_get_yaml(self):
+        """Test get_yaml() method"""
         self.assertEqual(self.ssh_source.get_yaml(), self.ssh_source_dict)
         self.assertEqual(self.https_source.get_yaml(), self.https_source_dict)
 
