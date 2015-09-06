@@ -28,13 +28,14 @@ class ClowderYAML(object):
         """Save current commits to a clowder.yaml in the versions directory"""
         self._validate(self.group_names)
         versions_dir = os.path.join(self.root_directory, 'clowder', 'versions')
-        version_dir = os.path.join(versions_dir, version)
+        version_name = version.replace('/', '-') # Replace path separateors with dashes
+        version_dir = os.path.join(versions_dir, version_name)
         if not os.path.exists(version_dir):
             os.makedirs(version_dir)
 
         yaml_file = os.path.join(version_dir, 'clowder.yaml')
         yaml_file_output = colored(yaml_file, 'cyan')
-        version_output = colored(version, attrs=['bold'])
+        version_output = colored(version_name, attrs=['bold'])
         if not os.path.exists(yaml_file):
             with open(yaml_file, 'w') as file:
                 print('Fixing version ' + version_output + ' at ' + yaml_file_output)

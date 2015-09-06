@@ -276,6 +276,11 @@ clowder herd -v missing-groups
 clowder herd -g slavic || exit 1
 clowder meow || exit 1
 
+echo "TEST: Test fixing version with path separator in input name"
+clowder fix path/separator
+clowder herd -v path-separator || exit 1
+clowder meow || exit 1
+
 print_separator
 pushd clowder &>/dev/null
 git checkout master
