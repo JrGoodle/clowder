@@ -9,19 +9,17 @@ Managing multiple repositories can be pretty frustrating. There are a number of 
 - [git submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules)
 - [subtree merging](https://git-scm.com/book/en/v1/Git-Tools-Subtree-Merging)
 - [Google's repo tool](https://code.google.com/p/git-repo/)
+- [GitSlave](http://gitslave.sourceforge.net)
 - [git-submanage](https://github.com/idbrii/git-submanage)
 - [gr](https://github.com/mixu/gr)
 - [git-stree](https://github.com/tdd/git-stree)
 - [git-subrepo](https://github.com/ingydotnet/git-subrepo)
 
-All of these have their own approach, but many are based on submodules or subtrees.
-The problem with submodules and subtrees is that a tight coupling is created because dependencies are part of each repository.
-Google's `repo` tool takes a different approach, but is closely tied to Google's development workflow.
-`clowder` uses a similar approach as `repo` but with a yaml file instead of xml (and without the default rebasing behavior of `repo`).
-URL information and project locations on disk are specified in a `clowder.yaml` file.
-The use of a separate file for tracking projects means that there's detailed information about the dependencies between them, but each repository is still essentially independent.
-This file is checked into its own repository, so the project structure's history is saved under version control.
-You can `fix` specific versions with current commit hashes saved for later restoration.
+All of these have their own approach, but many are based on submodules or subtrees. Submodules and subtrees create a tight coupling between repositories because of the way dependencies are stored. Much has been written about their drawbacks elsewhere. Google's `repo` tool takes a different approach, but is closely tied to Google's development workflow (and doesn't have a great deal of documentation).
+
+`clowder` uses a similar approach as `repo` (and `gr`) but with a yaml file instead of xml (and without the default rebasing behavior of `repo`). URL information and relative project locations on disk are specified in a `clowder.yaml` file. This file is checked into its own repository, so the project structure's history is saved under version control. The use of a separate file for tracking projects means that there's detailed information about the dependencies between them, but each repository is still essentially independent. Projects can be tied to specific tags or commits, or can track branches. Specific versions can be saved from the current commit hashes of projects on disk for later restoration.
+
+`clowder` takes a mostly read-only approach to multiple repository management. The primary purpose is for synchronization, so normal development would take place in individual repositories with normal `git` commands.
 
 For a few example projects, see the [examples directory](https://github.com/JrGoodle/clowder/tree/master/examples).
 
@@ -67,13 +65,13 @@ This command will clone the [llvm-projects](https://github.com/jrgoodle/llvm-pro
 $ clowder herd
 ```
 
-This command syncs the projects. Projects are cloned if they don't currently exist. Otherwise, each project will pull the latest changes. If the current branch isn't the default, it'll be checked out, and latest changes pulled.
+This command syncs the projects. The `clowder.yaml` symlink is always updated to point to the primary `clowder.yaml` file in the repository cloned with `clowder breed`. Projects are cloned if they don't currently exist. Otherwise, each project will pull the latest changes. If the current branch isn't the default, it'll be checked out, and latest changes pulled. For commits and tags, the commits are checked out into a detached HEAD state (`clowder forall` can be used to checkout branches if needed).
 
 ```bash
 $ clowder sync
 ```
 
-This command is like `clowder herd`, but for syncing the repository containing the `clowder.yaml` file (located in the `clowder` directory).
+This command is like `clowder herd`, but for syncing the repository containing the `clowder.yaml` file (located in the `clowder` directory created with the `clowder breed` command).
 
 ### Further Commands
 
@@ -138,7 +136,7 @@ sources:
 
 **Groups** have a `name` and associated `projects`.
 At a minimum, **projects** need the `name` from the project's url, and the `path` to clone relative to the root directory.
-The default `remote`, `source`, and `ref` values can also be overridden on a per-project basis.
+The default `remote`, `source`, and `ref` values can also be overridden on a per-project basis. It's also easy to add references to central repositories and forks in the same `clowder.yaml` file.
 
 ```yaml
 groups:
