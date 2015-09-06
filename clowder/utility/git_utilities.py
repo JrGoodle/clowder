@@ -161,6 +161,11 @@ def git_current_sha(repo_path):
     repo = Repo(repo_path)
     return repo.head.commit.hexsha
 
+def git_reset_head(repo_path):
+    """Reset head of repo, discarding changes"""
+    repo = Repo(repo_path)
+    repo.head.reset(index=True, working_tree=True)
+
 def git_fetch(repo_path):
     """Fetch all remotes, tags, and prune obsolete branches"""
     try:
@@ -187,7 +192,17 @@ def git_is_dirty(repo_path):
     repo = Repo(repo_path)
     return repo.is_dirty()
 
-def git_pull(repo_path, remote, branch):
+def git_pull(repo_path):
+    """Pull from remote branch"""
+    repo = Repo(repo_path)
+    if not repo.head.is_detached:
+        try:
+            print(' - Pulling latest changes')
+            print(repo.git.pull())
+        except:
+            print(' - Failed to pull latest changes')
+
+def git_pull_remote_branch(repo_path, remote, branch):
     """Pull from remote branch"""
     repo = Repo(repo_path)
     if not repo.head.is_detached:

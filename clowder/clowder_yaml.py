@@ -167,5 +167,6 @@ class ClowderYAML(object):
                 if not project.exists():
                     valid = False
         if not valid:
-            print('Missing projects, herd before fixinga version')
+            herd_output = colored('clowder herd', 'yellow')
+            print('Missing projects, first run ' + herd_output + ' to clone missing projects')
             print_exiting()

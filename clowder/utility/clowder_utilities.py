@@ -1,6 +1,5 @@
 """Clowder utilities"""
 import emoji, os, subprocess, sys
-from git import Repo
 from termcolor import colored, cprint
 from clowder.utility.git_utilities import (
     git_checkout_ref,
@@ -12,7 +11,9 @@ from clowder.utility.git_utilities import (
     git_is_detached,
     git_is_dirty,
     git_pull,
+    git_pull_remote_branch,
     git_ref_type,
+    git_reset_head,
     git_truncate_ref
 )
 
@@ -45,10 +46,9 @@ def format_ref_string(repo_path):
 
 def groom(repo_path):
     """Discard current changes in repository"""
-    repo = Repo(repo_path)
-    if repo.is_dirty():
+    if git_is_dirty(repo_path):
         print(' - Discarding current changes')
-        repo.head.reset(index=True, working_tree=True)
+        git_reset_head(repo_path)
     else:
         print(' - No changes to discard')
 
@@ -63,7 +63,7 @@ def herd(repo_path, ref, remote, url):
             git_fetch(repo_path)
             git_checkout_ref(repo_path, ref, remote)
             branch = git_truncate_ref(ref)
-            git_pull(repo_path, remote, branch)
+            git_pull_remote_branch(repo_path, remote, branch)
         elif ref_type is 'tag' or ref_type is 'sha':
             git_create_remote(repo_path, remote, url)
             git_fetch(repo_path)
@@ -76,11 +76,11 @@ def print_clowder_repo_status(root_directory):
     repo_path = os.path.join(root_directory, 'clowder')
     if not os.path.isdir(os.path.join(repo_path, '.git')):
         output = colored('clowder', 'green')
-        print(cat_face() + ' ' + output)
+        print(cat_face() + '  ' + output)
         return
     project_output = format_project_string(repo_path, 'clowder')
     current_ref_output = format_ref_string(repo_path)
-    print(cat_face() + ' ' + project_output + ' ' + current_ref_output)
+    print(cat_face() + '  ' + project_output + ' ' + current_ref_output)
 
 def print_exiting():
     """Print Exiting and exit with error code"""
@@ -98,11 +98,9 @@ def print_validation(repo_path):
 
 def sync(repo_path):
     """Sync clowder repo with current branch"""
-    git_fetch(repo_path)
-    repo = Repo(repo_path)
     if not git_is_detached(repo_path):
         print(' - Pulling latest changes')
-        print(repo.git.pull())
+        git_pull(repo_path)
 
 def validate_repo_state(repo_path):
     """Validate repo state"""
