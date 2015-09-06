@@ -61,6 +61,15 @@ You can <code>fix</code> specific versions with current commit hashes saved for 
 <a id="getting-started" class="anchor" href="#getting-started" aria-hidden="true"><span class="octicon octicon-link"></span></a>Getting Started</h2>
 
 <h3>
+<a id="requirements" class="anchor" href="#requirements" aria-hidden="true"><span class="octicon octicon-link"></span></a>Requirements</h3>
+
+<ul>
+<li><a href="https://www.python.org/downloads/">Python 3</a></li>
+<li>
+<a href="https://pypi.python.org/pypi/pip">pip3</a> (and <a href="https://pypi.python.org/pypi/setuptools">setuptools</a>)</li>
+</ul>
+
+<h3>
 <a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h3>
 
 <div class="highlight highlight-bash"><pre>$ git clone https://github.com/JrGoodle/clowder.git
@@ -99,22 +108,22 @@ $ <span class="pl-c1">cd</span> clowder <span class="pl-k">&amp;&amp;</span> ./i
 <div class="highlight highlight-bash"><pre>$ clowder meow <span class="pl-c"># print status of projects</span>
 $ clowder meow -v <span class="pl-c"># print more verbose status of projects</span>
 $ clowder meow -g clang llvm <span class="pl-c"># print status of projects in clang and llvm groups</span>
-$ clowder meow -g clang llvm -v <span class="pl-c"># print verbose status of projects in clang and llvm groups</span></pre></div>
+$ clowder meow -v -g clang <span class="pl-c"># print verbose status of projects in clang group</span></pre></div>
 
 <div class="highlight highlight-bash"><pre>$ clowder groom <span class="pl-c"># Discard any changes in projects</span>
-$ clowder groom -g clang llvm <span class="pl-c"># Discard any changes in projects in clang and llvm groups</span></pre></div>
+$ clowder groom -g clang <span class="pl-c"># Discard any changes in projects in clang group</span></pre></div>
 
 <div class="highlight highlight-bash"><pre>$ clowder stash <span class="pl-c"># Stash any changes in projects</span>
-$ clowder stash -g clang llvm <span class="pl-c"># Stash any changes in projects in clang and llvm groups</span></pre></div>
+$ clowder stash -g clang <span class="pl-c"># Stash any changes in projects in clang group</span></pre></div>
 
 <div class="highlight highlight-bash"><pre>$ clowder fix v0.1 <span class="pl-c"># Fix new version of clowder.yaml</span></pre></div>
 
 <div class="highlight highlight-bash"><pre>$ clowder herd -g clang llvm <span class="pl-c"># Only herd projects in clang and llvm groups</span>
 $ clowder herd -v v0.1 <span class="pl-c"># Check out fixed version</span></pre></div>
 
-<div class="highlight highlight-bash"><pre>$ COMMAND=<span class="pl-s"><span class="pl-pds">'</span>git status<span class="pl-pds">'</span></span>
-$ clowder forall -c <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$COMMAND</span><span class="pl-pds">"</span></span> <span class="pl-c"># Run "$COMMAND" in all project directories</span>
-$ clowder forall -g clang -c <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$COMMAND</span><span class="pl-pds">"</span></span> <span class="pl-c"># Run "$COMMAND" only for projects in clang group</span></pre></div>
+<div class="highlight highlight-bash"><pre>$ CMD=<span class="pl-s"><span class="pl-pds">'</span>git status<span class="pl-pds">'</span></span>
+$ clowder forall <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$CMD</span><span class="pl-pds">"</span></span> <span class="pl-c"># Run "$CMD" in all project directories</span>
+$ clowder forall <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$CMD</span><span class="pl-pds">"</span></span> -g clang <span class="pl-c"># Run "$CMD" only for projects in clang group</span></pre></div>
 
 <h2>
 <a id="the-clowderyaml-file" class="anchor" href="#the-clowderyaml-file" aria-hidden="true"><span class="octicon octicon-link"></span></a>The <code>clowder.yaml</code> File</h2>
