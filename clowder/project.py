@@ -73,6 +73,11 @@ class Project(object):
         """Check if project is dirty"""
         return git_is_dirty(self.full_path())
 
+    def exists(self):
+        """Check if project exists on disk"""
+        path = os.path.join(self.full_path(), '.git')
+        return os.path.isdir(path)
+
     def meow(self):
         """Print status for project"""
         self._print_status()
