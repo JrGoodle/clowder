@@ -27,6 +27,11 @@ For a few example projects, see the [examples directory](https://github.com/JrGo
 
 ## Getting Started
 
+### Requirements
+
+- [Python 3](https://www.python.org/downloads/)
+- [pip3](https://pypi.python.org/pypi/pip) (and [setuptools](https://pypi.python.org/pypi/setuptools))
+
 ### Installation
 
 ```bash
