@@ -3,10 +3,7 @@ import os, subprocess, sys, yaml
 from termcolor import colored
 from clowder.group import Group
 from clowder.source import Source
-from clowder.utility.clowder_utilities import (
-    print_clowder_repo_status,
-    print_exiting
-)
+from clowder.utility.clowder_utilities import print_exiting
 
 class ClowderYAML(object):
     """Class encapsulating project information from clowder.yaml"""
@@ -66,8 +63,6 @@ class ClowderYAML(object):
 
     def groom(self, group_names):
         """Discard changes for all projects"""
-        print_clowder_repo_status(self.root_directory)
-        print('')
         if self._is_dirty():
             for group in self.groups:
                 if group.name in group_names:
@@ -78,32 +73,24 @@ class ClowderYAML(object):
     def herd(self, group_names):
         """Sync all projects with latest upstream changes"""
         self._validate(group_names)
-        print_clowder_repo_status(self.root_directory)
-        print('')
         for group in self.groups:
             if group.name in group_names:
                 group.herd()
 
     def meow(self, group_names):
         """Print status for all projects"""
-        print_clowder_repo_status(self.root_directory)
-        print('')
         for group in self.groups:
             if group.name in group_names:
                 group.meow()
 
     def meow_verbose(self, group_names):
         """Print git status for all projects with changes"""
-        print_clowder_repo_status(self.root_directory)
-        print('')
         for group in self.groups:
             if group.name in group_names:
                 group.meow_verbose()
 
     def stash(self, group_names):
         """Stash changes for all projects with changes"""
-        print_clowder_repo_status(self.root_directory)
-        print('')
         if self._is_dirty():
             for group in self.groups:
                 if group.name in group_names:

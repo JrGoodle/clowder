@@ -1,8 +1,8 @@
 """Clowder repo management"""
 import os
+from termcolor import colored
 from clowder.utility.git_utilities import git_clone_url_at_path
 from clowder.utility.clowder_utilities import (
-    print_clowder_repo_status,
     print_exiting,
     print_validation,
     sync,
@@ -17,14 +17,12 @@ class ClowderRepo(object):
 
     def breed(self, url):
         """Clone clowder repo from url"""
-        print_clowder_repo_status(self.root_directory)
         git_clone_url_at_path(url, self.clowder_path, 'refs/heads/master', 'origin')
         self.symlink_yaml()
 
     def sync(self):
         """Sync clowder repo"""
         self._validate()
-        print_clowder_repo_status(self.root_directory)
         sync(self.clowder_path)
         self.symlink_yaml()
 
@@ -32,21 +30,23 @@ class ClowderRepo(object):
         """Create symlink pointing to clowder.yaml file"""
         if version == None:
             yaml_file = os.path.join(self.root_directory, 'clowder', 'clowder.yaml')
+            path_output = colored('clowder/clowder.yaml', 'cyan')
         else:
-            yaml_file = os.path.join(self.root_directory, 'clowder', 'versions',
-                                     version, 'clowder.yaml')
+            relative_path = os.path.join('clowder', 'versions', version, 'clowder.yaml')
+            path_output = colored(relative_path, 'cyan')
+            yaml_file = os.path.join(self.root_directory, relative_path)
         os.chdir(self.root_directory)
         if os.path.isfile(yaml_file):
             if os.path.isfile('clowder.yaml'):
                 os.remove('clowder.yaml')
+            print(' - Symlink ' + path_output)
             os.symlink(yaml_file, 'clowder.yaml')
         else:
-            print(yaml_file + " doesn't seem to exist")
+            print(path_output + r" doesn't seem to exist ¯\_(ツ)_/¯")
             print_exiting()
 
     def _validate(self):
         """Validate status of clowder repo"""
         if not validate_repo_state(self.clowder_path):
-            print_clowder_repo_status(self.root_directory)
             print_validation(self.clowder_path)
             print_exiting()

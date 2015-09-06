@@ -8,7 +8,10 @@ import argcomplete, argparse, colorama, os, signal, sys
 from termcolor import cprint
 from clowder.clowder_repo import ClowderRepo
 from clowder.clowder_yaml import ClowderYAML
-from clowder.utility.clowder_utilities import print_exiting
+from clowder.utility.clowder_utilities import (
+    print_clowder_repo_status,
+    print_exiting
+)
 
 class Command(object):
     """Command class for parsing commandline options"""
@@ -110,6 +113,8 @@ class Command(object):
         """clowder forall command"""
         if self.clowder is not None:
             cprint('Forall...\n', 'yellow')
+            print_clowder_repo_status(self.root_directory)
+            print('')
             self.clowder.forall(self.args.cmd, self.args.groups)
         else:
             exit_clowder_not_found()
@@ -118,6 +123,8 @@ class Command(object):
         """clowder groom command"""
         if self.clowder is not None:
             cprint('Groom...\n', 'yellow')
+            print_clowder_repo_status(self.root_directory)
+            print('')
             self.clowder.groom(self.args.groups)
         else:
             exit_clowder_not_found()
@@ -126,8 +133,10 @@ class Command(object):
         """clowder herd command"""
         if self.clowder is not None:
             cprint('Herd...\n', 'yellow')
+            print_clowder_repo_status(self.root_directory)
             clowder_repo = ClowderRepo(self.root_directory)
             clowder_repo.symlink_yaml(self.args.version)
+            print('')
             clowder = ClowderYAML(self.root_directory)
             clowder.herd(self.args.groups)
         else:
@@ -137,6 +146,8 @@ class Command(object):
         """clowder meow command"""
         if self.clowder is not None:
             cprint('Meow...\n', 'yellow')
+            print_clowder_repo_status(self.root_directory)
+            print('')
             if self.args.verbose:
                 self.clowder.meow_verbose(self.args.groups)
             else:
@@ -148,6 +159,8 @@ class Command(object):
         """clowder stash command"""
         if self.clowder is not None:
             cprint('Stash...\n', 'yellow')
+            print_clowder_repo_status(self.root_directory)
+            print('')
             self.clowder.stash(self.args.groups)
         else:
             exit_clowder_not_found()
@@ -156,6 +169,8 @@ class Command(object):
         """clowder sync command"""
         if self.clowder is not None:
             cprint('Sync...\n', 'yellow')
+            print_clowder_repo_status(self.root_directory)
+            print('')
             clowder_repo = ClowderRepo(self.root_directory)
             clowder_repo.sync()
         else:
