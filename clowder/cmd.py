@@ -60,8 +60,7 @@ class Command(object):
         # clowder forall
         forall_help = 'Run command in project directories'
         parser_forall = subparsers.add_parser('forall', help=forall_help)
-        parser_forall.add_argument('command', dest='cmd',
-                                   help='Command to run in project directories')
+        parser_forall.add_argument('cmd', help='Command to run in project directories')
         parser_forall.add_argument('--groups', '-g', choices=self.group_names,
                                    default=self.group_names, nargs='+',
                                    help='Groups to run command for')
