@@ -17,15 +17,15 @@ class ProjectTest(unittest.TestCase):
         root_directory = '/root/directory'
         self.project = Project(root_directory, project, defaults, sources)
 
-    def test_get_yaml(self):
-        """Test get_yaml() method"""
-        # project_dict = {'name': 'test/project',
-        #                 'path': 'test/path',
-        #                 'ref': '7083e8840e1bb972b7664cfa20bbd7a25f004018',
-        #                 'remote': 'origin',
-        #                 'source': 'github'}
-        # self.assertEqual(self.project.get_yaml(), project_dict)
-        pass
+    # def test_get_yaml(self):
+    #     """Test get_yaml() method"""
+    #     project_dict = {'name': 'test/project',
+    #                     'path': 'test/path',
+    #                     'ref': '7083e8840e1bb972b7664cfa20bbd7a25f004018',
+    #                     'remote': 'origin',
+    #                     'source': 'github'}
+    #     self.assertEqual(self.project.get_yaml(), project_dict)
+    #     pass
 
 if __name__ == '__main__':
     unittest.main()

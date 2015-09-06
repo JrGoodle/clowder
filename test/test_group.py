@@ -7,9 +7,9 @@ class GroupTest(unittest.TestCase):
     def setUp(self):
         pass
 
-    def test_get_yaml(self):
-        """Test get_yaml() method"""
-        pass
+    # def test_get_yaml(self):
+    #     """Test get_yaml() method"""
+    #     pass
 
 if __name__ == '__main__':
     unittest.main()
