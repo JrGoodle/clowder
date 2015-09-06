@@ -7,7 +7,7 @@ from termcolor import colored
 # pylint: disable=W0702
 
 def git_checkout_branch(repo_path, branch, remote):
-    """Checkout branch"""
+    """Checkout branch, and create if it doesn't exist"""
     repo = Repo(repo_path)
     branch_output = colored('(' + branch + ')', 'magenta')
     correct_branch = False
@@ -61,7 +61,7 @@ def git_create_checkout_branch(repo_path, branch, remote):
                     print(' - Failed to checkout branch ' + branch_output)
 
 def git_checkout_ref(repo_path, ref, remote):
-    """Checkout default branch. Create if doesn't exist"""
+    """Checkout branch, tag, or commit from sha"""
     ref_type = git_ref_type(ref)
     if ref_type is 'branch':
         branch = git_truncate_ref(ref)
@@ -76,9 +76,9 @@ def git_checkout_ref(repo_path, ref, remote):
         print('Unknown ref ' + ref_output)
 
 def git_checkout_sha(repo_path, sha):
-    """Checkout commit sha"""
+    """Checkout commit by sha"""
     repo = Repo(repo_path)
-    ref_output = colored('(' + sha + ')', 'magenta')
+    commit_output = colored('(' + sha + ')', 'magenta')
     correct_commit = False
     try:
         same_sha = repo.head.commit.hexsha == sha
@@ -92,13 +92,13 @@ def git_checkout_sha(repo_path, sha):
     finally:
         if not correct_commit:
             try:
-                print(' - Checkout ref ' + ref_output)
+                print(' - Checkout commit ' + commit_output)
                 repo.git.checkout(sha)
             except:
-                print(' - Failed to checkout ref ' + ref_output)
+                print(' - Failed to checkout commit ' + commit_output)
 
 def git_checkout_tag(repo_path, tag):
-    """Checkout tag"""
+    """Checkout commit tag is pointing to"""
     repo = Repo(repo_path)
     tag_output = colored('(' + tag + ')', 'magenta')
     correct_commit = False
@@ -162,7 +162,7 @@ def git_current_sha(repo_path):
     return repo.head.commit.hexsha
 
 def git_fetch(repo_path):
-    """Fetch all remotes, tags, and prune"""
+    """Fetch all remotes, tags, and prune obsolete branches"""
     try:
         repo = Repo(repo_path)
         repo.git.fetch('--all', '--prune', '--tags')
@@ -198,7 +198,7 @@ def git_pull(repo_path, remote, branch):
             print(' - Failed to pull latest changes')
 
 def git_ref_type(ref):
-    """Return branch, tag, or sha"""
+    """Return branch, tag, sha, or unknown ref type"""
     git_branch = "refs/heads/"
     git_tag = "refs/tags/"
     if ref.startswith(git_branch):

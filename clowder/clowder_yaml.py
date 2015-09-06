@@ -1,10 +1,11 @@
 """clowder.yaml parsing and functionality"""
-import os, subprocess, sys, yaml
+import os, yaml
 from termcolor import colored
 from clowder.group import Group
 from clowder.source import Source
 from clowder.utility.clowder_utilities import (
-    print_clowder_repo_status,
+    _forall_run,
+    _validate_yaml,
     print_exiting
 )
 
@@ -24,7 +25,7 @@ class ClowderYAML(object):
         self.group_names.sort()
 
     def fix_version(self, version):
-        """Fix current commits to versioned clowder.yaml"""
+        """Save current commits to a clowder.yaml in the versions directory"""
         self._validate(self.group_names)
         versions_dir = os.path.join(self.root_directory, 'clowder', 'versions')
         version_dir = os.path.join(versions_dir, version)
@@ -43,7 +44,7 @@ class ClowderYAML(object):
             print_exiting()
 
     def forall(self, command, group_names):
-        """Runs command in all projects of groups specified"""
+        """Runs command in all project directories of groups specified"""
         directories = []
         for group in self.groups:
             if group.name in group_names:
@@ -65,9 +66,7 @@ class ClowderYAML(object):
             return None
 
     def groom(self, group_names):
-        """Discard changes for all projects"""
-        print_clowder_repo_status(self.root_directory)
-        print('')
+        """Discard changes for projects"""
         if self._is_dirty():
             for group in self.groups:
                 if group.name in group_names:
@@ -76,34 +75,26 @@ class ClowderYAML(object):
             print('No changes to discard')
 
     def herd(self, group_names):
-        """Sync all projects with latest upstream changes"""
+        """Sync projects with latest upstream changes"""
         self._validate(group_names)
-        print_clowder_repo_status(self.root_directory)
-        print('')
         for group in self.groups:
             if group.name in group_names:
                 group.herd()
 
     def meow(self, group_names):
-        """Print status for all projects"""
-        print_clowder_repo_status(self.root_directory)
-        print('')
+        """Print status for projects"""
         for group in self.groups:
             if group.name in group_names:
                 group.meow()
 
     def meow_verbose(self, group_names):
-        """Print git status for all projects with changes"""
-        print_clowder_repo_status(self.root_directory)
-        print('')
+        """Print git status for projects with changes"""
         for group in self.groups:
             if group.name in group_names:
                 group.meow_verbose()
 
     def stash(self, group_names):
-        """Stash changes for all projects with changes"""
-        print_clowder_repo_status(self.root_directory)
-        print('')
+        """Stash changes for projects with changes"""
         if self._is_dirty():
             for group in self.groups:
                 if group.name in group_names:
@@ -165,45 +156,3 @@ class ClowderYAML(object):
                     valid = False
         if not valid:
             print_exiting()
-
-# Disable errors shown by pylint for no specified exception types
-# pylint: disable=W0702
-# Disable errors shown by pylint for statements which appear to have no effect
-# pylint: disable=W0104
-def _validate_yaml(parsed_yaml):
-    """Load clowder from yaml file"""
-    try:
-        parsed_yaml['defaults']['ref']
-        parsed_yaml['defaults']['remote']
-        parsed_yaml['defaults']['source']
-
-        for source in parsed_yaml['sources']:
-            source['name']
-            source['url']
-
-        for group in parsed_yaml['groups']:
-            group['name']
-            for project in group['projects']:
-                project['name']
-                project['path']
-    except:
-        print('')
-        clowder_output = colored('clowder.yaml', 'cyan')
-        print(clowder_output + ' appears to be invalid')
-        print_exiting()
-
-def _forall_run(command, directories):
-    """Run command in all directories"""
-    sorted_paths = sorted(set(directories))
-    paths = [p for p in sorted_paths if os.path.isdir(p)]
-    for path in paths:
-        running_output = colored('Running command', attrs=['underline'])
-        command_output = colored(command, attrs=['bold'])
-        print(running_output + ': ' + command_output)
-        directory_output = colored('Directory', attrs=['underline'])
-        path_output = colored(path, 'cyan')
-        print(directory_output + ': ' + path_output)
-        subprocess.call(command.split(),
-                        cwd=path)
-        print('')
-    sys.exit()
