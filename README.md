@@ -81,7 +81,7 @@ This command is like `clowder herd`, but for syncing the repository containing t
 $ clowder meow # print status of projects
 $ clowder meow -v # print more verbose status of projects
 $ clowder meow -g clang llvm # print status of projects in clang and llvm groups
-$ clowder meow -g clang llvm -v # print verbose status of projects in clang and llvm groups
+$ clowder meow -v -g clang llvm # print verbose status of projects in clang and llvm groups
 ```
 
 ```bash
@@ -105,8 +105,8 @@ $ clowder herd -v v0.1 # Check out fixed version
 
 ```bash
 $ COMMAND='git status'
-$ clowder forall -c "$COMMAND" # Run "$COMMAND" in all project directories
-$ clowder forall -g clang -c "$COMMAND" # Run "$COMMAND" only for projects in clang group
+$ clowder forall "$COMMAND" # Run "$COMMAND" in all project directories
+$ clowder forall "$COMMAND" -g clang # Run "$COMMAND" only for projects in clang group
 ```
 
 ## The `clowder.yaml` File
