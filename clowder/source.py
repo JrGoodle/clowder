@@ -3,12 +3,12 @@
 class Source(object):
     """clowder.yaml source class"""
 
-    def __init__(self, remote):
-        self.name = remote['name']
-        self.url = remote['url']
+    def __init__(self, source):
+        self.name = source['name']
+        self.url = source['url']
 
     def get_url_prefix(self):
-        """Return full remote url for project"""
+        """Return full remote url prefix for project"""
         source_url_prefix = None
         if self.url.startswith('https://'):
             source_url_prefix = self.url + "/"
