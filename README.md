@@ -9,19 +9,22 @@ Managing multiple repositories can be pretty frustrating. There are a number of 
 - [git submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules)
 - [subtree merging](https://git-scm.com/book/en/v1/Git-Tools-Subtree-Merging)
 - [Google's repo tool](https://code.google.com/p/git-repo/)
+- [GitSlave](http://gitslave.sourceforge.net)
 - [git-submanage](https://github.com/idbrii/git-submanage)
 - [gr](https://github.com/mixu/gr)
 - [git-stree](https://github.com/tdd/git-stree)
 - [git-subrepo](https://github.com/ingydotnet/git-subrepo)
 
 All of these have their own approach, but many are based on submodules or subtrees.
-The problem with submodules and subtrees is that a tight coupling is created because dependencies are part of each repository.
-Google's `repo` tool takes a different approach, but is closely tied to Google's development workflow.
-`clowder` uses a similar approach as `repo` but with a yaml file instead of xml (and without the default rebasing behavior of `repo`).
+Submodules and subtrees create a tight coupling between repositories because of the way dependencies are stored.
+Google's `repo` tool takes a different approach, but is closely tied to Google's development workflow and the documentation is lacking and inconsistent.
+`clowder` uses a similar approach as `repo` (and `gr`) but with a yaml file instead of xml (and without the default rebasing behavior of `repo`).
 URL information and project locations on disk are specified in a `clowder.yaml` file.
-The use of a separate file for tracking projects means that there's detailed information about the dependencies between them, but each repository is still essentially independent.
 This file is checked into its own repository, so the project structure's history is saved under version control.
-You can `fix` specific versions with current commit hashes saved for later restoration.
+The use of a separate file for tracking projects means that there's detailed information about the dependencies between them, but each repository is still essentially independent.
+Projects can be tied to specific tags or commits, or can track branches.
+It's easy to add references to central repositories and forks in one the same `clowder.yaml` file.
+Specific versions can be saved from the current commit hashes of projects on disk for later restoration.
 
 For a few example projects, see the [examples directory](https://github.com/JrGoodle/clowder/tree/master/examples).
 
