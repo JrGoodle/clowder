@@ -21,7 +21,7 @@ class ClowderYAML(object):
         self.group_names.sort()
 
     def fix_version(self, version):
-        """Fix current commits to versioned clowder.yaml"""
+        """Save current commits to a clowder.yaml in the versions directory"""
         self._validate(self.group_names)
         versions_dir = os.path.join(self.root_directory, 'clowder', 'versions')
         version_dir = os.path.join(versions_dir, version)
@@ -40,7 +40,7 @@ class ClowderYAML(object):
             print_exiting()
 
     def forall(self, command, group_names):
-        """Runs command in all projects of groups specified"""
+        """Runs command in all project directories of groups specified"""
         directories = []
         for group in self.groups:
             if group.name in group_names:
@@ -62,7 +62,7 @@ class ClowderYAML(object):
             return None
 
     def groom(self, group_names):
-        """Discard changes for all projects"""
+        """Discard changes for projects"""
         if self._is_dirty():
             for group in self.groups:
                 if group.name in group_names:
@@ -71,26 +71,26 @@ class ClowderYAML(object):
             print('No changes to discard')
 
     def herd(self, group_names):
-        """Sync all projects with latest upstream changes"""
+        """Sync projects with latest upstream changes"""
         self._validate(group_names)
         for group in self.groups:
             if group.name in group_names:
                 group.herd()
 
     def meow(self, group_names):
-        """Print status for all projects"""
+        """Print status for projects"""
         for group in self.groups:
             if group.name in group_names:
                 group.meow()
 
     def meow_verbose(self, group_names):
-        """Print git status for all projects with changes"""
+        """Print git status for projects with changes"""
         for group in self.groups:
             if group.name in group_names:
                 group.meow_verbose()
 
     def stash(self, group_names):
-        """Stash changes for all projects with changes"""
+        """Stash changes for projects with changes"""
         if self._is_dirty():
             for group in self.groups:
                 if group.name in group_names:
