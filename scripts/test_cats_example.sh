@@ -281,6 +281,12 @@ clowder fix path/separator
 clowder herd -v path-separator || exit 1
 clowder meow || exit 1
 
+echo "TEST: Remove directories"
+rm -rf duke mu
+echo "TEST: Fail fixing version with missing directories"
+clowder herd -v missing-directories && exit 1
+clowder meow || exit 1
+
 print_separator
 pushd clowder &>/dev/null
 git checkout master
