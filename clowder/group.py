@@ -13,6 +13,14 @@ class Group(object):
             self.projects.append(Project(rootDirectory, project, defaults, sources))
         self.projects.sort(key=lambda project: project.path)
 
+    def exists(self):
+        """Validate existence status of all projects"""
+        exists = True
+        for project in self.projects:
+            if not project.exists():
+                exists = False
+        return exists
+
     def get_all_project_names(self):
         """Return all project names"""
         return [p.name for p in self.projects]
@@ -70,10 +78,25 @@ class Group(object):
                 valid = False
         return valid
 
+    def projects_exist(self):
+        """Validate existence status of all projects"""
+        exist = True
+        for project in self.projects:
+            if not project.exists():
+                exist = False
+        return exist
+
     def _print_name(self):
         """Print formatted group name"""
         name_output = colored(self.name, attrs=['bold', 'underline'])
         print(name_output)
+
+    def print_exists(self):
+        """Print existence validation message for projects in group"""
+        if not self.projects_exist():
+            self._print_name()
+            for project in self.projects:
+                project.print_exists()
 
     def print_validation(self):
         """Print validation message for projects in group"""

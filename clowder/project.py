@@ -6,6 +6,7 @@ from clowder.utility.clowder_utilities import (
     format_ref_string,
     groom,
     herd,
+    print_exists,
     print_validation,
     validate_repo_state
 )
@@ -107,6 +108,12 @@ class Project(object):
         current_ref_output = format_ref_string(repo_path)
         path_output = colored(self.path, 'cyan')
         print(project_output + ' ' + current_ref_output + ' ' + path_output)
+
+    def print_exists(self):
+        """Print existence validation message for project"""
+        if not self.exists():
+            self._print_status()
+            print_exists(self.full_path())
 
     def print_validation(self):
         """Print validation message for project"""
