@@ -55,7 +55,7 @@ test_meow_groups 'srclib' 'projects'
 test_groom 'srclib' 'projects'
 test_herd_dirty_repos
 test_herd_detached_heads
-test_herd 'srclib'
+test_herd 'srclib' 'srcco'
 test_sync
 test_forall 'srclib' 'projects'
 test_fix
@@ -63,5 +63,6 @@ test_stash 'srclib' 'projects'
 test_herd_detached_heads
 test_herd_groups 'srclib' 'projects'
 test_herd_missing_branches
+test_fix_missing_directories 'srclib' 'srcco'
 
 print_help

@@ -46,6 +46,7 @@ test_branch_master()
 test_branch_version()
 {
     print_separator
+    clowder forall 'git checkout -b v0.1'
     echo "TEST: Check current branches"
     for project in "${projects[@]}"
     do
@@ -71,7 +72,6 @@ test_breed_herd_version()
     ./clean.sh || exit 1
     ./breed.sh || exit 1
     clowder herd -v v0.1 || exit 1
-    clowder forall 'git checkout -b v0.1'
 }
 
 test_command()
@@ -134,13 +134,13 @@ test_groom()
 test_herd()
 {
     print_separator
-    echo "TEST: Herd a previously fixed version"
+    echo "TEST: Successfully herd a previously fixed version"
     clowder herd -v v0.1 || exit 1
-    echo "TEST: Normal herd after herding a previously fixed version"
+    echo "TEST: Successfully herd after herding a previously fixed version"
     clowder herd || exit 1
     echo "TEST: Remove directories"
     rm -rf "$@"
-    echo "TEST: Herd with missing directories"
+    echo "TEST: Successfully herd with missing directories"
     clowder herd || exit 1
 }
 
