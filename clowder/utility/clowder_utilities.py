@@ -96,6 +96,11 @@ def print_validation(repo_path):
     if git_is_dirty(repo_path):
         print(' - Dirty repo. Please stash, commit, or discard your changes')
 
+def print_exists(repo_path):
+    """Print existence validation messages"""
+    if not os.path.isdir(os.path.join(repo_path, '.git')):
+        print(' - Project is missing')
+
 def sync(repo_path):
     """Sync clowder repo with current branch"""
     if not git_is_detached(repo_path):
