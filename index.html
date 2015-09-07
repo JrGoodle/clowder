@@ -51,7 +51,7 @@
 
 <p><code>clowder</code> uses a similar approach as <code>repo</code> (and <code>gr</code>) but with a yaml file instead of xml (and without the default rebasing behavior of <code>repo</code>). URL information and relative project locations on disk are specified in a <code>clowder.yaml</code> file. This file is checked into its own repository, so the project structure's history is saved under version control. The use of a separate file for tracking projects means that there's detailed information about the dependencies between them, but each repository is still essentially independent. Projects can be tied to specific tags or commits, or can track branches. Specific versions can be saved from the current commit hashes of projects on disk for later restoration.</p>
 
-<p><code>clowder</code> takes a mostly read-only approach to multiple repository management. The primary purpose is for synchronization, so normal development would take place in individual repositories with normal <code>git</code> commands.</p>
+<p>The primary purpose of <code>clowder</code> is synchronization of multiple repositories, so normal development would take place in individual repositories with the usual <code>git</code> commands.</p>
 
 <p>For a few example projects, see the <a href="https://github.com/JrGoodle/clowder/tree/master/examples">examples directory</a>.</p>
 
