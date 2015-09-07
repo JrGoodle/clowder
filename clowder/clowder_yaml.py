@@ -169,5 +169,5 @@ class ClowderYAML(object):
         if not exists:
             herd_output = colored('clowder herd', 'yellow')
             print('')
-            print('Missing projects, first run ' + herd_output + ' to clone missing projects')
+            print('First run ' + herd_output + ' to clone missing projects')
             print_exiting()
