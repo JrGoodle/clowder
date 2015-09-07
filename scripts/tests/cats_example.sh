@@ -2,6 +2,7 @@
 
 cd "$( dirname "${BASH_SOURCE[0]}" )"
 source functional_tests.sh
+cd ../../examples/cats
 
 test_herd_missing_branches()
 {
@@ -31,23 +32,23 @@ test_herd_missing_groups()
     clowder meow || exit 1
 }
 
-test_herd_tag()
-{
-    print_separator
-    echo "TEST: Test herd of tag refs"
-    pushd clowder &>/dev/null
-    git checkout tags
-    popd &>/dev/null
-    clowder herd || exit 1
-    clowder meow || exit 1
-}
-
 test_herd_sha()
 {
     print_separator
     echo "TEST: Test herd of static commit hash refs"
     pushd clowder &>/dev/null
     git checkout static-refs
+    popd &>/dev/null
+    clowder herd || exit 1
+    clowder meow || exit 1
+}
+
+test_herd_tag()
+{
+    print_separator
+    echo "TEST: Test herd of tag refs"
+    pushd clowder &>/dev/null
+    git checkout tags
     popd &>/dev/null
     clowder herd || exit 1
     clowder meow || exit 1
@@ -74,8 +75,6 @@ black_cat_projects=( 'black-cats/kit' \
                      'black-cats/kishka' \
                      'black-cats/sasha' \
                      'black-cats/jules' )
-
-cd ../../examples/cats
 
 test_command
 test_breed_herd
