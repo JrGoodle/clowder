@@ -13,7 +13,6 @@ make_dirty_clowder_repo()
 make_dirty_repos()
 {
     print_separator
-    local projects=("${@}")
     echo "TEST: Make dirty repos"
     for project in "${projects[@]}"
     do
@@ -34,7 +33,7 @@ test_branch()
 
 test_branch_master()
 {
-    local projects=("${@}")
+    print_separator
     echo "TEST: Check current branches"
     for project in "${projects[@]}"
     do
@@ -46,7 +45,7 @@ test_branch_master()
 
 test_branch_version()
 {
-    local projects=("${@}")
+    print_separator
     echo "TEST: Check current branches"
     for project in "${projects[@]}"
     do
@@ -67,10 +66,11 @@ test_breed_herd()
 
 test_breed_herd_version()
 {
+    print_separator
     echo "TEST: Herd version after breed"
+    ./clean.sh || exit 1
     ./breed.sh || exit 1
-    clowder herd -v "$1" || exit 1
-    clowder meow || exit 1
+    clowder herd -v v0.1 || exit 1
     clowder forall 'git checkout -b v0.1'
 }
 
@@ -84,23 +84,6 @@ test_command()
     clowder herd && exit 1
 }
 
-test_dirty_repos()
-{
-    print_separator
-    make_dirty_repos "${projects[@]}"
-    echo "TEST: Fail herd with dirty repos"
-    clowder herd && exit 1
-    echo "TEST: Discard changes with groom"
-    clowder groom || exit 1
-    clowder meow || exit 1
-    echo "TEST: Successfully herd after groom"
-    clowder herd || exit 1
-    clowder meow || exit 1
-    echo "TEST: Successfully herd twice"
-    clowder herd || exit 1
-    clowder meow || exit 1
-}
-
 test_fix()
 {
     print_separator
@@ -110,7 +93,6 @@ test_fix()
     clowder fix v0.1 && exit 1
     echo "TEST: Successfully fix a new version"
     clowder fix v0.11 || exit 1
-    clowder meow || exit 1
     echo "TEST: Successfully fix version with path separator in input name"
     clowder fix path/separator
     clowder herd -v path-separator || exit 1
@@ -119,11 +101,11 @@ test_fix()
 
 test_fix_missing_directories()
 {
+    print_separator
     echo "TEST: Remove directories"
     rm -rf "$@"
     echo "TEST: Fail fixing version with missing directories"
     clowder fix missing-directories && exit 1
-    clowder meow || exit 1
 }
 
 test_forall()
@@ -147,28 +129,24 @@ test_groom()
     clowder meow || exit 1
     echo "TEST: Groom when clean"
     clowder groom || exit 1
-    clowder meow || exit 1
 }
 
 test_herd()
 {
+    print_separator
     echo "TEST: Herd a previously fixed version"
     clowder herd -v v0.1 || exit 1
-    clowder meow || exit 1
     echo "TEST: Normal herd after herding a previously fixed version"
     clowder herd || exit 1
-    clowder meow || exit 1
     echo "TEST: Remove directories"
-    rm -rf duke mu
+    rm -rf "$@"
     echo "TEST: Herd with 2 missing directories"
     clowder herd || exit 1
-    clowder meow || exit 1
 }
 
 test_herd_detached_heads()
 {
     print_separator
-    local projects=("${@}")
     echo "TEST: Create detached HEADs"
     for project in "${projects[@]}"
     do
@@ -179,11 +157,26 @@ test_herd_detached_heads()
     clowder meow || exit 1
     echo "TEST: Successfully herd with detached HEADs"
     clowder herd || exit 1
+}
+
+test_herd_dirty_repos()
+{
+    print_separator
+    make_dirty_repos "${projects[@]}"
+    echo "TEST: Fail herd with dirty repos"
+    clowder herd && exit 1
+    echo "TEST: Discard changes with groom"
+    clowder groom || exit 1
     clowder meow || exit 1
+    echo "TEST: Successfully herd after groom"
+    clowder herd || exit 1
+    echo "TEST: Successfully herd twice"
+    clowder herd || exit 1
 }
 
 test_meow_groups()
 {
+    print_separator
     echo "TEST: Test meow for specific groups"
     clowder meow -g "$@" || exit 1
 }
@@ -201,7 +194,6 @@ test_stash()
     clowder meow || exit 1
     echo "TEST: Stash changes when clean"
     clowder stash || exit 1
-    clowder meow || exit 1
 }
 
 test_sync()
@@ -210,17 +202,14 @@ test_sync()
     make_dirty_clowder_repo
     echo "TEST: Fail sync with dirty clowder repo"
     clowder sync && exit 1
-    clowder meow || exit 1
     echo "TEST: Discard changes in clowder repo"
     pushd clowder &>/dev/null
     git reset --hard
     popd &>/dev/null
     echo "TEST: Successfully sync after discarding changes"
     clowder sync || exit 1
-    clowder meow || exit 1
     echo "TEST: Successfully sync twice"
     clowder sync || exit 1
-    clowder meow || exit 1
 }
 
 test_herd_groups()
@@ -228,9 +217,8 @@ test_herd_groups()
     print_separator
     echo "TEST: Herd fixed version to test herding select groups"
     clowder herd -v v0.1 || exit 1
-    clowder meow || exit 1
     print_separator
-    echo "TEST: Herd only specific group"
+    echo "TEST: Herd only specific groups"
     clowder herd -g "$@" || exit 1
     clowder meow || exit 1
 }

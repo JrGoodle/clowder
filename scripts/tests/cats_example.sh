@@ -1,8 +1,21 @@
 #! /bin/bash
 
+# set -xv
+
 cd "$( dirname "${BASH_SOURCE[0]}" )"
 source functional_tests.sh
 cd ../../examples/cats
+
+test_branches()
+{
+    test_branch_master "${projects[@]}"
+    pushd mu &>/dev/null
+    test_branch knead
+    popd &>/dev/null
+    pushd duke &>/dev/null
+    test_branch purr
+    popd &>/dev/null
+}
 
 test_herd_missing_branches()
 {
@@ -24,9 +37,6 @@ test_herd_missing_branches()
 test_herd_missing_groups()
 {
     echo "TEST: Test herd of missing group"
-    pushd clowder &>/dev/null
-    git checkout master
-    popd &>/dev/null
     clowder herd -v missing-groups
     clowder herd -g slavic || exit 1
     clowder meow || exit 1
@@ -41,6 +51,9 @@ test_herd_sha()
     popd &>/dev/null
     clowder herd || exit 1
     clowder meow || exit 1
+    pushd clowder &>/dev/null
+    git checkout master
+    popd &>/dev/null
 }
 
 test_herd_tag()
@@ -52,6 +65,9 @@ test_herd_tag()
     popd &>/dev/null
     clowder herd || exit 1
     clowder meow || exit 1
+    pushd clowder &>/dev/null
+    git checkout master
+    popd &>/dev/null
 }
 
 test_invalid_yaml()
@@ -62,49 +78,47 @@ test_invalid_yaml()
     git checkout invalid-yaml
     popd &>/dev/null
     clowder herd && exit 1
+    pushd clowder &>/dev/null
+    git checkout master
+    popd &>/dev/null
 }
 
-projects=( 'black-cats/kit' \
-           'black-cats/kishka' \
-           'black-cats/sasha' \
-           'black-cats/jules' \
-           'mu' \
-           'duke' )
+# export projects=( 'black-cats/kit' \
+#                   'black-cats/kishka' \
+#                   'black-cats/sasha' \
+#                   'black-cats/jules' \
+#                   'mu' \
+#                   'duke' )
 
-black_cat_projects=( 'black-cats/kit' \
-                     'black-cats/kishka' \
-                     'black-cats/sasha' \
-                     'black-cats/jules' )
+export projects=( 'black-cats/kit' \
+                  'black-cats/kishka' \
+                  'black-cats/sasha' \
+                  'black-cats/jules' )
 
 test_command
+
+test_breed_herd_version
+test_branch_version
+
 test_breed_herd
+test_branches
 test_meow_groups 'cats'
 test_invalid_yaml
-test_breed_herd_version 'v0.1'
-test_branch_version
-test_groom
-test_dirty_repos
-
-test_branch_master "${projects[@]}"
-pushd mu &>/dev/null
-test_branch knead
-popd &>/dev/null
-pushd duke &>/dev/null
-test_branch purr
-popd &>/dev/null
-
+test_groom 'cats'
+test_herd_dirty_repos
 test_herd_detached_heads
-test_herd
+test_herd 'duke' 'mu'
 test_sync
 test_forall 'cats'
 test_fix
-test_stash
-test_herd_groups
+test_stash 'cats'
+test_herd_groups 'cats'
 test_herd_missing_branches
+test_fix_missing_directories 'duke' 'mu'
+
 test_invalid_yaml
 test_herd_sha
 test_herd_tag
 test_herd_missing_groups
-test_fix_missing_directories 'duke' 'mu'
 
 print_help
