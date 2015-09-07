@@ -56,7 +56,11 @@ class ClowderYAML(object):
 
     def get_all_project_names(self):
         """Returns all project names for current clowder.yaml"""
-        names = [g.get_all_project_names() for g in self.groups]
+        names = []
+        for group in self.groups:
+            for project in group.projects:
+                names.append(project.name)
+        print(names)
         return names.sort()
 
     def get_fixed_version_names(self):
@@ -76,12 +80,20 @@ class ClowderYAML(object):
         else:
             print('No changes to discard')
 
-    def herd(self, group_names):
+    def herd_groups(self, group_names):
         """Sync projects with latest upstream changes"""
         self._validate(group_names)
         for group in self.groups:
             if group.name in group_names:
                 group.herd()
+
+    def herd_projects(self, project_names):
+        """Sync projects with latest upstream changes"""
+        self._validate(project_names)
+        for group in self.groups:
+            for project in group.projects:
+                if project.name in project_names:
+                    project.herd()
 
     def meow(self, group_names):
         """Print status for projects"""

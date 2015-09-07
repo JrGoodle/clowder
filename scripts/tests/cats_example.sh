@@ -115,6 +115,7 @@ test_stash 'cats'
 test_herd_groups 'cats'
 test_herd_missing_branches
 test_fix_missing_directories 'duke' 'mu'
+test_herd_projects 'jrgoodle/kit' 'jrgoodle/kishka'
 
 test_invalid_yaml
 test_herd_sha

@@ -64,5 +64,6 @@ test_herd_detached_heads
 test_herd_groups 'srclib' 'projects'
 test_herd_missing_branches
 test_fix_missing_directories 'srclib' 'srcco'
+test_herd_projects 'sourcegraph/srclib-c'
 
 print_help

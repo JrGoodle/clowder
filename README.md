@@ -98,6 +98,7 @@ $ clowder fix v0.1 # Fix new version of clowder.yaml
 
 ```bash
 $ clowder herd -g clang llvm # Only herd projects in clang and llvm groups
+$ clowder herd -p llvm-mirror/clang # Only herd clang project
 $ clowder herd -v v0.1 # Check out fixed version
 ```
 

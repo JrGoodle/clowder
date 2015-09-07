@@ -21,10 +21,12 @@ class Command(object):
         self.clowder = None
         self.versions = None
         self.group_names = ''
+        self.project_names = ''
         # Load current clowder.yml config if it exists
         if os.path.isdir(os.path.join(self.root_directory, 'clowder')):
             self.clowder = ClowderYAML(self.root_directory)
             self.versions = self.clowder.get_fixed_version_names()
+            self.project_names = self.clowder.get_all_project_names()
             if self.clowder.group_names is not None:
                 self.group_names = self.clowder.group_names
         # clowder argparse setup
@@ -57,6 +59,8 @@ class Command(object):
                            help='Version name to herd')
         group.add_argument('--groups', '-g', choices=self.group_names,
                            default=self.group_names, nargs='+', help='Groups to herd')
+        group.add_argument('--projects', '-p', choices=self.project_names,
+                           nargs='+', help='Projects to herd')
         # clowder forall
         forall_help = 'Run command in project directories'
         parser_forall = subparsers.add_parser('forall', help=forall_help)
@@ -137,7 +141,10 @@ class Command(object):
             clowder_repo.symlink_yaml(self.args.version)
             print('')
             clowder = ClowderYAML(self.root_directory)
-            clowder.herd(self.args.groups)
+            if self.args.projects is None:
+                clowder.herd_groups(self.args.groups)
+            else:
+                clowder.herd_projects(self.args.projects)
         else:
             exit_clowder_not_found()
 
