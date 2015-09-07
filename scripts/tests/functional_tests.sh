@@ -140,7 +140,7 @@ test_herd()
     clowder herd || exit 1
     echo "TEST: Remove directories"
     rm -rf "$@"
-    echo "TEST: Herd with 2 missing directories"
+    echo "TEST: Herd with missing directories"
     clowder herd || exit 1
 }
 
