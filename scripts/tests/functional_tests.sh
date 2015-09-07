@@ -1,14 +1,5 @@
 #! /bin/bash
 
-# set -xv
-
-print_separator()
-{
-    echo ''
-    echo '--------------------------------------------------------------------------------'
-    echo ''
-}
-
 test_branch()
 {
     local git_branch
@@ -32,22 +23,26 @@ black_cat_projects=( 'black-cats/kit' \
 
 cd $TRAVIS_BUILD_DIR/examples/cats
 
-test_breed()
+test_breed_herd()
 {
     print_separator
     echo "TEST: Normal herd after breed"
     ./breed.sh  || exit 1
     clowder herd  || exit 1
     clowder meow || exit 1
-    echo "TEST: Test meow for specific groups"
-    clowder meow -g cats || exit 1
 }
 
-test_breed_version()
+test_meow_groups()
+{
+    echo "TEST: Test meow for specific groups"
+    clowder meow -g "$@" || exit 1
+}
+
+test_breed_herd_version()
 {
     echo "TEST: Herd version after breed"
     ./breed.sh || exit 1
-    clowder herd -v v0.1 || exit 1
+    clowder herd -v "$1" || exit 1
     clowder meow || exit 1
     clowder forall 'git checkout -b v0.1'
 }
@@ -69,7 +64,7 @@ test_groom()
     print_separator
     make_dirty_repos "${projects[@]}"
     echo "TEST: Groom specific group when dirty"
-    clowder groom -g cats || exit 1
+    clowder groom -g "$@" || exit 1
     clowder meow || exit 1
     echo "TEST: Groom all when dirty"
     clowder groom || exit 1
@@ -82,7 +77,7 @@ test_groom()
 test_dirty_repos()
 {
     print_separator
-    make_dirty_repos "${black_cat_projects[@]}"
+    make_dirty_repos "${projects[@]}"
     echo "TEST: Fail herd with dirty repos"
     clowder herd && exit 1
     echo "TEST: Discard changes with groom"
@@ -131,9 +126,6 @@ create_detached_heads()
 
 test_herd()
 {
-    echo "TEST: Successfully herd with detached HEADs"
-    clowder herd || exit 1
-    clowder meow || exit 1
     echo "TEST: Herd a previously fixed version"
     clowder herd -v v0.1 || exit 1
     clowder meow || exit 1
@@ -147,10 +139,18 @@ test_herd()
     clowder meow || exit 1
 }
 
-print_separator
-
-test_clowder_repo()
+test_herd_detached_heads()
 {
+    create_detached_heads "${projects[@]}"
+    echo "TEST: Successfully herd with detached HEADs"
+    clowder herd || exit 1
+    clowder meow || exit 1
+}
+
+test_sync()
+{
+    print_separator
+    make_dirty_clowder_repo
     echo "TEST: Fail sync with dirty clowder repo"
     clowder sync && exit 1
     clowder meow || exit 1
@@ -172,7 +172,7 @@ test_forall()
     echo "TEST: Run forall command"
     clowder forall 'git status' || exit 1
     echo "TEST: Run forall command for specific groups"
-    clowder forall 'git status' -g cats || exit 1
+    clowder forall 'git status' -g "$@" || exit 1
 }
 
 test_fix()
@@ -185,17 +185,30 @@ test_fix()
     echo "TEST: Successfully fix a new version"
     clowder fix v0.11 || exit 1
     clowder meow || exit 1
-    echo "TEST: Test fixing version with path separator in input name"
+    echo "TEST: Successfully fix version with path separator in input name"
     clowder fix path/separator
     clowder herd -v path-separator || exit 1
     clowder meow || exit 1
+}
+
+test_fix_missing_directories()
+{
     echo "TEST: Remove directories"
-    rm -rf duke mu
+    rm -rf "$@"
     echo "TEST: Fail fixing version with missing directories"
     clowder fix missing-directories && exit 1
     clowder meow || exit 1
 }
 
+make_dirty_clowder_repo()
+{
+    echo "TEST: Make dirty clowder repo"
+    pushd clowder &>/dev/null
+    touch newfile
+    git add newfile
+    popd &>/dev/null
+    clowder meow || exit 1
+}
 
 make_dirty_repos()
 {
@@ -214,11 +227,11 @@ make_dirty_repos()
 
 test_stash()
 {
-    make_dirty_repos "${black_cat_projects[@]}"
+    make_dirty_repos "${projects[@]}"
     echo "TEST: Fail herd with dirty repos"
     clowder herd && exit 1
     echo "TEST: Stash specific groups when dirty"
-    clowder stash -g cats || exit 1
+    clowder stash -g "$@" || exit 1
     clowder meow || exit 1
     echo "TEST: Stash all changes when dirty"
     clowder stash || exit 1
@@ -232,28 +245,11 @@ test_herd_groups()
 {
     print_separator
     echo "TEST: Herd fixed version to test herding select groups"
-    clowder herd -v v0.11 || exit 1
+    clowder herd -v v0.1 || exit 1
     clowder meow || exit 1
     print_separator
     echo "TEST: Herd only specific group"
-    clowder herd -g cats || exit 1
-    clowder meow || exit 1
-}
-
-test_herd_missing_branches()
-{
-    print_separator
-    echo "TEST: Herd v0.1 to test missing default branches"
-    clowder herd -v v0.1 || exit 1
-    echo "TEST: Delete default branches locally"
-    pushd mu &>/dev/null
-    git branch -D knead
-    popd &>/dev/null
-    pushd duke &>/dev/null
-    git branch -D purr
-    popd &>/dev/null
-    echo "TEST: Herd existing repo's with no default branch locally"
-    clowder herd || exit 1
+    clowder herd -g "$@" || exit 1
     clowder meow || exit 1
 }
 
@@ -267,55 +263,9 @@ test_command()
     clowder herd && exit 1
 }
 
-test_yaml()
-{
-    print_separator
-    echo "TEST: Fail herd with invalid yaml"
-    pushd clowder &>/dev/null
-    git checkout invalid-yaml
-    popd &>/dev/null
-    clowder herd && exit 1
-}
-
-test_herd_sha()
-{
-    print_separator
-    echo "TEST: Test herd of static commit hash refs"
-    pushd clowder &>/dev/null
-    git checkout static-refs
-    popd &>/dev/null
-    clowder herd || exit 1
-    clowder meow || exit 1
-}
-
-test_herd_tag()
-{
-    print_separator
-    echo "TEST: Test herd of tag refs"
-    pushd clowder &>/dev/null
-    git checkout tags
-    popd &>/dev/null
-    clowder herd || exit 1
-    clowder meow || exit 1
-}
-
-test_herd_missing_groups()
-{
-    echo "TEST: Test herd of missing group"
-    pushd clowder &>/dev/null
-    git checkout master
-    popd &>/dev/null
-    clowder herd -v missing-groups
-    clowder herd -g slavic || exit 1
-    clowder meow || exit 1
-}
-
 print_help()
 {
     print_separator
-    pushd clowder &>/dev/null
-    git checkout master
-    popd &>/dev/null
     echo "TEST: Help output"
     print_separator
     echo "TEST: clowder -h"
@@ -341,4 +291,11 @@ print_help()
     print_separator
     echo "TEST: clowder stash -h"
     clowder stash -h
+}
+
+print_separator()
+{
+    echo ''
+    echo '--------------------------------------------------------------------------------'
+    echo ''
 }
