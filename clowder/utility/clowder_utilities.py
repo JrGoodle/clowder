@@ -82,6 +82,11 @@ def print_clowder_repo_status(root_directory):
     current_ref_output = format_ref_string(repo_path)
     print(cat_face() + '  ' + project_output + ' ' + current_ref_output)
 
+def print_exists(repo_path):
+    """Print existence validation messages"""
+    if not os.path.isdir(os.path.join(repo_path, '.git')):
+        print(' - Project is missing')
+
 def print_exiting():
     """Print Exiting and exit with error code"""
     print('')
@@ -95,11 +100,6 @@ def print_validation(repo_path):
         return
     if git_is_dirty(repo_path):
         print(' - Dirty repo. Please stash, commit, or discard your changes')
-
-def print_exists(repo_path):
-    """Print existence validation messages"""
-    if not os.path.isdir(os.path.join(repo_path, '.git')):
-        print(' - Project is missing')
 
 def sync(repo_path):
     """Sync clowder repo with current branch"""

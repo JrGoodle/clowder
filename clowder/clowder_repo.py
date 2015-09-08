@@ -20,12 +20,6 @@ class ClowderRepo(object):
         git_clone_url_at_path(url, self.clowder_path, 'refs/heads/master', 'origin')
         self.symlink_yaml()
 
-    def sync(self):
-        """Sync clowder repo"""
-        self._validate()
-        sync(self.clowder_path)
-        self.symlink_yaml()
-
     def symlink_yaml(self, version=None):
         """Create symlink pointing to clowder.yaml file"""
         if version == None:
@@ -44,6 +38,12 @@ class ClowderRepo(object):
         else:
             print(path_output + " doesn't seem to exist")
             print_exiting()
+
+    def sync(self):
+        """Sync clowder repo"""
+        self._validate()
+        sync(self.clowder_path)
+        self.symlink_yaml()
 
     def _validate(self):
         """Validate status of clowder repo"""

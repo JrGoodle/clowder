@@ -47,6 +47,14 @@ class Group(object):
                 is_dirty = True
         return is_dirty
 
+    def is_valid(self):
+        """Validate status of all projects"""
+        valid = True
+        for project in self.projects:
+            if not project.is_valid():
+                valid = False
+        return valid
+
     def meow(self):
         """Print status for all projects"""
         self._print_name()
@@ -66,27 +74,6 @@ class Group(object):
             for project in self.projects:
                 project.stash()
 
-    def is_valid(self):
-        """Validate status of all projects"""
-        valid = True
-        for project in self.projects:
-            if not project.is_valid():
-                valid = False
-        return valid
-
-    def projects_exist(self):
-        """Validate existence status of all projects"""
-        exist = True
-        for project in self.projects:
-            if not project.exists():
-                exist = False
-        return exist
-
-    def _print_name(self):
-        """Print formatted group name"""
-        name_output = colored(self.name, attrs=['bold', 'underline'])
-        print(name_output)
-
     def print_exists(self):
         """Print existence validation message for projects in group"""
         if not self.projects_exist():
@@ -100,3 +87,16 @@ class Group(object):
             self._print_name()
             for project in self.projects:
                 project.print_validation()
+
+    def projects_exist(self):
+        """Validate existence status of all projects"""
+        exist = True
+        for project in self.projects:
+            if not project.exists():
+                exist = False
+        return exist
+
+    def _print_name(self):
+        """Print formatted group name"""
+        name_output = colored(self.name, attrs=['bold', 'underline'])
+        print(name_output)

@@ -203,12 +203,6 @@ class Command(object):
         # clowder sync
         subparsers.add_parser('sync', add_help=False, help='Sync clowder repo')
 
-def main():
-    """Main entrypoint for clowder command"""
-    signal.signal(signal.SIGINT, signal_handler)
-    colorama.init()
-    Command()
-
 def exit_unrecognized_command(parser):
     """Print unrecognized command message and exit"""
     cprint('Unrecognized command\n', 'red')
@@ -219,6 +213,12 @@ def exit_clowder_not_found():
     """Print clowder not found message and exit"""
     cprint('No clowder found in the current directory, exiting...\n', 'red')
     print_exiting()
+
+def main():
+    """Main entrypoint for clowder command"""
+    signal.signal(signal.SIGINT, signal_handler)
+    colorama.init()
+    Command()
 
 # Disable errors shown by pylint for unused arguments
 # pylint: disable=W0613

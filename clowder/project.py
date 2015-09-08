@@ -47,6 +47,11 @@ class Project(object):
 
         self.url = self.source.get_url_prefix() + self.name + ".git"
 
+    def exists(self):
+        """Check if project exists on disk"""
+        path = os.path.join(self.full_path(), '.git')
+        return os.path.isdir(path)
+
     def full_path(self):
         """Return full path to project"""
         return os.path.join(self.root_directory, self.path)
@@ -74,10 +79,9 @@ class Project(object):
         """Check if project is dirty"""
         return git_is_dirty(self.full_path())
 
-    def exists(self):
-        """Check if project exists on disk"""
-        path = os.path.join(self.full_path(), '.git')
-        return os.path.isdir(path)
+    def is_valid(self):
+        """Validate status of project"""
+        return validate_repo_state(self.full_path())
 
     def meow(self):
         """Print status for project"""
@@ -94,21 +98,6 @@ class Project(object):
             self._print_status()
             git_stash(self.full_path())
 
-    def is_valid(self):
-        """Validate status of project"""
-        return validate_repo_state(self.full_path())
-
-    def _print_status(self):
-        """Print formatted project status"""
-        repo_path = os.path.join(self.root_directory, self.path)
-        if not os.path.isdir(os.path.join(repo_path, '.git')):
-            cprint(self.name, 'green')
-            return
-        project_output = format_project_string(repo_path, self.name)
-        current_ref_output = format_ref_string(repo_path)
-        path_output = colored(self.path, 'cyan')
-        print(project_output + ' ' + current_ref_output + ' ' + path_output)
-
     def print_exists(self):
         """Print existence validation message for project"""
         if not self.exists():
@@ -120,3 +109,14 @@ class Project(object):
         if not self.is_valid():
             self._print_status()
             print_validation(self.full_path())
+
+    def _print_status(self):
+        """Print formatted project status"""
+        repo_path = os.path.join(self.root_directory, self.path)
+        if not os.path.isdir(os.path.join(repo_path, '.git')):
+            cprint(self.name, 'green')
+            return
+        project_output = format_project_string(repo_path, self.name)
+        current_ref_output = format_ref_string(repo_path)
+        path_output = colored(self.path, 'cyan')
+        print(project_output + ' ' + current_ref_output + ' ' + path_output)
