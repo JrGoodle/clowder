@@ -3,8 +3,8 @@
 # set -xv
 
 cd "$( dirname "${BASH_SOURCE[0]}" )"
-source functional_tests.sh
-cd ../../examples/cats
+source test_utilities.sh
+cd ../examples/cats
 
 test_branches()
 {

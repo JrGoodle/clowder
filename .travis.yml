@@ -16,7 +16,7 @@ install:
 
 before_script: python3 setup.py -q install
 
-script: scripts/tests/${TARGET}.sh
+script: scripts/test_${TARGET}.sh
 
 after_success: scripts/deploy.sh
 
