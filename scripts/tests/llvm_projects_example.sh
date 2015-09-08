@@ -74,6 +74,7 @@ test_groom_projects 'llvm-mirror/clang'
 test_sync
 test_herd_detached_heads
 test_forall 'clang' 'llvm'
+test_forall_projects 'llvm-mirror/clang' 'llvm-mirror/llvm'
 test_fix
 test_stash 'clang' 'llvm'
 test_stash_projects 'llvm-mirror/clang'

@@ -59,6 +59,7 @@ test_herd_detached_heads
 test_herd 'srclib' 'srcco'
 test_sync
 test_forall 'srclib' 'projects'
+test_forall_projects 'sourcegraph/srclib'
 test_fix
 test_stash 'srclib' 'projects'
 test_stash_projects 'sourcegraph/srclib'

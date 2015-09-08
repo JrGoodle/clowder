@@ -70,7 +70,10 @@ class Command(object):
             cprint('Forall...\n', 'yellow')
             print_clowder_repo_status(self.root_directory)
             print('')
-            self.clowder.forall(self.args.cmd, self.args.groups)
+            if self.args.projects is None:
+                self.clowder.forall_groups(self.args.cmd, self.args.groups)
+            else:
+                self.clowder.forall_projects(self.args.cmd, self.args.projects)
         else:
             exit_clowder_not_found()
 
@@ -162,9 +165,12 @@ class Command(object):
         forall_help = 'Run command in project directories'
         parser_forall = subparsers.add_parser('forall', help=forall_help)
         parser_forall.add_argument('cmd', help='Command to run in project directories')
-        parser_forall.add_argument('--groups', '-g', choices=self.group_names,
-                                   default=self.group_names, nargs='+',
-                                   help='Groups to run command for')
+        group_forall = parser_forall.add_mutually_exclusive_group()
+        group_forall.add_argument('--groups', '-g', choices=self.group_names,
+                                  default=self.group_names, nargs='+',
+                                  help='Groups to run command for')
+        group_forall.add_argument('--projects', '-p', choices=self.project_names,
+                                  nargs='+', help='Projects to run command for')
         # clowder meow
         parser_meow = subparsers.add_parser('meow', help='Print status for projects')
         parser_meow.add_argument('--verbose', '-v', action='store_true',

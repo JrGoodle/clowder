@@ -108,6 +108,7 @@ $ clowder herd -v v0.1 # Check out fixed version
 $ CMD='git status'
 $ clowder forall "$CMD" # Run "$CMD" in all project directories
 $ clowder forall "$CMD" -g clang # Run "$CMD" only for projects in clang group
+$ clowder forall "$CMD" -p llvm-mirror/clang # Run "$CMD" only for clang project
 ```
 
 ## The `clowder.yaml` File

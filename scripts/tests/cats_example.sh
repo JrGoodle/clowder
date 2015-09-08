@@ -111,6 +111,7 @@ test_herd_detached_heads
 test_herd 'duke' 'mu'
 test_sync
 test_forall 'cats'
+test_forall_projects 'jrgoodle/kit' 'jrgoodle/kishka'
 test_fix
 test_stash 'black-cats'
 test_stash_projects 'jrgoodle/kit'

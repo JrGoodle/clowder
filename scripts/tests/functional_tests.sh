@@ -117,6 +117,13 @@ test_forall()
     clowder forall 'git status' -g "$@" || exit 1
 }
 
+test_forall_projects()
+{
+    print_separator
+    echo "TEST: Run forall command for specific projects"
+    clowder forall 'git status' -p "$@" || exit 1
+}
+
 test_groom()
 {
     print_separator

@@ -42,12 +42,21 @@ class ClowderYAML(object):
             print('Version ' + version_output + ' already exists at ' + yaml_file_output)
             print_exiting()
 
-    def forall(self, command, group_names):
+    def forall_groups(self, command, group_names):
         """Runs command in all project directories of groups specified"""
         directories = []
         for group in self.groups:
             if group.name in group_names:
                 for project in group.projects:
+                    directories.append(project.full_path())
+        _forall_run(command, directories)
+
+    def forall_projects(self, command, project_names):
+        """Runs command in all project directories of projects specified"""
+        directories = []
+        for group in self.groups:
+            for project in group.projects:
+                if project.name in project_names:
                     directories.append(project.full_path())
         _forall_run(command, directories)
 
