@@ -9,8 +9,8 @@ from clowder.utility.clowder_utilities import (
     print_exiting
 )
 
-class ClowderYAML(object):
-    """Class encapsulating project information from clowder.yaml"""
+class ClowderController(object):
+    """Class encapsulating project information from clowder.yaml for controlling clowder"""
     def __init__(self, rootDirectory):
         self.root_directory = rootDirectory
         self.default_ref = None

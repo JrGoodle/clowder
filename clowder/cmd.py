@@ -7,7 +7,7 @@ if __name__ == '__main__':
 import argcomplete, argparse, colorama, os, signal, sys
 from termcolor import cprint
 from clowder.clowder_repo import ClowderRepo
-from clowder.clowder_yaml import ClowderYAML
+from clowder.clowder_controller import ClowderController
 from clowder.utility.clowder_utilities import (
     print_clowder_repo_status,
     print_exiting
@@ -24,7 +24,7 @@ class Command(object):
         self.project_names = ''
         # Load current clowder.yml config if it exists
         if os.path.isdir(os.path.join(self.root_directory, 'clowder')):
-            self.clowder = ClowderYAML(self.root_directory)
+            self.clowder = ClowderController(self.root_directory)
             self.versions = self.clowder.get_fixed_version_names()
             if self.clowder.get_all_group_names() is not None:
                 self.group_names = self.clowder.get_all_group_names()
@@ -98,7 +98,7 @@ class Command(object):
             clowder_repo = ClowderRepo(self.root_directory)
             clowder_repo.symlink_yaml(self.args.version)
             print('')
-            clowder = ClowderYAML(self.root_directory)
+            clowder = ClowderController(self.root_directory)
             if self.args.projects is None:
                 clowder.herd_groups(self.args.groups)
             else:
