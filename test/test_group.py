@@ -35,5 +35,10 @@ class GroupTest(unittest.TestCase):
                                     'source': 'github'}]}
         self.assertEqual(self.group.get_yaml(), group_yaml)
 
+    def test_member_variables(self):
+        """Test the state of all project member variables initialized"""
+        self.assertEqual(self.group.name, 'cats')
+        # self.assertEqual(self.group.projects, [Project()])
+
 if __name__ == '__main__':
     unittest.main()
