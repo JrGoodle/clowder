@@ -1,4 +1,6 @@
 #! /bin/bash
 
-cd ${TRAVIS_BUILD_DIR}
+cd "$( dirname "${BASH_SOURCE[0]}" )"
+cd ../..
+
 python3 -m unittest discover -v
