@@ -46,55 +46,6 @@ class Command(object):
         getattr(self, self.args.command)()
         print('')
 
-    def _configure_subparsers(self, subparsers):
-        """Configure all clowder command subparsers and arguments"""
-        # clowder breed
-        breed_help = 'Clone repository to clowder directory and create clowder.yaml symlink'
-        parser_breed = subparsers.add_parser('breed', help=breed_help)
-        parser_breed.add_argument('url', help='URL of repo containing clowder.yaml')
-        # clowder herd
-        herd_help = 'Clone and sync latest changes for projects'
-        parser_herd = subparsers.add_parser('herd', help=herd_help)
-        group = parser_herd.add_mutually_exclusive_group()
-        group.add_argument('--version', '-v', choices=self.versions,
-                           help='Version name to herd')
-        group.add_argument('--groups', '-g', choices=self.group_names,
-                           default=self.group_names, nargs='+', help='Groups to herd')
-        group.add_argument('--projects', '-p', choices=self.project_names,
-                           nargs='+', help='Projects to herd')
-        # clowder forall
-        forall_help = 'Run command in project directories'
-        parser_forall = subparsers.add_parser('forall', help=forall_help)
-        parser_forall.add_argument('cmd', help='Command to run in project directories')
-        parser_forall.add_argument('--groups', '-g', choices=self.group_names,
-                                   default=self.group_names, nargs='+',
-                                   help='Groups to run command for')
-        # clowder meow
-        parser_meow = subparsers.add_parser('meow', help='Print status for projects')
-        parser_meow.add_argument('--verbose', '-v', action='store_true',
-                                 help='Print detailed diff status')
-        parser_meow.add_argument('--groups', '-g', choices=self.group_names,
-                                 default=self.group_names, nargs='+',
-                                 help='Groups to print status for')
-        # clowder fix
-        fix_help = 'Create version of clowder.yaml for current repos'
-        parser_fix = subparsers.add_parser('fix', help=fix_help)
-        parser_fix.add_argument('version', help='Version name to fix')
-        # clowder groom
-        groom_help = 'Discard current changes in all projects'
-        parser_groom = subparsers.add_parser('groom', help=groom_help)
-        parser_groom.add_argument('--groups', '-g', choices=self.group_names,
-                                  default=self.group_names, nargs='+',
-                                  help='Groups to groom')
-        # clowder stash
-        parser_stash = subparsers.add_parser('stash',
-                                             help='Stash current changes in all projects')
-        parser_stash.add_argument('--groups', '-g', choices=self.group_names,
-                                  default=self.group_names, nargs='+',
-                                  help='Groups to stash')
-        # clowder sync
-        subparsers.add_parser('sync', add_help=False, help='Sync clowder repo')
-
     def breed(self):
         """clowder breed command"""
         if self.clowder is None:
@@ -129,7 +80,10 @@ class Command(object):
             cprint('Groom...\n', 'yellow')
             print_clowder_repo_status(self.root_directory)
             print('')
-            self.clowder.groom(self.args.groups)
+            if self.args.projects is None:
+                self.clowder.groom_groups(self.args.groups)
+            else:
+                self.clowder.groom_projects(self.args.projects)
         else:
             exit_clowder_not_found()
 
@@ -182,6 +136,60 @@ class Command(object):
             clowder_repo.sync()
         else:
             exit_clowder_not_found()
+
+# Disable errors shown by pylint for unused arguments
+# pylint: disable=R0914
+    def _configure_subparsers(self, subparsers):
+        """Configure all clowder command subparsers and arguments"""
+        # clowder breed
+        breed_help = 'Clone repository to clowder directory and create clowder.yaml symlink'
+        parser_breed = subparsers.add_parser('breed', help=breed_help)
+        parser_breed.add_argument('url', help='URL of repo containing clowder.yaml')
+        # clowder herd
+        herd_help = 'Clone and sync latest changes for projects'
+        parser_herd = subparsers.add_parser('herd', help=herd_help)
+        group_herd = parser_herd.add_mutually_exclusive_group()
+        group_herd.add_argument('--version', '-v', choices=self.versions,
+                                help='Version name to herd')
+        group_herd.add_argument('--groups', '-g', choices=self.group_names,
+                                default=self.group_names, nargs='+', help='Groups to herd')
+        group_herd.add_argument('--projects', '-p', choices=self.project_names,
+                                nargs='+', help='Projects to herd')
+        # clowder forall
+        forall_help = 'Run command in project directories'
+        parser_forall = subparsers.add_parser('forall', help=forall_help)
+        parser_forall.add_argument('cmd', help='Command to run in project directories')
+        parser_forall.add_argument('--groups', '-g', choices=self.group_names,
+                                   default=self.group_names, nargs='+',
+                                   help='Groups to run command for')
+        # clowder meow
+        parser_meow = subparsers.add_parser('meow', help='Print status for projects')
+        parser_meow.add_argument('--verbose', '-v', action='store_true',
+                                 help='Print detailed diff status')
+        parser_meow.add_argument('--groups', '-g', choices=self.group_names,
+                                 default=self.group_names, nargs='+',
+                                 help='Groups to print status for')
+        # clowder fix
+        fix_help = 'Create version of clowder.yaml for current repos'
+        parser_fix = subparsers.add_parser('fix', help=fix_help)
+        parser_fix.add_argument('version', help='Version name to fix')
+        # clowder groom
+        groom_help = 'Discard current changes in all projects'
+        parser_groom = subparsers.add_parser('groom', help=groom_help)
+        group_groom = parser_groom.add_mutually_exclusive_group()
+        group_groom.add_argument('--groups', '-g', choices=self.group_names,
+                                 default=self.group_names, nargs='+',
+                                 help='Groups to groom')
+        group_groom.add_argument('--projects', '-p', choices=self.project_names,
+                                 nargs='+', help='Projects to groom')
+        # clowder stash
+        parser_stash = subparsers.add_parser('stash',
+                                             help='Stash current changes in all projects')
+        parser_stash.add_argument('--groups', '-g', choices=self.group_names,
+                                  default=self.group_names, nargs='+',
+                                  help='Groups to stash')
+        # clowder sync
+        subparsers.add_parser('sync', add_help=False, help='Sync clowder repo')
 
 def main():
     """Main entrypoint for clowder command"""

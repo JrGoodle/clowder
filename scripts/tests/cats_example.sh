@@ -102,16 +102,17 @@ test_branch_version
 
 test_breed_herd
 test_branches
-test_meow_groups 'cats'
+test_meow_groups 'black-cats'
 test_invalid_yaml
-test_groom 'cats'
+test_groom 'black-cats'
+test_groom_projects 'jrgoodle/kit'
 test_herd_dirty_repos
 test_herd_detached_heads
 test_herd 'duke' 'mu'
 test_sync
 test_forall 'cats'
 test_fix
-test_stash 'cats'
+test_stash 'black-cats'
 test_herd_groups 'cats'
 test_herd_missing_branches
 test_fix_missing_directories 'duke' 'mu'

@@ -85,6 +85,7 @@ $ clowder meow -v -g clang # print verbose status of projects in clang group
 ```bash
 $ clowder groom # Discard any changes in projects
 $ clowder groom -g clang # Discard any changes in projects in clang group
+$ clowder groom -p llvm-mirror/clang # Discard any changes in clang project
 ```
 
 ```bash

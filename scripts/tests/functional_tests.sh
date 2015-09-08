@@ -131,6 +131,18 @@ test_groom()
     clowder groom || exit 1
 }
 
+test_groom_projects()
+{
+    print_separator
+    make_dirty_repos "${projects[@]}"
+    echo "TEST: Groom specific project when dirty"
+    clowder groom -p "$@" || exit 1
+    clowder meow || exit 1
+    echo "TEST: Groom all when dirty"
+    clowder groom || exit 1
+    clowder meow || exit 1
+}
+
 test_herd()
 {
     print_separator

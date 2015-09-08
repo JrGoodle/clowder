@@ -70,6 +70,7 @@ test_herd 'llvm/tools/clang/tools/extra' \
 test_branch_version
 test_herd_dirty_repos
 test_groom 'clang' 'llvm'
+test_groom_projects 'llvm-mirror/clang'
 test_sync
 test_herd_detached_heads
 test_forall 'clang' 'llvm'

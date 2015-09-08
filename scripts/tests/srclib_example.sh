@@ -53,6 +53,7 @@ test_breed_herd
 test_branch_master
 test_meow_groups 'srclib' 'projects'
 test_groom 'srclib' 'projects'
+test_groom_projects 'sourcegraph/srclib'
 test_herd_dirty_repos
 test_herd_detached_heads
 test_herd 'srclib' 'srcco'

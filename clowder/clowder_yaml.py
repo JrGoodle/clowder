@@ -67,12 +67,22 @@ class ClowderYAML(object):
         else:
             return None
 
-    def groom(self, group_names):
+    def groom_groups(self, group_names):
         """Discard changes for projects"""
         if self._is_dirty():
             for group in self.groups:
                 if group.name in group_names:
                     group.groom()
+        else:
+            print('No changes to discard')
+
+    def groom_projects(self, project_names):
+        """Discard changes for projects"""
+        if self._is_dirty():
+            for group in self.groups:
+                for project in group.projects:
+                    if project.name in project_names:
+                        project.groom()
         else:
             print('No changes to discard')
 
