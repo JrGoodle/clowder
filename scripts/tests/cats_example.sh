@@ -142,3 +142,8 @@ test_herd_tag
 test_herd_missing_groups
 
 print_help
+
+echo 'TEST: Run unittests'
+clowder herd
+cd ../..
+python3 -m unittest discover -v

@@ -7,7 +7,6 @@ env:
     - TARGET="cats_example"
     - TARGET="llvm_projects_example"
     - TARGET="srclib_example"
-    - TARGET="unittests"
 
 before_install: brew update
 
@@ -23,7 +22,6 @@ after_success: scripts/deploy.sh
 
 branches:
   only: # whitelist
-    - deploy
     - master
 
 notifications:
