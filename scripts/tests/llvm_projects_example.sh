@@ -9,16 +9,17 @@ cd ../../examples/llvm-projects
 setup_old_repos()
 {
     echo 'TEST: Set up older copies of repos'
-    local CLANG_DIR="$LLVM_PROJECTS_DIR/llvm/tools/clang"
-    rm -rf $CLANG_DIR
-    mkdir -p $CLANG_DIR
-    pushd $CLANG_DIR &>/dev/null
-    git clone https://github.com/JrGoodle/clang.git . &>/dev/null
-    git remote remove origin &>/dev/null
-    git remote add origin https://github.com/llvm-mirror/clang.git &>/dev/null
-    git fetch &>/dev/null
-    git branch -u origin/master &>/dev/null
-    popd &>/dev/null
+
+    # local CLANG_DIR="$LLVM_PROJECTS_DIR/llvm/tools/clang"
+    # rm -rf $CLANG_DIR
+    # mkdir -p $CLANG_DIR
+    # pushd $CLANG_DIR &>/dev/null
+    # git clone https://github.com/JrGoodle/clang.git . &>/dev/null
+    # git remote remove origin &>/dev/null
+    # git remote add origin https://github.com/llvm-mirror/clang.git &>/dev/null
+    # git fetch &>/dev/null
+    # git branch -u origin/master &>/dev/null
+    # popd &>/dev/null
 
     local CLANG_TOOLS_EXTRA_DIR="$LLVM_PROJECTS_DIR/llvm/tools/clang/tools/extra"
     rm -rf $CLANG_TOOLS_EXTRA_DIR
@@ -69,13 +70,17 @@ test_herd 'llvm/tools/clang/tools/extra' \
 test_branch_version
 test_herd_dirty_repos
 test_groom 'clang' 'llvm'
+test_groom_projects 'llvm-mirror/clang'
 test_sync
 test_herd_detached_heads
 test_forall 'clang' 'llvm'
+test_forall_projects 'llvm-mirror/clang' 'llvm-mirror/llvm'
 test_fix
 test_stash 'clang' 'llvm'
+test_stash_projects 'llvm-mirror/clang'
 test_herd_groups 'clang' 'llvm'
 test_fix_missing_directories 'llvm/tools/clang/tools/extra' \
                              'llvm/projects/dragonegg'
+test_herd_projects 'llvm-mirror/lld'
 
 print_help

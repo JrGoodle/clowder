@@ -19,7 +19,7 @@ All of these have their own approach, but many are based on submodules or subtre
 
 `clowder` uses a similar approach as `repo` (and `gr`) but with a yaml file instead of xml (and without the default rebasing behavior of `repo`). URL information and relative project locations on disk are specified in a `clowder.yaml` file. This file is checked into its own repository, so the project structure's history is saved under version control. The use of a separate file for tracking projects means that there's detailed information about the dependencies between them, but each repository is still essentially independent. Projects can be tied to specific tags or commits, or can track branches. Specific versions can be saved from the current commit hashes of projects on disk for later restoration.
 
-The primary purpose of `clowder` is synchronization of multiple repositories, so normal development would take place in individual repositories with the usual `git` commands.
+The primary purpose of `clowder` is synchronization of multiple repositories, so normal development still takes place in individual repositories with the usual `git` commands.
 
 For a few example projects, see the [examples directory](https://github.com/JrGoodle/clowder/tree/master/examples).
 
@@ -85,11 +85,13 @@ $ clowder meow -v -g clang # print verbose status of projects in clang group
 ```bash
 $ clowder groom # Discard any changes in projects
 $ clowder groom -g clang # Discard any changes in projects in clang group
+$ clowder groom -p llvm-mirror/clang # Discard any changes in clang project
 ```
 
 ```bash
 $ clowder stash # Stash any changes in projects
 $ clowder stash -g clang # Stash any changes in projects in clang group
+$ clowder stash -p llvm-mirror/clang # Stash any changes in clang project
 ```
 
 ```bash
@@ -98,6 +100,7 @@ $ clowder fix v0.1 # Fix new version of clowder.yaml
 
 ```bash
 $ clowder herd -g clang llvm # Only herd projects in clang and llvm groups
+$ clowder herd -p llvm-mirror/clang # Only herd clang project
 $ clowder herd -v v0.1 # Check out fixed version
 ```
 
@@ -105,6 +108,7 @@ $ clowder herd -v v0.1 # Check out fixed version
 $ CMD='git status'
 $ clowder forall "$CMD" # Run "$CMD" in all project directories
 $ clowder forall "$CMD" -g clang # Run "$CMD" only for projects in clang group
+$ clowder forall "$CMD" -p llvm-mirror/clang # Run "$CMD" only for clang project
 ```
 
 ## The `clowder.yaml` File

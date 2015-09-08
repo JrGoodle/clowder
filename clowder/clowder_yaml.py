@@ -21,13 +21,10 @@ class ClowderYAML(object):
 
         self._load_yaml()
 
-        self.group_names = [g.name for g in self.groups]
-        self.group_names.sort()
-
     def fix_version(self, version):
         """Save current commits to a clowder.yaml in the versions directory"""
         self._validate_exists()
-        self._validate(self.group_names)
+        self._validate(self.get_all_group_names())
         versions_dir = os.path.join(self.root_directory, 'clowder', 'versions')
         version_name = version.replace('/', '-') # Replace path separateors with dashes
         version_dir = os.path.join(versions_dir, version_name)
@@ -45,7 +42,7 @@ class ClowderYAML(object):
             print('Version ' + version_output + ' already exists at ' + yaml_file_output)
             print_exiting()
 
-    def forall(self, command, group_names):
+    def forall_groups(self, command, group_names):
         """Runs command in all project directories of groups specified"""
         directories = []
         for group in self.groups:
@@ -54,10 +51,22 @@ class ClowderYAML(object):
                     directories.append(project.full_path())
         _forall_run(command, directories)
 
+    def forall_projects(self, command, project_names):
+        """Runs command in all project directories of projects specified"""
+        directories = []
+        for group in self.groups:
+            for project in group.projects:
+                if project.name in project_names:
+                    directories.append(project.full_path())
+        _forall_run(command, directories)
+
+    def get_all_group_names(self):
+        """Returns all group names for current clowder.yaml"""
+        return sorted([g.name for g in self.groups])
+
     def get_all_project_names(self):
         """Returns all project names for current clowder.yaml"""
-        names = [g.get_all_project_names() for g in self.groups]
-        return names.sort()
+        return sorted([p.name for g in self.groups for p in g.projects])
 
     def get_fixed_version_names(self):
         """Return list of all fixed versions"""
@@ -67,7 +76,7 @@ class ClowderYAML(object):
         else:
             return None
 
-    def groom(self, group_names):
+    def groom_groups(self, group_names):
         """Discard changes for projects"""
         if self._is_dirty():
             for group in self.groups:
@@ -76,12 +85,30 @@ class ClowderYAML(object):
         else:
             print('No changes to discard')
 
-    def herd(self, group_names):
+    def groom_projects(self, project_names):
+        """Discard changes for projects"""
+        if self._is_dirty():
+            for group in self.groups:
+                for project in group.projects:
+                    if project.name in project_names:
+                        project.groom()
+        else:
+            print('No changes to discard')
+
+    def herd_groups(self, group_names):
         """Sync projects with latest upstream changes"""
         self._validate(group_names)
         for group in self.groups:
             if group.name in group_names:
                 group.herd()
+
+    def herd_projects(self, project_names):
+        """Sync projects with latest upstream changes"""
+        self._validate(project_names)
+        for group in self.groups:
+            for project in group.projects:
+                if project.name in project_names:
+                    project.herd()
 
     def meow(self, group_names):
         """Print status for projects"""
@@ -95,12 +122,22 @@ class ClowderYAML(object):
             if group.name in group_names:
                 group.meow_verbose()
 
-    def stash(self, group_names):
+    def stash_groups(self, group_names):
         """Stash changes for projects with changes"""
         if self._is_dirty():
             for group in self.groups:
                 if group.name in group_names:
                     group.stash()
+        else:
+            print('No changes to stash')
+
+    def stash_projects(self, project_names):
+        """Stash changes for projects with changes"""
+        if self._is_dirty():
+            for group in self.groups:
+                for project in group.projects:
+                    if project.name in project_names:
+                        project.stash()
         else:
             print('No changes to stash')
 

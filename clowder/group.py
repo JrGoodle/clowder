@@ -21,10 +21,6 @@ class Group(object):
                 exists = False
         return exists
 
-    def get_all_project_names(self):
-        """Return all project names"""
-        return [p.name for p in self.projects]
-
     def get_yaml(self):
         """Return python object representation for saving yaml"""
         projects_yaml = [p.get_yaml() for p in self.projects]
