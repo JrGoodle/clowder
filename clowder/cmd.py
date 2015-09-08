@@ -122,7 +122,10 @@ class Command(object):
             cprint('Stash...\n', 'yellow')
             print_clowder_repo_status(self.root_directory)
             print('')
-            self.clowder.stash(self.args.groups)
+            if self.args.projects is None:
+                self.clowder.stash_groups(self.args.groups)
+            else:
+                self.clowder.stash_projects(self.args.projects)
         else:
             exit_clowder_not_found()
 
@@ -185,9 +188,12 @@ class Command(object):
         # clowder stash
         parser_stash = subparsers.add_parser('stash',
                                              help='Stash current changes in all projects')
-        parser_stash.add_argument('--groups', '-g', choices=self.group_names,
-                                  default=self.group_names, nargs='+',
-                                  help='Groups to stash')
+        group_stash = parser_stash.add_mutually_exclusive_group()
+        group_stash.add_argument('--groups', '-g', choices=self.group_names,
+                                 default=self.group_names, nargs='+',
+                                 help='Groups to stash')
+        group_stash.add_argument('--projects', '-p', choices=self.project_names,
+                                 nargs='+', help='Projects to stash')
         # clowder sync
         subparsers.add_parser('sync', add_help=False, help='Sync clowder repo')
 

@@ -91,6 +91,7 @@ $ clowder groom -p llvm-mirror/clang # Discard any changes in clang project
 ```bash
 $ clowder stash # Stash any changes in projects
 $ clowder stash -g clang # Stash any changes in projects in clang group
+$ clowder stash -p llvm-mirror/clang # Stash any changes in clang project
 ```
 
 ```bash

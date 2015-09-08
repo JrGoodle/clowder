@@ -76,6 +76,7 @@ test_herd_detached_heads
 test_forall 'clang' 'llvm'
 test_fix
 test_stash 'clang' 'llvm'
+test_stash_projects 'llvm-mirror/clang'
 test_herd_groups 'clang' 'llvm'
 test_fix_missing_directories 'llvm/tools/clang/tools/extra' \
                              'llvm/projects/dragonegg'

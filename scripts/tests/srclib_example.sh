@@ -61,6 +61,7 @@ test_sync
 test_forall 'srclib' 'projects'
 test_fix
 test_stash 'srclib' 'projects'
+test_stash_projects 'sourcegraph/srclib'
 test_herd_detached_heads
 test_herd_groups 'srclib' 'projects'
 test_herd_missing_branches

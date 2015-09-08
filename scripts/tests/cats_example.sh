@@ -113,6 +113,7 @@ test_sync
 test_forall 'cats'
 test_fix
 test_stash 'black-cats'
+test_stash_projects 'jrgoodle/kit'
 test_herd_groups 'cats'
 test_herd_missing_branches
 test_fix_missing_directories 'duke' 'mu'

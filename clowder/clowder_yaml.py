@@ -113,12 +113,22 @@ class ClowderYAML(object):
             if group.name in group_names:
                 group.meow_verbose()
 
-    def stash(self, group_names):
+    def stash_groups(self, group_names):
         """Stash changes for projects with changes"""
         if self._is_dirty():
             for group in self.groups:
                 if group.name in group_names:
                     group.stash()
+        else:
+            print('No changes to stash')
+
+    def stash_projects(self, project_names):
+        """Stash changes for projects with changes"""
+        if self._is_dirty():
+            for group in self.groups:
+                for project in group.projects:
+                    if project.name in project_names:
+                        project.stash()
         else:
             print('No changes to stash')
 

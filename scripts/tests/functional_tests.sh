@@ -215,6 +215,17 @@ test_stash()
     clowder stash || exit 1
 }
 
+test_stash_projects()
+{
+    make_dirty_repos "${projects[@]}"
+    echo "TEST: Stash specific projects when dirty"
+    clowder stash -p "$@" || exit 1
+    clowder meow || exit 1
+    echo "TEST: Stash all changes when dirty"
+    clowder stash || exit 1
+    clowder meow || exit 1
+}
+
 test_sync()
 {
     print_separator
