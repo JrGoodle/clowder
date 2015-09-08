@@ -83,6 +83,21 @@ test_invalid_yaml()
     popd &>/dev/null
 }
 
+test_no_versions()
+{
+    print_separator
+    echo "TEST: Test clowder repo with no versions fixed"
+    pushd clowder &>/dev/null
+    git checkout no-versions
+    popd &>/dev/null
+    clowder herd -v fixed-version && exit 1
+    clowder herd || exit 1
+    clowder meow || exit 1
+    pushd clowder &>/dev/null
+    git checkout master
+    popd &>/dev/null
+}
+
 # export projects=( 'black-cats/kit' \
 #                   'black-cats/kishka' \
 #                   'black-cats/sasha' \
@@ -118,6 +133,7 @@ test_stash_projects 'jrgoodle/kit'
 test_herd_groups 'cats'
 test_herd_missing_branches
 test_fix_missing_directories 'duke' 'mu'
+test_no_versions
 test_herd_projects 'jrgoodle/kit' 'jrgoodle/kishka'
 
 test_invalid_yaml
