@@ -26,9 +26,10 @@ class Command(object):
         if os.path.isdir(os.path.join(self.root_directory, 'clowder')):
             self.clowder = ClowderYAML(self.root_directory)
             self.versions = self.clowder.get_fixed_version_names()
-            self.project_names = self.clowder.get_all_project_names()
-            if self.clowder.group_names is not None:
-                self.group_names = self.clowder.group_names
+            if self.clowder.get_all_group_names() is not None:
+                self.group_names = self.clowder.get_all_group_names()
+            if self.clowder.get_all_project_names() is not None:
+                self.project_names = self.clowder.get_all_project_names()
         # clowder argparse setup
         command_description = 'Utility for managing multiple git repositories'
         parser = argparse.ArgumentParser(description=command_description)
