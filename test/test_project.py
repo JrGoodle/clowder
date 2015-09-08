@@ -1,31 +1,50 @@
 """Test project class"""
-import unittest
+import os, unittest
 from clowder.source import Source
 from clowder.project import Project
+
+CURRENT_FILE_DIR_PATH = os.path.dirname(os.path.realpath(__file__))
+CATS_EXAMPLE_PATH = os.path.abspath(os.path.join(CURRENT_FILE_DIR_PATH, '..', 'examples', 'cats'))
 
 class ProjectTest(unittest.TestCase):
     """project test subclass"""
     def setUp(self):
-        defaults = {'ref': 'refs/heads/master',
-                    'remote': 'origin',
-                    'source': 'github'}
-        sources = [Source({'name': 'github', 'url': 'ssh://git@github.com'}),
-                   Source({'name': 'github-https', 'url': 'https://github.com'})]
-        project = {'name': 'test/project',
-                   'path': 'test/path',
-                   'ref': '7083e8840e1bb972b7664cfa20bbd7a25f004018'}
-        root_directory = '/root/directory'
-        self.project = Project(root_directory, project, defaults, sources)
+        self.project_path = os.path.join(CATS_EXAMPLE_PATH, 'black-cats', 'kit')
+        defaults_yaml = {'ref': 'refs/heads/master',
+                         'remote': 'origin',
+                         'source': 'github'}
+        sources = [Source({'name': 'github-ssh', 'url': 'ssh://git@github.com'}),
+                   Source({'name': 'github', 'url': 'https://github.com'})]
+        project_yaml = {'name': 'jrgoodle/kit',
+                        'path': 'black-cats/kit',
+                        'ref': 'da5c3d32ec2c00aba4a9f7d822cce2c727f7f5dd'}
+        self.project = Project(CATS_EXAMPLE_PATH, project_yaml, defaults_yaml, sources)
 
-    # def test_get_yaml(self):
-    #     """Test get_yaml() method"""
-    #     project_dict = {'name': 'test/project',
-    #                     'path': 'test/path',
-    #                     'ref': '7083e8840e1bb972b7664cfa20bbd7a25f004018',
-    #                     'remote': 'origin',
-    #                     'source': 'github'}
-    #     self.assertEqual(self.project.get_yaml(), project_dict)
-    #     pass
+    def test_exists(self):
+        """Test exists() method"""
+        self.assertTrue(self.project.exists())
+
+    def test_full_path(self):
+        """Test full_path() method"""
+        self.assertEqual(self.project.full_path(), self.project_path)
+
+    def test_member_variables(self):
+        """Test the state of all project member variables initialized"""
+        self.assertEqual(self.project.name, 'jrgoodle/kit')
+        self.assertEqual(self.project.path, 'black-cats/kit')
+        self.assertEqual(self.project.ref, 'da5c3d32ec2c00aba4a9f7d822cce2c727f7f5dd')
+        self.assertEqual(self.project.remote_name, 'origin')
+        self.assertEqual(self.project.root_directory, CATS_EXAMPLE_PATH)
+        self.assertEqual(self.project.url, 'https://github.com/jrgoodle/kit.git')
+
+    def test_get_yaml(self):
+        """Test get_yaml() method"""
+        project_yaml = {'name': 'jrgoodle/kit',
+                        'path': 'black-cats/kit',
+                        'ref': 'da5c3d32ec2c00aba4a9f7d822cce2c727f7f5dd',
+                        'remote': 'origin',
+                        'source': 'github'}
+        self.assertEqual(self.project.get_yaml(), project_yaml)
 
 if __name__ == '__main__':
     unittest.main()

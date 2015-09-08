@@ -1,5 +1,5 @@
 """Clowder utilities"""
-import emoji, os, subprocess, sys
+import os, subprocess, sys
 from termcolor import colored, cprint
 from clowder.utility.git_utilities import (
     git_checkout_ref,
@@ -16,14 +16,6 @@ from clowder.utility.git_utilities import (
     git_reset_head,
     git_truncate_ref
 )
-
-def cat_face():
-    """Return a cat emoji"""
-    return emoji.emojize(':cat:', use_aliases=True)
-
-def cat():
-    """Return a cat emoji"""
-    return emoji.emojize(':cat2:', use_aliases=True)
 
 def format_project_string(repo_path, name):
     """Return formatted project name"""
@@ -71,16 +63,10 @@ def herd(repo_path, ref, remote, url):
         else:
             print('Unknown ref ' + ref)
 
-def print_clowder_repo_status(root_directory):
-    """Print clowder repo status"""
-    repo_path = os.path.join(root_directory, 'clowder')
+def print_exists(repo_path):
+    """Print existence validation messages"""
     if not os.path.isdir(os.path.join(repo_path, '.git')):
-        output = colored('clowder', 'green')
-        print(cat_face() + '  ' + output)
-        return
-    project_output = format_project_string(repo_path, 'clowder')
-    current_ref_output = format_ref_string(repo_path)
-    print(cat_face() + '  ' + project_output + ' ' + current_ref_output)
+        print(' - Project is missing')
 
 def print_exiting():
     """Print Exiting and exit with error code"""
@@ -95,11 +81,6 @@ def print_validation(repo_path):
         return
     if git_is_dirty(repo_path):
         print(' - Dirty repo. Please stash, commit, or discard your changes')
-
-def print_exists(repo_path):
-    """Print existence validation messages"""
-    if not os.path.isdir(os.path.join(repo_path, '.git')):
-        print(' - Project is missing')
 
 def sync(repo_path):
     """Sync clowder repo with current branch"""

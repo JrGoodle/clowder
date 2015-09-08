@@ -3,8 +3,8 @@
 # set -xv
 
 cd "$( dirname "${BASH_SOURCE[0]}" )"
-source functional_tests.sh
-cd ../../examples/llvm-projects
+source test_utilities.sh
+cd ../examples/llvm-projects
 
 setup_old_repos()
 {

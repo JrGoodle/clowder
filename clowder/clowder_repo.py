@@ -1,8 +1,10 @@
 """Clowder repo management"""
-import os
+import emoji, os
 from termcolor import colored
 from clowder.utility.git_utilities import git_clone_url_at_path
 from clowder.utility.clowder_utilities import (
+    format_project_string,
+    format_ref_string,
     print_exiting,
     print_validation,
     sync,
@@ -20,11 +22,17 @@ class ClowderRepo(object):
         git_clone_url_at_path(url, self.clowder_path, 'refs/heads/master', 'origin')
         self.symlink_yaml()
 
-    def sync(self):
-        """Sync clowder repo"""
-        self._validate()
-        sync(self.clowder_path)
-        self.symlink_yaml()
+    def print_status(self):
+        """Print clowder repo status"""
+        repo_path = os.path.join(self.root_directory, 'clowder')
+        cat_face = emoji.emojize(':cat:', use_aliases=True)
+        if not os.path.isdir(os.path.join(repo_path, '.git')):
+            output = colored('clowder', 'green')
+            print(cat_face + '  ' + output)
+            return
+        project_output = format_project_string(repo_path, 'clowder')
+        current_ref_output = format_ref_string(repo_path)
+        print(cat_face + '  ' + project_output + ' ' + current_ref_output)
 
     def symlink_yaml(self, version=None):
         """Create symlink pointing to clowder.yaml file"""
@@ -44,6 +52,12 @@ class ClowderRepo(object):
         else:
             print(path_output + " doesn't seem to exist")
             print_exiting()
+
+    def sync(self):
+        """Sync clowder repo"""
+        self._validate()
+        sync(self.clowder_path)
+        self.symlink_yaml()
 
     def _validate(self):
         """Validate status of clowder repo"""

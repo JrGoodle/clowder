@@ -7,11 +7,8 @@ if __name__ == '__main__':
 import argcomplete, argparse, colorama, os, signal, sys
 from termcolor import cprint
 from clowder.clowder_repo import ClowderRepo
-from clowder.clowder_yaml import ClowderYAML
-from clowder.utility.clowder_utilities import (
-    print_clowder_repo_status,
-    print_exiting
-)
+from clowder.clowder_controller import ClowderController
+from clowder.utility.clowder_utilities import print_exiting
 
 class Command(object):
     """Command class for parsing commandline options"""
@@ -19,12 +16,14 @@ class Command(object):
     def __init__(self):
         self.root_directory = os.getcwd()
         self.clowder = None
+        self.clowder_repo = None
         self.versions = None
         self.group_names = ''
         self.project_names = ''
         # Load current clowder.yml config if it exists
         if os.path.isdir(os.path.join(self.root_directory, 'clowder')):
-            self.clowder = ClowderYAML(self.root_directory)
+            self.clowder_repo = ClowderRepo(self.root_directory)
+            self.clowder = ClowderController(self.root_directory)
             self.versions = self.clowder.get_fixed_version_names()
             if self.clowder.get_all_group_names() is not None:
                 self.group_names = self.clowder.get_all_group_names()
@@ -48,7 +47,7 @@ class Command(object):
 
     def breed(self):
         """clowder breed command"""
-        if self.clowder is None:
+        if self.clowder_repo is None:
             cprint('Breed from %s\n' % self.args.url, 'yellow')
             clowder_repo = ClowderRepo(self.root_directory)
             clowder_repo.breed(self.args.url)
@@ -58,7 +57,7 @@ class Command(object):
 
     def fix(self):
         """clowder fix command"""
-        if self.clowder is not None:
+        if self.clowder_repo is not None:
             cprint('Fix...\n', 'yellow')
             self.clowder.fix_version(self.args.version)
         else:
@@ -66,9 +65,9 @@ class Command(object):
 
     def forall(self):
         """clowder forall command"""
-        if self.clowder is not None:
+        if self.clowder_repo is not None:
             cprint('Forall...\n', 'yellow')
-            print_clowder_repo_status(self.root_directory)
+            self.clowder_repo.print_status()
             print('')
             if self.args.projects is None:
                 self.clowder.forall_groups(self.args.cmd, self.args.groups)
@@ -79,9 +78,9 @@ class Command(object):
 
     def groom(self):
         """clowder groom command"""
-        if self.clowder is not None:
+        if self.clowder_repo is not None:
             cprint('Groom...\n', 'yellow')
-            print_clowder_repo_status(self.root_directory)
+            self.clowder_repo.print_status()
             print('')
             if self.args.projects is None:
                 self.clowder.groom_groups(self.args.groups)
@@ -92,13 +91,12 @@ class Command(object):
 
     def herd(self):
         """clowder herd command"""
-        if self.clowder is not None:
+        if self.clowder_repo is not None:
             cprint('Herd...\n', 'yellow')
-            print_clowder_repo_status(self.root_directory)
-            clowder_repo = ClowderRepo(self.root_directory)
-            clowder_repo.symlink_yaml(self.args.version)
+            self.clowder_repo.print_status()
+            self.clowder_repo.symlink_yaml(self.args.version)
             print('')
-            clowder = ClowderYAML(self.root_directory)
+            clowder = ClowderController(self.root_directory)
             if self.args.projects is None:
                 clowder.herd_groups(self.args.groups)
             else:
@@ -108,9 +106,9 @@ class Command(object):
 
     def meow(self):
         """clowder meow command"""
-        if self.clowder is not None:
+        if self.clowder_repo is not None:
             cprint('Meow...\n', 'yellow')
-            print_clowder_repo_status(self.root_directory)
+            self.clowder_repo.print_status()
             print('')
             if self.args.verbose:
                 self.clowder.meow_verbose(self.args.groups)
@@ -121,9 +119,9 @@ class Command(object):
 
     def stash(self):
         """clowder stash command"""
-        if self.clowder is not None:
+        if self.clowder_repo is not None:
             cprint('Stash...\n', 'yellow')
-            print_clowder_repo_status(self.root_directory)
+            self.clowder_repo.print_status()
             print('')
             if self.args.projects is None:
                 self.clowder.stash_groups(self.args.groups)
@@ -134,12 +132,11 @@ class Command(object):
 
     def sync(self):
         """clowder sync command"""
-        if self.clowder is not None:
+        if self.clowder_repo is not None:
             cprint('Sync...\n', 'yellow')
-            print_clowder_repo_status(self.root_directory)
+            self.clowder_repo.print_status()
             print('')
-            clowder_repo = ClowderRepo(self.root_directory)
-            clowder_repo.sync()
+            self.clowder_repo.sync()
         else:
             exit_clowder_not_found()
 
@@ -203,12 +200,6 @@ class Command(object):
         # clowder sync
         subparsers.add_parser('sync', add_help=False, help='Sync clowder repo')
 
-def main():
-    """Main entrypoint for clowder command"""
-    signal.signal(signal.SIGINT, signal_handler)
-    colorama.init()
-    Command()
-
 def exit_unrecognized_command(parser):
     """Print unrecognized command message and exit"""
     cprint('Unrecognized command\n', 'red')
@@ -219,6 +210,12 @@ def exit_clowder_not_found():
     """Print clowder not found message and exit"""
     cprint('No clowder found in the current directory, exiting...\n', 'red')
     print_exiting()
+
+def main():
+    """Main entrypoint for clowder command"""
+    signal.signal(signal.SIGINT, signal_handler)
+    colorama.init()
+    Command()
 
 # Disable errors shown by pylint for unused arguments
 # pylint: disable=W0613

@@ -3,8 +3,8 @@
 # set -xv
 
 cd "$( dirname "${BASH_SOURCE[0]}" )"
-source functional_tests.sh
-cd ../../examples/srclib
+source test_utilities.sh
+cd ../examples/srclib
 
 test_herd_missing_branches()
 {

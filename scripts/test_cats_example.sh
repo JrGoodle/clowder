@@ -3,8 +3,8 @@
 # set -xv
 
 cd "$( dirname "${BASH_SOURCE[0]}" )"
-source functional_tests.sh
-cd ../../examples/cats
+source test_utilities.sh
+cd ../examples/cats
 
 test_branches()
 {
@@ -142,3 +142,8 @@ test_herd_tag
 test_herd_missing_groups
 
 print_help
+
+echo 'TEST: Run unittests'
+clowder herd
+cd ../..
+python3 -m unittest discover -v
