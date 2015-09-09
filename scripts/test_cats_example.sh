@@ -143,7 +143,21 @@ test_herd_missing_groups
 
 print_help
 
+prepare_unittest_repos()
+{
+    # Groom and herd repo's to clean state
+    clowder groom
+    clowder herd
+    # Remove jules repository
+    rm -rf black-cats/jules
+    # Make kishka repo dirty
+    pushd black-cats/kishka &>/dev/null
+    touch newfile
+    git add .
+    popd &>/dev/null
+}
+
 echo 'TEST: Run unittests'
-clowder herd
+prepare_unittest_repos
 cd ../..
 python3 -m unittest discover -v
