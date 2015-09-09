@@ -63,7 +63,9 @@ test_forall_projects 'sourcegraph/srclib'
 test_fix
 test_stash 'srclib' 'projects'
 test_stash_projects 'sourcegraph/srclib'
+test_stash_missing_directories 'srclib'
 test_herd_detached_heads
+test_groom_missing_directories 'srclib'
 test_herd_groups 'srclib' 'projects'
 test_herd_missing_branches
 test_fix_missing_directories 'srclib' 'srcco'

@@ -121,6 +121,7 @@ test_meow_groups 'black-cats'
 test_invalid_yaml
 test_groom 'black-cats'
 test_groom_projects 'jrgoodle/kit'
+test_groom_missing_directories 'mu' 'duke'
 test_herd_dirty_repos
 test_herd_detached_heads
 test_herd 'duke' 'mu'
@@ -130,6 +131,7 @@ test_forall_projects 'jrgoodle/kit' 'jrgoodle/kishka'
 test_fix
 test_stash 'black-cats'
 test_stash_projects 'jrgoodle/kit'
+test_stash_missing_directories 'mu' 'duke'
 test_herd_groups 'cats'
 test_herd_missing_branches
 test_fix_missing_directories 'duke' 'mu'
