@@ -2,17 +2,10 @@
 import os, subprocess, sys
 from termcolor import colored, cprint
 from clowder.utility.git_utilities import (
-    git_checkout_ref,
-    git_clone_url_at_path,
-    git_create_remote,
     git_current_branch,
     git_current_sha,
-    git_fetch,
     git_is_detached,
-    git_is_dirty,
-    git_pull_remote_branch,
-    git_ref_type,
-    git_truncate_ref
+    git_is_dirty
 )
 
 def format_project_string(repo_path, name):
@@ -33,25 +26,6 @@ def format_ref_string(repo_path):
     else:
         current_branch = git_current_branch(repo_path)
         return colored('(' + current_branch + ')', 'magenta')
-
-def herd(repo_path, ref, remote, url):
-    """Sync git repo with default branch"""
-    if not os.path.isdir(os.path.join(repo_path, '.git')):
-        git_clone_url_at_path(url, repo_path, ref, remote)
-    else:
-        ref_type = git_ref_type(ref)
-        if ref_type is 'branch':
-            git_create_remote(repo_path, remote, url)
-            git_fetch(repo_path)
-            git_checkout_ref(repo_path, ref, remote)
-            branch = git_truncate_ref(ref)
-            git_pull_remote_branch(repo_path, remote, branch)
-        elif ref_type is 'tag' or ref_type is 'sha':
-            git_create_remote(repo_path, remote, url)
-            git_fetch(repo_path)
-            git_checkout_ref(repo_path, ref, remote)
-        else:
-            print('Unknown ref ' + ref)
 
 def print_exists(repo_path):
     """Print existence validation messages"""
