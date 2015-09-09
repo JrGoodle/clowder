@@ -13,14 +13,6 @@ class Group(object):
             self.projects.append(Project(rootDirectory, project, defaults, sources))
         self.projects.sort(key=lambda project: project.path)
 
-    def exists(self):
-        """Validate existence status of all projects"""
-        exists = True
-        for project in self.projects:
-            if not project.exists():
-                exists = False
-        return exists
-
     def get_yaml(self):
         """Return python object representation for saving yaml"""
         projects_yaml = [p.get_yaml() for p in self.projects]
@@ -74,7 +66,7 @@ class Group(object):
             for project in self.projects:
                 project.stash()
 
-    def print_exists(self):
+    def print_existence_message(self):
         """Print existence validation message for projects in group"""
         if not self.projects_exist():
             self._print_name()
@@ -90,11 +82,11 @@ class Group(object):
 
     def projects_exist(self):
         """Validate existence status of all projects"""
-        exist = True
+        projects_exist = True
         for project in self.projects:
             if not project.exists():
-                exist = False
-        return exist
+                projects_exist = False
+        return projects_exist
 
     def _print_name(self):
         """Print formatted group name"""

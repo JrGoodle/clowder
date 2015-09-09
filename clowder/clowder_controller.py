@@ -4,8 +4,8 @@ from termcolor import colored
 from clowder.group import Group
 from clowder.source import Source
 from clowder.utility.clowder_utilities import (
-    _forall_run,
-    _validate_yaml,
+    forall_run,
+    validate_yaml,
     print_exiting
 )
 
@@ -23,7 +23,7 @@ class ClowderController(object):
 
     def fix_version(self, version):
         """Save current commits to a clowder.yaml in the versions directory"""
-        self._validate_exists()
+        self._validate_projects_exist()
         self._validate(self.get_all_group_names())
         versions_dir = os.path.join(self.root_directory, 'clowder', 'versions')
         version_name = version.replace('/', '-') # Replace path separateors with dashes
@@ -49,7 +49,7 @@ class ClowderController(object):
             if group.name in group_names:
                 for project in group.projects:
                     directories.append(project.full_path())
-        _forall_run(command, directories)
+        forall_run(command, directories)
 
     def forall_projects(self, command, project_names):
         """Runs command in all project directories of projects specified"""
@@ -58,7 +58,7 @@ class ClowderController(object):
             for project in group.projects:
                 if project.name in project_names:
                     directories.append(project.full_path())
-        _forall_run(command, directories)
+        forall_run(command, directories)
 
     def get_all_group_names(self):
         """Returns all group names for current clowder.yaml"""
@@ -166,7 +166,7 @@ class ClowderController(object):
         if os.path.exists(yaml_file):
             with open(yaml_file) as file:
                 parsed_yaml = yaml.safe_load(file)
-                _validate_yaml(parsed_yaml)
+                validate_yaml(parsed_yaml)
 
                 self.default_ref = parsed_yaml['defaults']['ref']
                 self.default_remote = parsed_yaml['defaults']['remote']
@@ -196,14 +196,14 @@ class ClowderController(object):
         if not valid:
             print_exiting()
 
-    def _validate_exists(self):
+    def _validate_projects_exist(self):
         """Validate existence status of all projects for specified groups"""
-        exists = True
+        projects_exist = True
         for group in self.groups:
-            group.print_exists()
-            if not group.exists():
-                exists = False
-        if not exists:
+            group.print_existence_message()
+            if not group.projects_exist():
+                projects_exist = False
+        if not projects_exist:
             herd_output = colored('clowder herd', 'yellow')
             print('')
             print('First run ' + herd_output + ' to clone missing projects')

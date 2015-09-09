@@ -1,13 +1,16 @@
 """Clowder repo management"""
 import emoji, os
 from termcolor import colored
-from clowder.utility.git_utilities import git_clone_url_at_path
+from clowder.utility.git_utilities import (
+    git_clone_url_at_path,
+    git_is_detached,
+    git_pull
+)
 from clowder.utility.clowder_utilities import (
     format_project_string,
     format_ref_string,
     print_exiting,
     print_validation,
-    sync,
     validate_repo_state
 )
 
@@ -56,8 +59,13 @@ class ClowderRepo(object):
     def sync(self):
         """Sync clowder repo"""
         self._validate()
-        sync(self.clowder_path)
-        self.symlink_yaml()
+        if not git_is_detached(self.clowder_path):
+            print(' - Pulling latest changes')
+            git_pull(self.clowder_path)
+            self.symlink_yaml()
+        else:
+            print(' - HEAD is detached')
+            print_exiting()
 
     def _validate(self):
         """Validate status of clowder repo"""
