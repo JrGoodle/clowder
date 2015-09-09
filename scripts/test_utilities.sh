@@ -60,6 +60,7 @@ test_breed_herd()
 {
     print_separator
     echo "TEST: Normal herd after breed"
+    ./clean.sh
     ./breed.sh  || exit 1
     clowder herd  || exit 1
     clowder meow || exit 1
