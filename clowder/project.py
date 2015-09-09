@@ -101,7 +101,10 @@ class Project(object):
 
     def is_dirty(self):
         """Check if project is dirty"""
-        return git_is_dirty(self.full_path())
+        if self.exists():
+            return git_is_dirty(self.full_path())
+        else:
+            return False
 
     def is_valid(self):
         """Validate status of project"""
