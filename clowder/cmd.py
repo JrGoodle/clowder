@@ -135,7 +135,6 @@ class Command(object):
         if self.clowder_repo is not None:
             cprint('Sync...\n', 'yellow')
             self.clowder_repo.print_status()
-            print('')
             self.clowder_repo.sync()
         else:
             exit_clowder_not_found()
