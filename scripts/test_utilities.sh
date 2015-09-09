@@ -60,6 +60,7 @@ test_breed_herd()
 {
     print_separator
     echo "TEST: Normal herd after breed"
+    ./clean.sh
     ./breed.sh  || exit 1
     clowder herd  || exit 1
     clowder meow || exit 1
@@ -136,6 +137,15 @@ test_groom()
     clowder meow || exit 1
     echo "TEST: Groom when clean"
     clowder groom || exit 1
+}
+
+test_groom_missing_directories()
+{
+    rm -rf "$@"
+    echo "TEST: Discard all changes when directories are missing"
+    clowder groom || exit 1
+    clowder meow || exit 1
+    clowder herd || exit 1
 }
 
 test_groom_projects()
@@ -220,6 +230,15 @@ test_stash()
     clowder meow || exit 1
     echo "TEST: Stash changes when clean"
     clowder stash || exit 1
+}
+
+test_stash_missing_directories()
+{
+    rm -rf "$@"
+    echo "TEST: Stash all changes when directories are missing"
+    clowder stash || exit 1
+    clowder meow || exit 1
+    clowder herd || exit 1
 }
 
 test_stash_projects()
