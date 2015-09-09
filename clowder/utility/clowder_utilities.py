@@ -8,6 +8,23 @@ from clowder.utility.git_utilities import (
     git_is_dirty
 )
 
+def forall_run(command, directories):
+    """Run command in all directories"""
+    sorted_paths = sorted(set(directories))
+    paths = [p for p in sorted_paths if os.path.isdir(p)]
+    for path in paths:
+        running_output = colored('Running command', attrs=['underline'])
+        command_output = colored(command, attrs=['bold'])
+        print(running_output + ': ' + command_output)
+        directory_output = colored('Directory', attrs=['underline'])
+        path_output = colored(path, 'cyan')
+        print(directory_output + ': ' + path_output)
+        subprocess.call(command.split(),
+                        cwd=path)
+        print('')
+    # Exit early to prevent printing extra newline
+    sys.exit()
+
 def format_project_string(repo_path, name):
     """Return formatted project name"""
     if git_is_dirty(repo_path):
@@ -51,23 +68,6 @@ def validate_repo_state(repo_path):
     if not os.path.isdir(os.path.join(repo_path, '.git')):
         return True
     return not git_is_dirty(repo_path)
-
-def forall_run(command, directories):
-    """Run command in all directories"""
-    sorted_paths = sorted(set(directories))
-    paths = [p for p in sorted_paths if os.path.isdir(p)]
-    for path in paths:
-        running_output = colored('Running command', attrs=['underline'])
-        command_output = colored(command, attrs=['bold'])
-        print(running_output + ': ' + command_output)
-        directory_output = colored('Directory', attrs=['underline'])
-        path_output = colored(path, 'cyan')
-        print(directory_output + ': ' + path_output)
-        subprocess.call(command.split(),
-                        cwd=path)
-        print('')
-    # Exit early to prevent printing extra newline
-    sys.exit()
 
 # Disable errors shown by pylint for no specified exception types
 # pylint: disable=W0702
