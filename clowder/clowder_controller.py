@@ -23,7 +23,7 @@ class ClowderController(object):
 
     def fix_version(self, version):
         """Save current commits to a clowder.yaml in the versions directory"""
-        self._validate_exists()
+        self._validate_projects_exist()
         self._validate(self.get_all_group_names())
         versions_dir = os.path.join(self.root_directory, 'clowder', 'versions')
         version_name = version.replace('/', '-') # Replace path separateors with dashes
@@ -196,14 +196,14 @@ class ClowderController(object):
         if not valid:
             print_exiting()
 
-    def _validate_exists(self):
+    def _validate_projects_exist(self):
         """Validate existence status of all projects for specified groups"""
-        exists = True
+        projects_exist = True
         for group in self.groups:
-            group.print_exists()
-            if not group.exists():
-                exists = False
-        if not exists:
+            group.print_existence_message()
+            if not group.projects_exist():
+                projects_exist = False
+        if not projects_exist:
             herd_output = colored('clowder herd', 'yellow')
             print('')
             print('First run ' + herd_output + ' to clone missing projects')
