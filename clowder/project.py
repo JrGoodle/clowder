@@ -4,7 +4,6 @@ from termcolor import colored, cprint
 from clowder.utility.clowder_utilities import (
     format_project_string,
     format_ref_string,
-    groom,
     herd,
     print_exists,
     print_validation,
@@ -13,6 +12,7 @@ from clowder.utility.clowder_utilities import (
 from clowder.utility.git_utilities import (
     git_current_sha,
     git_is_dirty,
+    git_reset_head,
     git_stash,
     git_status
 )
@@ -68,7 +68,10 @@ class Project(object):
         """Discard changes for project"""
         if self.is_dirty():
             self._print_status()
-            groom(self.full_path())
+            print(' - Discarding current changes')
+            git_reset_head(self.full_path())
+        else:
+            print(' - No changes to discard')
 
     def herd(self):
         """Clone project or update latest from upstream"""

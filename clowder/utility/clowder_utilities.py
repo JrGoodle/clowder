@@ -13,7 +13,6 @@ from clowder.utility.git_utilities import (
     git_pull,
     git_pull_remote_branch,
     git_ref_type,
-    git_reset_head,
     git_truncate_ref
 )
 
@@ -35,14 +34,6 @@ def format_ref_string(repo_path):
     else:
         current_branch = git_current_branch(repo_path)
         return colored('(' + current_branch + ')', 'magenta')
-
-def groom(repo_path):
-    """Discard current changes in repository"""
-    if git_is_dirty(repo_path):
-        print(' - Discarding current changes')
-        git_reset_head(repo_path)
-    else:
-        print(' - No changes to discard')
 
 def herd(repo_path, ref, remote, url):
     """Sync git repo with default branch"""
