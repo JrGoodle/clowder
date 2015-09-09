@@ -189,8 +189,11 @@ def git_is_detached(repo_path):
 
 def git_is_dirty(repo_path):
     """Check if repo is dirty"""
-    repo = Repo(repo_path)
-    return repo.is_dirty()
+    if not os.path.isdir(repo_path):
+        return False
+    else:
+        repo = Repo(repo_path)
+        return repo.is_dirty()
 
 def git_pull(repo_path):
     """Pull from remote branch"""
