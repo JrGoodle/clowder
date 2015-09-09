@@ -23,7 +23,7 @@ class GroupTest(unittest.TestCase):
 
     def test_exists(self):
         """Test exists() method"""
-        self.assertTrue(self.group.exists())
+        self.assertTrue(self.group.projects_exist())
 
     def test_get_yaml(self):
         """Test get_yaml() method"""
