@@ -155,6 +155,10 @@ prepare_unittest_repos()
     touch newfile
     git add .
     popd &>/dev/null
+    # Set sasha repo to detached HEAD state
+    pushd black-cats/sasha &>/dev/null
+    git checkout '6ce5538d2c09fda2f56a9ca3859f5e8cfe706bf0'
+    popd &>/dev/null
 }
 
 echo 'TEST: Run unittests'

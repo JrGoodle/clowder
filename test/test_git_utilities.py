@@ -1,17 +1,46 @@
 """Test group class"""
-import unittest
+import os, unittest
 from clowder.utility.git_utilities import (
+    git_current_branch,
+    git_current_sha,
+    git_is_detached,
+    git_is_dirty,
     git_ref_type,
     git_truncate_ref
 )
 
-class GroupTest(unittest.TestCase):
-    """group test subclass"""
+CURRENT_FILE_DIR_PATH = os.path.dirname(os.path.realpath(__file__))
+CATS_EXAMPLE_PATH = os.path.abspath(os.path.join(CURRENT_FILE_DIR_PATH, '..', 'examples', 'cats'))
+
+class GitUtilitiesTest(unittest.TestCase):
+    """git_utilities test subclass"""
     def setUp(self):
+        # self.jules_project_path = os.path.join(CATS_EXAMPLE_PATH, 'black-cats', 'jules')
+        self.kishka_project_path = os.path.join(CATS_EXAMPLE_PATH, 'black-cats', 'kishka')
+        self.kit_project_path = os.path.join(CATS_EXAMPLE_PATH, 'black-cats', 'kit')
+        self.sasha_project_path = os.path.join(CATS_EXAMPLE_PATH, 'black-cats', 'sasha')
         self.branch_ref = 'refs/heads/master'
         self.tag_ref = 'refs/tags/v1.0'
-        self.sha_ref = '7083e8840e1bb972b7664cfa20bbd7a25f004018'
+        self.sha_ref = '6ce5538d2c09fda2f56a9ca3859f5e8cfe706bf0'
         self.unknown_ref = 'unknown'
+
+    def test_git_current_branch(self):
+        """Test git_current_branch() function"""
+        self.assertEqual(git_current_branch(self.kit_project_path), 'master')
+
+    def test_git_current_sha(self):
+        """Test git_current_sha() function"""
+        self.assertEqual(git_current_sha(self.sasha_project_path), self.sha_ref)
+
+    def test_git_is_detached(self):
+        """Test git_is_detached() function"""
+        self.assertTrue(git_is_detached(self.sasha_project_path))
+        self.assertFalse(git_is_detached(self.kit_project_path))
+
+    def test_git_is_dirty(self):
+        """Test git_is_detached() function"""
+        self.assertTrue(git_is_dirty(self.kishka_project_path))
+        self.assertFalse(git_is_dirty(self.kit_project_path))
 
     def test_git_ref_type_branch(self):
         """Test git_ref_type() function for branch ref"""

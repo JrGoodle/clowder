@@ -9,8 +9,8 @@ CATS_EXAMPLE_PATH = os.path.abspath(os.path.join(CURRENT_FILE_DIR_PATH, '..', 'e
 class ProjectTest(unittest.TestCase):
     """project test subclass"""
     def setUp(self):
-        self.jules_project_path = os.path.join(CATS_EXAMPLE_PATH, 'black-cats', 'jules')
-        self.kishka_project_path = os.path.join(CATS_EXAMPLE_PATH, 'black-cats', 'kishka')
+        # self.jules_project_path = os.path.join(CATS_EXAMPLE_PATH, 'black-cats', 'jules')
+        # self.kishka_project_path = os.path.join(CATS_EXAMPLE_PATH, 'black-cats', 'kishka')
         self.kit_project_path = os.path.join(CATS_EXAMPLE_PATH, 'black-cats', 'kit')
         defaults_yaml = {'ref': 'refs/heads/master',
                          'remote': 'origin',
