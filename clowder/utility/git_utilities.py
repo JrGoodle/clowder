@@ -184,8 +184,11 @@ def git_has_untracked_files(repo_path):
 
 def git_is_detached(repo_path):
     """Check if HEAD is detached"""
-    repo = Repo(repo_path)
-    return repo.head.is_detached
+    if not os.path.isdir(repo_path):
+        return False
+    else:
+        repo = Repo(repo_path)
+        return repo.head.is_detached
 
 def git_is_dirty(repo_path):
     """Check if repo is dirty"""

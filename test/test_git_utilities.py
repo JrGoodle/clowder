@@ -15,7 +15,7 @@ CATS_EXAMPLE_PATH = os.path.abspath(os.path.join(CURRENT_FILE_DIR_PATH, '..', 'e
 class GitUtilitiesTest(unittest.TestCase):
     """git_utilities test subclass"""
     def setUp(self):
-        # self.jules_project_path = os.path.join(CATS_EXAMPLE_PATH, 'black-cats', 'jules')
+        self.jules_project_path = os.path.join(CATS_EXAMPLE_PATH, 'black-cats', 'jules')
         self.kishka_project_path = os.path.join(CATS_EXAMPLE_PATH, 'black-cats', 'kishka')
         self.kit_project_path = os.path.join(CATS_EXAMPLE_PATH, 'black-cats', 'kit')
         self.sasha_project_path = os.path.join(CATS_EXAMPLE_PATH, 'black-cats', 'sasha')
@@ -34,11 +34,13 @@ class GitUtilitiesTest(unittest.TestCase):
 
     def test_git_is_detached(self):
         """Test git_is_detached() function"""
-        self.assertTrue(git_is_detached(self.sasha_project_path))
+        self.assertFalse(git_is_detached(self.jules_project_path))
         self.assertFalse(git_is_detached(self.kit_project_path))
+        self.assertTrue(git_is_detached(self.sasha_project_path))
 
     def test_git_is_dirty(self):
         """Test git_is_detached() function"""
+        self.assertFalse(git_is_dirty(self.jules_project_path))
         self.assertTrue(git_is_dirty(self.kishka_project_path))
         self.assertFalse(git_is_dirty(self.kit_project_path))
 
