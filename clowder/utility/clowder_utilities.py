@@ -78,7 +78,7 @@ def validate_repo_state(repo_path):
         return True
     return not git_is_dirty(repo_path)
 
-def _forall_run(command, directories):
+def forall_run(command, directories):
     """Run command in all directories"""
     sorted_paths = sorted(set(directories))
     paths = [p for p in sorted_paths if os.path.isdir(p)]
@@ -99,7 +99,7 @@ def _forall_run(command, directories):
 # pylint: disable=W0702
 # Disable errors shown by pylint for statements which appear to have no effect
 # pylint: disable=W0104
-def _validate_yaml(parsed_yaml):
+def validate_yaml(parsed_yaml):
     """Load clowder from yaml file"""
     try:
         parsed_yaml['defaults']['ref']

@@ -4,8 +4,8 @@ from termcolor import colored
 from clowder.group import Group
 from clowder.source import Source
 from clowder.utility.clowder_utilities import (
-    _forall_run,
-    _validate_yaml,
+    forall_run,
+    validate_yaml,
     print_exiting
 )
 
@@ -49,7 +49,7 @@ class ClowderController(object):
             if group.name in group_names:
                 for project in group.projects:
                     directories.append(project.full_path())
-        _forall_run(command, directories)
+        forall_run(command, directories)
 
     def forall_projects(self, command, project_names):
         """Runs command in all project directories of projects specified"""
@@ -58,7 +58,7 @@ class ClowderController(object):
             for project in group.projects:
                 if project.name in project_names:
                     directories.append(project.full_path())
-        _forall_run(command, directories)
+        forall_run(command, directories)
 
     def get_all_group_names(self):
         """Returns all group names for current clowder.yaml"""
@@ -166,7 +166,7 @@ class ClowderController(object):
         if os.path.exists(yaml_file):
             with open(yaml_file) as file:
                 parsed_yaml = yaml.safe_load(file)
-                _validate_yaml(parsed_yaml)
+                validate_yaml(parsed_yaml)
 
                 self.default_ref = parsed_yaml['defaults']['ref']
                 self.default_remote = parsed_yaml['defaults']['remote']
