@@ -10,7 +10,6 @@ from clowder.utility.git_utilities import (
     git_fetch,
     git_is_detached,
     git_is_dirty,
-    git_pull,
     git_pull_remote_branch,
     git_ref_type,
     git_truncate_ref
@@ -72,12 +71,6 @@ def print_validation(repo_path):
         return
     if git_is_dirty(repo_path):
         print(' - Dirty repo. Please stash, commit, or discard your changes')
-
-def sync(repo_path):
-    """Sync clowder repo with current branch"""
-    if not git_is_detached(repo_path):
-        print(' - Pulling latest changes')
-        git_pull(repo_path)
 
 def validate_repo_state(repo_path):
     """Validate repo state"""
