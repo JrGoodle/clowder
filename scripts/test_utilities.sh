@@ -170,7 +170,7 @@ test_herd_detached_heads()
     for project in "${projects[@]}"
     do
     	pushd $project &>/dev/null
-        git checkout master~2 &>/dev/null
+        git checkout master~2
         popd &>/dev/null
     done
     clowder meow || exit 1
@@ -247,6 +247,14 @@ test_sync()
     clowder sync || exit 1
     echo "TEST: Successfully sync twice"
     clowder sync || exit 1
+    echo "TEST: Fail sync with detached HEAD in clowder repo"
+    pushd clowder &>/dev/null
+    git checkout master~2
+    popd &>/dev/null
+    clowder sync && exit 1
+    pushd clowder &>/dev/null
+    git checkout master
+    popd &>/dev/null
 }
 
 test_herd_groups()

@@ -62,7 +62,10 @@ class ClowderRepo(object):
         if not git_is_detached(self.clowder_path):
             print(' - Pulling latest changes')
             git_pull(self.clowder_path)
-        self.symlink_yaml()
+            self.symlink_yaml()
+        else:
+            print(' - HEAD is detached')
+            print_exiting()
 
     def _validate(self):
         """Validate status of clowder repo"""
