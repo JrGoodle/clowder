@@ -1,35 +1,25 @@
 """Test group class"""
-import os, unittest
+import unittest
 from clowder.group import Group
 from clowder.source import Source
-
-CURRENT_FILE_DIR_PATH = os.path.dirname(os.path.realpath(__file__))
-CATS_EXAMPLE_PATH = os.path.abspath(os.path.join(CURRENT_FILE_DIR_PATH, '..', 'examples', 'cats'))
+from test.shared import (
+    CATS_EXAMPLE_PATH,
+    DEFAULTS_YAML,
+    GITHUB_HTTPS_SOURCE_YAML,
+    GITHUB_SSH_SOURCE_YAML,
+    JULES_GROUP_YAML,
+    KISHKA_GROUP_YAML,
+    KIT_GROUP_YAML
+)
 
 class GroupTest(unittest.TestCase):
     """group test subclass"""
     def setUp(self):
-        defaults_yaml = {'ref': 'refs/heads/master',
-                         'remote': 'origin',
-                         'source': 'github'}
-        sources = [Source({'name': 'github-ssh', 'url': 'ssh://git@github.com'}),
-                   Source({'name': 'github', 'url': 'https://github.com'})]
-        jules_project_yaml = {'name': 'jrgoodle/jules',
-                              'path': 'black-cats/jules'}
-        kishka_project_yaml = {'name': 'jrgoodle/kishka',
-                               'path': 'black-cats/kishka'}
-        kit_project_yaml = {'name': 'jrgoodle/kit',
-                            'path': 'black-cats/kit',
-                            'ref': 'da5c3d32ec2c00aba4a9f7d822cce2c727f7f5dd'}
-        jules_group_yaml = {'name': 'cats',
-                            'projects': [jules_project_yaml]}
-        kishka_group_yaml = {'name': 'cats',
-                             'projects': [kishka_project_yaml]}
-        kit_group_yaml = {'name': 'cats',
-                          'projects': [kit_project_yaml]}
-        self.jules_group = Group(CATS_EXAMPLE_PATH, jules_group_yaml, defaults_yaml, sources)
-        self.kishka_group = Group(CATS_EXAMPLE_PATH, kishka_group_yaml, defaults_yaml, sources)
-        self.kit_group = Group(CATS_EXAMPLE_PATH, kit_group_yaml, defaults_yaml, sources)
+        sources = [Source(GITHUB_SSH_SOURCE_YAML),
+                   Source(GITHUB_HTTPS_SOURCE_YAML)]
+        self.jules_group = Group(CATS_EXAMPLE_PATH, JULES_GROUP_YAML, DEFAULTS_YAML, sources)
+        self.kishka_group = Group(CATS_EXAMPLE_PATH, KISHKA_GROUP_YAML, DEFAULTS_YAML, sources)
+        self.kit_group = Group(CATS_EXAMPLE_PATH, KIT_GROUP_YAML, DEFAULTS_YAML, sources)
 
     def test_get_yaml(self):
         """Test get_yaml() method"""

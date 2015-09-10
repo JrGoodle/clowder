@@ -8,9 +8,7 @@ from clowder.utility.git_utilities import (
     git_ref_type,
     git_truncate_ref
 )
-
-CURRENT_FILE_DIR_PATH = os.path.dirname(os.path.realpath(__file__))
-CATS_EXAMPLE_PATH = os.path.abspath(os.path.join(CURRENT_FILE_DIR_PATH, '..', 'examples', 'cats'))
+from test.shared import CATS_EXAMPLE_PATH
 
 class GitUtilitiesTest(unittest.TestCase):
     """git_utilities test subclass"""
@@ -22,7 +20,6 @@ class GitUtilitiesTest(unittest.TestCase):
         self.branch_ref = 'refs/heads/master'
         self.tag_ref = 'refs/tags/v1.0'
         self.sha_ref = '6ce5538d2c09fda2f56a9ca3859f5e8cfe706bf0'
-        self.unknown_ref = 'unknown'
 
     def test_git_current_branch(self):
         """Test git_current_branch() function"""
@@ -58,7 +55,7 @@ class GitUtilitiesTest(unittest.TestCase):
 
     def test_git_ref_type_unknown(self):
         """Test git_ref_type() function for unknown ref type"""
-        self.assertEqual(git_ref_type(self.unknown_ref), 'unknown')
+        self.assertEqual(git_ref_type('42'), 'unknown')
 
     def test_git_truncate_ref_branch(self):
         """Test git_truncate_ref() function for branch ref"""
