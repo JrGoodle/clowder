@@ -2,9 +2,15 @@
 import os, unittest
 from clowder.source import Source
 from clowder.project import Project
-
-CURRENT_FILE_DIR_PATH = os.path.dirname(os.path.realpath(__file__))
-CATS_EXAMPLE_PATH = os.path.abspath(os.path.join(CURRENT_FILE_DIR_PATH, '..', 'examples', 'cats'))
+from test.shared import (
+    CATS_EXAMPLE_PATH,
+    DEFAULTS_YAML,
+    GITHUB_HTTPS_SOURCE_YAML,
+    GITHUB_SSH_SOURCE_YAML,
+    JULES_PROJECT_YAML,
+    KISHKA_PROJECT_YAML,
+    KIT_PROJECT_YAML
+)
 
 class ProjectTest(unittest.TestCase):
     """project test subclass"""
@@ -12,24 +18,14 @@ class ProjectTest(unittest.TestCase):
         # self.jules_project_path = os.path.join(CATS_EXAMPLE_PATH, 'black-cats', 'jules')
         # self.kishka_project_path = os.path.join(CATS_EXAMPLE_PATH, 'black-cats', 'kishka')
         self.kit_project_path = os.path.join(CATS_EXAMPLE_PATH, 'black-cats', 'kit')
-        defaults_yaml = {'ref': 'refs/heads/master',
-                         'remote': 'origin',
-                         'source': 'github'}
-        sources = [Source({'name': 'github-ssh', 'url': 'ssh://git@github.com'}),
-                   Source({'name': 'github', 'url': 'https://github.com'})]
-        jules_project_yaml = {'name': 'jrgoodle/jules',
-                              'path': 'black-cats/jules'}
-        kishka_project_yaml = {'name': 'jrgoodle/kishka',
-                               'path': 'black-cats/kishka'}
-        kit_project_yaml = {'name': 'jrgoodle/kit',
-                            'path': 'black-cats/kit',
-                            'ref': 'da5c3d32ec2c00aba4a9f7d822cce2c727f7f5dd'}
-        self.jules_project = Project(CATS_EXAMPLE_PATH, jules_project_yaml,
-                                     defaults_yaml, sources)
-        self.kishka_project = Project(CATS_EXAMPLE_PATH, kishka_project_yaml,
-                                      defaults_yaml, sources)
-        self.kit_project = Project(CATS_EXAMPLE_PATH, kit_project_yaml,
-                                   defaults_yaml, sources)
+        sources = [Source(GITHUB_SSH_SOURCE_YAML),
+                   Source(GITHUB_HTTPS_SOURCE_YAML)]
+        self.jules_project = Project(CATS_EXAMPLE_PATH, JULES_PROJECT_YAML,
+                                     DEFAULTS_YAML, sources)
+        self.kishka_project = Project(CATS_EXAMPLE_PATH, KISHKA_PROJECT_YAML,
+                                      DEFAULTS_YAML, sources)
+        self.kit_project = Project(CATS_EXAMPLE_PATH, KIT_PROJECT_YAML,
+                                   DEFAULTS_YAML, sources)
 
     def test_exists(self):
         """Test exists() method"""

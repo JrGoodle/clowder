@@ -1,9 +1,7 @@
 """Test ClowderRepo class"""
 import os, unittest
 from clowder.clowder_repo import ClowderRepo
-
-CURRENT_FILE_DIR_PATH = os.path.dirname(os.path.realpath(__file__))
-CATS_EXAMPLE_PATH = os.path.abspath(os.path.join(CURRENT_FILE_DIR_PATH, '..', 'examples', 'cats'))
+from test.shared import CATS_EXAMPLE_PATH
 
 class ClowderRepoTest(unittest.TestCase):
     """clowder_repo test subclass"""
