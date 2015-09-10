@@ -76,8 +76,6 @@ class Project(object):
             self._print_status()
             print(' - Discarding current changes')
             git_reset_head(self.full_path())
-        else:
-            print(' - No changes to discard')
 
     def herd(self):
         """Clone project or update latest from upstream"""
