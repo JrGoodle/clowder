@@ -10,6 +10,8 @@ Managing multiple repositories can be pretty frustrating. There are a number of 
 - [subtree merging](https://git-scm.com/book/en/v1/Git-Tools-Subtree-Merging)
 - [Google's repo tool](https://code.google.com/p/git-repo/)
 - [GitSlave](http://gitslave.sourceforge.net)
+- [braid](https://github.com/cristibalan/braid)
+- [giternal](https://github.com/patmaddox/giternal)
 - [git-submanage](https://github.com/idbrii/git-submanage)
 - [gr](https://github.com/mixu/gr)
 - [git-stree](https://github.com/tdd/git-stree)
@@ -17,7 +19,7 @@ Managing multiple repositories can be pretty frustrating. There are a number of 
 
 All of these have their own approach, but many are based on submodules or subtrees. Submodules and subtrees create a tight coupling between repositories because of the way dependencies are stored. Much has been written about their drawbacks elsewhere. Google's `repo` tool takes a different approach, but is closely tied to Google's development workflow (and doesn't have a great deal of documentation).
 
-`clowder` uses a similar approach as `repo` (and `gr`) but with a yaml file instead of xml (and without the default rebasing behavior of `repo`). URL information and relative project locations on disk are specified in a `clowder.yaml` file. This file is checked into its own repository, so the project structure's history is saved under version control. The use of a separate file for tracking projects means that there's detailed information about the dependencies between them, but each repository is still essentially independent. Projects can be tied to specific tags or commits, or can track branches. Specific versions can be saved from the current commit hashes of projects on disk for later restoration.
+`clowder` uses a similar approach as `repo` (and as it turns out, `gr` and `giternal`) with a yaml file instead of xml (and without the default rebasing behavior of `repo`). URL information and relative project locations on disk are specified in a `clowder.yaml` file. This file is checked into its own repository, so the project structure's history is saved under version control. The use of a separate file for tracking projects means that there's detailed information about the dependencies between them, but each repository is still essentially independent. Projects can be tied to specific tags or commits, or can track branches. Specific versions can be saved from the current commit hashes of projects on disk for later restoration.
 
 The primary purpose of `clowder` is synchronization of multiple repositories, so normal development still takes place in individual repositories with the usual `git` commands.
 
@@ -59,19 +61,19 @@ Clone repository containing `clowder.yaml` file.
 $ clowder breed https://github.com/jrgoodle/llvm-projects.git
 ```
 
-This command will clone the [llvm-projects](https://github.com/jrgoodle/llvm-projects.git) repository in the `llvm-projects/clowder` directory and create a symlink at `llvm-projects/clowder.yaml`.
+The `clowder breed` command will clone the [llvm-projects](https://github.com/jrgoodle/llvm-projects.git) repository in the `llvm-projects/clowder` directory and create a symlink at `llvm-projects/clowder.yaml`.
 
 ```bash
 $ clowder herd
 ```
 
-This command syncs the projects. The `clowder.yaml` symlink is always updated to point to the primary `clowder.yaml` file in the repository cloned with `clowder breed`. Projects are cloned if they don't currently exist. Otherwise, each project will pull the latest changes. If the current branch isn't the default, it'll be checked out, and latest changes pulled. For commits and tags, the commits are checked out into a detached HEAD state (`clowder forall` can be used to checkout branches if needed).
+The `clowder herd` command syncs the projects. The `clowder.yaml` symlink is always updated to point to the primary `clowder.yaml` file in the repository cloned with `clowder breed`. Projects are cloned if they don't currently exist. Otherwise, each project will pull the latest changes. If the current branch isn't the default, it'll be checked out, and latest changes pulled. For commits and tags, the commits are checked out into a detached HEAD state (`clowder forall` can be used to checkout branches if needed).
 
 ```bash
 $ clowder sync
 ```
 
-This command is like `clowder herd`, but for syncing the repository containing the `clowder.yaml` file (located in the `clowder` directory created with the `clowder breed` command).
+The `clowder sync` command is like `clowder herd`, but for syncing the repository containing the `clowder.yaml` file (located in the `clowder` directory created with the `clowder breed` command). It will try to pull latest changes for whatever branch is currently checked out in the `clowder` directory. If the repository is in a detached HEAD state, a message will be printed indicating this, and the command will exit without trying to pull any new changes.
 
 ### Further Commands
 
