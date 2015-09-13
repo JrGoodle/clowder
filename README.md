@@ -61,19 +61,19 @@ Clone repository containing `clowder.yaml` file.
 $ clowder breed https://github.com/jrgoodle/llvm-projects.git
 ```
 
-This command will clone the [llvm-projects](https://github.com/jrgoodle/llvm-projects.git) repository in the `llvm-projects/clowder` directory and create a symlink at `llvm-projects/clowder.yaml`.
+The `clowder breed` command will clone the [llvm-projects](https://github.com/jrgoodle/llvm-projects.git) repository in the `llvm-projects/clowder` directory and create a symlink at `llvm-projects/clowder.yaml`.
 
 ```bash
 $ clowder herd
 ```
 
-This command syncs the projects. The `clowder.yaml` symlink is always updated to point to the primary `clowder.yaml` file in the repository cloned with `clowder breed`. Projects are cloned if they don't currently exist. Otherwise, each project will pull the latest changes. If the current branch isn't the default, it'll be checked out, and latest changes pulled. For commits and tags, the commits are checked out into a detached HEAD state (`clowder forall` can be used to checkout branches if needed).
+The `clowder herd` command syncs the projects. The `clowder.yaml` symlink is always updated to point to the primary `clowder.yaml` file in the repository cloned with `clowder breed`. Projects are cloned if they don't currently exist. Otherwise, each project will pull the latest changes. If the current branch isn't the default, it'll be checked out, and latest changes pulled. For commits and tags, the commits are checked out into a detached HEAD state (`clowder forall` can be used to checkout branches if needed).
 
 ```bash
 $ clowder sync
 ```
 
-This command is like `clowder herd`, but for syncing the repository containing the `clowder.yaml` file (located in the `clowder` directory created with the `clowder breed` command).
+The `clowder sync` command is like `clowder herd`, but for syncing the repository containing the `clowder.yaml` file (located in the `clowder` directory created with the `clowder breed` command). It will try to pull latest changes for whatever branch is currently checked out in the `clowder` directory. If the repository is in a detached HEAD state, a message will be printed indicating this, and the command will exit without trying to pull any new changes.
 
 ### Further Commands
 
