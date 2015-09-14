@@ -2,6 +2,8 @@
 
 # set -xv
 
+echo 'TEST: srclib example test script'
+
 cd "$( dirname "${BASH_SOURCE[0]}" )"
 source test_utilities.sh
 cd ../examples/srclib
