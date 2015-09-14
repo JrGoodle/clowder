@@ -4,9 +4,10 @@ sudo: false # Enable container-based builds
 
 env:
   matrix:
-    - TARGET="cats_example"
-    - TARGET="llvm_projects_example"
-    - TARGET="srclib_example"
+    - TARGET="test_cats_example"
+    - TARGET="test_llvm_projects_example"
+    - TARGET="test_srclib_example"
+    - TARGET="unittests"
 
 before_install: brew update
 
@@ -16,7 +17,7 @@ install:
 
 before_script: python3 setup.py -q install
 
-script: scripts/test_${TARGET}.sh
+script: scripts/${TARGET}.sh
 
 after_success: scripts/deploy.sh
 
