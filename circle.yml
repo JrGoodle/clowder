@@ -5,3 +5,4 @@ machine:
 test:
   override:
     - scripts/unittests.sh
+    - scripts/test_cats_example.sh
