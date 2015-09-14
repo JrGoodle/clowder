@@ -2,6 +2,8 @@
 
 # set -xv
 
+echo 'TEST: python unittests test script'
+
 cd "$( dirname "${BASH_SOURCE[0]}" )"
 cd ../examples/cats
 

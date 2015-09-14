@@ -2,6 +2,8 @@
 
 # set -xv
 
+echo 'TEST: cats example test script'
+
 cd "$( dirname "${BASH_SOURCE[0]}" )"
 source test_utilities.sh
 cd ../examples/cats
@@ -144,7 +146,3 @@ test_herd_tag
 test_herd_missing_groups
 
 print_help
-
-# Run unit tests
-cd ../../scripts
-./unittests.sh

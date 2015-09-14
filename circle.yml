@@ -1,0 +1,13 @@
+machine:
+  python:
+    version: 3.4.3
+
+checkout:
+  post:
+    - git config --global user.name "joe DeCapo"
+    - git config --global user.email "joe@polka.cat"
+
+test:
+  override:
+    - scripts/test_circleci.sh:
+        parallel: true
