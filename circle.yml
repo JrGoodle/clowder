@@ -9,5 +9,5 @@ checkout:
 
 test:
   override:
-    - scripts/unittests.sh
-    - scripts/test_cats_example.sh
+    - scripts/test_circleci.sh:
+        parallel: true
