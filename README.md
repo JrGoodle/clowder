@@ -61,7 +61,7 @@ Clone repository containing `clowder.yaml` file.
 $ clowder breed https://github.com/jrgoodle/llvm-projects.git
 ```
 
-The `clowder breed` command will clone the [llvm-projects](https://github.com/jrgoodle/llvm-projects.git) repository in the `llvm-projects/clowder` directory and create a symlink at `llvm-projects/clowder.yaml`.
+The `clowder breed` command will clone the [llvm-projects](https://github.com/jrgoodle/llvm-projects.git) repository in the `llvm-projects/clowder` directory and create a symlink pointing to the primary `clowder.yaml` file in the repository: `llvm-projects/clowder.yaml` -> `llvm-projects/clowder/clowder.yaml`.
 
 ```bash
 $ clowder herd
@@ -107,7 +107,7 @@ $ clowder herd -v v0.1 # Check out fixed version
 ```
 
 ```bash
-$ CMD='git status'
+$ export CMD='git status'
 $ clowder forall "$CMD" # Run "$CMD" in all project directories
 $ clowder forall "$CMD" -g clang # Run "$CMD" only for projects in clang group
 $ clowder forall "$CMD" -p llvm-mirror/clang # Run "$CMD" only for clang project
