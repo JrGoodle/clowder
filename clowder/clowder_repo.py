@@ -1,7 +1,9 @@
 """Clowder repo management"""
 import emoji, os
+from git import Repo
 from termcolor import colored
 from clowder.utility.git_utilities import (
+    git_branches,
     git_clone_url_at_path,
     git_is_detached,
     git_pull
@@ -20,6 +22,10 @@ class ClowderRepo(object):
     def __init__(self, root_directory):
         self.root_directory = root_directory
         self.clowder_path = os.path.join(self.root_directory, 'clowder')
+
+    def branches(self):
+        """Return current local branches"""
+        return git_branches(self.clowder_path)
 
     def breed(self, url):
         """Clone clowder repo from url"""
@@ -59,13 +65,36 @@ class ClowderRepo(object):
     def sync(self):
         """Sync clowder repo"""
         self._validate()
+        self.print_status()
         if not git_is_detached(self.clowder_path):
-            print(' - Pulling latest changes')
             git_pull(self.clowder_path)
             self.symlink_yaml()
         else:
             print(' - HEAD is detached')
             print_exiting()
+
+    # Disable errors shown by pylint for no specified exception types
+    # pylint: disable=W0702
+    def sync_branch(self, branch):
+        """Sync clowder repo to specified branch"""
+        try:
+            repo = Repo(self.clowder_path)
+        except:
+            repo_path_output = colored(self.clowder_path, 'cyan')
+            print("Failed to create Repo instance for " + repo_path_output)
+        else:
+            detached = git_is_detached(self.clowder_path)
+            correct_branch = repo.active_branch.name == branch
+            if detached or not correct_branch:
+                try:
+                    repo.git.checkout(branch)
+                except:
+                    print("Failed to checkout branch " + branch)
+                    print_exiting()
+            self._validate()
+            self.print_status()
+            git_pull(self.clowder_path)
+            self.symlink_yaml()
 
     def _validate(self):
         """Validate status of clowder repo"""
