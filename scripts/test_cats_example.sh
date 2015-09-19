@@ -110,6 +110,8 @@ test_sync_branch()
     clowder sync -b master || exit 1
     echo "TEST: Test syncing other branch"
     clowder sync -b tags || exit 1
+    echo "TEST: Test syncing missing branch"
+    clowder sync -b sync-missing-branch && exit 1
     echo "TEST: Test syncing branch from detached HEAD"
     pushd clowder &>/dev/null
     git checkout master~2
