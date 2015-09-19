@@ -7,6 +7,7 @@ from clowder.utility.git_utilities import (
     git_pull
 )
 from clowder.utility.clowder_utilities import (
+    force_symlink,
     format_project_string,
     format_ref_string,
     print_exiting,
@@ -46,12 +47,11 @@ class ClowderRepo(object):
             relative_path = os.path.join('clowder', 'versions', version, 'clowder.yaml')
             path_output = colored(relative_path, 'cyan')
             yaml_file = os.path.join(self.root_directory, relative_path)
-        os.chdir(self.root_directory)
+
         if os.path.isfile(yaml_file):
-            if os.path.isfile('clowder.yaml'):
-                os.remove('clowder.yaml')
+            yaml_symlink = os.path.join(self.root_directory, 'clowder.yaml')
             print(' - Symlink ' + path_output)
-            os.symlink(yaml_file, 'clowder.yaml')
+            force_symlink(yaml_file, yaml_symlink)
         else:
             print(path_output + " doesn't seem to exist")
             print_exiting()
