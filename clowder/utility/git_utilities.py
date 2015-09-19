@@ -6,6 +6,16 @@ from termcolor import colored
 # Disable errors shown by pylint for no specified exception types
 # pylint: disable=W0702
 
+def git_branches(repo_path):
+    """Get list of current branches"""
+    try:
+        repo = Repo(repo_path)
+    except:
+        repo_path_output = colored(repo_path, 'cyan')
+        print("Failed to create Repo instance for " + repo_path_output)
+    else:
+        return repo.branches
+
 def git_checkout_branch(repo_path, branch, remote):
     """Checkout branch, and create if it doesn't exist"""
     try:
