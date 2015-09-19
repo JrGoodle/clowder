@@ -83,14 +83,20 @@ class ClowderRepo(object):
             repo_path_output = colored(self.clowder_path, 'cyan')
             print("Failed to create Repo instance for " + repo_path_output)
         else:
-            detached = git_is_detached(self.clowder_path)
-            correct_branch = repo.active_branch.name == branch
-            if detached or not correct_branch:
+            if git_is_detached(self.clowder_path):
                 try:
                     repo.git.checkout(branch)
                 except:
                     print("Failed to checkout branch " + branch)
                     print_exiting()
+
+            if repo.active_branch.name != branch:
+                try:
+                    repo.git.checkout(branch)
+                except:
+                    print("Failed to checkout branch " + branch)
+                    print_exiting()
+
             self._validate()
             self.print_status()
             git_pull(self.clowder_path)

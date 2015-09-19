@@ -20,7 +20,7 @@ class Command(object):
         self.versions = None
         self.group_names = ''
         self.project_names = ''
-        self.brancehs = ''
+        self.branches = ''
         # Load current clowder.yml config if it exists
         clowder_path = os.path.join(self.root_directory, 'clowder')
         if os.path.isdir(clowder_path):
