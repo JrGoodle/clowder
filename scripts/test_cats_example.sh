@@ -100,6 +100,23 @@ test_no_versions()
     popd &>/dev/null
 }
 
+test_sync_branch()
+{
+    print_separator
+    echo "TEST: Test syncing branch from current branch"
+    pushd clowder &>/dev/null
+    git checkout master
+    popd &>/dev/null
+    clowder sync -b master || exit 1
+    echo "TEST: Test syncing other branch"
+    clowder sync -b tags || exit 1
+    echo "TEST: Test syncing branch from detached HEAD"
+    pushd clowder &>/dev/null
+    git checkout master~2
+    popd &>/dev/null
+    clowder sync -b master || exit 1
+}
+
 # export projects=( 'black-cats/kit' \
 #                   'black-cats/kishka' \
 #                   'black-cats/sasha' \
@@ -144,5 +161,6 @@ test_invalid_yaml
 test_herd_sha
 test_herd_tag
 test_herd_missing_groups
+test_sync_branch
 
 print_help
