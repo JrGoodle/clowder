@@ -1,5 +1,5 @@
 """Clowder utilities"""
-import os, subprocess, sys
+import errno, os, subprocess, sys
 from termcolor import colored, cprint
 from clowder.utility.git_utilities import (
     git_current_branch,
@@ -7,6 +7,15 @@ from clowder.utility.git_utilities import (
     git_is_detached,
     git_is_dirty
 )
+
+def force_symlink(file1, file2):
+    """Force symlink creation"""
+    try:
+        os.symlink(file1, file2)
+    except OSError as error:
+        if error.errno == errno.EEXIST:
+            os.remove(file2)
+            os.symlink(file1, file2)
 
 def forall_run(command, directories):
     """Run command in all directories"""
