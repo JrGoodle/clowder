@@ -20,11 +20,14 @@ class Command(object):
         self.versions = None
         self.group_names = ''
         self.project_names = ''
+        self.branches = ''
         # Load current clowder.yml config if it exists
-        if os.path.isdir(os.path.join(self.root_directory, 'clowder')):
+        clowder_path = os.path.join(self.root_directory, 'clowder')
+        if os.path.isdir(clowder_path):
             self.clowder_repo = ClowderRepo(self.root_directory)
             self.clowder = ClowderController(self.root_directory)
             self.versions = self.clowder.get_fixed_version_names()
+            self.branches = self.clowder_repo.branches()
             if self.clowder.get_all_group_names() is not None:
                 self.group_names = self.clowder.get_all_group_names()
             if self.clowder.get_all_project_names() is not None:
@@ -134,8 +137,10 @@ class Command(object):
         """clowder sync command"""
         if self.clowder_repo is not None:
             cprint('Sync...\n', 'yellow')
-            self.clowder_repo.print_status()
-            self.clowder_repo.sync()
+            if self.args.branch is None:
+                self.clowder_repo.sync()
+            else:
+                self.clowder_repo.sync_branch(self.args.branch)
         else:
             exit_clowder_not_found()
 
@@ -197,7 +202,9 @@ class Command(object):
         group_stash.add_argument('--projects', '-p', choices=self.project_names,
                                  nargs='+', help='Projects to stash')
         # clowder sync
-        subparsers.add_parser('sync', add_help=False, help='Sync clowder repo')
+        parser_sync = subparsers.add_parser('sync', add_help=False, help='Sync clowder repo')
+        parser_sync.add_argument('--branch', '-b', choices=self.branches,
+                                 help='Groups to print status for')
 
 def exit_unrecognized_command(parser):
     """Print unrecognized command message and exit"""
