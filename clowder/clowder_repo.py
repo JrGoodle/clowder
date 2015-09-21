@@ -1,10 +1,11 @@
 """Clowder repo management"""
 import emoji, os
-from git import Repo
 from termcolor import colored
 from clowder.utility.git_utilities import (
     git_branches,
+    git_checkout_branch,
     git_clone_url_at_path,
+    git_current_branch,
     git_is_detached,
     git_pull
 )
@@ -77,30 +78,14 @@ class ClowderRepo(object):
     # pylint: disable=W0702
     def sync_branch(self, branch):
         """Sync clowder repo to specified branch"""
-        try:
-            repo = Repo(self.clowder_path)
-        except:
-            repo_path_output = colored(self.clowder_path, 'cyan')
-            print("Failed to create Repo instance for " + repo_path_output)
-        else:
-            if git_is_detached(self.clowder_path):
-                try:
-                    repo.git.checkout(branch)
-                except:
-                    print("Failed to checkout branch " + branch)
-                    print_exiting()
-
-            if repo.active_branch.name != branch:
-                try:
-                    repo.git.checkout(branch)
-                except:
-                    print("Failed to checkout branch " + branch)
-                    print_exiting()
-
-            self._validate()
-            self.print_status()
-            git_pull(self.clowder_path)
-            self.symlink_yaml()
+        if git_is_detached(self.clowder_path):
+            git_checkout_branch(self.clowder_path, branch)
+        elif git_current_branch(self.clowder_path) != branch:
+            git_checkout_branch(self.clowder_path, branch)
+        self._validate()
+        self.print_status()
+        git_pull(self.clowder_path)
+        self.symlink_yaml()
 
     def _validate(self):
         """Validate status of clowder repo"""
