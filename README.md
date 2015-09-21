@@ -78,10 +78,14 @@ The `clowder sync` command is like `clowder herd`, but for syncing the repositor
 ### Further Commands
 
 ```bash
-$ clowder meow # print status of projects
-$ clowder meow -v # print more verbose status of projects
-$ clowder meow -g clang llvm # print status of projects in clang and llvm groups
-$ clowder meow -v -g clang # print verbose status of projects in clang group
+$ clowder fix v0.1 # Fix new version of clowder.yaml
+```
+
+```bash
+$ export CMD='git status'
+$ clowder forall "$CMD" # Run "$CMD" in all project directories
+$ clowder forall "$CMD" -g clang # Run "$CMD" only for projects in clang group
+$ clowder forall "$CMD" -p llvm-mirror/clang # Run "$CMD" only for clang project
 ```
 
 ```bash
@@ -91,26 +95,26 @@ $ clowder groom -p llvm-mirror/clang # Discard any changes in clang project
 ```
 
 ```bash
-$ clowder stash # Stash any changes in projects
-$ clowder stash -g clang # Stash any changes in projects in clang group
-$ clowder stash -p llvm-mirror/clang # Stash any changes in clang project
-```
-
-```bash
-$ clowder fix v0.1 # Fix new version of clowder.yaml
-```
-
-```bash
 $ clowder herd -g clang llvm # Only herd projects in clang and llvm groups
 $ clowder herd -p llvm-mirror/clang # Only herd clang project
 $ clowder herd -v v0.1 # Check out fixed version
 ```
 
 ```bash
-$ export CMD='git status'
-$ clowder forall "$CMD" # Run "$CMD" in all project directories
-$ clowder forall "$CMD" -g clang # Run "$CMD" only for projects in clang group
-$ clowder forall "$CMD" -p llvm-mirror/clang # Run "$CMD" only for clang project
+$ clowder meow # print status of projects
+$ clowder meow -v # print more verbose status of projects
+$ clowder meow -g clang llvm # print status of projects in clang and llvm groups
+$ clowder meow -v -g clang # print verbose status of projects in clang group
+```
+
+```bash
+$ clowder stash # Stash any changes in projects
+$ clowder stash -g clang # Stash any changes in projects in clang group
+$ clowder stash -p llvm-mirror/clang # Stash any changes in clang project
+```
+
+```bash
+$ clowder sync -b alternate-yaml # Sync clowder.yaml repo with alternate local branch
 ```
 
 ## The `clowder.yaml` File
