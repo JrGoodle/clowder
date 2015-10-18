@@ -36,7 +36,7 @@ def git_checkout_branch(repo_path, branch, remote):
                 pass
             else:
                 if not_detached and same_branch:
-                    print(' - On correct branch')
+                    print(' - On default branch')
                     correct_branch = True
             finally:
                 if not correct_branch:
