@@ -225,6 +225,7 @@ def git_fetch(repo_path):
         print("Failed to create Repo instance for " + repo_path_output)
     else:
         try:
+            print(' - Fetch remote data')
             repo.git.fetch('--all', '--prune', '--tags')
         except:
             print(' - Failed to fetch')
