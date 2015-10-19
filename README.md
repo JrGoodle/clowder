@@ -34,7 +34,7 @@ For a few example projects, see the [examples directory](https://github.com/JrGo
 
 ### Installation
 
-To install from the GitHub Releases, first download the latest `.whl` file, then:
+To install from the [GitHub Releases](https://github.com/JrGoodle/clowder/releases), first download the latest `.whl` file, then:
 
 ```bash
 $ pip3 install clowder-0.7.5-py3-none-any.whl
