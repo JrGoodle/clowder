@@ -16,8 +16,8 @@ def git_branches(repo_path):
     else:
         return repo.branches
 
-def git_checkout_branch(repo_path, branch, remote):
-    """Checkout branch, and create if it doesn't exist"""
+def git_checkout_branch(repo_path, branch):
+    """Checkout branch"""
     try:
         repo = Repo(repo_path)
     except:
@@ -31,7 +31,6 @@ def git_checkout_branch(repo_path, branch, remote):
             try:
                 not_detached = not repo.head.is_detached
                 same_branch = repo.head.ref == default_branch
-                # same_commit = repo.head.ref.commit == default_branch.commit
             except:
                 pass
             else:
@@ -46,46 +45,15 @@ def git_checkout_branch(repo_path, branch, remote):
                     except:
                         print(' - Failed to checkout branch ' + branch_output)
         else:
-            git_create_checkout_branch(repo_path, branch, remote)
-
-def git_create_checkout_branch(repo_path, branch, remote):
-    """Create and checkout tracking branch"""
-    try:
-        repo = Repo(repo_path)
-    except:
-        repo_path_output = colored(repo_path, 'cyan')
-        print("Failed to create Repo instance for " + repo_path_output)
-    else:
-        branch_output = colored('(' + branch + ')', 'magenta')
-        remote_output = colored(remote, attrs=['underline'])
-        print(' - Create and checkout branch ' + branch_output)
-        try:
-            origin = repo.remotes[remote]
-            origin.fetch()
-        except:
-            print(' - Failed to fetch from remote ' + remote_output)
-        else:
-            try:
-                default_branch = repo.create_head(branch, origin.refs[branch])
-            except:
-                print(' - Failed to create branch ' + branch_output)
-            else:
-                try:
-                    default_branch.set_tracking_branch(origin.refs[branch])
-                except:
-                    print(' - Failed to set tracking branch ' + branch_output)
-                else:
-                    try:
-                        default_branch.checkout()
-                    except:
-                        print(' - Failed to checkout branch ' + branch_output)
+            print(" - No existing branch " + branch_output)
 
 def git_checkout_ref(repo_path, ref, remote):
     """Checkout branch, tag, or commit from sha"""
     ref_type = git_ref_type(ref)
     if ref_type is 'branch':
         branch = git_truncate_ref(ref)
-        git_checkout_branch(repo_path, branch, remote)
+        git_create_tracking_branch(repo_path, branch, remote)
+        git_checkout_branch(repo_path, branch)
     elif ref_type is 'tag':
         tag = git_truncate_ref(ref)
         git_checkout_tag(repo_path, tag)
@@ -185,6 +153,37 @@ def git_create_remote(repo_path, remote, url):
                 origin.fetch()
             except:
                 print(" - Failed to create remote " + remote_output)
+
+def git_create_tracking_branch(repo_path, branch, remote):
+    """Create tracking branch"""
+    try:
+        repo = Repo(repo_path)
+    except:
+        repo_path_output = colored(repo_path, 'cyan')
+        print("Failed to create Repo instance for " + repo_path_output)
+    else:
+        branch_output = colored('(' + branch + ')', 'magenta')
+        remote_output = colored(remote, attrs=['underline'])
+        try:
+            repo.heads[branch] # Try to access branch if it exists
+        except:
+            # Create branch if exception was thrown accessing branch
+            print(' - Create and checkout branch ' + branch_output)
+            try:
+                origin = repo.remotes[remote]
+                origin.fetch()
+            except:
+                print(' - Failed to fetch from remote ' + remote_output)
+            else:
+                try:
+                    new_branch = repo.create_head(branch, origin.refs[branch])
+                except:
+                    print(' - Failed to create branch ' + branch_output)
+                else:
+                    try:
+                        new_branch.set_tracking_branch(origin.refs[branch])
+                    except:
+                        print(' - Failed to set tracking branch ' + branch_output)
 
 def git_current_branch(repo_path):
     """Return currently checked out branch of project"""
