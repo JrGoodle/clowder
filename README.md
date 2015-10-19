@@ -34,6 +34,14 @@ For a few example projects, see the [examples directory](https://github.com/JrGo
 
 ### Installation
 
+To install from the GitHub Releases, first download the latest `.whl` file, then:
+
+```bash
+$ pip3 install clowder-0.7.5-py3-none-any.whl
+```
+
+To install from the cloned repository:
+
 ```bash
 $ git clone https://github.com/JrGoodle/clowder.git
 $ cd clowder && ./install.sh
