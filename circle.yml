@@ -11,3 +11,8 @@ test:
   override:
     - scripts/test_circleci.sh:
         parallel: true
+
+general:
+  branches:
+    ignore: # list of branches to ignore
+      - gh-pages
