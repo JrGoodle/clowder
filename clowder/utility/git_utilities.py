@@ -61,7 +61,7 @@ def git_create_checkout_branch(repo_path, branch, remote):
         print(message + repo_path_output)
     else:
         branch_output = colored('(' + branch + ')', 'magenta')
-        remote_output = colored(remote, attrs=['underline'])
+        remote_output = colored(remote, attrs=['bold'])
         print(' - Create and checkout branch ' + branch_output)
         try:
             origin = repo.remotes[remote]
