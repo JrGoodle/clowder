@@ -42,7 +42,7 @@ class Command(object):
         self.args = parser.parse_args()
 
         print('')
-        if not hasattr(self, self.args.command):
+        if self.args.command is None or not hasattr(self, self.args.command):
             exit_unrecognized_command(parser)
         # use dispatch pattern to invoke method with same name
         getattr(self, self.args.command)()
