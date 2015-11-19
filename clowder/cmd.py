@@ -22,7 +22,7 @@ class Command(object):
         self.project_names = ''
         self.branches = ''
         # Load current clowder.yml config if it exists
-        clowder_path = os.path.join(self.root_directory, 'clowder')
+        clowder_path = os.path.join(self.root_directory, '.clowder')
         if os.path.isdir(clowder_path):
             self.clowder_repo = ClowderRepo(self.root_directory)
             self.clowder = ClowderController(self.root_directory)
