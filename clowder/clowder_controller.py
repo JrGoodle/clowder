@@ -25,7 +25,7 @@ class ClowderController(object):
         """Save current commits to a clowder.yaml in the versions directory"""
         self._validate_projects_exist()
         self._validate(self.get_all_group_names())
-        versions_dir = os.path.join(self.root_directory, 'clowder', 'versions')
+        versions_dir = os.path.join(self.root_directory, '.clowder', 'versions')
         version_name = version.replace('/', '-') # Replace path separateors with dashes
         version_dir = os.path.join(versions_dir, version_name)
         if not os.path.exists(version_dir):
@@ -70,7 +70,7 @@ class ClowderController(object):
 
     def get_fixed_version_names(self):
         """Return list of all fixed versions"""
-        versions_dir = os.path.join(self.root_directory, 'clowder', 'versions')
+        versions_dir = os.path.join(self.root_directory, '.clowder', 'versions')
         if os.path.exists(versions_dir):
             return os.listdir(versions_dir)
         else:

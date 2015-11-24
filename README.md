@@ -37,7 +37,7 @@ For a few example projects, see the [examples directory](https://github.com/JrGo
 To install from the [GitHub Releases](https://github.com/JrGoodle/clowder/releases), first download the latest `.whl` file, then:
 
 ```bash
-$ pip3 install clowder-0.7.5-py3-none-any.whl
+$ pip3 install clowder-0.8.0-py3-none-any.whl
 ```
 
 To install from the cloned repository:
@@ -69,7 +69,7 @@ Clone repository containing `clowder.yaml` file.
 $ clowder breed https://github.com/jrgoodle/llvm-projects.git
 ```
 
-The `clowder breed` command will clone the [llvm-projects](https://github.com/jrgoodle/llvm-projects.git) repository in the `llvm-projects/clowder` directory and create a symlink pointing to the primary `clowder.yaml` file in the repository: `llvm-projects/clowder.yaml` -> `llvm-projects/clowder/clowder.yaml`.
+The `clowder breed` command will clone the [llvm-projects](https://github.com/jrgoodle/llvm-projects.git) repository in the `llvm-projects/.clowder` directory and create a symlink pointing to the primary `clowder.yaml` file in the repository: `llvm-projects/clowder.yaml` -> `llvm-projects/.clowder/clowder.yaml`.
 
 ```bash
 $ clowder herd

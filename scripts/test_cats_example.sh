@@ -48,12 +48,12 @@ test_herd_sha()
 {
     print_separator
     echo "TEST: Test herd of static commit hash refs"
-    pushd clowder &>/dev/null
+    pushd .clowder &>/dev/null
     git checkout static-refs
     popd &>/dev/null
     clowder herd || exit 1
     clowder meow || exit 1
-    pushd clowder &>/dev/null
+    pushd .clowder &>/dev/null
     git checkout master
     popd &>/dev/null
 }
@@ -62,12 +62,12 @@ test_herd_tag()
 {
     print_separator
     echo "TEST: Test herd of tag refs"
-    pushd clowder &>/dev/null
+    pushd .clowder &>/dev/null
     git checkout tags
     popd &>/dev/null
     clowder herd || exit 1
     clowder meow || exit 1
-    pushd clowder &>/dev/null
+    pushd .clowder &>/dev/null
     git checkout master
     popd &>/dev/null
 }
@@ -76,11 +76,11 @@ test_invalid_yaml()
 {
     print_separator
     echo "TEST: Fail herd with invalid yaml"
-    pushd clowder &>/dev/null
+    pushd .clowder &>/dev/null
     git checkout invalid-yaml
     popd &>/dev/null
     clowder herd && exit 1
-    pushd clowder &>/dev/null
+    pushd .clowder &>/dev/null
     git checkout master
     popd &>/dev/null
 }
@@ -89,13 +89,13 @@ test_no_versions()
 {
     print_separator
     echo "TEST: Test clowder repo with no versions fixed"
-    pushd clowder &>/dev/null
+    pushd .clowder &>/dev/null
     git checkout no-versions
     popd &>/dev/null
     clowder herd -v fixed-version && exit 1
     clowder herd || exit 1
     clowder meow || exit 1
-    pushd clowder &>/dev/null
+    pushd .clowder &>/dev/null
     git checkout master
     popd &>/dev/null
 }
@@ -104,7 +104,7 @@ test_sync_branch()
 {
     print_separator
     echo "TEST: Test syncing branch from current branch"
-    pushd clowder &>/dev/null
+    pushd .clowder &>/dev/null
     git checkout master
     popd &>/dev/null
     clowder sync -b master || exit 1
@@ -113,7 +113,7 @@ test_sync_branch()
     echo "TEST: Test syncing missing branch"
     clowder sync -b sync-missing-branch && exit 1
     echo "TEST: Test syncing branch from detached HEAD"
-    pushd clowder &>/dev/null
+    pushd .clowder &>/dev/null
     git checkout master~2
     popd &>/dev/null
     clowder sync -b master || exit 1

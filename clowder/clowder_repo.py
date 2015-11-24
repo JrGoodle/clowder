@@ -21,7 +21,7 @@ class ClowderRepo(object):
     """Class encapsulating clowder repo information"""
     def __init__(self, root_directory):
         self.root_directory = root_directory
-        self.clowder_path = os.path.join(self.root_directory, 'clowder')
+        self.clowder_path = os.path.join(self.root_directory, '.clowder')
 
     def branches(self):
         """Return current local branches"""
@@ -34,23 +34,23 @@ class ClowderRepo(object):
 
     def print_status(self):
         """Print clowder repo status"""
-        repo_path = os.path.join(self.root_directory, 'clowder')
+        repo_path = os.path.join(self.root_directory, '.clowder')
         cat_face = emoji.emojize(':cat:', use_aliases=True)
         if not os.path.isdir(os.path.join(repo_path, '.git')):
             output = colored('clowder', 'green')
             print(cat_face + '  ' + output)
             return
-        project_output = format_project_string(repo_path, 'clowder')
+        project_output = format_project_string(repo_path, '.clowder')
         current_ref_output = format_ref_string(repo_path)
         print(cat_face + '  ' + project_output + ' ' + current_ref_output)
 
     def symlink_yaml(self, version=None):
         """Create symlink pointing to clowder.yaml file"""
         if version == None:
-            yaml_file = os.path.join(self.root_directory, 'clowder', 'clowder.yaml')
-            path_output = colored('clowder/clowder.yaml', 'cyan')
+            yaml_file = os.path.join(self.root_directory, '.clowder', 'clowder.yaml')
+            path_output = colored('.clowder/clowder.yaml', 'cyan')
         else:
-            relative_path = os.path.join('clowder', 'versions', version, 'clowder.yaml')
+            relative_path = os.path.join('.clowder', 'versions', version, 'clowder.yaml')
             path_output = colored(relative_path, 'cyan')
             yaml_file = os.path.join(self.root_directory, relative_path)
 

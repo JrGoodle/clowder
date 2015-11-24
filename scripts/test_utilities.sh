@@ -3,7 +3,7 @@
 make_dirty_clowder_repo()
 {
     echo "TEST: Make dirty clowder repo"
-    pushd clowder &>/dev/null
+    pushd .clowder &>/dev/null
     touch newfile
     git add newfile
     popd &>/dev/null
@@ -259,7 +259,7 @@ test_sync()
     echo "TEST: Fail sync with dirty clowder repo"
     clowder sync && exit 1
     echo "TEST: Discard changes in clowder repo"
-    pushd clowder &>/dev/null
+    pushd .clowder &>/dev/null
     git reset --hard
     popd &>/dev/null
     echo "TEST: Successfully sync after discarding changes"
@@ -267,11 +267,11 @@ test_sync()
     echo "TEST: Successfully sync twice"
     clowder sync || exit 1
     echo "TEST: Fail sync with detached HEAD in clowder repo"
-    pushd clowder &>/dev/null
+    pushd .clowder &>/dev/null
     git checkout master~2
     popd &>/dev/null
     clowder sync && exit 1
-    pushd clowder &>/dev/null
+    pushd .clowder &>/dev/null
     git checkout master
     popd &>/dev/null
 }
