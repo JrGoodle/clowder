@@ -24,7 +24,10 @@ class Command(object):
         # Load current clowder.yml config if it exists
         clowder_path = os.path.join(self.root_directory, '.clowder')
         if os.path.isdir(clowder_path):
+            clowder_symlink = os.path.join(self.root_directory, 'clowder.yaml')
             self.clowder_repo = ClowderRepo(self.root_directory)
+            if not os.path.islink(clowder_symlink):
+                self.clowder_repo.symlink_yaml()
             self.clowder = ClowderController(self.root_directory)
             self.versions = self.clowder.get_fixed_version_names()
             self.branches = self.clowder_repo.branches()
@@ -101,7 +104,10 @@ class Command(object):
             print('')
             clowder = ClowderController(self.root_directory)
             if self.args.projects is None:
-                clowder.herd_groups(self.args.groups)
+                if self.args.groups is None:
+                    clowder.herd_groups(clowder.get_all_group_names())
+                else:
+                    clowder.herd_groups(self.args.groups)
             else:
                 clowder.herd_projects(self.args.projects)
         else:
