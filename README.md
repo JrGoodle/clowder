@@ -1,4 +1,4 @@
-# `clowder` [![Build Status](https://travis-ci.org/JrGoodle/clowder.svg)](https://travis-ci.org/JrGoodle/clowder) [![Build Status](https://circleci.com/gh/JrGoodle/clowder/tree/master.svg?style=shield&circle-token=d996206c648af7b9708b4ab2f1a5a825e06121c0)](https://circleci.com/gh/JrGoodle/clowder)
+# `clowder` [![Build Status](https://travis-ci.org/JrGoodle/clowder.svg)](https://travis-ci.org/JrGoodle/clowder)
 
 > **clowder** - A group of cats
 
@@ -81,7 +81,7 @@ The `clowder herd` command syncs the projects. The `clowder.yaml` symlink is alw
 $ clowder sync
 ```
 
-The `clowder sync` command is like `clowder herd`, but for syncing the repository containing the `clowder.yaml` file (located in the `clowder` directory created with the `clowder breed` command). It will try to pull latest changes for whatever branch is currently checked out in the `clowder` directory. If the repository is in a detached HEAD state, a message will be printed indicating this, and the command will exit without trying to pull any new changes.
+The `clowder sync` command is like `clowder herd`, but for syncing the repository containing the `clowder.yaml` file (located in the `.clowder` directory created with the `clowder breed` command). It will try to pull latest changes for whatever branch is currently checked out in the `.clowder` directory. If the repository is in a detached HEAD state, a message will be printed indicating this, and the command will exit without trying to pull any new changes.
 
 ### Further Commands
 
