@@ -79,19 +79,19 @@ test_command()
 {
     print_separator
     echo "TEST: Fail with unrecognized command"
-    clowder cat && exit 1
+    clowder cat
     ./clean.sh || exit 1
     echo "TEST: Fail herd with missing clowder.yaml"
-    clowder herd && exit 1
+    clowder herd
 }
 
 test_fix()
 {
     print_separator
     echo "TEST: Fail herding a previously fixed version"
-    clowder herd -v v100 && exit 1
+    clowder herd -v v100 
     echo "TEST: Fail fixing a previously fixed version"
-    clowder fix v0.1 && exit 1
+    clowder fix v0.1 
     echo "TEST: Successfully fix a new version"
     clowder fix v0.11 || exit 1
     echo "TEST: Successfully fix version with path separator in input name"
@@ -106,7 +106,7 @@ test_fix_missing_directories()
     echo "TEST: Remove directories"
     rm -rf "$@"
     echo "TEST: Fail fixing version with missing directories"
-    clowder fix missing-directories && exit 1
+    clowder fix missing-directories 
 }
 
 test_forall()
@@ -193,7 +193,7 @@ test_herd_dirty_repos()
     print_separator
     make_dirty_repos "${projects[@]}"
     echo "TEST: Fail herd with dirty repos"
-    clowder herd && exit 1
+    clowder herd 
     echo "TEST: Discard changes with groom"
     clowder groom || exit 1
     clowder meow || exit 1
@@ -221,7 +221,7 @@ test_stash()
 {
     make_dirty_repos "${projects[@]}"
     echo "TEST: Fail herd with dirty repos"
-    clowder herd && exit 1
+    clowder herd 
     echo "TEST: Stash specific groups when dirty"
     clowder stash -g "$@" || exit 1
     clowder meow || exit 1
@@ -257,7 +257,7 @@ test_sync()
     print_separator
     make_dirty_clowder_repo
     echo "TEST: Fail sync with dirty clowder repo"
-    clowder sync && exit 1
+    clowder sync 
     echo "TEST: Discard changes in clowder repo"
     pushd .clowder &>/dev/null
     git reset --hard
@@ -270,7 +270,7 @@ test_sync()
     pushd .clowder &>/dev/null
     git checkout master~2
     popd &>/dev/null
-    clowder sync && exit 1
+    clowder sync 
     pushd .clowder &>/dev/null
     git checkout master
     popd &>/dev/null
