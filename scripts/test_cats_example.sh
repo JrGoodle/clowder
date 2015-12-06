@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 set -eu
-#set -x
+set -x
 
 echo 'TEST: cats example test script'
 
