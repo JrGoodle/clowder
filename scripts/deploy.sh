@@ -21,7 +21,7 @@ cd "${TRAVIS_BUILD_DIR}"
 SETUP_PY="${TRAVIS_BUILD_DIR}/setup.py"
 VERSION=$(awk "/version='/" "${SETUP_PY}" | sed -n -e "s/^.*version='//p" | tr -d "',")
 echo "VERSION=${VERSION}"
-TAG="v${VERSION}"
+TAG="${VERSION}"
 
 git fetch --tags
 if git rev-list "${TAG}" >/dev/null; then
