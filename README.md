@@ -19,7 +19,7 @@ Managing multiple repositories can be pretty frustrating. There are a number of 
 
 All of these have their own approach, but many are based on submodules or subtrees. Submodules and subtrees create a tight coupling between repositories because of the way dependencies are stored. Much has been written about their drawbacks elsewhere. Google's `repo` tool takes a different approach, but is closely tied to Google's development workflow.
 
-`clowder` uses a similar approach as `repo` (and as it turns out, `gr` and `giternal`) with a yaml file instead of xml. URL information and relative project locations on disk are specified in a `clowder.yaml` file. This file is checked into its own repository (which at this point assumes one branch due to the way saved versions are handled). The use of a separate file for tracking projects means that there's detailed information about the dependencies between them, but each repository is still essentially independent. Projects can be tied to specific tags or commits, or can track branches. Specific versions can be saved from the current commit hashes of projects on disk for later restoration.
+`clowder` uses a similar approach as `repo` (and as it turns out, `gr` and `giternal`) with a yaml file instead of xml. URL information and relative project locations on disk are specified in a `clowder.yaml` file. This file is checked into its own repository (which at this point assumes one branch due to the way saved versions are handled). The use of a separate file for tracking projects means that there's detailed information about the dependencies between them, but each repository is still essentially independent. Projects can be tied to specific tags or commits, or can track branches. With the `clowder fix <version>` command, specific versions of the `clowder.yaml` file can be saved from the current commit hashes of all projects for later restoration.
 
 The primary purpose of `clowder` is synchronization of multiple repositories, so normal development still takes place in individual repositories with the usual `git` commands.
 
@@ -37,7 +37,7 @@ For a few example projects, see the [examples directory](https://github.com/JrGo
 To install from the [GitHub Releases](https://github.com/JrGoodle/clowder/releases), first download the latest `.whl` file, then:
 
 ```bash
-$ pip3 install clowder-0.8.0-py3-none-any.whl
+$ pip3 install clowder-0.8.1-py3-none-any.whl
 ```
 
 To install from the cloned repository:
@@ -69,19 +69,19 @@ Clone repository containing `clowder.yaml` file.
 $ clowder breed https://github.com/jrgoodle/llvm-projects.git
 ```
 
-The `clowder breed` command will clone the [llvm-projects](https://github.com/jrgoodle/llvm-projects.git) repository in the `llvm-projects/.clowder` directory and create a symlink pointing to the primary `clowder.yaml` file in the repository: `llvm-projects/clowder.yaml` -> `llvm-projects/.clowder/clowder.yaml`.
+The `clowder breed` command will clone the [llvm-projects](https://github.com/jrgoodle/llvm-projects.git) repository in the `llvm-projects/.clowder` directory and create a symlink pointing to the primary `clowder.yaml` file in the repository:
+
+```
+llvm-projects/clowder.yaml -> llvm-projects/.clowder/clowder.yaml
+```
+
+Next sync (`herd`) all repositories:
 
 ```bash
 $ clowder herd
 ```
 
 The `clowder herd` command syncs the projects. The `clowder.yaml` symlink is always updated to point to the primary `clowder.yaml` file in the repository cloned with `clowder breed`. Projects are cloned if they don't currently exist. Otherwise, each project will pull the latest changes. If the current branch isn't the default, it'll be checked out, and latest changes pulled. For commits and tags, the commits are checked out into a detached HEAD state (`clowder forall` can be used to checkout branches if needed).
-
-```bash
-$ clowder sync
-```
-
-The `clowder sync` command is like `clowder herd`, but for syncing the repository containing the `clowder.yaml` file (located in the `.clowder` directory created with the `clowder breed` command). It will try to pull latest changes for whatever branch is currently checked out in the `.clowder` directory. If the repository is in a detached HEAD state, a message will be printed indicating this, and the command will exit without trying to pull any new changes.
 
 ### Further Commands
 
