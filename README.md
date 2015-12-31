@@ -17,9 +17,9 @@ Managing multiple repositories can be pretty frustrating. There are a number of 
 - [git-stree](https://github.com/tdd/git-stree)
 - [git-subrepo](https://github.com/ingydotnet/git-subrepo)
 
-All of these have their own approach, but many are based on submodules or subtrees. Submodules and subtrees create a tight coupling between repositories because of the way dependencies are stored. Much has been written about their drawbacks elsewhere. Google's `repo` tool takes a different approach, but is closely tied to Google's development workflow (and doesn't have a great deal of documentation).
+All of these have their own approach, but many are based on submodules or subtrees. Submodules and subtrees create a tight coupling between repositories because of the way dependencies are stored. Much has been written about their drawbacks elsewhere. Google's `repo` tool takes a different approach, but is closely tied to Google's development workflow.
 
-`clowder` uses a similar approach as `repo` (and as it turns out, `gr` and `giternal`) with a yaml file instead of xml (and without the default rebasing behavior of `repo`). URL information and relative project locations on disk are specified in a `clowder.yaml` file. This file is checked into its own repository, so the project structure's history is saved under version control. The use of a separate file for tracking projects means that there's detailed information about the dependencies between them, but each repository is still essentially independent. Projects can be tied to specific tags or commits, or can track branches. Specific versions can be saved from the current commit hashes of projects on disk for later restoration.
+`clowder` uses a similar approach as `repo` (and as it turns out, `gr` and `giternal`) with a yaml file instead of xml. URL information and relative project locations on disk are specified in a `clowder.yaml` file. This file is checked into its own repository (which at this point assumes one branch due to the way saved versions are handled). The use of a separate file for tracking projects means that there's detailed information about the dependencies between them, but each repository is still essentially independent. Projects can be tied to specific tags or commits, or can track branches. Specific versions can be saved from the current commit hashes of projects on disk for later restoration.
 
 The primary purpose of `clowder` is synchronization of multiple repositories, so normal development still takes place in individual repositories with the usual `git` commands.
 
@@ -86,7 +86,7 @@ The `clowder sync` command is like `clowder herd`, but for syncing the repositor
 ### Further Commands
 
 ```bash
-$ clowder fix v0.1 # Fix new version of clowder.yaml
+$ clowder fix v0.1 # Save a fixed version of clowder.yaml
 ```
 
 ```bash
@@ -119,10 +119,6 @@ $ clowder meow -v -g clang # print verbose status of projects in clang group
 $ clowder stash # Stash any changes in projects
 $ clowder stash -g clang # Stash any changes in projects in clang group
 $ clowder stash -p llvm-mirror/clang # Stash any changes in clang project
-```
-
-```bash
-$ clowder sync -b alternate-yaml # Sync clowder.yaml repo with alternate local branch
 ```
 
 ## The `clowder.yaml` File
