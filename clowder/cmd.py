@@ -139,17 +139,6 @@ class Command(object):
         else:
             exit_clowder_not_found()
 
-    def sync(self):
-        """clowder sync command"""
-        if self.clowder_repo is not None:
-            cprint('Sync...\n', 'yellow')
-            if self.args.branch is None:
-                self.clowder_repo.sync()
-            else:
-                self.clowder_repo.sync_branch(self.args.branch)
-        else:
-            exit_clowder_not_found()
-
 # Disable errors shown by pylint for unused arguments
 # pylint: disable=R0914
     def _configure_subparsers(self, subparsers):
@@ -207,10 +196,6 @@ class Command(object):
                                  help='Groups to stash')
         group_stash.add_argument('--projects', '-p', choices=self.project_names,
                                  nargs='+', help='Projects to stash')
-        # clowder sync
-        parser_sync = subparsers.add_parser('sync', add_help=False, help='Sync clowder repo')
-        parser_sync.add_argument('--branch', '-b', choices=self.branches,
-                                 help='Groups to print status for')
 
 def exit_unrecognized_command(parser):
     """Print unrecognized command message and exit"""
