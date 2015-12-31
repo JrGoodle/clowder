@@ -252,30 +252,6 @@ test_stash_projects()
     clowder meow || exit 1
 }
 
-test_sync()
-{
-    print_separator
-    make_dirty_clowder_repo
-    echo "TEST: Fail sync with dirty clowder repo"
-    clowder sync && exit 1
-    echo "TEST: Discard changes in clowder repo"
-    pushd .clowder &>/dev/null
-    git reset --hard
-    popd &>/dev/null
-    echo "TEST: Successfully sync after discarding changes"
-    clowder sync || exit 1
-    echo "TEST: Successfully sync twice"
-    clowder sync || exit 1
-    echo "TEST: Fail sync with detached HEAD in clowder repo"
-    pushd .clowder &>/dev/null
-    git checkout master~2
-    popd &>/dev/null
-    clowder sync && exit 1
-    pushd .clowder &>/dev/null
-    git checkout master
-    popd &>/dev/null
-}
-
 test_herd_groups()
 {
     print_separator

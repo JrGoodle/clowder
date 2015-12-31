@@ -4,9 +4,9 @@
 
 echo 'TEST: srclib example test script'
 
-cd "$( dirname "${BASH_SOURCE[0]}" )"
+cd "$( dirname "${BASH_SOURCE[0]}" )" || exit 1
 source test_utilities.sh
-cd ../examples/srclib
+cd ../examples/srclib || exit 1
 
 test_herd_missing_branches()
 {
@@ -59,7 +59,6 @@ test_groom_projects 'sourcegraph/srclib'
 test_herd_dirty_repos
 test_herd_detached_heads
 test_herd 'srclib' 'srcco'
-test_sync
 test_forall 'srclib' 'projects'
 test_forall_projects 'sourcegraph/srclib'
 test_fix

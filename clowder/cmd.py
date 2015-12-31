@@ -8,7 +8,6 @@ import argcomplete, argparse, colorama, os, signal, sys
 from termcolor import cprint
 from clowder.clowder_repo import ClowderRepo
 from clowder.clowder_controller import ClowderController
-from clowder.utility.clowder_utilities import print_exiting
 
 class Command(object):
     """Command class for parsing commandline options"""
@@ -58,7 +57,7 @@ class Command(object):
             clowder_repo = ClowderRepo(self.root_directory)
             clowder_repo.breed(self.args.url)
         else:
-            cprint('Clowder already bred in this directory, exiting...\n', 'red')
+            cprint('Clowder already bred in this directory', 'red')
             sys.exit()
 
     def fix(self):
@@ -139,17 +138,6 @@ class Command(object):
         else:
             exit_clowder_not_found()
 
-    def sync(self):
-        """clowder sync command"""
-        if self.clowder_repo is not None:
-            cprint('Sync...\n', 'yellow')
-            if self.args.branch is None:
-                self.clowder_repo.sync()
-            else:
-                self.clowder_repo.sync_branch(self.args.branch)
-        else:
-            exit_clowder_not_found()
-
 # Disable errors shown by pylint for unused arguments
 # pylint: disable=R0914
     def _configure_subparsers(self, subparsers):
@@ -207,21 +195,17 @@ class Command(object):
                                  help='Groups to stash')
         group_stash.add_argument('--projects', '-p', choices=self.project_names,
                                  nargs='+', help='Projects to stash')
-        # clowder sync
-        parser_sync = subparsers.add_parser('sync', add_help=False, help='Sync clowder repo')
-        parser_sync.add_argument('--branch', '-b', choices=self.branches,
-                                 help='Groups to print status for')
 
 def exit_unrecognized_command(parser):
     """Print unrecognized command message and exit"""
     cprint('Unrecognized command\n', 'red')
     parser.print_help()
-    print_exiting()
+    sys.exit(1)
 
 def exit_clowder_not_found():
     """Print clowder not found message and exit"""
-    cprint('No clowder found in the current directory, exiting...\n', 'red')
-    print_exiting()
+    cprint('No clowder found in the current directory\n', 'red')
+    sys.exit(1)
 
 def main():
     """Main entrypoint for clowder command"""

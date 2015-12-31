@@ -1,18 +1,15 @@
 """Clowder repo management"""
-import emoji, os
-from git import Repo
+import emoji, os, sys
+# from git import Repo
 from termcolor import colored
 from clowder.utility.git_utilities import (
     git_branches,
-    git_clone_url_at_path,
-    git_is_detached,
-    git_pull
+    git_clone_url_at_path
 )
 from clowder.utility.clowder_utilities import (
     force_symlink,
     format_project_string,
     format_ref_string,
-    print_exiting,
     print_validation,
     validate_repo_state
 )
@@ -60,50 +57,10 @@ class ClowderRepo(object):
             force_symlink(yaml_file, yaml_symlink)
         else:
             print(path_output + " doesn't seem to exist")
-            print_exiting()
-
-    def sync(self):
-        """Sync clowder repo"""
-        self._validate()
-        self.print_status()
-        if not git_is_detached(self.clowder_path):
-            git_pull(self.clowder_path)
-            self.symlink_yaml()
-        else:
-            print(' - HEAD is detached')
-            print_exiting()
-
-    # Disable errors shown by pylint for no specified exception types
-    # pylint: disable=W0702
-    def sync_branch(self, branch):
-        """Sync clowder repo to specified branch"""
-        try:
-            repo = Repo(self.clowder_path)
-        except:
-            repo_path_output = colored(self.clowder_path, 'cyan')
-            print("Failed to create Repo instance for " + repo_path_output)
-        else:
-            if git_is_detached(self.clowder_path):
-                try:
-                    repo.git.checkout(branch)
-                except:
-                    print("Failed to checkout branch " + branch)
-                    print_exiting()
-
-            if repo.active_branch.name != branch:
-                try:
-                    repo.git.checkout(branch)
-                except:
-                    print("Failed to checkout branch " + branch)
-                    print_exiting()
-
-            self._validate()
-            self.print_status()
-            git_pull(self.clowder_path)
-            self.symlink_yaml()
+            sys.exit(1)
 
     def _validate(self):
         """Validate status of clowder repo"""
         if not validate_repo_state(self.clowder_path):
             print_validation(self.clowder_path)
-            print_exiting()
+            sys.exit(1)

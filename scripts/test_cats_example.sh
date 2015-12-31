@@ -4,9 +4,9 @@
 
 echo 'TEST: cats example test script'
 
-cd "$( dirname "${BASH_SOURCE[0]}" )"
+cd "$( dirname "${BASH_SOURCE[0]}" )" || exit 1
 source test_utilities.sh
-cd ../examples/cats
+cd ../examples/cats || exit 1
 
 test_branches()
 {
@@ -100,25 +100,6 @@ test_no_versions()
     popd &>/dev/null
 }
 
-test_sync_branch()
-{
-    print_separator
-    echo "TEST: Test syncing branch from current branch"
-    pushd .clowder &>/dev/null
-    git checkout master
-    popd &>/dev/null
-    clowder sync -b master || exit 1
-    echo "TEST: Test syncing other branch"
-    clowder sync -b tags || exit 1
-    echo "TEST: Test syncing missing branch"
-    clowder sync -b sync-missing-branch && exit 1
-    echo "TEST: Test syncing branch from detached HEAD"
-    pushd .clowder &>/dev/null
-    git checkout master~2
-    popd &>/dev/null
-    clowder sync -b master || exit 1
-}
-
 # export projects=( 'black-cats/kit' \
 #                   'black-cats/kishka' \
 #                   'black-cats/sasha' \
@@ -146,7 +127,6 @@ test_groom_missing_directories 'mu' 'duke'
 test_herd_dirty_repos
 test_herd_detached_heads
 test_herd 'duke' 'mu'
-test_sync
 test_forall 'cats'
 test_forall_projects 'jrgoodle/kit' 'jrgoodle/kishka'
 test_fix
@@ -163,6 +143,5 @@ test_invalid_yaml
 test_herd_sha
 test_herd_tag
 test_herd_missing_groups
-test_sync_branch
 
 print_help

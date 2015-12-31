@@ -1,6 +1,6 @@
 """Clowder utilities"""
 import errno, os, subprocess, sys
-from termcolor import colored, cprint
+from termcolor import colored
 from clowder.utility.git_utilities import (
     git_current_branch,
     git_current_sha,
@@ -58,13 +58,6 @@ def print_exists(repo_path):
     if not os.path.isdir(os.path.join(repo_path, '.git')):
         print(' - Project is missing')
 
-def print_exiting():
-    """Print Exiting and exit with error code"""
-    print('')
-    cprint('Exiting...', 'red')
-    print('')
-    sys.exit(1)
-
 def print_validation(repo_path):
     """Print validation messages"""
     if not os.path.isdir(os.path.join(repo_path, '.git')):
@@ -102,4 +95,4 @@ def validate_yaml(parsed_yaml):
         print('')
         clowder_output = colored('clowder.yaml', 'cyan')
         print(clowder_output + ' appears to be invalid')
-        print_exiting()
+        sys.exit(1)

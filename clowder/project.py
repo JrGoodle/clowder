@@ -140,5 +140,5 @@ class Project(object):
             return
         project_output = format_project_string(repo_path, self.name)
         current_ref_output = format_ref_string(repo_path)
-        path_output = colored(self.path, 'cyan')
-        print(project_output + ' ' + current_ref_output + ' ' + path_output)
+        print(project_output + ' ' + current_ref_output)
+        cprint(self.path, 'cyan')
