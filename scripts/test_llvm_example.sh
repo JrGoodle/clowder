@@ -4,9 +4,9 @@
 
 echo 'TEST: llvm projects example test script'
 
-cd "$( dirname "${BASH_SOURCE[0]}" )"
+cd "$( dirname "${BASH_SOURCE[0]}" )" || exit 1
 source test_utilities.sh
-cd ../examples/llvm-projects
+cd ../examples/llvm-projects || exit 1
 
 setup_old_repos()
 {
@@ -74,7 +74,6 @@ test_herd_dirty_repos
 test_groom 'clang' 'llvm'
 test_groom_projects 'llvm-mirror/clang'
 test_groom_missing_directories 'zorg'
-test_sync
 test_herd_detached_heads
 test_forall 'clang' 'llvm'
 test_forall_projects 'llvm-mirror/clang' 'llvm-mirror/llvm'
