@@ -1,12 +1,11 @@
 """clowder.yaml parsing and functionality"""
-import os, yaml
+import os, yaml, sys
 from termcolor import colored
 from clowder.group import Group
 from clowder.source import Source
 from clowder.utility.clowder_utilities import (
     forall_run,
-    validate_yaml,
-    print_exiting
+    validate_yaml
 )
 
 class ClowderController(object):
@@ -40,7 +39,7 @@ class ClowderController(object):
                 yaml.dump(self._get_yaml(), file, default_flow_style=False)
         else:
             print('Version ' + version_output + ' already exists at ' + yaml_file_output)
-            print_exiting()
+            sys.exit(1)
 
     def forall_groups(self, command, group_names):
         """Runs command in all project directories of groups specified"""
@@ -194,7 +193,7 @@ class ClowderController(object):
                 if not group.is_valid():
                     valid = False
         if not valid:
-            print_exiting()
+            sys.exit(1)
 
     def _validate_projects_exist(self):
         """Validate existence status of all projects for specified groups"""
@@ -207,4 +206,4 @@ class ClowderController(object):
             herd_output = colored('clowder herd', 'yellow')
             print('')
             print('First run ' + herd_output + ' to clone missing projects')
-            print_exiting()
+            sys.exit(1)

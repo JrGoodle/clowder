@@ -8,7 +8,6 @@ import argcomplete, argparse, colorama, os, signal, sys
 from termcolor import cprint
 from clowder.clowder_repo import ClowderRepo
 from clowder.clowder_controller import ClowderController
-from clowder.utility.clowder_utilities import print_exiting
 
 class Command(object):
     """Command class for parsing commandline options"""
@@ -58,7 +57,7 @@ class Command(object):
             clowder_repo = ClowderRepo(self.root_directory)
             clowder_repo.breed(self.args.url)
         else:
-            cprint('Clowder already bred in this directory, exiting...\n', 'red')
+            cprint('Clowder already bred in this directory', 'red')
             sys.exit()
 
     def fix(self):
@@ -201,12 +200,12 @@ def exit_unrecognized_command(parser):
     """Print unrecognized command message and exit"""
     cprint('Unrecognized command\n', 'red')
     parser.print_help()
-    print_exiting()
+    sys.exit(1)
 
 def exit_clowder_not_found():
     """Print clowder not found message and exit"""
-    cprint('No clowder found in the current directory, exiting...\n', 'red')
-    print_exiting()
+    cprint('No clowder found in the current directory\n', 'red')
+    sys.exit(1)
 
 def main():
     """Main entrypoint for clowder command"""

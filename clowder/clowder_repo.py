@@ -1,5 +1,5 @@
 """Clowder repo management"""
-import emoji, os
+import emoji, os, sys
 # from git import Repo
 from termcolor import colored
 from clowder.utility.git_utilities import (
@@ -10,7 +10,6 @@ from clowder.utility.clowder_utilities import (
     force_symlink,
     format_project_string,
     format_ref_string,
-    print_exiting,
     print_validation,
     validate_repo_state
 )
@@ -58,10 +57,10 @@ class ClowderRepo(object):
             force_symlink(yaml_file, yaml_symlink)
         else:
             print(path_output + " doesn't seem to exist")
-            print_exiting()
+            sys.exit(1)
 
     def _validate(self):
         """Validate status of clowder repo"""
         if not validate_repo_state(self.clowder_path):
             print_validation(self.clowder_path)
-            print_exiting()
+            sys.exit(1)
