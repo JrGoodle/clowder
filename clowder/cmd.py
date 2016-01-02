@@ -131,7 +131,7 @@ class Command(object):
             # cprint('Repo...\n', 'yellow')
             self.clowder_repo.print_status()
             print('')
-            self.clowder_repo.git(self.args.cmd)
+            self.clowder_repo.run_command(self.args.cmd)
         else:
             exit_clowder_not_found()
 

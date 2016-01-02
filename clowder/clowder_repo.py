@@ -29,13 +29,11 @@ class ClowderRepo(object):
         git_clone_url_at_path(url, self.clowder_path, 'refs/heads/master', 'origin')
         self.symlink_yaml()
 
-    def git(self, cmd):
+    def run_command(self, command):
         """Run git command in clowder repo"""
-        command_output = colored(cmd, attrs=['bold'])
+        command_output = colored('$ ' + command, attrs=['bold'])
         print(command_output)
-        print('')
-        subprocess.call(cmd.split(), cwd=self.clowder_path)
-        print('')
+        subprocess.call(command.split(), cwd=self.clowder_path)
 
     def print_status(self):
         """Print clowder repo status"""

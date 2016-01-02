@@ -1,5 +1,5 @@
 """Clowder utilities"""
-import errno, os, subprocess, sys
+import errno, os, sys
 from termcolor import colored
 from clowder.utility.git_utilities import (
     git_current_branch,
@@ -16,22 +16,6 @@ def force_symlink(file1, file2):
         if error.errno == errno.EEXIST:
             os.remove(file2)
             os.symlink(file1, file2)
-
-def forall_run(command, directories):
-    """Run command in all directories"""
-    sorted_paths = sorted(set(directories))
-    paths = [p for p in sorted_paths if os.path.isdir(p)]
-    for path in paths:
-        running_output = colored('Running command', attrs=['underline'])
-        command_output = colored(command, attrs=['bold'])
-        print(running_output + ': ' + command_output)
-        directory_output = colored('Directory', attrs=['underline'])
-        path_output = colored(path, 'cyan')
-        print(directory_output + ': ' + path_output)
-        subprocess.call(command.split(), cwd=path)
-        print('')
-    # Exit early to prevent printing extra newline
-    sys.exit()
 
 def format_project_string(repo_path, name):
     """Return formatted project name"""
