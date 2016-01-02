@@ -88,9 +88,7 @@ $ <span class="pl-c1">cd</span> clowder <span class="pl-k">&amp;&amp;</span> ./i
 <h3>
 <a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h3>
 
-<p>This example is based on the LLVM project. See <a href="https://github.com/JrGoodle/llvm-projects/blob/master/clowder.yaml">the full clowder.yaml</a>.</p>
-
-<p>First create a directory to contain all the projects.</p>
+<p>This example is based on the LLVM project (see <a href="https://github.com/JrGoodle/llvm-projects/blob/master/clowder.yaml">the full clowder.yaml</a>). First create a directory to contain all the projects.</p>
 
 <div class="highlight highlight-source-shell"><pre>$ mkdir llvm-projects <span class="pl-k">&amp;&amp;</span> <span class="pl-c1">cd</span> llvm-projects</pre></div>
 
@@ -103,16 +101,16 @@ $ <span class="pl-c1">cd</span> clowder <span class="pl-k">&amp;&amp;</span> ./i
 <pre><code>llvm-projects/clowder.yaml -&gt; llvm-projects/.clowder/clowder.yaml
 </code></pre>
 
-<p>Next sync (<code>herd</code>) all repositories:</p>
+<p>Next sync all repositories:</p>
 
 <div class="highlight highlight-source-shell"><pre>$ clowder herd</pre></div>
 
-<p>The <code>clowder herd</code> command syncs the projects. The <code>clowder.yaml</code> symlink is always updated to point to the primary <code>clowder.yaml</code> file in the repository cloned with <code>clowder breed</code>. Projects are cloned if they don't currently exist. Otherwise, each project will pull the latest changes. If the current branch isn't the default, it'll be checked out, and latest changes pulled. For commits and tags, the commits are checked out into a detached HEAD state (<code>clowder forall</code> can be used to checkout branches if needed).</p>
+<p>The <code>clowder herd</code> command syncs the projects. The <code>clowder.yaml</code> symlink is always updated to point to the primary <code>clowder.yaml</code> file in the repository cloned with <code>clowder breed</code>. Projects are cloned if they don't currently exist. Otherwise, each project will pull the latest changes. If the current branch isn't the default, it'll be checked out, and latest changes pulled. For commits and tags, the commits are checked out into a detached <code>HEAD</code> state (<code>clowder forall</code> can then be used to checkout/create branches).</p>
 
 <h3>
 <a id="further-commands" class="anchor" href="#further-commands" aria-hidden="true"><span class="octicon octicon-link"></span></a>Further Commands</h3>
 
-<div class="highlight highlight-source-shell"><pre>$ clowder fix v0.1 <span class="pl-c"># Save a fixed version of clowder.yaml</span></pre></div>
+<div class="highlight highlight-source-shell"><pre>$ clowder fix 0.1 <span class="pl-c"># Save a fixed version of clowder.yaml</span></pre></div>
 
 <div class="highlight highlight-source-shell"><pre>$ <span class="pl-k">export</span> CMD=<span class="pl-s"><span class="pl-pds">'</span>git status<span class="pl-pds">'</span></span>
 $ clowder forall <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$CMD</span><span class="pl-pds">"</span></span> <span class="pl-c"># Run $CMD in all project directories</span>
@@ -125,7 +123,7 @@ $ clowder groom -p llvm-mirror/clang <span class="pl-c"># Discard any changes in
 
 <div class="highlight highlight-source-shell"><pre>$ clowder herd -g clang llvm <span class="pl-c"># Only herd projects in clang and llvm groups</span>
 $ clowder herd -p llvm-mirror/clang <span class="pl-c"># Only herd clang project</span>
-$ clowder herd -v v0.1 <span class="pl-c"># Check out fixed version</span></pre></div>
+$ clowder herd -v 0.1 <span class="pl-c"># Point clowder.yaml symlink to fixed version</span></pre></div>
 
 <div class="highlight highlight-source-shell"><pre>$ clowder meow <span class="pl-c"># print status of projects</span>
 $ clowder meow -v <span class="pl-c"># print more verbose status of projects</span>
@@ -144,7 +142,7 @@ $ clowder stash -p llvm-mirror/clang <span class="pl-c"># Stash any changes in c
 <h3>
 <a id="defaults" class="anchor" href="#defaults" aria-hidden="true"><span class="octicon octicon-link"></span></a>Defaults</h3>
 
-<p>The <strong>defaults</strong> specify the default <code>ref</code>, <code>source</code>, and <code>remote</code> for projects.</p>
+<p>The <code>defaults</code> specify the default <code>ref</code>, <code>source</code>, and <code>remote</code> for projects.</p>
 
 <div class="highlight highlight-source-yaml"><pre><span class="pl-s"><span class="pl-ent">defaults:</span></span>
     <span class="pl-s"><span class="pl-ent">ref:</span> <span class="pl-s">refs/heads/master</span></span>
@@ -154,20 +152,22 @@ $ clowder stash -p llvm-mirror/clang <span class="pl-c"># Stash any changes in c
 <h3>
 <a id="sources" class="anchor" href="#sources" aria-hidden="true"><span class="octicon octicon-link"></span></a>Sources</h3>
 
-<p>Multiple <strong>sources</strong> can be specified for use with different projects.</p>
+<p>Multiple <code>sources</code> can be specified for use with different projects.</p>
 
 <div class="highlight highlight-source-yaml"><pre><span class="pl-s"><span class="pl-ent">sources:</span></span>
     <span class="pl-s">- <span class="pl-ent">name:</span> <span class="pl-s">github-ssh</span></span>
       <span class="pl-s"><span class="pl-ent">url:</span> <span class="pl-s">ssh://git@github.com</span></span>
     <span class="pl-s">- <span class="pl-ent">name:</span> <span class="pl-s">github</span></span>
-      <span class="pl-s"><span class="pl-ent">url:</span> <span class="pl-s">https://github.com</span></span></pre></div>
+      <span class="pl-s"><span class="pl-ent">url:</span> <span class="pl-s">https://github.com</span></span>
+    <span class="pl-s">- <span class="pl-ent">name:</span> <span class="pl-s">bitbucket</span></span>
+      <span class="pl-s"><span class="pl-ent">url:</span> <span class="pl-s">ssh://git@bitbucket.org</span></span></pre></div>
 
 <h3>
 <a id="groups-and-projects" class="anchor" href="#groups-and-projects" aria-hidden="true"><span class="octicon octicon-link"></span></a>Groups and Projects</h3>
 
-<p><strong>Groups</strong> have a <code>name</code> and associated <code>projects</code>.
-At a minimum, <strong>projects</strong> need the <code>name</code> from the project's url, and the <code>path</code> to clone relative to the root directory.
-The default <code>remote</code>, <code>source</code>, and <code>ref</code> values can also be overridden on a per-project basis. It's also easy to add references to central repositories and forks in the same <code>clowder.yaml</code> file.</p>
+<p>The <code>groups</code> each have a <code>name</code> and associated <code>projects</code>.
+At a minimum, <code>projects</code> need the <code>name</code> from the project's url, and the <code>path</code> to clone relative to the root directory.
+The default <code>remote</code>, <code>source</code>, and <code>ref</code> values can be overridden on a per-project basis. It's also easy to add references to central repositories and forks in the same <code>clowder.yaml</code> file by specifying different <code>remote</code> names.</p>
 
 <div class="highlight highlight-source-yaml"><pre><span class="pl-s"><span class="pl-ent">groups:</span></span>
     <span class="pl-s">- <span class="pl-ent">name:</span> <span class="pl-s">llvm</span></span>
@@ -195,6 +195,18 @@ The default <code>remote</code>, <code>source</code>, and <code>ref</code> value
         <span class="pl-s">- <span class="pl-ent">name:</span> <span class="pl-s">llvm-mirror/compiler-rt</span></span>
           <span class="pl-s"><span class="pl-ent">path:</span> <span class="pl-s">llvm/projects/compiler-rt</span></span>
           <span class="pl-s"><span class="pl-ent">remote:</span> <span class="pl-s">upstream</span></span></pre></div>
+
+<h3>
+<a id="refs" class="anchor" href="#refs" aria-hidden="true"><span class="octicon octicon-link"></span></a>Refs</h3>
+
+<p>The <code>ref</code> can specify a branch, tag, or commit hash with the following patterns:</p>
+
+<div class="highlight highlight-source-yaml"><pre><span class="pl-c"># branch</span>
+<span class="pl-s"><span class="pl-ent">ref:</span> <span class="pl-s">refs/heads/knead </span></span><span class="pl-c"># track branch 'knead'</span>
+<span class="pl-c"># tag</span>
+<span class="pl-s"><span class="pl-ent">ref:</span> <span class="pl-s">refs/tags/v0.01 </span></span><span class="pl-c"># point to commit with tag 'v0.01'</span>
+<span class="pl-c"># commit</span>
+<span class="pl-s"><span class="pl-ent">ref:</span> <span class="pl-s">7083e8840e1bb972b7664cfa20bbd7a25f004018 </span></span><span class="pl-c"># point to commit hash</span></pre></div>
         </section>
 
         <aside id="sidebar">
