@@ -48,56 +48,40 @@ test_herd_sha()
 {
     print_separator
     echo "TEST: Test herd of static commit hash refs"
-    pushd .clowder &>/dev/null
-    git checkout static-refs
-    popd &>/dev/null
+    clowder repo 'git checkout static-refs'
     clowder herd || exit 1
     clowder meow || exit 1
-    pushd .clowder &>/dev/null
-    git checkout master
-    popd &>/dev/null
+    clowder repo 'git checkout master'
 }
 
 test_herd_tag()
 {
     print_separator
     echo "TEST: Test herd of tag refs"
-    pushd .clowder &>/dev/null
-    git checkout tags
-    popd &>/dev/null
+    clowder repo 'git checkout tags'
     clowder herd || exit 1
     clowder meow || exit 1
-    pushd .clowder &>/dev/null
-    git checkout master
-    popd &>/dev/null
+    clowder repo 'git checkout master'
 }
 
 test_invalid_yaml()
 {
     print_separator
     echo "TEST: Fail herd with invalid yaml"
-    pushd .clowder &>/dev/null
-    git checkout invalid-yaml
-    popd &>/dev/null
+    clowder repo 'git checkout invalid-yaml'
     clowder herd && exit 1
-    pushd .clowder &>/dev/null
-    git checkout master
-    popd &>/dev/null
+    clowder repo 'git checkout master'
 }
 
 test_no_versions()
 {
     print_separator
     echo "TEST: Test clowder repo with no versions fixed"
-    pushd .clowder &>/dev/null
-    git checkout no-versions
-    popd &>/dev/null
+    clowder repo 'git checkout no-versions'
     clowder herd -v fixed-version && exit 1
     clowder herd || exit 1
     clowder meow || exit 1
-    pushd .clowder &>/dev/null
-    git checkout master
-    popd &>/dev/null
+    clowder repo 'git checkout master'
 }
 
 # export projects=( 'black-cats/kit' \
