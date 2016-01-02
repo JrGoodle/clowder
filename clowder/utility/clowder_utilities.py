@@ -28,8 +28,7 @@ def forall_run(command, directories):
         directory_output = colored('Directory', attrs=['underline'])
         path_output = colored(path, 'cyan')
         print(directory_output + ': ' + path_output)
-        subprocess.call(command.split(),
-                        cwd=path)
+        subprocess.call(command.split(), cwd=path)
         print('')
     # Exit early to prevent printing extra newline
     sys.exit()

@@ -63,7 +63,7 @@ class Command(object):
     def fix(self):
         """clowder fix command"""
         if self.clowder_repo is not None:
-            cprint('Fix...\n', 'yellow')
+            # cprint('Fix...\n', 'yellow')
             self.clowder.fix_version(self.args.version)
         else:
             exit_clowder_not_found()
@@ -71,7 +71,7 @@ class Command(object):
     def forall(self):
         """clowder forall command"""
         if self.clowder_repo is not None:
-            cprint('Forall...\n', 'yellow')
+            # cprint('Forall...\n', 'yellow')
             self.clowder_repo.print_status()
             print('')
             if self.args.projects is None:
@@ -84,7 +84,7 @@ class Command(object):
     def groom(self):
         """clowder groom command"""
         if self.clowder_repo is not None:
-            cprint('Groom...\n', 'yellow')
+            # cprint('Groom...\n', 'yellow')
             self.clowder_repo.print_status()
             print('')
             if self.args.projects is None:
@@ -97,7 +97,7 @@ class Command(object):
     def herd(self):
         """clowder herd command"""
         if self.clowder_repo is not None:
-            cprint('Herd...\n', 'yellow')
+            # cprint('Herd...\n', 'yellow')
             self.clowder_repo.print_status()
             self.clowder_repo.symlink_yaml(self.args.version)
             print('')
@@ -115,7 +115,7 @@ class Command(object):
     def meow(self):
         """clowder meow command"""
         if self.clowder_repo is not None:
-            cprint('Meow...\n', 'yellow')
+            # cprint('Meow...\n', 'yellow')
             self.clowder_repo.print_status()
             print('')
             if self.args.verbose:
@@ -138,7 +138,7 @@ class Command(object):
     def stash(self):
         """clowder stash command"""
         if self.clowder_repo is not None:
-            cprint('Stash...\n', 'yellow')
+            # cprint('Stash...\n', 'yellow')
             self.clowder_repo.print_status()
             print('')
             if self.args.projects is None:
