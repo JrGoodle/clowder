@@ -125,6 +125,16 @@ class Command(object):
         else:
             exit_clowder_not_found()
 
+    def repo(self):
+        """clowder repo command"""
+        if self.clowder_repo is not None:
+            # cprint('Repo...\n', 'yellow')
+            self.clowder_repo.print_status()
+            print('')
+            self.clowder_repo.git(self.args.cmd)
+        else:
+            exit_clowder_not_found()
+
     def stash(self):
         """clowder stash command"""
         if self.clowder_repo is not None:
@@ -173,6 +183,11 @@ class Command(object):
         parser_meow.add_argument('--groups', '-g', choices=self.group_names,
                                  default=self.group_names, nargs='+',
                                  help='Groups to print status for')
+        # clowder repo
+        repo_help = 'Run command in project directories'
+        parser_repo = subparsers.add_parser('repo', help=repo_help)
+        parser_repo.add_argument('cmd', help='Command to run in project directories')
+
         # clowder fix
         fix_help = 'Create version of clowder.yaml for current repos'
         parser_fix = subparsers.add_parser('fix', help=fix_help)

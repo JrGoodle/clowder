@@ -1,5 +1,5 @@
 """Clowder repo management"""
-import emoji, os, sys
+import emoji, os, subprocess, sys
 # from git import Repo
 from termcolor import colored
 from clowder.utility.git_utilities import (
@@ -28,6 +28,14 @@ class ClowderRepo(object):
         """Clone clowder repo from url"""
         git_clone_url_at_path(url, self.clowder_path, 'refs/heads/master', 'origin')
         self.symlink_yaml()
+
+    def git(self, cmd):
+        """Run git command in clowder repo"""
+        command_output = colored(cmd, attrs=['bold'])
+        print(command_output)
+        print('')
+        subprocess.call(cmd.split(), cwd=self.clowder_path)
+        print('')
 
     def print_status(self):
         """Print clowder repo status"""
