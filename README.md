@@ -55,9 +55,7 @@ For terminal autocompletion, add the following to your shell profile:
 
 ### Usage
 
-This example is based on the LLVM project. See [the full clowder.yaml](https://github.com/JrGoodle/llvm-projects/blob/master/clowder.yaml).
-
-First create a directory to contain all the projects.
+This example is based on the LLVM project (see [the full clowder.yaml](https://github.com/JrGoodle/llvm-projects/blob/master/clowder.yaml)). First create a directory to contain all the projects.
 
 ```bash
 $ mkdir llvm-projects && cd llvm-projects
@@ -75,18 +73,18 @@ The `clowder breed` command will clone the [llvm-projects](https://github.com/jr
 llvm-projects/clowder.yaml -> llvm-projects/.clowder/clowder.yaml
 ```
 
-Next sync (`herd`) all repositories:
+Next sync all repositories:
 
 ```bash
 $ clowder herd
 ```
 
-The `clowder herd` command syncs the projects. The `clowder.yaml` symlink is always updated to point to the primary `clowder.yaml` file in the repository cloned with `clowder breed`. Projects are cloned if they don't currently exist. Otherwise, each project will pull the latest changes. If the current branch isn't the default, it'll be checked out, and latest changes pulled. For commits and tags, the commits are checked out into a detached HEAD state (`clowder forall` can be used to checkout branches if needed).
+The `clowder herd` command syncs the projects. The `clowder.yaml` symlink is always updated to point to the primary `clowder.yaml` file in the repository cloned with `clowder breed`. Projects are cloned if they don't currently exist. Otherwise, each project will pull the latest changes. If the current branch isn't the default, it'll be checked out, and latest changes pulled. For commits and tags, the commits are checked out into a detached `HEAD` state (`clowder forall` can then be used to checkout/create branches).
 
 ### Further Commands
 
 ```bash
-$ clowder fix v0.1 # Save a fixed version of clowder.yaml
+$ clowder fix 0.1 # Save a fixed version of clowder.yaml
 ```
 
 ```bash
@@ -105,7 +103,7 @@ $ clowder groom -p llvm-mirror/clang # Discard any changes in clang project
 ```bash
 $ clowder herd -g clang llvm # Only herd projects in clang and llvm groups
 $ clowder herd -p llvm-mirror/clang # Only herd clang project
-$ clowder herd -v v0.1 # Check out fixed version
+$ clowder herd -v 0.1 # Point clowder.yaml symlink to fixed version
 ```
 
 ```bash
@@ -129,7 +127,7 @@ $ clowder stash -p llvm-mirror/clang # Stash any changes in clang project
 
 ### Defaults
 
-The **defaults** specify the default `ref`, `source`, and `remote` for projects.
+The `defaults` specify the default `ref`, `source`, and `remote` for projects.
 
 ```yaml
 defaults:
@@ -140,7 +138,7 @@ defaults:
 
 ### Sources
 
-Multiple **sources** can be specified for use with different projects.
+Multiple `sources` can be specified for use with different projects.
 
 ```yaml
 sources:
@@ -148,13 +146,15 @@ sources:
       url: ssh://git@github.com
     - name: github
       url: https://github.com
+    - name: bitbucket
+      url: ssh://git@bitbucket.org
 ```
 
 ### Groups and Projects
 
-**Groups** have a `name` and associated `projects`.
-At a minimum, **projects** need the `name` from the project's url, and the `path` to clone relative to the root directory.
-The default `remote`, `source`, and `ref` values can also be overridden on a per-project basis. It's also easy to add references to central repositories and forks in the same `clowder.yaml` file.
+The `groups` each have a `name` and associated `projects`.
+At a minimum, `projects` need the `name` from the project's url, and the `path` to clone relative to the root directory.
+The default `remote`, `source`, and `ref` values can be overridden on a per-project basis. It's also easy to add references to central repositories and forks in the same `clowder.yaml` file by specifying different `remote` names.
 
 ```yaml
 groups:
@@ -183,4 +183,17 @@ groups:
         - name: llvm-mirror/compiler-rt
           path: llvm/projects/compiler-rt
           remote: upstream
+```
+
+### Refs
+
+The `ref` can specify a branch, tag, or commit hash with the following patterns:
+
+```yaml
+# branch
+ref: refs/heads/knead # track branch 'knead'
+# tag
+ref: refs/tags/v0.01 # point to commit with tag 'v0.01'
+# commit
+ref: 7083e8840e1bb972b7664cfa20bbd7a25f004018 # point to commit hash
 ```
