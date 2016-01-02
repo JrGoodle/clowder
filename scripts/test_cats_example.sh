@@ -70,7 +70,9 @@ test_invalid_yaml()
     echo "TEST: Fail herd with invalid yaml"
     clowder repo 'git checkout invalid-yaml'
     clowder herd && exit 1
-    clowder repo 'git checkout master'
+    pushd .clowder &>/dev/null
+    git checkout master
+    popd &>/dev/null
 }
 
 test_no_versions()
