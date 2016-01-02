@@ -30,7 +30,7 @@ class ClowderRepo(object):
         self.symlink_yaml()
 
     def run_command(self, command):
-        """Run git command in clowder repo"""
+        """Run command in clowder repo"""
         command_output = colored('$ ' + command, attrs=['bold'])
         print(command_output)
         subprocess.call(command.split(), cwd=self.clowder_path)
