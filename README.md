@@ -92,8 +92,8 @@ $ clowder fix v0.1 # Save a fixed version of clowder.yaml
 ```bash
 $ export CMD='git status'
 $ clowder forall "$CMD" # Run $CMD in all project directories
-$ clowder forall "$CMD" -g clang # Run "$CMD" only for projects in clang group
-$ clowder forall "$CMD" -p llvm-mirror/clang # Run "$CMD" only for clang project
+$ clowder forall "$CMD" -g clang # Run $CMD only for projects in clang group
+$ clowder forall "$CMD" -p llvm-mirror/clang # Run $CMD only for clang project
 ```
 
 ```bash
@@ -116,8 +116,7 @@ $ clowder meow -v -g clang # print verbose status of projects in clang group
 ```
 
 ```bash
-$ export CMD='git status'
-$ clowder repo "$CMD" # Run $CMD in .clowder directory
+$ clowder repo 'git status' # Run 'git status' in .clowder directory
 ```
 
 ```bash
