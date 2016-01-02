@@ -19,7 +19,7 @@ Managing multiple repositories can be pretty frustrating. There are a number of 
 
 All of these have their own approach, but many are based on submodules or subtrees. Submodules and subtrees create a tight coupling between repositories because of the way dependencies are stored. Much has been written about their drawbacks elsewhere. Google's `repo` tool takes a different approach, but is closely tied to Google's development workflow.
 
-`clowder` uses a similar approach as `repo` (and as it turns out, `gr` and `giternal`) with a yaml file instead of xml. URL information and relative project locations on disk are specified in a `clowder.yaml` file. This file is checked into its own repository (which at this point assumes one branch due to the way saved versions are handled). The use of a separate file for tracking projects means that there's detailed information about the dependencies between them, but each repository is still essentially independent. Projects can be tied to specific tags or commits, or can track branches. With the `clowder fix <version>` command, specific versions of the `clowder.yaml` file can be saved from the current commit hashes of all projects for later restoration.
+`clowder` uses a similar approach as `repo` (and as it turns out, `gr` and `giternal`) with a yaml file instead of xml. URL information and relative project locations on disk are specified in a `clowder.yaml` file. This file is checked into its own repository. The use of a separate file for tracking projects means that there's detailed information about the dependencies between them, but each repository is still essentially independent. Projects can be tied to specific tags or commits, or can track branches. With the `clowder fix <version>` command, specific versions of the `clowder.yaml` file can be saved from the current commit hashes of all projects for later restoration.
 
 The primary purpose of `clowder` is synchronization of multiple repositories, so normal development still takes place in individual repositories with the usual `git` commands.
 
@@ -37,7 +37,7 @@ For a few example projects, see the [examples directory](https://github.com/JrGo
 To install from the [GitHub Releases](https://github.com/JrGoodle/clowder/releases) open a terminal and run:
 
 ```bash
-$ pip3 install https://github.com/JrGoodle/clowder/releases/download/0.8.2/clowder-0.8.2-py3-none-any.whl
+$ pip3 install https://github.com/JrGoodle/clowder/releases/download/0.8.3/clowder-0.8.3-py3-none-any.whl
 ```
 
 To install from the cloned repository:
@@ -91,9 +91,9 @@ $ clowder fix v0.1 # Save a fixed version of clowder.yaml
 
 ```bash
 $ export CMD='git status'
-$ clowder forall "$CMD" # Run "$CMD" in all project directories
-$ clowder forall "$CMD" -g clang # Run "$CMD" only for projects in clang group
-$ clowder forall "$CMD" -p llvm-mirror/clang # Run "$CMD" only for clang project
+$ clowder forall "$CMD" # Run $CMD in all project directories
+$ clowder forall "$CMD" -g clang # Run $CMD only for projects in clang group
+$ clowder forall "$CMD" -p llvm-mirror/clang # Run $CMD only for clang project
 ```
 
 ```bash
@@ -113,6 +113,10 @@ $ clowder meow # print status of projects
 $ clowder meow -v # print more verbose status of projects
 $ clowder meow -g clang llvm # print status of projects in clang and llvm groups
 $ clowder meow -v -g clang # print verbose status of projects in clang group
+```
+
+```bash
+$ clowder repo 'git status' # Run 'git status' in .clowder directory
 ```
 
 ```bash

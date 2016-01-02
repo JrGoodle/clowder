@@ -1,5 +1,5 @@
 """Representation of clowder.yaml project"""
-import os
+import os, subprocess
 from termcolor import colored, cprint
 from clowder.utility.clowder_utilities import (
     format_project_string,
@@ -142,3 +142,11 @@ class Project(object):
         current_ref_output = format_ref_string(repo_path)
         print(project_output + ' ' + current_ref_output)
         cprint(self.path, 'cyan')
+
+    def run_command(self, command):
+        """Run command in project directory"""
+        self._print_status()
+        command_output = colored('$ ' + command, attrs=['bold'])
+        print(command_output)
+        subprocess.call(command.split(), cwd=self.full_path())
+        print('')

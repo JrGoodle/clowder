@@ -3,10 +3,8 @@
 make_dirty_clowder_repo()
 {
     echo "TEST: Make dirty clowder repo"
-    pushd .clowder &>/dev/null
-    touch newfile
-    git add newfile
-    popd &>/dev/null
+    clowder repo 'touch newfile'
+    clowder repo 'git add newfile'
     clowder meow || exit 1
 }
 

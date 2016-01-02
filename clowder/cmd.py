@@ -63,7 +63,7 @@ class Command(object):
     def fix(self):
         """clowder fix command"""
         if self.clowder_repo is not None:
-            cprint('Fix...\n', 'yellow')
+            # cprint('Fix...\n', 'yellow')
             self.clowder.fix_version(self.args.version)
         else:
             exit_clowder_not_found()
@@ -71,7 +71,7 @@ class Command(object):
     def forall(self):
         """clowder forall command"""
         if self.clowder_repo is not None:
-            cprint('Forall...\n', 'yellow')
+            # cprint('Forall...\n', 'yellow')
             self.clowder_repo.print_status()
             print('')
             if self.args.projects is None:
@@ -84,7 +84,7 @@ class Command(object):
     def groom(self):
         """clowder groom command"""
         if self.clowder_repo is not None:
-            cprint('Groom...\n', 'yellow')
+            # cprint('Groom...\n', 'yellow')
             self.clowder_repo.print_status()
             print('')
             if self.args.projects is None:
@@ -97,7 +97,7 @@ class Command(object):
     def herd(self):
         """clowder herd command"""
         if self.clowder_repo is not None:
-            cprint('Herd...\n', 'yellow')
+            # cprint('Herd...\n', 'yellow')
             self.clowder_repo.print_status()
             self.clowder_repo.symlink_yaml(self.args.version)
             print('')
@@ -115,7 +115,7 @@ class Command(object):
     def meow(self):
         """clowder meow command"""
         if self.clowder_repo is not None:
-            cprint('Meow...\n', 'yellow')
+            # cprint('Meow...\n', 'yellow')
             self.clowder_repo.print_status()
             print('')
             if self.args.verbose:
@@ -125,10 +125,20 @@ class Command(object):
         else:
             exit_clowder_not_found()
 
+    def repo(self):
+        """clowder repo command"""
+        if self.clowder_repo is not None:
+            # cprint('Repo...\n', 'yellow')
+            self.clowder_repo.print_status()
+            print('')
+            self.clowder_repo.run_command(self.args.cmd)
+        else:
+            exit_clowder_not_found()
+
     def stash(self):
         """clowder stash command"""
         if self.clowder_repo is not None:
-            cprint('Stash...\n', 'yellow')
+            # cprint('Stash...\n', 'yellow')
             self.clowder_repo.print_status()
             print('')
             if self.args.projects is None:
@@ -173,6 +183,11 @@ class Command(object):
         parser_meow.add_argument('--groups', '-g', choices=self.group_names,
                                  default=self.group_names, nargs='+',
                                  help='Groups to print status for')
+        # clowder repo
+        repo_help = 'Run command in project directories'
+        parser_repo = subparsers.add_parser('repo', help=repo_help)
+        parser_repo.add_argument('cmd', help='Command to run in project directories')
+
         # clowder fix
         fix_help = 'Create version of clowder.yaml for current repos'
         parser_fix = subparsers.add_parser('fix', help=fix_help)

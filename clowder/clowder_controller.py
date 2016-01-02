@@ -1,12 +1,9 @@
 """clowder.yaml parsing and functionality"""
-import os, yaml, sys
+import os, yaml, subprocess, sys
 from termcolor import colored
 from clowder.group import Group
 from clowder.source import Source
-from clowder.utility.clowder_utilities import (
-    forall_run,
-    validate_yaml
-)
+from clowder.utility.clowder_utilities import validate_yaml
 
 class ClowderController(object):
     """Class encapsulating project information from clowder.yaml for controlling clowder"""
@@ -43,21 +40,19 @@ class ClowderController(object):
 
     def forall_groups(self, command, group_names):
         """Runs command in all project directories of groups specified"""
-        directories = []
         for group in self.groups:
             if group.name in group_names:
                 for project in group.projects:
-                    directories.append(project.full_path())
-        forall_run(command, directories)
+                    project.run_command(command)
+        sys.exit() # Exit early to prevent printing extra newline
 
     def forall_projects(self, command, project_names):
         """Runs command in all project directories of projects specified"""
-        directories = []
         for group in self.groups:
             for project in group.projects:
                 if project.name in project_names:
-                    directories.append(project.full_path())
-        forall_run(command, directories)
+                    project.run_command(command)
+        sys.exit() # Exit early to prevent printing extra newline
 
     def get_all_group_names(self):
         """Returns all group names for current clowder.yaml"""
