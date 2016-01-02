@@ -13,7 +13,7 @@ if sys.version_info[0] < 3:
 setup(
     name='clowder',
     description='A tool for managing code',
-    version='0.8.2',
+    version='0.8.3',
     url='http://clowder.cat',
     author='joe DeCapo',
     author_email='joe@polka.cat',
