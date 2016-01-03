@@ -52,7 +52,6 @@ def git_create_checkout_branch(repo_path, branch, remote):
     except:
         message = colored(' - Failed to fetch from remote ', 'red')
         print(message + remote_output)
-        shutil.rmtree(repo_path)
         print('')
         sys.exit(1)
     else:
@@ -160,10 +159,31 @@ def git_clone_url_at_path(url, repo_path, ref, remote):
         except:
             cprint(' - Failed to initialize repository', 'red')
             print('')
+            shutil.rmtree(repo_path)
             sys.exit(1)
         else:
-            git_create_remote(repo_path, remote, url)
-            git_fetch(repo_path)
+            repo = git_repo(repo_path)
+            remote_names = [r.name for r in repo.remotes]
+            if remote not in remote_names:
+                remote_output = colored(remote, attrs=['bold'])
+                try:
+                    print(" - Create remote " + remote_output)
+                    origin = repo.create_remote(remote, url)
+                    origin.fetch()
+                except:
+                    message = colored(" - Failed to create remote ", 'red')
+                    print(message + remote_output)
+                    print('')
+                    shutil.rmtree(repo_path)
+                    sys.exit(1)
+            try:
+                print(' - Fetch remote data')
+                repo.git.fetch('--all', '--prune', '--tags')
+            except:
+                cprint(' - Failed to fetch', 'red')
+                print('')
+                shutil.rmtree(repo_path)
+                sys.exit(1)
             git_checkout_ref(repo_path, ref, remote)
 
 def git_create_remote(repo_path, remote, url):
