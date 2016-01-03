@@ -31,6 +31,12 @@ examples/srclib/srcco
 examples/srclib/srclib
 examples/srclib/toolchains
 
+examples/fastlane/clowder
+examples/fastlane/.clowder
+examples/fastlane/clowder.yaml
+examples/fastlane/fastlane
+examples/fastlane/snapshot
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

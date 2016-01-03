@@ -37,7 +37,7 @@ For a few example projects, see the [examples directory](https://github.com/JrGo
 To install from the [GitHub Releases](https://github.com/JrGoodle/clowder/releases) open a terminal and run:
 
 ```bash
-$ pip3 install https://github.com/JrGoodle/clowder/releases/download/0.8.3/clowder-0.8.3-py3-none-any.whl
+$ pip3 install https://github.com/JrGoodle/clowder/releases/download/0.9.0/clowder-0.9.0-py3-none-any.whl
 ```
 
 To install from the cloned repository:
