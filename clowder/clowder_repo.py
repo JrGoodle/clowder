@@ -63,10 +63,12 @@ class ClowderRepo(object):
             force_symlink(yaml_file, yaml_symlink)
         else:
             print(path_output + " doesn't seem to exist")
+            print('')
             sys.exit(1)
 
     def _validate(self):
         """Validate status of clowder repo"""
         if not validate_repo_state(self.clowder_path):
             print_validation(self.clowder_path)
+            print('')
             sys.exit(1)

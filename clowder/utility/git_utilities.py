@@ -35,6 +35,8 @@ def git_checkout_branch(repo_path, branch, remote):
                 except:
                     message = colored(' - Failed to checkout branch ', 'red')
                     print(message + branch_output)
+                    print('')
+                    sys.exit(1)
     else:
         git_create_checkout_branch(repo_path, branch, remote)
 
@@ -51,6 +53,7 @@ def git_create_checkout_branch(repo_path, branch, remote):
         message = colored(' - Failed to fetch from remote ', 'red')
         print(message + remote_output)
         shutil.rmtree(repo_path)
+        print('')
         sys.exit(1)
     else:
         try:
@@ -58,18 +61,24 @@ def git_create_checkout_branch(repo_path, branch, remote):
         except:
             message = colored(' - Failed to create branch ', 'red')
             print(message + branch_output)
+            print('')
+            sys.exit(1)
         else:
             try:
                 default_branch.set_tracking_branch(origin.refs[branch])
             except:
                 message = colored(' - Failed to set tracking branch ', 'red')
                 print(message + branch_output)
+                print('')
+                sys.exit(1)
             else:
                 try:
                     default_branch.checkout()
                 except:
                     message = colored(' - Failed to checkout branch ', 'red')
                     print(message + branch_output)
+                    print('')
+                    sys.exit(1)
 
 def git_checkout_ref(repo_path, ref, remote):
     """Checkout branch, tag, or commit from sha"""
@@ -108,6 +117,8 @@ def git_checkout_sha(repo_path, sha):
             except:
                 message = colored(' - Failed to checkout commit ', 'red')
                 print(message + commit_output)
+                print('')
+                sys.exit(1)
 
 def git_checkout_tag(repo_path, tag):
     """Checkout commit tag is pointing to"""
@@ -132,6 +143,8 @@ def git_checkout_tag(repo_path, tag):
                 except:
                     message = colored(' - Failed to checkout tag ', 'red')
                     print(message + tag_output)
+                    print('')
+                    sys.exit(1)
     else:
         print(' - No existing tag ' + tag_output)
 
@@ -146,6 +159,8 @@ def git_clone_url_at_path(url, repo_path, ref, remote):
             Repo.init(repo_path)
         except:
             cprint(' - Failed to initialize repository', 'red')
+            print('')
+            sys.exit(1)
         else:
             git_create_remote(repo_path, remote, url)
             git_fetch(repo_path)
@@ -164,6 +179,8 @@ def git_create_remote(repo_path, remote, url):
         except:
             message = colored(" - Failed to create remote ", 'red')
             print(message + remote_output)
+            print('')
+            sys.exit(1)
 
 def git_current_branch(repo_path):
     """Return currently checked out branch of project"""
@@ -188,6 +205,8 @@ def git_fetch(repo_path):
         repo.git.fetch('--all', '--prune', '--tags')
     except:
         cprint(' - Failed to fetch', 'red')
+        print('')
+        sys.exit(1)
 
 def git_has_untracked_files(repo_path):
     """Check if there are untracked files"""
@@ -222,6 +241,8 @@ def git_pull(repo_path):
             print(repo.git.pull())
         except:
             cprint(' - Failed to pull latest changes', 'red')
+            print('')
+            sys.exit(1)
 
 def git_pull_remote_branch(repo_path, remote, branch):
     """Pull from remote branch"""
@@ -232,6 +253,8 @@ def git_pull_remote_branch(repo_path, remote, branch):
             print(repo.git.pull(remote, branch))
         except:
             cprint(' - Failed to pull latest changes', 'red')
+            print('')
+            sys.exit(1)
 
 def git_ref_type(ref):
     """Return branch, tag, sha, or unknown ref type"""
@@ -268,6 +291,7 @@ def git_repo(repo_path):
         repo_path_output = colored(repo_path, 'cyan')
         message = colored("Failed to create Repo instance for ", 'red')
         print(message + repo_path_output)
+        print('')
         sys.exit(1)
     else:
         return repo
