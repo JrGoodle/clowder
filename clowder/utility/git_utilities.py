@@ -1,5 +1,5 @@
 """Git utilities"""
-import os, sys
+import os, shutil, sys
 from git import Repo
 from termcolor import colored, cprint
 
@@ -21,7 +21,6 @@ def git_checkout_branch(repo_path, branch, remote):
         try:
             not_detached = not repo.head.is_detached
             same_branch = repo.head.ref == default_branch
-            # same_commit = repo.head.ref.commit == default_branch.commit
         except:
             pass
         else:
@@ -51,6 +50,8 @@ def git_create_checkout_branch(repo_path, branch, remote):
     except:
         message = colored(' - Failed to fetch from remote ', 'red')
         print(message + remote_output)
+        shutil.rmtree(repo_path)
+        sys.exit(1)
     else:
         try:
             default_branch = repo.create_head(branch, origin.refs[branch])
