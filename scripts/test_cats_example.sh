@@ -99,6 +99,7 @@ export projects=( 'black-cats/kit' \
                   'black-cats/jules' )
 
 test_command
+test_clowder_version
 
 test_breed_herd_version
 test_branch_version

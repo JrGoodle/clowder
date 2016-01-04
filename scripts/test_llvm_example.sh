@@ -62,6 +62,7 @@ export projects=( 'llvm' \
                   'llvm/projects/dragonegg' )
 
 test_command
+test_clowder_version
 
 test_breed_herd
 test_branch_master

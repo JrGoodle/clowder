@@ -73,6 +73,14 @@ test_breed_herd_version()
     clowder herd -v v0.1 || exit 1
 }
 
+test_clowder_version()
+{
+    print_separator
+    echo "TEST: Print clowder version"
+    clowder --version || exit 1
+    clowder --v || exit 1
+}
+
 test_command()
 {
     print_separator
