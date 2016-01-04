@@ -37,12 +37,17 @@ class Command(object):
         # clowder argparse setup
         command_description = 'Utility for managing multiple git repositories'
         parser = argparse.ArgumentParser(description=command_description)
+        parser.add_argument('--version', '-v', action='store_true',
+                            dest='clowder_version', help='Print clowder version')
         subparsers = parser.add_subparsers(dest='command')
         self._configure_subparsers(subparsers)
         # Argcomplete and arguments parsing
         argcomplete.autocomplete(parser)
         self.args = parser.parse_args()
 
+        if self.args.clowder_version:
+            print('clowder version 0.9.0')
+            sys.exit(0)
         print('')
         if self.args.command is None or not hasattr(self, self.args.command):
             exit_unrecognized_command(parser)
