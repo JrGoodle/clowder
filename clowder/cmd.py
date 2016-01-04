@@ -117,16 +117,16 @@ class Command(object):
         else:
             exit_clowder_not_found()
 
-    def meow(self):
-        """clowder meow command"""
+    def status(self):
+        """clowder status command"""
         if self.clowder_repo is not None:
-            # cprint('Meow...\n', 'yellow')
+            # cprint('Status...\n', 'yellow')
             self.clowder_repo.print_status()
             print('')
             if self.args.verbose:
-                self.clowder.meow_verbose(self.args.groups)
+                self.clowder.status_verbose(self.args.groups)
             else:
-                self.clowder.meow(self.args.groups)
+                self.clowder.status(self.args.groups)
         else:
             exit_clowder_not_found()
 
@@ -181,11 +181,11 @@ class Command(object):
                                   help='Groups to run command for')
         group_forall.add_argument('--projects', '-p', choices=self.project_names,
                                   nargs='+', help='Projects to run command for')
-        # clowder meow
-        parser_meow = subparsers.add_parser('meow', help='Print status for projects')
-        parser_meow.add_argument('--verbose', '-v', action='store_true',
+        # clowder status
+        parser_status = subparsers.add_parser('status', help='Print status for projects')
+        parser_status.add_argument('--verbose', '-v', action='store_true',
                                  help='Print detailed diff status')
-        parser_meow.add_argument('--groups', '-g', choices=self.group_names,
+        parser_status.add_argument('--groups', '-g', choices=self.group_names,
                                  default=self.group_names, nargs='+',
                                  help='Groups to print status for')
         # clowder repo

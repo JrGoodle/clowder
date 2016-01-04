@@ -105,11 +105,11 @@ class Project(object):
         """Validate status of project"""
         return validate_repo_state(self.full_path())
 
-    def meow(self):
+    def status(self):
         """Print status for project"""
         self._print_status()
 
-    def meow_verbose(self):
+    def status_verbose(self):
         """Print verbose status for project"""
         self._print_status()
         git_status(self.full_path())

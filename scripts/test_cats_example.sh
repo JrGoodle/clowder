@@ -33,7 +33,7 @@ test_herd_missing_branches()
     popd &>/dev/null
     echo "TEST: Herd existing repo's with no default branch locally"
     clowder herd || exit 1
-    clowder meow || exit 1
+    clowder status || exit 1
 }
 
 test_herd_missing_groups()
@@ -41,7 +41,7 @@ test_herd_missing_groups()
     echo "TEST: Test herd of missing group"
     clowder herd -v missing-groups
     clowder herd -g slavic || exit 1
-    clowder meow || exit 1
+    clowder status || exit 1
 }
 
 test_herd_sha()
@@ -50,7 +50,7 @@ test_herd_sha()
     echo "TEST: Test herd of static commit hash refs"
     clowder repo 'git checkout static-refs'
     clowder herd || exit 1
-    clowder meow || exit 1
+    clowder status || exit 1
     clowder repo 'git checkout master'
 }
 
@@ -60,7 +60,7 @@ test_herd_tag()
     echo "TEST: Test herd of tag refs"
     clowder repo 'git checkout tags'
     clowder herd || exit 1
-    clowder meow || exit 1
+    clowder status || exit 1
     clowder repo 'git checkout master'
 }
 
@@ -82,7 +82,7 @@ test_no_versions()
     clowder repo 'git checkout no-versions'
     clowder herd -v fixed-version && exit 1
     clowder herd || exit 1
-    clowder meow || exit 1
+    clowder status || exit 1
     clowder repo 'git checkout master'
 }
 
@@ -106,7 +106,7 @@ test_branch_version
 
 test_breed_herd
 test_branches
-test_meow_groups 'black-cats'
+test_status_groups 'black-cats'
 test_invalid_yaml
 test_groom 'black-cats'
 test_groom_projects 'jrgoodle/kit'

@@ -46,17 +46,17 @@ class Group(object):
                 valid = False
         return valid
 
-    def meow(self):
+    def status(self):
         """Print status for all projects"""
         self._print_name()
         for project in self.projects:
-            project.meow()
+            project.status()
 
-    def meow_verbose(self):
+    def status_verbose(self):
         """Print verbose status for all projects"""
         self._print_name()
         for project in self.projects:
-            project.meow_verbose()
+            project.status_verbose()
 
     def stash(self):
         """Stash changes for all projects with changes"""

@@ -107,10 +107,10 @@ $ clowder herd -v 0.1 # Point clowder.yaml symlink to fixed version
 ```
 
 ```bash
-$ clowder meow # print status of projects
-$ clowder meow -v # print more verbose status of projects
-$ clowder meow -g clang llvm # print status of projects in clang and llvm groups
-$ clowder meow -v -g clang # print verbose status of projects in clang group
+$ clowder status # print status of projects
+$ clowder status -v # print more verbose status of projects
+$ clowder status -g clang llvm # print status of projects in clang and llvm groups
+$ clowder status -v -g clang # print verbose status of projects in clang group
 ```
 
 ```bash

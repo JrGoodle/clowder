@@ -51,7 +51,7 @@ test_herd_old_repos()
     setup_old_repos
     echo "TEST: Normal herd with out of date repos"
     clowder herd || exit 1
-    clowder meow || exit 1
+    clowder status || exit 1
 }
 
 export projects=( 'llvm' \
@@ -67,7 +67,7 @@ test_clowder_version
 test_breed_herd
 test_branch_master
 test_herd_old_repos
-test_meow_groups 'clang' 'llvm'
+test_status_groups 'clang' 'llvm'
 test_herd 'llvm/tools/clang/tools/extra' \
           'llvm/projects/dragonegg'
 test_branch_version

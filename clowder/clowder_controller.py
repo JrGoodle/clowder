@@ -104,17 +104,17 @@ class ClowderController(object):
                 if project.name in project_names:
                     project.herd()
 
-    def meow(self, group_names):
+    def status(self, group_names):
         """Print status for projects"""
         for group in self.groups:
             if group.name in group_names:
-                group.meow()
+                group.status()
 
-    def meow_verbose(self, group_names):
+    def status_verbose(self, group_names):
         """Print git status for projects with changes"""
         for group in self.groups:
             if group.name in group_names:
-                group.meow_verbose()
+                group.status_verbose()
 
     def stash_groups(self, group_names):
         """Stash changes for projects with changes"""

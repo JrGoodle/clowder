@@ -5,7 +5,7 @@ make_dirty_clowder_repo()
     echo "TEST: Make dirty clowder repo"
     clowder repo 'touch newfile'
     clowder repo 'git add newfile'
-    clowder meow || exit 1
+    clowder status || exit 1
 }
 
 make_dirty_repos()
@@ -19,7 +19,7 @@ make_dirty_repos()
         git add newfile
         popd &>/dev/null
     done
-    clowder meow -v || exit 1
+    clowder status -v || exit 1
 }
 
 test_branch()
@@ -61,7 +61,7 @@ test_breed_herd()
     ./clean.sh
     ./breed.sh  || exit 1
     clowder herd  || exit 1
-    clowder meow || exit 1
+    clowder status || exit 1
 }
 
 test_breed_herd_version()
@@ -103,7 +103,7 @@ test_fix()
     echo "TEST: Successfully fix version with path separator in input name"
     clowder fix path/separator
     clowder herd -v path-separator || exit 1
-    clowder meow || exit 1
+    clowder status || exit 1
 }
 
 test_fix_missing_directories()
@@ -137,10 +137,10 @@ test_groom()
     make_dirty_repos "${projects[@]}"
     echo "TEST: Groom specific group when dirty"
     clowder groom -g "$@" || exit 1
-    clowder meow || exit 1
+    clowder status || exit 1
     echo "TEST: Groom all when dirty"
     clowder groom || exit 1
-    clowder meow || exit 1
+    clowder status || exit 1
     echo "TEST: Groom when clean"
     clowder groom || exit 1
 }
@@ -150,7 +150,7 @@ test_groom_missing_directories()
     rm -rf "$@"
     echo "TEST: Discard all changes when directories are missing"
     clowder groom || exit 1
-    clowder meow || exit 1
+    clowder status || exit 1
     clowder herd || exit 1
 }
 
@@ -160,10 +160,10 @@ test_groom_projects()
     make_dirty_repos "${projects[@]}"
     echo "TEST: Groom specific project when dirty"
     clowder groom -p "$@" || exit 1
-    clowder meow || exit 1
+    clowder status || exit 1
     echo "TEST: Groom all when dirty"
     clowder groom || exit 1
-    clowder meow || exit 1
+    clowder status || exit 1
 }
 
 test_herd()
@@ -189,7 +189,7 @@ test_herd_detached_heads()
         git checkout master~2
         popd &>/dev/null
     done
-    clowder meow || exit 1
+    clowder status || exit 1
     echo "TEST: Successfully herd with detached HEADs"
     clowder herd || exit 1
 }
@@ -202,7 +202,7 @@ test_herd_dirty_repos()
     clowder herd && exit 1
     echo "TEST: Discard changes with groom"
     clowder groom || exit 1
-    clowder meow || exit 1
+    clowder status || exit 1
     echo "TEST: Successfully herd after groom"
     clowder herd || exit 1
     echo "TEST: Successfully herd twice"
@@ -216,11 +216,11 @@ test_herd_projects()
     clowder herd -p "$@" || exit 1
 }
 
-test_meow_groups()
+test_status_groups()
 {
     print_separator
-    echo "TEST: Test meow for specific groups"
-    clowder meow -g "$@" || exit 1
+    echo "TEST: Test status for specific groups"
+    clowder status -g "$@" || exit 1
 }
 
 test_stash()
@@ -230,10 +230,10 @@ test_stash()
     clowder herd && exit 1
     echo "TEST: Stash specific groups when dirty"
     clowder stash -g "$@" || exit 1
-    clowder meow || exit 1
+    clowder status || exit 1
     echo "TEST: Stash all changes when dirty"
     clowder stash || exit 1
-    clowder meow || exit 1
+    clowder status || exit 1
     echo "TEST: Stash changes when clean"
     clowder stash || exit 1
 }
@@ -243,7 +243,7 @@ test_stash_missing_directories()
     rm -rf "$@"
     echo "TEST: Stash all changes when directories are missing"
     clowder stash || exit 1
-    clowder meow || exit 1
+    clowder status || exit 1
     clowder herd || exit 1
 }
 
@@ -252,10 +252,10 @@ test_stash_projects()
     make_dirty_repos "${projects[@]}"
     echo "TEST: Stash specific projects when dirty"
     clowder stash -p "$@" || exit 1
-    clowder meow || exit 1
+    clowder status || exit 1
     echo "TEST: Stash all changes when dirty"
     clowder stash || exit 1
-    clowder meow || exit 1
+    clowder status || exit 1
 }
 
 test_herd_groups()
@@ -266,7 +266,7 @@ test_herd_groups()
     print_separator
     echo "TEST: Herd only specific groups"
     clowder herd -g "$@" || exit 1
-    clowder meow || exit 1
+    clowder status || exit 1
 }
 
 print_help()
@@ -292,8 +292,8 @@ print_help()
     echo "TEST: clowder groom -h"
     clowder groom -h
     print_separator
-    echo "TEST: clowder meow -h"
-    clowder meow -h
+    echo "TEST: clowder status -h"
+    clowder status -h
     print_separator
     echo "TEST: clowder stash -h"
     clowder stash -h

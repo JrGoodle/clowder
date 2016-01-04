@@ -22,7 +22,7 @@ test_herd_missing_branches()
     popd &>/dev/null
     echo "TEST: Herd existing repo's with no default branch locally"
     clowder herd || exit 1
-    clowder meow || exit 1
+    clowder status || exit 1
 }
 
 export projects=( 'samples/srclib-sample' \
@@ -54,7 +54,7 @@ test_branch_version
 
 test_breed_herd
 test_branch_master
-test_meow_groups 'srclib' 'projects'
+test_status_groups 'srclib' 'projects'
 test_groom 'srclib' 'projects'
 test_groom_projects 'sourcegraph/srclib'
 test_herd_dirty_repos
