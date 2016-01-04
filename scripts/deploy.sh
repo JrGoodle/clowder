@@ -1,6 +1,6 @@
 #! /bin/bash
 
-cd "$( dirname "${BASH_SOURCE[0]}" )"
+cd "$( dirname "${BASH_SOURCE[0]}" )" || exit 1
 
 echo "deploy.sh"
 
@@ -16,7 +16,7 @@ fi
 export GITHUB_USER='JrGoodle'
 export GITHUB_REPO='clowder'
 
-cd "${TRAVIS_BUILD_DIR}"
+cd "${TRAVIS_BUILD_DIR}" || exit 1
 
 SETUP_PY="${TRAVIS_BUILD_DIR}/setup.py"
 VERSION=$(awk "/version='/" "${SETUP_PY}" | sed -n -e "s/^.*version='//p" | tr -d "',")
@@ -53,7 +53,7 @@ else
 
 	echo "Uploading artifacts"
 	echo '-------------------'
-    cd "${TRAVIS_BUILD_DIR}/dist"
+    cd "${TRAVIS_BUILD_DIR}/dist" || exit 1
     artifacts=( "clowder-${VERSION}-py3-none-any.whl" \
                  "clowder-${VERSION}.tar.gz" )
     for artifact in "${artifacts[@]}"; do
