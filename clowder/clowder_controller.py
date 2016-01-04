@@ -1,5 +1,5 @@
 """clowder.yaml parsing and functionality"""
-import os, yaml, subprocess, sys
+import os, yaml, sys
 from termcolor import colored
 from clowder.group import Group
 from clowder.source import Source

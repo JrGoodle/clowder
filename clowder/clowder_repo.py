@@ -1,6 +1,5 @@
 """Clowder repo management"""
 import emoji, os, subprocess, sys
-# from git import Repo
 from termcolor import colored
 from clowder.utility.git_utilities import (
     git_branches,

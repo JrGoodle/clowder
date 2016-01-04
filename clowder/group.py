@@ -1,5 +1,4 @@
 """Representation of clowder.yaml group"""
-
 from termcolor import colored
 from clowder.project import Project
 
