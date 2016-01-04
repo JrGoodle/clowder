@@ -47,6 +47,7 @@ export selected_projects=( 'samples/srclib-sample' \
                            'srclib' )
 
 test_command
+test_clowder_version
 
 test_breed_herd_version
 test_branch_version

@@ -4,8 +4,8 @@
 
 echo 'TEST: python unittests test script'
 
-cd "$( dirname "${BASH_SOURCE[0]}" )"
-cd ../examples/cats
+cd "$( dirname "${BASH_SOURCE[0]}" )" || exit 1
+cd ../examples/cats || exit 1
 
 prepare_unittest_repos()
 {
@@ -28,5 +28,5 @@ prepare_unittest_repos()
 
 echo 'TEST: Run unittests'
 prepare_unittest_repos
-cd ../..
+cd ../.. || exit 1
 python3 -m unittest discover -v
