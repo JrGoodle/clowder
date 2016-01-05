@@ -61,9 +61,17 @@ def validate_repo_state(repo_path):
 def validate_yaml(parsed_yaml):
     """Load clowder from yaml file"""
     try:
-        parsed_yaml['defaults']['ref']
-        parsed_yaml['defaults']['remote']
-        parsed_yaml['defaults']['source']
+        defaults = parsed_yaml['defaults']
+        defaults['ref']
+        del defaults['ref']
+        defaults['remote']
+        del defaults['remote']
+        defaults['source']
+        del defaults['source']
+        if 'depth' in defaults:
+            del defaults['depth']
+        if len(defaults) > 0:
+            raise Exception('Unknown default values')
 
         for source in parsed_yaml['sources']:
             source['name']
@@ -73,9 +81,27 @@ def validate_yaml(parsed_yaml):
             group['name']
             for project in group['projects']:
                 project['name']
+                del project['name']
                 project['path']
+                del project['path']
+                if 'remote' in project:
+                    del project['remote']
+                if 'ref' in project:
+                    del project['ref']
+                if 'source' in project:
+                    del project['source']
+                if 'depth' in project:
+                    del project['depth']
+                if 'forks' in project:
+                    for fork in project['forks']:
+                        fork['name']
+                        fork['remote']
+                    del project['forks']
+                if len(project) > 0:
+                    raise Exception('Unknown project values')
     except:
         print('')
         clowder_output = colored('clowder.yaml', 'cyan')
         print(clowder_output + ' appears to be invalid')
+        print('')
         sys.exit(1)

@@ -1,6 +1,7 @@
 """Representation of clowder.yaml project"""
 import os, subprocess
 from termcolor import colored, cprint
+from clowder.fork import Fork
 from clowder.utility.clowder_utilities import (
     format_project_string,
     format_ref_string,
@@ -58,6 +59,12 @@ class Project(object):
 
         self.url = self.source.get_url_prefix() + self.name + ".git"
 
+        self.forks = []
+        if 'forks' in project:
+            for fork in project['forks']:
+                full_path = os.path.join(self.root_directory, self.path)
+                self.forks.append(Fork(fork['name'], full_path, self.source, fork['remote']))
+
     def exists(self):
         """Check if project exists on disk"""
         path = os.path.join(self.full_path(), '.git')
@@ -69,9 +76,11 @@ class Project(object):
 
     def get_yaml(self):
         """Return python object representation for saving yaml"""
+        forks_yaml = [f.get_yaml() for f in self.forks]
         return {'name': self.name,
                 'path': self.path,
                 'depth': self.depth,
+                'forks': forks_yaml,
                 'ref': git_current_sha(self.full_path()),
                 'remote': self.remote_name,
                 'source': self.source.name}
@@ -102,7 +111,10 @@ class Project(object):
                 git_fetch(self.full_path())
                 git_checkout_ref(self.full_path(), self.ref, self.remote_name)
             else:
-                print('Unknown ref ' + self.ref)
+                cprint('Unknown ref ' + self.ref, 'red')
+
+        for fork in self.forks:
+            fork.herd()
 
     def is_dirty(self):
         """Check if project is dirty"""
