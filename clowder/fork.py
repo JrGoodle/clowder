@@ -22,6 +22,7 @@ class Fork(object):
         """Herd remote data from fork"""
         self._print_status()
         git_create_remote(self.path, self.remote, self.url)
+        print(' - Fetch remote data')
 
     def get_yaml(self):
         """Return python object representation for saving yaml"""
