@@ -70,7 +70,7 @@ class Project(object):
                 'remote': self.remote_name,
                 'source': self.source.name}
 
-    def groom(self):
+    def clean(self):
         """Discard changes for project"""
         if self.is_dirty():
             self._print_status()

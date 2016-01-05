@@ -95,9 +95,9 @@ $ clowder forall "$CMD" -p llvm-mirror/clang # Run $CMD only for clang project
 ```
 
 ```bash
-$ clowder groom # Discard any changes in projects
-$ clowder groom -g clang # Discard any changes in projects in clang group
-$ clowder groom -p llvm-mirror/clang # Discard any changes in clang project
+$ clowder clean # Discard any changes in projects
+$ clowder clean -g clang # Discard any changes in projects in clang group
+$ clowder clean -p llvm-mirror/clang # Discard any changes in clang project
 ```
 
 ```bash

@@ -86,16 +86,16 @@ class Command(object):
         else:
             exit_clowder_not_found()
 
-    def groom(self):
-        """clowder groom command"""
+    def clean(self):
+        """clowder clean command"""
         if self.clowder_repo is not None:
-            # cprint('Groom...\n', 'yellow')
+            # cprint('Clean...\n', 'yellow')
             self.clowder_repo.print_status()
             print('')
             if self.args.projects is None:
-                self.clowder.groom_groups(self.args.groups)
+                self.clowder.clean_groups(self.args.groups)
             else:
-                self.clowder.groom_projects(self.args.projects)
+                self.clowder.clean_projects(self.args.projects)
         else:
             exit_clowder_not_found()
 
@@ -197,15 +197,15 @@ class Command(object):
         fix_help = 'Create version of clowder.yaml for current repos'
         parser_fix = subparsers.add_parser('fix', help=fix_help)
         parser_fix.add_argument('version', help='Version name to fix')
-        # clowder groom
-        groom_help = 'Discard current changes in all projects'
-        parser_groom = subparsers.add_parser('groom', help=groom_help)
-        group_groom = parser_groom.add_mutually_exclusive_group()
-        group_groom.add_argument('--groups', '-g', choices=self.group_names,
+        # clowder clean
+        clean_help = 'Discard current changes in all projects'
+        parser_clean = subparsers.add_parser('clean', help=clean_help)
+        group_clean = parser_clean.add_mutually_exclusive_group()
+        group_clean.add_argument('--groups', '-g', choices=self.group_names,
                                  default=self.group_names, nargs='+',
-                                 help='Groups to groom')
-        group_groom.add_argument('--projects', '-p', choices=self.project_names,
-                                 nargs='+', help='Projects to groom')
+                                 help='Groups to clean')
+        group_clean.add_argument('--projects', '-p', choices=self.project_names,
+                                 nargs='+', help='Projects to clean')
         # clowder stash
         parser_stash = subparsers.add_parser('stash',
                                              help='Stash current changes in all projects')

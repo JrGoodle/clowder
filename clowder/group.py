@@ -17,12 +17,12 @@ class Group(object):
         projects_yaml = [p.get_yaml() for p in self.projects]
         return {'name': self.name, 'projects': projects_yaml}
 
-    def groom(self):
+    def clean(self):
         """Discard changes for all projects"""
         if self.is_dirty():
             self._print_name()
             for project in self.projects:
-                project.groom()
+                project.clean()
 
     def herd(self):
         """Sync all projects with latest upstream changes"""

@@ -108,9 +108,9 @@ test_breed_herd
 test_branches
 test_status_groups 'black-cats'
 test_invalid_yaml
-test_groom 'black-cats'
-test_groom_projects 'jrgoodle/kit'
-test_groom_missing_directories 'mu' 'duke'
+test_clean 'black-cats'
+test_clean_projects 'jrgoodle/kit'
+test_clean_missing_directories 'mu' 'duke'
 test_herd_dirty_repos
 test_herd_detached_heads
 test_herd 'duke' 'mu'

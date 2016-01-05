@@ -131,38 +131,38 @@ test_forall_projects()
     clowder forall 'git status' -p "$@" || exit 1
 }
 
-test_groom()
+test_clean()
 {
     print_separator
     make_dirty_repos "${projects[@]}"
-    echo "TEST: Groom specific group when dirty"
-    clowder groom -g "$@" || exit 1
+    echo "TEST: Clean specific group when dirty"
+    clowder clean -g "$@" || exit 1
     clowder status || exit 1
-    echo "TEST: Groom all when dirty"
-    clowder groom || exit 1
+    echo "TEST: Clean all when dirty"
+    clowder clean || exit 1
     clowder status || exit 1
-    echo "TEST: Groom when clean"
-    clowder groom || exit 1
+    echo "TEST: Clean when clean"
+    clowder clean || exit 1
 }
 
-test_groom_missing_directories()
+test_clean_missing_directories()
 {
     rm -rf "$@"
     echo "TEST: Discard all changes when directories are missing"
-    clowder groom || exit 1
+    clowder clean || exit 1
     clowder status || exit 1
     clowder herd || exit 1
 }
 
-test_groom_projects()
+test_clean_projects()
 {
     print_separator
     make_dirty_repos "${projects[@]}"
-    echo "TEST: Groom specific project when dirty"
-    clowder groom -p "$@" || exit 1
+    echo "TEST: Clean specific project when dirty"
+    clowder clean -p "$@" || exit 1
     clowder status || exit 1
-    echo "TEST: Groom all when dirty"
-    clowder groom || exit 1
+    echo "TEST: Clean all when dirty"
+    clowder clean || exit 1
     clowder status || exit 1
 }
 
@@ -200,10 +200,10 @@ test_herd_dirty_repos()
     make_dirty_repos "${projects[@]}"
     echo "TEST: Fail herd with dirty repos"
     clowder herd && exit 1
-    echo "TEST: Discard changes with groom"
-    clowder groom || exit 1
+    echo "TEST: Discard changes with clean"
+    clowder clean || exit 1
     clowder status || exit 1
-    echo "TEST: Successfully herd after groom"
+    echo "TEST: Successfully herd after clean"
     clowder herd || exit 1
     echo "TEST: Successfully herd twice"
     clowder herd || exit 1
@@ -289,8 +289,8 @@ print_help()
     echo "TEST: clowder forall -h"
     clowder forall -h
     print_separator
-    echo "TEST: clowder groom -h"
-    clowder groom -h
+    echo "TEST: clowder clean -h"
+    clowder clean -h
     print_separator
     echo "TEST: clowder status -h"
     clowder status -h

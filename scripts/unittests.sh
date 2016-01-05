@@ -9,9 +9,9 @@ cd ../examples/cats || exit 1
 
 prepare_unittest_repos()
 {
-    # Groom and herd repo's to clean state
+    # Clean and herd repo's to clean state
     ./breed.sh
-    clowder groom
+    clowder clean
     clowder herd
     # Remove jules repository
     rm -rf black-cats/jules

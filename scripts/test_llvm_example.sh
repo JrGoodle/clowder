@@ -72,9 +72,9 @@ test_herd 'llvm/tools/clang/tools/extra' \
           'llvm/projects/dragonegg'
 test_branch_version
 test_herd_dirty_repos
-test_groom 'clang' 'llvm'
-test_groom_projects 'llvm-mirror/clang'
-test_groom_missing_directories 'zorg'
+test_clean 'clang' 'llvm'
+test_clean_projects 'llvm-mirror/clang'
+test_clean_missing_directories 'zorg'
 test_herd_detached_heads
 test_forall 'clang' 'llvm'
 test_forall_projects 'llvm-mirror/clang' 'llvm-mirror/llvm'
