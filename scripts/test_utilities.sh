@@ -91,28 +91,28 @@ test_command()
     clowder herd && exit 1
 }
 
-test_fix()
+test_save()
 {
     print_separator
-    echo "TEST: Fail herding a previously fixed version"
+    echo "TEST: Fail herding a previously saved version"
     clowder herd -v v100 && exit 1
-    echo "TEST: Fail fixing a previously fixed version"
-    clowder fix v0.1 && exit 1
-    echo "TEST: Successfully fix a new version"
-    clowder fix v0.11 || exit 1
-    echo "TEST: Successfully fix version with path separator in input name"
-    clowder fix path/separator
+    echo "TEST: Fail saving a previously saved version"
+    clowder save v0.1 && exit 1
+    echo "TEST: Successfully save a new version"
+    clowder save v0.11 || exit 1
+    echo "TEST: Successfully save version with path separator in input name"
+    clowder save path/separator
     clowder herd -v path-separator || exit 1
     clowder status || exit 1
 }
 
-test_fix_missing_directories()
+test_save_missing_directories()
 {
     print_separator
     echo "TEST: Remove directories"
     rm -rf "$@"
-    echo "TEST: Fail fixing version with missing directories"
-    clowder fix missing-directories && exit 1
+    echo "TEST: Fail saving version with missing directories"
+    clowder save missing-directories && exit 1
 }
 
 test_forall()
@@ -169,9 +169,9 @@ test_clean_projects()
 test_herd()
 {
     print_separator
-    echo "TEST: Successfully herd a previously fixed version"
+    echo "TEST: Successfully herd a previously saved version"
     clowder herd -v v0.1 || exit 1
-    echo "TEST: Successfully herd after herding a previously fixed version"
+    echo "TEST: Successfully herd after herding a previously saved version"
     clowder herd || exit 1
     echo "TEST: Remove directories"
     rm -rf "$@"
@@ -261,7 +261,7 @@ test_stash_projects()
 test_herd_groups()
 {
     print_separator
-    echo "TEST: Herd fixed version to test herding select groups"
+    echo "TEST: Herd saved version to test herding select groups"
     clowder herd -v v0.1 || exit 1
     print_separator
     echo "TEST: Herd only specific groups"
@@ -283,8 +283,8 @@ print_help()
     echo "TEST: clowder herd -h"
     clowder herd -h
     print_separator
-    echo "TEST: clowder fix -h"
-    clowder fix -h
+    echo "TEST: clowder save -h"
+    clowder save -h
     print_separator
     echo "TEST: clowder forall -h"
     clowder forall -h

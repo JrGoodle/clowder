@@ -19,7 +19,7 @@ Managing multiple repositories can be pretty frustrating. There are a number of 
 
 All of these have their own approach, but many are based on submodules or subtrees. Submodules and subtrees create a tight coupling between repositories because of the way dependencies are stored. Much has been written about their drawbacks elsewhere. Google's `repo` tool takes a different approach, but is closely tied to Google's development workflow.
 
-`clowder` uses a similar approach as `repo` (and as it turns out, `gr` and `giternal`) with a yaml file instead of xml. URL information and relative project locations on disk are specified in a `clowder.yaml` file. This file is checked into its own repository. The use of a separate file for tracking projects means that there's detailed information about the dependencies between them, but each repository is still essentially independent. Projects can be tied to specific tags or commits, or can track branches. With the `clowder fix <version>` command, specific versions of the `clowder.yaml` file can be saved from the current commit hashes of all projects for later restoration.
+`clowder` uses a similar approach as `repo` (and as it turns out, `gr` and `giternal`) with a yaml file instead of xml. URL information and relative project locations on disk are specified in a `clowder.yaml` file. This file is checked into its own repository. The use of a separate file for tracking projects means that there's detailed information about the dependencies between them, but each repository is still essentially independent. Projects can be tied to specific tags or commits, or can track branches. With the `clowder save <version>` command, specific versions of the `clowder.yaml` file can be saved from the current commit hashes of all projects for later restoration.
 
 The primary purpose of `clowder` is synchronization of multiple repositories, so normal development still takes place in individual repositories with the usual `git` commands.
 
@@ -84,7 +84,7 @@ The `clowder herd` command syncs the projects. The `clowder.yaml` symlink is alw
 ### Further Commands
 
 ```bash
-$ clowder fix 0.1 # Save a fixed version of clowder.yaml
+$ clowder save 0.1 # Save a version of clowder.yaml with current commit sha's
 ```
 
 ```bash
@@ -103,7 +103,7 @@ $ clowder clean -p llvm-mirror/clang # Discard any changes in clang project
 ```bash
 $ clowder herd -g clang llvm # Only herd projects in clang and llvm groups
 $ clowder herd -p llvm-mirror/clang # Only herd clang project
-$ clowder herd -v 0.1 # Point clowder.yaml symlink to fixed version
+$ clowder herd -v 0.1 # Point clowder.yaml symlink to saved version
 ```
 
 ```bash

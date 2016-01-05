@@ -28,7 +28,7 @@ class Command(object):
             if not os.path.islink(clowder_symlink):
                 self.clowder_repo.symlink_yaml()
             self.clowder = ClowderController(self.root_directory)
-            self.versions = self.clowder.get_fixed_version_names()
+            self.versions = self.clowder.get_saved_version_names()
             self.branches = self.clowder_repo.branches()
             if self.clowder.get_all_group_names() is not None:
                 self.group_names = self.clowder.get_all_group_names()
@@ -65,11 +65,11 @@ class Command(object):
             cprint('Clowder already bred in this directory', 'red')
             sys.exit()
 
-    def fix(self):
-        """clowder fix command"""
+    def save(self):
+        """clowder save command"""
         if self.clowder_repo is not None:
-            # cprint('Fix...\n', 'yellow')
-            self.clowder.fix_version(self.args.version)
+            # cprint('Save...\n', 'yellow')
+            self.clowder.save_version(self.args.version)
         else:
             exit_clowder_not_found()
 
@@ -184,19 +184,19 @@ class Command(object):
         # clowder status
         parser_status = subparsers.add_parser('status', help='Print status for projects')
         parser_status.add_argument('--verbose', '-v', action='store_true',
-                                 help='Print detailed diff status')
+                                   help='Print detailed diff status')
         parser_status.add_argument('--groups', '-g', choices=self.group_names,
-                                 default=self.group_names, nargs='+',
-                                 help='Groups to print status for')
+                                   default=self.group_names, nargs='+',
+                                   help='Groups to print status for')
         # clowder repo
         repo_help = 'Run command in project directories'
         parser_repo = subparsers.add_parser('repo', help=repo_help)
         parser_repo.add_argument('cmd', help='Command to run in project directories')
 
-        # clowder fix
-        fix_help = 'Create version of clowder.yaml for current repos'
-        parser_fix = subparsers.add_parser('fix', help=fix_help)
-        parser_fix.add_argument('version', help='Version name to fix')
+        # clowder save
+        save_help = 'Create version of clowder.yaml for current repos'
+        parser_save = subparsers.add_parser('save', help=save_help)
+        parser_save.add_argument('version', help='Version name to save')
         # clowder clean
         clean_help = 'Discard current changes in all projects'
         parser_clean = subparsers.add_parser('clean', help=clean_help)
