@@ -55,12 +55,12 @@ class Command(object):
         getattr(self, self.args.command)()
         print('')
 
-    def breed(self):
-        """clowder breed command"""
+    def init(self):
+        """clowder init command"""
         if self.clowder_repo is None:
-            cprint('Breed from %s\n' % self.args.url, 'yellow')
+            cprint('Init from %s\n' % self.args.url, 'yellow')
             clowder_repo = ClowderRepo(self.root_directory)
-            clowder_repo.breed(self.args.url)
+            clowder_repo.init(self.args.url)
         else:
             cprint('Clowder already bred in this directory', 'red')
             sys.exit()
@@ -157,10 +157,10 @@ class Command(object):
 # pylint: disable=R0914
     def _configure_subparsers(self, subparsers):
         """Configure all clowder command subparsers and arguments"""
-        # clowder breed
-        breed_help = 'Clone repository to clowder directory and create clowder.yaml symlink'
-        parser_breed = subparsers.add_parser('breed', help=breed_help)
-        parser_breed.add_argument('url', help='URL of repo containing clowder.yaml')
+        # clowder init
+        init_help = 'Clone repository to clowder directory and create clowder.yaml symlink'
+        parser_init = subparsers.add_parser('init', help=init_help)
+        parser_init.add_argument('url', help='URL of repo containing clowder.yaml')
         # clowder herd
         herd_help = 'Clone and sync latest changes for projects'
         parser_herd = subparsers.add_parser('herd', help=herd_help)

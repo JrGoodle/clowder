@@ -64,10 +64,10 @@ $ mkdir llvm-projects && cd llvm-projects
 Clone repository containing `clowder.yaml` file.
 
 ```bash
-$ clowder breed https://github.com/jrgoodle/llvm-projects.git
+$ clowder init https://github.com/jrgoodle/llvm-projects.git
 ```
 
-The `clowder breed` command will clone the [llvm-projects](https://github.com/jrgoodle/llvm-projects.git) repository in the `llvm-projects/.clowder` directory and create a symlink pointing to the primary `clowder.yaml` file in the repository:
+The `clowder init` command will clone the [llvm-projects](https://github.com/jrgoodle/llvm-projects.git) repository in the `llvm-projects/.clowder` directory and create a symlink pointing to the primary `clowder.yaml` file in the repository:
 
 ```
 llvm-projects/clowder.yaml -> llvm-projects/.clowder/clowder.yaml
@@ -79,7 +79,7 @@ Next sync all repositories:
 $ clowder herd
 ```
 
-The `clowder herd` command syncs the projects. The `clowder.yaml` symlink is always updated to point to the primary `clowder.yaml` file in the repository cloned with `clowder breed`. Projects are cloned if they don't currently exist. Otherwise, each project will pull the latest changes. If the current branch isn't the default, it'll be checked out, and latest changes pulled. For commits and tags, the commits are checked out into a detached `HEAD` state (`clowder forall` can then be used to checkout/create branches).
+The `clowder herd` command syncs the projects. The `clowder.yaml` symlink is always updated to point to the primary `clowder.yaml` file in the repository cloned with `clowder init`. Projects are cloned if they don't currently exist. Otherwise, each project will pull the latest changes. If the current branch isn't the default, it'll be checked out, and latest changes pulled. For commits and tags, the commits are checked out into a detached `HEAD` state (`clowder forall` can then be used to checkout/create branches).
 
 ### Further Commands
 

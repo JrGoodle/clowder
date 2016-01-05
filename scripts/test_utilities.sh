@@ -54,22 +54,22 @@ test_branch_version()
     done
 }
 
-test_breed_herd()
+test_init_herd()
 {
     print_separator
-    echo "TEST: Normal herd after breed"
+    echo "TEST: Normal herd after init"
     ./clean.sh
-    ./breed.sh  || exit 1
+    ./init.sh  || exit 1
     clowder herd  || exit 1
     clowder status || exit 1
 }
 
-test_breed_herd_version()
+test_init_herd_version()
 {
     print_separator
-    echo "TEST: Herd version after breed"
+    echo "TEST: Herd version after init"
     ./clean.sh || exit 1
-    ./breed.sh || exit 1
+    ./init.sh || exit 1
     clowder herd -v v0.1 || exit 1
 }
 
@@ -277,8 +277,8 @@ print_help()
     echo "TEST: clowder -h"
     clowder -h
     print_separator
-    echo "TEST: clowder breed -h"
-    clowder breed -h
+    echo "TEST: clowder init -h"
+    clowder init -h
     print_separator
     echo "TEST: clowder herd -h"
     clowder herd -h

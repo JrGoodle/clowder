@@ -23,7 +23,7 @@ class ClowderRepo(object):
         """Return current local branches"""
         return git_branches(self.clowder_path)
 
-    def breed(self, url):
+    def init(self, url):
         """Clone clowder repo from url"""
         git_clone_url_at_path(url, self.clowder_path, 'refs/heads/master', 'origin')
         self.symlink_yaml()

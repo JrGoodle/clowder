@@ -64,7 +64,7 @@ export projects=( 'llvm' \
 test_command
 test_clowder_version
 
-test_breed_herd
+test_init_herd
 test_branch_master
 test_herd_old_repos
 test_status_groups 'clang' 'llvm'

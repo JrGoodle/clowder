@@ -101,10 +101,10 @@ export projects=( 'black-cats/kit' \
 test_command
 test_clowder_version
 
-test_breed_herd_version
+test_init_herd_version
 test_branch_version
 
-test_breed_herd
+test_init_herd
 test_branches
 test_status_groups 'black-cats'
 test_invalid_yaml

@@ -49,10 +49,10 @@ export selected_projects=( 'samples/srclib-sample' \
 test_command
 test_clowder_version
 
-test_breed_herd_version
+test_init_herd_version
 test_branch_version
 
-test_breed_herd
+test_init_herd
 test_branch_master
 test_status_groups 'srclib' 'projects'
 test_clean 'srclib' 'projects'

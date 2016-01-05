@@ -10,7 +10,7 @@ cd ../examples/cats || exit 1
 prepare_unittest_repos()
 {
     # Clean and herd repo's to clean state
-    ./breed.sh
+    ./init.sh
     clowder clean
     clowder herd
     # Remove jules repository
