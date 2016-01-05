@@ -1,5 +1,5 @@
 """clowder.yaml parsing and functionality"""
-import os, yaml, sys
+import copy, os, yaml, sys
 from termcolor import colored
 from clowder.group import Group
 from clowder.source import Source
@@ -155,8 +155,9 @@ class ClowderController(object):
         if os.path.exists(yaml_file):
             with open(yaml_file) as file:
                 parsed_yaml = yaml.safe_load(file)
-                validate_yaml(parsed_yaml)
-
+                parsed_yaml_copy = copy.deepcopy(parsed_yaml)
+                validate_yaml(parsed_yaml_copy)
+                
                 self.defaults = parsed_yaml['defaults']
                 if 'depth' not in self.defaults:
                     self.defaults['depth'] = 0
