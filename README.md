@@ -153,7 +153,7 @@ sources:
 
 The `groups` each have a `name` and associated `projects`.
 At a minimum, `projects` need the `name` from the project's url, and the `path` to clone relative to the root directory.
-The default `remote`, `source`, and `ref` values can be overridden on a per-project basis. It's also easy to add references to central repositories and forks in the same `clowder.yaml` file by specifying different `remote` names.
+The default `remote`, `source`, and `ref` values can be overridden on a per-project basis. The `depth` can be set to do a shallow clone. It's also easy to add references to central repositories and forks in the same `clowder.yaml` file by specifying different `remote` names.
 
 ```yaml
 groups:
@@ -161,6 +161,7 @@ groups:
       projects:
         - name: llvm-mirror/llvm
           path: llvm
+          depth: 5
     - name: clang
       projects:
         - name: llvm-mirror/clang
