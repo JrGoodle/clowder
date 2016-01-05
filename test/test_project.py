@@ -60,6 +60,7 @@ class ProjectTest(unittest.TestCase):
         """Test get_yaml() method"""
         project_yaml = {'name': 'jrgoodle/kit',
                         'path': 'black-cats/kit',
+                        'depth': 0,
                         'ref': 'da5c3d32ec2c00aba4a9f7d822cce2c727f7f5dd',
                         'remote': 'origin',
                         'source': 'github'}

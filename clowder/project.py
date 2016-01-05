@@ -32,6 +32,11 @@ class Project(object):
         self.name = project['name']
         self.path = project['path']
 
+        if 'depth' in project:
+            self.depth = project['depth']
+        else:
+            self.depth = defaults['depth']
+
         if 'ref' in project:
             self.ref = project['ref']
         else:
@@ -66,6 +71,7 @@ class Project(object):
         """Return python object representation for saving yaml"""
         return {'name': self.name,
                 'path': self.path,
+                'depth': self.depth,
                 'ref': git_current_sha(self.full_path()),
                 'remote': self.remote_name,
                 'source': self.source.name}
@@ -81,7 +87,8 @@ class Project(object):
         """Clone project or update latest from upstream"""
         self._print_status()
         if not os.path.isdir(os.path.join(self.full_path(), '.git')):
-            git_clone_url_at_path(self.url, self.full_path(), self.ref, self.remote_name)
+            git_clone_url_at_path(self.url, self.full_path(), self.ref,
+                                  self.remote_name, self.depth)
         else:
             ref_type = git_ref_type(self.ref)
             if ref_type is 'branch':

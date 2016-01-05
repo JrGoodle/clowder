@@ -6,7 +6,8 @@ CATS_EXAMPLE_PATH = os.path.abspath(os.path.join(CURRENT_FILE_DIR_PATH, '..', 'e
 
 DEFAULTS_YAML = {'ref': 'refs/heads/master',
                  'remote': 'origin',
-                 'source': 'github'}
+                 'source': 'github',
+                 'depth': 0}
 
 GITHUB_SSH_SOURCE_YAML = {'name': 'github-ssh', 'url': 'ssh://git@github.com'}
 GITHUB_HTTPS_SOURCE_YAML = {'name': 'github', 'url': 'https://github.com'}

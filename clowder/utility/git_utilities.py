@@ -11,7 +11,7 @@ def git_branches(repo_path):
     repo = git_repo(repo_path)
     return repo.branches
 
-def git_checkout_branch(repo_path, branch, remote):
+def git_checkout_branch(repo_path, branch, remote, depth=0):
     """Checkout branch, and create if it doesn't exist"""
     repo = git_repo(repo_path)
     branch_output = colored('(' + branch + ')', 'magenta')
@@ -38,9 +38,9 @@ def git_checkout_branch(repo_path, branch, remote):
                     print('')
                     sys.exit(1)
     else:
-        git_create_checkout_branch(repo_path, branch, remote)
+        git_create_checkout_branch(repo_path, branch, remote, depth)
 
-def git_create_checkout_branch(repo_path, branch, remote):
+def git_create_checkout_branch(repo_path, branch, remote, depth):
     """Create and checkout tracking branch"""
     repo = git_repo(repo_path)
     branch_output = colored('(' + branch + ')', 'magenta')
@@ -48,7 +48,10 @@ def git_create_checkout_branch(repo_path, branch, remote):
     print(' - Create and checkout branch ' + branch_output)
     try:
         origin = repo.remotes[remote]
-        origin.fetch()
+        if depth == 0:
+            origin.fetch()
+        else:
+            origin.fetch(depth=depth)
     except:
         message = colored(' - Failed to fetch from remote ', 'red')
         print(message + remote_output)
@@ -147,7 +150,7 @@ def git_checkout_tag(repo_path, tag):
     else:
         print(' - No existing tag ' + tag_output)
 
-def git_clone_url_at_path(url, repo_path, ref, remote):
+def git_clone_url_at_path(url, repo_path, ref, remote, depth=0):
     """Clone git repo from url at path"""
     repo_path_output = colored(repo_path, 'cyan')
     if not os.path.isdir(os.path.join(repo_path, '.git')):
@@ -169,7 +172,10 @@ def git_clone_url_at_path(url, repo_path, ref, remote):
                 try:
                     print(" - Create remote " + remote_output)
                     origin = repo.create_remote(remote, url)
-                    origin.fetch()
+                    if depth == 0:
+                        origin.fetch()
+                    else:
+                        origin.fetch(depth=depth)
                 except:
                     message = colored(" - Failed to create remote ", 'red')
                     print(message + remote_output)
@@ -177,8 +183,9 @@ def git_clone_url_at_path(url, repo_path, ref, remote):
                     shutil.rmtree(repo_path)
                     sys.exit(1)
             try:
-                print(' - Fetch remote data')
-                repo.git.fetch('--all', '--prune', '--tags')
+                if depth == 0:
+                    print(' - Fetch remote data')
+                    repo.git.fetch('--all', '--prune', '--tags')
             except:
                 cprint(' - Failed to fetch', 'red')
                 print('')

@@ -9,9 +9,7 @@ class ClowderController(object):
     """Class encapsulating project information from clowder.yaml for controlling clowder"""
     def __init__(self, rootDirectory):
         self.root_directory = rootDirectory
-        self.default_ref = None
-        self.default_remote = None
-        self.default_source = None
+        self.defaults = None
         self.groups = []
         self.sources = []
 
@@ -139,10 +137,7 @@ class ClowderController(object):
         """Return python object representation for saving yaml"""
         groups_yaml = [g.get_yaml() for g in self.groups]
         sources_yaml = [s.get_yaml() for s in self.sources]
-        defaults_yaml = {'ref': self.default_ref,
-                         'remote': self.default_remote,
-                         'source': self.default_source}
-        return {'defaults': defaults_yaml,
+        return {'defaults': self.defaults,
                 'sources': sources_yaml,
                 'groups': groups_yaml}
 
@@ -162,22 +157,17 @@ class ClowderController(object):
                 parsed_yaml = yaml.safe_load(file)
                 validate_yaml(parsed_yaml)
 
-                self.default_ref = parsed_yaml['defaults']['ref']
-                self.default_remote = parsed_yaml['defaults']['remote']
-                self.default_source = parsed_yaml['defaults']['source']
+                self.defaults = parsed_yaml['defaults']
+                if 'depth' not in self.defaults:
+                    self.defaults['depth'] = 0
 
                 self.sources = [Source(s) for s in parsed_yaml['sources']]
-
-                defaults = {'ref': self.default_ref,
-                            'remote': self.default_remote,
-                            'source': self.default_source}
 
                 for group in parsed_yaml['groups']:
                     self.groups.append(Group(self.root_directory,
                                              group,
-                                             defaults,
+                                             self.defaults,
                                              self.sources))
-                # self.groups.sort(key=lambda group: group.name)
 
     def _validate(self, group_names):
         """Validate status of all projects for specified groups"""
@@ -188,6 +178,7 @@ class ClowderController(object):
                 if not group.is_valid():
                     valid = False
         if not valid:
+            print('')
             sys.exit(1)
 
     def _validate_projects_exist(self):
