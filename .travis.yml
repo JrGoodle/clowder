@@ -5,7 +5,7 @@ sudo: false # Enable container-based builds
 env:
   matrix:
     - TARGET="test_cats_example"
-    - TARGET="test_llvm_example"
+    # - TARGET="test_llvm_example"
     - TARGET="test_srclib_example"
     - TARGET="unittests"
 
