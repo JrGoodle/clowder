@@ -99,6 +99,16 @@ class Command(object):
         else:
             exit_clowder_not_found()
 
+    def grep(self):
+        """clowder grep command"""
+        if self.clowder_repo is not None:
+            # cprint('grep...\n', 'yellow')
+            self.clowder_repo.print_status()
+            print('')
+            self.clowder.grep(self.args.grep_command)
+        else:
+            exit_clowder_not_found()
+
     def herd(self):
         """clowder herd command"""
         if self.clowder_repo is not None:
@@ -181,6 +191,11 @@ class Command(object):
                                   help='Groups to run command for')
         group_forall.add_argument('--projects', '-p', choices=self.project_names,
                                   nargs='+', help='Projects to run command for')
+        # clowder grep
+        grep_help = 'Run command in project directories'
+        parser_grep = subparsers.add_parser('grep', help=grep_help)
+        parser_grep.add_argument('grep_command', nargs='+',
+                                 help='Command to run in project directories')
         # clowder status
         parser_status = subparsers.add_parser('status', help='Print status for projects')
         parser_status.add_argument('--verbose', '-v', action='store_true',
