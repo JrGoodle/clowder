@@ -19,7 +19,7 @@ Managing multiple repositories can be pretty frustrating. There are a number of 
 
 All of these have their own approach, but many are based on submodules or subtrees. Submodules and subtrees create a tight coupling between repositories because of the way dependencies are stored. Much has been written about their drawbacks elsewhere. Google's `repo` tool takes a different approach, but is closely tied to Google's development workflow.
 
-`clowder` uses a similar approach as `repo` (and as it turns out, `gr` and `giternal`) with a yaml file instead of xml. URL information and relative project locations on disk are specified in a `clowder.yaml` file. This file is checked into its own repository. The use of a separate file for tracking projects means that there's detailed information about the dependencies between them, but each repository is still essentially independent. Projects can be tied to specific tags or commits, or can track branches. With the `clowder fix <version>` command, specific versions of the `clowder.yaml` file can be saved from the current commit hashes of all projects for later restoration.
+`clowder` uses a similar approach as `repo` (and as it turns out, `gr` and `giternal`) with a yaml file instead of xml. URL information and relative project locations on disk are specified in a `clowder.yaml` file. This file is checked into its own repository. The use of a separate file for tracking projects means that there's detailed information about the dependencies between them, but each repository is still essentially independent. Projects can be tied to specific tags or commits, or can track branches. With the `clowder save <version>` command, specific versions of the `clowder.yaml` file can be saved from the current commit hashes of all projects for later restoration.
 
 The primary purpose of `clowder` is synchronization of multiple repositories, so normal development still takes place in individual repositories with the usual `git` commands.
 
@@ -64,10 +64,10 @@ $ mkdir llvm-projects && cd llvm-projects
 Clone repository containing `clowder.yaml` file.
 
 ```bash
-$ clowder breed https://github.com/jrgoodle/llvm-projects.git
+$ clowder init https://github.com/jrgoodle/llvm-projects.git
 ```
 
-The `clowder breed` command will clone the [llvm-projects](https://github.com/jrgoodle/llvm-projects.git) repository in the `llvm-projects/.clowder` directory and create a symlink pointing to the primary `clowder.yaml` file in the repository:
+The `clowder init` command will clone the [llvm-projects](https://github.com/jrgoodle/llvm-projects.git) repository in the `llvm-projects/.clowder` directory and create a symlink pointing to the primary `clowder.yaml` file in the repository:
 
 ```
 llvm-projects/clowder.yaml -> llvm-projects/.clowder/clowder.yaml
@@ -79,42 +79,41 @@ Next sync all repositories:
 $ clowder herd
 ```
 
-The `clowder herd` command syncs the projects. The `clowder.yaml` symlink is always updated to point to the primary `clowder.yaml` file in the repository cloned with `clowder breed`. Projects are cloned if they don't currently exist. Otherwise, each project will pull the latest changes. If the current branch isn't the default, it'll be checked out, and latest changes pulled. For commits and tags, the commits are checked out into a detached `HEAD` state (`clowder forall` can then be used to checkout/create branches).
+The `clowder herd` command syncs the projects. The `clowder.yaml` symlink is always updated to point to the primary `clowder.yaml` file in the repository cloned with `clowder init`. Projects are cloned if they don't currently exist. Otherwise, each project will pull the latest changes. If the current branch isn't the default, it'll be checked out, and latest changes pulled. For commits and tags, the commits are checked out into a detached `HEAD` state (`clowder forall` can then be used to checkout/create branches).
 
 ### Further Commands
 
 ```bash
-$ clowder fix 0.1 # Save a fixed version of clowder.yaml
+$ clowder save 0.1 # Save a version of clowder.yaml with current commit sha's
 ```
 
 ```bash
-$ export CMD='git status'
-$ clowder forall "$CMD" # Run $CMD in all project directories
-$ clowder forall "$CMD" -g clang # Run $CMD only for projects in clang group
-$ clowder forall "$CMD" -p llvm-mirror/clang # Run $CMD only for clang project
+$ clowder forall "git status" # Run command in all project directories
+$ clowder forall "git status" -g clang # Run command for projects in clang group
+$ clowder forall "git status" -p llvm-mirror/clang # Run command for clang project
 ```
 
 ```bash
-$ clowder groom # Discard any changes in projects
-$ clowder groom -g clang # Discard any changes in projects in clang group
-$ clowder groom -p llvm-mirror/clang # Discard any changes in clang project
+$ clowder clean # Discard any changes in projects
+$ clowder clean -g clang # Discard any changes in projects in clang group
+$ clowder clean -p llvm-mirror/clang # Discard any changes in clang project
 ```
 
 ```bash
 $ clowder herd -g clang llvm # Only herd projects in clang and llvm groups
 $ clowder herd -p llvm-mirror/clang # Only herd clang project
-$ clowder herd -v 0.1 # Point clowder.yaml symlink to fixed version
+$ clowder herd -v 0.1 # Point clowder.yaml symlink to saved version
 ```
 
 ```bash
-$ clowder meow # print status of projects
-$ clowder meow -v # print more verbose status of projects
-$ clowder meow -g clang llvm # print status of projects in clang and llvm groups
-$ clowder meow -v -g clang # print verbose status of projects in clang group
+$ clowder status # print status of projects
+$ clowder status -v # print more verbose status of projects
+$ clowder status -g clang llvm # print status of projects in clang and llvm groups
+$ clowder status -v -g clang # print verbose status of projects in clang group
 ```
 
 ```bash
-$ clowder repo 'git status' # Run 'git status' in .clowder directory
+$ clowder repo 'git status' # Run command in .clowder directory
 ```
 
 ```bash

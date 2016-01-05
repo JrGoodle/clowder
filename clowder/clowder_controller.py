@@ -17,7 +17,7 @@ class ClowderController(object):
 
         self._load_yaml()
 
-    def fix_version(self, version):
+    def save_version(self, version):
         """Save current commits to a clowder.yaml in the versions directory"""
         self._validate_projects_exist()
         self._validate(self.get_all_group_names())
@@ -32,7 +32,7 @@ class ClowderController(object):
         version_output = colored(version_name, attrs=['bold'])
         if not os.path.exists(yaml_file):
             with open(yaml_file, 'w') as file:
-                print('Fixing version ' + version_output + ' at ' + yaml_file_output)
+                print('Saving version ' + version_output + ' at ' + yaml_file_output)
                 yaml.dump(self._get_yaml(), file, default_flow_style=False)
         else:
             print('Version ' + version_output + ' already exists at ' + yaml_file_output)
@@ -62,30 +62,30 @@ class ClowderController(object):
         """Returns all project names for current clowder.yaml"""
         return sorted([p.name for g in self.groups for p in g.projects])
 
-    def get_fixed_version_names(self):
-        """Return list of all fixed versions"""
+    def get_saved_version_names(self):
+        """Return list of all saved versions"""
         versions_dir = os.path.join(self.root_directory, '.clowder', 'versions')
         if os.path.exists(versions_dir):
             return os.listdir(versions_dir)
         else:
             return None
 
-    def groom_groups(self, group_names):
+    def clean_groups(self, group_names):
         """Discard changes for projects"""
         if self._is_dirty():
             for group in self.groups:
                 if group.name in group_names:
-                    group.groom()
+                    group.clean()
         else:
             print('No changes to discard')
 
-    def groom_projects(self, project_names):
+    def clean_projects(self, project_names):
         """Discard changes for projects"""
         if self._is_dirty():
             for group in self.groups:
                 for project in group.projects:
                     if project.name in project_names:
-                        project.groom()
+                        project.clean()
         else:
             print('No changes to discard')
 
@@ -104,17 +104,17 @@ class ClowderController(object):
                 if project.name in project_names:
                     project.herd()
 
-    def meow(self, group_names):
+    def status(self, group_names):
         """Print status for projects"""
         for group in self.groups:
             if group.name in group_names:
-                group.meow()
+                group.status()
 
-    def meow_verbose(self, group_names):
+    def status_verbose(self, group_names):
         """Print git status for projects with changes"""
         for group in self.groups:
             if group.name in group_names:
-                group.meow_verbose()
+                group.status_verbose()
 
     def stash_groups(self, group_names):
         """Stash changes for projects with changes"""

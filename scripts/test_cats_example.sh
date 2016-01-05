@@ -33,7 +33,7 @@ test_herd_missing_branches()
     popd &>/dev/null
     echo "TEST: Herd existing repo's with no default branch locally"
     clowder herd || exit 1
-    clowder meow || exit 1
+    clowder status || exit 1
 }
 
 test_herd_missing_groups()
@@ -41,7 +41,7 @@ test_herd_missing_groups()
     echo "TEST: Test herd of missing group"
     clowder herd -v missing-groups
     clowder herd -g slavic || exit 1
-    clowder meow || exit 1
+    clowder status || exit 1
 }
 
 test_herd_sha()
@@ -50,7 +50,7 @@ test_herd_sha()
     echo "TEST: Test herd of static commit hash refs"
     clowder repo 'git checkout static-refs'
     clowder herd || exit 1
-    clowder meow || exit 1
+    clowder status || exit 1
     clowder repo 'git checkout master'
 }
 
@@ -60,7 +60,7 @@ test_herd_tag()
     echo "TEST: Test herd of tag refs"
     clowder repo 'git checkout tags'
     clowder herd || exit 1
-    clowder meow || exit 1
+    clowder status || exit 1
     clowder repo 'git checkout master'
 }
 
@@ -78,11 +78,11 @@ test_invalid_yaml()
 test_no_versions()
 {
     print_separator
-    echo "TEST: Test clowder repo with no versions fixed"
+    echo "TEST: Test clowder repo with no versions saved"
     clowder repo 'git checkout no-versions'
-    clowder herd -v fixed-version && exit 1
+    clowder herd -v saved-version && exit 1
     clowder herd || exit 1
-    clowder meow || exit 1
+    clowder status || exit 1
     clowder repo 'git checkout master'
 }
 
@@ -101,28 +101,28 @@ export projects=( 'black-cats/kit' \
 test_command
 test_clowder_version
 
-test_breed_herd_version
+test_init_herd_version
 test_branch_version
 
-test_breed_herd
+test_init_herd
 test_branches
-test_meow_groups 'black-cats'
+test_status_groups 'black-cats'
 test_invalid_yaml
-test_groom 'black-cats'
-test_groom_projects 'jrgoodle/kit'
-test_groom_missing_directories 'mu' 'duke'
+test_clean 'black-cats'
+test_clean_projects 'jrgoodle/kit'
+test_clean_missing_directories 'mu' 'duke'
 test_herd_dirty_repos
 test_herd_detached_heads
 test_herd 'duke' 'mu'
 test_forall 'cats'
 test_forall_projects 'jrgoodle/kit' 'jrgoodle/kishka'
-test_fix
+test_save
 test_stash 'black-cats'
 test_stash_projects 'jrgoodle/kit'
 test_stash_missing_directories 'mu' 'duke'
 test_herd_groups 'cats'
 test_herd_missing_branches
-test_fix_missing_directories 'duke' 'mu'
+test_save_missing_directories 'duke' 'mu'
 test_no_versions
 test_herd_projects 'jrgoodle/kit' 'jrgoodle/kishka'
 

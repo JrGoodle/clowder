@@ -51,7 +51,7 @@ test_herd_old_repos()
     setup_old_repos
     echo "TEST: Normal herd with out of date repos"
     clowder herd || exit 1
-    clowder meow || exit 1
+    clowder status || exit 1
 }
 
 export projects=( 'llvm' \
@@ -64,26 +64,26 @@ export projects=( 'llvm' \
 test_command
 test_clowder_version
 
-test_breed_herd
+test_init_herd
 test_branch_master
 test_herd_old_repos
-test_meow_groups 'clang' 'llvm'
+test_status_groups 'clang' 'llvm'
 test_herd 'llvm/tools/clang/tools/extra' \
           'llvm/projects/dragonegg'
 test_branch_version
 test_herd_dirty_repos
-test_groom 'clang' 'llvm'
-test_groom_projects 'llvm-mirror/clang'
-test_groom_missing_directories 'zorg'
+test_clean 'clang' 'llvm'
+test_clean_projects 'llvm-mirror/clang'
+test_clean_missing_directories 'zorg'
 test_herd_detached_heads
 test_forall 'clang' 'llvm'
 test_forall_projects 'llvm-mirror/clang' 'llvm-mirror/llvm'
-test_fix
+test_save
 test_stash 'clang' 'llvm'
 test_stash_projects 'llvm-mirror/clang'
 test_stash_missing_directories 'zorg'
 test_herd_groups 'clang' 'llvm'
-test_fix_missing_directories 'llvm/tools/clang/tools/extra' \
+test_save_missing_directories 'llvm/tools/clang/tools/extra' \
                              'llvm/projects/dragonegg'
 test_herd_projects 'llvm-mirror/lld'
 

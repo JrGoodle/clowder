@@ -17,12 +17,12 @@ class Group(object):
         projects_yaml = [p.get_yaml() for p in self.projects]
         return {'name': self.name, 'projects': projects_yaml}
 
-    def groom(self):
+    def clean(self):
         """Discard changes for all projects"""
         if self.is_dirty():
             self._print_name()
             for project in self.projects:
-                project.groom()
+                project.clean()
 
     def herd(self):
         """Sync all projects with latest upstream changes"""
@@ -46,17 +46,17 @@ class Group(object):
                 valid = False
         return valid
 
-    def meow(self):
+    def status(self):
         """Print status for all projects"""
         self._print_name()
         for project in self.projects:
-            project.meow()
+            project.status()
 
-    def meow_verbose(self):
+    def status_verbose(self):
         """Print verbose status for all projects"""
         self._print_name()
         for project in self.projects:
-            project.meow_verbose()
+            project.status_verbose()
 
     def stash(self):
         """Stash changes for all projects with changes"""
