@@ -166,34 +166,36 @@ $ clowder stash -p llvm-mirror/clang <span class="pl-c"># Stash any changes in c
 
 <p>The <code>groups</code> each have a <code>name</code> and associated <code>projects</code>.
 At a minimum, <code>projects</code> need the <code>name</code> from the project's url, and the <code>path</code> to clone relative to the root directory.
-The default <code>remote</code>, <code>source</code>, and <code>ref</code> values can be overridden on a per-project basis. It's also easy to add references to central repositories and forks in the same <code>clowder.yaml</code> file by specifying different <code>remote</code> names.</p>
+The default <code>remote</code>, <code>source</code>, and <code>ref</code> values can be overridden on a per-project basis. The <code>depth</code> can be set to do a shallow clone. It's also easy to add references to forks in the same <code>clowder.yaml</code> file by specifying <code>forks</code> with a <code>name</code> and <code>remote</code>.</p>
 
 <div class="highlight highlight-source-yaml"><pre><span class="pl-s"><span class="pl-ent">groups:</span></span>
     <span class="pl-s">- <span class="pl-ent">name:</span> <span class="pl-s">llvm</span></span>
       <span class="pl-s"><span class="pl-ent">projects:</span></span>
         <span class="pl-s">- <span class="pl-ent">name:</span> <span class="pl-s">llvm-mirror/llvm</span></span>
           <span class="pl-s"><span class="pl-ent">path:</span> <span class="pl-s">llvm</span></span>
+          <span class="pl-c1"><span class="pl-ent">depth:</span> 5</span>
     <span class="pl-s">- <span class="pl-ent">name:</span> <span class="pl-s">clang</span></span>
       <span class="pl-s"><span class="pl-ent">projects:</span></span>
         <span class="pl-s">- <span class="pl-ent">name:</span> <span class="pl-s">llvm-mirror/clang</span></span>
           <span class="pl-s"><span class="pl-ent">path:</span> <span class="pl-s">llvm/tools/clang</span></span>
           <span class="pl-s"><span class="pl-ent">remote:</span> <span class="pl-s">upstream</span></span>
+          <span class="pl-s"><span class="pl-ent">forks:</span></span>
+            <span class="pl-s">- <span class="pl-ent">name:</span> <span class="pl-s">jrgoodle/clang</span></span>
+              <span class="pl-s"><span class="pl-ent">remote:</span> <span class="pl-s">origin</span></span>
         <span class="pl-s">- <span class="pl-ent">name:</span> <span class="pl-s">llvm-mirror/clang-tools-extra</span></span>
           <span class="pl-s"><span class="pl-ent">path:</span> <span class="pl-s">llvm/tools/clang/tools/extra</span></span>
           <span class="pl-s"><span class="pl-ent">remote:</span> <span class="pl-s">upstream</span></span>
-    <span class="pl-s">- <span class="pl-ent">name:</span> <span class="pl-s">forks</span></span>
-      <span class="pl-s"><span class="pl-ent">projects:</span></span>
-        <span class="pl-s">- <span class="pl-ent">name:</span> <span class="pl-s">jrgoodle/clang</span></span>
-          <span class="pl-s"><span class="pl-ent">path:</span> <span class="pl-s">llvm/tools/clang</span></span>
-        <span class="pl-s">- <span class="pl-ent">name:</span> <span class="pl-s">jrgoodle/clang-tools-extra</span></span>
-          <span class="pl-s"><span class="pl-ent">path:</span> <span class="pl-s">llvm/tools/clang/tools/extra</span></span>
-        <span class="pl-s">- <span class="pl-ent">name:</span> <span class="pl-s">jrgoodle/compiler-rt</span></span>
-          <span class="pl-s"><span class="pl-ent">path:</span> <span class="pl-s">llvm/projects/compiler-rt</span></span>
+          <span class="pl-s"><span class="pl-ent">forks:</span></span>
+            <span class="pl-s">- <span class="pl-ent">name:</span> <span class="pl-s">jrgoodle/clang-tools-extra</span></span>
+              <span class="pl-s"><span class="pl-ent">remote:</span> <span class="pl-s">origin</span></span>
     <span class="pl-s">- <span class="pl-ent">name:</span> <span class="pl-s">projects</span></span>
       <span class="pl-s"><span class="pl-ent">projects:</span></span>
         <span class="pl-s">- <span class="pl-ent">name:</span> <span class="pl-s">llvm-mirror/compiler-rt</span></span>
           <span class="pl-s"><span class="pl-ent">path:</span> <span class="pl-s">llvm/projects/compiler-rt</span></span>
-          <span class="pl-s"><span class="pl-ent">remote:</span> <span class="pl-s">upstream</span></span></pre></div>
+          <span class="pl-s"><span class="pl-ent">remote:</span> <span class="pl-s">upstream</span></span>
+          <span class="pl-s"><span class="pl-ent">forks:</span></span>
+            <span class="pl-s">- <span class="pl-ent">name:</span> <span class="pl-s">jrgoodle/compiler-rt</span></span>
+              <span class="pl-s"><span class="pl-ent">path:</span> <span class="pl-s">llvm/projects/compiler-rt</span></span></pre></div>
 
 <h3>
 <a id="refs" class="anchor" href="#refs" aria-hidden="true"><span class="octicon octicon-link"></span></a>Refs</h3>
