@@ -51,7 +51,7 @@
 
 <p>All of these have their own approach, but many are based on submodules or subtrees. Submodules and subtrees create a tight coupling between repositories because of the way dependencies are stored. Much has been written about their drawbacks elsewhere. Google's <code>repo</code> tool takes a different approach, but is closely tied to Google's development workflow.</p>
 
-<p><code>clowder</code> uses a similar approach as <code>repo</code> (and as it turns out, <code>gr</code> and <code>giternal</code>) with a yaml file instead of xml. URL information and relative project locations on disk are specified in a <code>clowder.yaml</code> file. This file is checked into its own repository. The use of a separate file for tracking projects means that there's detailed information about the dependencies between them, but each repository is still essentially independent. Projects can be tied to specific tags or commits, or can track branches. With the <code>clowder fix &lt;version&gt;</code> command, specific versions of the <code>clowder.yaml</code> file can be saved from the current commit hashes of all projects for later restoration.</p>
+<p><code>clowder</code> uses a similar approach as <code>repo</code> (and as it turns out, <code>gr</code> and <code>giternal</code>) with a yaml file instead of xml. URL information and relative project locations on disk are specified in a <code>clowder.yaml</code> file. This file is checked into its own repository. The use of a separate file for tracking projects means that there's detailed information about the dependencies between them, but each repository is still essentially independent. Projects can be tied to specific tags or commits, or can track branches. With the <code>clowder save &lt;version&gt;</code> command, specific versions of the <code>clowder.yaml</code> file can be saved from the current commit hashes of all projects for later restoration.</p>
 
 <p>The primary purpose of <code>clowder</code> is synchronization of multiple repositories, so normal development still takes place in individual repositories with the usual <code>git</code> commands.</p>
 
@@ -94,9 +94,9 @@ $ <span class="pl-c1">cd</span> clowder <span class="pl-k">&amp;&amp;</span> ./i
 
 <p>Clone repository containing <code>clowder.yaml</code> file.</p>
 
-<div class="highlight highlight-source-shell"><pre>$ clowder breed https://github.com/jrgoodle/llvm-projects.git</pre></div>
+<div class="highlight highlight-source-shell"><pre>$ clowder init https://github.com/jrgoodle/llvm-projects.git</pre></div>
 
-<p>The <code>clowder breed</code> command will clone the <a href="https://github.com/jrgoodle/llvm-projects.git">llvm-projects</a> repository in the <code>llvm-projects/.clowder</code> directory and create a symlink pointing to the primary <code>clowder.yaml</code> file in the repository:</p>
+<p>The <code>clowder init</code> command will clone the <a href="https://github.com/jrgoodle/llvm-projects.git">llvm-projects</a> repository in the <code>llvm-projects/.clowder</code> directory and create a symlink pointing to the primary <code>clowder.yaml</code> file in the repository:</p>
 
 <pre><code>llvm-projects/clowder.yaml -&gt; llvm-projects/.clowder/clowder.yaml
 </code></pre>
@@ -105,32 +105,31 @@ $ <span class="pl-c1">cd</span> clowder <span class="pl-k">&amp;&amp;</span> ./i
 
 <div class="highlight highlight-source-shell"><pre>$ clowder herd</pre></div>
 
-<p>The <code>clowder herd</code> command syncs the projects. The <code>clowder.yaml</code> symlink is always updated to point to the primary <code>clowder.yaml</code> file in the repository cloned with <code>clowder breed</code>. Projects are cloned if they don't currently exist. Otherwise, each project will pull the latest changes. If the current branch isn't the default, it'll be checked out, and latest changes pulled. For commits and tags, the commits are checked out into a detached <code>HEAD</code> state (<code>clowder forall</code> can then be used to checkout/create branches).</p>
+<p>The <code>clowder herd</code> command syncs the projects. The <code>clowder.yaml</code> symlink is always updated to point to the primary <code>clowder.yaml</code> file in the repository cloned with <code>clowder init</code>. Projects are cloned if they don't currently exist. Otherwise, each project will pull the latest changes. If the current branch isn't the default, it'll be checked out, and latest changes pulled. For commits and tags, the commits are checked out into a detached <code>HEAD</code> state (<code>clowder forall</code> can then be used to checkout/create branches).</p>
 
 <h3>
 <a id="further-commands" class="anchor" href="#further-commands" aria-hidden="true"><span class="octicon octicon-link"></span></a>Further Commands</h3>
 
-<div class="highlight highlight-source-shell"><pre>$ clowder fix 0.1 <span class="pl-c"># Save a fixed version of clowder.yaml</span></pre></div>
+<div class="highlight highlight-source-shell"><pre>$ clowder save 0.1 <span class="pl-c"># Save a version of clowder.yaml with current commit sha's</span></pre></div>
 
-<div class="highlight highlight-source-shell"><pre>$ <span class="pl-k">export</span> CMD=<span class="pl-s"><span class="pl-pds">'</span>git status<span class="pl-pds">'</span></span>
-$ clowder forall <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$CMD</span><span class="pl-pds">"</span></span> <span class="pl-c"># Run $CMD in all project directories</span>
-$ clowder forall <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$CMD</span><span class="pl-pds">"</span></span> -g clang <span class="pl-c"># Run $CMD only for projects in clang group</span>
-$ clowder forall <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$CMD</span><span class="pl-pds">"</span></span> -p llvm-mirror/clang <span class="pl-c"># Run $CMD only for clang project</span></pre></div>
+<div class="highlight highlight-source-shell"><pre>$ clowder forall <span class="pl-s"><span class="pl-pds">"</span>git status<span class="pl-pds">"</span></span> <span class="pl-c"># Run command in all project directories</span>
+$ clowder forall <span class="pl-s"><span class="pl-pds">"</span>git status<span class="pl-pds">"</span></span> -g clang <span class="pl-c"># Run command for projects in clang group</span>
+$ clowder forall <span class="pl-s"><span class="pl-pds">"</span>git status<span class="pl-pds">"</span></span> -p llvm-mirror/clang <span class="pl-c"># Run command for clang project</span></pre></div>
 
-<div class="highlight highlight-source-shell"><pre>$ clowder groom <span class="pl-c"># Discard any changes in projects</span>
-$ clowder groom -g clang <span class="pl-c"># Discard any changes in projects in clang group</span>
-$ clowder groom -p llvm-mirror/clang <span class="pl-c"># Discard any changes in clang project</span></pre></div>
+<div class="highlight highlight-source-shell"><pre>$ clowder clean <span class="pl-c"># Discard any changes in projects</span>
+$ clowder clean -g clang <span class="pl-c"># Discard any changes in projects in clang group</span>
+$ clowder clean -p llvm-mirror/clang <span class="pl-c"># Discard any changes in clang project</span></pre></div>
 
 <div class="highlight highlight-source-shell"><pre>$ clowder herd -g clang llvm <span class="pl-c"># Only herd projects in clang and llvm groups</span>
 $ clowder herd -p llvm-mirror/clang <span class="pl-c"># Only herd clang project</span>
-$ clowder herd -v 0.1 <span class="pl-c"># Point clowder.yaml symlink to fixed version</span></pre></div>
+$ clowder herd -v 0.1 <span class="pl-c"># Point clowder.yaml symlink to saved version</span></pre></div>
 
-<div class="highlight highlight-source-shell"><pre>$ clowder meow <span class="pl-c"># print status of projects</span>
-$ clowder meow -v <span class="pl-c"># print more verbose status of projects</span>
-$ clowder meow -g clang llvm <span class="pl-c"># print status of projects in clang and llvm groups</span>
-$ clowder meow -v -g clang <span class="pl-c"># print verbose status of projects in clang group</span></pre></div>
+<div class="highlight highlight-source-shell"><pre>$ clowder status <span class="pl-c"># print status of projects</span>
+$ clowder status -v <span class="pl-c"># print more verbose status of projects</span>
+$ clowder status -g clang llvm <span class="pl-c"># print status of projects in clang and llvm groups</span>
+$ clowder status -v -g clang <span class="pl-c"># print verbose status of projects in clang group</span></pre></div>
 
-<div class="highlight highlight-source-shell"><pre>$ clowder repo <span class="pl-s"><span class="pl-pds">'</span>git status<span class="pl-pds">'</span></span> <span class="pl-c"># Run 'git status' in .clowder directory</span></pre></div>
+<div class="highlight highlight-source-shell"><pre>$ clowder repo <span class="pl-s"><span class="pl-pds">'</span>git status<span class="pl-pds">'</span></span> <span class="pl-c"># Run command in .clowder directory</span></pre></div>
 
 <div class="highlight highlight-source-shell"><pre>$ clowder stash <span class="pl-c"># Stash any changes in projects</span>
 $ clowder stash -g clang <span class="pl-c"># Stash any changes in projects in clang group</span>
