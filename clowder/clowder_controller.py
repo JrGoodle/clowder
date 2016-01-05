@@ -158,6 +158,8 @@ class ClowderController(object):
                 validate_yaml(parsed_yaml)
 
                 self.defaults = parsed_yaml['defaults']
+                if 'depth' not in self.defaults:
+                    self.defaults['depth'] = 0
 
                 self.sources = [Source(s) for s in parsed_yaml['sources']]
 
@@ -176,6 +178,7 @@ class ClowderController(object):
                 if not group.is_valid():
                     valid = False
         if not valid:
+            print('')
             sys.exit(1)
 
     def _validate_projects_exist(self):
