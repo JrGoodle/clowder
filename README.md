@@ -88,10 +88,9 @@ $ clowder save 0.1 # Save a version of clowder.yaml with current commit sha's
 ```
 
 ```bash
-$ export CMD='git status'
-$ clowder forall "$CMD" # Run $CMD in all project directories
-$ clowder forall "$CMD" -g clang # Run $CMD only for projects in clang group
-$ clowder forall "$CMD" -p llvm-mirror/clang # Run $CMD only for clang project
+$ clowder forall "git status" # Run command in all project directories
+$ clowder forall "git status" -g clang # Run command for projects in clang group
+$ clowder forall "git status" -p llvm-mirror/clang # Run command for clang project
 ```
 
 ```bash
@@ -114,7 +113,7 @@ $ clowder status -v -g clang # print verbose status of projects in clang group
 ```
 
 ```bash
-$ clowder repo 'git status' # Run 'git status' in .clowder directory
+$ clowder repo 'git status' # Run command in .clowder directory
 ```
 
 ```bash
