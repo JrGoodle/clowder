@@ -74,8 +74,12 @@ def validate_yaml(parsed_yaml):
             for project in group['projects']:
                 project['name']
                 project['path']
+                # for fork in project['forks']:
+                #     fork['name']
+                #     fork['remote']
     except:
         print('')
         clowder_output = colored('clowder.yaml', 'cyan')
         print(clowder_output + ' appears to be invalid')
+        print('')
         sys.exit(1)
