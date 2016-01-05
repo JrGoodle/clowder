@@ -62,7 +62,8 @@ class Project(object):
         self.forks = []
         if 'forks' in project:
             for fork in project['forks']:
-                self.forks.append(Fork(fork['name'], self.path, fork['remote']))
+                full_path = os.path.join(self.root_directory, self.path)
+                self.forks.append(Fork(fork['name'], full_path, self.source, fork['remote']))
 
     def exists(self):
         """Check if project exists on disk"""
@@ -110,10 +111,10 @@ class Project(object):
                 git_fetch(self.full_path())
                 git_checkout_ref(self.full_path(), self.ref, self.remote_name)
             else:
-                print('Unknown ref ' + self.ref)
+                cprint('Unknown ref ' + self.ref, 'red')
 
         for fork in self.forks:
-            fork.fetch()
+            fork.herd()
 
     def is_dirty(self):
         """Check if project is dirty"""
