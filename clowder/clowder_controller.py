@@ -1,5 +1,5 @@
 """clowder.yaml parsing and functionality"""
-import copy, os, yaml, sys
+import copy, os, subprocess, sys, yaml
 from termcolor import colored
 from clowder.group import Group
 from clowder.source import Source
@@ -7,34 +7,32 @@ from clowder.utility.clowder_utilities import validate_yaml
 
 class ClowderController(object):
     """Class encapsulating project information from clowder.yaml for controlling clowder"""
-    def __init__(self, rootDirectory):
-        self.root_directory = rootDirectory
+    def __init__(self, root_dir):
+        self.root_directory = root_dir
         self.defaults = None
         self.groups = []
         self.sources = []
 
         self._load_yaml()
 
-    def save_version(self, version):
-        """Save current commits to a clowder.yaml in the versions directory"""
-        self._validate_projects_exist()
-        self._validate(self.get_all_group_names())
-        versions_dir = os.path.join(self.root_directory, '.clowder', 'versions')
-        version_name = version.replace('/', '-') # Replace path separateors with dashes
-        version_dir = os.path.join(versions_dir, version_name)
-        if not os.path.exists(version_dir):
-            os.makedirs(version_dir)
-
-        yaml_file = os.path.join(version_dir, 'clowder.yaml')
-        yaml_file_output = colored(yaml_file, 'cyan')
-        version_output = colored(version_name, attrs=['bold'])
-        if not os.path.exists(yaml_file):
-            with open(yaml_file, 'w') as file:
-                print('Saving version ' + version_output + ' at ' + yaml_file_output)
-                yaml.dump(self._get_yaml(), file, default_flow_style=False)
+    def clean_groups(self, group_names):
+        """Discard changes for projects"""
+        if self._is_dirty():
+            for group in self.groups:
+                if group.name in group_names:
+                    group.clean()
         else:
-            print('Version ' + version_output + ' already exists at ' + yaml_file_output)
-            sys.exit(1)
+            print('No changes to discard')
+
+    def clean_projects(self, project_names):
+        """Discard changes for projects"""
+        if self._is_dirty():
+            for group in self.groups:
+                for project in group.projects:
+                    if project.name in project_names:
+                        project.clean()
+        else:
+            print('No changes to discard')
 
     def forall_groups(self, command, group_names):
         """Runs command in all project directories of groups specified"""
@@ -68,24 +66,12 @@ class ClowderController(object):
         else:
             return None
 
-    def clean_groups(self, group_names):
-        """Discard changes for projects"""
-        if self._is_dirty():
-            for group in self.groups:
-                if group.name in group_names:
-                    group.clean()
-        else:
-            print('No changes to discard')
-
-    def clean_projects(self, project_names):
-        """Discard changes for projects"""
-        if self._is_dirty():
-            for group in self.groups:
-                for project in group.projects:
-                    if project.name in project_names:
-                        project.clean()
-        else:
-            print('No changes to discard')
+    def grep(self, command):
+        """Call grep in root directory"""
+        command.insert(0, 'grep')
+        print(" ".join(str(i) for i in command))
+        print('')
+        subprocess.call(command, cwd=self.root_directory)
 
     def herd_groups(self, group_names):
         """Sync projects with latest upstream changes"""
@@ -101,6 +87,27 @@ class ClowderController(object):
             for project in group.projects:
                 if project.name in project_names:
                     project.herd()
+
+    def save_version(self, version):
+        """Save current commits to a clowder.yaml in the versions directory"""
+        self._validate_projects_exist()
+        self._validate(self.get_all_group_names())
+        versions_dir = os.path.join(self.root_directory, '.clowder', 'versions')
+        version_name = version.replace('/', '-') # Replace path separateors with dashes
+        version_dir = os.path.join(versions_dir, version_name)
+        if not os.path.exists(version_dir):
+            os.makedirs(version_dir)
+
+        yaml_file = os.path.join(version_dir, 'clowder.yaml')
+        yaml_file_output = colored(yaml_file, 'cyan')
+        version_output = colored(version_name, attrs=['bold'])
+        if not os.path.exists(yaml_file):
+            with open(yaml_file, 'w') as file:
+                print('Saving version ' + version_output + ' at ' + yaml_file_output)
+                yaml.dump(self._get_yaml(), file, default_flow_style=False)
+        else:
+            print('Version ' + version_output + ' already exists at ' + yaml_file_output)
+            sys.exit(1)
 
     def status(self, group_names):
         """Print status for projects"""
