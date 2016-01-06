@@ -1,6 +1,6 @@
 #! /bin/bash
 
-# set -xv
+set -xv
 
 echo 'TEST: cats example test script'
 
@@ -70,22 +70,20 @@ test_invalid_yaml()
     echo "TEST: Fail herd with invalid yaml"
 
     clowder repo 'git checkout invalid-yaml'
-    clowder herd && exit 1
 
-    # branches=( 'invalid-yaml-missing-default' \
-    #            'invalid-yaml-unknown-defaults' \
-    #            'invalid-yaml-missing-sources' \
-    #            'invalid-yaml-unknown-source' \
-    #            'invalid-yaml-missing-project' \
-    #            'invalid-yaml-unknown-project' )
-    #
-    # for branch in "${branches[@]}"
-    # do
-    #   	pushd .clowder &>/dev/null
-    #     git checkout $branch
-    #     popd &>/dev/null
-    #     clowder herd && exit 1
-    # done
+    test_cases=( 'missing-default-arg' \
+                 'unknown-defaults-arg' \
+                 'missing-sources' \
+                 'unknown-source-arg' \
+                 'missing-project-arg' \
+                 'unknown-project-arg' )
+
+    for test in "${test_cases[@]}"
+    do
+      	clowder herd -v $test && exit 1
+        clowder herd && exit 1
+        rm clowder.yaml
+    done
 
     pushd .clowder &>/dev/null
     git checkout master
