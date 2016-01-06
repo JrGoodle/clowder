@@ -58,7 +58,7 @@ test_status_groups 'srclib' 'projects'
 test_clean 'srclib' 'projects'
 test_clean_projects 'sourcegraph/srclib'
 test_herd_dirty_repos
-test_herd_detached_heads
+# test_herd_detached_heads
 test_herd 'srclib' 'srcco'
 test_forall 'srclib' 'projects'
 test_forall_projects 'sourcegraph/srclib'
@@ -66,7 +66,7 @@ test_save
 test_stash 'srclib' 'projects'
 test_stash_projects 'sourcegraph/srclib'
 test_stash_missing_directories 'srclib'
-test_herd_detached_heads
+# test_herd_detached_heads
 test_clean_missing_directories 'srclib'
 test_herd_groups 'srclib' 'projects'
 test_herd_missing_branches
