@@ -68,8 +68,25 @@ test_invalid_yaml()
 {
     print_separator
     echo "TEST: Fail herd with invalid yaml"
+
     clowder repo 'git checkout invalid-yaml'
     clowder herd && exit 1
+
+    # branches=( 'invalid-yaml-missing-default' \
+    #            'invalid-yaml-unknown-defaults' \
+    #            'invalid-yaml-missing-sources' \
+    #            'invalid-yaml-unknown-source' \
+    #            'invalid-yaml-missing-project' \
+    #            'invalid-yaml-unknown-project' )
+    #
+    # for branch in "${branches[@]}"
+    # do
+    #   	pushd .clowder &>/dev/null
+    #     git checkout $branch
+    #     popd &>/dev/null
+    #     clowder herd && exit 1
+    # done
+
     pushd .clowder &>/dev/null
     git checkout master
     popd &>/dev/null
