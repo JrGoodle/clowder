@@ -137,7 +137,7 @@ def git_create_repo(url, repo_path, remote, ref, depth=0):
                     shutil.rmtree(repo_path)
                     sys.exit(1)
             try:
-                origin = repo.remotes.origin
+                origin = repo.remotes[remote]
                 print(' - Fetch remote data')
                 if depth == 0:
                     origin.fetch()
