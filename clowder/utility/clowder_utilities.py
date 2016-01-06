@@ -102,11 +102,20 @@ def validate_yaml_sources(parsed_yaml):
     """Validate sources in clowder loaded from yaml file"""
     try:
         error = colored('Missing \'sources\'\n', 'red')
-        for source in parsed_yaml['sources']:
+        sources = parsed_yaml['sources']
+        for source in sources:
             error = colored('Missing \'name\' in \'sources\'\n', 'red')
             source['name']
+            del source['name']
             error = colored('Missing \'url\' in \'sources\'\n', 'red')
             source['url']
+            del source['url']
+            if len(source) > 0:
+                dict_entries = ''.join('{}: {}\n'.format(key, val)
+                                       for key, val in sorted(source.items()))
+                error = colored('Uknown entry in \'fork\'\n\n' +
+                                dict_entries, 'red')
+                raise Exception('Unknown fork value')
     except:
         print('')
         clowder_output = colored('clowder.yaml', 'cyan')
@@ -119,7 +128,8 @@ def validate_yaml_groups(parsed_yaml):
     """Validate groups in clowder loaded from yaml file"""
     try:
         error = colored('Missing \'groups\'\n', 'red')
-        for group in parsed_yaml['groups']:
+        groups = parsed_yaml['groups']
+        for group in groups:
             error = colored('Missing \'name\' in \'group\'\n', 'red')
             group['name']
             error = colored('Missing \'projects\' in \'group\'\n', 'red')
