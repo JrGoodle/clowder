@@ -13,10 +13,10 @@ from clowder.utility.git_utilities import (
 class Fork(object):
     """clowder.yaml fork class"""
 
-    def __init__(self, name, path, source, remote, depth):
-        self.name = name
+    def __init__(self, fork, path, source, depth):
+        self.name = fork['name']
+        self.remote = fork['remote']
         self.path = path
-        self.remote = remote
         self.depth = depth
         self.url = source.get_url_prefix() + self.name + ".git"
 
