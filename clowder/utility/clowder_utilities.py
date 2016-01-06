@@ -54,12 +54,19 @@ def validate_repo_state(repo_path):
         return True
     return not git_is_dirty(repo_path)
 
+def validate_yaml(parsed_yaml):
+    """Validate clowder loaded from yaml file"""
+    validate_yaml_defaults(parsed_yaml)
+    validate_yaml_sources(parsed_yaml)
+    validate_yaml_groups(parsed_yaml)
+
 # Disable errors shown by pylint for no specified exception types
 # pylint: disable=W0702
 # Disable errors shown by pylint for statements which appear to have no effect
 # pylint: disable=W0104
-def validate_yaml(parsed_yaml):
-    """Validate clowder loaded from yaml file"""
+
+def validate_yaml_defaults(parsed_yaml):
+    """Validate defaults in clowder loaded from yaml file"""
     try:
         error = colored('Missing \'defaults\'', 'red')
         defaults = parsed_yaml['defaults']
@@ -80,14 +87,34 @@ def validate_yaml(parsed_yaml):
             error = colored('Uknown entry in \'defaults\'\n\n' +
                             dict_entries, 'red')
             raise Exception('Unknown default value')
+    except:
+        print('')
+        clowder_output = colored('clowder.yaml', 'cyan')
+        print(clowder_output + ' appears to be invalid')
+        print('')
+        print(error)
+        sys.exit(1)
 
+def validate_yaml_sources(parsed_yaml):
+    """Validate sources in clowder loaded from yaml file"""
+    try:
         error = colored('Missing \'sources\'\n', 'red')
         for source in parsed_yaml['sources']:
             error = colored('Missing \'name\' in \'sources\'\n', 'red')
             source['name']
             error = colored('Missing \'url\' in \'sources\'\n', 'red')
             source['url']
+    except:
+        print('')
+        clowder_output = colored('clowder.yaml', 'cyan')
+        print(clowder_output + ' appears to be invalid')
+        print('')
+        print(error)
+        sys.exit(1)
 
+def validate_yaml_groups(parsed_yaml):
+    """Validate groups in clowder loaded from yaml file"""
+    try:
         error = colored('Missing \'groups\'\n', 'red')
         for group in parsed_yaml['groups']:
             error = colored('Missing \'name\' in \'group\'\n', 'red')
