@@ -3,7 +3,7 @@ import emoji, os, subprocess, sys
 from termcolor import colored
 from clowder.utility.git_utilities import (
     git_branches,
-    git_clone_url_at_path
+    git_create_repo
 )
 from clowder.utility.clowder_utilities import (
     force_symlink,
@@ -25,7 +25,7 @@ class ClowderRepo(object):
 
     def init(self, url):
         """Clone clowder repo from url"""
-        git_clone_url_at_path(url, self.clowder_path, 'refs/heads/master', 'origin')
+        git_create_repo(url, self.clowder_path, 'origin', 'refs/heads/master')
         self.symlink_yaml()
 
     def run_command(self, command):

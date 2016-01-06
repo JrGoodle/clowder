@@ -11,7 +11,7 @@ def git_branches(repo_path):
     repo = git_repo(repo_path)
     return repo.branches
 
-def git_checkout_branch(repo_path, branch, remote, depth=0):
+def git_checkout_branch(repo_path, branch, remote, depth):
     """Checkout branch, and create if it doesn't exist"""
     repo = git_repo(repo_path)
     branch_output = colored('(' + branch + ')', 'magenta')
@@ -40,54 +40,12 @@ def git_checkout_branch(repo_path, branch, remote, depth=0):
     else:
         git_create_checkout_branch(repo_path, branch, remote, depth)
 
-def git_create_checkout_branch(repo_path, branch, remote, depth):
-    """Create and checkout tracking branch"""
-    repo = git_repo(repo_path)
-    branch_output = colored('(' + branch + ')', 'magenta')
-    remote_output = colored(remote, attrs=['bold'])
-    print(' - Create and checkout branch ' + branch_output)
-    try:
-        origin = repo.remotes[remote]
-        if depth == 0:
-            origin.fetch()
-        else:
-            origin.fetch(depth=depth)
-    except:
-        message = colored(' - Failed to fetch from remote ', 'red')
-        print(message + remote_output)
-        print('')
-        sys.exit(1)
-    else:
-        try:
-            default_branch = repo.create_head(branch, origin.refs[branch])
-        except:
-            message = colored(' - Failed to create branch ', 'red')
-            print(message + branch_output)
-            print('')
-            sys.exit(1)
-        else:
-            try:
-                default_branch.set_tracking_branch(origin.refs[branch])
-            except:
-                message = colored(' - Failed to set tracking branch ', 'red')
-                print(message + branch_output)
-                print('')
-                sys.exit(1)
-            else:
-                try:
-                    default_branch.checkout()
-                except:
-                    message = colored(' - Failed to checkout branch ', 'red')
-                    print(message + branch_output)
-                    print('')
-                    sys.exit(1)
-
-def git_checkout_ref(repo_path, ref, remote):
+def git_checkout_ref(repo_path, ref, remote, depth):
     """Checkout branch, tag, or commit from sha"""
     ref_type = git_ref_type(ref)
     if ref_type is 'branch':
         branch = git_truncate_ref(ref)
-        git_checkout_branch(repo_path, branch, remote)
+        git_checkout_branch(repo_path, branch, remote, depth)
     elif ref_type is 'tag':
         tag = git_truncate_ref(ref)
         git_checkout_tag(repo_path, tag)
@@ -150,7 +108,7 @@ def git_checkout_tag(repo_path, tag):
     else:
         print(' - No existing tag ' + tag_output)
 
-def git_clone_url_at_path(url, repo_path, ref, remote, depth=0):
+def git_create_repo(url, repo_path, remote, ref, depth=0):
     """Clone git repo from url at path"""
     repo_path_output = colored(repo_path, 'cyan')
     if not os.path.isdir(os.path.join(repo_path, '.git')):
@@ -167,15 +125,11 @@ def git_clone_url_at_path(url, repo_path, ref, remote, depth=0):
         else:
             repo = git_repo(repo_path)
             remote_names = [r.name for r in repo.remotes]
+            remote_output = colored(remote, attrs=['bold'])
             if remote not in remote_names:
-                remote_output = colored(remote, attrs=['bold'])
                 try:
                     print(" - Create remote " + remote_output)
                     origin = repo.create_remote(remote, url)
-                    if depth == 0:
-                        origin.fetch()
-                    else:
-                        origin.fetch(depth=depth)
                 except:
                     message = colored(" - Failed to create remote ", 'red')
                     print(message + remote_output)
@@ -183,15 +137,61 @@ def git_clone_url_at_path(url, repo_path, ref, remote, depth=0):
                     shutil.rmtree(repo_path)
                     sys.exit(1)
             try:
+                origin = repo.remotes[remote]
+                print(' - Fetch remote data')
                 if depth == 0:
-                    print(' - Fetch remote data')
-                    repo.git.fetch('--all', '--prune', '--tags')
+                    origin.fetch()
+                else:
+                    origin.fetch(git_truncate_ref(ref), depth=depth)
             except:
-                cprint(' - Failed to fetch', 'red')
+                message = colored(" - Failed to fetch ", 'red')
+                print(message + remote_output)
                 print('')
                 shutil.rmtree(repo_path)
                 sys.exit(1)
-            git_checkout_ref(repo_path, ref, remote)
+            git_checkout_ref(repo_path, ref, remote, depth)
+
+def git_create_checkout_branch(repo_path, branch, remote, depth):
+    """Create and checkout tracking branch"""
+    repo = git_repo(repo_path)
+    branch_output = colored('(' + branch + ')', 'magenta')
+    remote_output = colored(remote, attrs=['bold'])
+    print(' - Create and checkout branch ' + branch_output)
+    try:
+        origin = repo.remotes[remote]
+        if depth == 0:
+            origin.fetch()
+        else:
+            origin.fetch(branch, depth=depth)
+    except:
+        message = colored(' - Failed to fetch from remote ', 'red')
+        print(message + remote_output)
+        print('')
+        sys.exit(1)
+    else:
+        try:
+            default_branch = repo.create_head(branch, origin.refs[branch])
+        except:
+            message = colored(' - Failed to create branch ', 'red')
+            print(message + branch_output)
+            print('')
+            sys.exit(1)
+        else:
+            try:
+                default_branch.set_tracking_branch(origin.refs[branch])
+            except:
+                message = colored(' - Failed to set tracking branch ', 'red')
+                print(message + branch_output)
+                print('')
+                sys.exit(1)
+            else:
+                try:
+                    default_branch.checkout()
+                except:
+                    message = colored(' - Failed to checkout branch ', 'red')
+                    print(message + branch_output)
+                    print('')
+                    sys.exit(1)
 
 def git_create_remote(repo_path, remote, url):
     """Create new remote"""
@@ -201,8 +201,7 @@ def git_create_remote(repo_path, remote, url):
         remote_output = colored(remote, attrs=['bold'])
         try:
             print(" - Create remote " + remote_output)
-            origin = repo.create_remote(remote, url)
-            origin.fetch()
+            repo.create_remote(remote, url)
         except:
             message = colored(" - Failed to create remote ", 'red')
             print(message + remote_output)
@@ -219,19 +218,32 @@ def git_current_sha(repo_path):
     repo = git_repo(repo_path)
     return repo.head.commit.hexsha
 
-def git_reset_head(repo_path):
-    """Reset head of repo, discarding changes"""
-    repo = git_repo(repo_path)
-    repo.head.reset(index=True, working_tree=True)
-
-def git_fetch(repo_path):
-    """Fetch all remotes, tags, and prune obsolete branches"""
+def git_fetch_remote(repo_path, remote, depth):
+    """Fetch from a specific remote"""
     repo = git_repo(repo_path)
     try:
         print(' - Fetch remote data')
-        repo.git.fetch('--all', '--prune', '--tags')
+        if depth == 0:
+            repo.git.fetch(remote, '--all', '--prune', '--tags')
+        else:
+            repo.git.fetch(remote, depth=depth)
     except:
-        cprint(' - Failed to fetch', 'red')
+        cprint(' - Failed to fetch remote', 'red')
+        print('')
+        sys.exit(1)
+
+def git_fetch_remote_ref(repo_path, remote, ref, depth):
+    """Fetch from a specific remote ref"""
+    repo = git_repo(repo_path)
+    try:
+        print(' - Fetch remote data')
+        if depth == 0:
+            repo.git.fetch('--all', '--prune', '--tags')
+        else:
+            origin = repo.remotes[remote]
+            origin.fetch(git_truncate_ref(ref), depth=depth)
+    except:
+        cprint(' - Failed to fetch remote ref', 'red')
         print('')
         sys.exit(1)
 
@@ -296,6 +308,24 @@ def git_ref_type(ref):
     else:
         return 'unknown'
 
+def git_repo(repo_path):
+    """Create Repo instance for path"""
+    try:
+        repo = Repo(repo_path)
+    except:
+        repo_path_output = colored(repo_path, 'cyan')
+        message = colored("Failed to create Repo instance for ", 'red')
+        print(message + repo_path_output)
+        print('')
+        sys.exit(1)
+    else:
+        return repo
+
+def git_reset_head(repo_path):
+    """Reset head of repo, discarding changes"""
+    repo = git_repo(repo_path)
+    repo.head.reset(index=True, working_tree=True)
+
 def git_stash(repo_path):
     """Stash current changes in repository"""
     repo = git_repo(repo_path)
@@ -309,19 +339,6 @@ def git_status(repo_path):
     """Print git status"""
     repo = git_repo(repo_path)
     print(repo.git.status())
-
-def git_repo(repo_path):
-    """Create Repo instance for path"""
-    try:
-        repo = Repo(repo_path)
-    except:
-        repo_path_output = colored(repo_path, 'cyan')
-        message = colored("Failed to create Repo instance for ", 'red')
-        print(message + repo_path_output)
-        print('')
-        sys.exit(1)
-    else:
-        return repo
 
 def git_truncate_ref(ref):
     """Return bare branch, tag, or sha"""
