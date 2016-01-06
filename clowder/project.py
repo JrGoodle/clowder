@@ -11,10 +11,10 @@ from clowder.utility.clowder_utilities import (
 )
 from clowder.utility.git_utilities import (
     git_checkout_ref,
-    git_clone_url_at_path,
+    git_create_repo,
     git_create_remote,
     git_current_sha,
-    git_fetch,
+    git_fetch_remote_ref,
     git_is_dirty,
     git_pull_remote_branch,
     git_ref_type,
@@ -97,19 +97,21 @@ class Project(object):
         """Clone project or update latest from upstream"""
         self._print_status()
         if not os.path.isdir(os.path.join(self.full_path(), '.git')):
-            git_clone_url_at_path(self.url, self.full_path(), self.ref,
-                                  self.remote_name, self.depth)
+            git_create_repo(self.url, self.full_path(), self.remote_name,
+                            self.ref, self.depth)
         else:
             ref_type = git_ref_type(self.ref)
             if ref_type is 'branch':
                 git_create_remote(self.full_path(), self.remote_name, self.url)
-                git_fetch(self.full_path(), self.remote_name, self.depth)
+                git_fetch_remote_ref(self.full_path(), self.remote_name,
+                                     self.ref, self.depth)
                 git_checkout_ref(self.full_path(), self.ref, self.remote_name)
                 branch = git_truncate_ref(self.ref)
                 git_pull_remote_branch(self.full_path(), self.remote_name, branch)
             elif ref_type is 'tag' or ref_type is 'sha':
                 git_create_remote(self.full_path(), self.remote_name, self.url)
-                git_fetch(self.full_path(), self.remote_name, self.depth)
+                git_fetch_remote_ref(self.full_path(), self.remote_name,
+                                     self.ref, self.depth)
                 git_checkout_ref(self.full_path(), self.ref, self.remote_name)
             else:
                 cprint('Unknown ref ' + self.ref, 'red')

@@ -7,7 +7,7 @@ from clowder.utility.clowder_utilities import (
 )
 from clowder.utility.git_utilities import (
     git_create_remote,
-    git_fetch
+    git_fetch_remote
 )
 
 class Fork(object):
@@ -24,7 +24,7 @@ class Fork(object):
         """Herd remote data from fork"""
         self._print_status()
         git_create_remote(self.path, self.remote, self.url)
-        git_fetch(self.path, self.remote, self.depth)
+        git_fetch_remote(self.path, self.remote, self.depth)
 
     def get_yaml(self):
         """Return python object representation for saving yaml"""
