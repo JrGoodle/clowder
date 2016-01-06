@@ -71,12 +71,18 @@ test_invalid_yaml()
 
     clowder repo 'git checkout invalid-yaml'
 
-    test_cases=( 'missing-default-arg' \
-                 'unknown-defaults-arg' \
+    test_cases=( 'missing-defaults' \
                  'missing-sources' \
-                 'unknown-source-arg' \
+                 'missing-groups' \
+                 'missing-default-arg' \
+                 'missing-source-arg' \
+                 'missing-group-arg' \
                  'missing-project-arg' \
-                 'unknown-project-arg' )
+                 'missing-fork-arg' \
+                 'unknown-defaults-arg' \
+                 'unknown-source-arg' \
+                 'unknown-project-arg' \
+                 'unknown-fork-arg' )
 
     for test in "${test_cases[@]}"
     do
