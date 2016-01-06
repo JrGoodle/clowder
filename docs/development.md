@@ -1,6 +1,6 @@
-# Development
+## Development
 
-## Getting Started
+### Getting Started
 
 Clone the repository:
 
@@ -9,7 +9,7 @@ $ git clone https://github.com/JrGoodle/clowder.git
 $ cd clowder
 ```
 
-## Building
+### Building
 
 Install and uninstall scripts:
 
@@ -18,15 +18,15 @@ $ ./install.sh
 $ ./uninstall.sh
 ```
 
-## Testing
+### Testing
 
 Run unit tests.
 
 ```bash
-$ ./scripts/unittests.sh 
+$ ./scripts/unittests.sh
 ```
 
-## Updating version
+### Updating version
 
 ```bash
 $ ./update_version.sh $OLD_VERSION $NEW_VERSION
