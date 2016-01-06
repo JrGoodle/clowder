@@ -11,7 +11,7 @@ def git_branches(repo_path):
     repo = git_repo(repo_path)
     return repo.branches
 
-def git_checkout_branch(repo_path, branch, remote, depth=0):
+def git_checkout_branch(repo_path, branch, remote, depth):
     """Checkout branch, and create if it doesn't exist"""
     repo = git_repo(repo_path)
     branch_output = colored('(' + branch + ')', 'magenta')
@@ -40,12 +40,12 @@ def git_checkout_branch(repo_path, branch, remote, depth=0):
     else:
         git_create_checkout_branch(repo_path, branch, remote, depth)
 
-def git_checkout_ref(repo_path, ref, remote):
+def git_checkout_ref(repo_path, ref, remote, depth):
     """Checkout branch, tag, or commit from sha"""
     ref_type = git_ref_type(ref)
     if ref_type is 'branch':
         branch = git_truncate_ref(ref)
-        git_checkout_branch(repo_path, branch, remote)
+        git_checkout_branch(repo_path, branch, remote, depth)
     elif ref_type is 'tag':
         tag = git_truncate_ref(ref)
         git_checkout_tag(repo_path, tag)
@@ -149,7 +149,7 @@ def git_create_repo(url, repo_path, remote, ref, depth=0):
                 print('')
                 shutil.rmtree(repo_path)
                 sys.exit(1)
-            git_checkout_ref(repo_path, ref, remote)
+            git_checkout_ref(repo_path, ref, remote, depth)
 
 def git_create_checkout_branch(repo_path, branch, remote, depth):
     """Create and checkout tracking branch"""

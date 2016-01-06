@@ -105,14 +105,16 @@ class Project(object):
                 git_create_remote(self.full_path(), self.remote_name, self.url)
                 git_fetch_remote_ref(self.full_path(), self.remote_name,
                                      self.ref, self.depth)
-                git_checkout_ref(self.full_path(), self.ref, self.remote_name)
+                git_checkout_ref(self.full_path(), self.ref,
+                                 self.remote_name, self.depth)
                 branch = git_truncate_ref(self.ref)
                 git_pull_remote_branch(self.full_path(), self.remote_name, branch)
             elif ref_type is 'tag' or ref_type is 'sha':
                 git_create_remote(self.full_path(), self.remote_name, self.url)
                 git_fetch_remote_ref(self.full_path(), self.remote_name,
                                      self.ref, self.depth)
-                git_checkout_ref(self.full_path(), self.ref, self.remote_name)
+                git_checkout_ref(self.full_path(), self.ref,
+                                 self.remote_name, self.depth)
             else:
                 cprint('Unknown ref ' + self.ref, 'red')
 
