@@ -40,13 +40,6 @@ To install from the [GitHub Releases](https://github.com/JrGoodle/clowder/releas
 $ pip3 install https://github.com/JrGoodle/clowder/releases/download/0.9.0/clowder-0.9.0-py3-none-any.whl
 ```
 
-To install from the cloned repository:
-
-```bash
-$ git clone https://github.com/JrGoodle/clowder.git
-$ cd clowder && ./install.sh
-```
-
 For terminal autocompletion, add the following to your shell profile:
 
 ```bash
@@ -79,122 +72,27 @@ Next sync all repositories:
 $ clowder herd
 ```
 
-The `clowder herd` command syncs the projects. The `clowder.yaml` symlink is always updated to point to the primary `clowder.yaml` file in the repository cloned with `clowder init`. Projects are cloned if they don't currently exist. Otherwise, each project will pull the latest changes. If the current branch isn't the default, it'll be checked out, and latest changes pulled. For commits and tags, the commits are checked out into a detached `HEAD` state (`clowder forall` can then be used to checkout/create branches).
+The `clowder herd` command syncs the default branch for each project. The project repositories must be clean, or `clowder` will exit. rThe `clowder.yaml` symlink is always updated to point to the primary `clowder.yaml` file in the repository cloned with `clowder init`. Projects are cloned if they don't currently exist. Otherwise, each project will pull the latest changes. If the current branch isn't the default, it'll be checked out, and latest changes pulled. For commits and tags, the commits are checked out into a detached `HEAD` state (`clowder forall` can then be used to checkout/create branches).
 
 ### Further Commands
 
 ```bash
 $ clowder save 0.1 # Save a version of clowder.yaml with current commit sha's
-```
-
-```bash
 $ clowder forall "git status" # Run command in all project directories
-$ clowder forall "git status" -g clang # Run command for projects in clang group
-$ clowder forall "git status" -p llvm-mirror/clang # Run command for clang project
-```
-
-```bash
 $ clowder clean # Discard any changes in projects
-$ clowder clean -g clang # Discard any changes in projects in clang group
-$ clowder clean -p llvm-mirror/clang # Discard any changes in clang project
-```
-
-```bash
-$ clowder herd -g clang llvm # Only herd projects in clang and llvm groups
-$ clowder herd -p llvm-mirror/clang # Only herd clang project
 $ clowder herd -v 0.1 # Point clowder.yaml symlink to saved version
-```
-
-```bash
 $ clowder status # print status of projects
 $ clowder status -v # print more verbose status of projects
-$ clowder status -g clang llvm # print status of projects in clang and llvm groups
-$ clowder status -v -g clang # print verbose status of projects in clang group
-```
-
-```bash
 $ clowder repo 'git status' # Run command in .clowder directory
+$ clowder stash # Stash any changes in projects
 ```
 
-```bash
-$ clowder stash # Stash any changes in projects
-$ clowder stash -g clang # Stash any changes in projects in clang group
-$ clowder stash -p llvm-mirror/clang # Stash any changes in clang project
-```
+See [clowder commands doc](https://github.com/JrGoodle/clowder/blob/master/docs/commands.md)
 
 ## The `clowder.yaml` File
 
-### Defaults
+See [clowder.yaml doc](https://github.com/JrGoodle/clowder/blob/master/docs/clowder_yaml.md)
 
-The `defaults` specify the default `ref`, `source`, and `remote` for projects.
+## The `.clowder` Directory
 
-```yaml
-defaults:
-    ref: refs/heads/master
-    remote: origin
-    source: github
-```
-
-### Sources
-
-Multiple `sources` can be specified for use with different projects.
-
-```yaml
-sources:
-    - name: github-ssh
-      url: ssh://git@github.com
-    - name: github
-      url: https://github.com
-    - name: bitbucket
-      url: ssh://git@bitbucket.org
-```
-
-### Groups and Projects
-
-The `groups` each have a `name` and associated `projects`.
-At a minimum, `projects` need the `name` from the project's url, and the `path` to clone relative to the root directory.
-The default `remote`, `source`, and `ref` values can be overridden on a per-project basis. The `depth` can be set to do a shallow clone. It's also easy to add references to forks in the same `clowder.yaml` file by specifying `forks` with a `name` and `remote`.
-
-```yaml
-groups:
-    - name: llvm
-      projects:
-        - name: llvm-mirror/llvm
-          path: llvm
-          depth: 5
-    - name: clang
-      projects:
-        - name: llvm-mirror/clang
-          path: llvm/tools/clang
-          remote: upstream
-          forks:
-            - name: jrgoodle/clang
-              remote: origin
-        - name: llvm-mirror/clang-tools-extra
-          path: llvm/tools/clang/tools/extra
-          remote: upstream
-          forks:
-            - name: jrgoodle/clang-tools-extra
-              remote: origin
-    - name: projects
-      projects:
-        - name: llvm-mirror/compiler-rt
-          path: llvm/projects/compiler-rt
-          remote: upstream
-          forks:
-            - name: jrgoodle/compiler-rt
-              path: llvm/projects/compiler-rt
-```
-
-### Refs
-
-The `ref` can specify a branch, tag, or commit hash with the following patterns:
-
-```yaml
-# branch
-ref: refs/heads/knead # track branch 'knead'
-# tag
-ref: refs/tags/v0.01 # point to commit with tag 'v0.01'
-# commit
-ref: 7083e8840e1bb972b7664cfa20bbd7a25f004018 # point to commit hash
-```
+See [.clowder doc](https://github.com/JrGoodle/clowder/blob/master/docs/dot_clowder_dir.md)
