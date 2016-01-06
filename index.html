@@ -100,7 +100,7 @@
 
 <div class="highlight highlight-source-shell"><pre>$ clowder herd</pre></div>
 
-<p>The <code>clowder herd</code> command syncs the default branch for each project. The project repositories must be clean, or <code>clowder</code> will exit. rThe <code>clowder.yaml</code> symlink is always updated to point to the primary <code>clowder.yaml</code> file in the repository cloned with <code>clowder init</code>. Projects are cloned if they don't currently exist. Otherwise, each project will pull the latest changes. If the current branch isn't the default, it'll be checked out, and latest changes pulled. For commits and tags, the commits are checked out into a detached <code>HEAD</code> state (<code>clowder forall</code> can then be used to checkout/create branches).</p>
+<p>The <code>clowder herd</code> command syncs the default branch for each project. The project repositories must be clean, or <code>clowder</code> will exit. The <code>clowder.yaml</code> symlink is always updated to point to the primary <code>clowder.yaml</code> file in the repository cloned with <code>clowder init</code>. Projects are cloned if they don't currently exist. Otherwise, each project will pull the latest changes. If the current branch isn't the default, it'll be checked out, and latest changes pulled. For commits and tags, the commits are checked out into a detached <code>HEAD</code> state (<code>clowder forall</code> can then be used to checkout/create branches).</p>
 
 <h3>
 <a id="further-commands" class="anchor" href="#further-commands" aria-hidden="true"><span class="octicon octicon-link"></span></a>Further Commands</h3>
