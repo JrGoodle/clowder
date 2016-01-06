@@ -29,8 +29,11 @@ For a few example projects, see the [examples directory](https://github.com/JrGo
 
 ### Requirements
 
-- [Python 3](https://www.python.org/downloads/)
-- [pip3](https://pypi.python.org/pypi/pip) (and [setuptools](https://pypi.python.org/pypi/setuptools))
+[Python 3](https://www.python.org/downloads/) is necessary for `clowder`. On OS X it's simple to install Python 3 with Homebrew.
+
+```bash
+$ brew install python3
+```
 
 ### Installation
 
@@ -54,7 +57,7 @@ This example is based on the LLVM project (see [the full clowder.yaml](https://g
 $ mkdir llvm-projects && cd llvm-projects
 ```
 
-Clone repository containing `clowder.yaml` file.
+Clone clowder repo containing `clowder.yaml` file.
 
 ```bash
 $ clowder init https://github.com/jrgoodle/llvm-projects.git
@@ -74,25 +77,26 @@ $ clowder herd
 
 The `clowder herd` command syncs the default branch for each project. The project repositories must be clean, or `clowder` will exit. The `clowder.yaml` symlink is always updated to point to the primary `clowder.yaml` file in the repository cloned with `clowder init`. Projects are cloned if they don't currently exist. Otherwise, each project will pull the latest changes. If the current branch isn't the default, it'll be checked out, and latest changes pulled. For commits and tags, the commits are checked out into a detached `HEAD` state (`clowder forall` can then be used to checkout/create branches).
 
-### Further Commands
+## Further Information
+
+### More `clowder` Commands
 
 ```bash
-$ clowder save 0.1 # Save a version of clowder.yaml with current commit sha's
-$ clowder forall "git status" # Run command in all project directories
 $ clowder clean # Discard any changes in projects
+$ clowder forall "git status" # Run command in all project directories
 $ clowder herd -v 0.1 # Point clowder.yaml symlink to saved version
-$ clowder status # print status of projects
-$ clowder status -v # print more verbose status of projects
 $ clowder repo 'git status' # Run command in .clowder directory
+$ clowder save 0.1 # Save a version of clowder.yaml with current commit sha's
 $ clowder stash # Stash any changes in projects
+$ clowder status # print status of projects
 ```
 
 See [clowder commands doc](https://github.com/JrGoodle/clowder/blob/master/docs/commands.md)
 
-## The `clowder.yaml` File
+### The `clowder.yaml` File
 
 See [clowder.yaml doc](https://github.com/JrGoodle/clowder/blob/master/docs/clowder_yaml.md)
 
-## The `.clowder` Directory
+### The `.clowder` Directory
 
 See [.clowder doc](https://github.com/JrGoodle/clowder/blob/master/docs/dot_clowder_dir.md)
