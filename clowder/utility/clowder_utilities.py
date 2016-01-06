@@ -81,7 +81,7 @@ def validate_yaml_defaults(parsed_yaml):
         del defaults['source']
         if 'depth' in defaults:
             if int(defaults['depth']) < 0:
-                error = colored('depth must be a positive integer\n', 'red')
+                error = colored('\'depth\' must be a positive integer\n', 'red')
                 raise Exception('Negative depth value')
             del defaults['depth']
         if len(defaults) > 0:
@@ -138,7 +138,7 @@ def validate_yaml_groups(parsed_yaml):
                     del project['source']
                 if 'depth' in project:
                     if int(project['depth']) < 0:
-                        error = colored('depth must be a positive integer\n', 'red')
+                        error = colored('\'depth\' must be a positive integer\n', 'red')
                         raise Exception('Negative depth value')
                     del project['depth']
                 if 'forks' in project:
