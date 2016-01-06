@@ -59,29 +59,45 @@ def validate_repo_state(repo_path):
 # Disable errors shown by pylint for statements which appear to have no effect
 # pylint: disable=W0104
 def validate_yaml(parsed_yaml):
-    """Load clowder from yaml file"""
+    """Validate clowder loaded from yaml file"""
     try:
+        error = colored('Missing \'defaults\'', 'red')
         defaults = parsed_yaml['defaults']
+        error = colored('Missing \'ref\' in \'defaults\'\n', 'red')
         defaults['ref']
         del defaults['ref']
+        error = colored('Missing \'remote\' in \'defaults\'\n', 'red')
         defaults['remote']
         del defaults['remote']
+        error = colored('Missing \'source\' in \'defaults\'\n', 'red')
         defaults['source']
         del defaults['source']
         if 'depth' in defaults:
             del defaults['depth']
         if len(defaults) > 0:
-            raise Exception('Unknown default values')
+            dict_entries = ''.join('{}: {}\n'.format(key, val)
+                                   for key, val in sorted(defaults.items()))
+            error = colored('Uknown entry in \'defaults\'\n\n' +
+                            dict_entries, 'red')
+            raise Exception('Unknown default value')
 
+        error = colored('Missing \'sources\'\n', 'red')
         for source in parsed_yaml['sources']:
+            error = colored('Missing \'name\' in \'sources\'\n', 'red')
             source['name']
+            error = colored('Missing \'url\' in \'sources\'\n', 'red')
             source['url']
 
+        error = colored('Missing \'groups\'\n', 'red')
         for group in parsed_yaml['groups']:
+            error = colored('Missing \'name\' in \'group\'\n', 'red')
             group['name']
+            error = colored('Missing \'projects\' in \'group\'\n', 'red')
             for project in group['projects']:
+                error = colored('Missing \'name\' in \'project\'\n', 'red')
                 project['name']
                 del project['name']
+                error = colored('Missing \'path\' in \'project\'\n', 'red')
                 project['path']
                 del project['path']
                 if 'remote' in project:
@@ -94,14 +110,29 @@ def validate_yaml(parsed_yaml):
                     del project['depth']
                 if 'forks' in project:
                     for fork in project['forks']:
+                        error = colored('Missing \'name\' in \'fork\'\n', 'red')
                         fork['name']
+                        del fork['name']
+                        error = colored('Missing \'remote\' in \'fork\'\n', 'red')
                         fork['remote']
+                        del fork['remote']
+                        if len(fork) > 0:
+                            dict_entries = ''.join('{}: {}\n'.format(key, val)
+                                                   for key, val in sorted(fork.items()))
+                            error = colored('Uknown entry in \'fork\'\n\n' +
+                                            dict_entries, 'red')
+                            raise Exception('Unknown fork value')
                     del project['forks']
                 if len(project) > 0:
-                    raise Exception('Unknown project values')
+                    dict_entries = ''.join('{}: {}\n'.format(key, val)
+                                           for key, val in sorted(project.items()))
+                    error = colored('Uknown entry in \'project\'\n\n' +
+                                    dict_entries, 'red')
+                    raise Exception('Unknown project value')
     except:
         print('')
         clowder_output = colored('clowder.yaml', 'cyan')
         print(clowder_output + ' appears to be invalid')
         print('')
+        print(error)
         sys.exit(1)
