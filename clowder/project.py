@@ -63,7 +63,8 @@ class Project(object):
         if 'forks' in project:
             for fork in project['forks']:
                 full_path = os.path.join(self.root_directory, self.path)
-                self.forks.append(Fork(fork['name'], full_path, self.source, fork['remote']))
+                self.forks.append(Fork(fork['name'], full_path, self.source,
+                                       fork['remote'], self.depth))
 
     def exists(self):
         """Check if project exists on disk"""
@@ -102,13 +103,13 @@ class Project(object):
             ref_type = git_ref_type(self.ref)
             if ref_type is 'branch':
                 git_create_remote(self.full_path(), self.remote_name, self.url)
-                git_fetch(self.full_path())
+                git_fetch(self.full_path(), self.remote_name, self.depth)
                 git_checkout_ref(self.full_path(), self.ref, self.remote_name)
                 branch = git_truncate_ref(self.ref)
                 git_pull_remote_branch(self.full_path(), self.remote_name, branch)
             elif ref_type is 'tag' or ref_type is 'sha':
                 git_create_remote(self.full_path(), self.remote_name, self.url)
-                git_fetch(self.full_path())
+                git_fetch(self.full_path(), self.remote_name, self.depth)
                 git_checkout_ref(self.full_path(), self.ref, self.remote_name)
             else:
                 cprint('Unknown ref ' + self.ref, 'red')

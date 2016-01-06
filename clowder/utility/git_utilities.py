@@ -201,8 +201,7 @@ def git_create_remote(repo_path, remote, url):
         remote_output = colored(remote, attrs=['bold'])
         try:
             print(" - Create remote " + remote_output)
-            origin = repo.create_remote(remote, url)
-            origin.fetch()
+            repo.create_remote(remote, url)
         except:
             message = colored(" - Failed to create remote ", 'red')
             print(message + remote_output)
@@ -224,12 +223,15 @@ def git_reset_head(repo_path):
     repo = git_repo(repo_path)
     repo.head.reset(index=True, working_tree=True)
 
-def git_fetch(repo_path):
+def git_fetch(repo_path, remote, depth):
     """Fetch all remotes, tags, and prune obsolete branches"""
     repo = git_repo(repo_path)
     try:
         print(' - Fetch remote data')
-        repo.git.fetch('--all', '--prune', '--tags')
+        if depth == 0:
+            repo.git.fetch(remote, '--all', '--prune', '--tags')
+        else:
+            repo.git.fetch(remote, depth=depth)
     except:
         cprint(' - Failed to fetch', 'red')
         print('')
