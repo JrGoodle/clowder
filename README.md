@@ -40,13 +40,6 @@ To install from the [GitHub Releases](https://github.com/JrGoodle/clowder/releas
 $ pip3 install https://github.com/JrGoodle/clowder/releases/download/0.9.0/clowder-0.9.0-py3-none-any.whl
 ```
 
-To install from the cloned repository:
-
-```bash
-$ git clone https://github.com/JrGoodle/clowder.git
-$ cd clowder && ./install.sh
-```
-
 For terminal autocompletion, add the following to your shell profile:
 
 ```bash
@@ -79,7 +72,7 @@ Next sync all repositories:
 $ clowder herd
 ```
 
-The `clowder herd` command syncs the projects. The `clowder.yaml` symlink is always updated to point to the primary `clowder.yaml` file in the repository cloned with `clowder init`. Projects are cloned if they don't currently exist. Otherwise, each project will pull the latest changes. If the current branch isn't the default, it'll be checked out, and latest changes pulled. For commits and tags, the commits are checked out into a detached `HEAD` state (`clowder forall` can then be used to checkout/create branches).
+The `clowder herd` command syncs the default branch for each project. The project repositories must be clean, or `clowder` will exit. rThe `clowder.yaml` symlink is always updated to point to the primary `clowder.yaml` file in the repository cloned with `clowder init`. Projects are cloned if they don't currently exist. Otherwise, each project will pull the latest changes. If the current branch isn't the default, it'll be checked out, and latest changes pulled. For commits and tags, the commits are checked out into a detached `HEAD` state (`clowder forall` can then be used to checkout/create branches).
 
 ### Further Commands
 
