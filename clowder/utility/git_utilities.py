@@ -44,7 +44,6 @@ def git_checkout_ref(repo_path, ref, remote, depth):
     """Checkout branch, tag, or commit from sha"""
     ref_type = git_ref_type(ref)
     if ref_type is 'branch':
-        git_fetch_remote_ref(repo_path, remote, ref, depth)
         branch = git_truncate_ref(ref)
         git_checkout_branch(repo_path, branch, remote, depth)
     elif ref_type is 'tag':
