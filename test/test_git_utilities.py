@@ -5,8 +5,8 @@ from clowder.utility.git_utilities import (
     git_current_sha,
     git_is_detached,
     git_is_dirty,
-    git_ref_type,
-    git_truncate_ref
+    _ref_type,
+    _truncate_ref
 )
 from test.shared import CATS_EXAMPLE_PATH
 
@@ -41,33 +41,33 @@ class GitUtilitiesTest(unittest.TestCase):
         self.assertTrue(git_is_dirty(self.kishka_project_path))
         self.assertFalse(git_is_dirty(self.kit_project_path))
 
-    def test_git_ref_type_branch(self):
-        """Test git_ref_type() function for branch ref"""
-        self.assertEqual(git_ref_type(self.branch_ref), 'branch')
+    def test_ref_type_branch(self):
+        """Test _ref_type() function for branch ref"""
+        self.assertEqual(_ref_type(self.branch_ref), 'branch')
 
-    def test_git_ref_type_sha(self):
-        """Test git_ref_type() function for sha ref"""
-        self.assertEqual(git_ref_type(self.sha_ref), 'sha')
+    def test_ref_type_sha(self):
+        """Test _ref_type() function for sha ref"""
+        self.assertEqual(_ref_type(self.sha_ref), 'sha')
 
-    def test_git_ref_type_tag(self):
-        """Test git_ref_type() function for tag ref"""
-        self.assertEqual(git_ref_type(self.tag_ref), 'tag')
+    def test_ref_type_tag(self):
+        """Test _ref_type() function for tag ref"""
+        self.assertEqual(_ref_type(self.tag_ref), 'tag')
 
-    def test_git_ref_type_unknown(self):
-        """Test git_ref_type() function for unknown ref type"""
-        self.assertEqual(git_ref_type('42'), 'unknown')
+    def test_ref_type_unknown(self):
+        """Test _ref_type() function for unknown ref type"""
+        self.assertEqual(_ref_type('42'), 'unknown')
 
-    def test_git_truncate_ref_branch(self):
-        """Test git_truncate_ref() function for branch ref"""
-        self.assertEqual(git_truncate_ref(self.branch_ref), 'master')
+    def test_truncate_ref_branch(self):
+        """Test _truncate_ref() function for branch ref"""
+        self.assertEqual(_truncate_ref(self.branch_ref), 'master')
 
-    def test_git_truncate_ref_sha(self):
-        """Test git_truncate_ref() function for sha ref"""
-        self.assertEqual(git_truncate_ref(self.sha_ref), self.sha_ref)
+    def test_truncate_ref_sha(self):
+        """Test _truncate_ref() function for sha ref"""
+        self.assertEqual(_truncate_ref(self.sha_ref), self.sha_ref)
 
-    def test_git_truncate_ref_tag(self):
-        """Test git_truncate_ref() function for tag ref"""
-        self.assertEqual(git_truncate_ref(self.tag_ref), 'v1.0')
+    def test_truncate_ref_tag(self):
+        """Test _truncate_ref() function for tag ref"""
+        self.assertEqual(_truncate_ref(self.tag_ref), 'v1.0')
 
 if __name__ == '__main__':
     unittest.main()
