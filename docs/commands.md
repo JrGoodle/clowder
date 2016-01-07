@@ -2,7 +2,7 @@
 
 ---
 
-### `clowder clean`
+### `clean`
 
 Discards changes in dirty repositories.
 
@@ -14,7 +14,7 @@ $ clowder clean -p llvm-mirror/clang # Discard changes in clang project
 
 ---
 
-### `clowder forall`
+### `forall`
 
 Runs command argument in project directories.
 
@@ -26,7 +26,7 @@ $ clowder forall "git status" -p llvm-mirror/clang # Run command for clang proje
 
 ---
 
-### `clowder herd`
+### `herd`
 
 Update default branches with latest changes.
 
@@ -38,7 +38,7 @@ $ clowder herd -v 0.1 # Point clowder.yaml symlink to saved version
 
 ---
 
-### `clowder repo`
+### `repo`
 
 Manage clowder repository (`.clowder` directory).
 
@@ -48,7 +48,7 @@ $ clowder repo 'git status' # Run command in .clowder directory
 
 ---
 
-### `clowder save`
+### `save`
 
 Save a `clowder.yaml` version with the information from currently checked out repositories.
 
@@ -58,7 +58,7 @@ $ clowder save 0.1 # Save a version of clowder.yaml with current commit sha's
 
 ---
 
-### `clowder start`
+### `start`
 
 Start a new feature branch or check out if it already exists.
 
@@ -70,7 +70,7 @@ $ clowder start my_feature -p llvm-mirror/clang  # Create new branch 'my_feature
 
 ---
 
-### `clowder stash`
+### `stash`
 
 Stash changes in dirty repositories.
 
@@ -82,7 +82,7 @@ $ clowder stash -p llvm-mirror/clang # Stash any changes in clang project
 
 ---
 
-### `clowder status`
+### `status`
 
 Print status of projects.
 
