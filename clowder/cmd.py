@@ -62,21 +62,16 @@ class Command(object):
         getattr(self, self.args.command)()
         print('')
 
-    def init(self):
-        """clowder init command"""
-        if self.clowder_repo is None:
-            cprint('Init from %s\n' % self.args.url, 'yellow')
-            clowder_repo = ClowderRepo(self.root_directory)
-            clowder_repo.init(self.args.url)
-        else:
-            cprint('Clowder already bred in this directory', 'red')
-            sys.exit()
-
-    def save(self):
-        """clowder save command"""
+    def clean(self):
+        """clowder clean command"""
         if self.clowder_repo is not None:
-            # cprint('Save...\n', 'yellow')
-            self.clowder.save_version(self.args.version)
+            # cprint('Clean...\n', 'yellow')
+            self.clowder_repo.print_status()
+            print('')
+            if self.args.projects is None:
+                self.clowder.clean_groups(self.args.groups)
+            else:
+                self.clowder.clean_projects(self.args.projects)
         else:
             exit_clowder_not_found()
 
@@ -90,19 +85,6 @@ class Command(object):
                 self.clowder.forall_groups(self.args.cmd, self.args.groups)
             else:
                 self.clowder.forall_projects(self.args.cmd, self.args.projects)
-        else:
-            exit_clowder_not_found()
-
-    def clean(self):
-        """clowder clean command"""
-        if self.clowder_repo is not None:
-            # cprint('Clean...\n', 'yellow')
-            self.clowder_repo.print_status()
-            print('')
-            if self.args.projects is None:
-                self.clowder.clean_groups(self.args.groups)
-            else:
-                self.clowder.clean_projects(self.args.projects)
         else:
             exit_clowder_not_found()
 
@@ -124,18 +106,15 @@ class Command(object):
         else:
             exit_clowder_not_found()
 
-    def status(self):
-        """clowder status command"""
-        if self.clowder_repo is not None:
-            # cprint('Status...\n', 'yellow')
-            self.clowder_repo.print_status()
-            print('')
-            if self.args.verbose:
-                self.clowder.status_verbose(self.args.groups)
-            else:
-                self.clowder.status(self.args.groups)
+    def init(self):
+        """clowder init command"""
+        if self.clowder_repo is None:
+            cprint('Init from %s\n' % self.args.url, 'yellow')
+            clowder_repo = ClowderRepo(self.root_directory)
+            clowder_repo.init(self.args.url)
         else:
-            exit_clowder_not_found()
+            cprint('Clowder already bred in this directory', 'red')
+            sys.exit()
 
     def repo(self):
         """clowder repo command"""
@@ -144,6 +123,14 @@ class Command(object):
             self.clowder_repo.print_status()
             print('')
             self.clowder_repo.run_command(self.args.cmd)
+        else:
+            exit_clowder_not_found()
+
+    def save(self):
+        """clowder save command"""
+        if self.clowder_repo is not None:
+            # cprint('Save...\n', 'yellow')
+            self.clowder.save_version(self.args.version)
         else:
             exit_clowder_not_found()
 
@@ -160,27 +147,32 @@ class Command(object):
         else:
             exit_clowder_not_found()
 
-# Disable errors shown by pylint for too many local variables
-# pylint: disable=R0914
-    def _configure_subparser_init(self, subparsers):
-        """Configure all clowder init subparser and arguments"""
-        # clowder init
-        init_help = 'Clone repository to clowder directory and create clowder.yaml symlink'
-        parser_init = subparsers.add_parser('init', help=init_help)
-        parser_init.add_argument('url', help='URL of repo containing clowder.yaml')
+    def status(self):
+        """clowder status command"""
+        if self.clowder_repo is not None:
+            # cprint('Status...\n', 'yellow')
+            self.clowder_repo.print_status()
+            print('')
+            if self.args.verbose:
+                self.clowder.status_verbose(self.args.groups)
+            else:
+                self.clowder.status(self.args.groups)
+        else:
+            exit_clowder_not_found()
 
-    def _configure_subparser_herd(self, subparsers):
-        """Configure all clowder herd subparser and arguments"""
-        # clowder herd
-        herd_help = 'Clone and sync latest changes for projects'
-        parser_herd = subparsers.add_parser('herd', help=herd_help)
-        group_herd = parser_herd.add_mutually_exclusive_group()
-        group_herd.add_argument('--version', '-v', choices=self.versions,
-                                help='Version name to herd')
-        group_herd.add_argument('--groups', '-g', choices=self.group_names,
-                                default=self.group_names, nargs='+', help='Groups to herd')
-        group_herd.add_argument('--projects', '-p', choices=self.project_names,
-                                nargs='+', help='Projects to herd')
+# Disable errors shown by pylint for too many local variables
+# pylint: disable=R0201
+    def _configure_subparser_clean(self, subparsers):
+        """Configure all clowder clean subparser and arguments"""
+        # clowder clean
+        clean_help = 'Discard current changes in all projects'
+        parser_clean = subparsers.add_parser('clean', help=clean_help)
+        group_clean = parser_clean.add_mutually_exclusive_group()
+        group_clean.add_argument('--groups', '-g', choices=self.group_names,
+                                 default=self.group_names, nargs='+',
+                                 help='Groups to clean')
+        group_clean.add_argument('--projects', '-p', choices=self.project_names,
+                                 nargs='+', help='Projects to clean')
 
     def _configure_subparser_forall(self, subparsers):
         """Configure all clowder forall subparser and arguments"""
@@ -195,15 +187,25 @@ class Command(object):
         group_forall.add_argument('--projects', '-p', choices=self.project_names,
                                   nargs='+', help='Projects to run command for')
 
-    def _configure_subparser_status(self, subparsers):
-        """Configure all clowder status subparser and arguments"""
-        # clowder status
-        parser_status = subparsers.add_parser('status', help='Print status for projects')
-        parser_status.add_argument('--verbose', '-v', action='store_true',
-                                   help='Print detailed diff status')
-        parser_status.add_argument('--groups', '-g', choices=self.group_names,
-                                   default=self.group_names, nargs='+',
-                                   help='Groups to print status for')
+    def _configure_subparser_herd(self, subparsers):
+        """Configure all clowder herd subparser and arguments"""
+        # clowder herd
+        herd_help = 'Clone and sync latest changes for projects'
+        parser_herd = subparsers.add_parser('herd', help=herd_help)
+        group_herd = parser_herd.add_mutually_exclusive_group()
+        group_herd.add_argument('--version', '-v', choices=self.versions,
+                                help='Version name to herd')
+        group_herd.add_argument('--groups', '-g', choices=self.group_names,
+                                default=self.group_names, nargs='+', help='Groups to herd')
+        group_herd.add_argument('--projects', '-p', choices=self.project_names,
+                                nargs='+', help='Projects to herd')
+
+    def _configure_subparser_init(self, subparsers):
+        """Configure all clowder init subparser and arguments"""
+        # clowder init
+        init_help = 'Clone repository to clowder directory and create clowder.yaml symlink'
+        parser_init = subparsers.add_parser('init', help=init_help)
+        parser_init.add_argument('url', help='URL of repo containing clowder.yaml')
 
     def _configure_subparser_repo(self, subparsers):
         """Configure all clowder repo subparser and arguments"""
@@ -219,18 +221,6 @@ class Command(object):
         parser_save = subparsers.add_parser('save', help=save_help)
         parser_save.add_argument('version', help='Version name to save')
 
-    def _configure_subparser_clean(self, subparsers):
-        """Configure all clowder clean subparser and arguments"""
-        # clowder clean
-        clean_help = 'Discard current changes in all projects'
-        parser_clean = subparsers.add_parser('clean', help=clean_help)
-        group_clean = parser_clean.add_mutually_exclusive_group()
-        group_clean.add_argument('--groups', '-g', choices=self.group_names,
-                                 default=self.group_names, nargs='+',
-                                 help='Groups to clean')
-        group_clean.add_argument('--projects', '-p', choices=self.project_names,
-                                 nargs='+', help='Projects to clean')
-
     def _configure_subparser_stash(self, subparsers):
         """Configure all clowder stash subparser and arguments"""
         # clowder stash
@@ -242,6 +232,16 @@ class Command(object):
                                  help='Groups to stash')
         group_stash.add_argument('--projects', '-p', choices=self.project_names,
                                  nargs='+', help='Projects to stash')
+
+    def _configure_subparser_status(self, subparsers):
+        """Configure all clowder status subparser and arguments"""
+        # clowder status
+        parser_status = subparsers.add_parser('status', help='Print status for projects')
+        parser_status.add_argument('--verbose', '-v', action='store_true',
+                                   help='Print detailed diff status')
+        parser_status.add_argument('--groups', '-g', choices=self.group_names,
+                                   default=self.group_names, nargs='+',
+                                   help='Groups to print status for')
 
 def exit_unrecognized_command(parser):
     """Print unrecognized command message and exit"""
