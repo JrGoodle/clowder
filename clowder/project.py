@@ -128,6 +128,11 @@ class Project(object):
         """Validate status of project"""
         return validate_repo_state(self.full_path())
 
+    def start(self):
+        """Start a new feature branch"""
+        self._print_status()
+        print('TODO: Implement')
+
     def status(self):
         """Print status for project"""
         self._print_status()
