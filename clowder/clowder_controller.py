@@ -93,20 +93,20 @@ class ClowderController(object):
             if group.name in group_names:
                 group.status_verbose()
 
-    def start_groups(self, group_names):
+    def start_groups(self, group_names, branch):
         """Start feature branch for groups"""
         self._validate(group_names)
         for group in self.groups:
             if group.name in group_names:
-                group.start()
+                group.start(branch)
 
-    def start_projects(self, project_names):
+    def start_projects(self, project_names, branch):
         """Start feature branch for projects"""
         self._validate(project_names)
         for group in self.groups:
             for project in group.projects:
                 if project.name in project_names:
-                    project.start()
+                    project.start(branch)
 
     def stash_groups(self, group_names):
         """Stash changes for projects with changes"""

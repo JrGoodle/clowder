@@ -139,11 +139,12 @@ class Command(object):
             print('')
             if self.args.projects is None:
                 if self.args.groups is None:
-                    self.clowder.start_groups(self.clowder.get_all_group_names())
+                    self.clowder.start_groups(self.clowder.get_all_group_names(),
+                                              self.args.branch)
                 else:
-                    self.clowder.start_groups(self.args.groups)
+                    self.clowder.start_groups(self.args.groups, self.args.branch)
             else:
-                self.clowder.start_projects(self.args.projects)
+                self.clowder.start_projects(self.args.projects, self.args.branch)
         else:
             exit_clowder_not_found()
 

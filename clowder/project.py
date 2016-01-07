@@ -128,10 +128,14 @@ class Project(object):
         """Validate status of project"""
         return validate_repo_state(self.full_path())
 
-    def start(self):
+    def start(self, branch):
         """Start a new feature branch"""
         self._print_status()
-        print('TODO: Implement')
+        if not os.path.isdir(os.path.join(self.full_path(), '.git')):
+            cprint(" - Directory doesn't exist", 'red')
+        else:
+            print('start ' + branch)
+            # git_start(self.full_path(), branch)
 
     def status(self):
         """Print status for project"""
