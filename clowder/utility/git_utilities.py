@@ -326,6 +326,36 @@ def git_reset_head(repo_path):
     repo = git_repo(repo_path)
     repo.head.reset(index=True, working_tree=True)
 
+def git_start(repo_path, remote, branch, depth):
+    """Start new branch in repository"""
+    repo = git_repo(repo_path)
+    branch_output = colored('(' + branch + ')', 'magenta')
+    correct_branch = False
+    if branch in repo.heads:
+        print(' - ' + branch + ' already exists')
+        default_branch = repo.heads[branch]
+        try:
+            not_detached = not repo.head.is_detached
+            same_branch = repo.head.ref == default_branch
+        except:
+            pass
+        else:
+            if not_detached and same_branch:
+                print(' - On correct branch')
+                correct_branch = True
+        finally:
+            if not correct_branch:
+                try:
+                    print(' - Checkout branch ' + branch_output)
+                    default_branch.checkout()
+                except:
+                    message = colored(' - Failed to checkout branch ', 'red')
+                    print(message + branch_output)
+                    print('')
+                    sys.exit(1)
+    else:
+        git_create_checkout_branch(repo_path, branch, remote, depth)
+
 def git_stash(repo_path):
     """Stash current changes in repository"""
     repo = git_repo(repo_path)

@@ -19,12 +19,14 @@ from clowder.utility.git_utilities import (
     git_pull_remote_branch,
     git_ref_type,
     git_reset_head,
+    git_start,
     git_stash,
     git_status,
     git_truncate_ref
 )
 
-
+# Disable errors shown by pylint for too many instance attributes
+# pylint: disable=R0902
 class Project(object):
     """clowder.yaml project class"""
 
@@ -134,8 +136,7 @@ class Project(object):
         if not os.path.isdir(os.path.join(self.full_path(), '.git')):
             cprint(" - Directory doesn't exist", 'red')
         else:
-            print('start ' + branch)
-            # git_start(self.full_path(), branch)
+            git_start(self.full_path(), self.remote_name, branch, self.depth)
 
     def status(self):
         """Print status for project"""
