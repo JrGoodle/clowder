@@ -151,7 +151,7 @@ def git_create_checkout_branch(repo_path, branch, remote, depth):
         if depth == 0:
             origin.fetch()
         else:
-            origin.fetch(branch, depth=depth)
+            origin.fetch(depth=depth)
     except:
         message = colored(' - Failed to fetch from remote ', 'red')
         print(message + remote_output)
