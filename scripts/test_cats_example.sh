@@ -19,6 +19,21 @@ test_branches()
     popd &>/dev/null
 }
 
+test_start()
+{
+    clowder herd
+    print_separator
+    echo "TEST: Start new feature branch"
+    clowder start start_branch
+    pushd mu &>/dev/null
+    test_branch start_branch
+    popd &>/dev/null
+    pushd duke &>/dev/null
+    test_branch start_branch
+    popd &>/dev/null
+    clowder start start_branch
+}
+
 test_herd_missing_branches()
 {
     print_separator
@@ -151,5 +166,6 @@ test_invalid_yaml
 test_herd_sha
 test_herd_tag
 test_herd_missing_groups
+test_start
 
 print_help
