@@ -44,6 +44,7 @@ def git_checkout_ref(repo_path, ref, remote, depth):
     """Checkout branch, tag, or commit from sha"""
     ref_type = git_ref_type(ref)
     if ref_type is 'branch':
+        git_fetch_remote_ref(repo_path, remote, ref, depth)
         branch = git_truncate_ref(ref)
         git_checkout_branch(repo_path, branch, remote, depth)
     elif ref_type is 'tag':
@@ -288,13 +289,11 @@ def git_herd(repo_path, url, remote, ref, depth):
     ref_type = git_ref_type(ref)
     if ref_type is 'branch':
         git_create_remote(repo_path, remote, url)
-        git_fetch_remote_ref(repo_path, remote, ref, depth)
         git_checkout_ref(repo_path, ref, remote, depth)
         branch = git_truncate_ref(ref)
         git_pull_remote_branch(repo_path, remote, branch)
     elif ref_type is 'tag' or ref_type is 'sha':
         git_create_remote(repo_path, remote, url)
-        git_fetch_remote_ref(repo_path, remote, ref, depth)
         git_checkout_ref(repo_path, ref, remote, depth)
     else:
         cprint('Unknown ref ' + ref, 'red')
