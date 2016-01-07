@@ -238,11 +238,12 @@ class Command(object):
         # clowder start
         parser_start = subparsers.add_parser('start', help='Start a new feature')
         parser_start.add_argument('branch', help='Name of branch to create')
-        parser_start.add_argument('--groups', '-g', choices=self.group_names,
-                                  default=self.group_names, nargs='+',
-                                  help='Groups to start feature for')
-        parser_start.add_argument('--projects', '-p', choices=self.project_names,
-                                  nargs='+', help='Projects to start feature for')
+        group_start = parser_start.add_mutually_exclusive_group()
+        group_start.add_argument('--groups', '-g', choices=self.group_names,
+                                 default=self.group_names, nargs='+',
+                                 help='Groups to start feature for')
+        group_start.add_argument('--projects', '-p', choices=self.project_names,
+                                 nargs='+', help='Projects to start feature for')
 
     def _configure_subparser_stash(self, subparsers):
         """Configure clowder stash subparser and arguments"""
