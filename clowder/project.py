@@ -1,5 +1,6 @@
 """Representation of clowder.yaml project"""
-import os, subprocess
+import os
+import subprocess
 from termcolor import colored, cprint
 from clowder.fork import Fork
 from clowder.utility.clowder_utilities import (

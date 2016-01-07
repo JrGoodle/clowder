@@ -1,13 +1,17 @@
 #! /usr/bin/env python3
 """Main entrypoint for clowder command"""
-
-if __name__ == '__main__':
-    raise SystemExit(main())
-
-import argcomplete, argparse, colorama, os, signal, sys
+import argparse
+import os
+import signal
+import sys
+import argcomplete
+import colorama
 from termcolor import cprint
 from clowder.clowder_repo import ClowderRepo
 from clowder.clowder_controller import ClowderController
+
+if __name__ == '__main__':
+    raise SystemExit(main())
 
 # Disable errors shown by pylint for too many instance attributes
 # pylint: disable=R0902

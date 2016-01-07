@@ -1,5 +1,7 @@
 """Git utilities"""
-import os, shutil, sys
+import os
+import shutil
+import sys
 from git import Repo
 from termcolor import colored, cprint
 
