@@ -23,8 +23,6 @@ All of these have their own approach, but many are based on submodules or subtre
 
 The primary purpose of `clowder` is synchronization of multiple repositories, so normal development still takes place in individual repositories with the usual `git` commands.
 
-For a few example projects, see the [examples directory](https://github.com/JrGoodle/clowder/tree/master/examples).
-
 ## Getting Started
 
 ### Requirements
@@ -77,6 +75,8 @@ $ clowder herd
 
 The `clowder herd` command syncs the default branch for each project. The project repositories must be clean, or `clowder` will exit. The `clowder.yaml` symlink is always updated to point to the primary `clowder.yaml` file in the repository cloned with `clowder init`. Projects are cloned if they don't currently exist. Otherwise, each project will pull the latest changes. If the current branch isn't the default, it'll be checked out, and latest changes pulled. For commits and tags, the commits are checked out into a detached `HEAD` state (`clowder forall` can then be used to checkout/create branches).
 
+For more example projects, see the [examples directory](https://github.com/JrGoodle/clowder/tree/master/examples).
+
 ## Further Information
 
 ### More `clowder` Commands
@@ -87,6 +87,7 @@ $ clowder forall "git status" # Run command in all project directories
 $ clowder herd -v 0.1 # Point clowder.yaml symlink to saved version
 $ clowder repo 'git status' # Run command in .clowder directory
 $ clowder save 0.1 # Save a version of clowder.yaml with current commit sha's
+$ clowder start my_feature # Create new branch 'my_feature' for all projects
 $ clowder stash # Stash any changes in projects
 $ clowder status # print status of projects
 ```

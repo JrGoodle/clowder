@@ -46,6 +46,12 @@ class Group(object):
                 valid = False
         return valid
 
+    def start(self, branch):
+        """Start a new feature branch"""
+        self._print_name()
+        for project in self.projects:
+            project.start(branch)
+
     def status(self):
         """Print status for all projects"""
         self._print_name()
