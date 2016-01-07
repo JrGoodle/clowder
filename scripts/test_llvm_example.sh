@@ -54,6 +54,32 @@ test_herd_old_repos()
     clowder status || exit 1
 }
 
+test_start()
+{
+    clowder herd
+    print_separator
+    echo "TEST: Start new feature branch"
+
+    clowder start start_branch
+    clowder forall 'git checkout master' -g llvm
+
+    pushd 'llvm/tools/clang' &>/dev/null
+    test_branch start_branch
+    popd &>/dev/null
+    pushd 'llvm/tools/clang/tools/extra' &>/dev/null
+    test_branch start_branch
+    popd &>/dev/null
+    pushd llvm &>/dev/null
+    test_branch master
+    popd &>/dev/null
+
+    clowder start start_branch
+
+    pushd llvm &>/dev/null
+    test_branch start_branch
+    popd &>/dev/null
+}
+
 export projects=( 'llvm' \
                   'llvm/tools/clang' \
                   'llvm/tools/clang/tools/extra' \

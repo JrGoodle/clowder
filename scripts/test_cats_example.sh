@@ -24,15 +24,31 @@ test_start()
     clowder herd
     print_separator
     echo "TEST: Start new feature branch"
+
     clowder start start_branch
     clowder forall 'git checkout master' -g black-cats
+
     pushd mu &>/dev/null
     test_branch start_branch
     popd &>/dev/null
     pushd duke &>/dev/null
     test_branch start_branch
     popd &>/dev/null
+    pushd black-cats/jules &>/dev/null
+    test_branch master
+    popd &>/dev/null
+    pushd black-cats/kishka &>/dev/null
+    test_branch master
+    popd &>/dev/null
+
     clowder start start_branch
+
+    pushd black-cats/jules &>/dev/null
+    test_branch start_branch
+    popd &>/dev/null
+    pushd black-cats/kishka &>/dev/null
+    test_branch start_branch
+    popd &>/dev/null
 }
 
 test_herd_missing_branches()
