@@ -55,19 +55,15 @@
 
 <p>The primary purpose of <code>clowder</code> is synchronization of multiple repositories, so normal development still takes place in individual repositories with the usual <code>git</code> commands.</p>
 
-<p>For a few example projects, see the <a href="https://github.com/JrGoodle/clowder/tree/master/examples">examples directory</a>.</p>
-
 <h2>
 <a id="getting-started" class="anchor" href="#getting-started" aria-hidden="true"><span class="octicon octicon-link"></span></a>Getting Started</h2>
 
 <h3>
 <a id="requirements" class="anchor" href="#requirements" aria-hidden="true"><span class="octicon octicon-link"></span></a>Requirements</h3>
 
-<ul>
-<li><a href="https://www.python.org/downloads/">Python 3</a></li>
-<li>
-<a href="https://pypi.python.org/pypi/pip">pip3</a> (and <a href="https://pypi.python.org/pypi/setuptools">setuptools</a>)</li>
-</ul>
+<p><a href="https://www.python.org/downloads/">Python 3</a> is necessary for <code>clowder</code>. On OS X it's simple to install Python 3 with Homebrew.</p>
+
+<div class="highlight highlight-source-shell"><pre>$ brew install python3</pre></div>
 
 <h3>
 <a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h3>
@@ -87,7 +83,7 @@
 
 <div class="highlight highlight-source-shell"><pre>$ mkdir llvm-projects <span class="pl-k">&amp;&amp;</span> <span class="pl-c1">cd</span> llvm-projects</pre></div>
 
-<p>Clone repository containing <code>clowder.yaml</code> file.</p>
+<p>Clone clowder repo containing <code>clowder.yaml</code> file.</p>
 
 <div class="highlight highlight-source-shell"><pre>$ clowder init https://github.com/jrgoodle/llvm-projects.git</pre></div>
 
@@ -102,27 +98,32 @@
 
 <p>The <code>clowder herd</code> command syncs the default branch for each project. The project repositories must be clean, or <code>clowder</code> will exit. The <code>clowder.yaml</code> symlink is always updated to point to the primary <code>clowder.yaml</code> file in the repository cloned with <code>clowder init</code>. Projects are cloned if they don't currently exist. Otherwise, each project will pull the latest changes. If the current branch isn't the default, it'll be checked out, and latest changes pulled. For commits and tags, the commits are checked out into a detached <code>HEAD</code> state (<code>clowder forall</code> can then be used to checkout/create branches).</p>
 
-<h3>
-<a id="further-commands" class="anchor" href="#further-commands" aria-hidden="true"><span class="octicon octicon-link"></span></a>Further Commands</h3>
+<p>For more example projects, see the <a href="https://github.com/JrGoodle/clowder/tree/master/examples">examples directory</a>.</p>
 
-<div class="highlight highlight-source-shell"><pre>$ clowder save 0.1 <span class="pl-c"># Save a version of clowder.yaml with current commit sha's</span>
+<h2>
+<a id="further-information" class="anchor" href="#further-information" aria-hidden="true"><span class="octicon octicon-link"></span></a>Further Information</h2>
+
+<h3>
+<a id="more-clowder-commands" class="anchor" href="#more-clowder-commands" aria-hidden="true"><span class="octicon octicon-link"></span></a>More <code>clowder</code> Commands</h3>
+
+<div class="highlight highlight-source-shell"><pre>$ clowder clean <span class="pl-c"># Discard any changes in projects</span>
 $ clowder forall <span class="pl-s"><span class="pl-pds">"</span>git status<span class="pl-pds">"</span></span> <span class="pl-c"># Run command in all project directories</span>
-$ clowder clean <span class="pl-c"># Discard any changes in projects</span>
 $ clowder herd -v 0.1 <span class="pl-c"># Point clowder.yaml symlink to saved version</span>
-$ clowder status <span class="pl-c"># print status of projects</span>
-$ clowder status -v <span class="pl-c"># print more verbose status of projects</span>
 $ clowder repo <span class="pl-s"><span class="pl-pds">'</span>git status<span class="pl-pds">'</span></span> <span class="pl-c"># Run command in .clowder directory</span>
-$ clowder stash <span class="pl-c"># Stash any changes in projects</span></pre></div>
+$ clowder save 0.1 <span class="pl-c"># Save a version of clowder.yaml with current commit sha's</span>
+$ clowder start my_feature <span class="pl-c"># Create new branch 'my_feature' for all projects</span>
+$ clowder stash <span class="pl-c"># Stash any changes in projects</span>
+$ clowder status <span class="pl-c"># print status of projects</span></pre></div>
 
 <p>See <a href="https://github.com/JrGoodle/clowder/blob/master/docs/commands.md">clowder commands doc</a></p>
 
-<h2>
-<a id="the-clowderyaml-file" class="anchor" href="#the-clowderyaml-file" aria-hidden="true"><span class="octicon octicon-link"></span></a>The <code>clowder.yaml</code> File</h2>
+<h3>
+<a id="the-clowderyaml-file" class="anchor" href="#the-clowderyaml-file" aria-hidden="true"><span class="octicon octicon-link"></span></a>The <code>clowder.yaml</code> File</h3>
 
 <p>See <a href="https://github.com/JrGoodle/clowder/blob/master/docs/clowder_yaml.md">clowder.yaml doc</a></p>
 
-<h2>
-<a id="the-clowder-directory" class="anchor" href="#the-clowder-directory" aria-hidden="true"><span class="octicon octicon-link"></span></a>The <code>.clowder</code> Directory</h2>
+<h3>
+<a id="the-clowder-directory" class="anchor" href="#the-clowder-directory" aria-hidden="true"><span class="octicon octicon-link"></span></a>The <code>.clowder</code> Directory</h3>
 
 <p>See <a href="https://github.com/JrGoodle/clowder/blob/master/docs/dot_clowder_dir.md">.clowder doc</a></p>
         </section>
