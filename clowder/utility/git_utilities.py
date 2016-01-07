@@ -38,7 +38,7 @@ def git_checkout_branch(repo_path, branch, remote, depth):
                     print('')
                     sys.exit(1)
     else:
-        git_create_checkout_branch(repo_path, branch, remote, depth)
+        git_create_checkout_tracking_branch(repo_path, branch, remote, depth)
 
 def git_checkout_ref(repo_path, ref, remote, depth):
     """Checkout branch, tag, or commit from sha"""
@@ -152,6 +152,40 @@ def git_create_repo(url, repo_path, remote, ref, depth=0):
             git_checkout_ref(repo_path, ref, remote, depth)
 
 def git_create_checkout_branch(repo_path, branch, remote, depth):
+    """Create and checkout tracking branch"""
+    repo = git_repo(repo_path)
+    branch_output = colored('(' + branch + ')', 'magenta')
+    remote_output = colored(remote, attrs=['bold'])
+    print(' - Create and checkout branch ' + branch_output)
+    try:
+        origin = repo.remotes[remote]
+        if depth == 0:
+            origin.fetch()
+        else:
+            origin.fetch(branch, depth=depth)
+    except:
+        message = colored(' - Failed to fetch from remote ', 'red')
+        print(message + remote_output)
+        print('')
+        sys.exit(1)
+    else:
+        try:
+            default_branch = repo.create_head(branch)
+        except:
+            message = colored(' - Failed to create branch ', 'red')
+            print(message + branch_output)
+            print('')
+            sys.exit(1)
+        else:
+            try:
+                default_branch.checkout()
+            except:
+                message = colored(' - Failed to checkout branch ', 'red')
+                print(message + branch_output)
+                print('')
+                sys.exit(1)
+
+def git_create_checkout_tracking_branch(repo_path, branch, remote, depth):
     """Create and checkout tracking branch"""
     repo = git_repo(repo_path)
     branch_output = colored('(' + branch + ')', 'magenta')
@@ -332,7 +366,7 @@ def git_start(repo_path, remote, branch, depth):
     branch_output = colored('(' + branch + ')', 'magenta')
     correct_branch = False
     if branch in repo.heads:
-        print(' - ' + branch + ' already exists')
+        print(' - ' + branch_output + ' already exists')
         default_branch = repo.heads[branch]
         try:
             not_detached = not repo.head.is_detached

@@ -1,6 +1,6 @@
 #! /bin/bash
 
-set -xv
+# set -xv
 
 echo 'TEST: cats example test script'
 
@@ -25,6 +25,7 @@ test_start()
     print_separator
     echo "TEST: Start new feature branch"
     clowder start start_branch
+    clowder forall 'git checkout master' -g black-cats
     pushd mu &>/dev/null
     test_branch start_branch
     popd &>/dev/null
