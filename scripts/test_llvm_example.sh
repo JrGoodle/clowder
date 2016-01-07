@@ -112,5 +112,6 @@ test_stash_missing_directories 'zorg'
 test_save_missing_directories 'llvm/tools/clang/tools/extra' \
                              'llvm/projects/dragonegg'
 test_herd_projects 'llvm-mirror/lld'
+test_start
 
 print_help

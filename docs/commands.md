@@ -58,6 +58,18 @@ $ clowder save 0.1 # Save a version of clowder.yaml with current commit sha's
 
 ---
 
+### `clowder start`
+
+Start a new feature branch or check out if it already exists.
+
+```bash
+$ clowder start my_feature # Create new branch 'my_feature' for all projects
+$ clowder start my_feature -g clang # Create new branch 'my_feature' in clang group
+$ clowder start my_feature -p llvm-mirror/clang  # Create new branch 'my_feature' in clang project
+```
+
+---
+
 ### `clowder stash`
 
 Stash changes in dirty repositories.
