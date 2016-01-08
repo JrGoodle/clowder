@@ -93,6 +93,12 @@ class Group(object):
                 projects_exist = False
         return projects_exist
 
+    def prune(self, branch):
+        """Prune branch"""
+        self._print_name()
+        for project in self.projects:
+            project.prune(branch)
+
     def _print_name(self):
         """Print formatted group name"""
         name_output = colored(self.name, attrs=['bold', 'underline'])

@@ -92,3 +92,15 @@ $ clowder status -v # print more verbose status of projects
 $ clowder status -g clang llvm # print status of projects in clang and llvm groups
 $ clowder status -v -g clang # print verbose status of projects in clang group
 ```
+
+---
+
+### `prune`
+
+Prune stale local branches.
+
+```bash
+$ clowder prune stale_branch # Prune branch 'stale_branch' for all projects
+$ clowder prune stale_branch -g clang # Prune branch 'stale_branch' in clang group
+$ clowder prune stale_branch -p llvm-mirror/clang  # Prune branch 'stale_branch' in clang project
+```

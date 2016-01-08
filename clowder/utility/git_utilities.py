@@ -177,6 +177,34 @@ def git_status(repo_path):
     repo = _repo(repo_path)
     print(repo.git.status())
 
+def git_prune(repo_path, branch, default_ref):
+    """Start new branch in repository"""
+    repo = _repo(repo_path)
+    truncated_ref = _truncate_ref(default_ref)
+    branch_output = colored('(' + branch + ')', 'magenta')
+    ref_output = colored('(' + truncated_ref + ')', 'magenta')
+    if branch in repo.heads:
+        prune_branch = repo.heads[branch]
+        if repo.head.ref == prune_branch:
+            try:
+                print(' - Checking out ' + ref_output)
+                repo.git.checkout(truncated_ref)
+            except:
+                message = colored(' - Failed to checkout ref', 'red')
+                print(message + ref_output)
+                print('')
+                sys.exit(1)
+        try:
+            print(' - Deleting branch ' + branch_output)
+            repo.delete_head(branch)
+        except:
+            message = colored(' - Failed to delete branch', 'red')
+            print(message + branch_output)
+            print('')
+            sys.exit(1)
+    else:
+        print(' - Branch ' + branch_output + " doesn't exist")
+
 def _checkout_branch(repo_path, branch, remote, depth):
     """Checkout branch, and create if it doesn't exist"""
     repo = _repo(repo_path)

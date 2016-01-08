@@ -139,6 +139,41 @@ test_no_versions()
     clowder repo 'git checkout master'
 }
 
+test_prune()
+{
+    clowder herd
+    print_separator
+    echo "TEST: Prune branch"
+
+    clowder start prune_branch
+    clowder prune prune_branch
+
+    pushd black-cats/jules &>/dev/null
+    test_branch master
+    popd &>/dev/null
+    pushd black-cats/kishka &>/dev/null
+    test_branch master
+    popd &>/dev/null
+
+    clowder start prune_branch
+    clowder prune prune_branch -g black-cats
+    
+    pushd duke &>/dev/null
+    test_branch prune_branch
+    popd &>/dev/null
+    pushd mu &>/dev/null
+    test_branch prune_branch
+    popd &>/dev/null
+    pushd black-cats/jules &>/dev/null
+    test_branch master
+    popd &>/dev/null
+    pushd black-cats/kishka &>/dev/null
+    test_branch master
+    popd &>/dev/null
+
+    clowder prune
+}
+
 # export projects=( 'black-cats/kit' \
 #                   'black-cats/kishka' \
 #                   'black-cats/sasha' \
@@ -184,5 +219,6 @@ test_herd_sha
 test_herd_tag
 test_herd_missing_groups
 test_start
+test_prune
 
 print_help

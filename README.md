@@ -90,6 +90,7 @@ $ clowder save 0.1 # Save a version of clowder.yaml with current commit sha's
 $ clowder start my_feature # Create new branch 'my_feature' for all projects
 $ clowder stash # Stash any changes in projects
 $ clowder status # print status of projects
+$ clowder prune stale_branch # Prune branch 'stale_branch' for all projects
 ```
 
 See [clowder commands doc](https://github.com/JrGoodle/clowder/blob/master/docs/commands.md)
