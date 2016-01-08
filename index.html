@@ -70,7 +70,7 @@
 
 <p>To install from the <a href="https://github.com/JrGoodle/clowder/releases">GitHub Releases</a> open a terminal and run:</p>
 
-<div class="highlight highlight-source-shell"><pre>$ pip3 install https://github.com/JrGoodle/clowder/releases/download/0.9.0/clowder-0.9.0-py3-none-any.whl</pre></div>
+<div class="highlight highlight-source-shell"><pre>$ pip3 install https://github.com/JrGoodle/clowder/releases/download/0.10.0/clowder-0.10.0-py3-none-any.whl</pre></div>
 
 <p>For terminal autocompletion, add the following to your shell profile:</p>
 
@@ -83,7 +83,7 @@
 
 <div class="highlight highlight-source-shell"><pre>$ mkdir llvm-projects <span class="pl-k">&amp;&amp;</span> <span class="pl-c1">cd</span> llvm-projects</pre></div>
 
-<p>Clone clowder repo containing <code>clowder.yaml</code> file.</p>
+<p>Clone repo containing <code>clowder.yaml</code> file ('clowder repo').</p>
 
 <div class="highlight highlight-source-shell"><pre>$ clowder init https://github.com/jrgoodle/llvm-projects.git</pre></div>
 
@@ -113,7 +113,8 @@ $ clowder repo <span class="pl-s"><span class="pl-pds">'</span>git status<span c
 $ clowder save 0.1 <span class="pl-c"># Save a version of clowder.yaml with current commit sha's</span>
 $ clowder start my_feature <span class="pl-c"># Create new branch 'my_feature' for all projects</span>
 $ clowder stash <span class="pl-c"># Stash any changes in projects</span>
-$ clowder status <span class="pl-c"># print status of projects</span></pre></div>
+$ clowder status <span class="pl-c"># print status of projects</span>
+$ clowder prune stale_branch <span class="pl-c"># Prune branch 'stale_branch' for all projects</span></pre></div>
 
 <p>See <a href="https://github.com/JrGoodle/clowder/blob/master/docs/commands.md">clowder commands doc</a></p>
 
