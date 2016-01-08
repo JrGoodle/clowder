@@ -15,6 +15,7 @@ from clowder.utility.git_utilities import (
     git_current_sha,
     git_herd,
     git_is_dirty,
+    git_prune,
     git_reset_head,
     git_start,
     git_stash,
@@ -146,6 +147,22 @@ class Project(object):
             self._print_status()
             print_validation(self.full_path())
 
+    def prune(self, branch):
+        """Prune branch"""
+        self._print_status()
+        if not os.path.isdir(os.path.join(self.full_path(), '.git')):
+            cprint(" - Directory doesn't exist", 'red')
+        else:
+            git_prune(self.full_path(), branch)
+
+    def run_command(self, command):
+        """Run command in project directory"""
+        self._print_status()
+        command_output = colored('$ ' + command, attrs=['bold'])
+        print(command_output)
+        subprocess.call(command.split(), cwd=self.full_path())
+        print('')
+
     def _print_status(self):
         """Print formatted project status"""
         repo_path = os.path.join(self.root_directory, self.path)
@@ -156,11 +173,3 @@ class Project(object):
         current_ref_output = format_ref_string(repo_path)
         print(project_output + ' ' + current_ref_output)
         cprint(self.path, 'cyan')
-
-    def run_command(self, command):
-        """Run command in project directory"""
-        self._print_status()
-        command_output = colored('$ ' + command, attrs=['bold'])
-        print(command_output)
-        subprocess.call(command.split(), cwd=self.full_path())
-        print('')

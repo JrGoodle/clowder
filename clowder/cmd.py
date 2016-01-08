@@ -50,6 +50,7 @@ class Command(object):
         self._configure_subparser_forall(subparsers)
         self._configure_subparser_herd(subparsers)
         self._configure_subparser_init(subparsers)
+        self._configure_subparser_prune(subparsers)
         self._configure_subparser_repo(subparsers)
         self._configure_subparser_save(subparsers)
         self._configure_subparser_start(subparsers)
@@ -119,6 +120,22 @@ class Command(object):
         else:
             cprint('Clowder already bred in this directory', 'red')
             sys.exit()
+
+    def prune(self):
+        """clowder prune command"""
+        if self.clowder_repo is not None:
+            self.clowder_repo.print_status()
+            print('')
+            if self.args.projects is None:
+                if self.args.groups is None:
+                    self.clowder.prune_groups(self.clowder.get_all_group_names(),
+                                              self.args.branch)
+                else:
+                    self.clowder.prune_groups(self.args.groups, self.args.branch)
+            else:
+                self.clowder.prune_projects(self.args.projects, self.args.branch)
+        else:
+            exit_clowder_not_found()
 
     def repo(self):
         """clowder repo command"""
@@ -222,6 +239,18 @@ class Command(object):
         init_help = 'Clone repository to clowder directory and create clowder.yaml symlink'
         parser_init = subparsers.add_parser('init', help=init_help)
         parser_init.add_argument('url', help='URL of repo containing clowder.yaml')
+
+    def _configure_subparser_prune(self, subparsers):
+        """Configure clowder prune subparser and arguments"""
+        # clowder prune
+        parser_prune = subparsers.add_parser('prune', help='Prune old branch')
+        parser_prune.add_argument('branch', help='Name of branch to remove')
+        group_prune = parser_prune.add_mutually_exclusive_group()
+        group_prune.add_argument('--groups', '-g', choices=self.group_names,
+                                 default=self.group_names, nargs='+',
+                                 help='Groups to prune branch for')
+        group_prune.add_argument('--projects', '-p', choices=self.project_names,
+                                 nargs='+', help='Projects to prune branch for')
 
     def _configure_subparser_repo(self, subparsers):
         """Configure clowder repo subparser and arguments"""
