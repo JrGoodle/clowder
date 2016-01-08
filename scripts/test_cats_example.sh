@@ -96,6 +96,20 @@ test_herd_tag()
     clowder repo 'git checkout master'
 }
 
+test_init_branch()
+{
+    print_separator
+    echo "TEST: Test clowder init branch"
+
+    clowder init https://github.com/jrgoodle/cats.git -b tags
+
+    pushd .clowder &>/dev/null
+    test_branch tags
+    popd &>/dev/null
+
+    rm -rf .clowder clowder.yaml
+}
+
 test_invalid_yaml()
 {
     print_separator
@@ -157,7 +171,7 @@ test_prune()
 
     clowder start prune_branch
     clowder prune prune_branch -g black-cats
-    
+
     pushd duke &>/dev/null
     test_branch prune_branch
     popd &>/dev/null
@@ -185,6 +199,8 @@ export projects=( 'black-cats/kit' \
                   'black-cats/kishka' \
                   'black-cats/sasha' \
                   'black-cats/jules' )
+
+test_init_branch
 
 test_command
 test_clowder_version
