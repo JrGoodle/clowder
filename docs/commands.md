@@ -38,6 +38,20 @@ $ clowder herd -v 0.1 # Point clowder.yaml symlink to saved version
 
 ---
 
+### `init`
+
+Clone repo containing `clowder.yaml` file ('clowder repo').
+
+```bash
+# Clone clowder repo
+$ clowder init https://github.com/jrgoodle/llvm-projects.git
+
+# Clone clowder repo from branch 'tags'
+$ clowder init https://github.com/jrgoodle/cats.git -b tags
+```
+
+---
+
 ### `repo`
 
 Manage clowder repository (`.clowder` directory).
