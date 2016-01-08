@@ -1,5 +1,7 @@
 """Clowder utilities"""
-import errno, os, sys
+import errno
+import os
+import sys
 from termcolor import colored
 from clowder.utility.git_utilities import (
     git_current_branch,
@@ -124,6 +126,8 @@ def validate_yaml_sources(parsed_yaml):
         print(error)
         sys.exit(1)
 
+# Disable errors shown by pylint for too many nested blocks
+# pylint: disable=R0101
 def validate_yaml_groups(parsed_yaml):
     """Validate groups in clowder loaded from yaml file"""
     try:

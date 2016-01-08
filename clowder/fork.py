@@ -13,10 +13,11 @@ from clowder.utility.git_utilities import (
 class Fork(object):
     """clowder.yaml fork class"""
 
-    def __init__(self, fork, path, source, depth):
+    def __init__(self, fork, path, source, ref, depth):
+        self.path = path
         self.name = fork['name']
         self.remote = fork['remote']
-        self.path = path
+        self.ref = ref
         self.depth = depth
         self.url = source.get_url_prefix() + self.name + ".git"
 
@@ -24,7 +25,7 @@ class Fork(object):
         """Herd remote data from fork"""
         self._print_status()
         git_create_remote(self.path, self.remote, self.url)
-        git_fetch_remote(self.path, self.remote, self.depth)
+        git_fetch_remote(self.path, self.remote, self.ref, self.depth)
 
     def get_yaml(self):
         """Return python object representation for saving yaml"""

@@ -1,5 +1,6 @@
 """Representation of clowder.yaml project"""
-import os, subprocess
+import os
+import subprocess
 from termcolor import colored, cprint
 from clowder.fork import Fork
 from clowder.utility.clowder_utilities import (
@@ -60,7 +61,8 @@ class Project(object):
         if 'forks' in project:
             for fork in project['forks']:
                 full_path = os.path.join(self.root_directory, self.path)
-                self.forks.append(Fork(fork, full_path, self.source, self.depth))
+                self.forks.append(Fork(fork, full_path, self.source,
+                                       self.ref, self.depth))
 
     def exists(self):
         """Check if project exists on disk"""

@@ -1,5 +1,8 @@
 """Clowder repo management"""
-import emoji, os, subprocess, sys
+import os
+import subprocess
+import sys
+import emoji
 from termcolor import colored
 from clowder.utility.git_utilities import (
     git_branches,
@@ -48,7 +51,7 @@ class ClowderRepo(object):
 
     def symlink_yaml(self, version=None):
         """Create symlink pointing to clowder.yaml file"""
-        if version == None:
+        if version is None:
             yaml_file = os.path.join(self.root_directory, '.clowder', 'clowder.yaml')
             path_output = colored('.clowder/clowder.yaml', 'cyan')
         else:
