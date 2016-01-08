@@ -55,7 +55,7 @@ This example is based on the LLVM project (see [the full clowder.yaml](https://g
 $ mkdir llvm-projects && cd llvm-projects
 ```
 
-Clone clowder repo containing `clowder.yaml` file.
+Clone repo containing `clowder.yaml` file ('clowder repo').
 
 ```bash
 $ clowder init https://github.com/jrgoodle/llvm-projects.git

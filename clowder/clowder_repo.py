@@ -26,9 +26,10 @@ class ClowderRepo(object):
         """Return current local branches"""
         return git_branches(self.clowder_path)
 
-    def init(self, url):
+    def init(self, url, branch):
         """Clone clowder repo from url"""
-        git_create_repo(url, self.clowder_path, 'origin', 'refs/heads/master')
+        repo_branch = 'refs/heads/' + branch
+        git_create_repo(url, self.clowder_path, 'origin', repo_branch)
         self.symlink_yaml()
 
     def run_command(self, command):
