@@ -72,7 +72,8 @@ def git_fetch_remote(repo_path, remote, depth):
     """Fetch from a specific remote"""
     repo = _repo(repo_path)
     try:
-        print(' - Fetch remote data')
+        remote_output = colored(remote, attrs=['bold'])
+        print(' - Fetch all data from ' + remote_output)
         if depth == 0:
             repo.git.fetch(remote, '--all', '--prune', '--tags')
         else:
@@ -278,7 +279,7 @@ def _create_checkout_branch(repo_path, branch, remote, depth):
     branch_output = colored('(' + branch + ')', 'magenta')
     remote_output = colored(remote, attrs=['bold'])
     try:
-        print(' - Fetch remote data')
+        print(' - Fetch data from ' + remote_output)
         origin = repo.remotes[remote]
         if depth == 0:
             origin.fetch()
@@ -315,10 +316,12 @@ def _create_tracking_branch(repo_path, branch, remote, depth):
     remote_output = colored(remote, attrs=['bold'])
     try:
         origin = repo.remotes[remote]
-        print(' - Fetch remote data')
+        remote_output = colored(remote, attrs=['bold'])
         if depth == 0:
+            print(' - Fetch data from ' + remote_output)
             origin.fetch()
         else:
+            print(' - Fetch data from ' + remote_output + ' ' + branch_output)
             origin.fetch(branch, depth=depth)
     except:
         message = colored(' - Failed to fetch from remote ', 'red')
@@ -357,10 +360,13 @@ def _fetch_remote_ref(repo_path, remote, ref, depth):
     """Fetch from a specific remote ref"""
     repo = _repo(repo_path)
     try:
-        print(' - Fetch remote data')
+        remote_output = colored(remote, attrs=['bold'])
         if depth == 0:
+            print(' - Fetch all data from ' + remote_output)
             repo.git.fetch('--all', '--prune', '--tags')
         else:
+            ref_output = colored('(' + branch + ')', 'magenta')
+            print(' - Fetch data from ' + remote_output + ' ' + ref_output)
             origin = repo.remotes[remote]
             origin.fetch(_truncate_ref(ref), depth=depth)
     except:
@@ -373,7 +379,9 @@ def _pull_remote_branch(repo_path, remote, branch):
     repo = _repo(repo_path)
     if not repo.head.is_detached:
         try:
-            print(' - Pulling latest changes')
+            branch_output = colored('(' + branch + ')', 'magenta')
+            remote_output = colored(remote, attrs=['bold'])
+            print(' - Pulling latest changes from ' + remote_output + ' ' + branch_output)
             print(repo.git.pull(remote, branch))
         except:
             cprint(' - Failed to pull latest changes', 'red')
