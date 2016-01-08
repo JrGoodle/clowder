@@ -1,5 +1,16 @@
 ## `clowder` Commands
 
+- [clowder clean](https://github.com/JrGoodle/clowder/blob/master/docs/commands.md#clean)
+- [clowder forall](https://github.com/JrGoodle/clowder/blob/master/docs/commands.md#forall)
+- [clowder herd](https://github.com/JrGoodle/clowder/blob/master/docs/commands.md#herd)
+- [clowder init](https://github.com/JrGoodle/clowder/blob/master/docs/commands.md#init)
+- [clowder repo](https://github.com/JrGoodle/clowder/blob/master/docs/commands.md#repo)
+- [clowder save](https://github.com/JrGoodle/clowder/blob/master/docs/commands.md#save)
+- [clowder start](https://github.com/JrGoodle/clowder/blob/master/docs/commands.md#start)
+- [clowder stash](https://github.com/JrGoodle/clowder/blob/master/docs/commands.md#stash)
+- [clowder status](https://github.com/JrGoodle/clowder/blob/master/docs/commands.md#status)
+- [clowder prune](https://github.com/JrGoodle/clowder/blob/master/docs/commands.md#prune)
+
 ---
 
 ### `clean`
