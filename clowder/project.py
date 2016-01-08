@@ -61,7 +61,8 @@ class Project(object):
         if 'forks' in project:
             for fork in project['forks']:
                 full_path = os.path.join(self.root_directory, self.path)
-                self.forks.append(Fork(fork, full_path, self.source, self.depth))
+                self.forks.append(Fork(fork, full_path, self.source,
+                                       self.ref, self.depth))
 
     def exists(self):
         """Check if project exists on disk"""

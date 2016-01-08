@@ -68,16 +68,19 @@ def git_current_sha(repo_path):
     repo = _repo(repo_path)
     return repo.head.commit.hexsha
 
-def git_fetch_remote(repo_path, remote, depth):
+def git_fetch_remote(repo_path, remote, ref, depth):
     """Fetch from a specific remote"""
     repo = _repo(repo_path)
     try:
+        truncated_ref = _truncate_ref(ref)
+        ref_output = colored('(' + truncated_ref + ')', 'magenta')
         remote_output = colored(remote, attrs=['bold'])
-        print(' - Fetch all data from ' + remote_output)
         if depth == 0:
+            print(' - Fetch all data from ' + remote_output)
             repo.git.fetch(remote, '--all', '--prune', '--tags')
         else:
-            repo.git.fetch(remote, depth=depth)
+            print(' - Fetch data from ' + remote_output + ' ' + ref_output)
+            repo.git.fetch(remote, truncated_ref, depth=depth)
     except:
         cprint(' - Failed to fetch remote', 'red')
         print('')
@@ -365,7 +368,7 @@ def _fetch_remote_ref(repo_path, remote, ref, depth):
             print(' - Fetch all data from ' + remote_output)
             repo.git.fetch('--all', '--prune', '--tags')
         else:
-            ref_output = colored('(' + branch + ')', 'magenta')
+            ref_output = colored('(' + ref + ')', 'magenta')
             print(' - Fetch data from ' + remote_output + ' ' + ref_output)
             origin = repo.remotes[remote]
             origin.fetch(_truncate_ref(ref), depth=depth)
