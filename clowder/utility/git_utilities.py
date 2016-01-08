@@ -15,10 +15,10 @@ def git_branches(repo_path):
 
 def git_create_repo(url, repo_path, remote, ref, depth=0):
     """Clone git repo from url at path"""
-    repo_path_output = colored(repo_path, 'cyan')
     if not os.path.isdir(os.path.join(repo_path, '.git')):
         if not os.path.isdir(repo_path):
             os.makedirs(repo_path)
+        repo_path_output = colored(repo_path, 'cyan')
         try:
             print(' - Cloning repo at ' + repo_path_output)
             Repo.init(repo_path)
@@ -73,12 +73,12 @@ def git_fetch_remote(repo_path, remote, ref, depth):
     repo = _repo(repo_path)
     try:
         truncated_ref = _truncate_ref(ref)
-        ref_output = colored('(' + truncated_ref + ')', 'magenta')
         remote_output = colored(remote, attrs=['bold'])
         if depth == 0:
             print(' - Fetch all data from ' + remote_output)
             repo.git.fetch(remote, '--all', '--prune', '--tags')
         else:
+            ref_output = colored('(' + truncated_ref + ')', 'magenta')
             print(' - Fetch data from ' + remote_output + ' ' + ref_output)
             repo.git.fetch(remote, truncated_ref, depth=depth)
     except:
@@ -136,9 +136,9 @@ def git_reset_head(repo_path):
 def git_start(repo_path, remote, branch, depth):
     """Start new branch in repository"""
     repo = _repo(repo_path)
-    branch_output = colored('(' + branch + ')', 'magenta')
     correct_branch = False
     if branch in repo.heads:
+        branch_output = colored('(' + branch + ')', 'magenta')
         print(' - ' + branch_output + ' already exists')
         default_branch = repo.heads[branch]
         try:
@@ -210,7 +210,6 @@ def _checkout_branch(repo_path, branch, remote, depth):
     repo = _repo(repo_path)
     correct_branch = False
     if branch in repo.heads:
-        branch_output = colored('(' + branch + ')', 'magenta')
         default_branch = repo.heads[branch]
         try:
             not_detached = not repo.head.is_detached
@@ -223,6 +222,7 @@ def _checkout_branch(repo_path, branch, remote, depth):
                 correct_branch = True
         finally:
             if not correct_branch:
+                branch_output = colored('(' + branch + ')', 'magenta')
                 try:
                     print(' - Checkout branch ' + branch_output)
                     default_branch.checkout()
@@ -254,7 +254,6 @@ def _checkout_ref(repo_path, ref, remote, depth):
 def _checkout_sha(repo_path, sha):
     """Checkout commit by sha"""
     repo = _repo(repo_path)
-    commit_output = colored('(' + sha + ')', 'magenta')
     correct_commit = False
     try:
         same_sha = repo.head.commit.hexsha == sha
@@ -267,6 +266,7 @@ def _checkout_sha(repo_path, sha):
             correct_commit = True
     finally:
         if not correct_commit:
+            commit_output = colored('(' + sha + ')', 'magenta')
             try:
                 print(' - Checkout commit ' + commit_output)
                 repo.git.checkout(sha)
@@ -307,7 +307,6 @@ def _checkout_tag(repo_path, tag):
 def _create_checkout_branch(repo_path, branch, remote, depth):
     """Create and checkout local branch"""
     repo = _repo(repo_path)
-    branch_output = colored('(' + branch + ')', 'magenta')
     remote_output = colored(remote, attrs=['bold'])
     try:
         print(' - Fetch data from ' + remote_output)
@@ -322,6 +321,7 @@ def _create_checkout_branch(repo_path, branch, remote, depth):
         print('')
         sys.exit(1)
     else:
+        branch_output = colored('(' + branch + ')', 'magenta')
         try:
             print(' - Create branch ' + branch_output)
             default_branch = repo.create_head(branch)
@@ -347,7 +347,6 @@ def _create_tracking_branch(repo_path, branch, remote, depth):
     remote_output = colored(remote, attrs=['bold'])
     try:
         origin = repo.remotes[remote]
-        remote_output = colored(remote, attrs=['bold'])
         if depth == 0:
             print(' - Fetch data from ' + remote_output)
             origin.fetch()
