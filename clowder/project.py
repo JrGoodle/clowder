@@ -153,7 +153,7 @@ class Project(object):
         if not os.path.isdir(os.path.join(self.full_path(), '.git')):
             cprint(" - Directory doesn't exist", 'red')
         else:
-            git_prune(self.full_path(), branch)
+            git_prune(self.full_path(), branch, self.ref)
 
     def run_command(self, command):
         """Run command in project directory"""
