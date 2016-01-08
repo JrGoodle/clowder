@@ -180,12 +180,12 @@ def git_status(repo_path):
 def git_prune(repo_path, branch, default_ref):
     """Start new branch in repository"""
     repo = _repo(repo_path)
-    truncated_ref = _truncate_ref(default_ref)
     branch_output = colored('(' + branch + ')', 'magenta')
-    ref_output = colored('(' + truncated_ref + ')', 'magenta')
     if branch in repo.heads:
         prune_branch = repo.heads[branch]
         if repo.head.ref == prune_branch:
+            truncated_ref = _truncate_ref(default_ref)
+            ref_output = colored('(' + truncated_ref + ')', 'magenta')
             try:
                 print(' - Checking out ' + ref_output)
                 repo.git.checkout(truncated_ref)
@@ -208,9 +208,9 @@ def git_prune(repo_path, branch, default_ref):
 def _checkout_branch(repo_path, branch, remote, depth):
     """Checkout branch, and create if it doesn't exist"""
     repo = _repo(repo_path)
-    branch_output = colored('(' + branch + ')', 'magenta')
     correct_branch = False
     if branch in repo.heads:
+        branch_output = colored('(' + branch + ')', 'magenta')
         default_branch = repo.heads[branch]
         try:
             not_detached = not repo.head.is_detached
