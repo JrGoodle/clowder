@@ -114,9 +114,9 @@ class Command(object):
     def init(self):
         """clowder init command"""
         if self.clowder_repo is None:
-            cprint('Init from %s\n' % self.args.url, 'yellow')
+            cprint('Create clowder repo from %s\n' % self.args.url, 'yellow')
             clowder_repo = ClowderRepo(self.root_directory)
-            clowder_repo.init(self.args.url)
+            clowder_repo.init(self.args.url, self.args.branch)
         else:
             cprint('Clowder already bred in this directory', 'red')
             sys.exit()
@@ -239,6 +239,8 @@ class Command(object):
         init_help = 'Clone repository to clowder directory and create clowder.yaml symlink'
         parser_init = subparsers.add_parser('init', help=init_help)
         parser_init.add_argument('url', help='URL of repo containing clowder.yaml')
+        parser_init.add_argument('--branch', '-b', default='master', nargs='?',
+                                 help='Branch of repo containing clowder.yaml')
 
     def _configure_subparser_prune(self, subparsers):
         """Configure clowder prune subparser and arguments"""
