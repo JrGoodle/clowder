@@ -1,5 +1,6 @@
 """Test project class"""
-import os, unittest
+import os
+import unittest
 from clowder.source import Source
 from clowder.project import Project
 from test.shared import (
