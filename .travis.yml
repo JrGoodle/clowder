@@ -21,7 +21,7 @@ install:
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew install github-release; fi
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get install -y python3-setuptools; fi
 
-before_script: sudo python3 setup.py -q install
+before_script: sudo python3 setup.py install
 
 script: scripts/${TARGET}.sh
 
