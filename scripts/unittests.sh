@@ -26,9 +26,13 @@ prepare_unittest_repos()
     popd &>/dev/null
 }
 
-echo 'TEST: Run unittests'
+echo 'TEST: Prepare repos for unit tests'
 prepare_unittest_repos
 cd ../.. || exit 1
+echo ''
+echo '----------------------------------------------------------------------'
+echo 'TEST: Run unittests'
+echo ''
 python3 -m unittest discover -v || exit 1
 
 cd examples/cats || exit 1

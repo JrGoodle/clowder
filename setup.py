@@ -1,8 +1,8 @@
 """
 Setup file for clowder
 """
-from setuptools import setup
 import sys
+from setuptools import setup
 
 # Written according to the docs at
 # https://packaging.python.org/en/latest/distributing.html
@@ -31,7 +31,6 @@ setup(
         'License :: OSI Approved :: MIT License',
         # Specify the Python versions you support here. In particular, ensure
         # that you indicate whether you support Python 2, Python 3 or both.
-        'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.2',
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',

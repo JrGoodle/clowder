@@ -3,8 +3,8 @@
 make_dirty_clowder_repo()
 {
     echo "TEST: Make dirty clowder repo"
-    clowder repo 'touch newfile'
-    clowder repo 'git add newfile'
+    clowder repo run 'touch newfile'
+    clowder repo run 'git add newfile'
     clowder status || exit 1
 }
 
@@ -291,6 +291,33 @@ print_help()
     print_separator
     echo "TEST: clowder prune -h"
     clowder prune -h
+    print_separator
+    echo "TEST: clowder repo -h"
+    clowder repo -h
+    print_separator
+    echo "TEST: clowder repo add -h"
+    clowder repo add -h
+    print_separator
+    echo "TEST: clowder repo checkout -h"
+    clowder repo checkout -h
+    print_separator
+    echo "TEST: clowder repo clean -h"
+    clowder repo clean -h
+    print_separator
+    echo "TEST: clowder repo commit -h"
+    clowder repo commit -h
+    print_separator
+    echo "TEST: clowder repo pull -h"
+    clowder repo pull -h
+    print_separator
+    echo "TEST: clowder repo push -h"
+    clowder repo push -h
+    print_separator
+    echo "TEST: clowder repo run -h"
+    clowder repo run -h
+    print_separator
+    echo "TEST: clowder repo status -h"
+    clowder repo status -h
     print_separator
     echo "TEST: clowder save -h"
     clowder save -h

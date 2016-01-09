@@ -5,8 +5,16 @@ import sys
 import emoji
 from termcolor import colored
 from clowder.utility.git_utilities import (
+    git_add,
     git_branches,
-    git_create_repo
+    git_checkout,
+    git_commit,
+    git_create_repo,
+    git_is_dirty,
+    git_pull,
+    git_push,
+    git_reset_head,
+    git_status
 )
 from clowder.utility.clowder_utilities import (
     force_symlink,
@@ -22,9 +30,34 @@ class ClowderRepo(object):
         self.root_directory = root_directory
         self.clowder_path = os.path.join(self.root_directory, '.clowder')
 
+    def add(self, files):
+        """Add files in clowder repo to git"""
+        print(' - Add files in clowder repo')
+        git_add(self.clowder_path, files)
+        git_status(self.clowder_path)
+
     def branches(self):
         """Return current local branches"""
         return git_branches(self.clowder_path)
+
+    def checkout(self, ref):
+        """Checkout ref in clowder repo"""
+        if self.is_dirty():
+            print(' - Dirty repo. Please stash, commit, or discard your changes')
+        else:
+            git_checkout(self.clowder_path, ref)
+
+    def clean(self):
+        """Discard changes in clowder repo"""
+        if self.is_dirty():
+            print(' - Discarding current changes')
+            git_reset_head(self.clowder_path)
+        else:
+            print(' - No changes to discard')
+
+    def commit(self, message):
+        """Commit current changes in clowder repo"""
+        git_commit(self.clowder_path, message)
 
     def init(self, url, branch):
         """Clone clowder repo from url"""
@@ -32,11 +65,9 @@ class ClowderRepo(object):
         git_create_repo(url, self.clowder_path, 'origin', repo_branch)
         self.symlink_yaml()
 
-    def run_command(self, command):
-        """Run command in clowder repo"""
-        command_output = colored('$ ' + command, attrs=['bold'])
-        print(command_output)
-        subprocess.call(command.split(), cwd=self.clowder_path)
+    def is_dirty(self):
+        """Check if project is dirty"""
+        return git_is_dirty(self.clowder_path)
 
     def print_status(self):
         """Print clowder repo status"""
@@ -49,6 +80,24 @@ class ClowderRepo(object):
         project_output = format_project_string(repo_path, '.clowder')
         current_ref_output = format_ref_string(repo_path)
         print(cat_face + '  ' + project_output + ' ' + current_ref_output)
+
+    def pull(self):
+        """Pull clowder repo upstream changes"""
+        git_pull(self.clowder_path)
+
+    def push(self):
+        """Push clowder repo changes"""
+        git_push(self.clowder_path)
+
+    def run_command(self, command):
+        """Run command in clowder repo"""
+        command_output = colored('$ ' + command, attrs=['bold'])
+        print(command_output)
+        subprocess.call(command.split(), cwd=self.clowder_path)
+
+    def status(self):
+        """Print clowder repo git status"""
+        git_status(self.clowder_path)
 
     def symlink_yaml(self, version=None):
         """Create symlink pointing to clowder.yaml file"""

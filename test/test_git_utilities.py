@@ -1,5 +1,6 @@
 """Test group class"""
-import os, unittest
+import os
+import unittest
 from clowder.utility.git_utilities import (
     git_current_branch,
     git_current_sha,

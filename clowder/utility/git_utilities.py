@@ -8,10 +8,28 @@ from termcolor import colored, cprint
 # Disable errors shown by pylint for no specified exception types
 # pylint: disable=W0702
 
+def git_add(repo_path, files):
+    """Add files to git index"""
+    repo = _repo(repo_path)
+    print(repo.git.add(files))
+
 def git_branches(repo_path):
     """Get list of current branches"""
     repo = _repo(repo_path)
     return repo.branches
+
+def git_checkout(repo_path, ref):
+    """Checkout git ref"""
+    repo = _repo(repo_path)
+    ref_output = colored('(' + ref + ')', 'magenta')
+    print(' - Check out ' + ref_output)
+    print(repo.git.checkout(ref))
+
+def git_commit(repo_path, message):
+    """Commit current changes"""
+    repo = _repo(repo_path)
+    print(' - Commit current changes')
+    print(repo.git.commit(message=message))
 
 def git_create_repo(url, repo_path, remote, ref, depth=0):
     """Clone git repo from url at path"""
@@ -116,6 +134,34 @@ def git_is_dirty(repo_path):
         repo = _repo(repo_path)
         return repo.is_dirty()
 
+def git_prune(repo_path, branch, default_ref):
+    """Start new branch in repository"""
+    repo = _repo(repo_path)
+    branch_output = colored('(' + branch + ')', 'magenta')
+    if branch in repo.heads:
+        prune_branch = repo.heads[branch]
+        if repo.head.ref == prune_branch:
+            truncated_ref = _truncate_ref(default_ref)
+            ref_output = colored('(' + truncated_ref + ')', 'magenta')
+            try:
+                print(' - Checking out ' + ref_output)
+                repo.git.checkout(truncated_ref)
+            except:
+                message = colored(' - Failed to checkout ref', 'red')
+                print(message + ref_output)
+                print('')
+                sys.exit(1)
+        try:
+            print(' - Deleting branch ' + branch_output)
+            repo.delete_head(branch)
+        except:
+            message = colored(' - Failed to delete branch', 'red')
+            print(message + branch_output)
+            print('')
+            sys.exit(1)
+    else:
+        print(' - Branch ' + branch_output + " doesn't exist")
+
 def git_pull(repo_path):
     """Pull from remote branch"""
     repo = _repo(repo_path)
@@ -127,6 +173,22 @@ def git_pull(repo_path):
             cprint(' - Failed to pull latest changes', 'red')
             print('')
             sys.exit(1)
+    else:
+        print(' - HEAD is detached')
+
+def git_push(repo_path):
+    """Push to remote branch"""
+    repo = _repo(repo_path)
+    if not repo.head.is_detached:
+        try:
+            print(' - Pushing local changes')
+            print(repo.git.push())
+        except:
+            cprint(' - Failed to push local changes', 'red')
+            print('')
+            sys.exit(1)
+    else:
+        print(' - HEAD is detached')
 
 def git_reset_head(repo_path):
     """Reset head of repo, discarding changes"""
@@ -176,34 +238,6 @@ def git_status(repo_path):
     """Print git status"""
     repo = _repo(repo_path)
     print(repo.git.status())
-
-def git_prune(repo_path, branch, default_ref):
-    """Start new branch in repository"""
-    repo = _repo(repo_path)
-    branch_output = colored('(' + branch + ')', 'magenta')
-    if branch in repo.heads:
-        prune_branch = repo.heads[branch]
-        if repo.head.ref == prune_branch:
-            truncated_ref = _truncate_ref(default_ref)
-            ref_output = colored('(' + truncated_ref + ')', 'magenta')
-            try:
-                print(' - Checking out ' + ref_output)
-                repo.git.checkout(truncated_ref)
-            except:
-                message = colored(' - Failed to checkout ref', 'red')
-                print(message + ref_output)
-                print('')
-                sys.exit(1)
-        try:
-            print(' - Deleting branch ' + branch_output)
-            repo.delete_head(branch)
-        except:
-            message = colored(' - Failed to delete branch', 'red')
-            print(message + branch_output)
-            print('')
-            sys.exit(1)
-    else:
-        print(' - Branch ' + branch_output + " doesn't exist")
 
 def _checkout_branch(repo_path, branch, remote, depth):
     """Checkout branch, and create if it doesn't exist"""

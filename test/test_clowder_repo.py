@@ -1,5 +1,6 @@
 """Test ClowderRepo class"""
-import os, unittest
+import os
+import unittest
 from clowder.clowder_repo import ClowderRepo
 from test.shared import CATS_EXAMPLE_PATH
 
