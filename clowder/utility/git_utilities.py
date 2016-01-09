@@ -18,6 +18,13 @@ def git_branches(repo_path):
     repo = _repo(repo_path)
     return repo.branches
 
+def git_checkout(repo_path, ref):
+    """Checkout git ref"""
+    repo = _repo(repo_path)
+    ref_output = colored('(' + ref + ')', 'magenta')
+    print(' - Check out ' + ref_output)
+    print(repo.git.checkout(ref))
+
 def git_commit(repo_path, message):
     """Commit current changes"""
     repo = _repo(repo_path)
