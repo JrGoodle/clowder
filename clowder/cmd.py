@@ -168,7 +168,7 @@ class Command(object):
     def repo_commit(self):
         """clowder repo commit command"""
         if self.clowder_repo is not None:
-            self.clowder_repo.commit(self.args.message)
+            self.clowder_repo.commit(self.args.message[0])
         else:
             exit_clowder_not_found()
 

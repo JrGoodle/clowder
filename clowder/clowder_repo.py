@@ -7,6 +7,7 @@ from termcolor import colored
 from clowder.utility.git_utilities import (
     git_add,
     git_branches,
+    git_commit,
     git_create_repo,
     git_is_dirty,
     git_reset_head,
@@ -38,7 +39,10 @@ class ClowderRepo(object):
 
     def checkout(self, ref):
         """Checkout ref in clowder repo"""
-        print('clowder repo checkout ' + ref)
+        if self.is_dirty():
+            print(' - Dirty repo. Please stash, commit, or discard your changes')
+        else:
+            print(' - Check out ' + ref)
 
     def clean(self):
         """Discard changes in clowder repo"""
@@ -50,7 +54,7 @@ class ClowderRepo(object):
 
     def commit(self, message):
         """Commit current changes in clowder repo"""
-        print('clowder repo commit ' + message)
+        git_commit(self.clowder_path, message)
 
     def init(self, url, branch):
         """Clone clowder repo from url"""

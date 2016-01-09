@@ -9,7 +9,7 @@ from termcolor import colored, cprint
 # pylint: disable=W0702
 
 def git_add(repo_path, files):
-    """Get list of current branches"""
+    """Add files to git index"""
     repo = _repo(repo_path)
     print(repo.git.add(files))
 
@@ -17,6 +17,12 @@ def git_branches(repo_path):
     """Get list of current branches"""
     repo = _repo(repo_path)
     return repo.branches
+
+def git_commit(repo_path, message):
+    """Commit current changes"""
+    repo = _repo(repo_path)
+    print(' - Commit current changes')
+    print(repo.git.commit(message=message))
 
 def git_create_repo(url, repo_path, remote, ref, depth=0):
     """Clone git repo from url at path"""
