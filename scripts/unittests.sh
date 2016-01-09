@@ -30,3 +30,6 @@ echo 'TEST: Run unittests'
 prepare_unittest_repos
 cd ../.. || exit 1
 python3 -m unittest discover -v
+
+cd examples/cats || exit 1
+./clean.sh

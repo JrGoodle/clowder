@@ -5,6 +5,7 @@
 echo 'TEST: cats example test script'
 
 cd "$( dirname "${BASH_SOURCE[0]}" )" || exit 1
+./unittests.sh
 source test_utilities.sh
 cd ../examples/cats || exit 1
 
