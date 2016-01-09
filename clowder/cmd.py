@@ -141,7 +141,6 @@ class Command(object):
         """clowder repo command"""
         if self.clowder_repo is not None:
             self.clowder_repo.print_status()
-            print('')
             repo_command = 'repo_' + self.args.repo_command
             getattr(self, repo_command)()
         else:

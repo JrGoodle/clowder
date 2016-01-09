@@ -8,7 +8,7 @@ from clowder.utility.git_utilities import (
     git_branches,
     git_create_repo,
     git_is_dirty,
-    git_reset_head
+    git_reset_head,
 )
 from clowder.utility.clowder_utilities import (
     force_symlink,
@@ -35,9 +35,10 @@ class ClowderRepo(object):
     def clean(self):
         """Discard changes in clowder repo"""
         if self.is_dirty():
-            self.print_status()
             print(' - Discarding current changes')
             git_reset_head(self.clowder_path)
+        else:
+            print(' - No changes to discard')
 
     def init(self, url, branch):
         """Clone clowder repo from url"""
