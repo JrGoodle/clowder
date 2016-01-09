@@ -24,6 +24,10 @@ class ClowderRepo(object):
         self.root_directory = root_directory
         self.clowder_path = os.path.join(self.root_directory, '.clowder')
 
+    def add(self, files):
+        """Add files in clowder repo to git"""
+        print('clowder repo add ' + files)
+
     def branches(self):
         """Return current local branches"""
         return git_branches(self.clowder_path)
@@ -40,6 +44,10 @@ class ClowderRepo(object):
         else:
             print(' - No changes to discard')
 
+    def commit(self, message):
+        """Commit current changes in clowder repo"""
+        print('clowder repo commit ' + message)
+
     def init(self, url, branch):
         """Clone clowder repo from url"""
         repo_branch = 'refs/heads/' + branch
@@ -49,12 +57,6 @@ class ClowderRepo(object):
     def is_dirty(self):
         """Check if project is dirty"""
         return git_is_dirty(self.clowder_path)
-
-    def run_command(self, command):
-        """Run command in clowder repo"""
-        command_output = colored('$ ' + command, attrs=['bold'])
-        print(command_output)
-        subprocess.call(command.split(), cwd=self.clowder_path)
 
     def print_status(self):
         """Print clowder repo status"""
@@ -67,6 +69,25 @@ class ClowderRepo(object):
         project_output = format_project_string(repo_path, '.clowder')
         current_ref_output = format_ref_string(repo_path)
         print(cat_face + '  ' + project_output + ' ' + current_ref_output)
+
+    def pull(self):
+        """Pull clowder repo upstream changes"""
+        print('clowder repo pull')
+
+    def push(self):
+        """Push clowder repo changes"""
+        print('clowder repo push')
+
+
+    def run_command(self, command):
+        """Run command in clowder repo"""
+        command_output = colored('$ ' + command, attrs=['bold'])
+        print(command_output)
+        subprocess.call(command.split(), cwd=self.clowder_path)
+
+    def status(self):
+        """Print clowder repo git status"""
+        print('clowder repo status')
 
     def symlink_yaml(self, version=None):
         """Create symlink pointing to clowder.yaml file"""
@@ -86,14 +107,6 @@ class ClowderRepo(object):
             print(path_output + " doesn't seem to exist")
             print('')
             sys.exit(1)
-
-    def sync(self):
-        """Sync clowder repo"""
-        print('clowder repo sync ')
-
-    def update(self, message):
-        """Update clowder repo with current changes"""
-        print('clowder repo update ' + message)
 
     def _validate(self):
         """Validate status of clowder repo"""
