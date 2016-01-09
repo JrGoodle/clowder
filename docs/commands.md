@@ -78,6 +78,23 @@ $ clowder init https://github.com/jrgoodle/cats.git -b tags
 
 ---
 
+### `prune`
+
+Prune stale local branches.
+
+```bash
+# Prune branch 'stale_branch' for all projects
+$ clowder prune stale_branch
+
+# Prune branch 'stale_branch' in clang group
+$ clowder prune stale_branch -g clang
+
+# Prune branch 'stale_branch' in clang project
+$ clowder prune stale_branch -p llvm-mirror/clang
+```
+
+---
+
 ### `repo`
 
 Manage clowder repository (`.clowder` directory).
@@ -87,12 +104,16 @@ Manage clowder repository (`.clowder` directory).
 $ clowder repo checkout my_branch
 # Discard current changes in clowder repo
 $ clowder repo clean
-# Pull latest changes in clowder repo
-$ clowder repo sync
 # Commit changes to yaml files in clowder repo
-$ clowder repo update
+$ clowder repo commit 'commit message'
+# Pull latest changes in clowder repo
+$ clowder repo pull
+# Push latest changes in clowder repo
+$ clowder repo push
 # Run command in .clowder directory
 $ clowder repo run 'git status'
+# Print clowder repo git status
+$ clowder repo status
 ```
 
 ---
@@ -158,21 +179,4 @@ $ clowder status -g clang llvm
 
 # Print verbose status of projects in clang group
 $ clowder status -v -g clang
-```
-
----
-
-### `prune`
-
-Prune stale local branches.
-
-```bash
-# Prune branch 'stale_branch' for all projects
-$ clowder prune stale_branch
-
-# Prune branch 'stale_branch' in clang group
-$ clowder prune stale_branch -g clang
-
-# Prune branch 'stale_branch' in clang project
-$ clowder prune stale_branch -p llvm-mirror/clang
 ```
