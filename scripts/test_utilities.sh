@@ -277,26 +277,32 @@ print_help()
     echo "TEST: clowder -h"
     clowder -h
     print_separator
-    echo "TEST: clowder init -h"
-    clowder init -h
-    print_separator
-    echo "TEST: clowder herd -h"
-    clowder herd -h
-    print_separator
-    echo "TEST: clowder save -h"
-    clowder save -h
+    echo "TEST: clowder clean -h"
+    clowder clean -h
     print_separator
     echo "TEST: clowder forall -h"
     clowder forall -h
     print_separator
-    echo "TEST: clowder clean -h"
-    clowder clean -h
+    echo "TEST: clowder herd -h"
+    clowder herd -h
     print_separator
-    echo "TEST: clowder status -h"
-    clowder status -h
+    echo "TEST: clowder init -h"
+    clowder init -h
+    print_separator
+    echo "TEST: clowder prune -h"
+    clowder prune -h
+    print_separator
+    echo "TEST: clowder save -h"
+    clowder save -h
+    print_separator
+    echo "TEST: clowder start -h"
+    clowder start -h
     print_separator
     echo "TEST: clowder stash -h"
     clowder stash -h
+    print_separator
+    echo "TEST: clowder status -h"
+    clowder status -h
 }
 
 print_separator()

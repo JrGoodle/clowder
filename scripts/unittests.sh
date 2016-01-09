@@ -29,4 +29,7 @@ prepare_unittest_repos()
 echo 'TEST: Run unittests'
 prepare_unittest_repos
 cd ../.. || exit 1
-python3 -m unittest discover -v
+python3 -m unittest discover -v || exit 1
+
+cd examples/cats || exit 1
+./clean.sh

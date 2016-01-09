@@ -1,25 +1,31 @@
-language: objective-c
+language: c
 
-sudo: false # Enable container-based builds
+os:
+  - linux
+  - osx
+
+sudo: required
+dist: trusty
 
 env:
   matrix:
     - TARGET="test_cats_example"
     - TARGET="test_llvm_example"
-    # - TARGET="test_srclib_example"
-    - TARGET="unittests"
 
-before_install: brew update
+before_install:
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew update; fi
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get update; fi
 
 install:
-  - brew install python3
-  - brew install github-release
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew install python3; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew install github-release; fi
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get install -y python3-setuptools; fi
 
-before_script: python3 setup.py -q install
+before_script: sudo python3 setup.py -q install
 
 script: scripts/${TARGET}.sh
 
-after_success: scripts/deploy.sh
+after_success: if [ "$TRAVIS_OS_NAME" = "osx" ]; then scripts/deploy.sh; fi
 
 branches:
   only: # whitelist
