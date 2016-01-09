@@ -5,10 +5,12 @@ import sys
 import emoji
 from termcolor import colored
 from clowder.utility.git_utilities import (
+    git_add,
     git_branches,
     git_create_repo,
     git_is_dirty,
     git_reset_head,
+    git_status
 )
 from clowder.utility.clowder_utilities import (
     force_symlink,
@@ -26,7 +28,9 @@ class ClowderRepo(object):
 
     def add(self, files):
         """Add files in clowder repo to git"""
-        print('clowder repo add ' + files)
+        print(' - Add files in clowder repo')
+        git_add(self.clowder_path, files)
+        git_status(self.clowder_path)
 
     def branches(self):
         """Return current local branches"""
@@ -87,7 +91,7 @@ class ClowderRepo(object):
 
     def status(self):
         """Print clowder repo git status"""
-        print('clowder repo status')
+        git_status(self.clowder_path)
 
     def symlink_yaml(self, version=None):
         """Create symlink pointing to clowder.yaml file"""

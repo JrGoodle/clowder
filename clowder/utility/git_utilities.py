@@ -8,6 +8,11 @@ from termcolor import colored, cprint
 # Disable errors shown by pylint for no specified exception types
 # pylint: disable=W0702
 
+def git_add(repo_path, files):
+    """Get list of current branches"""
+    repo = _repo(repo_path)
+    print(repo.git.add(files))
+
 def git_branches(repo_path):
     """Get list of current branches"""
     repo = _repo(repo_path)
