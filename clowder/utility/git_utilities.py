@@ -173,6 +173,22 @@ def git_pull(repo_path):
             cprint(' - Failed to pull latest changes', 'red')
             print('')
             sys.exit(1)
+    else:
+        print(' - HEAD is detached')
+
+def git_push(repo_path):
+    """Push to remote branch"""
+    repo = _repo(repo_path)
+    if not repo.head.is_detached:
+        try:
+            print(' - Pushing local changes')
+            print(repo.git.push())
+        except:
+            cprint(' - Failed to push local changes', 'red')
+            print('')
+            sys.exit(1)
+    else:
+        print(' - HEAD is detached')
 
 def git_reset_head(repo_path):
     """Reset head of repo, discarding changes"""

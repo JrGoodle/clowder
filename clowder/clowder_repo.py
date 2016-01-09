@@ -11,6 +11,8 @@ from clowder.utility.git_utilities import (
     git_commit,
     git_create_repo,
     git_is_dirty,
+    git_pull,
+    git_push,
     git_reset_head,
     git_status
 )
@@ -81,12 +83,11 @@ class ClowderRepo(object):
 
     def pull(self):
         """Pull clowder repo upstream changes"""
-        print('clowder repo pull')
+        git_pull(self.clowder_path)
 
     def push(self):
         """Push clowder repo changes"""
-        print('clowder repo push')
-
+        git_push(self.clowder_path)
 
     def run_command(self, command):
         """Run command in clowder repo"""
