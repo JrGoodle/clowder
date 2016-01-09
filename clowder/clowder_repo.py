@@ -6,7 +6,9 @@ import emoji
 from termcolor import colored
 from clowder.utility.git_utilities import (
     git_branches,
-    git_create_repo
+    git_create_repo,
+    git_is_dirty,
+    git_reset_head
 )
 from clowder.utility.clowder_utilities import (
     force_symlink,
@@ -26,11 +28,26 @@ class ClowderRepo(object):
         """Return current local branches"""
         return git_branches(self.clowder_path)
 
+    def checkout(self, ref):
+        """Checkout ref in clowder repo"""
+        print('clowder repo checkout ' + ref)
+
+    def clean(self):
+        """Discard changes in clowder repo"""
+        if self.is_dirty():
+            self.print_status()
+            print(' - Discarding current changes')
+            git_reset_head(self.clowder_path)
+
     def init(self, url, branch):
         """Clone clowder repo from url"""
         repo_branch = 'refs/heads/' + branch
         git_create_repo(url, self.clowder_path, 'origin', repo_branch)
         self.symlink_yaml()
+
+    def is_dirty(self):
+        """Check if project is dirty"""
+        return git_is_dirty(self.clowder_path)
 
     def run_command(self, command):
         """Run command in clowder repo"""
@@ -68,6 +85,14 @@ class ClowderRepo(object):
             print(path_output + " doesn't seem to exist")
             print('')
             sys.exit(1)
+
+    def sync(self):
+        """Sync clowder repo"""
+        print('clowder repo sync ')
+
+    def update(self, message):
+        """Update clowder repo with current changes"""
+        print('clowder repo update ' + message)
 
     def _validate(self):
         """Validate status of clowder repo"""

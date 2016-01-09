@@ -142,7 +142,43 @@ class Command(object):
         if self.clowder_repo is not None:
             self.clowder_repo.print_status()
             print('')
+            repo_command = 'repo_' + self.args.repo_command
+            getattr(self, repo_command)()
+        else:
+            exit_clowder_not_found()
+
+    def repo_checkout(self):
+        """clowder repo checkout command"""
+        if self.clowder_repo is not None:
+            self.clowder_repo.checkout(self.args.ref)
+        else:
+            exit_clowder_not_found()
+
+    def repo_clean(self):
+        """clowder repo clean command"""
+        if self.clowder_repo is not None:
+            self.clowder_repo.clean()
+        else:
+            exit_clowder_not_found()
+
+    def repo_run(self):
+        """clowder repo run command"""
+        if self.clowder_repo is not None:
             self.clowder_repo.run_command(self.args.cmd)
+        else:
+            exit_clowder_not_found()
+
+    def repo_sync(self):
+        """clowder repo sync command"""
+        if self.clowder_repo is not None:
+            self.clowder_repo.sync()
+        else:
+            exit_clowder_not_found()
+
+    def repo_update(self):
+        """clowder repo update command"""
+        if self.clowder_repo is not None:
+            self.clowder_repo.update(self.args.message)
         else:
             exit_clowder_not_found()
 
@@ -257,9 +293,27 @@ class Command(object):
     def _configure_subparser_repo(self, subparsers):
         """Configure clowder repo subparser and arguments"""
         # clowder repo
-        repo_help = 'Run command in project directories'
+        repo_help = 'Manage clowder repo'
         parser_repo = subparsers.add_parser('repo', help=repo_help)
-        parser_repo.add_argument('cmd', help='Command to run in project directories')
+        repo_subparsers = parser_repo.add_subparsers(dest='repo_command')
+        # clowder repo checkout
+        repo_checkout_help = 'Checkout ref in clowder repo'
+        parser_repo_checkout = repo_subparsers.add_parser('checkout', help=repo_checkout_help)
+        parser_repo_checkout.add_argument('ref', help='Git ref to checkout')
+        # clowder repo clean
+        repo_clean_help = 'Discard changes in clowder repo'
+        repo_subparsers.add_parser('clean', help=repo_clean_help)
+        # clowder repo run
+        repo_run_help = 'Command to run in project directories'
+        parser_repo_run = repo_subparsers.add_parser('run', help=repo_run_help)
+        parser_repo_run.add_argument('cmd', help='Command to run in clowder repo directory')
+        # clowder repo sync
+        repo_sync_help = 'Pull upstream changes in clowder repo'
+        repo_subparsers.add_parser('sync', help=repo_sync_help)
+        # clowder repo update
+        repo_update_help = 'Commit current changes in clowder repo yaml files'
+        parser_repo_update = repo_subparsers.add_parser('update', help=repo_help)
+        parser_repo_update.add_argument('message', help='Commit message')
 
     def _configure_subparser_save(self, subparsers):
         """Configure clowder save subparser and arguments"""

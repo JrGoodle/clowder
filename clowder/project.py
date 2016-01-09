@@ -65,6 +65,13 @@ class Project(object):
                 self.forks.append(Fork(fork, full_path, self.source,
                                        self.ref, self.depth))
 
+    def clean(self):
+        """Discard changes for project"""
+        if self.is_dirty():
+            self._print_status()
+            print(' - Discarding current changes')
+            git_reset_head(self.full_path())
+
     def exists(self):
         """Check if project exists on disk"""
         path = os.path.join(self.full_path(), '.git')
@@ -84,13 +91,6 @@ class Project(object):
                 'ref': git_current_sha(self.full_path()),
                 'remote': self.remote_name,
                 'source': self.source.name}
-
-    def clean(self):
-        """Discard changes for project"""
-        if self.is_dirty():
-            self._print_status()
-            print(' - Discarding current changes')
-            git_reset_head(self.full_path())
 
     def herd(self):
         """Clone project or update latest from upstream"""
