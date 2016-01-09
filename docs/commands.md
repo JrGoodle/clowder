@@ -83,8 +83,16 @@ $ clowder init https://github.com/jrgoodle/cats.git -b tags
 Manage clowder repository (`.clowder` directory).
 
 ```bash
+# Checkout git ref in clowder repo
+$ clowder repo checkout my_branch
+# Discard current changes in clowder repo
+$ clowder repo clean
+# Pull latest changes in clowder repo
+$ clowder repo sync
+# Commit changes to yaml files in clowder repo
+$ clowder repo update
 # Run command in .clowder directory
-$ clowder repo 'git status'
+$ clowder repo run 'git status'
 ```
 
 ---
