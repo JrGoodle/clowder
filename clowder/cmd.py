@@ -154,7 +154,7 @@ class Command(object):
     def repo_checkout(self):
         """clowder repo checkout command"""
         if self.clowder_repo is not None:
-            self.clowder_repo.checkout(self.args.ref)
+            self.clowder_repo.checkout(self.args.ref[0])
         else:
             exit_clowder_not_found()
 
@@ -189,7 +189,7 @@ class Command(object):
     def repo_run(self):
         """clowder repo run command"""
         if self.clowder_repo is not None:
-            self.clowder_repo.run_command(self.args.cmd)
+            self.clowder_repo.run_command(self.args.cmd[0])
         else:
             exit_clowder_not_found()
 
@@ -332,7 +332,7 @@ class Command(object):
         repo_run_help = 'Run command in clowder repo'
         parser_repo_run = repo_subparsers.add_parser('run', help=repo_run_help)
         repo_run_command_help = 'Command to run in clowder repo directory'
-        parser_repo_run.add_argument('cmd', help=repo_run_command_help)
+        parser_repo_run.add_argument('cmd', nargs=1, help=repo_run_command_help)
         # clowder repo pull
         repo_pull_help = 'Pull upstream changes in clowder repo'
         repo_subparsers.add_parser('pull', help=repo_pull_help)
