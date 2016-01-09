@@ -139,16 +139,16 @@ $ clowder stash -p llvm-mirror/clang
 Print status of projects.
 
 ```bash
-# print status of projects
+# Print status of projects
 $ clowder status
 
-# print more verbose status of projects
+# Print more verbose status of projects
 $ clowder status -v
 
-# print status of projects in clang and llvm groups
+# Print status of projects in clang and llvm groups
 $ clowder status -g clang llvm
 
-# print verbose status of projects in clang group
+# Print verbose status of projects in clang group
 $ clowder status -v -g clang
 ```
 

@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/usr/bin/env bash
 
 make_dirty_clowder_repo()
 {

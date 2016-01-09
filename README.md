@@ -73,7 +73,7 @@ Next sync all repositories:
 $ clowder herd
 ```
 
-The `clowder herd` command syncs the default branch for each project. The project repositories must be clean, or `clowder` will exit. The `clowder.yaml` symlink is always updated to point to the primary `clowder.yaml` file in the repository cloned with `clowder init`. Projects are cloned if they don't currently exist. Otherwise, each project will pull the latest changes. If the current branch isn't the default, it'll be checked out, and latest changes pulled. For commits and tags, the commits are checked out into a detached `HEAD` state (`clowder forall` can then be used to checkout/create branches).
+The `clowder herd` command syncs the default branch for each project. The project repositories must be clean, or `clowder` will exit. The `clowder.yaml` symlink is always updated to point to the primary `clowder.yaml` file in the clowder repo. Projects are cloned if they don't currently exist. Otherwise, each project will pull the latest changes. If the current branch isn't the default, it'll be checked out, and latest changes pulled. For commits and tags, the commits are checked out into a detached `HEAD` state (`clowder forall` or `clowder start` can then be used to create/checkout branches).
 
 For more example projects, see the [examples directory](https://github.com/JrGoodle/clowder/tree/master/examples).
 
