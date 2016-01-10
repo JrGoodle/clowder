@@ -97,21 +97,28 @@ $ clowder prune stale_branch -p llvm-mirror/clang
 
 ### `repo`
 
-Manage clowder repository (`.clowder` directory).
+Convenience commands for managing clowder repo (the `.clowder` directory).
+More advanced needs may require changing to the `.clowder` directory and running commands directly.
 
 ```bash
 # Checkout git ref in clowder repo
 $ clowder repo checkout my_branch
+
 # Discard current changes in clowder repo
 $ clowder repo clean
+
 # Commit changes to yaml files in clowder repo
 $ clowder repo commit 'commit message'
+
 # Pull latest changes in clowder repo
 $ clowder repo pull
+
 # Push latest changes in clowder repo
 $ clowder repo push
+
 # Run command in .clowder directory
 $ clowder repo run 'git status'
+
 # Print clowder repo git status
 $ clowder repo status
 ```
@@ -121,6 +128,7 @@ $ clowder repo status
 ### `save`
 
 Save a `clowder.yaml` version with the information from currently checked out repositories.
+Versions are saved to `.clowder/versions/<version_name>/clowder.yaml` and need to be committed manually.
 
 ```bash
 # Save a version of clowder.yaml with current commit sha's
