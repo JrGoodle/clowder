@@ -16,6 +16,32 @@ source test_utilities.sh
 cd ../examples/cats || exit 1
 ./clean.sh
 
+export projects=( 'black-cats/kit' \
+                  'black-cats/kishka' \
+                  'black-cats/sasha' \
+                  'black-cats/jules' )
+
+test_init_branch()
+{
+    print_separator
+    echo "TEST: Test clowder init branch"
+
+    clowder init https://github.com/jrgoodle/cats.git -b tags
+
+    pushd .clowder &>/dev/null
+    test_branch tags
+    popd &>/dev/null
+
+    rm -rf .clowder clowder.yaml
+}
+test_init_branch
+
+test_command
+test_clowder_version
+test_init_herd_version
+test_branch_version "${projects[@]}"
+test_init_herd
+
 test_branches()
 {
     test_branch_master "${projects[@]}"
@@ -26,38 +52,22 @@ test_branches()
     test_branch purr
     popd &>/dev/null
 }
+test_branches
 
-test_start()
-{
-    clowder herd
-    print_separator
-    echo "TEST: Start new feature branch"
-
-    clowder start start_branch
-    clowder forall 'git checkout master' -g black-cats
-
-    pushd mu &>/dev/null
-    test_branch start_branch
-    popd &>/dev/null
-    pushd duke &>/dev/null
-    test_branch start_branch
-    popd &>/dev/null
-    pushd black-cats/jules &>/dev/null
-    test_branch master
-    popd &>/dev/null
-    pushd black-cats/kishka &>/dev/null
-    test_branch master
-    popd &>/dev/null
-
-    clowder start start_branch
-
-    pushd black-cats/jules &>/dev/null
-    test_branch start_branch
-    popd &>/dev/null
-    pushd black-cats/kishka &>/dev/null
-    test_branch start_branch
-    popd &>/dev/null
-}
+test_status_groups 'black-cats'
+test_clean 'black-cats'
+test_clean_projects 'jrgoodle/kit'
+test_clean_missing_directories 'mu' 'duke'
+test_herd_dirty_repos "${projects[@]}"
+test_herd_detached_heads "${projects[@]}"
+test_herd 'duke' 'mu'
+test_forall 'cats'
+test_forall_projects 'jrgoodle/kit' 'jrgoodle/kishka'
+test_save
+test_stash 'black-cats'
+test_stash_projects 'jrgoodle/kit'
+test_stash_missing_directories 'mu' 'duke'
+test_herd_groups 'cats'
 
 test_herd_missing_branches()
 {
@@ -75,48 +85,23 @@ test_herd_missing_branches()
     clowder herd || exit 1
     clowder status || exit 1
 }
+test_herd_missing_branches
 
-test_herd_missing_groups()
-{
-    echo "TEST: Test herd of missing group"
-    clowder herd -v missing-groups
-    clowder herd -g slavic || exit 1
-    clowder status || exit 1
-}
+test_save_missing_directories 'duke' 'mu'
 
-test_herd_sha()
+test_no_versions()
 {
     print_separator
-    echo "TEST: Test herd of static commit hash refs"
-    clowder repo checkout static-refs || exit 1
+    echo "TEST: Test clowder repo with no versions saved"
+    clowder repo checkout no-versions || exit 1
+    clowder herd -v saved-version && exit 1
     clowder herd || exit 1
     clowder status || exit 1
     clowder repo checkout master || exit 1
 }
+test_no_versions
 
-test_herd_tag()
-{
-    print_separator
-    echo "TEST: Test herd of tag refs"
-    clowder repo checkout tags || exit 1
-    clowder herd || exit 1
-    clowder status || exit 1
-    clowder repo checkout master || exit 1
-}
-
-test_init_branch()
-{
-    print_separator
-    echo "TEST: Test clowder init branch"
-
-    clowder init https://github.com/jrgoodle/cats.git -b tags
-
-    pushd .clowder &>/dev/null
-    test_branch tags
-    popd &>/dev/null
-
-    rm -rf .clowder clowder.yaml
-}
+test_herd_projects 'jrgoodle/kit' 'jrgoodle/kishka'
 
 test_invalid_yaml()
 {
@@ -149,17 +134,71 @@ test_invalid_yaml()
     git checkout master
     popd &>/dev/null
 }
+test_invalid_yaml
 
-test_no_versions()
+test_herd_sha()
 {
     print_separator
-    echo "TEST: Test clowder repo with no versions saved"
-    clowder repo checkout no-versions || exit 1
-    clowder herd -v saved-version && exit 1
+    echo "TEST: Test herd of static commit hash refs"
+    clowder repo checkout static-refs || exit 1
     clowder herd || exit 1
     clowder status || exit 1
     clowder repo checkout master || exit 1
 }
+test_herd_sha
+
+test_herd_tag()
+{
+    print_separator
+    echo "TEST: Test herd of tag refs"
+    clowder repo checkout tags || exit 1
+    clowder herd || exit 1
+    clowder status || exit 1
+    clowder repo checkout master || exit 1
+}
+test_herd_tag
+
+test_herd_missing_groups()
+{
+    echo "TEST: Test herd of missing group"
+    clowder herd -v missing-groups
+    clowder herd -g slavic || exit 1
+    clowder status || exit 1
+}
+test_herd_missing_groups
+
+test_start()
+{
+    clowder herd
+    print_separator
+    echo "TEST: Start new feature branch"
+
+    clowder start start_branch
+    clowder forall 'git checkout master' -g black-cats
+
+    pushd mu &>/dev/null
+    test_branch start_branch
+    popd &>/dev/null
+    pushd duke &>/dev/null
+    test_branch start_branch
+    popd &>/dev/null
+    pushd black-cats/jules &>/dev/null
+    test_branch master
+    popd &>/dev/null
+    pushd black-cats/kishka &>/dev/null
+    test_branch master
+    popd &>/dev/null
+
+    clowder start start_branch
+
+    pushd black-cats/jules &>/dev/null
+    test_branch start_branch
+    popd &>/dev/null
+    pushd black-cats/kishka &>/dev/null
+    test_branch start_branch
+    popd &>/dev/null
+}
+test_start
 
 test_prune()
 {
@@ -195,54 +234,6 @@ test_prune()
 
     clowder prune
 }
-
-# export projects=( 'black-cats/kit' \
-#                   'black-cats/kishka' \
-#                   'black-cats/sasha' \
-#                   'black-cats/jules' \
-#                   'mu' \
-#                   'duke' )
-
-export projects=( 'black-cats/kit' \
-                  'black-cats/kishka' \
-                  'black-cats/sasha' \
-                  'black-cats/jules' )
-
-test_init_branch
-
-test_command
-test_clowder_version
-
-test_init_herd_version
-test_branch_version "${projects[@]}"
-
-test_init_herd
-test_branches
-test_status_groups 'black-cats'
-test_invalid_yaml
-test_clean 'black-cats'
-test_clean_projects 'jrgoodle/kit'
-test_clean_missing_directories 'mu' 'duke'
-test_herd_dirty_repos "${projects[@]}"
-test_herd_detached_heads "${projects[@]}"
-test_herd 'duke' 'mu'
-test_forall 'cats'
-test_forall_projects 'jrgoodle/kit' 'jrgoodle/kishka'
-test_save
-test_stash 'black-cats'
-test_stash_projects 'jrgoodle/kit'
-test_stash_missing_directories 'mu' 'duke'
-test_herd_groups 'cats'
-test_herd_missing_branches
-test_save_missing_directories 'duke' 'mu'
-test_no_versions
-test_herd_projects 'jrgoodle/kit' 'jrgoodle/kishka'
-
-test_invalid_yaml
-test_herd_sha
-test_herd_tag
-test_herd_missing_groups
-test_start
 test_prune
 
 print_help
