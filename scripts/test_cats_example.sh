@@ -83,20 +83,20 @@ test_herd_sha()
 {
     print_separator
     echo "TEST: Test herd of static commit hash refs"
-    clowder repo run 'git checkout static-refs'
+    clowder repo checkout static-refs
     clowder herd || exit 1
     clowder status || exit 1
-    clowder repo run 'git checkout master'
+    clowder repo checkout master
 }
 
 test_herd_tag()
 {
     print_separator
     echo "TEST: Test herd of tag refs"
-    clowder repo run 'git checkout tags'
+    clowder repo checkout tags
     clowder herd || exit 1
     clowder status || exit 1
-    clowder repo run 'git checkout master'
+    clowder repo checkout master
 }
 
 test_init_branch()
@@ -118,7 +118,7 @@ test_invalid_yaml()
     print_separator
     echo "TEST: Fail herd with invalid yaml"
 
-    clowder repo run 'git checkout invalid-yaml'
+    clowder repo checkout invalid-yaml
 
     test_cases=( 'missing-defaults' \
                  'missing-sources' \
@@ -149,11 +149,11 @@ test_no_versions()
 {
     print_separator
     echo "TEST: Test clowder repo with no versions saved"
-    clowder repo run 'git checkout no-versions'
+    clowder repo checkout no-versions
     clowder herd -v saved-version && exit 1
     clowder herd || exit 1
     clowder status || exit 1
-    clowder repo run 'git checkout master'
+    clowder repo checkout master
 }
 
 test_prune()

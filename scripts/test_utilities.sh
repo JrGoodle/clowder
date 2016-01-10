@@ -4,7 +4,7 @@ make_dirty_clowder_repo()
 {
     echo "TEST: Make dirty clowder repo"
     clowder repo run 'touch newfile'
-    clowder repo run 'git add newfile'
+    clowder repo add newfile
     clowder status || exit 1
 }
 
