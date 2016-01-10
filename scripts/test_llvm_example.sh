@@ -74,15 +74,69 @@ test_status_groups 'clang' 'llvm'
 #           'llvm/projects/dragonegg'
 test_branch_version "${projects[@]}"
 test_herd_dirty_repos "${projects[@]}"
+
+test_clean()
+{
+    print_separator
+    make_dirty_repos "${projects[@]}"
+    echo "TEST: Clean specific group when dirty"
+    clowder clean -g "$@" || exit 1
+    clowder status || exit 1
+    echo "TEST: Clean all when dirty"
+    clowder clean || exit 1
+    clowder status || exit 1
+    echo "TEST: Clean when clean"
+    clowder clean || exit 1
+}
 test_clean 'clang' 'llvm'
+
+test_clean_projects()
+{
+    print_separator
+    make_dirty_repos "${projects[@]}"
+    echo "TEST: Clean specific project when dirty"
+    clowder clean -p "$@" || exit 1
+    clowder status || exit 1
+    echo "TEST: Clean all when dirty"
+    clowder clean || exit 1
+    clowder status || exit 1
+}
 test_clean_projects 'llvm-mirror/clang'
+
 test_clean_missing_directories 'zorg'
 test_herd_detached_heads "${projects[@]}"
 test_forall 'clang' 'llvm'
 test_forall_projects 'llvm-mirror/clang' 'llvm-mirror/llvm'
 # test_save
+
+test_stash()
+{
+    make_dirty_repos "${projects[@]}"
+    echo "TEST: Fail herd with dirty repos"
+    clowder herd && exit 1
+    echo "TEST: Stash specific groups when dirty"
+    clowder stash -g "$@" || exit 1
+    clowder status || exit 1
+    echo "TEST: Stash all changes when dirty"
+    clowder stash || exit 1
+    clowder status || exit 1
+    echo "TEST: Stash changes when clean"
+    clowder stash || exit 1
+}
 test_stash 'clang' 'llvm'
+
+test_stash_projects()
+{
+    make_dirty_repos "${projects[@]}"
+    echo "TEST: Stash specific projects when dirty"
+    clowder stash -p "$@" || exit 1
+    clowder status || exit 1
+    echo "TEST: Stash all changes when dirty"
+    clowder stash || exit 1
+    clowder status || exit 1
+}
 test_stash_projects 'llvm-mirror/clang'
+
 test_stash_missing_directories 'zorg'
 # test_herd_groups 'clang' 'llvm'
 test_save_missing_directories 'llvm/tools/clang/tools/extra' \
