@@ -78,7 +78,7 @@ test_clowder_version()
     print_separator
     echo "TEST: Print clowder version"
     clowder --version || exit 1
-    clowder --v || exit 1
+    clowder -v || exit 1
 }
 
 test_command()
