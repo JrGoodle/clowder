@@ -7,6 +7,7 @@ echo 'TEST: llvm projects example test script'
 cd "$( dirname "${BASH_SOURCE[0]}" )" || exit 1
 source test_utilities.sh
 cd ../examples/llvm-projects || exit 1
+./clean.sh
 
 setup_old_repos()
 {

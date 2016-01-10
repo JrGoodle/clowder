@@ -6,10 +6,15 @@ echo 'TEST: cats example test script'
 
 cd "$( dirname "${BASH_SOURCE[0]}" )" || exit 1
 
-if [ "$TRAVIS_OS_NAME" = "osx" ]; then ./unittests.sh || exit 1; fi
+if [ -n "$1" ]; then
+    if [ "$TRAVIS_OS_NAME" = "osx" ]; then
+        ./unittests.sh || exit 1
+    fi
+fi
 
 source test_utilities.sh
 cd ../examples/cats || exit 1
+./clean.sh
 
 test_branches()
 {
