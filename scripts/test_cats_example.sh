@@ -214,7 +214,7 @@ test_command
 test_clowder_version
 
 test_init_herd_version
-test_branch_version
+test_branch_version "${projects[@]}"
 
 test_init_herd
 test_branches
@@ -223,8 +223,8 @@ test_invalid_yaml
 test_clean 'black-cats'
 test_clean_projects 'jrgoodle/kit'
 test_clean_missing_directories 'mu' 'duke'
-test_herd_dirty_repos
-test_herd_detached_heads
+test_herd_dirty_repos "${projects[@]}"
+test_herd_detached_heads "${projects[@]}"
 test_herd 'duke' 'mu'
 test_forall 'cats'
 test_forall_projects 'jrgoodle/kit' 'jrgoodle/kishka'

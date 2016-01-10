@@ -12,7 +12,7 @@ make_dirty_repos()
 {
     print_separator
     echo "TEST: Make dirty repos"
-    for project in "${projects[@]}"
+    for project in "$@"
     do
     	pushd $project &>/dev/null
         touch newfile
@@ -33,7 +33,7 @@ test_branch_master()
 {
     print_separator
     echo "TEST: Check current branches"
-    for project in "${projects[@]}"
+    for project in "$@"
     do
     	pushd $project &>/dev/null
         test_branch master
@@ -46,7 +46,7 @@ test_branch_version()
     print_separator
     clowder forall 'git checkout -b v0.1'
     echo "TEST: Check current branches"
-    for project in "${projects[@]}"
+    for project in "$@"
     do
     	pushd $project &>/dev/null
         test_branch v0.1
@@ -183,7 +183,7 @@ test_herd_detached_heads()
 {
     print_separator
     echo "TEST: Create detached HEADs"
-    for project in "${projects[@]}"
+    for project in "$@"
     do
     	pushd $project &>/dev/null
         git checkout master~2
@@ -197,7 +197,7 @@ test_herd_detached_heads()
 test_herd_dirty_repos()
 {
     print_separator
-    make_dirty_repos "${projects[@]}"
+    make_dirty_repos "$@"
     echo "TEST: Fail herd with dirty repos"
     clowder herd && exit 1
     echo "TEST: Discard changes with clean"
