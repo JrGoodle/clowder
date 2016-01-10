@@ -9,6 +9,13 @@ source test_utilities.sh
 cd ../examples/llvm-projects || exit 1
 ./clean.sh
 
+export projects=( 'llvm' \
+                  'llvm/tools/clang' \
+                  'llvm/tools/clang/tools/extra' \
+                  'llvm/projects/compiler-rt' \
+                  'llvm/projects/libunwind' \
+                  'llvm/projects/dragonegg' )
+
 setup_old_repos()
 {
     echo 'TEST: Set up older copies of repos'
@@ -47,6 +54,12 @@ setup_old_repos()
     popd &>/dev/null
 }
 
+test_command
+test_clowder_version
+
+test_init_herd
+test_branch_master "${projects[@]}"
+
 test_herd_old_repos()
 {
     setup_old_repos
@@ -54,6 +67,27 @@ test_herd_old_repos()
     clowder herd || exit 1
     clowder status || exit 1
 }
+test_herd_old_repos
+
+test_status_groups 'clang' 'llvm'
+# test_herd 'llvm/tools/clang/tools/extra' \
+#           'llvm/projects/dragonegg'
+test_branch_version "${projects[@]}"
+test_herd_dirty_repos "${projects[@]}"
+test_clean 'clang' 'llvm'
+test_clean_projects 'llvm-mirror/clang'
+test_clean_missing_directories 'zorg'
+test_herd_detached_heads "${projects[@]}"
+test_forall 'clang' 'llvm'
+test_forall_projects 'llvm-mirror/clang' 'llvm-mirror/llvm'
+# test_save
+test_stash 'clang' 'llvm'
+test_stash_projects 'llvm-mirror/clang'
+test_stash_missing_directories 'zorg'
+# test_herd_groups 'clang' 'llvm'
+test_save_missing_directories 'llvm/tools/clang/tools/extra' \
+                              'llvm/projects/dragonegg'
+test_herd_projects 'llvm-mirror/lld'
 
 test_start()
 {
@@ -80,39 +114,6 @@ test_start()
     test_branch start_branch
     popd &>/dev/null
 }
-
-export projects=( 'llvm' \
-                  'llvm/tools/clang' \
-                  'llvm/tools/clang/tools/extra' \
-                  'llvm/projects/compiler-rt' \
-                  'llvm/projects/libunwind' \
-                  'llvm/projects/dragonegg' )
-
-test_command
-test_clowder_version
-
-test_init_herd
-test_branch_master "${projects[@]}"
-test_herd_old_repos
-test_status_groups 'clang' 'llvm'
-# test_herd 'llvm/tools/clang/tools/extra' \
-#           'llvm/projects/dragonegg'
-test_branch_version "${projects[@]}"
-test_herd_dirty_repos "${projects[@]}"
-test_clean 'clang' 'llvm'
-test_clean_projects 'llvm-mirror/clang'
-test_clean_missing_directories 'zorg'
-test_herd_detached_heads "${projects[@]}"
-test_forall 'clang' 'llvm'
-test_forall_projects 'llvm-mirror/clang' 'llvm-mirror/llvm'
-# test_save
-test_stash 'clang' 'llvm'
-test_stash_projects 'llvm-mirror/clang'
-test_stash_missing_directories 'zorg'
-# test_herd_groups 'clang' 'llvm'
-test_save_missing_directories 'llvm/tools/clang/tools/extra' \
-                             'llvm/projects/dragonegg'
-test_herd_projects 'llvm-mirror/lld'
 test_start
 
 print_help
