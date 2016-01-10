@@ -2,7 +2,7 @@
 import errno
 import os
 import sys
-from termcolor import colored
+from termcolor import colored, cprint
 from clowder.utility.git_utilities import (
     git_current_branch,
     git_current_sha,
@@ -41,7 +41,7 @@ def format_ref_string(repo_path):
 def print_exists(repo_path):
     """Print existence validation messages"""
     if not os.path.isdir(os.path.join(repo_path, '.git')):
-        print(' - Project is missing')
+        cprint(' - Project is missing', 'red')
 
 def print_validation(repo_path):
     """Print validation messages"""

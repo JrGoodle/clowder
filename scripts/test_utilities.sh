@@ -12,7 +12,7 @@ make_dirty_repos()
 {
     print_separator
     echo "TEST: Make dirty repos"
-    for project in "${projects[@]}"
+    for project in "$@"
     do
     	pushd $project &>/dev/null
         touch newfile
@@ -33,7 +33,7 @@ test_branch_master()
 {
     print_separator
     echo "TEST: Check current branches"
-    for project in "${projects[@]}"
+    for project in "$@"
     do
     	pushd $project &>/dev/null
         test_branch master
@@ -46,7 +46,7 @@ test_branch_version()
     print_separator
     clowder forall 'git checkout -b v0.1'
     echo "TEST: Check current branches"
-    for project in "${projects[@]}"
+    for project in "$@"
     do
     	pushd $project &>/dev/null
         test_branch v0.1
@@ -78,7 +78,7 @@ test_clowder_version()
     print_separator
     echo "TEST: Print clowder version"
     clowder --version || exit 1
-    clowder --v || exit 1
+    clowder -v || exit 1
 }
 
 test_command()
@@ -131,20 +131,6 @@ test_forall_projects()
     clowder forall 'git status' -p "$@" || exit 1
 }
 
-test_clean()
-{
-    print_separator
-    make_dirty_repos "${projects[@]}"
-    echo "TEST: Clean specific group when dirty"
-    clowder clean -g "$@" || exit 1
-    clowder status || exit 1
-    echo "TEST: Clean all when dirty"
-    clowder clean || exit 1
-    clowder status || exit 1
-    echo "TEST: Clean when clean"
-    clowder clean || exit 1
-}
-
 test_clean_missing_directories()
 {
     rm -rf "$@"
@@ -152,18 +138,6 @@ test_clean_missing_directories()
     clowder clean || exit 1
     clowder status || exit 1
     clowder herd || exit 1
-}
-
-test_clean_projects()
-{
-    print_separator
-    make_dirty_repos "${projects[@]}"
-    echo "TEST: Clean specific project when dirty"
-    clowder clean -p "$@" || exit 1
-    clowder status || exit 1
-    echo "TEST: Clean all when dirty"
-    clowder clean || exit 1
-    clowder status || exit 1
 }
 
 test_herd()
@@ -183,7 +157,7 @@ test_herd_detached_heads()
 {
     print_separator
     echo "TEST: Create detached HEADs"
-    for project in "${projects[@]}"
+    for project in "$@"
     do
     	pushd $project &>/dev/null
         git checkout master~2
@@ -197,7 +171,7 @@ test_herd_detached_heads()
 test_herd_dirty_repos()
 {
     print_separator
-    make_dirty_repos "${projects[@]}"
+    make_dirty_repos "$@"
     echo "TEST: Fail herd with dirty repos"
     clowder herd && exit 1
     echo "TEST: Discard changes with clean"
@@ -223,21 +197,6 @@ test_status_groups()
     clowder status -g "$@" || exit 1
 }
 
-test_stash()
-{
-    make_dirty_repos "${projects[@]}"
-    echo "TEST: Fail herd with dirty repos"
-    clowder herd && exit 1
-    echo "TEST: Stash specific groups when dirty"
-    clowder stash -g "$@" || exit 1
-    clowder status || exit 1
-    echo "TEST: Stash all changes when dirty"
-    clowder stash || exit 1
-    clowder status || exit 1
-    echo "TEST: Stash changes when clean"
-    clowder stash || exit 1
-}
-
 test_stash_missing_directories()
 {
     rm -rf "$@"
@@ -245,17 +204,6 @@ test_stash_missing_directories()
     clowder stash || exit 1
     clowder status || exit 1
     clowder herd || exit 1
-}
-
-test_stash_projects()
-{
-    make_dirty_repos "${projects[@]}"
-    echo "TEST: Stash specific projects when dirty"
-    clowder stash -p "$@" || exit 1
-    clowder status || exit 1
-    echo "TEST: Stash all changes when dirty"
-    clowder stash || exit 1
-    clowder status || exit 1
 }
 
 test_herd_groups()

@@ -6,6 +6,7 @@ echo 'TEST: python unittests test script'
 
 cd "$( dirname "${BASH_SOURCE[0]}" )" || exit 1
 cd ../examples/cats || exit 1
+./clean.sh
 
 prepare_unittest_repos()
 {
