@@ -6,7 +6,7 @@ echo 'TEST: cats example test script'
 
 cd "$( dirname "${BASH_SOURCE[0]}" )" || exit 1
 
-if [ -n "$1" ]; then
+if [ -n "$TRAVIS_OS_NAME" ]; then
     if [ "$TRAVIS_OS_NAME" = "osx" ]; then
         ./unittests.sh || exit 1
     fi
