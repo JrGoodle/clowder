@@ -70,7 +70,7 @@
 
 <p>To install from the <a href="https://github.com/JrGoodle/clowder/releases">GitHub Releases</a> open a terminal and run:</p>
 
-<div class="highlight highlight-source-shell"><pre>$ pip3 install https://github.com/JrGoodle/clowder/releases/download/0.10.0/clowder-0.10.0-py3-none-any.whl</pre></div>
+<div class="highlight highlight-source-shell"><pre>$ pip3 install https://github.com/JrGoodle/clowder/releases/download/0.11.0/clowder-0.11.0-py3-none-any.whl</pre></div>
 
 <p>For terminal autocompletion, add the following to your shell profile:</p>
 
@@ -108,11 +108,11 @@
 
 <div class="highlight highlight-source-shell"><pre>$ clowder clean <span class="pl-c"># Discard any changes in projects</span>
 $ clowder forall <span class="pl-s"><span class="pl-pds">"</span>git status<span class="pl-pds">"</span></span> <span class="pl-c"># Run command in all project directories</span>
-$ clowder herd -v 0.1 <span class="pl-c"># Point clowder.yaml symlink to saved version</span>
+$ clowder herd -v 0.1 <span class="pl-c"># Herd a previously saved version</span>
 $ clowder repo run <span class="pl-s"><span class="pl-pds">'</span>git status<span class="pl-pds">'</span></span> <span class="pl-c"># Run command in .clowder directory</span>
 $ clowder save 0.1 <span class="pl-c"># Save a version of clowder.yaml with current commit sha's</span>
 $ clowder start my_feature <span class="pl-c"># Create new branch 'my_feature' for all projects</span>
-$ clowder stash <span class="pl-c"># Stash any changes in projects</span>
+$ clowder stash <span class="pl-c"># Stash changes in all projects</span>
 $ clowder status <span class="pl-c"># print status of projects</span>
 $ clowder prune stale_branch <span class="pl-c"># Prune branch 'stale_branch' for all projects</span></pre></div>
 
