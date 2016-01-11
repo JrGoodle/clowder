@@ -384,8 +384,8 @@ class Command(object):
 
 def exit_unrecognized_command(parser):
     """Print unrecognized command message and exit"""
-    cprint('Unrecognized command\n', 'red')
     parser.print_help()
+    print('')
     sys.exit(1)
 
 def exit_clowder_not_found():
