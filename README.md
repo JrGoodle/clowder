@@ -84,11 +84,11 @@ For more example projects, see the [examples directory](https://github.com/JrGoo
 ```bash
 $ clowder clean # Discard any changes in projects
 $ clowder forall "git status" # Run command in all project directories
-$ clowder herd -v 0.1 # Point clowder.yaml symlink to saved version
+$ clowder herd -v 0.1 # Herd a previously saved version
 $ clowder repo run 'git status' # Run command in .clowder directory
 $ clowder save 0.1 # Save a version of clowder.yaml with current commit sha's
 $ clowder start my_feature # Create new branch 'my_feature' for all projects
-$ clowder stash # Stash any changes in projects
+$ clowder stash # Stash changes in all projects
 $ clowder status # print status of projects
 $ clowder prune stale_branch # Prune branch 'stale_branch' for all projects
 ```
