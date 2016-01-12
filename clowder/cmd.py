@@ -378,9 +378,12 @@ class Command(object):
         parser_status = subparsers.add_parser('status', help='Print project status')
         parser_status.add_argument('--verbose', '-v', action='store_true',
                                    help='Print detailed diff status')
-        parser_status.add_argument('--groups', '-g', choices=self.group_names,
-                                   default=self.group_names, nargs='+',
-                                   help='Groups to print status for')
+        group_status = parser_status.add_mutually_exclusive_group()
+        group_status.add_argument('--groups', '-g', choices=self.group_names,
+                                  default=self.group_names, nargs='+',
+                                  help='Groups to print status for')
+        group_status.add_argument('--projects', '-p', choices=self.project_names,
+                                  nargs='+', help='Projects to print status for')
 
 def exit_unrecognized_command(parser):
     """Print unrecognized command message and exit"""
