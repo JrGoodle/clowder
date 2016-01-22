@@ -98,6 +98,7 @@ class Command(object):
             self.clowder_repo.print_status()
             self.clowder_repo.symlink_yaml(self.args.version)
             print('')
+            # Create new clowder in case symlink changed
             clowder = ClowderController(self.root_directory)
             if self.args.projects is None:
                 if self.args.groups is None:
@@ -125,11 +126,7 @@ class Command(object):
             self.clowder_repo.print_status()
             print('')
             if self.args.projects is None:
-                if self.args.groups is None:
-                    self.clowder.prune_groups(self.clowder.get_all_group_names(),
-                                              self.args.branch)
-                else:
-                    self.clowder.prune_groups(self.args.groups, self.args.branch)
+                self.clowder.prune_groups(self.args.groups, self.args.branch)
             else:
                 self.clowder.prune_projects(self.args.projects, self.args.branch)
         else:
@@ -213,11 +210,7 @@ class Command(object):
             self.clowder_repo.print_status()
             print('')
             if self.args.projects is None:
-                if self.args.groups is None:
-                    self.clowder.start_groups(self.clowder.get_all_group_names(),
-                                              self.args.branch)
-                else:
-                    self.clowder.start_groups(self.args.groups, self.args.branch)
+                self.clowder.start_groups(self.args.groups, self.args.branch)
             else:
                 self.clowder.start_projects(self.args.projects, self.args.branch)
         else:

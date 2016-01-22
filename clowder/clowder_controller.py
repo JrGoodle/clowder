@@ -19,7 +19,7 @@ class ClowderController(object):
         self._load_yaml()
 
     def clean_groups(self, group_names):
-        """Discard changes for projects"""
+        """Discard changes for groups"""
         if self._is_dirty():
             for group in self.groups:
                 if group.name in group_names:
@@ -70,7 +70,7 @@ class ClowderController(object):
             return None
 
     def herd_groups(self, group_names):
-        """Sync projects with latest upstream changes"""
+        """Sync groups with latest upstream changes"""
         self._validate(group_names)
         for group in self.groups:
             if group.name in group_names:
@@ -112,7 +112,7 @@ class ClowderController(object):
                     project.start(branch)
 
     def stash_groups(self, group_names):
-        """Stash changes for projects with changes"""
+        """Stash changes for groups with changes"""
         if self._is_dirty():
             for group in self.groups:
                 if group.name in group_names:
