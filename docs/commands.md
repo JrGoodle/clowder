@@ -185,6 +185,12 @@ $ clowder status -v
 # Print status of projects in clang and llvm groups
 $ clowder status -g clang llvm
 
+# Print status of clang and llvm projects
+$ clowder status -p llvm-mirror/clang llvm-mirror/llvm
+
 # Print verbose status of projects in clang group
 $ clowder status -v -g clang
+
+# Print verbose status of clang and llvm projects
+$ clowder status -v -p llvm-mirror/clang llvm-mirror/llvm
 ```
