@@ -199,6 +199,13 @@ test_status_groups()
     clowder status -g "$@" || exit 1
 }
 
+test_status_projects()
+{
+    print_separator
+    echo "TEST: Test status for specific projects"
+    clowder status -p "$@" || exit 1
+}
+
 test_stash_missing_directories()
 {
     rm -rf "$@"

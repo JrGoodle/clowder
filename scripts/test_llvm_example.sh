@@ -70,6 +70,7 @@ test_herd_old_repos()
 test_herd_old_repos
 
 test_status_groups 'clang' 'llvm'
+test_status_projects 'llvm-mirror/llvm' 'llvm-mirror/clang'
 # test_herd 'llvm/tools/clang/tools/extra' \
 #           'llvm/projects/dragonegg'
 test_branch_version "${projects[@]}"
