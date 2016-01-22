@@ -233,10 +233,10 @@ class Command(object):
         if self.clowder_repo is not None:
             self.clowder_repo.print_status()
             print('')
-            if self.args.verbose:
-                self.clowder.status_verbose(self.args.groups)
+            if self.args.projects is None:
+                self.clowder.status_groups(self.args.groups, self.args.verbose)
             else:
-                self.clowder.status(self.args.groups)
+                self.clowder.status_projects(self.args.projects, self.args.verbose)
         else:
             exit_clowder_not_found()
 
