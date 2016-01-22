@@ -98,6 +98,7 @@ class Command(object):
             self.clowder_repo.print_status()
             self.clowder_repo.symlink_yaml(self.args.version)
             print('')
+            # Create new clowder in case symlink changed
             clowder = ClowderController(self.root_directory)
             if self.args.projects is None:
                 if self.args.groups is None:
@@ -125,11 +126,7 @@ class Command(object):
             self.clowder_repo.print_status()
             print('')
             if self.args.projects is None:
-                if self.args.groups is None:
-                    self.clowder.prune_groups(self.clowder.get_all_group_names(),
-                                              self.args.branch)
-                else:
-                    self.clowder.prune_groups(self.args.groups, self.args.branch)
+                self.clowder.prune_groups(self.args.groups, self.args.branch)
             else:
                 self.clowder.prune_projects(self.args.projects, self.args.branch)
         else:
@@ -213,11 +210,7 @@ class Command(object):
             self.clowder_repo.print_status()
             print('')
             if self.args.projects is None:
-                if self.args.groups is None:
-                    self.clowder.start_groups(self.clowder.get_all_group_names(),
-                                              self.args.branch)
-                else:
-                    self.clowder.start_groups(self.args.groups, self.args.branch)
+                self.clowder.start_groups(self.args.groups, self.args.branch)
             else:
                 self.clowder.start_projects(self.args.projects, self.args.branch)
         else:
@@ -240,10 +233,10 @@ class Command(object):
         if self.clowder_repo is not None:
             self.clowder_repo.print_status()
             print('')
-            if self.args.verbose:
-                self.clowder.status_verbose(self.args.groups)
+            if self.args.projects is None:
+                self.clowder.status_groups(self.args.groups, self.args.verbose)
             else:
-                self.clowder.status(self.args.groups)
+                self.clowder.status_projects(self.args.projects, self.args.verbose)
         else:
             exit_clowder_not_found()
 
@@ -378,9 +371,12 @@ class Command(object):
         parser_status = subparsers.add_parser('status', help='Print project status')
         parser_status.add_argument('--verbose', '-v', action='store_true',
                                    help='Print detailed diff status')
-        parser_status.add_argument('--groups', '-g', choices=self.group_names,
-                                   default=self.group_names, nargs='+',
-                                   help='Groups to print status for')
+        group_status = parser_status.add_mutually_exclusive_group()
+        group_status.add_argument('--groups', '-g', choices=self.group_names,
+                                  default=self.group_names, nargs='+',
+                                  help='Groups to print status for')
+        group_status.add_argument('--projects', '-p', choices=self.project_names,
+                                  nargs='+', help='Projects to print status for')
 
 def exit_unrecognized_command(parser):
     """Print unrecognized command message and exit"""

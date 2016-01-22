@@ -55,6 +55,7 @@ test_branches()
 test_branches
 
 test_status_groups 'black-cats'
+test_status_projects 'jrgoodle/mu' 'jrgoodle/duke'
 
 test_clean()
 {

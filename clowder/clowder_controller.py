@@ -19,7 +19,7 @@ class ClowderController(object):
         self._load_yaml()
 
     def clean_groups(self, group_names):
-        """Discard changes for projects"""
+        """Discard changes for groups"""
         if self._is_dirty():
             for group in self.groups:
                 if group.name in group_names:
@@ -70,7 +70,7 @@ class ClowderController(object):
             return None
 
     def herd_groups(self, group_names):
-        """Sync projects with latest upstream changes"""
+        """Sync groups with latest upstream changes"""
         self._validate(group_names)
         for group in self.groups:
             if group.name in group_names:
@@ -84,17 +84,24 @@ class ClowderController(object):
                 if project.name in project_names:
                     project.herd()
 
-    def status(self, group_names):
+    def status_groups(self, group_names, verbose=False):
+        """Print status for groups"""
+        for group in self.groups:
+            if group.name in group_names:
+                if verbose is False:
+                    group.status()
+                else:
+                    group.status_verbose()
+
+    def status_projects(self, project_names, verbose=False):
         """Print status for projects"""
         for group in self.groups:
-            if group.name in group_names:
-                group.status()
-
-    def status_verbose(self, group_names):
-        """Print git status for projects with changes"""
-        for group in self.groups:
-            if group.name in group_names:
-                group.status_verbose()
+            for project in group.projects:
+                if project.name in project_names:
+                    if verbose is False:
+                        project.status()
+                    else:
+                        project.status_verbose()
 
     def start_groups(self, group_names, branch):
         """Start feature branch for groups"""
@@ -112,7 +119,7 @@ class ClowderController(object):
                     project.start(branch)
 
     def stash_groups(self, group_names):
-        """Stash changes for projects with changes"""
+        """Stash changes for groups with changes"""
         if self._is_dirty():
             for group in self.groups:
                 if group.name in group_names:
