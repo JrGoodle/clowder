@@ -31,12 +31,12 @@ else
 
 	echo 'Create source distribution'
 	echo '--------------------------'
-	python3 setup.py sdist
+	sudo python3 setup.py sdist
 	echo ''
 
 	echo 'Create wheel'
 	echo '------------'
-	python3 setup.py bdist_wheel
+	sudo python3 setup.py bdist_wheel
 	echo ''
 
 	echo "Creating new tag and GitHub Release"
