@@ -52,11 +52,20 @@ $ clowder forall "git status" -p llvm-mirror/clang
 Update default branches with latest changes.
 
 ```bash
+# Herd specified branch
+$ clowder herd -b my_branch
+
 # Only herd projects in clang and llvm groups
 $ clowder herd -g clang llvm
 
 # Only herd clang project
 $ clowder herd -p llvm-mirror/clang
+
+# Herd specified branch for projects in clang and llvm groups
+$ clowder herd -b my_branch -g clang llvm
+
+# Herd specified branch for the clang project
+$ clowder herd -b my_branch -p llvm-mirror/clang
 
 # Point clowder.yaml symlink to saved version
 $ clowder herd -v 0.1

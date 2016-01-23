@@ -92,14 +92,19 @@ class Project(object):
                 'remote': self.remote_name,
                 'source': self.source.name}
 
-    def herd(self):
+    def herd(self, branch=None):
         """Clone project or update latest from upstream"""
         self._print_status()
+        if branch is None:
+            ref = self.ref
+        else:
+            ref = 'refs/heads/' + branch
+
         if not os.path.isdir(os.path.join(self.full_path(), '.git')):
             git_create_repo(self.url, self.full_path(), self.remote_name,
-                            self.ref, self.depth)
+                            ref, self.depth)
         else:
-            git_herd(self.full_path(), self.url, self.remote_name, self.ref, self.depth)
+            git_herd(self.full_path(), self.url, self.remote_name, ref, self.depth)
 
         for fork in self.forks:
             fork.herd()
