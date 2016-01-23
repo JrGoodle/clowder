@@ -13,24 +13,16 @@ if sys.version_info[0] < 3:
 setup(
     name='clowder',
     description='A tool for managing code',
-    version='0.11.0',
+    version='1.0.0',
     url='http://clowder.cat',
     author='joe DeCapo',
     author_email='joe@polka.cat',
     license='MIT',
     classifiers=[
-        # How mature is this project? Common values are
-        #   3 - Alpha
-        #   4 - Beta
-        #   5 - Production/Stable
-        'Development Status :: 4 - Beta',
-        # Indicate who your project is intended for
+        'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
         'Topic :: Software Development :: Build Tools',
-        # Pick your license as you wish (should match "license" above)
         'License :: OSI Approved :: MIT License',
-        # Specify the Python versions you support here. In particular, ensure
-        # that you indicate whether you support Python 2, Python 3 or both.
         'Programming Language :: Python :: 3.2',
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
