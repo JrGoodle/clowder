@@ -84,6 +84,7 @@ For more example projects, see the [examples directory](https://github.com/JrGoo
 ```bash
 $ clowder clean # Discard any changes in projects
 $ clowder forall "git status" # Run command in all project directories
+$ clowder herd -b my_branch # Herd specified branch
 $ clowder herd -v 0.1 # Herd a previously saved version
 $ clowder repo run 'git status' # Run command in .clowder directory
 $ clowder save 0.1 # Save a version of clowder.yaml with current commit sha's
@@ -93,12 +94,15 @@ $ clowder status # print status of projects
 $ clowder prune stale_branch # Prune branch 'stale_branch' for all projects
 ```
 
-See [clowder commands doc](https://github.com/JrGoodle/clowder/blob/master/docs/commands.md)
+See the [clowder commands doc](https://github.com/JrGoodle/clowder/blob/master/docs/commands.md)
+for more advanced `clowder` command usage.
 
 ### The `clowder.yaml` File
 
-See [clowder.yaml doc](https://github.com/JrGoodle/clowder/blob/master/docs/clowder_yaml.md)
+See the [clowder.yaml doc](https://github.com/JrGoodle/clowder/blob/master/docs/clowder_yaml.md)
+for an explanation of the `clowder.yaml` configuration file.
 
 ### The `.clowder` Directory
 
-See [.clowder doc](https://github.com/JrGoodle/clowder/blob/master/docs/dot_clowder_dir.md)
+See the [.clowder doc](https://github.com/JrGoodle/clowder/blob/master/docs/dot_clowder_dir.md)
+for a description of the structure of the `.clowder` directory.
