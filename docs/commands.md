@@ -55,6 +55,9 @@ Update default branches with latest changes.
 # Herd specified branch
 $ clowder herd -b my_branch
 
+# Herd a shallow clone to specified depth
+$ clowder herd -d 1
+
 # Only herd projects in clang and llvm groups
 $ clowder herd -g clang llvm
 
