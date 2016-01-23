@@ -56,28 +56,28 @@
 <p>The primary purpose of <code>clowder</code> is synchronization of multiple repositories, so normal development still takes place in individual repositories with the usual <code>git</code> commands.</p>
 
 <h2>
-<a id="getting-started" class="anchor" href="#getting-started" aria-hidden="true"><span class="octicon octicon-link"></span></a>Getting Started</h2>
+<a id="getting-started" class="anchor" href="#getting-started" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Getting Started</h2>
 
 <h3>
-<a id="requirements" class="anchor" href="#requirements" aria-hidden="true"><span class="octicon octicon-link"></span></a>Requirements</h3>
+<a id="requirements" class="anchor" href="#requirements" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Requirements</h3>
 
 <p><a href="https://www.python.org/downloads/">Python 3</a> is necessary for <code>clowder</code>. On OS X it's simple to install Python 3 with Homebrew.</p>
 
 <div class="highlight highlight-source-shell"><pre>$ brew install python3</pre></div>
 
 <h3>
-<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h3>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installation</h3>
 
 <p>To install from the <a href="https://github.com/JrGoodle/clowder/releases">GitHub Releases</a> open a terminal and run:</p>
 
-<div class="highlight highlight-source-shell"><pre>$ pip3 install https://github.com/JrGoodle/clowder/releases/download/0.11.0/clowder-0.11.0-py3-none-any.whl</pre></div>
+<div class="highlight highlight-source-shell"><pre>$ pip3 install https://github.com/JrGoodle/clowder/releases/download/1.0.0/clowder-1.0.0-py3-none-any.whl</pre></div>
 
 <p>For terminal autocompletion, add the following to your shell profile:</p>
 
 <div class="highlight highlight-source-shell"><pre>[[ <span class="pl-k">-f</span> <span class="pl-s"><span class="pl-pds">"</span>/usr/local/bin/clowder<span class="pl-pds">"</span></span> ]] <span class="pl-k">&amp;&amp;</span> <span class="pl-c1">eval</span> <span class="pl-s"><span class="pl-pds">"</span><span class="pl-s"><span class="pl-pds">$(</span>register-python-argcomplete clowder<span class="pl-pds">)</span></span><span class="pl-pds">"</span></span></pre></div>
 
 <h3>
-<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h3>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h3>
 
 <p>This example is based on the LLVM project (see <a href="https://github.com/JrGoodle/llvm-projects/blob/master/clowder.yaml">the full clowder.yaml</a>). First create a directory to contain all the projects.</p>
 
@@ -101,13 +101,14 @@
 <p>For more example projects, see the <a href="https://github.com/JrGoodle/clowder/tree/master/examples">examples directory</a>.</p>
 
 <h2>
-<a id="further-information" class="anchor" href="#further-information" aria-hidden="true"><span class="octicon octicon-link"></span></a>Further Information</h2>
+<a id="further-information" class="anchor" href="#further-information" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Further Information</h2>
 
 <h3>
-<a id="more-clowder-commands" class="anchor" href="#more-clowder-commands" aria-hidden="true"><span class="octicon octicon-link"></span></a>More <code>clowder</code> Commands</h3>
+<a id="more-clowder-commands" class="anchor" href="#more-clowder-commands" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>More <code>clowder</code> Commands</h3>
 
 <div class="highlight highlight-source-shell"><pre>$ clowder clean <span class="pl-c"># Discard any changes in projects</span>
 $ clowder forall <span class="pl-s"><span class="pl-pds">"</span>git status<span class="pl-pds">"</span></span> <span class="pl-c"># Run command in all project directories</span>
+$ clowder herd -b my_branch <span class="pl-c"># Herd specified branch</span>
 $ clowder herd -v 0.1 <span class="pl-c"># Herd a previously saved version</span>
 $ clowder repo run <span class="pl-s"><span class="pl-pds">'</span>git status<span class="pl-pds">'</span></span> <span class="pl-c"># Run command in .clowder directory</span>
 $ clowder save 0.1 <span class="pl-c"># Save a version of clowder.yaml with current commit sha's</span>
@@ -116,17 +117,20 @@ $ clowder stash <span class="pl-c"># Stash changes in all projects</span>
 $ clowder status <span class="pl-c"># print status of projects</span>
 $ clowder prune stale_branch <span class="pl-c"># Prune branch 'stale_branch' for all projects</span></pre></div>
 
-<p>See <a href="https://github.com/JrGoodle/clowder/blob/master/docs/commands.md">clowder commands doc</a></p>
+<p>See the <a href="https://github.com/JrGoodle/clowder/blob/master/docs/commands.md">clowder commands doc</a>
+for more advanced <code>clowder</code> command usage.</p>
 
 <h3>
-<a id="the-clowderyaml-file" class="anchor" href="#the-clowderyaml-file" aria-hidden="true"><span class="octicon octicon-link"></span></a>The <code>clowder.yaml</code> File</h3>
+<a id="the-clowderyaml-file" class="anchor" href="#the-clowderyaml-file" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>The <code>clowder.yaml</code> File</h3>
 
-<p>See <a href="https://github.com/JrGoodle/clowder/blob/master/docs/clowder_yaml.md">clowder.yaml doc</a></p>
+<p>See the <a href="https://github.com/JrGoodle/clowder/blob/master/docs/clowder_yaml.md">clowder.yaml doc</a>
+for an explanation of the <code>clowder.yaml</code> configuration file.</p>
 
 <h3>
-<a id="the-clowder-directory" class="anchor" href="#the-clowder-directory" aria-hidden="true"><span class="octicon octicon-link"></span></a>The <code>.clowder</code> Directory</h3>
+<a id="the-clowder-directory" class="anchor" href="#the-clowder-directory" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>The <code>.clowder</code> Directory</h3>
 
-<p>See <a href="https://github.com/JrGoodle/clowder/blob/master/docs/dot_clowder_dir.md">.clowder doc</a></p>
+<p>See the <a href="https://github.com/JrGoodle/clowder/blob/master/docs/dot_clowder_dir.md">.clowder doc</a>
+for a description of the structure of the <code>.clowder</code> directory.</p>
         </section>
 
         <aside id="sidebar">
