@@ -62,8 +62,7 @@ class Project(object):
         if 'forks' in project:
             for fork in project['forks']:
                 full_path = os.path.join(self.root_directory, self.path)
-                self.forks.append(Fork(fork, full_path, self.source,
-                                       self.ref, self.depth))
+                self.forks.append(Fork(fork, full_path, self.source))
 
     def clean(self):
         """Discard changes for project"""
@@ -92,7 +91,7 @@ class Project(object):
                 'remote': self.remote_name,
                 'source': self.source.name}
 
-    def herd(self, branch=None):
+    def herd(self, branch=None, depth=None):
         """Clone project or update latest from upstream"""
         self._print_status()
         if branch is None:
@@ -100,14 +99,19 @@ class Project(object):
         else:
             ref = 'refs/heads/' + branch
 
+        if depth is None:
+            herd_depth = self.depth
+        else:
+            herd_depth = depth
+
         if not os.path.isdir(os.path.join(self.full_path(), '.git')):
             git_create_repo(self.url, self.full_path(), self.remote_name,
-                            ref, self.depth)
+                            ref, herd_depth)
         else:
-            git_herd(self.full_path(), self.url, self.remote_name, ref, self.depth)
+            git_herd(self.full_path(), self.url, self.remote_name, ref, herd_depth)
 
         for fork in self.forks:
-            fork.herd()
+            fork.herd(ref, herd_depth)
 
     def is_dirty(self):
         """Check if project is dirty"""

@@ -12,10 +12,7 @@ class ForkTest(unittest.TestCase):
         self.fork_yaml = {'name': self.name, 'remote': self.remote}
         self.source = Source(GITHUB_SSH_SOURCE_YAML)
         self.path = '/fork/path'
-        self.ref = 'refs/heads/master'
-        self.depth = 0
-        self.fork = Fork(self.fork_yaml, self.path,
-                         self.source, self.ref, 0)
+        self.fork = Fork(self.fork_yaml, self.path, self.source)
 
     def test_get_yaml(self):
         """Test get_yaml() method"""
@@ -26,8 +23,6 @@ class ForkTest(unittest.TestCase):
         self.assertEqual(self.fork.path, self.path)
         self.assertEqual(self.fork.name, self.name)
         self.assertEqual(self.fork.remote, self.remote)
-        self.assertEqual(self.fork.ref, self.ref)
-        self.assertEqual(self.fork.depth, self.depth)
         self.assertEqual(self.fork.url, self.source.get_url_prefix() + self.name + ".git")
 
 if __name__ == '__main__':

@@ -106,13 +106,18 @@ class Command(object):
             else:
                 ref = self.args.branch[0]
 
+            if self.args.depth is None:
+                depth = None
+            else:
+                depth = self.args.depth[0]
+
             if self.args.projects is None:
                 if self.args.groups is None:
-                    clowder.herd_groups(clowder.get_all_group_names(), ref)
+                    clowder.herd_groups(clowder.get_all_group_names(), ref, depth)
                 else:
-                    clowder.herd_groups(self.args.groups, ref)
+                    clowder.herd_groups(self.args.groups, ref, depth)
             else:
-                clowder.herd_projects(self.args.projects, ref)
+                clowder.herd_projects(self.args.projects, ref, depth)
         else:
             exit_clowder_not_found()
 
@@ -279,6 +284,8 @@ class Command(object):
         # clowder herd
         herd_help = 'Clone and sync latest changes for projects'
         parser_herd = subparsers.add_parser('herd', help=herd_help)
+        parser_herd.add_argument('--depth', '-d', default=None, type=int, nargs=1,
+                                 help='Depth to herd')
         group_herd = parser_herd.add_mutually_exclusive_group()
         group_herd.add_argument('--version', '-v', choices=self.versions,
                                 help='Version name to herd')

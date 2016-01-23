@@ -24,11 +24,11 @@ class Group(object):
             for project in self.projects:
                 project.clean()
 
-    def herd(self, branch=None):
+    def herd(self, branch=None, depth=None):
         """Sync all projects with latest upstream changes"""
         self._print_name()
         for project in self.projects:
-            project.herd(branch)
+            project.herd(branch, depth)
 
     def is_dirty(self):
         """Check if group has dirty project(s)"""
