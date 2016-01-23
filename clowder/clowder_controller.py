@@ -69,20 +69,20 @@ class ClowderController(object):
         else:
             return None
 
-    def herd_groups(self, group_names):
+    def herd_groups(self, group_names, branch=None):
         """Sync groups with latest upstream changes"""
         self._validate(group_names)
         for group in self.groups:
             if group.name in group_names:
-                group.herd()
+                group.herd(branch)
 
-    def herd_projects(self, project_names):
+    def herd_projects(self, project_names, branch=None):
         """Sync projects with latest upstream changes"""
         self._validate(project_names)
         for group in self.groups:
             for project in group.projects:
                 if project.name in project_names:
-                    project.herd()
+                    project.herd(branch)
 
     def status_groups(self, group_names, verbose=False):
         """Print status for groups"""

@@ -100,13 +100,19 @@ class Command(object):
             print('')
             # Create new clowder in case symlink changed
             clowder = ClowderController(self.root_directory)
+
+            if self.args.branch is None:
+                ref = None
+            else:
+                ref = self.args.branch[0]
+
             if self.args.projects is None:
                 if self.args.groups is None:
-                    clowder.herd_groups(clowder.get_all_group_names())
+                    clowder.herd_groups(clowder.get_all_group_names(), ref)
                 else:
-                    clowder.herd_groups(self.args.groups)
+                    clowder.herd_groups(self.args.groups, ref)
             else:
-                clowder.herd_projects(self.args.projects)
+                clowder.herd_projects(self.args.projects, ref)
         else:
             exit_clowder_not_found()
 
@@ -117,7 +123,8 @@ class Command(object):
             clowder_repo = ClowderRepo(self.root_directory)
             clowder_repo.init(self.args.url, self.args.branch)
         else:
-            cprint('Clowder already bred in this directory', 'red')
+            cprint('Clowder already initialized in this directory', 'red')
+            print('')
             sys.exit()
 
     def prune(self):
@@ -275,6 +282,8 @@ class Command(object):
         group_herd = parser_herd.add_mutually_exclusive_group()
         group_herd.add_argument('--version', '-v', choices=self.versions,
                                 help='Version name to herd')
+        group_herd.add_argument('--branch', '-b', nargs=1, default=None, help='Branch to herd')
+        group_herd = parser_herd.add_mutually_exclusive_group()
         group_herd.add_argument('--groups', '-g', choices=self.group_names,
                                 default=self.group_names, nargs='+', help='Groups to herd')
         group_herd.add_argument('--projects', '-p', choices=self.project_names,
