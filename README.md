@@ -38,7 +38,7 @@ $ brew install python3
 To install from the [GitHub Releases](https://github.com/JrGoodle/clowder/releases) open a terminal and run:
 
 ```bash
-$ pip3 install https://github.com/JrGoodle/clowder/releases/download/1.0.0/clowder-1.0.0-py3-none-any.whl
+$ pip3 install https://github.com/JrGoodle/clowder/releases/download/1.0.1/clowder-1.0.1-py3-none-any.whl
 ```
 
 For terminal autocompletion, add the following to your shell profile:
