@@ -96,7 +96,13 @@ class Command(object):
         """clowder herd command"""
         if self.clowder_repo is not None:
             self.clowder_repo.print_status()
-            self.clowder_repo.symlink_yaml(self.args.version)
+
+            if self.args.version is None:
+                version = None
+            else:
+                version = self.args.version[0]
+
+            self.clowder_repo.symlink_yaml(version)
             print('')
             # Create new clowder in case symlink changed
             clowder = ClowderController(self.root_directory)
@@ -286,10 +292,9 @@ class Command(object):
         parser_herd = subparsers.add_parser('herd', help=herd_help)
         parser_herd.add_argument('--depth', '-d', default=None, type=int, nargs=1,
                                  help='Depth to herd')
-        group_herd = parser_herd.add_mutually_exclusive_group()
-        group_herd.add_argument('--version', '-v', choices=self.versions,
-                                help='Version name to herd')
-        group_herd.add_argument('--branch', '-b', nargs=1, default=None, help='Branch to herd')
+        parser_herd.add_argument('--version', '-v', choices=self.versions, nargs=1,
+                                 default=None, help='Version name to herd')
+        parser_herd.add_argument('--branch', '-b', nargs=1, default=None, help='Branch to herd')
         group_herd = parser_herd.add_mutually_exclusive_group()
         group_herd.add_argument('--groups', '-g', choices=self.group_names,
                                 default=self.group_names, nargs='+', help='Groups to herd')
