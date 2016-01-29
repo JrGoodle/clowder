@@ -64,9 +64,6 @@ $ clowder herd -g clang llvm
 # Only herd clang project
 $ clowder herd -p llvm-mirror/clang
 
-# Point clowder.yaml symlink to saved version
-$ clowder herd -v 0.1
-
 # Multiple arguments
 $ clowder herd -v 0.1 -b my_branch -g clang llvm -d 1
 ```
@@ -83,6 +80,21 @@ $ clowder init https://github.com/jrgoodle/llvm-projects.git
 
 # Clone clowder repo from branch 'tags'
 $ clowder init https://github.com/jrgoodle/cats.git -b tags
+```
+
+---
+
+### `link`
+
+Set `clowder.yaml` symlink.
+
+```bash
+# Point clowder.yaml symlink to default clowder.yaml file
+$ clowder link
+
+# Point clowder.yaml symlink to saved version
+$ clowder herd -v 0.1
+
 ```
 
 ---

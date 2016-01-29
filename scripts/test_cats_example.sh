@@ -128,7 +128,8 @@ test_herd_missing_branches()
 {
     print_separator
     echo "TEST: Herd v0.1 to test missing default branches"
-    clowder herd -v v0.1 || exit 1
+    clowder link -v v0.1 || exit 1
+    clowder herd || exit 1
     echo "TEST: Delete default branches locally"
     pushd mu &>/dev/null
     git branch -D knead
@@ -137,6 +138,7 @@ test_herd_missing_branches()
     git branch -D purr
     popd &>/dev/null
     echo "TEST: Herd existing repo's with no default branch locally"
+    clowder link || exit 1
     clowder herd || exit 1
     clowder status || exit 1
 }
@@ -149,7 +151,7 @@ test_no_versions()
     print_separator
     echo "TEST: Test clowder repo with no versions saved"
     clowder repo checkout no-versions || exit 1
-    clowder herd -v saved-version && exit 1
+    clowder link -v saved-version && exit 1
     clowder herd || exit 1
     clowder status || exit 1
     clowder repo checkout master || exit 1
@@ -180,7 +182,7 @@ test_invalid_yaml()
 
     for test in "${test_cases[@]}"
     do
-      	clowder herd -v $test && exit 1
+        clowder link -v $test || exit 1
         clowder herd && exit 1
         rm clowder.yaml
     done
@@ -212,15 +214,6 @@ test_herd_tag()
     clowder repo checkout master || exit 1
 }
 test_herd_tag
-
-test_herd_missing_groups()
-{
-    echo "TEST: Test herd of missing group"
-    clowder herd -v missing-groups
-    clowder herd -g slavic || exit 1
-    clowder status || exit 1
-}
-test_herd_missing_groups
 
 test_start()
 {

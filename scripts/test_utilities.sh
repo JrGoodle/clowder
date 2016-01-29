@@ -70,7 +70,8 @@ test_init_herd_version()
     echo "TEST: Herd version after init"
     ./clean.sh || exit 1
     ./init.sh || exit 1
-    clowder herd -v v0.1 || exit 1
+    clowder link -v v0.1 || exit 1
+    clowder herd || exit 1
 }
 
 test_clowder_version()
@@ -96,15 +97,16 @@ test_command()
 test_save()
 {
     print_separator
-    echo "TEST: Fail herding a previously saved version"
-    clowder herd -v v100 && exit 1
+    echo "TEST: Fail linking a previously saved version that doesn't exist"
+    clowder link -v v100 && exit 1
     echo "TEST: Fail saving a previously saved version"
     clowder save v0.1 && exit 1
     echo "TEST: Successfully save a new version"
     clowder save v0.11 || exit 1
     echo "TEST: Successfully save version with path separator in input name"
     clowder save path/separator
-    clowder herd -v path-separator || exit 1
+    clowder link -v path-separator || exit 1
+    clowder herd || exit 1
     clowder status || exit 1
 }
 
@@ -146,8 +148,10 @@ test_herd()
 {
     print_separator
     echo "TEST: Successfully herd a previously saved version"
-    clowder herd -v v0.1 || exit 1
+    clowder link -v v0.1 || exit 1
+    clowder herd || exit 1
     echo "TEST: Successfully herd after herding a previously saved version"
+    clowder link || exit 1
     clowder herd || exit 1
     echo "TEST: Remove directories"
     rm -rf "$@"
@@ -219,7 +223,8 @@ test_herd_groups()
 {
     print_separator
     echo "TEST: Herd saved version to test herding select groups"
-    clowder herd -v v0.1 || exit 1
+    clowder link -v v0.1 || exit 1
+    clowder herd || exit 1
     print_separator
     echo "TEST: Herd only specific groups"
     clowder herd -g "$@" || exit 1
@@ -245,6 +250,9 @@ print_help()
     print_separator
     echo "TEST: clowder init -h"
     clowder init -h
+    print_separator
+    echo "TEST: clowder link -h"
+    clowder link -h
     print_separator
     echo "TEST: clowder prune -h"
     clowder prune -h

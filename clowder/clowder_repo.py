@@ -21,6 +21,7 @@ from clowder.utility.clowder_utilities import (
     format_project_string,
     format_ref_string,
     print_validation,
+    remove_prefix,
     validate_repo_state
 )
 
@@ -63,23 +64,52 @@ class ClowderRepo(object):
         """Clone clowder repo from url"""
         repo_branch = 'refs/heads/' + branch
         git_create_repo(url, self.clowder_path, 'origin', repo_branch)
-        self.symlink_yaml()
+        self.link()
 
     def is_dirty(self):
         """Check if project is dirty"""
         return git_is_dirty(self.clowder_path)
 
+    def link(self, version=None):
+        """Create symlink pointing to clowder.yaml file"""
+        if version is None:
+            yaml_file = os.path.join(self.root_directory, '.clowder', 'clowder.yaml')
+            path_output = colored('.clowder/clowder.yaml', 'cyan')
+        else:
+            relative_path = os.path.join('.clowder', 'versions', version, 'clowder.yaml')
+            path_output = colored(relative_path, 'cyan')
+            yaml_file = os.path.join(self.root_directory, relative_path)
+
+        if os.path.isfile(yaml_file):
+            yaml_symlink = os.path.join(self.root_directory, 'clowder.yaml')
+            print(' - Symlink ' + path_output)
+            force_symlink(yaml_file, yaml_symlink)
+        else:
+            print(path_output + " doesn't seem to exist")
+            print('')
+            sys.exit(1)
+
     def print_status(self):
         """Print clowder repo status"""
         repo_path = os.path.join(self.root_directory, '.clowder')
         cat_face = emoji.emojize(':cat:', use_aliases=True)
+        # FIXME: Probably should remove this as it assumes .clowder repo which isn't git directory
         if not os.path.isdir(os.path.join(repo_path, '.git')):
-            output = colored('clowder', 'green')
+            output = colored('.clowder', 'green')
             print(cat_face + '  ' + output)
             return
         project_output = format_project_string(repo_path, '.clowder')
         current_ref_output = format_ref_string(repo_path)
-        print(cat_face + '  ' + project_output + ' ' + current_ref_output)
+
+        clowder_symlink = os.path.join(self.root_directory, 'clowder.yaml')
+        if os.path.islink(clowder_symlink):
+            real_path = os.path.realpath(clowder_symlink)
+            clowder_path = remove_prefix(real_path + '/', self.root_directory)
+            path_output = colored(clowder_path[1:-1], 'cyan')
+            print(cat_face + '  ' + project_output + ' ' + current_ref_output +
+                  ' -> ' + path_output)
+        else:
+            print(cat_face + '  ' + project_output + ' ' + current_ref_output)
 
     def pull(self):
         """Pull clowder repo upstream changes"""
@@ -98,25 +128,6 @@ class ClowderRepo(object):
     def status(self):
         """Print clowder repo git status"""
         git_status(self.clowder_path)
-
-    def symlink_yaml(self, version=None):
-        """Create symlink pointing to clowder.yaml file"""
-        if version is None:
-            yaml_file = os.path.join(self.root_directory, '.clowder', 'clowder.yaml')
-            path_output = colored('.clowder/clowder.yaml', 'cyan')
-        else:
-            relative_path = os.path.join('.clowder', 'versions', version, 'clowder.yaml')
-            path_output = colored(relative_path, 'cyan')
-            yaml_file = os.path.join(self.root_directory, relative_path)
-
-        if os.path.isfile(yaml_file):
-            yaml_symlink = os.path.join(self.root_directory, 'clowder.yaml')
-            print(' - Symlink ' + path_output)
-            force_symlink(yaml_file, yaml_symlink)
-        else:
-            print(path_output + " doesn't seem to exist")
-            print('')
-            sys.exit(1)
 
     def _validate(self):
         """Validate status of clowder repo"""
