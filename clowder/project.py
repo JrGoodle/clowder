@@ -167,10 +167,13 @@ class Project(object):
     def run_command(self, command):
         """Run command in project directory"""
         self._print_status()
-        command_output = colored('$ ' + command, attrs=['bold'])
-        print(command_output)
-        subprocess.call(command.split(), cwd=self.full_path())
-        print('')
+        if not os.path.isdir(self.full_path()):
+            cprint(" - Project is missing\n", 'red')
+        else:
+            command_output = colored('$ ' + command, attrs=['bold'])
+            print(command_output)
+            subprocess.call(command.split(), cwd=self.full_path())
+            print('')
 
     def _print_status(self):
         """Print formatted project status"""

@@ -4,6 +4,7 @@
 - [clowder forall](https://github.com/JrGoodle/clowder/blob/master/docs/commands.md#forall)
 - [clowder herd](https://github.com/JrGoodle/clowder/blob/master/docs/commands.md#herd)
 - [clowder init](https://github.com/JrGoodle/clowder/blob/master/docs/commands.md#init)
+- [clowder link](https://github.com/JrGoodle/clowder/blob/master/docs/commands.md#link)
 - [clowder repo](https://github.com/JrGoodle/clowder/blob/master/docs/commands.md#repo)
 - [clowder save](https://github.com/JrGoodle/clowder/blob/master/docs/commands.md#save)
 - [clowder start](https://github.com/JrGoodle/clowder/blob/master/docs/commands.md#start)

@@ -32,8 +32,7 @@ class ClowderRepo(object):
         self.clowder_path = os.path.join(self.root_directory, '.clowder')
 
     def add(self, files):
-        """Add files in clowder repo to git"""
-        print(' - Add files in clowder repo')
+        """Add files in clowder repo to git index"""
         git_add(self.clowder_path, files)
         git_status(self.clowder_path)
 
