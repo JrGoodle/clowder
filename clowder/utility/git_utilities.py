@@ -11,7 +11,13 @@ from termcolor import colored, cprint
 def git_add(repo_path, files):
     """Add files to git index"""
     repo = _repo(repo_path)
-    print(repo.git.add(files))
+    try:
+        print(' - Add files to git index')
+        print(repo.git.add(files))
+    except:
+        cprint(' - Failed to add files to git index', 'red')
+        print('')
+        sys.exit(1)
 
 def git_branches(repo_path):
     """Get list of current branches"""
@@ -22,8 +28,14 @@ def git_checkout(repo_path, ref):
     """Checkout git ref"""
     repo = _repo(repo_path)
     ref_output = colored('(' + ref + ')', 'magenta')
-    print(' - Check out ' + ref_output)
-    print(repo.git.checkout(ref))
+    try:
+        print(' - Check out ' + ref_output)
+        print(repo.git.checkout(ref))
+    except:
+        message = colored(' - Failed to checkout ref ', 'red')
+        print(message + ref_output)
+        print('')
+        sys.exit(1)
 
 def git_commit(repo_path, message):
     """Commit current changes"""

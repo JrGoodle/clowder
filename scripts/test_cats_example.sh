@@ -284,4 +284,13 @@ test_prune()
 }
 test_prune
 
+test_clowder_repo()
+{
+    print_separator
+    echo "TEST: Test clowder repo command"
+    clowder repo checkout ref_that_doesnt_exist && exit 1
+    clowder repo add file_that_doesnt_exist && exit 1
+}
+test_clowder_repo
+
 print_help
