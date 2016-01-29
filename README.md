@@ -38,7 +38,7 @@ $ brew install python3
 To install from the [GitHub Releases](https://github.com/JrGoodle/clowder/releases) open a terminal and run:
 
 ```bash
-$ pip3 install https://github.com/JrGoodle/clowder/releases/download/1.0.1/clowder-1.0.1-py3-none-any.whl
+$ pip3 install https://github.com/JrGoodle/clowder/releases/download/1.1.0/clowder-1.1.0-py3-none-any.whl
 ```
 
 For terminal autocompletion, add the following to your shell profile:
@@ -85,7 +85,7 @@ For more example projects, see the [examples directory](https://github.com/JrGoo
 $ clowder clean # Discard any changes in projects
 $ clowder forall "git status" # Run command in all project directories
 $ clowder herd -b my_branch # Herd specified branch
-$ clowder herd -v 0.1 # Herd a previously saved version
+$ clowder link -v 0.1 # Set clowder.yaml symlink to a previously saved version
 $ clowder repo run 'git status' # Run command in .clowder directory
 $ clowder save 0.1 # Save a version of clowder.yaml with current commit sha's
 $ clowder start my_feature # Create new branch 'my_feature' for all projects

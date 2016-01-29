@@ -50,6 +50,12 @@ def print_validation(repo_path):
     if git_is_dirty(repo_path):
         print(' - Dirty repo. Please stash, commit, or discard your changes')
 
+# http://stackoverflow.com/questions/16891340/remove-a-prefix-from-a-string
+def remove_prefix(text, prefix):
+    if text.startswith(prefix):
+        return text[len(prefix):]
+    return text
+
 def validate_repo_state(repo_path):
     """Validate repo state"""
     if not os.path.isdir(os.path.join(repo_path, '.git')):

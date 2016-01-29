@@ -6,7 +6,8 @@ import signal
 import sys
 import argcomplete
 import colorama
-from termcolor import cprint
+import emoji
+from termcolor import cprint, colored
 from clowder.clowder_repo import ClowderRepo
 from clowder.clowder_controller import ClowderController
 
@@ -31,7 +32,11 @@ class Command(object):
             clowder_symlink = os.path.join(self.root_directory, 'clowder.yaml')
             self.clowder_repo = ClowderRepo(self.root_directory)
             if not os.path.islink(clowder_symlink):
-                self.clowder_repo.symlink_yaml()
+                print('')
+                cat_face = emoji.emojize(':cat:', use_aliases=True)
+                clowder_output = colored('.clowder', 'green')
+                print(cat_face + '  ' + clowder_output)
+                self.clowder_repo.link()
             self.clowder = ClowderController(self.root_directory)
             self.versions = self.clowder.get_saved_version_names()
             if self.clowder.get_all_group_names() is not None:
@@ -48,6 +53,7 @@ class Command(object):
         self._configure_subparser_forall(subparsers)
         self._configure_subparser_herd(subparsers)
         self._configure_subparser_init(subparsers)
+        self._configure_subparser_link(subparsers)
         self._configure_subparser_prune(subparsers)
         self._configure_subparser_repo(subparsers)
         self._configure_subparser_save(subparsers)
@@ -59,7 +65,7 @@ class Command(object):
         self.args = parser.parse_args()
 
         if self.args.clowder_version:
-            print('clowder version 1.0.1')
+            print('clowder version 1.1.0')
             sys.exit(0)
         print('')
         if self.args.command is None or not hasattr(self, self.args.command):
@@ -96,16 +102,7 @@ class Command(object):
         """clowder herd command"""
         if self.clowder_repo is not None:
             self.clowder_repo.print_status()
-
-            if self.args.version is None:
-                version = None
-            else:
-                version = self.args.version[0]
-
-            self.clowder_repo.symlink_yaml(version)
             print('')
-            # Create new clowder in case symlink changed
-            clowder = ClowderController(self.root_directory)
 
             if self.args.branch is None:
                 ref = None
@@ -119,24 +116,41 @@ class Command(object):
 
             if self.args.projects is None:
                 if self.args.groups is None:
-                    clowder.herd_groups(clowder.get_all_group_names(), ref, depth)
+                    self.clowder.herd_groups(self.clowder.get_all_group_names(), ref, depth)
                 else:
-                    clowder.herd_groups(self.args.groups, ref, depth)
+                    self.clowder.herd_groups(self.args.groups, ref, depth)
             else:
-                clowder.herd_projects(self.args.projects, ref, depth)
+                self.clowder.herd_projects(self.args.projects, ref, depth)
         else:
             exit_clowder_not_found()
 
     def init(self):
         """clowder init command"""
         if self.clowder_repo is None:
-            cprint('Create clowder repo from %s\n' % self.args.url, 'yellow')
+            init_output = colored('Create clowder repo from ', 'yellow')
+            url_output = colored(self.args.url, 'green')
+            print(init_output + url_output)
+            print('')
             clowder_repo = ClowderRepo(self.root_directory)
             clowder_repo.init(self.args.url, self.args.branch)
         else:
             cprint('Clowder already initialized in this directory', 'red')
             print('')
             sys.exit()
+
+    def link(self):
+        """clowder link command"""
+        self.clowder_repo.print_status()
+
+        if self.clowder_repo is not None:
+            if self.args.version is None:
+                version = None
+            else:
+                version = self.args.version[0]
+
+            self.clowder_repo.link(version)
+        else:
+            exit_clowder_not_found()
 
     def prune(self):
         """clowder prune command"""
@@ -292,8 +306,6 @@ class Command(object):
         parser_herd = subparsers.add_parser('herd', help=herd_help)
         parser_herd.add_argument('--depth', '-d', default=None, type=int, nargs=1,
                                  help='Depth to herd')
-        parser_herd.add_argument('--version', '-v', choices=self.versions, nargs=1,
-                                 default=None, help='Version name to herd')
         parser_herd.add_argument('--branch', '-b', nargs=1, default=None, help='Branch to herd')
         group_herd = parser_herd.add_mutually_exclusive_group()
         group_herd.add_argument('--groups', '-g', choices=self.group_names,
@@ -309,6 +321,13 @@ class Command(object):
         parser_init.add_argument('url', help='URL of repo containing clowder.yaml')
         parser_init.add_argument('--branch', '-b', default='master', nargs='?',
                                  help='Branch of repo containing clowder.yaml')
+
+    def _configure_subparser_link(self, subparsers):
+        """Configure clowder link subparser and arguments"""
+        # clowder link
+        parser_link = subparsers.add_parser('link', help='Symlink clowder.yaml version')
+        parser_link.add_argument('--version', '-v', choices=self.versions, nargs=1,
+                                 default=None, help='Version name to symlink')
 
     def _configure_subparser_prune(self, subparsers):
         """Configure clowder prune subparser and arguments"""
