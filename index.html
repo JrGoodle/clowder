@@ -70,7 +70,7 @@
 
 <p>To install from the <a href="https://github.com/JrGoodle/clowder/releases">GitHub Releases</a> open a terminal and run:</p>
 
-<div class="highlight highlight-source-shell"><pre>$ pip3 install https://github.com/JrGoodle/clowder/releases/download/1.0.0/clowder-1.0.0-py3-none-any.whl</pre></div>
+<div class="highlight highlight-source-shell"><pre>$ pip3 install https://github.com/JrGoodle/clowder/releases/download/1.1.0/clowder-1.1.0-py3-none-any.whl</pre></div>
 
 <p>For terminal autocompletion, add the following to your shell profile:</p>
 
@@ -92,11 +92,11 @@
 <pre><code>llvm-projects/clowder.yaml -&gt; llvm-projects/.clowder/clowder.yaml
 </code></pre>
 
-<p>Next sync all repositories:</p>
+<p>Next clone all repositories and check out refs specified in <code>clowder.yaml</code>:</p>
 
 <div class="highlight highlight-source-shell"><pre>$ clowder herd</pre></div>
 
-<p>The <code>clowder herd</code> command syncs the default branch for each project. The project repositories must be clean, or <code>clowder</code> will exit. The <code>clowder.yaml</code> symlink is always updated to point to the primary <code>clowder.yaml</code> file in the clowder repo. Projects are cloned if they don't currently exist. Otherwise, each project will pull the latest changes. If the current branch isn't the default, it'll be checked out, and latest changes pulled. For commits and tags, the commits are checked out into a detached <code>HEAD</code> state (<code>clowder forall</code> or <code>clowder start</code> can then be used to create/checkout branches).</p>
+<p>The <code>clowder herd</code> command updates the state of the projects. The project repositories must have a clean git status, or <code>clowder</code> will exit. The <code>clowder.yaml</code> symlink is always updated to point to the primary <code>clowder.yaml</code> file in the clowder repo. Projects are cloned if they don't currently exist; otherwise, each project will pull the latest changes. If the current git ref checked out doesn't correspond to the <code>clowder.yaml</code> configuration, the correct ref will be checked out, and latest changes pulled for branches. For commits and tags, the commits are checked out into a detached <code>HEAD</code> state (<code>clowder forall</code> or <code>clowder start</code> can then be used to create/checkout branches).</p>
 
 <p>For more example projects, see the <a href="https://github.com/JrGoodle/clowder/tree/master/examples">examples directory</a>.</p>
 
@@ -109,7 +109,7 @@
 <div class="highlight highlight-source-shell"><pre>$ clowder clean <span class="pl-c"># Discard any changes in projects</span>
 $ clowder forall <span class="pl-s"><span class="pl-pds">"</span>git status<span class="pl-pds">"</span></span> <span class="pl-c"># Run command in all project directories</span>
 $ clowder herd -b my_branch <span class="pl-c"># Herd specified branch</span>
-$ clowder herd -v 0.1 <span class="pl-c"># Herd a previously saved version</span>
+$ clowder link -v 0.1 <span class="pl-c"># Set clowder.yaml symlink to a previously saved version</span>
 $ clowder repo run <span class="pl-s"><span class="pl-pds">'</span>git status<span class="pl-pds">'</span></span> <span class="pl-c"># Run command in .clowder directory</span>
 $ clowder save 0.1 <span class="pl-c"># Save a version of clowder.yaml with current commit sha's</span>
 $ clowder start my_feature <span class="pl-c"># Create new branch 'my_feature' for all projects</span>
