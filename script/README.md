@@ -1,4 +1,4 @@
-# Test Scripts
+# Scripts
 
 ## `test_cats_example.sh`
 
