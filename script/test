@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+cd "$( dirname "${BASH_SOURCE[0]}" )" || exit 1
+
+if [ $1 == "cats" ]; then
+    ./test_cats_example.sh
+elif [ $1 == "llvm" ]; then
+    ./test_llvm_example.sh
+fi

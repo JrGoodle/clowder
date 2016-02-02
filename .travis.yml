@@ -9,23 +9,18 @@ dist: trusty
 
 env:
   matrix:
-    - TARGET="test_cats_example"
-    - TARGET="test_llvm_example"
+    - TARGET="cats"
+    - TARGET="llvm"
 
-before_install:
-  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew update; fi
-  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get update; fi
+before_install: script/bootstrap
 
-install:
-  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew install python3; fi
-  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew install github-release; fi
-  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get install -y python3-setuptools; fi
+install: if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew install github-release; fi
 
-before_script: sudo python3 setup.py install
+before_script: script/setup
 
-script: scripts/${TARGET}.sh
+script: script/test ${TARGET}
 
-after_success: if [ "$TRAVIS_OS_NAME" = "osx" ]; then scripts/deploy.sh; fi
+after_success: if [ "$TRAVIS_OS_NAME" = "osx" ]; then script/deploy; fi
 
 branches:
   only: # whitelist

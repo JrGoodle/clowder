@@ -2,7 +2,7 @@
 
 cd "$( dirname "${BASH_SOURCE[0]}" )" || exit 1
 
-echo "deploy.sh"
+echo "deploy"
 
 if [[ "$TRAVIS_PULL_REQUEST" != "false" ]]; then
   echo "This is a pull request. No deployment will be done."
