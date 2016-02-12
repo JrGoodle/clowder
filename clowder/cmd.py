@@ -33,9 +33,10 @@ class Command(object):
             self.clowder_repo = ClowderRepo(self.root_directory)
             if not os.path.islink(clowder_symlink):
                 print('')
-                cat_face = emoji.emojize(':cat:', use_aliases=True)
+                # cat_face = emoji.emojize(':cat:', use_aliases=True)
                 clowder_output = colored('.clowder', 'green')
-                print(cat_face + '  ' + clowder_output)
+                # print(cat_face + '  ' + clowder_output)
+                print(clowder_output)
                 self.clowder_repo.link()
             self.clowder = ClowderController(self.root_directory)
             self.versions = self.clowder.get_saved_version_names()
