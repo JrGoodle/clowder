@@ -6,7 +6,6 @@ import signal
 import sys
 import argcomplete
 import colorama
-import emoji
 from termcolor import cprint, colored
 from clowder.clowder_repo import ClowderRepo
 from clowder.clowder_controller import ClowderController
@@ -33,9 +32,7 @@ class Command(object):
             self.clowder_repo = ClowderRepo(self.root_directory)
             if not os.path.islink(clowder_symlink):
                 print('')
-                # cat_face = emoji.emojize(':cat:', use_aliases=True)
                 clowder_output = colored('.clowder', 'green')
-                # print(cat_face + '  ' + clowder_output)
                 print(clowder_output)
                 self.clowder_repo.link()
             self.clowder = ClowderController(self.root_directory)
