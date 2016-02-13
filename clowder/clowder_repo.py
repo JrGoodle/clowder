@@ -2,7 +2,6 @@
 import os
 import subprocess
 import sys
-import emoji
 from termcolor import colored
 from clowder.utility.git_utilities import (
     git_add,
@@ -91,11 +90,9 @@ class ClowderRepo(object):
     def print_status(self):
         """Print clowder repo status"""
         repo_path = os.path.join(self.root_directory, '.clowder')
-        # cat_face = emoji.emojize(':cat:', use_aliases=True)
         # FIXME: Probably should remove this as it assumes .clowder repo which isn't git directory
         if not os.path.isdir(os.path.join(repo_path, '.git')):
             output = colored('.clowder', 'green')
-            # print(cat_face + '  ' + output)
             print(output)
             return
         project_output = format_project_string(repo_path, '.clowder')
@@ -106,11 +103,8 @@ class ClowderRepo(object):
             real_path = os.path.realpath(clowder_symlink)
             clowder_path = remove_prefix(real_path + '/', self.root_directory)
             path_output = colored(clowder_path[1:-1], 'cyan')
-            # print(cat_face + '  ' + project_output + ' ' + current_ref_output +
-            #       ' -> ' + path_output)
             print(project_output + ' ' + current_ref_output + ' -> ' + path_output)
         else:
-            # print(cat_face + '  ' + project_output + ' ' + current_ref_output)
             print(project_output + ' ' + current_ref_output)
 
     def pull(self):
