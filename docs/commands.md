@@ -33,7 +33,7 @@ $ clowder clean -p llvm-mirror/clang
 
 ### `forall`
 
-Runs command argument in project directories.
+Runs command in project directories.
 
 ```bash
 # Run command in all project directories
@@ -50,7 +50,7 @@ $ clowder forall "git status" -p llvm-mirror/clang
 
 ### `herd`
 
-Update default branches with latest changes.
+Update with latest changes.
 
 ```bash
 # Herd specified branch
@@ -66,7 +66,7 @@ $ clowder herd -g clang llvm
 $ clowder herd -p llvm-mirror/clang
 
 # Multiple arguments
-$ clowder herd -v 0.1 -b my_branch -g clang llvm -d 1
+$ clowder herd -b my_branch -g clang llvm -d 1
 ```
 
 ---
@@ -94,8 +94,7 @@ Set `clowder.yaml` symlink.
 $ clowder link
 
 # Point clowder.yaml symlink to saved version
-$ clowder herd -v 0.1
-
+$ clowder link -v 0.1
 ```
 
 ---
@@ -150,7 +149,7 @@ $ clowder repo status
 ### `save`
 
 Save a `clowder.yaml` version with the information from currently checked out repositories.
-Versions are saved to `.clowder/versions/<version_name>/clowder.yaml` and need to be committed manually.
+Versions are saved to `.clowder/versions/<version_name>/clowder.yaml`.
 
 ```bash
 # Save a version of clowder.yaml with current commit sha's
