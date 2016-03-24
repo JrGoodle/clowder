@@ -1,5 +1,7 @@
 ## The `clowder.yaml` File
 
+The examples are based on [llvm-projects clowder.yaml](https://github.com/JrGoodle/llvm-projects/blob/master/clowder.yaml)
+
 ### Defaults
 
 The `defaults` specify the default `ref`, `source`, and `remote` for projects.
@@ -13,7 +15,7 @@ defaults:
 
 ### Sources
 
-Multiple `sources` can be specified for use with different projects.
+Multiple `sources` can be specified.
 
 ```yaml
 sources:
@@ -28,8 +30,8 @@ sources:
 ### Groups and Projects
 
 The `groups` each have a `name` and associated `projects`.
-At a minimum, `projects` need the `name` from the project's url, and the `path` to clone relative to the root directory.
-The default `remote`, `source`, and `ref` values can be overridden on a per-project basis. The `depth` can be set to do a shallow clone. It's also easy to add references to forks in the same `clowder.yaml` file by specifying `forks` with a `name` and `remote`.
+At a minimum, `projects` need the `name` from the project's url, and the `path` to clone relative to the base directory.
+The default `remote`, `source`, and `ref` values can be overridden on a per-project basis. The `depth` can be set to do a shallow clone. It's also possible to add references to forks in the same `clowder.yaml` file by specifying `forks` with a `name` and `remote`.
 
 ```yaml
 groups:
