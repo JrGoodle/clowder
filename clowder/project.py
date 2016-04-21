@@ -16,6 +16,7 @@ from clowder.utility.git_utilities import (
     git_herd,
     git_is_dirty,
     git_prune,
+    git_prune_remote,
     git_reset_head,
     git_start,
     git_stash,
@@ -156,13 +157,16 @@ class Project(object):
             self._print_status()
             print_validation(self.full_path())
 
-    def prune(self, branch):
+    def prune(self, branch, is_remote):
         """Prune branch"""
         self._print_status()
         if not os.path.isdir(os.path.join(self.full_path(), '.git')):
             cprint(" - Directory doesn't exist", 'red')
         else:
-            git_prune(self.full_path(), branch, self.ref)
+            if is_remote:
+                git_prune_remote(self.full_path(), branch, self.remote_name)
+            else:
+                git_prune(self.full_path(), branch, self.ref)
 
     def run_command(self, command):
         """Run command in project directory"""

@@ -156,9 +156,9 @@ class Command(object):
             self.clowder_repo.print_status()
             print('')
             if self.args.projects is None:
-                self.clowder.prune_groups(self.args.groups, self.args.branch)
+                self.clowder.prune_groups(self.args.groups, self.args.branch, self.args.remote)
             else:
-                self.clowder.prune_projects(self.args.projects, self.args.branch)
+                self.clowder.prune_projects(self.args.projects, self.args.branch, self.args.remote)
         else:
             exit_clowder_not_found()
 
@@ -332,6 +332,8 @@ class Command(object):
         # clowder prune
         parser_prune = subparsers.add_parser('prune', help='Prune old branch')
         parser_prune.add_argument('branch', help='Name of branch to remove')
+        parser_prune.add_argument('--remote', '-r', action='store_true',
+                                  help='Prune remote branches')
         group_prune = parser_prune.add_mutually_exclusive_group()
         group_prune.add_argument('--groups', '-g', choices=self.group_names,
                                  default=self.group_names, nargs='+',
