@@ -158,20 +158,20 @@ class ClowderController(object):
             print('Version ' + version_output + ' already exists at ' + yaml_file_output)
             sys.exit(1)
 
-    def prune_groups(self, group_names, branch):
+    def prune_groups(self, group_names, branch, is_remote):
         """Prune branch for groups"""
         self._validate(group_names)
         for group in self.groups:
             if group.name in group_names:
-                group.prune(branch)
+                group.prune(branch, is_remote)
 
-    def prune_projects(self, project_names, branch):
+    def prune_projects(self, project_names, branch, is_remote):
         """Prune branch for projects"""
         self._validate(project_names)
         for group in self.groups:
             for project in group.projects:
                 if project.name in project_names:
-                    project.prune(branch)
+                    project.prune(branch, is_remote)
 
     def _get_yaml(self):
         """Return python object representation for saving yaml"""

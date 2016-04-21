@@ -147,7 +147,7 @@ def git_is_dirty(repo_path):
         return repo.is_dirty()
 
 def git_prune(repo_path, branch, default_ref):
-    """Start new branch in repository"""
+    """Prune branch in repository"""
     repo = _repo(repo_path)
     branch_output = colored('(' + branch + ')', 'magenta')
     if branch in repo.heads:
@@ -167,12 +167,38 @@ def git_prune(repo_path, branch, default_ref):
             print(' - Deleting branch ' + branch_output)
             repo.delete_head(branch)
         except:
-            message = colored(' - Failed to delete branch', 'red')
+            message = colored(' - Failed to delete branch ', 'red')
             print(message + branch_output)
             print('')
             sys.exit(1)
     else:
         print(' - Branch ' + branch_output + " doesn't exist")
+
+def git_prune_remote(repo_path, branch, remote):
+    """Prune remote branch in repository"""
+    repo = _repo(repo_path)
+    remote_output = colored(remote, attrs=['bold'])
+    try:
+        print(' - Fetch data from ' + remote_output)
+        origin = repo.remotes[remote]
+        origin.fetch()
+        branch_output = colored('(' + branch + ')', 'magenta')
+        if branch in origin.refs:
+            try:
+                print(' - Deleting branch ' + branch_output)
+                repo.git.push(remote, '--delete', branch)
+            except:
+                message = colored(' - Failed to delete branch ', 'red')
+                print(message + branch_output)
+                print('')
+                sys.exit(1)
+        else:
+            print(' - Branch ' + branch_output + " doesn't exist")
+    except:
+        message = colored(' - Failed to fetch from remote ', 'red')
+        print(message + remote_output)
+        print('')
+        sys.exit(1)
 
 def git_pull(repo_path):
     """Pull from remote branch"""
