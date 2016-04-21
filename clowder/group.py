@@ -46,31 +46,6 @@ class Group(object):
                 valid = False
         return valid
 
-    def start(self, branch):
-        """Start a new feature branch"""
-        self._print_name()
-        for project in self.projects:
-            project.start(branch)
-
-    def status(self):
-        """Print status for all projects"""
-        self._print_name()
-        for project in self.projects:
-            project.status()
-
-    def status_verbose(self):
-        """Print verbose status for all projects"""
-        self._print_name()
-        for project in self.projects:
-            project.status_verbose()
-
-    def stash(self):
-        """Stash changes for all projects with changes"""
-        if self.is_dirty():
-            self._print_name()
-            for project in self.projects:
-                project.stash()
-
     def print_existence_message(self):
         """Print existence validation message for projects in group"""
         if not self.projects_exist():
@@ -98,6 +73,31 @@ class Group(object):
         self._print_name()
         for project in self.projects:
             project.prune(branch, is_remote)
+
+    def start(self, branch):
+        """Start a new feature branch"""
+        self._print_name()
+        for project in self.projects:
+            project.start(branch)
+
+    def status(self):
+        """Print status for all projects"""
+        self._print_name()
+        for project in self.projects:
+            project.status()
+
+    def status_verbose(self):
+        """Print verbose status for all projects"""
+        self._print_name()
+        for project in self.projects:
+            project.status_verbose()
+
+    def stash(self):
+        """Stash changes for all projects with changes"""
+        if self.is_dirty():
+            self._print_name()
+            for project in self.projects:
+                project.stash()
 
     def _print_name(self):
         """Print formatted group name"""
