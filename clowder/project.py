@@ -122,29 +122,6 @@ class Project(object):
         """Validate status of project"""
         return validate_repo_state(self.full_path())
 
-    def start(self, branch):
-        """Start a new feature branch"""
-        self._print_status()
-        if not os.path.isdir(os.path.join(self.full_path(), '.git')):
-            cprint(" - Directory doesn't exist", 'red')
-        else:
-            git_start(self.full_path(), self.remote_name, branch, self.depth)
-
-    def status(self):
-        """Print status for project"""
-        self._print_status()
-
-    def status_verbose(self):
-        """Print verbose status for project"""
-        self._print_status()
-        git_status(self.full_path())
-
-    def stash(self):
-        """Stash changes for project if dirty"""
-        if self.is_dirty():
-            self._print_status()
-            git_stash(self.full_path())
-
     def print_exists(self):
         """Print existence validation message for project"""
         if not self.exists():
@@ -178,6 +155,29 @@ class Project(object):
             print(command_output)
             subprocess.call(command.split(), cwd=self.full_path())
             print('')
+
+    def start(self, branch):
+        """Start a new feature branch"""
+        self._print_status()
+        if not os.path.isdir(os.path.join(self.full_path(), '.git')):
+            cprint(" - Directory doesn't exist", 'red')
+        else:
+            git_start(self.full_path(), self.remote_name, branch, self.depth)
+
+    def status(self):
+        """Print status for project"""
+        self._print_status()
+
+    def status_verbose(self):
+        """Print verbose status for project"""
+        self._print_status()
+        git_status(self.full_path())
+
+    def stash(self):
+        """Stash changes for project if dirty"""
+        if self.is_dirty():
+            self._print_status()
+            git_stash(self.full_path())
 
     def _print_status(self):
         """Print formatted project status"""

@@ -84,24 +84,41 @@ class ClowderController(object):
                 if project.name in project_names:
                     project.herd(branch, depth)
 
-    def status_groups(self, group_names, verbose=False):
-        """Print status for groups"""
+    def prune_groups(self, group_names, branch, is_remote):
+        """Prune branch for groups"""
+        self._validate(group_names)
         for group in self.groups:
             if group.name in group_names:
-                if verbose is False:
-                    group.status()
-                else:
-                    group.status_verbose()
+                group.prune(branch, is_remote)
 
-    def status_projects(self, project_names, verbose=False):
-        """Print status for projects"""
+    def prune_projects(self, project_names, branch, is_remote):
+        """Prune branch for projects"""
+        self._validate(project_names)
         for group in self.groups:
             for project in group.projects:
                 if project.name in project_names:
-                    if verbose is False:
-                        project.status()
-                    else:
-                        project.status_verbose()
+                    project.prune(branch, is_remote)
+
+    def save_version(self, version):
+        """Save current commits to a clowder.yaml in the versions directory"""
+        self._validate_projects_exist()
+        self._validate(self.get_all_group_names())
+        versions_dir = os.path.join(self.root_directory, '.clowder', 'versions')
+        version_name = version.replace('/', '-') # Replace path separateors with dashes
+        version_dir = os.path.join(versions_dir, version_name)
+        if not os.path.exists(version_dir):
+            os.makedirs(version_dir)
+
+        yaml_file = os.path.join(version_dir, 'clowder.yaml')
+        yaml_file_output = colored(yaml_file, 'cyan')
+        version_output = colored(version_name, attrs=['bold'])
+        if not os.path.exists(yaml_file):
+            with open(yaml_file, 'w') as file:
+                print('Saving version ' + version_output + ' at ' + yaml_file_output)
+                yaml.dump(self._get_yaml(), file, default_flow_style=False)
+        else:
+            print('Version ' + version_output + ' already exists at ' + yaml_file_output)
+            sys.exit(1)
 
     def start_groups(self, group_names, branch):
         """Start feature branch for groups"""
@@ -137,41 +154,24 @@ class ClowderController(object):
         else:
             print('No changes to stash')
 
-    def save_version(self, version):
-        """Save current commits to a clowder.yaml in the versions directory"""
-        self._validate_projects_exist()
-        self._validate(self.get_all_group_names())
-        versions_dir = os.path.join(self.root_directory, '.clowder', 'versions')
-        version_name = version.replace('/', '-') # Replace path separateors with dashes
-        version_dir = os.path.join(versions_dir, version_name)
-        if not os.path.exists(version_dir):
-            os.makedirs(version_dir)
-
-        yaml_file = os.path.join(version_dir, 'clowder.yaml')
-        yaml_file_output = colored(yaml_file, 'cyan')
-        version_output = colored(version_name, attrs=['bold'])
-        if not os.path.exists(yaml_file):
-            with open(yaml_file, 'w') as file:
-                print('Saving version ' + version_output + ' at ' + yaml_file_output)
-                yaml.dump(self._get_yaml(), file, default_flow_style=False)
-        else:
-            print('Version ' + version_output + ' already exists at ' + yaml_file_output)
-            sys.exit(1)
-
-    def prune_groups(self, group_names, branch, is_remote):
-        """Prune branch for groups"""
-        self._validate(group_names)
+    def status_groups(self, group_names, verbose=False):
+        """Print status for groups"""
         for group in self.groups:
             if group.name in group_names:
-                group.prune(branch, is_remote)
+                if verbose is False:
+                    group.status()
+                else:
+                    group.status_verbose()
 
-    def prune_projects(self, project_names, branch, is_remote):
-        """Prune branch for projects"""
-        self._validate(project_names)
+    def status_projects(self, project_names, verbose=False):
+        """Print status for projects"""
         for group in self.groups:
             for project in group.projects:
                 if project.name in project_names:
-                    project.prune(branch, is_remote)
+                    if verbose is False:
+                        project.status()
+                    else:
+                        project.status_verbose()
 
     def _get_yaml(self):
         """Return python object representation for saving yaml"""
