@@ -37,7 +37,7 @@ class ClowderController(object):
         else:
             print('No changes to discard')
 
-    def forall_groups(self, command, group_names):
+    def forall_groups_command(self, command, group_names):
         """Runs command in all project directories of groups specified"""
         for group in self.groups:
             if group.name in group_names:
@@ -45,12 +45,28 @@ class ClowderController(object):
                     project.run_command(command)
         sys.exit() # Exit early to prevent printing extra newline
 
-    def forall_projects(self, command, project_names):
+    def forall_groups_file(self, script, group_names):
+        """Runs script in all project directories of groups specified"""
+        for group in self.groups:
+            if group.name in group_names:
+                for project in group.projects:
+                    project.run_script(script)
+        sys.exit() # Exit early to prevent printing extra newline
+
+    def forall_projects_command(self, command, project_names):
         """Runs command in all project directories of projects specified"""
         for group in self.groups:
             for project in group.projects:
                 if project.name in project_names:
                     project.run_command(command)
+        sys.exit() # Exit early to prevent printing extra newline
+
+    def forall_projects_file(self, script, project_names):
+        """Runs script in all project directories of projects specified"""
+        for group in self.groups:
+            for project in group.projects:
+                if project.name in project_names:
+                    project.run_script(script)
         sys.exit() # Exit early to prevent printing extra newline
 
     def get_all_group_names(self):

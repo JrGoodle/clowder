@@ -153,7 +153,18 @@ class Project(object):
         else:
             command_output = colored('$ ' + command, attrs=['bold'])
             print(command_output)
-            subprocess.call(command.split(), cwd=self.full_path())
+            subprocess.call(command, cwd=self.full_path(), shell=True)
+            print('')
+
+    def run_script(self, script):
+        """Run script in project directory"""
+        self._print_status()
+        if not os.path.isdir(self.full_path()):
+            cprint(" - Project is missing\n", 'red')
+        else:
+            command_output = colored('$ ' + script, attrs=['bold'])
+            print(command_output)
+            subprocess.call(script, cwd=self.full_path(), shell=True)
             print('')
 
     def start(self, branch):

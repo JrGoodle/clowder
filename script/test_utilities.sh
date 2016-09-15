@@ -44,7 +44,7 @@ test_branch_master()
 test_branch_version()
 {
     print_separator
-    clowder forall 'git checkout -b v0.1'
+    clowder forall -c 'git checkout -b v0.1'
     echo "TEST: Check current branches"
     for project in "$@"
     do
@@ -123,16 +123,16 @@ test_forall()
 {
     print_separator
     echo "TEST: Run forall command"
-    clowder forall 'git status' || exit 1
+    clowder forall -c 'git status' || exit 1
     echo "TEST: Run forall command for specific groups"
-    clowder forall 'git status' -g "$@" || exit 1
+    clowder forall -c 'git status' -g "$@" || exit 1
 }
 
 test_forall_projects()
 {
     print_separator
     echo "TEST: Run forall command for specific projects"
-    clowder forall 'git status' -p "$@" || exit 1
+    clowder forall -c 'git status' -p "$@" || exit 1
 }
 
 test_clean_missing_directories()
