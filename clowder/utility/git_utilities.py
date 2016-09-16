@@ -146,6 +146,48 @@ def git_is_dirty(repo_path):
         repo = _repo(repo_path)
         return repo.is_dirty()
 
+def git_new_local_commits(repo_path):
+    """Returns the number of new commits upstream"""
+    repo = _repo(repo_path)
+    try:
+        local_branch = repo.active_branch
+    except:
+        return 0
+    if local_branch is None:
+        return 0
+    else:
+        tracking_branch = local_branch.tracking_branch()
+        if tracking_branch is None:
+            return 0
+        else:
+            try:
+                rev_list_count = repo.git.rev_list('--count', '--left-right', local_branch.name + '...' + tracking_branch.name)
+                count = str(rev_list_count).split()[0]
+                return count
+            except:
+                return 0
+
+def git_new_upstream_commits(repo_path):
+    """Returns the number of new commits upstream"""
+    repo = _repo(repo_path)
+    try:
+        local_branch = repo.active_branch
+    except:
+        return 0
+    if local_branch is None:
+        return 0
+    else:
+        tracking_branch = local_branch.tracking_branch()
+        if tracking_branch is None:
+            return 0
+        else:
+            try:
+                rev_list_count = repo.git.rev_list('--count', '--left-right', local_branch.name + '...' + tracking_branch.name)
+                count = str(rev_list_count).split()[1]
+                return count
+            except:
+                return 0
+
 def git_prune(repo_path, branch, default_ref):
     """Prune branch in repository"""
     repo = _repo(repo_path)
