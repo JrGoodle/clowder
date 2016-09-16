@@ -98,6 +98,14 @@ def git_current_sha(repo_path):
     repo = _repo(repo_path)
     return repo.head.commit.hexsha
 
+def git_fetch(repo_path):
+    """Perform a git fetch"""
+    repo = _repo(repo_path)
+    try:
+        repo.git.fetch()
+    except:
+        return
+
 def git_fetch_remote(repo_path, remote, ref, depth):
     """Fetch from a specific remote"""
     repo = _repo(repo_path)
