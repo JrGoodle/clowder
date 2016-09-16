@@ -37,13 +37,22 @@ Runs command in project directories.
 
 ```bash
 # Run command in all project directories
-$ clowder forall "git status"
+$ clowder forall -c "git status"
+
+# Run script in all project directories
+$ clowder forall -f "/path/to/script.sh"
 
 # Run command for projects in clang group
-$ clowder forall "git status" -g clang
+$ clowder forall -c "git status" -g clang
+
+# Run command for projects in clang group
+$ clowder forall -f "/path/to/script.sh" -g clang
 
 # Run command for clang project
-$ clowder forall "git status" -p llvm-mirror/clang
+$ clowder forall -c "git status" -p llvm-mirror/clang
+
+# Run command for clang project
+$ clowder forall -f "/path/to/script.sh" -p llvm-mirror/clang
 ```
 
 ---

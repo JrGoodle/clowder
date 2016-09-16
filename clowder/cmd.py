@@ -90,9 +90,15 @@ class Command(object):
             self.clowder_repo.print_status()
             print('')
             if self.args.projects is None:
-                self.clowder.forall_groups(self.args.cmd, self.args.groups)
+                if self.args.cmd is not None:
+                    self.clowder.forall_groups_command(self.args.cmd[0], self.args.groups)
+                else:
+                    self.clowder.forall_groups_file(self.args.file[0], self.args.groups)
             else:
-                self.clowder.forall_projects(self.args.cmd, self.args.projects)
+                if self.args.cmd is not None:
+                    self.clowder.forall_projects_command(self.args.cmd[0], self.args.projects)
+                else:
+                    self.clowder.forall_projects_file(self.args.file[0], self.args.projects)
         else:
             exit_clowder_not_found()
 
@@ -289,12 +295,15 @@ class Command(object):
         # clowder forall
         forall_help = 'Run command in project directories'
         parser_forall = subparsers.add_parser('forall', help=forall_help)
-        parser_forall.add_argument('cmd', help='Command to run in project directories')
-        group_forall = parser_forall.add_mutually_exclusive_group()
-        group_forall.add_argument('--groups', '-g', choices=self.group_names,
+        group_forall_command = parser_forall.add_mutually_exclusive_group()
+        group_forall_command.add_argument('--cmd', '-c', nargs=1,
+                                help='Command to run in project directories')
+        group_forall_command.add_argument('--file', '-f', nargs=1, help='Script to run')
+        group_forall_targets = parser_forall.add_mutually_exclusive_group()
+        group_forall_targets.add_argument('--groups', '-g', choices=self.group_names,
                                   default=self.group_names, nargs='+',
                                   help='Groups to run command for')
-        group_forall.add_argument('--projects', '-p', choices=self.project_names,
+        group_forall_targets.add_argument('--projects', '-p', choices=self.project_names,
                                   nargs='+', help='Projects to run command for')
 
     def _configure_subparser_herd(self, subparsers):
