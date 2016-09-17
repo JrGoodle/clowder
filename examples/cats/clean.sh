@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-cd "$( dirname "${BASH_SOURCE[0]}" )"
+cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 rm -rf clowder
 rm -rf .clowder
 rm -rf black-cats

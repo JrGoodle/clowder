@@ -4,7 +4,7 @@
 
 echo 'TEST: cats example test script'
 
-cd "$( dirname "${BASH_SOURCE[0]}" )" || exit 1
+cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 
 if [ -n "$TRAVIS_OS_NAME" ]; then
     if [ "$TRAVIS_OS_NAME" = "osx" ]; then
