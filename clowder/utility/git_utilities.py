@@ -60,7 +60,7 @@ def git_create_repo(url, repo_path, remote, ref, depth=0):
         else:
             repo = _repo(repo_path)
             remote_names = [r.name for r in repo.remotes]
-            remote_output = colored(remote, attrs=['bold'])
+            remote_output = colored(remote, 'yellow')
             if remote not in remote_names:
                 try:
                     print(" - Create remote " + remote_output)
@@ -78,7 +78,7 @@ def git_create_remote(repo_path, remote, url):
     repo = _repo(repo_path)
     remote_names = [r.name for r in repo.remotes]
     if remote not in remote_names:
-        remote_output = colored(remote, attrs=['bold'])
+        remote_output = colored(remote, 'yellow')
         try:
             print(" - Create remote " + remote_output)
             repo.create_remote(remote, url)
@@ -111,7 +111,7 @@ def git_fetch_remote(repo_path, remote, ref, depth):
     repo = _repo(repo_path)
     try:
         truncated_ref = _truncate_ref(ref)
-        remote_output = colored(remote, attrs=['bold'])
+        remote_output = colored(remote, 'yellow')
         if depth == 0:
             print(' - Fetch all data from ' + remote_output)
             repo.git.fetch(remote, '--all', '--prune', '--tags')
@@ -227,7 +227,7 @@ def git_prune(repo_path, branch, default_ref):
 def git_prune_remote(repo_path, branch, remote):
     """Prune remote branch in repository"""
     repo = _repo(repo_path)
-    remote_output = colored(remote, attrs=['bold'])
+    remote_output = colored(remote, 'yellow')
     try:
         print(' - Fetch data from ' + remote_output)
         origin = repo.remotes[remote]
@@ -429,7 +429,7 @@ def _checkout_tag(repo_path, tag):
 def _create_checkout_branch(repo_path, branch, remote, depth):
     """Create and checkout local branch"""
     repo = _repo(repo_path)
-    remote_output = colored(remote, attrs=['bold'])
+    remote_output = colored(remote, 'yellow')
     try:
         print(' - Fetch data from ' + remote_output)
         origin = repo.remotes[remote]
@@ -466,7 +466,7 @@ def _create_tracking_branch(repo_path, branch, remote, depth):
     """Create and checkout tracking branch"""
     repo = _repo(repo_path)
     branch_output = colored('(' + branch + ')', 'magenta')
-    remote_output = colored(remote, attrs=['bold'])
+    remote_output = colored(remote, 'yellow')
     try:
         origin = repo.remotes[remote]
         if depth == 0:
@@ -512,7 +512,7 @@ def _fetch_remote_ref(repo_path, remote, ref, depth):
     """Fetch from a specific remote ref"""
     repo = _repo(repo_path)
     try:
-        remote_output = colored(remote, attrs=['bold'])
+        remote_output = colored(remote, 'yellow')
         if depth == 0:
             print(' - Fetch all data from ' + remote_output)
             repo.git.fetch('--all', '--prune', '--tags')
@@ -532,7 +532,7 @@ def _pull_remote_branch(repo_path, remote, branch):
     if not repo.head.is_detached:
         try:
             branch_output = colored('(' + branch + ')', 'magenta')
-            remote_output = colored(remote, attrs=['bold'])
+            remote_output = colored(remote, 'yellow')
             print(' - Pull latest changes from ' + remote_output + ' ' + branch_output)
             print(repo.git.pull(remote, branch))
         except:
