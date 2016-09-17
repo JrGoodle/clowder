@@ -50,7 +50,7 @@ class ClowderRepo(object):
     def clean(self):
         """Discard changes in clowder repo"""
         if self.is_dirty():
-            print(' - Discarding current changes')
+            print(' - Discard current changes')
             git_reset_head(self.clowder_path)
         else:
             print(' - No changes to discard')
