@@ -9,6 +9,7 @@ from clowder.utility.git_utilities import (
     git_checkout,
     git_commit,
     git_create_repo,
+    git_fetch,
     git_is_dirty,
     git_pull,
     git_push,
@@ -95,6 +96,7 @@ class ClowderRepo(object):
             output = colored('.clowder', 'green')
             print(output)
             return
+        git_fetch(self.clowder_path)
         project_output = format_project_string(repo_path, '.clowder')
         current_ref_output = format_ref_string(repo_path)
 
