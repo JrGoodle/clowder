@@ -206,7 +206,7 @@ def git_prune(repo_path, branch, default_ref):
             truncated_ref = _truncate_ref(default_ref)
             ref_output = colored('(' + truncated_ref + ')', 'magenta')
             try:
-                print(' - Checking out ' + ref_output)
+                print(' - Checkout branch ' + ref_output)
                 repo.git.checkout(truncated_ref)
             except:
                 message = colored(' - Failed to checkout ref', 'red')
@@ -214,7 +214,7 @@ def git_prune(repo_path, branch, default_ref):
                 print('')
                 sys.exit(1)
         try:
-            print(' - Deleting branch ' + branch_output)
+            print(' - Delete branch ' + branch_output)
             repo.delete_head(branch)
         except:
             message = colored(' - Failed to delete branch ', 'red')
@@ -235,7 +235,7 @@ def git_prune_remote(repo_path, branch, remote):
         branch_output = colored('(' + branch + ')', 'magenta')
         if branch in origin.refs:
             try:
-                print(' - Deleting branch ' + branch_output)
+                print(' - Delete branch ' + branch_output)
                 repo.git.push(remote, '--delete', branch)
             except:
                 message = colored(' - Failed to delete branch ', 'red')
