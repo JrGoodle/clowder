@@ -50,7 +50,7 @@ def git_create_repo(url, repo_path, remote, ref, depth=0):
             os.makedirs(repo_path)
         repo_path_output = colored(repo_path, 'cyan')
         try:
-            print(' - Cloning repo at ' + repo_path_output)
+            print(' - Clone repo at ' + repo_path_output)
             Repo.init(repo_path)
         except:
             cprint(' - Failed to initialize repository', 'red')
@@ -255,7 +255,7 @@ def git_pull(repo_path):
     repo = _repo(repo_path)
     if not repo.head.is_detached:
         try:
-            print(' - Pulling latest changes')
+            print(' - Pull latest changes')
             print(repo.git.pull())
         except:
             cprint(' - Failed to pull latest changes', 'red')
@@ -533,7 +533,7 @@ def _pull_remote_branch(repo_path, remote, branch):
         try:
             branch_output = colored('(' + branch + ')', 'magenta')
             remote_output = colored(remote, attrs=['bold'])
-            print(' - Pulling latest changes from ' + remote_output + ' ' + branch_output)
+            print(' - Pull latest changes from ' + remote_output + ' ' + branch_output)
             print(repo.git.pull(remote, branch))
         except:
             cprint(' - Failed to pull latest changes', 'red')

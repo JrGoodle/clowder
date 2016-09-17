@@ -69,7 +69,7 @@ class Project(object):
         """Discard changes for project"""
         if self.is_dirty():
             self._print_status()
-            print(' - Discarding current changes')
+            print(' - Discard current changes')
             git_reset_head(self.full_path())
 
     def exists(self):
