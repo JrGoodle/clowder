@@ -131,9 +131,8 @@ class Command(object):
     def init(self):
         """clowder init command"""
         if self.clowder_repo is None:
-            init_output = colored('Create clowder repo from ', 'yellow')
             url_output = colored(self.args.url, 'green')
-            print(init_output + url_output)
+            print('Create clowder repo from ' + url_output)
             print('')
             clowder_repo = ClowderRepo(self.root_directory)
             clowder_repo.init(self.args.url, self.args.branch)
