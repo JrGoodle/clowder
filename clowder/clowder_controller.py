@@ -170,8 +170,12 @@ class ClowderController(object):
         else:
             print('No changes to stash')
 
-    def status_groups(self, group_names, verbose=False):
+    def status_groups(self, group_names, fetch, verbose=False):
         """Print status for groups"""
+        if fetch:
+            for group in self.groups:
+                if group.name in group_names:
+                    group.fetch()
         for group in self.groups:
             if group.name in group_names:
                 if verbose is False:
@@ -179,8 +183,13 @@ class ClowderController(object):
                 else:
                     group.status_verbose()
 
-    def status_projects(self, project_names, verbose=False):
+    def status_projects(self, project_names, fetch, verbose=False):
         """Print status for projects"""
+        if fetch:
+            for group in self.groups:
+                for project in group.projects:
+                    if project.name in project_names:
+                        project.fetch()
         for group in self.groups:
             for project in group.projects:
                 if project.name in project_names:

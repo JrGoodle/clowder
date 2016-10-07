@@ -13,6 +13,7 @@ from clowder.utility.clowder_utilities import (
 from clowder.utility.git_utilities import (
     git_create_repo,
     git_current_sha,
+    git_fetch,
     git_herd,
     git_is_dirty,
     git_prune,
@@ -76,6 +77,11 @@ class Project(object):
         """Check if project exists on disk"""
         path = os.path.join(self.full_path(), '.git')
         return os.path.isdir(path)
+
+    def fetch(self):
+        """Check if project exists on disk"""
+        if self.exists():
+            git_fetch(self.full_path())
 
     def full_path(self):
         """Return full path to project"""
