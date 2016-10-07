@@ -268,10 +268,15 @@ class Command(object):
         if self.clowder_repo is not None:
             self.clowder_repo.print_status()
             print('')
+            if self.args.fetch:
+                print(' - Fetching upstream changes for projects')
+                print('')
             if self.args.projects is None:
-                self.clowder.status_groups(self.args.groups, self.args.verbose)
+                self.clowder.status_groups(self.args.groups, self.args.fetch,
+                                           self.args.verbose)
             else:
-                self.clowder.status_projects(self.args.projects, self.args.verbose)
+                self.clowder.status_projects(self.args.projects, self.args.fetch,
+                                             self.args.verbose)
         else:
             exit_clowder_not_found()
 
@@ -417,6 +422,8 @@ class Command(object):
         """Configure clowder status subparser and arguments"""
         # clowder status
         parser_status = subparsers.add_parser('status', help='Print project status')
+        parser_status.add_argument('--fetch', '-f', action='store_true',
+                                   help='Fetch projects before printing status')
         parser_status.add_argument('--verbose', '-v', action='store_true',
                                    help='Print detailed diff status')
         group_status = parser_status.add_mutually_exclusive_group()
