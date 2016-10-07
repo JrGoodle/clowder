@@ -79,7 +79,7 @@ class Project(object):
         return os.path.isdir(path)
 
     def fetch(self):
-        """Check if project exists on disk"""
+        """Silently fetch upstream changes if project exists on disk"""
         if self.exists():
             git_fetch(self.full_path())
 
