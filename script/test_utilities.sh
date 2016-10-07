@@ -209,6 +209,9 @@ test_status_groups()
     print_separator
     echo "TEST: Test status for specific groups"
     clowder status -g "$@" || exit 1
+    echo "TEST: Test status for specific groups with fetching"
+    clowder status -f -g "$@" || exit 1
+
 }
 
 test_status_projects()
@@ -216,6 +219,8 @@ test_status_projects()
     print_separator
     echo "TEST: Test status for specific projects"
     clowder status -p "$@" || exit 1
+    echo "TEST: Test status for specific projects with fetching"
+    clowder status -f -p "$@" || exit 1
 }
 
 test_stash_missing_directories()
