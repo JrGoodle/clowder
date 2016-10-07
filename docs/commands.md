@@ -215,6 +215,9 @@ $ clowder status
 # Print more verbose status of projects
 $ clowder status -v
 
+# Fetch upstream changes for projects before printing statuses
+$ clowder status -f
+
 # Print status of projects in clang and llvm groups
 $ clowder status -g clang llvm
 
