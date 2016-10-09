@@ -9,6 +9,7 @@ import colorama
 from termcolor import cprint, colored
 from clowder.clowder_repo import ClowderRepo
 from clowder.clowder_controller import ClowderController
+from clowder.utility.repeated_timer import RepeatedTimer
 
 if __name__ == '__main__':
     raise SystemExit(main())
@@ -269,14 +270,18 @@ class Command(object):
             self.clowder_repo.print_status()
             print('')
             if self.args.fetch:
-                print(' - Fetching upstream changes for projects')
-                print('')
+                print(' - Fetching upstream changes for projects', end="", flush=True)
+                timer = RepeatedTimer(1, self._print_progress)
+                if self.args.projects is None:
+                    self.clowder.fetch_groups(self.args.groups)
+                else:
+                    self.clowder.fetch_projects(self.args.projects)
+                timer.stop()
+                print('\n')
             if self.args.projects is None:
-                self.clowder.status_groups(self.args.groups, self.args.fetch,
-                                           self.args.verbose)
+                self.clowder.status_groups(self.args.groups, self.args.verbose)
             else:
-                self.clowder.status_projects(self.args.projects, self.args.fetch,
-                                             self.args.verbose)
+                self.clowder.status_projects(self.args.projects, self.args.verbose)
         else:
             exit_clowder_not_found()
 
@@ -301,14 +306,14 @@ class Command(object):
         parser_forall = subparsers.add_parser('forall', help=forall_help)
         group_forall_command = parser_forall.add_mutually_exclusive_group()
         group_forall_command.add_argument('--cmd', '-c', nargs=1,
-                                help='Command to run in project directories')
+                                          help='Command to run in project directories')
         group_forall_command.add_argument('--file', '-f', nargs=1, help='Script to run')
         group_forall_targets = parser_forall.add_mutually_exclusive_group()
         group_forall_targets.add_argument('--groups', '-g', choices=self.group_names,
-                                  default=self.group_names, nargs='+',
-                                  help='Groups to run command for')
+                                          default=self.group_names, nargs='+',
+                                          help='Groups to run command for')
         group_forall_targets.add_argument('--projects', '-p', choices=self.project_names,
-                                  nargs='+', help='Projects to run command for')
+                                          nargs='+', help='Projects to run command for')
 
     def _configure_subparser_herd(self, subparsers):
         """Configure clowder herd subparser and arguments"""
@@ -432,6 +437,10 @@ class Command(object):
                                   help='Groups to print status for')
         group_status.add_argument('--projects', '-p', choices=self.project_names,
                                   nargs='+', help='Projects to print status for')
+
+
+    def _print_progress(self):
+        print('.', end="", flush=True)
 
 def exit_unrecognized_command(parser):
     """Print unrecognized command message and exit"""
