@@ -196,6 +196,8 @@ class Project(object):
             self._print_status()
             git_stash(self.full_path())
 
+# Disable warning for unused variables
+# pylint: disable=W0612
     def _print_status(self):
         """Print formatted project status"""
         repo_path = os.path.join(self.root_directory, self.path)
@@ -204,5 +206,11 @@ class Project(object):
             return
         project_output = format_project_string(repo_path, self.name)
         current_ref_output = format_ref_string(repo_path)
-        print(project_output + ' ' + current_ref_output)
-        cprint(self.path, 'cyan')
+        path_output = colored(self.path, 'cyan')
+        unused_rows, columns = subprocess.check_output(['stty', 'size']).decode().split()
+        long_output = project_output + ' ' + current_ref_output + ' -> ' + path_output
+        long_output_length = len(''.join(s for s in long_output if ord(s) > 31 and ord(s) < 126))
+        if long_output_length <= int(columns):
+            print(long_output)
+        else:
+            print(project_output + ' ' + current_ref_output + '\n-> ' + path_output)
