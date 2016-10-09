@@ -96,6 +96,8 @@ class ClowderRepo(object):
             output = colored('.clowder', 'green')
             print(output)
             return
+        print(' - Fetching upstream changes for clowder repo')
+        print('')
         git_fetch(self.clowder_path)
         project_output = format_project_string(repo_path, '.clowder')
         current_ref_output = format_ref_string(repo_path)
