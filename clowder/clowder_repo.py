@@ -96,6 +96,8 @@ class ClowderRepo(object):
             output = colored('.clowder', 'green')
             print(output)
             return
+        print(' - Fetching upstream changes for clowder repo')
+        print('')
         git_fetch(self.clowder_path)
         project_output = format_project_string(repo_path, '.clowder')
         current_ref_output = format_ref_string(repo_path)
@@ -105,7 +107,7 @@ class ClowderRepo(object):
             real_path = os.path.realpath(clowder_symlink)
             clowder_path = remove_prefix(real_path + '/', self.root_directory)
             path_output = colored(clowder_path[1:-1], 'cyan')
-            print(project_output + ' ' + current_ref_output + ' -> ' + path_output)
+            print(project_output + ' ' + current_ref_output + ' ~~> ' + path_output)
         else:
             print(project_output + ' ' + current_ref_output)
 
