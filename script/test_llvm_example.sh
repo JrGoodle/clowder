@@ -31,7 +31,7 @@ setup_old_repos()
     # git branch -u origin/master &>/dev/null
     # popd &>/dev/null
 
-    local CLANG_TOOLS_EXTRA_DIR="$LLVM_PROJECTS_DIR/llvm/tools/clang/tools/extra"
+    local CLANG_TOOLS_EXTRA_DIR="llvm/tools/clang/tools/extra"
     rm -rf $CLANG_TOOLS_EXTRA_DIR
     mkdir -p $CLANG_TOOLS_EXTRA_DIR
     pushd $CLANG_TOOLS_EXTRA_DIR &>/dev/null
@@ -42,7 +42,7 @@ setup_old_repos()
     git branch -u origin/master &>/dev/null
     popd &>/dev/null
 
-    local COMPILER_RT_DIR="$LLVM_PROJECTS_DIR/llvm/projects/compiler-rt"
+    local COMPILER_RT_DIR="llvm/projects/compiler-rt"
     rm -rf $COMPILER_RT_DIR
     mkdir -p $COMPILER_RT_DIR
     pushd $COMPILER_RT_DIR &>/dev/null
