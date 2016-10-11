@@ -96,7 +96,11 @@ class ClowderController(object):
         """Return list of all saved versions"""
         versions_dir = os.path.join(self.root_directory, '.clowder', 'versions')
         if os.path.exists(versions_dir):
-            return os.listdir(versions_dir)
+            versions = os.listdir(versions_dir)
+            for version in versions[:]:
+                if version.startswith('.'):
+                    versions.remove(version)
+            return versions
         else:
             return None
 
