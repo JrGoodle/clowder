@@ -45,13 +45,13 @@ $ clowder forall -f "/path/to/script.sh"
 # Run command for projects in clang group
 $ clowder forall -c "git status" -g clang
 
-# Run command for projects in clang group
+# Run script for projects in clang group
 $ clowder forall -f "/path/to/script.sh" -g clang
 
 # Run command for clang project
 $ clowder forall -c "git status" -p llvm-mirror/clang
 
-# Run command for clang project
+# Run script for clang project
 $ clowder forall -f "/path/to/script.sh" -p llvm-mirror/clang
 ```
 
