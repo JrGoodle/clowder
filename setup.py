@@ -11,9 +11,9 @@ if sys.version_info[0] < 3:
     sys.exit('This script requires python 3.0 or higher to run.')
 
 setup(
-    name='clowder',
+    name='clowder-git',
     description='A tool for managing code',
-    version='1.1.2',
+    version='1.1.6',
     url='http://clowder.cat',
     author='joe DeCapo',
     author_email='joe@polka.cat',
