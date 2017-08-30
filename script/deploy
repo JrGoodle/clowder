@@ -51,8 +51,8 @@ else
 		--description "Release ${TAG}"
 	echo ''
 
-	echo "Uploading artifacts"
-	echo '-------------------'
+	echo "Uploading artifacts to GitHub Releases"
+	echo '--------------------------------------'
     cd "${TRAVIS_BUILD_DIR}/dist" || exit 1
     artifacts=( "clowder-${VERSION}-py3-none-any.whl" \
                  "clowder-${VERSION}.tar.gz" )
@@ -63,4 +63,9 @@ else
             --name "${artifact}" \
             --file "${artifact}"
     done
+
+    echo 'Uploading to PyPI'
+	echo '-----------------'
+	twine upload dist/*
+	echo ''
 fi

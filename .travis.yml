@@ -14,7 +14,9 @@ env:
 
 before_install: script/bootstrap
 
-install: if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew install github-release; fi
+install:
+    - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew install github-release; fi
+    - if [ "$TRAVIS_OS_NAME" = "osx" ]; then sudo -H pip3 install twine wheel; fi
 
 before_script: script/setup
 
