@@ -1,4 +1,4 @@
-# 1.1.6
+# 1.1.7
 
 - Add support for uploading to PyPI as [clowder-git](https://pypi.python.org/pypi/clowder-git)
 - Add ability to run scripts with `clowder forall`
