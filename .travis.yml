@@ -12,6 +12,11 @@ env:
     - TARGET="cats"
     - TARGET="llvm"
 
+matrix:
+  exclude:
+  - os: osx
+    env: TARGET="llvm"
+
 before_install: script/bootstrap
 
 install:
