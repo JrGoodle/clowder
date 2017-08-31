@@ -53,9 +53,9 @@ else
 
 	echo "Uploading artifacts to GitHub Releases"
 	echo '--------------------------------------'
-    cd "${TRAVIS_BUILD_DIR}/dist" || exit 1
-    artifacts=( "clowder-${VERSION}-py3-none-any.whl" \
-                 "clowder-${VERSION}.tar.gz" )
+    pushd "${TRAVIS_BUILD_DIR}/dist" || exit 1
+    artifacts=( "clowder_git-${VERSION}-py3-none-any.whl" \
+                 "clowder-git-${VERSION}.tar.gz" )
     for artifact in "${artifacts[@]}"; do
         echo "Upload ${artifact} to GitHub Release"
         github-release upload \
@@ -63,6 +63,8 @@ else
             --name "${artifact}" \
             --file "${artifact}"
     done
+    popd
+    echo ''
 
     echo 'Uploading to PyPI'
 	echo '-----------------'
