@@ -119,20 +119,20 @@ class ClowderController(object):
                 if project.name in project_names:
                     project.herd(branch, depth)
 
-    def prune_groups(self, group_names, branch, is_remote):
+    def prune_groups(self, group_names, branch, is_remote, force):
         """Prune branch for groups"""
         self._validate(group_names)
         for group in self.groups:
             if group.name in group_names:
-                group.prune(branch, is_remote)
+                group.prune(branch, is_remote, force)
 
-    def prune_projects(self, project_names, branch, is_remote):
+    def prune_projects(self, project_names, branch, is_remote, force):
         """Prune branch for projects"""
         self._validate(project_names)
         for group in self.groups:
             for project in group.projects:
                 if project.name in project_names:
-                    project.prune(branch, is_remote)
+                    project.prune(branch, is_remote, force)
 
     def save_version(self, version):
         """Save current commits to a clowder.yaml in the versions directory"""
