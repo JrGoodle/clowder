@@ -153,7 +153,7 @@ test_start()
     clowder start start_branch
     # TODO: clowder herd -b
     # clowder herd -b master -g llvm
-    clowder forall -g black-cats -c 'git fetch'
+    clowder forall -g llvm -c 'git fetch origin master'
     clowder forall -g llvm -c 'git checkout master'
 
     pushd 'llvm/tools/clang' &>/dev/null

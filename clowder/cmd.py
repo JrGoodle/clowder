@@ -65,7 +65,7 @@ class Command(object):
 
         if self.args.clowder_version:
             print('clowder version 1.1.7')
-            sys.exit(0)
+            sys.exit()
         print('')
         if self.args.command is None or not hasattr(self, self.args.command):
             exit_unrecognized_command(parser)
@@ -92,14 +92,22 @@ class Command(object):
             print('')
             if self.args.projects is None:
                 if self.args.cmd is not None:
-                    self.clowder.forall_groups_command(self.args.cmd[0], self.args.groups)
+                    self.clowder.forall_groups_command(self.args.cmd[0],
+                                                       self.args.groups,
+                                                       self.args.ignore_errors)
                 else:
-                    self.clowder.forall_groups_file(self.args.file[0], self.args.groups)
+                    self.clowder.forall_groups_file(self.args.file[0],
+                                                    self.args.groups,
+                                                    self.args.ignore_errors)
             else:
                 if self.args.cmd is not None:
-                    self.clowder.forall_projects_command(self.args.cmd[0], self.args.projects)
+                    self.clowder.forall_projects_command(self.args.cmd[0],
+                                                         self.args.projects,
+                                                         self.args.ignore_errors)
                 else:
-                    self.clowder.forall_projects_file(self.args.file[0], self.args.projects)
+                    self.clowder.forall_projects_file(self.args.file[0],
+                                                      self.args.projects,
+                                                      self.args.ignore_errors)
         else:
             exit_clowder_not_found()
 
@@ -142,7 +150,7 @@ class Command(object):
         else:
             cprint('Clowder already initialized in this directory', 'red')
             print('')
-            sys.exit()
+            sys.exit(1)
 
     def link(self):
         """clowder link command"""
@@ -306,6 +314,8 @@ class Command(object):
         # clowder forall
         forall_help = 'Run command in project directories'
         parser_forall = subparsers.add_parser('forall', help=forall_help)
+        parser_forall.add_argument('--ignore-errors', '-i', action='store_true',
+                                   help='Ignore errors in command or script')
         group_forall_command = parser_forall.add_mutually_exclusive_group()
         group_forall_command.add_argument('--cmd', '-c', nargs=1,
                                           help='Command to run in project directories')

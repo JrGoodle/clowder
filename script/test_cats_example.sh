@@ -224,7 +224,7 @@ test_start()
     clowder start start_branch
     # TODO: clowder herd -b
     # clowder herd -b master -g black-cats
-    clowder forall -g black-cats -c 'git fetch'
+    clowder forall -g black-cats -c 'git fetch origin master'
     clowder forall -g black-cats -c 'git checkout master'
 
     pushd mu &>/dev/null
