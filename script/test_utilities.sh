@@ -131,6 +131,14 @@ test_forall()
     clowder forall -c 'git status' -g "$@" || exit 1
     echo "TEST: Run forall script for specific groups"
     clowder forall -f "$CURRENT_DIR/../../script/test_forall_script.sh" -g "$@" || exit 1
+    echo "TEST: Run forall command with error"
+    clowder forall -c 'exit 1' && exit 1
+    echo "TEST: Run forall command with --ignore-error"
+    clowder forall -ic 'exit 1' || exit 1
+    echo "TEST: Run forall script with error"
+    clowder forall -f "$CURRENT_DIR/../../script/test_forall_script_error.sh" && exit 1
+    echo "TEST: Run forall script with --ignore-error"
+    clowder forall -if "$CURRENT_DIR/../../script/test_forall_script_error.sh" || exit 1
 }
 
 test_forall_projects()
