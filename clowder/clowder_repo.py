@@ -1,5 +1,7 @@
 """Clowder repo management"""
+import atexit
 import os
+import shutil
 import subprocess
 import sys
 from termcolor import colored
@@ -63,8 +65,17 @@ class ClowderRepo(object):
     def init(self, url, branch):
         """Clone clowder repo from url"""
         repo_branch = 'refs/heads/' + branch
+        # Register exit handler to remove files if cloning repo fails
+        atexit.register(self.init_exit_handler)
         git_create_repo(url, self.clowder_path, 'origin', repo_branch)
         self.link()
+
+    def init_exit_handler(self):
+        """Exit handler for deleting files if init fails"""
+        if os.path.isdir(self.clowder_path):
+            clowder_yaml = os.path.join(self.root_directory, 'clowder.yaml')
+            if not os.path.isfile(clowder_yaml):
+                shutil.rmtree(self.clowder_path)
 
     def is_dirty(self):
         """Check if project is dirty"""
