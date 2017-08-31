@@ -151,7 +151,10 @@ test_start()
     echo "TEST: Start new feature branch"
 
     clowder start start_branch
-    clowder herd -b master -g llvm
+    # TODO: clowder herd -b
+    # clowder herd -b master -g llvm
+    clowder forall -g black-cats -c 'git fetch'
+    clowder forall -g llvm -c 'git checkout master'
 
     pushd 'llvm/tools/clang' &>/dev/null
     test_branch start_branch

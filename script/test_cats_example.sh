@@ -222,7 +222,10 @@ test_start()
     echo "TEST: Start new feature branch"
 
     clowder start start_branch
-    clowder herd -b master -g black-cats
+    # TODO: clowder herd -b
+    # clowder herd -b master -g black-cats
+    clowder forall -g black-cats -c 'git fetch'
+    clowder forall -g black-cats -c 'git checkout master'
 
     pushd mu &>/dev/null
     test_branch start_branch
