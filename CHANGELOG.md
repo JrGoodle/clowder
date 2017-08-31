@@ -1,3 +1,10 @@
+# 1.1.6
+
+- Add support for uploading to PyPI as [clowder-git](https://pypi.python.org/pypi/clowder-git)
+- Add ability to run scripts with `clowder forall`
+- Print number of new local and upstream commits in output
+- Add `-f` option to `clowder status` to fetch before printing status
+
 # 1.1.2
 
 - Remove cat face emoji from command output for better portability.
