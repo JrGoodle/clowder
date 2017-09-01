@@ -1,0 +1,8 @@
+title: clowder
+description: Utility for managing multiple git repositories
+google_analytics: 
+show_downloads: true
+theme: jekyll-theme-architect
+
+gems:
+  - jekyll-mentions
