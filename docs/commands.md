@@ -68,9 +68,6 @@ $ clowder forall -f "/path/to/script.sh" -p llvm-mirror/clang
 Update with latest changes.
 
 ```bash
-# Herd specified branch
-$ clowder herd -b my_branch
-
 # Herd a shallow clone to specified depth
 $ clowder herd -d 1
 
@@ -79,9 +76,6 @@ $ clowder herd -g clang llvm
 
 # Only herd clang project
 $ clowder herd -p llvm-mirror/clang
-
-# Multiple arguments
-$ clowder herd -b my_branch -g clang llvm -d 1
 ```
 
 ---

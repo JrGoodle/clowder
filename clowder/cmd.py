@@ -117,10 +117,12 @@ class Command(object):
             self.clowder_repo.print_status()
             print('')
 
-            if self.args.branch is None:
-                ref = None
-            else:
-                ref = self.args.branch[0]
+            # TODO: clowder herd -b
+            # if self.args.branch is None:
+            #     ref = None
+            # else:
+            #     ref = self.args.branch[0]
+            ref = None
 
             if self.args.depth is None:
                 depth = None
@@ -332,7 +334,8 @@ class Command(object):
         parser_herd = subparsers.add_parser('herd', help=herd_help)
         parser_herd.add_argument('--depth', '-d', default=None, type=int, nargs=1,
                                  help='Depth to herd')
-        parser_herd.add_argument('--branch', '-b', nargs=1, default=None, help='Branch to herd')
+        # TODO: clowder herd -b
+        # parser_herd.add_argument('--branch', '-b', nargs=1, default=None, help='Branch to herd')
         group_herd = parser_herd.add_mutually_exclusive_group()
         group_herd.add_argument('--groups', '-g', choices=self.group_names,
                                 default=self.group_names, nargs='+', help='Groups to herd')
