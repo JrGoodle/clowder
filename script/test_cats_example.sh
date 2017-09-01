@@ -255,7 +255,7 @@ test_prune()
 {
     clowder herd
     print_separator
-    echo "TEST: Prune branch"
+    echo "TEST: Test clowder prune branch"
 
     clowder start prune_branch
     clowder prune prune_branch
@@ -283,7 +283,56 @@ test_prune()
     test_branch master
     popd &>/dev/null
 
-    clowder prune
+    echo "TEST: Test clowder force prune branch"
+
+    clowder start prune_branch
+    pushd duke &>/dev/null
+    touch something
+    git add something
+    git commit -m 'something'
+    popd &>/dev/null
+    pushd mu &>/dev/null
+    touch something
+    git add something
+    git commit -m 'something'
+    popd &>/dev/null
+
+    clowder prune prune_branch && exit 1
+    clowder prune -f prune_branch || exit 1
+
+    pushd duke &>/dev/null
+    test_branch purr
+    popd &>/dev/null
+    pushd mu &>/dev/null
+    test_branch knead
+    popd &>/dev/null
+
+    if [ -z "$TRAVIS_OS_NAME" ]; then
+        echo "TEST: Test clowder prune remote branch"
+
+        pushd duke &>/dev/null
+        git checkout -b remote_branch
+        git push -u origin remote_branch
+        popd &>/dev/null
+
+        clowder prune remote_branch
+
+        pushd duke &>/dev/null
+        OUT_1="$(git ls-remote --heads origin remote_branch | wc -l | tr -d '[:space:]')"
+        if [ "$OUT_1" -eq "0" ]; then
+            exit 1
+        fi
+        popd
+
+        clowder prune -r remote_branch
+
+        pushd duke &>/dev/null
+        OUT_2="$(git ls-remote --heads origin remote_branch | wc -l | tr -d '[:space:]')"
+        if [ "$OUT_2" -eq "1" ]; then
+            exit 1
+        fi
+        popd
+    fi
 }
 test_prune
 

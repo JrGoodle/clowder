@@ -83,7 +83,7 @@ For more example projects, see the [examples directory](https://github.com/JrGoo
 
 ```bash
 $ clowder clean # Discard any changes in projects
-$ clowder forall "git status" # Run command in all project directories
+$ clowder forall -c "git status" # Run command in all project directories
 $ clowder link -v 0.1 # Set clowder.yaml symlink to a previously saved version
 $ clowder repo run 'git status' # Run command in .clowder directory
 $ clowder save 0.1 # Save a version of clowder.yaml with current commit sha's

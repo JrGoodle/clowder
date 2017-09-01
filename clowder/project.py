@@ -141,7 +141,7 @@ class Project(object):
             self._print_status()
             print_validation(self.full_path())
 
-    def prune(self, branch, is_remote):
+    def prune(self, branch, is_remote, force):
         """Prune branch"""
         self._print_status()
         if not os.path.isdir(os.path.join(self.full_path(), '.git')):
@@ -150,7 +150,7 @@ class Project(object):
             if is_remote:
                 git_prune_remote(self.full_path(), branch, self.remote_name)
             else:
-                git_prune(self.full_path(), branch, self.ref)
+                git_prune(self.full_path(), branch, self.ref, force)
 
     def run_command(self, command, ignore_errors):
         """Run command in project directory"""

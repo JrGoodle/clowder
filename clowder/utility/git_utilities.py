@@ -196,7 +196,7 @@ def git_new_upstream_commits(repo_path):
             except:
                 return 0
 
-def git_prune(repo_path, branch, default_ref):
+def git_prune(repo_path, branch, default_ref, force):
     """Prune branch in repository"""
     repo = _repo(repo_path)
     branch_output = colored('(' + branch + ')', 'magenta')
@@ -215,7 +215,7 @@ def git_prune(repo_path, branch, default_ref):
                 sys.exit(1)
         try:
             print(' - Delete branch ' + branch_output)
-            repo.delete_head(branch)
+            repo.delete_head(branch, force=force)
         except:
             message = colored(' - Failed to delete branch ', 'red')
             print(message + branch_output)
