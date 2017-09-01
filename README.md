@@ -35,7 +35,7 @@ $ brew install python3
 
 ### Installation
 
-To install from the [GitHub Releases](https://github.com/JrGoodle/clowder/releases) open a terminal and run:
+To install from PyPI open a terminal and run:
 
 ```bash
 $ pip3 install clowder-repo
