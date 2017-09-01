@@ -36,13 +36,25 @@ $ brew install python3
 To install from the [GitHub Releases](https://github.com/JrGoodle/clowder/releases) open a terminal and run:
 
 ```bash
-$ pip3 install https://github.com/JrGoodle/clowder/releases/download/1.1.2/clowder-1.1.2-py3-none-any.whl
+$ pip3 install clowder-repo
 ```
 
-For terminal autocompletion, add the following to your shell profile:
+To make `clowder` available in your shell environment, it may be necessary to add the Python 3 bin directory to your environment's `PATH` variable:
 
 ```bash
-[[ -f "/usr/local/bin/clowder" ]] && eval "$(register-python-argcomplete clowder)"
+echo "$(dirname $(which python3))"
+```
+
+On macOS with Python 3.4, I had to add the following to my bash profile:
+
+```bash
+export PATH="/Library/Frameworks/Python.framework/Versions/3.4/bin:$PATH"
+```
+
+For terminal autocompletion, add the following to your bash profile (after adding the Python 3 bin directory to your path, if necessary):
+
+```bash
+command -v clowder >/dev/null 2>&1 && eval "$(register-python-argcomplete clowder)"
 ```
 
 ### Usage
@@ -81,8 +93,7 @@ For more example projects, see the [examples directory](https://github.com/JrGoo
 
 ```bash
 $ clowder clean # Discard any changes in projects
-$ clowder forall "git status" # Run command in all project directories
-$ clowder herd -b my_branch # Herd specified branch
+$ clowder forall -c "git status" # Run command in all project directories
 $ clowder link -v 0.1 # Set clowder.yaml symlink to a previously saved version
 $ clowder repo run 'git status' # Run command in .clowder directory
 $ clowder save 0.1 # Save a version of clowder.yaml with current commit sha's
