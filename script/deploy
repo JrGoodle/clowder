@@ -41,9 +41,6 @@ else
 
 	echo "Creating new tag and GitHub Release"
 	echo '-----------------------------------'
-    # Create new tag
-    git tag "${TAG}"
-    git push origin "${TAG}"
     # Create new GitHub Release from tag
     github-release release \
         --tag "${TAG}" \
@@ -54,8 +51,8 @@ else
 	echo "Uploading artifacts to GitHub Releases"
 	echo '--------------------------------------'
     pushd "${TRAVIS_BUILD_DIR}/dist" || exit 1
-    artifacts=( "clowder_git-${VERSION}-py3-none-any.whl" \
-                 "clowder-git-${VERSION}.tar.gz" )
+    artifacts=( "clowder_repo-${VERSION}-py3-none-any.whl" \
+                 "clowder-repo-${VERSION}.tar.gz" )
     for artifact in "${artifacts[@]}"; do
         echo "Upload ${artifact} to GitHub Release"
         github-release upload \

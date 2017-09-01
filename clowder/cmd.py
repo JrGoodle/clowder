@@ -64,7 +64,7 @@ class Command(object):
         self.args = parser.parse_args()
 
         if self.args.clowder_version:
-            print('clowder version 1.1.7')
+            print('clowder version 2.0.0')
             sys.exit()
         print('')
         if self.args.clowder_command is None or not hasattr(self, self.args.clowder_command):

@@ -1,9 +1,13 @@
-# 1.1.7
+# 2.0.0
 
-- Add support for uploading to PyPI as [clowder-git](https://pypi.python.org/pypi/clowder-git)
+- Add support for uploading to PyPI as [clowder-repo](https://pypi.python.org/pypi/clowder-repo)
 - Add ability to run scripts with `clowder forall`
 - Print number of new local and upstream commits in output
 - Add `-f` option to `clowder status` to fetch before printing status
+- Add `--ignore-errors`/`-i` option to `clowder forall`
+- Remove `-f` option from `clowder forall`
+- Remove `-b` option from `clowder herd` (may be added back in the future)
+- Add `-f` option to `clowder prune` to force delete branches
 
 # 1.1.2
 

@@ -38,13 +38,25 @@ $ brew install python3
 To install from the [GitHub Releases](https://github.com/JrGoodle/clowder/releases) open a terminal and run:
 
 ```bash
-$ pip3 install https://github.com/JrGoodle/clowder/releases/download/1.1.7/clowder-1.1.7-py3-none-any.whl
+$ pip3 install clowder-repo
 ```
 
-For terminal autocompletion, add the following to your shell profile:
+To make `clowder` available in your shell environment, it may be necessary to add the Python 3 bin directory to your environment's `PATH` variable:
 
 ```bash
-[[ -f "/usr/local/bin/clowder" ]] && eval "$(register-python-argcomplete clowder)"
+echo "$(dirname $(which python3))"
+```
+
+On macOS with Python 3.4, I had to add the following to my bash profile:
+
+```bash
+export PATH="/Library/Frameworks/Python.framework/Versions/3.4/bin:$PATH"
+```
+
+For terminal autocompletion, add the following to your bash profile (after adding the Python 3 bin directory to your path, if necessary):
+
+```bash
+command -v clowder >/dev/null 2>&1 && eval "$(register-python-argcomplete clowder)"
 ```
 
 ### Usage
