@@ -152,8 +152,8 @@ class Project(object):
             else:
                 git_prune(self.full_path(), branch, self.ref, force)
 
-    def run_command(self, command, ignore_errors):
-        """Run command in project directory"""
+    def run(self, command, ignore_errors):
+        """Run command or script in project directory"""
         self._print_status()
         if not os.path.isdir(self.full_path()):
             cprint(" - Project is missing\n", 'red')
@@ -161,20 +161,6 @@ class Project(object):
             command_output = colored('$ ' + command, attrs=['bold'])
             print(command_output)
             return_code = subprocess.call(command, cwd=self.full_path(), shell=True)
-            if not ignore_errors:
-                if return_code != 0:
-                    sys.exit(return_code)
-            print('')
-
-    def run_script(self, script, ignore_errors):
-        """Run script in project directory"""
-        self._print_status()
-        if not os.path.isdir(self.full_path()):
-            cprint(" - Project is missing\n", 'red')
-        else:
-            command_output = colored('$ ' + script, attrs=['bold'])
-            print(command_output)
-            return_code = subprocess.call(script, cwd=self.full_path(), shell=True)
             if not ignore_errors:
                 if return_code != 0:
                     sys.exit(return_code)
