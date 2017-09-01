@@ -47,7 +47,7 @@ class Command(object):
         parser = argparse.ArgumentParser(description=command_description)
         parser.add_argument('--version', '-v', action='store_true',
                             dest='clowder_version', help='Print clowder version')
-        subparsers = parser.add_subparsers(dest='command')
+        subparsers = parser.add_subparsers(dest='clowder_command')
         self._configure_subparser_clean(subparsers)
         self._configure_subparser_forall(subparsers)
         self._configure_subparser_herd(subparsers)
@@ -67,10 +67,10 @@ class Command(object):
             print('clowder version 1.1.7')
             sys.exit()
         print('')
-        if self.args.command is None or not hasattr(self, self.args.command):
+        if self.args.clowder_command is None or not hasattr(self, self.args.clowder_command):
             exit_unrecognized_command(parser)
         # use dispatch pattern to invoke method with same name
-        getattr(self, self.args.command)()
+        getattr(self, self.args.clowder_command)()
         print('')
 
     def clean(self):
@@ -91,23 +91,13 @@ class Command(object):
             self.clowder_repo.print_status()
             print('')
             if self.args.projects is None:
-                if self.args.cmd is not None:
-                    self.clowder.forall_groups_command(self.args.cmd[0],
-                                                       self.args.groups,
-                                                       self.args.ignore_errors)
-                else:
-                    self.clowder.forall_groups_file(self.args.file[0],
-                                                    self.args.groups,
-                                                    self.args.ignore_errors)
+                self.clowder.forall_groups_run(self.args.command[0],
+                                               self.args.groups,
+                                               self.args.ignore_errors)
             else:
-                if self.args.cmd is not None:
-                    self.clowder.forall_projects_command(self.args.cmd[0],
-                                                         self.args.projects,
-                                                         self.args.ignore_errors)
-                else:
-                    self.clowder.forall_projects_file(self.args.file[0],
-                                                      self.args.projects,
-                                                      self.args.ignore_errors)
+                self.clowder.forall_projects_run(self.args.command[0],
+                                                 self.args.projects,
+                                                 self.args.ignore_errors)
         else:
             exit_clowder_not_found()
 
@@ -318,20 +308,19 @@ class Command(object):
     def _configure_subparser_forall(self, subparsers):
         """Configure clowder forall subparser and arguments"""
         # clowder forall
-        forall_help = 'Run command in project directories'
+        forall_help = 'Run command or script in project directories'
         parser_forall = subparsers.add_parser('forall', help=forall_help)
         parser_forall.add_argument('--ignore-errors', '-i', action='store_true',
                                    help='Ignore errors in command or script')
         group_forall_command = parser_forall.add_mutually_exclusive_group()
-        group_forall_command.add_argument('--cmd', '-c', nargs=1,
-                                          help='Command to run in project directories')
-        group_forall_command.add_argument('--file', '-f', nargs=1, help='Script to run')
+        group_forall_command.add_argument('--command', '-c', nargs=1,
+                                          help='Command or script to run in project directories')
         group_forall_targets = parser_forall.add_mutually_exclusive_group()
         group_forall_targets.add_argument('--groups', '-g', choices=self.group_names,
                                           default=self.group_names, nargs='+',
-                                          help='Groups to run command for')
+                                          help='Groups to run command or script for')
         group_forall_targets.add_argument('--projects', '-p', choices=self.project_names,
-                                          nargs='+', help='Projects to run command for')
+                                          nargs='+', help='Projects to run command or script for')
 
     def _configure_subparser_herd(self, subparsers):
         """Configure clowder herd subparser and arguments"""

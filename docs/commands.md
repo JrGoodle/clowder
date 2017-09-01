@@ -40,25 +40,25 @@ Runs command in project directories.
 $ clowder forall -c "git status"
 
 # Run script in all project directories
-$ clowder forall -f "/path/to/script.sh"
+$ clowder forall -c "/path/to/script.sh"
 
 # Run command in all project directories, ignoring errors
 $ clowder forall -ic "git status"
 
 # Run script in all project directories, ignoring errors
-$ clowder forall -if "/path/to/script.sh"
+$ clowder forall -ic "/path/to/script.sh"
 
 # Run command for projects in clang group
 $ clowder forall -c "git status" -g clang
 
 # Run script for projects in clang group
-$ clowder forall -f "/path/to/script.sh" -g clang
+$ clowder forall -c "/path/to/script.sh" -g clang
 
 # Run command for clang project
 $ clowder forall -c "git status" -p llvm-mirror/clang
 
 # Run script for clang project
-$ clowder forall -f "/path/to/script.sh" -p llvm-mirror/clang
+$ clowder forall -c "/path/to/script.sh" -p llvm-mirror/clang
 ```
 
 ---

@@ -52,36 +52,20 @@ class ClowderController(object):
                 if project.name in project_names:
                     project.fetch()
 
-    def forall_groups_command(self, command, group_names, ignore_errors):
-        """Runs command in all project directories of groups specified"""
+    def forall_groups_run(self, command, group_names, ignore_errors):
+        """Runs command or script in all project directories of groups specified"""
         for group in self.groups:
             if group.name in group_names:
                 for project in group.projects:
-                    project.run_command(command, ignore_errors)
+                    project.run(command, ignore_errors)
         sys.exit() # Exit early to prevent printing extra newline
 
-    def forall_groups_file(self, script, group_names, ignore_errors):
-        """Runs script in all project directories of groups specified"""
-        for group in self.groups:
-            if group.name in group_names:
-                for project in group.projects:
-                    project.run_script(script, ignore_errors)
-        sys.exit() # Exit early to prevent printing extra newline
-
-    def forall_projects_command(self, command, project_names, ignore_errors):
-        """Runs command in all project directories of projects specified"""
+    def forall_projects_run(self, command, project_names, ignore_errors):
+        """Runs command or script in all project directories of projects specified"""
         for group in self.groups:
             for project in group.projects:
                 if project.name in project_names:
-                    project.run_command(command, ignore_errors)
-        sys.exit() # Exit early to prevent printing extra newline
-
-    def forall_projects_file(self, script, project_names, ignore_errors):
-        """Runs script in all project directories of projects specified"""
-        for group in self.groups:
-            for project in group.projects:
-                if project.name in project_names:
-                    project.run_script(script, ignore_errors)
+                    project.run(command, ignore_errors)
         sys.exit() # Exit early to prevent printing extra newline
 
     def get_all_group_names(self):
