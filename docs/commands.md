@@ -110,7 +110,7 @@ $ clowder link -v 0.1
 
 ### `prune`
 
-Prune stale local branches.
+Prune local or remote branches.
 
 ```bash
 # Prune branch 'stale_branch' for all projects
