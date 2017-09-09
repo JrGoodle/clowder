@@ -6,7 +6,10 @@ import yaml
 from termcolor import colored
 from clowder.group import Group
 from clowder.source import Source
-from clowder.utility.clowder_utilities import validate_yaml
+from clowder.utility.clowder_utilities import (
+    validate_yaml,
+    validate_yaml_import
+)
 
 # Disable errors shown by pylint for too many public methods
 # pylint: disable=R0904
@@ -18,6 +21,18 @@ class ClowderController(object):
         self.groups = []
         self.sources = []
 
+        yaml_file = os.path.join(self.root_directory, 'clowder.yaml')
+        if os.path.isfile(yaml_file):
+            with open(yaml_file) as file:
+                parsed_yaml = _parse_yaml(file)
+        else:
+            print('')
+            clowder_output = colored('clowder.yaml', 'cyan')
+            print(clowder_output + ' appears to be missing')
+            print('')
+            sys.exit(1)
+            sys.exit(1)
+        self._validate_yaml(parsed_yaml)
         self._load_yaml()
 
     def clean_groups(self, group_names):
@@ -211,11 +226,9 @@ class ClowderController(object):
     def _load_yaml(self):
         """Load clowder from yaml file"""
         yaml_file = os.path.join(self.root_directory, 'clowder.yaml')
-        if os.path.exists(yaml_file):
+        if os.path.isfile(yaml_file):
             with open(yaml_file) as file:
                 parsed_yaml = yaml.safe_load(file)
-                parsed_yaml_copy = copy.deepcopy(parsed_yaml)
-                validate_yaml(parsed_yaml_copy)
 
                 self.defaults = parsed_yaml['defaults']
                 if 'depth' not in self.defaults:
@@ -253,3 +266,57 @@ class ClowderController(object):
             print('')
             print('First run ' + herd_output + ' to clone missing projects')
             sys.exit(1)
+
+# Disable errors shown by pylint for no specified exception types
+# pylint: disable=W0702
+# Disable errors shown by pylint for statements which appear to have no effect
+# pylint: disable=W0104
+
+    def _validate_yaml(self, parsed_yaml):
+        """Validate clowder.yaml"""
+        if 'import' not in parsed_yaml:
+            validate_yaml(parsed_yaml)
+        else:
+            validate_yaml_import(parsed_yaml)
+            imported_clowder = parsed_yaml['import']
+            try:
+                if imported_clowder == 'default':
+                    yaml_file = os.path.join(self.root_directory,
+                                             '.clowder',
+                                             'clowder.yaml')
+                    if not os.path.isfile(clowder_yaml):
+                        error_message = colored('Missing imported clowder.yaml\n', 'red')
+                        error = error_message + path + '\n'
+                        raise Exception('Missing clowder.yaml')
+                else:
+                    yaml_file = os.path.join(self.root_directory,
+                                             '.clowder',
+                                             'versions',
+                                             imported_clowder,
+                                             'clowder.yaml')
+                    if not os.path.isfile(clowder_yaml):
+                        error_message = colored('Missing imported clowder.yaml\n', 'red')
+                        error = error_message + path + '\n'
+                        raise Exception('Missing clowder.yaml')
+            except:
+                print('')
+                clowder_output = colored('clowder.yaml', 'cyan')
+                print(clowder_output + ' appears to be invalid')
+                print('')
+                print(error)
+                sys.exit(1)
+            with open(yaml_file) as file:
+                parsed_yaml_import = _parse_yaml(file)
+                self._validate_yaml(parsed_yaml_import)
+
+def _parse_yaml(yaml_file):
+    """Parse yaml file"""
+    parsed_yaml = yaml.safe_load(yaml_file)
+    if parsed_yaml is None:
+        print('')
+        clowder_output = colored('clowder.yaml', 'cyan')
+        print(clowder_output + ' appears to be invalid')
+        print('')
+        print(colored('clowder.yaml has no elements\n', 'red'))
+    else:
+        return parsed_yaml
