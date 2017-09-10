@@ -345,4 +345,52 @@ test_clowder_repo()
 }
 test_clowder_repo
 
+test_clowder_import()
+{
+    print_separator
+
+    echo "TEST: Test clowder file with default import"
+    clowder link
+    clowder herd
+    clowder link -v import-default
+    clowder herd
+    pushd black-cats/jules &>/dev/null
+    test_branch import-default
+    popd &>/dev/null
+    pushd black-cats/kishka &>/dev/null
+    test_branch import-default
+    popd &>/dev/null
+    pushd black-cats/kit &>/dev/null
+    test_branch import-default
+    popd &>/dev/null
+    pushd black-cats/sasha &>/dev/null
+    test_branch import-default
+    popd &>/dev/null
+
+    echo "TEST: Test clowder file with version import"
+    clowder link
+    clowder herd
+    clowder link -v import-version
+    clowder herd
+    pushd black-cats/jules &>/dev/null
+    test_branch import-version
+    popd &>/dev/null
+    pushd black-cats/kishka &>/dev/null
+    test_branch import-version
+    popd &>/dev/null
+    pushd black-cats/kit &>/dev/null
+    test_branch import-version
+    popd &>/dev/null
+    pushd black-cats/sasha &>/dev/null
+    test_branch import-version
+    popd &>/dev/null
+
+    echo "TEST: Test clowder file with infinite import loop"
+    clowder link
+    clowder herd
+    clowder link -v import-loop-1
+    clowder herd && exit 1
+}
+test_clowder_import
+
 print_help

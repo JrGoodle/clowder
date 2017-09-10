@@ -116,6 +116,11 @@ def validate_yaml(parsed_yaml):
 def validate_yaml_import(parsed_yaml):
     """Validate clowder.yaml with an import"""
     try:
+        if 'import' not in parsed_yaml:
+            error = colored('Missing \'import\' in clowder.yaml\n', 'red')
+            raise Exception('Missing import in clowder.yaml')
+        del parsed_yaml['import']
+
         if 'defaults' in parsed_yaml:
             defaults = parsed_yaml['defaults']
             if 'ref' in defaults:
@@ -129,25 +134,28 @@ def validate_yaml_import(parsed_yaml):
                     error = colored('\'depth\' must be a positive integer\n', 'red')
                     raise Exception('Negative depth value')
                 del defaults['depth']
-                if len(defaults) > 0:
-                    dict_entries = ''.join('{}: {}\n'.format(key, val)
-                                           for key, val in sorted(defaults.items()))
-                    error = colored('Uknown entry in \'defaults\'\n\n' +
-                                    dict_entries, 'red')
-                    raise Exception('Unknown default value')
+            if len(defaults) > 0:
+                dict_entries = ''.join('{}: {}\n'.format(key, val)
+                                       for key, val in sorted(defaults.items()))
+                error = colored('Uknown entry in \'defaults\'\n\n' +
+                                dict_entries, 'red')
+                raise Exception('Unknown default value')
+            del parsed_yaml['defaults']
 
         if 'sources' in parsed_yaml:
             validate_yaml_sources(parsed_yaml['sources'])
+            del parsed_yaml['sources']
 
         if 'groups' in parsed_yaml:
             validate_yaml_groups(parsed_yaml['groups'])
+            del parsed_yaml['groups']
 
         if len(parsed_yaml) > 0:
             dict_entries = ''.join('{}: {}\n'.format(key, val)
                                    for key, val in sorted(parsed_yaml.items()))
-            error = colored('Uknown entry in \'defaults\'\n\n' +
+            error = colored('Uknown entry in clowder.yaml\n\n' +
                             dict_entries, 'red')
-            raise Exception('Unknown default value')
+            raise Exception('Unknown clowder.yaml value')
     except:
         print('')
         clowder_output = colored('clowder.yaml', 'cyan')
