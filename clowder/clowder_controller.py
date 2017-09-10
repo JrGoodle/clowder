@@ -105,14 +105,14 @@ class ClowderController(object):
 
     def herd_groups(self, group_names, branch=None, depth=None):
         """Sync groups with latest upstream changes"""
-        self._validate(group_names)
+        self._validate_groups(group_names)
         for group in self.groups:
             if group.name in group_names:
                 group.herd(branch, depth)
 
     def herd_projects(self, project_names, branch=None, depth=None):
         """Sync projects with latest upstream changes"""
-        self._validate(project_names)
+        self._validate_groups(project_names)
         for group in self.groups:
             for project in group.projects:
                 if project.name in project_names:
@@ -120,14 +120,14 @@ class ClowderController(object):
 
     def prune_groups(self, group_names, branch, is_remote, force):
         """Prune branch for groups"""
-        self._validate(group_names)
+        self._validate_groups(group_names)
         for group in self.groups:
             if group.name in group_names:
                 group.prune(branch, is_remote, force)
 
     def prune_projects(self, project_names, branch, is_remote, force):
         """Prune branch for projects"""
-        self._validate(project_names)
+        self._validate_groups(project_names)
         for group in self.groups:
             for project in group.projects:
                 if project.name in project_names:
@@ -136,7 +136,7 @@ class ClowderController(object):
     def save_version(self, version):
         """Save current commits to a clowder.yaml in the versions directory"""
         self._validate_projects_exist()
-        self._validate(self.get_all_group_names())
+        self._validate_groups(self.get_all_group_names())
         versions_dir = os.path.join(self.root_directory, '.clowder', 'versions')
         version_name = version.replace('/', '-') # Replace path separateors with dashes
         version_dir = os.path.join(versions_dir, version_name)
@@ -156,14 +156,14 @@ class ClowderController(object):
 
     def start_groups(self, group_names, branch):
         """Start feature branch for groups"""
-        self._validate(group_names)
+        self._validate_groups(group_names)
         for group in self.groups:
             if group.name in group_names:
                 group.start(branch)
 
     def start_projects(self, project_names, branch):
         """Start feature branch for projects"""
-        self._validate(project_names)
+        self._validate_groups(project_names)
         for group in self.groups:
             for project in group.projects:
                 if project.name in project_names:
@@ -242,7 +242,7 @@ class ClowderController(object):
                                              self.defaults,
                                              self.sources))
 
-    def _validate(self, group_names):
+    def _validate_groups(self, group_names):
         """Validate status of all projects for specified groups"""
         valid = True
         for group in self.groups:
