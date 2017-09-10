@@ -87,14 +87,17 @@ def validate_yaml(parsed_yaml):
         error = colored('Missing \'defaults\'', 'red')
         defaults = parsed_yaml['defaults']
         validate_yaml_defaults(defaults)
+        del parsed_yaml['defaults']
 
         error = colored('Missing \'sources\'\n', 'red')
         sources = parsed_yaml['sources']
         validate_yaml_sources(sources)
+        del parsed_yaml['sources']
 
         error = colored('Missing \'groups\'\n', 'red')
         groups = parsed_yaml['groups']
         validate_yaml_groups(groups)
+        del parsed_yaml['groups']
 
         if len(parsed_yaml) > 0:
             dict_entries = ''.join('{}: {}\n'.format(key, val)
@@ -132,10 +135,13 @@ def validate_yaml_import(parsed_yaml):
                     error = colored('Uknown entry in \'defaults\'\n\n' +
                                     dict_entries, 'red')
                     raise Exception('Unknown default value')
+
         if 'sources' in parsed_yaml:
             validate_yaml_sources(parsed_yaml['sources'])
+
         if 'groups' in parsed_yaml:
             validate_yaml_groups(parsed_yaml['groups'])
+
         if len(parsed_yaml) > 0:
             dict_entries = ''.join('{}: {}\n'.format(key, val)
                                    for key, val in sorted(parsed_yaml.items()))
@@ -156,17 +162,21 @@ def validate_yaml_defaults(defaults):
         error = colored('Missing \'ref\' in \'defaults\'\n', 'red')
         defaults['ref']
         del defaults['ref']
+
         error = colored('Missing \'remote\' in \'defaults\'\n', 'red')
         defaults['remote']
         del defaults['remote']
+
         error = colored('Missing \'source\' in \'defaults\'\n', 'red')
         defaults['source']
         del defaults['source']
+
         if 'depth' in defaults:
             if int(defaults['depth']) < 0:
                 error = colored('\'depth\' must be a positive integer\n', 'red')
                 raise Exception('Negative depth value')
             del defaults['depth']
+
         if len(defaults) > 0:
             dict_entries = ''.join('{}: {}\n'.format(key, val)
                                    for key, val in sorted(defaults.items()))
@@ -188,9 +198,11 @@ def validate_yaml_sources(sources):
             error = colored('Missing \'name\' in \'sources\'\n', 'red')
             source['name']
             del source['name']
+
             error = colored('Missing \'url\' in \'sources\'\n', 'red')
             source['url']
             del source['url']
+
             if len(source) > 0:
                 dict_entries = ''.join('{}: {}\n'.format(key, val)
                                        for key, val in sorted(source.items()))
@@ -219,9 +231,11 @@ def validate_yaml_groups(groups):
                 error = colored('Missing \'name\' in \'project\'\n', 'red')
                 project['name']
                 del project['name']
+
                 error = colored('Missing \'path\' in \'project\'\n', 'red')
                 project['path']
                 del project['path']
+
                 if 'remote' in project:
                     del project['remote']
                 if 'ref' in project:
@@ -248,6 +262,7 @@ def validate_yaml_groups(groups):
                                             dict_entries, 'red')
                             raise Exception('Unknown fork value')
                     del project['forks']
+
                 if len(project) > 0:
                     dict_entries = ''.join('{}: {}\n'.format(key, val)
                                            for key, val in sorted(project.items()))

@@ -1,5 +1,4 @@
 """clowder.yaml parsing and functionality"""
-import copy
 import os
 import sys
 import yaml
@@ -263,13 +262,12 @@ class ClowderController(object):
                             sys.exit(1)
                     else:
                         self._load_yaml_base(parsed_yaml)
+                        break
                 for parsed_yaml in reversed(imported_yaml_files):
                     self._load_yaml_import(parsed_yaml)
 
-    def _load_yaml_base(self, yaml_file):
+    def _load_yaml_base(self, parsed_yaml):
         """Load clowder from base yaml file"""
-        parsed_yaml = yaml.safe_load(yaml_file)
-
         self.defaults = parsed_yaml['defaults']
         if 'depth' not in self.defaults:
             self.defaults['depth'] = 0
@@ -282,9 +280,8 @@ class ClowderController(object):
                                      self.defaults,
                                      self.sources))
 
-    def _load_yaml_import(self, yaml_file):
+    def _load_yaml_import(self, parsed_yaml):
         """Load clowder from import yaml file"""
-        parsed_yaml = yaml.safe_load(yaml_file)
         if 'defaults' in parsed_yaml:
             imported_defaults = parsed_yaml['defaults']
             if 'ref' in imported_defaults:
