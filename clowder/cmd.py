@@ -1,6 +1,7 @@
 #! /usr/bin/env python3
 """Main entrypoint for clowder command"""
 import argparse
+import atexit
 import os
 import signal
 import sys
@@ -67,12 +68,16 @@ class Command(object):
         self._configure_subparser_status(subparsers)
         # Argcomplete and arguments parsing
         argcomplete.autocomplete(parser)
+        print('')
+        # Register exit handler to display trailing newline
+        self._display_trailing_newline = True
+        atexit.register(self._exit_handler_formatter)
         self.args = parser.parse_args()
+        self._display_trailing_newline = False
 
         if self.args.clowder_version:
             print('clowder version 2.0.0')
             sys.exit()
-        print('')
         if self.args.clowder_command is None or not hasattr(self, self.args.clowder_command):
             exit_unrecognized_command(parser)
         # use dispatch pattern to invoke method with same name
@@ -83,8 +88,8 @@ class Command(object):
         """clowder clean command"""
         if self.clowder_repo is not None:
             self.clowder_repo.print_status()
-            print('')
             if self.clowder is None:
+                print('')
                 sys.exit(1)
             if self.args.projects is None:
                 self.clowder.clean_groups(self.args.groups)
@@ -97,8 +102,8 @@ class Command(object):
         """clowder forall command"""
         if self.clowder_repo is not None:
             self.clowder_repo.print_status()
-            print('')
             if self.clowder is None:
+                print('')
                 sys.exit(1)
             if self.args.projects is None:
                 self.clowder.forall_groups_run(self.args.command[0],
@@ -115,8 +120,8 @@ class Command(object):
         """clowder herd command"""
         if self.clowder_repo is not None:
             self.clowder_repo.print_status()
-            print('')
             if self.clowder is None:
+                print('')
                 sys.exit(1)
 
             # TODO: clowder herd -b
@@ -172,8 +177,8 @@ class Command(object):
         """clowder prune command"""
         if self.clowder_repo is not None:
             self.clowder_repo.print_status()
-            print('')
             if self.clowder is None:
+                print('')
                 sys.exit(1)
             if self.args.projects is None:
                 self.clowder.prune_groups(self.args.groups,
@@ -257,6 +262,7 @@ class Command(object):
         """clowder save command"""
         if self.clowder_repo is not None:
             if self.clowder is None:
+                print('')
                 sys.exit(1)
             self.clowder.save_version(self.args.version)
         else:
@@ -266,8 +272,8 @@ class Command(object):
         """clowder start command"""
         if self.clowder_repo is not None:
             self.clowder_repo.print_status()
-            print('')
             if self.clowder is None:
+                print('')
                 sys.exit(1)
             if self.args.projects is None:
                 self.clowder.start_groups(self.args.groups, self.args.branch)
@@ -280,8 +286,8 @@ class Command(object):
         """clowder stash command"""
         if self.clowder_repo is not None:
             self.clowder_repo.print_status()
-            print('')
             if self.clowder is None:
+                print('')
                 sys.exit(1)
             if self.args.projects is None:
                 self.clowder.stash_groups(self.args.groups)
@@ -294,8 +300,8 @@ class Command(object):
         """clowder status command"""
         if self.clowder_repo is not None:
             self.clowder_repo.print_status()
-            print('')
             if self.clowder is None:
+                print('')
                 sys.exit(1)
             if self.args.fetch:
                 print(' - Fetching upstream changes for projects', end="", flush=True)
@@ -470,9 +476,14 @@ class Command(object):
         group_status.add_argument('--projects', '-p', choices=self.project_names,
                                   nargs='+', help='Projects to print status for')
 
+    def _exit_handler_formatter(self):
+        """Exit handler to display trailing newline"""
+        if self._display_trailing_newline:
+            print('')
 
     def _print_progress(self):
         print('.', end="", flush=True)
+
 
 def exit_unrecognized_command(parser):
     """Print unrecognized command message and exit"""

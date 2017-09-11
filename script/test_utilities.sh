@@ -10,7 +10,6 @@ make_dirty_clowder_repo()
 
 make_dirty_repos()
 {
-    print_separator
     echo "TEST: Make dirty repos"
     for project in "$@"
     do
@@ -320,7 +319,5 @@ print_help()
 
 print_separator()
 {
-    echo ''
     echo '--------------------------------------------------------------------------------'
-    echo ''
 }

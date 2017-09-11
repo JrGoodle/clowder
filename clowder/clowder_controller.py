@@ -393,14 +393,14 @@ class ClowderController(object):
             parsed_yaml_copy = copy.deepcopy(parsed_yaml)
             validate_yaml_import(parsed_yaml_copy)
             imported_clowder = parsed_yaml['import']
-            error = colored('Missing imported clowder.yaml\n', 'red')
+            error = colored('- Missing imported clowder.yaml\n', 'red')
             try:
                 if imported_clowder == 'default':
                     yaml_file = os.path.join(self.root_directory,
                                              '.clowder',
                                              'clowder.yaml')
                     if not os.path.isfile(yaml_file):
-                        error_message = colored('Missing imported clowder.yaml\n', 'red')
+                        error_message = colored('- Missing imported clowder.yaml\n', 'red')
                         error = error_message + yaml_file + '\n'
                         raise Exception('Missing clowder.yaml')
                 else:
@@ -410,14 +410,13 @@ class ClowderController(object):
                                              imported_clowder,
                                              'clowder.yaml')
                     if not os.path.isfile(yaml_file):
-                        error_message = colored('Missing imported clowder.yaml\n', 'red')
+                        error_message = colored('- Missing imported clowder.yaml\n', 'red')
                         error = error_message + yaml_file + '\n'
                         raise Exception('Missing clowder.yaml')
             except:
                 print('')
                 clowder_output = colored('clowder.yaml', 'cyan')
                 print(clowder_output + ' appears to be invalid')
-                print('')
                 print(error)
                 raise
             with open(yaml_file) as file:
