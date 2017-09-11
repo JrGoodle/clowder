@@ -113,7 +113,7 @@ class ClowderController(object):
 
     def herd_projects(self, project_names, branch=None, depth=None):
         """Sync projects with latest upstream changes"""
-        self._validate_groups(project_names)
+        self._validate_projects(project_names)
         for group in self.groups:
             for project in group.projects:
                 if project.name in project_names:
@@ -128,7 +128,7 @@ class ClowderController(object):
 
     def prune_projects(self, project_names, branch, is_remote, force):
         """Prune branch for projects"""
-        self._validate_groups(project_names)
+        self._validate_projects(project_names)
         for group in self.groups:
             for project in group.projects:
                 if project.name in project_names:
@@ -164,7 +164,7 @@ class ClowderController(object):
 
     def start_projects(self, project_names, branch):
         """Start feature branch for projects"""
-        self._validate_groups(project_names)
+        self._validate_projects(project_names)
         for group in self.groups:
             for project in group.projects:
                 if project.name in project_names:
@@ -356,6 +356,21 @@ class ClowderController(object):
                 group.print_validation()
                 if not group.is_valid():
                     valid = False
+                    break
+        if not valid:
+            print('')
+            sys.exit(1)
+
+    def _validate_projects(self, project_names):
+        """Validate status of all projects"""
+        valid = True
+        for project in project_names:
+            for group in self.groups:
+                for group_project in group.projects:
+                    if group_project.name == project:
+                        if not group_project.is_valid():
+                            valid = False
+                            break
         if not valid:
             print('')
             sys.exit(1)
@@ -371,6 +386,7 @@ class ClowderController(object):
             herd_output = colored('clowder herd', 'yellow')
             print('')
             print('First run ' + herd_output + ' to clone missing projects')
+            print('')
             sys.exit(1)
 
 # Disable errors shown by pylint for no specified exception types

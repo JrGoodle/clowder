@@ -160,7 +160,7 @@ def validate_yaml_groups(groups):
             error = colored('- Missing \'projects\' in \'group\'\n', 'red')
             projects = group['projects']
             error = colored('- \'projects\' doesn\'t contain array\n', 'red')
-            for project in group['projects']:
+            for project in projects:
                 error = colored('- Missing \'name\' in \'project\'\n', 'red')
                 project['name']
                 del project['name']
