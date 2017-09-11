@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
 case "$(uname)" in
-    Linux) export MY_PLATFORM="linux";
+    Linux*) export MY_PLATFORM="linux";
         sudo apt-get update
         sudo apt-get install -y python3-setuptools
         sudo apt-get install -y python3-pip
         ;;
-    Darwin) export MY_PLATFORM="osx";
+    Darwin*) export MY_PLATFORM="osx";
         which brew || exit 1
         brew update
         brew install python3

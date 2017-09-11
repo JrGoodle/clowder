@@ -435,12 +435,12 @@ class Command(object):
         parser_link = subparsers.add_parser('link', help='Symlink clowder.yaml version')
         if self.versions is not None:
             link_help_version = '''
-                                   version name to symlink:
+                                   version to symlink:
                                    {0}
                                    '''
             link_help_version = link_help_version.format(', '.join(self.versions))
         else:
-            link_help_version = 'version name to symlink'
+            link_help_version = 'version to symlink'
         parser_link.add_argument('--version', '-v', choices=self.versions, nargs=1,
                                  default=None, help=link_help_version, metavar='VERSION')
 
@@ -518,7 +518,7 @@ class Command(object):
         # clowder save
         save_help = 'Create version of clowder.yaml for current repos'
         parser_save = subparsers.add_parser('save', help=save_help)
-        parser_save.add_argument('version', help='version name to save', metavar='VERSION')
+        parser_save.add_argument('version', help='version to save', metavar='VERSION')
 
     def _configure_subparser_start(self, subparsers):
         """Configure clowder start subparser and arguments"""

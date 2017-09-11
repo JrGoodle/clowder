@@ -1,4 +1,17 @@
 #!/usr/bin/env bash
 
 cd "$( dirname "${BASH_SOURCE[0]}" )/.." || exit 1
-sudo -H pip3 install -e .
+
+case "$(uname)" in
+    Linux*) export MY_PLATFORM="linux";
+        sudo -H pip3 install -e .
+        ;;
+    Darwin*) export MY_PLATFORM="osx";
+        sudo -H pip3 install -e .
+        ;;
+    CYGWIN*) export MY_PLATFORM="windows";
+        pip3 install -e .
+        ;;
+esac
+
+echo $MY_PLATFORM

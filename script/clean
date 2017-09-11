@@ -2,15 +2,31 @@
 
 cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 
-echo "Removing clowder.egg-info"
-sudo -H rm -rf ../clowder_repo.egg-info
-echo "Removing dist"
-sudo -H rm -rf ../dist
-echo "Removing build"
-sudo -H rm -rf ../build
-echo "pip3 uninstall clowder"
-sudo -H pip3 uninstall clowder-repo
-echo "Remove installed clowder binary"
-export PYTHON3_PATH
-CLOWDER_PATH="$(dirname $(which python3))/clowder"
-sudo -H rm "$CLOWDER_PATH"
+clean_nix() {
+    echo "Removing clowder.egg-info"
+    sudo -H rm -rf ../clowder_repo.egg-info
+    echo "Removing dist"
+    sudo -H rm -rf ../dist
+    echo "Removing build"
+    sudo -H rm -rf ../build
+    echo "pip3 uninstall clowder"
+    sudo -H pip3 uninstall clowder-repo
+    echo "Remove installed clowder binary"
+    export PYTHON3_PATH
+    CLOWDER_PATH="$(dirname $(which python3))/clowder"
+    sudo -H rm "$CLOWDER_PATH"
+}
+
+case "$(uname)" in
+    Linux*) export MY_PLATFORM="linux";
+        clean_nix
+        ;;
+    Darwin*) export MY_PLATFORM="osx";
+        clean_nix
+        ;;
+    CYGWIN*) export MY_PLATFORM="windows";
+        pip3 uninstall clowder-repo
+        ;;
+esac
+
+echo $MY_PLATFORM
