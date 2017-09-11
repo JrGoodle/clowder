@@ -5,11 +5,11 @@ from clowder.project import Project
 class Group(object):
     """clowder.yaml group class"""
 
-    def __init__(self, rootDirectory, group, defaults, sources):
+    def __init__(self, root_directory, group, defaults, sources):
         self.name = group['name']
         self.projects = []
         for project in group['projects']:
-            self.projects.append(Project(rootDirectory, project, defaults, sources))
+            self.projects.append(Project(root_directory, project, defaults, sources))
         self.projects.sort(key=lambda project: project.path)
 
     def get_yaml(self):

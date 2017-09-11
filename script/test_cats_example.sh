@@ -44,6 +44,8 @@ test_init_herd
 
 test_branches()
 {
+    print_separator
+    echo "TEST: Test branches"
     test_branch_master "${projects[@]}"
     pushd mu &>/dev/null
     test_branch knead
@@ -60,6 +62,7 @@ test_status_projects 'jrgoodle/mu' 'jrgoodle/duke'
 test_clean()
 {
     print_separator
+    echo "TEST: Clean repos"
     make_dirty_repos "${projects[@]}"
     echo "TEST: Clean specific group when dirty"
     clowder clean -g "$@" || exit 1
@@ -75,6 +78,7 @@ test_clean 'black-cats'
 test_clean_projects()
 {
     print_separator
+    echo "TEST: Clean projects"
     make_dirty_repos "${projects[@]}"
     echo "TEST: Clean specific project when dirty"
     clowder clean -p "$@" || exit 1
@@ -95,6 +99,7 @@ test_save
 
 test_stash()
 {
+    print_separator
     make_dirty_repos "${projects[@]}"
     echo "TEST: Fail herd with dirty repos"
     clowder herd && exit 1
@@ -111,6 +116,7 @@ test_stash 'black-cats'
 
 test_stash_projects()
 {
+    print_separator
     make_dirty_repos "${projects[@]}"
     echo "TEST: Stash specific projects when dirty"
     clowder stash -p "$@" || exit 1
@@ -217,9 +223,9 @@ test_herd_tag
 
 test_start()
 {
-    clowder herd
     print_separator
     echo "TEST: Start new feature branch"
+    clowder herd
 
     clowder start start_branch
     # TODO: clowder herd -b
@@ -253,9 +259,9 @@ test_start
 
 test_prune()
 {
-    clowder herd
     print_separator
     echo "TEST: Test clowder prune branch"
+    clowder herd
 
     clowder start prune_branch
     clowder prune prune_branch
@@ -345,4 +351,65 @@ test_clowder_repo()
 }
 test_clowder_repo
 
-print_help
+test_clowder_import()
+{
+    print_separator
+    echo "TEST: Test clowder file with default import"
+
+    clowder link
+    clowder herd
+    clowder link -v import-default
+    clowder herd
+    pushd black-cats/jules &>/dev/null
+    test_branch import-default
+    popd &>/dev/null
+    pushd black-cats/kishka &>/dev/null
+    test_branch import-default
+    popd &>/dev/null
+    pushd black-cats/kit &>/dev/null
+    test_branch import-default
+    popd &>/dev/null
+    pushd black-cats/sasha &>/dev/null
+    test_branch import-default
+    popd &>/dev/null
+
+    echo "TEST: Test clowder file with version import"
+    clowder link
+    clowder herd
+    clowder link -v import-version
+    clowder herd
+    pushd black-cats/jules &>/dev/null
+    test_branch import-version
+    popd &>/dev/null
+    pushd black-cats/kishka &>/dev/null
+    test_branch import-version
+    popd &>/dev/null
+    pushd black-cats/kit &>/dev/null
+    test_branch import-version
+    popd &>/dev/null
+    pushd black-cats/sasha &>/dev/null
+    test_branch import-version
+    popd &>/dev/null
+
+    echo "TEST: Test clowder file with infinite import loop"
+    clowder link
+    clowder herd
+    clowder link -v import-loop-1
+    clowder herd && exit 1
+}
+test_clowder_import
+
+test_print()
+{
+    print_separator
+    clowder repo checkout invalid-yaml || exit 1
+    clowder link -v 'missing-defaults'
+    clowder herd
+    print_help
+
+    clowder repo checkout master || exit 1
+    clowder link
+    clowder herd
+    print_help
+}
+test_print

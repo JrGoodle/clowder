@@ -62,8 +62,9 @@ test_branch_master "${projects[@]}"
 
 test_herd_old_repos()
 {
-    setup_old_repos
+    print_separator
     echo "TEST: Normal herd with out of date repos"
+    setup_old_repos
     clowder herd || exit 1
     clowder status || exit 1
 }
@@ -79,6 +80,7 @@ test_herd_dirty_repos "${projects[@]}"
 test_clean()
 {
     print_separator
+    echo "TEST: Clean repos"
     make_dirty_repos "${projects[@]}"
     echo "TEST: Clean specific group when dirty"
     clowder clean -g "$@" || exit 1
@@ -94,6 +96,7 @@ test_clean 'clang' 'llvm'
 test_clean_projects()
 {
     print_separator
+    echo "TEST: Clean projects"
     make_dirty_repos "${projects[@]}"
     echo "TEST: Clean specific project when dirty"
     clowder clean -p "$@" || exit 1
@@ -112,6 +115,8 @@ test_forall_projects 'llvm-mirror/clang' 'llvm-mirror/llvm'
 
 test_stash()
 {
+    print_separator
+    echo "TEST: Stash changes"
     make_dirty_repos "${projects[@]}"
     echo "TEST: Fail herd with dirty repos"
     clowder herd && exit 1
@@ -128,6 +133,8 @@ test_stash 'clang' 'llvm'
 
 test_stash_projects()
 {
+    print_separator
+    echo "TEST: Stash projects"
     make_dirty_repos "${projects[@]}"
     echo "TEST: Stash specific projects when dirty"
     clowder stash -p "$@" || exit 1
@@ -146,9 +153,9 @@ test_herd_projects 'llvm-mirror/lld'
 
 test_start()
 {
-    clowder herd
     print_separator
     echo "TEST: Start new feature branch"
+    clowder herd
 
     clowder start start_branch
     # TODO: clowder herd -b
