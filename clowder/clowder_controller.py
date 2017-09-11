@@ -5,9 +5,8 @@ import sys
 import yaml
 from termcolor import colored
 from clowder.group import Group
-from clowder.project import Project
 from clowder.source import Source
-from clowder.utility.clowder_utilities import (
+from clowder.utility.clowder_yaml_validation import (
     validate_yaml,
     validate_yaml_import
 )
@@ -340,46 +339,14 @@ class ClowderController(object):
                     combined_groups = []
                     for group in self.combined_yaml['groups']:
                         if group['name'] == imported_group['name']:
-                            self._load_yaml_import_projects(imported_group,
-                                                            group)
+                            _load_yaml_import_projects(imported_group,
+                                                       group)
                             combined_groups.append(group)
                         else:
                             combined_groups.append(group)
                     self.combined_yaml['groups'] = combined_groups
                 else:
                     self.groups.append(imported_group)
-
-    def _load_yaml_import_projects(self, imported_group, group):
-        """Load clowder projects from imported group"""
-        project_names = [p['name'] for p in group['projects']]
-        for imported_project in imported_group['projects']:
-            if imported_project['name'] in project_names:
-                combined_projects = []
-                for project in group['projects']:
-                    if project.name == imported_project['name']:
-                        if 'path' not in imported_project:
-                            imported_project['path'] = project['path']
-
-                        if 'depth' not in imported_project:
-                            imported_project['depth'] = project['depth']
-
-                        if 'ref' not in imported_project:
-                            imported_project['ref'] = project['ref']
-
-                        if 'remote' not in imported_project:
-                            imported_project['remote'] = project['remote_name']
-
-                        if 'source' not in imported_project:
-                            imported_project['source'] = project['source']['name']
-
-                        combined_project = imported_project
-                        combined_projects.append(combined_project)
-                    else:
-                        combined_projects.append(project)
-                group['projects'] = combined_projects
-            else:
-                combined_project = imported_project
-                group['projects'].append(combined_project)
 
     def _validate_groups(self, group_names):
         """Validate status of all projects for specified groups"""
@@ -456,6 +423,38 @@ class ClowderController(object):
             with open(yaml_file) as file:
                 parsed_yaml_import = _parse_yaml(file)
                 self._validate_yaml(parsed_yaml_import, max_import_depth - 1)
+
+def _load_yaml_import_projects(imported_group, group):
+    """Load clowder projects from imported group"""
+    project_names = [p['name'] for p in group['projects']]
+    for imported_project in imported_group['projects']:
+        if imported_project['name'] in project_names:
+            combined_projects = []
+            for project in group['projects']:
+                if project.name == imported_project['name']:
+                    if 'path' not in imported_project:
+                        imported_project['path'] = project['path']
+
+                    if 'depth' not in imported_project:
+                        imported_project['depth'] = project['depth']
+
+                    if 'ref' not in imported_project:
+                        imported_project['ref'] = project['ref']
+
+                    if 'remote' not in imported_project:
+                        imported_project['remote'] = project['remote_name']
+
+                    if 'source' not in imported_project:
+                        imported_project['source'] = project['source']['name']
+
+                    combined_project = imported_project
+                    combined_projects.append(combined_project)
+                else:
+                    combined_projects.append(project)
+            group['projects'] = combined_projects
+        else:
+            combined_project = imported_project
+            group['projects'].append(combined_project)
 
 def _parse_yaml(yaml_file):
     """Parse yaml file"""
