@@ -111,7 +111,7 @@ def validate_yaml(parsed_yaml):
         print(clowder_output + ' appears to be invalid')
         print('')
         print(error)
-        sys.exit(1)
+        raise
 
 def validate_yaml_import(parsed_yaml):
     """Validate clowder.yaml with an import"""
@@ -162,7 +162,7 @@ def validate_yaml_import(parsed_yaml):
         print(clowder_output + ' appears to be invalid')
         print('')
         print(error)
-        sys.exit(1)
+        raise
 
 def validate_yaml_defaults(defaults):
     """Validate defaults in clowder loaded from yaml file"""
@@ -197,7 +197,7 @@ def validate_yaml_defaults(defaults):
         print(clowder_output + ' appears to be invalid')
         print('')
         print(error)
-        sys.exit(1)
+        raise
 
 def validate_yaml_sources(sources):
     """Validate sources in clowder loaded from yaml file"""
@@ -223,7 +223,7 @@ def validate_yaml_sources(sources):
         print(clowder_output + ' appears to be invalid')
         print('')
         print(error)
-        sys.exit(1)
+        raise
 
 # Disable errors shown by pylint for too many nested blocks
 # pylint: disable=R0101
@@ -283,4 +283,4 @@ def validate_yaml_groups(groups):
         print(clowder_output + ' appears to be invalid')
         print('')
         print(error)
-        sys.exit(1)
+        raise

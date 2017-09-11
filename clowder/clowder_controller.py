@@ -452,7 +452,7 @@ class ClowderController(object):
                 print(clowder_output + ' appears to be invalid')
                 print('')
                 print(error)
-                sys.exit(1)
+                raise
             with open(yaml_file) as file:
                 parsed_yaml_import = _parse_yaml(file)
                 self._validate_yaml(parsed_yaml_import, max_import_depth - 1)

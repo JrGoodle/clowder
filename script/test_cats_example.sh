@@ -393,4 +393,16 @@ test_clowder_import()
 }
 test_clowder_import
 
-print_help
+test_print()
+{
+    clowder repo checkout invalid-yaml || exit 1
+    clowder link -v 'missing-defaults'
+    clowder herd
+    print_help
+
+    clowder repo checkout master || exit 1
+    clowder link
+    clowder herd
+    print_help
+}
+test_print

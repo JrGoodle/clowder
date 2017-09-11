@@ -16,6 +16,8 @@ if __name__ == '__main__':
 
 # Disable errors shown by pylint for too many instance attributes
 # pylint: disable=R0902
+# Disable errors shown by pylint for no specified exception types
+# pylint: disable=W0702
 class Command(object):
     """Command class for parsing commandline options"""
 
@@ -36,12 +38,16 @@ class Command(object):
                 clowder_output = colored('.clowder', 'green')
                 print(clowder_output)
                 self.clowder_repo.link()
-            self.clowder = ClowderController(self.root_directory)
-            self.versions = self.clowder.get_saved_version_names()
-            if self.clowder.get_all_group_names() is not None:
-                self.group_names = self.clowder.get_all_group_names()
-            if self.clowder.get_all_project_names() is not None:
-                self.project_names = self.clowder.get_all_project_names()
+            try:
+                self.clowder = ClowderController(self.root_directory)
+                self.versions = self.clowder.get_saved_version_names()
+                if self.clowder.get_all_group_names() is not None:
+                    self.group_names = self.clowder.get_all_group_names()
+                if self.clowder.get_all_project_names() is not None:
+                    self.project_names = self.clowder.get_all_project_names()
+            except:
+                pass
+
         # clowder argparse setup
         command_description = 'Utility for managing multiple git repositories'
         parser = argparse.ArgumentParser(description=command_description)
@@ -78,6 +84,8 @@ class Command(object):
         if self.clowder_repo is not None:
             self.clowder_repo.print_status()
             print('')
+            if self.clowder is None:
+                sys.exit(1)
             if self.args.projects is None:
                 self.clowder.clean_groups(self.args.groups)
             else:
@@ -90,6 +98,8 @@ class Command(object):
         if self.clowder_repo is not None:
             self.clowder_repo.print_status()
             print('')
+            if self.clowder is None:
+                sys.exit(1)
             if self.args.projects is None:
                 self.clowder.forall_groups_run(self.args.command[0],
                                                self.args.groups,
@@ -106,6 +116,8 @@ class Command(object):
         if self.clowder_repo is not None:
             self.clowder_repo.print_status()
             print('')
+            if self.clowder is None:
+                sys.exit(1)
 
             # TODO: clowder herd -b
             # if self.args.branch is None:
@@ -161,6 +173,8 @@ class Command(object):
         if self.clowder_repo is not None:
             self.clowder_repo.print_status()
             print('')
+            if self.clowder is None:
+                sys.exit(1)
             if self.args.projects is None:
                 self.clowder.prune_groups(self.args.groups,
                                           self.args.branch,
@@ -242,6 +256,8 @@ class Command(object):
     def save(self):
         """clowder save command"""
         if self.clowder_repo is not None:
+            if self.clowder is None:
+                sys.exit(1)
             self.clowder.save_version(self.args.version)
         else:
             exit_clowder_not_found()
@@ -251,6 +267,8 @@ class Command(object):
         if self.clowder_repo is not None:
             self.clowder_repo.print_status()
             print('')
+            if self.clowder is None:
+                sys.exit(1)
             if self.args.projects is None:
                 self.clowder.start_groups(self.args.groups, self.args.branch)
             else:
@@ -263,6 +281,8 @@ class Command(object):
         if self.clowder_repo is not None:
             self.clowder_repo.print_status()
             print('')
+            if self.clowder is None:
+                sys.exit(1)
             if self.args.projects is None:
                 self.clowder.stash_groups(self.args.groups)
             else:
@@ -275,6 +295,8 @@ class Command(object):
         if self.clowder_repo is not None:
             self.clowder_repo.print_status()
             print('')
+            if self.clowder is None:
+                sys.exit(1)
             if self.args.fetch:
                 print(' - Fetching upstream changes for projects', end="", flush=True)
                 timer = RepeatedTimer(1, self._print_progress)
