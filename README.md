@@ -29,32 +29,34 @@ The primary purpose of `clowder` is synchronization of multiple repositories, so
 
 #### [Python 3](https://www.python.org/downloads/)
 
-- macOS with [Homebrew](https://brew.sh):
+- macOS with [Homebrew](https://brew.sh)
     ```bash
     $ brew install python3
     ```
 
 ### Installation
 
-To install `clowder` from PyPI, open a terminal and run:
+To install `clowder` from PyPI
 
 ```bash
 $ pip3 install clowder-repo
 ```
 
-To make `clowder` available in your shell environment, it may be necessary to add the Python 3 bin directory to your environment's `PATH` variable:
+#### Shell Profile Customizations
+
+To make `clowder` available in your shell environment, it may be necessary to add the Python 3 bin directory to your environment's `PATH` variable
 
 ```bash
 echo "$(dirname $(which python3))"
 ```
 
-On macOS with Python 3.4, I had to add the following to my bash profile:
+For example, on macOS with Python 3.4
 
 ```bash
 export PATH="/Library/Frameworks/Python.framework/Versions/3.4/bin:$PATH"
 ```
 
-For terminal autocompletion, add the following to your bash profile (after adding the Python 3 bin directory to your path, if necessary):
+For terminal autocompletion
 
 ```bash
 command -v clowder >/dev/null 2>&1 && eval "$(register-python-argcomplete clowder)"

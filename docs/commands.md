@@ -178,16 +178,16 @@ $ clowder save 0.1
 Start a new feature branch or check out if it already exists.
 
 ```bash
-# Create new branch 'my_feature' for all projects
+# Create new local branch 'my_feature' for all projects
 $ clowder start my_feature
 
 # Create new local and remote tracking branch 'my_feature' for all projects
 $ clowder start -t my_feature
 
-# Create new branch 'my_feature' in clang group
+# Create new local branch 'my_feature' in clang group
 $ clowder start my_feature -g clang
 
-# Create new branch 'my_feature' in clang project
+# Create new local branch 'my_feature' in clang project
 $ clowder start my_feature -p llvm-mirror/clang
 ```
 
