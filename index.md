@@ -1,6 +1,6 @@
 > **clowder** - A group of cats
 
-> **herding cats** - An idiom that refers to a frustrating attempt to control or organize a class of entities which are uncontrollable or chaotic.
+> **herding cats** - An idiom that refers to a frustrating attempt to control or organize a class of entities which are uncontrollable or chaotic
 
 Managing multiple repositories can be pretty frustrating. There are a number of existing options:
 
@@ -15,11 +15,11 @@ Managing multiple repositories can be pretty frustrating. There are a number of 
 - [git-stree](https://github.com/tdd/git-stree)
 - [git-subrepo](https://github.com/ingydotnet/git-subrepo)
 
-All of these have their own approach, but many are based on submodules or subtrees. Submodules and subtrees create a tight coupling between repositories because of the way dependencies are stored. Much has been written about their drawbacks elsewhere. Google's `repo` tool takes a different approach, but is closely tied to Google's development workflow.
+All of these have their own approach, but many are based on submodules or subtrees. Submodules and subtrees create a tight coupling between repositories because of the way dependencies are stored. Much has been written about their drawbacks elsewhere. Google's `repo` tool takes a different approach, but is closely tied to Google's development workflow
 
-`clowder` uses a similar approach as `repo` (and as it turns out, `gr` and `giternal`) with a yaml file instead of xml. URL information and relative project locations on disk are specified in a `clowder.yaml` file. This file is checked into its own repository. The use of a separate file for tracking projects means that there's detailed information about the dependencies between them, but each repository is still essentially independent. Projects can be tied to specific tags or commits, or can track branches. With the `clowder save <version>` command, specific versions of the `clowder.yaml` file can be saved from the current commit hashes of all projects for later restoration.
+`clowder` uses a similar approach as `repo` (and as it turns out, `gr` and `giternal`), but using yaml instead of xml for the configuration file. URL information and relative project locations on disk are specified in a `clowder.yaml` file. This file is checked into its own repository. The use of a separate file to track projects allows for detailed information about the dependencies between them to be stored, but each repository is still essentially independent. Projects can can track branches, or be tied to specific tags or commits. The `clowder save <version>` command can be used to save specific versions of the `clowder.yaml` file from the current commit hashes of all projects, for later restoration
 
-The primary purpose of `clowder` is synchronization of multiple repositories, so normal development still takes place in individual repositories with the usual `git` commands.
+The primary purpose of `clowder` is synchronization of multiple repositories, so normal development still takes place in individual repositories with the usual `git` commands
 
 ## Getting Started
 
@@ -33,7 +33,7 @@ $ brew install python3
 
 ### Installation
 
-To install from PyPI open a terminal and run:
+To install `clowder` from PyPI, open a terminal and run:
 
 ```bash
 $ pip3 install clowder-repo
@@ -59,31 +59,41 @@ command -v clowder >/dev/null 2>&1 && eval "$(register-python-argcomplete clowde
 
 ### Usage
 
-This example is based on the LLVM project (see [the full clowder.yaml](https://github.com/JrGoodle/llvm-projects/blob/master/clowder.yaml)). First create a directory to contain all the projects.
+This example is based on the [LLVM project](https://llvm.org) (see [the full clowder.yaml](https://github.com/JrGoodle/llvm-projects/blob/master/clowder.yaml))
 
-```bash
-$ mkdir llvm-projects && cd llvm-projects
-```
+1. Create a directory to contain all the LLVM projects
+    ```bash
+    $ mkdir llvm-projects
+    $ cd llvm-projects
+    ```
 
-Clone repo containing `clowder.yaml` file ('clowder repo').
+2. Clone the [llvm-projects](https://github.com/jrgoodle/llvm-projects.git) repository (the "**clowder repo**") containing the `clowder.yaml` file
+    ```bash
+    $ clowder init https://github.com/jrgoodle/llvm-projects.git
+    ```
+    The `clowder init` command will do the following:
+    - Clone the [llvm-projects](https://github.com/jrgoodle/llvm-projects.git) repository in the `llvm-projects/.clowder` directory
+    - Create a symlink pointing to the primary `clowder.yaml` file in the repository
 
-```bash
-$ clowder init https://github.com/jrgoodle/llvm-projects.git
-```
+        ```bash
+        llvm-projects/clowder.yaml -> llvm-projects/.clowder/clowder.yaml
+        ```
 
-The `clowder init` command will clone the [llvm-projects](https://github.com/jrgoodle/llvm-projects.git) repository in the `llvm-projects/.clowder` directory and create a symlink pointing to the primary `clowder.yaml` file in the repository:
+3. Clone all repositories and check out refs specified in `clowder.yaml`
+    ```bash
+    $ clowder herd
+    ```
+    `clowder herd` updates the state of the projects. When `clowder herd` is run, the following happens:
+    - Project repositories are checked for whether they have a clean git status, if not then `clowder` exits
+    - Projects are cloned if they don't currently exist
+    - Each project fetches the latest changes
+    - If the current git ref checked out doesn't match the `clowder.yaml` configuration, the correct ref will be checked out
+    - The latest changes are pulled for branches. For commits and tags, the commits are checked out into a detached `HEAD` state
 
-```
-llvm-projects/clowder.yaml -> llvm-projects/.clowder/clowder.yaml
-```
-
-Next clone all repositories and check out refs specified in `clowder.yaml`:
-
-```bash
-$ clowder herd
-```
-
-The `clowder herd` command updates the state of the projects. The project repositories must have a clean git status, or `clowder` will exit. Projects are cloned if they don't currently exist; otherwise, each project will pull the latest changes. If the current git ref checked out doesn't correspond to the `clowder.yaml` configuration, the correct ref will be checked out, and latest changes pulled for branches. For commits and tags, the commits are checked out into a detached `HEAD` state (`clowder forall` or `clowder start` can then be used to create/checkout branches).
+4. Print status of projects
+    ```bash
+    $ clowder status
+    ```
 
 For more example projects, see the [examples directory](https://github.com/JrGoodle/clowder/tree/master/examples).
 
@@ -104,14 +114,14 @@ $ clowder prune stale_branch # Prune branch 'stale_branch' for all projects
 ```
 
 See the [clowder commands doc](https://github.com/JrGoodle/clowder/blob/master/docs/commands.md)
-for more advanced `clowder` command usage.
+for more advanced `clowder` command usage
 
 ### The `clowder.yaml` File
 
 See the [clowder.yaml doc](https://github.com/JrGoodle/clowder/blob/master/docs/clowder_yaml.md)
-for an explanation of the `clowder.yaml` configuration file.
+for an explanation of the `clowder.yaml` configuration file
 
 ### The `.clowder` Directory
 
 See the [.clowder doc](https://github.com/JrGoodle/clowder/blob/master/docs/dot_clowder_dir.md)
-for a description of the structure of the `.clowder` directory.
+for a description of the structure of the `.clowder` directory
