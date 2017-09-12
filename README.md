@@ -47,18 +47,17 @@ $ pip3 install clowder-repo
 To make `clowder` available in your shell environment, it may be necessary to add the Python 3 bin directory to your environment's `PATH` variable
 
 ```bash
-echo "$(dirname $(which python3))"
-```
-
-For example, on macOS with Python 3.4
-
-```bash
+# macOS and Python 3.4
+$ echo "$(dirname $(which python3))"
+> /Library/Frameworks/Python.framework/Versions/3.4/bin
+# add to bash profile
 export PATH="/Library/Frameworks/Python.framework/Versions/3.4/bin:$PATH"
 ```
 
 For terminal autocompletion
 
 ```bash
+# add to bash profile
 command -v clowder >/dev/null 2>&1 && eval "$(register-python-argcomplete clowder)"
 ```
 
