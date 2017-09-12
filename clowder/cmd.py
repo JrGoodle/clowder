@@ -89,8 +89,8 @@ class Command(object):
         """clowder clean command"""
         if self.clowder_repo is not None:
             self.clowder_repo.print_status()
+            print('')
             if self.clowder is None:
-                print('')
                 sys.exit(1)
             if self.args.projects is None:
                 self.clowder.clean_groups(self.args.groups)
@@ -103,8 +103,8 @@ class Command(object):
         """clowder forall command"""
         if self.clowder_repo is not None:
             self.clowder_repo.print_status()
+            print('')
             if self.clowder is None:
-                print('')
                 sys.exit(1)
             if self.args.projects is None:
                 self.clowder.forall_groups_run(self.args.command[0],
@@ -121,8 +121,8 @@ class Command(object):
         """clowder herd command"""
         if self.clowder_repo is not None:
             self.clowder_repo.print_status()
+            print('')
             if self.clowder is None:
-                print('')
                 sys.exit(1)
 
             # TODO: clowder herd -b
@@ -182,8 +182,8 @@ class Command(object):
         """clowder prune command"""
         if self.clowder_repo is not None:
             self.clowder_repo.print_status()
+            print('')
             if self.clowder is None:
-                print('')
                 sys.exit(1)
             if self.args.projects is None:
                 self.clowder.prune_groups(self.args.groups,
@@ -266,8 +266,8 @@ class Command(object):
     def save(self):
         """clowder save command"""
         if self.clowder_repo is not None:
+            print('')
             if self.clowder is None:
-                print('')
                 sys.exit(1)
             self.clowder.save_version(self.args.version)
         else:
@@ -277,13 +277,17 @@ class Command(object):
         """clowder start command"""
         if self.clowder_repo is not None:
             self.clowder_repo.print_status()
+            print('')
             if self.clowder is None:
-                print('')
                 sys.exit(1)
             if self.args.projects is None:
-                self.clowder.start_groups(self.args.groups, self.args.branch)
+                self.clowder.start_groups(self.args.groups,
+                                          self.args.branch,
+                                          self.args.tracking)
             else:
-                self.clowder.start_projects(self.args.projects, self.args.branch)
+                self.clowder.start_projects(self.args.projects,
+                                            self.args.branch,
+                                            self.args.tracking)
         else:
             exit_clowder_not_found()
 
@@ -291,8 +295,8 @@ class Command(object):
         """clowder stash command"""
         if self.clowder_repo is not None:
             self.clowder_repo.print_status()
+            print('')
             if self.clowder is None:
-                print('')
                 sys.exit(1)
             if self.args.projects is None:
                 self.clowder.stash_groups(self.args.groups)
@@ -305,8 +309,8 @@ class Command(object):
         """clowder status command"""
         if self.clowder_repo is not None:
             self.clowder_repo.print_status()
+            print('')
             if self.clowder is None:
-                print('')
                 sys.exit(1)
             if self.args.fetch:
                 print(' - Fetching upstream changes for projects', end="", flush=True)
@@ -524,6 +528,8 @@ class Command(object):
         """Configure clowder start subparser and arguments"""
         # clowder start
         parser_start = subparsers.add_parser('start', help='Start a new feature')
+        parser_start.add_argument('--tracking', '-t', action='store_true',
+                                  help='create remote tracking branch')
         parser_start.add_argument('branch', help='name of branch to create', metavar='BRANCH')
         group_start = parser_start.add_mutually_exclusive_group()
         if self.group_names is not '':

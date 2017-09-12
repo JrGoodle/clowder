@@ -181,6 +181,9 @@ Start a new feature branch or check out if it already exists.
 # Create new branch 'my_feature' for all projects
 $ clowder start my_feature
 
+# Create new local and remote tracking branch 'my_feature' for all projects
+$ clowder start -t my_feature
+
 # Create new branch 'my_feature' in clang group
 $ clowder start my_feature -g clang
 

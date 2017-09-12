@@ -166,13 +166,13 @@ class Project(object):
                     sys.exit(return_code)
             print('')
 
-    def start(self, branch):
+    def start(self, branch, tracking):
         """Start a new feature branch"""
         self._print_status()
         if not os.path.isdir(os.path.join(self.full_path(), '.git')):
             cprint(" - Directory doesn't exist", 'red')
         else:
-            git_start(self.full_path(), self.remote_name, branch, self.depth)
+            git_start(self.full_path(), self.remote_name, branch, self.depth, tracking)
 
     def status(self):
         """Print status for project"""

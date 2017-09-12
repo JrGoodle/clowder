@@ -23,35 +23,35 @@ setup_old_repos()
     # local CLANG_DIR="$LLVM_PROJECTS_DIR/llvm/tools/clang"
     # rm -rf $CLANG_DIR
     # mkdir -p $CLANG_DIR
-    # pushd $CLANG_DIR &>/dev/null
-    # git clone https://github.com/JrGoodle/clang.git . &>/dev/null
-    # git remote remove origin &>/dev/null
-    # git remote add origin https://github.com/llvm-mirror/clang.git &>/dev/null
-    # git fetch &>/dev/null
-    # git branch -u origin/master &>/dev/null
-    # popd &>/dev/null
+    # pushd $CLANG_DIR
+    # git clone https://github.com/JrGoodle/clang.git .
+    # git remote remove origin
+    # git remote add origin https://github.com/llvm-mirror/clang.git
+    # git fetch
+    # git branch -u origin/master
+    # popd
 
     local CLANG_TOOLS_EXTRA_DIR="llvm/tools/clang/tools/extra"
     rm -rf $CLANG_TOOLS_EXTRA_DIR
     mkdir -p $CLANG_TOOLS_EXTRA_DIR
-    pushd $CLANG_TOOLS_EXTRA_DIR &>/dev/null
-    git clone https://github.com/JrGoodle/clang-tools-extra.git . &>/dev/null
-    git remote remove origin &>/dev/null
-    git remote add origin https://github.com/llvm-mirror/clang-tools-extra.git &>/dev/null
-    git fetch &>/dev/null
-    git branch -u origin/master &>/dev/null
-    popd &>/dev/null
+    pushd $CLANG_TOOLS_EXTRA_DIR
+    git clone https://github.com/JrGoodle/clang-tools-extra.git .
+    git remote remove origin
+    git remote add origin https://github.com/llvm-mirror/clang-tools-extra.git
+    git fetch
+    git branch -u origin/master
+    popd
 
     local COMPILER_RT_DIR="llvm/projects/compiler-rt"
     rm -rf $COMPILER_RT_DIR
     mkdir -p $COMPILER_RT_DIR
-    pushd $COMPILER_RT_DIR &>/dev/null
-    git clone https://github.com/JrGoodle/compiler-rt.git . &>/dev/null
-    git remote remove origin &>/dev/null
-    git remote add origin https://github.com/llvm-mirror/compiler-rt.git &>/dev/null
-    git fetch &>/dev/null
-    git branch -u origin/master &>/dev/null
-    popd &>/dev/null
+    pushd $COMPILER_RT_DIR
+    git clone https://github.com/JrGoodle/compiler-rt.git .
+    git remote remove origin
+    git remote add origin https://github.com/llvm-mirror/compiler-rt.git
+    git fetch
+    git branch -u origin/master
+    popd
 }
 
 test_command
@@ -163,21 +163,21 @@ test_start()
     clowder forall -g llvm -c 'git fetch origin master'
     clowder forall -g llvm -c 'git checkout master'
 
-    pushd 'llvm/tools/clang' &>/dev/null
+    pushd 'llvm/tools/clang'
     test_branch start_branch
-    popd &>/dev/null
-    pushd 'llvm/tools/clang/tools/extra' &>/dev/null
+    popd
+    pushd 'llvm/tools/clang/tools/extra'
     test_branch start_branch
-    popd &>/dev/null
-    pushd llvm &>/dev/null
+    popd
+    pushd llvm
     test_branch master
-    popd &>/dev/null
+    popd
 
     clowder start start_branch
 
-    pushd llvm &>/dev/null
+    pushd llvm
     test_branch start_branch
-    popd &>/dev/null
+    popd
 }
 test_start
 
