@@ -73,11 +73,23 @@ class Group(object):
                 projects_exist = False
         return projects_exist
 
-    def prune(self, branch, is_remote, force):
-        """Prune branch"""
+    def prune_all(self, branch, force):
+        """Prune local and remote branch"""
         self._print_name()
         for project in self.projects:
-            project.prune(branch, is_remote, force)
+            project.prune_all(branch, force)
+
+    def prune_local(self, branch, force):
+        """Prune local branch"""
+        self._print_name()
+        for project in self.projects:
+            project.prune_local(branch, force)
+
+    def prune_remote(self, branch, force):
+        """Prune remote branch"""
+        self._print_name()
+        for project in self.projects:
+            project.prune_remote(branch, force)
 
     def start(self, branch, tracking):
         """Start a new feature branch"""

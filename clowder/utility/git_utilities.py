@@ -196,7 +196,7 @@ def git_new_upstream_commits(repo_path):
             except:
                 return 0
 
-def git_prune(repo_path, branch, default_ref, force):
+def git_prune_local(repo_path, branch, default_ref, force):
     """Prune branch in repository"""
     repo = _repo(repo_path)
     branch_output = colored('(' + branch + ')', 'magenta')
