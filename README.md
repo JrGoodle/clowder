@@ -86,7 +86,7 @@ This example is based on the [LLVM project](https://llvm.org) (see [the full clo
     $ clowder herd
     ```
     `clowder herd` updates the state of the projects. When `clowder herd` is run, the following happens:
-    - Project repositories are checked for whether they have a clean git status, if not then `clowder` exits
+    - If any projects don't have a clean git status then `clowder` exits
     - Projects are cloned if they don't currently exist
     - Each project fetches the latest changes
     - If the current git ref checked out doesn't match the `clowder.yaml` configuration, the correct ref will be checked out
