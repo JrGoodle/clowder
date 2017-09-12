@@ -119,20 +119,50 @@ class ClowderController(object):
                 if project.name in project_names:
                     project.herd(branch, depth)
 
-    def prune_groups(self, group_names, branch, is_remote, force):
-        """Prune branch for groups"""
+    def prune_groups_all(self, group_names, branch, force):
+        """Prune local and remote branch for groups"""
         self._validate_groups(group_names)
         for group in self.groups:
             if group.name in group_names:
-                group.prune(branch, is_remote, force)
+                group.prune_all(branch, force)
 
-    def prune_projects(self, project_names, branch, is_remote, force):
-        """Prune branch for projects"""
+    def prune_groups_local(self, group_names, branch, force):
+        """Prune local branch for groups"""
+        self._validate_groups(group_names)
+        for group in self.groups:
+            if group.name in group_names:
+                group.prune_local(branch, force)
+
+    def prune_groups_remote(self, group_names, branch, force):
+        """Prune remote branch for groups"""
+        self._validate_groups(group_names)
+        for group in self.groups:
+            if group.name in group_names:
+                group.prune_remote(branch, force)
+
+    def prune_projects_all(self, project_names, branch, force):
+        """Prune local and remote branch for projects"""
         self._validate_projects(project_names)
         for group in self.groups:
             for project in group.projects:
                 if project.name in project_names:
-                    project.prune(branch, is_remote, force)
+                    project.prune_all(branch, force)
+
+    def prune_projects_local(self, project_names, branch, force):
+        """Prune local branch for projects"""
+        self._validate_projects(project_names)
+        for group in self.groups:
+            for project in group.projects:
+                if project.name in project_names:
+                    project.prune_local(branch, force)
+
+    def prune_projects_remote(self, project_names, branch, force):
+        """Prune remote branch for projects"""
+        self._validate_projects(project_names)
+        for group in self.groups:
+            for project in group.projects:
+                if project.name in project_names:
+                    project.prune_remote(branch, force)
 
     def save_version(self, version):
         """Save current commits to a clowder.yaml in the versions directory"""

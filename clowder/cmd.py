@@ -186,15 +186,31 @@ class Command(object):
             if self.clowder is None:
                 sys.exit(1)
             if self.args.projects is None:
-                self.clowder.prune_groups(self.args.groups,
-                                          self.args.branch,
-                                          self.args.remote,
-                                          self.args.force)
+                if self.args.all:
+                    self.clowder.prune_groups_all(self.args.groups,
+                                                  self.args.branch,
+                                                  self.args.force)
+                elif self.args.remote:
+                    self.clowder.prune_groups_remote(self.args.groups,
+                                                     self.args.branch,
+                                                     self.args.force)
+                else:
+                    self.clowder.prune_groups_local(self.args.groups,
+                                                    self.args.branch,
+                                                    self.args.force)
             else:
-                self.clowder.prune_projects(self.args.projects,
-                                            self.args.branch,
-                                            self.args.remote,
-                                            self.args.force)
+                if self.args.all:
+                    self.clowder.prune_projects_all(self.args.projects,
+                                                    self.args.branch,
+                                                    self.args.force)
+                elif self.args.remote:
+                    self.clowder.prune_projects_remote(self.args.projects,
+                                                       self.args.branch,
+                                                       self.args.force)
+                else:
+                    self.clowder.prune_projects_local(self.args.projects,
+                                                      self.args.branch,
+                                                      self.args.force)
         else:
             exit_clowder_not_found()
 
@@ -455,8 +471,11 @@ class Command(object):
         parser_prune.add_argument('--force', '-f', action='store_true',
                                   help='force prune branches')
         parser_prune.add_argument('branch', help='name of branch to remove', metavar='BRANCH')
-        parser_prune.add_argument('--remote', '-r', action='store_true',
-                                  help='prune remote branches')
+        group_prune_options = parser_prune.add_mutually_exclusive_group()
+        group_prune_options.add_argument('--all', '-a', action='store_true',
+                                         help='prune local and remote branches')
+        group_prune_options.add_argument('--remote', '-r', action='store_true',
+                                         help='prune remote branches')
         group_prune = parser_prune.add_mutually_exclusive_group()
         if self.group_names is not '':
             prune_help_groups = '''

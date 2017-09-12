@@ -17,7 +17,7 @@ from clowder.utility.git_utilities import (
     git_fetch,
     git_herd,
     git_is_dirty,
-    git_prune,
+    git_prune_local,
     git_prune_remote,
     git_reset_head,
     git_start,
@@ -141,16 +141,30 @@ class Project(object):
             self._print_status()
             print_validation(self.full_path())
 
-    def prune(self, branch, is_remote, force):
-        """Prune branch"""
+    def prune_all(self, branch, force):
+        """Prune local and remote branch"""
         self._print_status()
         if not os.path.isdir(os.path.join(self.full_path(), '.git')):
             cprint(" - Directory doesn't exist", 'red')
         else:
-            if is_remote:
-                git_prune_remote(self.full_path(), branch, self.remote_name)
-            else:
-                git_prune(self.full_path(), branch, self.ref, force)
+            git_prune_local(self.full_path(), branch, self.ref, force)
+            git_prune_remote(self.full_path(), branch, self.remote_name)
+
+    def prune_local(self, branch, force):
+        """Prune local branch"""
+        self._print_status()
+        if not os.path.isdir(os.path.join(self.full_path(), '.git')):
+            cprint(" - Directory doesn't exist", 'red')
+        else:
+            git_prune_local(self.full_path(), branch, self.ref, force)
+
+    def prune_remote(self, branch, force):
+        """Prune remote branch"""
+        self._print_status()
+        if not os.path.isdir(os.path.join(self.full_path(), '.git')):
+            cprint(" - Directory doesn't exist", 'red')
+        else:
+            git_prune_remote(self.full_path(), branch, self.remote_name)
 
     def run(self, command, ignore_errors):
         """Run command or script in project directory"""

@@ -122,6 +122,12 @@ $ clowder prune -f stale_branch
 # Prune remote branch 'stale_branch' for all projects
 $ clowder prune -r stale_branch
 
+# Prune local and remote branch 'stale_branch' for all projects
+$ clowder prune -a stale_branch
+
+# Force prune local and remote branch 'stale_branch' for all projects
+$ clowder prune -af stale_branch
+
 # Prune branch 'stale_branch' in clang group
 $ clowder prune stale_branch -g clang
 
