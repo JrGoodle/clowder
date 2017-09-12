@@ -79,11 +79,11 @@ class Group(object):
         for project in self.projects:
             project.prune(branch, is_remote, force)
 
-    def start(self, branch):
+    def start(self, branch, tracking):
         """Start a new feature branch"""
         self._print_name()
         for project in self.projects:
-            project.start(branch)
+            project.start(branch, tracking)
 
     def status(self):
         """Print status for all projects"""

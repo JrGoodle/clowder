@@ -28,9 +28,9 @@ test_init_branch()
 
     clowder init https://github.com/jrgoodle/cats.git -b tags
 
-    pushd .clowder &>/dev/null
+    pushd .clowder
     test_branch tags
-    popd &>/dev/null
+    popd
 
     rm -rf .clowder clowder.yaml
 }
@@ -47,12 +47,12 @@ test_branches()
     print_separator
     echo "TEST: Test branches"
     test_branch_master "${projects[@]}"
-    pushd mu &>/dev/null
+    pushd mu
     test_branch knead
-    popd &>/dev/null
-    pushd duke &>/dev/null
+    popd
+    pushd duke
     test_branch purr
-    popd &>/dev/null
+    popd
 }
 test_branches
 
@@ -137,12 +137,12 @@ test_herd_missing_branches()
     clowder link -v v0.1 || exit 1
     clowder herd || exit 1
     echo "TEST: Delete default branches locally"
-    pushd mu &>/dev/null
+    pushd mu
     git branch -D knead
-    popd &>/dev/null
-    pushd duke &>/dev/null
+    popd
+    pushd duke
     git branch -D purr
-    popd &>/dev/null
+    popd
     echo "TEST: Herd existing repo's with no default branch locally"
     clowder link || exit 1
     clowder herd || exit 1
@@ -193,9 +193,9 @@ test_invalid_yaml()
         rm clowder.yaml
     done
 
-    pushd .clowder &>/dev/null
+    pushd .clowder
     git checkout master
-    popd &>/dev/null
+    popd
 }
 test_invalid_yaml
 
@@ -224,38 +224,186 @@ test_herd_tag
 test_start()
 {
     print_separator
-    echo "TEST: Start new feature branch"
+    echo "TEST: Start new branch"
     clowder herd
 
-    clowder start start_branch
+    clowder start start_branch || exit 1
     # TODO: clowder herd -b
     # clowder herd -b master -g black-cats
     clowder forall -g black-cats -c 'git fetch origin master'
     clowder forall -g black-cats -c 'git checkout master'
 
-    pushd mu &>/dev/null
+    pushd mu
     test_branch start_branch
-    popd &>/dev/null
-    pushd duke &>/dev/null
+    popd
+    pushd duke
     test_branch start_branch
-    popd &>/dev/null
-    pushd black-cats/jules &>/dev/null
+    popd
+    pushd black-cats/jules
     test_branch master
-    popd &>/dev/null
-    pushd black-cats/kishka &>/dev/null
+    popd
+    pushd black-cats/kishka
     test_branch master
-    popd &>/dev/null
+    popd
 
-    clowder start start_branch
+    clowder start start_branch || exit 1
 
-    pushd black-cats/jules &>/dev/null
+    pushd black-cats/jules
     test_branch start_branch
-    popd &>/dev/null
-    pushd black-cats/kishka &>/dev/null
+    popd
+    pushd black-cats/kishka
     test_branch start_branch
-    popd &>/dev/null
+    popd
 }
 test_start
+
+if [ -z "$TRAVIS_OS_NAME" ]; then
+    test_start_tracking()
+    {
+        print_separator
+        echo "TEST: Test start tracking branch"
+        clowder herd
+
+        echo "TEST: No local or remote branches"
+        clowder prune tracking_branch || exit 1
+        clowder prune -r tracking_branch || exit 1
+        clowder start -t tracking_branch || exit 1
+
+        pushd duke
+        test_branch tracking_branch
+        test_remote_branch_exists tracking_branch
+        test_tracking_branch_exists tracking_branch
+        popd
+        pushd mu
+        test_branch tracking_branch
+        test_remote_branch_exists tracking_branch
+        test_tracking_branch_exists tracking_branch
+        popd
+        pushd black-cats/jules
+        test_branch tracking_branch
+        test_remote_branch_exists tracking_branch
+        test_tracking_branch_exists tracking_branch
+        popd
+        pushd black-cats/kishka
+        test_branch tracking_branch
+        test_remote_branch_exists tracking_branch
+        test_tracking_branch_exists tracking_branch
+        popd
+
+        echo "TEST: Existing local branch checked out, remote tracking branch exists"
+        clowder prune tracking_branch || exit 1
+        clowder prune -r tracking_branch || exit 1
+        clowder start -t tracking_branch || exit 1
+        clowder start -t tracking_branch || exit 1
+
+        echo "TEST: Existing local branch not checked out, remote tracking branch exists"
+        clowder prune tracking_branch || exit 1
+        clowder prune -r tracking_branch || exit 1
+        clowder start -t tracking_branch || exit 1
+        clowder forall -c 'git checkout master' || exit 1
+        clowder start -t tracking_branch || exit 1
+
+        echo "TEST: No local branch, existing remote branch"
+        clowder prune tracking_branch || exit 1
+        clowder prune -r tracking_branch || exit 1
+        clowder start -t tracking_branch || exit 1
+        clowder prune tracking_branch || exit 1
+        clowder start -t tracking_branch && exit 1
+
+        pushd duke
+        test_branch tracking_branch
+        test_remote_branch_exists tracking_branch
+        test_no_tracking_branch_exists tracking_branch
+        popd
+        pushd mu
+        test_branch knead
+        test_remote_branch_exists tracking_branch
+        test_no_tracking_branch_exists tracking_branch
+        popd
+        pushd black-cats/jules
+        test_branch master
+        test_remote_branch_exists tracking_branch
+        test_no_tracking_branch_exists tracking_branch
+        popd
+        pushd black-cats/kishka
+        test_branch master
+        test_remote_branch_exists tracking_branch
+        test_no_tracking_branch_exists tracking_branch
+        popd
+
+        echo "TEST: Existing local branch checked out, existing remote branch, no tracking relationship"
+        clowder prune tracking_branch || exit 1
+        clowder prune -r tracking_branch || exit 1
+        clowder start -t tracking_branch || exit 1
+        clowder prune tracking_branch || exit 1
+        clowder forall -c 'git checkout -b tracking_branch' || exit 1
+        clowder start -t tracking_branch && exit 1
+
+        echo "TEST: Existing local branch not checked out, existing remote branch, no tracking relationship"
+        clowder prune tracking_branch || exit 1
+        clowder prune -r tracking_branch || exit 1
+        clowder start -t tracking_branch || exit 1
+        clowder prune tracking_branch || exit 1
+        clowder forall -c 'git checkout -b tracking_branch' || exit 1
+        clowder forall -c 'git checkout master' || exit 1
+        clowder start -t tracking_branch && exit 1
+
+        echo "TEST: Existing local branch checked out, no remote branch"
+        clowder prune tracking_branch
+        clowder prune -r tracking_branch
+        clowder start tracking_branch || exit 1
+        clowder start -t tracking_branch || exit 1
+
+        pushd duke
+        test_branch tracking_branch
+        test_remote_branch_exists tracking_branch
+        test_tracking_branch_exists tracking_branch
+        popd
+        pushd mu
+        test_branch tracking_branch
+        test_remote_branch_exists tracking_branch
+        test_tracking_branch_exists tracking_branch
+        popd
+        pushd black-cats/jules
+        test_branch tracking_branch
+        test_remote_branch_exists tracking_branch
+        test_tracking_branch_exists tracking_branch
+        popd
+        pushd black-cats/kishka
+        test_branch tracking_branch
+        test_remote_branch_exists tracking_branch
+        test_tracking_branch_exists tracking_branch
+        popd
+
+        echo "TEST: Existing local branch not checked out, no remote branch"
+        clowder prune -r tracking_branch
+        clowder start tracking_branch || exit 1
+        clowder forall -c 'git checkout master'
+        clowder start -t tracking_branch || exit 1
+
+        pushd duke
+        test_branch tracking_branch
+        test_remote_branch_exists tracking_branch
+        test_tracking_branch_exists tracking_branch
+        popd
+        pushd mu
+        test_branch tracking_branch
+        test_remote_branch_exists tracking_branch
+        test_tracking_branch_exists tracking_branch
+        popd
+        pushd black-cats/jules
+        test_branch tracking_branch
+        test_remote_branch_exists tracking_branch
+        test_tracking_branch_exists tracking_branch
+        popd
+        pushd black-cats/kishka
+        test_branch tracking_branch
+        test_remote_branch_exists tracking_branch
+        test_tracking_branch_exists tracking_branch
+        popd
+    }
+    test_start_tracking
+fi
 
 test_prune()
 {
@@ -264,79 +412,73 @@ test_prune()
     clowder herd
 
     clowder start prune_branch
-    clowder prune prune_branch
+    clowder prune prune_branch || exit 1
 
-    pushd black-cats/jules &>/dev/null
+    pushd black-cats/jules
     test_branch master
-    popd &>/dev/null
-    pushd black-cats/kishka &>/dev/null
+    popd
+    pushd black-cats/kishka
     test_branch master
-    popd &>/dev/null
+    popd
 
     clowder start prune_branch
-    clowder prune prune_branch -g black-cats
+    clowder prune prune_branch -g black-cats || exit 1
 
-    pushd duke &>/dev/null
+    pushd duke
     test_branch prune_branch
-    popd &>/dev/null
-    pushd mu &>/dev/null
+    popd
+    pushd mu
     test_branch prune_branch
-    popd &>/dev/null
-    pushd black-cats/jules &>/dev/null
+    popd
+    pushd black-cats/jules
     test_branch master
-    popd &>/dev/null
-    pushd black-cats/kishka &>/dev/null
+    popd
+    pushd black-cats/kishka
     test_branch master
-    popd &>/dev/null
+    popd
 
     echo "TEST: Test clowder force prune branch"
 
     clowder start prune_branch
-    pushd duke &>/dev/null
+    pushd duke
     touch something
     git add something
     git commit -m 'something'
-    popd &>/dev/null
-    pushd mu &>/dev/null
+    popd
+    pushd mu
     touch something
     git add something
     git commit -m 'something'
-    popd &>/dev/null
+    popd
 
     clowder prune prune_branch && exit 1
     clowder prune -f prune_branch || exit 1
 
-    pushd duke &>/dev/null
+    pushd duke
     test_branch purr
-    popd &>/dev/null
-    pushd mu &>/dev/null
+    popd
+    pushd mu
     test_branch knead
-    popd &>/dev/null
+    popd
 
     if [ -z "$TRAVIS_OS_NAME" ]; then
         echo "TEST: Test clowder prune remote branch"
 
-        pushd duke &>/dev/null
+        pushd duke
         git checkout -b remote_branch
         git push -u origin remote_branch
-        popd &>/dev/null
+        popd
 
         clowder prune remote_branch
 
-        pushd duke &>/dev/null
-        OUT_1="$(git ls-remote --heads origin remote_branch | wc -l | tr -d '[:space:]')"
-        if [ "$OUT_1" -eq "0" ]; then
-            exit 1
-        fi
+        pushd duke
+        test_remote_branch_exists remote_branch
         popd
 
         clowder prune -r remote_branch
 
-        pushd duke &>/dev/null
-        OUT_2="$(git ls-remote --heads origin remote_branch | wc -l | tr -d '[:space:]')"
-        if [ "$OUT_2" -eq "1" ]; then
-            exit 1
-        fi
+        pushd duke
+        test_no_remote_branch_exists remote_branch
         popd
     fi
 }
@@ -360,36 +502,36 @@ test_clowder_import()
     clowder herd
     clowder link -v import-default
     clowder herd
-    pushd black-cats/jules &>/dev/null
+    pushd black-cats/jules
     test_branch import-default
-    popd &>/dev/null
-    pushd black-cats/kishka &>/dev/null
+    popd
+    pushd black-cats/kishka
     test_branch import-default
-    popd &>/dev/null
-    pushd black-cats/kit &>/dev/null
+    popd
+    pushd black-cats/kit
     test_branch import-default
-    popd &>/dev/null
-    pushd black-cats/sasha &>/dev/null
+    popd
+    pushd black-cats/sasha
     test_branch import-default
-    popd &>/dev/null
+    popd
 
     echo "TEST: Test clowder file with version import"
     clowder link
     clowder herd
     clowder link -v import-version
     clowder herd
-    pushd black-cats/jules &>/dev/null
+    pushd black-cats/jules
     test_branch import-version
-    popd &>/dev/null
-    pushd black-cats/kishka &>/dev/null
+    popd
+    pushd black-cats/kishka
     test_branch import-version
-    popd &>/dev/null
-    pushd black-cats/kit &>/dev/null
+    popd
+    pushd black-cats/kit
     test_branch import-version
-    popd &>/dev/null
-    pushd black-cats/sasha &>/dev/null
+    popd
+    pushd black-cats/sasha
     test_branch import-version
-    popd &>/dev/null
+    popd
 
     echo "TEST: Test clowder file with infinite import loop"
     clowder link

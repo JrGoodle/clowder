@@ -155,20 +155,20 @@ class ClowderController(object):
             print('Version ' + version_output + ' already exists at ' + yaml_file_output)
             sys.exit(1)
 
-    def start_groups(self, group_names, branch):
+    def start_groups(self, group_names, branch, tracking):
         """Start feature branch for groups"""
         self._validate_groups(group_names)
         for group in self.groups:
             if group.name in group_names:
-                group.start(branch)
+                group.start(branch, tracking)
 
-    def start_projects(self, project_names, branch):
+    def start_projects(self, project_names, branch, tracking):
         """Start feature branch for projects"""
         self._validate_projects(project_names)
         for group in self.groups:
             for project in group.projects:
                 if project.name in project_names:
-                    project.start(branch)
+                    project.start(branch, tracking)
 
     def stash_groups(self, group_names):
         """Stash changes for groups with changes"""

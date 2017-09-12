@@ -12,20 +12,30 @@ clean_nix() {
     echo "pip3 uninstall clowder"
     sudo -H pip3 uninstall clowder-repo
     echo "Remove installed clowder binary"
-    export PYTHON3_PATH
-    CLOWDER_PATH="$(dirname $(which python3))/clowder"
+    PYTHON3_PATH="$(which python3)"
+    CLOWDER_PATH="$(dirname $PYTHON3_PATH)/clowder"
     sudo -H rm "$CLOWDER_PATH"
+}
+
+clean_examples() {
+    pushd ..
+    rm -rf examples
+    git checkout -- examples
+    popd
 }
 
 case "$(uname)" in
     Linux*) export MY_PLATFORM="linux";
         clean_nix
+        clean_examples
         ;;
     Darwin*) export MY_PLATFORM="osx";
         clean_nix
+        clean_examples
         ;;
     CYGWIN*) export MY_PLATFORM="windows";
         pip3 uninstall clowder-repo
+        clean_examples
         ;;
 esac
 
