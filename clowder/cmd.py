@@ -19,6 +19,11 @@ if __name__ == '__main__':
 # pylint: disable=R0902
 # Disable errors shown by pylint for no specified exception types
 # pylint: disable=W0702
+# Disable errors shown by pylint for too many statements
+# pylint: disable=R0915
+# Disable errors shown by pylint for TODO's
+# pylint: disable=W0511
+
 class Command(object):
     """Command class for parsing commandline options"""
 
@@ -192,8 +197,7 @@ class Command(object):
                                                   self.args.force)
                 elif self.args.remote:
                     self.clowder.prune_groups_remote(self.args.groups,
-                                                     self.args.branch,
-                                                     self.args.force)
+                                                     self.args.branch)
                 else:
                     self.clowder.prune_groups_local(self.args.groups,
                                                     self.args.branch,
@@ -205,8 +209,7 @@ class Command(object):
                                                     self.args.force)
                 elif self.args.remote:
                     self.clowder.prune_projects_remote(self.args.projects,
-                                                       self.args.branch,
-                                                       self.args.force)
+                                                       self.args.branch)
                 else:
                     self.clowder.prune_projects_local(self.args.projects,
                                                       self.args.branch,

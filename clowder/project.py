@@ -14,7 +14,11 @@ from clowder.utility.clowder_utilities import (
 from clowder.utility.git_utilities import (
     git_create_repo,
     git_current_sha,
-    git_fetch,
+    git_existing_local_branch,
+    git_existing_remote_branch,
+    git_existing_repository,
+    git_fetch_all,
+    git_fetch_silent,
     git_herd,
     git_is_dirty,
     git_prune_local,
@@ -27,6 +31,9 @@ from clowder.utility.git_utilities import (
 
 # Disable errors shown by pylint for too many instance attributes
 # pylint: disable=R0902
+# Disable errors shown by pylint for too many public methods
+# pylint: disable=R0904
+
 class Project(object):
     """clowder.yaml project class"""
 
@@ -76,13 +83,29 @@ class Project(object):
 
     def exists(self):
         """Check if project exists on disk"""
-        path = os.path.join(self.full_path(), '.git')
+        path = os.path.join(self.full_path())
         return os.path.isdir(path)
 
-    def fetch(self):
+    def existing_local_branch(self, branch):
+        """Check if local branch exists"""
+        return git_existing_local_branch(self.full_path(), branch)
+
+    def existing_remote_branch(self, branch):
+        """Check if remote branch exists"""
+        return git_existing_remote_branch(self.full_path(), branch, self.remote_name)
+
+    def fetch_all(self):
+        """Fetch upstream changes if project exists on disk"""
+        self._print_status()
+        if self.exists():
+            git_fetch_all(self.full_path())
+        else:
+            self.print_exists()
+
+    def fetch_silent(self):
         """Silently fetch upstream changes if project exists on disk"""
         if self.exists():
-            git_fetch(self.full_path())
+            git_fetch_silent(self.full_path())
 
     def full_path(self):
         """Return full path to project"""
@@ -112,7 +135,7 @@ class Project(object):
         else:
             herd_depth = depth
 
-        if not os.path.isdir(os.path.join(self.full_path(), '.git')):
+        if not git_existing_repository(self.full_path()):
             git_create_repo(self.url, self.full_path(), self.remote_name,
                             ref, herd_depth)
         else:
@@ -142,29 +165,31 @@ class Project(object):
             print_validation(self.full_path())
 
     def prune_all(self, branch, force):
-        """Prune local and remote branch"""
-        self._print_status()
-        if not os.path.isdir(os.path.join(self.full_path(), '.git')):
-            cprint(" - Directory doesn't exist", 'red')
-        else:
-            git_prune_local(self.full_path(), branch, self.ref, force)
-            git_prune_remote(self.full_path(), branch, self.remote_name)
+        """Prune local and remote branches"""
+        if git_existing_repository(self.full_path()):
+            local_branch_exists = git_existing_local_branch(self.full_path(), branch)
+            remote_branch_exists = git_existing_remote_branch(self.full_path(),
+                                                            branch, self.remote_name)
+            if local_branch_exists or remote_branch_exists:
+                self._print_status()
+                if local_branch_exists:
+                    git_prune_local(self.full_path(), branch, self.ref, force)
+                if remote_branch_exists:
+                    git_prune_remote(self.full_path(), branch, self.remote_name)
 
     def prune_local(self, branch, force):
         """Prune local branch"""
-        self._print_status()
-        if not os.path.isdir(os.path.join(self.full_path(), '.git')):
-            cprint(" - Directory doesn't exist", 'red')
-        else:
-            git_prune_local(self.full_path(), branch, self.ref, force)
+        if git_existing_repository(self.full_path()):
+            if git_existing_local_branch(self.full_path(), branch):
+                self._print_status()
+                git_prune_local(self.full_path(), branch, self.ref, force)
 
-    def prune_remote(self, branch, force):
+    def prune_remote(self, branch):
         """Prune remote branch"""
-        self._print_status()
-        if not os.path.isdir(os.path.join(self.full_path(), '.git')):
-            cprint(" - Directory doesn't exist", 'red')
-        else:
-            git_prune_remote(self.full_path(), branch, self.remote_name)
+        if git_existing_repository(self.full_path()):
+            if git_existing_remote_branch(self.full_path(), branch, self.remote_name):
+                self._print_status()
+                git_prune_remote(self.full_path(), branch, self.remote_name)
 
     def run(self, command, ignore_errors):
         """Run command or script in project directory"""
@@ -183,7 +208,7 @@ class Project(object):
     def start(self, branch, tracking):
         """Start a new feature branch"""
         self._print_status()
-        if not os.path.isdir(os.path.join(self.full_path(), '.git')):
+        if not git_existing_repository(self.full_path()):
             cprint(" - Directory doesn't exist", 'red')
         else:
             git_start(self.full_path(), self.remote_name, branch, self.depth, tracking)
@@ -210,7 +235,7 @@ class Project(object):
     def _print_status(self):
         """Print formatted project status"""
         repo_path = os.path.join(self.root_directory, self.path)
-        if not os.path.isdir(os.path.join(repo_path, '.git')):
+        if not git_existing_repository(repo_path):
             cprint(self.name, 'green')
             return
         project_output = format_project_string(repo_path, self.name)

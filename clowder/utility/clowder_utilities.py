@@ -5,6 +5,7 @@ from termcolor import colored, cprint
 from clowder.utility.git_utilities import (
     git_current_branch,
     git_current_sha,
+    git_existing_repository,
     git_is_detached,
     git_is_dirty,
     git_new_local_commits,
@@ -52,12 +53,12 @@ def format_ref_string(repo_path):
 
 def print_exists(repo_path):
     """Print existence validation messages"""
-    if not os.path.isdir(os.path.join(repo_path, '.git')):
+    if not git_existing_repository(repo_path):
         cprint(' - Project is missing', 'red')
 
 def print_validation(repo_path):
     """Print validation messages"""
-    if not os.path.isdir(os.path.join(repo_path, '.git')):
+    if not git_existing_repository(repo_path):
         return
     if git_is_dirty(repo_path):
         print(' - Dirty repo. Please stash, commit, or discard your changes')
@@ -71,6 +72,6 @@ def remove_prefix(text, prefix):
 
 def validate_repo_state(repo_path):
     """Validate repo state"""
-    if not os.path.isdir(os.path.join(repo_path, '.git')):
+    if not git_existing_repository(repo_path):
         return True
     return not git_is_dirty(repo_path)
