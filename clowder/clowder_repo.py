@@ -11,7 +11,8 @@ from clowder.utility.git_utilities import (
     git_checkout,
     git_commit,
     git_create_repo,
-    git_fetch,
+    git_existing_repository,
+    git_fetch_silent,
     git_is_dirty,
     git_pull,
     git_push,
@@ -103,14 +104,13 @@ class ClowderRepo(object):
     def print_status(self):
         """Print clowder repo status"""
         repo_path = os.path.join(self.root_directory, '.clowder')
-        # FIXME: Probably should remove this as it assumes .clowder repo which isn't git directory
-        if not os.path.isdir(os.path.join(repo_path, '.git')):
+        if not git_existing_repository(repo_path):
             output = colored('.clowder', 'green')
             print(output)
             return
         print(' - Fetching upstream changes for clowder repo', end="", flush=True)
         timer = RepeatedTimer(1, _print_progress)
-        git_fetch(self.clowder_path)
+        git_fetch_silent(self.clowder_path)
         timer.stop()
         print("\n")
         project_output = format_project_string(repo_path, '.clowder')

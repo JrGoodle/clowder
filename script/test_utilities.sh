@@ -32,19 +32,13 @@ test_branch()
 test_local_branch_exists()
 {
     echo "TEST: Local branch exists: $1"
-    git rev-parse --quiet --verify $REVISION > /dev/null
-    if [ "$?" != "0" ]; then
-        exit 1
-    fi
+    git rev-parse --quiet --verify "$1" || exit 1
 }
 
 test_no_local_branch_exists()
 {
     echo "TEST: Local branch doesn't exist: $1"
-    git rev-parse --quiet --verify $REVISION > /dev/null
-    if [ "$?" == "0" ]; then
-        exit 1
-    fi
+    git rev-parse --quiet --verify "$1" && exit 1
 }
 
 test_remote_branch_exists()

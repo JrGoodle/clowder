@@ -9,17 +9,13 @@ Managing multiple repositories can be pretty frustrating. There are a number of 
 - [git submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules)
 - [subtree merging](https://git-scm.com/book/en/v1/Git-Tools-Subtree-Merging)
 - [Google's repo tool](https://code.google.com/p/git-repo/)
-- [GitSlave](http://gitslave.sourceforge.net)
 - [braid](https://github.com/cristibalan/braid)
-- [giternal](https://github.com/patmaddox/giternal)
-- [git-submanage](https://github.com/idbrii/git-submanage)
 - [gr](https://github.com/mixu/gr)
-- [git-stree](https://github.com/tdd/git-stree)
 - [git-subrepo](https://github.com/ingydotnet/git-subrepo)
 
 All of these have their own approach, but many are based on submodules or subtrees. Submodules and subtrees create a tight coupling between repositories because of the way dependencies are stored. Much has been written about their drawbacks elsewhere. Google's `repo` tool takes a different approach, but is closely tied to Google's development workflow
 
-`clowder` uses a similar approach as `repo` (and, as it turns out, `gr` and `giternal`), but using yaml instead of xml for the configuration file. URL information and relative project locations on disk are specified in a `clowder.yaml` file. This file is checked into its own repository. The use of a separate file to track projects allows for detailed information about the dependencies between them to be stored, but each repository is still essentially independent. Projects can can track branches, or be tied to specific tags or commits
+`clowder` uses a similar approach as `repo`, but using yaml instead of xml for the configuration file. URL information and relative project locations on disk are specified in a `clowder.yaml` file. This file is checked into its own repository. The use of a separate file to track projects allows for detailed information about the dependencies between them to be stored, but each repository is still essentially independent. Projects can can track branches, or be tied to specific tags or commits
 
 The primary purpose of `clowder` is synchronization of multiple repositories, so normal development still takes place in individual repositories with the usual `git` commands
 

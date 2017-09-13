@@ -265,7 +265,7 @@ if [ -z "$TRAVIS_OS_NAME" ]; then
         clowder herd
 
         echo "TEST: No local or remote branches"
-        clowder prune -a tracking_branch || exit 1
+        clowder prune -af tracking_branch || exit 1
         clowder start -t tracking_branch || exit 1
 
         pushd duke
@@ -290,20 +290,20 @@ if [ -z "$TRAVIS_OS_NAME" ]; then
         popd
 
         echo "TEST: Existing local branch checked out, remote tracking branch exists"
-        clowder prune -a tracking_branch || exit 1
+        clowder prune -af tracking_branch || exit 1
         clowder start -t tracking_branch || exit 1
         clowder start -t tracking_branch || exit 1
 
         echo "TEST: Existing local branch not checked out, remote tracking branch exists"
-        clowder prune -a tracking_branch || exit 1
+        clowder prune -af tracking_branch || exit 1
         clowder start -t tracking_branch || exit 1
         clowder forall -c 'git checkout master' || exit 1
         clowder start -t tracking_branch || exit 1
 
         echo "TEST: No local branch, existing remote branch"
-        clowder prune -a tracking_branch || exit 1
+        clowder prune -af tracking_branch || exit 1
         clowder start -t tracking_branch || exit 1
-        clowder prune tracking_branch || exit 1
+        clowder prune -f tracking_branch || exit 1
         clowder start -t tracking_branch && exit 1
 
         pushd duke
@@ -328,22 +328,22 @@ if [ -z "$TRAVIS_OS_NAME" ]; then
         popd
 
         echo "TEST: Existing local branch checked out, existing remote branch, no tracking relationship"
-        clowder prune -a tracking_branch || exit 1
+        clowder prune -af tracking_branch || exit 1
         clowder start -t tracking_branch || exit 1
-        clowder prune tracking_branch || exit 1
+        clowder prune -f tracking_branch || exit 1
         clowder forall -c 'git checkout -b tracking_branch' || exit 1
         clowder start -t tracking_branch && exit 1
 
         echo "TEST: Existing local branch not checked out, existing remote branch, no tracking relationship"
-        clowder prune -a tracking_branch || exit 1
+        clowder prune -af tracking_branch || exit 1
         clowder start -t tracking_branch || exit 1
-        clowder prune tracking_branch || exit 1
+        clowder prune -f tracking_branch || exit 1
         clowder forall -c 'git checkout -b tracking_branch' || exit 1
         clowder forall -c 'git checkout master' || exit 1
         clowder start -t tracking_branch && exit 1
 
         echo "TEST: Existing local branch checked out, no remote branch"
-        clowder prune -a tracking_branch
+        clowder prune -af tracking_branch
         clowder start tracking_branch || exit 1
         clowder start -t tracking_branch || exit 1
 
@@ -405,7 +405,7 @@ test_prune()
     clowder herd
 
     clowder start prune_branch
-    clowder prune prune_branch || exit 1
+    clowder prune -f prune_branch || exit 1
 
     pushd duke
     test_branch purr
@@ -425,7 +425,7 @@ test_prune()
     popd
 
     clowder start prune_branch
-    clowder prune prune_branch -g black-cats || exit 1
+    clowder prune -f prune_branch -g black-cats || exit 1
 
     pushd duke
     test_branch prune_branch
@@ -469,28 +469,31 @@ test_prune()
     if [ -z "$TRAVIS_OS_NAME" ]; then
         echo "TEST: Test clowder prune remote branch"
 
-        clowder start -t prune_branch -p duke || exit 1
-        clowder prune prune_branch || exit 1
+        clowder prune -af prune_branch || exit 1
+        clowder start -t prune_branch -p jrgoodle/duke || exit 1
+        clowder prune -f prune_branch || exit 1
 
         pushd duke
+        test_no_local_branch_exists prune_branch
         test_remote_branch_exists prune_branch
         popd
 
         clowder prune -r prune_branch || exit 1
 
         pushd duke
+        test_no_local_branch_exists prune_branch
         test_no_remote_branch_exists prune_branch
         popd
 
         echo "TEST: Test clowder prune all - delete local and remote branch"
-        clowder start -t prune_branch -p duke || exit 1
+        clowder start -t prune_branch -p jrgoodle/duke || exit 1
 
         pushd duke
         test_local_branch_exists prune_branch
         test_remote_branch_exists prune_branch
         popd
 
-        clowder prune -a prune_branch || exit 1
+        clowder prune -af prune_branch || exit 1
 
         pushd duke
         test_no_local_branch_exists prune_branch
