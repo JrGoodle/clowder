@@ -29,10 +29,10 @@ class ClowderController(object):
             with open(yaml_file) as file:
                 parsed_yaml = _parse_yaml(file)
         else:
-            print('')
+            print()
             clowder_output = colored('clowder.yaml', 'cyan')
             print(clowder_output + ' appears to be missing')
-            print('')
+            print()
             sys.exit(1)
         self._validate_yaml(parsed_yaml, self._max_import_depth)
         self._load_yaml()
@@ -125,7 +125,7 @@ class ClowderController(object):
         self._validate_groups(group_names)
         # print(' - Fetching remote changes\n')
         # self._fetch_groups(group_names)
-        # print('')
+        # print()
         local_branch_exists = self._existing_branch_group(group_names, branch, is_remote=False)
         remote_branch_exists = self._existing_branch_group(group_names, branch, is_remote=True)
         if local_branch_exists or remote_branch_exists:
@@ -153,7 +153,7 @@ class ClowderController(object):
         self._validate_groups(group_names)
         # print(' - Fetching remote changes\n')
         # self._fetch_groups(group_names)
-        # print('')
+        # print()
         if self._existing_branch_group(group_names, branch, is_remote=True):
             for group in self.groups:
                 if group.name in group_names:
@@ -167,7 +167,7 @@ class ClowderController(object):
         self._validate_projects(project_names)
         # print(' - Fetching remote changes\n')
         # self._fetch_projects(project_names)
-        # print('')
+        # print()
         local_branch_exists = self._existing_branch_project(project_names, branch, is_remote=False)
         remote_branch_exists = self._existing_branch_project(project_names, branch, is_remote=True)
         if local_branch_exists or remote_branch_exists:
@@ -197,7 +197,7 @@ class ClowderController(object):
         self._validate_projects(project_names)
         # print(' - Fetching remote changes\n')
         # self._fetch_projects(project_names)
-        # print('')
+        # print()
         if self._existing_branch_project(project_names, branch, is_remote=True):
             for group in self.groups:
                 for project in group.projects:
@@ -361,17 +361,17 @@ class ClowderController(object):
                             with open(imported_yaml_file) as file:
                                 parsed_yaml = _parse_yaml(file)
                         else:
-                            print('')
+                            print()
                             clowder_output = colored('clowder.yaml', 'cyan')
                             print(clowder_output + ' appears to be missing')
-                            print('')
+                            print()
                             sys.exit(1)
                         if len(imported_yaml_files) > self._max_import_depth:
-                            print('')
+                            print()
                             clowder_output = colored('clowder.yaml', 'cyan')
                             print(clowder_output + ' has too many recursive imports')
                             print('Currently the max is ' + str(self._max_import_depth))
-                            print('')
+                            print()
                             sys.exit(1)
                     else:
                         self._load_yaml_base(parsed_yaml)
@@ -380,10 +380,10 @@ class ClowderController(object):
                     self._load_yaml_import(parsed_yaml)
                 self._load_yaml_combined()
         else:
-            print('')
+            print()
             clowder_output = colored('clowder.yaml', 'cyan')
             print(clowder_output + ' appears to be missing')
-            print('')
+            print()
             sys.exit(1)
 
     def _load_yaml_base(self, parsed_yaml):
@@ -470,7 +470,7 @@ class ClowderController(object):
                     valid = False
                     break
         if not valid:
-            print('')
+            print()
             sys.exit(1)
 
     def _validate_projects(self, project_names):
@@ -484,7 +484,7 @@ class ClowderController(object):
                             valid = False
                             break
         if not valid:
-            print('')
+            print()
             sys.exit(1)
 
     def _validate_projects_exist(self):
@@ -496,9 +496,9 @@ class ClowderController(object):
                 projects_exist = False
         if not projects_exist:
             herd_output = colored('clowder herd', 'yellow')
-            print('')
+            print()
             print('First run ' + herd_output + ' to clone missing projects')
-            print('')
+            print()
             sys.exit(1)
 
 # Disable errors shown by pylint for no specified exception types
@@ -509,11 +509,11 @@ class ClowderController(object):
     def _validate_yaml(self, parsed_yaml, max_import_depth):
         """Validate clowder.yaml"""
         if max_import_depth < 0:
-            print('')
+            print()
             clowder_output = colored('clowder.yaml', 'cyan')
             print(clowder_output + ' has too many recursive imports')
             print('Currently the max is ' + str(self._max_import_depth))
-            print('')
+            print()
             sys.exit(1)
         if 'import' not in parsed_yaml:
             validate_yaml(parsed_yaml)
@@ -542,7 +542,7 @@ class ClowderController(object):
                         error = error_message + yaml_file + '\n'
                         raise Exception('Missing clowder.yaml')
             except:
-                print('')
+                print()
                 clowder_output = colored('clowder.yaml', 'cyan')
                 print(clowder_output + ' appears to be invalid')
                 print(error)
@@ -587,10 +587,10 @@ def _parse_yaml(yaml_file):
     """Parse yaml file"""
     parsed_yaml = yaml.safe_load(yaml_file)
     if parsed_yaml is None:
-        print('')
+        print()
         clowder_output = colored('clowder.yaml', 'cyan')
         print(clowder_output + ' appears to be invalid')
-        print('')
+        print()
         print(colored('clowder.yaml has no elements\n', 'red'))
     else:
         return parsed_yaml

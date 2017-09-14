@@ -65,9 +65,9 @@ class ClowderRepo(object):
 
     def init(self, url, branch):
         """Clone clowder repo from url"""
-        repo_branch = 'refs/heads/' + branch
         # Register exit handler to remove files if cloning repo fails
         atexit.register(self.init_exit_handler)
+        repo_branch = 'refs/heads/' + branch
         git_create_repo(url, self.clowder_path, 'origin', repo_branch)
         self.link()
 
@@ -98,7 +98,7 @@ class ClowderRepo(object):
             force_symlink(yaml_file, yaml_symlink)
         else:
             print(path_output + " doesn't seem to exist")
-            print('')
+            print()
             sys.exit(1)
 
     def print_status(self):
@@ -147,7 +147,7 @@ class ClowderRepo(object):
         """Validate status of clowder repo"""
         if not validate_repo_state(self.clowder_path):
             print_validation(self.clowder_path)
-            print('')
+            print()
             sys.exit(1)
 
 def _print_progress():
