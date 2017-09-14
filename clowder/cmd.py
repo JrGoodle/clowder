@@ -10,7 +10,6 @@ import colorama
 from termcolor import cprint, colored
 from clowder.clowder_repo import ClowderRepo
 from clowder.clowder_controller import ClowderController
-from clowder.utility.repeated_timer import RepeatedTimer
 
 if __name__ == '__main__':
     raise SystemExit(main())
@@ -333,12 +332,10 @@ class Command(object):
                 sys.exit(1)
             if self.args.fetch:
                 print(' - Fetching upstream changes for projects', end="", flush=True)
-                timer = RepeatedTimer(1, self._print_progress)
                 if self.args.projects is None:
                     self.clowder.fetch_groups(self.args.groups)
                 else:
                     self.clowder.fetch_projects(self.args.projects)
-                timer.stop()
                 print('\n')
             if self.args.projects is None:
                 self.clowder.status_groups(self.args.groups, self.args.verbose)

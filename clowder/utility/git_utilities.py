@@ -4,6 +4,7 @@ import shutil
 import sys
 from git import Repo
 from termcolor import colored, cprint
+from clowder.utility.fetch_progress_printer import FetchProgressPrinter
 
 # Disable errors shown by pylint for no specified exception types
 # pylint: disable=W0702
@@ -129,19 +130,26 @@ def git_fetch_all(repo_path):
         print()
         sys.exit(1)
 
-def git_fetch_remote(repo_path, remote, ref, depth):
+def git_fetch_remote(repo_path, remote, depth):
     """Fetch from a specific remote"""
     repo = _repo(repo_path)
     try:
-        truncated_ref = _truncate_ref(ref)
         remote_output = colored(remote, 'yellow')
         if depth == 0:
             print(' - Fetch all from ' + remote_output)
-            repo.git.fetch(remote, '--all', '--prune', '--tags')
+            print(repo.git.fetch(remote, prune=True, tags=True))
         else:
-            ref_output = colored('(' + truncated_ref + ')', 'magenta')
-            print(' - Fetch from ' + remote_output + ' ' + ref_output)
-            repo.git.fetch(remote, truncated_ref, depth=depth, prune=True)
+            repo = _repo(repo_path)
+            remote_output = colored(remote, 'yellow')
+            try:
+                origin = repo.remotes[remote]
+            except:
+                message = colored(' - No existing remote ', 'red')
+                print(message + remote_output)
+                print()
+                sys.exit(1)
+            else:
+                origin.fetch(depth=depth, prune=True, tags=True)
     except:
         cprint(' - Failed to fetch remote', 'red')
         print()
@@ -412,11 +420,11 @@ def _checkout_ref(repo_path, ref, remote, depth):
         branch = _truncate_ref(ref)
         _checkout_branch(repo_path, branch, remote, depth)
     elif ref_type is 'tag':
+        git_fetch_remote_ref(repo_path, remote, ref, depth)
         tag = _truncate_ref(ref)
-        _fetch_remote_ref(repo_path, remote, ref, depth)
         _checkout_tag(repo_path, tag)
     elif ref_type is 'sha':
-        _fetch_remote_ref(repo_path, remote, ref, depth)
+        git_fetch_remote_ref(repo_path, remote, ref, depth)
         _checkout_sha(repo_path, ref)
     else:
         ref_output = colored('(' + ref + ')', 'magenta')
@@ -483,9 +491,10 @@ def _create_checkout_branch(repo_path, branch, remote, depth):
         print(' - Fetch from ' + remote_output)
         origin = repo.remotes[remote]
         if depth == 0:
-            origin.fetch(prune=True)
+            origin.fetch(prune=True, progress=FetchProgressPrinter())
         else:
-            origin.fetch(depth=depth, prune=True)
+            origin.fetch(depth=depth, prune=True,
+                         progress=FetchProgressPrinter())
     except:
         message = colored(' - Failed to fetch from remote ', 'red')
         print(message + remote_output)
@@ -520,10 +529,11 @@ def _create_local_tracking_branch(repo_path, branch, remote, depth):
         origin = repo.remotes[remote]
         if depth == 0:
             print(' - Fetch from ' + remote_output)
-            origin.fetch(prune=True)
+            origin.fetch(prune=True, progress=FetchProgressPrinter())
         else:
             print(' - Fetch from ' + remote_output + ' ' + branch_output)
-            origin.fetch(branch, depth=depth, prune=True)
+            origin.fetch(branch, depth=depth, prune=True,
+                         progress=FetchProgressPrinter())
     except:
         message = colored(' - Failed to fetch from remote ', 'red')
         print(message + remote_output)
@@ -567,9 +577,10 @@ def _create_remote_tracking_branch(repo_path, branch, remote, depth):
         print(' - Fetch from ' + remote_output)
         origin = repo.remotes[remote]
         if depth == 0:
-            origin.fetch(prune=True)
+            origin.fetch(prune=True, progress=FetchProgressPrinter())
         else:
-            origin.fetch(depth=depth, prune=True)
+            origin.fetch(depth=depth, prune=True,
+                         progress=FetchProgressPrinter())
     except:
         message = colored(' - Failed to fetch from remote ', 'red')
         print(message + remote_output)
@@ -607,23 +618,36 @@ def _create_remote_tracking_branch(repo_path, branch, remote, depth):
                     print()
                     sys.exit(1)
 
-def _fetch_remote_ref(repo_path, remote, ref, depth):
+def git_fetch_remote_ref(repo_path, remote, ref, depth):
     """Fetch from a specific remote ref"""
     repo = _repo(repo_path)
     try:
         remote_output = colored(remote, 'yellow')
-        if depth == 0:
-            print(' - Fetch all from ' + remote_output)
-            repo.git.fetch('--all', '--prune', '--tags')
-        else:
-            ref_output = colored('(' + ref + ')', 'magenta')
-            print(' - Fetch from ' + remote_output + ' ' + ref_output)
-            origin = repo.remotes[remote]
-            origin.fetch(_truncate_ref(ref), depth=depth, prune=True)
+        origin = repo.remotes[remote]
     except:
-        cprint(' - Failed to fetch remote ref', 'red')
+        cprint(' - No exsting remote ' + remote_output, 'red')
         print()
         sys.exit(1)
+    else:
+        if depth == 0:
+            try:
+                print(' - Fetch all from ' + remote_output)
+                origin.fetch(prune=True, tags=True,
+                             progress=FetchProgressPrinter())
+            except:
+                cprint(' - Failed to fetch from ' + remote_output, 'red')
+                print()
+                sys.exit(1)
+        else:
+            try:
+                ref_output = colored('(' + ref + ')', 'magenta')
+                print(' - Fetch from ' + remote_output + ' ' + ref_output)
+                origin.fetch(_truncate_ref(ref), depth=depth, prune=True,
+                             progress=FetchProgressPrinter())
+            except:
+                cprint(' - Failed to fetch from ' + remote_output + ' ' + ref_output, 'red')
+                print()
+                sys.exit(1)
 
 def _pull_remote_branch(repo_path, remote, branch):
     """Pull from remote branch"""
