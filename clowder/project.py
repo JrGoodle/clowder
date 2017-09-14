@@ -169,7 +169,7 @@ class Project(object):
         if git_existing_repository(self.full_path()):
             local_branch_exists = git_existing_local_branch(self.full_path(), branch)
             remote_branch_exists = git_existing_remote_branch(self.full_path(),
-                                                            branch, self.remote_name)
+                                                              branch, self.remote_name)
             if local_branch_exists or remote_branch_exists:
                 self._print_status()
                 if local_branch_exists:
@@ -203,7 +203,7 @@ class Project(object):
             if not ignore_errors:
                 if return_code != 0:
                     sys.exit(return_code)
-            print('')
+            print()
 
     def start(self, branch, tracking):
         """Start a new feature branch"""

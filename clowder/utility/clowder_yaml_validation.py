@@ -31,7 +31,7 @@ def validate_yaml(parsed_yaml):
                             dict_entries, 'red')
             raise Exception('Unknown clowder.yaml value')
     except:
-        print('')
+        print()
         clowder_output = colored('clowder.yaml', 'cyan')
         print(clowder_output + ' appears to be invalid')
         print(error)
@@ -81,7 +81,7 @@ def validate_yaml_import(parsed_yaml):
                             dict_entries, 'red')
             raise Exception('Unknown clowder.yaml value')
     except:
-        print('')
+        print()
         clowder_output = colored('clowder.yaml', 'cyan')
         print(clowder_output + ' appears to be invalid')
         print(error)
@@ -115,7 +115,7 @@ def validate_yaml_defaults(defaults):
                             dict_entries, 'red')
             raise Exception('Unknown default value')
     except:
-        print('')
+        print()
         clowder_output = colored('clowder.yaml', 'cyan')
         print(clowder_output + ' appears to be invalid')
         print(error)
@@ -141,7 +141,7 @@ def validate_yaml_sources(sources):
                                 dict_entries, 'red')
                 raise Exception('Unknown fork value')
     except:
-        print('')
+        print()
         clowder_output = colored('clowder.yaml', 'cyan')
         print(clowder_output + ' appears to be invalid')
         print(error)
@@ -203,7 +203,7 @@ def validate_yaml_groups(groups):
                                     dict_entries, 'red')
                     raise Exception('Unknown project value')
     except:
-        print('')
+        print()
         clowder_output = colored('clowder.yaml', 'cyan')
         print(clowder_output + ' appears to be invalid')
         print(error)
