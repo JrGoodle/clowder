@@ -250,5 +250,7 @@ class Project(object):
                 print(long_output)
             else:
                 print(short_output)
-        except:
+        except Exception as err:
             print(short_output)
+            message = colored(' - Error: ', 'red')
+            print(message + err)
