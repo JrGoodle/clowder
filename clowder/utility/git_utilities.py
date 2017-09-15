@@ -12,6 +12,8 @@ from termcolor import colored, cprint
 # pylint: disable=R0912
 # Disable errors shown by pylint for catching too general exception Exception
 # pylint: disable=W0703
+# Disable errors shown by pylint for too many statements
+# pylint: disable=R0915
 
 def git_add(repo_path, files):
     """Add files to git index"""
@@ -138,7 +140,7 @@ def git_fetch_all(repo_path):
         for path in execute(['git', 'fetch', '--all', '--prune', '--tags'], repo_path):
             print(path, end="")
     except Exception as err:
-        cprint(' - Failed to fetch remote', 'red')
+        cprint(' - Failed to fetch ', 'red')
         message = colored(' - Error: ', 'red')
         print(message + str(err))
         print()
@@ -147,9 +149,9 @@ def git_fetch_all(repo_path):
 def git_fetch_remote(repo_path, remote, depth):
     """Fetch from a specific remote"""
     remote_output = colored(remote, 'yellow')
+    print(' - Fetch from ' + remote_output)
     try:
         if depth == 0:
-            print(' - Fetch all from ' + remote_output)
             for path in execute(['git', 'fetch', remote, '--prune', '--tags'], repo_path):
                 print(path, end="")
         else:
@@ -384,7 +386,7 @@ def git_start(repo_path, remote, branch, depth, tracking):
                     message = colored(' - Failed to checkout branch ', 'red')
                     print(message + branch_output)
                     message = colored(' - Error: ', 'red')
-                    print(message + error)
+                    print(message + err)
                     print()
                     sys.exit(1)
                 else:
@@ -518,18 +520,19 @@ def _create_checkout_branch(repo_path, branch, remote, depth):
     """Create and checkout local branch"""
     repo = _repo(repo_path)
     remote_output = colored(remote, 'yellow')
+    print(' - Fetch from ' + remote_output)
     try:
-        print(' - Fetch from ' + remote_output)
         if depth == 0:
-            for path in execute(['git', 'fetch', remote, '--prune'], repo_path):
+            for path in execute(['git', 'fetch', remote, '--prune', '--tags'],
+                                repo_path):
                 print(path, end="")
         else:
             for path in execute(['git', 'fetch', remote,
-                                 '--depth', str(depth), '--prune'],
+                                 '--depth', str(depth), '--prune', '--tags'],
                                 repo_path):
                 print(path, end="")
     except Exception as err:
-        message = colored(' - Failed to fetch from remote ', 'red')
+        message = colored(' - Failed to fetch from ', 'red')
         print(message + remote_output)
         message = colored(' - Error: ', 'red')
         print(message + str(err))
@@ -568,16 +571,17 @@ def _create_local_tracking_branch(repo_path, branch, remote, depth):
         origin = repo.remotes[remote]
         if depth == 0:
             print(' - Fetch from ' + remote_output)
-            for path in execute(['git', 'fetch', remote, '--prune'], repo_path):
+            for path in execute(['git', 'fetch', remote, '--prune', '--tags'],
+                                repo_path):
                 print(path, end="")
         else:
             print(' - Fetch from ' + remote_output + ' ' + branch_output)
             for path in execute(['git', 'fetch', remote, branch,
-                                 '--depth', str(depth), '--prune'],
+                                 '--depth', str(depth), '--prune', '--tags'],
                                 repo_path):
                 print(path, end="")
     except Exception as err:
-        message = colored(' - Failed to fetch from remote ', 'red')
+        message = colored(' - Failed to fetch from ', 'red')
         print(message + remote_output)
         message = colored(' - Error: ', 'red')
         print(message + str(err))
@@ -618,27 +622,25 @@ def _create_local_tracking_branch(repo_path, branch, remote, depth):
                     print()
                     sys.exit(1)
 
-# Disable errors shown by pylint for too many statements
-# pylint: disable=R0915
-
 def _create_remote_tracking_branch(repo_path, branch, remote, depth):
     """Create remote tracking branch"""
     repo = _repo(repo_path)
     branch_output = colored('(' + branch + ')', 'magenta')
     remote_output = colored(remote, 'yellow')
+    print(' - Fetch from ' + remote_output)
     try:
-        print(' - Fetch from ' + remote_output)
         origin = repo.remotes[remote]
         if depth == 0:
-            for path in execute(['git', 'fetch', remote, '--prune'], repo_path):
+            for path in execute(['git', 'fetch', remote, '--prune', '--tags'],
+                                repo_path):
                 print(path, end="")
         else:
             for path in execute(['git', 'fetch', remote,
-                                 '--depth', str(depth), '--prune'],
+                                 '--depth', str(depth), '--prune', '--tags'],
                                 repo_path):
                 print(path, end="")
     except Exception as err:
-        message = colored(' - Failed to fetch from remote ', 'red')
+        message = colored(' - Failed to fetch from ', 'red')
         print(message + remote_output)
         message = colored(' - Error: ', 'red')
         print(message + str(err))
@@ -648,12 +650,10 @@ def _create_remote_tracking_branch(repo_path, branch, remote, depth):
         if branch in origin.refs:
             try:
                 repo.git.config('--get', 'branch.' + branch + '.merge')
-            except Exception as err:
+            except:
                 message_1 = colored(' - Remote branch ', 'red')
                 message_2 = colored(' already exists', 'red')
                 print(message_1 + branch_output + message_2)
-                message = colored(' - Error: ', 'red')
-                print(message + str(err))
                 print()
                 sys.exit(1)
             else:
@@ -687,8 +687,9 @@ def git_fetch_remote_ref(repo_path, remote, ref, depth):
     remote_output = colored(remote, 'yellow')
     if depth == 0:
         try:
-            print(' - Fetch all from ' + remote_output)
-            for path in execute(['git', 'fetch', remote, '--prune'], repo_path):
+            print(' - Fetch from ' + remote_output)
+            for path in execute(['git', 'fetch', remote, '--prune', '--tags'],
+                                repo_path):
                 print(path, end="")
         except Exception as err:
             cprint(' - Failed to fetch from ' + remote_output, 'red')
