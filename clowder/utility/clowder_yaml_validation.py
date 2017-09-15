@@ -36,7 +36,7 @@ def validate_yaml(parsed_yaml):
         print(clowder_output + ' appears to be invalid')
         print(error)
         message = colored(' - Error: ', 'red')
-        print(message + err)
+        print(message + str(err))
         raise
 
 def validate_yaml_import(parsed_yaml):
@@ -88,7 +88,7 @@ def validate_yaml_import(parsed_yaml):
         print(clowder_output + ' appears to be invalid')
         print(error)
         message = colored(' - Error: ', 'red')
-        print(message + err)
+        print(message + str(err))
         raise
 
 def validate_yaml_defaults(defaults):
@@ -124,7 +124,7 @@ def validate_yaml_defaults(defaults):
         print(clowder_output + ' appears to be invalid')
         print(error)
         message = colored(' - Error: ', 'red')
-        print(message + err)
+        print(message + str(err))
         raise
 
 def validate_yaml_sources(sources):
@@ -152,7 +152,7 @@ def validate_yaml_sources(sources):
         print(clowder_output + ' appears to be invalid')
         print(error)
         message = colored(' - Error: ', 'red')
-        print(message + err)
+        print(message + str(err))
         raise
 
 # Disable errors shown by pylint for too many nested blocks
@@ -216,5 +216,5 @@ def validate_yaml_groups(groups):
         print(clowder_output + ' appears to be invalid')
         print(error)
         message = colored(' - Error: ', 'red')
-        print(message + err)
+        print(message + str(err))
         raise

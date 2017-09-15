@@ -253,4 +253,4 @@ class Project(object):
         except Exception as err:
             print(short_output)
             message = colored(' - Error: ', 'red')
-            print(message + err)
+            print(message + str(err))

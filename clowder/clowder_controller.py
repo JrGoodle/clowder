@@ -547,7 +547,7 @@ class ClowderController(object):
                 print(clowder_output + ' appears to be invalid')
                 print(error)
                 message = colored(' - Error: ', 'red')
-                print(message + err)
+                print(message + str(err))
                 raise
             with open(yaml_file) as file:
                 parsed_yaml_import = _parse_yaml(file)
