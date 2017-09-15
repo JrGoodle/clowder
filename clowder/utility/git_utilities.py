@@ -1,10 +1,10 @@
 """Git utilities"""
 import os
 import shutil
+import subprocess
 import sys
 from git import Repo
 from termcolor import colored, cprint
-from clowder.utility.fetch_progress_printer import FetchProgressPrinter
 
 # Disable errors shown by pylint for no specified exception types
 # pylint: disable=W0702
@@ -124,7 +124,8 @@ def git_fetch_all(repo_path):
     repo = _repo(repo_path)
     try:
         print(' - Fetch all upstream changes')
-        repo.git.fetch('--all', '--prune', '--tags')
+        for path in execute(['git', 'fetch', '--all', '--prune', '--tags']):
+            print(path, end="")
     except:
         cprint(' - Failed to fetch remote', 'red')
         print()
@@ -137,7 +138,8 @@ def git_fetch_remote(repo_path, remote, depth):
         remote_output = colored(remote, 'yellow')
         if depth == 0:
             print(' - Fetch all from ' + remote_output)
-            print(repo.git.fetch(remote, prune=True, tags=True))
+            for path in execute(['git', 'fetch', remote, '--prune', '--tags']):
+                print(path, end="")
         else:
             repo = _repo(repo_path)
             remote_output = colored(remote, 'yellow')
@@ -149,7 +151,9 @@ def git_fetch_remote(repo_path, remote, depth):
                 print()
                 sys.exit(1)
             else:
-                origin.fetch(depth=depth, prune=True, tags=True)
+                for path in execute(['git', 'fetch', remote,
+                                     "--depth=" + depth, '--prune', '--tags']):
+                    print(path, end="")
     except:
         cprint(' - Failed to fetch remote', 'red')
         print()
@@ -491,10 +495,12 @@ def _create_checkout_branch(repo_path, branch, remote, depth):
         print(' - Fetch from ' + remote_output)
         origin = repo.remotes[remote]
         if depth == 0:
-            origin.fetch(prune=True, progress=FetchProgressPrinter())
+            for path in execute(['git', 'fetch', remote, '--prune']):
+                print(path, end="")
         else:
-            origin.fetch(depth=depth, prune=True,
-                         progress=FetchProgressPrinter())
+            for path in execute(['git', 'fetch', remote,
+                                 "--depth=" + depth, '--prune']):
+                print(path, end="")
     except:
         message = colored(' - Failed to fetch from remote ', 'red')
         print(message + remote_output)
@@ -529,11 +535,15 @@ def _create_local_tracking_branch(repo_path, branch, remote, depth):
         origin = repo.remotes[remote]
         if depth == 0:
             print(' - Fetch from ' + remote_output)
-            origin.fetch(prune=True, progress=FetchProgressPrinter())
+            for path in execute(['git', 'fetch', remote, '--prune']):
+                print(path, end="")
         else:
             print(' - Fetch from ' + remote_output + ' ' + branch_output)
-            origin.fetch(branch, depth=depth, prune=True,
-                         progress=FetchProgressPrinter())
+            for path in execute(['git', 'fetch', remote, '--prune']):
+                print(path, end="")
+            for path in execute(['git', 'fetch', branch, remote,
+                                 "--depth=" + depth, '--prune']):
+                print(path, end="")
     except:
         message = colored(' - Failed to fetch from remote ', 'red')
         print(message + remote_output)
@@ -577,10 +587,12 @@ def _create_remote_tracking_branch(repo_path, branch, remote, depth):
         print(' - Fetch from ' + remote_output)
         origin = repo.remotes[remote]
         if depth == 0:
-            origin.fetch(prune=True, progress=FetchProgressPrinter())
+            for path in execute(['git', 'fetch', remote, '--prune']):
+                print(path, end="")
         else:
-            origin.fetch(depth=depth, prune=True,
-                         progress=FetchProgressPrinter())
+            for path in execute(['git', 'fetch', remote,
+                                 "--depth=" + depth, '--prune']):
+                print(path, end="")
     except:
         message = colored(' - Failed to fetch from remote ', 'red')
         print(message + remote_output)
@@ -632,8 +644,8 @@ def git_fetch_remote_ref(repo_path, remote, ref, depth):
         if depth == 0:
             try:
                 print(' - Fetch all from ' + remote_output)
-                origin.fetch(prune=True, tags=True,
-                             progress=FetchProgressPrinter())
+                for path in execute(['git', 'fetch', remote, '--prune']):
+                    print(path, end="")
             except:
                 cprint(' - Failed to fetch from ' + remote_output, 'red')
                 print()
@@ -642,8 +654,9 @@ def git_fetch_remote_ref(repo_path, remote, ref, depth):
             try:
                 ref_output = colored('(' + ref + ')', 'magenta')
                 print(' - Fetch from ' + remote_output + ' ' + ref_output)
-                origin.fetch(_truncate_ref(ref), depth=depth, prune=True,
-                             progress=FetchProgressPrinter())
+                for path in execute(['git', 'fetch', remote, _truncate_ref(ref),
+                                     "--depth=" + depth, '--prune']):
+                    print(path, end="")
             except:
                 cprint(' - Failed to fetch from ' + remote_output + ' ' + ref_output, 'red')
                 print()
@@ -700,3 +713,14 @@ def _truncate_ref(ref):
     else:
         length = 0
     return ref[length:]
+
+def execute(cmd):
+    """Execute command and display continuous output"""
+    # https://stackoverflow.com/questions/4417546/constantly-print-subprocess-output-while-process-is-running
+    popen = subprocess.Popen(cmd, stdout=subprocess.PIPE, universal_newlines=True)
+    for stdout_line in iter(popen.stdout.readline, ""):
+        yield stdout_line
+    popen.stdout.close()
+    return_code = popen.wait()
+    if return_code:
+        raise subprocess.CalledProcessError(return_code, cmd)
