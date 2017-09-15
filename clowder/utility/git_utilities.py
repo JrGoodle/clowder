@@ -709,13 +709,12 @@ def _truncate_ref(ref):
 def execute(cmd, path):
     """Execute command and display continuous output"""
     # https://stackoverflow.com/questions/4417546/constantly-print-subprocess-output-while-process-is-running
-    process = subprocess.Popen(cmd, cwd=path,
-                               stdout=subprocess.PIPE,
-                               stderr=subprocess.PIPE,
-                               shell=True)
-    for line in iter(process.stdout.readline, ''):
-        sys.stdout.write(line.decode('utf-8'))
-        if process.returncode is not None:
-            print(process.stdout.readline)
-            raise Exception('Failed to execute command')
-        # print(line)
+    popen = subprocess.Popen(cmd, cwd=path,
+                             stdout=subprocess.PIPE,
+                             universal_newlines=True)
+    for stdout_line in iter(popen.stdout.readline, ""):
+        yield stdout_line
+    popen.stdout.close()
+    return_code = popen.wait()
+    if return_code:
+        raise subprocess.CalledProcessError(return_code, cmd)
