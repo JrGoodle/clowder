@@ -5,9 +5,17 @@
 echo 'TEST: llvm projects example test script'
 
 cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
-source test_utilities.sh
-cd ../examples/llvm-projects || exit 1
-./clean.sh
+
+. test_utilities.sh
+../examples/llvm-projects/clean.sh
+
+if [ -n "$TRAVIS_OS_NAME" ]; then
+    cd ../examples/llvm-projects || exit 1
+else
+    rm -rf "$HOME/.clowder_tests"
+    mkdir -p "$HOME/.clowder_tests" && cp -r ../examples/llvm-projects "$HOME/.clowder_tests/llvm-projects"
+    cd "$HOME/.clowder_tests/llvm-projects" || exit 1
+fi
 
 export projects=( 'llvm' \
                   'llvm/tools/clang' \

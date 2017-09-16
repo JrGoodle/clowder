@@ -18,10 +18,14 @@ clean_nix() {
 }
 
 clean_examples() {
-    pushd ..
-    rm -rf examples
-    git checkout -- examples
-    popd
+    if [ -n "$TRAVIS_OS_NAME" ]; then
+        pushd ..
+        rm -rf examples
+        git checkout -- examples
+        popd
+    else
+        rm -rf "$HOME/.clowder_tests"
+    fi
 }
 
 case "$(uname)" in
