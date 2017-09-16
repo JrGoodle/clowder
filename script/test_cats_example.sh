@@ -12,9 +12,16 @@ if [ -n "$TRAVIS_OS_NAME" ]; then
     fi
 fi
 
-source test_utilities.sh
-cd ../examples/cats || exit 1
-./clean.sh
+. test_utilities.sh
+../examples/cats/clean.sh
+
+if [ -n "$TRAVIS_OS_NAME" ]; then
+    cd ../examples/cats || exit 1
+else
+    rm -rf "$HOME/.clowder_tests"
+    mkdir -p "$HOME/.clowder_tests" && cp -r ../examples/cats "$HOME/.clowder_tests/cats"
+    cd "$HOME/.clowder_tests/cats" || exit 1
+fi
 
 export projects=( 'black-cats/kit' \
                   'black-cats/kishka' \
