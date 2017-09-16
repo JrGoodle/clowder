@@ -3,9 +3,9 @@ import os
 import unittest
 from clowder.utility.git_utilities import (
     git_current_branch,
-    git_current_sha,
     git_is_detached,
     git_is_dirty,
+    git_sha_long,
     _ref_type,
     _truncate_ref
 )
@@ -26,9 +26,9 @@ class GitUtilitiesTest(unittest.TestCase):
         """Test git_current_branch() function"""
         self.assertEqual(git_current_branch(self.kit_project_path), 'master')
 
-    def test_git_current_sha(self):
-        """Test git_current_sha() function"""
-        self.assertEqual(git_current_sha(self.sasha_project_path), self.sha_ref)
+    def test_git_sha_long(self):
+        """Test git_sha_long() function"""
+        self.assertEqual(git_sha_long(self.sasha_project_path), self.sha_ref)
 
     def test_git_is_detached(self):
         """Test git_is_detached() function"""

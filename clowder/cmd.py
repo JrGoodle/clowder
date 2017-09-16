@@ -646,7 +646,7 @@ def exit_unrecognized_command(parser):
 
 def exit_clowder_not_found():
     """Print clowder not found message and exit"""
-    cprint('No clowder found in the current directory\n', 'red')
+    cprint(' - No clowder found in the current directory\n', 'red')
     sys.exit(1)
 
 def main():

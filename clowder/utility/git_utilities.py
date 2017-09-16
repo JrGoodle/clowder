@@ -71,7 +71,7 @@ def git_create_repo(url, repo_path, remote, ref, depth=0):
             try:
                 shutil.rmtree(repo_path)
             except:
-                message = colored(" - Failed remove directory ", 'red')
+                message = colored(" - Failed to remove directory ", 'red')
                 print(message + format_path(repo_path))
             finally:
                 print()
@@ -93,7 +93,7 @@ def git_create_repo(url, repo_path, remote, ref, depth=0):
                     try:
                         shutil.rmtree(repo_path)
                     except:
-                        message = colored(" - Failed remove directory ", 'red')
+                        message = colored(" - Failed to remove directory ", 'red')
                         print(message + format_path(repo_path))
                     finally:
                         print()
@@ -120,11 +120,6 @@ def git_current_branch(repo_path):
     """Return currently checked out branch of project"""
     repo = _repo(repo_path)
     return repo.head.ref.name
-
-def git_current_sha(repo_path):
-    """Return current git sha for checked out commit"""
-    repo = _repo(repo_path)
-    return repo.head.commit.hexsha
 
 def git_existing_repository(path):
     """Check if a git repository exists"""
@@ -344,6 +339,17 @@ def git_reset_head(repo_path):
     """Reset head of repo, discarding changes"""
     repo = _repo(repo_path)
     repo.head.reset(index=True, working_tree=True)
+
+def git_sha_long(repo_path):
+    """Return long sha for currently checked out commit"""
+    repo = _repo(repo_path)
+    return repo.head.commit.hexsha
+
+def git_sha_short(repo_path):
+    """Return short sha of currently checked out commit"""
+    repo = _repo(repo_path)
+    sha = repo.head.commit.hexsha
+    return repo.git.rev_parse(sha, short=True)
 
 def git_start(repo_path, remote, branch, depth, tracking):
     """Start new branch in repository"""

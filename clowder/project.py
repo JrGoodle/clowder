@@ -17,7 +17,6 @@ from clowder.utility.git_print_utilities import (
 )
 from clowder.utility.git_utilities import (
     git_create_repo,
-    git_current_sha,
     git_existing_local_branch,
     git_existing_remote_branch,
     git_existing_repository,
@@ -28,6 +27,7 @@ from clowder.utility.git_utilities import (
     git_prune_local,
     git_prune_remote,
     git_reset_head,
+    git_sha_long,
     git_start,
     git_stash,
     git_status,
@@ -125,7 +125,7 @@ class Project(object):
                 'path': self.path,
                 'depth': self.depth,
                 'forks': forks_yaml,
-                'ref': git_current_sha(self.full_path()),
+                'ref': git_sha_long(self.full_path()),
                 'remote': self.remote_name,
                 'source': self.source.name}
 

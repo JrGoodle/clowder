@@ -2,12 +2,12 @@
 from termcolor import colored, cprint
 from clowder.utility.git_utilities import (
     git_current_branch,
-    git_current_sha,
     git_existing_repository,
     git_is_detached,
     git_is_dirty,
     git_new_local_commits,
-    git_new_upstream_commits
+    git_new_upstream_commits,
+    git_sha_short
 )
 
 def format_project_string(repo_path, name):
@@ -34,7 +34,7 @@ def format_project_ref_string(repo_path):
         status = ' (' + local_commits_output + '/' + upstream_commits_output + ')'
 
     if git_is_detached(repo_path):
-        current_ref = git_current_sha(repo_path)
+        current_ref = git_sha_short(repo_path)
         return colored('(HEAD @ ' + current_ref + ')', 'magenta')
     else:
         current_branch = git_current_branch(repo_path)
