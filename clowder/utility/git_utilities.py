@@ -4,7 +4,7 @@ import shutil
 import sys
 from git import Repo
 from termcolor import colored, cprint
-from clowder.utility.clowder_utilities import execute
+from clowder.utility.clowder_utilities import execute_command
 from clowder.utility.format_utilities import (
     format_ref_string,
     format_remote_string,
@@ -132,8 +132,7 @@ def git_fetch_all(repo_path):
     """Fetch all upstream changes"""
     print(' - Fetch all upstream changes')
     try:
-        for path in execute(['git', 'fetch', '--all', '--prune', '--tags'], repo_path):
-            print(path, end="")
+        execute_command(['git', 'fetch', '--all', '--prune', '--tags'], repo_path)
     except Exception as err:
         cprint(' - Failed to fetch ', 'red')
         print_error(err)
@@ -145,13 +144,10 @@ def git_fetch_remote(repo_path, remote, depth):
     print(' - Fetch from ' + remote_output)
     try:
         if depth == 0:
-            for path in execute(['git', 'fetch', remote, '--prune', '--tags'], repo_path):
-                print(path, end="")
+            execute_command(['git', 'fetch', remote, '--prune', '--tags'], repo_path)
         else:
-            for path in execute(['git', 'fetch', remote,
-                                 '--depth', str(depth), '--prune', '--tags'],
-                                repo_path):
-                print(path, end="")
+            execute_command(['git', 'fetch', remote, '--depth', str(depth),
+                             '--prune', '--tags'], repo_path)
     except Exception as err:
         cprint(' - Failed to fetch remote ', remote_output, 'red')
         print_error(err)
@@ -492,14 +488,10 @@ def _create_checkout_branch(repo_path, branch, remote, depth):
     print(' - Fetch from ' + remote_output)
     try:
         if depth == 0:
-            for path in execute(['git', 'fetch', remote, '--prune', '--tags'],
-                                repo_path):
-                print(path, end="")
+            execute_command(['git', 'fetch', remote, '--prune', '--tags'], repo_path)
         else:
-            for path in execute(['git', 'fetch', remote,
-                                 '--depth', str(depth), '--prune', '--tags'],
-                                repo_path):
-                print(path, end="")
+            execute_command(['git', 'fetch', remote, '--depth', str(depth),
+                             '--prune', '--tags'], repo_path)
     except Exception as err:
         message = colored(' - Failed to fetch from ', 'red')
         print(message + remote_output)
@@ -534,15 +526,11 @@ def _create_local_tracking_branch(repo_path, branch, remote, depth):
         origin = repo.remotes[remote]
         if depth == 0:
             print(' - Fetch from ' + remote_output)
-            for path in execute(['git', 'fetch', remote, '--prune', '--tags'],
-                                repo_path):
-                print(path, end="")
+            execute_command(['git', 'fetch', remote, '--prune', '--tags'], repo_path)
         else:
             print(' - Fetch from ' + remote_output + ' ' + branch_output)
-            for path in execute(['git', 'fetch', remote, branch,
-                                 '--depth', str(depth), '--prune', '--tags'],
-                                repo_path):
-                print(path, end="")
+            execute_command(['git', 'fetch', remote, branch, '--depth', str(depth),
+                             '--prune', '--tags'], repo_path)
     except Exception as err:
         message = colored(' - Failed to fetch from ', 'red')
         print(message + remote_output)
@@ -586,14 +574,10 @@ def _create_remote_tracking_branch(repo_path, branch, remote, depth):
     try:
         origin = repo.remotes[remote]
         if depth == 0:
-            for path in execute(['git', 'fetch', remote, '--prune', '--tags'],
-                                repo_path):
-                print(path, end="")
+            execute_command(['git', 'fetch', remote, '--prune', '--tags'], repo_path)
         else:
-            for path in execute(['git', 'fetch', remote,
-                                 '--depth', str(depth), '--prune', '--tags'],
-                                repo_path):
-                print(path, end="")
+            execute_command(['git', 'fetch', remote, '--depth', str(depth),
+                             '--prune', '--tags'], repo_path)
     except Exception as err:
         message = colored(' - Failed to fetch from ', 'red')
         print(message + remote_output)
@@ -637,9 +621,7 @@ def git_fetch_remote_ref(repo_path, remote, ref, depth):
     if depth == 0:
         try:
             print(' - Fetch from ' + remote_output)
-            for path in execute(['git', 'fetch', remote, '--prune', '--tags'],
-                                repo_path):
-                print(path, end="")
+            execute_command(['git', 'fetch', remote, '--prune', '--tags'], repo_path)
         except Exception as err:
             cprint(' - Failed to fetch from ' + remote_output, 'red')
             print_error(err)
@@ -648,10 +630,8 @@ def git_fetch_remote_ref(repo_path, remote, ref, depth):
         try:
             ref_output = format_ref_string(ref)
             print(' - Fetch from ' + remote_output + ' ' + ref_output)
-            for path in execute(['git', 'fetch', remote, _truncate_ref(ref),
-                                 '--depth', str(depth), '--prune'],
-                                repo_path):
-                print(path, end="")
+            execute_command(['git', 'fetch', remote, _truncate_ref(ref),
+                             '--depth', str(depth), '--prune'], repo_path)
         except Exception as err:
             cprint(' - Failed to fetch from ' + remote_output + ' ' + ref_output, 'red')
             print_error(err)

@@ -1,9 +1,13 @@
 """Representation of clowder.yaml project"""
 import os
-import subprocess
 import sys
 from termcolor import colored, cprint
 from clowder.fork import Fork
+from clowder.utility.clowder_utilities import execute_command
+from clowder.utility.format_utilities import (
+    format_command,
+    print_error
+)
 from clowder.utility.git_format_utilities import (
     format_project_string,
     format_project_ref_string,
@@ -33,6 +37,8 @@ from clowder.utility.git_utilities import (
 # pylint: disable=R0902
 # Disable errors shown by pylint for too many public methods
 # pylint: disable=R0904
+# Disable errors shown by pylint for catching too general exception Exception
+# pylint: disable=W0703
 
 class Project(object):
     """clowder.yaml project class"""
@@ -197,13 +203,15 @@ class Project(object):
         if not os.path.isdir(self.full_path()):
             cprint(" - Project is missing\n", 'red')
         else:
-            command_output = colored('$ ' + command, attrs=['bold'])
-            print(command_output)
-            return_code = subprocess.call(command, cwd=self.full_path(), shell=True)
-            if not ignore_errors:
-                if return_code != 0:
-                    sys.exit(return_code)
-            print()
+            print(format_command(command))
+            try:
+                execute_command(command.split(), self.full_path())
+            except Exception as err:
+                if not ignore_errors:
+                    print_error(err)
+                    sys.exit(1)
+            finally:
+                print()
 
     def start(self, branch, tracking):
         """Start a new feature branch"""
@@ -232,8 +240,6 @@ class Project(object):
 # pylint: disable=W0612
 # Disable errors shown by pylint for no specified exception types
 # pylint: disable=W0702
-# Disable errors shown by pylint for catching too general exception Exception
-# pylint: disable=W0703
 
     def _print_status(self):
         """Print formatted project status"""

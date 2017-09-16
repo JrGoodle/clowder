@@ -9,7 +9,7 @@ from clowder.utility.format_utilities import (
 # pylint: disable=W0702
 # Disable errors shown by pylint for statements which appear to have no effect
 # pylint: disable=W0104
-# Disable errors shown by pylint for catchingtoo general exception Exception
+# Disable errors shown by pylint for catching too general exception Exception
 # pylint: disable=W0703
 
 def validate_yaml(parsed_yaml):

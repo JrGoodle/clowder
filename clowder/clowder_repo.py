@@ -2,9 +2,8 @@
 import atexit
 import os
 import shutil
-import subprocess
 import sys
-from termcolor import colored
+from termcolor import colored, cprint
 from clowder.utility.git_utilities import (
     git_add,
     git_branches,
@@ -20,13 +19,23 @@ from clowder.utility.git_utilities import (
     git_status,
     git_validate_repo_state
 )
-from clowder.utility.clowder_utilities import force_symlink
-from clowder.utility.format_utilities import remove_prefix
+from clowder.utility.clowder_utilities import (
+    execute_command,
+    force_symlink
+)
+from clowder.utility.format_utilities import (
+    format_command,
+    print_error,
+    remove_prefix
+)
 from clowder.utility.git_format_utilities import (
     format_project_string,
     format_project_ref_string,
     print_validation
 )
+
+# Disable errors shown by pylint for catching too general exception Exception
+# pylint: disable=W0703
 
 class ClowderRepo(object):
     """Class encapsulating clowder repo information"""
@@ -132,9 +141,13 @@ class ClowderRepo(object):
 
     def run_command(self, command):
         """Run command in clowder repo"""
-        command_output = colored('$ ' + command, attrs=['bold'])
-        print(command_output)
-        subprocess.call(command.split(), cwd=self.clowder_path)
+        print(format_command(command))
+        try:
+            execute_command(command.split(), self.clowder_path)
+        except Exception as err:
+            cprint(' - Failed to run command', 'red')
+            print_error(err)
+            sys.exit(1)
 
     def status(self):
         """Print clowder repo git status"""

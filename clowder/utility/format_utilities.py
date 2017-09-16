@@ -1,6 +1,10 @@
 """String format and printing utilities"""
 from termcolor import colored
 
+def format_command(command):
+    """Return formatted command name"""
+    return colored('$ ' + command, attrs=['bold'])
+
 def format_ref_string(ref):
     """Return formatted ref name"""
     return colored('(' + ref + ')', 'magenta')
