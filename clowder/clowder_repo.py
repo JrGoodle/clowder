@@ -2,7 +2,6 @@
 import atexit
 import os
 import shutil
-import subprocess
 import sys
 from termcolor import colored
 from clowder.utility.git_utilities import (
@@ -17,16 +16,28 @@ from clowder.utility.git_utilities import (
     git_pull,
     git_push,
     git_reset_head,
-    git_status
+    git_status,
+    git_validate_repo_state
 )
 from clowder.utility.clowder_utilities import (
-    force_symlink,
-    format_project_string,
-    format_ref_string,
-    print_validation,
-    remove_prefix,
-    validate_repo_state
+    execute_command,
+    force_symlink
 )
+from clowder.utility.print_utilities import (
+    format_command,
+    format_path,
+    print_command_failed_error,
+    print_error,
+    remove_prefix
+)
+from clowder.utility.git_print_utilities import (
+    format_project_string,
+    format_project_ref_string,
+    print_validation
+)
+
+# Disable errors shown by pylint for catching too general exception Exception
+# pylint: disable=W0703
 
 class ClowderRepo(object):
     """Class encapsulating clowder repo information"""
@@ -85,10 +96,10 @@ class ClowderRepo(object):
         """Create symlink pointing to clowder.yaml file"""
         if version is None:
             yaml_file = os.path.join(self.root_directory, '.clowder', 'clowder.yaml')
-            path_output = colored('.clowder/clowder.yaml', 'cyan')
+            path_output = format_path('.clowder/clowder.yaml')
         else:
             relative_path = os.path.join('.clowder', 'versions', version, 'clowder.yaml')
-            path_output = colored(relative_path, 'cyan')
+            path_output = format_path(relative_path)
             yaml_file = os.path.join(self.root_directory, relative_path)
 
         if os.path.isfile(yaml_file):
@@ -107,17 +118,17 @@ class ClowderRepo(object):
             output = colored('.clowder', 'green')
             print(output)
             return
-        print(' - Fetching upstream changes for clowder repo', end="", flush=True)
+        print(' - Fetch upstream changes for clowder repo')
         git_fetch_silent(self.clowder_path)
-        print("\n")
+        print()
         project_output = format_project_string(repo_path, '.clowder')
-        current_ref_output = format_ref_string(repo_path)
+        current_ref_output = format_project_ref_string(repo_path)
 
         clowder_symlink = os.path.join(self.root_directory, 'clowder.yaml')
         if os.path.islink(clowder_symlink):
             real_path = os.path.realpath(clowder_symlink)
             clowder_path = remove_prefix(real_path + '/', self.root_directory)
-            path_output = colored(clowder_path[1:-1], 'cyan')
+            path_output = format_path(clowder_path[1:-1])
             print(project_output + ' ' + current_ref_output + ' ~~> ' + path_output)
         else:
             print(project_output + ' ' + current_ref_output)
@@ -132,9 +143,13 @@ class ClowderRepo(object):
 
     def run_command(self, command):
         """Run command in clowder repo"""
-        command_output = colored('$ ' + command, attrs=['bold'])
-        print(command_output)
-        subprocess.call(command.split(), cwd=self.clowder_path)
+        print(format_command(command))
+        try:
+            execute_command(command.split(), self.clowder_path)
+        except Exception as err:
+            print_command_failed_error(command)
+            print_error(err)
+            sys.exit(1)
 
     def status(self):
         """Print clowder repo git status"""
@@ -142,10 +157,7 @@ class ClowderRepo(object):
 
     def _validate_groups(self):
         """Validate status of clowder repo"""
-        if not validate_repo_state(self.clowder_path):
+        if not git_validate_repo_state(self.clowder_path):
             print_validation(self.clowder_path)
             print()
             sys.exit(1)
-
-def _print_progress():
-    print('.', end="", flush=True)

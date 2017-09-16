@@ -1,15 +1,19 @@
 """Representation of clowder.yaml project"""
 import os
-import subprocess
 import sys
-from termcolor import colored, cprint
+from termcolor import cprint
 from clowder.fork import Fork
-from clowder.utility.clowder_utilities import (
+from clowder.utility.clowder_utilities import execute_command
+from clowder.utility.print_utilities import (
+    format_command,
+    format_path,
+    print_error
+)
+from clowder.utility.git_print_utilities import (
     format_project_string,
-    format_ref_string,
+    format_project_ref_string,
     print_exists,
-    print_validation,
-    validate_repo_state
+    print_validation
 )
 from clowder.utility.git_utilities import (
     git_create_repo,
@@ -26,13 +30,16 @@ from clowder.utility.git_utilities import (
     git_reset_head,
     git_start,
     git_stash,
-    git_status
+    git_status,
+    git_validate_repo_state
 )
 
 # Disable errors shown by pylint for too many instance attributes
 # pylint: disable=R0902
 # Disable errors shown by pylint for too many public methods
 # pylint: disable=R0904
+# Disable errors shown by pylint for catching too general exception Exception
+# pylint: disable=W0703
 
 class Project(object):
     """clowder.yaml project class"""
@@ -150,7 +157,7 @@ class Project(object):
 
     def is_valid(self):
         """Validate status of project"""
-        return validate_repo_state(self.full_path())
+        return git_validate_repo_state(self.full_path())
 
     def print_exists(self):
         """Print existence validation message for project"""
@@ -197,13 +204,13 @@ class Project(object):
         if not os.path.isdir(self.full_path()):
             cprint(" - Project is missing\n", 'red')
         else:
-            command_output = colored('$ ' + command, attrs=['bold'])
-            print(command_output)
-            return_code = subprocess.call(command, cwd=self.full_path(), shell=True)
-            if not ignore_errors:
-                if return_code != 0:
-                    sys.exit(return_code)
-            print()
+            print(format_command(command))
+            try:
+                execute_command(command.split(), self.full_path())
+            except Exception as err:
+                if not ignore_errors:
+                    print_error(err)
+                    sys.exit(1)
 
     def start(self, branch, tracking):
         """Start a new feature branch"""
@@ -232,6 +239,7 @@ class Project(object):
 # pylint: disable=W0612
 # Disable errors shown by pylint for no specified exception types
 # pylint: disable=W0702
+
     def _print_status(self):
         """Print formatted project status"""
         repo_path = os.path.join(self.root_directory, self.path)
@@ -239,18 +247,16 @@ class Project(object):
             cprint(self.name, 'green')
             return
         project_output = format_project_string(repo_path, self.name)
-        current_ref_output = format_ref_string(repo_path)
-        path_output = colored(self.path, 'cyan')
+        current_ref_output = format_project_ref_string(repo_path)
+        path_output = format_path(self.path)
         long_output = project_output + ' ' + current_ref_output + ' -> ' + path_output
         short_output = project_output + ' ' + current_ref_output + '\n-> ' + path_output
         long_output_length = len(''.join(s for s in long_output if ord(s) > 31 and ord(s) < 126))
         try:
-            ts = os.get_terminal_size()
-            if long_output_length <= ts.columns:
+            terminal_size = os.get_terminal_size()
+            if long_output_length <= terminal_size.columns:
                 print(long_output)
             else:
                 print(short_output)
-        except Exception as err:
-            print(short_output)
-            message = colored(' - Error: ', 'red')
-            print(message + str(err))
+        except:
+            print(long_output)

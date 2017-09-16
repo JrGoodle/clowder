@@ -284,7 +284,6 @@ class Command(object):
     def save(self):
         """clowder save command"""
         if self.clowder_repo is not None:
-            print()
             if self.clowder is None:
                 sys.exit(1)
             self.clowder.save_version(self.args.version)
@@ -331,12 +330,13 @@ class Command(object):
             if self.clowder is None:
                 sys.exit(1)
             if self.args.fetch:
-                print(' - Fetching upstream changes for projects', end="", flush=True)
+                print(' - Fetch upstream changes for projects')
+                print()
                 if self.args.projects is None:
                     self.clowder.fetch_groups(self.args.groups)
                 else:
                     self.clowder.fetch_projects(self.args.projects)
-                print('\n')
+                print()
             if self.args.projects is None:
                 self.clowder.status_groups(self.args.groups, self.args.verbose)
             else:
@@ -636,9 +636,6 @@ class Command(object):
         """Exit handler to display trailing newline"""
         if self._display_trailing_newline:
             print()
-
-    def _print_progress(self):
-        print('.', end="", flush=True)
 
 
 def exit_unrecognized_command(parser):

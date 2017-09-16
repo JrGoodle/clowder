@@ -1,8 +1,8 @@
 """Representation of clowder.yaml fork"""
 from termcolor import cprint
-from clowder.utility.clowder_utilities import (
+from clowder.utility.git_print_utilities import (
     format_project_string,
-    format_ref_string
+    format_project_ref_string
 )
 from clowder.utility.git_utilities import (
     git_create_remote,
@@ -35,5 +35,5 @@ class Fork(object):
             cprint(self.name, 'green')
             return
         project_output = format_project_string(self.path, self.name)
-        current_ref_output = format_ref_string(self.path)
+        current_ref_output = format_project_ref_string(self.path)
         print(project_output + ' ' + current_ref_output)
