@@ -10,9 +10,14 @@ from clowder.utility.clowder_yaml_validation import (
     validate_yaml,
     validate_yaml_import
 )
+from clowder.utility.format_utilities import (
+    print_error
+)
 
 # Disable errors shown by pylint for too many public methods
 # pylint: disable=R0904
+# Disable errors shown by pylint for catching too general exception Exception
+# pylint: disable=W0703
 
 class ClowderController(object):
     """Class encapsulating project information from clowder.yaml for controlling clowder"""
@@ -546,9 +551,8 @@ class ClowderController(object):
                 clowder_output = colored('clowder.yaml', 'cyan')
                 print(clowder_output + ' appears to be invalid')
                 print(error)
-                message = colored(' - Error: ', 'red')
-                print(message + str(err))
-                raise
+                print_error(err)
+                sys.exit(1)
             with open(yaml_file) as file:
                 parsed_yaml_import = _parse_yaml(file)
                 self._validate_yaml(parsed_yaml_import, max_import_depth - 1)

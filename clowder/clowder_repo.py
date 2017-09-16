@@ -21,11 +21,11 @@ from clowder.utility.git_utilities import (
     git_validate_repo_state
 )
 from clowder.utility.clowder_utilities import force_symlink
-from clowder.utility.format_utilities import (
+from clowder.utility.format_utilities import remove_prefix
+from clowder.utility.git_format_utilities import (
     format_project_string,
-    format_ref_string,
-    print_validation,
-    remove_prefix
+    format_project_ref_string,
+    print_validation
 )
 
 class ClowderRepo(object):
@@ -111,7 +111,7 @@ class ClowderRepo(object):
         git_fetch_silent(self.clowder_path)
         print("\n")
         project_output = format_project_string(repo_path, '.clowder')
-        current_ref_output = format_ref_string(repo_path)
+        current_ref_output = format_project_ref_string(repo_path)
 
         clowder_symlink = os.path.join(self.root_directory, 'clowder.yaml')
         if os.path.islink(clowder_symlink):

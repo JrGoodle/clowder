@@ -4,9 +4,9 @@ import subprocess
 import sys
 from termcolor import colored, cprint
 from clowder.fork import Fork
-from clowder.utility.format_utilities import (
+from clowder.utility.git_format_utilities import (
     format_project_string,
-    format_ref_string,
+    format_project_ref_string,
     print_exists,
     print_validation
 )
@@ -242,18 +242,16 @@ class Project(object):
             cprint(self.name, 'green')
             return
         project_output = format_project_string(repo_path, self.name)
-        current_ref_output = format_ref_string(repo_path)
+        current_ref_output = format_project_ref_string(repo_path)
         path_output = colored(self.path, 'cyan')
         long_output = project_output + ' ' + current_ref_output + ' -> ' + path_output
         short_output = project_output + ' ' + current_ref_output + '\n-> ' + path_output
         long_output_length = len(''.join(s for s in long_output if ord(s) > 31 and ord(s) < 126))
         try:
-            ts = os.get_terminal_size()
-            if long_output_length <= ts.columns:
+            terminal_size = os.get_terminal_size()
+            if long_output_length <= terminal_size.columns:
                 print(long_output)
             else:
                 print(short_output)
-        except Exception as err:
-            print(short_output)
-            message = colored(' - Error: ', 'red')
-            print(message + str(err))
+        except:
+            print(long_output)

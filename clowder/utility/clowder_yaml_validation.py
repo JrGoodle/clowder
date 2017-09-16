@@ -1,10 +1,16 @@
 """Clowder yaml validation"""
+import sys
 from termcolor import colored
+from clowder.utility.format_utilities import (
+    print_error
+)
 
 # Disable errors shown by pylint for no specified exception types
 # pylint: disable=W0702
 # Disable errors shown by pylint for statements which appear to have no effect
 # pylint: disable=W0104
+# Disable errors shown by pylint for catchingtoo general exception Exception
+# pylint: disable=W0703
 
 def validate_yaml(parsed_yaml):
     """Validate clowder.yaml without no import"""
@@ -14,12 +20,12 @@ def validate_yaml(parsed_yaml):
         validate_yaml_defaults(defaults)
         del parsed_yaml['defaults']
 
-        error = colored(' - Missing \'sources\'\n', 'red')
+        error = colored(' - Missing \'sources\'', 'red')
         sources = parsed_yaml['sources']
         validate_yaml_sources(sources)
         del parsed_yaml['sources']
 
-        error = colored(' - Missing \'groups\'\n', 'red')
+        error = colored(' - Missing \'groups\'', 'red')
         groups = parsed_yaml['groups']
         validate_yaml_groups(groups)
         del parsed_yaml['groups']
@@ -27,7 +33,7 @@ def validate_yaml(parsed_yaml):
         if len(parsed_yaml) > 0:
             dict_entries = ''.join('{}: {}\n'.format(key, val)
                                    for key, val in sorted(parsed_yaml.items()))
-            error = colored(' - Unknown entry in \'clowder.yaml\'\n\n' +
+            error = colored(' - Unknown entry in \'clowder.yaml\'\n' +
                             dict_entries, 'red')
             raise Exception('Unknown clowder.yaml value')
     except Exception as err:
@@ -35,15 +41,14 @@ def validate_yaml(parsed_yaml):
         clowder_output = colored('clowder.yaml', 'cyan')
         print(clowder_output + ' appears to be invalid')
         print(error)
-        message = colored(' - Error: ', 'red')
-        print(message + str(err))
-        raise
+        print_error(err)
+        sys.exit(1)
 
 def validate_yaml_import(parsed_yaml):
     """Validate clowder.yaml with an import"""
     try:
         if 'import' not in parsed_yaml:
-            error = colored(' - Missing \'import\' in clowder.yaml\n', 'red')
+            error = colored(' - Missing \'import\' in clowder.yaml', 'red')
             raise Exception('Missing import in clowder.yaml')
         del parsed_yaml['import']
 
@@ -57,13 +62,13 @@ def validate_yaml_import(parsed_yaml):
                 del defaults['source']
             if 'depth' in defaults:
                 if int(defaults['depth']) < 0:
-                    error = colored(' - \'depth\' must be a positive integer\n', 'red')
+                    error = colored(' - \'depth\' must be a positive integer', 'red')
                     raise Exception('Negative depth value')
                 del defaults['depth']
             if len(defaults) > 0:
                 dict_entries = ''.join('{}: {}\n'.format(key, val)
                                        for key, val in sorted(defaults.items()))
-                error = colored(' - Unknown entry in \'defaults\'\n\n' +
+                error = colored(' - Unknown entry in \'defaults\'\n' +
                                 dict_entries, 'red')
                 raise Exception('Unknown default value')
             del parsed_yaml['defaults']
@@ -79,7 +84,7 @@ def validate_yaml_import(parsed_yaml):
         if len(parsed_yaml) > 0:
             dict_entries = ''.join('{}: {}\n'.format(key, val)
                                    for key, val in sorted(parsed_yaml.items()))
-            error = colored(' - Unknown entry in clowder.yaml\n\n' +
+            error = colored(' - Unknown entry in clowder.yaml\n' +
                             dict_entries, 'red')
             raise Exception('Unknown clowder.yaml value')
     except Exception as err:
@@ -87,35 +92,34 @@ def validate_yaml_import(parsed_yaml):
         clowder_output = colored('clowder.yaml', 'cyan')
         print(clowder_output + ' appears to be invalid')
         print(error)
-        message = colored(' - Error: ', 'red')
-        print(message + str(err))
-        raise
+        print_error(err)
+        sys.exit(1)
 
 def validate_yaml_defaults(defaults):
     """Validate defaults in clowder loaded from yaml file"""
     try:
-        error = colored(' - Missing \'ref\' in \'defaults\'\n', 'red')
+        error = colored(' - Missing \'ref\' in \'defaults\'', 'red')
         defaults['ref']
         del defaults['ref']
 
-        error = colored(' - Missing \'remote\' in \'defaults\'\n', 'red')
+        error = colored(' - Missing \'remote\' in \'defaults\'', 'red')
         defaults['remote']
         del defaults['remote']
 
-        error = colored(' - Missing \'source\' in \'defaults\'\n', 'red')
+        error = colored(' - Missing \'source\' in \'defaults\'', 'red')
         defaults['source']
         del defaults['source']
 
         if 'depth' in defaults:
             if int(defaults['depth']) < 0:
-                error = colored(' - \'depth\' must be a positive integer\n', 'red')
+                error = colored(' - \'depth\' must be a positive integer', 'red')
                 raise Exception('Negative depth value')
             del defaults['depth']
 
         if len(defaults) > 0:
             dict_entries = ''.join('{}: {}\n'.format(key, val)
                                    for key, val in sorted(defaults.items()))
-            error = colored(' - Unknown entry in \'defaults\'\n\n' +
+            error = colored(' - Unknown entry in \'defaults\'\n' +
                             dict_entries, 'red')
             raise Exception('Unknown default value')
     except Exception as err:
@@ -123,27 +127,26 @@ def validate_yaml_defaults(defaults):
         clowder_output = colored('clowder.yaml', 'cyan')
         print(clowder_output + ' appears to be invalid')
         print(error)
-        message = colored(' - Error: ', 'red')
-        print(message + str(err))
-        raise
+        print_error(err)
+        sys.exit(1)
 
 def validate_yaml_sources(sources):
     """Validate sources in clowder loaded from yaml file"""
     try:
-        error = colored(' - \'sources\' doesn\'t contain array\n', 'red')
+        error = colored(' - \'sources\' doesn\'t contain array', 'red')
         for source in sources:
-            error = colored(' - Missing \'name\' in \'sources\'\n', 'red')
+            error = colored(' - Missing \'name\' in \'sources\'', 'red')
             source['name']
             del source['name']
 
-            error = colored(' - Missing \'url\' in \'sources\'\n', 'red')
+            error = colored(' - Missing \'url\' in \'sources\'', 'red')
             source['url']
             del source['url']
 
             if len(source) > 0:
                 dict_entries = ''.join('{}: {}\n'.format(key, val)
                                        for key, val in sorted(source.items()))
-                error = colored(' - Unknown entry in \'fork\'\n\n' +
+                error = colored(' - Unknown entry in \'fork\'\n' +
                                 dict_entries, 'red')
                 raise Exception('Unknown fork value')
     except Exception as err:
@@ -151,9 +154,8 @@ def validate_yaml_sources(sources):
         clowder_output = colored('clowder.yaml', 'cyan')
         print(clowder_output + ' appears to be invalid')
         print(error)
-        message = colored(' - Error: ', 'red')
-        print(message + str(err))
-        raise
+        print_error(err)
+        sys.exit(1)
 
 # Disable errors shown by pylint for too many nested blocks
 # pylint: disable=R0101
@@ -161,19 +163,19 @@ def validate_yaml_sources(sources):
 def validate_yaml_groups(groups):
     """Validate groups in clowder loaded from yaml file"""
     try:
-        error = colored(' - \'groups\' doesn\'t contain array\n', 'red')
+        error = colored(' - \'groups\' doesn\'t contain array', 'red')
         for group in groups:
-            error = colored(' - Missing \'name\' in \'group\'\n', 'red')
+            error = colored(' - Missing \'name\' in \'group\'', 'red')
             group['name']
-            error = colored(' - Missing \'projects\' in \'group\'\n', 'red')
+            error = colored(' - Missing \'projects\' in \'group\'', 'red')
             projects = group['projects']
-            error = colored(' - \'projects\' doesn\'t contain array\n', 'red')
+            error = colored(' - \'projects\' doesn\'t contain array', 'red')
             for project in projects:
-                error = colored(' - Missing \'name\' in \'project\'\n', 'red')
+                error = colored(' - Missing \'name\' in \'project\'', 'red')
                 project['name']
                 del project['name']
 
-                error = colored(' - Missing \'path\' in \'project\'\n', 'red')
+                error = colored(' - Missing \'path\' in \'project\'', 'red')
                 project['path']
                 del project['path']
 
@@ -185,21 +187,21 @@ def validate_yaml_groups(groups):
                     del project['source']
                 if 'depth' in project:
                     if int(project['depth']) < 0:
-                        error = colored(' - \'depth\' must be a positive integer\n', 'red')
+                        error = colored(' - \'depth\' must be a positive integer', 'red')
                         raise Exception('Negative depth value')
                     del project['depth']
                 if 'forks' in project:
                     for fork in project['forks']:
-                        error = colored(' - Missing \'name\' in \'fork\'\n', 'red')
+                        error = colored(' - Missing \'name\' in \'fork\'', 'red')
                         fork['name']
                         del fork['name']
-                        error = colored(' - Missing \'remote\' in \'fork\'\n', 'red')
+                        error = colored(' - Missing \'remote\' in \'fork\'', 'red')
                         fork['remote']
                         del fork['remote']
                         if len(fork) > 0:
                             dict_entries = ''.join('{}: {}\n'.format(key, val)
                                                    for key, val in sorted(fork.items()))
-                            error = colored(' - Unknown entry in \'fork\'\n\n' +
+                            error = colored(' - Unknown entry in \'fork\'\n' +
                                             dict_entries, 'red')
                             raise Exception('Unknown fork value')
                     del project['forks']
@@ -207,7 +209,7 @@ def validate_yaml_groups(groups):
                 if len(project) > 0:
                     dict_entries = ''.join('{}: {}\n'.format(key, val)
                                            for key, val in sorted(project.items()))
-                    error = colored(' - Unknown entry in \'project\'\n\n' +
+                    error = colored(' - Unknown entry in \'project\'\n' +
                                     dict_entries, 'red')
                     raise Exception('Unknown project value')
     except Exception as err:
@@ -215,6 +217,5 @@ def validate_yaml_groups(groups):
         clowder_output = colored('clowder.yaml', 'cyan')
         print(clowder_output + ' appears to be invalid')
         print(error)
-        message = colored(' - Error: ', 'red')
-        print(message + str(err))
-        raise
+        print_error(err)
+        sys.exit(1)
