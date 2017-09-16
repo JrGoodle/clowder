@@ -1,6 +1,6 @@
 """Representation of clowder.yaml fork"""
 from termcolor import cprint
-from clowder.utility.clowder_utilities import (
+from clowder.utility.format_utilities import (
     format_project_string,
     format_ref_string
 )

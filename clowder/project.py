@@ -4,12 +4,11 @@ import subprocess
 import sys
 from termcolor import colored, cprint
 from clowder.fork import Fork
-from clowder.utility.clowder_utilities import (
+from clowder.utility.format_utilities import (
     format_project_string,
     format_ref_string,
     print_exists,
-    print_validation,
-    validate_repo_state
+    print_validation
 )
 from clowder.utility.git_utilities import (
     git_create_repo,
@@ -26,7 +25,8 @@ from clowder.utility.git_utilities import (
     git_reset_head,
     git_start,
     git_stash,
-    git_status
+    git_status,
+    git_validate_repo_state
 )
 
 # Disable errors shown by pylint for too many instance attributes
@@ -150,7 +150,7 @@ class Project(object):
 
     def is_valid(self):
         """Validate status of project"""
-        return validate_repo_state(self.full_path())
+        return git_validate_repo_state(self.full_path())
 
     def print_exists(self):
         """Print existence validation message for project"""
@@ -232,6 +232,9 @@ class Project(object):
 # pylint: disable=W0612
 # Disable errors shown by pylint for no specified exception types
 # pylint: disable=W0702
+# Disable errors shown by pylint for catching too general exception Exception
+# pylint: disable=W0703
+
     def _print_status(self):
         """Print formatted project status"""
         repo_path = os.path.join(self.root_directory, self.path)

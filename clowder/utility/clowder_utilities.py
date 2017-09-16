@@ -1,16 +1,21 @@
 """Clowder utilities"""
 import errno
 import os
-from termcolor import colored, cprint
-from clowder.utility.git_utilities import (
-    git_current_branch,
-    git_current_sha,
-    git_existing_repository,
-    git_is_detached,
-    git_is_dirty,
-    git_new_local_commits,
-    git_new_upstream_commits
-)
+import subprocess
+
+def execute(cmd, path):
+    """Execute command and display continuous output"""
+    # https://stackoverflow.com/questions/4417546/constantly-print-subprocess-output-while-process-is-running
+    process = subprocess.Popen(cmd, cwd=path,
+                               stdout=subprocess.PIPE,
+                               universal_newlines=True)
+    # print("the commandline is {}".format(process.args))
+    for stdout_line in iter(process.stdout.readline, ""):
+        yield stdout_line
+    process.stdout.close()
+    return_code = process.wait()
+    if return_code:
+        raise subprocess.CalledProcessError(return_code, cmd)
 
 def force_symlink(file1, file2):
     """Force symlink creation"""
@@ -20,58 +25,3 @@ def force_symlink(file1, file2):
         if error.errno == errno.EEXIST:
             os.remove(file2)
             os.symlink(file1, file2)
-
-def format_project_string(repo_path, name):
-    """Return formatted project name"""
-    if git_is_dirty(repo_path):
-        color = 'red'
-        symbol = '*'
-    else:
-        color = 'green'
-        symbol = ''
-    return colored(name + symbol, color)
-
-def format_ref_string(repo_path):
-    """Return formatted repo ref name"""
-    local_commits = git_new_local_commits(repo_path)
-    upstream_commits = git_new_upstream_commits(repo_path)
-    no_local_commits = local_commits == 0 or local_commits == '0'
-    no_upstream_commits = upstream_commits == 0 or upstream_commits == '0'
-    if no_local_commits and no_upstream_commits:
-        status = ''
-    else:
-        local_commits_output = colored('+' + str(local_commits), 'yellow')
-        upstream_commits_output = colored('-' + str(upstream_commits), 'red')
-        status = ' (' + local_commits_output + '/' + upstream_commits_output + ')'
-
-    if git_is_detached(repo_path):
-        current_ref = git_current_sha(repo_path)
-        return colored('(HEAD @ ' + current_ref + ')', 'magenta')
-    else:
-        current_branch = git_current_branch(repo_path)
-        return colored('(' + current_branch + ')', 'magenta') + status
-
-def print_exists(repo_path):
-    """Print existence validation messages"""
-    if not git_existing_repository(repo_path):
-        cprint(' - Project is missing', 'red')
-
-def print_validation(repo_path):
-    """Print validation messages"""
-    if not git_existing_repository(repo_path):
-        return
-    if git_is_dirty(repo_path):
-        print(' - Dirty repo. Please stash, commit, or discard your changes')
-
-# http://stackoverflow.com/questions/16891340/remove-a-prefix-from-a-string
-def remove_prefix(text, prefix):
-    """Remove prefix from a string"""
-    if text.startswith(prefix):
-        return text[len(prefix):]
-    return text
-
-def validate_repo_state(repo_path):
-    """Validate repo state"""
-    if not git_existing_repository(repo_path):
-        return True
-    return not git_is_dirty(repo_path)

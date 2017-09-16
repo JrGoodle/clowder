@@ -1,10 +1,10 @@
 """Git utilities"""
 import os
 import shutil
-import subprocess
 import sys
 from git import Repo
 from termcolor import colored, cprint
+from clowder. utility.clowder_utilities import execute
 
 # Disable errors shown by pylint for no specified exception types
 # pylint: disable=W0702
@@ -712,6 +712,12 @@ def git_fetch_remote_ref(repo_path, remote, ref, depth):
             print()
             sys.exit(1)
 
+def git_validate_repo_state(repo_path):
+    """Validate repo state"""
+    if not git_existing_repository(repo_path):
+        return True
+    return not git_is_dirty(repo_path)
+
 def _pull_remote_branch(repo_path, remote, branch):
     """Pull from remote branch"""
     repo = _repo(repo_path)
@@ -767,17 +773,3 @@ def _truncate_ref(ref):
     else:
         length = 0
     return ref[length:]
-
-def execute(cmd, path):
-    """Execute command and display continuous output"""
-    # https://stackoverflow.com/questions/4417546/constantly-print-subprocess-output-while-process-is-running
-    process = subprocess.Popen(cmd, cwd=path,
-                               stdout=subprocess.PIPE,
-                               universal_newlines=True)
-    # print("the commandline is {}".format(process.args))
-    for stdout_line in iter(process.stdout.readline, ""):
-        yield stdout_line
-    process.stdout.close()
-    return_code = process.wait()
-    if return_code:
-        raise subprocess.CalledProcessError(return_code, cmd)

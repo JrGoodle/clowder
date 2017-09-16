@@ -17,15 +17,15 @@ from clowder.utility.git_utilities import (
     git_pull,
     git_push,
     git_reset_head,
-    git_status
+    git_status,
+    git_validate_repo_state
 )
-from clowder.utility.clowder_utilities import (
-    force_symlink,
+from clowder.utility.clowder_utilities import force_symlink
+from clowder.utility.format_utilities import (
     format_project_string,
     format_ref_string,
     print_validation,
-    remove_prefix,
-    validate_repo_state
+    remove_prefix
 )
 
 class ClowderRepo(object):
@@ -142,7 +142,7 @@ class ClowderRepo(object):
 
     def _validate_groups(self):
         """Validate status of clowder repo"""
-        if not validate_repo_state(self.clowder_path):
+        if not git_validate_repo_state(self.clowder_path):
             print_validation(self.clowder_path)
             print()
             sys.exit(1)
