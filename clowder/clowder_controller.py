@@ -12,14 +12,14 @@ from clowder.utility.clowder_yaml_validation import (
 )
 from clowder.utility.print_utilities import (
     format_clowder_command,
-    format_missing_imported_yaml,
-    print_empty_yaml,
+    format_missing_imported_yaml_error,
+    print_empty_yaml_error,
     print_error,
-    print_invalid_yaml,
-    print_missing_yaml,
+    print_invalid_yaml_error,
+    print_missing_yaml_error,
     print_recursive_import_error,
     print_save_version,
-    print_save_version_exists
+    print_save_version_exists_error
 )
 
 # Disable errors shown by pylint for too many public methods
@@ -43,7 +43,7 @@ class ClowderController(object):
                 parsed_yaml = _parse_yaml(file)
         else:
             print()
-            print_missing_yaml()
+            print_missing_yaml_error()
             print()
             sys.exit(1)
         self._validate_yaml(parsed_yaml, self._max_import_depth)
@@ -135,7 +135,7 @@ class ClowderController(object):
     def prune_groups_all(self, group_names, branch, force):
         """Prune local and remote branch for groups"""
         self._validate_groups(group_names)
-        # print(' - Fetching remote changes\n')
+        # print(' - Fetch remote changes\n')
         # self._fetch_groups(group_names)
         # print()
         local_branch_exists = self._existing_branch_group(group_names, branch, is_remote=False)
@@ -163,7 +163,7 @@ class ClowderController(object):
     def prune_groups_remote(self, group_names, branch):
         """Prune remote branch for groups"""
         self._validate_groups(group_names)
-        # print(' - Fetching remote changes\n')
+        # print(' - Fetch remote changes\n')
         # self._fetch_groups(group_names)
         # print()
         if self._existing_branch_group(group_names, branch, is_remote=True):
@@ -177,7 +177,7 @@ class ClowderController(object):
     def prune_projects_all(self, project_names, branch, force):
         """Prune local and remote branch for projects"""
         self._validate_projects(project_names)
-        # print(' - Fetching remote changes\n')
+        # print(' - Fetch remote changes\n')
         # self._fetch_projects(project_names)
         # print()
         local_branch_exists = self._existing_branch_project(project_names, branch, is_remote=False)
@@ -207,7 +207,7 @@ class ClowderController(object):
     def prune_projects_remote(self, project_names, branch):
         """Prune remote branch for projects"""
         self._validate_projects(project_names)
-        # print(' - Fetching remote changes\n')
+        # print(' - Fetch remote changes\n')
         # self._fetch_projects(project_names)
         # print()
         if self._existing_branch_project(project_names, branch, is_remote=True):
@@ -235,7 +235,7 @@ class ClowderController(object):
                 print_save_version(version_name, yaml_file)
                 yaml.dump(self._get_yaml(), file, default_flow_style=False)
         else:
-            print_save_version_exists(version_name, yaml_file)
+            print_save_version_exists_error(version_name, yaml_file)
             print()
             sys.exit(1)
 
@@ -372,7 +372,7 @@ class ClowderController(object):
                             with open(imported_yaml_file) as file:
                                 parsed_yaml = _parse_yaml(file)
                         else:
-                            print_missing_yaml()
+                            print_missing_yaml_error()
                             print()
                             sys.exit(1)
                         if len(imported_yaml_files) > self._max_import_depth:
@@ -386,7 +386,7 @@ class ClowderController(object):
                     self._load_yaml_import(parsed_yaml)
                 self._load_yaml_combined()
         else:
-            print_missing_yaml()
+            print_missing_yaml_error()
             print()
             sys.exit(1)
 
@@ -521,14 +521,14 @@ class ClowderController(object):
             parsed_yaml_copy = copy.deepcopy(parsed_yaml)
             validate_yaml_import(parsed_yaml_copy)
             imported_clowder = parsed_yaml['import']
-            error = format_missing_imported_yaml(imported_clowder)
+            error = format_missing_imported_yaml_error(imported_clowder)
             try:
                 if imported_clowder == 'default':
                     yaml_file = os.path.join(self.root_directory,
                                              '.clowder',
                                              'clowder.yaml')
                     if not os.path.isfile(yaml_file):
-                        error = format_missing_imported_yaml(yaml_file)
+                        error = format_missing_imported_yaml_error(yaml_file)
                         raise Exception('Missing clowder.yaml')
                 else:
                     yaml_file = os.path.join(self.root_directory,
@@ -537,10 +537,10 @@ class ClowderController(object):
                                              imported_clowder,
                                              'clowder.yaml')
                     if not os.path.isfile(yaml_file):
-                        error = format_missing_imported_yaml(yaml_file)
+                        error = format_missing_imported_yaml_error(yaml_file)
                         raise Exception('Missing clowder.yaml')
             except Exception as err:
-                print_invalid_yaml()
+                print_invalid_yaml_error()
                 print(error)
                 print_error(err)
                 sys.exit(1)
@@ -584,7 +584,7 @@ def _parse_yaml(yaml_file):
     """Parse yaml file"""
     parsed_yaml = yaml.safe_load(yaml_file)
     if parsed_yaml is None:
-        print_invalid_yaml()
-        print_empty_yaml(yaml_file)
+        print_invalid_yaml_error()
+        print_empty_yaml_error(yaml_file)
     else:
         return parsed_yaml

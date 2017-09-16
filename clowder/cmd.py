@@ -331,7 +331,7 @@ class Command(object):
             if self.clowder is None:
                 sys.exit(1)
             if self.args.fetch:
-                print(' - Fetching upstream changes for projects', end="", flush=True)
+                print(' - Fetch upstream changes for projects')
                 if self.args.projects is None:
                     self.clowder.fetch_groups(self.args.groups)
                 else:

@@ -26,7 +26,7 @@ from clowder.utility.clowder_utilities import (
 from clowder.utility.print_utilities import (
     format_command,
     format_path,
-    print_command_failed,
+    print_command_failed_error,
     print_error,
     remove_prefix
 )
@@ -118,7 +118,7 @@ class ClowderRepo(object):
             output = colored('.clowder', 'green')
             print(output)
             return
-        print(' - Fetch upstream changes for clowder repo', end="", flush=True)
+        print(' - Fetch upstream changes for clowder repo')
         git_fetch_silent(self.clowder_path)
         print("\n")
         project_output = format_project_string(repo_path, '.clowder')
@@ -147,7 +147,7 @@ class ClowderRepo(object):
         try:
             execute_command(command.split(), self.clowder_path)
         except Exception as err:
-            print_command_failed(command)
+            print_command_failed_error(command)
             print_error(err)
             sys.exit(1)
 

@@ -1,6 +1,9 @@
 """String formatting and printing utilities"""
 from termcolor import colored
 
+# Disable errors shown by pylint for invalid function name
+# pylint: disable=C0103
+
 def format_clowder_command(command):
     """Return formatted clowder command name"""
     return colored(command, attrs=['bold'])
@@ -10,18 +13,18 @@ def format_command(command):
     return colored('$ ' + command, attrs=['bold'])
 
 def format_depth_error(depth):
-    """Print error for invalid depth"""
+    """Return formatted error string for invalid depth"""
     output_1 = colored(' - ', 'red')
     output_2 = colored(' must be a positive integer', 'red')
     return output_1 + '\'depth\'' + output_2 + '\n   - depth: ' + str(depth)
 
-def format_missing_entry(entry, name):
+def format_missing_entry_error(entry, name):
     """Return formatted error string for missing entry in dictionary"""
     output_1 = colored(' - Missing ', 'red')
     output_2 = colored(' in ', 'red')
     return output_1 + str(entry) + output_2 + name
 
-def format_missing_imported_yaml(path):
+def format_missing_imported_yaml_error(path):
     """Return formatted error string for missing imported clowder.yaml"""
     output_1 = colored(' - Missing imported ', 'red')
     output_2 = format_yaml_file('clowder.yaml')
@@ -29,7 +32,7 @@ def format_missing_imported_yaml(path):
     output_4 = format_path(path)
     return output_1 + output_2 + output_3 + output_4
 
-def format_not_array(name):
+def format_not_array_error(name):
     """Return formatted error string for no array"""
     output_1 = colored(' - ', 'red')
     output_2 = colored(' doesn\'t contain array', 'red')
@@ -51,7 +54,7 @@ def format_version(version_name):
     """Return formatted string for clowder.yaml version"""
     return colored(version_name, attrs=['bold'])
 
-def format_unknown_entries(name, dictionary):
+def format_unknown_entries_error(name, dictionary):
     """Return formatted error string for unknown entry in dictionary"""
     dict_entries = ''.join('   - {}: {}\n'.format(key, val)
                            for key, val in sorted(dictionary.items())).rstrip()
@@ -68,37 +71,37 @@ def format_yaml_file(yaml_file):
     """Return formatted string for clowder.yaml file"""
     return colored(yaml_file, 'cyan')
 
-def print_command_failed(command):
+def print_command_failed_error(command):
     """Print error message for failed command"""
     output_1 = colored(' - Failed to run command\n   ', 'red')
     output_2 = format_command(command)
     return output_1 + output_2
 
-def print_empty_yaml(yaml_file):
-    """Print message for empty clowder.yaml"""
+def print_empty_yaml_error(yaml_file):
+    """Print error message for empty clowder.yaml"""
     output_1 = colored(' - ', 'red')
     output_2 = format_yaml_file('clowder.yaml')
     output_3 = colored(' is empty ', 'red')
     return output_1 + output_2 + output_3 + yaml_file
 
 def print_error(error):
-    """Print general exception error message"""
+    """Print error message for generic exception"""
     message = colored(' - Error: ', 'red')
     print(message + str(error))
     print()
 
-def print_invalid_yaml():
-    """Print message for invalid clowder.yaml"""
+def print_invalid_yaml_error():
+    """Print error message for invalid clowder.yaml"""
     clowder_output = format_yaml_file('clowder.yaml')
     print(clowder_output + ' appears to be invalid')
 
-def print_missing_yaml():
-    """Print message for missing clowder.yaml"""
+def print_missing_yaml_error():
+    """Print error message for missing clowder.yaml"""
     clowder_output = format_yaml_file('clowder.yaml')
     print(clowder_output + ' appears to be missing')
 
 def print_recursive_import_error(depth):
-    """Print message for too many recursive imports"""
+    """Print error message for too many recursive imports"""
     clowder_output = format_yaml_file('clowder.yaml')
     print(clowder_output + ' has too many recursive imports')
     print('Currently the max is ' + str(depth))
@@ -109,8 +112,8 @@ def print_save_version(version_name, yaml_file):
     output_2 = format_yaml_file(yaml_file)
     print(' - Save version ' + output_1 + ' at '+ output_2)
 
-def print_save_version_exists(version_name, yaml_file):
-    """Print message for error saving version because previous exists"""
+def print_save_version_exists_error(version_name, yaml_file):
+    """Print error message previous existing saved version"""
     output_1 = colored(' - Version ', 'red')
     output_2 = format_version(version_name)
     output_3 = colored(' already exists at ', 'red')
