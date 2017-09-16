@@ -120,7 +120,7 @@ class ClowderRepo(object):
             return
         print(' - Fetch upstream changes for clowder repo')
         git_fetch_silent(self.clowder_path)
-        print("\n")
+        print()
         project_output = format_project_string(repo_path, '.clowder')
         current_ref_output = format_project_ref_string(repo_path)
 

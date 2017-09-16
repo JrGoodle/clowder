@@ -40,7 +40,7 @@ def format_not_array_error(name):
 
 def format_path(path):
     """Return formatted path"""
-    return colored('(' + path + ')', 'cyan')
+    return colored(path, 'cyan')
 
 def format_ref_string(ref):
     """Return formatted ref name"""

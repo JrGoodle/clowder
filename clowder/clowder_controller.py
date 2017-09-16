@@ -56,7 +56,7 @@ class ClowderController(object):
                 if group.name in group_names:
                     group.clean()
         else:
-            print('No changes to discard')
+            print(' - No changes to discard')
 
     def clean_projects(self, project_names):
         """Discard changes for projects"""
@@ -66,7 +66,7 @@ class ClowderController(object):
                     if project.name in project_names:
                         project.clean()
         else:
-            print('No changes to discard')
+            print(' - No changes to discard')
 
     def fetch_groups(self, group_names):
         """Print status for groups"""
@@ -500,6 +500,7 @@ class ClowderController(object):
                 projects_exist = False
         if not projects_exist:
             herd_output = format_clowder_command('clowder herd')
+            print()
             print(' - First run ' + herd_output + ' to clone missing projects')
             print()
             sys.exit(1)

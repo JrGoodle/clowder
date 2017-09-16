@@ -319,7 +319,7 @@ def git_push(repo_path):
     repo = _repo(repo_path)
     if not repo.head.is_detached:
         try:
-            print(' - Pushing local changes')
+            print(' - Push local changes')
             print(repo.git.push())
         except Exception as err:
             cprint(' - Failed to push local changes', 'red')
@@ -374,7 +374,7 @@ def git_stash(repo_path):
     """Stash current changes in repository"""
     repo = _repo(repo_path)
     if repo.is_dirty():
-        print(' - Stashing current changes')
+        print(' - Stash current changes')
         repo.git.stash()
     else:
         print(' - No changes to stash')

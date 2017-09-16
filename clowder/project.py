@@ -210,9 +210,8 @@ class Project(object):
             except Exception as err:
                 if not ignore_errors:
                     print_error(err)
+                    print()
                     sys.exit(1)
-            finally:
-                print()
 
     def start(self, branch, tracking):
         """Start a new feature branch"""
