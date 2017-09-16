@@ -5,7 +5,8 @@ import sys
 from git import Repo
 from termcolor import colored, cprint
 from clowder.utility.clowder_utilities import execute_command
-from clowder.utility.format_utilities import (
+from clowder.utility.print_utilities import (
+    format_path,
     format_ref_string,
     format_remote_string,
     print_error
@@ -60,7 +61,7 @@ def git_create_repo(url, repo_path, remote, ref, depth=0):
     if not git_existing_repository(repo_path):
         if not os.path.isdir(repo_path):
             os.makedirs(repo_path)
-        repo_path_output = colored(repo_path, 'cyan')
+        repo_path_output = format_path(repo_path)
         try:
             print(' - Clone repo at ' + repo_path_output)
             Repo.init(repo_path)
@@ -134,7 +135,7 @@ def git_fetch_all(repo_path):
     try:
         execute_command(['git', 'fetch', '--all', '--prune', '--tags'], repo_path)
     except Exception as err:
-        cprint(' - Failed to fetch ', 'red')
+        cprint(' - Failed to fetch', 'red')
         print_error(err)
         sys.exit(1)
 
@@ -155,11 +156,12 @@ def git_fetch_remote(repo_path, remote, depth):
 
 def git_fetch_silent(repo_path):
     """Perform a git fetch"""
-    repo = _repo(repo_path)
     try:
-        repo.git.fetch(prune=True, all=True, tags=True)
-    except:
-        return
+        execute_command(['git', 'fetch', '--all', '--prune', '--tags'], repo_path)
+    except Exception as err:
+        cprint(' - Failed to fetch', 'red')
+        print_error(err)
+        sys.exit(1)
 
 def git_herd(repo_path, url, remote, ref, depth):
     """Check if there are untracked files"""
@@ -675,7 +677,7 @@ def _repo(repo_path):
     try:
         repo = Repo(repo_path)
     except Exception as err:
-        repo_path_output = colored(repo_path, 'cyan')
+        repo_path_output = format_path(repo_path)
         message = colored("Failed to create Repo instance for ", 'red')
         print(message + repo_path_output)
         print_error(err)

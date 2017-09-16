@@ -637,9 +637,6 @@ class Command(object):
         if self._display_trailing_newline:
             print()
 
-    def _print_progress(self):
-        print('.', end="", flush=True)
-
 
 def exit_unrecognized_command(parser):
     """Print unrecognized command message and exit"""

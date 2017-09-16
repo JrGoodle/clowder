@@ -1,14 +1,15 @@
 """Representation of clowder.yaml project"""
 import os
 import sys
-from termcolor import colored, cprint
+from termcolor import cprint
 from clowder.fork import Fork
 from clowder.utility.clowder_utilities import execute_command
-from clowder.utility.format_utilities import (
+from clowder.utility.print_utilities import (
     format_command,
+    format_path,
     print_error
 )
-from clowder.utility.git_format_utilities import (
+from clowder.utility.git_print_utilities import (
     format_project_string,
     format_project_ref_string,
     print_exists,
@@ -249,7 +250,7 @@ class Project(object):
             return
         project_output = format_project_string(repo_path, self.name)
         current_ref_output = format_project_ref_string(repo_path)
-        path_output = colored(self.path, 'cyan')
+        path_output = format_path(self.path)
         long_output = project_output + ' ' + current_ref_output + ' -> ' + path_output
         short_output = project_output + ' ' + current_ref_output + '\n-> ' + path_output
         long_output_length = len(''.join(s for s in long_output if ord(s) > 31 and ord(s) < 126))

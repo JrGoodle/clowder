@@ -1,4 +1,4 @@
-"""String format and printing utilities for git"""
+"""String formatting and printing utilities for git"""
 from termcolor import colored, cprint
 from clowder.utility.git_utilities import (
     git_current_branch,

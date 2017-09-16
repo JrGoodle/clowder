@@ -3,7 +3,7 @@ import atexit
 import os
 import shutil
 import sys
-from termcolor import colored, cprint
+from termcolor import colored
 from clowder.utility.git_utilities import (
     git_add,
     git_branches,
@@ -23,12 +23,14 @@ from clowder.utility.clowder_utilities import (
     execute_command,
     force_symlink
 )
-from clowder.utility.format_utilities import (
+from clowder.utility.print_utilities import (
     format_command,
+    format_path,
+    print_command_failed,
     print_error,
     remove_prefix
 )
-from clowder.utility.git_format_utilities import (
+from clowder.utility.git_print_utilities import (
     format_project_string,
     format_project_ref_string,
     print_validation
@@ -94,10 +96,10 @@ class ClowderRepo(object):
         """Create symlink pointing to clowder.yaml file"""
         if version is None:
             yaml_file = os.path.join(self.root_directory, '.clowder', 'clowder.yaml')
-            path_output = colored('.clowder/clowder.yaml', 'cyan')
+            path_output = format_path('.clowder/clowder.yaml')
         else:
             relative_path = os.path.join('.clowder', 'versions', version, 'clowder.yaml')
-            path_output = colored(relative_path, 'cyan')
+            path_output = format_path(relative_path)
             yaml_file = os.path.join(self.root_directory, relative_path)
 
         if os.path.isfile(yaml_file):
@@ -116,7 +118,7 @@ class ClowderRepo(object):
             output = colored('.clowder', 'green')
             print(output)
             return
-        print(' - Fetching upstream changes for clowder repo', end="", flush=True)
+        print(' - Fetch upstream changes for clowder repo', end="", flush=True)
         git_fetch_silent(self.clowder_path)
         print("\n")
         project_output = format_project_string(repo_path, '.clowder')
@@ -126,7 +128,7 @@ class ClowderRepo(object):
         if os.path.islink(clowder_symlink):
             real_path = os.path.realpath(clowder_symlink)
             clowder_path = remove_prefix(real_path + '/', self.root_directory)
-            path_output = colored(clowder_path[1:-1], 'cyan')
+            path_output = format_path(clowder_path[1:-1])
             print(project_output + ' ' + current_ref_output + ' ~~> ' + path_output)
         else:
             print(project_output + ' ' + current_ref_output)
@@ -145,7 +147,7 @@ class ClowderRepo(object):
         try:
             execute_command(command.split(), self.clowder_path)
         except Exception as err:
-            cprint(' - Failed to run command', 'red')
+            print_command_failed(command)
             print_error(err)
             sys.exit(1)
 
@@ -159,6 +161,3 @@ class ClowderRepo(object):
             print_validation(self.clowder_path)
             print()
             sys.exit(1)
-
-def _print_progress():
-    print('.', end="", flush=True)
