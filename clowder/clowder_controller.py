@@ -541,11 +541,13 @@ class ClowderController(object):
                         error_message = colored(' - Missing imported clowder.yaml\n', 'red')
                         error = error_message + yaml_file + '\n'
                         raise Exception('Missing clowder.yaml')
-            except:
+            except Exception as err:
                 print()
                 clowder_output = colored('clowder.yaml', 'cyan')
                 print(clowder_output + ' appears to be invalid')
                 print(error)
+                message = colored(' - Error: ', 'red')
+                print(message + str(err))
                 raise
             with open(yaml_file) as file:
                 parsed_yaml_import = _parse_yaml(file)

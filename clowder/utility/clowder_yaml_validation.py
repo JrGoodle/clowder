@@ -30,11 +30,13 @@ def validate_yaml(parsed_yaml):
             error = colored(' - Unknown entry in \'clowder.yaml\'\n\n' +
                             dict_entries, 'red')
             raise Exception('Unknown clowder.yaml value')
-    except:
+    except Exception as err:
         print()
         clowder_output = colored('clowder.yaml', 'cyan')
         print(clowder_output + ' appears to be invalid')
         print(error)
+        message = colored(' - Error: ', 'red')
+        print(message + str(err))
         raise
 
 def validate_yaml_import(parsed_yaml):
@@ -80,11 +82,13 @@ def validate_yaml_import(parsed_yaml):
             error = colored(' - Unknown entry in clowder.yaml\n\n' +
                             dict_entries, 'red')
             raise Exception('Unknown clowder.yaml value')
-    except:
+    except Exception as err:
         print()
         clowder_output = colored('clowder.yaml', 'cyan')
         print(clowder_output + ' appears to be invalid')
         print(error)
+        message = colored(' - Error: ', 'red')
+        print(message + str(err))
         raise
 
 def validate_yaml_defaults(defaults):
@@ -114,11 +118,13 @@ def validate_yaml_defaults(defaults):
             error = colored(' - Unknown entry in \'defaults\'\n\n' +
                             dict_entries, 'red')
             raise Exception('Unknown default value')
-    except:
+    except Exception as err:
         print()
         clowder_output = colored('clowder.yaml', 'cyan')
         print(clowder_output + ' appears to be invalid')
         print(error)
+        message = colored(' - Error: ', 'red')
+        print(message + str(err))
         raise
 
 def validate_yaml_sources(sources):
@@ -140,11 +146,13 @@ def validate_yaml_sources(sources):
                 error = colored(' - Unknown entry in \'fork\'\n\n' +
                                 dict_entries, 'red')
                 raise Exception('Unknown fork value')
-    except:
+    except Exception as err:
         print()
         clowder_output = colored('clowder.yaml', 'cyan')
         print(clowder_output + ' appears to be invalid')
         print(error)
+        message = colored(' - Error: ', 'red')
+        print(message + str(err))
         raise
 
 # Disable errors shown by pylint for too many nested blocks
@@ -202,9 +210,11 @@ def validate_yaml_groups(groups):
                     error = colored(' - Unknown entry in \'project\'\n\n' +
                                     dict_entries, 'red')
                     raise Exception('Unknown project value')
-    except:
+    except Exception as err:
         print()
         clowder_output = colored('clowder.yaml', 'cyan')
         print(clowder_output + ' appears to be invalid')
         print(error)
+        message = colored(' - Error: ', 'red')
+        print(message + str(err))
         raise

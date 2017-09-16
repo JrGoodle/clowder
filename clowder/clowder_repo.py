@@ -27,7 +27,6 @@ from clowder.utility.clowder_utilities import (
     remove_prefix,
     validate_repo_state
 )
-from clowder.utility.repeated_timer import RepeatedTimer
 
 class ClowderRepo(object):
     """Class encapsulating clowder repo information"""
@@ -109,9 +108,7 @@ class ClowderRepo(object):
             print(output)
             return
         print(' - Fetching upstream changes for clowder repo', end="", flush=True)
-        timer = RepeatedTimer(1, _print_progress)
         git_fetch_silent(self.clowder_path)
-        timer.stop()
         print("\n")
         project_output = format_project_string(repo_path, '.clowder')
         current_ref_output = format_ref_string(repo_path)
