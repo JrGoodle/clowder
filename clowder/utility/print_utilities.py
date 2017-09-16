@@ -22,7 +22,7 @@ def format_missing_entry_error(entry, name):
     """Return formatted error string for missing entry in dictionary"""
     output_1 = colored(' - Missing ', 'red')
     output_2 = colored(' in ', 'red')
-    return output_1 + str(entry) + output_2 + name
+    return output_1 + str(entry) + output_2 + str(name)
 
 def format_missing_imported_yaml_error(path):
     """Return formatted error string for missing imported clowder.yaml"""
@@ -65,7 +65,7 @@ def format_unknown_entries_error(name, dictionary):
         unknown_entry_output = colored(' - Unknown entries in ', 'red')
     else:
         unknown_entry_output = colored(' - Unknown entry in ', 'red')
-    return unknown_entry_output + name + '\n' + dict_entries
+    return unknown_entry_output + name + '\n' + str(dict_entries)
 
 def format_yaml_file(yaml_file):
     """Return formatted string for clowder.yaml file"""
@@ -86,8 +86,7 @@ def print_empty_yaml_error(yaml_file):
 
 def print_error(error):
     """Print error message for generic exception"""
-    message = colored(' - Error: ', 'red')
-    print(message + str(error))
+    print(str(error))
     print()
 
 def print_invalid_yaml_error():

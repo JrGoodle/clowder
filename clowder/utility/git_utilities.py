@@ -68,24 +68,36 @@ def git_create_repo(url, repo_path, remote, ref, depth=0):
         except Exception as err:
             cprint(' - Failed to initialize repository', 'red')
             print_error(err)
-            shutil.rmtree(repo_path)
-            sys.exit(1)
+            try:
+                shutil.rmtree(repo_path)
+            except:
+                message = colored(" - Failed remove directory ", 'red')
+                print(message + format_path(repo_path))
+            finally:
+                print()
+                sys.exit(1)
         else:
             repo = _repo(repo_path)
             remote_names = [r.name for r in repo.remotes]
-            remote_output = format_remote_string(remote)
             if remote in remote_names:
                 _checkout_ref(repo_path, ref, remote, depth)
             else:
+                remote_output = format_remote_string(remote)
+                print(" - Create remote " + remote_output)
                 try:
-                    print(" - Create remote " + remote_output)
                     repo.create_remote(remote, url)
                 except Exception as err:
                     message = colored(" - Failed to create remote ", 'red')
                     print(message + remote_output)
                     print_error(err)
-                    shutil.rmtree(repo_path)
-                    sys.exit(1)
+                    try:
+                        shutil.rmtree(repo_path)
+                    except:
+                        message = colored(" - Failed remove directory ", 'red')
+                        print(message + format_path(repo_path))
+                    finally:
+                        print()
+                        sys.exit(1)
                 else:
                     _checkout_ref(repo_path, ref, remote, depth)
 

@@ -210,7 +210,6 @@ class Project(object):
             except Exception as err:
                 if not ignore_errors:
                     print_error(err)
-                    print()
                     sys.exit(1)
 
     def start(self, branch, tracking):
