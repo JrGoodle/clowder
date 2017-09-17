@@ -1,4 +1,5 @@
 """String formatting and printing utilities"""
+import os
 from termcolor import colored
 
 # Disable errors shown by pylint for invalid function name
@@ -16,6 +17,7 @@ def format_command(command):
 
 def format_depth_error(depth, yaml_file):
     """Return formatted error string for invalid depth"""
+    yaml_file = format_symlink_target(yaml_file)
     output_1 = format_path(yaml_file) + '\n'
     output_2 = colored(' - Error: ', 'red')
     output_3 = colored('depth', attrs=['bold'])
@@ -25,6 +27,7 @@ def format_depth_error(depth, yaml_file):
 
 def format_empty_yaml_error(yaml_file):
     """Return formatted error string for empty clowder.yaml"""
+    yaml_file = format_symlink_target(yaml_file)
     output_1 = format_path(yaml_file) + '\n'
     output_2 = colored(' - Error: No entries in ', 'red')
     output_3 = format_yaml_file('clowder.yaml')
@@ -32,6 +35,7 @@ def format_empty_yaml_error(yaml_file):
 
 def format_invalid_entries_error(name, collection, yaml_file):
     """Return formatted error string for invalid entry in collection"""
+    yaml_file = format_symlink_target(yaml_file)
     output_1 = format_path(yaml_file) + '\n'
     output_2 = colored(' - Error: No entries in ', 'red')
     output_3 = colored(name, attrs=['bold'])
@@ -54,6 +58,7 @@ def format_invalid_entries_error(name, collection, yaml_file):
 
 def format_missing_entry_error(entry, name, yaml_file):
     """Return formatted error string for missing entry in dictionary"""
+    yaml_file = format_symlink_target(yaml_file)
     output_1 = format_path(yaml_file) + '\n'
     output_2 = colored(' - Error: Missing ', 'red')
     output_3 = colored(str(entry), attrs=['bold'])
@@ -63,6 +68,7 @@ def format_missing_entry_error(entry, name, yaml_file):
 
 def format_missing_imported_yaml_error(path, yaml_file):
     """Return formatted error string for missing imported clowder.yaml"""
+    yaml_file = format_symlink_target(yaml_file)
     output_1 = format_path(yaml_file) + '\n'
     output_2 = colored(' - Error: Missing imported file\n', 'red')
     output_3 = format_path(path)
@@ -70,6 +76,7 @@ def format_missing_imported_yaml_error(path, yaml_file):
 
 def format_not_list_error(name, yaml_file):
     """Return formatted error string for value that's not a list"""
+    yaml_file = format_symlink_target(yaml_file)
     output_1 = format_path(yaml_file) + '\n'
     output_2 = colored(' - Error: ', 'red')
     output_3 = colored(name, attrs=['bold'])
@@ -79,6 +86,7 @@ def format_not_list_error(name, yaml_file):
 
 def format_not_dictionary_error(name, yaml_file):
     """Return formatted error string for value that's not a dictionary"""
+    yaml_file = format_symlink_target(yaml_file)
     output_1 = format_path(yaml_file) + '\n'
     output_2 = colored(' - Error: ', 'red')
     output_3 = colored(name, attrs=['bold'])
@@ -88,6 +96,7 @@ def format_not_dictionary_error(name, yaml_file):
 
 def format_not_string_error(name, yaml_file):
     """Return formatted error string for value that's not a string"""
+    yaml_file = format_symlink_target(yaml_file)
     output_1 = format_path(yaml_file) + '\n'
     output_2 = colored(' - Error: ', 'red')
     output_3 = colored(name, attrs=['bold'])
@@ -106,6 +115,13 @@ def format_ref_string(ref):
 def format_remote_string(remote):
     """Return formatted remote name"""
     return colored(remote, 'yellow')
+
+def format_symlink_target(path):
+    """Returns target path if input is a symlink"""
+    if os.path.islink(path):
+        return os.readlink(path)
+    else:
+        return path
 
 def format_version(version_name):
     """Return formatted string for clowder.yaml version"""
@@ -156,12 +172,9 @@ def print_save_file_error(path):
 
 def print_recursive_import_error(depth):
     """Print error message for too many recursive imports"""
-    clowder_output = format_yaml_file('clowder.yaml')
-    print(clowder_output + ' has too many recursive imports')
-    output_1 = colored(' - Error: ', 'red')
+    output_1 = colored(' - Error: Too many recursive imports\n', 'red')
     output_2 = colored(str(depth), attrs=['bold'])
-    output_3 = colored(' max imports', 'red')
-    print(output_1 + output_2 + output_3)
+    print(output_1 + 'Max imports: ' + output_2)
 
 def print_save_version(version_name, yaml_file):
     """Print message for saving version"""
