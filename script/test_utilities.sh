@@ -20,7 +20,7 @@ make_dirty_repos()
         git add newfile
         popd
     done
-    clowder status -v || exit 1
+    clowder diff || exit 1
 }
 
 test_branch()
@@ -307,6 +307,9 @@ print_help()
     print_separator
     echo "TEST: clowder clean -h"
     clowder clean -h
+    print_separator
+    echo "TEST: clowder diff -h"
+    clowder diff -h
     print_separator
     echo "TEST: clowder forall -h"
     clowder forall -h

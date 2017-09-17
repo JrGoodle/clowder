@@ -16,7 +16,7 @@
 
 ### `clean`
 
-Discards changes in dirty repositories.
+Discards changes in dirty repositories
 
 ```bash
 # Discard changes in all projects
@@ -31,9 +31,26 @@ $ clowder clean -p llvm-mirror/clang
 
 ---
 
+### `diff`
+
+Equivalent to running `git status -vv` in project directories
+
+```bash
+# Print diff status for all projects
+$ clowder diff
+
+# Print diff status for projects in clang group
+$ clowder diff -g clang
+
+# Print diff status for clang project
+$ clowder diff -p llvm-mirror/clang
+```
+
+---
+
 ### `forall`
 
-Runs command in project directories.
+Runs command or script in project directories
 
 ```bash
 # Run command in all project directories
@@ -65,7 +82,7 @@ $ clowder forall -c "/path/to/script.sh" -p llvm-mirror/clang
 
 ### `herd`
 
-Update with latest changes.
+Update with latest changes
 
 ```bash
 # Herd a shallow clone to specified depth
@@ -82,7 +99,7 @@ $ clowder herd -p llvm-mirror/clang
 
 ### `init`
 
-Clone repo containing `clowder.yaml` file ('clowder repo').
+Clone repo containing `clowder.yaml` file (referred to as the "clowder repo")
 
 ```bash
 # Clone clowder repo
@@ -96,7 +113,7 @@ $ clowder init https://github.com/jrgoodle/cats.git -b tags
 
 ### `link`
 
-Set `clowder.yaml` symlink.
+Set `clowder.yaml` symlink
 
 ```bash
 # Point clowder.yaml symlink to default clowder.yaml file
@@ -110,7 +127,7 @@ $ clowder link -v 0.1
 
 ### `prune`
 
-Prune local or remote branches.
+Prune local or remote branches
 
 ```bash
 # Prune branch 'stale_branch' for all projects
@@ -139,8 +156,9 @@ $ clowder prune stale_branch -p llvm-mirror/clang
 
 ### `repo`
 
-Convenience commands for managing clowder repo (the `.clowder` directory).
-More advanced needs may require changing to the `.clowder` directory and running commands directly.
+Convenience commands for managing clowder repo (the `.clowder` directory)
+
+More advanced needs may require changing to the `.clowder` directory and running commands directly
 
 ```bash
 # Checkout git ref in clowder repo
@@ -169,8 +187,9 @@ $ clowder repo status
 
 ### `save`
 
-Save a `clowder.yaml` version with the information from currently checked out repositories.
-Versions are saved to `.clowder/versions/<version_name>/clowder.yaml`.
+Save a `clowder.yaml` version with the information from currently checked out repositories
+
+Versions are saved to `.clowder/versions/<version_name>/clowder.yaml`
 
 ```bash
 # Save a version of clowder.yaml with current commit sha's
@@ -181,7 +200,7 @@ $ clowder save 0.1
 
 ### `start`
 
-Start a new feature branch or check out if it already exists.
+Start a new feature branch or check out if it already exists
 
 ```bash
 # Create new local branch 'my_feature' for all projects
@@ -201,7 +220,7 @@ $ clowder start my_feature -p llvm-mirror/clang
 
 ### `stash`
 
-Stash changes in dirty repositories.
+Stash changes in dirty repositories
 
 ```bash
 # Stash any changes in projects
@@ -218,14 +237,11 @@ $ clowder stash -p llvm-mirror/clang
 
 ### `status`
 
-Print status of projects.
+Print status of projects
 
 ```bash
 # Print status of projects
 $ clowder status
-
-# Print more verbose status of projects
-$ clowder status -v
 
 # Fetch upstream changes for projects before printing statuses
 $ clowder status -f
@@ -235,10 +251,4 @@ $ clowder status -g clang llvm
 
 # Print status of clang and llvm projects
 $ clowder status -p llvm-mirror/clang llvm-mirror/llvm
-
-# Print verbose status of projects in clang group
-$ clowder status -v -g clang
-
-# Print verbose status of clang and llvm projects
-$ clowder status -v -p llvm-mirror/clang llvm-mirror/llvm
 ```

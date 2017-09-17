@@ -120,12 +120,6 @@ class Group(object):
         for project in self.projects:
             project.status()
 
-    def status_verbose(self):
-        """Print verbose status for all projects"""
-        self._print_name()
-        for project in self.projects:
-            project.status_verbose()
-
     def stash(self):
         """Stash changes for all projects with changes"""
         if self.is_dirty():

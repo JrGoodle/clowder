@@ -369,9 +369,9 @@ class Command(object):
                     self.clowder.fetch_projects(self.args.projects)
                 print()
             if self.args.projects is None:
-                self.clowder.status_groups(self.args.groups, self.args.verbose)
+                self.clowder.status_groups(self.args.groups)
             else:
-                self.clowder.status_projects(self.args.projects, self.args.verbose)
+                self.clowder.status_projects(self.args.projects)
         else:
             exit_clowder_not_found()
 
@@ -666,8 +666,6 @@ class Command(object):
         parser_status = subparsers.add_parser('status', help='Print project status')
         parser_status.add_argument('--fetch', '-f', action='store_true',
                                    help='fetch projects before printing status')
-        parser_status.add_argument('--verbose', '-v', action='store_true',
-                                   help='print detailed diff status')
         if self.group_names is not '':
             status_help_groups = '''
                                  groups to print status for:

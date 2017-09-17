@@ -94,18 +94,7 @@ class Project(object):
         if not os.path.isdir(self.full_path()):
             cprint(" - Project is missing\n", 'red')
         else:
-            command = ['git', 'diff']
-            print(format_command(command))
-            return_code = execute_command(command, self.full_path())
-            if return_code != 0:
-                print_command_failed_error(command)
-                sys.exit(return_code)
-            command = ['git', 'diff', '--cached']
-            print(format_command(command))
-            return_code = execute_command(command, self.full_path())
-            if return_code != 0:
-                print_command_failed_error(command)
-                sys.exit(return_code)
+            git_status(self.full_path())
 
     def exists(self):
         """Check if project exists on disk"""
@@ -243,11 +232,6 @@ class Project(object):
     def status(self):
         """Print status for project"""
         self._print_status()
-
-    def status_verbose(self):
-        """Print verbose status for project"""
-        self._print_status()
-        git_status(self.full_path())
 
     def stash(self):
         """Stash changes for project if dirty"""

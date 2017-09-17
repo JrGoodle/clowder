@@ -6,6 +6,7 @@ from git import Repo
 from termcolor import colored, cprint
 from clowder.utility.clowder_utilities import execute_command
 from clowder.utility.print_utilities import (
+    format_command,
     format_path,
     format_ref_string,
     format_remote_string,
@@ -399,7 +400,8 @@ def git_stash(repo_path):
 
 def git_status(repo_path):
     """Print git status"""
-    command = ['git', 'status']
+    command = ['git', 'status', '-vv']
+    print(format_command(command))
     return_code = execute_command(command, repo_path)
     if return_code != 0:
         cprint(' - Failed to print status', 'red')
