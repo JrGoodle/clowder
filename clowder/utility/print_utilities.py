@@ -31,14 +31,14 @@ def format_missing_entry_error(entry, name):
 def format_missing_imported_yaml_error(path):
     """Return formatted error string for missing imported clowder.yaml"""
     output_1 = colored(' - Error: Missing imported file\n', 'red')
-    output_2 = colored(format_path(path), attrs=['bold'])
+    output_2 = colored(path, attrs=['bold'])
     return output_1 + output_2
 
 def format_not_list_error(name):
     """Return formatted error string for value that's not a list"""
     output_1 = colored(' - Error: ', 'red')
     output_2 = colored(name, attrs=['bold'])
-    output_3 = colored(' should be type ', 'red')
+    output_3 = colored(' type should be ', 'red')
     output_4 = colored('list', 'yellow')
     return output_1 + output_2 + output_3 + output_4
 
@@ -46,7 +46,7 @@ def format_not_dictionary_error(name):
     """Return formatted error string for value that's not a dictionary"""
     output_1 = colored(' - Error: ', 'red')
     output_2 = colored(name, attrs=['bold'])
-    output_3 = colored(' should be type ', 'red')
+    output_3 = colored(' type should be ', 'red')
     output_4 = colored('dict', 'yellow')
     return output_1 + output_2 + output_3 + output_4
 
@@ -54,7 +54,7 @@ def format_not_string_error(name):
     """Return formatted error string for value that's not a string"""
     output_1 = colored(' - Error: ', 'red')
     output_2 = colored(name, attrs=['bold'])
-    output_3 = colored(' should be type ', 'red')
+    output_3 = colored(' type should be ', 'red')
     output_4 = colored('str', 'yellow')
     return output_1 + output_2 + output_3 + output_4
 
@@ -74,11 +74,16 @@ def format_version(version_name):
     """Return formatted string for clowder.yaml version"""
     return colored(version_name, attrs=['bold'])
 
-def format_unknown_entries_error(name, dictionary):
-    """Return formatted error string for unknown entry in dictionary"""
+def format_invalid_entries_error(name, collection):
+    """Return formatted error string for invalid entry in collection"""
+    if isinstance(collection, list):
+        output_1 = colored(' - Error: No entries in ', 'red')
+        output_2 = colored(name, attrs=['bold'])
+        return output_1 + output_2
+
     dict_entries = ''.join('{}: {}\n'.format(key, val)
-                           for key, val in sorted(dictionary.items())).rstrip()
-    length = len(dictionary)
+                           for key, val in sorted(collection.items())).rstrip()
+    length = len(collection)
     if length is 0:
         output_1 = colored(' - Error: No entries in ', 'red')
         output_2 = colored(name, attrs=['bold'])

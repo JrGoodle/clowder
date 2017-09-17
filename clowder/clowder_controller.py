@@ -87,7 +87,6 @@ class ClowderController(object):
             if group.name in group_names:
                 for project in group.projects:
                     project.run(command, ignore_errors)
-        sys.exit() # Exit early to prevent printing extra newline
 
     def forall_projects_run(self, command, project_names, ignore_errors):
         """Runs command or script in all project directories of projects specified"""
@@ -95,7 +94,6 @@ class ClowderController(object):
             for project in group.projects:
                 if project.name in project_names:
                     project.run(command, ignore_errors)
-        sys.exit() # Exit early to prevent printing extra newline
 
     def get_all_group_names(self):
         """Returns all group names for current clowder.yaml"""

@@ -120,14 +120,16 @@ class Project(object):
 
     def get_yaml(self):
         """Return python object representation for saving yaml"""
+        project = {'name': self.name,
+                   'path': self.path,
+                   'depth': self.depth,
+                   'ref': git_sha_long(self.full_path()),
+                   'remote': self.remote_name,
+                   'source': self.source.name}
         forks_yaml = [f.get_yaml() for f in self.forks]
-        return {'name': self.name,
-                'path': self.path,
-                'depth': self.depth,
-                'forks': forks_yaml,
-                'ref': git_sha_long(self.full_path()),
-                'remote': self.remote_name,
-                'source': self.source.name}
+        if len(forks_yaml) > 0:
+            project['forks'] = forks_yaml
+        return project
 
     def herd(self, branch=None, depth=None):
         """Clone project or update latest from upstream"""
