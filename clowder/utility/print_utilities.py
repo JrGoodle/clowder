@@ -14,26 +14,28 @@ def format_command(command):
         command = " ".join(command)
     return colored('$ ' + command, attrs=['bold'])
 
-def format_depth_error(depth):
+def format_depth_error(depth, yaml_file):
     """Return formatted error string for invalid depth"""
     output_1 = colored(' - Error: ', 'red')
     output_2 = colored('depth', attrs=['bold'])
     output_3 = colored(' must be a positive integer\n', 'red')
-    output_4 = colored('   - depth: ' + str(depth), attrs=['bold'])
-    return output_1 + output_2 + output_3 + output_4
+    output_4 = colored('depth: ' + str(depth), attrs=['bold'])
+    output_5 = '\n' + format_path(yaml_file)
+    return output_1 + output_2 + output_3 + output_4 + output_5
 
 def format_empty_yaml_error(yaml_file):
     """Return formatted error string for empty clowder.yaml"""
     output_1 = colored(' - Error: No entries in ', 'red')
     output_2 = format_yaml_file('clowder.yaml')
-    output_3 = format_path(yaml_file)
-    return output_1 + output_2 + '\n' + output_3
+    output_3 = '\n' + format_path(yaml_file)
+    return output_1 + output_2 + output_3
 
-def format_invalid_entries_error(name, collection):
+def format_invalid_entries_error(name, collection, yaml_file):
     """Return formatted error string for invalid entry in collection"""
     output_1 = colored(' - Error: No entries in ', 'red')
     output_2 = colored(name, attrs=['bold'])
-    empty_output = output_1 + output_2
+    output_3 = '\n' + format_path(yaml_file)
+    empty_output = output_1 + output_2 + output_3
 
     if isinstance(collection, list):
         return empty_output
@@ -48,45 +50,50 @@ def format_invalid_entries_error(name, collection):
     else:
         output_1 = colored(' - Error: Unknown entry in ', 'red')
     output_2 = colored(name + '\n\n' + str(dict_entries), attrs=['bold'])
-    return output_1 + output_2
+    return output_1 + output_2 + output_3
 
-def format_missing_entry_error(entry, name):
+def format_missing_entry_error(entry, name, yaml_file):
     """Return formatted error string for missing entry in dictionary"""
     output_1 = colored(' - Error: Missing ', 'red')
     output_2 = colored(str(entry), attrs=['bold'])
     output_3 = colored(' in ', 'red')
     output_4 = colored(str(name), attrs=['bold'])
-    return output_1 + output_2 + output_3 + output_4
+    output_5 = '\n' + format_path(yaml_file)
+    return output_1 + output_2 + output_3 + output_4 + output_5
 
-def format_missing_imported_yaml_error(path):
+def format_missing_imported_yaml_error(path, yaml_file):
     """Return formatted error string for missing imported clowder.yaml"""
     output_1 = colored(' - Error: Missing imported file\n', 'red')
     output_2 = format_path(path)
-    return output_1 + output_2
+    output_3 = '\n' + format_path(yaml_file)
+    return output_1 + output_2 + output_3
 
-def format_not_list_error(name):
+def format_not_list_error(name, yaml_file):
     """Return formatted error string for value that's not a list"""
     output_1 = colored(' - Error: ', 'red')
     output_2 = colored(name, attrs=['bold'])
     output_3 = colored(' type should be ', 'red')
     output_4 = colored('list', 'yellow')
-    return output_1 + output_2 + output_3 + output_4
+    output_5 = '\n' + format_path(yaml_file)
+    return output_1 + output_2 + output_3 + output_4 + output_5
 
-def format_not_dictionary_error(name):
+def format_not_dictionary_error(name, yaml_file):
     """Return formatted error string for value that's not a dictionary"""
     output_1 = colored(' - Error: ', 'red')
     output_2 = colored(name, attrs=['bold'])
     output_3 = colored(' type should be ', 'red')
     output_4 = colored('dict', 'yellow')
-    return output_1 + output_2 + output_3 + output_4
+    output_5 = '\n' + format_path(yaml_file)
+    return output_1 + output_2 + output_3 + output_4 + output_5
 
-def format_not_string_error(name):
+def format_not_string_error(name, yaml_file):
     """Return formatted error string for value that's not a string"""
     output_1 = colored(' - Error: ', 'red')
     output_2 = colored(name, attrs=['bold'])
     output_3 = colored(' type should be ', 'red')
     output_4 = colored('str', 'yellow')
-    return output_1 + output_2 + output_3 + output_4
+    output_5 = '\n' + format_path(yaml_file)
+    return output_1 + output_2 + output_3 + output_4 + output_5
 
 def format_path(path):
     """Return formatted path"""
