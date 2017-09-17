@@ -33,6 +33,7 @@ class Command(object):
         self.versions = None
         self.group_names = ''
         self.project_names = ''
+        self._invalid_yaml = False
         # Load current clowder.yml config if it exists
         clowder_path = os.path.join(self.root_directory, '.clowder')
         if os.path.isdir(clowder_path):
@@ -51,7 +52,7 @@ class Command(object):
                 if self.clowder.get_all_project_names() is not None:
                     self.project_names = self.clowder.get_all_project_names()
             except:
-                pass
+                self._invalid_yaml = True
 
         # clowder argparse setup
         command_description = 'Utility for managing multiple git repositories'
@@ -74,7 +75,8 @@ class Command(object):
         self._configure_subparser_status(subparsers)
         # Argcomplete and arguments parsing
         argcomplete.autocomplete(parser)
-        print()
+        if not self._invalid_yaml:
+            print()
         # Register exit handler to display trailing newline
         self._display_trailing_newline = True
         atexit.register(self._exit_handler_formatter)
@@ -92,6 +94,8 @@ class Command(object):
 
     def clean(self):
         """clowder clean command"""
+        if self._invalid_yaml:
+            sys.exit(1)
         if self.clowder_repo is not None:
             self.clowder_repo.print_status()
             print()
@@ -106,6 +110,8 @@ class Command(object):
 
     def diff(self):
         """clowder diff command"""
+        if self._invalid_yaml:
+            sys.exit(1)
         if self.clowder_repo is not None:
             self.clowder_repo.print_status()
             print()
@@ -120,6 +126,8 @@ class Command(object):
 
     def forall(self):
         """clowder forall command"""
+        if self._invalid_yaml:
+            sys.exit(1)
         if self.clowder_repo is not None:
             self.clowder_repo.print_status()
             print()
@@ -138,6 +146,8 @@ class Command(object):
 
     def herd(self):
         """clowder herd command"""
+        if self._invalid_yaml:
+            sys.exit(1)
         if self.clowder_repo is not None:
             self.clowder_repo.print_status()
             print()
@@ -199,6 +209,8 @@ class Command(object):
 
     def prune(self):
         """clowder prune command"""
+        if self._invalid_yaml:
+            sys.exit(1)
         if self.clowder_repo is not None:
             self.clowder_repo.print_status()
             print()
@@ -307,6 +319,8 @@ class Command(object):
 
     def start(self):
         """clowder start command"""
+        if self._invalid_yaml:
+            sys.exit(1)
         if self.clowder_repo is not None:
             self.clowder_repo.print_status()
             print()
@@ -325,6 +339,8 @@ class Command(object):
 
     def stash(self):
         """clowder stash command"""
+        if self._invalid_yaml:
+            sys.exit(1)
         if self.clowder_repo is not None:
             self.clowder_repo.print_status()
             print()
