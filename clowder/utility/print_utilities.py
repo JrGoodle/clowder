@@ -16,7 +16,7 @@ def format_depth_error(depth):
     """Return formatted error string for invalid depth"""
     output_1 = colored(' - ', 'red')
     output_2 = colored(' must be a positive integer', 'red')
-    return output_1 + '\'depth\'' + output_2 + '\n   - depth: ' + str(depth)
+    return output_1 + 'depth' + output_2 + '\n   - depth: ' + str(depth)
 
 def format_missing_entry_error(entry, name):
     """Return formatted error string for missing entry in dictionary"""
@@ -26,11 +26,9 @@ def format_missing_entry_error(entry, name):
 
 def format_missing_imported_yaml_error(path):
     """Return formatted error string for missing imported clowder.yaml"""
-    output_1 = colored(' - Missing imported ', 'red')
-    output_2 = format_yaml_file('clowder.yaml')
-    output_3 = colored(' at ', 'red')
-    output_4 = format_path(path)
-    return output_1 + output_2 + output_3 + output_4
+    output_1 = colored(' - Missing imported file at ', 'red')
+    output_2 = format_path(path)
+    return output_1 + output_2
 
 def format_not_list_error(name):
     """Return formatted error string for value that's not a list"""
@@ -74,10 +72,11 @@ def format_unknown_entries_error(name, dictionary):
     if length is 0:
         return colored(' - No entries', 'red')
     elif length > 1:
-        unknown_entry_output = colored(' - Unknown entries in ', 'red')
+        output_1 = colored(' - Unknown entries in ', 'red')
     else:
-        unknown_entry_output = colored(' - Unknown entry in ', 'red')
-    return unknown_entry_output + name + '\n' + str(dict_entries)
+        output_1 = colored(' - Unknown entry in ', 'red')
+    output_2 = colored(':', 'red')
+    return output_1 + name + output_2 + '\n' + str(dict_entries)
 
 def format_yaml_file(yaml_file):
     """Return formatted string for clowder.yaml file"""
@@ -115,7 +114,8 @@ def print_recursive_import_error(depth):
     """Print error message for too many recursive imports"""
     clowder_output = format_yaml_file('clowder.yaml')
     print(clowder_output + ' has too many recursive imports')
-    print('Currently the max is ' + str(depth))
+    output = colored(' - Max number of imports: ', 'red')
+    print(output + str(depth))
 
 def print_save_version(version_name, yaml_file):
     """Print message for saving version"""
