@@ -7,7 +7,7 @@ from clowder.utility.clowder_utilities import execute_command
 from clowder.utility.print_utilities import (
     format_command,
     format_path,
-    print_error
+    print_command_failed_error
 )
 from clowder.utility.git_print_utilities import (
     format_project_string,
@@ -87,6 +87,25 @@ class Project(object):
             self._print_status()
             print(' - Discard current changes')
             git_reset_head(self.full_path())
+
+    def diff(self):
+        """Show git diff for project"""
+        self._print_status()
+        if not os.path.isdir(self.full_path()):
+            cprint(" - Project is missing\n", 'red')
+        else:
+            command = ['git', 'diff']
+            print(format_command(command))
+            return_code = execute_command(command, self.full_path())
+            if return_code != 0:
+                print_command_failed_error(command)
+                sys.exit(return_code)
+            command = ['git', 'diff', '--cached']
+            print(format_command(command))
+            return_code = execute_command(command, self.full_path())
+            if return_code != 0:
+                print_command_failed_error(command)
+                sys.exit(return_code)
 
     def exists(self):
         """Check if project exists on disk"""
@@ -207,12 +226,11 @@ class Project(object):
             cprint(" - Project is missing\n", 'red')
         else:
             print(format_command(command))
-            try:
-                execute_command(command.split(), self.full_path())
-            except Exception as err:
-                if not ignore_errors:
-                    print_error(err)
-                    sys.exit(1)
+            return_code = execute_command(command.split(), self.full_path())
+            if not ignore_errors:
+                if return_code != 0:
+                    print_command_failed_error(command)
+                    sys.exit(return_code)
 
     def start(self, branch, tracking):
         """Start a new feature branch"""

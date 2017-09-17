@@ -5,10 +5,16 @@ import subprocess
 
 def execute_command(cmd, path):
     """Execute command and display continuous output"""
-    for output in execute(cmd, path):
+    return subprocess.call(" ".join(cmd),
+                           shell=True,
+                           cwd=path)
+
+def execute_command_popen(cmd, path):
+    """Execute command and display continuous output"""
+    for output in execute_popen(cmd, path):
         print(output, end='')
 
-def execute(cmd, path):
+def execute_popen(cmd, path):
     """Execute command"""
     # https://stackoverflow.com/questions/4417546/constantly-print-subprocess-output-while-process-is-running
     process = subprocess.Popen(cmd, cwd=path,

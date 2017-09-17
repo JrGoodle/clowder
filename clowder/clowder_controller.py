@@ -68,6 +68,19 @@ class ClowderController(object):
         else:
             print(' - No changes to discard')
 
+    def diff_groups(self, group_names):
+        """Show git diff for groups"""
+        for group in self.groups:
+            if group.name in group_names:
+                group.diff()
+
+    def diff_projects(self, project_names):
+        """Show git diff for projects"""
+        for group in self.groups:
+            for project in group.projects:
+                if project.name in project_names:
+                    project.diff()
+
     def fetch_groups(self, group_names):
         """Print status for groups"""
         for group in self.groups:

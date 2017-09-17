@@ -61,6 +61,7 @@ class Command(object):
                             dest='clowder_version', help='print clowder version')
         subparsers = parser.add_subparsers(dest='clowder_command', metavar='SUBCOMMAND')
         self._configure_subparser_clean(subparsers)
+        self._configure_subparser_diff(subparsers)
         self._configure_subparser_forall(subparsers)
         self._configure_subparser_herd(subparsers)
         self._configure_subparser_init(subparsers)
@@ -100,6 +101,20 @@ class Command(object):
                 self.clowder.clean_groups(self.args.groups)
             else:
                 self.clowder.clean_projects(self.args.projects)
+        else:
+            exit_clowder_not_found()
+
+    def diff(self):
+        """clowder diff command"""
+        if self.clowder_repo is not None:
+            self.clowder_repo.print_status()
+            print()
+            if self.clowder is None:
+                sys.exit(1)
+            if self.args.projects is None:
+                self.clowder.diff_groups(self.args.groups)
+            else:
+                self.clowder.diff_projects(self.args.projects)
         else:
             exit_clowder_not_found()
 
@@ -349,7 +364,7 @@ class Command(object):
     def _configure_subparser_clean(self, subparsers):
         """Configure clowder clean subparser and arguments"""
         # clowder clean
-        clean_help = 'Discard current changes in all projects'
+        clean_help = 'Discard current changes in projects'
         parser_clean = subparsers.add_parser('clean', help=clean_help)
         group_clean = parser_clean.add_mutually_exclusive_group()
         if self.group_names is not '':
@@ -373,6 +388,34 @@ class Command(object):
             clean_help_projects = 'projects to clean'
         group_clean.add_argument('--projects', '-p', choices=self.project_names,
                                  nargs='+', help=clean_help_projects, metavar='PROJECT')
+
+    def _configure_subparser_diff(self, subparsers):
+        """Configure clowder diff subparser and arguments"""
+        # clowder diff
+        diff_help = 'Show git diff for projects'
+        parser_diff = subparsers.add_parser('diff', help=diff_help)
+        group_diff = parser_diff.add_mutually_exclusive_group()
+        if self.group_names is not '':
+            diff_help_groups = '''
+                               groups to diff:
+                               {0}
+                               '''
+            diff_help_groups = diff_help_groups.format(', '.join(self.group_names))
+        else:
+            diff_help_groups = 'groups to diff'
+        group_diff.add_argument('--groups', '-g', choices=self.group_names,
+                                default=self.group_names, nargs='+',
+                                help=diff_help_groups, metavar='GROUP')
+        if self.project_names is not '':
+            diff_help_projects = '''
+                                 projects to diff:
+                                 {0}
+                                 '''
+            diff_help_projects = diff_help_projects.format(', '.join(self.project_names))
+        else:
+            diff_help_projects = 'projects to diff'
+        group_diff.add_argument('--projects', '-p', choices=self.project_names,
+                                nargs='+', help=diff_help_projects, metavar='PROJECT')
 
     def _configure_subparser_forall(self, subparsers):
         """Configure clowder forall subparser and arguments"""
