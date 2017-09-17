@@ -22,6 +22,27 @@ def format_depth_error(depth):
     output_4 = colored('   - depth: ' + str(depth), attrs=['bold'])
     return output_1 + output_2 + output_3 + output_4
 
+def format_invalid_entries_error(name, collection):
+    """Return formatted error string for invalid entry in collection"""
+    if isinstance(collection, list):
+        output_1 = colored(' - Error: No entries in ', 'red')
+        output_2 = colored(name, attrs=['bold'])
+        return output_1 + output_2
+
+    dict_entries = ''.join('{}: {}\n'.format(key, val)
+                           for key, val in sorted(collection.items())).rstrip()
+    length = len(collection)
+    if length is 0:
+        output_1 = colored(' - Error: No entries in ', 'red')
+        output_2 = colored(name, attrs=['bold'])
+        return output_1 + output_2
+    elif length > 1:
+        output_1 = colored(' - Error: Unknown entries in ', 'red')
+    else:
+        output_1 = colored(' - Error: Unknown entry in ', 'red')
+    output_2 = colored(name + '\n\n' + str(dict_entries), attrs=['bold'])
+    return output_1 + output_2
+
 def format_missing_entry_error(entry, name):
     """Return formatted error string for missing entry in dictionary"""
     output_1 = colored(' - Error: Missing ', 'red')
@@ -75,27 +96,6 @@ def format_remote_string(remote):
 def format_version(version_name):
     """Return formatted string for clowder.yaml version"""
     return colored(version_name, attrs=['bold'])
-
-def format_invalid_entries_error(name, collection):
-    """Return formatted error string for invalid entry in collection"""
-    if isinstance(collection, list):
-        output_1 = colored(' - Error: No entries in ', 'red')
-        output_2 = colored(name, attrs=['bold'])
-        return output_1 + output_2
-
-    dict_entries = ''.join('{}: {}\n'.format(key, val)
-                           for key, val in sorted(collection.items())).rstrip()
-    length = len(collection)
-    if length is 0:
-        output_1 = colored(' - Error: No entries in ', 'red')
-        output_2 = colored(name, attrs=['bold'])
-        return output_1 + output_2
-    elif length > 1:
-        output_1 = colored(' - Error: Unknown entries in ', 'red')
-    else:
-        output_1 = colored(' - Error: Unknown entry in ', 'red')
-    output_2 = colored(name + '\n\n' + str(dict_entries), attrs=['bold'])
-    return output_1 + output_2
 
 def format_yaml_file(yaml_file):
     """Return formatted string for clowder.yaml file"""

@@ -22,8 +22,15 @@ from clowder.utility.print_utilities import (
 # pylint: disable=R0915
 
 def validate_yaml(parsed_yaml):
-    """Validate clowder.yaml without no import"""
+    """Validate clowder.yaml with no import"""
     try:
+        if not isinstance(parsed_yaml, dict):
+            error = format_not_dictionary_error(format_yaml_file('clowder.yaml'))
+            raise Exception(error)
+        if len(parsed_yaml) is 0:
+            error = format_invalid_entries_error(format_yaml_file('clowder.yaml'), parsed_yaml)
+            raise Exception(error)
+
         if 'defaults' not in parsed_yaml:
             error = format_missing_entry_error('defaults', format_yaml_file('clowder.yaml'))
             raise Exception(error)
@@ -53,6 +60,10 @@ def validate_yaml(parsed_yaml):
 def validate_yaml_import(parsed_yaml):
     """Validate clowder.yaml with an import"""
     try:
+        if not isinstance(parsed_yaml, dict):
+            error = format_not_dictionary_error(format_yaml_file('clowder.yaml'))
+            raise Exception(error)
+
         if 'import' not in parsed_yaml:
             error = format_missing_entry_error('import', format_yaml_file('clowder.yaml'))
             raise Exception(error)
@@ -60,6 +71,10 @@ def validate_yaml_import(parsed_yaml):
             error = format_not_string_error('import')
             raise Exception(error)
         del parsed_yaml['import']
+
+        if len(parsed_yaml) is 0:
+            error = format_invalid_entries_error(format_yaml_file('clowder.yaml'), parsed_yaml)
+            raise Exception(error)
 
         if 'defaults' in parsed_yaml:
             defaults = parsed_yaml['defaults']
