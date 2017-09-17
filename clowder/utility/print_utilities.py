@@ -22,6 +22,13 @@ def format_depth_error(depth):
     output_4 = colored('   - depth: ' + str(depth), attrs=['bold'])
     return output_1 + output_2 + output_3 + output_4
 
+def format_empty_yaml_error(yaml_file):
+    """Return formatted error string for empty clowder.yaml"""
+    output_1 = colored(' - Error: No entries in ', 'red')
+    output_2 = format_yaml_file('clowder.yaml')
+    output_3 = format_path(yaml_file)
+    return output_1 + output_2 + '\n' + output_3
+
 def format_invalid_entries_error(name, collection):
     """Return formatted error string for invalid entry in collection"""
     output_1 = colored(' - Error: No entries in ', 'red')
@@ -54,7 +61,7 @@ def format_missing_entry_error(entry, name):
 def format_missing_imported_yaml_error(path):
     """Return formatted error string for missing imported clowder.yaml"""
     output_1 = colored(' - Error: Missing imported file\n', 'red')
-    output_2 = colored(path, attrs=['bold'])
+    output_2 = format_path(path)
     return output_1 + output_2
 
 def format_not_list_error(name):
@@ -107,28 +114,38 @@ def print_command_failed_error(command):
     output_2 = format_command(command)
     return output_1 + output_2
 
-def print_empty_yaml_error(yaml_file):
-    """Print error message for empty clowder.yaml"""
-    output_1 = colored(' - Error: ', 'red')
-    output_2 = format_yaml_file('clowder.yaml')
-    output_3 = colored(' is empty\n', 'red')
-    output_4 = format_path(yaml_file)
-    print(output_1 + output_2 + output_3 + output_4)
-
 def print_error(error):
     """Print error message for generic exception"""
     print(str(error))
     print()
 
+def print_file_exists_error(path):
+    """Print error message for already existing file"""
+    output_1 = colored(' - Error: File already exists\n', 'red')
+    output_2 = format_path(path)
+    return output_1 + output_2
+
 def print_invalid_yaml_error():
     """Print error message for invalid clowder.yaml"""
     clowder_output = format_yaml_file('clowder.yaml')
-    print(clowder_output + ' appears to be invalid')
+    print('\n' + clowder_output + ' appears to be invalid')
 
 def print_missing_yaml_error():
     """Print error message for missing clowder.yaml"""
     clowder_output = format_yaml_file('clowder.yaml')
     print(clowder_output + ' appears to be missing')
+
+def print_open_file_error(path):
+    """Print error message for failing to open file"""
+    output_1 = colored(' - Error: Failed to open file\n', 'red')
+    output_2 = format_path(path)
+    return output_1 + output_2
+
+def print_save_file_error(path):
+    """Print error message for failing to save file"""
+    output_1 = colored(' - Error: Failed to save file\n', 'red')
+    output_2 = format_path(path)
+    return output_1 + output_2
 
 def print_recursive_import_error(depth):
     """Print error message for too many recursive imports"""
@@ -142,8 +159,8 @@ def print_recursive_import_error(depth):
 def print_save_version(version_name, yaml_file):
     """Print message for saving version"""
     output_1 = format_version(version_name)
-    output_2 = format_yaml_file(yaml_file)
-    print(' - Save version ' + output_1 + ' at '+ output_2)
+    output_2 = format_path(yaml_file)
+    print(' - Save version ' + output_1 + '\n'+ output_2)
 
 def print_save_version_exists_error(version_name, yaml_file):
     """Print error message previous existing saved version"""
