@@ -27,7 +27,6 @@ from clowder.utility.print_utilities import (
     format_command,
     format_path,
     print_command_failed_error,
-    print_error,
     remove_prefix
 )
 from clowder.utility.git_print_utilities import (
@@ -144,12 +143,10 @@ class ClowderRepo(object):
     def run_command(self, command):
         """Run command in clowder repo"""
         print(format_command(command))
-        try:
-            execute_command(command.split(), self.clowder_path)
-        except Exception as err:
+        return_code = execute_command(command.split(), self.clowder_path)
+        if return_code != 0:
             print_command_failed_error(command)
-            print_error(err)
-            sys.exit(1)
+            sys.exit(return_code)
 
     def status(self):
         """Print clowder repo git status"""

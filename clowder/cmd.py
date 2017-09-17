@@ -33,6 +33,7 @@ class Command(object):
         self.versions = None
         self.group_names = ''
         self.project_names = ''
+        self._invalid_yaml = False
         # Load current clowder.yml config if it exists
         clowder_path = os.path.join(self.root_directory, '.clowder')
         if os.path.isdir(clowder_path):
@@ -51,7 +52,7 @@ class Command(object):
                 if self.clowder.get_all_project_names() is not None:
                     self.project_names = self.clowder.get_all_project_names()
             except:
-                pass
+                self._invalid_yaml = True
 
         # clowder argparse setup
         command_description = 'Utility for managing multiple git repositories'
@@ -61,6 +62,7 @@ class Command(object):
                             dest='clowder_version', help='print clowder version')
         subparsers = parser.add_subparsers(dest='clowder_command', metavar='SUBCOMMAND')
         self._configure_subparser_clean(subparsers)
+        self._configure_subparser_diff(subparsers)
         self._configure_subparser_forall(subparsers)
         self._configure_subparser_herd(subparsers)
         self._configure_subparser_init(subparsers)
@@ -73,7 +75,8 @@ class Command(object):
         self._configure_subparser_status(subparsers)
         # Argcomplete and arguments parsing
         argcomplete.autocomplete(parser)
-        print()
+        if not self._invalid_yaml:
+            print()
         # Register exit handler to display trailing newline
         self._display_trailing_newline = True
         atexit.register(self._exit_handler_formatter)
@@ -91,6 +94,8 @@ class Command(object):
 
     def clean(self):
         """clowder clean command"""
+        if self._invalid_yaml:
+            sys.exit(1)
         if self.clowder_repo is not None:
             self.clowder_repo.print_status()
             print()
@@ -103,8 +108,26 @@ class Command(object):
         else:
             exit_clowder_not_found()
 
+    def diff(self):
+        """clowder diff command"""
+        if self._invalid_yaml:
+            sys.exit(1)
+        if self.clowder_repo is not None:
+            self.clowder_repo.print_status()
+            print()
+            if self.clowder is None:
+                sys.exit(1)
+            if self.args.projects is None:
+                self.clowder.diff_groups(self.args.groups)
+            else:
+                self.clowder.diff_projects(self.args.projects)
+        else:
+            exit_clowder_not_found()
+
     def forall(self):
         """clowder forall command"""
+        if self._invalid_yaml:
+            sys.exit(1)
         if self.clowder_repo is not None:
             self.clowder_repo.print_status()
             print()
@@ -123,6 +146,8 @@ class Command(object):
 
     def herd(self):
         """clowder herd command"""
+        if self._invalid_yaml:
+            sys.exit(1)
         if self.clowder_repo is not None:
             self.clowder_repo.print_status()
             print()
@@ -184,6 +209,8 @@ class Command(object):
 
     def prune(self):
         """clowder prune command"""
+        if self._invalid_yaml:
+            sys.exit(1)
         if self.clowder_repo is not None:
             self.clowder_repo.print_status()
             print()
@@ -292,6 +319,8 @@ class Command(object):
 
     def start(self):
         """clowder start command"""
+        if self._invalid_yaml:
+            sys.exit(1)
         if self.clowder_repo is not None:
             self.clowder_repo.print_status()
             print()
@@ -310,6 +339,8 @@ class Command(object):
 
     def stash(self):
         """clowder stash command"""
+        if self._invalid_yaml:
+            sys.exit(1)
         if self.clowder_repo is not None:
             self.clowder_repo.print_status()
             print()
@@ -338,9 +369,9 @@ class Command(object):
                     self.clowder.fetch_projects(self.args.projects)
                 print()
             if self.args.projects is None:
-                self.clowder.status_groups(self.args.groups, self.args.verbose)
+                self.clowder.status_groups(self.args.groups)
             else:
-                self.clowder.status_projects(self.args.projects, self.args.verbose)
+                self.clowder.status_projects(self.args.projects)
         else:
             exit_clowder_not_found()
 
@@ -349,7 +380,7 @@ class Command(object):
     def _configure_subparser_clean(self, subparsers):
         """Configure clowder clean subparser and arguments"""
         # clowder clean
-        clean_help = 'Discard current changes in all projects'
+        clean_help = 'Discard current changes in projects'
         parser_clean = subparsers.add_parser('clean', help=clean_help)
         group_clean = parser_clean.add_mutually_exclusive_group()
         if self.group_names is not '':
@@ -373,6 +404,34 @@ class Command(object):
             clean_help_projects = 'projects to clean'
         group_clean.add_argument('--projects', '-p', choices=self.project_names,
                                  nargs='+', help=clean_help_projects, metavar='PROJECT')
+
+    def _configure_subparser_diff(self, subparsers):
+        """Configure clowder diff subparser and arguments"""
+        # clowder diff
+        diff_help = 'Show git diff for projects'
+        parser_diff = subparsers.add_parser('diff', help=diff_help)
+        group_diff = parser_diff.add_mutually_exclusive_group()
+        if self.group_names is not '':
+            diff_help_groups = '''
+                               groups to diff:
+                               {0}
+                               '''
+            diff_help_groups = diff_help_groups.format(', '.join(self.group_names))
+        else:
+            diff_help_groups = 'groups to diff'
+        group_diff.add_argument('--groups', '-g', choices=self.group_names,
+                                default=self.group_names, nargs='+',
+                                help=diff_help_groups, metavar='GROUP')
+        if self.project_names is not '':
+            diff_help_projects = '''
+                                 projects to diff:
+                                 {0}
+                                 '''
+            diff_help_projects = diff_help_projects.format(', '.join(self.project_names))
+        else:
+            diff_help_projects = 'projects to diff'
+        group_diff.add_argument('--projects', '-p', choices=self.project_names,
+                                nargs='+', help=diff_help_projects, metavar='PROJECT')
 
     def _configure_subparser_forall(self, subparsers):
         """Configure clowder forall subparser and arguments"""
@@ -607,8 +666,6 @@ class Command(object):
         parser_status = subparsers.add_parser('status', help='Print project status')
         parser_status.add_argument('--fetch', '-f', action='store_true',
                                    help='fetch projects before printing status')
-        parser_status.add_argument('--verbose', '-v', action='store_true',
-                                   help='print detailed diff status')
         if self.group_names is not '':
             status_help_groups = '''
                                  groups to print status for:

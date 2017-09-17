@@ -185,7 +185,9 @@ test_invalid_yaml()
     for test in "${test_cases[@]}"
     do
         clowder link -v $test || exit 1
+        print_separator
         clowder herd && exit 1
+        print_separator
         rm clowder.yaml
     done
 }

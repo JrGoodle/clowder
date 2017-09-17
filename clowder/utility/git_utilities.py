@@ -6,9 +6,11 @@ from git import Repo
 from termcolor import colored, cprint
 from clowder.utility.clowder_utilities import execute_command
 from clowder.utility.print_utilities import (
+    format_command,
     format_path,
     format_ref_string,
     format_remote_string,
+    print_command_failed_error,
     print_error
 )
 
@@ -139,36 +141,35 @@ def git_existing_remote_branch(repo_path, branch, remote):
 def git_fetch_all(repo_path):
     """Fetch all upstream changes"""
     print(' - Fetch all upstream changes')
-    try:
-        execute_command(['git', 'fetch', '--all', '--prune', '--tags'], repo_path)
-    except Exception as err:
+    command = ['git', 'fetch', '--all', '--prune', '--tags']
+    return_code = execute_command(command, repo_path)
+    if return_code != 0:
         cprint(' - Failed to fetch', 'red')
-        print_error(err)
-        sys.exit(1)
+        print_command_failed_error(command)
+        sys.exit(return_code)
 
 def git_fetch_remote(repo_path, remote, depth):
     """Fetch from a specific remote"""
     remote_output = format_remote_string(remote)
     print(' - Fetch from ' + remote_output)
-    try:
-        if depth == 0:
-            execute_command(['git', 'fetch', remote, '--prune', '--tags'], repo_path)
-        else:
-            execute_command(['git', 'fetch', remote, '--depth', str(depth),
-                             '--prune', '--tags'], repo_path)
-    except Exception as err:
+    if depth == 0:
+        command = ['git', 'fetch', remote, '--prune', '--tags']
+    else:
+        command = ['git', 'fetch', remote, '--depth', str(depth), '--prune', '--tags']
+    return_code = execute_command(command, repo_path)
+    if return_code != 0:
         cprint(' - Failed to fetch remote ', remote_output, 'red')
-        print_error(err)
-        sys.exit(1)
+        print_command_failed_error(command)
+        sys.exit(return_code)
 
 def git_fetch_silent(repo_path):
     """Perform a git fetch"""
-    try:
-        execute_command(['git', 'fetch', '--all', '--prune', '--tags'], repo_path)
-    except Exception as err:
+    command = ['git', 'fetch', '--all', '--prune', '--tags']
+    return_code = execute_command(command, repo_path)
+    if return_code != 0:
         cprint(' - Failed to fetch', 'red')
-        print_error(err)
-        sys.exit(1)
+        print_command_failed_error(command)
+        sys.exit(return_code)
 
 def git_herd(repo_path, url, remote, ref, depth):
     """Check if there are untracked files"""
@@ -399,8 +400,13 @@ def git_stash(repo_path):
 
 def git_status(repo_path):
     """Print git status"""
-    repo = _repo(repo_path)
-    print(repo.git.status())
+    command = ['git', 'status', '-vv']
+    print(format_command(command))
+    return_code = execute_command(command, repo_path)
+    if return_code != 0:
+        cprint(' - Failed to print status', 'red')
+        print_command_failed_error(command)
+        sys.exit(return_code)
 
 def _checkout_branch(repo_path, branch, remote, depth):
     """Checkout branch, and create if it doesn't exist"""
@@ -506,36 +512,34 @@ def _create_checkout_branch(repo_path, branch, remote, depth):
     repo = _repo(repo_path)
     remote_output = format_remote_string(remote)
     print(' - Fetch from ' + remote_output)
-    try:
-        if depth == 0:
-            execute_command(['git', 'fetch', remote, '--prune', '--tags'], repo_path)
-        else:
-            execute_command(['git', 'fetch', remote, '--depth', str(depth),
-                             '--prune', '--tags'], repo_path)
-    except Exception as err:
+    if depth == 0:
+        command = ['git', 'fetch', remote, '--prune', '--tags']
+    else:
+        command = ['git', 'fetch', remote, '--depth', str(depth), '--prune', '--tags']
+    return_code = execute_command(command, repo_path)
+    if return_code != 0:
         message = colored(' - Failed to fetch from ', 'red')
         print(message + remote_output)
+        print_command_failed_error(command)
+        sys.exit(return_code)
+    branch_output = format_ref_string(branch)
+    try:
+        print(' - Create branch ' + branch_output)
+        default_branch = repo.create_head(branch)
+    except Exception as err:
+        message = colored(' - Failed to create branch ', 'red')
+        print(message + branch_output)
         print_error(err)
         sys.exit(1)
     else:
-        branch_output = format_ref_string(branch)
         try:
-            print(' - Create branch ' + branch_output)
-            default_branch = repo.create_head(branch)
+            print(' - Checkout branch ' + branch_output)
+            default_branch.checkout()
         except Exception as err:
-            message = colored(' - Failed to create branch ', 'red')
+            message = colored(' - Failed to checkout branch ', 'red')
             print(message + branch_output)
             print_error(err)
             sys.exit(1)
-        else:
-            try:
-                print(' - Checkout branch ' + branch_output)
-                default_branch.checkout()
-            except Exception as err:
-                message = colored(' - Failed to checkout branch ', 'red')
-                print(message + branch_output)
-                print_error(err)
-                sys.exit(1)
 
 def _create_local_tracking_branch(repo_path, branch, remote, depth):
     """Create and checkout tracking branch"""
@@ -544,19 +548,25 @@ def _create_local_tracking_branch(repo_path, branch, remote, depth):
     remote_output = format_remote_string(remote)
     try:
         origin = repo.remotes[remote]
-        if depth == 0:
-            print(' - Fetch from ' + remote_output)
-            execute_command(['git', 'fetch', remote, '--prune', '--tags'], repo_path)
-        else:
-            print(' - Fetch from ' + remote_output + ' ' + branch_output)
-            execute_command(['git', 'fetch', remote, branch, '--depth', str(depth),
-                             '--prune', '--tags'], repo_path)
     except Exception as err:
-        message = colored(' - Failed to fetch from ', 'red')
+        message = colored(' - No existing remote ', 'red')
         print(message + remote_output)
         print_error(err)
         sys.exit(1)
     else:
+        if depth == 0:
+            print(' - Fetch from ' + remote_output)
+            command = ['git', 'fetch', remote, '--prune', '--tags']
+        else:
+            print(' - Fetch from ' + remote_output + ' ' + branch_output)
+            command = ['git', 'fetch', remote, branch, '--depth', str(depth),
+                       '--prune', '--tags']
+        return_code = execute_command(command, repo_path)
+        if return_code != 0:
+            message = colored(' - Failed to fetch from ', 'red')
+            print(message + remote_output)
+            print_command_failed_error(command)
+            sys.exit(return_code)
         try:
             print(' - Create branch ' + branch_output)
             default_branch = repo.create_head(branch, origin.refs[branch])
@@ -590,20 +600,26 @@ def _create_remote_tracking_branch(repo_path, branch, remote, depth):
     repo = _repo(repo_path)
     branch_output = format_ref_string(branch)
     remote_output = format_remote_string(remote)
-    print(' - Fetch from ' + remote_output)
     try:
         origin = repo.remotes[remote]
-        if depth == 0:
-            execute_command(['git', 'fetch', remote, '--prune', '--tags'], repo_path)
-        else:
-            execute_command(['git', 'fetch', remote, '--depth', str(depth),
-                             '--prune', '--tags'], repo_path)
     except Exception as err:
-        message = colored(' - Failed to fetch from ', 'red')
+        message = colored(' - No existing remote ', 'red')
         print(message + remote_output)
         print_error(err)
         sys.exit(1)
     else:
+        print(' - Fetch from ' + remote_output)
+        if depth == 0:
+            command = ['git', 'fetch', remote, '--prune', '--tags']
+        else:
+            command = ['git', 'fetch', remote, '--depth', str(depth),
+                       '--prune', '--tags']
+        return_code = execute_command(command, repo_path)
+        if return_code != 0:
+            message = colored(' - Failed to fetch from ', 'red')
+            print(message + remote_output)
+            print_command_failed_error(command)
+            sys.exit(return_code)
         if branch in origin.refs:
             try:
                 repo.git.config('--get', 'branch.' + branch + '.merge')
@@ -639,23 +655,22 @@ def git_fetch_remote_ref(repo_path, remote, ref, depth):
     """Fetch from a specific remote ref"""
     remote_output = format_remote_string(remote)
     if depth == 0:
-        try:
-            print(' - Fetch from ' + remote_output)
-            execute_command(['git', 'fetch', remote, '--prune', '--tags'], repo_path)
-        except Exception as err:
-            cprint(' - Failed to fetch from ' + remote_output, 'red')
-            print_error(err)
-            sys.exit(1)
+        print(' - Fetch from ' + remote_output)
+        message = colored(' - Failed to fetch from ', 'red')
+        error = message + remote_output
+        command = ['git', 'fetch', remote, '--prune', '--tags']
     else:
-        try:
-            ref_output = format_ref_string(ref)
-            print(' - Fetch from ' + remote_output + ' ' + ref_output)
-            execute_command(['git', 'fetch', remote, _truncate_ref(ref),
-                             '--depth', str(depth), '--prune'], repo_path)
-        except Exception as err:
-            cprint(' - Failed to fetch from ' + remote_output + ' ' + ref_output, 'red')
-            print_error(err)
-            sys.exit(1)
+        ref_output = format_ref_string(ref)
+        print(' - Fetch from ' + remote_output + ' ' + ref_output)
+        message = colored(' - Failed to fetch from ', 'red')
+        error = message + remote_output + ' ' + ref_output
+        command = ['git', 'fetch', remote, _truncate_ref(ref),
+                   '--depth', str(depth), '--prune']
+    return_code = execute_command(command, repo_path)
+    if return_code != 0:
+        print(error)
+        print_command_failed_error(command)
+        sys.exit(return_code)
 
 def git_validate_repo_state(repo_path):
     """Validate repo state"""
