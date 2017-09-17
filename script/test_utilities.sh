@@ -182,9 +182,9 @@ test_forall()
     echo "TEST: Run forall command with --ignore-error"
     clowder forall -ic 'exit 1' || exit 1
     echo "TEST: Run forall script with error"
-    clowder forall -c "$TEST_SCRIPT_DIR/script/test_forall_script_error.sh" && exit 1
+    clowder forall -c "$TEST_SCRIPT_DIR/test_forall_script_error.sh" && exit 1
     echo "TEST: Run forall script with --ignore-error"
-    clowder forall -ic "$TEST_SCRIPT_DIR/script/test_forall_script_error.sh" || exit 1
+    clowder forall -ic "$TEST_SCRIPT_DIR/test_forall_script_error.sh" || exit 1
 }
 
 test_forall_projects()

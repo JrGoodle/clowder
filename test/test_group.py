@@ -27,7 +27,6 @@ class GroupTest(unittest.TestCase):
                       'projects': [{'name': 'jrgoodle/kit',
                                     'path': 'black-cats/kit',
                                     'depth': 0,
-                                    'forks': [],
                                     'ref': 'da5c3d32ec2c00aba4a9f7d822cce2c727f7f5dd',
                                     'remote': 'origin',
                                     'source': 'github'}]}

@@ -87,7 +87,6 @@ class ClowderController(object):
             if group.name in group_names:
                 for project in group.projects:
                     project.run(command, ignore_errors)
-        sys.exit() # Exit early to prevent printing extra newline
 
     def forall_projects_run(self, command, project_names, ignore_errors):
         """Runs command or script in all project directories of projects specified"""
@@ -95,7 +94,6 @@ class ClowderController(object):
             for project in group.projects:
                 if project.name in project_names:
                     project.run(command, ignore_errors)
-        sys.exit() # Exit early to prevent printing extra newline
 
     def get_all_group_names(self):
         """Returns all group names for current clowder.yaml"""
@@ -528,7 +526,7 @@ class ClowderController(object):
                                              '.clowder',
                                              'clowder.yaml')
                     if not os.path.isfile(yaml_file):
-                        error = format_missing_imported_yaml_error(imported_clowder)
+                        error = format_missing_imported_yaml_error(yaml_file)
                         raise Exception(error)
                 else:
                     yaml_file = os.path.join(self.root_directory,
@@ -537,7 +535,7 @@ class ClowderController(object):
                                              imported_clowder,
                                              'clowder.yaml')
                     if not os.path.isfile(yaml_file):
-                        error = format_missing_imported_yaml_error(imported_clowder)
+                        error = format_missing_imported_yaml_error(yaml_file)
                         raise Exception(error)
             except Exception as err:
                 print_invalid_yaml_error()
