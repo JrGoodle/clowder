@@ -32,10 +32,22 @@ def format_missing_imported_yaml_error(path):
     output_4 = format_path(path)
     return output_1 + output_2 + output_3 + output_4
 
-def format_not_array_error(name):
-    """Return formatted error string for no array"""
+def format_not_list_error(name):
+    """Return formatted error string for value that's not a list"""
     output_1 = colored(' - ', 'red')
-    output_2 = colored(' doesn\'t contain array', 'red')
+    output_2 = colored(' isn\'t a list', 'red')
+    return output_1 + name + output_2
+
+def format_not_dictionary_error(name):
+    """Return formatted error string for value that's not a dictionary"""
+    output_1 = colored(' - ', 'red')
+    output_2 = colored(' isn\'t a dictionary', 'red')
+    return output_1 + name + output_2
+
+def format_not_string_error(name):
+    """Return formatted error string for value that's not a string"""
+    output_1 = colored(' - ', 'red')
+    output_2 = colored(' isn\'t a string', 'red')
     return output_1 + name + output_2
 
 def format_path(path):

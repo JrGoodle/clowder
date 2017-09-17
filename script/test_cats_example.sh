@@ -178,20 +178,9 @@ test_invalid_yaml()
     print_separator
     echo "TEST: Fail herd with invalid yaml"
 
-    clowder repo checkout invalid-yaml || exit 1
-
-    test_cases=( 'missing-defaults' \
-                 'missing-sources' \
-                 'missing-groups' \
-                 'missing-default-arg' \
-                 'missing-source-arg' \
-                 'missing-group-arg' \
-                 'missing-project-arg' \
-                 'missing-fork-arg' \
-                 'unknown-defaults-arg' \
-                 'unknown-source-arg' \
-                 'unknown-project-arg' \
-                 'unknown-fork-arg' )
+    pushd .clowder/versions
+    test_cases=( $(ls -d test-*) )
+    popd
 
     for test in "${test_cases[@]}"
     do
@@ -199,10 +188,6 @@ test_invalid_yaml()
         clowder herd && exit 1
         rm clowder.yaml
     done
-
-    pushd .clowder
-    git checkout master
-    popd
 }
 test_invalid_yaml
 
@@ -558,24 +543,19 @@ test_clowder_import()
     pushd black-cats/sasha
     test_branch import-version
     popd
-
-    echo "TEST: Test clowder file with infinite import loop"
-    clowder link
-    clowder herd
-    clowder link -v import-loop-1
-    clowder herd && exit 1
 }
 test_clowder_import
 
 test_print()
 {
     print_separator
-    clowder repo checkout invalid-yaml || exit 1
+
+    clowder repo checkout master || exit 1
+
     clowder link -v 'missing-defaults'
     clowder herd
     print_help
 
-    clowder repo checkout master || exit 1
     clowder link
     clowder herd
     print_help
