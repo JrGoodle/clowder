@@ -38,14 +38,7 @@ class ClowderController(object):
         self._max_import_depth = 10
 
         yaml_file = os.path.join(self.root_directory, 'clowder.yaml')
-        if os.path.isfile(yaml_file):
-            with open(yaml_file) as file:
-                parsed_yaml = _parse_yaml(file)
-        else:
-            print()
-            print_missing_yaml_error()
-            print()
-            sys.exit(1)
+        parsed_yaml = _parse_yaml(yaml_file)
         self._validate_yaml(parsed_yaml, self._max_import_depth)
         self._load_yaml()
 
@@ -361,45 +354,33 @@ class ClowderController(object):
     def _load_yaml(self):
         """Load clowder from yaml file"""
         yaml_file = os.path.join(self.root_directory, 'clowder.yaml')
-        if os.path.isfile(yaml_file):
-            with open(yaml_file) as file:
-                parsed_yaml = _parse_yaml(file)
-                imported_yaml_files = []
-                while True:
-                    if 'import' in parsed_yaml:
-                        imported_yaml_files.append(parsed_yaml)
-                        imported_yaml = parsed_yaml['import']
-                        if imported_yaml == 'default':
-                            imported_yaml_file = os.path.join(self.root_directory,
-                                                              '.clowder',
-                                                              'clowder.yaml')
-                        else:
-                            imported_yaml_file = os.path.join(self.root_directory,
-                                                              '.clowder',
-                                                              'versions',
-                                                              imported_yaml,
-                                                              'clowder.yaml')
-                        if os.path.isfile(imported_yaml_file):
-                            with open(imported_yaml_file) as file:
-                                parsed_yaml = _parse_yaml(file)
-                        else:
-                            print_missing_yaml_error()
-                            print()
-                            sys.exit(1)
-                        if len(imported_yaml_files) > self._max_import_depth:
-                            print_recursive_import_error(self._max_import_depth)
-                            print()
-                            sys.exit(1)
-                    else:
-                        self._load_yaml_base(parsed_yaml)
-                        break
-                for parsed_yaml in reversed(imported_yaml_files):
-                    self._load_yaml_import(parsed_yaml)
-                self._load_yaml_combined()
-        else:
-            print_missing_yaml_error()
-            print()
-            sys.exit(1)
+        parsed_yaml = _parse_yaml(yaml_file)
+        imported_yaml_files = []
+        while True:
+            if 'import' in parsed_yaml:
+                imported_yaml_files.append(parsed_yaml)
+                imported_yaml = parsed_yaml['import']
+                if imported_yaml == 'default':
+                    imported_yaml_file = os.path.join(self.root_directory,
+                                                      '.clowder',
+                                                      'clowder.yaml')
+                else:
+                    imported_yaml_file = os.path.join(self.root_directory,
+                                                      '.clowder',
+                                                      'versions',
+                                                      imported_yaml,
+                                                      'clowder.yaml')
+                parsed_yaml = _parse_yaml(imported_yaml_file)
+                if len(imported_yaml_files) > self._max_import_depth:
+                    print_recursive_import_error(self._max_import_depth)
+                    print()
+                    sys.exit(1)
+            else:
+                self._load_yaml_base(parsed_yaml)
+                break
+        for parsed_yaml in reversed(imported_yaml_files):
+            self._load_yaml_import(parsed_yaml)
+        self._load_yaml_combined()
 
     def _load_yaml_base(self, parsed_yaml):
         """Load clowder from base yaml file"""
@@ -554,9 +535,8 @@ class ClowderController(object):
                 print_invalid_yaml_error()
                 print_error(err)
                 sys.exit(1)
-            with open(yaml_file) as file:
-                parsed_yaml_import = _parse_yaml(file)
-                self._validate_yaml(parsed_yaml_import, max_import_depth - 1)
+            parsed_yaml_import = _parse_yaml(yaml_file)
+            self._validate_yaml(parsed_yaml_import, max_import_depth - 1)
 
 def _load_yaml_import_projects(imported_group, group):
     """Load clowder projects from imported group"""
@@ -592,9 +572,18 @@ def _load_yaml_import_projects(imported_group, group):
 
 def _parse_yaml(yaml_file):
     """Parse yaml file"""
-    parsed_yaml = yaml.safe_load(yaml_file)
-    if parsed_yaml is None:
-        print_invalid_yaml_error()
-        print_empty_yaml_error(yaml_file)
+    if os.path.isfile(yaml_file):
+        with open(yaml_file) as file:
+            parsed_yaml = yaml.safe_load(file)
+            if parsed_yaml is None:
+                print()
+                print_invalid_yaml_error()
+                print_empty_yaml_error(yaml_file)
+                sys.exit(1)
+            else:
+                return parsed_yaml
     else:
-        return parsed_yaml
+        print()
+        print_missing_yaml_error()
+        print()
+        sys.exit(1)

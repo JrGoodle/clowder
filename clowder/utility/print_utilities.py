@@ -24,18 +24,18 @@ def format_depth_error(depth):
 
 def format_invalid_entries_error(name, collection):
     """Return formatted error string for invalid entry in collection"""
+    output_1 = colored(' - Error: No entries in ', 'red')
+    output_2 = colored(name, attrs=['bold'])
+    empty_output = output_1 + output_2
+
     if isinstance(collection, list):
-        output_1 = colored(' - Error: No entries in ', 'red')
-        output_2 = colored(name, attrs=['bold'])
-        return output_1 + output_2
+        return empty_output
 
     dict_entries = ''.join('{}: {}\n'.format(key, val)
                            for key, val in sorted(collection.items())).rstrip()
     length = len(collection)
     if length is 0:
-        output_1 = colored(' - Error: No entries in ', 'red')
-        output_2 = colored(name, attrs=['bold'])
-        return output_1 + output_2
+        return empty_output
     elif length > 1:
         output_1 = colored(' - Error: Unknown entries in ', 'red')
     else:
@@ -111,9 +111,9 @@ def print_empty_yaml_error(yaml_file):
     """Print error message for empty clowder.yaml"""
     output_1 = colored(' - Error: ', 'red')
     output_2 = format_yaml_file('clowder.yaml')
-    output_3 = colored(' is empty ', 'red')
-    output_4 = colored('    ' + yaml_file, attrs=['bold'])
-    return output_1 + output_2 + output_3 + output_4
+    output_3 = colored(' is empty\n', 'red')
+    output_4 = format_path(yaml_file)
+    print(output_1 + output_2 + output_3 + output_4)
 
 def print_error(error):
     """Print error message for generic exception"""
