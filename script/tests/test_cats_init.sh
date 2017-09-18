@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+pushd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
+
+. test_utilities.sh
+
 test_init_herd()
 {
     print_separator
@@ -36,3 +40,5 @@ test_init_herd_version()
     clowder herd || exit 1
 }
 test_init_herd_version
+
+popd

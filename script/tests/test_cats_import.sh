@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+pushd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
+
+. test_utilities.sh
+
 test_clowder_import()
 {
     print_separator
@@ -41,3 +45,5 @@ test_clowder_import()
     popd
 }
 test_clowder_import
+
+popd

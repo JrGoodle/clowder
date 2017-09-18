@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+pushd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
+
+. test_utilities.sh
+
 test_status_groups()
 {
     print_separator
@@ -19,3 +23,5 @@ test_status_projects()
     clowder status -f -p "$@" || exit 1
 }
 test_status_projects 'jrgoodle/mu' 'jrgoodle/duke'
+
+popd

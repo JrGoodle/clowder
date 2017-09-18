@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-pushd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+pushd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 
-. ./test_utilities.sh
+. test_utilities.sh
 
 pushd "$1"
 
@@ -71,5 +71,7 @@ clowder stash -h
 print_separator
 echo "TEST: clowder status -h"
 clowder status -h
+
+popd
 
 popd

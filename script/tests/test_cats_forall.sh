@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+pushd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
+
+. test_utilities.sh
+
 test_forall()
 {
     print_separator
@@ -31,3 +35,5 @@ test_forall_projects()
     clowder forall -c "$TEST_SCRIPT_DIR/tests/test_forall_script.sh" -p "$@" || exit 1
 }
 test_forall_projects 'jrgoodle/kit' 'jrgoodle/kishka'
+
+popd

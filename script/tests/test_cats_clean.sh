@@ -1,10 +1,14 @@
 #!/usr/bin/env bash
 
+pushd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
+
+. test_utilities.sh
+
 export projects=( 'black-cats/kit' \
                   'black-cats/kishka' \
                   'black-cats/sasha' \
                   'black-cats/jules' )
-                  
+
 test_clean()
 {
     print_separator
@@ -44,3 +48,5 @@ test_clean_missing_directories()
     clowder herd || exit 1
 }
 test_clean_missing_directories 'mu' 'duke'
+
+popd

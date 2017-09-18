@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+pushd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
+
+. test_utilities.sh
+
 test_start()
 {
     print_separator
@@ -176,3 +180,5 @@ if [ -z "$TRAVIS_OS_NAME" ]; then
     }
     test_start_tracking
 fi
+
+popd
