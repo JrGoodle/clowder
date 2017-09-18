@@ -211,6 +211,14 @@ test_stash_projects()
 }
 test_stash_projects 'llvm-mirror/clang'
 
+test_stash_missing_directories()
+{
+    rm -rf "$@"
+    echo "TEST: Stash all changes when directories are missing"
+    clowder stash || exit 1
+    clowder status || exit 1
+    clowder herd || exit 1
+}
 test_stash_missing_directories 'zorg'
 
 test_save_missing_directories()

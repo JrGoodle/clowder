@@ -152,15 +152,6 @@ test_status_projects()
     clowder status -f -p "$@" || exit 1
 }
 
-test_stash_missing_directories()
-{
-    rm -rf "$@"
-    echo "TEST: Stash all changes when directories are missing"
-    clowder stash || exit 1
-    clowder status || exit 1
-    clowder herd || exit 1
-}
-
 print_help()
 {
     print_separator
