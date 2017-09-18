@@ -760,11 +760,11 @@ test_print()
 
     clowder link -v 'missing-defaults'
     clowder herd
-    print_help
+    "$TEST_SCRIPT_DIR/tests/test.sh" "$CATS_EXAMPLE_DIR"
 
     clowder link
     clowder herd
-    print_help
+    "$TEST_SCRIPT_DIR/tests/test.sh" "$CATS_EXAMPLE_DIR"
 }
 test_print
 
