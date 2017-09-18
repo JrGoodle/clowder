@@ -67,8 +67,19 @@ setup_old_repos()
 
 test_clowder_version
 
+test_init_herd()
+{
+    print_separator
+    echo "TEST: Normal herd after init"
+    "$LLVM_EXAMPLE_DIR/clean.sh"
+    "$LLVM_EXAMPLE_DIR/init.sh"  || exit 1
+    clowder herd  || exit 1
+    clowder status -f || exit 1
+}
 test_init_herd
+
 print_separator
+
 echo "TEST: Check current branches are on master"
 for project in "${projects[@]}"; do
 	pushd $project

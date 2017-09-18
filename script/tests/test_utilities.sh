@@ -67,16 +67,6 @@ test_no_tracking_branch_exists()
     git config --get branch.$1.merge && exit 1
 }
 
-test_init_herd()
-{
-    print_separator
-    echo "TEST: Normal herd after init"
-    ./clean.sh
-    ./init.sh  || exit 1
-    clowder herd  || exit 1
-    clowder status -f || exit 1
-}
-
 test_clowder_version()
 {
     print_separator
