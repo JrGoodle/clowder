@@ -23,12 +23,30 @@ The primary purpose of `clowder` is synchronization of multiple repositories, so
 
 ### Requirements
 
-#### [Python 3](https://www.python.org/downloads/)
+- [Python 3](https://www.python.org/downloads/)
 
-- macOS with [Homebrew](https://brew.sh)
-    ```bash
-    $ brew install python3
-    ```
+#### macOS
+
+Installation with [Homebrew](https://brew.sh)
+
+```bash
+$ brew install python3
+```
+
+#### Ubuntu 16.04
+
+```bash
+$ sudo apt install git
+$ sudo apt install python3-pip
+```
+
+#### Windows
+
+Install the following dependencies in [Cygwin](https://cygwin.com/install.html)
+
+- git
+- python3-pip
+- python3
 
 ### Installation
 
@@ -40,7 +58,14 @@ $ pip3 install clowder-repo
 
 #### Shell Profile Customizations
 
-To make `clowder` available in your shell environment, it may be necessary to add the Python 3 bin directory to your environment's `PATH` variable
+For terminal autocompletion
+
+```bash
+# add to bash profile
+command -v clowder >/dev/null 2>&1 && eval "$(register-python-argcomplete clowder)"
+```
+
+To make `clowder` available in your shell environment, it may be necessary to add the Python 3 bin directory to your environment's `PATH` variable. This is likely only be necessary if you've previously installed `clowder` for development
 
 ```bash
 # macOS and Python 3.4
@@ -48,13 +73,6 @@ $ echo "$(dirname $(which python3))"
 > /Library/Frameworks/Python.framework/Versions/3.4/bin
 # add to bash profile
 export PATH="/Library/Frameworks/Python.framework/Versions/3.4/bin:$PATH"
-```
-
-For terminal autocompletion
-
-```bash
-# add to bash profile
-command -v clowder >/dev/null 2>&1 && eval "$(register-python-argcomplete clowder)"
 ```
 
 ### Usage
@@ -103,6 +121,7 @@ For more example projects, see the [examples directory](https://github.com/JrGoo
 
 ```bash
 $ clowder clean # Discard any changes in projects
+$ clowder diff # Print git diff for all projects
 $ clowder forall -c "git status" # Run command in all project directories
 $ clowder link -v 0.1 # Set clowder.yaml symlink to a previously saved version
 $ clowder repo run 'git status' # Run command in .clowder directory

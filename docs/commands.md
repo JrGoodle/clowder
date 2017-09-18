@@ -1,6 +1,7 @@
 ## `clowder` Commands
 
 - [clowder clean](https://github.com/JrGoodle/clowder/blob/master/docs/commands.md#clean)
+- [clowder diff](https://github.com/JrGoodle/clowder/blob/master/docs/commands.md#diff)
 - [clowder forall](https://github.com/JrGoodle/clowder/blob/master/docs/commands.md#forall)
 - [clowder herd](https://github.com/JrGoodle/clowder/blob/master/docs/commands.md#herd)
 - [clowder init](https://github.com/JrGoodle/clowder/blob/master/docs/commands.md#init)
@@ -36,13 +37,13 @@ $ clowder clean -p llvm-mirror/clang
 Equivalent to running `git status -vv` in project directories
 
 ```bash
-# Print diff status for all projects
+# Print git diff status for all projects
 $ clowder diff
 
-# Print diff status for projects in clang group
+# Print git diff status for projects in clang group
 $ clowder diff -g clang
 
-# Print diff status for clang project
+# Print git diff status for clang project
 $ clowder diff -p llvm-mirror/clang
 ```
 
