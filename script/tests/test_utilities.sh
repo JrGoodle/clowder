@@ -2,14 +2,6 @@
 
 TEST_SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-make_dirty_clowder_repo()
-{
-    echo "TEST: Make dirty clowder repo"
-    clowder repo run 'touch newfile' || exit 1
-    clowder repo add newfile || exit 1
-    clowder status -f || exit 1
-}
-
 make_dirty_repos()
 {
     echo "TEST: Make dirty repos"
@@ -108,16 +100,6 @@ test_init_herd()
     ./init.sh  || exit 1
     clowder herd  || exit 1
     clowder status -f || exit 1
-}
-
-test_init_herd_version()
-{
-    print_separator
-    echo "TEST: Herd version after init"
-    ./clean.sh || exit 1
-    ./init.sh || exit 1
-    clowder link -v v0.1 || exit 1
-    clowder herd || exit 1
 }
 
 test_clowder_version()

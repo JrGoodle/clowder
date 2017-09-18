@@ -6,20 +6,23 @@ echo 'TEST: cats example test script'
 
 cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 
+SCRIPTS_DIR="$(pwd)/.."
+CATS_EXAMPLE_DIR="$(pwd)/../../examples/cats"
+
 if [ -n "$TRAVIS_OS_NAME" ]; then
     if [ "$TRAVIS_OS_NAME" = "osx" ]; then
-        ./unittests.sh || exit 1
+        "$SCRIPTS_DIR/unittests.sh" || exit 1
     fi
 fi
 
 . test_utilities.sh
-../examples/cats/clean.sh
+"$CATS_EXAMPLE_DIR/clean.sh"
 
 if [ -n "$TRAVIS_OS_NAME" ]; then
-    cd ../examples/cats || exit 1
+    cd "$CATS_EXAMPLE_DIR" || exit 1
 else
     rm -rf "$HOME/.clowder_tests"
-    mkdir -p "$HOME/.clowder_tests" && cp -r ../examples/cats "$HOME/.clowder_tests/cats"
+    mkdir -p "$HOME/.clowder_tests" && cp -r "$CATS_EXAMPLE_DIR" "$HOME/.clowder_tests/cats"
     cd "$HOME/.clowder_tests/cats" || exit 1
 fi
 
@@ -45,7 +48,18 @@ test_init_branch
 
 test_command
 test_clowder_version
+
+test_init_herd_version()
+{
+    print_separator
+    echo "TEST: Herd version after init"
+    "$CATS_EXAMPLE_DIR/clean.sh" || exit 1
+    "$CATS_EXAMPLE_DIR/init.sh" || exit 1
+    clowder link -v v0.1 || exit 1
+    clowder herd || exit 1
+}
 test_init_herd_version
+
 test_branch_version "${projects[@]}"
 test_init_herd
 
