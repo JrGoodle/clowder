@@ -151,7 +151,22 @@ test_clean_missing_directories()
 }
 test_clean_missing_directories 'zorg'
 
+test_herd_detached_heads()
+{
+    print_separator
+    echo "TEST: Create detached HEADs"
+    for project in "$@"
+    do
+    	pushd $project
+        git checkout master~2
+        popd
+    done
+    clowder status || exit 1
+    echo "TEST: Successfully herd with detached HEADs"
+    clowder herd || exit 1
+}
 test_herd_detached_heads "${projects[@]}"
+
 test_forall 'clang' 'llvm'
 
 test_forall_projects()

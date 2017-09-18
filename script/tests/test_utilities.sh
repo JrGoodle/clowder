@@ -127,21 +127,6 @@ test_herd()
     clowder herd || exit 1
 }
 
-test_herd_detached_heads()
-{
-    print_separator
-    echo "TEST: Create detached HEADs"
-    for project in "$@"
-    do
-    	pushd $project
-        git checkout master~2
-        popd
-    done
-    clowder status || exit 1
-    echo "TEST: Successfully herd with detached HEADs"
-    clowder herd || exit 1
-}
-
 test_herd_dirty_repos()
 {
     print_separator
