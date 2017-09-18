@@ -110,7 +110,16 @@ test_branches()
 }
 test_branches
 
+test_status_groups()
+{
+    print_separator
+    echo "TEST: Test status for specific groups"
+    clowder status -g "$@" || exit 1
+    echo "TEST: Test status for specific groups with fetching"
+    clowder status -f -g "$@" || exit 1
+}
 test_status_groups 'black-cats'
+
 test_status_projects 'jrgoodle/mu' 'jrgoodle/duke'
 
 test_clean()
