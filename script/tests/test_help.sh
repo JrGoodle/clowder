@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+pushd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+. ./test_utilities.sh
+
 pushd "$1"
 
 print_separator
