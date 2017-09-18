@@ -89,9 +89,16 @@ test_herd_old_repos
 
 test_status_groups 'clang' 'llvm'
 test_status_projects 'llvm-mirror/llvm' 'llvm-mirror/clang'
-# test_herd 'llvm/tools/clang/tools/extra' \
-#           'llvm/projects/dragonegg'
-test_branch_version "${projects[@]}"
+
+print_separator
+clowder forall -c 'git checkout -b v0.1'
+echo "TEST: Check current branches"
+for project in "${projects[@]}"; do
+	pushd $project
+    test_branch v0.1
+    popd
+done
+
 test_herd_dirty_repos "${projects[@]}"
 
 test_clean()

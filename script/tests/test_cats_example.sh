@@ -60,7 +60,15 @@ test_init_herd_version()
 }
 test_init_herd_version
 
-test_branch_version "${projects[@]}"
+print_separator
+clowder forall -c 'git checkout -b v0.1'
+echo "TEST: Check current branches"
+for project in "${projects[@]}"; do
+	pushd $project
+    test_branch v0.1
+    popd
+done
+
 test_init_herd
 
 test_branches()
