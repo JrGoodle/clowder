@@ -296,6 +296,12 @@ test_no_versions()
 }
 test_no_versions
 
+test_herd_projects()
+{
+    print_separator
+    echo "TEST: Successfully herd specific projects"
+    clowder herd -p "$@" || exit 1
+}
 test_herd_projects 'jrgoodle/kit' 'jrgoodle/kishka'
 
 test_invalid_yaml()

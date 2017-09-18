@@ -232,6 +232,12 @@ test_save_missing_directories()
 test_save_missing_directories 'llvm/tools/clang/tools/extra' \
                               'llvm/projects/dragonegg'
 
+test_herd_projects()
+{
+    print_separator
+    echo "TEST: Successfully herd specific projects"
+    clowder herd -p "$@" || exit 1
+}
 test_herd_projects 'llvm-mirror/lld'
 
 test_start()
