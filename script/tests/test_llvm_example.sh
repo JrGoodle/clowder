@@ -169,7 +169,7 @@ test_stash_projects()
 test_stash_projects 'llvm-mirror/clang'
 
 test_stash_missing_directories 'zorg'
-# test_herd_groups 'clang' 'llvm'
+
 test_save_missing_directories 'llvm/tools/clang/tools/extra' \
                               'llvm/projects/dragonegg'
 test_herd_projects 'llvm-mirror/lld'

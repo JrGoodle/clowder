@@ -173,6 +173,18 @@ test_stash_projects()
 test_stash_projects 'jrgoodle/kit'
 
 test_stash_missing_directories 'mu' 'duke'
+
+test_herd_groups()
+{
+    print_separator
+    echo "TEST: Herd saved version to test herding select groups"
+    clowder link -v v0.1 || exit 1
+    clowder herd || exit 1
+    print_separator
+    echo "TEST: Herd only specific groups"
+    clowder herd -g "$@" || exit 1
+    clowder status || exit 1
+}
 test_herd_groups 'cats'
 
 test_herd_missing_branches()

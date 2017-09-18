@@ -230,18 +230,6 @@ test_stash_missing_directories()
     clowder herd || exit 1
 }
 
-test_herd_groups()
-{
-    print_separator
-    echo "TEST: Herd saved version to test herding select groups"
-    clowder link -v v0.1 || exit 1
-    clowder herd || exit 1
-    print_separator
-    echo "TEST: Herd only specific groups"
-    clowder herd -g "$@" || exit 1
-    clowder status || exit 1
-}
-
 print_help()
 {
     print_separator
