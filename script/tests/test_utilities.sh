@@ -126,15 +126,6 @@ test_herd_dirty_repos()
     clowder herd || exit 1
 }
 
-test_status_projects()
-{
-    print_separator
-    echo "TEST: Test status for specific projects"
-    clowder status -p "$@" || exit 1
-    echo "TEST: Test status for specific projects with fetching"
-    clowder status -f -p "$@" || exit 1
-}
-
 print_help()
 {
     print_separator

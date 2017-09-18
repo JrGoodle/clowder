@@ -120,6 +120,14 @@ test_status_groups()
 }
 test_status_groups 'black-cats'
 
+test_status_projects()
+{
+    print_separator
+    echo "TEST: Test status for specific projects"
+    clowder status -p "$@" || exit 1
+    echo "TEST: Test status for specific projects with fetching"
+    clowder status -f -p "$@" || exit 1
+}
 test_status_projects 'jrgoodle/mu' 'jrgoodle/duke'
 
 test_clean()
