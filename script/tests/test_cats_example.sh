@@ -225,6 +225,14 @@ test_herd_missing_branches()
 }
 test_herd_missing_branches
 
+test_save_missing_directories()
+{
+    print_separator
+    echo "TEST: Remove directories"
+    rm -rf "$@"
+    echo "TEST: Fail saving version with missing directories"
+    clowder save missing-directories && exit 1
+}
 test_save_missing_directories 'duke' 'mu'
 
 test_no_versions()

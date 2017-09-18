@@ -189,8 +189,17 @@ test_stash_projects 'llvm-mirror/clang'
 
 test_stash_missing_directories 'zorg'
 
+test_save_missing_directories()
+{
+    print_separator
+    echo "TEST: Remove directories"
+    rm -rf "$@"
+    echo "TEST: Fail saving version with missing directories"
+    clowder save missing-directories && exit 1
+}
 test_save_missing_directories 'llvm/tools/clang/tools/extra' \
                               'llvm/projects/dragonegg'
+
 test_herd_projects 'llvm-mirror/lld'
 
 test_start()

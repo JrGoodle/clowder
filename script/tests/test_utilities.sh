@@ -91,15 +91,6 @@ test_save()
     clowder status || exit 1
 }
 
-test_save_missing_directories()
-{
-    print_separator
-    echo "TEST: Remove directories"
-    rm -rf "$@"
-    echo "TEST: Fail saving version with missing directories"
-    clowder save missing-directories && exit 1
-}
-
 test_forall()
 {
     print_separator
