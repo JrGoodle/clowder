@@ -4,26 +4,33 @@
 
 echo 'TEST: cats example test script'
 
-cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
+pushd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 
-SCRIPTS_DIR="$(pwd)/.."
-CATS_EXAMPLE_DIR="$(pwd)/../../examples/cats"
+export EXAMPLES_DIR
+export TEST_SCRIPT_DIR
+export CATS_EXAMPLE_DIR
+TEST_SCRIPT_DIR="$(pwd)/.."
+EXAMPLES_DIR="$(pwd)/../../examples"
+if [ -n "$TRAVIS_OS_NAME" ]; then
+    CATS_EXAMPLE_DIR="$(pwd)/../../examples/cats"
+else
+    CATS_EXAMPLE_DIR="$HOME/.clowder_tests/cats"
+fi
 
 if [ -n "$TRAVIS_OS_NAME" ]; then
     if [ "$TRAVIS_OS_NAME" = "osx" ]; then
-        "$SCRIPTS_DIR/unittests.sh" || exit 1
+        "$TEST_SCRIPT_DIR/unittests.sh" || exit 1
     fi
 fi
 
 . test_utilities.sh
-"$CATS_EXAMPLE_DIR/clean.sh"
 
 if [ -n "$TRAVIS_OS_NAME" ]; then
     cd "$CATS_EXAMPLE_DIR" || exit 1
 else
     rm -rf "$HOME/.clowder_tests"
-    mkdir -p "$HOME/.clowder_tests" && cp -r "$CATS_EXAMPLE_DIR" "$HOME/.clowder_tests/cats"
-    cd "$HOME/.clowder_tests/cats" || exit 1
+    mkdir -p "$HOME/.clowder_tests" && cp -r "$EXAMPLES_DIR/cats" "$CATS_EXAMPLE_DIR"
+    cd "$CATS_EXAMPLE_DIR" || exit 1
 fi
 
 export projects=( 'black-cats/kit' \
@@ -224,19 +231,19 @@ test_forall()
     echo "TEST: Run forall command"
     clowder forall -c 'git status' || exit 1
     echo "TEST: Run forall script"
-    clowder forall -c "$TEST_SCRIPT_DIR/test_forall_script.sh" || exit 1
+    clowder forall -c "$TEST_SCRIPT_DIR/tests/test_forall_script.sh" || exit 1
     echo "TEST: Run forall command for specific groups"
     clowder forall -c 'git status' -g "$@" || exit 1
     echo "TEST: Run forall script for specific groups"
-    clowder forall -c "$TEST_SCRIPT_DIR/test_forall_script.sh" -g "$@" || exit 1
+    clowder forall -c "$TEST_SCRIPT_DIR/tests/test_forall_script.sh" -g "$@" || exit 1
     echo "TEST: Run forall command with error"
     clowder forall -c 'exit 1' && exit 1
     echo "TEST: Run forall command with --ignore-error"
     clowder forall -ic 'exit 1' || exit 1
     echo "TEST: Run forall script with error"
-    clowder forall -c "$TEST_SCRIPT_DIR/test_forall_script_error.sh" && exit 1
+    clowder forall -c "$TEST_SCRIPT_DIR/tests/test_forall_script_error.sh" && exit 1
     echo "TEST: Run forall script with --ignore-error"
-    clowder forall -ic "$TEST_SCRIPT_DIR/test_forall_script_error.sh" || exit 1
+    clowder forall -ic "$TEST_SCRIPT_DIR/tests/test_forall_script_error.sh" || exit 1
 }
 test_forall 'cats'
 
@@ -246,7 +253,7 @@ test_forall_projects()
     echo "TEST: Run forall command for specific projects"
     clowder forall -c 'git status' -p "$@" || exit 1
     echo "TEST: Run forall script for specific projects"
-    clowder forall -c "$TEST_SCRIPT_DIR/test_forall_script.sh" -p "$@" || exit 1
+    clowder forall -c "$TEST_SCRIPT_DIR/tests/test_forall_script.sh" -p "$@" || exit 1
 }
 test_forall_projects 'jrgoodle/kit' 'jrgoodle/kishka'
 
@@ -760,3 +767,5 @@ test_print()
     print_help
 }
 test_print
+
+popd

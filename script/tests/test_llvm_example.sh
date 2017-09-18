@@ -4,20 +4,27 @@
 
 echo 'TEST: llvm projects example test script'
 
-cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
+pushd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 
-SCRIPTS_DIR="$(pwd)/.."
-LLVM_EXAMPLE_DIR="$(pwd)/../../examples/llvm-projects"
+export EXAMPLES_DIR
+export TEST_SCRIPT_DIR
+export LLVM_EXAMPLE_DIR
+TEST_SCRIPT_DIR="$(pwd)/.."
+EXAMPLES_DIR="$(pwd)/../../examples"
+if [ -n "$TRAVIS_OS_NAME" ]; then
+    LLVM_EXAMPLE_DIR="$(pwd)/../../examples/llvm-projects"
+else
+    LLVM_EXAMPLE_DIR="$HOME/.clowder_tests/llvm-projects"
+fi
 
 . test_utilities.sh
-"$LLVM_EXAMPLE_DIR/clean.sh"
 
 if [ -n "$TRAVIS_OS_NAME" ]; then
     cd "$LLVM_EXAMPLE_DIR" || exit 1
 else
     rm -rf "$HOME/.clowder_tests"
-    mkdir -p "$HOME/.clowder_tests" && cp -r "$LLVM_EXAMPLE_DIR" "$HOME/.clowder_tests/llvm-projects"
-    cd "$HOME/.clowder_tests/llvm-projects" || exit 1
+    mkdir -p "$HOME/.clowder_tests" && cp -r "$EXAMPLES_DIR/llvm-projects" "$LLVM_EXAMPLE_DIR"
+    cd "$LLVM_EXAMPLE_DIR" || exit 1
 fi
 
 export projects=( 'llvm' \
@@ -204,19 +211,19 @@ test_forall()
     echo "TEST: Run forall command"
     clowder forall -c 'git status' || exit 1
     echo "TEST: Run forall script"
-    clowder forall -c "$TEST_SCRIPT_DIR/test_forall_script.sh" || exit 1
+    clowder forall -c "$TEST_SCRIPT_DIR/tests/test_forall_script.sh" || exit 1
     echo "TEST: Run forall command for specific groups"
     clowder forall -c 'git status' -g "$@" || exit 1
     echo "TEST: Run forall script for specific groups"
-    clowder forall -c "$TEST_SCRIPT_DIR/test_forall_script.sh" -g "$@" || exit 1
+    clowder forall -c "$TEST_SCRIPT_DIR/tests/test_forall_script.sh" -g "$@" || exit 1
     echo "TEST: Run forall command with error"
     clowder forall -c 'exit 1' && exit 1
     echo "TEST: Run forall command with --ignore-error"
     clowder forall -ic 'exit 1' || exit 1
     echo "TEST: Run forall script with error"
-    clowder forall -c "$TEST_SCRIPT_DIR/test_forall_script_error.sh" && exit 1
+    clowder forall -c "$TEST_SCRIPT_DIR/tests/test_forall_script_error.sh" && exit 1
     echo "TEST: Run forall script with --ignore-error"
-    clowder forall -ic "$TEST_SCRIPT_DIR/test_forall_script_error.sh" || exit 1
+    clowder forall -ic "$TEST_SCRIPT_DIR/tests/test_forall_script_error.sh" || exit 1
 }
 test_forall 'clang' 'llvm'
 
@@ -226,7 +233,7 @@ test_forall_projects()
     echo "TEST: Run forall command for specific projects"
     clowder forall -c 'git status' -p "$@" || exit 1
     echo "TEST: Run forall script for specific projects"
-    clowder forall -c "$TEST_SCRIPT_DIR/test_forall_script.sh" -p "$@" || exit 1
+    clowder forall -c "$TEST_SCRIPT_DIR/tests/test_forall_script.sh" -p "$@" || exit 1
 }
 test_forall_projects 'llvm-mirror/clang' 'llvm-mirror/llvm'
 
@@ -322,3 +329,5 @@ test_start()
 test_start
 
 print_help
+
+popd

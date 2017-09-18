@@ -7,6 +7,8 @@ fi
 
 cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 
+./update
+
 if [ $1 == "cats" ]; then
     ./tests/test_cats_example.sh
 elif [ $1 == "llvm" ]; then

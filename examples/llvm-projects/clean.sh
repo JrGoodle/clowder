@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+pushd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
 rm -rf clowder
 rm -rf .clowder
 rm -rf klee
@@ -15,3 +16,5 @@ rm -rf test-suite
 rm -rf vmkit
 rm -rf zorg
 rm -f clowder.yaml
+
+popd
