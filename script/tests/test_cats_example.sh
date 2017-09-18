@@ -157,7 +157,17 @@ test_herd_dirty_repos "${projects[@]}"
 test_herd_detached_heads "${projects[@]}"
 test_herd 'duke' 'mu'
 test_forall 'cats'
+
+test_forall_projects()
+{
+    print_separator
+    echo "TEST: Run forall command for specific projects"
+    clowder forall -c 'git status' -p "$@" || exit 1
+    echo "TEST: Run forall script for specific projects"
+    clowder forall -c "$TEST_SCRIPT_DIR/test_forall_script.sh" -p "$@" || exit 1
+}
 test_forall_projects 'jrgoodle/kit' 'jrgoodle/kishka'
+
 test_save
 
 test_stash()

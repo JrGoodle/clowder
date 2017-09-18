@@ -94,7 +94,6 @@ test_save()
 test_forall()
 {
     print_separator
-    CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
     echo "TEST: Run forall command"
     clowder forall -c 'git status' || exit 1
     echo "TEST: Run forall script"
@@ -111,15 +110,6 @@ test_forall()
     clowder forall -c "$TEST_SCRIPT_DIR/test_forall_script_error.sh" && exit 1
     echo "TEST: Run forall script with --ignore-error"
     clowder forall -ic "$TEST_SCRIPT_DIR/test_forall_script_error.sh" || exit 1
-}
-
-test_forall_projects()
-{
-    print_separator
-    echo "TEST: Run forall command for specific projects"
-    clowder forall -c 'git status' -p "$@" || exit 1
-    echo "TEST: Run forall script for specific projects"
-    clowder forall -c "$TEST_SCRIPT_DIR/test_forall_script.sh" -p "$@" || exit 1
 }
 
 test_herd()

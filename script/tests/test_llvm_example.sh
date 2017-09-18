@@ -153,6 +153,15 @@ test_clean_missing_directories 'zorg'
 
 test_herd_detached_heads "${projects[@]}"
 test_forall 'clang' 'llvm'
+
+test_forall_projects()
+{
+    print_separator
+    echo "TEST: Run forall command for specific projects"
+    clowder forall -c 'git status' -p "$@" || exit 1
+    echo "TEST: Run forall script for specific projects"
+    clowder forall -c "$TEST_SCRIPT_DIR/test_forall_script.sh" -p "$@" || exit 1
+}
 test_forall_projects 'llvm-mirror/clang' 'llvm-mirror/llvm'
 
 test_stash()
