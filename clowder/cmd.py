@@ -84,7 +84,7 @@ class Command(object):
         self._display_trailing_newline = False
 
         if self.args.clowder_version:
-            print('clowder version 2.0.0')
+            print('clowder version 2.1.0')
             sys.exit()
         if self.args.clowder_command is None or not hasattr(self, self.args.clowder_command):
             exit_unrecognized_command(parser)

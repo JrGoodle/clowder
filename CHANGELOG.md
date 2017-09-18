@@ -1,3 +1,12 @@
+# 2.1.0
+
+- Add ability to import another `clowder.yaml` file and override values
+- Add `clowder diff` command to display git diff status. Replaces previous `clowder status -v` command option
+- Add `clowder start -t` option to create remote tracking branches
+- Add `clowder prune -a` option to prune local and remote branches
+- Less noise in output when pruning branches
+- Better validation of `clowder.yaml` files
+
 # 2.0.0
 
 - Add support for uploading to PyPI as [clowder-repo](https://pypi.python.org/pypi/clowder-repo)
