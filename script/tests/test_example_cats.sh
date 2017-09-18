@@ -32,20 +32,9 @@ export projects=( 'black-cats/kit' \
                   'black-cats/sasha' \
                   'black-cats/jules' )
 
-test_init_branch()
-{
-    print_separator
-    echo "TEST: Test clowder init branch"
+test_clowder_version
 
-    clowder init https://github.com/jrgoodle/cats.git -b tags
-
-    pushd .clowder
-    test_branch tags
-    popd
-
-    rm -rf .clowder clowder.yaml
-}
-test_init_branch
+"$TEST_SCRIPT_DIR/tests/test_cats_init.sh"
 
 test_command()
 {
@@ -60,20 +49,9 @@ test_command()
 }
 test_command
 
-test_clowder_version
-
-test_init_herd_version()
-{
-    print_separator
-    echo "TEST: Herd version after init"
-    "$CATS_EXAMPLE_DIR/clean.sh" || exit 1
-    "$CATS_EXAMPLE_DIR/init.sh" || exit 1
-    clowder link -v v0.1 || exit 1
-    clowder herd || exit 1
-}
-test_init_herd_version
-
 print_separator
+clowder init https://github.com/jrgoodle/cats.git
+clowder herd
 clowder forall -c 'git checkout -b v0.1'
 echo "TEST: Check current branches"
 for project in "${projects[@]}"; do
@@ -82,21 +60,11 @@ for project in "${projects[@]}"; do
     popd
 done
 
-test_init_herd()
-{
-    print_separator
-    echo "TEST: Normal herd after init"
-    "$CATS_EXAMPLE_DIR/clean.sh"
-    "$CATS_EXAMPLE_DIR/init.sh"  || exit 1
-    clowder herd  || exit 1
-    clowder status -f || exit 1
-}
-test_init_herd
-
 test_branches()
 {
     print_separator
     echo "TEST: Check current branches are on master"
+    clowder herd
     for project in "${projects[@]}"; do
     	pushd $project
         test_branch master

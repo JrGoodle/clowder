@@ -31,6 +31,8 @@ export projects=( 'llvm' \
                   'llvm/projects/libunwind' \
                   'llvm/projects/dragonegg' )
 
+test_clowder_version
+
 setup_old_repos()
 {
     echo 'TEST: Set up older copies of repos'
@@ -68,8 +70,6 @@ setup_old_repos()
     git branch -u origin/master
     popd
 }
-
-test_clowder_version
 
 test_init_herd()
 {
