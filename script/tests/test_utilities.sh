@@ -75,21 +75,6 @@ test_clowder_version()
     clowder -v || exit 1
 }
 
-test_herd()
-{
-    print_separator
-    echo "TEST: Successfully herd a previously saved version"
-    clowder link -v v0.1 || exit 1
-    clowder herd || exit 1
-    echo "TEST: Successfully herd after herding a previously saved version"
-    clowder link || exit 1
-    clowder herd || exit 1
-    echo "TEST: Remove directories"
-    rm -rf "$@"
-    echo "TEST: Successfully herd with missing directories"
-    clowder herd || exit 1
-}
-
 print_help()
 {
     print_separator
