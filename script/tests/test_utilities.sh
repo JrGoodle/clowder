@@ -111,21 +111,6 @@ test_herd()
     clowder herd || exit 1
 }
 
-test_herd_dirty_repos()
-{
-    print_separator
-    make_dirty_repos "$@"
-    echo "TEST: Fail herd with dirty repos"
-    clowder herd && exit 1
-    echo "TEST: Discard changes with clean"
-    clowder clean || exit 1
-    clowder status || exit 1
-    echo "TEST: Successfully herd after clean"
-    clowder herd || exit 1
-    echo "TEST: Successfully herd twice"
-    clowder herd || exit 1
-}
-
 print_help()
 {
     print_separator
