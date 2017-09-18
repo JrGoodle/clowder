@@ -53,7 +53,13 @@ Install the following dependencies in [Cygwin](https://cygwin.com/install.html)
 To install `clowder` from PyPI
 
 ```bash
-$ pip3 install clowder-repo
+$ sudo pip3 install clowder-repo
+```
+
+To upgrade to the latest version
+
+```bash
+$ sudo pip3 install clowder-repo --upgrade
 ```
 
 #### Shell Profile Customizations
@@ -65,7 +71,7 @@ For terminal autocompletion
 command -v clowder >/dev/null 2>&1 && eval "$(register-python-argcomplete clowder)"
 ```
 
-To make `clowder` available in your shell environment, it may be necessary to add the Python 3 bin directory to your environment's `PATH` variable. This is likely only be necessary if you've previously installed `clowder` for development
+To make `clowder` available in your shell environment, it may be necessary to add the Python 3 bin directory to your environment's `PATH` variable. This is likely only necessary if you've previously installed `clowder` for development purposes
 
 ```bash
 # macOS and Python 3.4
