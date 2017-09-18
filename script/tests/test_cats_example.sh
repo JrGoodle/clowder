@@ -184,6 +184,21 @@ test_forall_projects()
 }
 test_forall_projects 'jrgoodle/kit' 'jrgoodle/kishka'
 
+test_save()
+{
+    print_separator
+    echo "TEST: Fail linking a previously saved version that doesn't exist"
+    clowder link -v v100 && exit 1
+    echo "TEST: Fail saving a previously saved version"
+    clowder save v0.1 && exit 1
+    echo "TEST: Successfully save a new version"
+    clowder save v0.11 || exit 1
+    echo "TEST: Successfully save version with path separator in input name"
+    clowder save path/separator
+    clowder link -v path-separator || exit 1
+    clowder herd || exit 1
+    clowder status || exit 1
+}
 test_save
 
 test_stash()
