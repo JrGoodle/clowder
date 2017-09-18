@@ -130,11 +130,19 @@ test_clean_projects()
 }
 test_clean_projects 'llvm-mirror/clang'
 
+test_clean_missing_directories()
+{
+    rm -rf "$@"
+    echo "TEST: Discard all changes when directories are missing"
+    clowder clean || exit 1
+    clowder status || exit 1
+    clowder herd || exit 1
+}
 test_clean_missing_directories 'zorg'
+
 test_herd_detached_heads "${projects[@]}"
 test_forall 'clang' 'llvm'
 test_forall_projects 'llvm-mirror/clang' 'llvm-mirror/llvm'
-# test_save
 
 test_stash()
 {

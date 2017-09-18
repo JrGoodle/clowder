@@ -141,15 +141,6 @@ test_forall_projects()
     clowder forall -c "$TEST_SCRIPT_DIR/test_forall_script.sh" -p "$@" || exit 1
 }
 
-test_clean_missing_directories()
-{
-    rm -rf "$@"
-    echo "TEST: Discard all changes when directories are missing"
-    clowder clean || exit 1
-    clowder status || exit 1
-    clowder herd || exit 1
-}
-
 test_herd()
 {
     print_separator
