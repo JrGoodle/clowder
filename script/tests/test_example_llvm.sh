@@ -6,22 +6,19 @@ echo 'TEST: llvm projects example test script'
 
 pushd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 
+. test_utilities.sh
+
 export EXAMPLES_DIR
 export TEST_SCRIPT_DIR
 export LLVM_EXAMPLE_DIR
 TEST_SCRIPT_DIR="$(pwd)/.."
 EXAMPLES_DIR="$(pwd)/../../examples"
+
 if [ -n "$TRAVIS_OS_NAME" ]; then
     LLVM_EXAMPLE_DIR="$(pwd)/../../examples/llvm-projects"
-else
-    LLVM_EXAMPLE_DIR="$HOME/.clowder_tests/llvm-projects"
-fi
-
-. test_utilities.sh
-
-if [ -n "$TRAVIS_OS_NAME" ]; then
     cd "$LLVM_EXAMPLE_DIR" || exit 1
 else
+    LLVM_EXAMPLE_DIR="$HOME/.clowder_tests/llvm-projects"
     rm -rf "$HOME/.clowder_tests"
     mkdir -p "$HOME/.clowder_tests" && cp -r "$EXAMPLES_DIR/llvm-projects" "$LLVM_EXAMPLE_DIR"
     cd "$LLVM_EXAMPLE_DIR" || exit 1
