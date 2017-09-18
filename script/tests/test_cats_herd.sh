@@ -107,3 +107,11 @@ test_herd_tag()
     clowder repo checkout master || exit 1
 }
 test_herd_tag
+
+test_herd_projects()
+{
+    print_separator
+    echo "TEST: Successfully herd specific projects"
+    clowder herd -p "$@" || exit 1
+}
+test_herd_projects 'jrgoodle/kit' 'jrgoodle/kishka'
