@@ -65,7 +65,6 @@ setup_old_repos()
     popd
 }
 
-test_command
 test_clowder_version
 
 test_init_herd

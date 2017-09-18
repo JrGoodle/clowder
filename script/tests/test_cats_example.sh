@@ -46,7 +46,19 @@ test_init_branch()
 }
 test_init_branch
 
+test_command()
+{
+    print_separator
+    echo "TEST: Fail with unrecognized command"
+    clowder cat && exit 1
+    echo "TEST: Fail with no arguments"
+    clowder && exit 1
+    "$CATS_EXAMPLE_DIR/clean.sh" || exit 1
+    echo "TEST: Fail herd with missing clowder.yaml"
+    clowder herd && exit 1
+}
 test_command
+
 test_clowder_version
 
 test_init_herd_version()
