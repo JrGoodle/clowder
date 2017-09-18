@@ -69,7 +69,13 @@ test_command
 test_clowder_version
 
 test_init_herd
-test_branch_master "${projects[@]}"
+print_separator
+echo "TEST: Check current branches are on master"
+for project in "${projects[@]}"; do
+	pushd $project
+    test_branch master
+    popd
+done
 
 test_herd_old_repos()
 {

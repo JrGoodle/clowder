@@ -67,25 +67,12 @@ test_no_tracking_branch_exists()
     git config --get branch.$1.merge && exit 1
 }
 
-test_branch_master()
-{
-    print_separator
-    echo "TEST: Check current branches are on master"
-    for project in "$@"
-    do
-    	pushd $project
-        test_branch master
-        popd
-    done
-}
-
 test_branch_version()
 {
     print_separator
     clowder forall -c 'git checkout -b v0.1'
     echo "TEST: Check current branches"
-    for project in "$@"
-    do
+    for project in "$@"; do
     	pushd $project
         test_branch v0.1
         popd

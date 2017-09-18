@@ -66,8 +66,12 @@ test_init_herd
 test_branches()
 {
     print_separator
-    echo "TEST: Test branches"
-    test_branch_master "${projects[@]}"
+    echo "TEST: Check current branches are on master"
+    for project in "${projects[@]}"; do
+    	pushd $project
+        test_branch master
+        popd
+    done
     pushd mu
     test_branch knead
     popd
