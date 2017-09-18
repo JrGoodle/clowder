@@ -8,9 +8,9 @@ fi
 cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 
 if [ $1 == "cats" ]; then
-    ./test_cats_example.sh
+    ./tests/test_cats_example.sh
 elif [ $1 == "llvm" ]; then
-    ./test_llvm_example.sh
+    ./tests/test_llvm_example.sh
 else
     echo 'Requires parameter "cat" or "llvm"'
     exit 1
