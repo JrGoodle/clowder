@@ -9,6 +9,33 @@ export projects=( 'black-cats/kit' \
                   'black-cats/sasha' \
                   'black-cats/jules' )
 
+clowder forall -c 'git checkout -b v0.1'
+echo "TEST: Check current branches"
+for project in "${projects[@]}"; do
+	pushd $project
+    test_branch v0.1
+    popd
+done
+
+test_herd()
+{
+    print_separator
+    echo "TEST: Check current branches are on master"
+    clowder herd
+    for project in "${projects[@]}"; do
+    	pushd $project
+        test_branch master
+        popd
+    done
+    pushd mu
+    test_branch knead
+    popd
+    pushd duke
+    test_branch purr
+    popd
+}
+test_herd
+
 test_herd_dirty_repos()
 {
     print_separator

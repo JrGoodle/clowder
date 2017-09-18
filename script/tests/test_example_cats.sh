@@ -35,49 +35,15 @@ export projects=( 'black-cats/kit' \
 test_clowder_version
 
 "$TEST_SCRIPT_DIR/tests/test_cats_init.sh"
+"$TEST_SCRIPT_DIR/tests/test_command.sh"
 
-test_command()
-{
-    print_separator
-    echo "TEST: Fail with unrecognized command"
-    clowder cat && exit 1
-    echo "TEST: Fail with no arguments"
-    clowder && exit 1
-    "$CATS_EXAMPLE_DIR/clean.sh" || exit 1
-    echo "TEST: Fail herd with missing clowder.yaml"
-    clowder herd && exit 1
-}
-test_command
+"$CATS_EXAMPLE_DIR/clean.sh" || exit 1
+echo "TEST: Fail herd with missing clowder.yaml"
+clowder herd && exit 1
 
 print_separator
 clowder init https://github.com/jrgoodle/cats.git
 clowder herd
-clowder forall -c 'git checkout -b v0.1'
-echo "TEST: Check current branches"
-for project in "${projects[@]}"; do
-	pushd $project
-    test_branch v0.1
-    popd
-done
-
-test_branches()
-{
-    print_separator
-    echo "TEST: Check current branches are on master"
-    clowder herd
-    for project in "${projects[@]}"; do
-    	pushd $project
-        test_branch master
-        popd
-    done
-    pushd mu
-    test_branch knead
-    popd
-    pushd duke
-    test_branch purr
-    popd
-}
-test_branches
 
 "$TEST_SCRIPT_DIR/tests/test_cats_status.sh"
 "$TEST_SCRIPT_DIR/tests/test_cats_clean.sh"
@@ -85,35 +51,14 @@ test_branches
 "$TEST_SCRIPT_DIR/tests/test_cats_forall.sh"
 "$TEST_SCRIPT_DIR/tests/test_cats_save.sh"
 "$TEST_SCRIPT_DIR/tests/test_cats_stash.sh"
-
-test_no_versions()
-{
-    print_separator
-    echo "TEST: Test clowder repo with no versions saved"
-    clowder repo checkout no-versions || exit 1
-    clowder link -v saved-version && exit 1
-    clowder herd || exit 1
-    clowder status || exit 1
-    clowder repo checkout master || exit 1
-}
-test_no_versions
-
+"$TEST_SCRIPT_DIR/tests/test_cats_link.sh"
 "$TEST_SCRIPT_DIR/tests/test_cats_yaml_validation.sh"
 "$TEST_SCRIPT_DIR/tests/test_cats_start.sh"
 "$TEST_SCRIPT_DIR/tests/test_cats_prune.sh"
-
-test_clowder_repo()
-{
-    print_separator
-    echo "TEST: Test clowder repo command"
-    clowder repo checkout ref_that_doesnt_exist && exit 1
-    clowder repo add file_that_doesnt_exist && exit 1
-}
-test_clowder_repo
-
+"$TEST_SCRIPT_DIR/tests/test_cats_repo.sh"
 "$TEST_SCRIPT_DIR/tests/test_cats_import.sh"
 
-test_print()
+test_help()
 {
     print_separator
 
@@ -127,6 +72,6 @@ test_print()
     clowder herd
     "$TEST_SCRIPT_DIR/tests/test_help.sh" "$CATS_EXAMPLE_DIR"
 }
-test_print
+test_help
 
 popd

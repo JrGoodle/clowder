@@ -110,13 +110,13 @@ for project in "${projects[@]}"; do
     popd
 done
 
-test_print()
+test_help()
 {
     print_separator
     clowder link
     clowder herd
     "$TEST_SCRIPT_DIR/tests/test_help.sh" "$LLVM_EXAMPLE_DIR"
 }
-test_print
+test_help
 
 popd
