@@ -1,4 +1,5 @@
 """Test source class"""
+import sys
 import unittest
 from clowder.source import Source
 from test.shared import (
@@ -33,4 +34,6 @@ class SourceTest(unittest.TestCase):
         self.assertEqual(self.ssh_source.get_url_prefix(), 'git@github.com:')
 
 if __name__ == '__main__':
+    if len(sys.argv) > 1:
+        _ = sys.argv.pop()
     unittest.main()

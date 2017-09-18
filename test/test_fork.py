@@ -1,4 +1,5 @@
 """Test fork class"""
+import sys
 import unittest
 from clowder.fork import Fork
 from clowder.source import Source
@@ -26,4 +27,6 @@ class ForkTest(unittest.TestCase):
         self.assertEqual(self.fork.url, self.source.get_url_prefix() + self.name + ".git")
 
 if __name__ == '__main__':
+    if len(sys.argv) > 1:
+        _ = sys.argv.pop()
     unittest.main()

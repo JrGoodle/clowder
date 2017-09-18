@@ -1,5 +1,27 @@
 #!/usr/bin/env bash
 
+CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+export EXAMPLES_DIR="$CURRENT_DIR/../../examples"
+export TEST_SCRIPT_DIR="$CURRENT_DIR/.."
+
+if [ -n "$TRAVIS_OS_NAME" ]; then
+    export CATS_EXAMPLE_DIR="$CURRENT_DIR/../../examples/cats"
+    export LLVM_EXAMPLE_DIR="$CURRENT_DIR/../../examples/llvm-projects"
+else
+    export CATS_EXAMPLE_DIR="$HOME/.clowder_tests/cats"
+    export LLVM_EXAMPLE_DIR="$HOME/.clowder_tests/llvm-projects"
+fi
+
+setup_local_test_directory()
+{
+    echo 'Set up local test directory at .clowder_tests'
+    rm -rf "$HOME/.clowder_tests" || exit 1
+    mkdir -p "$HOME/.clowder_tests" || exit 1
+    cp -r "$EXAMPLES_DIR/cats" "$CATS_EXAMPLE_DIR" || exit 1
+    cp -r "$EXAMPLES_DIR/llvm-projects" "$LLVM_EXAMPLE_DIR" || exit 1
+}
+
 make_dirty_repos()
 {
     echo "TEST: Make dirty repos"

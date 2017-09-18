@@ -8,24 +8,16 @@ pushd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 
 . test_utilities.sh
 
-export EXAMPLES_DIR
-export TEST_SCRIPT_DIR
-export CATS_EXAMPLE_DIR
-TEST_SCRIPT_DIR="$(pwd)/.."
-EXAMPLES_DIR="$(pwd)/../../examples"
-
 if [ -n "$TRAVIS_OS_NAME" ]; then
-    CATS_EXAMPLE_DIR="$(pwd)/../../examples/cats"
     if [ "$TRAVIS_OS_NAME" = "osx" ]; then
         "$TEST_SCRIPT_DIR/unittests.sh" || exit 1
     fi
-    cd "$CATS_EXAMPLE_DIR" || exit 1
 else
-    CATS_EXAMPLE_DIR="$HOME/.clowder_tests/cats"
-    rm -rf "$HOME/.clowder_tests"
-    mkdir -p "$HOME/.clowder_tests" && cp -r "$EXAMPLES_DIR/cats" "$CATS_EXAMPLE_DIR"
-    cd "$CATS_EXAMPLE_DIR" || exit 1
+    setup_local_test_directory
+    "$TEST_SCRIPT_DIR/unittests.sh" "$CATS_EXAMPLE_DIR" || exit 1
 fi
+
+pushd "$CATS_EXAMPLE_DIR" || exit 1
 
 export projects=( 'black-cats/kit' \
                   'black-cats/kishka' \
