@@ -6,6 +6,7 @@
 - Add `clowder prune -a` option to prune local and remote branches
 - Less noise in output when pruning branches
 - Better validation of `clowder.yaml` files
+- Better help messages
 
 # 2.0.0
 
