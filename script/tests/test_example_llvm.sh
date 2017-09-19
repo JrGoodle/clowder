@@ -23,8 +23,7 @@ export projects=( 'llvm' \
 
 test_clowder_version
 
-setup_old_repos()
-{
+setup_old_repos() {
     echo 'TEST: Set up older copies of repos'
 
     # local CLANG_DIR="$LLVM_PROJECTS_DIR/llvm/tools/clang"
@@ -61,8 +60,7 @@ setup_old_repos()
     popd
 }
 
-test_init_herd()
-{
+test_init_herd() {
     print_separator
     echo "TEST: Normal herd after init"
     "$LLVM_EXAMPLE_DIR/clean.sh"
@@ -81,8 +79,7 @@ for project in "${projects[@]}"; do
     popd
 done
 
-test_herd_old_repos()
-{
+test_herd_old_repos() {
     print_separator
     echo "TEST: Normal herd with out of date repos"
     setup_old_repos
@@ -100,8 +97,7 @@ for project in "${projects[@]}"; do
     popd
 done
 
-test_help()
-{
+test_help() {
     print_separator
     clowder link
     clowder herd

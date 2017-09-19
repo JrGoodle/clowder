@@ -4,8 +4,7 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 
 . test_utilities.sh
 
-test_command()
-{
+test_command() {
     print_separator
     echo "TEST: Fail with unrecognized command"
     clowder cat && exit 1

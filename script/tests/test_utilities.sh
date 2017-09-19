@@ -13,8 +13,7 @@ else
     export LLVM_EXAMPLE_DIR="$HOME/.clowder_tests/llvm-projects"
 fi
 
-setup_local_test_directory()
-{
+setup_local_test_directory() {
     echo 'Set up local test directory at .clowder_tests'
     rm -rf "$HOME/.clowder_tests" || exit 1
     mkdir -p "$HOME/.clowder_tests" || exit 1
@@ -22,8 +21,7 @@ setup_local_test_directory()
     cp -r "$EXAMPLES_DIR/llvm-projects" "$LLVM_EXAMPLE_DIR" || exit 1
 }
 
-prepare_cats_example()
-{
+prepare_cats_example() {
     if [ -z "$TRAVIS_OS_NAME" ]; then
         if [ ! -d "$CATS_EXAMPLE_DIR" ]; then
             setup_local_test_directory
@@ -40,8 +38,7 @@ prepare_cats_example()
     popd
 }
 
-make_dirty_repos()
-{
+make_dirty_repos() {
     echo "TEST: Make dirty repos"
     for project in "$@"
     do
@@ -53,28 +50,24 @@ make_dirty_repos()
     clowder diff || exit 1
 }
 
-test_branch()
-{
+test_branch() {
     echo "TEST: Check local branch $1 is checked out"
     local git_branch
     git_branch=$(git rev-parse --abbrev-ref HEAD)
     [[ "$1" = "$git_branch" ]] && echo "TEST: On correct branch: $1" || exit 1
 }
 
-test_local_branch_exists()
-{
+test_local_branch_exists() {
     echo "TEST: Local branch exists: $1"
     git rev-parse --quiet --verify "$1" || exit 1
 }
 
-test_no_local_branch_exists()
-{
+test_no_local_branch_exists() {
     echo "TEST: Local branch doesn't exist: $1"
     git rev-parse --quiet --verify "$1" && exit 1
 }
 
-test_remote_branch_exists()
-{
+test_remote_branch_exists() {
     echo "TEST: Remote branch exists: $1"
     local remote_branch_count
     remote_branch_count="$(git ls-remote --heads origin $1 | wc -l | tr -d '[:space:]')"
@@ -83,8 +76,7 @@ test_remote_branch_exists()
     fi
 }
 
-test_no_remote_branch_exists()
-{
+test_no_remote_branch_exists() {
     echo "TEST: Remote branch doesn't exist: $1"
     local remote_branch_count
     remote_branch_count="$(git ls-remote --heads origin $1 | wc -l | tr -d '[:space:]')"
@@ -93,27 +85,23 @@ test_no_remote_branch_exists()
     fi
 }
 
-test_tracking_branch_exists()
-{
+test_tracking_branch_exists() {
     echo "TEST: Tracking branch exists: $1"
     git config --get branch.$1.merge || exit 1
 }
 
-test_no_tracking_branch_exists()
-{
+test_no_tracking_branch_exists() {
     echo "TEST: Tracking branch doesn't exist: $1"
     git config --get branch.$1.merge && exit 1
 }
 
-test_clowder_version()
-{
+test_clowder_version() {
     print_separator
     echo "TEST: Print clowder version"
     clowder --version || exit 1
     clowder -v || exit 1
 }
 
-print_separator()
-{
+print_separator() {
     echo '--------------------------------------------------------------------------------'
 }

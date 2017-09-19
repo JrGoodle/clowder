@@ -6,8 +6,9 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 prepare_cats_example
 cd "$CATS_EXAMPLE_DIR" || exit 1
 
-test_init_herd()
-{
+echo "TEST: Test clowder init"
+
+test_init_herd() {
     print_separator
     echo "TEST: Normal herd after init"
     "$CATS_EXAMPLE_DIR/clean.sh"
@@ -17,8 +18,7 @@ test_init_herd()
 }
 test_init_herd
 
-test_init_branch()
-{
+test_init_branch() {
     print_separator
     echo "TEST: Test clowder init branch"
 
@@ -33,8 +33,7 @@ test_init_branch()
 }
 test_init_branch
 
-test_init_herd_version()
-{
+test_init_herd_version() {
     print_separator
     echo "TEST: Herd version after init"
     "$CATS_EXAMPLE_DIR/clean.sh" || exit 1

@@ -11,10 +11,9 @@ export projects=( 'black-cats/kit' \
                   'black-cats/sasha' \
                   'black-cats/jules' )
 
-echo "TEST: Test clean"
+echo "TEST: Test clowder clean"
 
-test_clean()
-{
+test_clean_groups() {
     print_separator
     echo "TEST: Make dirty repos"
     make_dirty_repos "${projects[@]}"
@@ -24,13 +23,10 @@ test_clean()
     echo "TEST: Clean all when dirty"
     clowder clean || exit 1
     clowder status || exit 1
-    echo "TEST: Clean when clean"
-    clowder clean || exit 1
 }
-test_clean 'black-cats'
+test_clean_groups 'black-cats'
 
-test_clean_projects()
-{
+test_clean_projects() {
     print_separator
     echo "TEST: Clean projects"
     make_dirty_repos "${projects[@]}"
@@ -43,12 +39,26 @@ test_clean_projects()
 }
 test_clean_projects 'jrgoodle/kit'
 
-test_clean_missing_directories()
-{
-    rm -rf "$@"
-    echo "TEST: Discard all changes when directories are missing"
+test_clean_all() {
+    print_separator
+    echo "TEST: Make dirty repos"
+    make_dirty_repos "${projects[@]}"
+    echo "TEST: Clean all when dirty"
     clowder clean || exit 1
     clowder status || exit 1
-    clowder herd || exit 1
+    echo "TEST: Clean when clean"
+    clowder clean || exit 1
+}
+test_clean_all 'black-cats'
+
+test_clean_missing_directories() {
+    print_separator
+    echo "TEST: Make dirty repos"
+    make_dirty_repos "${projects[@]}"
+    rm -rf "$@"
+    echo "TEST: Clean when directories are missing"
+    clowder clean || exit 1
+    clowder status || exit 1
+    clowder herd >/dev/null
 }
 test_clean_missing_directories 'mu' 'duke'

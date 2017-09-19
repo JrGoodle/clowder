@@ -12,8 +12,7 @@ if [ -z "$TRAVIS_OS_NAME" ]; then
     setup_local_test_directory
 fi
 
-prepare_unittest_repos()
-{
+prepare_unittest_repos() {
     echo 'TEST: Prepare repos for unit tests'
     pushd "$CATS_EXAMPLE_DIR" || exit 1
     # Clean and herd repo's to clean state

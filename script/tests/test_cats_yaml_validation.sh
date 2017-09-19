@@ -6,8 +6,9 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 prepare_cats_example
 cd "$CATS_EXAMPLE_DIR" || exit 1
 
-test_invalid_yaml()
-{
+echo "TEST: Test yaml validation"
+
+test_invalid_yaml() {
     print_separator
     echo "TEST: Fail herd with invalid yaml"
 

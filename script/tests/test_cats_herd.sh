@@ -11,8 +11,9 @@ export projects=( 'black-cats/kit' \
                   'black-cats/sasha' \
                   'black-cats/jules' )
 
-test_herd_missing_clowder()
-{
+echo "TEST: Test clowder herd"
+
+test_herd_missing_clowder() {
     "$CATS_EXAMPLE_DIR/clean.sh" || exit 1
     echo "TEST: Fail herd with missing clowder.yaml"
     clowder herd && exit 1
@@ -20,8 +21,7 @@ test_herd_missing_clowder()
 }
 test_herd_missing_clowder
 
-test_herd()
-{
+test_herd() {
     print_separator
     echo "TEST: Check current branches are on master"
     clowder herd
@@ -39,8 +39,7 @@ test_herd()
 }
 test_herd
 
-test_herd_dirty_repos()
-{
+test_herd_dirty_repos() {
     print_separator
     make_dirty_repos "$@"
     echo "TEST: Fail herd with dirty repos"
@@ -55,8 +54,7 @@ test_herd_dirty_repos()
 }
 test_herd_dirty_repos "${projects[@]}"
 
-test_herd_detached_heads()
-{
+test_herd_detached_heads() {
     print_separator
     echo "TEST: Create detached HEADs"
     for project in "$@"
@@ -71,8 +69,7 @@ test_herd_detached_heads()
 }
 test_herd_detached_heads "${projects[@]}"
 
-test_herd()
-{
+test_herd() {
     print_separator
     echo "TEST: Successfully herd a previously saved version"
     clowder link -v v0.1 || exit 1
@@ -87,8 +84,7 @@ test_herd()
 }
 test_herd 'duke' 'mu'
 
-test_herd_groups()
-{
+test_herd_groups() {
     print_separator
     echo "TEST: Herd saved version to test herding select groups"
     clowder link -v v0.1 || exit 1
@@ -100,8 +96,7 @@ test_herd_groups()
 }
 test_herd_groups 'cats'
 
-test_herd_missing_branches()
-{
+test_herd_missing_branches() {
     print_separator
     echo "TEST: Herd v0.1 to test missing default branches"
     clowder link -v v0.1 || exit 1
@@ -120,8 +115,7 @@ test_herd_missing_branches()
 }
 test_herd_missing_branches
 
-test_herd_sha()
-{
+test_herd_sha() {
     print_separator
     echo "TEST: Test herd of static commit hash refs"
     clowder repo checkout static-refs || exit 1
@@ -131,8 +125,7 @@ test_herd_sha()
 }
 test_herd_sha
 
-test_herd_tag()
-{
+test_herd_tag() {
     print_separator
     echo "TEST: Test herd of tag refs"
     clowder repo checkout tags || exit 1
@@ -142,8 +135,7 @@ test_herd_tag()
 }
 test_herd_tag
 
-test_herd_projects()
-{
+test_herd_projects() {
     print_separator
     echo "TEST: Successfully herd specific projects"
     clowder herd -p "$@" || exit 1

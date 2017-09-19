@@ -6,8 +6,9 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 prepare_cats_example
 cd "$CATS_EXAMPLE_DIR" || exit 1
 
-test_save()
-{
+echo "TEST: Test clowder save"
+
+test_save() {
     print_separator
     echo "TEST: Fail linking a previously saved version that doesn't exist"
     clowder link -v v100 && exit 1
@@ -23,8 +24,7 @@ test_save()
 }
 test_save
 
-test_save_missing_directories()
-{
+test_save_missing_directories() {
     print_separator
     echo "TEST: Remove directories"
     rm -rf "$@"

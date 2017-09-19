@@ -41,8 +41,7 @@ test_clowder_version
 "$TEST_SCRIPT_DIR/tests/test_cats_repo.sh"
 "$TEST_SCRIPT_DIR/tests/test_cats_import.sh"
 
-test_help()
-{
+test_help() {
     print_separator
 
     clowder repo checkout master || exit 1
