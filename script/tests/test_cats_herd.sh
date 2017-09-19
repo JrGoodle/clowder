@@ -11,6 +11,10 @@ export projects=( 'black-cats/kit' \
                   'black-cats/sasha' \
                   'black-cats/jules' )
 
+"$CATS_EXAMPLE_DIR/clean.sh" || exit 1
+echo "TEST: Fail herd with missing clowder.yaml"
+clowder herd && exit 1
+
 clowder forall -c 'git checkout -b v0.1'
 echo "TEST: Check current branches"
 for project in "${projects[@]}"; do

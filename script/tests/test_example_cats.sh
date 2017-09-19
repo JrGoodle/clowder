@@ -28,13 +28,6 @@ test_clowder_version
 
 "$TEST_SCRIPT_DIR/tests/test_cats_init.sh"
 "$TEST_SCRIPT_DIR/tests/test_command.sh"
-
-"$CATS_EXAMPLE_DIR/clean.sh" || exit 1
-echo "TEST: Fail herd with missing clowder.yaml"
-clowder herd && exit 1
-
-prepare_cats_example
-
 "$TEST_SCRIPT_DIR/tests/test_cats_status.sh"
 "$TEST_SCRIPT_DIR/tests/test_cats_clean.sh"
 "$TEST_SCRIPT_DIR/tests/test_cats_herd.sh"
