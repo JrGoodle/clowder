@@ -17,8 +17,8 @@ prepare_unittest_repos()
     echo 'TEST: Prepare repos for unit tests'
     pushd "$CATS_EXAMPLE_DIR" || exit 1
     # Clean and herd repo's to clean state
-    ./clean.sh
-    ./init.sh
+    $CATS_EXAMPLE_DIR/clean.sh
+    $CATS_EXAMPLE_DIR/init.sh
     clowder clean
     clowder herd
     # Remove jules repository
@@ -32,10 +32,11 @@ prepare_unittest_repos()
     pushd black-cats/sasha &>/dev/null
     git checkout '6ce5538d2c09fda2f56a9ca3859f5e8cfe706bf0'
     popd &>/dev/null
+    popd
 }
 prepare_unittest_repos
 
-pushd "$TEST_SCRIPT_DIR/.." || exit 1
+cd "$TEST_SCRIPT_DIR/.." || exit 1
 
 echo ''
 echo '----------------------------------------------------------------------'
@@ -48,8 +49,4 @@ python3 test/test_group.py "$1" || exit 1
 python3 test/test_project.py "$1" || exit 1
 python3 test/test_source.py "$1" || exit 1
 
-popd
-
-./clean.sh
-
-popd
+$CATS_EXAMPLE_DIR/clean.sh

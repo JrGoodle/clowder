@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 
-pushd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
+cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 
 . test_utilities.sh
+prepare_cats_example
+cd "$CATS_EXAMPLE_DIR" || exit 1
 
 test_init_herd()
 {
@@ -20,6 +22,7 @@ test_init_branch()
     print_separator
     echo "TEST: Test clowder init branch"
 
+    "$CATS_EXAMPLE_DIR/clean.sh"
     clowder init https://github.com/jrgoodle/cats.git -b tags
 
     pushd .clowder
@@ -40,5 +43,3 @@ test_init_herd_version()
     clowder herd || exit 1
 }
 test_init_herd_version
-
-popd

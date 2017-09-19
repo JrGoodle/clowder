@@ -22,6 +22,24 @@ setup_local_test_directory()
     cp -r "$EXAMPLES_DIR/llvm-projects" "$LLVM_EXAMPLE_DIR" || exit 1
 }
 
+prepare_cats_example()
+{
+    if [ -z "$TRAVIS_OS_NAME" ]; then
+        if [ ! -d "$CATS_EXAMPLE_DIR" ]; then
+            setup_local_test_directory
+        fi
+    fi
+    pushd $CATS_EXAMPLE_DIR
+    ./clean.sh >/dev/null
+    if [ ! -d "$CATS_EXAMPLE_DIR/.clowder" ]; then
+        clowder init https://github.com/jrgoodle/cats.git >/dev/null
+    fi
+    clowder repo checkout master >/dev/null
+    clowder link >/dev/null
+    clowder herd >/dev/null
+    popd
+}
+
 make_dirty_repos()
 {
     echo "TEST: Make dirty repos"

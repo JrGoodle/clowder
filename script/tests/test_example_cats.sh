@@ -4,7 +4,7 @@
 
 echo 'TEST: cats example test script'
 
-pushd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
+cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 
 . test_utilities.sh
 
@@ -17,7 +17,7 @@ else
     "$TEST_SCRIPT_DIR/unittests.sh" "$CATS_EXAMPLE_DIR" || exit 1
 fi
 
-pushd "$CATS_EXAMPLE_DIR" || exit 1
+cd "$CATS_EXAMPLE_DIR" || exit 1
 
 export projects=( 'black-cats/kit' \
                   'black-cats/kishka' \
@@ -33,9 +33,7 @@ test_clowder_version
 echo "TEST: Fail herd with missing clowder.yaml"
 clowder herd && exit 1
 
-print_separator
-clowder init https://github.com/jrgoodle/cats.git
-clowder herd
+prepare_cats_example
 
 "$TEST_SCRIPT_DIR/tests/test_cats_status.sh"
 "$TEST_SCRIPT_DIR/tests/test_cats_clean.sh"
@@ -65,5 +63,3 @@ test_help()
     "$TEST_SCRIPT_DIR/tests/test_help.sh" "$CATS_EXAMPLE_DIR"
 }
 test_help
-
-popd

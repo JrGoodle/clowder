@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-pushd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 
 clowder init https://github.com/jrgoodle/cats.git
-
-popd

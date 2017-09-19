@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 
-pushd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
+cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 
 . test_utilities.sh
+prepare_cats_example
+cd "$CATS_EXAMPLE_DIR" || exit 1
 
 test_forall()
 {
@@ -35,5 +37,3 @@ test_forall_projects()
     clowder forall -c "$TEST_SCRIPT_DIR/tests/test_forall_script.sh" -p "$@" || exit 1
 }
 test_forall_projects 'jrgoodle/kit' 'jrgoodle/kishka'
-
-popd
