@@ -2,22 +2,19 @@
 
 # set -xv
 
-print_double_separator
-echo 'TEST: cats example test script'
-print_double_separator
-
 cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 
 . test_utilities.sh
 
-if [ -n "$TRAVIS_OS_NAME" ]; then
-    if [ "$TRAVIS_OS_NAME" = "osx" ]; then
-        "$TEST_SCRIPT_DIR/unittests.sh" || exit 1
-    fi
-else
+print_double_separator
+echo 'TEST: cats example test script'
+print_double_separator
+
+if [ -z "$TRAVIS_OS_NAME" ]; then
     setup_local_test_directory
-    "$TEST_SCRIPT_DIR/unittests.sh" || exit 1
 fi
+
+"$TEST_SCRIPT_DIR/unittests.sh" || exit 1
 
 cd "$CATS_EXAMPLE_DIR" || exit 1
 
