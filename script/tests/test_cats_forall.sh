@@ -11,10 +11,11 @@ export projects=( 'black-cats/kit' \
                   'black-cats/sasha' \
                   'black-cats/jules' )
 
+print_separator
 echo "TEST: Test clowder forall"
 
 test_forall_branches() {
-    clowder forall -c 'git checkout -b v0.1'
+    clowder forall -c 'git checkout -b v0.1' || exit 1
     echo "TEST: Check current branches"
     for project in "${projects[@]}"; do
     	pushd $project
@@ -25,7 +26,6 @@ test_forall_branches() {
 test_forall_branches
 
 test_forall_command() {
-    print_separator
     echo "TEST: Run forall command"
     clowder forall -c 'git status' || exit 1
     echo "TEST: Run forall command for specific groups"
@@ -38,7 +38,6 @@ test_forall_command() {
 test_forall_command 'cats'
 
 test_forall_script() {
-    print_separator
     echo "TEST: Run forall script"
     clowder forall -c "$TEST_SCRIPT_DIR/tests/test_forall_script.sh" || exit 1
     echo "TEST: Run forall script for specific groups"
@@ -51,7 +50,6 @@ test_forall_script() {
 test_forall_script 'cats'
 
 test_forall_projects() {
-    print_separator
     echo "TEST: Run forall command for specific projects"
     clowder forall -c 'git status' -p "$@" || exit 1
     echo "TEST: Run forall script for specific projects"

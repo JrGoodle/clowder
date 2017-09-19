@@ -6,15 +6,15 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 prepare_cats_example
 cd "$CATS_EXAMPLE_DIR" || exit 1
 
+print_separator
 echo "TEST: Test clowder prune"
 
 test_prune() {
-    print_separator
     echo "TEST: Test clowder prune branch"
-    clowder herd
+    clowder herd >/dev/null
 
     clowder start prune_branch >/dev/null
-    clowder status
+    clowder status || exit 1
     clowder prune -f prune_branch || exit 1
 
     pushd duke
@@ -36,7 +36,7 @@ test_prune() {
 
     clowder start prune_branch >/dev/null
     clowder prune -f prune_branch -g black-cats || exit 1
-    clowder status
+    clowder status || exit 1
 
     pushd duke
     test_branch prune_branch
@@ -59,18 +59,19 @@ test_prune_force() {
     echo "TEST: Test clowder force prune branch"
 
     clowder start prune_branch >/dev/null
-    clowder status
+    clowder status || exit 1
     pushd duke
-    touch something
-    git add something
-    git commit -m 'something'
+    touch something >/dev/null
+    git add something >/dev/null
+    git commit -m 'something' >/dev/null
     popd
     pushd mu
-    touch something
-    git add something
-    git commit -m 'something'
+    touch something >/dev/null
+    git add something >/dev/null
+    git commit -m 'something' >/dev/null
     popd
 
+    clowder status || exit 1
     clowder prune prune_branch && exit 1
     clowder prune -f prune_branch || exit 1
 
@@ -107,7 +108,8 @@ if [ -z "$TRAVIS_OS_NAME" ]; then
 
     test_prune_all() {
         echo "TEST: Test clowder prune all - delete local and remote branch"
-        clowder start -t prune_branch -p jrgoodle/duke || exit 1
+        clowder start -t prune_branch -p jrgoodle/duke >/dev/null
+        clowder status || exit 1
 
         pushd duke
         test_local_branch_exists prune_branch

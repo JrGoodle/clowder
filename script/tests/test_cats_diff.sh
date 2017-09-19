@@ -11,10 +11,10 @@ export projects=( 'black-cats/kit' \
                   'black-cats/sasha' \
                   'black-cats/jules' )
 
+print_separator
 echo "TEST: Test clowder diff"
 
 test_diff() {
-    print_separator
     echo "TEST: Make dirty repos"
     make_dirty_repos "${projects[@]}"
     echo "TEST: Display diff"

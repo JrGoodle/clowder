@@ -46,12 +46,16 @@ test_help() {
 
     clowder repo checkout master || exit 1
 
-    clowder link -v 'missing-defaults'
-    clowder herd
+    echo "TEST: Print help with invalid clowder.yaml"
+    clowder link -v 'missing-defaults' >/dev/null
+    clowder herd >/dev/null
+    clowder status || exit 1
     "$TEST_SCRIPT_DIR/tests/test_help.sh" "$CATS_EXAMPLE_DIR"
 
-    clowder link
-    clowder herd
+    echo "TEST: Print help with valid clowder.yaml"
+    clowder link >/dev/null
+    clowder herd >/dev/null
+    clowder status || exit 1
     "$TEST_SCRIPT_DIR/tests/test_help.sh" "$CATS_EXAMPLE_DIR"
 }
 test_help

@@ -43,8 +43,8 @@ make_dirty_repos() {
     for project in "$@"
     do
     	pushd $project
-        touch newfile
-        git add newfile
+        touch newfile >/dev/null
+        git add newfile >/dev/null
         popd
     done
     clowder diff || exit 1

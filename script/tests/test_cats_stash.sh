@@ -11,10 +11,10 @@ export projects=( 'black-cats/kit' \
                   'black-cats/sasha' \
                   'black-cats/jules' )
 
+print_separator
 echo "TEST: Test clowder stash"
 
 test_stash() {
-    print_separator
     make_dirty_repos "${projects[@]}"
     echo "TEST: Fail herd with dirty repos"
     clowder herd && exit 1
@@ -30,7 +30,6 @@ test_stash() {
 test_stash 'black-cats'
 
 test_stash_projects() {
-    print_separator
     make_dirty_repos "${projects[@]}"
     echo "TEST: Stash specific projects when dirty"
     clowder stash -p "$@" || exit 1

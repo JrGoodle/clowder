@@ -28,7 +28,7 @@ export commands=( 'clean' \
                   'status')
 
 print_separator
-echo "TEST: Help output"
+echo "TEST: Clowder help output"
 
 print_separator
 echo "TEST: clowder -h"

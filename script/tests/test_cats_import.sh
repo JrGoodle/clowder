@@ -6,15 +6,17 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 prepare_cats_example
 cd "$CATS_EXAMPLE_DIR" || exit 1
 
+print_separator
+echo "TEST: Test clowder file with import"
+
 test_clowder_import_default() {
-    print_separator
     echo "TEST: Test clowder file with default import"
 
     clowder link >/dev/null
     clowder herd >/dev/null
     clowder link -v import-default
     clowder herd >/dev/null
-    clowder status
+    clowder status || exit 1
     pushd black-cats/jules
     test_branch import-default
     popd
@@ -36,7 +38,7 @@ test_clowder_import_version() {
     clowder herd >/dev/null
     clowder link -v import-version
     clowder herd >/dev/null
-    clowder status
+    clowder status || exit 1
     pushd black-cats/jules
     test_branch import-version
     popd
