@@ -143,3 +143,61 @@ test_herd_projects() {
     clowder herd -p "$@" || exit 1
 }
 test_herd_projects 'jrgoodle/kit' 'jrgoodle/kishka'
+
+test_herd_no_local_existing_remote() {
+    echo 'TODO'
+}
+test_herd_no_local_existing_remote
+
+test_herd_no_local_no_remote() {
+    echo 'TODO'
+}
+test_herd_no_local_no_remote
+
+test_herd_existing_local_no_remote() {
+    print_single_separator
+    echo 'TODO'
+}
+test_herd_existing_local_no_remote
+
+test_herd_existing_local_existing_remote_no_tracking() {
+    print_single_separator
+    echo 'TODO'
+}
+test_herd_existing_local_existing_remote_no_tracking
+
+test_herd_existing_local_existing_remote_tracking() {
+    print_single_separator
+    echo 'TODO'
+}
+test_herd_existing_local_existing_remote_tracking
+
+test_herd_branch_no_local_existing_remote() {
+    print_single_separator
+    echo 'TODO'
+}
+test_herd_branch_no_local_existing_remote
+
+test_herd_branch_no_local_no_remote() {
+    print_single_separator
+    echo 'TODO'
+}
+test_herd_branch_no_local_no_remote
+
+test_herd_branch_existing_local_no_remote() {
+    print_single_separator
+    echo 'TODO'
+}
+test_herd_branch_existing_local_no_remote
+
+test_herd_branch_existing_local_existing_remote_no_tracking() {
+    print_single_separator
+    echo 'TODO'
+}
+test_herd_branch_existing_local_existing_remote_no_tracking
+
+test_herd_branch_existing_local_existing_remote_tracking() {
+    print_single_separator
+    echo 'TODO'
+}
+test_herd_branch_existing_local_existing_remote_tracking
