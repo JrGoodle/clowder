@@ -14,7 +14,7 @@ if [ -n "$TRAVIS_OS_NAME" ]; then
     fi
 else
     setup_local_test_directory
-    "$TEST_SCRIPT_DIR/unittests.sh" "$CATS_EXAMPLE_DIR" || exit 1
+    "$TEST_SCRIPT_DIR/unittests.sh" || exit 1
 fi
 
 cd "$CATS_EXAMPLE_DIR" || exit 1

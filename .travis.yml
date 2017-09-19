@@ -8,6 +8,8 @@ sudo: required
 dist: trusty
 
 env:
+  global:
+    - PYTHONPATH="$PYTHONPATH:$TRAVIS_BUILD_DIR"
   matrix:
     - TARGET="cats"
     - TARGET="llvm"

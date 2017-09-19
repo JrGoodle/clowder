@@ -38,14 +38,24 @@ prepare_unittest_repos
 cd "$TEST_SCRIPT_DIR/.." || exit 1
 
 echo ''
-echo '----------------------------------------------------------------------'
+print_separator
 echo 'TEST: Run unittests'
 echo ''
-python3 test/test_clowder_repo.py "$1" || exit 1
-python3 test/test_fork.py "$1" || exit 1
-python3 test/test_git_utilities.py "$1" || exit 1
-python3 test/test_group.py "$1" || exit 1
-python3 test/test_project.py "$1" || exit 1
-python3 test/test_source.py "$1" || exit 1
+
+if [ -n "$TRAVIS_OS_NAME" ]; then
+    python3 test/test_clowder_repo.py || exit 1
+    python3 test/test_fork.py || exit 1
+    python3 test/test_git_utilities.py || exit 1
+    python3 test/test_group.py || exit 1
+    python3 test/test_project.py || exit 1
+    python3 test/test_source.py || exit 1
+else
+    python3 test/test_clowder_repo.py "$CATS_EXAMPLE_DIR" || exit 1
+    python3 test/test_fork.py "$CATS_EXAMPLE_DIR" || exit 1
+    python3 test/test_git_utilities.py "$CATS_EXAMPLE_DIR" || exit 1
+    python3 test/test_group.py "$CATS_EXAMPLE_DIR" || exit 1
+    python3 test/test_project.py "$CATS_EXAMPLE_DIR" || exit 1
+    python3 test/test_source.py "$CATS_EXAMPLE_DIR" || exit 1
+fi
 
 $CATS_EXAMPLE_DIR/clean.sh
