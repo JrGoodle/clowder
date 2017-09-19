@@ -23,7 +23,7 @@ test_herd_missing_clowder
 
 test_herd() {
     print_separator
-    echo "TEST: Check current branches are on master"
+    echo "TEST: Check projects are on correct branches"
     clowder herd
     for project in "${projects[@]}"; do
     	pushd $project

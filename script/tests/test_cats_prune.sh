@@ -13,7 +13,8 @@ test_prune() {
     echo "TEST: Test clowder prune branch"
     clowder herd
 
-    clowder start prune_branch
+    clowder start prune_branch >/dev/null
+    clowder status
     clowder prune -f prune_branch || exit 1
 
     pushd duke
@@ -33,8 +34,9 @@ test_prune() {
     test_no_local_branch_exists prune_branch
     popd
 
-    clowder start prune_branch
+    clowder start prune_branch >/dev/null
     clowder prune -f prune_branch -g black-cats || exit 1
+    clowder status
 
     pushd duke
     test_branch prune_branch
@@ -56,7 +58,8 @@ test_prune
 test_prune_force() {
     echo "TEST: Test clowder force prune branch"
 
-    clowder start prune_branch
+    clowder start prune_branch >/dev/null
+    clowder status
     pushd duke
     touch something
     git add something

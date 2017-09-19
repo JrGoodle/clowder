@@ -10,10 +10,11 @@ test_clowder_import_default() {
     print_separator
     echo "TEST: Test clowder file with default import"
 
-    clowder link
-    clowder herd
+    clowder link >/dev/null
+    clowder herd >/dev/null
     clowder link -v import-default
-    clowder herd
+    clowder herd >/dev/null
+    clowder status
     pushd black-cats/jules
     test_branch import-default
     popd
@@ -31,10 +32,11 @@ test_clowder_import_default
 
 test_clowder_import_version() {
     echo "TEST: Test clowder file with version import"
-    clowder link
-    clowder herd
+    clowder link >/dev/null
+    clowder herd >/dev/null
     clowder link -v import-version
-    clowder herd
+    clowder herd >/dev/null
+    clowder status
     pushd black-cats/jules
     test_branch import-version
     popd

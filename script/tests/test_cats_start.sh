@@ -47,7 +47,7 @@ if [ -z "$TRAVIS_OS_NAME" ]; then
     test_start_tracking() {
         print_separator
         echo "TEST: Test start tracking branch"
-        clowder herd
+        clowder herd >/dev/null
 
         echo "TEST: No local or remote branches"
         clowder prune -af tracking_branch || exit 1
@@ -154,10 +154,11 @@ if [ -z "$TRAVIS_OS_NAME" ]; then
         popd
 
         echo "TEST: Existing local branch not checked out, no remote branch"
-        clowder prune -r tracking_branch
+        clowder prune -r tracking_branch >/dev/null
         clowder start tracking_branch || exit 1
         clowder forall -c 'git checkout master'
         clowder start -t tracking_branch || exit 1
+        clowder status
 
         pushd duke
         test_branch tracking_branch
