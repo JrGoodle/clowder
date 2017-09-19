@@ -6,10 +6,11 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 prepare_cats_example
 cd "$CATS_EXAMPLE_DIR" || exit 1
 
-print_separator
+print_double_separator
 echo "TEST: Test clowder start"
 
 test_start() {
+    print_single_separator
     echo "TEST: Start new branch"
     clowder herd >/dev/null
 
@@ -45,6 +46,7 @@ test_start
 
 if [ -z "$TRAVIS_OS_NAME" ]; then
     test_start_tracking() {
+        print_single_separator
         echo "TEST: Test start tracking branch"
         clowder herd >/dev/null
 

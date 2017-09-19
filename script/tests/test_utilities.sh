@@ -22,6 +22,8 @@ setup_local_test_directory() {
 }
 
 prepare_cats_example() {
+    print_single_separator
+    echo "TEST: Prepare cats example at $CATS_EXAMPLE_DIR"
     if [ -z "$TRAVIS_OS_NAME" ]; then
         if [ ! -d "$CATS_EXAMPLE_DIR" ]; then
             setup_local_test_directory
@@ -96,12 +98,16 @@ test_no_tracking_branch_exists() {
 }
 
 test_clowder_version() {
-    print_separator
+    print_double_separator
     echo "TEST: Print clowder version"
     clowder --version || exit 1
     clowder -v || exit 1
 }
 
-print_separator() {
+print_single_separator() {
     echo '--------------------------------------------------------------------------------'
+}
+
+print_double_separator() {
+    echo '================================================================================'
 }

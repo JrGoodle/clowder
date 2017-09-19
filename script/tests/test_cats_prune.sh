@@ -6,10 +6,11 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 prepare_cats_example
 cd "$CATS_EXAMPLE_DIR" || exit 1
 
-print_separator
+print_double_separator
 echo "TEST: Test clowder prune"
 
 test_prune() {
+    print_single_separator
     echo "TEST: Test clowder prune branch"
     clowder herd >/dev/null
 
@@ -56,6 +57,7 @@ test_prune() {
 test_prune
 
 test_prune_force() {
+    print_single_separator
     echo "TEST: Test clowder force prune branch"
 
     clowder start prune_branch >/dev/null
@@ -86,6 +88,7 @@ test_prune_force
 
 if [ -z "$TRAVIS_OS_NAME" ]; then
     test_prune_remote() {
+        print_single_separator
         echo "TEST: Test clowder prune remote branch"
 
         clowder prune -af prune_branch || exit 1
@@ -107,6 +110,7 @@ if [ -z "$TRAVIS_OS_NAME" ]; then
     test_prune_remote
 
     test_prune_all() {
+        print_single_separator
         echo "TEST: Test clowder prune all - delete local and remote branch"
         clowder start -t prune_branch -p jrgoodle/duke >/dev/null
         clowder status || exit 1

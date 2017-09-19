@@ -11,10 +11,11 @@ export projects=( 'black-cats/kit' \
                   'black-cats/sasha' \
                   'black-cats/jules' )
 
-print_separator
+print_double_separator
 echo "TEST: Test clowder clean"
 
 test_clean_groups() {
+    print_single_separator
     echo "TEST: Make dirty repos"
     make_dirty_repos "${projects[@]}"
     echo "TEST: Clean specific group when dirty"
@@ -27,6 +28,7 @@ test_clean_groups() {
 test_clean_groups 'black-cats'
 
 test_clean_projects() {
+    print_single_separator
     echo "TEST: Clean projects"
     make_dirty_repos "${projects[@]}"
     echo "TEST: Clean specific project when dirty"
@@ -39,6 +41,7 @@ test_clean_projects() {
 test_clean_projects 'jrgoodle/kit'
 
 test_clean_all() {
+    print_single_separator
     echo "TEST: Make dirty repos"
     make_dirty_repos "${projects[@]}"
     echo "TEST: Clean all when dirty"
@@ -50,6 +53,7 @@ test_clean_all() {
 test_clean_all 'black-cats'
 
 test_clean_missing_directories() {
+    print_single_separator
     echo "TEST: Make dirty repos"
     make_dirty_repos "${projects[@]}"
     rm -rf "$@"

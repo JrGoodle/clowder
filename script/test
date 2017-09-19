@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 if [ -z "$1" ]; then
-    echo 'Requires parameter "cat" or "llvm"'
+    echo 'Requires parameter "cats" or "llvm"'
     exit 1
 fi
 
@@ -14,6 +14,6 @@ if [ $1 == "cats" ]; then
 elif [ $1 == "llvm" ]; then
     ./tests/test_example_llvm.sh
 else
-    echo 'Requires parameter "cat" or "llvm"'
+    echo 'Requires parameter "cats" or "llvm"'
     exit 1
 fi

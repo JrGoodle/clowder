@@ -6,10 +6,11 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 prepare_cats_example
 cd "$CATS_EXAMPLE_DIR" || exit 1
 
-print_separator
+print_double_separator
 echo "TEST: Test clowder status"
 
 test_status_groups() {
+    print_single_separator
     echo "TEST: Test status for specific groups"
     clowder status -g "$@" || exit 1
     echo "TEST: Test status for specific groups with fetching"
@@ -18,6 +19,7 @@ test_status_groups() {
 test_status_groups 'black-cats'
 
 test_status_projects() {
+    print_single_separator
     echo "TEST: Test status for specific projects"
     clowder status -p "$@" || exit 1
     echo "TEST: Test status for specific projects with fetching"

@@ -13,6 +13,7 @@ if [ -z "$TRAVIS_OS_NAME" ]; then
 fi
 
 prepare_unittest_repos() {
+    print_single_separator
     echo 'TEST: Prepare repos for unit tests'
     pushd "$CATS_EXAMPLE_DIR" || exit 1
     # Clean and herd repo's to clean state
@@ -38,7 +39,7 @@ prepare_unittest_repos
 cd "$TEST_SCRIPT_DIR/.." || exit 1
 
 echo ''
-print_separator
+print_double_separator
 echo 'TEST: Run unittests'
 echo ''
 

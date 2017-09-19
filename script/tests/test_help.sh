@@ -27,15 +27,15 @@ export commands=( 'clean' \
                   'stash' \
                   'status')
 
-print_separator
+print_double_separator
 echo "TEST: Clowder help output"
 
-print_separator
+print_single_separator
 echo "TEST: clowder -h"
 clowder -h
 
 for command in "${commands[@]}"; do
-	print_separator
+	print_single_separator
     echo "TEST: clowder $command -h"
     clowder $command -h
 done

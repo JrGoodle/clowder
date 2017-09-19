@@ -2,7 +2,9 @@
 
 # set -xv
 
+print_double_separator
 echo 'TEST: llvm projects example test script'
+print_double_separator
 
 pushd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 
@@ -61,7 +63,7 @@ setup_old_repos() {
 }
 
 test_init_herd() {
-    print_separator
+    print_double_separator
     echo "TEST: Normal herd after init"
     "$LLVM_EXAMPLE_DIR/clean.sh"
     "$LLVM_EXAMPLE_DIR/init.sh"  || exit 1
@@ -69,8 +71,6 @@ test_init_herd() {
     clowder status -f || exit 1
 }
 test_init_herd
-
-print_separator
 
 echo "TEST: Check current branches are on master"
 for project in "${projects[@]}"; do
@@ -80,7 +80,7 @@ for project in "${projects[@]}"; do
 done
 
 test_herd_old_repos() {
-    print_separator
+    print_double_separator
     echo "TEST: Normal herd with out of date repos"
     setup_old_repos
     clowder herd || exit 1
@@ -88,7 +88,7 @@ test_herd_old_repos() {
 }
 test_herd_old_repos
 
-print_separator
+print_double_separator
 clowder forall -c 'git checkout -b v0.1'
 echo "TEST: Check current branches"
 for project in "${projects[@]}"; do
@@ -98,7 +98,7 @@ for project in "${projects[@]}"; do
 done
 
 test_help() {
-    print_separator
+    print_double_separator
     clowder link
     clowder herd
     "$TEST_SCRIPT_DIR/tests/test_help.sh" "$LLVM_EXAMPLE_DIR"

@@ -2,7 +2,9 @@
 
 # set -xv
 
+print_double_separator
 echo 'TEST: cats example test script'
+print_double_separator
 
 cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 
@@ -42,16 +44,15 @@ test_clowder_version
 "$TEST_SCRIPT_DIR/tests/test_cats_import.sh"
 
 test_help() {
-    print_separator
-
-    clowder repo checkout master || exit 1
-
+    print_double_separator
     echo "TEST: Print help with invalid clowder.yaml"
+    clowder repo checkout master || exit 1
     clowder link -v 'missing-defaults' >/dev/null
     clowder herd >/dev/null
     clowder status || exit 1
     "$TEST_SCRIPT_DIR/tests/test_help.sh" "$CATS_EXAMPLE_DIR"
 
+    print_double_separator
     echo "TEST: Print help with valid clowder.yaml"
     clowder link >/dev/null
     clowder herd >/dev/null
