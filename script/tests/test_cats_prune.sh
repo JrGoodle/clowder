@@ -49,7 +49,11 @@ test_prune()
     test_branch master
     test_no_local_branch_exists prune_branch
     popd
+}
+test_prune
 
+test_prune_force()
+{
     echo "TEST: Test clowder force prune branch"
 
     clowder start prune_branch
@@ -73,8 +77,12 @@ test_prune()
     pushd mu
     test_branch knead
     popd
+}
+test_prune_force
 
-    if [ -z "$TRAVIS_OS_NAME" ]; then
+if [ -z "$TRAVIS_OS_NAME" ]; then
+    test_prune_remote()
+    {
         echo "TEST: Test clowder prune remote branch"
 
         clowder prune -af prune_branch || exit 1
@@ -92,7 +100,11 @@ test_prune()
         test_no_local_branch_exists prune_branch
         test_no_remote_branch_exists prune_branch
         popd
+    }
+    test_prune_remote
 
+    test_prune_all()
+    {
         echo "TEST: Test clowder prune all - delete local and remote branch"
         clowder start -t prune_branch -p jrgoodle/duke || exit 1
 
@@ -107,6 +119,6 @@ test_prune()
         test_no_local_branch_exists prune_branch
         test_no_remote_branch_exists prune_branch
         popd
-    fi
-}
-test_prune
+    }
+    test_prune_all
+fi

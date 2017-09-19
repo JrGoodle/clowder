@@ -11,10 +11,12 @@ export projects=( 'black-cats/kit' \
                   'black-cats/sasha' \
                   'black-cats/jules' )
 
+echo "TEST: Test clean"
+
 test_clean()
 {
     print_separator
-    echo "TEST: Clean repos"
+    echo "TEST: Make dirty repos"
     make_dirty_repos "${projects[@]}"
     echo "TEST: Clean specific group when dirty"
     clowder clean -g "$@" || exit 1
