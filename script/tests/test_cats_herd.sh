@@ -11,6 +11,12 @@ export projects=( 'black-cats/kit' \
                   'black-cats/sasha' \
                   'black-cats/jules' )
 
+export all_projects=( 'mu' 'duke' \
+                      'black-cats/kit' \
+                      'black-cats/kishka' \
+                      'black-cats/sasha' \
+                      'black-cats/jules' )
+
 print_double_separator
 echo "TEST: Test clowder herd"
 
@@ -144,31 +150,193 @@ test_herd_projects() {
 }
 test_herd_projects 'jrgoodle/kit' 'jrgoodle/kishka'
 
+clowder repo checkout master || exit 1
+
+EXISTING_REMOTE_BRANCH='test-herd-existing-remote-branch'
+NO_REMOTE_BRANCH='test-herd-no-remote-branch'
+
+test_herd_no_repo_existing_remote() {
+    print_single_separator
+    echo "TEST: Herd - No repo, existing remote branch"
+    for project in "${all_projects[@]}"; do
+        rm -rf $project
+    done
+    clowder link -v $EXISTING_REMOTE_BRANCH
+    for project in "${all_projects[@]}"; do
+    	if [ -d "$project" ]; then
+            exit 1
+        fi
+    done
+    clowder herd || exit 1
+    for project in "${all_projects[@]}"; do
+    	pushd $project
+        test_branch $EXISTING_REMOTE_BRANCH
+        test_remote_branch_exists $EXISTING_REMOTE_BRANCH
+        test_tracking_branch_exists $EXISTING_REMOTE_BRANCH
+        popd
+    done
+}
+test_herd_no_repo_existing_remote
+
+test_herd_no_repo_no_remote() {
+    print_single_separator
+    echo "TEST: Herd - No repo, no remote branch"
+    for project in "${all_projects[@]}"; do
+        rm -rf $project
+    done
+    clowder link -v $NO_REMOTE_BRANCH
+    for project in "${all_projects[@]}"; do
+    	if [ -d "$project" ]; then
+            exit 1
+        fi
+    done
+    clowder herd && exit 1
+    for project in "${all_projects[@]}"; do
+    	if [ -d "$project" ]; then
+            exit 1
+        fi
+    done
+}
+test_herd_no_repo_no_remote
+
 test_herd_no_local_existing_remote() {
-    echo 'TODO'
+    print_single_separator
+    echo "TEST: Herd - No local branch, existing remote branch"
+    clowder link -v $EXISTING_REMOTE_BRANCH
+    clowder prune $EXISTING_REMOTE_BRANCH
+    for project in "${all_projects[@]}"; do
+    	pushd $project
+        test_no_local_branch_exists $EXISTING_REMOTE_BRANCH
+        test_remote_branch_exists $EXISTING_REMOTE_BRANCH
+        popd
+    done
+    clowder herd || exit 1
+    for project in "${all_projects[@]}"; do
+    	pushd $project
+        test_branch $EXISTING_REMOTE_BRANCH
+        test_remote_branch_exists $EXISTING_REMOTE_BRANCH
+        test_tracking_branch_exists $EXISTING_REMOTE_BRANCH
+        popd
+    done
 }
 test_herd_no_local_existing_remote
 
 test_herd_no_local_no_remote() {
-    echo 'TODO'
+    print_single_separator
+    echo "TEST: Herd - No local branch, no remote branch"
+    clowder link -v $NO_REMOTE_BRANCH
+    for project in "${all_projects[@]}"; do
+    	pushd $project
+        test_no_local_branch_exists $NO_REMOTE_BRANCH
+        test_no_remote_branch_exists $NO_REMOTE_BRANCH
+        popd
+    done
+    clowder herd && exit 1
+    for project in "${all_projects[@]}"; do
+    	pushd $project
+        test_no_local_branch_exists $NO_REMOTE_BRANCH
+        test_no_remote_branch_exists $NO_REMOTE_BRANCH
+        popd
+    done
 }
 test_herd_no_local_no_remote
 
 test_herd_existing_local_no_remote() {
     print_single_separator
-    echo 'TODO'
+    echo "TEST: Herd - Existing local branch, no remote branch"
+    clowder link
+    clowder start $NO_REMOTE_BRANCH
+    clowder herd
+    clowder link -v $NO_REMOTE_BRANCH
+    for project in "${all_projects[@]}"; do
+    	pushd $project
+        test_local_branch_exists $NO_REMOTE_BRANCH
+        test_no_remote_branch_exists $NO_REMOTE_BRANCH
+        popd
+    done
+    clowder herd || exit 1
+    for project in "${all_projects[@]}"; do
+    	pushd $project
+        test_local_branch_exists $NO_REMOTE_BRANCH
+        test_no_remote_branch_exists $NO_REMOTE_BRANCH
+        test_branch $NO_REMOTE_BRANCH
+        popd
+    done
 }
 test_herd_existing_local_no_remote
 
 test_herd_existing_local_existing_remote_no_tracking() {
     print_single_separator
-    echo 'TODO'
+    echo "TEST: Herd - Existing local branch, existing remote branch, no tracking, same commit"
+    clowder link -v $EXISTING_REMOTE_BRANCH
+    clowder prune $EXISTING_REMOTE_BRANCH
+    clowder herd
+    clowder prune $EXISTING_REMOTE_BRANCH
+    clowder start $EXISTING_REMOTE_BRANCH
+    for project in "${all_projects[@]}"; do
+    	pushd $project
+        test_local_branch_exists $EXISTING_REMOTE_BRANCH
+        test_remote_branch_exists $EXISTING_REMOTE_BRANCH
+        test_no_tracking_branch_exists $EXISTING_REMOTE_BRANCH
+        popd
+    done
+    clowder herd || exit 1
+    for project in "${all_projects[@]}"; do
+    	pushd $project
+        test_branch $EXISTING_REMOTE_BRANCH
+        test_local_branch_exists $EXISTING_REMOTE_BRANCH
+        test_remote_branch_exists $EXISTING_REMOTE_BRANCH
+        test_tracking_branch_exists $EXISTING_REMOTE_BRANCH
+        popd
+    done
+    echo "TEST: Herd - Existing local branch, existing remote branch, no tracking, different commits"
+    clowder link
+    clowder herd
+    clowder prune $EXISTING_REMOTE_BRANCH
+    clowder forall -c 'git reset --hard HEAD~10'
+    clowder forall -c "git branch $EXISTING_REMOTE_BRANCH"
+    clowder link -v $EXISTING_REMOTE_BRANCH
+    for project in "${all_projects[@]}"; do
+    	pushd $project
+        test_local_branch_exists $EXISTING_REMOTE_BRANCH
+        test_remote_branch_exists $EXISTING_REMOTE_BRANCH
+        test_no_tracking_branch_exists $EXISTING_REMOTE_BRANCH
+        popd
+    done
+    clowder herd && exit 1
+    for project in "${all_projects[@]}"; do
+    	pushd $project
+        test_branch $EXISTING_REMOTE_BRANCH
+        test_local_branch_exists $EXISTING_REMOTE_BRANCH
+        test_remote_branch_exists $EXISTING_REMOTE_BRANCH
+        test_no_tracking_branch_exists $EXISTING_REMOTE_BRANCH
+        popd
+    done
 }
 test_herd_existing_local_existing_remote_no_tracking
 
 test_herd_existing_local_existing_remote_tracking() {
     print_single_separator
-    echo 'TODO'
+    echo "TEST: Herd - Existing local branch, existing remote branch, tracking"
+    clowder link -v $EXISTING_REMOTE_BRANCH
+    clowder prune $EXISTING_REMOTE_BRANCH
+    clowder forall -c "git checkout $EXISTING_REMOTE_BRANCH"
+    for project in "${all_projects[@]}"; do
+    	pushd $project
+        test_local_branch_exists $EXISTING_REMOTE_BRANCH
+        test_remote_branch_exists $EXISTING_REMOTE_BRANCH
+        test_tracking_branch_exists $EXISTING_REMOTE_BRANCH
+        popd
+    done
+    clowder herd || exit 1
+    for project in "${all_projects[@]}"; do
+    	pushd $project
+        test_branch $EXISTING_REMOTE_BRANCH
+        test_local_branch_exists $EXISTING_REMOTE_BRANCH
+        test_remote_branch_exists $EXISTING_REMOTE_BRANCH
+        test_tracking_branch_exists $EXISTING_REMOTE_BRANCH
+        popd
+    done
 }
 test_herd_existing_local_existing_remote_tracking
 
