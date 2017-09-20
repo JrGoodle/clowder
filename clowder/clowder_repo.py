@@ -1,7 +1,6 @@
 """Clowder repo management"""
 import atexit
 import os
-import shutil
 import sys
 from termcolor import colored
 from clowder.utility.git_utilities import (
@@ -21,7 +20,8 @@ from clowder.utility.git_utilities import (
 )
 from clowder.utility.clowder_utilities import (
     execute_command,
-    force_symlink
+    force_symlink,
+    remove_directory_exit
 )
 from clowder.utility.print_utilities import (
     format_command,
@@ -85,7 +85,7 @@ class ClowderRepo(object):
         if os.path.isdir(self.clowder_path):
             clowder_yaml = os.path.join(self.root_directory, 'clowder.yaml')
             if not os.path.isfile(clowder_yaml):
-                shutil.rmtree(self.clowder_path)
+                remove_directory_exit(self.clowder_path)
 
     def is_dirty(self):
         """Check if project is dirty"""
@@ -128,7 +128,7 @@ class ClowderRepo(object):
             real_path = os.path.realpath(clowder_symlink)
             clowder_path = remove_prefix(real_path + '/', self.root_directory)
             path_output = format_path(clowder_path[1:-1])
-            print(current_ref_output + ' ' + project_output + ' -> ' + path_output)
+            print(current_ref_output + ' ' + project_output + ' ~~> ' + path_output)
         else:
             print(current_ref_output + ' ' + project_output)
 

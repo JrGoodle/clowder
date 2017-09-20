@@ -1,11 +1,14 @@
 """Clowder utilities"""
 import errno
 import os
+import shutil
 import subprocess
 import sys
 import yaml
+from termcolor import colored
 from clowder.utility.print_utilities import (
     format_empty_yaml_error,
+    format_path,
     print_file_exists_error,
     print_invalid_yaml_error,
     print_missing_yaml_error,
@@ -68,6 +71,17 @@ def parse_yaml(yaml_file):
     else:
         print()
         print_missing_yaml_error()
+        print()
+        sys.exit(1)
+
+def remove_directory_exit(path):
+    """Remove directory at path"""
+    try:
+        shutil.rmtree(path)
+    except:
+        message = colored(" - Failed to remove directory ", 'red')
+        print(message + format_path(path))
+    finally:
         print()
         sys.exit(1)
 

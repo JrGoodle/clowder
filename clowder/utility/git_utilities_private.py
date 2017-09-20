@@ -2,7 +2,10 @@
 import sys
 from git import Repo
 from termcolor import colored, cprint
-from clowder.utility.clowder_utilities import execute_command
+from clowder.utility.clowder_utilities import (
+    execute_command,
+    remove_directory_exit
+)
 from clowder.utility.print_utilities import (
     format_path,
     format_ref_string,
@@ -46,6 +49,67 @@ def _checkout_branch(repo_path, branch, remote, depth):
                     sys.exit(1)
     else:
         _create_local_tracking_branch(repo_path, branch, remote, depth)
+
+def _checkout_branch_new_repo(repo_path, branch, remote, depth):
+    """Checkout remote branch or fail and delete repo if it doesn't exist"""
+    repo = _repo(repo_path)
+    branch_output = format_ref_string(branch)
+    remote_output = format_remote_string(remote)
+    try:
+        origin = repo.remotes[remote]
+    except Exception as err:
+        message = colored(' - No existing remote ', 'red')
+        print(message + remote_output)
+        print_error(err)
+        remove_directory_exit(repo_path)
+    else:
+        if depth == 0:
+            print(' - Fetch from ' + remote_output)
+            command = ['git', 'fetch', remote, '--prune', '--tags']
+        else:
+            print(' - Fetch from ' + remote_output + ' ' + branch_output)
+            command = ['git', 'fetch', remote, branch, '--depth', str(depth),
+                       '--prune', '--tags']
+        return_code = execute_command(command, repo_path)
+        if return_code != 0:
+            message = colored(' - Failed to fetch from ', 'red')
+            print(message + remote_output)
+            print_command_failed_error(command)
+            remove_directory_exit(repo_path)
+        try:
+            remote_branch = origin.refs[branch]
+        except:
+            message = colored(' - No existing remote branch ', 'red')
+            print(message + branch_output)
+            remove_directory_exit(repo_path)
+        else:
+            print(' - Create branch ' + branch_output)
+            try:
+                default_branch = repo.create_head(branch, remote_branch)
+            except Exception as err:
+                message = colored(' - Failed to create branch ', 'red')
+                print(message + branch_output)
+                print_error(err)
+                remove_directory_exit(repo_path)
+            else:
+                try:
+                    print(' - Set tracking branch ' + branch_output +
+                          ' -> ' + remote_output + ' ' + branch_output)
+                    default_branch.set_tracking_branch(remote_branch)
+                except Exception as err:
+                    message = colored(' - Failed to set tracking branch ', 'red')
+                    print(message + branch_output)
+                    print_error(err)
+                    remove_directory_exit(repo_path)
+                else:
+                    try:
+                        print(' - Checkout branch ' + branch_output)
+                        default_branch.checkout()
+                    except Exception as err:
+                        message = colored(' - Failed to checkout branch ', 'red')
+                        print(message + branch_output)
+                        print_error(err)
+                        remove_directory_exit(repo_path)
 
 def _checkout_sha(repo_path, sha):
     """Checkout commit by sha"""

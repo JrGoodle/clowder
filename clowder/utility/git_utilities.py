@@ -1,10 +1,12 @@
 """Git utilities"""
 import os
-import shutil
 import sys
 from git import Repo
 from termcolor import colored, cprint
-from clowder.utility.clowder_utilities import execute_command
+from clowder.utility.clowder_utilities import (
+    execute_command,
+    remove_directory_exit
+)
 from clowder.utility.print_utilities import (
     format_command,
     format_path,
@@ -15,6 +17,7 @@ from clowder.utility.print_utilities import (
 )
 from clowder.utility.git_utilities_private import (
     _checkout_branch,
+    _checkout_branch_new_repo,
     _checkout_sha,
     _checkout_tag,
     _create_checkout_branch,
@@ -63,6 +66,23 @@ def git_checkout(repo_path, truncated_ref):
         print_error(err)
         sys.exit(1)
 
+def git_checkout_ref(repo_path, ref, remote, depth):
+    """Checkout branch, tag, or commit from sha"""
+    ref_type = _ref_type(ref)
+    if ref_type is 'branch':
+        branch = _truncate_ref(ref)
+        _checkout_branch(repo_path, branch, remote, depth)
+    elif ref_type is 'tag':
+        git_fetch_remote_ref(repo_path, remote, ref, depth)
+        tag = _truncate_ref(ref)
+        _checkout_tag(repo_path, tag)
+    elif ref_type is 'sha':
+        git_fetch_remote_ref(repo_path, remote, ref, depth)
+        _checkout_sha(repo_path, ref)
+    else:
+        ref_output = format_ref_string(ref)
+        print('Unknown ref ' + ref_output)
+
 def git_commit(repo_path, message):
     """Commit current changes"""
     repo = _repo(repo_path)
@@ -81,19 +101,12 @@ def git_create_repo(url, repo_path, remote, ref, depth=0):
         except Exception as err:
             cprint(' - Failed to initialize repository', 'red')
             print_error(err)
-            try:
-                shutil.rmtree(repo_path)
-            except:
-                message = colored(" - Failed to remove directory ", 'red')
-                print(message + format_path(repo_path))
-            finally:
-                print()
-                sys.exit(1)
+            remove_directory_exit(repo_path)
         else:
             repo = _repo(repo_path)
             remote_names = [r.name for r in repo.remotes]
             if remote in remote_names:
-                _checkout_ref(repo_path, ref, remote, depth)
+                git_checkout_ref(repo_path, ref, remote, depth)
             else:
                 remote_output = format_remote_string(remote)
                 print(" - Create remote " + remote_output)
@@ -103,16 +116,10 @@ def git_create_repo(url, repo_path, remote, ref, depth=0):
                     message = colored(" - Failed to create remote ", 'red')
                     print(message + remote_output)
                     print_error(err)
-                    try:
-                        shutil.rmtree(repo_path)
-                    except:
-                        message = colored(" - Failed to remove directory ", 'red')
-                        print(message + format_path(repo_path))
-                    finally:
-                        print()
-                        sys.exit(1)
+                    remove_directory_exit(repo_path)
                 else:
-                    _checkout_ref(repo_path, ref, remote, depth)
+                    branch = _truncate_ref(ref)
+                    _checkout_branch_new_repo(repo_path, branch, remote, depth)
 
 def git_create_remote(repo_path, remote, url):
     """Create new remote"""
@@ -204,16 +211,17 @@ def git_fetch_silent(repo_path):
         sys.exit(return_code)
 
 def git_herd(repo_path, url, remote, ref, depth):
-    """Check if there are untracked files"""
+    """Herd ref"""
     ref_type = _ref_type(ref)
     if ref_type is 'branch':
         git_create_remote(repo_path, remote, url)
-        _checkout_ref(repo_path, ref, remote, depth)
+        git_checkout_ref(repo_path, ref, remote, depth)
         branch = _truncate_ref(ref)
-        _pull_remote_branch(repo_path, remote, branch)
+        if git_existing_remote_branch(repo_path, branch, remote):
+            _pull_remote_branch(repo_path, remote, branch)
     elif ref_type is 'tag' or ref_type is 'sha':
         git_create_remote(repo_path, remote, url)
-        _checkout_ref(repo_path, ref, remote, depth)
+        git_checkout_ref(repo_path, ref, remote, depth)
     else:
         cprint('Unknown ref ' + ref, 'red')
 
@@ -445,20 +453,3 @@ def git_validate_repo_state(repo_path):
     if not git_existing_repository(repo_path):
         return True
     return not git_is_dirty(repo_path)
-
-def _checkout_ref(repo_path, ref, remote, depth):
-    """Checkout branch, tag, or commit from sha"""
-    ref_type = _ref_type(ref)
-    if ref_type is 'branch':
-        branch = _truncate_ref(ref)
-        _checkout_branch(repo_path, branch, remote, depth)
-    elif ref_type is 'tag':
-        git_fetch_remote_ref(repo_path, remote, ref, depth)
-        tag = _truncate_ref(ref)
-        _checkout_tag(repo_path, tag)
-    elif ref_type is 'sha':
-        git_fetch_remote_ref(repo_path, remote, ref, depth)
-        _checkout_sha(repo_path, ref)
-    else:
-        ref_output = format_ref_string(ref)
-        print('Unknown ref ' + ref_output)
