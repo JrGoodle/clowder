@@ -253,22 +253,11 @@ class Project(object):
         """Print formatted project status"""
         repo_path = os.path.join(self.root_directory, self.path)
         if not git_existing_repository(repo_path):
-            cprint(self.name, 'green')
+            cprint(self.path, 'green')
             return
-        project_output = format_project_string(repo_path, self.name)
+        project_output = format_project_string(repo_path, self.path)
         current_ref_output = format_project_ref_string(repo_path)
-        path_output = format_path(self.path)
-        long_output = project_output + ' ' + current_ref_output + ' -> ' + path_output
-        short_output = project_output + ' ' + current_ref_output + '\n-> ' + path_output
-        long_output_length = len(''.join(s for s in long_output if ord(s) > 31 and ord(s) < 126))
-        try:
-            terminal_size = os.get_terminal_size()
-            if long_output_length <= terminal_size.columns:
-                print(long_output)
-            else:
-                print(short_output)
-        except:
-            print(long_output)
+        print(project_output + ' ' + current_ref_output)
 
     def _print_status_indented(self, padding):
         """Print formatted and indented project status"""
