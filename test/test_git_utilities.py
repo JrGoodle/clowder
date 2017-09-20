@@ -1,5 +1,6 @@
 """Test group class"""
 import os
+import sys
 import unittest
 from clowder.utility.git_utilities import (
     git_current_branch,
@@ -9,15 +10,19 @@ from clowder.utility.git_utilities import (
     _ref_type,
     _truncate_ref
 )
-from test.shared import CATS_EXAMPLE_PATH
 
 class GitUtilitiesTest(unittest.TestCase):
     """git_utilities test subclass"""
+
+    CURRENT_FILE_DIR_PATH = os.path.dirname(os.path.realpath(__file__))
+    CATS_EXAMPLE_PATH = os.path.abspath(os.path.join(CURRENT_FILE_DIR_PATH,
+                                                     '..', 'examples', 'cats'))
+
     def setUp(self):
-        self.jules_project_path = os.path.join(CATS_EXAMPLE_PATH, 'black-cats', 'jules')
-        self.kishka_project_path = os.path.join(CATS_EXAMPLE_PATH, 'black-cats', 'kishka')
-        self.kit_project_path = os.path.join(CATS_EXAMPLE_PATH, 'black-cats', 'kit')
-        self.sasha_project_path = os.path.join(CATS_EXAMPLE_PATH, 'black-cats', 'sasha')
+        self.jules_project_path = os.path.join(self.CATS_EXAMPLE_PATH, 'black-cats', 'jules')
+        self.kishka_project_path = os.path.join(self.CATS_EXAMPLE_PATH, 'black-cats', 'kishka')
+        self.kit_project_path = os.path.join(self.CATS_EXAMPLE_PATH, 'black-cats', 'kit')
+        self.sasha_project_path = os.path.join(self.CATS_EXAMPLE_PATH, 'black-cats', 'sasha')
         self.branch_ref = 'refs/heads/master'
         self.tag_ref = 'refs/tags/v1.0'
         self.sha_ref = '6ce5538d2c09fda2f56a9ca3859f5e8cfe706bf0'
@@ -71,4 +76,6 @@ class GitUtilitiesTest(unittest.TestCase):
         self.assertEqual(_truncate_ref(self.tag_ref), 'v1.0')
 
 if __name__ == '__main__':
+    if len(sys.argv) > 1:
+        GitUtilitiesTest.CATS_EXAMPLE_PATH = sys.argv.pop()
     unittest.main()

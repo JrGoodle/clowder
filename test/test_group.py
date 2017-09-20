@@ -1,9 +1,10 @@
 """Test group class"""
+import os
+import sys
 import unittest
 from clowder.group import Group
 from clowder.source import Source
 from test.shared import (
-    CATS_EXAMPLE_PATH,
     DEFAULTS_YAML,
     GITHUB_HTTPS_SOURCE_YAML,
     GITHUB_SSH_SOURCE_YAML,
@@ -14,12 +15,17 @@ from test.shared import (
 
 class GroupTest(unittest.TestCase):
     """group test subclass"""
+
+    CURRENT_FILE_DIR_PATH = os.path.dirname(os.path.realpath(__file__))
+    CATS_EXAMPLE_PATH = os.path.abspath(os.path.join(CURRENT_FILE_DIR_PATH,
+                                                     '..', 'examples', 'cats'))
+
     def setUp(self):
         sources = [Source(GITHUB_SSH_SOURCE_YAML),
                    Source(GITHUB_HTTPS_SOURCE_YAML)]
-        self.jules_group = Group(CATS_EXAMPLE_PATH, JULES_GROUP_YAML, DEFAULTS_YAML, sources)
-        self.kishka_group = Group(CATS_EXAMPLE_PATH, KISHKA_GROUP_YAML, DEFAULTS_YAML, sources)
-        self.kit_group = Group(CATS_EXAMPLE_PATH, KIT_GROUP_YAML, DEFAULTS_YAML, sources)
+        self.jules_group = Group(self.CATS_EXAMPLE_PATH, JULES_GROUP_YAML, DEFAULTS_YAML, sources)
+        self.kishka_group = Group(self.CATS_EXAMPLE_PATH, KISHKA_GROUP_YAML, DEFAULTS_YAML, sources)
+        self.kit_group = Group(self.CATS_EXAMPLE_PATH, KIT_GROUP_YAML, DEFAULTS_YAML, sources)
 
     def test_get_yaml(self):
         """Test get_yaml() method"""
@@ -54,4 +60,6 @@ class GroupTest(unittest.TestCase):
         self.assertTrue(self.kit_group.projects_exist())
 
 if __name__ == '__main__':
+    if len(sys.argv) > 1:
+        GroupTest.CATS_EXAMPLE_PATH = sys.argv.pop()
     unittest.main()

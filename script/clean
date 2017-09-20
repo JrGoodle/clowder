@@ -19,10 +19,8 @@ clean_nix() {
 
 clean_examples() {
     if [ -n "$TRAVIS_OS_NAME" ]; then
-        pushd ..
-        rm -rf examples
-        git checkout -- examples
-        popd
+        ../examples/cats/clean.sh
+        ../examples/llvm-projects/clean.sh
     else
         rm -rf "$HOME/.clowder_tests"
     fi

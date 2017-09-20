@@ -1,17 +1,19 @@
 #!/usr/bin/env bash
 
 if [ -z "$1" ]; then
-    echo 'Requires parameter "cat" or "llvm"'
+    echo 'Requires parameter "cats" or "llvm"'
     exit 1
 fi
 
 cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 
+./update
+
 if [ $1 == "cats" ]; then
-    ./test_cats_example.sh
+    ./tests/test_example_cats.sh
 elif [ $1 == "llvm" ]; then
-    ./test_llvm_example.sh
+    ./tests/test_example_llvm.sh
 else
-    echo 'Requires parameter "cat" or "llvm"'
+    echo 'Requires parameter "cats" or "llvm"'
     exit 1
 fi

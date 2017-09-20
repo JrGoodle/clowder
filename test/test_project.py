@@ -1,10 +1,10 @@
 """Test project class"""
 import os
+import sys
 import unittest
 from clowder.source import Source
 from clowder.project import Project
 from test.shared import (
-    CATS_EXAMPLE_PATH,
     DEFAULTS_YAML,
     GITHUB_HTTPS_SOURCE_YAML,
     GITHUB_SSH_SOURCE_YAML,
@@ -15,17 +15,22 @@ from test.shared import (
 
 class ProjectTest(unittest.TestCase):
     """project test subclass"""
+
+    CURRENT_FILE_DIR_PATH = os.path.dirname(os.path.realpath(__file__))
+    CATS_EXAMPLE_PATH = os.path.abspath(os.path.join(CURRENT_FILE_DIR_PATH,
+                                                     '..', 'examples', 'cats'))
+
     def setUp(self):
-        # self.jules_project_path = os.path.join(CATS_EXAMPLE_PATH, 'black-cats', 'jules')
-        # self.kishka_project_path = os.path.join(CATS_EXAMPLE_PATH, 'black-cats', 'kishka')
-        self.kit_project_path = os.path.join(CATS_EXAMPLE_PATH, 'black-cats', 'kit')
+        # self.jules_project_path = os.path.join(self.CATS_EXAMPLE_PATH, 'black-cats', 'jules')
+        # self.kishka_project_path = os.path.join(self.CATS_EXAMPLE_PATH, 'black-cats', 'kishka')
+        self.kit_project_path = os.path.join(self.CATS_EXAMPLE_PATH, 'black-cats', 'kit')
         sources = [Source(GITHUB_SSH_SOURCE_YAML),
                    Source(GITHUB_HTTPS_SOURCE_YAML)]
-        self.jules_project = Project(CATS_EXAMPLE_PATH, JULES_PROJECT_YAML,
+        self.jules_project = Project(self.CATS_EXAMPLE_PATH, JULES_PROJECT_YAML,
                                      DEFAULTS_YAML, sources)
-        self.kishka_project = Project(CATS_EXAMPLE_PATH, KISHKA_PROJECT_YAML,
+        self.kishka_project = Project(self.CATS_EXAMPLE_PATH, KISHKA_PROJECT_YAML,
                                       DEFAULTS_YAML, sources)
-        self.kit_project = Project(CATS_EXAMPLE_PATH, KIT_PROJECT_YAML,
+        self.kit_project = Project(self.CATS_EXAMPLE_PATH, KIT_PROJECT_YAML,
                                    DEFAULTS_YAML, sources)
 
     def test_exists(self):
@@ -54,7 +59,7 @@ class ProjectTest(unittest.TestCase):
         self.assertEqual(self.kit_project.path, 'black-cats/kit')
         self.assertEqual(self.kit_project.ref, 'da5c3d32ec2c00aba4a9f7d822cce2c727f7f5dd')
         self.assertEqual(self.kit_project.remote_name, 'origin')
-        self.assertEqual(self.kit_project.root_directory, CATS_EXAMPLE_PATH)
+        self.assertEqual(self.kit_project.root_directory, self.CATS_EXAMPLE_PATH)
         self.assertEqual(self.kit_project.url, 'https://github.com/jrgoodle/kit.git')
 
     def test_get_yaml(self):
@@ -68,4 +73,6 @@ class ProjectTest(unittest.TestCase):
         self.assertEqual(self.kit_project.get_yaml(), project_yaml)
 
 if __name__ == '__main__':
+    if len(sys.argv) > 1:
+        ProjectTest.CATS_EXAMPLE_PATH = sys.argv.pop()
     unittest.main()

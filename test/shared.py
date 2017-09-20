@@ -1,8 +1,4 @@
 """Shared resources for tests"""
-import os
-
-CURRENT_FILE_DIR_PATH = os.path.dirname(os.path.realpath(__file__))
-CATS_EXAMPLE_PATH = os.path.abspath(os.path.join(CURRENT_FILE_DIR_PATH, '..', 'examples', 'cats'))
 
 DEFAULTS_YAML = {'ref': 'refs/heads/master',
                  'remote': 'origin',

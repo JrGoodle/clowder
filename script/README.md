@@ -1,11 +1,11 @@
 # Scripts
 
-## `test_cats_example.sh`
+## `test_example_cats.sh`
 
 - Test invalid yaml
 - Test various herding scenarios
 
-## `test_llvm_example.sh`
+## `test_example_llvm.sh`
 
 - Test forks
 - Test depth
