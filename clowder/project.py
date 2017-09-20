@@ -122,6 +122,11 @@ class Project(object):
         if self.exists():
             git_fetch_silent(self.full_path())
 
+    def formatted_project_path(self):
+        """Return formatted project path"""
+        repo_path = os.path.join(self.root_directory, self.path)
+        return format_project_string(repo_path, self.path)
+
     def full_path(self):
         """Return full path to project"""
         return os.path.join(self.root_directory, self.path)
@@ -229,9 +234,9 @@ class Project(object):
         else:
             git_start(self.full_path(), self.remote_name, branch, self.depth, tracking)
 
-    def status(self):
+    def status(self, padding):
         """Print status for project"""
-        self._print_status()
+        self._print_status_indented(padding)
 
     def stash(self):
         """Stash changes for project if dirty"""
@@ -264,3 +269,14 @@ class Project(object):
                 print(short_output)
         except:
             print(long_output)
+
+    def _print_status_indented(self, padding):
+        """Print formatted and indented project status"""
+        repo_path = os.path.join(self.root_directory, self.path)
+        if not git_existing_repository(repo_path):
+            cprint(self.name, 'green')
+            return
+        project_output = format_project_string(repo_path, self.path)
+        current_ref_output = format_project_ref_string(repo_path)
+        path_output = format_path(self.path)
+        print('{0} {1}'.format(project_output.ljust(padding), current_ref_output))

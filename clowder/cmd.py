@@ -10,6 +10,7 @@ import colorama
 from termcolor import cprint, colored
 from clowder.clowder_repo import ClowderRepo
 from clowder.clowder_controller import ClowderController
+from clowder.utility.git_print_utilities import format_project_string
 
 if __name__ == '__main__':
     raise SystemExit(main())
@@ -363,15 +364,10 @@ class Command(object):
             if self.args.fetch:
                 print(' - Fetch upstream changes for projects')
                 print()
-                if self.args.projects is None:
-                    self.clowder.fetch_groups(self.args.groups)
-                else:
-                    self.clowder.fetch_projects(self.args.projects)
-                print()
-            if self.args.projects is None:
-                self.clowder.status_groups(self.args.groups)
-            else:
-                self.clowder.status_projects(self.args.projects)
+                self.clowder.fetch_groups(self.group_names)
+            all_project_paths = self.clowder.get_all_project_paths()
+            padding = len(max(all_project_paths, key=len))
+            self.clowder.status_groups(self.group_names, padding)
         else:
             exit_clowder_not_found()
 
@@ -666,28 +662,6 @@ class Command(object):
         parser_status = subparsers.add_parser('status', help='Print project status')
         parser_status.add_argument('--fetch', '-f', action='store_true',
                                    help='fetch projects before printing status')
-        if self.group_names is not '':
-            status_help_groups = '''
-                                 groups to print status for:
-                                 {0}
-                                 '''
-            status_help_groups = status_help_groups.format(', '.join(self.group_names))
-        else:
-            status_help_groups = 'groups to print status for'
-        group_status = parser_status.add_mutually_exclusive_group()
-        group_status.add_argument('--groups', '-g', choices=self.group_names,
-                                  default=self.group_names, nargs='+',
-                                  help=status_help_groups, metavar='GROUP')
-        if self.project_names is not '':
-            status_help_projects = '''
-                                   projects to print status for:
-                                   {0}
-                                   '''
-            status_help_projects = status_help_projects.format(', '.join(self.project_names))
-        else:
-            status_help_projects = 'projects to print status for'
-        group_status.add_argument('--projects', '-p', choices=self.project_names,
-                                  nargs='+', help=status_help_projects, metavar='PROJECT')
 
     def _exit_handler_formatter(self):
         """Exit handler to display trailing newline"""

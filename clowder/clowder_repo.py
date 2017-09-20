@@ -128,9 +128,9 @@ class ClowderRepo(object):
             real_path = os.path.realpath(clowder_symlink)
             clowder_path = remove_prefix(real_path + '/', self.root_directory)
             path_output = format_path(clowder_path[1:-1])
-            print(project_output + ' ' + current_ref_output + ' ~~> ' + path_output)
+            print(current_ref_output + ' ' + project_output + ' -> ' + path_output)
         else:
-            print(project_output + ' ' + current_ref_output)
+            print(current_ref_output + ' ' + project_output)
 
     def pull(self):
         """Pull clowder repo upstream changes"""
