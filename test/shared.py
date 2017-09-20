@@ -14,7 +14,7 @@ KISHKA_PROJECT_YAML = {'name': 'jrgoodle/kishka',
                        'path': 'black-cats/kishka'}
 KIT_PROJECT_YAML = {'name': 'jrgoodle/kit',
                     'path': 'black-cats/kit',
-                    'ref': 'da5c3d32ec2c00aba4a9f7d822cce2c727f7f5dd'}
+                    'ref': 'f2e20031ddce5cb097105f4d8ccbc77f4ac20709'}
 
 JULES_GROUP_YAML = {'name': 'cats',
                     'projects': [JULES_PROJECT_YAML]}
@@ -26,6 +26,6 @@ KIT_GROUP_YAML = {'name': 'cats',
 # GROUP_YAML = {'name': 'cats',
 #               'projects': [{'name': 'jrgoodle/kit',
 #                             'path': 'black-cats/kit',
-#                             'ref': 'da5c3d32ec2c00aba4a9f7d822cce2c727f7f5dd',
+#                             'ref': 'f2e20031ddce5cb097105f4d8ccbc77f4ac20709',
 #                             'remote': 'origin',
 #                             'source': 'github'}]}

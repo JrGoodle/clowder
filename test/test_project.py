@@ -57,7 +57,7 @@ class ProjectTest(unittest.TestCase):
         """Test the state of all project member variables initialized"""
         self.assertEqual(self.kit_project.name, 'jrgoodle/kit')
         self.assertEqual(self.kit_project.path, 'black-cats/kit')
-        self.assertEqual(self.kit_project.ref, 'da5c3d32ec2c00aba4a9f7d822cce2c727f7f5dd')
+        self.assertEqual(self.kit_project.ref, 'f2e20031ddce5cb097105f4d8ccbc77f4ac20709')
         self.assertEqual(self.kit_project.remote_name, 'origin')
         self.assertEqual(self.kit_project.root_directory, self.CATS_EXAMPLE_PATH)
         self.assertEqual(self.kit_project.url, 'https://github.com/jrgoodle/kit.git')
@@ -67,7 +67,7 @@ class ProjectTest(unittest.TestCase):
         project_yaml = {'name': 'jrgoodle/kit',
                         'path': 'black-cats/kit',
                         'depth': 0,
-                        'ref': 'da5c3d32ec2c00aba4a9f7d822cce2c727f7f5dd',
+                        'ref': 'f2e20031ddce5cb097105f4d8ccbc77f4ac20709',
                         'remote': 'origin',
                         'source': 'github'}
         self.assertEqual(self.kit_project.get_yaml(), project_yaml)

@@ -33,7 +33,7 @@ class GroupTest(unittest.TestCase):
                       'projects': [{'name': 'jrgoodle/kit',
                                     'path': 'black-cats/kit',
                                     'depth': 0,
-                                    'ref': 'da5c3d32ec2c00aba4a9f7d822cce2c727f7f5dd',
+                                    'ref': 'f2e20031ddce5cb097105f4d8ccbc77f4ac20709',
                                     'remote': 'origin',
                                     'source': 'github'}]}
         self.assertEqual(self.kit_group.get_yaml(), group_yaml)
