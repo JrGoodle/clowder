@@ -10,7 +10,6 @@ import colorama
 from termcolor import cprint, colored
 from clowder.clowder_repo import ClowderRepo
 from clowder.clowder_controller import ClowderController
-from clowder.utility.git_print_utilities import format_project_string
 
 if __name__ == '__main__':
     raise SystemExit(main())
