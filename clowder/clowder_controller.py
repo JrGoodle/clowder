@@ -108,6 +108,10 @@ class ClowderController(object):
         """Returns all project names for current clowder.yaml"""
         return sorted([p.name for g in self.groups for p in g.projects])
 
+    def get_all_project_paths(self):
+        """Returns all project paths for current clowder.yaml"""
+        return sorted([p.formatted_project_path() for g in self.groups for p in g.projects])
+
     def get_saved_version_names(self):
         """Return list of all saved versions"""
         versions_dir = os.path.join(self.root_directory, '.clowder', 'versions')
@@ -275,14 +279,14 @@ class ClowderController(object):
         else:
             print('No changes to stash')
 
-    def status_groups(self, group_names, verbose=False):
+    def status_groups(self, group_names, padding, verbose=False):
         """Print status for groups"""
         for group in self.groups:
             if group.name in group_names:
                 if verbose is False:
-                    group.status()
+                    group.status(padding)
                 else:
-                    group.status_verbose()
+                    group.status_verbose(padding)
 
     def status_projects(self, project_names, verbose=False):
         """Print status for projects"""

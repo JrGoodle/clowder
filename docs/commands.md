@@ -246,10 +246,4 @@ $ clowder status
 
 # Fetch upstream changes for projects before printing statuses
 $ clowder status -f
-
-# Print status of projects in clang and llvm groups
-$ clowder status -g clang llvm
-
-# Print status of clang and llvm projects
-$ clowder status -p llvm-mirror/clang llvm-mirror/llvm
 ```

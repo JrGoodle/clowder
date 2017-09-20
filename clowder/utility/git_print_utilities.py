@@ -31,7 +31,7 @@ def format_project_ref_string(repo_path):
     else:
         local_commits_output = colored('+' + str(local_commits), 'yellow')
         upstream_commits_output = colored('-' + str(upstream_commits), 'red')
-        status = ' (' + local_commits_output + '/' + upstream_commits_output + ')'
+        status = '[' + local_commits_output + '/' + upstream_commits_output + ']'
 
     if git_is_detached(repo_path):
         current_ref = git_sha_short(repo_path)

@@ -114,11 +114,11 @@ class Group(object):
         for project in self.projects:
             project.start(branch, tracking)
 
-    def status(self):
+    def status(self, padding):
         """Print status for all projects"""
         self._print_name()
         for project in self.projects:
-            project.status()
+            project.status(padding)
 
     def stash(self):
         """Stash changes for all projects with changes"""

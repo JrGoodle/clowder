@@ -9,20 +9,16 @@ cd "$CATS_EXAMPLE_DIR" || exit 1
 print_double_separator
 echo "TEST: Test clowder status"
 
-test_status_groups() {
+test_status() {
     print_single_separator
-    echo "TEST: Test status for specific groups"
-    clowder status -g "$@" || exit 1
-    echo "TEST: Test status for specific groups with fetching"
-    clowder status -f -g "$@" || exit 1
+    echo "TEST: Test status"
+    clowder status -f || exit 1
 }
-test_status_groups 'black-cats'
+test_status
 
-test_status_projects() {
+test_status_fetch() {
     print_single_separator
-    echo "TEST: Test status for specific projects"
-    clowder status -p "$@" || exit 1
-    echo "TEST: Test status for specific projects with fetching"
-    clowder status -f -p "$@" || exit 1
+    echo "TEST: Test status with fetching"
+    clowder status -f || exit 1
 }
-test_status_projects 'jrgoodle/mu' 'jrgoodle/duke'
+test_status_fetch
