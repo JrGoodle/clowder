@@ -3,11 +3,6 @@
 cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 
 . test_utilities.sh
-prepare_cats_example
-cd "$CATS_EXAMPLE_DIR" || exit 1
-
-print_double_separator
-echo "TEST: Test clowder start"
 
 export black_cats_projects=( 'black-cats/kit' \
                              'black-cats/kishka' \
@@ -19,6 +14,12 @@ export all_projects=( 'mu' 'duke' \
                       'black-cats/kishka' \
                       'black-cats/sasha' \
                       'black-cats/jules' )
+
+prepare_cats_example
+cd "$CATS_EXAMPLE_DIR" || exit 1
+
+print_double_separator
+echo "TEST: Test clowder start"
 
 test_start() {
     print_single_separator
@@ -170,7 +171,21 @@ if [ -z "$TRAVIS_OS_NAME" ]; then
         clowder start -t tracking_branch || exit 1
         clowder prune -f tracking_branch || exit 1
         clowder forall -c 'git checkout -b tracking_branch' || exit 1
+        for project in "${all_projects[@]}"; do
+            pushd $project
+            test_branch tracking_branch
+            test_remote_branch_exists tracking_branch
+            test_no_tracking_branch_exists tracking_branch
+            popd
+        done
         clowder start -t tracking_branch && exit 1
+        for project in "${all_projects[@]}"; do
+            pushd $project
+            test_branch tracking_branch
+            test_remote_branch_exists tracking_branch
+            test_no_tracking_branch_exists tracking_branch
+            popd
+        done
 
         echo "TEST: Existing local branch not checked out, existing remote branch, no tracking relationship"
         clowder prune -af tracking_branch || exit 1
@@ -178,61 +193,67 @@ if [ -z "$TRAVIS_OS_NAME" ]; then
         clowder prune -f tracking_branch || exit 1
         clowder forall -c 'git checkout -b tracking_branch' || exit 1
         clowder forall -c 'git checkout master' || exit 1
+        for project in "${all_projects[@]}"; do
+            pushd $project
+            test_branch 'master'
+            test_local_branch_exists tracking_branch
+            test_remote_branch_exists tracking_branch
+            test_no_tracking_branch_exists tracking_branch
+            popd
+        done
         clowder start -t tracking_branch && exit 1
+        for project in "${all_projects[@]}"; do
+            pushd $project
+            test_local_branch_exists tracking_branch
+            test_remote_branch_exists tracking_branch
+            test_no_tracking_branch_exists tracking_branch
+            popd
+        done
 
         echo "TEST: Existing local branch checked out, no remote branch"
         clowder prune -af tracking_branch
         clowder start tracking_branch || exit 1
+
+        for project in "${all_projects[@]}"; do
+            pushd $project
+            test_branch tracking_branch
+            test_local_branch_exists tracking_branch
+            test_no_remote_branch_exists tracking_branch
+            popd
+        done
+
         clowder start -t tracking_branch || exit 1
 
-        pushd duke
-        test_branch tracking_branch
-        test_remote_branch_exists tracking_branch
-        test_tracking_branch_exists tracking_branch
-        popd
-        pushd mu
-        test_branch tracking_branch
-        test_remote_branch_exists tracking_branch
-        test_tracking_branch_exists tracking_branch
-        popd
-        pushd black-cats/jules
-        test_branch tracking_branch
-        test_remote_branch_exists tracking_branch
-        test_tracking_branch_exists tracking_branch
-        popd
-        pushd black-cats/kishka
-        test_branch tracking_branch
-        test_remote_branch_exists tracking_branch
-        test_tracking_branch_exists tracking_branch
-        popd
+        for project in "${all_projects[@]}"; do
+            pushd $project
+            test_branch tracking_branch
+            test_remote_branch_exists tracking_branch
+            test_tracking_branch_exists tracking_branch
+            popd
+        done
 
         echo "TEST: Existing local branch not checked out, no remote branch"
         clowder prune -r tracking_branch >/dev/null
         clowder start tracking_branch || exit 1
         clowder forall -c 'git checkout master'
-        clowder start -t tracking_branch || exit 1
-        clowder status
 
-        pushd duke
-        test_branch tracking_branch
-        test_remote_branch_exists tracking_branch
-        test_tracking_branch_exists tracking_branch
-        popd
-        pushd mu
-        test_branch tracking_branch
-        test_remote_branch_exists tracking_branch
-        test_tracking_branch_exists tracking_branch
-        popd
-        pushd black-cats/jules
-        test_branch tracking_branch
-        test_remote_branch_exists tracking_branch
-        test_tracking_branch_exists tracking_branch
-        popd
-        pushd black-cats/kishka
-        test_branch tracking_branch
-        test_remote_branch_exists tracking_branch
-        test_tracking_branch_exists tracking_branch
-        popd
+        for project in "${all_projects[@]}"; do
+            pushd $project
+            test_branch 'master'
+            test_local_branch_exists tracking_branch
+            test_no_remote_branch_exists tracking_branch
+            popd
+        done
+
+        clowder start -t tracking_branch || exit 1
+
+        for project in "${all_projects[@]}"; do
+            pushd $project
+            test_branch tracking_branch
+            test_remote_branch_exists tracking_branch
+            test_tracking_branch_exists tracking_branch
+            popd
+        done
     }
     test_start_tracking
 fi
