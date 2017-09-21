@@ -466,7 +466,6 @@ class ClowderController(object):
                 group.print_validation()
                 if not group.is_valid():
                     valid = False
-                    break
         if not valid:
             print()
             sys.exit(1)

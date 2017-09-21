@@ -57,6 +57,7 @@ class ClowderRepo(object):
         """Checkout ref in clowder repo"""
         if self.is_dirty():
             print(' - Dirty repo. Please stash, commit, or discard your changes')
+            git_status(self.clowder_path)
         else:
             git_checkout(self.clowder_path, ref)
 

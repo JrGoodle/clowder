@@ -7,7 +7,8 @@ from clowder.utility.git_utilities import (
     git_is_dirty,
     git_new_local_commits,
     git_new_upstream_commits,
-    git_sha_short
+    git_sha_short,
+    git_status
 )
 
 def format_project_string(repo_path, name):
@@ -51,3 +52,4 @@ def print_validation(repo_path):
         return
     if git_is_dirty(repo_path):
         print(' - Dirty repo. Please stash, commit, or discard your changes')
+        git_status(repo_path)
