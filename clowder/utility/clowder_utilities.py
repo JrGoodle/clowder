@@ -63,8 +63,7 @@ def parse_yaml(yaml_file):
                     print_invalid_yaml_error()
                     print(format_empty_yaml_error(yaml_file))
                     sys.exit(1)
-                else:
-                    return parsed_yaml
+                return parsed_yaml
         except:
             print_open_file_error(yaml_file)
             sys.exit(1)

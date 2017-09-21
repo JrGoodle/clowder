@@ -93,8 +93,8 @@ class Project(object):
         self._print_status()
         if not os.path.isdir(self.full_path()):
             cprint(" - Project is missing\n", 'red')
-        else:
-            git_status(self.full_path())
+            return
+        git_status(self.full_path())
 
     def exists(self):
         """Check if project exists on disk"""
@@ -215,21 +215,21 @@ class Project(object):
         self._print_status()
         if not os.path.isdir(self.full_path()):
             cprint(" - Project is missing\n", 'red')
-        else:
-            print(format_command(command))
-            return_code = execute_command(command.split(), self.full_path())
-            if not ignore_errors:
-                if return_code != 0:
-                    print_command_failed_error(command)
-                    sys.exit(return_code)
+            return
+        print(format_command(command))
+        return_code = execute_command(command.split(), self.full_path())
+        if not ignore_errors:
+            if return_code != 0:
+                print_command_failed_error(command)
+                sys.exit(return_code)
 
     def start(self, branch, tracking):
         """Start a new feature branch"""
         self._print_status()
         if not git_existing_repository(self.full_path()):
             cprint(" - Directory doesn't exist", 'red')
-        else:
-            git_start(self.full_path(), self.remote_name, branch, self.depth, tracking)
+            return
+        git_start(self.full_path(), self.remote_name, branch, self.depth, tracking)
 
     def status(self, padding):
         """Print status for project"""
