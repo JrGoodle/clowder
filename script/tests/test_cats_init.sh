@@ -14,7 +14,7 @@ test_init_herd() {
     echo "TEST: Normal herd after init"
     "$CATS_EXAMPLE_DIR/clean.sh"
     "$CATS_EXAMPLE_DIR/init.sh"  || exit 1
-    clowder herd  || exit 1
+    clowder herd || exit 1
     clowder status -f || exit 1
 }
 test_init_herd

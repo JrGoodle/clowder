@@ -27,30 +27,30 @@ def _checkout_branch(repo_path, branch, remote, depth):
     """Checkout branch, and create if it doesn't exist"""
     repo = _repo(repo_path)
     correct_branch = False
-    if branch in repo.heads:
-        default_branch = repo.heads[branch]
-        try:
-            not_detached = not repo.head.is_detached
-            same_branch = repo.head.ref == default_branch
-        except Exception as err:
-            pass
-        else:
-            if not_detached and same_branch:
-                print(' - On default branch')
-                correct_branch = True
-        finally:
-            if not correct_branch:
-                branch_output = format_ref_string(branch)
-                try:
-                    print(' - Checkout branch ' + branch_output)
-                    default_branch.checkout()
-                except Exception as err:
-                    message = colored(' - Failed to checkout branch ', 'red')
-                    print(message + branch_output)
-                    print_error(err)
-                    sys.exit(1)
-    else:
+    if branch not in repo.heads:
         _create_local_tracking_branch(repo_path, branch, remote, depth)
+        return
+    default_branch = repo.heads[branch]
+    try:
+        not_detached = not repo.head.is_detached
+        same_branch = repo.head.ref == default_branch
+    except Exception as err:
+        pass
+    else:
+        if not_detached and same_branch:
+            print(' - On default branch')
+            correct_branch = True
+    finally:
+        if not correct_branch:
+            branch_output = format_ref_string(branch)
+            try:
+                print(' - Checkout branch ' + branch_output)
+                default_branch.checkout()
+            except Exception as err:
+                message = colored(' - Failed to checkout branch ', 'red')
+                print(message + branch_output)
+                print_error(err)
+                sys.exit(1)
 
 def _checkout_branch_new_repo(repo_path, branch, remote, depth):
     """Checkout remote branch or fail and delete repo if it doesn't exist"""
@@ -203,28 +203,28 @@ def _checkout_tag(repo_path, tag):
     repo = _repo(repo_path)
     tag_output = format_ref_string(tag)
     correct_commit = False
-    if tag in repo.tags:
-        try:
-            same_commit = repo.head.commit == repo.tags[tag].commit
-            is_detached = repo.head.is_detached
-        except Exception as err:
-            pass
-        else:
-            if same_commit and is_detached:
-                print(' - On correct commit for tag')
-                correct_commit = True
-        finally:
-            if not correct_commit:
-                try:
-                    print(' - Checkout tag ' + tag_output)
-                    repo.git.checkout(tag)
-                except Exception as err:
-                    message = colored(' - Failed to checkout tag ', 'red')
-                    print(message + tag_output)
-                    print_error(err)
-                    sys.exit(1)
-    else:
+    if tag not in repo.tags:
         print(' - No existing tag ' + tag_output)
+        return
+    try:
+        same_commit = repo.head.commit == repo.tags[tag].commit
+        is_detached = repo.head.is_detached
+    except Exception as err:
+        pass
+    else:
+        if same_commit and is_detached:
+            print(' - On correct commit for tag')
+            correct_commit = True
+    finally:
+        if not correct_commit:
+            try:
+                print(' - Checkout tag ' + tag_output)
+                repo.git.checkout(tag)
+            except Exception as err:
+                message = colored(' - Failed to checkout tag ', 'red')
+                print(message + tag_output)
+                print_error(err)
+                sys.exit(1)
 
 def _create_checkout_branch(repo_path, branch, remote, depth):
     """Create and checkout local branch"""
@@ -373,16 +373,18 @@ def _create_remote_tracking_branch(repo_path, branch, remote, depth):
 def _pull_remote_branch(repo_path, remote, branch):
     """Pull from remote branch"""
     repo = _repo(repo_path)
-    if not repo.head.is_detached:
-        try:
-            branch_output = format_ref_string(branch)
-            remote_output = format_remote_string(remote)
-            print(' - Pull latest changes from ' + remote_output + ' ' + branch_output)
-            print(repo.git.pull(remote, branch))
-        except Exception as err:
-            cprint(' - Failed to pull latest changes', 'red')
-            print_error(err)
-            sys.exit(1)
+    if repo.head.is_detached:
+        print(' - HEAD is detached')
+        return
+    try:
+        branch_output = format_ref_string(branch)
+        remote_output = format_remote_string(remote)
+        print(' - Pull latest changes from ' + remote_output + ' ' + branch_output)
+        print(repo.git.pull(remote, branch))
+    except Exception as err:
+        cprint(' - Failed to pull latest changes', 'red')
+        print_error(err)
+        sys.exit(1)
 
 def _ref_type(ref):
     """Return branch, tag, sha, or unknown ref type"""

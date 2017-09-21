@@ -12,7 +12,7 @@ echo "TEST: Test clowder status"
 test_status() {
     print_single_separator
     echo "TEST: Test status"
-    clowder status -f || exit 1
+    clowder status || exit 1
 }
 test_status
 

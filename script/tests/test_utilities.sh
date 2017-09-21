@@ -59,6 +59,16 @@ test_branch() {
     [[ "$1" = "$git_branch" ]] && echo "TEST: On correct branch: $1" || exit 1
 }
 
+test_git_clean() {
+    echo "TEST: Git repo is clean"
+    [[ $(git diff --shortstat 2> /dev/null | tail -n1) != "" ]] && exit 1
+}
+
+test_git_dirty() {
+    echo "TEST: Git repo is dirty"
+    [[ $(git diff --shortstat 2> /dev/null | tail -n1) != "" ]] || exit 1
+}
+
 test_local_branch_exists() {
     echo "TEST: Local branch exists: $1"
     git rev-parse --quiet --verify "$1" || exit 1

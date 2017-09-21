@@ -3,13 +3,13 @@
 cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 
 . test_utilities.sh
-prepare_cats_example
-cd "$CATS_EXAMPLE_DIR" || exit 1
 
-export projects=( 'black-cats/kit' \
-                  'black-cats/kishka' \
-                  'black-cats/sasha' \
-                  'black-cats/jules' )
+export cats_projects=( 'duke' 'mu' )
+
+export black_cats_projects=( 'black-cats/kit' \
+                             'black-cats/kishka' \
+                             'black-cats/sasha' \
+                             'black-cats/jules' )
 
 export all_projects=( 'mu' 'duke' \
                       'black-cats/kit' \
@@ -18,7 +18,7 @@ export all_projects=( 'mu' 'duke' \
                       'black-cats/jules' )
 
 test_cats_default_herd_branches() {
-    for project in "${projects[@]}"; do
+    for project in "${black_cats_projects[@]}"; do
     	pushd $project
         test_branch master
         popd
@@ -30,6 +30,9 @@ test_cats_default_herd_branches() {
     test_branch purr
     popd
 }
+
+prepare_cats_example
+cd "$CATS_EXAMPLE_DIR" || exit 1
 
 print_double_separator
 echo "TEST: Test clowder herd"
@@ -66,7 +69,7 @@ test_herd_dirty_repos() {
     clowder herd || exit 1
     test_cats_default_herd_branches
 }
-test_herd_dirty_repos "${projects[@]}"
+test_herd_dirty_repos "${black_cats_projects[@]}"
 
 test_herd_detached_heads() {
     print_single_separator
@@ -82,7 +85,7 @@ test_herd_detached_heads() {
     clowder herd || exit 1
     test_cats_default_herd_branches
 }
-test_herd_detached_heads "${projects[@]}"
+test_herd_detached_heads "${black_cats_projects[@]}"
 
 test_herd_version() {
     print_single_separator
@@ -94,6 +97,11 @@ test_herd_version() {
     clowder herd || exit 1
     echo "TEST: Remove directories"
     rm -rf "$@"
+    for project in "${cats_projects[@]}"; do
+    	if [ -d "$project" ]; then
+            exit 1
+        fi
+    done
     echo "TEST: Successfully herd with missing directories"
     clowder herd || exit 1
     test_cats_default_herd_branches
@@ -360,7 +368,7 @@ test_herd_branch_no_repo_existing_remote() {
     echo "TEST: Herd branch - No repo, existing remote branch"
     clowder link
     clowder herd
-    for project in "${projects[@]}"; do
+    for project in "${black_cats_projects[@]}"; do
     	pushd $project
         test_remote_branch_exists $EXISTING_REMOTE_BRANCH
         popd
@@ -374,7 +382,7 @@ test_herd_branch_no_repo_existing_remote() {
         fi
     done
     clowder herd -b $EXISTING_REMOTE_BRANCH || exit 1
-    for project in "${projects[@]}"; do
+    for project in "${black_cats_projects[@]}"; do
     	pushd $project
         test_branch $EXISTING_REMOTE_BRANCH
         test_remote_branch_exists $EXISTING_REMOTE_BRANCH
@@ -430,7 +438,7 @@ test_herd_branch_no_local_existing_remote() {
     clowder link
     clowder herd
     clowder prune $EXISTING_REMOTE_BRANCH
-    for project in "${projects[@]}"; do
+    for project in "${black_cats_projects[@]}"; do
     	pushd $project
         test_no_local_branch_exists $EXISTING_REMOTE_BRANCH
         test_remote_branch_exists $EXISTING_REMOTE_BRANCH
@@ -445,7 +453,7 @@ test_herd_branch_no_local_existing_remote() {
     test_no_remote_branch_exists $EXISTING_REMOTE_BRANCH
     popd
     clowder herd -b $EXISTING_REMOTE_BRANCH || exit 1
-    for project in "${projects[@]}"; do
+    for project in "${black_cats_projects[@]}"; do
     	pushd $project
         test_branch $EXISTING_REMOTE_BRANCH
         test_remote_branch_exists $EXISTING_REMOTE_BRANCH
@@ -569,7 +577,7 @@ test_herd_branch_existing_local_existing_remote_tracking() {
     clowder forall -g black-cats -c "git checkout $EXISTING_REMOTE_BRANCH"
     clowder herd
     test_cats_default_herd_branches
-    for project in "${projects[@]}"; do
+    for project in "${black_cats_projects[@]}"; do
     	pushd $project
         test_local_branch_exists $EXISTING_REMOTE_BRANCH
         test_remote_branch_exists $EXISTING_REMOTE_BRANCH
@@ -577,7 +585,7 @@ test_herd_branch_existing_local_existing_remote_tracking() {
         popd
     done
     clowder herd -b $EXISTING_REMOTE_BRANCH || exit 1
-    for project in "${projects[@]}"; do
+    for project in "${black_cats_projects[@]}"; do
     	pushd $project
         test_branch $EXISTING_REMOTE_BRANCH
         popd

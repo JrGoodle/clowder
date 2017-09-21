@@ -6,6 +6,11 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 prepare_cats_example
 cd "$CATS_EXAMPLE_DIR" || exit 1
 
+export black_cats_projects=( 'black-cats/kit' \
+                             'black-cats/kishka' \
+                             'black-cats/sasha' \
+                             'black-cats/jules' )
+
 print_double_separator
 echo "TEST: Test clowder file with import"
 
@@ -18,18 +23,12 @@ test_clowder_import_default() {
     clowder link -v import-default
     clowder herd >/dev/null
     clowder status || exit 1
-    pushd black-cats/jules
-    test_branch import-default
-    popd
-    pushd black-cats/kishka
-    test_branch import-default
-    popd
-    pushd black-cats/kit
-    test_branch import-default
-    popd
-    pushd black-cats/sasha
-    test_branch import-default
-    popd
+
+    for project in "${black_cats_projects[@]}"; do
+        pushd $project
+        test_branch import-default
+        popd
+    done
 }
 test_clowder_import_default
 
@@ -41,17 +40,11 @@ test_clowder_import_version() {
     clowder link -v import-version
     clowder herd >/dev/null
     clowder status || exit 1
-    pushd black-cats/jules
-    test_branch import-version
-    popd
-    pushd black-cats/kishka
-    test_branch import-version
-    popd
-    pushd black-cats/kit
-    test_branch import-version
-    popd
-    pushd black-cats/sasha
-    test_branch import-version
-    popd
+
+    for project in "${black_cats_projects[@]}"; do
+        pushd $project
+        test_branch import-version
+        popd
+    done
 }
 test_clowder_import_version

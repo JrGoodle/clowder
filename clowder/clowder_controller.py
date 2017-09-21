@@ -43,22 +43,22 @@ class ClowderController(object):
 
     def clean_groups(self, group_names):
         """Discard changes for groups"""
-        if self._is_dirty():
-            for group in self.groups:
-                if group.name in group_names:
-                    group.clean()
-        else:
+        if not self._is_dirty():
             print(' - No changes to discard')
+            return
+        for group in self.groups:
+            if group.name in group_names:
+                group.clean()
 
     def clean_projects(self, project_names):
         """Discard changes for projects"""
-        if self._is_dirty():
-            for group in self.groups:
-                for project in group.projects:
-                    if project.name in project_names:
-                        project.clean()
-        else:
+        if not self._is_dirty():
             print(' - No changes to discard')
+            return
+        for group in self.groups:
+            for project in group.projects:
+                if project.name in project_names:
+                    project.clean()
 
     def diff_groups(self, group_names):
         """Show git diff for groups"""
@@ -115,14 +115,13 @@ class ClowderController(object):
     def get_saved_version_names(self):
         """Return list of all saved versions"""
         versions_dir = os.path.join(self.root_directory, '.clowder', 'versions')
-        if os.path.exists(versions_dir):
-            versions = os.listdir(versions_dir)
-            for version in versions[:]:
-                if version.startswith('.'):
-                    versions.remove(version)
-            return versions
-        else:
+        if not os.path.exists(versions_dir):
             return None
+        versions = os.listdir(versions_dir)
+        for version in versions[:]:
+            if version.startswith('.'):
+                versions.remove(version)
+        return versions
 
     def herd_groups(self, group_names, branch=None, depth=None):
         """Sync groups with latest upstream changes"""
@@ -262,22 +261,22 @@ class ClowderController(object):
 
     def stash_groups(self, group_names):
         """Stash changes for groups with changes"""
-        if self._is_dirty():
-            for group in self.groups:
-                if group.name in group_names:
-                    group.stash()
-        else:
+        if not self._is_dirty():
             print('No changes to stash')
+            return
+        for group in self.groups:
+            if group.name in group_names:
+                group.stash()
 
     def stash_projects(self, project_names):
         """Stash changes for projects with changes"""
-        if self._is_dirty():
-            for group in self.groups:
-                for project in group.projects:
-                    if project.name in project_names:
-                        project.stash()
-        else:
+        if not self._is_dirty():
             print('No changes to stash')
+            return
+        for group in self.groups:
+            for project in group.projects:
+                if project.name in project_names:
+                    project.stash()
 
     def status_groups(self, group_names, padding, verbose=False):
         """Print status for groups"""
