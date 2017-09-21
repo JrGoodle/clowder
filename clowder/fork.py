@@ -25,6 +25,11 @@ class Fork(object):
         git_create_remote(self.path, self.remote, self.url)
         git_fetch_remote_ref(self.path, self.remote, ref, depth)
 
+    def herd_branch(self, branch, default_ref, depth):
+        """Herd branch remote data from fork"""
+        self._print_status()
+        print('TODO')
+
     def get_yaml(self):
         """Return python object representation for saving yaml"""
         return {'name': self.name, 'remote': self.remote}
