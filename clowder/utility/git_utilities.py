@@ -89,7 +89,7 @@ def git_commit(repo_path, message):
     print(' - Commit current changes')
     print(repo.git.commit(message=message))
 
-def git_create_repo(url, repo_path, remote, ref, depth=0):
+def git_create_repo(repo_path, url, remote, ref, depth=0):
     """Clone git repo from url at path"""
     if not git_existing_repository(repo_path):
         if not os.path.isdir(repo_path):
@@ -212,6 +212,9 @@ def git_fetch_silent(repo_path):
 
 def git_herd(repo_path, url, remote, ref, depth):
     """Herd ref"""
+    if not git_existing_repository(repo_path):
+        git_create_repo(repo_path, url, remote, ref, depth)
+        return
     ref_type = _ref_type(ref)
     if ref_type is 'branch':
         git_create_remote(repo_path, remote, url)

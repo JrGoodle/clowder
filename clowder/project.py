@@ -16,7 +16,6 @@ from clowder.utility.git_print_utilities import (
     print_validation
 )
 from clowder.utility.git_utilities import (
-    git_create_repo,
     git_existing_local_branch,
     git_existing_remote_branch,
     git_existing_repository,
@@ -157,11 +156,7 @@ class Project(object):
         else:
             herd_depth = depth
 
-        if not git_existing_repository(self.full_path()):
-            git_create_repo(self.url, self.full_path(), self.remote_name,
-                            ref, herd_depth)
-        else:
-            git_herd(self.full_path(), self.url, self.remote_name, ref, herd_depth)
+        git_herd(self.full_path(), self.url, self.remote_name, ref, herd_depth)
 
         for fork in self.forks:
             fork.herd(ref, herd_depth)
