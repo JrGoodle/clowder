@@ -22,6 +22,7 @@ from clowder.utility.git_utilities import (
     git_fetch_all,
     git_fetch_silent,
     git_herd,
+    git_herd_branch,
     git_is_dirty,
     git_prune_local,
     git_prune_remote,
@@ -146,20 +147,21 @@ class Project(object):
     def herd(self, branch=None, depth=None):
         """Clone project or update latest from upstream"""
         self._print_status()
-        if branch is None:
-            ref = self.ref
-        else:
-            ref = 'refs/heads/' + branch
 
         if depth is None:
             herd_depth = self.depth
         else:
             herd_depth = depth
 
-        git_herd(self.full_path(), self.url, self.remote_name, ref, herd_depth)
-
-        for fork in self.forks:
-            fork.herd(ref, herd_depth)
+        if branch is None:
+            git_herd(self.full_path(), self.url, self.remote_name, self.ref, herd_depth)
+            for fork in self.forks:
+                fork.herd(self.ref, herd_depth)
+        else:
+            git_herd_branch(self.full_path(), self.url, self.remote_name,
+                            branch, self.ref, herd_depth)
+            for fork in self.forks:
+                fork.herd_branch(branch, self.ref, herd_depth)
 
     def is_dirty(self):
         """Check if project is dirty"""

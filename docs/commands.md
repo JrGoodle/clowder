@@ -89,6 +89,9 @@ Update with latest changes
 # Herd a shallow clone to specified depth
 $ clowder herd -d 1
 
+# Herd a specified branch if it exists, otherwise use default
+$ clowder herd -b my_branch
+
 # Only herd projects in clang and llvm groups
 $ clowder herd -g clang llvm
 

@@ -20,6 +20,8 @@ from clowder.utility.print_utilities import (
 # pylint: disable=W0703
 # Disable errors shown by pylint for too many statements
 # pylint: disable=R0915
+# Disable errors shown by pylint for invalid function name
+# pylint: disable=C0103
 
 def _checkout_branch(repo_path, branch, remote, depth):
     """Checkout branch, and create if it doesn't exist"""
@@ -82,6 +84,66 @@ def _checkout_branch_new_repo(repo_path, branch, remote, depth):
             message = colored(' - No existing remote branch ', 'red')
             print(message + branch_output)
             remove_directory_exit(repo_path)
+        else:
+            print(' - Create branch ' + branch_output)
+            try:
+                default_branch = repo.create_head(branch, remote_branch)
+            except Exception as err:
+                message = colored(' - Failed to create branch ', 'red')
+                print(message + branch_output)
+                print_error(err)
+                remove_directory_exit(repo_path)
+            else:
+                try:
+                    print(' - Set tracking branch ' + branch_output +
+                          ' -> ' + remote_output + ' ' + branch_output)
+                    default_branch.set_tracking_branch(remote_branch)
+                except Exception as err:
+                    message = colored(' - Failed to set tracking branch ', 'red')
+                    print(message + branch_output)
+                    print_error(err)
+                    remove_directory_exit(repo_path)
+                else:
+                    try:
+                        print(' - Checkout branch ' + branch_output)
+                        default_branch.checkout()
+                    except Exception as err:
+                        message = colored(' - Failed to checkout branch ', 'red')
+                        print(message + branch_output)
+                        print_error(err)
+                        remove_directory_exit(repo_path)
+
+def _checkout_branch_new_repo_herd_branch(repo_path, branch, default_ref, remote, depth):
+    """Checkout remote branch or fall back to normal checkout branch if fails"""
+    repo = _repo(repo_path)
+    branch_output = format_ref_string(branch)
+    remote_output = format_remote_string(remote)
+    try:
+        origin = repo.remotes[remote]
+    except Exception as err:
+        message = colored(' - No existing remote ', 'red')
+        print(message + remote_output)
+        print_error(err)
+        remove_directory_exit(repo_path)
+    else:
+        if depth == 0:
+            print(' - Fetch from ' + remote_output)
+            command = ['git', 'fetch', remote, '--prune', '--tags']
+        else:
+            print(' - Fetch from ' + remote_output + ' ' + branch_output)
+            command = ['git', 'fetch', remote, branch, '--depth', str(depth),
+                       '--prune', '--tags']
+        return_code = execute_command(command, repo_path)
+        if return_code != 0:
+            message = colored(' - Failed to fetch from ', 'red')
+            print(message + remote_output)
+            print_command_failed_error(command)
+            remove_directory_exit(repo_path)
+        try:
+            remote_branch = origin.refs[branch]
+        except:
+            print(' - No existing remote branch ' + branch_output)
+            _checkout_branch_new_repo(repo_path, _truncate_ref(default_ref), remote, depth)
         else:
             print(' - Create branch ' + branch_output)
             try:

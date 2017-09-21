@@ -154,12 +154,10 @@ class Command(object):
             if self.clowder is None:
                 sys.exit(1)
 
-            # TODO: clowder herd -b
-            # if self.args.branch is None:
-            #     ref = None
-            # else:
-            #     ref = self.args.branch[0]
-            ref = None
+            if self.args.branch is None:
+                branch = None
+            else:
+                branch = self.args.branch[0]
 
             if self.args.depth is None:
                 depth = None
@@ -168,11 +166,11 @@ class Command(object):
 
             if self.args.projects is None:
                 if self.args.groups is None:
-                    self.clowder.herd_groups(self.clowder.get_all_group_names(), ref, depth)
+                    self.clowder.herd_groups(self.clowder.get_all_group_names(), branch, depth)
                 else:
-                    self.clowder.herd_groups(self.args.groups, ref, depth)
+                    self.clowder.herd_groups(self.args.groups, branch, depth)
             else:
-                self.clowder.herd_projects(self.args.projects, ref, depth)
+                self.clowder.herd_projects(self.args.projects, branch, depth)
         else:
             exit_clowder_not_found()
 
@@ -469,8 +467,8 @@ class Command(object):
         parser_herd = subparsers.add_parser('herd', help=herd_help)
         parser_herd.add_argument('--depth', '-d', default=None, type=int, nargs=1,
                                  help='depth to herd', metavar='DEPTH')
-        # TODO: clowder herd -b
-        # parser_herd.add_argument('--branch', '-b', nargs=1, default=None, help='Branch to herd')
+        parser_herd.add_argument('--branch', '-b', nargs=1, default=None,
+                                 help='branch to herd if present', metavar='BRANCH')
         group_herd = parser_herd.add_mutually_exclusive_group()
         if self.group_names is not '':
             herd_help_groups = '''

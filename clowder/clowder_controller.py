@@ -164,7 +164,7 @@ class ClowderController(object):
                 if group.name in group_names:
                     group.prune_local(branch, force)
         else:
-            cprint(' - No local branches to prune\n', 'red')
+            print(' - No local branches to prune\n')
             sys.exit()
 
     def prune_groups_remote(self, group_names, branch):
@@ -208,7 +208,7 @@ class ClowderController(object):
                     if project.name in project_names:
                         project.prune_local(branch, force)
         else:
-            cprint(' - No local branches to prune\n', 'red')
+            print(' - No local branches to prune\n')
             sys.exit()
 
     def prune_projects_remote(self, project_names, branch):

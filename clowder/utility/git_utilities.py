@@ -18,6 +18,7 @@ from clowder.utility.print_utilities import (
 from clowder.utility.git_utilities_private import (
     _checkout_branch,
     _checkout_branch_new_repo,
+    _checkout_branch_new_repo_herd_branch,
     _checkout_sha,
     _checkout_tag,
     _create_checkout_branch,
@@ -36,6 +37,8 @@ from clowder.utility.git_utilities_private import (
 # pylint: disable=W0703
 # Disable errors shown by pylint for too many statements
 # pylint: disable=R0915
+# Disable errors shown by pylint for too many arguments
+# pylint: disable=R0913
 
 def git_add(repo_path, files):
     """Add files to git index"""
@@ -120,6 +123,38 @@ def git_create_repo(repo_path, url, remote, ref, depth=0):
                 else:
                     branch = _truncate_ref(ref)
                     _checkout_branch_new_repo(repo_path, branch, remote, depth)
+
+def git_create_repo_herd_branch(repo_path, url, remote, branch, default_ref, depth=0):
+    """Clone git repo from url at path for herd branch"""
+    if not git_existing_repository(repo_path):
+        if not os.path.isdir(repo_path):
+            os.makedirs(repo_path)
+        repo_path_output = format_path(repo_path)
+        try:
+            print(' - Clone repo at ' + repo_path_output)
+            Repo.init(repo_path)
+        except Exception as err:
+            cprint(' - Failed to initialize repository', 'red')
+            print_error(err)
+            remove_directory_exit(repo_path)
+        else:
+            repo = _repo(repo_path)
+            remote_names = [r.name for r in repo.remotes]
+            if remote in remote_names:
+                git_checkout_ref(repo_path, 'refs/heads/' + branch, remote, depth)
+            else:
+                remote_output = format_remote_string(remote)
+                print(" - Create remote " + remote_output)
+                try:
+                    repo.create_remote(remote, url)
+                except Exception as err:
+                    message = colored(" - Failed to create remote ", 'red')
+                    print(message + remote_output)
+                    print_error(err)
+                    remove_directory_exit(repo_path)
+                else:
+                    _checkout_branch_new_repo_herd_branch(repo_path, branch, default_ref,
+                                                          remote, depth)
 
 def git_create_remote(repo_path, remote, url):
     """Create new remote"""
@@ -227,6 +262,39 @@ def git_herd(repo_path, url, remote, ref, depth):
         git_checkout_ref(repo_path, ref, remote, depth)
     else:
         cprint('Unknown ref ' + ref, 'red')
+
+def git_herd_branch(repo_path, url, remote, branch, default_ref, depth):
+    """Herd branch"""
+    if not git_existing_repository(repo_path):
+        git_create_repo_herd_branch(repo_path, url, remote, branch,
+                                    default_ref, depth)
+    else:
+        remote_output = format_remote_string(remote)
+        if depth == 0:
+            print(' - Fetch from ' + remote_output)
+            message = colored(' - Failed to fetch from ', 'red')
+            error = message + remote_output
+            command = ['git', 'fetch', remote, '--prune', '--tags']
+        else:
+            ref_output = format_ref_string(branch)
+            print(' - Fetch from ' + remote_output + ' ' + ref_output)
+            message = colored(' - Failed to fetch from ', 'red')
+            error = message + remote_output + ' ' + ref_output
+            command = ['git', 'fetch', remote, branch,
+                       '--depth', str(depth), '--prune']
+        return_code = execute_command(command, repo_path)
+        if return_code != 0:
+            print(error)
+            git_herd(repo_path, url, remote, default_ref, depth)
+            return
+        if git_existing_local_branch(repo_path, branch):
+            git_checkout_ref(repo_path, 'refs/heads/' + branch, remote, depth)
+            if git_existing_remote_branch(repo_path, branch, remote):
+                git_pull(repo_path)
+        elif git_existing_remote_branch(repo_path, branch, remote):
+            git_herd(repo_path, url, remote, 'refs/heads/' + branch, depth)
+        else:
+            git_herd(repo_path, url, remote, default_ref, depth)
 
 def git_is_detached(repo_path):
     """Check if HEAD is detached"""
