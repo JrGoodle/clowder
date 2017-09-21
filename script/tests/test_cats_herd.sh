@@ -17,6 +17,20 @@ export all_projects=( 'mu' 'duke' \
                       'black-cats/sasha' \
                       'black-cats/jules' )
 
+test_cats_default_herd_branches() {
+    for project in "${projects[@]}"; do
+    	pushd $project
+        test_branch master
+        popd
+    done
+    pushd mu
+    test_branch knead
+    popd
+    pushd duke
+    test_branch purr
+    popd
+}
+
 print_double_separator
 echo "TEST: Test clowder herd"
 
@@ -33,17 +47,7 @@ test_herd() {
     print_single_separator
     echo "TEST: Check projects are on correct branches"
     clowder herd || exit 1
-    for project in "${projects[@]}"; do
-    	pushd $project
-        test_branch master
-        popd
-    done
-    pushd mu
-    test_branch knead
-    popd
-    pushd duke
-    test_branch purr
-    popd
+    test_cats_default_herd_branches
 }
 test_herd
 
@@ -57,8 +61,10 @@ test_herd_dirty_repos() {
     clowder status || exit 1
     echo "TEST: Successfully herd after clean"
     clowder herd || exit 1
+    test_cats_default_herd_branches
     echo "TEST: Successfully herd twice"
     clowder herd || exit 1
+    test_cats_default_herd_branches
 }
 test_herd_dirty_repos "${projects[@]}"
 
@@ -74,6 +80,7 @@ test_herd_detached_heads() {
     clowder status || exit 1
     echo "TEST: Successfully herd with detached HEADs"
     clowder herd || exit 1
+    test_cats_default_herd_branches
 }
 test_herd_detached_heads "${projects[@]}"
 
@@ -89,6 +96,7 @@ test_herd_version() {
     rm -rf "$@"
     echo "TEST: Successfully herd with missing directories"
     clowder herd || exit 1
+    test_cats_default_herd_branches
 }
 test_herd_version 'duke' 'mu'
 
@@ -119,7 +127,7 @@ test_herd_missing_branches() {
     echo "TEST: Herd existing repo's with no default branch locally"
     clowder link || exit 1
     clowder herd || exit 1
-    clowder status || exit 1
+    test_cats_default_herd_branches
 }
 test_herd_missing_branches
 
@@ -250,6 +258,7 @@ test_herd_existing_local_no_remote() {
     clowder link
     clowder start $NO_REMOTE_BRANCH
     clowder herd
+    test_cats_default_herd_branches
     clowder link -v $NO_REMOTE_BRANCH
     for project in "${all_projects[@]}"; do
     	pushd $project
