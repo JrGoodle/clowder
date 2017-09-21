@@ -29,6 +29,12 @@ test_save_missing_directories() {
     print_single_separator
     echo "TEST: Remove directories"
     rm -rf "$@"
+    if [ -d 'duke' ]; then
+        exit 1
+    fi
+    if [ -d 'mu' ]; then
+        exit 1
+    fi
     echo "TEST: Fail saving version with missing directories"
     clowder save missing-directories && exit 1
 }

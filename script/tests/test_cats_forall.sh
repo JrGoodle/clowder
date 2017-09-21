@@ -6,10 +6,10 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 prepare_cats_example
 cd "$CATS_EXAMPLE_DIR" || exit 1
 
-export projects=( 'black-cats/kit' \
-                  'black-cats/kishka' \
-                  'black-cats/sasha' \
-                  'black-cats/jules' )
+export black_cats_projects=( 'black-cats/kit' \
+                             'black-cats/kishka' \
+                             'black-cats/sasha' \
+                             'black-cats/jules' )
 
 print_double_separator
 echo "TEST: Test clowder forall"
@@ -18,7 +18,7 @@ test_forall_branches() {
     print_single_separator
     clowder forall -c 'git checkout -b v0.1' || exit 1
     echo "TEST: Check current branches"
-    for project in "${projects[@]}"; do
+    for project in "${black_cats_projects[@]}"; do
     	pushd $project
         test_branch v0.1
         popd
