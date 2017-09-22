@@ -285,54 +285,53 @@ test_herd_existing_local_no_remote() {
 }
 test_herd_existing_local_no_remote
 
-# test_herd_existing_local_existing_remote_no_tracking() {
-#     print_single_separator
-#     echo "TEST: Herd - Existing local branch, existing remote branch, no tracking, same commit"
-#     clowder link
-#     clowder prune $EXISTING_REMOTE_BRANCH
-#     clowder link -v $EXISTING_REMOTE_BRANCH
-#     clowder forall -c "git branch $EXISTING_REMOTE_BRANCH"
-#     for project in "${all_projects[@]}"; do
-#     	pushd $project
-#         test_local_branch_exists $EXISTING_REMOTE_BRANCH
-#         test_remote_branch_exists $EXISTING_REMOTE_BRANCH
-#         test_no_tracking_branch_exists $EXISTING_REMOTE_BRANCH
-#         popd
-#     done
-#     clowder herd || exit 1
-#     for project in "${all_projects[@]}"; do
-#     	pushd $project
-#         test_branch $EXISTING_REMOTE_BRANCH
-#         test_local_branch_exists $EXISTING_REMOTE_BRANCH
-#         test_remote_branch_exists $EXISTING_REMOTE_BRANCH
-#         test_tracking_branch_exists $EXISTING_REMOTE_BRANCH
-#         popd
-#     done
-#     echo "TEST: Herd - Existing local branch, existing remote branch, no tracking, different commits"
-#     clowder link
-#     clowder herd
-#     clowder prune $EXISTING_REMOTE_BRANCH
-#     clowder forall -c 'git reset --hard HEAD~1'
-#     clowder forall -c "git branch $EXISTING_REMOTE_BRANCH"
-#     clowder link -v $EXISTING_REMOTE_BRANCH
-#     for project in "${all_projects[@]}"; do
-#     	pushd $project
-#         test_local_branch_exists $EXISTING_REMOTE_BRANCH
-#         test_remote_branch_exists $EXISTING_REMOTE_BRANCH
-#         test_no_tracking_branch_exists $EXISTING_REMOTE_BRANCH
-#         popd
-#     done
-#     clowder herd && exit 1
-#     for project in "${all_projects[@]}"; do
-#     	pushd $project
-#         test_branch $EXISTING_REMOTE_BRANCH
-#         test_local_branch_exists $EXISTING_REMOTE_BRANCH
-#         test_remote_branch_exists $EXISTING_REMOTE_BRANCH
-#         test_no_tracking_branch_exists $EXISTING_REMOTE_BRANCH
-#         popd
-#     done
-# }
-# test_herd_existing_local_existing_remote_no_tracking
+test_herd_existing_local_existing_remote_no_tracking() {
+    print_single_separator
+    echo "TEST: Herd - Existing local branch, existing remote branch, no tracking, same commit"
+    clowder link -v $EXISTING_REMOTE_BRANCH
+    clowder prune $EXISTING_REMOTE_BRANCH
+    clowder herd || exit 1
+    clowder forall -c 'git branch --unset-upstream'
+    for project in "${all_projects[@]}"; do
+    	pushd $project
+        test_local_branch_exists $EXISTING_REMOTE_BRANCH
+        test_remote_branch_exists $EXISTING_REMOTE_BRANCH
+        test_no_tracking_branch_exists $EXISTING_REMOTE_BRANCH
+        popd
+    done
+    clowder herd || exit 1
+    for project in "${all_projects[@]}"; do
+    	pushd $project
+        test_branch $EXISTING_REMOTE_BRANCH
+        test_local_branch_exists $EXISTING_REMOTE_BRANCH
+        test_remote_branch_exists $EXISTING_REMOTE_BRANCH
+        test_tracking_branch_exists $EXISTING_REMOTE_BRANCH
+        popd
+    done
+    echo "TEST: Herd - Existing local branch, existing remote branch, no tracking, different commits"
+    clowder link
+    clowder herd
+    clowder prune $EXISTING_REMOTE_BRANCH
+    clowder forall -c 'git reset --hard HEAD~1'
+    clowder forall -c "git branch $EXISTING_REMOTE_BRANCH"
+    clowder link -v $EXISTING_REMOTE_BRANCH
+    for project in "${all_projects[@]}"; do
+    	pushd $project
+        test_local_branch_exists $EXISTING_REMOTE_BRANCH
+        test_remote_branch_exists $EXISTING_REMOTE_BRANCH
+        test_no_tracking_branch_exists $EXISTING_REMOTE_BRANCH
+        popd
+    done
+    clowder herd && exit 1
+    for project in "${all_projects[@]}"; do
+    	pushd $project
+        test_local_branch_exists $EXISTING_REMOTE_BRANCH
+        test_remote_branch_exists $EXISTING_REMOTE_BRANCH
+        test_no_tracking_branch_exists $EXISTING_REMOTE_BRANCH
+        popd
+    done
+}
+test_herd_existing_local_existing_remote_no_tracking
 
 test_herd_existing_local_existing_remote_tracking() {
     print_single_separator
@@ -520,54 +519,85 @@ test_herd_branch_existing_local_no_remote() {
 }
 test_herd_branch_existing_local_no_remote
 
-# test_herd_branch_existing_local_existing_remote_no_tracking() {
-#     print_single_separator
-#     echo "TEST: Herd branch - Existing local branch, existing remote branch, no tracking, same commit"
-#     clowder link
-#     clowder prune $EXISTING_REMOTE_BRANCH
-#     clowder link -v $EXISTING_REMOTE_BRANCH
-#     clowder forall -c "git branch $EXISTING_REMOTE_BRANCH"
-#     for project in "${all_projects[@]}"; do
-#     	pushd $project
-#         test_local_branch_exists $EXISTING_REMOTE_BRANCH
-#         test_remote_branch_exists $EXISTING_REMOTE_BRANCH
-#         test_no_tracking_branch_exists $EXISTING_REMOTE_BRANCH
-#         popd
-#     done
-#     clowder herd || exit 1
-#     for project in "${all_projects[@]}"; do
-#     	pushd $project
-#         test_branch $EXISTING_REMOTE_BRANCH
-#         test_local_branch_exists $EXISTING_REMOTE_BRANCH
-#         test_remote_branch_exists $EXISTING_REMOTE_BRANCH
-#         test_tracking_branch_exists $EXISTING_REMOTE_BRANCH
-#         popd
-#     done
-#     echo "TEST: Herd - Existing local branch, existing remote branch, no tracking, different commits"
-#     clowder link
-#     clowder herd
-#     clowder prune $EXISTING_REMOTE_BRANCH
-#     clowder forall -c 'git reset --hard HEAD~1'
-#     clowder forall -c "git branch $EXISTING_REMOTE_BRANCH"
-#     clowder link -v $EXISTING_REMOTE_BRANCH
-#     for project in "${all_projects[@]}"; do
-#     	pushd $project
-#         test_local_branch_exists $EXISTING_REMOTE_BRANCH
-#         test_remote_branch_exists $EXISTING_REMOTE_BRANCH
-#         test_no_tracking_branch_exists $EXISTING_REMOTE_BRANCH
-#         popd
-#     done
-#     clowder herd && exit 1
-#     for project in "${all_projects[@]}"; do
-#     	pushd $project
-#         test_branch $EXISTING_REMOTE_BRANCH
-#         test_local_branch_exists $EXISTING_REMOTE_BRANCH
-#         test_remote_branch_exists $EXISTING_REMOTE_BRANCH
-#         test_no_tracking_branch_exists $EXISTING_REMOTE_BRANCH
-#         popd
-#     done
-# }
-# test_herd_branch_existing_local_existing_remote_no_tracking
+test_herd_branch_existing_local_existing_remote_no_tracking() {
+    print_single_separator
+    echo "TEST: Herd branch - Existing local branch, existing remote branch, no tracking, same commit"
+    clowder link
+    clowder prune $EXISTING_REMOTE_BRANCH
+    clowder forall -c "git checkout -b $EXISTING_REMOTE_BRANCH" -g cats
+    clowder forall -ic "git checkout $EXISTING_REMOTE_BRANCH"
+    clowder forall -ic 'git branch --unset-upstream'
+    pushd mu
+    test_local_branch_exists $EXISTING_REMOTE_BRANCH
+    test_no_remote_branch_exists $EXISTING_REMOTE_BRANCH
+    popd
+    pushd duke
+    test_local_branch_exists $EXISTING_REMOTE_BRANCH
+    test_no_remote_branch_exists $EXISTING_REMOTE_BRANCH
+    popd
+    for project in "${black_cats_projects[@]}"; do
+    	pushd $project
+        test_local_branch_exists $EXISTING_REMOTE_BRANCH
+        test_remote_branch_exists $EXISTING_REMOTE_BRANCH
+        test_no_tracking_branch_exists $EXISTING_REMOTE_BRANCH
+        popd
+    done
+    clowder herd || exit 1
+    test_cats_default_herd_branches
+    clowder herd -b $EXISTING_REMOTE_BRANCH || exit 1
+    pushd mu
+    test_branch $EXISTING_REMOTE_BRANCH
+    test_no_remote_branch_exists $EXISTING_REMOTE_BRANCH
+    popd
+    pushd duke
+    test_branch $EXISTING_REMOTE_BRANCH
+    test_no_remote_branch_exists $EXISTING_REMOTE_BRANCH
+    popd
+    for project in "${black_cats_projects[@]}"; do
+    	pushd $project
+        test_branch $EXISTING_REMOTE_BRANCH
+        test_remote_branch_exists $EXISTING_REMOTE_BRANCH
+        test_tracking_branch_exists $EXISTING_REMOTE_BRANCH
+        popd
+    done
+    echo "TEST: Herd branch - Existing local branch, existing remote branch, no tracking, different commits"
+    clowder herd
+    clowder prune $EXISTING_REMOTE_BRANCH
+    clowder forall -c 'git reset --hard HEAD~1'
+    clowder forall -c "git branch $EXISTING_REMOTE_BRANCH"
+    pushd mu
+    test_local_branch_exists $EXISTING_REMOTE_BRANCH
+    test_no_remote_branch_exists $EXISTING_REMOTE_BRANCH
+    popd
+    pushd duke
+    test_local_branch_exists $EXISTING_REMOTE_BRANCH
+    test_no_remote_branch_exists $EXISTING_REMOTE_BRANCH
+    popd
+    for project in "${black_cats_projects[@]}"; do
+    	pushd $project
+        test_local_branch_exists $EXISTING_REMOTE_BRANCH
+        test_remote_branch_exists $EXISTING_REMOTE_BRANCH
+        test_no_tracking_branch_exists $EXISTING_REMOTE_BRANCH
+        popd
+    done
+    clowder herd && exit 1
+    pushd mu
+    test_local_branch_exists $EXISTING_REMOTE_BRANCH
+    test_no_remote_branch_exists $EXISTING_REMOTE_BRANCH
+    popd
+    pushd duke
+    test_local_branch_exists $EXISTING_REMOTE_BRANCH
+    test_no_remote_branch_exists $EXISTING_REMOTE_BRANCH
+    popd
+    for project in "${black_cats_projects[@]}"; do
+    	pushd $project
+        test_local_branch_exists $EXISTING_REMOTE_BRANCH
+        test_remote_branch_exists $EXISTING_REMOTE_BRANCH
+        test_no_tracking_branch_exists $EXISTING_REMOTE_BRANCH
+        popd
+    done
+}
+test_herd_branch_existing_local_existing_remote_no_tracking
 
 test_herd_branch_existing_local_existing_remote_tracking() {
     print_single_separator
