@@ -165,6 +165,9 @@ Convenience commands for managing clowder repo (the `.clowder` directory)
 More advanced needs may require changing to the `.clowder` directory and running commands directly
 
 ```bash
+# Add modified files in working tree to the index
+$ clowder repo add .
+
 # Checkout git ref in clowder repo
 $ clowder repo checkout my_branch
 

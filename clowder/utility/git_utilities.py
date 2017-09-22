@@ -39,6 +39,8 @@ from clowder.utility.git_utilities_private import (
 # pylint: disable=R0915
 # Disable errors shown by pylint for too many arguments
 # pylint: disable=R0913
+# Disable errors shown by pylint for too many local variables
+# pylint: disable=R0914
 
 def git_add(repo_path, files):
     """Add files to git index"""
@@ -259,7 +261,10 @@ def git_herd(repo_path, url, remote, ref, depth):
         git_checkout_ref(repo_path, ref, remote, depth)
         branch = _truncate_ref(ref)
         if git_existing_remote_branch(repo_path, branch, remote):
-            _pull_remote_branch(repo_path, remote, branch)
+            if git_is_tracking_branch(repo_path, branch):
+                _pull_remote_branch(repo_path, remote, branch)
+            else:
+                git_set_tracking_branch_same_commit(repo_path, branch, remote, depth)
     elif ref_type is 'tag' or ref_type is 'sha':
         git_create_remote(repo_path, remote, url)
         git_checkout_ref(repo_path, ref, remote, depth)
@@ -293,7 +298,10 @@ def git_herd_branch(repo_path, url, remote, branch, default_ref, depth):
     if git_existing_local_branch(repo_path, branch):
         git_checkout_ref(repo_path, 'refs/heads/' + branch, remote, depth)
         if git_existing_remote_branch(repo_path, branch, remote):
-            git_pull(repo_path)
+            if git_is_tracking_branch(repo_path, branch):
+                _pull_remote_branch(repo_path, remote, branch)
+            else:
+                git_set_tracking_branch_same_commit(repo_path, branch, remote, depth)
     elif git_existing_remote_branch(repo_path, branch, remote):
         git_herd(repo_path, url, remote, 'refs/heads/' + branch, depth)
     else:
@@ -314,6 +322,24 @@ def git_is_dirty(repo_path):
     else:
         repo = _repo(repo_path)
         return repo.is_dirty()
+
+def git_is_tracking_branch(repo_path, branch):
+    """Check if branch is a tracking branch"""
+    repo = _repo(repo_path)
+    branch_output = format_ref_string(branch)
+    try:
+        local_branch = repo.heads[branch]
+    except Exception as err:
+        message = colored(' - No existing branch ', 'red')
+        print(message + branch_output)
+        print_error(err)
+        sys.exit(1)
+    else:
+        tracking_branch = local_branch.tracking_branch()
+        if tracking_branch is None:
+            return False
+        else:
+            return True
 
 def git_new_local_commits(repo_path):
     """Returns the number of new commits upstream"""
@@ -455,6 +481,66 @@ def git_reset_head(repo_path):
     """Reset head of repo, discarding changes"""
     repo = _repo(repo_path)
     repo.head.reset(index=True, working_tree=True)
+
+def git_set_tracking_branch_same_commit(repo_path, branch, remote, depth):
+    """Set tracking relationship between local and remote branch if on same commit"""
+    repo = _repo(repo_path)
+    repo = _repo(repo_path)
+    branch_output = format_ref_string(branch)
+    remote_output = format_remote_string(remote)
+    try:
+        origin = repo.remotes[remote]
+    except Exception as err:
+        message = colored(' - No existing remote ', 'red')
+        print(message + remote_output)
+        print_error(err)
+        sys.exit(1)
+    else:
+        if depth == 0:
+            print(' - Fetch from ' + remote_output)
+            command = ['git', 'fetch', remote, '--prune', '--tags']
+        else:
+            print(' - Fetch from ' + remote_output + ' ' + branch_output)
+            command = ['git', 'fetch', remote, branch, '--depth', str(depth),
+                       '--prune', '--tags']
+        return_code = execute_command(command, repo_path)
+        if return_code != 0:
+            message = colored(' - Failed to fetch from ', 'red')
+            print(message + remote_output)
+            print_command_failed_error(command)
+            sys.exit(return_code)
+        try:
+            local_branch = repo.heads[branch]
+        except Exception as err:
+            message = colored(' - No local branch ', 'red')
+            print(message + branch_output)
+            print_error(err)
+            sys.exit(1)
+        else:
+            try:
+                remote_branch = origin.refs[branch]
+            except Exception as err:
+                message = colored(' - No remote branch ', 'red')
+                print(message + branch_output)
+                print_error(err)
+                sys.exit(1)
+            else:
+                if local_branch.commit != remote_branch.commit:
+                    message_1 = colored(' - Existing remote branch ', 'red')
+                    message_2 = colored(' on different commit', 'red')
+                    print(message_1 + branch_output + message_2)
+                    print()
+                    sys.exit(1)
+                else:
+                    try:
+                        print(' - Set tracking branch ' + branch_output +
+                              ' -> ' + remote_output + ' ' + branch_output)
+                        local_branch.set_tracking_branch(origin.refs[branch])
+                    except Exception as err:
+                        message = colored(' - Failed to set tracking branch ', 'red')
+                        print(message + branch_output)
+                        print_error(err)
+                        sys.exit(1)
 
 def git_sha_long(repo_path):
     """Return long sha for currently checked out commit"""
