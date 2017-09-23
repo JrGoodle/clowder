@@ -139,8 +139,7 @@ def print_command_failed_error(command):
 
 def print_error(error):
     """Print error message for generic exception"""
-    print(str(error))
-    print()
+    print(str(error) + '\n')
 
 def print_file_exists_error(path):
     """Print error message for already existing file"""

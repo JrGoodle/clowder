@@ -345,30 +345,29 @@ def _create_remote_tracking_branch(repo_path, branch, remote, depth):
             except:
                 message_1 = colored(' - Remote branch ', 'red')
                 message_2 = colored(' already exists', 'red')
-                print(message_1 + branch_output + message_2)
-                print()
+                print(message_1 + branch_output + message_2 + '\n')
                 sys.exit(1)
             else:
                 print(' - Tracking branch ' + branch_output + ' already exists')
+                return
+        try:
+            print(' - Push remote branch ' + branch_output)
+            repo.git.push(remote, branch)
+        except Exception as err:
+            message = colored(' - Failed to push remote branch ', 'red')
+            print(message + branch_output)
+            print_error(err)
+            sys.exit(1)
         else:
             try:
-                print(' - Push remote branch ' + branch_output)
-                repo.git.push(remote, branch)
+                print(' - Set tracking branch ' + branch_output +
+                      ' -> ' + remote_output + ' ' + branch_output)
+                repo.active_branch.set_tracking_branch(origin.refs[branch])
             except Exception as err:
-                message = colored(' - Failed to push remote branch ', 'red')
+                message = colored(' - Failed to set tracking branch ', 'red')
                 print(message + branch_output)
                 print_error(err)
                 sys.exit(1)
-            else:
-                try:
-                    print(' - Set tracking branch ' + branch_output +
-                          ' -> ' + remote_output + ' ' + branch_output)
-                    repo.active_branch.set_tracking_branch(origin.refs[branch])
-                except Exception as err:
-                    message = colored(' - Failed to set tracking branch ', 'red')
-                    print(message + branch_output)
-                    print_error(err)
-                    sys.exit(1)
 
 def _pull_remote_branch(repo_path, remote, branch):
     """Pull from remote branch"""

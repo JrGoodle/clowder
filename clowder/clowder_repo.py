@@ -102,14 +102,12 @@ class ClowderRepo(object):
             path_output = format_path(relative_path)
             yaml_file = os.path.join(self.root_directory, relative_path)
 
-        if os.path.isfile(yaml_file):
-            yaml_symlink = os.path.join(self.root_directory, 'clowder.yaml')
-            print(' - Symlink ' + path_output)
-            force_symlink(yaml_file, yaml_symlink)
-        else:
-            print(path_output + " doesn't seem to exist")
-            print()
+        if not os.path.isfile(yaml_file):
+            print(path_output + " doesn't seem to exist\n")
             sys.exit(1)
+        yaml_symlink = os.path.join(self.root_directory, 'clowder.yaml')
+        print(' - Symlink ' + path_output)
+        force_symlink(yaml_file, yaml_symlink)
 
     def print_status(self):
         """Print clowder repo status"""
@@ -125,15 +123,15 @@ class ClowderRepo(object):
         current_ref_output = format_project_ref_string(repo_path)
 
         clowder_symlink = os.path.join(self.root_directory, 'clowder.yaml')
-        if os.path.islink(clowder_symlink):
-            real_path = os.path.realpath(clowder_symlink)
-            symlink_output = format_path('clowder.yaml')
-            clowder_path = remove_prefix(real_path + '/', self.root_directory)
-            path_output = format_path(clowder_path[1:-1])
+        if not os.path.islink(clowder_symlink):
             print(project_output + ' ' + current_ref_output)
-            print(symlink_output + ' -> ' + path_output)
-        else:
-            print(project_output + ' ' + current_ref_output)
+            return
+        real_path = os.path.realpath(clowder_symlink)
+        symlink_output = format_path('clowder.yaml')
+        clowder_path = remove_prefix(real_path + '/', self.root_directory)
+        path_output = format_path(clowder_path[1:-1])
+        print(project_output + ' ' + current_ref_output)
+        print(symlink_output + ' -> ' + path_output)
 
     def pull(self):
         """Pull clowder repo upstream changes"""

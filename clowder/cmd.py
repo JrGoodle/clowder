@@ -96,17 +96,16 @@ class Command(object):
         """clowder clean command"""
         if self._invalid_yaml:
             sys.exit(1)
-        if self.clowder_repo is not None:
-            self.clowder_repo.print_status()
-            print()
-            if self.clowder is None:
-                sys.exit(1)
-            if self.args.projects is None:
-                self.clowder.clean_groups(self.args.groups)
-            else:
-                self.clowder.clean_projects(self.args.projects)
-        else:
+        if self.clowder_repo is None:
             exit_clowder_not_found()
+        self.clowder_repo.print_status()
+        print()
+        if self.clowder is None:
+            sys.exit(1)
+        if self.args.projects is None:
+            self.clowder.clean_groups(self.args.groups)
+        else:
+            self.clowder.clean_projects(self.args.projects)
 
     def diff(self):
         """clowder diff command"""
@@ -174,12 +173,10 @@ class Command(object):
     def init(self):
         """clowder init command"""
         if self.clowder_repo is not None:
-            cprint('Clowder already initialized in this directory', 'red')
-            print()
+            cprint('Clowder already initialized in this directory\n', 'red')
             sys.exit(1)
         url_output = colored(self.args.url, 'green')
-        print('Create clowder repo from ' + url_output)
-        print()
+        print('Create clowder repo from ' + url_output + '\n')
         clowder_repo = ClowderRepo(self.root_directory)
         if self.args.branch is None:
             branch = 'master'
@@ -342,8 +339,7 @@ class Command(object):
         if self.clowder is None:
             sys.exit(1)
         if self.args.fetch:
-            print(' - Fetch upstream changes for projects')
-            print()
+            print(' - Fetch upstream changes for projects\n')
             self.clowder.fetch_groups(self.group_names)
         all_project_paths = self.clowder.get_all_project_paths()
         padding = len(max(all_project_paths, key=len))
