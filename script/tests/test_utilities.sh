@@ -61,12 +61,12 @@ test_branch() {
 
 test_git_clean() {
     echo "TEST: Git repo is clean"
-    [[ $(git diff --shortstat 2> /dev/null | tail -n1) != "" ]] && exit 1
+    git diff --cached --quiet || exit 1
 }
 
 test_git_dirty() {
     echo "TEST: Git repo is dirty"
-    [[ $(git diff --shortstat 2> /dev/null | tail -n1) != "" ]] || exit 1
+    git diff --cached --quiet && exit 1
 }
 
 test_local_branch_exists() {
