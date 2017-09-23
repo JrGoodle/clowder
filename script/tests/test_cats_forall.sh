@@ -60,3 +60,23 @@ test_forall_projects() {
     clowder forall -c "$TEST_SCRIPT_DIR/tests/test_forall_script.sh" -p "$@" || exit 1
 }
 test_forall_projects 'jrgoodle/kit' 'jrgoodle/kishka'
+
+test_forall_environment_variables() {
+    print_single_separator
+    echo "TEST: Test forall environment variables in script"
+    clowder link
+    clowder herd || exit 1
+    clowder forall -c "$TEST_SCRIPT_DIR/tests/test_forall_script_env_kit.sh" -p "jrgoodle/kit" || exit 1
+    clowder forall -c "$TEST_SCRIPT_DIR/tests/test_forall_script_env_duke.sh" -p "jrgoodle/duke" || exit 1
+    clowder forall -c "$TEST_SCRIPT_DIR/tests/test_forall_script_env_duke.sh" && exit 1
+    clowder forall -ic "$TEST_SCRIPT_DIR/tests/test_forall_script_env_duke.sh" || exit 1
+    echo "TEST: Test forall environment variables in command"
+    clowder forall -c 'if [ $PROJECT_NAME != jrgoodle/kit ]; then exit 1; fi' -p 'jrgoodle/kit' || exit 1
+    clowder forall -c 'if [ $PROJECT_REMOTE != origin ]; then exit 1; fi' -p 'jrgoodle/kit' || exit 1
+    clowder forall -c 'if [ $PROJECT_REF != refs/heads/master ]; then exit 1; fi' -p 'jrgoodle/kit' || exit 1
+    clowder forall -c 'if [ $PROJECT_NAME != jrgoodle/duke ]; then exit 1; fi' -p 'jrgoodle/duke' || exit 1
+    clowder forall -c 'if [ $PROJECT_REMOTE != origin ]; then exit 1; fi' -p 'jrgoodle/duke' || exit 1
+    clowder forall -c 'if [ $PROJECT_REF != refs/heads/purr ]; then exit 1; fi' -p 'jrgoodle/duke' || exit 1
+
+}
+test_forall_environment_variables

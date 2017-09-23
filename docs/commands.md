@@ -79,6 +79,14 @@ $ clowder forall -c "git status" -p llvm-mirror/clang
 $ clowder forall -c "/path/to/script.sh" -p llvm-mirror/clang
 ```
 
+The following environment variables are available for use in commands and scripts:
+
+- `CLOWDER_PATH` is the absolute path to the root directory the clowder repo was initialized in
+- `PROJECT_PATH` is the absolute path to the project directory
+- `PROJECT_NAME` is the unique name of the project
+- `PROJECT_REMOTE` is the name of the project's remote
+- `PROJECT_REF` is the project ref as written in the `clowder.yaml` file
+
 ---
 
 ### `herd`
