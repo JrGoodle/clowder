@@ -17,63 +17,57 @@ All of these have their own approach, but many are based on submodules or subtre
 
 The primary purpose of `clowder` is synchronization of multiple repositories, so normal development still takes place in individual repositories with the usual `git` commands
 
-## Getting Started
+# Getting Started
 
-### Requirements
+## Requirements
 
+- [git](https://git-scm.com)
 - [Python 3](https://www.python.org/downloads/)
 
-#### macOS
+### macOS
 
-Installation with [Homebrew](https://brew.sh)
+macOS comes with `git` preinstalled. To install Python 3 with [Homebrew](https://brew.sh)
 
 ```bash
 $ brew install python3
 ```
 
-#### Ubuntu 16.04
+### Ubuntu 16.04
 
 ```bash
 $ sudo apt install git
 $ sudo apt install python3-pip
 ```
 
-#### Windows
+### Windows
 
-Install the following dependencies in [Cygwin](https://cygwin.com/install.html)
+Currently `clowder` has only been tested to work on Windows with [Cygwin](https://cygwin.com/install.html). The following dependencies should be installed
 
 - git
 - python3-pip
 - python3
 
-### Installation
+## Installation
 
 To install `clowder` from PyPI
 
 ```bash
-$ pip3 install clowder-repo
+$ sudo pip3 install clowder-repo
 ```
 
-#### Shell Profile Customizations
-
-For terminal autocompletion
+To upgrade to the latest version
 
 ```bash
-# add to bash profile
+$ sudo pip3 install clowder-repo --upgrade
+```
+
+For terminal autocompletion add the following line to your bash profile
+
+```bash
 command -v clowder >/dev/null 2>&1 && eval "$(register-python-argcomplete clowder)"
 ```
 
-To make `clowder` available in your shell environment, it may be necessary to add the Python 3 bin directory to your environment's `PATH` variable. This is likely only be necessary if you've previously installed `clowder` for development
-
-```bash
-# macOS and Python 3.4
-$ echo "$(dirname $(which python3))"
-> /Library/Frameworks/Python.framework/Versions/3.4/bin
-# add to bash profile
-export PATH="/Library/Frameworks/Python.framework/Versions/3.4/bin:$PATH"
-```
-
-### Usage
+# Usage
 
 This example is based on the [LLVM project](https://llvm.org) (see [the full clowder.yaml](https://github.com/JrGoodle/llvm-projects/blob/master/clowder.yaml))
 
@@ -83,7 +77,7 @@ This example is based on the [LLVM project](https://llvm.org) (see [the full clo
     $ cd llvm-projects
     ```
 
-2. Clone the [llvm-projects](https://github.com/jrgoodle/llvm-projects.git) repository (the "**clowder repo**") containing the `clowder.yaml` file
+2. Clone the [llvm-projects clowder repo](https://github.com/jrgoodle/llvm-projects.git) containing the `clowder.yaml` file
     ```bash
     $ clowder init https://github.com/jrgoodle/llvm-projects.git
     ```
@@ -111,16 +105,16 @@ This example is based on the [LLVM project](https://llvm.org) (see [the full clo
     $ clowder status
     ```
 
-For more example projects, see the [examples directory](https://github.com/JrGoodle/clowder/tree/master/examples).
+For more example projects, see the [examples directory](https://github.com/JrGoodle/clowder/tree/master/examples)
 
-## Further Information
+# Further Information
 
-### More `clowder` Commands
+## More `clowder` commands
 
 ```bash
 $ clowder clean # Discard any changes in projects
 $ clowder diff # Print git diff for all projects
-$ clowder forall -c "git status" # Run command in all project directories
+$ clowder forall -c 'git status' # Run command in all project directories
 $ clowder link -v 0.1 # Set clowder.yaml symlink to a previously saved version
 $ clowder repo run 'git status' # Run command in .clowder directory
 $ clowder save 0.1 # Save a version of clowder.yaml with current commit sha's
@@ -132,12 +126,16 @@ $ clowder prune stale_branch # Prune branch 'stale_branch' for all projects
 See the [clowder commands doc](https://github.com/JrGoodle/clowder/blob/master/docs/commands.md)
 for more advanced `clowder` command usage
 
-### The `clowder.yaml` File
+## The `clowder.yaml` file
 
-See the [clowder.yaml doc](https://github.com/JrGoodle/clowder/blob/master/docs/clowder_yaml.md)
+See the [clowder.yaml doc](https://github.com/JrGoodle/clowder/blob/master/docs/clowder-yaml.md)
 for an explanation of the `clowder.yaml` configuration file
 
-### The `.clowder` Directory
+## The clowder repo
 
-See the [.clowder doc](https://github.com/JrGoodle/clowder/blob/master/docs/dot_clowder_dir.md)
-for a description of the structure of the `.clowder` directory
+See the [clowder repo doc](https://github.com/JrGoodle/clowder/blob/master/docs/clowder-repo.md)
+for a description of the structure of the clowder repo cloned in the `.clowder` directory
+
+## Development
+
+See the [development doc](https://github.com/JrGoodle/clowder/blob/master/docs/development.md) for information on setting up your environment for `clowder` development
