@@ -146,25 +146,24 @@ class ClowderController(object):
         # print()
         local_branch_exists = self._existing_branch_group(group_names, branch, is_remote=False)
         remote_branch_exists = self._existing_branch_group(group_names, branch, is_remote=True)
-        if local_branch_exists or remote_branch_exists:
-            print(' - Prune local and remote branches\n')
-            for group in self.groups:
-                if group.name in group_names:
-                    group.prune_all(branch, force)
-        else:
+        branch_exists = local_branch_exists or remote_branch_exists
+        if not branch_exists:
             cprint(' - No local or remote branches to prune\n', 'red')
             sys.exit()
+        print(' - Prune local and remote branches\n')
+        for group in self.groups:
+            if group.name in group_names:
+                group.prune_all(branch, force)
 
     def prune_groups_local(self, group_names, branch, force):
         """Prune local branch for groups"""
         self._validate_groups(group_names)
-        if self._existing_branch_group(group_names, branch, is_remote=False):
-            for group in self.groups:
-                if group.name in group_names:
-                    group.prune_local(branch, force)
-        else:
+        if not self._existing_branch_group(group_names, branch, is_remote=False):
             print(' - No local branches to prune\n')
             sys.exit()
+        for group in self.groups:
+            if group.name in group_names:
+                group.prune_local(branch, force)
 
     def prune_groups_remote(self, group_names, branch):
         """Prune remote branch for groups"""
@@ -172,13 +171,12 @@ class ClowderController(object):
         # print(' - Fetch remote changes\n')
         # self._fetch_groups(group_names)
         # print()
-        if self._existing_branch_group(group_names, branch, is_remote=True):
-            for group in self.groups:
-                if group.name in group_names:
-                    group.prune_remote(branch)
-        else:
+        if not self._existing_branch_group(group_names, branch, is_remote=True):
             cprint(' - No remote branches to prune\n', 'red')
             sys.exit()
+        for group in self.groups:
+            if group.name in group_names:
+                group.prune_remote(branch)
 
     def prune_projects_all(self, project_names, branch, force):
         """Prune local and remote branch for projects"""
@@ -188,27 +186,26 @@ class ClowderController(object):
         # print()
         local_branch_exists = self._existing_branch_project(project_names, branch, is_remote=False)
         remote_branch_exists = self._existing_branch_project(project_names, branch, is_remote=True)
-        if local_branch_exists or remote_branch_exists:
-            print(' - Prune local and remote branches\n')
-            for group in self.groups:
-                for project in group.projects:
-                    if project.name in project_names:
-                        project.prune_all(branch, force)
-        else:
+        branch_exists = local_branch_exists or remote_branch_exists
+        if not branch_exists:
             cprint(' - No local or remote branches to prune\n', 'red')
             sys.exit()
+        print(' - Prune local and remote branches\n')
+        for group in self.groups:
+            for project in group.projects:
+                if project.name in project_names:
+                    project.prune_all(branch, force)
 
     def prune_projects_local(self, project_names, branch, force):
         """Prune local branch for projects"""
         self._validate_projects(project_names)
-        if self._existing_branch_project(project_names, branch, is_remote=False):
-            for group in self.groups:
-                for project in group.projects:
-                    if project.name in project_names:
-                        project.prune_local(branch, force)
-        else:
+        if not self._existing_branch_project(project_names, branch, is_remote=False):
             print(' - No local branches to prune\n')
             sys.exit()
+        for group in self.groups:
+            for project in group.projects:
+                if project.name in project_names:
+                    project.prune_local(branch, force)
 
     def prune_projects_remote(self, project_names, branch):
         """Prune remote branch for projects"""
@@ -216,14 +213,13 @@ class ClowderController(object):
         # print(' - Fetch remote changes\n')
         # self._fetch_projects(project_names)
         # print()
-        if self._existing_branch_project(project_names, branch, is_remote=True):
-            for group in self.groups:
-                for project in group.projects:
-                    if project.name in project_names:
-                        project.prune_remote(branch)
-        else:
+        if not self._existing_branch_project(project_names, branch, is_remote=True):
             cprint(' - No remote branches to prune\n', 'red')
             sys.exit()
+        for group in self.groups:
+            for project in group.projects:
+                if project.name in project_names:
+                    project.prune_remote(branch)
 
     def save_version(self, version):
         """Save current commits to a clowder.yaml in the versions directory"""
@@ -236,13 +232,12 @@ class ClowderController(object):
             os.makedirs(version_dir)
 
         yaml_file = os.path.join(version_dir, 'clowder.yaml')
-        if not os.path.exists(yaml_file):
-            print_save_version(version_name, yaml_file)
-            save_yaml(self._get_yaml(), yaml_file)
-        else:
+        if os.path.exists(yaml_file):
             print_save_version_exists_error(version_name, yaml_file)
             print()
             sys.exit(1)
+        print_save_version(version_name, yaml_file)
+        save_yaml(self._get_yaml(), yaml_file)
 
     def start_groups(self, group_names, branch, tracking):
         """Start feature branch for groups"""
@@ -358,28 +353,27 @@ class ClowderController(object):
         parsed_yaml = parse_yaml(yaml_file)
         imported_yaml_files = []
         while True:
-            if 'import' in parsed_yaml:
-                imported_yaml_files.append(parsed_yaml)
-                imported_yaml = parsed_yaml['import']
-                if imported_yaml == 'default':
-                    imported_yaml_file = os.path.join(self.root_directory,
-                                                      '.clowder',
-                                                      'clowder.yaml')
-                else:
-                    imported_yaml_file = os.path.join(self.root_directory,
-                                                      '.clowder',
-                                                      'versions',
-                                                      imported_yaml,
-                                                      'clowder.yaml')
-                parsed_yaml = parse_yaml(imported_yaml_file)
-                if len(imported_yaml_files) > self._max_import_depth:
-                    print_invalid_yaml_error()
-                    print_recursive_import_error(self._max_import_depth)
-                    print()
-                    sys.exit(1)
-            else:
+            if 'import' not in parsed_yaml:
                 self._load_yaml_base(parsed_yaml)
                 break
+            imported_yaml_files.append(parsed_yaml)
+            imported_yaml = parsed_yaml['import']
+            if imported_yaml == 'default':
+                imported_yaml_file = os.path.join(self.root_directory,
+                                                  '.clowder',
+                                                  'clowder.yaml')
+            else:
+                imported_yaml_file = os.path.join(self.root_directory,
+                                                  '.clowder',
+                                                  'versions',
+                                                  imported_yaml,
+                                                  'clowder.yaml')
+            parsed_yaml = parse_yaml(imported_yaml_file)
+            if len(imported_yaml_files) > self._max_import_depth:
+                print_invalid_yaml_error()
+                print_recursive_import_error(self._max_import_depth)
+                print()
+                sys.exit(1)
         for parsed_yaml in reversed(imported_yaml_files):
             self._load_yaml_import(parsed_yaml)
         self._load_yaml_combined()
@@ -428,16 +422,16 @@ class ClowderController(object):
             imported_sources = parsed_yaml['sources']
             source_names = [s['name'] for s in self.combined_yaml['sources']]
             for imported_source in imported_sources:
-                if imported_source['name'] in source_names:
-                    combined_sources = []
-                    for source in self.sources:
-                        if source.name == imported_source['name']:
-                            combined_sources.append(imported_source)
-                        else:
-                            combined_sources.append(source)
-                    self.combined_yaml['sources'] = combined_sources
-                else:
+                if imported_source['name'] not in source_names:
                     self.combined_yaml['sources'].append(imported_source)
+                    continue
+                combined_sources = []
+                for source in self.sources:
+                    if source.name == imported_source['name']:
+                        combined_sources.append(imported_source)
+                    else:
+                        combined_sources.append(source)
+                self.combined_yaml['sources'] = combined_sources
 
     def _load_yaml_import_groups(self, parsed_yaml):
         """Load clowder groups from import yaml"""
@@ -445,18 +439,18 @@ class ClowderController(object):
             imported_groups = parsed_yaml['groups']
             group_names = [g['name'] for g in self.combined_yaml['groups']]
             for imported_group in imported_groups:
-                if imported_group['name'] in group_names:
-                    combined_groups = []
-                    for group in self.combined_yaml['groups']:
-                        if group['name'] == imported_group['name']:
-                            _load_yaml_import_projects(imported_group,
-                                                       group)
-                            combined_groups.append(group)
-                        else:
-                            combined_groups.append(group)
-                    self.combined_yaml['groups'] = combined_groups
-                else:
+                if imported_group['name'] not in group_names:
                     self.groups.append(imported_group)
+                    continue
+                combined_groups = []
+                for group in self.combined_yaml['groups']:
+                    if group['name'] == imported_group['name']:
+                        _load_yaml_import_projects(imported_group,
+                                                   group)
+                        combined_groups.append(group)
+                    else:
+                        combined_groups.append(group)
+                self.combined_yaml['groups'] = combined_groups
 
     def _validate_groups(self, group_names):
         """Validate status of all projects for specified groups"""
@@ -513,63 +507,63 @@ class ClowderController(object):
             sys.exit(1)
         if 'import' not in parsed_yaml:
             validate_yaml(yaml_file)
-        else:
-            validate_yaml_import(yaml_file)
-            imported_clowder = parsed_yaml['import']
-            try:
-                if imported_clowder == 'default':
-                    imported_yaml_file = os.path.join(self.root_directory,
-                                                      '.clowder',
-                                                      'clowder.yaml')
-                    if not os.path.isfile(imported_yaml_file):
-                        error = format_missing_imported_yaml_error(imported_yaml_file,
-                                                                   yaml_file)
-                        raise Exception(error)
-                else:
-                    imported_yaml_file = os.path.join(self.root_directory,
-                                                      '.clowder',
-                                                      'versions',
-                                                      imported_clowder,
-                                                      'clowder.yaml')
-                    if not os.path.isfile(imported_yaml_file):
-                        error = format_missing_imported_yaml_error(imported_yaml_file,
-                                                                   yaml_file)
-                        raise Exception(error)
-                yaml_file = imported_yaml_file
-            except Exception as err:
-                print_invalid_yaml_error()
-                print_error(err)
-                sys.exit(1)
-            self._validate_yaml(yaml_file, max_import_depth - 1)
+            return
+        validate_yaml_import(yaml_file)
+        imported_clowder = parsed_yaml['import']
+        try:
+            if imported_clowder == 'default':
+                imported_yaml_file = os.path.join(self.root_directory,
+                                                  '.clowder',
+                                                  'clowder.yaml')
+                if not os.path.isfile(imported_yaml_file):
+                    error = format_missing_imported_yaml_error(imported_yaml_file,
+                                                               yaml_file)
+                    raise Exception(error)
+            else:
+                imported_yaml_file = os.path.join(self.root_directory,
+                                                  '.clowder',
+                                                  'versions',
+                                                  imported_clowder,
+                                                  'clowder.yaml')
+                if not os.path.isfile(imported_yaml_file):
+                    error = format_missing_imported_yaml_error(imported_yaml_file,
+                                                               yaml_file)
+                    raise Exception(error)
+            yaml_file = imported_yaml_file
+        except Exception as err:
+            print_invalid_yaml_error()
+            print_error(err)
+            sys.exit(1)
+        self._validate_yaml(yaml_file, max_import_depth - 1)
 
 def _load_yaml_import_projects(imported_group, group):
     """Load clowder projects from imported group"""
     project_names = [p['name'] for p in group['projects']]
     for imported_project in imported_group['projects']:
-        if imported_project['name'] in project_names:
-            combined_projects = []
-            for project in group['projects']:
-                if project.name == imported_project['name']:
-                    if 'path' not in imported_project:
-                        imported_project['path'] = project['path']
-
-                    if 'depth' not in imported_project:
-                        imported_project['depth'] = project['depth']
-
-                    if 'ref' not in imported_project:
-                        imported_project['ref'] = project['ref']
-
-                    if 'remote' not in imported_project:
-                        imported_project['remote'] = project['remote_name']
-
-                    if 'source' not in imported_project:
-                        imported_project['source'] = project['source']['name']
-
-                    combined_project = imported_project
-                    combined_projects.append(combined_project)
-                else:
-                    combined_projects.append(project)
-            group['projects'] = combined_projects
-        else:
+        if imported_project['name'] not in project_names:
             combined_project = imported_project
             group['projects'].append(combined_project)
+            return
+        combined_projects = []
+        for project in group['projects']:
+            if project.name != imported_project['name']:
+                combined_projects.append(project)
+                continue
+            if 'path' not in imported_project:
+                imported_project['path'] = project['path']
+
+            if 'depth' not in imported_project:
+                imported_project['depth'] = project['depth']
+
+            if 'ref' not in imported_project:
+                imported_project['ref'] = project['ref']
+
+            if 'remote' not in imported_project:
+                imported_project['remote'] = project['remote_name']
+
+            if 'source' not in imported_project:
+                imported_project['source'] = project['source']['name']
+
+            combined_project = imported_project
+            combined_projects.append(combined_project)
+        group['projects'] = combined_projects
