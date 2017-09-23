@@ -48,3 +48,45 @@ test_clowder_import_version() {
     done
 }
 test_clowder_import_version
+
+test_clowder_import_override_project_ref() {
+    print_single_separator
+    echo "TEST: Test clowder file import overriding project ref"
+    echo 'TODO: Add test'
+}
+test_clowder_import_override_project_ref
+
+test_clowder_import_add_project_to_group() {
+    print_single_separator
+    echo "TEST: Test clowder file import adding new project to existing group"
+    echo 'TODO: Add test'
+}
+test_clowder_import_add_project_to_group
+
+test_clowder_import_add_new_group() {
+    print_single_separator
+    echo "TEST: Test clowder file import adding new group"
+    echo 'TODO: Add test'
+}
+test_clowder_import_add_new_group
+
+test_clowder_import_recursive_override_project_ref() {
+    print_single_separator
+    echo "TEST: Test clowder file recursive import overriding project ref"
+    echo 'TODO: Add test'
+}
+test_clowder_import_recursive_override_project_ref
+
+test_clowder_import_recursive_add_project_to_group() {
+    print_single_separator
+    echo "TEST: Test clowder file recursive import adding new project to existing group"
+    echo 'TODO: Add test'
+}
+test_clowder_import_recursive_add_project_to_group
+
+test_clowder_import_recursive_add_new_group() {
+    print_single_separator
+    echo "TEST: Test clowder file recursive import adding new group"
+    echo 'TODO: Add test'
+}
+test_clowder_import_recursive_add_new_group
