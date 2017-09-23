@@ -527,8 +527,7 @@ def git_set_tracking_branch_same_commit(repo_path, branch, remote, depth):
                 if local_branch.commit != remote_branch.commit:
                     message_1 = colored(' - Existing remote branch ', 'red')
                     message_2 = colored(' on different commit', 'red')
-                    print(message_1 + branch_output + message_2)
-                    print()
+                    print(message_1 + branch_output + message_2 + '\n')
                     sys.exit(1)
                 try:
                     print(' - Set tracking branch ' + branch_output +

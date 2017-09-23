@@ -345,8 +345,7 @@ def _create_remote_tracking_branch(repo_path, branch, remote, depth):
             except:
                 message_1 = colored(' - Remote branch ', 'red')
                 message_2 = colored(' already exists', 'red')
-                print(message_1 + branch_output + message_2)
-                print()
+                print(message_1 + branch_output + message_2 + '\n')
                 sys.exit(1)
             else:
                 print(' - Tracking branch ' + branch_output + ' already exists')

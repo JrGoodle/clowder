@@ -487,9 +487,7 @@ class ClowderController(object):
                 projects_exist = False
         if not projects_exist:
             herd_output = format_clowder_command('clowder herd')
-            print()
-            print(' - First run ' + herd_output + ' to clone missing projects')
-            print()
+            print('\n - First run ' + herd_output + ' to clone missing projects\n')
             sys.exit(1)
 
 # Disable errors shown by pylint for no specified exception types

@@ -103,8 +103,7 @@ class ClowderRepo(object):
             yaml_file = os.path.join(self.root_directory, relative_path)
 
         if not os.path.isfile(yaml_file):
-            print(path_output + " doesn't seem to exist")
-            print()
+            print(path_output + " doesn't seem to exist\n")
             sys.exit(1)
         yaml_symlink = os.path.join(self.root_directory, 'clowder.yaml')
         print(' - Symlink ' + path_output)
