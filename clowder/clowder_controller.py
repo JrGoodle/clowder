@@ -515,20 +515,16 @@ class ClowderController(object):
                 imported_yaml_file = os.path.join(self.root_directory,
                                                   '.clowder',
                                                   'clowder.yaml')
-                if not os.path.isfile(imported_yaml_file):
-                    error = format_missing_imported_yaml_error(imported_yaml_file,
-                                                               yaml_file)
-                    raise Exception(error)
             else:
                 imported_yaml_file = os.path.join(self.root_directory,
                                                   '.clowder',
                                                   'versions',
                                                   imported_clowder,
                                                   'clowder.yaml')
-                if not os.path.isfile(imported_yaml_file):
-                    error = format_missing_imported_yaml_error(imported_yaml_file,
-                                                               yaml_file)
-                    raise Exception(error)
+            if not os.path.isfile(imported_yaml_file):
+                error = format_missing_imported_yaml_error(imported_yaml_file,
+                                                           yaml_file)
+                raise Exception(error)
             yaml_file = imported_yaml_file
         except Exception as err:
             print_invalid_yaml_error()

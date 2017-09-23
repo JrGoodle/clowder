@@ -96,17 +96,16 @@ class Command(object):
         """clowder clean command"""
         if self._invalid_yaml:
             sys.exit(1)
-        if self.clowder_repo is not None:
-            self.clowder_repo.print_status()
-            print()
-            if self.clowder is None:
-                sys.exit(1)
-            if self.args.projects is None:
-                self.clowder.clean_groups(self.args.groups)
-            else:
-                self.clowder.clean_projects(self.args.projects)
-        else:
+        if self.clowder_repo is None:
             exit_clowder_not_found()
+        self.clowder_repo.print_status()
+        print()
+        if self.clowder is None:
+            sys.exit(1)
+        if self.args.projects is None:
+            self.clowder.clean_groups(self.args.groups)
+        else:
+            self.clowder.clean_projects(self.args.projects)
 
     def diff(self):
         """clowder diff command"""
