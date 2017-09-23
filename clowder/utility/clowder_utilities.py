@@ -18,12 +18,27 @@ from clowder.utility.print_utilities import (
 
 # Disable errors shown by pylint for no specified exception types
 # pylint: disable=W0702
+# Disable errors shown by pylint for too many arguments
+# pylint: disable=R0913
 
 def execute_command(cmd, path):
     """Execute command and display continuous output"""
     return subprocess.call(" ".join(cmd),
                            shell=True,
                            cwd=path)
+
+def execute_forall_command(cmd, path, clowder_path, name, remote, ref):
+    """Execute forall command with additional environment variables and display continuous output"""
+    forall_env = os.environ.copy()
+    forall_env["CLOWDER_PATH"] = clowder_path
+    forall_env["PROJECT_PATH"] = path
+    forall_env["PROJECT_NAME"] = name
+    forall_env["PROJECT_REMOTE"] = remote
+    forall_env["PROJECT_REF"] = ref
+    return subprocess.call(" ".join(cmd),
+                           shell=True,
+                           cwd=path,
+                           env=forall_env)
 
 def execute_command_popen(cmd, path):
     """Execute command and display continuous output"""

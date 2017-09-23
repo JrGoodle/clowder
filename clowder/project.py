@@ -3,7 +3,7 @@ import os
 import sys
 from termcolor import cprint
 from clowder.fork import Fork
-from clowder.utility.clowder_utilities import execute_command
+from clowder.utility.clowder_utilities import execute_forall_command
 from clowder.utility.print_utilities import (
     format_command,
     format_path,
@@ -217,7 +217,12 @@ class Project(object):
             cprint(" - Project is missing\n", 'red')
             return
         print(format_command(command))
-        return_code = execute_command(command.split(), self.full_path())
+        return_code = execute_forall_command(command.split(),
+                                             self.full_path(),
+                                             self.root_directory,
+                                             self.name,
+                                             self.remote_name,
+                                             self.ref)
         if not ignore_errors:
             if return_code != 0:
                 print_command_failed_error(command)
