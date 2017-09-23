@@ -1,8 +1,8 @@
 # llvm-projects Example
 
-Run `init.sh` script to set up clowder directory for LLVM project repos. Clones from https://github.com/jrgoodle/llvm-projects.git
+Run [init.sh](init.sh) script to set up clowder directory for LLVM project repos. Clones from https://github.com/jrgoodle/llvm-projects.git
 
-`clean.sh` will clean up cloned files.
+[clean.sh](clean.sh) will clean up cloned files
 
 ## Projects Directory Structure
 

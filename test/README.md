@@ -1,5 +1,5 @@
-## Python unit tests
+# Python unit tests
 
-See [unit test script](https://github.com/JrGoodle/clowder/blob/master/scripts/test_utilities.sh)
+See [unit test script](../script/unittests.sh)
 
-See also [development doc](https://github.com/JrGoodle/clowder/blob/master/docs/development.md)
+See also [development doc](../docs/development.md)

@@ -1,17 +1,17 @@
-## Documentation
+# Documentation
 
-### [clowder_yaml.md](https://github.com/JrGoodle/clowder/blob/master/docs/clowder_yaml.md)
+## [clowder-repo.md](clowder-repo.md)
 
-- Description of `clowder.yaml` file
+- Description of the clowder repo cloned into the `.clowder` directory with `clowder init`
 
-### [commands.md](https://github.com/JrGoodle/clowder/blob/master/docs/commands.md)
+## [clowder-yaml.md](clowder-yaml.md)
 
-- Describe `clowder` commands
+- Description of the `clowder.yaml` file
 
-### [development.md](https://github.com/JrGoodle/clowder/blob/master/docs/development.md)
+## [commands.md](commands.md)
 
-- Information for developing `clowder`
+- Description of all `clowder` commands
 
-### [dot_clowder_dir.md](https://github.com/JrGoodle/clowder/blob/master/docs/dot_clowder_dir.md)
+## [development.md](development.md)
 
-- Description of `.clowder` directory
+- Information for `clowder` development
