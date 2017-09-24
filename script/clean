@@ -18,6 +18,7 @@ clean_nix() {
 }
 
 clean_examples() {
+    echo "Removing existing example files"
     if [ -n "$TRAVIS_OS_NAME" ]; then
         ../examples/cats/clean.sh
         ../examples/llvm-projects/clean.sh
