@@ -27,7 +27,7 @@ def execute_command(cmd, path):
                            shell=True,
                            cwd=path)
 
-def execute_forall_command(cmd, path, clowder_path, name, remote, ref):
+def execute_forall_command(cmd, path, clowder_path, name, remote, fork_remote, ref):
     """Execute forall command with additional environment variables and display continuous output"""
     forall_env = os.environ.copy()
     forall_env["CLOWDER_PATH"] = clowder_path
@@ -35,6 +35,8 @@ def execute_forall_command(cmd, path, clowder_path, name, remote, ref):
     forall_env["PROJECT_NAME"] = name
     forall_env["PROJECT_REMOTE"] = remote
     forall_env["PROJECT_REF"] = ref
+    if fork_remote is not None:
+        forall_env["FORK_REMOTE"] = fork_remote
     return subprocess.call(" ".join(cmd),
                            shell=True,
                            cwd=path,

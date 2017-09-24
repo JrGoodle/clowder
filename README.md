@@ -98,7 +98,7 @@ The `clowder init` command does the following
 $ clowder herd
 ```
 
-<img alt="clowder herd" src="docs/README/clowder-herd.png" width="60%">
+![clowder herd](docs/README/clowder-herd.png)
 
 `clowder herd` updates the state of the projects. When the command is run, the following happens
 - If any projects don't have a clean git status then `clowder` exits
@@ -113,7 +113,7 @@ $ clowder herd
 $ clowder status
 ```
 
-<img alt="clowder status" src="docs/README/clowder-status.png" width="50%">
+<img alt="clowder status" src="docs/README/clowder-status.png" width="60%">
 
 # Further Information
 

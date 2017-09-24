@@ -33,6 +33,10 @@ def format_empty_yaml_error(yaml_file):
     output_3 = format_yaml_file('clowder.yaml')
     return output_1 + output_2 + output_3
 
+def format_fork_string(name):
+    """Return formatted fork name"""
+    return colored(name, 'cyan')
+
 def format_invalid_entries_error(name, collection, yaml_file):
     """Return formatted error string for invalid entry in collection"""
     yaml_file = format_symlink_target(yaml_file)

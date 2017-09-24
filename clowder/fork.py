@@ -1,44 +1,35 @@
 """Representation of clowder.yaml fork"""
+import os
 from termcolor import cprint
 from clowder.utility.git_print_utilities import (
-    format_project_string,
-    format_project_ref_string
+    format_project_ref_string,
+    format_project_string
 )
-from clowder.utility.git_utilities import (
-    git_create_remote,
-    git_existing_repository,
-    git_fetch_remote_ref
-)
+from clowder.utility.git_utilities import git_existing_repository
 
 class Fork(object):
     """clowder.yaml fork class"""
 
-    def __init__(self, fork, path, source):
+    def __init__(self, fork, root_directory, path, source):
+        self.root_directory = root_directory
         self.path = path
         self.name = fork['name']
-        self.remote = fork['remote']
+        self.remote_name = fork['remote']
         self.url = source.get_url_prefix() + self.name + ".git"
 
-    def herd(self, ref, depth):
-        """Herd remote data from fork"""
-        self._print_status()
-        git_create_remote(self.path, self.remote, self.url)
-        git_fetch_remote_ref(self.path, self.remote, ref, depth)
-
-    def herd_branch(self, branch, default_ref, depth):
-        """Herd branch remote data from fork"""
-        self._print_status()
-        print('TODO')
+    def full_path(self):
+        """Return full path to project"""
+        return os.path.join(self.root_directory, self.path)
 
     def get_yaml(self):
         """Return python object representation for saving yaml"""
-        return {'name': self.name, 'remote': self.remote}
+        return {'name': self.name, 'remote': self.remote_name}
 
-    def _print_status(self):
+    def print_status(self):
         """Print formatted fork status"""
         if not git_existing_repository(self.path):
-            cprint(self.name, 'green')
+            cprint(self.path, 'green')
             return
-        project_output = format_project_string(self.path, self.name)
-        current_ref_output = format_project_ref_string(self.path)
+        project_output = format_project_string(self.path, self.path)
+        current_ref_output = format_project_ref_string(self.full_path())
         print(project_output + ' ' + current_ref_output)

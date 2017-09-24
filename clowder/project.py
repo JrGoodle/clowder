@@ -6,6 +6,7 @@ from clowder.fork import Fork
 from clowder.utility.clowder_utilities import execute_forall_command
 from clowder.utility.print_utilities import (
     format_command,
+    format_fork_string,
     print_command_failed_error
 )
 from clowder.utility.git_print_utilities import (
@@ -22,6 +23,8 @@ from clowder.utility.git_utilities import (
     git_fetch_silent,
     git_herd,
     git_herd_branch,
+    git_herd_branch_upstream,
+    git_herd_upstream,
     git_is_dirty,
     git_prune_local,
     git_prune_remote,
@@ -72,11 +75,10 @@ class Project(object):
 
         self.url = self.source.get_url_prefix() + self.name + ".git"
 
-        self.forks = []
-        if 'forks' in project:
-            for fork in project['forks']:
-                full_path = os.path.join(self.root_directory, self.path)
-                self.forks.append(Fork(fork, full_path, self.source))
+        self.fork = None
+        if 'fork' in project:
+            fork = project['fork']
+            self.fork = Fork(fork, self.root_directory, self.path, self.source)
 
     def clean(self):
         """Discard changes for project"""
@@ -101,7 +103,10 @@ class Project(object):
     def existing_branch(self, branch, is_remote):
         """Check if branch exists"""
         if is_remote:
-            return git_existing_remote_branch(self.full_path(), branch, self.remote_name)
+            if self.fork is None:
+                return git_existing_remote_branch(self.full_path(), branch, self.remote_name)
+            else:
+                return git_existing_remote_branch(self.full_path(), branch, self.fork.remote_name)
         else:
             return git_existing_local_branch(self.full_path(), branch)
 
@@ -135,29 +140,43 @@ class Project(object):
                    'ref': git_sha_long(self.full_path()),
                    'remote': self.remote_name,
                    'source': self.source.name}
-        forks_yaml = [f.get_yaml() for f in self.forks]
-        if len(forks_yaml) > 0:
-            project['forks'] = forks_yaml
+        if self.fork is not None:
+            fork_yaml = self.fork.get_yaml()
+            project['fork'] = fork_yaml
         return project
 
     def herd(self, branch=None, depth=None):
         """Clone project or update latest from upstream"""
-        self._print_status()
-
         if depth is None:
             herd_depth = self.depth
         else:
             herd_depth = depth
 
         if branch is None:
-            git_herd(self.full_path(), self.url, self.remote_name, self.ref, herd_depth)
-            for fork in self.forks:
-                fork.herd(self.ref, herd_depth)
+            if self.fork is None:
+                self._print_status()
+                git_herd(self.full_path(), self.url, self.remote_name, self.ref, herd_depth)
+            else:
+                self.fork.print_status()
+                print(format_fork_string(self.fork.name))
+                git_herd(self.full_path(), self.fork.url, self.fork.remote_name,
+                         self.ref, 0)
+                print(format_fork_string(self.name))
+                git_herd_upstream(self.full_path(), self.url, self.remote_name,
+                                  self.ref, 0)
         else:
-            git_herd_branch(self.full_path(), self.url, self.remote_name,
-                            branch, self.ref, herd_depth)
-            for fork in self.forks:
-                fork.herd_branch(branch, self.ref, herd_depth)
+            if self.fork is None:
+                self._print_status()
+                git_herd_branch(self.full_path(), self.url, self.remote_name,
+                                branch, self.ref, herd_depth)
+            else:
+                self.fork.print_status()
+                print(format_fork_string(self.fork.name))
+                git_herd_branch(self.full_path(), self.fork.url, self.fork.remote_name,
+                                branch, self.ref, 0)
+                print(format_fork_string(self.name))
+                git_herd_branch_upstream(self.full_path(), self.url, self.remote_name,
+                                         branch, self.ref, 0)
 
     def is_dirty(self):
         """Check if project is dirty"""
@@ -182,23 +201,31 @@ class Project(object):
     def prune_all(self, branch, force):
         """Prune local and remote branches"""
         if git_existing_repository(self.full_path()):
+            if self.fork is None:
+                remote = self.remote_name
+            else:
+                remote = self.fork.remote_name
             local_branch_exists = git_existing_local_branch(self.full_path(), branch)
             remote_branch_exists = git_existing_remote_branch(self.full_path(),
-                                                              branch, self.remote_name)
+                                                              branch, remote)
             if local_branch_exists or remote_branch_exists:
                 self._print_status()
                 if local_branch_exists:
                     git_prune_local(self.full_path(), branch, self.ref, force)
                 if remote_branch_exists:
-                    git_prune_remote(self.full_path(), branch, self.remote_name)
+                    git_prune_remote(self.full_path(), branch, remote)
 
     def prune(self, branch, force, is_remote):
         """Prune branch"""
         if git_existing_repository(self.full_path()):
             if is_remote:
-                if git_existing_remote_branch(self.full_path(), branch, self.remote_name):
+                if self.fork is None:
+                    remote = self.remote_name
+                else:
+                    remote = self.fork.remote_name
+                if git_existing_remote_branch(self.full_path(), branch, remote):
                     self._print_status()
-                    git_prune_remote(self.full_path(), branch, self.remote_name)
+                    git_prune_remote(self.full_path(), branch, remote)
             else:
                 if git_existing_local_branch(self.full_path(), branch):
                     self._print_status()
@@ -211,11 +238,16 @@ class Project(object):
             cprint(" - Project is missing\n", 'red')
             return
         print(format_command(command))
+        if self.fork is None:
+            fork_remote = None
+        else:
+            fork_remote = self.fork.remote_name
         return_code = execute_forall_command(command.split(),
                                              self.full_path(),
                                              self.root_directory,
                                              self.name,
                                              self.remote_name,
+                                             fork_remote,
                                              self.ref)
         if not ignore_errors:
             if return_code != 0:
@@ -228,7 +260,11 @@ class Project(object):
         if not git_existing_repository(self.full_path()):
             cprint(" - Directory doesn't exist", 'red')
             return
-        git_start(self.full_path(), self.remote_name, branch, self.depth, tracking)
+        if self.fork is None:
+            remote = self.remote_name
+        else:
+            remote = self.fork.remote_name
+        git_start(self.full_path(), remote, branch, self.depth, tracking)
 
     def status(self, padding):
         """Print status for project"""

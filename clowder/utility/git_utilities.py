@@ -224,7 +224,7 @@ def git_fetch_remote_ref(repo_path, remote, ref, depth):
         error = message + remote_output
         command = ['git', 'fetch', remote, '--prune', '--tags']
     else:
-        ref_output = format_ref_string(ref)
+        ref_output = format_ref_string(_truncate_ref(ref))
         print(' - Fetch from ' + remote_output + ' ' + ref_output)
         message = colored(' - Failed to fetch from ', 'red')
         error = message + remote_output + ' ' + ref_output
@@ -301,6 +301,36 @@ def git_herd_branch(repo_path, url, remote, branch, default_ref, depth):
         git_herd(repo_path, url, remote, 'refs/heads/' + branch, depth)
     else:
         git_herd(repo_path, url, remote, default_ref, depth)
+
+def git_herd_branch_upstream(repo_path, url, remote, branch, default_ref, depth):
+    """Herd branch for fork's upstream repo"""
+    git_create_remote(repo_path, remote, url)
+    remote_output = format_remote_string(remote)
+    if depth == 0:
+        print(' - Fetch from ' + remote_output)
+        message = colored(' - Failed to fetch from ', 'red')
+        error = message + remote_output
+        command = ['git', 'fetch', remote, '--prune', '--tags']
+        return_code = execute_command(command, repo_path)
+        if return_code != 0:
+            print(error)
+            sys.exit(1)
+    else:
+        ref_output = format_ref_string(branch)
+        print(' - Fetch from ' + remote_output + ' ' + ref_output)
+        message = colored(' - Failed to fetch from ', 'red')
+        error = message + remote_output + ' ' + ref_output
+        command = ['git', 'fetch', remote, branch,
+                   '--depth', str(depth), '--prune']
+        return_code = execute_command(command, repo_path)
+        if return_code != 0:
+            print(error)
+            git_fetch_remote_ref(repo_path, remote, default_ref, depth)
+
+def git_herd_upstream(repo_path, url, remote, ref, depth):
+    """Herd branch for fork's upstream repo"""
+    git_create_remote(repo_path, remote, url)
+    git_fetch_remote_ref(repo_path, remote, ref, depth)
 
 def git_is_detached(repo_path):
     """Check if HEAD is detached"""
