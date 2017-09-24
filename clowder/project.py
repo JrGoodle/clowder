@@ -6,7 +6,6 @@ from clowder.fork import Fork
 from clowder.utility.clowder_utilities import execute_forall_command
 from clowder.utility.print_utilities import (
     format_command,
-    format_path,
     print_command_failed_error
 )
 from clowder.utility.git_print_utilities import (
@@ -38,6 +37,8 @@ from clowder.utility.git_utilities import (
 # pylint: disable=R0902
 # Disable errors shown by pylint for catching too general exception Exception
 # pylint: disable=W0703
+# Disable errors shown by pylint for no specified exception types
+# pylint: disable=W0702
 
 class Project(object):
     """clowder.yaml project class"""
@@ -241,11 +242,6 @@ class Project(object):
             self._print_status()
             git_stash(self.full_path())
 
-# Disable warning for unused variables
-# pylint: disable=W0612
-# Disable errors shown by pylint for no specified exception types
-# pylint: disable=W0702
-
     def _print_status(self):
         """Print formatted project status"""
         repo_path = os.path.join(self.root_directory, self.path)
@@ -264,5 +260,4 @@ class Project(object):
             return
         project_output = format_project_string(repo_path, self.path)
         current_ref_output = format_project_ref_string(repo_path)
-        path_output = format_path(self.path)
         print('{0} {1}'.format(project_output.ljust(padding), current_ref_output))
