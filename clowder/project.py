@@ -36,8 +36,6 @@ from clowder.utility.git_utilities import (
 
 # Disable errors shown by pylint for too many instance attributes
 # pylint: disable=R0902
-# Disable errors shown by pylint for too many public methods
-# pylint: disable=R0904
 # Disable errors shown by pylint for catching too general exception Exception
 # pylint: disable=W0703
 
@@ -101,13 +99,12 @@ class Project(object):
         path = os.path.join(self.full_path())
         return os.path.isdir(path)
 
-    def existing_local_branch(self, branch):
-        """Check if local branch exists"""
-        return git_existing_local_branch(self.full_path(), branch)
-
-    def existing_remote_branch(self, branch):
-        """Check if remote branch exists"""
-        return git_existing_remote_branch(self.full_path(), branch, self.remote_name)
+    def existing_branch(self, branch, is_remote):
+        """Check if branch exists"""
+        if is_remote:
+            return git_existing_remote_branch(self.full_path(), branch, self.remote_name)
+        else:
+            return git_existing_local_branch(self.full_path(), branch)
 
     def fetch_all(self):
         """Fetch upstream changes if project exists on disk"""
@@ -196,19 +193,17 @@ class Project(object):
                 if remote_branch_exists:
                     git_prune_remote(self.full_path(), branch, self.remote_name)
 
-    def prune_local(self, branch, force):
-        """Prune local branch"""
+    def prune(self, branch, force, is_remote):
+        """Prune branch"""
         if git_existing_repository(self.full_path()):
-            if git_existing_local_branch(self.full_path(), branch):
-                self._print_status()
-                git_prune_local(self.full_path(), branch, self.ref, force)
-
-    def prune_remote(self, branch):
-        """Prune remote branch"""
-        if git_existing_repository(self.full_path()):
-            if git_existing_remote_branch(self.full_path(), branch, self.remote_name):
-                self._print_status()
-                git_prune_remote(self.full_path(), branch, self.remote_name)
+            if is_remote:
+                if git_existing_remote_branch(self.full_path(), branch, self.remote_name):
+                    self._print_status()
+                    git_prune_remote(self.full_path(), branch, self.remote_name)
+            else:
+                if git_existing_local_branch(self.full_path(), branch):
+                    self._print_status()
+                    git_prune_local(self.full_path(), branch, self.ref, force)
 
     def run(self, command, ignore_errors):
         """Run command or script in project directory"""

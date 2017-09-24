@@ -212,7 +212,7 @@ class ClowderController(object):
         for group in self.groups:
             for project in group.projects:
                 if project.name in project_names:
-                    project.prune_local(branch, force)
+                    project.prune(branch, force, is_remote=False)
 
     def prune_projects_remote(self, project_names, branch):
         """Prune remote branch for projects"""
@@ -226,7 +226,7 @@ class ClowderController(object):
         for group in self.groups:
             for project in group.projects:
                 if project.name in project_names:
-                    project.prune_remote(branch)
+                    project.prune(branch, is_remote=True)
 
     def save_version(self, version):
         """Save current commits to a clowder.yaml in the versions directory"""
@@ -289,10 +289,10 @@ class ClowderController(object):
             if group.name in group_names:
                 for project in group.projects:
                     if is_remote:
-                        if project.existing_remote_branch(branch):
+                        if project.existing_branch(branch, is_remote=True):
                             return True
                     else:
-                        if project.existing_local_branch(branch):
+                        if project.existing_branch(branch, is_remote=False):
                             return True
         return False
 
@@ -302,10 +302,10 @@ class ClowderController(object):
             for project in group.projects:
                 if project.name in project_names:
                     if is_remote:
-                        if project.existing_remote_branch(branch):
+                        if project.existing_branch(branch, is_remote=True):
                             return True
                     else:
-                        if project.existing_local_branch(branch):
+                        if project.existing_branch(branch, is_remote=False):
                             return True
         return False
 
