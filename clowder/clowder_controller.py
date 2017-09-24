@@ -8,6 +8,11 @@ from clowder.utility.clowder_utilities import (
     parse_yaml,
     save_yaml
 )
+from clowder.utility.clowder_yaml_loading import (
+    load_yaml_import_defaults,
+    load_yaml_import_groups,
+    load_yaml_import_sources
+)
 from clowder.utility.clowder_yaml_validation import (
     validate_yaml,
     validate_yaml_import
@@ -395,9 +400,7 @@ class ClowderController(object):
         self.defaults = self.combined_yaml['defaults']
         if 'depth' not in self.defaults:
             self.defaults['depth'] = 0
-
         self.sources = [Source(s) for s in self.combined_yaml['sources']]
-
         for group in self.combined_yaml['groups']:
             self.groups.append(Group(self.root_directory,
                                      group,
@@ -407,89 +410,14 @@ class ClowderController(object):
     def _load_yaml_import(self, parsed_yaml):
         """Load clowder from import yaml file"""
         if 'defaults' in parsed_yaml:
-            imported_defaults = parsed_yaml['defaults']
-            if 'ref' in imported_defaults:
-                self.combined_yaml['defaults']['ref'] = imported_defaults['ref']
-            if 'remote' in imported_defaults:
-                self.combined_yaml['defaults']['remote'] = imported_defaults['remote']
-            if 'source' in imported_defaults:
-                self.combined_yaml['defaults']['source'] = imported_defaults['source']
-            if 'depth' in imported_defaults:
-                self.combined_yaml['defaults']['depth'] = imported_defaults['depth']
-
-        self._load_yaml_import_sources(parsed_yaml)
-        self._load_yaml_import_groups(parsed_yaml)
-
-    def _load_yaml_import_projects(self, imported_group, group):
-        """Load clowder projects from imported group"""
-        project_names = [p['name'] for p in group['projects']]
-        for imported_project in imported_group['projects']:
-            if imported_project['name'] not in project_names:
-                group['projects'].append(imported_project)
-                continue
-            combined_projects = []
-            for project in group['projects']:
-                if project['name'] != imported_project['name']:
-                    combined_projects.append(project)
-                    continue
-                if 'path' not in imported_project:
-                    imported_project['path'] = project['path']
-
-                if 'depth' not in imported_project:
-                    if 'depth' in project:
-                        imported_project['depth'] = project['depth']
-
-                if 'ref' not in imported_project:
-                    if 'ref' in project:
-                        imported_project['ref'] = project['ref']
-
-                if 'remote' not in imported_project:
-                    if 'remote' in project:
-                        imported_project['remote'] = project['remote_name']
-
-                if 'source' not in imported_project:
-                    if 'source' in project:
-                        imported_project['source'] = project['source']['name']
-
-                combined_projects.append(imported_project)
-            group['projects'] = combined_projects
-        return group
-
-    def _load_yaml_import_sources(self, parsed_yaml):
-        """Load clowder sources from import yaml"""
+            load_yaml_import_defaults(parsed_yaml['defaults'],
+                                      self.combined_yaml['defaults'])
         if 'sources' in parsed_yaml:
-            imported_sources = parsed_yaml['sources']
-            source_names = [s['name'] for s in self.combined_yaml['sources']]
-            for imported_source in imported_sources:
-                if imported_source['name'] not in source_names:
-                    self.combined_yaml['sources'].append(imported_source)
-                    continue
-                combined_sources = []
-                for source in self.sources:
-                    if source.name == imported_source['name']:
-                        combined_sources.append(imported_source)
-                    else:
-                        combined_sources.append(source)
-                self.combined_yaml['sources'] = combined_sources
-
-    def _load_yaml_import_groups(self, parsed_yaml):
-        """Load clowder groups from import yaml"""
+            load_yaml_import_sources(parsed_yaml['sources'],
+                                     self.combined_yaml['sources'])
         if 'groups' in parsed_yaml:
-            imported_groups = parsed_yaml['groups']
-            group_names = [g['name'] for g in self.combined_yaml['groups']]
-            for imported_group in imported_groups:
-                if imported_group['name'] not in group_names:
-                    self.groups.append(imported_group)
-                    continue
-                combined_groups = []
-                for group in self.combined_yaml['groups']:
-                    if group['name'] == imported_group['name']:
-                        group = self._load_yaml_import_projects(imported_group,
-                                                                group)
-                        combined_groups.append(group)
-                    else:
-                        combined_groups.append(group)
-                self.combined_yaml['groups'] = combined_groups
+            load_yaml_import_groups(parsed_yaml['groups'],
+                                    self.combined_yaml['groups'])
 
     def _validate_groups(self, group_names):
         """Validate status of all projects for specified groups"""
