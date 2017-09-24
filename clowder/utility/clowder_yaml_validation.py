@@ -94,7 +94,7 @@ def validate_yaml_import(yaml_file):
         if 'defaults' in parsed_yaml:
             defaults = parsed_yaml['defaults']
             if not isinstance(defaults, dict):
-                error = format_not_dictionary_error('defaults')
+                error = format_not_dictionary_error('defaults', yaml_file)
                 raise Exception(error)
             if 'ref' in defaults:
                 if not isinstance(defaults['ref'], str):

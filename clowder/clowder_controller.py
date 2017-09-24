@@ -9,9 +9,8 @@ from clowder.utility.clowder_utilities import (
     save_yaml
 )
 from clowder.utility.clowder_yaml_loading import (
-    load_yaml_import_defaults,
-    load_yaml_import_groups,
-    load_yaml_import_sources
+    load_yaml_base,
+    load_yaml_import
 )
 from clowder.utility.clowder_yaml_validation import (
     validate_yaml,
@@ -31,10 +30,6 @@ from clowder.utility.print_utilities import (
 # pylint: disable=R0904
 # Disable errors shown by pylint for catching too general exception Exception
 # pylint: disable=W0703
-# Disable errors shown by pylint for no specified exception types
-# pylint: disable=W0702
-# Disable errors shown by pylint for too many branches
-# pylint: disable=R0912
 
 class ClowderController(object):
     """Class encapsulating project information from clowder.yaml for controlling clowder"""
@@ -43,7 +38,6 @@ class ClowderController(object):
         self.defaults = None
         self.groups = []
         self.sources = []
-        self.combined_yaml = {}
         self._max_import_depth = 10
 
         yaml_file = os.path.join(self.root_directory, 'clowder.yaml')
@@ -361,9 +355,10 @@ class ClowderController(object):
         yaml_file = os.path.join(self.root_directory, 'clowder.yaml')
         parsed_yaml = parse_yaml(yaml_file)
         imported_yaml_files = []
+        combined_yaml = {}
         while True:
             if 'import' not in parsed_yaml:
-                self._load_yaml_base(parsed_yaml)
+                load_yaml_base(parsed_yaml, combined_yaml)
                 break
             imported_yaml_files.append(parsed_yaml)
             imported_yaml = parsed_yaml['import']
@@ -384,40 +379,20 @@ class ClowderController(object):
                 print()
                 sys.exit(1)
         for parsed_yaml in reversed(imported_yaml_files):
-            self._load_yaml_import(parsed_yaml)
-        self._load_yaml_combined()
+            load_yaml_import(parsed_yaml, combined_yaml)
+        self._load_yaml_combined(combined_yaml)
 
-    def _load_yaml_base(self, parsed_yaml):
-        """Load clowder from base yaml file"""
-        self.combined_yaml['defaults'] = parsed_yaml['defaults']
-        if 'depth' not in parsed_yaml['defaults']:
-            self.combined_yaml['defaults']['depth'] = 0
-        self.combined_yaml['sources'] = parsed_yaml['sources']
-        self.combined_yaml['groups'] = parsed_yaml['groups']
-
-    def _load_yaml_combined(self):
+    def _load_yaml_combined(self, combined_yaml):
         """Load clowder from combined yaml"""
-        self.defaults = self.combined_yaml['defaults']
+        self.defaults = combined_yaml['defaults']
         if 'depth' not in self.defaults:
             self.defaults['depth'] = 0
-        self.sources = [Source(s) for s in self.combined_yaml['sources']]
-        for group in self.combined_yaml['groups']:
+        self.sources = [Source(s) for s in combined_yaml['sources']]
+        for group in combined_yaml['groups']:
             self.groups.append(Group(self.root_directory,
                                      group,
                                      self.defaults,
                                      self.sources))
-
-    def _load_yaml_import(self, parsed_yaml):
-        """Load clowder from import yaml file"""
-        if 'defaults' in parsed_yaml:
-            load_yaml_import_defaults(parsed_yaml['defaults'],
-                                      self.combined_yaml['defaults'])
-        if 'sources' in parsed_yaml:
-            load_yaml_import_sources(parsed_yaml['sources'],
-                                     self.combined_yaml['sources'])
-        if 'groups' in parsed_yaml:
-            load_yaml_import_groups(parsed_yaml['groups'],
-                                    self.combined_yaml['groups'])
 
     def _validate_groups(self, group_names):
         """Validate status of all projects for specified groups"""

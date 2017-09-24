@@ -1,15 +1,26 @@
 """Clowder yaml loading"""
 
-# Disable errors shown by pylint for no specified exception types
-# pylint: disable=W0702
-# Disable errors shown by pylint for catching too general exception Exception
-# pylint: disable=W0703
-# Disable errors shown by pylint for too many branches
-# pylint: disable=R0912
-# Disable errors shown by pylint for too many statements
-# pylint: disable=R0915
+def load_yaml_base(parsed_yaml, combined_yaml):
+    """Load clowder from base yaml file"""
+    combined_yaml['defaults'] = parsed_yaml['defaults']
+    if 'depth' not in parsed_yaml['defaults']:
+        combined_yaml['defaults']['depth'] = 0
+    combined_yaml['sources'] = parsed_yaml['sources']
+    combined_yaml['groups'] = parsed_yaml['groups']
 
-def load_yaml_import_defaults(imported_defaults, defaults):
+def load_yaml_import(parsed_yaml, combined_yaml):
+    """Load clowder from import yaml file"""
+    if 'defaults' in parsed_yaml:
+        _load_yaml_import_defaults(parsed_yaml['defaults'],
+                                   combined_yaml['defaults'])
+    if 'sources' in parsed_yaml:
+        _load_yaml_import_sources(parsed_yaml['sources'],
+                                  combined_yaml['sources'])
+    if 'groups' in parsed_yaml:
+        _load_yaml_import_groups(parsed_yaml['groups'],
+                                 combined_yaml['groups'])
+
+def _load_yaml_import_defaults(imported_defaults, defaults):
     """Load clowder projects from imported group"""
     if 'ref' in imported_defaults:
         defaults['ref'] = imported_defaults['ref']
@@ -20,7 +31,7 @@ def load_yaml_import_defaults(imported_defaults, defaults):
     if 'depth' in imported_defaults:
         defaults['depth'] = imported_defaults['depth']
 
-def load_yaml_import_groups(imported_groups, groups):
+def _load_yaml_import_groups(imported_groups, groups):
     """Load clowder groups from import yaml"""
     group_names = [g['name'] for g in groups]
     for imported_group in imported_groups:
@@ -58,7 +69,7 @@ def _load_yaml_import_projects(imported_projects, projects):
             combined_projects.append(imported_project)
         projects = combined_projects
 
-def load_yaml_import_sources(imported_sources, sources):
+def _load_yaml_import_sources(imported_sources, sources):
     """Load clowder sources from import yaml"""
     source_names = [s['name'] for s in sources]
     for imported_source in imported_sources:
