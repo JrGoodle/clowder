@@ -59,9 +59,3 @@ The `test_cats_*.sh` scripts can also be run individually
 ```bash
 $ script/tests/test_cats_herd.sh
 ```
-
-## Updating version
-
-```bash
-$ script/update_version.sh $NEW_VERSION
-```

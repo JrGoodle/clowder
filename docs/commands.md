@@ -1,21 +1,21 @@
-## `clowder` Commands
+# `clowder` Commands
 
-- [clowder clean](https://github.com/JrGoodle/clowder/blob/master/docs/commands.md#clean)
-- [clowder diff](https://github.com/JrGoodle/clowder/blob/master/docs/commands.md#diff)
-- [clowder forall](https://github.com/JrGoodle/clowder/blob/master/docs/commands.md#forall)
-- [clowder herd](https://github.com/JrGoodle/clowder/blob/master/docs/commands.md#herd)
-- [clowder init](https://github.com/JrGoodle/clowder/blob/master/docs/commands.md#init)
-- [clowder link](https://github.com/JrGoodle/clowder/blob/master/docs/commands.md#link)
-- [clowder repo](https://github.com/JrGoodle/clowder/blob/master/docs/commands.md#repo)
-- [clowder save](https://github.com/JrGoodle/clowder/blob/master/docs/commands.md#save)
-- [clowder start](https://github.com/JrGoodle/clowder/blob/master/docs/commands.md#start)
-- [clowder stash](https://github.com/JrGoodle/clowder/blob/master/docs/commands.md#stash)
-- [clowder status](https://github.com/JrGoodle/clowder/blob/master/docs/commands.md#status)
-- [clowder prune](https://github.com/JrGoodle/clowder/blob/master/docs/commands.md#prune)
+- [clowder clean](#clowder-clean)
+- [clowder diff](#clowder-diff)
+- [clowder forall](#clowder-forall)
+- [clowder herd](#clowder-herd)
+- [clowder init](#clowder-init)
+- [clowder link](#clowder-link)
+- [clowder repo](#clowder-repo)
+- [clowder save](#clowder-save)
+- [clowder start](#clowder-start)
+- [clowder stash](#clowder-stash)
+- [clowder status](#clowder-status)
+- [clowder prune](#clowder-prune)
 
 ---
 
-### `clean`
+## `clowder clean`
 
 Discards changes in dirty repositories
 
@@ -32,7 +32,7 @@ $ clowder clean -p llvm-mirror/clang
 
 ---
 
-### `diff`
+## `clowder diff`
 
 Equivalent to running `git status -vv` in project directories
 
@@ -49,7 +49,7 @@ $ clowder diff -p llvm-mirror/clang
 
 ---
 
-### `forall`
+## `clowder forall`
 
 Runs command or script in project directories
 
@@ -89,7 +89,7 @@ The following environment variables are available for use in commands and script
 
 ---
 
-### `herd`
+## `clowder herd`
 
 Update with latest changes
 
@@ -97,7 +97,7 @@ Update with latest changes
 # Herd a shallow clone to specified depth
 $ clowder herd -d 1
 
-# Herd a specified branch if it exists, otherwise use default
+# Herd a specified branch if it exists, otherwise use default ref
 $ clowder herd -b my_branch
 
 # Only herd projects in clang and llvm groups
@@ -109,7 +109,7 @@ $ clowder herd -p llvm-mirror/clang
 
 ---
 
-### `init`
+## `clowder init`
 
 Clone repo containing `clowder.yaml` file (referred to as the "clowder repo")
 
@@ -123,7 +123,7 @@ $ clowder init https://github.com/jrgoodle/cats.git -b tags
 
 ---
 
-### `link`
+## `clowder link`
 
 Set `clowder.yaml` symlink
 
@@ -137,7 +137,7 @@ $ clowder link -v 0.1
 
 ---
 
-### `prune`
+## `clowder prune`
 
 Prune local or remote branches
 
@@ -166,7 +166,7 @@ $ clowder prune stale_branch -p llvm-mirror/clang
 
 ---
 
-### `repo`
+## `clowder repo`
 
 Convenience commands for managing clowder repo (the `.clowder` directory)
 
@@ -200,7 +200,7 @@ $ clowder repo status
 
 ---
 
-### `save`
+## `clowder save`
 
 Save a `clowder.yaml` version with the information from currently checked out repositories
 
@@ -213,7 +213,7 @@ $ clowder save 0.1
 
 ---
 
-### `start`
+## `clowder start`
 
 Start a new feature branch or check out if it already exists
 
@@ -233,7 +233,7 @@ $ clowder start my_feature -p llvm-mirror/clang
 
 ---
 
-### `stash`
+## `clowder stash`
 
 Stash changes in dirty repositories
 
@@ -250,7 +250,7 @@ $ clowder stash -p llvm-mirror/clang
 
 ---
 
-### `status`
+## `clowder status`
 
 Print status of projects
 
