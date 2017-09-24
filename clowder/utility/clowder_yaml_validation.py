@@ -14,14 +14,8 @@ from clowder.utility.print_utilities import (
     print_invalid_yaml_error
 )
 
-# Disable errors shown by pylint for no specified exception types
-# pylint: disable=W0702
 # Disable errors shown by pylint for catching too general exception Exception
 # pylint: disable=W0703
-# Disable errors shown by pylint for too many branches
-# pylint: disable=R0912
-# Disable errors shown by pylint for too many statements
-# pylint: disable=R0915
 
 def validate_yaml(yaml_file):
     """Validate clowder.yaml with no import"""
@@ -92,35 +86,7 @@ def validate_yaml_import(yaml_file):
             raise Exception(error)
 
         if 'defaults' in parsed_yaml:
-            defaults = parsed_yaml['defaults']
-            if not isinstance(defaults, dict):
-                error = format_not_dictionary_error('defaults', yaml_file)
-                raise Exception(error)
-            if 'ref' in defaults:
-                if not isinstance(defaults['ref'], str):
-                    error = format_not_string_error('ref', yaml_file)
-                    raise Exception(error)
-                del defaults['ref']
-            if 'remote' in defaults:
-                if not isinstance(defaults['remote'], str):
-                    error = format_not_string_error('remote', yaml_file)
-                    raise Exception(error)
-                del defaults['remote']
-            if 'source' in defaults:
-                if not isinstance(defaults['source'], str):
-                    error = format_not_string_error('source', yaml_file)
-                    raise Exception(error)
-                del defaults['source']
-            if 'depth' in defaults:
-                error = format_depth_error(defaults['depth'], yaml_file)
-                if not isinstance(defaults['depth'], int):
-                    raise Exception(error)
-                if int(defaults['depth']) < 0:
-                    raise Exception(error)
-                del defaults['depth']
-            if len(defaults) > 0:
-                error = format_invalid_entries_error('defaults', defaults, yaml_file)
-                raise Exception(error)
+            validate_yaml_import_defaults(parsed_yaml['defaults'], yaml_file)
             del parsed_yaml['defaults']
 
         if 'sources' in parsed_yaml:
@@ -139,6 +105,37 @@ def validate_yaml_import(yaml_file):
         print_invalid_yaml_error()
         print_error(err)
         sys.exit(1)
+
+def validate_yaml_import_defaults(defaults, yaml_file):
+    """Validate clowder.yaml defaults with an import"""
+    if not isinstance(defaults, dict):
+        error = format_not_dictionary_error('defaults', yaml_file)
+        raise Exception(error)
+    if 'ref' in defaults:
+        if not isinstance(defaults['ref'], str):
+            error = format_not_string_error('ref', yaml_file)
+            raise Exception(error)
+        del defaults['ref']
+    if 'remote' in defaults:
+        if not isinstance(defaults['remote'], str):
+            error = format_not_string_error('remote', yaml_file)
+            raise Exception(error)
+        del defaults['remote']
+    if 'source' in defaults:
+        if not isinstance(defaults['source'], str):
+            error = format_not_string_error('source', yaml_file)
+            raise Exception(error)
+        del defaults['source']
+    if 'depth' in defaults:
+        error = format_depth_error(defaults['depth'], yaml_file)
+        if not isinstance(defaults['depth'], int):
+            raise Exception(error)
+        if int(defaults['depth']) < 0:
+            raise Exception(error)
+        del defaults['depth']
+    if len(defaults) > 0:
+        error = format_invalid_entries_error('defaults', defaults, yaml_file)
+        raise Exception(error)
 
 def validate_yaml_defaults(defaults, yaml_file):
     """Validate defaults in clowder loaded from yaml file"""
@@ -174,13 +171,7 @@ def validate_yaml_defaults(defaults, yaml_file):
             raise Exception(error)
         del defaults['source']
 
-        if 'depth' in defaults:
-            error = format_depth_error(defaults['depth'], yaml_file)
-            if not isinstance(defaults['depth'], int):
-                raise Exception(error)
-            if int(defaults['depth']) < 0:
-                raise Exception(error)
-            del defaults['depth']
+        validate_yaml_defaults_optional(defaults, yaml_file)
 
         if len(defaults) > 0:
             error = format_invalid_entries_error('defaults', defaults, yaml_file)
@@ -189,6 +180,16 @@ def validate_yaml_defaults(defaults, yaml_file):
         print_invalid_yaml_error()
         print_error(err)
         sys.exit(1)
+
+def validate_yaml_defaults_optional(defaults, yaml_file):
+    """Validate defaults optional args in clowder loaded from yaml file"""
+    if 'depth' in defaults:
+        error = format_depth_error(defaults['depth'], yaml_file)
+        if not isinstance(defaults['depth'], int):
+            raise Exception(error)
+        if int(defaults['depth']) < 0:
+            raise Exception(error)
+        del defaults['depth']
 
 def validate_yaml_forks(forks, yaml_file):
     """Validate forks in clowder loaded from yaml file"""
@@ -272,6 +273,70 @@ def validate_yaml_groups(groups, yaml_file):
         print_error(err)
         sys.exit(1)
 
+def validate_yaml_project(project, yaml_file):
+    """Validate project in clowder loaded from yaml file"""
+    if not isinstance(project, dict):
+        error = format_not_dictionary_error('project', yaml_file)
+        raise Exception(error)
+    if len(project) is 0:
+        error = format_invalid_entries_error('project', project, yaml_file)
+        raise Exception(error)
+
+    if 'name' not in project:
+        error = format_missing_entry_error('name', 'project', yaml_file)
+        raise Exception(error)
+    if not isinstance(project['name'], str):
+        error = format_not_string_error('name', yaml_file)
+        raise Exception(error)
+    del project['name']
+
+    if 'path' not in project:
+        error = format_missing_entry_error('path', 'project', yaml_file)
+        raise Exception(error)
+    if not isinstance(project['path'], str):
+        error = format_not_string_error('path', yaml_file)
+        raise Exception(error)
+    del project['path']
+
+    validate_yaml_project_optional(project, yaml_file)
+
+    if len(project) > 0:
+        error = format_invalid_entries_error('project', project, yaml_file)
+        raise Exception(error)
+
+def validate_yaml_project_optional(project, yaml_file):
+    """Validate optional args in project in clowder loaded from yaml file"""
+    if 'remote' in project:
+        if not isinstance(project['remote'], str):
+            error = format_not_string_error('remote', yaml_file)
+            raise Exception(error)
+        del project['remote']
+
+    if 'ref' in project:
+        if not isinstance(project['ref'], str):
+            error = format_not_string_error('ref', yaml_file)
+            raise Exception(error)
+        del project['ref']
+
+    if 'source' in project:
+        if not isinstance(project['source'], str):
+            error = format_not_string_error('source', yaml_file)
+            raise Exception(error)
+        del project['source']
+
+    if 'depth' in project:
+        error = format_depth_error(project['depth'], yaml_file)
+        if not isinstance(project['depth'], int):
+            raise Exception(error)
+        if int(project['depth']) < 0:
+            raise Exception(error)
+        del project['depth']
+
+    if 'forks' in project:
+        forks = project['forks']
+        validate_yaml_forks(forks, yaml_file)
+        del project['forks']
+
 def validate_yaml_projects(projects, yaml_file):
     """Validate projects in clowder loaded from yaml file"""
     try:
@@ -283,63 +348,8 @@ def validate_yaml_projects(projects, yaml_file):
             raise Exception(error)
 
         for project in projects:
-            if not isinstance(project, dict):
-                error = format_not_dictionary_error('project', yaml_file)
-                raise Exception(error)
-            if len(project) is 0:
-                error = format_invalid_entries_error('project', project, yaml_file)
-                raise Exception(error)
+            validate_yaml_project(project, yaml_file)
 
-            if 'name' not in project:
-                error = format_missing_entry_error('name', 'project', yaml_file)
-                raise Exception(error)
-            if not isinstance(project['name'], str):
-                error = format_not_string_error('name', yaml_file)
-                raise Exception(error)
-            del project['name']
-
-            if 'path' not in project:
-                error = format_missing_entry_error('path', 'project', yaml_file)
-                raise Exception(error)
-            if not isinstance(project['path'], str):
-                error = format_not_string_error('path', yaml_file)
-                raise Exception(error)
-            del project['path']
-
-            if 'remote' in project:
-                if not isinstance(project['remote'], str):
-                    error = format_not_string_error('remote', yaml_file)
-                    raise Exception(error)
-                del project['remote']
-
-            if 'ref' in project:
-                if not isinstance(project['ref'], str):
-                    error = format_not_string_error('ref', yaml_file)
-                    raise Exception(error)
-                del project['ref']
-
-            if 'source' in project:
-                if not isinstance(project['source'], str):
-                    error = format_not_string_error('source', yaml_file)
-                    raise Exception(error)
-                del project['source']
-
-            if 'depth' in project:
-                error = format_depth_error(project['depth'], yaml_file)
-                if not isinstance(project['depth'], int):
-                    raise Exception(error)
-                if int(project['depth']) < 0:
-                    raise Exception(error)
-                del project['depth']
-
-            if 'forks' in project:
-                forks = project['forks']
-                validate_yaml_forks(forks, yaml_file)
-                del project['forks']
-
-            if len(project) > 0:
-                error = format_invalid_entries_error('project', project, yaml_file)
-                raise Exception(error)
     except Exception as err:
         print_invalid_yaml_error()
         print_error(err)
