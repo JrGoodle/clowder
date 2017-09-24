@@ -35,7 +35,7 @@ def format_empty_yaml_error(yaml_file):
 
 def format_fork_string(name):
     """Return formatted fork name"""
-    return colored('(' + name + ')', 'cyan')
+    return colored(name, 'cyan')
 
 def format_invalid_entries_error(name, collection, yaml_file):
     """Return formatted error string for invalid entry in collection"""

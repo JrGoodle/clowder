@@ -6,6 +6,7 @@ from clowder.fork import Fork
 from clowder.utility.clowder_utilities import execute_forall_command
 from clowder.utility.print_utilities import (
     format_command,
+    format_fork_string,
     print_command_failed_error
 )
 from clowder.utility.git_print_utilities import (
@@ -77,7 +78,7 @@ class Project(object):
         self.fork = None
         if 'fork' in project:
             fork = project['fork']
-            self.fork = Fork(fork, self.path, self.source)
+            self.fork = Fork(fork, self.root_directory, self.path, self.source)
 
     def clean(self):
         """Discard changes for project"""
@@ -157,11 +158,12 @@ class Project(object):
                 git_herd(self.full_path(), self.url, self.remote_name, self.ref, herd_depth)
             else:
                 self.fork.print_status()
+                print(format_fork_string(self.fork.name))
                 git_herd(self.full_path(), self.fork.url, self.fork.remote_name,
-                         self.ref, herd_depth)
-                self._print_status()
+                         self.ref, 0)
+                print(format_fork_string(self.name))
                 git_herd_upstream(self.full_path(), self.url, self.remote_name,
-                                  self.ref, herd_depth)
+                                  self.ref, 0)
         else:
             if self.fork is None:
                 self._print_status()
@@ -169,11 +171,12 @@ class Project(object):
                                 branch, self.ref, herd_depth)
             else:
                 self.fork.print_status()
+                print(format_fork_string(self.fork.name))
                 git_herd_branch(self.full_path(), self.fork.url, self.fork.remote_name,
-                                branch, self.ref, herd_depth)
-                self._print_status()
+                                branch, self.ref, 0)
+                print(format_fork_string(self.name))
                 git_herd_branch_upstream(self.full_path(), self.url, self.remote_name,
-                                         branch, self.ref, herd_depth)
+                                         branch, self.ref, 0)
 
     def is_dirty(self):
         """Check if project is dirty"""
