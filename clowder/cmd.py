@@ -18,8 +18,6 @@ if __name__ == '__main__':
 # pylint: disable=R0902
 # Disable errors shown by pylint for no specified exception types
 # pylint: disable=W0702
-# Disable errors shown by pylint for too many statements
-# pylint: disable=R0915
 # Disable errors shown by pylint for TODO's
 # pylint: disable=W0511
 
@@ -61,18 +59,7 @@ class Command(object):
         parser.add_argument('--version', '-v', action='store_true',
                             dest='clowder_version', help='print clowder version')
         subparsers = parser.add_subparsers(dest='clowder_command', metavar='SUBCOMMAND')
-        self._configure_subparser_clean(subparsers)
-        self._configure_subparser_diff(subparsers)
-        self._configure_subparser_forall(subparsers)
-        self._configure_subparser_herd(subparsers)
-        self._configure_subparser_init(subparsers)
-        self._configure_subparser_link(subparsers)
-        self._configure_subparser_prune(subparsers)
-        self._configure_subparser_repo(subparsers)
-        self._configure_subparser_save(subparsers)
-        self._configure_subparser_start(subparsers)
-        self._configure_subparser_stash(subparsers)
-        self._configure_subparser_status(subparsers)
+        self._configure_subparsers(subparsers)
         # Argcomplete and arguments parsing
         argcomplete.autocomplete(parser)
         if not self._invalid_yaml:
@@ -334,6 +321,21 @@ class Command(object):
 
 # Disable errors shown by pylint for too many local variables
 # pylint: disable=R0201
+    def _configure_subparsers(self, subparsers):
+        """Configure clowder command subparsers"""
+        self._configure_subparser_clean(subparsers)
+        self._configure_subparser_diff(subparsers)
+        self._configure_subparser_forall(subparsers)
+        self._configure_subparser_herd(subparsers)
+        self._configure_subparser_init(subparsers)
+        self._configure_subparser_link(subparsers)
+        self._configure_subparser_prune(subparsers)
+        self._configure_subparser_repo(subparsers)
+        self._configure_subparser_save(subparsers)
+        self._configure_subparser_start(subparsers)
+        self._configure_subparser_stash(subparsers)
+        self._configure_subparser_status(subparsers)
+
     def _configure_subparser_clean(self, subparsers):
         """Configure clowder clean subparser and arguments"""
         # clowder clean
