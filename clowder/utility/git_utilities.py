@@ -302,8 +302,8 @@ def git_herd_branch(repo_path, url, remote, branch, default_ref, depth):
     else:
         git_herd(repo_path, url, remote, default_ref, depth)
 
-def git_herd_branch_fork(repo_path, url, remote, branch, default_ref, depth):
-    """Herd branch for fork"""
+def git_herd_branch_upstream(repo_path, url, remote, branch, default_ref, depth):
+    """Herd branch for fork's upstream repo"""
     git_create_remote(repo_path, remote, url)
     remote_output = format_remote_string(remote)
     if depth == 0:
@@ -327,8 +327,8 @@ def git_herd_branch_fork(repo_path, url, remote, branch, default_ref, depth):
             print(error)
             git_fetch_remote_ref(repo_path, remote, default_ref, depth)
 
-def git_herd_fork(repo_path, url, remote, ref, depth):
-    """Herd branch for fork"""
+def git_herd_upstream(repo_path, url, remote, ref, depth):
+    """Herd branch for fork's upstream repo"""
     git_create_remote(repo_path, remote, url)
     git_fetch_remote_ref(repo_path, remote, ref, depth)
 

@@ -191,43 +191,35 @@ def validate_yaml_defaults_optional(defaults, yaml_file):
             raise Exception(error)
         del defaults['depth']
 
-def validate_yaml_forks(forks, yaml_file):
-    """Validate forks in clowder loaded from yaml file"""
+def validate_yaml_fork(fork, yaml_file):
+    """Validate fork in clowder loaded from yaml file"""
     try:
-        if not isinstance(forks, list):
-            error = format_not_list_error('forks', yaml_file)
+        if not isinstance(fork, dict):
+            error = format_not_dictionary_error('fork', yaml_file)
             raise Exception(error)
-        if len(forks) is 0:
-            error = format_invalid_entries_error('forks', forks, yaml_file)
+        if len(fork) is 0:
+            error = format_invalid_entries_error('fork', fork, yaml_file)
             raise Exception(error)
 
-        for fork in forks:
-            if not isinstance(fork, dict):
-                error = format_not_dictionary_error('fork', yaml_file)
-                raise Exception(error)
-            if len(fork) is 0:
-                error = format_invalid_entries_error('fork', fork, yaml_file)
-                raise Exception(error)
+        if 'name' not in fork:
+            error = format_missing_entry_error('name', 'fork', yaml_file)
+            raise Exception(error)
+        if not isinstance(fork['name'], str):
+            error = format_not_string_error('name', yaml_file)
+            raise Exception(error)
+        del fork['name']
 
-            if 'name' not in fork:
-                error = format_missing_entry_error('name', 'fork', yaml_file)
-                raise Exception(error)
-            if not isinstance(fork['name'], str):
-                error = format_not_string_error('name', yaml_file)
-                raise Exception(error)
-            del fork['name']
+        if 'remote' not in fork:
+            error = format_missing_entry_error('remote', 'fork', yaml_file)
+            raise Exception(error)
+        if not isinstance(fork['remote'], str):
+            error = format_not_string_error('remote', yaml_file)
+            raise Exception(error)
+        del fork['remote']
 
-            if 'remote' not in fork:
-                error = format_missing_entry_error('remote', 'fork', yaml_file)
-                raise Exception(error)
-            if not isinstance(fork['remote'], str):
-                error = format_not_string_error('remote', yaml_file)
-                raise Exception(error)
-            del fork['remote']
-
-            if len(fork) > 0:
-                error = format_invalid_entries_error('fork', fork, yaml_file)
-                raise Exception(error)
+        if len(fork) > 0:
+            error = format_invalid_entries_error('fork', fork, yaml_file)
+            raise Exception(error)
     except Exception as err:
         print_invalid_yaml_error()
         print_error(err)
@@ -332,10 +324,10 @@ def validate_yaml_project_optional(project, yaml_file):
             raise Exception(error)
         del project['depth']
 
-    if 'forks' in project:
-        forks = project['forks']
-        validate_yaml_forks(forks, yaml_file)
-        del project['forks']
+    if 'fork' in project:
+        fork = project['fork']
+        validate_yaml_fork(fork, yaml_file)
+        del project['fork']
 
 def validate_yaml_projects(projects, yaml_file):
     """Validate projects in clowder loaded from yaml file"""
