@@ -41,7 +41,7 @@ $ sudo apt install python3-pip
 
 ### Windows
 
-Currently `clowder` has only been tested to work on Windows with [Cygwin](https://cygwin.com/install.html). The following dependencies should be installed
+Currently `clowder` has only been tested on Windows with [Cygwin](https://cygwin.com/install.html). The following dependencies should be installed
 
 - git
 - python3-pip
