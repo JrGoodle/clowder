@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )" || exit 1
+
+GH_PAGES_DIR="$( cd .. && pwd)/clowder-gh-pages"
+rm -rf $GH_PAGES_DIR
+git clone git@github.com:JrGoodle/clowder.git -b gh-pages $GH_PAGES_DIR
+
+tail -n+3 "README.md" > "$GH_PAGES_DIR/index.md"
+rm -rf "$GH_PAGES_DIR/docs/README"
+cp -R 'docs/README' "$GH_PAGES_DIR/docs/README"
+
+pushd $GH_PAGES_DIR
+git add index.md docs/README
+git commit -m 'Update web site from latest in master branch'
+git push
+popd
