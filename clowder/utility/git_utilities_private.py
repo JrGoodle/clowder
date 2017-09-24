@@ -18,8 +18,6 @@ from clowder.utility.print_utilities import (
 # pylint: disable=W0702
 # Disable errors shown by pylint for catching too general exception Exception
 # pylint: disable=W0703
-# Disable errors shown by pylint for too many statements
-# pylint: disable=R0915
 
 def _checkout_branch(repo_path, branch, remote, depth):
     """Checkout branch, and create if it doesn't exist"""
@@ -92,9 +90,8 @@ def _checkout_branch_new_repo(repo_path, branch, remote, depth):
                 print_error(err)
                 remove_directory_exit(repo_path)
             else:
-                success = _set_tracking_branch(default_branch, remote_branch,
-                                               branch_output, remote_output)
-                if not success:
+                if not _set_tracking_branch(default_branch, remote_branch,
+                                            branch_output, remote_output):
                     remove_directory_exit(repo_path)
                     return
                 try:
