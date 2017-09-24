@@ -92,24 +92,19 @@ def _checkout_branch_new_repo(repo_path, branch, remote, depth):
                 print_error(err)
                 remove_directory_exit(repo_path)
             else:
+                success = _set_tracking_branch(default_branch, remote_branch,
+                                               branch_output, remote_output)
+                if not success:
+                    remove_directory_exit(repo_path)
+                    return
                 try:
-                    print(' - Set tracking branch ' + branch_output +
-                          ' -> ' + remote_output + ' ' + branch_output)
-                    default_branch.set_tracking_branch(remote_branch)
+                    print(' - Checkout branch ' + branch_output)
+                    default_branch.checkout()
                 except Exception as err:
-                    message = colored(' - Failed to set tracking branch ', 'red')
+                    message = colored(' - Failed to checkout branch ', 'red')
                     print(message + branch_output)
                     print_error(err)
                     remove_directory_exit(repo_path)
-                else:
-                    try:
-                        print(' - Checkout branch ' + branch_output)
-                        default_branch.checkout()
-                    except Exception as err:
-                        message = colored(' - Failed to checkout branch ', 'red')
-                        print(message + branch_output)
-                        print_error(err)
-                        remove_directory_exit(repo_path)
 
 def _checkout_branch_herd_branch(repo_path, branch, default_ref, remote, depth):
     """Checkout remote branch or fall back to normal checkout branch if fails"""
@@ -152,24 +147,18 @@ def _checkout_branch_herd_branch(repo_path, branch, default_ref, remote, depth):
                 print_error(err)
                 remove_directory_exit(repo_path)
             else:
+                if not _set_tracking_branch(default_branch, remote_branch,
+                                            branch_output, remote_output):
+                    remove_directory_exit(repo_path)
+                    return
                 try:
-                    print(' - Set tracking branch ' + branch_output +
-                          ' -> ' + remote_output + ' ' + branch_output)
-                    default_branch.set_tracking_branch(remote_branch)
+                    print(' - Checkout branch ' + branch_output)
+                    default_branch.checkout()
                 except Exception as err:
-                    message = colored(' - Failed to set tracking branch ', 'red')
+                    message = colored(' - Failed to checkout branch ', 'red')
                     print(message + branch_output)
                     print_error(err)
                     remove_directory_exit(repo_path)
-                else:
-                    try:
-                        print(' - Checkout branch ' + branch_output)
-                        default_branch.checkout()
-                    except Exception as err:
-                        message = colored(' - Failed to checkout branch ', 'red')
-                        print(message + branch_output)
-                        print_error(err)
-                        remove_directory_exit(repo_path)
 
 def _checkout_sha(repo_path, sha):
     """Checkout commit by sha"""
@@ -293,24 +282,18 @@ def _create_local_tracking_branch(repo_path, branch, remote, depth):
             print_error(err)
             sys.exit(1)
         else:
+            success = _set_tracking_branch(default_branch, origin.refs[branch],
+                                           branch_output, remote_output)
+            if not success:
+                sys.exit(1)
             try:
-                print(' - Set tracking branch ' + branch_output +
-                      ' -> ' + remote_output + ' ' + branch_output)
-                default_branch.set_tracking_branch(origin.refs[branch])
+                print(' - Checkout branch ' + branch_output)
+                default_branch.checkout()
             except Exception as err:
-                message = colored(' - Failed to set tracking branch ', 'red')
+                message = colored(' - Failed to checkout branch ', 'red')
                 print(message + branch_output)
                 print_error(err)
                 sys.exit(1)
-            else:
-                try:
-                    print(' - Checkout branch ' + branch_output)
-                    default_branch.checkout()
-                except Exception as err:
-                    message = colored(' - Failed to checkout branch ', 'red')
-                    print(message + branch_output)
-                    print_error(err)
-                    sys.exit(1)
 
 def _create_remote_tracking_branch(repo_path, branch, remote, depth):
     """Create remote tracking branch"""
@@ -357,14 +340,9 @@ def _create_remote_tracking_branch(repo_path, branch, remote, depth):
             print_error(err)
             sys.exit(1)
         else:
-            try:
-                print(' - Set tracking branch ' + branch_output +
-                      ' -> ' + remote_output + ' ' + branch_output)
-                repo.active_branch.set_tracking_branch(origin.refs[branch])
-            except Exception as err:
-                message = colored(' - Failed to set tracking branch ', 'red')
-                print(message + branch_output)
-                print_error(err)
+            success = _set_tracking_branch(repo.active_branch, origin.refs[branch],
+                                           branch_output, remote_output)
+            if not success:
                 sys.exit(1)
 
 def _pull_remote_branch(repo_path, remote, branch):
@@ -420,3 +398,16 @@ def _truncate_ref(ref):
     else:
         length = 0
     return ref[length:]
+
+def _set_tracking_branch(local_branch, remote_branch, branch_output, remote_output):
+    """Set tracking branch"""
+    try:
+        print(' - Set tracking branch ' + branch_output +
+              ' -> ' + remote_output + ' ' + branch_output)
+        local_branch.set_tracking_branch(remote_branch)
+        return True
+    except Exception as err:
+        message = colored(' - Failed to set tracking branch ', 'red')
+        print(message + branch_output)
+        print_error(err)
+        return False
