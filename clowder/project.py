@@ -35,8 +35,6 @@ from clowder.utility.git_utilities import (
 
 # Disable errors shown by pylint for too many instance attributes
 # pylint: disable=R0902
-# Disable errors shown by pylint for catching too general exception Exception
-# pylint: disable=W0703
 # Disable errors shown by pylint for no specified exception types
 # pylint: disable=W0702
 
