@@ -20,7 +20,6 @@ from clowder.utility.git_utilities import (
     git_existing_remote_branch,
     git_existing_repository,
     git_fetch_all,
-    git_fetch_silent,
     git_herd,
     git_herd_branch,
     git_herd_branch_upstream,
@@ -33,6 +32,7 @@ from clowder.utility.git_utilities import (
     git_start,
     git_stash,
     git_status,
+    git_sync,
     git_validate_repo_state
 )
 
@@ -117,11 +117,6 @@ class Project(object):
             git_fetch_all(self.full_path())
         else:
             self.print_exists()
-
-    def fetch_silent(self):
-        """Silently fetch upstream changes if project exists on disk"""
-        if self.exists():
-            git_fetch_silent(self.full_path())
 
     def formatted_project_path(self):
         """Return formatted project path"""
@@ -275,6 +270,18 @@ class Project(object):
         if self.is_dirty():
             self._print_status()
             git_stash(self.full_path())
+
+    def sync(self):
+        """Print status for project"""
+        self.fork.print_status()
+        print(format_fork_string(self.fork.name))
+        git_herd(self.full_path(), self.fork.url, self.fork.remote_name,
+                 self.ref, 0)
+        print(format_fork_string(self.name))
+        git_herd_upstream(self.full_path(), self.url, self.remote_name,
+                          self.ref, 0)
+        self.fork.print_status()
+        git_sync(self.full_path(), self.remote_name, self.fork.remote_name, self.ref)
 
     def _print_status(self):
         """Print formatted project status"""

@@ -307,6 +307,20 @@ class Command(object):
         padding = len(max(all_project_paths, key=len))
         self.clowder.status(self.clowder.get_all_group_names(), padding)
 
+    def sync(self):
+        """clowder sync command"""
+        if self.clowder_repo is None:
+            exit_clowder_not_found()
+        self.clowder_repo.print_status()
+        print()
+        if self.clowder is None:
+            sys.exit(1)
+        all_fork_projects = self.clowder.get_all_fork_project_names()
+        if all_fork_projects is '':
+            cprint(' - No forks to sync\n', 'red')
+            sys.exit()
+        self.clowder.sync(all_fork_projects)
+
     def _exit_handler_formatter(self):
         """Exit handler to display trailing newline"""
         if self._display_trailing_newline:
