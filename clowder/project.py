@@ -75,8 +75,7 @@ class Project(object):
         self.forks = []
         if 'forks' in project:
             for fork in project['forks']:
-                full_path = os.path.join(self.root_directory, self.path)
-                self.forks.append(Fork(fork, full_path, self.source))
+                self.forks.append(Fork(fork, self.root_directory, self.path, self.source))
 
     def clean(self):
         """Discard changes for project"""
@@ -157,7 +156,7 @@ class Project(object):
             git_herd_branch(self.full_path(), self.url, self.remote_name,
                             branch, self.ref, herd_depth)
             for fork in self.forks:
-                fork.herd_branch(branch, self.ref, herd_depth)
+                fork.herd(self.ref, herd_depth, branch=branch)
 
     def is_dirty(self):
         """Check if project is dirty"""
