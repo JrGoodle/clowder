@@ -1,3 +1,14 @@
+# 2.2.0
+
+- Add `-b` option to `clowder herd`
+- Add environment variables available in `clowder forall` scripts and commands
+- Fix handling of edge cases in `clowder herd`
+- Fix bugs in `clowder.yaml` import logic
+- Show diffs when command fails with dirty repos
+- Tweak output formatting
+- More complete test coverage
+- Update documentation
+
 # 2.1.0
 
 - Add ability to import another `clowder.yaml` file and override values
