@@ -26,6 +26,10 @@ from clowder.utility.print_utilities import (
 # pylint: disable=R0904
 # Disable errors shown by pylint for catching too general exception Exception
 # pylint: disable=W0703
+# Disable errors shown by pylint for no specified exception types
+# pylint: disable=W0702
+# Disable errors shown by pylint for too many branches
+# pylint: disable=R0912
 
 class ClowderController(object):
     """Class encapsulating project information from clowder.yaml for controlling clowder"""
@@ -416,6 +420,41 @@ class ClowderController(object):
         self._load_yaml_import_sources(parsed_yaml)
         self._load_yaml_import_groups(parsed_yaml)
 
+    def _load_yaml_import_projects(self, imported_group, group):
+        """Load clowder projects from imported group"""
+        project_names = [p['name'] for p in group['projects']]
+        for imported_project in imported_group['projects']:
+            if imported_project['name'] not in project_names:
+                group['projects'].append(imported_project)
+                continue
+            combined_projects = []
+            for project in group['projects']:
+                if project['name'] != imported_project['name']:
+                    combined_projects.append(project)
+                    continue
+                if 'path' not in imported_project:
+                    imported_project['path'] = project['path']
+
+                if 'depth' not in imported_project:
+                    if 'depth' in project:
+                        imported_project['depth'] = project['depth']
+
+                if 'ref' not in imported_project:
+                    if 'ref' in project:
+                        imported_project['ref'] = project['ref']
+
+                if 'remote' not in imported_project:
+                    if 'remote' in project:
+                        imported_project['remote'] = project['remote_name']
+
+                if 'source' not in imported_project:
+                    if 'source' in project:
+                        imported_project['source'] = project['source']['name']
+
+                combined_projects.append(imported_project)
+            group['projects'] = combined_projects
+        return group
+
     def _load_yaml_import_sources(self, parsed_yaml):
         """Load clowder sources from import yaml"""
         if 'sources' in parsed_yaml:
@@ -445,8 +484,8 @@ class ClowderController(object):
                 combined_groups = []
                 for group in self.combined_yaml['groups']:
                     if group['name'] == imported_group['name']:
-                        _load_yaml_import_projects(imported_group,
-                                                   group)
+                        group = self._load_yaml_import_projects(imported_group,
+                                                                group)
                         combined_groups.append(group)
                     else:
                         combined_groups.append(group)
@@ -490,11 +529,6 @@ class ClowderController(object):
             print('\n - First run ' + herd_output + ' to clone missing projects\n')
             sys.exit(1)
 
-# Disable errors shown by pylint for no specified exception types
-# pylint: disable=W0702
-# Disable errors shown by pylint for statements which appear to have no effect
-# pylint: disable=W0104
-
     def _validate_yaml(self, yaml_file, max_import_depth):
         """Validate clowder.yaml"""
         parsed_yaml = parse_yaml(yaml_file)
@@ -529,35 +563,3 @@ class ClowderController(object):
             print_error(err)
             sys.exit(1)
         self._validate_yaml(yaml_file, max_import_depth - 1)
-
-def _load_yaml_import_projects(imported_group, group):
-    """Load clowder projects from imported group"""
-    project_names = [p['name'] for p in group['projects']]
-    for imported_project in imported_group['projects']:
-        if imported_project['name'] not in project_names:
-            combined_project = imported_project
-            group['projects'].append(combined_project)
-            return
-        combined_projects = []
-        for project in group['projects']:
-            if project.name != imported_project['name']:
-                combined_projects.append(project)
-                continue
-            if 'path' not in imported_project:
-                imported_project['path'] = project['path']
-
-            if 'depth' not in imported_project:
-                imported_project['depth'] = project['depth']
-
-            if 'ref' not in imported_project:
-                imported_project['ref'] = project['ref']
-
-            if 'remote' not in imported_project:
-                imported_project['remote'] = project['remote_name']
-
-            if 'source' not in imported_project:
-                imported_project['source'] = project['source']['name']
-
-            combined_project = imported_project
-            combined_projects.append(combined_project)
-        group['projects'] = combined_projects

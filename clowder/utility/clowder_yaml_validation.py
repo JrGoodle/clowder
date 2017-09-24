@@ -94,7 +94,7 @@ def validate_yaml_import(yaml_file):
         if 'defaults' in parsed_yaml:
             defaults = parsed_yaml['defaults']
             if not isinstance(defaults, dict):
-                error = format_not_dict_error('defaults')
+                error = format_not_dictionary_error('defaults')
                 raise Exception(error)
             if 'ref' in defaults:
                 if not isinstance(defaults['ref'], str):
@@ -265,7 +265,7 @@ def validate_yaml_groups(groups, yaml_file):
             del group['projects']
 
             if len(group) > 0:
-                error = format_invalid_entries_error('group', fork, yaml_file)
+                error = format_invalid_entries_error('group', group, yaml_file)
                 raise Exception(error)
     except Exception as err:
         print_invalid_yaml_error()
