@@ -14,8 +14,6 @@ from clowder.clowder_controller import ClowderController
 if __name__ == '__main__':
     raise SystemExit(main())
 
-# Disable errors shown by pylint for too many instance attributes
-# pylint: disable=R0902
 # Disable errors shown by pylint for no specified exception types
 # pylint: disable=W0702
 # Disable errors shown by pylint for TODO's
@@ -29,8 +27,6 @@ class Command(object):
         self.clowder = None
         self.clowder_repo = None
         self.versions = None
-        self.group_names = ''
-        self.project_names = ''
         self._invalid_yaml = False
         # Load current clowder.yml config if it exists
         clowder_path = os.path.join(self.root_directory, '.clowder')
@@ -45,10 +41,6 @@ class Command(object):
             try:
                 self.clowder = ClowderController(self.root_directory)
                 self.versions = self.clowder.get_saved_version_names()
-                if self.clowder.get_all_group_names() is not None:
-                    self.group_names = self.clowder.get_all_group_names()
-                if self.clowder.get_all_project_names() is not None:
-                    self.project_names = self.clowder.get_all_project_names()
             except:
                 self._invalid_yaml = True
 
@@ -314,10 +306,10 @@ class Command(object):
             sys.exit(1)
         if self.args.fetch:
             print(' - Fetch upstream changes for projects\n')
-            self.clowder.fetch(self.group_names)
+            self.clowder.fetch(self.clowder.get_all_group_names())
         all_project_paths = self.clowder.get_all_project_paths()
         padding = len(max(all_project_paths, key=len))
-        self.clowder.status(self.group_names, padding)
+        self.clowder.status(self.clowder.get_all_group_names(), padding)
 
 # Disable errors shown by pylint for too many local variables
 # pylint: disable=R0201
@@ -342,26 +334,32 @@ class Command(object):
         clean_help = 'Discard current changes in projects'
         parser_clean = subparsers.add_parser('clean', help=clean_help)
         group_clean = parser_clean.add_mutually_exclusive_group()
-        if self.group_names is '':
+        if self.clowder is None:
+            group_names = ''
+            project_names = ''
+        else:
+            group_names = self.clowder.get_all_group_names()
+            project_names = self.clowder.get_all_project_names()
+        if group_names is '':
             clean_help_groups = 'groups to clean'
         else:
             clean_help_groups = '''
                                  groups to clean:
                                  {0}
                                  '''
-            clean_help_groups = clean_help_groups.format(', '.join(self.group_names))
-        group_clean.add_argument('--groups', '-g', choices=self.group_names,
-                                 default=self.group_names, nargs='+',
+            clean_help_groups = clean_help_groups.format(', '.join(group_names))
+        group_clean.add_argument('--groups', '-g', choices=group_names,
+                                 default=group_names, nargs='+',
                                  help=clean_help_groups, metavar='GROUP')
-        if self.project_names is '':
+        if project_names is '':
             clean_help_projects = 'projects to clean'
         else:
             clean_help_projects = '''
                                    projects to clean:
                                    {0}
                                    '''
-            clean_help_projects = clean_help_projects.format(', '.join(self.project_names))
-        group_clean.add_argument('--projects', '-p', choices=self.project_names,
+            clean_help_projects = clean_help_projects.format(', '.join(project_names))
+        group_clean.add_argument('--projects', '-p', choices=project_names,
                                  nargs='+', help=clean_help_projects, metavar='PROJECT')
 
     def _configure_subparser_diff(self, subparsers):
@@ -370,26 +368,32 @@ class Command(object):
         diff_help = 'Show git diff for projects'
         parser_diff = subparsers.add_parser('diff', help=diff_help)
         group_diff = parser_diff.add_mutually_exclusive_group()
-        if self.group_names is '':
+        if self.clowder is None:
+            group_names = ''
+            project_names = ''
+        else:
+            group_names = self.clowder.get_all_group_names()
+            project_names = self.clowder.get_all_project_names()
+        if group_names is '':
             diff_help_groups = 'groups to diff'
         else:
             diff_help_groups = '''
                                groups to diff:
                                {0}
                                '''
-            diff_help_groups = diff_help_groups.format(', '.join(self.group_names))
-        group_diff.add_argument('--groups', '-g', choices=self.group_names,
-                                default=self.group_names, nargs='+',
+            diff_help_groups = diff_help_groups.format(', '.join(group_names))
+        group_diff.add_argument('--groups', '-g', choices=group_names,
+                                default=group_names, nargs='+',
                                 help=diff_help_groups, metavar='GROUP')
-        if self.project_names is '':
+        if project_names is '':
             diff_help_projects = 'projects to diff'
         else:
             diff_help_projects = '''
                                  projects to diff:
                                  {0}
                                  '''
-            diff_help_projects = diff_help_projects.format(', '.join(self.project_names))
-        group_diff.add_argument('--projects', '-p', choices=self.project_names,
+            diff_help_projects = diff_help_projects.format(', '.join(project_names))
+        group_diff.add_argument('--projects', '-p', choices=project_names,
                                 nargs='+', help=diff_help_projects, metavar='PROJECT')
 
     def _configure_subparser_forall(self, subparsers):
@@ -403,26 +407,32 @@ class Command(object):
         group_forall_command.add_argument('--command', '-c', nargs=1, metavar='COMMAND',
                                           help='command or script to run in project directories')
         group_forall_targets = parser_forall.add_mutually_exclusive_group()
-        if self.group_names is '':
+        if self.clowder is None:
+            group_names = ''
+            project_names = ''
+        else:
+            group_names = self.clowder.get_all_group_names()
+            project_names = self.clowder.get_all_project_names()
+        if group_names is '':
             forall_help_groups = 'groups to run command or script for'
         else:
             forall_help_groups = '''
                                  groups to run command or script for:
                                  {0}
                                  '''
-            forall_help_groups = forall_help_groups.format(', '.join(self.group_names))
-        group_forall_targets.add_argument('--groups', '-g', choices=self.group_names,
-                                          default=self.group_names, nargs='+',
+            forall_help_groups = forall_help_groups.format(', '.join(group_names))
+        group_forall_targets.add_argument('--groups', '-g', choices=group_names,
+                                          default=group_names, nargs='+',
                                           help=forall_help_groups, metavar='GROUP')
-        if self.project_names is '':
+        if project_names is '':
             forall_help_projects = 'projects to run command or script for'
         else:
             forall_help_projects = '''
                                    projects to run command or script for:
                                    {0}
                                    '''
-            forall_help_projects = forall_help_projects.format(', '.join(self.project_names))
-        group_forall_targets.add_argument('--projects', '-p', choices=self.project_names,
+            forall_help_projects = forall_help_projects.format(', '.join(project_names))
+        group_forall_targets.add_argument('--projects', '-p', choices=project_names,
                                           nargs='+', help=forall_help_projects,
                                           metavar='PROJECT')
 
@@ -436,26 +446,32 @@ class Command(object):
         parser_herd.add_argument('--branch', '-b', nargs=1, default=None,
                                  help='branch to herd if present', metavar='BRANCH')
         group_herd = parser_herd.add_mutually_exclusive_group()
-        if self.group_names is '':
+        if self.clowder is None:
+            group_names = ''
+            project_names = ''
+        else:
+            group_names = self.clowder.get_all_group_names()
+            project_names = self.clowder.get_all_project_names()
+        if group_names is '':
             herd_help_groups = 'groups to herd'
         else:
             herd_help_groups = '''
                                  groups to herd:
                                  {0}
                                  '''
-            herd_help_groups = herd_help_groups.format(', '.join(self.group_names))
-        group_herd.add_argument('--groups', '-g', choices=self.group_names,
-                                default=self.group_names, nargs='+',
+            herd_help_groups = herd_help_groups.format(', '.join(group_names))
+        group_herd.add_argument('--groups', '-g', choices=group_names,
+                                default=group_names, nargs='+',
                                 help=herd_help_groups, metavar='GROUP')
-        if self.project_names is '':
+        if project_names is '':
             herd_help_projects = 'projects to herd'
         else:
             herd_help_projects = '''
                                    projects to herd:
                                    {0}
                                    '''
-            herd_help_projects = herd_help_projects.format(', '.join(self.project_names))
-        group_herd.add_argument('--projects', '-p', choices=self.project_names,
+            herd_help_projects = herd_help_projects.format(', '.join(project_names))
+        group_herd.add_argument('--projects', '-p', choices=project_names,
                                 nargs='+', help=herd_help_projects, metavar='PROJECT')
 
     def _configure_subparser_init(self, subparsers):
@@ -495,26 +511,32 @@ class Command(object):
         group_prune_options.add_argument('--remote', '-r', action='store_true',
                                          help='prune remote branches')
         group_prune = parser_prune.add_mutually_exclusive_group()
-        if self.group_names is '':
+        if self.clowder is None:
+            group_names = ''
+            project_names = ''
+        else:
+            group_names = self.clowder.get_all_group_names()
+            project_names = self.clowder.get_all_project_names()
+        if group_names is '':
             prune_help_groups = 'groups to prune branch for'
         else:
             prune_help_groups = '''
                                  groups to prune branch for:
                                  {0}
                                  '''
-            prune_help_groups = prune_help_groups.format(', '.join(self.group_names))
-        group_prune.add_argument('--groups', '-g', choices=self.group_names,
-                                 default=self.group_names, nargs='+',
+            prune_help_groups = prune_help_groups.format(', '.join(group_names))
+        group_prune.add_argument('--groups', '-g', choices=group_names,
+                                 default=group_names, nargs='+',
                                  help=prune_help_groups, metavar='GROUP')
-        if self.project_names is '':
+        if project_names is '':
             prune_help_projects = 'projects to prune branch for'
         else:
             prune_help_projects = '''
                                    projects to prune branch for:
                                    {0}
                                    '''
-            prune_help_projects = prune_help_projects.format(', '.join(self.project_names))
-        group_prune.add_argument('--projects', '-p', choices=self.project_names,
+            prune_help_projects = prune_help_projects.format(', '.join(project_names))
+        group_prune.add_argument('--projects', '-p', choices=project_names,
                                  nargs='+', help=prune_help_projects, metavar='PROJECT')
 
     def _configure_subparser_repo(self, subparsers):
@@ -569,26 +591,32 @@ class Command(object):
                                   help='create remote tracking branch')
         parser_start.add_argument('branch', help='name of branch to create', metavar='BRANCH')
         group_start = parser_start.add_mutually_exclusive_group()
-        if self.group_names is '':
+        if self.clowder is None:
+            group_names = ''
+            project_names = ''
+        else:
+            group_names = self.clowder.get_all_group_names()
+            project_names = self.clowder.get_all_project_names()
+        if group_names is '':
             start_help_groups = 'groups to start feature branch for'
         else:
             start_help_groups = '''
                                  groups to start feature branch for:
                                  {0}
                                  '''
-            start_help_groups = start_help_groups.format(', '.join(self.group_names))
-        group_start.add_argument('--groups', '-g', choices=self.group_names,
-                                 default=self.group_names, nargs='+',
+            start_help_groups = start_help_groups.format(', '.join(group_names))
+        group_start.add_argument('--groups', '-g', choices=group_names,
+                                 default=group_names, nargs='+',
                                  help=start_help_groups, metavar='GROUP')
-        if self.project_names is '':
+        if project_names is '':
             start_help_projects = 'projects to start feature branch for'
         else:
             start_help_projects = '''
                                    projects to start feature branch for:
                                    {0}
                                    '''
-            start_help_projects = start_help_projects.format(', '.join(self.project_names))
-        group_start.add_argument('--projects', '-p', choices=self.project_names,
+            start_help_projects = start_help_projects.format(', '.join(project_names))
+        group_start.add_argument('--projects', '-p', choices=project_names,
                                  nargs='+', help=start_help_projects, metavar='PROJECT')
 
     def _configure_subparser_stash(self, subparsers):
@@ -597,26 +625,32 @@ class Command(object):
         parser_stash = subparsers.add_parser('stash',
                                              help='Stash current changes')
         group_stash = parser_stash.add_mutually_exclusive_group()
-        if self.group_names is '':
+        if self.clowder is None:
+            group_names = ''
+            project_names = ''
+        else:
+            group_names = self.clowder.get_all_group_names()
+            project_names = self.clowder.get_all_project_names()
+        if group_names is '':
             stash_help_groups = 'groups to stash'
         else:
             stash_help_groups = '''
                                  groups to stash:
                                  {0}
                                  '''
-            stash_help_groups = stash_help_groups.format(', '.join(self.group_names))
-        group_stash.add_argument('--groups', '-g', choices=self.group_names,
-                                 default=self.group_names, nargs='+',
+            stash_help_groups = stash_help_groups.format(', '.join(group_names))
+        group_stash.add_argument('--groups', '-g', choices=group_names,
+                                 default=group_names, nargs='+',
                                  help=stash_help_groups, metavar='GROUP')
-        if self.project_names is '':
+        if project_names is '':
             stash_help_projects = 'projects to stash'
         else:
             stash_help_projects = '''
                                    projects to stash:
                                    {0}
                                    '''
-            stash_help_projects = stash_help_projects.format(', '.join(self.project_names))
-        group_stash.add_argument('--projects', '-p', choices=self.project_names,
+            stash_help_projects = stash_help_projects.format(', '.join(project_names))
+        group_stash.add_argument('--projects', '-p', choices=project_names,
                                  nargs='+', help=stash_help_projects, metavar='PROJECT')
 
     def _configure_subparser_status(self, subparsers):

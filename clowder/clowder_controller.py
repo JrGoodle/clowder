@@ -94,15 +94,27 @@ class ClowderController(object):
 
     def get_all_group_names(self):
         """Returns all group names for current clowder.yaml"""
-        return sorted([g.name for g in self.groups])
+        names = sorted([g.name for g in self.groups])
+        if names is None:
+            return ''
+        else:
+            return names
 
     def get_all_project_names(self):
         """Returns all project names for current clowder.yaml"""
-        return sorted([p.name for g in self.groups for p in g.projects])
+        names = sorted([p.name for g in self.groups for p in g.projects])
+        if names is None:
+            return ''
+        else:
+            return names
 
     def get_all_project_paths(self):
         """Returns all project paths for current clowder.yaml"""
-        return sorted([p.formatted_project_path() for g in self.groups for p in g.projects])
+        names = sorted([p.formatted_project_path() for g in self.groups for p in g.projects])
+        if names is None:
+            return ''
+        else:
+            return names
 
     def get_saved_version_names(self):
         """Return list of all saved versions"""
