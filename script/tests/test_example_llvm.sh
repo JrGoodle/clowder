@@ -235,9 +235,12 @@ if [ -z "$TRAVIS_OS_NAME" ]; then
 fi
 
 test_forks_env() {
-    echo "TEST: Fork remote environment variable"
+    echo "TEST: Fork remote environment variable in script"
     clowder forall -c "$TEST_SCRIPT_DIR/tests/test_forall_script_env_fork.sh" -p "llvm-mirror/clang" || exit 1
     clowder forall -c "$TEST_SCRIPT_DIR/tests/test_forall_script_env_fork.sh" -p "llvm-mirror/llvm" && exit 1
+    echo "TEST: Fork remote environment variable in command"
+    clowder forall -c 'if [ $PROJECT_REMOTE != upstream ]; then exit 1; fi' -p 'llvm-mirror/clang' || exit 1
+    clowder forall -c 'if [ $FORK_REMOTE != origin ]; then exit 1; fi' -p 'llvm-mirror/clang' || exit 1
 }
 
 test_help() {
