@@ -343,7 +343,7 @@ class Command(object):
             self.clowder.fetch_groups(self.group_names)
         all_project_paths = self.clowder.get_all_project_paths()
         padding = len(max(all_project_paths, key=len))
-        self.clowder.status_groups(self.group_names, padding)
+        self.clowder.status(self.group_names, padding)
 
 # Disable errors shown by pylint for too many local variables
 # pylint: disable=R0201

@@ -276,24 +276,11 @@ class ClowderController(object):
                 if project.name in project_names:
                     project.stash()
 
-    def status_groups(self, group_names, padding, verbose=False):
+    def status(self, group_names, padding):
         """Print status for groups"""
         for group in self.groups:
             if group.name in group_names:
-                if verbose is False:
-                    group.status(padding)
-                else:
-                    group.status_verbose(padding)
-
-    def status_projects(self, project_names, verbose=False):
-        """Print status for projects"""
-        for group in self.groups:
-            for project in group.projects:
-                if project.name in project_names:
-                    if verbose is False:
-                        project.status()
-                    else:
-                        project.status_verbose()
+                group.status(padding)
 
     def _existing_branch_group(self, group_names, branch, is_remote):
         """Checks whether at least one branch exists for projects in groups"""
