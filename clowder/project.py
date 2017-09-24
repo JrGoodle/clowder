@@ -257,9 +257,11 @@ class Project(object):
             return
         if self.fork is None:
             remote = self.remote_name
+            depth = self.depth
         else:
             remote = self.fork.remote_name
-        git_start(self.full_path(), remote, branch, self.depth, tracking)
+            depth = 0
+        git_start(self.full_path(), remote, branch, depth, tracking)
 
     def status(self, padding):
         """Print status for project"""

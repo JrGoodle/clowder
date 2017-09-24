@@ -1,4 +1,5 @@
 """String formatting and printing utilities for git"""
+import os
 from termcolor import colored, cprint
 from clowder.utility.git_utilities import (
     git_current_branch,
@@ -13,6 +14,8 @@ from clowder.utility.git_utilities import (
 
 def format_project_string(repo_path, name):
     """Return formatted project name"""
+    if not os.path.isdir(os.path.join(repo_path, '.git')):
+        return colored(name, 'green')
     if git_is_dirty(repo_path):
         color = 'red'
         symbol = '*'

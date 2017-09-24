@@ -232,6 +232,41 @@ if [ -z "$TRAVIS_OS_NAME" ]; then
         done
     }
     test_forks
+
+    test_sync() {
+        print_double_separator
+        echo "TEST: clowder sync"
+        clowder link || exit 1
+        clowder herd || exit 1
+
+        pushd 'llvm/tools/clang'
+        git pull upstream master || exit 1
+        UPSTREAM_COMMIT="$(git rev-parse HEAD)"
+        git reset --hard HEAD~1 || exit 1
+        git push origin master --force || exit 1
+        git pull origin master || exit 1
+        if [ "$UPSTREAM_COMMIT" == "$(git rev-parse HEAD)" ]; then
+            exit 1
+        fi
+        popd
+
+        clowder sync || exit 1
+
+        pushd 'llvm/tools/clang'
+        if [ "$UPSTREAM_COMMIT" != "$(git rev-parse HEAD)" ]; then
+            exit 1
+        fi
+        git reset --hard HEAD~1 || exit 1
+        if [ "$UPSTREAM_COMMIT" == "$(git rev-parse HEAD)" ]; then
+            exit 1
+        fi
+        git pull origin master
+        if [ "$UPSTREAM_COMMIT" != "$(git rev-parse HEAD)" ]; then
+            exit 1
+        fi
+        popd
+    }
+    test_sync
 fi
 
 test_forks_env() {
