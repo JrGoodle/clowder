@@ -102,10 +102,8 @@ class Command(object):
         print()
         if self.clowder is None:
             sys.exit(1)
-        if self.args.projects is None:
-            self.clowder.clean_groups(self.args.groups)
-        else:
-            self.clowder.clean_projects(self.args.projects)
+        self.clowder.clean(group_names=self.args.groups,
+                           project_names=self.args.projects)
 
     def diff(self):
         """clowder diff command"""
@@ -117,10 +115,8 @@ class Command(object):
         print()
         if self.clowder is None:
             sys.exit(1)
-        if self.args.projects is None:
-            self.clowder.diff_groups(self.args.groups)
-        else:
-            self.clowder.diff_projects(self.args.projects)
+        self.clowder.diff(group_names=self.args.groups,
+                          project_names=self.args.projects)
 
     def forall(self):
         """clowder forall command"""
@@ -132,14 +128,10 @@ class Command(object):
         print()
         if self.clowder is None:
             sys.exit(1)
-        if self.args.projects is None:
-            self.clowder.forall_groups_run(self.args.command[0],
-                                           self.args.groups,
-                                           self.args.ignore_errors)
-        else:
-            self.clowder.forall_projects_run(self.args.command[0],
-                                             self.args.projects,
-                                             self.args.ignore_errors)
+        self.clowder.forall(self.args.command[0],
+                            self.args.ignore_errors,
+                            group_names=self.args.groups,
+                            project_names=self.args.projects)
 
     def herd(self):
         """clowder herd command"""
@@ -162,13 +154,10 @@ class Command(object):
         else:
             depth = self.args.depth[0]
 
-        if self.args.projects is None:
-            if self.args.groups is None:
-                self.clowder.herd_groups(self.clowder.get_all_group_names(), branch, depth)
-            else:
-                self.clowder.herd_groups(self.args.groups, branch, depth)
-        else:
-            self.clowder.herd_projects(self.args.projects, branch, depth)
+        self.clowder.herd(group_names=self.args.groups,
+                          project_names=self.args.projects,
+                          branch=branch,
+                          depth=depth)
 
     def init(self):
         """clowder init command"""
@@ -325,10 +314,8 @@ class Command(object):
         print()
         if self.clowder is None:
             sys.exit(1)
-        if self.args.projects is None:
-            self.clowder.stash_groups(self.args.groups)
-        else:
-            self.clowder.stash_projects(self.args.projects)
+        self.clowder.stash(group_names=self.args.groups,
+                           project_names=self.args.projects)
 
     def status(self):
         """clowder status command"""
@@ -340,7 +327,7 @@ class Command(object):
             sys.exit(1)
         if self.args.fetch:
             print(' - Fetch upstream changes for projects\n')
-            self.clowder.fetch_groups(self.group_names)
+            self.clowder.fetch(self.group_names)
         all_project_paths = self.clowder.get_all_project_paths()
         padding = len(max(all_project_paths, key=len))
         self.clowder.status(self.group_names, padding)

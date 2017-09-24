@@ -26,8 +26,6 @@ from clowder.utility.print_utilities import (
     print_save_version_exists_error
 )
 
-# Disable errors shown by pylint for too many public methods
-# pylint: disable=R0904
 # Disable errors shown by pylint for catching too general exception Exception
 # pylint: disable=W0703
 
@@ -44,64 +42,55 @@ class ClowderController(object):
         self._validate_yaml(yaml_file, self._max_import_depth)
         self._load_yaml()
 
-    def clean_groups(self, group_names):
-        """Discard changes for groups"""
+    def clean(self, group_names=None, project_names=None):
+        """Discard changes"""
         if not self._is_dirty():
             print(' - No changes to discard')
             return
         for group in self.groups:
-            if group.name in group_names:
+            if project_names is None and group_names is None:
                 group.clean()
+            elif project_names is None:
+                if group.name in group_names:
+                    group.clean()
+            else:
+                for project in group.projects:
+                    if project.name in project_names:
+                        project.clean()
 
-    def clean_projects(self, project_names):
-        """Discard changes for projects"""
-        if not self._is_dirty():
-            print(' - No changes to discard')
-            return
+    def diff(self, group_names=None, project_names=None):
+        """Show git diff"""
         for group in self.groups:
-            for project in group.projects:
-                if project.name in project_names:
-                    project.clean()
-
-    def diff_groups(self, group_names):
-        """Show git diff for groups"""
-        for group in self.groups:
-            if group.name in group_names:
+            if project_names is None and group_names is None:
                 group.diff()
+            elif project_names is None:
+                if group.name in group_names:
+                    group.diff()
+            else:
+                for project in group.projects:
+                    if project.name in project_names:
+                        project.diff()
 
-    def diff_projects(self, project_names):
-        """Show git diff for projects"""
-        for group in self.groups:
-            for project in group.projects:
-                if project.name in project_names:
-                    project.diff()
-
-    def fetch_groups(self, group_names):
-        """Print status for groups"""
+    def fetch(self, group_names):
+        """Fetch groups"""
         for group in self.groups:
             if group.name in group_names:
                 group.fetch_all()
 
-    def fetch_projects(self, project_names):
-        """Print status for projects"""
+    def forall(self, command, ignore_errors, group_names=None, project_names=None):
+        """Runs command or script in project directories specified"""
         for group in self.groups:
-            for project in group.projects:
-                if project.name in project_names:
-                    project.fetch_all()
-
-    def forall_groups_run(self, command, group_names, ignore_errors):
-        """Runs command or script in all project directories of groups specified"""
-        for group in self.groups:
-            if group.name in group_names:
+            if group_names is None and project_names is None:
                 for project in group.projects:
                     project.run(command, ignore_errors)
-
-    def forall_projects_run(self, command, project_names, ignore_errors):
-        """Runs command or script in all project directories of projects specified"""
-        for group in self.groups:
-            for project in group.projects:
-                if project.name in project_names:
-                    project.run(command, ignore_errors)
+            elif project_names is None:
+                if group.name in group_names:
+                    for project in group.projects:
+                        project.run(command, ignore_errors)
+            else:
+                for project in group.projects:
+                    if project.name in project_names:
+                        project.run(command, ignore_errors)
 
     def get_all_group_names(self):
         """Returns all group names for current clowder.yaml"""
@@ -126,20 +115,23 @@ class ClowderController(object):
                 versions.remove(version)
         return versions
 
-    def herd_groups(self, group_names, branch=None, depth=None):
-        """Sync groups with latest upstream changes"""
-        self._validate_groups(group_names)
-        for group in self.groups:
-            if group.name in group_names:
-                group.herd(branch, depth)
-
-    def herd_projects(self, project_names, branch=None, depth=None):
+    def herd(self, group_names=None, project_names=None, branch=None, depth=None):
         """Sync projects with latest upstream changes"""
-        self._validate_projects(project_names)
-        for group in self.groups:
-            for project in group.projects:
-                if project.name in project_names:
-                    project.herd(branch, depth)
+        if project_names is None and group_names is None:
+            self._validate_groups(self.get_all_group_names())
+            for group in self.groups:
+                group.herd(branch, depth)
+        elif project_names is None:
+            self._validate_groups(group_names)
+            for group in self.groups:
+                if group.name in group_names:
+                    group.herd(branch, depth)
+        else:
+            self._validate_projects(project_names)
+            for group in self.groups:
+                for project in group.projects:
+                    if project.name in project_names:
+                        project.herd(branch, depth)
 
     def prune_groups_all(self, group_names, branch, force):
         """Prune local and remote branch for groups"""
@@ -257,24 +249,21 @@ class ClowderController(object):
                 if project.name in project_names:
                     project.start(branch, tracking)
 
-    def stash_groups(self, group_names):
-        """Stash changes for groups with changes"""
-        if not self._is_dirty():
-            print('No changes to stash')
-            return
-        for group in self.groups:
-            if group.name in group_names:
-                group.stash()
-
-    def stash_projects(self, project_names):
+    def stash(self, group_names=None, project_names=None):
         """Stash changes for projects with changes"""
         if not self._is_dirty():
             print('No changes to stash')
             return
         for group in self.groups:
-            for project in group.projects:
-                if project.name in project_names:
-                    project.stash()
+            if project_names is None and group_names is None:
+                group.stash()
+            elif project_names is None:
+                if group.name in group_names:
+                    group.stash()
+            else:
+                for project in group.projects:
+                    if project.name in project_names:
+                        project.stash()
 
     def status(self, group_names, padding):
         """Print status for groups"""
