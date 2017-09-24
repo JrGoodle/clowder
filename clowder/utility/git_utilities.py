@@ -32,12 +32,8 @@ from clowder.utility.git_utilities_private import (
 
 # Disable errors shown by pylint for no specified exception types
 # pylint: disable=W0702
-# Disable errors shown by pylint for too many branches
-# pylint: disable=R0912
 # Disable errors shown by pylint for catching too general exception Exception
 # pylint: disable=W0703
-# Disable errors shown by pylint for too many statements
-# pylint: disable=R0915
 # Disable errors shown by pylint for too many arguments
 # pylint: disable=R0913
 
@@ -263,7 +259,7 @@ def git_herd(repo_path, url, remote, ref, depth):
             if git_is_tracking_branch(repo_path, branch):
                 _pull_remote_branch(repo_path, remote, branch)
             else:
-                git_set_tracking_branch_same_commit(repo_path, branch, remote, depth)
+                git_set_tracking_branch(repo_path, branch, remote, depth)
     elif ref_type is 'tag' or ref_type is 'sha':
         git_create_remote(repo_path, remote, url)
         git_checkout_ref(repo_path, ref, remote, depth)
@@ -300,7 +296,7 @@ def git_herd_branch(repo_path, url, remote, branch, default_ref, depth):
             if git_is_tracking_branch(repo_path, branch):
                 _pull_remote_branch(repo_path, remote, branch)
             else:
-                git_set_tracking_branch_same_commit(repo_path, branch, remote, depth)
+                git_set_tracking_branch(repo_path, branch, remote, depth)
     elif git_existing_remote_branch(repo_path, branch, remote):
         git_herd(repo_path, url, remote, 'refs/heads/' + branch, depth)
     else:
@@ -480,7 +476,7 @@ def git_reset_head(repo_path):
     repo = _repo(repo_path)
     repo.head.reset(index=True, working_tree=True)
 
-def git_set_tracking_branch_same_commit(repo_path, branch, remote, depth):
+def git_set_tracking_branch(repo_path, branch, remote, depth):
     """Set tracking relationship between local and remote branch if on same commit"""
     repo = _repo(repo_path)
     branch_output = format_ref_string(branch)
