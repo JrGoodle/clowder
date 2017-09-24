@@ -71,50 +71,57 @@ command -v clowder >/dev/null 2>&1 && eval "$(register-python-argcomplete clowde
 
 This example is based on the [LLVM project](https://llvm.org) (see [the full clowder.yaml](https://github.com/JrGoodle/llvm-projects/blob/master/clowder.yaml))
 
-1. Create a directory to contain all the LLVM projects
-    ```bash
-    $ mkdir llvm-projects
-    $ cd llvm-projects
-    ```
+First reate a directory to contain all the LLVM projects
 
-2. Clone the [llvm-projects clowder repo](https://github.com/jrgoodle/llvm-projects.git) containing the `clowder.yaml` file
-    ```bash
-    $ clowder init https://github.com/jrgoodle/llvm-projects.git
-    ```
-    The `clowder init` command will do the following:
-    - Clone the [llvm-projects](https://github.com/jrgoodle/llvm-projects.git) repository in the `llvm-projects/.clowder` directory
-    - Create a symlink pointing to the primary `clowder.yaml` file in the repository
+```bash
+$ mkdir llvm-projects
+$ cd llvm-projects
+```
 
-        ```bash
-        llvm-projects/clowder.yaml -> llvm-projects/.clowder/clowder.yaml
-        ```
+## `clowder init`
 
-3. Clone all repositories and check out refs specified in `clowder.yaml`
-    ```bash
-    $ clowder herd
-    ```
-    `clowder herd` updates the state of the projects. When `clowder herd` is run, the following happens:
-    - If any projects don't have a clean git status then `clowder` exits
-    - Projects are cloned if they don't currently exist
-    - Each project fetches the latest changes
-    - If the current git ref checked out doesn't match the `clowder.yaml` configuration, the correct ref will be checked out
-    - The latest changes are pulled for branches. For commits and tags, the commits are checked out into a detached `HEAD` state
+```bash
+$ clowder init git@github.com:jrgoodle/llvm-projects.git
+```
 
-4. Print status of projects
-    ```bash
-    $ clowder status
-    ```
+![clowder init](docs/README/clowder-init.png)
 
-For more example projects, see the [examples directory](https://github.com/JrGoodle/clowder/tree/master/examples)
+The `clowder init` command does the following
+- Clones the [llvm-projects clowder repo](https://github.com/jrgoodle/llvm-projects.git) in the `llvm-projects/.clowder` directory
+- Creates a symlink pointing to the primary `clowder.yaml` file in the repository
+
+## `clowder herd`
+
+```bash
+$ clowder herd
+```
+
+<img alt="clowder herd" src="docs/README/clowder-herd.png" width="60%">
+
+`clowder herd` updates the state of the projects. When the command is run, the following happens
+- If any projects don't have a clean git status then `clowder` exits
+- Projects are cloned if they don't currently exist
+- Each project fetches the latest changes
+- If the current git ref checked out doesn't match the `clowder.yaml` configuration, the correct ref will be checked out
+- The latest changes are pulled for branches. For commits and tags, the commits are checked out into a detached `HEAD` state
+
+## `clowder status`
+
+```bash
+$ clowder status
+```
+
+<img alt="clowder status" src="docs/README/clowder-status.png" width="50%">
 
 # Further Information
 
-## More `clowder` commands
+## More commands
 
 ```bash
 $ clowder clean # Discard any changes in projects
 $ clowder diff # Print git diff for all projects
 $ clowder forall -c 'git status' # Run command in all project directories
+$ clowder herd -b my_branch # Herd a specified branch if it exists, otherwise use default ref
 $ clowder link -v 0.1 # Set clowder.yaml symlink to a previously saved version
 $ clowder repo run 'git status' # Run command in .clowder directory
 $ clowder save 0.1 # Save a version of clowder.yaml with current commit sha's
@@ -124,7 +131,7 @@ $ clowder prune stale_branch # Prune branch 'stale_branch' for all projects
 ```
 
 See the [clowder commands doc](https://github.com/JrGoodle/clowder/blob/master/docs/commands.md)
-for more advanced `clowder` command usage
+for documentation of all command options
 
 ## The `clowder.yaml` file
 
@@ -138,4 +145,4 @@ for a description of the structure of the clowder repo cloned in the `.clowder` 
 
 ## Development
 
-See the [development doc](https://github.com/JrGoodle/clowder/blob/master/docs/development.md) for information on setting up your environment for `clowder` development
+See the [development doc](https://github.com/JrGoodle/clowder/blob/master/docs/development.md) for information on setting up your environment for development
