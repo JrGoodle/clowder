@@ -31,7 +31,7 @@ sources:
 
 The `groups` each require a `name` and associated `projects`
 
-At a minimum, `projects` require the `name` from the project's url, and the `path` to clone relative to the base directory. The default `remote`, `source`, `ref`, and `depth` values can be overridden on a per-project basis. It's also possible to add references to forks by adding `forks` to a project, with a required `name` and `remote`
+At a minimum, `projects` require the `name` from the project's url, and the `path` to clone relative to the base directory. The default `remote`, `source`, `ref`, and `depth` values can be overridden on a per-project basis. It's also possible to add a reference to a fork by adding `fork` to a project, with a required `name` and `remote`. When a `fork` is present the `clowder start -t`, `clowder prune -r`, and `clowder prune -a` commands will apply to the fork's remote
 
 ```yaml
 groups:
@@ -45,22 +45,22 @@ groups:
         - name: llvm-mirror/clang
           path: llvm/tools/clang
           remote: upstream
-          forks:
-            - name: jrgoodle/clang
+          fork:
+              name: jrgoodle/clang
               remote: origin
         - name: llvm-mirror/clang-tools-extra
           path: llvm/tools/clang/tools/extra
           remote: upstream
-          forks:
-            - name: jrgoodle/clang-tools-extra
+          fork:
+              name: jrgoodle/clang-tools-extra
               remote: origin
     - name: projects
       projects:
         - name: llvm-mirror/compiler-rt
           path: llvm/projects/compiler-rt
           remote: upstream
-          forks:
-            - name: jrgoodle/compiler-rt
+          fork:
+              name: jrgoodle/compiler-rt
               path: llvm/projects/compiler-rt
 ```
 
