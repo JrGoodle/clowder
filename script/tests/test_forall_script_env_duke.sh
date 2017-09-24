@@ -22,6 +22,11 @@ if [ $PROJECT_REMOTE != "origin" ]; then
     exit 1
 fi
 
+echo "FORK_REMOTE = $FORK_REMOTE"
+if [ -n "$FORK_REMOTE" ]; then
+    exit 1
+fi
+
 echo "PROJECT_REF = $PROJECT_REF"
 if [ $PROJECT_REF != "refs/heads/purr" ]; then
     exit 1

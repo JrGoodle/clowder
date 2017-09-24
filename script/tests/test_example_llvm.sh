@@ -143,9 +143,8 @@ if [ -z "$TRAVIS_OS_NAME" ]; then
     test_forks() {
         print_double_separator
         echo "TEST: Forks"
-        clowder link
-        clowder herd
-        echo "TEST: Start tracking branches"
+        clowder link || exit 1
+        clowder herd || exit 1
         clowder start -t fail_start && exit 1
         clowder prune -a fail_start || exit 1
 
@@ -234,6 +233,12 @@ if [ -z "$TRAVIS_OS_NAME" ]; then
     }
     test_forks
 fi
+
+test_forks_env() {
+    echo "TEST: Fork remote environment variable"
+    clowder forall -c "$TEST_SCRIPT_DIR/tests/test_forall_script_env_fork.sh" -p "llvm-mirror/clang" || exit 1
+    clowder forall -c "$TEST_SCRIPT_DIR/tests/test_forall_script_env_fork.sh" -p "llvm-mirror/llvm" && exit 1
+}
 
 test_help() {
     print_double_separator
