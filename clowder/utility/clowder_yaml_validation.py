@@ -14,8 +14,6 @@ from clowder.utility.print_utilities import (
     print_invalid_yaml_error
 )
 
-# Disable errors shown by pylint for no specified exception types
-# pylint: disable=W0702
 # Disable errors shown by pylint for catching too general exception Exception
 # pylint: disable=W0703
 

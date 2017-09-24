@@ -18,7 +18,7 @@ from clowder.utility.print_utilities import (
 from clowder.utility.git_utilities_private import (
     _checkout_branch,
     _checkout_branch_new_repo,
-    _checkout_branch_new_repo_herd_branch,
+    _checkout_branch_herd_branch,
     _checkout_sha,
     _checkout_tag,
     _create_checkout_branch,
@@ -157,8 +157,8 @@ def git_create_repo_herd_branch(repo_path, url, remote, branch, default_ref, dep
             print_error(err)
             remove_directory_exit(repo_path)
         else:
-            _checkout_branch_new_repo_herd_branch(repo_path, branch, default_ref,
-                                                  remote, depth)
+            _checkout_branch_herd_branch(repo_path, branch, default_ref,
+                                         remote, depth)
 
 def git_create_remote(repo_path, remote, url):
     """Create new remote"""

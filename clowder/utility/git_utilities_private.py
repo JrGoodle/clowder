@@ -20,8 +20,6 @@ from clowder.utility.print_utilities import (
 # pylint: disable=W0703
 # Disable errors shown by pylint for too many statements
 # pylint: disable=R0915
-# Disable errors shown by pylint for invalid function name
-# pylint: disable=C0103
 
 def _checkout_branch(repo_path, branch, remote, depth):
     """Checkout branch, and create if it doesn't exist"""
@@ -113,7 +111,7 @@ def _checkout_branch_new_repo(repo_path, branch, remote, depth):
                         print_error(err)
                         remove_directory_exit(repo_path)
 
-def _checkout_branch_new_repo_herd_branch(repo_path, branch, default_ref, remote, depth):
+def _checkout_branch_herd_branch(repo_path, branch, default_ref, remote, depth):
     """Checkout remote branch or fall back to normal checkout branch if fails"""
     repo = _repo(repo_path)
     branch_output = format_ref_string(branch)
