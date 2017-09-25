@@ -67,6 +67,19 @@ class Command(object):
         getattr(self, self.args.clowder_command)()
         print()
 
+    def branch(self):
+        """clowder branch command"""
+        if self._invalid_yaml:
+            sys.exit(1)
+        if self.clowder_repo is None:
+            exit_clowder_not_found()
+        self.clowder_repo.print_status()
+        print()
+        if self.clowder is None:
+            sys.exit(1)
+        self.clowder.branch(group_names=self.args.groups,
+                            project_names=self.args.projects)
+
     def clean(self):
         """clowder clean command"""
         if self._invalid_yaml:

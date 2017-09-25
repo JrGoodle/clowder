@@ -20,11 +20,13 @@ from clowder.utility.git_utilities import (
     git_existing_remote_branch,
     git_existing_repository,
     git_fetch_all,
+    git_fetch_remote,
     git_herd,
     git_herd_branch,
     git_herd_branch_upstream,
     git_herd_upstream,
     git_is_dirty,
+    git_print_branches,
     git_prune_local,
     git_prune_remote,
     git_reset_head,
@@ -79,6 +81,19 @@ class Project(object):
         if 'fork' in project:
             fork = project['fork']
             self.fork = Fork(fork, self.root_directory, self.path, self.source)
+
+    def branch(self):
+        """Show local and remote branches for project"""
+        self._print_status()
+        if not os.path.isdir(self.full_path()):
+            cprint(" - Project is missing\n", 'red')
+            return
+        if self.fork is None:
+            git_fetch_remote(self.full_path(), self.remote_name, self.depth)
+        else:
+            git_fetch_remote(self.full_path(), self.fork.remote_name, 0)
+            git_fetch_remote(self.full_path(), self.remote_name, 0)
+        git_print_branches(self.full_path())
 
     def clean(self):
         """Discard changes for project"""

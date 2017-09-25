@@ -42,6 +42,19 @@ class ClowderController(object):
         self._validate_yaml(yaml_file, self._max_import_depth)
         self._load_yaml()
 
+    def branch(self, group_names=None, project_names=None):
+        """Show local and remote branches"""
+        for group in self.groups:
+            if project_names is None and group_names is None:
+                group.branch()
+            elif project_names is None:
+                if group.name in group_names:
+                    group.branch()
+            else:
+                for project in group.projects:
+                    if project.name in project_names:
+                        project.branch()
+
     def clean(self, group_names=None, project_names=None):
         """Discard changes"""
         if not self._is_dirty():
