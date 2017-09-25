@@ -401,12 +401,6 @@ class ClowderController(object):
                 if project.name in project_names:
                     project.prune(branch, force=force, local=True, remote=True)
 
-    def _prune_projects_local(self, project_names, branch, force=False, local=False, remote=False):
-        """Prune local branches for projects"""
-
-    def _prune_projects_remote(self, project_names, branch, force=False, local=False, remote=False):
-        """Prune remote branches for projects"""
-
     def _validate_groups(self, group_names):
         """Validate status of all projects for specified groups"""
         valid = True
