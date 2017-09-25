@@ -211,7 +211,7 @@ class Project(object):
             self._print_status()
             print_validation(self.full_path())
 
-    def prune(self, branch, force, local=False, remote=False):
+    def prune(self, branch, force=False, local=False, remote=False):
         """Prune branch"""
         if not git_existing_repository(self.full_path()):
             return
