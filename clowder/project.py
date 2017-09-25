@@ -19,7 +19,6 @@ from clowder.utility.git_utilities import (
     git_existing_local_branch,
     git_existing_remote_branch,
     git_existing_repository,
-    git_fetch_all,
     git_fetch_remote,
     git_herd,
     git_herd_branch,
@@ -129,7 +128,11 @@ class Project(object):
         """Fetch upstream changes if project exists on disk"""
         self._print_status()
         if self.exists():
-            git_fetch_all(self.full_path())
+            if self.fork is None:
+                git_fetch_remote(self.full_path(), self.remote_name, self.depth)
+            else:
+                git_fetch_remote(self.full_path(), self.fork.remote_name, 0)
+                git_fetch_remote(self.full_path(), self.remote_name, 0)
         else:
             self.print_exists()
 
