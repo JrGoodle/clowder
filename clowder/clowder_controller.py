@@ -200,42 +200,39 @@ class ClowderController(object):
                 if group.name in group_names:
                     group.prune(branch, remote=True)
 
-    def prune_projects_all(self, project_names, branch, force):
+    def prune_projects(self, project_names, branch, force=False, local=False, remote=False):
         """Prune local and remote branch for projects"""
         self._validate_projects(project_names)
-        local_branch_exists = self._existing_branch_project(project_names, branch, is_remote=False)
-        remote_branch_exists = self._existing_branch_project(project_names, branch, is_remote=True)
-        branch_exists = local_branch_exists or remote_branch_exists
-        if not branch_exists:
-            cprint(' - No local or remote branches to prune\n', 'red')
-            sys.exit()
-        print(' - Prune local and remote branches\n')
-        for group in self.groups:
-            for project in group.projects:
-                if project.name in project_names:
-                    project.prune(branch, force=force, local=True, remote=True)
-
-    def prune_projects_local(self, project_names, branch, force):
-        """Prune local branch for projects"""
-        self._validate_projects(project_names)
-        if not self._existing_branch_project(project_names, branch, is_remote=False):
-            print(' - No local branches to prune\n')
-            sys.exit()
-        for group in self.groups:
-            for project in group.projects:
-                if project.name in project_names:
-                    project.prune(branch, force=force, is_remote=False)
-
-    def prune_projects_remote(self, project_names, branch):
-        """Prune remote branch for projects"""
-        self._validate_projects(project_names)
-        if not self._existing_branch_project(project_names, branch, is_remote=True):
-            cprint(' - No remote branches to prune\n', 'red')
-            sys.exit()
-        for group in self.groups:
-            for project in group.projects:
-                if project.name in project_names:
-                    project.prune(branch, remote=True)
+        if local and remote:
+            local_branch_exists = self._existing_branch_project(project_names,
+                                                                branch, is_remote=False)
+            remote_branch_exists = self._existing_branch_project(project_names,
+                                                                 branch, is_remote=True)
+            branch_exists = local_branch_exists or remote_branch_exists
+            if not branch_exists:
+                cprint(' - No local or remote branches to prune\n', 'red')
+                sys.exit()
+            print(' - Prune local and remote branches\n')
+            for group in self.groups:
+                for project in group.projects:
+                    if project.name in project_names:
+                        project.prune(branch, force=force, local=True, remote=True)
+        elif local:
+            if not self._existing_branch_project(project_names, branch, is_remote=False):
+                print(' - No local branches to prune\n')
+                sys.exit()
+            for group in self.groups:
+                for project in group.projects:
+                    if project.name in project_names:
+                        project.prune(branch, force=force, is_remote=False)
+        elif remote:
+            if not self._existing_branch_project(project_names, branch, is_remote=True):
+                cprint(' - No remote branches to prune\n', 'red')
+                sys.exit()
+            for group in self.groups:
+                for project in group.projects:
+                    if project.name in project_names:
+                        project.prune(branch, remote=True)
 
     def save_version(self, version):
         """Save current commits to a clowder.yaml in the versions directory"""

@@ -202,16 +202,20 @@ class Command(object):
                                           local=True)
         else:
             if self.args.all:
-                self.clowder.prune_projects_all(self.args.projects,
-                                                self.args.branch,
-                                                self.args.force)
+                self.clowder.prune_projects(self.args.projects,
+                                            self.args.branch,
+                                            force=self.args.force,
+                                            local=True,
+                                            remote=True)
             elif self.args.remote:
-                self.clowder.prune_projects_remote(self.args.projects,
-                                                   self.args.branch)
+                self.clowder.prune_projects(self.args.projects,
+                                            self.args.branch,
+                                            remote=True)
             else:
-                self.clowder.prune_projects_local(self.args.projects,
-                                                  self.args.branch,
-                                                  self.args.force)
+                self.clowder.prune_projects(self.args.projects,
+                                            self.args.branch,
+                                            force=self.args.force,
+                                            local=True)
 
     def repo(self):
         """clowder repo command"""
