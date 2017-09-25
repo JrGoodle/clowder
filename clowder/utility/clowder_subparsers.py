@@ -26,8 +26,13 @@ def _configure_subparsers(subparsers, clowder, versions):
 
 def _configure_subparser_branch(subparsers, clowder):
     """Configure clowder branch subparser and arguments"""
-    branch_help = 'Display all local and remote branches'
+    branch_help = 'Display current branches'
     parser_branch = subparsers.add_parser('branch', help=branch_help)
+    group_branch_options = parser_branch.add_mutually_exclusive_group()
+    group_branch_options.add_argument('--all', '-a', action='store_true',
+                                      help='show local and remote branches')
+    group_branch_options.add_argument('--remote', '-r', action='store_true',
+                                      help='show remote branches')
     group_branch = parser_branch.add_mutually_exclusive_group()
     if clowder is None:
         group_names = ''

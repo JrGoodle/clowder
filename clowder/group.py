@@ -17,11 +17,11 @@ class Group(object):
         projects_yaml = [p.get_yaml() for p in self.projects]
         return {'name': self.name, 'projects': projects_yaml}
 
-    def branch(self):
-        """Show local and remote branches for all projects"""
+    def branch(self, local=False, remote=False):
+        """Print branches for all projects"""
         self._print_name()
         for project in self.projects:
-            project.branch()
+            project.branch(local=local, remote=remote)
 
     def clean(self):
         """Discard changes for all projects"""

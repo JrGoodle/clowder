@@ -79,8 +79,19 @@ class Command(object):
         print()
         if self.clowder is None:
             sys.exit(1)
-        self.clowder.branch(group_names=self.args.groups,
-                            project_names=self.args.projects)
+        if self.args.all:
+            self.clowder.branch(group_names=self.args.groups,
+                                project_names=self.args.projects,
+                                local=True,
+                                remote=True)
+        elif self.args.remote:
+            self.clowder.branch(group_names=self.args.groups,
+                                project_names=self.args.projects,
+                                remote=True)
+        else:
+            self.clowder.branch(group_names=self.args.groups,
+                                project_names=self.args.projects,
+                                local=True)
 
     def clean(self):
         """clowder clean command"""

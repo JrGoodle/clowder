@@ -400,9 +400,14 @@ def git_new_upstream_commits(repo_path):
             except:
                 return 0
 
-def git_print_branches(repo_path):
-    """Print local and remote branches"""
-    command = ['git', 'branch', '-a']
+def git_print_branches(repo_path, local=False, remote=False):
+    """Print branches"""
+    if local and remote:
+        command = ['git', 'branch', '-a']
+    elif local:
+        command = ['git', 'branch']
+    elif remote:
+        command = ['git', 'branch', '-r']
     return_code = execute_command(command, repo_path)
     if return_code != 0:
         cprint(' - Failed to print branches', 'red')

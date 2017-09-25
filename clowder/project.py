@@ -81,18 +81,19 @@ class Project(object):
             fork = project['fork']
             self.fork = Fork(fork, self.root_directory, self.path, self.source)
 
-    def branch(self):
-        """Show local and remote branches for project"""
+    def branch(self, local=False, remote=False):
+        """Print branches for project"""
         self._print_status()
         if not os.path.isdir(self.full_path()):
             cprint(" - Project is missing\n", 'red')
             return
-        if self.fork is None:
-            git_fetch_remote(self.full_path(), self.remote_name, self.depth)
-        else:
-            git_fetch_remote(self.full_path(), self.fork.remote_name, 0)
-            git_fetch_remote(self.full_path(), self.remote_name, 0)
-        git_print_branches(self.full_path())
+        if remote:
+            if self.fork is None:
+                git_fetch_remote(self.full_path(), self.remote_name, self.depth)
+            else:
+                git_fetch_remote(self.full_path(), self.fork.remote_name, 0)
+                git_fetch_remote(self.full_path(), self.remote_name, 0)
+        git_print_branches(self.full_path(), local=local, remote=remote)
 
     def clean(self):
         """Discard changes for project"""

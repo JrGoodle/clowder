@@ -1,5 +1,6 @@
 # `clowder` Commands
 
+- [clowder branch](#clowder-branch)
 - [clowder clean](#clowder-clean)
 - [clowder diff](#clowder-diff)
 - [clowder forall](#clowder-forall)
@@ -13,6 +14,25 @@
 - [clowder stash](#clowder-stash)
 - [clowder status](#clowder-status)
 - [clowder sync](#clowder-sync)
+
+---
+
+```bash
+# Print all local branches
+$ clowder branch
+
+# Print all remote branches
+$ clowder branch -r
+
+# Print all local and remote branches
+$ clowder branch -a
+
+# Print local branches in clang group
+$ clowder branch -g clang
+
+# Print local branches in clang project
+$ clowder branch -p llvm-mirror/clang
+```
 
 ---
 

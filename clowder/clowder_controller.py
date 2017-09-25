@@ -28,7 +28,7 @@ from clowder.utility.print_utilities import (
 
 # Disable errors shown by pylint for catching too general exception Exception
 # pylint: disable=W0703
-# Disable errors shown by pylint for catching too many arguments
+# Disable errors shown by pylint for too many arguments
 # pylint: disable=R0913
 
 class ClowderController(object):
@@ -44,18 +44,18 @@ class ClowderController(object):
         self._validate_yaml(yaml_file, self._max_import_depth)
         self._load_yaml()
 
-    def branch(self, group_names=None, project_names=None):
-        """Show local and remote branches"""
+    def branch(self, group_names=None, project_names=None, local=False, remote=False):
+        """Show branches"""
         for group in self.groups:
             if project_names is None and group_names is None:
-                group.branch()
+                group.branch(local=local, remote=remote)
             elif project_names is None:
                 if group.name in group_names:
-                    group.branch()
+                    group.branch(local=local, remote=remote)
             else:
                 for project in group.projects:
                     if project.name in project_names:
-                        project.branch()
+                        project.branch(local=local, remote=remote)
 
     def clean(self, group_names=None, project_names=None):
         """Discard changes"""
