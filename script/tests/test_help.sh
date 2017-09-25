@@ -6,7 +6,8 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 
 cd "$1" || exit 1
 
-export commands=( 'clean' \
+export commands=( 'branch' \
+                  'clean' \
                   'diff' \
                   'forall' \
                   'herd' \
@@ -25,7 +26,8 @@ export commands=( 'clean' \
                   'save' \
                   'start' \
                   'stash' \
-                  'status')
+                  'status' \
+                  'sync' )
 
 print_double_separator
 echo "TEST: Clowder help output"

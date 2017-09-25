@@ -17,6 +17,12 @@ class Group(object):
         projects_yaml = [p.get_yaml() for p in self.projects]
         return {'name': self.name, 'projects': projects_yaml}
 
+    def branch(self, local=False, remote=False):
+        """Print branches for all projects"""
+        self._print_name()
+        for project in self.projects:
+            project.branch(local=local, remote=remote)
+
     def clean(self):
         """Discard changes for all projects"""
         if self.is_dirty():
@@ -80,28 +86,25 @@ class Group(object):
                 projects_exist = False
         return projects_exist
 
-    def prune_all(self, branch, force):
-        """Prune local and remote branch"""
-        local_branch_exists = self._existing_branch(branch, is_remote=False)
-        remote_branch_exists = self._existing_branch(branch, is_remote=True)
-        if local_branch_exists or remote_branch_exists:
-            self._print_name()
-            for project in self.projects:
-                project.prune_all(branch, force)
-
-    def prune_local(self, branch, force):
-        """Prune local branch"""
-        if self._existing_branch(branch, is_remote=False):
-            self._print_name()
-            for project in self.projects:
-                project.prune(branch, force, is_remote=False)
-
-    def prune_remote(self, branch):
-        """Prune remote branch"""
-        if self._existing_branch(branch, is_remote=True):
-            self._print_name()
-            for project in self.projects:
-                project.prune(branch, is_remote=True)
+    def prune(self, branch, force=False, local=False, remote=False):
+        """Prune branches"""
+        if local and remote:
+            local_branch_exists = self._existing_branch(branch, is_remote=False)
+            remote_branch_exists = self._existing_branch(branch, is_remote=True)
+            if local_branch_exists or remote_branch_exists:
+                self._print_name()
+                for project in self.projects:
+                    project.prune(branch, force=force, local=True, remote=True)
+        elif local:
+            if self._existing_branch(branch, is_remote=False):
+                self._print_name()
+                for project in self.projects:
+                    project.prune(branch, force=force, local=True)
+        elif remote:
+            if self._existing_branch(branch, is_remote=True):
+                self._print_name()
+                for project in self.projects:
+                    project.prune(branch, remote=True)
 
     def start(self, branch, tracking):
         """Start a new feature branch"""

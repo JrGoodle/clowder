@@ -27,6 +27,7 @@ test_clowder_version
 
 "$TEST_SCRIPT_DIR/tests/test_cats_init.sh"
 "$TEST_SCRIPT_DIR/tests/test_command.sh"
+"$TEST_SCRIPT_DIR/tests/test_cats_branch.sh"
 "$TEST_SCRIPT_DIR/tests/test_cats_status.sh"
 "$TEST_SCRIPT_DIR/tests/test_cats_clean.sh"
 "$TEST_SCRIPT_DIR/tests/test_cats_herd.sh"

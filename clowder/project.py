@@ -19,12 +19,13 @@ from clowder.utility.git_utilities import (
     git_existing_local_branch,
     git_existing_remote_branch,
     git_existing_repository,
-    git_fetch_all,
+    git_fetch_remote,
     git_herd,
     git_herd_branch,
     git_herd_branch_upstream,
     git_herd_upstream,
     git_is_dirty,
+    git_print_branches,
     git_prune_local,
     git_prune_remote,
     git_reset_head,
@@ -80,6 +81,20 @@ class Project(object):
             fork = project['fork']
             self.fork = Fork(fork, self.root_directory, self.path, self.source)
 
+    def branch(self, local=False, remote=False):
+        """Print branches for project"""
+        self._print_status()
+        if not os.path.isdir(self.full_path()):
+            cprint(" - Project is missing\n", 'red')
+            return
+        if remote:
+            if self.fork is None:
+                git_fetch_remote(self.full_path(), self.remote_name, self.depth)
+            else:
+                git_fetch_remote(self.full_path(), self.fork.remote_name, 0)
+                git_fetch_remote(self.full_path(), self.remote_name, 0)
+        git_print_branches(self.full_path(), local=local, remote=remote)
+
     def clean(self):
         """Discard changes for project"""
         if self.is_dirty():
@@ -114,7 +129,11 @@ class Project(object):
         """Fetch upstream changes if project exists on disk"""
         self._print_status()
         if self.exists():
-            git_fetch_all(self.full_path())
+            if self.fork is None:
+                git_fetch_remote(self.full_path(), self.remote_name, self.depth)
+            else:
+                git_fetch_remote(self.full_path(), self.fork.remote_name, 0)
+                git_fetch_remote(self.full_path(), self.remote_name, 0)
         else:
             self.print_exists()
 
@@ -193,38 +212,17 @@ class Project(object):
             self._print_status()
             print_validation(self.full_path())
 
-    def prune_all(self, branch, force):
-        """Prune local and remote branches"""
-        if git_existing_repository(self.full_path()):
-            if self.fork is None:
-                remote = self.remote_name
-            else:
-                remote = self.fork.remote_name
-            local_branch_exists = git_existing_local_branch(self.full_path(), branch)
-            remote_branch_exists = git_existing_remote_branch(self.full_path(),
-                                                              branch, remote)
-            if local_branch_exists or remote_branch_exists:
-                self._print_status()
-                if local_branch_exists:
-                    git_prune_local(self.full_path(), branch, self.ref, force)
-                if remote_branch_exists:
-                    git_prune_remote(self.full_path(), branch, remote)
-
-    def prune(self, branch, force, is_remote):
+    def prune(self, branch, force=False, local=False, remote=False):
         """Prune branch"""
-        if git_existing_repository(self.full_path()):
-            if is_remote:
-                if self.fork is None:
-                    remote = self.remote_name
-                else:
-                    remote = self.fork.remote_name
-                if git_existing_remote_branch(self.full_path(), branch, remote):
-                    self._print_status()
-                    git_prune_remote(self.full_path(), branch, remote)
-            else:
-                if git_existing_local_branch(self.full_path(), branch):
-                    self._print_status()
-                    git_prune_local(self.full_path(), branch, self.ref, force)
+        if not git_existing_repository(self.full_path()):
+            return
+        if local and remote:
+            self._prune_local(branch, force)
+            self._prune_remote(branch)
+        elif local:
+            self._prune_local(branch, force)
+        elif remote:
+            self._prune_remote(branch)
 
     def run(self, command, ignore_errors):
         """Run command or script in project directory"""
@@ -304,3 +302,19 @@ class Project(object):
         project_output = format_project_string(repo_path, self.path)
         current_ref_output = format_project_ref_string(repo_path)
         print('{0} {1}'.format(project_output.ljust(padding), current_ref_output))
+
+    def _prune_local(self, branch, force):
+        """Prune local branch"""
+        if git_existing_local_branch(self.full_path(), branch):
+            self._print_status()
+            git_prune_local(self.full_path(), branch, self.ref, force)
+
+    def _prune_remote(self, branch):
+        """Prune remote branch"""
+        if self.fork is None:
+            remote = self.remote_name
+        else:
+            remote = self.fork.remote_name
+        if git_existing_remote_branch(self.full_path(), branch, remote):
+            self._print_status()
+            git_prune_remote(self.full_path(), branch, remote)

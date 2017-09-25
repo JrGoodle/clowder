@@ -17,6 +17,8 @@ if __name__ == '__main__':
 
 # Disable errors shown by pylint for no specified exception types
 # pylint: disable=W0702
+# Disable errors shown by pylint for too many public methods
+# pylint: disable=R0904
 
 class Command(object):
     """Command class for parsing commandline options"""
@@ -66,6 +68,30 @@ class Command(object):
         # use dispatch pattern to invoke method with same name
         getattr(self, self.args.clowder_command)()
         print()
+
+    def branch(self):
+        """clowder branch command"""
+        if self._invalid_yaml:
+            sys.exit(1)
+        if self.clowder_repo is None:
+            exit_clowder_not_found()
+        self.clowder_repo.print_status()
+        print()
+        if self.clowder is None:
+            sys.exit(1)
+        if self.args.all:
+            self.clowder.branch(group_names=self.args.groups,
+                                project_names=self.args.projects,
+                                local=True,
+                                remote=True)
+        elif self.args.remote:
+            self.clowder.branch(group_names=self.args.groups,
+                                project_names=self.args.projects,
+                                remote=True)
+        else:
+            self.clowder.branch(group_names=self.args.groups,
+                                project_names=self.args.projects,
+                                local=True)
 
     def clean(self):
         """clowder clean command"""
@@ -173,28 +199,36 @@ class Command(object):
             sys.exit(1)
         if self.args.projects is None:
             if self.args.all:
-                self.clowder.prune_groups_all(self.args.groups,
-                                              self.args.branch,
-                                              self.args.force)
+                self.clowder.prune_groups(self.args.groups,
+                                          self.args.branch,
+                                          force=self.args.force,
+                                          local=True,
+                                          remote=True)
             elif self.args.remote:
-                self.clowder.prune_groups_remote(self.args.groups,
-                                                 self.args.branch)
+                self.clowder.prune_groups(self.args.groups,
+                                          self.args.branch,
+                                          remote=True)
             else:
-                self.clowder.prune_groups_local(self.args.groups,
-                                                self.args.branch,
-                                                self.args.force)
+                self.clowder.prune_groups(self.args.groups,
+                                          self.args.branch,
+                                          force=self.args.force,
+                                          local=True)
         else:
             if self.args.all:
-                self.clowder.prune_projects_all(self.args.projects,
-                                                self.args.branch,
-                                                self.args.force)
+                self.clowder.prune_projects(self.args.projects,
+                                            self.args.branch,
+                                            force=self.args.force,
+                                            local=True,
+                                            remote=True)
             elif self.args.remote:
-                self.clowder.prune_projects_remote(self.args.projects,
-                                                   self.args.branch)
+                self.clowder.prune_projects(self.args.projects,
+                                            self.args.branch,
+                                            remote=True)
             else:
-                self.clowder.prune_projects_local(self.args.projects,
-                                                  self.args.branch,
-                                                  self.args.force)
+                self.clowder.prune_projects(self.args.projects,
+                                            self.args.branch,
+                                            force=self.args.force,
+                                            local=True)
 
     def repo(self):
         """clowder repo command"""

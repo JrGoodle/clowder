@@ -278,6 +278,22 @@ test_forks_env() {
     clowder forall -c 'if [ $FORK_REMOTE != origin ]; then exit 1; fi' -p 'llvm-mirror/clang' || exit 1
 }
 
+test_branch() {
+    echo "TEST: clowder branch"
+    clowder link || exit 1
+    clowder herd || exit 1
+    clowder branch || exit 1
+    clowder branch -r || exit 1
+    clowder branch -a || exit 1
+    clowder branch -p 'llvm-mirror/llvm' || exit 1
+    clowder branch -rp 'llvm-mirror/llvm' || exit 1
+    clowder branch -ap 'llvm-mirror/llvm' || exit 1
+    clowder branch -g 'clang' || exit 1
+    clowder branch -rg 'clang' || exit 1
+    clowder branch -ag 'clang' || exit 1
+}
+test_branch
+
 test_help() {
     print_double_separator
     clowder link

@@ -191,16 +191,6 @@ def git_existing_remote_branch(repo_path, branch, remote):
     origin = repo.remotes[remote]
     return branch in origin.refs
 
-def git_fetch_all(repo_path):
-    """Fetch all upstream changes"""
-    print(' - Fetch all upstream changes')
-    command = ['git', 'fetch', '--all', '--prune', '--tags']
-    return_code = execute_command(command, repo_path)
-    if return_code != 0:
-        cprint(' - Failed to fetch', 'red')
-        print_command_failed_error(command)
-        sys.exit(return_code)
-
 def git_fetch_remote(repo_path, remote, depth):
     """Fetch from a specific remote"""
     remote_output = format_remote_string(remote)
@@ -409,6 +399,20 @@ def git_new_upstream_commits(repo_path):
                 return count
             except:
                 return 0
+
+def git_print_branches(repo_path, local=False, remote=False):
+    """Print branches"""
+    if local and remote:
+        command = ['git', 'branch', '-a']
+    elif local:
+        command = ['git', 'branch']
+    elif remote:
+        command = ['git', 'branch', '-r']
+    return_code = execute_command(command, repo_path)
+    if return_code != 0:
+        cprint(' - Failed to print branches', 'red')
+        print_command_failed_error(command)
+        sys.exit(return_code)
 
 def git_prune_local(repo_path, branch, default_ref, force):
     """Prune branch in repository"""
