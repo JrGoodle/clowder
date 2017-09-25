@@ -21,6 +21,7 @@ def _configure_subparsers(subparsers, clowder, versions):
     _configure_subparser_start(subparsers, clowder)
     _configure_subparser_stash(subparsers, clowder)
     _configure_subparser_status(subparsers)
+    _configure_subparser_sync(subparsers, clowder)
 
 def _configure_subparser_clean(subparsers, clowder):
     """Configure clowder clean subparser and arguments"""
@@ -353,3 +354,22 @@ def _configure_subparser_status(subparsers):
     parser_status = subparsers.add_parser('status', help='Print project status')
     parser_status.add_argument('--fetch', '-f', action='store_true',
                                help='fetch projects before printing status')
+
+def _configure_subparser_sync(subparsers, clowder):
+    """Configure clowder sync subparser and arguments"""
+    # clowder sync
+    if clowder is None:
+        project_names = ''
+    else:
+        project_names = clowder.get_all_fork_project_names()
+    parser_sync = subparsers.add_parser('sync', help='Sync fork with upstream remote')
+    if project_names is '':
+        sync_help_projects = 'projects to sync'
+    else:
+        sync_help_projects = '''
+                               projects to sync:
+                               {0}
+                               '''
+        sync_help_projects = sync_help_projects.format(', '.join(project_names))
+    parser_sync.add_argument('--projects', '-p', choices=project_names,
+                             nargs='+', help=sync_help_projects, metavar='PROJECT')

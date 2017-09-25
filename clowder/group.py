@@ -36,11 +36,6 @@ class Group(object):
         for project in self.projects:
             project.fetch_all()
 
-    def fetch_silent(self):
-        """Silently fetch changes for all projects"""
-        for project in self.projects:
-            project.fetch_silent()
-
     def herd(self, branch=None, depth=None):
         """Sync all projects with latest upstream changes"""
         self._print_name()

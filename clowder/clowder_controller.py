@@ -92,6 +92,19 @@ class ClowderController(object):
                     if project.name in project_names:
                         project.run(command, ignore_errors)
 
+    def get_all_fork_project_names(self):
+        """Returns all project names containing forks"""
+        project_names = []
+        for group in self.groups:
+            for project in group.projects:
+                if project.fork is not None:
+                    project_names.append(project.name)
+        names = sorted(project_names)
+        if not names:
+            return ''
+        else:
+            return names
+
     def get_all_group_names(self):
         """Returns all group names for current clowder.yaml"""
         names = sorted([g.name for g in self.groups])
@@ -282,6 +295,13 @@ class ClowderController(object):
         for group in self.groups:
             if group.name in group_names:
                 group.status(padding)
+
+    def sync(self, project_names):
+        """Print status for groups"""
+        for group in self.groups:
+            for project in group.projects:
+                if project.name in project_names:
+                    project.sync()
 
     def _existing_branch_group(self, group_names, branch, is_remote):
         """Checks whether at least one branch exists for projects in groups"""

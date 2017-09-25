@@ -624,6 +624,35 @@ def git_status(repo_path):
         print_command_failed_error(command)
         sys.exit(return_code)
 
+def git_sync(repo_path, upstream_remote, fork_remote, ref):
+    """Sync fork with upstream remote"""
+    ref_type = _ref_type(ref)
+    print(' - Sync fork with upstream remote')
+    if ref_type is 'branch':
+        branch = _truncate_ref(ref)
+        upstream_remote_output = format_remote_string(upstream_remote)
+        fork_remote_output = format_remote_string(fork_remote)
+        branch_output = format_ref_string(branch)
+        print(' - Pull from ' + upstream_remote_output + ' ' + branch_output)
+        command = ['git', 'pull', upstream_remote, branch]
+        return_code = execute_command(command, repo_path)
+        if return_code != 0:
+            message = colored(' - Failed to pull from ', 'red')
+            print(message + upstream_remote_output + ' ' + branch_output)
+            print_command_failed_error(command)
+            sys.exit(return_code)
+        print(' - Push to ' + fork_remote_output + ' ' + branch_output)
+        command = ['git', 'push', fork_remote, branch]
+        return_code = execute_command(command, repo_path)
+        if return_code != 0:
+            message = colored(' - Failed to push to ', 'red')
+            print(message + fork_remote_output + ' ' + branch_output)
+            print_command_failed_error(command)
+            sys.exit(return_code)
+    elif ref_type is 'tag' or ref_type is 'sha':
+        cprint(' - Can only sync branches', 'red')
+        sys.exit(1)
+
 def git_validate_repo_state(repo_path):
     """Validate repo state"""
     if not git_existing_repository(repo_path):

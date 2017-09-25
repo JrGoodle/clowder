@@ -6,12 +6,13 @@
 - [clowder herd](#clowder-herd)
 - [clowder init](#clowder-init)
 - [clowder link](#clowder-link)
+- [clowder prune](#clowder-prune)
 - [clowder repo](#clowder-repo)
 - [clowder save](#clowder-save)
 - [clowder start](#clowder-start)
 - [clowder stash](#clowder-stash)
 - [clowder status](#clowder-status)
-- [clowder prune](#clowder-prune)
+- [clowder sync](#clowder-sync)
 
 ---
 
@@ -260,4 +261,18 @@ $ clowder status
 
 # Fetch upstream changes for projects before printing statuses
 $ clowder status -f
+```
+
+---
+
+## `clowder sync`
+
+Sync default fork branches with upstream remotes
+
+```bash
+# Sync all forks with upstream remotes
+$ clowder sync
+
+# Sync clang fork with upstream remote
+$ clowder sync -p llvm-mirror/clang
 ```
