@@ -227,7 +227,7 @@ class ClowderController(object):
         for group in self.groups:
             for project in group.projects:
                 if project.name in project_names:
-                    project.prune_all(branch, force)
+                    project.prune(branch, force, local=True, remote=True)
 
     def prune_projects_local(self, project_names, branch, force):
         """Prune local branch for projects"""
