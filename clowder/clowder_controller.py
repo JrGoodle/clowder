@@ -28,6 +28,8 @@ from clowder.utility.print_utilities import (
 
 # Disable errors shown by pylint for catching too general exception Exception
 # pylint: disable=W0703
+# Disable errors shown by pylint for catching too many arguments
+# pylint: disable=R0913
 
 class ClowderController(object):
     """Class encapsulating project information from clowder.yaml for controlling clowder"""
@@ -204,19 +206,7 @@ class ClowderController(object):
         """Prune local and remote branch for projects"""
         self._validate_projects(project_names)
         if local and remote:
-            local_branch_exists = self._existing_branch_project(project_names,
-                                                                branch, is_remote=False)
-            remote_branch_exists = self._existing_branch_project(project_names,
-                                                                 branch, is_remote=True)
-            branch_exists = local_branch_exists or remote_branch_exists
-            if not branch_exists:
-                cprint(' - No local or remote branches to prune\n', 'red')
-                sys.exit()
-            print(' - Prune local and remote branches\n')
-            for group in self.groups:
-                for project in group.projects:
-                    if project.name in project_names:
-                        project.prune(branch, force=force, local=True, remote=True)
+            self._prune_projects_all(project_names, branch, force)
         elif local:
             if not self._existing_branch_project(project_names, branch, is_remote=False):
                 print(' - No local branches to prune\n')
@@ -394,6 +384,28 @@ class ClowderController(object):
                                      group,
                                      self.defaults,
                                      self.sources))
+
+    def _prune_projects_all(self, project_names, branch, force):
+        """Prune local and remote branches for projects"""
+        local_branch_exists = self._existing_branch_project(project_names,
+                                                            branch, is_remote=False)
+        remote_branch_exists = self._existing_branch_project(project_names,
+                                                             branch, is_remote=True)
+        branch_exists = local_branch_exists or remote_branch_exists
+        if not branch_exists:
+            cprint(' - No local or remote branches to prune\n', 'red')
+            sys.exit()
+        print(' - Prune local and remote branches\n')
+        for group in self.groups:
+            for project in group.projects:
+                if project.name in project_names:
+                    project.prune(branch, force=force, local=True, remote=True)
+
+    def _prune_projects_local(self, project_names, branch, force=False, local=False, remote=False):
+        """Prune local branches for projects"""
+
+    def _prune_projects_remote(self, project_names, branch, force=False, local=False, remote=False):
+        """Prune remote branches for projects"""
 
     def _validate_groups(self, group_names):
         """Validate status of all projects for specified groups"""
