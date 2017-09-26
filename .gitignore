@@ -22,6 +22,25 @@ examples/llvm-projects/t*
 examples/llvm-projects/v*
 examples/llvm-projects/z*
 
+examples/swift-projects/clowder
+examples/swift-projects/.clowder
+examples/swift-projects/clowder.yaml
+examples/swift-projects/peru.yaml
+examples/swift-projects/clang
+examples/swift-projects/cmark
+examples/swift-projects/compiler-rt
+examples/swift-projects/llbuild
+examples/swift-projects/lldb
+examples/swift-projects/llvm
+examples/swift-projects/ninja
+examples/swift-projects/swift
+examples/swift-projects/swift-corelibs-foundation
+examples/swift-projects/swift-corelibs-libdispatch
+examples/swift-projects/swift-corelibs-xctest
+examples/swift-projects/swift-integration-tests
+examples/swift-projects/swift-xcode-playground-support
+examples/swift-projects/swiftpm
+
 examples/srclib/clowder
 examples/srclib/.clowder
 examples/srclib/clowder.yaml

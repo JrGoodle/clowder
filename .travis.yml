@@ -13,6 +13,7 @@ env:
   matrix:
     - TARGET="cats"
     - TARGET="llvm"
+    - TARGET="swift"
 
 matrix:
   exclude:
