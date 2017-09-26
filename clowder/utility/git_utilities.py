@@ -99,25 +99,12 @@ def git_configure_remotes(repo_path, upstream_remote_name, upstream_remote_url,
     fork_remote_output = format_remote_string(fork_remote_name)
     try:
         for remote in repo.remotes:
-            remote_output = format_remote_string(remote.name)
             if upstream_remote_url == repo.git.remote('get-url', remote.name):
                 if remote.name != upstream_remote_name:
-                    print(' - Rename remote ' + remote_output + ' to ' + upstream_remote_output)
-                    try:
-                        repo.git.remote('rename', remote.name, upstream_remote_name)
-                    except Exception as err:
-                        cprint(' - Failed to rename remote', 'red')
-                        print_error(err)
-                        sys.exit(1)
+                    git_rename_remote(repo_path, remote.name, upstream_remote_name)
             if fork_remote_url == repo.git.remote('get-url', remote.name):
                 if remote.name != fork_remote_name:
-                    print(' - Rename remote ' + remote_output + ' to ' + fork_remote_output)
-                    try:
-                        repo.git.remote('rename', remote.name, fork_remote_name)
-                    except Exception as err:
-                        cprint(' - Failed to rename remote', 'red')
-                        print_error(err)
-                        sys.exit(1)
+                    git_rename_remote(repo_path, remote.name, fork_remote_name)
         remote_names = [r.name for r in repo.remotes]
         if upstream_remote_name in remote_names:
             if upstream_remote_url != repo.git.remote('get-url', upstream_remote_name):
@@ -551,6 +538,19 @@ def git_push(repo_path):
         print(repo.git.push())
     except Exception as err:
         cprint(' - Failed to push local changes', 'red')
+        print_error(err)
+        sys.exit(1)
+
+def git_rename_remote(repo_path, remote_from, remote_to):
+    """Rename remote"""
+    repo = _repo(repo_path)
+    remote_output_from = format_remote_string(remote_from)
+    remote_output_to = format_remote_string(remote_to)
+    print(' - Rename remote ' + remote_output_from + ' to ' + remote_output_to)
+    try:
+        repo.git.remote('rename', remote_from, remote_to)
+    except Exception as err:
+        cprint(' - Failed to rename remote', 'red')
         print_error(err)
         sys.exit(1)
 

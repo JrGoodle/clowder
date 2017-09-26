@@ -99,6 +99,7 @@ else
         test_remote_url 'origin' 'https://github.com/apple/swift.git'
         popd
         clowder init https://github.com/JrGoodle/swift-clowder.git
+        clowder link -v travis-ci || exit 1
         clowder herd || exit 1
         pushd swift
         test_remote_url 'origin' 'https://github.com/JrGoodle/swift.git'
