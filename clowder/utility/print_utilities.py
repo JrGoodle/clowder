@@ -1,6 +1,6 @@
 """String formatting and printing utilities"""
 import os
-from termcolor import colored
+from termcolor import colored, cprint
 
 # Disable errors shown by pylint for invalid function name
 # pylint: disable=C0103
@@ -166,6 +166,15 @@ def print_open_file_error(path):
     output_1 = colored(' - Error: Failed to open file\n', 'red')
     output_2 = format_path(path)
     return output_1 + output_2
+
+def print_remote_already_exists_error(remote_name, remote_url, actual_url):
+    """Print error message when remote already exists with different url"""
+    remote_output = format_remote_string(remote_name)
+    cprint(' - Remote already exists with a different url', 'red')
+    actual_url_output = format_path(actual_url)
+    print(remote_output + ' ' + actual_url_output)
+    remote_url_output = format_path(remote_url)
+    print('should be ' + remote_url_output + '\n')
 
 def print_save_file_error(path):
     """Print error message for failing to save file"""

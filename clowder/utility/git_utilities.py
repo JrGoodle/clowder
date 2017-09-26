@@ -13,7 +13,8 @@ from clowder.utility.print_utilities import (
     format_ref_string,
     format_remote_string,
     print_command_failed_error,
-    print_error
+    print_error,
+    print_remote_already_exists_error
 )
 from clowder.utility.git_utilities_private import (
     _checkout_branch,
@@ -95,8 +96,6 @@ def git_configure_remotes(repo_path, upstream_remote_name, upstream_remote_url,
     if not git_existing_repository(repo_path):
         return
     repo = _repo(repo_path)
-    upstream_remote_output = format_remote_string(upstream_remote_name)
-    fork_remote_output = format_remote_string(fork_remote_name)
     try:
         remotes = repo.remotes
     except:
@@ -106,25 +105,22 @@ def git_configure_remotes(repo_path, upstream_remote_name, upstream_remote_url,
             if upstream_remote_url == repo.git.remote('get-url', remote.name):
                 if remote.name != upstream_remote_name:
                     git_rename_remote(repo_path, remote.name, upstream_remote_name)
+                    continue
             if fork_remote_url == repo.git.remote('get-url', remote.name):
                 if remote.name != fork_remote_name:
                     git_rename_remote(repo_path, remote.name, fork_remote_name)
         remote_names = [r.name for r in repo.remotes]
         if upstream_remote_name in remote_names:
             if upstream_remote_url != repo.git.remote('get-url', upstream_remote_name):
-                cprint(' - Remote already exists with a different url', 'red')
-                actual_url_output = format_path(repo.git.remote('get-url', upstream_remote_name))
-                print(upstream_remote_output + ' ' + actual_url_output)
-                upstream_url_output = format_path(upstream_remote_url)
-                print('should be ' + upstream_url_output + '\n')
+                actual_url = repo.git.remote('get-url', upstream_remote_name)
+                print_remote_already_exists_error(upstream_remote_name,
+                                                  upstream_remote_url, actual_url)
                 sys.exit(1)
         if fork_remote_name in remote_names:
             if fork_remote_url != repo.git.remote('get-url', fork_remote_name):
-                cprint(' - Remote already exists with a different url', 'red')
-                actual_url_output = format_path(repo.git.remote('get-url', fork_remote_name))
-                print(fork_remote_output + ' ' + actual_url_output)
-                fork_url_output = format_path(fork_remote_url)
-                print('should be ' + fork_url_output + '\n')
+                actual_url = repo.git.remote('get-url', fork_remote_name)
+                print_remote_already_exists_error(fork_remote_name,
+                                                  fork_remote_url, actual_url)
                 sys.exit(1)
 
 def git_create_repo(repo_path, url, remote, ref, depth=0):

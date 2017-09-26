@@ -2,7 +2,7 @@
 
 # set -xv
 
-pushd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
+cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 
 . test_utilities.sh
 
@@ -301,5 +301,3 @@ test_help() {
     "$TEST_SCRIPT_DIR/tests/test_help.sh" "$LLVM_EXAMPLE_DIR"
 }
 test_help
-
-popd
