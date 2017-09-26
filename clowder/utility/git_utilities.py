@@ -98,7 +98,11 @@ def git_configure_remotes(repo_path, upstream_remote_name, upstream_remote_url,
     upstream_remote_output = format_remote_string(upstream_remote_name)
     fork_remote_output = format_remote_string(fork_remote_name)
     try:
-        for remote in repo.remotes:
+        remotes = repo.remotes
+    except:
+        return
+    else:
+        for remote in remotes:
             if upstream_remote_url == repo.git.remote('get-url', remote.name):
                 if remote.name != upstream_remote_name:
                     git_rename_remote(repo_path, remote.name, upstream_remote_name)
@@ -122,8 +126,6 @@ def git_configure_remotes(repo_path, upstream_remote_name, upstream_remote_url,
                 fork_url_output = format_path(fork_remote_url)
                 print('should be ' + fork_url_output + '\n')
                 sys.exit(1)
-    except:
-        pass
 
 def git_create_repo(repo_path, url, remote, ref, depth=0):
     """Clone git repo from url at path"""
