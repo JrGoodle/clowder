@@ -100,6 +100,15 @@ test_no_remote_branch_exists() {
     fi
 }
 
+test_remote_url() {
+    echo "TEST: Remote url of $1 is $2"
+    local remote_url
+    remote_url="$(git remote get-url $1)"
+    if [ "$remote_url" != "$2" ]; then
+        exit 1
+    fi
+}
+
 test_tracking_branch_exists() {
     echo "TEST: Tracking branch exists: $1"
     git config --get branch.$1.merge || exit 1
