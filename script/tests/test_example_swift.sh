@@ -57,7 +57,7 @@ test_init_herd() {
     "$SWIFT_EXAMPLE_DIR/clean.sh"
     "$SWIFT_EXAMPLE_DIR/init.sh"  || exit 1
     clowder link -v travis-ci || exit 1
-    clowder herd  || exit 1
+    clowder herd || exit 1
     clowder status || exit 1
     # echo "TEST: Check current branches are on master"
     # for project in "${project_paths[@]}"; do

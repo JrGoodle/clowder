@@ -89,6 +89,55 @@ def git_commit(repo_path, message):
     print(' - Commit current changes')
     print(repo.git.commit(message=message))
 
+def git_configure_remotes(repo_path, upstream_remote_name, upstream_remote_url,
+                          fork_remote_name, fork_remote_url):
+    """Configure remotes names for fork and upstream"""
+    if not git_existing_repository(repo_path):
+        return
+    repo = _repo(repo_path)
+    upstream_remote_output = format_remote_string(upstream_remote_name)
+    fork_remote_output = format_remote_string(fork_remote_name)
+    try:
+        for remote in repo.remotes:
+            remote_output = format_remote_string(remote.name)
+            if upstream_remote_url == repo.git.remote('get-url', remote.name):
+                if remote.name != upstream_remote_name:
+                    print(' - Rename remote ' + remote_output + ' to ' + upstream_remote_output)
+                    try:
+                        repo.git.remote('rename', remote.name, upstream_remote_name)
+                    except Exception as err:
+                        cprint(' - Failed to rename remote', 'red')
+                        print_error(err)
+                        sys.exit(1)
+            if fork_remote_url == repo.git.remote('get-url', remote.name):
+                if remote.name != fork_remote_name:
+                    print(' - Rename remote ' + remote_output + ' to ' + fork_remote_output)
+                    try:
+                        repo.git.remote('rename', remote.name, fork_remote_name)
+                    except Exception as err:
+                        cprint(' - Failed to rename remote', 'red')
+                        print_error(err)
+                        sys.exit(1)
+        remote_names = [r.name for r in repo.remotes]
+        if upstream_remote_name in remote_names:
+            if upstream_remote_url != repo.git.remote('get-url', upstream_remote_name):
+                cprint(' - Remote already exists with a different url', 'red')
+                actual_url_output = format_path(repo.git.remote('get-url', upstream_remote_name))
+                print(upstream_remote_output + ' ' + actual_url_output)
+                upstream_url_output = format_path(upstream_remote_url)
+                print('should be ' + upstream_url_output + '\n')
+                sys.exit(1)
+        if fork_remote_name in remote_names:
+            if fork_remote_url != repo.git.remote('get-url', fork_remote_name):
+                cprint(' - Remote already exists with a different url', 'red')
+                actual_url_output = format_path(repo.git.remote('get-url', fork_remote_name))
+                print(fork_remote_output + ' ' + actual_url_output)
+                fork_url_output = format_path(fork_remote_url)
+                print('should be ' + fork_url_output + '\n')
+                sys.exit(1)
+    except:
+        pass
+
 def git_create_repo(repo_path, url, remote, ref, depth=0):
     """Clone git repo from url at path"""
     if git_existing_repository(repo_path):
