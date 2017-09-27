@@ -22,6 +22,7 @@ clean_examples() {
     if [ -n "$TRAVIS_OS_NAME" ]; then
         ../examples/cats/clean.sh
         ../examples/llvm-projects/clean.sh
+        ../examples/swift-projects/clean.sh
     else
         rm -rf "$HOME/.clowder_tests"
     fi

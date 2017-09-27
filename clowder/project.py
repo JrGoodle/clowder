@@ -16,6 +16,7 @@ from clowder.utility.git_print_utilities import (
     print_validation
 )
 from clowder.utility.git_utilities import (
+    git_configure_remotes,
     git_existing_local_branch,
     git_existing_remote_branch,
     git_existing_repository,
@@ -172,6 +173,8 @@ class Project(object):
                 git_herd(self.full_path(), self.url, self.remote_name, self.ref, herd_depth)
             else:
                 self.fork.print_status()
+                git_configure_remotes(self.full_path(), self.remote_name, self.url,
+                                      self.fork.remote_name, self.fork.url)
                 print(format_fork_string(self.fork.name))
                 git_herd(self.full_path(), self.fork.url, self.fork.remote_name,
                          self.ref, 0)
@@ -185,6 +188,8 @@ class Project(object):
                                 branch, self.ref, herd_depth)
             else:
                 self.fork.print_status()
+                git_configure_remotes(self.full_path(), self.remote_name, self.url,
+                                      self.fork.remote_name, self.fork.url)
                 print(format_fork_string(self.fork.name))
                 git_herd_branch(self.full_path(), self.fork.url, self.fork.remote_name,
                                 branch, self.ref, 0)
@@ -274,6 +279,8 @@ class Project(object):
     def sync(self):
         """Print status for project"""
         self.fork.print_status()
+        git_configure_remotes(self.full_path(), self.remote_name, self.url,
+                              self.fork.remote_name, self.fork.url)
         print(format_fork_string(self.fork.name))
         git_herd(self.full_path(), self.fork.url, self.fork.remote_name,
                  self.ref, 0)

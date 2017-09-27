@@ -13,7 +13,8 @@ from clowder.utility.print_utilities import (
     format_ref_string,
     format_remote_string,
     print_command_failed_error,
-    print_error
+    print_error,
+    print_remote_already_exists_error
 )
 from clowder.utility.git_utilities_private import (
     _checkout_branch,
@@ -88,6 +89,39 @@ def git_commit(repo_path, message):
     repo = _repo(repo_path)
     print(' - Commit current changes')
     print(repo.git.commit(message=message))
+
+def git_configure_remotes(repo_path, upstream_remote_name, upstream_remote_url,
+                          fork_remote_name, fork_remote_url):
+    """Configure remotes names for fork and upstream"""
+    if not git_existing_repository(repo_path):
+        return
+    repo = _repo(repo_path)
+    try:
+        remotes = repo.remotes
+    except:
+        return
+    else:
+        for remote in remotes:
+            if upstream_remote_url == repo.git.remote('get-url', remote.name):
+                if remote.name != upstream_remote_name:
+                    git_rename_remote(repo_path, remote.name, upstream_remote_name)
+                    continue
+            if fork_remote_url == repo.git.remote('get-url', remote.name):
+                if remote.name != fork_remote_name:
+                    git_rename_remote(repo_path, remote.name, fork_remote_name)
+        remote_names = [r.name for r in repo.remotes]
+        if upstream_remote_name in remote_names:
+            if upstream_remote_url != repo.git.remote('get-url', upstream_remote_name):
+                actual_url = repo.git.remote('get-url', upstream_remote_name)
+                print_remote_already_exists_error(upstream_remote_name,
+                                                  upstream_remote_url, actual_url)
+                sys.exit(1)
+        if fork_remote_name in remote_names:
+            if fork_remote_url != repo.git.remote('get-url', fork_remote_name):
+                actual_url = repo.git.remote('get-url', fork_remote_name)
+                print_remote_already_exists_error(fork_remote_name,
+                                                  fork_remote_url, actual_url)
+                sys.exit(1)
 
 def git_create_repo(repo_path, url, remote, ref, depth=0):
     """Clone git repo from url at path"""
@@ -502,6 +536,19 @@ def git_push(repo_path):
         print(repo.git.push())
     except Exception as err:
         cprint(' - Failed to push local changes', 'red')
+        print_error(err)
+        sys.exit(1)
+
+def git_rename_remote(repo_path, remote_from, remote_to):
+    """Rename remote"""
+    repo = _repo(repo_path)
+    remote_output_from = format_remote_string(remote_from)
+    remote_output_to = format_remote_string(remote_to)
+    print(' - Rename remote ' + remote_output_from + ' to ' + remote_output_to)
+    try:
+        repo.git.remote('rename', remote_from, remote_to)
+    except Exception as err:
+        cprint(' - Failed to rename remote', 'red')
         print_error(err)
         sys.exit(1)
 
