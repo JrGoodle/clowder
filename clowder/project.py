@@ -58,28 +58,28 @@ class Project(object):
         if 'depth' in project:
             self.depth = project['depth']
         elif 'depth' in group:
-            self.depth = project['depth']
+            self.depth = group['depth']
         else:
             self.depth = defaults['depth']
 
         if 'ref' in project:
             self.ref = project['ref']
         elif 'ref' in group:
-            self.ref = project['depth']
+            self.ref = group['ref']
         else:
             self.ref = defaults['ref']
 
         if 'remote' in project:
             self.remote_name = project['remote']
         elif 'remote' in group:
-            self.remote_name = project['remote']
+            self.remote_name = group['remote']
         else:
             self.remote_name = defaults['remote']
 
         if 'source' in project:
             source_name = project['source']
         elif 'source' in group:
-            source_name = project['source']
+            source_name = group['source']
         else:
             source_name = defaults['source']
 
