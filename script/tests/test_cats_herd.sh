@@ -168,6 +168,22 @@ test_herd_projects 'jrgoodle/kit' 'jrgoodle/kishka'
 
 clowder repo checkout master || exit 1
 
+test_herd_override_groups() {
+    print_single_separator
+    echo "TEST: Override values at group level"
+    clowder link || exit 1
+    clowder herd -b alt-branch || exit 1
+    for project in "${all_projects[@]}"; do
+    	pushd $project
+        test_branch 'alt-branch'
+        popd
+    done
+    clowder link -v override-group-ref || exit 1
+    clowder herd || exit 1
+    test_cats_default_herd_branches
+}
+test_herd_override_groups
+
 EXISTING_REMOTE_BRANCH='test-herd-existing-remote-branch'
 NO_REMOTE_BRANCH='test-herd-no-remote-branch'
 

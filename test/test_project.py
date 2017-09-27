@@ -8,8 +8,11 @@ from test.shared import (
     DEFAULTS_YAML,
     GITHUB_HTTPS_SOURCE_YAML,
     GITHUB_SSH_SOURCE_YAML,
+    JULES_GROUP_YAML,
     JULES_PROJECT_YAML,
+    KISHKA_GROUP_YAML,
     KISHKA_PROJECT_YAML,
+    KIT_GROUP_YAML,
     KIT_PROJECT_YAML
 )
 
@@ -27,11 +30,11 @@ class ProjectTest(unittest.TestCase):
         sources = [Source(GITHUB_SSH_SOURCE_YAML),
                    Source(GITHUB_HTTPS_SOURCE_YAML)]
         self.jules_project = Project(self.CATS_EXAMPLE_PATH, JULES_PROJECT_YAML,
-                                     DEFAULTS_YAML, sources)
+                                     JULES_GROUP_YAML, DEFAULTS_YAML, sources)
         self.kishka_project = Project(self.CATS_EXAMPLE_PATH, KISHKA_PROJECT_YAML,
-                                      DEFAULTS_YAML, sources)
+                                      KISHKA_GROUP_YAML, DEFAULTS_YAML, sources)
         self.kit_project = Project(self.CATS_EXAMPLE_PATH, KIT_PROJECT_YAML,
-                                   DEFAULTS_YAML, sources)
+                                   KIT_GROUP_YAML, DEFAULTS_YAML, sources)
 
     def test_exists(self):
         """Test exists() method"""
