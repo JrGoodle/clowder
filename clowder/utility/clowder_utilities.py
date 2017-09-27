@@ -2,6 +2,7 @@
 import errno
 import os
 import shutil
+import socket
 import subprocess
 import sys
 import yaml
@@ -20,6 +21,8 @@ from clowder.utility.print_utilities import (
 # pylint: disable=W0702
 # Disable errors shown by pylint for too many arguments
 # pylint: disable=R0913
+# Disable errors shown by pylint for invalid function name
+# pylint: disable=C0103
 
 def execute_command(cmd, path):
     """Execute command and display continuous output"""
@@ -69,6 +72,20 @@ def force_symlink(file1, file2):
         if error.errno == errno.EEXIST:
             os.remove(file2)
             os.symlink(file1, file2)
+
+def is_internet_connection_available(host='8.8.8.8', port=53, timeout=3):
+    """
+    Source: https://stackoverflow.com/a/33117579
+    Host: 8.8.8.8 (google-public-dns-a.google.com)
+    OpenPort: 53/tcp
+    Service: domain (DNS/TCP)
+    """
+    try:
+        socket.setdefaulttimeout(timeout)
+        socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host, port))
+        return True
+    except:
+        return False
 
 def parse_yaml(yaml_file):
     """Parse yaml file"""
