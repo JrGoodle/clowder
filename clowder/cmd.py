@@ -11,6 +11,8 @@ from termcolor import cprint, colored
 from clowder.clowder_repo import ClowderRepo
 from clowder.clowder_controller import ClowderController
 from clowder.utility.clowder_subparsers import configure_argparse
+from clowder.utility.clowder_utilities import is_internet_connection_available
+from clowder.utility.print_utilities import print_no_internet_exit_error
 
 if __name__ == '__main__':
     raise SystemExit(main())
@@ -140,6 +142,8 @@ class Command(object):
             sys.exit(1)
         if self.clowder_repo is None:
             exit_clowder_not_found()
+        if not is_internet_connection_available():
+            print_no_internet_exit_error()
         self.clowder_repo.print_status()
         print()
         if self.clowder is None:
@@ -165,6 +169,8 @@ class Command(object):
         if self.clowder_repo is not None:
             cprint('Clowder already initialized in this directory\n', 'red')
             sys.exit(1)
+        if not is_internet_connection_available():
+            print_no_internet_exit_error()
         url_output = colored(self.args.url, 'green')
         print('Create clowder repo from ' + url_output + '\n')
         clowder_repo = ClowderRepo(self.root_directory)
@@ -199,12 +205,16 @@ class Command(object):
             sys.exit(1)
         if self.args.projects is None:
             if self.args.all:
+                if not is_internet_connection_available():
+                    print_no_internet_exit_error()
                 self.clowder.prune_groups(self.args.groups,
                                           self.args.branch,
                                           force=self.args.force,
                                           local=True,
                                           remote=True)
             elif self.args.remote:
+                if not is_internet_connection_available():
+                    print_no_internet_exit_error()
                 self.clowder.prune_groups(self.args.groups,
                                           self.args.branch,
                                           remote=True)
@@ -215,12 +225,16 @@ class Command(object):
                                           local=True)
         else:
             if self.args.all:
+                if not is_internet_connection_available():
+                    print_no_internet_exit_error()
                 self.clowder.prune_projects(self.args.projects,
                                             self.args.branch,
                                             force=self.args.force,
                                             local=True,
                                             remote=True)
             elif self.args.remote:
+                if not is_internet_connection_available():
+                    print_no_internet_exit_error()
                 self.clowder.prune_projects(self.args.projects,
                                             self.args.branch,
                                             remote=True)
@@ -266,12 +280,16 @@ class Command(object):
         """clowder repo pull command"""
         if self.clowder_repo is None:
             exit_clowder_not_found()
+        if not is_internet_connection_available():
+            print_no_internet_exit_error()
         self.clowder_repo.pull()
 
     def repo_push(self):
         """clowder repo push command"""
         if self.clowder_repo is None:
             exit_clowder_not_found()
+        if not is_internet_connection_available():
+            print_no_internet_exit_error()
         self.clowder_repo.push()
 
     def repo_run(self):
@@ -304,6 +322,9 @@ class Command(object):
         print()
         if self.clowder is None:
             sys.exit(1)
+        if self.args.tracking:
+            if not is_internet_connection_available():
+                print_no_internet_exit_error()
         if self.args.projects is None:
             self.clowder.start_groups(self.args.groups,
                                       self.args.branch,
@@ -335,6 +356,8 @@ class Command(object):
         if self.clowder is None:
             sys.exit(1)
         if self.args.fetch:
+            if not is_internet_connection_available():
+                print_no_internet_exit_error()
             print(' - Fetch upstream changes for projects\n')
             self.clowder.fetch(self.clowder.get_all_group_names())
         all_project_paths = self.clowder.get_all_project_paths()
@@ -353,6 +376,8 @@ class Command(object):
         if all_fork_projects is '':
             cprint(' - No forks to sync\n', 'red')
             sys.exit()
+        if not is_internet_connection_available():
+            print_no_internet_exit_error()
         self.clowder.sync(all_fork_projects)
 
     def _exit_handler_formatter(self):
