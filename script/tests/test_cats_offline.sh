@@ -22,11 +22,9 @@ clowder herd || exit 1
 
 echo 'Disable your network connection'
 # https://unix.stackexchange.com/a/293941
-# read -p "Press enter to continue"
 read -n 1 -s -r -p "Press any key to continue"
 echo ''
 echo ''
-# Precondition: Assume no network connection
 
 echo 'TEST: clowder branch'
 clowder branch || exit 1
@@ -42,8 +40,6 @@ echo 'TEST: clowder forall'
 clowder forall -c 'git status' || exit 1
 echo 'TEST: clowder herd'
 clowder herd && exit 1
-echo 'TEST: clowder init'
-clowder init git@github.com:JrGoodle/cats.git && exit 1
 echo 'TEST: clowder link'
 clowder link -v v0.1 || exit 1
 clowder link || exit 1
@@ -96,6 +92,9 @@ echo 'TEST: clowder status -f'
 clowder status -f && exit 1
 echo 'TEST: clowder sync'
 clowder sync && exit 1
+echo 'TEST: clowder init'
+rm -rf .clowder || exit 1
+clowder init git@github.com:JrGoodle/cats.git && exit 1
 
 echo 'You can enable your network connection again'
 echo ''

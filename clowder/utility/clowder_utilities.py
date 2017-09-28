@@ -73,8 +73,9 @@ def force_symlink(file1, file2):
             os.remove(file2)
             os.symlink(file1, file2)
 
-def is_internet_connection_available(host='8.8.8.8', port=53, timeout=3):
+def is_offline(host='8.8.8.8', port=53, timeout=3):
     """
+    Returns True if offline, False otherwise
     Source: https://stackoverflow.com/a/33117579
     Host: 8.8.8.8 (google-public-dns-a.google.com)
     OpenPort: 53/tcp
@@ -83,9 +84,9 @@ def is_internet_connection_available(host='8.8.8.8', port=53, timeout=3):
     try:
         socket.setdefaulttimeout(timeout)
         socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host, port))
-        return True
-    except:
         return False
+    except:
+        return True
 
 def parse_yaml(yaml_file):
     """Parse yaml file"""

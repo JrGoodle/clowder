@@ -162,7 +162,7 @@ def print_missing_yaml_error():
     clowder_output = format_yaml_file('clowder.yaml')
     print(clowder_output + ' appears to be missing')
 
-def print_no_internet_exit_error():
+def print_offline_error():
     """Print error message for no internet connection"""
     cprint('No available internet connection\n', 'red')
     sys.exit(1)

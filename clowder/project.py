@@ -5,7 +5,7 @@ from termcolor import cprint
 from clowder.fork import Fork
 from clowder.utility.clowder_utilities import (
     execute_forall_command,
-    is_internet_connection_available
+    is_offline
 )
 from clowder.utility.print_utilities import (
     format_command,
@@ -104,7 +104,7 @@ class Project(object):
         if not os.path.isdir(self.full_path()):
             cprint(" - Project is missing\n", 'red')
             return
-        if is_internet_connection_available():
+        if not is_offline():
             if remote:
                 if self.fork is None:
                     git_fetch_remote(self.full_path(), self.remote_name, self.depth)
@@ -281,10 +281,10 @@ class Project(object):
         else:
             remote = self.fork.remote_name
             depth = 0
-        if is_internet_connection_available():
-            git_start(self.full_path(), remote, branch, depth, tracking)
-        else:
+        if is_offline():
             git_start_offline(self.full_path(), branch)
+        else:
+            git_start(self.full_path(), remote, branch, depth, tracking)
 
     def status(self, padding):
         """Print status for project"""

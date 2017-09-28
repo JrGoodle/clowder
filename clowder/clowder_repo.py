@@ -21,7 +21,7 @@ from clowder.utility.git_utilities import (
 from clowder.utility.clowder_utilities import (
     execute_command,
     force_symlink,
-    is_internet_connection_available,
+    is_offline,
     remove_directory_exit
 )
 from clowder.utility.print_utilities import (
@@ -117,7 +117,7 @@ class ClowderRepo(object):
             output = colored('.clowder', 'green')
             print(output)
             return
-        if is_internet_connection_available():
+        if not is_offline():
             print(' - Fetch upstream changes for clowder repo')
             git_fetch_silent(self.clowder_path)
         project_output = format_project_string(repo_path, '.clowder')
