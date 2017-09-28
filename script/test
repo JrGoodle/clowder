@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 if [ -z "$1" ]; then
-    echo 'Requires parameter "cats", "llvm", "swift", or "offline"'
+    echo 'Requires parameter "cats", "llvm", "swift", "offline", or "all"'
     exit 1
 fi
 
@@ -17,7 +17,12 @@ elif [ $1 == "swift" ]; then
     ./tests/test_example_swift.sh
 elif [ $1 == "offline" ]; then
     ./tests/test_cats_offline.sh
+elif [ $1 == "all" ]; then
+    ./tests/test_example_cats.sh
+    ./tests/test_example_llvm.sh
+    ./tests/test_example_swift.sh
+    ./tests/test_cats_offline.sh
 else
-    echo 'Requires parameter "cats", "llvm", "swift", or "offline"'
+    echo 'Requires parameter "cats", "llvm", "swift", "offline", or "all"'
     exit 1
 fi
