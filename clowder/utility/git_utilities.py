@@ -656,6 +656,51 @@ def git_start(repo_path, remote, branch, depth, tracking):
                 if tracking:
                     _create_remote_tracking_branch(repo_path, branch, remote, depth)
 
+def git_start_offline(repo_path, branch):
+    """Start new branch in repository when offline"""
+    repo = _repo(repo_path)
+    correct_branch = False
+    branch_output = format_ref_string(branch)
+    if branch not in repo.heads:
+        try:
+            print(' - Create branch ' + branch_output)
+            default_branch = repo.create_head(branch)
+        except Exception as err:
+            message = colored(' - Failed to create branch ', 'red')
+            print(message + branch_output)
+            print_error(err)
+            sys.exit(1)
+        else:
+            try:
+                print(' - Checkout branch ' + branch_output)
+                default_branch.checkout()
+            except Exception as err:
+                message = colored(' - Failed to checkout branch ', 'red')
+                print(message + branch_output)
+                print_error(err)
+                sys.exit(1)
+    print(' - ' + branch_output + ' already exists')
+    default_branch = repo.heads[branch]
+    try:
+        not_detached = not repo.head.is_detached
+        same_branch = repo.head.ref == default_branch
+    except Exception as err:
+        pass
+    else:
+        if not_detached and same_branch:
+            print(' - On correct branch')
+            correct_branch = True
+    finally:
+        if not correct_branch:
+            try:
+                print(' - Checkout branch ' + branch_output)
+                default_branch.checkout()
+            except Exception as err:
+                message = colored(' - Failed to checkout branch ', 'red')
+                print(message + branch_output)
+                print_error(err)
+                sys.exit(1)
+
 def git_stash(repo_path):
     """Stash current changes in repository"""
     repo = _repo(repo_path)

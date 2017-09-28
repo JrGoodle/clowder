@@ -21,6 +21,7 @@ from clowder.utility.git_utilities import (
 from clowder.utility.clowder_utilities import (
     execute_command,
     force_symlink,
+    is_offline,
     remove_directory_exit
 )
 from clowder.utility.print_utilities import (
@@ -116,9 +117,9 @@ class ClowderRepo(object):
             output = colored('.clowder', 'green')
             print(output)
             return
-        print(' - Fetch upstream changes for clowder repo')
-        git_fetch_silent(self.clowder_path)
-        print()
+        if not is_offline():
+            print(' - Fetch upstream changes for clowder repo')
+            git_fetch_silent(self.clowder_path)
         project_output = format_project_string(repo_path, '.clowder')
         current_ref_output = format_project_ref_string(repo_path)
 

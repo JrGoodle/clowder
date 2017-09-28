@@ -1,6 +1,7 @@
 """String formatting and printing utilities"""
 import os
-from termcolor import colored
+import sys
+from termcolor import colored, cprint
 
 # Disable errors shown by pylint for invalid function name
 # pylint: disable=C0103
@@ -160,6 +161,11 @@ def print_missing_yaml_error():
     """Print error message for missing clowder.yaml"""
     clowder_output = format_yaml_file('clowder.yaml')
     print(clowder_output + ' appears to be missing')
+
+def print_offline_error():
+    """Print error message for no internet connection"""
+    cprint('No available internet connection\n', 'red')
+    sys.exit(1)
 
 def print_open_file_error(path):
     """Print error message for failing to open file"""
