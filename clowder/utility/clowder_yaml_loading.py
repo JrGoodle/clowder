@@ -41,6 +41,14 @@ def _load_yaml_import_groups(imported_groups, groups):
         combined_groups = []
         for group in groups:
             if group['name'] == imported_group['name']:
+                if 'ref' in imported_group:
+                    group['ref'] = imported_group['ref']
+                if 'remote' in imported_group:
+                    group['remote'] = imported_group['remote']
+                if 'source' in imported_group:
+                    group['source'] = imported_group['source']
+                if 'depth' in imported_group:
+                    group['depth'] = imported_group['depth']
                 _load_yaml_import_projects(imported_group['projects'], group['projects'])
             combined_groups.append(group)
         groups = combined_groups

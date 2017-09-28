@@ -257,6 +257,32 @@ def validate_yaml_groups(groups, yaml_file):
             validate_yaml_projects(group['projects'], yaml_file)
             del group['projects']
 
+            if 'ref' in group:
+                if not isinstance(group['ref'], str):
+                    error = format_not_string_error('ref', yaml_file)
+                    raise Exception(error)
+                del group['ref']
+
+            if 'remote' in group:
+                if not isinstance(group['remote'], str):
+                    error = format_not_string_error('remote', yaml_file)
+                    raise Exception(error)
+                del group['remote']
+
+            if 'source' in group:
+                if not isinstance(group['source'], str):
+                    error = format_not_string_error('source', yaml_file)
+                    raise Exception(error)
+                del group['source']
+
+            if 'depth' in group:
+                error = format_depth_error(group['depth'], yaml_file)
+                if not isinstance(group['depth'], int):
+                    raise Exception(error)
+                if int(group['depth']) < 0:
+                    raise Exception(error)
+                del group['depth']
+
             if len(group) > 0:
                 error = format_invalid_entries_error('group', group, yaml_file)
                 raise Exception(error)

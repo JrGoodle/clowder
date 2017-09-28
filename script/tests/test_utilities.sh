@@ -17,6 +17,7 @@ fi
 
 setup_local_test_directory() {
     echo 'Set up local test directory at .clowder_tests'
+    echo "Removing existing test files"
     rm -rf "$HOME/.clowder_tests" || exit 1
     mkdir -p "$HOME/.clowder_tests" || exit 1
     cp -r "$EXAMPLES_DIR/cats" "$CATS_EXAMPLE_DIR" || exit 1

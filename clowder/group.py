@@ -7,9 +7,34 @@ class Group(object):
 
     def __init__(self, root_directory, group, defaults, sources):
         self.name = group['name']
+
+        if 'depth' in group:
+            self.depth = group['depth']
+        else:
+            self.depth = defaults['depth']
+
+        if 'ref' in group:
+            self.ref = group['ref']
+        else:
+            self.ref = defaults['ref']
+
+        if 'remote' in group:
+            self.remote_name = group['remote']
+        else:
+            self.remote_name = defaults['remote']
+
+        if 'source' in group:
+            source_name = group['source']
+        else:
+            source_name = defaults['source']
+
+        for source in sources:
+            if source.name == source_name:
+                self.source = source
+
         self.projects = []
         for project in group['projects']:
-            self.projects.append(Project(root_directory, project, defaults, sources))
+            self.projects.append(Project(root_directory, project, group, defaults, sources))
         self.projects.sort(key=lambda project: project.path)
 
     def get_yaml(self):

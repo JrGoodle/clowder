@@ -38,6 +38,10 @@ from clowder.utility.git_utilities import (
     git_validate_repo_state
 )
 
+# Disable errors shown by pylint for too many branches
+# pylint: disable=R0912
+# Disable errors shown by pylint for too many arguments
+# pylint: disable=R0913
 # Disable errors shown by pylint for too many instance attributes
 # pylint: disable=R0902
 # Disable errors shown by pylint for no specified exception types
@@ -46,28 +50,36 @@ from clowder.utility.git_utilities import (
 class Project(object):
     """clowder.yaml project class"""
 
-    def __init__(self, root_directory, project, defaults, sources):
+    def __init__(self, root_directory, project, group, defaults, sources):
         self.root_directory = root_directory
         self.name = project['name']
         self.path = project['path']
 
         if 'depth' in project:
             self.depth = project['depth']
+        elif 'depth' in group:
+            self.depth = group['depth']
         else:
             self.depth = defaults['depth']
 
         if 'ref' in project:
             self.ref = project['ref']
+        elif 'ref' in group:
+            self.ref = group['ref']
         else:
             self.ref = defaults['ref']
 
         if 'remote' in project:
             self.remote_name = project['remote']
+        elif 'remote' in group:
+            self.remote_name = group['remote']
         else:
             self.remote_name = defaults['remote']
 
         if 'source' in project:
             source_name = project['source']
+        elif 'source' in group:
+            source_name = group['source']
         else:
             source_name = defaults['source']
 
