@@ -3,7 +3,10 @@ import os
 import sys
 from termcolor import cprint
 from clowder.fork import Fork
-from clowder.utility.clowder_utilities import execute_forall_command
+from clowder.utility.clowder_utilities import (
+    execute_forall_command,
+    is_internet_connection_available
+)
 from clowder.utility.print_utilities import (
     format_command,
     format_fork_string,
@@ -32,6 +35,7 @@ from clowder.utility.git_utilities import (
     git_reset_head,
     git_sha_long,
     git_start,
+    git_start_offline,
     git_stash,
     git_status,
     git_sync,
@@ -100,12 +104,13 @@ class Project(object):
         if not os.path.isdir(self.full_path()):
             cprint(" - Project is missing\n", 'red')
             return
-        if remote:
-            if self.fork is None:
-                git_fetch_remote(self.full_path(), self.remote_name, self.depth)
-            else:
-                git_fetch_remote(self.full_path(), self.fork.remote_name, 0)
-                git_fetch_remote(self.full_path(), self.remote_name, 0)
+        if is_internet_connection_available():
+            if remote:
+                if self.fork is None:
+                    git_fetch_remote(self.full_path(), self.remote_name, self.depth)
+                else:
+                    git_fetch_remote(self.full_path(), self.fork.remote_name, 0)
+                    git_fetch_remote(self.full_path(), self.remote_name, 0)
         git_print_branches(self.full_path(), local=local, remote=remote)
 
     def clean(self):
@@ -276,7 +281,10 @@ class Project(object):
         else:
             remote = self.fork.remote_name
             depth = 0
-        git_start(self.full_path(), remote, branch, depth, tracking)
+        if is_internet_connection_available():
+            git_start(self.full_path(), remote, branch, depth, tracking)
+        else:
+            git_start_offline(self.full_path(), branch)
 
     def status(self, padding):
         """Print status for project"""

@@ -250,6 +250,8 @@ class Command(object):
             exit_clowder_not_found()
         self.clowder_repo.print_status()
         repo_command = 'repo_' + self.args.repo_command
+        if not is_internet_connection_available():
+            print()
         getattr(self, repo_command)()
 
     def repo_add(self):
@@ -372,12 +374,12 @@ class Command(object):
         print()
         if self.clowder is None:
             sys.exit(1)
+        if not is_internet_connection_available():
+            print_no_internet_exit_error()
         all_fork_projects = self.clowder.get_all_fork_project_names()
         if all_fork_projects is '':
             cprint(' - No forks to sync\n', 'red')
             sys.exit()
-        if not is_internet_connection_available():
-            print_no_internet_exit_error()
         self.clowder.sync(all_fork_projects)
 
     def _exit_handler_formatter(self):
