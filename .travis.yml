@@ -14,11 +14,14 @@ env:
     - TARGET="cats"
     - TARGET="llvm"
     - TARGET="swift"
+    - TARGET="python2"
 
 matrix:
   exclude:
   - os: osx
     env: TARGET="llvm"
+  - os: osx
+    env: TARGET="python2"
 
 before_install: script/bootstrap
 

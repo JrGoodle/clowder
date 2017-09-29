@@ -2,17 +2,23 @@
 
 CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-export EXAMPLES_DIR="$CURRENT_DIR/../../examples"
-export TEST_SCRIPT_DIR="$CURRENT_DIR/.."
+export EXAMPLES_DIR
+EXAMPLES_DIR="$( cd $CURRENT_DIR/../../examples && pwd)"
+export TEST_SCRIPT_DIR
+TEST_SCRIPT_DIR="$( cd $CURRENT_DIR/.. && pwd)"
+export CLOWDER_PROJECT_DIR
+CLOWDER_PROJECT_DIR="$( cd $CURRENT_DIR/../.. && pwd)"
 
 if [ -n "$TRAVIS_OS_NAME" ]; then
     export CATS_EXAMPLE_DIR="$CURRENT_DIR/../../examples/cats"
     export LLVM_EXAMPLE_DIR="$CURRENT_DIR/../../examples/llvm-projects"
     export SWIFT_EXAMPLE_DIR="$CURRENT_DIR/../../examples/swift-projects"
+    export PYTHON_VERSIONS_DIR="$CURRENT_DIR/../../python2_virtualenv"
 else
     export CATS_EXAMPLE_DIR="$HOME/.clowder_tests/cats"
     export LLVM_EXAMPLE_DIR="$HOME/.clowder_tests/llvm-projects"
     export SWIFT_EXAMPLE_DIR="$HOME/.clowder_tests//swift-projects"
+    export PYTHON_VERSIONS_DIR="$HOME/python2_virtualenv"
 fi
 
 setup_local_test_directory() {
