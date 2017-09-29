@@ -70,8 +70,10 @@ class Project(object):
             self.recursive = project['recursive']
         elif 'recursive' in group:
             self.recursive = group['recursive']
-        else:
+        elif 'recursive' in defaults:
             self.recursive = defaults['recursive']
+        else:
+            self.recursive = False
 
         if 'ref' in project:
             self.ref = project['ref']
@@ -202,7 +204,7 @@ class Project(object):
                                       self.fork.remote_name, self.fork.url)
                 print(format_fork_string(self.fork.name))
                 git_herd(self.full_path(), self.fork.url, self.fork.remote_name,
-                         self.ref, 0)
+                         self.ref, 0, self.recursive)
                 print(format_fork_string(self.name))
                 git_herd_upstream(self.full_path(), self.url, self.remote_name,
                                   self.ref, 0, self.recursive)
@@ -217,7 +219,7 @@ class Project(object):
                                       self.fork.remote_name, self.fork.url)
                 print(format_fork_string(self.fork.name))
                 git_herd_branch(self.full_path(), self.fork.url, self.fork.remote_name,
-                                branch, self.ref, 0)
+                                branch, self.ref, 0, self.recursive)
                 print(format_fork_string(self.name))
                 git_herd_branch_upstream(self.full_path(), self.url, self.remote_name,
                                          branch, self.ref, 0, self.recursive)
@@ -311,10 +313,10 @@ class Project(object):
                               self.fork.remote_name, self.fork.url)
         print(format_fork_string(self.fork.name))
         git_herd(self.full_path(), self.fork.url, self.fork.remote_name,
-                 self.ref, 0)
+                 self.ref, 0, self.recursive)
         print(format_fork_string(self.name))
         git_herd_upstream(self.full_path(), self.url, self.remote_name,
-                          self.ref, 0)
+                          self.ref, 0, self.recursive)
         self.fork.print_status()
         git_sync(self.full_path(), self.remote_name, self.fork.remote_name, self.ref)
 

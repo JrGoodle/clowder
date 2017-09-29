@@ -15,8 +15,10 @@ class Group(object):
 
         if 'recursive' in group:
             self.recursive = group['recursive']
-        else:
+        elif 'recursive' in group:
             self.recursive = defaults['recursive']
+        else:
+            self.recursive = False
 
         if 'ref' in group:
             self.ref = group['ref']
