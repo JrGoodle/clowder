@@ -1,14 +1,11 @@
 """
 Setup file for clowder
 """
-import sys
+
 from setuptools import setup
 
 # Written according to the docs at
 # https://packaging.python.org/en/latest/distributing.html
-
-if sys.version_info[0] < 3:
-    sys.exit('This script requires python 3.0 or higher to run.')
 
 setup(
     name='clowder-repo',
@@ -23,6 +20,8 @@ setup(
         'Intended Audience :: Developers',
         'Topic :: Software Development :: Build Tools',
         'License :: OSI Approved :: MIT License',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.2',
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
