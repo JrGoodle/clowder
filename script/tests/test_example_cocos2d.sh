@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 
-# set -xv
+set -xv
 
 cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 
 . test_utilities.sh
 
-export external_projects=( 'external/Chipmunk' \
-                           'external/ObjectAL' \
-                           'external/SSZipArchive' )
+export external_projects=( 'cocos2d-objc/external/Chipmunk' \
+                           'cocos2d-objc/external/ObjectAL' \
+                           'cocos2d-objc/external/SSZipArchive' )
 
 print_double_separator
 echo 'TEST: cocos2d example test script'
@@ -20,6 +20,7 @@ fi
 
 cd "$COCOS2D_EXAMPLE_DIR" || exit 1
 
+./clean.sh
 ./init.sh
 
 test_recurse() {
@@ -35,11 +36,12 @@ test_recurse() {
 test_recurse
 
 ./clean.sh
+./init.sh
 
 test_no_recurse() {
     print_single_separator
     echo "TEST: Herd without updating submodules"
-    clowder link -v no-recurse
+    clowder link -v no-recurse || exit 1
     clowder herd || exit 1
     for project in "${external_projects[@]}"; do
     	if [ -d "$project" ]; then

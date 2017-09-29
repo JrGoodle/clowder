@@ -730,7 +730,8 @@ def git_status(repo_path):
         sys.exit(return_code)
 
 def git_submodule_update_recursive(repo_path, depth):
-    """Fetch from a specific remote"""
+    """Update submodules recursively and initialize if not present"""
+    print(' - Update submodules recursively and initialize if not present')
     if depth == 0:
         command = ['git', 'submodule', 'update', '--init', '--recursive']
     else:
