@@ -45,6 +45,7 @@ class Command(object):
         self.clowder_repo = None
         self.versions = None
         self._invalid_yaml = False
+        self._version = '2.3.0'
         # Load current clowder.yml config if it exists
         clowder_path = os.path.join(self.root_directory, '.clowder')
         if os.path.isdir(clowder_path):
@@ -76,9 +77,6 @@ class Command(object):
         self.args = parser.parse_args()
         self._display_trailing_newline = False
 
-        if self.args.clowder_version:
-            print('clowder version 2.3.0')
-            sys.exit()
         if self.args.clowder_command is None or not hasattr(self, self.args.clowder_command):
             exit_unrecognized_command(parser)
         # use dispatch pattern to invoke method with same name
@@ -406,6 +404,11 @@ class Command(object):
             cprint(' - No forks to sync\n', 'red')
             sys.exit()
         self.clowder.sync(all_fork_projects, rebase=self.args.rebase)
+
+    def version(self):
+        """clowder version command"""
+        print('clowder version ' + self._version + '\n')
+        sys.exit()
 
     def yaml(self):
         """clowder yaml command"""

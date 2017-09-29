@@ -172,8 +172,7 @@ test_untracked_files() {
 test_clowder_version() {
     print_double_separator
     echo "TEST: Print clowder version"
-    clowder --version || exit 1
-    clowder -v || exit 1
+    clowder version || exit 1
 }
 
 print_single_separator() {
