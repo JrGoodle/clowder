@@ -2,8 +2,8 @@
 
 def configure_argparse(parser, clowder, versions):
     """Configure clowder argparse"""
-    parser.add_argument('--version', '-v', action='store_true',
-                        dest='clowder_version', help='print clowder version')
+    parser.add_argument('--version', action='version', version='%(prog)s 2.2.0',
+                        help='print clowder version')
     subparsers = parser.add_subparsers(dest='clowder_command', metavar='SUBCOMMAND')
     _configure_subparsers(subparsers, clowder, versions)
 

@@ -62,9 +62,6 @@ class Command(object):
         self.args = parser.parse_args()
         self._display_trailing_newline = False
 
-        if self.args.clowder_version:
-            print('clowder version 2.2.0')
-            sys.exit()
         if self.args.clowder_command is None or not hasattr(self, self.args.clowder_command):
             exit_unrecognized_command(parser)
         # use dispatch pattern to invoke method with same name
