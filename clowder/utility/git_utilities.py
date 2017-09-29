@@ -269,7 +269,7 @@ def git_fetch_silent(repo_path):
         print_command_failed_error(command)
         sys.exit(return_code)
 
-def git_herd(repo_path, url, remote, ref, depth):
+def git_herd(repo_path, url, remote, ref, depth, recursive):
     """Herd ref"""
     if not git_existing_repository(repo_path):
         git_create_repo(repo_path, url, remote, ref, depth)
@@ -289,8 +289,11 @@ def git_herd(repo_path, url, remote, ref, depth):
         git_checkout_ref(repo_path, ref, remote, depth)
     else:
         cprint('Unknown ref ' + ref, 'red')
+        sys.exit(1)
+    if recursive:
+        git_submodule_update_recursive(repo_path, depth)
 
-def git_herd_branch(repo_path, url, remote, branch, default_ref, depth):
+def git_herd_branch(repo_path, url, remote, branch, default_ref, depth, recursive):
     """Herd branch"""
     if not git_existing_repository(repo_path):
         git_create_repo_herd_branch(repo_path, url, remote, branch,
@@ -312,7 +315,7 @@ def git_herd_branch(repo_path, url, remote, branch, default_ref, depth):
     return_code = execute_command(command, repo_path)
     if return_code != 0:
         print(error)
-        git_herd(repo_path, url, remote, default_ref, depth)
+        git_herd(repo_path, url, remote, default_ref, depth, recursive)
         return
     if git_existing_local_branch(repo_path, branch):
         git_checkout_ref(repo_path, 'refs/heads/' + branch, remote, depth)
@@ -322,11 +325,13 @@ def git_herd_branch(repo_path, url, remote, branch, default_ref, depth):
             else:
                 git_set_tracking_branch(repo_path, branch, remote, depth)
     elif git_existing_remote_branch(repo_path, branch, remote):
-        git_herd(repo_path, url, remote, 'refs/heads/' + branch, depth)
+        git_herd(repo_path, url, remote, 'refs/heads/' + branch, depth, recursive)
     else:
-        git_herd(repo_path, url, remote, default_ref, depth)
+        git_herd(repo_path, url, remote, default_ref, depth, recursive)
+    if recursive:
+        git_submodule_update_recursive(repo_path, depth)
 
-def git_herd_branch_upstream(repo_path, url, remote, branch, default_ref, depth):
+def git_herd_branch_upstream(repo_path, url, remote, branch, default_ref, depth, recursive):
     """Herd branch for fork's upstream repo"""
     git_create_remote(repo_path, remote, url)
     remote_output = format_remote_string(remote)
@@ -350,11 +355,15 @@ def git_herd_branch_upstream(repo_path, url, remote, branch, default_ref, depth)
         if return_code != 0:
             print(error)
             git_fetch_remote_ref(repo_path, remote, default_ref, depth)
+    if recursive:
+        git_submodule_update_recursive(repo_path, depth)
 
-def git_herd_upstream(repo_path, url, remote, ref, depth):
+def git_herd_upstream(repo_path, url, remote, ref, depth, recursive):
     """Herd branch for fork's upstream repo"""
     git_create_remote(repo_path, remote, url)
     git_fetch_remote_ref(repo_path, remote, ref, depth)
+    if recursive:
+        git_submodule_update_recursive(repo_path, depth)
 
 def git_is_detached(repo_path):
     """Check if HEAD is detached"""
@@ -717,6 +726,18 @@ def git_status(repo_path):
     return_code = execute_command(command, repo_path)
     if return_code != 0:
         cprint(' - Failed to print status', 'red')
+        print_command_failed_error(command)
+        sys.exit(return_code)
+
+def git_submodule_update_recursive(repo_path, depth):
+    """Fetch from a specific remote"""
+    if depth == 0:
+        command = ['git', 'submodule', 'update', '--init', '--recursive']
+    else:
+        command = ['git', 'submodule', 'update', '--init', '--recursive', '--depth', depth]
+    return_code = execute_command(command, repo_path)
+    if return_code != 0:
+        cprint(' - Failed to update submodules', 'red')
         print_command_failed_error(command)
         sys.exit(return_code)
 

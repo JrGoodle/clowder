@@ -5,6 +5,7 @@ from clowder.utility.print_utilities import (
     format_depth_error,
     format_empty_yaml_error,
     format_missing_entry_error,
+    format_not_bool_error,
     format_not_dictionary_error,
     format_not_list_error,
     format_not_string_error,
@@ -111,6 +112,11 @@ def validate_yaml_import_defaults(defaults, yaml_file):
     if not isinstance(defaults, dict):
         error = format_not_dictionary_error('defaults', yaml_file)
         raise Exception(error)
+    if 'recursive' in defaults:
+        if not isinstance(defaults['recursive'], bool):
+            error = format_not_bool_error('recursive', yaml_file)
+            raise Exception(error)
+        del defaults['recursive']
     if 'ref' in defaults:
         if not isinstance(defaults['ref'], str):
             error = format_not_string_error('ref', yaml_file)
@@ -191,6 +197,12 @@ def validate_yaml_defaults_optional(defaults, yaml_file):
             raise Exception(error)
         del defaults['depth']
 
+    if 'recursive' in defaults:
+        if not isinstance(defaults['recursive'], bool):
+            error = format_not_bool_error('recursive', yaml_file)
+            raise Exception(error)
+        del defaults['recursive']
+
 def validate_yaml_fork(fork, yaml_file):
     """Validate fork in clowder loaded from yaml file"""
     try:
@@ -256,6 +268,12 @@ def validate_yaml_groups(groups, yaml_file):
                 raise Exception(error)
             validate_yaml_projects(group['projects'], yaml_file)
             del group['projects']
+
+            if 'recursive' in group:
+                if not isinstance(group['recursive'], bool):
+                    error = format_not_bool_error('recursive', yaml_file)
+                    raise Exception(error)
+                del group['recursive']
 
             if 'ref' in group:
                 if not isinstance(group['ref'], str):
@@ -329,6 +347,12 @@ def validate_yaml_project_optional(project, yaml_file):
             error = format_not_string_error('remote', yaml_file)
             raise Exception(error)
         del project['remote']
+
+    if 'recursive' in project:
+        if not isinstance(project['recursive'], bool):
+            error = format_not_bool_error('recursive', yaml_file)
+            raise Exception(error)
+        del project['recursive']
 
     if 'ref' in project:
         if not isinstance(project['ref'], str):

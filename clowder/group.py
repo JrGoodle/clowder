@@ -13,6 +13,11 @@ class Group(object):
         else:
             self.depth = defaults['depth']
 
+        if 'recursive' in group:
+            self.recursive = group['recursive']
+        else:
+            self.recursive = defaults['recursive']
+
         if 'ref' in group:
             self.ref = group['ref']
         else:
