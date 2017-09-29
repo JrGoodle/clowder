@@ -44,12 +44,17 @@ echo 'TEST: Run unittests'
 echo ''
 
 if [ -n "$TRAVIS_OS_NAME" ]; then
-    python3 test/test_clowder_repo.py || exit 1
-    python3 test/test_fork.py || exit 1
-    python3 test/test_git_utilities.py || exit 1
-    python3 test/test_group.py || exit 1
-    python3 test/test_project.py || exit 1
-    python3 test/test_source.py || exit 1
+    if [ "$TARGET" == 'python2' ]; then
+        PYTHON_VERSION='python'
+    else
+        PYTHON_VERSION='python3'
+    fi
+    $PYTHON_VERSION test/test_clowder_repo.py || exit 1
+    $PYTHON_VERSION test/test_fork.py || exit 1
+    $PYTHON_VERSION test/test_git_utilities.py || exit 1
+    $PYTHON_VERSION test/test_group.py || exit 1
+    $PYTHON_VERSION test/test_project.py || exit 1
+    $PYTHON_VERSION test/test_source.py || exit 1
 else
     python3 test/test_clowder_repo.py "$CATS_EXAMPLE_DIR" || exit 1
     python3 test/test_fork.py "$CATS_EXAMPLE_DIR" || exit 1
