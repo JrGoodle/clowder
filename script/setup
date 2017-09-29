@@ -2,6 +2,15 @@
 
 cd "$( dirname "${BASH_SOURCE[0]}" )/.." || exit 1
 
+if [ -n "$TRAVIS_OS_NAME" ]; then
+    if [ -n "$TARGET" ]; then
+        if [ "$TARGET" == 'python2' ]; then
+            sudo -H pip install -e .
+            exit
+        fi
+    fi
+fi
+
 case "$(uname)" in
     Linux*) export MY_PLATFORM="linux";
         sudo -H pip3 install -e .

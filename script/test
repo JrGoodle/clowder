@@ -7,6 +7,11 @@ fi
 
 cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 
+if [ $1 == "python2" ]; then
+    ./tests/test_example_cats.sh
+    exit
+fi
+
 ./update
 
 if [ $1 == "cats" ]; then
