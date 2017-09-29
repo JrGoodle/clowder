@@ -15,6 +15,7 @@ env:
     - TARGET="cocos2d"
     - TARGET="llvm"
     - TARGET="swift"
+    - TARGET="python2"
 
 matrix:
   exclude:
@@ -24,6 +25,8 @@ matrix:
     env: TARGET="llvm"
   - os: osx
     env: TARGET="swift"
+  - os: osx
+    env: TARGET="python2"
 
 before_install: script/bootstrap
 
