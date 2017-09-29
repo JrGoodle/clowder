@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 if [ -z "$1" ]; then
-    echo 'Requires parameter "cats", "llvm", "swift", "offline", or "all"'
+    echo 'Requires parameter "cocos2d", "cats", "llvm", "swift", "offline", or "all"'
     exit 1
 fi
 
@@ -11,6 +11,8 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 
 if [ $1 == "cats" ]; then
     ./tests/test_example_cats.sh
+elif [ $1 == "cocos2d" ]; then
+    ./tests/test_example_cocos2d.sh
 elif [ $1 == "llvm" ]; then
     ./tests/test_example_llvm.sh
 elif [ $1 == "swift" ]; then
@@ -23,6 +25,6 @@ elif [ $1 == "all" ]; then
     ./tests/test_example_swift.sh
     ./tests/test_cats_offline.sh
 else
-    echo 'Requires parameter "cats", "llvm", "swift", "offline", or "all"'
+    echo 'Requires parameter "cocos2d", "cats", "llvm", "swift", "offline", or "all"'
     exit 1
 fi

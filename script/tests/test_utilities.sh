@@ -9,10 +9,12 @@ if [ -n "$TRAVIS_OS_NAME" ]; then
     export CATS_EXAMPLE_DIR="$CURRENT_DIR/../../examples/cats"
     export LLVM_EXAMPLE_DIR="$CURRENT_DIR/../../examples/llvm-projects"
     export SWIFT_EXAMPLE_DIR="$CURRENT_DIR/../../examples/swift-projects"
+    export COCOS2D_EXAMPLE_DIR="$CURRENT_DIR/../../examples/cocos2d-objc"
 else
     export CATS_EXAMPLE_DIR="$HOME/.clowder_tests/cats"
     export LLVM_EXAMPLE_DIR="$HOME/.clowder_tests/llvm-projects"
     export SWIFT_EXAMPLE_DIR="$HOME/.clowder_tests//swift-projects"
+    export COCOS2D_EXAMPLE_DIR="$HOME/.clowder_tests/cocos2d-objc"
 fi
 
 setup_local_test_directory() {
@@ -23,6 +25,7 @@ setup_local_test_directory() {
     cp -r "$EXAMPLES_DIR/cats" "$CATS_EXAMPLE_DIR" || exit 1
     cp -r "$EXAMPLES_DIR/llvm-projects" "$LLVM_EXAMPLE_DIR" || exit 1
     cp -r "$EXAMPLES_DIR/swift-projects" "$SWIFT_EXAMPLE_DIR" || exit 1
+    cp -r "$EXAMPLES_DIR/cocos2d-objc" "$COCOS2D_EXAMPLE_DIR" || exit 1
 }
 
 prepare_cats_example() {
