@@ -20,11 +20,6 @@ fi
 
 cd "$CATS_EXAMPLE_DIR" || exit 1
 
-export projects=( 'black-cats/kit' \
-                  'black-cats/kishka' \
-                  'black-cats/sasha' \
-                  'black-cats/jules' )
-
 test_clowder_version
 
 "$TEST_SCRIPT_DIR/tests/test_cats_init.sh" || exit 1
