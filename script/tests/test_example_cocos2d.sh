@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -xv
+# set -xv
 
 cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 
@@ -27,8 +27,11 @@ test_recurse() {
     print_single_separator
     echo "TEST: Herd recursive submodules"
     clowder herd || exit 1
+    clowder status || exit 1
     for project in "${external_projects[@]}"; do
-    	if [ ! -d "$project" ]; then
+        echo "TEST: Check that $project submodule was initialized"
+    	if [ ! -f "$project/.git" ]; then
+            echo "TEST: Submodule should exist"
             exit 1
         fi
     done
@@ -43,8 +46,11 @@ test_no_recurse() {
     echo "TEST: Herd without updating submodules"
     clowder link -v no-recurse || exit 1
     clowder herd || exit 1
+    clowder status || exit 1
     for project in "${external_projects[@]}"; do
-    	if [ -d "$project" ]; then
+        echo "TEST: Check that $project submodule wasn't initialized"
+    	if [ -f "$project/.git" ]; then
+            echo "TEST: Submodule shouldn't exist"
             exit 1
         fi
     done
