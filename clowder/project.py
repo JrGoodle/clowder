@@ -197,32 +197,32 @@ class Project(object):
             if self.fork is None:
                 self._print_status()
                 git_herd(self.full_path(), self.url, self.remote_name, self.ref,
-                         herd_depth, self.recursive)
+                         depth=herd_depth, recursive=self.recursive)
             else:
                 self.fork.print_status()
                 git_configure_remotes(self.full_path(), self.remote_name, self.url,
                                       self.fork.remote_name, self.fork.url)
                 print(format_fork_string(self.fork.name))
                 git_herd(self.full_path(), self.fork.url, self.fork.remote_name,
-                         self.ref, 0, self.recursive)
+                         self.ref, recursive=self.recursive)
                 print(format_fork_string(self.name))
                 git_herd_upstream(self.full_path(), self.url, self.remote_name,
-                                  self.ref, 0, self.recursive)
+                                  self.ref, recursive=self.recursive)
         else:
             if self.fork is None:
                 self._print_status()
                 git_herd_branch(self.full_path(), self.url, self.remote_name,
-                                branch, self.ref, herd_depth, self.recursive)
+                                branch, self.ref, depth=herd_depth, recursive=self.recursive)
             else:
                 self.fork.print_status()
                 git_configure_remotes(self.full_path(), self.remote_name, self.url,
                                       self.fork.remote_name, self.fork.url)
                 print(format_fork_string(self.fork.name))
                 git_herd_branch(self.full_path(), self.fork.url, self.fork.remote_name,
-                                branch, self.ref, 0, self.recursive)
+                                branch, self.ref, recursive=self.recursive)
                 print(format_fork_string(self.name))
                 git_herd_branch_upstream(self.full_path(), self.url, self.remote_name,
-                                         branch, self.ref, 0, self.recursive)
+                                         branch, self.ref, recursive=self.recursive)
 
     def is_dirty(self):
         """Check if project is dirty"""
@@ -313,10 +313,10 @@ class Project(object):
                               self.fork.remote_name, self.fork.url)
         print(format_fork_string(self.fork.name))
         git_herd(self.full_path(), self.fork.url, self.fork.remote_name,
-                 self.ref, 0, self.recursive)
+                 self.ref, recursive=self.recursive)
         print(format_fork_string(self.name))
         git_herd_upstream(self.full_path(), self.url, self.remote_name,
-                          self.ref, 0, self.recursive)
+                          self.ref, recursive=self.recursive)
         self.fork.print_status()
         git_sync(self.full_path(), self.remote_name, self.fork.remote_name, self.ref)
 
