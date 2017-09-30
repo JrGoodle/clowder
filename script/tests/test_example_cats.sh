@@ -25,37 +25,37 @@ export projects=( 'black-cats/kit' \
 
 test_clowder_version
 
-"$TEST_SCRIPT_DIR/tests/test_cats_init.sh"
-"$TEST_SCRIPT_DIR/tests/test_command.sh"
-"$TEST_SCRIPT_DIR/tests/test_cats_branch.sh"
-"$TEST_SCRIPT_DIR/tests/test_cats_status.sh"
-"$TEST_SCRIPT_DIR/tests/test_cats_clean.sh"
-"$TEST_SCRIPT_DIR/tests/test_cats_herd.sh"
-"$TEST_SCRIPT_DIR/tests/test_cats_herd_branch.sh"
-"$TEST_SCRIPT_DIR/tests/test_cats_forall.sh"
-"$TEST_SCRIPT_DIR/tests/test_cats_save.sh"
-"$TEST_SCRIPT_DIR/tests/test_cats_stash.sh"
-"$TEST_SCRIPT_DIR/tests/test_cats_link.sh"
-"$TEST_SCRIPT_DIR/tests/test_cats_yaml_validation.sh"
-"$TEST_SCRIPT_DIR/tests/test_cats_start.sh"
-"$TEST_SCRIPT_DIR/tests/test_cats_prune.sh"
-"$TEST_SCRIPT_DIR/tests/test_cats_repo.sh"
-"$TEST_SCRIPT_DIR/tests/test_cats_import.sh"
+"$TEST_SCRIPT_DIR/tests/test_cats_init.sh" || exit 1
+"$TEST_SCRIPT_DIR/tests/test_command.sh" || exit 1
+"$TEST_SCRIPT_DIR/tests/test_cats_branch.sh" || exit 1
+"$TEST_SCRIPT_DIR/tests/test_cats_status.sh" || exit 1
+"$TEST_SCRIPT_DIR/tests/test_cats_clean.sh" || exit 1
+"$TEST_SCRIPT_DIR/tests/test_cats_herd.sh" || exit 1
+"$TEST_SCRIPT_DIR/tests/test_cats_herd_branch.sh" || exit 1
+"$TEST_SCRIPT_DIR/tests/test_cats_forall.sh" || exit 1
+"$TEST_SCRIPT_DIR/tests/test_cats_save.sh" || exit 1
+"$TEST_SCRIPT_DIR/tests/test_cats_stash.sh" || exit 1
+"$TEST_SCRIPT_DIR/tests/test_cats_link.sh" || exit 1
+"$TEST_SCRIPT_DIR/tests/test_cats_yaml_validation.sh" || exit 1
+"$TEST_SCRIPT_DIR/tests/test_cats_start.sh" || exit 1
+"$TEST_SCRIPT_DIR/tests/test_cats_prune.sh" || exit 1
+"$TEST_SCRIPT_DIR/tests/test_cats_repo.sh" || exit 1
+"$TEST_SCRIPT_DIR/tests/test_cats_import.sh" || exit 1
 
 test_help() {
     print_double_separator
     echo "TEST: Print help with invalid clowder.yaml"
     clowder repo checkout master || exit 1
-    clowder link -v 'missing-defaults' >/dev/null
-    clowder herd >/dev/null
+    clowder link -v 'missing-defaults' || exit 1
+    clowder herd || exit 1
     clowder status || exit 1
-    "$TEST_SCRIPT_DIR/tests/test_help.sh" "$CATS_EXAMPLE_DIR"
+    "$TEST_SCRIPT_DIR/tests/test_help.sh" "$CATS_EXAMPLE_DIR" || exit 1
 
     print_double_separator
     echo "TEST: Print help with valid clowder.yaml"
-    clowder link >/dev/null
-    clowder herd >/dev/null
+    clowder link || exit 1
+    clowder herd || exit 1
     clowder status || exit 1
-    "$TEST_SCRIPT_DIR/tests/test_help.sh" "$CATS_EXAMPLE_DIR"
+    "$TEST_SCRIPT_DIR/tests/test_help.sh" "$CATS_EXAMPLE_DIR" || exit 1
 }
 test_help

@@ -211,7 +211,7 @@ if [ -z "$TRAVIS_OS_NAME" ]; then
         done
 
         echo "TEST: Existing local branch checked out, no remote branch"
-        clowder prune -af tracking_branch
+        clowder prune -af tracking_branch || exit 1
         clowder start tracking_branch || exit 1
 
         for project in "${all_projects[@]}"; do
@@ -233,9 +233,9 @@ if [ -z "$TRAVIS_OS_NAME" ]; then
         done
 
         echo "TEST: Existing local branch not checked out, no remote branch"
-        clowder prune -r tracking_branch >/dev/null
+        clowder prune -r tracking_branch || exit 1
         clowder start tracking_branch || exit 1
-        clowder forall -c 'git checkout master'
+        clowder forall -c 'git checkout master' || exit 1
 
         for project in "${all_projects[@]}"; do
             pushd $project

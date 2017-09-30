@@ -84,7 +84,7 @@ git add newfile || exit 1
 popd
 clowder repo commit 'Add newfile' || exit 1
 pushd .clowder
-git reset --hard HEAD~1
+git reset --hard HEAD~1 || exit 1
 popd
 print_single_separator
 echo 'TEST: clowder repo pull'

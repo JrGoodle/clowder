@@ -167,6 +167,6 @@ test_clean_missing_directories() {
         popd
     done
 
-    clowder herd >/dev/null
+    clowder herd || exit 1
 }
 test_clean_missing_directories 'mu' 'duke'

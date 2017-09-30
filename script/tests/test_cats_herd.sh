@@ -78,7 +78,7 @@ test_herd_detached_heads() {
     for project in "$@"
     do
     	pushd $project >/dev/null
-        git checkout master~2 >/dev/null
+        git checkout master~2 >/dev/null || exit 1
         popd >/dev/null
     done
     clowder status || exit 1
@@ -128,10 +128,10 @@ test_herd_missing_branches() {
     clowder herd || exit 1
     echo "TEST: Delete default branches locally"
     pushd mu >/dev/null
-    git branch -D knead >/dev/null
+    git branch -D knead || exit 1
     popd >/dev/null
     pushd duke >/dev/null
-    git branch -D purr >/dev/null
+    git branch -D purr || exit 1
     popd >/dev/null
     echo "TEST: Herd existing repo's with no default branch locally"
     clowder link || exit 1

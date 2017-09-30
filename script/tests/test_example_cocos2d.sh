@@ -21,7 +21,7 @@ fi
 cd "$COCOS2D_EXAMPLE_DIR" || exit 1
 
 ./clean.sh
-./init.sh
+./init.sh || exit 1
 
 test_recurse() {
     print_single_separator
@@ -39,7 +39,7 @@ test_recurse() {
 test_recurse
 
 ./clean.sh
-./init.sh
+./init.sh || exit 1
 
 test_no_recurse() {
     print_single_separator

@@ -23,9 +23,9 @@ echo "TEST: Test clowder prune"
 test_prune() {
     print_single_separator
     echo "TEST: Test clowder prune branch"
-    clowder herd >/dev/null
+    clowder herd || exit 1
 
-    clowder start prune_branch >/dev/null
+    clowder start prune_branch || exit 1
 
     for project in "${all_projects[@]}"; do
         pushd $project

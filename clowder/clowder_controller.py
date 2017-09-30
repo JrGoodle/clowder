@@ -214,7 +214,7 @@ class ClowderController(object):
             for group in self.groups:
                 for project in group.projects:
                     if project.name in project_names:
-                        project.prune(branch, force=force, is_remote=False)
+                        project.prune(branch, force=force, local=True)
         elif remote:
             if not self._existing_branch_project(project_names, branch, is_remote=True):
                 cprint(' - No remote branches to prune\n', 'red')

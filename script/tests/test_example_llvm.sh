@@ -296,8 +296,8 @@ test_branch
 
 test_help() {
     print_double_separator
-    clowder link
-    clowder herd
-    "$TEST_SCRIPT_DIR/tests/test_help.sh" "$LLVM_EXAMPLE_DIR"
+    clowder link || exit 1
+    clowder herd || exit 1
+    "$TEST_SCRIPT_DIR/tests/test_help.sh" "$LLVM_EXAMPLE_DIR" || exit 1
 }
 test_help
