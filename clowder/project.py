@@ -206,8 +206,7 @@ class Project(object):
                 git_herd(self.full_path(), self.fork.url, self.fork.remote_name,
                          self.ref, recursive=self.recursive)
                 print(format_fork_string(self.name))
-                git_herd_upstream(self.full_path(), self.url, self.remote_name,
-                                  self.ref, recursive=self.recursive)
+                git_herd_upstream(self.full_path(), self.url, self.remote_name, self.ref)
         else:
             if self.fork is None:
                 self._print_status()
@@ -222,7 +221,7 @@ class Project(object):
                                 branch, self.ref, recursive=self.recursive)
                 print(format_fork_string(self.name))
                 git_herd_branch_upstream(self.full_path(), self.url, self.remote_name,
-                                         branch, self.ref, recursive=self.recursive)
+                                         branch, self.ref)
 
     def is_dirty(self):
         """Check if project is dirty"""
@@ -316,9 +315,10 @@ class Project(object):
                  self.ref, recursive=self.recursive)
         print(format_fork_string(self.name))
         git_herd_upstream(self.full_path(), self.url, self.remote_name,
-                          self.ref, recursive=self.recursive)
+                          self.ref)
         self.fork.print_status()
-        git_sync(self.full_path(), self.remote_name, self.fork.remote_name, self.ref)
+        git_sync(self.full_path(), self.remote_name, self.fork.remote_name,
+                 self.ref, self.recursive)
 
     def _print_status(self):
         """Print formatted project status"""

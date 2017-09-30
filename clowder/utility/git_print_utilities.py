@@ -6,8 +6,7 @@ from clowder.utility.git_utilities import (
     git_existing_repository,
     git_is_detached,
     git_is_dirty,
-    git_new_local_commits,
-    git_new_upstream_commits,
+    git_new_commits,
     git_sha_short,
     git_status
 )
@@ -26,8 +25,8 @@ def format_project_string(repo_path, name):
 
 def format_project_ref_string(repo_path):
     """Return formatted repo ref name"""
-    local_commits = git_new_local_commits(repo_path)
-    upstream_commits = git_new_upstream_commits(repo_path)
+    local_commits = git_new_commits(repo_path)
+    upstream_commits = git_new_commits(repo_path, upstream=True)
     no_local_commits = local_commits == 0 or local_commits == '0'
     no_upstream_commits = upstream_commits == 0 or upstream_commits == '0'
     if no_local_commits and no_upstream_commits:

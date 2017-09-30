@@ -15,6 +15,10 @@ from clowder.utility.print_utilities import (
     print_invalid_yaml_error
 )
 
+# Disable errors shown by pylint for too many branches
+# pylint: disable=R0912
+# Disable errors shown by pylint for too many statements
+# pylint: disable=R0915
 # Disable errors shown by pylint for catching too general exception Exception
 # pylint: disable=W0703
 

@@ -158,7 +158,8 @@ def git_create_repo(repo_path, url, remote, ref, depth=0, recursive=False):
             if recursive:
                 git_submodule_update_recursive(repo_path, depth)
 
-def git_create_repo_herd_branch(repo_path, url, remote, branch, default_ref, depth=0, recursive=False):
+def git_create_repo_herd_branch(repo_path, url, remote, branch, default_ref,
+                                depth=0, recursive=False):
     """Clone git repo from url at path for herd branch"""
     if git_existing_repository(repo_path):
         return
@@ -335,7 +336,7 @@ def git_herd_branch(repo_path, url, remote, branch, default_ref, depth=0, recurs
     if recursive:
         git_submodule_update_recursive(repo_path, depth)
 
-def git_herd_branch_upstream(repo_path, url, remote, branch, default_ref, depth=0, recursive=False):
+def git_herd_branch_upstream(repo_path, url, remote, branch, default_ref, depth=0):
     """Herd branch for fork's upstream repo"""
     git_create_remote(repo_path, remote, url)
     remote_output = format_remote_string(remote)
@@ -359,15 +360,11 @@ def git_herd_branch_upstream(repo_path, url, remote, branch, default_ref, depth=
         if return_code != 0:
             print(error)
             git_fetch_remote_ref(repo_path, remote, default_ref, depth)
-    if recursive:
-        git_submodule_update_recursive(repo_path, depth)
 
-def git_herd_upstream(repo_path, url, remote, ref, depth=0, recursive=False):
+def git_herd_upstream(repo_path, url, remote, ref, depth=0):
     """Herd branch for fork's upstream repo"""
     git_create_remote(repo_path, remote, url)
     git_fetch_remote_ref(repo_path, remote, ref, depth)
-    if recursive:
-        git_submodule_update_recursive(repo_path, depth)
 
 def git_is_detached(repo_path):
     """Check if HEAD is detached"""
@@ -403,49 +400,31 @@ def git_is_tracking_branch(repo_path, branch):
         else:
             return True
 
-def git_new_local_commits(repo_path):
-    """Returns the number of new commits upstream"""
+def git_new_commits(repo_path, upstream=False):
+    """Returns the number of new commits"""
     repo = _repo(repo_path)
     try:
         local_branch = repo.active_branch
     except:
         return 0
-    if local_branch is None:
-        return 0
     else:
-        tracking_branch = local_branch.tracking_branch()
-        if tracking_branch is None:
+        if local_branch is None:
             return 0
         else:
-            try:
-                branches = local_branch.name + '...' + tracking_branch.name
-                rev_list_count = repo.git.rev_list('--count', '--left-right', branches)
-                count = str(rev_list_count).split()[0]
-                return count
-            except:
+            tracking_branch = local_branch.tracking_branch()
+            if tracking_branch is None:
                 return 0
-
-def git_new_upstream_commits(repo_path):
-    """Returns the number of new commits upstream"""
-    repo = _repo(repo_path)
-    try:
-        local_branch = repo.active_branch
-    except:
-        return 0
-    if local_branch is None:
-        return 0
-    else:
-        tracking_branch = local_branch.tracking_branch()
-        if tracking_branch is None:
-            return 0
-        else:
-            try:
-                branches = local_branch.name + '...' + tracking_branch.name
-                rev_list_count = repo.git.rev_list('--count', '--left-right', branches)
-                count = str(rev_list_count).split()[1]
-                return count
-            except:
-                return 0
+            else:
+                try:
+                    commits = local_branch.commit.hexsha + '...' + tracking_branch.commit.hexsha
+                    rev_list_count = repo.git.rev_list('--count', '--left-right', commits)
+                    if upstream:
+                        count = str(rev_list_count).split()[1]
+                    else:
+                        count = str(rev_list_count).split()[0]
+                    return count
+                except:
+                    return 0
 
 def git_print_branches(repo_path, local=False, remote=False):
     """Print branches"""
@@ -746,7 +725,7 @@ def git_submodule_update_recursive(repo_path, depth):
         print_command_failed_error(command)
         sys.exit(return_code)
 
-def git_sync(repo_path, upstream_remote, fork_remote, ref):
+def git_sync(repo_path, upstream_remote, fork_remote, ref, recursive):
     """Sync fork with upstream remote"""
     ref_type = _ref_type(ref)
     print(' - Sync fork with upstream remote')
@@ -771,6 +750,8 @@ def git_sync(repo_path, upstream_remote, fork_remote, ref):
             print(message + fork_remote_output + ' ' + branch_output)
             print_command_failed_error(command)
             sys.exit(return_code)
+        if recursive:
+            git_submodule_update_recursive(repo_path, recursive)
     elif ref_type is 'tag' or ref_type is 'sha':
         cprint(' - Can only sync branches', 'red')
         sys.exit(1)

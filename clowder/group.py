@@ -2,6 +2,9 @@
 from termcolor import colored
 from clowder.project import Project
 
+# Disable errors shown by pylint for too many branches
+# pylint: disable=R0912
+
 class Group(object):
     """clowder.yaml group class"""
 
