@@ -2,7 +2,12 @@
 import os
 import sys
 from clowder.utility.clowder_utilities import parse_yaml
-from clowder.utility.print_utilities import print_open_file_error
+from clowder.utility.print_utilities import (
+    format_path,
+    format_symlink_target,
+    print_open_file_error,
+    remove_prefix
+)
 
 # Disable errors shown by pylint for no specified exception types
 # pylint: disable=W0702
@@ -33,7 +38,20 @@ def print_yaml(root_directory):
             try:
                 with open(yaml_file) as file:
                     contents = file.read()
+                    print('-' * 80)
+                    if os.path.islink(yaml_file):
+                        path = format_symlink_target(yaml_file)
+                        path = remove_prefix(path, root_directory)
+                        path = remove_prefix(path, '/')
+                        print()
+                        print(format_path('clowder.yaml') + ' -> ' + format_path(path))
+                        print()
+                    else:
+                        path = remove_prefix(path, root_directory)
+                        path = remove_prefix(path, '/')
+                        print('\n' + format_path(path) + '\n')
                     print(contents)
-            except Exception as err:
+            except:
                 print_open_file_error(yaml_file)
                 sys.exit(1)
+    sys.exit() # exit early to prevent printing extra newline
