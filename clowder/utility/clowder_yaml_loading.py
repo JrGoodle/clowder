@@ -53,7 +53,8 @@ def _load_yaml_import_groups(imported_groups, groups):
                     group['source'] = imported_group['source']
                 if 'depth' in imported_group:
                     group['depth'] = imported_group['depth']
-                _load_yaml_import_projects(imported_group['projects'], group['projects'])
+                if 'projects' in imported_group:
+                    _load_yaml_import_projects(imported_group['projects'], group['projects'])
             combined_groups.append(group)
         groups = combined_groups
 
