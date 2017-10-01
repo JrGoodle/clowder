@@ -242,7 +242,7 @@ def validate_yaml_fork(fork, yaml_file):
         sys.exit(1)
 
 def validate_yaml_import_groups(groups, yaml_file):
-    """Validate groups in clowder loaded from yaml file"""
+    """Validate groups in clowder loaded from yaml file with import"""
     try:
         if not isinstance(groups, list):
             error = format_not_list_error('groups', yaml_file)
@@ -272,7 +272,7 @@ def validate_yaml_import_groups(groups, yaml_file):
                 raise Exception(error)
 
             if 'projects' in group:
-                validate_yaml_projects(group['projects'], yaml_file)
+                validate_yaml_projects(group['projects'], yaml_file, is_import=True)
                 del group['projects']
 
             if 'recursive' in group:
@@ -344,7 +344,7 @@ def validate_yaml_groups(groups, yaml_file):
             if 'projects' not in group:
                 error = format_missing_entry_error('projects', 'group', yaml_file)
                 raise Exception(error)
-            validate_yaml_projects(group['projects'], yaml_file)
+            validate_yaml_projects(group['projects'], yaml_file, is_import=False)
             del group['projects']
 
             if 'recursive' in group:
@@ -386,6 +386,39 @@ def validate_yaml_groups(groups, yaml_file):
         print_invalid_yaml_error()
         print_error(err)
         sys.exit(1)
+
+def validate_yaml_import_project(project, yaml_file):
+    """Validate project in clowder loaded from yaml file with import"""
+    if not isinstance(project, dict):
+        error = format_not_dictionary_error('project', yaml_file)
+        raise Exception(error)
+    if len(project) is 0:
+        error = format_invalid_entries_error('project', project, yaml_file)
+        raise Exception(error)
+
+    if 'name' not in project:
+        error = format_missing_entry_error('name', 'project', yaml_file)
+        raise Exception(error)
+    if not isinstance(project['name'], str):
+        error = format_not_string_error('name', yaml_file)
+        raise Exception(error)
+    del project['name']
+
+    if len(project) is 0:
+        error = format_invalid_entries_error('project', project, yaml_file)
+        raise Exception(error)
+
+    if 'path' in project:
+        if not isinstance(project['path'], str):
+            error = format_not_string_error('path', yaml_file)
+            raise Exception(error)
+        del project['path']
+
+    validate_yaml_project_optional(project, yaml_file)
+
+    if len(project) > 0:
+        error = format_invalid_entries_error('project', project, yaml_file)
+        raise Exception(error)
 
 def validate_yaml_project(project, yaml_file):
     """Validate project in clowder loaded from yaml file"""
@@ -457,7 +490,7 @@ def validate_yaml_project_optional(project, yaml_file):
         validate_yaml_fork(fork, yaml_file)
         del project['fork']
 
-def validate_yaml_projects(projects, yaml_file):
+def validate_yaml_projects(projects, yaml_file, is_import):
     """Validate projects in clowder loaded from yaml file"""
     try:
         if not isinstance(projects, list):
@@ -468,7 +501,10 @@ def validate_yaml_projects(projects, yaml_file):
             raise Exception(error)
 
         for project in projects:
-            validate_yaml_project(project, yaml_file)
+            if is_import:
+                validate_yaml_import_project(project, yaml_file)
+            else:
+                validate_yaml_project(project, yaml_file)
 
     except Exception as err:
         print_invalid_yaml_error()

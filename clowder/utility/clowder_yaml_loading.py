@@ -1,4 +1,11 @@
 """Clowder yaml loading"""
+import sys
+from termcolor import colored
+from clowder.utility.print_utilities import (
+    # format_invalid_entries_error,
+    print_error,
+    print_invalid_yaml_error
+)
 
 def load_yaml_base(parsed_yaml, combined_yaml):
     """Load clowder from base yaml file"""
@@ -63,6 +70,12 @@ def _load_yaml_import_projects(imported_projects, projects):
     project_names = [p['name'] for p in projects]
     for imported_project in imported_projects:
         if imported_project['name'] not in project_names:
+            if 'path' not in imported_project:
+                # error = format_invalid_entries_error('defaults', defaults, yaml_file)
+                error = colored(' - Missing path in new project', 'red')
+                print_invalid_yaml_error()
+                print_error(error)
+                sys.exit(1)
             projects.append(imported_project)
             continue
         combined_projects = []
@@ -70,7 +83,8 @@ def _load_yaml_import_projects(imported_projects, projects):
             if project['name'] != imported_project['name']:
                 combined_projects.append(project)
                 continue
-            project['path'] = imported_project['path']
+            if 'path' in imported_project:
+                project['path'] = imported_project['path']
             if 'depth' in imported_project:
                 project['depth'] = imported_project['depth']
             if 'recursive' in imported_project:
@@ -78,7 +92,9 @@ def _load_yaml_import_projects(imported_projects, projects):
             if 'ref' in imported_project:
                 project['ref'] = imported_project['ref']
             if 'remote' in imported_project:
-                project['remote'] = imported_project['remote_name']
+                project['remote'] = imported_project['remote']
+            if 'fork' in imported_project:
+                project['fork'] = imported_project['fork']
             if 'source' in imported_project:
                 project['source'] = imported_project['source']['name']
             combined_projects.append(imported_project)
