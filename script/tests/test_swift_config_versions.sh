@@ -143,7 +143,7 @@ test_swift_4_0_branch_07_11_2017_branches() {
         popd
     done
     pushd swift
-    test_branch 'swift-4.0-branch'
+    test_branch 'swift-4.0-branch-07-11-2017'
     popd
     pushd ninja
     test_branch release
@@ -200,6 +200,15 @@ test_swift_configs() {
         test_default_branches
         clowder link -v "$config"
         clowder herd || exit 1
+        clowder status || exit 1
+        "$config_function"
+        pushd swift
+            git checkout master || exit 1
+        popd
+        ./swift/utils/update-checkout --clone --scheme master --reset-to-remote || exit 1
+        clowder status || exit 1
+        test_default_branches
+        ./swift/utils/update-checkout --scheme "$config" --clone --reset-to-remote || exit 1
         clowder status || exit 1
         "$config_function"
     done
