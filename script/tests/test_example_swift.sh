@@ -55,6 +55,7 @@ if [ -z "$TRAVIS_OS_NAME" ]; then
     mkdir swift-source || exit 1
     pushd swift-source || exit 1
     clowder init git@github.com:JrGoodle/swift-clowder.git || exit 1
+    clowder link -v jrgoodle-fork-travis-ci || exit 1
 
     test_configure_remotes_herd() {
         git clone git@github.com:apple/swift.git || exit 1
@@ -135,8 +136,8 @@ test_local_swift_example() {
     mkdir swift-source || exit 1
     pushd swift-source || exit 1
 
-    clowder init https://github.com/JrGoodle/swift-clowder.git
-    clowder link -v travis-ci || exit 1
+    clowder init https://github.com/JrGoodle/swift-clowder.git || exit 1
+    clowder link -v jrgoodle-fork-travis-ci || exit 1
 
     test_configure_remotes_herd
     test_configure_remotes_fail_existing_remote
@@ -154,25 +155,12 @@ test_init_herd() {
     clowder link -v travis-ci || exit 1
     clowder herd || exit 1
     clowder status || exit 1
-    # echo "TEST: Check current branches are on master"
-    # for project in "${project_paths[@]}"; do
-    # 	pushd $project
-    #     test_branch master
-    #     test_tracking_branch_exists master
-    #     popd
-    # done
-    # for project in "${fork_paths[@]}"; do
-    #     pushd $project
-    #     test_branch master
-    #     test_tracking_branch_exists master
-    #     popd
-    # done
 }
 test_init_herd
 
 test_help() {
     print_double_separator
-    clowder link || exit 1
+    clowder link -v jrgoodle-fork-travis-ci || exit 1
     "$TEST_SCRIPT_DIR/tests/test_help.sh" "$SWIFT_EXAMPLE_DIR" || exit 1
 }
 test_help
