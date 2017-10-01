@@ -33,6 +33,7 @@ class GroupTest(unittest.TestCase):
                       'projects': [{'name': 'jrgoodle/kit',
                                     'path': 'black-cats/kit',
                                     'depth': 0,
+                                    'recursive': False,
                                     'ref': 'f2e20031ddce5cb097105f4d8ccbc77f4ac20709',
                                     'remote': 'origin',
                                     'source': 'github'}]}
