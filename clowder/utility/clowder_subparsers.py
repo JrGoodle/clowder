@@ -23,6 +23,7 @@ def _configure_subparsers(subparsers, clowder, versions):
     _configure_subparser_stash(subparsers, clowder)
     _configure_subparser_status(subparsers)
     _configure_subparser_sync(subparsers, clowder)
+    _configure_subparser_yaml(subparsers)
 
 def _configure_subparser_branch(subparsers, clowder):
     """Configure clowder branch subparser and arguments"""
@@ -402,3 +403,7 @@ def _configure_subparser_sync(subparsers, clowder):
         sync_help_projects = sync_help_projects.format(', '.join(project_names))
     parser_sync.add_argument('--projects', '-p', choices=project_names,
                              nargs='+', help=sync_help_projects, metavar='PROJECT')
+
+def _configure_subparser_yaml(subparsers):
+    """Configure clowder yaml subparser and arguments"""
+    subparsers.add_parser('yaml', help='Print clowder.yaml information')

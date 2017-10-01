@@ -14,6 +14,7 @@
 - [clowder stash](#clowder-stash)
 - [clowder status](#clowder-status)
 - [clowder sync](#clowder-sync)
+- [clowder yaml](#clowder-yaml)
 
 ---
 
@@ -298,4 +299,15 @@ $ clowder sync
 
 # Sync clang fork with upstream remote
 $ clowder sync -p llvm-mirror/clang
+```
+
+---
+
+## `clowder yaml`
+
+Print information about clowder.yaml files
+
+```bash
+# Print resolved clowder.yaml
+$ clowder yaml
 ```

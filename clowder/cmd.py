@@ -387,6 +387,13 @@ class Command(object):
             sys.exit()
         self.clowder.sync(all_fork_projects)
 
+    def yaml(self):
+        """clowder yaml command"""
+        if self.clowder_repo is None:
+            exit_clowder_not_found()
+        self.clowder_repo.print_status(fetch=False)
+        self.clowder.print_resolved_yaml()
+
     def _exit_handler_formatter(self):
         """Exit handler to display trailing newline"""
         if self._display_trailing_newline:

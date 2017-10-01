@@ -5,6 +5,7 @@ from termcolor import cprint
 from clowder.group import Group
 from clowder.source import Source
 from clowder.utility.clowder_utilities import (
+    get_yaml_string,
     parse_yaml,
     save_yaml
 )
@@ -172,6 +173,10 @@ class ClowderController(object):
                 for project in group.projects:
                     if project.name in project_names:
                         project.herd(branch, depth)
+
+    def print_resolved_yaml(self):
+        """Print resolved clowder.yaml"""
+        print(get_yaml_string(self._get_yaml()))
 
     def prune_groups(self, group_names, branch, force=False, local=False, remote=False):
         """Prune branches for groups"""
