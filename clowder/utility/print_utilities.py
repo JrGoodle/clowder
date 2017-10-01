@@ -127,6 +127,17 @@ def format_ref_string(ref):
     """Return formatted ref name"""
     return colored('(' + ref + ')', 'magenta')
 
+def format_invalid_ref_error(ref, yaml_file):
+    """Return formatted error string for incorrect ref"""
+    yaml_file = format_symlink_target(yaml_file)
+    output_1 = format_path(yaml_file) + '\n'
+    output_2 = colored(' - Error: ', 'red')
+    output_3 = colored('ref', attrs=['bold'])
+    output_4 = colored(' value ', 'red')
+    output_5 = colored(ref, attrs=['bold'])
+    output_6 = colored(' is not formatted correctly', 'red')
+    return output_1 + output_2 + output_3 + output_4 + output_5 + output_6
+
 def format_remote_string(remote):
     """Return formatted remote name"""
     return colored(remote, 'yellow')

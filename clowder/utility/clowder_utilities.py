@@ -85,7 +85,7 @@ def parse_yaml(yaml_file):
                 parsed_yaml = yaml.safe_load(file)
                 if parsed_yaml is None:
                     print_invalid_yaml_error()
-                    print(format_empty_yaml_error(yaml_file))
+                    print(format_empty_yaml_error(yaml_file) + '\n')
                     sys.exit(1)
                 return parsed_yaml
         except:
