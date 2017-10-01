@@ -33,7 +33,7 @@ def print_yaml(root_directory):
                                      imported_yaml,
                                      'clowder.yaml')
         parsed_yaml = parse_yaml(yaml_file)
-    for parsed_yaml in reversed(yaml_files):
+    for yaml_file in yaml_files:
         if os.path.isfile(yaml_file):
             try:
                 with open(yaml_file) as file:
