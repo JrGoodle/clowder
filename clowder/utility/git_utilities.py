@@ -19,6 +19,8 @@ from clowder.utility.print_utilities import (
 from clowder.utility.git_utilities_private import (
     _checkout_branch,
     _checkout_branch_new_repo,
+    _checkout_commit_new_repo,
+    _checkout_tag_new_repo,
     _checkout_branch_herd_branch,
     _checkout_sha,
     _checkout_tag,
@@ -37,6 +39,8 @@ from clowder.utility.git_utilities_private import (
 # pylint: disable=W0703
 # Disable errors shown by pylint for too many arguments
 # pylint: disable=R0913
+# Disable errors shown by pylint for too many local variables
+# pylint: disable=R0914
 
 def git_add(repo_path, files):
     """Add files to git index"""
@@ -153,8 +157,18 @@ def git_create_repo(repo_path, url, remote, ref, depth=0, recursive=False):
             print_error(err)
             remove_directory_exit(repo_path)
         else:
-            branch = _truncate_ref(ref)
-            _checkout_branch_new_repo(repo_path, branch, remote, depth)
+            ref_type = _ref_type(ref)
+            if ref_type is 'branch':
+                branch = _truncate_ref(ref)
+                _checkout_branch_new_repo(repo_path, branch, remote, depth)
+            elif ref_type is 'tag':
+                tag = _truncate_ref(ref)
+                _checkout_tag_new_repo(repo_path, tag, remote, depth)
+            elif ref_type is 'sha':
+                _checkout_commit_new_repo(repo_path, ref, remote, depth)
+            else:
+                ref_output = format_ref_string(ref)
+                print('Unknown ref ' + ref_output)
             if recursive:
                 git_submodule_update_recursive(repo_path, depth)
 

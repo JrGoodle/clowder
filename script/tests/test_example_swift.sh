@@ -149,8 +149,8 @@ test_local_swift_example
 test_init_herd() {
     print_double_separator
     echo "TEST: Normal herd after init"
-    "$SWIFT_EXAMPLE_DIR/clean.sh"
-    "$SWIFT_EXAMPLE_DIR/init.sh"  || exit 1
+    ./clean.sh
+    ./init.sh  || exit 1
     clowder link -v travis-ci || exit 1
     clowder herd || exit 1
     clowder status || exit 1
@@ -173,7 +173,6 @@ test_init_herd
 test_help() {
     print_double_separator
     clowder link || exit 1
-    clowder herd || exit 1
     "$TEST_SCRIPT_DIR/tests/test_help.sh" "$SWIFT_EXAMPLE_DIR" || exit 1
 }
 test_help

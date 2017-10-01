@@ -94,7 +94,7 @@ test_prune_force() {
 
     for project in "${all_projects[@]}"; do
         pushd $project
-        test_branch prune_branch
+        test_local_branch_exists prune_branch
         popd
     done
 
@@ -108,7 +108,7 @@ test_prune_force() {
     test_branch knead
     test_no_local_branch_exists prune_branch
     popd
-    for project in "${all_projects[@]}"; do
+    for project in "${black_cats_projects[@]}"; do
         pushd $project
         test_branch master
         test_no_local_branch_exists prune_branch

@@ -13,5 +13,6 @@ test_command() {
     clowder cat && exit 1
     echo "TEST: Fail with no arguments"
     clowder && exit 1
+    echo ''
 }
 test_command

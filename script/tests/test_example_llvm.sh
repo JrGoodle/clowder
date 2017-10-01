@@ -161,6 +161,8 @@ if [ -z "$TRAVIS_OS_NAME" ]; then
             popd
         done
 
+        clowder prune -af start_tracking || exit 1
+        
         for project in "${fork_projects[@]}"; do
             clowder start -t start_tracking -p $project || exit 1
         done
