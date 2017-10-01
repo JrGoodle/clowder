@@ -13,6 +13,7 @@ from clowder.utility.clowder_yaml_loading import (
     load_yaml_base,
     load_yaml_import
 )
+from clowder.utility.clowder_yaml_printing import print_yaml
 from clowder.utility.clowder_yaml_validation import (
     validate_yaml,
     validate_yaml_import
@@ -174,9 +175,12 @@ class ClowderController(object):
                     if project.name in project_names:
                         project.herd(branch, depth)
 
-    def print_resolved_yaml(self):
-        """Print resolved clowder.yaml"""
-        print(get_yaml_string(self._get_yaml_resolved()))
+    def print_yaml(self, resolved):
+        """Print clowder.yaml"""
+        if resolved:
+            print(get_yaml_string(self._get_yaml_resolved()))
+        else:
+            print_yaml(self.root_directory)
         sys.exit() # exit early to prevent printing extra newline
 
     def prune_groups(self, group_names, branch, force=False, local=False, remote=False):

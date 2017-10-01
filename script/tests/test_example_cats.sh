@@ -40,6 +40,7 @@ test_clowder_version
 "$TEST_SCRIPT_DIR/tests/test_cats_start.sh" || exit 1
 "$TEST_SCRIPT_DIR/tests/test_cats_prune.sh" || exit 1
 "$TEST_SCRIPT_DIR/tests/test_cats_repo.sh" || exit 1
+"$TEST_SCRIPT_DIR/tests/test_cats_yaml.sh" || exit 1
 "$TEST_SCRIPT_DIR/tests/test_cats_import.sh" || exit 1
 
 test_help() {

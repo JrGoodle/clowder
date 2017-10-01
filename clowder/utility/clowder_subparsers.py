@@ -303,8 +303,6 @@ def _configure_subparser_repo(subparsers):
     repo_subparsers.add_parser('push', help='Push changes in clowder repo')
     # clowder repo status
     repo_subparsers.add_parser('status', help='Print clowder repo git status')
-    # clowder repo yaml
-    repo_subparsers.add_parser('yaml', help='Print current clowder yaml')
 
 def _configure_subparser_save(subparsers):
     """Configure clowder save subparser and arguments"""
@@ -406,4 +404,6 @@ def _configure_subparser_sync(subparsers, clowder):
 
 def _configure_subparser_yaml(subparsers):
     """Configure clowder yaml subparser and arguments"""
-    subparsers.add_parser('yaml', help='Print clowder.yaml information')
+    parser_yaml = subparsers.add_parser('yaml', help='Print clowder.yaml information')
+    parser_yaml.add_argument('--resolved', '-r', action='store_true',
+                             help='print resolved clowder.yaml')

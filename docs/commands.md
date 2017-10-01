@@ -218,9 +218,6 @@ $ clowder repo run 'git status'
 
 # Print clowder repo git status
 $ clowder repo status
-
-# Print clowder.yaml file(s) referenced from current symlink and imports
-$ clowder repo yaml
 ```
 
 ---
@@ -308,6 +305,9 @@ $ clowder sync -p llvm-mirror/clang
 Print information about clowder.yaml files
 
 ```bash
-# Print resolved clowder.yaml
+# Print clowder.yaml file(s) referenced from current symlink and imports
 $ clowder yaml
+
+# Print resolved clowder.yaml
+$ clowder yaml -r
 ```

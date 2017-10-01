@@ -24,7 +24,6 @@ from clowder.utility.clowder_utilities import (
     is_offline,
     remove_directory_exit
 )
-from clowder.utility.clowder_yaml_printing import print_yaml
 from clowder.utility.print_utilities import (
     format_command,
     format_path,
@@ -135,10 +134,6 @@ class ClowderRepo(object):
         print(project_output + ' ' + current_ref_output)
         print(symlink_output + ' -> ' + path_output)
         print()
-
-    def print_yaml(self):
-        """Print current clowder yaml"""
-        print_yaml(self.root_directory)
 
     def pull(self):
         """Pull clowder repo upstream changes"""

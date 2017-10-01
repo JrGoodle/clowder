@@ -23,12 +23,12 @@ export commands=( 'branch' \
                   'repo push' \
                   'repo run' \
                   'repo status' \
-                  'repo yaml' \
                   'save' \
                   'start' \
                   'stash' \
                   'status' \
-                  'sync' )
+                  'sync' \
+                  'yaml' )
 
 print_double_separator
 echo "TEST: Clowder help output"

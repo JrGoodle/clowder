@@ -306,15 +306,6 @@ class Command(object):
         self.clowder_repo.print_status()
         self.clowder_repo.status()
 
-    def repo_yaml(self):
-        """clowder repo yaml command"""
-        if self.clowder_repo is None:
-            exit_clowder_not_found()
-        self.clowder_repo.print_status(fetch=False)
-        if self._invalid_yaml:
-            sys.exit(1)
-        self.clowder_repo.print_yaml()
-
     def save(self):
         """clowder save command"""
         if self.clowder_repo is None:
@@ -392,7 +383,9 @@ class Command(object):
         if self.clowder_repo is None:
             exit_clowder_not_found()
         self.clowder_repo.print_status(fetch=False)
-        self.clowder.print_resolved_yaml()
+        if self._invalid_yaml:
+            sys.exit(1)
+        self.clowder.print_yaml(self.args.resolved)
 
     def _exit_handler_formatter(self):
         """Exit handler to display trailing newline"""
