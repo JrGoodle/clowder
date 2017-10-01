@@ -173,12 +173,17 @@ class Project(object):
         """Return full path to project"""
         return os.path.join(self.root_directory, self.path)
 
-    def get_yaml(self):
+    def get_yaml(self, resolved=False):
         """Return python object representation for saving yaml"""
+        if resolved:
+            ref = self.ref
+        else:
+            ref = git_sha_long(self.full_path())
         project = {'name': self.name,
                    'path': self.path,
                    'depth': self.depth,
-                   'ref': git_sha_long(self.full_path()),
+                   'recursive': self.recursive,
+                   'ref': ref,
                    'remote': self.remote_name,
                    'source': self.source.name}
         if self.fork is not None:

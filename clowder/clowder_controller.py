@@ -5,6 +5,7 @@ from termcolor import cprint
 from clowder.group import Group
 from clowder.source import Source
 from clowder.utility.clowder_utilities import (
+    get_yaml_string,
     parse_yaml,
     save_yaml
 )
@@ -12,6 +13,7 @@ from clowder.utility.clowder_yaml_loading import (
     load_yaml_base,
     load_yaml_import
 )
+from clowder.utility.clowder_yaml_printing import print_yaml
 from clowder.utility.clowder_yaml_validation import (
     validate_yaml,
     validate_yaml_import
@@ -173,6 +175,14 @@ class ClowderController(object):
                     if project.name in project_names:
                         project.herd(branch, depth)
 
+    def print_yaml(self, resolved):
+        """Print clowder.yaml"""
+        if resolved:
+            print(get_yaml_string(self._get_yaml_resolved()))
+        else:
+            print_yaml(self.root_directory)
+        sys.exit() # exit early to prevent printing extra newline
+
     def prune_groups(self, group_names, branch, force=False, local=False, remote=False):
         """Prune branches for groups"""
         self._validate_groups(group_names)
@@ -328,6 +338,14 @@ class ClowderController(object):
     def _get_yaml(self):
         """Return python object representation for saving yaml"""
         groups_yaml = [g.get_yaml() for g in self.groups]
+        sources_yaml = [s.get_yaml() for s in self.sources]
+        return {'defaults': self.defaults,
+                'sources': sources_yaml,
+                'groups': groups_yaml}
+
+    def _get_yaml_resolved(self):
+        """Return python object representation for resolved yaml"""
+        groups_yaml = [g.get_yaml_resolved() for g in self.groups]
         sources_yaml = [s.get_yaml() for s in self.sources]
         return {'defaults': self.defaults,
                 'sources': sources_yaml,

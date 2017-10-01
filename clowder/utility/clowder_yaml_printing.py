@@ -54,4 +54,3 @@ def print_yaml(root_directory):
             except:
                 print_open_file_error(yaml_file)
                 sys.exit(1)
-    sys.exit() # exit early to prevent printing extra newline

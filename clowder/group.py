@@ -47,11 +47,6 @@ class Group(object):
             self.projects.append(Project(root_directory, project, group, defaults, sources))
         self.projects.sort(key=lambda project: project.path)
 
-    def get_yaml(self):
-        """Return python object representation for saving yaml"""
-        projects_yaml = [p.get_yaml() for p in self.projects]
-        return {'name': self.name, 'projects': projects_yaml}
-
     def branch(self, local=False, remote=False):
         """Print branches for all projects"""
         self._print_name()
@@ -76,6 +71,23 @@ class Group(object):
         self._print_name()
         for project in self.projects:
             project.fetch_all()
+
+    def get_yaml(self):
+        """Return python object representation for saving yaml"""
+        projects_yaml = [p.get_yaml() for p in self.projects]
+        return {'name': self.name, 'projects': projects_yaml}
+
+    def get_yaml_resolved(self):
+        """Return python object representation for resolved yaml"""
+        projects_yaml = [p.get_yaml(resolved=True) for p in self.projects]
+        group = {'name': self.name,
+                 'depth': self.depth,
+                 'ref': self.ref,
+                 'recursive': self.recursive,
+                 'remote': self.remote_name,
+                 'source': self.source.name,
+                 'projects': projects_yaml}
+        return group
 
     def herd(self, branch=None, depth=None):
         """Sync all projects with latest upstream changes"""

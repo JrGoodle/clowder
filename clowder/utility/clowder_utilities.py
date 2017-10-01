@@ -6,7 +6,7 @@ import socket
 import subprocess
 import sys
 import yaml
-from termcolor import colored
+from termcolor import colored, cprint
 from clowder.utility.print_utilities import (
     format_empty_yaml_error,
     format_path,
@@ -45,25 +45,6 @@ def execute_forall_command(cmd, path, clowder_path, name, remote, fork_remote, r
                            cwd=path,
                            env=forall_env)
 
-def execute_command_popen(cmd, path):
-    """Execute command and display continuous output"""
-    for output in execute_popen(cmd, path):
-        print(output, end='')
-
-def execute_popen(cmd, path):
-    """Execute command"""
-    # https://stackoverflow.com/questions/4417546/constantly-print-subprocess-output-while-process-is-running
-    process = subprocess.Popen(cmd, cwd=path,
-                               stdout=subprocess.PIPE,
-                               universal_newlines=True)
-    # print("the commandline is {}".format(process.args))
-    for stdout_line in iter(process.stdout.readline, ''):
-        yield stdout_line
-    process.stdout.close()
-    return_code = process.wait()
-    if return_code:
-        raise subprocess.CalledProcessError(return_code, cmd)
-
 def force_symlink(file1, file2):
     """Force symlink creation"""
     try:
@@ -72,6 +53,14 @@ def force_symlink(file1, file2):
         if error.errno == errno.EEXIST:
             os.remove(file2)
             os.symlink(file1, file2)
+
+def get_yaml_string(yaml_output):
+    """Return yaml string from python data structures"""
+    try:
+        return yaml.dump(yaml_output, default_flow_style=False, indent=4)
+    except:
+        cprint('Failed to dump yaml', 'red')
+        sys.exit(1)
 
 def is_offline(host='8.8.8.8', port=53, timeout=3):
     """
@@ -125,7 +114,7 @@ def save_yaml(yaml_output, yaml_file):
         try:
             with open(yaml_file, 'w') as file:
                 print(" - Save yaml to file")
-                yaml.dump(yaml_output, file, default_flow_style=False)
+                yaml.dump(yaml_output, file, default_flow_style=False, indent=4)
         except:
             print_save_file_error(yaml_file)
             sys.exit(1)
