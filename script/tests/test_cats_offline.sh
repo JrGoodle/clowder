@@ -10,11 +10,13 @@ export all_projects=( 'mu' 'duke' \
                       'black-cats/sasha' \
                       'black-cats/jules' )
 
-echo 'Make sure your network connection is enabled'
-# https://unix.stackexchange.com/a/293941
-read -n 1 -s -r -p "Press any key to continue"
-echo ''
-echo ''
+# echo 'Make sure your network connection is enabled'
+# # https://unix.stackexchange.com/a/293941
+# read -n 1 -s -r -p "Press any key to continue"
+# echo ''
+# echo ''
+echo "TEST: Enable network connection"
+networksetup -setairportpower airport on
 
 prepare_cats_example
 cd "$CATS_EXAMPLE_DIR" || exit 1
@@ -26,11 +28,13 @@ echo "TEST: Test clowder offline"
 ./init.sh || exit 1
 clowder herd || exit 1
 
-echo 'Disable your network connection'
-# https://unix.stackexchange.com/a/293941
-read -n 1 -s -r -p "Press any key to continue"
-echo ''
-echo ''
+# echo 'Disable your network connection'
+# # https://unix.stackexchange.com/a/293941
+# read -n 1 -s -r -p "Press any key to continue"
+# echo ''
+# echo ''
+echo "TEST: Disable network connection"
+networksetup -setairportpower airport off
 
 print_double_separator
 echo 'TEST: clowder branch'
@@ -129,5 +133,7 @@ echo 'TEST: clowder init'
 rm -rf .clowder || exit 1
 clowder init git@github.com:JrGoodle/cats.git && exit 1
 
-echo 'You can enable your network connection again'
-echo ''
+# echo 'You can enable your network connection again'
+# echo ''
+echo "TEST: Enable network connection"
+networksetup -setairportpower airport on
