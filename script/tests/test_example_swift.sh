@@ -16,19 +16,19 @@ fi
 
 cd "$SWIFT_EXAMPLE_DIR" || exit 1
 
-export project_paths=( 'clang' \
-                       'cmark' \
-                       'compiler-rt' \
+export project_paths=( 'cmark' \
                        'llbuild' \
-                       'lldb' \
-                       'llvm' \
-                       'ninja' \
                        'swift-corelibs-foundation' \
                        'swift-corelibs-libdispatch' \
                        'swift-corelibs-xctest' \
                        'swift-integration-tests' \
                        'swift-xcode-playground-support' \
                        'swiftpm' )
+
+export llvm_project_paths=( 'clang' \
+                            'compiler-rt' \
+                            'lldb' \
+                            'llvm' )
 
 export projects=( 'apple/swift-clang' \
                   'apple/swift-cmark' \
@@ -45,9 +45,25 @@ export projects=( 'apple/swift-clang' \
                   'apple/swift-xcode-playground-support' \
                   'apple/swift-package-manager' )
 
-export fork_paths=( 'swift' )
-
-export fork_projects=( 'apple/swift' )
+test_default_branches() {
+    echo "TEST: Default branches checked out"
+    for project in "${llvm_project_paths[@]}"; do
+    	pushd $project
+        test_branch stable
+        popd
+    done
+    for project in "${project_paths[@]}"; do
+    	pushd $project
+        test_branch master
+        popd
+    done
+    pushd swift
+    test_branch master
+    popd
+    pushd ninja
+    test_branch release
+    popd
+}
 
 test_clowder_version
 
@@ -147,16 +163,7 @@ test_local_swift_example() {
 }
 test_local_swift_example
 
-test_init_herd() {
-    print_double_separator
-    echo "TEST: Normal herd after init"
-    ./clean.sh
-    ./init.sh  || exit 1
-    clowder link -v travis-ci || exit 1
-    clowder herd || exit 1
-    clowder status || exit 1
-}
-test_init_herd
+"$TEST_SCRIPT_DIR/tests/test_swift_config_versions.sh" || exit 1
 
 test_help() {
     print_double_separator
