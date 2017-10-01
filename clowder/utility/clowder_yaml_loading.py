@@ -22,6 +22,8 @@ def load_yaml_import(parsed_yaml, combined_yaml):
 
 def _load_yaml_import_defaults(imported_defaults, defaults):
     """Load clowder projects from imported group"""
+    if 'recursive' in imported_defaults:
+        defaults['recursive'] = imported_defaults['recursive']
     if 'ref' in imported_defaults:
         defaults['ref'] = imported_defaults['ref']
     if 'remote' in imported_defaults:
@@ -41,6 +43,8 @@ def _load_yaml_import_groups(imported_groups, groups):
         combined_groups = []
         for group in groups:
             if group['name'] == imported_group['name']:
+                if 'recursive' in imported_groups:
+                    group['recursive'] = imported_groups['recursive']
                 if 'ref' in imported_group:
                     group['ref'] = imported_group['ref']
                 if 'remote' in imported_group:
@@ -68,6 +72,8 @@ def _load_yaml_import_projects(imported_projects, projects):
             project['path'] = imported_project['path']
             if 'depth' in imported_project:
                 project['depth'] = imported_project['depth']
+            if 'recursive' in imported_project:
+                project['recursive'] = imported_project['recursive']
             if 'ref' in imported_project:
                 project['ref'] = imported_project['ref']
             if 'remote' in imported_project:

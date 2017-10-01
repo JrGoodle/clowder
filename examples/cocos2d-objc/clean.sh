@@ -2,4 +2,7 @@
 
 cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 
-clowder init https://github.com/jrgoodle/cats.git || exit 1
+rm -f clowder.yaml
+rm -rf clowder
+rm -rf .clowder
+rm -rf cocos2d-objc

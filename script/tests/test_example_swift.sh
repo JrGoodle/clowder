@@ -52,12 +52,12 @@ export fork_projects=( 'apple/swift' )
 test_clowder_version
 
 if [ -z "$TRAVIS_OS_NAME" ]; then
-    mkdir swift-source
+    mkdir swift-source || exit 1
     pushd swift-source || exit 1
-    clowder init git@github.com:JrGoodle/swift-clowder.git
+    clowder init git@github.com:JrGoodle/swift-clowder.git || exit 1
 
     test_configure_remotes_herd() {
-        git clone git@github.com:apple/swift.git
+        git clone git@github.com:apple/swift.git || exit 1
         ./swift/utils/update-checkout --clone
         pushd swift
         test_remote_url 'origin' 'git@github.com:apple/swift.git'
@@ -72,7 +72,7 @@ if [ -z "$TRAVIS_OS_NAME" ]; then
     test_configure_remotes_herd
 
     test_configure_remotes_sync() {
-        git clone git@github.com:apple/swift.git
+        git clone git@github.com:apple/swift.git || exit 1
         ./swift/utils/update-checkout --clone-with-ssh
         pushd swift
         test_remote_url 'origin' 'git@github.com:apple/swift.git'
@@ -91,7 +91,7 @@ if [ -z "$TRAVIS_OS_NAME" ]; then
 fi
 
 test_configure_remotes_herd() {
-    git clone https://github.com/apple/swift.git
+    git clone https://github.com/apple/swift.git || exit 1
     ./swift/utils/update-checkout --clone
     pushd swift
     test_remote_url 'origin' 'https://github.com/apple/swift.git'
@@ -105,7 +105,7 @@ test_configure_remotes_herd() {
 }
 
 test_configure_remotes_fail_existing_remote() {
-    git clone https://github.com/apple/swift.git
+    git clone https://github.com/apple/swift.git || exit 1
     ./swift/utils/update-checkout --clone
     pushd swift
     git remote add 'upstream' 'https://github.com/apple/swift.git'
@@ -132,7 +132,7 @@ test_configure_remotes_fail_existing_remote() {
 }
 
 test_local_swift_example() {
-    mkdir swift-source
+    mkdir swift-source || exit 1
     pushd swift-source || exit 1
 
     clowder init https://github.com/JrGoodle/swift-clowder.git
@@ -149,8 +149,8 @@ test_local_swift_example
 test_init_herd() {
     print_double_separator
     echo "TEST: Normal herd after init"
-    "$SWIFT_EXAMPLE_DIR/clean.sh"
-    "$SWIFT_EXAMPLE_DIR/init.sh"  || exit 1
+    ./clean.sh
+    ./init.sh  || exit 1
     clowder link -v travis-ci || exit 1
     clowder herd || exit 1
     clowder status || exit 1
@@ -172,8 +172,7 @@ test_init_herd
 
 test_help() {
     print_double_separator
-    clowder link
-    clowder herd
-    "$TEST_SCRIPT_DIR/tests/test_help.sh" "$SWIFT_EXAMPLE_DIR"
+    clowder link || exit 1
+    "$TEST_SCRIPT_DIR/tests/test_help.sh" "$SWIFT_EXAMPLE_DIR" || exit 1
 }
 test_help

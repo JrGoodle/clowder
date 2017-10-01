@@ -38,10 +38,10 @@ test_clowder_import_default() {
     print_single_separator
     echo "TEST: Test clowder file with default import"
 
-    clowder link >/dev/null
-    clowder herd >/dev/null
-    clowder link -v import-default
-    clowder herd >/dev/null
+    clowder link || exit 1
+    clowder herd || exit 1
+    clowder link -v import-default || exit 1
+    clowder herd || exit 1
     clowder status || exit 1
 
     for project in "${black_cats_projects[@]}"; do
@@ -55,10 +55,10 @@ test_clowder_import_default
 test_clowder_import_version() {
     print_single_separator
     echo "TEST: Test clowder file with version import"
-    clowder link >/dev/null
-    clowder herd >/dev/null
-    clowder link -v import-version
-    clowder herd >/dev/null
+    clowder link || exit 1
+    clowder herd || exit 1
+    clowder link -v import-version || exit 1
+    clowder herd || exit 1
     clowder status || exit 1
 
     for project in "${black_cats_projects[@]}"; do

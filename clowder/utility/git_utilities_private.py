@@ -103,6 +103,83 @@ def _checkout_branch_new_repo(repo_path, branch, remote, depth):
                     print_error(err)
                     remove_directory_exit(repo_path)
 
+def _checkout_commit_new_repo(repo_path, commit, remote, depth):
+    """Checkout commit or fail and delete repo if it doesn't exist"""
+    repo = _repo(repo_path)
+    commit_output = format_ref_string(commit)
+    remote_output = format_remote_string(remote)
+    try:
+        repo.remotes[remote]
+    except Exception as err:
+        message = colored(' - No existing remote ', 'red')
+        print(message + remote_output)
+        print_error(err)
+        remove_directory_exit(repo_path)
+    else:
+        if depth == 0:
+            print(' - Fetch from ' + remote_output)
+            command = ['git', 'fetch', remote, '--prune', '--tags']
+        else:
+            print(' - Fetch from ' + remote_output + ' ' + commit_output)
+            command = ['git', 'fetch', remote, commit, '--depth', str(depth),
+                       '--prune', '--tags']
+        return_code = execute_command(command, repo_path)
+        if return_code != 0:
+            message = colored(' - Failed to fetch from ', 'red')
+            print(message + remote_output)
+            print_command_failed_error(command)
+            remove_directory_exit(repo_path)
+        print(' - Checkout commit ' + commit_output)
+        try:
+            repo.git.checkout(commit)
+        except Exception as err:
+            message = colored(' - Failed to checkout commit ', 'red')
+            print(message + commit_output)
+            print_error(err)
+            remove_directory_exit(repo_path)
+
+def _checkout_tag_new_repo(repo_path, tag, remote, depth):
+    """Checkout tag or fail and delete repo if it doesn't exist"""
+    repo = _repo(repo_path)
+    tag_output = format_ref_string(tag)
+    remote_output = format_remote_string(remote)
+    try:
+        origin = repo.remotes[remote]
+    except Exception as err:
+        message = colored(' - No existing remote ', 'red')
+        print(message + remote_output)
+        print_error(err)
+        remove_directory_exit(repo_path)
+    else:
+        if depth == 0:
+            print(' - Fetch from ' + remote_output)
+            command = ['git', 'fetch', remote, '--prune', '--tags']
+        else:
+            print(' - Fetch from ' + remote_output + ' ' + tag_output)
+            command = ['git', 'fetch', remote, tag, '--depth', str(depth),
+                       '--prune', '--tags']
+        return_code = execute_command(command, repo_path)
+        if return_code != 0:
+            message = colored(' - Failed to fetch from ', 'red')
+            print(message + remote_output)
+            print_command_failed_error(command)
+            remove_directory_exit(repo_path)
+        try:
+            remote_tag = origin.tags[tag]
+        except:
+            message = colored(' - No existing remote tag ', 'red')
+            print(message + tag_output)
+            remove_directory_exit(repo_path)
+        else:
+            print(' - Checkout tag ' + tag_output)
+            try:
+                repo.git.checkout(remote_tag)
+            except Exception as err:
+                message = colored(' - Failed to checkout tag ', 'red')
+                print(message + tag_output)
+                print_error(err)
+                remove_directory_exit(repo_path)
+
 def _checkout_branch_herd_branch(repo_path, branch, default_ref, remote, depth):
     """Checkout remote branch or fall back to normal checkout branch if fails"""
     repo = _repo(repo_path)

@@ -36,7 +36,7 @@ test_clean_groups() {
 
     clowder clean -g 'black-cats' || exit 1
 
-    for project in "${all_projects[@]}"; do
+    for project in "${black_cats_projects[@]}"; do
         pushd $project
         test_git_clean
         popd
@@ -167,6 +167,6 @@ test_clean_missing_directories() {
         popd
     done
 
-    clowder herd >/dev/null
+    clowder herd || exit 1
 }
 test_clean_missing_directories 'mu' 'duke'

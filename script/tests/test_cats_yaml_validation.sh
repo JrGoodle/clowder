@@ -20,7 +20,7 @@ test_invalid_yaml() {
         print_single_separator
         clowder herd && exit 1
         print_single_separator
-        rm clowder.yaml
+        rm clowder.yaml || exit 1
     done
 }
 test_invalid_yaml

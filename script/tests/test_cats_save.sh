@@ -37,5 +37,6 @@ test_save_missing_directories() {
     fi
     echo "TEST: Fail saving version with missing directories"
     clowder save missing-directories && exit 1
+    echo ''
 }
 test_save_missing_directories 'duke' 'mu'

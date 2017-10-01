@@ -182,10 +182,9 @@ class Command(object):
 
     def link(self):
         """clowder link command"""
-        self.clowder_repo.print_status()
-
         if self.clowder_repo is None:
             exit_clowder_not_found()
+        self.clowder_repo.print_status()
         if self.args.version is None:
             version = None
         else:

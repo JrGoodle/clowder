@@ -2,6 +2,9 @@
 from termcolor import colored
 from clowder.project import Project
 
+# Disable errors shown by pylint for too many branches
+# pylint: disable=R0912
+
 class Group(object):
     """clowder.yaml group class"""
 
@@ -12,6 +15,13 @@ class Group(object):
             self.depth = group['depth']
         else:
             self.depth = defaults['depth']
+
+        if 'recursive' in group:
+            self.recursive = group['recursive']
+        elif 'recursive' in group:
+            self.recursive = defaults['recursive']
+        else:
+            self.recursive = False
 
         if 'ref' in group:
             self.ref = group['ref']

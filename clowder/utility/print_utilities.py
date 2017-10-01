@@ -109,6 +109,16 @@ def format_not_string_error(name, yaml_file):
     output_5 = colored('str', 'yellow')
     return output_1 + output_2 + output_3 + output_4 + output_5
 
+def format_not_bool_error(name, yaml_file):
+    """Return formatted error string for value that's not a boolean"""
+    yaml_file = format_symlink_target(yaml_file)
+    output_1 = format_path(yaml_file) + '\n'
+    output_2 = colored(' - Error: ', 'red')
+    output_3 = colored(name, attrs=['bold'])
+    output_4 = colored(' type should be ', 'red')
+    output_5 = colored('bool', 'yellow')
+    return output_1 + output_2 + output_3 + output_4 + output_5
+
 def format_path(path):
     """Return formatted path"""
     return colored(path, 'cyan')

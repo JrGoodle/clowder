@@ -161,6 +161,8 @@ if [ -z "$TRAVIS_OS_NAME" ]; then
             popd
         done
 
+        clowder prune -af start_tracking || exit 1
+        
         for project in "${fork_projects[@]}"; do
             clowder start -t start_tracking -p $project || exit 1
         done
@@ -296,8 +298,8 @@ test_branch
 
 test_help() {
     print_double_separator
-    clowder link
-    clowder herd
-    "$TEST_SCRIPT_DIR/tests/test_help.sh" "$LLVM_EXAMPLE_DIR"
+    clowder link || exit 1
+    clowder herd || exit 1
+    "$TEST_SCRIPT_DIR/tests/test_help.sh" "$LLVM_EXAMPLE_DIR" || exit 1
 }
 test_help

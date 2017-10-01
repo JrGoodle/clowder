@@ -71,7 +71,7 @@ if [ -z "$TRAVIS_OS_NAME" ]; then
             exit 1
         fi
         clowder repo push || exit 1
-        clowder repo run 'git reset --hard HEAD~1'
+        clowder repo run 'git reset --hard HEAD~1' || exit 1
         pushd .clowder
         if [ "$ORIGINAL_COMMIT" != "$(git rev-parse HEAD)" ]; then
             exit 1
@@ -83,7 +83,7 @@ if [ -z "$TRAVIS_OS_NAME" ]; then
             exit 1
         fi
         popd
-        clowder repo run 'git reset --hard HEAD~1'
+        clowder repo run 'git reset --hard HEAD~1' || exit 1
         clowder repo run 'git push origin repo-test --force' || exit 1
         clowder repo checkout master || exit 1
     }

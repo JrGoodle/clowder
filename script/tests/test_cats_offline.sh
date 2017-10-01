@@ -22,8 +22,8 @@ cd "$CATS_EXAMPLE_DIR" || exit 1
 print_double_separator
 echo "TEST: Test clowder offline"
 
-"$CATS_EXAMPLE_DIR/clean.sh" || exit 1
-"$CATS_EXAMPLE_DIR/init.sh" || exit 1
+./clean.sh || exit 1
+./init.sh || exit 1
 clowder herd || exit 1
 
 echo 'Disable your network connection'
@@ -84,7 +84,7 @@ git add newfile || exit 1
 popd
 clowder repo commit 'Add newfile' || exit 1
 pushd .clowder
-git reset --hard HEAD~1
+git reset --hard HEAD~1 || exit 1
 popd
 print_single_separator
 echo 'TEST: clowder repo pull'
