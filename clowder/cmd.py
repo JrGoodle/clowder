@@ -21,6 +21,8 @@ if __name__ == '__main__':
 # pylint: disable=W0702
 # Disable errors shown by pylint for too many public methods
 # pylint: disable=R0904
+# Disable errors shown by pylint for too many branches
+# pylint: disable=R0912
 
 class Command(object):
     """Command class for parsing commandline options"""
@@ -304,6 +306,14 @@ class Command(object):
         if self.clowder_repo is None:
             exit_clowder_not_found()
         self.clowder_repo.status()
+
+    def repo_yaml(self):
+        """clowder repo yaml command"""
+        if self.clowder_repo is None:
+            exit_clowder_not_found()
+        if self._invalid_yaml:
+            sys.exit(1)
+        self.clowder_repo.print_yaml()
 
     def save(self):
         """clowder save command"""
