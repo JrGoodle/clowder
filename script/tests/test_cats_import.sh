@@ -69,6 +69,28 @@ test_clowder_import_version() {
 }
 test_clowder_import_version
 
+test_clowder_import_override_group_ref() {
+    print_single_separator
+    echo "TEST: Test clowder file import overriding group ref"
+    clowder link || exit 1
+    clowder herd || exit 1
+    test_cats_default_herd_branches
+    clowder link -v import-override-group-ref || exit 1
+    clowder herd || exit 1
+    for project in "${black_cats_projects[@]}"; do
+    	pushd $project
+        test_branch import-group-branch
+        popd
+    done
+    pushd mu
+    test_branch knead
+    popd
+    pushd duke
+    test_branch purr
+    popd
+}
+test_clowder_import_override_group_ref
+
 test_clowder_import_override_project_ref() {
     print_single_separator
     echo "TEST: Test clowder file import overriding project ref"

@@ -99,7 +99,7 @@ def validate_yaml_import(yaml_file):
             del parsed_yaml['sources']
 
         if 'groups' in parsed_yaml:
-            validate_yaml_groups(parsed_yaml['groups'], yaml_file)
+            validate_yaml_import_groups(parsed_yaml['groups'], yaml_file)
             del parsed_yaml['groups']
 
         if len(parsed_yaml) > 0:
@@ -236,6 +236,80 @@ def validate_yaml_fork(fork, yaml_file):
         if len(fork) > 0:
             error = format_invalid_entries_error('fork', fork, yaml_file)
             raise Exception(error)
+    except Exception as err:
+        print_invalid_yaml_error()
+        print_error(err)
+        sys.exit(1)
+
+def validate_yaml_import_groups(groups, yaml_file):
+    """Validate groups in clowder loaded from yaml file"""
+    try:
+        if not isinstance(groups, list):
+            error = format_not_list_error('groups', yaml_file)
+            raise Exception(error)
+        if len(groups) is 0:
+            error = format_invalid_entries_error('groups', groups, yaml_file)
+            raise Exception(error)
+
+        for group in groups:
+            if not isinstance(group, dict):
+                error = format_not_dictionary_error('group', yaml_file)
+                raise Exception(error)
+            if len(group) is 0:
+                error = format_invalid_entries_error('group', group, yaml_file)
+                raise Exception(error)
+
+            if 'name' not in group:
+                error = format_missing_entry_error('name', 'group', yaml_file)
+                raise Exception(error)
+            if not isinstance(group['name'], str):
+                error = format_not_string_error('name', yaml_file)
+                raise Exception(error)
+            del group['name']
+
+            if len(group) is 0:
+                error = format_invalid_entries_error('group', group, yaml_file)
+                raise Exception(error)
+
+            if 'projects' in group:
+                validate_yaml_projects(group['projects'], yaml_file)
+                del group['projects']
+
+            if 'recursive' in group:
+                if not isinstance(group['recursive'], bool):
+                    error = format_not_bool_error('recursive', yaml_file)
+                    raise Exception(error)
+                del group['recursive']
+
+            if 'ref' in group:
+                if not isinstance(group['ref'], str):
+                    error = format_not_string_error('ref', yaml_file)
+                    raise Exception(error)
+                del group['ref']
+
+            if 'remote' in group:
+                if not isinstance(group['remote'], str):
+                    error = format_not_string_error('remote', yaml_file)
+                    raise Exception(error)
+                del group['remote']
+
+            if 'source' in group:
+                if not isinstance(group['source'], str):
+                    error = format_not_string_error('source', yaml_file)
+                    raise Exception(error)
+                del group['source']
+
+            if 'depth' in group:
+                error = format_depth_error(group['depth'], yaml_file)
+                if not isinstance(group['depth'], int):
+                    raise Exception(error)
+                if int(group['depth']) < 0:
+                    raise Exception(error)
+                del group['depth']
+
+            if len(group) > 0:
+                error = format_invalid_entries_error('group', group, yaml_file)
+                raise Exception(error)
     except Exception as err:
         print_invalid_yaml_error()
         print_error(err)
