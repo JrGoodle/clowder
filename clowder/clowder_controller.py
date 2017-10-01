@@ -176,7 +176,8 @@ class ClowderController(object):
 
     def print_resolved_yaml(self):
         """Print resolved clowder.yaml"""
-        print(get_yaml_string(self._get_yaml()))
+        print(get_yaml_string(self._get_yaml_resolved()))
+        sys.exit() # exit early to prevent printing extra newline
 
     def prune_groups(self, group_names, branch, force=False, local=False, remote=False):
         """Prune branches for groups"""
@@ -333,6 +334,14 @@ class ClowderController(object):
     def _get_yaml(self):
         """Return python object representation for saving yaml"""
         groups_yaml = [g.get_yaml() for g in self.groups]
+        sources_yaml = [s.get_yaml() for s in self.sources]
+        return {'defaults': self.defaults,
+                'sources': sources_yaml,
+                'groups': groups_yaml}
+
+    def _get_yaml_resolved(self):
+        """Return python object representation for resolved yaml"""
+        groups_yaml = [g.get_yaml_resolved() for g in self.groups]
         sources_yaml = [s.get_yaml() for s in self.sources]
         return {'defaults': self.defaults,
                 'sources': sources_yaml,

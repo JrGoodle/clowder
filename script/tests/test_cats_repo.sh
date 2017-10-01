@@ -124,12 +124,16 @@ test_clowder_repo_yaml() {
     print_double_separator
     clowder link || exit 1
     clowder repo yaml || exit 1
+    print_single_separator
+    clowder yaml || exit 1
 
     for test in "${test_cases[@]}"
     do
         print_double_separator
         clowder link -v $test || exit 1
         clowder repo yaml || exit 1
+        print_single_separator
+        clowder yaml || exit 1
     done
 }
 test_clowder_repo_yaml
