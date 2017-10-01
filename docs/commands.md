@@ -217,6 +217,9 @@ $ clowder repo run 'git status'
 
 # Print clowder repo git status
 $ clowder repo status
+
+# Print clowder.yaml file(s) referenced from current symlink and imports
+$ clowder repo yaml
 ```
 
 ---

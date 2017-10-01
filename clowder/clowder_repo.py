@@ -24,6 +24,7 @@ from clowder.utility.clowder_utilities import (
     is_offline,
     remove_directory_exit
 )
+from clowder.utility.clowder_yaml_printing import print_yaml
 from clowder.utility.print_utilities import (
     format_command,
     format_path,
@@ -110,14 +111,14 @@ class ClowderRepo(object):
         print(' - Symlink ' + path_output)
         force_symlink(yaml_file, yaml_symlink)
 
-    def print_status(self):
+    def print_status(self, fetch=True):
         """Print clowder repo status"""
         repo_path = os.path.join(self.root_directory, '.clowder')
         if not git_existing_repository(repo_path):
             output = colored('.clowder', 'green')
             print(output)
             return
-        if not is_offline():
+        if not is_offline() and fetch:
             print(' - Fetch upstream changes for clowder repo')
             git_fetch_silent(self.clowder_path)
         project_output = format_project_string(repo_path, '.clowder')
@@ -133,6 +134,11 @@ class ClowderRepo(object):
         path_output = format_path(clowder_path[1:-1])
         print(project_output + ' ' + current_ref_output)
         print(symlink_output + ' -> ' + path_output)
+        print()
+
+    def print_yaml(self):
+        """Print current clowder yaml"""
+        print_yaml(self.root_directory)
 
     def pull(self):
         """Pull clowder repo upstream changes"""

@@ -113,3 +113,23 @@ test_clowder_repo_status() {
     clowder repo status || exit 1
 }
 test_clowder_repo_status
+
+test_clowder_repo_yaml() {
+    print_single_separator
+    echo "TEST: Test clowder repo yaml command"
+    pushd .clowder/versions >/dev/null
+    test_cases=( $(ls -d import-*) )
+    popd >/dev/null
+
+    print_double_separator
+    clowder link || exit 1
+    clowder repo yaml || exit 1
+
+    for test in "${test_cases[@]}"
+    do
+        print_double_separator
+        clowder link -v $test || exit 1
+        clowder repo yaml || exit 1
+    done
+}
+test_clowder_repo_yaml

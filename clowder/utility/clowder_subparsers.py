@@ -302,6 +302,8 @@ def _configure_subparser_repo(subparsers):
     repo_subparsers.add_parser('push', help='Push changes in clowder repo')
     # clowder repo status
     repo_subparsers.add_parser('status', help='Print clowder repo git status')
+    # clowder repo yaml
+    repo_subparsers.add_parser('yaml', help='Print current clowder yaml')
 
 def _configure_subparser_save(subparsers):
     """Configure clowder save subparser and arguments"""

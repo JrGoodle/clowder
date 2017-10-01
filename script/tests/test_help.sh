@@ -23,6 +23,7 @@ export commands=( 'branch' \
                   'repo push' \
                   'repo run' \
                   'repo status' \
+                  'repo yaml' \
                   'save' \
                   'start' \
                   'stash' \
