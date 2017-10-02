@@ -8,14 +8,14 @@ from clowder.utility.git_utilities import (
     git_new_commits,
     git_sha_short,
     git_status,
-    git_validate_repo_state
+    git_validate_repo
 )
 
 def format_project_string(repo_path, name):
     """Return formatted project name"""
     if not os.path.isdir(os.path.join(repo_path, '.git')):
         return colored(name, 'green')
-    if not git_validate_repo_state(repo_path):
+    if not git_validate_repo(repo_path):
         color = 'red'
         symbol = '*'
     else:
@@ -52,6 +52,6 @@ def print_validation(repo_path):
     """Print validation messages"""
     if not git_existing_repository(repo_path):
         return
-    if not git_validate_repo_state(repo_path):
+    if not git_validate_repo(repo_path):
         print(' - Dirty repo. Please stash, commit, or discard your changes')
         git_status(repo_path)

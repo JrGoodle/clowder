@@ -38,6 +38,89 @@ test_recurse() {
 }
 test_recurse
 
+test_clean_submodules_untracked() {
+    print_single_separator
+    echo "TEST: Clean untracked files in submodules"
+    clowder herd || exit 1
+    for project in "${external_projects[@]}"; do
+        pushd $project
+            touch newfile
+            mkdir something
+            touch something/something
+            if [ ! -d 'something' ]; then
+                exit 1
+            fi
+            if [ ! -f 'something/something' ]; then
+                exit 1
+            fi
+            if [ ! -f 'newfile' ]; then
+                exit 1
+            fi
+        popd
+    done
+
+    clowder clean || exit 1
+
+    for project in "${external_projects[@]}"; do
+        pushd $project
+            if [ -d 'something' ]; then
+                exit 1
+            fi
+            if [ -f 'something/something' ]; then
+                exit 1
+            fi
+            if [ -f 'newfile' ]; then
+                exit 1
+            fi
+        popd
+    done
+}
+test_clean_submodules_untracked
+
+test_clean_submodules_dirty() {
+    print_single_separator
+    echo "TEST: Clean dirty submodules"
+    clowder herd || exit 1
+    for project in "${external_projects[@]}"; do
+        pushd $project
+        touch newfile
+        mkdir something
+        touch something/something
+        git checkout -b something || exit 1
+        git add newfile something || exit 1
+        test_git_dirty
+        test_branch something
+        if [ ! -d 'something' ]; then
+            exit 1
+        fi
+        if [ ! -f 'something/something' ]; then
+            exit 1
+        fi
+        if [ ! -f 'newfile' ]; then
+            exit 1
+        fi
+        popd
+    done
+
+    clowder clean || exit 1
+
+    for project in "${external_projects[@]}"; do
+        pushd $project
+        test_head_detached
+        if [ -d 'something' ]; then
+            exit 1
+        fi
+        if [ -f 'something/something' ]; then
+            exit 1
+        fi
+        if [ -f 'newfile' ]; then
+            exit 1
+        fi
+        popd
+    done
+}
+test_clean_submodules_dirty
+
 ./clean.sh
 ./init.sh || exit 1
 

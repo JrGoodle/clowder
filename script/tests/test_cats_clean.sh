@@ -235,7 +235,7 @@ test_clean_untracked_files() {
         if [ -d 'something_else' ]; then
             exit 1
         fi
-        if [ -f 'newfil' ]; then
+        if [ -f 'newfile' ]; then
             exit 1
         fi
     popd

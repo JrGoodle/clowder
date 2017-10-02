@@ -31,8 +31,6 @@ from clowder.utility.git_utilities import (
     git_herd_branch,
     git_herd_branch_upstream,
     git_herd_upstream,
-    git_is_dirty,
-    git_is_rebase_in_progress,
     git_print_branches,
     git_prune_local,
     git_prune_remote,
@@ -43,8 +41,7 @@ from clowder.utility.git_utilities import (
     git_stash,
     git_status,
     git_sync,
-    git_untracked_files,
-    git_validate_repo_state
+    git_validate_repo
 )
 
 # Disable errors shown by pylint for too many branches
@@ -239,16 +236,11 @@ class Project(object):
 
     def is_dirty(self):
         """Check if project is dirty"""
-        if not os.path.exists(self.full_path()):
-            return False
-        is_dirty = git_is_dirty(self.full_path())
-        is_rebase_in_progress = git_is_rebase_in_progress(self.full_path())
-        has_untracked_files = git_untracked_files(self.full_path())
-        return is_dirty or is_rebase_in_progress or has_untracked_files
+        return not git_validate_repo(self.full_path())
 
     def is_valid(self):
         """Validate status of project"""
-        return git_validate_repo_state(self.full_path())
+        return git_validate_repo(self.full_path())
 
     def print_exists(self):
         """Print existence validation message for project"""
