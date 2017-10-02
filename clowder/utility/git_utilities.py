@@ -111,6 +111,23 @@ def git_clean(repo_path):
         print_error(err)
         sys.exit(1)
 
+def git_clean_submodules(repo_path):
+    """Clean all submodules"""
+    repo = _repo(repo_path)
+    try:
+        repo.git.submodule.foreach('--recursive', 'git', 'clean', '-fdx')
+    except Exception as err:
+        cprint(' - Failed to check untracked files in submodules', 'red')
+        print_error(err)
+        sys.exit(1)
+    else:
+        try:
+            repo.git.submodule.foreach('--recursive', 'git', 'reset', '--hard', 'HEAD')
+        except Exception as err:
+            cprint(' - Failed to reset submodules', 'red')
+            print_error(err)
+            sys.exit(1)
+
 def git_commit(repo_path, message):
     """Commit current changes"""
     repo = _repo(repo_path)

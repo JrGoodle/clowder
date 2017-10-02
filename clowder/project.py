@@ -21,6 +21,7 @@ from clowder.utility.git_print_utilities import (
 from clowder.utility.git_utilities import (
     git_abort_rebase,
     git_clean,
+    git_clean_submodules,
     git_configure_remotes,
     git_existing_local_branch,
     git_existing_remote_branch,
@@ -134,6 +135,8 @@ class Project(object):
             git_clean(self.full_path())
             git_reset_head(self.full_path())
             git_abort_rebase(self.full_path())
+            if self.recursive:
+                git_clean_submodules(self.full_path())
 
     def diff(self):
         """Show git diff for project"""
