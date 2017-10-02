@@ -71,25 +71,25 @@ command -v clowder >/dev/null 2>&1 && eval "$(register-python-argcomplete clowde
 
 # Usage
 
-This example is based on the [LLVM project](https://llvm.org) (see [the full clowder.yaml](https://github.com/JrGoodle/llvm-projects/blob/master/clowder.yaml))
+This example is based on the [Swift projects](https://github.com/apple/swift) (see [the full clowder.yaml](https://github.com/JrGoodle/swift-clowder/blob/master/clowder.yaml))
 
-First reate a directory to contain all the LLVM projects
+First reate a directory to contain all the Swift projects
 
 ```bash
-$ mkdir llvm-projects
-$ cd llvm-projects
+$ mkdir swift-source
+$ cd swift-source
 ```
 
 ## `clowder init`
 
 ```bash
-$ clowder init git@github.com:jrgoodle/llvm-projects.git
+$ clowder init git@github.com:jrgoodle/swift-clowder
 ```
 
 ![clowder init](docs/README/clowder-init.png)
 
 The `clowder init` command does the following
-- Clones the [llvm-projects clowder repo](https://github.com/jrgoodle/llvm-projects.git) in the `llvm-projects/.clowder` directory
+- Clones the [Swift clowder repo](https://github.com/JrGoodle/swift-clowder) in the `swift-source/.clowder` directory
 - Creates a symlink pointing to the primary `clowder.yaml` file in the repository
 
 ## `clowder herd`
@@ -113,7 +113,7 @@ $ clowder herd
 $ clowder status
 ```
 
-<img alt="clowder status" src="docs/README/clowder-status.png" width="60%">
+![clowder status](docs/README/clowder-status.png)
 
 # Further Information
 
