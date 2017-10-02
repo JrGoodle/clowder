@@ -34,6 +34,18 @@ def format_empty_yaml_error(yaml_file):
     output_3 = format_yaml_file('clowder.yaml')
     return output_1 + output_2 + output_3
 
+def format_remote_name_error(fork, project, remote):
+    """Return formatted error string for fork with same remote as project"""
+    # yaml_file = format_symlink_target(yaml_file)
+    # output_1 = format_path(yaml_file) + '\n'
+    output_1 = colored(' - Error: fork ', 'red')
+    output_2 = colored(fork, attrs=['bold'])
+    output_3 = colored(' and project ', 'red')
+    output_4 = colored(project, attrs=['bold'])
+    output_5 = colored(' have same remote name ', 'red')
+    output_6 = colored(remote, attrs=['bold'])
+    return output_1 + output_2 + output_3 + output_4 + output_5 + output_6
+
 def format_fork_string(name):
     """Return formatted fork name"""
     return colored(name, 'cyan')
