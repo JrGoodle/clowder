@@ -170,3 +170,38 @@ test_clean_missing_directories() {
     clowder herd || exit 1
 }
 test_clean_missing_directories 'mu' 'duke'
+
+test_clean_abort_rebase() {
+    print_single_separator
+    echo "TEST: Clean when in the middle of a rebase"
+
+    clowder link || exit 1
+    clowder herd || exit 1
+
+    pushd mu
+        touch newfile
+        echo 'something' > newfile
+        git checkout -b something
+        git add newfile || exit 1
+        git commit -m 'Add newfile with something' || exit 1
+        git checkout knead || exit 1
+        touch newfile
+        echo 'something else' > newfile || exit 1
+        git add newfile || exit 1
+        git commit -m 'Add newfile with something else' || exit 1
+        test_no_rebase_in_progress
+        git rebase something && exit 1
+        test_rebase_in_progress
+        git reset --hard || exit 1
+        test_rebase_in_progress
+    popd
+
+    clowder clean || exit 1
+
+    pushd mu
+        test_no_rebase_in_progress
+        test_git_clean
+        git reset --hard HEAD~1 || exit 1
+    popd
+}
+test_clean_abort_rebase
