@@ -203,6 +203,8 @@ test_swift_configs() {
         clowder status || exit 1
         "$config_function"
         pushd swift
+            # need to checkout master for latest update-checkout script changes
+            # one reason not to include checkout logic in the project repo ;)
             git checkout master || exit 1
         popd
         ./swift/utils/update-checkout --clone --scheme master --reset-to-remote || exit 1

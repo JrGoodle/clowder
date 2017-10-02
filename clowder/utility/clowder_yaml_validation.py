@@ -4,12 +4,13 @@ from clowder.utility.clowder_utilities import parse_yaml
 from clowder.utility.print_utilities import (
     format_depth_error,
     format_empty_yaml_error,
+    format_invalid_entries_error,
     format_missing_entry_error,
     format_not_bool_error,
     format_not_dictionary_error,
     format_not_list_error,
     format_not_string_error,
-    format_invalid_entries_error,
+    format_invalid_ref_error,
     format_yaml_file,
     print_error,
     print_invalid_yaml_error
@@ -125,6 +126,9 @@ def validate_yaml_import_defaults(defaults, yaml_file):
         if not isinstance(defaults['ref'], str):
             error = format_not_string_error('ref', yaml_file)
             raise Exception(error)
+        if not _valid_ref_type(defaults['ref']):
+            error = format_invalid_ref_error(defaults['ref'], yaml_file)
+            raise Exception(error)
         del defaults['ref']
     if 'remote' in defaults:
         if not isinstance(defaults['remote'], str):
@@ -162,6 +166,9 @@ def validate_yaml_defaults(defaults, yaml_file):
             raise Exception(error)
         if not isinstance(defaults['ref'], str):
             error = format_not_string_error('ref', yaml_file)
+            raise Exception(error)
+        if not _valid_ref_type(defaults['ref']):
+            error = format_invalid_ref_error(defaults['ref'], yaml_file)
             raise Exception(error)
         del defaults['ref']
 
@@ -285,6 +292,9 @@ def validate_yaml_import_groups(groups, yaml_file):
                 if not isinstance(group['ref'], str):
                     error = format_not_string_error('ref', yaml_file)
                     raise Exception(error)
+                if not _valid_ref_type(group['ref']):
+                    error = format_invalid_ref_error(group['ref'], yaml_file)
+                    raise Exception(error)
                 del group['ref']
 
             if 'remote' in group:
@@ -356,6 +366,9 @@ def validate_yaml_groups(groups, yaml_file):
             if 'ref' in group:
                 if not isinstance(group['ref'], str):
                     error = format_not_string_error('ref', yaml_file)
+                    raise Exception(error)
+                if not _valid_ref_type(group['ref']):
+                    error = format_invalid_ref_error(group['ref'], yaml_file)
                     raise Exception(error)
                 del group['ref']
 
@@ -469,6 +482,9 @@ def validate_yaml_project_optional(project, yaml_file):
         if not isinstance(project['ref'], str):
             error = format_not_string_error('ref', yaml_file)
             raise Exception(error)
+        if not _valid_ref_type(project['ref']):
+            error = format_invalid_ref_error(project['ref'], yaml_file)
+            raise Exception(error)
         del project['ref']
 
     if 'source' in project:
@@ -552,3 +568,16 @@ def validate_yaml_sources(sources, yaml_file):
         print_invalid_yaml_error()
         print_error(err)
         sys.exit(1)
+
+def _valid_ref_type(ref):
+    """Validate that ref is formatted correctly"""
+    git_branch = "refs/heads/"
+    git_tag = "refs/tags/"
+    if ref.startswith(git_branch):
+        return True
+    elif ref.startswith(git_tag):
+        return True
+    elif len(ref) is 40:
+        return True
+    else:
+        return False
