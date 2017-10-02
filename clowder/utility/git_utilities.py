@@ -111,6 +111,30 @@ def git_clean(repo_path):
         print_error(err)
         sys.exit(1)
 
+def git_clean_submodules(repo_path):
+    """Clean all submodules"""
+    repo = _repo(repo_path)
+    try:
+        repo.git.submodule('foreach', '--recursive', 'git', 'clean', '-fdx')
+    except Exception as err:
+        cprint(' - Failed to check untracked files in submodules', 'red')
+        print_error(err)
+        sys.exit(1)
+    else:
+        try:
+            repo.git.submodule('foreach', '--recursive', 'git', 'reset', '--hard', 'HEAD')
+        except Exception as err:
+            cprint(' - Failed to reset submodules', 'red')
+            print_error(err)
+            sys.exit(1)
+        else:
+            try:
+                repo.git.submodule('update', '--checkout', '--recursive', '--force')
+            except Exception as err:
+                cprint(' - Failed to update submodules', 'red')
+                print_error(err)
+                sys.exit(1)
+
 def git_commit(repo_path, message):
     """Commit current changes"""
     repo = _repo(repo_path)
@@ -256,6 +280,10 @@ def git_existing_repository(path):
     """Check if a git repository exists"""
     return os.path.isdir(os.path.join(path, '.git'))
 
+def git_existing_submodule(path):
+    """Check if a git submodule exists"""
+    return os.path.isfile(os.path.join(path, '.git'))
+
 def git_existing_local_branch(repo_path, branch):
     """Check if local branch exists"""
     repo = _repo(repo_path)
@@ -310,6 +338,13 @@ def git_fetch_silent(repo_path):
         cprint(' - Failed to fetch', 'red')
         print_command_failed_error(command)
         sys.exit(return_code)
+
+def git_has_submodules(repo_path):
+    """Repo has submodules"""
+    repo = _repo(repo_path)
+    if repo.submodules.count > 0:
+        return True
+    return False
 
 def git_herd(repo_path, url, remote, ref, depth=0, recursive=False):
     """Herd ref"""
@@ -814,12 +849,36 @@ def git_untracked_files(repo_path):
         print_error(err)
         sys.exit(1)
 
-def git_validate_repo_state(repo_path):
+def git_is_valid_repo(repo_path):
+    """Validate repo"""
+    if git_is_dirty(repo_path):
+        return False
+    elif git_is_rebase_in_progress(repo_path):
+        return False
+    elif git_untracked_files(repo_path):
+        return False
+    else:
+        return True
+
+def git_is_valid_submodule(repo_path):
+    """Validate repo"""
+    if git_is_dirty(repo_path):
+        return False
+    # elif git_is_rebase_in_progress(repo_path):
+    #     return False
+    # elif git_untracked_files(repo_path):
+    #     return False
+    else:
+        return True
+
+def git_validate_repo(repo_path):
     """Validate repo state"""
     if not git_existing_repository(repo_path):
         return True
-    dirty = git_is_dirty(repo_path)
-    rebase = git_is_rebase_in_progress(repo_path)
-    untracked = git_untracked_files(repo_path)
-    invalid = dirty or rebase or untracked
-    return not invalid
+    if not git_is_valid_repo(repo_path):
+        return False
+    repo = _repo(repo_path)
+    for submodule in repo.submodules:
+        if not git_is_valid_submodule(submodule.path):
+            return False
+    return True

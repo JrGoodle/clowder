@@ -16,7 +16,7 @@ from clowder.utility.git_utilities import (
     git_push,
     git_reset_head,
     git_status,
-    git_validate_repo_state
+    git_validate_repo
 )
 from clowder.utility.clowder_utilities import (
     execute_command,
@@ -157,7 +157,7 @@ class ClowderRepo(object):
 
     def _validate_groups(self):
         """Validate status of clowder repo"""
-        if not git_validate_repo_state(self.clowder_path):
+        if not git_validate_repo(self.clowder_path):
             print_validation(self.clowder_path)
             print()
             sys.exit(1)

@@ -75,6 +75,14 @@ test_git_dirty() {
     git diff --cached --quiet && exit 1
 }
 
+test_head_detached() {
+    echo "TEST: HEAD is detached"
+    output="$(git status | head -1)"
+    if [[ $output != 'HEAD detached at'* ]]; then
+        exit 1
+    fi
+}
+
 test_local_branch_exists() {
     echo "TEST: Local branch exists: $1"
     git rev-parse --quiet --verify "$1" || exit 1

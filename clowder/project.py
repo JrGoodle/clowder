@@ -21,17 +21,17 @@ from clowder.utility.git_print_utilities import (
 from clowder.utility.git_utilities import (
     git_abort_rebase,
     git_clean,
+    git_clean_submodules,
     git_configure_remotes,
     git_existing_local_branch,
     git_existing_remote_branch,
     git_existing_repository,
     git_fetch_remote,
+    git_has_submodules,
     git_herd,
     git_herd_branch,
     git_herd_branch_upstream,
     git_herd_upstream,
-    git_is_dirty,
-    git_is_rebase_in_progress,
     git_print_branches,
     git_prune_local,
     git_prune_remote,
@@ -42,8 +42,7 @@ from clowder.utility.git_utilities import (
     git_stash,
     git_status,
     git_sync,
-    git_untracked_files,
-    git_validate_repo_state
+    git_validate_repo
 )
 
 # Disable errors shown by pylint for too many branches
@@ -134,6 +133,8 @@ class Project(object):
             git_clean(self.full_path())
             git_reset_head(self.full_path())
             git_abort_rebase(self.full_path())
+            if self.recursive:
+                git_clean_submodules(self.full_path())
 
     def diff(self):
         """Show git diff for project"""
@@ -236,16 +237,16 @@ class Project(object):
 
     def is_dirty(self):
         """Check if project is dirty"""
-        if not os.path.exists(self.full_path()):
-            return False
-        is_dirty = git_is_dirty(self.full_path())
-        is_rebase_in_progress = git_is_rebase_in_progress(self.full_path())
-        has_untracked_files = git_untracked_files(self.full_path())
-        return is_dirty or is_rebase_in_progress or has_untracked_files
+        if not git_validate_repo(self.full_path()):
+            return True
+        if self.recursive:
+            if git_has_submodules(self.full_path()):
+                return True
+        return False
 
     def is_valid(self):
         """Validate status of project"""
-        return git_validate_repo_state(self.full_path())
+        return git_validate_repo(self.full_path())
 
     def print_exists(self):
         """Print existence validation message for project"""
