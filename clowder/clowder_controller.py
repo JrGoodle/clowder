@@ -61,9 +61,6 @@ class ClowderController(object):
 
     def clean(self, group_names=None, project_names=None):
         """Discard changes"""
-        if not self._is_dirty():
-            print(' - No changes to discard')
-            return
         for group in self.groups:
             if project_names is None and group_names is None:
                 group.clean()

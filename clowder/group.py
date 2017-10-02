@@ -55,10 +55,9 @@ class Group(object):
 
     def clean(self):
         """Discard changes for all projects"""
-        if self.is_dirty():
-            self._print_name()
-            for project in self.projects:
-                project.clean()
+        self._print_name()
+        for project in self.projects:
+            project.clean()
 
     def diff(self):
         """Show git diffs for all projects"""
