@@ -86,6 +86,16 @@ test_no_local_branch_exists() {
     git rev-parse --quiet --verify "$1" && exit 1
 }
 
+test_rebase_in_progress() {
+    echo "TEST: Rebase is in progress"
+    (test -d ".git/rebase-merge" || test -d ".git/rebase-apply") || exit 1
+}
+
+test_no_rebase_in_progress() {
+    echo "TEST: No rebase is in progress"
+    (test -d ".git/rebase-merge" || test -d ".git/rebase-apply") && exit 1
+}
+
 test_remote_branch_exists() {
     echo "TEST: Remote branch exists: $1"
     local remote_branch_count

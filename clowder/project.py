@@ -19,6 +19,7 @@ from clowder.utility.git_print_utilities import (
     print_validation
 )
 from clowder.utility.git_utilities import (
+    git_abort_rebase,
     git_configure_remotes,
     git_existing_local_branch,
     git_existing_remote_branch,
@@ -29,6 +30,7 @@ from clowder.utility.git_utilities import (
     git_herd_branch_upstream,
     git_herd_upstream,
     git_is_dirty,
+    git_is_rebase_in_progress,
     git_print_branches,
     git_prune_local,
     git_prune_remote,
@@ -128,6 +130,7 @@ class Project(object):
             self._print_status()
             print(' - Discard current changes')
             git_reset_head(self.full_path())
+            git_abort_rebase(self.full_path())
 
     def diff(self):
         """Show git diff for project"""
@@ -230,7 +233,9 @@ class Project(object):
 
     def is_dirty(self):
         """Check if project is dirty"""
-        return git_is_dirty(self.full_path())
+        is_dirty = git_is_dirty(self.full_path())
+        is_rebase_in_progress = git_is_rebase_in_progress(self.full_path())
+        return is_dirty or is_rebase_in_progress
 
     def is_valid(self):
         """Validate status of project"""
