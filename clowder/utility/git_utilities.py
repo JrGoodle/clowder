@@ -339,6 +339,13 @@ def git_fetch_silent(repo_path):
         print_command_failed_error(command)
         sys.exit(return_code)
 
+def git_has_submodules(repo_path):
+    """Repo has submodules"""
+    repo = _repo(repo_path)
+    if repo.submodules.count > 0:
+        return True
+    return False
+
 def git_herd(repo_path, url, remote, ref, depth=0, recursive=False):
     """Herd ref"""
     if not git_existing_repository(repo_path):

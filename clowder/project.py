@@ -27,6 +27,7 @@ from clowder.utility.git_utilities import (
     git_existing_remote_branch,
     git_existing_repository,
     git_fetch_remote,
+    git_has_submodules,
     git_herd,
     git_herd_branch,
     git_herd_branch_upstream,
@@ -236,7 +237,12 @@ class Project(object):
 
     def is_dirty(self):
         """Check if project is dirty"""
-        return not git_validate_repo(self.full_path())
+        if not git_validate_repo(self.full_path()):
+            return True
+        if self.recursive:
+            if git_has_submodules(self.full_path()):
+                return True
+        return False
 
     def is_valid(self):
         """Validate status of project"""
