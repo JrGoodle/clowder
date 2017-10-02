@@ -164,6 +164,7 @@ test_clean_missing_directories() {
     for project in "${black_cats_projects[@]}"; do
         pushd $project
         test_git_clean
+        test_no_untracked_files
         popd
     done
 
@@ -205,3 +206,38 @@ test_clean_abort_rebase() {
     popd
 }
 test_clean_abort_rebase
+
+test_clean_untracked_files() {
+    print_single_separator
+    echo "TEST: Clean untracked files"
+
+    clowder link || exit 1
+    clowder herd || exit 1
+
+    pushd mu
+        touch newfile
+        mkdir something
+        touch something/something
+        mkdir something_else
+        test_untracked_files
+    popd
+
+    clowder herd && exit 1
+    clowder clean || exit 1
+
+    pushd mu
+        if [ -d 'something' ]; then
+            exit 1
+        fi
+        if [ -f 'something/something' ]; then
+            exit 1
+        fi
+        if [ -d 'something_else' ]; then
+            exit 1
+        fi
+        if [ -f 'newfil' ]; then
+            exit 1
+        fi
+    popd
+}
+test_clean_untracked_files

@@ -56,7 +56,6 @@ make_dirty_repos() {
         git add newfile >/dev/null
         popd
     done
-    clowder diff || exit 1
 }
 
 test_branch() {
@@ -131,6 +130,22 @@ test_tracking_branch_exists() {
 test_no_tracking_branch_exists() {
     echo "TEST: Tracking branch doesn't exist: $1"
     git config --get branch.$1.merge && exit 1
+}
+
+test_no_untracked_files() {
+    echo "TEST: No untracked files exist"
+    files="$(git ls-files -o -d --exclude-standard | sed q | wc -l| tr -d '[:space:]')"
+    if [ "$files" != "0" ]; then
+        exit 1
+    fi
+}
+
+test_untracked_files() {
+    echo "TEST: Untracked files exist"
+    files="$(git ls-files -o -d --exclude-standard | sed q | wc -l| tr -d '[:space:]')"
+    if [ "$files" != "1" ]; then
+        exit 1
+    fi
 }
 
 test_clowder_version() {

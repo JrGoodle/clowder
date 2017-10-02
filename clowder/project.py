@@ -20,6 +20,7 @@ from clowder.utility.git_print_utilities import (
 )
 from clowder.utility.git_utilities import (
     git_abort_rebase,
+    git_clean,
     git_configure_remotes,
     git_existing_local_branch,
     git_existing_remote_branch,
@@ -41,6 +42,7 @@ from clowder.utility.git_utilities import (
     git_stash,
     git_status,
     git_sync,
+    git_untracked_files,
     git_validate_repo_state
 )
 
@@ -129,6 +131,7 @@ class Project(object):
         if self.is_dirty():
             self._print_status()
             print(' - Discard current changes')
+            git_clean(self.full_path())
             git_reset_head(self.full_path())
             git_abort_rebase(self.full_path())
 
@@ -233,9 +236,12 @@ class Project(object):
 
     def is_dirty(self):
         """Check if project is dirty"""
+        if not os.path.exists(self.full_path()):
+            return False
         is_dirty = git_is_dirty(self.full_path())
         is_rebase_in_progress = git_is_rebase_in_progress(self.full_path())
-        return is_dirty or is_rebase_in_progress
+        has_untracked_files = git_untracked_files(self.full_path())
+        return is_dirty or is_rebase_in_progress or has_untracked_files
 
     def is_valid(self):
         """Validate status of project"""

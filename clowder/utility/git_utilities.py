@@ -1,5 +1,6 @@
 """Git utilities"""
 import os
+import subprocess
 import sys
 from git import Repo
 from termcolor import colored, cprint
@@ -99,6 +100,16 @@ def git_checkout_ref(repo_path, ref, remote, depth):
     else:
         ref_output = format_ref_string(ref)
         print('Unknown ref ' + ref_output)
+
+def git_clean(repo_path):
+    """Clean all untracked files"""
+    repo = _repo(repo_path)
+    try:
+        repo.git.clean('-fdx')
+    except Exception as err:
+        cprint(' - Failed to clean untracked files', 'red')
+        print_error(err)
+        sys.exit(1)
 
 def git_commit(repo_path, message):
     """Commit current changes"""
@@ -790,8 +801,25 @@ def git_sync(repo_path, upstream_remote, fork_remote, ref, recursive):
         cprint(' - Can only sync branches', 'red')
         sys.exit(1)
 
+def git_untracked_files(repo_path):
+    """Execute command and display continuous output"""
+    command = "git ls-files -o -d --exclude-standard | sed q | wc -l| tr -d '[:space:]'"
+    try:
+        output = subprocess.check_output(command,
+                                         shell=True,
+                                         cwd=repo_path)
+        return output.decode('utf-8') is '1'
+    except Exception as err:
+        cprint(' - Failed to check untracked files', 'red')
+        print_error(err)
+        sys.exit(1)
+
 def git_validate_repo_state(repo_path):
     """Validate repo state"""
     if not git_existing_repository(repo_path):
         return True
-    return not git_is_dirty(repo_path)
+    dirty = git_is_dirty(repo_path)
+    rebase = git_is_rebase_in_progress(repo_path)
+    untracked = git_untracked_files(repo_path)
+    invalid = dirty or rebase or untracked
+    return not invalid
