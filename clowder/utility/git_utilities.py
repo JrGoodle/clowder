@@ -42,6 +42,18 @@ from clowder.utility.git_utilities_private import (
 # Disable errors shown by pylint for too many local variables
 # pylint: disable=R0914
 
+def git_abort_rebase(repo_path):
+    """Abort rebase"""
+    if not git_is_rebase_in_progress(repo_path):
+        return
+    repo = _repo(repo_path)
+    try:
+        repo.git.rebase('--abort')
+    except Exception as err:
+        cprint(' - Failed to abort rebase', 'red')
+        print_error(err)
+        sys.exit(1)
+
 def git_add(repo_path, files):
     """Add files to git index"""
     repo = _repo(repo_path)
@@ -395,6 +407,14 @@ def git_is_dirty(repo_path):
     else:
         repo = _repo(repo_path)
         return repo.is_dirty()
+
+def git_is_rebase_in_progress(repo_path):
+    """Detect whether rebase is in progress"""
+    rebase_apply = os.path.join(repo_path, '.git', 'rebase-apply')
+    rebase_merge = os.path.join(repo_path, '.git', 'rebase-merge')
+    is_rebase_apply = os.path.isdir(rebase_apply)
+    is_rebase_merge = os.path.isdir(rebase_merge)
+    return is_rebase_apply or is_rebase_merge
 
 def git_is_tracking_branch(repo_path, branch):
     """Check if branch is a tracking branch"""
