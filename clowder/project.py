@@ -10,7 +10,9 @@ from clowder.utility.clowder_utilities import (
 from clowder.utility.print_utilities import (
     format_command,
     format_fork_string,
-    print_command_failed_error
+    format_remote_name_error,
+    print_command_failed_error,
+    print_invalid_yaml_error
 )
 from clowder.utility.git_print_utilities import (
     format_project_string,
@@ -108,6 +110,11 @@ class Project(object):
         self.fork = None
         if 'fork' in project:
             fork = project['fork']
+            if fork['remote'] == self.remote_name:
+                error = format_remote_name_error(fork['name'], self.name, self.remote_name)
+                print_invalid_yaml_error()
+                print(error + '\n')
+                sys.exit(1)
             self.fork = Fork(fork, self.root_directory, self.path, self.source)
 
     def branch(self, local=False, remote=False):
