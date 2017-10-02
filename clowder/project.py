@@ -23,7 +23,6 @@ from clowder.utility.git_print_utilities import (
 from clowder.utility.git_utilities import (
     git_abort_rebase,
     git_clean,
-    git_clean_submodules,
     git_configure_remotes,
     git_existing_local_branch,
     git_existing_remote_branch,
@@ -37,12 +36,16 @@ from clowder.utility.git_utilities import (
     git_print_branches,
     git_prune_local,
     git_prune_remote,
+    git_is_rebase_in_progress,
     git_reset_head,
     git_sha_long,
     git_start,
     git_start_offline,
     git_stash,
     git_status,
+    git_submodules_clean,
+    git_submodules_reset,
+    git_submodules_update,
     git_sync,
     git_validate_repo
 )
@@ -134,14 +137,24 @@ class Project(object):
 
     def clean(self):
         """Discard changes for project"""
-        if self.is_dirty():
-            self._print_status()
-            print(' - Discard current changes')
-            git_clean(self.full_path())
-            git_reset_head(self.full_path())
+        self._print_status()
+        if not os.path.isdir(self.full_path()):
+            cprint(" - Project is missing\n", 'red')
+            return
+        print(' - Clean project')
+        git_clean(self.full_path())
+        print(' - Reset project')
+        git_reset_head(self.full_path())
+        if git_is_rebase_in_progress(self.full_path()):
+            print(' - Abort rebase in progress')
             git_abort_rebase(self.full_path())
-            if self.recursive:
-                git_clean_submodules(self.full_path())
+        if self.recursive:
+            print(' - Clean submodules recursively')
+            git_submodules_clean(self.full_path())
+            print(' - Reset submodules recursively')
+            git_submodules_reset(self.full_path())
+            print(' - Update submodules recursively')
+            git_submodules_update(self.full_path())
 
     def diff(self):
         """Show git diff for project"""

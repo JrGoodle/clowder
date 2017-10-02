@@ -111,30 +111,6 @@ def git_clean(repo_path):
         print_error(err)
         sys.exit(1)
 
-def git_clean_submodules(repo_path):
-    """Clean all submodules"""
-    repo = _repo(repo_path)
-    try:
-        repo.git.submodule('foreach', '--recursive', 'git', 'clean', '-fdx')
-    except Exception as err:
-        cprint(' - Failed to check untracked files in submodules', 'red')
-        print_error(err)
-        sys.exit(1)
-    else:
-        try:
-            repo.git.submodule('foreach', '--recursive', 'git', 'reset', '--hard', 'HEAD')
-        except Exception as err:
-            cprint(' - Failed to reset submodules', 'red')
-            print_error(err)
-            sys.exit(1)
-        else:
-            try:
-                repo.git.submodule('update', '--checkout', '--recursive', '--force')
-            except Exception as err:
-                cprint(' - Failed to update submodules', 'red')
-                print_error(err)
-                sys.exit(1)
-
 def git_commit(repo_path, message):
     """Commit current changes"""
     repo = _repo(repo_path)
@@ -804,6 +780,36 @@ def git_submodule_update_recursive(repo_path, depth):
         cprint(' - Failed to update submodules', 'red')
         print_command_failed_error(command)
         sys.exit(return_code)
+
+def git_submodules_clean(repo_path):
+    """Clean all submodules"""
+    repo = _repo(repo_path)
+    try:
+        repo.git.submodule('foreach', '--recursive', 'git', 'clean', '-fdx')
+    except Exception as err:
+        cprint(' - Failed to check untracked files in submodules', 'red')
+        print_error(err)
+        sys.exit(1)
+
+def git_submodules_reset(repo_path):
+    """Reset all submodules"""
+    repo = _repo(repo_path)
+    try:
+        repo.git.submodule('foreach', '--recursive', 'git', 'reset', '--hard', 'HEAD')
+    except Exception as err:
+        cprint(' - Failed to reset submodules', 'red')
+        print_error(err)
+        sys.exit(1)
+
+def git_submodules_update(repo_path):
+    """Update all submodules"""
+    repo = _repo(repo_path)
+    try:
+        repo.git.submodule('update', '--checkout', '--recursive', '--force')
+    except Exception as err:
+        cprint(' - Failed to update submodules', 'red')
+        print_error(err)
+        sys.exit(1)
 
 def git_sync(repo_path, upstream_remote, fork_remote, ref, recursive):
     """Sync fork with upstream remote"""
