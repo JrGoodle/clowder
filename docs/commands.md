@@ -16,6 +16,8 @@
 - [clowder sync](#clowder-sync)
 - [clowder yaml](#clowder-yaml)
 
+Examples based on the [Swift projects clowder.yaml](https://github.com/JrGoodle/swift-clowder/blob/master/clowder.yaml)
+
 ---
 
 ```bash
@@ -28,11 +30,11 @@ $ clowder branch -r
 # Print all local and remote branches
 $ clowder branch -a
 
-# Print local branches in clang group
-$ clowder branch -g clang
+# Print local branches in llvm group
+$ clowder branch -g llvm
 
-# Print local branches in clang project
-$ clowder branch -p llvm-mirror/clang
+# Print local branches in swift project
+$ clowder branch -p apple/swift
 ```
 
 ---
@@ -45,11 +47,11 @@ Discards changes in dirty repositories
 # Discard changes in all projects
 $ clowder clean
 
-# Discard changes in projects in clang group
-$ clowder clean -g clang
+# Discard changes in projects in llvm group
+$ clowder clean -g llvm
 
-# Discard changes in clang project
-$ clowder clean -p llvm-mirror/clang
+# Discard changes in swift project
+$ clowder clean -p apple/swift
 ```
 
 ---
@@ -62,11 +64,11 @@ Equivalent to running `git status -vv` in project directories
 # Print git diff status for all projects
 $ clowder diff
 
-# Print git diff status for projects in clang group
-$ clowder diff -g clang
+# Print git diff status for projects in llvm group
+$ clowder diff -g llvm
 
-# Print git diff status for clang project
-$ clowder diff -p llvm-mirror/clang
+# Print git diff status for swift project
+$ clowder diff -p apple/swift
 ```
 
 ---
@@ -88,17 +90,17 @@ $ clowder forall -ic "git status"
 # Run script in all project directories, ignoring errors
 $ clowder forall -ic "/path/to/script.sh"
 
-# Run command for projects in clang group
-$ clowder forall -c "git status" -g clang
+# Run command for projects in llvm group
+$ clowder forall -c "git status" -g llvm
 
-# Run script for projects in clang group
-$ clowder forall -c "/path/to/script.sh" -g clang
+# Run script for projects in llvm group
+$ clowder forall -c "/path/to/script.sh" -g llvm
 
-# Run command for clang project
-$ clowder forall -c "git status" -p llvm-mirror/clang
+# Run command for swift project
+$ clowder forall -c "git status" -p apple/swift
 
-# Run script for clang project
-$ clowder forall -c "/path/to/script.sh" -p llvm-mirror/clang
+# Run script for swift project
+$ clowder forall -c "/path/to/script.sh" -p apple/swift
 ```
 
 The following environment variables are available for use in commands and scripts:
@@ -122,11 +124,11 @@ $ clowder herd -d 1
 # Herd a specified branch if it exists, otherwise use default ref
 $ clowder herd -b my_branch
 
-# Only herd projects in clang and llvm groups
-$ clowder herd -g clang llvm
+# Only herd projects in swift and llvm groups
+$ clowder herd -g swift llvm
 
-# Only herd clang project
-$ clowder herd -p llvm-mirror/clang
+# Only herd swift project
+$ clowder herd -p apple/swift
 ```
 
 ---
@@ -137,7 +139,7 @@ Clone repo containing `clowder.yaml` file (referred to as the "clowder repo")
 
 ```bash
 # Clone clowder repo
-$ clowder init https://github.com/jrgoodle/llvm-projects.git
+$ clowder init https://github.com/jrgoodle/swift-clowder.git
 
 # Clone clowder repo from branch 'tags'
 $ clowder init https://github.com/jrgoodle/cats.git -b tags
@@ -179,11 +181,11 @@ $ clowder prune -a stale_branch
 # Force prune local and remote branch 'stale_branch' for all projects
 $ clowder prune -af stale_branch
 
-# Prune branch 'stale_branch' in clang group
-$ clowder prune stale_branch -g clang
+# Prune branch 'stale_branch' for projects in llvm group
+$ clowder prune stale_branch -g llvm
 
-# Prune branch 'stale_branch' in clang project
-$ clowder prune stale_branch -p llvm-mirror/clang
+# Prune branch 'stale_branch' in swift project
+$ clowder prune stale_branch -p apple/swift
 ```
 
 ---
@@ -246,11 +248,11 @@ $ clowder start my_feature
 # Create new local and remote tracking branch 'my_feature' for all projects
 $ clowder start -t my_feature
 
-# Create new local branch 'my_feature' in clang group
-$ clowder start my_feature -g clang
+# Create new local branch 'my_feature' for projects in llvm group
+$ clowder start my_feature -g llvm
 
-# Create new local branch 'my_feature' in clang project
-$ clowder start my_feature -p llvm-mirror/clang
+# Create new local branch 'my_feature' in swift project
+$ clowder start my_feature -p apple/swift
 ```
 
 ---
@@ -260,14 +262,14 @@ $ clowder start my_feature -p llvm-mirror/clang
 Stash changes in dirty repositories
 
 ```bash
-# Stash any changes in projects
+# Stash changes in all projects
 $ clowder stash
 
-# Stash any changes in projects in clang group
-$ clowder stash -g clang
+# Stash changes in projects in llvm group
+$ clowder stash -g llvm
 
-# Stash any changes in clang project
-$ clowder stash -p llvm-mirror/clang
+# Stash changes in swift project
+$ clowder stash -p apple/swift
 ```
 
 ---
@@ -280,7 +282,7 @@ Print status of projects
 # Print status of projects
 $ clowder status
 
-# Fetch upstream changes for projects before printing statuses
+# Fetch upstream changes for projects before printing status
 $ clowder status -f
 ```
 
@@ -294,8 +296,8 @@ Sync default fork branches with upstream remotes
 # Sync all forks with upstream remotes
 $ clowder sync
 
-# Sync clang fork with upstream remote
-$ clowder sync -p llvm-mirror/clang
+# Sync swift fork with upstream remote
+$ clowder sync -p apple/swift
 ```
 
 ---

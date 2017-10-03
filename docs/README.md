@@ -11,7 +11,11 @@
 
 - [Command Reference](commands.md)
     - Description of all `clowder` commands
-- [clowder-herd](clowder-herd.md)
+- [clowder branch](clowder-branch.md)
+- [clowder clean and clowder diff](clowder-clean-diff.md)
+- [clowder forall](clowder-forall.md)
+- [clowder herd](clowder-herd.md)
+- [clowder prune and clowder start](clowder-prune-start.md)
 
 ## Development
 

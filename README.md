@@ -71,7 +71,7 @@ command -v clowder >/dev/null 2>&1 && eval "$(register-python-argcomplete clowde
 
 # Usage
 
-This example is based on the [Swift projects](https://github.com/apple/swift) (see [the full clowder.yaml](https://github.com/JrGoodle/swift-clowder/blob/master/clowder.yaml))
+This example is based on the [Swift projects](https://github.com/apple/swift) (see the full [Swift projects clowder.yaml](https://github.com/JrGoodle/swift-clowder/blob/master/clowder.yaml))
 
 First reate a directory to contain all the Swift projects
 
@@ -135,6 +135,8 @@ $ clowder prune stale_branch # Prune branch 'stale_branch' for all projects
 
 See the [clowder commands doc](https://github.com/JrGoodle/clowder/blob/master/docs/commands.md)
 for documentation of all command options
+
+For example output from [individual commands](https://github.com/JrGoodle/clowder/blob/master/docs/docs#commands)
 
 ## The `clowder.yaml` file
 

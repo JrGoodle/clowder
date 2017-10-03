@@ -1,6 +1,6 @@
 # `clowder herd`
 
-The output from an initial invocation of `clowder herd` for the [Swift clowder repo](https://github.com/JrGoodle/swift-clowder)
+Subset of the output from an initial invocation of `clowder herd` for the [Swift clowder repo](https://github.com/JrGoodle/swift-clowder) after running `clowder init`
 
 ![clowder herd swift](clowder-herd/clowder-herd-1.png)
 
