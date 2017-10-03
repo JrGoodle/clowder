@@ -136,7 +136,7 @@ $ clowder prune stale_branch # Prune branch 'stale_branch' for all projects
 See the [clowder commands doc](https://github.com/JrGoodle/clowder/blob/master/docs/commands.md)
 for documentation of all command options
 
-For example output from [individual commands](https://github.com/JrGoodle/clowder/blob/master/docs/docs#commands)
+For example output from [individual commands](https://github.com/JrGoodle/clowder/tree/master/docs#commands)
 
 ## The `clowder.yaml` file
 
