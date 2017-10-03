@@ -102,7 +102,7 @@ class Command(object):
             sys.exit(1)
         if self.clowder_repo is None:
             exit_clowder_not_found()
-        self.clowder_repo.print_status(fetch=False)
+        self.clowder_repo.print_status()
         if self.clowder is None:
             sys.exit(1)
         self.clowder.clean(group_names=self.args.groups,
@@ -114,7 +114,7 @@ class Command(object):
             sys.exit(1)
         if self.clowder_repo is None:
             exit_clowder_not_found()
-        self.clowder_repo.print_status(fetch=False)
+        self.clowder_repo.print_status()
         if self.clowder is None:
             sys.exit(1)
         self.clowder.diff(group_names=self.args.groups,
@@ -126,7 +126,7 @@ class Command(object):
             sys.exit(1)
         if self.clowder_repo is None:
             exit_clowder_not_found()
-        self.clowder_repo.print_status(fetch=False)
+        self.clowder_repo.print_status()
         if self.clowder is None:
             sys.exit(1)
         self.clowder.forall(self.args.command[0],
@@ -140,7 +140,7 @@ class Command(object):
             sys.exit(1)
         if self.clowder_repo is None:
             exit_clowder_not_found()
-        self.clowder_repo.print_status()
+        self.clowder_repo.print_status(fetch=True)
         if is_offline():
             print_offline_error()
         if self.clowder is None:
@@ -181,7 +181,7 @@ class Command(object):
         """clowder link command"""
         if self.clowder_repo is None:
             exit_clowder_not_found()
-        self.clowder_repo.print_status(fetch=False)
+        self.clowder_repo.print_status()
         if self.args.version is None:
             version = None
         else:
@@ -195,7 +195,7 @@ class Command(object):
             sys.exit(1)
         if self.clowder_repo is None:
             exit_clowder_not_found()
-        self.clowder_repo.print_status(fetch=False)
+        self.clowder_repo.print_status()
         if self.clowder is None:
             sys.exit(1)
         if self.args.projects is None:
@@ -250,28 +250,28 @@ class Command(object):
         """clowder repo add command"""
         if self.clowder_repo is None:
             exit_clowder_not_found()
-        self.clowder_repo.print_status(fetch=False)
+        self.clowder_repo.print_status()
         self.clowder_repo.add(self.args.files)
 
     def repo_checkout(self):
         """clowder repo checkout command"""
         if self.clowder_repo is None:
             exit_clowder_not_found()
-        self.clowder_repo.print_status()
+        self.clowder_repo.print_status(fetch=True)
         self.clowder_repo.checkout(self.args.ref[0])
 
     def repo_clean(self):
         """clowder repo clean command"""
         if self.clowder_repo is None:
             exit_clowder_not_found()
-        self.clowder_repo.print_status(fetch=False)
+        self.clowder_repo.print_status()
         self.clowder_repo.clean()
 
     def repo_commit(self):
         """clowder repo commit command"""
         if self.clowder_repo is None:
             exit_clowder_not_found()
-        self.clowder_repo.print_status(fetch=False)
+        self.clowder_repo.print_status()
         self.clowder_repo.commit(self.args.message[0])
 
     def repo_pull(self):
@@ -280,7 +280,7 @@ class Command(object):
             exit_clowder_not_found()
         if is_offline():
             print_offline_error()
-        self.clowder_repo.print_status()
+        self.clowder_repo.print_status(fetch=True)
         self.clowder_repo.pull()
 
     def repo_push(self):
@@ -289,14 +289,14 @@ class Command(object):
             exit_clowder_not_found()
         if is_offline():
             print_offline_error()
-        self.clowder_repo.print_status()
+        self.clowder_repo.print_status(fetch=True)
         self.clowder_repo.push()
 
     def repo_run(self):
         """clowder repo run command"""
         if self.clowder_repo is None:
             exit_clowder_not_found()
-        self.clowder_repo.print_status(fetch=False)
+        self.clowder_repo.print_status()
         self.clowder_repo.run_command(self.args.command[0])
 
     def repo_status(self):
@@ -312,6 +312,7 @@ class Command(object):
             exit_clowder_not_found()
         if self.clowder is None:
             sys.exit(1)
+        self.clowder_repo.print_status()
         self.clowder.save_version(self.args.version)
 
     def start(self):
@@ -320,7 +321,7 @@ class Command(object):
             sys.exit(1)
         if self.clowder_repo is None:
             exit_clowder_not_found()
-        self.clowder_repo.print_status(fetch=False)
+        self.clowder_repo.print_status()
         if self.clowder is None:
             sys.exit(1)
         if self.args.tracking:
@@ -341,7 +342,7 @@ class Command(object):
             sys.exit(1)
         if self.clowder_repo is None:
             exit_clowder_not_found()
-        self.clowder_repo.print_status(fetch=False)
+        self.clowder_repo.print_status()
         if self.clowder is None:
             sys.exit(1)
         self.clowder.stash(group_names=self.args.groups,
@@ -351,7 +352,7 @@ class Command(object):
         """clowder status command"""
         if self.clowder_repo is None:
             exit_clowder_not_found()
-        self.clowder_repo.print_status()
+        self.clowder_repo.print_status(fetch=self.args.fetch)
         if self.clowder is None:
             sys.exit(1)
         if self.args.fetch:
@@ -367,7 +368,7 @@ class Command(object):
         """clowder sync command"""
         if self.clowder_repo is None:
             exit_clowder_not_found()
-        self.clowder_repo.print_status()
+        self.clowder_repo.print_status(fetch=True)
         if self.clowder is None:
             sys.exit(1)
         if is_offline():
@@ -382,7 +383,7 @@ class Command(object):
         """clowder yaml command"""
         if self.clowder_repo is None:
             exit_clowder_not_found()
-        self.clowder_repo.print_status(fetch=False)
+        self.clowder_repo.print_status()
         if self._invalid_yaml:
             sys.exit(1)
         self.clowder.print_yaml(self.args.resolved)
