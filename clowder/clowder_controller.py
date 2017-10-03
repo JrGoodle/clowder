@@ -28,6 +28,8 @@ from clowder.utility.print_utilities import (
     print_save_version_exists_error
 )
 
+# Disable errors shown by pylint for too many public methods
+# pylint: disable=R0904
 # Disable errors shown by pylint for catching too general exception Exception
 # pylint: disable=W0703
 # Disable errors shown by pylint for too many arguments
@@ -59,18 +61,31 @@ class ClowderController(object):
                     if project.name in project_names:
                         project.branch(local=local, remote=remote)
 
-    def clean(self, group_names=None, project_names=None):
+    def clean(self, group_names=None, project_names=None, args=None, recursive=False):
         """Discard changes"""
         for group in self.groups:
             if project_names is None and group_names is None:
-                group.clean()
+                group.clean(args=args, recursive=recursive)
             elif project_names is None:
                 if group.name in group_names:
-                    group.clean()
+                    group.clean(args=args, recursive=recursive)
             else:
                 for project in group.projects:
                     if project.name in project_names:
-                        project.clean()
+                        project.clean(args=args, recursive=recursive)
+
+    def clean_all(self, group_names=None, project_names=None):
+        """Discard all changes"""
+        for group in self.groups:
+            if project_names is None and group_names is None:
+                group.clean_all()
+            elif project_names is None:
+                if group.name in group_names:
+                    group.clean_all()
+            else:
+                for project in group.projects:
+                    if project.name in project_names:
+                        project.clean_all()
 
     def diff(self, group_names=None, project_names=None):
         """Show git diff"""

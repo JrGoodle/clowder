@@ -23,6 +23,7 @@ from clowder.utility.git_print_utilities import (
 from clowder.utility.git_utilities import (
     git_abort_rebase,
     git_clean,
+    git_clean_all,
     git_configure_remotes,
     git_existing_local_branch,
     git_existing_remote_branch,
@@ -50,6 +51,8 @@ from clowder.utility.git_utilities import (
     git_validate_repo
 )
 
+# Disable errors shown by pylint for too many public methods
+# pylint: disable=R0904
 # Disable errors shown by pylint for too many branches
 # pylint: disable=R0912
 # Disable errors shown by pylint for too many arguments
@@ -135,14 +138,35 @@ class Project(object):
                     git_fetch_remote(self.full_path(), self.remote_name, 0)
         git_print_branches(self.full_path(), local=local, remote=remote)
 
-    def clean(self):
+    def clean(self, args=None, recursive=False):
         """Discard changes for project"""
         self._print_status()
         if not os.path.isdir(self.full_path()):
             cprint(" - Project is missing\n", 'red')
             return
         print(' - Clean project')
-        git_clean(self.full_path())
+        git_clean(self.full_path(), args=args)
+        print(' - Reset project')
+        git_reset_head(self.full_path())
+        if git_is_rebase_in_progress(self.full_path()):
+            print(' - Abort rebase in progress')
+            git_abort_rebase(self.full_path())
+        if self.recursive and recursive:
+            print(' - Clean submodules recursively')
+            git_submodules_clean(self.full_path())
+            print(' - Reset submodules recursively')
+            git_submodules_reset(self.full_path())
+            print(' - Update submodules recursively')
+            git_submodules_update(self.full_path())
+
+    def clean_all(self):
+        """Discard all changes for project"""
+        self._print_status()
+        if not os.path.isdir(self.full_path()):
+            cprint(" - Project is missing\n", 'red')
+            return
+        print(' - Clean project')
+        git_clean_all(self.full_path())
         print(' - Reset project')
         git_reset_head(self.full_path())
         if git_is_rebase_in_progress(self.full_path()):

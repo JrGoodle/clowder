@@ -67,6 +67,18 @@ def _configure_subparser_clean(subparsers, clowder):
     """Configure clowder clean subparser and arguments"""
     clean_help = 'Discard current changes in projects'
     parser_clean = subparsers.add_parser('clean', help=clean_help)
+    parser_clean.add_argument('--all', '-a', action='store_true',
+                              help='clean all the things')
+    parser_clean.add_argument('--recursive', '-r', action='store_true',
+                              help='clean submodules recursively')
+    parser_clean.add_argument('-d', action='store_true',
+                              help='remove untracked directories')
+    parser_clean.add_argument('-f', action='store_true',
+                              help='remove directories with .git subdirectory or file')
+    parser_clean.add_argument('-X', action='store_true',
+                              help='remove only files ignored by git')
+    parser_clean.add_argument('-x', action='store_true',
+                              help='remove all untracked files')
     group_clean = parser_clean.add_mutually_exclusive_group()
     if clowder is None:
         group_names = ''

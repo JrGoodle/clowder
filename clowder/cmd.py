@@ -105,8 +105,23 @@ class Command(object):
         self.clowder_repo.print_status()
         if self.clowder is None:
             sys.exit(1)
+        if self.args.all:
+            self.clowder.clean_all(group_names=self.args.groups,
+                                   project_names=self.args.projects)
+            return
+        clean_args = ''
+        if self.args.d:
+            clean_args += 'd'
+        if self.args.f:
+            clean_args += 'f'
+        if self.args.X:
+            clean_args += 'X'
+        if self.args.x:
+            clean_args += 'x'
         self.clowder.clean(group_names=self.args.groups,
-                           project_names=self.args.projects)
+                           project_names=self.args.projects,
+                           args=clean_args,
+                           recursive=self.args.recursive)
 
     def diff(self):
         """clowder diff command"""
