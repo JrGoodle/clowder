@@ -110,7 +110,7 @@ class ClowderRepo(object):
         print(' - Symlink ' + path_output)
         force_symlink(yaml_file, yaml_symlink)
 
-    def print_status(self, fetch=True):
+    def print_status(self, fetch=False):
         """Print clowder repo status"""
         repo_path = os.path.join(self.root_directory, '.clowder')
         if not git_existing_repository(repo_path):

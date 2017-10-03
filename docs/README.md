@@ -1,17 +1,23 @@
 # Documentation
 
-## [clowder-repo.md](clowder-repo.md)
+## General
 
-- Description of the clowder repo cloned into the `.clowder` directory with `clowder init`
+- [clowder repo](clowder-repo.md)
+    - Description of the clowder repo cloned into the `.clowder` directory with `clowder init`
+- [clowder.yaml](clowder-yaml.md)
+    - Description of the `clowder.yaml` file
 
-## [clowder-yaml.md](clowder-yaml.md)
+## Commands
 
-- Description of the `clowder.yaml` file
+- [Command Reference](commands.md)
+    - Description of all `clowder` commands
+- [clowder branch](clowder-branch.md)
+- [clowder clean and clowder diff](clowder-clean-diff.md)
+- [clowder forall](clowder-forall.md)
+- [clowder herd](clowder-herd.md)
+- [clowder prune and clowder start](clowder-prune-start.md)
 
-## [commands.md](commands.md)
+## Development
 
-- Description of all `clowder` commands
-
-## [development.md](development.md)
-
-- Information for `clowder` development
+- [Development](development.md)
+    - Information for `clowder` development
