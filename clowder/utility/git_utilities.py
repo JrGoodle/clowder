@@ -801,7 +801,7 @@ def git_submodules_clean(repo_path):
     try:
         repo.git.submodule('foreach', '--recursive', 'git', 'clean', '-ffdx')
     except Exception as err:
-        cprint(' - Failed to check untracked files in submodules', 'red')
+        cprint(' - Failed to clean submodules', 'red')
         print_error(err)
         sys.exit(1)
 

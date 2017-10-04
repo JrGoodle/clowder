@@ -38,6 +38,240 @@ test_recurse() {
 }
 test_recurse
 
+teast_clean_d() {
+    print_single_separator
+    echo "TEST: Clean untracked files in submodules"
+    clowder herd || exit 1
+    for project in "${external_projects[@]}"; do
+        pushd $project
+            touch newfile
+            mkdir something
+            touch something/something
+            if [ ! -d 'something' ]; then
+                exit 1
+            fi
+            if [ ! -f 'something/something' ]; then
+                exit 1
+            fi
+            if [ ! -f 'newfile' ]; then
+                exit 1
+            fi
+        popd
+    done
+
+    clowder clean || exit 1
+
+    for project in "${external_projects[@]}"; do
+        pushd $project
+            if [ -d 'something' ]; then
+                exit 1
+            fi
+            if [ -f 'something/something' ]; then
+                exit 1
+            fi
+            if [ -f 'newfile' ]; then
+                exit 1
+            fi
+        popd
+    done
+}
+teast_clean_d
+
+test_clean_f() {
+    print_single_separator
+    echo "TEST: Clean untracked files in submodules"
+    clowder herd || exit 1
+    for project in "${external_projects[@]}"; do
+        pushd $project
+            touch newfile
+            mkdir something
+            touch something/something
+            if [ ! -d 'something' ]; then
+                exit 1
+            fi
+            if [ ! -f 'something/something' ]; then
+                exit 1
+            fi
+            if [ ! -f 'newfile' ]; then
+                exit 1
+            fi
+        popd
+    done
+
+    clowder clean || exit 1
+
+    for project in "${external_projects[@]}"; do
+        pushd $project
+            if [ -d 'something' ]; then
+                exit 1
+            fi
+            if [ -f 'something/something' ]; then
+                exit 1
+            fi
+            if [ -f 'newfile' ]; then
+                exit 1
+            fi
+        popd
+    done
+}
+test_clean_f
+
+test_clean_X() {
+    print_single_separator
+    echo "TEST: Clean untracked files in submodules"
+    clowder herd || exit 1
+    for project in "${external_projects[@]}"; do
+        pushd $project
+            touch newfile
+            mkdir something
+            touch something/something
+            if [ ! -d 'something' ]; then
+                exit 1
+            fi
+            if [ ! -f 'something/something' ]; then
+                exit 1
+            fi
+            if [ ! -f 'newfile' ]; then
+                exit 1
+            fi
+        popd
+    done
+
+    clowder clean || exit 1
+
+    for project in "${external_projects[@]}"; do
+        pushd $project
+            if [ -d 'something' ]; then
+                exit 1
+            fi
+            if [ -f 'something/something' ]; then
+                exit 1
+            fi
+            if [ -f 'newfile' ]; then
+                exit 1
+            fi
+        popd
+    done
+}
+test_clean_X
+
+test_clean_x() {
+    print_single_separator
+    echo "TEST: Clean untracked files in submodules"
+    clowder herd || exit 1
+    for project in "${external_projects[@]}"; do
+        pushd $project
+            touch newfile
+            mkdir something
+            touch something/something
+            if [ ! -d 'something' ]; then
+                exit 1
+            fi
+            if [ ! -f 'something/something' ]; then
+                exit 1
+            fi
+            if [ ! -f 'newfile' ]; then
+                exit 1
+            fi
+        popd
+    done
+
+    clowder clean || exit 1
+
+    for project in "${external_projects[@]}"; do
+        pushd $project
+            if [ -d 'something' ]; then
+                exit 1
+            fi
+            if [ -f 'something/something' ]; then
+                exit 1
+            fi
+            if [ -f 'newfile' ]; then
+                exit 1
+            fi
+        popd
+    done
+}
+test_clean_x
+
+test_clean_r() {
+    print_single_separator
+    echo "TEST: Clean untracked files in submodules"
+    clowder herd || exit 1
+    for project in "${external_projects[@]}"; do
+        pushd $project
+            touch newfile
+            mkdir something
+            touch something/something
+            if [ ! -d 'something' ]; then
+                exit 1
+            fi
+            if [ ! -f 'something/something' ]; then
+                exit 1
+            fi
+            if [ ! -f 'newfile' ]; then
+                exit 1
+            fi
+        popd
+    done
+
+    clowder clean || exit 1
+
+    for project in "${external_projects[@]}"; do
+        pushd $project
+            if [ -d 'something' ]; then
+                exit 1
+            fi
+            if [ -f 'something/something' ]; then
+                exit 1
+            fi
+            if [ -f 'newfile' ]; then
+                exit 1
+            fi
+        popd
+    done
+}
+test_clean_r
+
+test_clean_a() {
+    print_single_separator
+    echo "TEST: Clean untracked files in submodules"
+    clowder herd || exit 1
+    for project in "${external_projects[@]}"; do
+        pushd $project
+            touch newfile
+            mkdir something
+            touch something/something
+            if [ ! -d 'something' ]; then
+                exit 1
+            fi
+            if [ ! -f 'something/something' ]; then
+                exit 1
+            fi
+            if [ ! -f 'newfile' ]; then
+                exit 1
+            fi
+        popd
+    done
+
+    clowder clean || exit 1
+
+    for project in "${external_projects[@]}"; do
+        pushd $project
+            if [ -d 'something' ]; then
+                exit 1
+            fi
+            if [ -f 'something/something' ]; then
+                exit 1
+            fi
+            if [ -f 'newfile' ]; then
+                exit 1
+            fi
+        popd
+    done
+}
+test_clean_a
+
 test_clean_submodules_untracked() {
     print_single_separator
     echo "TEST: Clean untracked files in submodules"
