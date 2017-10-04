@@ -223,7 +223,7 @@ test_clean_untracked_files() {
     popd
 
     clowder herd && exit 1
-    clowder clean || exit 1
+    clowder clean -d || exit 1
 
     pushd mu
         if [ -d 'something' ]; then
