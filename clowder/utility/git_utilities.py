@@ -84,12 +84,12 @@ def git_checkout(repo_path, truncated_ref):
         print_error(err)
         sys.exit(1)
 
-def git_checkout_ref(repo_path, ref, remote, depth):
+def git_checkout_ref(repo_path, ref, remote, depth, fetch=True):
     """Checkout branch, tag, or commit from sha"""
     ref_type = _ref_type(ref)
     if ref_type is 'branch':
         branch = _truncate_ref(ref)
-        _checkout_branch(repo_path, branch, remote, depth)
+        _checkout_branch(repo_path, branch, remote, depth, fetch=fetch)
     elif ref_type is 'tag':
         git_fetch_remote_ref(repo_path, remote, ref, depth)
         tag = _truncate_ref(ref)
@@ -336,7 +336,7 @@ def git_has_submodules(repo_path):
         return True
     return False
 
-def git_herd(repo_path, url, remote, ref, depth=0, recursive=False):
+def git_herd(repo_path, url, remote, ref, depth=0, recursive=False, fetch=True):
     """Herd ref"""
     if not git_existing_repository(repo_path):
         git_create_repo(repo_path, url, remote, ref, depth=depth, recursive=recursive)
@@ -344,7 +344,7 @@ def git_herd(repo_path, url, remote, ref, depth=0, recursive=False):
     ref_type = _ref_type(ref)
     if ref_type is 'branch':
         git_create_remote(repo_path, remote, url)
-        git_checkout_ref(repo_path, ref, remote, depth)
+        git_checkout_ref(repo_path, ref, remote, depth, fetch=fetch)
         branch = _truncate_ref(ref)
         if git_existing_remote_branch(repo_path, branch, remote):
             if git_is_tracking_branch(repo_path, branch):
@@ -392,7 +392,7 @@ def git_herd_branch(repo_path, url, remote, branch, default_ref, depth=0, recurs
             else:
                 git_set_tracking_branch(repo_path, branch, remote, depth)
     elif git_existing_remote_branch(repo_path, branch, remote):
-        git_herd(repo_path, url, remote, 'refs/heads/' + branch, depth=depth, recursive=recursive)
+        git_herd(repo_path, url, remote, 'refs/heads/' + branch, depth=depth, recursive=recursive, fetch=False)
     else:
         git_herd(repo_path, url, remote, default_ref, depth=depth, recursive=recursive)
     if recursive:

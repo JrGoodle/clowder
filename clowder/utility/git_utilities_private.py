@@ -19,12 +19,12 @@ from clowder.utility.print_utilities import (
 # Disable errors shown by pylint for catching too general exception Exception
 # pylint: disable=W0703
 
-def _checkout_branch(repo_path, branch, remote, depth):
+def _checkout_branch(repo_path, branch, remote, depth, fetch=True):
     """Checkout branch, and create if it doesn't exist"""
     repo = _repo(repo_path)
     correct_branch = False
     if branch not in repo.heads:
-        _create_local_tracking_branch(repo_path, branch, remote, depth)
+        _create_local_tracking_branch(repo_path, branch, remote, depth, fetch=fetch)
         return
     default_branch = repo.heads[branch]
     try:
@@ -321,7 +321,7 @@ def _create_checkout_branch(repo_path, branch, remote, depth):
             print_error(err)
             sys.exit(1)
 
-def _create_local_tracking_branch(repo_path, branch, remote, depth):
+def _create_local_tracking_branch(repo_path, branch, remote, depth, fetch=True):
     """Create and checkout tracking branch"""
     repo = _repo(repo_path)
     branch_output = format_ref_string(branch)
@@ -334,19 +334,20 @@ def _create_local_tracking_branch(repo_path, branch, remote, depth):
         print_error(err)
         sys.exit(1)
     else:
-        if depth == 0:
-            print(' - Fetch from ' + remote_output)
-            command = ['git', 'fetch', remote, '--prune', '--tags']
-        else:
-            print(' - Fetch from ' + remote_output + ' ' + branch_output)
-            command = ['git', 'fetch', remote, branch, '--depth', str(depth),
-                       '--prune', '--tags']
-        return_code = execute_command(command, repo_path)
-        if return_code != 0:
-            message = colored(' - Failed to fetch from ', 'red')
-            print(message + remote_output)
-            print_command_failed_error(command)
-            sys.exit(return_code)
+        if fetch:
+            if depth == 0:
+                print(' - Fetch from ' + remote_output)
+                command = ['git', 'fetch', remote, '--prune', '--tags']
+            else:
+                print(' - Fetch from ' + remote_output + ' ' + branch_output)
+                command = ['git', 'fetch', remote, branch, '--depth', str(depth),
+                           '--prune', '--tags']
+            return_code = execute_command(command, repo_path)
+            if return_code != 0:
+                message = colored(' - Failed to fetch from ', 'red')
+                print(message + remote_output)
+                print_command_failed_error(command)
+                sys.exit(return_code)
         try:
             print(' - Create branch ' + branch_output)
             default_branch = repo.create_head(branch, origin.refs[branch])
