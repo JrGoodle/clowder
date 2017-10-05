@@ -73,7 +73,7 @@ def git_checkout_ref(repo_path, ref, remote, depth, fetch=True):
     ref_type = _ref_type(ref)
     if ref_type is 'branch':
         branch = _truncate_ref(ref)
-        _checkout_branch(repo_path, branch, remote, depth, fetch=fetch)
+        _checkout_branch_create(repo_path, branch, remote, depth, fetch=fetch)
     elif ref_type is 'tag':
         git_fetch(repo_path, remote, depth=depth, ref=ref)
         tag = _truncate_ref(ref)
@@ -362,6 +362,18 @@ def git_herd_upstream(repo_path, url, remote, ref, depth=0):
     git_create_remote(repo_path, remote, url)
     git_fetch(repo_path, remote, depth=depth, ref=ref)
 
+def git_is_branch_checked_out(repo_path, branch):
+    """Check if branch is checked out"""
+    repo = _repo(repo_path)
+    try:
+        default_branch = repo.heads[branch]
+        not_detached = not repo.head.is_detached
+        same_branch = repo.head.ref == default_branch
+    except:
+        return False
+    else:
+        return not_detached and same_branch
+
 def git_is_detached(repo_path):
     """Check if HEAD is detached"""
     if not os.path.isdir(repo_path):
@@ -465,7 +477,7 @@ def git_prune_local(repo_path, branch, default_ref, force):
     truncated_ref = _truncate_ref(default_ref)
     ref_output = format_ref_string(truncated_ref)
     try:
-        print(' - Checkout branch ' + ref_output)
+        print(' - Checkout ref ' + ref_output)
         repo.git.checkout(truncated_ref)
     except Exception as err:
         message = colored(' - Failed to checkout ref', 'red')
@@ -616,31 +628,15 @@ def git_start(repo_path, remote, branch, depth, tracking):
         return
     branch_output = format_ref_string(branch)
     print(' - ' + branch_output + ' already exists')
-    default_branch = repo.heads[branch]
-    try:
-        not_detached = not repo.head.is_detached
-        same_branch = repo.head.ref == default_branch
-    except Exception as err:
-        pass
+    correct_branch = git_is_branch_checked_out(repo_path, branch)
+    if correct_branch:
+        print(' - On correct branch')
     else:
-        if not_detached and same_branch:
-            print(' - On correct branch')
-            correct_branch = True
-            if tracking:
-                _create_remote_tracking_branch(repo_path, branch, remote, depth)
-    finally:
-        if not correct_branch:
-            try:
-                print(' - Checkout branch ' + branch_output)
-                default_branch.checkout()
-            except Exception as err:
-                message = colored(' - Failed to checkout branch ', 'red')
-                print(message + branch_output)
-                print_error(err)
-                sys.exit(1)
-            else:
-                if tracking:
-                    _create_remote_tracking_branch(repo_path, branch, remote, depth)
+        return_code = _checkout_branch_local(repo_path, branch)
+        if return_code != 0:
+            sys.exit(1)
+    if tracking:
+        _create_remote_tracking_branch(repo_path, branch, remote, depth)
 
 def git_start_offline(repo_path, branch):
     """Start new branch in repository when offline"""
@@ -657,35 +653,17 @@ def git_start_offline(repo_path, branch):
             print_error(err)
             sys.exit(1)
         else:
-            try:
-                print(' - Checkout branch ' + branch_output)
-                default_branch.checkout()
-            except Exception as err:
-                message = colored(' - Failed to checkout branch ', 'red')
-                print(message + branch_output)
-                print_error(err)
+            return_code = _checkout_branch_local(repo_path, branch)
+            if return_code != 0:
                 sys.exit(1)
     print(' - ' + branch_output + ' already exists')
-    default_branch = repo.heads[branch]
-    try:
-        not_detached = not repo.head.is_detached
-        same_branch = repo.head.ref == default_branch
-    except Exception as err:
-        pass
+    correct_branch = git_is_branch_checked_out(repo, branch)
+    if correct_branch:
+        print(' - On correct branch')
     else:
-        if not_detached and same_branch:
-            print(' - On correct branch')
-            correct_branch = True
-    finally:
-        if not correct_branch:
-            try:
-                print(' - Checkout branch ' + branch_output)
-                default_branch.checkout()
-            except Exception as err:
-                message = colored(' - Failed to checkout branch ', 'red')
-                print(message + branch_output)
-                print_error(err)
-                sys.exit(1)
+        return_code = _checkout_branch_local(repo_path, branch)
+        if return_code != 0:
+            sys.exit(1)
 
 def git_stash(repo_path):
     """Stash current changes in repository"""
@@ -827,34 +805,31 @@ def git_validate_repo(repo_path):
             return False
     return True
 
-def _checkout_branch(repo_path, branch, remote, depth, fetch=True):
-    """Checkout branch, and create if it doesn't exist"""
+def _checkout_branch_local(repo_path, branch):
+    """Checkout local branch"""
     repo = _repo(repo_path)
-    correct_branch = False
-    if branch not in repo.heads:
+    branch_output = format_ref_string(branch)
+    try:
+        print(' - Checkout branch ' + branch_output)
+        default_branch = repo.heads[branch]
+        default_branch.checkout()
+    except Exception as err:
+        message = colored(' - Failed to checkout branch ', 'red')
+        print(message + branch_output)
+        print_error(err)
+        return 1
+    else:
+        return 0
+
+def _checkout_branch_create(repo_path, branch, remote, depth, fetch=True):
+    """Checkout branch, and create if it doesn't exist"""
+    if not git_existing_local_branch(repo_path, branch):
         _create_local_tracking_branch(repo_path, branch, remote, depth, fetch=fetch)
         return
-    default_branch = repo.heads[branch]
-    try:
-        not_detached = not repo.head.is_detached
-        same_branch = repo.head.ref == default_branch
-    except Exception as err:
-        pass
-    else:
-        if not_detached and same_branch:
-            print(' - On default branch')
-            correct_branch = True
-    finally:
-        if not correct_branch:
-            branch_output = format_ref_string(branch)
-            try:
-                print(' - Checkout branch ' + branch_output)
-                default_branch.checkout()
-            except Exception as err:
-                message = colored(' - Failed to checkout branch ', 'red')
-                print(message + branch_output)
-                print_error(err)
-                sys.exit(1)
+    if git_is_branch_checked_out(repo_path, branch):
+        print(' - On default branch')
+        return
+    _checkout_branch_local(repo_path, branch)
 
 def _checkout_branch_new_repo(repo_path, branch, remote, depth):
     """Checkout remote branch or fail and delete repo if it doesn't exist"""
@@ -892,13 +867,8 @@ def _checkout_branch_new_repo(repo_path, branch, remote, depth):
                                             branch_output, remote_output):
                     remove_directory_exit(repo_path)
                     return
-                try:
-                    print(' - Checkout branch ' + branch_output)
-                    default_branch.checkout()
-                except Exception as err:
-                    message = colored(' - Failed to checkout branch ', 'red')
-                    print(message + branch_output)
-                    print_error(err)
+                return_code = _checkout_branch_local(repo_path, branch)
+                if return_code != 0:
                     remove_directory_exit(repo_path)
 
 def _checkout_commit_new_repo(repo_path, commit, remote, depth):
@@ -993,13 +963,8 @@ def _checkout_branch_herd_branch(repo_path, branch, default_ref, remote, depth):
                                             branch_output, remote_output):
                     remove_directory_exit(repo_path)
                     return
-                try:
-                    print(' - Checkout branch ' + branch_output)
-                    default_branch.checkout()
-                except Exception as err:
-                    message = colored(' - Failed to checkout branch ', 'red')
-                    print(message + branch_output)
-                    print_error(err)
+                return_code = _checkout_branch_local(repo_path, branch)
+                if return_code != 0:
                     remove_directory_exit(repo_path)
 
 def _checkout_sha(repo_path, sha):
@@ -1064,20 +1029,15 @@ def _create_checkout_branch(repo_path, branch, remote, depth):
     branch_output = format_ref_string(branch)
     try:
         print(' - Create branch ' + branch_output)
-        default_branch = repo.create_head(branch)
+        repo.create_head(branch)
     except Exception as err:
         message = colored(' - Failed to create branch ', 'red')
         print(message + branch_output)
         print_error(err)
         sys.exit(1)
     else:
-        try:
-            print(' - Checkout branch ' + branch_output)
-            default_branch.checkout()
-        except Exception as err:
-            message = colored(' - Failed to checkout branch ', 'red')
-            print(message + branch_output)
-            print_error(err)
+        return_code = _checkout_branch_local(repo_path, branch)
+        if return_code != 0:
             sys.exit(1)
 
 def _create_local_tracking_branch(repo_path, branch, remote, depth, fetch=True):
@@ -1110,13 +1070,8 @@ def _create_local_tracking_branch(repo_path, branch, remote, depth, fetch=True):
                                            branch_output, remote_output)
             if not success:
                 sys.exit(1)
-            try:
-                print(' - Checkout branch ' + branch_output)
-                default_branch.checkout()
-            except Exception as err:
-                message = colored(' - Failed to checkout branch ', 'red')
-                print(message + branch_output)
-                print_error(err)
+            return_code = _checkout_branch_local(repo_path, branch)
+            if return_code != 0:
                 sys.exit(1)
 
 def _create_remote_tracking_branch(repo_path, branch, remote, depth):
