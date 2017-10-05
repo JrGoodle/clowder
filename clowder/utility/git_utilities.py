@@ -73,7 +73,13 @@ def git_checkout_ref(repo_path, ref, remote, depth, fetch=True):
     ref_type = _ref_type(ref)
     if ref_type is 'branch':
         branch = _truncate_ref(ref)
-        _checkout_branch_create(repo_path, branch, remote, depth, fetch=fetch)
+        if not git_existing_local_branch(repo_path, branch):
+            _create_branch_local_tracking(repo_path, branch, remote, depth, fetch=fetch)
+            return
+        if git_is_branch_checked_out(repo_path, branch):
+            print(' - On default branch')
+            return
+        _checkout_branch_local(repo_path, branch)
     elif ref_type is 'tag':
         git_fetch(repo_path, remote, depth=depth, ref=ref)
         tag = _truncate_ref(ref)
@@ -644,26 +650,21 @@ def git_start_offline(repo_path, branch):
     correct_branch = False
     branch_output = format_ref_string(branch)
     if branch not in repo.heads:
-        try:
-            print(' - Create branch ' + branch_output)
-            default_branch = repo.create_head(branch)
-        except Exception as err:
-            message = colored(' - Failed to create branch ', 'red')
-            print(message + branch_output)
-            print_error(err)
+        return_code = _create_branch(repo_path, branch)
+        if return_code != 0:
             sys.exit(1)
+        return_code = _checkout_branch_local(repo_path, branch)
+        if return_code != 0:
+            sys.exit(1)
+    else:
+        print(' - ' + branch_output + ' already exists')
+        correct_branch = git_is_branch_checked_out(repo, branch)
+        if correct_branch:
+            print(' - On correct branch')
         else:
             return_code = _checkout_branch_local(repo_path, branch)
             if return_code != 0:
                 sys.exit(1)
-    print(' - ' + branch_output + ' already exists')
-    correct_branch = git_is_branch_checked_out(repo, branch)
-    if correct_branch:
-        print(' - On correct branch')
-    else:
-        return_code = _checkout_branch_local(repo_path, branch)
-        if return_code != 0:
-            sys.exit(1)
 
 def git_stash(repo_path):
     """Stash current changes in repository"""
@@ -821,16 +822,6 @@ def _checkout_branch_local(repo_path, branch):
     else:
         return 0
 
-def _checkout_branch_create(repo_path, branch, remote, depth, fetch=True):
-    """Checkout branch, and create if it doesn't exist"""
-    if not git_existing_local_branch(repo_path, branch):
-        _create_local_tracking_branch(repo_path, branch, remote, depth, fetch=fetch)
-        return
-    if git_is_branch_checked_out(repo_path, branch):
-        print(' - On default branch')
-        return
-    _checkout_branch_local(repo_path, branch)
-
 def _checkout_branch_new_repo(repo_path, branch, remote, depth):
     """Checkout remote branch or fail and delete repo if it doesn't exist"""
     repo = _repo(repo_path)
@@ -934,7 +925,7 @@ def _checkout_branch_herd_branch(repo_path, branch, default_ref, remote, depth):
     branch_output = format_ref_string(branch)
     remote_output = format_remote_string(remote)
     try:
-        origin = repo.remotes[remote]
+        repo.remotes[remote]
     except Exception as err:
         message = colored(' - No existing remote ', 'red')
         print(message + remote_output)
@@ -944,9 +935,7 @@ def _checkout_branch_herd_branch(repo_path, branch, default_ref, remote, depth):
         return_code = git_fetch(repo_path, remote, depth=depth, ref=branch)
         if return_code != 0:
             remove_directory_exit(repo_path)
-        try:
-            remote_branch = origin.refs[branch]
-        except:
+        if not git_existing_remote_branch(repo_path, remote, branch):
             print(' - No existing remote branch ' + branch_output)
             _checkout_branch_new_repo(repo_path, _truncate_ref(default_ref), remote, depth)
         else:
@@ -1020,12 +1009,9 @@ def _checkout_tag(repo_path, tag):
                 print_error(err)
                 sys.exit(1)
 
-def _create_checkout_branch(repo_path, branch, remote, depth):
-    """Create and checkout local branch"""
+def _create_branch(repo_path, branch):
+    """Create local branch"""
     repo = _repo(repo_path)
-    return_code = git_fetch(repo_path, remote, depth=depth, ref=branch)
-    if return_code != 0:
-        sys.exit(return_code)
     branch_output = format_ref_string(branch)
     try:
         print(' - Create branch ' + branch_output)
@@ -1034,13 +1020,23 @@ def _create_checkout_branch(repo_path, branch, remote, depth):
         message = colored(' - Failed to create branch ', 'red')
         print(message + branch_output)
         print_error(err)
-        sys.exit(1)
+        return 1
     else:
-        return_code = _checkout_branch_local(repo_path, branch)
-        if return_code != 0:
-            sys.exit(1)
+        return 0
 
-def _create_local_tracking_branch(repo_path, branch, remote, depth, fetch=True):
+def _create_checkout_branch(repo_path, branch, remote, depth):
+    """Create and checkout local branch"""
+    return_code = git_fetch(repo_path, remote, depth=depth, ref=branch)
+    if return_code != 0:
+        sys.exit(return_code)
+    return_code = _create_branch(repo_path, branch)
+    if return_code != 0:
+        sys.exit(1)
+    return_code = _checkout_branch_local(repo_path, branch)
+    if return_code != 0:
+        sys.exit(1)
+
+def _create_branch_local_tracking(repo_path, branch, remote, depth, fetch=True):
     """Create and checkout tracking branch"""
     repo = _repo(repo_path)
     branch_output = format_ref_string(branch)
