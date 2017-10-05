@@ -91,11 +91,11 @@ def git_checkout_ref(repo_path, ref, remote, depth, fetch=True):
         branch = _truncate_ref(ref)
         _checkout_branch(repo_path, branch, remote, depth, fetch=fetch)
     elif ref_type is 'tag':
-        git_fetch(repo_path, remote, depth, ref=ref)
+        git_fetch(repo_path, remote, depth=depth, ref=ref)
         tag = _truncate_ref(ref)
         _checkout_tag(repo_path, tag)
     elif ref_type is 'sha':
-        git_fetch(repo_path, remote, depth, ref=ref)
+        git_fetch(repo_path, remote, depth=depth, ref=ref)
         _checkout_sha(repo_path, ref)
     else:
         ref_output = format_ref_string(ref)
@@ -285,7 +285,7 @@ def git_existing_remote_branch(repo_path, branch, remote):
     origin = repo.remotes[remote]
     return branch in origin.refs
 
-def git_fetch(repo_path, remote, depth, ref=None):
+def git_fetch(repo_path, remote, ref=None, depth=0):
     """Fetch from a specific remote ref"""
     remote_output = format_remote_string(remote)
     if depth == 0:
@@ -411,12 +411,12 @@ def git_herd_branch_upstream(repo_path, url, remote, branch, default_ref, depth=
         return_code = execute_command(command, repo_path)
         if return_code != 0:
             print(error)
-            git_fetch(repo_path, remote, depth, ref=default_ref)
+            git_fetch(repo_path, remote, depth=depth, ref=default_ref)
 
 def git_herd_upstream(repo_path, url, remote, ref, depth=0):
     """Herd branch for fork's upstream repo"""
     git_create_remote(repo_path, remote, url)
-    git_fetch(repo_path, remote, depth, ref=ref)
+    git_fetch(repo_path, remote, depth=depth, ref=ref)
 
 def git_is_detached(repo_path):
     """Check if HEAD is detached"""

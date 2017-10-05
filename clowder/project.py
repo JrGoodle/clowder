@@ -132,10 +132,10 @@ class Project(object):
         if not is_offline():
             if remote:
                 if self.fork is None:
-                    git_fetch(self.full_path(), self.remote_name, self.depth)
+                    git_fetch(self.full_path(), self.remote_name, depth=self.depth)
                 else:
-                    git_fetch(self.full_path(), self.fork.remote_name, 0)
-                    git_fetch(self.full_path(), self.remote_name, 0)
+                    git_fetch(self.full_path(), self.fork.remote_name)
+                    git_fetch(self.full_path(), self.remote_name)
         git_print_branches(self.full_path(), local=local, remote=remote)
 
     def clean(self, args=None, recursive=False):
@@ -208,10 +208,10 @@ class Project(object):
         self._print_status()
         if self.exists():
             if self.fork is None:
-                git_fetch(self.full_path(), self.remote_name, self.depth)
+                git_fetch(self.full_path(), self.remote_name, depth=self.depth)
             else:
-                git_fetch(self.full_path(), self.fork.remote_name, 0)
-                git_fetch(self.full_path(), self.remote_name, 0)
+                git_fetch(self.full_path(), self.fork.remote_name)
+                git_fetch(self.full_path(), self.remote_name)
         else:
             self.print_exists()
 
