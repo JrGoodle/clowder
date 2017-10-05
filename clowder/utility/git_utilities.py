@@ -99,16 +99,6 @@ def git_clean(repo_path, args=None):
         print_error(err)
         sys.exit(1)
 
-def git_clean_all(repo_path):
-    """Clean all the things"""
-    repo = _repo(repo_path)
-    try:
-        repo.git.clean('-ffdx')
-    except Exception as err:
-        cprint(' - Failed to clean untracked files', 'red')
-        print_error(err)
-        sys.exit(1)
-
 def git_commit(repo_path, message):
     """Commit current changes"""
     repo = _repo(repo_path)
@@ -279,15 +269,16 @@ def git_fetch(repo_path, remote, ref=None, depth=0):
         command = ['git', 'fetch', remote, '--prune', '--tags']
     else:
         if ref is None:
+            command = ['git', 'fetch', remote, '--depth', str(depth), '--prune', '--tags']
+            message = colored(' - Failed to fetch remote ', 'red')
+            error = message + remote_output
+        else:
             ref_output = format_ref_string(_truncate_ref(ref))
             print(' - Fetch from ' + remote_output + ' ' + ref_output)
             message = colored(' - Failed to fetch from ', 'red')
             error = message + remote_output + ' ' + ref_output
             command = ['git', 'fetch', remote, _truncate_ref(ref),
                        '--depth', str(depth), '--prune']
-        else:
-            command = ['git', 'fetch', remote, '--depth', str(depth), '--prune', '--tags']
-            error = colored(' - Failed to fetch remote ', remote_output, 'red')
     return_code = execute_command(command, repo_path)
     if return_code != 0:
         print(error)

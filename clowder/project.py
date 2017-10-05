@@ -23,7 +23,6 @@ from clowder.utility.git_print_utilities import (
 from clowder.utility.git_utilities import (
     git_abort_rebase,
     git_clean,
-    git_clean_all,
     git_configure_remotes,
     git_existing_local_branch,
     git_existing_remote_branch,
@@ -166,7 +165,7 @@ class Project(object):
             cprint(" - Project is missing\n", 'red')
             return
         print(' - Clean project')
-        git_clean_all(self.full_path())
+        git_clean(self.full_path(), args='fdx')
         print(' - Reset project')
         git_reset_head(self.full_path())
         if git_is_rebase_in_progress(self.full_path()):
