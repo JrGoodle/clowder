@@ -53,11 +53,17 @@ class Group(object):
         for project in self.projects:
             project.branch(local=local, remote=remote)
 
-    def clean(self):
+    def clean(self, args=None, recursive=False):
         """Discard changes for all projects"""
         self._print_name()
         for project in self.projects:
-            project.clean()
+            project.clean(args=args, recursive=recursive)
+
+    def clean_all(self):
+        """Discard all changes for all projects"""
+        self._print_name()
+        for project in self.projects:
+            project.clean_all()
 
     def diff(self):
         """Show git diffs for all projects"""

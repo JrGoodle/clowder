@@ -101,11 +101,25 @@ def git_checkout_ref(repo_path, ref, remote, depth):
         ref_output = format_ref_string(ref)
         print('Unknown ref ' + ref_output)
 
-def git_clean(repo_path):
-    """Clean all untracked files"""
+def git_clean(repo_path, args=None):
+    """Clean git directory"""
     repo = _repo(repo_path)
     try:
-        repo.git.clean('-fdx')
+        if args is None:
+            repo.git.clean('-f')
+        else:
+            clean_args = '-f' + args
+            repo.git.clean(clean_args)
+    except Exception as err:
+        cprint(' - Failed to clean git repo', 'red')
+        print_error(err)
+        sys.exit(1)
+
+def git_clean_all(repo_path):
+    """Clean all the things"""
+    repo = _repo(repo_path)
+    try:
+        repo.git.clean('-ffdx')
     except Exception as err:
         cprint(' - Failed to clean untracked files', 'red')
         print_error(err)
@@ -785,9 +799,9 @@ def git_submodules_clean(repo_path):
     """Clean all submodules"""
     repo = _repo(repo_path)
     try:
-        repo.git.submodule('foreach', '--recursive', 'git', 'clean', '-fdx')
+        repo.git.submodule('foreach', '--recursive', 'git', 'clean', '-ffdx')
     except Exception as err:
-        cprint(' - Failed to check untracked files in submodules', 'red')
+        cprint(' - Failed to clean submodules', 'red')
         print_error(err)
         sys.exit(1)
 
@@ -795,7 +809,7 @@ def git_submodules_reset(repo_path):
     """Reset all submodules"""
     repo = _repo(repo_path)
     try:
-        repo.git.submodule('foreach', '--recursive', 'git', 'reset', '--hard', 'HEAD')
+        repo.git.submodule('foreach', '--recursive', 'git', 'reset', '--hard')
     except Exception as err:
         cprint(' - Failed to reset submodules', 'red')
         print_error(err)

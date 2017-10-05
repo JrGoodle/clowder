@@ -45,13 +45,51 @@ Discards changes in dirty repositories
 
 ```bash
 # Discard changes in all projects
+# Equivalent to:
+# git clean -f; git reset --hard; git rebase --abort
 $ clowder clean
+
+# Clean all the things
+# Equivalent to:
+# git clean -ffdx; git reset --hard; git rebase --abort
+# git submodule foreach --recursive git clean -ffdx
+# git submodule foreach --recursive git reset --hard
+# git submodule update --checkout --recursive --force
+$ clowder clean -a
 
 # Discard changes in projects in llvm group
 $ clowder clean -g llvm
 
 # Discard changes in swift project
 $ clowder clean -p apple/swift
+
+# Remove untracked directories in addition to untracked files
+# Equivalent to:
+# git clean -fd; git reset --hard; git rebase --abort
+$ clowder clean -d
+
+# Delete directories with .git sub directory or file
+# Equivalent to:
+# git clean -ff; git reset --hard; git rebase --abort
+$ clowder clean -f
+
+# Remove only files ignored by git
+# Equivalent to:
+# git clean -fX; git reset --hard; git rebase --abort
+$ clowder clean -X
+
+# Remove all untracked files
+# Equivalent to:
+# git clean -fx; git reset --hard; git rebase --abort
+$ clowder clean -x
+
+# Recursively clean submodules
+# Equivalent to:
+# git clean -f; git reset --hard; git rebase --abort
+# git submodule foreach --recursive git clean -ffdx
+# git submodule foreach --recursive git reset --hard
+# git submodule update --checkout --recursive --force
+$ clowder clean -r
 ```
 
 ---
