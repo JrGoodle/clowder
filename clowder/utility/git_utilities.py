@@ -94,12 +94,11 @@ def git_checkout_ref(repo_path, ref, remote, depth, fetch=True):
 def git_clean(repo_path, args=None):
     """Clean git directory"""
     repo = _repo(repo_path)
+    clean_args = '-f'
+    if args is not None:
+        clean_args += args
     try:
-        if args is None:
-            repo.git.clean('-f')
-        else:
-            clean_args = '-f' + args
-            repo.git.clean(clean_args)
+        repo.git.clean(clean_args)
     except Exception as err:
         cprint(' - Failed to clean git repo', 'red')
         print_error(err)
