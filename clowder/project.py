@@ -28,7 +28,7 @@ from clowder.utility.git_utilities import (
     git_existing_local_branch,
     git_existing_remote_branch,
     git_existing_repository,
-    git_fetch_remote,
+    git_fetch,
     git_has_submodules,
     git_herd,
     git_herd_branch,
@@ -132,10 +132,10 @@ class Project(object):
         if not is_offline():
             if remote:
                 if self.fork is None:
-                    git_fetch_remote(self.full_path(), self.remote_name, self.depth)
+                    git_fetch(self.full_path(), self.remote_name, self.depth)
                 else:
-                    git_fetch_remote(self.full_path(), self.fork.remote_name, 0)
-                    git_fetch_remote(self.full_path(), self.remote_name, 0)
+                    git_fetch(self.full_path(), self.fork.remote_name, 0)
+                    git_fetch(self.full_path(), self.remote_name, 0)
         git_print_branches(self.full_path(), local=local, remote=remote)
 
     def clean(self, args=None, recursive=False):
@@ -208,10 +208,10 @@ class Project(object):
         self._print_status()
         if self.exists():
             if self.fork is None:
-                git_fetch_remote(self.full_path(), self.remote_name, self.depth)
+                git_fetch(self.full_path(), self.remote_name, self.depth)
             else:
-                git_fetch_remote(self.full_path(), self.fork.remote_name, 0)
-                git_fetch_remote(self.full_path(), self.remote_name, 0)
+                git_fetch(self.full_path(), self.fork.remote_name, 0)
+                git_fetch(self.full_path(), self.remote_name, 0)
         else:
             self.print_exists()
 
