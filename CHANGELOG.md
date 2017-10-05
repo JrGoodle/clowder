@@ -1,3 +1,16 @@
+# 2.3.0
+
+- Add more options to `clowder clean` (`-f`, `-x`, -X`, `-d`, `-r`, `-a`)
+- More thorough cleaning logic
+- Add the ability to override project forks in imported `clowder.yaml` files
+- Add `clowder yaml` command to print `clowder.yaml` information
+- Add offline support
+- Update documentation to use Swift as the example
+- Add additonal options to `group`s in `clowder.yaml`
+- Add `clowder branch` command
+- Add `clowder sync` command
+- Better handling of `fork`s
+
 # 2.2.0
 
 - Add `-b` option to `clowder herd`
