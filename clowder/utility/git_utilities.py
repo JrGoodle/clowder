@@ -82,8 +82,7 @@ def git_checkout_ref(repo_path, ref, remote, depth, fetch=True):
         _checkout_branch_local(repo_path, branch)
     elif ref_type is 'tag':
         git_fetch(repo_path, remote, depth=depth, ref=ref)
-        tag = _truncate_ref(ref)
-        _checkout_tag(repo_path, tag)
+        _checkout_tag(repo_path, _truncate_ref(ref))
     elif ref_type is 'sha':
         git_fetch(repo_path, remote, depth=depth, ref=ref)
         _checkout_sha(repo_path, ref)
@@ -175,11 +174,9 @@ def git_create_repo(repo_path, url, remote, ref, depth=0, recursive=False):
         else:
             ref_type = _ref_type(ref)
             if ref_type is 'branch':
-                branch = _truncate_ref(ref)
-                _checkout_branch_new_repo(repo_path, branch, remote, depth)
+                _checkout_branch_new_repo(repo_path, _truncate_ref(ref), remote, depth)
             elif ref_type is 'tag':
-                tag = _truncate_ref(ref)
-                _checkout_tag_new_repo(repo_path, tag, remote, depth)
+                _checkout_tag_new_repo(repo_path, _truncate_ref(ref), remote, depth)
             elif ref_type is 'sha':
                 _checkout_commit_new_repo(repo_path, ref, remote, depth)
             else:
@@ -474,11 +471,10 @@ def git_prune_local(repo_path, branch, default_ref, force):
         return
     prune_branch = repo.heads[branch]
     if repo.head.ref == prune_branch:
-        truncated_ref = _truncate_ref(default_ref)
-        ref_output = format_ref_string(truncated_ref)
+        ref_output = format_ref_string(_truncate_ref(default_ref))
         try:
             print(' - Checkout ref ' + ref_output)
-            repo.git.checkout(truncated_ref)
+            repo.git.checkout(_truncate_ref(default_ref))
         except Exception as err:
             message = colored(' - Failed to checkout ref', 'red')
             print(message + ref_output)
@@ -713,12 +709,11 @@ def git_sync(repo_path, upstream_remote, fork_remote, ref, recursive):
     ref_type = _ref_type(ref)
     print(' - Sync fork with upstream remote')
     if ref_type is 'branch':
-        branch = _truncate_ref(ref)
         upstream_remote_output = format_remote_string(upstream_remote)
         fork_remote_output = format_remote_string(fork_remote)
-        branch_output = format_ref_string(branch)
+        branch_output = format_ref_string(_truncate_ref(ref))
         print(' - Pull from ' + upstream_remote_output + ' ' + branch_output)
-        command = ['git', 'pull', upstream_remote, branch]
+        command = ['git', 'pull', upstream_remote, _truncate_ref(ref)]
         return_code = execute_command(command, repo_path)
         if return_code != 0:
             message = colored(' - Failed to pull from ', 'red')
@@ -726,7 +721,7 @@ def git_sync(repo_path, upstream_remote, fork_remote, ref, recursive):
             print_command_failed_error(command)
             sys.exit(return_code)
         print(' - Push to ' + fork_remote_output + ' ' + branch_output)
-        command = ['git', 'push', fork_remote, branch]
+        command = ['git', 'push', fork_remote, _truncate_ref(ref)]
         return_code = execute_command(command, repo_path)
         if return_code != 0:
             message = colored(' - Failed to push to ', 'red')
