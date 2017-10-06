@@ -6,7 +6,9 @@ from git import Repo
 from termcolor import colored, cprint
 from clowder.utility.clowder_utilities import (
     execute_command,
-    remove_directory_exit
+    ref_type,
+    remove_directory_exit,
+    truncate_ref
 )
 from clowder.utility.print_utilities import (
     format_command,
@@ -24,8 +26,6 @@ from clowder.utility.print_utilities import (
 # pylint: disable=W0703
 # Disable errors shown by pylint for too many arguments
 # pylint: disable=R0913
-# Disable errors shown by pylint for too many local variables
-# pylint: disable=R0914
 
 def git_abort_rebase(repo_path):
     """Abort rebase"""
@@ -70,9 +70,8 @@ def git_checkout(repo_path, truncated_ref):
 
 def git_checkout_ref(repo_path, ref, remote, depth, fetch=True):
     """Checkout branch, tag, or commit from sha"""
-    ref_type = _ref_type(ref)
-    if ref_type is 'branch':
-        branch = _truncate_ref(ref)
+    if ref_type(ref) is 'branch':
+        branch = truncate_ref(ref)
         if not git_existing_local_branch(repo_path, branch):
             _create_branch_local_tracking(repo_path, branch, remote, depth, fetch=fetch)
             return
@@ -83,10 +82,10 @@ def git_checkout_ref(repo_path, ref, remote, depth, fetch=True):
             print(message_1 + branch_output + message_2)
             return
         _checkout_branch_local(repo_path, branch)
-    elif ref_type is 'tag':
+    elif ref_type(ref) is 'tag':
         git_fetch(repo_path, remote, depth=depth, ref=ref)
-        _checkout_tag(repo_path, _truncate_ref(ref))
-    elif ref_type is 'sha':
+        _checkout_tag(repo_path, truncate_ref(ref))
+    elif ref_type(ref) is 'sha':
         git_fetch(repo_path, remote, depth=depth, ref=ref)
         _checkout_sha(repo_path, ref)
     else:
@@ -124,22 +123,22 @@ def git_configure_remotes(repo_path, upstream_remote_name, upstream_remote_url,
         return
     else:
         for remote in remotes:
-            if upstream_remote_url == repo.git.remote('get-url', remote.name):
+            if _check_remote_url(repo_path, upstream_remote_url, remote.name):
                 if remote.name != upstream_remote_name:
                     git_rename_remote(repo_path, remote.name, upstream_remote_name)
                     continue
-            if fork_remote_url == repo.git.remote('get-url', remote.name):
+            if _check_remote_url(repo_path, fork_remote_url, remote.name):
                 if remote.name != fork_remote_name:
                     git_rename_remote(repo_path, remote.name, fork_remote_name)
         remote_names = [r.name for r in repo.remotes]
         if upstream_remote_name in remote_names:
-            if upstream_remote_url != repo.git.remote('get-url', upstream_remote_name):
+            if _check_remote_url(repo_path, upstream_remote_url, upstream_remote_name):
                 actual_url = repo.git.remote('get-url', upstream_remote_name)
                 print_remote_already_exists_error(upstream_remote_name,
                                                   upstream_remote_url, actual_url)
                 sys.exit(1)
         if fork_remote_name in remote_names:
-            if fork_remote_url != repo.git.remote('get-url', fork_remote_name):
+            if _check_remote_url(repo_path, fork_remote_url, fork_remote_name):
                 actual_url = repo.git.remote('get-url', fork_remote_name)
                 print_remote_already_exists_error(fork_remote_name,
                                                   fork_remote_url, actual_url)
@@ -175,12 +174,11 @@ def git_create_repo(repo_path, url, remote, ref, depth=0, recursive=False):
             print_error(err)
             remove_directory_exit(repo_path)
         else:
-            ref_type = _ref_type(ref)
-            if ref_type is 'branch':
-                _checkout_branch_new_repo(repo_path, _truncate_ref(ref), remote, depth)
-            elif ref_type is 'tag':
-                _checkout_tag_new_repo(repo_path, _truncate_ref(ref), remote, depth)
-            elif ref_type is 'sha':
+            if ref_type(ref) is 'branch':
+                _checkout_branch_new_repo(repo_path, truncate_ref(ref), remote, depth)
+            elif ref_type(ref) is 'tag':
+                _checkout_tag_new_repo(repo_path, truncate_ref(ref), remote, depth)
+            elif ref_type(ref) is 'sha':
                 _checkout_commit_new_repo(repo_path, ref, remote, depth)
             else:
                 ref_output = format_ref_string(ref)
@@ -282,11 +280,11 @@ def git_fetch(repo_path, remote, ref=None, depth=0):
             message = colored(' - Failed to fetch remote ', 'red')
             error = message + remote_output
         else:
-            ref_output = format_ref_string(_truncate_ref(ref))
+            ref_output = format_ref_string(truncate_ref(ref))
             print(' - Fetch from ' + remote_output + ' ' + ref_output)
             message = colored(' - Failed to fetch from ', 'red')
             error = message + remote_output + ' ' + ref_output
-            command = ['git', 'fetch', remote, _truncate_ref(ref),
+            command = ['git', 'fetch', remote, truncate_ref(ref),
                        '--depth', str(depth), '--prune']
     return_code = execute_command(command, repo_path)
     if return_code != 0:
@@ -315,17 +313,16 @@ def git_herd(repo_path, url, remote, ref, depth=0, recursive=False, fetch=True):
     if not git_existing_repository(repo_path):
         git_create_repo(repo_path, url, remote, ref, depth=depth, recursive=recursive)
         return
-    ref_type = _ref_type(ref)
-    if ref_type is 'branch':
+    if ref_type(ref) is 'branch':
         git_create_remote(repo_path, remote, url)
         git_checkout_ref(repo_path, ref, remote, depth, fetch=fetch)
-        branch = _truncate_ref(ref)
+        branch = truncate_ref(ref)
         if git_existing_remote_branch(repo_path, branch, remote):
             if git_is_tracking_branch(repo_path, branch):
                 _pull_remote_branch(repo_path, remote, branch)
             else:
                 git_set_tracking_branch(repo_path, branch, remote, depth)
-    elif ref_type is 'tag' or ref_type is 'sha':
+    elif ref_type(ref) is 'tag' or ref_type(ref) is 'sha':
         git_create_remote(repo_path, remote, url)
         git_checkout_ref(repo_path, ref, remote, depth)
     else:
@@ -492,10 +489,10 @@ def git_prune_local(repo_path, branch, default_ref, force):
         return
     prune_branch = repo.heads[branch]
     if repo.head.ref == prune_branch:
-        ref_output = format_ref_string(_truncate_ref(default_ref))
+        ref_output = format_ref_string(truncate_ref(default_ref))
         try:
             print(' - Checkout ref ' + ref_output)
-            repo.git.checkout(_truncate_ref(default_ref))
+            repo.git.checkout(truncate_ref(default_ref))
         except Exception as err:
             message = colored(' - Failed to checkout ref', 'red')
             print(message + ref_output)
@@ -723,16 +720,15 @@ def git_submodule_update_recursive(repo_path, depth):
 
 def git_sync(repo_path, upstream_remote, fork_remote, ref, recursive):
     """Sync fork with upstream remote"""
-    ref_type = _ref_type(ref)
     print(' - Sync fork with upstream remote')
-    if ref_type is not 'branch':
+    if ref_type(ref) is not 'branch':
         cprint(' - Can only sync branches', 'red')
         sys.exit(1)
     fork_remote_output = format_remote_string(fork_remote)
-    branch_output = format_ref_string(_truncate_ref(ref))
-    _pull_remote_branch(repo_path, upstream_remote, _truncate_ref(ref))
+    branch_output = format_ref_string(truncate_ref(ref))
+    _pull_remote_branch(repo_path, upstream_remote, truncate_ref(ref))
     print(' - Push to ' + fork_remote_output + ' ' + branch_output)
-    command = ['git', 'push', fork_remote, _truncate_ref(ref)]
+    command = ['git', 'push', fork_remote, truncate_ref(ref)]
     return_code = execute_command(command, repo_path)
     if return_code != 0:
         message = colored(' - Failed to push to ', 'red')
@@ -779,7 +775,7 @@ def _checkout_branch_herd_branch(repo_path, branch, default_ref, remote, depth):
         remove_directory_exit(repo_path)
     if not git_existing_remote_branch(repo_path, branch, remote):
         print(' - No existing remote branch ' + branch_output)
-        _checkout_branch_new_repo(repo_path, _truncate_ref(default_ref), remote, depth)
+        _checkout_branch_new_repo(repo_path, truncate_ref(default_ref), remote, depth)
         return
     print(' - Create branch ' + branch_output)
     try:
@@ -864,31 +860,10 @@ def _checkout_commit_new_repo(repo_path, commit, remote, depth):
         print_error(err)
         remove_directory_exit(repo_path)
 
-def _checkout_tag_new_repo(repo_path, tag, remote, depth):
-    """Checkout tag or fail and delete repo if it doesn't exist"""
+def _check_remote_url(repo_path, remote, url):
+    """Check remote url"""
     repo = _repo(repo_path)
-    tag_output = format_ref_string(tag)
-    origin = _remote(repo_path, remote)
-    if origin is None:
-        remove_directory_exit(repo_path)
-    return_code = git_fetch(repo_path, remote, depth=depth, ref=tag)
-    if return_code != 0:
-        remove_directory_exit(repo_path)
-    try:
-        remote_tag = origin.tags[tag]
-    except:
-        message = colored(' - No existing remote tag ', 'red')
-        print(message + tag_output)
-        remove_directory_exit(repo_path)
-    else:
-        print(' - Checkout tag ' + tag_output)
-        try:
-            repo.git.checkout(remote_tag)
-        except Exception as err:
-            message = colored(' - Failed to checkout tag ', 'red')
-            print(message + tag_output)
-            print_error(err)
-            remove_directory_exit(repo_path)
+    return url == repo.git.remote('get-url', remote)
 
 def _checkout_sha(repo_path, sha):
     """Checkout commit by sha"""
@@ -942,6 +917,32 @@ def _checkout_tag(repo_path, tag):
                 print(message + tag_output)
                 print_error(err)
                 sys.exit(1)
+
+def _checkout_tag_new_repo(repo_path, tag, remote, depth):
+    """Checkout tag or fail and delete repo if it doesn't exist"""
+    repo = _repo(repo_path)
+    tag_output = format_ref_string(tag)
+    origin = _remote(repo_path, remote)
+    if origin is None:
+        remove_directory_exit(repo_path)
+    return_code = git_fetch(repo_path, remote, depth=depth, ref=tag)
+    if return_code != 0:
+        remove_directory_exit(repo_path)
+    try:
+        remote_tag = origin.tags[tag]
+    except:
+        message = colored(' - No existing remote tag ', 'red')
+        print(message + tag_output)
+        remove_directory_exit(repo_path)
+    else:
+        print(' - Checkout tag ' + tag_output)
+        try:
+            repo.git.checkout(remote_tag)
+        except Exception as err:
+            message = colored(' - Failed to checkout tag ', 'red')
+            print(message + tag_output)
+            print_error(err)
+            remove_directory_exit(repo_path)
 
 def _create_branch(repo_path, branch):
     """Create local branch"""
@@ -1047,19 +1048,6 @@ def _pull_remote_branch(repo_path, remote, branch):
         print_command_failed_error(command)
         sys.exit(return_code)
 
-def _ref_type(ref):
-    """Return branch, tag, sha, or unknown ref type"""
-    git_branch = "refs/heads/"
-    git_tag = "refs/tags/"
-    if ref.startswith(git_branch):
-        return 'branch'
-    elif ref.startswith(git_tag):
-        return 'tag'
-    elif len(ref) is 40:
-        return 'sha'
-    else:
-        return 'unknown'
-
 def _remote(repo_path, remote):
     """Get remote"""
     repo = _repo(repo_path)
@@ -1102,15 +1090,3 @@ def _set_tracking_branch(repo_path, remote, branch):
         print(message + branch_output)
         print_error(err)
         return 1
-
-def _truncate_ref(ref):
-    """Return bare branch, tag, or sha"""
-    git_branch = "refs/heads/"
-    git_tag = "refs/tags/"
-    if ref.startswith(git_branch):
-        length = len(git_branch)
-    elif ref.startswith(git_tag):
-        length = len(git_tag)
-    else:
-        length = 0
-    return ref[length:]

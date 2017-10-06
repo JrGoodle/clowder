@@ -97,6 +97,19 @@ def parse_yaml(yaml_file):
         print()
         sys.exit(1)
 
+def ref_type(ref):
+    """Return branch, tag, sha, or unknown ref type"""
+    git_branch = "refs/heads/"
+    git_tag = "refs/tags/"
+    if ref.startswith(git_branch):
+        return 'branch'
+    elif ref.startswith(git_tag):
+        return 'tag'
+    elif len(ref) is 40:
+        return 'sha'
+    else:
+        return 'unknown'
+
 def remove_directory_exit(path):
     """Remove directory at path"""
     try:
@@ -122,3 +135,15 @@ def save_yaml(yaml_output, yaml_file):
         print_file_exists_error(yaml_file)
         print()
         sys.exit(1)
+
+def truncate_ref(ref):
+    """Return bare branch, tag, or sha"""
+    git_branch = "refs/heads/"
+    git_tag = "refs/tags/"
+    if ref.startswith(git_branch):
+        length = len(git_branch)
+    elif ref.startswith(git_tag):
+        length = len(git_tag)
+    else:
+        length = 0
+    return ref[length:]
