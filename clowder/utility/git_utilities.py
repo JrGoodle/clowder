@@ -473,35 +473,26 @@ def git_prune_local(repo_path, branch, default_ref, force):
         print(' - Local branch ' + branch_output + " doesn't exist")
         return
     prune_branch = repo.heads[branch]
-    if repo.head.ref != prune_branch:
+    if repo.head.ref == prune_branch:
+        truncated_ref = _truncate_ref(default_ref)
+        ref_output = format_ref_string(truncated_ref)
         try:
-            print(' - Delete local branch ' + branch_output)
-            repo.delete_head(branch, force=force)
-            return
+            print(' - Checkout ref ' + ref_output)
+            repo.git.checkout(truncated_ref)
         except Exception as err:
-            message = colored(' - Failed to delete local branch ', 'red')
-            print(message + branch_output)
+            message = colored(' - Failed to checkout ref', 'red')
+            print(message + ref_output)
             print_error(err)
             sys.exit(1)
-    truncated_ref = _truncate_ref(default_ref)
-    ref_output = format_ref_string(truncated_ref)
     try:
-        print(' - Checkout ref ' + ref_output)
-        repo.git.checkout(truncated_ref)
+        print(' - Delete local branch ' + branch_output)
+        repo.delete_head(branch, force=force)
+        return
     except Exception as err:
-        message = colored(' - Failed to checkout ref', 'red')
-        print(message + ref_output)
+        message = colored(' - Failed to delete local branch ', 'red')
+        print(message + branch_output)
         print_error(err)
         sys.exit(1)
-    else:
-        try:
-            print(' - Delete local branch ' + branch_output)
-            repo.delete_head(branch, force=force)
-        except Exception as err:
-            message = colored(' - Failed to delete local branch ', 'red')
-            print(message + branch_output)
-            print_error(err)
-            sys.exit(1)
 
 def git_prune_remote(repo_path, branch, remote):
     """Prune remote branch in repository"""
