@@ -77,7 +77,10 @@ def git_checkout_ref(repo_path, ref, remote, depth, fetch=True):
             _create_branch_local_tracking(repo_path, branch, remote, depth, fetch=fetch)
             return
         if git_is_branch_checked_out(repo_path, branch):
-            print(' - On default branch')
+            branch_output = format_ref_string(branch)
+            message_1 = ' - Branch '
+            message_2 = ' already checked out'
+            print(message_1 + branch_output + message_2)
             return
         _checkout_branch_local(repo_path, branch)
     elif ref_type is 'tag':
