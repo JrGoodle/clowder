@@ -170,11 +170,11 @@ def git_create_repo(repo_path, url, remote, ref, depth=0, recursive=False):
         if return_code != 0:
             remove_directory_exit(repo_path)
         if ref_type(ref) is 'branch':
-            _checkout_branch_new_repo(repo_path, truncate_ref(ref), remote, depth)
+            _checkout_new_repo_branch(repo_path, truncate_ref(ref), remote, depth)
         elif ref_type(ref) is 'tag':
-            _checkout_tag_new_repo(repo_path, truncate_ref(ref), remote, depth)
+            _checkout_new_repo_tag(repo_path, truncate_ref(ref), remote, depth)
         elif ref_type(ref) is 'sha':
-            _checkout_commit_new_repo(repo_path, ref, remote, depth)
+            _checkout_new_repo_commit(repo_path, ref, remote, depth)
         else:
             ref_output = format_ref_string(ref)
             print('Unknown ref ' + ref_output)
@@ -214,7 +214,7 @@ def git_create_repo_herd_branch(repo_path, url, remote, branch, default_ref,
             remove_directory_exit(repo_path)
         if not git_existing_remote_branch(repo_path, branch, remote):
             print(' - No existing remote branch ' + branch_output)
-            _checkout_branch_new_repo(repo_path, truncate_ref(default_ref), remote, depth)
+            _checkout_new_repo_branch(repo_path, truncate_ref(default_ref), remote, depth)
             return
         return_code = _create_branch_local_tracking(repo_path, branch, remote,
                                                     depth=depth, fetch=False)
@@ -636,7 +636,7 @@ def git_start(repo_path, remote, branch, depth, tracking):
         return_code = git_fetch(repo_path, remote, depth=depth, ref=branch)
         if return_code != 0:
             sys.exit(return_code)
-        return_code = _create_branch(repo_path, branch)
+        return_code = _create_branch_local(repo_path, branch)
         if return_code != 0:
             sys.exit(return_code)
         return_code = _checkout_branch_local(repo_path, branch)
@@ -663,7 +663,7 @@ def git_start_offline(repo_path, branch):
     correct_branch = False
     branch_output = format_ref_string(branch)
     if branch not in repo.heads:
-        return_code = _create_branch(repo_path, branch)
+        return_code = _create_branch_local(repo_path, branch)
         if return_code != 0:
             sys.exit(return_code)
         return_code = _checkout_branch_local(repo_path, branch)
@@ -786,6 +786,11 @@ def git_validate_repo(repo_path):
             return False
     return True
 
+def _check_remote_url(repo_path, remote, url):
+    """Check remote url"""
+    repo = _repo(repo_path)
+    return url == repo.git.remote('get-url', remote)
+
 def _checkout_branch_local(repo_path, branch):
     """Checkout local branch"""
     repo = _repo(repo_path)
@@ -801,7 +806,7 @@ def _checkout_branch_local(repo_path, branch):
         print_error(err)
         return 1
 
-def _checkout_branch_new_repo(repo_path, branch, remote, depth):
+def _checkout_new_repo_branch(repo_path, branch, remote, depth):
     """Checkout remote branch or fail and delete repo if it doesn't exist"""
     branch_output = format_ref_string(branch)
     origin = _remote(repo_path, remote)
@@ -827,7 +832,7 @@ def _checkout_branch_new_repo(repo_path, branch, remote, depth):
         if return_code != 0:
             remove_directory_exit(repo_path)
 
-def _checkout_commit_new_repo(repo_path, commit, remote, depth):
+def _checkout_new_repo_commit(repo_path, commit, remote, depth):
     """Checkout commit or fail and delete repo if it doesn't exist"""
     repo = _repo(repo_path)
     commit_output = format_ref_string(commit)
@@ -846,10 +851,31 @@ def _checkout_commit_new_repo(repo_path, commit, remote, depth):
         print_error(err)
         remove_directory_exit(repo_path)
 
-def _check_remote_url(repo_path, remote, url):
-    """Check remote url"""
+def _checkout_new_repo_tag(repo_path, tag, remote, depth):
+    """Checkout tag or fail and delete repo if it doesn't exist"""
     repo = _repo(repo_path)
-    return url == repo.git.remote('get-url', remote)
+    tag_output = format_ref_string(tag)
+    origin = _remote(repo_path, remote)
+    if origin is None:
+        remove_directory_exit(repo_path)
+    return_code = git_fetch(repo_path, remote, depth=depth, ref=tag)
+    if return_code != 0:
+        remove_directory_exit(repo_path)
+    try:
+        remote_tag = origin.tags[tag]
+    except:
+        message = colored(' - No existing remote tag ', 'red')
+        print(message + tag_output)
+        remove_directory_exit(repo_path)
+    else:
+        print(' - Checkout tag ' + tag_output)
+        try:
+            repo.git.checkout(remote_tag)
+        except Exception as err:
+            message = colored(' - Failed to checkout tag ', 'red')
+            print(message + tag_output)
+            print_error(err)
+            remove_directory_exit(repo_path)
 
 def _checkout_sha(repo_path, sha):
     """Checkout commit by sha"""
@@ -904,33 +930,7 @@ def _checkout_tag(repo_path, tag):
                 print_error(err)
                 sys.exit(1)
 
-def _checkout_tag_new_repo(repo_path, tag, remote, depth):
-    """Checkout tag or fail and delete repo if it doesn't exist"""
-    repo = _repo(repo_path)
-    tag_output = format_ref_string(tag)
-    origin = _remote(repo_path, remote)
-    if origin is None:
-        remove_directory_exit(repo_path)
-    return_code = git_fetch(repo_path, remote, depth=depth, ref=tag)
-    if return_code != 0:
-        remove_directory_exit(repo_path)
-    try:
-        remote_tag = origin.tags[tag]
-    except:
-        message = colored(' - No existing remote tag ', 'red')
-        print(message + tag_output)
-        remove_directory_exit(repo_path)
-    else:
-        print(' - Checkout tag ' + tag_output)
-        try:
-            repo.git.checkout(remote_tag)
-        except Exception as err:
-            message = colored(' - Failed to checkout tag ', 'red')
-            print(message + tag_output)
-            print_error(err)
-            remove_directory_exit(repo_path)
-
-def _create_branch(repo_path, branch):
+def _create_branch_local(repo_path, branch):
     """Create local branch"""
     repo = _repo(repo_path)
     branch_output = format_ref_string(branch)
