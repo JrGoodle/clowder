@@ -73,8 +73,10 @@ def git_checkout_ref(repo_path, ref, remote, depth, fetch=True):
     if ref_type(ref) is 'branch':
         branch = truncate_ref(ref)
         if not git_existing_local_branch(repo_path, branch):
-            _create_branch_local_tracking(repo_path, branch, remote, depth, fetch=fetch)
-            return
+            return_code = _create_branch_local_tracking(repo_path, branch, remote,
+                                                        depth=depth, fetch=fetch)
+        if return_code != 0:
+            sys.exit(return_code)
         if git_is_branch_checked_out(repo_path, branch):
             branch_output = format_ref_string(branch)
             message_1 = ' - Branch '
@@ -203,8 +205,29 @@ def git_create_repo_herd_branch(repo_path, url, remote, branch, default_ref,
         return_code = git_create_remote(repo_path, remote, url)
         if return_code != 0:
             remove_directory_exit(repo_path)
-        _checkout_branch_herd_branch(repo_path, branch, default_ref,
-                                     remote, depth)
+        branch_output = format_ref_string(branch)
+        origin = _remote(repo_path, remote)
+        if origin is None:
+            remove_directory_exit(repo_path)
+        return_code = git_fetch(repo_path, remote, depth=depth, ref=branch)
+        if return_code != 0:
+            remove_directory_exit(repo_path)
+        if not git_existing_remote_branch(repo_path, branch, remote):
+            print(' - No existing remote branch ' + branch_output)
+            _checkout_branch_new_repo(repo_path, truncate_ref(default_ref), remote, depth)
+            return
+        return_code = _create_branch_local_tracking(repo_path, branch, remote,
+                                                    depth=depth, fetch=False)
+        if return_code != 0:
+            remove_directory_exit(repo_path)
+        else:
+            return_code = _set_tracking_branch(repo_path, remote, branch)
+            if return_code != 0:
+                remove_directory_exit(repo_path)
+                return
+            return_code = _checkout_branch_local(repo_path, branch)
+            if return_code != 0:
+                remove_directory_exit(repo_path)
         if recursive:
             git_submodule_update_recursive(repo_path, depth)
 
@@ -763,37 +786,6 @@ def git_validate_repo(repo_path):
             return False
     return True
 
-def _checkout_branch_herd_branch(repo_path, branch, default_ref, remote, depth):
-    """Checkout remote branch or fall back to normal checkout branch if fails"""
-    repo = _repo(repo_path)
-    branch_output = format_ref_string(branch)
-    origin = _remote(repo_path, remote)
-    if origin is None:
-        remove_directory_exit(repo_path)
-    return_code = git_fetch(repo_path, remote, depth=depth, ref=branch)
-    if return_code != 0:
-        remove_directory_exit(repo_path)
-    if not git_existing_remote_branch(repo_path, branch, remote):
-        print(' - No existing remote branch ' + branch_output)
-        _checkout_branch_new_repo(repo_path, truncate_ref(default_ref), remote, depth)
-        return
-    print(' - Create branch ' + branch_output)
-    try:
-        repo.create_head(branch, origin.refs[branch])
-    except Exception as err:
-        message = colored(' - Failed to create branch ', 'red')
-        print(message + branch_output)
-        print_error(err)
-        remove_directory_exit(repo_path)
-    else:
-        return_code = _set_tracking_branch(repo_path, remote, branch)
-        if return_code != 0:
-            remove_directory_exit(repo_path)
-            return
-        return_code = _checkout_branch_local(repo_path, branch)
-        if return_code != 0:
-            remove_directory_exit(repo_path)
-
 def _checkout_branch_local(repo_path, branch):
     """Checkout local branch"""
     repo = _repo(repo_path)
@@ -811,7 +803,6 @@ def _checkout_branch_local(repo_path, branch):
 
 def _checkout_branch_new_repo(repo_path, branch, remote, depth):
     """Checkout remote branch or fail and delete repo if it doesn't exist"""
-    repo = _repo(repo_path)
     branch_output = format_ref_string(branch)
     origin = _remote(repo_path, remote)
     if origin is None:
@@ -823,14 +814,9 @@ def _checkout_branch_new_repo(repo_path, branch, remote, depth):
         message = colored(' - No existing remote branch ', 'red')
         print(message + branch_output)
         remove_directory_exit(repo_path)
-    remote_branch = origin.refs[branch]
-    print(' - Create branch ' + branch_output)
-    try:
-        repo.create_head(branch, remote_branch)
-    except Exception as err:
-        message = colored(' - Failed to create branch ', 'red')
-        print(message + branch_output)
-        print_error(err)
+    return_code = _create_branch_local_tracking(repo_path, branch, remote,
+                                                depth=depth, fetch=False)
+    if return_code != 0:
         remove_directory_exit(repo_path)
     else:
         return_code = _set_tracking_branch(repo_path, remote, branch)
@@ -968,7 +954,7 @@ def _create_branch_local_tracking(repo_path, branch, remote, depth, fetch=True):
     if fetch:
         return_code = git_fetch(repo_path, remote, depth=depth, ref=branch)
         if return_code != 0:
-            sys.exit(return_code)
+            return return_code
     try:
         print(' - Create branch ' + branch_output)
         repo.create_head(branch, origin.refs[branch])
@@ -976,14 +962,14 @@ def _create_branch_local_tracking(repo_path, branch, remote, depth, fetch=True):
         message = colored(' - Failed to create branch ', 'red')
         print(message + branch_output)
         print_error(err)
-        sys.exit(1)
+        return 1
     else:
         return_code = _set_tracking_branch(repo_path, remote, branch)
         if return_code != 0:
-            sys.exit(return_code)
+            return return_code
         return_code = _checkout_branch_local(repo_path, branch)
         if return_code != 0:
-            sys.exit(return_code)
+            return return_code
 
 def _create_branch_remote_tracking(repo_path, branch, remote, depth):
     """Create remote tracking branch"""
