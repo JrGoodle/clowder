@@ -733,14 +733,7 @@ def git_sync(repo_path, upstream_remote, fork_remote, ref, recursive):
         upstream_remote_output = format_remote_string(upstream_remote)
         fork_remote_output = format_remote_string(fork_remote)
         branch_output = format_ref_string(_truncate_ref(ref))
-        print(' - Pull from ' + upstream_remote_output + ' ' + branch_output)
-        command = ['git', 'pull', upstream_remote, _truncate_ref(ref)]
-        return_code = execute_command(command, repo_path)
-        if return_code != 0:
-            message = colored(' - Failed to pull from ', 'red')
-            print(message + upstream_remote_output + ' ' + branch_output)
-            print_command_failed_error(command)
-            sys.exit(return_code)
+        _pull_remote_branch(repo_path, upstream_remote, _truncate_ref(ref))
         print(' - Push to ' + fork_remote_output + ' ' + branch_output)
         command = ['git', 'push', fork_remote, _truncate_ref(ref)]
         return_code = execute_command(command, repo_path)
@@ -1050,15 +1043,16 @@ def _pull_remote_branch(repo_path, remote, branch):
     if repo.head.is_detached:
         print(' - HEAD is detached')
         return
-    try:
-        branch_output = format_ref_string(branch)
-        remote_output = format_remote_string(remote)
-        print(' - Pull latest changes from ' + remote_output + ' ' + branch_output)
-        print(repo.git.pull(remote, branch))
-    except Exception as err:
-        cprint(' - Failed to pull latest changes', 'red')
-        print_error(err)
-        sys.exit(1)
+    branch_output = format_ref_string(branch)
+    remote_output = format_remote_string(remote)
+    print(' - Pull from ' + remote_output + ' ' + branch_output)
+    command = ['git', 'pull', remote, branch]
+    return_code = execute_command(command, repo_path)
+    if return_code != 0:
+        message = colored(' - Failed to pull from ', 'red')
+        print(message + remote_output + ' ' + branch_output)
+        print_command_failed_error(command)
+        sys.exit(return_code)
 
 def _ref_type(ref):
     """Return branch, tag, sha, or unknown ref type"""
