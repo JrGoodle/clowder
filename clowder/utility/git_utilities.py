@@ -506,13 +506,8 @@ def git_prune_local(repo_path, branch, default_ref, force):
 def git_prune_remote(repo_path, branch, remote):
     """Prune remote branch in repository"""
     repo = _repo(repo_path)
-    remote_output = format_remote_string(remote)
-    try:
-        origin = repo.remotes[remote]
-    except Exception as err:
-        message = colored(' - No existing remote ', 'red')
-        print(message + remote_output)
-        print_error(err)
+    origin = _remote(repo_path, remote)
+    if origin is None:
         sys.exit(1)
     else:
         branch_output = format_ref_string(branch)
@@ -579,12 +574,8 @@ def git_set_tracking_branch(repo_path, branch, remote, depth):
     repo = _repo(repo_path)
     branch_output = format_ref_string(branch)
     remote_output = format_remote_string(remote)
-    try:
-        origin = repo.remotes[remote]
-    except Exception as err:
-        message_1 = colored(' - No existing remote ', 'red')
-        print(message_1 + remote_output)
-        print_error(err)
+    origin = _remote(repo_path, remote)
+    if origin is None:
         sys.exit(1)
     else:
         return_code = git_fetch(repo_path, remote, depth=depth, ref=branch)
@@ -592,13 +583,11 @@ def git_set_tracking_branch(repo_path, branch, remote, depth):
             sys.exit(return_code)
         if not git_existing_local_branch(repo_path, branch):
             message_1 = colored(' - No local branch ', 'red')
-            print(message_1 + branch_output)
-            print_error(err)
+            print(message_1 + branch_output + '\n')
             sys.exit(1)
         if not git_existing_remote_branch(repo_path, branch, remote):
             message_1 = colored(' - No remote branch ', 'red')
-            print(message_1 + branch_output)
-            print_error(err)
+            print(message_1 + branch_output + '\n')
             sys.exit(1)
         local_branch = repo.heads[branch]
         remote_branch = origin.refs[branch]
@@ -826,53 +815,43 @@ def _checkout_branch_new_repo(repo_path, branch, remote, depth):
     repo = _repo(repo_path)
     branch_output = format_ref_string(branch)
     remote_output = format_remote_string(remote)
+    origin = _remote(repo_path, remote)
+    if origin is None:
+        remove_directory_exit(repo_path)
+    return_code = git_fetch(repo_path, remote, depth=depth, ref=branch)
+    if return_code != 0:
+        remove_directory_exit(repo_path)
     try:
-        origin = repo.remotes[remote]
-    except Exception as err:
-        message = colored(' - No existing remote ', 'red')
-        print(message + remote_output)
-        print_error(err)
+        remote_branch = origin.refs[branch]
+    except:
+        message = colored(' - No existing remote branch ', 'red')
+        print(message + branch_output)
         remove_directory_exit(repo_path)
     else:
-        return_code = git_fetch(repo_path, remote, depth=depth, ref=branch)
-        if return_code != 0:
-            remove_directory_exit(repo_path)
+        print(' - Create branch ' + branch_output)
         try:
-            remote_branch = origin.refs[branch]
-        except:
-            message = colored(' - No existing remote branch ', 'red')
+            default_branch = repo.create_head(branch, remote_branch)
+        except Exception as err:
+            message = colored(' - Failed to create branch ', 'red')
             print(message + branch_output)
+            print_error(err)
             remove_directory_exit(repo_path)
         else:
-            print(' - Create branch ' + branch_output)
-            try:
-                default_branch = repo.create_head(branch, remote_branch)
-            except Exception as err:
-                message = colored(' - Failed to create branch ', 'red')
-                print(message + branch_output)
-                print_error(err)
+            return_code = _set_tracking_branch(default_branch, remote_branch,
+                                               branch_output, remote_output)
+            if return_code != 0:
                 remove_directory_exit(repo_path)
-            else:
-                return_code = _set_tracking_branch(default_branch, remote_branch,
-                                                   branch_output, remote_output)
-                if return_code != 0:
-                    remove_directory_exit(repo_path)
-                    return
-                return_code = _checkout_branch_local(repo_path, branch)
-                if return_code != 0:
-                    remove_directory_exit(repo_path)
+                return
+            return_code = _checkout_branch_local(repo_path, branch)
+            if return_code != 0:
+                remove_directory_exit(repo_path)
 
 def _checkout_commit_new_repo(repo_path, commit, remote, depth):
     """Checkout commit or fail and delete repo if it doesn't exist"""
     repo = _repo(repo_path)
     commit_output = format_ref_string(commit)
-    remote_output = format_remote_string(remote)
-    try:
-        repo.remotes[remote]
-    except Exception as err:
-        message = colored(' - No existing remote ', 'red')
-        print(message + remote_output)
-        print_error(err)
+    origin = _remote(repo_path, remote)
+    if origin is None:
         remove_directory_exit(repo_path)
     else:
         return_code = git_fetch(repo_path, remote, depth=depth, ref=commit)
@@ -891,13 +870,8 @@ def _checkout_tag_new_repo(repo_path, tag, remote, depth):
     """Checkout tag or fail and delete repo if it doesn't exist"""
     repo = _repo(repo_path)
     tag_output = format_ref_string(tag)
-    remote_output = format_remote_string(remote)
-    try:
-        origin = repo.remotes[remote]
-    except Exception as err:
-        message = colored(' - No existing remote ', 'red')
-        print(message + remote_output)
-        print_error(err)
+    origin = _remote(repo_path, remote)
+    if origin is None:
         remove_directory_exit(repo_path)
     else:
         return_code = git_fetch(repo_path, remote, depth=depth, ref=tag)
@@ -924,38 +898,34 @@ def _checkout_branch_herd_branch(repo_path, branch, default_ref, remote, depth):
     repo = _repo(repo_path)
     branch_output = format_ref_string(branch)
     remote_output = format_remote_string(remote)
-    try:
-        repo.remotes[remote]
-    except Exception as err:
-        message = colored(' - No existing remote ', 'red')
-        print(message + remote_output)
-        print_error(err)
+    origin = _remote(repo_path, remote)
+    if origin is None:
         remove_directory_exit(repo_path)
+    return_code = git_fetch(repo_path, remote, depth=depth, ref=branch)
+    if return_code != 0:
+        remove_directory_exit(repo_path)
+    if not git_existing_remote_branch(repo_path, branch, remote):
+        print(' - No existing remote branch ' + branch_output)
+        _checkout_branch_new_repo(repo_path, _truncate_ref(default_ref), remote, depth)
     else:
-        return_code = git_fetch(repo_path, remote, depth=depth, ref=branch)
-        if return_code != 0:
+        print(' - Create branch ' + branch_output)
+        try:
+            remote_branch = origin.refs[branch]
+            default_branch = repo.create_head(branch, remote_branch)
+        except Exception as err:
+            message = colored(' - Failed to create branch ', 'red')
+            print(message + branch_output)
+            print_error(err)
             remove_directory_exit(repo_path)
-        if not git_existing_remote_branch(repo_path, branch, remote):
-            print(' - No existing remote branch ' + branch_output)
-            _checkout_branch_new_repo(repo_path, _truncate_ref(default_ref), remote, depth)
         else:
-            print(' - Create branch ' + branch_output)
-            try:
-                default_branch = repo.create_head(branch, remote_branch)
-            except Exception as err:
-                message = colored(' - Failed to create branch ', 'red')
-                print(message + branch_output)
-                print_error(err)
+            return_code = _set_tracking_branch(default_branch, remote_branch,
+                                               branch_output, remote_output)
+            if return_code != 0:
                 remove_directory_exit(repo_path)
-            else:
-                return_code = _set_tracking_branch(default_branch, remote_branch,
-                                                   branch_output, remote_output)
-                if return_code != 0:
-                    remove_directory_exit(repo_path)
-                    return
-                return_code = _checkout_branch_local(repo_path, branch)
-                if return_code != 0:
-                    remove_directory_exit(repo_path)
+                return
+            return_code = _checkout_branch_local(repo_path, branch)
+            if return_code != 0:
+                remove_directory_exit(repo_path)
 
 def _checkout_sha(repo_path, sha):
     """Checkout commit by sha"""
@@ -1041,12 +1011,8 @@ def _create_branch_local_tracking(repo_path, branch, remote, depth, fetch=True):
     repo = _repo(repo_path)
     branch_output = format_ref_string(branch)
     remote_output = format_remote_string(remote)
-    try:
-        origin = repo.remotes[remote]
-    except Exception as err:
-        message = colored(' - No existing remote ', 'red')
-        print(message + remote_output)
-        print_error(err)
+    origin = _remote(repo_path, remote)
+    if origin is None:
         sys.exit(1)
     else:
         if fetch:
@@ -1075,12 +1041,8 @@ def _create_remote_tracking_branch(repo_path, branch, remote, depth):
     repo = _repo(repo_path)
     branch_output = format_ref_string(branch)
     remote_output = format_remote_string(remote)
-    try:
-        origin = repo.remotes[remote]
-    except Exception as err:
-        message = colored(' - No existing remote ', 'red')
-        print(message + remote_output)
-        print_error(err)
+    origin = _remote(repo_path, remote)
+    if origin is None:
         sys.exit(1)
     else:
         return_code = git_fetch(repo_path, remote, depth=depth, ref=branch)
@@ -1139,6 +1101,18 @@ def _ref_type(ref):
         return 'sha'
     else:
         return 'unknown'
+
+def _remote(repo_path, remote):
+    """Get remote"""
+    repo = _repo(repo_path)
+    remote_output = format_remote_string(remote)
+    try:
+        return repo.remotes[remote]
+    except Exception as err:
+        message = colored(' - No existing remote ', 'red')
+        print(message + remote_output)
+        print_error(err)
+        return None
 
 def _repo(repo_path):
     """Create Repo instance for path"""
