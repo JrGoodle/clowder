@@ -613,7 +613,15 @@ def git_start(repo_path, remote, branch, depth, tracking):
     repo = _repo(repo_path)
     correct_branch = False
     if branch not in repo.heads:
-        _create_checkout_branch(repo_path, branch, remote, depth)
+        return_code = git_fetch(repo_path, remote, depth=depth, ref=branch)
+        if return_code != 0:
+            sys.exit(return_code)
+        return_code = _create_branch(repo_path, branch)
+        if return_code != 0:
+            sys.exit(return_code)
+        return_code = _checkout_branch_local(repo_path, branch)
+        if return_code != 0:
+            sys.exit(return_code)
         if tracking:
             _create_branch_remote_tracking(repo_path, branch, remote, depth)
         return
@@ -1013,18 +1021,6 @@ def _create_branch_remote_tracking(repo_path, branch, remote, depth):
         return_code = _set_tracking_branch(repo_path, remote, branch)
         if return_code != 0:
             sys.exit(return_code)
-
-def _create_checkout_branch(repo_path, branch, remote, depth):
-    """Create and checkout local branch"""
-    return_code = git_fetch(repo_path, remote, depth=depth, ref=branch)
-    if return_code != 0:
-        sys.exit(return_code)
-    return_code = _create_branch(repo_path, branch)
-    if return_code != 0:
-        sys.exit(return_code)
-    return_code = _checkout_branch_local(repo_path, branch)
-    if return_code != 0:
-        sys.exit(return_code)
 
 def _pull_remote_branch(repo_path, remote, branch):
     """Pull from remote branch"""
