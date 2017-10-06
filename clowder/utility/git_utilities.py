@@ -412,10 +412,7 @@ def git_is_tracking_branch(repo_path, branch):
         sys.exit(1)
     else:
         tracking_branch = local_branch.tracking_branch()
-        if tracking_branch is None:
-            return False
-        else:
-            return True
+        return True if tracking_branch else False
 
 def git_is_valid_repo(repo_path):
     """Validate repo"""
