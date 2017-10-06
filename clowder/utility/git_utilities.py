@@ -99,22 +99,22 @@ def git_configure_remotes(repo_path, upstream_remote_name, upstream_remote_url,
         return
     else:
         for remote in remotes:
-            if _check_remote_url(repo_path, remote.name, upstream_remote_url):
+            if upstream_remote_url == repo.git.remote('get-url', remote.name):
                 if remote.name != upstream_remote_name:
                     _rename_remote(repo_path, remote.name, upstream_remote_name)
                     continue
-            if _check_remote_url(repo_path, remote.name, fork_remote_url):
+            if fork_remote_url == repo.git.remote('get-url', remote.name):
                 if remote.name != fork_remote_name:
                     _rename_remote(repo_path, remote.name, fork_remote_name)
         remote_names = [r.name for r in repo.remotes]
         if upstream_remote_name in remote_names:
-            if _check_remote_url(repo_path, upstream_remote_name, upstream_remote_url):
+            if upstream_remote_url != repo.git.remote('get-url', upstream_remote_name):
                 actual_url = repo.git.remote('get-url', upstream_remote_name)
                 print_remote_already_exists_error(upstream_remote_name,
                                                   upstream_remote_url, actual_url)
                 sys.exit(1)
         if fork_remote_name in remote_names:
-            if _check_remote_url(repo_path, fork_remote_name, fork_remote_url):
+            if fork_remote_url != repo.git.remote('get-url', fork_remote_name):
                 actual_url = repo.git.remote('get-url', fork_remote_name)
                 print_remote_already_exists_error(fork_remote_name,
                                                   fork_remote_url, actual_url)
@@ -623,11 +623,6 @@ def git_validate_repo(repo_path):
         if not git_is_valid_submodule(submodule.path):
             return False
     return True
-
-def _check_remote_url(repo_path, remote, url):
-    """Check remote url"""
-    repo = _repo(repo_path)
-    return url == repo.git.remote('get-url', remote)
 
 def _checkout_branch_local(repo_path, branch):
     """Checkout local branch"""
