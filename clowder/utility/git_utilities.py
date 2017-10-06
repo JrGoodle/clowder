@@ -560,7 +560,6 @@ def git_set_tracking_branch(repo_path, branch, remote, depth):
     """Set tracking relationship between local and remote branch if on same commit"""
     repo = _repo(repo_path)
     branch_output = format_ref_string(branch)
-    remote_output = format_remote_string(remote)
     origin = _remote(repo_path, remote)
     if origin is None:
         sys.exit(1)
@@ -583,8 +582,7 @@ def git_set_tracking_branch(repo_path, branch, remote, depth):
             message_2 = colored(' on different commit', 'red')
             print(message_1 + branch_output + message_2 + '\n')
             sys.exit(1)
-        return_code = _set_tracking_branch(local_branch, origin.refs[branch],
-                                           branch_output, remote_output)
+        return_code = _set_tracking_branch(repo_path, remote, branch)
         if return_code != 0:
             sys.exit(1)
 
@@ -798,7 +796,6 @@ def _checkout_branch_new_repo(repo_path, branch, remote, depth):
     """Checkout remote branch or fail and delete repo if it doesn't exist"""
     repo = _repo(repo_path)
     branch_output = format_ref_string(branch)
-    remote_output = format_remote_string(remote)
     origin = _remote(repo_path, remote)
     if origin is None:
         remove_directory_exit(repo_path)
@@ -812,15 +809,14 @@ def _checkout_branch_new_repo(repo_path, branch, remote, depth):
     remote_branch = origin.refs[branch]
     print(' - Create branch ' + branch_output)
     try:
-        default_branch = repo.create_head(branch, remote_branch)
+        repo.create_head(branch, remote_branch)
     except Exception as err:
         message = colored(' - Failed to create branch ', 'red')
         print(message + branch_output)
         print_error(err)
         remove_directory_exit(repo_path)
     else:
-        return_code = _set_tracking_branch(default_branch, remote_branch,
-                                           branch_output, remote_output)
+        return_code = _set_tracking_branch(repo_path, remote, branch)
         if return_code != 0:
             remove_directory_exit(repo_path)
             return
@@ -878,7 +874,6 @@ def _checkout_branch_herd_branch(repo_path, branch, default_ref, remote, depth):
     """Checkout remote branch or fall back to normal checkout branch if fails"""
     repo = _repo(repo_path)
     branch_output = format_ref_string(branch)
-    remote_output = format_remote_string(remote)
     origin = _remote(repo_path, remote)
     if origin is None:
         remove_directory_exit(repo_path)
@@ -891,16 +886,14 @@ def _checkout_branch_herd_branch(repo_path, branch, default_ref, remote, depth):
     else:
         print(' - Create branch ' + branch_output)
         try:
-            remote_branch = origin.refs[branch]
-            default_branch = repo.create_head(branch, remote_branch)
+            repo.create_head(branch, origin.refs[branch])
         except Exception as err:
             message = colored(' - Failed to create branch ', 'red')
             print(message + branch_output)
             print_error(err)
             remove_directory_exit(repo_path)
         else:
-            return_code = _set_tracking_branch(default_branch, remote_branch,
-                                               branch_output, remote_output)
+            return_code = _set_tracking_branch(repo_path, remote, branch)
             if return_code != 0:
                 remove_directory_exit(repo_path)
                 return
@@ -991,7 +984,6 @@ def _create_branch_local_tracking(repo_path, branch, remote, depth, fetch=True):
     """Create and checkout tracking branch"""
     repo = _repo(repo_path)
     branch_output = format_ref_string(branch)
-    remote_output = format_remote_string(remote)
     origin = _remote(repo_path, remote)
     if origin is None:
         sys.exit(1)
@@ -1001,15 +993,14 @@ def _create_branch_local_tracking(repo_path, branch, remote, depth, fetch=True):
             sys.exit(return_code)
     try:
         print(' - Create branch ' + branch_output)
-        default_branch = repo.create_head(branch, origin.refs[branch])
+        repo.create_head(branch, origin.refs[branch])
     except Exception as err:
         message = colored(' - Failed to create branch ', 'red')
         print(message + branch_output)
         print_error(err)
         sys.exit(1)
     else:
-        return_code = _set_tracking_branch(default_branch, origin.refs[branch],
-                                           branch_output, remote_output)
+        return_code = _set_tracking_branch(repo_path, remote, branch)
         if return_code != 0:
             sys.exit(1)
         return_code = _checkout_branch_local(repo_path, branch)
@@ -1020,7 +1011,6 @@ def _create_remote_tracking_branch(repo_path, branch, remote, depth):
     """Create remote tracking branch"""
     repo = _repo(repo_path)
     branch_output = format_ref_string(branch)
-    remote_output = format_remote_string(remote)
     origin = _remote(repo_path, remote)
     if origin is None:
         sys.exit(1)
@@ -1047,8 +1037,7 @@ def _create_remote_tracking_branch(repo_path, branch, remote, depth):
         print_error(err)
         sys.exit(1)
     else:
-        return_code = _set_tracking_branch(repo.active_branch, origin.refs[branch],
-                                           branch_output, remote_output)
+        return_code = _set_tracking_branch(repo_path, remote, branch)
         if return_code != 0:
             sys.exit(1)
 
@@ -1118,9 +1107,15 @@ def _truncate_ref(ref):
         length = 0
     return ref[length:]
 
-def _set_tracking_branch(local_branch, remote_branch, branch_output, remote_output):
+def _set_tracking_branch(repo_path, remote, branch):
     """Set tracking branch"""
+    repo = _repo(repo_path)
+    branch_output = format_ref_string(branch)
+    remote_output = format_remote_string(remote)
+    origin = _remote(repo_path, remote)
     try:
+        local_branch = repo.heads[branch]
+        remote_branch = origin.refs[branch]
         print(' - Set tracking branch ' + branch_output +
               ' -> ' + remote_output + ' ' + branch_output)
         local_branch.set_tracking_branch(remote_branch)
