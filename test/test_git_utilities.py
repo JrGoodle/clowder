@@ -50,19 +50,19 @@ class GitUtilitiesTest(unittest.TestCase):
         self.assertFalse(git_is_dirty(self.kit_project_path))
 
     def test_ref_type_branch(self):
-        """Test _ref_type() function for branch ref"""
+        """Test ref_type() function for branch ref"""
         self.assertEqual(ref_type(self.branch_ref), 'branch')
 
     def test_ref_type_sha(self):
-        """Test _ref_type() function for sha ref"""
+        """Test ref_type() function for sha ref"""
         self.assertEqual(ref_type(self.sha_ref), 'sha')
 
     def test_ref_type_tag(self):
-        """Test _ref_type() function for tag ref"""
+        """Test ref_type() function for tag ref"""
         self.assertEqual(ref_type(self.tag_ref), 'tag')
 
     def test_ref_type_unknown(self):
-        """Test _ref_type() function for unknown ref type"""
+        """Test ref_type() function for unknown ref type"""
         self.assertEqual(ref_type('42'), 'unknown')
 
     def test_truncate_ref_branch(self):

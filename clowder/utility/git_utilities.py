@@ -75,8 +75,8 @@ def git_checkout_ref(repo_path, ref, remote, depth, fetch=True):
         if not git_existing_local_branch(repo_path, branch):
             return_code = _create_branch_local_tracking(repo_path, branch, remote,
                                                         depth=depth, fetch=fetch)
-        if return_code != 0:
-            sys.exit(return_code)
+            if return_code != 0:
+                sys.exit(return_code)
         if git_is_branch_checked_out(repo_path, branch):
             branch_output = format_ref_string(branch)
             message_1 = ' - Branch '
@@ -236,7 +236,7 @@ def git_create_remote(repo_path, remote, url):
     repo = _repo(repo_path)
     remote_names = [r.name for r in repo.remotes]
     if remote in remote_names:
-        return
+        return 0
     remote_output = format_remote_string(remote)
     try:
         print(" - Create remote " + remote_output)
@@ -950,7 +950,7 @@ def _create_branch_local_tracking(repo_path, branch, remote, depth, fetch=True):
     branch_output = format_ref_string(branch)
     origin = _remote(repo_path, remote)
     if origin is None:
-        sys.exit(1)
+        return 1
     if fetch:
         return_code = git_fetch(repo_path, remote, depth=depth, ref=branch)
         if return_code != 0:
@@ -967,9 +967,7 @@ def _create_branch_local_tracking(repo_path, branch, remote, depth, fetch=True):
         return_code = _set_tracking_branch(repo_path, remote, branch)
         if return_code != 0:
             return return_code
-        return_code = _checkout_branch_local(repo_path, branch)
-        if return_code != 0:
-            return return_code
+        return _checkout_branch_local(repo_path, branch)
 
 def _create_branch_remote_tracking(repo_path, branch, remote, depth):
     """Create remote tracking branch"""
