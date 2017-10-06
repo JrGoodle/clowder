@@ -164,27 +164,20 @@ def git_create_repo(repo_path, url, remote, ref, depth=0, recursive=False):
         if remote in remote_names:
             git_checkout_ref(repo_path, ref, remote, depth)
             return
-        remote_output = format_remote_string(remote)
-        print(" - Create remote " + remote_output)
-        try:
-            repo.create_remote(remote, url)
-        except Exception as err:
-            message = colored(" - Failed to create remote ", 'red')
-            print(message + remote_output)
-            print_error(err)
+        return_code = git_create_remote(repo_path, remote, url)
+        if return_code != 0:
             remove_directory_exit(repo_path)
+        if ref_type(ref) is 'branch':
+            _checkout_branch_new_repo(repo_path, truncate_ref(ref), remote, depth)
+        elif ref_type(ref) is 'tag':
+            _checkout_tag_new_repo(repo_path, truncate_ref(ref), remote, depth)
+        elif ref_type(ref) is 'sha':
+            _checkout_commit_new_repo(repo_path, ref, remote, depth)
         else:
-            if ref_type(ref) is 'branch':
-                _checkout_branch_new_repo(repo_path, truncate_ref(ref), remote, depth)
-            elif ref_type(ref) is 'tag':
-                _checkout_tag_new_repo(repo_path, truncate_ref(ref), remote, depth)
-            elif ref_type(ref) is 'sha':
-                _checkout_commit_new_repo(repo_path, ref, remote, depth)
-            else:
-                ref_output = format_ref_string(ref)
-                print('Unknown ref ' + ref_output)
-            if recursive:
-                git_submodule_update_recursive(repo_path, depth)
+            ref_output = format_ref_string(ref)
+            print('Unknown ref ' + ref_output)
+        if recursive:
+            git_submodule_update_recursive(repo_path, depth)
 
 def git_create_repo_herd_branch(repo_path, url, remote, branch, default_ref,
                                 depth=0, recursive=False):
@@ -207,20 +200,13 @@ def git_create_repo_herd_branch(repo_path, url, remote, branch, default_ref,
         if remote in remote_names:
             git_checkout_ref(repo_path, 'refs/heads/' + branch, remote, depth)
             return
-        remote_output = format_remote_string(remote)
-        print(" - Create remote " + remote_output)
-        try:
-            repo.create_remote(remote, url)
-        except Exception as err:
-            message = colored(" - Failed to create remote ", 'red')
-            print(message + remote_output)
-            print_error(err)
+        return_code = git_create_remote(repo_path, remote, url)
+        if return_code != 0:
             remove_directory_exit(repo_path)
-        else:
-            _checkout_branch_herd_branch(repo_path, branch, default_ref,
-                                         remote, depth)
-            if recursive:
-                git_submodule_update_recursive(repo_path, depth)
+        _checkout_branch_herd_branch(repo_path, branch, default_ref,
+                                     remote, depth)
+        if recursive:
+            git_submodule_update_recursive(repo_path, depth)
 
 def git_create_remote(repo_path, remote, url):
     """Create new remote"""
@@ -232,11 +218,12 @@ def git_create_remote(repo_path, remote, url):
     try:
         print(" - Create remote " + remote_output)
         repo.create_remote(remote, url)
+        return 0
     except Exception as err:
         message = colored(" - Failed to create remote ", 'red')
         print(message + remote_output)
         print_error(err)
-        sys.exit(1)
+        return 1
 
 def git_current_branch(repo_path):
     """Return currently checked out branch of project"""
@@ -314,7 +301,9 @@ def git_herd(repo_path, url, remote, ref, depth=0, recursive=False, fetch=True):
         git_create_repo(repo_path, url, remote, ref, depth=depth, recursive=recursive)
         return
     if ref_type(ref) is 'branch':
-        git_create_remote(repo_path, remote, url)
+        return_code = git_create_remote(repo_path, remote, url)
+        if return_code != 0:
+            sys.exit(1)
         git_checkout_ref(repo_path, ref, remote, depth, fetch=fetch)
         branch = truncate_ref(ref)
         if git_existing_remote_branch(repo_path, branch, remote):
@@ -323,7 +312,9 @@ def git_herd(repo_path, url, remote, ref, depth=0, recursive=False, fetch=True):
             else:
                 git_set_tracking_branch(repo_path, branch, remote, depth)
     elif ref_type(ref) is 'tag' or ref_type(ref) is 'sha':
-        git_create_remote(repo_path, remote, url)
+        return_code = git_create_remote(repo_path, remote, url)
+        if return_code != 0:
+            sys.exit(1)
         git_checkout_ref(repo_path, ref, remote, depth)
     else:
         cprint('Unknown ref ' + ref, 'red')
@@ -358,14 +349,18 @@ def git_herd_branch(repo_path, url, remote, branch, default_ref, depth=0, recurs
 
 def git_herd_branch_upstream(repo_path, url, remote, branch, default_ref, depth=0):
     """Herd branch for fork's upstream repo"""
-    git_create_remote(repo_path, remote, url)
+    return_code = git_create_remote(repo_path, remote, url)
+    if return_code != 0:
+        sys.exit(1)
     return_code = git_fetch(repo_path, remote, depth=depth, ref=branch)
     if depth != 0 and return_code != 0:
         git_fetch(repo_path, remote, depth=depth, ref=default_ref)
 
 def git_herd_upstream(repo_path, url, remote, ref, depth=0):
     """Herd branch for fork's upstream repo"""
-    git_create_remote(repo_path, remote, url)
+    return_code = git_create_remote(repo_path, remote, url)
+    if return_code != 0:
+        sys.exit(1)
     git_fetch(repo_path, remote, depth=depth, ref=ref)
 
 def git_is_branch_checked_out(repo_path, branch):
