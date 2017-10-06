@@ -45,6 +45,14 @@ def execute_forall_command(cmd, path, clowder_path, name, remote, fork_remote, r
                            cwd=path,
                            env=forall_env)
 
+def existing_git_repository(path):
+    """Check if a git repository exists"""
+    return os.path.isdir(os.path.join(path, '.git'))
+
+def existing_git_submodule(path):
+    """Check if a git submodule exists"""
+    return os.path.isfile(os.path.join(path, '.git'))
+
 def force_symlink(file1, file2):
     """Force symlink creation"""
     try:
