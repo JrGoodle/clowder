@@ -1,11 +1,11 @@
 """Representation of clowder.yaml fork"""
 import os
 from termcolor import cprint
+from clowder.utility.clowder_utilities import existing_git_repository
 from clowder.utility.git_print_utilities import (
     format_project_ref_string,
     format_project_string
 )
-from clowder.utility.git_utilities import git_existing_repository
 
 class Fork(object):
     """clowder.yaml fork class"""
@@ -27,7 +27,7 @@ class Fork(object):
 
     def print_status(self):
         """Print formatted fork status"""
-        if not git_existing_repository(self.path):
+        if not existing_git_repository(self.path):
             cprint(self.path, 'green')
             return
         project_output = format_project_string(self.path, self.path)

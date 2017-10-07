@@ -2,14 +2,11 @@
 import os
 import sys
 import unittest
-from clowder.utility.git_utilities import (
-    git_current_branch,
-    git_is_detached,
-    git_is_dirty,
-    git_sha_long,
-    _ref_type,
-    _truncate_ref
+from clowder.utility.clowder_utilities import (
+    ref_type,
+    truncate_ref
 )
+from clowder.utility.git_utilities import Git
 
 class GitUtilitiesTest(unittest.TestCase):
     """git_utilities test subclass"""
@@ -29,51 +26,59 @@ class GitUtilitiesTest(unittest.TestCase):
 
     def test_git_current_branch(self):
         """Test git_current_branch() function"""
-        self.assertEqual(git_current_branch(self.kit_project_path), 'master')
+        repo = Git(self.kit_project_path)
+        self.assertEqual(repo.current_branch(), 'master')
 
     def test_git_sha_long(self):
         """Test git_sha_long() function"""
-        self.assertEqual(git_sha_long(self.sasha_project_path), self.sha_ref)
+        repo = Git(self.sasha_project_path)
+        self.assertEqual(repo.sha_long(), self.sha_ref)
 
     def test_git_is_detached(self):
         """Test git_is_detached() function"""
-        self.assertFalse(git_is_detached(self.jules_project_path))
-        self.assertFalse(git_is_detached(self.kit_project_path))
-        self.assertTrue(git_is_detached(self.sasha_project_path))
+        repo = Git(self.jules_project_path)
+        self.assertFalse(repo.is_detached())
+        repo = Git(self.kit_project_path)
+        self.assertFalse(repo.is_detached())
+        repo = Git(self.sasha_project_path)
+        self.assertTrue(repo.is_detached())
 
     def test_git_is_dirty(self):
         """Test git_is_detached() function"""
-        self.assertFalse(git_is_dirty(self.jules_project_path))
-        self.assertTrue(git_is_dirty(self.kishka_project_path))
-        self.assertFalse(git_is_dirty(self.kit_project_path))
+        repo = Git(self.jules_project_path)
+        self.assertFalse(repo.is_dirty(self.jules_project_path))
+        repo = Git(self.kishka_project_path)
+        self.assertTrue(repo.is_dirty(self.kishka_project_path))
+        repo = Git(self.kit_project_path)
+        self.assertFalse(repo.is_dirty(self.kit_project_path))
 
     def test_ref_type_branch(self):
-        """Test _ref_type() function for branch ref"""
-        self.assertEqual(_ref_type(self.branch_ref), 'branch')
+        """Test ref_type() function for branch ref"""
+        self.assertEqual(ref_type(self.branch_ref), 'branch')
 
     def test_ref_type_sha(self):
-        """Test _ref_type() function for sha ref"""
-        self.assertEqual(_ref_type(self.sha_ref), 'sha')
+        """Test ref_type() function for sha ref"""
+        self.assertEqual(ref_type(self.sha_ref), 'sha')
 
     def test_ref_type_tag(self):
-        """Test _ref_type() function for tag ref"""
-        self.assertEqual(_ref_type(self.tag_ref), 'tag')
+        """Test ref_type() function for tag ref"""
+        self.assertEqual(ref_type(self.tag_ref), 'tag')
 
     def test_ref_type_unknown(self):
-        """Test _ref_type() function for unknown ref type"""
-        self.assertEqual(_ref_type('42'), 'unknown')
+        """Test ref_type() function for unknown ref type"""
+        self.assertEqual(ref_type('42'), 'unknown')
 
     def test_truncate_ref_branch(self):
         """Test _truncate_ref() function for branch ref"""
-        self.assertEqual(_truncate_ref(self.branch_ref), 'master')
+        self.assertEqual(truncate_ref(self.branch_ref), 'master')
 
     def test_truncate_ref_sha(self):
         """Test _truncate_ref() function for sha ref"""
-        self.assertEqual(_truncate_ref(self.sha_ref), self.sha_ref)
+        self.assertEqual(truncate_ref(self.sha_ref), self.sha_ref)
 
     def test_truncate_ref_tag(self):
         """Test _truncate_ref() function for tag ref"""
-        self.assertEqual(_truncate_ref(self.tag_ref), 'v1.0')
+        self.assertEqual(truncate_ref(self.tag_ref), 'v1.0')
 
 if __name__ == '__main__':
     if len(sys.argv) > 1:

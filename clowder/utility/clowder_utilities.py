@@ -45,6 +45,14 @@ def execute_forall_command(cmd, path, clowder_path, name, remote, fork_remote, r
                            cwd=path,
                            env=forall_env)
 
+def existing_git_repository(path):
+    """Check if a git repository exists"""
+    return os.path.isdir(os.path.join(path, '.git'))
+
+def existing_git_submodule(path):
+    """Check if a git submodule exists"""
+    return os.path.isfile(os.path.join(path, '.git'))
+
 def force_symlink(file1, file2):
     """Force symlink creation"""
     try:
@@ -97,6 +105,19 @@ def parse_yaml(yaml_file):
         print()
         sys.exit(1)
 
+def ref_type(ref):
+    """Return branch, tag, sha, or unknown ref type"""
+    git_branch = "refs/heads/"
+    git_tag = "refs/tags/"
+    if ref.startswith(git_branch):
+        return 'branch'
+    elif ref.startswith(git_tag):
+        return 'tag'
+    elif len(ref) is 40:
+        return 'sha'
+    else:
+        return 'unknown'
+
 def remove_directory_exit(path):
     """Remove directory at path"""
     try:
@@ -122,3 +143,15 @@ def save_yaml(yaml_output, yaml_file):
         print_file_exists_error(yaml_file)
         print()
         sys.exit(1)
+
+def truncate_ref(ref):
+    """Return bare branch, tag, or sha"""
+    git_branch = "refs/heads/"
+    git_tag = "refs/tags/"
+    if ref.startswith(git_branch):
+        length = len(git_branch)
+    elif ref.startswith(git_tag):
+        length = len(git_tag)
+    else:
+        length = 0
+    return ref[length:]

@@ -10,6 +10,7 @@
 - Add `clowder branch` command
 - Add `clowder sync` command
 - Better handling of `fork`s
+- Fix bug in display of new commits in project status
 
 # 2.2.0
 
