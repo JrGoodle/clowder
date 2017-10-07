@@ -22,6 +22,7 @@ from clowder.utility.git_print_utilities import (
     print_validation
 )
 from clowder.utility.git_utilities import Git
+from clowder.utility.git_submodule_utilities import GitSubmodules
 
 # Disable errors shown by pylint for too many public methods
 # pylint: disable=R0904
@@ -126,12 +127,13 @@ class Project(object):
             print(' - Abort rebase in progress')
             repo.abort_rebase()
         if self.recursive and recursive:
+            repo_submodules = GitSubmodules(self.full_path())
             print(' - Clean submodules recursively')
-            repo.submodules_clean()
+            repo_submodules.submodules_clean()
             print(' - Reset submodules recursively')
-            repo.submodules_reset()
+            repo_submodules.submodules_reset()
             print(' - Update submodules recursively')
-            repo.submodules_update()
+            repo_submodules.submodules_update()
 
     def clean_all(self):
         """Discard all changes for project"""
@@ -148,12 +150,13 @@ class Project(object):
             print(' - Abort rebase in progress')
             repo.abort_rebase()
         if self.recursive:
+            repo_submodules = GitSubmodules(self.full_path())
             print(' - Clean submodules recursively')
-            repo.submodules_clean()
+            repo_submodules.submodules_clean()
             print(' - Reset submodules recursively')
-            repo.submodules_reset()
+            repo_submodules.submodules_reset()
             print(' - Update submodules recursively')
-            repo.submodules_update()
+            repo_submodules.submodules_update()
 
     def diff(self):
         """Show git diff for project"""
@@ -208,7 +211,7 @@ class Project(object):
             ref = self.ref
         else:
             repo = Git(self.full_path())
-            ref = repo.sha_long()
+            ref = repo.sha()
         project = {'name': self.name,
                    'path': self.path,
                    'depth': self.depth,
@@ -228,36 +231,16 @@ class Project(object):
         else:
             herd_depth = depth
 
-        repo = Git(self.full_path())
         if branch is None:
-            if self.fork is None:
-                self._print_status()
-                repo.herd(self.url, self.remote_name, self.ref,
-                              depth=herd_depth, recursive=self.recursive)
+            if self.recursive:
+                self._herd_ref(GitSubmodules(self.full_path()), herd_depth)
             else:
-                self.fork.print_status()
-                repo.configure_remotes(self.remote_name, self.url,
-                                           self.fork.remote_name, self.fork.url)
-                print(format_fork_string(self.fork.name))
-                repo.herd(self.fork.url, self.fork.remote_name,
-                              self.ref, recursive=self.recursive)
-                print(format_fork_string(self.name))
-                repo.herd_upstream(self.url, self.remote_name, self.ref)
+                self._herd_ref(Git(self.full_path()), herd_depth)
         else:
-            if self.fork is None:
-                self._print_status()
-                repo.herd_branch(self.url, self.remote_name,
-                                     branch, self.ref, depth=herd_depth, recursive=self.recursive)
+            if self.recursive:
+                self._herd_branch(GitSubmodules(self.full_path()), branch, herd_depth)
             else:
-                self.fork.print_status()
-                repo.configure_remotes(self.remote_name, self.url,
-                                           self.fork.remote_name, self.fork.url)
-                print(format_fork_string(self.fork.name))
-                repo.herd_branch(self.fork.url, self.fork.remote_name,
-                                     branch, self.ref, recursive=self.recursive)
-                print(format_fork_string(self.name))
-                repo.herd_branch_upstream(self.url, self.remote_name,
-                                              branch, self.ref)
+                self._herd_branch(Git(self.full_path()), branch, herd_depth)
 
     def is_dirty(self):
         """Check if project is dirty"""
@@ -265,7 +248,8 @@ class Project(object):
         if not repo.validate_repo():
             return True
         if self.recursive:
-            if repo.has_submodules():
+            repo_submodules = GitSubmodules(self.full_path())
+            if repo_submodules.has_submodules():
                 return True
         return False
 
@@ -351,19 +335,39 @@ class Project(object):
             repo.stash()
 
     def sync(self):
-        """Print status for project"""
-        self.fork.print_status()
-        repo = Git(self.full_path())
-        repo.configure_remotes(self.remote_name, self.url,
+        """Sync fork project with upstream"""
+        if self.recursive:
+            self._sync(GitSubmodules(self.full_path()))
+        else:
+            self._sync(Git(self.full_path()))
+
+    def _herd_branch(self, repo, branch, depth):
+        """Clone project or update latest from upstream"""
+        if self.fork is None:
+            self._print_status()
+            repo.herd_branch(self.url, self.remote_name, branch, self.ref, depth=depth)
+        else:
+            self.fork.print_status()
+            repo.configure_remotes(self.remote_name, self.url,
                                    self.fork.remote_name, self.fork.url)
-        print(format_fork_string(self.fork.name))
-        repo.herd(self.fork.url, self.fork.remote_name,
-                      self.ref, recursive=self.recursive)
-        print(format_fork_string(self.name))
-        repo.herd_upstream(self.url, self.remote_name, self.ref)
-        self.fork.print_status()
-        repo.sync(self.remote_name, self.fork.remote_name,
-                      self.ref, self.recursive)
+            print(format_fork_string(self.fork.name))
+            repo.herd_branch(self.fork.url, self.fork.remote_name, branch, self.ref)
+            print(format_fork_string(self.name))
+            repo.herd_branch_upstream(self.url, self.remote_name, branch, self.ref)
+
+    def _herd_ref(self, repo, depth):
+        """Clone project or update latest from upstream"""
+        if self.fork is None:
+            self._print_status()
+            repo.herd(self.url, self.remote_name, self.ref, depth=depth)
+        else:
+            self.fork.print_status()
+            repo.configure_remotes(self.remote_name, self.url,
+                                   self.fork.remote_name, self.fork.url)
+            print(format_fork_string(self.fork.name))
+            repo.herd(self.fork.url, self.fork.remote_name, self.ref)
+            print(format_fork_string(self.name))
+            repo.herd_upstream(self.url, self.remote_name, self.ref)
 
     def _print_status(self):
         """Print formatted project status"""
@@ -401,3 +405,15 @@ class Project(object):
         if repo.existing_remote_branch(branch, remote):
             self._print_status()
             repo.prune_remote(branch, remote)
+
+    def _sync(self, repo):
+        """Sync fork project with upstream"""
+        self.fork.print_status()
+        repo.configure_remotes(self.remote_name, self.url,
+                               self.fork.remote_name, self.fork.url)
+        print(format_fork_string(self.fork.name))
+        repo.herd(self.fork.url, self.fork.remote_name, self.ref)
+        print(format_fork_string(self.name))
+        repo.herd_upstream(self.url, self.remote_name, self.ref)
+        self.fork.print_status()
+        repo.sync(self.remote_name, self.fork.remote_name, self.ref)

@@ -32,7 +32,7 @@ def format_project_ref_string(repo_path):
         status = '[' + local_commits_output + '/' + upstream_commits_output + ']'
 
     if repo.is_detached():
-        current_ref = repo.sha_short()
+        current_ref = repo.sha(short=True)
         return colored('(HEAD @ ' + current_ref + ')', 'magenta')
     else:
         current_branch = repo.current_branch()

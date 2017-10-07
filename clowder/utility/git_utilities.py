@@ -119,7 +119,7 @@ class Git(object):
                                                   fork_remote_url, actual_url)
                 sys.exit(1)
 
-    def create_repo(self, url, remote, ref, depth=0, recursive=False):
+    def create_repo(self, url, remote, ref, depth=0):
         """Clone git repo from url at path"""
         if existing_git_repository(self.repo_path):
             return
@@ -145,8 +145,6 @@ class Git(object):
             ref_output = format_ref_string(ref)
             print('Unknown ref ' + ref_output)
             sys.exit(1)
-        if recursive:
-            self.submodule_update_recursive(depth)
 
     def current_branch(self):
         """Return currently checked out branch of project"""
@@ -199,14 +197,10 @@ class Git(object):
             print_command_failed_error(command)
             sys.exit(return_code)
 
-    def has_submodules(self):
-        """Repo has submodules"""
-        return self.repo.submodules.count > 0
-
-    def herd(self, url, remote, ref, depth=0, recursive=False, fetch=True):
+    def herd(self, url, remote, ref, depth=0, fetch=True):
         """Herd ref"""
         if not existing_git_repository(self.repo_path):
-            self.create_repo(url, remote, ref, depth=depth, recursive=recursive)
+            self.create_repo(url, remote, ref, depth=depth)
             return
         if ref_type(ref) is 'branch':
             return_code = self._create_remote(remote, url)
@@ -227,18 +221,16 @@ class Git(object):
         else:
             cprint('Unknown ref ' + ref, 'red')
             sys.exit(1)
-        if recursive:
-            self.submodule_update_recursive(depth)
 
-    def herd_branch(self, url, remote, branch, default_ref, depth=0, recursive=False):
+    def herd_branch(self, url, remote, branch, default_ref, depth=0):
         """Herd branch"""
         if not existing_git_repository(self.repo_path):
             self._create_repo_herd_branch(url, remote, branch,
-                                          default_ref, depth=depth, recursive=recursive)
+                                          default_ref, depth=depth)
             return
         return_code = self.fetch(remote, depth=depth, ref=branch)
         if return_code != 0:
-            self.herd(url, remote, default_ref, depth=depth, recursive=recursive)
+            self.herd(url, remote, default_ref, depth=depth)
             return
         if self.existing_local_branch(branch):
             self._checkout_ref('refs/heads/' + branch, remote, depth)
@@ -248,12 +240,9 @@ class Git(object):
                 else:
                     self._set_tracking_branch_commit(branch, remote, depth)
         elif self.existing_remote_branch(branch, remote):
-            self.herd(url, remote, 'refs/heads/' + branch, depth=depth,
-                      recursive=recursive, fetch=False)
+            self.herd(url, remote, 'refs/heads/' + branch, depth=depth, fetch=False)
         else:
-            self.herd(url, remote, default_ref, depth=depth, recursive=recursive)
-        if recursive:
-            self.submodule_update_recursive(depth)
+            self.herd(url, remote, default_ref, depth=depth)
 
     def herd_branch_upstream(self, url, remote, branch, default_ref, depth=0):
         """Herd branch for fork's upstream repo"""
@@ -296,10 +285,6 @@ class Git(object):
         return not (self.is_dirty(self.repo_path) or
                     self.is_rebase_in_progress() or
                     self.untracked_files())
-
-    def is_valid_submodule(self, path):
-        """Validate repo"""
-        return not self.is_dirty(path)
 
     def new_commits(self, upstream=False):
         """Returns the number of new commits"""
@@ -414,13 +399,11 @@ class Git(object):
         """Reset head of repo, discarding changes"""
         self.repo.head.reset(index=True, working_tree=True)
 
-    def sha_long(self):
-        """Return long sha for currently checked out commit"""
+    def sha(self, short=False):
+        """Return sha for currently checked out commit"""
+        if short:
+            return self.repo.git.rev_parse(self.repo.head.commit.hexsha, short=True)
         return self.repo.head.commit.hexsha
-
-    def sha_short(self):
-        """Return short sha of currently checked out commit"""
-        return self.repo.git.rev_parse(self.repo.head.commit.hexsha, short=True)
 
     def start(self, remote, branch, depth, tracking):
         """Start new branch in repository"""
@@ -485,47 +468,7 @@ class Git(object):
             print_command_failed_error(command)
             sys.exit(return_code)
 
-    def submodules_clean(self):
-        """Clean all submodules"""
-        try:
-            self.repo.git.submodule('foreach', '--recursive', 'git', 'clean', '-ffdx')
-        except Exception as err:
-            cprint(' - Failed to clean submodules', 'red')
-            print_error(err)
-            sys.exit(1)
-
-    def submodules_reset(self):
-        """Reset all submodules"""
-        try:
-            self.repo.git.submodule('foreach', '--recursive', 'git', 'reset', '--hard')
-        except Exception as err:
-            cprint(' - Failed to reset submodules', 'red')
-            print_error(err)
-            sys.exit(1)
-
-    def submodules_update(self):
-        """Update all submodules"""
-        try:
-            self.repo.git.submodule('update', '--checkout', '--recursive', '--force')
-        except Exception as err:
-            cprint(' - Failed to update submodules', 'red')
-            print_error(err)
-            sys.exit(1)
-
-    def submodule_update_recursive(self, depth):
-        """Update submodules recursively and initialize if not present"""
-        print(' - Update submodules recursively and initialize if not present')
-        if depth == 0:
-            command = ['git', 'submodule', 'update', '--init', '--recursive']
-        else:
-            command = ['git', 'submodule', 'update', '--init', '--recursive', '--depth', depth]
-        return_code = execute_command(command, self.repo_path)
-        if return_code != 0:
-            cprint(' - Failed to update submodules', 'red')
-            print_command_failed_error(command)
-            sys.exit(return_code)
-
-    def sync(self, upstream_remote, fork_remote, ref, recursive):
+    def sync(self, upstream_remote, fork_remote, ref):
         """Sync fork with upstream remote"""
         print(' - Sync fork with upstream remote')
         if ref_type(ref) is not 'branch':
@@ -542,8 +485,6 @@ class Git(object):
             print(message + fork_remote_output + ' ' + branch_output)
             print_command_failed_error(command)
             sys.exit(return_code)
-        if recursive:
-            self.submodule_update_recursive(recursive)
 
     def untracked_files(self):
         """Execute command and display continuous output"""
@@ -564,9 +505,6 @@ class Git(object):
             return True
         if not self.is_valid_repo():
             return False
-        for submodule in self.repo.submodules:
-            if not self.is_valid_submodule(submodule.path):
-                return False
         return True
 
     def _checkout_branch_local(self, branch):
@@ -795,8 +733,7 @@ class Git(object):
             print_error(err)
             return 1
 
-    def _create_repo_herd_branch(self, url, remote, branch, default_ref,
-                                 depth=0, recursive=False):
+    def _create_repo_herd_branch(self, url, remote, branch, default_ref, depth=0):
         """Clone git repo from url at path for herd branch"""
         if existing_git_repository(self.repo_path):
             return
@@ -833,8 +770,6 @@ class Git(object):
         return_code = self._checkout_branch_local(branch)
         if return_code != 0:
             remove_directory_exit(self.repo_path)
-        if recursive:
-            self.submodule_update_recursive(depth)
 
     def _init_repo(self):
         """Clone repository"""

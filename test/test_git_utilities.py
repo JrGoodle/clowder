@@ -32,7 +32,7 @@ class GitUtilitiesTest(unittest.TestCase):
     def test_git_sha_long(self):
         """Test git_sha_long() function"""
         repo = Git(self.sasha_project_path)
-        self.assertEqual(repo.sha_long(), self.sha_ref)
+        self.assertEqual(repo.sha(), self.sha_ref)
 
     def test_git_is_detached(self):
         """Test git_is_detached() function"""
