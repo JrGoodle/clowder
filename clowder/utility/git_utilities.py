@@ -100,28 +100,27 @@ class Git(object):
             remotes = self.repo.remotes
         except:
             return
-        else:
-            for remote in remotes:
-                if upstream_remote_url == self.repo.git.remote('get-url', remote.name):
-                    if remote.name != upstream_remote_name:
-                        self._rename_remote(remote.name, upstream_remote_name)
-                        continue
-                if fork_remote_url == self.repo.git.remote('get-url', remote.name):
-                    if remote.name != fork_remote_name:
-                        self._rename_remote(remote.name, fork_remote_name)
-            remote_names = [r.name for r in self.repo.remotes]
-            if upstream_remote_name in remote_names:
-                if upstream_remote_url != self.repo.git.remote('get-url', upstream_remote_name):
-                    actual_url = self.repo.git.remote('get-url', upstream_remote_name)
-                    print_remote_already_exists_error(upstream_remote_name,
-                                                      upstream_remote_url, actual_url)
-                    sys.exit(1)
-            if fork_remote_name in remote_names:
-                if fork_remote_url != self.repo.git.remote('get-url', fork_remote_name):
-                    actual_url = self.repo.git.remote('get-url', fork_remote_name)
-                    print_remote_already_exists_error(fork_remote_name,
-                                                      fork_remote_url, actual_url)
-                    sys.exit(1)
+        for remote in remotes:
+            if upstream_remote_url == self.repo.git.remote('get-url', remote.name):
+                if remote.name != upstream_remote_name:
+                    self._rename_remote(remote.name, upstream_remote_name)
+                    continue
+            if fork_remote_url == self.repo.git.remote('get-url', remote.name):
+                if remote.name != fork_remote_name:
+                    self._rename_remote(remote.name, fork_remote_name)
+        remote_names = [r.name for r in self.repo.remotes]
+        if upstream_remote_name in remote_names:
+            if upstream_remote_url != self.repo.git.remote('get-url', upstream_remote_name):
+                actual_url = self.repo.git.remote('get-url', upstream_remote_name)
+                print_remote_already_exists_error(upstream_remote_name,
+                                                  upstream_remote_url, actual_url)
+                sys.exit(1)
+        if fork_remote_name in remote_names:
+            if fork_remote_url != self.repo.git.remote('get-url', fork_remote_name):
+                actual_url = self.repo.git.remote('get-url', fork_remote_name)
+                print_remote_already_exists_error(fork_remote_name,
+                                                  fork_remote_url, actual_url)
+                sys.exit(1)
 
     def create_repo(self, url, remote, ref, depth=0, recursive=False):
         """Clone git repo from url at path"""
@@ -159,10 +158,9 @@ class Git(object):
         """Check if remote branch exists"""
         try:
             origin = self.repo.remotes[remote]
+            return branch in origin.refs
         except:
             return False
-        else:
-            return branch in origin.refs
 
     def existing_local_branch(self, branch):
         """Check if local branch exists"""
@@ -255,7 +253,7 @@ class Git(object):
                     self._set_tracking_branch_same_commit(branch, remote, depth)
         elif self.existing_remote_branch(branch, remote):
             self.herd(url, remote, 'refs/heads/' + branch, depth=depth,
-                          recursive=recursive, fetch=False)
+                      recursive=recursive, fetch=False)
         else:
             self.herd(url, remote, default_ref, depth=depth, recursive=recursive)
         if recursive:
