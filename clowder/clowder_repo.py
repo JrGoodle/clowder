@@ -35,36 +35,36 @@ class ClowderRepo(object):
     def add(self, files):
         """Add files in clowder repo to git index"""
         repo = Git(self.clowder_path)
-        repo.git_add(files)
-        repo.git_status()
+        repo.add(files)
+        repo.status()
 
     def branches(self):
         """Return current local branches"""
         repo = Git(self.clowder_path)
-        return repo.git_branches()
+        return repo.branches()
 
     def checkout(self, ref):
         """Checkout ref in clowder repo"""
         repo = Git(self.clowder_path)
         if self.is_dirty():
             print(' - Dirty repo. Please stash, commit, or discard your changes')
-            repo.git_status()
+            repo.status()
         else:
-            repo.git_checkout(ref)
+            repo.checkout(ref)
 
     def clean(self):
         """Discard changes in clowder repo"""
         repo = Git(self.clowder_path)
         if self.is_dirty():
             print(' - Discard current changes')
-            repo.git_reset_head()
+            repo.reset_head()
         else:
             print(' - No changes to discard')
 
     def commit(self, message):
         """Commit current changes in clowder repo"""
         repo = Git(self.clowder_path)
-        repo.git_commit(message)
+        repo.commit(message)
 
     def init(self, url, branch):
         """Clone clowder repo from url"""
@@ -72,7 +72,7 @@ class ClowderRepo(object):
         atexit.register(self.init_exit_handler)
         repo_branch = 'refs/heads/' + branch
         repo = Git(self.clowder_path)
-        repo.git_create_repo(url, 'origin', repo_branch)
+        repo.create_repo(url, 'origin', repo_branch)
         self.link()
 
     def init_exit_handler(self):
@@ -85,7 +85,7 @@ class ClowderRepo(object):
     def is_dirty(self):
         """Check if project is dirty"""
         repo = Git(self.clowder_path)
-        return repo.git_is_dirty(self.clowder_path)
+        return repo.is_dirty(self.clowder_path)
 
     def link(self, version=None):
         """Create symlink pointing to clowder.yaml file"""
@@ -114,7 +114,7 @@ class ClowderRepo(object):
             return
         if not is_offline() and fetch:
             print(' - Fetch upstream changes for clowder repo')
-            repo.git_fetch_silent()
+            repo.fetch_silent()
         project_output = format_project_string(repo_path, '.clowder')
         current_ref_output = format_project_ref_string(repo_path)
 
@@ -133,12 +133,12 @@ class ClowderRepo(object):
     def pull(self):
         """Pull clowder repo upstream changes"""
         repo = Git(self.clowder_path)
-        repo.git_pull()
+        repo.pull()
 
     def push(self):
         """Push clowder repo changes"""
         repo = Git(self.clowder_path)
-        repo.git_push()
+        repo.push()
 
     def run_command(self, command):
         """Run command in clowder repo"""
@@ -151,12 +151,12 @@ class ClowderRepo(object):
     def status(self):
         """Print clowder repo git status"""
         repo = Git(self.clowder_path)
-        repo.git_status()
+        repo.status()
 
     def _validate_groups(self):
         """Validate status of clowder repo"""
         repo = Git(self.clowder_path)
-        if not repo.git_validate_repo():
+        if not repo.validate_repo():
             print_validation(self.clowder_path)
             print()
             sys.exit(1)

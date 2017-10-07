@@ -9,7 +9,7 @@ def format_project_string(repo_path, name):
     if not os.path.isdir(os.path.join(repo_path, '.git')):
         return colored(name, 'green')
     repo = Git(repo_path)
-    if not repo.git_validate_repo():
+    if not repo.validate_repo():
         color = 'red'
         symbol = '*'
     else:
@@ -20,8 +20,8 @@ def format_project_string(repo_path, name):
 def format_project_ref_string(repo_path):
     """Return formatted repo ref name"""
     repo = Git(repo_path)
-    local_commits = repo.git_new_commits()
-    upstream_commits = repo.git_new_commits(upstream=True)
+    local_commits = repo.new_commits()
+    upstream_commits = repo.new_commits(upstream=True)
     no_local_commits = local_commits == 0 or local_commits == '0'
     no_upstream_commits = upstream_commits == 0 or upstream_commits == '0'
     if no_local_commits and no_upstream_commits:
@@ -31,11 +31,11 @@ def format_project_ref_string(repo_path):
         upstream_commits_output = colored('-' + str(upstream_commits), 'red')
         status = '[' + local_commits_output + '/' + upstream_commits_output + ']'
 
-    if repo.git_is_detached():
-        current_ref = repo.git_sha_short()
+    if repo.is_detached():
+        current_ref = repo.sha_short()
         return colored('(HEAD @ ' + current_ref + ')', 'magenta')
     else:
-        current_branch = repo.git_current_branch()
+        current_branch = repo.current_branch()
         return colored('(' + current_branch + ')', 'magenta') + status
 
 def print_exists(repo_path):
@@ -48,6 +48,6 @@ def print_validation(repo_path):
     repo = Git(repo_path)
     if not existing_git_repository(repo_path):
         return
-    if not repo.git_validate_repo():
+    if not repo.validate_repo():
         print(' - Dirty repo. Please stash, commit, or discard your changes')
-        repo.git_status()
+        repo.status()

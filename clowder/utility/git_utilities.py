@@ -37,9 +37,9 @@ class Git(object):
             return
         self.repo = self._repo()
 
-    def git_abort_rebase(self):
+    def abort_rebase(self):
         """Abort rebase"""
-        if not self.git_is_rebase_in_progress():
+        if not self.is_rebase_in_progress():
             return
         try:
             self.repo.git.rebase('--abort')
@@ -48,7 +48,7 @@ class Git(object):
             print_error(err)
             sys.exit(1)
 
-    def git_add(self, files):
+    def add(self, files):
         """Add files to git index"""
         try:
             print(' - Add files to git index')
@@ -58,11 +58,11 @@ class Git(object):
             print_error(err)
             sys.exit(1)
 
-    def git_branches(self,):
+    def branches(self,):
         """Get list of current branches"""
         return self.repo.branches
 
-    def git_checkout(self, truncated_ref):
+    def checkout(self, truncated_ref):
         """Checkout git ref"""
         ref_output = format_ref_string(truncated_ref)
         try:
@@ -74,7 +74,7 @@ class Git(object):
             print_error(err)
             sys.exit(1)
 
-    def git_clean(self, args=None):
+    def clean(self, args=None):
         """Clean git directory"""
         clean_args = '-f'
         if args is not None:
@@ -86,13 +86,13 @@ class Git(object):
             print_error(err)
             sys.exit(1)
 
-    def git_commit(self, message):
+    def commit(self, message):
         """Commit current changes"""
         print(' - Commit current changes')
         print(self.repo.git.commit(message=message))
 
-    def git_configure_remotes(self, upstream_remote_name, upstream_remote_url,
-                              fork_remote_name, fork_remote_url):
+    def configure_remotes(self, upstream_remote_name, upstream_remote_url,
+                          fork_remote_name, fork_remote_url):
         """Configure remotes names for fork and upstream"""
         if not existing_git_repository(self.repo_path):
             return
@@ -109,10 +109,10 @@ class Git(object):
                 if fork_remote_url == self.repo.git.remote('get-url', remote.name):
                     if remote.name != fork_remote_name:
                         self._rename_remote(remote.name, fork_remote_name)
-            remote_names = [r.name for r in repo.remotes]
+            remote_names = [r.name for r in self.repo.remotes]
             if upstream_remote_name in remote_names:
                 if upstream_remote_url != self.repo.git.remote('get-url', upstream_remote_name):
-                    actual_url = repo.git.remote('get-url', upstream_remote_name)
+                    actual_url = self.repo.git.remote('get-url', upstream_remote_name)
                     print_remote_already_exists_error(upstream_remote_name,
                                                       upstream_remote_url, actual_url)
                     sys.exit(1)
@@ -123,7 +123,7 @@ class Git(object):
                                                       fork_remote_url, actual_url)
                     sys.exit(1)
 
-    def git_create_repo(self, url, remote, ref, depth=0, recursive=False):
+    def create_repo(self, url, remote, ref, depth=0, recursive=False):
         """Clone git repo from url at path"""
         if existing_git_repository(self.repo_path):
             return
@@ -155,13 +155,13 @@ class Git(object):
                 ref_output = format_ref_string(ref)
                 print('Unknown ref ' + ref_output)
             if recursive:
-                self.git_submodule_update_recursive(depth)
+                self.submodule_update_recursive(depth)
 
-    def git_current_branch(self):
+    def current_branch(self):
         """Return currently checked out branch of project"""
         return self.repo.head.ref.name
 
-    def git_existing_remote_branch(self, branch, remote):
+    def existing_remote_branch(self, branch, remote):
         """Check if remote branch exists"""
         try:
             origin = self.repo.remotes[remote]
@@ -170,11 +170,11 @@ class Git(object):
         else:
             return branch in origin.refs
 
-    def git_existing_local_branch(self, branch):
+    def existing_local_branch(self, branch):
         """Check if local branch exists"""
         return branch in self.repo.heads
 
-    def git_fetch(self, remote, ref=None, depth=0):
+    def fetch(self, remote, ref=None, depth=0):
         """Fetch from a specific remote ref"""
         remote_output = format_remote_string(remote)
         if depth == 0:
@@ -200,7 +200,7 @@ class Git(object):
             print_command_failed_error(command)
         return return_code
 
-    def git_fetch_silent(self):
+    def fetch_silent(self):
         """Perform a git fetch"""
         command = ['git', 'fetch', '--all', '--prune', '--tags']
         return_code = execute_command(command, self.repo_path)
@@ -209,16 +209,16 @@ class Git(object):
             print_command_failed_error(command)
             sys.exit(return_code)
 
-    def git_has_submodules(self):
+    def has_submodules(self):
         """Repo has submodules"""
         if self.repo.submodules.count > 0:
             return True
         return False
 
-    def git_herd(self, url, remote, ref, depth=0, recursive=False, fetch=True):
+    def herd(self, url, remote, ref, depth=0, recursive=False, fetch=True):
         """Herd ref"""
         if not existing_git_repository(self.repo_path):
-            self.git_create_repo(url, remote, ref, depth=depth, recursive=recursive)
+            self.create_repo(url, remote, ref, depth=depth, recursive=recursive)
             return
         if ref_type(ref) is 'branch':
             return_code = self._create_remote(remote, url)
@@ -226,7 +226,7 @@ class Git(object):
                 sys.exit(1)
             self._checkout_ref(ref, remote, depth, fetch=fetch)
             branch = truncate_ref(ref)
-            if self.git_existing_remote_branch(branch, remote):
+            if self.existing_remote_branch(branch, remote):
                 if self._is_tracking_branch(branch):
                     self._pull_remote_branch(remote, branch)
                 else:
@@ -240,57 +240,57 @@ class Git(object):
             cprint('Unknown ref ' + ref, 'red')
             sys.exit(1)
         if recursive:
-            self.git_submodule_update_recursive(depth)
+            self.submodule_update_recursive(depth)
 
-    def git_herd_branch(self, url, remote, branch, default_ref, depth=0, recursive=False):
+    def herd_branch(self, url, remote, branch, default_ref, depth=0, recursive=False):
         """Herd branch"""
         if not existing_git_repository(self.repo_path):
             self._create_repo_herd_branch(url, remote, branch,
                                           default_ref, depth=depth, recursive=recursive)
             return
-        return_code = self.git_fetch(remote, depth=depth, ref=branch)
+        return_code = self.fetch(remote, depth=depth, ref=branch)
         if return_code != 0:
-            self.git_herd(url, remote, default_ref, depth=depth, recursive=recursive)
+            self.herd(url, remote, default_ref, depth=depth, recursive=recursive)
             return
-        if self.git_existing_local_branch(branch):
+        if self.existing_local_branch(branch):
             self._checkout_ref('refs/heads/' + branch, remote, depth)
-            if self.git_existing_remote_branch(branch, remote):
+            if self.existing_remote_branch(branch, remote):
                 if self._is_tracking_branch(branch):
                     self._pull_remote_branch(remote, branch)
                 else:
                     self._set_tracking_branch_same_commit(branch, remote, depth)
-        elif self.git_existing_remote_branch(branch, remote):
-            self.git_herd(url, remote, 'refs/heads/' + branch, depth=depth,
+        elif self.existing_remote_branch(branch, remote):
+            self.herd(url, remote, 'refs/heads/' + branch, depth=depth,
                           recursive=recursive, fetch=False)
         else:
-            self.git_herd(url, remote, default_ref, depth=depth, recursive=recursive)
+            self.herd(url, remote, default_ref, depth=depth, recursive=recursive)
         if recursive:
-            self.git_submodule_update_recursive(depth)
+            self.submodule_update_recursive(depth)
 
-    def git_herd_branch_upstream(self, url, remote, branch, default_ref, depth=0):
+    def herd_branch_upstream(self, url, remote, branch, default_ref, depth=0):
         """Herd branch for fork's upstream repo"""
         return_code = self._create_remote(remote, url)
         if return_code != 0:
             sys.exit(1)
-        return_code = self.git_fetch(remote, depth=depth, ref=branch)
+        return_code = self.fetch(remote, depth=depth, ref=branch)
         if depth != 0 and return_code != 0:
-            self.git_fetch(remote, depth=depth, ref=default_ref)
+            self.fetch(remote, depth=depth, ref=default_ref)
 
-    def git_herd_upstream(self, url, remote, ref, depth=0):
+    def herd_upstream(self, url, remote, ref, depth=0):
         """Herd branch for fork's upstream repo"""
         return_code = self._create_remote(remote, url)
         if return_code != 0:
             sys.exit(1)
-        self.git_fetch(remote, depth=depth, ref=ref)
+        self.fetch(remote, depth=depth, ref=ref)
 
-    def git_is_detached(self):
+    def is_detached(self):
         """Check if HEAD is detached"""
         if not os.path.isdir(self.repo_path):
             return False
         else:
             return self.repo.head.is_detached
 
-    def git_is_dirty(self, path):
+    def is_dirty(self, path):
         """Check if repo is dirty"""
         if not os.path.isdir(path):
             return False
@@ -304,7 +304,7 @@ class Git(object):
                 print_error(err)
                 sys.exit(1)
 
-    def git_is_rebase_in_progress(self):
+    def is_rebase_in_progress(self):
         """Detect whether rebase is in progress"""
         rebase_apply = os.path.join(self.repo_path, '.git', 'rebase-apply')
         rebase_merge = os.path.join(self.repo_path, '.git', 'rebase-merge')
@@ -312,27 +312,27 @@ class Git(object):
         is_rebase_merge = os.path.isdir(rebase_merge)
         return is_rebase_apply or is_rebase_merge
 
-    def git_is_valid_repo(self):
+    def is_valid_repo(self):
         """Validate repo"""
-        if self.git_is_dirty(self.repo_path):
+        if self.is_dirty(self.repo_path):
             return False
-        elif self.git_is_rebase_in_progress():
+        elif self.is_rebase_in_progress():
             return False
-        elif self.git_untracked_files():
+        elif self.untracked_files():
             return False
         else:
             return True
 
-    def git_is_valid_submodule(self, path):
+    def is_valid_submodule(self, path):
         """Validate repo"""
-        if self.git_is_dirty(path):
+        if self.is_dirty(path):
             return False
-        # elif git_untracked_files(repo_path):
+        # elif untracked_files(repo_path):
         #     return False
         else:
             return True
 
-    def git_new_commits(self, upstream=False):
+    def new_commits(self, upstream=False):
         """Returns the number of new commits"""
         try:
             local_branch = self.repo.active_branch
@@ -346,7 +346,7 @@ class Git(object):
                 return 0
             try:
                 commits = local_branch.commit.hexsha + '...' + tracking_branch.commit.hexsha
-                rev_list_count = repo.git.rev_list('--count', '--left-right', commits)
+                rev_list_count = self.repo.git.rev_list('--count', '--left-right', commits)
                 if upstream:
                     count = str(rev_list_count).split()[1]
                 else:
@@ -355,7 +355,7 @@ class Git(object):
             except:
                 return 0
 
-    def git_print_branches(self, local=False, remote=False):
+    def print_branches(self, local=False, remote=False):
         """Print branches"""
         if local and remote:
             command = ['git', 'branch', '-a']
@@ -369,7 +369,7 @@ class Git(object):
             print_command_failed_error(command)
             sys.exit(return_code)
 
-    def git_prune_local(self, branch, default_ref, force):
+    def prune_local(self, branch, default_ref, force):
         """Prune branch in repository"""
         branch_output = format_ref_string(branch)
         if branch not in self.repo.heads:
@@ -388,7 +388,7 @@ class Git(object):
                 sys.exit(1)
         try:
             print(' - Delete local branch ' + branch_output)
-            repo.delete_head(branch, force=force)
+            self.repo.delete_head(branch, force=force)
             return
         except Exception as err:
             message = colored(' - Failed to delete local branch ', 'red')
@@ -396,7 +396,7 @@ class Git(object):
             print_error(err)
             sys.exit(1)
 
-    def git_prune_remote(self, branch, remote):
+    def prune_remote(self, branch, remote):
         """Prune remote branch in repository"""
         origin = self._remote(remote)
         if origin is None:
@@ -407,14 +407,14 @@ class Git(object):
             return
         try:
             print(' - Delete remote branch ' + branch_output)
-            repo.git.push(remote, '--delete', branch)
+            self.repo.git.push(remote, '--delete', branch)
         except Exception as err:
             message = colored(' - Failed to delete remote branch ', 'red')
             print(message + branch_output)
             print_error(err)
             sys.exit(1)
 
-    def git_pull(self):
+    def pull(self):
         """Pull from remote branch"""
         if self.repo.head.is_detached:
             print(' - HEAD is detached')
@@ -427,7 +427,7 @@ class Git(object):
             print_error(err)
             sys.exit(1)
 
-    def git_push(self):
+    def push(self):
         """Push to remote branch"""
         if self.repo.head.is_detached:
             print(' - HEAD is detached')
@@ -440,24 +440,23 @@ class Git(object):
             print_error(err)
             sys.exit(1)
 
-    def git_reset_head(self):
+    def reset_head(self):
         """Reset head of repo, discarding changes"""
         self.repo.head.reset(index=True, working_tree=True)
 
-    def git_sha_long(self):
+    def sha_long(self):
         """Return long sha for currently checked out commit"""
         return self.repo.head.commit.hexsha
 
-    def git_sha_short(self):
+    def sha_short(self):
         """Return short sha of currently checked out commit"""
         sha = self.repo.head.commit.hexsha
         return self.repo.git.rev_parse(sha, short=True)
 
-    def git_start(self, remote, branch, depth, tracking):
+    def start(self, remote, branch, depth, tracking):
         """Start new branch in repository"""
-        correct_branch = False
         if branch not in self.repo.heads:
-            return_code = self.git_fetch(remote, depth=depth, ref=branch)
+            return_code = self.fetch(remote, depth=depth, ref=branch)
             if return_code != 0:
                 sys.exit(return_code)
             return_code = self._create_branch_local(branch)
@@ -481,9 +480,8 @@ class Git(object):
         if tracking:
             self._create_branch_remote_tracking(branch, remote, depth)
 
-    def git_start_offline(self, branch):
+    def start_offline(self, branch):
         """Start new branch in repository when offline"""
-        correct_branch = False
         branch_output = format_ref_string(branch)
         if branch not in self.repo.heads:
             return_code = self._create_branch_local(branch)
@@ -502,7 +500,7 @@ class Git(object):
         if return_code != 0:
             sys.exit(return_code)
 
-    def git_stash(self):
+    def stash(self):
         """Stash current changes in repository"""
         if self.repo.is_dirty():
             print(' - Stash current changes')
@@ -510,7 +508,7 @@ class Git(object):
         else:
             print(' - No changes to stash')
 
-    def git_status(self):
+    def status(self):
         """Print git status"""
         command = ['git', 'status', '-vv']
         print(format_command(command))
@@ -520,7 +518,7 @@ class Git(object):
             print_command_failed_error(command)
             sys.exit(return_code)
 
-    def git_submodules_clean(self):
+    def submodules_clean(self):
         """Clean all submodules"""
         try:
             self.repo.git.submodule('foreach', '--recursive', 'git', 'clean', '-ffdx')
@@ -529,7 +527,7 @@ class Git(object):
             print_error(err)
             sys.exit(1)
 
-    def git_submodules_reset(self):
+    def submodules_reset(self):
         """Reset all submodules"""
         try:
             self.repo.git.submodule('foreach', '--recursive', 'git', 'reset', '--hard')
@@ -538,7 +536,7 @@ class Git(object):
             print_error(err)
             sys.exit(1)
 
-    def git_submodules_update(self):
+    def submodules_update(self):
         """Update all submodules"""
         try:
             self.repo.git.submodule('update', '--checkout', '--recursive', '--force')
@@ -547,7 +545,7 @@ class Git(object):
             print_error(err)
             sys.exit(1)
 
-    def git_submodule_update_recursive(self, depth):
+    def submodule_update_recursive(self, depth):
         """Update submodules recursively and initialize if not present"""
         print(' - Update submodules recursively and initialize if not present')
         if depth == 0:
@@ -560,7 +558,7 @@ class Git(object):
             print_command_failed_error(command)
             sys.exit(return_code)
 
-    def git_sync(self, upstream_remote, fork_remote, ref, recursive):
+    def sync(self, upstream_remote, fork_remote, ref, recursive):
         """Sync fork with upstream remote"""
         print(' - Sync fork with upstream remote')
         if ref_type(ref) is not 'branch':
@@ -578,9 +576,9 @@ class Git(object):
             print_command_failed_error(command)
             sys.exit(return_code)
         if recursive:
-            self.git_submodule_update_recursive(recursive)
+            self.submodule_update_recursive(recursive)
 
-    def git_untracked_files(self):
+    def untracked_files(self):
         """Execute command and display continuous output"""
         command = "git ls-files -o -d --exclude-standard | sed q | wc -l| tr -d '[:space:]'"
         try:
@@ -593,14 +591,14 @@ class Git(object):
             print_error(err)
             sys.exit(1)
 
-    def git_validate_repo(self):
+    def validate_repo(self):
         """Validate repo state"""
         if not existing_git_repository(self.repo_path):
             return True
-        if not self.git_is_valid_repo():
+        if not self.is_valid_repo():
             return False
         for submodule in self.repo.submodules:
-            if not self.git_is_valid_submodule(submodule.path):
+            if not self.is_valid_submodule(submodule.path):
                 return False
         return True
 
@@ -624,10 +622,10 @@ class Git(object):
         origin = self._remote(remote)
         if origin is None:
             remove_directory_exit(self.repo_path)
-        return_code = self.git_fetch(remote, depth=depth, ref=branch)
+        return_code = self.fetch(remote, depth=depth, ref=branch)
         if return_code != 0:
             remove_directory_exit(self.repo_path)
-        if not self.git_existing_remote_branch(branch, remote):
+        if not self.existing_remote_branch(branch, remote):
             message = colored(' - No existing remote branch ', 'red')
             print(message + branch_output)
             remove_directory_exit(self.repo_path)
@@ -650,7 +648,7 @@ class Git(object):
         origin = self._remote(remote)
         if origin is None:
             remove_directory_exit(self.repo_path)
-        return_code = self.git_fetch(remote, depth=depth, ref=commit)
+        return_code = self.fetch(remote, depth=depth, ref=commit)
         if return_code != 0:
             remove_directory_exit(self.repo_path)
         print(' - Checkout commit ' + commit_output)
@@ -668,7 +666,7 @@ class Git(object):
         origin = self._remote(remote)
         if origin is None:
             remove_directory_exit(self.repo_path)
-        return_code = self.git_fetch(remote, depth=depth, ref=tag)
+        return_code = self.fetch(remote, depth=depth, ref=tag)
         if return_code != 0:
             remove_directory_exit(self.repo_path)
         try:
@@ -691,7 +689,7 @@ class Git(object):
         """Checkout branch, tag, or commit from sha"""
         if ref_type(ref) is 'branch':
             branch = truncate_ref(ref)
-            if not self.git_existing_local_branch(branch):
+            if not self.existing_local_branch(branch):
                 return_code = self._create_branch_local_tracking(branch, remote,
                                                                  depth=depth, fetch=fetch)
                 if return_code != 0:
@@ -704,10 +702,10 @@ class Git(object):
                 return
             self._checkout_branch_local(branch)
         elif ref_type(ref) is 'tag':
-            self.git_fetch(remote, depth=depth, ref=ref)
+            self.fetch(remote, depth=depth, ref=ref)
             self._checkout_tag(truncate_ref(ref))
         elif ref_type(ref) is 'sha':
-            self.git_fetch(remote, depth=depth, ref=ref)
+            self.fetch(remote, depth=depth, ref=ref)
             self._checkout_sha(ref)
         else:
             ref_output = format_ref_string(ref)
@@ -784,7 +782,7 @@ class Git(object):
         if origin is None:
             return 1
         if fetch:
-            return_code = self.git_fetch(remote, depth=depth, ref=branch)
+            return_code = self.fetch(remote, depth=depth, ref=branch)
             if return_code != 0:
                 return return_code
         try:
@@ -807,7 +805,7 @@ class Git(object):
         origin = self._remote(remote)
         if origin is None:
             sys.exit(1)
-        return_code = self.git_fetch(remote, depth=depth, ref=branch)
+        return_code = self.fetch(remote, depth=depth, ref=branch)
         if return_code != 0:
             sys.exit(return_code)
         if branch in origin.refs:
@@ -860,14 +858,13 @@ class Git(object):
         repo_path_output = format_path(self.repo_path)
         try:
             print(' - Clone repo at ' + repo_path_output)
-            Repo.init(repo_path)
+            self.repo = Repo.init(self.repo_path)
         except Exception as err:
             cprint(' - Failed to initialize repository', 'red')
             print_error(err)
             remove_directory_exit(self.repo_path)
         else:
-            repo = _repo(repo_path)
-            remote_names = [r.name for r in repo.remotes]
+            remote_names = [r.name for r in self.repo.remotes]
             if remote in remote_names:
                 self._checkout_ref('refs/heads/' + branch, remote, depth)
                 return
@@ -878,10 +875,10 @@ class Git(object):
             origin = self._remote(remote)
             if origin is None:
                 remove_directory_exit(self.repo_path)
-            return_code = self.git_fetch(remote, depth=depth, ref=branch)
+            return_code = self.fetch(remote, depth=depth, ref=branch)
             if return_code != 0:
                 remove_directory_exit(self.repo_path)
-            if not self.git_existing_remote_branch(branch, remote):
+            if not self.existing_remote_branch(branch, remote):
                 print(' - No existing remote branch ' + branch_output)
                 self._checkout_new_repo_branch(truncate_ref(default_ref), remote, depth)
                 return
@@ -898,7 +895,7 @@ class Git(object):
                 if return_code != 0:
                     remove_directory_exit(self.repo_path)
             if recursive:
-                self.git_submodule_update_recursive(depth)
+                self.submodule_update_recursive(depth)
 
     def _is_branch_checked_out(self, branch):
         """Check if branch is checked out"""
@@ -1000,14 +997,14 @@ class Git(object):
         origin = self._remote(remote)
         if origin is None:
             sys.exit(1)
-        return_code = self.git_fetch(remote, depth=depth, ref=branch)
+        return_code = self.fetch(remote, depth=depth, ref=branch)
         if return_code != 0:
             sys.exit(return_code)
-        if not self.git_existing_local_branch(branch):
+        if not self.existing_local_branch(branch):
             message_1 = colored(' - No local branch ', 'red')
             print(message_1 + branch_output + '\n')
             sys.exit(1)
-        if not self.git_existing_remote_branch(branch, remote):
+        if not self.existing_remote_branch(branch, remote):
             message_1 = colored(' - No remote branch ', 'red')
             print(message_1 + branch_output + '\n')
             sys.exit(1)

@@ -27,30 +27,30 @@ class GitUtilitiesTest(unittest.TestCase):
     def test_git_current_branch(self):
         """Test git_current_branch() function"""
         repo = Git(self.kit_project_path)
-        self.assertEqual(repo.git_current_branch(), 'master')
+        self.assertEqual(repo.current_branch(), 'master')
 
     def test_git_sha_long(self):
         """Test git_sha_long() function"""
         repo = Git(self.sasha_project_path)
-        self.assertEqual(repo.git_sha_long(), self.sha_ref)
+        self.assertEqual(repo.sha_long(), self.sha_ref)
 
     def test_git_is_detached(self):
         """Test git_is_detached() function"""
         repo = Git(self.jules_project_path)
-        self.assertFalse(repo.git_is_detached())
+        self.assertFalse(repo.is_detached())
         repo = Git(self.kit_project_path)
-        self.assertFalse(repo.git_is_detached())
+        self.assertFalse(repo.is_detached())
         repo = Git(self.sasha_project_path)
-        self.assertTrue(repo.git_is_detached())
+        self.assertTrue(repo.is_detached())
 
     def test_git_is_dirty(self):
         """Test git_is_detached() function"""
         repo = Git(self.jules_project_path)
-        self.assertFalse(repo.git_is_dirty(self.jules_project_path))
+        self.assertFalse(repo.is_dirty(self.jules_project_path))
         repo = Git(self.kishka_project_path)
-        self.assertTrue(repo.git_is_dirty(self.kishka_project_path))
+        self.assertTrue(repo.is_dirty(self.kishka_project_path))
         repo = Git(self.kit_project_path)
-        self.assertFalse(repo.git_is_dirty(self.kit_project_path))
+        self.assertFalse(repo.is_dirty(self.kit_project_path))
 
     def test_ref_type_branch(self):
         """Test ref_type() function for branch ref"""
