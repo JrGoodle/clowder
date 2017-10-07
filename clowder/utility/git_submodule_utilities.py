@@ -55,9 +55,9 @@ class GitSubmodules(Git):
         Git.herd_branch(self, url, remote, branch, default_ref, depth=depth)
         self.submodule_update_recursive(depth)
 
-    def is_valid_submodule(self, path):
-        """Validate repo"""
-        return not self.is_dirty(path)
+    def is_dirty_submodule(self, path):
+        """Check whether submodule repo is dirty"""
+        return not self.repo.is_dirty(path)
 
     def submodule_update_recursive(self, depth=0):
         """Update submodules recursively and initialize if not present"""
@@ -81,10 +81,10 @@ class GitSubmodules(Git):
         """Validate repo state"""
         if not existing_git_repository(self.repo_path):
             return True
-        if not self.is_valid_repo():
+        if not self.is_dirty():
             return False
         for submodule in self.repo.submodules:
-            if not self.is_valid_submodule(submodule.path):
+            if not self.is_dirty_submodule(submodule.path):
                 return False
         return True
 

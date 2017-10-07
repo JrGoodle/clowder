@@ -55,9 +55,9 @@ class ClowderRepo(object):
     def clean(self):
         """Discard changes in clowder repo"""
         repo = Git(self.clowder_path)
-        if self.is_dirty():
+        if not self.is_dirty():
             print(' - Discard current changes')
-            repo.reset_head()
+            repo.clean(args='fdx')
         else:
             print(' - No changes to discard')
 
@@ -85,7 +85,7 @@ class ClowderRepo(object):
     def is_dirty(self):
         """Check if project is dirty"""
         repo = Git(self.clowder_path)
-        return repo.is_dirty(self.clowder_path)
+        return repo.is_dirty()
 
     def link(self, version=None):
         """Create symlink pointing to clowder.yaml file"""
@@ -114,7 +114,7 @@ class ClowderRepo(object):
             return
         if not is_offline() and fetch:
             print(' - Fetch upstream changes for clowder repo')
-            repo.fetch_silent()
+            repo.fetch('origin')
         project_output = format_project_string(repo_path, '.clowder')
         current_ref_output = format_project_ref_string(repo_path)
 

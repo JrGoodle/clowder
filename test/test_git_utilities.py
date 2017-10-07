@@ -44,13 +44,13 @@ class GitUtilitiesTest(unittest.TestCase):
         self.assertTrue(repo.is_detached())
 
     def test_git_is_dirty(self):
-        """Test git_is_detached() function"""
+        """Test git_is_dirty() function"""
         repo = Git(self.jules_project_path)
-        self.assertFalse(repo.is_dirty(self.jules_project_path))
+        self.assertFalse(repo.is_dirty())
         repo = Git(self.kishka_project_path)
-        self.assertTrue(repo.is_dirty(self.kishka_project_path))
+        self.assertTrue(repo.is_dirty())
         repo = Git(self.kit_project_path)
-        self.assertFalse(repo.is_dirty(self.kit_project_path))
+        self.assertFalse(repo.is_dirty())
 
     def test_ref_type_branch(self):
         """Test ref_type() function for branch ref"""

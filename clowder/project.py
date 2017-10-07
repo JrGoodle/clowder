@@ -294,10 +294,7 @@ class Project(object):
         else:
             remote = self.fork.remote_name
             depth = 0
-        if is_offline():
-            repo.start_offline(branch)
-        else:
-            repo.start(remote, branch, depth, tracking)
+        repo.start(remote, branch, depth, tracking)
 
     def status(self, padding):
         """Print status for project"""

@@ -7,6 +7,7 @@ from termcolor import colored, cprint
 from clowder.utility.clowder_utilities import (
     execute_command,
     existing_git_repository,
+    is_offline,
     ref_type,
     remove_directory_exit,
     truncate_ref
@@ -176,15 +177,6 @@ class Git(object):
             print_command_failed_error(command)
         return return_code
 
-    def fetch_silent(self):
-        """Perform a git fetch"""
-        command = ['git', 'fetch', '--all', '--prune', '--tags']
-        return_code = execute_command(command, self.repo_path)
-        if return_code != 0:
-            cprint(' - Failed to fetch', 'red')
-            print_command_failed_error(command)
-            sys.exit(return_code)
-
     def herd(self, url, remote, ref, depth=0, fetch=True):
         """Herd ref"""
         if not existing_git_repository(self.repo_path):
@@ -254,17 +246,13 @@ class Git(object):
             return False
         return self.repo.head.is_detached
 
-    def is_dirty(self, path):
-        """Check if repo is dirty"""
-        if not os.path.isdir(path):
+    def is_dirty(self):
+        """Check whether repo is dirtys"""
+        if not os.path.isdir(self.repo_path):
             return False
-        return self.repo.is_dirty()
-
-    def is_valid_repo(self):
-        """Validate repo"""
-        return not (self.is_dirty(self.repo_path) or
-                    self._is_rebase_in_progress() or
-                    self.untracked_files())
+        return (self._is_dirty() or
+                self._is_rebase_in_progress() or
+                self._untracked_files())
 
     def new_commits(self, upstream=False):
         """Returns the number of new commits"""
@@ -384,9 +372,10 @@ class Git(object):
     def start(self, remote, branch, depth, tracking):
         """Start new branch in repository"""
         if branch not in self.repo.heads:
-            return_code = self.fetch(remote, depth=depth, ref=branch)
-            if return_code != 0:
-                sys.exit(return_code)
+            if not is_offline():
+                return_code = self.fetch(remote, depth=depth, ref=branch)
+                if return_code != 0:
+                    sys.exit(return_code)
             return_code = self._create_branch_local(branch)
             if return_code != 0:
                 sys.exit(return_code)
@@ -403,28 +392,8 @@ class Git(object):
                 return_code = self._checkout_branch_local(branch)
                 if return_code != 0:
                     sys.exit(return_code)
-        if tracking:
+        if tracking and not is_offline():
             self._create_branch_remote_tracking(branch, remote, depth)
-
-    def start_offline(self, branch):
-        """Start new branch in repository when offline"""
-        branch_output = format_ref_string(branch)
-        if branch not in self.repo.heads:
-            return_code = self._create_branch_local(branch)
-            if return_code != 0:
-                sys.exit(return_code)
-            return_code = self._checkout_branch_local(branch)
-            if return_code != 0:
-                sys.exit(return_code)
-            return
-        print(' - ' + branch_output + ' already exists')
-        correct_branch = self._is_branch_checked_out(branch)
-        if correct_branch:
-            print(' - On correct branch')
-            return
-        return_code = self._checkout_branch_local(branch)
-        if return_code != 0:
-            sys.exit(return_code)
 
     def stash(self):
         """Stash current changes in repository"""
@@ -462,26 +431,11 @@ class Git(object):
             print_command_failed_error(command)
             sys.exit(return_code)
 
-    def untracked_files(self):
-        """Execute command and display continuous output"""
-        command = "git ls-files -o -d --exclude-standard | sed q | wc -l| tr -d '[:space:]'"
-        try:
-            output = subprocess.check_output(command,
-                                             shell=True,
-                                             cwd=self.repo_path)
-            return output.decode('utf-8') is '1'
-        except Exception as err:
-            cprint(' - Failed to check untracked files', 'red')
-            print_error(err)
-            sys.exit(1)
-
     def validate_repo(self):
         """Validate repo state"""
         if not existing_git_repository(self.repo_path):
             return True
-        if not self.is_valid_repo():
-            return False
-        return True
+        return not self.is_dirty()
 
     def _abort_rebase(self):
         """Abort rebase"""
@@ -785,6 +739,10 @@ class Git(object):
         except:
             return False
 
+    def _is_dirty(self):
+        """Check if repo is dirty"""
+        return self.repo.is_dirty()
+
     def _is_rebase_in_progress(self):
         """Detect whether rebase is in progress"""
         rebase_apply = os.path.join(self.repo_path, '.git', 'rebase-apply')
@@ -906,3 +864,16 @@ class Git(object):
         return_code = self._set_tracking_branch(remote, branch)
         if return_code != 0:
             sys.exit(return_code)
+
+    def _untracked_files(self):
+        """Execute command and display continuous output"""
+        command = "git ls-files -o -d --exclude-standard | sed q | wc -l| tr -d '[:space:]'"
+        try:
+            output = subprocess.check_output(command,
+                                             shell=True,
+                                             cwd=self.repo_path)
+            return output.decode('utf-8') is '1'
+        except Exception as err:
+            cprint(' - Failed to check untracked files', 'red')
+            print_error(err)
+            sys.exit(1)
