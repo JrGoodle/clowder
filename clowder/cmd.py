@@ -319,7 +319,7 @@ class Command(object):
         if self.clowder_repo is None:
             exit_clowder_not_found()
         self.clowder_repo.print_status()
-        self.clowder_repo.status()
+        self.clowder_repo.git_status()
 
     def save(self):
         """clowder save command"""
