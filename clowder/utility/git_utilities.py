@@ -331,6 +331,8 @@ class Git(object):
             command = ['git', 'branch']
         elif remote:
             command = ['git', 'branch', '-r']
+        else:
+            return
         return_code = execute_command(command, self.repo_path)
         if return_code != 0:
             cprint(' - Failed to print branches', 'red')
@@ -658,9 +660,7 @@ class Git(object):
                     sys.exit(return_code)
             if self._is_branch_checked_out(branch):
                 branch_output = format_ref_string(branch)
-                message_1 = ' - Branch '
-                message_2 = ' already checked out'
-                print(message_1 + branch_output + message_2)
+                print(' - Branch ' + branch_output + ' already checked out')
                 return
             self._checkout_branch_local(branch)
         elif ref_type(ref) is 'tag':
@@ -676,54 +676,40 @@ class Git(object):
 
     def _checkout_sha(self, sha):
         """Checkout commit by sha"""
-        correct_commit = False
         try:
             same_sha = self.repo.head.commit.hexsha == sha
             is_detached = self.repo.head.is_detached
-        except:
-            pass
-        else:
             if same_sha and is_detached:
                 print(' - On correct commit')
-                correct_commit = True
-        finally:
-            if not correct_commit:
-                commit_output = format_ref_string(sha)
-                try:
-                    print(' - Checkout commit ' + commit_output)
-                    self.repo.git.checkout(sha)
-                except Exception as err:
-                    message = colored(' - Failed to checkout commit ', 'red')
-                    print(message + commit_output)
-                    print_error(err)
-                    sys.exit(1)
+                return
+            commit_output = format_ref_string(sha)
+            print(' - Checkout commit ' + commit_output)
+            self.repo.git.checkout(sha)
+        except Exception as err:
+            message = colored(' - Failed to checkout commit ', 'red')
+            print(message + commit_output)
+            print_error(err)
+            sys.exit(1)
 
     def _checkout_tag(self, tag):
         """Checkout commit tag is pointing to"""
         tag_output = format_ref_string(tag)
-        correct_commit = False
         if tag not in self.repo.tags:
-            print(' - No existing tag ' + tag_output)
-            return
+            print(' - No existing tag ' + tag_output + '\n')
+            sys.exit(1)
         try:
             same_commit = self.repo.head.commit == self.repo.tags[tag].commit
             is_detached = self.repo.head.is_detached
-        except:
-            pass
-        else:
             if same_commit and is_detached:
                 print(' - On correct commit for tag')
-                correct_commit = True
-        finally:
-            if not correct_commit:
-                try:
-                    print(' - Checkout tag ' + tag_output)
-                    self.repo.git.checkout(tag)
-                except Exception as err:
-                    message = colored(' - Failed to checkout tag ', 'red')
-                    print(message + tag_output)
-                    print_error(err)
-                    sys.exit(1)
+                return
+            print(' - Checkout tag ' + tag_output)
+            self.repo.git.checkout(tag)
+        except Exception as err:
+            message = colored(' - Failed to checkout tag ', 'red')
+            print(message + tag_output)
+            print_error(err)
+            sys.exit(1)
 
 
     def _create_branch_local(self, branch):
@@ -800,11 +786,11 @@ class Git(object):
             return 0
         remote_output = format_remote_string(remote)
         try:
-            print(" - Create remote " + remote_output)
+            print(' - Create remote ' + remote_output)
             self.repo.create_remote(remote, url)
             return 0
         except Exception as err:
-            message = colored(" - Failed to create remote ", 'red')
+            message = colored(' - Failed to create remote ', 'red')
             print(message + remote_output)
             print_error(err)
             return 1
