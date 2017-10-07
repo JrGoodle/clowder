@@ -35,20 +35,6 @@ class Git(object):
         self.repo_path = repo_path
         self.repo = self._repo() if existing_git_repository(repo_path) else None
 
-    def add(self, files):
-        """Add files to git index"""
-        try:
-            print(' - Add files to git index')
-            print(self.repo.git.add(files))
-        except Exception as err:
-            cprint(' - Failed to add files to git index', 'red')
-            print_error(err)
-            sys.exit(1)
-
-    def branches(self,):
-        """Get list of current branches"""
-        return self.repo.branches
-
     def checkout(self, truncated_ref):
         """Checkout git ref"""
         ref_output = format_ref_string(truncated_ref)
@@ -71,11 +57,6 @@ class Git(object):
         if self._is_rebase_in_progress():
             print(' - Abort rebase in progress')
             self._abort_rebase()
-
-    def commit(self, message):
-        """Commit current changes"""
-        print(' - Commit current changes')
-        print(self.repo.git.commit(message=message))
 
     def configure_remotes(self, upstream_remote_name, upstream_remote_url,
                           fork_remote_name, fork_remote_url):
@@ -334,32 +315,6 @@ class Git(object):
         except Exception as err:
             message = colored(' - Failed to delete remote branch ', 'red')
             print(message + branch_output)
-            print_error(err)
-            sys.exit(1)
-
-    def pull(self):
-        """Pull from remote branch"""
-        if self.repo.head.is_detached:
-            print(' - HEAD is detached')
-            return
-        try:
-            print(' - Pull latest changes')
-            print(self.repo.git.pull())
-        except Exception as err:
-            cprint(' - Failed to pull latest changes', 'red')
-            print_error(err)
-            sys.exit(1)
-
-    def push(self):
-        """Push to remote branch"""
-        if self.repo.head.is_detached:
-            print(' - HEAD is detached')
-            return
-        try:
-            print(' - Push local changes')
-            print(self.repo.git.push())
-        except Exception as err:
-            cprint(' - Failed to push local changes', 'red')
             print_error(err)
             sys.exit(1)
 
