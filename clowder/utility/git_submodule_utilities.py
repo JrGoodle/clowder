@@ -26,6 +26,16 @@ class GitSubmodules(Git):
     def __init__(self, repo_path):
         Git.__init__(self, repo_path)
 
+    def clean(self, args=None):
+        """Discard changes for repo and submodules"""
+        Git.clean(self, args=args)
+        print(' - Clean submodules recursively')
+        self._submodules_clean()
+        print(' - Reset submodules recursively')
+        self._submodules_reset()
+        print(' - Update submodules recursively')
+        self._submodules_update()
+
     def create_repo(self, url, remote, ref, depth=0):
         """Clone git repo from url at path"""
         Git.create_repo(self, url, remote, ref, depth=depth)
@@ -48,33 +58,6 @@ class GitSubmodules(Git):
     def is_valid_submodule(self, path):
         """Validate repo"""
         return not self.is_dirty(path)
-
-    def submodules_clean(self):
-        """Clean all submodules"""
-        try:
-            self.repo.git.submodule('foreach', '--recursive', 'git', 'clean', '-ffdx')
-        except Exception as err:
-            cprint(' - Failed to clean submodules', 'red')
-            print_error(err)
-            sys.exit(1)
-
-    def submodules_reset(self):
-        """Reset all submodules"""
-        try:
-            self.repo.git.submodule('foreach', '--recursive', 'git', 'reset', '--hard')
-        except Exception as err:
-            cprint(' - Failed to reset submodules', 'red')
-            print_error(err)
-            sys.exit(1)
-
-    def submodules_update(self):
-        """Update all submodules"""
-        try:
-            self.repo.git.submodule('update', '--checkout', '--recursive', '--force')
-        except Exception as err:
-            cprint(' - Failed to update submodules', 'red')
-            print_error(err)
-            sys.exit(1)
 
     def submodule_update_recursive(self, depth=0):
         """Update submodules recursively and initialize if not present"""
@@ -109,3 +92,30 @@ class GitSubmodules(Git):
         """Clone git repo from url at path for herd branch"""
         Git._create_repo_herd_branch(self, url, remote, branch, default_ref, depth=depth)
         self.submodule_update_recursive(depth=depth)
+
+    def _submodules_clean(self):
+        """Clean all submodules"""
+        try:
+            self.repo.git.submodule('foreach', '--recursive', 'git', 'clean', '-ffdx')
+        except Exception as err:
+            cprint(' - Failed to clean submodules', 'red')
+            print_error(err)
+            sys.exit(1)
+
+    def _submodules_reset(self):
+        """Reset all submodules"""
+        try:
+            self.repo.git.submodule('foreach', '--recursive', 'git', 'reset', '--hard')
+        except Exception as err:
+            cprint(' - Failed to reset submodules', 'red')
+            print_error(err)
+            sys.exit(1)
+
+    def _submodules_update(self):
+        """Update all submodules"""
+        try:
+            self.repo.git.submodule('update', '--checkout', '--recursive', '--force')
+        except Exception as err:
+            cprint(' - Failed to update submodules', 'red')
+            print_error(err)
+            sys.exit(1)

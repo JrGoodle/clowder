@@ -53,7 +53,7 @@ class Group(object):
         for project in self.projects:
             project.branch(local=local, remote=remote)
 
-    def clean(self, args=None, recursive=False):
+    def clean(self, args='', recursive=False):
         """Discard changes for all projects"""
         self._print_name()
         for project in self.projects:

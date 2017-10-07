@@ -61,7 +61,7 @@ class ClowderController(object):
                     if project.name in project_names:
                         project.branch(local=local, remote=remote)
 
-    def clean(self, group_names=None, project_names=None, args=None, recursive=False):
+    def clean(self, group_names=None, project_names=None, args='', recursive=False):
         """Discard changes"""
         for group in self.groups:
             if project_names is None and group_names is None:

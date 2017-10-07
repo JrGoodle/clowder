@@ -34,17 +34,6 @@ class Git(object):
         self.repo_path = repo_path
         self.repo = self._repo() if existing_git_repository(repo_path) else None
 
-    def abort_rebase(self):
-        """Abort rebase"""
-        if not self.is_rebase_in_progress():
-            return
-        try:
-            self.repo.git.rebase('--abort')
-        except Exception as err:
-            cprint(' - Failed to abort rebase', 'red')
-            print_error(err)
-            sys.exit(1)
-
     def add(self, files):
         """Add files to git index"""
         try:
@@ -71,17 +60,16 @@ class Git(object):
             print_error(err)
             sys.exit(1)
 
-    def clean(self, args=None):
-        """Clean git directory"""
-        clean_args = '-f'
-        if args is not None:
-            clean_args += args
-        try:
-            self.repo.git.clean(clean_args)
-        except Exception as err:
-            cprint(' - Failed to clean git repo', 'red')
-            print_error(err)
-            sys.exit(1)
+    def clean(self, args=''):
+        """Discard changes for repo"""
+        print(' - Clean project')
+        clean_args = '-f' if args is '' else '-f' + args
+        self._clean(args=clean_args)
+        print(' - Reset project')
+        self._reset_head()
+        if self._is_rebase_in_progress():
+            print(' - Abort rebase in progress')
+            self._abort_rebase()
 
     def commit(self, message):
         """Commit current changes"""
@@ -272,18 +260,10 @@ class Git(object):
             return False
         return self.repo.is_dirty()
 
-    def is_rebase_in_progress(self):
-        """Detect whether rebase is in progress"""
-        rebase_apply = os.path.join(self.repo_path, '.git', 'rebase-apply')
-        rebase_merge = os.path.join(self.repo_path, '.git', 'rebase-merge')
-        is_rebase_apply = os.path.isdir(rebase_apply)
-        is_rebase_merge = os.path.isdir(rebase_merge)
-        return is_rebase_apply or is_rebase_merge
-
     def is_valid_repo(self):
         """Validate repo"""
         return not (self.is_dirty(self.repo_path) or
-                    self.is_rebase_in_progress() or
+                    self._is_rebase_in_progress() or
                     self.untracked_files())
 
     def new_commits(self, upstream=False):
@@ -395,10 +375,6 @@ class Git(object):
             print_error(err)
             sys.exit(1)
 
-    def reset_head(self):
-        """Reset head of repo, discarding changes"""
-        self.repo.head.reset(index=True, working_tree=True)
-
     def sha(self, short=False):
         """Return sha for currently checked out commit"""
         if short:
@@ -506,6 +482,17 @@ class Git(object):
         if not self.is_valid_repo():
             return False
         return True
+
+    def _abort_rebase(self):
+        """Abort rebase"""
+        if not self._is_rebase_in_progress():
+            return
+        try:
+            self.repo.git.rebase('--abort')
+        except Exception as err:
+            cprint(' - Failed to abort rebase', 'red')
+            print_error(err)
+            sys.exit(1)
 
     def _checkout_branch_local(self, branch):
         """Checkout local branch"""
@@ -649,6 +636,14 @@ class Git(object):
             print_error(err)
             sys.exit(1)
 
+    def _clean(self, args):
+        """Clean git directory"""
+        try:
+            self.repo.git.clean(args)
+        except Exception as err:
+            cprint(' - Failed to clean git repo', 'red')
+            print_error(err)
+            sys.exit(1)
 
     def _create_branch_local(self, branch):
         """Create local branch"""
@@ -790,6 +785,14 @@ class Git(object):
         except:
             return False
 
+    def _is_rebase_in_progress(self):
+        """Detect whether rebase is in progress"""
+        rebase_apply = os.path.join(self.repo_path, '.git', 'rebase-apply')
+        rebase_merge = os.path.join(self.repo_path, '.git', 'rebase-merge')
+        is_rebase_apply = os.path.isdir(rebase_apply)
+        is_rebase_merge = os.path.isdir(rebase_merge)
+        return is_rebase_apply or is_rebase_merge
+
     def _is_tracking_branch(self, branch):
         """Check if branch is a tracking branch"""
         branch_output = format_ref_string(branch)
@@ -853,6 +856,10 @@ class Git(object):
             print(message + repo_path_output)
             print_error(err)
             sys.exit(1)
+
+    def _reset_head(self):
+        """Reset head of repo, discarding changes"""
+        self.repo.head.reset(index=True, working_tree=True)
 
     def _set_tracking_branch(self, remote, branch):
         """Set tracking branch"""

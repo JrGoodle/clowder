@@ -112,28 +112,16 @@ class Project(object):
                     repo.fetch(self.remote_name)
         repo.print_branches(local=local, remote=remote)
 
-    def clean(self, args=None, recursive=False):
+    def clean(self, args='', recursive=False):
         """Discard changes for project"""
         self._print_status()
         if not os.path.isdir(self.full_path()):
             cprint(" - Project is missing\n", 'red')
             return
-        repo = Git(self.full_path())
-        print(' - Clean project')
-        repo.clean(args=args)
-        print(' - Reset project')
-        repo.reset_head()
-        if repo.is_rebase_in_progress():
-            print(' - Abort rebase in progress')
-            repo.abort_rebase()
         if self.recursive and recursive:
-            repo_submodules = GitSubmodules(self.full_path())
-            print(' - Clean submodules recursively')
-            repo_submodules.submodules_clean()
-            print(' - Reset submodules recursively')
-            repo_submodules.submodules_reset()
-            print(' - Update submodules recursively')
-            repo_submodules.submodules_update()
+            _clean(GitSubmodules(self.full_path()), args=args)
+        else:
+            _clean(Git(self.full_path()), args=args)
 
     def clean_all(self):
         """Discard all changes for project"""
@@ -141,22 +129,10 @@ class Project(object):
         if not os.path.isdir(self.full_path()):
             cprint(" - Project is missing\n", 'red')
             return
-        repo = Git(self.full_path())
-        print(' - Clean project')
-        repo.clean(args='fdx')
-        print(' - Reset project')
-        repo.reset_head()
-        if repo.is_rebase_in_progress():
-            print(' - Abort rebase in progress')
-            repo.abort_rebase()
         if self.recursive:
-            repo_submodules = GitSubmodules(self.full_path())
-            print(' - Clean submodules recursively')
-            repo_submodules.submodules_clean()
-            print(' - Reset submodules recursively')
-            repo_submodules.submodules_reset()
-            print(' - Update submodules recursively')
-            repo_submodules.submodules_update()
+            _clean(GitSubmodules(self.full_path()), args='fdx')
+        else:
+            _clean(Git(self.full_path()), args='fdx')
 
     def diff(self):
         """Show git diff for project"""
@@ -417,3 +393,8 @@ class Project(object):
         repo.herd_upstream(self.url, self.remote_name, self.ref)
         self.fork.print_status()
         repo.sync(self.remote_name, self.fork.remote_name, self.ref)
+
+
+def _clean(repo, args=''):
+    """Discard changes for project"""
+    repo.clean(args=args)
