@@ -10,13 +10,59 @@ export all_projects=( 'mu' 'duke' \
                       'black-cats/sasha' \
                       'black-cats/jules' )
 
+enable_network_connection() {
+    case "$(uname)" in
+        Linux*)
+            print_double_separator
+            echo "Enable network connection"
+            nmcli nm enable true
+            print_double_separator
+            ;;
+        Darwin*)
+            print_double_separator
+            echo "Enable network connection"
+            networksetup -setairportpower airport on
+            print_double_separator
+            ;;
+        *)
+            echo "Offline test only runs on macOS and Ubuntu"
+            exit
+            ;;
+    esac
+}
+
+disable_network_connection() {
+    case "$(uname)" in
+        Linux*)
+            print_double_separator
+            echo "Disable network connection"
+            nmcli nm enable false
+            print_double_separator
+            ;;
+        Darwin*)
+            print_double_separator
+            echo "Disable network connection"
+            networksetup -setairportpower airport off
+            print_double_separator
+            ;;
+        *)
+            echo "Offline test only runs on macOS and Ubuntu"
+            exit
+            ;;
+    esac
+}
+
+enable_connection_exit() {
+    enable_network_connection
+    exit 1
+}
+
 # echo 'Make sure your network connection is enabled'
 # # https://unix.stackexchange.com/a/293941
 # read -n 1 -s -r -p "Press any key to continue"
 # echo ''
 # echo ''
-echo "TEST: Enable network connection"
-networksetup -setairportpower airport on
+enable_network_connection
 
 prepare_cats_example
 cd "$CATS_EXAMPLE_DIR" || exit 1
@@ -33,81 +79,80 @@ clowder herd || exit 1
 # read -n 1 -s -r -p "Press any key to continue"
 # echo ''
 # echo ''
-echo "TEST: Disable network connection"
-networksetup -setairportpower airport off
+disable_network_connection
 
-print_double_separator
+print_single_separator
 echo 'TEST: clowder branch'
-clowder branch || exit 1
+clowder branch || enable_connection_exit
 print_single_separator
 echo 'TEST: clowder branch -r'
-clowder branch -r || exit 1
+clowder branch -r || enable_connection_exit
 print_single_separator
 echo 'TEST: clowder branch -a'
-clowder branch -a || exit 1
+clowder branch -a || enable_connection_exit
 print_single_separator
 echo 'TEST: clowder clean'
-clowder clean || exit 1
+clowder clean || enable_connection_exit
 print_single_separator
 echo 'TEST: clowder diff'
-clowder diff || exit 1
+clowder diff || enable_connection_exit
 print_single_separator
 echo 'TEST: clowder forall'
-clowder forall -c 'git status' || exit 1
+clowder forall -c 'git status' || enable_connection_exit
 print_single_separator
 echo 'TEST: clowder herd'
-clowder herd && exit 1
+clowder herd && enable_connection_exit
 print_single_separator
 echo 'TEST: clowder link'
-clowder link -v v0.1 || exit 1
-clowder link || exit 1
+clowder link -v v0.1 || enable_connection_exit
+clowder link || enable_connection_exit
 print_single_separator
 echo 'TEST: clowder prune'
-clowder prune branch || exit 1
+clowder prune branch || enable_connection_exit
 print_single_separator
 echo 'TEST: clowder prune -r'
-clowder prune -r branch && exit 1
+clowder prune -r branch && enable_connection_exit
 print_single_separator
 echo 'TEST: clowder prune -a'
-clowder prune -a branch && exit 1
+clowder prune -a branch && enable_connection_exit
 print_single_separator
 echo 'TEST: clowder repo add'
-clowder repo add . || exit 1
+clowder repo add . || enable_connection_exit
 print_single_separator
 echo 'TEST: clowder repo checkout'
-clowder repo checkout tags || exit 1
-clowder repo checkout master || exit 1
+clowder repo checkout tags || enable_connection_exit
+clowder repo checkout master || enable_connection_exit
 print_single_separator
 echo 'TEST: clowder repo clean'
-clowder repo clean || exit 1
+clowder repo clean || enable_connection_exit
 print_single_separator
 echo 'TEST: clowder repo commit'
 pushd .clowder
-touch newfile || exit 1
-git add newfile || exit 1
+touch newfile || enable_connection_exit
+git add newfile || enable_connection_exit
 popd
-clowder repo commit 'Add newfile' || exit 1
+clowder repo commit 'Add newfile' || enable_connection_exit
 pushd .clowder
-git reset --hard HEAD~1 || exit 1
+git reset --hard HEAD~1 || enable_connection_exit
 popd
 print_single_separator
 echo 'TEST: clowder repo pull'
-clowder repo pull && exit 1
+clowder repo pull && enable_connection_exit
 print_single_separator
 echo 'TEST: clowder repo push'
-clowder repo push && exit 1
+clowder repo push && enable_connection_exit
 print_single_separator
 echo 'TEST: clowder repo run'
-clowder repo run 'git status' || exit 1
+clowder repo run 'git status' || enable_connection_exit
 print_single_separator
 echo 'TEST: clowder repo status'
-clowder repo status || exit 1
+clowder repo status || enable_connection_exit
 print_single_separator
 echo 'TEST: clowder save'
-clowder save offline_version || exit 1
+clowder save offline_version || enable_connection_exit
 print_single_separator
 echo 'TEST: clowder start'
-clowder start local_branch || exit 1
+clowder start local_branch || enable_connection_exit
 for project in "${all_projects[@]}"; do
 	pushd $project
     test_branch 'local_branch'
@@ -115,25 +160,25 @@ for project in "${all_projects[@]}"; do
 done
 print_single_separator
 echo 'TEST: clowder start -t'
-clowder start -t tracking_branch && exit 1
+clowder start -t tracking_branch && enable_connection_exit
 print_single_separator
 echo 'TEST: clowder stash'
-clowder stash || exit 1
+clowder stash || enable_connection_exit
 print_single_separator
 echo 'TEST: clowder status'
-clowder status || exit 1
+clowder status || enable_connection_exit
 print_single_separator
 echo 'TEST: clowder status -f'
-clowder status -f && exit 1
+clowder status -f && enable_connection_exit
 print_single_separator
 echo 'TEST: clowder sync'
-clowder sync && exit 1
+clowder sync && enable_connection_exit
 print_single_separator
 echo 'TEST: clowder init'
-rm -rf .clowder || exit 1
-clowder init git@github.com:JrGoodle/cats.git && exit 1
+rm -rf .clowder || enable_connection_exit
+clowder init git@github.com:JrGoodle/cats.git && enable_connection_exit
+print_single_separator
 
 # echo 'You can enable your network connection again'
 # echo ''
-echo "TEST: Enable network connection"
-networksetup -setairportpower airport on
+enable_network_connection
