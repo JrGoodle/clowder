@@ -32,10 +32,7 @@ class Git(object):
     """Class encapsulating git utilities"""
     def __init__(self, repo_path):
         self.repo_path = repo_path
-        if not existing_git_repository(self.repo_path):
-            self.repo = None
-            return
-        self.repo = self._repo()
+        self.repo = self._repo() if existing_git_repository(repo_path) else None
 
     def abort_rebase(self):
         """Abort rebase"""
@@ -147,6 +144,7 @@ class Git(object):
         else:
             ref_output = format_ref_string(ref)
             print('Unknown ref ' + ref_output)
+            sys.exit(1)
         if recursive:
             self.submodule_update_recursive(depth)
 
@@ -203,9 +201,7 @@ class Git(object):
 
     def has_submodules(self):
         """Repo has submodules"""
-        if self.repo.submodules.count > 0:
-            return True
-        return False
+        return self.repo.submodules.count > 0
 
     def herd(self, url, remote, ref, depth=0, recursive=False, fetch=True):
         """Herd ref"""
@@ -222,7 +218,7 @@ class Git(object):
                 if self._is_tracking_branch(branch):
                     self._pull_remote_branch(remote, branch)
                 else:
-                    self._set_tracking_branch_same_commit(branch, remote, depth)
+                    self._set_tracking_branch_commit(branch, remote, depth)
         elif ref_type(ref) is 'tag' or ref_type(ref) is 'sha':
             return_code = self._create_remote(remote, url)
             if return_code != 0:
@@ -250,7 +246,7 @@ class Git(object):
                 if self._is_tracking_branch(branch):
                     self._pull_remote_branch(remote, branch)
                 else:
-                    self._set_tracking_branch_same_commit(branch, remote, depth)
+                    self._set_tracking_branch_commit(branch, remote, depth)
         elif self.existing_remote_branch(branch, remote):
             self.herd(url, remote, 'refs/heads/' + branch, depth=depth,
                       recursive=recursive, fetch=False)
@@ -279,22 +275,13 @@ class Git(object):
         """Check if HEAD is detached"""
         if not os.path.isdir(self.repo_path):
             return False
-        else:
-            return self.repo.head.is_detached
+        return self.repo.head.is_detached
 
     def is_dirty(self, path):
         """Check if repo is dirty"""
         if not os.path.isdir(path):
             return False
-        else:
-            try:
-                return self.repo.is_dirty()
-            except Exception as err:
-                repo_path_output = format_path(path)
-                message = colored("Failed to create Repo instance for ", 'red')
-                print(message + repo_path_output)
-                print_error(err)
-                sys.exit(1)
+        return self.repo.is_dirty()
 
     def is_rebase_in_progress(self):
         """Detect whether rebase is in progress"""
@@ -306,23 +293,13 @@ class Git(object):
 
     def is_valid_repo(self):
         """Validate repo"""
-        if self.is_dirty(self.repo_path):
-            return False
-        elif self.is_rebase_in_progress():
-            return False
-        elif self.untracked_files():
-            return False
-        else:
-            return True
+        return not (self.is_dirty(self.repo_path) or
+                    self.is_rebase_in_progress() or
+                    self.untracked_files())
 
     def is_valid_submodule(self, path):
         """Validate repo"""
-        if self.is_dirty(path):
-            return False
-        # elif untracked_files(repo_path):
-        #     return False
-        else:
-            return True
+        return not self.is_dirty(path)
 
     def new_commits(self, upstream=False):
         """Returns the number of new commits"""
@@ -330,22 +307,21 @@ class Git(object):
             local_branch = self.repo.active_branch
         except:
             return 0
-        else:
-            if local_branch is None:
-                return 0
-            tracking_branch = local_branch.tracking_branch()
-            if tracking_branch is None:
-                return 0
-            try:
-                commits = local_branch.commit.hexsha + '...' + tracking_branch.commit.hexsha
-                rev_list_count = self.repo.git.rev_list('--count', '--left-right', commits)
-                if upstream:
-                    count = str(rev_list_count).split()[1]
-                else:
-                    count = str(rev_list_count).split()[0]
-                return count
-            except:
-                return 0
+        if local_branch is None:
+            return 0
+        tracking_branch = local_branch.tracking_branch()
+        if tracking_branch is None:
+            return 0
+        try:
+            commits = local_branch.commit.hexsha + '...' + tracking_branch.commit.hexsha
+            rev_list_count = self.repo.git.rev_list('--count', '--left-right', commits)
+            if upstream:
+                count = str(rev_list_count).split()[1]
+            else:
+                count = str(rev_list_count).split()[0]
+            return count
+        except:
+            return 0
 
     def print_branches(self, local=False, remote=False):
         """Print branches"""
@@ -442,8 +418,7 @@ class Git(object):
 
     def sha_short(self):
         """Return short sha of currently checked out commit"""
-        sha = self.repo.head.commit.hexsha
-        return self.repo.git.rev_parse(sha, short=True)
+        return self.repo.git.rev_parse(self.repo.head.commit.hexsha, short=True)
 
     def start(self, remote, branch, depth, tracking):
         """Start new branch in repository"""
@@ -457,18 +432,16 @@ class Git(object):
             return_code = self._checkout_branch_local(branch)
             if return_code != 0:
                 sys.exit(return_code)
-            if tracking:
-                self._create_branch_remote_tracking(branch, remote, depth)
-            return
-        branch_output = format_ref_string(branch)
-        print(' - ' + branch_output + ' already exists')
-        correct_branch = self._is_branch_checked_out(branch)
-        if correct_branch:
-            print(' - On correct branch')
         else:
-            return_code = self._checkout_branch_local(branch)
-            if return_code != 0:
-                sys.exit(return_code)
+            branch_output = format_ref_string(branch)
+            print(' - ' + branch_output + ' already exists')
+            correct_branch = self._is_branch_checked_out(branch)
+            if correct_branch:
+                print(' - On correct branch')
+            else:
+                return_code = self._checkout_branch_local(branch)
+                if return_code != 0:
+                    sys.exit(return_code)
         if tracking:
             self._create_branch_remote_tracking(branch, remote, depth)
 
@@ -494,11 +467,11 @@ class Git(object):
 
     def stash(self):
         """Stash current changes in repository"""
-        if self.repo.is_dirty():
-            print(' - Stash current changes')
-            self.repo.git.stash()
-        else:
+        if not self.repo.is_dirty():
             print(' - No changes to stash')
+            return
+        print(' - Stash current changes')
+        self.repo.git.stash()
 
     def status(self):
         """Print git status"""
@@ -625,14 +598,12 @@ class Git(object):
                                                          depth=depth, fetch=False)
         if return_code != 0:
             remove_directory_exit(self.repo_path)
-        else:
-            return_code = self._set_tracking_branch(remote, branch)
-            if return_code != 0:
-                remove_directory_exit(self.repo_path)
-                return
-            return_code = self._checkout_branch_local(branch)
-            if return_code != 0:
-                remove_directory_exit(self.repo_path)
+        return_code = self._set_tracking_branch(remote, branch)
+        if return_code != 0:
+            remove_directory_exit(self.repo_path)
+        return_code = self._checkout_branch_local(branch)
+        if return_code != 0:
+            remove_directory_exit(self.repo_path)
 
     def _checkout_new_repo_commit(self, commit, remote, depth):
         """Checkout commit or fail and delete repo if it doesn't exist"""
@@ -667,15 +638,14 @@ class Git(object):
             message = colored(' - No existing remote tag ', 'red')
             print(message + tag_output)
             remove_directory_exit(self.repo_path)
-        else:
+        try:
             print(' - Checkout tag ' + tag_output)
-            try:
-                self.repo.git.checkout(remote_tag)
-            except Exception as err:
-                message = colored(' - Failed to checkout tag ', 'red')
-                print(message + tag_output)
-                print_error(err)
-                remove_directory_exit(self.repo_path)
+            self.repo.git.checkout(remote_tag)
+        except Exception as err:
+            message = colored(' - Failed to checkout tag ', 'red')
+            print(message + tag_output)
+            print_error(err)
+            remove_directory_exit(self.repo_path)
 
     def _checkout_ref(self, ref, remote, depth, fetch=True):
         """Checkout branch, tag, or commit from sha"""
@@ -702,6 +672,7 @@ class Git(object):
         else:
             ref_output = format_ref_string(ref)
             print('Unknown ref ' + ref_output)
+            sys.exit(1)
 
     def _checkout_sha(self, sha):
         """Checkout commit by sha"""
@@ -781,16 +752,15 @@ class Git(object):
         try:
             print(' - Create branch ' + branch_output)
             self.repo.create_head(branch, origin.refs[branch])
+            return_code = self._set_tracking_branch(remote, branch)
+            if return_code != 0:
+                return return_code
+            return self._checkout_branch_local(branch)
         except Exception as err:
             message = colored(' - Failed to create branch ', 'red')
             print(message + branch_output)
             print_error(err)
             return 1
-        else:
-            return_code = self._set_tracking_branch(remote, branch)
-            if return_code != 0:
-                return return_code
-            return self._checkout_branch_local(branch)
 
     def _create_branch_remote_tracking(self, branch, remote, depth):
         """Create remote tracking branch"""
@@ -804,26 +774,24 @@ class Git(object):
         if branch in origin.refs:
             try:
                 self.repo.git.config('--get', 'branch.' + branch + '.merge')
+                print(' - Tracking branch ' + branch_output + ' already exists')
+                return
             except:
                 message_1 = colored(' - Remote branch ', 'red')
                 message_2 = colored(' already exists', 'red')
                 print(message_1 + branch_output + message_2 + '\n')
                 sys.exit(1)
-            else:
-                print(' - Tracking branch ' + branch_output + ' already exists')
-                return
         try:
             print(' - Push remote branch ' + branch_output)
             self.repo.git.push(remote, branch)
+            return_code = self._set_tracking_branch(remote, branch)
+            if return_code != 0:
+                sys.exit(return_code)
         except Exception as err:
             message = colored(' - Failed to push remote branch ', 'red')
             print(message + branch_output)
             print_error(err)
             sys.exit(1)
-        else:
-            return_code = self._set_tracking_branch(remote, branch)
-            if return_code != 0:
-                sys.exit(return_code)
 
     def _create_remote(self, remote, url):
         """Create new remote"""
@@ -897,24 +865,22 @@ class Git(object):
             default_branch = self.repo.heads[branch]
             not_detached = not self.repo.head.is_detached
             same_branch = self.repo.head.ref == default_branch
+            return not_detached and same_branch
         except:
             return False
-        else:
-            return not_detached and same_branch
 
     def _is_tracking_branch(self, branch):
         """Check if branch is a tracking branch"""
         branch_output = format_ref_string(branch)
         try:
             local_branch = self.repo.heads[branch]
+            tracking_branch = local_branch.tracking_branch()
+            return True if tracking_branch else False
         except Exception as err:
             message = colored(' - No existing branch ', 'red')
             print(message + branch_output)
             print_error(err)
             sys.exit(1)
-        else:
-            tracking_branch = local_branch.tracking_branch()
-            return True if tracking_branch else False
 
     def _pull_remote_branch(self, remote, branch):
         """Pull from remote branch"""
@@ -985,7 +951,7 @@ class Git(object):
             print_error(err)
             return 1
 
-    def _set_tracking_branch_same_commit(self, branch, remote, depth):
+    def _set_tracking_branch_commit(self, branch, remote, depth):
         """Set tracking relationship between local and remote branch if on same commit"""
         branch_output = format_ref_string(branch)
         origin = self._remote(remote)
