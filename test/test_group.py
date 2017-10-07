@@ -1,4 +1,6 @@
 """Test group class"""
+
+
 import os
 import sys
 import unittest
@@ -12,6 +14,7 @@ from test.shared import (
     KISHKA_GROUP_YAML,
     KIT_GROUP_YAML
 )
+
 
 class GroupTest(unittest.TestCase):
     """group test subclass"""
@@ -59,6 +62,7 @@ class GroupTest(unittest.TestCase):
         """Test projects_exist() method"""
         self.assertFalse(self.jules_group.projects_exist())
         self.assertTrue(self.kit_group.projects_exist())
+
 
 if __name__ == '__main__':
     if len(sys.argv) > 1:

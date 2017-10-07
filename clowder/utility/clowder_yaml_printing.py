@@ -1,4 +1,6 @@
 """Clowder yaml printing"""
+
+
 import os
 import sys
 from clowder.utility.clowder_utilities import parse_yaml
@@ -9,8 +11,10 @@ from clowder.utility.print_utilities import (
     remove_prefix
 )
 
+
 # Disable errors shown by pylint for no specified exception types
 # pylint: disable=W0702
+
 
 def print_yaml(root_directory):
     """Print current clowder yaml"""
@@ -47,7 +51,7 @@ def print_yaml(root_directory):
                         print(format_path('clowder.yaml') + ' -> ' + format_path(path))
                         print()
                     else:
-                        path = remove_prefix(path, root_directory)
+                        path = remove_prefix(yaml_file, root_directory)
                         path = remove_prefix(path, '/')
                         print('\n' + format_path(path) + '\n')
                     print(contents)

@@ -1,5 +1,6 @@
 """Representation of clowder.yaml source"""
 
+
 class Source(object):
     """clowder.yaml source class"""
 

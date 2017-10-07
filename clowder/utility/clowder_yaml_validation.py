@@ -1,4 +1,6 @@
 """Clowder yaml validation"""
+
+
 import sys
 from clowder.utility.clowder_utilities import parse_yaml
 from clowder.utility.print_utilities import (
@@ -16,12 +18,14 @@ from clowder.utility.print_utilities import (
     print_invalid_yaml_error
 )
 
+
 # Disable errors shown by pylint for too many branches
 # pylint: disable=R0912
 # Disable errors shown by pylint for too many statements
 # pylint: disable=R0915
 # Disable errors shown by pylint for catching too general exception Exception
 # pylint: disable=W0703
+
 
 def validate_yaml(yaml_file):
     """Validate clowder.yaml with no import"""
@@ -68,6 +72,7 @@ def validate_yaml(yaml_file):
         print_error(err)
         sys.exit(1)
 
+
 def validate_yaml_import(yaml_file):
     """Validate clowder.yaml with an import"""
     parsed_yaml = parse_yaml(yaml_file)
@@ -112,6 +117,7 @@ def validate_yaml_import(yaml_file):
         print_error(err)
         sys.exit(1)
 
+
 def validate_yaml_import_defaults(defaults, yaml_file):
     """Validate clowder.yaml defaults with an import"""
     if not isinstance(defaults, dict):
@@ -150,6 +156,7 @@ def validate_yaml_import_defaults(defaults, yaml_file):
     if len(defaults) > 0:
         error = format_invalid_entries_error('defaults', defaults, yaml_file)
         raise Exception(error)
+
 
 def validate_yaml_defaults(defaults, yaml_file):
     """Validate defaults in clowder loaded from yaml file"""
@@ -198,6 +205,7 @@ def validate_yaml_defaults(defaults, yaml_file):
         print_error(err)
         sys.exit(1)
 
+
 def validate_yaml_defaults_optional(defaults, yaml_file):
     """Validate defaults optional args in clowder loaded from yaml file"""
     if 'depth' in defaults:
@@ -213,6 +221,7 @@ def validate_yaml_defaults_optional(defaults, yaml_file):
             error = format_not_bool_error('recursive', yaml_file)
             raise Exception(error)
         del defaults['recursive']
+
 
 def validate_yaml_fork(fork, yaml_file):
     """Validate fork in clowder loaded from yaml file"""
@@ -247,6 +256,7 @@ def validate_yaml_fork(fork, yaml_file):
         print_invalid_yaml_error()
         print_error(err)
         sys.exit(1)
+
 
 def validate_yaml_import_groups(groups, yaml_file):
     """Validate groups in clowder loaded from yaml file with import"""
@@ -325,6 +335,7 @@ def validate_yaml_import_groups(groups, yaml_file):
         print_error(err)
         sys.exit(1)
 
+
 def validate_yaml_groups(groups, yaml_file):
     """Validate groups in clowder loaded from yaml file"""
     try:
@@ -400,6 +411,7 @@ def validate_yaml_groups(groups, yaml_file):
         print_error(err)
         sys.exit(1)
 
+
 def validate_yaml_import_project(project, yaml_file):
     """Validate project in clowder loaded from yaml file with import"""
     if not isinstance(project, dict):
@@ -433,6 +445,7 @@ def validate_yaml_import_project(project, yaml_file):
         error = format_invalid_entries_error('project', project, yaml_file)
         raise Exception(error)
 
+
 def validate_yaml_project(project, yaml_file):
     """Validate project in clowder loaded from yaml file"""
     if not isinstance(project, dict):
@@ -463,6 +476,7 @@ def validate_yaml_project(project, yaml_file):
     if len(project) > 0:
         error = format_invalid_entries_error('project', project, yaml_file)
         raise Exception(error)
+
 
 def validate_yaml_project_optional(project, yaml_file):
     """Validate optional args in project in clowder loaded from yaml file"""
@@ -506,6 +520,7 @@ def validate_yaml_project_optional(project, yaml_file):
         validate_yaml_fork(fork, yaml_file)
         del project['fork']
 
+
 def validate_yaml_projects(projects, yaml_file, is_import):
     """Validate projects in clowder loaded from yaml file"""
     try:
@@ -526,6 +541,7 @@ def validate_yaml_projects(projects, yaml_file, is_import):
         print_invalid_yaml_error()
         print_error(err)
         sys.exit(1)
+
 
 def validate_yaml_sources(sources, yaml_file):
     """Validate sources in clowder loaded from yaml file"""
@@ -568,6 +584,7 @@ def validate_yaml_sources(sources, yaml_file):
         print_invalid_yaml_error()
         print_error(err)
         sys.exit(1)
+
 
 def _valid_ref_type(ref):
     """Validate that ref is formatted correctly"""

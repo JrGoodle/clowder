@@ -1,4 +1,6 @@
 """Representation of clowder.yaml project"""
+
+
 import os
 import sys
 from termcolor import cprint
@@ -25,6 +27,7 @@ from clowder.utility.git_print_utilities import (
 from clowder.utility.git_utilities import Git
 from clowder.utility.git_submodule_utilities import GitSubmodules
 
+
 # Disable errors shown by pylint for too many public methods
 # pylint: disable=R0904
 # Disable errors shown by pylint for too many branches
@@ -35,6 +38,7 @@ from clowder.utility.git_submodule_utilities import GitSubmodules
 # pylint: disable=R0902
 # Disable errors shown by pylint for no specified exception types
 # pylint: disable=W0702
+
 
 class Project(object):
     """clowder.yaml project class"""

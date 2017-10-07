@@ -1,10 +1,13 @@
 """Test fork class"""
+
+
 import os
 import sys
 import unittest
 from clowder.fork import Fork
 from clowder.source import Source
 from test.shared import GITHUB_SSH_SOURCE_YAML
+
 
 class ForkTest(unittest.TestCase):
     """fork test subclass"""
@@ -33,6 +36,7 @@ class ForkTest(unittest.TestCase):
         self.assertEqual(self.fork.name, self.name)
         self.assertEqual(self.fork.remote_name, self.remote_name)
         self.assertEqual(self.fork.url, self.source.get_url_prefix() + self.name + ".git")
+
 
 if __name__ == '__main__':
     if len(sys.argv) > 1:

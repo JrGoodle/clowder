@@ -1,4 +1,6 @@
 """Test source class"""
+
+
 import sys
 import unittest
 from clowder.source import Source
@@ -7,8 +9,10 @@ from test.shared import (
     GITHUB_SSH_SOURCE_YAML
 )
 
+
 class SourceTest(unittest.TestCase):
     """source test subclass"""
+
     def setUp(self):
         self.ssh_source = Source(GITHUB_SSH_SOURCE_YAML)
         self.https_source = Source(GITHUB_HTTPS_SOURCE_YAML)
@@ -32,6 +36,7 @@ class SourceTest(unittest.TestCase):
     def test_ssh_url_prefix(self):
         """Test ssh url prefix"""
         self.assertEqual(self.ssh_source.get_url_prefix(), 'git@github.com:')
+
 
 if __name__ == '__main__':
     if len(sys.argv) > 1:

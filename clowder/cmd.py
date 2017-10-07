@@ -1,5 +1,7 @@
 #! /usr/bin/env python3
 """Main entrypoint for clowder command"""
+
+
 import argparse
 import atexit
 import os
@@ -14,8 +16,10 @@ from clowder.utility.clowder_subparsers import configure_argparse
 from clowder.utility.clowder_utilities import is_offline
 from clowder.utility.print_utilities import print_offline_error
 
+
 if __name__ == '__main__':
     raise SystemExit(main())
+
 
 # Disable errors shown by pylint for no specified exception types
 # pylint: disable=W0702
@@ -23,6 +27,7 @@ if __name__ == '__main__':
 # pylint: disable=R0904
 # Disable errors shown by pylint for too many branches
 # pylint: disable=R0912
+
 
 class Command(object):
     """Command class for parsing commandline options"""

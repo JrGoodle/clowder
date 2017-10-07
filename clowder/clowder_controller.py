@@ -1,4 +1,6 @@
 """clowder.yaml parsing and functionality"""
+
+
 import os
 import sys
 from termcolor import cprint
@@ -28,6 +30,7 @@ from clowder.utility.print_utilities import (
     print_save_version_exists_error
 )
 
+
 # Disable errors shown by pylint for too many public methods
 # pylint: disable=R0904
 # Disable errors shown by pylint for catching too general exception Exception
@@ -35,10 +38,12 @@ from clowder.utility.print_utilities import (
 # Disable errors shown by pylint for too many arguments
 # pylint: disable=R0913
 
+
 class ClowderController(object):
     """Class encapsulating project information from clowder.yaml for controlling clowder"""
-    def __init__(self, rootDirectory):
-        self.root_directory = rootDirectory
+
+    def __init__(self, root_directory):
+        self.root_directory = root_directory
         self.defaults = None
         self.groups = []
         self.sources = []
@@ -193,7 +198,7 @@ class ClowderController(object):
             print(get_yaml_string(self._get_yaml_resolved()))
         else:
             print_yaml(self.root_directory)
-        sys.exit() # exit early to prevent printing extra newline
+        sys.exit()  # exit early to prevent printing extra newline
 
     def prune_groups(self, group_names, branch, force=False, local=False, remote=False):
         """Prune branches for groups"""
@@ -251,7 +256,7 @@ class ClowderController(object):
         self._validate_projects_exist()
         self._validate_groups(self.get_all_group_names())
         versions_dir = os.path.join(self.root_directory, '.clowder', 'versions')
-        version_name = version.replace('/', '-') # Replace path separateors with dashes
+        version_name = version.replace('/', '-')  # Replace path separators with dashes
         version_dir = os.path.join(versions_dir, version_name)
         if not os.path.exists(version_dir):
             os.makedirs(version_dir)

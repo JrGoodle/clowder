@@ -1,8 +1,11 @@
 """Test ClowderRepo class"""
+
+
 import os
 import sys
 import unittest
 from clowder.clowder_repo import ClowderRepo
+
 
 class ClowderRepoTest(unittest.TestCase):
     """clowder_repo test subclass"""
@@ -33,6 +36,7 @@ class ClowderRepoTest(unittest.TestCase):
         version_path = os.path.join('.clowder', 'versions', 'v0.1', 'clowder.yaml')
         self.assertEqual(os.readlink(self.clowder_yaml_path),
                          os.path.join(self.CATS_EXAMPLE_PATH, version_path))
+
 
 if __name__ == '__main__':
     if len(sys.argv) > 1:

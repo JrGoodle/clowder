@@ -1,4 +1,6 @@
 """Git utilities"""
+
+
 import os
 import subprocess
 import sys
@@ -21,6 +23,7 @@ from clowder.utility.print_utilities import (
     print_remote_already_exists_error
 )
 
+
 # Disable errors shown by pylint for too many public methods
 # pylint: disable=R0904
 # Disable errors shown by pylint for no specified exception types
@@ -30,8 +33,10 @@ from clowder.utility.print_utilities import (
 # Disable errors shown by pylint for too many arguments
 # pylint: disable=R0913
 
+
 class Git(object):
     """Class encapsulating git utilities"""
+
     def __init__(self, repo_path):
         self.repo_path = repo_path
         self.repo = self._repo() if existing_git_repository(repo_path) else None

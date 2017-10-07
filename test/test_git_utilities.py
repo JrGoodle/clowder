@@ -1,4 +1,6 @@
 """Test group class"""
+
+
 import os
 import sys
 import unittest
@@ -7,6 +9,7 @@ from clowder.utility.clowder_utilities import (
     truncate_ref
 )
 from clowder.utility.git_utilities import Git
+
 
 class GitUtilitiesTest(unittest.TestCase):
     """git_utilities test subclass"""
@@ -79,6 +82,7 @@ class GitUtilitiesTest(unittest.TestCase):
     def test_truncate_ref_tag(self):
         """Test _truncate_ref() function for tag ref"""
         self.assertEqual(truncate_ref(self.tag_ref), 'v1.0')
+
 
 if __name__ == '__main__':
     if len(sys.argv) > 1:

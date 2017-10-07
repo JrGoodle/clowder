@@ -1,4 +1,6 @@
 """Clowder utilities"""
+
+
 import errno
 import os
 import shutil
@@ -17,6 +19,7 @@ from clowder.utility.print_utilities import (
     print_save_file_error
 )
 
+
 # Disable errors shown by pylint for no specified exception types
 # pylint: disable=W0702
 # Disable errors shown by pylint for too many arguments
@@ -24,11 +27,13 @@ from clowder.utility.print_utilities import (
 # Disable errors shown by pylint for invalid function name
 # pylint: disable=C0103
 
+
 def execute_command(cmd, path):
     """Execute command and display continuous output"""
     return subprocess.call(" ".join(cmd),
                            shell=True,
                            cwd=path)
+
 
 def execute_forall_command(cmd, path, clowder_path, name, remote, fork_remote, ref):
     """Execute forall command with additional environment variables and display continuous output"""
@@ -45,13 +50,16 @@ def execute_forall_command(cmd, path, clowder_path, name, remote, fork_remote, r
                            cwd=path,
                            env=forall_env)
 
+
 def existing_git_repository(path):
     """Check if a git repository exists"""
     return os.path.isdir(os.path.join(path, '.git'))
 
+
 def existing_git_submodule(path):
     """Check if a git submodule exists"""
     return os.path.isfile(os.path.join(path, '.git'))
+
 
 def force_symlink(file1, file2):
     """Force symlink creation"""
@@ -62,6 +70,7 @@ def force_symlink(file1, file2):
             os.remove(file2)
             os.symlink(file1, file2)
 
+
 def get_yaml_string(yaml_output):
     """Return yaml string from python data structures"""
     try:
@@ -69,6 +78,7 @@ def get_yaml_string(yaml_output):
     except:
         cprint('Failed to dump yaml', 'red')
         sys.exit(1)
+
 
 def is_offline(host='8.8.8.8', port=53, timeout=3):
     """
@@ -84,6 +94,7 @@ def is_offline(host='8.8.8.8', port=53, timeout=3):
         return False
     except:
         return True
+
 
 def parse_yaml(yaml_file):
     """Parse yaml file"""
@@ -105,6 +116,7 @@ def parse_yaml(yaml_file):
         print()
         sys.exit(1)
 
+
 def ref_type(ref):
     """Return branch, tag, sha, or unknown ref type"""
     git_branch = "refs/heads/"
@@ -118,6 +130,7 @@ def ref_type(ref):
     else:
         return 'unknown'
 
+
 def remove_directory_exit(path):
     """Remove directory at path"""
     try:
@@ -128,6 +141,7 @@ def remove_directory_exit(path):
     finally:
         print()
         sys.exit(1)
+
 
 def save_yaml(yaml_output, yaml_file):
     """Save yaml file to disk"""
@@ -143,6 +157,7 @@ def save_yaml(yaml_output, yaml_file):
         print_file_exists_error(yaml_file)
         print()
         sys.exit(1)
+
 
 def truncate_ref(ref):
     """Return bare branch, tag, or sha"""
