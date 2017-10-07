@@ -6,6 +6,8 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 prepare_cats_example
 cd "$CATS_EXAMPLE_DIR" || exit 1
 
+ACCESS_LEVEL=${1:-read}
+
 print_double_separator
 echo "TEST: Test clowder repo"
 
@@ -52,7 +54,7 @@ test_clowder_repo_clean() {
 }
 test_clowder_repo_clean
 
-if [ -z "$TRAVIS_OS_NAME" ]; then
+if [ "$ACCESS_LEVEL" == "write" ]; then
     test_clowder_repo_commit_pull_push() {
         print_single_separator
         echo "TEST: Test clowder repo commit, clowder repo pull, clowder repo push commands"

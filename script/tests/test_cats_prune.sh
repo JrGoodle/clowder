@@ -6,6 +6,8 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 prepare_cats_example
 cd "$CATS_EXAMPLE_DIR" || exit 1
 
+ACCESS_LEVEL=${1:-read}
+
 export black_cats_projects=( 'black-cats/kit' \
                              'black-cats/kishka' \
                              'black-cats/sasha' \
@@ -117,7 +119,7 @@ test_prune_force() {
 }
 test_prune_force
 
-if [ -z "$TRAVIS_OS_NAME" ]; then
+if [ "$ACCESS_LEVEL" == "write" ]; then
     test_prune_remote() {
         print_single_separator
         echo "TEST: Test clowder prune remote branch"

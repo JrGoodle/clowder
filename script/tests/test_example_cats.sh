@@ -6,6 +6,8 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 
 . test_utilities.sh
 
+ACCESS_LEVEL=${1:-read}
+
 print_double_separator
 echo 'TEST: cats example test script'
 print_double_separator
@@ -37,9 +39,9 @@ test_clowder_version
 "$TEST_SCRIPT_DIR/tests/test_cats_stash.sh" || exit 1
 "$TEST_SCRIPT_DIR/tests/test_cats_link.sh" || exit 1
 "$TEST_SCRIPT_DIR/tests/test_cats_yaml_validation.sh" || exit 1
-"$TEST_SCRIPT_DIR/tests/test_cats_start.sh" || exit 1
-"$TEST_SCRIPT_DIR/tests/test_cats_prune.sh" || exit 1
-"$TEST_SCRIPT_DIR/tests/test_cats_repo.sh" || exit 1
+"$TEST_SCRIPT_DIR/tests/test_cats_start.sh" $ACCESS_LEVEL || exit 1
+"$TEST_SCRIPT_DIR/tests/test_cats_prune.sh" $ACCESS_LEVEL || exit 1
+"$TEST_SCRIPT_DIR/tests/test_cats_repo.sh" $ACCESS_LEVEL || exit 1
 "$TEST_SCRIPT_DIR/tests/test_cats_yaml.sh" || exit 1
 "$TEST_SCRIPT_DIR/tests/test_cats_import.sh" || exit 1
 
