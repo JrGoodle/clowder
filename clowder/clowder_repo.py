@@ -21,6 +21,7 @@ from clowder.utility.print_utilities import (
 from clowder.utility.git_print_utilities import (
     format_project_string,
     format_project_ref_string,
+    print_git_status,
     print_validation
 )
 
@@ -43,7 +44,7 @@ class ClowderRepo(object):
             cprint(' - Failed to add files to git index', 'red')
             print_error(err)
             sys.exit(1)
-        clowder.status()
+        print_git_status(self.clowder_path)
 
     def branches(self):
         """Return current local branches"""
@@ -55,7 +56,7 @@ class ClowderRepo(object):
         clowder = Git(self.clowder_path)
         if self.is_dirty():
             print(' - Dirty repo. Please stash, commit, or discard your changes')
-            clowder.status()
+            print_git_status(self.clowder_path)
         else:
             clowder.checkout(ref)
 
@@ -179,10 +180,9 @@ class ClowderRepo(object):
             print_command_failed_error(command)
             sys.exit(return_code)
 
-    def status(self):
+    def git_status(self):
         """Print clowder repo git status"""
-        clowder = Git(self.clowder_path)
-        clowder.status()
+        print_git_status(self.clowder_path)
 
     def _validate_groups(self):
         """Validate status of clowder repo"""

@@ -19,6 +19,7 @@ from clowder.utility.git_print_utilities import (
     format_project_string,
     format_project_ref_string,
     print_exists,
+    print_git_status,
     print_validation
 )
 from clowder.utility.git_utilities import Git
@@ -140,8 +141,7 @@ class Project(object):
         if not os.path.isdir(self.full_path()):
             cprint(" - Project is missing\n", 'red')
             return
-        repo = Git(self.full_path())
-        repo.status()
+        print_git_status(self.full_path())
 
     def exists(self):
         """Check if project exists on disk"""
@@ -366,7 +366,7 @@ class Project(object):
         repo = Git(self.full_path())
         if repo.existing_local_branch(branch):
             self._print_status()
-            repo.prune_local(branch, self.ref, force)
+            repo.prune_branch_local(branch, self.ref, force)
 
     def _prune_remote(self, branch):
         """Prune remote branch"""
@@ -377,7 +377,7 @@ class Project(object):
         repo = Git(self.full_path())
         if repo.existing_remote_branch(branch, remote):
             self._print_status()
-            repo.prune_remote(branch, remote)
+            repo.prune_branch_remote(branch, remote)
 
     def _sync(self, repo):
         """Sync fork project with upstream"""

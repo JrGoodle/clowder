@@ -1,8 +1,16 @@
 """String formatting and printing utilities for git"""
 import os
+import sys
 from termcolor import colored, cprint
-from clowder.utility.clowder_utilities import existing_git_repository
+from clowder.utility.clowder_utilities import (
+    execute_command,
+    existing_git_repository,
+)
 from clowder.utility.git_utilities import Git
+from clowder.utility.print_utilities import (
+    format_command,
+    print_command_failed_error
+)
 
 def format_project_string(repo_path, name):
     """Return formatted project name"""
@@ -43,6 +51,16 @@ def print_exists(repo_path):
     if not existing_git_repository(repo_path):
         cprint(' - Project is missing', 'red')
 
+def print_git_status(repo_path):
+    """Print git status"""
+    command = ['git', 'status', '-vv']
+    print(format_command(command))
+    return_code = execute_command(command, repo_path)
+    if return_code != 0:
+        cprint(' - Failed to print status', 'red')
+        print_command_failed_error(command)
+        sys.exit(return_code)
+
 def print_validation(repo_path):
     """Print validation messages"""
     repo = Git(repo_path)
@@ -50,4 +68,4 @@ def print_validation(repo_path):
         return
     if not repo.validate_repo():
         print(' - Dirty repo. Please stash, commit, or discard your changes')
-        repo.status()
+        print_git_status(repo_path)

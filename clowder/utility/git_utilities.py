@@ -13,7 +13,6 @@ from clowder.utility.clowder_utilities import (
     truncate_ref
 )
 from clowder.utility.print_utilities import (
-    format_command,
     format_path,
     format_ref_string,
     format_remote_string,
@@ -228,7 +227,7 @@ class Git(object):
         return self.repo.head.is_detached
 
     def is_dirty(self):
-        """Check whether repo is dirtys"""
+        """Check whether repo is dirty"""
         if not os.path.isdir(self.repo_path):
             return False
         return (self._is_dirty() or
@@ -273,7 +272,7 @@ class Git(object):
             print_command_failed_error(command)
             sys.exit(return_code)
 
-    def prune_local(self, branch, default_ref, force):
+    def prune_branch_local(self, branch, default_ref, force):
         """Prune branch in repository"""
         branch_output = format_ref_string(branch)
         if branch not in self.repo.heads:
@@ -300,7 +299,7 @@ class Git(object):
             print_error(err)
             sys.exit(1)
 
-    def prune_remote(self, branch, remote):
+    def prune_branch_remote(self, branch, remote):
         """Prune remote branch in repository"""
         origin = self._remote(remote)
         if origin is None:
@@ -357,16 +356,6 @@ class Git(object):
             return
         print(' - Stash current changes')
         self.repo.git.stash()
-
-    def status(self):
-        """Print git status"""
-        command = ['git', 'status', '-vv']
-        print(format_command(command))
-        return_code = execute_command(command, self.repo_path)
-        if return_code != 0:
-            cprint(' - Failed to print status', 'red')
-            print_command_failed_error(command)
-            sys.exit(return_code)
 
     def sync(self, upstream_remote, fork_remote, ref):
         """Sync fork with upstream remote"""
