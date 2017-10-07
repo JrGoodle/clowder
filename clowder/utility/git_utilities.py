@@ -130,32 +130,26 @@ class Git(object):
         if not os.path.isdir(self.repo_path):
             os.makedirs(self.repo_path)
         repo_path_output = format_path(self.repo_path)
-        try:
-            print(' - Clone repo at ' + repo_path_output)
-            self.repo = Repo.init(self.repo_path)
-        except Exception as err:
-            cprint(' - Failed to initialize repository', 'red')
-            print_error(err)
+        print(' - Clone repo at ' + repo_path_output)
+        self._init_repo()
+        remote_names = [r.name for r in self.repo.remotes]
+        if remote in remote_names:
+            self._checkout_ref(ref, remote, depth)
+            return
+        return_code = self._create_remote(remote, url)
+        if return_code != 0:
             remove_directory_exit(self.repo_path)
+        if ref_type(ref) is 'branch':
+            self._checkout_new_repo_branch(truncate_ref(ref), remote, depth)
+        elif ref_type(ref) is 'tag':
+            self._checkout_new_repo_tag(truncate_ref(ref), remote, depth)
+        elif ref_type(ref) is 'sha':
+            self._checkout_new_repo_commit(ref, remote, depth)
         else:
-            remote_names = [r.name for r in self.repo.remotes]
-            if remote in remote_names:
-                self._checkout_ref(ref, remote, depth)
-                return
-            return_code = self._create_remote(remote, url)
-            if return_code != 0:
-                remove_directory_exit(self.repo_path)
-            if ref_type(ref) is 'branch':
-                self._checkout_new_repo_branch(truncate_ref(ref), remote, depth)
-            elif ref_type(ref) is 'tag':
-                self._checkout_new_repo_tag(truncate_ref(ref), remote, depth)
-            elif ref_type(ref) is 'sha':
-                self._checkout_new_repo_commit(ref, remote, depth)
-            else:
-                ref_output = format_ref_string(ref)
-                print('Unknown ref ' + ref_output)
-            if recursive:
-                self.submodule_update_recursive(depth)
+            ref_output = format_ref_string(ref)
+            print('Unknown ref ' + ref_output)
+        if recursive:
+            self.submodule_update_recursive(depth)
 
     def current_branch(self):
         """Return currently checked out branch of project"""
@@ -762,6 +756,7 @@ class Git(object):
                     print_error(err)
                     sys.exit(1)
 
+
     def _create_branch_local(self, branch):
         """Create local branch"""
         branch_output = format_ref_string(branch)
@@ -856,46 +851,47 @@ class Git(object):
         if not os.path.isdir(self.repo_path):
             os.makedirs(self.repo_path)
         repo_path_output = format_path(self.repo_path)
+        print(' - Clone repo at ' + repo_path_output)
+        self._init_repo()
+        remote_names = [r.name for r in self.repo.remotes]
+        if remote in remote_names:
+            self._checkout_ref('refs/heads/' + branch, remote, depth)
+            return
+        return_code = self._create_remote(remote, url)
+        if return_code != 0:
+            remove_directory_exit(self.repo_path)
+        branch_output = format_ref_string(branch)
+        origin = self._remote(remote)
+        if origin is None:
+            remove_directory_exit(self.repo_path)
+        return_code = self.fetch(remote, depth=depth, ref=branch)
+        if return_code != 0:
+            remove_directory_exit(self.repo_path)
+        if not self.existing_remote_branch(branch, remote):
+            print(' - No existing remote branch ' + branch_output)
+            self._checkout_new_repo_branch(truncate_ref(default_ref), remote, depth)
+            return
+        return_code = self._create_branch_local_tracking(branch, remote,
+                                                         depth=depth, fetch=False)
+        if return_code != 0:
+            remove_directory_exit(self.repo_path)
+        return_code = self._set_tracking_branch(remote, branch)
+        if return_code != 0:
+            remove_directory_exit(self.repo_path)
+        return_code = self._checkout_branch_local(branch)
+        if return_code != 0:
+            remove_directory_exit(self.repo_path)
+        if recursive:
+            self.submodule_update_recursive(depth)
+
+    def _init_repo(self):
+        """Clone repository"""
         try:
-            print(' - Clone repo at ' + repo_path_output)
             self.repo = Repo.init(self.repo_path)
         except Exception as err:
             cprint(' - Failed to initialize repository', 'red')
             print_error(err)
             remove_directory_exit(self.repo_path)
-        else:
-            remote_names = [r.name for r in self.repo.remotes]
-            if remote in remote_names:
-                self._checkout_ref('refs/heads/' + branch, remote, depth)
-                return
-            return_code = self._create_remote(remote, url)
-            if return_code != 0:
-                remove_directory_exit(self.repo_path)
-            branch_output = format_ref_string(branch)
-            origin = self._remote(remote)
-            if origin is None:
-                remove_directory_exit(self.repo_path)
-            return_code = self.fetch(remote, depth=depth, ref=branch)
-            if return_code != 0:
-                remove_directory_exit(self.repo_path)
-            if not self.existing_remote_branch(branch, remote):
-                print(' - No existing remote branch ' + branch_output)
-                self._checkout_new_repo_branch(truncate_ref(default_ref), remote, depth)
-                return
-            return_code = self._create_branch_local_tracking(branch, remote,
-                                                             depth=depth, fetch=False)
-            if return_code != 0:
-                remove_directory_exit(self.repo_path)
-            else:
-                return_code = self._set_tracking_branch(remote, branch)
-                if return_code != 0:
-                    remove_directory_exit(self.repo_path)
-                    return
-                return_code = self._checkout_branch_local(branch)
-                if return_code != 0:
-                    remove_directory_exit(self.repo_path)
-            if recursive:
-                self.submodule_update_recursive(depth)
 
     def _is_branch_checked_out(self, branch):
         """Check if branch is checked out"""
