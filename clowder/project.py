@@ -326,7 +326,7 @@ class Project(object):
             print(format_fork_string(self.fork.name))
             repo.herd_branch(self.fork.url, self.fork.remote_name, branch, self.ref)
             print(format_fork_string(self.name))
-            repo.herd_branch_upstream(self.url, self.remote_name, branch, self.ref)
+            repo.herd_upstream(self.url, self.remote_name, self.ref, branch=branch)
 
     def _herd_ref(self, repo, depth):
         """Clone project or update latest from upstream"""

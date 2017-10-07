@@ -21,6 +21,8 @@ from clowder.utility.print_utilities import (
     print_remote_already_exists_error
 )
 
+# Disable errors shown by pylint for too many public methods
+# pylint: disable=R0904
 # Disable errors shown by pylint for no specified exception types
 # pylint: disable=W0702
 # Disable errors shown by pylint for catching too general exception Exception
@@ -204,21 +206,18 @@ class Git(object):
         else:
             self.herd(url, remote, default_ref, depth=depth)
 
-    def herd_branch_upstream(self, url, remote, branch, default_ref, depth=0):
-        """Herd branch for fork's upstream repo"""
+    def herd_upstream(self, url, remote, default_ref, branch=None):
+        """Herd fork's upstream repo"""
         return_code = self._create_remote(remote, url)
         if return_code != 0:
             sys.exit(1)
-        return_code = self.fetch(remote, depth=depth, ref=branch)
-        if depth != 0 and return_code != 0:
-            self.fetch(remote, depth=depth, ref=default_ref)
-
-    def herd_upstream(self, url, remote, ref, depth=0):
-        """Herd branch for fork's upstream repo"""
-        return_code = self._create_remote(remote, url)
+        if branch is not None:
+            return_code = self.fetch(remote, ref=branch)
+            if return_code == 0:
+                return
+        return_code = self.fetch(remote, ref=default_ref)
         if return_code != 0:
             sys.exit(1)
-        self.fetch(remote, depth=depth, ref=ref)
 
     def is_detached(self):
         """Check if HEAD is detached"""
