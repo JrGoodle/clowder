@@ -4,6 +4,8 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 
 . test_utilities.sh
 
+ACCESS_LEVEL=${1:-read}
+
 export black_cats_projects=( 'black-cats/kit' \
                              'black-cats/kishka' \
                              'black-cats/sasha' \
@@ -55,7 +57,7 @@ test_start() {
 }
 test_start
 
-if [ -z "$TRAVIS_OS_NAME" ]; then
+if [ "$ACCESS_LEVEL" == "write" ]; then
     test_start_tracking() {
         print_single_separator
         echo "TEST: Test start tracking branch"

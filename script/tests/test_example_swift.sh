@@ -6,6 +6,8 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 
 . test_utilities.sh
 
+ACCESS_LEVEL=${1:-read}
+
 print_double_separator
 echo 'TEST: swift projects example test script'
 print_double_separator
@@ -67,11 +69,11 @@ test_default_branches() {
 
 test_clowder_version
 
-if [ -z "$TRAVIS_OS_NAME" ]; then
+if [ "$ACCESS_LEVEL" == "write" ]; then
     mkdir swift-source || exit 1
     pushd swift-source || exit 1
     clowder init git@github.com:JrGoodle/swift-clowder.git || exit 1
-    clowder link -v jrgoodle-fork-travis-ci || exit 1
+    clowder link -v jrgoodle-fork || exit 1
 
     test_configure_remotes_herd() {
         git clone git@github.com:apple/swift.git || exit 1

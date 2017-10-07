@@ -6,6 +6,8 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 
 . test_utilities.sh
 
+ACCESS_LEVEL=${1:-read}
+
 print_double_separator
 echo 'TEST: llvm projects example test script'
 print_double_separator
@@ -139,7 +141,7 @@ clowder status || exit 1
 #     popd
 # done
 
-if [ -z "$TRAVIS_OS_NAME" ]; then
+if [ "$ACCESS_LEVEL" == "write" ]; then
     test_forks() {
         print_double_separator
         echo "TEST: Forks"
