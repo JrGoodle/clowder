@@ -73,7 +73,7 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
     mkdir swift-source || exit 1
     pushd swift-source || exit 1
     clowder init git@github.com:JrGoodle/swift-clowder.git || exit 1
-    clowder link -v jrgoodle-fork-travis-ci || exit 1
+    clowder link -v jrgoodle-fork || exit 1
 
     test_configure_remotes_herd() {
         git clone git@github.com:apple/swift.git || exit 1
