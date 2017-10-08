@@ -367,7 +367,7 @@ class Git(object):
         print(' - Stash current changes')
         self.repo.git.stash()
 
-    def sync(self, upstream_remote, fork_remote, ref):
+    def sync(self, upstream_remote, fork_remote, ref, rebase=False):
         """Sync fork with upstream remote"""
         print(' - Sync fork with upstream remote')
         if ref_type(ref) != 'branch':
@@ -375,7 +375,10 @@ class Git(object):
             sys.exit(1)
         fork_remote_output = format_remote_string(fork_remote)
         branch_output = format_ref_string(truncate_ref(ref))
-        self._pull_remote_branch(upstream_remote, truncate_ref(ref))
+        if rebase:
+            self._rebase_remote_branch(upstream_remote, truncate_ref(ref))
+        else:
+            self._pull_remote_branch(upstream_remote, truncate_ref(ref))
         print(' - Push to ' + fork_remote_output + ' ' + branch_output)
         command = ['git', 'push', fork_remote, truncate_ref(ref)]
         return_code = execute_command(command, self.repo_path)
