@@ -161,7 +161,6 @@ class Git(object):
         return_code = execute_command(command, self.repo_path)
         if return_code != 0:
             print(error)
-            print_command_failed_error(command)
         return return_code
 
     def herd(self, url, remote, ref, depth=0, fetch=True, rebase=False):

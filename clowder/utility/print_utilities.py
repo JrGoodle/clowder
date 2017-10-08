@@ -18,8 +18,10 @@ def format_clowder_command(command):
 def format_command(command):
     """Return formatted command name"""
     if isinstance(command, list):
-        command = " ".join(command)
-    return colored('$ ' + command, attrs=['bold'])
+        command_output = " ".join(command)
+    else:
+        command_output = command
+    return colored('$ ' + command_output, attrs=['bold'])
 
 
 def format_depth_error(depth, yaml_file):
@@ -194,9 +196,9 @@ def format_yaml_file(yaml_file):
 
 def print_command_failed_error(command):
     """Print error message for failed command"""
-    output_1 = colored(' - Error: Failed to run command\n', 'red')
+    output_1 = colored(' - Error: Failed to run command ', 'red')
     output_2 = format_command(command)
-    return output_1 + output_2
+    print(output_1 + output_2 + '\n')
 
 
 def print_error(error):

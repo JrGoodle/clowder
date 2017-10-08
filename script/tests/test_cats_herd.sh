@@ -411,7 +411,7 @@ test_herd_rebase
 if [ "$ACCESS_LEVEL" == "write" ]; then
     test_herd_rebase_conflict() {
         print_single_separator
-        echo "TEST: clowder herd rebase"
+        echo "TEST: clowder herd rebase conflict"
         clowder link || exit 1
         clowder herd || exit 1
 
