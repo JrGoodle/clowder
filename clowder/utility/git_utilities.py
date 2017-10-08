@@ -161,10 +161,9 @@ class Git(object):
         return_code = execute_command(command, self.repo_path)
         if return_code != 0:
             print(error)
-            print_command_failed_error(command)
         return return_code
 
-    def herd(self, url, remote, ref, depth=0, fetch=True):
+    def herd(self, url, remote, ref, depth=0, fetch=True, rebase=False):
         """Herd ref"""
         if not existing_git_repository(self.repo_path):
             self.create_repo(url, remote, ref, depth=depth)
@@ -177,7 +176,10 @@ class Git(object):
             branch = truncate_ref(ref)
             if self.existing_remote_branch(branch, remote):
                 if self._is_tracking_branch(branch):
-                    self._pull_remote_branch(remote, branch)
+                    if rebase:
+                        self._rebase_remote_branch(remote, branch)
+                    else:
+                        self._pull_remote_branch(remote, branch)
                 else:
                     self._set_tracking_branch_commit(branch, remote, depth)
         elif ref_type(ref) == 'tag' or ref_type(ref) == 'sha':
@@ -189,7 +191,7 @@ class Git(object):
             cprint('Unknown ref ' + ref, 'red')
             sys.exit(1)
 
-    def herd_branch(self, url, remote, branch, default_ref, depth=0):
+    def herd_branch(self, url, remote, branch, default_ref, depth=0, rebase=False):
         """Herd branch"""
         if not existing_git_repository(self.repo_path):
             self._create_repo_herd_branch(url, remote, branch,
@@ -197,13 +199,16 @@ class Git(object):
             return
         return_code = self.fetch(remote, depth=depth, ref=branch)
         if return_code != 0:
-            self.herd(url, remote, default_ref, depth=depth)
+            self.herd(url, remote, default_ref, depth=depth, rebase=rebase)
             return
         if self.existing_local_branch(branch):
             self._checkout_ref('refs/heads/' + branch, remote, depth)
             if self.existing_remote_branch(branch, remote):
                 if self._is_tracking_branch(branch):
-                    self._pull_remote_branch(remote, branch)
+                    if rebase:
+                        self._rebase_remote_branch(remote, branch)
+                    else:
+                        self._pull_remote_branch(remote, branch)
                 else:
                     self._set_tracking_branch_commit(branch, remote, depth)
         elif self.existing_remote_branch(branch, remote):
@@ -361,7 +366,7 @@ class Git(object):
         print(' - Stash current changes')
         self.repo.git.stash()
 
-    def sync(self, upstream_remote, fork_remote, ref):
+    def sync(self, upstream_remote, fork_remote, ref, rebase=False):
         """Sync fork with upstream remote"""
         print(' - Sync fork with upstream remote')
         if ref_type(ref) != 'branch':
@@ -369,7 +374,10 @@ class Git(object):
             sys.exit(1)
         fork_remote_output = format_remote_string(fork_remote)
         branch_output = format_ref_string(truncate_ref(ref))
-        self._pull_remote_branch(upstream_remote, truncate_ref(ref))
+        if rebase:
+            self._rebase_remote_branch(upstream_remote, truncate_ref(ref))
+        else:
+            self._pull_remote_branch(upstream_remote, truncate_ref(ref))
         print(' - Push to ' + fork_remote_output + ' ' + branch_output)
         command = ['git', 'push', fork_remote, truncate_ref(ref)]
         return_code = execute_command(command, self.repo_path)
@@ -467,14 +475,15 @@ class Git(object):
             message = colored(' - No existing remote tag ', 'red')
             print(message + tag_output)
             remove_directory_exit(self.repo_path)
-        try:
-            print(' - Checkout tag ' + tag_output)
-            self.repo.git.checkout(remote_tag)
-        except Exception as err:
-            message = colored(' - Failed to checkout tag ', 'red')
-            print(message + tag_output)
-            print_error(err)
-            remove_directory_exit(self.repo_path)
+        else:
+            try:
+                print(' - Checkout tag ' + tag_output)
+                self.repo.git.checkout(remote_tag)
+            except Exception as err:
+                message = colored(' - Failed to checkout tag ', 'red')
+                print(message + tag_output)
+                print_error(err)
+                remove_directory_exit(self.repo_path)
 
     def _checkout_ref(self, ref, remote, depth, fetch=True):
         """Checkout branch, tag, or commit from sha"""
@@ -503,13 +512,13 @@ class Git(object):
 
     def _checkout_sha(self, sha):
         """Checkout commit by sha"""
+        commit_output = format_ref_string(sha)
         try:
             same_sha = self.repo.head.commit.hexsha == sha
             is_detached = self.repo.head.is_detached
             if same_sha and is_detached:
                 print(' - On correct commit')
                 return
-            commit_output = format_ref_string(sha)
             print(' - Checkout commit ' + commit_output)
             self.repo.git.checkout(sha)
         except Exception as err:
@@ -724,6 +733,22 @@ class Git(object):
         return_code = execute_command(command, self.repo_path)
         if return_code != 0:
             message = colored(' - Failed to pull from ', 'red')
+            print(message + remote_output + ' ' + branch_output)
+            print_command_failed_error(command)
+            sys.exit(return_code)
+
+    def _rebase_remote_branch(self, remote, branch):
+        """Rebase from remote branch"""
+        if self.repo.head.is_detached:
+            print(' - HEAD is detached')
+            return
+        branch_output = format_ref_string(branch)
+        remote_output = format_remote_string(remote)
+        print(' - Rebase from ' + remote_output + ' ' + branch_output)
+        command = ['git', 'rebase', remote + '/' + branch]
+        return_code = execute_command(command, self.repo_path)
+        if return_code != 0:
+            message = colored(' - Failed to rebase from ', 'red')
             print(message + remote_output + ' ' + branch_output)
             print_command_failed_error(command)
             sys.exit(return_code)

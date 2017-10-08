@@ -170,23 +170,23 @@ class ClowderController(object):
                 versions.remove(version)
         return versions
 
-    def herd(self, group_names=None, project_names=None, branch=None, depth=None):
+    def herd(self, group_names=None, project_names=None, branch=None, depth=None, rebase=False):
         """Sync projects with latest upstream changes"""
         if project_names is None and group_names is None:
             self._validate_groups(self.get_all_group_names())
             for group in self.groups:
-                group.herd(branch, depth)
+                group.herd(branch, depth, rebase=rebase)
         elif project_names is None:
             self._validate_groups(group_names)
             for group in self.groups:
                 if group.name in group_names:
-                    group.herd(branch, depth)
+                    group.herd(branch, depth, rebase=rebase)
         else:
             self._validate_projects(project_names)
             for group in self.groups:
                 for project in group.projects:
                     if project.name in project_names:
-                        project.herd(branch, depth)
+                        project.herd(branch, depth, rebase=rebase)
 
     def print_yaml(self, resolved):
         """Print clowder.yaml"""
@@ -302,12 +302,12 @@ class ClowderController(object):
             if group.name in group_names:
                 group.status(padding)
 
-    def sync(self, project_names):
-        """Print status for groups"""
+    def sync(self, project_names, rebase=False):
+        """Sync projects"""
         for group in self.groups:
             for project in group.projects:
                 if project.name in project_names:
-                    project.sync()
+                    project.sync(rebase=rebase)
 
     def _existing_branch_group(self, group_names, branch, is_remote):
         """Checks whether at least one branch exists for projects in groups"""

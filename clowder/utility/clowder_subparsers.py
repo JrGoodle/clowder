@@ -191,6 +191,8 @@ def _configure_subparser_herd(subparsers, clowder):
     """Configure clowder herd subparser and arguments"""
     herd_help = 'Clone and sync latest changes for projects'
     parser_herd = subparsers.add_parser('herd', help=herd_help)
+    parser_herd.add_argument('--rebase', '-r', action='store_true',
+                             help='use rebase instead of pull')
     parser_herd.add_argument('--depth', '-d', default=None, type=int, nargs=1,
                              help='depth to herd', metavar='DEPTH')
     parser_herd.add_argument('--branch', '-b', nargs=1, default=None,
@@ -414,11 +416,13 @@ def _configure_subparser_status(subparsers):
 
 def _configure_subparser_sync(subparsers, clowder):
     """Configure clowder sync subparser and arguments"""
+    parser_sync = subparsers.add_parser('sync', help='Sync fork with upstream remote')
+    parser_sync.add_argument('--rebase', '-r', action='store_true',
+                             help='use rebase instead of pull')
     if clowder is None:
         project_names = ''
     else:
         project_names = clowder.get_all_fork_project_names()
-    parser_sync = subparsers.add_parser('sync', help='Sync fork with upstream remote')
     if project_names == '':
         sync_help_projects = 'projects to sync'
     else:
