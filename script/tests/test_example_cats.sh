@@ -32,7 +32,7 @@ test_clowder_version
 "$TEST_SCRIPT_DIR/tests/test_cats_branch.sh" || exit 1
 "$TEST_SCRIPT_DIR/tests/test_cats_status.sh" || exit 1
 "$TEST_SCRIPT_DIR/tests/test_cats_clean.sh" || exit 1
-"$TEST_SCRIPT_DIR/tests/test_cats_herd.sh" || exit 1
+"$TEST_SCRIPT_DIR/tests/test_cats_herd.sh" $ACCESS_LEVEL || exit 1
 "$TEST_SCRIPT_DIR/tests/test_cats_herd_branch.sh" || exit 1
 "$TEST_SCRIPT_DIR/tests/test_cats_forall.sh" || exit 1
 "$TEST_SCRIPT_DIR/tests/test_cats_save.sh" || exit 1

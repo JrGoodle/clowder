@@ -4,6 +4,8 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 
 . test_utilities.sh
 
+ACCESS_LEVEL=${1:-read}
+
 export cats_projects=( 'duke' 'mu' )
 
 export black_cats_projects=( 'black-cats/kit' \
@@ -377,9 +379,10 @@ test_herd_existing_local_existing_remote_tracking
 
 test_herd_rebase() {
     print_single_separator
-    echo "TEST: Herd rebase"
+    echo "TEST: clowder herd rebase"
     clowder link || exit 1
     clowder herd || exit 1
+
     REBASE_MESSAGE='Add rebase file'
     pushd mu
     COMMIT_MESSAGE_1="$(git log --format=%B -n 1 HEAD)"
@@ -393,11 +396,52 @@ test_herd_rebase() {
     test_commit_messages "$(git log --format=%B -n 1 HEAD)" "$REBASE_MESSAGE"
     test_commit_messages "$(git log --format=%B -n 1 HEAD~1)" "$COMMIT_MESSAGE_2"
     popd
+
     clowder herd -r || exit 1
+
     pushd mu
     test_commit_messages "$(git log --format=%B -n 1 HEAD)" "$REBASE_MESSAGE"
     test_commit_messages "$(git log --format=%B -n 1 HEAD~1)" "$COMMIT_MESSAGE_1"
     test_commit_messages "$(git log --format=%B -n 1 HEAD~2)" "$COMMIT_MESSAGE_2"
+    git reset --hard HEAD~1 || exit 1
     popd
 }
 test_herd_rebase
+
+if [ "$ACCESS_LEVEL" == "write" ]; then
+    test_herd_rebase_conflict() {
+        print_single_separator
+        echo "TEST: clowder herd rebase"
+        clowder link || exit 1
+        clowder herd || exit 1
+
+        pushd mu
+        touch rebasefile || exit 1
+        echo 'something' >> rebasefile
+        git add rebasefile || exit 1
+        git commit -m 'Add rebase file' || exit 1
+        git push || exit 1
+        git reset --hard HEAD~1 || exit 1
+        touch rebasefile || exit 1
+        echo 'something else' >> rebasefile
+        git add rebasefile || exit 1
+        git commit -m 'Add another rebase file' || exit 1
+        test_no_rebase_in_progress
+        popd
+
+        clowder herd -r && exit 1
+
+        pushd mu
+        test_rebase_in_progress
+        popd
+
+        clowder clean -a || exit 1
+
+        pushd mu
+        test_no_rebase_in_progress
+        git reset --hard HEAD~1 || exit 1
+        git push --force || exit 1
+        popd
+    }
+    test_herd_rebase_conflict
+fi
