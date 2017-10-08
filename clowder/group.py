@@ -1,9 +1,13 @@
 """Representation of clowder.yaml group"""
+
+
 from termcolor import colored
 from clowder.project import Project
 
+
 # Disable errors shown by pylint for too many branches
 # pylint: disable=R0912
+
 
 class Group(object):
     """clowder.yaml group class"""
@@ -45,7 +49,7 @@ class Group(object):
         self.projects = []
         for project in group['projects']:
             self.projects.append(Project(root_directory, project, group, defaults, sources))
-        self.projects.sort(key=lambda project: project.path)
+        self.projects.sort(key=lambda p: p.path)
 
     def branch(self, local=False, remote=False):
         """Print branches for all projects"""

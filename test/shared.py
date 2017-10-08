@@ -1,5 +1,6 @@
 """Shared resources for tests"""
 
+
 DEFAULTS_YAML = {'ref': 'refs/heads/master',
                  'remote': 'origin',
                  'source': 'github',

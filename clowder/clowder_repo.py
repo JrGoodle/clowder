@@ -1,4 +1,6 @@
 """Clowder repo management"""
+
+
 import atexit
 import os
 import sys
@@ -25,11 +27,14 @@ from clowder.utility.git_print_utilities import (
     print_validation
 )
 
+
 # Disable errors shown by pylint for catching too general exception Exception
 # pylint: disable=W0703
 
+
 class ClowderRepo(object):
     """Class encapsulating clowder repo information"""
+
     def __init__(self, root_directory):
         self.root_directory = root_directory
         self.clowder_path = os.path.join(self.root_directory, '.clowder')

@@ -1,11 +1,13 @@
 """Clowder yaml loading"""
+
+
 import sys
 from termcolor import colored
 from clowder.utility.print_utilities import (
-    # format_invalid_entries_error,
     print_error,
     print_invalid_yaml_error
 )
+
 
 def load_yaml_base(parsed_yaml, combined_yaml):
     """Load clowder from base yaml file"""
@@ -14,6 +16,7 @@ def load_yaml_base(parsed_yaml, combined_yaml):
         combined_yaml['defaults']['depth'] = 0
     combined_yaml['sources'] = parsed_yaml['sources']
     combined_yaml['groups'] = parsed_yaml['groups']
+
 
 def load_yaml_import(parsed_yaml, combined_yaml):
     """Load clowder from import yaml file"""
@@ -27,6 +30,7 @@ def load_yaml_import(parsed_yaml, combined_yaml):
         _load_yaml_import_groups(parsed_yaml['groups'],
                                  combined_yaml['groups'])
 
+
 def _load_yaml_import_defaults(imported_defaults, defaults):
     """Load clowder projects from imported group"""
     if 'recursive' in imported_defaults:
@@ -39,6 +43,7 @@ def _load_yaml_import_defaults(imported_defaults, defaults):
         defaults['source'] = imported_defaults['source']
     if 'depth' in imported_defaults:
         defaults['depth'] = imported_defaults['depth']
+
 
 def _load_yaml_import_groups(imported_groups, groups):
     """Load clowder groups from import yaml"""
@@ -64,6 +69,7 @@ def _load_yaml_import_groups(imported_groups, groups):
                     _load_yaml_import_projects(imported_group['projects'], group['projects'])
             combined_groups.append(group)
         groups = combined_groups
+
 
 def _load_yaml_import_projects(imported_projects, projects):
     """Load clowder projects from imported group"""
@@ -99,6 +105,7 @@ def _load_yaml_import_projects(imported_projects, projects):
                 project['source'] = imported_project['source']['name']
             combined_projects.append(imported_project)
         projects = combined_projects
+
 
 def _load_yaml_import_sources(imported_sources, sources):
     """Load clowder sources from import yaml"""

@@ -1,4 +1,6 @@
 """Git utilities"""
+
+
 import os
 import subprocess
 import sys
@@ -21,6 +23,7 @@ from clowder.utility.print_utilities import (
     print_remote_already_exists_error
 )
 
+
 # Disable errors shown by pylint for too many public methods
 # pylint: disable=R0904
 # Disable errors shown by pylint for no specified exception types
@@ -30,8 +33,10 @@ from clowder.utility.print_utilities import (
 # Disable errors shown by pylint for too many arguments
 # pylint: disable=R0913
 
+
 class Git(object):
     """Class encapsulating git utilities"""
+
     def __init__(self, repo_path):
         self.repo_path = repo_path
         self.repo = self._repo() if existing_git_repository(repo_path) else None
@@ -51,7 +56,7 @@ class Git(object):
     def clean(self, args=''):
         """Discard changes for repo"""
         print(' - Clean project')
-        clean_args = '-f' if args is '' else '-f' + args
+        clean_args = '-f' if args == '' else '-f' + args
         self._clean(args=clean_args)
         print(' - Reset project')
         self._reset_head()
@@ -106,11 +111,11 @@ class Git(object):
         return_code = self._create_remote(remote, url)
         if return_code != 0:
             remove_directory_exit(self.repo_path)
-        if ref_type(ref) is 'branch':
+        if ref_type(ref) == 'branch':
             self._checkout_new_repo_branch(truncate_ref(ref), remote, depth)
-        elif ref_type(ref) is 'tag':
+        elif ref_type(ref) == 'tag':
             self._checkout_new_repo_tag(truncate_ref(ref), remote, depth)
-        elif ref_type(ref) is 'sha':
+        elif ref_type(ref) == 'sha':
             self._checkout_new_repo_commit(ref, remote, depth)
         else:
             ref_output = format_ref_string(ref)
@@ -164,7 +169,7 @@ class Git(object):
         if not existing_git_repository(self.repo_path):
             self.create_repo(url, remote, ref, depth=depth)
             return
-        if ref_type(ref) is 'branch':
+        if ref_type(ref) == 'branch':
             return_code = self._create_remote(remote, url)
             if return_code != 0:
                 sys.exit(1)
@@ -175,7 +180,7 @@ class Git(object):
                     self._pull_remote_branch(remote, branch)
                 else:
                     self._set_tracking_branch_commit(branch, remote, depth)
-        elif ref_type(ref) is 'tag' or ref_type(ref) is 'sha':
+        elif ref_type(ref) == 'tag' or ref_type(ref) == 'sha':
             return_code = self._create_remote(remote, url)
             if return_code != 0:
                 sys.exit(1)
@@ -359,7 +364,7 @@ class Git(object):
     def sync(self, upstream_remote, fork_remote, ref):
         """Sync fork with upstream remote"""
         print(' - Sync fork with upstream remote')
-        if ref_type(ref) is not 'branch':
+        if ref_type(ref) != 'branch':
             cprint(' - Can only sync branches', 'red')
             sys.exit(1)
         fork_remote_output = format_remote_string(fork_remote)
@@ -473,7 +478,7 @@ class Git(object):
 
     def _checkout_ref(self, ref, remote, depth, fetch=True):
         """Checkout branch, tag, or commit from sha"""
-        if ref_type(ref) is 'branch':
+        if ref_type(ref) == 'branch':
             branch = truncate_ref(ref)
             if not self.existing_local_branch(branch):
                 return_code = self._create_branch_local_tracking(branch, remote,
@@ -485,10 +490,10 @@ class Git(object):
                 print(' - Branch ' + branch_output + ' already checked out')
                 return
             self._checkout_branch_local(branch)
-        elif ref_type(ref) is 'tag':
+        elif ref_type(ref) == 'tag':
             self.fetch(remote, depth=depth, ref=ref)
             self._checkout_tag(truncate_ref(ref))
-        elif ref_type(ref) is 'sha':
+        elif ref_type(ref) == 'sha':
             self.fetch(remote, depth=depth, ref=ref)
             self._checkout_sha(ref)
         else:
@@ -815,7 +820,7 @@ class Git(object):
             output = subprocess.check_output(command,
                                              shell=True,
                                              cwd=self.repo_path)
-            return output.decode('utf-8') is '1'
+            return output.decode('utf-8') == '1'
         except Exception as err:
             cprint(' - Failed to check untracked files', 'red')
             print_error(err)

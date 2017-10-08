@@ -1,4 +1,6 @@
 """String formatting and printing utilities for git"""
+
+
 import os
 import sys
 from termcolor import colored, cprint
@@ -12,6 +14,7 @@ from clowder.utility.print_utilities import (
     print_command_failed_error
 )
 
+
 def format_project_string(repo_path, name):
     """Return formatted project name"""
     if not os.path.isdir(os.path.join(repo_path, '.git')):
@@ -24,6 +27,7 @@ def format_project_string(repo_path, name):
         color = 'green'
         symbol = ''
     return colored(name + symbol, color)
+
 
 def format_project_ref_string(repo_path):
     """Return formatted repo ref name"""
@@ -42,14 +46,15 @@ def format_project_ref_string(repo_path):
     if repo.is_detached():
         current_ref = repo.sha(short=True)
         return colored('(HEAD @ ' + current_ref + ')', 'magenta')
-    else:
-        current_branch = repo.current_branch()
-        return colored('(' + current_branch + ')', 'magenta') + status
+    current_branch = repo.current_branch()
+    return colored('(' + current_branch + ')', 'magenta') + status
+
 
 def print_exists(repo_path):
     """Print existence validation messages"""
     if not existing_git_repository(repo_path):
         cprint(' - Project is missing', 'red')
+
 
 def print_git_status(repo_path):
     """Print git status"""
@@ -60,6 +65,7 @@ def print_git_status(repo_path):
         cprint(' - Failed to print status', 'red')
         print_command_failed_error(command)
         sys.exit(return_code)
+
 
 def print_validation(repo_path):
     """Print validation messages"""

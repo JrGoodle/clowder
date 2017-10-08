@@ -1,4 +1,6 @@
 """Test project class"""
+
+
 import os
 import sys
 import unittest
@@ -15,6 +17,7 @@ from test.shared import (
     KIT_GROUP_YAML,
     KIT_PROJECT_YAML
 )
+
 
 class ProjectTest(unittest.TestCase):
     """project test subclass"""
@@ -75,6 +78,7 @@ class ProjectTest(unittest.TestCase):
                         'remote': 'origin',
                         'source': 'github'}
         self.assertEqual(self.kit_project.get_yaml(), project_yaml)
+
 
 if __name__ == '__main__':
     if len(sys.argv) > 1:
