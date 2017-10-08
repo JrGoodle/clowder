@@ -394,7 +394,7 @@ class Command(object):
         if is_offline():
             print_offline_error()
         all_fork_projects = self.clowder.get_all_fork_project_names()
-        if all_fork_projects is '':
+        if all_fork_projects == '':
             cprint(' - No forks to sync\n', 'red')
             sys.exit()
         self.clowder.sync(all_fork_projects)

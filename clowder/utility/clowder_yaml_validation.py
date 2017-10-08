@@ -594,7 +594,6 @@ def _valid_ref_type(ref):
         return True
     elif ref.startswith(git_tag):
         return True
-    elif len(ref) is 40:
+    elif len(ref) == 40:
         return True
-    else:
-        return False
+    return False

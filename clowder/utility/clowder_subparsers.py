@@ -44,7 +44,7 @@ def _configure_subparser_branch(subparsers, clowder):
     else:
         group_names = clowder.get_all_group_names()
         project_names = clowder.get_all_project_names()
-    if group_names is '':
+    if group_names == '':
         branch_help_groups = 'groups to show branches for'
     else:
         branch_help_groups = '''
@@ -55,7 +55,7 @@ def _configure_subparser_branch(subparsers, clowder):
     group_branch.add_argument('--groups', '-g', choices=group_names,
                               default=group_names, nargs='+',
                               help=branch_help_groups, metavar='GROUP')
-    if project_names is '':
+    if project_names == '':
         branch_help_projects = 'projects to show branches for'
     else:
         branch_help_projects = '''
@@ -90,7 +90,7 @@ def _configure_subparser_clean(subparsers, clowder):
     else:
         group_names = clowder.get_all_group_names()
         project_names = clowder.get_all_project_names()
-    if group_names is '':
+    if group_names == '':
         clean_help_groups = 'groups to clean'
     else:
         clean_help_groups = '''
@@ -101,7 +101,7 @@ def _configure_subparser_clean(subparsers, clowder):
     group_clean.add_argument('--groups', '-g', choices=group_names,
                              default=group_names, nargs='+',
                              help=clean_help_groups, metavar='GROUP')
-    if project_names is '':
+    if project_names == '':
         clean_help_projects = 'projects to clean'
     else:
         clean_help_projects = '''
@@ -124,7 +124,7 @@ def _configure_subparser_diff(subparsers, clowder):
     else:
         group_names = clowder.get_all_group_names()
         project_names = clowder.get_all_project_names()
-    if group_names is '':
+    if group_names == '':
         diff_help_groups = 'groups to diff'
     else:
         diff_help_groups = '''
@@ -135,7 +135,7 @@ def _configure_subparser_diff(subparsers, clowder):
     group_diff.add_argument('--groups', '-g', choices=group_names,
                             default=group_names, nargs='+',
                             help=diff_help_groups, metavar='GROUP')
-    if project_names is '':
+    if project_names == '':
         diff_help_projects = 'projects to diff'
     else:
         diff_help_projects = '''
@@ -163,7 +163,7 @@ def _configure_subparser_forall(subparsers, clowder):
     else:
         group_names = clowder.get_all_group_names()
         project_names = clowder.get_all_project_names()
-    if group_names is '':
+    if group_names == '':
         forall_help_groups = 'groups to run command or script for'
     else:
         forall_help_groups = '''
@@ -174,7 +174,7 @@ def _configure_subparser_forall(subparsers, clowder):
     group_forall_targets.add_argument('--groups', '-g', choices=group_names,
                                       default=group_names, nargs='+',
                                       help=forall_help_groups, metavar='GROUP')
-    if project_names is '':
+    if project_names == '':
         forall_help_projects = 'projects to run command or script for'
     else:
         forall_help_projects = '''
@@ -202,7 +202,7 @@ def _configure_subparser_herd(subparsers, clowder):
     else:
         group_names = clowder.get_all_group_names()
         project_names = clowder.get_all_project_names()
-    if group_names is '':
+    if group_names == '':
         herd_help_groups = 'groups to herd'
     else:
         herd_help_groups = '''
@@ -213,7 +213,7 @@ def _configure_subparser_herd(subparsers, clowder):
     group_herd.add_argument('--groups', '-g', choices=group_names,
                             default=group_names, nargs='+',
                             help=herd_help_groups, metavar='GROUP')
-    if project_names is '':
+    if project_names == '':
         herd_help_projects = 'projects to herd'
     else:
         herd_help_projects = '''
@@ -267,7 +267,7 @@ def _configure_subparser_prune(subparsers, clowder):
     else:
         group_names = clowder.get_all_group_names()
         project_names = clowder.get_all_project_names()
-    if group_names is '':
+    if group_names == '':
         prune_help_groups = 'groups to prune branch for'
     else:
         prune_help_groups = '''
@@ -278,7 +278,7 @@ def _configure_subparser_prune(subparsers, clowder):
     group_prune.add_argument('--groups', '-g', choices=group_names,
                              default=group_names, nargs='+',
                              help=prune_help_groups, metavar='GROUP')
-    if project_names is '':
+    if project_names == '':
         prune_help_projects = 'projects to prune branch for'
     else:
         prune_help_projects = '''
@@ -348,7 +348,7 @@ def _configure_subparser_start(subparsers, clowder):
     else:
         group_names = clowder.get_all_group_names()
         project_names = clowder.get_all_project_names()
-    if group_names is '':
+    if group_names == '':
         start_help_groups = 'groups to start feature branch for'
     else:
         start_help_groups = '''
@@ -359,7 +359,7 @@ def _configure_subparser_start(subparsers, clowder):
     group_start.add_argument('--groups', '-g', choices=group_names,
                              default=group_names, nargs='+',
                              help=start_help_groups, metavar='GROUP')
-    if project_names is '':
+    if project_names == '':
         start_help_projects = 'projects to start feature branch for'
     else:
         start_help_projects = '''
@@ -382,7 +382,7 @@ def _configure_subparser_stash(subparsers, clowder):
     else:
         group_names = clowder.get_all_group_names()
         project_names = clowder.get_all_project_names()
-    if group_names is '':
+    if group_names == '':
         stash_help_groups = 'groups to stash'
     else:
         stash_help_groups = '''
@@ -393,7 +393,7 @@ def _configure_subparser_stash(subparsers, clowder):
     group_stash.add_argument('--groups', '-g', choices=group_names,
                              default=group_names, nargs='+',
                              help=stash_help_groups, metavar='GROUP')
-    if project_names is '':
+    if project_names == '':
         stash_help_projects = 'projects to stash'
     else:
         stash_help_projects = '''
@@ -419,7 +419,7 @@ def _configure_subparser_sync(subparsers, clowder):
     else:
         project_names = clowder.get_all_fork_project_names()
     parser_sync = subparsers.add_parser('sync', help='Sync fork with upstream remote')
-    if project_names is '':
+    if project_names == '':
         sync_help_projects = 'projects to sync'
     else:
         sync_help_projects = '''

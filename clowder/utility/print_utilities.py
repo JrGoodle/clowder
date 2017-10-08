@@ -179,8 +179,7 @@ def format_symlink_target(path):
     """Returns target path if input is a symlink"""
     if os.path.islink(path):
         return os.readlink(path)
-    else:
-        return path
+    return path
 
 
 def format_version(version_name):

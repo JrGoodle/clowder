@@ -158,10 +158,8 @@ class Project(object):
         if is_remote:
             if self.fork is None:
                 return repo.existing_remote_branch(branch, self.remote_name)
-            else:
-                return repo.existing_remote_branch(branch, self.fork.remote_name)
-        else:
-            return repo.existing_local_branch(branch)
+            return repo.existing_remote_branch(branch, self.fork.remote_name)
+        return repo.existing_local_branch(branch)
 
     def fetch_all(self):
         """Fetch upstream changes if project exists on disk"""

@@ -46,9 +46,8 @@ def format_project_ref_string(repo_path):
     if repo.is_detached():
         current_ref = repo.sha(short=True)
         return colored('(HEAD @ ' + current_ref + ')', 'magenta')
-    else:
-        current_branch = repo.current_branch()
-        return colored('(' + current_branch + ')', 'magenta') + status
+    current_branch = repo.current_branch()
+    return colored('(' + current_branch + ')', 'magenta') + status
 
 
 def print_exists(repo_path):

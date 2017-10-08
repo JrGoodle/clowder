@@ -125,10 +125,9 @@ def ref_type(ref):
         return 'branch'
     elif ref.startswith(git_tag):
         return 'tag'
-    elif len(ref) is 40:
+    elif len(ref) == 40:
         return 'sha'
-    else:
-        return 'unknown'
+    return 'unknown'
 
 
 def remove_directory_exit(path):

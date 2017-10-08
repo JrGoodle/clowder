@@ -4,7 +4,6 @@
 import sys
 from termcolor import colored
 from clowder.utility.print_utilities import (
-    # format_invalid_entries_error,
     print_error,
     print_invalid_yaml_error
 )
