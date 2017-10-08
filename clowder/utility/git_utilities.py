@@ -467,14 +467,15 @@ class Git(object):
             message = colored(' - No existing remote tag ', 'red')
             print(message + tag_output)
             remove_directory_exit(self.repo_path)
-        try:
-            print(' - Checkout tag ' + tag_output)
-            self.repo.git.checkout(remote_tag)
-        except Exception as err:
-            message = colored(' - Failed to checkout tag ', 'red')
-            print(message + tag_output)
-            print_error(err)
-            remove_directory_exit(self.repo_path)
+        else:
+            try:
+                print(' - Checkout tag ' + tag_output)
+                self.repo.git.checkout(remote_tag)
+            except Exception as err:
+                message = colored(' - Failed to checkout tag ', 'red')
+                print(message + tag_output)
+                print_error(err)
+                remove_directory_exit(self.repo_path)
 
     def _checkout_ref(self, ref, remote, depth, fetch=True):
         """Checkout branch, tag, or commit from sha"""
@@ -503,13 +504,13 @@ class Git(object):
 
     def _checkout_sha(self, sha):
         """Checkout commit by sha"""
+        commit_output = format_ref_string(sha)
         try:
             same_sha = self.repo.head.commit.hexsha == sha
             is_detached = self.repo.head.is_detached
             if same_sha and is_detached:
                 print(' - On correct commit')
                 return
-            commit_output = format_ref_string(sha)
             print(' - Checkout commit ' + commit_output)
             self.repo.git.checkout(sha)
         except Exception as err:

@@ -17,6 +17,13 @@ from clowder.utility.clowder_utilities import is_offline
 from clowder.utility.print_utilities import print_offline_error
 
 
+def main():
+    """Main entrypoint for clowder command"""
+    signal.signal(signal.SIGINT, signal_handler)
+    colorama.init()
+    Command()
+
+
 if __name__ == '__main__':
     raise SystemExit(main())
 
@@ -420,20 +427,16 @@ def exit_unrecognized_command(parser):
     print()
     sys.exit(1)
 
+
 def exit_clowder_not_found():
     """Print clowder not found message and exit"""
     cprint(' - No clowder found in the current directory\n', 'red')
     sys.exit(1)
 
-def main():
-    """Main entrypoint for clowder command"""
-    signal.signal(signal.SIGINT, signal_handler)
-    colorama.init()
-    Command()
 
 # Disable errors shown by pylint for unused arguments
 # pylint: disable=W0613
 def signal_handler(sig, frame):
     """Signal handler for Ctrl+C trap"""
     print()
-    sys.exit(0)
+    sys.exit(1)
