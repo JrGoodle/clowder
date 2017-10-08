@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# set -xv
+set -xv
 
 cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 
@@ -142,100 +142,100 @@ clowder status || exit 1
 # done
 
 if [ "$ACCESS_LEVEL" == "write" ]; then
-    test_forks() {
-        print_double_separator
-        echo "TEST: Forks"
-        clowder link || exit 1
-        clowder herd || exit 1
-        clowder start -t fail_start && exit 1
-        clowder prune -a fail_start || exit 1
-
-        for project in "${project_paths[@]}"; do
-            pushd $project
-            test_branch master
-            test_tracking_branch_exists master
-            popd
-        done
-        for project in "${fork_paths[@]}"; do
-            pushd $project
-            test_branch master
-            test_tracking_branch_exists master
-            popd
-        done
-
-        clowder prune -af start_tracking || exit 1
-
-        for project in "${fork_projects[@]}"; do
-            clowder start -t start_tracking -p $project || exit 1
-        done
-
-        clowder status || exit 1
-
-        for project in "${project_paths[@]}"; do
-            pushd $project
-            test_branch master
-            popd
-        done
-        for project in "${fork_paths[@]}"; do
-            pushd $project
-            test_branch start_tracking
-            test_tracking_branch_exists start_tracking
-            popd
-        done
-
-        clowder herd || exit 1
-        clowder status || exit 1
-
-        for project in "${project_paths[@]}"; do
-            pushd $project
-            test_branch master
-            popd
-        done
-        for project in "${fork_paths[@]}"; do
-            pushd $project
-            test_branch master
-            popd
-        done
-
-        for project in "${fork_projects[@]}"; do
-            clowder prune start_tracking -p $project || exit 1
-        done
-
-        for project in "${fork_paths[@]}"; do
-            pushd $project
-            test_no_local_branch_exists start_tracking
-            test_remote_branch_exists start_tracking
-            popd
-        done
-
-        clowder herd -b start_tracking || exit 1
-        clowder status || exit 1
-
-        for project in "${project_paths[@]}"; do
-            pushd $project
-            test_branch master
-            popd
-        done
-        for project in "${fork_paths[@]}"; do
-            pushd $project
-            test_branch start_tracking
-            test_tracking_branch_exists start_tracking
-            popd
-        done
-
-        for project in "${fork_projects[@]}"; do
-            clowder prune -a start_tracking -p $project || exit 1
-        done
-
-        for project in "${fork_paths[@]}"; do
-            pushd $project
-            test_branch master
-            test_no_local_branch_exists start_tracking
-            test_no_remote_branch_exists start_tracking
-            popd
-        done
-    }
-    test_forks
+    # test_forks() {
+    #     print_double_separator
+    #     echo "TEST: Forks"
+    #     clowder link || exit 1
+    #     clowder herd || exit 1
+    #     clowder start -t fail_start && exit 1
+    #     clowder prune -a fail_start || exit 1
+    #
+    #     for project in "${project_paths[@]}"; do
+    #         pushd $project
+    #         test_branch master
+    #         test_tracking_branch_exists master
+    #         popd
+    #     done
+    #     for project in "${fork_paths[@]}"; do
+    #         pushd $project
+    #         test_branch master
+    #         test_tracking_branch_exists master
+    #         popd
+    #     done
+    #
+    #     clowder prune -af start_tracking || exit 1
+    #
+    #     for project in "${fork_projects[@]}"; do
+    #         clowder start -t start_tracking -p $project || exit 1
+    #     done
+    #
+    #     clowder status || exit 1
+    #
+    #     for project in "${project_paths[@]}"; do
+    #         pushd $project
+    #         test_branch master
+    #         popd
+    #     done
+    #     for project in "${fork_paths[@]}"; do
+    #         pushd $project
+    #         test_branch start_tracking
+    #         test_tracking_branch_exists start_tracking
+    #         popd
+    #     done
+    #
+    #     clowder herd || exit 1
+    #     clowder status || exit 1
+    #
+    #     for project in "${project_paths[@]}"; do
+    #         pushd $project
+    #         test_branch master
+    #         popd
+    #     done
+    #     for project in "${fork_paths[@]}"; do
+    #         pushd $project
+    #         test_branch master
+    #         popd
+    #     done
+    #
+    #     for project in "${fork_projects[@]}"; do
+    #         clowder prune start_tracking -p $project || exit 1
+    #     done
+    #
+    #     for project in "${fork_paths[@]}"; do
+    #         pushd $project
+    #         test_no_local_branch_exists start_tracking
+    #         test_remote_branch_exists start_tracking
+    #         popd
+    #     done
+    #
+    #     clowder herd -b start_tracking || exit 1
+    #     clowder status || exit 1
+    #
+    #     for project in "${project_paths[@]}"; do
+    #         pushd $project
+    #         test_branch master
+    #         popd
+    #     done
+    #     for project in "${fork_paths[@]}"; do
+    #         pushd $project
+    #         test_branch start_tracking
+    #         test_tracking_branch_exists start_tracking
+    #         popd
+    #     done
+    #
+    #     for project in "${fork_projects[@]}"; do
+    #         clowder prune -a start_tracking -p $project || exit 1
+    #     done
+    #
+    #     for project in "${fork_paths[@]}"; do
+    #         pushd $project
+    #         test_branch master
+    #         test_no_local_branch_exists start_tracking
+    #         test_no_remote_branch_exists start_tracking
+    #         popd
+    #     done
+    # }
+    # test_forks
 
     test_sync() {
         print_double_separator
@@ -325,37 +325,109 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
         popd
     }
     test_sync_rebase
+
+    # test_sync_force() {
+    #     print_single_separator
+    #     echo "TEST: clowder sync force"
+    #     clowder link || exit 1
+    #     clowder herd || exit 1
+    #     clowder sync || exit 1
+    #
+    #     pushd 'llvm/tools/clang'
+    #     git pull upstream master || exit 1
+    #     touch newfile1 || exit 1
+    #     echo 'something' >> newfile1
+    #     git add newfile1 || exit 1
+    #     git commit -m 'Add file' || exit 1
+    #     git push || exit 1
+    #     test_commit_messages "$(git log --format=%B -n 1 HEAD)" 'Add file'
+    #     git reset --hard HEAD~1 || exit 1
+    #     touch newfile2 || exit 1
+    #     echo 'something else' >> newfile2
+    #     git add newfile2 || exit 1
+    #     git commit -m 'Add another file' || exit 1
+    #     test_commit_messages "$(git log --format=%B -n 1 HEAD)" 'Add another file'
+    #     popd
+    #
+    #     clowder sync && exit 1
+    #     clowder sync -f || exit 1
+    #
+    #     pushd 'llvm/tools/clang'
+    #     git pull origin master || exit 1
+    #     test_commit_messages "$(git log --format=%B -n 1 HEAD)" "Merge branch 'master' of https://github.com/jrgoodle/clang"
+    #     git reset --hard HEAD~1 || exit 1
+    #     git push origin master --force || exit 1
+    #     popd
+    # }
+    # test_sync_force
+
+    test_sync_rebase_force() {
+        print_single_separator
+        echo "TEST: clowder sync rebase force"
+        clowder link || exit 1
+        clowder herd || exit 1
+        clowder sync || exit 1
+
+        pushd 'llvm/tools/clang'
+        git pull upstream master || exit 1
+        touch rebasefile1 || exit 1
+        echo 'something' >> rebasefile1
+        git add rebasefile1 || exit 1
+        git commit -m 'Add rebase file' || exit 1
+        git push || exit 1
+        test_commit_messages "$(git log --format=%B -n 1 HEAD)" 'Add rebase file'
+        git reset --hard HEAD~1 || exit 1
+        touch rebasefile2 || exit 1
+        echo 'something else' >> rebasefile2
+        git add rebasefile2 || exit 1
+        git commit -m 'Add another rebase file' || exit 1
+        test_commit_messages "$(git log --format=%B -n 1 HEAD)" 'Add another rebase file'
+        popd
+
+        clowder sync -r && exit 1
+        clowder clean -a || exit 1
+        clowder sync -rf || exit 1
+
+        pushd 'llvm/tools/clang'
+        git pull origin master || exit 1
+        test_commit_messages "$(git log --format=%B -n 1 HEAD)" 'Add another rebase file'
+        git reset --hard HEAD~1 || exit 1
+        git push origin master --force || exit 1
+        popd
+    }
+    test_sync_rebase_force
 fi
 
-test_forks_env() {
-    echo "TEST: Fork remote environment variable in script"
-    clowder forall -c "$TEST_SCRIPT_DIR/tests/test_forall_script_env_fork.sh" -p "llvm-mirror/clang" || exit 1
-    clowder forall -c "$TEST_SCRIPT_DIR/tests/test_forall_script_env_fork.sh" -p "llvm-mirror/llvm" && exit 1
-    echo "TEST: Fork remote environment variable in command"
-    clowder forall -c 'if [ $PROJECT_REMOTE != upstream ]; then exit 1; fi' -p 'llvm-mirror/clang' || exit 1
-    clowder forall -c 'if [ $FORK_REMOTE != origin ]; then exit 1; fi' -p 'llvm-mirror/clang' || exit 1
-}
-
-test_branch() {
-    echo "TEST: clowder branch"
-    clowder link || exit 1
-    clowder herd || exit 1
-    clowder branch || exit 1
-    clowder branch -r || exit 1
-    clowder branch -a || exit 1
-    clowder branch -p 'llvm-mirror/llvm' || exit 1
-    clowder branch -rp 'llvm-mirror/llvm' || exit 1
-    clowder branch -ap 'llvm-mirror/llvm' || exit 1
-    clowder branch -g 'clang' || exit 1
-    clowder branch -rg 'clang' || exit 1
-    clowder branch -ag 'clang' || exit 1
-}
-test_branch
-
-test_help() {
-    print_double_separator
-    clowder link || exit 1
-    clowder herd || exit 1
-    "$TEST_SCRIPT_DIR/tests/test_help.sh" "$LLVM_EXAMPLE_DIR" || exit 1
-}
-test_help
+# test_forks_env() {
+#     echo "TEST: Fork remote environment variable in script"
+#     clowder forall -c "$TEST_SCRIPT_DIR/tests/test_forall_script_env_fork.sh" -p "llvm-mirror/clang" || exit 1
+#     clowder forall -c "$TEST_SCRIPT_DIR/tests/test_forall_script_env_fork.sh" -p "llvm-mirror/llvm" && exit 1
+#     echo "TEST: Fork remote environment variable in command"
+#     clowder forall -c 'if [ $PROJECT_REMOTE != upstream ]; then exit 1; fi' -p 'llvm-mirror/clang' || exit 1
+#     clowder forall -c 'if [ $FORK_REMOTE != origin ]; then exit 1; fi' -p 'llvm-mirror/clang' || exit 1
+# }
+# test_forks_env
+#
+# test_branch() {
+#     echo "TEST: clowder branch"
+#     clowder link || exit 1
+#     clowder herd || exit 1
+#     clowder branch || exit 1
+#     clowder branch -r || exit 1
+#     clowder branch -a || exit 1
+#     clowder branch -p 'llvm-mirror/llvm' || exit 1
+#     clowder branch -rp 'llvm-mirror/llvm' || exit 1
+#     clowder branch -ap 'llvm-mirror/llvm' || exit 1
+#     clowder branch -g 'clang' || exit 1
+#     clowder branch -rg 'clang' || exit 1
+#     clowder branch -ag 'clang' || exit 1
+# }
+# test_branch
+#
+# test_help() {
+#     print_double_separator
+#     clowder link || exit 1
+#     clowder herd || exit 1
+#     "$TEST_SCRIPT_DIR/tests/test_help.sh" "$LLVM_EXAMPLE_DIR" || exit 1
+# }
+# test_help
