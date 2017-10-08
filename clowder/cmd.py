@@ -186,7 +186,8 @@ class Command(object):
         self.clowder.herd(group_names=self.args.groups,
                           project_names=self.args.projects,
                           branch=branch,
-                          depth=depth)
+                          depth=depth,
+                          rebase=self.args.rebase)
 
     def init(self):
         """clowder init command"""
@@ -404,7 +405,7 @@ class Command(object):
         if all_fork_projects == '':
             cprint(' - No forks to sync\n', 'red')
             sys.exit()
-        self.clowder.sync(all_fork_projects)
+        self.clowder.sync(all_fork_projects, rebase=self.args.rebase)
 
     def yaml(self):
         """clowder yaml command"""

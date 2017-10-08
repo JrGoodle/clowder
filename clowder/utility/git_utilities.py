@@ -164,7 +164,7 @@ class Git(object):
             print_command_failed_error(command)
         return return_code
 
-    def herd(self, url, remote, ref, depth=0, fetch=True):
+    def herd(self, url, remote, ref, depth=0, fetch=True, rebase=False):
         """Herd ref"""
         if not existing_git_repository(self.repo_path):
             self.create_repo(url, remote, ref, depth=depth)
@@ -177,7 +177,10 @@ class Git(object):
             branch = truncate_ref(ref)
             if self.existing_remote_branch(branch, remote):
                 if self._is_tracking_branch(branch):
-                    self._pull_remote_branch(remote, branch)
+                    if rebase:
+                        self._rebase_remote_branch(remote, branch)
+                    else:
+                        self._pull_remote_branch(remote, branch)
                 else:
                     self._set_tracking_branch_commit(branch, remote, depth)
         elif ref_type(ref) == 'tag' or ref_type(ref) == 'sha':
@@ -189,7 +192,7 @@ class Git(object):
             cprint('Unknown ref ' + ref, 'red')
             sys.exit(1)
 
-    def herd_branch(self, url, remote, branch, default_ref, depth=0):
+    def herd_branch(self, url, remote, branch, default_ref, depth=0, rebase=False):
         """Herd branch"""
         if not existing_git_repository(self.repo_path):
             self._create_repo_herd_branch(url, remote, branch,
@@ -197,13 +200,16 @@ class Git(object):
             return
         return_code = self.fetch(remote, depth=depth, ref=branch)
         if return_code != 0:
-            self.herd(url, remote, default_ref, depth=depth)
+            self.herd(url, remote, default_ref, depth=depth, rebase=rebase)
             return
         if self.existing_local_branch(branch):
             self._checkout_ref('refs/heads/' + branch, remote, depth)
             if self.existing_remote_branch(branch, remote):
                 if self._is_tracking_branch(branch):
-                    self._pull_remote_branch(remote, branch)
+                    if rebase:
+                        self._rebase_remote_branch(remote, branch)
+                    else:
+                        self._pull_remote_branch(remote, branch)
                 else:
                     self._set_tracking_branch_commit(branch, remote, depth)
         elif self.existing_remote_branch(branch, remote):
@@ -725,6 +731,22 @@ class Git(object):
         return_code = execute_command(command, self.repo_path)
         if return_code != 0:
             message = colored(' - Failed to pull from ', 'red')
+            print(message + remote_output + ' ' + branch_output)
+            print_command_failed_error(command)
+            sys.exit(return_code)
+
+    def _rebase_remote_branch(self, remote, branch):
+        """Rebase from remote branch"""
+        if self.repo.head.is_detached:
+            print(' - HEAD is detached')
+            return
+        branch_output = format_ref_string(branch)
+        remote_output = format_remote_string(remote)
+        print(' - Rebase from ' + remote_output + ' ' + branch_output)
+        command = ['git', 'rebase', remote + '/' + branch]
+        return_code = execute_command(command, self.repo_path)
+        if return_code != 0:
+            message = colored(' - Failed to rebase from ', 'red')
             print(message + remote_output + ' ' + branch_output)
             print_command_failed_error(command)
             sys.exit(return_code)

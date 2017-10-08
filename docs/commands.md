@@ -159,6 +159,9 @@ Update with latest changes
 # Herd a shallow clone to specified depth
 $ clowder herd -d 1
 
+# Herd using rebase instead of pull
+$ clowder herd -r
+
 # Herd a specified branch if it exists, otherwise use default ref
 $ clowder herd -b my_branch
 
@@ -333,6 +336,9 @@ Sync default fork branches with upstream remotes
 ```bash
 # Sync all forks with upstream remotes
 $ clowder sync
+
+# Sync using rebase instead of pull
+$ clowder sync -r
 
 # Sync swift fork with upstream remote
 $ clowder sync -p apple/swift

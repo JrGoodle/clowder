@@ -98,11 +98,11 @@ class Group(object):
                  'projects': projects_yaml}
         return group
 
-    def herd(self, branch=None, depth=None):
+    def herd(self, branch=None, depth=None, rebase=False):
         """Sync all projects with latest upstream changes"""
         self._print_name()
         for project in self.projects:
-            project.herd(branch, depth)
+            project.herd(branch, depth, rebase=rebase)
 
     def is_dirty(self):
         """Check if group has dirty project(s)"""

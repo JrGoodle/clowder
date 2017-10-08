@@ -202,7 +202,7 @@ class Project(object):
             project['fork'] = fork_yaml
         return project
 
-    def herd(self, branch=None, depth=None):
+    def herd(self, branch=None, depth=None, rebase=False):
         """Clone project or update latest from upstream"""
         if depth is None:
             herd_depth = self.depth
@@ -211,14 +211,14 @@ class Project(object):
 
         if branch is None:
             if self.recursive:
-                self._herd_ref(GitSubmodules(self.full_path()), herd_depth)
+                self._herd_ref(GitSubmodules(self.full_path()), herd_depth, rebase)
             else:
-                self._herd_ref(Git(self.full_path()), herd_depth)
+                self._herd_ref(Git(self.full_path()), herd_depth, rebase)
         else:
             if self.recursive:
-                self._herd_branch(GitSubmodules(self.full_path()), branch, herd_depth)
+                self._herd_branch(GitSubmodules(self.full_path()), branch, herd_depth, rebase)
             else:
-                self._herd_branch(Git(self.full_path()), branch, herd_depth)
+                self._herd_branch(Git(self.full_path()), branch, herd_depth, rebase)
 
     def is_dirty(self):
         """Check if project is dirty"""
@@ -309,38 +309,39 @@ class Project(object):
             repo = Git(self.full_path())
             repo.stash()
 
-    def sync(self):
+    def sync(self, rebase=False):
         """Sync fork project with upstream"""
         if self.recursive:
-            self._sync(GitSubmodules(self.full_path()))
+            self._sync(GitSubmodules(self.full_path()), rebase)
         else:
-            self._sync(Git(self.full_path()))
+            self._sync(Git(self.full_path()), rebase)
 
-    def _herd_branch(self, repo, branch, depth):
+    def _herd_branch(self, repo, branch, depth, rebase):
         """Clone project or update latest from upstream"""
         if self.fork is None:
             self._print_status()
-            repo.herd_branch(self.url, self.remote_name, branch, self.ref, depth=depth)
+            repo.herd_branch(self.url, self.remote_name, branch, self.ref,
+                             depth=depth, rebase=rebase)
         else:
             self.fork.print_status()
             repo.configure_remotes(self.remote_name, self.url,
                                    self.fork.remote_name, self.fork.url)
             print(format_fork_string(self.fork.name))
-            repo.herd_branch(self.fork.url, self.fork.remote_name, branch, self.ref)
+            repo.herd_branch(self.fork.url, self.fork.remote_name, branch, self.ref, rebase=rebase)
             print(format_fork_string(self.name))
             repo.herd_upstream(self.url, self.remote_name, self.ref, branch=branch)
 
-    def _herd_ref(self, repo, depth):
+    def _herd_ref(self, repo, depth, rebase):
         """Clone project or update latest from upstream"""
         if self.fork is None:
             self._print_status()
-            repo.herd(self.url, self.remote_name, self.ref, depth=depth)
+            repo.herd(self.url, self.remote_name, self.ref, depth=depth, rebase=rebase)
         else:
             self.fork.print_status()
             repo.configure_remotes(self.remote_name, self.url,
                                    self.fork.remote_name, self.fork.url)
             print(format_fork_string(self.fork.name))
-            repo.herd(self.fork.url, self.fork.remote_name, self.ref)
+            repo.herd(self.fork.url, self.fork.remote_name, self.ref, rebase=rebase)
             print(format_fork_string(self.name))
             repo.herd_upstream(self.url, self.remote_name, self.ref)
 
@@ -381,17 +382,17 @@ class Project(object):
             self._print_status()
             repo.prune_branch_remote(branch, remote)
 
-    def _sync(self, repo):
+    def _sync(self, repo, rebase):
         """Sync fork project with upstream"""
         self.fork.print_status()
         repo.configure_remotes(self.remote_name, self.url,
                                self.fork.remote_name, self.fork.url)
         print(format_fork_string(self.fork.name))
-        repo.herd(self.fork.url, self.fork.remote_name, self.ref)
+        repo.herd(self.fork.url, self.fork.remote_name, self.ref, rebase=rebase)
         print(format_fork_string(self.name))
         repo.herd_upstream(self.url, self.remote_name, self.ref)
         self.fork.print_status()
-        repo.sync(self.remote_name, self.fork.remote_name, self.ref)
+        repo.sync(self.remote_name, self.fork.remote_name, self.ref, rebase=rebase)
 
 
 def _clean(repo, args=''):
