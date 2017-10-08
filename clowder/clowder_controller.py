@@ -302,12 +302,12 @@ class ClowderController(object):
             if group.name in group_names:
                 group.status(padding)
 
-    def sync(self, project_names, rebase=False):
+    def sync(self, project_names, rebase=False, force=False):
         """Sync projects"""
         for group in self.groups:
             for project in group.projects:
                 if project.name in project_names:
-                    project.sync(rebase=rebase)
+                    project.sync(rebase=rebase, force=force)
 
     def _existing_branch_group(self, group_names, branch, is_remote):
         """Checks whether at least one branch exists for projects in groups"""

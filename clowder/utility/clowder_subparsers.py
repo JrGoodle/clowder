@@ -419,6 +419,8 @@ def _configure_subparser_sync(subparsers, clowder):
     parser_sync = subparsers.add_parser('sync', help='Sync fork with upstream remote')
     parser_sync.add_argument('--rebase', '-r', action='store_true',
                              help='use rebase instead of pull')
+    parser_sync.add_argument('--force', '-f', action='store_true',
+                             help='force push updates to fork')
     if clowder is None:
         project_names = ''
     else:

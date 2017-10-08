@@ -405,7 +405,7 @@ class Command(object):
         if all_fork_projects == '':
             cprint(' - No forks to sync\n', 'red')
             sys.exit()
-        self.clowder.sync(all_fork_projects, rebase=self.args.rebase)
+        self.clowder.sync(all_fork_projects, rebase=self.args.rebase, force=self.args.force)
 
     def yaml(self):
         """clowder yaml command"""

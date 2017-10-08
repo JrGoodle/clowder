@@ -309,12 +309,12 @@ class Project(object):
             repo = Git(self.full_path())
             repo.stash()
 
-    def sync(self, rebase=False):
+    def sync(self, rebase=False, force=False):
         """Sync fork project with upstream"""
         if self.recursive:
-            self._sync(GitSubmodules(self.full_path()), rebase)
+            self._sync(GitSubmodules(self.full_path()), rebase, force)
         else:
-            self._sync(Git(self.full_path()), rebase)
+            self._sync(Git(self.full_path()), rebase, force)
 
     def _herd_branch(self, repo, branch, depth, rebase):
         """Clone project or update latest from upstream"""
@@ -382,7 +382,7 @@ class Project(object):
             self._print_status()
             repo.prune_branch_remote(branch, remote)
 
-    def _sync(self, repo, rebase):
+    def _sync(self, repo, rebase, force):
         """Sync fork project with upstream"""
         self.fork.print_status()
         repo.configure_remotes(self.remote_name, self.url,
@@ -392,7 +392,8 @@ class Project(object):
         print(format_fork_string(self.name))
         repo.herd_upstream(self.url, self.remote_name, self.ref)
         self.fork.print_status()
-        repo.sync(self.remote_name, self.fork.remote_name, self.ref, rebase=rebase)
+        repo.sync(self.remote_name, self.fork.remote_name, self.ref,
+                  rebase=rebase, force=force)
 
 
 def _clean(repo, args=''):

@@ -366,7 +366,7 @@ class Git(object):
         print(' - Stash current changes')
         self.repo.git.stash()
 
-    def sync(self, upstream_remote, fork_remote, ref, rebase=False):
+    def sync(self, upstream_remote, fork_remote, ref, rebase=False, force=False):
         """Sync fork with upstream remote"""
         print(' - Sync fork with upstream remote')
         if ref_type(ref) != 'branch':
@@ -380,6 +380,8 @@ class Git(object):
             self._pull_remote_branch(upstream_remote, truncate_ref(ref))
         print(' - Push to ' + fork_remote_output + ' ' + branch_output)
         command = ['git', 'push', fork_remote, truncate_ref(ref)]
+        if force:
+            command.append('--force')
         return_code = execute_command(command, self.repo_path)
         if return_code != 0:
             message = colored(' - Failed to push to ', 'red')

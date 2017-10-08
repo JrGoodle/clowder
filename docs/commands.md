@@ -340,6 +340,9 @@ $ clowder sync
 # Sync using rebase instead of pull
 $ clowder sync -r
 
+# Force push to fork during sync
+$ clowder sync -f
+
 # Sync swift fork with upstream remote
 $ clowder sync -p apple/swift
 ```
