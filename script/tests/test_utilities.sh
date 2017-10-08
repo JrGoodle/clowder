@@ -51,7 +51,7 @@ make_dirty_repos() {
     echo "TEST: Make dirty repos"
     for project in "$@"
     do
-    	pushd $project
+        pushd $project
         touch newfile >/dev/null
         git add newfile >/dev/null
         popd
@@ -144,6 +144,13 @@ test_no_untracked_files() {
     echo "TEST: No untracked files exist"
     files="$(git ls-files -o -d --exclude-standard | sed q | wc -l| tr -d '[:space:]')"
     if [ "$files" != "0" ]; then
+        exit 1
+    fi
+}
+
+function test_commit_messages() {
+    echo "TEST: Commit messages are the same"
+    if [ "$1" != "$2" ]; then
         exit 1
     fi
 }
