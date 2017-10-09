@@ -9,6 +9,9 @@ clean_nix() {
     sudo -H rm -rf ../dist
     echo "Removing build"
     sudo -H rm -rf ../build
+    echo "Removing pyc files"
+    sudo -H rm ../clowder/*.pyc ../clowder/utility/*.pyc ../test/*.pyc
+    sudo -H rm -rf ../clowder/__pycache__ ../clowder/utility/__pycache__ ../test/__pycache__
     echo "pip uninstall clowder"
     sudo -H pip2 uninstall clowder-repo
     sudo -H pip3 uninstall clowder-repo
