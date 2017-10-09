@@ -2,6 +2,8 @@
 
 cd "$( dirname "${BASH_SOURCE[0]}" )/.." || exit 1
 
+VERSION=${1:-python2}
+
 if [ -n "$TRAVIS_OS_NAME" ]; then
     if [ -n "$TARGET" ]; then
         if [ "$TARGET" == 'python2' ]; then
@@ -11,15 +13,21 @@ if [ -n "$TRAVIS_OS_NAME" ]; then
     fi
 fi
 
+if [ "$VERSION" = 'python2' ]; then
+    PIP='pip'
+else
+    PIP='pip3'
+fi
+
 case "$(uname)" in
     Linux*) export MY_PLATFORM="linux";
-        sudo -H pip3 install -e .
+        sudo -H $PIP install -e .
         ;;
     Darwin*) export MY_PLATFORM="osx";
-        sudo -H pip3 install -e .
+        sudo -H $PIP install -e .
         ;;
     CYGWIN*) export MY_PLATFORM="windows";
-        pip3 install -e .
+        $PIP install -e .
         ;;
 esac
 
