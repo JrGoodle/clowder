@@ -4,7 +4,7 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 
 . test_utilities.sh
 
-ACCESS_LEVEL=${1:-read}
+ACCESS_LEVEL="$1"
 
 export cats_projects=( 'duke' 'mu' )
 

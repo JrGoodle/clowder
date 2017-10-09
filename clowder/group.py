@@ -1,6 +1,6 @@
 """Representation of clowder.yaml group"""
 
-
+from __future__ import print_function
 from termcolor import colored
 from clowder.project import Project
 

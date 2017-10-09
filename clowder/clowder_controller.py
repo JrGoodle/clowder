@@ -1,6 +1,6 @@
 """clowder.yaml parsing and functionality"""
 
-
+from __future__ import print_function
 import os
 import sys
 from termcolor import cprint

@@ -1,6 +1,6 @@
 """Clowder utilities"""
 
-
+from __future__ import print_function
 import errno
 import os
 import shutil
@@ -74,7 +74,7 @@ def force_symlink(file1, file2):
 def get_yaml_string(yaml_output):
     """Return yaml string from python data structures"""
     try:
-        return yaml.dump(yaml_output, default_flow_style=False, indent=4)
+        return yaml.safe_dump(yaml_output, default_flow_style=False, indent=4)
     except:
         cprint('Failed to dump yaml', 'red')
         sys.exit(1)
@@ -148,7 +148,7 @@ def save_yaml(yaml_output, yaml_file):
         try:
             with open(yaml_file, 'w') as file:
                 print(" - Save yaml to file")
-                yaml.dump(yaml_output, file, default_flow_style=False, indent=4)
+                yaml.safe_dump(yaml_output, file, default_flow_style=False, indent=4)
         except:
             print_save_file_error(yaml_file)
             sys.exit(1)

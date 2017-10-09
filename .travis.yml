@@ -11,29 +11,28 @@ env:
   global:
     - PYTHONPATH="$PYTHONPATH:$TRAVIS_BUILD_DIR"
   matrix:
-    - TARGET="cats"
-    - TARGET="cocos2d"
-    - TARGET="llvm"
-    - TARGET="swift"
+    - TARGET="cats" PYVERSION="python3"
 
 matrix:
-  exclude:
-  - os: osx
-    env: TARGET="cocos2d"
-  - os: osx
-    env: TARGET="llvm"
-  - os: osx
-    env: TARGET="swift"
+  include:
+  - os: linux
+    env: TARGET="cats" PYVERSION="python2"
+  - os: linux
+    env: TARGET="cocos2d" PYVERSION="python3"
+  - os: linux
+    env: TARGET="llvm" PYVERSION="python3"
+  - os: linux
+    env: TARGET="swift" PYVERSION="python3"
 
-before_install: script/bootstrap
+before_install: script/bootstrap "$PYVERSION"
 
 install:
     - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew install github-release; fi
     - if [ "$TRAVIS_OS_NAME" = "osx" ]; then sudo -H pip3 install twine wheel; fi
 
-before_script: script/setup
+before_script: script/setup "$PYVERSION"
 
-script: script/test ${TARGET}
+script: script/test "$TARGET" "read" "$PYVERSION"
 
 after_success: if [ "$TRAVIS_OS_NAME" = "osx" ]; then script/deploy; fi
 

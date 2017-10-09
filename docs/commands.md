@@ -14,6 +14,7 @@
 - [clowder stash](#clowder-stash)
 - [clowder status](#clowder-status)
 - [clowder sync](#clowder-sync)
+- [clowder version](#clowder-version)
 - [clowder yaml](#clowder-yaml)
 
 Examples based on the [Swift projects clowder.yaml](https://github.com/JrGoodle/swift-clowder/blob/master/clowder.yaml)
@@ -342,6 +343,16 @@ $ clowder sync -r
 
 # Sync swift fork with upstream remote
 $ clowder sync -p apple/swift
+```
+
+---
+
+## `clowder version`
+
+Print version of `clowder` command line tool
+
+```bash
+$ clowder version
 ```
 
 ---

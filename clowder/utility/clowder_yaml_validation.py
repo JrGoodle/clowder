@@ -1,6 +1,5 @@
 """Clowder yaml validation"""
 
-
 import sys
 from clowder.utility.clowder_utilities import parse_yaml
 from clowder.utility.print_utilities import (

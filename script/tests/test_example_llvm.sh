@@ -6,7 +6,7 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 
 . test_utilities.sh
 
-ACCESS_LEVEL=${1:-read}
+ACCESS_LEVEL="$1"
 
 print_double_separator
 echo 'TEST: llvm projects example test script'

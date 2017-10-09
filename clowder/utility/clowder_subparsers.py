@@ -3,8 +3,6 @@
 
 def configure_argparse(parser, clowder, versions):
     """Configure clowder argparse"""
-    parser.add_argument('--version', '-v', action='store_true',
-                        dest='clowder_version', help='print clowder version')
     subparsers = parser.add_subparsers(dest='clowder_command', metavar='SUBCOMMAND')
     _configure_subparsers(subparsers, clowder, versions)
 
@@ -25,6 +23,7 @@ def _configure_subparsers(subparsers, clowder, versions):
     _configure_subparser_stash(subparsers, clowder)
     _configure_subparser_status(subparsers)
     _configure_subparser_sync(subparsers, clowder)
+    _configure_subparser_version(subparsers)
     _configure_subparser_yaml(subparsers)
 
 
@@ -433,6 +432,11 @@ def _configure_subparser_sync(subparsers, clowder):
         sync_help_projects = sync_help_projects.format(', '.join(project_names))
     parser_sync.add_argument('--projects', '-p', choices=project_names,
                              nargs='+', help=sync_help_projects, metavar='PROJECT')
+
+
+def _configure_subparser_version(subparsers):
+    """Configure clowder version subparser and arguments"""
+    subparsers.add_parser('version', help='Print clowder version')
 
 
 def _configure_subparser_yaml(subparsers):
