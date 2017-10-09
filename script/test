@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 if [ -z "$1" ]; then
-    echo 'Requires parameter "cocos2d", "cats", "llvm", "swift", "offline", or "all"'
+    echo 'Requires parameter "all", "cats", "cocos2d", "llvm", "offline", or "swift"'
     exit 1
 fi
 
