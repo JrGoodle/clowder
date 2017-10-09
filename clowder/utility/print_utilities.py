@@ -1,6 +1,6 @@
 """String formatting and printing utilities"""
 
-
+from __future__ import print_function
 import os
 import sys
 from termcolor import colored, cprint

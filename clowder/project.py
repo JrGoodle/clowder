@@ -1,6 +1,6 @@
 """Representation of clowder.yaml project"""
 
-
+from __future__ import print_function
 import os
 import sys
 from termcolor import cprint

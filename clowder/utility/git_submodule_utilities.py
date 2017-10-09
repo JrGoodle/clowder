@@ -1,6 +1,6 @@
 """Git utilities"""
 
-
+from __future__ import print_function
 import sys
 from termcolor import cprint
 from clowder.utility.clowder_utilities import (
@@ -72,9 +72,9 @@ class GitSubmodules(Git):
             print_command_failed_error(command)
             sys.exit(return_code)
 
-    def sync(self, upstream_remote, fork_remote, ref):
+    def sync(self, upstream_remote, fork_remote, ref, rebase=False):
         """Sync fork with upstream remote"""
-        Git.sync(self, upstream_remote, fork_remote, ref)
+        Git.sync(self, upstream_remote, fork_remote, ref, rebase=rebase)
         self.submodule_update_recursive()
 
     def validate_repo(self):

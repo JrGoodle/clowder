@@ -1,6 +1,5 @@
 """Clowder yaml loading"""
 
-
 import sys
 from termcolor import colored
 from clowder.utility.print_utilities import (

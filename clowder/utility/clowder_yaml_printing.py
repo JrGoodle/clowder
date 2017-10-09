@@ -1,6 +1,6 @@
 """Clowder yaml printing"""
 
-
+from __future__ import print_function
 import os
 import sys
 from clowder.utility.clowder_utilities import parse_yaml
