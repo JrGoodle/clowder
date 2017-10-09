@@ -1,4 +1,3 @@
-#! /usr/bin/env python3
 """Main entrypoint for clowder command"""
 
 from __future__ import print_function
