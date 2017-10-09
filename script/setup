@@ -2,18 +2,9 @@
 
 cd "$( dirname "${BASH_SOURCE[0]}" )/.." || exit 1
 
-VERSION=${1:-python3}
+VERSION="$1"
 
-if [ -n "$TRAVIS_OS_NAME" ]; then
-    if [ -n "$TARGET" ]; then
-        if [ "$TARGET" == 'python2' ]; then
-            sudo -H pip install -e .
-            exit
-        fi
-    fi
-fi
-
-if [ "$VERSION" = 'python2' ]; then
+if [ "$VERSION" == 'python2' ]; then
     PIP='pip'
 else
     PIP='pip3'

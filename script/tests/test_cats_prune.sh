@@ -6,7 +6,7 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 prepare_cats_example
 cd "$CATS_EXAMPLE_DIR" || exit 1
 
-ACCESS_LEVEL=${1:-read}
+ACCESS_LEVEL="$1"
 
 export black_cats_projects=( 'black-cats/kit' \
                              'black-cats/kishka' \

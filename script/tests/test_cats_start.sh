@@ -4,7 +4,7 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 
 . test_utilities.sh
 
-ACCESS_LEVEL=${1:-read}
+ACCESS_LEVEL="$1"
 
 export black_cats_projects=( 'black-cats/kit' \
                              'black-cats/kishka' \
@@ -39,7 +39,7 @@ test_start() {
     test_no_remote_branch_exists start_branch
     popd
     for project in "${black_cats_projects[@]}"; do
-    	pushd $project
+        pushd $project
         test_branch master
         test_no_remote_branch_exists start_branch
         test_no_local_branch_exists start_branch
@@ -49,7 +49,7 @@ test_start() {
     clowder start start_branch || exit 1
 
     for project in "${all_projects[@]}"; do
-    	pushd $project
+        pushd $project
         test_branch start_branch
         test_no_remote_branch_exists start_branch
         popd
@@ -67,7 +67,7 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
         clowder prune -af tracking_branch || exit 1
 
         for project in "${all_projects[@]}"; do
-        	pushd $project
+            pushd $project
             test_no_remote_branch_exists tracking_branch
             test_no_local_branch_exists tracking_branch
             popd
@@ -76,7 +76,7 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
         clowder start -t tracking_branch || exit 1
 
         for project in "${all_projects[@]}"; do
-        	pushd $project
+            pushd $project
             test_branch tracking_branch
             test_remote_branch_exists tracking_branch
             test_tracking_branch_exists tracking_branch
@@ -87,7 +87,7 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
         clowder prune -af tracking_branch || exit 1
 
         for project in "${all_projects[@]}"; do
-        	pushd $project
+            pushd $project
             test_no_remote_branch_exists tracking_branch
             test_no_local_branch_exists tracking_branch
             popd

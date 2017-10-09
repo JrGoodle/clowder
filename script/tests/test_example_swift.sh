@@ -6,7 +6,7 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 
 . test_utilities.sh
 
-ACCESS_LEVEL=${1:-read}
+ACCESS_LEVEL="$1"
 
 print_double_separator
 echo 'TEST: swift projects example test script'
@@ -50,12 +50,12 @@ export projects=( 'apple/swift-clang' \
 test_default_branches() {
     echo "TEST: Default branches checked out"
     for project in "${llvm_project_paths[@]}"; do
-    	pushd $project
+        pushd $project
         test_branch stable
         popd
     done
     for project in "${project_paths[@]}"; do
-    	pushd $project
+        pushd $project
         test_branch master
         popd
     done

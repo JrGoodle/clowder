@@ -8,6 +8,12 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 
 . tests/test_utilities.sh
 
+if [ "$1" == 'python2' ]; then
+    VERSION='python'
+elif [ "$1" == 'python3' ]; then
+    VERSION='python3'
+fi
+
 if [ -z "$TRAVIS_OS_NAME" ]; then
     setup_local_test_directory
 fi
@@ -44,24 +50,19 @@ echo 'TEST: Run unittests'
 echo ''
 
 if [ -n "$TRAVIS_OS_NAME" ]; then
-    if [ "$TARGET" == 'python2' ]; then
-        PYTHON_VERSION='python'
-    else
-        PYTHON_VERSION='python3'
-    fi
-    $PYTHON_VERSION test/test_clowder_repo.py || exit 1
-    $PYTHON_VERSION test/test_fork.py || exit 1
-    $PYTHON_VERSION test/test_git_utilities.py || exit 1
-    $PYTHON_VERSION test/test_group.py || exit 1
-    $PYTHON_VERSION test/test_project.py || exit 1
-    $PYTHON_VERSION test/test_source.py || exit 1
+    $VERSION test/test_clowder_repo.py || exit 1
+    $VERSION test/test_fork.py || exit 1
+    $VERSION test/test_git_utilities.py || exit 1
+    $VERSION test/test_group.py || exit 1
+    $VERSION test/test_project.py || exit 1
+    $VERSION test/test_source.py || exit 1
 else
-    python3 test/test_clowder_repo.py "$CATS_EXAMPLE_DIR" || exit 1
-    python3 test/test_fork.py "$CATS_EXAMPLE_DIR" || exit 1
-    python3 test/test_git_utilities.py "$CATS_EXAMPLE_DIR" || exit 1
-    python3 test/test_group.py "$CATS_EXAMPLE_DIR" || exit 1
-    python3 test/test_project.py "$CATS_EXAMPLE_DIR" || exit 1
-    python3 test/test_source.py "$CATS_EXAMPLE_DIR" || exit 1
+    $VERSION test/test_clowder_repo.py "$CATS_EXAMPLE_DIR" || exit 1
+    $VERSION test/test_fork.py "$CATS_EXAMPLE_DIR" || exit 1
+    $VERSION test/test_git_utilities.py "$CATS_EXAMPLE_DIR" || exit 1
+    $VERSION test/test_group.py "$CATS_EXAMPLE_DIR" || exit 1
+    $VERSION test/test_project.py "$CATS_EXAMPLE_DIR" || exit 1
+    $VERSION test/test_source.py "$CATS_EXAMPLE_DIR" || exit 1
 fi
 
 $CATS_EXAMPLE_DIR/clean.sh

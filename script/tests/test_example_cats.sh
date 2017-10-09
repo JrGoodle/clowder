@@ -6,7 +6,7 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 
 . test_utilities.sh
 
-ACCESS_LEVEL=${1:-read}
+ACCESS_LEVEL="$1"
 
 print_double_separator
 echo 'TEST: cats example test script'
@@ -15,8 +15,6 @@ print_double_separator
 if [ -z "$TRAVIS_OS_NAME" ]; then
     setup_local_test_directory
 fi
-
-"$TEST_SCRIPT_DIR/unittests.sh" || exit 1
 
 cd "$CATS_EXAMPLE_DIR" || exit 1
 

@@ -1,11 +1,7 @@
 #!/usr/bin/env bash
 
-if [ -n "$TRAVIS_OS_NAME" ]; then
-    if [ -n "$TARGET" ]; then
-        if [ "$TARGET" == 'python2' ]; then
-            exit
-        fi
-    fi
+if [ "$1" == 'python2' ]; then
+    exit
 fi
 
 case "$(uname)" in
