@@ -51,6 +51,9 @@ def print_yaml(root_directory):
                         path = remove_prefix(path, '/')
                         print('\n' + format_path(path) + '\n')
                     print(contents)
-            except:
+            except IOError as err:
                 print_open_file_error(yaml_file)
+                print(err)
+                sys.exit(1)
+            except (KeyboardInterrupt, SystemExit):
                 sys.exit(1)

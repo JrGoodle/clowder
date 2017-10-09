@@ -4,7 +4,7 @@ from __future__ import print_function
 import os
 import subprocess
 import sys
-from git import Repo
+from git import Repo, GitError
 from termcolor import colored, cprint
 from clowder.utility.clowder_utilities import (
     execute_command,
@@ -61,8 +61,10 @@ class Git(object):
             return
         try:
             remotes = self.repo.remotes
-        except:
+        except GitError:
             return
+        except (KeyboardInterrupt, SystemExit):
+            sys.exit(1)
         for remote in remotes:
             if upstream_remote_url == self.repo.git.remote('get-url', remote.name):
                 if remote.name != upstream_remote_name:
@@ -121,8 +123,10 @@ class Git(object):
         try:
             origin = self.repo.remotes[remote]
             return branch in origin.refs
-        except:
+        except GitError:
             return False
+        except (KeyboardInterrupt, SystemExit):
+            sys.exit(1)
 
     def existing_local_branch(self, branch):
         """Check if local branch exists"""
@@ -237,8 +241,10 @@ class Git(object):
         """Returns the number of new commits"""
         try:
             local_branch = self.repo.active_branch
-        except:
+        except GitError:
             return 0
+        except (KeyboardInterrupt, SystemExit):
+            sys.exit(1)
         if local_branch is None:
             return 0
         tracking_branch = local_branch.tracking_branch()
@@ -252,8 +258,10 @@ class Git(object):
             else:
                 count = str(rev_list_count).split()[0]
             return count
-        except:
+        except GitError:
             return 0
+        except (KeyboardInterrupt, SystemExit):
+            sys.exit(1)
 
     def print_branches(self, local=False, remote=False):
         """Print branches"""
@@ -461,10 +469,12 @@ class Git(object):
             remove_directory_exit(self.repo_path)
         try:
             remote_tag = origin.tags[tag]
-        except:
+        except GitError:
             message = colored(' - No existing remote tag ', 'red')
             print(message + tag_output)
             remove_directory_exit(self.repo_path)
+        except (KeyboardInterrupt, SystemExit):
+            sys.exit(1)
         else:
             try:
                 print(' - Checkout tag ' + tag_output)
@@ -596,10 +606,12 @@ class Git(object):
                 self.repo.git.config('--get', 'branch.' + branch + '.merge')
                 print(' - Tracking branch ' + branch_output + ' already exists')
                 return
-            except:
+            except GitError:
                 message_1 = colored(' - Remote branch ', 'red')
                 message_2 = colored(' already exists', 'red')
                 print(message_1 + branch_output + message_2 + '\n')
+                sys.exit(1)
+            except (KeyboardInterrupt, SystemExit):
                 sys.exit(1)
         try:
             print(' - Push remote branch ' + branch_output)
@@ -683,8 +695,10 @@ class Git(object):
             not_detached = not self.repo.head.is_detached
             same_branch = self.repo.head.ref == default_branch
             return not_detached and same_branch
-        except:
+        except GitError:
             return False
+        except (KeyboardInterrupt, SystemExit):
+            sys.exit(1)
 
     def _is_dirty(self):
         """Check if repo is dirty"""

@@ -48,7 +48,9 @@ class Command(object):
             try:
                 self.clowder = ClowderController(self.root_directory)
                 self.versions = self.clowder.get_saved_version_names()
-            except:
+            except (KeyboardInterrupt, SystemExit):
+                sys.exit(1)
+            except Exception:
                 self._invalid_yaml = True
 
         # clowder argparse setup
