@@ -35,6 +35,13 @@ class Command(object):
         parser.add_argument('--write', '-w', action='store_true',
                             help='run tests requiring test repo write access')
         self._subparsers = parser.add_subparsers(dest='test_command', metavar='SUBCOMMAND')
+        self._configure_all_subparser()
+        self._configure_cats_subparser()
+        self._configure_cocos2d_subparser()
+        self._configure_llvm_subparser()
+        self._configure_offline_subparser()
+        self._configure_swift_subparser()
+        self._configure_unittest_subparser()
         # Argcomplete and arguments parsing
         argcomplete.autocomplete(parser)
         self.args = parser.parse_args()
