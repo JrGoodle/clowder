@@ -30,8 +30,6 @@ class Command(object):
         self._scripts_dir = os.path.join(os.getcwd(), 'test', 'scripts')
         parser = argparse.ArgumentParser(description=command_description,
                                          formatter_class=argparse.RawDescriptionHelpFormatter)
-        parser.add_argument('--python2', action='store_true',
-                            help='run tests for Python 2')
         parser.add_argument('--write', '-w', action='store_true',
                             help='run tests requiring test repo write access')
         self._subparsers = parser.add_subparsers(dest='test_command', metavar='SUBCOMMAND')
@@ -212,7 +210,10 @@ class Command(object):
 
     def unittests(self):
         """clowder unit tests"""
-        self.args.python2
+        script = os.path.join(self._scripts_dir, 'unittests.sh')
+        test_env = os.environ.copy()
+        test_env["PYTHON_VERSION"] = self.args.version
+        subprocess.call(script, shell=True, env=test_env)
 
     def _configure_all_subparser(self):
         """clowder all tests subparser"""
@@ -260,7 +261,11 @@ class Command(object):
 
     def _configure_unittest_subparser(self):
         """clowder unit tests subparser"""
-        self._subparsers.add_parser('unittests', help='Run unit tests')
+        unittest_subparser = self._subparsers.add_parser('unittests',
+                                                         help='Run unit tests')
+        unittest_subparser.add_argument('version', choices=['python2', 'python3'],
+                                        help='Python vesion to run unit tests for',
+                                        metavar='PYTHON_VERSION')
 
 
 def exit_unrecognized_command(parser):

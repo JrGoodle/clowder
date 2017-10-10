@@ -4,9 +4,9 @@
 
 echo 'TEST: python unittests test script'
 
-cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
+cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 
-. tests/test_utilities.sh
+. test_utilities.sh
 
 if [ -z "$TRAVIS_OS_NAME" ]; then
     setup_local_test_directory

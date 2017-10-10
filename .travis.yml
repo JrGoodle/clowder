@@ -30,9 +30,15 @@ install:
     - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew install github-release; fi
     - if [ "$TRAVIS_OS_NAME" = "osx" ]; then sudo -H pip3 install twine wheel; fi
 
-before_script: script/setup "$PYVERSION"
+before_script:
+    - script/setup "$PYVERSION"
+    - script/test
 
-script: script/test "$TARGET" "read" "$PYVERSION"
+script:
+    - if [ "$TARGET" = "cats" ]; then clowder-test unittests "$PYVERSION"; clowder-test cats all; fi
+    - if [ "$TARGET" = "cocos2d" ]; then clowder-test cocos2d; fi
+    - if [ "$TARGET" = "llvm" ]; then clowder-test llvm; fi
+    - if [ "$TARGET" = "swift" ]; then clowder-test swift; fi
 
 after_success: if [ "$TRAVIS_OS_NAME" = "osx" ]; then script/deploy; fi
 
