@@ -71,32 +71,38 @@ class Command(object):
         else:
             test_env["ACCESS_LEVEL"] = 'read'
         script = os.path.join(self._scripts_dir, 'test_example_cats.sh')
-        subprocess.call(script, shell=True, env=test_env)
+        return_code = subprocess.call(script, shell=True, env=test_env)
+        sys.exit(return_code)
 
     def cats_branch(self):
         """clowder cats branch tests"""
         script = os.path.join(self._scripts_dir, 'test_cats_branch.sh')
-        subprocess.call(script, shell=True)
+        return_code = subprocess.call(script, shell=True)
+        sys.exit(return_code)
 
     def cats_clean(self):
         """clowder cats clean tests"""
         script = os.path.join(self._scripts_dir, 'test_cats_clean.sh')
-        subprocess.call(script, shell=True)
+        return_code = subprocess.call(script, shell=True)
+        sys.exit(return_code)
 
     def cats_diff(self):
         """clowder cats diff tests"""
         script = os.path.join(self._scripts_dir, 'test_cats_diff.sh')
-        subprocess.call(script, shell=True)
+        return_code = subprocess.call(script, shell=True)
+        sys.exit(return_code)
 
     def cats_forall(self):
         """clowder cats forall tests"""
         script = os.path.join(self._scripts_dir, 'test_cats_forall.sh')
-        subprocess.call(script, shell=True)
+        return_code = subprocess.call(script, shell=True)
+        sys.exit(return_code)
 
     def cats_herd_branch(self):
         """clowder cats herd branch tests"""
         script = os.path.join(self._scripts_dir, 'test_cats_herd_branch.sh')
-        subprocess.call(script, shell=True)
+        return_code = subprocess.call(script, shell=True)
+        sys.exit(return_code)
 
     def cats_herd(self):
         """clowder cats herd tests"""
@@ -106,22 +112,26 @@ class Command(object):
         else:
             test_env["ACCESS_LEVEL"] = 'read'
         script = os.path.join(self._scripts_dir, 'test_cats_herd.sh')
-        subprocess.call(script, shell=True, env=test_env)
+        return_code = subprocess.call(script, shell=True, env=test_env)
+        sys.exit(return_code)
 
     def cats_import(self):
         """clowder cats import tests"""
         script = os.path.join(self._scripts_dir, 'test_cats_import.sh')
-        subprocess.call(script, shell=True)
+        return_code = subprocess.call(script, shell=True)
+        sys.exit(return_code)
 
     def cats_init(self):
         """clowder cats init tests"""
         script = os.path.join(self._scripts_dir, 'test_cats_init.sh')
-        subprocess.call(script, shell=True)
+        return_code = subprocess.call(script, shell=True)
+        sys.exit(return_code)
 
     def cats_link(self):
         """clowder cats link tests"""
         script = os.path.join(self._scripts_dir, 'test_cats_link.sh')
-        subprocess.call(script, shell=True)
+        return_code = subprocess.call(script, shell=True)
+        sys.exit(return_code)
 
     def cats_prune(self):
         """clowder cats prune tests"""
@@ -131,7 +141,8 @@ class Command(object):
         else:
             test_env["ACCESS_LEVEL"] = 'read'
         script = os.path.join(self._scripts_dir, 'test_cats_prune.sh')
-        subprocess.call(script, shell=True, env=test_env)
+        return_code = subprocess.call(script, shell=True, env=test_env)
+        sys.exit(return_code)
 
     def cats_repo(self):
         """clowder cats repo tests"""
@@ -141,12 +152,14 @@ class Command(object):
         else:
             test_env["ACCESS_LEVEL"] = 'read'
         script = os.path.join(self._scripts_dir, 'test_cats_repo.sh')
-        subprocess.call(script, shell=True, env=test_env)
+        return_code = subprocess.call(script, shell=True, env=test_env)
+        sys.exit(return_code)
 
     def cats_save(self):
         """clowder cats save tests"""
         script = os.path.join(self._scripts_dir, 'test_cats_save.sh')
-        subprocess.call(script, shell=True)
+        return_code = subprocess.call(script, shell=True)
+        sys.exit(return_code)
 
     def cats_start(self):
         """clowder cats start tests"""
@@ -156,32 +169,38 @@ class Command(object):
         else:
             test_env["ACCESS_LEVEL"] = 'read'
         script = os.path.join(self._scripts_dir, 'test_cats_start.sh')
-        subprocess.call(script, shell=True, env=test_env)
+        return_code = subprocess.call(script, shell=True, env=test_env)
+        sys.exit(return_code)
 
     def cats_stash(self):
         """clowder cats stash tests"""
         script = os.path.join(self._scripts_dir, 'test_cats_stash.sh')
-        subprocess.call(script, shell=True)
+        return_code = subprocess.call(script, shell=True)
+        sys.exit(return_code)
 
     def cats_status(self):
         """clowder cats status tests"""
         script = os.path.join(self._scripts_dir, 'test_cats_status.sh')
-        subprocess.call(script, shell=True)
+        return_code = subprocess.call(script, shell=True)
+        sys.exit(return_code)
 
     def cats_yaml_validation(self):
         """clowder cats yaml validation tests"""
         script = os.path.join(self._scripts_dir, 'test_cats_yaml_validation.sh')
-        subprocess.call(script, shell=True)
+        return_code = subprocess.call(script, shell=True)
+        sys.exit(return_code)
 
     def cats_yaml(self):
         """clowder cats yaml tests"""
         script = os.path.join(self._scripts_dir, 'test_cats_yaml.sh')
-        subprocess.call(script, shell=True)
+        return_code = subprocess.call(script, shell=True)
+        sys.exit(return_code)
 
     def cocos2d(self):
         """clowder cocos2d tests"""
         script = os.path.join(self._scripts_dir, 'test_example_cocos2d.sh')
-        subprocess.call(script, shell=True)
+        return_code = subprocess.call(script, shell=True)
+        sys.exit(return_code)
 
     def llvm(self):
         """clowder llvm tests"""
@@ -191,12 +210,14 @@ class Command(object):
         else:
             test_env["ACCESS_LEVEL"] = 'read'
         script = os.path.join(self._scripts_dir, 'test_example_llvm.sh')
-        subprocess.call(script, shell=True, env=test_env)
+        return_code = subprocess.call(script, shell=True, env=test_env)
+        sys.exit(return_code)
 
     def offline(self):
         """clowder offline tests"""
         script = os.path.join(self._scripts_dir, 'test_cats_offline.sh')
-        subprocess.call(script, shell=True)
+        return_code = subprocess.call(script, shell=True)
+        sys.exit(return_code)
 
     def swift(self):
         """clowder swift tests"""
@@ -206,14 +227,16 @@ class Command(object):
         else:
             test_env["ACCESS_LEVEL"] = 'read'
         script = os.path.join(self._scripts_dir, 'test_example_swift.sh')
-        subprocess.call(script, shell=True, env=test_env)
+        return_code = subprocess.call(script, shell=True, env=test_env)
+        sys.exit(return_code)
 
     def unittests(self):
         """clowder unit tests"""
         script = os.path.join(self._scripts_dir, 'unittests.sh')
         test_env = os.environ.copy()
         test_env["PYTHON_VERSION"] = self.args.version
-        subprocess.call(script, shell=True, env=test_env)
+        return_code = subprocess.call(script, shell=True, env=test_env)
+        sys.exit(return_code)
 
     def _configure_all_subparser(self):
         """clowder all tests subparser"""
