@@ -6,8 +6,6 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 
 . test_utilities.sh
 
-ACCESS_LEVEL="$1"
-
 print_double_separator
 echo 'TEST: swift projects example test script'
 print_double_separator
@@ -165,11 +163,11 @@ test_local_swift_example() {
 }
 test_local_swift_example
 
-"$TEST_SCRIPT_DIR/tests/test_swift_config_versions.sh" || exit 1
+"$TEST_SCRIPT_DIR/test_swift_config_versions.sh" || exit 1
 
 test_help() {
     print_double_separator
     clowder link -v jrgoodle-fork-travis-ci || exit 1
-    "$TEST_SCRIPT_DIR/tests/test_help.sh" "$SWIFT_EXAMPLE_DIR" || exit 1
+    "$TEST_SCRIPT_DIR/test_help.sh" "$SWIFT_EXAMPLE_DIR" || exit 1
 }
 test_help

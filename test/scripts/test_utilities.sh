@@ -5,7 +5,7 @@ CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 export EXAMPLES_DIR
 EXAMPLES_DIR="$( cd $CURRENT_DIR/../../examples && pwd)"
 export TEST_SCRIPT_DIR
-TEST_SCRIPT_DIR="$( cd $CURRENT_DIR/.. && pwd)"
+TEST_SCRIPT_DIR="$( cd $CURRENT_DIR && pwd)"
 export CLOWDER_PROJECT_DIR
 CLOWDER_PROJECT_DIR="$( cd $CURRENT_DIR/../.. && pwd)"
 

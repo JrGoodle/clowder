@@ -17,6 +17,6 @@ virtualenv -p $PY_PATH python2 || exit 1
 
 pip install $CLOWDER_PROJECT_DIR || exit 1
 
-$TEST_SCRIPT_DIR/tests/test_example_cats.sh
+$TEST_SCRIPT_DIR/test_example_cats.sh
 
 deactivate || exit 1

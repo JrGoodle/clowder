@@ -48,7 +48,7 @@ class Command(object):
         if self.args.test_command is None or not hasattr(self, self.args.test_command):
             exit_unrecognized_command(parser)
         # use dispatch pattern to invoke method with same name
-        getattr(self, self.args.clowder_command)()
+        getattr(self, self.args.test_command)()
         print()
 
     def all(self):
@@ -260,7 +260,7 @@ class Command(object):
 
     def _configure_unittest_subparser(self):
         """clowder unit tests subparser"""
-        self._subparsers.add_parser('swift', help='Run swift tests')
+        self._subparsers.add_parser('unittests', help='Run unit tests')
 
 
 def exit_unrecognized_command(parser):

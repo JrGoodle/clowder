@@ -35,7 +35,6 @@ case "$(uname)" in
         clean_examples
         ;;
     CYGWIN*) export MY_PLATFORM="windows";
-        pip3 uninstall clowder-repo
         clean_examples
         ;;
 esac
