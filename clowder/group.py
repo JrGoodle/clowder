@@ -106,19 +106,13 @@ class Group(object):
 
     def is_dirty(self):
         """Check if group has dirty project(s)"""
-        is_dirty = False
-        for project in self.projects:
-            if project.is_dirty():
-                is_dirty = True
-        return is_dirty
+
+        return any([project.is_dirty() for project in self.projects])
 
     def is_valid(self):
         """Validate status of all projects"""
-        valid = True
-        for project in self.projects:
-            if not project.is_valid():
-                valid = False
-        return valid
+
+        return all([project.is_valid() for project in self.projects])
 
     def print_existence_message(self):
         """Print existence validation message for projects in group"""
@@ -136,11 +130,8 @@ class Group(object):
 
     def projects_exist(self):
         """Validate existence status of all projects"""
-        projects_exist = True
-        for project in self.projects:
-            if not project.exists():
-                projects_exist = False
-        return projects_exist
+
+        return all([project.exists() for project in self.projects])
 
     def prune(self, branch, force=False, local=False, remote=False):
         """Prune branches"""
