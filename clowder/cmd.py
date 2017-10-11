@@ -27,14 +27,6 @@ if __name__ == '__main__':
     raise SystemExit(main())
 
 
-# Disable errors shown by pylint for no specified exception types
-# pylint: disable=W0702
-# Disable errors shown by pylint for too many public methods
-# pylint: disable=R0904
-# Disable errors shown by pylint for too many branches
-# pylint: disable=R0912
-
-
 class Command(object):
     """Command class for parsing commandline options"""
 

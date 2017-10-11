@@ -28,18 +28,6 @@ from clowder.utility.git_utilities import Git
 from clowder.utility.git_submodule_utilities import GitSubmodules
 
 
-# Disable errors shown by pylint for too many public methods
-# pylint: disable=R0904
-# Disable errors shown by pylint for too many branches
-# pylint: disable=R0912
-# Disable errors shown by pylint for too many arguments
-# pylint: disable=R0913
-# Disable errors shown by pylint for too many instance attributes
-# pylint: disable=R0902
-# Disable errors shown by pylint for no specified exception types
-# pylint: disable=W0702
-
-
 class Project(object):
     """clowder.yaml project class"""
 
@@ -48,42 +36,11 @@ class Project(object):
         self.name = project['name']
         self.path = project['path']
 
-        if 'depth' in project:
-            self.depth = project['depth']
-        elif 'depth' in group:
-            self.depth = group['depth']
-        else:
-            self.depth = defaults['depth']
-
-        if 'recursive' in project:
-            self.recursive = project['recursive']
-        elif 'recursive' in group:
-            self.recursive = group['recursive']
-        elif 'recursive' in defaults:
-            self.recursive = defaults['recursive']
-        else:
-            self.recursive = False
-
-        if 'ref' in project:
-            self.ref = project['ref']
-        elif 'ref' in group:
-            self.ref = group['ref']
-        else:
-            self.ref = defaults['ref']
-
-        if 'remote' in project:
-            self.remote_name = project['remote']
-        elif 'remote' in group:
-            self.remote_name = group['remote']
-        else:
-            self.remote_name = defaults['remote']
-
-        if 'source' in project:
-            source_name = project['source']
-        elif 'source' in group:
-            source_name = group['source']
-        else:
-            source_name = defaults['source']
+        self.depth = project.get('depth', group.get('depth', defaults['depth']))
+        self.recursive = project.get('recursive', group.get('recursive', defaults.get('recursive', False)))
+        self.ref = project.get('ref', group.get('ref', defaults['ref']))
+        self.remote_name = project.get('remote', group.get('remote', defaults['remote']))
+        source_name = project.get('source', group.get('source', defaults['source']))
 
         for source in sources:
             if source.name == source_name:

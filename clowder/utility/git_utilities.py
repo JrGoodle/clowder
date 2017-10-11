@@ -24,16 +24,6 @@ from clowder.utility.print_utilities import (
 )
 
 
-# Disable errors shown by pylint for too many public methods
-# pylint: disable=R0904
-# Disable errors shown by pylint for no specified exception types
-# pylint: disable=W0702
-# Disable errors shown by pylint for catching too general exception Exception
-# pylint: disable=W0703
-# Disable errors shown by pylint for too many arguments
-# pylint: disable=R0913
-
-
 class Git(object):
     """Class encapsulating git utilities"""
 

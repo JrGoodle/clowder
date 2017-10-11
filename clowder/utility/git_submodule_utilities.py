@@ -14,12 +14,6 @@ from clowder.utility.print_utilities import (
 )
 
 
-# Disable errors shown by pylint for catching too general exception Exception
-# pylint: disable=W0703
-# Disable errors shown by pylint for too many arguments
-# pylint: disable=R0913
-
-
 class GitSubmodules(Git):
     """Class encapsulating git utilities"""
 
@@ -95,27 +89,26 @@ class GitSubmodules(Git):
 
     def _submodules_clean(self):
         """Clean all submodules"""
+        self._submodule_command('foreach', '--recursive', 'git', 'clean', '-ffdx',
+                                error_msg=' - Failed to clean submodules')
+
+    def _submodule_command(self, *args, **kwargs):
+        """Base submodule command"""
+
         try:
-            self.repo.git.submodule('foreach', '--recursive', 'git', 'clean', '-ffdx')
+            self.repo.git.submodule(*args)
         except Exception as err:
-            cprint(' - Failed to clean submodules', 'red')
+            error_msg = str(kwargs.get('error_msg', ' - submodule command failed'))
+            cprint(error_msg, 'red')
             print_error(err)
             sys.exit(1)
 
     def _submodules_reset(self):
         """Reset all submodules"""
-        try:
-            self.repo.git.submodule('foreach', '--recursive', 'git', 'reset', '--hard')
-        except Exception as err:
-            cprint(' - Failed to reset submodules', 'red')
-            print_error(err)
-            sys.exit(1)
+        self._submodule_command('foreach', '--recursive', 'git', 'reset', '--hard',
+                                error_msg=' - Failed to reset submodules')
 
     def _submodules_update(self):
         """Update all submodules"""
-        try:
-            self.repo.git.submodule('update', '--checkout', '--recursive', '--force')
-        except Exception as err:
-            cprint(' - Failed to update submodules', 'red')
-            print_error(err)
-            sys.exit(1)
+        self._submodule_command('update', '--checkout', '--recursive', '--force',
+                                error_msg=' - Failed to update submodules')

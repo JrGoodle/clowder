@@ -28,10 +28,6 @@ from clowder.utility.git_print_utilities import (
 )
 
 
-# Disable errors shown by pylint for catching too general exception Exception
-# pylint: disable=W0703
-
-
 class ClowderRepo(object):
     """Class encapsulating clowder repo information"""
 

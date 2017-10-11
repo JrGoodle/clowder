@@ -20,14 +20,6 @@ from clowder.utility.print_utilities import (
 )
 
 
-# Disable errors shown by pylint for no specified exception types
-# pylint: disable=W0702
-# Disable errors shown by pylint for too many arguments
-# pylint: disable=R0913
-# Disable errors shown by pylint for invalid function name
-# pylint: disable=C0103
-
-
 def execute_command(cmd, path):
     """Execute command and display continuous output"""
     return subprocess.call(" ".join(cmd),
@@ -100,8 +92,8 @@ def parse_yaml(yaml_file):
     """Parse yaml file"""
     if os.path.isfile(yaml_file):
         try:
-            with open(yaml_file) as file:
-                parsed_yaml = yaml.safe_load(file)
+            with open(yaml_file) as raw_file:
+                parsed_yaml = yaml.safe_load(raw_file)
                 if parsed_yaml is None:
                     print_invalid_yaml_error()
                     print(format_empty_yaml_error(yaml_file) + '\n')
@@ -146,9 +138,9 @@ def save_yaml(yaml_output, yaml_file):
     """Save yaml file to disk"""
     if not os.path.isfile(yaml_file):
         try:
-            with open(yaml_file, 'w') as file:
+            with open(yaml_file, 'w') as raw_file:
                 print(" - Save yaml to file")
-                yaml.safe_dump(yaml_output, file, default_flow_style=False, indent=4)
+                yaml.safe_dump(yaml_output, raw_file, default_flow_style=False, indent=4)
         except:
             print_save_file_error(yaml_file)
             sys.exit(1)

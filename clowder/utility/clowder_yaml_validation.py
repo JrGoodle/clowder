@@ -18,14 +18,6 @@ from clowder.utility.print_utilities import (
 )
 
 
-# Disable errors shown by pylint for too many branches
-# pylint: disable=R0912
-# Disable errors shown by pylint for too many statements
-# pylint: disable=R0915
-# Disable errors shown by pylint for catching too general exception Exception
-# pylint: disable=W0703
-
-
 def validate_yaml(yaml_file):
     """Validate clowder.yaml with no import"""
     parsed_yaml = parse_yaml(yaml_file)
@@ -62,7 +54,7 @@ def validate_yaml(yaml_file):
         validate_yaml_groups(parsed_yaml['groups'], yaml_file)
         del parsed_yaml['groups']
 
-        if len(parsed_yaml) > 0:
+        if parsed_yaml:
             error = format_invalid_entries_error(format_yaml_file('clowder.yaml'),
                                                  parsed_yaml, yaml_file)
             raise Exception(error)
@@ -402,7 +394,7 @@ def validate_yaml_groups(groups, yaml_file):
                     raise Exception(error)
                 del group['depth']
 
-            if len(group) > 0:
+            if group:
                 error = format_invalid_entries_error('group', group, yaml_file)
                 raise Exception(error)
     except Exception as err:
@@ -440,7 +432,7 @@ def validate_yaml_import_project(project, yaml_file):
 
     validate_yaml_project_optional(project, yaml_file)
 
-    if len(project) > 0:
+    if project:
         error = format_invalid_entries_error('project', project, yaml_file)
         raise Exception(error)
 
@@ -472,7 +464,7 @@ def validate_yaml_project(project, yaml_file):
 
     validate_yaml_project_optional(project, yaml_file)
 
-    if len(project) > 0:
+    if project:
         error = format_invalid_entries_error('project', project, yaml_file)
         raise Exception(error)
 
@@ -576,7 +568,7 @@ def validate_yaml_sources(sources, yaml_file):
                 raise Exception(error)
             del source['url']
 
-            if len(source) > 0:
+            if source:
                 error = format_invalid_entries_error('source', source, yaml_file)
                 raise Exception(error)
     except Exception as err:

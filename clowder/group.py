@@ -5,42 +5,24 @@ from termcolor import colored
 from clowder.project import Project
 
 
-# Disable errors shown by pylint for too many branches
-# pylint: disable=R0912
-
-
 class Group(object):
     """clowder.yaml group class"""
 
     def __init__(self, root_directory, group, defaults, sources):
-        self.name = group['name']
 
-        if 'depth' in group:
-            self.depth = group['depth']
-        else:
-            self.depth = defaults['depth']
+        self.name = group['name']
+        self.depth = group.get('depth', defaults['depth'])
 
         if 'recursive' in group:
             self.recursive = group['recursive']
-        elif 'recursive' in group:
+        elif 'recursive' in defaults:
             self.recursive = defaults['recursive']
         else:
             self.recursive = False
 
-        if 'ref' in group:
-            self.ref = group['ref']
-        else:
-            self.ref = defaults['ref']
-
-        if 'remote' in group:
-            self.remote_name = group['remote']
-        else:
-            self.remote_name = defaults['remote']
-
-        if 'source' in group:
-            source_name = group['source']
-        else:
-            source_name = defaults['source']
+        self.ref = group.get('ref', defaults['ref'])
+        self.remote_name = group.get('remote', defaults['remote'])
+        source_name = group.get('source', defaults['source'])
 
         for source in sources:
             if source.name == source_name:
@@ -106,19 +88,13 @@ class Group(object):
 
     def is_dirty(self):
         """Check if group has dirty project(s)"""
-        is_dirty = False
-        for project in self.projects:
-            if project.is_dirty():
-                is_dirty = True
-        return is_dirty
+
+        return any([project.is_dirty() for project in self.projects])
 
     def is_valid(self):
         """Validate status of all projects"""
-        valid = True
-        for project in self.projects:
-            if not project.is_valid():
-                valid = False
-        return valid
+
+        return all([project.is_valid() for project in self.projects])
 
     def print_existence_message(self):
         """Print existence validation message for projects in group"""
@@ -136,11 +112,8 @@ class Group(object):
 
     def projects_exist(self):
         """Validate existence status of all projects"""
-        projects_exist = True
-        for project in self.projects:
-            if not project.exists():
-                projects_exist = False
-        return projects_exist
+
+        return all([project.exists() for project in self.projects])
 
     def prune(self, branch, force=False, local=False, remote=False):
         """Prune branches"""
