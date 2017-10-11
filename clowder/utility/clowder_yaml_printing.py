@@ -40,8 +40,8 @@ def print_yaml(root_directory):
     for yaml_file in yaml_files:
         if os.path.isfile(yaml_file):
             try:
-                with open(yaml_file) as file:
-                    contents = file.read()
+                with open(yaml_file) as raw_file:
+                    contents = raw_file.read()
                     print('-' * 80)
                     if os.path.islink(yaml_file):
                         path = format_symlink_target(yaml_file)
