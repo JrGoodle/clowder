@@ -19,7 +19,7 @@ class Group(object):
 
         if 'recursive' in group:
             self.recursive = group['recursive']
-        elif 'recursive' in group:
+        elif 'recursive' in defaults:
             self.recursive = defaults['recursive']
         else:
             self.recursive = False
