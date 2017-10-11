@@ -92,13 +92,14 @@ class GitSubmodules(Git):
         self._submodule_command('foreach', '--recursive', 'git', 'clean', '-ffdx',
                                 error_msg=' - Failed to clean submodules')
 
-    def _submodule_command(self, *args, error_msg=' - submodule command failed'):
+    def _submodule_command(self, *args, **kwargs):
         """Base submodule command"""
 
         try:
             self.repo.git.submodule(*args)
         except Exception as err:
-            cprint(str(error_msg), 'red')
+            error_msg = str(kwargs.get('error_msg', ' - submodule command failed'))
+            cprint(error_msg, 'red')
             print_error(err)
             sys.exit(1)
 
