@@ -14,12 +14,6 @@ from clowder.utility.print_utilities import (
 )
 
 
-# Disable errors shown by pylint for catching too general exception Exception
-# pylint: disable=W0703
-# Disable errors shown by pylint for too many arguments
-# pylint: disable=R0913
-
-
 class GitSubmodules(Git):
     """Class encapsulating git utilities"""
 

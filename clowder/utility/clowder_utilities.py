@@ -20,14 +20,6 @@ from clowder.utility.print_utilities import (
 )
 
 
-# Disable errors shown by pylint for no specified exception types
-# pylint: disable=W0702
-# Disable errors shown by pylint for too many arguments
-# pylint: disable=R0913
-# Disable errors shown by pylint for invalid function name
-# pylint: disable=C0103
-
-
 def execute_command(cmd, path):
     """Execute command and display continuous output"""
     return subprocess.call(" ".join(cmd),

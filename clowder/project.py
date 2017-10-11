@@ -28,18 +28,6 @@ from clowder.utility.git_utilities import Git
 from clowder.utility.git_submodule_utilities import GitSubmodules
 
 
-# Disable errors shown by pylint for too many public methods
-# pylint: disable=R0904
-# Disable errors shown by pylint for too many branches
-# pylint: disable=R0912
-# Disable errors shown by pylint for too many arguments
-# pylint: disable=R0913
-# Disable errors shown by pylint for too many instance attributes
-# pylint: disable=R0902
-# Disable errors shown by pylint for no specified exception types
-# pylint: disable=W0702
-
-
 class Project(object):
     """clowder.yaml project class"""
 

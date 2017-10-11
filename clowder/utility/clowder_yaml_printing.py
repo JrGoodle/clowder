@@ -12,10 +12,6 @@ from clowder.utility.print_utilities import (
 )
 
 
-# Disable errors shown by pylint for no specified exception types
-# pylint: disable=W0702
-
-
 def print_yaml(root_directory):
     """Print current clowder yaml"""
     yaml_file = os.path.join(root_directory, 'clowder.yaml')
