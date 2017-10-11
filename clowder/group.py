@@ -13,12 +13,9 @@ class Group(object):
     """clowder.yaml group class"""
 
     def __init__(self, root_directory, group, defaults, sources):
-        self.name = group['name']
 
-        if 'depth' in group:
-            self.depth = group['depth']
-        else:
-            self.depth = defaults['depth']
+        self.name = group['name']
+        self.depth = group.get('depth', defaults['depth'])
 
         if 'recursive' in group:
             self.recursive = group['recursive']
@@ -27,20 +24,9 @@ class Group(object):
         else:
             self.recursive = False
 
-        if 'ref' in group:
-            self.ref = group['ref']
-        else:
-            self.ref = defaults['ref']
-
-        if 'remote' in group:
-            self.remote_name = group['remote']
-        else:
-            self.remote_name = defaults['remote']
-
-        if 'source' in group:
-            source_name = group['source']
-        else:
-            source_name = defaults['source']
+        self.ref = group.get('ref', defaults['ref'])
+        self.remote_name = group.get('remote', defaults['remote'])
+        source_name = group.get('source', defaults['source'])
 
         for source in sources:
             if source.name == source_name:
