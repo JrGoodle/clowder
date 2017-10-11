@@ -12,11 +12,12 @@ import argcomplete
 
 # Disable errors shown by pylint for too many public methods
 # pylint: disable=R0904
+# Disable errors shown by pylint for no specified exception types
+# pylint: disable=W0702
 
 
 def main():
     """Main entrypoint for clowder test runner"""
-    signal.signal(signal.SIGINT, signal_handler)
     Command()
 
 
@@ -302,13 +303,18 @@ def exit_unrecognized_command(parser):
 
 
 def execute_subprocess(command, shell=False, env=None):
-    """Run subprocess call with exti handler to terminate"""
-    # atexit.register(subprocess_exit_handler)
+    """Run subprocess call with exit handler to terminate"""
     if env is None:
         cmd_env = env
     else:
         cmd_env = os.environ.copy()
-    return subprocess.call(command, shell=shell, env=cmd_env)
+    try:
+        process = subprocess.Popen(command, shell=shell, env=cmd_env)
+        atexit.register(subprocess_exit_handler, process)
+        process.communicate()
+    except KeyboardInterrupt:
+        os.kill(process.pid, signal.SIGTERM)
+    return process.returncode
 
 
 def subprocess_exit_handler(process):
@@ -316,14 +322,5 @@ def subprocess_exit_handler(process):
     try:
         os.kill(process.pid, 0)
         process.kill()
-        print("Forced kill")
     except:
-        print("Terminated gracefully")
-
-
-# Disable errors shown by pylint for unused arguments
-# pylint: disable=W0613
-def signal_handler(sig, frame):
-    """Signal handler for Ctrl+C trap"""
-    print()
-    sys.exit(1)
+        pass

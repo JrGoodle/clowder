@@ -1,9 +1,11 @@
 """Clowder utilities"""
 
 from __future__ import print_function
+import atexit
 import errno
 import os
 import shutil
+import signal
 import socket
 import subprocess
 import sys
@@ -20,14 +22,22 @@ from clowder.utility.print_utilities import (
 )
 
 
-def execute_command(cmd, path):
-    """Execute command and display continuous output"""
-    return subprocess.call(" ".join(cmd),
-                           shell=True,
-                           cwd=path)
+def execute_command(command, path, shell=True, env=None):
+    """Run subprocess call with exit handler to terminate"""
+    if env is None:
+        cmd_env = env
+    else:
+        cmd_env = os.environ.copy()
+    try:
+        process = subprocess.Popen(" ".join(command), shell=shell, env=cmd_env, cwd=path)
+        atexit.register(subprocess_exit_handler, process)
+        process.communicate()
+    except KeyboardInterrupt:
+        os.kill(process.pid, signal.SIGTERM)
+    return process.returncode
 
 
-def execute_forall_command(cmd, path, clowder_path, name, remote, fork_remote, ref):
+def execute_forall_command(command, path, clowder_path, name, remote, fork_remote, ref):
     """Execute forall command with additional environment variables and display continuous output"""
     forall_env = os.environ.copy()
     forall_env["CLOWDER_PATH"] = clowder_path
@@ -37,10 +47,7 @@ def execute_forall_command(cmd, path, clowder_path, name, remote, fork_remote, r
     forall_env["PROJECT_REF"] = ref
     if fork_remote is not None:
         forall_env["FORK_REMOTE"] = fork_remote
-    return subprocess.call(" ".join(cmd),
-                           shell=True,
-                           cwd=path,
-                           env=forall_env)
+    return execute_command(command, path, shell=True, env=forall_env)
 
 
 def existing_git_repository(path):
@@ -148,6 +155,15 @@ def save_yaml(yaml_output, yaml_file):
         print_file_exists_error(yaml_file)
         print()
         sys.exit(1)
+
+
+def subprocess_exit_handler(process):
+    """terminate subprocess"""
+    try:
+        os.kill(process.pid, 0)
+        process.kill()
+    except:
+        pass
 
 
 def truncate_ref(ref):
