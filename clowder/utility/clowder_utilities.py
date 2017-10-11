@@ -23,7 +23,7 @@ from clowder.utility.print_utilities import (
 
 
 def execute_command(command, path, shell=True, env=None):
-    """Run subprocess call with exit handler to terminate"""
+    """Run subprocess command"""
     if env is None:
         cmd_env = env
     else:

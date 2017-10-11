@@ -1,6 +1,5 @@
 """Test group class"""
 
-
 import os
 import sys
 import unittest
@@ -16,7 +15,7 @@ class GitUtilitiesTest(unittest.TestCase):
 
     CURRENT_FILE_DIR_PATH = os.path.dirname(os.path.realpath(__file__))
     CATS_EXAMPLE_PATH = os.path.abspath(os.path.join(CURRENT_FILE_DIR_PATH,
-                                                     '..', 'examples', 'cats'))
+                                                     '..', '..', 'examples', 'cats'))
 
     def setUp(self):
         self.jules_project_path = os.path.join(self.CATS_EXAMPLE_PATH, 'black-cats', 'jules')
