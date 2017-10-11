@@ -2,7 +2,9 @@
 
 from __future__ import print_function
 import argparse
+import atexit
 import os
+import signal
 import subprocess
 import sys
 import argcomplete
@@ -14,6 +16,7 @@ import argcomplete
 
 def main():
     """Main entrypoint for clowder test runner"""
+    signal.signal(signal.SIGINT, signal_handler)
     Command()
 
 
@@ -71,37 +74,37 @@ class Command(object):
         else:
             test_env["ACCESS_LEVEL"] = 'read'
         script = os.path.join(self._scripts_dir, 'test_example_cats.sh')
-        return_code = subprocess.call(script, shell=True, env=test_env)
+        return_code = execute_subprocess(script, shell=True, env=test_env)
         sys.exit(return_code)
 
     def cats_branch(self):
         """clowder cats branch tests"""
         script = os.path.join(self._scripts_dir, 'test_cats_branch.sh')
-        return_code = subprocess.call(script, shell=True)
+        return_code = execute_subprocess(script, shell=True)
         sys.exit(return_code)
 
     def cats_clean(self):
         """clowder cats clean tests"""
         script = os.path.join(self._scripts_dir, 'test_cats_clean.sh')
-        return_code = subprocess.call(script, shell=True)
+        return_code = execute_subprocess(script, shell=True)
         sys.exit(return_code)
 
     def cats_diff(self):
         """clowder cats diff tests"""
         script = os.path.join(self._scripts_dir, 'test_cats_diff.sh')
-        return_code = subprocess.call(script, shell=True)
+        return_code = execute_subprocess(script, shell=True)
         sys.exit(return_code)
 
     def cats_forall(self):
         """clowder cats forall tests"""
         script = os.path.join(self._scripts_dir, 'test_cats_forall.sh')
-        return_code = subprocess.call(script, shell=True)
+        return_code = execute_subprocess(script, shell=True)
         sys.exit(return_code)
 
     def cats_herd_branch(self):
         """clowder cats herd branch tests"""
         script = os.path.join(self._scripts_dir, 'test_cats_herd_branch.sh')
-        return_code = subprocess.call(script, shell=True)
+        return_code = execute_subprocess(script, shell=True)
         sys.exit(return_code)
 
     def cats_herd(self):
@@ -112,25 +115,25 @@ class Command(object):
         else:
             test_env["ACCESS_LEVEL"] = 'read'
         script = os.path.join(self._scripts_dir, 'test_cats_herd.sh')
-        return_code = subprocess.call(script, shell=True, env=test_env)
+        return_code = execute_subprocess(script, shell=True, env=test_env)
         sys.exit(return_code)
 
     def cats_import(self):
         """clowder cats import tests"""
         script = os.path.join(self._scripts_dir, 'test_cats_import.sh')
-        return_code = subprocess.call(script, shell=True)
+        return_code = execute_subprocess(script, shell=True)
         sys.exit(return_code)
 
     def cats_init(self):
         """clowder cats init tests"""
         script = os.path.join(self._scripts_dir, 'test_cats_init.sh')
-        return_code = subprocess.call(script, shell=True)
+        return_code = execute_subprocess(script, shell=True)
         sys.exit(return_code)
 
     def cats_link(self):
         """clowder cats link tests"""
         script = os.path.join(self._scripts_dir, 'test_cats_link.sh')
-        return_code = subprocess.call(script, shell=True)
+        return_code = execute_subprocess(script, shell=True)
         sys.exit(return_code)
 
     def cats_prune(self):
@@ -141,7 +144,7 @@ class Command(object):
         else:
             test_env["ACCESS_LEVEL"] = 'read'
         script = os.path.join(self._scripts_dir, 'test_cats_prune.sh')
-        return_code = subprocess.call(script, shell=True, env=test_env)
+        return_code = execute_subprocess(script, shell=True, env=test_env)
         sys.exit(return_code)
 
     def cats_repo(self):
@@ -152,13 +155,13 @@ class Command(object):
         else:
             test_env["ACCESS_LEVEL"] = 'read'
         script = os.path.join(self._scripts_dir, 'test_cats_repo.sh')
-        return_code = subprocess.call(script, shell=True, env=test_env)
+        return_code = execute_subprocess(script, shell=True, env=test_env)
         sys.exit(return_code)
 
     def cats_save(self):
         """clowder cats save tests"""
         script = os.path.join(self._scripts_dir, 'test_cats_save.sh')
-        return_code = subprocess.call(script, shell=True)
+        return_code = execute_subprocess(script, shell=True)
         sys.exit(return_code)
 
     def cats_start(self):
@@ -169,37 +172,37 @@ class Command(object):
         else:
             test_env["ACCESS_LEVEL"] = 'read'
         script = os.path.join(self._scripts_dir, 'test_cats_start.sh')
-        return_code = subprocess.call(script, shell=True, env=test_env)
+        return_code = execute_subprocess(script, shell=True, env=test_env)
         sys.exit(return_code)
 
     def cats_stash(self):
         """clowder cats stash tests"""
         script = os.path.join(self._scripts_dir, 'test_cats_stash.sh')
-        return_code = subprocess.call(script, shell=True)
+        return_code = execute_subprocess(script, shell=True)
         sys.exit(return_code)
 
     def cats_status(self):
         """clowder cats status tests"""
         script = os.path.join(self._scripts_dir, 'test_cats_status.sh')
-        return_code = subprocess.call(script, shell=True)
+        return_code = execute_subprocess(script, shell=True)
         sys.exit(return_code)
 
     def cats_yaml_validation(self):
         """clowder cats yaml validation tests"""
         script = os.path.join(self._scripts_dir, 'test_cats_yaml_validation.sh')
-        return_code = subprocess.call(script, shell=True)
+        return_code = execute_subprocess(script, shell=True)
         sys.exit(return_code)
 
     def cats_yaml(self):
         """clowder cats yaml tests"""
         script = os.path.join(self._scripts_dir, 'test_cats_yaml.sh')
-        return_code = subprocess.call(script, shell=True)
+        return_code = execute_subprocess(script, shell=True)
         sys.exit(return_code)
 
     def cocos2d(self):
         """clowder cocos2d tests"""
         script = os.path.join(self._scripts_dir, 'test_example_cocos2d.sh')
-        return_code = subprocess.call(script, shell=True)
+        return_code = execute_subprocess(script, shell=True)
         sys.exit(return_code)
 
     def llvm(self):
@@ -210,13 +213,13 @@ class Command(object):
         else:
             test_env["ACCESS_LEVEL"] = 'read'
         script = os.path.join(self._scripts_dir, 'test_example_llvm.sh')
-        return_code = subprocess.call(script, shell=True, env=test_env)
+        return_code = execute_subprocess(script, shell=True, env=test_env)
         sys.exit(return_code)
 
     def offline(self):
         """clowder offline tests"""
         script = os.path.join(self._scripts_dir, 'test_cats_offline.sh')
-        return_code = subprocess.call(script, shell=True)
+        return_code = execute_subprocess(script, shell=True)
         sys.exit(return_code)
 
     def swift(self):
@@ -227,7 +230,7 @@ class Command(object):
         else:
             test_env["ACCESS_LEVEL"] = 'read'
         script = os.path.join(self._scripts_dir, 'test_example_swift.sh')
-        return_code = subprocess.call(script, shell=True, env=test_env)
+        return_code = execute_subprocess(script, shell=True, env=test_env)
         sys.exit(return_code)
 
     def unittests(self):
@@ -235,7 +238,7 @@ class Command(object):
         script = os.path.join(self._scripts_dir, 'unittests.sh')
         test_env = os.environ.copy()
         test_env["PYTHON_VERSION"] = self.args.version
-        return_code = subprocess.call(script, shell=True, env=test_env)
+        return_code = execute_subprocess(script, shell=True, env=test_env)
         sys.exit(return_code)
 
     def _configure_all_subparser(self):
@@ -294,5 +297,33 @@ class Command(object):
 def exit_unrecognized_command(parser):
     """Print unrecognized command message and exit"""
     parser.print_help()
+    print()
+    sys.exit(1)
+
+
+def execute_subprocess(command, shell=False, env=None):
+    """Run subprocess call with exti handler to terminate"""
+    # atexit.register(subprocess_exit_handler)
+    if env is None:
+        cmd_env = env
+    else:
+        cmd_env = os.environ.copy()
+    return subprocess.call(command, shell=shell, env=cmd_env)
+
+
+def subprocess_exit_handler(process):
+    """terminate subprocess"""
+    try:
+        os.kill(process.pid, 0)
+        process.kill()
+        print("Forced kill")
+    except:
+        print("Terminated gracefully")
+
+
+# Disable errors shown by pylint for unused arguments
+# pylint: disable=W0613
+def signal_handler(sig, frame):
+    """Signal handler for Ctrl+C trap"""
     print()
     sys.exit(1)
