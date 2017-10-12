@@ -102,6 +102,12 @@ class Command(object):
         return_code = execute_command(script, shell=True)
         sys.exit(return_code)
 
+    def cats_help(self):
+        """clowder cats help tests"""
+        script = os.path.join(self._scripts_dir, 'test_cats_help.sh')
+        return_code = execute_command(script, shell=True)
+        sys.exit(return_code)
+
     def cats_herd_branch(self):
         """clowder cats herd branch tests"""
         script = os.path.join(self._scripts_dir, 'test_cats_herd_branch.sh')
@@ -259,6 +265,7 @@ class Command(object):
         cats_subparser.add_parser('clean', help='Run cats clean tests')
         cats_subparser.add_parser('diff', help='Run cats diff tests')
         cats_subparser.add_parser('forall', help='Run cats forall tests')
+        cats_subparser.add_parser('help', help='Run cats help tests')
         cats_subparser.add_parser('herd_branch', help='Run cats herd branch tests')
         cats_subparser.add_parser('herd', help='Run cats herd tests')
         cats_subparser.add_parser('import', help='Run cats import tests')

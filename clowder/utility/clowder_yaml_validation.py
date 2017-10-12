@@ -22,83 +22,73 @@ from clowder.utility.print_utilities import (
 def validate_yaml(yaml_file):
     """Validate clowder.yaml with no import"""
     parsed_yaml = parse_yaml(yaml_file)
-    try:
-        _validate_type_dict(parsed_yaml, format_yaml_file('clowder.yaml'), yaml_file)
-        if not parsed_yaml:
-            error = format_empty_yaml_error(yaml_file)
-            raise ClowderException(error)
+    _validate_type_dict(parsed_yaml, format_yaml_file('clowder.yaml'), yaml_file)
+    if not parsed_yaml:
+        error = format_empty_yaml_error(yaml_file)
+        raise ClowderException(error)
 
-        if 'defaults' not in parsed_yaml:
-            error = format_missing_entry_error('defaults',
-                                               format_yaml_file('clowder.yaml'),
-                                               yaml_file)
-            raise ClowderException(error)
-        validate_yaml_defaults(parsed_yaml['defaults'], yaml_file)
-        del parsed_yaml['defaults']
+    if 'defaults' not in parsed_yaml:
+        error = format_missing_entry_error('defaults',
+                                           format_yaml_file('clowder.yaml'),
+                                           yaml_file)
+        raise ClowderException(error)
+    validate_yaml_defaults(parsed_yaml['defaults'], yaml_file)
+    del parsed_yaml['defaults']
 
-        if 'sources' not in parsed_yaml:
-            error = format_missing_entry_error('sources',
-                                               format_yaml_file('clowder.yaml'),
-                                               yaml_file)
-            raise ClowderException(error)
-        validate_yaml_sources(parsed_yaml['sources'], yaml_file)
-        del parsed_yaml['sources']
+    if 'sources' not in parsed_yaml:
+        error = format_missing_entry_error('sources',
+                                           format_yaml_file('clowder.yaml'),
+                                           yaml_file)
+        raise ClowderException(error)
+    validate_yaml_sources(parsed_yaml['sources'], yaml_file)
+    del parsed_yaml['sources']
 
-        if 'groups' not in parsed_yaml:
-            error = format_missing_entry_error('groups',
-                                               format_yaml_file('clowder.yaml'),
-                                               yaml_file)
-            raise ClowderException(error)
-        validate_yaml_groups(parsed_yaml['groups'], yaml_file)
-        del parsed_yaml['groups']
+    if 'groups' not in parsed_yaml:
+        error = format_missing_entry_error('groups',
+                                           format_yaml_file('clowder.yaml'),
+                                           yaml_file)
+        raise ClowderException(error)
+    validate_yaml_groups(parsed_yaml['groups'], yaml_file)
+    del parsed_yaml['groups']
 
-        if parsed_yaml:
-            error = format_invalid_entries_error(format_yaml_file('clowder.yaml'),
-                                                 parsed_yaml, yaml_file)
-            raise ClowderException(error)
-    except ClowderException as err:
-        print_invalid_yaml_error()
-        print_error(err)
-        sys.exit(1)
+    if parsed_yaml:
+        error = format_invalid_entries_error(format_yaml_file('clowder.yaml'),
+                                             parsed_yaml, yaml_file)
+        raise ClowderException(error)
 
 
 def validate_yaml_import(yaml_file):
     """Validate clowder.yaml with an import"""
     parsed_yaml = parse_yaml(yaml_file)
-    try:
-        _validate_type_dict(parsed_yaml, format_yaml_file('clowder.yaml'), yaml_file)
-        if 'import' not in parsed_yaml:
-            error = format_missing_entry_error('import',
-                                               format_yaml_file('clowder.yaml'),
-                                               yaml_file)
-            raise ClowderException(error)
-        _validate_type_str(parsed_yaml['import'], 'import', yaml_file)
-        del parsed_yaml['import']
+    _validate_type_dict(parsed_yaml, format_yaml_file('clowder.yaml'), yaml_file)
+    if 'import' not in parsed_yaml:
+        error = format_missing_entry_error('import',
+                                           format_yaml_file('clowder.yaml'),
+                                           yaml_file)
+        raise ClowderException(error)
+    _validate_type_str(parsed_yaml['import'], 'import', yaml_file)
+    del parsed_yaml['import']
 
-        if not parsed_yaml:
-            error = format_empty_yaml_error(yaml_file)
-            raise ClowderException(error)
+    if not parsed_yaml:
+        error = format_empty_yaml_error(yaml_file)
+        raise ClowderException(error)
 
-        if 'defaults' in parsed_yaml:
-            validate_yaml_import_defaults(parsed_yaml['defaults'], yaml_file)
-            del parsed_yaml['defaults']
+    if 'defaults' in parsed_yaml:
+        validate_yaml_import_defaults(parsed_yaml['defaults'], yaml_file)
+        del parsed_yaml['defaults']
 
-        if 'sources' in parsed_yaml:
-            validate_yaml_sources(parsed_yaml['sources'], yaml_file)
-            del parsed_yaml['sources']
+    if 'sources' in parsed_yaml:
+        validate_yaml_sources(parsed_yaml['sources'], yaml_file)
+        del parsed_yaml['sources']
 
-        if 'groups' in parsed_yaml:
-            validate_yaml_import_groups(parsed_yaml['groups'], yaml_file)
-            del parsed_yaml['groups']
+    if 'groups' in parsed_yaml:
+        validate_yaml_import_groups(parsed_yaml['groups'], yaml_file)
+        del parsed_yaml['groups']
 
-        if parsed_yaml:
-            error = format_invalid_entries_error(format_yaml_file('clowder.yaml'),
-                                                 parsed_yaml, yaml_file)
-            raise ClowderException(error)
-    except ClowderException as err:
-        print_invalid_yaml_error()
-        print_error(err)
-        sys.exit(1)
+    if parsed_yaml:
+        error = format_invalid_entries_error(format_yaml_file('clowder.yaml'),
+                                             parsed_yaml, yaml_file)
+        raise ClowderException(error)
 
 
 def validate_yaml_import_defaults(defaults, yaml_file):
@@ -129,42 +119,37 @@ def validate_yaml_import_defaults(defaults, yaml_file):
 
 def validate_yaml_defaults(defaults, yaml_file):
     """Validate defaults in clowder loaded from yaml file"""
-    try:
-        _validate_type_dict(defaults, 'defaults', yaml_file)
-        if not defaults:
-            error = format_invalid_entries_error('defaults', defaults, yaml_file)
-            raise ClowderException(error)
+    _validate_type_dict(defaults, 'defaults', yaml_file)
+    if not defaults:
+        error = format_invalid_entries_error('defaults', defaults, yaml_file)
+        raise ClowderException(error)
 
-        if 'ref' not in defaults:
-            error = format_missing_entry_error('ref', 'defaults', yaml_file)
-            raise ClowderException(error)
-        _validate_type_str(defaults['ref'], 'ref', yaml_file)
-        if not _valid_ref_type(defaults['ref']):
-            error = format_invalid_ref_error(defaults['ref'], yaml_file)
-            raise ClowderException(error)
-        del defaults['ref']
+    if 'ref' not in defaults:
+        error = format_missing_entry_error('ref', 'defaults', yaml_file)
+        raise ClowderException(error)
+    _validate_type_str(defaults['ref'], 'ref', yaml_file)
+    if not _valid_ref_type(defaults['ref']):
+        error = format_invalid_ref_error(defaults['ref'], yaml_file)
+        raise ClowderException(error)
+    del defaults['ref']
 
-        if 'remote' not in defaults:
-            error = format_missing_entry_error('remote', 'defaults', yaml_file)
-            raise ClowderException(error)
-        _validate_type_str(defaults['remote'], 'remote', yaml_file)
-        del defaults['remote']
+    if 'remote' not in defaults:
+        error = format_missing_entry_error('remote', 'defaults', yaml_file)
+        raise ClowderException(error)
+    _validate_type_str(defaults['remote'], 'remote', yaml_file)
+    del defaults['remote']
 
-        if 'source' not in defaults:
-            error = format_missing_entry_error('source', 'defaults', yaml_file)
-            raise ClowderException(error)
-        _validate_type_str(defaults['source'], 'source', yaml_file)
-        del defaults['source']
+    if 'source' not in defaults:
+        error = format_missing_entry_error('source', 'defaults', yaml_file)
+        raise ClowderException(error)
+    _validate_type_str(defaults['source'], 'source', yaml_file)
+    del defaults['source']
 
-        validate_yaml_defaults_optional(defaults, yaml_file)
+    validate_yaml_defaults_optional(defaults, yaml_file)
 
-        if defaults:
-            error = format_invalid_entries_error('defaults', defaults, yaml_file)
-            raise ClowderException(error)
-    except ClowderException as err:
-        print_invalid_yaml_error()
-        print_error(err)
-        sys.exit(1)
+    if defaults:
+        error = format_invalid_entries_error('defaults', defaults, yaml_file)
+        raise ClowderException(error)
 
 
 def validate_yaml_defaults_optional(defaults, yaml_file):
@@ -180,63 +165,48 @@ def validate_yaml_defaults_optional(defaults, yaml_file):
 
 def validate_yaml_fork(fork, yaml_file):
     """Validate fork in clowder loaded from yaml file"""
-    try:
-        _validate_type_dict(fork, 'fork', yaml_file)
-        if not fork:
-            error = format_invalid_entries_error('fork', fork, yaml_file)
-            raise ClowderException(error)
+    _validate_type_dict(fork, 'fork', yaml_file)
+    if not fork:
+        error = format_invalid_entries_error('fork', fork, yaml_file)
+        raise ClowderException(error)
 
-        if 'name' not in fork:
-            error = format_missing_entry_error('name', 'fork', yaml_file)
-            raise ClowderException(error)
-        _validate_type_str(fork['name'], 'name', yaml_file)
-        del fork['name']
+    if 'name' not in fork:
+        error = format_missing_entry_error('name', 'fork', yaml_file)
+        raise ClowderException(error)
+    _validate_type_str(fork['name'], 'name', yaml_file)
+    del fork['name']
 
-        if 'remote' not in fork:
-            error = format_missing_entry_error('remote', 'fork', yaml_file)
-            raise ClowderException(error)
-        _validate_type_str(fork['remote'], 'remote', yaml_file)
-        del fork['remote']
+    if 'remote' not in fork:
+        error = format_missing_entry_error('remote', 'fork', yaml_file)
+        raise ClowderException(error)
+    _validate_type_str(fork['remote'], 'remote', yaml_file)
+    del fork['remote']
 
-        if fork:
-            error = format_invalid_entries_error('fork', fork, yaml_file)
-            raise ClowderException(error)
-    except ClowderException as err:
-        print_invalid_yaml_error()
-        print_error(err)
-        sys.exit(1)
+    if fork:
+        error = format_invalid_entries_error('fork', fork, yaml_file)
+        raise ClowderException(error)
 
 
 def validate_yaml_import_groups(groups, yaml_file):
     """Validate groups in clowder loaded from yaml file with import"""
-    try:
-        _validate_type_list(groups, 'groups', yaml_file)
-        if not groups:
-            error = format_invalid_entries_error('groups', groups, yaml_file)
-            raise ClowderException(error)
+    _validate_type_list(groups, 'groups', yaml_file)
+    if not groups:
+        error = format_invalid_entries_error('groups', groups, yaml_file)
+        raise ClowderException(error)
 
-        for group in groups:
-            validate_yaml_import_group(group, yaml_file)
-    except ClowderException as err:
-        print_invalid_yaml_error()
-        print_error(err)
-        sys.exit(1)
+    for group in groups:
+        validate_yaml_import_group(group, yaml_file)
 
 
 def validate_yaml_groups(groups, yaml_file):
     """Validate groups in clowder loaded from yaml file"""
-    try:
-        _validate_type_list(groups, 'groups', yaml_file)
-        if not groups:
-            error = format_invalid_entries_error('groups', groups, yaml_file)
-            raise ClowderException(error)
+    _validate_type_list(groups, 'groups', yaml_file)
+    if not groups:
+        error = format_invalid_entries_error('groups', groups, yaml_file)
+        raise ClowderException(error)
 
-        for group in groups:
-            validate_yaml_group(group, yaml_file)
-    except ClowderException as err:
-        print_invalid_yaml_error()
-        print_error(err)
-        sys.exit(1)
+    for group in groups:
+        validate_yaml_group(group, yaml_file)
 
 
 def validate_yaml_import_project(project, yaml_file):
@@ -422,57 +392,46 @@ def validate_yaml_project_optional(project, yaml_file):
 
 def validate_yaml_projects(projects, yaml_file, is_import):
     """Validate projects in clowder loaded from yaml file"""
-    try:
-        _validate_type_list(projects, 'projects', yaml_file)
-        if not projects:
-            error = format_invalid_entries_error('projects', projects, yaml_file)
-            raise ClowderException(error)
+    _validate_type_list(projects, 'projects', yaml_file)
+    if not projects:
+        error = format_invalid_entries_error('projects', projects, yaml_file)
+        raise ClowderException(error)
 
-        for project in projects:
-            if is_import:
-                validate_yaml_import_project(project, yaml_file)
-            else:
-                validate_yaml_project(project, yaml_file)
-
-    except ClowderException as err:
-        print_invalid_yaml_error()
-        print_error(err)
-        sys.exit(1)
+    for project in projects:
+        if is_import:
+            validate_yaml_import_project(project, yaml_file)
+        else:
+            validate_yaml_project(project, yaml_file)
 
 
 def validate_yaml_sources(sources, yaml_file):
     """Validate sources in clowder loaded from yaml file"""
-    try:
-        _validate_type_list(sources, 'sources', yaml_file)
-        if not sources:
-            error = format_invalid_entries_error('sources', sources, yaml_file)
+    _validate_type_list(sources, 'sources', yaml_file)
+    if not sources:
+        error = format_invalid_entries_error('sources', sources, yaml_file)
+        raise ClowderException(error)
+
+    for source in sources:
+        _validate_type_dict(source, 'source', yaml_file)
+        if not source:
+            error = format_invalid_entries_error('source', source, yaml_file)
             raise ClowderException(error)
 
-        for source in sources:
-            _validate_type_dict(source, 'source', yaml_file)
-            if not source:
-                error = format_invalid_entries_error('source', source, yaml_file)
-                raise ClowderException(error)
+        if 'name' not in source:
+            error = format_missing_entry_error('name', 'source', yaml_file)
+            raise ClowderException(error)
+        _validate_type_str(source['name'], 'name', yaml_file)
+        del source['name']
 
-            if 'name' not in source:
-                error = format_missing_entry_error('name', 'source', yaml_file)
-                raise ClowderException(error)
-            _validate_type_str(source['name'], 'name', yaml_file)
-            del source['name']
+        if 'url' not in source:
+            error = format_missing_entry_error('url', 'source', yaml_file)
+            raise ClowderException(error)
+        _validate_type_str(source['url'], 'url', yaml_file)
+        del source['url']
 
-            if 'url' not in source:
-                error = format_missing_entry_error('url', 'source', yaml_file)
-                raise ClowderException(error)
-            _validate_type_str(source['url'], 'url', yaml_file)
-            del source['url']
-
-            if source:
-                error = format_invalid_entries_error('source', source, yaml_file)
-                raise ClowderException(error)
-    except ClowderException as err:
-        print_invalid_yaml_error()
-        print_error(err)
-        sys.exit(1)
+        if source:
+            error = format_invalid_entries_error('source', source, yaml_file)
+            raise ClowderException(error)
 
 
 def _valid_ref_type(ref):

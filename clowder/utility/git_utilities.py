@@ -260,7 +260,7 @@ class Git(object):
             else:
                 count = str(rev_list_count).split()[0]
             return count
-        except GitError:
+        except (GitError, ValueError):
             return 0
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
