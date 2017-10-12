@@ -119,11 +119,7 @@ def validate_yaml_import_defaults(defaults, yaml_file):
         _validate_type_str(defaults['source'], 'source', yaml_file)
         del defaults['source']
     if 'depth' in defaults:
-        error = format_depth_error(defaults['depth'], yaml_file)
-        if not isinstance(defaults['depth'], int):
-            raise Exception(error)
-        if int(defaults['depth']) < 0:
-            raise Exception(error)
+        _validate_type_depth(defaults['depth'], yaml_file)
         del defaults['depth']
     if defaults:
         error = format_invalid_entries_error('defaults', defaults, yaml_file)
@@ -134,7 +130,7 @@ def validate_yaml_defaults(defaults, yaml_file):
     """Validate defaults in clowder loaded from yaml file"""
     try:
         _validate_type_dict(defaults, 'defaults', yaml_file)
-        if len(defaults) is 0:
+        if not defaults:
             error = format_invalid_entries_error('defaults', defaults, yaml_file)
             raise Exception(error)
 
@@ -173,11 +169,7 @@ def validate_yaml_defaults(defaults, yaml_file):
 def validate_yaml_defaults_optional(defaults, yaml_file):
     """Validate defaults optional args in clowder loaded from yaml file"""
     if 'depth' in defaults:
-        error = format_depth_error(defaults['depth'], yaml_file)
-        if not isinstance(defaults['depth'], int):
-            raise Exception(error)
-        if int(defaults['depth']) < 0:
-            raise Exception(error)
+        _validate_type_depth(defaults['depth'], yaml_file)
         del defaults['depth']
 
     if 'recursive' in defaults:
@@ -189,7 +181,7 @@ def validate_yaml_fork(fork, yaml_file):
     """Validate fork in clowder loaded from yaml file"""
     try:
         _validate_type_dict(fork, 'fork', yaml_file)
-        if len(fork) is 0:
+        if not fork:
             error = format_invalid_entries_error('fork', fork, yaml_file)
             raise Exception(error)
 
@@ -218,7 +210,7 @@ def validate_yaml_import_groups(groups, yaml_file):
     """Validate groups in clowder loaded from yaml file with import"""
     try:
         _validate_type_list(groups, 'groups', yaml_file)
-        if len(groups) is 0:
+        if not groups:
             error = format_invalid_entries_error('groups', groups, yaml_file)
             raise Exception(error)
 
@@ -234,7 +226,7 @@ def validate_yaml_groups(groups, yaml_file):
     """Validate groups in clowder loaded from yaml file"""
     try:
         _validate_type_list(groups, 'groups', yaml_file)
-        if len(groups) is 0:
+        if not groups:
             error = format_invalid_entries_error('groups', groups, yaml_file)
             raise Exception(error)
 
@@ -249,7 +241,7 @@ def validate_yaml_groups(groups, yaml_file):
 def validate_yaml_import_project(project, yaml_file):
     """Validate project in clowder loaded from yaml file with import"""
     _validate_type_dict(project, 'project', yaml_file)
-    if len(project) is 0:
+    if not project:
         error = format_invalid_entries_error('project', project, yaml_file)
         raise Exception(error)
 
@@ -259,7 +251,7 @@ def validate_yaml_import_project(project, yaml_file):
     _validate_type_str(project['name'], 'name', yaml_file)
     del project['name']
 
-    if len(project) is 0:
+    if not project:
         error = format_invalid_entries_error('project', project, yaml_file)
         raise Exception(error)
 
@@ -315,11 +307,7 @@ def validate_yaml_import_group(group, yaml_file):
         del group['source']
 
     if 'depth' in group:
-        error = format_depth_error(group['depth'], yaml_file)
-        if not isinstance(group['depth'], int):
-            raise Exception(error)
-        if int(group['depth']) < 0:
-            raise Exception(error)
+        _validate_type_depth(group['depth'], yaml_file)
         del group['depth']
 
     if group:
@@ -366,11 +354,7 @@ def validate_yaml_group(group, yaml_file):
         del group['source']
 
     if 'depth' in group:
-        error = format_depth_error(group['depth'], yaml_file)
-        if not isinstance(group['depth'], int):
-            raise Exception(error)
-        if int(group['depth']) < 0:
-            raise Exception(error)
+        _validate_type_depth(group['depth'], yaml_file)
         del group['depth']
 
     if group:
@@ -426,11 +410,7 @@ def validate_yaml_project_optional(project, yaml_file):
         del project['source']
 
     if 'depth' in project:
-        error = format_depth_error(project['depth'], yaml_file)
-        if not isinstance(project['depth'], int):
-            raise Exception(error)
-        if int(project['depth']) < 0:
-            raise Exception(error)
+        _validate_type_depth(project['depth'], yaml_file)
         del project['depth']
 
     if 'fork' in project:
@@ -443,7 +423,7 @@ def validate_yaml_projects(projects, yaml_file, is_import):
     """Validate projects in clowder loaded from yaml file"""
     try:
         _validate_type_list(projects, 'projects', yaml_file)
-        if len(projects) is 0:
+        if not projects:
             error = format_invalid_entries_error('projects', projects, yaml_file)
             raise Exception(error)
 
@@ -463,13 +443,13 @@ def validate_yaml_sources(sources, yaml_file):
     """Validate sources in clowder loaded from yaml file"""
     try:
         _validate_type_list(sources, 'sources', yaml_file)
-        if len(sources) is 0:
+        if not sources:
             error = format_invalid_entries_error('sources', sources, yaml_file)
             raise Exception(error)
 
         for source in sources:
             _validate_type_dict(source, 'source', yaml_file)
-            if len(source) is 0:
+            if not source:
                 error = format_invalid_entries_error('source', source, yaml_file)
                 raise Exception(error)
 
@@ -514,15 +494,20 @@ def _validate_type_bool(value, name, yaml_file):
         raise Exception(error)
 
 
+def _validate_type_depth(value, yaml_file):
+    """Validate depth value"""
+    error = format_depth_error(value, yaml_file)
+    if not isinstance(value, int):
+        raise Exception(error)
+    if int(value) < 0:
+        raise Exception(error)
+
+
 def _validate_type_dict(value, name, yaml_file):
     """Validate value is a dict"""
     if not isinstance(value, dict):
         error = format_not_dictionary_error(name, yaml_file)
         raise Exception(error)
-
-
-# def _validate_type_int(ref):
-#     """Validate value is a int"""
 
 
 def _validate_type_list(value, name, yaml_file):
