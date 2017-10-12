@@ -212,6 +212,20 @@ class Git(object):
         else:
             self.herd(url, remote, default_ref, depth=depth)
 
+    def herd_tag(self, url, remote, tag, default_ref, depth=0, rebase=False):
+        """Herd tag"""
+        if not existing_git_repository(self.repo_path):
+            self._create_repo_herd_tag(url, remote, tag, default_ref, depth=depth)
+            return
+        return_code = self.fetch(remote, depth=depth, ref=tag)
+        if return_code != 0:
+            self.herd(url, remote, default_ref, depth=depth, rebase=rebase)
+            return
+        if self._existing_remote_tag(tag, remote):
+            self._checkout_ref('refs/tags/' + tag, remote, depth)
+        else:
+            self.herd(url, remote, default_ref, depth=depth)
+
     def herd_upstream(self, url, remote, default_ref, branch=None):
         """Herd fork's upstream repo"""
         return_code = self._create_remote(remote, url)
@@ -708,6 +722,48 @@ class Git(object):
         return_code = self._checkout_branch_local(branch)
         if return_code != 0:
             remove_directory_exit(self.repo_path)
+
+    def _create_repo_herd_tag(self, url, remote, tag, default_ref, depth=0):
+        """Clone git repo from url at path for herd tag"""
+        if existing_git_repository(self.repo_path):
+            return
+        if not os.path.isdir(self.repo_path):
+            os.makedirs(self.repo_path)
+        repo_path_output = format_path(self.repo_path)
+        print(' - Clone repo at ' + repo_path_output)
+        self._init_repo()
+        remote_names = [r.name for r in self.repo.remotes]
+        if remote in remote_names:
+            self._checkout_ref('refs/tags/' + tag, remote, depth)
+            return
+        return_code = self._create_remote(remote, url)
+        if return_code != 0:
+            remove_directory_exit(self.repo_path)
+        tag_output = format_ref_string(tag)
+        origin = self._remote(remote)
+        if origin is None:
+            remove_directory_exit(self.repo_path)
+        return_code = self.fetch(remote, depth=depth, ref=tag)
+        if return_code != 0:
+            remove_directory_exit(self.repo_path)
+        if not self._existing_remote_tag(tag, remote):
+            print(' - No existing remote tag ' + tag_output)
+            self._checkout_new_repo_branch(truncate_ref(default_ref), remote, depth)
+            return
+        return_code = self._create_branch_local_tracking(tag, remote,
+                                                         depth=depth, fetch=False)
+        if return_code != 0:
+            remove_directory_exit(self.repo_path)
+
+    def _existing_remote_tag(self, tag, remote, depth=0):
+        """Check if remote tag exists"""
+        origin = self._remote(remote)
+        if origin is None:
+            remove_directory_exit(self.repo_path)
+        return_code = self.fetch(remote, depth=depth, ref=tag)
+        if return_code != 0:
+            remove_directory_exit(self.repo_path)
+        return tag in origin.tags
 
     def _init_repo(self):
         """Clone repository"""

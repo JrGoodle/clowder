@@ -194,8 +194,11 @@ def _configure_subparser_herd(subparsers, clowder):
                              help='use rebase instead of pull')
     parser_herd.add_argument('--depth', '-d', default=None, type=int, nargs=1,
                              help='depth to herd', metavar='DEPTH')
-    parser_herd.add_argument('--branch', '-b', nargs=1, default=None,
-                             help='branch to herd if present', metavar='BRANCH')
+    group_herd = parser_herd.add_mutually_exclusive_group()
+    group_herd.add_argument('--branch', '-b', nargs=1, default=None,
+                            help='branch to herd if present', metavar='BRANCH')
+    group_herd.add_argument('--tag', '-t', nargs=1, default=None,
+                            help='tag to herd if present', metavar='TAG')
     group_herd = parser_herd.add_mutually_exclusive_group()
     if clowder is None:
         group_names = ''
