@@ -19,9 +19,9 @@ test_forall_branches() {
     clowder forall -c 'git checkout -b v0.1' || exit 1
     echo "TEST: Check current branches"
     for project in "${black_cats_projects[@]}"; do
-    	pushd $project
+        pushd $project || exit 1
         test_branch v0.1
-        popd
+        popd || exit 1
     done
 }
 test_forall_branches

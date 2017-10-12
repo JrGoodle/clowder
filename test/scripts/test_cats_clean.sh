@@ -29,41 +29,41 @@ test_clean_groups() {
     echo "TEST: Clean specific group when dirty"
 
     for project in "${all_projects[@]}"; do
-        pushd $project
+        pushd $project || exit 1
         test_git_dirty
-        popd
+        popd || exit 1
     done
 
     clowder clean -g 'black-cats' || exit 1
 
     for project in "${black_cats_projects[@]}"; do
-        pushd $project
+        pushd $project || exit 1
         test_git_clean
-        popd
+        popd || exit 1
     done
-    pushd mu
+    pushd mu || exit 1
     test_git_dirty
-    popd
-    pushd duke
+    popd || exit 1
+    pushd duke || exit 1
     test_git_dirty
-    popd
+    popd || exit 1
 
     make_dirty_repos "${black_cats_projects[@]}"
 
     echo "TEST: Clean all when dirty"
 
     for project in "${all_projects[@]}"; do
-        pushd $project
+        pushd $project || exit 1
         test_git_dirty
-        popd
+        popd || exit 1
     done
 
     clowder clean || exit 1
 
     for project in "${all_projects[@]}"; do
-        pushd $project
+        pushd $project || exit 1
         test_git_clean
-        popd
+        popd || exit 1
     done
 }
 test_clean_groups
@@ -75,32 +75,32 @@ test_clean_projects() {
     echo "TEST: Clean specific project when dirty"
 
     for project in "${all_projects[@]}"; do
-        pushd $project
+        pushd $project || exit 1
         test_git_dirty
-        popd
+        popd || exit 1
     done
 
     clowder clean -p "$@" || exit 1
 
     for project in "${black_cats_projects[@]}"; do
-        pushd $project
+        pushd $project || exit 1
         test_git_dirty
-        popd
+        popd || exit 1
     done
-    pushd mu
+    pushd mu || exit 1
     test_git_clean
-    popd
-    pushd duke
+    popd || exit 1
+    pushd duke || exit 1
     test_git_clean
-    popd
+    popd || exit 1
 
     echo "TEST: Clean all when dirty"
     clowder clean || exit 1
 
     for project in "${all_projects[@]}"; do
-        pushd $project
+        pushd $project || exit 1
         test_git_clean
-        popd
+        popd || exit 1
     done
 }
 test_clean_projects 'jrgoodle/duke' 'jrgoodle/mu'
@@ -111,26 +111,26 @@ test_clean_all() {
     echo "TEST: Clean all when dirty"
 
     for project in "${all_projects[@]}"; do
-        pushd $project
+        pushd $project || exit 1
         test_git_dirty
-        popd
+        popd || exit 1
     done
 
     clowder clean || exit 1
 
     for project in "${all_projects[@]}"; do
-        pushd $project
+        pushd $project || exit 1
         test_git_clean
-        popd
+        popd || exit 1
     done
 
     echo "TEST: Clean when clean"
     clowder clean || exit 1
 
     for project in "${all_projects[@]}"; do
-        pushd $project
+        pushd $project || exit 1
         test_git_clean
-        popd
+        popd || exit 1
     done
 }
 test_clean_all 'black-cats'
@@ -141,31 +141,31 @@ test_clean_missing_directories() {
     rm -rf "$@"
 
     for project in "${cats_projects[@]}"; do
-    	if [ -d "$project" ]; then
+        if [ -d "$project" ]; then
             exit 1
         fi
     done
 
     for project in "${black_cats_projects[@]}"; do
-        pushd $project
+        pushd $project || exit 1
         test_git_dirty
-        popd
+        popd || exit 1
     done
 
     echo "TEST: Clean when directories are missing"
     clowder clean || exit 1
 
     for project in "${cats_projects[@]}"; do
-    	if [ -d "$project" ]; then
+        if [ -d "$project" ]; then
             exit 1
         fi
     done
 
     for project in "${black_cats_projects[@]}"; do
-        pushd $project
+        pushd $project || exit 1
         test_git_clean
         test_no_untracked_files
-        popd
+        popd || exit 1
     done
 
     clowder herd || exit 1
@@ -179,7 +179,7 @@ test_clean_abort_rebase() {
     clowder link || exit 1
     clowder herd || exit 1
 
-    pushd mu
+    pushd mu || exit 1
         touch newfile
         echo 'something' > newfile
         git checkout -b something
@@ -195,15 +195,15 @@ test_clean_abort_rebase() {
         test_rebase_in_progress
         git reset --hard || exit 1
         test_rebase_in_progress
-    popd
+    popd || exit 1
 
     clowder clean || exit 1
 
-    pushd mu
+    pushd mu || exit 1
         test_no_rebase_in_progress
         test_git_clean
         git reset --hard HEAD~1 || exit 1
-    popd
+    popd || exit 1
 }
 test_clean_abort_rebase
 
@@ -214,18 +214,18 @@ test_clean_untracked_files() {
     clowder link || exit 1
     clowder herd || exit 1
 
-    pushd mu
+    pushd mu || exit 1
         touch newfile
         mkdir something
         touch something/something
         mkdir something_else
         test_untracked_files
-    popd
+    popd || exit 1
 
     clowder herd && exit 1
     clowder clean -d || exit 1
 
-    pushd mu
+    pushd mu || exit 1
         if [ -d 'something' ]; then
             exit 1
         fi
@@ -238,6 +238,6 @@ test_clean_untracked_files() {
         if [ -f 'newfile' ]; then
             exit 1
         fi
-    popd
+    popd || exit 1
 }
 test_clean_untracked_files

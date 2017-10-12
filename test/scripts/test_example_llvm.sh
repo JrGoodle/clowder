@@ -66,35 +66,35 @@ test_clowder_version
 #     # local CLANG_DIR="$LLVM_PROJECTS_DIR/llvm/tools/clang"
 #     # rm -rf $CLANG_DIR
 #     # mkdir -p $CLANG_DIR
-#     # pushd $CLANG_DIR
+#     # pushd $CLANG_DIR || exit 1
 #     # git clone https://github.com/JrGoodle/clang.git .
 #     # git remote remove origin
 #     # git remote add origin https://github.com/llvm-mirror/clang.git
 #     # git fetch
 #     # git branch -u origin/master
-#     # popd
+#     # popd || exit 1
 #
 #     local CLANG_TOOLS_EXTRA_DIR="llvm/tools/clang/tools/extra"
 #     rm -rf $CLANG_TOOLS_EXTRA_DIR
 #     mkdir -p $CLANG_TOOLS_EXTRA_DIR
-#     pushd $CLANG_TOOLS_EXTRA_DIR
+#     pushd $CLANG_TOOLS_EXTRA_DIR || exit 1
 #     git clone https://github.com/JrGoodle/clang-tools-extra.git .
 #     git remote remove origin
 #     git remote add origin https://github.com/llvm-mirror/clang-tools-extra.git
 #     git fetch
 #     git branch -u origin/master
-#     popd
+#     popd || exit 1
 #
 #     local COMPILER_RT_DIR="llvm/projects/compiler-rt"
 #     rm -rf $COMPILER_RT_DIR
 #     mkdir -p $COMPILER_RT_DIR
-#     pushd $COMPILER_RT_DIR
+#     pushd $COMPILER_RT_DIR || exit 1
 #     git clone https://github.com/JrGoodle/compiler-rt.git .
 #     git remote remove origin
 #     git remote add origin https://github.com/llvm-mirror/compiler-rt.git
 #     git fetch
 #     git branch -u origin/master
-#     popd
+#     popd || exit 1
 # }
 
 test_init_herd() {
@@ -105,16 +105,16 @@ test_init_herd() {
     clowder herd  || exit 1
     echo "TEST: Check current branches are on master"
     for project in "${project_paths[@]}"; do
-        pushd $project
+        pushd $project || exit 1
         test_branch master
         test_tracking_branch_exists master
-        popd
+        popd || exit 1
     done
     for project in "${fork_paths[@]}"; do
-        pushd $project
+        pushd $project || exit 1
         test_branch master
         test_tracking_branch_exists master
-        popd
+        popd || exit 1
     done
 }
 test_init_herd
@@ -134,9 +134,9 @@ clowder status || exit 1
 # clowder forall -c 'git checkout -b v0.1'
 # echo "TEST: Check current branches"
 # for project in "${projects[@]}"; do
-# 	pushd $project
+# 	pushd $project || exit 1
 #     test_branch v0.1
-#     popd
+#     popd || exit 1
 # done
 
 if [ "$ACCESS_LEVEL" == "write" ]; then
@@ -149,16 +149,16 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
         clowder prune -a fail_start || exit 1
 
         for project in "${project_paths[@]}"; do
-            pushd $project
+            pushd $project || exit 1
             test_branch master
             test_tracking_branch_exists master
-            popd
+            popd || exit 1
         done
         for project in "${fork_paths[@]}"; do
-            pushd $project
+            pushd $project || exit 1
             test_branch master
             test_tracking_branch_exists master
-            popd
+            popd || exit 1
         done
 
         clowder prune -af start_tracking || exit 1
@@ -170,29 +170,29 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
         clowder status || exit 1
 
         for project in "${project_paths[@]}"; do
-            pushd $project
+            pushd $project || exit 1
             test_branch master
-            popd
+            popd || exit 1
         done
         for project in "${fork_paths[@]}"; do
-            pushd $project
+            pushd $project || exit 1
             test_branch start_tracking
             test_tracking_branch_exists start_tracking
-            popd
+            popd || exit 1
         done
 
         clowder herd || exit 1
         clowder status || exit 1
 
         for project in "${project_paths[@]}"; do
-            pushd $project
+            pushd $project || exit 1
             test_branch master
-            popd
+            popd || exit 1
         done
         for project in "${fork_paths[@]}"; do
-            pushd $project
+            pushd $project || exit 1
             test_branch master
-            popd
+            popd || exit 1
         done
 
         for project in "${fork_projects[@]}"; do
@@ -200,25 +200,25 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
         done
 
         for project in "${fork_paths[@]}"; do
-            pushd $project
+            pushd $project || exit 1
             test_no_local_branch_exists start_tracking
             test_remote_branch_exists start_tracking
-            popd
+            popd || exit 1
         done
 
         clowder herd -b start_tracking || exit 1
         clowder status || exit 1
 
         for project in "${project_paths[@]}"; do
-            pushd $project
+            pushd $project || exit 1
             test_branch master
-            popd
+            popd || exit 1
         done
         for project in "${fork_paths[@]}"; do
-            pushd $project
+            pushd $project || exit 1
             test_branch start_tracking
             test_tracking_branch_exists start_tracking
-            popd
+            popd || exit 1
         done
 
         for project in "${fork_projects[@]}"; do
@@ -226,11 +226,11 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
         done
 
         for project in "${fork_paths[@]}"; do
-            pushd $project
+            pushd $project || exit 1
             test_branch master
             test_no_local_branch_exists start_tracking
             test_no_remote_branch_exists start_tracking
-            popd
+            popd || exit 1
         done
     }
     test_forks
@@ -241,7 +241,7 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
         clowder link || exit 1
         clowder herd || exit 1
 
-        pushd 'llvm/tools/clang'
+        pushd 'llvm/tools/clang' || exit 1
         git pull upstream master || exit 1
         UPSTREAM_COMMIT="$(git rev-parse HEAD)"
         git reset --hard HEAD~1 || exit 1
@@ -250,11 +250,11 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
         if [ "$UPSTREAM_COMMIT" == "$(git rev-parse HEAD)" ]; then
             exit 1
         fi
-        popd
+        popd || exit 1
 
         clowder sync || exit 1
 
-        pushd 'llvm/tools/clang'
+        pushd 'llvm/tools/clang' || exit 1
         if [ "$UPSTREAM_COMMIT" != "$(git rev-parse HEAD)" ]; then
             exit 1
         fi
@@ -266,7 +266,7 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
         if [ "$UPSTREAM_COMMIT" != "$(git rev-parse HEAD)" ]; then
             exit 1
         fi
-        popd
+        popd || exit 1
     }
     test_sync
 
@@ -278,7 +278,7 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
         clowder sync || exit 1
 
         REBASE_MESSAGE='Add rebase file'
-        pushd 'llvm/tools/clang'
+        pushd 'llvm/tools/clang' || exit 1
         git pull upstream master || exit 1
         UPSTREAM_COMMIT="$(git rev-parse HEAD)"
         COMMIT_MESSAGE_1="$(git log --format=%B -n 1 HEAD)"
@@ -296,11 +296,11 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
         git commit -m "$REBASE_MESSAGE" || exit 1
         test_commit_messages "$(git log --format=%B -n 1 HEAD)" "$REBASE_MESSAGE"
         test_commit_messages "$(git log --format=%B -n 1 HEAD~1)" "$COMMIT_MESSAGE_2"
-        popd
+        popd || exit 1
 
         clowder sync -r || exit 1
 
-        pushd 'llvm/tools/clang'
+        pushd 'llvm/tools/clang' || exit 1
         test_commit_messages "$(git log --format=%B -n 1 HEAD)" "$REBASE_MESSAGE"
         test_commit_messages "$(git log --format=%B -n 1 HEAD~1)" "$COMMIT_MESSAGE_1"
         test_commit_messages "$(git log --format=%B -n 1 HEAD~2)" "$COMMIT_MESSAGE_2"
@@ -320,7 +320,7 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
         fi
         git reset --hard HEAD~1 || exit 1
         git push origin master --force || exit 1
-        popd
+        popd || exit 1
     }
     test_sync_rebase
 fi

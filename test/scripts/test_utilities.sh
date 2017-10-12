@@ -42,7 +42,7 @@ prepare_cats_example() {
             setup_local_test_directory
         fi
     fi
-    pushd $CATS_EXAMPLE_DIR
+    pushd $CATS_EXAMPLE_DIR || exit 1
     ./clean.sh >/dev/null
     if [ ! -d "$CATS_EXAMPLE_DIR/.clowder" ]; then
         clowder init https://github.com/jrgoodle/cats.git >/dev/null
@@ -50,17 +50,17 @@ prepare_cats_example() {
     clowder repo checkout master >/dev/null
     clowder link >/dev/null
     clowder herd >/dev/null
-    popd
+    popd || exit 1
 }
 
 make_dirty_repos() {
     echo "TEST: Make dirty repos"
     for project in "$@"
     do
-        pushd $project
+        pushd $project || exit 1
         touch newfile >/dev/null
         git add newfile >/dev/null
-        popd
+        popd || exit 1
     done
 }
 

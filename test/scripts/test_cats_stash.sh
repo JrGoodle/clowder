@@ -26,42 +26,42 @@ test_stash() {
     print_single_separator
     make_dirty_repos "${all_projects[@]}"
     for project in "${all_projects[@]}"; do
-        pushd $project
+        pushd $project || exit 1
         test_git_dirty
-        popd
+        popd || exit 1
     done
     echo "TEST: Fail herd with dirty repos"
     clowder herd && exit 1
     for project in "${all_projects[@]}"; do
-        pushd $project
+        pushd $project || exit 1
         test_git_dirty
-        popd
+        popd || exit 1
     done
     echo "TEST: Stash specific groups when dirty"
     clowder stash -g "$@" || exit 1
     for project in "${black_cats_projects[@]}"; do
-        pushd $project
+        pushd $project || exit 1
         test_git_clean
-        popd
+        popd || exit 1
     done
     for project in "${cats_projects[@]}"; do
-        pushd $project
+        pushd $project || exit 1
         test_git_dirty
-        popd
+        popd || exit 1
     done
     echo "TEST: Stash all changes when dirty"
     clowder stash || exit 1
     for project in "${all_projects[@]}"; do
-        pushd $project
+        pushd $project || exit 1
         test_git_clean
-        popd
+        popd || exit 1
     done
     echo "TEST: Stash changes when clean"
     clowder stash || exit 1
     for project in "${all_projects[@]}"; do
-        pushd $project
+        pushd $project || exit 1
         test_git_clean
-        popd
+        popd || exit 1
     done
 }
 test_stash 'black-cats'
@@ -71,27 +71,27 @@ test_stash_projects() {
     make_dirty_repos "${all_projects[@]}"
     echo "TEST: Stash specific projects when dirty"
     for project in "${all_projects[@]}"; do
-        pushd $project
+        pushd $project || exit 1
         test_git_dirty
-        popd
+        popd || exit 1
     done
     clowder stash -p "$@" || exit 1
     for project in "${cats_projects[@]}"; do
-        pushd $project
+        pushd $project || exit 1
         test_git_clean
-        popd
+        popd || exit 1
     done
     for project in "${black_cats_projects[@]}"; do
-        pushd $project
+        pushd $project || exit 1
         test_git_dirty
-        popd
+        popd || exit 1
     done
     echo "TEST: Stash all changes when dirty"
     clowder stash || exit 1
     for project in "${all_projects[@]}"; do
-        pushd $project
+        pushd $project || exit 1
         test_git_clean
-        popd
+        popd || exit 1
     done
 }
 test_stash_projects 'jrgoodle/duke' 'jrgoodle/mu'
@@ -108,9 +108,9 @@ test_stash_missing_directories() {
         exit 1
     fi
     for project in "${black_cats_projects[@]}"; do
-        pushd $project
+        pushd $project || exit 1
         test_git_dirty
-        popd
+        popd || exit 1
     done
     clowder stash || exit 1
     if [ -d 'duke' ]; then
@@ -120,16 +120,16 @@ test_stash_missing_directories() {
         exit 1
     fi
     for project in "${black_cats_projects[@]}"; do
-        pushd $project
+        pushd $project || exit 1
         test_git_clean
-        popd
+        popd || exit 1
     done
     clowder status || exit 1
     clowder herd || exit 1
     for project in "${all_projects[@]}"; do
-        pushd $project
+        pushd $project || exit 1
         test_git_clean
-        popd
+        popd || exit 1
     done
 }
 test_stash_missing_directories 'mu' 'duke'

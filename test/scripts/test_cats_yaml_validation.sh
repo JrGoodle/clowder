@@ -10,9 +10,9 @@ print_double_separator
 echo "TEST: Test yaml validation"
 
 test_invalid_yaml() {
-    pushd .clowder/versions >/dev/null
+    pushd .clowder/versions || exit 1
     test_cases=( $(ls -d test-*) )
-    popd >/dev/null
+    popd || exit 1
 
     for test in "${test_cases[@]}"
     do

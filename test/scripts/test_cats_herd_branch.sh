@@ -20,16 +20,16 @@ export all_projects=( 'mu' 'duke' \
 test_cats_default_herd_branches() {
     echo "TEST: cats projects on default branches"
     for project in "${black_cats_projects[@]}"; do
-    	pushd $project
+        pushd $project || exit 1
         test_branch master
-        popd
+        popd || exit 1
     done
-    pushd mu
+    pushd mu || exit 1
     test_branch knead
-    popd
-    pushd duke
+    popd || exit 1
+    pushd duke || exit 1
     test_branch purr
-    popd
+    popd || exit 1
 }
 
 prepare_cats_example
@@ -49,37 +49,37 @@ test_herd_branch_no_repo_existing_remote() {
     clowder link || exit 1
     clowder herd || exit 1
     for project in "${black_cats_projects[@]}"; do
-    	pushd $project
+        pushd $project || exit 1
         test_remote_branch_exists $EXISTING_REMOTE_BRANCH
-        popd
+        popd || exit 1
     done
     for project in "${all_projects[@]}"; do
         rm -rf $project
     done
     for project in "${all_projects[@]}"; do
-    	if [ -d "$project" ]; then
+        if [ -d "$project" ]; then
             exit 1
         fi
     done
     clowder herd -b $EXISTING_REMOTE_BRANCH || exit 1
     for project in "${black_cats_projects[@]}"; do
-    	pushd $project
+        pushd $project || exit 1
         test_branch $EXISTING_REMOTE_BRANCH
         test_remote_branch_exists $EXISTING_REMOTE_BRANCH
         test_tracking_branch_exists $EXISTING_REMOTE_BRANCH
         test_no_local_branch_exists 'master'
-        popd
+        popd || exit 1
     done
-    pushd mu
+    pushd mu || exit 1
     test_branch knead
     test_no_local_branch_exists $EXISTING_REMOTE_BRANCH
     test_no_remote_branch_exists $EXISTING_REMOTE_BRANCH
-    popd
-    pushd duke
+    popd || exit 1
+    pushd duke || exit 1
     test_branch purr
     test_no_local_branch_exists $EXISTING_REMOTE_BRANCH
     test_no_remote_branch_exists $EXISTING_REMOTE_BRANCH
-    popd
+    popd || exit 1
 }
 test_herd_branch_no_repo_existing_remote
 
@@ -89,25 +89,25 @@ test_herd_branch_no_repo_no_remote() {
     clowder link || exit 1
     clowder herd || exit 1
     for project in "${all_projects[@]}"; do
-    	pushd $project
+        pushd $project || exit 1
         test_no_remote_branch_exists $NO_REMOTE_BRANCH
-        popd
+        popd || exit 1
     done
     for project in "${all_projects[@]}"; do
         rm -rf $project
     done
     for project in "${all_projects[@]}"; do
-    	if [ -d "$project" ]; then
+        if [ -d "$project" ]; then
             exit 1
         fi
     done
     clowder herd -b $NO_REMOTE_BRANCH || exit 1
     test_cats_default_herd_branches
     for project in "${all_projects[@]}"; do
-    	pushd $project
+        pushd $project || exit 1
         test_no_local_branch_exists $NO_REMOTE_BRANCH
         test_no_remote_branch_exists $NO_REMOTE_BRANCH
-        popd
+        popd || exit 1
     done
 }
 test_herd_branch_no_repo_no_remote
@@ -119,37 +119,37 @@ test_herd_branch_no_local_existing_remote() {
     clowder herd || exit 1
     clowder prune $EXISTING_REMOTE_BRANCH || exit 1
     for project in "${black_cats_projects[@]}"; do
-    	pushd $project
+        pushd $project || exit 1
         test_no_local_branch_exists $EXISTING_REMOTE_BRANCH
         test_remote_branch_exists $EXISTING_REMOTE_BRANCH
-        popd
+        popd || exit 1
     done
-    pushd mu
+    pushd mu || exit 1
     test_no_local_branch_exists $EXISTING_REMOTE_BRANCH
     test_no_remote_branch_exists $EXISTING_REMOTE_BRANCH
-    popd
-    pushd duke
+    popd || exit 1
+    pushd duke || exit 1
     test_no_local_branch_exists $EXISTING_REMOTE_BRANCH
     test_no_remote_branch_exists $EXISTING_REMOTE_BRANCH
-    popd
+    popd || exit 1
     clowder herd -b $EXISTING_REMOTE_BRANCH || exit 1
     for project in "${black_cats_projects[@]}"; do
-    	pushd $project
+        pushd $project || exit 1
         test_branch $EXISTING_REMOTE_BRANCH
         test_remote_branch_exists $EXISTING_REMOTE_BRANCH
         test_tracking_branch_exists $EXISTING_REMOTE_BRANCH
-        popd
+        popd || exit 1
     done
-    pushd mu
+    pushd mu || exit 1
     test_branch knead
     test_no_local_branch_exists $EXISTING_REMOTE_BRANCH
     test_no_remote_branch_exists $EXISTING_REMOTE_BRANCH
-    popd
-    pushd duke
+    popd || exit 1
+    pushd duke || exit 1
     test_branch purr
     test_no_local_branch_exists $EXISTING_REMOTE_BRANCH
     test_no_remote_branch_exists $EXISTING_REMOTE_BRANCH
-    popd
+    popd || exit 1
 }
 test_herd_branch_no_local_existing_remote
 
@@ -160,17 +160,17 @@ test_herd_branch_no_local_no_remote() {
     clowder herd || exit 1
     clowder prune $NO_REMOTE_BRANCH || exit 1
     for project in "${all_projects[@]}"; do
-    	pushd $project
+        pushd $project || exit 1
         test_no_local_branch_exists $NO_REMOTE_BRANCH
         test_no_remote_branch_exists $NO_REMOTE_BRANCH
-        popd
+        popd || exit 1
     done
     clowder herd -b $NO_REMOTE_BRANCH || exit 1
     for project in "${all_projects[@]}"; do
-    	pushd $project
+        pushd $project || exit 1
         test_no_local_branch_exists $NO_REMOTE_BRANCH
         test_no_remote_branch_exists $NO_REMOTE_BRANCH
-        popd
+        popd || exit 1
     done
     test_cats_default_herd_branches
 }
@@ -184,18 +184,18 @@ test_herd_branch_existing_local_no_remote() {
     clowder herd || exit 1
     test_cats_default_herd_branches
     for project in "${all_projects[@]}"; do
-    	pushd $project
+        pushd $project || exit 1
         test_local_branch_exists $NO_REMOTE_BRANCH
         test_no_remote_branch_exists $NO_REMOTE_BRANCH
-        popd
+        popd || exit 1
     done
     clowder herd -b $NO_REMOTE_BRANCH || exit 1
     for project in "${all_projects[@]}"; do
-    	pushd $project
+        pushd $project || exit 1
         test_local_branch_exists $NO_REMOTE_BRANCH
         test_no_remote_branch_exists $NO_REMOTE_BRANCH
         test_branch $NO_REMOTE_BRANCH
-        popd
+        popd || exit 1
     done
 }
 test_herd_branch_existing_local_no_remote
@@ -208,74 +208,74 @@ test_herd_branch_existing_local_existing_remote_no_tracking() {
     clowder forall -c "git checkout -b $EXISTING_REMOTE_BRANCH" -g cats || exit 1
     clowder forall -ic "git checkout $EXISTING_REMOTE_BRANCH" || exit 1
     clowder forall -ic 'git branch --unset-upstream' || exit 1
-    pushd mu
+    pushd mu || exit 1
     test_local_branch_exists $EXISTING_REMOTE_BRANCH
     test_no_remote_branch_exists $EXISTING_REMOTE_BRANCH
-    popd
-    pushd duke
+    popd || exit 1
+    pushd duke || exit 1
     test_local_branch_exists $EXISTING_REMOTE_BRANCH
     test_no_remote_branch_exists $EXISTING_REMOTE_BRANCH
-    popd
+    popd || exit 1
     for project in "${black_cats_projects[@]}"; do
-    	pushd $project
+        pushd $project || exit 1
         test_local_branch_exists $EXISTING_REMOTE_BRANCH
         test_remote_branch_exists $EXISTING_REMOTE_BRANCH
         test_no_tracking_branch_exists $EXISTING_REMOTE_BRANCH
-        popd
+        popd || exit 1
     done
     clowder herd || exit 1
     test_cats_default_herd_branches
     clowder herd -b $EXISTING_REMOTE_BRANCH || exit 1
-    pushd mu
+    pushd mu || exit 1
     test_branch $EXISTING_REMOTE_BRANCH
     test_no_remote_branch_exists $EXISTING_REMOTE_BRANCH
-    popd
-    pushd duke
+    popd || exit 1
+    pushd duke || exit 1
     test_branch $EXISTING_REMOTE_BRANCH
     test_no_remote_branch_exists $EXISTING_REMOTE_BRANCH
-    popd
+    popd || exit 1
     for project in "${black_cats_projects[@]}"; do
-    	pushd $project
+        pushd $project || exit 1
         test_branch $EXISTING_REMOTE_BRANCH
         test_remote_branch_exists $EXISTING_REMOTE_BRANCH
         test_tracking_branch_exists $EXISTING_REMOTE_BRANCH
-        popd
+        popd || exit 1
     done
     echo "TEST: Herd branch - Existing local branch, existing remote branch, no tracking, different commits"
     clowder herd || exit 1
     clowder prune $EXISTING_REMOTE_BRANCH || exit 1
     clowder forall -c 'git reset --hard HEAD~1' || exit 1
     clowder forall -c "git branch $EXISTING_REMOTE_BRANCH" || exit 1
-    pushd mu
+    pushd mu || exit 1
     test_local_branch_exists $EXISTING_REMOTE_BRANCH
     test_no_remote_branch_exists $EXISTING_REMOTE_BRANCH
-    popd
-    pushd duke
+    popd || exit 1
+    pushd duke || exit 1
     test_local_branch_exists $EXISTING_REMOTE_BRANCH
     test_no_remote_branch_exists $EXISTING_REMOTE_BRANCH
-    popd
+    popd || exit 1
     for project in "${black_cats_projects[@]}"; do
-    	pushd $project
+        pushd $project || exit 1
         test_local_branch_exists $EXISTING_REMOTE_BRANCH
         test_remote_branch_exists $EXISTING_REMOTE_BRANCH
         test_no_tracking_branch_exists $EXISTING_REMOTE_BRANCH
-        popd
+        popd || exit 1
     done
     clowder herd -b $EXISTING_REMOTE_BRANCH && exit 1
-    pushd mu
+    pushd mu || exit 1
     test_local_branch_exists $EXISTING_REMOTE_BRANCH
     test_no_remote_branch_exists $EXISTING_REMOTE_BRANCH
-    popd
-    pushd duke
+    popd || exit 1
+    pushd duke || exit 1
     test_local_branch_exists $EXISTING_REMOTE_BRANCH
     test_no_remote_branch_exists $EXISTING_REMOTE_BRANCH
-    popd
+    popd || exit 1
     for project in "${black_cats_projects[@]}"; do
-    	pushd $project
+        pushd $project || exit 1
         test_local_branch_exists $EXISTING_REMOTE_BRANCH
         test_remote_branch_exists $EXISTING_REMOTE_BRANCH
         test_no_tracking_branch_exists $EXISTING_REMOTE_BRANCH
-        popd
+        popd || exit 1
     done
 }
 test_herd_branch_existing_local_existing_remote_no_tracking
@@ -289,27 +289,27 @@ test_herd_branch_existing_local_existing_remote_tracking() {
     clowder herd || exit 1
     test_cats_default_herd_branches
     for project in "${black_cats_projects[@]}"; do
-    	pushd $project
+        pushd $project || exit 1
         test_local_branch_exists $EXISTING_REMOTE_BRANCH
         test_remote_branch_exists $EXISTING_REMOTE_BRANCH
         test_tracking_branch_exists $EXISTING_REMOTE_BRANCH
-        popd
+        popd || exit 1
     done
     clowder herd -b $EXISTING_REMOTE_BRANCH || exit 1
     for project in "${black_cats_projects[@]}"; do
-    	pushd $project
+        pushd $project || exit 1
         test_branch $EXISTING_REMOTE_BRANCH
-        popd
+        popd || exit 1
     done
-    pushd mu
+    pushd mu || exit 1
     test_branch knead
     test_no_local_branch_exists $EXISTING_REMOTE_BRANCH
     test_no_remote_branch_exists $EXISTING_REMOTE_BRANCH
-    popd
-    pushd duke
+    popd || exit 1
+    pushd duke || exit 1
     test_branch purr
     test_no_local_branch_exists $EXISTING_REMOTE_BRANCH
     test_no_remote_branch_exists $EXISTING_REMOTE_BRANCH
-    popd
+    popd || exit 1
 }
 test_herd_branch_existing_local_existing_remote_tracking

@@ -48,21 +48,21 @@ export projects=( 'apple/swift-clang' \
 test_default_branches() {
     echo "TEST: Default branches checked out"
     for project in "${llvm_project_paths[@]}"; do
-        pushd $project
+        pushd $project || exit 1
         test_branch stable
-        popd
+        popd || exit 1
     done
     for project in "${project_paths[@]}"; do
-        pushd $project
+        pushd $project || exit 1
         test_branch master
-        popd
+        popd || exit 1
     done
-    pushd swift
+    pushd swift || exit 1
     test_branch master
-    popd
-    pushd ninja
+    popd || exit 1
+    pushd ninja || exit 1
     test_branch release
-    popd
+    popd || exit 1
 }
 
 test_clowder_version
@@ -76,14 +76,14 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
     test_configure_remotes_herd() {
         git clone git@github.com:apple/swift.git || exit 1
         ./swift/utils/update-checkout --clone
-        pushd swift
+        pushd swift || exit 1
         test_remote_url 'origin' 'git@github.com:apple/swift.git'
-        popd
+        popd || exit 1
         clowder herd || exit 1
-        pushd swift
+        pushd swift || exit 1
         test_remote_url 'origin' 'git@github.com:JrGoodle/swift.git'
         test_remote_url 'upstream' 'git@github.com:apple/swift.git'
-        popd
+        popd || exit 1
         rm -rf swift
     }
     test_configure_remotes_herd
@@ -91,46 +91,46 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
     test_configure_remotes_sync() {
         git clone git@github.com:apple/swift.git || exit 1
         ./swift/utils/update-checkout --clone-with-ssh
-        pushd swift
+        pushd swift || exit 1
         test_remote_url 'origin' 'git@github.com:apple/swift.git'
-        popd
+        popd || exit 1
         clowder sync || exit 1
-        pushd swift
+        pushd swift || exit 1
         test_remote_url 'origin' 'git@github.com:JrGoodle/swift.git'
         test_remote_url 'upstream' 'git@github.com:apple/swift.git'
-        popd
+        popd || exit 1
         rm -rf swift
     }
     test_configure_remotes_sync
 
-    popd
+    popd || exit 1
     rm -rf swift-source
 fi
 
 test_configure_remotes_herd() {
     git clone https://github.com/apple/swift.git || exit 1
     ./swift/utils/update-checkout --clone
-    pushd swift
+    pushd swift || exit 1
     test_remote_url 'origin' 'https://github.com/apple/swift.git'
-    popd
+    popd || exit 1
     clowder herd || exit 1
-    pushd swift
+    pushd swift || exit 1
     test_remote_url 'origin' 'https://github.com/JrGoodle/swift.git'
     test_remote_url 'upstream' 'https://github.com/apple/swift.git'
-    popd
+    popd || exit 1
     rm -rf swift
 }
 
 test_configure_remotes_fail_existing_remote() {
     git clone https://github.com/apple/swift.git || exit 1
     ./swift/utils/update-checkout --clone
-    pushd swift
+    pushd swift || exit 1
     git remote add 'upstream' 'https://github.com/apple/swift.git'
     test_remote_url 'origin' 'https://github.com/apple/swift.git'
     test_remote_url 'upstream' 'https://github.com/apple/swift.git'
-    popd
+    popd || exit 1
     clowder herd && exit 1
-    pushd swift
+    pushd swift || exit 1
     test_remote_url 'origin' 'https://github.com/apple/swift.git'
     test_remote_url 'upstream' 'https://github.com/apple/swift.git'
     git remote rm 'origin'
@@ -139,12 +139,12 @@ test_configure_remotes_fail_existing_remote() {
     git remote add 'upstream' 'git@github.com:apple/swift.git'
     test_remote_url 'origin' 'git@github.com:apple/swift.git'
     test_remote_url 'upstream' 'git@github.com:apple/swift.git'
-    popd
+    popd || exit 1
     clowder herd && exit 1
-    pushd swift
+    pushd swift || exit 1
     test_remote_url 'origin' 'git@github.com:apple/swift.git'
     test_remote_url 'upstream' 'git@github.com:apple/swift.git'
-    popd
+    popd || exit 1
     rm -rf swift
 }
 
@@ -158,7 +158,7 @@ test_local_swift_example() {
     test_configure_remotes_herd
     test_configure_remotes_fail_existing_remote
 
-    popd
+    popd || exit 1
     rm -rf swift-source
 }
 test_local_swift_example
