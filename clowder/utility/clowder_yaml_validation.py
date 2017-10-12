@@ -22,11 +22,8 @@ def validate_yaml(yaml_file):
     """Validate clowder.yaml with no import"""
     parsed_yaml = parse_yaml(yaml_file)
     try:
-        if not isinstance(parsed_yaml, dict):
-            error = format_not_dictionary_error(format_yaml_file('clowder.yaml'),
-                                                yaml_file)
-            raise Exception(error)
-        if len(parsed_yaml) is 0:
+        _validate_type_dict(parsed_yaml, format_yaml_file('clowder.yaml'), yaml_file)
+        if not parsed_yaml:
             error = format_empty_yaml_error(yaml_file)
             raise Exception(error)
 
@@ -68,11 +65,7 @@ def validate_yaml_import(yaml_file):
     """Validate clowder.yaml with an import"""
     parsed_yaml = parse_yaml(yaml_file)
     try:
-        if not isinstance(parsed_yaml, dict):
-            error = format_not_dictionary_error(format_yaml_file('clowder.yaml'),
-                                                yaml_file)
-            raise Exception(error)
-
+        _validate_type_dict(parsed_yaml, format_yaml_file('clowder.yaml'), yaml_file)
         if 'import' not in parsed_yaml:
             error = format_missing_entry_error('import',
                                                format_yaml_file('clowder.yaml'),
@@ -109,9 +102,7 @@ def validate_yaml_import(yaml_file):
 
 def validate_yaml_import_defaults(defaults, yaml_file):
     """Validate clowder.yaml defaults with an import"""
-    if not isinstance(defaults, dict):
-        error = format_not_dictionary_error('defaults', yaml_file)
-        raise Exception(error)
+    _validate_type_dict(defaults, 'defaults', yaml_file)
     if 'recursive' in defaults:
         _validate_type_bool(defaults['recursive'], 'recursive', yaml_file)
         del defaults['recursive']
@@ -142,9 +133,7 @@ def validate_yaml_import_defaults(defaults, yaml_file):
 def validate_yaml_defaults(defaults, yaml_file):
     """Validate defaults in clowder loaded from yaml file"""
     try:
-        if not isinstance(defaults, dict):
-            error = format_not_dictionary_error('defaults', yaml_file)
-            raise Exception(error)
+        _validate_type_dict(defaults, 'defaults', yaml_file)
         if len(defaults) is 0:
             error = format_invalid_entries_error('defaults', defaults, yaml_file)
             raise Exception(error)
@@ -199,9 +188,7 @@ def validate_yaml_defaults_optional(defaults, yaml_file):
 def validate_yaml_fork(fork, yaml_file):
     """Validate fork in clowder loaded from yaml file"""
     try:
-        if not isinstance(fork, dict):
-            error = format_not_dictionary_error('fork', yaml_file)
-            raise Exception(error)
+        _validate_type_dict(fork, 'fork', yaml_file)
         if len(fork) is 0:
             error = format_invalid_entries_error('fork', fork, yaml_file)
             raise Exception(error)
@@ -230,9 +217,7 @@ def validate_yaml_fork(fork, yaml_file):
 def validate_yaml_import_groups(groups, yaml_file):
     """Validate groups in clowder loaded from yaml file with import"""
     try:
-        if not isinstance(groups, list):
-            error = format_not_list_error('groups', yaml_file)
-            raise Exception(error)
+        _validate_type_list(groups, 'groups', yaml_file)
         if len(groups) is 0:
             error = format_invalid_entries_error('groups', groups, yaml_file)
             raise Exception(error)
@@ -248,9 +233,7 @@ def validate_yaml_import_groups(groups, yaml_file):
 def validate_yaml_groups(groups, yaml_file):
     """Validate groups in clowder loaded from yaml file"""
     try:
-        if not isinstance(groups, list):
-            error = format_not_list_error('groups', yaml_file)
-            raise Exception(error)
+        _validate_type_list(groups, 'groups', yaml_file)
         if len(groups) is 0:
             error = format_invalid_entries_error('groups', groups, yaml_file)
             raise Exception(error)
@@ -265,9 +248,7 @@ def validate_yaml_groups(groups, yaml_file):
 
 def validate_yaml_import_project(project, yaml_file):
     """Validate project in clowder loaded from yaml file with import"""
-    if not isinstance(project, dict):
-        error = format_not_dictionary_error('project', yaml_file)
-        raise Exception(error)
+    _validate_type_dict(project, 'project', yaml_file)
     if len(project) is 0:
         error = format_invalid_entries_error('project', project, yaml_file)
         raise Exception(error)
@@ -295,10 +276,8 @@ def validate_yaml_import_project(project, yaml_file):
 
 def validate_yaml_import_group(group, yaml_file):
     """Validate group in clowder loaded from yaml file with import"""
-    if not isinstance(group, dict):
-        error = format_not_dictionary_error('group', yaml_file)
-        raise Exception(error)
-    if len(group) is 0:
+    _validate_type_dict(group, 'group', yaml_file)
+    if not group:
         error = format_invalid_entries_error('group', group, yaml_file)
         raise Exception(error)
 
@@ -308,7 +287,7 @@ def validate_yaml_import_group(group, yaml_file):
     _validate_type_str(group['name'], 'name', yaml_file)
     del group['name']
 
-    if len(group) is 0:
+    if not group:
         error = format_invalid_entries_error('group', group, yaml_file)
         raise Exception(error)
 
@@ -350,10 +329,8 @@ def validate_yaml_import_group(group, yaml_file):
 
 def validate_yaml_group(group, yaml_file):
     """Validate group in clowder loaded from yaml file"""
-    if not isinstance(group, dict):
-        error = format_not_dictionary_error('group', yaml_file)
-        raise Exception(error)
-    if len(group) is 0:
+    _validate_type_dict(group, 'group', yaml_file)
+    if not group:
         error = format_invalid_entries_error('group', group, yaml_file)
         raise Exception(error)
 
@@ -403,10 +380,8 @@ def validate_yaml_group(group, yaml_file):
 
 def validate_yaml_project(project, yaml_file):
     """Validate project in clowder loaded from yaml file"""
-    if not isinstance(project, dict):
-        error = format_not_dictionary_error('project', yaml_file)
-        raise Exception(error)
-    if len(project) is 0:
+    _validate_type_dict(project, 'project', yaml_file)
+    if not project:
         error = format_invalid_entries_error('project', project, yaml_file)
         raise Exception(error)
 
@@ -467,9 +442,7 @@ def validate_yaml_project_optional(project, yaml_file):
 def validate_yaml_projects(projects, yaml_file, is_import):
     """Validate projects in clowder loaded from yaml file"""
     try:
-        if not isinstance(projects, list):
-            error = format_not_list_error('projects', yaml_file)
-            raise Exception(error)
+        _validate_type_list(projects, 'projects', yaml_file)
         if len(projects) is 0:
             error = format_invalid_entries_error('projects', projects, yaml_file)
             raise Exception(error)
@@ -489,17 +462,13 @@ def validate_yaml_projects(projects, yaml_file, is_import):
 def validate_yaml_sources(sources, yaml_file):
     """Validate sources in clowder loaded from yaml file"""
     try:
-        if not isinstance(sources, list):
-            error = format_not_list_error('sources', yaml_file)
-            raise Exception(error)
+        _validate_type_list(sources, 'sources', yaml_file)
         if len(sources) is 0:
             error = format_invalid_entries_error('sources', sources, yaml_file)
             raise Exception(error)
 
         for source in sources:
-            if not isinstance(source, dict):
-                error = format_not_dictionary_error('source', yaml_file)
-                raise Exception(error)
+            _validate_type_dict(source, 'source', yaml_file)
             if len(source) is 0:
                 error = format_invalid_entries_error('source', source, yaml_file)
                 raise Exception(error)
@@ -548,8 +517,7 @@ def _validate_type_bool(value, name, yaml_file):
 def _validate_type_dict(value, name, yaml_file):
     """Validate value is a dict"""
     if not isinstance(value, dict):
-        error = format_not_dictionary_error(format_yaml_file(name),
-                                            yaml_file)
+        error = format_not_dictionary_error(name, yaml_file)
         raise Exception(error)
 
 
