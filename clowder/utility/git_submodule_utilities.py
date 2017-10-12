@@ -30,11 +30,6 @@ class GitSubmodules(Git):
         print(' - Update submodules recursively')
         self._submodules_update()
 
-    def create_repo(self, url, remote, ref, depth=0):
-        """Clone git repo from url at path"""
-        Git.create_repo(self, url, remote, ref, depth=depth)
-        self.submodule_update_recursive(depth)
-
     def has_submodules(self):
         """Repo has submodules"""
         return self.repo.submodules.count > 0
