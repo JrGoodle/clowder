@@ -6,8 +6,6 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 
 . test_utilities.sh
 
-ACCESS_LEVEL="$1"
-
 print_double_separator
 echo 'TEST: llvm projects example test script'
 print_double_separator
@@ -329,8 +327,8 @@ fi
 
 test_forks_env() {
     echo "TEST: Fork remote environment variable in script"
-    clowder forall -c "$TEST_SCRIPT_DIR/tests/test_forall_script_env_fork.sh" -p "llvm-mirror/clang" || exit 1
-    clowder forall -c "$TEST_SCRIPT_DIR/tests/test_forall_script_env_fork.sh" -p "llvm-mirror/llvm" && exit 1
+    clowder forall -c "$TEST_SCRIPT_DIR/test_forall_script_env_fork.sh" -p "llvm-mirror/clang" || exit 1
+    clowder forall -c "$TEST_SCRIPT_DIR/test_forall_script_env_fork.sh" -p "llvm-mirror/llvm" && exit 1
     echo "TEST: Fork remote environment variable in command"
     clowder forall -c 'if [ $PROJECT_REMOTE != upstream ]; then exit 1; fi' -p 'llvm-mirror/clang' || exit 1
     clowder forall -c 'if [ $FORK_REMOTE != origin ]; then exit 1; fi' -p 'llvm-mirror/clang' || exit 1
@@ -356,6 +354,6 @@ test_help() {
     print_double_separator
     clowder link || exit 1
     clowder herd || exit 1
-    "$TEST_SCRIPT_DIR/tests/test_help.sh" "$LLVM_EXAMPLE_DIR" || exit 1
+    "$TEST_SCRIPT_DIR/test_help.sh" "$LLVM_EXAMPLE_DIR" || exit 1
 }
 test_help

@@ -9,13 +9,10 @@ clean_nix() {
     sudo -H rm -rf ../dist
     echo "Removing build"
     sudo -H rm -rf ../build
-    echo "pip uninstall clowder"
-    sudo -H pip2 uninstall clowder-repo
-    sudo -H pip3 uninstall clowder-repo
-    echo "Remove installed clowder binary"
-    PYTHON3_PATH="$(which python3)"
-    CLOWDER_PATH="$(dirname $PYTHON3_PATH)/clowder"
-    sudo -H rm "$CLOWDER_PATH"
+    echo "Removing pyc files"
+    sudo -H rm ../clowder/*.pyc ../clowder/utility/*.pyc ../test/unittests/*.pyc
+    sudo -H rm -rf ../clowder/__pycache__ ../clowder/utility/__pycache__
+    sudo -H rm -rf ../test/clowder_test.egg-info ../test/*.pyc
 }
 
 clean_examples() {
@@ -39,7 +36,6 @@ case "$(uname)" in
         clean_examples
         ;;
     CYGWIN*) export MY_PLATFORM="windows";
-        pip3 uninstall clowder-repo
         clean_examples
         ;;
 esac

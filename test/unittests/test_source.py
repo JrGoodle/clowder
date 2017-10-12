@@ -1,13 +1,12 @@
 """Test source class"""
 
-
 import sys
 import unittest
-from clowder.source import Source
-from test.shared import (
+from test.unittests.shared import (
     GITHUB_HTTPS_SOURCE_YAML,
     GITHUB_SSH_SOURCE_YAML
 )
+from clowder.source import Source
 
 
 class SourceTest(unittest.TestCase):

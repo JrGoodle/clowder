@@ -12,14 +12,7 @@ class Group(object):
 
         self.name = group['name']
         self.depth = group.get('depth', defaults['depth'])
-
-        if 'recursive' in group:
-            self.recursive = group['recursive']
-        elif 'recursive' in defaults:
-            self.recursive = defaults['recursive']
-        else:
-            self.recursive = False
-
+        self.recursive = group.get('recursive', defaults.get('recursive', False))
         self.ref = group.get('ref', defaults['ref'])
         self.remote_name = group.get('remote', defaults['remote'])
         source_name = group.get('source', defaults['source'])

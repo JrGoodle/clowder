@@ -1,5 +1,9 @@
-# Python unit tests
+# Testing
 
-See [unit test script](../script/unittests.sh)
+Command line test runner, test scripts, and Python unit tests
 
-See also [development doc](../docs/development.md)
+To install the test runner, run the [test script](../script/test). This will install `clowder-test` which can run various tests from the root directory of the repository. For more information see the `clowder-test` help
+
+```bash
+clowder-test -h
+```
