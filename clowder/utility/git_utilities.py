@@ -241,7 +241,7 @@ class Git(object):
         """Returns the number of new commits"""
         try:
             local_branch = self.repo.active_branch
-        except GitError:
+        except (GitError, TypeError):
             return 0
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
