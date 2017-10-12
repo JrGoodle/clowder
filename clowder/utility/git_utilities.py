@@ -95,13 +95,7 @@ class Git(object):
             return
         if not os.path.isdir(self.repo_path):
             os.makedirs(self.repo_path)
-        repo_path_output = format_path(self.repo_path)
-        print(' - Clone repo at ' + repo_path_output)
         self._init_repo()
-        remote_names = [r.name for r in self.repo.remotes]
-        if remote in remote_names:
-            self._checkout_ref(ref, remote, depth)
-            return
         return_code = self._create_remote(remote, url)
         if return_code != 0:
             remove_directory_exit(self.repo_path)
@@ -547,7 +541,7 @@ class Git(object):
             is_detached = self.repo.head.is_detached
             if same_sha and is_detached:
                 print(' - On correct commit')
-                return
+                return 0
             print(' - Checkout commit ' + commit_output)
             self.repo.git.checkout(sha)
         except GitError as err:
@@ -569,7 +563,7 @@ class Git(object):
             is_detached = self.repo.head.is_detached
             if same_commit and is_detached:
                 print(' - On correct commit for tag')
-                return
+                return 0
             print(' - Checkout tag ' + tag_output)
             self.repo.git.checkout('refs/tags/' + tag)
             return 0
@@ -691,8 +685,6 @@ class Git(object):
             return
         if not os.path.isdir(self.repo_path):
             os.makedirs(self.repo_path)
-        repo_path_output = format_path(self.repo_path)
-        print(' - Clone repo at ' + repo_path_output)
         self._init_repo()
         remote_names = [r.name for r in self.repo.remotes]
         if remote in remote_names:
@@ -729,8 +721,6 @@ class Git(object):
             return
         if not os.path.isdir(self.repo_path):
             os.makedirs(self.repo_path)
-        repo_path_output = format_path(self.repo_path)
-        print(' - Clone repo at ' + repo_path_output)
         self._init_repo()
         return_code = self._create_remote(remote, url)
         if return_code != 0:
@@ -757,8 +747,9 @@ class Git(object):
         return tag in origin.tags
 
     def _init_repo(self):
-        """Clone repository"""
+        """Initialize repository"""
         try:
+            print(' - Initialize repo at ' + format_path(self.repo_path))
             self.repo = Repo.init(self.repo_path)
         except GitError as err:
             cprint(' - Failed to initialize repository', 'red')
