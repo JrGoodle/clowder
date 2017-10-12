@@ -69,7 +69,7 @@ class Command(object):
 
     def cats_all(self):
         """clowder cats tests"""
-        test_env = os.environ.copy()
+        test_env = {}
         if self.args.write:
             test_env["ACCESS_LEVEL"] = 'write'
         else:
@@ -110,7 +110,7 @@ class Command(object):
 
     def cats_herd(self):
         """clowder cats herd tests"""
-        test_env = os.environ.copy()
+        test_env = {}
         if self.args.write:
             test_env["ACCESS_LEVEL"] = 'write'
         else:
@@ -139,7 +139,7 @@ class Command(object):
 
     def cats_prune(self):
         """clowder cats prune tests"""
-        test_env = os.environ.copy()
+        test_env = {}
         if self.args.write:
             test_env["ACCESS_LEVEL"] = 'write'
         else:
@@ -150,7 +150,7 @@ class Command(object):
 
     def cats_repo(self):
         """clowder cats repo tests"""
-        test_env = os.environ.copy()
+        test_env = {}
         if self.args.write:
             test_env["ACCESS_LEVEL"] = 'write'
         else:
@@ -167,7 +167,7 @@ class Command(object):
 
     def cats_start(self):
         """clowder cats start tests"""
-        test_env = os.environ.copy()
+        test_env = {}
         if self.args.write:
             test_env["ACCESS_LEVEL"] = 'write'
         else:
@@ -208,7 +208,7 @@ class Command(object):
 
     def llvm(self):
         """clowder llvm tests"""
-        test_env = os.environ.copy()
+        test_env = {}
         if self.args.write:
             test_env["ACCESS_LEVEL"] = 'write'
         else:
@@ -225,7 +225,7 @@ class Command(object):
 
     def swift(self):
         """clowder swift tests"""
-        test_env = os.environ.copy()
+        test_env = {}
         if self.args.write:
             test_env["ACCESS_LEVEL"] = 'write'
         else:
@@ -236,12 +236,12 @@ class Command(object):
 
     def unittests(self):
         """clowder unit tests"""
-        script = os.path.join(self._scripts_dir, 'unittests.sh')
-        test_env = os.environ.copy()
+        test_env = {}
         if self.args.version == 'python2':
             test_env["PYTHON_VERSION"] = 'python'
         else:
             test_env["PYTHON_VERSION"] = 'python3'
+        script = os.path.join(self._scripts_dir, 'unittests.sh')
         return_code = execute_command(script, shell=True, env=test_env)
         sys.exit(return_code)
 
@@ -307,10 +307,9 @@ def exit_unrecognized_command(parser):
 
 def execute_command(command, shell=False, env=None):
     """Run subprocess command"""
-    if env is None:
-        cmd_env = os.environ.copy()
-    else:
-        cmd_env = env
+    cmd_env = os.environ.copy()
+    if env is not None:
+        cmd_env.update(env)
     try:
         process = subprocess.Popen(command, shell=shell, env=cmd_env)
         atexit.register(subprocess_exit_handler, process)

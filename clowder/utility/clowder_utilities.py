@@ -24,10 +24,9 @@ from clowder.utility.print_utilities import (
 
 def execute_command(command, path, shell=True, env=None):
     """Run subprocess command"""
-    if env is None:
-        cmd_env = env
-    else:
-        cmd_env = os.environ.copy()
+    cmd_env = os.environ.copy()
+    if env is not None:
+        cmd_env.update(env)
     try:
         process = subprocess.Popen(" ".join(command), shell=shell, env=cmd_env, cwd=path)
         atexit.register(subprocess_exit_handler, process)
@@ -39,7 +38,7 @@ def execute_command(command, path, shell=True, env=None):
 
 def execute_forall_command(command, path, clowder_path, name, remote, fork_remote, ref):
     """Execute forall command with additional environment variables and display continuous output"""
-    forall_env = os.environ.copy()
+    forall_env = {}
     forall_env["CLOWDER_PATH"] = clowder_path
     forall_env["PROJECT_PATH"] = path
     forall_env["PROJECT_NAME"] = name
