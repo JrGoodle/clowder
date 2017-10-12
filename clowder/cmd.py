@@ -216,45 +216,9 @@ class Command(object):
         if self.clowder is None:
             sys.exit(1)
         if self.args.projects is None:
-            if self.args.all:
-                if is_offline():
-                    print_offline_error()
-                self.clowder.prune_groups(self.args.groups,
-                                          self.args.branch,
-                                          force=self.args.force,
-                                          local=True,
-                                          remote=True)
-            elif self.args.remote:
-                if is_offline():
-                    print_offline_error()
-                self.clowder.prune_groups(self.args.groups,
-                                          self.args.branch,
-                                          remote=True)
-            else:
-                self.clowder.prune_groups(self.args.groups,
-                                          self.args.branch,
-                                          force=self.args.force,
-                                          local=True)
+            self._prune_groups()
         else:
-            if self.args.all:
-                if is_offline():
-                    print_offline_error()
-                self.clowder.prune_projects(self.args.projects,
-                                            self.args.branch,
-                                            force=self.args.force,
-                                            local=True,
-                                            remote=True)
-            elif self.args.remote:
-                if is_offline():
-                    print_offline_error()
-                self.clowder.prune_projects(self.args.projects,
-                                            self.args.branch,
-                                            remote=True)
-            else:
-                self.clowder.prune_projects(self.args.projects,
-                                            self.args.branch,
-                                            force=self.args.force,
-                                            local=True)
+            self._prune_projects()
 
     def repo(self):
         """clowder repo command"""
@@ -415,6 +379,49 @@ class Command(object):
         if self._display_trailing_newline:
             print()
 
+    def _prune_groups(self):
+        """Private method for pruning groups"""
+        if self.args.all:
+            if is_offline():
+                print_offline_error()
+            self.clowder.prune_groups(self.args.groups,
+                                      self.args.branch,
+                                      force=self.args.force,
+                                      local=True,
+                                      remote=True)
+        elif self.args.remote:
+            if is_offline():
+                print_offline_error()
+            self.clowder.prune_groups(self.args.groups,
+                                      self.args.branch,
+                                      remote=True)
+        else:
+            self.clowder.prune_groups(self.args.groups,
+                                      self.args.branch,
+                                      force=self.args.force,
+                                      local=True)
+
+    def _prune_projects(self):
+        """Private method for pruning projects"""
+        if self.args.all:
+            if is_offline():
+                print_offline_error()
+            self.clowder.prune_projects(self.args.projects,
+                                        self.args.branch,
+                                        force=self.args.force,
+                                        local=True,
+                                        remote=True)
+        elif self.args.remote:
+            if is_offline():
+                print_offline_error()
+            self.clowder.prune_projects(self.args.projects,
+                                        self.args.branch,
+                                        remote=True)
+        else:
+            self.clowder.prune_projects(self.args.projects,
+                                        self.args.branch,
+                                        force=self.args.force,
+                                        local=True)
 
 def exit_unrecognized_command(parser):
     """Print unrecognized command message and exit"""
