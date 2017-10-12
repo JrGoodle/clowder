@@ -78,9 +78,7 @@ def validate_yaml_import(yaml_file):
                                                format_yaml_file('clowder.yaml'),
                                                yaml_file)
             raise Exception(error)
-        if not isinstance(parsed_yaml['import'], str):
-            error = format_not_string_error('import', yaml_file)
-            raise Exception(error)
+        _validate_type_str(parsed_yaml['import'], 'import', yaml_file)
         del parsed_yaml['import']
 
         if not parsed_yaml:
@@ -115,27 +113,19 @@ def validate_yaml_import_defaults(defaults, yaml_file):
         error = format_not_dictionary_error('defaults', yaml_file)
         raise Exception(error)
     if 'recursive' in defaults:
-        if not isinstance(defaults['recursive'], bool):
-            error = format_not_bool_error('recursive', yaml_file)
-            raise Exception(error)
+        _validate_type_bool(defaults['recursive'], 'recursive', yaml_file)
         del defaults['recursive']
     if 'ref' in defaults:
-        if not isinstance(defaults['ref'], str):
-            error = format_not_string_error('ref', yaml_file)
-            raise Exception(error)
+        _validate_type_str(defaults['ref'], 'ref', yaml_file)
         if not _valid_ref_type(defaults['ref']):
             error = format_invalid_ref_error(defaults['ref'], yaml_file)
             raise Exception(error)
         del defaults['ref']
     if 'remote' in defaults:
-        if not isinstance(defaults['remote'], str):
-            error = format_not_string_error('remote', yaml_file)
-            raise Exception(error)
+        _validate_type_str(defaults['remote'], 'remote', yaml_file)
         del defaults['remote']
     if 'source' in defaults:
-        if not isinstance(defaults['source'], str):
-            error = format_not_string_error('source', yaml_file)
-            raise Exception(error)
+        _validate_type_str(defaults['source'], 'source', yaml_file)
         del defaults['source']
     if 'depth' in defaults:
         error = format_depth_error(defaults['depth'], yaml_file)
@@ -162,9 +152,7 @@ def validate_yaml_defaults(defaults, yaml_file):
         if 'ref' not in defaults:
             error = format_missing_entry_error('ref', 'defaults', yaml_file)
             raise Exception(error)
-        if not isinstance(defaults['ref'], str):
-            error = format_not_string_error('ref', yaml_file)
-            raise Exception(error)
+        _validate_type_str(defaults['ref'], 'ref', yaml_file)
         if not _valid_ref_type(defaults['ref']):
             error = format_invalid_ref_error(defaults['ref'], yaml_file)
             raise Exception(error)
@@ -173,17 +161,13 @@ def validate_yaml_defaults(defaults, yaml_file):
         if 'remote' not in defaults:
             error = format_missing_entry_error('remote', 'defaults', yaml_file)
             raise Exception(error)
-        if not isinstance(defaults['remote'], str):
-            error = format_not_string_error('remote', yaml_file)
-            raise Exception(error)
+        _validate_type_str(defaults['remote'], 'remote', yaml_file)
         del defaults['remote']
 
         if 'source' not in defaults:
             error = format_missing_entry_error('source', 'defaults', yaml_file)
             raise Exception(error)
-        if not isinstance(defaults['source'], str):
-            error = format_not_string_error('source', yaml_file)
-            raise Exception(error)
+        _validate_type_str(defaults['source'], 'source', yaml_file)
         del defaults['source']
 
         validate_yaml_defaults_optional(defaults, yaml_file)
@@ -208,9 +192,7 @@ def validate_yaml_defaults_optional(defaults, yaml_file):
         del defaults['depth']
 
     if 'recursive' in defaults:
-        if not isinstance(defaults['recursive'], bool):
-            error = format_not_bool_error('recursive', yaml_file)
-            raise Exception(error)
+        _validate_type_bool(defaults['recursive'], 'recursive', yaml_file)
         del defaults['recursive']
 
 
@@ -227,17 +209,13 @@ def validate_yaml_fork(fork, yaml_file):
         if 'name' not in fork:
             error = format_missing_entry_error('name', 'fork', yaml_file)
             raise Exception(error)
-        if not isinstance(fork['name'], str):
-            error = format_not_string_error('name', yaml_file)
-            raise Exception(error)
+        _validate_type_str(fork['name'], 'name', yaml_file)
         del fork['name']
 
         if 'remote' not in fork:
             error = format_missing_entry_error('remote', 'fork', yaml_file)
             raise Exception(error)
-        if not isinstance(fork['remote'], str):
-            error = format_not_string_error('remote', yaml_file)
-            raise Exception(error)
+        _validate_type_str(fork['remote'], 'remote', yaml_file)
         del fork['remote']
 
         if fork:
@@ -297,9 +275,7 @@ def validate_yaml_import_project(project, yaml_file):
     if 'name' not in project:
         error = format_missing_entry_error('name', 'project', yaml_file)
         raise Exception(error)
-    if not isinstance(project['name'], str):
-        error = format_not_string_error('name', yaml_file)
-        raise Exception(error)
+    _validate_type_str(project['name'], 'name', yaml_file)
     del project['name']
 
     if len(project) is 0:
@@ -307,9 +283,7 @@ def validate_yaml_import_project(project, yaml_file):
         raise Exception(error)
 
     if 'path' in project:
-        if not isinstance(project['path'], str):
-            error = format_not_string_error('path', yaml_file)
-            raise Exception(error)
+        _validate_type_str(project['path'], 'path', yaml_file)
         del project['path']
 
     validate_yaml_project_optional(project, yaml_file)
@@ -331,9 +305,7 @@ def validate_yaml_import_group(group, yaml_file):
     if 'name' not in group:
         error = format_missing_entry_error('name', 'group', yaml_file)
         raise Exception(error)
-    if not isinstance(group['name'], str):
-        error = format_not_string_error('name', yaml_file)
-        raise Exception(error)
+    _validate_type_str(group['name'], 'name', yaml_file)
     del group['name']
 
     if len(group) is 0:
@@ -345,30 +317,22 @@ def validate_yaml_import_group(group, yaml_file):
         del group['projects']
 
     if 'recursive' in group:
-        if not isinstance(group['recursive'], bool):
-            error = format_not_bool_error('recursive', yaml_file)
-            raise Exception(error)
+        _validate_type_bool(group['recursive'], 'recursive', yaml_file)
         del group['recursive']
 
     if 'ref' in group:
-        if not isinstance(group['ref'], str):
-            error = format_not_string_error('ref', yaml_file)
-            raise Exception(error)
+        _validate_type_str(group['ref'], 'ref', yaml_file)
         if not _valid_ref_type(group['ref']):
             error = format_invalid_ref_error(group['ref'], yaml_file)
             raise Exception(error)
         del group['ref']
 
     if 'remote' in group:
-        if not isinstance(group['remote'], str):
-            error = format_not_string_error('remote', yaml_file)
-            raise Exception(error)
+        _validate_type_str(group['remote'], 'remote', yaml_file)
         del group['remote']
 
     if 'source' in group:
-        if not isinstance(group['source'], str):
-            error = format_not_string_error('source', yaml_file)
-            raise Exception(error)
+        _validate_type_str(group['source'], 'source', yaml_file)
         del group['source']
 
     if 'depth' in group:
@@ -396,9 +360,7 @@ def validate_yaml_group(group, yaml_file):
     if 'name' not in group:
         error = format_missing_entry_error('name', 'group', yaml_file)
         raise Exception(error)
-    if not isinstance(group['name'], str):
-        error = format_not_string_error('name', yaml_file)
-        raise Exception(error)
+    _validate_type_str(group['name'], 'name', yaml_file)
     del group['name']
 
     if 'projects' not in group:
@@ -408,30 +370,22 @@ def validate_yaml_group(group, yaml_file):
     del group['projects']
 
     if 'recursive' in group:
-        if not isinstance(group['recursive'], bool):
-            error = format_not_bool_error('recursive', yaml_file)
-            raise Exception(error)
+        _validate_type_bool(group['recursive'], 'recursive', yaml_file)
         del group['recursive']
 
     if 'ref' in group:
-        if not isinstance(group['ref'], str):
-            error = format_not_string_error('ref', yaml_file)
-            raise Exception(error)
+        _validate_type_str(group['ref'], 'ref', yaml_file)
         if not _valid_ref_type(group['ref']):
             error = format_invalid_ref_error(group['ref'], yaml_file)
             raise Exception(error)
         del group['ref']
 
     if 'remote' in group:
-        if not isinstance(group['remote'], str):
-            error = format_not_string_error('remote', yaml_file)
-            raise Exception(error)
+        _validate_type_str(group['remote'], 'remote', yaml_file)
         del group['remote']
 
     if 'source' in group:
-        if not isinstance(group['source'], str):
-            error = format_not_string_error('source', yaml_file)
-            raise Exception(error)
+        _validate_type_str(group['source'], 'source', yaml_file)
         del group['source']
 
     if 'depth' in group:
@@ -459,17 +413,13 @@ def validate_yaml_project(project, yaml_file):
     if 'name' not in project:
         error = format_missing_entry_error('name', 'project', yaml_file)
         raise Exception(error)
-    if not isinstance(project['name'], str):
-        error = format_not_string_error('name', yaml_file)
-        raise Exception(error)
+    _validate_type_str(project['name'], 'name', yaml_file)
     del project['name']
 
     if 'path' not in project:
         error = format_missing_entry_error('path', 'project', yaml_file)
         raise Exception(error)
-    if not isinstance(project['path'], str):
-        error = format_not_string_error('path', yaml_file)
-        raise Exception(error)
+    _validate_type_str(project['path'], 'path', yaml_file)
     del project['path']
 
     validate_yaml_project_optional(project, yaml_file)
@@ -482,30 +432,22 @@ def validate_yaml_project(project, yaml_file):
 def validate_yaml_project_optional(project, yaml_file):
     """Validate optional args in project in clowder loaded from yaml file"""
     if 'remote' in project:
-        if not isinstance(project['remote'], str):
-            error = format_not_string_error('remote', yaml_file)
-            raise Exception(error)
+        _validate_type_str(project['remote'], 'remote', yaml_file)
         del project['remote']
 
     if 'recursive' in project:
-        if not isinstance(project['recursive'], bool):
-            error = format_not_bool_error('recursive', yaml_file)
-            raise Exception(error)
+        _validate_type_bool(project['recursive'], 'recursive', yaml_file)
         del project['recursive']
 
     if 'ref' in project:
-        if not isinstance(project['ref'], str):
-            error = format_not_string_error('ref', yaml_file)
-            raise Exception(error)
+        _validate_type_str(project['ref'], 'ref', yaml_file)
         if not _valid_ref_type(project['ref']):
             error = format_invalid_ref_error(project['ref'], yaml_file)
             raise Exception(error)
         del project['ref']
 
     if 'source' in project:
-        if not isinstance(project['source'], str):
-            error = format_not_string_error('source', yaml_file)
-            raise Exception(error)
+        _validate_type_str(project['source'], 'source', yaml_file)
         del project['source']
 
     if 'depth' in project:
@@ -565,17 +507,13 @@ def validate_yaml_sources(sources, yaml_file):
             if 'name' not in source:
                 error = format_missing_entry_error('name', 'source', yaml_file)
                 raise Exception(error)
-            if not isinstance(source['name'], str):
-                error = format_not_string_error('name', yaml_file)
-                raise Exception(error)
+            _validate_type_str(source['name'], 'name', yaml_file)
             del source['name']
 
             if 'url' not in source:
                 error = format_missing_entry_error('url', 'source', yaml_file)
                 raise Exception(error)
-            if not isinstance(source['url'], str):
-                error = format_not_string_error('url', yaml_file)
-                raise Exception(error)
+            _validate_type_str(source['url'], 'url', yaml_file)
             del source['url']
 
             if source:
@@ -598,3 +536,36 @@ def _valid_ref_type(ref):
     elif len(ref) == 40:
         return True
     return False
+
+
+def _validate_type_bool(value, name, yaml_file):
+    """Validate value is a bool"""
+    if not isinstance(value, bool):
+        error = format_not_bool_error(name, yaml_file)
+        raise Exception(error)
+
+
+def _validate_type_dict(value, name, yaml_file):
+    """Validate value is a dict"""
+    if not isinstance(value, dict):
+        error = format_not_dictionary_error(format_yaml_file(name),
+                                            yaml_file)
+        raise Exception(error)
+
+
+# def _validate_type_int(ref):
+#     """Validate value is a int"""
+
+
+def _validate_type_list(value, name, yaml_file):
+    """Validate value is a list"""
+    if not isinstance(value, list):
+        error = format_not_list_error(name, yaml_file)
+        raise Exception(error)
+
+
+def _validate_type_str(value, name, yaml_file):
+    """Validate value is a str"""
+    if not isinstance(value, str):
+        error = format_not_string_error(name, yaml_file)
+        raise Exception(error)
