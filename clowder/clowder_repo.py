@@ -4,6 +4,7 @@ from __future__ import print_function
 import atexit
 import os
 import sys
+from git import GitError
 from termcolor import colored, cprint
 from clowder.utility.git_utilities import Git
 from clowder.utility.clowder_utilities import (
@@ -41,9 +42,11 @@ class ClowderRepo(object):
         try:
             print(' - Add files to git index')
             print(clowder.repo.git.add(files))
-        except Exception as err:
+        except GitError as err:
             cprint(' - Failed to add files to git index', 'red')
             print_error(err)
+            sys.exit(1)
+        except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
         print_git_status(self.clowder_path)
 
@@ -76,9 +79,11 @@ class ClowderRepo(object):
         try:
             print(' - Commit current changes')
             print(clowder.repo.git.commit(message=message))
-        except Exception as err:
+        except GitError as err:
             cprint(' - Failed to commit current changes', 'red')
             print_error(err)
+            sys.exit(1)
+        except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
 
     def init(self, url, branch):
@@ -154,9 +159,11 @@ class ClowderRepo(object):
         try:
             print(' - Pull latest changes')
             print(clowder.repo.git.pull())
-        except Exception as err:
+        except GitError as err:
             cprint(' - Failed to pull latest changes', 'red')
             print_error(err)
+            sys.exit(1)
+        except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
 
     def push(self):
@@ -168,9 +175,11 @@ class ClowderRepo(object):
         try:
             print(' - Push local changes')
             print(clowder.repo.git.push())
-        except Exception as err:
+        except GitError as err:
             cprint(' - Failed to push local changes', 'red')
             print_error(err)
+            sys.exit(1)
+        except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
 
     def run_command(self, command):

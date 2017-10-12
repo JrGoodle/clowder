@@ -37,10 +37,12 @@ class Git(object):
         try:
             print(' - Check out ' + ref_output)
             print(self.repo.git.checkout(truncated_ref))
-        except Exception as err:
+        except GitError as err:
             message = colored(' - Failed to checkout ref ', 'red')
             print(message + ref_output)
             print_error(err)
+            sys.exit(1)
+        except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
 
     def clean(self, args=''):
@@ -291,19 +293,23 @@ class Git(object):
             try:
                 print(' - Checkout ref ' + ref_output)
                 self.repo.git.checkout(truncate_ref(default_ref))
-            except Exception as err:
+            except GitError as err:
                 message = colored(' - Failed to checkout ref', 'red')
                 print(message + ref_output)
                 print_error(err)
+                sys.exit(1)
+            except (KeyboardInterrupt, SystemExit):
                 sys.exit(1)
         try:
             print(' - Delete local branch ' + branch_output)
             self.repo.delete_head(branch, force=force)
             return
-        except Exception as err:
+        except GitError as err:
             message = colored(' - Failed to delete local branch ', 'red')
             print(message + branch_output)
             print_error(err)
+            sys.exit(1)
+        except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
 
     def prune_branch_remote(self, branch, remote):
@@ -318,10 +324,12 @@ class Git(object):
         try:
             print(' - Delete remote branch ' + branch_output)
             self.repo.git.push(remote, '--delete', branch)
-        except Exception as err:
+        except GitError as err:
             message = colored(' - Failed to delete remote branch ', 'red')
             print(message + branch_output)
             print_error(err)
+            sys.exit(1)
+        except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
 
     def sha(self, short=False):
@@ -397,9 +405,11 @@ class Git(object):
             return
         try:
             self.repo.git.rebase('--abort')
-        except Exception as err:
+        except GitError as err:
             cprint(' - Failed to abort rebase', 'red')
             print_error(err)
+            sys.exit(1)
+        except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
 
     def _checkout_branch_local(self, branch):
@@ -410,11 +420,13 @@ class Git(object):
             default_branch = self.repo.heads[branch]
             default_branch.checkout()
             return 0
-        except Exception as err:
+        except GitError as err:
             message = colored(' - Failed to checkout branch ', 'red')
             print(message + branch_output)
             print_error(err)
             return 1
+        except (KeyboardInterrupt, SystemExit):
+            sys.exit(1)
 
     def _checkout_new_repo_branch(self, branch, remote, depth):
         """Checkout remote branch or fail and delete repo if it doesn't exist"""
@@ -452,11 +464,13 @@ class Git(object):
         print(' - Checkout commit ' + commit_output)
         try:
             self.repo.git.checkout(commit)
-        except Exception as err:
+        except GitError as err:
             message = colored(' - Failed to checkout commit ', 'red')
             print(message + commit_output)
             print_error(err)
             remove_directory_exit(self.repo_path)
+        except (KeyboardInterrupt, SystemExit):
+            sys.exit(1)
 
     def _checkout_new_repo_tag(self, tag, remote, depth):
         """Checkout tag or fail and delete repo if it doesn't exist"""
@@ -479,11 +493,13 @@ class Git(object):
             try:
                 print(' - Checkout tag ' + tag_output)
                 self.repo.git.checkout(remote_tag)
-            except Exception as err:
+            except GitError as err:
                 message = colored(' - Failed to checkout tag ', 'red')
                 print(message + tag_output)
                 print_error(err)
                 remove_directory_exit(self.repo_path)
+            except (KeyboardInterrupt, SystemExit):
+                sys.exit(1)
 
     def _checkout_ref(self, ref, remote, depth, fetch=True):
         """Checkout branch, tag, or commit from sha"""
@@ -521,10 +537,12 @@ class Git(object):
                 return
             print(' - Checkout commit ' + commit_output)
             self.repo.git.checkout(sha)
-        except Exception as err:
+        except GitError as err:
             message = colored(' - Failed to checkout commit ', 'red')
             print(message + commit_output)
             print_error(err)
+            sys.exit(1)
+        except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
 
     def _checkout_tag(self, tag):
@@ -541,19 +559,23 @@ class Git(object):
                 return
             print(' - Checkout tag ' + tag_output)
             self.repo.git.checkout(tag)
-        except Exception as err:
+        except GitError as err:
             message = colored(' - Failed to checkout tag ', 'red')
             print(message + tag_output)
             print_error(err)
+            sys.exit(1)
+        except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
 
     def _clean(self, args):
         """Clean git directory"""
         try:
             self.repo.git.clean(args)
-        except Exception as err:
+        except GitError as err:
             cprint(' - Failed to clean git repo', 'red')
             print_error(err)
+            sys.exit(1)
+        except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
 
     def _create_branch_local(self, branch):
@@ -563,11 +585,13 @@ class Git(object):
             print(' - Create branch ' + branch_output)
             self.repo.create_head(branch)
             return 0
-        except Exception as err:
+        except GitError as err:
             message = colored(' - Failed to create branch ', 'red')
             print(message + branch_output)
             print_error(err)
             return 1
+        except (KeyboardInterrupt, SystemExit):
+            sys.exit(1)
 
     def _create_branch_local_tracking(self, branch, remote, depth, fetch=True):
         """Create and checkout tracking branch"""
@@ -586,11 +610,13 @@ class Git(object):
             if return_code != 0:
                 return return_code
             return self._checkout_branch_local(branch)
-        except Exception as err:
+        except GitError as err:
             message = colored(' - Failed to create branch ', 'red')
             print(message + branch_output)
             print_error(err)
             return 1
+        except (KeyboardInterrupt, SystemExit):
+            sys.exit(1)
 
     def _create_branch_remote_tracking(self, branch, remote, depth):
         """Create remote tracking branch"""
@@ -619,10 +645,12 @@ class Git(object):
             return_code = self._set_tracking_branch(remote, branch)
             if return_code != 0:
                 sys.exit(return_code)
-        except Exception as err:
+        except GitError as err:
             message = colored(' - Failed to push remote branch ', 'red')
             print(message + branch_output)
             print_error(err)
+            sys.exit(1)
+        except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
 
     def _create_remote(self, remote, url):
@@ -635,11 +663,13 @@ class Git(object):
             print(' - Create remote ' + remote_output)
             self.repo.create_remote(remote, url)
             return 0
-        except Exception as err:
+        except GitError as err:
             message = colored(' - Failed to create remote ', 'red')
             print(message + remote_output)
             print_error(err)
             return 1
+        except (KeyboardInterrupt, SystemExit):
+            sys.exit(1)
 
     def _create_repo_herd_branch(self, url, remote, branch, default_ref, depth=0):
         """Clone git repo from url at path for herd branch"""
@@ -683,10 +713,12 @@ class Git(object):
         """Clone repository"""
         try:
             self.repo = Repo.init(self.repo_path)
-        except Exception as err:
+        except GitError as err:
             cprint(' - Failed to initialize repository', 'red')
             print_error(err)
             remove_directory_exit(self.repo_path)
+        except (KeyboardInterrupt, SystemExit):
+            sys.exit(1)
 
     def _is_branch_checked_out(self, branch):
         """Check if branch is checked out"""
@@ -695,7 +727,7 @@ class Git(object):
             not_detached = not self.repo.head.is_detached
             same_branch = self.repo.head.ref == default_branch
             return not_detached and same_branch
-        except GitError:
+        except (GitError, TypeError):
             return False
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
@@ -719,10 +751,12 @@ class Git(object):
             local_branch = self.repo.heads[branch]
             tracking_branch = local_branch.tracking_branch()
             return True if tracking_branch else False
-        except Exception as err:
+        except GitError as err:
             message = colored(' - No existing branch ', 'red')
             print(message + branch_output)
             print_error(err)
+            sys.exit(1)
+        except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
 
     def _pull_remote_branch(self, remote, branch):
@@ -762,11 +796,13 @@ class Git(object):
         remote_output = format_remote_string(remote)
         try:
             return self.repo.remotes[remote]
-        except Exception as err:
+        except GitError as err:
             message = colored(' - No existing remote ', 'red')
             print(message + remote_output)
             print_error(err)
             return None
+        except (KeyboardInterrupt, SystemExit):
+            sys.exit(1)
 
     def _rename_remote(self, remote_from, remote_to):
         """Rename remote"""
@@ -775,9 +811,11 @@ class Git(object):
         print(' - Rename remote ' + remote_output_from + ' to ' + remote_output_to)
         try:
             self.repo.git.remote('rename', remote_from, remote_to)
-        except Exception as err:
+        except GitError as err:
             cprint(' - Failed to rename remote', 'red')
             print_error(err)
+            sys.exit(1)
+        except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
 
     def _repo(self):
@@ -785,11 +823,13 @@ class Git(object):
         try:
             repo = Repo(self.repo_path)
             return repo
-        except Exception as err:
+        except GitError as err:
             repo_path_output = format_path(self.repo_path)
             message = colored("Failed to create Repo instance for ", 'red')
             print(message + repo_path_output)
             print_error(err)
+            sys.exit(1)
+        except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
 
     def _reset_head(self):
@@ -808,11 +848,13 @@ class Git(object):
                   ' -> ' + remote_output + ' ' + branch_output)
             local_branch.set_tracking_branch(remote_branch)
             return 0
-        except Exception as err:
+        except GitError as err:
             message = colored(' - Failed to set tracking branch ', 'red')
             print(message + branch_output)
             print_error(err)
             return 1
+        except (KeyboardInterrupt, SystemExit):
+            sys.exit(1)
 
     def _set_tracking_branch_commit(self, branch, remote, depth):
         """Set tracking relationship between local and remote branch if on same commit"""
@@ -850,7 +892,9 @@ class Git(object):
                                              shell=True,
                                              cwd=self.repo_path)
             return output.decode('utf-8') == '1'
-        except Exception as err:
+        except GitError as err:
             cprint(' - Failed to check untracked files', 'red')
             print_error(err)
+            sys.exit(1)
+        except (KeyboardInterrupt, SystemExit):
             sys.exit(1)

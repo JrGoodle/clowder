@@ -6,6 +6,7 @@ import sys
 from termcolor import cprint
 from clowder.group import Group
 from clowder.source import Source
+from clowder.utility.clowder_exception import ClowderException
 from clowder.utility.clowder_utilities import (
     get_yaml_string,
     parse_yaml,
@@ -489,9 +490,9 @@ class ClowderController(object):
             if not os.path.isfile(imported_yaml_file):
                 error = format_missing_imported_yaml_error(imported_yaml_file,
                                                            yaml_file)
-                raise Exception(error)
+                raise ClowderException(error)
             yaml_file = imported_yaml_file
-        except Exception as err:
+        except ClowderException as err:
             print_invalid_yaml_error()
             print_error(err)
             sys.exit(1)

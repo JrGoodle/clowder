@@ -5,6 +5,7 @@ import argparse
 import atexit
 import os
 import sys
+import yaml
 import argcomplete
 import colorama
 from termcolor import cprint, colored
@@ -50,7 +51,7 @@ class Command(object):
                 self.versions = self.clowder.get_saved_version_names()
             except (KeyboardInterrupt, SystemExit):
                 sys.exit(1)
-            except Exception:
+            except yaml.YAMLError:
                 self._invalid_yaml = True
 
         # clowder argparse setup
