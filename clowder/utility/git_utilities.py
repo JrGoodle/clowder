@@ -217,14 +217,13 @@ class Git(object):
         if not existing_git_repository(self.repo_path):
             self._create_repo_herd_tag(url, remote, tag, default_ref, depth=depth)
             return
-        return_code = self.fetch(remote, depth=depth, ref=tag)
+        return_code = self.fetch(remote, depth=depth)
         if return_code != 0:
-            self.herd(url, remote, default_ref, depth=depth, rebase=rebase)
+            sys.exit(1)
+        return_code = self._checkout_tag(tag)
+        if return_code == 0:
             return
-        if self._existing_remote_tag(tag, remote):
-            self._checkout_ref('refs/tags/' + tag, remote, depth)
-        else:
-            self.herd(url, remote, default_ref, depth=depth)
+        self.herd(url, remote, default_ref, depth=depth, rebase=rebase, fetch=False)
 
     def herd_upstream(self, url, remote, default_ref, branch=None):
         """Herd fork's upstream repo"""
@@ -563,8 +562,8 @@ class Git(object):
         """Checkout commit tag is pointing to"""
         tag_output = format_ref_string(tag)
         if tag not in self.repo.tags:
-            print(' - No existing tag ' + tag_output + '\n')
-            sys.exit(1)
+            print(' - No existing tag ' + tag_output)
+            return 1
         try:
             same_commit = self.repo.head.commit == self.repo.tags[tag].commit
             is_detached = self.repo.head.is_detached
@@ -572,7 +571,8 @@ class Git(object):
                 print(' - On correct commit for tag')
                 return
             print(' - Checkout tag ' + tag_output)
-            self.repo.git.checkout(tag)
+            self.repo.git.checkout('refs/tags/' + tag)
+            return 0
         except GitError as err:
             message = colored(' - Failed to checkout tag ', 'red')
             print(message + tag_output)
@@ -732,28 +732,19 @@ class Git(object):
         repo_path_output = format_path(self.repo_path)
         print(' - Clone repo at ' + repo_path_output)
         self._init_repo()
-        remote_names = [r.name for r in self.repo.remotes]
-        if remote in remote_names:
-            self._checkout_ref('refs/tags/' + tag, remote, depth)
-            return
         return_code = self._create_remote(remote, url)
         if return_code != 0:
             remove_directory_exit(self.repo_path)
-        tag_output = format_ref_string(tag)
         origin = self._remote(remote)
         if origin is None:
             remove_directory_exit(self.repo_path)
-        return_code = self.fetch(remote, depth=depth, ref=tag)
+        return_code = self.fetch(remote, depth=depth)
         if return_code != 0:
             remove_directory_exit(self.repo_path)
-        if not self._existing_remote_tag(tag, remote):
-            print(' - No existing remote tag ' + tag_output)
-            self._checkout_new_repo_branch(truncate_ref(default_ref), remote, depth)
+        return_code = self._checkout_tag(tag)
+        if return_code == 0:
             return
-        return_code = self._create_branch_local_tracking(tag, remote,
-                                                         depth=depth, fetch=False)
-        if return_code != 0:
-            remove_directory_exit(self.repo_path)
+        self._checkout_ref(default_ref, remote, depth)
 
     def _existing_remote_tag(self, tag, remote, depth=0):
         """Check if remote tag exists"""
