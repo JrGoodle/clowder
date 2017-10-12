@@ -8,8 +8,6 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 
 . test_utilities.sh
 
-printenv
-
 cd "$TEST_SCRIPT_DIR/../.." || exit 1
 
 if [ -z "$TRAVIS_OS_NAME" ]; then
