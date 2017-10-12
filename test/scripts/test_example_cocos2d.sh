@@ -30,7 +30,7 @@ test_recurse() {
     clowder status || exit 1
     for project in "${external_projects[@]}"; do
         echo "TEST: Check that $project submodule was initialized"
-    	if [ ! -f "$project/.git" ]; then
+        if [ ! -f "$project/.git" ]; then
             echo "TEST: Submodule should exist"
             exit 1
         fi
@@ -43,7 +43,7 @@ teast_clean_d() {
     echo "TEST: Clean untracked directories"
     clowder herd || exit 1
 
-    pushd cocos2d-objc
+    pushd cocos2d-objc || exit 1
     touch newfile
     mkdir something
     touch something/something
@@ -56,11 +56,11 @@ teast_clean_d() {
     if [ ! -f 'newfile' ]; then
         exit 1
     fi
-    popd
+    popd || exit 1
 
     clowder clean || exit 1
 
-    pushd cocos2d-objc
+    pushd cocos2d-objc || exit 1
     if [ ! -d 'something' ]; then
         exit 1
     fi
@@ -70,11 +70,11 @@ teast_clean_d() {
     if [ -f 'newfile' ]; then
         exit 1
     fi
-    popd
+    popd || exit 1
 
     clowder clean -d || exit 1
 
-    pushd cocos2d-objc
+    pushd cocos2d-objc || exit 1
     if [ -d 'something' ]; then
         exit 1
     fi
@@ -84,7 +84,7 @@ teast_clean_d() {
     if [ -f 'newfile' ]; then
         exit 1
     fi
-    popd
+    popd || exit 1
 }
 teast_clean_d
 
@@ -93,28 +93,28 @@ test_clean_f() {
     echo "TEST: Clean git directories"
     clowder herd || exit 1
 
-    pushd cocos2d-objc
+    pushd cocos2d-objc || exit 1
     git clone https://github.com/JrGoodle/cats.git
     if [ ! -d 'cats' ]; then
         exit 1
     fi
-    popd
+    popd || exit 1
 
     clowder clean || exit 1
 
-    pushd cocos2d-objc
+    pushd cocos2d-objc || exit 1
     if [ ! -d 'cats' ]; then
         exit 1
     fi
-    popd
+    popd || exit 1
 
     clowder clean -fd || exit 1
 
-    pushd cocos2d-objc
+    pushd cocos2d-objc || exit 1
     if [ -d 'cats' ]; then
         exit 1
     fi
-    popd
+    popd || exit 1
 }
 test_clean_f
 
@@ -123,7 +123,7 @@ test_clean_X() {
     echo "TEST: Clean only files ignored by git"
     clowder herd || exit 1
 
-    pushd cocos2d-objc
+    pushd cocos2d-objc || exit 1
     touch .idea
     touch something
     if [ ! -f '.idea' ]; then
@@ -132,20 +132,20 @@ test_clean_X() {
     if [ ! -f 'something' ]; then
         exit 1
     fi
-    popd
+    popd || exit 1
 
     clowder clean -X || exit 1
 
-    pushd cocos2d-objc
+    pushd cocos2d-objc || exit 1
     if [ -f '.idea' ]; then
         exit 1
     fi
     if [ ! -f 'something' ]; then
         exit 1
     fi
-    popd
+    popd || exit 1
 
-    pushd cocos2d-objc
+    pushd cocos2d-objc || exit 1
     rm -f something
     if [ -f '.idea' ]; then
         exit 1
@@ -153,7 +153,7 @@ test_clean_X() {
     if [ -f 'something' ]; then
         exit 1
     fi
-    popd
+    popd || exit 1
 }
 test_clean_X
 
@@ -162,7 +162,7 @@ test_clean_x() {
     echo "TEST: Clean all untracked files"
     clowder herd || exit 1
 
-    pushd cocos2d-objc
+    pushd cocos2d-objc || exit 1
     touch xcuserdata
     touch something
     if [ ! -f 'xcuserdata' ]; then
@@ -171,18 +171,18 @@ test_clean_x() {
     if [ ! -f 'something' ]; then
         exit 1
     fi
-    popd
+    popd || exit 1
 
     clowder clean -x || exit 1
 
-    pushd cocos2d-objc
+    pushd cocos2d-objc || exit 1
     if [ -f 'xcuserdata' ]; then
         exit 1
     fi
     if [ -f 'something' ]; then
         exit 1
     fi
-    popd
+    popd || exit 1
 }
 test_clean_x
 
@@ -191,7 +191,7 @@ test_clean_a() {
     echo "TEST: Clean all"
     clowder herd || exit 1
     for project in "${external_projects[@]}"; do
-        pushd $project
+        pushd $project || exit 1
         touch newfile
         mkdir something
         touch something/something
@@ -208,10 +208,10 @@ test_clean_a() {
         if [ ! -f 'newfile' ]; then
             exit 1
         fi
-        popd
+        popd || exit 1
     done
     for project in "${external_projects[@]}"; do
-        pushd $project
+        pushd $project || exit 1
             touch newfile
             mkdir something
             touch something/something
@@ -224,13 +224,13 @@ test_clean_a() {
             if [ ! -f 'newfile' ]; then
                 exit 1
             fi
-        popd
+        popd || exit 1
     done
 
     clowder clean -a || exit 1
 
     for project in "${external_projects[@]}"; do
-        pushd $project
+        pushd $project || exit 1
         test_head_detached
         if [ -d 'something' ]; then
             exit 1
@@ -241,10 +241,10 @@ test_clean_a() {
         if [ -f 'newfile' ]; then
             exit 1
         fi
-        popd
+        popd || exit 1
     done
     for project in "${external_projects[@]}"; do
-        pushd $project
+        pushd $project || exit 1
             if [ -d 'something' ]; then
                 exit 1
             fi
@@ -255,7 +255,7 @@ test_clean_a() {
                 exit 1
             fi
             git branch -D something
-        popd
+        popd || exit 1
     done
 }
 test_clean_a
@@ -265,7 +265,7 @@ test_clean_submodules_untracked() {
     echo "TEST: Clean untracked files in submodules"
     clowder herd || exit 1
     for project in "${external_projects[@]}"; do
-        pushd $project
+        pushd $project || exit 1
             touch newfile
             mkdir something
             touch something/something
@@ -278,13 +278,13 @@ test_clean_submodules_untracked() {
             if [ ! -f 'newfile' ]; then
                 exit 1
             fi
-        popd
+        popd || exit 1
     done
 
     clowder clean -r || exit 1
 
     for project in "${external_projects[@]}"; do
-        pushd $project
+        pushd $project || exit 1
             if [ -f 'something/something' ]; then
                 exit 1
             fi
@@ -294,7 +294,7 @@ test_clean_submodules_untracked() {
             if [ -f 'newfile' ]; then
                 exit 1
             fi
-        popd
+        popd || exit 1
     done
 }
 test_clean_submodules_untracked
@@ -304,7 +304,7 @@ test_clean_submodules_dirty() {
     echo "TEST: Clean dirty submodules"
     clowder herd || exit 1
     for project in "${external_projects[@]}"; do
-        pushd $project
+        pushd $project || exit 1
         touch newfile
         mkdir something
         touch something/something
@@ -321,13 +321,13 @@ test_clean_submodules_dirty() {
         if [ ! -f 'newfile' ]; then
             exit 1
         fi
-        popd
+        popd || exit 1
     done
 
     clowder clean -r || exit 1
 
     for project in "${external_projects[@]}"; do
-        pushd $project
+        pushd $project || exit 1
         test_head_detached
         if [ -f 'something/something' ]; then
             exit 1
@@ -339,7 +339,7 @@ test_clean_submodules_dirty() {
             exit 1
         fi
         git branch -D something
-        popd
+        popd || exit 1
     done
 }
 test_clean_submodules_dirty
@@ -355,7 +355,7 @@ test_no_recurse() {
     clowder status || exit 1
     for project in "${external_projects[@]}"; do
         echo "TEST: Check that $project submodule wasn't initialized"
-    	if [ -f "$project/.git" ]; then
+        if [ -f "$project/.git" ]; then
             echo "TEST: Submodule shouldn't exist"
             exit 1
         fi

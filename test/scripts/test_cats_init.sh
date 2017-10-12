@@ -26,9 +26,9 @@ test_init_branch() {
     "$CATS_EXAMPLE_DIR/clean.sh"
     clowder init https://github.com/jrgoodle/cats.git -b tags || exit 1
 
-    pushd .clowder
+    pushd .clowder || exit 1
     test_branch tags
-    popd
+    popd || exit 1
 
     rm -rf .clowder clowder.yaml
 }

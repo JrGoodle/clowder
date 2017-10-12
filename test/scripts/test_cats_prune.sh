@@ -28,49 +28,49 @@ test_prune() {
     clowder start prune_branch || exit 1
 
     for project in "${all_projects[@]}"; do
-        pushd $project
+        pushd $project || exit 1
         test_branch prune_branch
-        popd
+        popd || exit 1
     done
 
     clowder prune -f prune_branch || exit 1
 
-    pushd duke
+    pushd duke || exit 1
     test_branch purr
     test_no_local_branch_exists prune_branch
-    popd
-    pushd mu
+    popd || exit 1
+    pushd mu || exit 1
     test_branch knead
     test_no_local_branch_exists prune_branch
-    popd
+    popd || exit 1
     for project in "${black_cats_projects[@]}"; do
-        pushd $project
+        pushd $project || exit 1
         test_branch master
         test_no_local_branch_exists prune_branch
-        popd
+        popd || exit 1
     done
 
     clowder start prune_branch >/dev/null
 
     for project in "${all_projects[@]}"; do
-        pushd $project
+        pushd $project || exit 1
         test_branch prune_branch
-        popd
+        popd || exit 1
     done
 
     clowder prune -f prune_branch -g black-cats || exit 1
 
-    pushd duke
+    pushd duke || exit 1
     test_branch prune_branch
-    popd
-    pushd mu
+    popd || exit 1
+    pushd mu || exit 1
     test_branch prune_branch
-    popd
+    popd || exit 1
     for project in "${black_cats_projects[@]}"; do
-        pushd $project
+        pushd $project || exit 1
         test_branch master
         test_no_local_branch_exists prune_branch
-        popd
+        popd || exit 1
     done
 }
 test_prune
@@ -82,37 +82,37 @@ test_prune_force() {
     clowder start prune_branch || exit 1
 
     for project in "${all_projects[@]}"; do
-        pushd $project
+        pushd $project || exit 1
         test_branch prune_branch
         touch something >/dev/null
         git add something >/dev/null
         git commit -m 'something' >/dev/null
-        popd
+        popd || exit 1
     done
 
     clowder prune prune_branch && exit 1
 
     for project in "${all_projects[@]}"; do
-        pushd $project
+        pushd $project || exit 1
         test_local_branch_exists prune_branch
-        popd
+        popd || exit 1
     done
 
     clowder prune -f prune_branch || exit 1
 
-    pushd duke
+    pushd duke || exit 1
     test_branch purr
     test_no_local_branch_exists prune_branch
-    popd
-    pushd mu
+    popd || exit 1
+    pushd mu || exit 1
     test_branch knead
     test_no_local_branch_exists prune_branch
-    popd
+    popd || exit 1
     for project in "${black_cats_projects[@]}"; do
-        pushd $project
+        pushd $project || exit 1
         test_branch master
         test_no_local_branch_exists prune_branch
-        popd
+        popd || exit 1
     done
 }
 test_prune_force
@@ -127,19 +127,19 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
         clowder prune prune_branch || exit 1
 
         for project in "${all_projects[@]}"; do
-            pushd $project
+            pushd $project || exit 1
             test_no_local_branch_exists prune_branch
             test_remote_branch_exists prune_branch
-            popd
+            popd || exit 1
         done
 
         clowder prune -r prune_branch || exit 1
 
         for project in "${all_projects[@]}"; do
-            pushd $project
+            pushd $project || exit 1
             test_no_local_branch_exists prune_branch
             test_no_remote_branch_exists prune_branch
-            popd
+            popd || exit 1
         done
     }
     test_prune_remote
@@ -150,19 +150,19 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
         clowder start -t prune_branch || exit 1
 
         for project in "${all_projects[@]}"; do
-            pushd $project
+            pushd $project || exit 1
             test_local_branch_exists prune_branch
             test_remote_branch_exists prune_branch
-            popd
+            popd || exit 1
         done
 
         clowder prune -af prune_branch || exit 1
 
         for project in "${all_projects[@]}"; do
-            pushd $project
+            pushd $project || exit 1
             test_no_local_branch_exists prune_branch
             test_no_remote_branch_exists prune_branch
-            popd
+            popd || exit 1
         done
     }
     test_prune_all

@@ -10,9 +10,14 @@ import colorama
 from termcolor import cprint, colored
 from clowder.clowder_repo import ClowderRepo
 from clowder.clowder_controller import ClowderController
+from clowder.utility.clowder_exception import ClowderException
 from clowder.utility.clowder_subparsers import configure_argparse
 from clowder.utility.clowder_utilities import is_offline
-from clowder.utility.print_utilities import print_offline_error
+from clowder.utility.print_utilities import (
+    print_error,
+    print_invalid_yaml_error,
+    print_offline_error
+)
 
 
 def main():
@@ -48,8 +53,11 @@ class Command(object):
             try:
                 self.clowder = ClowderController(self.root_directory)
                 self.versions = self.clowder.get_saved_version_names()
-            except:
+            except (ClowderException, KeyError) as err:
                 self._invalid_yaml = True
+                self._error = err
+            except (KeyboardInterrupt, SystemExit):
+                sys.exit(1)
 
         # clowder argparse setup
         command_description = 'Utility for managing multiple git repositories'
@@ -58,11 +66,11 @@ class Command(object):
         configure_argparse(parser, self.clowder, self.versions)
         # Argcomplete and arguments parsing
         argcomplete.autocomplete(parser)
-        if not self._invalid_yaml:
-            print()
         # Register exit handler to display trailing newline
         self._display_trailing_newline = True
         atexit.register(self._exit_handler_formatter)
+        if not self._invalid_yaml:
+            print()
         self.args = parser.parse_args()
         self._display_trailing_newline = False
 
@@ -74,8 +82,7 @@ class Command(object):
 
     def branch(self):
         """clowder branch command"""
-        if self._invalid_yaml:
-            sys.exit(1)
+        self._validate_clowder_yaml()
         if self.clowder_repo is None:
             exit_clowder_not_found()
         self.clowder_repo.print_status()
@@ -97,8 +104,7 @@ class Command(object):
 
     def clean(self):
         """clowder clean command"""
-        if self._invalid_yaml:
-            sys.exit(1)
+        self._validate_clowder_yaml()
         if self.clowder_repo is None:
             exit_clowder_not_found()
         self.clowder_repo.print_status()
@@ -124,8 +130,7 @@ class Command(object):
 
     def diff(self):
         """clowder diff command"""
-        if self._invalid_yaml:
-            sys.exit(1)
+        self._validate_clowder_yaml()
         if self.clowder_repo is None:
             exit_clowder_not_found()
         self.clowder_repo.print_status()
@@ -136,8 +141,7 @@ class Command(object):
 
     def forall(self):
         """clowder forall command"""
-        if self._invalid_yaml:
-            sys.exit(1)
+        self._validate_clowder_yaml()
         if self.clowder_repo is None:
             exit_clowder_not_found()
         self.clowder_repo.print_status()
@@ -150,8 +154,7 @@ class Command(object):
 
     def herd(self):
         """clowder herd command"""
-        if self._invalid_yaml:
-            sys.exit(1)
+        self._validate_clowder_yaml()
         if self.clowder_repo is None:
             exit_clowder_not_found()
         self.clowder_repo.print_status(fetch=True)
@@ -206,53 +209,16 @@ class Command(object):
 
     def prune(self):
         """clowder prune command"""
-        if self._invalid_yaml:
-            sys.exit(1)
+        self._validate_clowder_yaml()
         if self.clowder_repo is None:
             exit_clowder_not_found()
         self.clowder_repo.print_status()
         if self.clowder is None:
             sys.exit(1)
         if self.args.projects is None:
-            if self.args.all:
-                if is_offline():
-                    print_offline_error()
-                self.clowder.prune_groups(self.args.groups,
-                                          self.args.branch,
-                                          force=self.args.force,
-                                          local=True,
-                                          remote=True)
-            elif self.args.remote:
-                if is_offline():
-                    print_offline_error()
-                self.clowder.prune_groups(self.args.groups,
-                                          self.args.branch,
-                                          remote=True)
-            else:
-                self.clowder.prune_groups(self.args.groups,
-                                          self.args.branch,
-                                          force=self.args.force,
-                                          local=True)
+            self._prune_groups()
         else:
-            if self.args.all:
-                if is_offline():
-                    print_offline_error()
-                self.clowder.prune_projects(self.args.projects,
-                                            self.args.branch,
-                                            force=self.args.force,
-                                            local=True,
-                                            remote=True)
-            elif self.args.remote:
-                if is_offline():
-                    print_offline_error()
-                self.clowder.prune_projects(self.args.projects,
-                                            self.args.branch,
-                                            remote=True)
-            else:
-                self.clowder.prune_projects(self.args.projects,
-                                            self.args.branch,
-                                            force=self.args.force,
-                                            local=True)
+            self._prune_projects()
 
     def repo(self):
         """clowder repo command"""
@@ -332,8 +298,7 @@ class Command(object):
 
     def start(self):
         """clowder start command"""
-        if self._invalid_yaml:
-            sys.exit(1)
+        self._validate_clowder_yaml()
         if self.clowder_repo is None:
             exit_clowder_not_found()
         self.clowder_repo.print_status()
@@ -353,8 +318,7 @@ class Command(object):
 
     def stash(self):
         """clowder stash command"""
-        if self._invalid_yaml:
-            sys.exit(1)
+        self._validate_clowder_yaml()
         if self.clowder_repo is None:
             exit_clowder_not_found()
         self.clowder_repo.print_status()
@@ -365,6 +329,7 @@ class Command(object):
 
     def status(self):
         """clowder status command"""
+        self._validate_clowder_yaml()
         if self.clowder_repo is None:
             exit_clowder_not_found()
         self.clowder_repo.print_status(fetch=self.args.fetch)
@@ -381,6 +346,7 @@ class Command(object):
 
     def sync(self):
         """clowder sync command"""
+        self._validate_clowder_yaml()
         if self.clowder_repo is None:
             exit_clowder_not_found()
         self.clowder_repo.print_status(fetch=True)
@@ -412,6 +378,57 @@ class Command(object):
         """Exit handler to display trailing newline"""
         if self._display_trailing_newline:
             print()
+
+    def _prune_groups(self):
+        """Private method for pruning groups"""
+        if self.args.all:
+            if is_offline():
+                print_offline_error()
+            self.clowder.prune_groups(self.args.groups,
+                                      self.args.branch,
+                                      force=self.args.force,
+                                      local=True,
+                                      remote=True)
+        elif self.args.remote:
+            if is_offline():
+                print_offline_error()
+            self.clowder.prune_groups(self.args.groups,
+                                      self.args.branch,
+                                      remote=True)
+        else:
+            self.clowder.prune_groups(self.args.groups,
+                                      self.args.branch,
+                                      force=self.args.force,
+                                      local=True)
+
+    def _prune_projects(self):
+        """Private method for pruning projects"""
+        if self.args.all:
+            if is_offline():
+                print_offline_error()
+            self.clowder.prune_projects(self.args.projects,
+                                        self.args.branch,
+                                        force=self.args.force,
+                                        local=True,
+                                        remote=True)
+        elif self.args.remote:
+            if is_offline():
+                print_offline_error()
+            self.clowder.prune_projects(self.args.projects,
+                                        self.args.branch,
+                                        remote=True)
+        else:
+            self.clowder.prune_projects(self.args.projects,
+                                        self.args.branch,
+                                        force=self.args.force,
+                                        local=True)
+
+    def _validate_clowder_yaml(self):
+        """Print invalid yaml message and exit if invalid"""
+        if self._invalid_yaml:
+            print_invalid_yaml_error()
+            print_error(self._error)
+            sys.exit(1)
 
 
 def exit_unrecognized_command(parser):

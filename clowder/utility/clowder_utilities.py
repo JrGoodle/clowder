@@ -73,8 +73,10 @@ def get_yaml_string(yaml_output):
     """Return yaml string from python data structures"""
     try:
         return yaml.safe_dump(yaml_output, default_flow_style=False, indent=4)
-    except:
+    except yaml.YAMLError:
         cprint('Failed to dump yaml', 'red')
+        sys.exit(1)
+    except (KeyboardInterrupt, SystemExit):
         sys.exit(1)
 
 
@@ -90,8 +92,10 @@ def is_offline(host='8.8.8.8', port=53, timeout=3):
         socket.setdefaulttimeout(timeout)
         socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host, port))
         return False
-    except:
+    except socket.error:
         return True
+    except (KeyboardInterrupt, SystemExit):
+        sys.exit(1)
 
 
 def parse_yaml(yaml_file):
@@ -105,8 +109,10 @@ def parse_yaml(yaml_file):
                     print(format_empty_yaml_error(yaml_file) + '\n')
                     sys.exit(1)
                 return parsed_yaml
-        except:
+        except yaml.YAMLError:
             print_open_file_error(yaml_file)
+            sys.exit(1)
+        except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
     else:
         print()
@@ -132,9 +138,11 @@ def remove_directory_exit(path):
     """Remove directory at path"""
     try:
         shutil.rmtree(path)
-    except:
+    except shutil.Error:
         message = colored(" - Failed to remove directory ", 'red')
         print(message + format_path(path))
+    except (KeyboardInterrupt, SystemExit):
+        sys.exit(1)
     finally:
         print()
         sys.exit(1)
@@ -147,8 +155,10 @@ def save_yaml(yaml_output, yaml_file):
             with open(yaml_file, 'w') as raw_file:
                 print(" - Save yaml to file")
                 yaml.safe_dump(yaml_output, raw_file, default_flow_style=False, indent=4)
-        except:
+        except yaml.YAMLError:
             print_save_file_error(yaml_file)
+            sys.exit(1)
+        except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
     else:
         print_file_exists_error(yaml_file)

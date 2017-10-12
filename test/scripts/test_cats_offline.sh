@@ -127,14 +127,14 @@ echo 'TEST: clowder repo clean'
 clowder repo clean || enable_connection_exit
 print_single_separator
 echo 'TEST: clowder repo commit'
-pushd .clowder
+pushd .clowder || exit 1
 touch newfile || enable_connection_exit
 git add newfile || enable_connection_exit
-popd
+popd || exit 1
 clowder repo commit 'Add newfile' || enable_connection_exit
-pushd .clowder
+pushd .clowder || exit 1
 git reset --hard HEAD~1 || enable_connection_exit
-popd
+popd || exit 1
 print_single_separator
 echo 'TEST: clowder repo pull'
 clowder repo pull && enable_connection_exit
@@ -154,9 +154,9 @@ print_single_separator
 echo 'TEST: clowder start'
 clowder start local_branch || enable_connection_exit
 for project in "${all_projects[@]}"; do
-	pushd $project
+    pushd $project || exit 1
     test_branch 'local_branch'
-    popd
+    popd || exit 1
 done
 print_single_separator
 echo 'TEST: clowder start -t'

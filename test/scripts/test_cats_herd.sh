@@ -20,16 +20,16 @@ export all_projects=( 'mu' 'duke' \
 test_cats_default_herd_branches() {
     echo "TEST: cats projects on default branches"
     for project in "${black_cats_projects[@]}"; do
-        pushd $project
+        pushd $project || exit 1
         test_branch master
-        popd
+        popd || exit 1
     done
-    pushd mu
+    pushd mu || exit 1
     test_branch knead
-    popd
-    pushd duke
+    popd || exit 1
+    pushd duke || exit 1
     test_branch purr
-    popd
+    popd || exit 1
 }
 
 prepare_cats_example
@@ -77,9 +77,9 @@ test_herd_detached_heads() {
     echo "TEST: Create detached HEADs"
     for project in "$@"
     do
-        pushd $project >/dev/null
-        git checkout master~2 >/dev/null || exit 1
-        popd >/dev/null
+        pushd $project || exit 1
+        git checkout master~2 || exit 1
+        popd || exit 1
     done
     clowder status || exit 1
     echo "TEST: Successfully herd with detached HEADs"
@@ -127,12 +127,12 @@ test_herd_missing_branches() {
     clowder link -v v0.1 || exit 1
     clowder herd || exit 1
     echo "TEST: Delete default branches locally"
-    pushd mu >/dev/null
+    pushd mu || exit 1
     git branch -D knead || exit 1
-    popd >/dev/null
-    pushd duke >/dev/null
+    popd || exit 1
+    pushd duke || exit 1
     git branch -D purr || exit 1
-    popd >/dev/null
+    popd || exit 1
     echo "TEST: Herd existing repo's with no default branch locally"
     clowder link || exit 1
     clowder herd || exit 1
@@ -175,9 +175,9 @@ test_herd_override_groups() {
     clowder link || exit 1
     clowder herd -b alt-branch || exit 1
     for project in "${all_projects[@]}"; do
-        pushd $project
+        pushd $project || exit 1
         test_branch 'alt-branch'
-        popd
+        popd || exit 1
     done
     clowder link -v override-group-ref || exit 1
     clowder herd || exit 1
@@ -202,11 +202,11 @@ test_herd_no_repo_existing_remote() {
     done
     clowder herd || exit 1
     for project in "${all_projects[@]}"; do
-        pushd $project
+        pushd $project || exit 1
         test_branch $EXISTING_REMOTE_BRANCH
         test_remote_branch_exists $EXISTING_REMOTE_BRANCH
         test_tracking_branch_exists $EXISTING_REMOTE_BRANCH
-        popd
+        popd || exit 1
     done
 }
 test_herd_no_repo_existing_remote
@@ -240,18 +240,18 @@ test_herd_no_local_existing_remote() {
     clowder prune $EXISTING_REMOTE_BRANCH || exit 1
     clowder link -v 'herd-existing-remote-branch' || exit 1
     for project in "${all_projects[@]}"; do
-        pushd $project
+        pushd $project || exit 1
         test_no_local_branch_exists $EXISTING_REMOTE_BRANCH
         test_remote_branch_exists $EXISTING_REMOTE_BRANCH
-        popd
+        popd || exit 1
     done
     clowder herd || exit 1
     for project in "${all_projects[@]}"; do
-        pushd $project
+        pushd $project || exit 1
         test_branch $EXISTING_REMOTE_BRANCH
         test_remote_branch_exists $EXISTING_REMOTE_BRANCH
         test_tracking_branch_exists $EXISTING_REMOTE_BRANCH
-        popd
+        popd || exit 1
     done
 }
 test_herd_no_local_existing_remote
@@ -261,17 +261,17 @@ test_herd_no_local_no_remote() {
     echo "TEST: Herd - No local branch, no remote branch"
     clowder link -v 'herd-no-remote-branch' || exit 1
     for project in "${all_projects[@]}"; do
-        pushd $project
+        pushd $project || exit 1
         test_no_local_branch_exists $NO_REMOTE_BRANCH
         test_no_remote_branch_exists $NO_REMOTE_BRANCH
-        popd
+        popd || exit 1
     done
     clowder herd && exit 1
     for project in "${all_projects[@]}"; do
-        pushd $project
+        pushd $project || exit 1
         test_no_local_branch_exists $NO_REMOTE_BRANCH
         test_no_remote_branch_exists $NO_REMOTE_BRANCH
-        popd
+        popd || exit 1
     done
 }
 test_herd_no_local_no_remote
@@ -285,18 +285,18 @@ test_herd_existing_local_no_remote() {
     test_cats_default_herd_branches
     clowder link -v 'herd-no-remote-branch' || exit 1
     for project in "${all_projects[@]}"; do
-        pushd $project
+        pushd $project || exit 1
         test_local_branch_exists $NO_REMOTE_BRANCH
         test_no_remote_branch_exists $NO_REMOTE_BRANCH
-        popd
+        popd || exit 1
     done
     clowder herd || exit 1
     for project in "${all_projects[@]}"; do
-        pushd $project
+        pushd $project || exit 1
         test_local_branch_exists $NO_REMOTE_BRANCH
         test_no_remote_branch_exists $NO_REMOTE_BRANCH
         test_branch $NO_REMOTE_BRANCH
-        popd
+        popd || exit 1
     done
 }
 test_herd_existing_local_no_remote
@@ -309,20 +309,20 @@ test_herd_existing_local_existing_remote_no_tracking() {
     clowder herd || exit 1
     clowder forall -c 'git branch --unset-upstream' || exit 1
     for project in "${all_projects[@]}"; do
-        pushd $project
+        pushd $project || exit 1
         test_local_branch_exists $EXISTING_REMOTE_BRANCH
         test_remote_branch_exists $EXISTING_REMOTE_BRANCH
         test_no_tracking_branch_exists $EXISTING_REMOTE_BRANCH
-        popd
+        popd || exit 1
     done
     clowder herd || exit 1
     for project in "${all_projects[@]}"; do
-        pushd $project
+        pushd $project || exit 1
         test_branch $EXISTING_REMOTE_BRANCH
         test_local_branch_exists $EXISTING_REMOTE_BRANCH
         test_remote_branch_exists $EXISTING_REMOTE_BRANCH
         test_tracking_branch_exists $EXISTING_REMOTE_BRANCH
-        popd
+        popd || exit 1
     done
 
     echo "TEST: Herd - Existing local branch, existing remote branch, no tracking, different commits"
@@ -333,19 +333,19 @@ test_herd_existing_local_existing_remote_no_tracking() {
     clowder forall -c "git branch $EXISTING_REMOTE_BRANCH" || exit 1
     clowder link -v 'herd-existing-remote-branch' || exit 1
     for project in "${all_projects[@]}"; do
-        pushd $project
+        pushd $project || exit 1
         test_local_branch_exists $EXISTING_REMOTE_BRANCH
         test_remote_branch_exists $EXISTING_REMOTE_BRANCH
         test_no_tracking_branch_exists $EXISTING_REMOTE_BRANCH
-        popd
+        popd || exit 1
     done
     clowder herd && exit 1
     for project in "${all_projects[@]}"; do
-        pushd $project
+        pushd $project || exit 1
         test_local_branch_exists $EXISTING_REMOTE_BRANCH
         test_remote_branch_exists $EXISTING_REMOTE_BRANCH
         test_no_tracking_branch_exists $EXISTING_REMOTE_BRANCH
-        popd
+        popd || exit 1
     done
 }
 test_herd_existing_local_existing_remote_no_tracking
@@ -358,19 +358,19 @@ test_herd_existing_local_existing_remote_tracking() {
     clowder link -v 'herd-existing-remote-branch' || exit 1
     clowder forall -c "git checkout $EXISTING_REMOTE_BRANCH" || exit 1
     for project in "${all_projects[@]}"; do
-        pushd $project
+        pushd $project || exit 1
         test_local_branch_exists $EXISTING_REMOTE_BRANCH
         test_remote_branch_exists $EXISTING_REMOTE_BRANCH
         test_tracking_branch_exists $EXISTING_REMOTE_BRANCH
-        popd
+        popd || exit 1
     done
     clowder herd || exit 1
     for project in "${all_projects[@]}"; do
-        pushd $project
+        pushd $project || exit 1
         test_branch $EXISTING_REMOTE_BRANCH
         test_remote_branch_exists $EXISTING_REMOTE_BRANCH
         test_tracking_branch_exists $EXISTING_REMOTE_BRANCH
-        popd
+        popd || exit 1
     done
 }
 test_herd_existing_local_existing_remote_tracking
@@ -382,7 +382,7 @@ test_herd_rebase() {
     clowder herd || exit 1
 
     REBASE_MESSAGE='Add rebase file'
-    pushd mu
+    pushd mu || exit 1
     COMMIT_MESSAGE_1="$(git log --format=%B -n 1 HEAD)"
     echo "$COMMIT_MESSAGE_1"
     COMMIT_MESSAGE_2="$(git log --format=%B -n 1 HEAD~1)"
@@ -393,16 +393,16 @@ test_herd_rebase() {
     git commit -m "$REBASE_MESSAGE" || exit 1
     test_commit_messages "$(git log --format=%B -n 1 HEAD)" "$REBASE_MESSAGE"
     test_commit_messages "$(git log --format=%B -n 1 HEAD~1)" "$COMMIT_MESSAGE_2"
-    popd
+    popd || exit 1
 
     clowder herd -r || exit 1
 
-    pushd mu
+    pushd mu || exit 1
     test_commit_messages "$(git log --format=%B -n 1 HEAD)" "$REBASE_MESSAGE"
     test_commit_messages "$(git log --format=%B -n 1 HEAD~1)" "$COMMIT_MESSAGE_1"
     test_commit_messages "$(git log --format=%B -n 1 HEAD~2)" "$COMMIT_MESSAGE_2"
     git reset --hard HEAD~1 || exit 1
-    popd
+    popd || exit 1
 }
 test_herd_rebase
 
@@ -413,7 +413,7 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
         clowder link || exit 1
         clowder herd || exit 1
 
-        pushd mu
+        pushd mu || exit 1
         touch rebasefile || exit 1
         echo 'something' >> rebasefile
         git add rebasefile || exit 1
@@ -425,21 +425,21 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
         git add rebasefile || exit 1
         git commit -m 'Add another rebase file' || exit 1
         test_no_rebase_in_progress
-        popd
+        popd || exit 1
 
         clowder herd -r && exit 1
 
-        pushd mu
+        pushd mu || exit 1
         test_rebase_in_progress
-        popd
+        popd || exit 1
 
         clowder clean -a || exit 1
 
-        pushd mu
+        pushd mu || exit 1
         test_no_rebase_in_progress
         git reset --hard HEAD~1 || exit 1
         git push --force || exit 1
-        popd
+        popd || exit 1
     }
     test_herd_rebase_conflict
 fi

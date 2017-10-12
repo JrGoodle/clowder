@@ -20,35 +20,35 @@ test_clowder_repo_checkout() {
     print_single_separator
     echo "TEST: Test clowder repo checkout command"
     clowder repo checkout tags || exit 1
-    pushd .clowder
+    pushd .clowder || exit 1
     test_branch tags
-    popd
+    popd || exit 1
     clowder repo checkout ref_that_doesnt_exist && exit 1
-    pushd .clowder
+    pushd .clowder || exit 1
     test_branch tags
-    popd
+    popd || exit 1
     clowder repo checkout master || exit 1
-    pushd .clowder
+    pushd .clowder || exit 1
     test_branch master
-    popd
+    popd || exit 1
 }
 test_clowder_repo_checkout
 
 test_clowder_repo_clean() {
     print_single_separator
     echo "TEST: Test clowder repo clean command"
-    pushd .clowder
+    pushd .clowder || exit 1
     test_git_clean
-    popd
+    popd || exit 1
     clowder repo run 'touch newfile' || exit 1
     clowder repo add 'newfile' || exit 1
-    pushd .clowder
+    pushd .clowder || exit 1
     test_git_dirty
-    popd
+    popd || exit 1
     clowder repo clean || exit 1
-    pushd .clowder
+    pushd .clowder || exit 1
     test_git_clean
-    popd
+    popd || exit 1
 }
 test_clowder_repo_clean
 
@@ -57,32 +57,32 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
         print_single_separator
         echo "TEST: Test clowder repo commit, clowder repo pull, clowder repo push commands"
         clowder repo checkout repo-test || exit 1
-        pushd .clowder
+        pushd .clowder || exit 1
         ORIGINAL_COMMIT="$(git rev-parse HEAD)"
         test_branch repo-test
-        popd
+        popd || exit 1
         clowder repo run 'touch newfile' || exit 1
         clowder repo add 'newfile' || exit 1
         clowder repo commit 'Add newfile for clowder repo test' || exit 1
-        pushd .clowder
+        pushd .clowder || exit 1
         NEW_COMMIT="$(git rev-parse HEAD)"
-        popd
+        popd || exit 1
         if [ "$ORIGINAL_COMMIT" == "$NEW_COMMIT" ]; then
             exit 1
         fi
         clowder repo push || exit 1
         clowder repo run 'git reset --hard HEAD~1' || exit 1
-        pushd .clowder
+        pushd .clowder || exit 1
         if [ "$ORIGINAL_COMMIT" != "$(git rev-parse HEAD)" ]; then
             exit 1
         fi
-        popd
+        popd || exit 1
         clowder repo pull || exit 1
-        pushd .clowder
+        pushd .clowder || exit 1
         if [ "$NEW_COMMIT" != "$(git rev-parse HEAD)" ]; then
             exit 1
         fi
-        popd
+        popd || exit 1
         clowder repo run 'git reset --hard HEAD~1' || exit 1
         clowder repo run 'git push origin repo-test --force' || exit 1
         clowder repo checkout master || exit 1

@@ -26,15 +26,15 @@ prepare_unittest_repos() {
     # Remove jules repository
     rm -rf black-cats/jules
     # Make kishka repo dirty
-    pushd black-cats/kishka &>/dev/null
+    pushd black-cats/kishka || exit 1
     touch newfile
     git add .
-    popd &>/dev/null
+    popd || exit 1
     # Set sasha repo to detached HEAD state
-    pushd black-cats/sasha &>/dev/null
+    pushd black-cats/sasha || exit 1
     git checkout '6ce5538d2c09fda2f56a9ca3859f5e8cfe706bf0'
-    popd &>/dev/null
-    popd
+    popd || exit 1
+    popd || exit 1
 }
 prepare_unittest_repos
 

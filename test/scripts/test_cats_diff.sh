@@ -19,9 +19,9 @@ test_diff() {
     make_dirty_repos "${black_cats_projects[@]}"
 
     for project in "${black_cats_projects[@]}"; do
-        pushd $project
+        pushd $project || exit 1 || exit 1
         test_git_dirty
-        popd
+        popd || exit 1
     done
 
     echo "TEST: Display diff"

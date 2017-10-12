@@ -12,9 +12,9 @@ echo "TEST: Test clowder yaml command"
 test_clowder_yaml() {
     print_single_separator
     echo "TEST: Test clowder yaml command"
-    pushd .clowder/versions >/dev/null
+    pushd .clowder/versions || exit 1
     test_cases=( $(ls -d import-*) )
-    popd >/dev/null
+    popd || exit 1
 
     print_double_separator
     clowder link || exit 1

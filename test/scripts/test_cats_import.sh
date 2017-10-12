@@ -19,16 +19,16 @@ export black_cats_projects=( 'black-cats/kit' \
 
 test_cats_default_herd_branches() {
     for project in "${black_cats_projects[@]}"; do
-    	pushd $project
+        pushd $project || exit 1
         test_branch master
-        popd
+        popd || exit 1
     done
-    pushd mu
+    pushd mu || exit 1
     test_branch knead
-    popd
-    pushd duke
+    popd || exit 1
+    pushd duke || exit 1
     test_branch purr
-    popd
+    popd || exit 1
 }
 
 print_double_separator
@@ -45,9 +45,9 @@ test_clowder_import_default() {
     clowder status || exit 1
 
     for project in "${black_cats_projects[@]}"; do
-        pushd $project
+        pushd $project || exit 1
         test_branch import-default
-        popd
+        popd || exit 1
     done
 }
 test_clowder_import_default
@@ -62,9 +62,9 @@ test_clowder_import_version() {
     clowder status || exit 1
 
     for project in "${black_cats_projects[@]}"; do
-        pushd $project
+        pushd $project || exit 1
         test_branch import-version
-        popd
+        popd || exit 1
     done
 }
 test_clowder_import_version
@@ -78,16 +78,16 @@ test_clowder_import_override_group_ref() {
     clowder link -v import-override-group-ref || exit 1
     clowder herd || exit 1
     for project in "${black_cats_projects[@]}"; do
-    	pushd $project
+        pushd $project || exit 1
         test_branch import-group-branch
-        popd
+        popd || exit 1
     done
-    pushd mu
+    pushd mu || exit 1
     test_branch knead
-    popd
-    pushd duke
+    popd || exit 1
+    pushd duke || exit 1
     test_branch purr
-    popd
+    popd || exit 1
 }
 test_clowder_import_override_group_ref
 
@@ -100,9 +100,9 @@ test_clowder_import_override_project_ref() {
     clowder link -v import-project-ref || exit 1
     clowder herd || exit 1
     for project in "${all_projects[@]}"; do
-    	pushd $project
+        pushd $project || exit 1
         test_branch master
-        popd
+        popd || exit 1
     done
 }
 test_clowder_import_override_project_ref
@@ -116,9 +116,9 @@ test_clowder_import_add_project_to_group() {
     clowder link -v import-add-project-to-group || exit 1
     clowder herd -g cats || exit 1
     test_cats_default_herd_branches
-    pushd ash
+    pushd ash || exit 1
     test_branch master
-    popd
+    popd || exit 1
     rm -rf ash || exit 1
 }
 test_clowder_import_add_project_to_group
@@ -132,9 +132,9 @@ test_clowder_import_add_new_group() {
     clowder link -v import-add-group || exit 1
     clowder herd -g rip || exit 1
     test_cats_default_herd_branches
-    pushd ash
+    pushd ash || exit 1
     test_branch master
-    popd
+    popd || exit 1
     rm -rf ash || exit 1
 }
 test_clowder_import_add_new_group
@@ -148,16 +148,16 @@ test_clowder_import_recursive_override_project_ref() {
     clowder link -v import-recursive-project-ref || exit 1
     clowder herd || exit 1
     for project in "${black_cats_projects[@]}"; do
-    	pushd $project
+        pushd $project || exit 1
         test_branch master
-        popd
+        popd || exit 1
     done
-    pushd mu
+    pushd mu || exit 1
     test_branch recursive-import
-    popd
-    pushd duke
+    popd || exit 1
+    pushd duke || exit 1
     test_branch purr
-    popd
+    popd || exit 1
 }
 test_clowder_import_recursive_override_project_ref
 
@@ -170,9 +170,9 @@ test_clowder_import_recursive_add_project_to_group() {
     clowder link -v import-recursive-add-project-to-group || exit 1
     clowder herd -g cats || exit 1
     test_cats_default_herd_branches
-    pushd ash
+    pushd ash || exit 1
     test_branch recursive-import
-    popd
+    popd || exit 1
     rm -rf ash || exit 1
 }
 test_clowder_import_recursive_add_project_to_group
@@ -186,9 +186,9 @@ test_clowder_import_recursive_add_new_group() {
     clowder link -v import-recursive-add-group || exit 1
     clowder herd -g rip || exit 1
     test_cats_default_herd_branches
-    pushd ash
+    pushd ash || exit 1
     test_branch recursive-import
-    popd
+    popd || exit 1
     rm -rf ash || exit 1
 }
 test_clowder_import_recursive_add_new_group
@@ -202,15 +202,15 @@ test_clowder_import_recursive_override_default() {
     clowder link -v import-recursive-default || exit 1
     clowder herd || exit 1
     for project in "${black_cats_projects[@]}"; do
-    	pushd $project
+        pushd $project || exit 1
         test_branch recursive-import
-        popd
+        popd || exit 1
     done
-    pushd mu
+    pushd mu || exit 1
     test_branch knead
-    popd
-    pushd duke
+    popd || exit 1
+    pushd duke || exit 1
     test_branch purr
-    popd
+    popd || exit 1
 }
 test_clowder_import_recursive_override_default

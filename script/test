@@ -3,4 +3,9 @@
 cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 
 cd '../test' || exit 1
+
+echo "pip uninstall clowder-test"
+sudo -H pip2 uninstall clowder_test
+sudo -H pip3 uninstall clowder_test
+
 sudo -H pip install -e .

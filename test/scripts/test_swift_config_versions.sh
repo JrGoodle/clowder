@@ -33,141 +33,141 @@ export llvm_project_paths=( 'clang' \
 test_default_branches() {
     echo "TEST: Default branches checked out"
     for project in "${llvm_project_paths[@]}"; do
-    	pushd $project
+        pushd $project || exit 1
         test_branch stable
-        popd
+        popd || exit 1
     done
     for project in "${project_paths[@]}"; do
-    	pushd $project
+        pushd $project || exit 1
         test_branch master
-        popd
+        popd || exit 1
     done
-    pushd swift
+    pushd swift || exit 1
     test_branch master
-    popd
-    pushd ninja
+    popd || exit 1
+    pushd ninja || exit 1
     test_branch release
-    popd
+    popd || exit 1
 }
 
 test_next_branches() {
     echo "TEST: Version 'next' branches checked out"
     for project in "${llvm_project_paths[@]}"; do
-    	pushd $project
+        pushd $project || exit 1
         test_branch upstream-with-swift
-        popd
+        popd || exit 1
     done
     for project in "${project_paths[@]}"; do
-    	pushd $project
+        pushd $project || exit 1
         test_branch master
-        popd
+        popd || exit 1
     done
-    pushd swift
+    pushd swift || exit 1
     test_branch master-next
-    popd
-    pushd ninja
+    popd || exit 1
+    pushd ninja || exit 1
     test_branch release
-    popd
+    popd || exit 1
 }
 
 test_swift_3_0_branch_branches() {
     echo "TEST: Version 'swift-3.0-branch' branches checked out"
     for project in "${llvm_project_paths[@]}"; do
-    	pushd $project
+        pushd $project || exit 1
         test_branch 'swift-3.0-branch'
-        popd
+        popd || exit 1
     done
     for project in "${project_paths[@]}"; do
-    	pushd $project
+        pushd $project || exit 1
         test_branch 'swift-3.0-branch'
-        popd
+        popd || exit 1
     done
-    pushd swift
+    pushd swift || exit 1
     test_branch 'swift-3.0-branch'
-    popd
-    pushd ninja
+    popd || exit 1
+    pushd ninja || exit 1
     test_branch release
-    popd
+    popd || exit 1
 }
 
 test_swift_3_1_branch_branches() {
     echo "TEST: Version 'swift-3.1-branch' branches checked out"
     for project in "${llvm_project_paths[@]}"; do
-    	pushd $project
+        pushd $project || exit 1
         test_branch 'swift-3.1-branch'
-        popd
+        popd || exit 1
     done
     for project in "${project_paths[@]}"; do
-    	pushd $project
+        pushd $project || exit 1
         test_branch 'swift-3.1-branch'
-        popd
+        popd || exit 1
     done
-    pushd swift
+    pushd swift || exit 1
     test_branch 'swift-3.1-branch'
-    popd
-    pushd ninja
+    popd || exit 1
+    pushd ninja || exit 1
     test_branch release
-    popd
+    popd || exit 1
 }
 
 test_swift_4_0_branch_branches() {
     echo "TEST: Version 'swift-4.0-branch' branches checked out"
     for project in "${llvm_project_paths[@]}"; do
-    	pushd $project
+        pushd $project || exit 1
         test_branch 'swift-4.0-branch'
-        popd
+        popd || exit 1
     done
     for project in "${project_paths[@]}"; do
-    	pushd $project
+        pushd $project || exit 1
         test_branch 'swift-4.0-branch'
-        popd
+        popd || exit 1
     done
-    pushd swift
+    pushd swift || exit 1
     test_branch 'swift-4.0-branch'
-    popd
-    pushd ninja
+    popd || exit 1
+    pushd ninja || exit 1
     test_branch release
-    popd
+    popd || exit 1
 }
 
 test_swift_4_0_branch_07_11_2017_branches() {
     echo "TEST: Version 'swift-4.0-branch-07-11-2017' branches checked out"
     for project in "${llvm_project_paths[@]}"; do
-    	pushd $project
+        pushd $project || exit 1
         test_branch 'swift-4.0-branch-07-11-2017'
-        popd
+        popd || exit 1
     done
     for project in "${project_paths[@]}"; do
-    	pushd $project
+        pushd $project || exit 1
         test_branch 'swift-4.0-branch'
-        popd
+        popd || exit 1
     done
-    pushd swift
+    pushd swift || exit 1
     test_branch 'swift-4.0-branch-07-11-2017'
-    popd
-    pushd ninja
+    popd || exit 1
+    pushd ninja || exit 1
     test_branch release
-    popd
+    popd || exit 1
 }
 
 test_swift_4_1_branch_branches() {
     echo "TEST: Version 'swift-4.1-branch' branches checked out"
     for project in "${llvm_project_paths[@]}"; do
-    	pushd $project
+        pushd $project || exit 1
         test_branch 'swift-4.1-branch'
-        popd
+        popd || exit 1
     done
     for project in "${project_paths[@]}"; do
-    	pushd $project
+        pushd $project || exit 1
         test_branch master
-        popd
+        popd || exit 1
     done
-    pushd swift
+    pushd swift || exit 1
     test_branch master
-    popd
-    pushd ninja
+    popd || exit 1
+    pushd ninja || exit 1
     test_branch release
-    popd
+    popd || exit 1
 }
 
 test_init_herd() {
@@ -195,18 +195,18 @@ test_swift_configs() {
         config_function="test_${config}_branches"
         config_function="${config_function//-/_}"
         config_function="${config_function//./_}"
-	    clowder link -v travis-ci || exit 1
+        clowder link -v travis-ci || exit 1
         clowder herd || exit 1
         test_default_branches
         clowder link -v "$config"
         clowder herd || exit 1
         clowder status || exit 1
         "$config_function"
-        pushd swift
+        pushd swift || exit 1
             # need to checkout master for latest update-checkout script changes
             # one reason not to include checkout logic in the project repo ;)
             git checkout master || exit 1
-        popd
+        popd || exit 1
         ./swift/utils/update-checkout --clone --scheme master --reset-to-remote || exit 1
         clowder status || exit 1
         test_default_branches
