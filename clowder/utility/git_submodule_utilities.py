@@ -44,6 +44,11 @@ class GitSubmodules(Git):
         Git.herd_branch(self, url, remote, branch, default_ref, depth=depth, rebase=rebase)
         self.submodule_update_recursive(depth)
 
+    def herd_tag(self, url, remote, tag, default_ref, depth=0, rebase=False):
+        """Herd tag"""
+        Git.herd_tag(self, url, remote, tag, default_ref, depth=depth, rebase=rebase)
+        self.submodule_update_recursive(depth)
+
     def is_dirty_submodule(self, path):
         """Check whether submodule repo is dirty"""
         return not self.repo.is_dirty(path)

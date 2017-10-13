@@ -238,7 +238,22 @@ class Git(object):
     def herd_tag(self, url, remote, tag, default_ref, depth=0, rebase=False):
         """Herd tag"""
         if not existing_git_repository(self.repo_path):
-            self._create_repo_herd_tag(url, remote, tag, default_ref, depth=depth)
+            if not os.path.isdir(self.repo_path):
+                os.makedirs(self.repo_path)
+            self._init_repo()
+            return_code = self._create_remote(remote, url)
+            if return_code != 0:
+                remove_directory_exit(self.repo_path)
+            origin = self._remote(remote)
+            if origin is None:
+                remove_directory_exit(self.repo_path)
+            return_code = self.fetch(remote, depth=depth)
+            if return_code != 0:
+                remove_directory_exit(self.repo_path)
+            return_code = self._checkout_tag(tag)
+            if return_code == 0:
+                return
+            self._checkout_ref(default_ref, remote, depth)
             return
         return_code = self.fetch(remote, depth=depth)
         if return_code != 0:
@@ -707,27 +722,6 @@ class Git(object):
             return 1
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
-
-    def _create_repo_herd_tag(self, url, remote, tag, default_ref, depth=0):
-        """Clone git repo from url at path for herd tag"""
-        if existing_git_repository(self.repo_path):
-            return
-        if not os.path.isdir(self.repo_path):
-            os.makedirs(self.repo_path)
-        self._init_repo()
-        return_code = self._create_remote(remote, url)
-        if return_code != 0:
-            remove_directory_exit(self.repo_path)
-        origin = self._remote(remote)
-        if origin is None:
-            remove_directory_exit(self.repo_path)
-        return_code = self.fetch(remote, depth=depth)
-        if return_code != 0:
-            remove_directory_exit(self.repo_path)
-        return_code = self._checkout_tag(tag)
-        if return_code == 0:
-            return
-        self._checkout_ref(default_ref, remote, depth)
 
     def _existing_remote_tag(self, tag, remote, depth=0):
         """Check if remote tag exists"""
