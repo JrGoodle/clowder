@@ -146,13 +146,18 @@ class Git(object):
 
     def herd(self, url, remote, ref, depth=0, fetch=True, rebase=False):
         """Herd ref"""
-        if not existing_git_repository(self.repo_path):
+        is_initial_herd = not existing_git_repository(self.repo_path)
+        if is_initial_herd:
             if not os.path.isdir(self.repo_path):
                 os.makedirs(self.repo_path)
             self._init_repo()
-            return_code = self._create_remote(remote, url)
-            if return_code != 0:
+        return_code = self._create_remote(remote, url)
+        if return_code != 0:
+            if is_initial_herd:
                 remove_directory_exit(self.repo_path)
+            else:
+                sys.exit(1)
+        if is_initial_herd:
             return_code = self.fetch(remote, depth=depth, ref=ref)
             if return_code != 0:
                 remove_directory_exit(self.repo_path)
@@ -162,14 +167,7 @@ class Git(object):
                 self._checkout_new_repo_tag(truncate_ref(ref), remote, depth)
             elif ref_type(ref) == 'sha':
                 self._checkout_new_repo_commit(ref, remote, depth)
-            else:
-                ref_output = format_ref_string(ref)
-                print('Unknown ref ' + ref_output)
-                sys.exit(1)
             return
-        return_code = self._create_remote(remote, url)
-        if return_code != 0:
-            sys.exit(1)
         self._checkout_ref(ref, remote, depth, fetch=fetch)
         if ref_type(ref) == 'branch':
             branch = truncate_ref(ref)
@@ -180,12 +178,13 @@ class Git(object):
                 return
             if rebase:
                 self._rebase_remote_branch(remote, branch)
-                return
-            self._pull_remote_branch(remote, branch)
+            else:
+                self._pull_remote_branch(remote, branch)
 
     def herd_branch(self, url, remote, branch, default_ref, depth=0, rebase=False):
         """Herd branch"""
-        if not existing_git_repository(self.repo_path):
+        is_initial_herd = not existing_git_repository(self.repo_path)
+        if is_initial_herd:
             if not os.path.isdir(self.repo_path):
                 os.makedirs(self.repo_path)
             self._init_repo()
@@ -237,7 +236,8 @@ class Git(object):
 
     def herd_tag(self, url, remote, tag, default_ref, depth=0, rebase=False):
         """Herd tag"""
-        if not existing_git_repository(self.repo_path):
+        is_initial_herd = not existing_git_repository(self.repo_path)
+        if is_initial_herd:
             if not os.path.isdir(self.repo_path):
                 os.makedirs(self.repo_path)
             self._init_repo()
@@ -572,10 +572,6 @@ class Git(object):
         elif ref_type(ref) == 'sha':
             self.fetch(remote, depth=depth, ref=ref)
             self._checkout_sha(ref)
-        else:
-            ref_output = format_ref_string(ref)
-            print('Unknown ref ' + ref_output)
-            sys.exit(1)
 
     def _checkout_sha(self, sha):
         """Checkout commit by sha"""
