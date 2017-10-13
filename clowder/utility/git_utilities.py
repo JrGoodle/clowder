@@ -110,7 +110,7 @@ class Git(object):
         try:
             origin = self.repo.remotes[remote]
             return branch in origin.refs
-        except GitError:
+        except (GitError, IndexError):
             return False
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
@@ -119,7 +119,7 @@ class Git(object):
         """Check if local branch exists"""
         return branch in self.repo.heads
 
-    def fetch(self, remote, ref=None, depth=0):
+    def fetch(self, remote, ref=None, depth=0, remove_dir=False):
         """Fetch from a specific remote ref"""
         remote_output = format_remote_string(remote)
         if depth == 0:
@@ -142,6 +142,8 @@ class Git(object):
         return_code = execute_command(command, self.repo_path)
         if return_code != 0:
             print(error)
+            if remove_dir:
+                remove_directory_exit(self.repo_path)
         return return_code
 
     def herd(self, url, remote, ref, depth=0, fetch=True, rebase=False):
@@ -157,8 +159,7 @@ class Git(object):
             else:
                 sys.exit(1)
         if is_initial_herd:
-            if self.fetch(remote, depth=depth, ref=ref):
-                remove_directory_exit(self.repo_path)
+            self.fetch(remote, depth=depth, ref=ref, remove_dir=True)
             if ref_type(ref) == 'branch':
                 self._checkout_new_repo_branch(truncate_ref(ref), remote, depth)
             elif ref_type(ref) == 'tag':
@@ -188,14 +189,12 @@ class Git(object):
             self._init_repo()
             if self._create_remote(remote, url):
                 remove_directory_exit(self.repo_path)
-            branch_output = format_ref_string(branch)
             origin = self._remote(remote)
             if origin is None:
                 remove_directory_exit(self.repo_path)
-            if self.fetch(remote, depth=depth, ref=branch):
-                remove_directory_exit(self.repo_path)
+            self.fetch(remote, depth=depth, ref=branch, remove_dir=True)
             if not self.existing_remote_branch(branch, remote):
-                print(' - No existing remote branch ' + branch_output)
+                print(' - No existing remote branch ' + format_ref_string(branch))
                 self._checkout_new_repo_branch(truncate_ref(default_ref), remote, depth)
                 return
             return_code = self._create_branch_local_tracking(branch, remote,
@@ -239,8 +238,7 @@ class Git(object):
             origin = self._remote(remote)
             if origin is None:
                 remove_directory_exit(self.repo_path)
-            if self.fetch(remote, depth=depth):
-                remove_directory_exit(self.repo_path)
+            self.fetch(remote, depth=depth, remove_dir=True)
             if self._checkout_tag(tag):
                 return
             self._checkout_ref(default_ref, remote, depth)
@@ -473,9 +471,7 @@ class Git(object):
         origin = self._remote(remote)
         if origin is None:
             remove_directory_exit(self.repo_path)
-        return_code = self.fetch(remote, depth=depth, ref=branch)
-        if return_code != 0:
-            remove_directory_exit(self.repo_path)
+        self.fetch(remote, depth=depth, ref=branch, remove_dir=True)
         if not self.existing_remote_branch(branch, remote):
             message = colored(' - No existing remote branch ', 'red')
             print(message + branch_output)
@@ -497,9 +493,7 @@ class Git(object):
         origin = self._remote(remote)
         if origin is None:
             remove_directory_exit(self.repo_path)
-        return_code = self.fetch(remote, depth=depth, ref=commit)
-        if return_code != 0:
-            remove_directory_exit(self.repo_path)
+        self.fetch(remote, depth=depth, ref=commit, remove_dir=True)
         print(' - Checkout commit ' + commit_output)
         try:
             self.repo.git.checkout(commit)
@@ -517,9 +511,7 @@ class Git(object):
         origin = self._remote(remote)
         if origin is None:
             remove_directory_exit(self.repo_path)
-        return_code = self.fetch(remote, depth=depth, ref=tag)
-        if return_code != 0:
-            remove_directory_exit(self.repo_path)
+        self.fetch(remote, depth=depth, ref=tag, remove_dir=True)
         try:
             remote_tag = origin.tags[tag]
         except GitError:
@@ -712,9 +704,7 @@ class Git(object):
         origin = self._remote(remote)
         if origin is None:
             remove_directory_exit(self.repo_path)
-        return_code = self.fetch(remote, depth=depth, ref=tag)
-        if return_code != 0:
-            remove_directory_exit(self.repo_path)
+        self.fetch(remote, depth=depth, ref=tag, remove_dir=True)
         return tag in origin.tags
 
     def _init_repo(self):
