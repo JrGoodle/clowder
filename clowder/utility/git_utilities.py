@@ -151,15 +151,13 @@ class Git(object):
             if not os.path.isdir(self.repo_path):
                 os.makedirs(self.repo_path)
             self._init_repo()
-        return_code = self._create_remote(remote, url)
-        if return_code != 0:
+        if self._create_remote(remote, url):
             if is_initial_herd:
                 remove_directory_exit(self.repo_path)
             else:
                 sys.exit(1)
         if is_initial_herd:
-            return_code = self.fetch(remote, depth=depth, ref=ref)
-            if return_code != 0:
+            if self.fetch(remote, depth=depth, ref=ref):
                 remove_directory_exit(self.repo_path)
             if ref_type(ref) == 'branch':
                 self._checkout_new_repo_branch(truncate_ref(ref), remote, depth)
@@ -188,15 +186,13 @@ class Git(object):
             if not os.path.isdir(self.repo_path):
                 os.makedirs(self.repo_path)
             self._init_repo()
-            return_code = self._create_remote(remote, url)
-            if return_code != 0:
+            if self._create_remote(remote, url):
                 remove_directory_exit(self.repo_path)
             branch_output = format_ref_string(branch)
             origin = self._remote(remote)
             if origin is None:
                 remove_directory_exit(self.repo_path)
-            return_code = self.fetch(remote, depth=depth, ref=branch)
-            if return_code != 0:
+            if self.fetch(remote, depth=depth, ref=branch):
                 remove_directory_exit(self.repo_path)
             if not self.existing_remote_branch(branch, remote):
                 print(' - No existing remote branch ' + branch_output)
@@ -206,15 +202,12 @@ class Git(object):
                                                              depth=depth, fetch=False)
             if return_code != 0:
                 remove_directory_exit(self.repo_path)
-            return_code = self._set_tracking_branch(remote, branch)
-            if return_code != 0:
+            if self._set_tracking_branch(remote, branch):
                 remove_directory_exit(self.repo_path)
-            return_code = self._checkout_branch_local(branch)
-            if return_code != 0:
+            if self._checkout_branch_local(branch):
                 remove_directory_exit(self.repo_path)
             return
-        return_code = self.fetch(remote, depth=depth, ref=branch)
-        if return_code != 0:
+        if self.fetch(remote, depth=depth, ref=branch):
             self.herd(url, remote, default_ref, depth=depth, rebase=rebase)
             return
         if self.existing_local_branch(branch):
@@ -241,25 +234,20 @@ class Git(object):
             if not os.path.isdir(self.repo_path):
                 os.makedirs(self.repo_path)
             self._init_repo()
-            return_code = self._create_remote(remote, url)
-            if return_code != 0:
+            if self._create_remote(remote, url):
                 remove_directory_exit(self.repo_path)
             origin = self._remote(remote)
             if origin is None:
                 remove_directory_exit(self.repo_path)
-            return_code = self.fetch(remote, depth=depth)
-            if return_code != 0:
+            if self.fetch(remote, depth=depth):
                 remove_directory_exit(self.repo_path)
-            return_code = self._checkout_tag(tag)
-            if return_code == 0:
+            if self._checkout_tag(tag):
                 return
             self._checkout_ref(default_ref, remote, depth)
             return
-        return_code = self.fetch(remote, depth=depth)
-        if return_code != 0:
+        if self.fetch(remote, depth=depth):
             sys.exit(1)
-        return_code = self._checkout_tag(tag)
-        if return_code == 0:
+        if self._checkout_tag(tag):
             return
         self.herd(url, remote, default_ref, depth=depth, rebase=rebase, fetch=False)
 
