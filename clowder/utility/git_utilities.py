@@ -449,7 +449,7 @@ class Git(object):
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
 
-    def _checkout_branch_local(self, branch):
+    def _checkout_branch_local(self, branch, remove_dir=False):
         """Checkout local branch"""
         branch_output = format_ref_string(branch)
         try:
@@ -461,8 +461,12 @@ class Git(object):
             message = colored(' - Failed to checkout branch ', 'red')
             print(message + branch_output)
             print_error(err)
+            if remove_dir:
+                remove_directory_exit(self.repo_path)
             return 1
         except (KeyboardInterrupt, SystemExit):
+            if remove_dir:
+                remove_directory_exit(self.repo_path)
             sys.exit(1)
 
     def _checkout_new_repo_branch(self, branch, remote, depth):
@@ -476,16 +480,9 @@ class Git(object):
             message = colored(' - No existing remote branch ', 'red')
             print(message + branch_output)
             remove_directory_exit(self.repo_path)
-        return_code = self._create_branch_local_tracking(branch, remote,
-                                                         depth=depth, fetch=False)
-        if return_code != 0:
-            remove_directory_exit(self.repo_path)
-        return_code = self._set_tracking_branch(remote, branch)
-        if return_code != 0:
-            remove_directory_exit(self.repo_path)
-        return_code = self._checkout_branch_local(branch)
-        if return_code != 0:
-            remove_directory_exit(self.repo_path)
+        self._create_branch_local_tracking(branch, remote, depth=depth, fetch=False, remove_dir=True)
+        self._set_tracking_branch(remote, branch, remove_dir=True)
+        self._checkout_branch_local(branch, remove_dir=True)
 
     def _checkout_new_repo_commit(self, commit, remote, depth):
         """Checkout commit or fail and delete repo if it doesn't exist"""
@@ -503,7 +500,7 @@ class Git(object):
             print_error(err)
             remove_directory_exit(self.repo_path)
         except (KeyboardInterrupt, SystemExit):
-            sys.exit(1)
+            remove_directory_exit(self.repo_path)
 
     def _checkout_new_repo_tag(self, tag, remote, depth):
         """Checkout tag or fail and delete repo if it doesn't exist"""
@@ -530,15 +527,14 @@ class Git(object):
                 print_error(err)
                 remove_directory_exit(self.repo_path)
             except (KeyboardInterrupt, SystemExit):
-                sys.exit(1)
+                remove_directory_exit(self.repo_path)
 
     def _checkout_ref(self, ref, remote, depth, fetch=True):
         """Checkout branch, tag, or commit from sha"""
         if ref_type(ref) == 'branch':
             branch = truncate_ref(ref)
             if not self.existing_local_branch(branch):
-                return_code = self._create_branch_local_tracking(branch, remote,
-                                                                 depth=depth, fetch=fetch)
+                return_code = self._create_branch_local_tracking(branch, remote, depth=depth, fetch=fetch)
                 if return_code != 0:
                     sys.exit(return_code)
             if self._is_branch_checked_out(branch):
@@ -621,30 +617,37 @@ class Git(object):
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
 
-    def _create_branch_local_tracking(self, branch, remote, depth, fetch=True):
+    def _create_branch_local_tracking(self, branch, remote, depth, fetch=True, remove_dir=False):
         """Create and checkout tracking branch"""
         branch_output = format_ref_string(branch)
         origin = self._remote(remote)
         if origin is None:
+            if remove_dir:
+                remove_directory_exit(self.repo_path)
             return 1
         if fetch:
-            return_code = self.fetch(remote, depth=depth, ref=branch)
+            return_code = self.fetch(remote, depth=depth, ref=branch, remove_dir=remove_dir)
             if return_code != 0:
                 return return_code
         try:
             print(' - Create branch ' + branch_output)
             self.repo.create_head(branch, origin.refs[branch])
-            return_code = self._set_tracking_branch(remote, branch)
-            if return_code != 0:
-                return return_code
-            return self._checkout_branch_local(branch)
         except GitError as err:
             message = colored(' - Failed to create branch ', 'red')
             print(message + branch_output)
             print_error(err)
+            if remove_dir:
+                remove_directory_exit(self.repo_path)
             return 1
         except (KeyboardInterrupt, SystemExit):
+            if remove_dir:
+                remove_directory_exit(self.repo_path)
             sys.exit(1)
+        else:
+            return_code = self._set_tracking_branch(remote, branch, remove_dir=remove_dir)
+            if return_code != 0:
+                return return_code
+            return self._checkout_branch_local(branch, remove_dir=remove_dir)
 
     def _create_branch_remote_tracking(self, branch, remote, depth):
         """Create remote tracking branch"""
@@ -717,7 +720,7 @@ class Git(object):
             print_error(err)
             remove_directory_exit(self.repo_path)
         except (KeyboardInterrupt, SystemExit):
-            sys.exit(1)
+            remove_directory_exit(self.repo_path)
 
     def _is_branch_checked_out(self, branch):
         """Check if branch is checked out"""
@@ -835,7 +838,7 @@ class Git(object):
         """Reset head of repo, discarding changes"""
         self.repo.head.reset(index=True, working_tree=True)
 
-    def _set_tracking_branch(self, remote, branch):
+    def _set_tracking_branch(self, remote, branch, remove_dir=False):
         """Set tracking branch"""
         branch_output = format_ref_string(branch)
         remote_output = format_remote_string(remote)
@@ -851,8 +854,12 @@ class Git(object):
             message = colored(' - Failed to set tracking branch ', 'red')
             print(message + branch_output)
             print_error(err)
+            if remove_dir:
+                remove_directory_exit(self.repo_path)
             return 1
         except (KeyboardInterrupt, SystemExit):
+            if remove_dir:
+                remove_directory_exit(self.repo_path)
             sys.exit(1)
 
     def _set_tracking_branch_commit(self, branch, remote, depth):
