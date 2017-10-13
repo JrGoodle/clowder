@@ -77,11 +77,6 @@ class GitSubmodules(Git):
                 return False
         return True
 
-    def _create_repo_herd_branch(self, url, remote, branch, default_ref, depth=0):
-        """Clone git repo from url at path for herd branch"""
-        Git._create_repo_herd_branch(self, url, remote, branch, default_ref, depth=depth)
-        self.submodule_update_recursive(depth=depth)
-
     def _submodules_clean(self):
         """Clean all submodules"""
         self._submodule_command('foreach', '--recursive', 'git', 'clean', '-ffdx',
