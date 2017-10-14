@@ -286,8 +286,7 @@ class Project(object):
                              depth=depth, rebase=rebase)
         else:
             self.fork.print_status()
-            repo.configure_remotes(self.remote_name, self.url,
-                                   self.fork.remote_name, self.fork.url)
+            repo.configure_remotes(self.remote_name, self.url, self.fork.remote_name, self.fork.url)
             print(format_fork_string(self.fork.name))
             repo.herd_branch(self.fork.url, self.fork.remote_name, branch, self.ref, rebase=rebase)
             print(format_fork_string(self.name))
@@ -300,8 +299,7 @@ class Project(object):
             repo.herd(self.url, self.remote_name, self.ref, depth=depth, rebase=rebase)
         else:
             self.fork.print_status()
-            repo.configure_remotes(self.remote_name, self.url,
-                                   self.fork.remote_name, self.fork.url)
+            repo.configure_remotes(self.remote_name, self.url, self.fork.remote_name, self.fork.url)
             print(format_fork_string(self.fork.name))
             repo.herd(self.fork.url, self.fork.remote_name, self.ref, rebase=rebase)
             print(format_fork_string(self.name))

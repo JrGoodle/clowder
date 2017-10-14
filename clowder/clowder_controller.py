@@ -379,15 +379,10 @@ class ClowderController(object):
             imported_yaml_files.append(parsed_yaml)
             imported_yaml = parsed_yaml['import']
             if imported_yaml == 'default':
-                imported_yaml_file = os.path.join(self.root_directory,
-                                                  '.clowder',
-                                                  'clowder.yaml')
+                imported_yaml_file = os.path.join(self.root_directory, '.clowder', 'clowder.yaml')
             else:
-                imported_yaml_file = os.path.join(self.root_directory,
-                                                  '.clowder',
-                                                  'versions',
-                                                  imported_yaml,
-                                                  'clowder.yaml')
+                imported_yaml_file = os.path.join(self.root_directory, '.clowder', 'versions',
+                                                  imported_yaml, 'clowder.yaml')
             parsed_yaml = parse_yaml(imported_yaml_file)
             if len(imported_yaml_files) > self._max_import_depth:
                 print_invalid_yaml_error()
@@ -405,17 +400,12 @@ class ClowderController(object):
             self.defaults['depth'] = 0
         self.sources = [Source(s) for s in combined_yaml['sources']]
         for group in combined_yaml['groups']:
-            self.groups.append(Group(self.root_directory,
-                                     group,
-                                     self.defaults,
-                                     self.sources))
+            self.groups.append(Group(self.root_directory, group, self.defaults, self.sources))
 
     def _prune_projects_all(self, project_names, branch, force):
         """Prune local and remote branches for projects"""
-        local_branch_exists = self._existing_branch_project(project_names,
-                                                            branch, is_remote=False)
-        remote_branch_exists = self._existing_branch_project(project_names,
-                                                             branch, is_remote=True)
+        local_branch_exists = self._existing_branch_project(project_names, branch, is_remote=False)
+        remote_branch_exists = self._existing_branch_project(project_names, branch, is_remote=True)
         branch_exists = local_branch_exists or remote_branch_exists
         if not branch_exists:
             cprint(' - No local or remote branches to prune\n', 'red')
@@ -479,18 +469,12 @@ class ClowderController(object):
         imported_clowder = parsed_yaml['import']
         try:
             if imported_clowder == 'default':
-                imported_yaml_file = os.path.join(self.root_directory,
-                                                  '.clowder',
-                                                  'clowder.yaml')
+                imported_yaml_file = os.path.join(self.root_directory, '.clowder', 'clowder.yaml')
             else:
-                imported_yaml_file = os.path.join(self.root_directory,
-                                                  '.clowder',
-                                                  'versions',
-                                                  imported_clowder,
-                                                  'clowder.yaml')
+                imported_yaml_file = os.path.join(self.root_directory, '.clowder', 'versions',
+                                                  imported_clowder, 'clowder.yaml')
             if not os.path.isfile(imported_yaml_file):
-                error = format_missing_imported_yaml_error(imported_yaml_file,
-                                                           yaml_file)
+                error = format_missing_imported_yaml_error(imported_yaml_file, yaml_file)
                 raise ClowderException(error)
             yaml_file = imported_yaml_file
         except ClowderException as err:
