@@ -207,9 +207,6 @@ class Git(object):
             return_code = self._create_remote(remote, url)
             if return_code != 0:
                 remove_directory_exit(self.repo_path)
-            origin = self._remote(remote)
-            if origin is None:
-                remove_directory_exit(self.repo_path)
             self.fetch(remote, depth=depth, remove_dir=True)
             if self._checkout_tag(tag):
                 return
@@ -682,9 +679,6 @@ class Git(object):
         self._init_repo()
         return_code = self._create_remote(remote, url)
         if return_code != 0:
-            remove_directory_exit(self.repo_path)
-        origin = self._remote(remote)
-        if origin is None:
             remove_directory_exit(self.repo_path)
         self.fetch(remote, depth=depth, ref=branch, remove_dir=True)
         if not self.existing_remote_branch(branch, remote):
