@@ -60,8 +60,6 @@ class Git(object):
         """Clone clowder git repo from url at path"""
         if existing_git_repository(self.repo_path):
             return
-        if not os.path.isdir(self.repo_path):
-            os.makedirs(self.repo_path)
         self._init_repo()
         return_code = self._create_remote(remote, url)
         if return_code != 0:
@@ -150,10 +148,9 @@ class Git(object):
         """Herd ref"""
         is_initial_herd = not existing_git_repository(self.repo_path)
         if is_initial_herd:
-            if not os.path.isdir(self.repo_path):
-                os.makedirs(self.repo_path)
             self._init_repo()
-        if self._create_remote(remote, url):
+        return_code = self._create_remote(remote, url)
+        if return_code != 0:
             if is_initial_herd:
                 remove_directory_exit(self.repo_path)
             else:
@@ -184,10 +181,9 @@ class Git(object):
         """Herd branch"""
         is_initial_herd = not existing_git_repository(self.repo_path)
         if is_initial_herd:
-            if not os.path.isdir(self.repo_path):
-                os.makedirs(self.repo_path)
             self._init_repo()
-            if self._create_remote(remote, url):
+            return_code = self._create_remote(remote, url)
+            if return_code != 0:
                 remove_directory_exit(self.repo_path)
             origin = self._remote(remote)
             if origin is None:
@@ -230,10 +226,9 @@ class Git(object):
         """Herd tag"""
         is_initial_herd = not existing_git_repository(self.repo_path)
         if is_initial_herd:
-            if not os.path.isdir(self.repo_path):
-                os.makedirs(self.repo_path)
             self._init_repo()
-            if self._create_remote(remote, url):
+            return_code = self._create_remote(remote, url)
+            if return_code != 0:
                 remove_directory_exit(self.repo_path)
             origin = self._remote(remote)
             if origin is None:
@@ -714,6 +709,8 @@ class Git(object):
         """Initialize repository"""
         try:
             print(' - Initialize repo at ' + format_path(self.repo_path))
+            if not os.path.isdir(self.repo_path):
+                os.makedirs(self.repo_path)
             self.repo = Repo.init(self.repo_path)
         except GitError as err:
             cprint(' - Failed to initialize repository', 'red')
