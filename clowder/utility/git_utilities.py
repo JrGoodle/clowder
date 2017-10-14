@@ -61,9 +61,7 @@ class Git(object):
         if existing_git_repository(self.repo_path):
             return
         self._init_repo()
-        return_code = self._create_remote(remote, url)
-        if return_code != 0:
-            remove_directory_exit(self.repo_path)
+        self._create_remote(remote, url, remove_dir=True)
         self._checkout_new_repo_branch(branch, remote, depth)
 
     def configure_remotes(self, upstream_remote_name, upstream_remote_url,
@@ -78,25 +76,23 @@ class Git(object):
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
         for remote in remotes:
-            if upstream_remote_url == self.repo.git.remote('get-url', remote.name):
+            if upstream_remote_url == self._remote_get_url(remote.name):
                 if remote.name != upstream_remote_name:
                     self._rename_remote(remote.name, upstream_remote_name)
                     continue
-            if fork_remote_url == self.repo.git.remote('get-url', remote.name):
+            if fork_remote_url == self._remote_get_url(remote.name):
                 if remote.name != fork_remote_name:
                     self._rename_remote(remote.name, fork_remote_name)
         remote_names = [r.name for r in self.repo.remotes]
         if upstream_remote_name in remote_names:
-            if upstream_remote_url != self.repo.git.remote('get-url', upstream_remote_name):
-                actual_url = self.repo.git.remote('get-url', upstream_remote_name)
-                print_remote_already_exists_error(upstream_remote_name,
-                                                  upstream_remote_url, actual_url)
+            if upstream_remote_url != self._remote_get_url(upstream_remote_name):
+                actual_url = self._remote_get_url(upstream_remote_name)
+                print_remote_already_exists_error(upstream_remote_name, upstream_remote_url, actual_url)
                 sys.exit(1)
         if fork_remote_name in remote_names:
-            if fork_remote_url != self.repo.git.remote('get-url', fork_remote_name):
-                actual_url = self.repo.git.remote('get-url', fork_remote_name)
-                print_remote_already_exists_error(fork_remote_name,
-                                                  fork_remote_url, actual_url)
+            if fork_remote_url != self._remote_get_url(fork_remote_name):
+                actual_url = self._remote_get_url(fork_remote_name)
+                print_remote_already_exists_error(fork_remote_name, fork_remote_url, actual_url)
                 sys.exit(1)
 
     def current_branch(self):
@@ -135,8 +131,7 @@ class Git(object):
                 print(' - Fetch from ' + remote_output + ' ' + ref_output)
                 message = colored(' - Failed to fetch from ', 'red')
                 error = message + remote_output + ' ' + ref_output
-                command = ['git', 'fetch', remote, truncate_ref(ref),
-                           '--depth', str(depth), '--prune']
+                command = ['git', 'fetch', remote, truncate_ref(ref), '--depth', str(depth), '--prune']
         return_code = execute_command(command, self.repo_path)
         if return_code != 0:
             print(error)
@@ -204,9 +199,7 @@ class Git(object):
         """Herd tag"""
         if not existing_git_repository(self.repo_path):
             self._init_repo()
-            return_code = self._create_remote(remote, url)
-            if return_code != 0:
-                remove_directory_exit(self.repo_path)
+            self._create_remote(remote, url, remove_dir=True)
             self.fetch(remote, depth=depth, remove_dir=True)
             if self._checkout_tag(tag):
                 return
@@ -634,7 +627,7 @@ class Git(object):
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
 
-    def _create_remote(self, remote, url):
+    def _create_remote(self, remote, url, remove_dir=False):
         """Create new remote"""
         remote_names = [r.name for r in self.repo.remotes]
         if remote in remote_names:
@@ -648,8 +641,12 @@ class Git(object):
             message = colored(' - Failed to create remote ', 'red')
             print(message + remote_output)
             print_error(err)
+            if remove_dir:
+                remove_directory_exit(self.repo_path)
             return 1
         except (KeyboardInterrupt, SystemExit):
+            if remove_dir:
+                remove_directory_exit(self.repo_path)
             sys.exit(1)
 
     def _existing_remote_tag(self, tag, remote, depth=0):
@@ -663,9 +660,7 @@ class Git(object):
     def _herd_initial(self, url, remote, ref, depth=0):
         """Herd ref initial"""
         self._init_repo()
-        return_code = self._create_remote(remote, url)
-        if return_code != 0:
-            remove_directory_exit(self.repo_path)
+        self._create_remote(remote, url, remove_dir=True)
         if ref_type(ref) == 'branch':
             self._checkout_new_repo_branch(truncate_ref(ref), remote, depth)
         elif ref_type(ref) == 'tag':
@@ -676,21 +671,13 @@ class Git(object):
     def _herd_branch_initial(self, url, remote, branch, default_ref, depth=0):
         """Herd branch initial"""
         self._init_repo()
-        return_code = self._create_remote(remote, url)
-        if return_code != 0:
-            remove_directory_exit(self.repo_path)
-        self.fetch(remote, depth=depth, ref=branch, remove_dir=True)
+        self._create_remote(remote, url, remove_dir=True)
+        self.fetch(remote, depth=depth, ref=branch)
         if not self.existing_remote_branch(branch, remote):
             print(' - No existing remote branch ' + format_ref_string(branch))
             self._herd_initial(url, remote, default_ref, depth=depth)
             return
-        return_code = self._create_branch_local_tracking(branch, remote, depth=depth, fetch=False)
-        if return_code != 0:
-            remove_directory_exit(self.repo_path)
-        if self._set_tracking_branch(remote, branch):
-            remove_directory_exit(self.repo_path)
-        if self._checkout_branch_local(branch):
-            remove_directory_exit(self.repo_path)
+        self._create_branch_local_tracking(branch, remote, depth=depth, fetch=False, remove_dir=True)
 
     def _init_repo(self):
         """Initialize repository"""
@@ -790,6 +777,10 @@ class Git(object):
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
 
+    def _remote_get_url(self, remote):
+        """Reset head of repo, discarding changes"""
+        return self.repo.git.remote('get-url', remote)
+
     def _rename_remote(self, remote_from, remote_to):
         """Rename remote"""
         remote_output_from = format_remote_string(remote_from)
@@ -830,8 +821,7 @@ class Git(object):
         try:
             local_branch = self.repo.heads[branch]
             remote_branch = origin.refs[branch]
-            print(' - Set tracking branch ' + branch_output +
-                  ' -> ' + remote_output + ' ' + branch_output)
+            print(' - Set tracking branch ' + branch_output + ' -> ' + remote_output + ' ' + branch_output)
             local_branch.set_tracking_branch(remote_branch)
             return 0
         except GitError as err:
