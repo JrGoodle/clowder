@@ -146,24 +146,12 @@ class Git(object):
 
     def herd(self, url, remote, ref, depth=0, fetch=True, rebase=False):
         """Herd ref"""
-        is_initial_herd = not existing_git_repository(self.repo_path)
-        if is_initial_herd:
-            self._init_repo()
+        if not existing_git_repository(self.repo_path):
+            self._herd_initial(url, remote, ref, depth=depth)
+            return
         return_code = self._create_remote(remote, url)
         if return_code != 0:
-            if is_initial_herd:
-                remove_directory_exit(self.repo_path)
-            else:
-                sys.exit(1)
-        if is_initial_herd:
-            self.fetch(remote, depth=depth, ref=ref, remove_dir=True)
-            if ref_type(ref) == 'branch':
-                self._checkout_new_repo_branch(truncate_ref(ref), remote, depth)
-            elif ref_type(ref) == 'tag':
-                self._checkout_new_repo_tag(truncate_ref(ref), remote, depth)
-            elif ref_type(ref) == 'sha':
-                self._checkout_new_repo_commit(ref, remote, depth)
-            return
+            sys.exit(1)
         if ref_type(ref) == 'branch':
             branch = truncate_ref(ref)
             if not self.existing_local_branch(branch):
@@ -193,27 +181,8 @@ class Git(object):
 
     def herd_branch(self, url, remote, branch, default_ref, depth=0, rebase=False):
         """Herd branch"""
-        is_initial_herd = not existing_git_repository(self.repo_path)
-        if is_initial_herd:
-            self._init_repo()
-            return_code = self._create_remote(remote, url)
-            if return_code != 0:
-                remove_directory_exit(self.repo_path)
-            origin = self._remote(remote)
-            if origin is None:
-                remove_directory_exit(self.repo_path)
-            self.fetch(remote, depth=depth, ref=branch, remove_dir=True)
-            if not self.existing_remote_branch(branch, remote):
-                print(' - No existing remote branch ' + format_ref_string(branch))
-                self._checkout_new_repo_branch(truncate_ref(default_ref), remote, depth)
-                return
-            return_code = self._create_branch_local_tracking(branch, remote, depth=depth, fetch=False)
-            if return_code != 0:
-                remove_directory_exit(self.repo_path)
-            if self._set_tracking_branch(remote, branch):
-                remove_directory_exit(self.repo_path)
-            if self._checkout_branch_local(branch):
-                remove_directory_exit(self.repo_path)
+        if not existing_git_repository(self.repo_path):
+            self._herd_branch_initial(url, remote, branch, default_ref, depth=0)
             return
         if self.fetch(remote, depth=depth, ref=branch):
             self.herd(url, remote, default_ref, depth=depth, rebase=rebase)
@@ -245,8 +214,7 @@ class Git(object):
 
     def herd_tag(self, url, remote, tag, default_ref, depth=0, rebase=False):
         """Herd tag"""
-        is_initial_herd = not existing_git_repository(self.repo_path)
-        if is_initial_herd:
+        if not existing_git_repository(self.repo_path):
             self._init_repo()
             return_code = self._create_remote(remote, url)
             if return_code != 0:
@@ -705,6 +673,42 @@ class Git(object):
             remove_directory_exit(self.repo_path)
         self.fetch(remote, depth=depth, ref=tag, remove_dir=True)
         return tag in origin.tags
+
+    def _herd_initial(self, url, remote, ref, depth=0):
+        """Herd ref initial"""
+        self._init_repo()
+        return_code = self._create_remote(remote, url)
+        if return_code != 0:
+            remove_directory_exit(self.repo_path)
+        self.fetch(remote, depth=depth, ref=ref, remove_dir=True)
+        if ref_type(ref) == 'branch':
+            self._checkout_new_repo_branch(truncate_ref(ref), remote, depth)
+        elif ref_type(ref) == 'tag':
+            self._checkout_new_repo_tag(truncate_ref(ref), remote, depth)
+        elif ref_type(ref) == 'sha':
+            self._checkout_new_repo_commit(ref, remote, depth)
+
+    def _herd_branch_initial(self, url, remote, branch, default_ref, depth=0):
+        """Herd branch initial"""
+        self._init_repo()
+        return_code = self._create_remote(remote, url)
+        if return_code != 0:
+            remove_directory_exit(self.repo_path)
+        origin = self._remote(remote)
+        if origin is None:
+            remove_directory_exit(self.repo_path)
+        self.fetch(remote, depth=depth, ref=branch, remove_dir=True)
+        if not self.existing_remote_branch(branch, remote):
+            print(' - No existing remote branch ' + format_ref_string(branch))
+            self._checkout_new_repo_branch(truncate_ref(default_ref), remote, depth)
+            return
+        return_code = self._create_branch_local_tracking(branch, remote, depth=depth, fetch=False)
+        if return_code != 0:
+            remove_directory_exit(self.repo_path)
+        if self._set_tracking_branch(remote, branch):
+            remove_directory_exit(self.repo_path)
+        if self._checkout_branch_local(branch):
+            remove_directory_exit(self.repo_path)
 
     def _init_repo(self):
         """Initialize repository"""
