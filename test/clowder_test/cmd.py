@@ -321,7 +321,7 @@ def execute_command(command, shell=False, env=None):
         process = subprocess.Popen(command, shell=shell, env=cmd_env)
         atexit.register(subprocess_exit_handler, process)
         process.communicate()
-    except KeyboardInterrupt:
+    except (KeyboardInterrupt, SystemExit):
         os.kill(process.pid, signal.SIGTERM)
     return process.returncode
 

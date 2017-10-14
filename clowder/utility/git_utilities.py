@@ -207,8 +207,7 @@ class Git(object):
                 print(' - No existing remote branch ' + format_ref_string(branch))
                 self._checkout_new_repo_branch(truncate_ref(default_ref), remote, depth)
                 return
-            return_code = self._create_branch_local_tracking(branch, remote,
-                                                             depth=depth, fetch=False)
+            return_code = self._create_branch_local_tracking(branch, remote, depth=depth, fetch=False)
             if return_code != 0:
                 remove_directory_exit(self.repo_path)
             if self._set_tracking_branch(remote, branch):
@@ -893,9 +892,7 @@ class Git(object):
         """Execute command and display continuous output"""
         command = "git ls-files -o -d --exclude-standard | sed q | wc -l| tr -d '[:space:]'"
         try:
-            output = subprocess.check_output(command,
-                                             shell=True,
-                                             cwd=self.repo_path)
+            output = subprocess.check_output(command, shell=True, cwd=self.repo_path)
             return output.decode('utf-8') == '1'
         except GitError as err:
             cprint(' - Failed to check untracked files', 'red')

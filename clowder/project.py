@@ -37,9 +37,7 @@ class Project(object):
         self.path = project['path']
 
         self.depth = project.get('depth', group.get('depth', defaults['depth']))
-        self.recursive = project.get('recursive',
-                                     group.get('recursive',
-                                               defaults.get('recursive', False)))
+        self.recursive = project.get('recursive', group.get('recursive', defaults.get('recursive', False)))
         self.ref = project.get('ref', group.get('ref', defaults['ref']))
         self.remote_name = project.get('remote', group.get('remote', defaults['remote']))
         source_name = project.get('source', group.get('source', defaults['source']))

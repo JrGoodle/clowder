@@ -31,7 +31,7 @@ def execute_command(command, path, shell=True, env=None):
         process = subprocess.Popen(" ".join(command), shell=shell, env=cmd_env, cwd=path)
         atexit.register(subprocess_exit_handler, process)
         process.communicate()
-    except KeyboardInterrupt:
+    except (KeyboardInterrupt, SystemExit):
         os.kill(process.pid, signal.SIGTERM)
     return process.returncode
 
@@ -67,6 +67,10 @@ def force_symlink(file1, file2):
         if error.errno == errno.EEXIST:
             os.remove(file2)
             os.symlink(file1, file2)
+    except (KeyboardInterrupt, SystemExit):
+        os.remove(file2)
+        os.symlink(file1, file2)
+        sys.exit(1)
 
 
 def get_yaml_string(yaml_output):

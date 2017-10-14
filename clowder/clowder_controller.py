@@ -497,4 +497,6 @@ class ClowderController(object):
             print_invalid_yaml_error()
             print_error(err)
             sys.exit(1)
+        except (KeyboardInterrupt, SystemExit):
+            sys.exit(1)
         self._validate_yaml(yaml_file, max_import_depth - 1)

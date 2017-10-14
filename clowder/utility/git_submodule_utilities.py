@@ -92,10 +92,12 @@ class GitSubmodules(Git):
 
         try:
             self.repo.git.submodule(*args)
-        except Exception as err:
+        except (GitError, ValueError) as err:
             error_msg = str(kwargs.get('error_msg', ' - submodule command failed'))
             cprint(error_msg, 'red')
             print_error(err)
+            sys.exit(1)
+        except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
 
     def _submodules_reset(self):
