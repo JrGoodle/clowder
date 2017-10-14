@@ -164,9 +164,17 @@ class Git(object):
             elif ref_type(ref) == 'sha':
                 self._checkout_new_repo_commit(ref, remote, depth)
             return
-        self._checkout_ref(ref, remote, depth, fetch=fetch)
         if ref_type(ref) == 'branch':
             branch = truncate_ref(ref)
+            if not self.existing_local_branch(branch):
+                return_code = self._create_branch_local_tracking(branch, remote, depth=depth, fetch=fetch)
+                if return_code != 0:
+                    sys.exit(return_code)
+            if self._is_branch_checked_out(branch):
+                branch_output = format_ref_string(branch)
+                print(' - Branch ' + branch_output + ' already checked out')
+            else:
+                self._checkout_branch_local(branch)
             if not self.existing_remote_branch(branch, remote):
                 return
             if not self._is_tracking_branch(branch):
@@ -176,6 +184,12 @@ class Git(object):
                 self._rebase_remote_branch(remote, branch)
             else:
                 self._pull_remote_branch(remote, branch)
+        elif ref_type(ref) == 'tag':
+            self.fetch(remote, depth=depth, ref=ref)
+            self._checkout_tag(truncate_ref(ref))
+        elif ref_type(ref) == 'sha':
+            self.fetch(remote, depth=depth, ref=ref)
+            self._checkout_sha(ref)
 
     def herd_branch(self, url, remote, branch, default_ref, depth=0, rebase=False):
         """Herd branch"""
@@ -206,7 +220,15 @@ class Git(object):
             self.herd(url, remote, default_ref, depth=depth, rebase=rebase)
             return
         if self.existing_local_branch(branch):
-            self._checkout_ref('refs/heads/' + branch, remote, depth)
+            if not self.existing_local_branch(branch):
+                return_code = self._create_branch_local_tracking(branch, remote, depth=depth)
+                if return_code != 0:
+                    sys.exit(return_code)
+            if self._is_branch_checked_out(branch):
+                branch_output = format_ref_string(branch)
+                print(' - Branch ' + branch_output + ' already checked out')
+            else:
+                self._checkout_branch_local(branch)
             if not self.existing_remote_branch(branch, remote):
                 return
             if not self._is_tracking_branch(branch):
@@ -236,7 +258,7 @@ class Git(object):
             self.fetch(remote, depth=depth, remove_dir=True)
             if self._checkout_tag(tag):
                 return
-            self._checkout_ref(default_ref, remote, depth)
+            self.herd(url, remote, default_ref, depth=depth, rebase=rebase)
             return
         if self.fetch(remote, depth=depth):
             sys.exit(1)
@@ -524,26 +546,6 @@ class Git(object):
             except (KeyboardInterrupt, SystemExit):
                 remove_directory_exit(self.repo_path)
 
-    def _checkout_ref(self, ref, remote, depth, fetch=True):
-        """Checkout branch, tag, or commit from sha"""
-        if ref_type(ref) == 'branch':
-            branch = truncate_ref(ref)
-            if not self.existing_local_branch(branch):
-                return_code = self._create_branch_local_tracking(branch, remote, depth=depth, fetch=fetch)
-                if return_code != 0:
-                    sys.exit(return_code)
-            if self._is_branch_checked_out(branch):
-                branch_output = format_ref_string(branch)
-                print(' - Branch ' + branch_output + ' already checked out')
-                return
-            self._checkout_branch_local(branch)
-        elif ref_type(ref) == 'tag':
-            self.fetch(remote, depth=depth, ref=ref)
-            self._checkout_tag(truncate_ref(ref))
-        elif ref_type(ref) == 'sha':
-            self.fetch(remote, depth=depth, ref=ref)
-            self._checkout_sha(ref)
-
     def _checkout_sha(self, sha):
         """Checkout commit by sha"""
         commit_output = format_ref_string(sha)
@@ -627,7 +629,7 @@ class Git(object):
         try:
             print(' - Create branch ' + branch_output)
             self.repo.create_head(branch, origin.refs[branch])
-        except GitError as err:
+        except (GitError, IndexError) as err:
             message = colored(' - Failed to create branch ', 'red')
             print(message + branch_output)
             print_error(err)
