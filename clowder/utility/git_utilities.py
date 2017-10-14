@@ -444,8 +444,6 @@ class Git(object):
             print(message + branch_output)
             remove_directory_exit(self.repo_path)
         self._create_branch_local_tracking(branch, remote, depth=depth, fetch=False, remove_dir=True)
-        self._set_tracking_branch(remote, branch, remove_dir=True)
-        self._checkout_branch_local(branch, remove_dir=True)
 
     def _checkout_new_repo_commit(self, commit, remote, depth):
         """Checkout commit or fail and delete repo if it doesn't exist"""
