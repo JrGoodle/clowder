@@ -167,7 +167,7 @@ class Git(object):
             if rebase:
                 self._rebase_remote_branch(remote, branch)
                 return
-            self._pull_remote_branch(remote, branch)
+            self._pull(remote, branch)
         elif ref_type(ref) == 'tag':
             self.fetch(remote, depth=depth, ref=ref)
             self._checkout_tag(truncate_ref(ref))
@@ -196,7 +196,7 @@ class Git(object):
             if rebase:
                 self._rebase_remote_branch(remote, branch)
                 return
-            self._pull_remote_branch(remote, branch)
+            self._pull(remote, branch)
             return
         if self.existing_remote_branch(branch, remote):
             self.herd(url, remote, branch_ref, depth=depth, fetch=False, rebase=rebase)
@@ -394,7 +394,7 @@ class Git(object):
         if rebase:
             self._rebase_remote_branch(upstream_remote, truncate_ref(ref))
         else:
-            self._pull_remote_branch(upstream_remote, truncate_ref(ref))
+            self._pull(upstream_remote, truncate_ref(ref))
         print(' - Push to ' + fork_remote_output + ' ' + branch_output)
         command = ['git', 'push', fork_remote, truncate_ref(ref)]
         return_code = execute_command(command, self.repo_path)
@@ -743,7 +743,7 @@ class Git(object):
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
 
-    def _pull_remote_branch(self, remote, branch):
+    def _pull(self, remote, branch):
         """Pull from remote branch"""
         if self.repo.head.is_detached:
             print(' - HEAD is detached')
@@ -766,11 +766,11 @@ class Git(object):
             return
         branch_output = format_ref_string(branch)
         remote_output = format_remote_string(remote)
-        print(' - Rebase from ' + remote_output + ' ' + branch_output)
-        command = ['git', 'rebase', remote + '/' + branch]
+        print(' - Rebase onto ' + remote_output + ' ' + branch_output)
+        command = ['git', 'pull', '--rebase', remote, branch]
         return_code = execute_command(command, self.repo_path)
         if return_code != 0:
-            message = colored(' - Failed to rebase from ', 'red')
+            message = colored(' - Failed to rebase onto ', 'red')
             print(message + remote_output + ' ' + branch_output)
             print_command_failed_error(command)
             sys.exit(return_code)
