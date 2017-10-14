@@ -170,8 +170,8 @@ class Git(object):
                 return
             if rebase:
                 self._rebase_remote_branch(remote, branch)
-            else:
-                self._pull_remote_branch(remote, branch)
+                return
+            self._pull_remote_branch(remote, branch)
         elif ref_type(ref) == 'tag':
             self.fetch(remote, depth=depth, ref=ref)
             self._checkout_tag(truncate_ref(ref))
@@ -182,16 +182,9 @@ class Git(object):
     def herd_branch(self, url, remote, branch, default_ref, depth=0, rebase=False):
         """Herd branch"""
         if not existing_git_repository(self.repo_path):
-            self._herd_branch_initial(url, remote, branch, default_ref, depth=0)
-            return
-        if self.fetch(remote, depth=depth, ref=branch):
-            self.herd(url, remote, default_ref, depth=depth, rebase=rebase)
+            self._herd_branch_initial(url, remote, branch, default_ref, depth=depth)
             return
         if self.existing_local_branch(branch):
-            if not self.existing_local_branch(branch):
-                return_code = self._create_branch_local_tracking(branch, remote, depth=depth)
-                if return_code != 0:
-                    sys.exit(return_code)
             if self._is_branch_checked_out(branch):
                 branch_output = format_ref_string(branch)
                 print(' - Branch ' + branch_output + ' already checked out')
@@ -202,13 +195,8 @@ class Git(object):
             if not self._is_tracking_branch(branch):
                 self._set_tracking_branch_commit(branch, remote, depth)
                 return
-            if rebase:
-                self._rebase_remote_branch(remote, branch)
-                return
-            self._pull_remote_branch(remote, branch)
-            return
         if self.existing_remote_branch(branch, remote):
-            self.herd(url, remote, 'refs/heads/' + branch, depth=depth, fetch=False)
+            self.herd(url, remote, 'refs/heads/' + branch, depth=depth, rebase=rebase)
             return
         self.herd(url, remote, default_ref, depth=depth)
 
@@ -227,11 +215,12 @@ class Git(object):
                 return
             self.herd(url, remote, default_ref, depth=depth, rebase=rebase)
             return
-        if self.fetch(remote, depth=depth):
-            sys.exit(1)
-        if self._checkout_tag(tag):
-            return
-        self.herd(url, remote, default_ref, depth=depth, rebase=rebase, fetch=False)
+        return_code = self.fetch(remote, ref="refs/tags/" + tag, depth=depth)
+        if return_code == 0:
+            return_code = self._checkout_tag(tag)
+            if return_code == 0:
+                return
+        self.herd(url, remote, default_ref, depth=depth, rebase=rebase)
 
     def herd_upstream(self, url, remote, default_ref, branch=None):
         """Herd fork's upstream repo"""

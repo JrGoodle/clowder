@@ -2,6 +2,7 @@
 
 from __future__ import print_function
 import sys
+from git import GitError
 from termcolor import cprint
 from clowder.utility.clowder_utilities import (
     execute_command,
