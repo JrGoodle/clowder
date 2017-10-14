@@ -153,7 +153,8 @@ class Git(object):
                 return_code = self._create_branch_local_tracking(branch, remote, depth=depth, fetch=fetch)
                 if return_code != 0:
                     sys.exit(return_code)
-            if self._is_branch_checked_out(branch):
+                return
+            elif self._is_branch_checked_out(branch):
                 branch_output = format_ref_string(branch)
                 print(' - Branch ' + branch_output + ' already checked out')
             else:
@@ -179,9 +180,11 @@ class Git(object):
         if not existing_git_repository(self.repo_path):
             self._herd_branch_initial(url, remote, branch, default_ref, depth=depth)
             return
+        branch_output = format_ref_string(branch)
+        branch_ref = 'refs/heads/' + branch
+        self.fetch(remote, depth=depth, ref=branch_ref)
         if self.existing_local_branch(branch):
             if self._is_branch_checked_out(branch):
-                branch_output = format_ref_string(branch)
                 print(' - Branch ' + branch_output + ' already checked out')
             else:
                 self._checkout_branch_local(branch)
@@ -190,10 +193,17 @@ class Git(object):
             if not self._is_tracking_branch(branch):
                 self._set_tracking_branch_commit(branch, remote, depth)
                 return
-        if self.existing_remote_branch(branch, remote):
-            self.herd(url, remote, 'refs/heads/' + branch, depth=depth, rebase=rebase)
+            if rebase:
+                self._rebase_remote_branch(remote, branch)
+                return
+            self._pull_remote_branch(remote, branch)
             return
-        self.herd(url, remote, default_ref, depth=depth, rebase=rebase)
+        if self.existing_remote_branch(branch, remote):
+            self.herd(url, remote, branch_ref, depth=depth, fetch=False, rebase=rebase)
+            return
+        print(' - No existing remote branch ' + branch_output)
+        fetch = depth != 0
+        self.herd(url, remote, default_ref, depth=depth, fetch=fetch, rebase=rebase)
 
     def herd_tag(self, url, remote, tag, default_ref, depth=0, rebase=False):
         """Herd tag"""
@@ -210,7 +220,8 @@ class Git(object):
             return_code = self._checkout_tag(tag)
             if return_code == 0:
                 return
-        self.herd(url, remote, default_ref, depth=depth, rebase=rebase)
+        fetch = depth != 0
+        self.herd(url, remote, default_ref, depth=depth, fetch=fetch, rebase=rebase)
 
     def herd_upstream(self, url, remote, default_ref, branch=None):
         """Herd fork's upstream repo"""
@@ -679,6 +690,8 @@ class Git(object):
 
     def _init_repo(self):
         """Initialize repository"""
+        if existing_git_repository(self.repo_path):
+            return
         try:
             print(' - Initialize repo at ' + format_path(self.repo_path))
             if not os.path.isdir(self.repo_path):
