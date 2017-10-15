@@ -350,6 +350,50 @@ test_branch() {
 }
 test_branch
 
+test_reset() {
+    print_single_separator
+    echo "TEST: clowder reset"
+    clowder link || exit 1
+    clowder herd || exit 1
+
+    COMMIT_MESSAGE='Add new commits'
+    pushd 'llvm/tools/clang' || exit 1
+    git pull upstream master || exit 1
+    test_number_commits 'HEAD' 'origin/master' '0'
+    UPSTREAM_COMMIT=$(git rev-parse HEAD)
+    git reset --hard HEAD~3 || exit 1
+    test_number_commits 'HEAD' 'upstream/master' '3'
+    if [ "$UPSTREAM_COMMIT" == "$(git rev-parse HEAD)" ]; then
+        exit 1
+    fi
+    popd || exit 1
+
+    clowder reset || exit 1
+
+    pushd 'llvm/tools/clang' || exit 1
+    test_number_commits 'HEAD' 'origin/master' '0'
+    test_commit  $UPSTREAM_COMMIT
+    touch file1 || exit 1
+    git add file1 || exit 1
+    git commit -m "$COMMIT_MESSAGE" || exit 1
+    touch file2 || exit 1
+    git add file2 || exit 1
+    git commit -m "$COMMIT_MESSAGE" || exit 1
+    test_number_commits 'upstream/master' 'HEAD' '2'
+    if [ "$UPSTREAM_COMMIT" == "$(git rev-parse HEAD)" ]; then
+        exit 1
+    fi
+    popd || exit 1
+
+    clowder reset || exit 1
+
+    pushd 'llvm/tools/clang' || exit 1
+    test_number_commits 'HEAD' 'origin/master' '0'
+    test_commit  $UPSTREAM_COMMIT
+    popd || exit 1
+}
+test_reset
+
 test_help() {
     print_double_separator
     clowder link || exit 1

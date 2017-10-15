@@ -171,6 +171,12 @@ class Command(object):
         return_code = execute_command(script, shell=True, env=test_env)
         sys.exit(return_code)
 
+    def cats_reset(self):
+        """clowder cats reset tests"""
+        script = os.path.join(self._scripts_dir, 'test_cats_reset.sh')
+        return_code = execute_command(script, shell=True)
+        sys.exit(return_code)
+
     def cats_save(self):
         """clowder cats save tests"""
         script = os.path.join(self._scripts_dir, 'test_cats_save.sh')
@@ -280,6 +286,7 @@ class Command(object):
         cats_subparser.add_parser('link', help='Run cats link tests')
         cats_subparser.add_parser('prune', help='Run cats prune tests')
         cats_subparser.add_parser('repo', help='Run cats repo tests')
+        cats_subparser.add_parser('reset', help='Run cats reset tests')
         cats_subparser.add_parser('save', help='Run cats save tests')
         cats_subparser.add_parser('start', help='Run cats start tests')
         cats_subparser.add_parser('stash', help='Run cats stash tests')

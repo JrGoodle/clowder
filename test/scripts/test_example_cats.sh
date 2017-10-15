@@ -34,6 +34,7 @@ test_clowder_version
 "$TEST_SCRIPT_DIR/test_cats_start.sh" $ACCESS_LEVEL || exit 1
 "$TEST_SCRIPT_DIR/test_cats_prune.sh" $ACCESS_LEVEL || exit 1
 "$TEST_SCRIPT_DIR/test_cats_repo.sh" $ACCESS_LEVEL || exit 1
+"$TEST_SCRIPT_DIR/test_cats_reset.sh" || exit 1
 "$TEST_SCRIPT_DIR/test_cats_yaml.sh" || exit 1
 "$TEST_SCRIPT_DIR/test_cats_import.sh" || exit 1
 "$TEST_SCRIPT_DIR/test_cats_help.sh" || exit 1

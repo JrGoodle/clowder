@@ -367,7 +367,7 @@ class Project(object):
         """Clone project or update latest from upstream"""
         if self.fork is None:
             self._print_status()
-            repo.reset(self.remote_name, self.ref, depth=depth)
+            repo.reset(self.remote_name, self.ref, depth=self.depth)
         else:
             self.fork.print_status()
             repo.configure_remotes(self.remote_name, self.url, self.fork.remote_name, self.fork.url)
