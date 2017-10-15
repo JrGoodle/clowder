@@ -6,6 +6,8 @@
     - Description of the clowder repo cloned into the `.clowder` directory with `clowder init`
 - [clowder.yaml](clowder-yaml.md)
     - Description of the `clowder.yaml` file
+- [Forks](forks.md)
+    - Description of the behavior of `clowder` commands with forks
 
 ## Commands
 
