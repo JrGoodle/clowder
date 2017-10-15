@@ -168,6 +168,11 @@ class Command(object):
         else:
             branch = self.args.branch[0]
 
+        if self.args.tag is None:
+            tag = None
+        else:
+            tag = self.args.tag[0]
+
         if self.args.depth is None:
             depth = None
         else:
@@ -176,6 +181,7 @@ class Command(object):
         self.clowder.herd(group_names=self.args.groups,
                           project_names=self.args.projects,
                           branch=branch,
+                          tag=tag,
                           depth=depth,
                           rebase=self.args.rebase)
 

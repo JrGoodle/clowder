@@ -114,6 +114,12 @@ class Command(object):
         return_code = execute_command(script, shell=True)
         sys.exit(return_code)
 
+    def cats_herd_tag(self):
+        """clowder cats herd tag tests"""
+        script = os.path.join(self._scripts_dir, 'test_cats_herd_tag.sh')
+        return_code = execute_command(script, shell=True)
+        sys.exit(return_code)
+
     def cats_herd(self):
         """clowder cats herd tests"""
         test_env = {}
@@ -267,6 +273,7 @@ class Command(object):
         cats_subparser.add_parser('forall', help='Run cats forall tests')
         cats_subparser.add_parser('help', help='Run cats help tests')
         cats_subparser.add_parser('herd_branch', help='Run cats herd branch tests')
+        cats_subparser.add_parser('herd_tag', help='Run cats herd tag tests')
         cats_subparser.add_parser('herd', help='Run cats herd tests')
         cats_subparser.add_parser('import', help='Run cats import tests')
         cats_subparser.add_parser('init', help='Run cats init tests')
@@ -321,7 +328,7 @@ def execute_command(command, shell=False, env=None):
         process = subprocess.Popen(command, shell=shell, env=cmd_env)
         atexit.register(subprocess_exit_handler, process)
         process.communicate()
-    except KeyboardInterrupt:
+    except (KeyboardInterrupt, SystemExit):
         os.kill(process.pid, signal.SIGTERM)
     return process.returncode
 

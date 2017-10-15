@@ -166,6 +166,9 @@ $ clowder herd -r
 # Herd a specified branch if it exists, otherwise use default ref
 $ clowder herd -b my_branch
 
+# Herd a specified tag if it exists, otherwise use default ref
+$ clowder herd -t my_tag
+
 # Only herd projects in swift and llvm groups
 $ clowder herd -g swift llvm
 

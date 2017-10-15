@@ -159,23 +159,28 @@ class Project(object):
             project['fork'] = fork_yaml
         return project
 
-    def herd(self, branch=None, depth=None, rebase=False):
+    def herd(self, branch=None, tag=None, depth=None, rebase=False):
         """Clone project or update latest from upstream"""
         if depth is None:
             herd_depth = self.depth
         else:
             herd_depth = depth
 
-        if branch is None:
-            if self.recursive:
-                self._herd_ref(GitSubmodules(self.full_path()), herd_depth, rebase)
-            else:
-                self._herd_ref(Git(self.full_path()), herd_depth, rebase)
-        else:
+        if branch is not None:
             if self.recursive:
                 self._herd_branch(GitSubmodules(self.full_path()), branch, herd_depth, rebase)
             else:
                 self._herd_branch(Git(self.full_path()), branch, herd_depth, rebase)
+        elif tag is not None:
+            if self.recursive:
+                self._herd_tag(GitSubmodules(self.full_path()), tag, herd_depth, rebase)
+            else:
+                self._herd_tag(Git(self.full_path()), tag, herd_depth, rebase)
+        else:
+            if self.recursive:
+                self._herd_ref(GitSubmodules(self.full_path()), herd_depth, rebase)
+            else:
+                self._herd_ref(Git(self.full_path()), herd_depth, rebase)
 
     def is_dirty(self):
         """Check if project is dirty"""
@@ -281,8 +286,7 @@ class Project(object):
                              depth=depth, rebase=rebase)
         else:
             self.fork.print_status()
-            repo.configure_remotes(self.remote_name, self.url,
-                                   self.fork.remote_name, self.fork.url)
+            repo.configure_remotes(self.remote_name, self.url, self.fork.remote_name, self.fork.url)
             print(format_fork_string(self.fork.name))
             repo.herd_branch(self.fork.url, self.fork.remote_name, branch, self.ref, rebase=rebase)
             print(format_fork_string(self.name))
@@ -295,12 +299,26 @@ class Project(object):
             repo.herd(self.url, self.remote_name, self.ref, depth=depth, rebase=rebase)
         else:
             self.fork.print_status()
-            repo.configure_remotes(self.remote_name, self.url,
-                                   self.fork.remote_name, self.fork.url)
+            repo.configure_remotes(self.remote_name, self.url, self.fork.remote_name, self.fork.url)
             print(format_fork_string(self.fork.name))
             repo.herd(self.fork.url, self.fork.remote_name, self.ref, rebase=rebase)
             print(format_fork_string(self.name))
             repo.herd_upstream(self.url, self.remote_name, self.ref)
+
+    def _herd_tag(self, repo, tag, depth, rebase):
+        """Clone project or update latest from upstream"""
+        if self.fork is None:
+            self._print_status()
+            repo.herd_tag(self.url, self.remote_name, tag, self.ref,
+                          depth=depth, rebase=rebase)
+        else:
+            self.fork.print_status()
+            repo.configure_remotes(self.remote_name, self.url,
+                                   self.fork.remote_name, self.fork.url)
+            print(format_fork_string(self.fork.name))
+            repo.herd_tag(self.fork.url, self.fork.remote_name, tag, self.ref, rebase=rebase)
+            print(format_fork_string(self.name))
+            repo.herd_upstream(self.url, self.remote_name, self.ref, tag=tag)
 
     def _print_status(self):
         """Print formatted project status"""

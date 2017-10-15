@@ -90,9 +90,8 @@ class ClowderRepo(object):
         """Clone clowder repo from url"""
         # Register exit handler to remove files if cloning repo fails
         atexit.register(self.init_exit_handler)
-        repo_branch = 'refs/heads/' + branch
         clowder = Git(self.clowder_path)
-        clowder.create_repo(url, 'origin', repo_branch)
+        clowder.create_clowder_repo(url, 'origin', branch)
         self.link()
 
     def init_exit_handler(self):

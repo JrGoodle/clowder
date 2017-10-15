@@ -2,6 +2,7 @@
 
 from __future__ import print_function
 import sys
+from git import GitError
 from termcolor import cprint
 from clowder.utility.clowder_utilities import (
     execute_command,
@@ -30,11 +31,6 @@ class GitSubmodules(Git):
         print(' - Update submodules recursively')
         self._submodules_update()
 
-    def create_repo(self, url, remote, ref, depth=0):
-        """Clone git repo from url at path"""
-        Git.create_repo(self, url, remote, ref, depth=depth)
-        self.submodule_update_recursive(depth)
-
     def has_submodules(self):
         """Repo has submodules"""
         return self.repo.submodules.count > 0
@@ -47,6 +43,11 @@ class GitSubmodules(Git):
     def herd_branch(self, url, remote, branch, default_ref, depth=0, rebase=False):
         """Herd branch"""
         Git.herd_branch(self, url, remote, branch, default_ref, depth=depth, rebase=rebase)
+        self.submodule_update_recursive(depth)
+
+    def herd_tag(self, url, remote, tag, default_ref, depth=0, rebase=False):
+        """Herd tag"""
+        Git.herd_tag(self, url, remote, tag, default_ref, depth=depth, rebase=rebase)
         self.submodule_update_recursive(depth)
 
     def is_dirty_submodule(self, path):
@@ -82,11 +83,6 @@ class GitSubmodules(Git):
                 return False
         return True
 
-    def _create_repo_herd_branch(self, url, remote, branch, default_ref, depth=0):
-        """Clone git repo from url at path for herd branch"""
-        Git._create_repo_herd_branch(self, url, remote, branch, default_ref, depth=depth)
-        self.submodule_update_recursive(depth=depth)
-
     def _submodules_clean(self):
         """Clean all submodules"""
         self._submodule_command('foreach', '--recursive', 'git', 'clean', '-ffdx',
@@ -97,10 +93,12 @@ class GitSubmodules(Git):
 
         try:
             self.repo.git.submodule(*args)
-        except Exception as err:
+        except (GitError, ValueError) as err:
             error_msg = str(kwargs.get('error_msg', ' - submodule command failed'))
             cprint(error_msg, 'red')
             print_error(err)
+            sys.exit(1)
+        except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
 
     def _submodules_reset(self):

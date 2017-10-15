@@ -20,14 +20,11 @@ def load_yaml_base(parsed_yaml, combined_yaml):
 def load_yaml_import(parsed_yaml, combined_yaml):
     """Load clowder from import yaml file"""
     if 'defaults' in parsed_yaml:
-        _load_yaml_import_defaults(parsed_yaml['defaults'],
-                                   combined_yaml['defaults'])
+        _load_yaml_import_defaults(parsed_yaml['defaults'], combined_yaml['defaults'])
     if 'sources' in parsed_yaml:
-        _load_yaml_import_sources(parsed_yaml['sources'],
-                                  combined_yaml['sources'])
+        _load_yaml_import_sources(parsed_yaml['sources'], combined_yaml['sources'])
     if 'groups' in parsed_yaml:
-        _load_yaml_import_groups(parsed_yaml['groups'],
-                                 combined_yaml['groups'])
+        _load_yaml_import_groups(parsed_yaml['groups'], combined_yaml['groups'])
 
 
 def _load_yaml_import_defaults(imported_defaults, defaults):

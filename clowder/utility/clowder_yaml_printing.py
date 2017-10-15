@@ -23,15 +23,9 @@ def print_yaml(root_directory):
             break
         imported_yaml = parsed_yaml['import']
         if imported_yaml == 'default':
-            yaml_file = os.path.join(root_directory,
-                                     '.clowder',
-                                     'clowder.yaml')
+            yaml_file = os.path.join(root_directory, '.clowder', 'clowder.yaml')
         else:
-            yaml_file = os.path.join(root_directory,
-                                     '.clowder',
-                                     'versions',
-                                     imported_yaml,
-                                     'clowder.yaml')
+            yaml_file = os.path.join(root_directory, '.clowder', 'versions', imported_yaml, 'clowder.yaml')
         parsed_yaml = parse_yaml(yaml_file)
     for yaml_file in yaml_files:
         if os.path.isfile(yaml_file):

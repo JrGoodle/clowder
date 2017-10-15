@@ -76,6 +76,13 @@ test_git_clean() {
     git diff --cached --quiet || exit 1
 }
 
+test_commit() {
+    echo "TEST: Check commit is checked out"
+    local git_commit
+    git_commit=$(git rev-parse HEAD)
+    [[ "$1" = "$git_commit" ]] && echo "TEST: On correct commit: $1" || exit 1
+}
+
 test_git_dirty() {
     echo "TEST: Git repo is dirty"
     git diff --cached --quiet && exit 1
