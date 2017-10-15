@@ -39,8 +39,7 @@ $ clowder herd -b my_branch
 - Projects are cloned from the upstream remote if they don't currently exist
 - Each project fetches the latest changes from upstream
 - If a local branch exists, it's checked out
-- If a remote branch `my_branch` exists on the fork remote, the latest changes are pulled
-- If a remote branch `my_branch` exists upstream, the latest changes are pulled
+- If a remote branch `my_branch` exists on the fork remote, the latest changes are pulled. Otherwise, if a remote branch `my_branch` exists upstream, the latest changes are pulled
 - If no local or upstream branches exist, the default ref will be checked out like a normal `herd`
 
 ```bash
@@ -123,5 +122,11 @@ $ clowder sync
 # Sync using rebase instead of pull
 $ clowder sync -r
 ```
+
+- If any projects don't have a clean git status then `clowder` exits
+- Each project fetches the latest changes from upstream
+- If the current git ref checked out doesn't match the `clowder.yaml` configuration, the correct ref will be checked out
+- The default branch is rebased onto the latest changes from upstream for branches. For commits and tags, the commits are checked out into a detached `HEAD` state
+- New changes from upstream are pushed to any fork remote branch
 
 ---
