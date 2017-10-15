@@ -134,7 +134,7 @@ $ clowder prune stale_branch # Prune branch 'stale_branch' for all projects
 See the [clowder commands doc](https://github.com/JrGoodle/clowder/blob/master/docs/commands.md)
 for documentation of all command options
 
-For example output from [individual commands](https://github.com/JrGoodle/clowder/tree/master/docs#commands)
+For example output from individual commands see the [clowder command examples](https://github.com/JrGoodle/clowder/tree/master/docs#commands)
 
 ## The `clowder.yaml` file
 
@@ -146,6 +146,12 @@ for an explanation of the `clowder.yaml` configuration file
 See the [clowder repo doc](https://github.com/JrGoodle/clowder/blob/master/docs/clowder-repo.md)
 for a description of the structure of the clowder repo cloned in the `.clowder` directory
 
+
+## Using `clowder` with forks
+
+See the [forks doc](https://github.com/JrGoodle/clowder/blob/master/docs/forks.md)
+for a description of the behavior of `clowder` commands with forks
+
 ## Development
 
-See the [development doc](https://github.com/JrGoodle/clowder/blob/master/docs/development.md) for information on setting up your environment for development
+See [CONTRIBUTING.md](https://github.com/JrGoodle/clowder/blob/master/CONTRIBUTING.md) for information on setting up your environment for development and for contribution guidelines
