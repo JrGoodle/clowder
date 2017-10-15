@@ -73,11 +73,15 @@ class Group(object):
                  'projects': projects_yaml}
         return group
 
-    def herd(self, branch=None, tag=None, depth=None, rebase=False):
+    def herd(self, branch=None, tag=None, depth=None, rebase=False, pool=None):
         """Sync all projects with latest upstream changes"""
         self._print_name()
         for project in self.projects:
-            project.herd(branch=branch, tag=tag, depth=depth, rebase=rebase)
+            if pool is None:
+                project.herd(branch=branch, tag=tag, depth=depth, rebase=rebase)
+            else:
+                arguments = {'branch': branch, 'tag': tag, 'depth': depth, 'rebase': rebase}
+                pool.apply_async(project.herd, arguments)
 
     def is_dirty(self):
         """Check if group has dirty project(s)"""

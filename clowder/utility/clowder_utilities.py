@@ -2,6 +2,7 @@
 
 from __future__ import print_function
 import atexit
+from contextlib import contextmanager
 import errno
 import os
 import shutil
@@ -177,6 +178,18 @@ def subprocess_exit_handler(process):
         process.kill()
     except:
         pass
+
+
+@contextmanager
+def suppress_stdout():
+    """Temporarily suppress stdout"""
+    with open(os.devnull, "w") as devnull:
+        old_stdout = sys.stdout
+        sys.stdout = devnull
+        try:
+            yield
+        finally:
+            sys.stdout = old_stdout
 
 
 def truncate_ref(ref):

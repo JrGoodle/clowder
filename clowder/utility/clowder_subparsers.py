@@ -71,6 +71,8 @@ def _configure_subparser_clean(subparsers, clowder):
     """Configure clowder clean subparser and arguments"""
     clean_help = 'Discard current changes in projects'
     parser_clean = subparsers.add_parser('clean', help=clean_help)
+    parser_clean.add_argument('--parallel', action='store_true',
+                              help='run commands in parallel')
     parser_clean.add_argument('--all', '-a', action='store_true',
                               help='clean all the things')
     parser_clean.add_argument('--recursive', '-r', action='store_true',
@@ -149,6 +151,8 @@ def _configure_subparser_forall(subparsers, clowder):
     """Configure clowder forall subparser and arguments"""
     forall_help = 'Run command or script in project directories'
     parser_forall = subparsers.add_parser('forall', help=forall_help)
+    parser_forall.add_argument('--parallel', action='store_true',
+                               help='run commands in parallel')
     parser_forall.add_argument('--ignore-errors', '-i', action='store_true',
                                help='ignore errors in command or script')
     group_forall_command = parser_forall.add_mutually_exclusive_group()
@@ -187,6 +191,8 @@ def _configure_subparser_herd(subparsers, clowder):
     """Configure clowder herd subparser and arguments"""
     herd_help = 'Clone and sync latest changes for projects'
     parser_herd = subparsers.add_parser('herd', help=herd_help)
+    parser_herd.add_argument('--parallel', action='store_true',
+                             help='run commands in parallel')
     parser_herd.add_argument('--rebase', '-r', action='store_true',
                              help='use rebase instead of pull')
     parser_herd.add_argument('--depth', '-d', default=None, type=int, nargs=1, metavar='DEPTH',
@@ -252,6 +258,8 @@ def _configure_subparser_link(subparsers, versions):
 def _configure_subparser_prune(subparsers, clowder):
     """Configure clowder prune subparser and arguments"""
     parser_prune = subparsers.add_parser('prune', help='Prune old branch')
+    parser_prune.add_argument('--parallel', action='store_true',
+                              help='run commands in parallel')
     parser_prune.add_argument('--force', '-f', action='store_true',
                               help='force prune branches')
     parser_prune.add_argument('branch', help='name of branch to remove', metavar='BRANCH')
@@ -331,6 +339,8 @@ def _configure_subparser_reset(subparsers, clowder):
     """Configure clowder reset subparser and arguments"""
     reset_help = 'Reset branches to upstream commits or check out detached HEADs for tags and shas'
     parser_reset = subparsers.add_parser('reset', help=reset_help)
+    parser_reset.add_argument('--parallel', action='store_true',
+                              help='run commands in parallel')
     group_reset = parser_reset.add_mutually_exclusive_group()
     if clowder is None:
         group_names = ''
@@ -370,6 +380,8 @@ def _configure_subparser_save(subparsers):
 def _configure_subparser_start(subparsers, clowder):
     """Configure clowder start subparser and arguments"""
     parser_start = subparsers.add_parser('start', help='Start a new feature')
+    parser_start.add_argument('--parallel', action='store_true',
+                              help='run commands in parallel')
     parser_start.add_argument('--tracking', '-t', action='store_true',
                               help='create remote tracking branch')
     parser_start.add_argument('branch', help='name of branch to create', metavar='BRANCH')
@@ -405,6 +417,8 @@ def _configure_subparser_start(subparsers, clowder):
 def _configure_subparser_stash(subparsers, clowder):
     """Configure clowder stash subparser and arguments"""
     parser_stash = subparsers.add_parser('stash', help='Stash current changes')
+    parser_stash.add_argument('--parallel', action='store_true',
+                              help='run commands in parallel')
     group_stash = parser_stash.add_mutually_exclusive_group()
     if clowder is None:
         group_names = ''
@@ -444,6 +458,8 @@ def _configure_subparser_status(subparsers):
 def _configure_subparser_sync(subparsers, clowder):
     """Configure clowder sync subparser and arguments"""
     parser_sync = subparsers.add_parser('sync', help='Sync fork with upstream remote')
+    parser_sync.add_argument('--parallel', action='store_true',
+                             help='run commands in parallel')
     parser_sync.add_argument('--rebase', '-r', action='store_true',
                              help='use rebase instead of pull')
     if clowder is None:

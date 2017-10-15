@@ -183,7 +183,8 @@ class Command(object):
                           branch=branch,
                           tag=tag,
                           depth=depth,
-                          rebase=self.args.rebase)
+                          rebase=self.args.rebase,
+                          parallel=self.args.parallel)
 
     def init(self):
         """clowder init command"""

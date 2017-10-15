@@ -7,6 +7,7 @@ from termcolor import cprint
 from clowder.group import Group
 from clowder.source import Source
 from clowder.utility.clowder_exception import ClowderException
+from clowder.utility.clowder_pool import ClowderPool
 from clowder.utility.clowder_utilities import (
     get_yaml_string,
     parse_yaml,
@@ -41,6 +42,7 @@ class ClowderController(object):
         self.groups = []
         self.sources = []
         self._max_import_depth = 10
+        self._pool = None
 
         yaml_file = os.path.join(self.root_directory, 'clowder.yaml')
         self._validate_yaml(yaml_file, self._max_import_depth)
@@ -164,23 +166,32 @@ class ClowderController(object):
         return versions
 
     def herd(self, group_names=None, project_names=None, branch=None, tag=None,
-             depth=None, rebase=False):
+             depth=None, rebase=False, parallel=False):
         """Sync projects with latest upstream changes"""
+        if parallel:
+            self._pool = ClowderPool()
         if project_names is None and group_names is None:
             self._validate_groups(self.get_all_group_names())
             for group in self.groups:
-                group.herd(branch=branch, tag=tag, depth=depth, rebase=rebase)
+                group.herd(branch=branch, tag=tag, depth=depth, rebase=rebase, pool=self._pool)
         elif project_names is None:
             self._validate_groups(group_names)
             for group in self.groups:
                 if group.name in group_names:
-                    group.herd(branch=branch, tag=tag, depth=depth, rebase=rebase)
+                    group.herd(branch=branch, tag=tag, depth=depth, rebase=rebase, pool=self._pool)
         else:
             self._validate_projects(project_names)
             for group in self.groups:
                 for project in group.projects:
                     if project.name in project_names:
-                        project.herd(branch=branch, tag=tag, depth=depth, rebase=rebase)
+                        if self._pool is None:
+                            project.herd(branch=branch, tag=tag, depth=depth, rebase=rebase)
+                        else:
+                            arguments = {'branch': branch, 'tag': tag, 'depth': depth, 'rebase': rebase}
+                            self._pool.apply_async(project.herd, arguments)
+        if self._pool is not None:
+            self._pool.close()
+            self._pool.join()
 
     def print_yaml(self, resolved):
         """Print clowder.yaml"""
