@@ -256,8 +256,6 @@ def _configure_subparser_link(subparsers, versions):
 def _configure_subparser_prune(subparsers, clowder):
     """Configure clowder prune subparser and arguments"""
     parser_prune = subparsers.add_parser('prune', help='Prune old branch')
-    parser_prune.add_argument('--parallel', action='store_true',
-                              help='run commands in parallel')
     parser_prune.add_argument('--force', '-f', action='store_true',
                               help='force prune branches')
     parser_prune.add_argument('branch', help='name of branch to remove', metavar='BRANCH')

@@ -137,11 +137,18 @@ class Group(object):
                 for project in self.projects:
                     project.prune(branch, remote=True)
 
-    def reset(self):
+    def reset(self, pool=None):
         """Reset project branches to upstream or checkout tag/sha as detached HEAD"""
         self._print_name()
         for project in self.projects:
-            project.reset()
+            if pool is None:
+                project.reset()
+            else:
+                project.print_status()
+                if project.fork is not None:
+                    print(format_fork_string(project.name))
+                    print(format_fork_string(project.fork.name))
+                self._pool.apply_async(project.reset, {'print_output': False})
 
     def start(self, branch, tracking):
         """Start a new feature branch"""

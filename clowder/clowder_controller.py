@@ -291,23 +291,35 @@ class ClowderController(object):
                     if project.name in project_names:
                         project.prune(branch, remote=True)
 
-    def reset(self, group_names=None, project_names=None):
+    def reset(self, group_names=None, project_names=None, parallel=False):
         """Reset project branches to upstream or checkout tag/sha as detached HEAD"""
+        if parallel:
+            self._pool = ClowderPool()
         if project_names is None and group_names is None:
             self._validate_groups(self.get_all_group_names())
             for group in self.groups:
-                group.reset()
+                group.reset(pool=self._pool)
         elif project_names is None:
             self._validate_groups(group_names)
             for group in self.groups:
                 if group.name in group_names:
-                    group.reset()
+                    group.reset(pool=self._pool)
         else:
             self._validate_projects(project_names)
             for group in self.groups:
                 for project in group.projects:
                     if project.name in project_names:
-                        project.reset()
+                        if self._pool is None:
+                            project.reset()
+                        else:
+                            project.print_status()
+                            if project.fork is not None:
+                                print(format_fork_string(project.name))
+                                print(format_fork_string(project.fork.name))
+                            self._pool.apply_async(project.reset, {'print_output': False})
+        if self._pool is not None:
+            self._pool.close()
+            self._pool.join()
 
     def save_version(self, version):
         """Save current commits to a clowder.yaml in the versions directory"""

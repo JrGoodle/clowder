@@ -305,7 +305,9 @@ class Command(object):
             print_offline_error()
         if self.clowder is None:
             sys.exit(1)
-        self.clowder.reset(group_names=self.args.groups, project_names=self.args.projects)
+        self.clowder.reset(group_names=self.args.groups,
+                           project_names=self.args.projects,
+                           parallel=self.args.parallel)
 
     def save(self):
         """clowder save command"""
