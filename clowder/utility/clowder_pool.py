@@ -17,23 +17,18 @@ class ClowderPool(object):
     def __init__(self):
         self._pool = mp.Pool(initializer=worker_init)
 
-    def apply_async(self, func, arguments):
-        """Wrapper for Pool apply_async"""
-        # with suppress_stdout():
-        self._pool.apply_async(func, kwds=arguments)
-
-    def close(self):
-        """Wrapper for Pool close"""
-        self._pool.close()
-
     @classmethod
-    def execute_command(cls, command, path, shell=True, env=None):
+    def execute_command(cls, command, path, shell=True, env=None, print_output=True):
         """Run subprocess command"""
         cmd_env = os.environ.copy()
         if env is not None:
             cmd_env.update(env)
         try:
-            process = subprocess.Popen('exec ' + ' '.join(command), shell=shell, env=cmd_env, cwd=path)
+            if print_output:
+                process = subprocess.Popen('exec ' + ' '.join(command), shell=shell, env=cmd_env, cwd=path)
+            else:
+                process = subprocess.Popen('exec ' + ' '.join(command), shell=shell, env=cmd_env, cwd=path,
+                                           stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             # atexit.register(subprocess_exit_handler, process)
             process.communicate()
         except (KeyboardInterrupt, SystemExit):
@@ -48,6 +43,15 @@ class ClowderPool(object):
         if fork_remote is not None:
             forall_env['FORK_REMOTE'] = fork_remote
         return cls.execute_command(command, path, shell=True, env=forall_env)
+
+    def apply_async(self, func, arguments):
+        """Wrapper for Pool apply_async"""
+        # with suppress_stdout():
+        self._pool.apply_async(func, kwds=arguments)
+
+    def close(self):
+        """Wrapper for Pool close"""
+        self._pool.close()
 
     def join(self):
         """Wrapper for Pool join"""

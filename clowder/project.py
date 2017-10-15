@@ -159,7 +159,7 @@ class Project(object):
             project['fork'] = fork_yaml
         return project
 
-    def herd(self, branch=None, tag=None, depth=None, rebase=False):
+    def herd(self, branch=None, tag=None, depth=None, rebase=False, print_output=True):
         """Clone project or update latest from upstream"""
         if depth is None:
             herd_depth = self.depth
@@ -168,19 +168,25 @@ class Project(object):
 
         if branch is not None:
             if self.recursive:
-                self._herd_branch(GitSubmodules(self.full_path()), branch, herd_depth, rebase)
+                self._herd_branch(GitSubmodules(self.full_path(), print_output=print_output),
+                                  branch, herd_depth, rebase)
             else:
-                self._herd_branch(Git(self.full_path()), branch, herd_depth, rebase)
+                self._herd_branch(Git(self.full_path(), print_output=print_output),
+                                  branch, herd_depth, rebase)
         elif tag is not None:
             if self.recursive:
-                self._herd_tag(GitSubmodules(self.full_path()), tag, herd_depth, rebase)
+                self._herd_tag(GitSubmodules(self.full_path(), print_output=print_output),
+                               tag, herd_depth, rebase)
             else:
-                self._herd_tag(Git(self.full_path()), tag, herd_depth, rebase)
+                self._herd_tag(Git(self.full_path(), print_output=print_output),
+                               tag, herd_depth, rebase)
         else:
             if self.recursive:
-                self._herd_ref(GitSubmodules(self.full_path()), herd_depth, rebase)
+                self._herd_ref(GitSubmodules(self.full_path(), print_output=print_output),
+                               herd_depth, rebase)
             else:
-                self._herd_ref(Git(self.full_path()), herd_depth, rebase)
+                self._herd_ref(Git(self.full_path(), print_output=print_output),
+                               herd_depth, rebase)
 
     def is_dirty(self):
         """Check if project is dirty"""

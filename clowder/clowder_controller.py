@@ -187,7 +187,8 @@ class ClowderController(object):
                         if self._pool is None:
                             project.herd(branch=branch, tag=tag, depth=depth, rebase=rebase)
                         else:
-                            arguments = {'branch': branch, 'tag': tag, 'depth': depth, 'rebase': rebase}
+                            arguments = {'branch': branch, 'tag': tag, 'depth': depth,
+                                         'rebase': rebase, 'print_output': False}
                             self._pool.apply_async(project.herd, arguments)
         if self._pool is not None:
             self._pool.close()

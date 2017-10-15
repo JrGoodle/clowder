@@ -80,7 +80,7 @@ class Group(object):
             if pool is None:
                 project.herd(branch=branch, tag=tag, depth=depth, rebase=rebase)
             else:
-                arguments = {'branch': branch, 'tag': tag, 'depth': depth, 'rebase': rebase}
+                arguments = {'branch': branch, 'tag': tag, 'depth': depth, 'rebase': rebase, 'print_output': False}
                 pool.apply_async(project.herd, arguments)
 
     def is_dirty(self):

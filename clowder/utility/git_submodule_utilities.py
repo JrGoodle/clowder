@@ -16,17 +16,20 @@ from clowder.utility.print_utilities import (
 class GitSubmodules(Git):
     """Class encapsulating git utilities"""
 
-    def __init__(self, repo_path):
-        Git.__init__(self, repo_path)
+    def __init__(self, repo_path, print_output=True):
+        Git.__init__(self, repo_path, print_output=print_output)
 
     def clean(self, args=None):
         """Discard changes for repo and submodules"""
         Git.clean(self, args=args)
-        print(' - Clean submodules recursively')
+        if self.print_output:
+            print(' - Clean submodules recursively')
         self._submodules_clean()
-        print(' - Reset submodules recursively')
+        if self.print_output:
+            print(' - Reset submodules recursively')
         self._submodules_reset()
-        print(' - Update submodules recursively')
+        if self.print_output:
+            print(' - Update submodules recursively')
         self._submodules_update()
 
     def has_submodules(self):
@@ -61,8 +64,9 @@ class GitSubmodules(Git):
             command = ['git', 'submodule', 'update', '--init', '--recursive', '--depth', depth]
         return_code = ClowderPool.execute_command(command, self.repo_path)
         if return_code != 0:
-            cprint(' - Failed to update submodules', 'red')
-            print_command_failed_error(command)
+            if self.print_output:
+                cprint(' - Failed to update submodules', 'red')
+                print_command_failed_error(command)
             sys.exit(return_code)
 
     def sync(self, upstream_remote, fork_remote, ref, rebase=False):
@@ -92,9 +96,10 @@ class GitSubmodules(Git):
         try:
             self.repo.git.submodule(*args)
         except (GitError, ValueError) as err:
-            error_msg = str(kwargs.get('error_msg', ' - submodule command failed'))
-            cprint(error_msg, 'red')
-            print_error(err)
+            if self.print_output:
+                error_msg = str(kwargs.get('error_msg', ' - submodule command failed'))
+                cprint(error_msg, 'red')
+                print_error(err)
             sys.exit(1)
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
