@@ -141,18 +141,6 @@ def save_yaml(yaml_output, yaml_file):
         sys.exit(1)
 
 
-@contextmanager
-def suppress_stdout():
-    """Temporarily suppress stdout"""
-    with open(os.devnull, "w") as devnull:
-        old_stdout = sys.stdout
-        sys.stdout = devnull
-        try:
-            yield
-        finally:
-            sys.stdout = old_stdout
-
-
 def truncate_ref(ref):
     """Return bare branch, tag, or sha"""
     git_branch = "refs/heads/"

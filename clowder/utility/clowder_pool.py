@@ -8,7 +8,7 @@ import psutil
 import signal
 import subprocess
 import sys
-# from clowder.utility.clowder_utilities import suppress_stdout
+from termcolor import cprint
 
 
 class ClowderPool(object):
@@ -46,8 +46,7 @@ class ClowderPool(object):
 
     def apply_async(self, func, arguments):
         """Wrapper for Pool apply_async"""
-        # with suppress_stdout():
-        self._pool.apply_async(func, kwds=arguments)
+        self._pool.apply_async(func, kwds=arguments, callback=self.terminate)
 
     def close(self):
         """Wrapper for Pool close"""
@@ -61,13 +60,9 @@ class ClowderPool(object):
             self._pool.terminate()
             sys.exit(1)
 
-    # def kill_pool(self, err_msg):
-    #     """Error handler for process pool"""
-    #     print(err_msg)
-    #     self._pool.terminate()
-
-    def terminate(self):
+    def terminate(self, err):
         """Wrapper for Pool terminate"""
+        cprint(" - Commands terminated", 'red')
         self._pool.terminate()
 
 
@@ -81,7 +76,6 @@ class ClowderPool(object):
 
 
 parent_id = os.getpid()
-
 
 
 def worker_init():
