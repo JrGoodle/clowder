@@ -25,6 +25,7 @@ test_clowder_version
 "$TEST_SCRIPT_DIR/test_cats_clean.sh" || exit 1
 "$TEST_SCRIPT_DIR/test_cats_herd.sh" $ACCESS_LEVEL || exit 1
 "$TEST_SCRIPT_DIR/test_cats_herd_branch.sh" || exit 1
+"$TEST_SCRIPT_DIR/test_cats_herd_tag.sh" || exit 1
 "$TEST_SCRIPT_DIR/test_cats_forall.sh" || exit 1
 "$TEST_SCRIPT_DIR/test_cats_save.sh" || exit 1
 "$TEST_SCRIPT_DIR/test_cats_stash.sh" || exit 1

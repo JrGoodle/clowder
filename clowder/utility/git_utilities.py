@@ -131,7 +131,7 @@ class Git(object):
                 print(' - Fetch from ' + remote_output + ' ' + ref_output)
                 message = colored(' - Failed to fetch from ', 'red')
                 error = message + remote_output + ' ' + ref_output
-                command = ['git', 'fetch', remote, truncate_ref(ref), '--depth', str(depth), '--prune']
+                command = ['git', 'fetch', remote, truncate_ref(ref), '--depth', str(depth), '--prune', '--tags']
         return_code = execute_command(command, self.repo_path)
         if return_code != 0:
             print(error)
@@ -210,12 +210,13 @@ class Git(object):
         if not existing_git_repository(self.repo_path):
             self._init_repo()
             self._create_remote(remote, url, remove_dir=True)
-            self.fetch(remote, depth=depth, remove_dir=True)
-            if self._checkout_tag(tag):
+            return_code = self._checkout_new_repo_tag(tag, remote, depth)
+            if return_code == 0:
                 return
-            self.herd(url, remote, default_ref, depth=depth, rebase=rebase)
+            fetch = depth != 0
+            self.herd(url, remote, default_ref, depth=depth, fetch=fetch, rebase=rebase)
             return
-        return_code = self.fetch(remote, ref="refs/tags/" + tag, depth=depth)
+        return_code = self.fetch(remote, ref='refs/tags/' + tag, depth=depth)
         if return_code == 0:
             return_code = self._checkout_tag(tag)
             if return_code == 0:
@@ -474,32 +475,44 @@ class Git(object):
         except (KeyboardInterrupt, SystemExit):
             remove_directory_exit(self.repo_path)
 
-    def _checkout_new_repo_tag(self, tag, remote, depth):
+    def _checkout_new_repo_tag(self, tag, remote, depth, remove_dir=False):
         """Checkout tag or fail and delete repo if it doesn't exist"""
         tag_output = format_ref_string(tag)
         origin = self._remote(remote)
         if origin is None:
-            remove_directory_exit(self.repo_path)
-        self.fetch(remote, depth=depth, ref=tag, remove_dir=True)
+            if remove_dir:
+                remove_directory_exit(self.repo_path)
+            return 1
+        self.fetch(remote, depth=depth, ref='refs/tags/' + tag, remove_dir=remove_dir)
         try:
-            remote_tag = origin.tags[tag]
-        except GitError:
-            message = colored(' - No existing remote tag ', 'red')
+            remote_tag = self.repo.tags[tag]
+        except (GitError, IndexError):
+            message = ' - No existing tag '
+            if remove_dir:
+                print(colored(message, 'red') + tag_output)
+                remove_directory_exit(self.repo_path)
             print(message + tag_output)
-            remove_directory_exit(self.repo_path)
+            return 1
         except (KeyboardInterrupt, SystemExit):
+            if remove_dir:
+                remove_directory_exit(self.repo_path)
             sys.exit(1)
         else:
             try:
                 print(' - Checkout tag ' + tag_output)
                 self.repo.git.checkout(remote_tag)
+                return 0
             except GitError as err:
                 message = colored(' - Failed to checkout tag ', 'red')
                 print(message + tag_output)
                 print_error(err)
-                remove_directory_exit(self.repo_path)
+                if remove_dir:
+                    remove_directory_exit(self.repo_path)
+                return 1
             except (KeyboardInterrupt, SystemExit):
-                remove_directory_exit(self.repo_path)
+                if remove_dir:
+                    remove_directory_exit(self.repo_path)
+                sys.exit(1)
 
     def _checkout_sha(self, sha):
         """Checkout commit by sha"""
@@ -535,7 +548,7 @@ class Git(object):
             print(' - Checkout tag ' + tag_output)
             self.repo.git.checkout('refs/tags/' + tag)
             return 0
-        except GitError as err:
+        except (GitError, ValueError) as err:
             message = colored(' - Failed to checkout tag ', 'red')
             print(message + tag_output)
             print_error(err)
@@ -673,7 +686,7 @@ class Git(object):
         if ref_type(ref) == 'branch':
             self._checkout_new_repo_branch(truncate_ref(ref), remote, depth)
         elif ref_type(ref) == 'tag':
-            self._checkout_new_repo_tag(truncate_ref(ref), remote, depth)
+            self._checkout_new_repo_tag(truncate_ref(ref), remote, depth, remove_dir=True)
         elif ref_type(ref) == 'sha':
             self._checkout_new_repo_commit(ref, remote, depth)
 
