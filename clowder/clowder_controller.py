@@ -24,6 +24,7 @@ from clowder.utility.clowder_yaml_validation import (
 )
 from clowder.utility.print_utilities import (
     format_clowder_command,
+    format_command,
     format_fork_string,
     format_missing_imported_yaml_error,
     print_error,
@@ -107,20 +108,52 @@ class ClowderController(object):
             if group.name in group_names:
                 group.fetch_all()
 
-    def forall(self, command, ignore_errors, group_names=None, project_names=None):
+    def forall(self, command, ignore_errors, group_names=None, project_names=None, parallel=False):
         """Runs command or script in project directories specified"""
+        if parallel:
+            self._pool = ClowderPool()
         for group in self.groups:
             if group_names is None and project_names is None:
                 for project in group.projects:
-                    project.run(command, ignore_errors)
+                    if self._pool is None:
+                        project.run(command, ignore_errors)
+                    else:
+                        project.print_status()
+                        if not os.path.isdir(project.full_path()):
+                            cprint(" - Project is missing\n", 'red')
+                            return
+                        print(format_command(command))
+                        arguments = {'command': command, 'ignore_errors': ignore_errors, 'print_output': False}
+                        self._pool.apply_async(project.run, arguments)
             elif project_names is None:
                 if group.name in group_names:
                     for project in group.projects:
-                        project.run(command, ignore_errors)
+                        if self._pool is None:
+                            project.run(command, ignore_errors)
+                        else:
+                            project.print_status()
+                            if not os.path.isdir(project.full_path()):
+                                cprint(" - Project is missing\n", 'red')
+                                return
+                            print(format_command(command))
+                            arguments = {'command': command, 'ignore_errors': ignore_errors, 'print_output': False}
+                            self._pool.apply_async(project.run, arguments)
             else:
                 for project in group.projects:
                     if project.name in project_names:
-                        project.run(command, ignore_errors)
+                        if self._pool is None:
+                            project.run(command, ignore_errors)
+                        else:
+                            project.print_status()
+                            if not os.path.isdir(project.full_path()):
+                                cprint(" - Project is missing\n", 'red')
+                                return
+                            print(format_command(command))
+                            arguments = {'command': command, 'ignore_errors': ignore_errors, 'print_output': False}
+                            self._pool.apply_async(project.run, arguments)
+        if self._pool is not None:
+            self._pool.close()
+            self._pool.join()
 
     def get_all_fork_project_names(self):
         """Returns all project names containing forks"""

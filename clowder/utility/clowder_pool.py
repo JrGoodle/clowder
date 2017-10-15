@@ -36,13 +36,13 @@ class ClowderPool(object):
         return process.returncode
 
     @classmethod
-    def execute_forall_command(cls, command, path, clowder_path, name, remote, fork_remote, ref):
+    def execute_forall_command(cls, command, path, clowder_path, name, remote, fork_remote, ref, print_output=True):
         """Execute forall command with additional environment variables and display continuous output"""
         forall_env = {'CLOWDER_PATH': clowder_path, 'PROJECT_PATH': path, 'PROJECT_NAME': name,
                       'PROJECT_REMOTE': remote, 'PROJECT_REF': ref}
         if fork_remote is not None:
             forall_env['FORK_REMOTE'] = fork_remote
-        return cls.execute_command(command, path, shell=True, env=forall_env)
+        return cls.execute_command(command, path, shell=True, env=forall_env, print_output=print_output)
 
     def apply_async(self, func, arguments):
         """Wrapper for Pool apply_async"""

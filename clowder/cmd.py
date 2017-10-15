@@ -150,7 +150,8 @@ class Command(object):
         self.clowder.forall(self.args.command[0],
                             self.args.ignore_errors,
                             group_names=self.args.groups,
-                            project_names=self.args.projects)
+                            project_names=self.args.projects,
+                            parallel=self.args.parallel)
 
     def herd(self):
         """clowder herd command"""

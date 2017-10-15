@@ -244,13 +244,16 @@ class Project(object):
         else:
             self._reset(Git(self.full_path()))
 
-    def run(self, command, ignore_errors):
+    def run(self, command, ignore_errors, print_output=True):
         """Run command or script in project directory"""
-        self.print_status()
+        if print_output:
+            self.print_status()
         if not os.path.isdir(self.full_path()):
-            cprint(" - Project is missing\n", 'red')
+            if print_output:
+                cprint(" - Project is missing\n", 'red')
             return
-        print(format_command(command))
+        if print_output:
+            print(format_command(command))
         if self.fork is None:
             fork_remote = None
         else:
@@ -261,7 +264,8 @@ class Project(object):
                                                          self.name,
                                                          self.remote_name,
                                                          fork_remote,
-                                                         self.ref)
+                                                         self.ref,
+                                                         print_output=print_output)
         if not ignore_errors:
             if return_code != 0:
                 print_command_failed_error(command)

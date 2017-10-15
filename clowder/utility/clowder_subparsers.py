@@ -71,8 +71,6 @@ def _configure_subparser_clean(subparsers, clowder):
     """Configure clowder clean subparser and arguments"""
     clean_help = 'Discard current changes in projects'
     parser_clean = subparsers.add_parser('clean', help=clean_help)
-    parser_clean.add_argument('--parallel', action='store_true',
-                              help='run commands in parallel')
     parser_clean.add_argument('--all', '-a', action='store_true',
                               help='clean all the things')
     parser_clean.add_argument('--recursive', '-r', action='store_true',
