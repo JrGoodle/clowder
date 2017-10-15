@@ -241,6 +241,24 @@ class ClowderController(object):
                     if project.name in project_names:
                         project.prune(branch, remote=True)
 
+    def reset(self, group_names=None, project_names=None):
+        """Reset project branches to upstream or checkout tag/sha as detached HEAD"""
+        if project_names is None and group_names is None:
+            self._validate_groups(self.get_all_group_names())
+            for group in self.groups:
+                group.reset()
+        elif project_names is None:
+            self._validate_groups(group_names)
+            for group in self.groups:
+                if group.name in group_names:
+                    group.reset()
+        else:
+            self._validate_projects(project_names)
+            for group in self.groups:
+                for project in group.projects:
+                    if project.name in project_names:
+                        project.reset()
+
     def save_version(self, version):
         """Save current commits to a clowder.yaml in the versions directory"""
         self._validate_projects_exist()

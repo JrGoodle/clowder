@@ -293,6 +293,18 @@ class Command(object):
         self.clowder_repo.print_status()
         self.clowder_repo.git_status()
 
+    def reset(self):
+        """clowder reset command"""
+        self._validate_clowder_yaml()
+        if self.clowder_repo is None:
+            exit_clowder_not_found()
+        self.clowder_repo.print_status(fetch=True)
+        if is_offline():
+            print_offline_error()
+        if self.clowder is None:
+            sys.exit(1)
+        self.clowder.reset(group_names=self.args.groups, project_names=self.args.projects)
+
     def save(self):
         """clowder save command"""
         if self.clowder_repo is None:

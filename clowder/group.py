@@ -128,6 +128,12 @@ class Group(object):
                 for project in self.projects:
                     project.prune(branch, remote=True)
 
+    def reset(self):
+        """Reset project branches to upstream or checkout tag/sha as detached HEAD"""
+        self._print_name()
+        for project in self.projects:
+            project.reset()
+
     def start(self, branch, tracking):
         """Start a new feature branch"""
         self._print_name()

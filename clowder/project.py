@@ -222,6 +222,13 @@ class Project(object):
         elif remote:
             self._prune_remote(branch)
 
+    def reset(self):
+        """Reset project branches to upstream or checkout tag/sha as detached HEAD"""
+        if self.recursive:
+            self._reset(GitSubmodules(self.full_path()))
+        else:
+            self._reset(Git(self.full_path()))
+
     def run(self, command, ignore_errors):
         """Run command or script in project directory"""
         self._print_status()
@@ -356,6 +363,18 @@ class Project(object):
         if repo.existing_remote_branch(branch, remote):
             self._print_status()
             repo.prune_branch_remote(branch, remote)
+
+    def _reset(self, repo):
+        """Clone project or update latest from upstream"""
+        if self.fork is None:
+            self._print_status()
+            repo.reset(self.remote_name, self.ref, depth=depth)
+        else:
+            self.fork.print_status()
+            repo.configure_remotes(self.remote_name, self.url, self.fork.remote_name, self.fork.url)
+            print(format_fork_string(self.name))
+            print(format_fork_string(self.fork.name))
+            repo.reset(self.fork.remote_name, self.ref)
 
     def _sync(self, repo, rebase):
         """Sync fork project with upstream"""

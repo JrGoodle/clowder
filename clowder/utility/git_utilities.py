@@ -344,6 +344,31 @@ class Git(object):
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
 
+    def reset(self, remote, ref, depth=0):
+        """Reset branch to upstream or checkout tag/sha as detached HEAD"""
+        if ref_type(ref) == 'branch':
+            branch = truncate_ref(ref)
+            if not self.existing_local_branch(branch):
+                return_code = self._create_branch_local_tracking(branch, remote, depth=depth, fetch=True)
+                if return_code != 0:
+                    sys.exit(return_code)
+                return
+            elif self._is_branch_checked_out(branch):
+                branch_output = format_ref_string(branch)
+                print(' - Branch ' + branch_output + ' already checked out')
+            else:
+                self._checkout_branch_local(branch)
+            if not self.existing_remote_branch(branch, remote):
+                sys.exit(1)
+            remote_branch = remote + '/' + branch
+            self._reset_head(branch=remote_branch)
+        elif ref_type(ref) == 'tag':
+            self.fetch(remote, depth=depth, ref=ref)
+            self._checkout_tag(truncate_ref(ref))
+        elif ref_type(ref) == 'sha':
+            self.fetch(remote, depth=depth, ref=ref)
+            self._checkout_sha(ref)
+
     def sha(self, short=False):
         """Return sha for currently checked out commit"""
         if short:
@@ -833,9 +858,12 @@ class Git(object):
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
 
-    def _reset_head(self):
+    def _reset_head(self, branch=None):
         """Reset head of repo, discarding changes"""
-        self.repo.head.reset(index=True, working_tree=True)
+        if branch is None:
+            self.repo.head.reset(index=True, working_tree=True)
+        else:
+            self.repo.git.reset('--hard', branch)
 
     def _set_tracking_branch(self, remote, branch, remove_dir=False):
         """Set tracking branch"""
