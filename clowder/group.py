@@ -3,6 +3,7 @@
 from __future__ import print_function
 from termcolor import colored
 from clowder.project import Project
+from clowder.utility.print_utilities import format_fork_string
 
 
 class Group(object):
@@ -80,6 +81,10 @@ class Group(object):
             if pool is None:
                 project.herd(branch=branch, tag=tag, depth=depth, rebase=rebase)
             else:
+                project.print_status()
+                if project.fork is not None:
+                    print(format_fork_string(project.name))
+                    print(format_fork_string(project.fork.name))
                 arguments = {'branch': branch, 'tag': tag, 'depth': depth, 'rebase': rebase, 'print_output': False}
                 pool.apply_async(project.herd, arguments)
 

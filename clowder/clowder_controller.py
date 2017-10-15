@@ -24,6 +24,7 @@ from clowder.utility.clowder_yaml_validation import (
 )
 from clowder.utility.print_utilities import (
     format_clowder_command,
+    format_fork_string,
     format_missing_imported_yaml_error,
     print_error,
     print_invalid_yaml_error,
@@ -187,6 +188,10 @@ class ClowderController(object):
                         if self._pool is None:
                             project.herd(branch=branch, tag=tag, depth=depth, rebase=rebase)
                         else:
+                            project.print_status()
+                            if project.fork is not None:
+                                print(format_fork_string(project.name))
+                                print(format_fork_string(project.fork.name))
                             arguments = {'branch': branch, 'tag': tag, 'depth': depth,
                                          'rebase': rebase, 'print_output': False}
                             self._pool.apply_async(project.herd, arguments)
