@@ -151,7 +151,7 @@ for a description of the structure of the clowder repo cloned in the `.clowder` 
 
 ## Using `clowder` with forks
 
-See the [Forks doc](https://github.com/JrGoodle/clowder/blob/master/docs/forks.md)
+See the [forks doc](https://github.com/JrGoodle/clowder/blob/master/docs/forks.md)
 for a description of the behavior of `clowder` commands with forks
 
 ## Development
