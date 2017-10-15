@@ -5,8 +5,8 @@ import os
 import sys
 from termcolor import cprint
 from clowder.fork import Fork
+from clowder.utility.clowder_pool import ClowderPool
 from clowder.utility.clowder_utilities import (
-    execute_forall_command,
     existing_git_repository,
     is_offline
 )
@@ -240,13 +240,13 @@ class Project(object):
             fork_remote = None
         else:
             fork_remote = self.fork.remote_name
-        return_code = execute_forall_command(command.split(),
-                                             self.full_path(),
-                                             self.root_directory,
-                                             self.name,
-                                             self.remote_name,
-                                             fork_remote,
-                                             self.ref)
+        return_code = ClowderPool.execute_forall_command(command.split(),
+                                                         self.full_path(),
+                                                         self.root_directory,
+                                                         self.name,
+                                                         self.remote_name,
+                                                         fork_remote,
+                                                         self.ref)
         if not ignore_errors:
             if return_code != 0:
                 print_command_failed_error(command)

@@ -7,8 +7,8 @@ import sys
 from git import GitError
 from termcolor import colored, cprint
 from clowder.utility.git_utilities import Git
+from clowder.utility.clowder_pool import ClowderPool
 from clowder.utility.clowder_utilities import (
-    execute_command,
     existing_git_repository,
     force_symlink,
     is_offline,
@@ -184,7 +184,7 @@ class ClowderRepo(object):
     def run_command(self, command):
         """Run command in clowder repo"""
         print(format_command(command))
-        return_code = execute_command(command.split(), self.clowder_path)
+        return_code = ClowderPool.execute_command(command.split(), self.clowder_path)
         if return_code != 0:
             print_command_failed_error(command)
             sys.exit(return_code)

@@ -1,14 +1,11 @@
 """Clowder utilities"""
 
 from __future__ import print_function
-import atexit
 from contextlib import contextmanager
 import errno
 import os
 import shutil
-import signal
 import socket
-import subprocess
 import sys
 import yaml
 from termcolor import colored, cprint
@@ -21,33 +18,6 @@ from clowder.utility.print_utilities import (
     print_open_file_error,
     print_save_file_error
 )
-
-
-def execute_command(command, path, shell=True, env=None):
-    """Run subprocess command"""
-    cmd_env = os.environ.copy()
-    if env is not None:
-        cmd_env.update(env)
-    try:
-        process = subprocess.Popen(" ".join(command), shell=shell, env=cmd_env, cwd=path)
-        atexit.register(subprocess_exit_handler, process)
-        process.communicate()
-    except (KeyboardInterrupt, SystemExit):
-        os.kill(process.pid, signal.SIGTERM)
-    return process.returncode
-
-
-def execute_forall_command(command, path, clowder_path, name, remote, fork_remote, ref):
-    """Execute forall command with additional environment variables and display continuous output"""
-    forall_env = {}
-    forall_env["CLOWDER_PATH"] = clowder_path
-    forall_env["PROJECT_PATH"] = path
-    forall_env["PROJECT_NAME"] = name
-    forall_env["PROJECT_REMOTE"] = remote
-    forall_env["PROJECT_REF"] = ref
-    if fork_remote is not None:
-        forall_env["FORK_REMOTE"] = fork_remote
-    return execute_command(command, path, shell=True, env=forall_env)
 
 
 def existing_git_repository(path):
@@ -169,15 +139,6 @@ def save_yaml(yaml_output, yaml_file):
         print_file_exists_error(yaml_file)
         print()
         sys.exit(1)
-
-
-def subprocess_exit_handler(process):
-    """terminate subprocess"""
-    try:
-        os.kill(process.pid, 0)
-        process.kill()
-    except:
-        pass
 
 
 @contextmanager
