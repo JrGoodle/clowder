@@ -51,9 +51,7 @@ test_reset() {
     UPSTREAM_COMMIT=$(git rev-parse HEAD)
     git reset --hard HEAD~3 || exit 1
     test_number_commits 'HEAD' 'origin/knead' '3'
-    if [ "$UPSTREAM_COMMIT" == "$(git rev-parse HEAD)" ]; then
-        exit 1
-    fi
+    test_not_commit "$UPSTREAM_COMMIT"
     popd || exit 1
 
     clowder reset || exit 1
@@ -68,15 +66,32 @@ test_reset() {
     git add file2 || exit 1
     git commit -m "$COMMIT_MESSAGE" || exit 1
     test_number_commits 'origin/knead' 'HEAD' '2'
-    if [ "$UPSTREAM_COMMIT" == "$(git rev-parse HEAD)" ]; then
-        exit 1
-    fi
+    test_not_commit "$UPSTREAM_COMMIT"
     popd || exit 1
 
     clowder reset || exit 1
 
     pushd 'mu' || exit 1
     test_number_commits 'HEAD' 'origin/knead' '0'
+    test_commit  $UPSTREAM_COMMIT
+    git reset --hard HEAD~3 || exit 1
+    test_number_commits 'HEAD' 'origin/knead' '3'
+    touch file1 || exit 1
+    git add file1 || exit 1
+    git commit -m "$COMMIT_MESSAGE" || exit 1
+    touch file2 || exit 1
+    git add file2 || exit 1
+    git commit -m "$COMMIT_MESSAGE" || exit 1
+    test_number_commits 'origin/knead' 'HEAD' '2'
+    test_number_commits 'HEAD' 'origin/knead' '3'
+    test_not_commit "$UPSTREAM_COMMIT"
+    popd || exit 1
+
+    clowder reset || exit 1
+
+    pushd 'mu' || exit 1
+    test_number_commits 'HEAD' 'origin/knead' '0'
+    test_number_commits 'origin/knead' 'HEAD' '0'
     test_commit  $UPSTREAM_COMMIT
     popd || exit 1
 }

@@ -161,6 +161,14 @@ test_no_untracked_files() {
     fi
 }
 
+test_not_commit() {
+    echo "TEST: Check commit is not checked out"
+    if [ "$1" == "$(git rev-parse HEAD)" ]; then
+        echo "TEST: On different commit than $1"
+        exit 1
+    fi
+}
+
 test_number_commits() {
     local TO="$1"
     local FROM="$2"
