@@ -247,25 +247,17 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
         git reset --hard HEAD~1 || exit 1
         git push origin master --force || exit 1
         git pull origin master || exit 1
-        if [ "$UPSTREAM_COMMIT" == "$(git rev-parse HEAD)" ]; then
-            exit 1
-        fi
+        test_not_commit "$UPSTREAM_COMMIT"
         popd || exit 1
 
         clowder sync || exit 1
 
         pushd 'llvm/tools/clang' || exit 1
-        if [ "$UPSTREAM_COMMIT" != "$(git rev-parse HEAD)" ]; then
-            exit 1
-        fi
+        test_commit "$UPSTREAM_COMMIT"
         git reset --hard HEAD~1 || exit 1
-        if [ "$UPSTREAM_COMMIT" == "$(git rev-parse HEAD)" ]; then
-            exit 1
-        fi
+        test_not_commit "$UPSTREAM_COMMIT"
         git pull origin master
-        if [ "$UPSTREAM_COMMIT" != "$(git rev-parse HEAD)" ]; then
-            exit 1
-        fi
+        test_commit "$UPSTREAM_COMMIT"
         popd || exit 1
     }
     test_sync
@@ -288,9 +280,7 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
         git reset --hard HEAD~1 || exit 1
         git push origin master --force || exit 1
         git pull origin master || exit 1
-        if [ "$UPSTREAM_COMMIT" == "$(git rev-parse HEAD)" ]; then
-            exit 1
-        fi
+        test_not_commit "$UPSTREAM_COMMIT"
         touch rebasefile || exit 1
         git add rebasefile || exit 1
         git commit -m "$REBASE_MESSAGE" || exit 1
@@ -308,13 +298,9 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
             exit 1
         fi
         git reset --hard HEAD~1 || exit 1
-        if [ "$UPSTREAM_COMMIT" != "$(git rev-parse HEAD)" ]; then
-            exit 1
-        fi
+        test_commit "$UPSTREAM_COMMIT"
         git pull origin master
-        if [ "$UPSTREAM_COMMIT" == "$(git rev-parse HEAD)" ]; then
-            exit 1
-        fi
+        test_not_commit "$UPSTREAM_COMMIT"
         if [ "$UPSTREAM_COMMIT" != "$(git rev-parse HEAD~1)" ]; then
             exit 1
         fi
@@ -349,6 +335,65 @@ test_branch() {
     clowder branch -ag 'clang' || exit 1
 }
 test_branch
+
+test_reset() {
+    print_single_separator
+    echo "TEST: clowder reset"
+    clowder link || exit 1
+    clowder herd || exit 1
+
+    COMMIT_MESSAGE='Add new commits'
+    pushd 'llvm/tools/clang' || exit 1
+    git pull upstream master || exit 1
+    test_number_commits 'HEAD' 'upstream/master' '0'
+    UPSTREAM_COMMIT=$(git rev-parse HEAD)
+    git reset --hard HEAD~3 || exit 1
+    test_number_commits 'HEAD' 'upstream/master' '3'
+    test_not_commit "$UPSTREAM_COMMIT"
+    popd || exit 1
+
+    clowder reset || exit 1
+
+    pushd 'llvm/tools/clang' || exit 1
+    test_number_commits 'HEAD' 'upstream/master' '0'
+    test_commit  $UPSTREAM_COMMIT
+    touch file1 || exit 1
+    git add file1 || exit 1
+    git commit -m "$COMMIT_MESSAGE" || exit 1
+    touch file2 || exit 1
+    git add file2 || exit 1
+    git commit -m "$COMMIT_MESSAGE" || exit 1
+    test_number_commits 'upstream/master' 'HEAD' '2'
+    test_not_commit "$UPSTREAM_COMMIT"
+    popd || exit 1
+
+    clowder reset || exit 1
+
+    pushd 'llvm/tools/clang' || exit 1
+    test_number_commits 'HEAD' 'upstream/master' '0'
+    test_commit  $UPSTREAM_COMMIT
+    git reset --hard HEAD~3 || exit 1
+    test_number_commits 'HEAD' 'upstream/master' '3'
+    touch file1 || exit 1
+    git add file1 || exit 1
+    git commit -m "$COMMIT_MESSAGE" || exit 1
+    touch file2 || exit 1
+    git add file2 || exit 1
+    git commit -m "$COMMIT_MESSAGE" || exit 1
+    test_number_commits 'upstream/master' 'HEAD' '2'
+    test_number_commits 'HEAD' 'upstream/master' '3'
+    test_not_commit "$UPSTREAM_COMMIT"
+    popd || exit 1
+
+    clowder reset || exit 1
+
+    pushd 'llvm/tools/clang' || exit 1
+    test_number_commits 'HEAD' 'upstream/master' '0'
+    test_number_commits 'upstream/master' 'HEAD' '0'
+    test_commit  $UPSTREAM_COMMIT
+    popd || exit 1
+}
+test_reset
 
 test_help() {
     print_double_separator

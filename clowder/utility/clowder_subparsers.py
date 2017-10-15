@@ -18,6 +18,7 @@ def _configure_subparsers(subparsers, clowder, versions):
     _configure_subparser_link(subparsers, versions)
     _configure_subparser_prune(subparsers, clowder)
     _configure_subparser_repo(subparsers)
+    _configure_subparser_reset(subparsers, clowder)
     _configure_subparser_save(subparsers)
     _configure_subparser_start(subparsers, clowder)
     _configure_subparser_stash(subparsers, clowder)
@@ -324,6 +325,39 @@ def _configure_subparser_repo(subparsers):
     repo_subparsers.add_parser('push', help='Push changes in clowder repo')
     # clowder repo status
     repo_subparsers.add_parser('status', help='Print clowder repo git status')
+
+
+def _configure_subparser_reset(subparsers, clowder):
+    """Configure clowder reset subparser and arguments"""
+    reset_help = 'Reset branches to upstream commits or check out detached HEADs for tags and shas'
+    parser_reset = subparsers.add_parser('reset', help=reset_help)
+    group_reset = parser_reset.add_mutually_exclusive_group()
+    if clowder is None:
+        group_names = ''
+        project_names = ''
+    else:
+        group_names = clowder.get_all_group_names()
+        project_names = clowder.get_all_project_names()
+    if group_names == '':
+        reset_help_groups = 'groups to reset'
+    else:
+        reset_help_groups = '''
+                             groups to reset:
+                             {0}
+                             '''
+        reset_help_groups = reset_help_groups.format(', '.join(group_names))
+    group_reset.add_argument('--groups', '-g', choices=group_names, default=group_names, nargs='+', metavar='GROUP',
+                             help=reset_help_groups)
+    if project_names == '':
+        reset_help_projects = 'projects to reset'
+    else:
+        reset_help_projects = '''
+                               projects to reset:
+                               {0}
+                               '''
+        reset_help_projects = reset_help_projects.format(', '.join(project_names))
+    group_reset.add_argument('--projects', '-p', choices=project_names, nargs='+', metavar='PROJECT',
+                             help=reset_help_projects)
 
 
 def _configure_subparser_save(subparsers):

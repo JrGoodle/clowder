@@ -161,6 +161,25 @@ test_no_untracked_files() {
     fi
 }
 
+test_not_commit() {
+    echo "TEST: Check commit is not checked out"
+    if [ "$1" == "$(git rev-parse HEAD)" ]; then
+        echo "TEST: On different commit than $1"
+        exit 1
+    fi
+}
+
+test_number_commits() {
+    local TO="$1"
+    local FROM="$2"
+    local COUNT="$3"
+    echo "TEST: Check number of commits is $COUNT"
+    local commit_count
+    commit_count="$(git rev-list $TO..$FROM --count)"
+    echo "TEST: Commit count $commit_count"
+    [[ "$COUNT" = "$commit_count" ]] && echo "TEST: Correct number of commits: $COUNT" || exit 1
+}
+
 function test_commit_messages() {
     echo "TEST: Commit messages are the same"
     if [ "$1" != "$2" ]; then

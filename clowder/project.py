@@ -222,6 +222,13 @@ class Project(object):
         elif remote:
             self._prune_remote(branch)
 
+    def reset(self):
+        """Reset project branches to upstream or checkout tag/sha as detached HEAD"""
+        if self.recursive:
+            self._reset(GitSubmodules(self.full_path()))
+        else:
+            self._reset(Git(self.full_path()))
+
     def run(self, command, ignore_errors):
         """Run command or script in project directory"""
         self._print_status()
@@ -287,10 +294,11 @@ class Project(object):
         else:
             self.fork.print_status()
             repo.configure_remotes(self.remote_name, self.url, self.fork.remote_name, self.fork.url)
-            print(format_fork_string(self.fork.name))
-            repo.herd_branch(self.fork.url, self.fork.remote_name, branch, self.ref, rebase=rebase)
             print(format_fork_string(self.name))
-            repo.herd_upstream(self.url, self.remote_name, self.ref, branch=branch)
+            repo.herd_branch(self.url, self.remote_name, branch, self.ref, rebase=rebase,
+                             fork_remote=self.fork.remote_name)
+            print(format_fork_string(self.fork.name))
+            repo.herd_remote(self.fork.url, self.fork.remote_name, self.ref, branch=branch)
 
     def _herd_ref(self, repo, depth, rebase):
         """Clone project or update latest from upstream"""
@@ -300,10 +308,10 @@ class Project(object):
         else:
             self.fork.print_status()
             repo.configure_remotes(self.remote_name, self.url, self.fork.remote_name, self.fork.url)
-            print(format_fork_string(self.fork.name))
-            repo.herd(self.fork.url, self.fork.remote_name, self.ref, rebase=rebase)
             print(format_fork_string(self.name))
-            repo.herd_upstream(self.url, self.remote_name, self.ref)
+            repo.herd(self.url, self.remote_name, self.ref, rebase=rebase)
+            print(format_fork_string(self.fork.name))
+            repo.herd_remote(self.fork.url, self.fork.remote_name, self.ref)
 
     def _herd_tag(self, repo, tag, depth, rebase):
         """Clone project or update latest from upstream"""
@@ -315,10 +323,10 @@ class Project(object):
             self.fork.print_status()
             repo.configure_remotes(self.remote_name, self.url,
                                    self.fork.remote_name, self.fork.url)
-            print(format_fork_string(self.fork.name))
-            repo.herd_tag(self.fork.url, self.fork.remote_name, tag, self.ref, rebase=rebase)
             print(format_fork_string(self.name))
-            repo.herd_upstream(self.url, self.remote_name, self.ref, tag=tag)
+            repo.herd_tag(self.url, self.remote_name, tag, self.ref, rebase=rebase)
+            print(format_fork_string(self.fork.name))
+            repo.herd_remote(self.fork.url, self.fork.remote_name, self.ref)
 
     def _print_status(self):
         """Print formatted project status"""
@@ -357,15 +365,26 @@ class Project(object):
             self._print_status()
             repo.prune_branch_remote(branch, remote)
 
+    def _reset(self, repo):
+        """Clone project or update latest from upstream"""
+        if self.fork is None:
+            self._print_status()
+            repo.reset(self.remote_name, self.ref, depth=self.depth)
+        else:
+            self.fork.print_status()
+            repo.configure_remotes(self.remote_name, self.url, self.fork.remote_name, self.fork.url)
+            print(format_fork_string(self.name))
+            repo.reset(self.remote_name, self.ref)
+
     def _sync(self, repo, rebase):
         """Sync fork project with upstream"""
         self.fork.print_status()
         repo.configure_remotes(self.remote_name, self.url,
                                self.fork.remote_name, self.fork.url)
-        print(format_fork_string(self.fork.name))
-        repo.herd(self.fork.url, self.fork.remote_name, self.ref, rebase=rebase)
         print(format_fork_string(self.name))
-        repo.herd_upstream(self.url, self.remote_name, self.ref)
+        repo.herd(self.url, self.remote_name, self.ref, rebase=rebase)
+        print(format_fork_string(self.fork.name))
+        repo.herd_remote(self.fork.url, self.fork.remote_name, self.ref)
         self.fork.print_status()
         repo.sync(self.remote_name, self.fork.remote_name, self.ref, rebase=rebase)
 

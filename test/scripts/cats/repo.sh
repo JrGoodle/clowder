@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
+cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
 
 . test_utilities.sh
 prepare_cats_example
@@ -73,15 +73,11 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
         clowder repo push || exit 1
         clowder repo run 'git reset --hard HEAD~1' || exit 1
         pushd .clowder || exit 1
-        if [ "$ORIGINAL_COMMIT" != "$(git rev-parse HEAD)" ]; then
-            exit 1
-        fi
+        test_commit "$ORIGINAL_COMMIT"
         popd || exit 1
         clowder repo pull || exit 1
         pushd .clowder || exit 1
-        if [ "$NEW_COMMIT" != "$(git rev-parse HEAD)" ]; then
-            exit 1
-        fi
+        test_commit "$NEW_COMMIT"
         popd || exit 1
         clowder repo run 'git reset --hard HEAD~1' || exit 1
         clowder repo run 'git push origin repo-test --force' || exit 1

@@ -80,43 +80,43 @@ class Command(object):
 
     def cats_branch(self):
         """clowder cats branch tests"""
-        script = os.path.join(self._scripts_dir, 'test_cats_branch.sh')
+        script = os.path.join(self._scripts_dir, 'cats', 'branch.sh')
         return_code = execute_command(script, shell=True)
         sys.exit(return_code)
 
     def cats_clean(self):
         """clowder cats clean tests"""
-        script = os.path.join(self._scripts_dir, 'test_cats_clean.sh')
+        script = os.path.join(self._scripts_dir, 'cats', 'clean.sh')
         return_code = execute_command(script, shell=True)
         sys.exit(return_code)
 
     def cats_diff(self):
         """clowder cats diff tests"""
-        script = os.path.join(self._scripts_dir, 'test_cats_diff.sh')
+        script = os.path.join(self._scripts_dir, 'cats', 'diff.sh')
         return_code = execute_command(script, shell=True)
         sys.exit(return_code)
 
     def cats_forall(self):
         """clowder cats forall tests"""
-        script = os.path.join(self._scripts_dir, 'test_cats_forall.sh')
+        script = os.path.join(self._scripts_dir, 'cats', 'forall.sh')
         return_code = execute_command(script, shell=True)
         sys.exit(return_code)
 
     def cats_help(self):
         """clowder cats help tests"""
-        script = os.path.join(self._scripts_dir, 'test_cats_help.sh')
+        script = os.path.join(self._scripts_dir, 'cats', 'help.sh')
         return_code = execute_command(script, shell=True)
         sys.exit(return_code)
 
     def cats_herd_branch(self):
         """clowder cats herd branch tests"""
-        script = os.path.join(self._scripts_dir, 'test_cats_herd_branch.sh')
+        script = os.path.join(self._scripts_dir, 'cats', 'herd_branch.sh')
         return_code = execute_command(script, shell=True)
         sys.exit(return_code)
 
     def cats_herd_tag(self):
         """clowder cats herd tag tests"""
-        script = os.path.join(self._scripts_dir, 'test_cats_herd_tag.sh')
+        script = os.path.join(self._scripts_dir, 'cats', 'herd_tag.sh')
         return_code = execute_command(script, shell=True)
         sys.exit(return_code)
 
@@ -127,25 +127,25 @@ class Command(object):
             test_env["ACCESS_LEVEL"] = 'write'
         else:
             test_env["ACCESS_LEVEL"] = 'read'
-        script = os.path.join(self._scripts_dir, 'test_cats_herd.sh')
+        script = os.path.join(self._scripts_dir, 'cats', 'herd.sh')
         return_code = execute_command(script, shell=True, env=test_env)
         sys.exit(return_code)
 
     def cats_import(self):
         """clowder cats import tests"""
-        script = os.path.join(self._scripts_dir, 'test_cats_import.sh')
+        script = os.path.join(self._scripts_dir, 'cats', 'import.sh')
         return_code = execute_command(script, shell=True)
         sys.exit(return_code)
 
     def cats_init(self):
         """clowder cats init tests"""
-        script = os.path.join(self._scripts_dir, 'test_cats_init.sh')
+        script = os.path.join(self._scripts_dir, 'cats', 'init.sh')
         return_code = execute_command(script, shell=True)
         sys.exit(return_code)
 
     def cats_link(self):
         """clowder cats link tests"""
-        script = os.path.join(self._scripts_dir, 'test_cats_link.sh')
+        script = os.path.join(self._scripts_dir, 'cats', 'link.sh')
         return_code = execute_command(script, shell=True)
         sys.exit(return_code)
 
@@ -156,7 +156,7 @@ class Command(object):
             test_env["ACCESS_LEVEL"] = 'write'
         else:
             test_env["ACCESS_LEVEL"] = 'read'
-        script = os.path.join(self._scripts_dir, 'test_cats_prune.sh')
+        script = os.path.join(self._scripts_dir, 'cats', 'prune.sh')
         return_code = execute_command(script, shell=True, env=test_env)
         sys.exit(return_code)
 
@@ -167,13 +167,19 @@ class Command(object):
             test_env["ACCESS_LEVEL"] = 'write'
         else:
             test_env["ACCESS_LEVEL"] = 'read'
-        script = os.path.join(self._scripts_dir, 'test_cats_repo.sh')
+        script = os.path.join(self._scripts_dir, 'cats', 'repo.sh')
         return_code = execute_command(script, shell=True, env=test_env)
+        sys.exit(return_code)
+
+    def cats_reset(self):
+        """clowder cats reset tests"""
+        script = os.path.join(self._scripts_dir, 'cats', 'reset.sh')
+        return_code = execute_command(script, shell=True)
         sys.exit(return_code)
 
     def cats_save(self):
         """clowder cats save tests"""
-        script = os.path.join(self._scripts_dir, 'test_cats_save.sh')
+        script = os.path.join(self._scripts_dir, 'cats', 'save.sh')
         return_code = execute_command(script, shell=True)
         sys.exit(return_code)
 
@@ -184,31 +190,31 @@ class Command(object):
             test_env["ACCESS_LEVEL"] = 'write'
         else:
             test_env["ACCESS_LEVEL"] = 'read'
-        script = os.path.join(self._scripts_dir, 'test_cats_start.sh')
+        script = os.path.join(self._scripts_dir, 'cats', 'start.sh')
         return_code = execute_command(script, shell=True, env=test_env)
         sys.exit(return_code)
 
     def cats_stash(self):
         """clowder cats stash tests"""
-        script = os.path.join(self._scripts_dir, 'test_cats_stash.sh')
+        script = os.path.join(self._scripts_dir, 'cats', 'stash.sh')
         return_code = execute_command(script, shell=True)
         sys.exit(return_code)
 
     def cats_status(self):
         """clowder cats status tests"""
-        script = os.path.join(self._scripts_dir, 'test_cats_status.sh')
+        script = os.path.join(self._scripts_dir, 'cats', 'status.sh')
         return_code = execute_command(script, shell=True)
         sys.exit(return_code)
 
     def cats_yaml_validation(self):
         """clowder cats yaml validation tests"""
-        script = os.path.join(self._scripts_dir, 'test_cats_yaml_validation.sh')
+        script = os.path.join(self._scripts_dir, 'cats', 'yaml_validation.sh')
         return_code = execute_command(script, shell=True)
         sys.exit(return_code)
 
     def cats_yaml(self):
         """clowder cats yaml tests"""
-        script = os.path.join(self._scripts_dir, 'test_cats_yaml.sh')
+        script = os.path.join(self._scripts_dir, 'cats', 'yaml.sh')
         return_code = execute_command(script, shell=True)
         sys.exit(return_code)
 
@@ -231,7 +237,7 @@ class Command(object):
 
     def offline(self):
         """clowder offline tests"""
-        script = os.path.join(self._scripts_dir, 'test_cats_offline.sh')
+        script = os.path.join(self._scripts_dir, 'cats', 'offline.sh')
         return_code = execute_command(script, shell=True)
         sys.exit(return_code)
 
@@ -280,6 +286,7 @@ class Command(object):
         cats_subparser.add_parser('link', help='Run cats link tests')
         cats_subparser.add_parser('prune', help='Run cats prune tests')
         cats_subparser.add_parser('repo', help='Run cats repo tests')
+        cats_subparser.add_parser('reset', help='Run cats reset tests')
         cats_subparser.add_parser('save', help='Run cats save tests')
         cats_subparser.add_parser('start', help='Run cats start tests')
         cats_subparser.add_parser('stash', help='Run cats stash tests')
