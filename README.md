@@ -156,4 +156,4 @@ for a description of the behavior of `clowder` commands with forks
 
 ## Development
 
-See the [development doc](https://github.com/JrGoodle/clowder/blob/master/docs/development.md) for information on setting up your environment for development
+See [CONTRIBUTING.md](https://github.com/JrGoodle/clowder/blob/master/CONTRIBUTING.md) for information on setting up your environment for development and for contribution guidelines
