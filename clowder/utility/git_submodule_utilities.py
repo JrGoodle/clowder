@@ -40,9 +40,9 @@ class GitSubmodules(Git):
         Git.herd(self, url, remote, ref, depth=depth, fetch=fetch, rebase=rebase)
         self.submodule_update_recursive(depth)
 
-    def herd_branch(self, url, remote, branch, default_ref, depth=0, rebase=False):
+    def herd_branch(self, url, remote, branch, default_ref, depth=0, rebase=False, fork_remote=None):
         """Herd branch"""
-        Git.herd_branch(self, url, remote, branch, default_ref, depth=depth, rebase=rebase)
+        Git.herd_branch(self, url, remote, branch, default_ref, depth=depth, rebase=rebase, fork_remote=fork_remote)
         self.submodule_update_recursive(depth)
 
     def herd_tag(self, url, remote, tag, default_ref, depth=0, rebase=False):
