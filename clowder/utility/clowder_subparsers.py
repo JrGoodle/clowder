@@ -376,8 +376,6 @@ def _configure_subparser_save(subparsers):
 def _configure_subparser_start(subparsers, clowder):
     """Configure clowder start subparser and arguments"""
     parser_start = subparsers.add_parser('start', help='Start a new feature')
-    parser_start.add_argument('--parallel', action='store_true',
-                              help='run commands in parallel')
     parser_start.add_argument('--tracking', '-t', action='store_true',
                               help='create remote tracking branch')
     parser_start.add_argument('branch', help='name of branch to create', metavar='BRANCH')
@@ -413,8 +411,6 @@ def _configure_subparser_start(subparsers, clowder):
 def _configure_subparser_stash(subparsers, clowder):
     """Configure clowder stash subparser and arguments"""
     parser_stash = subparsers.add_parser('stash', help='Stash current changes')
-    parser_stash.add_argument('--parallel', action='store_true',
-                              help='run commands in parallel')
     group_stash = parser_stash.add_mutually_exclusive_group()
     if clowder is None:
         group_names = ''

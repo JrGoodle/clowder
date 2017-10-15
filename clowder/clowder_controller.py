@@ -376,12 +376,24 @@ class ClowderController(object):
             if group.name in group_names:
                 group.status(padding)
 
-    def sync(self, project_names, rebase=False):
+    def sync(self, project_names, rebase=False, parallel=False):
         """Sync projects"""
+        if parallel:
+            self._pool = ClowderPool()
         for group in self.groups:
             for project in group.projects:
                 if project.name in project_names:
-                    project.sync(rebase=rebase)
+                    if self._pool is None:
+                        project.sync(rebase=rebase)
+                    else:
+                        project.print_status()
+                        if project.fork is not None:
+                            print(format_fork_string(project.name))
+                            print(format_fork_string(project.fork.name))
+                        self._pool.apply_async(project.sync, {'rebase': rebase, 'print_output': False})
+        if self._pool is not None:
+            self._pool.close()
+            self._pool.join()
 
     def _existing_branch_group(self, group_names, branch, is_remote):
         """Checks whether at least one branch exists for projects in groups"""

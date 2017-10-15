@@ -380,7 +380,7 @@ class Command(object):
         if all_fork_projects == '':
             cprint(' - No forks to sync\n', 'red')
             sys.exit()
-        self.clowder.sync(all_fork_projects, rebase=self.args.rebase)
+        self.clowder.sync(all_fork_projects, rebase=self.args.rebase, parallel=self.args.parallel)
 
     def version(self):
         """clowder version command"""
