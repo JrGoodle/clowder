@@ -322,10 +322,9 @@ class Project(object):
             self.fork.print_status()
             repo.configure_remotes(self.remote_name, self.url,
                                    self.fork.remote_name, self.fork.url)
-            print(format_fork_string(self.fork.name))
-            repo.herd_tag(self.fork.url, self.fork.remote_name, tag, self.ref, rebase=rebase)
             print(format_fork_string(self.name))
-            repo.herd_upstream(self.url, self.remote_name, self.ref, tag=tag)
+            print(format_fork_string(self.fork.name))
+            repo.herd_tag(self.fork.url, self.remote_name, tag, self.ref, rebase=rebase)
 
     def _print_status(self):
         """Print formatted project status"""

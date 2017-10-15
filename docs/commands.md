@@ -9,6 +9,7 @@
 - [clowder link](#clowder-link)
 - [clowder prune](#clowder-prune)
 - [clowder repo](#clowder-repo)
+- [clowder reset](#clowder-reset)
 - [clowder save](#clowder-save)
 - [clowder start](#clowder-start)
 - [clowder stash](#clowder-stash)
@@ -265,6 +266,23 @@ $ clowder repo run 'git status'
 
 # Print clowder repo git status
 $ clowder repo status
+```
+
+---
+
+## `clowder reset`
+
+Reset branches to upstream state
+
+```bash
+# Reset branches in all projects
+$ clowder reset
+
+# Reset branches in projects in llvm group
+$ clowder reset -g llvm
+
+# Reset branches in swift project
+$ clowder reset -p apple/swift
 ```
 
 ---

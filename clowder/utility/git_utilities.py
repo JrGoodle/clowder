@@ -201,7 +201,8 @@ class Git(object):
         if self.existing_remote_branch(branch, remote):
             self.herd(url, remote, branch_ref, depth=depth, fetch=False, rebase=rebase)
             return
-        print(' - No existing remote branch ' + branch_output)
+        remote_output = format_remote_string(remote)
+        print(' - No existing remote branch ' + remote_output + ' ' + branch_output)
         fetch = depth != 0
         self.herd(url, remote, default_ref, depth=depth, fetch=fetch, rebase=rebase)
 
@@ -358,8 +359,13 @@ class Git(object):
                 print(' - Branch ' + branch_output + ' already checked out')
             else:
                 self._checkout_branch_local(branch)
+            remote_output = format_remote_string(remote)
             if not self.existing_remote_branch(branch, remote):
+                message = colored(' - No existing remote branch ', 'red')
+                print(message + remote_output + ' ' + branch_output)
                 sys.exit(1)
+            self.fetch(remote, depth=depth, ref=ref)
+            print(' - Reset branch ' + branch_output + ' to ' + remote_output + ' ' + branch_output)
             remote_branch = remote + '/' + branch
             self._reset_head(branch=remote_branch)
         elif ref_type(ref) == 'tag':
@@ -472,13 +478,14 @@ class Git(object):
     def _checkout_new_repo_branch(self, branch, remote, depth):
         """Checkout remote branch or fail and delete repo if it doesn't exist"""
         branch_output = format_ref_string(branch)
+        remote_output = format_remote_string(remote)
         origin = self._remote(remote)
         if origin is None:
             remove_directory_exit(self.repo_path)
         self.fetch(remote, depth=depth, ref=branch, remove_dir=True)
         if not self.existing_remote_branch(branch, remote):
             message = colored(' - No existing remote branch ', 'red')
-            print(message + branch_output)
+            print(message + remote_output + ' ' + branch_output)
             remove_directory_exit(self.repo_path)
         self._create_branch_local_tracking(branch, remote, depth=depth, fetch=False, remove_dir=True)
 
@@ -721,7 +728,8 @@ class Git(object):
         self._create_remote(remote, url, remove_dir=True)
         self.fetch(remote, depth=depth, ref=branch)
         if not self.existing_remote_branch(branch, remote):
-            print(' - No existing remote branch ' + format_ref_string(branch))
+            remote_output = format_remote_string(remote)
+            print(' - No existing remote branch ' + remote_output + ' ' + format_ref_string(branch))
             self._herd_initial(url, remote, default_ref, depth=depth)
             return
         self._create_branch_local_tracking(branch, remote, depth=depth, fetch=False, remove_dir=True)
@@ -861,9 +869,27 @@ class Git(object):
     def _reset_head(self, branch=None):
         """Reset head of repo, discarding changes"""
         if branch is None:
-            self.repo.head.reset(index=True, working_tree=True)
+            try:
+                self.repo.head.reset(index=True, working_tree=True)
+                return 0
+            except GitError as err:
+                message = colored(' - Failed to reset ', 'red')
+                print(message + format_ref_string('HEAD'))
+                print_error(err)
+                return 1
+            except (KeyboardInterrupt, SystemExit):
+                sys.exit(1)
         else:
-            self.repo.git.reset('--hard', branch)
+            try:
+                self.repo.git.reset('--hard', branch)
+                return 0
+            except GitError as err:
+                message = colored(' - Failed to reset to ', 'red')
+                print(message + format_ref_string(branch))
+                print_error(err)
+                return 1
+            except (KeyboardInterrupt, SystemExit):
+                sys.exit(1)
 
     def _set_tracking_branch(self, remote, branch, remove_dir=False):
         """Set tracking branch"""
