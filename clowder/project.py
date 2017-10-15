@@ -374,8 +374,7 @@ class Project(object):
             self.fork.print_status()
             repo.configure_remotes(self.remote_name, self.url, self.fork.remote_name, self.fork.url)
             print(format_fork_string(self.name))
-            print(format_fork_string(self.fork.name))
-            repo.reset(self.fork.remote_name, self.ref)
+            repo.reset(self.remote_name, self.ref)
 
     def _sync(self, repo, rebase):
         """Sync fork project with upstream"""
