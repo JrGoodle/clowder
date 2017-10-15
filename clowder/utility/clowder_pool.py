@@ -1,9 +1,10 @@
 """Git utilities"""
 
 from __future__ import print_function
-import atexit
+# import atexit
 import multiprocessing as mp
 import os
+import psutil
 import signal
 import subprocess
 import sys
@@ -13,17 +14,13 @@ import sys
 class ClowderPool(object):
     """Wrapper for multiprocessing Pool"""
 
-    pids = []
-
     def __init__(self):
-        # original_sigint_handler = signal.signal(signal.SIGINT, signal.SIG_IGN)
-        self._pool = mp.Pool()
-        # signal.signal(signal.SIGINT, original_sigint_handler)
+        self._pool = mp.Pool(initializer=worker_init)
 
     def apply_async(self, func, arguments):
         """Wrapper for Pool apply_async"""
         # with suppress_stdout():
-        self._pool.apply_async(func, kwds=arguments)  # , error_callback=self.kill_pool)
+        self._pool.apply_async(func, kwds=arguments)
 
     def close(self):
         """Wrapper for Pool close"""
@@ -36,12 +33,11 @@ class ClowderPool(object):
         if env is not None:
             cmd_env.update(env)
         try:
-            process = subprocess.Popen(" ".join(command), shell=shell, env=cmd_env, cwd=path, preexec_fn=os.setsid)
-            atexit.register(subprocess_exit_handler, process)
-            cls.pids.append(process.pid)
+            process = subprocess.Popen('exec ' + ' '.join(command), shell=shell, env=cmd_env, cwd=path)
+            # atexit.register(subprocess_exit_handler, process)
             process.communicate()
         except (KeyboardInterrupt, SystemExit):
-            os.kill(process.pid, signal.SIGTERM)
+            process.kill()
         return process.returncode
 
     @classmethod
@@ -57,30 +53,48 @@ class ClowderPool(object):
         """Wrapper for Pool join"""
         try:
             self._pool.join()
-        except (KeyboardInterrupt, SystemExit) as err:
-            self.kill_pool(err)
+        except (KeyboardInterrupt, SystemExit):
+            self._pool.terminate()
             sys.exit(1)
 
-    def kill_pool(self, err_msg):
-        """Error handler for process pool"""
-        print(err_msg)
-        for pid in self.pids:
-            try:
-                # os.kill(pid, signal.SIGTERM)
-                os.killpg(os.getpgid(pid), signal.SIGTERM)
-            except:
-                pass
-        self._pool.terminate()
+    # def kill_pool(self, err_msg):
+    #     """Error handler for process pool"""
+    #     print(err_msg)
+    #     self._pool.terminate()
 
     def terminate(self):
         """Wrapper for Pool terminate"""
         self._pool.terminate()
 
 
-def subprocess_exit_handler(process):
-    """terminate subprocess"""
-    try:
-        os.kill(process.pid, 0)
-        process.kill()
-    except:
-        pass
+# def subprocess_exit_handler(process):
+#     """terminate subprocess"""
+#     try:
+#         os.kill(process.pid, 0)
+#         process.kill()
+#     except:
+#         pass
+
+
+parent_id = os.getpid()
+
+
+
+def worker_init():
+    """
+    Process pool terminator
+    Adapted from https://stackoverflow.com/a/45259908
+    """
+    def sig_int(signal_num, frame):
+        # print('signal: %s' % signal_num)
+        parent = psutil.Process(parent_id)
+        for child in parent.children():
+            if child.pid != os.getpid():
+                # print("killing child: %s" % child.pid)
+                child.kill()
+        # print("killing parent: %s" % parent_id)
+        parent.kill()
+        # print("suicide: %s" % os.getpid())
+        psutil.Process(os.getpid()).kill()
+        print('\n\n')
+    signal.signal(signal.SIGINT, sig_int)
