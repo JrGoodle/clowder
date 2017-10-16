@@ -206,17 +206,17 @@ class Project(object):
                 if pool is None:
                     self._herd_ref(repo, herd_depth, rebase, print_output)
                 else:
-                    result = pool.apply_async(self._herd_ref, args=(repo, herd_depth, rebase, print_output))
+                    result = pool.apply_async(self._herd_ref,
+                                              args=(repo, herd_depth, rebase, print_output),
+                                              callback=self._async_callback)
             else:
                 repo = Git(self.full_path(), print_output=print_output)
                 if pool is None:
                     self._herd_ref(repo, herd_depth, rebase, print_output)
                 else:
-                    result = pool.apply_async(self._herd_ref, args=(repo, herd_depth, rebase, print_output))
-        if result is not None:
-            if not result.success():
-                pool.terminate()
-                sys.exit(1)
+                    result = pool.apply_async(self._herd_ref,
+                                              args=(repo, herd_depth, rebase, print_output),
+                                              callback=self._async_callback)
 
     def is_dirty(self):
         """Check if project is dirty"""
@@ -489,3 +489,13 @@ class Project(object):
         repo.herd_remote(self.fork.url, self.fork.remote_name, self.ref)
         self.fork.print_status()
         repo.sync(self.remote_name, self.fork.remote_name, self.ref, rebase=rebase)
+
+    def _async_callback(self, val):
+        """Prune remote branch"""
+        print('something')
+        # if self._result is not None:
+        #     self._result.get()
+        #     if not self._result.successful():
+        #         cprint(' - Commands failed', 'red')
+        #         self._pool.terminate()
+        #         sys.exit(1)

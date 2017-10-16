@@ -16,9 +16,9 @@ class ClowderPool(object):
     def __init__(self):
         self._pool = mp.Pool(initializer=worker_init)
 
-    def apply_async(self, func, args):
+    def apply_async(self, func, args, callback):
         """Wrapper for Pool apply_async"""
-        return self._pool.apply_async(func, args=args)
+        return self._pool.apply_async(func, args=args, callback=callback)
 
     def close(self):
         """Wrapper for Pool close"""
