@@ -4,10 +4,9 @@ from __future__ import print_function
 # import atexit
 import multiprocessing as mp
 import os
-import psutil
 import signal
-import subprocess
 import sys
+import psutil
 from termcolor import cprint
 
 
@@ -19,7 +18,7 @@ class ClowderPool(object):
 
     def apply_async(self, func, args):
         """Wrapper for Pool apply_async"""
-        self._pool.apply_async(func, args=args)
+        return self._pool.apply_async(func, args=args)
 
     def close(self):
         """Wrapper for Pool close"""
@@ -35,7 +34,8 @@ class ClowderPool(object):
 
     def terminate(self, err):
         """Wrapper for Pool terminate"""
-        cprint(" - Commands terminated", 'red')
+        cprint(" - Command terminated", 'red')
+        print(err)
         self._pool.terminate()
 
 
@@ -48,7 +48,7 @@ class ClowderPool(object):
 #         pass
 
 
-parent_id = os.getpid()
+PARENT_ID = os.getpid()
 
 
 def worker_init():
@@ -57,8 +57,9 @@ def worker_init():
     Adapted from https://stackoverflow.com/a/45259908
     """
     def sig_int(signal_num, frame):
+        """Signal handler"""
         # print('signal: %s' % signal_num)
-        parent = psutil.Process(parent_id)
+        parent = psutil.Process(PARENT_ID)
         for child in parent.children():
             if child.pid != os.getpid():
                 # print("killing child: %s" % child.pid)
