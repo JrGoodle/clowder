@@ -8,6 +8,7 @@ import signal
 import sys
 import psutil
 from termcolor import cprint
+from clowder.exception.clowder_git_exception import ClowderGitException
 
 
 class ClowderPool(object):
@@ -16,9 +17,9 @@ class ClowderPool(object):
     def __init__(self):
         self._pool = mp.Pool(initializer=worker_init)
 
-    def apply_async(self, func, args, callback):
+    def apply_async(self, func, args=(), kwds={}, callback=None, error_callback=None):
         """Wrapper for Pool apply_async"""
-        return self._pool.apply_async(func, args=args, callback=callback)
+        return self._pool.apply_async(func, args=args, kwds=kwds, callback=callback, error_callback=error_callback)
 
     def close(self):
         """Wrapper for Pool close"""
@@ -28,7 +29,7 @@ class ClowderPool(object):
         """Wrapper for Pool join"""
         try:
             self._pool.join()
-        except (KeyboardInterrupt, SystemExit):
+        except (KeyboardInterrupt, SystemExit, ClowderGitException):
             self._pool.terminate()
             sys.exit(1)
 
