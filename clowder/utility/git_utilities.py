@@ -6,8 +6,8 @@ import subprocess
 import sys
 from git import Repo, GitError
 from termcolor import colored, cprint
-from clowder.utility.clowder_pool import ClowderPool
 from clowder.utility.clowder_utilities import (
+    execute_command,
     existing_git_repository,
     is_offline,
     ref_type,
@@ -142,7 +142,7 @@ class Git(object):
                 message = colored(' - Failed to fetch from ', 'red')
                 error = message + remote_output + ' ' + ref_output
                 command = ['git', 'fetch', remote, truncate_ref(ref), '--depth', str(depth), '--prune', '--tags']
-        return_code = ClowderPool.execute_command(command, self.repo_path, print_output=self.print_output)
+        return_code = execute_command(command, self.repo_path, print_output=self.print_output)
         if return_code != 0:
             if self.print_output:
                 print(error)
@@ -284,7 +284,7 @@ class Git(object):
             command = ['git', 'branch', '-r']
         else:
             return
-        return_code = ClowderPool.execute_command(command, self.repo_path, print_output=self.print_output)
+        return_code = execute_command(command, self.repo_path, print_output=self.print_output)
         if return_code != 0:
             if self.print_output:
                 cprint(' - Failed to print branches', 'red')
@@ -444,7 +444,7 @@ class Git(object):
         if self.print_output:
             print(' - Push to ' + fork_remote_output + ' ' + branch_output)
         command = ['git', 'push', fork_remote, truncate_ref(ref)]
-        return_code = ClowderPool.execute_command(command, self.repo_path, print_output=self.print_output)
+        return_code = execute_command(command, self.repo_path, print_output=self.print_output)
         if return_code != 0:
             if self.print_output:
                 message = colored(' - Failed to push to ', 'red')
@@ -889,7 +889,7 @@ class Git(object):
         if self.print_output:
             print(' - Pull from ' + remote_output + ' ' + branch_output)
         command = ['git', 'pull', remote, branch]
-        return_code = ClowderPool.execute_command(command, self.repo_path, print_output=self.print_output)
+        return_code = execute_command(command, self.repo_path, print_output=self.print_output)
         if return_code != 0:
             if self.print_output:
                 message = colored(' - Failed to pull from ', 'red')
@@ -908,7 +908,7 @@ class Git(object):
         if self.print_output:
             print(' - Rebase onto ' + remote_output + ' ' + branch_output)
         command = ['git', 'pull', '--rebase', remote, branch]
-        return_code = ClowderPool.execute_command(command, self.repo_path, print_output=self.print_output)
+        return_code = execute_command(command, self.repo_path, print_output=self.print_output)
         if return_code != 0:
             if self.print_output:
                 message = colored(' - Failed to rebase onto ', 'red')

@@ -78,15 +78,7 @@ class Group(object):
         """Sync all projects with latest upstream changes"""
         self._print_name()
         for project in self.projects:
-            if pool is None:
-                project.herd(branch=branch, tag=tag, depth=depth, rebase=rebase)
-            else:
-                project.print_status()
-                if project.fork is not None:
-                    print(format_fork_string(project.name))
-                    print(format_fork_string(project.fork.name))
-                arguments = {'branch': branch, 'tag': tag, 'depth': depth, 'rebase': rebase, 'print_output': False}
-                pool.apply_async(project.herd, arguments)
+            project.herd(branch=branch, tag=tag, depth=depth, rebase=rebase, pool=pool)
 
     def is_dirty(self):
         """Check if group has dirty project(s)"""
@@ -141,14 +133,7 @@ class Group(object):
         """Reset project branches to upstream or checkout tag/sha as detached HEAD"""
         self._print_name()
         for project in self.projects:
-            if pool is None:
-                project.reset()
-            else:
-                project.print_status()
-                if project.fork is not None:
-                    print(format_fork_string(project.name))
-                    print(format_fork_string(project.fork.name))
-                self._pool.apply_async(project.reset, {'print_output': False})
+            project.reset(pool=pool)
 
     def start(self, branch, tracking):
         """Start a new feature branch"""

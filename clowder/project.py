@@ -5,8 +5,8 @@ import os
 import sys
 from termcolor import cprint
 from clowder.fork import Fork
-from clowder.utility.clowder_pool import ClowderPool
 from clowder.utility.clowder_utilities import (
+    execute_forall_command,
     existing_git_repository,
     is_offline
 )
@@ -81,9 +81,11 @@ class Project(object):
             cprint(" - Project is missing\n", 'red')
             return
         if self.recursive and recursive:
-            _clean(GitSubmodules(self.full_path()), args=args)
+            repo = GitSubmodules(self.full_path())
+            repo.clean(args=args)
         else:
-            _clean(Git(self.full_path()), args=args)
+            repo = Git(self.full_path())
+            repo.clean(args=args)
 
     def clean_all(self):
         """Discard all changes for project"""
@@ -92,9 +94,11 @@ class Project(object):
             cprint(" - Project is missing\n", 'red')
             return
         if self.recursive:
-            _clean(GitSubmodules(self.full_path()), args='fdx')
+            repo = GitSubmodules(self.full_path())
+            repo.clean(args='fdx')
         else:
-            _clean(Git(self.full_path()), args='fdx')
+            repo = Git(self.full_path())
+            repo.clean(args='fdx')
 
     def diff(self):
         """Show git diff for project"""
@@ -159,8 +163,11 @@ class Project(object):
             project['fork'] = fork_yaml
         return project
 
-    def herd(self, branch=None, tag=None, depth=None, rebase=False, print_output=True):
+    def herd(self, branch=None, tag=None, depth=None, rebase=False, pool=None):
         """Clone project or update latest from upstream"""
+
+        print_output = pool is None
+
         if depth is None:
             herd_depth = self.depth
         else:
@@ -168,25 +175,43 @@ class Project(object):
 
         if branch is not None:
             if self.recursive:
-                self._herd_branch(GitSubmodules(self.full_path(), print_output=print_output),
-                                  branch, herd_depth, rebase, print_output=print_output)
+                repo = GitSubmodules(self.full_path(), print_output=print_output)
+                if pool is None:
+                    self._herd_branch(repo, branch, herd_depth, rebase, print_output)
+                else:
+                    pool.apply_async(self._herd_branch, (repo, branch, herd_depth, rebase, print_output))
             else:
-                self._herd_branch(Git(self.full_path(), print_output=print_output),
-                                  branch, herd_depth, rebase, print_output=print_output)
+                repo = Git(self.full_path(), print_output=print_output)
+                if pool is None:
+                    self._herd_branch(repo, branch, herd_depth, rebase, print_output)
+                else:
+                    pool.apply_async(self._herd_branch, (repo, branch, herd_depth, rebase, print_output))
         elif tag is not None:
             if self.recursive:
-                self._herd_tag(GitSubmodules(self.full_path(), print_output=print_output),
-                               tag, herd_depth, rebase, print_output=print_output)
+                repo = GitSubmodules(self.full_path(), print_output=print_output)
+                if pool is None:
+                    self._herd_tag(repo, tag, herd_depth, rebase, print_output)
+                else:
+                    pool.apply_async(self._herd_tag, (repo, tag, herd_depth, rebase, print_output))
             else:
-                self._herd_tag(Git(self.full_path(), print_output=print_output),
-                               tag, herd_depth, rebase, print_output=print_output)
+                repo = Git(self.full_path(), print_output=print_output)
+                if pool is None:
+                    self._herd_tag(repo, tag, herd_depth, rebase, print_output)
+                else:
+                    pool.apply_async(self._herd_tag, (repo, tag, herd_depth, rebase, print_output))
         else:
             if self.recursive:
-                self._herd_ref(GitSubmodules(self.full_path(), print_output=print_output),
-                               herd_depth, rebase, print_output=print_output)
+                repo = GitSubmodules(self.full_path(), print_output=print_output)
+                if pool is None:
+                    self._herd_ref(repo, herd_depth, rebase, print_output)
+                else:
+                    pool.apply_async(self._herd_ref, (repo, herd_depth, rebase, print_output))
             else:
-                self._herd_ref(Git(self.full_path(), print_output=print_output),
-                               herd_depth, rebase, print_output=print_output)
+                repo = Git(self.full_path(), print_output=print_output)
+                if pool is None:
+                    self._herd_ref(repo, herd_depth, rebase, print_output)
+                else:
+                    pool.apply_async(self._herd_ref, (repo, herd_depth, rebase, print_output))
 
     def is_dirty(self):
         """Check if project is dirty"""
@@ -237,15 +262,27 @@ class Project(object):
         elif remote:
             self._prune_remote(branch)
 
-    def reset(self):
+    def reset(self, pool=None):
         """Reset project branches to upstream or checkout tag/sha as detached HEAD"""
-        if self.recursive:
-            self._reset(GitSubmodules(self.full_path()))
-        else:
-            self._reset(Git(self.full_path()))
+        print_output = pool is not None
 
-    def run(self, command, ignore_errors, print_output=True):
+        if self.recursive:
+            repo = GitSubmodules(self.full_path(), print_output=print_output)
+            if pool is None:
+                self._reset(repo)
+            else:
+                pool.apply_async(self._reset, (repo))
+        else:
+            repo = Git(self.full_path(), print_output=print_output)
+            if pool is None:
+                self._reset(repo)
+            else:
+                pool.apply_async(self._reset, (repo))
+
+    def run(self, command, ignore_errors, pool=None):
         """Run command or script in project directory"""
+        print_output = pool is not None
+
         if print_output:
             self.print_status()
         if not os.path.isdir(self.full_path()):
@@ -254,18 +291,25 @@ class Project(object):
             return
         if print_output:
             print(format_command(command))
-        if self.fork is None:
-            fork_remote = None
+
+        forall_env = {'CLOWDER_PATH': self.root_directory,
+                      'PROJECT_PATH': self.full_path(),
+                      'PROJECT_NAME': self.name,
+                      'PROJECT_REMOTE': self.remote_name,
+                      'PROJECT_REF': self.ref}
+        if self.fork is not None:
+            forall_env['FORK_REMOTE'] = self.fork.remote_name
+
+        if pool is None:
+            return_code = execute_forall_command(command.split(),
+                                                 self.full_path(),
+                                                 forall_env,
+                                                 print_output)
         else:
-            fork_remote = self.fork.remote_name
-        return_code = ClowderPool.execute_forall_command(command.split(),
-                                                         self.full_path(),
-                                                         self.root_directory,
-                                                         self.name,
-                                                         self.remote_name,
-                                                         fork_remote,
-                                                         self.ref,
-                                                         print_output=print_output)
+            return_code = pool.apply_async(execute_forall_command, (command.split(),
+                                                                    self.full_path(),
+                                                                    forall_env,
+                                                                    print_output))
         if not ignore_errors:
             if return_code != 0:
                 print_command_failed_error(command)
@@ -297,16 +341,24 @@ class Project(object):
             repo = Git(self.full_path())
             repo.stash()
 
-    def sync(self, rebase=False, print_output=True):
+    def sync(self, rebase=False, pool=None):
         """Sync fork project with upstream"""
-        if self.recursive:
-            self._sync(GitSubmodules(self.full_path(), print_output=print_output),
-                       rebase, print_output=print_output)
-        else:
-            self._sync(Git(self.full_path(), print_output=print_output),
-                       rebase, print_output=print_output)
+        print_output = pool is not None
 
-    def _herd_branch(self, repo, branch, depth, rebase, print_output=True):
+        if self.recursive:
+            repo = GitSubmodules(self.full_path(), print_output=print_output)
+            if pool is None:
+                self._sync(repo, rebase, print_output)
+            else:
+                pool.apply_async(self._sync, (repo, rebase, print_output))
+        else:
+            repo = Git(self.full_path(), print_output=print_output)
+            if pool is None:
+                self._sync(repo, rebase, print_output)
+            else:
+                pool.apply_async(self._sync, (repo, rebase, print_output))
+
+    def _herd_branch(self, repo, branch, depth, rebase, print_output):
         """Clone project or update latest from upstream"""
         if self.fork is None:
             if print_output:
@@ -389,7 +441,7 @@ class Project(object):
             self.print_status()
             repo.prune_branch_remote(branch, remote)
 
-    def _reset(self, repo):
+    def _reset(self, repo, print_output=True):
         """Clone project or update latest from upstream"""
         if self.fork is None:
             self.print_status()
@@ -397,10 +449,11 @@ class Project(object):
         else:
             self.fork.print_status()
             repo.configure_remotes(self.remote_name, self.url, self.fork.remote_name, self.fork.url)
-            print(format_fork_string(self.name))
+            if print_output:
+                print(format_fork_string(self.name))
             repo.reset(self.remote_name, self.ref)
 
-    def _sync(self, repo, rebase, print_output=True):
+    def _sync(self, repo, rebase, print_output):
         """Sync fork project with upstream"""
         if print_output:
             self.fork.print_status()
@@ -414,8 +467,3 @@ class Project(object):
         repo.herd_remote(self.fork.url, self.fork.remote_name, self.ref)
         self.fork.print_status()
         repo.sync(self.remote_name, self.fork.remote_name, self.ref, rebase=rebase)
-
-
-def _clean(repo, args=''):
-    """Discard changes for project"""
-    repo.clean(args=args)

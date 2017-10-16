@@ -4,8 +4,10 @@ from __future__ import print_function
 import os
 import sys
 from termcolor import colored, cprint
-from clowder.utility.clowder_pool import ClowderPool
-from clowder.utility.clowder_utilities import existing_git_repository
+from clowder.utility.clowder_utilities import (
+    execute_command,
+    existing_git_repository
+)
 from clowder.utility.git_utilities import Git
 from clowder.utility.print_utilities import (
     format_command,
@@ -58,7 +60,7 @@ def print_git_status(repo_path):
     """Print git status"""
     command = ['git', 'status', '-vv']
     print(format_command(command))
-    return_code = ClowderPool.execute_command(command, repo_path)
+    return_code = execute_command(command, repo_path)
     if return_code != 0:
         cprint(' - Failed to print status', 'red')
         print_command_failed_error(command)

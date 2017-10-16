@@ -115,42 +115,15 @@ class ClowderController(object):
         for group in self.groups:
             if group_names is None and project_names is None:
                 for project in group.projects:
-                    if self._pool is None:
-                        project.run(command, ignore_errors)
-                    else:
-                        project.print_status()
-                        if not os.path.isdir(project.full_path()):
-                            cprint(" - Project is missing\n", 'red')
-                            return
-                        print(format_command(command))
-                        arguments = {'command': command, 'ignore_errors': ignore_errors, 'print_output': False}
-                        self._pool.apply_async(project.run, arguments)
+                    project.run(command, ignore_errors, pool=self._pool)
             elif project_names is None:
                 if group.name in group_names:
                     for project in group.projects:
-                        if self._pool is None:
-                            project.run(command, ignore_errors)
-                        else:
-                            project.print_status()
-                            if not os.path.isdir(project.full_path()):
-                                cprint(" - Project is missing\n", 'red')
-                                return
-                            print(format_command(command))
-                            arguments = {'command': command, 'ignore_errors': ignore_errors, 'print_output': False}
-                            self._pool.apply_async(project.run, arguments)
+                        project.run(command, ignore_errors, pool=self._pool)
             else:
                 for project in group.projects:
                     if project.name in project_names:
-                        if self._pool is None:
-                            project.run(command, ignore_errors)
-                        else:
-                            project.print_status()
-                            if not os.path.isdir(project.full_path()):
-                                cprint(" - Project is missing\n", 'red')
-                                return
-                            print(format_command(command))
-                            arguments = {'command': command, 'ignore_errors': ignore_errors, 'print_output': False}
-                            self._pool.apply_async(project.run, arguments)
+                        project.run(command, ignore_errors, pool=self._pool)
         if self._pool is not None:
             self._pool.close()
             self._pool.join()
@@ -218,16 +191,7 @@ class ClowderController(object):
             for group in self.groups:
                 for project in group.projects:
                     if project.name in project_names:
-                        if self._pool is None:
-                            project.herd(branch=branch, tag=tag, depth=depth, rebase=rebase)
-                        else:
-                            project.print_status()
-                            if project.fork is not None:
-                                print(format_fork_string(project.name))
-                                print(format_fork_string(project.fork.name))
-                            arguments = {'branch': branch, 'tag': tag, 'depth': depth,
-                                         'rebase': rebase, 'print_output': False}
-                            self._pool.apply_async(project.herd, arguments)
+                        project.herd(branch=branch, tag=tag, depth=depth, rebase=rebase, pool=self._pool)
         if self._pool is not None:
             self._pool.close()
             self._pool.join()
@@ -309,14 +273,7 @@ class ClowderController(object):
             for group in self.groups:
                 for project in group.projects:
                     if project.name in project_names:
-                        if self._pool is None:
-                            project.reset()
-                        else:
-                            project.print_status()
-                            if project.fork is not None:
-                                print(format_fork_string(project.name))
-                                print(format_fork_string(project.fork.name))
-                            self._pool.apply_async(project.reset, {'print_output': False})
+                        project.reset(pool=self._pool)
         if self._pool is not None:
             self._pool.close()
             self._pool.join()
@@ -383,14 +340,7 @@ class ClowderController(object):
         for group in self.groups:
             for project in group.projects:
                 if project.name in project_names:
-                    if self._pool is None:
-                        project.sync(rebase=rebase)
-                    else:
-                        project.print_status()
-                        if project.fork is not None:
-                            print(format_fork_string(project.name))
-                            print(format_fork_string(project.fork.name))
-                        self._pool.apply_async(project.sync, {'rebase': rebase, 'print_output': False})
+                    project.sync(rebase=rebase, pool=self._pool)
         if self._pool is not None:
             self._pool.close()
             self._pool.join()

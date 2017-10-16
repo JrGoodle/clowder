@@ -4,8 +4,10 @@ from __future__ import print_function
 import sys
 from git import GitError
 from termcolor import cprint
-from clowder.utility.clowder_pool import ClowderPool
-from clowder.utility.clowder_utilities import existing_git_repository
+from clowder.utility.clowder_utilities import (
+    execute_command,
+    existing_git_repository
+)
 from clowder.utility.git_utilities import Git
 from clowder.utility.print_utilities import (
     print_command_failed_error,
@@ -62,7 +64,7 @@ class GitSubmodules(Git):
             command = ['git', 'submodule', 'update', '--init', '--recursive']
         else:
             command = ['git', 'submodule', 'update', '--init', '--recursive', '--depth', depth]
-        return_code = ClowderPool.execute_command(command, self.repo_path)
+        return_code = execute_command(command, self.repo_path)
         if return_code != 0:
             if self.print_output:
                 cprint(' - Failed to update submodules', 'red')

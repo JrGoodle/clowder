@@ -1,11 +1,11 @@
 """Clowder utilities"""
 
 from __future__ import print_function
-from contextlib import contextmanager
 import errno
 import os
 import shutil
 import socket
+import subprocess
 import sys
 import yaml
 from termcolor import colored, cprint
@@ -18,6 +18,29 @@ from clowder.utility.print_utilities import (
     print_open_file_error,
     print_save_file_error
 )
+
+
+def execute_command(command, path, shell=True, env=None, print_output=True):
+    """Run subprocess command"""
+    cmd_env = os.environ.copy()
+    if env is not None:
+        cmd_env.update(env)
+    try:
+        if print_output:
+            process = subprocess.Popen('exec ' + ' '.join(command), shell=shell, env=cmd_env, cwd=path)
+        else:
+            process = subprocess.Popen('exec ' + ' '.join(command), shell=shell, env=cmd_env, cwd=path,
+                                       stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        # atexit.register(subprocess_exit_handler, process)
+        process.communicate()
+    except (KeyboardInterrupt, SystemExit):
+        process.kill()
+    return process.returncode
+
+
+def execute_forall_command(command, path, forall_env, print_output):
+    """Execute forall command with additional environment variables and display continuous output"""
+    return execute_command(command, path, shell=True, env=forall_env, print_output=print_output)
 
 
 def existing_git_repository(path):
