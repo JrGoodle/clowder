@@ -290,7 +290,7 @@ class Git(object):
             if self.print_output:
                 cprint(' - Failed to print branches', 'red')
                 print_command_failed_error(command)
-            sys.exit(return_code)
+            raise ClowderGitException
 
     def prune_branch_local(self, branch, default_ref, force):
         """Prune branch in repository"""
@@ -358,7 +358,7 @@ class Git(object):
             if not self.existing_local_branch(branch):
                 return_code = self._create_branch_local_tracking(branch, remote, depth=depth, fetch=True)
                 if return_code != 0:
-                    sys.exit(return_code)
+                    raise ClowderGitException
                 return
             elif self._is_branch_checked_out(branch):
                 branch_output = format_ref_string(branch)
@@ -396,13 +396,13 @@ class Git(object):
             if not is_offline():
                 return_code = self.fetch(remote, depth=depth, ref=branch)
                 if return_code != 0:
-                    sys.exit(return_code)
+                    raise ClowderGitException
             return_code = self._create_branch_local(branch)
             if return_code != 0:
-                sys.exit(return_code)
+                raise ClowderGitException
             return_code = self._checkout_branch_local(branch)
             if return_code != 0:
-                sys.exit(return_code)
+                raise ClowderGitException
         else:
             branch_output = format_ref_string(branch)
             if self.print_output:
@@ -414,7 +414,7 @@ class Git(object):
             else:
                 return_code = self._checkout_branch_local(branch)
                 if return_code != 0:
-                    sys.exit(return_code)
+                    raise ClowderGitException
         if tracking and not is_offline():
             self._create_branch_remote_tracking(branch, remote, depth)
 
@@ -451,7 +451,7 @@ class Git(object):
                 message = colored(' - Failed to push to ', 'red')
                 print(message + fork_remote_output + ' ' + branch_output)
                 print_command_failed_error(command)
-            sys.exit(return_code)
+            raise ClowderGitException
 
     def validate_repo(self):
         """Validate repo state"""
@@ -693,7 +693,7 @@ class Git(object):
             raise ClowderGitException
         return_code = self.fetch(remote, depth=depth, ref=branch)
         if return_code != 0:
-            sys.exit(return_code)
+            raise ClowderGitException
         if branch in origin.refs:
             try:
                 self.repo.git.config('--get', 'branch.' + branch + '.merge')
@@ -714,7 +714,7 @@ class Git(object):
             self.repo.git.push(remote, branch)
             return_code = self._set_tracking_branch(remote, branch)
             if return_code != 0:
-                sys.exit(return_code)
+                raise ClowderGitException
         except GitError as err:
             if self.print_output:
                 message = colored(' - Failed to push remote branch ', 'red')
@@ -763,7 +763,7 @@ class Git(object):
             if not self.existing_local_branch(branch):
                 return_code = self._create_branch_local_tracking(branch, remote, depth=depth, fetch=fetch)
                 if return_code != 0:
-                    sys.exit(return_code)
+                    raise ClowderGitException
                 return
             elif self._is_branch_checked_out(branch):
                 branch_output = format_ref_string(branch)
@@ -896,7 +896,7 @@ class Git(object):
                 message = colored(' - Failed to pull from ', 'red')
                 print(message + remote_output + ' ' + branch_output)
                 print_command_failed_error(command)
-            sys.exit(return_code)
+            raise ClowderGitException
 
     def _rebase_remote_branch(self, remote, branch):
         """Rebase from remote branch"""
@@ -915,7 +915,7 @@ class Git(object):
                 message = colored(' - Failed to rebase onto ', 'red')
                 print(message + remote_output + ' ' + branch_output)
                 print_command_failed_error(command)
-            sys.exit(return_code)
+            raise ClowderGitException
 
     def _remote(self, remote):
         """Get remote"""
@@ -1026,7 +1026,7 @@ class Git(object):
             sys.exit(1)
         return_code = self.fetch(remote, depth=depth, ref=branch)
         if return_code != 0:
-            sys.exit(return_code)
+            raise ClowderGitException
         if not self.existing_local_branch(branch):
             if self.print_output:
                 message_1 = colored(' - No local branch ', 'red')
@@ -1047,7 +1047,7 @@ class Git(object):
             raise ClowderGitException
         return_code = self._set_tracking_branch(remote, branch)
         if return_code != 0:
-            sys.exit(return_code)
+            raise ClowderGitException
 
     def _untracked_files(self):
         """Execute command and display continuous output"""
