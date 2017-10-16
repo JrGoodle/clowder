@@ -215,6 +215,7 @@ class Project(object):
                     result = pool.apply_async(self._herd_ref, args=(repo, herd_depth, rebase, print_output))
         if result is not None:
             if not result.success():
+                pool.terminate()
                 sys.exit(1)
 
     def is_dirty(self):
@@ -285,6 +286,7 @@ class Project(object):
                 result = pool.apply_async(self._reset, args=(repo))
         if result is not None:
             if not result.success():
+                pool.terminate()
                 sys.exit(1)
 
     def run(self, command, ignore_errors, pool=None):
@@ -327,6 +329,7 @@ class Project(object):
             if not ignore_errors:
                 if result is not None:
                     if not result.success():
+                        pool.terminate()
                         sys.exit(1)
 
     def start(self, branch, tracking):
@@ -374,6 +377,7 @@ class Project(object):
                 result = pool.apply_async(self._sync, args=(repo, rebase, print_output))
         if result is not None:
             if not result.success():
+                pool.terminate()
                 sys.exit(1)
 
     def _herd_branch(self, repo, branch, depth, rebase, print_output):

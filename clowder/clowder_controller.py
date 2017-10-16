@@ -6,7 +6,7 @@ import sys
 from termcolor import cprint
 from clowder.group import Group
 from clowder.source import Source
-from clowder.utility.clowder_exception import ClowderException
+from clowder.exception.clowder_exception import ClowderException
 from clowder.utility.clowder_pool import ClowderPool
 from clowder.utility.clowder_utilities import (
     get_yaml_string,

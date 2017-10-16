@@ -10,7 +10,7 @@ import colorama
 from termcolor import cprint, colored
 from clowder.clowder_repo import ClowderRepo
 from clowder.clowder_controller import ClowderController
-from clowder.utility.clowder_exception import ClowderException
+from clowder.exception.clowder_exception import ClowderException
 from clowder.utility.clowder_subparsers import configure_argparse
 from clowder.utility.clowder_utilities import is_offline
 from clowder.utility.print_utilities import (

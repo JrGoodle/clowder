@@ -1,6 +1,6 @@
 """Clowder yaml validation"""
 
-from clowder.utility.clowder_exception import ClowderException
+from clowder.exception.clowder_exception import ClowderException
 from clowder.utility.clowder_utilities import parse_yaml
 from clowder.utility.print_utilities import (
     format_depth_error,
