@@ -115,14 +115,32 @@ class ClowderController(object):
         for group in self.groups:
             if group_names is None and project_names is None:
                 for project in group.projects:
+                    if parallel:
+                        project.print_status()
+                        if not os.path.isdir(project.full_path()):
+                            cprint(" - Project is missing\n", 'red')
+                            return
+                        print(format_command(command))
                     project.run(command, ignore_errors, pool=self._pool)
             elif project_names is None:
                 if group.name in group_names:
                     for project in group.projects:
+                        if parallel:
+                            project.print_status()
+                            if not os.path.isdir(project.full_path()):
+                                cprint(" - Project is missing\n", 'red')
+                                return
+                            print(format_command(command))
                         project.run(command, ignore_errors, pool=self._pool)
             else:
                 for project in group.projects:
                     if project.name in project_names:
+                        if parallel:
+                            project.print_status()
+                            if not os.path.isdir(project.full_path()):
+                                cprint(" - Project is missing\n", 'red')
+                                return
+                            print(format_command(command))
                         project.run(command, ignore_errors, pool=self._pool)
         if self._pool is not None:
             self._pool.close()
@@ -191,6 +209,11 @@ class ClowderController(object):
             for group in self.groups:
                 for project in group.projects:
                     if project.name in project_names:
+                        if parallel:
+                            project.print_status()
+                            if project.fork is not None:
+                                print(format_fork_string(project.name))
+                                print(format_fork_string(project.fork.name))
                         project.herd(branch=branch, tag=tag, depth=depth, rebase=rebase, pool=self._pool)
         if self._pool is not None:
             self._pool.close()
@@ -273,6 +296,11 @@ class ClowderController(object):
             for group in self.groups:
                 for project in group.projects:
                     if project.name in project_names:
+                        if parallel:
+                            project.print_status()
+                            if project.fork is not None:
+                                print(format_fork_string(project.name))
+                                print(format_fork_string(project.fork.name))
                         project.reset(pool=self._pool)
         if self._pool is not None:
             self._pool.close()
@@ -340,6 +368,11 @@ class ClowderController(object):
         for group in self.groups:
             for project in group.projects:
                 if project.name in project_names:
+                    if parallel:
+                        project.print_status()
+                        if project.fork is not None:
+                            print(format_fork_string(project.name))
+                            print(format_fork_string(project.fork.name))
                     project.sync(rebase=rebase, pool=self._pool)
         if self._pool is not None:
             self._pool.close()

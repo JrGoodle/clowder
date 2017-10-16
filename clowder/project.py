@@ -268,7 +268,7 @@ class Project(object):
 
     def reset(self, pool=None):
         """Reset project branches to upstream or checkout tag/sha as detached HEAD"""
-        print_output = pool is not None
+        print_output = pool is None
 
         result = None
         if self.recursive:
@@ -289,7 +289,7 @@ class Project(object):
 
     def run(self, command, ignore_errors, pool=None):
         """Run command or script in project directory"""
-        print_output = pool is not None
+        print_output = pool is None
 
         if print_output:
             self.print_status()
@@ -357,7 +357,7 @@ class Project(object):
 
     def sync(self, rebase=False, pool=None):
         """Sync fork project with upstream"""
-        print_output = pool is not None
+        print_output = pool is None
 
         result = None
         if self.recursive:

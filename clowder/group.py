@@ -78,6 +78,11 @@ class Group(object):
         """Sync all projects with latest upstream changes"""
         self._print_name()
         for project in self.projects:
+            if pool is not None:
+                project.print_status()
+                if project.fork is not None:
+                    print(format_fork_string(project.name))
+                    print(format_fork_string(project.fork.name))
             project.herd(branch=branch, tag=tag, depth=depth, rebase=rebase, pool=pool)
 
     def is_dirty(self):
@@ -133,6 +138,11 @@ class Group(object):
         """Reset project branches to upstream or checkout tag/sha as detached HEAD"""
         self._print_name()
         for project in self.projects:
+            if pool is not None:
+                project.print_status()
+                if project.fork is not None:
+                    print(format_fork_string(project.name))
+                    print(format_fork_string(project.fork.name))
             project.reset(pool=pool)
 
     def start(self, branch, tracking):
