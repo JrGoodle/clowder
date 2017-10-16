@@ -173,45 +173,49 @@ class Project(object):
         else:
             herd_depth = depth
 
+        result = None
         if branch is not None:
             if self.recursive:
                 repo = GitSubmodules(self.full_path(), print_output=print_output)
                 if pool is None:
                     self._herd_branch(repo, branch, herd_depth, rebase, print_output)
                 else:
-                    pool.apply_async(self._herd_branch, (repo, branch, herd_depth, rebase, print_output))
+                    result = pool.apply_async(self._herd_branch, args=(repo, branch, herd_depth, rebase, print_output))
             else:
                 repo = Git(self.full_path(), print_output=print_output)
                 if pool is None:
                     self._herd_branch(repo, branch, herd_depth, rebase, print_output)
                 else:
-                    pool.apply_async(self._herd_branch, (repo, branch, herd_depth, rebase, print_output))
+                    result = pool.apply_async(self._herd_branch, args=(repo, branch, herd_depth, rebase, print_output))
         elif tag is not None:
             if self.recursive:
                 repo = GitSubmodules(self.full_path(), print_output=print_output)
                 if pool is None:
                     self._herd_tag(repo, tag, herd_depth, rebase, print_output)
                 else:
-                    pool.apply_async(self._herd_tag, (repo, tag, herd_depth, rebase, print_output))
+                    result = pool.apply_async(self._herd_tag, args=(repo, tag, herd_depth, rebase, print_output))
             else:
                 repo = Git(self.full_path(), print_output=print_output)
                 if pool is None:
                     self._herd_tag(repo, tag, herd_depth, rebase, print_output)
                 else:
-                    pool.apply_async(self._herd_tag, (repo, tag, herd_depth, rebase, print_output))
+                    result = pool.apply_async(self._herd_tag, args=(repo, tag, herd_depth, rebase, print_output))
         else:
             if self.recursive:
                 repo = GitSubmodules(self.full_path(), print_output=print_output)
                 if pool is None:
                     self._herd_ref(repo, herd_depth, rebase, print_output)
                 else:
-                    pool.apply_async(self._herd_ref, (repo, herd_depth, rebase, print_output))
+                    result = pool.apply_async(self._herd_ref, args=(repo, herd_depth, rebase, print_output))
             else:
                 repo = Git(self.full_path(), print_output=print_output)
                 if pool is None:
                     self._herd_ref(repo, herd_depth, rebase, print_output)
                 else:
-                    pool.apply_async(self._herd_ref, (repo, herd_depth, rebase, print_output))
+                    result = pool.apply_async(self._herd_ref, args=(repo, herd_depth, rebase, print_output))
+        if result is not None:
+            if not result.success():
+                sys.exit(1)
 
     def is_dirty(self):
         """Check if project is dirty"""
@@ -266,18 +270,22 @@ class Project(object):
         """Reset project branches to upstream or checkout tag/sha as detached HEAD"""
         print_output = pool is not None
 
+        result = None
         if self.recursive:
             repo = GitSubmodules(self.full_path(), print_output=print_output)
             if pool is None:
                 self._reset(repo)
             else:
-                pool.apply_async(self._reset, (repo))
+                result = pool.apply_async(self._reset, args=(repo))
         else:
             repo = Git(self.full_path(), print_output=print_output)
             if pool is None:
                 self._reset(repo)
             else:
-                pool.apply_async(self._reset, (repo))
+                result = pool.apply_async(self._reset, args=(repo))
+        if result is not None:
+            if not result.success():
+                sys.exit(1)
 
     def run(self, command, ignore_errors, pool=None):
         """Run command or script in project directory"""
@@ -300,20 +308,26 @@ class Project(object):
         if self.fork is not None:
             forall_env['FORK_REMOTE'] = self.fork.remote_name
 
+        result = None
+
         if pool is None:
             return_code = execute_forall_command(command.split(),
                                                  self.full_path(),
                                                  forall_env,
                                                  print_output)
+            if not ignore_errors:
+                if return_code != 0:
+                    print_command_failed_error(command)
+                    sys.exit(return_code)
         else:
-            return_code = pool.apply_async(execute_forall_command, (command.split(),
+            result = pool.apply_async(execute_forall_command, args=(command.split(),
                                                                     self.full_path(),
                                                                     forall_env,
                                                                     print_output))
-        if not ignore_errors:
-            if return_code != 0:
-                print_command_failed_error(command)
-                sys.exit(return_code)
+            if not ignore_errors:
+                if result is not None:
+                    if not result.success():
+                        sys.exit(1)
 
     def start(self, branch, tracking):
         """Start a new feature branch"""
@@ -345,18 +359,22 @@ class Project(object):
         """Sync fork project with upstream"""
         print_output = pool is not None
 
+        result = None
         if self.recursive:
             repo = GitSubmodules(self.full_path(), print_output=print_output)
             if pool is None:
                 self._sync(repo, rebase, print_output)
             else:
-                pool.apply_async(self._sync, (repo, rebase, print_output))
+                result = pool.apply_async(self._sync, args=(repo, rebase, print_output))
         else:
             repo = Git(self.full_path(), print_output=print_output)
             if pool is None:
                 self._sync(repo, rebase, print_output)
             else:
-                pool.apply_async(self._sync, (repo, rebase, print_output))
+                result = pool.apply_async(self._sync, args=(repo, rebase, print_output))
+        if result is not None:
+            if not result.success():
+                sys.exit(1)
 
     def _herd_branch(self, repo, branch, depth, rebase, print_output):
         """Clone project or update latest from upstream"""
