@@ -498,7 +498,8 @@ class Project(object):
         if print_output:
             print(format_fork_string(self.fork.name))
         repo.herd_remote(self.fork.url, self.fork.remote_name, self.ref)
-        self.fork.print_status()
+        if print_output:
+            self.fork.print_status()
         repo.sync(self.remote_name, self.fork.remote_name, self.ref, rebase=rebase)
 
     def _async_callback(self, val):
