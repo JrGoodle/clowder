@@ -1,3 +1,12 @@
+# 2.4.0
+
+- Add `clowder reset` command
+- Add `-t`/`--tag` option to `clowder herd`
+- Refactor exception handling
+- Add support for Python 2
+- Add `-r`/`--rebase` option to `clowder herd`
+- Add `clowder-test` test script runner for more easily running various tests
+
 # 2.3.0
 
 - Add more options to `clowder clean` (`-f`, `-x`, -X`, `-d`, `-r`, `-a`)
