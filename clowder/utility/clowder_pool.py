@@ -30,6 +30,7 @@ class ClowderPool(object):
         try:
             self._pool.join()
         except (KeyboardInterrupt, SystemExit, ClowderGitException):
+            print('\n')
             self._pool.terminate()
             sys.exit(1)
 

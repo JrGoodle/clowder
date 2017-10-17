@@ -769,13 +769,16 @@ class Git(object):
         """Herd ref"""
         if ref_type(ref) == 'branch':
             branch = truncate_ref(ref)
+            branch_output = format_ref_string(branch)
             if not self.existing_local_branch(branch):
                 return_code = self._create_branch_local_tracking(branch, remote, depth=depth, fetch=fetch)
                 if return_code != 0:
-                    raise ClowderGitException(msg=colored(' - Failed to create tracking branch', 'red'))
+                    if self.print_output:
+                        sys.exit(1)
+                    message = colored(' - Failed to create tracking branch ', 'red')
+                    raise ClowderGitException(msg=message + branch_output)
                 return
             elif self._is_branch_checked_out(branch):
-                branch_output = format_ref_string(branch)
                 if self.print_output:
                     print(' - Branch ' + branch_output + ' already checked out')
             else:
@@ -1038,15 +1041,17 @@ class Git(object):
         if return_code != 0:
             raise ClowderGitException(msg=colored(' - Failed to fech', 'red'))
         if not self.existing_local_branch(branch):
+            message_1 = colored(' - No local branch ', 'red')
             if self.print_output:
-                message_1 = colored(' - No local branch ', 'red')
                 print(message_1 + branch_output + '\n')
-            raise ClowderGitException(msg=colored(' - No local branch', 'red'))
+                sys.exit(1)
+            raise ClowderGitException(msg=message_1 + branch_output + '\n')
         if not self.existing_remote_branch(branch, remote):
+            message_1 = colored(' - No remote branch ', 'red')
             if self.print_output:
-                message_1 = colored(' - No remote branch ', 'red')
                 print(message_1 + branch_output + '\n')
-            raise ClowderGitException(msg=colored(' - No remote branch', 'red'))
+                sys.exit(1)
+            raise ClowderGitException(msg=message_1 + branch_output + '\n')
         local_branch = self.repo.heads[branch]
         remote_branch = origin.refs[branch]
         if local_branch.commit != remote_branch.commit:
@@ -1054,9 +1059,12 @@ class Git(object):
             message_2 = colored(' on different commit', 'red')
             if self.print_output:
                 print(message_1 + branch_output + message_2 + '\n')
+                sys.exit(1)
             raise ClowderGitException(msg=message_1 + branch_output + message_2 + '\n')
         return_code = self._set_tracking_branch(remote, branch)
         if return_code != 0:
+            if self.print_output:
+                sys.exit(1)
             raise ClowderGitException(msg=colored(' - Failed to set tracking branch', 'red'))
 
     def _untracked_files(self):

@@ -27,9 +27,9 @@ def execute_command(command, path, shell=True, env=None, print_output=True):
         cmd_env.update(env)
     try:
         if print_output:
-            process = subprocess.Popen('exec ' + ' '.join(command), shell=shell, env=cmd_env, cwd=path)
+            process = subprocess.Popen(' '.join(command), shell=shell, env=cmd_env, cwd=path)
         else:
-            process = subprocess.Popen('exec ' + ' '.join(command), shell=shell, env=cmd_env, cwd=path,
+            process = subprocess.Popen(' '.join(command), shell=shell, env=cmd_env, cwd=path,
                                        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         # atexit.register(subprocess_exit_handler, process)
         process.communicate()
