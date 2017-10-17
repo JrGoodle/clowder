@@ -356,26 +356,12 @@ class ClowderController(object):
     def _existing_branch_group(self, group_names, branch, is_remote):
         """Checks whether at least one branch exists for projects in groups"""
         projects = [p for g in self.groups if g.name in group_names for p in g.projects]
-        for project in projects:
-            if is_remote:
-                if project.existing_branch(branch, is_remote=True):
-                    return True
-            else:
-                if project.existing_branch(branch, is_remote=False):
-                    return True
-        return False
+        return any([p.existing_branch(branch, is_remote=is_remote) for p in projects])
 
     def _existing_branch_project(self, project_names, branch, is_remote):
         """Checks whether at least one branch exists for projects"""
         projects = [p for g in self.groups for p in g.projects if p.name in project_names]
-        for project in projects:
-            if is_remote:
-                if project.existing_branch(branch, is_remote=True):
-                    return True
-            else:
-                if project.existing_branch(branch, is_remote=False):
-                    return True
-        return False
+        return any([p.existing_branch(branch, is_remote=is_remote) for p in projects])
 
     def _fetch_groups(self, group_names):
         """Fetch all projects for specified groups"""
