@@ -187,8 +187,8 @@ class ClowderController(object):
                     for project in group.projects:
                         project.print_status()
                         if project.fork is not None:
-                            print(format_fork_string(project.name))
-                            print(format_fork_string(project.fork.name))
+                            print('  ' + format_fork_string(project.name))
+                            print('  ' + format_fork_string(project.fork.name))
             for group in self.groups:
                 group.herd(branch=branch, tag=tag, depth=depth, rebase=rebase, pool=self._pool)
         elif project_names is None:
@@ -200,8 +200,8 @@ class ClowderController(object):
                     for project in group.projects:
                         project.print_status()
                         if project.fork is not None:
-                            print(format_fork_string(project.name))
-                            print(format_fork_string(project.fork.name))
+                            print('  ' + format_fork_string(project.name))
+                            print('  ' + format_fork_string(project.fork.name))
             for group in groups:
                 group.herd(branch=branch, tag=tag, depth=depth, rebase=rebase, pool=self._pool)
         else:
@@ -211,8 +211,8 @@ class ClowderController(object):
                 for project in projects:
                     project.print_status()
                     if project.fork is not None:
-                        print(format_fork_string(project.name))
-                        print(format_fork_string(project.fork.name))
+                        print('  ' + format_fork_string(project.name))
+                        print('  ' + format_fork_string(project.fork.name))
             for project in projects:
                 project.herd(branch=branch, tag=tag, depth=depth, rebase=rebase, pool=self._pool)
         if self._pool is not None:
@@ -286,8 +286,8 @@ class ClowderController(object):
                     for project in group.projects:
                         project.print_status()
                         if project.fork is not None:
-                            print(format_fork_string(project.name))
-                            print(format_fork_string(project.fork.name))
+                            print('  ' + format_fork_string(project.name))
+                            print('  ' + format_fork_string(project.fork.name))
             for group in self.groups:
                 group.reset(pool=self._pool)
         elif project_names is None:
@@ -299,8 +299,8 @@ class ClowderController(object):
                     for project in group.projects:
                         project.print_status()
                         if project.fork is not None:
-                            print(format_fork_string(project.name))
-                            print(format_fork_string(project.fork.name))
+                            print('  ' + format_fork_string(project.name))
+                            print('  ' + format_fork_string(project.fork.name))
             for group in groups:
                 group.reset(pool=self._pool)
         else:
@@ -310,8 +310,8 @@ class ClowderController(object):
                 for project in projects:
                     project.print_status()
                     if project.fork is not None:
-                        print(format_fork_string(project.name))
-                        print(format_fork_string(project.fork.name))
+                        print('  ' + format_fork_string(project.name))
+                        print('  ' + format_fork_string(project.fork.name))
             for project in projects:
                 project.reset(pool=self._pool)
         if self._pool is not None:
@@ -383,8 +383,8 @@ class ClowderController(object):
             for project in projects:
                 project.print_status()
                 if project.fork is not None:
-                    print(format_fork_string(project.name))
-                    print(format_fork_string(project.fork.name))
+                    print('  ' + format_fork_string(project.name))
+                    print('  ' + format_fork_string(project.fork.name))
         for project in projects:
             project.sync(rebase=rebase, pool=self._pool)
         if self._pool is not None:
