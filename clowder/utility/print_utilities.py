@@ -150,6 +150,11 @@ def format_not_bool_error(name, yaml_file):
     return output_1 + output_2 + output_3 + output_4 + output_5
 
 
+def format_parallel_exception_error(path, *args):
+    """Return formatted error string for parallel exception"""
+    return format_path(path) + '\n' + ''.join(args)
+
+
 def format_path(path):
     """Return formatted path"""
     return colored(path, 'cyan')

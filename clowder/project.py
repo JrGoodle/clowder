@@ -506,10 +506,11 @@ class Project(object):
         """Prune remote branch"""
         result = RESULTS[id(self)]
         if result is not None:
-            print('Successful callback')
+            pass
 
     def _async_error_callback(self, err):
         """Prune remote branch"""
         result = RESULTS[id(self)]
         if result is not None:
+            print()
             cprint(err, 'red')

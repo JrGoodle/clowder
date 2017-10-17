@@ -132,7 +132,7 @@ def ref_type(ref):
     return 'unknown'
 
 
-def remove_directory_exit(path):
+def remove_directory(path):
     """Remove directory at path"""
     try:
         shutil.rmtree(path)
@@ -140,9 +140,6 @@ def remove_directory_exit(path):
         message = colored(" - Failed to remove directory ", 'red')
         print(message + format_path(path))
     except (KeyboardInterrupt, SystemExit):
-        sys.exit(1)
-    finally:
-        print()
         sys.exit(1)
 
 
