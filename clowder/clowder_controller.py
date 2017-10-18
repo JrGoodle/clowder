@@ -379,6 +379,7 @@ class ClowderController(object):
     def _forall_parallel(command, ignore_errors, projects):
         """Runs command or script in project directories specified"""
         print(' - Run forall commands in parallel\n')
+        global PROGRESS
         for project in projects:
             project.print_status()
             if not os.path.isdir(project.full_path()):
@@ -387,7 +388,11 @@ class ClowderController(object):
             print(format_command(command))
             result = POOL.apply_async(project.run, args=(command, ignore_errors, False))
             RESULTS.append(result)
+        print()
+        PROGRESS = tqdm(total=len(projects))
         pool_handler()
+        if PROGRESS is not None:
+            PROGRESS.close()
 
     def _get_yaml(self):
         """Return python object representation for saving yaml"""
@@ -503,6 +508,7 @@ class ClowderController(object):
     def _reset_parallel(self, group_names, project_names=None):
         """Reset project branches to upstream or checkout tag/sha as detached HEAD in parallel"""
         print(' - Reset projects in parallel\n')
+        global PROGRESS
         if project_names is None:
             self._validate_groups(group_names)
             groups = [g for g in self.groups if g.name in group_names]
@@ -517,7 +523,10 @@ class ClowderController(object):
             for project in projects:
                 result = POOL.apply_async(project.reset, args=(False,))
                 RESULTS.append(result)
+            PROGRESS = tqdm(total=len(projects))
             pool_handler()
+            if PROGRESS is not None:
+                PROGRESS.close()
             return
         self._validate_projects(project_names)
         projects = [p for g in self.groups for p in g.projects if p.name in project_names]
@@ -529,12 +538,16 @@ class ClowderController(object):
         for project in projects:
             result = POOL.apply_async(project.reset, args=(False,))
             RESULTS.append(result)
+        PROGRESS = tqdm(total=len(projects))
         pool_handler()
+        if PROGRESS is not None:
+            PROGRESS.close()
 
     @staticmethod
     def _sync_parallel(projects, rebase=False):
         """Sync projects in parallel"""
         print(' - Sync forks in parallel\n')
+        global PROGRESS
         for project in projects:
             project.print_status()
             if project.fork is not None:
@@ -543,7 +556,10 @@ class ClowderController(object):
         for project in projects:
             result = POOL.apply_async(project.sync, args=(rebase, False))
             RESULTS.append(result)
+        PROGRESS = tqdm(total=len(projects))
         pool_handler()
+        if PROGRESS is not None:
+            PROGRESS.close()
 
     def _validate_groups(self, group_names):
         """Validate status of all projects for specified groups"""
