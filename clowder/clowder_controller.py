@@ -159,10 +159,7 @@ class ClowderController(object):
                     cprint(" - Project is missing\n", 'red')
                     continue
                 print(format_command(command))
-                result = POOL.apply_async(project.run,
-                                          args=(command, ignore_errors, False),
-                                          callback=async_callback,
-                                          error_callback=async_error_callback)
+                result = POOL.apply_async(project.run, args=(command, ignore_errors, False))
                 RESULTS.append(result)
             else:
                 project.run(command, ignore_errors)
@@ -226,10 +223,7 @@ class ClowderController(object):
                             print('  ' + format_fork_string(project.name))
                             print('  ' + format_fork_string(project.fork.name))
                 for project in projects:
-                    result = POOL.apply_async(project.herd,
-                                              args=(branch, tag, depth, rebase, False),
-                                              callback=async_callback,
-                                              error_callback=async_error_callback)
+                    result = POOL.apply_async(project.herd, args=(branch, tag, depth, rebase, False))
                     RESULTS.append(result)
             else:
                 for project in projects:
@@ -244,10 +238,7 @@ class ClowderController(object):
                         print('  ' + format_fork_string(project.name))
                         print('  ' + format_fork_string(project.fork.name))
                 for project in projects:
-                    result = POOL.apply_async(project.herd,
-                                              args=(branch, tag, depth, rebase, False),
-                                              callback=async_callback,
-                                              error_callback=async_error_callback)
+                    result = POOL.apply_async(project.herd, args=(branch, tag, depth, rebase, False))
                     RESULTS.append(result)
             else:
                 for project in projects:
@@ -326,10 +317,7 @@ class ClowderController(object):
                             print('  ' + format_fork_string(project.name))
                             print('  ' + format_fork_string(project.fork.name))
                 for project in projects:
-                    result = POOL.apply_async(project.reset,
-                                              args=(False,),
-                                              callback=async_callback,
-                                              error_callback=async_error_callback)
+                    result = POOL.apply_async(project.reset, args=(False,))
                     RESULTS.append(result)
             else:
                 for group in groups:
@@ -346,10 +334,7 @@ class ClowderController(object):
                         print('  ' + format_fork_string(project.name))
                         print('  ' + format_fork_string(project.fork.name))
                 for project in projects:
-                    result = POOL.apply_async(project.reset,
-                                              args=(False,),
-                                              callback=async_callback,
-                                              error_callback=async_error_callback)
+                    result = POOL.apply_async(project.reset, args=(False,))
                     RESULTS.append(result)
             else:
                 for project in projects:
@@ -425,10 +410,7 @@ class ClowderController(object):
                     print('  ' + format_fork_string(project.fork.name))
         for project in projects:
             if parallel:
-                result = POOL.apply_async(project.sync,
-                                          args=(rebase, False),
-                                          callback=async_callback,
-                                          error_callback=async_error_callback)
+                result = POOL.apply_async(project.sync, args=(rebase, False))
                 RESULTS.append(result)
             else:
                 project.sync(rebase=rebase)
@@ -586,18 +568,6 @@ class ClowderController(object):
         self._validate_yaml(yaml_file, max_import_depth - 1)
 
 
-def async_callback(val):
-    """Prune remote branch"""
-    pass
-
-
-def async_error_callback(err):
-    """Prune remote branch"""
-    print()
-    cprint(err, 'red')
-    # POOL.terminate()
-
-
 def pool_handler():
     """Prune remote branch"""
     try:
@@ -612,7 +582,11 @@ def pool_handler():
                 result.get()
                 if not result.successful():
                     print()
+                    cprint(' - Command failed', 'red')
+                    print()
                     sys.exit(1)
-            except:
+            except Exception as err:
+                print()
+                cprint(err, 'red')
                 print()
                 sys.exit(1)
