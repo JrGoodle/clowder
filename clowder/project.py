@@ -368,28 +368,14 @@ class Project(object):
             repo = Git(self.full_path())
             repo.stash()
 
-    def sync(self, rebase=False, pool=None):
+    def sync(self, rebase=False, print_output=True):
         """Sync fork project with upstream"""
-        print_output = pool is None
-
         if self.recursive:
             repo = GitSubmodules(self.full_path(), print_output=print_output)
-            if pool is None:
-                self._sync(repo, rebase, print_output)
-            else:
-                RESULTS[id(self)] = pool.apply_async(self._sync,
-                                                     args=(repo, rebase, print_output),
-                                                     callback=self._async_callback,
-                                                     error_callback=self._async_error_callback)
+            self._sync(repo, rebase, print_output)
         else:
             repo = Git(self.full_path(), print_output=print_output)
-            if pool is None:
-                self._sync(repo, rebase, print_output)
-            else:
-                RESULTS[id(self)] = pool.apply_async(self._sync,
-                                                     args=(repo, rebase, print_output),
-                                                     callback=self._async_callback,
-                                                     error_callback=self._async_error_callback)
+            self._sync(repo, rebase, print_output)
 
     def _herd_branch(self, repo, branch, depth, rebase, print_output):
         """Clone project or update latest from upstream"""
