@@ -68,6 +68,26 @@ POOL = mp.Pool(initializer=worker_init)
 PROGRESS = None
 
 
+def herd(project, branch, tag, depth, rebase, print_output):
+    """Clone project or update latest from upstream"""
+    project.herd(branch=branch, tag=tag, depth=depth, rebase=rebase, print_output=print_output)
+
+
+def reset(project, print_output):
+    """Reset project branches to upstream or checkout tag/sha as detached HEAD"""
+    project.reset(print_output=print_output)
+
+
+def run(project, command, ignore_errors, print_output):
+    """Run command or script in project directory"""
+    project.run(command, ignore_errors, print_output=print_output)
+
+
+def sync(project, rebasee, print_output):
+    """Sync fork project with upstream"""
+    project.sync(rebasee, print_output=print_output)
+
+
 class ClowderController(object):
     """Class encapsulating project information from clowder.yaml for controlling clowder"""
 
@@ -386,7 +406,7 @@ class ClowderController(object):
                 cprint(" - Project is missing\n", 'red')
                 continue
             print(format_command(command))
-            result = POOL.apply_async(project.run, args=(command, ignore_errors, False))
+            result = POOL.apply_async(run, args=(project, command, ignore_errors, False))
             RESULTS.append(result)
         print()
         PROGRESS = tqdm(total=len(projects))
@@ -423,7 +443,7 @@ class ClowderController(object):
                     print('  ' + format_fork_string(project.name))
                     print('  ' + format_fork_string(project.fork.name))
             for project in projects:
-                result = POOL.apply_async(project.herd, args=(branch, tag, depth, rebase, False),
+                result = POOL.apply_async(herd, args=(project, branch, tag, depth, rebase, False),
                                           callback=async_callback)
                 RESULTS.append(result)
             print()
@@ -443,7 +463,7 @@ class ClowderController(object):
                     print('  ' + format_fork_string(project.name))
                     print('  ' + format_fork_string(project.fork.name))
         for project in projects:
-            result = POOL.apply_async(project.herd, args=(branch, tag, depth, rebase, False),
+            result = POOL.apply_async(herd, args=(project, branch, tag, depth, rebase, False),
                                       callback=async_callback)
             RESULTS.append(result)
         print()
@@ -521,7 +541,7 @@ class ClowderController(object):
                         print('  ' + format_fork_string(project.name))
                         print('  ' + format_fork_string(project.fork.name))
             for project in projects:
-                result = POOL.apply_async(project.reset, args=(False,))
+                result = POOL.apply_async(reset, args=(project, False))
                 RESULTS.append(result)
             PROGRESS = tqdm(total=len(projects))
             pool_handler()
@@ -536,7 +556,7 @@ class ClowderController(object):
                 print('  ' + format_fork_string(project.name))
                 print('  ' + format_fork_string(project.fork.name))
         for project in projects:
-            result = POOL.apply_async(project.reset, args=(False,))
+            result = POOL.apply_async(reset, args=(project, False))
             RESULTS.append(result)
         PROGRESS = tqdm(total=len(projects))
         pool_handler()
@@ -554,7 +574,7 @@ class ClowderController(object):
                 print('  ' + format_fork_string(project.name))
                 print('  ' + format_fork_string(project.fork.name))
         for project in projects:
-            result = POOL.apply_async(project.sync, args=(rebase, False))
+            result = POOL.apply_async(sync, args=(project, rebase, False))
             RESULTS.append(result)
         PROGRESS = tqdm(total=len(projects))
         pool_handler()
