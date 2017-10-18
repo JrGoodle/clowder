@@ -33,5 +33,5 @@ setup(
             'clowder=clowder.cmd:main',
         ]
     },
-    install_requires=['argcomplete', 'colorama', 'GitPython', 'PyYAML', 'termcolor', 'psutil']
+    install_requires=['argcomplete', 'colorama', 'GitPython', 'PyYAML', 'termcolor', 'psutil', 'tqdm']
 )
