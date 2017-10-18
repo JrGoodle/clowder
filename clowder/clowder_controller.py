@@ -277,7 +277,6 @@ class ClowderController(object):
         if project_names is None:
             self._validate_groups(group_names)
             groups = [g for g in self.groups if g.name in group_names]
-            projects = [p for g in self.groups if g.name in group_names for p in g.projects]
             for group in groups:
                 group.print_name()
                 for project in group.projects:
@@ -375,7 +374,8 @@ class ClowderController(object):
         for project in projects:
             project.fetch_all()
 
-    def _forall_parallel(self, command, ignore_errors, projects):
+    @staticmethod
+    def _forall_parallel(command, ignore_errors, projects):
         """Runs command or script in project directories specified"""
         print(' - Run forall commands in parallel\n')
         for project in projects:
@@ -434,7 +434,6 @@ class ClowderController(object):
             result = POOL.apply_async(project.herd, args=(branch, tag, depth, rebase, False))
             RESULTS.append(result)
         pool_handler()
-
 
     def _is_dirty(self):
         """Check if there are any dirty projects"""
@@ -520,7 +519,8 @@ class ClowderController(object):
             RESULTS.append(result)
         pool_handler()
 
-    def _sync_parallel(self, projects, rebase=False):
+    @staticmethod
+    def _sync_parallel(projects, rebase=False):
         """Sync projects in parallel"""
         print(' - Sync forks in parallel\n')
         for project in projects:
