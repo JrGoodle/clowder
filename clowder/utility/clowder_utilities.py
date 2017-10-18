@@ -23,7 +23,7 @@ from clowder.utility.print_utilities import (
 def execute_command(command, path, shell=True, env=None, print_output=True):
     """Run subprocess command"""
     cmd_env = os.environ.copy()
-    if env is not None:
+    if env:
         cmd_env.update(env)
     try:
         if print_output:

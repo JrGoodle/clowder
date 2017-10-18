@@ -196,7 +196,7 @@ class Git(object):
             if self.existing_remote_branch(branch, remote):
                 self._herd_remote_branch(remote, branch, depth=depth, rebase=rebase)
                 return
-            if fork_remote is not None:
+            if fork_remote:
                 self.fetch(fork_remote, depth=depth, ref=branch_ref)
                 if self.existing_remote_branch(branch, fork_remote):
                     self._herd_remote_branch(fork_remote, branch, depth=depth, rebase=rebase)
@@ -209,7 +209,7 @@ class Git(object):
             remote_output = format_remote_string(remote)
             if self.print_output:
                 print(' - No existing remote branch ' + remote_output + ' ' + branch_output)
-        if fork_remote is not None:
+        if fork_remote:
             self.fetch(fork_remote, depth=depth, ref=branch_ref)
             if self.existing_remote_branch(branch, fork_remote):
                 self._herd(fork_remote, branch_ref, depth=depth, fetch=False, rebase=rebase)
@@ -245,7 +245,7 @@ class Git(object):
         return_code = self._create_remote(remote, url)
         if return_code != 0:
             raise ClowderGitException(msg=colored(' - Failed to create remote', 'red'))
-        if branch is not None:
+        if branch:
             return_code = self.fetch(remote, ref=branch)
             if return_code == 0:
                 return

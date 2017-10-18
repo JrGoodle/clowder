@@ -189,7 +189,7 @@ class Command(object):
 
     def init(self):
         """clowder init command"""
-        if self.clowder_repo is not None:
+        if self.clowder_repo:
             cprint('Clowder already initialized in this directory\n', 'red')
             sys.exit(1)
         if is_offline():

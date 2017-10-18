@@ -361,7 +361,7 @@ def exit_unrecognized_command(parser):
 def execute_command(command, shell=False, env=None):
     """Run subprocess command"""
     cmd_env = os.environ.copy()
-    if env is not None:
+    if env:
         cmd_env.update(env)
     try:
         process = subprocess.Popen(command, shell=shell, env=cmd_env)

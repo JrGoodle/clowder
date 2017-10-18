@@ -158,7 +158,7 @@ class Project(object):
                    'ref': ref,
                    'remote': self.remote_name,
                    'source': self.source.name}
-        if self.fork is not None:
+        if self.fork:
             fork_yaml = self.fork.get_yaml()
             project['fork'] = fork_yaml
         return project
@@ -171,14 +171,14 @@ class Project(object):
         else:
             herd_depth = depth
 
-        if branch is not None:
+        if branch:
             if self.recursive:
                 repo = GitSubmodules(self.full_path(), print_output=print_output)
                 self._herd_branch(repo, branch, herd_depth, rebase, print_output)
             else:
                 repo = Git(self.full_path(), print_output=print_output)
                 self._herd_branch(repo, branch, herd_depth, rebase, print_output)
-        elif tag is not None:
+        elif tag:
             if self.recursive:
                 repo = GitSubmodules(self.full_path(), print_output=print_output)
                 self._herd_tag(repo, tag, herd_depth, rebase, print_output)
@@ -269,7 +269,7 @@ class Project(object):
                       'PROJECT_NAME': self.name,
                       'PROJECT_REMOTE': self.remote_name,
                       'PROJECT_REF': self.ref}
-        if self.fork is not None:
+        if self.fork:
             forall_env['FORK_REMOTE'] = self.fork.remote_name
 
         return_code = execute_forall_command(command.split(),

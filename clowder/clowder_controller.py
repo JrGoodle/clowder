@@ -167,7 +167,7 @@ class ClowderController(object):
 
     def get_all_fork_project_names(self):
         """Returns all project names containing forks"""
-        project_names = sorted([p.name for g in self.groups for p in g.projects if p.fork is not None])
+        project_names = sorted([p.name for g in self.groups for p in g.projects if p.fork])
         if not project_names:
             return ''
         return project_names
@@ -396,7 +396,7 @@ class ClowderController(object):
         print()
         PROGRESS = tqdm(total=len(projects))
         pool_handler()
-        if PROGRESS is not None:
+        if PROGRESS:
             PROGRESS.close()
 
     def _get_yaml(self):
@@ -424,7 +424,7 @@ class ClowderController(object):
             projects = [p for g in self.groups for p in g.projects if p.name in project_names]
             for project in projects:
                 project.print_status()
-                if project.fork is not None:
+                if project.fork:
                     print('  ' + format_fork_string(project.name))
                     print('  ' + format_fork_string(project.fork.name))
             for project in projects:
@@ -434,7 +434,7 @@ class ClowderController(object):
             print()
             PROGRESS = tqdm(total=len(projects))
             pool_handler()
-            if PROGRESS is not None:
+            if PROGRESS:
                 PROGRESS.close()
             return
         self._validate_groups(group_names)
@@ -444,7 +444,7 @@ class ClowderController(object):
             group.print_name()
             for project in group.projects:
                 project.print_status()
-                if project.fork is not None:
+                if project.fork:
                     print('  ' + format_fork_string(project.name))
                     print('  ' + format_fork_string(project.fork.name))
         for project in projects:
@@ -454,7 +454,7 @@ class ClowderController(object):
         print()
         PROGRESS = tqdm(total=len(projects))
         pool_handler()
-        if PROGRESS is not None:
+        if PROGRESS:
             PROGRESS.close()
 
     def _is_dirty(self):
@@ -522,7 +522,7 @@ class ClowderController(object):
                 group.print_name()
                 for project in group.projects:
                     project.print_status()
-                    if project.fork is not None:
+                    if project.fork:
                         print('  ' + format_fork_string(project.name))
                         print('  ' + format_fork_string(project.fork.name))
             for project in projects:
@@ -530,14 +530,14 @@ class ClowderController(object):
                 RESULTS.append(result)
             PROGRESS = tqdm(total=len(projects))
             pool_handler()
-            if PROGRESS is not None:
+            if PROGRESS:
                 PROGRESS.close()
             return
         self._validate_projects(project_names)
         projects = [p for g in self.groups for p in g.projects if p.name in project_names]
         for project in projects:
             project.print_status()
-            if project.fork is not None:
+            if project.fork:
                 print('  ' + format_fork_string(project.name))
                 print('  ' + format_fork_string(project.fork.name))
         for project in projects:
@@ -545,7 +545,7 @@ class ClowderController(object):
             RESULTS.append(result)
         PROGRESS = tqdm(total=len(projects))
         pool_handler()
-        if PROGRESS is not None:
+        if PROGRESS:
             PROGRESS.close()
 
     @staticmethod
@@ -555,7 +555,7 @@ class ClowderController(object):
         global PROGRESS
         for project in projects:
             project.print_status()
-            if project.fork is not None:
+            if project.fork:
                 print('  ' + format_fork_string(project.name))
                 print('  ' + format_fork_string(project.fork.name))
         for project in projects:
@@ -563,7 +563,7 @@ class ClowderController(object):
             RESULTS.append(result)
         PROGRESS = tqdm(total=len(projects))
         pool_handler()
-        if PROGRESS is not None:
+        if PROGRESS:
             PROGRESS.close()
 
     def _validate_groups(self, group_names):
@@ -628,7 +628,7 @@ class ClowderController(object):
 
 def async_callback(val):
     """Increment async progress bar"""
-    if PROGRESS is not None:
+    if PROGRESS:
         PROGRESS.update()
 
 
@@ -639,7 +639,7 @@ def pool_handler():
         POOL.join()
     except (KeyboardInterrupt, SystemExit):
         print()
-        if PROGRESS is not None:
+        if PROGRESS:
             PROGRESS.close()
         sys.exit(1)
     else:
@@ -647,14 +647,14 @@ def pool_handler():
             try:
                 result.get()
                 if not result.successful():
-                    if PROGRESS is not None:
+                    if PROGRESS:
                         PROGRESS.close()
                     print()
                     cprint(' - Command failed', 'red')
                     print()
                     sys.exit(1)
             except Exception as err:
-                if PROGRESS is not None:
+                if PROGRESS:
                     PROGRESS.close()
                 print()
                 cprint(err, 'red')
