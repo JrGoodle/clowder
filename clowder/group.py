@@ -74,13 +74,6 @@ class Group(object):
                  'projects': projects_yaml}
         return group
 
-    def herd(self, branch=None, tag=None, depth=None, rebase=False, pool=None):
-        """Sync all projects with latest upstream changes"""
-        if pool is None:
-            self.print_name()
-        for project in self.projects:
-            project.herd(branch=branch, tag=tag, depth=depth, rebase=rebase, pool=pool)
-
     def is_dirty(self):
         """Check if group has dirty project(s)"""
 
@@ -134,13 +127,6 @@ class Group(object):
                 self.print_name()
                 for project in self.projects:
                     project.prune(branch, remote=True)
-
-    def reset(self, pool=None):
-        """Reset project branches to upstream or checkout tag/sha as detached HEAD"""
-        if pool is None:
-            self.print_name()
-        for project in self.projects:
-            project.reset(pool=pool)
 
     def start(self, branch, tracking):
         """Start a new feature branch"""

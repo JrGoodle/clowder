@@ -28,9 +28,6 @@ from clowder.utility.git_utilities import Git
 from clowder.utility.git_submodule_utilities import GitSubmodules
 
 
-RESULTS = {}
-
-
 class Project(object):
     """clowder.yaml project class"""
 
@@ -166,10 +163,8 @@ class Project(object):
             project['fork'] = fork_yaml
         return project
 
-    def herd(self, branch=None, tag=None, depth=None, rebase=False, pool=None):
+    def herd(self, branch=None, tag=None, depth=None, rebase=False, print_output=True):
         """Clone project or update latest from upstream"""
-
-        print_output = pool is None
 
         if depth is None:
             herd_depth = self.depth
@@ -179,60 +174,24 @@ class Project(object):
         if branch is not None:
             if self.recursive:
                 repo = GitSubmodules(self.full_path(), print_output=print_output)
-                if pool is None:
-                    self._herd_branch(repo, branch, herd_depth, rebase, print_output)
-                else:
-                    RESULTS[id(self)] = pool.apply_async(self._herd_branch,
-                                                         args=(repo, branch, herd_depth, rebase, print_output),
-                                                         callback=self._async_callback,
-                                                         error_callback=self._async_error_callback)
+                self._herd_branch(repo, branch, herd_depth, rebase, print_output)
             else:
                 repo = Git(self.full_path(), print_output=print_output)
-                if pool is None:
-                    self._herd_branch(repo, branch, herd_depth, rebase, print_output)
-                else:
-                    RESULTS[id(self)] = pool.apply_async(self._herd_branch,
-                                                         args=(repo, branch, herd_depth, rebase, print_output),
-                                                         callback=self._async_callback,
-                                                         error_callback=self._async_error_callback)
+                self._herd_branch(repo, branch, herd_depth, rebase, print_output)
         elif tag is not None:
             if self.recursive:
                 repo = GitSubmodules(self.full_path(), print_output=print_output)
-                if pool is None:
-                    self._herd_tag(repo, tag, herd_depth, rebase, print_output)
-                else:
-                    RESULTS[id(self)] = pool.apply_async(self._herd_tag,
-                                                         args=(repo, tag, herd_depth, rebase, print_output),
-                                                         callback=self._async_callback,
-                                                         error_callback=self._async_error_callback)
+                self._herd_tag(repo, tag, herd_depth, rebase, print_output)
             else:
                 repo = Git(self.full_path(), print_output=print_output)
-                if pool is None:
-                    self._herd_tag(repo, tag, herd_depth, rebase, print_output)
-                else:
-                    RESULTS[id(self)] = pool.apply_async(self._herd_tag,
-                                                         args=(repo, tag, herd_depth, rebase, print_output),
-                                                         callback=self._async_callback,
-                                                         error_callback=self._async_error_callback)
+                self._herd_tag(repo, tag, herd_depth, rebase, print_output)
         else:
             if self.recursive:
                 repo = GitSubmodules(self.full_path(), print_output=print_output)
-                if pool is None:
-                    self._herd_ref(repo, herd_depth, rebase, print_output)
-                else:
-                    RESULTS[id(self)] = pool.apply_async(self._herd_ref,
-                                                         args=(repo, herd_depth, rebase, print_output),
-                                                         callback=self._async_callback,
-                                                         error_callback=self._async_error_callback)
+                self._herd_ref(repo, herd_depth, rebase, print_output)
             else:
                 repo = Git(self.full_path(), print_output=print_output)
-                if pool is None:
-                    self._herd_ref(repo, herd_depth, rebase, print_output)
-                else:
-                    RESULTS[id(self)] = pool.apply_async(self._herd_ref,
-                                                         args=(repo, herd_depth, rebase, print_output),
-                                                         callback=self._async_callback,
-                                                         error_callback=self._async_error_callback)
+                self._herd_ref(repo, herd_depth, rebase, print_output)
 
     def is_dirty(self):
         """Check if project is dirty"""
@@ -283,32 +242,18 @@ class Project(object):
         elif remote:
             self._prune_remote(branch)
 
-    def reset(self, pool=None):
+    def reset(self, print_output=True):
         """Reset project branches to upstream or checkout tag/sha as detached HEAD"""
-        print_output = pool is None
 
         if self.recursive:
             repo = GitSubmodules(self.full_path(), print_output=print_output)
-            if pool is None:
-                self._reset(repo)
-            else:
-                RESULTS[id(self)] = pool.apply_async(self._reset,
-                                                     args=(repo,),
-                                                     callback=self._async_callback,
-                                                     error_callback=self._async_error_callback)
+            self._reset(repo)
         else:
             repo = Git(self.full_path(), print_output=print_output)
-            if pool is None:
-                self._reset(repo)
-            else:
-                RESULTS[id(self)] = pool.apply_async(self._reset,
-                                                     args=(repo,),
-                                                     callback=self._async_callback,
-                                                     error_callback=self._async_error_callback)
+            self._reset(repo)
 
-    def run(self, command, ignore_errors, pool=None):
+    def run(self, command, ignore_errors, print_output=True):
         """Run command or script in project directory"""
-        print_output = pool is None
 
         if print_output:
             self.print_status()
@@ -327,20 +272,14 @@ class Project(object):
         if self.fork is not None:
             forall_env['FORK_REMOTE'] = self.fork.remote_name
 
-        if pool is None:
-            return_code = execute_forall_command(command.split(),
-                                                 self.full_path(),
-                                                 forall_env,
-                                                 print_output)
-            if not ignore_errors:
-                if return_code != 0:
-                    print_command_failed_error(command)
-                    sys.exit(return_code)
-        else:
-            RESULTS[id(self)] = pool.apply_async(execute_forall_command,
-                                                 args=(command.split(), self.full_path(), forall_env, print_output),
-                                                 callback=self._async_callback,
-                                                 error_callback=self._async_error_callback)
+        return_code = execute_forall_command(command.split(),
+                                             self.full_path(),
+                                             forall_env,
+                                             print_output)
+        if not ignore_errors:
+            if return_code != 0:
+                print_command_failed_error(command)
+                sys.exit(return_code)
 
     def start(self, branch, tracking):
         """Start a new feature branch"""
@@ -487,16 +426,3 @@ class Project(object):
         if print_output:
             self.fork.print_status()
         repo.sync(self.remote_name, self.fork.remote_name, self.ref, rebase=rebase)
-
-    def _async_callback(self, val):
-        """Prune remote branch"""
-        result = RESULTS[id(self)]
-        if result is not None:
-            pass
-
-    def _async_error_callback(self, err):
-        """Prune remote branch"""
-        result = RESULTS[id(self)]
-        if result is not None:
-            print()
-            cprint(err, 'red')
