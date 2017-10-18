@@ -98,7 +98,8 @@ def _configure_subparser_clean(subparsers, clowder):
                              {0}
                              '''
         clean_help_groups = clean_help_groups.format(', '.join(group_names))
-    group_clean.add_argument('--groups', '-g', choices=group_names, default=group_names, nargs='+', metavar='GROUP',
+    group_clean.add_argument('--groups', '-g', choices=group_names,
+                             default=group_names, nargs='+', metavar='GROUP',
                              help=clean_help_groups)
     if project_names == '':
         clean_help_projects = 'projects to clean'
@@ -131,7 +132,8 @@ def _configure_subparser_diff(subparsers, clowder):
                            {0}
                            '''
         diff_help_groups = diff_help_groups.format(', '.join(group_names))
-    group_diff.add_argument('--groups', '-g', choices=group_names, default=group_names, nargs='+', metavar='GROUP',
+    group_diff.add_argument('--groups', '-g', choices=group_names,
+                            default=group_names, nargs='+', metavar='GROUP',
                             help=diff_help_groups)
     if project_names == '':
         diff_help_projects = 'projects to diff'
@@ -171,7 +173,8 @@ def _configure_subparser_forall(subparsers, clowder):
                              {0}
                              '''
         forall_help_groups = forall_help_groups.format(', '.join(group_names))
-    group_forall_targets.add_argument('--groups', '-g', choices=group_names, default=group_names, nargs='+',
+    group_forall_targets.add_argument('--groups', '-g', choices=group_names,
+                                      default=group_names, nargs='+',
                                       metavar='GROUP', help=forall_help_groups,)
     if project_names == '':
         forall_help_projects = 'projects to run command or script for'
@@ -215,7 +218,8 @@ def _configure_subparser_herd(subparsers, clowder):
                              {0}
                              '''
         herd_help_groups = herd_help_groups.format(', '.join(group_names))
-    group_herd.add_argument('--groups', '-g', choices=group_names, default=group_names, nargs='+', metavar='GROUP',
+    group_herd.add_argument('--groups', '-g', choices=group_names,
+                            default=group_names, nargs='+', metavar='GROUP',
                             help=herd_help_groups)
     if project_names == '':
         herd_help_projects = 'projects to herd'
@@ -279,7 +283,8 @@ def _configure_subparser_prune(subparsers, clowder):
                              {0}
                              '''
         prune_help_groups = prune_help_groups.format(', '.join(group_names))
-    group_prune.add_argument('--groups', '-g', choices=group_names, default=group_names, nargs='+', metavar='GROUP',
+    group_prune.add_argument('--groups', '-g', choices=group_names,
+                             default=group_names, nargs='+', metavar='GROUP',
                              help=prune_help_groups)
     if project_names == '':
         prune_help_projects = 'projects to prune branch for'
@@ -352,7 +357,8 @@ def _configure_subparser_reset(subparsers, clowder):
                              {0}
                              '''
         reset_help_groups = reset_help_groups.format(', '.join(group_names))
-    group_reset.add_argument('--groups', '-g', choices=group_names, default=group_names, nargs='+', metavar='GROUP',
+    group_reset.add_argument('--groups', '-g', choices=group_names,
+                             default=group_names, nargs='+', metavar='GROUP',
                              help=reset_help_groups)
     if project_names == '':
         reset_help_projects = 'projects to reset'
@@ -394,7 +400,8 @@ def _configure_subparser_start(subparsers, clowder):
                              {0}
                              '''
         start_help_groups = start_help_groups.format(', '.join(group_names))
-    group_start.add_argument('--groups', '-g', choices=group_names, default=group_names, nargs='+', metavar='GROUP',
+    group_start.add_argument('--groups', '-g', choices=group_names,
+                             default=group_names, nargs='+', metavar='GROUP',
                              help=start_help_groups)
     if project_names == '':
         start_help_projects = 'projects to start feature branch for'
@@ -426,7 +433,8 @@ def _configure_subparser_stash(subparsers, clowder):
                              {0}
                              '''
         stash_help_groups = stash_help_groups.format(', '.join(group_names))
-    group_stash.add_argument('--groups', '-g', choices=group_names, default=group_names, nargs='+', metavar='GROUP',
+    group_stash.add_argument('--groups', '-g', choices=group_names,
+                             default=group_names, nargs='+', metavar='GROUP',
                              help=stash_help_groups)
     if project_names == '':
         stash_help_projects = 'projects to stash'

@@ -102,61 +102,49 @@ class ClowderController(object):
         self._validate_yaml(yaml_file, self._max_import_depth)
         self._load_yaml()
 
-    def branch(self, group_names=None, project_names=None, local=False, remote=False):
+    def branch(self, group_names, project_names=None, local=False, remote=False):
         """Show branches"""
-        if project_names is None and group_names is None:
-            for group in self.groups:
-                group.branch(local=local, remote=remote)
-        elif project_names is None:
+        if project_names is None:
             groups = [g for g in self.groups if g.name in group_names]
             for group in groups:
                 group.branch(local=local, remote=remote)
-        else:
-            projects = [p for g in self.groups for p in g.projects if p.name in project_names]
-            for project in projects:
-                project.branch(local=local, remote=remote)
+            return
+        projects = [p for g in self.groups for p in g.projects if p.name in project_names]
+        for project in projects:
+            project.branch(local=local, remote=remote)
 
-    def clean(self, group_names=None, project_names=None, args='', recursive=False):
+    def clean(self, group_names, project_names=None, args='', recursive=False):
         """Discard changes"""
-        if project_names is None and group_names is None:
-            for group in self.groups:
-                group.clean(args=args, recursive=recursive)
-        elif project_names is None:
+        if project_names is None:
             groups = [g for g in self.groups if g.name in group_names]
             for group in groups:
                 group.clean(args=args, recursive=recursive)
-        else:
-            projects = [p for g in self.groups for p in g.projects if p.name in project_names]
-            for project in projects:
-                project.clean(args=args, recursive=recursive)
+            return
+        projects = [p for g in self.groups for p in g.projects if p.name in project_names]
+        for project in projects:
+            project.clean(args=args, recursive=recursive)
 
-    def clean_all(self, group_names=None, project_names=None):
+    def clean_all(self, group_names, project_names=None):
         """Discard all changes"""
-        if project_names is None and group_names is None:
-            for group in self.groups:
-                group.clean_all()
-        elif project_names is None:
+        if project_names is None:
             groups = [g for g in self.groups if g.name in group_names]
             for group in groups:
                 group.clean_all()
-        else:
-            projects = [p for g in self.groups for p in g.projects if p.name in project_names]
-            for project in projects:
-                project.clean_all()
+            return
+        projects = [p for g in self.groups for p in g.projects if p.name in project_names]
+        for project in projects:
+            project.clean_all()
 
-    def diff(self, group_names=None, project_names=None):
+    def diff(self, group_names, project_names=None):
         """Show git diff"""
-        if project_names is None and group_names is None:
-            for group in self.groups:
-                group.diff()
-        elif project_names is None:
+        if project_names is None:
             groups = [g for g in self.groups if g.name in group_names]
             for group in groups:
                 group.diff()
-        else:
-            projects = [p for g in self.groups for p in g.projects if p.name in project_names]
-            for project in projects:
-                project.diff()
+            return
+        projects = [p for g in self.groups for p in g.projects if p.name in project_names]
+        for project in projects:
+            project.diff()
 
     def fetch(self, group_names):
         """Fetch groups"""
@@ -340,22 +328,19 @@ class ClowderController(object):
         for project in projects:
             project.start(branch, tracking)
 
-    def stash(self, group_names=None, project_names=None):
+    def stash(self, group_names, project_names=None):
         """Stash changes for projects with changes"""
         if not self._is_dirty():
             print('No changes to stash')
             return
-        if project_names is None and group_names is None:
-            for group in self.groups:
-                group.stash()
-        elif project_names is None:
+        if project_names is None:
             groups = [g for g in self.groups if g.name in group_names]
             for group in groups:
                 group.stash()
-        else:
-            projects = [p for g in self.groups for p in g.projects if p.name in project_names]
-            for project in projects:
-                project.stash()
+            return
+        projects = [p for g in self.groups for p in g.projects if p.name in project_names]
+        for project in projects:
+            project.stash()
 
     def status(self, group_names, padding):
         """Print status for groups"""
