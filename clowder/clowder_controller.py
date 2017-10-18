@@ -7,6 +7,7 @@ import signal
 import sys
 import psutil
 from termcolor import cprint
+from tqdm import tqdm
 from clowder.group import Group
 from clowder.source import Source
 from clowder.exception.clowder_exception import ClowderException
@@ -24,7 +25,6 @@ from clowder.utility.clowder_yaml_validation import (
     validate_yaml,
     validate_yaml_import
 )
-from clowder.utility.parallel_timer import ClowderParallelProgress
 from clowder.utility.print_utilities import (
     format_clowder_command,
     format_command,
@@ -65,6 +65,7 @@ def worker_init():
 
 RESULTS = []
 POOL = mp.Pool(initializer=worker_init)
+PROGRESS = None
 
 
 class ClowderController(object):
@@ -407,6 +408,7 @@ class ClowderController(object):
     def _herd_parallel(self, group_names, project_names=None, branch=None, tag=None, depth=None, rebase=False):
         """Pull or rebase latest upstream changes for projects in parallel"""
         print(' - Herd projects in parallel\n')
+        global PROGRESS
         if project_names:
             self._validate_projects(project_names)
             projects = [p for g in self.groups for p in g.projects if p.name in project_names]
@@ -416,9 +418,14 @@ class ClowderController(object):
                     print('  ' + format_fork_string(project.name))
                     print('  ' + format_fork_string(project.fork.name))
             for project in projects:
-                result = POOL.apply_async(project.herd, args=(branch, tag, depth, rebase, False))
+                result = POOL.apply_async(project.herd, args=(branch, tag, depth, rebase, False),
+                                          callback=async_callback)
                 RESULTS.append(result)
+            print()
+            PROGRESS = tqdm(total=len(projects))
             pool_handler()
+            if PROGRESS is not None:
+                PROGRESS.close()
             return
         self._validate_groups(group_names)
         groups = [g for g in self.groups if g.name in group_names]
@@ -431,9 +438,14 @@ class ClowderController(object):
                     print('  ' + format_fork_string(project.name))
                     print('  ' + format_fork_string(project.fork.name))
         for project in projects:
-            result = POOL.apply_async(project.herd, args=(branch, tag, depth, rebase, False))
+            result = POOL.apply_async(project.herd, args=(branch, tag, depth, rebase, False),
+                                      callback=async_callback)
             RESULTS.append(result)
+        print()
+        PROGRESS = tqdm(total=len(projects))
         pool_handler()
+        if PROGRESS is not None:
+            PROGRESS.close()
 
     def _is_dirty(self):
         """Check if there are any dirty projects"""
@@ -593,6 +605,12 @@ class ClowderController(object):
         self._validate_yaml(yaml_file, max_import_depth - 1)
 
 
+def async_callback(val):
+    """Increment async progress bar"""
+    if PROGRESS is not None:
+        PROGRESS.update()
+
+
 def pool_handler():
     """Pool handler for finishing parallel jobs"""
     try:
@@ -600,17 +618,23 @@ def pool_handler():
         POOL.join()
     except (KeyboardInterrupt, SystemExit):
         print()
+        if PROGRESS is not None:
+            PROGRESS.close()
         sys.exit(1)
     else:
         for result in RESULTS:
             try:
                 result.get()
                 if not result.successful():
+                    if PROGRESS is not None:
+                        PROGRESS.close()
                     print()
                     cprint(' - Command failed', 'red')
                     print()
                     sys.exit(1)
             except Exception as err:
+                if PROGRESS is not None:
+                    PROGRESS.close()
                 print()
                 cprint(err, 'red')
                 print()
