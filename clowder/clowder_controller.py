@@ -38,6 +38,26 @@ from clowder.utility.print_utilities import (
 )
 
 
+def herd(project, branch, tag, depth, rebase, print_output):
+    """Clone project or update latest from upstream"""
+    project.herd(branch=branch, tag=tag, depth=depth, rebase=rebase, print_output=print_output)
+
+
+def reset(project, print_output):
+    """Reset project branches to upstream or checkout tag/sha as detached HEAD"""
+    project.reset(print_output=print_output)
+
+
+def run(project, command, ignore_errors, print_output):
+    """Run command or script in project directory"""
+    project.run(command, ignore_errors, print_output=print_output)
+
+
+def sync(project, rebasee, print_output):
+    """Sync fork project with upstream"""
+    project.sync(rebasee, print_output=print_output)
+
+
 PARENT_ID = os.getpid()
 
 
@@ -66,26 +86,6 @@ def worker_init():
 RESULTS = []
 POOL = mp.Pool(initializer=worker_init)
 PROGRESS = None
-
-
-def herd(project, branch, tag, depth, rebase, print_output):
-    """Clone project or update latest from upstream"""
-    project.herd(branch=branch, tag=tag, depth=depth, rebase=rebase, print_output=print_output)
-
-
-def reset(project, print_output):
-    """Reset project branches to upstream or checkout tag/sha as detached HEAD"""
-    project.reset(print_output=print_output)
-
-
-def run(project, command, ignore_errors, print_output):
-    """Run command or script in project directory"""
-    project.run(command, ignore_errors, print_output=print_output)
-
-
-def sync(project, rebasee, print_output):
-    """Sync fork project with upstream"""
-    project.sync(rebasee, print_output=print_output)
 
 
 class ClowderController(object):
