@@ -150,16 +150,7 @@ class ClowderController(object):
         else:
             projects = [p for g in self.groups for p in g.projects if p.name in project_names]
         if parallel:
-            print(' - Run forall commands in parallel\n')
-            for project in projects:
-                project.print_status()
-                if not os.path.isdir(project.full_path()):
-                    cprint(" - Project is missing\n", 'red')
-                    continue
-                print(format_command(command))
-                result = POOL.apply_async(project.run, args=(command, ignore_errors, False))
-                RESULTS.append(result)
-            pool_handler()
+            self._forall_parallel(command, ignore_errors, projects)
             return
         # Serial
         for project in projects:
@@ -208,34 +199,8 @@ class ClowderController(object):
              depth=None, rebase=False, parallel=False):
         """Pull or rebase latest upstream changes for projects"""
         if parallel:
-            print(' - Herd projects in parallel\n')
-            if project_names:
-                self._validate_projects(project_names)
-                projects = [p for g in self.groups for p in g.projects if p.name in project_names]
-                for project in projects:
-                    project.print_status()
-                    if project.fork is not None:
-                        print('  ' + format_fork_string(project.name))
-                        print('  ' + format_fork_string(project.fork.name))
-                for project in projects:
-                    result = POOL.apply_async(project.herd, args=(branch, tag, depth, rebase, False))
-                    RESULTS.append(result)
-                pool_handler()
-                return
-            self._validate_groups(group_names)
-            groups = [g for g in self.groups if g.name in group_names]
-            projects = [p for g in self.groups if g.name in group_names for p in g.projects]
-            for group in groups:
-                group.print_name()
-                for project in group.projects:
-                    project.print_status()
-                    if project.fork is not None:
-                        print('  ' + format_fork_string(project.name))
-                        print('  ' + format_fork_string(project.fork.name))
-            for project in projects:
-                result = POOL.apply_async(project.herd, args=(branch, tag, depth, rebase, False))
-                RESULTS.append(result)
-            pool_handler()
+            self._herd_parallel(group_names, project_names=project_names, branch=branch, tag=tag,
+                                depth=depth, rebase=rebase)
             return
         # Serial
         if project_names:
@@ -245,7 +210,6 @@ class ClowderController(object):
                 project.herd(branch=branch, tag=tag, depth=depth, rebase=rebase)
             return
         self._validate_groups(group_names)
-        groups = [g for g in self.groups if g.name in group_names]
         projects = [p for g in self.groups if g.name in group_names for p in g.projects]
         for project in projects:
             project.herd(branch=branch, tag=tag, depth=depth, rebase=rebase)
@@ -307,34 +271,7 @@ class ClowderController(object):
     def reset(self, group_names, project_names=None, parallel=False):
         """Reset project branches to upstream or checkout tag/sha as detached HEAD"""
         if parallel:
-            print(' - Reset projects in parallel\n')
-            if project_names is None:
-                self._validate_groups(group_names)
-                groups = [g for g in self.groups if g.name in group_names]
-                projects = [p for g in self.groups if g.name in group_names for p in g.projects]
-                for group in groups:
-                    group.print_name()
-                    for project in group.projects:
-                        project.print_status()
-                        if project.fork is not None:
-                            print('  ' + format_fork_string(project.name))
-                            print('  ' + format_fork_string(project.fork.name))
-                for project in projects:
-                    result = POOL.apply_async(project.reset, args=(False,))
-                    RESULTS.append(result)
-                pool_handler()
-                return
-            self._validate_projects(project_names)
-            projects = [p for g in self.groups for p in g.projects if p.name in project_names]
-            for project in projects:
-                project.print_status()
-                if project.fork is not None:
-                    print('  ' + format_fork_string(project.name))
-                    print('  ' + format_fork_string(project.fork.name))
-            for project in projects:
-                result = POOL.apply_async(project.reset, args=(False,))
-                RESULTS.append(result)
-            pool_handler()
+            self._reset_parallel(group_names, project_names=project_names)
             return
         # Serial
         if project_names is None:
@@ -410,16 +347,7 @@ class ClowderController(object):
         """Sync projects"""
         projects = [p for g in self.groups for p in g.projects if p.name in project_names]
         if parallel:
-            print(' - Sync forks in parallel\n')
-            for project in projects:
-                project.print_status()
-                if project.fork is not None:
-                    print('  ' + format_fork_string(project.name))
-                    print('  ' + format_fork_string(project.fork.name))
-            for project in projects:
-                result = POOL.apply_async(project.sync, args=(rebase, False))
-                RESULTS.append(result)
-            pool_handler()
+            self._sync_parallel(projects, rebase=rebase)
             return
         # Serial
         for project in projects:
@@ -447,6 +375,19 @@ class ClowderController(object):
         for project in projects:
             project.fetch_all()
 
+    def _forall_parallel(self, command, ignore_errors, projects):
+        """Runs command or script in project directories specified"""
+        print(' - Run forall commands in parallel\n')
+        for project in projects:
+            project.print_status()
+            if not os.path.isdir(project.full_path()):
+                cprint(" - Project is missing\n", 'red')
+                continue
+            print(format_command(command))
+            result = POOL.apply_async(project.run, args=(command, ignore_errors, False))
+            RESULTS.append(result)
+        pool_handler()
+
     def _get_yaml(self):
         """Return python object representation for saving yaml"""
         groups_yaml = [g.get_yaml() for g in self.groups]
@@ -462,6 +403,38 @@ class ClowderController(object):
         return {'defaults': self.defaults,
                 'sources': sources_yaml,
                 'groups': groups_yaml}
+
+    def _herd_parallel(self, group_names, project_names=None, branch=None, tag=None, depth=None, rebase=False):
+        """Pull or rebase latest upstream changes for projects in parallel"""
+        print(' - Herd projects in parallel\n')
+        if project_names:
+            self._validate_projects(project_names)
+            projects = [p for g in self.groups for p in g.projects if p.name in project_names]
+            for project in projects:
+                project.print_status()
+                if project.fork is not None:
+                    print('  ' + format_fork_string(project.name))
+                    print('  ' + format_fork_string(project.fork.name))
+            for project in projects:
+                result = POOL.apply_async(project.herd, args=(branch, tag, depth, rebase, False))
+                RESULTS.append(result)
+            pool_handler()
+            return
+        self._validate_groups(group_names)
+        groups = [g for g in self.groups if g.name in group_names]
+        projects = [p for g in self.groups if g.name in group_names for p in g.projects]
+        for group in groups:
+            group.print_name()
+            for project in group.projects:
+                project.print_status()
+                if project.fork is not None:
+                    print('  ' + format_fork_string(project.name))
+                    print('  ' + format_fork_string(project.fork.name))
+        for project in projects:
+            result = POOL.apply_async(project.herd, args=(branch, tag, depth, rebase, False))
+            RESULTS.append(result)
+        pool_handler()
+
 
     def _is_dirty(self):
         """Check if there are any dirty projects"""
@@ -515,6 +488,50 @@ class ClowderController(object):
         projects = [p for g in self.groups for p in g.projects if p.name in project_names]
         for project in projects:
             project.prune(branch, force=force, local=True, remote=True)
+
+    def _reset_parallel(self, group_names, project_names=None):
+        """Reset project branches to upstream or checkout tag/sha as detached HEAD in parallel"""
+        print(' - Reset projects in parallel\n')
+        if project_names is None:
+            self._validate_groups(group_names)
+            groups = [g for g in self.groups if g.name in group_names]
+            projects = [p for g in self.groups if g.name in group_names for p in g.projects]
+            for group in groups:
+                group.print_name()
+                for project in group.projects:
+                    project.print_status()
+                    if project.fork is not None:
+                        print('  ' + format_fork_string(project.name))
+                        print('  ' + format_fork_string(project.fork.name))
+            for project in projects:
+                result = POOL.apply_async(project.reset, args=(False,))
+                RESULTS.append(result)
+            pool_handler()
+            return
+        self._validate_projects(project_names)
+        projects = [p for g in self.groups for p in g.projects if p.name in project_names]
+        for project in projects:
+            project.print_status()
+            if project.fork is not None:
+                print('  ' + format_fork_string(project.name))
+                print('  ' + format_fork_string(project.fork.name))
+        for project in projects:
+            result = POOL.apply_async(project.reset, args=(False,))
+            RESULTS.append(result)
+        pool_handler()
+
+    def _sync_parallel(self, projects, rebase=False):
+        """Sync projects in parallel"""
+        print(' - Sync forks in parallel\n')
+        for project in projects:
+            project.print_status()
+            if project.fork is not None:
+                print('  ' + format_fork_string(project.name))
+                print('  ' + format_fork_string(project.fork.name))
+        for project in projects:
+            result = POOL.apply_async(project.sync, args=(rebase, False))
+            RESULTS.append(result)
+        pool_handler()
 
     def _validate_groups(self, group_names):
         """Validate status of all projects for specified groups"""
@@ -577,7 +594,7 @@ class ClowderController(object):
 
 
 def pool_handler():
-    """Prune remote branch"""
+    """Pool handler for finishing parallel jobs"""
     try:
         POOL.close()
         POOL.join()
