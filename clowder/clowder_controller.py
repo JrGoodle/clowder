@@ -38,24 +38,24 @@ from clowder.utility.print_utilities import (
 )
 
 
-def herd(project, branch, tag, depth, rebase, print_output):
+def herd(project, branch, tag, depth, rebase):
     """Clone project or update latest from upstream"""
-    project.herd(branch=branch, tag=tag, depth=depth, rebase=rebase, print_output=print_output)
+    project.herd(branch=branch, tag=tag, depth=depth, rebase=rebase, print_output=False)
 
 
-def reset(project, print_output):
+def reset(project):
     """Reset project branches to upstream or checkout tag/sha as detached HEAD"""
-    project.reset(print_output=print_output)
+    project.reset(print_output=False)
 
 
-def run(project, command, ignore_errors, print_output):
+def run(project, command, ignore_errors):
     """Run command or script in project directory"""
-    project.run(command, ignore_errors, print_output=print_output)
+    project.run(command, ignore_errors, print_output=False)
 
 
-def sync(project, rebasee, print_output):
+def sync(project, rebasee):
     """Sync fork project with upstream"""
-    project.sync(rebasee, print_output=print_output)
+    project.sync(rebasee, print_output=False)
 
 
 PARENT_ID = os.getpid()
@@ -388,11 +388,11 @@ class ClowderController(object):
             project.print_status()
             if not os.path.isdir(project.full_path()):
                 cprint(" - Project is missing", 'red')
-
         print('\n' + format_command(command) + '\n')
         for project in projects:
-            result = POOL.apply_async(run, args=(project, command, ignore_errors, False))
+            result = POOL.apply_async(run, args=(project, command, ignore_errors), callback=async_callback)
             RESULTS.append(result)
+        print()
         bar_format = '{desc}: {percentage:3.0f}%|{bar}| {n_fmt}/{total_fmt} projects'
         PROGRESS = tqdm(total=len(projects), unit='project', bar_format=bar_format)
         pool_handler()
@@ -430,7 +430,7 @@ class ClowderController(object):
                     print('  ' + format_fork_string(project.name))
                     print('  ' + format_fork_string(project.fork.name))
             for project in projects:
-                result = POOL.apply_async(herd, args=(project, branch, tag, depth, rebase, False),
+                result = POOL.apply_async(herd, args=(project, branch, tag, depth, rebase),
                                           callback=async_callback)
                 RESULTS.append(result)
             print()
@@ -438,6 +438,8 @@ class ClowderController(object):
             PROGRESS = tqdm(total=len(projects), unit='projects', bar_format=bar_format)
             pool_handler()
             if PROGRESS:
+                if PROGRESS.n < PROGRESS.total:
+                    PROGRESS.n = PROGRESS.total
                 PROGRESS.close()
             return
         self._validate_groups(group_names)
@@ -451,7 +453,7 @@ class ClowderController(object):
                     print('  ' + format_fork_string(project.name))
                     print('  ' + format_fork_string(project.fork.name))
         for project in projects:
-            result = POOL.apply_async(herd, args=(project, branch, tag, depth, rebase, False),
+            result = POOL.apply_async(herd, args=(project, branch, tag, depth, rebase),
                                       callback=async_callback)
             RESULTS.append(result)
         print()
@@ -459,6 +461,8 @@ class ClowderController(object):
         PROGRESS = tqdm(total=len(projects), unit='project', bar_format=bar_format)
         pool_handler()
         if PROGRESS:
+            if PROGRESS.n < PROGRESS.total:
+                PROGRESS.n = PROGRESS.total
             PROGRESS.close()
 
     def _is_dirty(self):
@@ -530,12 +534,15 @@ class ClowderController(object):
                         print('  ' + format_fork_string(project.name))
                         print('  ' + format_fork_string(project.fork.name))
             for project in projects:
-                result = POOL.apply_async(reset, args=(project, False))
+                result = POOL.apply_async(reset, args=(project,), callback=async_callback)
                 RESULTS.append(result)
+            print()
             bar_format = '{desc}: {percentage:3.0f}%|{bar}| {n_fmt}/{total_fmt} projects'
             PROGRESS = tqdm(total=len(projects), unit='project', bar_format=bar_format)
             pool_handler()
             if PROGRESS:
+                if PROGRESS.n < PROGRESS.total:
+                    PROGRESS.n = PROGRESS.total
                 PROGRESS.close()
             return
         self._validate_projects(project_names)
@@ -546,12 +553,15 @@ class ClowderController(object):
                 print('  ' + format_fork_string(project.name))
                 print('  ' + format_fork_string(project.fork.name))
         for project in projects:
-            result = POOL.apply_async(reset, args=(project, False))
+            result = POOL.apply_async(reset, args=(project,), callback=async_callback)
             RESULTS.append(result)
+        print()
         bar_format = '{desc}: {percentage:3.0f}%|{bar}| {n_fmt}/{total_fmt} projects'
         PROGRESS = tqdm(total=len(projects), unit='project', bar_format=bar_format)
         pool_handler()
         if PROGRESS:
+            if PROGRESS.n < PROGRESS.total:
+                PROGRESS.n = PROGRESS.total
             PROGRESS.close()
 
     @staticmethod
@@ -565,12 +575,15 @@ class ClowderController(object):
                 print('  ' + format_fork_string(project.name))
                 print('  ' + format_fork_string(project.fork.name))
         for project in projects:
-            result = POOL.apply_async(sync, args=(project, rebase, False))
+            result = POOL.apply_async(sync, args=(project, rebase), callback=async_callback)
             RESULTS.append(result)
+        print()
         bar_format = '{desc}: {percentage:3.0f}%|{bar}| {n_fmt}/{total_fmt} projects'
         PROGRESS = tqdm(total=len(projects), unit='project', bar_format=bar_format)
         pool_handler()
         if PROGRESS:
+            if PROGRESS.n < PROGRESS.total:
+                PROGRESS.n = PROGRESS.total
             PROGRESS.close()
 
     def _validate_groups(self, group_names):
@@ -648,6 +661,7 @@ def pool_handler():
         print()
         if PROGRESS:
             PROGRESS.close()
+        print()
         sys.exit(1)
     else:
         for result in RESULTS:

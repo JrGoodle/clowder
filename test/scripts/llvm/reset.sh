@@ -4,10 +4,10 @@
 
 cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 
-. test_utilities.sh
+. ../test_utilities.sh
 
 print_double_separator
-echo 'TEST: llvm projects example test script'
+echo 'TEST: llvm projects reset'
 print_double_separator
 
 if [ -z "$TRAVIS_OS_NAME" ]; then
