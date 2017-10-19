@@ -392,7 +392,6 @@ class ClowderController(object):
         for project in projects:
             result = POOL.apply_async(run, args=(project, command, ignore_errors), callback=async_callback)
             RESULTS.append(result)
-        print()
         bar_format = '{desc}: {percentage:3.0f}%|{bar}| {n_fmt}/{total_fmt} projects'
         PROGRESS = tqdm(total=len(projects), unit='project', bar_format=bar_format)
         pool_handler()

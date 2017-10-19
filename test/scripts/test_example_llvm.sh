@@ -340,7 +340,7 @@ test_branch() {
 }
 test_branch
 
-"$TEST_SCRIPT_DIR/llvm/reset.sh" || exit 1
+"$TEST_SCRIPT_DIR/llvm/reset.sh" $1 || exit 1
 
 test_help() {
     print_double_separator

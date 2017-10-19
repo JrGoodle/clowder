@@ -46,7 +46,7 @@ test_reset() {
     print_single_separator
     echo "TEST: clowder reset"
     clowder link || exit 1
-    clowder herd || exit 1
+    clowder herd $PARALLEL || exit 1
 
     COMMIT_MESSAGE='Add new commits'
     pushd 'mu' || exit 1

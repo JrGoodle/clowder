@@ -248,10 +248,10 @@ class Project(object):
 
         if self.recursive:
             repo = GitSubmodules(self.full_path(), print_output=print_output)
-            self._reset(repo)
+            self._reset(repo, print_output=print_output)
         else:
             repo = Git(self.full_path(), print_output=print_output)
-            self._reset(repo)
+            self._reset(repo, print_output=print_output)
 
     def run(self, command, ignore_errors, print_output=True):
         """Run command or script in project directory"""
@@ -404,10 +404,12 @@ class Project(object):
     def _reset(self, repo, print_output=True):
         """Clone project or update latest from upstream"""
         if self.fork is None:
-            self.print_status()
+            if print_output:
+                self.print_status()
             repo.reset(self.remote_name, self.ref, depth=self.depth)
         else:
-            self.fork.print_status()
+            if print_output:
+                self.fork.print_status()
             repo.configure_remotes(self.remote_name, self.url, self.fork.remote_name, self.fork.url)
             if print_output:
                 print(format_fork_string(self.name))
