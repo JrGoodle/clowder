@@ -199,11 +199,11 @@ def format_yaml_file(yaml_file):
     return colored(yaml_file, 'cyan')
 
 
-def print_command_failed_error(command):
-    """Print error message for failed command"""
+def format_command_failed_error(command):
+    """Format error message for failed command"""
     output_1 = colored(' - Error: Failed to run command ', 'red')
     output_2 = format_command(command)
-    print(output_1 + output_2 + '\n')
+    return output_1 + output_2 + '\n'
 
 
 def print_error(error):

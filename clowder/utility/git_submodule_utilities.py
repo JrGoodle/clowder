@@ -10,7 +10,7 @@ from clowder.utility.clowder_utilities import (
 )
 from clowder.utility.git_utilities import Git
 from clowder.utility.print_utilities import (
-    print_command_failed_error,
+    format_command_failed_error,
     print_error
 )
 
@@ -68,7 +68,7 @@ class GitSubmodules(Git):
         if return_code != 0:
             if self.print_output:
                 cprint(' - Failed to update submodules', 'red')
-                print_command_failed_error(command)
+                print(format_command_failed_error(command))
             sys.exit(return_code)
 
     def sync(self, upstream_remote, fork_remote, ref, rebase=False):

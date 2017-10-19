@@ -4,6 +4,7 @@ from __future__ import print_function
 import os
 import sys
 from termcolor import cprint
+from clowder.exception.clowder_exception import ClowderException
 from clowder.fork import Fork
 from clowder.utility.clowder_utilities import (
     execute_forall_command,
@@ -14,7 +15,7 @@ from clowder.utility.print_utilities import (
     format_command,
     format_fork_string,
     format_remote_name_error,
-    print_command_failed_error,
+    format_command_failed_error,
     print_invalid_yaml_error
 )
 from clowder.utility.git_print_utilities import (
@@ -257,11 +258,9 @@ class Project(object):
 
         if print_output:
             self.print_status()
-        if not os.path.isdir(self.full_path()):
-            if print_output:
+            if not os.path.isdir(self.full_path()):
                 cprint(" - Project is missing\n", 'red')
-            return
-        if print_output:
+                return
             print(format_command(command))
 
         forall_env = {'CLOWDER_PATH': self.root_directory,
@@ -277,9 +276,12 @@ class Project(object):
                                              forall_env,
                                              print_output)
         if not ignore_errors:
+            err = format_command_failed_error(command)
             if return_code != 0:
-                print_command_failed_error(command)
-                sys.exit(return_code)
+                if print_output:
+                    print(err)
+                    sys.exit(return_code)
+                raise ClowderException(err)
 
     def start(self, branch, tracking):
         """Start a new feature branch"""

@@ -387,16 +387,18 @@ class ClowderController(object):
         for project in projects:
             project.print_status()
             if not os.path.isdir(project.full_path()):
-                cprint(" - Project is missing\n", 'red')
-                continue
-            print(format_command(command))
+                cprint(" - Project is missing", 'red')
+
+        print('\n' + format_command(command) + '\n')
+        for project in projects:
             result = POOL.apply_async(run, args=(project, command, ignore_errors, False))
             RESULTS.append(result)
-        print()
         bar_format = '{desc}: {percentage:3.0f}%|{bar}| {n_fmt}/{total_fmt} projects'
         PROGRESS = tqdm(total=len(projects), unit='project', bar_format=bar_format)
         pool_handler()
         if PROGRESS:
+            if PROGRESS.n < PROGRESS.total:
+                PROGRESS.n = PROGRESS.total
             PROGRESS.close()
 
     def _get_yaml(self):

@@ -21,7 +21,7 @@ from clowder.utility.print_utilities import (
     format_ref_string,
     format_remote_already_exists_error,
     format_remote_string,
-    print_command_failed_error,
+    format_command_failed_error,
     print_error
 )
 
@@ -306,7 +306,7 @@ class Git(object):
         return_code = execute_command(command, self.repo_path, print_output=self.print_output)
         if return_code != 0:
             cprint(' - Failed to print branches', 'red')
-            print_command_failed_error(command)
+            print(format_command_failed_error(command))
             sys.exit(1)
 
     def prune_branch_local(self, branch, default_ref, force):
@@ -464,7 +464,7 @@ class Git(object):
             message = colored(' - Failed to push to ', 'red')
             if self.print_output:
                 print(message + fork_remote_output + ' ' + branch_output)
-                print_command_failed_error(command)
+                print(format_command_failed_error(command))
                 sys.exit(1)
             raise ClowderGitException(msg=format_parallel_exception_error(self.repo_path,
                                                                           message,
@@ -938,7 +938,7 @@ class Git(object):
             message = colored(' - Failed to pull from ', 'red')
             if self.print_output:
                 print(message + remote_output + ' ' + branch_output)
-                print_command_failed_error(command)
+                print(format_command_failed_error(command))
                 sys.exit(1)
             raise ClowderGitException(msg=format_parallel_exception_error(self.repo_path,
                                                                           message,
@@ -961,7 +961,7 @@ class Git(object):
             message = colored(' - Failed to rebase onto ', 'red')
             if self.print_output:
                 print(message + remote_output + ' ' + branch_output)
-                print_command_failed_error(command)
+                print(format_command_failed_error(command))
                 sys.exit(1)
             raise ClowderGitException(msg=format_parallel_exception_error(self.repo_path,
                                                                           message,

@@ -42,6 +42,7 @@ class Command(object):
         self._configure_cocos2d_subparser()
         self._configure_llvm_subparser()
         self._configure_offline_subparser()
+        self._configure_parallel_subparser()
         self._configure_swift_subparser()
         self._configure_unittest_subparser()
         # Argcomplete and arguments parsing
@@ -59,6 +60,7 @@ class Command(object):
         self.cocos2d()
         self.llvm()
         self.offline()
+        self.parallel()
         self.swift()
         self.unittests()
 
@@ -114,21 +116,9 @@ class Command(object):
         return_code = execute_command(script, shell=True)
         sys.exit(return_code)
 
-    def cats_herd_branch_parallel(self):
-        """clowder cats herd branch parallel tests"""
-        script = os.path.join(self._scripts_dir, 'cats', 'herd_branch_parallel.sh')
-        return_code = execute_command(script, shell=True)
-        sys.exit(return_code)
-
     def cats_herd_tag(self):
         """clowder cats herd tag tests"""
         script = os.path.join(self._scripts_dir, 'cats', 'herd_tag.sh')
-        return_code = execute_command(script, shell=True)
-        sys.exit(return_code)
-
-    def cats_herd_tag_parallel(self):
-        """clowder cats herd tag parallel tests"""
-        script = os.path.join(self._scripts_dir, 'cats', 'herd_tag_parallel.sh')
         return_code = execute_command(script, shell=True)
         sys.exit(return_code)
 
@@ -140,17 +130,6 @@ class Command(object):
         else:
             test_env["ACCESS_LEVEL"] = 'read'
         script = os.path.join(self._scripts_dir, 'cats', 'herd.sh')
-        return_code = execute_command(script, shell=True, env=test_env)
-        sys.exit(return_code)
-
-    def cats_herd_parallel(self):
-        """clowder cats herd parallel tests"""
-        test_env = {}
-        if self.args.write:
-            test_env["ACCESS_LEVEL"] = 'write'
-        else:
-            test_env["ACCESS_LEVEL"] = 'read'
-        script = os.path.join(self._scripts_dir, 'cats', 'herd_parallel.sh')
         return_code = execute_command(script, shell=True, env=test_env)
         sys.exit(return_code)
 
@@ -197,12 +176,6 @@ class Command(object):
     def cats_reset(self):
         """clowder cats reset tests"""
         script = os.path.join(self._scripts_dir, 'cats', 'reset.sh')
-        return_code = execute_command(script, shell=True)
-        sys.exit(return_code)
-
-    def cats_reset_parallel(self):
-        """clowder cats reset parallel tests"""
-        script = os.path.join(self._scripts_dir, 'cats', 'reset_parallel.sh')
         return_code = execute_command(script, shell=True)
         sys.exit(return_code)
 
@@ -270,6 +243,12 @@ class Command(object):
         return_code = execute_command(script, shell=True)
         sys.exit(return_code)
 
+    def parallel(self):
+        """clowder parallel tests"""
+        script = os.path.join(self._scripts_dir, 'test_parallel.sh')
+        return_code = execute_command(script, shell=True)
+        sys.exit(return_code)
+
     def swift(self):
         """clowder swift tests"""
         test_env = {}
@@ -308,11 +287,8 @@ class Command(object):
         cats_subparser.add_parser('forall', help='Run cats forall tests')
         cats_subparser.add_parser('help', help='Run cats help tests')
         cats_subparser.add_parser('herd_branch', help='Run cats herd branch tests')
-        cats_subparser.add_parser('herd_branch_parallel', help='Run cats herd branch parallel tests')
         cats_subparser.add_parser('herd_tag', help='Run cats herd tag tests')
-        cats_subparser.add_parser('herd_tag_parallel', help='Run cats herd tag parallel tests')
         cats_subparser.add_parser('herd', help='Run cats herd tests')
-        cats_subparser.add_parser('herd_parallel', help='Run cats herd parallel tests')
         cats_subparser.add_parser('import', help='Run cats import tests')
         cats_subparser.add_parser('init', help='Run cats init tests')
         cats_subparser.add_parser('link', help='Run cats link tests')
@@ -337,6 +313,10 @@ class Command(object):
     def _configure_offline_subparser(self):
         """clowder offline tests subparser"""
         self._subparsers.add_parser('offline', help='Run offline tests')
+
+    def _configure_parallel_subparser(self):
+        """clowder parallel tests subparser"""
+        self._subparsers.add_parser('parallel', help='Run parallel tests')
 
     def _configure_swift_subparser(self):
         """clowder swift tests subparser"""

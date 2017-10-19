@@ -2,6 +2,10 @@
 
 cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
 
+if [ $1 = 'parallel' ]; then
+    PARALLEL='--parallel'
+fi
+
 . test_utilities.sh
 
 export cats_projects=( 'duke' 'mu' )
@@ -54,7 +58,7 @@ test_reset() {
     test_not_commit "$UPSTREAM_COMMIT"
     popd || exit 1
 
-    clowder reset || exit 1
+    clowder reset $PARALLEL || exit 1
 
     pushd 'mu' || exit 1
     test_number_commits 'HEAD' 'origin/knead' '0'
@@ -69,7 +73,7 @@ test_reset() {
     test_not_commit "$UPSTREAM_COMMIT"
     popd || exit 1
 
-    clowder reset || exit 1
+    clowder reset $PARALLEL || exit 1
 
     pushd 'mu' || exit 1
     test_number_commits 'HEAD' 'origin/knead' '0'
@@ -87,7 +91,7 @@ test_reset() {
     test_not_commit "$UPSTREAM_COMMIT"
     popd || exit 1
 
-    clowder reset || exit 1
+    clowder reset $PARALLEL || exit 1
 
     pushd 'mu' || exit 1
     test_number_commits 'HEAD' 'origin/knead' '0'

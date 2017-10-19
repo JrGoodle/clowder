@@ -22,6 +22,10 @@ matrix:
   - os: linux
     env: TARGET="llvm" PYVERSION="python3"
   - os: linux
+    env: TARGET="parallel" PYVERSION="python2"
+  - os: linux
+    env: TARGET="parallel" PYVERSION="python3"
+  - os: linux
     env: TARGET="swift" PYVERSION="python3"
 
 before_install: script/bootstrap "$PYVERSION"

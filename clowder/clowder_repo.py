@@ -17,7 +17,7 @@ from clowder.utility.clowder_utilities import (
 from clowder.utility.print_utilities import (
     format_command,
     format_path,
-    print_command_failed_error,
+    format_command_failed_error,
     print_error,
     remove_prefix
 )
@@ -187,7 +187,7 @@ class ClowderRepo(object):
         print(format_command(command))
         return_code = execute_command(command.split(), self.clowder_path)
         if return_code != 0:
-            print_command_failed_error(command)
+            print(format_command_failed_error(command))
             sys.exit(return_code)
 
     def git_status(self):
