@@ -1,10 +1,13 @@
 """Representation of clowder.yaml fork"""
 
 from __future__ import print_function
+
 import os
+
 from termcolor import cprint
+
 from clowder.utility.clowder_utilities import existing_git_repository
-from clowder.utility.git_print_utilities import (
+from clowder.utility.git.printing import (
     format_project_ref_string,
     format_project_string
 )

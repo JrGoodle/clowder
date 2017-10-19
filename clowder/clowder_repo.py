@@ -1,12 +1,14 @@
 """Clowder repo management"""
 
 from __future__ import print_function
+
 import atexit
 import os
 import sys
+
 from git import GitError
 from termcolor import colored, cprint
-from clowder.utility.git_utilities import Git
+
 from clowder.utility.clowder_utilities import (
     execute_command,
     existing_git_repository,
@@ -14,18 +16,19 @@ from clowder.utility.clowder_utilities import (
     is_offline,
     remove_directory
 )
-from clowder.utility.print_utilities import (
+from clowder.utility.git.printing import (
+    format_project_string,
+    format_project_ref_string,
+    print_git_status,
+    print_validation
+)
+from clowder.utility.git.git_repo import GitRepo
+from clowder.utility.printing import (
     format_command,
     format_path,
     format_command_failed_error,
     print_error,
     remove_prefix
-)
-from clowder.utility.git_print_utilities import (
-    format_project_string,
-    format_project_ref_string,
-    print_git_status,
-    print_validation
 )
 
 
@@ -38,7 +41,7 @@ class ClowderRepo(object):
 
     def add(self, files):
         """Add files in clowder repo to git index"""
-        clowder = Git(self.clowder_path)
+        clowder = GitRepo(self.clowder_path)
         try:
             print(' - Add files to git index')
             print(clowder.repo.git.add(files))
@@ -52,12 +55,12 @@ class ClowderRepo(object):
 
     def branches(self):
         """Return current local branches"""
-        clowder = Git(self.clowder_path)
+        clowder = GitRepo(self.clowder_path)
         return clowder.print_branches(local=True, remote=True)
 
     def checkout(self, ref):
         """Checkout ref in clowder repo"""
-        clowder = Git(self.clowder_path)
+        clowder = GitRepo(self.clowder_path)
         if self.is_dirty():
             print(' - Dirty repo. Please stash, commit, or discard your changes')
             print_git_status(self.clowder_path)
@@ -66,7 +69,7 @@ class ClowderRepo(object):
 
     def clean(self):
         """Discard changes in clowder repo"""
-        clowder = Git(self.clowder_path)
+        clowder = GitRepo(self.clowder_path)
         if self.is_dirty():
             print(' - Discard current changes')
             clowder.clean(args='fdx')
@@ -75,7 +78,7 @@ class ClowderRepo(object):
 
     def commit(self, message):
         """Commit current changes in clowder repo"""
-        clowder = Git(self.clowder_path)
+        clowder = GitRepo(self.clowder_path)
         try:
             print(' - Commit current changes')
             print(clowder.repo.git.commit(message=message))
@@ -90,7 +93,7 @@ class ClowderRepo(object):
         """Clone clowder repo from url"""
         # Register exit handler to remove files if cloning repo fails
         atexit.register(self.init_exit_handler)
-        clowder = Git(self.clowder_path)
+        clowder = GitRepo(self.clowder_path)
         clowder.create_clowder_repo(url, 'origin', branch)
         self.link()
 
@@ -104,7 +107,7 @@ class ClowderRepo(object):
 
     def is_dirty(self):
         """Check if project is dirty"""
-        clowder = Git(self.clowder_path)
+        clowder = GitRepo(self.clowder_path)
         return clowder.is_dirty()
 
     def link(self, version=None):
@@ -133,7 +136,7 @@ class ClowderRepo(object):
             return
         if not is_offline() and fetch:
             print(' - Fetch upstream changes for clowder repo')
-            clowder = Git(self.clowder_path)
+            clowder = GitRepo(self.clowder_path)
             clowder.fetch('origin')
         project_output = format_project_string(repo_path, '.clowder')
         current_ref_output = format_project_ref_string(repo_path)
@@ -152,7 +155,7 @@ class ClowderRepo(object):
 
     def pull(self):
         """Pull clowder repo upstream changes"""
-        clowder = Git(self.clowder_path)
+        clowder = GitRepo(self.clowder_path)
         if clowder.repo.head.is_detached:
             print(' - HEAD is detached')
             return
@@ -168,7 +171,7 @@ class ClowderRepo(object):
 
     def push(self):
         """Push clowder repo changes"""
-        clowder = Git(self.clowder_path)
+        clowder = GitRepo(self.clowder_path)
         if clowder.repo.head.is_detached:
             print(' - HEAD is detached')
             return
@@ -196,7 +199,7 @@ class ClowderRepo(object):
 
     def _validate_groups(self):
         """Validate status of clowder repo"""
-        clowder = Git(self.clowder_path)
+        clowder = GitRepo(self.clowder_path)
         if not clowder.validate_repo():
             print_validation(self.clowder_path)
             print()

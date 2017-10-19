@@ -3,11 +3,12 @@
 import os
 import sys
 import unittest
+
 from clowder.utility.clowder_utilities import (
     ref_type,
     truncate_ref
 )
-from clowder.utility.git_utilities import Git
+from clowder.utility.git.git_repo import GitRepo
 
 
 class GitUtilitiesTest(unittest.TestCase):
@@ -28,30 +29,30 @@ class GitUtilitiesTest(unittest.TestCase):
 
     def test_git_current_branch(self):
         """Test git_current_branch() function"""
-        repo = Git(self.kit_project_path)
+        repo = GitRepo(self.kit_project_path)
         self.assertEqual(repo.current_branch(), 'master')
 
     def test_git_sha_long(self):
         """Test git_sha_long() function"""
-        repo = Git(self.sasha_project_path)
+        repo = GitRepo(self.sasha_project_path)
         self.assertEqual(repo.sha(), self.sha_ref)
 
     def test_git_is_detached(self):
         """Test git_is_detached() function"""
-        repo = Git(self.jules_project_path)
+        repo = GitRepo(self.jules_project_path)
         self.assertFalse(repo.is_detached())
-        repo = Git(self.kit_project_path)
+        repo = GitRepo(self.kit_project_path)
         self.assertFalse(repo.is_detached())
-        repo = Git(self.sasha_project_path)
+        repo = GitRepo(self.sasha_project_path)
         self.assertTrue(repo.is_detached())
 
     def test_git_is_dirty(self):
         """Test git_is_dirty() function"""
-        repo = Git(self.jules_project_path)
+        repo = GitRepo(self.jules_project_path)
         self.assertFalse(repo.is_dirty())
-        repo = Git(self.kishka_project_path)
+        repo = GitRepo(self.kishka_project_path)
         self.assertTrue(repo.is_dirty())
-        repo = Git(self.kit_project_path)
+        repo = GitRepo(self.kit_project_path)
         self.assertFalse(repo.is_dirty())
 
     def test_ref_type_branch(self):

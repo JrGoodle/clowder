@@ -2,7 +2,7 @@
 
 import sys
 from termcolor import colored
-from clowder.utility.print_utilities import (
+from clowder.utility.printing import (
     print_error,
     print_invalid_yaml_error
 )

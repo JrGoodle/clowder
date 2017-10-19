@@ -1,32 +1,34 @@
 """Representation of clowder.yaml project"""
 
 from __future__ import print_function
+
 import os
 import sys
+
+from clowder.utility.git.git_submodules import GitSubmodules
 from termcolor import cprint
-from clowder.exception.clowder_exception import ClowderException
+from clowder.utility.exception.clowder_exception import ClowderException
 from clowder.fork import Fork
 from clowder.utility.clowder_utilities import (
     execute_forall_command,
     existing_git_repository,
     is_offline
 )
-from clowder.utility.print_utilities import (
-    format_command,
-    format_fork_string,
-    format_remote_name_error,
-    format_command_failed_error,
-    print_invalid_yaml_error
-)
-from clowder.utility.git_print_utilities import (
+from clowder.utility.git.printing import (
     format_project_string,
     format_project_ref_string,
     print_exists,
     print_git_status,
     print_validation
 )
-from clowder.utility.git_utilities import Git
-from clowder.utility.git_submodule_utilities import GitSubmodules
+from clowder.utility.git.git_repo import GitRepo
+from clowder.utility.printing import (
+    format_command,
+    format_fork_string,
+    format_remote_name_error,
+    format_command_failed_error,
+    print_invalid_yaml_error
+)
 
 
 class Project(object):
@@ -65,7 +67,7 @@ class Project(object):
         if not os.path.isdir(self.full_path()):
             cprint(" - Project is missing\n", 'red')
             return
-        repo = Git(self.full_path())
+        repo = GitRepo(self.full_path())
         if not is_offline():
             if remote:
                 if self.fork is None:
@@ -85,7 +87,7 @@ class Project(object):
             repo = GitSubmodules(self.full_path())
             repo.clean(args=args)
         else:
-            repo = Git(self.full_path())
+            repo = GitRepo(self.full_path())
             repo.clean(args=args)
 
     def clean_all(self):
@@ -98,7 +100,7 @@ class Project(object):
             repo = GitSubmodules(self.full_path())
             repo.clean(args='fdx')
         else:
-            repo = Git(self.full_path())
+            repo = GitRepo(self.full_path())
             repo.clean(args='fdx')
 
     def diff(self):
@@ -116,7 +118,7 @@ class Project(object):
 
     def existing_branch(self, branch, is_remote):
         """Check if branch exists"""
-        repo = Git(self.full_path())
+        repo = GitRepo(self.full_path())
         if is_remote:
             if self.fork is None:
                 return repo.existing_remote_branch(branch, self.remote_name)
@@ -126,7 +128,7 @@ class Project(object):
     def fetch_all(self):
         """Fetch upstream changes if project exists on disk"""
         self.print_status()
-        repo = Git(self.full_path())
+        repo = GitRepo(self.full_path())
         if self.exists():
             if self.fork is None:
                 repo.fetch(self.remote_name, depth=self.depth)
@@ -150,7 +152,7 @@ class Project(object):
         if resolved:
             ref = self.ref
         else:
-            repo = Git(self.full_path())
+            repo = GitRepo(self.full_path())
             ref = repo.sha()
         project = {'name': self.name,
                    'path': self.path,
@@ -177,26 +179,26 @@ class Project(object):
                 repo = GitSubmodules(self.full_path(), print_output=print_output)
                 self._herd_branch(repo, branch, herd_depth, rebase, print_output)
             else:
-                repo = Git(self.full_path(), print_output=print_output)
+                repo = GitRepo(self.full_path(), print_output=print_output)
                 self._herd_branch(repo, branch, herd_depth, rebase, print_output)
         elif tag:
             if self.recursive:
                 repo = GitSubmodules(self.full_path(), print_output=print_output)
                 self._herd_tag(repo, tag, herd_depth, rebase, print_output)
             else:
-                repo = Git(self.full_path(), print_output=print_output)
+                repo = GitRepo(self.full_path(), print_output=print_output)
                 self._herd_tag(repo, tag, herd_depth, rebase, print_output)
         else:
             if self.recursive:
                 repo = GitSubmodules(self.full_path(), print_output=print_output)
                 self._herd_ref(repo, herd_depth, rebase, print_output)
             else:
-                repo = Git(self.full_path(), print_output=print_output)
+                repo = GitRepo(self.full_path(), print_output=print_output)
                 self._herd_ref(repo, herd_depth, rebase, print_output)
 
     def is_dirty(self):
         """Check if project is dirty"""
-        repo = Git(self.full_path())
+        repo = GitRepo(self.full_path())
         if not repo.validate_repo():
             return True
         if self.recursive:
@@ -207,7 +209,7 @@ class Project(object):
 
     def is_valid(self):
         """Validate status of project"""
-        repo = Git(self.full_path())
+        repo = GitRepo(self.full_path())
         return repo.validate_repo()
 
     def print_exists(self):
@@ -250,7 +252,7 @@ class Project(object):
             repo = GitSubmodules(self.full_path(), print_output=print_output)
             self._reset(repo, print_output=print_output)
         else:
-            repo = Git(self.full_path(), print_output=print_output)
+            repo = GitRepo(self.full_path(), print_output=print_output)
             self._reset(repo, print_output=print_output)
 
     def run(self, command, ignore_errors, print_output=True):
@@ -286,7 +288,7 @@ class Project(object):
     def start(self, branch, tracking):
         """Start a new feature branch"""
         self.print_status()
-        repo = Git(self.full_path())
+        repo = GitRepo(self.full_path())
         if not existing_git_repository(self.full_path()):
             cprint(" - Directory doesn't exist", 'red')
             return
@@ -306,7 +308,7 @@ class Project(object):
         """Stash changes for project if dirty"""
         if self.is_dirty():
             self.print_status()
-            repo = Git(self.full_path())
+            repo = GitRepo(self.full_path())
             repo.stash()
 
     def sync(self, rebase=False, print_output=True):
@@ -315,7 +317,7 @@ class Project(object):
             repo = GitSubmodules(self.full_path(), print_output=print_output)
             self._sync(repo, rebase, print_output)
         else:
-            repo = Git(self.full_path(), print_output=print_output)
+            repo = GitRepo(self.full_path(), print_output=print_output)
             self._sync(repo, rebase, print_output)
 
     def _herd_branch(self, repo, branch, depth, rebase, print_output):
@@ -385,7 +387,7 @@ class Project(object):
 
     def _prune_local(self, branch, force):
         """Prune local branch"""
-        repo = Git(self.full_path())
+        repo = GitRepo(self.full_path())
         if repo.existing_local_branch(branch):
             self.print_status()
             repo.prune_branch_local(branch, self.ref, force)
@@ -396,7 +398,7 @@ class Project(object):
             remote = self.remote_name
         else:
             remote = self.fork.remote_name
-        repo = Git(self.full_path())
+        repo = GitRepo(self.full_path())
         if repo.existing_remote_branch(branch, remote):
             self.print_status()
             repo.prune_branch_remote(branch, remote)

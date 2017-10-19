@@ -9,7 +9,7 @@ import subprocess
 import sys
 import yaml
 from termcolor import colored, cprint
-from clowder.utility.print_utilities import (
+from clowder.utility.printing import (
     format_empty_yaml_error,
     format_path,
     print_file_exists_error,

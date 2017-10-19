@@ -1,31 +1,25 @@
 """clowder.yaml parsing and functionality"""
 
 from __future__ import print_function
+
 import multiprocessing as mp
 import os
 import signal
 import sys
+
 import psutil
 from termcolor import cprint
 from tqdm import tqdm
+
 from clowder.group import Group
 from clowder.source import Source
-from clowder.exception.clowder_exception import ClowderException
 from clowder.utility.clowder_utilities import (
     get_yaml_string,
     parse_yaml,
     save_yaml
 )
-from clowder.utility.clowder_yaml_loading import (
-    load_yaml_base,
-    load_yaml_import
-)
-from clowder.utility.clowder_yaml_printing import print_yaml
-from clowder.utility.clowder_yaml_validation import (
-    validate_yaml,
-    validate_yaml_import
-)
-from clowder.utility.print_utilities import (
+from clowder.utility.exception.clowder_exception import ClowderException
+from clowder.utility.printing import (
     format_clowder_command,
     format_command,
     format_fork_string,
@@ -35,6 +29,15 @@ from clowder.utility.print_utilities import (
     print_recursive_import_error,
     print_save_version,
     print_save_version_exists_error
+)
+from clowder.utility.yaml.load import (
+    load_yaml_base,
+    load_yaml_import
+)
+from clowder.utility.yaml.printing import print_yaml
+from clowder.utility.yaml.validation import (
+    validate_yaml,
+    validate_yaml_import
 )
 
 

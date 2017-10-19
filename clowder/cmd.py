@@ -1,23 +1,26 @@
 """Main entrypoint for clowder command"""
 
 from __future__ import print_function
+
 import argparse
 import atexit
 import os
 import sys
+
 import argcomplete
 import colorama
 from termcolor import cprint, colored
-from clowder.clowder_repo import ClowderRepo
+
 from clowder.clowder_controller import ClowderController
-from clowder.exception.clowder_exception import ClowderException
-from clowder.utility.clowder_subparsers import configure_argparse
+from clowder.clowder_repo import ClowderRepo
 from clowder.utility.clowder_utilities import is_offline
-from clowder.utility.print_utilities import (
+from clowder.utility.exception.clowder_exception import ClowderException
+from clowder.utility.printing import (
     print_error,
     print_invalid_yaml_error,
     print_offline_error
 )
+from clowder.utility.subparsers import configure_argparse
 
 
 def main():

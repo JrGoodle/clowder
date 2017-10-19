@@ -1,12 +1,14 @@
 """Git utilities"""
 
 from __future__ import print_function
+
 import os
 import subprocess
 import sys
+
 from git import Repo, GitError
 from termcolor import colored, cprint
-from clowder.exception.clowder_git_exception import ClowderGitException
+
 from clowder.utility.clowder_utilities import (
     execute_command,
     existing_git_repository,
@@ -15,7 +17,8 @@ from clowder.utility.clowder_utilities import (
     remove_directory,
     truncate_ref
 )
-from clowder.utility.print_utilities import (
+from clowder.utility.exception.clowder_git_exception import ClowderGitException
+from clowder.utility.printing import (
     format_path,
     format_parallel_exception_error,
     format_ref_string,
@@ -26,7 +29,7 @@ from clowder.utility.print_utilities import (
 )
 
 
-class Git(object):
+class GitRepo(object):
     """Class encapsulating git utilities"""
 
     def __init__(self, repo_path, print_output=True):
