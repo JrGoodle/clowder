@@ -159,11 +159,11 @@ test_swift_4_1_branch_branches() {
     done
     for project in "${project_paths[@]}"; do
         pushd $project || exit 1
-        test_branch master
+        test_branch 'swift-4.1-branch'
         popd || exit 1
     done
     pushd swift || exit 1
-    test_branch master
+    test_branch 'swift-4.1-branch'
     popd || exit 1
     pushd ninja || exit 1
     test_branch release
@@ -198,7 +198,7 @@ test_swift_configs() {
         clowder link -v travis-ci || exit 1
         clowder herd || exit 1
         test_default_branches
-        clowder link -v "$config"
+        clowder link -v "$config" || exit 1
         clowder herd || exit 1
         clowder status || exit 1
         "$config_function"
