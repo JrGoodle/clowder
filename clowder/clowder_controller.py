@@ -109,7 +109,9 @@ class ClowderController(object):
         if project_names is None:
             groups = [g for g in self.groups if g.name in group_names]
             for group in groups:
-                group.branch(local=local, remote=remote)
+                group.print_name()
+                for project in group.projects:
+                    project.branch(local=local, remote=remote)
             return
         projects = [p for g in self.groups for p in g.projects if p.name in project_names]
         for project in projects:
@@ -120,7 +122,9 @@ class ClowderController(object):
         if project_names is None:
             groups = [g for g in self.groups if g.name in group_names]
             for group in groups:
-                group.clean(args=args, recursive=recursive)
+                group.print_name()
+                for project in group.projects:
+                    project.clean(args=args, recursive=recursive)
             return
         projects = [p for g in self.groups for p in g.projects if p.name in project_names]
         for project in projects:
@@ -131,7 +135,9 @@ class ClowderController(object):
         if project_names is None:
             groups = [g for g in self.groups if g.name in group_names]
             for group in groups:
-                group.clean_all()
+                group.print_name()
+                for project in group.projects:
+                    project.clean_all()
             return
         projects = [p for g in self.groups for p in g.projects if p.name in project_names]
         for project in projects:
@@ -142,7 +148,9 @@ class ClowderController(object):
         if project_names is None:
             groups = [g for g in self.groups if g.name in group_names]
             for group in groups:
-                group.diff()
+                group.print_name()
+                for project in group.projects:
+                    project.diff()
             return
         projects = [p for g in self.groups for p in g.projects if p.name in project_names]
         for project in projects:
@@ -152,7 +160,9 @@ class ClowderController(object):
         """Fetch groups"""
         for group in self.groups:
             if group.name in group_names:
-                group.fetch_all()
+                group.print_name()
+                for project in group.projects:
+                    project.fetch_all()
 
     def forall(self, command, ignore_errors, group_names, project_names=None, parallel=False):
         """Runs command or script in project directories specified"""
@@ -321,7 +331,9 @@ class ClowderController(object):
         self._validate_groups(group_names)
         groups = [g for g in self.groups if g.name in group_names]
         for group in groups:
-            group.start(branch, tracking)
+            group.print_name()
+            for project in group.projects:
+                project.start(branch, tracking)
 
     def start_projects(self, project_names, branch, tracking):
         """Start feature branch for projects"""

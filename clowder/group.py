@@ -27,36 +27,6 @@ class Group(object):
             self.projects.append(Project(root_directory, project, group, defaults, sources))
         self.projects.sort(key=lambda p: p.path)
 
-    def branch(self, local=False, remote=False):
-        """Print branches for all projects"""
-        self.print_name()
-        for project in self.projects:
-            project.branch(local=local, remote=remote)
-
-    def clean(self, args='', recursive=False):
-        """Discard changes for all projects"""
-        self.print_name()
-        for project in self.projects:
-            project.clean(args=args, recursive=recursive)
-
-    def clean_all(self):
-        """Discard all changes for all projects"""
-        self.print_name()
-        for project in self.projects:
-            project.clean_all()
-
-    def diff(self):
-        """Show git diffs for all projects"""
-        self.print_name()
-        for project in self.projects:
-            project.diff()
-
-    def fetch_all(self):
-        """Fetch upstream changes for all projects"""
-        self.print_name()
-        for project in self.projects:
-            project.fetch_all()
-
     def get_yaml(self):
         """Return python object representation for saving yaml"""
         projects_yaml = [p.get_yaml() for p in self.projects]
@@ -127,12 +97,6 @@ class Group(object):
                 self.print_name()
                 for project in self.projects:
                     project.prune(branch, remote=True)
-
-    def start(self, branch, tracking):
-        """Start a new feature branch"""
-        self.print_name()
-        for project in self.projects:
-            project.start(branch, tracking)
 
     def status(self, padding):
         """Print status for all projects"""

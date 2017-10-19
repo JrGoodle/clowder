@@ -8,7 +8,10 @@ import socket
 import subprocess
 import sys
 import yaml
+
 from termcolor import colored, cprint
+
+from clowder.utility.exception.clowder_exception import ClowderException
 from clowder.utility.printing import (
     format_empty_yaml_error,
     format_path,
@@ -23,19 +26,22 @@ from clowder.utility.printing import (
 def execute_command(command, path, shell=True, env=None, print_output=True):
     """Run subprocess command"""
     cmd_env = os.environ.copy()
+    process = None
     if env:
         cmd_env.update(env)
+    if print_output:
+        pipe = None
+    else:
+        pipe = subprocess.PIPE
     try:
-        if print_output:
-            process = subprocess.Popen(' '.join(command), shell=shell, env=cmd_env, cwd=path)
-        else:
-            process = subprocess.Popen(' '.join(command), shell=shell, env=cmd_env, cwd=path,
-                                       stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        # atexit.register(subprocess_exit_handler, process)
+        process = subprocess.Popen(' '.join(command), shell=shell, env=cmd_env, cwd=path, stdout=pipe, stderr=pipe)
         process.communicate()
     except (KeyboardInterrupt, SystemExit):
-        process.kill()
-    return process.returncode
+        if process:
+            process.terminate()
+        return 1
+    else:
+        return process.returncode
 
 
 def execute_forall_command(command, path, forall_env, print_output):
