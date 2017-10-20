@@ -12,7 +12,7 @@ from termcolor import cprint
 from tqdm import tqdm
 
 import clowder.clowder_yaml as clowder_yaml
-import clowder.utility.formatting as fmt
+import clowder.util.formatting as fmt
 from clowder.error.clowder_error import ClowderError
 from clowder.model.group import Group
 from clowder.model.source import Source

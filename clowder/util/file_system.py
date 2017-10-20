@@ -7,7 +7,7 @@ import sys
 
 from termcolor import colored
 
-import clowder.utility.formatting as fmt
+import clowder.util.formatting as fmt
 
 
 def remove_directory(path):

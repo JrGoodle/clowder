@@ -7,9 +7,9 @@ import sys
 from git import GitError
 from termcolor import cprint
 
-import clowder.utility.formatting as fmt
+import clowder.util.formatting as fmt
 from clowder.git.repo import GitRepo
-from clowder.utility.execute import execute_command
+from clowder.util.execute import execute_command
 
 
 class GitSubmodules(GitRepo):

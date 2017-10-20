@@ -8,7 +8,7 @@ import sys
 import yaml
 from termcolor import colored
 
-import clowder.utility.formatting as fmt
+import clowder.util.formatting as fmt
 from clowder.error.clowder_error import ClowderError
 
 

@@ -31,7 +31,7 @@ setup(
               'clowder.error',
               'clowder.git',
               'clowder.model',
-              'clowder.utility'],
+              'clowder.util'],
     entry_points={
         'console_scripts': [
             'clowder=clowder.cmd:main',

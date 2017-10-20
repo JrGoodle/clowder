@@ -10,11 +10,11 @@ import sys
 from termcolor import colored
 
 import clowder.git.clowder_repo as git
-import clowder.utility.formatting as fmt
+import clowder.util.formatting as fmt
 from clowder.git.repo import GitRepo
-from clowder.utility.connectivity import is_offline
-from clowder.utility.execute import execute_command
-from clowder.utility.file_system import remove_directory
+from clowder.util.connectivity import is_offline
+from clowder.util.execute import execute_command
+from clowder.util.file_system import remove_directory
 
 
 class ClowderRepo(object):
