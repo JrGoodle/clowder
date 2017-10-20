@@ -343,12 +343,14 @@ def execute_command(command, shell=False, env=None):
     cmd_env = os.environ.copy()
     if env:
         cmd_env.update(env)
+    process = None
     try:
         process = subprocess.Popen(command, shell=shell, env=cmd_env)
         atexit.register(subprocess_exit_handler, process)
         process.communicate()
     except (KeyboardInterrupt, SystemExit):
-        os.kill(process.pid, signal.SIGTERM)
+        if process:
+            os.kill(process.pid, signal.SIGTERM)
     return process.returncode
 
 

@@ -15,11 +15,7 @@ from clowder.clowder_controller import ClowderController
 from clowder.clowder_repo import ClowderRepo
 from clowder.utility.clowder_utilities import is_offline
 from clowder.utility.exception.clowder_exception import ClowderException
-from clowder.utility.printing import (
-    print_error,
-    print_invalid_yaml_error,
-    print_offline_error
-)
+import clowder.utility.formatting as fmt
 from clowder.utility.subparsers import configure_argparse
 
 
@@ -163,7 +159,8 @@ class Command(object):
             exit_clowder_not_found()
         self.clowder_repo.print_status(fetch=True)
         if is_offline():
-            print_offline_error()
+            print(fmt.offline_error())
+            sys.exit(1)
         if self.clowder is None:
             sys.exit(1)
 
@@ -196,7 +193,8 @@ class Command(object):
             cprint('Clowder already initialized in this directory\n', 'red')
             sys.exit(1)
         if is_offline():
-            print_offline_error()
+            print(fmt.offline_error())
+            sys.exit(1)
         url_output = colored(self.args.url, 'green')
         print('Create clowder repo from ' + url_output + '\n')
         clowder_repo = ClowderRepo(self.root_directory)
@@ -271,7 +269,8 @@ class Command(object):
         if self.clowder_repo is None:
             exit_clowder_not_found()
         if is_offline():
-            print_offline_error()
+            print(fmt.offline_error())
+            sys.exit(1)
         self.clowder_repo.print_status(fetch=True)
         self.clowder_repo.pull()
 
@@ -280,7 +279,8 @@ class Command(object):
         if self.clowder_repo is None:
             exit_clowder_not_found()
         if is_offline():
-            print_offline_error()
+            print(fmt.offline_error())
+            sys.exit(1)
         self.clowder_repo.print_status(fetch=True)
         self.clowder_repo.push()
 
@@ -305,7 +305,8 @@ class Command(object):
             exit_clowder_not_found()
         self.clowder_repo.print_status(fetch=True)
         if is_offline():
-            print_offline_error()
+            print(fmt.offline_error())
+            sys.exit(1)
         if self.clowder is None:
             sys.exit(1)
         self.clowder.reset(group_names=self.args.groups,
@@ -331,7 +332,8 @@ class Command(object):
             sys.exit(1)
         if self.args.tracking:
             if is_offline():
-                print_offline_error()
+                print(fmt.offline_error())
+                sys.exit(1)
         if self.args.projects is None:
             self.clowder.start_groups(self.args.groups,
                                       self.args.branch,
@@ -362,7 +364,8 @@ class Command(object):
             sys.exit(1)
         if self.args.fetch:
             if is_offline():
-                print_offline_error()
+                print(fmt.offline_error())
+                sys.exit(1)
             print(' - Fetch upstream changes for projects\n')
             self.clowder.fetch(self.clowder.get_all_group_names())
         all_project_paths = self.clowder.get_all_project_paths()
@@ -378,7 +381,8 @@ class Command(object):
         if self.clowder is None:
             sys.exit(1)
         if is_offline():
-            print_offline_error()
+            print(fmt.offline_error())
+            sys.exit(1)
         all_fork_projects = self.clowder.get_all_fork_project_names()
         if all_fork_projects == '':
             cprint(' - No forks to sync\n', 'red')
@@ -408,7 +412,8 @@ class Command(object):
         """Private method for pruning groups"""
         if self.args.all:
             if is_offline():
-                print_offline_error()
+                print(fmt.offline_error())
+                sys.exit(1)
             self.clowder.prune_groups(self.args.groups,
                                       self.args.branch,
                                       force=self.args.force,
@@ -416,7 +421,8 @@ class Command(object):
                                       remote=True)
         elif self.args.remote:
             if is_offline():
-                print_offline_error()
+                print(fmt.offline_error())
+                sys.exit(1)
             self.clowder.prune_groups(self.args.groups,
                                       self.args.branch,
                                       remote=True)
@@ -430,7 +436,8 @@ class Command(object):
         """Private method for pruning projects"""
         if self.args.all:
             if is_offline():
-                print_offline_error()
+                print(fmt.offline_error())
+                sys.exit(1)
             self.clowder.prune_projects(self.args.projects,
                                         self.args.branch,
                                         force=self.args.force,
@@ -438,7 +445,8 @@ class Command(object):
                                         remote=True)
         elif self.args.remote:
             if is_offline():
-                print_offline_error()
+                print(fmt.offline_error())
+                sys.exit(1)
             self.clowder.prune_projects(self.args.projects,
                                         self.args.branch,
                                         remote=True)
@@ -451,8 +459,8 @@ class Command(object):
     def _validate_clowder_yaml(self):
         """Print invalid yaml message and exit if invalid"""
         if self._invalid_yaml:
-            print_invalid_yaml_error()
-            print_error(self._error)
+            print(fmt.invalid_yaml_error())
+            print(fmt.error(self._error))
             sys.exit(1)
 
 

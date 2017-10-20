@@ -19,17 +19,7 @@ from clowder.utility.clowder_utilities import (
     save_yaml
 )
 from clowder.utility.exception.clowder_exception import ClowderException
-from clowder.utility.printing import (
-    format_clowder_command,
-    format_command,
-    format_fork_string,
-    format_missing_imported_yaml_error,
-    print_error,
-    print_invalid_yaml_error,
-    print_recursive_import_error,
-    print_save_version,
-    print_save_version_exists_error
-)
+import clowder.utility.formatting as fmt
 from clowder.utility.yaml.load import (
     load_yaml_base,
     load_yaml_import
@@ -320,10 +310,10 @@ class ClowderController(object):
 
         yaml_file = os.path.join(version_dir, 'clowder.yaml')
         if os.path.exists(yaml_file):
-            print_save_version_exists_error(version_name, yaml_file)
+            print(fmt.save_version_exists_error(version_name, yaml_file))
             print()
             sys.exit(1)
-        print_save_version(version_name, yaml_file)
+        print(fmt.save_version(version_name, yaml_file))
         save_yaml(self._get_yaml(), yaml_file)
 
     def start_groups(self, group_names, branch, tracking):
@@ -402,7 +392,7 @@ class ClowderController(object):
             project.print_status()
             if not os.path.isdir(project.full_path()):
                 cprint(" - Project is missing", 'red')
-        print('\n' + format_command(command))
+        print('\n' + fmt.command(command))
         for project in projects:
             result = POOL.apply_async(run, args=(project, command, ignore_errors), callback=async_callback)
             RESULTS.append(result)
@@ -433,8 +423,8 @@ class ClowderController(object):
             for project in projects:
                 project.print_status()
                 if project.fork:
-                    print('  ' + format_fork_string(project.name))
-                    print('  ' + format_fork_string(project.fork.name))
+                    print('  ' + fmt.fork_string(project.name))
+                    print('  ' + fmt.fork_string(project.fork.name))
             for project in projects:
                 result = POOL.apply_async(herd, args=(project, branch, tag, depth, rebase),
                                           callback=async_callback)
@@ -449,8 +439,8 @@ class ClowderController(object):
             for project in group.projects:
                 project.print_status()
                 if project.fork:
-                    print('  ' + format_fork_string(project.name))
-                    print('  ' + format_fork_string(project.fork.name))
+                    print('  ' + fmt.fork_string(project.name))
+                    print('  ' + fmt.fork_string(project.fork.name))
         for project in projects:
             result = POOL.apply_async(herd, args=(project, branch, tag, depth, rebase),
                                       callback=async_callback)
@@ -480,8 +470,8 @@ class ClowderController(object):
                                                   imported_yaml, 'clowder.yaml')
             parsed_yaml = parse_yaml(imported_yaml_file)
             if len(imported_yaml_files) > self._max_import_depth:
-                print_invalid_yaml_error()
-                print_recursive_import_error(self._max_import_depth)
+                print(fmt.invalid_yaml_error())
+                print(fmt.recursive_import_error(self._max_import_depth))
                 print()
                 sys.exit(1)
         for parsed_yaml in reversed(imported_yaml_files):
@@ -522,8 +512,8 @@ class ClowderController(object):
                 for project in group.projects:
                     project.print_status()
                     if project.fork:
-                        print('  ' + format_fork_string(project.name))
-                        print('  ' + format_fork_string(project.fork.name))
+                        print('  ' + fmt.fork_string(project.name))
+                        print('  ' + fmt.fork_string(project.fork.name))
             for project in projects:
                 result = POOL.apply_async(reset, args=(project,), callback=async_callback)
                 RESULTS.append(result)
@@ -534,8 +524,8 @@ class ClowderController(object):
         for project in projects:
             project.print_status()
             if project.fork:
-                print('  ' + format_fork_string(project.name))
-                print('  ' + format_fork_string(project.fork.name))
+                print('  ' + fmt.fork_string(project.name))
+                print('  ' + fmt.fork_string(project.fork.name))
         for project in projects:
             result = POOL.apply_async(reset, args=(project,), callback=async_callback)
             RESULTS.append(result)
@@ -549,8 +539,8 @@ class ClowderController(object):
         for project in projects:
             project.print_status()
             if project.fork:
-                print('  ' + format_fork_string(project.name))
-                print('  ' + format_fork_string(project.fork.name))
+                print('  ' + fmt.fork_string(project.name))
+                print('  ' + fmt.fork_string(project.fork.name))
         for project in projects:
             result = POOL.apply_async(sync, args=(project, rebase), callback=async_callback)
             RESULTS.append(result)
@@ -580,7 +570,7 @@ class ClowderController(object):
             if not group.projects_exist():
                 projects_exist = False
         if not projects_exist:
-            herd_output = format_clowder_command('clowder herd')
+            herd_output = fmt.clowder_command('clowder herd')
             print('\n - First run ' + herd_output + ' to clone missing projects\n')
             sys.exit(1)
 
@@ -588,8 +578,8 @@ class ClowderController(object):
         """Validate clowder.yaml"""
         parsed_yaml = parse_yaml(yaml_file)
         if max_import_depth < 0:
-            print_invalid_yaml_error()
-            print_recursive_import_error(self._max_import_depth)
+            print(fmt.invalid_yaml_error())
+            print(fmt.recursive_import_error(self._max_import_depth))
             print()
             sys.exit(1)
         if 'import' not in parsed_yaml:
@@ -604,12 +594,12 @@ class ClowderController(object):
                 imported_yaml_file = os.path.join(self.root_directory, '.clowder', 'versions',
                                                   imported_clowder, 'clowder.yaml')
             if not os.path.isfile(imported_yaml_file):
-                error = format_missing_imported_yaml_error(imported_yaml_file, yaml_file)
+                error = fmt.missing_imported_yaml_error(imported_yaml_file, yaml_file)
                 raise ClowderException(error)
             yaml_file = imported_yaml_file
         except ClowderException as err:
-            print_invalid_yaml_error()
-            print_error(err)
+            print(fmt.invalid_yaml_error())
+            print(fmt.error(err))
             sys.exit(1)
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)

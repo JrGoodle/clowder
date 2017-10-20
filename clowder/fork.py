@@ -8,10 +8,9 @@ from termcolor import cprint
 
 from clowder.utility.clowder_utilities import existing_git_repository
 from clowder.utility.git.printing import (
-    format_project_ref_string,
-    format_project_string
+    project_ref_string,
+    project_string
 )
-
 
 class Fork(object):
     """clowder.yaml fork class"""
@@ -36,6 +35,6 @@ class Fork(object):
         if not existing_git_repository(self.path):
             cprint(self.path, 'green')
             return
-        project_output = format_project_string(self.path, self.path)
-        current_ref_output = format_project_ref_string(self.full_path())
+        project_output = project_string(self.path, self.path)
+        current_ref_output = project_ref_string(self.full_path())
         print(project_output + ' ' + current_ref_output)

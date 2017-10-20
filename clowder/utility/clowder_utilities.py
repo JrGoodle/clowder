@@ -11,16 +11,7 @@ import yaml
 
 from termcolor import colored, cprint
 
-from clowder.utility.exception.clowder_exception import ClowderException
-from clowder.utility.printing import (
-    format_empty_yaml_error,
-    format_path,
-    print_file_exists_error,
-    print_invalid_yaml_error,
-    print_missing_yaml_error,
-    print_open_file_error,
-    print_save_file_error
-)
+import clowder.utility.formatting as fmt
 
 
 def execute_command(command, path, shell=True, env=None, print_output=True):
@@ -109,18 +100,18 @@ def parse_yaml(yaml_file):
             with open(yaml_file) as raw_file:
                 parsed_yaml = yaml.safe_load(raw_file)
                 if parsed_yaml is None:
-                    print_invalid_yaml_error()
-                    print(format_empty_yaml_error(yaml_file) + '\n')
+                    print(fmt.invalid_yaml_error())
+                    print(fmt.empty_yaml_error(yaml_file) + '\n')
                     sys.exit(1)
                 return parsed_yaml
         except yaml.YAMLError:
-            print_open_file_error(yaml_file)
+            fmt.open_file_error(yaml_file)
             sys.exit(1)
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
     else:
         print()
-        print_missing_yaml_error()
+        print(fmt.missing_yaml_error())
         print()
         sys.exit(1)
 
@@ -144,7 +135,7 @@ def remove_directory(path):
         shutil.rmtree(path)
     except shutil.Error:
         message = colored(" - Failed to remove directory ", 'red')
-        print(message + format_path(path))
+        print(message + fmt.path(path))
     except (KeyboardInterrupt, SystemExit):
         sys.exit(1)
 
@@ -157,12 +148,12 @@ def save_yaml(yaml_output, yaml_file):
                 print(" - Save yaml to file")
                 yaml.safe_dump(yaml_output, raw_file, default_flow_style=False, indent=4)
         except yaml.YAMLError:
-            print_save_file_error(yaml_file)
+            fmt.save_file_error(yaml_file)
             sys.exit(1)
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
     else:
-        print_file_exists_error(yaml_file)
+        fmt.file_exists_error(yaml_file)
         print()
         sys.exit(1)
 

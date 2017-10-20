@@ -2,10 +2,7 @@
 
 import sys
 from termcolor import colored
-from clowder.utility.printing import (
-    print_error,
-    print_invalid_yaml_error
-)
+import clowder.utility.formatting as fmt
 
 
 def load_yaml_base(parsed_yaml, combined_yaml):
@@ -73,10 +70,10 @@ def _load_yaml_import_projects(imported_projects, projects):
     for imported_project in imported_projects:
         if imported_project['name'] not in project_names:
             if 'path' not in imported_project:
-                # error = format_invalid_entries_error('defaults', defaults, yaml_file)
+                # error = fmt.invalid_entries_error('defaults', defaults, yaml_file)
                 error = colored(' - Missing path in new project', 'red')
-                print_invalid_yaml_error()
-                print_error(error)
+                print(fmt.invalid_yaml_error())
+                print(fmt.error(error))
                 sys.exit(1)
             projects.append(imported_project)
             continue

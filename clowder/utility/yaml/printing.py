@@ -4,12 +4,7 @@ from __future__ import print_function
 import os
 import sys
 from clowder.utility.clowder_utilities import parse_yaml
-from clowder.utility.printing import (
-    format_path,
-    format_symlink_target,
-    print_open_file_error,
-    remove_prefix
-)
+import clowder.utility.formatting as fmt
 
 
 def print_yaml(root_directory):
@@ -34,19 +29,19 @@ def print_yaml(root_directory):
                     contents = raw_file.read()
                     print('-' * 80)
                     if os.path.islink(yaml_file):
-                        path = format_symlink_target(yaml_file)
-                        path = remove_prefix(path, root_directory)
-                        path = remove_prefix(path, '/')
+                        path = fmt.symlink_target(yaml_file)
+                        path = fmt.remove_prefix(path, root_directory)
+                        path = fmt.remove_prefix(path, '/')
                         print()
-                        print(format_path('clowder.yaml') + ' -> ' + format_path(path))
+                        print(fmt.path('clowder.yaml') + ' -> ' + fmt.path(path))
                         print()
                     else:
-                        path = remove_prefix(yaml_file, root_directory)
-                        path = remove_prefix(path, '/')
-                        print('\n' + format_path(path) + '\n')
+                        path = fmt.remove_prefix(yaml_file, root_directory)
+                        path = fmt.remove_prefix(path, '/')
+                        print('\n' + fmt.path(path) + '\n')
                     print(contents)
             except IOError as err:
-                print_open_file_error(yaml_file)
+                fmt.open_file_error(yaml_file)
                 print(err)
                 sys.exit(1)
             except (KeyboardInterrupt, SystemExit):

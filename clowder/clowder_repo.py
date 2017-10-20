@@ -17,19 +17,13 @@ from clowder.utility.clowder_utilities import (
     remove_directory
 )
 from clowder.utility.git.printing import (
-    format_project_string,
-    format_project_ref_string,
     print_git_status,
-    print_validation
+    print_validation,
+    project_ref_string,
+    project_string
 )
 from clowder.utility.git.git_repo import GitRepo
-from clowder.utility.printing import (
-    format_command,
-    format_path,
-    format_command_failed_error,
-    print_error,
-    remove_prefix
-)
+import clowder.utility.formatting as fmt
 
 
 class ClowderRepo(object):
@@ -47,7 +41,7 @@ class ClowderRepo(object):
             print(clowder.repo.git.add(files))
         except GitError as err:
             cprint(' - Failed to add files to git index', 'red')
-            print_error(err)
+            print(fmt.error(err))
             sys.exit(1)
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
@@ -84,7 +78,7 @@ class ClowderRepo(object):
             print(clowder.repo.git.commit(message=message))
         except GitError as err:
             cprint(' - Failed to commit current changes', 'red')
-            print_error(err)
+            print(fmt.error(err))
             sys.exit(1)
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
@@ -114,10 +108,10 @@ class ClowderRepo(object):
         """Create symlink pointing to clowder.yaml file"""
         if version is None:
             yaml_file = os.path.join(self.root_directory, '.clowder', 'clowder.yaml')
-            path_output = format_path('.clowder/clowder.yaml')
+            path_output = fmt.path('.clowder/clowder.yaml')
         else:
             relative_path = os.path.join('.clowder', 'versions', version, 'clowder.yaml')
-            path_output = format_path(relative_path)
+            path_output = fmt.path(relative_path)
             yaml_file = os.path.join(self.root_directory, relative_path)
 
         if not os.path.isfile(yaml_file):
@@ -138,17 +132,17 @@ class ClowderRepo(object):
             print(' - Fetch upstream changes for clowder repo')
             clowder = GitRepo(self.clowder_path)
             clowder.fetch('origin')
-        project_output = format_project_string(repo_path, '.clowder')
-        current_ref_output = format_project_ref_string(repo_path)
+        project_output = project_string(repo_path, '.clowder')
+        current_ref_output = project_ref_string(repo_path)
 
         clowder_symlink = os.path.join(self.root_directory, 'clowder.yaml')
         if not os.path.islink(clowder_symlink):
             print(project_output + ' ' + current_ref_output)
             return
         real_path = os.path.realpath(clowder_symlink)
-        symlink_output = format_path('clowder.yaml')
-        clowder_path = remove_prefix(real_path + '/', self.root_directory)
-        path_output = format_path(clowder_path[1:-1])
+        symlink_output = fmt.path('clowder.yaml')
+        clowder_path = fmt.remove_prefix(real_path + '/', self.root_directory)
+        path_output = fmt.path(clowder_path[1:-1])
         print(project_output + ' ' + current_ref_output)
         print(symlink_output + ' -> ' + path_output)
         print()
@@ -164,7 +158,7 @@ class ClowderRepo(object):
             print(clowder.repo.git.pull())
         except GitError as err:
             cprint(' - Failed to pull latest changes', 'red')
-            print_error(err)
+            print(fmt.error(err))
             sys.exit(1)
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
@@ -180,17 +174,17 @@ class ClowderRepo(object):
             print(clowder.repo.git.push())
         except GitError as err:
             cprint(' - Failed to push local changes', 'red')
-            print_error(err)
+            print(fmt.error(err))
             sys.exit(1)
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
 
     def run_command(self, command):
         """Run command in clowder repo"""
-        print(format_command(command))
+        print(fmt.command(command))
         return_code = execute_command(command.split(), self.clowder_path)
         if return_code != 0:
-            print(format_command_failed_error(command))
+            print(fmt.command_failed_error(command))
             sys.exit(return_code)
 
     def git_status(self):

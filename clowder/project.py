@@ -15,20 +15,14 @@ from clowder.utility.clowder_utilities import (
     is_offline
 )
 from clowder.utility.git.printing import (
-    format_project_string,
-    format_project_ref_string,
     print_exists,
     print_git_status,
-    print_validation
+    print_validation,
+    project_ref_string,
+    project_string
 )
 from clowder.utility.git.git_repo import GitRepo
-from clowder.utility.printing import (
-    format_command,
-    format_fork_string,
-    format_remote_name_error,
-    format_command_failed_error,
-    print_invalid_yaml_error
-)
+import clowder.utility.formatting as fmt
 
 
 class Project(object):
@@ -55,8 +49,8 @@ class Project(object):
         if 'fork' in project:
             fork = project['fork']
             if fork['remote'] == self.remote_name:
-                error = format_remote_name_error(fork['name'], self.name, self.remote_name)
-                print_invalid_yaml_error()
+                error = fmt.remote_name_error(fork['name'], self.name, self.remote_name)
+                print(fmt.invalid_yaml_error())
                 print(error + '\n')
                 sys.exit(1)
             self.fork = Fork(fork, self.root_directory, self.path, self.source)
@@ -141,7 +135,7 @@ class Project(object):
     def formatted_project_path(self):
         """Return formatted project path"""
         repo_path = os.path.join(self.root_directory, self.path)
-        return format_project_string(repo_path, self.path)
+        return project_string(repo_path, self.path)
 
     def full_path(self):
         """Return full path to project"""
@@ -223,8 +217,8 @@ class Project(object):
         if not existing_git_repository(self.full_path()):
             cprint(self.path, 'green')
             return
-        project_output = format_project_string(self.full_path(), self.path)
-        current_ref_output = format_project_ref_string(self.full_path())
+        project_output = project_string(self.full_path(), self.path)
+        current_ref_output = project_ref_string(self.full_path())
         print(project_output + ' ' + current_ref_output)
 
     def print_validation(self):
@@ -263,7 +257,7 @@ class Project(object):
             if not os.path.isdir(self.full_path()):
                 cprint(" - Project is missing\n", 'red')
                 return
-            print(format_command(command))
+            print(fmt.command(command))
 
         forall_env = {'CLOWDER_PATH': self.root_directory,
                       'PROJECT_PATH': self.full_path(),
@@ -278,7 +272,7 @@ class Project(object):
                                              forall_env,
                                              print_output)
         if not ignore_errors:
-            err = format_command_failed_error(command)
+            err = fmt.command_failed_error(command)
             if return_code != 0:
                 if print_output:
                     print(err)
@@ -332,11 +326,11 @@ class Project(object):
                 self.fork.print_status()
             repo.configure_remotes(self.remote_name, self.url, self.fork.remote_name, self.fork.url)
             if print_output:
-                print(format_fork_string(self.name))
+                print(fmt.fork_string(self.name))
             repo.herd_branch(self.url, self.remote_name, branch, self.ref, rebase=rebase,
                              fork_remote=self.fork.remote_name)
             if print_output:
-                print(format_fork_string(self.fork.name))
+                print(fmt.fork_string(self.fork.name))
             repo.herd_remote(self.fork.url, self.fork.remote_name, self.ref, branch=branch)
 
     def _herd_ref(self, repo, depth, rebase, print_output=True):
@@ -350,10 +344,10 @@ class Project(object):
                 self.fork.print_status()
             repo.configure_remotes(self.remote_name, self.url, self.fork.remote_name, self.fork.url)
             if print_output:
-                print(format_fork_string(self.name))
+                print(fmt.fork_string(self.name))
             repo.herd(self.url, self.remote_name, self.ref, rebase=rebase)
             if print_output:
-                print(format_fork_string(self.fork.name))
+                print(fmt.fork_string(self.fork.name))
             repo.herd_remote(self.fork.url, self.fork.remote_name, self.ref)
 
     def _herd_tag(self, repo, tag, depth, rebase, print_output=True):
@@ -369,10 +363,10 @@ class Project(object):
             repo.configure_remotes(self.remote_name, self.url,
                                    self.fork.remote_name, self.fork.url)
             if print_output:
-                print(format_fork_string(self.name))
+                print(fmt.fork_string(self.name))
             repo.herd_tag(self.url, self.remote_name, tag, self.ref, rebase=rebase)
             if print_output:
-                print(format_fork_string(self.fork.name))
+                print(fmt.fork_string(self.fork.name))
             repo.herd_remote(self.fork.url, self.fork.remote_name, self.ref)
 
     def _print_status_indented(self, padding):
@@ -381,8 +375,8 @@ class Project(object):
         if not existing_git_repository(self.full_path()):
             cprint(self.name, 'green')
             return
-        project_output = format_project_string(repo_path, self.path)
-        current_ref_output = format_project_ref_string(repo_path)
+        project_output = project_string(repo_path, self.path)
+        current_ref_output = project_ref_string(repo_path)
         print('{0} {1}'.format(project_output.ljust(padding), current_ref_output))
 
     def _prune_local(self, branch, force):
@@ -414,7 +408,7 @@ class Project(object):
                 self.fork.print_status()
             repo.configure_remotes(self.remote_name, self.url, self.fork.remote_name, self.fork.url)
             if print_output:
-                print(format_fork_string(self.name))
+                print(fmt.fork_string(self.name))
             repo.reset(self.remote_name, self.ref)
 
     def _sync(self, repo, rebase, print_output):
@@ -424,10 +418,10 @@ class Project(object):
         repo.configure_remotes(self.remote_name, self.url,
                                self.fork.remote_name, self.fork.url)
         if print_output:
-            print(format_fork_string(self.name))
+            print(fmt.fork_string(self.name))
         repo.herd(self.url, self.remote_name, self.ref, rebase=rebase)
         if print_output:
-            print(format_fork_string(self.fork.name))
+            print(fmt.fork_string(self.fork.name))
         repo.herd_remote(self.fork.url, self.fork.remote_name, self.ref)
         if print_output:
             self.fork.print_status()

@@ -12,13 +12,37 @@ from clowder.utility.clowder_utilities import (
     existing_git_repository
 )
 from clowder.utility.git.git_repo import GitRepo
-from clowder.utility.printing import (
-    format_command,
-    format_command_failed_error
-)
+import clowder.utility.formatting as fmt
 
 
-def format_project_string(repo_path, name):
+def print_exists(repo_path):
+    """Print existence validation messages"""
+    if not existing_git_repository(repo_path):
+        cprint(' - Project is missing', 'red')
+
+
+def print_git_status(repo_path):
+    """Print git status"""
+    command = ['git', 'status', '-vv']
+    print(fmt.command(command))
+    return_code = execute_command(command, repo_path)
+    if return_code != 0:
+        cprint(' - Failed to print status', 'red')
+        print(fmt.command_failed_error(command))
+        sys.exit(return_code)
+
+
+def print_validation(repo_path):
+    """Print validation messages"""
+    repo = GitRepo(repo_path)
+    if not existing_git_repository(repo_path):
+        return
+    if not repo.validate_repo():
+        print(' - Dirty repo. Please stash, commit, or discard your changes')
+        print_git_status(repo_path)
+
+
+def project_string(repo_path, name):
     """Return formatted project name"""
     if not os.path.isdir(os.path.join(repo_path, '.git')):
         return colored(name, 'green')
@@ -32,7 +56,7 @@ def format_project_string(repo_path, name):
     return colored(name + symbol, color)
 
 
-def format_project_ref_string(repo_path):
+def project_ref_string(repo_path):
     """Return formatted repo ref name"""
     repo = GitRepo(repo_path)
     local_commits = repo.new_commits()
@@ -51,30 +75,3 @@ def format_project_ref_string(repo_path):
         return colored('(HEAD @ ' + current_ref + ')', 'magenta')
     current_branch = repo.current_branch()
     return colored('(' + current_branch + ')', 'magenta') + status
-
-
-def print_exists(repo_path):
-    """Print existence validation messages"""
-    if not existing_git_repository(repo_path):
-        cprint(' - Project is missing', 'red')
-
-
-def print_git_status(repo_path):
-    """Print git status"""
-    command = ['git', 'status', '-vv']
-    print(format_command(command))
-    return_code = execute_command(command, repo_path)
-    if return_code != 0:
-        cprint(' - Failed to print status', 'red')
-        print(format_command_failed_error(command))
-        sys.exit(return_code)
-
-
-def print_validation(repo_path):
-    """Print validation messages"""
-    repo = GitRepo(repo_path)
-    if not existing_git_repository(repo_path):
-        return
-    if not repo.validate_repo():
-        print(' - Dirty repo. Please stash, commit, or discard your changes')
-        print_git_status(repo_path)

@@ -12,10 +12,7 @@ from clowder.utility.clowder_utilities import (
     existing_git_repository
 )
 from clowder.utility.git.git_repo import GitRepo
-from clowder.utility.printing import (
-    format_command_failed_error,
-    print_error
-)
+import clowder.utility.formatting as fmt
 
 
 class GitSubmodules(GitRepo):
@@ -71,7 +68,7 @@ class GitSubmodules(GitRepo):
         if return_code != 0:
             if self.print_output:
                 cprint(' - Failed to update submodules', 'red')
-                print(format_command_failed_error(command))
+                print(fmt.command_failed_error(command))
             sys.exit(return_code)
 
     def sync(self, upstream_remote, fork_remote, ref, rebase=False):
@@ -104,7 +101,7 @@ class GitSubmodules(GitRepo):
             if self.print_output:
                 error_msg = str(kwargs.get('error_msg', ' - submodule command failed'))
                 cprint(error_msg, 'red')
-                print_error(err)
+                print(fmt.error(err))
             sys.exit(1)
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)

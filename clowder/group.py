@@ -3,7 +3,6 @@
 from __future__ import print_function
 from termcolor import colored
 from clowder.project import Project
-from clowder.utility.printing import format_fork_string
 
 
 class Group(object):
