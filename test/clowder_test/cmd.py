@@ -2,15 +2,13 @@
 
 from __future__ import print_function
 
-import atexit
 import os
-import signal
-import subprocess
 import sys
 
 import argcomplete
 import argparse
-import psutil
+
+from clowder.util.execute import execute_command
 
 # Disable errors shown by pylint for too many public methods
 # pylint: disable=R0904
@@ -78,49 +76,49 @@ class Command(object):
             test_env["ACCESS_LEVEL"] = 'write'
         else:
             test_env["ACCESS_LEVEL"] = 'read'
-        return_code = execute_command('./test_example_cats.sh', self._scripts_dir, shell=True, env=test_env)
+        return_code = execute_command(['./test_example_cats.sh'], self._scripts_dir, shell=True, env=test_env)
         sys.exit(return_code)
 
     def cats_branch(self):
         """clowder cats branch tests"""
         path = os.path.join(self._scripts_dir, 'cats')
-        return_code = execute_command('./branch.sh', path, shell=True)
+        return_code = execute_command(['./branch.sh'], path, shell=True)
         sys.exit(return_code)
 
     def cats_clean(self):
         """clowder cats clean tests"""
         path = os.path.join(self._scripts_dir, 'cats')
-        return_code = execute_command('./clean.sh', path, shell=True)
+        return_code = execute_command(['./clean.sh'], path, shell=True)
         sys.exit(return_code)
 
     def cats_diff(self):
         """clowder cats diff tests"""
         path = os.path.join(self._scripts_dir, 'cats')
-        return_code = execute_command('./diff.sh', path, shell=True)
+        return_code = execute_command(['./diff.sh'], path, shell=True)
         sys.exit(return_code)
 
     def cats_forall(self):
         """clowder cats forall tests"""
         path = os.path.join(self._scripts_dir, 'cats')
-        return_code = execute_command('./forall.sh', path, shell=True)
+        return_code = execute_command(['./forall.sh'], path, shell=True)
         sys.exit(return_code)
 
     def cats_help(self):
         """clowder cats help tests"""
         path = os.path.join(self._scripts_dir, 'cats')
-        return_code = execute_command('./help.sh', path, shell=True)
+        return_code = execute_command(['./help.sh'], path, shell=True)
         sys.exit(return_code)
 
     def cats_herd_branch(self):
         """clowder cats herd branch tests"""
         path = os.path.join(self._scripts_dir, 'cats')
-        return_code = execute_command('./herd_branch.sh', path, shell=True)
+        return_code = execute_command(['./herd_branch.sh'], path, shell=True)
         sys.exit(return_code)
 
     def cats_herd_tag(self):
         """clowder cats herd tag tests"""
         path = os.path.join(self._scripts_dir, 'cats')
-        return_code = execute_command('./herd_tag.sh', path, shell=True)
+        return_code = execute_command(['./herd_tag.sh'], path, shell=True)
         sys.exit(return_code)
 
     def cats_herd(self):
@@ -131,25 +129,25 @@ class Command(object):
         else:
             test_env["ACCESS_LEVEL"] = 'read'
         path = os.path.join(self._scripts_dir, 'cats')
-        return_code = execute_command('./herd.sh', path, shell=True, env=test_env)
+        return_code = execute_command(['./herd.sh'], path, shell=True, env=test_env)
         sys.exit(return_code)
 
     def cats_import(self):
         """clowder cats import tests"""
         path = os.path.join(self._scripts_dir, 'cats')
-        return_code = execute_command('./import.sh', path, shell=True)
+        return_code = execute_command(['./import.sh'], path, shell=True)
         sys.exit(return_code)
 
     def cats_init(self):
         """clowder cats init tests"""
         path = os.path.join(self._scripts_dir, 'cats')
-        return_code = execute_command('./init.sh', path, shell=True)
+        return_code = execute_command(['./init.sh'], path, shell=True)
         sys.exit(return_code)
 
     def cats_link(self):
         """clowder cats link tests"""
         path = os.path.join(self._scripts_dir, 'cats')
-        return_code = execute_command('./link.sh', path, shell=True)
+        return_code = execute_command(['./link.sh'], path, shell=True)
         sys.exit(return_code)
 
     def cats_prune(self):
@@ -160,7 +158,7 @@ class Command(object):
         else:
             test_env["ACCESS_LEVEL"] = 'read'
         path = os.path.join(self._scripts_dir, 'cats')
-        return_code = execute_command('./prune.sh', path, shell=True, env=test_env)
+        return_code = execute_command(['./prune.sh'], path, shell=True, env=test_env)
         sys.exit(return_code)
 
     def cats_repo(self):
@@ -171,19 +169,19 @@ class Command(object):
         else:
             test_env["ACCESS_LEVEL"] = 'read'
         path = os.path.join(self._scripts_dir, 'cats')
-        return_code = execute_command('./repo.sh', path, shell=True, env=test_env)
+        return_code = execute_command(['./repo.sh'], path, shell=True, env=test_env)
         sys.exit(return_code)
 
     def cats_reset(self):
         """clowder cats reset tests"""
         path = os.path.join(self._scripts_dir, 'cats')
-        return_code = execute_command('./reset.sh', path, shell=True)
+        return_code = execute_command(['./reset.sh'], path, shell=True)
         sys.exit(return_code)
 
     def cats_save(self):
         """clowder cats save tests"""
         path = os.path.join(self._scripts_dir, 'cats')
-        return_code = execute_command('./save.sh', path, shell=True)
+        return_code = execute_command(['./save.sh'], path, shell=True)
         sys.exit(return_code)
 
     def cats_start(self):
@@ -194,36 +192,36 @@ class Command(object):
         else:
             test_env["ACCESS_LEVEL"] = 'read'
         path = os.path.join(self._scripts_dir, 'cats')
-        return_code = execute_command('./start.sh', path, shell=True, env=test_env)
+        return_code = execute_command(['./start.sh'], path, shell=True, env=test_env)
         sys.exit(return_code)
 
     def cats_stash(self):
         """clowder cats stash tests"""
         path = os.path.join(self._scripts_dir, 'cats')
-        return_code = execute_command('./stash.sh', path, shell=True)
+        return_code = execute_command(['./stash.sh'], path, shell=True)
         sys.exit(return_code)
 
     def cats_status(self):
         """clowder cats status tests"""
         path = os.path.join(self._scripts_dir, 'cats')
-        return_code = execute_command('./status.sh', path, shell=True)
+        return_code = execute_command(['./status.sh'], path, shell=True)
         sys.exit(return_code)
 
     def cats_yaml_validation(self):
         """clowder cats yaml validation tests"""
         path = os.path.join(self._scripts_dir, 'cats')
-        return_code = execute_command('./yaml_validation.sh', path, shell=True)
+        return_code = execute_command(['./yaml_validation.sh'], path, shell=True)
         sys.exit(return_code)
 
     def cats_yaml(self):
         """clowder cats yaml tests"""
         path = os.path.join(self._scripts_dir, 'cats')
-        return_code = execute_command('./yaml.sh', path, shell=True)
+        return_code = execute_command(['./yaml.sh'], path, shell=True)
         sys.exit(return_code)
 
     def cocos2d(self):
         """clowder cocos2d tests"""
-        return_code = execute_command('./test_example_cocos2d.sh', self._scripts_dir, shell=True)
+        return_code = execute_command(['./test_example_cocos2d.sh'], self._scripts_dir, shell=True)
         sys.exit(return_code)
 
     def llvm(self):
@@ -233,18 +231,18 @@ class Command(object):
             test_env["ACCESS_LEVEL"] = 'write'
         else:
             test_env["ACCESS_LEVEL"] = 'read'
-        return_code = execute_command('./test_example_llvm.sh', self._scripts_dir, shell=True, env=test_env)
+        return_code = execute_command(['./test_example_llvm.sh'], self._scripts_dir, shell=True, env=test_env)
         sys.exit(return_code)
 
     def offline(self):
         """clowder offline tests"""
         path = os.path.join(self._scripts_dir, 'cats')
-        return_code = execute_command('./offline.sh', path, shell=True)
+        return_code = execute_command(['./offline.sh'], path, shell=True)
         sys.exit(return_code)
 
     def parallel(self):
         """clowder parallel tests"""
-        return_code = execute_command('./test_parallel.sh', self._scripts_dir, shell=True)
+        return_code = execute_command(['./test_parallel.sh'], self._scripts_dir, shell=True)
         sys.exit(return_code)
 
     def swift(self):
@@ -254,7 +252,7 @@ class Command(object):
             test_env["ACCESS_LEVEL"] = 'write'
         else:
             test_env["ACCESS_LEVEL"] = 'read'
-        return_code = execute_command('./test_example_swift.sh', self._scripts_dir, shell=True, env=test_env)
+        return_code = execute_command(['./test_example_swift.sh'], self._scripts_dir, shell=True, env=test_env)
         sys.exit(return_code)
 
     def unittests(self):
@@ -264,7 +262,7 @@ class Command(object):
             test_env["PYTHON_VERSION"] = 'python'
         else:
             test_env["PYTHON_VERSION"] = 'python3'
-        return_code = execute_command('./unittests.sh', self._scripts_dir, shell=True, env=test_env)
+        return_code = execute_command(['./unittests.sh'], self._scripts_dir, shell=True, env=test_env)
         sys.exit(return_code)
 
     def _configure_all_subparser(self):
@@ -332,50 +330,3 @@ def exit_unrecognized_command(parser):
     parser.print_help()
     print()
     sys.exit(1)
-
-
-def execute_command(command, path, shell=True, env=None, print_output=True):
-    """Run subprocess command"""
-    cmd_env = os.environ.copy()
-    process = None
-    if env:
-        cmd_env.update(env)
-    if print_output:
-        pipe = None
-    else:
-        pipe = subprocess.PIPE
-    try:
-        process = subprocess.Popen(command, shell=shell, env=cmd_env, cwd=path, stdout=pipe, stderr=pipe)
-        atexit.register(subprocess_exit_handler)
-        process.communicate()
-    except (KeyboardInterrupt, SystemExit):
-        if process:
-            return process.returncode
-        return 1
-    else:
-        return process.returncode
-
-
-PARENT_ID = os.getpid()
-
-
-def subprocess_exit_handler():
-    """
-    Process pool terminator
-    Adapted from https://stackoverflow.com/a/45259908
-    """
-
-    def sig_int(signal_num, frame):
-        """Signal handler"""
-        # print('signal: %s' % signal_num)
-        parent = psutil.Process(PARENT_ID)
-        for child in parent.children():
-            if child.pid != os.getpid():
-                # print("killing child: %s" % child.pid)
-                child.terminate()
-        # print("killing parent: %s" % parent_id)
-        parent.terminate()
-        # print("suicide: %s" % os.getpid())
-        psutil.Process(os.getpid()).terminate()
-        print('\n\n')
-    signal.signal(signal.SIGINT, sig_int)
