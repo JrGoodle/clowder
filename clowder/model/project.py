@@ -7,14 +7,14 @@ import sys
 
 from termcolor import cprint
 
-from clowder.error.clowder_error import ClowderError
-from clowder.fork import Fork
 import clowder.git.printing as git_print
+import clowder.utility.formatting as fmt
+from clowder.error.clowder_error import ClowderError
 from clowder.git.repo import GitRepo
 from clowder.git.submodules import GitSubmodules
+from clowder.model.fork import Fork
 from clowder.utility.connectivity import is_offline
 from clowder.utility.execute import execute_forall_command
-import clowder.utility.formatting as fmt
 
 
 class Project(object):

@@ -3,6 +3,9 @@
 import os
 import sys
 import unittest
+
+from clowder.model.project import Project
+from clowder.model.source import Source
 from test.unittests.shared import (
     DEFAULTS_YAML,
     GITHUB_HTTPS_SOURCE_YAML,
@@ -14,8 +17,6 @@ from test.unittests.shared import (
     KIT_GROUP_YAML,
     KIT_PROJECT_YAML
 )
-from clowder.source import Source
-from clowder.project import Project
 
 
 class ProjectTest(unittest.TestCase):

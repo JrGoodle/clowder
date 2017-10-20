@@ -11,6 +11,7 @@ import psutil
 from termcolor import cprint
 from tqdm import tqdm
 
+import clowder.utility.formatting as fmt
 from clowder.clowder_yaml import (
     load_yaml_base,
     load_yaml_import,
@@ -21,9 +22,8 @@ from clowder.clowder_yaml import (
     validate_yaml_import
 )
 from clowder.error.clowder_error import ClowderError
-from clowder.group import Group
-from clowder.source import Source
-import clowder.utility.formatting as fmt
+from clowder.model.group import Group
+from clowder.model.source import Source
 
 
 def herd(project, branch, tag, depth, rebase):
