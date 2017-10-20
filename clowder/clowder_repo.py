@@ -12,12 +12,12 @@ from clowder.utility.clowder_utilities import (
     existing_git_repository,
     force_symlink,
     is_offline,
-    remove_directory_exit
+    remove_directory
 )
 from clowder.utility.print_utilities import (
     format_command,
     format_path,
-    print_command_failed_error,
+    format_command_failed_error,
     print_error,
     remove_prefix
 )
@@ -99,7 +99,8 @@ class ClowderRepo(object):
         if os.path.isdir(self.clowder_path):
             clowder_yaml = os.path.join(self.root_directory, 'clowder.yaml')
             if not os.path.isfile(clowder_yaml):
-                remove_directory_exit(self.clowder_path)
+                remove_directory(self.clowder_path)
+                sys.exit(1)
 
     def is_dirty(self):
         """Check if project is dirty"""
@@ -186,7 +187,7 @@ class ClowderRepo(object):
         print(format_command(command))
         return_code = execute_command(command.split(), self.clowder_path)
         if return_code != 0:
-            print_command_failed_error(command)
+            print(format_command_failed_error(command))
             sys.exit(return_code)
 
     def git_status(self):

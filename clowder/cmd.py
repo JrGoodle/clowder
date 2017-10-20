@@ -10,7 +10,7 @@ import colorama
 from termcolor import cprint, colored
 from clowder.clowder_repo import ClowderRepo
 from clowder.clowder_controller import ClowderController
-from clowder.utility.clowder_exception import ClowderException
+from clowder.exception.clowder_exception import ClowderException
 from clowder.utility.clowder_subparsers import configure_argparse
 from clowder.utility.clowder_utilities import is_offline
 from clowder.utility.print_utilities import (
@@ -150,7 +150,8 @@ class Command(object):
         self.clowder.forall(self.args.command[0],
                             self.args.ignore_errors,
                             group_names=self.args.groups,
-                            project_names=self.args.projects)
+                            project_names=self.args.projects,
+                            parallel=self.args.parallel)
 
     def herd(self):
         """clowder herd command"""
@@ -183,11 +184,12 @@ class Command(object):
                           branch=branch,
                           tag=tag,
                           depth=depth,
-                          rebase=self.args.rebase)
+                          rebase=self.args.rebase,
+                          parallel=self.args.parallel)
 
     def init(self):
         """clowder init command"""
-        if self.clowder_repo is not None:
+        if self.clowder_repo:
             cprint('Clowder already initialized in this directory\n', 'red')
             sys.exit(1)
         if is_offline():
@@ -303,7 +305,9 @@ class Command(object):
             print_offline_error()
         if self.clowder is None:
             sys.exit(1)
-        self.clowder.reset(group_names=self.args.groups, project_names=self.args.projects)
+        self.clowder.reset(group_names=self.args.groups,
+                           project_names=self.args.projects,
+                           parallel=self.args.parallel)
 
     def save(self):
         """clowder save command"""
@@ -376,7 +380,7 @@ class Command(object):
         if all_fork_projects == '':
             cprint(' - No forks to sync\n', 'red')
             sys.exit()
-        self.clowder.sync(all_fork_projects, rebase=self.args.rebase)
+        self.clowder.sync(all_fork_projects, rebase=self.args.rebase, parallel=self.args.parallel)
 
     def version(self):
         """clowder version command"""

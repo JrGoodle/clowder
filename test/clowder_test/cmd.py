@@ -42,6 +42,7 @@ class Command(object):
         self._configure_cocos2d_subparser()
         self._configure_llvm_subparser()
         self._configure_offline_subparser()
+        self._configure_parallel_subparser()
         self._configure_swift_subparser()
         self._configure_unittest_subparser()
         # Argcomplete and arguments parsing
@@ -59,6 +60,7 @@ class Command(object):
         self.cocos2d()
         self.llvm()
         self.offline()
+        self.parallel()
         self.swift()
         self.unittests()
 
@@ -241,6 +243,12 @@ class Command(object):
         return_code = execute_command(script, shell=True)
         sys.exit(return_code)
 
+    def parallel(self):
+        """clowder parallel tests"""
+        script = os.path.join(self._scripts_dir, 'test_parallel.sh')
+        return_code = execute_command(script, shell=True)
+        sys.exit(return_code)
+
     def swift(self):
         """clowder swift tests"""
         test_env = {}
@@ -306,6 +314,10 @@ class Command(object):
         """clowder offline tests subparser"""
         self._subparsers.add_parser('offline', help='Run offline tests')
 
+    def _configure_parallel_subparser(self):
+        """clowder parallel tests subparser"""
+        self._subparsers.add_parser('parallel', help='Run parallel tests')
+
     def _configure_swift_subparser(self):
         """clowder swift tests subparser"""
         self._subparsers.add_parser('swift', help='Run swift tests')
@@ -329,7 +341,7 @@ def exit_unrecognized_command(parser):
 def execute_command(command, shell=False, env=None):
     """Run subprocess command"""
     cmd_env = os.environ.copy()
-    if env is not None:
+    if env:
         cmd_env.update(env)
     try:
         process = subprocess.Popen(command, shell=shell, env=cmd_env)

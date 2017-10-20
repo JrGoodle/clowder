@@ -1,11 +1,9 @@
 """Clowder utilities"""
 
 from __future__ import print_function
-import atexit
 import errno
 import os
 import shutil
-import signal
 import socket
 import subprocess
 import sys
@@ -22,31 +20,27 @@ from clowder.utility.print_utilities import (
 )
 
 
-def execute_command(command, path, shell=True, env=None):
+def execute_command(command, path, shell=True, env=None, print_output=True):
     """Run subprocess command"""
     cmd_env = os.environ.copy()
-    if env is not None:
+    if env:
         cmd_env.update(env)
     try:
-        process = subprocess.Popen(" ".join(command), shell=shell, env=cmd_env, cwd=path)
-        atexit.register(subprocess_exit_handler, process)
+        if print_output:
+            process = subprocess.Popen(' '.join(command), shell=shell, env=cmd_env, cwd=path)
+        else:
+            process = subprocess.Popen(' '.join(command), shell=shell, env=cmd_env, cwd=path,
+                                       stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        # atexit.register(subprocess_exit_handler, process)
         process.communicate()
     except (KeyboardInterrupt, SystemExit):
-        os.kill(process.pid, signal.SIGTERM)
+        process.kill()
     return process.returncode
 
 
-def execute_forall_command(command, path, clowder_path, name, remote, fork_remote, ref):
+def execute_forall_command(command, path, forall_env, print_output):
     """Execute forall command with additional environment variables and display continuous output"""
-    forall_env = {}
-    forall_env["CLOWDER_PATH"] = clowder_path
-    forall_env["PROJECT_PATH"] = path
-    forall_env["PROJECT_NAME"] = name
-    forall_env["PROJECT_REMOTE"] = remote
-    forall_env["PROJECT_REF"] = ref
-    if fork_remote is not None:
-        forall_env["FORK_REMOTE"] = fork_remote
-    return execute_command(command, path, shell=True, env=forall_env)
+    return execute_command(command, path, shell=True, env=forall_env, print_output=print_output)
 
 
 def existing_git_repository(path):
@@ -138,7 +132,7 @@ def ref_type(ref):
     return 'unknown'
 
 
-def remove_directory_exit(path):
+def remove_directory(path):
     """Remove directory at path"""
     try:
         shutil.rmtree(path)
@@ -146,9 +140,6 @@ def remove_directory_exit(path):
         message = colored(" - Failed to remove directory ", 'red')
         print(message + format_path(path))
     except (KeyboardInterrupt, SystemExit):
-        sys.exit(1)
-    finally:
-        print()
         sys.exit(1)
 
 
@@ -168,15 +159,6 @@ def save_yaml(yaml_output, yaml_file):
         print_file_exists_error(yaml_file)
         print()
         sys.exit(1)
-
-
-def subprocess_exit_handler(process):
-    """terminate subprocess"""
-    try:
-        os.kill(process.pid, 0)
-        process.kill()
-    except:
-        pass
 
 
 def truncate_ref(ref):

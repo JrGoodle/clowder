@@ -150,6 +150,11 @@ def format_not_bool_error(name, yaml_file):
     return output_1 + output_2 + output_3 + output_4 + output_5
 
 
+def format_parallel_exception_error(path, *args):
+    """Return formatted error string for parallel exception"""
+    return format_path(path) + '\n' + ''.join(args)
+
+
 def format_path(path):
     """Return formatted path"""
     return colored(path, 'cyan')
@@ -194,11 +199,11 @@ def format_yaml_file(yaml_file):
     return colored(yaml_file, 'cyan')
 
 
-def print_command_failed_error(command):
-    """Print error message for failed command"""
+def format_command_failed_error(command):
+    """Format error message for failed command"""
     output_1 = colored(' - Error: Failed to run command ', 'red')
     output_2 = format_command(command)
-    print(output_1 + output_2 + '\n')
+    return output_1 + output_2 + '\n'
 
 
 def print_error(error):
@@ -238,15 +243,14 @@ def print_open_file_error(path):
     return output_1 + output_2
 
 
-def print_remote_already_exists_error(remote_name, remote_url, actual_url):
+def format_remote_already_exists_error(remote_name, remote_url, actual_url):
     """Print error message when remote already exists with different url"""
     message_1 = colored(' - Remote ', 'red')
     remote_output = format_remote_string(remote_name)
     message_2 = colored(' already exists with a different url', 'red')
     actual_url_output = format_path(actual_url)
-    print(message_1 + remote_output + message_2)
     remote_url_output = format_path(remote_url)
-    print(actual_url_output + ' should be ' + remote_url_output + '\n')
+    return message_1 + remote_output + message_2 + '\n' + actual_url_output + ' should be ' + remote_url_output + '\n'
 
 
 def print_save_file_error(path):

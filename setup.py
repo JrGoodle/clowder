@@ -27,11 +27,11 @@ setup(
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5'
     ],
-    packages=['clowder', 'clowder.utility'],
+    packages=['clowder', 'clowder.exception', 'clowder.utility'],
     entry_points={
         'console_scripts': [
             'clowder=clowder.cmd:main',
         ]
     },
-    install_requires=['argcomplete', 'colorama', 'GitPython', 'PyYAML', 'termcolor']
+    install_requires=['argcomplete', 'colorama', 'GitPython', 'PyYAML', 'termcolor', 'psutil', 'tqdm']
 )

@@ -3,6 +3,7 @@
 from __future__ import print_function
 from termcolor import colored
 from clowder.project import Project
+from clowder.utility.print_utilities import format_fork_string
 
 
 class Group(object):
@@ -28,31 +29,31 @@ class Group(object):
 
     def branch(self, local=False, remote=False):
         """Print branches for all projects"""
-        self._print_name()
+        self.print_name()
         for project in self.projects:
             project.branch(local=local, remote=remote)
 
     def clean(self, args='', recursive=False):
         """Discard changes for all projects"""
-        self._print_name()
+        self.print_name()
         for project in self.projects:
             project.clean(args=args, recursive=recursive)
 
     def clean_all(self):
         """Discard all changes for all projects"""
-        self._print_name()
+        self.print_name()
         for project in self.projects:
             project.clean_all()
 
     def diff(self):
         """Show git diffs for all projects"""
-        self._print_name()
+        self.print_name()
         for project in self.projects:
             project.diff()
 
     def fetch_all(self):
         """Fetch upstream changes for all projects"""
-        self._print_name()
+        self.print_name()
         for project in self.projects:
             project.fetch_all()
 
@@ -73,12 +74,6 @@ class Group(object):
                  'projects': projects_yaml}
         return group
 
-    def herd(self, branch=None, tag=None, depth=None, rebase=False):
-        """Sync all projects with latest upstream changes"""
-        self._print_name()
-        for project in self.projects:
-            project.herd(branch=branch, tag=tag, depth=depth, rebase=rebase)
-
     def is_dirty(self):
         """Check if group has dirty project(s)"""
 
@@ -92,14 +87,19 @@ class Group(object):
     def print_existence_message(self):
         """Print existence validation message for projects in group"""
         if not self.projects_exist():
-            self._print_name()
+            self.print_name()
             for project in self.projects:
                 project.print_exists()
+
+    def print_name(self):
+        """Print formatted group name"""
+        name_output = colored(self.name, attrs=['bold', 'underline'])
+        print(name_output)
 
     def print_validation(self):
         """Print validation message for projects in group"""
         if not self.is_valid():
-            self._print_name()
+            self.print_name()
             for project in self.projects:
                 project.print_validation()
 
@@ -114,42 +114,36 @@ class Group(object):
             local_branch_exists = self._existing_branch(branch, is_remote=False)
             remote_branch_exists = self._existing_branch(branch, is_remote=True)
             if local_branch_exists or remote_branch_exists:
-                self._print_name()
+                self.print_name()
                 for project in self.projects:
                     project.prune(branch, force=force, local=True, remote=True)
         elif local:
             if self._existing_branch(branch, is_remote=False):
-                self._print_name()
+                self.print_name()
                 for project in self.projects:
                     project.prune(branch, force=force, local=True)
         elif remote:
             if self._existing_branch(branch, is_remote=True):
-                self._print_name()
+                self.print_name()
                 for project in self.projects:
                     project.prune(branch, remote=True)
 
-    def reset(self):
-        """Reset project branches to upstream or checkout tag/sha as detached HEAD"""
-        self._print_name()
-        for project in self.projects:
-            project.reset()
-
     def start(self, branch, tracking):
         """Start a new feature branch"""
-        self._print_name()
+        self.print_name()
         for project in self.projects:
             project.start(branch, tracking)
 
     def status(self, padding):
         """Print status for all projects"""
-        self._print_name()
+        self.print_name()
         for project in self.projects:
             project.status(padding)
 
     def stash(self):
         """Stash changes for all projects with changes"""
         if self.is_dirty():
-            self._print_name()
+            self.print_name()
             for project in self.projects:
                 project.stash()
 
@@ -163,8 +157,3 @@ class Group(object):
                 if project.existing_branch(branch, is_remote=False):
                     return True
         return False
-
-    def _print_name(self):
-        """Print formatted group name"""
-        name_output = colored(self.name, attrs=['bold', 'underline'])
-        print(name_output)

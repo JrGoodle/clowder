@@ -2,6 +2,10 @@
 
 cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
 
+if [ $1 = 'parallel' ]; then
+    PARALLEL='--parallel'
+fi
+
 . test_utilities.sh
 
 export cats_projects=( 'duke' 'mu' )
@@ -78,7 +82,7 @@ test_herd_tag_no_repo_existing_tag() {
             exit 1
         fi
     done
-    clowder herd -t $EXISTING_TAG || exit 1
+    clowder herd $PARALLEL -t $EXISTING_TAG || exit 1
     clowder status || exit 1
     test_cats_herd_tag
 }
@@ -94,7 +98,7 @@ test_herd_tag_no_repo_no_tag() {
             exit 1
         fi
     done
-    clowder herd -t $NO_TAG || exit 1
+    clowder herd $PARALLEL -t $NO_TAG || exit 1
     test_cats_default_herd_branches
 }
 test_herd_tag_no_repo_no_tag
@@ -103,9 +107,9 @@ test_herd_tag_existing_tag() {
     print_single_separator
     echo "TEST: Herd tag - Existing tag"
     clowder link || exit 1
-    clowder herd || exit 1
+    clowder herd $PARALLEL || exit 1
     test_cats_default_herd_branches
-    clowder herd -t $EXISTING_TAG || exit 1
+    clowder herd $PARALLEL -t $EXISTING_TAG || exit 1
     clowder status || exit 1
     test_cats_herd_tag
 }
@@ -115,9 +119,9 @@ test_herd_tag_no_tag() {
     print_single_separator
     echo "TEST: Herd tag - No existing tag"
     clowder link || exit 1
-    clowder herd || exit 1
+    clowder herd $PARALLEL || exit 1
     test_cats_default_herd_branches
-    clowder herd -t $NO_TAG || exit 1
+    clowder herd $PARALLEL -t $NO_TAG || exit 1
     test_cats_default_herd_branches
 }
 test_herd_tag_no_tag

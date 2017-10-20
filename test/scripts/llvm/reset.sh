@@ -4,10 +4,14 @@
 
 cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 
-. test_utilities.sh
+if [ $1 = 'parallel' ]; then
+    PARALLEL='--parallel'
+fi
+
+. ../test_utilities.sh
 
 print_double_separator
-echo 'TEST: llvm projects example test script'
+echo 'TEST: llvm projects reset'
 print_double_separator
 
 if [ -z "$TRAVIS_OS_NAME" ]; then
@@ -67,7 +71,7 @@ test_reset() {
    print_single_separator
    echo "TEST: clowder reset"
    clowder link || exit 1
-   clowder herd || exit 1
+   clowder herd $PARALLEL || exit 1
 
    COMMIT_MESSAGE='Add new commits'
    pushd 'llvm/tools/clang' || exit 1
@@ -79,7 +83,7 @@ test_reset() {
    test_not_commit "$UPSTREAM_COMMIT"
    popd || exit 1
 
-   clowder reset || exit 1
+   clowder reset $PARALLEL || exit 1
 
    pushd 'llvm/tools/clang' || exit 1
    test_number_commits 'HEAD' 'upstream/master' '0'
@@ -94,7 +98,7 @@ test_reset() {
    test_not_commit "$UPSTREAM_COMMIT"
    popd || exit 1
 
-   clowder reset || exit 1
+   clowder reset $PARALLEL || exit 1
 
    pushd 'llvm/tools/clang' || exit 1
    test_number_commits 'HEAD' 'upstream/master' '0'
@@ -112,7 +116,7 @@ test_reset() {
    test_not_commit "$UPSTREAM_COMMIT"
    popd || exit 1
 
-   clowder reset || exit 1
+   clowder reset  $PARALLEL || exit 1
 
    pushd 'llvm/tools/clang' || exit 1
    test_number_commits 'HEAD' 'upstream/master' '0'

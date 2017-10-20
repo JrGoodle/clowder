@@ -1,12 +1,16 @@
 """clowder.yaml parsing and functionality"""
 
 from __future__ import print_function
+import multiprocessing as mp
 import os
+import signal
 import sys
+import psutil
 from termcolor import cprint
+from tqdm import tqdm
 from clowder.group import Group
 from clowder.source import Source
-from clowder.utility.clowder_exception import ClowderException
+from clowder.exception.clowder_exception import ClowderException
 from clowder.utility.clowder_utilities import (
     get_yaml_string,
     parse_yaml,
@@ -23,6 +27,8 @@ from clowder.utility.clowder_yaml_validation import (
 )
 from clowder.utility.print_utilities import (
     format_clowder_command,
+    format_command,
+    format_fork_string,
     format_missing_imported_yaml_error,
     print_error,
     print_invalid_yaml_error,
@@ -30,6 +36,55 @@ from clowder.utility.print_utilities import (
     print_save_version,
     print_save_version_exists_error
 )
+
+
+def herd(project, branch, tag, depth, rebase):
+    """Clone project or update latest from upstream"""
+    project.herd(branch=branch, tag=tag, depth=depth, rebase=rebase, print_output=False)
+
+
+def reset(project):
+    """Reset project branches to upstream or checkout tag/sha as detached HEAD"""
+    project.reset(print_output=False)
+
+
+def run(project, command, ignore_errors):
+    """Run command or script in project directory"""
+    project.run(command, ignore_errors, print_output=False)
+
+
+def sync(project, rebasee):
+    """Sync fork project with upstream"""
+    project.sync(rebasee, print_output=False)
+
+
+PARENT_ID = os.getpid()
+
+
+def worker_init():
+    """
+    Process pool terminator
+    Adapted from https://stackoverflow.com/a/45259908
+    """
+    def sig_int(signal_num, frame):
+        """Signal handler"""
+        # print('signal: %s' % signal_num)
+        parent = psutil.Process(PARENT_ID)
+        for child in parent.children():
+            if child.pid != os.getpid():
+                # print("killing child: %s" % child.pid)
+                child.terminate()
+        # print("killing parent: %s" % parent_id)
+        parent.terminate()
+        # print("suicide: %s" % os.getpid())
+        psutil.Process(os.getpid()).terminate()
+        print('\n\n')
+    signal.signal(signal.SIGINT, sig_int)
+
+
+RESULTS = []
+POOL = mp.Pool(initializer=worker_init)
+PROGRESS = None
 
 
 class ClowderController(object):
@@ -46,57 +101,49 @@ class ClowderController(object):
         self._validate_yaml(yaml_file, self._max_import_depth)
         self._load_yaml()
 
-    def branch(self, group_names=None, project_names=None, local=False, remote=False):
+    def branch(self, group_names, project_names=None, local=False, remote=False):
         """Show branches"""
-        for group in self.groups:
-            if project_names is None and group_names is None:
+        if project_names is None:
+            groups = [g for g in self.groups if g.name in group_names]
+            for group in groups:
                 group.branch(local=local, remote=remote)
-            elif project_names is None:
-                if group.name in group_names:
-                    group.branch(local=local, remote=remote)
-            else:
-                for project in group.projects:
-                    if project.name in project_names:
-                        project.branch(local=local, remote=remote)
+            return
+        projects = [p for g in self.groups for p in g.projects if p.name in project_names]
+        for project in projects:
+            project.branch(local=local, remote=remote)
 
-    def clean(self, group_names=None, project_names=None, args='', recursive=False):
+    def clean(self, group_names, project_names=None, args='', recursive=False):
         """Discard changes"""
-        for group in self.groups:
-            if project_names is None and group_names is None:
+        if project_names is None:
+            groups = [g for g in self.groups if g.name in group_names]
+            for group in groups:
                 group.clean(args=args, recursive=recursive)
-            elif project_names is None:
-                if group.name in group_names:
-                    group.clean(args=args, recursive=recursive)
-            else:
-                for project in group.projects:
-                    if project.name in project_names:
-                        project.clean(args=args, recursive=recursive)
+            return
+        projects = [p for g in self.groups for p in g.projects if p.name in project_names]
+        for project in projects:
+            project.clean(args=args, recursive=recursive)
 
-    def clean_all(self, group_names=None, project_names=None):
+    def clean_all(self, group_names, project_names=None):
         """Discard all changes"""
-        for group in self.groups:
-            if project_names is None and group_names is None:
+        if project_names is None:
+            groups = [g for g in self.groups if g.name in group_names]
+            for group in groups:
                 group.clean_all()
-            elif project_names is None:
-                if group.name in group_names:
-                    group.clean_all()
-            else:
-                for project in group.projects:
-                    if project.name in project_names:
-                        project.clean_all()
+            return
+        projects = [p for g in self.groups for p in g.projects if p.name in project_names]
+        for project in projects:
+            project.clean_all()
 
-    def diff(self, group_names=None, project_names=None):
+    def diff(self, group_names, project_names=None):
         """Show git diff"""
-        for group in self.groups:
-            if project_names is None and group_names is None:
+        if project_names is None:
+            groups = [g for g in self.groups if g.name in group_names]
+            for group in groups:
                 group.diff()
-            elif project_names is None:
-                if group.name in group_names:
-                    group.diff()
-            else:
-                for project in group.projects:
-                    if project.name in project_names:
-                        project.diff()
+            return
+        projects = [p for g in self.groups for p in g.projects if p.name in project_names]
+        for project in projects:
+            project.diff()
 
     def fetch(self, group_names):
         """Fetch groups"""
@@ -104,32 +151,25 @@ class ClowderController(object):
             if group.name in group_names:
                 group.fetch_all()
 
-    def forall(self, command, ignore_errors, group_names=None, project_names=None):
+    def forall(self, command, ignore_errors, group_names, project_names=None, parallel=False):
         """Runs command or script in project directories specified"""
-        for group in self.groups:
-            if group_names is None and project_names is None:
-                for project in group.projects:
-                    project.run(command, ignore_errors)
-            elif project_names is None:
-                if group.name in group_names:
-                    for project in group.projects:
-                        project.run(command, ignore_errors)
-            else:
-                for project in group.projects:
-                    if project.name in project_names:
-                        project.run(command, ignore_errors)
+        if project_names is None:
+            projects = [p for g in self.groups if g.name in group_names for p in g.projects]
+        else:
+            projects = [p for g in self.groups for p in g.projects if p.name in project_names]
+        if parallel:
+            self._forall_parallel(command, ignore_errors, projects)
+            return
+        # Serial
+        for project in projects:
+            project.run(command, ignore_errors)
 
     def get_all_fork_project_names(self):
         """Returns all project names containing forks"""
-        project_names = []
-        for group in self.groups:
-            for project in group.projects:
-                if project.fork is not None:
-                    project_names.append(project.name)
-        names = sorted(project_names)
-        if not names:
+        project_names = sorted([p.name for g in self.groups for p in g.projects if p.fork])
+        if not project_names:
             return ''
-        return names
+        return project_names
 
     def get_all_group_names(self):
         """Returns all group names for current clowder.yaml"""
@@ -163,24 +203,24 @@ class ClowderController(object):
                 versions.remove(version)
         return versions
 
-    def herd(self, group_names=None, project_names=None, branch=None, tag=None,
-             depth=None, rebase=False):
-        """Sync projects with latest upstream changes"""
-        if project_names is None and group_names is None:
-            self._validate_groups(self.get_all_group_names())
-            for group in self.groups:
-                group.herd(branch=branch, tag=tag, depth=depth, rebase=rebase)
-        elif project_names is None:
-            self._validate_groups(group_names)
-            for group in self.groups:
-                if group.name in group_names:
-                    group.herd(branch=branch, tag=tag, depth=depth, rebase=rebase)
-        else:
+    def herd(self, group_names, project_names=None, branch=None, tag=None,
+             depth=None, rebase=False, parallel=False):
+        """Pull or rebase latest upstream changes for projects"""
+        if parallel:
+            self._herd_parallel(group_names, project_names=project_names, branch=branch, tag=tag,
+                                depth=depth, rebase=rebase)
+            return
+        # Serial
+        if project_names:
             self._validate_projects(project_names)
-            for group in self.groups:
-                for project in group.projects:
-                    if project.name in project_names:
-                        project.herd(branch=branch, tag=tag, depth=depth, rebase=rebase)
+            projects = [p for g in self.groups for p in g.projects if p.name in project_names]
+            for project in projects:
+                project.herd(branch=branch, tag=tag, depth=depth, rebase=rebase)
+            return
+        self._validate_groups(group_names)
+        projects = [p for g in self.groups if g.name in group_names for p in g.projects]
+        for project in projects:
+            project.herd(branch=branch, tag=tag, depth=depth, rebase=rebase)
 
     def print_yaml(self, resolved):
         """Print clowder.yaml"""
@@ -193,6 +233,7 @@ class ClowderController(object):
     def prune_groups(self, group_names, branch, force=False, local=False, remote=False):
         """Prune branches for groups"""
         self._validate_groups(group_names)
+        groups = [g for g in self.groups if g.name in group_names]
         if local and remote:
             local_branch_exists = self._existing_branch_group(group_names, branch, is_remote=False)
             remote_branch_exists = self._existing_branch_group(group_names, branch, is_remote=True)
@@ -201,63 +242,58 @@ class ClowderController(object):
                 cprint(' - No local or remote branches to prune\n', 'red')
                 sys.exit()
             print(' - Prune local and remote branches\n')
-            for group in self.groups:
-                if group.name in group_names:
-                    group.prune(branch, force=force, local=True, remote=True)
+            for group in groups:
+                group.prune(branch, force=force, local=True, remote=True)
         elif local:
             if not self._existing_branch_group(group_names, branch, is_remote=False):
                 print(' - No local branches to prune\n')
                 sys.exit()
-            for group in self.groups:
-                if group.name in group_names:
-                    group.prune(branch, force=force, local=True)
+            for group in groups:
+                group.prune(branch, force=force, local=True)
         elif remote:
             if not self._existing_branch_group(group_names, branch, is_remote=True):
                 cprint(' - No remote branches to prune\n', 'red')
                 sys.exit()
-            for group in self.groups:
-                if group.name in group_names:
-                    group.prune(branch, remote=True)
+            for group in groups:
+                group.prune(branch, remote=True)
 
     def prune_projects(self, project_names, branch, force=False, local=False, remote=False):
         """Prune local and remote branch for projects"""
         self._validate_projects(project_names)
+        projects = [p for g in self.groups for p in g.projects if p.name in project_names]
         if local and remote:
             self._prune_projects_all(project_names, branch, force)
         elif local:
             if not self._existing_branch_project(project_names, branch, is_remote=False):
                 print(' - No local branches to prune\n')
                 sys.exit()
-            for group in self.groups:
-                for project in group.projects:
-                    if project.name in project_names:
-                        project.prune(branch, force=force, local=True)
+            for project in projects:
+                project.prune(branch, force=force, local=True)
         elif remote:
             if not self._existing_branch_project(project_names, branch, is_remote=True):
                 cprint(' - No remote branches to prune\n', 'red')
                 sys.exit()
-            for group in self.groups:
-                for project in group.projects:
-                    if project.name in project_names:
-                        project.prune(branch, remote=True)
+            for project in projects:
+                project.prune(branch, remote=True)
 
-    def reset(self, group_names=None, project_names=None):
+    def reset(self, group_names, project_names=None, parallel=False):
         """Reset project branches to upstream or checkout tag/sha as detached HEAD"""
-        if project_names is None and group_names is None:
-            self._validate_groups(self.get_all_group_names())
-            for group in self.groups:
-                group.reset()
-        elif project_names is None:
+        if parallel:
+            self._reset_parallel(group_names, project_names=project_names)
+            return
+        # Serial
+        if project_names is None:
             self._validate_groups(group_names)
-            for group in self.groups:
-                if group.name in group_names:
-                    group.reset()
-        else:
-            self._validate_projects(project_names)
-            for group in self.groups:
+            groups = [g for g in self.groups if g.name in group_names]
+            for group in groups:
+                group.print_name()
                 for project in group.projects:
-                    if project.name in project_names:
-                        project.reset()
+                    project.reset()
+            return
+        self._validate_projects(project_names)
+        projects = [p for g in self.groups for p in g.projects if p.name in project_names]
+        for project in projects:
+            project.reset()
 
     def save_version(self, version):
         """Save current commits to a clowder.yaml in the versions directory"""
@@ -280,85 +316,82 @@ class ClowderController(object):
     def start_groups(self, group_names, branch, tracking):
         """Start feature branch for groups"""
         self._validate_groups(group_names)
-        for group in self.groups:
-            if group.name in group_names:
-                group.start(branch, tracking)
+        groups = [g for g in self.groups if g.name in group_names]
+        for group in groups:
+            group.start(branch, tracking)
 
     def start_projects(self, project_names, branch, tracking):
         """Start feature branch for projects"""
         self._validate_projects(project_names)
-        for group in self.groups:
-            for project in group.projects:
-                if project.name in project_names:
-                    project.start(branch, tracking)
+        projects = [p for g in self.groups for p in g.projects if p.name in project_names]
+        for project in projects:
+            project.start(branch, tracking)
 
-    def stash(self, group_names=None, project_names=None):
+    def stash(self, group_names, project_names=None):
         """Stash changes for projects with changes"""
         if not self._is_dirty():
             print('No changes to stash')
             return
-        for group in self.groups:
-            if project_names is None and group_names is None:
+        if project_names is None:
+            groups = [g for g in self.groups if g.name in group_names]
+            for group in groups:
                 group.stash()
-            elif project_names is None:
-                if group.name in group_names:
-                    group.stash()
-            else:
-                for project in group.projects:
-                    if project.name in project_names:
-                        project.stash()
+            return
+        projects = [p for g in self.groups for p in g.projects if p.name in project_names]
+        for project in projects:
+            project.stash()
 
     def status(self, group_names, padding):
         """Print status for groups"""
-        for group in self.groups:
-            if group.name in group_names:
-                group.status(padding)
+        groups = [g for g in self.groups if g.name in group_names]
+        for group in groups:
+            group.status(padding)
 
-    def sync(self, project_names, rebase=False):
+    def sync(self, project_names, rebase=False, parallel=False):
         """Sync projects"""
-        for group in self.groups:
-            for project in group.projects:
-                if project.name in project_names:
-                    project.sync(rebase=rebase)
+        projects = [p for g in self.groups for p in g.projects if p.name in project_names]
+        if parallel:
+            self._sync_parallel(projects, rebase=rebase)
+            return
+        # Serial
+        for project in projects:
+            project.sync(rebase=rebase)
 
     def _existing_branch_group(self, group_names, branch, is_remote):
         """Checks whether at least one branch exists for projects in groups"""
-        for group in self.groups:
-            if group.name in group_names:
-                for project in group.projects:
-                    if is_remote:
-                        if project.existing_branch(branch, is_remote=True):
-                            return True
-                    else:
-                        if project.existing_branch(branch, is_remote=False):
-                            return True
-        return False
+        projects = [p for g in self.groups if g.name in group_names for p in g.projects]
+        return any([p.existing_branch(branch, is_remote=is_remote) for p in projects])
 
     def _existing_branch_project(self, project_names, branch, is_remote):
         """Checks whether at least one branch exists for projects"""
-        for group in self.groups:
-            for project in group.projects:
-                if project.name in project_names:
-                    if is_remote:
-                        if project.existing_branch(branch, is_remote=True):
-                            return True
-                    else:
-                        if project.existing_branch(branch, is_remote=False):
-                            return True
-        return False
+        projects = [p for g in self.groups for p in g.projects if p.name in project_names]
+        return any([p.existing_branch(branch, is_remote=is_remote) for p in projects])
 
     def _fetch_groups(self, group_names):
         """Fetch all projects for specified groups"""
-        for group in self.groups:
-            if group.name in group_names:
-                group.fetch_all()
+        groups = [g for g in self.groups if g.name in group_names]
+        for group in groups:
+            group.fetch_all()
 
     def _fetch_projects(self, project_names):
         """Fetch specified projects"""
-        for group in self.groups:
-            for project in group.projects:
-                if project.name in project_names:
-                    project.fetch_all()
+        projects = [p for g in self.groups for p in g.projects if p.name in project_names]
+        for project in projects:
+            project.fetch_all()
+
+    @staticmethod
+    def _forall_parallel(command, ignore_errors, projects):
+        """Runs command or script in project directories specified"""
+        print(' - Run forall commands in parallel\n')
+        for project in projects:
+            project.print_status()
+            if not os.path.isdir(project.full_path()):
+                cprint(" - Project is missing", 'red')
+        print('\n' + format_command(command))
+        for project in projects:
+            result = POOL.apply_async(run, args=(project, command, ignore_errors), callback=async_callback)
+            RESULTS.append(result)
+        pool_handler(len(projects))
 
     def _get_yaml(self):
         """Return python object representation for saving yaml"""
@@ -376,13 +409,42 @@ class ClowderController(object):
                 'sources': sources_yaml,
                 'groups': groups_yaml}
 
+    def _herd_parallel(self, group_names, project_names=None, branch=None, tag=None, depth=None, rebase=False):
+        """Pull or rebase latest upstream changes for projects in parallel"""
+        print(' - Herd projects in parallel\n')
+        if project_names:
+            self._validate_projects(project_names)
+            projects = [p for g in self.groups for p in g.projects if p.name in project_names]
+            for project in projects:
+                project.print_status()
+                if project.fork:
+                    print('  ' + format_fork_string(project.name))
+                    print('  ' + format_fork_string(project.fork.name))
+            for project in projects:
+                result = POOL.apply_async(herd, args=(project, branch, tag, depth, rebase),
+                                          callback=async_callback)
+                RESULTS.append(result)
+            pool_handler(len(projects))
+            return
+        self._validate_groups(group_names)
+        groups = [g for g in self.groups if g.name in group_names]
+        projects = [p for g in self.groups if g.name in group_names for p in g.projects]
+        for group in groups:
+            group.print_name()
+            for project in group.projects:
+                project.print_status()
+                if project.fork:
+                    print('  ' + format_fork_string(project.name))
+                    print('  ' + format_fork_string(project.fork.name))
+        for project in projects:
+            result = POOL.apply_async(herd, args=(project, branch, tag, depth, rebase),
+                                      callback=async_callback)
+            RESULTS.append(result)
+        pool_handler(len(projects))
+
     def _is_dirty(self):
         """Check if there are any dirty projects"""
-        is_dirty = False
-        for group in self.groups:
-            if group.is_dirty():
-                is_dirty = True
-        return is_dirty
+        return any([g.is_dirty() for g in self.groups])
 
     def _load_yaml(self):
         """Load clowder from yaml file"""
@@ -429,34 +491,69 @@ class ClowderController(object):
             cprint(' - No local or remote branches to prune\n', 'red')
             sys.exit()
         print(' - Prune local and remote branches\n')
-        for group in self.groups:
-            for project in group.projects:
-                if project.name in project_names:
-                    project.prune(branch, force=force, local=True, remote=True)
+        projects = [p for g in self.groups for p in g.projects if p.name in project_names]
+        for project in projects:
+            project.prune(branch, force=force, local=True, remote=True)
+
+    def _reset_parallel(self, group_names, project_names=None):
+        """Reset project branches to upstream or checkout tag/sha as detached HEAD in parallel"""
+        print(' - Reset projects in parallel\n')
+        if project_names is None:
+            self._validate_groups(group_names)
+            groups = [g for g in self.groups if g.name in group_names]
+            projects = [p for g in self.groups if g.name in group_names for p in g.projects]
+            for group in groups:
+                group.print_name()
+                for project in group.projects:
+                    project.print_status()
+                    if project.fork:
+                        print('  ' + format_fork_string(project.name))
+                        print('  ' + format_fork_string(project.fork.name))
+            for project in projects:
+                result = POOL.apply_async(reset, args=(project,), callback=async_callback)
+                RESULTS.append(result)
+            pool_handler(len(projects))
+            return
+        self._validate_projects(project_names)
+        projects = [p for g in self.groups for p in g.projects if p.name in project_names]
+        for project in projects:
+            project.print_status()
+            if project.fork:
+                print('  ' + format_fork_string(project.name))
+                print('  ' + format_fork_string(project.fork.name))
+        for project in projects:
+            result = POOL.apply_async(reset, args=(project,), callback=async_callback)
+            RESULTS.append(result)
+        pool_handler(len(projects))
+
+    @staticmethod
+    def _sync_parallel(projects, rebase=False):
+        """Sync projects in parallel"""
+        print(' - Sync forks in parallel\n')
+        global PROGRESS
+        for project in projects:
+            project.print_status()
+            if project.fork:
+                print('  ' + format_fork_string(project.name))
+                print('  ' + format_fork_string(project.fork.name))
+        for project in projects:
+            result = POOL.apply_async(sync, args=(project, rebase), callback=async_callback)
+            RESULTS.append(result)
+        pool_handler(len(projects))
 
     def _validate_groups(self, group_names):
         """Validate status of all projects for specified groups"""
-        valid = True
-        for group in self.groups:
-            if group.name in group_names:
-                group.print_validation()
-                if not group.is_valid():
-                    valid = False
-        if not valid:
+        groups = [g for g in self.groups if g.name in group_names]
+        for group in groups:
+            group.print_validation()
+        if not all([g.is_valid() for g in groups]):
             print()
             sys.exit(1)
 
     def _validate_projects(self, project_names):
         """Validate status of all projects"""
-        valid = True
-        for project in project_names:
-            for group in self.groups:
-                for group_project in group.projects:
-                    if group_project.name == project:
-                        if not group_project.is_valid():
-                            valid = False
-                            break
-        if not valid:
+        projects = [p for g in self.groups for p in g.projects if p.name in project_names]
+        if not all([p.is_valid() for p in projects]):
             print()
             sys.exit(1)
 
@@ -502,3 +599,49 @@ class ClowderController(object):
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
         self._validate_yaml(yaml_file, max_import_depth - 1)
+
+
+def async_callback(val):
+    """Increment async progress bar"""
+    if PROGRESS:
+        PROGRESS.update()
+
+
+def pool_handler(count):
+    """Pool handler for finishing parallel jobs"""
+    print()
+    global PROGRESS
+    bar_format = '{desc}: {percentage:3.0f}%|{bar}| {n_fmt}/{total_fmt} projects'
+    PROGRESS = tqdm(total=count, unit='projects', bar_format=bar_format)
+    try:
+        POOL.close()
+        POOL.join()
+    except (KeyboardInterrupt, SystemExit):
+        print()
+        if PROGRESS:
+            PROGRESS.close()
+        print()
+        sys.exit(1)
+    else:
+        try:
+            for result in RESULTS:
+                result.get()
+                if not result.successful():
+                    if PROGRESS:
+                        PROGRESS.close()
+                    print()
+                    cprint(' - Command failed', 'red')
+                    print()
+                    sys.exit(1)
+        except Exception as err:
+            if PROGRESS:
+                PROGRESS.close()
+            print()
+            cprint(err, 'red')
+            print()
+            sys.exit(1)
+        else:
+            if PROGRESS:
+                if PROGRESS.n < PROGRESS.total:
+                    PROGRESS.n = PROGRESS.total
+                PROGRESS.close()

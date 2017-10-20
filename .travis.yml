@@ -22,6 +22,10 @@ matrix:
   - os: linux
     env: TARGET="llvm" PYVERSION="python3"
   - os: linux
+    env: TARGET="parallel" PYVERSION="python2"
+  - os: linux
+    env: TARGET="parallel" PYVERSION="python3"
+  - os: linux
     env: TARGET="swift" PYVERSION="python3"
 
 before_install: script/bootstrap "$PYVERSION"
@@ -38,6 +42,7 @@ script:
     - if [ "$TARGET" = "cats" ]; then clowder-test unittests "$PYVERSION" || exit 1; clowder-test cats all; fi
     - if [ "$TARGET" = "cocos2d" ]; then clowder-test cocos2d; fi
     - if [ "$TARGET" = "llvm" ]; then clowder-test llvm; fi
+    - if [ "$TARGET" = "parallel" ]; then clowder-test parallel; fi
     - if [ "$TARGET" = "swift" ]; then clowder-test swift; fi
 
 after_success: if [ "$TRAVIS_OS_NAME" = "osx" ]; then script/deploy; fi

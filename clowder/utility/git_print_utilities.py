@@ -6,12 +6,12 @@ import sys
 from termcolor import colored, cprint
 from clowder.utility.clowder_utilities import (
     execute_command,
-    existing_git_repository,
+    existing_git_repository
 )
 from clowder.utility.git_utilities import Git
 from clowder.utility.print_utilities import (
     format_command,
-    print_command_failed_error
+    format_command_failed_error
 )
 
 
@@ -63,7 +63,7 @@ def print_git_status(repo_path):
     return_code = execute_command(command, repo_path)
     if return_code != 0:
         cprint(' - Failed to print status', 'red')
-        print_command_failed_error(command)
+        print(format_command_failed_error(command))
         sys.exit(return_code)
 
 

@@ -4,6 +4,10 @@
 
 cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 
+if [ $1 = 'parallel' ]; then
+    PARALLEL='--parallel'
+fi
+
 . test_utilities.sh
 
 print_double_separator
@@ -102,7 +106,7 @@ test_init_herd() {
     echo "TEST: Normal herd after init"
     "$LLVM_EXAMPLE_DIR/clean.sh"
     "$LLVM_EXAMPLE_DIR/init.sh"  || exit 1
-    clowder herd  || exit 1
+    clowder herd $PARALLEL || exit 1
     echo "TEST: Check current branches are on master"
     for project in "${project_paths[@]}"; do
         pushd $project || exit 1
@@ -125,13 +129,13 @@ clowder status || exit 1
 #     print_double_separator
 #     echo "TEST: Normal herd with out of date repos"
 #     setup_old_repos
-#     clowder herd || exit 1
+#     clowder herd $PARALLEL || exit 1
 #     clowder status || exit 1
 # }
 # test_herd_old_repos
 
 # print_double_separator
-# clowder forall -c 'git checkout -b v0.1'
+# clowder forall $PARALLEL -c 'git checkout -b v0.1'
 # echo "TEST: Check current branches"
 # for project in "${projects[@]}"; do
 # 	pushd $project || exit 1
@@ -144,7 +148,7 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
         print_double_separator
         echo "TEST: Forks"
         clowder link || exit 1
-        clowder herd || exit 1
+        clowder herd $PARALLEL || exit 1
         clowder start -t fail_start && exit 1
         clowder prune -a fail_start || exit 1
 
@@ -181,7 +185,7 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
             popd || exit 1
         done
 
-        clowder herd || exit 1
+        clowder herd $PARALLEL || exit 1
         clowder status || exit 1
 
         for project in "${project_paths[@]}"; do
@@ -206,7 +210,7 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
             popd || exit 1
         done
 
-        clowder herd -b start_tracking || exit 1
+        clowder herd $PARALLEL -b start_tracking || exit 1
         clowder status || exit 1
 
         for project in "${project_paths[@]}"; do
@@ -239,7 +243,7 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
         print_double_separator
         echo "TEST: clowder sync"
         clowder link || exit 1
-        clowder herd || exit 1
+        clowder herd $PARALLEL || exit 1
 
         pushd 'llvm/tools/clang' || exit 1
         git pull upstream master || exit 1
@@ -250,7 +254,7 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
         test_not_commit "$UPSTREAM_COMMIT"
         popd || exit 1
 
-        clowder sync || exit 1
+        clowder sync $PARALLEL || exit 1
 
         pushd 'llvm/tools/clang' || exit 1
         test_commit "$UPSTREAM_COMMIT"
@@ -266,8 +270,8 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
         print_single_separator
         echo "TEST: clowder sync rebase"
         clowder link || exit 1
-        clowder herd || exit 1
-        clowder sync || exit 1
+        clowder herd $PARALLEL || exit 1
+        clowder sync $PARALLEL || exit 1
 
         REBASE_MESSAGE='Add rebase file'
         pushd 'llvm/tools/clang' || exit 1
@@ -288,7 +292,7 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
         test_commit_messages "$(git log --format=%B -n 1 HEAD~1)" "$COMMIT_MESSAGE_2"
         popd || exit 1
 
-        clowder sync -r || exit 1
+        clowder sync $PARALLEL -r || exit 1
 
         pushd 'llvm/tools/clang' || exit 1
         test_commit_messages "$(git log --format=%B -n 1 HEAD)" "$REBASE_MESSAGE"
@@ -313,17 +317,17 @@ fi
 
 test_forks_env() {
     echo "TEST: Fork remote environment variable in script"
-    clowder forall -c "$TEST_SCRIPT_DIR/test_forall_script_env_fork.sh" -p "llvm-mirror/clang" || exit 1
-    clowder forall -c "$TEST_SCRIPT_DIR/test_forall_script_env_fork.sh" -p "llvm-mirror/llvm" && exit 1
+    clowder forall $PARALLEL -c "$TEST_SCRIPT_DIR/test_forall_script_env_fork.sh" -p "llvm-mirror/clang" || exit 1
+    clowder forall $PARALLEL -c "$TEST_SCRIPT_DIR/test_forall_script_env_fork.sh" -p "llvm-mirror/llvm" && exit 1
     echo "TEST: Fork remote environment variable in command"
-    clowder forall -c 'if [ $PROJECT_REMOTE != upstream ]; then exit 1; fi' -p 'llvm-mirror/clang' || exit 1
-    clowder forall -c 'if [ $FORK_REMOTE != origin ]; then exit 1; fi' -p 'llvm-mirror/clang' || exit 1
+    clowder forall $PARALLEL -c 'if [ $PROJECT_REMOTE != upstream ]; then exit 1; fi' -p 'llvm-mirror/clang' || exit 1
+    clowder forall $PARALLEL -c 'if [ $FORK_REMOTE != origin ]; then exit 1; fi' -p 'llvm-mirror/clang' || exit 1
 }
 
 test_branch() {
     echo "TEST: clowder branch"
     clowder link || exit 1
-    clowder herd || exit 1
+    clowder herd $PARALLEL || exit 1
     clowder branch || exit 1
     clowder branch -r || exit 1
     clowder branch -a || exit 1
@@ -336,12 +340,12 @@ test_branch() {
 }
 test_branch
 
-"$TEST_SCRIPT_DIR/llvm/reset.sh" || exit 1
+"$TEST_SCRIPT_DIR/llvm/reset.sh" $1 || exit 1
 
 test_help() {
     print_double_separator
     clowder link || exit 1
-    clowder herd || exit 1
+    clowder herd $PARALLEL || exit 1
     "$TEST_SCRIPT_DIR/test_help.sh" "$LLVM_EXAMPLE_DIR" || exit 1
 }
 test_help
