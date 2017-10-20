@@ -4,7 +4,7 @@ import os
 import sys
 import unittest
 
-from clowder.git.git_repo import GitRepo
+from clowder.git.repo import GitRepo
 
 
 class GitUtilitiesTest(unittest.TestCase):

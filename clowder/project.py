@@ -5,8 +5,8 @@ from __future__ import print_function
 import os
 import sys
 
-from clowder.git.git_repo import GitRepo
-from clowder.git.git_submodules import GitSubmodules
+from clowder.git.repo import GitRepo
+from clowder.git.submodules import GitSubmodules
 from termcolor import cprint
 
 import clowder.utility.formatting as fmt

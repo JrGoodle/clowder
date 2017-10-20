@@ -7,7 +7,7 @@ import errno
 import os
 import sys
 
-from clowder.git.git_repo import GitRepo
+from clowder.git.repo import GitRepo
 from git import GitError
 from termcolor import colored, cprint
 

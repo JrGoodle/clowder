@@ -4,7 +4,7 @@ from __future__ import print_function
 
 import os
 
-from clowder.git.git_repo import GitRepo
+from clowder.git.repo import GitRepo
 from termcolor import cprint
 
 from clowder.git.printing import (
