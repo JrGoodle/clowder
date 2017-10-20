@@ -69,15 +69,15 @@ class GitUtilitiesTest(unittest.TestCase):
 
     def test_truncate_ref_branch(self):
         """Test _truncate_ref() function for branch ref"""
-        self.assertEqual(truncate_ref(self.branch_ref), 'master')
+        self.assertEqual(GitRepo.truncate_ref(self.branch_ref), 'master')
 
     def test_truncate_ref_sha(self):
         """Test _truncate_ref() function for sha ref"""
-        self.assertEqual(truncate_ref(self.sha_ref), self.sha_ref)
+        self.assertEqual(GitRepo.truncate_ref(self.sha_ref), self.sha_ref)
 
     def test_truncate_ref_tag(self):
         """Test _truncate_ref() function for tag ref"""
-        self.assertEqual(truncate_ref(self.tag_ref), 'v1.0')
+        self.assertEqual(GitRepo.truncate_ref(self.tag_ref), 'v1.0')
 
 
 if __name__ == '__main__':
