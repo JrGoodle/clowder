@@ -13,17 +13,14 @@ from tqdm import tqdm
 
 from clowder.group import Group
 from clowder.source import Source
-from clowder.utility.clowder_utilities import (
-    get_yaml_string,
-    parse_yaml,
-    save_yaml
-)
+from clowder.utility.clowder_utilities import save_yaml
 from clowder.utility.exception.clowder_exception import ClowderException
 import clowder.utility.formatting as fmt
 from clowder.utility.yaml.load import (
     load_yaml_base,
     load_yaml_import
 )
+from clowder.utility.yaml.parsing import parse_yaml
 from clowder.utility.yaml.printing import print_yaml
 from clowder.utility.yaml.validation import (
     validate_yaml,
@@ -228,7 +225,7 @@ class ClowderController(object):
     def print_yaml(self, resolved):
         """Print clowder.yaml"""
         if resolved:
-            print(get_yaml_string(self._get_yaml_resolved()))
+            print(fmt.yaml_string(self._get_yaml_resolved()))
         else:
             print_yaml(self.root_directory)
         sys.exit()  # exit early to prevent printing extra newline

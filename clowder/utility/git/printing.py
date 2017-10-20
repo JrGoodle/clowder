@@ -7,17 +7,14 @@ import sys
 
 from termcolor import colored, cprint
 
-from clowder.utility.clowder_utilities import (
-    execute_command,
-    existing_git_repository
-)
+from clowder.utility.clowder_utilities import execute_command
 from clowder.utility.git.git_repo import GitRepo
 import clowder.utility.formatting as fmt
 
 
 def print_exists(repo_path):
     """Print existence validation messages"""
-    if not existing_git_repository(repo_path):
+    if not GitRepo.existing_git_repository(repo_path):
         cprint(' - Project is missing', 'red')
 
 
@@ -35,7 +32,7 @@ def print_git_status(repo_path):
 def print_validation(repo_path):
     """Print validation messages"""
     repo = GitRepo(repo_path)
-    if not existing_git_repository(repo_path):
+    if not GitRepo.existing_git_repository(repo_path):
         return
     if not repo.validate_repo():
         print(' - Dirty repo. Please stash, commit, or discard your changes')

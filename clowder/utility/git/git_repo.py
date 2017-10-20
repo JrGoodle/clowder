@@ -11,9 +11,7 @@ from termcolor import colored, cprint
 
 from clowder.utility.clowder_utilities import (
     execute_command,
-    existing_git_repository,
     is_offline,
-    ref_type,
     remove_directory,
     truncate_ref
 )
@@ -27,7 +25,7 @@ class GitRepo(object):
     def __init__(self, repo_path, print_output=True):
         self.repo_path = repo_path
         self.print_output = print_output
-        self.repo = self._repo() if existing_git_repository(repo_path) else None
+        self.repo = self._repo() if GitRepo.existing_git_repository(repo_path) else None
 
     def checkout(self, truncated_ref):
         """Checkout git ref"""
@@ -64,7 +62,7 @@ class GitRepo(object):
 
     def create_clowder_repo(self, url, remote, branch, depth=0):
         """Clone clowder git repo from url at path"""
-        if existing_git_repository(self.repo_path):
+        if GitRepo.existing_git_repository(self.repo_path):
             return
         self._init_repo()
         self._create_remote(remote, url, remove_dir=True)
@@ -73,7 +71,7 @@ class GitRepo(object):
     def configure_remotes(self, upstream_remote_name, upstream_remote_url,
                           fork_remote_name, fork_remote_url):
         """Configure remotes names for fork and upstream"""
-        if not existing_git_repository(self.repo_path):
+        if not GitRepo.existing_git_repository(self.repo_path):
             return
         try:
             remotes = self.repo.remotes
@@ -125,6 +123,16 @@ class GitRepo(object):
         """Check if local branch exists"""
         return branch in self.repo.heads
 
+    @staticmethod
+    def existing_git_repository(path):
+        """Check if a git repository exists"""
+        return os.path.isdir(os.path.join(path, '.git'))
+
+    @staticmethod
+    def existing_git_submodule(path):
+        """Check if a git submodule exists"""
+        return os.path.isfile(os.path.join(path, '.git'))
+
     def fetch(self, remote, ref=None, depth=0, remove_dir=False):
         """Fetch from a specific remote ref"""
         remote_output = fmt.remote_string(remote)
@@ -158,7 +166,7 @@ class GitRepo(object):
 
     def herd(self, url, remote, ref, depth=0, fetch=True, rebase=False):
         """Herd ref"""
-        if not existing_git_repository(self.repo_path):
+        if not GitRepo.existing_git_repository(self.repo_path):
             self._herd_initial(url, remote, ref, depth=depth)
             return
         return_code = self._create_remote(remote, url)
@@ -168,7 +176,7 @@ class GitRepo(object):
 
     def herd_branch(self, url, remote, branch, default_ref, depth=0, rebase=False, fork_remote=None):
         """Herd branch"""
-        if not existing_git_repository(self.repo_path):
+        if not GitRepo.existing_git_repository(self.repo_path):
             self._herd_branch_initial(url, remote, branch, default_ref, depth=depth)
             return
         branch_output = fmt.ref_string(branch)
@@ -210,7 +218,7 @@ class GitRepo(object):
 
     def herd_tag(self, url, remote, tag, default_ref, depth=0, rebase=False):
         """Herd tag"""
-        if not existing_git_repository(self.repo_path):
+        if not GitRepo.existing_git_repository(self.repo_path):
             self._init_repo()
             self._create_remote(remote, url, remove_dir=True)
             return_code = self._checkout_new_repo_tag(tag, remote, depth)
@@ -352,7 +360,7 @@ class GitRepo(object):
 
     def reset(self, remote, ref, depth=0):
         """Reset branch to upstream or checkout tag/sha as detached HEAD"""
-        if ref_type(ref) == 'branch':
+        if GitRepo.ref_type(ref) == 'branch':
             branch = truncate_ref(ref)
             branch_output = fmt.ref_string(branch)
             if not self.existing_local_branch(branch):
@@ -377,10 +385,10 @@ class GitRepo(object):
                 print(' - Reset branch ' + branch_output + ' to ' + remote_output + ' ' + branch_output)
             remote_branch = remote + '/' + branch
             self._reset_head(branch=remote_branch)
-        elif ref_type(ref) == 'tag':
+        elif GitRepo.ref_type(ref) == 'tag':
             self.fetch(remote, depth=depth, ref=ref)
             self._checkout_tag(truncate_ref(ref))
-        elif ref_type(ref) == 'sha':
+        elif GitRepo.ref_type(ref) == 'sha':
             self.fetch(remote, depth=depth, ref=ref)
             self._checkout_sha(ref)
 
@@ -428,7 +436,7 @@ class GitRepo(object):
         """Sync fork with upstream remote"""
         if self.print_output:
             print(' - Sync fork with upstream remote')
-        if ref_type(ref) != 'branch':
+        if GitRepo.ref_type(ref) != 'branch':
             message = colored(' - Can only sync branches', 'red')
             if self.print_output:
                 print(message)
@@ -455,7 +463,7 @@ class GitRepo(object):
 
     def validate_repo(self):
         """Validate repo state"""
-        if not existing_git_repository(self.repo_path):
+        if not GitRepo.existing_git_repository(self.repo_path):
             return True
         return not self.is_dirty()
 
@@ -754,7 +762,7 @@ class GitRepo(object):
 
     def _herd(self, remote, ref, depth=0, fetch=True, rebase=False):
         """Herd ref"""
-        if ref_type(ref) == 'branch':
+        if GitRepo.ref_type(ref) == 'branch':
             branch = truncate_ref(ref)
             branch_output = fmt.ref_string(branch)
             if not self.existing_local_branch(branch):
@@ -779,10 +787,10 @@ class GitRepo(object):
                 self._rebase_remote_branch(remote, branch)
                 return
             self._pull(remote, branch)
-        elif ref_type(ref) == 'tag':
+        elif GitRepo.ref_type(ref) == 'tag':
             self.fetch(remote, depth=depth, ref=ref)
             self._checkout_tag(truncate_ref(ref))
-        elif ref_type(ref) == 'sha':
+        elif GitRepo.ref_type(ref) == 'sha':
             self.fetch(remote, depth=depth, ref=ref)
             self._checkout_sha(ref)
 
@@ -790,11 +798,11 @@ class GitRepo(object):
         """Herd ref initial"""
         self._init_repo()
         self._create_remote(remote, url, remove_dir=True)
-        if ref_type(ref) == 'branch':
+        if GitRepo.ref_type(ref) == 'branch':
             self._checkout_new_repo_branch(truncate_ref(ref), remote, depth)
-        elif ref_type(ref) == 'tag':
+        elif GitRepo.ref_type(ref) == 'tag':
             self._checkout_new_repo_tag(truncate_ref(ref), remote, depth, remove_dir=True)
-        elif ref_type(ref) == 'sha':
+        elif GitRepo.ref_type(ref) == 'sha':
             self._checkout_new_repo_commit(ref, remote, depth)
 
     def _herd_branch_initial(self, url, remote, branch, default_ref, depth=0):
@@ -822,7 +830,7 @@ class GitRepo(object):
 
     def _init_repo(self):
         """Initialize repository"""
-        if existing_git_repository(self.repo_path):
+        if GitRepo.existing_git_repository(self.repo_path):
             return
         try:
             if self.print_output:
@@ -1087,3 +1095,16 @@ class GitRepo(object):
             raise ClowderGitException(msg=message)
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
+
+    @staticmethod
+    def ref_type(ref):
+        """Return branch, tag, sha, or unknown ref type"""
+        git_branch = "refs/heads/"
+        git_tag = "refs/tags/"
+        if ref.startswith(git_branch):
+            return 'branch'
+        elif ref.startswith(git_tag):
+            return 'tag'
+        elif len(ref) == 40:
+            return 'sha'
+        return 'unknown'

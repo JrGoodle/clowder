@@ -11,7 +11,6 @@ from termcolor import colored, cprint
 
 from clowder.utility.clowder_utilities import (
     execute_command,
-    existing_git_repository,
     force_symlink,
     is_offline,
     remove_directory
@@ -124,7 +123,7 @@ class ClowderRepo(object):
     def print_status(self, fetch=False):
         """Print clowder repo status"""
         repo_path = os.path.join(self.root_directory, '.clowder')
-        if not existing_git_repository(repo_path):
+        if not GitRepo.existing_git_repository(repo_path):
             output = colored('.clowder', 'green')
             print(output)
             return

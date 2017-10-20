@@ -1,6 +1,6 @@
 """Clowder yaml validation"""
 
-from clowder.utility.clowder_utilities import parse_yaml
+from clowder.utility.yaml.parsing import parse_yaml
 from clowder.utility.exception.clowder_exception import ClowderException
 import clowder.utility.formatting as fmt
 

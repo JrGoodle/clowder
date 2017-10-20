@@ -11,7 +11,6 @@ from clowder.utility.exception.clowder_exception import ClowderException
 from clowder.fork import Fork
 from clowder.utility.clowder_utilities import (
     execute_forall_command,
-    existing_git_repository,
     is_offline
 )
 from clowder.utility.git.printing import (
@@ -214,7 +213,7 @@ class Project(object):
 
     def print_status(self):
         """Print formatted project status"""
-        if not existing_git_repository(self.full_path()):
+        if not GitRepo.existing_git_repository(self.full_path()):
             cprint(self.path, 'green')
             return
         project_output = project_string(self.full_path(), self.path)
@@ -229,7 +228,7 @@ class Project(object):
 
     def prune(self, branch, force=False, local=False, remote=False):
         """Prune branch"""
-        if not existing_git_repository(self.full_path()):
+        if not GitRepo.existing_git_repository(self.full_path()):
             return
         if local and remote:
             self._prune_local(branch, force)
@@ -283,7 +282,7 @@ class Project(object):
         """Start a new feature branch"""
         self.print_status()
         repo = GitRepo(self.full_path())
-        if not existing_git_repository(self.full_path()):
+        if not GitRepo.existing_git_repository(self.full_path()):
             cprint(" - Directory doesn't exist", 'red')
             return
         if self.fork is None:
@@ -372,7 +371,7 @@ class Project(object):
     def _print_status_indented(self, padding):
         """Print formatted and indented project status"""
         repo_path = os.path.join(self.root_directory, self.path)
-        if not existing_git_repository(self.full_path()):
+        if not GitRepo.existing_git_repository(self.full_path()):
             cprint(self.name, 'green')
             return
         project_output = project_string(repo_path, self.path)

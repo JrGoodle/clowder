@@ -3,7 +3,7 @@
 from __future__ import print_function
 import os
 import sys
-from clowder.utility.clowder_utilities import parse_yaml
+from clowder.utility.yaml.parsing import parse_yaml
 import clowder.utility.formatting as fmt
 
 

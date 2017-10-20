@@ -4,10 +4,7 @@ import os
 import sys
 import unittest
 
-from clowder.utility.clowder_utilities import (
-    ref_type,
-    truncate_ref
-)
+from clowder.utility.clowder_utilities import truncate_ref
 from clowder.utility.git.git_repo import GitRepo
 
 
@@ -57,19 +54,19 @@ class GitUtilitiesTest(unittest.TestCase):
 
     def test_ref_type_branch(self):
         """Test ref_type() function for branch ref"""
-        self.assertEqual(ref_type(self.branch_ref), 'branch')
+        self.assertEqual(GitRepo.ref_type(self.branch_ref), 'branch')
 
     def test_ref_type_sha(self):
         """Test ref_type() function for sha ref"""
-        self.assertEqual(ref_type(self.sha_ref), 'sha')
+        self.assertEqual(GitRepo.ref_type(self.sha_ref), 'sha')
 
     def test_ref_type_tag(self):
         """Test ref_type() function for tag ref"""
-        self.assertEqual(ref_type(self.tag_ref), 'tag')
+        self.assertEqual(GitRepo.ref_type(self.tag_ref), 'tag')
 
     def test_ref_type_unknown(self):
         """Test ref_type() function for unknown ref type"""
-        self.assertEqual(ref_type('42'), 'unknown')
+        self.assertEqual(GitRepo.ref_type('42'), 'unknown')
 
     def test_truncate_ref_branch(self):
         """Test _truncate_ref() function for branch ref"""

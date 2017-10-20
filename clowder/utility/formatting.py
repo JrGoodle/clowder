@@ -1,6 +1,7 @@
 """String formatting utilities"""
 
 import os
+import yaml
 
 from termcolor import colored
 
@@ -283,3 +284,14 @@ def version(version_name):
 def yaml_file(yml):
     """Return formatted string for clowder.yaml file"""
     return colored(yml, 'cyan')
+
+
+def yaml_string(yaml_output):
+    """Return yaml string from python data structures"""
+    try:
+        return yaml.safe_dump(yaml_output, default_flow_style=False, indent=4)
+    except yaml.YAMLError:
+        cprint('Failed to dump yaml', 'red')
+        sys.exit(1)
+    except (KeyboardInterrupt, SystemExit):
+        sys.exit(1)

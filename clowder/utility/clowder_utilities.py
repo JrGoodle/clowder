@@ -7,9 +7,8 @@ import shutil
 import socket
 import subprocess
 import sys
-import yaml
 
-from termcolor import colored, cprint
+from termcolor import colored
 
 import clowder.utility.formatting as fmt
 
@@ -40,16 +39,6 @@ def execute_forall_command(command, path, forall_env, print_output):
     return execute_command(command, path, shell=True, env=forall_env, print_output=print_output)
 
 
-def existing_git_repository(path):
-    """Check if a git repository exists"""
-    return os.path.isdir(os.path.join(path, '.git'))
-
-
-def existing_git_submodule(path):
-    """Check if a git submodule exists"""
-    return os.path.isfile(os.path.join(path, '.git'))
-
-
 def force_symlink(file1, file2):
     """Force symlink creation"""
     try:
@@ -61,17 +50,6 @@ def force_symlink(file1, file2):
     except (KeyboardInterrupt, SystemExit):
         os.remove(file2)
         os.symlink(file1, file2)
-        sys.exit(1)
-
-
-def get_yaml_string(yaml_output):
-    """Return yaml string from python data structures"""
-    try:
-        return yaml.safe_dump(yaml_output, default_flow_style=False, indent=4)
-    except yaml.YAMLError:
-        cprint('Failed to dump yaml', 'red')
-        sys.exit(1)
-    except (KeyboardInterrupt, SystemExit):
         sys.exit(1)
 
 
@@ -91,42 +69,6 @@ def is_offline(host='8.8.8.8', port=53, timeout=3):
         return True
     except (KeyboardInterrupt, SystemExit):
         sys.exit(1)
-
-
-def parse_yaml(yaml_file):
-    """Parse yaml file"""
-    if os.path.isfile(yaml_file):
-        try:
-            with open(yaml_file) as raw_file:
-                parsed_yaml = yaml.safe_load(raw_file)
-                if parsed_yaml is None:
-                    print(fmt.invalid_yaml_error())
-                    print(fmt.empty_yaml_error(yaml_file) + '\n')
-                    sys.exit(1)
-                return parsed_yaml
-        except yaml.YAMLError:
-            fmt.open_file_error(yaml_file)
-            sys.exit(1)
-        except (KeyboardInterrupt, SystemExit):
-            sys.exit(1)
-    else:
-        print()
-        print(fmt.missing_yaml_error())
-        print()
-        sys.exit(1)
-
-
-def ref_type(ref):
-    """Return branch, tag, sha, or unknown ref type"""
-    git_branch = "refs/heads/"
-    git_tag = "refs/tags/"
-    if ref.startswith(git_branch):
-        return 'branch'
-    elif ref.startswith(git_tag):
-        return 'tag'
-    elif len(ref) == 40:
-        return 'sha'
-    return 'unknown'
 
 
 def remove_directory(path):

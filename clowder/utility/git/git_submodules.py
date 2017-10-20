@@ -7,10 +7,7 @@ import sys
 from git import GitError
 from termcolor import cprint
 
-from clowder.utility.clowder_utilities import (
-    execute_command,
-    existing_git_repository
-)
+from clowder.utility.clowder_utilities import execute_command
 from clowder.utility.git.git_repo import GitRepo
 import clowder.utility.formatting as fmt
 
@@ -78,7 +75,7 @@ class GitSubmodules(GitRepo):
 
     def validate_repo(self):
         """Validate repo state"""
-        if not existing_git_repository(self.repo_path):
+        if not GitRepo.existing_git_repository(self.repo_path):
             return True
         if not self.is_dirty():
             return False
