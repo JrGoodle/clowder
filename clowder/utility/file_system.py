@@ -1,4 +1,4 @@
-"""Clowder utilities"""
+"""File system utilities"""
 
 from __future__ import print_function
 

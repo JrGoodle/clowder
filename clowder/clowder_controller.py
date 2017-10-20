@@ -609,7 +609,6 @@ def pool_handler(count):
         POOL.close()
         POOL.join()
     except (KeyboardInterrupt, SystemExit):
-        print()
         if PROGRESS:
             PROGRESS.close()
         print()

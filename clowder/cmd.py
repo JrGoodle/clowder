@@ -39,7 +39,7 @@ class Command(object):
         self.versions = None
         self._invalid_yaml = False
         self._version = '2.4.0'
-        # Load current clowder.yml config if it exists
+        # Load current clowder.yaml config if it exists
         clowder_path = os.path.join(self.root_directory, '.clowder')
         if os.path.isdir(clowder_path):
             clowder_symlink = os.path.join(self.root_directory, 'clowder.yaml')
