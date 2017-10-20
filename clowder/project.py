@@ -7,7 +7,7 @@ import sys
 
 from clowder.utility.git.git_submodules import GitSubmodules
 from termcolor import cprint
-from clowder.utility.exception.clowder_exception import ClowderException
+from clowder.utility.error.clowder_error import ClowderError
 from clowder.fork import Fork
 from clowder.utility.clowder_utilities import (
     execute_forall_command,
@@ -276,7 +276,7 @@ class Project(object):
                 if print_output:
                     print(err)
                     sys.exit(return_code)
-                raise ClowderException(err)
+                raise ClowderError(err)
 
     def start(self, branch, tracking):
         """Start a new feature branch"""

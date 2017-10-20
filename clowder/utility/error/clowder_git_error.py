@@ -1,10 +1,10 @@
 """Clowder git exception"""
 
 
-class ClowderGitException(Exception):
-    """Clowder git exception type"""
+class ClowderGitError(Exception):
+    """Clowder git error type"""
     def __init__(self, msg=None):
-        super(ClowderGitException, self).__init__(msg)
+        super(ClowderGitError, self).__init__(msg)
         self.msg = msg
 
     def __str__(self):

@@ -14,7 +14,7 @@ from termcolor import cprint, colored
 from clowder.clowder_controller import ClowderController
 from clowder.clowder_repo import ClowderRepo
 from clowder.utility.clowder_utilities import is_offline
-from clowder.utility.exception.clowder_exception import ClowderException
+from clowder.utility.error.clowder_error import ClowderError
 import clowder.utility.formatting as fmt
 from clowder.utility.subparsers import configure_argparse
 
@@ -52,7 +52,7 @@ class Command(object):
             try:
                 self.clowder = ClowderController(self.root_directory)
                 self.versions = self.clowder.get_saved_version_names()
-            except (ClowderException, KeyError) as err:
+            except (ClowderError, KeyError) as err:
                 self._invalid_yaml = True
                 self._error = err
             except (KeyboardInterrupt, SystemExit):

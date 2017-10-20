@@ -48,7 +48,7 @@ def empty_yaml_error(yml):
 
 
 def error(err):
-    """Return error message for generic exception"""
+    """Return error message for generic error"""
     return str(err) + '\n'
 
 
@@ -189,7 +189,7 @@ def open_file_error(pth):
 
 
 def parallel_exception_error(pth, *args):
-    """Return formatted error string for parallel exception"""
+    """Return formatted error string for parallel error"""
     return path(pth) + '\n' + ''.join(args)
 
 

@@ -14,7 +14,7 @@ from tqdm import tqdm
 from clowder.group import Group
 from clowder.source import Source
 from clowder.utility.clowder_utilities import save_yaml
-from clowder.utility.exception.clowder_exception import ClowderException
+from clowder.utility.error.clowder_error import ClowderError
 import clowder.utility.formatting as fmt
 from clowder.utility.yaml.load import (
     load_yaml_base,
@@ -592,9 +592,9 @@ class ClowderController(object):
                                                   imported_clowder, 'clowder.yaml')
             if not os.path.isfile(imported_yaml_file):
                 error = fmt.missing_imported_yaml_error(imported_yaml_file, yaml_file)
-                raise ClowderException(error)
+                raise ClowderError(error)
             yaml_file = imported_yaml_file
-        except ClowderException as err:
+        except ClowderError as err:
             print(fmt.invalid_yaml_error())
             print(fmt.error(err))
             sys.exit(1)

@@ -29,7 +29,7 @@ setup(
     ],
     packages=['clowder',
               'clowder.utility',
-              'clowder.utility.exception',
+              'clowder.utility.error',
               'clowder.utility.git',
               'clowder.utility.yaml'],
     entry_points={

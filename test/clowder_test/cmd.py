@@ -12,7 +12,7 @@ import argcomplete
 
 # Disable errors shown by pylint for too many public methods
 # pylint: disable=R0904
-# Disable errors shown by pylint for no specified exception types
+# Disable errors shown by pylint for no specified error types
 # pylint: disable=W0702
 
 
