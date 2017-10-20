@@ -7,9 +7,9 @@ import sys
 
 from termcolor import colored, cprint
 
-import clowder.utility.formatting as fmt
 from clowder.git.repo import GitRepo
 from clowder.utility.execute import execute_command
+import clowder.utility.formatting as fmt
 
 
 def exists(repo_path):

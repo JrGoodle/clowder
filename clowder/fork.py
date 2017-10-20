@@ -4,13 +4,13 @@ from __future__ import print_function
 
 import os
 
-from clowder.git.repo import GitRepo
 from termcolor import cprint
 
 from clowder.git.printing import (
     format_project_ref_string,
     format_project_string
 )
+from clowder.git.repo import GitRepo
 
 
 class Fork(object):

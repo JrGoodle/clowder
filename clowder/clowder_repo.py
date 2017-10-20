@@ -7,15 +7,15 @@ import errno
 import os
 import sys
 
-from clowder.git.repo import GitRepo
 from git import GitError
 from termcolor import colored, cprint
 
-import clowder.utility.formatting as fmt
 import clowder.git.printing as git_print
+from clowder.git.repo import GitRepo
 from clowder.utility.connectivity import is_offline
 from clowder.utility.execute import execute_command
 from clowder.utility.file_system import remove_directory
+import clowder.utility.formatting as fmt
 
 
 class ClowderRepo(object):

@@ -8,24 +8,22 @@ import signal
 import sys
 
 import psutil
+from termcolor import cprint
+from tqdm import tqdm
+
 from clowder.clowder_yaml import (
+    load_yaml_base,
+    load_yaml_import,
     parse_yaml,
     print_yaml,
     save_yaml,
     validate_yaml,
     validate_yaml_import
 )
-from termcolor import cprint
-from tqdm import tqdm
-
-import clowder.utility.formatting as fmt
 from clowder.error.clowder_error import ClowderError
 from clowder.group import Group
 from clowder.source import Source
-from clowder.clowder_yaml import (
-    load_yaml_base,
-    load_yaml_import
-)
+import clowder.utility.formatting as fmt
 
 
 def herd(project, branch, tag, depth, rebase):
