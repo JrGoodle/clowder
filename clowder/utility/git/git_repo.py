@@ -9,13 +9,10 @@ import sys
 from git import Repo, GitError
 from termcolor import colored, cprint
 
-from clowder.utility.clowder_utilities import (
-    execute_command,
-    is_offline,
-    remove_directory,
-    truncate_ref
-)
+from clowder.utility.clowder_utilities import remove_directory
+from clowder.utility.connectivity import is_offline
 from clowder.utility.error.clowder_git_error import ClowderGitError
+from clowder.utility.execute import execute_command
 import clowder.utility.formatting as fmt
 
 
@@ -148,12 +145,13 @@ class GitRepo(object):
                 message = colored(' - Failed to fetch remote ', 'red')
                 error = message + remote_output
             else:
-                ref_output = fmt.ref_string(truncate_ref(ref))
+                ref_output = fmt.ref_string(GitRepo.truncate_ref(ref))
                 if self.print_output:
                     print(' - Fetch from ' + remote_output + ' ' + ref_output)
                 message = colored(' - Failed to fetch from ', 'red')
                 error = message + remote_output + ' ' + ref_output
-                command = ['git', 'fetch', remote, truncate_ref(ref), '--depth', str(depth), '--prune', '--tags']
+                command = ['git', 'fetch', remote, GitRepo.truncate_ref(ref),
+                           '--depth', str(depth), '--prune', '--tags']
         return_code = execute_command(command, self.repo_path, print_output=self.print_output)
         if return_code != 0:
             if remove_dir:
@@ -313,11 +311,11 @@ class GitRepo(object):
             return
         prune_branch = self.repo.heads[branch]
         if self.repo.head.ref == prune_branch:
-            ref_output = fmt.ref_string(truncate_ref(default_ref))
+            ref_output = fmt.ref_string(GitRepo.truncate_ref(default_ref))
             try:
                 if self.print_output:
                     print(' - Checkout ref ' + ref_output)
-                self.repo.git.checkout(truncate_ref(default_ref))
+                self.repo.git.checkout(GitRepo.truncate_ref(default_ref))
             except GitError as err:
                 message = colored(' - Failed to checkout ref', 'red')
                 print(message + ref_output)
@@ -361,7 +359,7 @@ class GitRepo(object):
     def reset(self, remote, ref, depth=0):
         """Reset branch to upstream or checkout tag/sha as detached HEAD"""
         if GitRepo.ref_type(ref) == 'branch':
-            branch = truncate_ref(ref)
+            branch = GitRepo.truncate_ref(ref)
             branch_output = fmt.ref_string(branch)
             if not self.existing_local_branch(branch):
                 return_code = self._create_branch_local_tracking(branch, remote, depth=depth, fetch=True)
@@ -387,7 +385,7 @@ class GitRepo(object):
             self._reset_head(branch=remote_branch)
         elif GitRepo.ref_type(ref) == 'tag':
             self.fetch(remote, depth=depth, ref=ref)
-            self._checkout_tag(truncate_ref(ref))
+            self._checkout_tag(GitRepo.truncate_ref(ref))
         elif GitRepo.ref_type(ref) == 'sha':
             self.fetch(remote, depth=depth, ref=ref)
             self._checkout_sha(ref)
@@ -443,14 +441,14 @@ class GitRepo(object):
                 sys.exit(1)
             raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message))
         fork_remote_output = fmt.remote_string(fork_remote)
-        branch_output = fmt.ref_string(truncate_ref(ref))
+        branch_output = fmt.ref_string(GitRepo.truncate_ref(ref))
         if rebase:
-            self._rebase_remote_branch(upstream_remote, truncate_ref(ref))
+            self._rebase_remote_branch(upstream_remote, GitRepo.truncate_ref(ref))
         else:
-            self._pull(upstream_remote, truncate_ref(ref))
+            self._pull(upstream_remote, GitRepo.truncate_ref(ref))
         if self.print_output:
             print(' - Push to ' + fork_remote_output + ' ' + branch_output)
-        command = ['git', 'push', fork_remote, truncate_ref(ref)]
+        command = ['git', 'push', fork_remote, GitRepo.truncate_ref(ref)]
         return_code = execute_command(command, self.repo_path, print_output=self.print_output)
         if return_code != 0:
             message = colored(' - Failed to push to ', 'red')
@@ -460,6 +458,19 @@ class GitRepo(object):
                 sys.exit(1)
             raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message,
                                                                    fork_remote_output, ' ', branch_output))
+
+    @staticmethod
+    def truncate_ref(ref):
+        """Return bare branch, tag, or sha"""
+        git_branch = "refs/heads/"
+        git_tag = "refs/tags/"
+        if ref.startswith(git_branch):
+            length = len(git_branch)
+        elif ref.startswith(git_tag):
+            length = len(git_tag)
+        else:
+            length = 0
+        return ref[length:]
 
     def validate_repo(self):
         """Validate repo state"""
@@ -763,7 +774,7 @@ class GitRepo(object):
     def _herd(self, remote, ref, depth=0, fetch=True, rebase=False):
         """Herd ref"""
         if GitRepo.ref_type(ref) == 'branch':
-            branch = truncate_ref(ref)
+            branch = GitRepo.truncate_ref(ref)
             branch_output = fmt.ref_string(branch)
             if not self.existing_local_branch(branch):
                 return_code = self._create_branch_local_tracking(branch, remote, depth=depth, fetch=fetch)
@@ -789,7 +800,7 @@ class GitRepo(object):
             self._pull(remote, branch)
         elif GitRepo.ref_type(ref) == 'tag':
             self.fetch(remote, depth=depth, ref=ref)
-            self._checkout_tag(truncate_ref(ref))
+            self._checkout_tag(GitRepo.truncate_ref(ref))
         elif GitRepo.ref_type(ref) == 'sha':
             self.fetch(remote, depth=depth, ref=ref)
             self._checkout_sha(ref)
@@ -799,9 +810,9 @@ class GitRepo(object):
         self._init_repo()
         self._create_remote(remote, url, remove_dir=True)
         if GitRepo.ref_type(ref) == 'branch':
-            self._checkout_new_repo_branch(truncate_ref(ref), remote, depth)
+            self._checkout_new_repo_branch(GitRepo.truncate_ref(ref), remote, depth)
         elif GitRepo.ref_type(ref) == 'tag':
-            self._checkout_new_repo_tag(truncate_ref(ref), remote, depth, remove_dir=True)
+            self._checkout_new_repo_tag(GitRepo.truncate_ref(ref), remote, depth, remove_dir=True)
         elif GitRepo.ref_type(ref) == 'sha':
             self._checkout_new_repo_commit(ref, remote, depth)
 

@@ -7,7 +7,7 @@ import sys
 from git import GitError
 from termcolor import cprint
 
-from clowder.utility.clowder_utilities import execute_command
+from clowder.utility.execute import execute_command
 from clowder.utility.git.git_repo import GitRepo
 import clowder.utility.formatting as fmt
 

@@ -9,10 +9,8 @@ from clowder.utility.git.git_submodules import GitSubmodules
 from termcolor import cprint
 from clowder.utility.error.clowder_error import ClowderError
 from clowder.fork import Fork
-from clowder.utility.clowder_utilities import (
-    execute_forall_command,
-    is_offline
-)
+from clowder.utility.connectivity import is_offline
+from clowder.utility.execute import execute_forall_command
 from clowder.utility.git.printing import (
     print_exists,
     print_git_status,

@@ -6,6 +6,7 @@ import os
 
 from termcolor import cprint
 
+from clowder.utility.git.git_repo import GitRepo
 from clowder.utility.git.printing import (
     project_ref_string,
     project_string

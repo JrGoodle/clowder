@@ -4,7 +4,6 @@ import os
 import sys
 import unittest
 
-from clowder.utility.clowder_utilities import truncate_ref
 from clowder.utility.git.git_repo import GitRepo
 
 

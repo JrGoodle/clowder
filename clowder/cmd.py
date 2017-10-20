@@ -13,7 +13,7 @@ from termcolor import cprint, colored
 
 from clowder.clowder_controller import ClowderController
 from clowder.clowder_repo import ClowderRepo
-from clowder.utility.clowder_utilities import is_offline
+from clowder.utility.connectivity import is_offline
 from clowder.utility.error.clowder_error import ClowderError
 import clowder.utility.formatting as fmt
 from clowder.utility.subparsers import configure_argparse

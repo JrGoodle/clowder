@@ -3,18 +3,16 @@
 from __future__ import print_function
 
 import atexit
+import errno
 import os
 import sys
 
 from git import GitError
 from termcolor import colored, cprint
 
-from clowder.utility.clowder_utilities import (
-    execute_command,
-    force_symlink,
-    is_offline,
-    remove_directory
-)
+from clowder.utility.clowder_utilities import remove_directory
+from clowder.utility.connectivity import is_offline
+from clowder.utility.execute import execute_command
 from clowder.utility.git.printing import (
     print_git_status,
     print_validation,
@@ -197,3 +195,17 @@ class ClowderRepo(object):
             print_validation(self.clowder_path)
             print()
             sys.exit(1)
+
+
+def force_symlink(file1, file2):
+    """Force symlink creation"""
+    try:
+        os.symlink(file1, file2)
+    except OSError as error:
+        if error.errno == errno.EEXIST:
+            os.remove(file2)
+            os.symlink(file1, file2)
+    except (KeyboardInterrupt, SystemExit):
+        os.remove(file2)
+        os.symlink(file1, file2)
+        sys.exit(1)
