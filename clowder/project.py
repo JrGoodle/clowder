@@ -5,21 +5,22 @@ from __future__ import print_function
 import os
 import sys
 
-from clowder.utility.git.git_submodules import GitSubmodules
+from clowder.git.git_repo import GitRepo
+from clowder.git.git_submodules import GitSubmodules
 from termcolor import cprint
-from clowder.utility.error.clowder_error import ClowderError
+
+import clowder.utility.formatting as fmt
+from clowder.error.clowder_error import ClowderError
 from clowder.fork import Fork
-from clowder.utility.connectivity import is_offline
-from clowder.utility.execute import execute_forall_command
-from clowder.utility.git.printing import (
+from clowder.git.printing import (
     print_exists,
     print_git_status,
     print_validation,
     project_ref_string,
     project_string
 )
-from clowder.utility.git.git_repo import GitRepo
-import clowder.utility.formatting as fmt
+from clowder.utility.connectivity import is_offline
+from clowder.utility.execute import execute_forall_command
 
 
 class Project(object):

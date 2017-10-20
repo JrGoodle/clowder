@@ -28,10 +28,10 @@ setup(
         'Programming Language :: Python :: 3.5'
     ],
     packages=['clowder',
+              'clowder.error',
+              'clowder.git',
               'clowder.utility',
-              'clowder.utility.error',
-              'clowder.utility.git',
-              'clowder.utility.yaml'],
+              'clowder.yaml'],
     entry_points={
         'console_scripts': [
             'clowder=clowder.cmd:main',

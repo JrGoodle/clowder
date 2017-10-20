@@ -1,8 +1,8 @@
 """Clowder yaml validation"""
 
-from clowder.utility.yaml.parsing import parse_yaml
-from clowder.utility.error.clowder_error import ClowderError
 import clowder.utility.formatting as fmt
+from clowder.error.clowder_error import ClowderError
+from clowder.yaml.parsing import parse_yaml
 
 
 def validate_yaml(yaml_file):

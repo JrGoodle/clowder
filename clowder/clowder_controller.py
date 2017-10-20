@@ -8,23 +8,23 @@ import signal
 import sys
 
 import psutil
+from clowder.yaml.parsing import parse_yaml
+from clowder.yaml.printing import print_yaml
+from clowder.yaml.saving import save_yaml
+from clowder.yaml.validation import (
+    validate_yaml,
+    validate_yaml_import
+)
 from termcolor import cprint
 from tqdm import tqdm
 
+import clowder.utility.formatting as fmt
+from clowder.error.clowder_error import ClowderError
 from clowder.group import Group
 from clowder.source import Source
-from clowder.utility.yaml.saving import save_yaml
-from clowder.utility.error.clowder_error import ClowderError
-import clowder.utility.formatting as fmt
-from clowder.utility.yaml.load import (
+from clowder.yaml.load import (
     load_yaml_base,
     load_yaml_import
-)
-from clowder.utility.yaml.parsing import parse_yaml
-from clowder.utility.yaml.printing import print_yaml
-from clowder.utility.yaml.validation import (
-    validate_yaml,
-    validate_yaml_import
 )
 
 

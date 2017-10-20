@@ -4,10 +4,10 @@ from __future__ import print_function
 
 import os
 
+from clowder.git.git_repo import GitRepo
 from termcolor import cprint
 
-from clowder.utility.git.git_repo import GitRepo
-from clowder.utility.git.printing import (
+from clowder.git.printing import (
     project_ref_string,
     project_string
 )

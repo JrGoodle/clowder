@@ -1,10 +1,12 @@
 """Clowder yaml printing"""
 
 from __future__ import print_function
+
 import os
 import sys
-from clowder.utility.yaml.parsing import parse_yaml
+
 import clowder.utility.formatting as fmt
+from clowder.yaml.parsing import parse_yaml
 
 
 def print_yaml(root_directory):

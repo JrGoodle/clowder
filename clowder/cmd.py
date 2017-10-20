@@ -11,11 +11,11 @@ import argcomplete
 import colorama
 from termcolor import cprint, colored
 
+import clowder.utility.formatting as fmt
 from clowder.clowder_controller import ClowderController
 from clowder.clowder_repo import ClowderRepo
+from clowder.error.clowder_error import ClowderError
 from clowder.utility.connectivity import is_offline
-from clowder.utility.error.clowder_error import ClowderError
-import clowder.utility.formatting as fmt
 from clowder.utility.subparsers import configure_argparse
 
 
