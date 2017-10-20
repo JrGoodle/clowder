@@ -9,11 +9,11 @@ import sys
 from git import Repo, GitError
 from termcolor import colored, cprint
 
+import clowder.utility.formatting as fmt
 from clowder.error.clowder_git_error import ClowderGitError
 from clowder.utility.connectivity import is_offline
 from clowder.utility.execute import execute_command
 from clowder.utility.file_system import remove_directory
-import clowder.utility.formatting as fmt
 
 
 class GitRepo(object):

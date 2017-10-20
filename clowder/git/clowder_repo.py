@@ -7,8 +7,8 @@ import sys
 from git import GitError
 from termcolor import cprint
 
-from clowder.git.repo import GitRepo
 import clowder.utility.formatting as fmt
+from clowder.git.repo import GitRepo
 
 
 def add(path, files):

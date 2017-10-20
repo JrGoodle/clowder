@@ -1,14 +1,15 @@
 """clowder.yaml parsing and functionality"""
 
 from __future__ import print_function
+
 import os
 import sys
-import yaml
 
+import yaml
 from termcolor import colored
 
-from clowder.error.clowder_error import ClowderError
 import clowder.utility.formatting as fmt
+from clowder.error.clowder_error import ClowderError
 
 
 def load_yaml_base(parsed_yaml, combined_yaml):

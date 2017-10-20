@@ -1,8 +1,8 @@
 """String formatting utilities"""
 
 import os
-import yaml
 
+import yaml
 from termcolor import colored
 
 
