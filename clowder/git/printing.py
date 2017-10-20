@@ -12,13 +12,13 @@ from clowder.git.repo import GitRepo
 from clowder.utility.execute import execute_command
 
 
-def print_exists(repo_path):
+def exists(repo_path):
     """Print existence validation messages"""
     if not GitRepo.existing_git_repository(repo_path):
         cprint(' - Project is missing', 'red')
 
 
-def print_git_status(repo_path):
+def status(repo_path):
     """Print git status"""
     command = ['git', 'status', '-vv']
     print(fmt.command(command))
@@ -29,17 +29,17 @@ def print_git_status(repo_path):
         sys.exit(return_code)
 
 
-def print_validation(repo_path):
+def validation(repo_path):
     """Print validation messages"""
     repo = GitRepo(repo_path)
     if not GitRepo.existing_git_repository(repo_path):
         return
     if not repo.validate_repo():
         print(' - Dirty repo. Please stash, commit, or discard your changes')
-        print_git_status(repo_path)
+        git_status(repo_path)
 
 
-def project_string(repo_path, name):
+def format_project_string(repo_path, name):
     """Return formatted project name"""
     if not os.path.isdir(os.path.join(repo_path, '.git')):
         return colored(name, 'green')
@@ -53,7 +53,7 @@ def project_string(repo_path, name):
     return colored(name + symbol, color)
 
 
-def project_ref_string(repo_path):
+def format_project_ref_string(repo_path):
     """Return formatted repo ref name"""
     repo = GitRepo(repo_path)
     local_commits = repo.new_commits()

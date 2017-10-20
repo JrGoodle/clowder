@@ -12,12 +12,7 @@ from git import GitError
 from termcolor import colored, cprint
 
 import clowder.utility.formatting as fmt
-from clowder.git.printing import (
-    print_git_status,
-    print_validation,
-    project_ref_string,
-    project_string
-)
+import clowder.git.printing as git_print
 from clowder.utility.connectivity import is_offline
 from clowder.utility.execute import execute_command
 from clowder.utility.file_system import remove_directory
@@ -42,7 +37,7 @@ class ClowderRepo(object):
             sys.exit(1)
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
-        print_git_status(self.clowder_path)
+        git_print.status(self.clowder_path)
 
     def branches(self):
         """Return current local branches"""
@@ -54,7 +49,7 @@ class ClowderRepo(object):
         clowder = GitRepo(self.clowder_path)
         if self.is_dirty():
             print(' - Dirty repo. Please stash, commit, or discard your changes')
-            print_git_status(self.clowder_path)
+            git_print.status(self.clowder_path)
         else:
             clowder.checkout(ref)
 
@@ -129,8 +124,8 @@ class ClowderRepo(object):
             print(' - Fetch upstream changes for clowder repo')
             clowder = GitRepo(self.clowder_path)
             clowder.fetch('origin')
-        project_output = project_string(repo_path, '.clowder')
-        current_ref_output = project_ref_string(repo_path)
+        project_output = git_print.format_project_string(repo_path, '.clowder')
+        current_ref_output = git_print.format_project_ref_string(repo_path)
 
         clowder_symlink = os.path.join(self.root_directory, 'clowder.yaml')
         if not os.path.islink(clowder_symlink):
@@ -186,13 +181,13 @@ class ClowderRepo(object):
 
     def git_status(self):
         """Print clowder repo git status"""
-        print_git_status(self.clowder_path)
+        git_print.status(self.clowder_path)
 
     def _validate_groups(self):
         """Validate status of clowder repo"""
         clowder = GitRepo(self.clowder_path)
         if not clowder.validate_repo():
-            print_validation(self.clowder_path)
+            git_print.validation(self.clowder_path)
             print()
             sys.exit(1)
 

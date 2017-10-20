@@ -12,13 +12,7 @@ from termcolor import cprint
 import clowder.utility.formatting as fmt
 from clowder.error.clowder_error import ClowderError
 from clowder.fork import Fork
-from clowder.git.printing import (
-    print_exists,
-    print_git_status,
-    print_validation,
-    project_ref_string,
-    project_string
-)
+import clowder.git.printing as git_print
 from clowder.utility.connectivity import is_offline
 from clowder.utility.execute import execute_forall_command
 
@@ -101,7 +95,7 @@ class Project(object):
         if not os.path.isdir(self.full_path()):
             cprint(" - Project is missing\n", 'red')
             return
-        print_git_status(self.full_path())
+        git_print.status(self.full_path())
 
     def exists(self):
         """Check if project exists on disk"""
@@ -133,7 +127,7 @@ class Project(object):
     def formatted_project_path(self):
         """Return formatted project path"""
         repo_path = os.path.join(self.root_directory, self.path)
-        return project_string(repo_path, self.path)
+        return git_print.format_project_string(repo_path, self.path)
 
     def full_path(self):
         """Return full path to project"""
@@ -208,22 +202,22 @@ class Project(object):
         """Print existence validation message for project"""
         if not self.exists():
             self.print_status()
-            print_exists(self.full_path())
+            git_print.exists(self.full_path())
 
     def print_status(self):
         """Print formatted project status"""
         if not GitRepo.existing_git_repository(self.full_path()):
             cprint(self.path, 'green')
             return
-        project_output = project_string(self.full_path(), self.path)
-        current_ref_output = project_ref_string(self.full_path())
+        project_output = git_print.format_project_string(self.full_path(), self.path)
+        current_ref_output = git_print.format_project_ref_string(self.full_path())
         print(project_output + ' ' + current_ref_output)
 
     def print_validation(self):
         """Print validation message for project"""
         if not self.is_valid():
             self.print_status()
-            print_validation(self.full_path())
+            git_print.validation(self.full_path())
 
     def prune(self, branch, force=False, local=False, remote=False):
         """Prune branch"""
@@ -373,8 +367,8 @@ class Project(object):
         if not GitRepo.existing_git_repository(self.full_path()):
             cprint(self.name, 'green')
             return
-        project_output = project_string(repo_path, self.path)
-        current_ref_output = project_ref_string(repo_path)
+        project_output = git_print.format_project_string(repo_path, self.path)
+        current_ref_output = git_print.format_project_ref_string(repo_path)
         print('{0} {1}'.format(project_output.ljust(padding), current_ref_output))
 
     def _prune_local(self, branch, force):
