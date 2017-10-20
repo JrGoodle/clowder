@@ -20,7 +20,8 @@ def execute_command(command, path, shell=True, env=None, print_output=True):
         pipe = subprocess.PIPE
     try:
         process = subprocess.Popen(' '.join(command), shell=shell, env=cmd_env, cwd=path, stdout=pipe, stderr=pipe)
-        atexit.register(subprocess_exit_handler)
+        if print_output:
+            atexit.register(subprocess_exit_handler)
         process.communicate()
     except (KeyboardInterrupt, SystemExit):
         if process:
