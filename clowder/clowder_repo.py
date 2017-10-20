@@ -9,16 +9,11 @@ import sys
 
 from termcolor import colored
 
-from clowder.git.clowder_repo import (
-    add,
-    commit,
-    pull,
-    push
-)
 from clowder.git.repo import GitRepo
 from clowder.utility.connectivity import is_offline
 from clowder.utility.execute import execute_command
 from clowder.utility.file_system import remove_directory
+import clowder.git.clowder_repo as clowder_repo
 import clowder.utility.formatting as fmt
 
 
@@ -31,7 +26,7 @@ class ClowderRepo(object):
 
     def add(self, files):
         """Add files in clowder repo to git index"""
-        add(self.clowder_path, files)
+        clowder_repo.add(self.clowder_path, files)
 
     def branches(self):
         """Return current local branches"""
@@ -58,7 +53,7 @@ class ClowderRepo(object):
 
     def commit(self, message):
         """Commit current changes in clowder repo"""
-        commit(self.clowder_path, message)
+        clowder_repo.commit(self.clowder_path, message)
 
     def init(self, url, branch):
         """Clone clowder repo from url"""
@@ -126,11 +121,11 @@ class ClowderRepo(object):
 
     def pull(self):
         """Pull clowder repo upstream changes"""
-        pull(self.clowder_path)
+        clowder_repo.pull(self.clowder_path)
 
     def push(self):
         """Push clowder repo changes"""
-        push(self.clowder_path)
+        clowder_repo.push(self.clowder_path)
 
     def run_command(self, command):
         """Run command in clowder repo"""
