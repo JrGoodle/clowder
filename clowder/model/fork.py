@@ -6,10 +6,7 @@ import os
 
 from termcolor import cprint
 
-from clowder.git.printing import (
-    format_project_ref_string,
-    format_project_string
-)
+import clowder.git.printing as git_print
 from clowder.git.repo import GitRepo
 
 
@@ -36,6 +33,6 @@ class Fork(object):
         if not GitRepo.existing_git_repository(self.path):
             cprint(self.path, 'green')
             return
-        project_output = format_project_string(self.path, self.path)
-        current_ref_output = format_project_ref_string(self.full_path())
+        project_output = git_print.format_project_string(self.path, self.path)
+        current_ref_output = git_print.format_project_ref_string(self.full_path())
         print(project_output + ' ' + current_ref_output)
