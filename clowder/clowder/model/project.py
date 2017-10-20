@@ -240,7 +240,7 @@ class Project(object):
         elif remote:
             self._prune_remote(branch)
 
-    def reset(self, parallel=False):
+    def reset(self, timestamp=None, parallel=False):
         """Reset project branches to upstream or checkout tag/sha as detached HEAD"""
 
         print_output = not parallel
@@ -248,11 +248,11 @@ class Project(object):
         if self.recursive:
             repo = ProjectRepoRecursive(self.full_path(), self.remote_name, self.ref,
                                         parallel=parallel, print_output=print_output)
-            self._reset(repo, print_output=print_output)
+            self._reset(repo, timestamp=timestamp, print_output=print_output)
         else:
             repo = ProjectRepo(self.full_path(), self.remote_name, self.ref,
                                parallel=parallel, print_output=print_output)
-            self._reset(repo, print_output=print_output)
+            self._reset(repo, timestamp=timestamp, print_output=print_output)
 
     def run(self, command, ignore_errors, parallel=False):
         """Run command or script in project directory"""
@@ -405,19 +405,25 @@ class Project(object):
             self.print_status()
             repo.prune_branch_remote(branch, remote)
 
-    def _reset(self, repo, print_output=True):
+    def _reset(self, repo, timestamp=None, print_output=True):
         """Clone project or update latest from upstream"""
         if self.fork is None:
             if print_output:
                 self.print_status()
+            if timestamp:
+                repo.reset_timestamp(timestamp, depth=self.depth)
+                return
             repo.reset(depth=self.depth)
-        else:
-            if print_output:
-                self.fork.print_status()
-            repo.configure_remotes(self.remote_name, self.url, self.fork.remote_name, self.fork.url)
-            if print_output:
-                print(fmt.fork_string(self.name))
-            repo.reset()
+            return
+        if print_output:
+            self.fork.print_status()
+        repo.configure_remotes(self.remote_name, self.url, self.fork.remote_name, self.fork.url)
+        if print_output:
+            print(fmt.fork_string(self.name))
+        if timestamp:
+            repo.reset_timestamp(timestamp)
+            return
+        repo.reset()
 
     def _sync(self, repo, rebase, print_output):
         """Sync fork project with upstream"""

@@ -342,6 +342,8 @@ def _configure_subparser_reset(subparsers, clowder):
     parser_reset = subparsers.add_parser('reset', help=reset_help)
     parser_reset.add_argument('--parallel', action='store_true',
                               help='run commands in parallel')
+    parser_reset.add_argument('--timestamp', '-t', default=None, nargs=1, metavar='TIMESTAMP',
+                              help='timestamp to check out')
     group_reset = parser_reset.add_mutually_exclusive_group()
     if clowder is None:
         group_names = ''

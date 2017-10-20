@@ -310,6 +310,7 @@ class Command(object):
             sys.exit(1)
         self.clowder.reset(group_names=self.args.groups,
                            project_names=self.args.projects,
+                           timestamp=self.args.timestamp,
                            parallel=self.args.parallel)
 
     def save(self):
