@@ -1,41 +1,21 @@
 """clowder.yaml parsing and functionality"""
 
 from __future__ import print_function
+
 import multiprocessing as mp
 import os
 import signal
 import sys
+
 import psutil
 from termcolor import cprint
 from tqdm import tqdm
-from clowder.group import Group
-from clowder.source import Source
-from clowder.exception.clowder_exception import ClowderException
-from clowder.utility.clowder_utilities import (
-    get_yaml_string,
-    parse_yaml,
-    save_yaml
-)
-from clowder.utility.clowder_yaml_loading import (
-    load_yaml_base,
-    load_yaml_import
-)
-from clowder.utility.clowder_yaml_printing import print_yaml
-from clowder.utility.clowder_yaml_validation import (
-    validate_yaml,
-    validate_yaml_import
-)
-from clowder.utility.print_utilities import (
-    format_clowder_command,
-    format_command,
-    format_fork_string,
-    format_missing_imported_yaml_error,
-    print_error,
-    print_invalid_yaml_error,
-    print_recursive_import_error,
-    print_save_version,
-    print_save_version_exists_error
-)
+
+import clowder.clowder_yaml as clowder_yaml
+import clowder.utility.formatting as fmt
+from clowder.error.clowder_error import ClowderError
+from clowder.model.group import Group
+from clowder.model.source import Source
 
 
 def herd(project, branch, tag, depth, rebase):
@@ -106,7 +86,9 @@ class ClowderController(object):
         if project_names is None:
             groups = [g for g in self.groups if g.name in group_names]
             for group in groups:
-                group.branch(local=local, remote=remote)
+                group.print_name()
+                for project in group.projects:
+                    project.branch(local=local, remote=remote)
             return
         projects = [p for g in self.groups for p in g.projects if p.name in project_names]
         for project in projects:
@@ -117,7 +99,9 @@ class ClowderController(object):
         if project_names is None:
             groups = [g for g in self.groups if g.name in group_names]
             for group in groups:
-                group.clean(args=args, recursive=recursive)
+                group.print_name()
+                for project in group.projects:
+                    project.clean(args=args, recursive=recursive)
             return
         projects = [p for g in self.groups for p in g.projects if p.name in project_names]
         for project in projects:
@@ -128,7 +112,9 @@ class ClowderController(object):
         if project_names is None:
             groups = [g for g in self.groups if g.name in group_names]
             for group in groups:
-                group.clean_all()
+                group.print_name()
+                for project in group.projects:
+                    project.clean_all()
             return
         projects = [p for g in self.groups for p in g.projects if p.name in project_names]
         for project in projects:
@@ -139,7 +125,9 @@ class ClowderController(object):
         if project_names is None:
             groups = [g for g in self.groups if g.name in group_names]
             for group in groups:
-                group.diff()
+                group.print_name()
+                for project in group.projects:
+                    project.diff()
             return
         projects = [p for g in self.groups for p in g.projects if p.name in project_names]
         for project in projects:
@@ -149,7 +137,9 @@ class ClowderController(object):
         """Fetch groups"""
         for group in self.groups:
             if group.name in group_names:
-                group.fetch_all()
+                group.print_name()
+                for project in group.projects:
+                    project.fetch_all()
 
     def forall(self, command, ignore_errors, group_names, project_names=None, parallel=False):
         """Runs command or script in project directories specified"""
@@ -225,9 +215,9 @@ class ClowderController(object):
     def print_yaml(self, resolved):
         """Print clowder.yaml"""
         if resolved:
-            print(get_yaml_string(self._get_yaml_resolved()))
+            print(fmt.yaml_string(self._get_yaml_resolved()))
         else:
-            print_yaml(self.root_directory)
+            clowder_yaml.print_yaml(self.root_directory)
         sys.exit()  # exit early to prevent printing extra newline
 
     def prune_groups(self, group_names, branch, force=False, local=False, remote=False):
@@ -307,18 +297,20 @@ class ClowderController(object):
 
         yaml_file = os.path.join(version_dir, 'clowder.yaml')
         if os.path.exists(yaml_file):
-            print_save_version_exists_error(version_name, yaml_file)
+            print(fmt.save_version_exists_error(version_name, yaml_file))
             print()
             sys.exit(1)
-        print_save_version(version_name, yaml_file)
-        save_yaml(self._get_yaml(), yaml_file)
+        print(fmt.save_version(version_name, yaml_file))
+        clowder_yaml.save_yaml(self._get_yaml(), yaml_file)
 
     def start_groups(self, group_names, branch, tracking):
         """Start feature branch for groups"""
         self._validate_groups(group_names)
         groups = [g for g in self.groups if g.name in group_names]
         for group in groups:
-            group.start(branch, tracking)
+            group.print_name()
+            for project in group.projects:
+                project.start(branch, tracking)
 
     def start_projects(self, project_names, branch, tracking):
         """Start feature branch for projects"""
@@ -387,7 +379,7 @@ class ClowderController(object):
             project.print_status()
             if not os.path.isdir(project.full_path()):
                 cprint(" - Project is missing", 'red')
-        print('\n' + format_command(command))
+        print('\n' + fmt.command(command))
         for project in projects:
             result = POOL.apply_async(run, args=(project, command, ignore_errors), callback=async_callback)
             RESULTS.append(result)
@@ -418,8 +410,8 @@ class ClowderController(object):
             for project in projects:
                 project.print_status()
                 if project.fork:
-                    print('  ' + format_fork_string(project.name))
-                    print('  ' + format_fork_string(project.fork.name))
+                    print('  ' + fmt.fork_string(project.name))
+                    print('  ' + fmt.fork_string(project.fork.name))
             for project in projects:
                 result = POOL.apply_async(herd, args=(project, branch, tag, depth, rebase),
                                           callback=async_callback)
@@ -434,8 +426,8 @@ class ClowderController(object):
             for project in group.projects:
                 project.print_status()
                 if project.fork:
-                    print('  ' + format_fork_string(project.name))
-                    print('  ' + format_fork_string(project.fork.name))
+                    print('  ' + fmt.fork_string(project.name))
+                    print('  ' + fmt.fork_string(project.fork.name))
         for project in projects:
             result = POOL.apply_async(herd, args=(project, branch, tag, depth, rebase),
                                       callback=async_callback)
@@ -449,12 +441,12 @@ class ClowderController(object):
     def _load_yaml(self):
         """Load clowder from yaml file"""
         yaml_file = os.path.join(self.root_directory, 'clowder.yaml')
-        parsed_yaml = parse_yaml(yaml_file)
+        parsed_yaml = clowder_yaml.parse_yaml(yaml_file)
         imported_yaml_files = []
         combined_yaml = {}
         while True:
             if 'import' not in parsed_yaml:
-                load_yaml_base(parsed_yaml, combined_yaml)
+                clowder_yaml.load_yaml_base(parsed_yaml, combined_yaml)
                 break
             imported_yaml_files.append(parsed_yaml)
             imported_yaml = parsed_yaml['import']
@@ -463,14 +455,14 @@ class ClowderController(object):
             else:
                 imported_yaml_file = os.path.join(self.root_directory, '.clowder', 'versions',
                                                   imported_yaml, 'clowder.yaml')
-            parsed_yaml = parse_yaml(imported_yaml_file)
+            parsed_yaml = clowder_yaml.parse_yaml(imported_yaml_file)
             if len(imported_yaml_files) > self._max_import_depth:
-                print_invalid_yaml_error()
-                print_recursive_import_error(self._max_import_depth)
+                print(fmt.invalid_yaml_error())
+                print(fmt.recursive_import_error(self._max_import_depth))
                 print()
                 sys.exit(1)
         for parsed_yaml in reversed(imported_yaml_files):
-            load_yaml_import(parsed_yaml, combined_yaml)
+            clowder_yaml.load_yaml_import(parsed_yaml, combined_yaml)
         self._load_yaml_combined(combined_yaml)
 
     def _load_yaml_combined(self, combined_yaml):
@@ -507,8 +499,8 @@ class ClowderController(object):
                 for project in group.projects:
                     project.print_status()
                     if project.fork:
-                        print('  ' + format_fork_string(project.name))
-                        print('  ' + format_fork_string(project.fork.name))
+                        print('  ' + fmt.fork_string(project.name))
+                        print('  ' + fmt.fork_string(project.fork.name))
             for project in projects:
                 result = POOL.apply_async(reset, args=(project,), callback=async_callback)
                 RESULTS.append(result)
@@ -519,8 +511,8 @@ class ClowderController(object):
         for project in projects:
             project.print_status()
             if project.fork:
-                print('  ' + format_fork_string(project.name))
-                print('  ' + format_fork_string(project.fork.name))
+                print('  ' + fmt.fork_string(project.name))
+                print('  ' + fmt.fork_string(project.fork.name))
         for project in projects:
             result = POOL.apply_async(reset, args=(project,), callback=async_callback)
             RESULTS.append(result)
@@ -534,8 +526,8 @@ class ClowderController(object):
         for project in projects:
             project.print_status()
             if project.fork:
-                print('  ' + format_fork_string(project.name))
-                print('  ' + format_fork_string(project.fork.name))
+                print('  ' + fmt.fork_string(project.name))
+                print('  ' + fmt.fork_string(project.fork.name))
         for project in projects:
             result = POOL.apply_async(sync, args=(project, rebase), callback=async_callback)
             RESULTS.append(result)
@@ -565,22 +557,22 @@ class ClowderController(object):
             if not group.projects_exist():
                 projects_exist = False
         if not projects_exist:
-            herd_output = format_clowder_command('clowder herd')
+            herd_output = fmt.clowder_command('clowder herd')
             print('\n - First run ' + herd_output + ' to clone missing projects\n')
             sys.exit(1)
 
     def _validate_yaml(self, yaml_file, max_import_depth):
         """Validate clowder.yaml"""
-        parsed_yaml = parse_yaml(yaml_file)
+        parsed_yaml = clowder_yaml.parse_yaml(yaml_file)
         if max_import_depth < 0:
-            print_invalid_yaml_error()
-            print_recursive_import_error(self._max_import_depth)
+            print(fmt.invalid_yaml_error())
+            print(fmt.recursive_import_error(self._max_import_depth))
             print()
             sys.exit(1)
         if 'import' not in parsed_yaml:
-            validate_yaml(yaml_file)
+            clowder_yaml.validate_yaml(yaml_file)
             return
-        validate_yaml_import(yaml_file)
+        clowder_yaml.validate_yaml_import(yaml_file)
         imported_clowder = parsed_yaml['import']
         try:
             if imported_clowder == 'default':
@@ -589,12 +581,12 @@ class ClowderController(object):
                 imported_yaml_file = os.path.join(self.root_directory, '.clowder', 'versions',
                                                   imported_clowder, 'clowder.yaml')
             if not os.path.isfile(imported_yaml_file):
-                error = format_missing_imported_yaml_error(imported_yaml_file, yaml_file)
-                raise ClowderException(error)
+                error = fmt.missing_imported_yaml_error(imported_yaml_file, yaml_file)
+                raise ClowderError(error)
             yaml_file = imported_yaml_file
-        except ClowderException as err:
-            print_invalid_yaml_error()
-            print_error(err)
+        except ClowderError as err:
+            print(fmt.invalid_yaml_error())
+            print(fmt.error(err))
             sys.exit(1)
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
@@ -617,7 +609,6 @@ def pool_handler(count):
         POOL.close()
         POOL.join()
     except (KeyboardInterrupt, SystemExit):
-        print()
         if PROGRESS:
             PROGRESS.close()
         print()

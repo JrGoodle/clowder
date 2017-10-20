@@ -33,5 +33,5 @@ setup(
             'clowder-test=clowder_test.cmd:main',
         ]
     },
-    install_requires=['argcomplete']
+    install_requires=['argcomplete', 'psutil']
 )

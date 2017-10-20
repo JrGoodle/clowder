@@ -3,6 +3,9 @@
 import os
 import sys
 import unittest
+
+from clowder.model.group import Group
+from clowder.model.source import Source
 from test.unittests.shared import (
     DEFAULTS_YAML,
     GITHUB_HTTPS_SOURCE_YAML,
@@ -11,8 +14,6 @@ from test.unittests.shared import (
     KISHKA_GROUP_YAML,
     KIT_GROUP_YAML
 )
-from clowder.group import Group
-from clowder.source import Source
 
 
 class GroupTest(unittest.TestCase):

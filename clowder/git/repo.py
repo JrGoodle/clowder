@@ -1,42 +1,32 @@
 """Git utilities"""
 
 from __future__ import print_function
+
 import os
 import subprocess
 import sys
+
 from git import Repo, GitError
 from termcolor import colored, cprint
-from clowder.exception.clowder_git_exception import ClowderGitException
-from clowder.utility.clowder_utilities import (
-    execute_command,
-    existing_git_repository,
-    is_offline,
-    ref_type,
-    remove_directory,
-    truncate_ref
-)
-from clowder.utility.print_utilities import (
-    format_path,
-    format_parallel_exception_error,
-    format_ref_string,
-    format_remote_already_exists_error,
-    format_remote_string,
-    format_command_failed_error,
-    print_error
-)
+
+import clowder.utility.formatting as fmt
+from clowder.error.clowder_git_error import ClowderGitError
+from clowder.utility.connectivity import is_offline
+from clowder.utility.execute import execute_command
+from clowder.utility.file_system import remove_directory
 
 
-class Git(object):
+class GitRepo(object):
     """Class encapsulating git utilities"""
 
     def __init__(self, repo_path, print_output=True):
         self.repo_path = repo_path
         self.print_output = print_output
-        self.repo = self._repo() if existing_git_repository(repo_path) else None
+        self.repo = self._repo() if GitRepo.existing_git_repository(repo_path) else None
 
     def checkout(self, truncated_ref):
         """Checkout git ref"""
-        ref_output = format_ref_string(truncated_ref)
+        ref_output = fmt.ref_string(truncated_ref)
         try:
             if self.print_output:
                 print(' - Check out ' + ref_output)
@@ -47,11 +37,9 @@ class Git(object):
             message = colored(' - Failed to checkout ref ', 'red')
             if self.print_output:
                 print(message + ref_output)
-                print_error(err)
+                print(fmt.error(err))
                 sys.exit(1)
-            raise ClowderGitException(msg=format_parallel_exception_error(self.repo_path,
-                                                                          message,
-                                                                          ref_output))
+            raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message, ref_output))
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
 
@@ -71,7 +59,7 @@ class Git(object):
 
     def create_clowder_repo(self, url, remote, branch, depth=0):
         """Clone clowder git repo from url at path"""
-        if existing_git_repository(self.repo_path):
+        if GitRepo.existing_git_repository(self.repo_path):
             return
         self._init_repo()
         self._create_remote(remote, url, remove_dir=True)
@@ -80,7 +68,7 @@ class Git(object):
     def configure_remotes(self, upstream_remote_name, upstream_remote_url,
                           fork_remote_name, fork_remote_url):
         """Configure remotes names for fork and upstream"""
-        if not existing_git_repository(self.repo_path):
+        if not GitRepo.existing_git_repository(self.repo_path):
             return
         try:
             remotes = self.repo.remotes
@@ -100,25 +88,19 @@ class Git(object):
         if upstream_remote_name in remote_names:
             if upstream_remote_url != self._remote_get_url(upstream_remote_name):
                 actual_url = self._remote_get_url(upstream_remote_name)
-                message = format_remote_already_exists_error(upstream_remote_name,
-                                                             upstream_remote_url,
-                                                             actual_url)
+                message = fmt.remote_already_exists_error(upstream_remote_name, upstream_remote_url, actual_url)
                 if self.print_output:
                     print(message)
                     sys.exit(1)
-                raise ClowderGitException(msg=format_parallel_exception_error(self.repo_path,
-                                                                              message))
+                raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message))
         if fork_remote_name in remote_names:
             if fork_remote_url != self._remote_get_url(fork_remote_name):
                 actual_url = self._remote_get_url(fork_remote_name)
-                message = format_remote_already_exists_error(fork_remote_name,
-                                                             fork_remote_url,
-                                                             actual_url)
+                message = fmt.remote_already_exists_error(fork_remote_name, fork_remote_url, actual_url)
                 if self.print_output:
                     print(message)
                     sys.exit(1)
-                raise ClowderGitException(msg=format_parallel_exception_error(self.repo_path,
-                                                                              message))
+                raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message))
 
     def current_branch(self):
         """Return currently checked out branch of project"""
@@ -138,9 +120,19 @@ class Git(object):
         """Check if local branch exists"""
         return branch in self.repo.heads
 
+    @staticmethod
+    def existing_git_repository(path):
+        """Check if a git repository exists"""
+        return os.path.isdir(os.path.join(path, '.git'))
+
+    @staticmethod
+    def existing_git_submodule(path):
+        """Check if a git submodule exists"""
+        return os.path.isfile(os.path.join(path, '.git'))
+
     def fetch(self, remote, ref=None, depth=0, remove_dir=False):
         """Fetch from a specific remote ref"""
-        remote_output = format_remote_string(remote)
+        remote_output = fmt.remote_string(remote)
         if depth == 0:
             if self.print_output:
                 print(' - Fetch from ' + remote_output)
@@ -153,12 +145,13 @@ class Git(object):
                 message = colored(' - Failed to fetch remote ', 'red')
                 error = message + remote_output
             else:
-                ref_output = format_ref_string(truncate_ref(ref))
+                ref_output = fmt.ref_string(GitRepo.truncate_ref(ref))
                 if self.print_output:
                     print(' - Fetch from ' + remote_output + ' ' + ref_output)
                 message = colored(' - Failed to fetch from ', 'red')
                 error = message + remote_output + ' ' + ref_output
-                command = ['git', 'fetch', remote, truncate_ref(ref), '--depth', str(depth), '--prune', '--tags']
+                command = ['git', 'fetch', remote, GitRepo.truncate_ref(ref),
+                           '--depth', str(depth), '--prune', '--tags']
         return_code = execute_command(command, self.repo_path, print_output=self.print_output)
         if return_code != 0:
             if remove_dir:
@@ -166,25 +159,25 @@ class Git(object):
             if self.print_output:
                 print(error)
                 sys.exit(1)
-            raise ClowderGitException(msg=format_parallel_exception_error(self.repo_path, error))
+            raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, error))
         return return_code
 
     def herd(self, url, remote, ref, depth=0, fetch=True, rebase=False):
         """Herd ref"""
-        if not existing_git_repository(self.repo_path):
+        if not GitRepo.existing_git_repository(self.repo_path):
             self._herd_initial(url, remote, ref, depth=depth)
             return
         return_code = self._create_remote(remote, url)
         if return_code != 0:
-            raise ClowderGitException(msg=colored(' - Failed to create remote', 'red'))
+            raise ClowderGitError(msg=colored(' - Failed to create remote', 'red'))
         self._herd(remote, ref, depth=depth, fetch=fetch, rebase=rebase)
 
     def herd_branch(self, url, remote, branch, default_ref, depth=0, rebase=False, fork_remote=None):
         """Herd branch"""
-        if not existing_git_repository(self.repo_path):
+        if not GitRepo.existing_git_repository(self.repo_path):
             self._herd_branch_initial(url, remote, branch, default_ref, depth=depth)
             return
-        branch_output = format_ref_string(branch)
+        branch_output = fmt.ref_string(branch)
         branch_ref = 'refs/heads/' + branch
         if self.existing_local_branch(branch):
             if self._is_branch_checked_out(branch):
@@ -206,7 +199,7 @@ class Git(object):
             self._herd(remote, branch_ref, depth=depth, fetch=False, rebase=rebase)
             return
         else:
-            remote_output = format_remote_string(remote)
+            remote_output = fmt.remote_string(remote)
             if self.print_output:
                 print(' - No existing remote branch ' + remote_output + ' ' + branch_output)
         if fork_remote:
@@ -215,7 +208,7 @@ class Git(object):
                 self._herd(fork_remote, branch_ref, depth=depth, fetch=False, rebase=rebase)
                 return
             else:
-                remote_output = format_remote_string(fork_remote)
+                remote_output = fmt.remote_string(fork_remote)
                 if self.print_output:
                     print(' - No existing remote branch ' + remote_output + ' ' + branch_output)
         fetch = depth != 0
@@ -223,7 +216,7 @@ class Git(object):
 
     def herd_tag(self, url, remote, tag, default_ref, depth=0, rebase=False):
         """Herd tag"""
-        if not existing_git_repository(self.repo_path):
+        if not GitRepo.existing_git_repository(self.repo_path):
             self._init_repo()
             self._create_remote(remote, url, remove_dir=True)
             return_code = self._checkout_new_repo_tag(tag, remote, depth)
@@ -244,14 +237,14 @@ class Git(object):
         """Herd remote repo"""
         return_code = self._create_remote(remote, url)
         if return_code != 0:
-            raise ClowderGitException(msg=colored(' - Failed to create remote', 'red'))
+            raise ClowderGitError(msg=colored(' - Failed to create remote', 'red'))
         if branch:
             return_code = self.fetch(remote, ref=branch)
             if return_code == 0:
                 return
         return_code = self.fetch(remote, ref=default_ref)
         if return_code != 0:
-            raise ClowderGitException(msg=colored(' - Failed to fetch', 'red'))
+            raise ClowderGitError(msg=colored(' - Failed to fetch', 'red'))
 
     def is_detached(self):
         """Check if HEAD is detached"""
@@ -306,27 +299,27 @@ class Git(object):
         return_code = execute_command(command, self.repo_path, print_output=self.print_output)
         if return_code != 0:
             cprint(' - Failed to print branches', 'red')
-            print(format_command_failed_error(command))
+            print(fmt.command_failed_error(command))
             sys.exit(1)
 
     def prune_branch_local(self, branch, default_ref, force):
         """Prune branch in repository"""
-        branch_output = format_ref_string(branch)
+        branch_output = fmt.ref_string(branch)
         if branch not in self.repo.heads:
             if self.print_output:
                 print(' - Local branch ' + branch_output + " doesn't exist")
             return
         prune_branch = self.repo.heads[branch]
         if self.repo.head.ref == prune_branch:
-            ref_output = format_ref_string(truncate_ref(default_ref))
+            ref_output = fmt.ref_string(GitRepo.truncate_ref(default_ref))
             try:
                 if self.print_output:
                     print(' - Checkout ref ' + ref_output)
-                self.repo.git.checkout(truncate_ref(default_ref))
+                self.repo.git.checkout(GitRepo.truncate_ref(default_ref))
             except GitError as err:
                 message = colored(' - Failed to checkout ref', 'red')
                 print(message + ref_output)
-                print_error(err)
+                print(fmt.error(err))
                 sys.exit(1)
             except (KeyboardInterrupt, SystemExit):
                 sys.exit(1)
@@ -338,7 +331,7 @@ class Git(object):
         except GitError as err:
             message = colored(' - Failed to delete local branch ', 'red')
             print(message + branch_output)
-            print_error(err)
+            print(fmt.error(err))
             sys.exit(1)
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
@@ -346,7 +339,7 @@ class Git(object):
     def prune_branch_remote(self, branch, remote):
         """Prune remote branch in repository"""
         origin = self._remote(remote)
-        branch_output = format_ref_string(branch)
+        branch_output = fmt.ref_string(branch)
         if branch not in origin.refs:
             if self.print_output:
                 print(' - Remote branch ' + branch_output + " doesn't exist")
@@ -358,44 +351,42 @@ class Git(object):
         except GitError as err:
             message = colored(' - Failed to delete remote branch ', 'red')
             print(message + branch_output)
-            print_error(err)
+            print(fmt.error(err))
             sys.exit(1)
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
 
     def reset(self, remote, ref, depth=0):
         """Reset branch to upstream or checkout tag/sha as detached HEAD"""
-        if ref_type(ref) == 'branch':
-            branch = truncate_ref(ref)
-            branch_output = format_ref_string(branch)
+        if GitRepo.ref_type(ref) == 'branch':
+            branch = GitRepo.truncate_ref(ref)
+            branch_output = fmt.ref_string(branch)
             if not self.existing_local_branch(branch):
                 return_code = self._create_branch_local_tracking(branch, remote, depth=depth, fetch=True)
                 if return_code != 0:
-                    raise ClowderGitException(msg=colored(' - Failed to create tracking branch', 'red'))
+                    raise ClowderGitError(msg=colored(' - Failed to create tracking branch', 'red'))
                 return
             elif self._is_branch_checked_out(branch):
                 if self.print_output:
                     print(' - Branch ' + branch_output + ' already checked out')
             else:
                 self._checkout_branch_local(branch)
-            remote_output = format_remote_string(remote)
+            remote_output = fmt.remote_string(remote)
             if not self.existing_remote_branch(branch, remote):
                 message = colored(' - No existing remote branch ', 'red')
                 if self.print_output:
                     print(message + remote_output + ' ' + branch_output)
-                raise ClowderGitException(msg=format_parallel_exception_error(self.repo_path,
-                                                                              message,
-                                                                              remote_output, ' ',
-                                                                              branch_output))
+                raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message,
+                                                                       remote_output, ' ', branch_output))
             self.fetch(remote, depth=depth, ref=ref)
             if self.print_output:
                 print(' - Reset branch ' + branch_output + ' to ' + remote_output + ' ' + branch_output)
             remote_branch = remote + '/' + branch
             self._reset_head(branch=remote_branch)
-        elif ref_type(ref) == 'tag':
+        elif GitRepo.ref_type(ref) == 'tag':
             self.fetch(remote, depth=depth, ref=ref)
-            self._checkout_tag(truncate_ref(ref))
-        elif ref_type(ref) == 'sha':
+            self._checkout_tag(GitRepo.truncate_ref(ref))
+        elif GitRepo.ref_type(ref) == 'sha':
             self.fetch(remote, depth=depth, ref=ref)
             self._checkout_sha(ref)
 
@@ -419,7 +410,7 @@ class Git(object):
             if return_code != 0:
                 sys.exit(1)
         else:
-            branch_output = format_ref_string(branch)
+            branch_output = fmt.ref_string(branch)
             print(' - ' + branch_output + ' already exists')
             correct_branch = self._is_branch_checked_out(branch)
             if correct_branch:
@@ -443,37 +434,47 @@ class Git(object):
         """Sync fork with upstream remote"""
         if self.print_output:
             print(' - Sync fork with upstream remote')
-        if ref_type(ref) != 'branch':
+        if GitRepo.ref_type(ref) != 'branch':
             message = colored(' - Can only sync branches', 'red')
             if self.print_output:
                 print(message)
                 sys.exit(1)
-            raise ClowderGitException(msg=format_parallel_exception_error(self.repo_path,
-                                                                          message))
-        fork_remote_output = format_remote_string(fork_remote)
-        branch_output = format_ref_string(truncate_ref(ref))
+            raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message))
+        fork_remote_output = fmt.remote_string(fork_remote)
+        branch_output = fmt.ref_string(GitRepo.truncate_ref(ref))
         if rebase:
-            self._rebase_remote_branch(upstream_remote, truncate_ref(ref))
+            self._rebase_remote_branch(upstream_remote, GitRepo.truncate_ref(ref))
         else:
-            self._pull(upstream_remote, truncate_ref(ref))
+            self._pull(upstream_remote, GitRepo.truncate_ref(ref))
         if self.print_output:
             print(' - Push to ' + fork_remote_output + ' ' + branch_output)
-        command = ['git', 'push', fork_remote, truncate_ref(ref)]
+        command = ['git', 'push', fork_remote, GitRepo.truncate_ref(ref)]
         return_code = execute_command(command, self.repo_path, print_output=self.print_output)
         if return_code != 0:
             message = colored(' - Failed to push to ', 'red')
             if self.print_output:
                 print(message + fork_remote_output + ' ' + branch_output)
-                print(format_command_failed_error(command))
+                print(fmt.command_failed_error(command))
                 sys.exit(1)
-            raise ClowderGitException(msg=format_parallel_exception_error(self.repo_path,
-                                                                          message,
-                                                                          fork_remote_output, ' ',
-                                                                          branch_output))
+            raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message,
+                                                                   fork_remote_output, ' ', branch_output))
+
+    @staticmethod
+    def truncate_ref(ref):
+        """Return bare branch, tag, or sha"""
+        git_branch = "refs/heads/"
+        git_tag = "refs/tags/"
+        if ref.startswith(git_branch):
+            length = len(git_branch)
+        elif ref.startswith(git_tag):
+            length = len(git_tag)
+        else:
+            length = 0
+        return ref[length:]
 
     def validate_repo(self):
         """Validate repo state"""
-        if not existing_git_repository(self.repo_path):
+        if not GitRepo.existing_git_repository(self.repo_path):
             return True
         return not self.is_dirty()
 
@@ -486,14 +487,14 @@ class Git(object):
         except GitError as err:
             if self.print_output:
                 cprint(' - Failed to abort rebase', 'red')
-                print_error(err)
+                print(fmt.error(err))
             sys.exit(1)
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
 
     def _checkout_branch_local(self, branch, remove_dir=False):
         """Checkout local branch"""
-        branch_output = format_ref_string(branch)
+        branch_output = fmt.ref_string(branch)
         try:
             if self.print_output:
                 print(' - Checkout branch ' + branch_output)
@@ -506,11 +507,9 @@ class Git(object):
             message = colored(' - Failed to checkout branch ', 'red')
             if self.print_output:
                 print(message + branch_output)
-                print_error(err)
+                print(fmt.error(err))
                 sys.exit(1)
-            raise ClowderGitException(msg=format_parallel_exception_error(self.repo_path,
-                                                                          message,
-                                                                          branch_output))
+            raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message, branch_output))
         except (KeyboardInterrupt, SystemExit):
             if remove_dir:
                 remove_directory(self.repo_path)
@@ -518,8 +517,8 @@ class Git(object):
 
     def _checkout_new_repo_branch(self, branch, remote, depth):
         """Checkout remote branch or fail and delete repo if it doesn't exist"""
-        branch_output = format_ref_string(branch)
-        remote_output = format_remote_string(remote)
+        branch_output = fmt.ref_string(branch)
+        remote_output = fmt.remote_string(remote)
         self._remote(remote, remove_dir=True)
         self.fetch(remote, depth=depth, ref=branch, remove_dir=True)
         if not self.existing_remote_branch(branch, remote):
@@ -528,15 +527,13 @@ class Git(object):
             if self.print_output:
                 print(message + remote_output + ' ' + branch_output)
                 sys.exit(1)
-            raise ClowderGitException(msg=format_parallel_exception_error(self.repo_path,
-                                                                          message,
-                                                                          remote_output, ' ',
-                                                                          branch_output))
+            raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message,
+                                                                   remote_output, ' ', branch_output))
         self._create_branch_local_tracking(branch, remote, depth=depth, fetch=False, remove_dir=True)
 
     def _checkout_new_repo_commit(self, commit, remote, depth):
         """Checkout commit or fail and delete repo if it doesn't exist"""
-        commit_output = format_ref_string(commit)
+        commit_output = fmt.ref_string(commit)
         self._remote(remote, remove_dir=True)
         self.fetch(remote, depth=depth, ref=commit, remove_dir=True)
         if self.print_output:
@@ -548,18 +545,16 @@ class Git(object):
             message = colored(' - Failed to checkout commit ', 'red')
             if self.print_output:
                 print(message + commit_output)
-                print_error(err)
+                print(fmt.error(err))
                 sys.exit(1)
-            raise ClowderGitException(msg=format_parallel_exception_error(self.repo_path,
-                                                                          message,
-                                                                          commit_output))
+            raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message, commit_output))
         except (KeyboardInterrupt, SystemExit):
             remove_directory(self.repo_path)
             sys.exit(1)
 
     def _checkout_new_repo_tag(self, tag, remote, depth, remove_dir=False):
         """Checkout tag or fail and delete repo if it doesn't exist"""
-        tag_output = format_ref_string(tag)
+        tag_output = fmt.ref_string(tag)
         self._remote(remote, remove_dir=remove_dir)
         self.fetch(remote, depth=depth, ref='refs/tags/' + tag, remove_dir=remove_dir)
         try:
@@ -571,9 +566,8 @@ class Git(object):
                 if self.print_output:
                     print(colored(message, 'red') + tag_output)
                     sys.exit(1)
-                raise ClowderGitException(msg=format_parallel_exception_error(self.repo_path,
-                                                                              colored(message, 'red'),
-                                                                              tag_output))
+                raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path,
+                                                                       colored(message, 'red'), tag_output))
             if self.print_output:
                 print(message + tag_output)
             return 1
@@ -591,14 +585,12 @@ class Git(object):
                 message = colored(' - Failed to checkout tag ', 'red')
                 if self.print_output:
                     print(message + tag_output)
-                    print_error(err)
+                    print(fmt.error(err))
                 if remove_dir:
                     remove_directory(self.repo_path)
                     if self.print_output:
                         sys.exit(1)
-                    raise ClowderGitException(msg=format_parallel_exception_error(self.repo_path,
-                                                                                  message,
-                                                                                  tag_output))
+                    raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message, tag_output))
                 return 1
             except (KeyboardInterrupt, SystemExit):
                 if remove_dir:
@@ -607,7 +599,7 @@ class Git(object):
 
     def _checkout_sha(self, sha):
         """Checkout commit by sha"""
-        commit_output = format_ref_string(sha)
+        commit_output = fmt.ref_string(sha)
         try:
             same_sha = self.repo.head.commit.hexsha == sha
             is_detached = self.repo.head.is_detached
@@ -622,17 +614,15 @@ class Git(object):
             message = colored(' - Failed to checkout commit ', 'red')
             if self.print_output:
                 print(message + commit_output)
-                print_error(err)
+                print(fmt.error(err))
                 sys.exit(1)
-            raise ClowderGitException(msg=format_parallel_exception_error(self.repo_path,
-                                                                          message,
-                                                                          commit_output))
+            raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message, commit_output))
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
 
     def _checkout_tag(self, tag):
         """Checkout commit tag is pointing to"""
-        tag_output = format_ref_string(tag)
+        tag_output = fmt.ref_string(tag)
         if tag not in self.repo.tags:
             if self.print_output:
                 print(' - No existing tag ' + tag_output)
@@ -652,11 +642,9 @@ class Git(object):
             message = colored(' - Failed to checkout tag ', 'red')
             if self.print_output:
                 print(message + tag_output)
-                print_error(err)
+                print(fmt.error(err))
                 sys.exit(1)
-            raise ClowderGitException(msg=format_parallel_exception_error(self.repo_path,
-                                                                          message,
-                                                                          tag_output))
+            raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message, tag_output))
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
 
@@ -666,14 +654,14 @@ class Git(object):
             self.repo.git.clean(args)
         except GitError as err:
             cprint(' - Failed to clean git repo', 'red')
-            print_error(err)
+            print(fmt.error(err))
             sys.exit(1)
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
 
     def _create_branch_local(self, branch):
         """Create local branch"""
-        branch_output = format_ref_string(branch)
+        branch_output = fmt.ref_string(branch)
         try:
             if self.print_output:
                 print(' - Create branch ' + branch_output)
@@ -683,14 +671,14 @@ class Git(object):
             if self.print_output:
                 message = colored(' - Failed to create branch ', 'red')
                 print(message + branch_output)
-                print_error(err)
+                print(fmt.error(err))
             return 1
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
 
     def _create_branch_local_tracking(self, branch, remote, depth, fetch=True, remove_dir=False):
         """Create and checkout tracking branch"""
-        branch_output = format_ref_string(branch)
+        branch_output = fmt.ref_string(branch)
         origin = self._remote(remote, remove_dir=remove_dir)
         if fetch:
             return_code = self.fetch(remote, depth=depth, ref=branch, remove_dir=remove_dir)
@@ -706,11 +694,9 @@ class Git(object):
                 remove_directory(self.repo_path)
             if self.print_output:
                 print(message + branch_output)
-                print_error(err)
+                print(fmt.error(err))
                 sys.exit(1)
-            raise ClowderGitException(msg=format_parallel_exception_error(self.repo_path,
-                                                                          message,
-                                                                          branch_output))
+            raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message, branch_output))
         except (KeyboardInterrupt, SystemExit):
             if remove_dir:
                 remove_directory(self.repo_path)
@@ -723,7 +709,7 @@ class Git(object):
 
     def _create_branch_remote_tracking(self, branch, remote, depth):
         """Create remote tracking branch"""
-        branch_output = format_ref_string(branch)
+        branch_output = fmt.ref_string(branch)
         origin = self._remote(remote)
         return_code = self.fetch(remote, depth=depth, ref=branch)
         if return_code != 0:
@@ -749,7 +735,7 @@ class Git(object):
         except GitError as err:
             message = colored(' - Failed to push remote branch ', 'red')
             print(message + branch_output)
-            print_error(err)
+            print(fmt.error(err))
             sys.exit(1)
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
@@ -759,7 +745,7 @@ class Git(object):
         remote_names = [r.name for r in self.repo.remotes]
         if remote in remote_names:
             return 0
-        remote_output = format_remote_string(remote)
+        remote_output = fmt.remote_string(remote)
         try:
             if self.print_output:
                 print(' - Create remote ' + remote_output)
@@ -771,11 +757,9 @@ class Git(object):
                 remove_directory(self.repo_path)
             if self.print_output:
                 print(message + remote_output)
-                print_error(err)
+                print(fmt.error(err))
                 sys.exit(1)
-            raise ClowderGitException(msg=format_parallel_exception_error(self.repo_path,
-                                                                          message,
-                                                                          remote_output))
+            raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message, remote_output))
         except (KeyboardInterrupt, SystemExit):
             if remove_dir:
                 remove_directory(self.repo_path)
@@ -789,18 +773,16 @@ class Git(object):
 
     def _herd(self, remote, ref, depth=0, fetch=True, rebase=False):
         """Herd ref"""
-        if ref_type(ref) == 'branch':
-            branch = truncate_ref(ref)
-            branch_output = format_ref_string(branch)
+        if GitRepo.ref_type(ref) == 'branch':
+            branch = GitRepo.truncate_ref(ref)
+            branch_output = fmt.ref_string(branch)
             if not self.existing_local_branch(branch):
                 return_code = self._create_branch_local_tracking(branch, remote, depth=depth, fetch=fetch)
                 if return_code != 0:
                     if self.print_output:
                         sys.exit(1)
                     message = colored(' - Failed to create tracking branch ', 'red')
-                    raise ClowderGitException(msg=format_parallel_exception_error(self.repo_path,
-                                                                                  message,
-                                                                                  branch_output))
+                    raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message, branch_output))
                 return
             elif self._is_branch_checked_out(branch):
                 if self.print_output:
@@ -816,10 +798,10 @@ class Git(object):
                 self._rebase_remote_branch(remote, branch)
                 return
             self._pull(remote, branch)
-        elif ref_type(ref) == 'tag':
+        elif GitRepo.ref_type(ref) == 'tag':
             self.fetch(remote, depth=depth, ref=ref)
-            self._checkout_tag(truncate_ref(ref))
-        elif ref_type(ref) == 'sha':
+            self._checkout_tag(GitRepo.truncate_ref(ref))
+        elif GitRepo.ref_type(ref) == 'sha':
             self.fetch(remote, depth=depth, ref=ref)
             self._checkout_sha(ref)
 
@@ -827,11 +809,11 @@ class Git(object):
         """Herd ref initial"""
         self._init_repo()
         self._create_remote(remote, url, remove_dir=True)
-        if ref_type(ref) == 'branch':
-            self._checkout_new_repo_branch(truncate_ref(ref), remote, depth)
-        elif ref_type(ref) == 'tag':
-            self._checkout_new_repo_tag(truncate_ref(ref), remote, depth, remove_dir=True)
-        elif ref_type(ref) == 'sha':
+        if GitRepo.ref_type(ref) == 'branch':
+            self._checkout_new_repo_branch(GitRepo.truncate_ref(ref), remote, depth)
+        elif GitRepo.ref_type(ref) == 'tag':
+            self._checkout_new_repo_tag(GitRepo.truncate_ref(ref), remote, depth, remove_dir=True)
+        elif GitRepo.ref_type(ref) == 'sha':
             self._checkout_new_repo_commit(ref, remote, depth)
 
     def _herd_branch_initial(self, url, remote, branch, default_ref, depth=0):
@@ -840,9 +822,9 @@ class Git(object):
         self._create_remote(remote, url, remove_dir=True)
         self.fetch(remote, depth=depth, ref=branch)
         if not self.existing_remote_branch(branch, remote):
-            remote_output = format_remote_string(remote)
+            remote_output = fmt.remote_string(remote)
             if self.print_output:
-                print(' - No existing remote branch ' + remote_output + ' ' + format_ref_string(branch))
+                print(' - No existing remote branch ' + remote_output + ' ' + fmt.ref_string(branch))
             self._herd_initial(url, remote, default_ref, depth=depth)
             return
         self._create_branch_local_tracking(branch, remote, depth=depth, fetch=False, remove_dir=True)
@@ -859,11 +841,11 @@ class Git(object):
 
     def _init_repo(self):
         """Initialize repository"""
-        if existing_git_repository(self.repo_path):
+        if GitRepo.existing_git_repository(self.repo_path):
             return
         try:
             if self.print_output:
-                print(' - Initialize repo at ' + format_path(self.repo_path))
+                print(' - Initialize repo at ' + fmt.path(self.repo_path))
             if not os.path.isdir(self.repo_path):
                 os.makedirs(self.repo_path)
             self.repo = Repo.init(self.repo_path)
@@ -872,9 +854,9 @@ class Git(object):
             message = colored(' - Failed to initialize repository', 'red')
             if self.print_output:
                 print(message)
-                print_error(err)
+                print(fmt.error(err))
                 sys.exit(1)
-            raise ClowderGitException(msg=format_parallel_exception_error(self.repo_path, message))
+            raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message))
         except (KeyboardInterrupt, SystemExit):
             remove_directory(self.repo_path)
             sys.exit(1)
@@ -905,7 +887,7 @@ class Git(object):
 
     def _is_tracking_branch(self, branch):
         """Check if branch is a tracking branch"""
-        branch_output = format_ref_string(branch)
+        branch_output = fmt.ref_string(branch)
         try:
             local_branch = self.repo.heads[branch]
             tracking_branch = local_branch.tracking_branch()
@@ -914,11 +896,9 @@ class Git(object):
             message = colored(' - No existing branch ', 'red')
             if self.print_output:
                 print(message + branch_output)
-                print_error(err)
+                print(fmt.error(err))
                 sys.exit(1)
-            raise ClowderGitException(msg=format_parallel_exception_error(self.repo_path,
-                                                                          message,
-                                                                          branch_output))
+            raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message, branch_output))
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
 
@@ -928,8 +908,8 @@ class Git(object):
             if self.print_output:
                 print(' - HEAD is detached')
             return
-        branch_output = format_ref_string(branch)
-        remote_output = format_remote_string(remote)
+        branch_output = fmt.ref_string(branch)
+        remote_output = fmt.remote_string(remote)
         if self.print_output:
             print(' - Pull from ' + remote_output + ' ' + branch_output)
         command = ['git', 'pull', remote, branch]
@@ -938,12 +918,10 @@ class Git(object):
             message = colored(' - Failed to pull from ', 'red')
             if self.print_output:
                 print(message + remote_output + ' ' + branch_output)
-                print(format_command_failed_error(command))
+                print(fmt.command_failed_error(command))
                 sys.exit(1)
-            raise ClowderGitException(msg=format_parallel_exception_error(self.repo_path,
-                                                                          message,
-                                                                          remote_output, ' ',
-                                                                          branch_output))
+            raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message,
+                                                                   remote_output, ' ', branch_output))
 
     def _rebase_remote_branch(self, remote, branch):
         """Rebase from remote branch"""
@@ -951,8 +929,8 @@ class Git(object):
             if self.print_output:
                 print(' - HEAD is detached')
             return
-        branch_output = format_ref_string(branch)
-        remote_output = format_remote_string(remote)
+        branch_output = fmt.ref_string(branch)
+        remote_output = fmt.remote_string(remote)
         if self.print_output:
             print(' - Rebase onto ' + remote_output + ' ' + branch_output)
         command = ['git', 'pull', '--rebase', remote, branch]
@@ -961,16 +939,14 @@ class Git(object):
             message = colored(' - Failed to rebase onto ', 'red')
             if self.print_output:
                 print(message + remote_output + ' ' + branch_output)
-                print(format_command_failed_error(command))
+                print(fmt.command_failed_error(command))
                 sys.exit(1)
-            raise ClowderGitException(msg=format_parallel_exception_error(self.repo_path,
-                                                                          message,
-                                                                          remote_output, ' ',
-                                                                          branch_output))
+            raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message,
+                                                                   remote_output, ' ', branch_output))
 
     def _remote(self, remote, remove_dir=False):
         """Get remote"""
-        remote_output = format_remote_string(remote)
+        remote_output = fmt.remote_string(remote)
         try:
             return self.repo.remotes[remote]
         except GitError as err:
@@ -979,11 +955,9 @@ class Git(object):
                 remove_directory(self.repo_path)
             if self.print_output:
                 print(message + remote_output)
-                print_error(err)
+                print(fmt.error(err))
                 sys.exit(1)
-            raise ClowderGitException(msg=format_parallel_exception_error(self.repo_path,
-                                                                          message,
-                                                                          remote_output))
+            raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message, remote_output))
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
 
@@ -993,8 +967,8 @@ class Git(object):
 
     def _rename_remote(self, remote_from, remote_to):
         """Rename remote"""
-        remote_output_from = format_remote_string(remote_from)
-        remote_output_to = format_remote_string(remote_to)
+        remote_output_from = fmt.remote_string(remote_from)
+        remote_output_to = fmt.remote_string(remote_to)
         if self.print_output:
             print(' - Rename remote ' + remote_output_from + ' to ' + remote_output_to)
         try:
@@ -1004,11 +978,9 @@ class Git(object):
             message_2 = remote_output_from + ' to ' + remote_output_to
             if self.print_output:
                 print(message_1 + message_2)
-                print_error(err)
+                print(fmt.error(err))
                 sys.exit(1)
-            raise ClowderGitException(msg=format_parallel_exception_error(self.repo_path,
-                                                                          message_1,
-                                                                          message_2))
+            raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message_1, message_2))
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
 
@@ -1019,14 +991,12 @@ class Git(object):
             return repo
         except GitError as err:
             message = colored(" - Failed to create Repo instance for ", 'red')
-            repo_path_output = format_path(self.repo_path)
+            repo_path_output = fmt.path(self.repo_path)
             if self.print_output:
                 print(message + repo_path_output)
-                print_error(err)
+                print(fmt.error(err))
                 sys.exit(1)
-            raise ClowderGitException(msg=format_parallel_exception_error(self.repo_path,
-                                                                          message,
-                                                                          repo_path_output))
+            raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message, repo_path_output))
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
 
@@ -1038,14 +1008,12 @@ class Git(object):
                 return 0
             except GitError as err:
                 message = colored(' - Failed to reset ', 'red')
-                ref_output = format_ref_string('HEAD')
+                ref_output = fmt.ref_string('HEAD')
                 if self.print_output:
                     print(message + ref_output)
-                    print_error(err)
+                    print(fmt.error(err))
                     sys.exit(1)
-                raise ClowderGitException(msg=format_parallel_exception_error(self.repo_path,
-                                                                              message,
-                                                                              ref_output))
+                raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message, ref_output))
             except (KeyboardInterrupt, SystemExit):
                 sys.exit(1)
         else:
@@ -1054,21 +1022,19 @@ class Git(object):
                 return 0
             except GitError as err:
                 message = colored(' - Failed to reset to ', 'red')
-                branch_output = format_ref_string(branch)
+                branch_output = fmt.ref_string(branch)
                 if self.print_output:
                     print(message + branch_output)
-                    print_error(err)
+                    print(fmt.error(err))
                     sys.exit(1)
-                raise ClowderGitException(msg=format_parallel_exception_error(self.repo_path,
-                                                                              message,
-                                                                              branch_output))
+                raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message, branch_output))
             except (KeyboardInterrupt, SystemExit):
                 sys.exit(1)
 
     def _set_tracking_branch(self, remote, branch, remove_dir=False):
         """Set tracking branch"""
-        branch_output = format_ref_string(branch)
-        remote_output = format_remote_string(remote)
+        branch_output = fmt.ref_string(branch)
+        remote_output = fmt.remote_string(remote)
         origin = self._remote(remote)
         try:
             local_branch = self.repo.heads[branch]
@@ -1083,11 +1049,9 @@ class Git(object):
                 remove_directory(self.repo_path)
             if self.print_output:
                 print(message + branch_output)
-                print_error(err)
+                print(fmt.error(err))
                 sys.exit(1)
-            raise ClowderGitException(msg=format_parallel_exception_error(self.repo_path,
-                                                                          message,
-                                                                          branch_output))
+            raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message, branch_output))
         except (KeyboardInterrupt, SystemExit):
             if remove_dir:
                 remove_directory(self.repo_path)
@@ -1095,27 +1059,23 @@ class Git(object):
 
     def _set_tracking_branch_commit(self, branch, remote, depth):
         """Set tracking relationship between local and remote branch if on same commit"""
-        branch_output = format_ref_string(branch)
+        branch_output = fmt.ref_string(branch)
         origin = self._remote(remote)
         return_code = self.fetch(remote, depth=depth, ref=branch)
         if return_code != 0:
-            raise ClowderGitException(msg=colored(' - Failed to fech', 'red'))
+            raise ClowderGitError(msg=colored(' - Failed to fech', 'red'))
         if not self.existing_local_branch(branch):
             message = colored(' - No local branch ', 'red')
             if self.print_output:
                 print(message + branch_output + '\n')
                 sys.exit(1)
-            raise ClowderGitException(msg=format_parallel_exception_error(self.repo_path,
-                                                                          message,
-                                                                          branch_output, '\n'))
+            raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message, branch_output, '\n'))
         if not self.existing_remote_branch(branch, remote):
             message = colored(' - No remote branch ', 'red')
             if self.print_output:
                 print(message + branch_output + '\n')
                 sys.exit(1)
-            raise ClowderGitException(msg=format_parallel_exception_error(self.repo_path,
-                                                                          message,
-                                                                          branch_output, '\n'))
+            raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message, branch_output, '\n'))
         local_branch = self.repo.heads[branch]
         remote_branch = origin.refs[branch]
         if local_branch.commit != remote_branch.commit:
@@ -1124,15 +1084,13 @@ class Git(object):
             if self.print_output:
                 print(message_1 + branch_output + message_2 + '\n')
                 sys.exit(1)
-            raise ClowderGitException(msg=format_parallel_exception_error(self.repo_path,
-                                                                          message_1,
-                                                                          branch_output,
-                                                                          message_2, '\n'))
+            raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message_1,
+                                                                   branch_output, message_2, '\n'))
         return_code = self._set_tracking_branch(remote, branch)
         if return_code != 0:
             if self.print_output:
                 sys.exit(1)
-            raise ClowderGitException(msg=colored(' - Failed to set tracking branch', 'red'))
+            raise ClowderGitError(msg=colored(' - Failed to set tracking branch', 'red'))
 
     def _untracked_files(self):
         """Execute command and display continuous output"""
@@ -1143,8 +1101,85 @@ class Git(object):
         except GitError as err:
             message = colored(' - Failed to check untracked files', 'red')
             if self.print_output:
-                print_error(err)
+                print(fmt.error(err))
                 sys.exit(1)
-            raise ClowderGitException(msg=message)
+            raise ClowderGitError(msg=message)
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
+
+    @staticmethod
+    def ref_type(ref):
+        """Return branch, tag, sha, or unknown ref type"""
+        git_branch = "refs/heads/"
+        git_tag = "refs/tags/"
+        if ref.startswith(git_branch):
+            return 'branch'
+        elif ref.startswith(git_tag):
+            return 'tag'
+        elif len(ref) == 40:
+            return 'sha'
+        return 'unknown'
+
+    @staticmethod
+    def exists(repo_path):
+        """Print existence validation messages"""
+        if not GitRepo.existing_git_repository(repo_path):
+            cprint(' - Project is missing', 'red')
+
+    @staticmethod
+    def status(repo_path):
+        """Print git status"""
+        command = ['git', 'status', '-vv']
+        print(fmt.command(command))
+        return_code = execute_command(command, repo_path)
+        if return_code != 0:
+            cprint(' - Failed to print status', 'red')
+            print(fmt.command_failed_error(command))
+            sys.exit(return_code)
+
+
+    @staticmethod
+    def validation(repo_path):
+        """Print validation messages"""
+        repo = GitRepo(repo_path)
+        if not GitRepo.existing_git_repository(repo_path):
+            return
+        if not repo.validate_repo():
+            print(' - Dirty repo. Please stash, commit, or discard your changes')
+            git_status(repo_path)
+
+
+    @staticmethod
+    def format_project_string(repo_path, name):
+        """Return formatted project name"""
+        if not os.path.isdir(os.path.join(repo_path, '.git')):
+            return colored(name, 'green')
+        repo = GitRepo(repo_path)
+        if not repo.validate_repo():
+            color = 'red'
+            symbol = '*'
+        else:
+            color = 'green'
+            symbol = ''
+        return colored(name + symbol, color)
+
+    @staticmethod
+    def format_project_ref_string(repo_path):
+        """Return formatted repo ref name"""
+        repo = GitRepo(repo_path)
+        local_commits = repo.new_commits()
+        upstream_commits = repo.new_commits(upstream=True)
+        no_local_commits = local_commits == 0 or local_commits == '0'
+        no_upstream_commits = upstream_commits == 0 or upstream_commits == '0'
+        if no_local_commits and no_upstream_commits:
+            status = ''
+        else:
+            local_commits_output = colored('+' + str(local_commits), 'yellow')
+            upstream_commits_output = colored('-' + str(upstream_commits), 'red')
+            status = '[' + local_commits_output + '/' + upstream_commits_output + ']'
+
+        if repo.is_detached():
+            current_ref = repo.sha(short=True)
+            return colored('(HEAD @ ' + current_ref + ')', 'magenta')
+        current_branch = repo.current_branch()
+        return colored('(' + current_branch + ')', 'magenta') + status
