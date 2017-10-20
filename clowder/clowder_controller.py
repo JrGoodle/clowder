@@ -13,7 +13,7 @@ from tqdm import tqdm
 
 from clowder.group import Group
 from clowder.source import Source
-from clowder.utility.clowder_utilities import save_yaml
+from clowder.utility.yaml.saving import save_yaml
 from clowder.utility.error.clowder_error import ClowderError
 import clowder.utility.formatting as fmt
 from clowder.utility.yaml.load import (

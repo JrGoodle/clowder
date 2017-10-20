@@ -1,4 +1,4 @@
-"""Clowder yaml loading"""
+"""Clowder yaml parsing"""
 
 import os
 import sys
