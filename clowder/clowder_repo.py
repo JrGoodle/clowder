@@ -10,7 +10,7 @@ import sys
 from git import GitError
 from termcolor import colored, cprint
 
-from clowder.utility.clowder_utilities import remove_directory
+from clowder.utility.file_system import remove_directory
 from clowder.utility.connectivity import is_offline
 from clowder.utility.execute import execute_command
 from clowder.utility.git.printing import (
