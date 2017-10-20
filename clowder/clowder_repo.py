@@ -7,9 +7,14 @@ import errno
 import os
 import sys
 
-from git import GitError
-from termcolor import colored, cprint
+from termcolor import colored
 
+from clowder.git.clowder_repo import (
+    add,
+    commit,
+    pull,
+    push
+)
 from clowder.git.repo import GitRepo
 from clowder.utility.connectivity import is_offline
 from clowder.utility.execute import execute_command
@@ -26,18 +31,7 @@ class ClowderRepo(object):
 
     def add(self, files):
         """Add files in clowder repo to git index"""
-        clowder = GitRepo(self.clowder_path)
-        try:
-            print(' - Add files to git index')
-            print(clowder.repo.git.add(files))
-        except GitError as err:
-            cprint(' - Failed to add files to git index', 'red')
-            print(fmt.error(err))
-            sys.exit(1)
-        except (KeyboardInterrupt, SystemExit):
-            sys.exit(1)
-        else:
-            GitRepo.status(self.clowder_path)
+        add(self.clowder_path, files)
 
     def branches(self):
         """Return current local branches"""
@@ -64,16 +58,7 @@ class ClowderRepo(object):
 
     def commit(self, message):
         """Commit current changes in clowder repo"""
-        clowder = GitRepo(self.clowder_path)
-        try:
-            print(' - Commit current changes')
-            print(clowder.repo.git.commit(message=message))
-        except GitError as err:
-            cprint(' - Failed to commit current changes', 'red')
-            print(fmt.error(err))
-            sys.exit(1)
-        except (KeyboardInterrupt, SystemExit):
-            sys.exit(1)
+        commit(self.clowder_path, message)
 
     def init(self, url, branch):
         """Clone clowder repo from url"""
@@ -141,35 +126,11 @@ class ClowderRepo(object):
 
     def pull(self):
         """Pull clowder repo upstream changes"""
-        clowder = GitRepo(self.clowder_path)
-        if clowder.repo.head.is_detached:
-            print(' - HEAD is detached')
-            return
-        try:
-            print(' - Pull latest changes')
-            print(clowder.repo.git.pull())
-        except GitError as err:
-            cprint(' - Failed to pull latest changes', 'red')
-            print(fmt.error(err))
-            sys.exit(1)
-        except (KeyboardInterrupt, SystemExit):
-            sys.exit(1)
+        pull(self.clowder_path)
 
     def push(self):
         """Push clowder repo changes"""
-        clowder = GitRepo(self.clowder_path)
-        if clowder.repo.head.is_detached:
-            print(' - HEAD is detached')
-            return
-        try:
-            print(' - Push local changes')
-            print(clowder.repo.git.push())
-        except GitError as err:
-            cprint(' - Failed to push local changes', 'red')
-            print(fmt.error(err))
-            sys.exit(1)
-        except (KeyboardInterrupt, SystemExit):
-            sys.exit(1)
+        push(self.clowder_path)
 
     def run_command(self, command):
         """Run command in clowder repo"""
