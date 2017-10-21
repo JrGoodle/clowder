@@ -12,7 +12,7 @@ from clowder.git.project_repo import ProjectRepo
 from clowder.util.execute import execute_command
 
 
-class GitSubmodules(ProjectRepo):
+class ProjectRepoRecursive(ProjectRepo):
     """Class encapsulating git utilities"""
 
     def __init__(self, repo_path, remote, default_ref, parallel=False, print_output=True):

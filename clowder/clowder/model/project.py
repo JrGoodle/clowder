@@ -10,7 +10,7 @@ from termcolor import cprint
 import clowder.util.formatting as fmt
 from clowder.error.clowder_error import ClowderError
 from clowder.git.project_repo import ProjectRepo
-from clowder.git.submodules import GitSubmodules
+from clowder.git.project_repo_recursive import ProjectRepoRecursive
 from clowder.model.fork import Fork
 from clowder.util.connectivity import is_offline
 from clowder.util.execute import execute_forall_command
@@ -69,7 +69,7 @@ class Project(object):
             cprint(" - Project is missing\n", 'red')
             return
         if self.recursive and recursive:
-            repo = GitSubmodules(self.full_path(), self.remote_name, self.ref)
+            repo = ProjectRepoRecursive(self.full_path(), self.remote_name, self.ref)
             repo.clean(args=args)
         else:
             repo = ProjectRepo(self.full_path(), self.remote_name, self.ref)
@@ -82,7 +82,7 @@ class Project(object):
             cprint(" - Project is missing\n", 'red')
             return
         if self.recursive:
-            repo = GitSubmodules(self.full_path(), self.remote_name, self.ref)
+            repo = ProjectRepoRecursive(self.full_path(), self.remote_name, self.ref)
             repo.clean(args='fdx')
         else:
             repo = ProjectRepo(self.full_path(), self.remote_name, self.ref)
@@ -163,8 +163,8 @@ class Project(object):
 
         if branch:
             if self.recursive:
-                repo = GitSubmodules(self.full_path(), self.remote_name, self.ref,
-                                     parallel=parallel, print_output=print_output)
+                repo = ProjectRepoRecursive(self.full_path(), self.remote_name, self.ref,
+                                            parallel=parallel, print_output=print_output)
                 self._herd_branch(repo, branch, herd_depth, rebase, print_output)
             else:
                 repo = ProjectRepo(self.full_path(), self.remote_name, self.ref,
@@ -172,8 +172,8 @@ class Project(object):
                 self._herd_branch(repo, branch, herd_depth, rebase, print_output)
         elif tag:
             if self.recursive:
-                repo = GitSubmodules(self.full_path(), self.remote_name, self.ref,
-                                     parallel=parallel, print_output=print_output)
+                repo = ProjectRepoRecursive(self.full_path(), self.remote_name, self.ref,
+                                            parallel=parallel, print_output=print_output)
                 self._herd_tag(repo, tag, herd_depth, rebase, print_output)
             else:
                 repo = ProjectRepo(self.full_path(), self.remote_name, self.ref,
@@ -181,8 +181,8 @@ class Project(object):
                 self._herd_tag(repo, tag, herd_depth, rebase, print_output)
         else:
             if self.recursive:
-                repo = GitSubmodules(self.full_path(), self.remote_name, self.ref,
-                                     parallel=parallel, print_output=print_output)
+                repo = ProjectRepoRecursive(self.full_path(), self.remote_name, self.ref,
+                                            parallel=parallel, print_output=print_output)
                 self._herd_ref(repo, herd_depth, rebase, print_output)
             else:
                 repo = ProjectRepo(self.full_path(), self.remote_name, self.ref,
@@ -195,7 +195,7 @@ class Project(object):
         if not repo.validate_repo():
             return True
         if self.recursive:
-            repo_submodules = GitSubmodules(self.full_path(), self.remote_name, self.ref)
+            repo_submodules = ProjectRepoRecursive(self.full_path(), self.remote_name, self.ref)
             if repo_submodules.has_submodules():
                 return True
         return False
@@ -244,8 +244,8 @@ class Project(object):
         print_output = not parallel
 
         if self.recursive:
-            repo = GitSubmodules(self.full_path(), self.remote_name, self.ref,
-                                 parallel=parallel, print_output=print_output)
+            repo = ProjectRepoRecursive(self.full_path(), self.remote_name, self.ref,
+                                        parallel=parallel, print_output=print_output)
             self._reset(repo, print_output=print_output)
         else:
             repo = ProjectRepo(self.full_path(), self.remote_name, self.ref,
@@ -316,8 +316,8 @@ class Project(object):
         print_output = not parallel
 
         if self.recursive:
-            repo = GitSubmodules(self.full_path(), self.remote_name, self.ref,
-                                 parallel=parallel, print_output=print_output)
+            repo = ProjectRepoRecursive(self.full_path(), self.remote_name, self.ref,
+                                        parallel=parallel, print_output=print_output)
             self._sync(repo, rebase, print_output)
         else:
             repo = ProjectRepo(self.full_path(), self.remote_name, self.ref,
