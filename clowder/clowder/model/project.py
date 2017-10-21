@@ -94,7 +94,8 @@ class Project(object):
         if not os.path.isdir(self.full_path()):
             cprint(" - Project is missing\n", 'red')
             return
-        ProjectRepo.status_verbose(self.full_path())
+        repo = ProjectRepo(self.full_path(), self.remote_name, self.ref)
+        repo.status_verbose()
 
     def exists(self):
         """Check if project exists on disk"""

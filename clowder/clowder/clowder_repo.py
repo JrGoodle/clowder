@@ -37,11 +37,11 @@ class ClowderRepo(object):
 
     def checkout(self, ref):
         """Checkout ref in clowder repo"""
+        repo = ProjectRepo(self.clowder_path, self.remote, self.default_ref)
         if self.is_dirty():
             print(' - Dirty repo. Please stash, commit, or discard your changes')
-            ProjectRepo.status_verbose(self.clowder_path)
+            repo.status_verbose()
             return
-        repo = ProjectRepo(self.clowder_path, self.remote, self.default_ref)
         repo.checkout(ref)
 
     def clean(self):
@@ -142,7 +142,8 @@ class ClowderRepo(object):
 
     def git_status(self):
         """Print clowder repo git status"""
-        ProjectRepo.status_verbose(self.clowder_path)
+        repo = ProjectRepo(self.clowder_path, self.remote, self.default_ref)
+        repo.status_verbose()
 
     def _validate_groups(self):
         """Validate status of clowder repo"""

@@ -41,7 +41,7 @@ class ProjectRepo(GitRepo):
         except GitError:
             return
         except (KeyboardInterrupt, SystemExit):
-            sys.exit(1)
+            self._exit('')
         for remote in remotes:
             if upstream_remote_url == self._remote_get_url(remote.name):
                 if remote.name != upstream_remote_name:
@@ -199,23 +199,23 @@ class ProjectRepo(GitRepo):
                 self._print(' - Checkout ref ' + ref_output)
                 self.repo.git.checkout(self.truncate_ref(self.default_ref))
             except GitError as err:
-                message = colored(' - Failed to checkout ref', 'red')
-                print(message + ref_output)
-                print(fmt.error(err))
-                sys.exit(1)
+                message = colored(' - Failed to checkout ref', 'red') + ref_output
+                self._print(message)
+                self._print(fmt.error(err))
+                self._exit(message)
             except (KeyboardInterrupt, SystemExit):
-                sys.exit(1)
+                self._exit('')
         try:
             self._print(' - Delete local branch ' + branch_output)
             self.repo.delete_head(branch, force=force)
             return
         except GitError as err:
-            message = colored(' - Failed to delete local branch ', 'red')
-            print(message + branch_output)
-            print(fmt.error(err))
-            sys.exit(1)
+            message = colored(' - Failed to delete local branch ', 'red') + branch_output
+            self._print(message)
+            self._print(fmt.error(err))
+            self._exit(message)
         except (KeyboardInterrupt, SystemExit):
-            sys.exit(1)
+            self._exit('')
 
     def prune_branch_remote(self, branch, remote):
         """Prune remote branch in repository"""
@@ -227,12 +227,12 @@ class ProjectRepo(GitRepo):
             self._print(' - Delete remote branch ' + branch_output)
             self.repo.git.push(remote, '--delete', branch)
         except GitError as err:
-            message = colored(' - Failed to delete remote branch ', 'red')
-            print(message + branch_output)
-            print(fmt.error(err))
-            sys.exit(1)
+            message = colored(' - Failed to delete remote branch ', 'red') + branch_output
+            self._print(message)
+            self._print(fmt.error(err))
+            self._exit(message)
         except (KeyboardInterrupt, SystemExit):
-            sys.exit(1)
+            self._exit('')
 
     def reset(self, depth=0):
         """Reset branch to upstream or checkout tag/sha as detached HEAD"""
@@ -275,10 +275,10 @@ class ProjectRepo(GitRepo):
                     sys.exit(1)
             return_code = self._create_branch_local(branch)
             if return_code != 0:
-                sys.exit(1)
+                self._exit('', return_code=return_code)
             return_code = self._checkout_branch_local(branch)
             if return_code != 0:
-                sys.exit(1)
+                self._exit('', return_code=return_code)
         else:
             branch_output = fmt.ref_string(branch)
             print(' - ' + branch_output + ' already exists')
@@ -288,14 +288,13 @@ class ProjectRepo(GitRepo):
             else:
                 return_code = self._checkout_branch_local(branch)
                 if return_code != 0:
-                    sys.exit(1)
+                    self._exit('', return_code=return_code)
         if tracking and not is_offline():
             self._create_branch_remote_tracking(branch, remote, depth)
 
     def sync(self, fork_remote, rebase=False):
         """Sync fork with upstream remote"""
-        if self.print_output:
-            print(' - Sync fork with upstream remote')
+        self._print(' - Sync fork with upstream remote')
         if self.ref_type(self.default_ref) != 'branch':
             message = colored(' - Can only sync branches', 'red')
             self._print(message)

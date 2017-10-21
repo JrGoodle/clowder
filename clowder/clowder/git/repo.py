@@ -42,7 +42,7 @@ class GitRepo(object):
         except (KeyboardInterrupt, SystemExit):
             self._exit('')
         else:
-            self.status_verbose(self.repo_path)
+            self.status_verbose()
 
     def checkout(self, truncated_ref):
         """Checkout git ref"""
@@ -78,11 +78,12 @@ class GitRepo(object):
             print(' - Commit current changes')
             print(self.repo.git.commit(message=message))
         except GitError as err:
-            cprint(' - Failed to commit current changes', 'red')
-            print(fmt.error(err))
-            sys.exit(1)
+            message = colored(' - Failed to commit current changes', 'red')
+            self._print(message)
+            self._print(fmt.error(err))
+            self._exit(message)
         except (KeyboardInterrupt, SystemExit):
-            sys.exit(1)
+            self._exit('')
 
     def current_branch(self):
         """Return currently checked out branch of project"""
@@ -96,7 +97,7 @@ class GitRepo(object):
         except (GitError, IndexError):
             return False
         except (KeyboardInterrupt, SystemExit):
-            sys.exit(1)
+            self._exit('')
 
     def existing_local_branch(self, branch):
         """Check if local branch exists"""
@@ -137,7 +138,7 @@ class GitRepo(object):
             if remove_dir:
                 remove_directory(self.repo_path)
             self._print(error)
-            self._exit(fmt.parallel_exception_error(self.repo_path, error))
+            self._exit(error)
         return return_code
 
     def is_detached(self):
@@ -161,24 +162,25 @@ class GitRepo(object):
         except (GitError, TypeError):
             return 0
         except (KeyboardInterrupt, SystemExit):
-            sys.exit(1)
-        if local_branch is None:
-            return 0
-        tracking_branch = local_branch.tracking_branch()
-        if tracking_branch is None:
-            return 0
-        try:
-            commits = local_branch.commit.hexsha + '...' + tracking_branch.commit.hexsha
-            rev_list_count = self.repo.git.rev_list('--count', '--left-right', commits)
-            if upstream:
-                count = str(rev_list_count).split()[1]
-            else:
-                count = str(rev_list_count).split()[0]
-            return count
-        except (GitError, ValueError):
-            return 0
-        except (KeyboardInterrupt, SystemExit):
-            sys.exit(1)
+            self._exit('')
+        else:
+            if local_branch is None:
+                return 0
+            tracking_branch = local_branch.tracking_branch()
+            if tracking_branch is None:
+                return 0
+            try:
+                commits = local_branch.commit.hexsha + '...' + tracking_branch.commit.hexsha
+                rev_list_count = self.repo.git.rev_list('--count', '--left-right', commits)
+                if upstream:
+                    count = str(rev_list_count).split()[1]
+                else:
+                    count = str(rev_list_count).split()[0]
+                return count
+            except (GitError, ValueError):
+                return 0
+            except (KeyboardInterrupt, SystemExit):
+                self._exit('')
 
     def print_branches(self, local=False, remote=False):
         """Print branches"""
@@ -192,9 +194,9 @@ class GitRepo(object):
             return
         return_code = execute_command(command, self.repo_path, print_output=self.print_output)
         if return_code != 0:
-            cprint(' - Failed to print branches', 'red')
-            print(fmt.command_failed_error(command))
-            sys.exit(1)
+            message = colored(' - Failed to print branches', 'red')
+            self._print(message)
+            self._exit(message)
 
     def pull(self):
         """Pull upstream changes"""
@@ -205,12 +207,12 @@ class GitRepo(object):
             print(' - Pull latest changes')
             print(self.repo.git.pull())
         except GitError as err:
-            cprint(' - Failed to pull latest changes', 'red')
-            print(fmt.error(err))
-            sys.exit(1)
+            message = colored(' - Failed to pull latest changes', 'red')
+            self._print(message)
+            self._print(fmt.error(err))
+            self._exit(message)
         except (KeyboardInterrupt, SystemExit):
-            sys.exit(1)
-
+            self._exit('')
 
     def push(self):
         """Push changes"""
@@ -221,11 +223,12 @@ class GitRepo(object):
             print(' - Push local changes')
             print(self.repo.git.push())
         except GitError as err:
-            cprint(' - Failed to push local changes', 'red')
-            print(fmt.error(err))
-            sys.exit(1)
+            message = colored(' - Failed to push local changes', 'red')
+            self._print(message)
+            self._print(fmt.error(err))
+            self._exit(message)
         except (KeyboardInterrupt, SystemExit):
-            sys.exit(1)
+            self._exit('')
 
     @staticmethod
     def ref_type(ref):
@@ -267,16 +270,15 @@ class GitRepo(object):
         """Print  git status"""
         self.repo.git.status()
 
-    @staticmethod
-    def status_verbose(repo_path):
+    def status_verbose(self):
         """Print git status"""
         command = ['git', 'status', '-vv']
         print(fmt.command(command))
-        return_code = execute_command(command, repo_path)
+        return_code = execute_command(command, self.repo_path)
         if return_code != 0:
-            cprint(' - Failed to print status', 'red')
-            print(fmt.command_failed_error(command))
-            sys.exit(return_code)
+            message = colored(' - Failed to print status\n', 'red') + fmt.command_failed_error(command)
+            self._print(message)
+            self._exit(message, return_code=return_code)
 
     @staticmethod
     def truncate_ref(ref):
@@ -305,7 +307,7 @@ class GitRepo(object):
             return
         if not repo.validate_repo():
             print(' - Dirty repo. Please stash, commit, or discard your changes')
-            GitRepo.status_verbose(repo_path)
+            repo.status_verbose()
 
     def _abort_rebase(self):
         """Abort rebase"""
@@ -316,9 +318,9 @@ class GitRepo(object):
         except GitError as err:
             self._print(colored(' - Failed to abort rebase', 'red'))
             self._print(fmt.error(err))
-            sys.exit(1)
+            self._exit(fmt.error(err))
         except (KeyboardInterrupt, SystemExit):
-            sys.exit(1)
+            self._exit('')
 
     def _checkout_branch_local(self, branch, remove_dir=False):
         """Checkout local branch"""
@@ -338,7 +340,7 @@ class GitRepo(object):
         except (KeyboardInterrupt, SystemExit):
             if remove_dir:
                 remove_directory(self.repo_path)
-            sys.exit(1)
+            self._exit('')
 
     def _checkout_new_repo_branch(self, branch, depth):
         """Checkout remote branch or fail and delete repo if it doesn't exist"""
@@ -369,7 +371,7 @@ class GitRepo(object):
             self._exit(fmt.parallel_exception_error(self.repo_path, message, commit_output))
         except (KeyboardInterrupt, SystemExit):
             remove_directory(self.repo_path)
-            sys.exit(1)
+            self._exit('')
 
     def _checkout_new_repo_tag(self, tag, remote, depth, remove_dir=False):
         """Checkout tag or fail and delete repo if it doesn't exist"""
@@ -390,7 +392,7 @@ class GitRepo(object):
         except (KeyboardInterrupt, SystemExit):
             if remove_dir:
                 remove_directory(self.repo_path)
-            sys.exit(1)
+            self._exit('')
         else:
             try:
                 self._print(' - Checkout tag ' + tag_output)
@@ -407,7 +409,7 @@ class GitRepo(object):
             except (KeyboardInterrupt, SystemExit):
                 if remove_dir:
                     remove_directory(self.repo_path)
-                sys.exit(1)
+                self._exit('')
 
     def _checkout_sha(self, sha):
         """Checkout commit by sha"""
@@ -426,7 +428,7 @@ class GitRepo(object):
             self._print(fmt.error(err))
             self._exit(fmt.parallel_exception_error(self.repo_path, message, commit_output))
         except (KeyboardInterrupt, SystemExit):
-            sys.exit(1)
+            self._exit('')
 
     def _checkout_tag(self, tag):
         """Checkout commit tag is pointing to"""
@@ -449,18 +451,19 @@ class GitRepo(object):
             self._print(fmt.error(err))
             self._exit(fmt.parallel_exception_error(self.repo_path, message, tag_output))
         except (KeyboardInterrupt, SystemExit):
-            sys.exit(1)
+            self._exit('')
 
     def _clean(self, args):
         """Clean git directory"""
         try:
             self.repo.git.clean(args)
         except GitError as err:
-            cprint(' - Failed to clean git repo', 'red')
-            print(fmt.error(err))
-            sys.exit(1)
+            message = colored(' - Failed to clean git repo', 'red')
+            self._print(message)
+            self._print(fmt.error(err))
+            self._exit(fmt.error(err))
         except (KeyboardInterrupt, SystemExit):
-            sys.exit(1)
+            self._exit('')
 
     def _create_branch_local(self, branch):
         """Create local branch"""
@@ -475,7 +478,7 @@ class GitRepo(object):
             self._print(fmt.error(err))
             return 1
         except (KeyboardInterrupt, SystemExit):
-            sys.exit(1)
+            self._exit('')
 
     def _create_branch_local_tracking(self, branch, remote, depth, fetch=True, remove_dir=False):
         """Create and checkout tracking branch"""
@@ -489,16 +492,16 @@ class GitRepo(object):
             self._print(' - Create branch ' + branch_output)
             self.repo.create_head(branch, origin.refs[branch])
         except (GitError, IndexError) as err:
-            message = colored(' - Failed to create branch ', 'red')
+            message = colored(' - Failed to create branch ', 'red') + branch_output
             if remove_dir:
                 remove_directory(self.repo_path)
-            self._print(message + branch_output)
+            self._print(message)
             self._print(fmt.error(err))
-            self._exit(fmt.parallel_exception_error(self.repo_path, message, branch_output))
+            self._exit(message)
         except (KeyboardInterrupt, SystemExit):
             if remove_dir:
                 remove_directory(self.repo_path)
-            sys.exit(1)
+            self._exit('')
         else:
             return_code = self._set_tracking_branch(remote, branch, remove_dir=remove_dir)
             if return_code != 0:
@@ -511,7 +514,7 @@ class GitRepo(object):
         origin = self._remote(remote)
         return_code = self.fetch(remote, depth=depth, ref=branch)
         if return_code != 0:
-            sys.exit(1)
+            self._exit('', return_code=return_code)
         if branch in origin.refs:
             try:
                 self.repo.git.config('--get', 'branch.' + branch + '.merge')
@@ -520,23 +523,24 @@ class GitRepo(object):
             except GitError:
                 message_1 = colored(' - Remote branch ', 'red')
                 message_2 = colored(' already exists', 'red')
-                print(message_1 + branch_output + message_2 + '\n')
-                sys.exit(1)
+                message = message_1 + branch_output + message_2 + '\n'
+                self._print(message)
+                self._exit(message)
             except (KeyboardInterrupt, SystemExit):
-                sys.exit(1)
+                self._exit('')
         try:
             print(' - Push remote branch ' + branch_output)
             self.repo.git.push(remote, branch)
             return_code = self._set_tracking_branch(remote, branch)
             if return_code != 0:
-                sys.exit(1)
+                self._exit('', return_code=return_code)
         except GitError as err:
-            message = colored(' - Failed to push remote branch ', 'red')
-            print(message + branch_output)
-            print(fmt.error(err))
-            sys.exit(1)
+            message = colored(' - Failed to push remote branch ', 'red') + branch_output
+            self._print(message)
+            self._print(fmt.error(err))
+            self._exit(fmt.error(err))
         except (KeyboardInterrupt, SystemExit):
-            sys.exit(1)
+            self._exit('')
 
     def _create_remote(self, remote, url, remove_dir=False):
         """Create new remote"""
@@ -558,7 +562,7 @@ class GitRepo(object):
         except (KeyboardInterrupt, SystemExit):
             if remove_dir:
                 remove_directory(self.repo_path)
-            sys.exit(1)
+            self._exit('')
 
     def _existing_remote_tag(self, tag, remote, depth=0):
         """Check if remote tag exists"""
@@ -593,7 +597,7 @@ class GitRepo(object):
             self._exit(message)
         except (KeyboardInterrupt, SystemExit):
             remove_directory(self.repo_path)
-            sys.exit(1)
+            self._exit('')
 
     def _is_branch_checked_out(self, branch):
         """Check if branch is checked out"""
@@ -605,7 +609,7 @@ class GitRepo(object):
         except (GitError, TypeError):
             return False
         except (KeyboardInterrupt, SystemExit):
-            sys.exit(1)
+            self._exit('')
 
     def _is_dirty(self):
         """Check if repo is dirty"""
@@ -632,7 +636,7 @@ class GitRepo(object):
             self._print(fmt.error(err))
             self._exit(message)
         except (KeyboardInterrupt, SystemExit):
-            sys.exit(1)
+            self._exit('')
 
     def _print(self, val):
         """Print output if print_output is True"""
@@ -683,7 +687,7 @@ class GitRepo(object):
             self._print(fmt.error(err))
             self._exit(message)
         except (KeyboardInterrupt, SystemExit):
-            sys.exit(1)
+            self._exit('')
 
     def _remote_get_url(self, remote):
         """Get url of remote"""
@@ -702,7 +706,7 @@ class GitRepo(object):
             self._print(fmt.error(err))
             self._exit(message)
         except (KeyboardInterrupt, SystemExit):
-            sys.exit(1)
+            self._exit('')
 
     def _repo(self):
         """Create Repo instance for path"""
@@ -712,11 +716,11 @@ class GitRepo(object):
         except GitError as err:
             repo_path_output = fmt.path(self.repo_path)
             message = colored(" - Failed to create Repo instance for ", 'red') + repo_path_output
-            self._print(message )
+            self._print(message)
             self._print(fmt.error(err))
             self._exit(message)
         except (KeyboardInterrupt, SystemExit):
-            sys.exit(1)
+            self._exit('')
 
     def _reset_head(self, branch=None):
         """Reset head of repo, discarding changes"""
@@ -731,7 +735,7 @@ class GitRepo(object):
                 self._print(fmt.error(err))
                 self._exit(message)
             except (KeyboardInterrupt, SystemExit):
-                sys.exit(1)
+                self._exit('')
         else:
             try:
                 self.repo.git.reset('--hard', branch)
@@ -743,7 +747,7 @@ class GitRepo(object):
                 self._print(fmt.error(err))
                 self._exit(message)
             except (KeyboardInterrupt, SystemExit):
-                sys.exit(1)
+                self._exit('')
 
     def _set_tracking_branch(self, remote, branch, remove_dir=False):
         """Set tracking branch"""
@@ -766,7 +770,7 @@ class GitRepo(object):
         except (KeyboardInterrupt, SystemExit):
             if remove_dir:
                 remove_directory(self.repo_path)
-            sys.exit(1)
+            self._exit('')
 
     def _untracked_files(self):
         """Execute command and display continuous output"""
@@ -780,4 +784,4 @@ class GitRepo(object):
             self._print(fmt.error(err))
             self._exit(message)
         except (KeyboardInterrupt, SystemExit):
-            sys.exit(1)
+            self._exit('')
