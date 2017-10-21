@@ -121,6 +121,12 @@ class GitRepo(object):
         """Check if a git submodule exists"""
         return os.path.isfile(os.path.join(path, '.git'))
 
+    @staticmethod
+    def exists(repo_path):
+        """Print existence validation messages"""
+        if not GitRepo.existing_git_repository(repo_path):
+            cprint(' - Project is missing', 'red')
+
     def fetch(self, remote, ref=None, depth=0, remove_dir=False):
         """Fetch from a specific remote ref"""
         remote_output = fmt.remote_string(remote)
@@ -148,6 +154,41 @@ class GitRepo(object):
             self._print(error)
             self._exit(fmt.parallel_exception_error(self.repo_path, error))
         return return_code
+
+    @staticmethod
+    def format_project_ref_string(repo_path):
+        """Return formatted repo ref name"""
+        repo = GitRepo(repo_path)
+        local_commits = repo.new_commits()
+        upstream_commits = repo.new_commits(upstream=True)
+        no_local_commits = local_commits == 0 or local_commits == '0'
+        no_upstream_commits = upstream_commits == 0 or upstream_commits == '0'
+        if no_local_commits and no_upstream_commits:
+            status = ''
+        else:
+            local_commits_output = colored('+' + str(local_commits), 'yellow')
+            upstream_commits_output = colored('-' + str(upstream_commits), 'red')
+            status = '[' + local_commits_output + '/' + upstream_commits_output + ']'
+
+        if repo.is_detached():
+            current_ref = repo.sha(short=True)
+            return colored('(HEAD @ ' + current_ref + ')', 'magenta')
+        current_branch = repo.current_branch()
+        return colored('(' + current_branch + ')', 'magenta') + status
+
+    @staticmethod
+    def format_project_string(repo_path, name):
+        """Return formatted project name"""
+        if not os.path.isdir(os.path.join(repo_path, '.git')):
+            return colored(name, 'green')
+        repo = GitRepo(repo_path)
+        if not repo.validate_repo():
+            color = 'red'
+            symbol = '*'
+        else:
+            color = 'green'
+            symbol = ''
+        return colored(name + symbol, color)
 
     def herd(self, url, remote, ref, depth=0, fetch=True, rebase=False):
         """Herd ref"""
@@ -335,6 +376,19 @@ class GitRepo(object):
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
 
+    @staticmethod
+    def ref_type(ref):
+        """Return branch, tag, sha, or unknown ref type"""
+        git_branch = "refs/heads/"
+        git_tag = "refs/tags/"
+        if ref.startswith(git_branch):
+            return 'branch'
+        elif ref.startswith(git_tag):
+            return 'tag'
+        elif len(ref) == 40:
+            return 'sha'
+        return 'unknown'
+
     def reset(self, remote, ref, depth=0):
         """Reset branch to upstream or checkout tag/sha as detached HEAD"""
         if GitRepo.ref_type(ref) == 'branch':
@@ -411,6 +465,17 @@ class GitRepo(object):
         """Print  git status"""
         self.repo.git.status()
 
+    @staticmethod
+    def status_verbose(repo_path):
+        """Print git status"""
+        command = ['git', 'status', '-vv']
+        print(fmt.command(command))
+        return_code = execute_command(command, repo_path)
+        if return_code != 0:
+            cprint(' - Failed to print status', 'red')
+            print(fmt.command_failed_error(command))
+            sys.exit(return_code)
+
     def sync(self, upstream_remote, fork_remote, ref, rebase=False):
         """Sync fork with upstream remote"""
         if self.print_output:
@@ -452,6 +517,16 @@ class GitRepo(object):
         if not GitRepo.existing_git_repository(self.repo_path):
             return True
         return not self.is_dirty()
+
+    @staticmethod
+    def validation(repo_path):
+        """Print validation messages"""
+        repo = GitRepo(repo_path)
+        if not GitRepo.existing_git_repository(repo_path):
+            return
+        if not repo.validate_repo():
+            print(' - Dirty repo. Please stash, commit, or discard your changes')
+            GitRepo.status_verbose(repo_path)
 
     def _abort_rebase(self):
         """Abort rebase"""
@@ -712,6 +787,12 @@ class GitRepo(object):
         self.fetch(remote, depth=depth, ref=tag, remove_dir=True)
         return tag in origin.tags
 
+    def _exit(self, message):
+        """Print output if print_output is True"""
+        if self.print_output:
+            sys.exit(1)
+        raise ClowderGitError(msg=message)
+
     def _herd(self, remote, ref, depth=0, fetch=True, rebase=False):
         """Herd ref"""
         if GitRepo.ref_type(ref) == 'branch':
@@ -833,6 +914,11 @@ class GitRepo(object):
             self._exit(fmt.parallel_exception_error(self.repo_path, message, branch_output))
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
+
+    def _print(self, val):
+        """Print output if print_output is True"""
+        if self.print_output:
+            print(val)
 
     def _pull(self, remote, branch):
         """Pull from remote branch"""
@@ -1002,91 +1088,3 @@ class GitRepo(object):
             self._exit(colored(' - Failed to check untracked files', 'red'))
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
-
-    @staticmethod
-    def ref_type(ref):
-        """Return branch, tag, sha, or unknown ref type"""
-        git_branch = "refs/heads/"
-        git_tag = "refs/tags/"
-        if ref.startswith(git_branch):
-            return 'branch'
-        elif ref.startswith(git_tag):
-            return 'tag'
-        elif len(ref) == 40:
-            return 'sha'
-        return 'unknown'
-
-    @staticmethod
-    def exists(repo_path):
-        """Print existence validation messages"""
-        if not GitRepo.existing_git_repository(repo_path):
-            cprint(' - Project is missing', 'red')
-
-    @staticmethod
-    def status_verbose(repo_path):
-        """Print git status"""
-        command = ['git', 'status', '-vv']
-        print(fmt.command(command))
-        return_code = execute_command(command, repo_path)
-        if return_code != 0:
-            cprint(' - Failed to print status', 'red')
-            print(fmt.command_failed_error(command))
-            sys.exit(return_code)
-
-
-    @staticmethod
-    def validation(repo_path):
-        """Print validation messages"""
-        repo = GitRepo(repo_path)
-        if not GitRepo.existing_git_repository(repo_path):
-            return
-        if not repo.validate_repo():
-            print(' - Dirty repo. Please stash, commit, or discard your changes')
-            GitRepo.status_verbose(repo_path)
-
-
-    @staticmethod
-    def format_project_string(repo_path, name):
-        """Return formatted project name"""
-        if not os.path.isdir(os.path.join(repo_path, '.git')):
-            return colored(name, 'green')
-        repo = GitRepo(repo_path)
-        if not repo.validate_repo():
-            color = 'red'
-            symbol = '*'
-        else:
-            color = 'green'
-            symbol = ''
-        return colored(name + symbol, color)
-
-    @staticmethod
-    def format_project_ref_string(repo_path):
-        """Return formatted repo ref name"""
-        repo = GitRepo(repo_path)
-        local_commits = repo.new_commits()
-        upstream_commits = repo.new_commits(upstream=True)
-        no_local_commits = local_commits == 0 or local_commits == '0'
-        no_upstream_commits = upstream_commits == 0 or upstream_commits == '0'
-        if no_local_commits and no_upstream_commits:
-            status = ''
-        else:
-            local_commits_output = colored('+' + str(local_commits), 'yellow')
-            upstream_commits_output = colored('-' + str(upstream_commits), 'red')
-            status = '[' + local_commits_output + '/' + upstream_commits_output + ']'
-
-        if repo.is_detached():
-            current_ref = repo.sha(short=True)
-            return colored('(HEAD @ ' + current_ref + ')', 'magenta')
-        current_branch = repo.current_branch()
-        return colored('(' + current_branch + ')', 'magenta') + status
-
-    def _exit(self, message):
-        """Print output if print_output is True"""
-        if self.print_output:
-            sys.exit(1)
-        raise ClowderGitError(msg=message)
-
-    def _print(self, val):
-        """Print output if print_output is True"""
-        if self.print_output:
-            print(val)
