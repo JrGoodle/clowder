@@ -20,7 +20,7 @@ class GitSubmodules(ProjectRepo):
 
     def clean(self, args=None):
         """Discard changes for repo and submodules"""
-        self.clean(self, args=args)
+        ProjectRepo.clean(self, args=args)
         self._print(' - Clean submodules recursively')
         self._submodules_clean()
         self._print(' - Reset submodules recursively')
@@ -34,17 +34,17 @@ class GitSubmodules(ProjectRepo):
 
     def herd(self, url, depth=0, fetch=True, rebase=False):
         """Herd ref"""
-        self.herd(self, url, depth=depth, fetch=fetch, rebase=rebase)
+        ProjectRepo.herd(self, url, depth=depth, fetch=fetch, rebase=rebase)
         self.submodule_update_recursive(depth)
 
     def herd_branch(self, url, branch, depth=0, rebase=False, fork_remote=None):
         """Herd branch"""
-        self.herd_branch(self, url, branch, depth=depth, rebase=rebase, fork_remote=fork_remote)
+        ProjectRepo.herd_branch(self, url, branch, depth=depth, rebase=rebase, fork_remote=fork_remote)
         self.submodule_update_recursive(depth)
 
     def herd_tag(self, url, tag, depth=0, rebase=False):
         """Herd tag"""
-        self.herd_tag(self, url, tag, depth=depth, rebase=rebase)
+        ProjectRepo.herd_tag(self, url, tag, depth=depth, rebase=rebase)
         self.submodule_update_recursive(depth)
 
     def is_dirty_submodule(self, path):
@@ -66,7 +66,7 @@ class GitSubmodules(ProjectRepo):
 
     def sync(self, fork_remote, rebase=False):
         """Sync fork with upstream remote"""
-        self.sync(self, fork_remote, rebase=rebase)
+        ProjectRepo.sync(self, fork_remote, rebase=rebase)
         self.submodule_update_recursive()
 
     def validate_repo(self):
