@@ -9,11 +9,31 @@ from termcolor import cprint
 
 import clowder.util.formatting as fmt
 from clowder.error.clowder_error import ClowderError
+from clowder.fork import Fork
 from clowder.git.project_repo import ProjectRepo
 from clowder.git.project_repo_recursive import ProjectRepoRecursive
-from clowder.model.fork import Fork
+from clowder.process_pool import execute_forall_command
 from clowder.util.connectivity import is_offline
-from clowder.util.execute import execute_forall_command
+
+
+def herd_project(project, branch, tag, depth, rebase):
+    """Clone project or update latest from upstream"""
+    project.herd(branch=branch, tag=tag, depth=depth, rebase=rebase, parallel=True)
+
+
+def reset_project(project):
+    """Reset project branches to upstream or checkout tag/sha as detached HEAD"""
+    project.reset(parallel=True)
+
+
+def run_project(project, command, ignore_errors):
+    """Run command or script in project directory"""
+    project.run(command, ignore_errors, parallel=True)
+
+
+def sync_project(project, rebase):
+    """Sync fork project with upstream"""
+    project.sync(rebase, parallel=True)
 
 
 class Project(object):

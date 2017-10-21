@@ -2,14 +2,12 @@
 
 from __future__ import print_function
 
-import sys
-
 from git import GitError
 from termcolor import colored
 
 import clowder.util.formatting as fmt
 from clowder.git.project_repo import ProjectRepo
-from clowder.util.execute import execute_command
+from clowder.process_pool import execute_command
 
 
 class ProjectRepoRecursive(ProjectRepo):

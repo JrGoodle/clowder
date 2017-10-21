@@ -11,8 +11,8 @@ from termcolor import colored
 
 import clowder.util.formatting as fmt
 from clowder.git.project_repo import ProjectRepo
+from clowder.process_pool import execute_command
 from clowder.util.connectivity import is_offline
-from clowder.util.execute import execute_command
 from clowder.util.file_system import remove_directory
 
 

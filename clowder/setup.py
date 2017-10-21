@@ -30,7 +30,6 @@ setup(
     packages=['clowder',
               'clowder.error',
               'clowder.git',
-              'clowder.model',
               'clowder.util'],
     entry_points={
         'console_scripts': [

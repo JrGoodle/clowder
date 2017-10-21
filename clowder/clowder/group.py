@@ -4,7 +4,7 @@ from __future__ import print_function
 
 from termcolor import colored
 
-from clowder.model.project import Project
+from clowder.project import Project
 
 
 class Group(object):

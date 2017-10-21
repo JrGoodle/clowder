@@ -4,15 +4,14 @@ from __future__ import print_function
 
 import sys
 
-from git import  GitError
+from git import GitError
 from termcolor import colored, cprint
 
 import clowder.util.formatting as fmt
-from clowder.git.repo import GitRepo
 from clowder.error.clowder_git_error import ClowderGitError
+from clowder.git.repo import GitRepo
+from clowder.process_pool import execute_command
 from clowder.util.connectivity import is_offline
-from clowder.util.execute import execute_command
-
 
 DEFAULT_REF = 'refs/heads/master'
 DEFAULT_REMOTE = 'origin'
