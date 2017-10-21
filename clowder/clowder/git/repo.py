@@ -30,6 +30,20 @@ class GitRepo(object):
         self.parallel = parallel
         self.repo = self._repo() if GitRepo.existing_git_repository(repo_path) else None
 
+    def add(self, files):
+        """Add files to git index"""
+        print(' - Add files to git index')
+        try:
+            print(self.repo.git.add(files))
+        except GitError as err:
+            cprint(' - Failed to add files to git index', 'red')
+            print(fmt.error(err))
+            sys.exit(1)
+        except (KeyboardInterrupt, SystemExit):
+            sys.exit(1)
+        else:
+            self.status_verbose(self.repo_path)
+
     def checkout(self, truncated_ref):
         """Checkout git ref"""
         ref_output = fmt.ref_string(truncated_ref)
@@ -57,6 +71,18 @@ class GitRepo(object):
         if self._is_rebase_in_progress():
             self._print(' - Abort rebase in progress')
             self._abort_rebase()
+
+    def commit(self, message):
+        """Commit current changes"""
+        try:
+            print(' - Commit current changes')
+            print(self.repo.git.commit(message=message))
+        except GitError as err:
+            cprint(' - Failed to commit current changes', 'red')
+            print(fmt.error(err))
+            sys.exit(1)
+        except (KeyboardInterrupt, SystemExit):
+            sys.exit(1)
 
     def current_branch(self):
         """Return currently checked out branch of project"""
@@ -168,6 +194,37 @@ class GitRepo(object):
         if return_code != 0:
             cprint(' - Failed to print branches', 'red')
             print(fmt.command_failed_error(command))
+            sys.exit(1)
+
+    def pull(self):
+        """Pull upstream changes"""
+        if self.repo.head.is_detached:
+            print(' - HEAD is detached')
+            return
+        try:
+            print(' - Pull latest changes')
+            print(self.repo.git.pull())
+        except GitError as err:
+            cprint(' - Failed to pull latest changes', 'red')
+            print(fmt.error(err))
+            sys.exit(1)
+        except (KeyboardInterrupt, SystemExit):
+            sys.exit(1)
+
+
+    def push(self):
+        """Push changes"""
+        if self.repo.head.is_detached:
+            print(' - HEAD is detached')
+            return
+        try:
+            print(' - Push local changes')
+            print(self.repo.git.push())
+        except GitError as err:
+            cprint(' - Failed to push local changes', 'red')
+            print(fmt.error(err))
+            sys.exit(1)
+        except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
 
     @staticmethod

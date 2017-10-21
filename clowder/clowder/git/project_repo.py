@@ -1,4 +1,4 @@
-"""Git utilities"""
+"""Project git utilities"""
 
 from __future__ import print_function
 

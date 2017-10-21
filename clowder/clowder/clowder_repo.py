@@ -9,7 +9,6 @@ import sys
 
 from termcolor import colored
 
-import clowder.git.clowder_repo as git
 import clowder.util.formatting as fmt
 from clowder.git.project_repo import ProjectRepo
 from clowder.util.connectivity import is_offline
@@ -28,41 +27,43 @@ class ClowderRepo(object):
 
     def add(self, files):
         """Add files in clowder repo to git index"""
-        git.add(self.clowder_path, files)
+        repo = ProjectRepo(self.clowder_path, self.remote, self.default_ref)
+        repo.add(files)
 
     def branches(self):
         """Return current local branches"""
-        clowder = ProjectRepo(self.clowder_path, self.remote, self.default_ref)
-        return clowder.print_branches(local=True, remote=True)
+        repo = ProjectRepo(self.clowder_path, self.remote, self.default_ref)
+        return repo.print_branches(local=True, remote=True)
 
     def checkout(self, ref):
         """Checkout ref in clowder repo"""
-        clowder = ProjectRepo(self.clowder_path, self.remote, self.default_ref)
         if self.is_dirty():
             print(' - Dirty repo. Please stash, commit, or discard your changes')
             ProjectRepo.status_verbose(self.clowder_path)
-        else:
-            clowder.checkout(ref)
+            return
+        repo = ProjectRepo(self.clowder_path, self.remote, self.default_ref)
+        repo.checkout(ref)
 
     def clean(self):
         """Discard changes in clowder repo"""
-        clowder = ProjectRepo(self.clowder_path, self.remote, self.default_ref)
+        repo = ProjectRepo(self.clowder_path, self.remote, self.default_ref)
         if self.is_dirty():
             print(' - Discard current changes')
-            clowder.clean(args='fdx')
-        else:
-            print(' - No changes to discard')
+            repo.clean(args='fdx')
+            return
+        print(' - No changes to discard')
 
     def commit(self, message):
         """Commit current changes in clowder repo"""
-        git.commit(self.clowder_path, message)
+        repo = ProjectRepo(self.clowder_path, self.remote, self.default_ref)
+        repo.commit(message)
 
     def init(self, url, branch):
         """Clone clowder repo from url"""
         # Register exit handler to remove files if cloning repo fails
         atexit.register(self.init_exit_handler)
-        clowder = ProjectRepo(self.clowder_path, self.remote, self.default_ref)
-        clowder.create_clowder_repo(url, branch)
+        repo = ProjectRepo(self.clowder_path, self.remote, self.default_ref)
+        repo.create_clowder_repo(url, branch)
         self.link()
 
     def init_exit_handler(self):
@@ -75,8 +76,8 @@ class ClowderRepo(object):
 
     def is_dirty(self):
         """Check if project is dirty"""
-        clowder = ProjectRepo(self.clowder_path, self.remote, self.default_ref)
-        return clowder.is_dirty()
+        repo = ProjectRepo(self.clowder_path, self.remote, self.default_ref)
+        return repo.is_dirty()
 
     def link(self, version=None):
         """Create symlink pointing to clowder.yaml file"""
@@ -104,8 +105,8 @@ class ClowderRepo(object):
             return
         if not is_offline() and fetch:
             print(' - Fetch upstream changes for clowder repo')
-            clowder = ProjectRepo(self.clowder_path, self.remote, self.default_ref)
-            clowder.fetch(self.remote)
+            repo = ProjectRepo(self.clowder_path, self.remote, self.default_ref)
+            repo.fetch(self.remote)
         project_output = ProjectRepo.format_project_string(repo_path, '.clowder')
         current_ref_output = ProjectRepo.format_project_ref_string(repo_path)
 
@@ -123,11 +124,13 @@ class ClowderRepo(object):
 
     def pull(self):
         """Pull clowder repo upstream changes"""
-        git.pull(self.clowder_path)
+        repo = ProjectRepo(self.clowder_path, self.remote, self.default_ref)
+        repo.pull(self.clowder_path)
 
     def push(self):
         """Push clowder repo changes"""
-        git.push(self.clowder_path)
+        repo = ProjectRepo(self.clowder_path, self.remote, self.default_ref)
+        repo.push(self.clowder_path)
 
     def run_command(self, command):
         """Run command in clowder repo"""
