@@ -10,6 +10,7 @@ if [ "$1" == 'version' ]; then
     perl -pi -e "s/$OLD_VERSION/$NEW_VERSION/g" README.md || exit 1
     perl -pi -e "s/$OLD_VERSION/$NEW_VERSION/g" setup.py || exit 1
     perl -pi -e "s/$OLD_VERSION/$NEW_VERSION/g" clowder/cmd.py || exit 1
+    perl -pi -e "s/$OLD_VERSION/$NEW_VERSION/g" docs/issue_template.md || exit 1
     exit
 fi
 
