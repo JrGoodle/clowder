@@ -9,13 +9,13 @@ import sys
 
 import psutil
 from termcolor import cprint
-from tqdm import tqdm
 
 import clowder.clowder_yaml as clowder_yaml
 import clowder.util.formatting as fmt
 from clowder.error.clowder_error import ClowderError
 from clowder.model.group import Group
 from clowder.model.source import Source
+from clowder.util.progress import Progress
 
 
 def herd(project, branch, tag, depth, rebase):
@@ -48,6 +48,7 @@ def worker_init():
     """
     def sig_int(signal_num, frame):
         """Signal handler"""
+        del signal_num, frame
         # print('signal: %s' % signal_num)
         parent = psutil.Process(PARENT_ID)
         for child in parent.children():
@@ -64,7 +65,7 @@ def worker_init():
 
 RESULTS = []
 POOL = mp.Pool(initializer=worker_init)
-PROGRESS = None
+PROGRESS = Progress()
 
 
 class ClowderController(object):
@@ -526,7 +527,6 @@ class ClowderController(object):
     def _sync_parallel(projects, rebase=False):
         """Sync projects in parallel"""
         print(' - Sync forks in parallel\n')
-        global PROGRESS
         for project in projects:
             project.print_status()
             if project.fork:
@@ -599,22 +599,19 @@ class ClowderController(object):
 
 def async_callback(val):
     """Increment async progress bar"""
-    if PROGRESS:
-        PROGRESS.update()
+    del val
+    PROGRESS.update()
 
 
 def pool_handler(count):
     """Pool handler for finishing parallel jobs"""
     print()
-    global PROGRESS
-    bar_format = '{desc}: {percentage:3.0f}%|{bar}| {n_fmt}/{total_fmt} projects'
-    PROGRESS = tqdm(total=count, unit='projects', bar_format=bar_format)
+    PROGRESS.start(count)
     try:
         POOL.close()
         POOL.join()
     except (KeyboardInterrupt, SystemExit):
-        if PROGRESS:
-            PROGRESS.close()
+        PROGRESS.close()
         print()
         sys.exit(1)
     else:
@@ -622,21 +619,17 @@ def pool_handler(count):
             for result in RESULTS:
                 result.get()
                 if not result.successful():
-                    if PROGRESS:
-                        PROGRESS.close()
+                    PROGRESS.close()
                     print()
                     cprint(' - Command failed', 'red')
                     print()
                     sys.exit(1)
         except Exception as err:
-            if PROGRESS:
-                PROGRESS.close()
+            PROGRESS.close()
             print()
             cprint(err, 'red')
             print()
             sys.exit(1)
         else:
-            if PROGRESS:
-                if PROGRESS.n < PROGRESS.total:
-                    PROGRESS.n = PROGRESS.total
-                PROGRESS.close()
+            PROGRESS.complete()
+            PROGRESS.close()
