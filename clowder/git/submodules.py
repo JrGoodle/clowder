@@ -5,7 +5,7 @@ from __future__ import print_function
 import sys
 
 from git import GitError
-from termcolor import cprint
+from termcolor import colored
 
 import clowder.util.formatting as fmt
 from clowder.git.repo import GitRepo
@@ -21,14 +21,11 @@ class GitSubmodules(GitRepo):
     def clean(self, args=None):
         """Discard changes for repo and submodules"""
         GitRepo.clean(self, args=args)
-        if self.print_output:
-            print(' - Clean submodules recursively')
+        self._print(' - Clean submodules recursively')
         self._submodules_clean()
-        if self.print_output:
-            print(' - Reset submodules recursively')
+        self._print(' - Reset submodules recursively')
         self._submodules_reset()
-        if self.print_output:
-            print(' - Update submodules recursively')
+        self._print(' - Update submodules recursively')
         self._submodules_update()
 
     def has_submodules(self):
@@ -63,9 +60,8 @@ class GitSubmodules(GitRepo):
             command = ['git', 'submodule', 'update', '--init', '--recursive', '--depth', depth]
         return_code = execute_command(command, self.repo_path)
         if return_code != 0:
-            if self.print_output:
-                cprint(' - Failed to update submodules', 'red')
-                print(fmt.command_failed_error(command))
+            self._print(colored(' - Failed to update submodules', 'red'))
+            self._print(fmt.command_failed_error(command))
             sys.exit(return_code)
 
     def sync(self, upstream_remote, fork_remote, ref, rebase=False):
@@ -95,10 +91,9 @@ class GitSubmodules(GitRepo):
         try:
             self.repo.git.submodule(*args)
         except (GitError, ValueError) as err:
-            if self.print_output:
-                error_msg = str(kwargs.get('error_msg', ' - submodule command failed'))
-                cprint(error_msg, 'red')
-                print(fmt.error(err))
+            error_msg = str(kwargs.get('error_msg', ' - submodule command failed'))
+            self._print(colored(error_msg, 'red'))
+            self._print(fmt.error(err))
             sys.exit(1)
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
