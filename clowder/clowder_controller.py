@@ -194,14 +194,8 @@ class ClowderController(object):
                 versions.remove(version)
         return versions
 
-    def herd(self, group_names, project_names=None, branch=None, tag=None,
-             depth=None, rebase=False, parallel=False):
+    def herd(self, group_names, project_names=None, branch=None, tag=None, depth=None, rebase=False):
         """Pull or rebase latest upstream changes for projects"""
-        if parallel:
-            self._herd_parallel(group_names, project_names=project_names, branch=branch, tag=tag,
-                                depth=depth, rebase=rebase)
-            return
-        # Serial
         if project_names:
             self._validate_projects(project_names)
             projects = [p for g in self.groups for p in g.projects if p.name in project_names]
@@ -212,6 +206,39 @@ class ClowderController(object):
         projects = [p for g in self.groups if g.name in group_names for p in g.projects]
         for project in projects:
             project.herd(branch=branch, tag=tag, depth=depth, rebase=rebase)
+
+    def herd_parallel(self, group_names, project_names=None, branch=None, tag=None, depth=None, rebase=False):
+        """Pull or rebase latest upstream changes for projects in parallel"""
+        print(' - Herd projects in parallel\n')
+        if project_names:
+            self._validate_projects(project_names)
+            projects = [p for g in self.groups for p in g.projects if p.name in project_names]
+            for project in projects:
+                project.print_status()
+                if project.fork:
+                    print('  ' + fmt.fork_string(project.name))
+                    print('  ' + fmt.fork_string(project.fork.name))
+            for project in projects:
+                result = POOL.apply_async(herd, args=(project, branch, tag, depth, rebase),
+                                          callback=async_callback)
+                RESULTS.append(result)
+            pool_handler(len(projects))
+            return
+        self._validate_groups(group_names)
+        groups = [g for g in self.groups if g.name in group_names]
+        projects = [p for g in self.groups if g.name in group_names for p in g.projects]
+        for group in groups:
+            group.print_name()
+            for project in group.projects:
+                project.print_status()
+                if project.fork:
+                    print('  ' + fmt.fork_string(project.name))
+                    print('  ' + fmt.fork_string(project.fork.name))
+        for project in projects:
+            result = POOL.apply_async(herd, args=(project, branch, tag, depth, rebase),
+                                      callback=async_callback)
+            RESULTS.append(result)
+        pool_handler(len(projects))
 
     def print_yaml(self, resolved):
         """Print clowder.yaml"""
@@ -405,39 +432,6 @@ class ClowderController(object):
         return {'defaults': self.defaults,
                 'sources': sources_yaml,
                 'groups': groups_yaml}
-
-    def _herd_parallel(self, group_names, project_names=None, branch=None, tag=None, depth=None, rebase=False):
-        """Pull or rebase latest upstream changes for projects in parallel"""
-        print(' - Herd projects in parallel\n')
-        if project_names:
-            self._validate_projects(project_names)
-            projects = [p for g in self.groups for p in g.projects if p.name in project_names]
-            for project in projects:
-                project.print_status()
-                if project.fork:
-                    print('  ' + fmt.fork_string(project.name))
-                    print('  ' + fmt.fork_string(project.fork.name))
-            for project in projects:
-                result = POOL.apply_async(herd, args=(project, branch, tag, depth, rebase),
-                                          callback=async_callback)
-                RESULTS.append(result)
-            pool_handler(len(projects))
-            return
-        self._validate_groups(group_names)
-        groups = [g for g in self.groups if g.name in group_names]
-        projects = [p for g in self.groups if g.name in group_names for p in g.projects]
-        for group in groups:
-            group.print_name()
-            for project in group.projects:
-                project.print_status()
-                if project.fork:
-                    print('  ' + fmt.fork_string(project.name))
-                    print('  ' + fmt.fork_string(project.fork.name))
-        for project in projects:
-            result = POOL.apply_async(herd, args=(project, branch, tag, depth, rebase),
-                                      callback=async_callback)
-            RESULTS.append(result)
-        pool_handler(len(projects))
 
     def _is_dirty(self):
         """Check if there are any dirty projects"""

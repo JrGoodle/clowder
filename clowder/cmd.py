@@ -179,13 +179,12 @@ class Command(object):
         else:
             depth = self.args.depth[0]
 
-        self.clowder.herd(group_names=self.args.groups,
-                          project_names=self.args.projects,
-                          branch=branch,
-                          tag=tag,
-                          depth=depth,
-                          rebase=self.args.rebase,
-                          parallel=self.args.parallel)
+        args = {'group_names': self.args.groups, 'project_names': self.args.projects,
+                'branch': branch, 'tag': tag, 'depth': depth, 'rebase': self.args.rebase}
+        if self.args.parallel:
+            self.clowder.herd_parallel(**args)
+            return
+        self.clowder.herd(**args)
 
     def init(self):
         """clowder init command"""

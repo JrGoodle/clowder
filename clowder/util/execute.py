@@ -44,9 +44,9 @@ def subprocess_exit_handler():
     Process pool terminator
     Adapted from https://stackoverflow.com/a/45259908
     """
-
     def sig_int(signal_num, frame):
         """Signal handler"""
+        del signal_num, frame
         # print('signal: %s' % signal_num)
         parent = psutil.Process(PARENT_ID)
         for child in parent.children():
