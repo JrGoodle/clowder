@@ -1,9 +1,10 @@
 """String formatting utilities"""
 
 import os
+import sys
 
 import yaml
-from termcolor import colored
+from termcolor import colored, cprint
 
 
 def clowder_command(cmd):
