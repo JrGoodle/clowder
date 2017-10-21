@@ -151,8 +151,10 @@ class Project(object):
             project['fork'] = fork_yaml
         return project
 
-    def herd(self, branch=None, tag=None, depth=None, rebase=False, print_output=True):
+    def herd(self, branch=None, tag=None, depth=None, rebase=False, parallel=False):
         """Clone project or update latest from upstream"""
+
+        print_output = not parallel
 
         if depth is None:
             herd_depth = self.depth
@@ -161,24 +163,30 @@ class Project(object):
 
         if branch:
             if self.recursive:
-                repo = GitSubmodules(self.full_path(), self.remote_name, self.ref, print_output=print_output)
+                repo = GitSubmodules(self.full_path(), self.remote_name, self.ref,
+                                     parallel=parallel, print_output=print_output)
                 self._herd_branch(repo, branch, herd_depth, rebase, print_output)
             else:
-                repo = GitRepo(self.full_path(), self.remote_name, self.ref, print_output=print_output)
+                repo = GitRepo(self.full_path(), self.remote_name, self.ref,
+                               parallel=parallel, print_output=print_output)
                 self._herd_branch(repo, branch, herd_depth, rebase, print_output)
         elif tag:
             if self.recursive:
-                repo = GitSubmodules(self.full_path(), self.remote_name, self.ref, print_output=print_output)
+                repo = GitSubmodules(self.full_path(), self.remote_name, self.ref,
+                                     parallel=parallel, print_output=print_output)
                 self._herd_tag(repo, tag, herd_depth, rebase, print_output)
             else:
-                repo = GitRepo(self.full_path(), self.remote_name, self.ref, print_output=print_output)
+                repo = GitRepo(self.full_path(), self.remote_name, self.ref,
+                               parallel=parallel, print_output=print_output)
                 self._herd_tag(repo, tag, herd_depth, rebase, print_output)
         else:
             if self.recursive:
-                repo = GitSubmodules(self.full_path(), self.remote_name, self.ref, print_output=print_output)
+                repo = GitSubmodules(self.full_path(), self.remote_name, self.ref,
+                                     parallel=parallel, print_output=print_output)
                 self._herd_ref(repo, herd_depth, rebase, print_output)
             else:
-                repo = GitRepo(self.full_path(), self.remote_name, self.ref, print_output=print_output)
+                repo = GitRepo(self.full_path(), self.remote_name, self.ref,
+                               parallel=parallel, print_output=print_output)
                 self._herd_ref(repo, herd_depth, rebase, print_output)
 
     def is_dirty(self):
@@ -230,18 +238,24 @@ class Project(object):
         elif remote:
             self._prune_remote(branch)
 
-    def reset(self, print_output=True):
+    def reset(self, parallel=False):
         """Reset project branches to upstream or checkout tag/sha as detached HEAD"""
 
+        print_output = not parallel
+
         if self.recursive:
-            repo = GitSubmodules(self.full_path(), self.remote_name, self.ref, print_output=print_output)
+            repo = GitSubmodules(self.full_path(), self.remote_name, self.ref,
+                                 parallel=parallel, print_output=print_output)
             self._reset(repo, print_output=print_output)
         else:
-            repo = GitRepo(self.full_path(), self.remote_name, self.ref, print_output=print_output)
+            repo = GitRepo(self.full_path(), self.remote_name, self.ref,
+                           parallel=parallel, print_output=print_output)
             self._reset(repo, print_output=print_output)
 
-    def run(self, command, ignore_errors, print_output=True):
+    def run(self, command, ignore_errors, parallel=False):
         """Run command or script in project directory"""
+
+        print_output = not parallel
 
         if print_output:
             self.print_status()
@@ -296,13 +310,18 @@ class Project(object):
             repo = GitRepo(self.full_path(), self.remote_name, self.ref)
             repo.stash()
 
-    def sync(self, rebase=False, print_output=True):
+    def sync(self, rebase=False, parallel=False):
         """Sync fork project with upstream"""
+
+        print_output = not parallel
+
         if self.recursive:
-            repo = GitSubmodules(self.full_path(), self.remote_name, self.ref, print_output=print_output)
+            repo = GitSubmodules(self.full_path(), self.remote_name, self.ref,
+                                 parallel=parallel, print_output=print_output)
             self._sync(repo, rebase, print_output)
         else:
-            repo = GitRepo(self.full_path(), self.remote_name, self.ref, print_output=print_output)
+            repo = GitRepo(self.full_path(), self.remote_name, self.ref,
+                           parallel=parallel, print_output=print_output)
             self._sync(repo, rebase, print_output)
 
     def _herd_branch(self, repo, branch, depth, rebase, print_output):

@@ -20,22 +20,22 @@ from clowder.util.progress import Progress
 
 def herd(project, branch, tag, depth, rebase):
     """Clone project or update latest from upstream"""
-    project.herd(branch=branch, tag=tag, depth=depth, rebase=rebase, print_output=False)
+    project.herd(branch=branch, tag=tag, depth=depth, rebase=rebase, parallel=True)
 
 
 def reset(project):
     """Reset project branches to upstream or checkout tag/sha as detached HEAD"""
-    project.reset(print_output=False)
+    project.reset(parallel=True)
 
 
 def run(project, command, ignore_errors):
     """Run command or script in project directory"""
-    project.run(command, ignore_errors, print_output=False)
+    project.run(command, ignore_errors, parallel=True)
 
 
 def sync(project, rebase):
     """Sync fork project with upstream"""
-    project.sync(rebase, print_output=False)
+    project.sync(rebase, parallel=True)
 
 
 PARENT_ID = os.getpid()

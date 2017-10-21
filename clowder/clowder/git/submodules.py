@@ -15,8 +15,8 @@ from clowder.util.execute import execute_command
 class GitSubmodules(GitRepo):
     """Class encapsulating git utilities"""
 
-    def __init__(self, repo_path, remote, default_ref, print_output=True):
-        GitRepo.__init__(self, repo_path, remote, default_ref, print_output=print_output)
+    def __init__(self, repo_path, remote, default_ref, parallel=False, print_output=True):
+        GitRepo.__init__(self, repo_path, remote, default_ref, parallel=parallel, print_output=print_output)
 
     def clean(self, args=None):
         """Discard changes for repo and submodules"""
@@ -60,9 +60,9 @@ class GitSubmodules(GitRepo):
             command = ['git', 'submodule', 'update', '--init', '--recursive', '--depth', depth]
         return_code = execute_command(command, self.repo_path)
         if return_code != 0:
-            self._print(colored(' - Failed to update submodules', 'red'))
-            self._print(fmt.command_failed_error(command))
-            sys.exit(return_code)
+            error = colored(' - Failed to update submodules\n', 'red') + fmt.command_failed_error(command)
+            self._print(error)
+            self._exit(fmt.parallel_exception_error(self.repo_path, error))
 
     def sync(self, fork_remote, rebase=False):
         """Sync fork with upstream remote"""
@@ -91,10 +91,10 @@ class GitSubmodules(GitRepo):
         try:
             self.repo.git.submodule(*args)
         except (GitError, ValueError) as err:
-            error_msg = str(kwargs.get('error_msg', ' - submodule command failed'))
-            self._print(colored(error_msg, 'red'))
+            error_msg = colored(str(kwargs.get('error_msg', ' - Submodule command failed')), 'red')
+            self._print(error_msg)
             self._print(fmt.error(err))
-            sys.exit(1)
+            self._exit(fmt.parallel_exception_error(self.repo_path, error_msg, fmt.error(err)))
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
 

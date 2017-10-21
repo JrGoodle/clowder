@@ -23,11 +23,12 @@ DEFAULT_REMOTE = 'origin'
 class GitRepo(object):
     """Class encapsulating git utilities"""
 
-    def __init__(self, repo_path, remote, default_ref, print_output=True):
+    def __init__(self, repo_path, remote, default_ref, parallel=False, print_output=True):
         self.repo_path = repo_path
         self.default_ref = default_ref
         self.remote = remote
         self.print_output = print_output
+        self.parallel = parallel
         self.repo = self._repo() if GitRepo.existing_git_repository(repo_path) else None
 
     def checkout(self, truncated_ref):
@@ -794,7 +795,7 @@ class GitRepo(object):
 
     def _exit(self, message):
         """Print output if print_output is True"""
-        if self.print_output:
+        if self.parallel:
             sys.exit(1)
         raise ClowderGitError(msg=message)
 
