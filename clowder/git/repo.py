@@ -37,9 +37,7 @@ class GitRepo(object):
             message = colored(' - Failed to checkout ref ', 'red')
             self._print(message + ref_output)
             self._print(fmt.error(err))
-            if self.print_output:
-                sys.exit(1)
-            raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message, ref_output))
+            self._exit(fmt.parallel_exception_error(self.repo_path, message, ref_output))
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
 
@@ -87,17 +85,13 @@ class GitRepo(object):
                 actual_url = self._remote_get_url(upstream_remote_name)
                 message = fmt.remote_already_exists_error(upstream_remote_name, upstream_remote_url, actual_url)
                 self._print(message)
-                if self.print_output:
-                    sys.exit(1)
-                raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message))
+                self._exit(fmt.parallel_exception_error(self.repo_path, message))
         if fork_remote_name in remote_names:
             if fork_remote_url != self._remote_get_url(fork_remote_name):
                 actual_url = self._remote_get_url(fork_remote_name)
                 message = fmt.remote_already_exists_error(fork_remote_name, fork_remote_url, actual_url)
                 self._print(message)
-                if self.print_output:
-                    sys.exit(1)
-                raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message))
+                self._exit(fmt.parallel_exception_error(self.repo_path, message))
 
     def current_branch(self):
         """Return currently checked out branch of project"""
@@ -152,9 +146,7 @@ class GitRepo(object):
             if remove_dir:
                 remove_directory(self.repo_path)
             self._print(error)
-            if self.print_output:
-                sys.exit(1)
-            raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, error))
+            self._exit(fmt.parallel_exception_error(self.repo_path, error))
         return return_code
 
     def herd(self, url, remote, ref, depth=0, fetch=True, rebase=False):
@@ -426,9 +418,7 @@ class GitRepo(object):
         if GitRepo.ref_type(ref) != 'branch':
             message = colored(' - Can only sync branches', 'red')
             self._print(message)
-            if self.print_output:
-                sys.exit(1)
-            raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message))
+            self._exit(fmt.parallel_exception_error(self.repo_path, message))
         fork_remote_output = fmt.remote_string(fork_remote)
         branch_output = fmt.ref_string(GitRepo.truncate_ref(ref))
         if rebase:
@@ -442,10 +432,7 @@ class GitRepo(object):
             message = colored(' - Failed to push to ', 'red')
             self._print(message + fork_remote_output + ' ' + branch_output)
             self._print(fmt.command_failed_error(command))
-            if self.print_output:
-                sys.exit(1)
-            raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message,
-                                                                   fork_remote_output, ' ', branch_output))
+            self._exit(fmt.parallel_exception_error(self.repo_path, message, fork_remote_output, ' ', branch_output))
 
     @staticmethod
     def truncate_ref(ref):
@@ -493,9 +480,7 @@ class GitRepo(object):
             message = colored(' - Failed to checkout branch ', 'red')
             self._print(message + branch_output)
             self._print(fmt.error(err))
-            if self.print_output:
-                sys.exit(1)
-            raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message, branch_output))
+            self._exit(fmt.parallel_exception_error(self.repo_path, message, branch_output))
         except (KeyboardInterrupt, SystemExit):
             if remove_dir:
                 remove_directory(self.repo_path)
@@ -511,10 +496,7 @@ class GitRepo(object):
             remove_directory(self.repo_path)
             message = colored(' - No existing remote branch ', 'red')
             self._print(message + remote_output + ' ' + branch_output)
-            if self.print_output:
-                sys.exit(1)
-            raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message,
-                                                                   remote_output, ' ', branch_output))
+            self._exit(fmt.parallel_exception_error(self.repo_path, message, remote_output, ' ', branch_output))
         self._create_branch_local_tracking(branch, remote, depth=depth, fetch=False, remove_dir=True)
 
     def _checkout_new_repo_commit(self, commit, remote, depth):
@@ -530,9 +512,7 @@ class GitRepo(object):
             message = colored(' - Failed to checkout commit ', 'red')
             self._print(message + commit_output)
             self._print(fmt.error(err))
-            if self.print_output:
-                sys.exit(1)
-            raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message, commit_output))
+            self._exit(fmt.parallel_exception_error(self.repo_path, message, commit_output))
         except (KeyboardInterrupt, SystemExit):
             remove_directory(self.repo_path)
             sys.exit(1)
@@ -549,10 +529,7 @@ class GitRepo(object):
             if remove_dir:
                 remove_directory(self.repo_path)
                 self._print(colored(message, 'red') + tag_output)
-                if self.print_output:
-                    sys.exit(1)
-                raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path,
-                                                                       colored(message, 'red'), tag_output))
+                self._exit(fmt.parallel_exception_error(self.repo_path, colored(message, 'red'), tag_output))
             if self.print_output:
                 print(message + tag_output)
             return 1
@@ -571,9 +548,7 @@ class GitRepo(object):
                 self._print(fmt.error(err))
                 if remove_dir:
                     remove_directory(self.repo_path)
-                    if self.print_output:
-                        sys.exit(1)
-                    raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message, tag_output))
+                    self._exit(fmt.parallel_exception_error(self.repo_path, message, tag_output))
                 return 1
             except (KeyboardInterrupt, SystemExit):
                 if remove_dir:
@@ -595,9 +570,7 @@ class GitRepo(object):
             message = colored(' - Failed to checkout commit ', 'red')
             self._print(message + commit_output)
             self._print(fmt.error(err))
-            if self.print_output:
-                sys.exit(1)
-            raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message, commit_output))
+            self._exit(fmt.parallel_exception_error(self.repo_path, message, commit_output))
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
 
@@ -620,9 +593,7 @@ class GitRepo(object):
             message = colored(' - Failed to checkout tag ', 'red')
             self._print(message + tag_output)
             self._print(fmt.error(err))
-            if self.print_output:
-                sys.exit(1)
-            raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message, tag_output))
+            self._exit(fmt.parallel_exception_error(self.repo_path, message, tag_output))
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
 
@@ -669,9 +640,7 @@ class GitRepo(object):
                 remove_directory(self.repo_path)
             self._print(message + branch_output)
             self._print(fmt.error(err))
-            if self.print_output:
-                sys.exit(1)
-            raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message, branch_output))
+            self._exit(fmt.parallel_exception_error(self.repo_path, message, branch_output))
         except (KeyboardInterrupt, SystemExit):
             if remove_dir:
                 remove_directory(self.repo_path)
@@ -731,9 +700,7 @@ class GitRepo(object):
                 remove_directory(self.repo_path)
             self._print(message + remote_output)
             self._print(fmt.error(err))
-            if self.print_output:
-                sys.exit(1)
-            raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message, remote_output))
+            self._exit(fmt.parallel_exception_error(self.repo_path, message, remote_output))
         except (KeyboardInterrupt, SystemExit):
             if remove_dir:
                 remove_directory(self.repo_path)
@@ -753,10 +720,8 @@ class GitRepo(object):
             if not self.existing_local_branch(branch):
                 return_code = self._create_branch_local_tracking(branch, remote, depth=depth, fetch=fetch)
                 if return_code != 0:
-                    if self.print_output:
-                        sys.exit(1)
                     message = colored(' - Failed to create tracking branch ', 'red')
-                    raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message, branch_output))
+                    self._exit(fmt.parallel_exception_error(self.repo_path, message, branch_output))
                 return
             elif self._is_branch_checked_out(branch):
                 self._print(' - Branch ' + branch_output + ' already checked out')
@@ -825,9 +790,7 @@ class GitRepo(object):
             message = colored(' - Failed to initialize repository', 'red')
             self._print(message)
             self._print(fmt.error(err))
-            if self.print_output:
-                sys.exit(1)
-            raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message))
+            self._exit(fmt.parallel_exception_error(self.repo_path, message))
         except (KeyboardInterrupt, SystemExit):
             remove_directory(self.repo_path)
             sys.exit(1)
@@ -867,9 +830,7 @@ class GitRepo(object):
             message = colored(' - No existing branch ', 'red')
             self._print(message + branch_output)
             self._print(fmt.error(err))
-            if self.print_output:
-                sys.exit(1)
-            raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message, branch_output))
+            self._exit(fmt.parallel_exception_error(self.repo_path, message, branch_output))
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
 
@@ -887,10 +848,7 @@ class GitRepo(object):
             message = colored(' - Failed to pull from ', 'red')
             self._print(message + remote_output + ' ' + branch_output)
             self._print(fmt.command_failed_error(command))
-            if self.print_output:
-                sys.exit(1)
-            raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message,
-                                                                   remote_output, ' ', branch_output))
+            self._exit(fmt.parallel_exception_error(self.repo_path, message, remote_output, ' ', branch_output))
 
     def _rebase_remote_branch(self, remote, branch):
         """Rebase from remote branch"""
@@ -906,10 +864,7 @@ class GitRepo(object):
             message = colored(' - Failed to rebase onto ', 'red')
             self._print(message + remote_output + ' ' + branch_output)
             self._print(fmt.command_failed_error(command))
-            if self.print_output:
-                sys.exit(1)
-            raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message,
-                                                                   remote_output, ' ', branch_output))
+            self._exit(fmt.parallel_exception_error(self.repo_path, message, remote_output, ' ', branch_output))
 
     def _remote(self, remote, remove_dir=False):
         """Get remote"""
@@ -922,9 +877,7 @@ class GitRepo(object):
                 remove_directory(self.repo_path)
             self._print(message + remote_output)
             self._print(fmt.error(err))
-            if self.print_output:
-                sys.exit(1)
-            raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message, remote_output))
+            self._exit(fmt.parallel_exception_error(self.repo_path, message, remote_output))
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
 
@@ -944,9 +897,7 @@ class GitRepo(object):
             message_2 = remote_output_from + ' to ' + remote_output_to
             self._print(message_1 + message_2)
             self._print(fmt.error(err))
-            if self.print_output:
-                sys.exit(1)
-            raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message_1, message_2))
+            self._exit(fmt.parallel_exception_error(self.repo_path, message_1, message_2))
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
 
@@ -960,9 +911,7 @@ class GitRepo(object):
             repo_path_output = fmt.path(self.repo_path)
             self._print(message + repo_path_output)
             self._print(fmt.error(err))
-            if self.print_output:
-                sys.exit(1)
-            raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message, repo_path_output))
+            self._exit(fmt.parallel_exception_error(self.repo_path, message, repo_path_output))
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
 
@@ -977,9 +926,7 @@ class GitRepo(object):
                 ref_output = fmt.ref_string('HEAD')
                 self._print(message + ref_output)
                 self._print(fmt.error(err))
-                if self.print_output:
-                    sys.exit(1)
-                raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message, ref_output))
+                self._exit(fmt.parallel_exception_error(self.repo_path, message, ref_output))
             except (KeyboardInterrupt, SystemExit):
                 sys.exit(1)
         else:
@@ -991,9 +938,7 @@ class GitRepo(object):
                 branch_output = fmt.ref_string(branch)
                 self._print(message + branch_output)
                 self._print(fmt.error(err))
-                if self.print_output:
-                    sys.exit(1)
-                raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message, branch_output))
+                self._exit(fmt.parallel_exception_error(self.repo_path, message, branch_output))
             except (KeyboardInterrupt, SystemExit):
                 sys.exit(1)
 
@@ -1014,9 +959,7 @@ class GitRepo(object):
                 remove_directory(self.repo_path)
             self._print(message + branch_output)
             self._print(fmt.error(err))
-            if self.print_output:
-                sys.exit(1)
-            raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message, branch_output))
+            self._exit(fmt.parallel_exception_error(self.repo_path, message, branch_output))
         except (KeyboardInterrupt, SystemExit):
             if remove_dir:
                 remove_directory(self.repo_path)
@@ -1032,30 +975,21 @@ class GitRepo(object):
         if not self.existing_local_branch(branch):
             message = colored(' - No local branch ', 'red')
             self._print(message + branch_output + '\n')
-            if self.print_output:
-                sys.exit(1)
-            raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message, branch_output, '\n'))
+            self._exit(fmt.parallel_exception_error(self.repo_path, message, branch_output, '\n'))
         if not self.existing_remote_branch(branch, remote):
             message = colored(' - No remote branch ', 'red')
             self._print(message + branch_output + '\n')
-            if self.print_output:
-                sys.exit(1)
-            raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message, branch_output, '\n'))
+            self._exit(fmt.parallel_exception_error(self.repo_path, message, branch_output, '\n'))
         local_branch = self.repo.heads[branch]
         remote_branch = origin.refs[branch]
         if local_branch.commit != remote_branch.commit:
             message_1 = colored(' - Existing remote branch ', 'red')
             message_2 = colored(' on different commit', 'red')
             self._print(message_1 + branch_output + message_2 + '\n')
-            if self.print_output:
-                sys.exit(1)
-            raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message_1,
-                                                                   branch_output, message_2, '\n'))
+            self._exit(fmt.parallel_exception_error(self.repo_path, message_1, branch_output, message_2, '\n'))
         return_code = self._set_tracking_branch(remote, branch)
         if return_code != 0:
-            if self.print_output:
-                sys.exit(1)
-            raise ClowderGitError(msg=colored(' - Failed to set tracking branch', 'red'))
+            self._exit(colored(' - Failed to set tracking branch', 'red'))
 
     def _untracked_files(self):
         """Execute command and display continuous output"""
@@ -1064,11 +998,8 @@ class GitRepo(object):
             output = subprocess.check_output(command, shell=True, cwd=self.repo_path)
             return output.decode('utf-8') == '1'
         except GitError as err:
-            message = colored(' - Failed to check untracked files', 'red')
             self._print(fmt.error(err))
-            if self.print_output:
-                sys.exit(1)
-            raise ClowderGitError(msg=message)
+            self._exit(colored(' - Failed to check untracked files', 'red'))
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
 
@@ -1148,6 +1079,12 @@ class GitRepo(object):
             return colored('(HEAD @ ' + current_ref + ')', 'magenta')
         current_branch = repo.current_branch()
         return colored('(' + current_branch + ')', 'magenta') + status
+
+    def _exit(self, message):
+        """Print output if print_output is True"""
+        if self.print_output:
+            sys.exit(1)
+        raise ClowderGitError(msg=message)
 
     def _print(self, val):
         """Print output if print_output is True"""
