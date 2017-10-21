@@ -38,7 +38,7 @@ class ClowderRepo(object):
         clowder = GitRepo(self.clowder_path)
         if self.is_dirty():
             print(' - Dirty repo. Please stash, commit, or discard your changes')
-            GitRepo.status(self.clowder_path)
+            GitRepo.status_verbose(self.clowder_path)
         else:
             clowder.checkout(ref)
 
@@ -137,7 +137,8 @@ class ClowderRepo(object):
 
     def git_status(self):
         """Print clowder repo git status"""
-        GitRepo.status(self.clowder_path)
+        clowder = GitRepo(self.clowder_path)
+        clowder.repo.git.status_verbose()
 
     def _validate_groups(self):
         """Validate status of clowder repo"""

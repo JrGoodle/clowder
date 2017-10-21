@@ -24,7 +24,7 @@ def add(path, files):
     except (KeyboardInterrupt, SystemExit):
         sys.exit(1)
     else:
-        GitRepo.status(path)
+        GitRepo.status_verbose(path)
 
 
 def commit(path, message):

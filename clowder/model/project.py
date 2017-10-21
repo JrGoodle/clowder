@@ -94,7 +94,7 @@ class Project(object):
         if not os.path.isdir(self.full_path()):
             cprint(" - Project is missing\n", 'red')
             return
-        GitRepo.status(self.full_path())
+        GitRepo.status_verbose(self.full_path())
 
     def exists(self):
         """Check if project exists on disk"""
