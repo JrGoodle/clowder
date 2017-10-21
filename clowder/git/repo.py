@@ -864,7 +864,11 @@ class GitRepo(object):
         try:
             self._print(' - Initialize repo at ' + fmt.path(self.repo_path))
             if not os.path.isdir(self.repo_path):
-                os.makedirs(self.repo_path)
+                try:
+                    os.makedirs(self.repo_path)
+                except OSError as err:
+                    if err.errno != os.errno.EEXIST:
+                        raise
             self.repo = Repo.init(self.repo_path)
         except GitError as err:
             remove_directory(self.repo_path)

@@ -293,7 +293,11 @@ class ClowderController(object):
         version_name = version.replace('/', '-')  # Replace path separators with dashes
         version_dir = os.path.join(versions_dir, version_name)
         if not os.path.exists(version_dir):
-            os.makedirs(version_dir)
+            try:
+                os.makedirs(version_dir)
+            except OSError as err:
+                if err.errno != os.errno.EEXIST:
+                    raise
 
         yaml_file = os.path.join(version_dir, 'clowder.yaml')
         if os.path.exists(yaml_file):
