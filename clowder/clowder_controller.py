@@ -33,9 +33,9 @@ def run(project, command, ignore_errors):
     project.run(command, ignore_errors, print_output=False)
 
 
-def sync(project, rebasee):
+def sync(project, rebase):
     """Sync fork project with upstream"""
-    project.sync(rebasee, print_output=False)
+    project.sync(rebase, print_output=False)
 
 
 PARENT_ID = os.getpid()

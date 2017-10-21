@@ -11,9 +11,12 @@ import clowder.util.formatting as fmt
 from clowder.git.repo import GitRepo
 
 
+DEFAULT_REF = 'refs/heads/master'
+
+
 def add(path, files):
     """Add files in clowder repo to git index"""
-    clowder = GitRepo(path)
+    clowder = GitRepo(path, DEFAULT_REF)
     try:
         print(' - Add files to git index')
         print(clowder.repo.git.add(files))
@@ -29,7 +32,7 @@ def add(path, files):
 
 def commit(path, message):
     """Commit current changes in clowder repo"""
-    clowder = GitRepo(path)
+    clowder = GitRepo(path, DEFAULT_REF)
     try:
         print(' - Commit current changes')
         print(clowder.repo.git.commit(message=message))
@@ -43,7 +46,7 @@ def commit(path, message):
 
 def pull(path):
     """Pull clowder repo upstream changes"""
-    clowder = GitRepo(path)
+    clowder = GitRepo(path, DEFAULT_REF)
     if clowder.repo.head.is_detached:
         print(' - HEAD is detached')
         return
@@ -60,7 +63,7 @@ def pull(path):
 
 def push(path):
     """Push clowder repo changes"""
-    clowder = GitRepo(path)
+    clowder = GitRepo(path, DEFAULT_REF)
     if clowder.repo.head.is_detached:
         print(' - HEAD is detached')
         return

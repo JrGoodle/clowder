@@ -22,6 +22,7 @@ class ClowderRepo(object):
 
     def __init__(self, root_directory):
         self.root_directory = root_directory
+        self.default_ref = 'refs/heads/master'
         self.clowder_path = os.path.join(self.root_directory, '.clowder')
 
     def add(self, files):
@@ -30,12 +31,12 @@ class ClowderRepo(object):
 
     def branches(self):
         """Return current local branches"""
-        clowder = GitRepo(self.clowder_path)
+        clowder = GitRepo(self.clowder_path, self.default_ref)
         return clowder.print_branches(local=True, remote=True)
 
     def checkout(self, ref):
         """Checkout ref in clowder repo"""
-        clowder = GitRepo(self.clowder_path)
+        clowder = GitRepo(self.clowder_path, self.default_ref)
         if self.is_dirty():
             print(' - Dirty repo. Please stash, commit, or discard your changes')
             GitRepo.status_verbose(self.clowder_path)
@@ -44,7 +45,7 @@ class ClowderRepo(object):
 
     def clean(self):
         """Discard changes in clowder repo"""
-        clowder = GitRepo(self.clowder_path)
+        clowder = GitRepo(self.clowder_path, self.default_ref)
         if self.is_dirty():
             print(' - Discard current changes')
             clowder.clean(args='fdx')
@@ -59,7 +60,7 @@ class ClowderRepo(object):
         """Clone clowder repo from url"""
         # Register exit handler to remove files if cloning repo fails
         atexit.register(self.init_exit_handler)
-        clowder = GitRepo(self.clowder_path)
+        clowder = GitRepo(self.clowder_path, self.default_ref)
         clowder.create_clowder_repo(url, 'origin', branch)
         self.link()
 
@@ -73,7 +74,7 @@ class ClowderRepo(object):
 
     def is_dirty(self):
         """Check if project is dirty"""
-        clowder = GitRepo(self.clowder_path)
+        clowder = GitRepo(self.clowder_path, self.default_ref)
         return clowder.is_dirty()
 
     def link(self, version=None):
@@ -102,7 +103,7 @@ class ClowderRepo(object):
             return
         if not is_offline() and fetch:
             print(' - Fetch upstream changes for clowder repo')
-            clowder = GitRepo(self.clowder_path)
+            clowder = GitRepo(self.clowder_path, self.default_ref)
             clowder.fetch('origin')
         project_output = GitRepo.format_project_string(repo_path, '.clowder')
         current_ref_output = GitRepo.format_project_ref_string(repo_path)
@@ -141,7 +142,7 @@ class ClowderRepo(object):
 
     def _validate_groups(self):
         """Validate status of clowder repo"""
-        clowder = GitRepo(self.clowder_path)
+        clowder = GitRepo(self.clowder_path, self.default_ref)
         if not clowder.validate_repo():
             GitRepo.validation(self.clowder_path)
             print()

@@ -15,8 +15,8 @@ from clowder.util.execute import execute_command
 class GitSubmodules(GitRepo):
     """Class encapsulating git utilities"""
 
-    def __init__(self, repo_path, print_output=True):
-        GitRepo.__init__(self, repo_path, print_output=print_output)
+    def __init__(self, repo_path, default_ref, print_output=True):
+        GitRepo.__init__(self, repo_path, default_ref, print_output=print_output)
 
     def clean(self, args=None):
         """Discard changes for repo and submodules"""
@@ -32,19 +32,19 @@ class GitSubmodules(GitRepo):
         """Repo has submodules"""
         return self.repo.submodules.count > 0
 
-    def herd(self, url, remote, ref, depth=0, fetch=True, rebase=False):
+    def herd(self, url, remote, depth=0, fetch=True, rebase=False):
         """Herd ref"""
-        GitRepo.herd(self, url, remote, ref, depth=depth, fetch=fetch, rebase=rebase)
+        GitRepo.herd(self, url, remote, depth=depth, fetch=fetch, rebase=rebase)
         self.submodule_update_recursive(depth)
 
-    def herd_branch(self, url, remote, branch, default_ref, depth=0, rebase=False, fork_remote=None):
+    def herd_branch(self, url, remote, branch, depth=0, rebase=False, fork_remote=None):
         """Herd branch"""
-        GitRepo.herd_branch(self, url, remote, branch, default_ref, depth=depth, rebase=rebase, fork_remote=fork_remote)
+        GitRepo.herd_branch(self, url, remote, branch, depth=depth, rebase=rebase, fork_remote=fork_remote)
         self.submodule_update_recursive(depth)
 
-    def herd_tag(self, url, remote, tag, default_ref, depth=0, rebase=False):
+    def herd_tag(self, url, remote, tag, depth=0, rebase=False):
         """Herd tag"""
-        GitRepo.herd_tag(self, url, remote, tag, default_ref, depth=depth, rebase=rebase)
+        GitRepo.herd_tag(self, url, remote, tag, depth=depth, rebase=rebase)
         self.submodule_update_recursive(depth)
 
     def is_dirty_submodule(self, path):
@@ -64,9 +64,9 @@ class GitSubmodules(GitRepo):
             self._print(fmt.command_failed_error(command))
             sys.exit(return_code)
 
-    def sync(self, upstream_remote, fork_remote, ref, rebase=False):
+    def sync(self, upstream_remote, fork_remote, rebase=False):
         """Sync fork with upstream remote"""
-        GitRepo.sync(self, upstream_remote, fork_remote, ref, rebase=rebase)
+        GitRepo.sync(self, upstream_remote, fork_remote, rebase=rebase)
         self.submodule_update_recursive()
 
     def validate_repo(self):
