@@ -31,8 +31,8 @@ class GitRepo(object):
             self._print(' - Check out ' + ref_output)
             if self.print_output:
                 print(self.repo.git.checkout(truncated_ref))
-            else:
-                self.repo.git.checkout(truncated_ref)
+                return
+            self.repo.git.checkout(truncated_ref)
         except GitError as err:
             message = colored(' - Failed to checkout ref ', 'red')
             self._print(message + ref_output)

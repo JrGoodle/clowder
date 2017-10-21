@@ -137,8 +137,7 @@ class ClowderRepo(object):
 
     def git_status(self):
         """Print clowder repo git status"""
-        clowder = GitRepo(self.clowder_path)
-        clowder.repo.git.status_verbose()
+        GitRepo.status_verbose(self.clowder_path)
 
     def _validate_groups(self):
         """Validate status of clowder repo"""
