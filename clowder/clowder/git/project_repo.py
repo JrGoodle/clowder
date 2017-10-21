@@ -56,13 +56,13 @@ class ProjectRepo(GitRepo):
                 actual_url = self._remote_get_url(upstream_remote_name)
                 message = fmt.remote_already_exists_error(upstream_remote_name, upstream_remote_url, actual_url)
                 self._print(message)
-                self._exit(fmt.parallel_exception_error(self.repo_path, message))
+                self._exit(message)
         if fork_remote_name in remote_names:
             if fork_remote_url != self._remote_get_url(fork_remote_name):
                 actual_url = self._remote_get_url(fork_remote_name)
                 message = fmt.remote_already_exists_error(fork_remote_name, fork_remote_url, actual_url)
                 self._print(message)
-                self._exit(fmt.parallel_exception_error(self.repo_path, message))
+                self._exit(message)
 
     @staticmethod
     def exists(repo_path):
@@ -219,9 +219,8 @@ class ProjectRepo(GitRepo):
 
     def prune_branch_remote(self, branch, remote):
         """Prune remote branch in repository"""
-        origin = self._remote(remote)
         branch_output = fmt.ref_string(branch)
-        if branch not in origin.refs:
+        if not self.existing_remote_branch(branch, remote):
             self._print(' - Remote branch ' + branch_output + " doesn't exist")
             return
         try:
@@ -245,7 +244,7 @@ class ProjectRepo(GitRepo):
                 if return_code != 0:
                     message = colored(' - Failed to create tracking branch ', 'red') + branch_output
                     self._print(message)
-                    self._exit(fmt.parallel_exception_error(self.repo_path, message))
+                    self._exit(message)
                 return
             elif self._is_branch_checked_out(branch):
                 self._print(' - Branch ' + branch_output + ' already checked out')
@@ -255,7 +254,7 @@ class ProjectRepo(GitRepo):
             if not self.existing_remote_branch(branch, self.remote):
                 message = colored(' - No existing remote branch ', 'red') + remote_output + ' ' + branch_output
                 self._print(message)
-                self._exit(fmt.parallel_exception_error(self.repo_path, message))
+                self._exit(message)
             self.fetch(self.remote, ref=self.default_ref, depth=depth)
             self._print(' - Reset branch ' + branch_output + ' to ' + remote_output + ' ' + branch_output)
             remote_branch = self.remote + '/' + branch
@@ -300,7 +299,7 @@ class ProjectRepo(GitRepo):
         if self.ref_type(self.default_ref) != 'branch':
             message = colored(' - Can only sync branches', 'red')
             self._print(message)
-            self._exit(fmt.parallel_exception_error(self.repo_path, message))
+            self._exit(message)
         fork_remote_output = fmt.remote_string(fork_remote)
         branch_output = fmt.ref_string(self.truncate_ref(self.default_ref))
         if rebase:
@@ -311,10 +310,10 @@ class ProjectRepo(GitRepo):
         command = ['git', 'push', fork_remote, self.truncate_ref(self.default_ref)]
         return_code = execute_command(command, self.repo_path, print_output=self.print_output)
         if return_code != 0:
-            message = colored(' - Failed to push to ', 'red')
-            self._print(message + fork_remote_output + ' ' + branch_output)
+            message = colored(' - Failed to push to ', 'red') + fork_remote_output + ' ' + branch_output
+            self._print(message)
             self._print(fmt.command_failed_error(command))
-            self._exit(fmt.parallel_exception_error(self.repo_path, message, fork_remote_output, ' ', branch_output))
+            self._exit(message)
 
     def _herd(self, remote, ref, depth=0, fetch=True, rebase=False):
         """Herd ref"""
@@ -324,8 +323,9 @@ class ProjectRepo(GitRepo):
             if not self.existing_local_branch(branch):
                 return_code = self._create_branch_local_tracking(branch, remote, depth=depth, fetch=fetch)
                 if return_code != 0:
-                    message = colored(' - Failed to create tracking branch ', 'red')
-                    self._exit(fmt.parallel_exception_error(self.repo_path, message, branch_output))
+                    message = colored(' - Failed to create tracking branch ', 'red') + branch_output
+                    self._print(message)
+                    self._exit(message)
                 return
             elif self._is_branch_checked_out(branch):
                 self._print(' - Branch ' + branch_output + ' already checked out')
@@ -388,20 +388,21 @@ class ProjectRepo(GitRepo):
         if return_code != 0:
             raise ClowderGitError(msg=colored(' - Failed to fech', 'red'))
         if not self.existing_local_branch(branch):
-            message = colored(' - No local branch ', 'red')
-            self._print(message + branch_output + '\n')
-            self._exit(fmt.parallel_exception_error(self.repo_path, message, branch_output, '\n'))
+            message = colored(' - No local branch ', 'red') + branch_output + '\n'
+            self._print(message)
+            self._exit(message)
         if not self.existing_remote_branch(branch, remote):
-            message = colored(' - No remote branch ', 'red')
-            self._print(message + branch_output + '\n')
-            self._exit(fmt.parallel_exception_error(self.repo_path, message, branch_output, '\n'))
+            message = colored(' - No remote branch ', 'red') + branch_output + '\n'
+            self._print(message)
+            self._exit(message)
         local_branch = self.repo.heads[branch]
         remote_branch = origin.refs[branch]
         if local_branch.commit != remote_branch.commit:
             message_1 = colored(' - Existing remote branch ', 'red')
             message_2 = colored(' on different commit', 'red')
-            self._print(message_1 + branch_output + message_2 + '\n')
-            self._exit(fmt.parallel_exception_error(self.repo_path, message_1, branch_output, message_2, '\n'))
+            message = message_1 + branch_output + message_2 + '\n'
+            self._print(message)
+            self._exit(message_1)
         return_code = self._set_tracking_branch(remote, branch)
         if return_code != 0:
             self._exit(colored(' - Failed to set tracking branch', 'red'))

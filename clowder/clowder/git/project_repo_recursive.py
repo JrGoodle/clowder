@@ -60,9 +60,9 @@ class ProjectRepoRecursive(ProjectRepo):
             command = ['git', 'submodule', 'update', '--init', '--recursive', '--depth', depth]
         return_code = execute_command(command, self.repo_path)
         if return_code != 0:
-            error = colored(' - Failed to update submodules\n', 'red') + fmt.command_failed_error(command)
-            self._print(error)
-            self._exit(fmt.parallel_exception_error(self.repo_path, error))
+            message = colored(' - Failed to update submodules\n', 'red') + fmt.command_failed_error(command)
+            self._print(message)
+            self._exit(message)
 
     def sync(self, fork_remote, rebase=False):
         """Sync fork with upstream remote"""
@@ -91,10 +91,10 @@ class ProjectRepoRecursive(ProjectRepo):
         try:
             self.repo.git.submodule(*args)
         except (GitError, ValueError) as err:
-            error_msg = colored(str(kwargs.get('error_msg', ' - Submodule command failed')), 'red')
-            self._print(error_msg)
+            message = colored(str(kwargs.get('error_msg', ' - Submodule command failed')), 'red')
+            self._print(message)
             self._print(fmt.error(err))
-            self._exit(fmt.parallel_exception_error(self.repo_path, error_msg, fmt.error(err)))
+            self._exit(message)
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
 

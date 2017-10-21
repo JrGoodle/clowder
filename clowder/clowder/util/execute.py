@@ -24,8 +24,8 @@ def execute_command(command, path, shell=True, env=None, print_output=True):
             atexit.register(subprocess_exit_handler)
         process.communicate()
     except (KeyboardInterrupt, SystemExit):
-        if process:
-            process.terminate()
+        return 1
+    except Exception as err:
         return 1
     else:
         return process.returncode
@@ -49,7 +49,7 @@ def subprocess_exit_handler():
         del signal_num, frame
         # print('signal: %s' % signal_num)
         parent = psutil.Process(PARENT_ID)
-        for child in parent.children():
+        for child in parent.children(recursive=True):
             if child.pid != os.getpid():
                 # print("killing child: %s" % child.pid)
                 child.terminate()

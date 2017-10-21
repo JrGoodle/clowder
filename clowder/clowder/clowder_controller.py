@@ -51,7 +51,7 @@ def worker_init():
         del signal_num, frame
         # print('signal: %s' % signal_num)
         parent = psutil.Process(PARENT_ID)
-        for child in parent.children():
+        for child in parent.children(recursive=True):
             if child.pid != os.getpid():
                 # print("killing child: %s" % child.pid)
                 child.terminate()
