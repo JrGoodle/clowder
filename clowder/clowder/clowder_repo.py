@@ -11,7 +11,7 @@ from termcolor import colored
 
 import clowder.git.clowder_repo as git
 import clowder.util.formatting as fmt
-from clowder.git.repo import GitRepo
+from clowder.git.project_repo import ProjectRepo
 from clowder.util.connectivity import is_offline
 from clowder.util.execute import execute_command
 from clowder.util.file_system import remove_directory
@@ -32,21 +32,21 @@ class ClowderRepo(object):
 
     def branches(self):
         """Return current local branches"""
-        clowder = GitRepo(self.clowder_path, self.remote, self.default_ref)
+        clowder = ProjectRepo(self.clowder_path, self.remote, self.default_ref)
         return clowder.print_branches(local=True, remote=True)
 
     def checkout(self, ref):
         """Checkout ref in clowder repo"""
-        clowder = GitRepo(self.clowder_path, self.remote, self.default_ref)
+        clowder = ProjectRepo(self.clowder_path, self.remote, self.default_ref)
         if self.is_dirty():
             print(' - Dirty repo. Please stash, commit, or discard your changes')
-            GitRepo.status_verbose(self.clowder_path)
+            ProjectRepo.status_verbose(self.clowder_path)
         else:
             clowder.checkout(ref)
 
     def clean(self):
         """Discard changes in clowder repo"""
-        clowder = GitRepo(self.clowder_path, self.remote, self.default_ref)
+        clowder = ProjectRepo(self.clowder_path, self.remote, self.default_ref)
         if self.is_dirty():
             print(' - Discard current changes')
             clowder.clean(args='fdx')
@@ -61,7 +61,7 @@ class ClowderRepo(object):
         """Clone clowder repo from url"""
         # Register exit handler to remove files if cloning repo fails
         atexit.register(self.init_exit_handler)
-        clowder = GitRepo(self.clowder_path, self.remote, self.default_ref)
+        clowder = ProjectRepo(self.clowder_path, self.remote, self.default_ref)
         clowder.create_clowder_repo(url, branch)
         self.link()
 
@@ -75,7 +75,7 @@ class ClowderRepo(object):
 
     def is_dirty(self):
         """Check if project is dirty"""
-        clowder = GitRepo(self.clowder_path, self.remote, self.default_ref)
+        clowder = ProjectRepo(self.clowder_path, self.remote, self.default_ref)
         return clowder.is_dirty()
 
     def link(self, version=None):
@@ -98,16 +98,16 @@ class ClowderRepo(object):
     def print_status(self, fetch=False):
         """Print clowder repo status"""
         repo_path = os.path.join(self.root_directory, '.clowder')
-        if not GitRepo.existing_git_repository(repo_path):
+        if not ProjectRepo.existing_git_repository(repo_path):
             output = colored('.clowder', 'green')
             print(output)
             return
         if not is_offline() and fetch:
             print(' - Fetch upstream changes for clowder repo')
-            clowder = GitRepo(self.clowder_path, self.remote, self.default_ref)
+            clowder = ProjectRepo(self.clowder_path, self.remote, self.default_ref)
             clowder.fetch(self.remote)
-        project_output = GitRepo.format_project_string(repo_path, '.clowder')
-        current_ref_output = GitRepo.format_project_ref_string(repo_path)
+        project_output = ProjectRepo.format_project_string(repo_path, '.clowder')
+        current_ref_output = ProjectRepo.format_project_ref_string(repo_path)
 
         clowder_symlink = os.path.join(self.root_directory, 'clowder.yaml')
         if not os.path.islink(clowder_symlink):
@@ -139,13 +139,13 @@ class ClowderRepo(object):
 
     def git_status(self):
         """Print clowder repo git status"""
-        GitRepo.status_verbose(self.clowder_path)
+        ProjectRepo.status_verbose(self.clowder_path)
 
     def _validate_groups(self):
         """Validate status of clowder repo"""
-        clowder = GitRepo(self.clowder_path, self.remote, self.default_ref)
+        clowder = ProjectRepo(self.clowder_path, self.remote, self.default_ref)
         if not clowder.validate_repo():
-            GitRepo.validation(self.clowder_path)
+            ProjectRepo.validation(self.clowder_path)
             print()
             sys.exit(1)
 

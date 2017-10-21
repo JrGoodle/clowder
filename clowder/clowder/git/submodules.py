@@ -8,19 +8,19 @@ from git import GitError
 from termcolor import colored
 
 import clowder.util.formatting as fmt
-from clowder.git.repo import GitRepo
+from clowder.git.project_repo import ProjectRepo
 from clowder.util.execute import execute_command
 
 
-class GitSubmodules(GitRepo):
+class GitSubmodules(ProjectRepo):
     """Class encapsulating git utilities"""
 
     def __init__(self, repo_path, remote, default_ref, parallel=False, print_output=True):
-        GitRepo.__init__(self, repo_path, remote, default_ref, parallel=parallel, print_output=print_output)
+        ProjectRepo.__init__(self, repo_path, remote, default_ref, parallel=parallel, print_output=print_output)
 
     def clean(self, args=None):
         """Discard changes for repo and submodules"""
-        GitRepo.clean(self, args=args)
+        self.clean(self, args=args)
         self._print(' - Clean submodules recursively')
         self._submodules_clean()
         self._print(' - Reset submodules recursively')
@@ -34,17 +34,17 @@ class GitSubmodules(GitRepo):
 
     def herd(self, url, depth=0, fetch=True, rebase=False):
         """Herd ref"""
-        GitRepo.herd(self, url, depth=depth, fetch=fetch, rebase=rebase)
+        self.herd(self, url, depth=depth, fetch=fetch, rebase=rebase)
         self.submodule_update_recursive(depth)
 
     def herd_branch(self, url, branch, depth=0, rebase=False, fork_remote=None):
         """Herd branch"""
-        GitRepo.herd_branch(self, url, branch, depth=depth, rebase=rebase, fork_remote=fork_remote)
+        self.herd_branch(self, url, branch, depth=depth, rebase=rebase, fork_remote=fork_remote)
         self.submodule_update_recursive(depth)
 
     def herd_tag(self, url, tag, depth=0, rebase=False):
         """Herd tag"""
-        GitRepo.herd_tag(self, url, tag, depth=depth, rebase=rebase)
+        self.herd_tag(self, url, tag, depth=depth, rebase=rebase)
         self.submodule_update_recursive(depth)
 
     def is_dirty_submodule(self, path):
@@ -66,12 +66,12 @@ class GitSubmodules(GitRepo):
 
     def sync(self, fork_remote, rebase=False):
         """Sync fork with upstream remote"""
-        GitRepo.sync(self, fork_remote, rebase=rebase)
+        self.sync(self, fork_remote, rebase=rebase)
         self.submodule_update_recursive()
 
     def validate_repo(self):
         """Validate repo state"""
-        if not GitRepo.existing_git_repository(self.repo_path):
+        if not self.existing_git_repository(self.repo_path):
             return True
         if not self.is_dirty():
             return False
