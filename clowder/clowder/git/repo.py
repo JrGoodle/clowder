@@ -184,7 +184,7 @@ class GitRepo(object):
     @staticmethod
     def format_project_string(repo_path, name):
         """Return formatted project name"""
-        if not os.path.isdir(os.path.join(repo_path, '.git')):
+        if not GitRepo.existing_git_repository(repo_path):
             return colored(name, 'green')
         repo = GitRepo(repo_path, DEFAULT_REMOTE, DEFAULT_REF)
         if not repo.validate_repo():
