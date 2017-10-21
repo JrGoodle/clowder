@@ -602,28 +602,26 @@ def pool_handler(count):
     print()
     PROGRESS.start(count)
     try:
-        POOL.close()
-        POOL.join()
-    except (KeyboardInterrupt, SystemExit):
+        for result in RESULTS:
+            result.get()
+            if not result.successful():
+                PROGRESS.close()
+                POOL.close()
+                POOL.terminate()
+                print()
+                cprint(' - Command failed', 'red')
+                print()
+                sys.exit(1)
+    except Exception as err:
         PROGRESS.close()
+        POOL.close()
+        POOL.terminate()
+        print()
+        cprint(err, 'red')
         print()
         sys.exit(1)
     else:
-        try:
-            for result in RESULTS:
-                result.get()
-                if not result.successful():
-                    PROGRESS.close()
-                    print()
-                    cprint(' - Command failed', 'red')
-                    print()
-                    sys.exit(1)
-        except Exception as err:
-            PROGRESS.close()
-            print()
-            cprint(err, 'red')
-            print()
-            sys.exit(1)
-        else:
-            PROGRESS.complete()
-            PROGRESS.close()
+        PROGRESS.complete()
+        PROGRESS.close()
+        POOL.close()
+        POOL.join()
