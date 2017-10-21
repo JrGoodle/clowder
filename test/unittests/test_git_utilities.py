@@ -19,36 +19,37 @@ class GitUtilitiesTest(unittest.TestCase):
         self.kishka_project_path = os.path.join(self.CATS_EXAMPLE_PATH, 'black-cats', 'kishka')
         self.kit_project_path = os.path.join(self.CATS_EXAMPLE_PATH, 'black-cats', 'kit')
         self.sasha_project_path = os.path.join(self.CATS_EXAMPLE_PATH, 'black-cats', 'sasha')
+        self.remote = 'origin'
         self.branch_ref = 'refs/heads/master'
         self.tag_ref = 'refs/tags/v1.0'
         self.sha_ref = '6ce5538d2c09fda2f56a9ca3859f5e8cfe706bf0'
 
     def test_git_current_branch(self):
         """Test git_current_branch() function"""
-        repo = GitRepo(self.kit_project_path, self.branch_ref)
+        repo = GitRepo(self.kit_project_path, self.remote, self.branch_ref)
         self.assertEqual(repo.current_branch(), 'master')
 
     def test_git_sha_long(self):
         """Test git_sha_long() function"""
-        repo = GitRepo(self.sasha_project_path, self.branch_ref)
+        repo = GitRepo(self.sasha_project_path, self.remote, self.branch_ref)
         self.assertEqual(repo.sha(), self.sha_ref)
 
     def test_git_is_detached(self):
         """Test git_is_detached() function"""
-        repo = GitRepo(self.jules_project_path, self.branch_ref)
+        repo = GitRepo(self.jules_project_path, self.remote, self.branch_ref)
         self.assertFalse(repo.is_detached())
-        repo = GitRepo(self.kit_project_path, self.branch_ref)
+        repo = GitRepo(self.kit_project_path, self.remote, self.branch_ref)
         self.assertFalse(repo.is_detached())
-        repo = GitRepo(self.sasha_project_path, self.branch_ref)
+        repo = GitRepo(self.sasha_project_path, self.remote, self.branch_ref)
         self.assertTrue(repo.is_detached())
 
     def test_git_is_dirty(self):
         """Test git_is_dirty() function"""
-        repo = GitRepo(self.jules_project_path, self.branch_ref)
+        repo = GitRepo(self.jules_project_path, self.remote, self.branch_ref)
         self.assertFalse(repo.is_dirty())
-        repo = GitRepo(self.kishka_project_path, self.branch_ref)
+        repo = GitRepo(self.kishka_project_path, self.remote, self.branch_ref)
         self.assertTrue(repo.is_dirty())
-        repo = GitRepo(self.kit_project_path, self.branch_ref)
+        repo = GitRepo(self.kit_project_path, self.remote, self.branch_ref)
         self.assertFalse(repo.is_dirty())
 
     def test_ref_type_branch(self):
