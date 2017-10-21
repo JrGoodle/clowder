@@ -2,16 +2,14 @@
 
 import atexit
 import os
-import signal
 import subprocess
 
-import psutil
+from clowder.util.process_pool import POOL
 
 
 def execute_command(command, path, shell=True, env=None, print_output=True):
     """Run subprocess command"""
     cmd_env = os.environ.copy()
-    process = None
     if env:
         cmd_env.update(env)
     if print_output:
@@ -19,16 +17,16 @@ def execute_command(command, path, shell=True, env=None, print_output=True):
     else:
         pipe = subprocess.PIPE
     try:
-        process = subprocess.Popen(' '.join(command), shell=shell, env=cmd_env, cwd=path, stdout=pipe, stderr=pipe)
-        if print_output:
-            atexit.register(subprocess_exit_handler)
-        process.communicate()
+        result = POOL.apply(_execute_command, args=(command,),
+                            kwds={'shell': shell, 'env': cmd_env, 'cwd': path,
+                                  'stdout': pipe, 'stderr': pipe, 'print_output': print_output})
+        result.get()
     except (KeyboardInterrupt, SystemExit):
         return 1
     except Exception as err:
         return 1
     else:
-        return process.returncode
+        return 0
 
 
 def execute_forall_command(command, path, forall_env, print_output):
@@ -36,26 +34,17 @@ def execute_forall_command(command, path, forall_env, print_output):
     return execute_command(command, path, shell=True, env=forall_env, print_output=print_output)
 
 
-PARENT_ID = os.getpid()
-
-
-def subprocess_exit_handler():
-    """
-    Process pool terminator
-    Adapted from https://stackoverflow.com/a/45259908
-    """
-    def sig_int(signal_num, frame):
-        """Signal handler"""
-        del signal_num, frame
-        # print('signal: %s' % signal_num)
-        parent = psutil.Process(PARENT_ID)
-        for child in parent.children(recursive=True):
-            if child.pid != os.getpid():
-                # print("killing child: %s" % child.pid)
-                child.terminate()
-        # print("killing parent: %s" % parent_id)
-        parent.terminate()
-        # print("suicide: %s" % os.getpid())
-        psutil.Process(os.getpid()).terminate()
-        print('\n\n')
-    signal.signal(signal.SIGINT, sig_int)
+def _execute_command(command, path, shell=True, env=None, stdout=None, stderr=None, print_output=True):
+    """Run subprocess command"""
+    try:
+        process = subprocess.Popen(' '.join(command), shell=shell, env=env, cwd=path,
+                                   stdout=stdout, stderr=stderr)
+        # if print_output:
+            # atexit.register(subprocess_exit_handler)
+        process.communicate()
+    except (KeyboardInterrupt, SystemExit):
+        raise
+    except Exception as err:
+        raise
+    else:
+        return process.returncode
