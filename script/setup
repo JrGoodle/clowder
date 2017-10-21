@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-cd "$( dirname "${BASH_SOURCE[0]}" )/.." || exit 1
+cd "$( dirname "${BASH_SOURCE[0]}" )/../clowder" || exit 1
 
 VERSION=${1:-python3}
 
@@ -12,13 +12,13 @@ fi
 
 case "$(uname)" in
     Linux*) export MY_PLATFORM="linux";
-        sudo -H $PIP install -e .
+        sudo -H $PIP install -e . || exit 1
         ;;
     Darwin*) export MY_PLATFORM="osx";
-        sudo -H $PIP install -e .
+        sudo -H $PIP install -e . || exit 1
         ;;
     CYGWIN*) export MY_PLATFORM="windows";
-        $PIP install -e .
+        $PIP install -e . || exit 1
         ;;
 esac
 

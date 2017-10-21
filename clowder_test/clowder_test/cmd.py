@@ -2,13 +2,13 @@
 
 from __future__ import print_function
 
+import argparse
 import os
 import sys
 
 import argcomplete
-import argparse
 
-from clowder.util.execute import execute_command
+from clowder_test.execute import execute_command
 
 # Disable errors shown by pylint for too many public methods
 # pylint: disable=R0904

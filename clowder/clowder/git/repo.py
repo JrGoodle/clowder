@@ -415,15 +415,15 @@ class GitRepo(object):
                 message = colored(' - No existing remote branch ', 'red') + remote_output + ' ' + branch_output
                 self._print(message)
                 self._exit(fmt.parallel_exception_error(self.repo_path, message))
-            self.fetch(self.remote, depth=depth, ref=self.default_ref)
+            self.fetch(self.remote, ref=self.default_ref, depth=depth)
             self._print(' - Reset branch ' + branch_output + ' to ' + remote_output + ' ' + branch_output)
             remote_branch = self.remote + '/' + branch
             self._reset_head(branch=remote_branch)
         elif GitRepo.ref_type(self.default_ref) == 'tag':
-            self.fetch(self.remote, depth=depth, ref=self.default_ref)
+            self.fetch(self.remote, ref=self.default_ref, depth=depth)
             self._checkout_tag(GitRepo.truncate_ref(self.default_ref))
         elif GitRepo.ref_type(self.default_ref) == 'sha':
-            self.fetch(self.remote, depth=depth, ref=self.default_ref)
+            self.fetch(self.remote, ref=self.default_ref, depth=depth)
             self._checkout_sha(self.default_ref)
 
     def sha(self, short=False):
@@ -436,7 +436,7 @@ class GitRepo(object):
         """Start new branch in repository"""
         if branch not in self.repo.heads:
             if not is_offline():
-                return_code = self.fetch(remote, depth=depth, ref=branch)
+                return_code = self.fetch(remote, ref=branch, depth=depth)
                 if return_code != 0:
                     sys.exit(1)
             return_code = self._create_branch_local(branch)

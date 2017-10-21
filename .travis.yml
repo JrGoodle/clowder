@@ -9,7 +9,7 @@ dist: trusty
 
 env:
   global:
-    - PYTHONPATH="$PYTHONPATH:$TRAVIS_BUILD_DIR"
+    - PYTHONPATH="$PYTHONPATH:$TRAVIS_BUILD_DIR/clowder:$TRAVIS_BUILD_DIR/clowder_test:$TRAVIS_BUILD_DIR/test"
   matrix:
     - TARGET="cats" PYVERSION="python3"
 

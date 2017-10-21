@@ -4,7 +4,7 @@ import sys
 import unittest
 
 from clowder.model.source import Source
-from test.unittests.shared import (
+from unittests.shared import (
     GITHUB_HTTPS_SOURCE_YAML,
     GITHUB_SSH_SOURCE_YAML
 )

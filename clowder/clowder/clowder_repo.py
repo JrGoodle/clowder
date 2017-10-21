@@ -105,7 +105,7 @@ class ClowderRepo(object):
         if not is_offline() and fetch:
             print(' - Fetch upstream changes for clowder repo')
             clowder = GitRepo(self.clowder_path, self.remote, self.default_ref)
-            clowder.fetch('origin')
+            clowder.fetch(self.remote)
         project_output = GitRepo.format_project_string(repo_path, '.clowder')
         current_ref_output = GitRepo.format_project_ref_string(repo_path)
 

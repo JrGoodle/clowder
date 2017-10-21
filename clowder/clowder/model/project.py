@@ -334,7 +334,7 @@ class Project(object):
             repo.configure_remotes(self.remote_name, self.url, self.fork.remote_name, self.fork.url)
             if print_output:
                 print(fmt.fork_string(self.name))
-            repo.herd(self.url, self.remote_name, rebase=rebase)
+            repo.herd(self.url, rebase=rebase)
             if print_output:
                 print(fmt.fork_string(self.fork.name))
             repo.herd_remote(self.fork.url, self.fork.remote_name)
