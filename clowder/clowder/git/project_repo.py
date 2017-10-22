@@ -51,17 +51,9 @@ class ProjectRepo(GitRepo):
                         self._rename_remote(remote.name, fork_remote_name)
             remote_names = [r.name for r in self.repo.remotes]
             if upstream_remote_name in remote_names:
-                if upstream_remote_url != self._remote_get_url(upstream_remote_name):
-                    actual_url = self._remote_get_url(upstream_remote_name)
-                    message = fmt.remote_already_exists_error(upstream_remote_name, upstream_remote_url, actual_url)
-                    self._print(message)
-                    self._exit(message)
+                self._compare_remote_url(upstream_remote_name, upstream_remote_url)
             if fork_remote_name in remote_names:
-                if fork_remote_url != self._remote_get_url(fork_remote_name):
-                    actual_url = self._remote_get_url(fork_remote_name)
-                    message = fmt.remote_already_exists_error(fork_remote_name, fork_remote_url, actual_url)
-                    self._print(message)
-                    self._exit(message)
+                self._compare_remote_url(fork_remote_name, fork_remote_url)
 
     @staticmethod
     def exists(repo_path):
@@ -311,6 +303,14 @@ class ProjectRepo(GitRepo):
             message = colored(' - Failed to push to ', 'red') + fork_remote_output + ' ' + branch_output
             self._print(message)
             self._print(fmt.command_failed_error(command))
+            self._exit(message)
+
+    def _compare_remote_url(self, remote, url):
+        """Compare actual remote url to given url"""
+        if url != self._remote_get_url(remote):
+            actual_url = self._remote_get_url(remote)
+            message = fmt.remote_already_exists_error(remote, url, actual_url)
+            self._print(message)
             self._exit(message)
 
     def _herd(self, remote, ref, depth=0, fetch=True, rebase=False):
