@@ -224,13 +224,26 @@ class Command(object):
         sys.exit(return_code)
 
     def llvm(self, path):
+        """clowder llvm tests entrypoint"""
+        llvm_command = 'llvm_' + self.args.llvm_command
+        if self.args.llvm_command != 'all':
+            path = os.path.join(path, 'llvm')
+        getattr(self, llvm_command)(path)
+
+    def llvm_all(self, path):
         """clowder llvm tests"""
         test_env = {}
         if self.args.write:
             test_env["ACCESS_LEVEL"] = 'write'
         else:
             test_env["ACCESS_LEVEL"] = 'read'
-        return_code = execute_command('./test_example_llvm.sh', path, shell=True)
+        return_code = execute_command('./test_example_llvm.sh', path, shell=True, env=test_env)
+        sys.exit(return_code)
+
+    @classmethod
+    def llvm_reset(cls, path):
+        """clowder llvm reset tests"""
+        return_code = execute_command('./reset.sh', path, shell=True)
         sys.exit(return_code)
 
     @classmethod
@@ -247,6 +260,13 @@ class Command(object):
         sys.exit(return_code)
 
     def swift(self, path):
+        """clowder swift tests entrypoint"""
+        swift_command = 'swift_' + self.args.swift_command
+        if self.args.swift_command != 'all':
+            path = os.path.join(path, 'swift')
+        getattr(self, swift_command)(path)
+
+    def swift_all(self, path):
         """clowder swift tests"""
         test_env = {}
         if self.args.write:
@@ -254,6 +274,18 @@ class Command(object):
         else:
             test_env["ACCESS_LEVEL"] = 'read'
         return_code = execute_command('./test_example_swift.sh', path, shell=True, env=test_env)
+        sys.exit(return_code)
+
+    @classmethod
+    def swift_config_versions(cls, path):
+        """clowder swift config versions tests"""
+        return_code = execute_command('./config_versions.sh', path, shell=True)
+        sys.exit(return_code)
+
+    @classmethod
+    def swift_reset(cls, path):
+        """clowder swift reset tests"""
+        return_code = execute_command('./reset.sh', path, shell=True)
         sys.exit(return_code)
 
     def unittests(self, path):
@@ -273,8 +305,7 @@ class Command(object):
     def _configure_cats_subparser(self):
         """clowder cats tests subparser"""
         parser = self._subparsers.add_parser('cats', help='Run cats tests')
-        cats_subparser = parser.add_subparsers(dest='cats_command',
-                                               metavar='SUBCOMMAND')
+        cats_subparser = parser.add_subparsers(dest='cats_command', metavar='SUBCOMMAND')
         cats_subparser.add_parser('all', help='Run all cats tests')
         cats_subparser.add_parser('branch', help='Run cats branch tests')
         cats_subparser.add_parser('clean', help='Run cats clean tests')
@@ -303,7 +334,10 @@ class Command(object):
 
     def _configure_llvm_subparser(self):
         """clowder llvm tests subparser"""
-        self._subparsers.add_parser('llvm', help='Run llvm tests')
+        parser = self._subparsers.add_parser('llvm', help='Run llvm tests')
+        llvm_subparser = parser.add_subparsers(dest='llvm_command', metavar='SUBCOMMAND')
+        llvm_subparser.add_parser('all', help='Run all llvm tests')
+        llvm_subparser.add_parser('reset', help='Run llvm reset tests')
 
     def _configure_offline_subparser(self):
         """clowder offline tests subparser"""
@@ -315,7 +349,11 @@ class Command(object):
 
     def _configure_swift_subparser(self):
         """clowder swift tests subparser"""
-        self._subparsers.add_parser('swift', help='Run swift tests')
+        parser = self._subparsers.add_parser('swift', help='Run swift tests')
+        swift_subparser = parser.add_subparsers(dest='swift_command', metavar='SUBCOMMAND')
+        swift_subparser.add_parser('all', help='Run all swift tests')
+        swift_subparser.add_parser('config_versions', help='Run swift config versions tests')
+        swift_subparser.add_parser('reset', help='Run swift reset tests')
 
     def _configure_unittest_subparser(self):
         """clowder unit tests subparser"""

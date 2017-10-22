@@ -2,13 +2,13 @@
 
 # set -xv
 
-cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
+cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
 
 if [ "$1" = 'parallel' ]; then
     PARALLEL='--parallel'
 fi
 
-. ../test_utilities.sh
+./test_utilities.sh
 
 print_double_separator
 echo 'TEST: llvm projects reset'

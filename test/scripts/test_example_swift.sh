@@ -163,7 +163,8 @@ test_local_swift_example() {
 }
 test_local_swift_example
 
-"$TEST_SCRIPT_DIR/test_swift_config_versions.sh" || exit 1
+"$TEST_SCRIPT_DIR/swift/config_versions.sh" || exit 1
+"$TEST_SCRIPT_DIR/swift/reset.sh" || exit 1
 
 test_help() {
     print_double_separator
