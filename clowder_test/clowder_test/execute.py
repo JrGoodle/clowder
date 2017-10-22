@@ -18,8 +18,8 @@ def subprocess_exit_handler(process):
     """terminate subprocess"""
     try:
         process.terminate()
-    except ProcessLookupError:
-        pass
+    except Exception as err:
+        del err
 
 
 def execute_subprocess_command(command, path, shell=True, env=None, stdout=None, stderr=None):
