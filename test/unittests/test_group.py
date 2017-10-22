@@ -4,8 +4,8 @@ import os
 import sys
 import unittest
 
-from clowder.group import Group
-from clowder.source import Source
+from clowder.model.group import Group
+from clowder.model.source import Source
 from unittests.shared import (
     DEFAULTS_YAML,
     GITHUB_HTTPS_SOURCE_YAML,

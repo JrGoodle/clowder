@@ -7,15 +7,14 @@ import os
 import signal
 import sys
 
-
 import psutil
 from termcolor import cprint
 
 import clowder.clowder_yaml as clowder_yaml
 import clowder.util.formatting as fmt
 from clowder.error.clowder_error import ClowderError
-from clowder.group import Group
-from clowder.source import Source
+from clowder.model.group import Group
+from clowder.model.source import Source
 from clowder.util.progress import Progress
 
 

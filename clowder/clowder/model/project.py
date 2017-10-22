@@ -9,9 +9,9 @@ from termcolor import cprint
 
 import clowder.util.formatting as fmt
 from clowder.error.clowder_error import ClowderError
-from clowder.fork import Fork
 from clowder.git.project_repo import ProjectRepo
 from clowder.git.project_repo_recursive import ProjectRepoRecursive
+from clowder.model.fork import Fork
 from clowder.util.connectivity import is_offline
 
 
