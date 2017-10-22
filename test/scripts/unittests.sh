@@ -19,20 +19,20 @@ prepare_unittest_repos() {
     echo 'TEST: Prepare repos for unit tests'
     pushd "$CATS_EXAMPLE_DIR" || exit 1
     # Clean and herd repo's to clean state
-    $CATS_EXAMPLE_DIR/clean.sh
-    $CATS_EXAMPLE_DIR/init.sh
-    clowder clean
-    clowder herd
+    $CATS_EXAMPLE_DIR/clean.sh || exit 1
+    $CATS_EXAMPLE_DIR/init.sh || exit 1
+    clowder clean || exit 1
+    clowder herd || exit 1
     # Remove jules repository
-    rm -rf black-cats/jules
+    rm -rf black-cats/jules || exit 1
     # Make kishka repo dirty
     pushd black-cats/kishka || exit 1
-    touch newfile
-    git add .
+    touch newfile || exit 1
+    git add .  || exit 1
     popd || exit 1
     # Set sasha repo to detached HEAD state
     pushd black-cats/sasha || exit 1
-    git checkout '6ce5538d2c09fda2f56a9ca3859f5e8cfe706bf0'
+    git checkout '6ce5538d2c09fda2f56a9ca3859f5e8cfe706bf0' || exit 1
     popd || exit 1
     popd || exit 1
 }

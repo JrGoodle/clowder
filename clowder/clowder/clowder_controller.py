@@ -11,7 +11,7 @@ import psutil
 from termcolor import cprint
 
 import clowder.util.formatting as fmt
-import clowder.util.yaml as clowder_yaml
+import clowder.util.clowder_yaml as clowder_yaml
 from clowder.error.clowder_error import ClowderError
 from clowder.model.group import Group
 from clowder.model.source import Source
