@@ -330,10 +330,19 @@ class ClowderController(object):
             for project in projects:
                 project.prune(branch, remote=True)
 
-    def reset(self, group_names, project_names=None, timestamp=None, parallel=False):
+    def reset(self, group_names, project_names=None, timestamp_project=None, parallel=False):
         """Reset project branches to upstream or checkout tag/sha as detached HEAD"""
+        timestamp = None
+        if timestamp_project:
+            all_projects = [p for g in self.groups for p in g.projects]
+            for project in all_projects:
+                if project.name == timestamp_project:
+                    timestamp = project.get_current_timestamp()
+            if timestamp is None:
+                cprint(' - Failed to find timestamp\n', 'red')
+                sys.exit(1)
         if parallel:
-            self._reset_parallel(group_names, timestamp=timestamp, project_names=project_names)
+            self._reset_parallel(group_names, project_names=project_names, timestamp=timestamp)
             return
         # Serial
         if project_names is None:

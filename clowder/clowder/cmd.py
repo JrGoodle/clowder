@@ -308,9 +308,12 @@ class Command(object):
             sys.exit(1)
         if self.clowder is None:
             sys.exit(1)
+        timestamp_project = None
+        if self. args.timestamp:
+            timestamp_project = self.args.timestamp[0]
         self.clowder.reset(group_names=self.args.groups,
                            project_names=self.args.projects,
-                           timestamp=self.args.timestamp,
+                           timestamp_project=timestamp_project,
                            parallel=self.args.parallel)
 
     def save(self):

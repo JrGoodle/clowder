@@ -134,6 +134,11 @@ class Project(object):
         """Return full path to project"""
         return os.path.join(self.root_directory, self.path)
 
+    def get_current_timestamp(self):
+        """Clone project or update latest from upstream"""
+        repo = ProjectRepo(self.full_path(), self.remote_name, self.ref)
+        return repo.get_current_timestamp()
+
     def get_yaml(self, resolved=False):
         """Return python object representation for saving yaml"""
         if resolved:
@@ -411,7 +416,7 @@ class Project(object):
             if print_output:
                 self.print_status()
             if timestamp:
-                repo.reset_timestamp(timestamp, depth=self.depth)
+                repo.reset_timestamp(timestamp)
                 return
             repo.reset(depth=self.depth)
             return
