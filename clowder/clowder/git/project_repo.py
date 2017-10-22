@@ -257,9 +257,13 @@ class ProjectRepo(GitRepo):
             self.fetch(self.remote, ref=self.default_ref, depth=depth)
             self._checkout_sha(self.default_ref)
 
-    def reset_timestamp(self, timestamp):
+    def reset_timestamp(self, timestamp, author, ref):
         """Reset branch to upstream or checkout tag/sha as detached HEAD"""
-        rev = self._find_rev_by_timestamp(timestamp)
+        rev = None
+        if author:
+            rev = self._find_rev_by_timestamp_author(timestamp, author, ref)
+        if rev is None:
+            rev = self._find_rev_by_timestamp(timestamp)
         if rev is None:
             message = colored(' - Failed to find rev', 'red')
             self._print(message)

@@ -141,7 +141,7 @@ class GitRepo(object):
         return return_code
 
     def get_current_timestamp(self):
-        """Clone project or update latest from upstream"""
+        """Get current timestamp of HEAD commit"""
         try:
             return self.repo.git.log('-1', '--format=%cI')
         except GitError as err:
@@ -580,17 +580,29 @@ class GitRepo(object):
         return tag in origin.tags
 
     def _exit(self, message, return_code=1):
-        """Print output if print_output is True"""
+        """Exit based on serial or parallel job"""
         if self.parallel:
             raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message))
         sys.exit(return_code)
 
     def _find_rev_by_timestamp(self, timestamp):
-        """Clone project or update latest from upstream"""
+        """Find rev by timestamp"""
         try:
             return self.repo.git.log('-1', '--format=%H', '--before=' + timestamp)
         except GitError as err:
             message = colored(' - Failed to find rev from timestamp', 'red')
+            self._print(message)
+            self._print(fmt.error(err))
+            self._exit(fmt.error(err))
+        except (KeyboardInterrupt, SystemExit):
+            self._exit('')
+
+    def _find_rev_by_timestamp_author(self, timestamp, author, ref):
+        """Find rev by timestamp and author"""
+        try:
+            return self.repo.git.log('-1', '--format=%H', '--before=' + timestamp, '--author', author, ref)
+        except GitError as err:
+            message = colored(' - Failed to find rev from timestamp by author', 'red')
             self._print(message)
             self._print(fmt.error(err))
             self._exit(fmt.error(err))

@@ -420,7 +420,7 @@ class Project(object):
             if print_output:
                 self.print_status()
             if timestamp:
-                repo.reset_timestamp(timestamp)
+                repo.reset_timestamp(timestamp, self.timestamp_author, self.ref)
                 return
             repo.reset(depth=self.depth)
             return
@@ -430,7 +430,7 @@ class Project(object):
         if print_output:
             print(fmt.fork_string(self.name))
         if timestamp:
-            repo.reset_timestamp(timestamp)
+            repo.reset_timestamp(timestamp, self.timestamp_author, self.ref)
             return
         repo.reset()
 
