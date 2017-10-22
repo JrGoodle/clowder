@@ -26,6 +26,8 @@ class Project(object):
 
         self.depth = project.get('depth', group.get('depth', defaults['depth']))
         self.recursive = project.get('recursive', group.get('recursive', defaults.get('recursive', False)))
+        self.timestamp_author = project.get('timestamp_author', group.get('timestamp_author',
+                                                                          defaults.get('timestamp_author', None)))
         self.ref = project.get('ref', group.get('ref', defaults['ref']))
         self.remote_name = project.get('remote', group.get('remote', defaults['remote']))
         source_name = project.get('source', group.get('source', defaults['source']))
@@ -156,6 +158,8 @@ class Project(object):
         if self.fork:
             fork_yaml = self.fork.get_yaml()
             project['fork'] = fork_yaml
+        if self.timestamp_author:
+            project['timestamp_author'] = self.timestamp_author
         return project
 
     def herd(self, branch=None, tag=None, depth=None, rebase=False, parallel=False):

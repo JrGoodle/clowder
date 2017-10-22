@@ -15,6 +15,7 @@ class Group(object):
         self.name = group['name']
         self.depth = group.get('depth', defaults['depth'])
         self.recursive = group.get('recursive', defaults.get('recursive', False))
+        self.timestamp_author = group.get('timestamp_author', defaults.get('timestamp_author', None))
         self.ref = group.get('ref', defaults['ref'])
         self.remote_name = group.get('remote', defaults['remote'])
         source_name = group.get('source', defaults['source'])
@@ -43,6 +44,8 @@ class Group(object):
                  'remote': self.remote_name,
                  'source': self.source.name,
                  'projects': projects_yaml}
+        if self.timestamp_author:
+            group['timestamp_author'] = self.timestamp_author
         return group
 
     def is_dirty(self):
