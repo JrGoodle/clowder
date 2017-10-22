@@ -585,10 +585,10 @@ class GitRepo(object):
             raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message))
         sys.exit(return_code)
 
-    def _find_rev_by_timestamp(self, timestamp):
+    def _find_rev_by_timestamp(self, timestamp, ref):
         """Find rev by timestamp"""
         try:
-            return self.repo.git.log('-1', '--format=%H', '--before=' + timestamp)
+            return self.repo.git.log('-1', '--format=%H', '--before=' + timestamp, ref)
         except GitError as err:
             message = colored(' - Failed to find rev from timestamp', 'red')
             self._print(message)

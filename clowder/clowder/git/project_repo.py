@@ -263,7 +263,7 @@ class ProjectRepo(GitRepo):
         if author:
             rev = self._find_rev_by_timestamp_author(timestamp, author, ref)
         if rev is None:
-            rev = self._find_rev_by_timestamp(timestamp)
+            rev = self._find_rev_by_timestamp(timestamp, ref)
         if rev is None:
             message = colored(' - Failed to find rev', 'red')
             self._print(message)

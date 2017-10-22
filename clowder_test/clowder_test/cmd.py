@@ -33,6 +33,8 @@ class Command(object):
         command_description = 'Clowder test runner'
         parser = argparse.ArgumentParser(description=command_description,
                                          formatter_class=argparse.RawDescriptionHelpFormatter)
+        parser.add_argument('--parallel', '-p', action='store_true',
+                            help='run tests with parallel commands')
         parser.add_argument('--write', '-w', action='store_true',
                             help='run tests requiring test repo write access')
         self._subparsers = parser.add_subparsers(dest='test_command', metavar='SUBCOMMAND')
@@ -83,7 +85,10 @@ class Command(object):
             test_env["ACCESS_LEVEL"] = 'write'
         else:
             test_env["ACCESS_LEVEL"] = 'read'
-        return_code = execute_command('./test_example_cats.sh', path, shell=True, env=test_env)
+        args = ''
+        if self.args.parallel:
+            args = 'parallel'
+        return_code = execute_command(['./test_example_cats.sh', args], path, shell=True, env=test_env)
         self._exit(return_code)
 
     def cats_branch(self, path):
@@ -103,7 +108,10 @@ class Command(object):
 
     def cats_forall(self, path):
         """clowder cats forall tests"""
-        return_code = execute_command('./forall.sh', path, shell=True)
+        args = ''
+        if self.args.parallel:
+            args = 'parallel'
+        return_code = execute_command(['./forall.sh', args], path, shell=True)
         self._exit(return_code)
 
     def cats_help(self, path):
@@ -113,12 +121,18 @@ class Command(object):
 
     def cats_herd_branch(self, path):
         """clowder cats herd branch tests"""
-        return_code = execute_command('./herd_branch.sh', path, shell=True)
+        args = ''
+        if self.args.parallel:
+            args = 'parallel'
+        return_code = execute_command(['./herd_branch.sh', args], path, shell=True)
         self._exit(return_code)
 
     def cats_herd_tag(self, path):
         """clowder cats herd tag tests"""
-        return_code = execute_command('./herd_tag.sh', path, shell=True)
+        args = ''
+        if self.args.parallel:
+            args = 'parallel'
+        return_code = execute_command(['./herd_tag.sh', args], path, shell=True)
         self._exit(return_code)
 
     def cats_herd(self, path):
@@ -128,7 +142,10 @@ class Command(object):
             test_env["ACCESS_LEVEL"] = 'write'
         else:
             test_env["ACCESS_LEVEL"] = 'read'
-        return_code = execute_command('./herd.sh', path, shell=True)
+        args = ''
+        if self.args.parallel:
+            args = 'parallel'
+        return_code = execute_command(['./herd.sh', args], path, shell=True)
         self._exit(return_code)
 
     def cats_import(self, path):
@@ -168,7 +185,10 @@ class Command(object):
 
     def cats_reset(self, path):
         """clowder cats reset tests"""
-        return_code = execute_command('./reset.sh', path, shell=True)
+        args = ''
+        if self.args.parallel:
+            args = 'parallel'
+        return_code = execute_command(['./reset.sh', args], path, shell=True)
         self._exit(return_code)
 
     def cats_save(self, path):
@@ -225,27 +245,42 @@ class Command(object):
             test_env["ACCESS_LEVEL"] = 'write'
         else:
             test_env["ACCESS_LEVEL"] = 'read'
-        return_code = execute_command('./test_example_llvm.sh', path, shell=True, env=test_env)
+        args = ''
+        if self.args.parallel:
+            args = 'parallel'
+        return_code = execute_command(['./test_example_llvm.sh', args], path, shell=True, env=test_env)
         self._exit(return_code)
 
     def llvm_branch(self, path):
         """clowder llvm branch tests"""
-        return_code = execute_command('./branch.sh', path, shell=True)
+        args = ''
+        if self.args.parallel:
+            args = 'parallel'
+        return_code = execute_command(['./branch.sh', args], path, shell=True)
         self._exit(return_code)
 
     def llvm_forks(self, path):
         """clowder llvm forks tests"""
-        return_code = execute_command('./forks.sh', path, shell=True)
+        args = ''
+        if self.args.parallel:
+            args = 'parallel'
+        return_code = execute_command(['./forks.sh', args], path, shell=True)
         self._exit(return_code)
 
     def llvm_herd(self, path):
         """clowder llvm herd tests"""
-        return_code = execute_command('./herd.sh', path, shell=True)
+        args = ''
+        if self.args.parallel:
+            args = 'parallel'
+        return_code = execute_command(['./herd.sh', args], path, shell=True)
         self._exit(return_code)
 
     def llvm_reset(self, path):
         """clowder llvm reset tests"""
-        return_code = execute_command('./reset.sh', path, shell=True)
+        args = ''
+        if self.args.parallel:
+            args = 'parallel'
+        return_code = execute_command(['./reset.sh', args], path, shell=True)
         self._exit(return_code)
 
     def llvm_sync(self, path):
@@ -283,7 +318,10 @@ class Command(object):
             test_env["ACCESS_LEVEL"] = 'write'
         else:
             test_env["ACCESS_LEVEL"] = 'read'
-        return_code = execute_command('./test_example_swift.sh', path, shell=True, env=test_env)
+        args = ''
+        if self.args.parallel:
+            args = 'parallel'
+        return_code = execute_command(['./test_example_swift.sh', args], path, shell=True, env=test_env)
         self._exit(return_code)
 
     def swift_config_versions(self, path):
@@ -298,7 +336,10 @@ class Command(object):
 
     def swift_reset(self, path):
         """clowder swift reset tests"""
-        return_code = execute_command('./reset.sh', path, shell=True)
+        args = ''
+        if self.args.parallel:
+            args = 'parallel'
+        return_code = execute_command(['./reset.sh', args], path, shell=True)
         self._exit(return_code)
 
     def unittests(self, path):
@@ -314,9 +355,12 @@ class Command(object):
     def write(self, path):
         """clowder write tests"""
         test_env = {"ACCESS_LEVEL": 'write'}
+        args = ''
+        if self.args.parallel:
+            args = 'parallel'
 
         example_dir = os.path.join(path, 'cats')
-        return_code = execute_command('./write_herd.sh', example_dir, shell=True, env=test_env)
+        return_code = execute_command(['./write_herd.sh', args], example_dir, shell=True, env=test_env)
         self._exit(return_code)
         return_code = execute_command('./write_prune.sh', example_dir, shell=True, env=test_env)
         self._exit(return_code)
@@ -326,9 +370,9 @@ class Command(object):
         self._exit(return_code)
 
         example_dir = os.path.join(path, 'llvm')
-        return_code = execute_command('./write_forks.sh', example_dir, shell=True, env=test_env)
+        return_code = execute_command(['./write_forks.sh', args], example_dir, shell=True, env=test_env)
         self._exit(return_code)
-        return_code = execute_command('./write_sync.sh', example_dir, shell=True, env=test_env)
+        return_code = execute_command(['./write_sync.sh', args], example_dir, shell=True, env=test_env)
         self._exit(return_code)
 
         example_dir = os.path.join(path, 'swift')
