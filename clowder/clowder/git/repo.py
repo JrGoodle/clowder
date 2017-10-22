@@ -14,7 +14,6 @@ from clowder.error.clowder_git_error import ClowderGitError
 from clowder.util.execute import execute_command
 from clowder.util.file_system import remove_directory
 
-
 DEFAULT_REF = 'refs/heads/master'
 DEFAULT_REMOTE = 'origin'
 
