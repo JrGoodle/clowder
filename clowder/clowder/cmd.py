@@ -90,15 +90,18 @@ class Command(object):
         if self.args.all:
             self.clowder.branch(group_names=self.args.groups,
                                 project_names=self.args.projects,
+                                skip=self.args.skip,
                                 local=True,
                                 remote=True)
         elif self.args.remote:
             self.clowder.branch(group_names=self.args.groups,
                                 project_names=self.args.projects,
+                                skip=self.args.skip,
                                 remote=True)
         else:
             self.clowder.branch(group_names=self.args.groups,
                                 project_names=self.args.projects,
+                                skip=self.args.skip,
                                 local=True)
 
     def clean(self):
@@ -111,7 +114,8 @@ class Command(object):
             sys.exit(1)
         if self.args.all:
             self.clowder.clean_all(group_names=self.args.groups,
-                                   project_names=self.args.projects)
+                                   project_names=self.args.projects,
+                                   skip=self.args.skip)
             return
         clean_args = ''
         if self.args.d:
@@ -124,6 +128,7 @@ class Command(object):
             clean_args += 'x'
         self.clowder.clean(group_names=self.args.groups,
                            project_names=self.args.projects,
+                           skip=self.args.skip,
                            args=clean_args,
                            recursive=self.args.recursive)
 
@@ -150,6 +155,7 @@ class Command(object):
                             self.args.ignore_errors,
                             group_names=self.args.groups,
                             project_names=self.args.projects,
+                            skip=self.args.skip,
                             parallel=self.args.parallel)
 
     def herd(self):
@@ -179,7 +185,7 @@ class Command(object):
         else:
             depth = self.args.depth[0]
 
-        args = {'group_names': self.args.groups, 'project_names': self.args.projects,
+        args = {'group_names': self.args.groups, 'project_names': self.args.projects, 'skip': self.args.skip,
                 'branch': branch, 'tag': tag, 'depth': depth, 'rebase': self.args.rebase}
         if self.args.parallel:
             self.clowder.herd_parallel(**args)
@@ -313,6 +319,7 @@ class Command(object):
             timestamp_project = self.args.timestamp[0]
         self.clowder.reset(group_names=self.args.groups,
                            project_names=self.args.projects,
+                           skip=self.args.skip,
                            timestamp_project=timestamp_project,
                            parallel=self.args.parallel)
 
@@ -340,10 +347,12 @@ class Command(object):
         if self.args.projects is None:
             self.clowder.start_groups(self.args.groups,
                                       self.args.branch,
+                                      self.args.skip,
                                       self.args.tracking)
         else:
             self.clowder.start_projects(self.args.projects,
                                         self.args.branch,
+                                        self.args.skip,
                                         self.args.tracking)
 
     def stash(self):
@@ -355,7 +364,8 @@ class Command(object):
         if self.clowder is None:
             sys.exit(1)
         self.clowder.stash(group_names=self.args.groups,
-                           project_names=self.args.projects)
+                           project_names=self.args.projects,
+                           skip=self.args.skip)
 
     def status(self):
         """clowder status command"""
@@ -419,6 +429,7 @@ class Command(object):
                 sys.exit(1)
             self.clowder.prune_groups(self.args.groups,
                                       self.args.branch,
+                                      skip=self.args.skip,
                                       force=self.args.force,
                                       local=True,
                                       remote=True)
@@ -428,10 +439,12 @@ class Command(object):
                 sys.exit(1)
             self.clowder.prune_groups(self.args.groups,
                                       self.args.branch,
+                                      skip=self.args.skip,
                                       remote=True)
         else:
             self.clowder.prune_groups(self.args.groups,
                                       self.args.branch,
+                                      skip=self.args.skip,
                                       force=self.args.force,
                                       local=True)
 
@@ -443,6 +456,7 @@ class Command(object):
                 sys.exit(1)
             self.clowder.prune_projects(self.args.projects,
                                         self.args.branch,
+                                        skip=self.args.skip,
                                         force=self.args.force,
                                         local=True,
                                         remote=True)
@@ -452,10 +466,12 @@ class Command(object):
                 sys.exit(1)
             self.clowder.prune_projects(self.args.projects,
                                         self.args.branch,
+                                        skip=self.args.skip,
                                         remote=True)
         else:
             self.clowder.prune_projects(self.args.projects,
                                         self.args.branch,
+                                        skip=self.args.skip,
                                         force=self.args.force,
                                         local=True)
 
