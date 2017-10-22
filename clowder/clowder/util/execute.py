@@ -18,8 +18,12 @@ def subprocess_exit_handler(process):
 
 def execute_subprocess_command(command, path, shell=True, env=None, stdout=None, stderr=None):
     """Run subprocess command"""
+    if isinstance(command, list):
+        cmd = ' '.join(command)
+    else:
+        cmd = command
     try:
-        process = subprocess.Popen(' '.join(command), shell=shell, env=env, cwd=path,
+        process = subprocess.Popen(cmd, shell=shell, env=env, cwd=path,
                                    stdout=stdout, stderr=stderr)
         atexit.register(subprocess_exit_handler, process)
         process.communicate()

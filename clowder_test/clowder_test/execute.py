@@ -1,52 +1,72 @@
-"""Command execution"""
+"""Subprocess execution"""
+
+from __future__ import print_function
 
 import atexit
 import os
-import signal
 import subprocess
+from multiprocessing.pool import ThreadPool
 
-import psutil
+from termcolor import cprint
 
 
-def execute_command(command, path, shell=True, env=None):
-    """Run subprocess command"""
-    cmd_env = os.environ.copy()
-    process = None
-    if env:
-        cmd_env.update(env)
+def subprocess_exit_handler(process):
+    """terminate subprocess"""
     try:
-        process = subprocess.Popen(' '.join(command), shell=shell, env=cmd_env, cwd=path)
-        atexit.register(subprocess_exit_handler)
+        process.terminate()
+    except:
+        pass
+
+
+def execute_subprocess_command(command, path, shell=True, env=None, stdout=None, stderr=None):
+    if isinstance(command, list):
+        cmd = ' '.join(command)
+    else:
+        cmd = command
+    try:
+        process = subprocess.Popen(cmd, shell=shell, env=env, cwd=path,
+                                   stdout=stdout, stderr=stderr)
+        atexit.register(subprocess_exit_handler, process)
         process.communicate()
     except (KeyboardInterrupt, SystemExit):
-        return 1
+        raise
     except Exception as err:
-        print(err)
-        return 1
+        raise
     else:
         return process.returncode
 
 
-PARENT_ID = os.getpid()
-
-
-def subprocess_exit_handler():
-    """
-    Process pool terminator
-    Adapted from https://stackoverflow.com/a/45259908
-    """
-    def sig_int(signal_num, frame):
-        """Signal handler"""
-        del signal_num, frame
-        # print('signal: %s' % signal_num)
-        parent = psutil.Process(PARENT_ID)
-        for child in parent.children(recursive=True):
-            if child.pid != os.getpid():
-                # print("killing child: %s" % child.pid)
-                child.terminate()
-        # print("killing parent: %s" % parent_id)
-        parent.terminate()
-        # print("suicide: %s" % os.getpid())
-        psutil.Process(os.getpid()).terminate()
-        print('\n\n')
-    signal.signal(signal.SIGINT, sig_int)
+def execute_command(command, path, shell=True, env=None, print_output=True):
+    """Run subprocess command"""
+    cmd_env = os.environ.copy()
+    if env:
+        cmd_env.update(env)
+    if print_output:
+        pipe = None
+    else:
+        pipe = subprocess.PIPE
+    pool = ThreadPool()
+    try:
+        result = pool.apply(execute_subprocess_command,
+                            args=(command, path),
+                            kwds={'shell': shell, 'env': cmd_env, 'stdout': pipe, 'stderr': pipe})
+        pool.close()
+        pool.join()
+        return result
+    except (KeyboardInterrupt, SystemExit):
+        if pool:
+            pool.close()
+            pool.terminate()
+        print()
+        cprint(' - Command failed', 'red')
+        print()
+        return 1
+    except Exception as err:
+        if pool:
+            pool.close()
+            pool.terminate()
+        print()
+        cprint(' - Command failed', 'red')
+        print(err)
+        print()
+        return 1

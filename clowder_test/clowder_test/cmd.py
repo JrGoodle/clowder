@@ -3,49 +3,17 @@
 from __future__ import print_function
 
 import argparse
-import multiprocessing as mp
 import os
-import signal
 import sys
-
 import argcomplete
-import psutil
-from termcolor import cprint
 
 from clowder_test.execute import execute_command
+
 
 # Disable errors shown by pylint for too many public methods
 # pylint: disable=R0904
 # Disable errors shown by pylint for no specified exception types
 # pylint: disable=W0702
-
-
-PARENT_ID = os.getpid()
-
-
-def worker_init():
-    """
-    Process pool terminator
-    Adapted from https://stackoverflow.com/a/45259908
-    """
-    def sig_int(signal_num, frame):
-        """Signal handler"""
-        del signal_num, frame
-        # print('signal: %s' % signal_num)
-        parent = psutil.Process(PARENT_ID)
-        for child in parent.children(recursive=True):
-            if child.pid != os.getpid():
-                # print("killing child: %s" % child.pid)
-                child.terminate()
-        # print("killing parent: %s" % parent_id)
-        parent.terminate()
-        # print("suicide: %s" % os.getpid())
-        psutil.Process(os.getpid()).terminate()
-        print('\n\n')
-    signal.signal(signal.SIGINT, sig_int)
-
-
-POOL = mp.Pool(initializer=worker_init)
 
 
 def main():
@@ -63,7 +31,6 @@ class Command(object):
     def __init__(self):
         # clowder argparse setup
         command_description = 'Clowder test runner'
-        self._scripts_dir = os.path.join(os.getcwd(), 'test', 'scripts')
         parser = argparse.ArgumentParser(description=command_description,
                                          formatter_class=argparse.RawDescriptionHelpFormatter)
         parser.add_argument('--write', '-w', action='store_true',
@@ -83,282 +50,220 @@ class Command(object):
         if self.args.test_command is None or not hasattr(self, self.args.test_command):
             exit_unrecognized_command(parser)
         # use dispatch pattern to invoke method with same name
-        getattr(self, self.args.test_command)()
+        scripts_dir = os.path.join(os.getcwd(), 'test', 'scripts')
+        getattr(self, self.args.test_command)(scripts_dir)
         print()
 
-    def all(self):
+    def all(self, path):
         """clowder branch command"""
-        self.cats()
-        self.cocos2d()
-        self.llvm()
-        self.offline()
-        self.parallel()
-        self.swift()
-        self.unittests()
+        self.cats(path)
+        self.cocos2d(path)
+        self.llvm(path)
+        self.offline(path)
+        self.parallel(path)
+        self.swift(path)
+        self.unittests(path)
 
-    def cats(self):
+    def cats(self, path):
         """clowder cats tests entrypoint"""
         cats_command = 'cats_' + self.args.cats_command
-        getattr(self, cats_command)()
+        path = os.path.join(path, 'cats')
+        getattr(self, cats_command)(path)
 
-    def cats_all(self):
+    def cats_all(self, path):
         """clowder cats tests"""
         test_env = {}
         if self.args.write:
             test_env["ACCESS_LEVEL"] = 'write'
         else:
             test_env["ACCESS_LEVEL"] = 'read'
-        result = POOL.apply_async(execute_command, args=(['./test_example_cats.sh'], self._scripts_dir),
-                                  kwds={'shell': True, 'env': test_env})
-        pool_handler(result)
-        POOL.close()
-        POOL.join()
+        return_code = execute_command('./test_example_cats.sh', path, shell=True, env=test_env)
+        sys.exit(return_code)
 
-    def cats_branch(self):
+    @classmethod
+    def cats_branch(cls, path):
         """clowder cats branch tests"""
-        path = os.path.join(self._scripts_dir, 'cats')
-        result = POOL.apply_async(execute_command, args=(['./branch.sh'], path), kwds={'shell': True})
-        pool_handler(result)
-        POOL.close()
-        POOL.join()
+        return_code = execute_command('./branch.sh', path, shell=True)
+        sys.exit(return_code)
 
-    def cats_clean(self):
+    @classmethod
+    def cats_clean(cls, path):
         """clowder cats clean tests"""
-        path = os.path.join(self._scripts_dir, 'cats')
-        result = POOL.apply_async(execute_command, args=(['./clean.sh'], path), kwds={'shell': True})
-        pool_handler(result)
-        POOL.close()
-        POOL.join()
+        return_code = execute_command('./clean.sh', path, shell=True)
+        sys.exit(return_code)
 
-    def cats_diff(self):
+    @classmethod
+    def cats_diff(cls, path):
         """clowder cats diff tests"""
-        path = os.path.join(self._scripts_dir, 'cats')
-        result = POOL.apply_async(execute_command, args=(['./diff.sh'], path), kwds={'shell': True})
-        pool_handler(result)
-        POOL.close()
-        POOL.join()
+        return_code = execute_command('./diff.sh', path, shell=True)
+        sys.exit(return_code)
 
-    def cats_forall(self):
+    @classmethod
+    def cats_forall(cls, path):
         """clowder cats forall tests"""
-        path = os.path.join(self._scripts_dir, 'cats')
-        result = POOL.apply_async(execute_command, args=(['./forall.sh'], path), kwds={'shell': True})
-        pool_handler(result)
-        POOL.close()
-        POOL.join()
+        return_code = execute_command('./forall.sh', path, shell=True)
+        sys.exit(return_code)
 
-    def cats_help(self):
+    @classmethod
+    def cats_help(cls, path):
         """clowder cats help tests"""
-        path = os.path.join(self._scripts_dir, 'cats')
-        result = POOL.apply_async(execute_command, args=(['./help.sh'], path), kwds={'shell': True})
-        pool_handler(result)
-        POOL.close()
-        POOL.join()
+        return_code = execute_command('./help.sh', path, shell=True)
+        sys.exit(return_code)
 
-    def cats_herd_branch(self):
+    @classmethod
+    def cats_herd_branch(cls, path):
         """clowder cats herd branch tests"""
-        path = os.path.join(self._scripts_dir, 'cats')
-        result = POOL.apply_async(execute_command, args=(['./herd_branch.sh'], path), kwds={'shell': True})
-        pool_handler(result)
-        POOL.close()
-        POOL.join()
+        return_code = execute_command('./herd_branch.sh', path, shell=True)
+        sys.exit(return_code)
 
-    def cats_herd_tag(self):
+    @classmethod
+    def cats_herd_tag(cls, path):
         """clowder cats herd tag tests"""
-        path = os.path.join(self._scripts_dir, 'cats')
-        result = POOL.apply_async(execute_command, args=(['./herd_tag.sh'], path), kwds={'shell': True})
-        pool_handler(result)
-        POOL.close()
-        POOL.join()
+        return_code = execute_command('./herd_tag.sh', path, shell=True)
+        sys.exit(return_code)
 
-    def cats_herd(self):
+    def cats_herd(self, path):
         """clowder cats herd tests"""
         test_env = {}
         if self.args.write:
             test_env["ACCESS_LEVEL"] = 'write'
         else:
             test_env["ACCESS_LEVEL"] = 'read'
-        path = os.path.join(self._scripts_dir, 'cats')
-        result = POOL.apply_async(execute_command, args=(['./herd.sh'], path), kwds={'shell': True})
-        pool_handler(result)
-        POOL.close()
-        POOL.join()
+        return_code = execute_command('./herd.sh', path, shell=True)
+        sys.exit(return_code)
 
-    def cats_import(self):
+    @classmethod
+    def cats_import(cls, path):
         """clowder cats import tests"""
-        path = os.path.join(self._scripts_dir, 'cats')
-        result = POOL.apply_async(execute_command, args=(['./import.sh'], path), kwds={'shell': True})
-        pool_handler(result)
-        POOL.close()
-        POOL.join()
+        return_code = execute_command('./import.sh', path, shell=True)
+        sys.exit(return_code)
 
-    def cats_init(self):
+    @classmethod
+    def cats_init(cls, path):
         """clowder cats init tests"""
-        path = os.path.join(self._scripts_dir, 'cats')
-        result = POOL.apply_async(execute_command, args=(['./init.sh'], path), kwds={'shell': True})
-        pool_handler(result)
-        POOL.close()
-        POOL.join()
+        return_code = execute_command('./init.sh', path, shell=True)
+        sys.exit(return_code)
 
-    def cats_link(self):
+    @classmethod
+    def cats_link(cls, path):
         """clowder cats link tests"""
-        path = os.path.join(self._scripts_dir, 'cats')
-        result = POOL.apply_async(execute_command, args=(['./link.sh'], path), kwds={'shell': True})
-        pool_handler(result)
-        POOL.close()
-        POOL.join()
+        return_code = execute_command('./link.sh', path, shell=True)
+        sys.exit(return_code)
 
-    def cats_prune(self):
+    def cats_prune(self, path):
         """clowder cats prune tests"""
         test_env = {}
         if self.args.write:
             test_env["ACCESS_LEVEL"] = 'write'
         else:
             test_env["ACCESS_LEVEL"] = 'read'
-        path = os.path.join(self._scripts_dir, 'cats')
-        result = POOL.apply_async(execute_command, args=(['./prune.sh'], path), kwds={'shell': True})
-        pool_handler(result)
-        POOL.close()
-        POOL.join()
+        return_code = execute_command('./prune.sh', path, shell=True)
+        sys.exit(return_code)
 
-    def cats_repo(self):
+    def cats_repo(self, path):
         """clowder cats repo tests"""
         test_env = {}
         if self.args.write:
             test_env["ACCESS_LEVEL"] = 'write'
         else:
             test_env["ACCESS_LEVEL"] = 'read'
-        path = os.path.join(self._scripts_dir, 'cats')
-        result = POOL.apply_async(execute_command, args=(['./repo.sh'], path), kwds={'shell': True})
-        pool_handler(result)
-        POOL.close()
-        POOL.join()
+        return_code = execute_command('./repo.sh', path, shell=True)
+        sys.exit(return_code)
 
-    def cats_reset(self):
+    @classmethod
+    def cats_reset(cls, path):
         """clowder cats reset tests"""
-        path = os.path.join(self._scripts_dir, 'cats')
-        result = POOL.apply_async(execute_command, args=(['./reset.sh'], path), kwds={'shell': True})
-        pool_handler(result)
-        POOL.close()
-        POOL.join()
+        return_code = execute_command('./reset.sh', path, shell=True)
+        sys.exit(return_code)
 
-    def cats_save(self):
+    @classmethod
+    def cats_save(cls, path):
         """clowder cats save tests"""
-        path = os.path.join(self._scripts_dir, 'cats')
-        result = POOL.apply_async(execute_command, args=(['./save.sh'], path), kwds={'shell': True})
-        pool_handler(result)
-        POOL.close()
-        POOL.join()
+        return_code = execute_command('./save.sh', path, shell=True)
+        sys.exit(return_code)
 
-    def cats_start(self):
+    def cats_start(self, path):
         """clowder cats start tests"""
         test_env = {}
         if self.args.write:
             test_env["ACCESS_LEVEL"] = 'write'
         else:
             test_env["ACCESS_LEVEL"] = 'read'
-        path = os.path.join(self._scripts_dir, 'cats')
-        result = POOL.apply_async(execute_command, args=(['./start.sh'], path), kwds={'shell': True})
-        pool_handler(result)
-        POOL.close()
-        POOL.join()
-
-    def cats_stash(self):
-        """clowder cats stash tests"""
-        path = os.path.join(self._scripts_dir, 'cats')
-        return_code = execute_command(['./stash.sh'], path, shell=True)
+        return_code = execute_command('./start.sh', path, shell=True)
         sys.exit(return_code)
 
-    def cats_status(self):
+    @classmethod
+    def cats_stash(cls, path):
+        """clowder cats stash tests"""
+        return_code = execute_command('./stash.sh', path, shell=True)
+        sys.exit(return_code)
+
+    @classmethod
+    def cats_status(cls, path):
         """clowder cats status tests"""
-        path = os.path.join(self._scripts_dir, 'cats')
-        result = POOL.apply_async(execute_command, args=(['./status.sh'], path), kwds={'shell': True})
-        pool_handler(result)
-        POOL.close()
-        POOL.join()
+        return_code = execute_command('./status.sh', path, shell=True)
+        sys.exit(return_code)
 
-    def cats_yaml_validation(self):
+    @classmethod
+    def cats_yaml_validation(cls, path):
         """clowder cats yaml validation tests"""
-        path = os.path.join(self._scripts_dir, 'cats')
-        result = POOL.apply_async(execute_command, args=(['./yaml_validation.sh'], path), kwds={'shell': True})
-        pool_handler(result)
-        POOL.close()
-        POOL.join()
+        return_code = execute_command('./yaml_validation.sh', path, shell=True)
+        sys.exit(return_code)
 
-    def cats_yaml(self):
+    @classmethod
+    def cats_yaml(cls, path):
         """clowder cats yaml tests"""
-        path = os.path.join(self._scripts_dir, 'cats')
-        result = POOL.apply_async(execute_command, args=(['./yaml.sh'], path), kwds={'shell': True})
-        pool_handler(result)
-        POOL.close()
-        POOL.join()
+        return_code = execute_command('./yaml.sh', path, shell=True)
+        sys.exit(return_code)
 
-    def cocos2d(self):
+    @classmethod
+    def cocos2d(cls, path):
         """clowder cocos2d tests"""
-        result = POOL.apply_async(execute_command,
-                                  args=(['./test_example_cocos2d.sh'], self._scripts_dir),
-                                  kwds={'shell': True})
-        pool_handler(result)
-        POOL.close()
-        POOL.join()
+        return_code = execute_command('./test_example_cocos2d.sh', path, shell=True)
+        sys.exit(return_code)
 
-    def llvm(self):
+    def llvm(self, path):
         """clowder llvm tests"""
         test_env = {}
         if self.args.write:
             test_env["ACCESS_LEVEL"] = 'write'
         else:
             test_env["ACCESS_LEVEL"] = 'read'
-        result = POOL.apply_async(execute_command,
-                                  args=(['./test_example_llvm.sh'], self._scripts_dir),
-                                  kwds={'shell': True, 'env': test_env})
-        pool_handler(result)
-        POOL.close()
-        POOL.join()
+        return_code = execute_command('./test_example_llvm.sh', path, shell=True)
+        sys.exit(return_code)
 
-    def offline(self):
+    @classmethod
+    def offline(cls, path):
         """clowder offline tests"""
-        path = os.path.join(self._scripts_dir, 'cats')
-        result = POOL.apply_async(execute_command, args=(['./offline.sh'], path), kwds={'shell': True})
-        pool_handler(result)
-        POOL.close()
-        POOL.join()
+        path = os.path.join(path, 'cats')
+        return_code = execute_command('./offline.sh', path, shell=True)
+        sys.exit(return_code)
 
-    def parallel(self):
+    @classmethod
+    def parallel(cls, path):
         """clowder parallel tests"""
-        result = POOL.apply_async(execute_command,
-                                  args=(['./test_parallel.sh'], self._scripts_dir),
-                                  kwds={'shell': True})
-        pool_handler(result)
-        POOL.close()
-        POOL.join()
+        return_code = execute_command('./test_parallel.sh', path, shell=True)
+        sys.exit(return_code)
 
-    def swift(self):
+    def swift(self, path):
         """clowder swift tests"""
         test_env = {}
         if self.args.write:
             test_env["ACCESS_LEVEL"] = 'write'
         else:
             test_env["ACCESS_LEVEL"] = 'read'
-        result = POOL.apply_async(execute_command,
-                                  args=(['./test_example_swift.sh'], self._scripts_dir),
-                                  kwds={'shell': True, 'env': test_env})
-        pool_handler(result)
-        POOL.close()
-        POOL.join()
+        return_code = execute_command('./test_example_swift.sh', path, shell=True, env=test_env)
+        sys.exit(return_code)
 
-    def unittests(self):
+    def unittests(self, path):
         """clowder unit tests"""
         test_env = {}
         if self.args.version == 'python2':
             test_env["PYTHON_VERSION"] = 'python'
         else:
             test_env["PYTHON_VERSION"] = 'python3'
-        result = POOL.apply_async(execute_command,
-                                  args=(['./unittests.sh'], self._scripts_dir),
-                                  kwds={'shell': True, 'env': test_env})
-        pool_handler(result)
-        POOL.close()
-        POOL.join()
+        return_code = execute_command('./unittests.sh', path, shell=True, env=test_env)
+        sys.exit(return_code)
 
     def _configure_all_subparser(self):
         """clowder all tests subparser"""
@@ -419,25 +324,6 @@ class Command(object):
                                         help='Python vesion to run unit tests for',
                                         metavar='PYTHON_VERSION')
 
-
-def pool_handler(result):
-    """Pool handler for finishing jobs"""
-    try:
-        result.get()
-        if not result.successful():
-            print()
-            cprint(' - Test failed', 'red')
-            print()
-            POOL.close()
-            POOL.join()
-            sys.exit(1)
-    except Exception as err:
-        print()
-        cprint(err, 'red')
-        print()
-        POOL.close()
-        POOL.join()
-        sys.exit(1)
 
 def exit_unrecognized_command(parser):
     """Print unrecognized command message and exit"""
