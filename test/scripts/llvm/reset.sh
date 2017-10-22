@@ -68,60 +68,60 @@ echo "TEST: Test clowder reset"
 ./init.sh || exit 1
 
 test_reset() {
-   print_single_separator
-   echo "TEST: clowder reset"
-   clowder link || exit 1
-   clowder herd $PARALLEL || exit 1
+    print_single_separator
+    echo "TEST: clowder reset"
+    clowder link || exit 1
+    clowder herd $PARALLEL || exit 1
 
-   COMMIT_MESSAGE='Add new commits'
-   pushd 'llvm/tools/clang' || exit 1
-   git pull upstream master || exit 1
-   test_number_commits 'HEAD' 'upstream/master' '0'
-   UPSTREAM_COMMIT=$(git rev-parse HEAD)
-   git reset --hard HEAD~3 || exit 1
-   test_number_commits 'HEAD' 'upstream/master' '3'
-   test_not_commit "$UPSTREAM_COMMIT"
-   popd || exit 1
+    COMMIT_MESSAGE='Add new commits'
+    pushd 'llvm/tools/clang' || exit 1
+    git pull upstream master || exit 1
+    test_number_commits 'HEAD' 'upstream/master' '0'
+    UPSTREAM_COMMIT=$(git rev-parse HEAD)
+    git reset --hard HEAD~3 || exit 1
+    test_number_commits 'HEAD' 'upstream/master' '3'
+    test_not_commit "$UPSTREAM_COMMIT"
+    popd || exit 1
 
-   clowder reset $PARALLEL || exit 1
+    clowder reset $PARALLEL || exit 1
 
-   pushd 'llvm/tools/clang' || exit 1
-   test_number_commits 'HEAD' 'upstream/master' '0'
-   test_commit  $UPSTREAM_COMMIT
-   touch file1 || exit 1
-   git add file1 || exit 1
-   git commit -m "$COMMIT_MESSAGE" || exit 1
-   touch file2 || exit 1
-   git add file2 || exit 1
-   git commit -m "$COMMIT_MESSAGE" || exit 1
-   test_number_commits 'upstream/master' 'HEAD' '2'
-   test_not_commit "$UPSTREAM_COMMIT"
-   popd || exit 1
+    pushd 'llvm/tools/clang' || exit 1
+    test_number_commits 'HEAD' 'upstream/master' '0'
+    test_commit  $UPSTREAM_COMMIT
+    touch file1 || exit 1
+    git add file1 || exit 1
+    git commit -m "$COMMIT_MESSAGE" || exit 1
+    touch file2 || exit 1
+    git add file2 || exit 1
+    git commit -m "$COMMIT_MESSAGE" || exit 1
+    test_number_commits 'upstream/master' 'HEAD' '2'
+    test_not_commit "$UPSTREAM_COMMIT"
+    popd || exit 1
 
-   clowder reset $PARALLEL || exit 1
+    clowder reset $PARALLEL || exit 1
 
-   pushd 'llvm/tools/clang' || exit 1
-   test_number_commits 'HEAD' 'upstream/master' '0'
-   test_commit  $UPSTREAM_COMMIT
-   git reset --hard HEAD~3 || exit 1
-   test_number_commits 'HEAD' 'upstream/master' '3'
-   touch file1 || exit 1
-   git add file1 || exit 1
-   git commit -m "$COMMIT_MESSAGE" || exit 1
-   touch file2 || exit 1
-   git add file2 || exit 1
-   git commit -m "$COMMIT_MESSAGE" || exit 1
-   test_number_commits 'upstream/master' 'HEAD' '2'
-   test_number_commits 'HEAD' 'upstream/master' '3'
-   test_not_commit "$UPSTREAM_COMMIT"
-   popd || exit 1
+    pushd 'llvm/tools/clang' || exit 1
+    test_number_commits 'HEAD' 'upstream/master' '0'
+    test_commit  $UPSTREAM_COMMIT
+    git reset --hard HEAD~3 || exit 1
+    test_number_commits 'HEAD' 'upstream/master' '3'
+    touch file1 || exit 1
+    git add file1 || exit 1
+    git commit -m "$COMMIT_MESSAGE" || exit 1
+    touch file2 || exit 1
+    git add file2 || exit 1
+    git commit -m "$COMMIT_MESSAGE" || exit 1
+    test_number_commits 'upstream/master' 'HEAD' '2'
+    test_number_commits 'HEAD' 'upstream/master' '3'
+    test_not_commit "$UPSTREAM_COMMIT"
+    popd || exit 1
 
-   clowder reset  $PARALLEL || exit 1
+    clowder reset  $PARALLEL || exit 1
 
-   pushd 'llvm/tools/clang' || exit 1
-   test_number_commits 'HEAD' 'upstream/master' '0'
-   test_number_commits 'upstream/master' 'HEAD' '0'
-   test_commit  $UPSTREAM_COMMIT
-   popd || exit 1
+    pushd 'llvm/tools/clang' || exit 1
+    test_number_commits 'HEAD' 'upstream/master' '0'
+    test_number_commits 'upstream/master' 'HEAD' '0'
+    test_commit  $UPSTREAM_COMMIT
+    popd || exit 1
 }
 test_reset

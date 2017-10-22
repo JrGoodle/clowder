@@ -241,9 +241,27 @@ class Command(object):
         sys.exit(return_code)
 
     @classmethod
+    def llvm_branch(cls, path):
+        """clowder llvm branch tests"""
+        return_code = execute_command('./branch.sh', path, shell=True)
+        sys.exit(return_code)
+
+    @classmethod
+    def llvm_forks(cls, path):
+        """clowder llvm forks tests"""
+        return_code = execute_command('./forks.sh', path, shell=True)
+        sys.exit(return_code)
+
+    @classmethod
     def llvm_reset(cls, path):
         """clowder llvm reset tests"""
         return_code = execute_command('./reset.sh', path, shell=True)
+        sys.exit(return_code)
+
+    @classmethod
+    def llvm_sync(cls, path):
+        """clowder llvm sync tests"""
+        return_code = execute_command('./sync.sh', path, shell=True)
         sys.exit(return_code)
 
     @classmethod
@@ -337,7 +355,10 @@ class Command(object):
         parser = self._subparsers.add_parser('llvm', help='Run llvm tests')
         llvm_subparser = parser.add_subparsers(dest='llvm_command', metavar='SUBCOMMAND')
         llvm_subparser.add_parser('all', help='Run all llvm tests')
+        llvm_subparser.add_parser('branch', help='Run llvm branch tests')
+        llvm_subparser.add_parser('forks', help='Run llvm forks tests')
         llvm_subparser.add_parser('reset', help='Run llvm reset tests')
+        llvm_subparser.add_parser('sync', help='Run llvm sync tests')
 
     def _configure_offline_subparser(self):
         """clowder offline tests subparser"""
