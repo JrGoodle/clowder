@@ -25,23 +25,3 @@ export llvm_project_paths=( 'clang' \
                             'compiler-rt' \
                             'lldb' \
                             'llvm' )
-
-test_default_branches() {
-    echo "TEST: Default branches checked out"
-    for project in "${llvm_project_paths[@]}"; do
-        pushd $project || exit 1
-        test_branch stable
-        popd || exit 1
-    done
-    for project in "${project_paths[@]}"; do
-        pushd $project || exit 1
-        test_branch master
-        popd || exit 1
-    done
-    pushd swift || exit 1
-    test_branch master
-    popd || exit 1
-    pushd ninja || exit 1
-    test_branch release
-    popd || exit 1
-}

@@ -257,6 +257,12 @@ class Command(object):
         sys.exit(return_code)
 
     @classmethod
+    def llvm_herd(cls, path):
+        """clowder llvm herd tests"""
+        return_code = execute_command('./herd.sh', path, shell=True)
+        sys.exit(return_code)
+
+    @classmethod
     def llvm_reset(cls, path):
         """clowder llvm reset tests"""
         return_code = execute_command('./reset.sh', path, shell=True)
@@ -302,6 +308,12 @@ class Command(object):
     def swift_config_versions(cls, path):
         """clowder swift config versions tests"""
         return_code = execute_command('./config_versions.sh', path, shell=True)
+        sys.exit(return_code)
+
+    @classmethod
+    def swift_configure_remotes(cls, path):
+        """clowder swift configure remotes tests"""
+        return_code = execute_command('./configure_remotes.sh', path, shell=True)
         sys.exit(return_code)
 
     @classmethod
@@ -361,6 +373,7 @@ class Command(object):
         llvm_subparser.add_parser('all', help='Run all llvm tests')
         llvm_subparser.add_parser('branch', help='Run llvm branch tests')
         llvm_subparser.add_parser('forks', help='Run llvm forks tests')
+        llvm_subparser.add_parser('herd', help='Run llvm herd tests')
         llvm_subparser.add_parser('reset', help='Run llvm reset tests')
         llvm_subparser.add_parser('sync', help='Run llvm sync tests')
 
@@ -378,6 +391,7 @@ class Command(object):
         swift_subparser = parser.add_subparsers(dest='swift_command', metavar='SUBCOMMAND')
         swift_subparser.add_parser('all', help='Run all swift tests')
         swift_subparser.add_parser('config_versions', help='Run swift config versions tests')
+        swift_subparser.add_parser('configure_remotes', help='Run swift configure remotes tests')
         swift_subparser.add_parser('reset', help='Run swift reset tests')
 
     def _configure_unittest_subparser(self):
