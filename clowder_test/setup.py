@@ -33,5 +33,5 @@ setup(
             'clowder-test=clowder_test.cmd:main',
         ]
     },
-    install_requires=['argcomplete', 'cprint', 'psutil']
+    install_requires=['argcomplete', 'cprint', 'psutil', 'termcolor']
 )
