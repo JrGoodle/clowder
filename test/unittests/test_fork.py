@@ -6,7 +6,7 @@ import unittest
 
 from clowder.model.fork import Fork
 from clowder.model.source import Source
-from test.unittests.shared import GITHUB_SSH_SOURCE_YAML
+from unittests.shared import GITHUB_SSH_SOURCE_YAML
 
 
 class ForkTest(unittest.TestCase):

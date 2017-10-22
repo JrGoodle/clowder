@@ -4,7 +4,7 @@
 
 cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 
-if [ $1 = 'parallel' ]; then
+if [ "$1" = 'parallel' ]; then
     PARALLEL='--parallel'
 fi
 

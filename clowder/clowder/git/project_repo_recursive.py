@@ -2,52 +2,47 @@
 
 from __future__ import print_function
 
-import sys
-
 from git import GitError
-from termcolor import cprint
+from termcolor import colored
 
-import clowder.utility.formatting as fmt
-from clowder.git.repo import GitRepo
-from clowder.utility.execute import execute_command
+import clowder.util.formatting as fmt
+from clowder.git.project_repo import ProjectRepo
+from clowder.git.repo import execute_command
 
 
-class GitSubmodules(GitRepo):
+class ProjectRepoRecursive(ProjectRepo):
     """Class encapsulating git utilities"""
 
-    def __init__(self, repo_path, print_output=True):
-        GitRepo.__init__(self, repo_path, print_output=print_output)
+    def __init__(self, repo_path, remote, default_ref, parallel=False, print_output=True):
+        ProjectRepo.__init__(self, repo_path, remote, default_ref, parallel=parallel, print_output=print_output)
 
     def clean(self, args=None):
         """Discard changes for repo and submodules"""
-        GitRepo.clean(self, args=args)
-        if self.print_output:
-            print(' - Clean submodules recursively')
+        ProjectRepo.clean(self, args=args)
+        self._print(' - Clean submodules recursively')
         self._submodules_clean()
-        if self.print_output:
-            print(' - Reset submodules recursively')
+        self._print(' - Reset submodules recursively')
         self._submodules_reset()
-        if self.print_output:
-            print(' - Update submodules recursively')
+        self._print(' - Update submodules recursively')
         self._submodules_update()
 
     def has_submodules(self):
         """Repo has submodules"""
         return self.repo.submodules.count > 0
 
-    def herd(self, url, remote, ref, depth=0, fetch=True, rebase=False):
+    def herd(self, url, depth=0, fetch=True, rebase=False):
         """Herd ref"""
-        GitRepo.herd(self, url, remote, ref, depth=depth, fetch=fetch, rebase=rebase)
+        ProjectRepo.herd(self, url, depth=depth, fetch=fetch, rebase=rebase)
         self.submodule_update_recursive(depth)
 
-    def herd_branch(self, url, remote, branch, default_ref, depth=0, rebase=False, fork_remote=None):
+    def herd_branch(self, url, branch, depth=0, rebase=False, fork_remote=None):
         """Herd branch"""
-        GitRepo.herd_branch(self, url, remote, branch, default_ref, depth=depth, rebase=rebase, fork_remote=fork_remote)
+        ProjectRepo.herd_branch(self, url, branch, depth=depth, rebase=rebase, fork_remote=fork_remote)
         self.submodule_update_recursive(depth)
 
-    def herd_tag(self, url, remote, tag, default_ref, depth=0, rebase=False):
+    def herd_tag(self, url, tag, depth=0, rebase=False):
         """Herd tag"""
-        GitRepo.herd_tag(self, url, remote, tag, default_ref, depth=depth, rebase=rebase)
+        ProjectRepo.herd_tag(self, url, tag, depth=depth, rebase=rebase)
         self.submodule_update_recursive(depth)
 
     def is_dirty_submodule(self, path):
@@ -63,19 +58,18 @@ class GitSubmodules(GitRepo):
             command = ['git', 'submodule', 'update', '--init', '--recursive', '--depth', depth]
         return_code = execute_command(command, self.repo_path)
         if return_code != 0:
-            if self.print_output:
-                cprint(' - Failed to update submodules', 'red')
-                print(fmt.command_failed_error(command))
-            sys.exit(return_code)
+            message = colored(' - Failed to update submodules\n', 'red') + fmt.command_failed_error(command)
+            self._print(message)
+            self._exit(message)
 
-    def sync(self, upstream_remote, fork_remote, ref, rebase=False):
+    def sync(self, fork_remote, rebase=False):
         """Sync fork with upstream remote"""
-        GitRepo.sync(self, upstream_remote, fork_remote, ref, rebase=rebase)
+        ProjectRepo.sync(self, fork_remote, rebase=rebase)
         self.submodule_update_recursive()
 
     def validate_repo(self):
         """Validate repo state"""
-        if not GitRepo.existing_git_repository(self.repo_path):
+        if not self.existing_git_repository(self.repo_path):
             return True
         if not self.is_dirty():
             return False
@@ -95,13 +89,12 @@ class GitSubmodules(GitRepo):
         try:
             self.repo.git.submodule(*args)
         except (GitError, ValueError) as err:
-            if self.print_output:
-                error_msg = str(kwargs.get('error_msg', ' - submodule command failed'))
-                cprint(error_msg, 'red')
-                print(fmt.error(err))
-            sys.exit(1)
+            message = colored(str(kwargs.get('error_msg', ' - Submodule command failed')), 'red')
+            self._print(message)
+            self._print(fmt.error(err))
+            self._exit(message)
         except (KeyboardInterrupt, SystemExit):
-            sys.exit(1)
+            self._exit('')
 
     def _submodules_reset(self):
         """Reset all submodules"""

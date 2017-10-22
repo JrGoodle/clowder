@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
+CLOWDER_PATH"$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
 
 echo "deploy"
 
@@ -18,39 +18,39 @@ export GITHUB_REPO='clowder'
 
 cd "${TRAVIS_BUILD_DIR}" || exit 1
 
-SETUP_PY="${TRAVIS_BUILD_DIR}/setup.py"
+SETUP_PY="${TRAVIS_BUILD_DIR}/clowder/setup.py"
 VERSION=$(awk "/version='/" "${SETUP_PY}" | sed -n -e "s/^.*version='//p" | tr -d "',")
 echo "VERSION=${VERSION}"
 TAG="${VERSION}"
 
 git fetch --tags
 if git rev-list "${TAG}" >/dev/null; then
-	echo "${TAG} tag exists. No deployment will be done."
+    echo "${TAG} tag exists. No deployment will be done."
 else
     echo "${TAG} tag not found. Deploying..."
 
-	echo 'Create source distribution'
-	echo '--------------------------'
-	sudo python3 setup.py sdist
-	echo ''
+    echo 'Create source distribution'
+    echo '--------------------------'
+    sudo python3 clowder/setup.py sdist
+    echo ''
 
-	echo 'Create wheel'
-	echo '------------'
-	sudo python3 setup.py bdist_wheel
-	echo ''
+    echo 'Create wheel'
+    echo '------------'
+    sudo python3 clowder/setup.py bdist_wheel
+    echo ''
 
-	echo "Creating new tag and GitHub Release"
-	echo '-----------------------------------'
+    echo "Creating new tag and GitHub Release"
+    echo '-----------------------------------'
     # Create new GitHub Release from tag
     github-release release \
         --tag "${TAG}" \
         --name "${TAG}" \
-		--description "Release ${TAG}"
-	echo ''
+        --description "Release ${TAG}"
+    echo ''
 
-	echo "Uploading artifacts to GitHub Releases"
-	echo '--------------------------------------'
-    pushd "${TRAVIS_BUILD_DIR}/dist" || exit 1
+    echo "Uploading artifacts to GitHub Releases"
+    echo '--------------------------------------'
+    pushd "${TRAVIS_BUILD_DIR}/clowder/dist" || exit 1
     artifacts=( "clowder_repo-${VERSION}-py3-none-any.whl" \
                  "clowder-repo-${VERSION}.tar.gz" )
     for artifact in "${artifacts[@]}"; do
@@ -64,7 +64,7 @@ else
     echo ''
 
     echo 'Uploading to PyPI'
-	echo '-----------------'
-	twine upload dist/*
-	echo ''
+    echo '-----------------'
+    twine upload clowder/dist/*
+    echo ''
 fi

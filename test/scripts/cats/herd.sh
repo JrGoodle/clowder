@@ -2,7 +2,7 @@
 
 cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
 
-if [ $1 = 'parallel' ]; then
+if [ "$1" = 'parallel' ]; then
     PARALLEL='--parallel'
 fi
 
@@ -228,11 +228,13 @@ test_herd_no_repo_no_remote() {
         fi
     done
     clowder herd $PARALLEL && exit 1
-    for project in "${all_projects[@]}"; do
-        if [ -d "$project" ]; then
-            exit 1
-        fi
-    done
+    if [ -z "$PARALLEL" ]; then
+        for project in "${all_projects[@]}"; do
+            if [ -d "$project" ]; then
+                exit 1
+            fi
+        done
+    fi
 }
 test_herd_no_repo_no_remote
 

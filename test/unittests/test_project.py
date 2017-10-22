@@ -6,7 +6,7 @@ import unittest
 
 from clowder.model.project import Project
 from clowder.model.source import Source
-from test.unittests.shared import (
+from unittests.shared import (
     DEFAULTS_YAML,
     GITHUB_HTTPS_SOURCE_YAML,
     GITHUB_SSH_SOURCE_YAML,

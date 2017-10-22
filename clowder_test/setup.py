@@ -16,7 +16,7 @@ setup(
     author_email='joe@polka.cat',
     license='MIT',
     classifiers=[
-        'Development Status :: 5 - Production/Stable',
+        'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
         'Topic :: Software Development :: Build Tools',
         'License :: OSI Approved :: MIT License',
@@ -33,5 +33,5 @@ setup(
             'clowder-test=clowder_test.cmd:main',
         ]
     },
-    install_requires=['argcomplete', 'psutil']
+    install_requires=['argcomplete', 'cprint', 'psutil', 'termcolor']
 )

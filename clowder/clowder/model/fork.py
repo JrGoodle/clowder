@@ -6,7 +6,7 @@ import os
 
 from termcolor import cprint
 
-from clowder.git.repo import GitRepo
+from clowder.git.project_repo import ProjectRepo
 
 
 class Fork(object):
@@ -29,9 +29,9 @@ class Fork(object):
 
     def print_status(self):
         """Print formatted fork status"""
-        if not GitRepo.existing_git_repository(self.path):
+        if not ProjectRepo.existing_git_repository(self.path):
             cprint(self.path, 'green')
             return
-        project_output = GitRepo.format_project_string(self.path, self.path)
-        current_ref_output = GitRepo.format_project_ref_string(self.full_path())
+        project_output = ProjectRepo.format_project_string(self.path, self.path)
+        current_ref_output = ProjectRepo.format_project_ref_string(self.full_path())
         print(project_output + ' ' + current_ref_output)

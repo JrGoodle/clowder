@@ -8,8 +8,9 @@ if [ "$1" == 'version' ]; then
     NEW_VERSION=$2
 
     perl -pi -e "s/$OLD_VERSION/$NEW_VERSION/g" README.md || exit 1
-    perl -pi -e "s/$OLD_VERSION/$NEW_VERSION/g" setup.py || exit 1
-    perl -pi -e "s/$OLD_VERSION/$NEW_VERSION/g" clowder/cmd.py || exit 1
+    perl -pi -e "s/$OLD_VERSION/$NEW_VERSION/g" clowder/setup.py || exit 1
+    perl -pi -e "s/$OLD_VERSION/$NEW_VERSION/g" clowder/clowder/cmd.py || exit 1
+    perl -pi -e "s/$OLD_VERSION/$NEW_VERSION/g" docs/issue_template.md || exit 1
     exit
 fi
 
@@ -36,5 +37,5 @@ echo "pip uninstall clowder"
 sudo -H pip2 uninstall clowder-repo
 sudo -H pip3 uninstall clowder-repo
 
-./clean
-./setup $VERSION
+./clean 'clowder' || exit 1
+./setup $VERSION || exit 1
