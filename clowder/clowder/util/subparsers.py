@@ -47,6 +47,9 @@ def _configure_subparser_branch(subparsers, clowder):
     branch_help_projects = _options_help_message(project_names, 'projects to show branches for')
     group_branch.add_argument('--projects', '-p', choices=project_names, nargs='+', metavar='PROJECT',
                               help=branch_help_projects)
+    branch_help_skip = _options_help_message(project_names, 'projects to skip')
+    group_branch.add_argument('--skip', '-s', choices=project_names, nargs='+', metavar='PROJECT',
+                              help=branch_help_skip)
 
 
 def _configure_subparser_clean(subparsers, clowder):
@@ -75,6 +78,9 @@ def _configure_subparser_clean(subparsers, clowder):
     clean_help_projects = _options_help_message(project_names, 'projects to clean')
     group_clean.add_argument('--projects', '-p', choices=project_names, nargs='+', metavar='PROJECT',
                              help=clean_help_projects)
+    clean_help_skip = _options_help_message(project_names, 'projects to skip')
+    group_clean.add_argument('--skip', '-s', choices=project_names, nargs='+', metavar='PROJECT',
+                             help=clean_help_skip)
 
 
 def _configure_subparser_diff(subparsers, clowder):
@@ -114,6 +120,9 @@ def _configure_subparser_forall(subparsers, clowder):
     forall_help_projects = _options_help_message(project_names, 'projects to run command or script for')
     group_forall_targets.add_argument('--projects', '-p', choices=project_names, nargs='+', metavar='PROJECT',
                                       help=forall_help_projects)
+    forall_help_skip = _options_help_message(project_names, 'projects to skip')
+    group_forall_targets.add_argument('--skip', '-s', choices=project_names, nargs='+', metavar='PROJECT',
+                                      help=forall_help_skip)
 
 
 def _configure_subparser_herd(subparsers, clowder):
@@ -141,6 +150,9 @@ def _configure_subparser_herd(subparsers, clowder):
     herd_help_projects = _options_help_message(project_names, 'projects to herd')
     group_herd.add_argument('--projects', '-p', choices=project_names, nargs='+', metavar='PROJECT',
                             help=herd_help_projects)
+    herd_help_skip = _options_help_message(project_names, 'projects to skip')
+    group_herd.add_argument('--skip', '-s', choices=project_names, nargs='+', metavar='PROJECT',
+                            help=herd_help_skip)
 
 
 def _configure_subparser_init(subparsers):
@@ -181,6 +193,9 @@ def _configure_subparser_prune(subparsers, clowder):
     prune_help_projects = _options_help_message(project_names, 'projects to prune branch for')
     group_prune.add_argument('--projects', '-p', choices=project_names, nargs='+', metavar='PROJECT',
                              help=prune_help_projects)
+    prune_help_skip = _options_help_message(project_names, 'projects to skip')
+    group_prune.add_argument('--skip', '-s', choices=project_names, nargs='+', metavar='PROJECT',
+                             help=prune_help_skip)
 
 
 def _configure_subparser_repo(subparsers):
@@ -240,6 +255,9 @@ def _configure_subparser_reset(subparsers, clowder):
     reset_help_projects = _options_help_message(project_names, 'projects to reset')
     group_reset.add_argument('--projects', '-p', choices=project_names, nargs='+', metavar='PROJECT',
                              help=reset_help_projects)
+    reset_help_skip = _options_help_message(project_names, 'projects to skip')
+    group_reset.add_argument('--skip', '-s', choices=project_names, nargs='+', metavar='PROJECT',
+                             help=reset_help_skip)
 
 
 def _configure_subparser_save(subparsers):
@@ -265,6 +283,9 @@ def _configure_subparser_start(subparsers, clowder):
     start_help_projects = _options_help_message(project_names, 'projects to start feature branch for')
     group_start.add_argument('--projects', '-p', choices=project_names, nargs='+', metavar='PROJECT',
                              help=start_help_projects)
+    start_help_skip = _options_help_message(project_names, 'projects to skip')
+    group_start.add_argument('--skip', '-s', choices=project_names, nargs='+', metavar='PROJECT',
+                             help=start_help_skip)
 
 
 def _configure_subparser_stash(subparsers, clowder):
@@ -280,6 +301,9 @@ def _configure_subparser_stash(subparsers, clowder):
     stash_help_projects = _options_help_message(project_names, 'projects to stash')
     group_stash.add_argument('--projects', '-p', choices=project_names, nargs='+', metavar='PROJECT',
                              help=stash_help_projects)
+    stash_help_skip = _options_help_message(project_names, 'projects to skip')
+    group_stash.add_argument('--skip', '-s', choices=project_names, nargs='+', metavar='PROJECT',
+                             help=stash_help_skip)
 
 
 def _configure_subparser_status(subparsers):
