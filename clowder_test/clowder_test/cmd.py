@@ -67,7 +67,8 @@ class Command(object):
     def cats(self, path):
         """clowder cats tests entrypoint"""
         cats_command = 'cats_' + self.args.cats_command
-        path = os.path.join(path, 'cats')
+        if self.args.cats_command != 'all':
+            path = os.path.join(path, 'cats')
         getattr(self, cats_command)(path)
 
     def cats_all(self, path):
