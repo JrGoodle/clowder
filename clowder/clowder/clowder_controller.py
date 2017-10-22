@@ -345,17 +345,17 @@ class ClowderController(object):
             for group in groups:
                 group.print_name()
                 for project in group.projects:
-                    if timestamp:
-                        if project.name == timestamp_project:
-                            continue
+                    # if timestamp:
+                    #     if project.name == timestamp_project:
+                    #         continue
                     project.reset(timestamp=timestamp)
             return
         self._validate_projects(project_names)
         projects = [p for g in self.groups for p in g.projects if p.name in project_names]
         for project in projects:
-            if timestamp:
-                if project.name == timestamp_project:
-                    continue
+            # if timestamp:
+            #     if project.name == timestamp_project:
+            #         continue
             project.reset(timestamp=timestamp)
 
     def save_version(self, version):
@@ -562,9 +562,9 @@ class ClowderController(object):
                         print('  ' + fmt.fork_string(project.name))
                         print('  ' + fmt.fork_string(project.fork.name))
             for project in projects:
-                if timestamp:
-                    if project.name == timestamp_project:
-                        continue
+                # if timestamp:
+                #     if project.name == timestamp_project:
+                #         continue
                 result = CLOWDER_POOL.apply_async(reset_project, args=(project, timestamp), callback=async_callback)
                 RESULTS.append(result)
             pool_handler(len(projects))
@@ -577,9 +577,9 @@ class ClowderController(object):
                 print('  ' + fmt.fork_string(project.name))
                 print('  ' + fmt.fork_string(project.fork.name))
         for project in projects:
-            if timestamp:
-                if project.name == timestamp_project:
-                    continue
+            # if timestamp:
+            #     if project.name == timestamp_project:
+            #         continue
             result = CLOWDER_POOL.apply_async(reset_project, args=(project, timestamp), callback=async_callback)
             RESULTS.append(result)
         pool_handler(len(projects))

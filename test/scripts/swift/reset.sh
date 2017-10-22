@@ -14,75 +14,147 @@ print_double_separator
 echo 'TEST: swift projects reset'
 print_double_separator
 cd "$SWIFT_EXAMPLE_DIR" || exit 1
-./init.sh
 
-export project_paths=( 'cmark' \
-                       'llbuild' \
-                       'swift-corelibs-foundation' \
-                       'swift-corelibs-libdispatch' \
-                       'swift-corelibs-xctest' \
-                       'swift-integration-tests' \
-                       'swift-xcode-playground-support' \
-                       'swiftpm' )
-
-export llvm_project_paths=( 'clang' \
-                            'compiler-rt' \
-                            'lldb' \
-                            'llvm' )
-
-test_reset() {
-    print_single_separator
-    echo "TEST: clowder reset timestamp"
-    clowder link -v reset-timestamp-swift-4.0-branch || exit 1
-    clowder herd $PARALLEL || exit 1
-
+export_commits() {
     pushd 'swift' || exit 1
-    git checkout swift-4.0-branch
-    popd || exit 1
-
-    clowder reset $PARALLEL --timestamp apple/swift || exit 1
-
-    pushd 'swift' || exit 1
-    test_commit 'e004d80f1a5a40d957aba1ed277ef2eaf57c5a28'
+    export SWIFT_COMMIT
+    SWIFT_COMMIT="$(git rev-parse HEAD)"
     popd || exit 1
     pushd 'clang' || exit 1
-    test_commit 'ab7472e733a4081d672e2ef9a8e2011d941d1347'
+    export CLANG_COMMIT
+    CLANG_COMMIT="$(git rev-parse HEAD)"
     popd || exit 1
     pushd 'compiler-rt' || exit 1
-    test_commit '2c7fe45c2bc76b4e928d65694cdbfcfcca49d008'
+    export COMPILER_RT_COMMIT
+    COMPILER_RT_COMMIT="$(git rev-parse HEAD)"
     popd || exit 1
     pushd 'lldb' || exit 1
-    test_commit '855bfe02537689163d99ad28f5b8c97d2f190417'
+    export LLDB_COMMIT
+    LLDB_COMMIT="$(git rev-parse HEAD)"
     popd || exit 1
     pushd 'llvm' || exit 1
-    test_commit '2dedb62a0bcb69354e15a54be89fb5dfa63275d2'
+    export LLVM_COMMIT
+    LLVM_COMMIT="$(git rev-parse HEAD)"
     popd || exit 1
     pushd 'swift-corelibs-foundation' || exit 1
-    test_commit '8afed758bec4495937c82b68ca1dfe76c2383325'
+    export SWIFT_CORELIBS_FOUNDATION_COMMIT
+    SWIFT_CORELIBS_FOUNDATION_COMMIT="$(git rev-parse HEAD)"
     popd || exit 1
     pushd 'swift-corelibs-libdispatch' || exit 1
-    test_commit '7ef9cde3dc931e794f5ba21eabcf308db31c2972'
+    export SWIFT_CORELIBS_LIBDISPATCH_COMMIT
+    SWIFT_CORELIBS_LIBDISPATCH_COMMIT="$(git rev-parse HEAD)"
     popd || exit 1
     pushd 'swift-corelibs-xctest' || exit 1
-    test_commit '73190ac9eec3099dcf82cbaecb82dbbe0c1ded98'
+    export SWIFT_CORELIBS_XCTEST_COMMIT
+    SWIFT_CORELIBS_XCTEST_COMMIT="$(git rev-parse HEAD)"
     popd || exit 1
     pushd 'swift-integration-tests' || exit 1
-    test_commit 'ef82eb354adf1fa3c0d0e498c5da227ffe81edcf'
+    export SWIFT_INTEGRATION_TESTS_COMMIT
+    SWIFT_INTEGRATION_TESTS_COMMIT="$(git rev-parse HEAD)"
     popd || exit 1
     pushd 'swift-xcode-playground-support' || exit 1
-    test_commit '05737c49f04b9089392b599ad529ab91c7119a75'
+    export SWIFT_XCODE_PLAYGROUND_SUPPORT_COMMIT
+    SWIFT_XCODE_PLAYGROUND_SUPPORT_COMMIT="$(git rev-parse HEAD)"
     popd || exit 1
     pushd 'llbuild' || exit 1
-    test_commit '4c6e96719729ba1d8866730693b745696ab4ccc2'
+    export LLBUILD_COMMIT
+    LLBUILD_COMMIT="$(git rev-parse HEAD)"
     popd || exit 1
     pushd 'swiftpm' || exit 1
-    test_commit 'f47adf512a750c790e07f58aa26b2bca95019a2d'
+    export SWIFTPM_COMMIT
+    SWIFTPM_COMMIT="$(git rev-parse HEAD)"
     popd || exit 1
     pushd 'cmark' || exit 1
-    test_commit 'd875488a6a95d5487b7c675f79a8dafef210a65f'
+    export CMARK_COMMIT
+    CMARK_COMMIT="$(git rev-parse HEAD)"
     popd || exit 1
     pushd 'ninja' || exit 1
-    test_commit '253e94c1fa511704baeb61cf69995bbf09ba435e'
+    export NINJA_COMMIT
+    NINJA_COMMIT="$(git rev-parse HEAD)"
     popd || exit 1
 }
-test_reset
+
+test_commits() {
+    pushd 'swift' || exit 1
+    test_commit $SWIFT_COMMIT
+    popd || exit 1
+    pushd 'clang' || exit 1
+    test_commit $CLANG_COMMIT
+    popd || exit 1
+    pushd 'compiler-rt' || exit 1
+    test_commit $COMPILER_RT_COMMIT
+    popd || exit 1
+    pushd 'lldb' || exit 1
+    test_commit $LLDB_COMMIT
+    popd || exit 1
+    pushd 'llvm' || exit 1
+    test_commit $LLVM_COMMIT
+    popd || exit 1
+    pushd 'swift-corelibs-foundation' || exit 1
+    test_commit $SWIFT_CORELIBS_FOUNDATION_COMMIT
+    popd || exit 1
+    pushd 'swift-corelibs-libdispatch' || exit 1
+    test_commit $SWIFT_CORELIBS_LIBDISPATCH_COMMIT
+    popd || exit 1
+    pushd 'swift-corelibs-xctest' || exit 1
+    test_commit $SWIFT_CORELIBS_XCTEST_COMMIT
+    popd || exit 1
+    pushd 'swift-integration-tests' || exit 1
+    test_commit $SWIFT_INTEGRATION_TESTS_COMMIT
+    popd || exit 1
+    pushd 'swift-xcode-playground-support' || exit 1
+    test_commit $SWIFT_XCODE_PLAYGROUND_SUPPORT_COMMIT
+    popd || exit 1
+    pushd 'llbuild' || exit 1
+    test_commit $LLBUILD_COMMIT
+    popd || exit 1
+    pushd 'swiftpm' || exit 1
+    test_commit $SWIFTPM_COMMIT
+    popd || exit 1
+    pushd 'cmark' || exit 1
+    test_commit $CMARK_COMMIT
+    popd || exit 1
+    pushd 'ninja' || exit 1
+    test_commit $NINJA_COMMIT
+    popd || exit 1
+}
+
+test_reset_swift_4_0_branch() {
+    print_single_separator
+    echo "TEST: clowder reset timestamp"
+    ./clean.sh
+    git clone git@github.com:apple/swift.git
+    swift/utils/update-checkout --scheme swift-4.0-branch --reset-to-remote --clone --clean
+    swift/utils/update-checkout --scheme swift-4.0-branch --match-timestamp
+
+    export_commits
+
+    ./init.sh
+    clowder herd $PARALLEL || exit 1
+    clowder link -v reset-timestamp-swift-4.0-branch || exit 1
+    clowder herd $PARALLEL || exit 1
+    clowder reset $PARALLEL --timestamp apple/swift || exit 1
+
+    test_commits
+}
+test_reset_swift_4_0_branch
+
+test_reset_swift_4_1_branch() {
+    print_single_separator
+    echo "TEST: clowder reset timestamp"
+    ./clean.sh
+    git clone git@github.com:apple/swift.git
+    swift/utils/update-checkout --scheme swift-4.1-branch --reset-to-remote --clone --clean
+    swift/utils/update-checkout --scheme swift-4.1-branch --match-timestamp
+
+    export_commits
+
+    ./init.sh
+    clowder herd $PARALLEL || exit 1
+    clowder link -v reset-timestamp-swift-4.1-branch || exit 1
+    clowder herd $PARALLEL || exit 1
+    clowder reset $PARALLEL --timestamp apple/swift || exit 1
+
+    test_commits
+}
+test_reset_swift_4_1_branch

@@ -14,7 +14,7 @@ test_clowder_version
 
 "$TEST_SCRIPT_DIR/swift/configure_remotes.sh" || exit 1
 "$TEST_SCRIPT_DIR/swift/config_versions.sh" || exit 1
-"$TEST_SCRIPT_DIR/swift/reset.sh" || exit 1
+"$TEST_SCRIPT_DIR/swift/reset.sh" $1 || exit 1
 
 test_help() {
     print_double_separator
