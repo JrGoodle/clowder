@@ -271,7 +271,8 @@ class ClowderController(object):
                     print('  ' + fmt.fork_string(project.name))
                     print('  ' + fmt.fork_string(project.fork.name))
         for project in projects:
-            result = CLOWDER_POOL.apply_async(herd_project, args=(project, branch, tag, depth, rebase), callback=async_callback)
+            result = CLOWDER_POOL.apply_async(herd_project, args=(project, branch, tag, depth, rebase),
+                                              callback=async_callback)
             RESULTS.append(result)
         pool_handler(len(projects))
 
@@ -448,7 +449,8 @@ class ClowderController(object):
                 cprint(" - Project is missing", 'red')
         print('\n' + fmt.command(command))
         for project in projects:
-            result = CLOWDER_POOL.apply_async(run_project, args=(project, command, ignore_errors), callback=async_callback)
+            result = CLOWDER_POOL.apply_async(run_project, args=(project, command, ignore_errors),
+                                              callback=async_callback)
             RESULTS.append(result)
         pool_handler(len(projects))
 
