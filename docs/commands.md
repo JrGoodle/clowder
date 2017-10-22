@@ -278,6 +278,9 @@ Reset branches to upstream state
 # Reset branches in all projects
 $ clowder reset
 
+# Reset branches in all projects to closest timestamp to swift project
+$ clowder reset --timestamp apple/swift
+
 # Reset branches in projects in llvm group
 $ clowder reset -g llvm
 
