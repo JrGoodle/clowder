@@ -261,7 +261,12 @@ class Command(object):
 
     def parallel(self, path):
         """clowder parallel tests"""
-        return_code = execute_command('./test_parallel.sh', path, shell=True)
+        test_env = {}
+        if self.args.write:
+            test_env["ACCESS_LEVEL"] = 'write'
+        else:
+            test_env["ACCESS_LEVEL"] = 'read'
+        return_code = execute_command('./test_parallel.sh', path, shell=True, env=test_env)
         self._exit(return_code)
 
     def swift(self, path):
@@ -308,17 +313,27 @@ class Command(object):
 
     def write(self, path):
         """clowder write tests"""
-        self.args.write = True
+        test_env = {"ACCESS_LEVEL": 'write'}
+
         example_dir = os.path.join(path, 'cats')
-        self.cats_herd(example_dir)
-        self.cats_prune(example_dir)
-        self.cats_repo(example_dir)
-        self.cats_start(example_dir)
+        return_code = execute_command('./write_herd.sh', example_dir, shell=True, env=test_env)
+        self._exit(return_code)
+        return_code = execute_command('./write_prune.sh', example_dir, shell=True, env=test_env)
+        self._exit(return_code)
+        return_code = execute_command('./write_repo.sh', example_dir, shell=True, env=test_env)
+        self._exit(return_code)
+        return_code = execute_command('./write_start.sh', example_dir, shell=True, env=test_env)
+        self._exit(return_code)
+
         example_dir = os.path.join(path, 'llvm')
-        self.llvm_forks(example_dir)
-        self.llvm_sync(example_dir)
+        return_code = execute_command('./write_forks.sh', example_dir, shell=True, env=test_env)
+        self._exit(return_code)
+        return_code = execute_command('./write_sync.sh', example_dir, shell=True, env=test_env)
+        self._exit(return_code)
+
         example_dir = os.path.join(path, 'swift')
-        self.swift_configure_remotes(example_dir)
+        return_code = execute_command('./write_configure_remotes.sh', example_dir, shell=True, env=test_env)
+        self._exit(return_code)
 
     def _configure_all_subparser(self):
         """clowder all tests subparser"""
