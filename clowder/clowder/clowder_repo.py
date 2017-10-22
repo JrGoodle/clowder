@@ -157,8 +157,7 @@ class ClowderRepo(object):
 def subprocess_exit_handler(process):
     """terminate subprocess"""
     try:
-        os.kill(process.pid, 0)
-        process.kill()
+        process.terminate()
     except:
         pass
 
@@ -168,7 +167,7 @@ def execute_subprocess_command(command, path, shell=True, env=None, stdout=None,
     try:
         process = subprocess.Popen(' '.join(command), shell=shell, env=env, cwd=path,
                                    stdout=stdout, stderr=stderr)
-        atexit.register(subprocess_exit_handler)
+        atexit.register(subprocess_exit_handler, process)
         process.communicate()
     except (KeyboardInterrupt, SystemExit):
         raise

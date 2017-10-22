@@ -23,8 +23,7 @@ DEFAULT_REMOTE = 'origin'
 def subprocess_exit_handler(process):
     """terminate subprocess"""
     try:
-        os.kill(process.pid, 0)
-        process.kill()
+        process.terminate()
     except:
         pass
 
