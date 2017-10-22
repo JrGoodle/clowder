@@ -31,7 +31,7 @@ class GitRepo(object):
 
     def add(self, files):
         """Add files to git index"""
-        print(' - Add files to git index')
+        self._print(' - Add files to git index')
         try:
             print(self.repo.git.add(files))
         except GitError as err:
@@ -74,7 +74,7 @@ class GitRepo(object):
     def commit(self, message):
         """Commit current changes"""
         try:
-            print(' - Commit current changes')
+            self._print(' - Commit current changes')
             print(self.repo.git.commit(message=message))
         except GitError as err:
             message = colored(' - Failed to commit current changes', 'red')
@@ -119,10 +119,10 @@ class GitRepo(object):
             self._print(' - Fetch from ' + remote_output)
             message = colored(' - Failed to fetch from ', 'red')
             error = message + remote_output
-            command = ['git', 'fetch', remote, '--prune', '--tags']
+            command = ['git fetch', remote, '--prune --tags']
         else:
             if ref is None:
-                command = ['git', 'fetch', remote, '--depth', str(depth), '--prune', '--tags']
+                command = ['git fetch', remote, '--depth', str(depth), '--prune --tags']
                 message = colored(' - Failed to fetch remote ', 'red')
                 error = message + remote_output
             else:
@@ -130,8 +130,8 @@ class GitRepo(object):
                 self._print(' - Fetch from ' + remote_output + ' ' + ref_output)
                 message = colored(' - Failed to fetch from ', 'red')
                 error = message + remote_output + ' ' + ref_output
-                command = ['git', 'fetch', remote, GitRepo.truncate_ref(ref),
-                           '--depth', str(depth), '--prune', '--tags']
+                command = ['git fetch', remote, GitRepo.truncate_ref(ref),
+                           '--depth', str(depth), '--prune --tags']
         return_code = execute_command(command, self.repo_path, print_output=self.print_output)
         if return_code != 0:
             if remove_dir:
@@ -184,11 +184,11 @@ class GitRepo(object):
     def print_branches(self, local=False, remote=False):
         """Print branches"""
         if local and remote:
-            command = ['git', 'branch', '-a']
+            command = 'git branch -a'
         elif local:
-            command = ['git', 'branch']
+            command = 'git branch'
         elif remote:
-            command = ['git', 'branch', '-r']
+            command = 'git branch -r'
         else:
             return
         return_code = execute_command(command, self.repo_path, print_output=self.print_output)
@@ -200,10 +200,10 @@ class GitRepo(object):
     def pull(self):
         """Pull upstream changes"""
         if self.repo.head.is_detached:
-            print(' - HEAD is detached')
+            self._print(' - HEAD is detached')
             return
         try:
-            print(' - Pull latest changes')
+            self._print(' - Pull latest changes')
             print(self.repo.git.pull())
         except GitError as err:
             message = colored(' - Failed to pull latest changes', 'red')
@@ -216,10 +216,10 @@ class GitRepo(object):
     def push(self):
         """Push changes"""
         if self.repo.head.is_detached:
-            print(' - HEAD is detached')
+            self._print(' - HEAD is detached')
             return
         try:
-            print(' - Push local changes')
+            self._print(' - Push local changes')
             print(self.repo.git.push())
         except GitError as err:
             message = colored(' - Failed to push local changes', 'red')
@@ -260,9 +260,9 @@ class GitRepo(object):
     def stash(self):
         """Stash current changes in repository"""
         if not self.repo.is_dirty():
-            print(' - No changes to stash')
+            self._print(' - No changes to stash')
             return
-        print(' - Stash current changes')
+        self._print(' - Stash current changes')
         self.repo.git.stash()
 
     def status(self):
@@ -271,8 +271,8 @@ class GitRepo(object):
 
     def status_verbose(self):
         """Print git status"""
-        command = ['git', 'status', '-vv']
-        print(fmt.command(command))
+        command = 'git status -vv'
+        self._print(fmt.command(command))
         return_code = execute_command(command, self.repo_path)
         if return_code != 0:
             message = colored(' - Failed to print status\n', 'red') + fmt.command_failed_error(command)
@@ -386,7 +386,7 @@ class GitRepo(object):
                 self._print(colored(message, 'red') + tag_output)
                 self._exit(fmt.parallel_exception_error(self.repo_path, colored(message, 'red'), tag_output))
             if self.print_output:
-                print(message + tag_output)
+                self._print(message + tag_output)
             return 1
         except (KeyboardInterrupt, SystemExit):
             if remove_dir:
@@ -517,7 +517,7 @@ class GitRepo(object):
         if branch in origin.refs:
             try:
                 self.repo.git.config('--get', 'branch.' + branch + '.merge')
-                print(' - Tracking branch ' + branch_output + ' already exists')
+                self._print(' - Tracking branch ' + branch_output + ' already exists')
                 return
             except GitError:
                 message_1 = colored(' - Remote branch ', 'red')
@@ -528,7 +528,7 @@ class GitRepo(object):
             except (KeyboardInterrupt, SystemExit):
                 self._exit('')
         try:
-            print(' - Push remote branch ' + branch_output)
+            self._print(' - Push remote branch ' + branch_output)
             self.repo.git.push(remote, branch)
             return_code = self._set_tracking_branch(remote, branch)
             if return_code != 0:
@@ -650,7 +650,7 @@ class GitRepo(object):
         branch_output = fmt.ref_string(branch)
         remote_output = fmt.remote_string(remote)
         self._print(' - Pull from ' + remote_output + ' ' + branch_output)
-        command = ['git', 'pull', remote, branch]
+        command = ['git pull', remote, branch]
         return_code = execute_command(command, self.repo_path, print_output=self.print_output)
         if return_code != 0:
             message = colored(' - Failed to pull from ', 'red') + remote_output + ' ' + branch_output
@@ -665,7 +665,7 @@ class GitRepo(object):
         branch_output = fmt.ref_string(branch)
         remote_output = fmt.remote_string(remote)
         self._print(' - Rebase onto ' + remote_output + ' ' + branch_output)
-        command = ['git', 'pull', '--rebase', remote, branch]
+        command = ['git pull --rebase', remote, branch]
         return_code = execute_command(command, self.repo_path, print_output=self.print_output)
         if return_code != 0:
             message = colored(' - Failed to rebase onto ', 'red') + remote_output + ' ' + branch_output
