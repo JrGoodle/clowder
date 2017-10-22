@@ -123,13 +123,13 @@ test_reset_swift_4_0_branch() {
     print_single_separator
     echo "TEST: clowder reset timestamp"
     ./clean.sh
-    git clone git@github.com:apple/swift.git
-    swift/utils/update-checkout --scheme swift-4.0-branch --reset-to-remote --clone --clean
-    swift/utils/update-checkout --scheme swift-4.0-branch --match-timestamp
+    git clone https://github.com/apple/swift.git || exit 1
+    swift/utils/update-checkout --scheme swift-4.0-branch --reset-to-remote --clone --clean || exit 1
+    swift/utils/update-checkout --scheme swift-4.0-branch --match-timestamp || exit 1
 
     export_commits
 
-    ./init.sh
+    ./init.sh || exit 1
     clowder herd $PARALLEL || exit 1
     clowder link -v reset-timestamp-swift-4.0-branch || exit 1
     clowder herd $PARALLEL || exit 1
@@ -143,13 +143,13 @@ test_reset_swift_4_1_branch() {
     print_single_separator
     echo "TEST: clowder reset timestamp"
     ./clean.sh
-    git clone git@github.com:apple/swift.git
-    swift/utils/update-checkout --scheme swift-4.1-branch --reset-to-remote --clone --clean
-    swift/utils/update-checkout --scheme swift-4.1-branch --match-timestamp
+    git clone https://github.com/apple/swift.git || exit 1
+    swift/utils/update-checkout --scheme swift-4.1-branch --reset-to-remote --clone --clean || exit 1
+    swift/utils/update-checkout --scheme swift-4.1-branch --match-timestamp || exit 1
 
     export_commits
 
-    ./init.sh
+    ./init.sh || exit 1
     clowder herd $PARALLEL || exit 1
     clowder link -v reset-timestamp-swift-4.1-branch || exit 1
     clowder herd $PARALLEL || exit 1
