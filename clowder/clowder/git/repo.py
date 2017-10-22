@@ -2,20 +2,87 @@
 
 from __future__ import print_function
 
+import atexit
 import os
 import subprocess
 import sys
+from multiprocessing.pool import ThreadPool
 
 from git import Repo, GitError
 from termcolor import colored, cprint
 
 import clowder.util.formatting as fmt
 from clowder.error.clowder_git_error import ClowderGitError
-from clowder.process_pool import execute_command
 from clowder.util.file_system import remove_directory
+
 
 DEFAULT_REF = 'refs/heads/master'
 DEFAULT_REMOTE = 'origin'
+
+
+def subprocess_exit_handler(process):
+    """terminate subprocess"""
+    try:
+        os.kill(process.pid, 0)
+        process.kill()
+    except:
+        pass
+
+
+def execute_subprocess_command(command, path, shell=True, env=None, stdout=None, stderr=None):
+    """Run subprocess command"""
+    try:
+        process = subprocess.Popen(' '.join(command), shell=shell, env=env, cwd=path,
+                                   stdout=stdout, stderr=stderr)
+        atexit.register(subprocess_exit_handler, process)
+        process.communicate()
+    except (KeyboardInterrupt, SystemExit):
+        raise
+    except:
+        raise
+    else:
+        return process.returncode
+
+
+def execute_command(command, path, shell=True, env=None, print_output=True):
+    """Run subprocess command"""
+    cmd_env = os.environ.copy()
+    if env:
+        cmd_env.update(env)
+    if print_output:
+        pipe = None
+    else:
+        pipe = subprocess.PIPE
+    pool = ThreadPool()
+    try:
+        result = pool.apply(execute_subprocess_command,
+                            args=(command, path),
+                            kwds={'shell': shell, 'env': cmd_env, 'stdout': pipe, 'stderr': pipe})
+        pool.close()
+        pool.join()
+        return result
+    except (KeyboardInterrupt, SystemExit):
+        if pool:
+            pool.close()
+            pool.terminate()
+        print()
+        cprint(' - Command failed', 'red')
+        print()
+        return 1
+    except Exception as err:
+        if pool:
+            pool.close()
+            pool.terminate()
+        print()
+        cprint(' - Command failed', 'red')
+        print(err)
+        print()
+        return 1
+
+
+def execute_forall_command(command, path, forall_env, print_output):
+    """Execute forall command with additional environment variables and display continuous output"""
+    return execute_command(command, path, env=forall_env, print_output=print_output)
 
 
 class GitRepo(object):

@@ -2,17 +2,107 @@
 
 from __future__ import print_function
 
+import multiprocessing as mp
 import os
+import signal
 import sys
 
+
+import psutil
 from termcolor import cprint
 
 import clowder.clowder_yaml as clowder_yaml
 import clowder.util.formatting as fmt
 from clowder.error.clowder_error import ClowderError
 from clowder.group import Group
-from clowder.process_pool import herd, reset, run, sync
 from clowder.source import Source
+from clowder.util.progress import Progress
+
+
+def herd_project(project, branch, tag, depth, rebase):
+    """Clone project or update latest from upstream"""
+    project.herd(branch=branch, tag=tag, depth=depth, rebase=rebase, parallel=True)
+
+
+def reset_project(project):
+    """Reset project branches to upstream or checkout tag/sha as detached HEAD"""
+    project.reset(parallel=True)
+
+
+def run_project(project, command, ignore_errors):
+    """Run command or script in project directory"""
+    project.run(command, ignore_errors, parallel=True)
+
+
+def sync_project(project, rebase):
+    """Sync fork project with upstream"""
+    project.sync(rebase, parallel=True)
+
+
+def async_callback(val):
+    """Increment async progress bar"""
+    del val
+    PROGRESS.update()
+
+
+PARENT_ID = os.getpid()
+
+
+def worker_init():
+    """
+    Process pool terminator
+    Adapted from https://stackoverflow.com/a/45259908
+    """
+    def sig_int(signal_num, frame):
+        """Signal handler"""
+        del signal_num, frame
+        # print('signal: %s' % signal_num)
+        parent = psutil.Process(PARENT_ID)
+        for child in parent.children(recursive=True):
+            if child.pid != os.getpid():
+                # print("killing child: %s" % child.pid)
+                child.terminate()
+        # print("killing parent: %s" % parent_id)
+        parent.terminate()
+        # print("suicide: %s" % os.getpid())
+        psutil.Process(os.getpid()).terminate()
+        print('\n\n')
+    signal.signal(signal.SIGINT, sig_int)
+
+
+RESULTS = []
+CLOWDER_POOL = mp.Pool(initializer=worker_init)
+PROGRESS = Progress()
+
+
+def pool_handler(count):
+    """Pool handler for finishing parallel jobs"""
+    print()
+    PROGRESS.start(count)
+    try:
+        for result in RESULTS:
+            result.get()
+            if not result.successful():
+                PROGRESS.close()
+                CLOWDER_POOL.close()
+                CLOWDER_POOL.terminate()
+                print()
+                cprint(' - Command failed', 'red')
+                print()
+                sys.exit(1)
+    except Exception as err:
+        PROGRESS.close()
+        CLOWDER_POOL.close()
+        CLOWDER_POOL.terminate()
+        print()
+        cprint(err, 'red')
+        print()
+        sys.exit(1)
+    else:
+        PROGRESS.complete()
+        PROGRESS.close()
+        CLOWDER_POOL.close()
+        CLOWDER_POOL.join()
 
 
 class ClowderController(object):
@@ -165,7 +255,11 @@ class ClowderController(object):
                 if project.fork:
                     print('  ' + fmt.fork_string(project.name))
                     print('  ' + fmt.fork_string(project.fork.name))
-            herd(projects, branch, tag, depth, rebase)
+            for project in projects:
+                result = CLOWDER_POOL.apply_async(herd_project, args=(project, branch, tag, depth, rebase),
+                                                  callback=async_callback)
+                RESULTS.append(result)
+            pool_handler(len(projects))
             return
         self._validate_groups(group_names)
         groups = [g for g in self.groups if g.name in group_names]
@@ -177,7 +271,10 @@ class ClowderController(object):
                 if project.fork:
                     print('  ' + fmt.fork_string(project.name))
                     print('  ' + fmt.fork_string(project.fork.name))
-        herd(projects, branch, tag, depth, rebase)
+        for project in projects:
+            result = CLOWDER_POOL.apply_async(herd_project, args=(project, branch, tag, depth, rebase), callback=async_callback)
+            RESULTS.append(result)
+        pool_handler(len(projects))
 
     def print_yaml(self, resolved):
         """Print clowder.yaml"""
@@ -351,7 +448,10 @@ class ClowderController(object):
             if not os.path.isdir(project.full_path()):
                 cprint(" - Project is missing", 'red')
         print('\n' + fmt.command(command))
-        run(projects, command, ignore_errors)
+        for project in projects:
+            result = CLOWDER_POOL.apply_async(run_project, args=(project, command, ignore_errors), callback=async_callback)
+            RESULTS.append(result)
+        pool_handler(len(projects))
 
     def _get_yaml(self):
         """Return python object representation for saving yaml"""
@@ -436,7 +536,10 @@ class ClowderController(object):
                     if project.fork:
                         print('  ' + fmt.fork_string(project.name))
                         print('  ' + fmt.fork_string(project.fork.name))
-            reset(projects)
+            for project in projects:
+                result = CLOWDER_POOL.apply_async(reset_project, args=(project,), callback=async_callback)
+                RESULTS.append(result)
+            pool_handler(len(projects))
             return
         self._validate_projects(project_names)
         projects = [p for g in self.groups for p in g.projects if p.name in project_names]
@@ -445,7 +548,10 @@ class ClowderController(object):
             if project.fork:
                 print('  ' + fmt.fork_string(project.name))
                 print('  ' + fmt.fork_string(project.fork.name))
-        reset(projects)
+        for project in projects:
+            result = CLOWDER_POOL.apply_async(reset_project, args=(project,), callback=async_callback)
+            RESULTS.append(result)
+        pool_handler(len(projects))
 
     @staticmethod
     def _sync_parallel(projects, rebase=False):
@@ -456,7 +562,10 @@ class ClowderController(object):
             if project.fork:
                 print('  ' + fmt.fork_string(project.name))
                 print('  ' + fmt.fork_string(project.fork.name))
-        sync(projects, rebase)
+        for project in projects:
+            result = CLOWDER_POOL.apply_async(sync_project, args=(project, rebase), callback=async_callback)
+            RESULTS.append(result)
+        pool_handler(len(projects))
 
     def _validate_groups(self, group_names):
         """Validate status of all projects for specified groups"""

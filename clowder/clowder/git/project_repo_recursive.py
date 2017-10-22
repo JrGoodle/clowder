@@ -6,8 +6,8 @@ from git import GitError
 from termcolor import colored
 
 import clowder.util.formatting as fmt
+from clowder.git.repo import execute_command
 from clowder.git.project_repo import ProjectRepo
-from clowder.process_pool import execute_command
 
 
 class ProjectRepoRecursive(ProjectRepo):

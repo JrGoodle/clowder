@@ -9,8 +9,7 @@ from termcolor import colored, cprint
 
 import clowder.util.formatting as fmt
 from clowder.error.clowder_git_error import ClowderGitError
-from clowder.git.repo import GitRepo
-from clowder.process_pool import execute_command
+from clowder.git.repo import execute_command, GitRepo
 from clowder.util.connectivity import is_offline
 
 DEFAULT_REF = 'refs/heads/master'
@@ -41,27 +40,28 @@ class ProjectRepo(GitRepo):
             return
         except (KeyboardInterrupt, SystemExit):
             self._exit('')
-        for remote in remotes:
-            if upstream_remote_url == self._remote_get_url(remote.name):
-                if remote.name != upstream_remote_name:
-                    self._rename_remote(remote.name, upstream_remote_name)
-                    continue
-            if fork_remote_url == self._remote_get_url(remote.name):
-                if remote.name != fork_remote_name:
-                    self._rename_remote(remote.name, fork_remote_name)
-        remote_names = [r.name for r in self.repo.remotes]
-        if upstream_remote_name in remote_names:
-            if upstream_remote_url != self._remote_get_url(upstream_remote_name):
-                actual_url = self._remote_get_url(upstream_remote_name)
-                message = fmt.remote_already_exists_error(upstream_remote_name, upstream_remote_url, actual_url)
-                self._print(message)
-                self._exit(message)
-        if fork_remote_name in remote_names:
-            if fork_remote_url != self._remote_get_url(fork_remote_name):
-                actual_url = self._remote_get_url(fork_remote_name)
-                message = fmt.remote_already_exists_error(fork_remote_name, fork_remote_url, actual_url)
-                self._print(message)
-                self._exit(message)
+        else:
+            for remote in remotes:
+                if upstream_remote_url == self._remote_get_url(remote.name):
+                    if remote.name != upstream_remote_name:
+                        self._rename_remote(remote.name, upstream_remote_name)
+                        continue
+                if fork_remote_url == self._remote_get_url(remote.name):
+                    if remote.name != fork_remote_name:
+                        self._rename_remote(remote.name, fork_remote_name)
+            remote_names = [r.name for r in self.repo.remotes]
+            if upstream_remote_name in remote_names:
+                if upstream_remote_url != self._remote_get_url(upstream_remote_name):
+                    actual_url = self._remote_get_url(upstream_remote_name)
+                    message = fmt.remote_already_exists_error(upstream_remote_name, upstream_remote_url, actual_url)
+                    self._print(message)
+                    self._exit(message)
+            if fork_remote_name in remote_names:
+                if fork_remote_url != self._remote_get_url(fork_remote_name):
+                    actual_url = self._remote_get_url(fork_remote_name)
+                    message = fmt.remote_already_exists_error(fork_remote_name, fork_remote_url, actual_url)
+                    self._print(message)
+                    self._exit(message)
 
     @staticmethod
     def exists(repo_path):
