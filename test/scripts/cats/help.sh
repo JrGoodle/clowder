@@ -10,11 +10,8 @@ print_double_separator
 echo 'TEST: cats help test script'
 print_double_separator
 
-if [ -z "$TRAVIS_OS_NAME" ]; then
-    setup_local_test_directory
-fi
-
 cd "$CATS_EXAMPLE_DIR" || exit 1
+./init.sh
 
 test_help() {
     print_double_separator

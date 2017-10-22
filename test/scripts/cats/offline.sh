@@ -66,6 +66,7 @@ enable_network_connection
 
 prepare_cats_example
 cd "$CATS_EXAMPLE_DIR" || exit 1
+./init.sh
 
 print_double_separator
 echo "TEST: Test clowder offline"

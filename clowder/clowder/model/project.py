@@ -26,6 +26,8 @@ class Project(object):
 
         self.depth = project.get('depth', group.get('depth', defaults['depth']))
         self.recursive = project.get('recursive', group.get('recursive', defaults.get('recursive', False)))
+        self.timestamp_author = project.get('timestamp_author', group.get('timestamp_author',
+                                                                          defaults.get('timestamp_author', None)))
         self.ref = project.get('ref', group.get('ref', defaults['ref']))
         self.remote_name = project.get('remote', group.get('remote', defaults['remote']))
         source_name = project.get('source', group.get('source', defaults['source']))
@@ -134,6 +136,11 @@ class Project(object):
         """Return full path to project"""
         return os.path.join(self.root_directory, self.path)
 
+    def get_current_timestamp(self):
+        """Clone project or update latest from upstream"""
+        repo = ProjectRepo(self.full_path(), self.remote_name, self.ref)
+        return repo.get_current_timestamp()
+
     def get_yaml(self, resolved=False):
         """Return python object representation for saving yaml"""
         if resolved:
@@ -151,6 +158,8 @@ class Project(object):
         if self.fork:
             fork_yaml = self.fork.get_yaml()
             project['fork'] = fork_yaml
+        if self.timestamp_author:
+            project['timestamp_author'] = self.timestamp_author
         return project
 
     def herd(self, branch=None, tag=None, depth=None, rebase=False, parallel=False):
@@ -240,7 +249,7 @@ class Project(object):
         elif remote:
             self._prune_remote(branch)
 
-    def reset(self, parallel=False):
+    def reset(self, timestamp=None, parallel=False):
         """Reset project branches to upstream or checkout tag/sha as detached HEAD"""
 
         print_output = not parallel
@@ -248,11 +257,11 @@ class Project(object):
         if self.recursive:
             repo = ProjectRepoRecursive(self.full_path(), self.remote_name, self.ref,
                                         parallel=parallel, print_output=print_output)
-            self._reset(repo, print_output=print_output)
+            self._reset(repo, timestamp=timestamp, print_output=print_output)
         else:
             repo = ProjectRepo(self.full_path(), self.remote_name, self.ref,
                                parallel=parallel, print_output=print_output)
-            self._reset(repo, print_output=print_output)
+            self._reset(repo, timestamp=timestamp, print_output=print_output)
 
     def run(self, command, ignore_errors, parallel=False):
         """Run command or script in project directory"""
@@ -405,19 +414,25 @@ class Project(object):
             self.print_status()
             repo.prune_branch_remote(branch, remote)
 
-    def _reset(self, repo, print_output=True):
+    def _reset(self, repo, timestamp=None, print_output=True):
         """Clone project or update latest from upstream"""
         if self.fork is None:
             if print_output:
                 self.print_status()
+            if timestamp:
+                repo.reset_timestamp(timestamp, self.timestamp_author, self.ref)
+                return
             repo.reset(depth=self.depth)
-        else:
-            if print_output:
-                self.fork.print_status()
-            repo.configure_remotes(self.remote_name, self.url, self.fork.remote_name, self.fork.url)
-            if print_output:
-                print(fmt.fork_string(self.name))
-            repo.reset()
+            return
+        if print_output:
+            self.fork.print_status()
+        repo.configure_remotes(self.remote_name, self.url, self.fork.remote_name, self.fork.url)
+        if print_output:
+            print(fmt.fork_string(self.name))
+        if timestamp:
+            repo.reset_timestamp(timestamp, self.timestamp_author, self.ref)
+            return
+        repo.reset()
 
     def _sync(self, repo, rebase, print_output):
         """Sync fork project with upstream"""

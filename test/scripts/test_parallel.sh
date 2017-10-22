@@ -24,3 +24,4 @@ test_clowder_version
 "$TEST_SCRIPT_DIR/cats/forall.sh" 'parallel' || exit 1
 "$TEST_SCRIPT_DIR/cats/reset.sh" 'parallel' || exit 1
 "$TEST_SCRIPT_DIR/test_example_llvm.sh" 'parallel' || exit 1
+"$TEST_SCRIPT_DIR/swift/reset.sh" 'parallel' || exit 1

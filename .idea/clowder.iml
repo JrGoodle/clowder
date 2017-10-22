@@ -3,9 +3,11 @@
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$/clowder">
       <sourceFolder url="file://$MODULE_DIR$/clowder" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/clowder/clowder_repo.egg-info" />
     </content>
     <content url="file://$MODULE_DIR$/clowder_test">
       <sourceFolder url="file://$MODULE_DIR$/clowder_test" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/clowder_test/clowder_test.egg-info" />
     </content>
     <content url="file://$MODULE_DIR$/test">
       <sourceFolder url="file://$MODULE_DIR$/test" isTestSource="false" />

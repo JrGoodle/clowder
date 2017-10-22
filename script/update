@@ -33,9 +33,5 @@ fi
 
 VERSION=${1:-python3}
 
-echo "pip uninstall clowder"
-sudo -H pip2 uninstall clowder-repo
-sudo -H pip3 uninstall clowder-repo
-
 ./clean 'clowder' || exit 1
 ./setup $VERSION || exit 1

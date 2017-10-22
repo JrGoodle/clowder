@@ -140,6 +140,18 @@ class GitRepo(object):
             self._exit(error)
         return return_code
 
+    def get_current_timestamp(self):
+        """Get current timestamp of HEAD commit"""
+        try:
+            return self.repo.git.log('-1', '--format=%cI')
+        except GitError as err:
+            message = colored(' - Failed to find rev from timestamp', 'red')
+            self._print(message)
+            self._print(fmt.error(err))
+            self._exit(fmt.error(err))
+        except (KeyboardInterrupt, SystemExit):
+            self._exit('')
+
     def is_detached(self):
         """Check if HEAD is detached"""
         if not os.path.isdir(self.repo_path):
@@ -414,10 +426,8 @@ class GitRepo(object):
         """Checkout commit by sha"""
         commit_output = fmt.ref_string(sha)
         try:
-            same_sha = self.repo.head.commit.hexsha == sha
-            is_detached = self.repo.head.is_detached
-            self._print(' - On correct commit')
-            if same_sha and is_detached:
+            if self.repo.head.commit.hexsha == sha:
+                self._print(' - On correct commit')
                 return 0
             self._print(' - Checkout commit ' + commit_output)
             self.repo.git.checkout(sha)
@@ -570,10 +580,34 @@ class GitRepo(object):
         return tag in origin.tags
 
     def _exit(self, message, return_code=1):
-        """Print output if print_output is True"""
+        """Exit based on serial or parallel job"""
         if self.parallel:
             raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message))
         sys.exit(return_code)
+
+    def _find_rev_by_timestamp(self, timestamp, ref):
+        """Find rev by timestamp"""
+        try:
+            return self.repo.git.log('-1', '--format=%H', '--before=' + timestamp, ref)
+        except GitError as err:
+            message = colored(' - Failed to find rev from timestamp', 'red')
+            self._print(message)
+            self._print(fmt.error(err))
+            self._exit(fmt.error(err))
+        except (KeyboardInterrupt, SystemExit):
+            self._exit('')
+
+    def _find_rev_by_timestamp_author(self, timestamp, author, ref):
+        """Find rev by timestamp and author"""
+        try:
+            return self.repo.git.log('-1', '--format=%H', '--before=' + timestamp, '--author', author, ref)
+        except GitError as err:
+            message = colored(' - Failed to find rev from timestamp by author', 'red')
+            self._print(message)
+            self._print(fmt.error(err))
+            self._exit(fmt.error(err))
+        except (KeyboardInterrupt, SystemExit):
+            self._exit('')
 
     def _init_repo(self):
         """Initialize repository"""

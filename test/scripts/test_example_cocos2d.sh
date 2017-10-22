@@ -13,15 +13,8 @@ export external_projects=( 'cocos2d-objc/external/Chipmunk' \
 print_double_separator
 echo 'TEST: cocos2d example test script'
 print_double_separator
-
-if [ -z "$TRAVIS_OS_NAME" ]; then
-    setup_local_test_directory
-fi
-
 cd "$COCOS2D_EXAMPLE_DIR" || exit 1
-
-./clean.sh
-./init.sh || exit 1
+./init.sh
 
 test_recurse() {
     print_single_separator

@@ -15,6 +15,11 @@ clean_clowder_repo() {
     local path=$clowder_path/clowder
     sudo -H rm $path/*.pyc $path/*/*.pyc
     sudo -H rm -rf $path/__pycache__ $path/*/__pycache__
+    echo "pip uninstall clowder"
+    pushd $REPO_PATH || exit 1
+    sudo -H pip2 uninstall clowder-repo
+    sudo -H pip3 uninstall clowder-repo
+    popd || exit 1
 }
 
 clean_clowder_test() {
@@ -29,6 +34,11 @@ clean_clowder_test() {
     local path=$REPO_PATH/test/unittests
     sudo -H rm $path/*.pyc
     sudo -H rm -rf $path/__pycache__
+    echo "pip uninstall clowder-test"
+    pushd $REPO_PATH || exit 1
+    sudo -H pip2 uninstall clowder_test
+    sudo -H pip3 uninstall clowder_test
+    popd || exit 1
 }
 
 clean_examples() {

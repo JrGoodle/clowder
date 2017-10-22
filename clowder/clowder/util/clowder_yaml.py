@@ -187,6 +187,8 @@ def _load_yaml_import_defaults(imported_defaults, defaults):
         defaults['source'] = imported_defaults['source']
     if 'depth' in imported_defaults:
         defaults['depth'] = imported_defaults['depth']
+    if 'timestamp_author' in imported_defaults:
+        defaults['timestamp_author'] = imported_defaults['timestamp_author']
 
 
 def _load_yaml_import_groups(imported_groups, groups):
@@ -199,8 +201,8 @@ def _load_yaml_import_groups(imported_groups, groups):
         combined_groups = []
         for group in groups:
             if group['name'] == imported_group['name']:
-                if 'recursive' in imported_groups:
-                    group['recursive'] = imported_groups['recursive']
+                if 'recursive' in imported_group:
+                    group['recursive'] = imported_group['recursive']
                 if 'ref' in imported_group:
                     group['ref'] = imported_group['ref']
                 if 'remote' in imported_group:
@@ -209,6 +211,8 @@ def _load_yaml_import_groups(imported_groups, groups):
                     group['source'] = imported_group['source']
                 if 'depth' in imported_group:
                     group['depth'] = imported_group['depth']
+                if 'timestamp_author' in imported_group:
+                    group['timestamp_author'] = imported_group['timestamp_author']
                 if 'projects' in imported_group:
                     _load_yaml_import_projects(imported_group['projects'], group['projects'])
             combined_groups.append(group)
@@ -237,6 +241,8 @@ def _load_yaml_import_projects(imported_projects, projects):
                 project['path'] = imported_project['path']
             if 'depth' in imported_project:
                 project['depth'] = imported_project['depth']
+            if 'timestamp_author' in imported_project:
+                project['timestamp_author'] = imported_project['timestamp_author']
             if 'recursive' in imported_project:
                 project['recursive'] = imported_project['recursive']
             if 'ref' in imported_project:
@@ -338,6 +344,9 @@ def _validate_yaml_import_defaults(defaults, yaml_file):
     if 'depth' in defaults:
         _validate_type_depth(defaults['depth'], yaml_file)
         del defaults['depth']
+    if 'timestamp_author' in defaults:
+        _validate_type_str(defaults['timestamp_author'], 'timestamp_author', yaml_file)
+        del defaults['timestamp_author']
     if defaults:
         error = fmt.invalid_entries_error('defaults', defaults, yaml_file)
         raise ClowderError(error)
@@ -387,6 +396,10 @@ def _validate_yaml_defaults_optional(defaults, yaml_file):
     if 'recursive' in defaults:
         _validate_type_bool(defaults['recursive'], 'recursive', yaml_file)
         del defaults['recursive']
+
+    if 'timestamp_author' in defaults:
+        _validate_type_str(defaults['timestamp_author'], 'timestamp_author', yaml_file)
+        del defaults['timestamp_author']
 
 
 def _validate_yaml_fork(fork, yaml_file):
@@ -507,6 +520,10 @@ def _validate_yaml_import_group(group, yaml_file):
         _validate_type_depth(group['depth'], yaml_file)
         del group['depth']
 
+    if 'timestamp_author' in group:
+        _validate_type_str(group['timestamp_author'], 'timestamp_author', yaml_file)
+        del group['timestamp_author']
+
     if group:
         error = fmt.invalid_entries_error('group', group, yaml_file)
         raise ClowderError(error)
@@ -534,6 +551,10 @@ def _validate_yaml_group(group, yaml_file):
     if 'recursive' in group:
         _validate_type_bool(group['recursive'], 'recursive', yaml_file)
         del group['recursive']
+
+    if 'timestamp_author' in group:
+        _validate_type_str(group['timestamp_author'], 'timestamp_author', yaml_file)
+        del group['timestamp_author']
 
     if 'ref' in group:
         _validate_type_str(group['ref'], 'ref', yaml_file)
@@ -594,6 +615,10 @@ def _validate_yaml_project_optional(project, yaml_file):
     if 'recursive' in project:
         _validate_type_bool(project['recursive'], 'recursive', yaml_file)
         del project['recursive']
+
+    if 'timestamp_author' in project:
+        _validate_type_str(project['timestamp_author'], 'timestamp_author', yaml_file)
+        del project['timestamp_author']
 
     if 'ref' in project:
         _validate_type_str(project['ref'], 'ref', yaml_file)

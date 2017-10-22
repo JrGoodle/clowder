@@ -23,17 +23,6 @@ else
     export PYTHON_VERSIONS_DIR="$HOME/python2_virtualenv"
 fi
 
-setup_local_test_directory() {
-    echo 'Set up local test directory at .clowder_tests'
-    echo "Removing existing test files"
-    rm -rf "$HOME/.clowder_tests" || exit 1
-    mkdir -p "$HOME/.clowder_tests" || exit 1
-    cp -r "$EXAMPLES_DIR/cats" "$CATS_EXAMPLE_DIR" || exit 1
-    cp -r "$EXAMPLES_DIR/llvm-projects" "$LLVM_EXAMPLE_DIR" || exit 1
-    cp -r "$EXAMPLES_DIR/swift-projects" "$SWIFT_EXAMPLE_DIR" || exit 1
-    cp -r "$EXAMPLES_DIR/cocos2d-objc" "$COCOS2D_EXAMPLE_DIR" || exit 1
-}
-
 prepare_cats_example() {
     print_single_separator
     echo "TEST: Prepare cats example at $CATS_EXAMPLE_DIR"
@@ -81,6 +70,27 @@ test_commit() {
     local git_commit
     git_commit=$(git rev-parse HEAD)
     [[ "$1" = "$git_commit" ]] && echo "TEST: On correct commit: $1" || exit 1
+}
+
+test_commit_author_email() {
+    echo "TEST: Check commit is checked out by author email"
+    local git_author
+    git_author=$(git log -1 --format="%ae" HEAD)
+    [[ "$1" = "$git_author" ]] && echo "TEST: Commit author is $1" || exit 1
+}
+
+test_commit_author_name() {
+    echo "TEST: Check commit is checked out by author name"
+    local git_author
+    git_author=$(git log -1 --format="%an" HEAD)
+    [[ "$1" = "$git_author" ]] && echo "TEST: Commit author is $1" || exit 1
+}
+
+test_commit_timestamp() {
+    echo "TEST: Check commit timestamp"
+    local git_timestamp
+    git_timestamp=$(git log -1 --format=%cI)
+    [[ "$1" = "$git_timestamp" ]] && echo "TEST: Commit timestamp is $1" || exit 1
 }
 
 test_git_dirty() {
@@ -199,6 +209,17 @@ test_clowder_version() {
     print_double_separator
     echo "TEST: Print clowder version"
     clowder version || exit 1
+}
+
+test_command() {
+    print_double_separator
+    echo "TEST: Clowder command"
+    print_single_separator
+    echo "TEST: Fail with unrecognized command"
+    clowder cat && exit 1
+    echo "TEST: Fail with no arguments"
+    clowder && exit 1
+    echo ''
 }
 
 print_single_separator() {

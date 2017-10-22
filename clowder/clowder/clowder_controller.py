@@ -23,9 +23,9 @@ def herd_project(project, branch, tag, depth, rebase):
     project.herd(branch=branch, tag=tag, depth=depth, rebase=rebase, parallel=True)
 
 
-def reset_project(project):
+def reset_project(project, timestamp):
     """Reset project branches to upstream or checkout tag/sha as detached HEAD"""
-    project.reset(parallel=True)
+    project.reset(timestamp=timestamp, parallel=True)
 
 
 def run_project(project, command, ignore_errors):
@@ -330,24 +330,27 @@ class ClowderController(object):
             for project in projects:
                 project.prune(branch, remote=True)
 
-    def reset(self, group_names, project_names=None, parallel=False):
+    def reset(self, group_names, project_names=None, timestamp_project=None, parallel=False):
         """Reset project branches to upstream or checkout tag/sha as detached HEAD"""
         if parallel:
-            self._reset_parallel(group_names, project_names=project_names)
+            self._reset_parallel(group_names, timestamp_project=timestamp_project)
             return
         # Serial
+        timestamp = None
+        if timestamp_project:
+            timestamp = self._get_timestamp(timestamp_project)
         if project_names is None:
             self._validate_groups(group_names)
             groups = [g for g in self.groups if g.name in group_names]
             for group in groups:
                 group.print_name()
                 for project in group.projects:
-                    project.reset()
+                    project.reset(timestamp=timestamp)
             return
         self._validate_projects(project_names)
         projects = [p for g in self.groups for p in g.projects if p.name in project_names]
         for project in projects:
-            project.reset()
+            project.reset(timestamp=timestamp)
 
     def save_version(self, version):
         """Save current commits to a clowder.yaml in the versions directory"""
@@ -454,6 +457,18 @@ class ClowderController(object):
             RESULTS.append(result)
         pool_handler(len(projects))
 
+    def _get_timestamp(self, timestamp_project):
+        """Return timestamp for project"""
+        timestamp = None
+        all_projects = [p for g in self.groups for p in g.projects]
+        for project in all_projects:
+            if project.name == timestamp_project:
+                timestamp = project.get_current_timestamp()
+        if timestamp is None:
+            cprint(' - Failed to find timestamp\n', 'red')
+            sys.exit(1)
+        return timestamp
+
     def _get_yaml(self):
         """Return python object representation for saving yaml"""
         groups_yaml = [g.get_yaml() for g in self.groups]
@@ -523,9 +538,12 @@ class ClowderController(object):
         for project in projects:
             project.prune(branch, force=force, local=True, remote=True)
 
-    def _reset_parallel(self, group_names, project_names=None):
+    def _reset_parallel(self, group_names, project_names=None, timestamp_project=None):
         """Reset project branches to upstream or checkout tag/sha as detached HEAD in parallel"""
         print(' - Reset projects in parallel\n')
+        timestamp = None
+        if timestamp_project:
+            timestamp = self._get_timestamp(timestamp_project)
         if project_names is None:
             self._validate_groups(group_names)
             groups = [g for g in self.groups if g.name in group_names]
@@ -538,7 +556,7 @@ class ClowderController(object):
                         print('  ' + fmt.fork_string(project.name))
                         print('  ' + fmt.fork_string(project.fork.name))
             for project in projects:
-                result = CLOWDER_POOL.apply_async(reset_project, args=(project,), callback=async_callback)
+                result = CLOWDER_POOL.apply_async(reset_project, args=(project, timestamp), callback=async_callback)
                 RESULTS.append(result)
             pool_handler(len(projects))
             return
@@ -550,7 +568,7 @@ class ClowderController(object):
                 print('  ' + fmt.fork_string(project.name))
                 print('  ' + fmt.fork_string(project.fork.name))
         for project in projects:
-            result = CLOWDER_POOL.apply_async(reset_project, args=(project,), callback=async_callback)
+            result = CLOWDER_POOL.apply_async(reset_project, args=(project, timestamp), callback=async_callback)
             RESULTS.append(result)
         pool_handler(len(projects))
 
