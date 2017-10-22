@@ -10,15 +10,20 @@ from multiprocessing.pool import ThreadPool
 from termcolor import cprint
 
 
+# Disable errors shown by pylint for catching too general exception
+# pylint: disable=W0703
+
+
 def subprocess_exit_handler(process):
     """terminate subprocess"""
     try:
         process.terminate()
-    except:
+    except ProcessLookupError:
         pass
 
 
 def execute_subprocess_command(command, path, shell=True, env=None, stdout=None, stderr=None):
+    """Execute subprocess command"""
     if isinstance(command, list):
         cmd = ' '.join(command)
     else:
@@ -31,13 +36,14 @@ def execute_subprocess_command(command, path, shell=True, env=None, stdout=None,
     except (KeyboardInterrupt, SystemExit):
         raise
     except Exception as err:
+        print(err)
         raise
     else:
         return process.returncode
 
 
 def execute_command(command, path, shell=True, env=None, print_output=True):
-    """Run subprocess command"""
+    """Execute command via thread"""
     cmd_env = os.environ.copy()
     if env:
         cmd_env.update(env)
