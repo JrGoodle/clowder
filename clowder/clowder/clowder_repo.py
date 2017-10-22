@@ -5,7 +5,6 @@ from __future__ import print_function
 import atexit
 import errno
 import os
-import subprocess
 import sys
 
 from termcolor import colored
@@ -13,6 +12,7 @@ from termcolor import colored
 import clowder.util.formatting as fmt
 from clowder.git.project_repo import ProjectRepo
 from clowder.util.connectivity import is_offline
+from clowder.util.execute import execute_command
 from clowder.util.file_system import remove_directory
 
 
@@ -135,7 +135,7 @@ class ClowderRepo(object):
     def run_command(self, command):
         """Run command in clowder repo"""
         print(fmt.command(command))
-        return_code = execute_subprocess_command(command.split(), self.clowder_path)
+        return_code = execute_command(command.split(), self.clowder_path)
         if return_code != 0:
             print(fmt.command_failed_error(command))
             sys.exit(return_code)
@@ -152,29 +152,6 @@ class ClowderRepo(object):
             ProjectRepo.validation(self.clowder_path)
             print()
             sys.exit(1)
-
-
-def subprocess_exit_handler(process):
-    """terminate subprocess"""
-    try:
-        process.terminate()
-    except:
-        pass
-
-
-def execute_subprocess_command(command, path, shell=True, env=None, stdout=None, stderr=None):
-    """Run subprocess command"""
-    try:
-        process = subprocess.Popen(' '.join(command), shell=shell, env=env, cwd=path,
-                                   stdout=stdout, stderr=stderr)
-        atexit.register(subprocess_exit_handler, process)
-        process.communicate()
-    except (KeyboardInterrupt, SystemExit):
-        raise
-    except:
-        raise
-    else:
-        return process.returncode
 
 
 def force_symlink(file1, file2):
