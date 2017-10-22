@@ -82,7 +82,7 @@ class Group(object):
 
         return all([project.exists() for project in self.projects])
 
-    def prune(self, branch, force=False, local=False, remote=False):
+    def prune(self, branch, skip=None, force=False, local=False, remote=False):
         """Prune branches"""
         if local and remote:
             local_branch_exists = self._existing_branch(branch, is_remote=False)
@@ -90,16 +90,22 @@ class Group(object):
             if local_branch_exists or remote_branch_exists:
                 self.print_name()
                 for project in self.projects:
+                    if project.name in skip:
+                        continue
                     project.prune(branch, force=force, local=True, remote=True)
         elif local:
             if self._existing_branch(branch, is_remote=False):
                 self.print_name()
                 for project in self.projects:
+                    if project.name in skip:
+                        continue
                     project.prune(branch, force=force, local=True)
         elif remote:
             if self._existing_branch(branch, is_remote=True):
                 self.print_name()
                 for project in self.projects:
+                    if project.name in skip:
+                        continue
                     project.prune(branch, remote=True)
 
     def status(self, padding):
@@ -107,13 +113,6 @@ class Group(object):
         self.print_name()
         for project in self.projects:
             project.status(padding)
-
-    def stash(self):
-        """Stash changes for all projects with changes"""
-        if self.is_dirty():
-            self.print_name()
-            for project in self.projects:
-                project.stash()
 
     def _existing_branch(self, branch, is_remote):
         """Checks whether at least one branch exists"""

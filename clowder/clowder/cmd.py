@@ -346,13 +346,13 @@ class Command(object):
                 sys.exit(1)
         if self.args.projects is None:
             self.clowder.start_groups(self.args.groups,
-                                      self.args.branch,
                                       self.args.skip,
+                                      self.args.branch,
                                       self.args.tracking)
         else:
             self.clowder.start_projects(self.args.projects,
-                                        self.args.branch,
                                         self.args.skip,
+                                        self.args.branch,
                                         self.args.tracking)
 
     def stash(self):
