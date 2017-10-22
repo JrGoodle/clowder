@@ -38,12 +38,8 @@ def _configure_subparser_branch(subparsers, clowder):
     group_branch_options.add_argument('--remote', '-r', action='store_true',
                                       help='show remote branches')
     group_branch = parser_branch.add_mutually_exclusive_group()
-    if clowder is None:
-        group_names = ''
-        project_names = ''
-    else:
-        group_names = clowder.get_all_group_names()
-        project_names = clowder.get_all_project_names()
+    group_names = _group_names(clowder)
+    project_names = _project_names(clowder)
     if group_names == '':
         branch_help_groups = 'groups to show branches for'
     else:
@@ -84,12 +80,8 @@ def _configure_subparser_clean(subparsers, clowder):
     parser_clean.add_argument('-x', action='store_true',
                               help='remove all untracked files')
     group_clean = parser_clean.add_mutually_exclusive_group()
-    if clowder is None:
-        group_names = ''
-        project_names = ''
-    else:
-        group_names = clowder.get_all_group_names()
-        project_names = clowder.get_all_project_names()
+    group_names = _group_names(clowder)
+    project_names = _project_names(clowder)
     if group_names == '':
         clean_help_groups = 'groups to clean'
     else:
@@ -118,12 +110,8 @@ def _configure_subparser_diff(subparsers, clowder):
     diff_help = 'Show git diff for projects'
     parser_diff = subparsers.add_parser('diff', help=diff_help)
     group_diff = parser_diff.add_mutually_exclusive_group()
-    if clowder is None:
-        group_names = ''
-        project_names = ''
-    else:
-        group_names = clowder.get_all_group_names()
-        project_names = clowder.get_all_project_names()
+    group_names = _group_names(clowder)
+    project_names = _project_names(clowder)
     if group_names == '':
         diff_help_groups = 'groups to diff'
     else:
@@ -159,12 +147,8 @@ def _configure_subparser_forall(subparsers, clowder):
     group_forall_command.add_argument('--command', '-c', nargs=1, metavar='COMMAND',
                                       help='command or script to run in project directories')
     group_forall_targets = parser_forall.add_mutually_exclusive_group()
-    if clowder is None:
-        group_names = ''
-        project_names = ''
-    else:
-        group_names = clowder.get_all_group_names()
-        project_names = clowder.get_all_project_names()
+    group_names = _group_names(clowder)
+    project_names = _project_names(clowder)
     if group_names == '':
         forall_help_groups = 'groups to run command or script for'
     else:
@@ -204,12 +188,8 @@ def _configure_subparser_herd(subparsers, clowder):
     group_herd.add_argument('--tag', '-t', nargs=1, default=None, metavar='TAG',
                             help='tag to herd if present')
     group_herd = parser_herd.add_mutually_exclusive_group()
-    if clowder is None:
-        group_names = ''
-        project_names = ''
-    else:
-        group_names = clowder.get_all_group_names()
-        project_names = clowder.get_all_project_names()
+    group_names = _group_names(clowder)
+    project_names = _project_names(clowder)
     if group_names == '':
         herd_help_groups = 'groups to herd'
     else:
@@ -269,12 +249,8 @@ def _configure_subparser_prune(subparsers, clowder):
     group_prune_options.add_argument('--remote', '-r', action='store_true',
                                      help='prune remote branches')
     group_prune = parser_prune.add_mutually_exclusive_group()
-    if clowder is None:
-        group_names = ''
-        project_names = ''
-    else:
-        group_names = clowder.get_all_group_names()
-        project_names = clowder.get_all_project_names()
+    group_names = _group_names(clowder)
+    project_names = _project_names(clowder)
     if group_names == '':
         prune_help_groups = 'groups to prune branch for'
     else:
@@ -342,12 +318,8 @@ def _configure_subparser_reset(subparsers, clowder):
     parser_reset = subparsers.add_parser('reset', help=reset_help)
     parser_reset.add_argument('--parallel', action='store_true',
                               help='run commands in parallel')
-    if clowder is None:
-        group_names = ''
-        project_names = ''
-    else:
-        group_names = clowder.get_all_group_names()
-        project_names = clowder.get_all_project_names()
+    group_names = _group_names(clowder)
+    project_names = _project_names(clowder)
     if project_names == '':
         reset_help_timestamp = 'project to reset timestamps to'
     else:
@@ -395,12 +367,8 @@ def _configure_subparser_start(subparsers, clowder):
                               help='create remote tracking branch')
     parser_start.add_argument('branch', help='name of branch to create', metavar='BRANCH')
     group_start = parser_start.add_mutually_exclusive_group()
-    if clowder is None:
-        group_names = ''
-        project_names = ''
-    else:
-        group_names = clowder.get_all_group_names()
-        project_names = clowder.get_all_project_names()
+    group_names = _group_names(clowder)
+    project_names = _project_names(clowder)
     if group_names == '':
         start_help_groups = 'groups to start feature branch for'
     else:
@@ -428,12 +396,8 @@ def _configure_subparser_stash(subparsers, clowder):
     """Configure clowder stash subparser and arguments"""
     parser_stash = subparsers.add_parser('stash', help='Stash current changes')
     group_stash = parser_stash.add_mutually_exclusive_group()
-    if clowder is None:
-        group_names = ''
-        project_names = ''
-    else:
-        group_names = clowder.get_all_group_names()
-        project_names = clowder.get_all_project_names()
+    group_names = _group_names(clowder)
+    project_names = _project_names(clowder)
     if group_names == '':
         stash_help_groups = 'groups to stash'
     else:
@@ -471,10 +435,7 @@ def _configure_subparser_sync(subparsers, clowder):
                              help='run commands in parallel')
     parser_sync.add_argument('--rebase', '-r', action='store_true',
                              help='use rebase instead of pull')
-    if clowder is None:
-        project_names = ''
-    else:
-        project_names = clowder.get_all_fork_project_names()
+    project_names = _fork_project_names(clowder)
     if project_names == '':
         sync_help_projects = 'projects to sync'
     else:
@@ -497,3 +458,35 @@ def _configure_subparser_yaml(subparsers):
     parser_yaml = subparsers.add_parser('yaml', help='Print clowder.yaml information')
     parser_yaml.add_argument('--resolved', '-r', action='store_true',
                              help='print resolved clowder.yaml')
+
+
+def _fork_project_names(clowder):
+    """Return group options"""
+    if clowder:
+        return clowder.get_all_fork_project_names()
+    return ''
+
+
+def _group_names(clowder):
+    """Return group options"""
+    if clowder:
+        return clowder.get_all_group_names()
+    return ''
+
+
+def _options_help_message(options, message):
+    """Help message for groups option"""
+    if options == '':
+        return message
+    help_message = '''
+                   {0}:
+                   {1}
+                   '''
+    return help_message.format(message, ', '.join(options))
+
+
+def _project_names(clowder):
+    """Return project options"""
+    if clowder:
+        return clowder.get_all_project_names()
+    return ''
