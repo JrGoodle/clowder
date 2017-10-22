@@ -8,15 +8,7 @@ if [ "$1" = 'parallel' ]; then
     PARALLEL='--parallel'
 fi
 
-./test_utilities.sh
-
-print_double_separator
-echo 'TEST: llvm projects reset'
-print_double_separator
-
-if [ -z "$TRAVIS_OS_NAME" ]; then
-    setup_local_test_directory
-fi
+. test_utilities.sh
 
 export project_paths=( 'llvm' \
                        'klee' \
@@ -60,12 +52,10 @@ export fork_projects=( 'llvm-mirror/clang' \
                        'llvm-mirror/clang-tools-extra' \
                        'llvm-mirror/compiler-rt' )
 
-cd "$LLVM_EXAMPLE_DIR" || exit 1
-
 print_double_separator
 echo "TEST: Test clowder reset"
-./clean.sh || exit 1
-./init.sh || exit 1
+cd "$LLVM_EXAMPLE_DIR" || exit 1
+./init.sh
 
 test_reset() {
     print_single_separator

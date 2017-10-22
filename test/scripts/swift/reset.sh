@@ -9,12 +9,8 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
 print_double_separator
 echo 'TEST: swift projects reset'
 print_double_separator
-
-if [ -z "$TRAVIS_OS_NAME" ]; then
-    setup_local_test_directory
-fi
-
 cd "$SWIFT_EXAMPLE_DIR" || exit 1
+./init.sh
 
 export project_paths=( 'cmark' \
                        'llbuild' \

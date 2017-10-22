@@ -51,6 +51,10 @@ class Command(object):
             exit_unrecognized_command(parser)
         # use dispatch pattern to invoke method with same name
         scripts_dir = os.path.join(os.getcwd(), 'test', 'scripts')
+        return_code = execute_command('./setup_local_test_directory.sh', scripts_dir, shell=True)
+        if return_code != 0:
+            print(' - Failed to setup local test directory')
+            sys.exit(return_code)
         getattr(self, self.args.test_command)(scripts_dir)
         print()
 

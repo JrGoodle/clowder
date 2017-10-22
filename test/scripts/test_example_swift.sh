@@ -10,12 +10,6 @@ print_double_separator
 echo 'TEST: swift projects example test script'
 print_double_separator
 
-if [ -z "$TRAVIS_OS_NAME" ]; then
-    setup_local_test_directory
-fi
-
-cd "$SWIFT_EXAMPLE_DIR" || exit 1
-
 export project_paths=( 'cmark' \
                        'llbuild' \
                        'swift-corelibs-foundation' \
@@ -44,6 +38,9 @@ export projects=( 'apple/swift-clang' \
                   'apple/swift-integration-tests' \
                   'apple/swift-xcode-playground-support' \
                   'apple/swift-package-manager' )
+
+cd "$SWIFT_EXAMPLE_DIR" || exit 1
+./init.sh
 
 test_default_branches() {
     echo "TEST: Default branches checked out"

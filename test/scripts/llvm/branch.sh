@@ -11,19 +11,9 @@ fi
 . test_utilities.sh
 
 print_double_separator
-echo 'TEST: llvm projects example test script'
-print_double_separator
-
-if [ -z "$TRAVIS_OS_NAME" ]; then
-    setup_local_test_directory
-fi
-
-cd "$LLVM_EXAMPLE_DIR" || exit 1
-
-print_double_separator
 echo "TEST: Test clowder branch"
-# ./clean.sh || exit 1
-./init.sh || exit 1
+cd "$LLVM_EXAMPLE_DIR" || exit 1
+./init.sh
 
 test_branch() {
     echo "TEST: clowder branch"

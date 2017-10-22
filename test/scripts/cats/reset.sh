@@ -21,6 +21,9 @@ export all_projects=( 'mu' 'duke' \
                       'black-cats/sasha' \
                       'black-cats/jules' )
 
+cd "$CATS_EXAMPLE_DIR" || exit 1
+./init.sh
+
 test_cats_default_herd_branches() {
     echo "TEST: cats projects on default branches"
     for project in "${black_cats_projects[@]}"; do

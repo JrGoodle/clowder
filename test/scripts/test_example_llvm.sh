@@ -10,16 +10,6 @@ fi
 
 . test_utilities.sh
 
-print_double_separator
-echo 'TEST: llvm projects example test script'
-print_double_separator
-
-if [ -z "$TRAVIS_OS_NAME" ]; then
-    setup_local_test_directory
-fi
-
-cd "$LLVM_EXAMPLE_DIR" || exit 1
-
 export project_paths=( 'llvm' \
                        'klee' \
                        'libclc' \
@@ -101,11 +91,15 @@ test_clowder_version
 #     popd || exit 1
 # }
 
+print_double_separator
+echo 'TEST: llvm projects example test script'
+print_double_separator
+cd "$LLVM_EXAMPLE_DIR" || exit 1
+./init.sh
+
 test_init_herd() {
     print_double_separator
     echo "TEST: Normal herd after init"
-    "$LLVM_EXAMPLE_DIR/clean.sh"
-    "$LLVM_EXAMPLE_DIR/init.sh"  || exit 1
     clowder herd $PARALLEL || exit 1
     echo "TEST: Check current branches are on master"
     for project in "${project_paths[@]}"; do

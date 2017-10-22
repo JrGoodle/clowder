@@ -10,12 +10,6 @@ print_double_separator
 echo 'TEST: cats example test script'
 print_double_separator
 
-if [ -z "$TRAVIS_OS_NAME" ]; then
-    setup_local_test_directory
-fi
-
-cd "$CATS_EXAMPLE_DIR" || exit 1
-
 test_clowder_version
 
 "$TEST_SCRIPT_DIR/cats/init.sh" || exit 1

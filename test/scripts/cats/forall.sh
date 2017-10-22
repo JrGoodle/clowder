@@ -10,6 +10,7 @@ fi
 
 prepare_cats_example
 cd "$CATS_EXAMPLE_DIR" || exit 1
+./init.sh
 
 export black_cats_projects=( 'black-cats/kit' \
                              'black-cats/kishka' \

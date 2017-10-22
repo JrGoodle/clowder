@@ -23,17 +23,6 @@ else
     export PYTHON_VERSIONS_DIR="$HOME/python2_virtualenv"
 fi
 
-setup_local_test_directory() {
-    echo 'Set up local test directory at .clowder_tests'
-    echo "Removing existing test files"
-    rm -rf "$HOME/.clowder_tests" || exit 1
-    mkdir -p "$HOME/.clowder_tests" || exit 1
-    cp -r "$EXAMPLES_DIR/cats" "$CATS_EXAMPLE_DIR" || exit 1
-    cp -r "$EXAMPLES_DIR/llvm-projects" "$LLVM_EXAMPLE_DIR" || exit 1
-    cp -r "$EXAMPLES_DIR/swift-projects" "$SWIFT_EXAMPLE_DIR" || exit 1
-    cp -r "$EXAMPLES_DIR/cocos2d-objc" "$COCOS2D_EXAMPLE_DIR" || exit 1
-}
-
 prepare_cats_example() {
     print_single_separator
     echo "TEST: Prepare cats example at $CATS_EXAMPLE_DIR"
