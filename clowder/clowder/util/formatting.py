@@ -270,6 +270,11 @@ def save_version_exists_error(version_name, yml):
     return output_1 + output_2 + output_3 + output_4
 
 
+def skip_project_message():
+    """Return skip project message"""
+    return ' - Skip project'
+
+
 def symlink_target(pth):
     """Returns target path if input is a symlink"""
     if os.path.islink(pth):

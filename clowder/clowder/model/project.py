@@ -51,7 +51,6 @@ class Project(object):
 
     def branch(self, local=False, remote=False):
         """Print branches for project"""
-        self.print_status()
         if not os.path.isdir(self.full_path()):
             cprint(" - Project is missing\n", 'red')
             return
@@ -67,7 +66,6 @@ class Project(object):
 
     def clean(self, args='', recursive=False):
         """Discard changes for project"""
-        self.print_status()
         if not os.path.isdir(self.full_path()):
             cprint(" - Project is missing\n", 'red')
             return
@@ -80,7 +78,6 @@ class Project(object):
 
     def clean_all(self):
         """Discard all changes for project"""
-        self.print_status()
         if not os.path.isdir(self.full_path()):
             cprint(" - Project is missing\n", 'red')
             return
@@ -269,7 +266,6 @@ class Project(object):
         print_output = not parallel
 
         if print_output:
-            self.print_status()
             if not os.path.isdir(self.full_path()):
                 cprint(" - Project is missing\n", 'red')
                 return
@@ -297,7 +293,6 @@ class Project(object):
 
     def start(self, branch, tracking):
         """Start a new feature branch"""
-        self.print_status()
         repo = ProjectRepo(self.full_path(), self.remote_name, self.ref)
         if not ProjectRepo.existing_git_repository(self.full_path()):
             cprint(" - Directory doesn't exist", 'red')
@@ -317,7 +312,6 @@ class Project(object):
     def stash(self):
         """Stash changes for project if dirty"""
         if self.is_dirty():
-            self.print_status()
             repo = ProjectRepo(self.full_path(), self.remote_name, self.ref)
             repo.stash()
 
@@ -400,7 +394,6 @@ class Project(object):
         """Prune local branch"""
         repo = ProjectRepo(self.full_path(), self.remote_name, self.ref)
         if repo.existing_local_branch(branch):
-            self.print_status()
             repo.prune_branch_local(branch, force)
 
     def _prune_remote(self, branch):
@@ -411,7 +404,6 @@ class Project(object):
             remote = self.fork.remote_name
         repo = ProjectRepo(self.full_path(), self.remote_name, self.ref)
         if repo.existing_remote_branch(branch, remote):
-            self.print_status()
             repo.prune_branch_remote(branch, remote)
 
     def _reset(self, repo, timestamp=None, print_output=True):

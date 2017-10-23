@@ -125,13 +125,17 @@ class ClowderController(object):
             for group in groups:
                 group.print_name()
                 for project in group.projects:
+                    project.print_status()
                     if project.name in skip:
+                        print(fmt.skip_project_message())
                         continue
                     project.branch(local=local, remote=remote)
             return
         projects = [p for g in self.groups for p in g.projects if p.name in project_names]
         for project in projects:
+            project.print_status()
             if project.name in skip:
+                print(fmt.skip_project_message())
                 continue
             project.branch(local=local, remote=remote)
 
@@ -142,13 +146,17 @@ class ClowderController(object):
             for group in groups:
                 group.print_name()
                 for project in group.projects:
+                    project.print_status()
                     if project.name in skip:
+                        print(fmt.skip_project_message())
                         continue
                     project.clean(args=args, recursive=recursive)
             return
         projects = [p for g in self.groups for p in g.projects if p.name in project_names]
         for project in projects:
+            project.print_status()
             if project.name in skip:
+                print(fmt.skip_project_message())
                 continue
             project.clean(args=args, recursive=recursive)
 
@@ -159,13 +167,17 @@ class ClowderController(object):
             for group in groups:
                 group.print_name()
                 for project in group.projects:
+                    project.print_status()
                     if project.name in skip:
+                        print(fmt.skip_project_message())
                         continue
                     project.clean_all()
             return
         projects = [p for g in self.groups for p in g.projects if p.name in project_names]
         for project in projects:
+            project.print_status()
             if project.name in skip:
+                print(fmt.skip_project_message())
                 continue
             project.clean_all()
 
@@ -201,7 +213,9 @@ class ClowderController(object):
             return
         # Serial
         for project in projects:
+            project.print_status()
             if project.name in skip:
+                print(fmt.skip_project_message())
                 continue
             project.run(command, ignore_errors)
 
@@ -253,13 +267,18 @@ class ClowderController(object):
                 group.print_name()
                 for project in group.projects:
                     if project.name in skip:
+                        project.print_status()
+                        print(fmt.skip_project_message())
                         continue
                     project.herd(branch=branch, tag=tag, depth=depth, rebase=rebase)
             return
         self._validate_projects(project_names)
         projects = [p for g in self.groups for p in g.projects if p.name in project_names]
         for project in projects:
+            project.print_status()
             if project.name in skip:
+                project.print_status()
+                print(fmt.skip_project_message())
                 continue
             project.herd(branch=branch, tag=tag, depth=depth, rebase=rebase)
 
@@ -351,7 +370,9 @@ class ClowderController(object):
                 print(' - No local branches to prune\n')
                 sys.exit()
             for project in projects:
+                project.print_status()
                 if project.name in skip:
+                    print(fmt.skip_project_message())
                     continue
                 project.prune(branch, force=force, local=True)
         elif remote:
@@ -359,7 +380,9 @@ class ClowderController(object):
                 cprint(' - No remote branches to prune\n', 'red')
                 sys.exit()
             for project in projects:
+                project.print_status()
                 if project.name in skip:
+                    print(fmt.skip_project_message())
                     continue
                 project.prune(branch, remote=True)
 
@@ -379,6 +402,8 @@ class ClowderController(object):
                 group.print_name()
                 for project in group.projects:
                     if project.name in skip:
+                        project.print_status()
+                        print(fmt.skip_project_message())
                         continue
                     project.reset(timestamp=timestamp)
             return
@@ -386,6 +411,8 @@ class ClowderController(object):
         projects = [p for g in self.groups for p in g.projects if p.name in project_names]
         for project in projects:
             if project.name in skip:
+                project.print_status()
+                print(fmt.skip_project_message())
                 continue
             project.reset(timestamp=timestamp)
 
@@ -418,7 +445,9 @@ class ClowderController(object):
         for group in groups:
             group.print_name()
             for project in group.projects:
+                project.print_status()
                 if project.name in skip:
+                    print(fmt.skip_project_message())
                     continue
                 project.start(branch, tracking)
 
@@ -427,7 +456,9 @@ class ClowderController(object):
         self._validate_projects(project_names)
         projects = [p for g in self.groups for p in g.projects if p.name in project_names]
         for project in projects:
+            project.print_status()
             if project.name in skip:
+                print(fmt.skip_project_message())
                 continue
             project.start(branch, tracking)
 
@@ -441,13 +472,17 @@ class ClowderController(object):
             for group in groups:
                 group.print_name()
                 for project in group.projects:
+                    project.print_status()
                     if project.name in skip:
+                        print(fmt.skip_project_message())
                         continue
                     project.stash()
             return
         projects = [p for g in self.groups for p in g.projects if p.name in project_names]
         for project in projects:
+            project.print_status()
             if project.name in skip:
+                print(fmt.skip_project_message())
                 continue
             project.stash()
 
