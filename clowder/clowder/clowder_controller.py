@@ -290,8 +290,8 @@ class ClowderController(object):
             groups = [g for g in self.groups if g.name in group_names]
             self._validate_groups(groups)
             if local and remote:
-                local_branch_exists = self._existing_branch_group(group_names, branch, is_remote=False)
-                remote_branch_exists = self._existing_branch_group(group_names, branch, is_remote=True)
+                local_branch_exists = self._existing_branch_groups(groups, branch, is_remote=False)
+                remote_branch_exists = self._existing_branch_groups(groups, branch, is_remote=True)
                 branch_exists = local_branch_exists or remote_branch_exists
                 if not branch_exists:
                     cprint(' - No local or remote branches to prune\n', 'red')
@@ -303,14 +303,14 @@ class ClowderController(object):
                     if local_branch_exists or remote_branch_exists:
                         self._run_group_command(group, skip, 'prune', branch, force=force, local=True, remote=True)
             elif local:
-                if not self._existing_branch_group(group_names, branch, is_remote=False):
+                if not self._existing_branch_groups(groups, branch, is_remote=False):
                     print(' - No local branches to prune\n')
                     sys.exit()
                 for group in groups:
                     if group.existing_branch(branch, is_remote=False):
                         self._run_group_command(group, skip, 'prune', branch, force=force, local=True)
             elif remote:
-                if not self._existing_branch_group(group_names, branch, is_remote=True):
+                if not self._existing_branch_groups(groups, branch, is_remote=True):
                     cprint(' - No remote branches to prune\n', 'red')
                     sys.exit()
                 for group in groups:
@@ -320,15 +320,23 @@ class ClowderController(object):
         projects = [p for g in self.groups for p in g.projects if p.name in project_names]
         self._validate_projects(projects)
         if local and remote:
-            self._prune_projects_all(project_names, branch, skip, force)
+            local_branch_exists = self._existing_branch_projects(projects, branch, is_remote=False)
+            remote_branch_exists = self._existing_branch_projects(projects, branch, is_remote=True)
+            branch_exists = local_branch_exists or remote_branch_exists
+            if not branch_exists:
+                cprint(' - No local or remote branches to prune\n', 'red')
+                sys.exit()
+            print(' - Prune local and remote branches\n')
+            for project in projects:
+                self._run_project_command(project, skip, 'prune', branch, force=force, local=True, remote=True)
         elif local:
-            if not self._existing_branch_project(project_names, branch, is_remote=False):
+            if not self._existing_branch_projects(projects, branch, is_remote=False):
                 print(' - No local branches to prune\n')
                 sys.exit()
             for project in projects:
                 self._run_project_command(project, skip, 'prune', branch, force=force, local=True)
         elif remote:
-            if not self._existing_branch_project(project_names, branch, is_remote=True):
+            if not self._existing_branch_projects(projects, branch, is_remote=True):
                 cprint(' - No remote branches to prune\n', 'red')
                 sys.exit()
             for project in projects:
@@ -424,14 +432,14 @@ class ClowderController(object):
         for project in projects:
             project.sync(rebase=rebase)
 
-    def _existing_branch_group(self, group_names, branch, is_remote):
+    @staticmethod
+    def _existing_branch_groups(groups, branch, is_remote):
         """Checks whether at least one branch exists for projects in groups"""
-        projects = [p for g in self.groups if g.name in group_names for p in g.projects]
-        return any([p.existing_branch(branch, is_remote=is_remote) for p in projects])
+        return any([p.existing_branch(branch, is_remote=is_remote) for g in groups for p in g.projects])
 
-    def _existing_branch_project(self, project_names, branch, is_remote):
+    @staticmethod
+    def _existing_branch_projects(projects, branch, is_remote):
         """Checks whether at least one branch exists for projects"""
-        projects = [p for g in self.groups for p in g.projects if p.name in project_names]
         return any([p.existing_branch(branch, is_remote=is_remote) for p in projects])
 
     def _fetch_groups(self, group_names):
@@ -554,21 +562,6 @@ class ClowderController(object):
             if project.fork:
                 print('  ' + fmt.fork_string(project.name))
                 print('  ' + fmt.fork_string(project.fork.name))
-
-    def _prune_projects_all(self, project_names, branch, skip, force):
-        """Prune local and remote branches for projects"""
-        local_branch_exists = self._existing_branch_project(project_names, branch, is_remote=False)
-        remote_branch_exists = self._existing_branch_project(project_names, branch, is_remote=True)
-        branch_exists = local_branch_exists or remote_branch_exists
-        if not branch_exists:
-            cprint(' - No local or remote branches to prune\n', 'red')
-            sys.exit()
-        print(' - Prune local and remote branches\n')
-        projects = [p for g in self.groups for p in g.projects if p.name in project_names]
-        for project in projects:
-            if project.name in skip:
-                continue
-            project.prune(branch, force=force, local=True, remote=True)
 
     def _reset_parallel(self, group_names, project_names=None, skip=None, timestamp_project=None):
         """Reset project branches to upstream or checkout tag/sha as detached HEAD in parallel"""
