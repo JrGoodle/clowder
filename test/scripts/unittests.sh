@@ -8,19 +8,13 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 
 . test_utilities.sh
 
-cd "$TEST_SCRIPT_DIR/../.." || exit 1
-
-if [ -z "$TRAVIS_OS_NAME" ]; then
-    setup_local_test_directory
-fi
-
 prepare_unittest_repos() {
     print_single_separator
     echo 'TEST: Prepare repos for unit tests'
     pushd "$CATS_EXAMPLE_DIR" || exit 1
     # Clean and herd repo's to clean state
-    $CATS_EXAMPLE_DIR/clean.sh || exit 1
-    $CATS_EXAMPLE_DIR/init.sh || exit 1
+    ./clean.sh || exit 1
+    ./init.sh || exit 1
     clowder clean || exit 1
     clowder herd || exit 1
     # Remove jules repository
@@ -43,18 +37,19 @@ print_double_separator
 echo 'TEST: Run unittests'
 echo ''
 
+UNITTTEST_PATH="$TEST_SCRIPT_DIR/../unittests"
 if [ -n "$TRAVIS_OS_NAME" ]; then
-    $PYTHON_VERSION test/unittests/test_clowder_repo.py -v "$CATS_EXAMPLE_DIR" || exit 1
-    $PYTHON_VERSION test/unittests/test_fork.py -v "$CATS_EXAMPLE_DIR" || exit 1
-    $PYTHON_VERSION test/unittests/test_git_utilities.py -v "$CATS_EXAMPLE_DIR" || exit 1
-    $PYTHON_VERSION test/unittests/test_group.py -v "$CATS_EXAMPLE_DIR" || exit 1
-    $PYTHON_VERSION test/unittests/test_project.py -v "$CATS_EXAMPLE_DIR" || exit 1
-    $PYTHON_VERSION test/unittests/test_source.py -v "$CATS_EXAMPLE_DIR" || exit 1
+    $PYTHON_VERSION "$UNITTTEST_PATH/test_clowder_repo.py" -v "$CATS_EXAMPLE_DIR" || exit 1
+    $PYTHON_VERSION "$UNITTTEST_PATH/test_fork.py" -v "$CATS_EXAMPLE_DIR" || exit 1
+    $PYTHON_VERSION "$UNITTTEST_PATH/test_git_utilities.py" -v "$CATS_EXAMPLE_DIR" || exit 1
+    $PYTHON_VERSION "$UNITTTEST_PATH/test_group.py" -v "$CATS_EXAMPLE_DIR" || exit 1
+    $PYTHON_VERSION "$UNITTTEST_PATH/test_project.py" -v "$CATS_EXAMPLE_DIR" || exit 1
+    $PYTHON_VERSION "$UNITTTEST_PATH/test_source.py" -v "$CATS_EXAMPLE_DIR" || exit 1
 else
-    $PYTHON_VERSION test/unittests/test_clowder_repo.py -v "$CATS_EXAMPLE_DIR" || exit 1
-    $PYTHON_VERSION test/unittests/test_fork.py -v "$CATS_EXAMPLE_DIR" || exit 1
-    $PYTHON_VERSION test/unittests/test_git_utilities.py -v "$CATS_EXAMPLE_DIR" || exit 1
-    $PYTHON_VERSION test/unittests/test_group.py -v "$CATS_EXAMPLE_DIR" || exit 1
-    $PYTHON_VERSION test/unittests/test_project.py -v "$CATS_EXAMPLE_DIR" || exit 1
-    $PYTHON_VERSION test/unittests/test_source.py -v "$CATS_EXAMPLE_DIR" || exit 1
+    $PYTHON_VERSION "$UNITTTEST_PATH/test_clowder_repo.py" -v "$CATS_EXAMPLE_DIR" || exit 1
+    $PYTHON_VERSION "$UNITTTEST_PATH/test_fork.py" -v "$CATS_EXAMPLE_DIR" || exit 1
+    $PYTHON_VERSION "$UNITTTEST_PATH/test_git_utilities.py" -v "$CATS_EXAMPLE_DIR" || exit 1
+    $PYTHON_VERSION "$UNITTTEST_PATH/test_group.py" -v "$CATS_EXAMPLE_DIR" || exit 1
+    $PYTHON_VERSION "$UNITTTEST_PATH/test_project.py" -v "$CATS_EXAMPLE_DIR" || exit 1
+    $PYTHON_VERSION "$UNITTTEST_PATH/test_source.py" -v "$CATS_EXAMPLE_DIR" || exit 1
 fi
