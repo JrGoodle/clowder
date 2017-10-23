@@ -162,21 +162,18 @@ class ClowderController(object):
         if project_names is None:
             groups = [g for g in self.groups if g.name in group_names]
             for group in groups:
-                group.print_name()
-                for project in group.projects:
-                    project.diff()
+                self._run_group_command(group, [], 'diff')
             return
         projects = [p for g in self.groups for p in g.projects if p.name in project_names]
         for project in projects:
+            project.print_status()
             project.diff()
 
     def fetch(self, group_names):
         """Fetch groups"""
-        for group in self.groups:
-            if group.name in group_names:
-                group.print_name()
-                for project in group.projects:
-                    project.fetch_all()
+        groups = [g for g in self.groups if g.name in group_names]
+        for group in groups:
+            self._run_group_command(group, [], 'fetch_all')
 
     def forall(self, command, ignore_errors, group_names, project_names=None, skip=None, parallel=False):
         """Runs command or script in project directories specified"""
@@ -257,15 +254,7 @@ class ClowderController(object):
             self._validate_groups(group_names)
             groups = [g for g in self.groups if g.name in group_names]
             projects = [p for g in self.groups if g.name in group_names for p in g.projects]
-            for group in groups:
-                group.print_name()
-                for project in group.projects:
-                    if project.name in skip:
-                        continue
-                    project.print_status()
-                    if project.fork:
-                        print('  ' + fmt.fork_string(project.name))
-                        print('  ' + fmt.fork_string(project.fork.name))
+            self._print_parallel_groups_output(groups, skip)
             for project in projects:
                 if project.name in skip:
                     continue
@@ -276,13 +265,7 @@ class ClowderController(object):
             return
         self._validate_projects(project_names)
         projects = [p for g in self.groups for p in g.projects if p.name in project_names]
-        for project in projects:
-            if project.name in skip:
-                continue
-            project.print_status()
-            if project.fork:
-                print('  ' + fmt.fork_string(project.name))
-                print('  ' + fmt.fork_string(project.fork.name))
+        self._print_parallel_projects_output(projects, skip)
         for project in projects:
             if project.name in skip:
                 continue
@@ -550,6 +533,28 @@ class ClowderController(object):
         for group in combined_yaml['groups']:
             self.groups.append(Group(self.root_directory, group, self.defaults, self.sources))
 
+    @staticmethod
+    def _print_parallel_groups_output(groups, skip):
+        for group in groups:
+            group.print_name()
+            for project in group.projects:
+                if project.name in skip:
+                    continue
+                project.print_status()
+                if project.fork:
+                    print('  ' + fmt.fork_string(project.name))
+                    print('  ' + fmt.fork_string(project.fork.name))
+
+    @staticmethod
+    def _print_parallel_projects_output(projects, skip):
+        for project in projects:
+            if project.name in skip:
+                continue
+            project.print_status()
+            if project.fork:
+                print('  ' + fmt.fork_string(project.name))
+                print('  ' + fmt.fork_string(project.fork.name))
+
     def _prune_projects_all(self, project_names, branch, skip, force):
         """Prune local and remote branches for projects"""
         local_branch_exists = self._existing_branch_project(project_names, branch, is_remote=False)
@@ -577,15 +582,7 @@ class ClowderController(object):
             self._validate_groups(group_names)
             groups = [g for g in self.groups if g.name in group_names]
             projects = [p for g in self.groups if g.name in group_names for p in g.projects]
-            for group in groups:
-                group.print_name()
-                for project in group.projects:
-                    if project.name in skip:
-                        continue
-                    project.print_status()
-                    if project.fork:
-                        print('  ' + fmt.fork_string(project.name))
-                        print('  ' + fmt.fork_string(project.fork.name))
+            self._print_parallel_groups_output(groups, skip)
             for project in projects:
                 if project.name in skip:
                     continue
@@ -595,13 +592,7 @@ class ClowderController(object):
             return
         self._validate_projects(project_names)
         projects = [p for g in self.groups for p in g.projects if p.name in project_names]
-        for project in projects:
-            if project.name in skip:
-                continue
-            project.print_status()
-            if project.fork:
-                print('  ' + fmt.fork_string(project.name))
-                print('  ' + fmt.fork_string(project.fork.name))
+        self._print_parallel_projects_output(projects, skip)
         for project in projects:
             if project.name in skip:
                 continue

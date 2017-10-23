@@ -90,7 +90,6 @@ class Project(object):
 
     def diff(self):
         """Show git diff for project"""
-        self.print_status()
         if not os.path.isdir(self.full_path()):
             cprint(" - Project is missing\n", 'red')
             return
@@ -113,7 +112,6 @@ class Project(object):
 
     def fetch_all(self):
         """Fetch upstream changes if project exists on disk"""
-        self.print_status()
         repo = ProjectRepo(self.full_path(), self.remote_name, self.ref)
         if self.exists():
             if self.fork is None:
