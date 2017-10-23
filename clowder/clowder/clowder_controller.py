@@ -234,8 +234,8 @@ class ClowderController(object):
         if skip is None:
             skip = []
         if project_names is None:
-            self._validate_groups(group_names)
             groups = [g for g in self.groups if g.name in group_names]
+            self._validate_groups(groups)
             for group in groups:
                 self._run_group_command(group, skip, 'herd', branch=branch, tag=tag, depth=depth, rebase=rebase)
             return
@@ -251,8 +251,8 @@ class ClowderController(object):
             skip = []
         print(' - Herd projects in parallel\n')
         if project_names is None:
-            self._validate_groups(group_names)
             groups = [g for g in self.groups if g.name in group_names]
+            self._validate_groups(groups)
             projects = [p for g in self.groups if g.name in group_names for p in g.projects]
             self._print_parallel_groups_output(groups, skip)
             for project in projects:
@@ -287,8 +287,8 @@ class ClowderController(object):
         if skip is None:
             skip = []
         if project_names is None:
-            self._validate_groups(group_names)
             groups = [g for g in self.groups if g.name in group_names]
+            self._validate_groups(groups)
             if local and remote:
                 local_branch_exists = self._existing_branch_group(group_names, branch, is_remote=False)
                 remote_branch_exists = self._existing_branch_group(group_names, branch, is_remote=True)
@@ -346,8 +346,8 @@ class ClowderController(object):
         if timestamp_project:
             timestamp = self._get_timestamp(timestamp_project)
         if project_names is None:
-            self._validate_groups(group_names)
             groups = [g for g in self.groups if g.name in group_names]
+            self._validate_groups(groups)
             for group in groups:
                 self._run_group_command(group, skip, 'reset', timestamp=timestamp)
             return
@@ -359,7 +359,7 @@ class ClowderController(object):
     def save_version(self, version):
         """Save current commits to a clowder.yaml in the versions directory"""
         self._validate_projects_exist()
-        self._validate_groups(self.get_all_group_names())
+        self._validate_groups(self.groups)
         versions_dir = os.path.join(self.root_directory, '.clowder', 'versions')
         version_name = version.replace('/', '-')  # Replace path separators with dashes
         version_dir = os.path.join(versions_dir, version_name)
@@ -380,8 +380,8 @@ class ClowderController(object):
 
     def start_groups(self, group_names, skip, branch, tracking):
         """Start feature branch for groups"""
-        self._validate_groups(group_names)
         groups = [g for g in self.groups if g.name in group_names]
+        self._validate_groups(groups)
         for group in groups:
             self._run_group_command(group, skip, 'start', branch, tracking)
 
@@ -579,8 +579,8 @@ class ClowderController(object):
         if timestamp_project:
             timestamp = self._get_timestamp(timestamp_project)
         if project_names is None:
-            self._validate_groups(group_names)
             groups = [g for g in self.groups if g.name in group_names]
+            self._validate_groups(groups)
             projects = [p for g in self.groups if g.name in group_names for p in g.projects]
             self._print_parallel_groups_output(groups, skip)
             for project in projects:
@@ -632,9 +632,9 @@ class ClowderController(object):
             RESULTS.append(result)
         pool_handler(len(projects))
 
-    def _validate_groups(self, group_names):
+    @staticmethod
+    def _validate_groups(groups):
         """Validate status of all projects for specified groups"""
-        groups = [g for g in self.groups if g.name in group_names]
         for group in groups:
             group.print_validation()
         if not all([g.is_valid() for g in groups]):
