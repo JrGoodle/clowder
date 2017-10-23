@@ -125,13 +125,7 @@ class ClowderController(object):
         if project_names is None:
             groups = [g for g in self.groups if g.name in group_names]
             for group in groups:
-                group.print_name()
-                for project in group.projects:
-                    project.print_status()
-                    if project.name in skip:
-                        print(fmt.skip_project_message())
-                        continue
-                    project.branch(local=local, remote=remote)
+                self._run_group_command(group, skip, 'branch', local=local, remote=remote)
             return
         projects = [p for g in self.groups for p in g.projects if p.name in project_names]
         for project in projects:
@@ -148,13 +142,7 @@ class ClowderController(object):
         if project_names is None:
             groups = [g for g in self.groups if g.name in group_names]
             for group in groups:
-                group.print_name()
-                for project in group.projects:
-                    project.print_status()
-                    if project.name in skip:
-                        print(fmt.skip_project_message())
-                        continue
-                    project.clean(args=args, recursive=recursive)
+                self._run_group_command(group, skip, 'clean', args=args, recursive=recursive)
             return
         projects = [p for g in self.groups for p in g.projects if p.name in project_names]
         for project in projects:
@@ -171,13 +159,7 @@ class ClowderController(object):
         if project_names is None:
             groups = [g for g in self.groups if g.name in group_names]
             for group in groups:
-                group.print_name()
-                for project in group.projects:
-                    project.print_status()
-                    if project.name in skip:
-                        print(fmt.skip_project_message())
-                        continue
-                    project.clean_all()
+                self._run_group_command(group, skip, 'clean_all')
             return
         projects = [p for g in self.groups for p in g.projects if p.name in project_names]
         for project in projects:
@@ -274,13 +256,7 @@ class ClowderController(object):
             self._validate_groups(group_names)
             groups = [g for g in self.groups if g.name in group_names]
             for group in groups:
-                group.print_name()
-                for project in group.projects:
-                    if project.name in skip:
-                        project.print_status()
-                        print(fmt.skip_project_message())
-                        continue
-                    project.herd(branch=branch, tag=tag, depth=depth, rebase=rebase)
+                self._run_group_command(group, skip, 'herd', branch=branch, tag=tag, depth=depth, rebase=rebase)
             return
         self._validate_projects(project_names)
         projects = [p for g in self.groups for p in g.projects if p.name in project_names]
@@ -363,39 +339,21 @@ class ClowderController(object):
                     local_branch_exists = group.existing_branch(branch, is_remote=False)
                     remote_branch_exists = group.existing_branch(branch, is_remote=True)
                     if local_branch_exists or remote_branch_exists:
-                        group.print_name()
-                        for project in group.projects:
-                            project.print_status()
-                            if project.name in skip:
-                                print(fmt.skip_project_message())
-                                continue
-                            project.prune(branch, force=force, local=True, remote=True)
+                        self._run_group_command(group, skip, 'prune', branch, force=force, local=True, remote=True)
             elif local:
                 if not self._existing_branch_group(group_names, branch, is_remote=False):
                     print(' - No local branches to prune\n')
                     sys.exit()
                 for group in groups:
                     if group.existing_branch(branch, is_remote=False):
-                        group.print_name()
-                        for project in group.projects:
-                            project.print_status()
-                            if project.name in skip:
-                                print(fmt.skip_project_message())
-                                continue
-                            project.prune(branch, force=force, local=True)
+                        self._run_group_command(group, skip, 'prune', branch, force=force, local=True)
             elif remote:
                 if not self._existing_branch_group(group_names, branch, is_remote=True):
                     cprint(' - No remote branches to prune\n', 'red')
                     sys.exit()
                 for group in groups:
                     if group.existing_branch(branch, is_remote=True):
-                        group.print_name()
-                        for project in group.projects:
-                            project.print_status()
-                            if project.name in skip:
-                                print(fmt.skip_project_message())
-                                continue
-                            project.prune(branch, remote=True)
+                        self._run_group_command(group, skip, 'prune', branch, remote=True)
             return
         self._validate_projects(project_names)
         projects = [p for g in self.groups for p in g.projects if p.name in project_names]
@@ -437,13 +395,7 @@ class ClowderController(object):
             self._validate_groups(group_names)
             groups = [g for g in self.groups if g.name in group_names]
             for group in groups:
-                group.print_name()
-                for project in group.projects:
-                    if project.name in skip:
-                        project.print_status()
-                        print(fmt.skip_project_message())
-                        continue
-                    project.reset(timestamp=timestamp)
+                self._run_group_command(group, skip, 'reset', timestamp=timestamp)
             return
         self._validate_projects(project_names)
         projects = [p for g in self.groups for p in g.projects if p.name in project_names]
@@ -510,13 +462,7 @@ class ClowderController(object):
         if project_names is None:
             groups = [g for g in self.groups if g.name in group_names]
             for group in groups:
-                group.print_name()
-                for project in group.projects:
-                    project.print_status()
-                    if project.name in skip:
-                        print(fmt.skip_project_message())
-                        continue
-                    project.stash()
+                self._run_group_command(group, skip, 'stash')
             return
         projects = [p for g in self.groups for p in g.projects if p.name in project_names]
         for project in projects:
@@ -709,6 +655,16 @@ class ClowderController(object):
             result = CLOWDER_POOL.apply_async(reset_project, args=(project, timestamp), callback=async_callback)
             RESULTS.append(result)
         pool_handler(len(projects))
+
+    @staticmethod
+    def _run_group_command(group, skip, command, *args, **kwargs):
+        group.print_name()
+        for project in group.projects:
+            project.print_status()
+            if project.name in skip:
+                print(fmt.skip_project_message())
+                continue
+            getattr(project, command)(*args, **kwargs)
 
     @staticmethod
     def _sync_parallel(projects, rebase=False):
