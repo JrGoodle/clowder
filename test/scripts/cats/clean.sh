@@ -224,13 +224,8 @@ test_clean_untracked_files() {
 
     pushd mu || exit 1
         test_no_directory_exists 'something'
-        if [ -f 'something/something' ]; then
-            exit 1
-        fi
-        test_no_directory_exists 'something_else'
-        if [ -f 'newfile' ]; then
-            exit 1
-        fi
+        test_no_file_exists 'something/something'
+        test_no_file_exists 'something_else'
     popd || exit 1
 }
 test_clean_untracked_files

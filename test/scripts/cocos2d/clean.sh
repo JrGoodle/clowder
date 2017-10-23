@@ -27,36 +27,24 @@ teast_clean_d() {
     mkdir something
     touch something/something
     test_directory_exists 'something'
-    if [ ! -f 'something/something' ]; then
-        exit 1
-    fi
-    if [ ! -f 'newfile' ]; then
-        exit 1
-    fi
+    test_file_exists 'something/something'
+    test_file_exists 'newfile'
     popd || exit 1
 
     clowder clean || exit 1
 
     pushd cocos2d-objc || exit 1
     test_directory_exists 'something'
-    if [ ! -f 'something/something' ]; then
-        exit 1
-    fi
-    if [ -f 'newfile' ]; then
-        exit 1
-    fi
+    test_file_exists 'something/something'
+    test_no_file_exists 'newfile'
     popd || exit 1
 
     clowder clean -d || exit 1
 
     pushd cocos2d-objc || exit 1
     test_no_directory_exists 'something'
-    if [ -f 'something/something' ]; then
-        exit 1
-    fi
-    if [ -f 'newfile' ]; then
-        exit 1
-    fi
+    test_no_file_exists 'something/something'
+    test_no_file_exists 'newfile'
     popd || exit 1
 }
 teast_clean_d
@@ -93,33 +81,21 @@ test_clean_X() {
     pushd cocos2d-objc || exit 1
     touch .idea
     touch something
-    if [ ! -f '.idea' ]; then
-        exit 1
-    fi
-    if [ ! -f 'something' ]; then
-        exit 1
-    fi
+    test_file_exists '.idea'
+    test_file_exists 'something'
     popd || exit 1
 
     clowder clean -X || exit 1
 
     pushd cocos2d-objc || exit 1
-    if [ -f '.idea' ]; then
-        exit 1
-    fi
-    if [ ! -f 'something' ]; then
-        exit 1
-    fi
+    test_no_file_exists '.idea'
+    test_file_exists 'something'
     popd || exit 1
 
     pushd cocos2d-objc || exit 1
     rm -f something
-    if [ -f '.idea' ]; then
-        exit 1
-    fi
-    if [ -f 'something' ]; then
-        exit 1
-    fi
+    test_no_file_exists '.idea'
+    test_no_file_exists 'something'
     popd || exit 1
 }
 test_clean_X
@@ -132,23 +108,15 @@ test_clean_x() {
     pushd cocos2d-objc || exit 1
     touch xcuserdata
     touch something
-    if [ ! -f 'xcuserdata' ]; then
-        exit 1
-    fi
-    if [ ! -f 'something' ]; then
-        exit 1
-    fi
+    test_file_exists 'xcuserdata'
+    test_file_exists 'something'
     popd || exit 1
 
     clowder clean -x || exit 1
 
     pushd cocos2d-objc || exit 1
-    if [ -f 'xcuserdata' ]; then
-        exit 1
-    fi
-    if [ -f 'something' ]; then
-        exit 1
-    fi
+    test_no_file_exists 'xcuserdata'
+    test_no_file_exists 'something'
     popd || exit 1
 }
 test_clean_x
@@ -167,12 +135,8 @@ test_clean_a() {
         test_git_dirty
         test_branch something
         test_directory_exists 'something'
-        if [ ! -f 'something/something' ]; then
-            exit 1
-        fi
-        if [ ! -f 'newfile' ]; then
-            exit 1
-        fi
+        test_file_exists 'something/something'
+        test_file_exists 'newfile'
         popd || exit 1
     done
     for project in "${external_projects[@]}"; do
@@ -181,12 +145,8 @@ test_clean_a() {
         mkdir something
         touch something/something
         test_directory_exists 'something'
-        if [ ! -f 'something/something' ]; then
-            exit 1
-        fi
-        if [ ! -f 'newfile' ]; then
-            exit 1
-        fi
+        test_file_exists 'something/something'
+        test_file_exists 'newfile'
         popd || exit 1
     done
 
@@ -196,23 +156,15 @@ test_clean_a() {
         pushd $project || exit 1
         test_head_detached
         test_no_directory_exists 'something'
-        if [ -f 'something/something' ]; then
-            exit 1
-        fi
-        if [ -f 'newfile' ]; then
-            exit 1
-        fi
+        test_no_file_exists 'something/something'
+        test_no_file_exists 'newfile'
         popd || exit 1
     done
     for project in "${external_projects[@]}"; do
         pushd $project || exit 1
         test_no_directory_exists 'something'
-        if [ -f 'something/something' ]; then
-            exit 1
-        fi
-        if [ -f 'newfile' ]; then
-            exit 1
-        fi
+        test_no_file_exists 'something/something'
+        test_no_file_exists 'newfile'
         git branch -D something
         popd || exit 1
     done
@@ -229,12 +181,8 @@ test_clean_submodules_untracked() {
         mkdir something
         touch something/something
         test_directory_exists 'something'
-        if [ ! -f 'something/something' ]; then
-            exit 1
-        fi
-        if [ ! -f 'newfile' ]; then
-            exit 1
-        fi
+        test_file_exists 'something/something'
+        test_file_exists 'newfile'
         popd || exit 1
     done
 
@@ -243,12 +191,8 @@ test_clean_submodules_untracked() {
     for project in "${external_projects[@]}"; do
         pushd $project || exit 1
         test_no_directory_exists 'something'
-        if [ -f 'something/something' ]; then
-            exit 1
-        fi
-        if [ -f 'newfile' ]; then
-            exit 1
-        fi
+        test_no_file_exists 'something/something'
+        test_no_file_exists 'newfile'
         popd || exit 1
     done
 }
@@ -268,12 +212,8 @@ test_clean_submodules_dirty() {
         test_git_dirty
         test_branch something
         test_directory_exists 'something'
-        if [ ! -f 'something/something' ]; then
-            exit 1
-        fi
-        if [ ! -f 'newfile' ]; then
-            exit 1
-        fi
+        test_file_exists 'something/something'
+        test_file_exists 'newfile'
         popd || exit 1
     done
 
@@ -283,12 +223,8 @@ test_clean_submodules_dirty() {
         pushd $project || exit 1
         test_head_detached
         test_no_directory_exists 'something'
-        if [ -f 'something/something' ]; then
-            exit 1
-        fi
-        if [ -f 'newfile' ]; then
-            exit 1
-        fi
+        test_no_file_exists 'something/something'
+        test_no_file_exists 'newfile'
         git branch -D something
         popd || exit 1
     done

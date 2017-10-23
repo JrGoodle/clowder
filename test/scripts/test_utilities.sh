@@ -234,6 +234,18 @@ test_no_directory_exists() {
     fi
 }
 
+test_file_exists() {
+    if [ ! -f "$1" ]; then
+        exit 1
+    fi
+}
+
+test_no_file_exists() {
+    if [ -f "$1" ]; then
+        exit 1
+    fi
+}
+
 print_single_separator() {
     echo '--------------------------------------------------------------------------------'
 }
