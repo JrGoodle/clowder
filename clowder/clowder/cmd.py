@@ -88,21 +88,15 @@ class Command(object):
         if self.clowder is None:
             sys.exit(1)
         if self.args.all:
-            self.clowder.branch(group_names=self.args.groups,
-                                project_names=self.args.projects,
-                                skip=self.args.skip,
-                                local=True,
-                                remote=True)
-        elif self.args.remote:
-            self.clowder.branch(group_names=self.args.groups,
-                                project_names=self.args.projects,
-                                skip=self.args.skip,
-                                remote=True)
-        else:
-            self.clowder.branch(group_names=self.args.groups,
-                                project_names=self.args.projects,
-                                skip=self.args.skip,
-                                local=True)
+            self.clowder.branch(group_names=self.args.groups, project_names=self.args.projects,
+                                skip=self.args.skip, local=True, remote=True)
+            return
+        if self.args.remote:
+            self.clowder.branch(group_names=self.args.groups, project_names=self.args.projects,
+                                skip=self.args.skip, remote=True)
+            return
+        self.clowder.branch(group_names=self.args.groups, project_names=self.args.projects,
+                            skip=self.args.skip, local=True)
 
     def clean(self):
         """clowder clean command"""
@@ -113,8 +107,7 @@ class Command(object):
         if self.clowder is None:
             sys.exit(1)
         if self.args.all:
-            self.clowder.clean_all(group_names=self.args.groups,
-                                   project_names=self.args.projects,
+            self.clowder.clean_all(group_names=self.args.groups, project_names=self.args.projects,
                                    skip=self.args.skip)
             return
         clean_args = ''
@@ -126,11 +119,8 @@ class Command(object):
             clean_args += 'X'
         if self.args.x:
             clean_args += 'x'
-        self.clowder.clean(group_names=self.args.groups,
-                           project_names=self.args.projects,
-                           skip=self.args.skip,
-                           args=clean_args,
-                           recursive=self.args.recursive)
+        self.clowder.clean(group_names=self.args.groups, project_names=self.args.projects,
+                           skip=self.args.skip, args=clean_args, recursive=self.args.recursive)
 
     def diff(self):
         """clowder diff command"""
@@ -140,8 +130,7 @@ class Command(object):
         self.clowder_repo.print_status()
         if self.clowder is None:
             sys.exit(1)
-        self.clowder.diff(group_names=self.args.groups,
-                          project_names=self.args.projects)
+        self.clowder.diff(group_names=self.args.groups, project_names=self.args.projects)
 
     def forall(self):
         """clowder forall command"""
@@ -151,12 +140,9 @@ class Command(object):
         self.clowder_repo.print_status()
         if self.clowder is None:
             sys.exit(1)
-        self.clowder.forall(self.args.command[0],
-                            self.args.ignore_errors,
-                            group_names=self.args.groups,
-                            project_names=self.args.projects,
-                            skip=self.args.skip,
-                            parallel=self.args.parallel)
+        self.clowder.forall(self.args.command[0], self.args.ignore_errors,
+                            group_names=self.args.groups, project_names=self.args.projects,
+                            skip=self.args.skip, parallel=self.args.parallel)
 
     def herd(self):
         """clowder herd command"""
@@ -218,7 +204,6 @@ class Command(object):
             version = None
         else:
             version = self.args.version[0]
-
         self.clowder_repo.link(version)
 
     def prune(self):
@@ -233,30 +218,18 @@ class Command(object):
             if is_offline():
                 print(fmt.offline_error())
                 sys.exit(1)
-            self.clowder.prune(self.args.groups,
-                               self.args.branch,
-                               project_names=self.args.projects,
-                               skip=self.args.skip,
-                               force=self.args.force,
-                               local=True,
-                               remote=True)
+            self.clowder.prune(self.args.groups, self.args.branch, project_names=self.args.projects,
+                               skip=self.args.skip, force=self.args.force, local=True, remote=True)
             return
         if self.args.remote:
             if is_offline():
                 print(fmt.offline_error())
                 sys.exit(1)
-            self.clowder.prune(self.args.groups,
-                               self.args.branch,
-                               project_names=self.args.projects,
-                               skip=self.args.skip,
-                               remote=True)
+            self.clowder.prune(self.args.groups, self.args.branch, project_names=self.args.projects,
+                               skip=self.args.skip, remote=True)
             return
-        self.clowder.prune(self.args.groups,
-                           self.args.branch,
-                           project_names=self.args.projects,
-                           skip=self.args.skip,
-                           force=self.args.force,
-                           local=True)
+        self.clowder.prune(self.args.groups, self.args.branch, project_names=self.args.projects,
+                           skip=self.args.skip, force=self.args.force, local=True)
 
     def repo(self):
         """clowder repo command"""
@@ -341,11 +314,8 @@ class Command(object):
         timestamp_project = None
         if self. args.timestamp:
             timestamp_project = self.args.timestamp[0]
-        self.clowder.reset(group_names=self.args.groups,
-                           project_names=self.args.projects,
-                           skip=self.args.skip,
-                           timestamp_project=timestamp_project,
-                           parallel=self.args.parallel)
+        self.clowder.reset(group_names=self.args.groups, project_names=self.args.projects,
+                           skip=self.args.skip, timestamp_project=timestamp_project, parallel=self.args.parallel)
 
     def save(self):
         """clowder save command"""
@@ -369,15 +339,9 @@ class Command(object):
                 print(fmt.offline_error())
                 sys.exit(1)
         if self.args.projects is None:
-            self.clowder.start_groups(self.args.groups,
-                                      self.args.skip,
-                                      self.args.branch,
-                                      self.args.tracking)
+            self.clowder.start_groups(self.args.groups, self.args.skip, self.args.branch, self.args.tracking)
         else:
-            self.clowder.start_projects(self.args.projects,
-                                        self.args.skip,
-                                        self.args.branch,
-                                        self.args.tracking)
+            self.clowder.start_projects(self.args.projects, self.args.skip, self.args.branch, self.args.tracking)
 
     def stash(self):
         """clowder stash command"""
@@ -387,9 +351,7 @@ class Command(object):
         self.clowder_repo.print_status()
         if self.clowder is None:
             sys.exit(1)
-        self.clowder.stash(group_names=self.args.groups,
-                           project_names=self.args.projects,
-                           skip=self.args.skip)
+        self.clowder.stash(group_names=self.args.groups, project_names=self.args.projects, skip=self.args.skip)
 
     def status(self):
         """clowder status command"""
