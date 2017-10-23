@@ -239,8 +239,8 @@ class ClowderController(object):
             for group in groups:
                 self._run_group_command(group, skip, 'herd', branch=branch, tag=tag, depth=depth, rebase=rebase)
             return
-        self._validate_projects(project_names)
         projects = [p for g in self.groups for p in g.projects if p.name in project_names]
+        self._validate_projects(projects)
         for project in projects:
             self._run_project_command(project, skip, 'herd', branch=branch, tag=tag, depth=depth, rebase=rebase)
 
@@ -263,8 +263,8 @@ class ClowderController(object):
                 RESULTS.append(result)
             pool_handler(len(projects))
             return
-        self._validate_projects(project_names)
         projects = [p for g in self.groups for p in g.projects if p.name in project_names]
+        self._validate_projects(projects)
         self._print_parallel_projects_output(projects, skip)
         for project in projects:
             if project.name in skip:
@@ -317,8 +317,8 @@ class ClowderController(object):
                     if group.existing_branch(branch, is_remote=True):
                         self._run_group_command(group, skip, 'prune', branch, remote=True)
             return
-        self._validate_projects(project_names)
         projects = [p for g in self.groups for p in g.projects if p.name in project_names]
+        self._validate_projects(projects)
         if local and remote:
             self._prune_projects_all(project_names, branch, skip, force)
         elif local:
@@ -351,8 +351,8 @@ class ClowderController(object):
             for group in groups:
                 self._run_group_command(group, skip, 'reset', timestamp=timestamp)
             return
-        self._validate_projects(project_names)
         projects = [p for g in self.groups for p in g.projects if p.name in project_names]
+        self._validate_projects(projects)
         for project in projects:
             self._run_project_command(project, skip, 'reset', timestamp=timestamp)
 
@@ -387,8 +387,8 @@ class ClowderController(object):
 
     def start_projects(self, project_names, skip, branch, tracking):
         """Start feature branch for projects"""
-        self._validate_projects(project_names)
         projects = [p for g in self.groups for p in g.projects if p.name in project_names]
+        self._validate_projects(projects)
         for project in projects:
             self._run_project_command(project, skip, 'start', branch, tracking)
 
@@ -590,8 +590,8 @@ class ClowderController(object):
                 RESULTS.append(result)
             pool_handler(len(projects))
             return
-        self._validate_projects(project_names)
         projects = [p for g in self.groups for p in g.projects if p.name in project_names]
+        self._validate_projects(projects)
         self._print_parallel_projects_output(projects, skip)
         for project in projects:
             if project.name in skip:
@@ -641,9 +641,9 @@ class ClowderController(object):
             print()
             sys.exit(1)
 
-    def _validate_projects(self, project_names):
+    @staticmethod
+    def _validate_projects(projects):
         """Validate status of all projects"""
-        projects = [p for g in self.groups for p in g.projects if p.name in project_names]
         if not all([p.is_valid() for p in projects]):
             print()
             sys.exit(1)
