@@ -118,7 +118,7 @@ class ClowderController(object):
         self._validate_yaml(yaml_file, self._max_import_depth)
         self._load_yaml()
 
-    def branch(self, group_names, project_names=None, skip=None, local=False, remote=False):
+    def branch(self, group_names, project_names=None, skip=[], local=False, remote=False):
         """Show branches"""
         if project_names is None:
             groups = [g for g in self.groups if g.name in group_names]
@@ -139,7 +139,7 @@ class ClowderController(object):
                 continue
             project.branch(local=local, remote=remote)
 
-    def clean(self, group_names, project_names=None, skip=None, args='', recursive=False):
+    def clean(self, group_names, project_names=None, skip=[], args='', recursive=False):
         """Discard changes"""
         if project_names is None:
             groups = [g for g in self.groups if g.name in group_names]
@@ -160,7 +160,7 @@ class ClowderController(object):
                 continue
             project.clean(args=args, recursive=recursive)
 
-    def clean_all(self, group_names, skip=None, project_names=None):
+    def clean_all(self, group_names, skip=[], project_names=None):
         """Discard all changes"""
         if project_names is None:
             groups = [g for g in self.groups if g.name in group_names]
@@ -202,7 +202,7 @@ class ClowderController(object):
                 for project in group.projects:
                     project.fetch_all()
 
-    def forall(self, command, ignore_errors, group_names, project_names=None, skip=None, parallel=False):
+    def forall(self, command, ignore_errors, group_names, project_names=None, skip=[], parallel=False):
         """Runs command or script in project directories specified"""
         if project_names is None:
             projects = [p for g in self.groups if g.name in group_names for p in g.projects]
@@ -258,7 +258,7 @@ class ClowderController(object):
                 versions.remove(version)
         return versions
 
-    def herd(self, group_names, project_names=None, skip=None, branch=None, tag=None, depth=None, rebase=False):
+    def herd(self, group_names, project_names=None, skip=[], branch=None, tag=None, depth=None, rebase=False):
         """Pull or rebase latest upstream changes for projects"""
         if project_names is None:
             self._validate_groups(group_names)
@@ -282,7 +282,7 @@ class ClowderController(object):
                 continue
             project.herd(branch=branch, tag=tag, depth=depth, rebase=rebase)
 
-    def herd_parallel(self, group_names, project_names=None, skip=None, branch=None, tag=None,
+    def herd_parallel(self, group_names, project_names=None, skip=[], branch=None, tag=None,
                       depth=None, rebase=False):
         """Pull or rebase latest upstream changes for projects in parallel"""
         print(' - Herd projects in parallel\n')
@@ -332,7 +332,7 @@ class ClowderController(object):
             clowder_yaml.print_yaml(self.root_directory)
         sys.exit()  # exit early to prevent printing extra newline
 
-    def prune_groups(self, group_names, branch, skip=None, force=False, local=False, remote=False):
+    def prune_groups(self, group_names, branch, skip=[], force=False, local=False, remote=False):
         """Prune branches for groups"""
         self._validate_groups(group_names)
         groups = [g for g in self.groups if g.name in group_names]
@@ -359,7 +359,7 @@ class ClowderController(object):
             for group in groups:
                 group.prune(branch, skip=skip, remote=True)
 
-    def prune_projects(self, project_names, branch, skip=None, force=False, local=False, remote=False):
+    def prune_projects(self, project_names, branch, skip=[], force=False, local=False, remote=False):
         """Prune local and remote branch for projects"""
         self._validate_projects(project_names)
         projects = [p for g in self.groups for p in g.projects if p.name in project_names]
@@ -386,7 +386,7 @@ class ClowderController(object):
                     continue
                 project.prune(branch, remote=True)
 
-    def reset(self, group_names, project_names=None, skip=None, timestamp_project=None, parallel=False):
+    def reset(self, group_names, project_names=None, skip=[], timestamp_project=None, parallel=False):
         """Reset project branches to upstream or checkout tag/sha as detached HEAD"""
         if parallel:
             self._reset_parallel(group_names, skip=skip, timestamp_project=timestamp_project)
@@ -462,7 +462,7 @@ class ClowderController(object):
                 continue
             project.start(branch, tracking)
 
-    def stash(self, group_names, skip=None, project_names=None):
+    def stash(self, group_names, skip=[], project_names=None):
         """Stash changes for projects with changes"""
         if not self._is_dirty():
             print('No changes to stash')
@@ -626,7 +626,7 @@ class ClowderController(object):
                 continue
             project.prune(branch, force=force, local=True, remote=True)
 
-    def _reset_parallel(self, group_names, project_names=None, skip=None, timestamp_project=None):
+    def _reset_parallel(self, group_names, project_names=None, skip=[], timestamp_project=None):
         """Reset project branches to upstream or checkout tag/sha as detached HEAD in parallel"""
         print(' - Reset projects in parallel\n')
         timestamp = None

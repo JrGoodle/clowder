@@ -82,7 +82,7 @@ class Group(object):
 
         return all([project.exists() for project in self.projects])
 
-    def prune(self, branch, skip=None, force=False, local=False, remote=False):
+    def prune(self, branch, skip=[], force=False, local=False, remote=False):
         """Prune branches"""
         if local and remote:
             local_branch_exists = self._existing_branch(branch, is_remote=False)

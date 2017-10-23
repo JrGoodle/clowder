@@ -35,7 +35,7 @@ def _configure_subparser_branch(subparsers, clowder):
     project_names = _project_names(clowder)
     parser_branch = subparsers.add_parser('branch', help=branch_help)
     branch_help_skip = _options_help_message(project_names, 'projects to skip')
-    parser_branch.add_argument('--skip', '-s', choices=project_names, nargs='+', metavar='PROJECT',
+    parser_branch.add_argument('--skip', '-s', choices=project_names, nargs='+', metavar='PROJECT', default=[],
                                help=branch_help_skip)
     group_branch_options = parser_branch.add_mutually_exclusive_group()
     group_branch_options.add_argument('--all', '-a', action='store_true',
@@ -59,7 +59,7 @@ def _configure_subparser_clean(subparsers, clowder):
     clean_help = 'Discard current changes in projects'
     parser_clean = subparsers.add_parser('clean', help=clean_help)
     clean_help_skip = _options_help_message(project_names, 'projects to skip')
-    parser_clean.add_argument('--skip', '-s', choices=project_names, nargs='+', metavar='PROJECT',
+    parser_clean.add_argument('--skip', '-s', choices=project_names, nargs='+', metavar='PROJECT', default=[],
                               help=clean_help_skip)
     parser_clean.add_argument('--all', '-a', action='store_true',
                               help='clean all the things')
@@ -106,7 +106,7 @@ def _configure_subparser_forall(subparsers, clowder):
     forall_help = 'Run command or script in project directories'
     parser_forall = subparsers.add_parser('forall', help=forall_help)
     forall_help_skip = _options_help_message(project_names, 'projects to skip')
-    parser_forall.add_argument('--skip', '-s', choices=project_names, nargs='+', metavar='PROJECT',
+    parser_forall.add_argument('--skip', '-s', choices=project_names, nargs='+', metavar='PROJECT', default=[],
                                help=forall_help_skip)
     parser_forall.add_argument('--parallel', action='store_true',
                                help='run commands in parallel')
@@ -132,7 +132,7 @@ def _configure_subparser_herd(subparsers, clowder):
     herd_help = 'Clone and sync latest changes for projects'
     parser_herd = subparsers.add_parser('herd', help=herd_help)
     herd_help_skip = _options_help_message(project_names, 'projects to skip')
-    parser_herd.add_argument('--skip', '-s', choices=project_names, nargs='+', metavar='PROJECT',
+    parser_herd.add_argument('--skip', '-s', choices=project_names, nargs='+', metavar='PROJECT', default=[],
                              help=herd_help_skip)
     parser_herd.add_argument('--parallel', action='store_true',
                              help='run commands in parallel')
@@ -178,7 +178,7 @@ def _configure_subparser_prune(subparsers, clowder):
     project_names = _project_names(clowder)
     parser_prune = subparsers.add_parser('prune', help='Prune old branch')
     prune_help_skip = _options_help_message(project_names, 'projects to skip')
-    parser_prune.add_argument('--skip', '-s', choices=project_names, nargs='+', metavar='PROJECT',
+    parser_prune.add_argument('--skip', '-s', choices=project_names, nargs='+', metavar='PROJECT', default=[],
                               help=prune_help_skip)
     parser_prune.add_argument('--force', '-f', action='store_true',
                               help='force prune branches')
@@ -243,7 +243,7 @@ def _configure_subparser_reset(subparsers, clowder):
     reset_help = 'Reset branches to upstream commits or check out detached HEADs for tags and shas'
     parser_reset = subparsers.add_parser('reset', help=reset_help)
     reset_help_skip = _options_help_message(project_names, 'projects to skip')
-    parser_reset.add_argument('--skip', '-s', choices=project_names, nargs='+', metavar='PROJECT',
+    parser_reset.add_argument('--skip', '-s', choices=project_names, nargs='+', metavar='PROJECT', default=[],
                               help=reset_help_skip)
     parser_reset.add_argument('--parallel', action='store_true',
                               help='run commands in parallel')
@@ -273,7 +273,7 @@ def _configure_subparser_start(subparsers, clowder):
     project_names = _project_names(clowder)
     parser_start = subparsers.add_parser('start', help='Start a new feature')
     start_help_skip = _options_help_message(project_names, 'projects to skip')
-    parser_start.add_argument('--skip', '-s', choices=project_names, nargs='+', metavar='PROJECT',
+    parser_start.add_argument('--skip', '-s', choices=project_names, nargs='+', metavar='PROJECT', default=[],
                               help=start_help_skip)
     parser_start.add_argument('--tracking', '-t', action='store_true',
                               help='create remote tracking branch')
@@ -294,7 +294,7 @@ def _configure_subparser_stash(subparsers, clowder):
     project_names = _project_names(clowder)
     parser_stash = subparsers.add_parser('stash', help='Stash current changes')
     stash_help_skip = _options_help_message(project_names, 'projects to skip')
-    parser_stash.add_argument('--skip', '-s', choices=project_names, nargs='+', metavar='PROJECT',
+    parser_stash.add_argument('--skip', '-s', choices=project_names, nargs='+', metavar='PROJECT', default=[],
                               help=stash_help_skip)
     group_stash = parser_stash.add_mutually_exclusive_group()
     stash_help_groups = _options_help_message(group_names, 'groups to stash')
