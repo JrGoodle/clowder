@@ -227,8 +227,44 @@ class Command(object):
         self._exit(return_code)
 
     def cocos2d(self, path):
+        """clowder cocos2d tests entrypoint"""
+        cocos2d_command = 'cocos2d_' + self.args.cocos2d_command
+        if self.args.cocos2d_command != 'all':
+            path = os.path.join(path, 'cocos2d')
+        getattr(self, cocos2d_command)(path)
+
+    def cocos2d_all(self, path):
         """clowder cocos2d tests"""
-        return_code = execute_command('./test_example_cocos2d.sh', path, shell=True)
+        test_env = {}
+        if self.args.write:
+            test_env["ACCESS_LEVEL"] = 'write'
+        else:
+            test_env["ACCESS_LEVEL"] = 'read'
+        args = ''
+        if self.args.parallel:
+            args = 'parallel'
+        return_code = execute_command(['./test_example_cocos2d.sh', args], path, shell=True, env=test_env)
+        self._exit(return_code)
+
+    def cocos2d_clean(self, path):
+        """clowder cocos2d clean tests"""
+        return_code = execute_command('./clean.sh', path, shell=True)
+        self._exit(return_code)
+
+    def cocos2d_herd(self, path):
+        """clowder cocos2d herd tests"""
+        args = ''
+        if self.args.parallel:
+            args = 'parallel'
+        return_code = execute_command(['./herd.sh', args], path, shell=True)
+        self._exit(return_code)
+
+    def cocos2d_skip(self, path):
+        """clowder cocos2d skip tests"""
+        args = ''
+        if self.args.parallel:
+            args = 'parallel'
+        return_code = execute_command(['./skip.sh', args], path, shell=True)
         self._exit(return_code)
 
     def llvm(self, path):
@@ -411,7 +447,12 @@ class Command(object):
 
     def _configure_cocos2d_subparser(self):
         """clowder cocos2d tests subparser"""
-        self._subparsers.add_parser('cocos2d', help='Run cocos2d tests')
+        parser = self._subparsers.add_parser('cocos2d', help='Run cocos2d tests')
+        cocos2d_subparser = parser.add_subparsers(dest='cocos2d_command', metavar='SUBCOMMAND')
+        cocos2d_subparser.add_parser('all', help='Run all cocos2d tests')
+        cocos2d_subparser.add_parser('clean', help='Run clean cocos2d tests')
+        cocos2d_subparser.add_parser('herd', help='Run herd cocos2d tests')
+        cocos2d_subparser.add_parser('skip', help='Run skip cocos2d tests')
 
     def _configure_llvm_subparser(self):
         """clowder llvm tests subparser"""
