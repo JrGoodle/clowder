@@ -142,9 +142,7 @@ test_clean_missing_directories() {
     rm -rf "$@"
 
     for project in "${cats_projects[@]}"; do
-        if [ -d "$project" ]; then
-            exit 1
-        fi
+        test_no_directory_exists "$project"
     done
 
     for project in "${black_cats_projects[@]}"; do
@@ -157,9 +155,7 @@ test_clean_missing_directories() {
     clowder clean || exit 1
 
     for project in "${cats_projects[@]}"; do
-        if [ -d "$project" ]; then
-            exit 1
-        fi
+        test_no_directory_exists "$project"
     done
 
     for project in "${black_cats_projects[@]}"; do
@@ -227,15 +223,11 @@ test_clean_untracked_files() {
     clowder clean -d || exit 1
 
     pushd mu || exit 1
-        if [ -d 'something' ]; then
-            exit 1
-        fi
+        test_no_directory_exists 'something'
         if [ -f 'something/something' ]; then
             exit 1
         fi
-        if [ -d 'something_else' ]; then
-            exit 1
-        fi
+        test_no_directory_exists 'something_else'
         if [ -f 'newfile' ]; then
             exit 1
         fi

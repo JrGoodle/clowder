@@ -60,9 +60,7 @@ test_herd_branch_no_repo_existing_remote() {
         rm -rf $project
     done
     for project in "${all_projects[@]}"; do
-        if [ -d "$project" ]; then
-            exit 1
-        fi
+        test_no_directory_exists "$project"
     done
     clowder herd $PARALLEL -b $EXISTING_REMOTE_BRANCH || exit 1
     for project in "${black_cats_projects[@]}"; do
@@ -100,9 +98,7 @@ test_herd_branch_no_repo_no_remote() {
         rm -rf $project
     done
     for project in "${all_projects[@]}"; do
-        if [ -d "$project" ]; then
-            exit 1
-        fi
+        test_no_directory_exists "$project"
     done
     clowder herd $PARALLEL -b $NO_REMOTE_BRANCH || exit 1
     test_cats_default_herd_branches

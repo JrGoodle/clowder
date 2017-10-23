@@ -102,24 +102,16 @@ test_stash_missing_directories() {
     echo "TEST: Stash all changes when directories are missing"
     make_dirty_repos "${all_projects[@]}"
     rm -rf "$@"
-    if [ -d 'duke' ]; then
-        exit 1
-    fi
-    if [ -d 'mu' ]; then
-        exit 1
-    fi
+    test_no_directory_exists 'duke'
+    test_no_directory_exists 'mu'
     for project in "${black_cats_projects[@]}"; do
         pushd $project || exit 1
         test_git_dirty
         popd || exit 1
     done
     clowder stash || exit 1
-    if [ -d 'duke' ]; then
-        exit 1
-    fi
-    if [ -d 'mu' ]; then
-        exit 1
-    fi
+    test_no_directory_exists 'duke'
+    test_no_directory_exists 'mu'
     for project in "${black_cats_projects[@]}"; do
         pushd $project || exit 1
         test_git_clean

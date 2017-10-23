@@ -26,9 +26,7 @@ teast_clean_d() {
     touch newfile
     mkdir something
     touch something/something
-    if [ ! -d 'something' ]; then
-        exit 1
-    fi
+    test_directory_exists 'something'
     if [ ! -f 'something/something' ]; then
         exit 1
     fi
@@ -40,9 +38,7 @@ teast_clean_d() {
     clowder clean || exit 1
 
     pushd cocos2d-objc || exit 1
-    if [ ! -d 'something' ]; then
-        exit 1
-    fi
+    test_directory_exists 'something'
     if [ ! -f 'something/something' ]; then
         exit 1
     fi
@@ -54,9 +50,7 @@ teast_clean_d() {
     clowder clean -d || exit 1
 
     pushd cocos2d-objc || exit 1
-    if [ -d 'something' ]; then
-        exit 1
-    fi
+    test_no_directory_exists 'something'
     if [ -f 'something/something' ]; then
         exit 1
     fi
@@ -74,25 +68,19 @@ test_clean_f() {
 
     pushd cocos2d-objc || exit 1
     git clone https://github.com/JrGoodle/cats.git
-    if [ ! -d 'cats' ]; then
-        exit 1
-    fi
+    test_directory_exists 'cats'
     popd || exit 1
 
     clowder clean || exit 1
 
     pushd cocos2d-objc || exit 1
-    if [ ! -d 'cats' ]; then
-        exit 1
-    fi
+    test_directory_exists 'cats'
     popd || exit 1
 
     clowder clean -fd || exit 1
 
     pushd cocos2d-objc || exit 1
-    if [ -d 'cats' ]; then
-        exit 1
-    fi
+    test_no_directory_exists 'cats'
     popd || exit 1
 }
 test_clean_f
@@ -178,9 +166,7 @@ test_clean_a() {
         git add newfile something || exit 1
         test_git_dirty
         test_branch something
-        if [ ! -d 'something' ]; then
-            exit 1
-        fi
+        test_directory_exists 'something'
         if [ ! -f 'something/something' ]; then
             exit 1
         fi
@@ -191,18 +177,16 @@ test_clean_a() {
     done
     for project in "${external_projects[@]}"; do
         pushd $project || exit 1
-            touch newfile
-            mkdir something
-            touch something/something
-            if [ ! -d 'something' ]; then
-                exit 1
-            fi
-            if [ ! -f 'something/something' ]; then
-                exit 1
-            fi
-            if [ ! -f 'newfile' ]; then
-                exit 1
-            fi
+        touch newfile
+        mkdir something
+        touch something/something
+        test_directory_exists 'something'
+        if [ ! -f 'something/something' ]; then
+            exit 1
+        fi
+        if [ ! -f 'newfile' ]; then
+            exit 1
+        fi
         popd || exit 1
     done
 
@@ -211,9 +195,7 @@ test_clean_a() {
     for project in "${external_projects[@]}"; do
         pushd $project || exit 1
         test_head_detached
-        if [ -d 'something' ]; then
-            exit 1
-        fi
+        test_no_directory_exists 'something'
         if [ -f 'something/something' ]; then
             exit 1
         fi
@@ -224,16 +206,14 @@ test_clean_a() {
     done
     for project in "${external_projects[@]}"; do
         pushd $project || exit 1
-            if [ -d 'something' ]; then
-                exit 1
-            fi
-            if [ -f 'something/something' ]; then
-                exit 1
-            fi
-            if [ -f 'newfile' ]; then
-                exit 1
-            fi
-            git branch -D something
+        test_no_directory_exists 'something'
+        if [ -f 'something/something' ]; then
+            exit 1
+        fi
+        if [ -f 'newfile' ]; then
+            exit 1
+        fi
+        git branch -D something
         popd || exit 1
     done
 }
@@ -245,18 +225,16 @@ test_clean_submodules_untracked() {
     clowder herd || exit 1
     for project in "${external_projects[@]}"; do
         pushd $project || exit 1
-            touch newfile
-            mkdir something
-            touch something/something
-            if [ ! -d 'something' ]; then
-                exit 1
-            fi
-            if [ ! -f 'something/something' ]; then
-                exit 1
-            fi
-            if [ ! -f 'newfile' ]; then
-                exit 1
-            fi
+        touch newfile
+        mkdir something
+        touch something/something
+        test_directory_exists 'something'
+        if [ ! -f 'something/something' ]; then
+            exit 1
+        fi
+        if [ ! -f 'newfile' ]; then
+            exit 1
+        fi
         popd || exit 1
     done
 
@@ -264,15 +242,13 @@ test_clean_submodules_untracked() {
 
     for project in "${external_projects[@]}"; do
         pushd $project || exit 1
-            if [ -f 'something/something' ]; then
-                exit 1
-            fi
-            if [ -d 'something' ]; then
-                exit 1
-            fi
-            if [ -f 'newfile' ]; then
-                exit 1
-            fi
+        test_no_directory_exists 'something'
+        if [ -f 'something/something' ]; then
+            exit 1
+        fi
+        if [ -f 'newfile' ]; then
+            exit 1
+        fi
         popd || exit 1
     done
 }
@@ -291,10 +267,8 @@ test_clean_submodules_dirty() {
         git add newfile something || exit 1
         test_git_dirty
         test_branch something
+        test_directory_exists 'something'
         if [ ! -f 'something/something' ]; then
-            exit 1
-        fi
-        if [ ! -d 'something' ]; then
             exit 1
         fi
         if [ ! -f 'newfile' ]; then
@@ -308,10 +282,8 @@ test_clean_submodules_dirty() {
     for project in "${external_projects[@]}"; do
         pushd $project || exit 1
         test_head_detached
+        test_no_directory_exists 'something'
         if [ -f 'something/something' ]; then
-            exit 1
-        fi
-        if [ -d 'something' ]; then
             exit 1
         fi
         if [ -f 'newfile' ]; then

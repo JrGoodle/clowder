@@ -222,6 +222,18 @@ test_command() {
     echo ''
 }
 
+test_directory_exists() {
+    if [ ! -d "$1" ]; then
+        exit 1
+    fi
+}
+
+test_no_directory_exists() {
+    if [ -d "$1" ]; then
+        exit 1
+    fi
+}
+
 print_single_separator() {
     echo '--------------------------------------------------------------------------------'
 }

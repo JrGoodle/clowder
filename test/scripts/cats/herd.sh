@@ -104,9 +104,7 @@ test_herd_version() {
     echo "TEST: Remove directories"
     rm -rf "$@"
     for project in "${cats_projects[@]}"; do
-        if [ -d "$project" ]; then
-            exit 1
-        fi
+        test_no_directory_exists "$project"
     done
     echo "TEST: Successfully herd with missing directories"
     clowder herd $PARALLEL || exit 1
@@ -201,9 +199,7 @@ test_herd_no_repo_existing_remote() {
     done
     clowder link -v 'herd-existing-remote-branch' || exit 1
     for project in "${all_projects[@]}"; do
-        if [ -d "$project" ]; then
-            exit 1
-        fi
+        test_no_directory_exists "$project"
     done
     clowder herd $PARALLEL || exit 1
     for project in "${all_projects[@]}"; do
@@ -224,16 +220,12 @@ test_herd_no_repo_no_remote() {
     done
     clowder link -v 'herd-no-remote-branch' || exit 1
     for project in "${all_projects[@]}"; do
-        if [ -d "$project" ]; then
-            exit 1
-        fi
+        test_no_directory_exists "$project"
     done
     clowder herd $PARALLEL && exit 1
     if [ -z "$PARALLEL" ]; then
         for project in "${all_projects[@]}"; do
-            if [ -d "$project" ]; then
-                exit 1
-            fi
+            test_no_directory_exists "$project"
         done
     fi
 }
