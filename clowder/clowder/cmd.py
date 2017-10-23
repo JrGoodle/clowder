@@ -229,10 +229,34 @@ class Command(object):
         self.clowder_repo.print_status()
         if self.clowder is None:
             sys.exit(1)
-        if self.args.projects is None:
-            self._prune_groups()
-        else:
-            self._prune_projects()
+        if self.args.all:
+            if is_offline():
+                print(fmt.offline_error())
+                sys.exit(1)
+            self.clowder.prune(self.args.groups,
+                               self.args.branch,
+                               project_names=self.args.projects,
+                               skip=self.args.skip,
+                               force=self.args.force,
+                               local=True,
+                               remote=True)
+            return
+        if self.args.remote:
+            if is_offline():
+                print(fmt.offline_error())
+                sys.exit(1)
+            self.clowder.prune(self.args.groups,
+                               self.args.branch,
+                               project_names=self.args.projects,
+                               skip=self.args.skip,
+                               remote=True)
+            return
+        self.clowder.prune(self.args.groups,
+                           self.args.branch,
+                           project_names=self.args.projects,
+                           skip=self.args.skip,
+                           force=self.args.force,
+                           local=True)
 
     def repo(self):
         """clowder repo command"""
@@ -420,60 +444,6 @@ class Command(object):
         """Exit handler to display trailing newline"""
         if self._display_trailing_newline:
             print()
-
-    def _prune_groups(self):
-        """Private method for pruning groups"""
-        if self.args.all:
-            if is_offline():
-                print(fmt.offline_error())
-                sys.exit(1)
-            self.clowder.prune_groups(self.args.groups,
-                                      self.args.branch,
-                                      skip=self.args.skip,
-                                      force=self.args.force,
-                                      local=True,
-                                      remote=True)
-        elif self.args.remote:
-            if is_offline():
-                print(fmt.offline_error())
-                sys.exit(1)
-            self.clowder.prune_groups(self.args.groups,
-                                      self.args.branch,
-                                      skip=self.args.skip,
-                                      remote=True)
-        else:
-            self.clowder.prune_groups(self.args.groups,
-                                      self.args.branch,
-                                      skip=self.args.skip,
-                                      force=self.args.force,
-                                      local=True)
-
-    def _prune_projects(self):
-        """Private method for pruning projects"""
-        if self.args.all:
-            if is_offline():
-                print(fmt.offline_error())
-                sys.exit(1)
-            self.clowder.prune_projects(self.args.projects,
-                                        self.args.branch,
-                                        skip=self.args.skip,
-                                        force=self.args.force,
-                                        local=True,
-                                        remote=True)
-        elif self.args.remote:
-            if is_offline():
-                print(fmt.offline_error())
-                sys.exit(1)
-            self.clowder.prune_projects(self.args.projects,
-                                        self.args.branch,
-                                        skip=self.args.skip,
-                                        remote=True)
-        else:
-            self.clowder.prune_projects(self.args.projects,
-                                        self.args.branch,
-                                        skip=self.args.skip,
-                                        force=self.args.force,
-                                        local=True)
 
     def _validate_clowder_yaml(self):
         """Print invalid yaml message and exit if invalid"""
