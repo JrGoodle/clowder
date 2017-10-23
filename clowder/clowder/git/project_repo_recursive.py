@@ -51,7 +51,7 @@ class ProjectRepoRecursive(ProjectRepo):
 
     def submodule_update_recursive(self, depth=0):
         """Update submodules recursively and initialize if not present"""
-        print(' - Update submodules recursively and initialize if not present')
+        print(' - Recursively update and init submodules')
         if depth == 0:
             command = ['git', 'submodule', 'update', '--init', '--recursive']
         else:

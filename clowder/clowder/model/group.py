@@ -90,21 +90,27 @@ class Group(object):
             if local_branch_exists or remote_branch_exists:
                 self.print_name()
                 for project in self.projects:
+                    project.print_name()
                     if project.name in skip:
+                        print(fmt.skip_project_message())
                         continue
                     project.prune(branch, force=force, local=True, remote=True)
         elif local:
             if self._existing_branch(branch, is_remote=False):
                 self.print_name()
                 for project in self.projects:
+                    project.print_name()
                     if project.name in skip:
+                        print(fmt.skip_project_message())
                         continue
                     project.prune(branch, force=force, local=True)
         elif remote:
             if self._existing_branch(branch, is_remote=True):
                 self.print_name()
                 for project in self.projects:
+                    project.print_name()
                     if project.name in skip:
+                        print(fmt.skip_project_message())
                         continue
                     project.prune(branch, remote=True)
 
