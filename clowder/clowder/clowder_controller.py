@@ -129,11 +129,7 @@ class ClowderController(object):
             return
         projects = [p for g in self.groups for p in g.projects if p.name in project_names]
         for project in projects:
-            project.print_status()
-            if project.name in skip:
-                print(fmt.skip_project_message())
-                continue
-            project.branch(local=local, remote=remote)
+            self._run_project_command(project, skip, 'branch', local=local, remote=remote)
 
     def clean(self, group_names, project_names=None, skip=None, args='', recursive=False):
         """Discard changes"""
@@ -146,11 +142,7 @@ class ClowderController(object):
             return
         projects = [p for g in self.groups for p in g.projects if p.name in project_names]
         for project in projects:
-            project.print_status()
-            if project.name in skip:
-                print(fmt.skip_project_message())
-                continue
-            project.clean(args=args, recursive=recursive)
+            self._run_project_command(project, skip, 'clean', args=args, recursive=recursive)
 
     def clean_all(self, group_names, skip=None, project_names=None):
         """Discard all changes"""
@@ -163,11 +155,7 @@ class ClowderController(object):
             return
         projects = [p for g in self.groups for p in g.projects if p.name in project_names]
         for project in projects:
-            project.print_status()
-            if project.name in skip:
-                print(fmt.skip_project_message())
-                continue
-            project.clean_all()
+            self._run_project_command(project, skip, 'clean_all')
 
     def diff(self, group_names, project_names=None):
         """Show git diff"""
@@ -203,11 +191,7 @@ class ClowderController(object):
             return
         # Serial
         for project in projects:
-            project.print_status()
-            if project.name in skip:
-                print(fmt.skip_project_message())
-                continue
-            project.run(command, ignore_errors)
+            self._run_project_command(project, skip, 'run', command, ignore_errors)
 
     def get_all_fork_project_names(self):
         """Returns all project names containing forks"""
@@ -261,12 +245,7 @@ class ClowderController(object):
         self._validate_projects(project_names)
         projects = [p for g in self.groups for p in g.projects if p.name in project_names]
         for project in projects:
-            project.print_status()
-            if project.name in skip:
-                project.print_status()
-                print(fmt.skip_project_message())
-                continue
-            project.herd(branch=branch, tag=tag, depth=depth, rebase=rebase)
+            self._run_project_command(project, skip, 'herd', branch=branch, tag=tag, depth=depth, rebase=rebase)
 
     def herd_parallel(self, group_names, project_names=None, skip=None, branch=None, tag=None,
                       depth=None, rebase=False):
@@ -364,21 +343,13 @@ class ClowderController(object):
                 print(' - No local branches to prune\n')
                 sys.exit()
             for project in projects:
-                project.print_status()
-                if project.name in skip:
-                    print(fmt.skip_project_message())
-                    continue
-                project.prune(branch, force=force, local=True)
+                self._run_project_command(project, skip, 'prune', branch, force=force, local=True)
         elif remote:
             if not self._existing_branch_project(project_names, branch, is_remote=True):
                 cprint(' - No remote branches to prune\n', 'red')
                 sys.exit()
             for project in projects:
-                project.print_status()
-                if project.name in skip:
-                    print(fmt.skip_project_message())
-                    continue
-                project.prune(branch, remote=True)
+                self._run_project_command(project, skip, 'prune', branch, remote=True)
 
     def reset(self, group_names, project_names=None, skip=None, timestamp_project=None, parallel=False):
         """Reset project branches to upstream or checkout tag/sha as detached HEAD"""
@@ -400,11 +371,7 @@ class ClowderController(object):
         self._validate_projects(project_names)
         projects = [p for g in self.groups for p in g.projects if p.name in project_names]
         for project in projects:
-            if project.name in skip:
-                project.print_status()
-                print(fmt.skip_project_message())
-                continue
-            project.reset(timestamp=timestamp)
+            self._run_project_command(project, skip, 'reset', timestamp=timestamp)
 
     def save_version(self, version):
         """Save current commits to a clowder.yaml in the versions directory"""
@@ -433,24 +400,14 @@ class ClowderController(object):
         self._validate_groups(group_names)
         groups = [g for g in self.groups if g.name in group_names]
         for group in groups:
-            group.print_name()
-            for project in group.projects:
-                project.print_status()
-                if project.name in skip:
-                    print(fmt.skip_project_message())
-                    continue
-                project.start(branch, tracking)
+            self._run_group_command(group, skip, 'start', branch, tracking)
 
     def start_projects(self, project_names, skip, branch, tracking):
         """Start feature branch for projects"""
         self._validate_projects(project_names)
         projects = [p for g in self.groups for p in g.projects if p.name in project_names]
         for project in projects:
-            project.print_status()
-            if project.name in skip:
-                print(fmt.skip_project_message())
-                continue
-            project.start(branch, tracking)
+            self._run_project_command(project, skip, 'start', branch, tracking)
 
     def stash(self, group_names, skip=None, project_names=None):
         """Stash changes for projects with changes"""
@@ -466,11 +423,7 @@ class ClowderController(object):
             return
         projects = [p for g in self.groups for p in g.projects if p.name in project_names]
         for project in projects:
-            project.print_status()
-            if project.name in skip:
-                print(fmt.skip_project_message())
-                continue
-            project.stash()
+            self._run_project_command(project, skip, 'stash')
 
     def status(self, group_names, padding):
         """Print status for groups"""
@@ -665,6 +618,14 @@ class ClowderController(object):
                 print(fmt.skip_project_message())
                 continue
             getattr(project, command)(*args, **kwargs)
+
+    @staticmethod
+    def _run_project_command(project, skip, command, *args, **kwargs):
+        project.print_status()
+        if project.name in skip:
+            print(fmt.skip_project_message())
+            return
+        getattr(project, command)(*args, **kwargs)
 
     @staticmethod
     def _sync_parallel(projects, rebase=False):
