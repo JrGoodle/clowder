@@ -28,7 +28,7 @@ class ProjectRepoRecursive(ProjectRepo):
 
     def has_submodules(self):
         """Repo has submodules"""
-        return self.repo.submodules.count > 0
+        return len(self.repo.submodules) > 0
 
     def herd(self, url, depth=0, fetch=True, rebase=False):
         """Herd ref"""

@@ -18,10 +18,13 @@ cd "$CATS_EXAMPLE_DIR" || exit 1
 
 test_clowder_version
 
-"$TEST_SCRIPT_DIR/cats/herd.sh" 'parallel' || exit 1
-"$TEST_SCRIPT_DIR/cats/herd_branch.sh" 'parallel' || exit 1
-"$TEST_SCRIPT_DIR/cats/herd_tag.sh" 'parallel' || exit 1
-"$TEST_SCRIPT_DIR/cats/forall.sh" 'parallel' || exit 1
-"$TEST_SCRIPT_DIR/cats/reset.sh" 'parallel' || exit 1
-"$TEST_SCRIPT_DIR/test_example_llvm.sh" 'parallel' || exit 1
-"$TEST_SCRIPT_DIR/swift/reset.sh" 'parallel' || exit 1
+arg='parallel'
+"$TEST_SCRIPT_DIR/cats/herd.sh" "$arg" || exit 1
+"$TEST_SCRIPT_DIR/cats/herd_branch.sh" "$arg" || exit 1
+"$TEST_SCRIPT_DIR/cats/herd_tag.sh" "$arg" || exit 1
+"$TEST_SCRIPT_DIR/cats/forall.sh" "$arg" || exit 1
+"$TEST_SCRIPT_DIR/cats/reset.sh" "$arg" || exit 1
+"$TEST_SCRIPT_DIR/cocos2d/herd.sh" "$arg" || exit 1
+"$TEST_SCRIPT_DIR/cocos2d/skip.sh" "$arg" || exit 1
+"$TEST_SCRIPT_DIR/test_example_llvm.sh" "$arg" || exit 1
+"$TEST_SCRIPT_DIR/swift/reset.sh" "$arg" || exit 1
