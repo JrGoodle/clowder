@@ -4,6 +4,7 @@ from __future__ import print_function
 
 from termcolor import colored
 
+import clowder.util.formatting as fmt
 from clowder.model.project import Project
 
 
@@ -82,15 +83,17 @@ class Group(object):
 
         return all([project.exists() for project in self.projects])
 
-    def prune(self, branch, skip=[], force=False, local=False, remote=False):
+    def prune(self, branch, skip=None, force=False, local=False, remote=False):
         """Prune branches"""
+        if skip is None:
+            skip = []
         if local and remote:
             local_branch_exists = self._existing_branch(branch, is_remote=False)
             remote_branch_exists = self._existing_branch(branch, is_remote=True)
             if local_branch_exists or remote_branch_exists:
                 self.print_name()
                 for project in self.projects:
-                    project.print_name()
+                    project.print_status()
                     if project.name in skip:
                         print(fmt.skip_project_message())
                         continue
@@ -99,7 +102,7 @@ class Group(object):
             if self._existing_branch(branch, is_remote=False):
                 self.print_name()
                 for project in self.projects:
-                    project.print_name()
+                    project.print_status()
                     if project.name in skip:
                         print(fmt.skip_project_message())
                         continue
@@ -108,7 +111,7 @@ class Group(object):
             if self._existing_branch(branch, is_remote=True):
                 self.print_name()
                 for project in self.projects:
-                    project.print_name()
+                    project.print_status()
                     if project.name in skip:
                         print(fmt.skip_project_message())
                         continue
