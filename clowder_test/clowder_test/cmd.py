@@ -37,7 +37,7 @@ class Command(object):
 
         parser.add_argument('--parallel', '-p', action='store_true', help='run tests with parallel commands')
 
-        parser.add_argument('--write', '-w', action='store_true',  help='run tests requiring test repo write access')
+        parser.add_argument('--write', '-w', action='store_true', help='run tests requiring test repo write access')
 
         self._subparsers = parser.add_subparsers(dest='test_command', metavar='SUBCOMMAND')
         self._configure_all_subparser()
@@ -58,7 +58,7 @@ class Command(object):
 
         # use dispatch pattern to invoke method with same name
         scripts_dir = os.path.join(os.getcwd(), 'test', 'scripts')
-        return_code = execute_command('./setup_local_test_directory.sh', scripts_dir, shell=True)
+        return_code = execute_command('./setup_local_test_directory.sh', scripts_dir)
         if return_code != 0:
             print(' - Failed to setup local test directory')
             sys.exit(return_code)
@@ -67,11 +67,6 @@ class Command(object):
         self.test_env = {'ACCESS_LEVEL': access}
         if self.args.parallel:
             self.test_env["PARALLEL"] = '--parallel'
-        if self.args.version:
-            if self.args.version == 'python2':
-                self.test_env["PYTHON_VERSION"] = 'python'
-            else:
-                self.test_env["PYTHON_VERSION"] = 'python3'
 
         getattr(self, self.args.test_command)(scripts_dir)
         print()
@@ -98,127 +93,127 @@ class Command(object):
     def cats_all(self, path):
         """clowder cats tests"""
 
-        return_code = execute_command('./test_example_cats.sh', path, shell=True, env=self.test_env)
+        return_code = self._execute_command('./test_example_cats.sh', path)
         self._exit(return_code)
 
     def cats_branch(self, path):
         """clowder cats branch tests"""
 
-        return_code = execute_command('./branch.sh', path, shell=True, env=self.test_env)
+        return_code = self._execute_command('./branch.sh', path)
         self._exit(return_code)
 
     def cats_clean(self, path):
         """clowder cats clean tests"""
 
-        return_code = execute_command('./clean.sh', path, shell=True, env=self.test_env)
+        return_code = self._execute_command('./clean.sh', path)
         self._exit(return_code)
 
     def cats_diff(self, path):
         """clowder cats diff tests"""
 
-        return_code = execute_command('./diff.sh', path, shell=True, env=self.test_env)
+        return_code = self._execute_command('./diff.sh', path)
         self._exit(return_code)
 
     def cats_forall(self, path):
         """clowder cats forall tests"""
 
-        return_code = execute_command('./forall.sh', path, shell=True, env=self.test_env)
+        return_code = self._execute_command('./forall.sh', path)
         self._exit(return_code)
 
     def cats_help(self, path):
         """clowder cats help tests"""
 
-        return_code = execute_command('./help.sh', path, shell=True, env=self.test_env)
+        return_code = self._execute_command('./help.sh', path)
         self._exit(return_code)
 
     def cats_herd_branch(self, path):
         """clowder cats herd branch tests"""
 
-        return_code = execute_command('./herd_branch.sh', path, shell=True, env=self.test_env)
+        return_code = self._execute_command('./herd_branch.sh', path)
         self._exit(return_code)
 
     def cats_herd_tag(self, path):
         """clowder cats herd tag tests"""
 
-        return_code = execute_command('./herd_tag.sh', path, shell=True, env=self.test_env)
+        return_code = self._execute_command('./herd_tag.sh', path)
         self._exit(return_code)
 
     def cats_herd(self, path):
         """clowder cats herd tests"""
 
-        return_code = execute_command('./herd.sh', path, shell=True, env=self.test_env)
+        return_code = self._execute_command('./herd.sh', path)
         self._exit(return_code)
 
     def cats_import(self, path):
         """clowder cats import tests"""
 
-        return_code = execute_command('./import.sh', path, shell=True, env=self.test_env)
+        return_code = self._execute_command('./import.sh', path)
         self._exit(return_code)
 
     def cats_init(self, path):
         """clowder cats init tests"""
 
-        return_code = execute_command('./init.sh', path, shell=True, env=self.test_env)
+        return_code = self._execute_command('./init.sh', path)
         self._exit(return_code)
 
     def cats_link(self, path):
         """clowder cats link tests"""
 
-        return_code = execute_command('./link.sh', path, shell=True, env=self.test_env)
+        return_code = self._execute_command('./link.sh', path)
         self._exit(return_code)
 
     def cats_prune(self, path):
         """clowder cats prune tests"""
 
-        return_code = execute_command('./prune.sh', path, shell=True, env=self.test_env)
+        return_code = self._execute_command('./prune.sh', path)
         self._exit(return_code)
 
     def cats_repo(self, path):
         """clowder cats repo tests"""
 
-        return_code = execute_command('./repo.sh', path, shell=True, env=self.test_env)
+        return_code = self._execute_command('./repo.sh', path)
         self._exit(return_code)
 
     def cats_reset(self, path):
         """clowder cats reset tests"""
 
-        return_code = execute_command('./reset.sh', path, shell=True, env=self.test_env)
+        return_code = self._execute_command('./reset.sh', path)
         self._exit(return_code)
 
     def cats_save(self, path):
         """clowder cats save tests"""
 
-        return_code = execute_command('./save.sh', path, shell=True, env=self.test_env)
+        return_code = self._execute_command('./save.sh', path)
         self._exit(return_code)
 
     def cats_start(self, path):
         """clowder cats start tests"""
 
-        return_code = execute_command('./start.sh', path, shell=True, env=self.test_env)
+        return_code = self._execute_command('./start.sh', path)
         self._exit(return_code)
 
     def cats_stash(self, path):
         """clowder cats stash tests"""
 
-        return_code = execute_command('./stash.sh', path, shell=True, env=self.test_env)
+        return_code = self._execute_command('./stash.sh', path)
         self._exit(return_code)
 
     def cats_status(self, path):
         """clowder cats status tests"""
 
-        return_code = execute_command('./status.sh', path, shell=True, env=self.test_env)
+        return_code = self._execute_command('./status.sh', path)
         self._exit(return_code)
 
     def cats_yaml_validation(self, path):
         """clowder cats yaml validation tests"""
 
-        return_code = execute_command('./yaml_validation.sh', path, shell=True, env=self.test_env)
+        return_code = self._execute_command('./yaml_validation.sh', path)
         self._exit(return_code)
 
     def cats_yaml(self, path):
         """clowder cats yaml tests"""
 
-        return_code = execute_command('./yaml.sh', path, shell=True, env=self.test_env)
+        return_code = self._execute_command('./yaml.sh', path)
         self._exit(return_code)
 
     def cocos2d(self, path):
@@ -232,25 +227,25 @@ class Command(object):
     def cocos2d_all(self, path):
         """clowder cocos2d tests"""
 
-        return_code = execute_command('./test_example_cocos2d.sh', path, shell=True, env=self.test_env)
+        return_code = self._execute_command('./test_example_cocos2d.sh', path)
         self._exit(return_code)
 
     def cocos2d_clean(self, path):
         """clowder cocos2d clean tests"""
 
-        return_code = execute_command('./clean.sh', path, shell=True, env=self.test_env)
+        return_code = self._execute_command('./clean.sh', path)
         self._exit(return_code)
 
     def cocos2d_herd(self, path):
         """clowder cocos2d herd tests"""
 
-        return_code = execute_command('./herd.sh', path, shell=True, env=self.test_env)
+        return_code = self._execute_command('./herd.sh', path)
         self._exit(return_code)
 
     def cocos2d_skip(self, path):
         """clowder cocos2d skip tests"""
 
-        return_code = execute_command('./skip.sh', path, shell=True, env=self.test_env)
+        return_code = self._execute_command('./skip.sh', path)
         self._exit(return_code)
 
     def llvm(self, path):
@@ -264,50 +259,50 @@ class Command(object):
     def llvm_all(self, path):
         """clowder llvm tests"""
 
-        return_code = execute_command('./test_example_llvm.sh', path, shell=True, env=self.test_env)
+        return_code = self._execute_command('./test_example_llvm.sh', path)
         self._exit(return_code)
 
     def llvm_branch(self, path):
         """clowder llvm branch tests"""
 
-        return_code = execute_command('./branch.sh', path, shell=True, env=self.test_env)
+        return_code = self._execute_command('./branch.sh', path)
         self._exit(return_code)
 
     def llvm_forks(self, path):
         """clowder llvm forks tests"""
 
-        return_code = execute_command('./forks.sh', path, shell=True, env=self.test_env)
+        return_code = self._execute_command('./forks.sh', path)
         self._exit(return_code)
 
     def llvm_herd(self, path):
         """clowder llvm herd tests"""
 
-        return_code = execute_command('./herd.sh', path, shell=True, env=self.test_env)
+        return_code = self._execute_command('./herd.sh', path)
         self._exit(return_code)
 
     def llvm_reset(self, path):
         """clowder llvm reset tests"""
 
-        return_code = execute_command('./reset.sh', path, shell=True, env=self.test_env)
+        return_code = self._execute_command('./reset.sh', path)
         self._exit(return_code)
 
     def llvm_sync(self, path):
         """clowder llvm sync tests"""
 
-        return_code = execute_command('./sync.sh', path, shell=True, env=self.test_env)
+        return_code = self._execute_command('./sync.sh', path)
         self._exit(return_code)
 
     def offline(self, path):
         """clowder offline tests"""
 
         path = os.path.join(path, 'cats')
-        return_code = execute_command('./offline.sh', path, shell=True, env=self.test_env)
+        return_code = self._execute_command('./offline.sh', path)
         self._exit(return_code)
 
     def parallel(self, path):
         """clowder parallel tests"""
 
-        return_code = execute_command('./test_parallel.sh', path, shell=True, env=self.test_env)
+        return_code = self._execute_command('./test_parallel.sh', path)
         self._exit(return_code)
 
     def swift(self, path):
@@ -321,31 +316,36 @@ class Command(object):
     def swift_all(self, path):
         """clowder swift tests"""
 
-        return_code = execute_command('./test_example_swift.sh', path, shell=True, env=self.test_env)
+        return_code = self._execute_command('./test_example_swift.sh', path)
         self._exit(return_code)
 
     def swift_config_versions(self, path):
         """clowder swift config versions tests"""
 
-        return_code = execute_command('./config_versions.sh', path, shell=True, env=self.test_env)
+        return_code = self._execute_command('./config_versions.sh', path)
         self._exit(return_code)
 
     def swift_configure_remotes(self, path):
         """clowder swift configure remotes tests"""
 
-        return_code = execute_command('./configure_remotes.sh', path, shell=True, env=self.test_env)
+        return_code = self._execute_command('./configure_remotes.sh', path)
         self._exit(return_code)
 
     def swift_reset(self, path):
         """clowder swift reset tests"""
 
-        return_code = execute_command('./reset.sh', path, shell=True, env=self.test_env)
+        return_code = self._execute_command('./reset.sh', path)
         self._exit(return_code)
 
     def unittests(self, path):
         """clowder unit tests"""
 
-        return_code = execute_command('./unittests.sh', path, shell=True, env=self.test_env)
+        if self.args.version == 'python2':
+            self.test_env["PYTHON_VERSION"] = 'python'
+        else:
+            self.test_env["PYTHON_VERSION"] = 'python3'
+
+        return_code = self._execute_command('./unittests.sh', path)
         self._exit(return_code)
 
     def write(self, path):
@@ -354,23 +354,23 @@ class Command(object):
         self.test_env['ACCESS_LEVEL'] = 'write'
 
         example_dir = os.path.join(path, 'cats')
-        return_code = execute_command('./write_herd.sh', example_dir, shell=True, env=self.test_env)
+        return_code = self._execute_command('./write_herd.sh', example_dir)
         self._exit(return_code)
-        return_code = execute_command('./write_prune.sh', example_dir, shell=True, env=self.test_env)
+        return_code = self._execute_command('./write_prune.sh', example_dir)
         self._exit(return_code)
-        return_code = execute_command('./write_repo.sh', example_dir, shell=True, env=self.test_env)
+        return_code = self._execute_command('./write_repo.sh', example_dir)
         self._exit(return_code)
-        return_code = execute_command('./write_start.sh', example_dir, shell=True, env=self.test_env)
+        return_code = self._execute_command('./write_start.sh', example_dir)
         self._exit(return_code)
 
         example_dir = os.path.join(path, 'llvm')
-        return_code = execute_command('./write_forks.sh', example_dir, shell=True, env=self.test_env)
+        return_code = self._execute_command('./write_forks.sh', example_dir)
         self._exit(return_code)
-        return_code = execute_command('./write_sync.sh', example_dir, shell=True, env=self.test_env)
+        return_code = self._execute_command('./write_sync.sh', example_dir)
         self._exit(return_code)
 
         example_dir = os.path.join(path, 'swift')
-        return_code = execute_command('./write_configure_remotes.sh', example_dir, shell=True, env=self.test_env)
+        return_code = self._execute_command('./write_configure_remotes.sh', example_dir)
         self._exit(return_code)
 
     def _configure_all_subparser(self):
@@ -460,6 +460,11 @@ class Command(object):
         """clowder write tests subparser"""
 
         self._subparsers.add_parser('write', help='Run tests requiring remote write permissions')
+
+    def _execute_command(self, command, path):
+        """Private exit handler"""
+
+        return execute_command(command, path, env=self.test_env)
 
     @staticmethod
     def _exit(return_code):
