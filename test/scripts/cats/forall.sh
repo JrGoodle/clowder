@@ -2,10 +2,6 @@
 
 cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
 
-if [ "$1" = 'parallel' ]; then
-    PARALLEL='--parallel'
-fi
-
 . test_utilities.sh
 
 export black_cats_projects=( 'black-cats/kit' \
@@ -72,7 +68,7 @@ test_forall_environment_variables() {
     print_single_separator
     echo "TEST: Test forall environment variables in script"
     clowder link
-    clowder herd || exit 1
+    clowder herd $PARALLEL || exit 1
     clowder forall $PARALLEL -c "$TEST_SCRIPT_DIR/test_forall_script_env_kit.sh" -p "jrgoodle/kit" || exit 1
     clowder forall $PARALLEL -c "$TEST_SCRIPT_DIR/test_forall_script_env_duke.sh" -p "jrgoodle/duke" || exit 1
     clowder forall $PARALLEL -c "$TEST_SCRIPT_DIR/test_forall_script_env_duke.sh" && exit 1

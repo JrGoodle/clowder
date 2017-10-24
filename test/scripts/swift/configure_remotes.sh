@@ -19,7 +19,7 @@ test_configure_remotes_herd() {
     pushd swift || exit 1
     test_remote_url 'origin' 'https://github.com/apple/swift.git'
     popd || exit 1
-    clowder herd || exit 1
+    clowder herd $PARALLEL || exit 1
     pushd swift || exit 1
     test_remote_url 'origin' 'https://github.com/JrGoodle/swift.git'
     test_remote_url 'upstream' 'https://github.com/apple/swift.git'

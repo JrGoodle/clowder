@@ -172,7 +172,7 @@ test_init_herd() {
     ./clean.sh
     ./init.sh  || exit 1
     clowder link -v travis-ci || exit 1
-    clowder herd || exit 1
+    clowder herd $PARALLEL || exit 1
     clowder status || exit 1
 }
 test_init_herd
@@ -192,10 +192,10 @@ test_swift_configs() {
         config_function="${config_function//-/_}"
         config_function="${config_function//./_}"
         clowder link -v travis-ci || exit 1
-        clowder herd || exit 1
+        clowder herd $PARALLEL || exit 1
         test_default_branches
         clowder link -v "$config" || exit 1
-        clowder herd || exit 1
+        clowder herd $PARALLEL || exit 1
         clowder status || exit 1
         "$config_function"
         pushd swift || exit 1

@@ -120,7 +120,7 @@ test_stash_missing_directories() {
         popd || exit 1
     done
     clowder status || exit 1
-    clowder herd || exit 1
+    clowder herd $PARALLEL || exit 1
     for project in "${all_projects[@]}"; do
         pushd $project || exit 1
         test_git_clean
