@@ -96,7 +96,7 @@ echo 'TEST: clowder diff'
 clowder diff || enable_connection_exit
 print_single_separator
 echo 'TEST: clowder forall'
-clowder forall -c 'git status' || enable_connection_exit
+clowder forall $PARALLEL -c 'git status' || enable_connection_exit
 print_single_separator
 echo 'TEST: clowder herd'
 clowder herd && enable_connection_exit

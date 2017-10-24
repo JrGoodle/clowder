@@ -2,10 +2,6 @@
 
 cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
 
-if [ "$1" = 'parallel' ]; then
-    PARALLEL='--parallel'
-fi
-
 . test_utilities.sh
 
 export cats_projects=( 'duke' 'mu' )
@@ -306,7 +302,7 @@ test_herd_existing_local_existing_remote_no_tracking() {
     clowder link -v 'herd-existing-remote-branch' || exit 1
     clowder prune $EXISTING_REMOTE_BRANCH || exit 1
     clowder herd $PARALLEL || exit 1
-    clowder forall -c 'git branch --unset-upstream' || exit 1
+    clowder forall $PARALLEL -c 'git branch --unset-upstream' || exit 1
     for project in "${all_projects[@]}"; do
         pushd $project || exit 1
         test_local_branch_exists $EXISTING_REMOTE_BRANCH
@@ -328,8 +324,8 @@ test_herd_existing_local_existing_remote_no_tracking() {
     clowder link || exit 1
     clowder herd $PARALLEL || exit 1
     clowder prune $EXISTING_REMOTE_BRANCH || exit 1
-    clowder forall -c 'git reset --hard HEAD~1' || exit 1
-    clowder forall -c "git branch $EXISTING_REMOTE_BRANCH" || exit 1
+    clowder forall $PARALLEL -c 'git reset --hard HEAD~1' || exit 1
+    clowder forall $PARALLEL -c "git branch $EXISTING_REMOTE_BRANCH" || exit 1
     clowder link -v 'herd-existing-remote-branch' || exit 1
     for project in "${all_projects[@]}"; do
         pushd $project || exit 1
@@ -355,7 +351,7 @@ test_herd_existing_local_existing_remote_tracking() {
     clowder link || exit 1
     clowder prune $EXISTING_REMOTE_BRANCH || exit 1
     clowder link -v 'herd-existing-remote-branch' || exit 1
-    clowder forall -c "git checkout $EXISTING_REMOTE_BRANCH" || exit 1
+    clowder forall $PARALLEL -c "git checkout $EXISTING_REMOTE_BRANCH" || exit 1
     for project in "${all_projects[@]}"; do
         pushd $project || exit 1
         test_local_branch_exists $EXISTING_REMOTE_BRANCH

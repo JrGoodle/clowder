@@ -4,10 +4,6 @@
 
 cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
 
-if [ "$1" = 'parallel' ]; then
-    PARALLEL='--parallel'
-fi
-
 . test_utilities.sh
 
 print_double_separator
@@ -121,7 +117,7 @@ test_commits() {
 
 test_reset_swift_4_0_branch() {
     print_single_separator
-    echo "TEST: clowder reset timestamp"
+    echo "TEST: clowder reset timestamp swift-4.0-branch"
     ./clean.sh
     git clone https://github.com/apple/swift.git || exit 1
     swift/utils/update-checkout --scheme swift-4.0-branch --reset-to-remote --clone --clean || exit 1
@@ -141,7 +137,7 @@ test_reset_swift_4_0_branch
 
 test_reset_swift_4_1_branch() {
     print_single_separator
-    echo "TEST: clowder reset timestamp"
+    echo "TEST: clowder reset timestamp swift-4.1-branch"
     ./clean.sh
     git clone https://github.com/apple/swift.git || exit 1
     swift/utils/update-checkout --scheme swift-4.1-branch --reset-to-remote --clone --clean || exit 1

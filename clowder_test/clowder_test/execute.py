@@ -16,6 +16,7 @@ from termcolor import cprint
 
 def subprocess_exit_handler(process):
     """terminate subprocess"""
+
     try:
         process.terminate()
     except Exception as err:
@@ -24,6 +25,7 @@ def subprocess_exit_handler(process):
 
 def execute_subprocess_command(command, path, shell=True, env=None, stdout=None, stderr=None):
     """Execute subprocess command"""
+
     if isinstance(command, list):
         cmd = ' '.join(command)
     else:
@@ -44,6 +46,7 @@ def execute_subprocess_command(command, path, shell=True, env=None, stdout=None,
 
 def execute_command(command, path, shell=True, env=None, print_output=True):
     """Execute command via thread"""
+
     cmd_env = os.environ.copy()
     if env:
         cmd_env.update(env)

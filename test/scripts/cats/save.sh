@@ -25,7 +25,7 @@ test_save() {
     echo "TEST: Successfully save version with path separator in input name"
     clowder save path/separator || exit 1
     clowder link -v path-separator || exit 1
-    clowder herd || exit 1
+    clowder herd $PARALLEL || exit 1
     clowder status || exit 1
 }
 test_save

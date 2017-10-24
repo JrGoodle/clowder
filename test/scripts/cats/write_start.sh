@@ -26,7 +26,7 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
     test_start_tracking() {
         print_single_separator
         echo "TEST: Test start tracking branch"
-        clowder herd || exit 1
+        clowder herd $PARALLEL || exit 1
 
         echo "TEST: No local or remote branches"
         clowder prune -af tracking_branch || exit 1
@@ -81,7 +81,7 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
         echo "TEST: Existing local branch not checked out, remote tracking branch exists"
         clowder prune -af tracking_branch || exit 1
         clowder start -t tracking_branch || exit 1
-        clowder forall -c 'git checkout master' || exit 1
+        clowder forall $PARALLEL -c 'git checkout master' || exit 1
 
         for project in "${all_projects[@]}"; do
             pushd $project || exit 1
@@ -137,7 +137,7 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
         clowder prune -af tracking_branch || exit 1
         clowder start -t tracking_branch || exit 1
         clowder prune -f tracking_branch || exit 1
-        clowder forall -c 'git checkout -b tracking_branch' || exit 1
+        clowder forall $PARALLEL -c 'git checkout -b tracking_branch' || exit 1
         for project in "${all_projects[@]}"; do
             pushd $project || exit 1
             test_branch tracking_branch
@@ -158,8 +158,8 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
         clowder prune -af tracking_branch || exit 1
         clowder start -t tracking_branch || exit 1
         clowder prune -f tracking_branch || exit 1
-        clowder forall -c 'git checkout -b tracking_branch' || exit 1
-        clowder forall -c 'git checkout master' || exit 1
+        clowder forall $PARALLEL -c 'git checkout -b tracking_branch' || exit 1
+        clowder forall $PARALLEL -c 'git checkout master' || exit 1
         for project in "${all_projects[@]}"; do
             pushd $project || exit 1
             test_branch 'master'
@@ -202,7 +202,7 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
         echo "TEST: Existing local branch not checked out, no remote branch"
         clowder prune -r tracking_branch || exit 1
         clowder start tracking_branch || exit 1
-        clowder forall -c 'git checkout master' || exit 1
+        clowder forall $PARALLEL -c 'git checkout master' || exit 1
 
         for project in "${all_projects[@]}"; do
             pushd $project || exit 1

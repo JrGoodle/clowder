@@ -25,7 +25,7 @@ echo "TEST: Test clowder prune"
 test_prune() {
     print_single_separator
     echo "TEST: Test clowder prune branch"
-    clowder herd || exit 1
+    clowder herd $PARALLEL || exit 1
 
     clowder start prune_branch || exit 1
 

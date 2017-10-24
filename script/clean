@@ -43,12 +43,13 @@ clean_clowder_test() {
 
 clean_examples() {
     echo "Removing existing example files"
-    if [ -n "$TRAVIS_OS_NAME" ]; then
-        local examples_path=$REPO_PATH/examples
-        $examples_path/cats/clean.sh
-        $examples_path/llvm-projects/clean.sh
-        $examples_path/swift-projects/clean.sh
-    else
+    local examples_path=$REPO_PATH/examples
+    echo 'Clean repo examples...'
+    $examples_path/cats/clean.sh
+    $examples_path/llvm-projects/clean.sh
+    $examples_path/swift-projects/clean.sh
+    if [ -z "$TRAVIS_OS_NAME" ]; then
+        echo 'Clean home directory examples...'
         rm -rf "$HOME/.clowder_tests"
     fi
 }

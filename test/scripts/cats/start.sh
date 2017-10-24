@@ -26,7 +26,7 @@ test_start() {
     print_single_separator
     echo "TEST: Start new branch"
 
-    clowder herd || exit 1
+    clowder herd $PARALLEL || exit 1
     clowder start start_branch -g cats || exit 1
 
     pushd mu || exit 1

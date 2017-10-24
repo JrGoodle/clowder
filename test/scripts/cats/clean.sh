@@ -166,7 +166,7 @@ test_clean_missing_directories() {
         popd || exit 1
     done
 
-    clowder herd || exit 1
+    clowder herd $PARALLEL || exit 1
 }
 test_clean_missing_directories 'mu' 'duke'
 
@@ -175,7 +175,7 @@ test_clean_abort_rebase() {
     echo "TEST: Clean when in the middle of a rebase"
 
     clowder link || exit 1
-    clowder herd || exit 1
+    clowder herd $PARALLEL || exit 1
 
     pushd mu || exit 1
         touch newfile
@@ -210,7 +210,7 @@ test_clean_untracked_files() {
     echo "TEST: Clean untracked files"
 
     clowder link || exit 1
-    clowder herd || exit 1
+    clowder herd $PARALLEL || exit 1
 
     pushd mu || exit 1
         touch newfile

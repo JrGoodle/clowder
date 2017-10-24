@@ -12,8 +12,8 @@ from clowder.error.clowder_git_error import ClowderGitError
 from clowder.git.repo import execute_command, GitRepo
 from clowder.util.connectivity import is_offline
 
-DEFAULT_REF = 'refs/heads/master'
-DEFAULT_REMOTE = 'origin'
+__project_repo_default_ref__ = 'refs/heads/master'
+__project_repo_default_remote__ = 'origin'
 
 
 class ProjectRepo(GitRepo):
@@ -24,6 +24,7 @@ class ProjectRepo(GitRepo):
 
     def create_clowder_repo(self, url, branch, depth=0):
         """Clone clowder git repo from url at path"""
+
         if self.existing_git_repository(self.repo_path):
             return
         self._init_repo()
@@ -32,6 +33,7 @@ class ProjectRepo(GitRepo):
 
     def configure_remotes(self, upstream_remote_name, upstream_remote_url, fork_remote_name, fork_remote_url):
         """Configure remotes names for fork and upstream"""
+
         if not self.existing_git_repository(self.repo_path):
             return
         try:
@@ -39,7 +41,7 @@ class ProjectRepo(GitRepo):
         except GitError:
             return
         except (KeyboardInterrupt, SystemExit):
-            self._exit('')
+            self._exit()
         else:
             for remote in remotes:
                 if upstream_remote_url == self._remote_get_url(remote.name):
@@ -58,13 +60,15 @@ class ProjectRepo(GitRepo):
     @staticmethod
     def exists(repo_path):
         """Print existence validation messages"""
+
         if not ProjectRepo.existing_git_repository(repo_path):
             cprint(' - Project is missing', 'red')
 
     @staticmethod
     def format_project_ref_string(repo_path):
         """Return formatted repo ref name"""
-        repo = ProjectRepo(repo_path, DEFAULT_REMOTE, DEFAULT_REF)
+
+        repo = ProjectRepo(repo_path, __project_repo_default_remote__, __project_repo_default_ref__)
         local_commits = repo.new_commits()
         upstream_commits = repo.new_commits(upstream=True)
         no_local_commits = local_commits == 0 or local_commits == '0'
@@ -85,9 +89,10 @@ class ProjectRepo(GitRepo):
     @staticmethod
     def format_project_string(repo_path, name):
         """Return formatted project name"""
+
         if not ProjectRepo.existing_git_repository(repo_path):
             return colored(name, 'green')
-        repo = ProjectRepo(repo_path, DEFAULT_REMOTE, DEFAULT_REF)
+        repo = ProjectRepo(repo_path, __project_repo_default_remote__, __project_repo_default_ref__)
         if not repo.validate_repo():
             color = 'red'
             symbol = '*'
@@ -98,6 +103,7 @@ class ProjectRepo(GitRepo):
 
     def herd(self, url, depth=0, fetch=True, rebase=False):
         """Herd ref"""
+
         if not self.existing_git_repository(self.repo_path):
             self._herd_initial(url, depth=depth)
             return
@@ -108,6 +114,7 @@ class ProjectRepo(GitRepo):
 
     def herd_branch(self, url, branch, depth=0, rebase=False, fork_remote=None):
         """Herd branch"""
+
         if not self.existing_git_repository(self.repo_path):
             self._herd_branch_initial(url, branch, depth=depth)
             return
@@ -147,6 +154,7 @@ class ProjectRepo(GitRepo):
 
     def herd_tag(self, url, tag, depth=0, rebase=False):
         """Herd tag"""
+
         if not self.existing_git_repository(self.repo_path):
             self._init_repo()
             self._create_remote(self.remote, url, remove_dir=True)
@@ -166,6 +174,7 @@ class ProjectRepo(GitRepo):
 
     def herd_remote(self, url, remote, branch=None):
         """Herd remote repo"""
+
         return_code = self._create_remote(remote, url)
         if return_code != 0:
             raise ClowderGitError(msg=colored(' - Failed to create remote', 'red'))
@@ -179,6 +188,7 @@ class ProjectRepo(GitRepo):
 
     def prune_branch_local(self, branch, force):
         """Prune branch in repository"""
+
         branch_output = fmt.ref_string(branch)
         if branch not in self.repo.heads:
             self._print(' - Local branch ' + branch_output + " doesn't exist")
@@ -195,7 +205,7 @@ class ProjectRepo(GitRepo):
                 self._print(fmt.error(err))
                 self._exit(message)
             except (KeyboardInterrupt, SystemExit):
-                self._exit('')
+                self._exit()
         try:
             self._print(' - Delete local branch ' + branch_output)
             self.repo.delete_head(branch, force=force)
@@ -206,10 +216,11 @@ class ProjectRepo(GitRepo):
             self._print(fmt.error(err))
             self._exit(message)
         except (KeyboardInterrupt, SystemExit):
-            self._exit('')
+            self._exit()
 
     def prune_branch_remote(self, branch, remote):
         """Prune remote branch in repository"""
+
         branch_output = fmt.ref_string(branch)
         if not self.existing_remote_branch(branch, remote):
             self._print(' - Remote branch ' + branch_output + " doesn't exist")
@@ -223,10 +234,11 @@ class ProjectRepo(GitRepo):
             self._print(fmt.error(err))
             self._exit(message)
         except (KeyboardInterrupt, SystemExit):
-            self._exit('')
+            self._exit()
 
     def reset(self, depth=0):
         """Reset branch to upstream or checkout tag/sha as detached HEAD"""
+
         if self.ref_type(self.default_ref) == 'branch':
             branch = self.truncate_ref(self.default_ref)
             branch_output = fmt.ref_string(branch)
@@ -259,12 +271,13 @@ class ProjectRepo(GitRepo):
 
     def reset_timestamp(self, timestamp, author, ref):
         """Reset branch to upstream or checkout tag/sha as detached HEAD"""
+
         rev = None
         if author:
             rev = self._find_rev_by_timestamp_author(timestamp, author, ref)
-        if rev is None:
+        if not rev:
             rev = self._find_rev_by_timestamp(timestamp, ref)
-        if rev is None:
+        if not rev:
             message = colored(' - Failed to find rev', 'red')
             self._print(message)
             self._exit(message)
@@ -272,6 +285,7 @@ class ProjectRepo(GitRepo):
 
     def start(self, remote, branch, depth, tracking):
         """Start new branch in repository"""
+
         if branch not in self.repo.heads:
             if not is_offline():
                 return_code = self.fetch(remote, ref=branch, depth=depth)
@@ -298,6 +312,7 @@ class ProjectRepo(GitRepo):
 
     def sync(self, fork_remote, rebase=False):
         """Sync fork with upstream remote"""
+
         self._print(' - Sync fork with upstream remote')
         if self.ref_type(self.default_ref) != 'branch':
             message = colored(' - Can only sync branches', 'red')
@@ -320,6 +335,7 @@ class ProjectRepo(GitRepo):
 
     def _compare_remote_url(self, remote, url):
         """Compare actual remote url to given url"""
+
         if url != self._remote_get_url(remote):
             actual_url = self._remote_get_url(remote)
             message = fmt.remote_already_exists_error(remote, url, actual_url)
@@ -328,6 +344,7 @@ class ProjectRepo(GitRepo):
 
     def _herd(self, remote, ref, depth=0, fetch=True, rebase=False):
         """Herd ref"""
+
         if self.ref_type(ref) == 'branch':
             branch = self.truncate_ref(ref)
             branch_output = fmt.ref_string(branch)
@@ -360,6 +377,7 @@ class ProjectRepo(GitRepo):
 
     def _herd_initial(self, url, depth=0):
         """Herd ref initial"""
+
         self._init_repo()
         self._create_remote(self.remote, url, remove_dir=True)
         if self.ref_type(self.default_ref) == 'branch':
@@ -371,6 +389,7 @@ class ProjectRepo(GitRepo):
 
     def _herd_branch_initial(self, url, branch, depth=0):
         """Herd branch initial"""
+
         self._init_repo()
         self._create_remote(self.remote, url, remove_dir=True)
         self.fetch(self.remote, depth=depth, ref=branch)
@@ -383,6 +402,7 @@ class ProjectRepo(GitRepo):
 
     def _herd_remote_branch(self, remote, branch, depth=0, rebase=False):
         """Herd remote branch"""
+
         if not self._is_tracking_branch(branch):
             self._set_tracking_branch_commit(branch, remote, depth)
             return
@@ -393,6 +413,7 @@ class ProjectRepo(GitRepo):
 
     def _set_tracking_branch_commit(self, branch, remote, depth):
         """Set tracking relationship between local and remote branch if on same commit"""
+
         branch_output = fmt.ref_string(branch)
         origin = self._remote(remote)
         return_code = self.fetch(remote, depth=depth, ref=branch)

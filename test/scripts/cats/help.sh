@@ -24,7 +24,7 @@ test_help() {
     print_double_separator
     echo "TEST: Print help with valid clowder.yaml"
     clowder link || exit 1
-    clowder herd || exit 1
+    clowder herd $PARALLEL || exit 1
     clowder status || exit 1
     "$TEST_SCRIPT_DIR/test_help.sh" "$CATS_EXAMPLE_DIR" || exit 1
 }

@@ -3,6 +3,7 @@
 
 class ClowderGitError(Exception):
     """Clowder git error type"""
+
     def __init__(self, msg=None):
         super(ClowderGitError, self).__init__(msg)
         self.msg = msg

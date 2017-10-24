@@ -2,8 +2,6 @@
 
 from __future__ import print_function
 
-from termcolor import colored
-
 import clowder.util.formatting as fmt
 from clowder.model.project import Project
 
@@ -25,30 +23,30 @@ class Group(object):
             if source.name == source_name:
                 self.source = source
 
-        self.projects = []
-        for project in group['projects']:
-            self.projects.append(Project(root_directory, project, group, defaults, sources))
+        self.projects = [Project(root_directory, p, group, defaults, sources) for p in group['projects']]
         self.projects.sort(key=lambda p: p.path)
 
     def existing_branch(self, branch, is_remote):
         """Checks whether at least one branch exists"""
-        for project in self.projects:
-            if is_remote:
-                if project.existing_branch(branch, is_remote=True):
-                    return True
-            else:
-                if project.existing_branch(branch, is_remote=False):
-                    return True
-        return False
+
+        return any([p.existing_branch(branch, is_remote=is_remote) for p in self.projects])
+
+    def existing_projects(self):
+        """Validate existence status of all projects"""
+
+        return all([project.exists() for project in self.projects])
 
     def get_yaml(self):
         """Return python object representation for saving yaml"""
+
         projects_yaml = [p.get_yaml() for p in self.projects]
         return {'name': self.name, 'projects': projects_yaml}
 
     def get_yaml_resolved(self):
         """Return python object representation for resolved yaml"""
+
         projects_yaml = [p.get_yaml(resolved=True) for p in self.projects]
+
         group = {'name': self.name,
                  'depth': self.depth,
                  'ref': self.ref,
@@ -56,12 +54,14 @@ class Group(object):
                  'remote': self.remote_name,
                  'source': self.source.name,
                  'projects': projects_yaml}
+
         if self.timestamp_author:
             group['timestamp_author'] = self.timestamp_author
+
         return group
 
     def is_dirty(self):
-        """Check if group has dirty project(s)"""
+        """Check if group has at least one dirty project"""
 
         return any([project.is_dirty() for project in self.projects])
 
@@ -72,30 +72,20 @@ class Group(object):
 
     def print_existence_message(self):
         """Print existence validation message for projects in group"""
-        if not self.projects_exist():
-            self.print_name()
-            for project in self.projects:
-                project.print_exists()
 
-    def print_name(self):
-        """Print formatted group name"""
-        name_output = colored(self.name, attrs=['bold', 'underline'])
-        print(name_output)
+        if self.existing_projects():
+            return
+
+        print(fmt.group_name(self.name))
+        for project in self.projects:
+            project.print_exists()
 
     def print_validation(self):
         """Print validation message for projects in group"""
-        if not self.is_valid():
-            self.print_name()
-            for project in self.projects:
-                project.print_validation()
 
-    def projects_exist(self):
-        """Validate existence status of all projects"""
+        if self.is_valid():
+            return
 
-        return all([project.exists() for project in self.projects])
-
-    def status(self, padding):
-        """Print status for all projects"""
-        self.print_name()
+        print(fmt.group_name(self.name))
         for project in self.projects:
-            project.status(padding)
+            project.print_validation()

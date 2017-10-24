@@ -16,7 +16,7 @@ prepare_unittest_repos() {
     ./clean.sh || exit 1
     ./init.sh || exit 1
     clowder clean || exit 1
-    clowder herd || exit 1
+    clowder herd $PARALLEL || exit 1
     # Remove jules repository
     rm -rf black-cats/jules || exit 1
     # Make kishka repo dirty

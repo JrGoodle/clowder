@@ -23,7 +23,7 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
         pushd swift || exit 1
         test_remote_url 'origin' 'git@github.com:apple/swift.git'
         popd || exit 1
-        clowder herd || exit 1
+        clowder herd $PARALLEL || exit 1
         pushd swift || exit 1
         test_remote_url 'origin' 'git@github.com:JrGoodle/swift.git'
         test_remote_url 'upstream' 'git@github.com:apple/swift.git'
@@ -38,7 +38,7 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
         pushd swift || exit 1
         test_remote_url 'origin' 'git@github.com:apple/swift.git'
         popd || exit 1
-        clowder sync || exit 1
+        clowder sync $PARALLEL || exit 1
         pushd swift || exit 1
         test_remote_url 'origin' 'git@github.com:JrGoodle/swift.git'
         test_remote_url 'upstream' 'git@github.com:apple/swift.git'
