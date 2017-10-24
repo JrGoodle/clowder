@@ -5,8 +5,8 @@ import unittest
 
 from clowder.model.source import Source
 from unittests.shared import (
-    GITHUB_HTTPS_SOURCE_YAML,
-    GITHUB_SSH_SOURCE_YAML
+    __github_https_source_yaml__,
+    __github_ssh_source_yaml__
 )
 
 
@@ -15,14 +15,14 @@ class SourceTest(unittest.TestCase):
 
     def setUp(self):
 
-        self.ssh_source = Source(GITHUB_SSH_SOURCE_YAML)
-        self.https_source = Source(GITHUB_HTTPS_SOURCE_YAML)
+        self.ssh_source = Source(__github_ssh_source_yaml__)
+        self.https_source = Source(__github_https_source_yaml__)
 
     def test_get_yaml(self):
         """Test get_yaml() method"""
 
-        self.assertEqual(self.ssh_source.get_yaml(), GITHUB_SSH_SOURCE_YAML)
-        self.assertEqual(self.https_source.get_yaml(), GITHUB_HTTPS_SOURCE_YAML)
+        self.assertEqual(self.ssh_source.get_yaml(), __github_ssh_source_yaml__)
+        self.assertEqual(self.https_source.get_yaml(), __github_https_source_yaml__)
 
     def test_https_url_prefix(self):
         """Test https url prefix"""

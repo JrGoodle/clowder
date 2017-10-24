@@ -1,27 +1,18 @@
 """Shared resources for tests"""
 
-DEFAULTS_YAML = {'ref': 'refs/heads/master',
-                 'remote': 'origin',
-                 'source': 'github',
-                 'depth': 0}
+__defaults_yaml__ = {'ref': 'refs/heads/master', 'remote': 'origin', 'source': 'github', 'depth': 0}
 
-GITHUB_SSH_SOURCE_YAML = {'name': 'github-ssh', 'url': 'ssh://git@github.com'}
-GITHUB_HTTPS_SOURCE_YAML = {'name': 'github', 'url': 'https://github.com'}
+__github_ssh_source_yaml__ = {'name': 'github-ssh', 'url': 'ssh://git@github.com'}
+__github_https_source_yaml__ = {'name': 'github', 'url': 'https://github.com'}
 
-JULES_PROJECT_YAML = {'name': 'jrgoodle/jules',
-                      'path': 'black-cats/jules'}
-KISHKA_PROJECT_YAML = {'name': 'jrgoodle/kishka',
-                       'path': 'black-cats/kishka'}
-KIT_PROJECT_YAML = {'name': 'jrgoodle/kit',
-                    'path': 'black-cats/kit',
-                    'ref': 'f2e20031ddce5cb097105f4d8ccbc77f4ac20709'}
+__jules_project_yaml__ = {'name': 'jrgoodle/jules', 'path': 'black-cats/jules'}
+__kishka_project_yaml__ = {'name': 'jrgoodle/kishka', 'path': 'black-cats/kishka'}
+__kit_project_yaml__ = {'name': 'jrgoodle/kit', 'path': 'black-cats/kit',
+                        'ref': 'f2e20031ddce5cb097105f4d8ccbc77f4ac20709'}
 
-JULES_GROUP_YAML = {'name': 'cats',
-                    'projects': [JULES_PROJECT_YAML]}
-KISHKA_GROUP_YAML = {'name': 'cats',
-                     'projects': [KISHKA_PROJECT_YAML]}
-KIT_GROUP_YAML = {'name': 'cats',
-                  'projects': [KIT_PROJECT_YAML]}
+__jules_group_yaml__ = {'name': 'cats', 'projects': [__jules_project_yaml__]}
+__kishka_group_yaml__ = {'name': 'cats', 'projects': [__kishka_project_yaml__]}
+__kit_group_yaml__ = {'name': 'cats', 'projects': [__kit_project_yaml__]}
 
 # GROUP_YAML = {'name': 'cats',
 #               'projects': [{'name': 'jrgoodle/kit',

@@ -12,8 +12,8 @@ from clowder.error.clowder_git_error import ClowderGitError
 from clowder.git.repo import execute_command, GitRepo
 from clowder.util.connectivity import is_offline
 
-DEFAULT_REF = 'refs/heads/master'
-DEFAULT_REMOTE = 'origin'
+__project_repo_default_ref__ = 'refs/heads/master'
+__project_repo_default_remote__ = 'origin'
 
 
 class ProjectRepo(GitRepo):
@@ -68,7 +68,7 @@ class ProjectRepo(GitRepo):
     def format_project_ref_string(repo_path):
         """Return formatted repo ref name"""
 
-        repo = ProjectRepo(repo_path, DEFAULT_REMOTE, DEFAULT_REF)
+        repo = ProjectRepo(repo_path, __project_repo_default_remote__, __project_repo_default_ref__)
         local_commits = repo.new_commits()
         upstream_commits = repo.new_commits(upstream=True)
         no_local_commits = local_commits == 0 or local_commits == '0'
@@ -92,7 +92,7 @@ class ProjectRepo(GitRepo):
 
         if not ProjectRepo.existing_git_repository(repo_path):
             return colored(name, 'green')
-        repo = ProjectRepo(repo_path, DEFAULT_REMOTE, DEFAULT_REF)
+        repo = ProjectRepo(repo_path, __project_repo_default_remote__, __project_repo_default_ref__)
         if not repo.validate_repo():
             color = 'red'
             symbol = '*'

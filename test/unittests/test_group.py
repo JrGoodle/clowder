@@ -7,27 +7,27 @@ import unittest
 from clowder.model.group import Group
 from clowder.model.source import Source
 from unittests.shared import (
-    DEFAULTS_YAML,
-    GITHUB_HTTPS_SOURCE_YAML,
-    GITHUB_SSH_SOURCE_YAML,
-    JULES_GROUP_YAML,
-    KISHKA_GROUP_YAML,
-    KIT_GROUP_YAML
+    __defaults_yaml__,
+    __github_https_source_yaml__,
+    __github_ssh_source_yaml__,
+    __jules_group_yaml__,
+    __kishka_group_yaml__,
+    __kit_group_yaml__
 )
 
 
 class GroupTest(unittest.TestCase):
     """group test subclass"""
 
-    CURRENT_FILE_DIR_PATH = os.path.dirname(os.path.realpath(__file__))
-    CATS_EXAMPLE_PATH = os.path.abspath(os.path.join(CURRENT_FILE_DIR_PATH, '..', '..', 'examples', 'cats'))
+    current_file_path = os.path.dirname(os.path.realpath(__file__))
+    cats_example_path = os.path.abspath(os.path.join(current_file_path, '..', '..', 'examples', 'cats'))
 
     def setUp(self):
 
-        sources = [Source(GITHUB_SSH_SOURCE_YAML), Source(GITHUB_HTTPS_SOURCE_YAML)]
-        self.jules_group = Group(self.CATS_EXAMPLE_PATH, JULES_GROUP_YAML, DEFAULTS_YAML, sources)
-        self.kishka_group = Group(self.CATS_EXAMPLE_PATH, KISHKA_GROUP_YAML, DEFAULTS_YAML, sources)
-        self.kit_group = Group(self.CATS_EXAMPLE_PATH, KIT_GROUP_YAML, DEFAULTS_YAML, sources)
+        sources = [Source(__github_ssh_source_yaml__), Source(__github_https_source_yaml__)]
+        self.jules_group = Group(self.cats_example_path, __jules_group_yaml__, __defaults_yaml__, sources)
+        self.kishka_group = Group(self.cats_example_path, __kishka_group_yaml__, __defaults_yaml__, sources)
+        self.kit_group = Group(self.cats_example_path, __kit_group_yaml__, __defaults_yaml__, sources)
 
     def test_get_yaml(self):
         """Test get_yaml() method"""
@@ -70,5 +70,5 @@ class GroupTest(unittest.TestCase):
 
 if __name__ == '__main__':
     if len(sys.argv) > 1:
-        GroupTest.CATS_EXAMPLE_PATH = sys.argv.pop()
+        GroupTest.cats_example_path = sys.argv.pop()
     unittest.main()

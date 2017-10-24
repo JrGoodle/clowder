@@ -10,15 +10,15 @@ from clowder.git.repo import GitRepo
 class GitUtilitiesTest(unittest.TestCase):
     """git_utilities test subclass"""
 
-    CURRENT_FILE_DIR_PATH = os.path.dirname(os.path.realpath(__file__))
-    CATS_EXAMPLE_PATH = os.path.abspath(os.path.join(CURRENT_FILE_DIR_PATH, '..', '..', 'examples', 'cats'))
+    current_file_path = os.path.dirname(os.path.realpath(__file__))
+    cats_example_path = os.path.abspath(os.path.join(current_file_path, '..', '..', 'examples', 'cats'))
 
     def setUp(self):
 
-        self.jules_project_path = os.path.join(self.CATS_EXAMPLE_PATH, 'black-cats', 'jules')
-        self.kishka_project_path = os.path.join(self.CATS_EXAMPLE_PATH, 'black-cats', 'kishka')
-        self.kit_project_path = os.path.join(self.CATS_EXAMPLE_PATH, 'black-cats', 'kit')
-        self.sasha_project_path = os.path.join(self.CATS_EXAMPLE_PATH, 'black-cats', 'sasha')
+        self.jules_project_path = os.path.join(self.cats_example_path, 'black-cats', 'jules')
+        self.kishka_project_path = os.path.join(self.cats_example_path, 'black-cats', 'kishka')
+        self.kit_project_path = os.path.join(self.cats_example_path, 'black-cats', 'kit')
+        self.sasha_project_path = os.path.join(self.cats_example_path, 'black-cats', 'sasha')
         self.remote = 'origin'
         self.branch_ref = 'refs/heads/master'
         self.tag_ref = 'refs/tags/v1.0'
@@ -94,5 +94,5 @@ class GitUtilitiesTest(unittest.TestCase):
 
 if __name__ == '__main__':
     if len(sys.argv) > 1:
-        GitUtilitiesTest.CATS_EXAMPLE_PATH = sys.argv.pop()
+        GitUtilitiesTest.cats_example_path = sys.argv.pop()
     unittest.main()

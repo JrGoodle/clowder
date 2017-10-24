@@ -14,8 +14,8 @@ from clowder.error.clowder_git_error import ClowderGitError
 from clowder.util.execute import execute_command
 from clowder.util.file_system import remove_directory
 
-DEFAULT_REF = 'refs/heads/master'
-DEFAULT_REMOTE = 'origin'
+__repo_default_ref__ = 'refs/heads/master'
+__repo_default_remote__ = 'origin'
 
 
 class GitRepo(object):
@@ -343,7 +343,7 @@ class GitRepo(object):
     def validation(repo_path):
         """Print validation messages"""
 
-        repo = GitRepo(repo_path, DEFAULT_REMOTE, DEFAULT_REF)
+        repo = GitRepo(repo_path, __repo_default_remote__, __repo_default_ref__)
         if not GitRepo.existing_git_repository(repo_path):
             return
 

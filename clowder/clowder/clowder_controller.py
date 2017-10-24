@@ -46,10 +46,10 @@ def async_callback(val):
     """Increment async progress bar"""
 
     del val
-    PROGRESS.update()
+    __clowder_progress__.update()
 
 
-PARENT_ID = os.getpid()
+__clowder_parent_id__ = os.getpid()
 
 
 def worker_init():
@@ -63,7 +63,7 @@ def worker_init():
 
         del signal_num, frame
         # print('signal: %s' % signal_num)
-        parent = psutil.Process(PARENT_ID)
+        parent = psutil.Process(__clowder_parent_id__)
         for child in parent.children(recursive=True):
             if child.pid != os.getpid():
                 # print("killing child: %s" % child.pid)
@@ -77,41 +77,41 @@ def worker_init():
     signal.signal(signal.SIGINT, sig_int)
 
 
-RESULTS = []
-CLOWDER_POOL = mp.Pool(initializer=worker_init)
-PROGRESS = Progress()
+__clowder_results__ = []
+__clowder_pool__ = mp.Pool(initializer=worker_init)
+__clowder_progress__ = Progress()
 
 
 def pool_handler(count):
     """Pool handler for finishing parallel jobs"""
 
     print()
-    PROGRESS.start(count)
+    __clowder_progress__.start(count)
 
     try:
-        for result in RESULTS:
+        for result in __clowder_results__:
             result.get()
             if not result.successful():
-                PROGRESS.close()
-                CLOWDER_POOL.close()
-                CLOWDER_POOL.terminate()
+                __clowder_progress__.close()
+                __clowder_pool__.close()
+                __clowder_pool__.terminate()
                 print()
                 cprint(' - Command failed', 'red')
                 print()
                 sys.exit(1)
     except Exception as err:
-        PROGRESS.close()
-        CLOWDER_POOL.close()
-        CLOWDER_POOL.terminate()
+        __clowder_progress__.close()
+        __clowder_pool__.close()
+        __clowder_pool__.terminate()
         print()
         cprint(err, 'red')
         print()
         sys.exit(1)
     else:
-        PROGRESS.complete()
-        PROGRESS.close()
-        CLOWDER_POOL.close()
-        CLOWDER_POOL.join()
+        __clowder_progress__.complete()
+        __clowder_progress__.close()
+        __clowder_pool__.close()
+        __clowder_pool__.join()
 
 
 class ClowderController(object):
@@ -293,9 +293,9 @@ class ClowderController(object):
             for project in projects:
                 if project.name in skip:
                     continue
-                result = CLOWDER_POOL.apply_async(herd_project, args=(project, branch, tag, depth, rebase),
-                                                  callback=async_callback)
-                RESULTS.append(result)
+                result = __clowder_pool__.apply_async(herd_project, args=(project, branch, tag, depth, rebase),
+                                                      callback=async_callback)
+                __clowder_results__.append(result)
             pool_handler(len(projects))
             return
 
@@ -305,9 +305,9 @@ class ClowderController(object):
         for project in projects:
             if project.name in skip:
                 continue
-            result = CLOWDER_POOL.apply_async(herd_project, args=(project, branch, tag, depth, rebase),
-                                              callback=async_callback)
-            RESULTS.append(result)
+            result = __clowder_pool__.apply_async(herd_project, args=(project, branch, tag, depth, rebase),
+                                                  callback=async_callback)
+            __clowder_results__.append(result)
         pool_handler(len(projects))
 
     def print_yaml(self, resolved):
@@ -482,9 +482,9 @@ class ClowderController(object):
         for project in projects:
             if project.name in skip:
                 continue
-            result = CLOWDER_POOL.apply_async(run_project, args=(project, command, ignore_errors),
-                                              callback=async_callback)
-            RESULTS.append(result)
+            result = __clowder_pool__.apply_async(run_project, args=(project, command, ignore_errors),
+                                                  callback=async_callback)
+            __clowder_results__.append(result)
 
         pool_handler(len(projects))
 
@@ -676,8 +676,8 @@ class ClowderController(object):
             for project in projects:
                 if project.name in skip:
                     continue
-                result = CLOWDER_POOL.apply_async(reset_project, args=(project, timestamp), callback=async_callback)
-                RESULTS.append(result)
+                result = __clowder_pool__.apply_async(reset_project, args=(project, timestamp), callback=async_callback)
+                __clowder_results__.append(result)
             pool_handler(len(projects))
             return
 
@@ -687,8 +687,8 @@ class ClowderController(object):
         for project in projects:
             if project.name in skip:
                 continue
-            result = CLOWDER_POOL.apply_async(reset_project, args=(project, timestamp), callback=async_callback)
-            RESULTS.append(result)
+            result = __clowder_pool__.apply_async(reset_project, args=(project, timestamp), callback=async_callback)
+            __clowder_results__.append(result)
         pool_handler(len(projects))
 
     @staticmethod
@@ -725,8 +725,8 @@ class ClowderController(object):
                 print('  ' + fmt.fork_string(project.fork.name))
 
         for project in projects:
-            result = CLOWDER_POOL.apply_async(sync_project, args=(project, rebase), callback=async_callback)
-            RESULTS.append(result)
+            result = __clowder_pool__.apply_async(sync_project, args=(project, rebase), callback=async_callback)
+            __clowder_results__.append(result)
         pool_handler(len(projects))
 
     @staticmethod
