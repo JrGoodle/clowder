@@ -20,26 +20,31 @@ from clowder.util.progress import Progress
 
 def herd_project(project, branch, tag, depth, rebase):
     """Clone project or update latest from upstream"""
+
     project.herd(branch=branch, tag=tag, depth=depth, rebase=rebase, parallel=True)
 
 
 def reset_project(project, timestamp):
     """Reset project branches to upstream or checkout tag/sha as detached HEAD"""
+
     project.reset(timestamp=timestamp, parallel=True)
 
 
 def run_project(project, command, ignore_errors):
     """Run command or script in project directory"""
+
     project.run(command, ignore_errors, parallel=True)
 
 
 def sync_project(project, rebase):
     """Sync fork project with upstream"""
+
     project.sync(rebase, parallel=True)
 
 
 def async_callback(val):
     """Increment async progress bar"""
+
     del val
     PROGRESS.update()
 
@@ -52,6 +57,7 @@ def worker_init():
     Process pool terminator
     Adapted from https://stackoverflow.com/a/45259908
     """
+
     def sig_int(signal_num, frame):
         """Signal handler"""
         del signal_num, frame
@@ -76,6 +82,7 @@ PROGRESS = Progress()
 
 def pool_handler(count):
     """Pool handler for finishing parallel jobs"""
+
     print()
     PROGRESS.start(count)
     try:
@@ -120,6 +127,7 @@ class ClowderController(object):
 
     def branch(self, group_names, project_names=None, skip=None, local=False, remote=False):
         """Show branches"""
+
         if skip is None:
             skip = []
         if project_names is None:
@@ -133,6 +141,7 @@ class ClowderController(object):
 
     def clean(self, group_names, project_names=None, skip=None, args='', recursive=False):
         """Discard changes"""
+
         if skip is None:
             skip = []
         if project_names is None:
@@ -146,6 +155,7 @@ class ClowderController(object):
 
     def clean_all(self, group_names, skip=None, project_names=None):
         """Discard all changes"""
+
         if skip is None:
             skip = []
         if project_names is None:
@@ -159,6 +169,7 @@ class ClowderController(object):
 
     def diff(self, group_names, project_names=None):
         """Show git diff"""
+
         if project_names is None:
             groups = [g for g in self.groups if g.name in group_names]
             for group in groups:
@@ -171,12 +182,14 @@ class ClowderController(object):
 
     def fetch(self, group_names):
         """Fetch groups"""
+
         groups = [g for g in self.groups if g.name in group_names]
         for group in groups:
             self._run_group_command(group, [], 'fetch_all')
 
     def forall(self, command, ignore_errors, group_names, project_names=None, skip=None, parallel=False):
         """Runs command or script in project directories specified"""
+
         if skip is None:
             skip = []
         if project_names is None:
@@ -192,6 +205,7 @@ class ClowderController(object):
 
     def get_all_fork_project_names(self):
         """Returns all project names containing forks"""
+
         project_names = sorted([p.name for g in self.groups for p in g.projects if p.fork])
         if not project_names:
             return ''
@@ -199,6 +213,7 @@ class ClowderController(object):
 
     def get_all_group_names(self):
         """Returns all group names for current clowder.yaml"""
+
         names = sorted([g.name for g in self.groups])
         if names is None:
             return ''
@@ -206,6 +221,7 @@ class ClowderController(object):
 
     def get_all_project_names(self):
         """Returns all project names for current clowder.yaml"""
+
         names = sorted([p.name for g in self.groups for p in g.projects])
         if names is None:
             return ''
@@ -213,6 +229,7 @@ class ClowderController(object):
 
     def get_all_project_paths(self):
         """Returns all project paths for current clowder.yaml"""
+
         paths = sorted([p.formatted_project_path() for g in self.groups for p in g.projects])
         if paths is None:
             return ''
@@ -220,6 +237,7 @@ class ClowderController(object):
 
     def get_saved_version_names(self):
         """Return list of all saved versions"""
+
         versions_dir = os.path.join(self.root_directory, '.clowder', 'versions')
         if not os.path.exists(versions_dir):
             return None
@@ -231,6 +249,7 @@ class ClowderController(object):
 
     def herd(self, group_names, project_names=None, skip=None, branch=None, tag=None, depth=None, rebase=False):
         """Pull or rebase latest upstream changes for projects"""
+
         if skip is None:
             skip = []
         if project_names is None:
@@ -247,6 +266,7 @@ class ClowderController(object):
     def herd_parallel(self, group_names, project_names=None, skip=None, branch=None, tag=None,
                       depth=None, rebase=False):
         """Pull or rebase latest upstream changes for projects in parallel"""
+
         if skip is None:
             skip = []
         print(' - Herd projects in parallel\n')
@@ -276,6 +296,7 @@ class ClowderController(object):
 
     def print_yaml(self, resolved):
         """Print clowder.yaml"""
+
         if resolved:
             print(fmt.yaml_string(self._get_yaml_resolved()))
         else:
@@ -284,6 +305,7 @@ class ClowderController(object):
 
     def prune(self, group_names, branch, project_names=None, skip=None, force=False, local=False, remote=False):
         """Prune branches"""
+
         if skip is None:
             skip = []
         if project_names is None:
@@ -297,6 +319,7 @@ class ClowderController(object):
 
     def reset(self, group_names, project_names=None, skip=None, timestamp_project=None, parallel=False):
         """Reset project branches to upstream or checkout tag/sha as detached HEAD"""
+
         if skip is None:
             skip = []
         if parallel:
@@ -319,6 +342,7 @@ class ClowderController(object):
 
     def save_version(self, version):
         """Save current commits to a clowder.yaml in the versions directory"""
+
         self._validate_projects_exist()
         self._validate_groups(self.groups)
         versions_dir = os.path.join(self.root_directory, '.clowder', 'versions')
@@ -341,6 +365,7 @@ class ClowderController(object):
 
     def start_groups(self, group_names, skip, branch, tracking):
         """Start feature branch for groups"""
+
         groups = [g for g in self.groups if g.name in group_names]
         self._validate_groups(groups)
         for group in groups:
@@ -348,6 +373,7 @@ class ClowderController(object):
 
     def start_projects(self, project_names, skip, branch, tracking):
         """Start feature branch for projects"""
+
         projects = [p for g in self.groups for p in g.projects if p.name in project_names]
         self._validate_projects(projects)
         for project in projects:
@@ -355,6 +381,7 @@ class ClowderController(object):
 
     def stash(self, group_names, skip=None, project_names=None):
         """Stash changes for projects with changes"""
+
         if skip is None:
             skip = []
         if not self._is_dirty():
@@ -371,6 +398,7 @@ class ClowderController(object):
 
     def status(self, group_names, padding):
         """Print status for groups"""
+
         groups = [g for g in self.groups if g.name in group_names]
         for group in groups:
             print(fmt.group_name(group.name))
@@ -379,6 +407,7 @@ class ClowderController(object):
 
     def sync(self, project_names, rebase=False, parallel=False):
         """Sync projects"""
+
         projects = [p for g in self.groups for p in g.projects if p.name in project_names]
         if parallel:
             self._sync_parallel(projects, rebase=rebase)
@@ -390,21 +419,25 @@ class ClowderController(object):
     @staticmethod
     def _existing_branch_groups(groups, branch, is_remote):
         """Checks whether at least one branch exists for projects in groups"""
+
         return any([p.existing_branch(branch, is_remote=is_remote) for g in groups for p in g.projects])
 
     @staticmethod
     def _existing_branch_projects(projects, branch, is_remote):
         """Checks whether at least one branch exists for projects"""
+
         return any([p.existing_branch(branch, is_remote=is_remote) for p in projects])
 
     def _fetch_groups(self, group_names):
         """Fetch all projects for specified groups"""
+
         groups = [g for g in self.groups if g.name in group_names]
         for group in groups:
             group.fetch_all()
 
     def _fetch_projects(self, project_names):
         """Fetch specified projects"""
+
         projects = [p for g in self.groups for p in g.projects if p.name in project_names]
         for project in projects:
             project.fetch_all()
@@ -412,6 +445,7 @@ class ClowderController(object):
     @staticmethod
     def _forall_parallel(command, skip, ignore_errors, projects):
         """Runs command or script in project directories specified"""
+
         print(' - Run forall commands in parallel\n')
         for project in projects:
             if project.name in skip:
@@ -430,6 +464,7 @@ class ClowderController(object):
 
     def _get_timestamp(self, timestamp_project):
         """Return timestamp for project"""
+
         timestamp = None
         all_projects = [p for g in self.groups for p in g.projects]
         for project in all_projects:
@@ -442,6 +477,7 @@ class ClowderController(object):
 
     def _get_yaml(self):
         """Return python object representation for saving yaml"""
+
         groups_yaml = [g.get_yaml() for g in self.groups]
         sources_yaml = [s.get_yaml() for s in self.sources]
         return {'defaults': self.defaults,
@@ -450,6 +486,7 @@ class ClowderController(object):
 
     def _get_yaml_resolved(self):
         """Return python object representation for resolved yaml"""
+
         groups_yaml = [g.get_yaml_resolved() for g in self.groups]
         sources_yaml = [s.get_yaml() for s in self.sources]
         return {'defaults': self.defaults,
@@ -462,6 +499,7 @@ class ClowderController(object):
 
     def _load_yaml(self):
         """Load clowder from yaml file"""
+
         yaml_file = os.path.join(self.root_directory, 'clowder.yaml')
         parsed_yaml = clowder_yaml.parse_yaml(yaml_file)
         imported_yaml_files = []
@@ -489,6 +527,7 @@ class ClowderController(object):
 
     def _load_yaml_combined(self, combined_yaml):
         """Load clowder from combined yaml"""
+
         self.defaults = combined_yaml['defaults']
         if 'depth' not in self.defaults:
             self.defaults['depth'] = 0
@@ -499,6 +538,7 @@ class ClowderController(object):
     @staticmethod
     def _print_parallel_groups_output(groups, skip):
         """Print output for parallel group command"""
+
         for group in groups:
             print(fmt.group_name(group.name))
             for project in group.projects:
@@ -512,6 +552,7 @@ class ClowderController(object):
     @staticmethod
     def _print_parallel_projects_output(projects, skip):
         """Print output for parallel project command"""
+
         for project in projects:
             if project.name in skip:
                 continue
@@ -522,6 +563,7 @@ class ClowderController(object):
 
     def _prune_groups(self, groups, branch, skip=None, force=False, local=False, remote=False):
         """Prune group branches"""
+
         if local and remote:
             local_branch_exists = self._existing_branch_groups(groups, branch, is_remote=False)
             remote_branch_exists = self._existing_branch_groups(groups, branch, is_remote=True)
@@ -552,6 +594,7 @@ class ClowderController(object):
 
     def _prune_projects(self, projects, branch, skip=None, force=False, local=False, remote=False):
         """Prune project branches"""
+
         if local and remote:
             local_branch_exists = self._existing_branch_projects(projects, branch, is_remote=False)
             remote_branch_exists = self._existing_branch_projects(projects, branch, is_remote=True)
@@ -577,6 +620,7 @@ class ClowderController(object):
 
     def _reset_parallel(self, group_names, project_names=None, skip=None, timestamp_project=None):
         """Reset project branches to upstream or checkout tag/sha as detached HEAD in parallel"""
+
         if skip is None:
             skip = []
         print(' - Reset projects in parallel\n')
@@ -608,6 +652,7 @@ class ClowderController(object):
     @staticmethod
     def _run_group_command(group, skip, command, *args, **kwargs):
         """Run group command and print output"""
+
         print(fmt.group_name(group.name))
         for project in group.projects:
             print(project.status())
@@ -619,6 +664,7 @@ class ClowderController(object):
     @staticmethod
     def _run_project_command(project, skip, command, *args, **kwargs):
         """Run project command and print output"""
+
         print(project.status())
         if project.name in skip:
             print(fmt.skip_project_message())
@@ -628,6 +674,7 @@ class ClowderController(object):
     @staticmethod
     def _sync_parallel(projects, rebase=False):
         """Sync projects in parallel"""
+
         print(' - Sync forks in parallel\n')
         for project in projects:
             print(project.status())
@@ -642,6 +689,7 @@ class ClowderController(object):
     @staticmethod
     def _validate_groups(groups):
         """Validate status of all projects for specified groups"""
+
         for group in groups:
             group.print_validation()
         if not all([g.is_valid() for g in groups]):
@@ -651,12 +699,14 @@ class ClowderController(object):
     @staticmethod
     def _validate_projects(projects):
         """Validate status of all projects"""
+
         if not all([p.is_valid() for p in projects]):
             print()
             sys.exit(1)
 
     def _validate_projects_exist(self):
         """Validate existence status of all projects for specified groups"""
+
         projects_exist = True
         for group in self.groups:
             group.print_existence_message()
@@ -669,6 +719,7 @@ class ClowderController(object):
 
     def _validate_yaml(self, yaml_file, max_import_depth):
         """Validate clowder.yaml"""
+
         parsed_yaml = clowder_yaml.parse_yaml(yaml_file)
         if max_import_depth < 0:
             print(fmt.invalid_yaml_error())

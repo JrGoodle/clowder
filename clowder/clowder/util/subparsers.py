@@ -3,12 +3,14 @@
 
 def configure_argparse(parser, clowder, versions):
     """Configure clowder argparse"""
+
     subparsers = parser.add_subparsers(dest='clowder_command', metavar='SUBCOMMAND')
     _configure_subparsers(subparsers, clowder, versions)
 
 
 def _configure_subparsers(subparsers, clowder, versions):
     """Configure clowder command subparsers"""
+
     _configure_subparser_branch(subparsers, clowder)
     _configure_subparser_clean(subparsers, clowder)
     _configure_subparser_diff(subparsers, clowder)
@@ -30,6 +32,7 @@ def _configure_subparsers(subparsers, clowder, versions):
 
 def _configure_subparser_branch(subparsers, clowder):
     """Configure clowder branch subparser and arguments"""
+
     branch_help = 'Display current branches'
     group_names = _group_names(clowder)
     project_names = _project_names(clowder)
@@ -54,6 +57,7 @@ def _configure_subparser_branch(subparsers, clowder):
 
 def _configure_subparser_clean(subparsers, clowder):
     """Configure clowder clean subparser and arguments"""
+
     group_names = _group_names(clowder)
     project_names = _project_names(clowder)
     clean_help = 'Discard current changes in projects'
@@ -85,6 +89,7 @@ def _configure_subparser_clean(subparsers, clowder):
 
 def _configure_subparser_diff(subparsers, clowder):
     """Configure clowder diff subparser and arguments"""
+
     group_names = _group_names(clowder)
     project_names = _project_names(clowder)
     diff_help = 'Show git diff for projects'
@@ -101,6 +106,7 @@ def _configure_subparser_diff(subparsers, clowder):
 
 def _configure_subparser_forall(subparsers, clowder):
     """Configure clowder forall subparser and arguments"""
+
     group_names = _group_names(clowder)
     project_names = _project_names(clowder)
     forall_help = 'Run command or script in project directories'
@@ -127,6 +133,7 @@ def _configure_subparser_forall(subparsers, clowder):
 
 def _configure_subparser_herd(subparsers, clowder):
     """Configure clowder herd subparser and arguments"""
+
     group_names = _group_names(clowder)
     project_names = _project_names(clowder)
     herd_help = 'Clone and sync latest changes for projects'
@@ -157,6 +164,7 @@ def _configure_subparser_herd(subparsers, clowder):
 
 def _configure_subparser_init(subparsers):
     """Configure clowder init subparser and arguments"""
+
     init_help = 'Clone repository to clowder directory and create clowder.yaml symlink'
     parser_init = subparsers.add_parser('init', help=init_help)
     parser_init.add_argument('url', metavar='URL', help='url of repo containing clowder.yaml')
@@ -166,6 +174,7 @@ def _configure_subparser_init(subparsers):
 
 def _configure_subparser_link(subparsers, versions):
     """Configure clowder link subparser and arguments"""
+
     parser_link = subparsers.add_parser('link', help='Symlink clowder.yaml version')
     link_help_version = _options_help_message(versions, 'version to symlink')
     parser_link.add_argument('--version', '-v', choices=versions, nargs=1, default=None, metavar='VERSION',
@@ -174,6 +183,7 @@ def _configure_subparser_link(subparsers, versions):
 
 def _configure_subparser_prune(subparsers, clowder):
     """Configure clowder prune subparser and arguments"""
+
     group_names = _group_names(clowder)
     project_names = _project_names(clowder)
     parser_prune = subparsers.add_parser('prune', help='Prune old branch')
@@ -200,6 +210,7 @@ def _configure_subparser_prune(subparsers, clowder):
 
 def _configure_subparser_repo(subparsers):
     """Configure clowder repo subparser and arguments"""
+
     # clowder repo
     parser_repo = subparsers.add_parser('repo', help='Manage clowder repo')
     repo_subparsers = parser_repo.add_subparsers(dest='repo_command', metavar='SUBCOMMAND')
@@ -238,6 +249,7 @@ def _configure_subparser_repo(subparsers):
 
 def _configure_subparser_reset(subparsers, clowder):
     """Configure clowder reset subparser and arguments"""
+
     group_names = _group_names(clowder)
     project_names = _project_names(clowder)
     reset_help = 'Reset branches to upstream commits or check out detached HEADs for tags and shas'
@@ -262,6 +274,7 @@ def _configure_subparser_reset(subparsers, clowder):
 
 def _configure_subparser_save(subparsers):
     """Configure clowder save subparser and arguments"""
+
     save_help = 'Create version of clowder.yaml for current repos'
     parser_save = subparsers.add_parser('save', help=save_help)
     parser_save.add_argument('version', help='version to save', metavar='VERSION')
@@ -269,6 +282,7 @@ def _configure_subparser_save(subparsers):
 
 def _configure_subparser_start(subparsers, clowder):
     """Configure clowder start subparser and arguments"""
+
     group_names = _group_names(clowder)
     project_names = _project_names(clowder)
     parser_start = subparsers.add_parser('start', help='Start a new feature')
@@ -290,6 +304,7 @@ def _configure_subparser_start(subparsers, clowder):
 
 def _configure_subparser_stash(subparsers, clowder):
     """Configure clowder stash subparser and arguments"""
+
     group_names = _group_names(clowder)
     project_names = _project_names(clowder)
     parser_stash = subparsers.add_parser('stash', help='Stash current changes')
@@ -308,6 +323,7 @@ def _configure_subparser_stash(subparsers, clowder):
 
 def _configure_subparser_status(subparsers):
     """Configure clowder status subparser and arguments"""
+
     parser_status = subparsers.add_parser('status', help='Print project status')
     parser_status.add_argument('--fetch', '-f', action='store_true',
                                help='fetch projects before printing status')
@@ -315,6 +331,7 @@ def _configure_subparser_status(subparsers):
 
 def _configure_subparser_sync(subparsers, clowder):
     """Configure clowder sync subparser and arguments"""
+
     project_names = _fork_project_names(clowder)
     parser_sync = subparsers.add_parser('sync', help='Sync fork with upstream remote')
     parser_sync.add_argument('--parallel', action='store_true',
@@ -328,11 +345,13 @@ def _configure_subparser_sync(subparsers, clowder):
 
 def _configure_subparser_version(subparsers):
     """Configure clowder version subparser and arguments"""
+
     subparsers.add_parser('version', help='Print clowder version')
 
 
 def _configure_subparser_yaml(subparsers):
     """Configure clowder yaml subparser and arguments"""
+
     parser_yaml = subparsers.add_parser('yaml', help='Print clowder.yaml information')
     parser_yaml.add_argument('--resolved', '-r', action='store_true',
                              help='print resolved clowder.yaml')
@@ -340,6 +359,7 @@ def _configure_subparser_yaml(subparsers):
 
 def _fork_project_names(clowder):
     """Return group options"""
+
     if clowder:
         return clowder.get_all_fork_project_names()
     return ''
@@ -347,6 +367,7 @@ def _fork_project_names(clowder):
 
 def _group_names(clowder):
     """Return group options"""
+
     if clowder:
         return clowder.get_all_group_names()
     return ''
@@ -354,6 +375,7 @@ def _group_names(clowder):
 
 def _options_help_message(options, message):
     """Help message for groups option"""
+
     if options == '' or options is None:
         return message
     help_message = '''
@@ -365,6 +387,7 @@ def _options_help_message(options, message):
 
 def _project_names(clowder):
     """Return project options"""
+
     if clowder:
         return clowder.get_all_project_names()
     return ''

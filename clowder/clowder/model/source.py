@@ -10,6 +10,7 @@ class Source(object):
 
     def get_url_prefix(self):
         """Return full remote url prefix for project"""
+
         source_url_prefix = None
         if self.url.startswith('https://'):
             source_url_prefix = self.url + "/"
@@ -19,4 +20,5 @@ class Source(object):
 
     def get_yaml(self):
         """Return python object representation for saving yaml"""
+
         return {'name': self.name, 'url': self.url}

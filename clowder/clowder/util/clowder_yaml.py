@@ -14,6 +14,7 @@ from clowder.error.clowder_error import ClowderError
 
 def load_yaml_base(parsed_yaml, combined_yaml):
     """Load clowder from base yaml file"""
+
     combined_yaml['defaults'] = parsed_yaml['defaults']
     if 'depth' not in parsed_yaml['defaults']:
         combined_yaml['defaults']['depth'] = 0
@@ -23,6 +24,7 @@ def load_yaml_base(parsed_yaml, combined_yaml):
 
 def load_yaml_import(parsed_yaml, combined_yaml):
     """Load clowder from import yaml file"""
+
     if 'defaults' in parsed_yaml:
         _load_yaml_import_defaults(parsed_yaml['defaults'], combined_yaml['defaults'])
     if 'sources' in parsed_yaml:
@@ -33,6 +35,7 @@ def load_yaml_import(parsed_yaml, combined_yaml):
 
 def parse_yaml(yaml_file):
     """Parse yaml file"""
+
     if os.path.isfile(yaml_file):
         try:
             with open(yaml_file) as raw_file:
@@ -56,6 +59,7 @@ def parse_yaml(yaml_file):
 
 def print_yaml(root_directory):
     """Print current clowder yaml"""
+
     yaml_file = os.path.join(root_directory, 'clowder.yaml')
     parsed_yaml = parse_yaml(yaml_file)
     yaml_files = []
@@ -97,6 +101,7 @@ def print_yaml(root_directory):
 
 def save_yaml(yaml_output, yaml_file):
     """Save yaml file to disk"""
+
     if not os.path.isfile(yaml_file):
         try:
             with open(yaml_file, 'w') as raw_file:
@@ -115,6 +120,7 @@ def save_yaml(yaml_output, yaml_file):
 
 def validate_yaml(yaml_file):
     """Validate clowder.yaml with no import"""
+
     parsed_yaml = parse_yaml(yaml_file)
     _validate_type_dict(parsed_yaml, fmt.yaml_file('clowder.yaml'), yaml_file)
     if not parsed_yaml:
@@ -146,6 +152,7 @@ def validate_yaml(yaml_file):
 
 def validate_yaml_import(yaml_file):
     """Validate clowder.yaml with an import"""
+
     parsed_yaml = parse_yaml(yaml_file)
     _validate_type_dict(parsed_yaml, fmt.yaml_file('clowder.yaml'), yaml_file)
     if 'import' not in parsed_yaml:
@@ -177,6 +184,7 @@ def validate_yaml_import(yaml_file):
 
 def _load_yaml_import_defaults(imported_defaults, defaults):
     """Load clowder projects from imported group"""
+
     if 'recursive' in imported_defaults:
         defaults['recursive'] = imported_defaults['recursive']
     if 'ref' in imported_defaults:
@@ -193,6 +201,7 @@ def _load_yaml_import_defaults(imported_defaults, defaults):
 
 def _load_yaml_import_groups(imported_groups, groups):
     """Load clowder groups from import yaml"""
+
     group_names = [g['name'] for g in groups]
     for imported_group in imported_groups:
         if imported_group['name'] not in group_names:
@@ -221,6 +230,7 @@ def _load_yaml_import_groups(imported_groups, groups):
 
 def _load_yaml_import_projects(imported_projects, projects):
     """Load clowder projects from imported group"""
+
     project_names = [p['name'] for p in projects]
     for imported_project in imported_projects:
         if imported_project['name'] not in project_names:
@@ -259,6 +269,7 @@ def _load_yaml_import_projects(imported_projects, projects):
 
 def _load_yaml_import_sources(imported_sources, sources):
     """Load clowder sources from import yaml"""
+
     source_names = [s['name'] for s in sources]
     for imported_source in imported_sources:
         if imported_source['name'] not in source_names:
@@ -275,6 +286,7 @@ def _load_yaml_import_sources(imported_sources, sources):
 
 def _valid_ref_type(ref):
     """Validate that ref is formatted correctly"""
+
     git_branch = "refs/heads/"
     git_tag = "refs/tags/"
     if ref.startswith(git_branch):
@@ -288,6 +300,7 @@ def _valid_ref_type(ref):
 
 def _validate_type_bool(value, name, yaml_file):
     """Validate value is a bool"""
+
     if not isinstance(value, bool):
         error = fmt.not_bool_error(name, yaml_file)
         raise ClowderError(error)

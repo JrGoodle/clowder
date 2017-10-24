@@ -2,8 +2,6 @@
 
 from __future__ import print_function
 
-from termcolor import colored
-
 import clowder.util.formatting as fmt
 from clowder.model.project import Project
 
@@ -42,11 +40,13 @@ class Group(object):
 
     def get_yaml(self):
         """Return python object representation for saving yaml"""
+
         projects_yaml = [p.get_yaml() for p in self.projects]
         return {'name': self.name, 'projects': projects_yaml}
 
     def get_yaml_resolved(self):
         """Return python object representation for resolved yaml"""
+
         projects_yaml = [p.get_yaml(resolved=True) for p in self.projects]
         group = {'name': self.name,
                  'depth': self.depth,
@@ -60,7 +60,7 @@ class Group(object):
         return group
 
     def is_dirty(self):
-        """Check if group has dirty project(s)"""
+        """Check if group has at least one dirty project"""
 
         return any([project.is_dirty() for project in self.projects])
 
@@ -71,6 +71,7 @@ class Group(object):
 
     def print_existence_message(self):
         """Print existence validation message for projects in group"""
+
         if not self.existing_projects():
             print(fmt.group_name(self.name))
             for project in self.projects:
@@ -78,6 +79,7 @@ class Group(object):
 
     def print_validation(self):
         """Print validation message for projects in group"""
+
         if not self.is_valid():
             print(fmt.group_name(self.name))
             for project in self.projects:

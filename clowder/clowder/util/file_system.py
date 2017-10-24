@@ -12,6 +12,7 @@ import clowder.util.formatting as fmt
 
 def remove_directory(path):
     """Remove directory at path"""
+
     try:
         shutil.rmtree(path)
     except shutil.Error:

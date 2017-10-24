@@ -18,6 +18,7 @@ from clowder_test.execute import execute_command
 
 def main():
     """Main entrypoint for clowder test runner"""
+
     Command()
 
 
@@ -63,6 +64,7 @@ class Command(object):
 
     def all(self, path):
         """clowder branch command"""
+
         self.cats(path)
         self.cocos2d(path)
         self.llvm(path)
@@ -73,6 +75,7 @@ class Command(object):
 
     def cats(self, path):
         """clowder cats tests entrypoint"""
+
         cats_command = 'cats_' + self.args.cats_command
         if self.args.cats_command != 'all':
             path = os.path.join(path, 'cats')
@@ -80,6 +83,7 @@ class Command(object):
 
     def cats_all(self, path):
         """clowder cats tests"""
+
         test_env = {}
         if self.args.write:
             test_env["ACCESS_LEVEL"] = 'write'
@@ -93,21 +97,25 @@ class Command(object):
 
     def cats_branch(self, path):
         """clowder cats branch tests"""
+
         return_code = execute_command('./branch.sh', path, shell=True)
         self._exit(return_code)
 
     def cats_clean(self, path):
         """clowder cats clean tests"""
+
         return_code = execute_command('./clean.sh', path, shell=True)
         self._exit(return_code)
 
     def cats_diff(self, path):
         """clowder cats diff tests"""
+
         return_code = execute_command('./diff.sh', path, shell=True)
         self._exit(return_code)
 
     def cats_forall(self, path):
         """clowder cats forall tests"""
+
         args = ''
         if self.args.parallel:
             args = 'parallel'
@@ -116,11 +124,13 @@ class Command(object):
 
     def cats_help(self, path):
         """clowder cats help tests"""
+
         return_code = execute_command('./help.sh', path, shell=True)
         self._exit(return_code)
 
     def cats_herd_branch(self, path):
         """clowder cats herd branch tests"""
+
         args = ''
         if self.args.parallel:
             args = 'parallel'
@@ -129,6 +139,7 @@ class Command(object):
 
     def cats_herd_tag(self, path):
         """clowder cats herd tag tests"""
+
         args = ''
         if self.args.parallel:
             args = 'parallel'
@@ -137,6 +148,7 @@ class Command(object):
 
     def cats_herd(self, path):
         """clowder cats herd tests"""
+
         test_env = {}
         if self.args.write:
             test_env["ACCESS_LEVEL"] = 'write'
@@ -150,21 +162,25 @@ class Command(object):
 
     def cats_import(self, path):
         """clowder cats import tests"""
+
         return_code = execute_command('./import.sh', path, shell=True)
         self._exit(return_code)
 
     def cats_init(self, path):
         """clowder cats init tests"""
+
         return_code = execute_command('./init.sh', path, shell=True)
         self._exit(return_code)
 
     def cats_link(self, path):
         """clowder cats link tests"""
+
         return_code = execute_command('./link.sh', path, shell=True)
         self._exit(return_code)
 
     def cats_prune(self, path):
         """clowder cats prune tests"""
+
         test_env = {}
         if self.args.write:
             test_env["ACCESS_LEVEL"] = 'write'
@@ -175,6 +191,7 @@ class Command(object):
 
     def cats_repo(self, path):
         """clowder cats repo tests"""
+
         test_env = {}
         if self.args.write:
             test_env["ACCESS_LEVEL"] = 'write'
@@ -185,6 +202,7 @@ class Command(object):
 
     def cats_reset(self, path):
         """clowder cats reset tests"""
+
         args = ''
         if self.args.parallel:
             args = 'parallel'
@@ -193,11 +211,13 @@ class Command(object):
 
     def cats_save(self, path):
         """clowder cats save tests"""
+
         return_code = execute_command('./save.sh', path, shell=True)
         self._exit(return_code)
 
     def cats_start(self, path):
         """clowder cats start tests"""
+
         test_env = {}
         if self.args.write:
             test_env["ACCESS_LEVEL"] = 'write'
@@ -208,26 +228,31 @@ class Command(object):
 
     def cats_stash(self, path):
         """clowder cats stash tests"""
+
         return_code = execute_command('./stash.sh', path, shell=True)
         self._exit(return_code)
 
     def cats_status(self, path):
         """clowder cats status tests"""
+
         return_code = execute_command('./status.sh', path, shell=True)
         self._exit(return_code)
 
     def cats_yaml_validation(self, path):
         """clowder cats yaml validation tests"""
+
         return_code = execute_command('./yaml_validation.sh', path, shell=True)
         self._exit(return_code)
 
     def cats_yaml(self, path):
         """clowder cats yaml tests"""
+
         return_code = execute_command('./yaml.sh', path, shell=True)
         self._exit(return_code)
 
     def cocos2d(self, path):
         """clowder cocos2d tests entrypoint"""
+
         cocos2d_command = 'cocos2d_' + self.args.cocos2d_command
         if self.args.cocos2d_command != 'all':
             path = os.path.join(path, 'cocos2d')
@@ -235,6 +260,7 @@ class Command(object):
 
     def cocos2d_all(self, path):
         """clowder cocos2d tests"""
+
         test_env = {}
         if self.args.write:
             test_env["ACCESS_LEVEL"] = 'write'
@@ -248,11 +274,13 @@ class Command(object):
 
     def cocos2d_clean(self, path):
         """clowder cocos2d clean tests"""
+
         return_code = execute_command('./clean.sh', path, shell=True)
         self._exit(return_code)
 
     def cocos2d_herd(self, path):
         """clowder cocos2d herd tests"""
+
         args = ''
         if self.args.parallel:
             args = 'parallel'
@@ -261,6 +289,7 @@ class Command(object):
 
     def cocos2d_skip(self, path):
         """clowder cocos2d skip tests"""
+
         args = ''
         if self.args.parallel:
             args = 'parallel'
@@ -269,6 +298,7 @@ class Command(object):
 
     def llvm(self, path):
         """clowder llvm tests entrypoint"""
+
         llvm_command = 'llvm_' + self.args.llvm_command
         if self.args.llvm_command != 'all':
             path = os.path.join(path, 'llvm')
@@ -276,6 +306,7 @@ class Command(object):
 
     def llvm_all(self, path):
         """clowder llvm tests"""
+
         test_env = {}
         if self.args.write:
             test_env["ACCESS_LEVEL"] = 'write'
@@ -289,6 +320,7 @@ class Command(object):
 
     def llvm_branch(self, path):
         """clowder llvm branch tests"""
+
         args = ''
         if self.args.parallel:
             args = 'parallel'
@@ -297,6 +329,7 @@ class Command(object):
 
     def llvm_forks(self, path):
         """clowder llvm forks tests"""
+
         args = ''
         if self.args.parallel:
             args = 'parallel'
@@ -305,6 +338,7 @@ class Command(object):
 
     def llvm_herd(self, path):
         """clowder llvm herd tests"""
+
         args = ''
         if self.args.parallel:
             args = 'parallel'
@@ -313,6 +347,7 @@ class Command(object):
 
     def llvm_reset(self, path):
         """clowder llvm reset tests"""
+
         args = ''
         if self.args.parallel:
             args = 'parallel'
@@ -321,17 +356,20 @@ class Command(object):
 
     def llvm_sync(self, path):
         """clowder llvm sync tests"""
+
         return_code = execute_command('./sync.sh', path, shell=True)
         self._exit(return_code)
 
     def offline(self, path):
         """clowder offline tests"""
+
         path = os.path.join(path, 'cats')
         return_code = execute_command('./offline.sh', path, shell=True)
         self._exit(return_code)
 
     def parallel(self, path):
         """clowder parallel tests"""
+
         test_env = {}
         if self.args.write:
             test_env["ACCESS_LEVEL"] = 'write'
@@ -342,6 +380,7 @@ class Command(object):
 
     def swift(self, path):
         """clowder swift tests entrypoint"""
+
         swift_command = 'swift_' + self.args.swift_command
         if self.args.swift_command != 'all':
             path = os.path.join(path, 'swift')
@@ -349,6 +388,7 @@ class Command(object):
 
     def swift_all(self, path):
         """clowder swift tests"""
+
         test_env = {}
         if self.args.write:
             test_env["ACCESS_LEVEL"] = 'write'
@@ -362,16 +402,19 @@ class Command(object):
 
     def swift_config_versions(self, path):
         """clowder swift config versions tests"""
+
         return_code = execute_command('./config_versions.sh', path, shell=True)
         self._exit(return_code)
 
     def swift_configure_remotes(self, path):
         """clowder swift configure remotes tests"""
+
         return_code = execute_command('./configure_remotes.sh', path, shell=True)
         self._exit(return_code)
 
     def swift_reset(self, path):
         """clowder swift reset tests"""
+
         args = ''
         if self.args.parallel:
             args = 'parallel'
@@ -380,6 +423,7 @@ class Command(object):
 
     def unittests(self, path):
         """clowder unit tests"""
+
         test_env = {}
         if self.args.version == 'python2':
             test_env["PYTHON_VERSION"] = 'python'
@@ -390,6 +434,7 @@ class Command(object):
 
     def write(self, path):
         """clowder write tests"""
+
         test_env = {"ACCESS_LEVEL": 'write'}
         args = ''
         if self.args.parallel:
@@ -417,10 +462,12 @@ class Command(object):
 
     def _configure_all_subparser(self):
         """clowder all tests subparser"""
+
         self._subparsers.add_parser('all', help='Run all tests')
 
     def _configure_cats_subparser(self):
         """clowder cats tests subparser"""
+
         parser = self._subparsers.add_parser('cats', help='Run cats tests')
         cats_subparser = parser.add_subparsers(dest='cats_command', metavar='SUBCOMMAND')
         cats_subparser.add_parser('all', help='Run all cats tests')
@@ -447,6 +494,7 @@ class Command(object):
 
     def _configure_cocos2d_subparser(self):
         """clowder cocos2d tests subparser"""
+
         parser = self._subparsers.add_parser('cocos2d', help='Run cocos2d tests')
         cocos2d_subparser = parser.add_subparsers(dest='cocos2d_command', metavar='SUBCOMMAND')
         cocos2d_subparser.add_parser('all', help='Run all cocos2d tests')
@@ -456,6 +504,7 @@ class Command(object):
 
     def _configure_llvm_subparser(self):
         """clowder llvm tests subparser"""
+
         parser = self._subparsers.add_parser('llvm', help='Run llvm tests')
         llvm_subparser = parser.add_subparsers(dest='llvm_command', metavar='SUBCOMMAND')
         llvm_subparser.add_parser('all', help='Run all llvm tests')
@@ -467,14 +516,17 @@ class Command(object):
 
     def _configure_offline_subparser(self):
         """clowder offline tests subparser"""
+
         self._subparsers.add_parser('offline', help='Run offline tests')
 
     def _configure_parallel_subparser(self):
         """clowder parallel tests subparser"""
+
         self._subparsers.add_parser('parallel', help='Run parallel tests')
 
     def _configure_swift_subparser(self):
         """clowder swift tests subparser"""
+
         parser = self._subparsers.add_parser('swift', help='Run swift tests')
         swift_subparser = parser.add_subparsers(dest='swift_command', metavar='SUBCOMMAND')
         swift_subparser.add_parser('all', help='Run all swift tests')
@@ -484,6 +536,7 @@ class Command(object):
 
     def _configure_unittest_subparser(self):
         """clowder unit tests subparser"""
+
         unittest_subparser = self._subparsers.add_parser('unittests',
                                                          help='Run unit tests')
         unittest_subparser.add_argument('version', choices=['python2', 'python3'],
@@ -492,17 +545,20 @@ class Command(object):
 
     def _configure_write_subparser(self):
         """clowder write tests subparser"""
+
         self._subparsers.add_parser('write', help='Run tests requiring remote write permissions')
 
     @staticmethod
     def _exit(return_code):
         """Private exit handler"""
+
         if return_code != 0:
             sys.exit(return_code)
 
 
 def exit_unrecognized_command(parser):
     """Print unrecognized command message and exit"""
+
     parser.print_help()
     print()
     sys.exit(1)
