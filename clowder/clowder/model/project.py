@@ -324,7 +324,6 @@ class Project(object):
         """Clone project or update latest from upstream"""
 
         if self.fork is None:
-            self._print(self.status())
             repo.herd_branch(self._url, branch, depth=depth, rebase=rebase)
             return
 
@@ -341,7 +340,6 @@ class Project(object):
         """Clone project or update latest from upstream"""
 
         if self.fork is None:
-            self._print(self.status())
             repo.herd(self._url, depth=depth, rebase=rebase)
             return
 
@@ -358,7 +356,6 @@ class Project(object):
         """Clone project or update latest from upstream"""
 
         if self.fork is None:
-            self._print(self.status())
             repo.herd_tag(self._url, tag, depth=depth, rebase=rebase)
             return
 
@@ -404,7 +401,6 @@ class Project(object):
         """Clone project or update latest from upstream"""
 
         if self.fork is None:
-            self._print(self.status())
             if timestamp:
                 repo.reset_timestamp(timestamp, self._timestamp_author, self._ref)
                 return
