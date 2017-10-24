@@ -179,7 +179,8 @@ class Project(object):
         self._print_output = not parallel
 
         herd_depth = depth if depth is not None else self._depth
-        repo = self._repo(self.full_path(), self._remote, self._ref, self._recursive, parallel=parallel)
+        repo = self._repo(self.full_path(), self._remote, self._ref, self._recursive,
+                          parallel=parallel, print_output=self._print_output)
 
         if branch:
             self._herd_branch(repo, branch, herd_depth, rebase)
@@ -236,7 +237,8 @@ class Project(object):
 
         self._print_output = not parallel
 
-        repo = self._repo(self.full_path(), self._remote, self._ref, self._recursive, parallel=parallel)
+        repo = self._repo(self.full_path(), self._remote, self._ref, self._recursive,
+                          parallel=parallel, print_output=self._print_output)
         self._reset(repo, timestamp=timestamp)
 
     def run(self, command, ignore_errors, parallel=False):
@@ -306,7 +308,8 @@ class Project(object):
 
         self._print_output = not parallel
 
-        repo = self._repo(self.full_path(), self._remote, self._ref, self._recursive, parallel=parallel)
+        repo = self._repo(self.full_path(), self._remote, self._ref, self._recursive,
+                          parallel=parallel, print_output=self._print_output)
         self._sync(repo, rebase)
 
     @staticmethod
@@ -321,7 +324,6 @@ class Project(object):
         """Clone project or update latest from upstream"""
 
         if self.fork is None:
-            self._print(self.status())
             repo.herd_branch(self._url, branch, depth=depth, rebase=rebase)
             return
 
@@ -338,7 +340,6 @@ class Project(object):
         """Clone project or update latest from upstream"""
 
         if self.fork is None:
-            self._print(self.status())
             repo.herd(self._url, depth=depth, rebase=rebase)
             return
 
@@ -355,7 +356,6 @@ class Project(object):
         """Clone project or update latest from upstream"""
 
         if self.fork is None:
-            self._print(self.status())
             repo.herd_tag(self._url, tag, depth=depth, rebase=rebase)
             return
 
@@ -401,7 +401,6 @@ class Project(object):
         """Clone project or update latest from upstream"""
 
         if self.fork is None:
-            self._print(self.status())
             if timestamp:
                 repo.reset_timestamp(timestamp, self._timestamp_author, self._ref)
                 return
