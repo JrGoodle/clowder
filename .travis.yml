@@ -40,7 +40,7 @@ before_script:
 
 script:
     - if [ "$TARGET" = "cats" ]; then clowder-test unittests "$PYVERSION" || exit 1; clowder-test cats all; fi
-    - if [ "$TARGET" = "cocos2d" ]; then clowder-test cocos2d; fi
+    - if [ "$TARGET" = "cocos2d" ]; then clowder-test cocos2d all; fi
     - if [ "$TARGET" = "llvm" ]; then clowder-test llvm all; fi
     - if [ "$TARGET" = "parallel" ]; then clowder-test parallel; fi
     - if [ "$TARGET" = "swift" ]; then clowder-test swift all; fi

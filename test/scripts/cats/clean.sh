@@ -17,9 +17,10 @@ export all_projects=( 'mu' 'duke' \
                       'black-cats/sasha' \
                       'black-cats/jules' )
 
-prepare_cats_example
 cd "$CATS_EXAMPLE_DIR" || exit 1
+./clean.sh
 ./init.sh
+clowder herd $PARALLEL || exit 1
 
 print_double_separator
 echo "TEST: Test clowder clean"
@@ -142,9 +143,7 @@ test_clean_missing_directories() {
     rm -rf "$@"
 
     for project in "${cats_projects[@]}"; do
-        if [ -d "$project" ]; then
-            exit 1
-        fi
+        test_no_directory_exists "$project"
     done
 
     for project in "${black_cats_projects[@]}"; do
@@ -157,9 +156,7 @@ test_clean_missing_directories() {
     clowder clean || exit 1
 
     for project in "${cats_projects[@]}"; do
-        if [ -d "$project" ]; then
-            exit 1
-        fi
+        test_no_directory_exists "$project"
     done
 
     for project in "${black_cats_projects[@]}"; do
@@ -227,18 +224,9 @@ test_clean_untracked_files() {
     clowder clean -d || exit 1
 
     pushd mu || exit 1
-        if [ -d 'something' ]; then
-            exit 1
-        fi
-        if [ -f 'something/something' ]; then
-            exit 1
-        fi
-        if [ -d 'something_else' ]; then
-            exit 1
-        fi
-        if [ -f 'newfile' ]; then
-            exit 1
-        fi
+        test_no_directory_exists 'something'
+        test_no_file_exists 'something/something'
+        test_no_file_exists 'something_else'
     popd || exit 1
 }
 test_clean_untracked_files

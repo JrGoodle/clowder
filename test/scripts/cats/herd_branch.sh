@@ -36,11 +36,10 @@ test_cats_default_herd_branches() {
     popd || exit 1
 }
 
-prepare_cats_example
-
 print_double_separator
 echo "TEST: Test clowder herd branch"
 cd "$CATS_EXAMPLE_DIR" || exit 1
+./clean.sh
 ./init.sh
 
 EXISTING_REMOTE_BRANCH='test-herd-branch'
@@ -60,9 +59,7 @@ test_herd_branch_no_repo_existing_remote() {
         rm -rf $project
     done
     for project in "${all_projects[@]}"; do
-        if [ -d "$project" ]; then
-            exit 1
-        fi
+        test_no_directory_exists "$project"
     done
     clowder herd $PARALLEL -b $EXISTING_REMOTE_BRANCH || exit 1
     for project in "${black_cats_projects[@]}"; do
@@ -100,9 +97,7 @@ test_herd_branch_no_repo_no_remote() {
         rm -rf $project
     done
     for project in "${all_projects[@]}"; do
-        if [ -d "$project" ]; then
-            exit 1
-        fi
+        test_no_directory_exists "$project"
     done
     clowder herd $PARALLEL -b $NO_REMOTE_BRANCH || exit 1
     test_cats_default_herd_branches

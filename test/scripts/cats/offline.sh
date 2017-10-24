@@ -64,16 +64,13 @@ enable_connection_exit() {
 # echo ''
 enable_network_connection
 
-prepare_cats_example
-cd "$CATS_EXAMPLE_DIR" || exit 1
-./init.sh
-
 print_double_separator
 echo "TEST: Test clowder offline"
 
+cd "$CATS_EXAMPLE_DIR" || exit 1
 ./clean.sh || exit 1
 ./init.sh || exit 1
-clowder herd || exit 1
+clowder herd $PARALLEL || exit 1
 
 # echo 'Disable your network connection'
 # # https://unix.stackexchange.com/a/293941

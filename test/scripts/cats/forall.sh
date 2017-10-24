@@ -8,10 +8,6 @@ fi
 
 . test_utilities.sh
 
-prepare_cats_example
-cd "$CATS_EXAMPLE_DIR" || exit 1
-./init.sh
-
 export black_cats_projects=( 'black-cats/kit' \
                              'black-cats/kishka' \
                              'black-cats/sasha' \
@@ -19,6 +15,11 @@ export black_cats_projects=( 'black-cats/kit' \
 
 print_double_separator
 echo "TEST: Test clowder forall"
+
+cd "$CATS_EXAMPLE_DIR" || exit 1
+./clean.sh
+./init.sh
+clowder herd $PARALLEL || exit 1
 
 test_forall_branches() {
     print_single_separator

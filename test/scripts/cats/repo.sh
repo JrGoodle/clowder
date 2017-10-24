@@ -3,8 +3,9 @@
 cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
 
 . test_utilities.sh
-prepare_cats_example
+
 cd "$CATS_EXAMPLE_DIR" || exit 1
+./clean.sh
 ./init.sh
 
 print_double_separator
@@ -60,17 +61,11 @@ fi
 test_clowder_repo_run() {
     print_single_separator
     echo "TEST: Test clowder repo run command"
-    if [ -f .clowder/newfile ]; then
-        exit 1
-    fi
+    test_no_file_exists '.clowder/newfile'
     clowder repo run 'touch newfile'
-    if [ ! -f .clowder/newfile ]; then
-        exit 1
-    fi
+    test_file_exists '.clowder/newfile'
     clowder repo run 'rm newfile'
-    if [ -f .clowder/newfile ]; then
-        exit 1
-    fi
+    test_no_file_exists '.clowder/newfile'
 }
 test_clowder_repo_run
 

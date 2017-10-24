@@ -17,8 +17,9 @@ export all_projects=( 'mu' 'duke' \
 
 print_double_separator
 echo "TEST: Test clowder start"
-prepare_cats_example
+
 cd "$CATS_EXAMPLE_DIR" || exit 1
+./clean.sh
 ./init.sh
 
 if [ "$ACCESS_LEVEL" == "write" ]; then

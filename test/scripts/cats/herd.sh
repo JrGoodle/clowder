@@ -36,21 +36,21 @@ test_cats_default_herd_branches() {
     popd || exit 1
 }
 
-prepare_cats_example
-cd "$CATS_EXAMPLE_DIR" || exit 1
-./init.sh
-
 print_double_separator
 echo "TEST: Test clowder herd"
 
+cd "$CATS_EXAMPLE_DIR" || exit 1
+./clean.sh
+
 test_herd_missing_clowder() {
     print_single_separator
-    "$CATS_EXAMPLE_DIR/clean.sh" || exit 1
     echo "TEST: Fail herd with missing clowder.yaml"
     clowder herd $PARALLEL && exit 1
-    "$CATS_EXAMPLE_DIR/init.sh" || exit 1
 }
 test_herd_missing_clowder
+
+./clean.sh
+./init.sh
 
 test_herd() {
     print_single_separator
@@ -104,9 +104,7 @@ test_herd_version() {
     echo "TEST: Remove directories"
     rm -rf "$@"
     for project in "${cats_projects[@]}"; do
-        if [ -d "$project" ]; then
-            exit 1
-        fi
+        test_no_directory_exists "$project"
     done
     echo "TEST: Successfully herd with missing directories"
     clowder herd $PARALLEL || exit 1
@@ -201,9 +199,7 @@ test_herd_no_repo_existing_remote() {
     done
     clowder link -v 'herd-existing-remote-branch' || exit 1
     for project in "${all_projects[@]}"; do
-        if [ -d "$project" ]; then
-            exit 1
-        fi
+        test_no_directory_exists "$project"
     done
     clowder herd $PARALLEL || exit 1
     for project in "${all_projects[@]}"; do
@@ -224,16 +220,12 @@ test_herd_no_repo_no_remote() {
     done
     clowder link -v 'herd-no-remote-branch' || exit 1
     for project in "${all_projects[@]}"; do
-        if [ -d "$project" ]; then
-            exit 1
-        fi
+        test_no_directory_exists "$project"
     done
     clowder herd $PARALLEL && exit 1
     if [ -z "$PARALLEL" ]; then
         for project in "${all_projects[@]}"; do
-            if [ -d "$project" ]; then
-                exit 1
-            fi
+            test_no_directory_exists "$project"
         done
     fi
 }

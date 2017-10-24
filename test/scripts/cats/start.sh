@@ -15,8 +15,8 @@ export all_projects=( 'mu' 'duke' \
                       'black-cats/sasha' \
                       'black-cats/jules' )
 
-prepare_cats_example
 cd "$CATS_EXAMPLE_DIR" || exit 1
+./clean.sh
 ./init.sh
 
 print_double_separator

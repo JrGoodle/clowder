@@ -23,25 +23,6 @@ else
     export PYTHON_VERSIONS_DIR="$HOME/python2_virtualenv"
 fi
 
-prepare_cats_example() {
-    print_single_separator
-    echo "TEST: Prepare cats example at $CATS_EXAMPLE_DIR"
-    if [ -z "$TRAVIS_OS_NAME" ]; then
-        if [ ! -d "$CATS_EXAMPLE_DIR" ]; then
-            setup_local_test_directory
-        fi
-    fi
-    pushd $CATS_EXAMPLE_DIR || exit 1
-    ./clean.sh || exit 1
-    if [ ! -d "$CATS_EXAMPLE_DIR/.clowder" ]; then
-        clowder init https://github.com/jrgoodle/cats.git || exit 1
-    fi
-    clowder repo checkout master || exit 1
-    clowder link || exit 1
-    clowder herd || exit 1
-    popd || exit 1
-}
-
 make_dirty_repos() {
     echo "TEST: Make dirty repos"
     for project in "$@"
@@ -220,6 +201,30 @@ test_command() {
     echo "TEST: Fail with no arguments"
     clowder && exit 1
     echo ''
+}
+
+test_directory_exists() {
+    if [ ! -d "$1" ]; then
+        exit 1
+    fi
+}
+
+test_no_directory_exists() {
+    if [ -d "$1" ]; then
+        exit 1
+    fi
+}
+
+test_file_exists() {
+    if [ ! -f "$1" ]; then
+        exit 1
+    fi
+}
+
+test_no_file_exists() {
+    if [ -f "$1" ]; then
+        exit 1
+    fi
 }
 
 print_single_separator() {

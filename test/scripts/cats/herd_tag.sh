@@ -61,11 +61,10 @@ test_cats_herd_tag() {
     popd || exit 1
 }
 
-prepare_cats_example
-
 print_double_separator
 echo "TEST: Test clowder herd tag"
 cd "$CATS_EXAMPLE_DIR" || exit 1
+./clean.sh
 ./init.sh
 
 EXISTING_TAG='test-herd-tag'
@@ -77,9 +76,7 @@ test_herd_tag_no_repo_existing_tag() {
     clowder link || exit 1
     for project in "${all_projects[@]}"; do
         rm -rf $project
-        if [ -d "$project" ]; then
-            exit 1
-        fi
+        test_no_directory_exists "$project"
     done
     clowder herd $PARALLEL -t $EXISTING_TAG || exit 1
     clowder status || exit 1
@@ -93,9 +90,7 @@ test_herd_tag_no_repo_no_tag() {
     clowder link || exit 1
     for project in "${all_projects[@]}"; do
         rm -rf $project
-        if [ -d "$project" ]; then
-            exit 1
-        fi
+        test_no_directory_exists "$project"
     done
     clowder herd $PARALLEL -t $NO_TAG || exit 1
     test_cats_default_herd_branches

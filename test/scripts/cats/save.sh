@@ -5,9 +5,11 @@
 cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
 
 . test_utilities.sh
-prepare_cats_example
+
 cd "$CATS_EXAMPLE_DIR" || exit 1
+./clean.sh
 ./init.sh
+clowder herd $PARALLEL || exit 1
 
 print_double_separator
 echo "TEST: Test clowder save"
@@ -32,12 +34,8 @@ test_save_missing_directories() {
     print_single_separator
     echo "TEST: Remove directories"
     rm -rf "$@"
-    if [ -d 'duke' ]; then
-        exit 1
-    fi
-    if [ -d 'mu' ]; then
-        exit 1
-    fi
+    test_no_directory_exists 'duke'
+    test_no_directory_exists 'mu'
     echo "TEST: Fail saving version with missing directories"
     clowder save missing-directories && exit 1
     echo ''
