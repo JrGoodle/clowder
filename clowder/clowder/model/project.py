@@ -179,7 +179,8 @@ class Project(object):
         self._print_output = not parallel
 
         herd_depth = depth if depth is not None else self._depth
-        repo = self._repo(self.full_path(), self._remote, self._ref, self._recursive, parallel=parallel)
+        repo = self._repo(self.full_path(), self._remote, self._ref, self._recursive,
+                          parallel=parallel, print_output=self._print_output)
 
         if branch:
             self._herd_branch(repo, branch, herd_depth, rebase)
@@ -236,7 +237,8 @@ class Project(object):
 
         self._print_output = not parallel
 
-        repo = self._repo(self.full_path(), self._remote, self._ref, self._recursive, parallel=parallel)
+        repo = self._repo(self.full_path(), self._remote, self._ref, self._recursive,
+                          parallel=parallel, print_output=self._print_output)
         self._reset(repo, timestamp=timestamp)
 
     def run(self, command, ignore_errors, parallel=False):
@@ -306,7 +308,8 @@ class Project(object):
 
         self._print_output = not parallel
 
-        repo = self._repo(self.full_path(), self._remote, self._ref, self._recursive, parallel=parallel)
+        repo = self._repo(self.full_path(), self._remote, self._ref, self._recursive,
+                          parallel=parallel, print_output=self._print_output)
         self._sync(repo, rebase)
 
     @staticmethod
