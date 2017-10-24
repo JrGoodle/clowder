@@ -22,25 +22,8 @@ export all_projects=( 'mu' 'duke' \
                       'black-cats/jules' )
 
 cd "$CATS_EXAMPLE_DIR" || exit 1
+./clean.sh
 ./init.sh
-
-test_cats_default_herd_branches() {
-    echo "TEST: cats projects on default branches"
-    for project in "${black_cats_projects[@]}"; do
-        pushd $project || exit 1
-        test_branch master
-        popd || exit 1
-    done
-    pushd mu || exit 1
-    test_branch knead
-    popd || exit 1
-    pushd duke || exit 1
-    test_branch purr
-    popd || exit 1
-}
-
-prepare_cats_example
-cd "$CATS_EXAMPLE_DIR" || exit 1
 
 print_double_separator
 echo "TEST: Test clowder reset"

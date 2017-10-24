@@ -61,11 +61,10 @@ test_cats_herd_tag() {
     popd || exit 1
 }
 
-prepare_cats_example
-
 print_double_separator
 echo "TEST: Test clowder herd tag"
 cd "$CATS_EXAMPLE_DIR" || exit 1
+./clean.sh
 ./init.sh
 
 EXISTING_TAG='test-herd-tag'

@@ -36,21 +36,21 @@ test_cats_default_herd_branches() {
     popd || exit 1
 }
 
-prepare_cats_example
-cd "$CATS_EXAMPLE_DIR" || exit 1
-./init.sh
-
 print_double_separator
 echo "TEST: Test clowder herd"
 
+cd "$CATS_EXAMPLE_DIR" || exit 1
+./clean.sh
+
 test_herd_missing_clowder() {
     print_single_separator
-    "$CATS_EXAMPLE_DIR/clean.sh" || exit 1
     echo "TEST: Fail herd with missing clowder.yaml"
     clowder herd $PARALLEL && exit 1
-    "$CATS_EXAMPLE_DIR/init.sh" || exit 1
 }
 test_herd_missing_clowder
+
+./clean.sh
+./init.sh
 
 test_herd() {
     print_single_separator

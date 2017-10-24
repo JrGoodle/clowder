@@ -12,9 +12,11 @@ export all_projects=( 'mu' 'duke' \
 
 print_double_separator
 echo "TEST: Test clowder prune write"
-prepare_cats_example
+
 cd "$CATS_EXAMPLE_DIR" || exit 1
+./clean.sh
 ./init.sh
+clowder herd $PARALLEL || exit 1
 
 if [ "$ACCESS_LEVEL" == "write" ]; then
     test_prune_remote() {

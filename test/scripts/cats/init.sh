@@ -3,8 +3,9 @@
 cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
 
 . test_utilities.sh
-prepare_cats_example
+
 cd "$CATS_EXAMPLE_DIR" || exit 1
+./clean.sh
 ./init.sh
 
 print_double_separator
@@ -15,7 +16,7 @@ test_init_herd() {
     echo "TEST: Normal herd after init"
     "$CATS_EXAMPLE_DIR/clean.sh"
     "$CATS_EXAMPLE_DIR/init.sh"  || exit 1
-    clowder herd || exit 1
+    clowder herd $PARALLEL || exit 1
     clowder status -f || exit 1
 }
 test_init_herd
@@ -41,6 +42,6 @@ test_init_herd_version() {
     "$CATS_EXAMPLE_DIR/clean.sh" || exit 1
     "$CATS_EXAMPLE_DIR/init.sh" || exit 1
     clowder link -v v0.1 || exit 1
-    clowder herd || exit 1
+    clowder herd $PARALLEL || exit 1
 }
 test_init_herd_version

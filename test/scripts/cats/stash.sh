@@ -3,9 +3,11 @@
 cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
 
 . test_utilities.sh
-prepare_cats_example
+
 cd "$CATS_EXAMPLE_DIR" || exit 1
+./clean.sh
 ./init.sh
+clowder herd $PARALLEL || exit 1
 
 export cats_projects=( 'duke' 'mu' )
 

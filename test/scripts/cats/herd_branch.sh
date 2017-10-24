@@ -36,11 +36,10 @@ test_cats_default_herd_branches() {
     popd || exit 1
 }
 
-prepare_cats_example
-
 print_double_separator
 echo "TEST: Test clowder herd branch"
 cd "$CATS_EXAMPLE_DIR" || exit 1
+./clean.sh
 ./init.sh
 
 EXISTING_REMOTE_BRANCH='test-herd-branch'

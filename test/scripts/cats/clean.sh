@@ -17,9 +17,10 @@ export all_projects=( 'mu' 'duke' \
                       'black-cats/sasha' \
                       'black-cats/jules' )
 
-prepare_cats_example
 cd "$CATS_EXAMPLE_DIR" || exit 1
+./clean.sh
 ./init.sh
+clowder herd $PARALLEL || exit 1
 
 print_double_separator
 echo "TEST: Test clowder clean"
