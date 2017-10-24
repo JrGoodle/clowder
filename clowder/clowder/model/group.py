@@ -23,9 +23,7 @@ class Group(object):
             if source.name == source_name:
                 self.source = source
 
-        self.projects = []
-        for project in group['projects']:
-            self.projects.append(Project(root_directory, project, group, defaults, sources))
+        self.projects = [Project(root_directory, p, group, defaults, sources) for p in group['projects']]
         self.projects.sort(key=lambda p: p.path)
 
     def existing_branch(self, branch, is_remote):

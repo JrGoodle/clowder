@@ -108,11 +108,11 @@ class Project(object):
         """Check if branch exists"""
 
         repo = ProjectRepo(self.full_path(), self._remote, self._ref)
-        if is_remote:
-            if self.fork is None:
-                return repo.existing_remote_branch(branch, self._remote)
-            return repo.existing_remote_branch(branch, self.fork.remote_name)
-        return repo.existing_local_branch(branch)
+        if not is_remote:
+            return repo.existing_local_branch(branch)
+
+        rem = self._remote if self.fork is None else self.fork.remote_name
+        return repo.existing_remote_branch(branch, rem)
 
     def fetch_all(self):
         """Fetch upstream changes if project exists on disk"""
@@ -273,12 +273,8 @@ class Project(object):
             print(colored(" - Directory doesn't exist", 'red'))
             return
 
-        if self.fork is None:
-            remote = self._remote
-            depth = self._depth
-        else:
-            remote = self.fork.remote_name
-            depth = 0
+        remote = self._remote if self.fork is None else self.fork.remote_name
+        depth = self._depth if self.fork is None else 0
 
         repo = ProjectRepo(self.full_path(), self._remote, self._ref)
         repo.start(remote, branch, depth, tracking)
@@ -409,6 +405,7 @@ class Project(object):
             if timestamp:
                 repo.reset_timestamp(timestamp, self._timestamp_author, self._ref)
                 return
+
             repo.reset(depth=self._depth)
             return
 

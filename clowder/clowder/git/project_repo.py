@@ -41,7 +41,7 @@ class ProjectRepo(GitRepo):
         except GitError:
             return
         except (KeyboardInterrupt, SystemExit):
-            self._exit('')
+            self._exit()
         else:
             for remote in remotes:
                 if upstream_remote_url == self._remote_get_url(remote.name):
@@ -205,7 +205,7 @@ class ProjectRepo(GitRepo):
                 self._print(fmt.error(err))
                 self._exit(message)
             except (KeyboardInterrupt, SystemExit):
-                self._exit('')
+                self._exit()
         try:
             self._print(' - Delete local branch ' + branch_output)
             self.repo.delete_head(branch, force=force)
@@ -216,7 +216,7 @@ class ProjectRepo(GitRepo):
             self._print(fmt.error(err))
             self._exit(message)
         except (KeyboardInterrupt, SystemExit):
-            self._exit('')
+            self._exit()
 
     def prune_branch_remote(self, branch, remote):
         """Prune remote branch in repository"""
@@ -234,7 +234,7 @@ class ProjectRepo(GitRepo):
             self._print(fmt.error(err))
             self._exit(message)
         except (KeyboardInterrupt, SystemExit):
-            self._exit('')
+            self._exit()
 
     def reset(self, depth=0):
         """Reset branch to upstream or checkout tag/sha as detached HEAD"""

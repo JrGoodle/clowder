@@ -55,6 +55,7 @@ class ClowderRepo(object):
             print(' - Discard current changes')
             repo.clean(args='fdx')
             return
+
         print(' - No changes to discard')
 
     def commit(self, message):
@@ -68,6 +69,7 @@ class ClowderRepo(object):
 
         # Register exit handler to remove files if cloning repo fails
         atexit.register(self.init_exit_handler)
+
         repo = ProjectRepo(self.clowder_path, self.remote, self.default_ref)
         repo.create_clowder_repo(url, branch)
         self.link()

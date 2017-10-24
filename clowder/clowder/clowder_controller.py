@@ -62,15 +62,11 @@ def worker_init():
         """Signal handler"""
 
         del signal_num, frame
-        # print('signal: %s' % signal_num)
         parent = psutil.Process(__clowder_parent_id__)
         for child in parent.children(recursive=True):
             if child.pid != os.getpid():
-                # print("killing child: %s" % child.pid)
                 child.terminate()
-        # print("killing parent: %s" % parent_id)
         parent.terminate()
-        # print("suicide: %s" % os.getpid())
         psutil.Process(os.getpid()).terminate()
         print('\n\n')
 
@@ -95,17 +91,13 @@ def pool_handler(count):
                 __clowder_progress__.close()
                 __clowder_pool__.close()
                 __clowder_pool__.terminate()
-                print()
-                cprint(' - Command failed', 'red')
-                print()
+                cprint('\n - Command failed\n', 'red')
                 sys.exit(1)
     except Exception as err:
         __clowder_progress__.close()
         __clowder_pool__.close()
         __clowder_pool__.terminate()
-        print()
-        cprint(err, 'red')
-        print()
+        cprint('\n' + str(err) + '\n', 'red')
         sys.exit(1)
     else:
         __clowder_progress__.complete()
@@ -183,6 +175,7 @@ class ClowderController(object):
             for group in groups:
                 self._run_group_command(group, [], 'diff')
             return
+
         projects = [p for g in self.groups for p in g.projects if p.name in project_names]
         for project in projects:
             print(project.status())
@@ -218,33 +211,25 @@ class ClowderController(object):
         """Returns all project names containing forks"""
 
         project_names = sorted([p.name for g in self.groups for p in g.projects if p.fork])
-        if not project_names:
-            return ''
-        return project_names
+        return '' if project_names is None else project_names
 
     def get_all_group_names(self):
         """Returns all group names for current clowder.yaml"""
 
         names = sorted([g.name for g in self.groups])
-        if names is None:
-            return ''
-        return names
+        return '' if names is None else names
 
     def get_all_project_names(self):
         """Returns all project names for current clowder.yaml"""
 
         names = sorted([p.name for g in self.groups for p in g.projects])
-        if names is None:
-            return ''
-        return names
+        return '' if names is None else names
 
     def get_all_project_paths(self):
         """Returns all project paths for current clowder.yaml"""
 
         paths = sorted([p.formatted_project_path() for g in self.groups for p in g.projects])
-        if paths is None:
-            return ''
-        return paths
+        return '' if paths is None else paths
 
     def get_saved_version_names(self):
         """Return list of all saved versions"""

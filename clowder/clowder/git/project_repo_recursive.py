@@ -105,7 +105,7 @@ class ProjectRepoRecursive(ProjectRepo):
             self._print(fmt.error(err))
             self._exit(message)
         except (KeyboardInterrupt, SystemExit):
-            self._exit('')
+            self._exit()
 
     def _submodules_reset(self):
         """Reset all submodules"""
