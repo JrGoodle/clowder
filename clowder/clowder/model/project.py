@@ -175,12 +175,7 @@ class Project(object):
     def is_dirty(self):
         """Check if project is dirty"""
         repo = self._repo(self.full_path(), self._remote, self._ref, self._recursive)
-        if not repo.validate_repo():
-            return True
-        if self._recursive:
-            if repo.has_submodules():
-                return True
-        return False
+        return not repo.validate_repo()
 
     def is_valid(self):
         """Validate status of project"""

@@ -69,9 +69,7 @@ class ProjectRepoRecursive(ProjectRepo):
 
     def validate_repo(self):
         """Validate repo state"""
-        if not self.existing_git_repository(self.repo_path):
-            return True
-        if not self.is_dirty():
+        if not ProjectRepo.validate_repo(self):
             return False
         for submodule in self.repo.submodules:
             if not self.is_dirty_submodule(submodule.path):
