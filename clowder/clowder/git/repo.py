@@ -175,7 +175,7 @@ class GitRepo(object):
         if not os.path.isdir(self.repo_path):
             return False
 
-        return (self._is_dirty() or self._is_rebase_in_progress() or self._untracked_files())
+        return self._is_dirty() or self._is_rebase_in_progress() or self._untracked_files()
 
     def new_commits(self, upstream=False):
         """Returns the number of new commits"""

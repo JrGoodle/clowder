@@ -78,34 +78,6 @@ __clowder_pool__ = mp.Pool(initializer=worker_init)
 __clowder_progress__ = Progress()
 
 
-def pool_handler(count):
-    """Pool handler for finishing parallel jobs"""
-
-    print()
-    __clowder_progress__.start(count)
-
-    try:
-        for result in __clowder_results__:
-            result.get()
-            if not result.successful():
-                __clowder_progress__.close()
-                __clowder_pool__.close()
-                __clowder_pool__.terminate()
-                cprint('\n - Command failed\n', 'red')
-                sys.exit(1)
-    except Exception as err:
-        __clowder_progress__.close()
-        __clowder_pool__.close()
-        __clowder_pool__.terminate()
-        cprint('\n' + str(err) + '\n', 'red')
-        sys.exit(1)
-    else:
-        __clowder_progress__.complete()
-        __clowder_progress__.close()
-        __clowder_pool__.close()
-        __clowder_pool__.join()
-
-
 class ClowderController(object):
     """Class encapsulating project information from clowder.yaml for controlling clowder"""
 
@@ -781,3 +753,35 @@ class ClowderController(object):
             sys.exit(1)
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
+
+
+# Disable warnings shown by pylint for catching too general exception
+# pylint: disable=W0703
+
+
+def pool_handler(count):
+    """Pool handler for finishing parallel jobs"""
+
+    print()
+    __clowder_progress__.start(count)
+
+    try:
+        for result in __clowder_results__:
+            result.get()
+            if not result.successful():
+                __clowder_progress__.close()
+                __clowder_pool__.close()
+                __clowder_pool__.terminate()
+                cprint('\n - Command failed\n', 'red')
+                sys.exit(1)
+    except Exception as err:
+        __clowder_progress__.close()
+        __clowder_pool__.close()
+        __clowder_pool__.terminate()
+        cprint('\n' + str(err) + '\n', 'red')
+        sys.exit(1)
+    else:
+        __clowder_progress__.complete()
+        __clowder_progress__.close()
+        __clowder_pool__.close()
+        __clowder_pool__.join()
