@@ -32,14 +32,13 @@ class Group(object):
 
     def existing_branch(self, branch, is_remote):
         """Checks whether at least one branch exists"""
-        for project in self.projects:
-            if is_remote:
-                if project.existing_branch(branch, is_remote=True):
-                    return True
-            else:
-                if project.existing_branch(branch, is_remote=False):
-                    return True
-        return False
+
+        return any([p.existing_branch(branch, is_remote=is_remote) for p in self.projects])
+
+    def existing_projects(self):
+        """Validate existence status of all projects"""
+
+        return all([project.exists() for project in self.projects])
 
     def get_yaml(self):
         """Return python object representation for saving yaml"""
@@ -72,7 +71,7 @@ class Group(object):
 
     def print_existence_message(self):
         """Print existence validation message for projects in group"""
-        if not self.projects_exist():
+        if not self.existing_projects():
             print(fmt.group_name(self.name))
             for project in self.projects:
                 project.print_exists()
@@ -83,8 +82,3 @@ class Group(object):
             print(fmt.group_name(self.name))
             for project in self.projects:
                 project.print_validation()
-
-    def projects_exist(self):
-        """Validate existence status of all projects"""
-
-        return all([project.exists() for project in self.projects])

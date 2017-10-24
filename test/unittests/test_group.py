@@ -60,8 +60,8 @@ class GroupTest(unittest.TestCase):
 
     def test_projects_exist(self):
         """Test projects_exist() method"""
-        self.assertFalse(self.jules_group.projects_exist())
-        self.assertTrue(self.kit_group.projects_exist())
+        self.assertFalse(self.jules_group.existing_projects())
+        self.assertTrue(self.kit_group.existing_projects())
 
 
 if __name__ == '__main__':

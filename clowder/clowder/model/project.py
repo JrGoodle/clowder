@@ -106,14 +106,14 @@ class Project(object):
     def fetch_all(self):
         """Fetch upstream changes if project exists on disk"""
         repo = ProjectRepo(self.full_path(), self._remote, self._ref)
-        if self.exists():
-            if self.fork is None:
-                repo.fetch(self._remote, depth=self._depth)
-            else:
-                repo.fetch(self.fork.remote_name)
-                repo.fetch(self._remote)
-        else:
+        if not self.exists():
             self.print_exists()
+            return
+        if self.fork is None:
+            repo.fetch(self._remote, depth=self._depth)
+            return
+        repo.fetch(self.fork.remote_name)
+        repo.fetch(self._remote)
 
     def formatted_project_path(self):
         """Return formatted project path"""
@@ -211,13 +211,13 @@ class Project(object):
     def run(self, command, ignore_errors, parallel=False):
         """Run command or script in project directory"""
 
-        self._print_output = not parallel
-
-        if self._print_output:
+        if not parallel:
             if not os.path.isdir(self.full_path()):
                 print(colored(" - Project is missing\n", 'red'))
                 return
-            print(fmt.command(command))
+
+        self._print_output = not parallel
+        self._print(fmt.command(command))
 
         forall_env = {'CLOWDER_PATH': self._root_directory,
                       'PROJECT_PATH': self.full_path(),
@@ -227,10 +227,7 @@ class Project(object):
         if self.fork:
             forall_env['FORK_REMOTE'] = self.fork.remote_name
 
-        return_code = execute_forall_command(command.split(),
-                                             self.full_path(),
-                                             forall_env,
-                                             self._print_output)
+        return_code = execute_forall_command(command.split(), self.full_path(), forall_env, self._print_output)
         if not ignore_errors:
             err = fmt.command_failed_error(command)
             if return_code != 0:
@@ -335,10 +332,7 @@ class Project(object):
 
     def _prune_remote(self, branch):
         """Prune remote branch"""
-        if self.fork is None:
-            remote = self._remote
-        else:
-            remote = self.fork.remote_name
+        remote = self._remote if self.fork is None else self.fork.remote_name
         repo = ProjectRepo(self.full_path(), self._remote, self._ref)
         if repo.existing_remote_branch(branch, remote):
             repo.prune_branch_remote(branch, remote)

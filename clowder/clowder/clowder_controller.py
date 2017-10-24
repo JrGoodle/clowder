@@ -660,7 +660,7 @@ class ClowderController(object):
         projects_exist = True
         for group in self.groups:
             group.print_existence_message()
-            if not group.projects_exist():
+            if not group.existing_projects():
                 projects_exist = False
         if not projects_exist:
             herd_output = fmt.clowder_command('clowder herd')
