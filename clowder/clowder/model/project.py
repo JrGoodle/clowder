@@ -185,22 +185,13 @@ class Project(object):
     def print_exists(self):
         """Print existence validation message for project"""
         if not self.exists():
-            self.print_status()
+            print(self.status())
             ProjectRepo.exists(self.full_path())
-
-    def print_status(self):
-        """Print formatted project status"""
-        if not ProjectRepo.existing_git_repository(self.full_path()):
-            cprint(self.path, 'green')
-            return
-        project_output = ProjectRepo.format_project_string(self.full_path(), self.path)
-        current_ref_output = ProjectRepo.format_project_ref_string(self.full_path())
-        print(project_output + ' ' + current_ref_output)
 
     def print_validation(self):
         """Print validation message for project"""
         if not self.is_valid():
-            self.print_status()
+            print(self.status())
             ProjectRepo.validation(self.full_path())
 
     def prune(self, branch, force=False, local=False, remote=False):
@@ -268,9 +259,16 @@ class Project(object):
             depth = 0
         repo.start(remote, branch, depth, tracking)
 
-    def status(self, padding):
-        """Print status for project"""
-        self._print_status_indented(padding)
+    def status(self, padding=None):
+        """Return formatted status for project"""
+        if not ProjectRepo.existing_git_repository(self.full_path()):
+            cprint(self.name, 'green')
+            return
+        project_output = ProjectRepo.format_project_string(self.full_path(), self.path)
+        current_ref_output = ProjectRepo.format_project_ref_string(self.full_path())
+        if padding:
+            project_output = project_output.ljust(padding)
+        return project_output + ' ' + current_ref_output
 
     def stash(self):
         """Stash changes for project if dirty"""
@@ -290,7 +288,7 @@ class Project(object):
         """Clone project or update latest from upstream"""
         if self.fork is None:
             if print_output:
-                self.print_status()
+                print(self.status())
             repo.herd_branch(self._url, branch, depth=depth, rebase=rebase)
             return
         if print_output:
@@ -307,7 +305,7 @@ class Project(object):
         """Clone project or update latest from upstream"""
         if self.fork is None:
             if print_output:
-                self.print_status()
+                print(self.status())
             repo.herd(self._url, depth=depth, rebase=rebase)
             return
         if print_output:
@@ -324,7 +322,7 @@ class Project(object):
         """Clone project or update latest from upstream"""
         if self.fork is None:
             if print_output:
-                self.print_status()
+                print(self.status())
             repo.herd_tag(self._url, tag, depth=depth, rebase=rebase)
             return
         if print_output:
@@ -336,16 +334,6 @@ class Project(object):
         if print_output:
             print(fmt.fork_string(self.fork.name))
         repo.herd_remote(self.fork.url, self.fork.remote_name)
-
-    def _print_status_indented(self, padding):
-        """Print formatted and indented project status"""
-        repo_path = os.path.join(self._root_directory, self.path)
-        if not ProjectRepo.existing_git_repository(self.full_path()):
-            cprint(self.name, 'green')
-            return
-        project_output = ProjectRepo.format_project_string(repo_path, self.path)
-        current_ref_output = ProjectRepo.format_project_ref_string(repo_path)
-        print('{0} {1}'.format(project_output.ljust(padding), current_ref_output))
 
     def _prune_local(self, branch, force):
         """Prune local branch"""
@@ -374,7 +362,7 @@ class Project(object):
         """Clone project or update latest from upstream"""
         if self.fork is None:
             if print_output:
-                self.print_status()
+                print(self.status())
             if timestamp:
                 repo.reset_timestamp(timestamp, self._timestamp_author, self._ref)
                 return

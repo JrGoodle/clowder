@@ -73,19 +73,14 @@ class Group(object):
     def print_existence_message(self):
         """Print existence validation message for projects in group"""
         if not self.projects_exist():
-            self.print_name()
+            print(fmt.group_name(self.name))
             for project in self.projects:
                 project.print_exists()
-
-    def print_name(self):
-        """Print formatted group name"""
-        name_output = colored(self.name, attrs=['bold', 'underline'])
-        print(name_output)
 
     def print_validation(self):
         """Print validation message for projects in group"""
         if not self.is_valid():
-            self.print_name()
+            print(fmt.group_name(self.name))
             for project in self.projects:
                 project.print_validation()
 
@@ -93,9 +88,3 @@ class Group(object):
         """Validate existence status of all projects"""
 
         return all([project.exists() for project in self.projects])
-
-    def status(self, padding):
-        """Print status for all projects"""
-        self.print_name()
-        for project in self.projects:
-            project.status(padding)

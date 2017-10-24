@@ -166,7 +166,7 @@ class ClowderController(object):
             return
         projects = [p for g in self.groups for p in g.projects if p.name in project_names]
         for project in projects:
-            project.print_status()
+            print(project.status())
             project.diff()
 
     def fetch(self, group_names):
@@ -373,7 +373,9 @@ class ClowderController(object):
         """Print status for groups"""
         groups = [g for g in self.groups if g.name in group_names]
         for group in groups:
-            group.status(padding)
+            print(fmt.group_name(group.name))
+            for project in group.projects:
+                project.status(padding=padding)
 
     def sync(self, project_names, rebase=False, parallel=False):
         """Sync projects"""
@@ -414,7 +416,7 @@ class ClowderController(object):
         for project in projects:
             if project.name in skip:
                 continue
-            project.print_status()
+            print(project.status())
             if not os.path.isdir(project.full_path()):
                 cprint(" - Project is missing", 'red')
         print('\n' + fmt.command(command))
@@ -498,11 +500,11 @@ class ClowderController(object):
     def _print_parallel_groups_output(groups, skip):
         """Print output for parallel group command"""
         for group in groups:
-            group.print_name()
+            print(fmt.group_name(group.name))
             for project in group.projects:
                 if project.name in skip:
                     continue
-                project.print_status()
+                print(project.status())
                 if project.fork:
                     print('  ' + fmt.fork_string(project.name))
                     print('  ' + fmt.fork_string(project.fork.name))
@@ -513,7 +515,7 @@ class ClowderController(object):
         for project in projects:
             if project.name in skip:
                 continue
-            project.print_status()
+            print(project.status())
             if project.fork:
                 print('  ' + fmt.fork_string(project.name))
                 print('  ' + fmt.fork_string(project.fork.name))
@@ -606,9 +608,9 @@ class ClowderController(object):
     @staticmethod
     def _run_group_command(group, skip, command, *args, **kwargs):
         """Run group command and print output"""
-        group.print_name()
+        print(fmt.group_name(group.name))
         for project in group.projects:
-            project.print_status()
+            print(project.status())
             if project.name in skip:
                 print(fmt.skip_project_message())
                 continue
@@ -617,7 +619,7 @@ class ClowderController(object):
     @staticmethod
     def _run_project_command(project, skip, command, *args, **kwargs):
         """Run project command and print output"""
-        project.print_status()
+        print(project.status())
         if project.name in skip:
             print(fmt.skip_project_message())
             return
@@ -628,7 +630,7 @@ class ClowderController(object):
         """Sync projects in parallel"""
         print(' - Sync forks in parallel\n')
         for project in projects:
-            project.print_status()
+            print(project.status())
             if project.fork:
                 print('  ' + fmt.fork_string(project.name))
                 print('  ' + fmt.fork_string(project.fork.name))

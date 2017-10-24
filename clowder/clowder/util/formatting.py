@@ -65,6 +65,11 @@ def fork_string(name):
     return colored(name, 'cyan')
 
 
+def group_name(name):
+    """Print formatted group name"""
+    return colored(name, attrs=['bold', 'underline'])
+
+
 def invalid_entries_error(name, collection, yml):
     """Return formatted error string for invalid entry in collection"""
     yml = symlink_target(yml)
