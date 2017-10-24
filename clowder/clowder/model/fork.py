@@ -34,6 +34,7 @@ class Fork(object):
 
         if not ProjectRepo.existing_git_repository(self.path):
             return colored(self.path, 'green')
+
         project_output = ProjectRepo.format_project_string(self.path, self.path)
         current_ref_output = ProjectRepo.format_project_ref_string(self.full_path())
         return project_output + ' ' + current_ref_output

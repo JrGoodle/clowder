@@ -67,12 +67,14 @@ def print_yaml(root_directory):
         yaml_files.append(yaml_file)
         if 'import' not in parsed_yaml:
             break
+
         imported_yaml = parsed_yaml['import']
         if imported_yaml == 'default':
             yaml_file = os.path.join(root_directory, '.clowder', 'clowder.yaml')
         else:
             yaml_file = os.path.join(root_directory, '.clowder', 'versions', imported_yaml, 'clowder.yaml')
         parsed_yaml = parse_yaml(yaml_file)
+
     for yaml_file in yaml_files:
         if os.path.isfile(yaml_file):
             try:
@@ -102,19 +104,19 @@ def print_yaml(root_directory):
 def save_yaml(yaml_output, yaml_file):
     """Save yaml file to disk"""
 
-    if not os.path.isfile(yaml_file):
-        try:
-            with open(yaml_file, 'w') as raw_file:
-                print(" - Save yaml to file")
-                yaml.safe_dump(yaml_output, raw_file, default_flow_style=False, indent=4)
-        except yaml.YAMLError:
-            fmt.save_file_error(yaml_file)
-            sys.exit(1)
-        except (KeyboardInterrupt, SystemExit):
-            sys.exit(1)
-    else:
+    if os.path.isfile(yaml_file):
         fmt.file_exists_error(yaml_file)
         print()
+        sys.exit(1)
+
+    try:
+        with open(yaml_file, 'w') as raw_file:
+            print(" - Save yaml to file")
+            yaml.safe_dump(yaml_output, raw_file, default_flow_style=False, indent=4)
+    except yaml.YAMLError:
+        fmt.save_file_error(yaml_file)
+        sys.exit(1)
+    except (KeyboardInterrupt, SystemExit):
         sys.exit(1)
 
 
@@ -123,6 +125,7 @@ def validate_yaml(yaml_file):
 
     parsed_yaml = parse_yaml(yaml_file)
     _validate_type_dict(parsed_yaml, fmt.yaml_file('clowder.yaml'), yaml_file)
+
     if not parsed_yaml:
         error = fmt.empty_yaml_error(yaml_file)
         raise ClowderError(error)
@@ -155,6 +158,7 @@ def validate_yaml_import(yaml_file):
 
     parsed_yaml = parse_yaml(yaml_file)
     _validate_type_dict(parsed_yaml, fmt.yaml_file('clowder.yaml'), yaml_file)
+
     if 'import' not in parsed_yaml:
         error = fmt.missing_entry_error('import', fmt.yaml_file('clowder.yaml'), yaml_file)
         raise ClowderError(error)
@@ -308,6 +312,7 @@ def _validate_type_bool(value, name, yaml_file):
 
 def _validate_type_depth(value, yaml_file):
     """Validate depth value"""
+
     error = fmt.depth_error(value, yaml_file)
     if not isinstance(value, int):
         raise ClowderError(error)
@@ -317,6 +322,7 @@ def _validate_type_depth(value, yaml_file):
 
 def _validate_type_dict(value, name, yaml_file):
     """Validate value is a dict"""
+
     if not isinstance(value, dict):
         error = fmt.not_dictionary_error(name, yaml_file)
         raise ClowderError(error)
@@ -324,6 +330,7 @@ def _validate_type_dict(value, name, yaml_file):
 
 def _validate_type_list(value, name, yaml_file):
     """Validate value is a list"""
+
     if not isinstance(value, list):
         error = fmt.not_list_error(name, yaml_file)
         raise ClowderError(error)
@@ -331,6 +338,7 @@ def _validate_type_list(value, name, yaml_file):
 
 def _validate_type_str(value, name, yaml_file):
     """Validate value is a str"""
+
     if not isinstance(value, str):
         error = fmt.not_string_error(name, yaml_file)
         raise ClowderError(error)
@@ -338,28 +346,35 @@ def _validate_type_str(value, name, yaml_file):
 
 def _validate_yaml_import_defaults(defaults, yaml_file):
     """Validate clowder.yaml defaults with an import"""
+
     _validate_type_dict(defaults, 'defaults', yaml_file)
     if 'recursive' in defaults:
         _validate_type_bool(defaults['recursive'], 'recursive', yaml_file)
         del defaults['recursive']
+
     if 'ref' in defaults:
         _validate_type_str(defaults['ref'], 'ref', yaml_file)
         if not _valid_ref_type(defaults['ref']):
             error = fmt.invalid_ref_error(defaults['ref'], yaml_file)
             raise ClowderError(error)
         del defaults['ref']
+
     if 'remote' in defaults:
         _validate_type_str(defaults['remote'], 'remote', yaml_file)
         del defaults['remote']
+
     if 'source' in defaults:
         _validate_type_str(defaults['source'], 'source', yaml_file)
         del defaults['source']
+
     if 'depth' in defaults:
         _validate_type_depth(defaults['depth'], yaml_file)
         del defaults['depth']
+
     if 'timestamp_author' in defaults:
         _validate_type_str(defaults['timestamp_author'], 'timestamp_author', yaml_file)
         del defaults['timestamp_author']
+
     if defaults:
         error = fmt.invalid_entries_error('defaults', defaults, yaml_file)
         raise ClowderError(error)
@@ -367,6 +382,7 @@ def _validate_yaml_import_defaults(defaults, yaml_file):
 
 def _validate_yaml_defaults(defaults, yaml_file):
     """Validate defaults in clowder loaded from yaml file"""
+
     _validate_type_dict(defaults, 'defaults', yaml_file)
     if not defaults:
         error = fmt.invalid_entries_error('defaults', defaults, yaml_file)
@@ -402,6 +418,7 @@ def _validate_yaml_defaults(defaults, yaml_file):
 
 def _validate_yaml_defaults_optional(defaults, yaml_file):
     """Validate defaults optional args in clowder loaded from yaml file"""
+
     if 'depth' in defaults:
         _validate_type_depth(defaults['depth'], yaml_file)
         del defaults['depth']
@@ -417,7 +434,9 @@ def _validate_yaml_defaults_optional(defaults, yaml_file):
 
 def _validate_yaml_fork(fork, yaml_file):
     """Validate fork in clowder loaded from yaml file"""
+
     _validate_type_dict(fork, 'fork', yaml_file)
+
     if not fork:
         error = fmt.invalid_entries_error('fork', fork, yaml_file)
         raise ClowderError(error)
@@ -441,7 +460,9 @@ def _validate_yaml_fork(fork, yaml_file):
 
 def _validate_yaml_import_groups(groups, yaml_file):
     """Validate groups in clowder loaded from yaml file with import"""
+
     _validate_type_list(groups, 'groups', yaml_file)
+
     if not groups:
         error = fmt.invalid_entries_error('groups', groups, yaml_file)
         raise ClowderError(error)
@@ -452,7 +473,9 @@ def _validate_yaml_import_groups(groups, yaml_file):
 
 def _validate_yaml_groups(groups, yaml_file):
     """Validate groups in clowder loaded from yaml file"""
+
     _validate_type_list(groups, 'groups', yaml_file)
+
     if not groups:
         error = fmt.invalid_entries_error('groups', groups, yaml_file)
         raise ClowderError(error)
@@ -463,7 +486,9 @@ def _validate_yaml_groups(groups, yaml_file):
 
 def _validate_yaml_import_project(project, yaml_file):
     """Validate project in clowder loaded from yaml file with import"""
+
     _validate_type_dict(project, 'project', yaml_file)
+
     if not project:
         error = fmt.invalid_entries_error('project', project, yaml_file)
         raise ClowderError(error)
@@ -491,7 +516,9 @@ def _validate_yaml_import_project(project, yaml_file):
 
 def _validate_yaml_import_group(group, yaml_file):
     """Validate group in clowder loaded from yaml file with import"""
+
     _validate_type_dict(group, 'group', yaml_file)
+
     if not group:
         error = fmt.invalid_entries_error('group', group, yaml_file)
         raise ClowderError(error)
@@ -544,7 +571,9 @@ def _validate_yaml_import_group(group, yaml_file):
 
 def _validate_yaml_group(group, yaml_file):
     """Validate group in clowder loaded from yaml file"""
+
     _validate_type_dict(group, 'group', yaml_file)
+
     if not group:
         error = fmt.invalid_entries_error('group', group, yaml_file)
         raise ClowderError(error)
@@ -595,7 +624,9 @@ def _validate_yaml_group(group, yaml_file):
 
 def _validate_yaml_project(project, yaml_file):
     """Validate project in clowder loaded from yaml file"""
+
     _validate_type_dict(project, 'project', yaml_file)
+
     if not project:
         error = fmt.invalid_entries_error('project', project, yaml_file)
         raise ClowderError(error)
@@ -621,6 +652,7 @@ def _validate_yaml_project(project, yaml_file):
 
 def _validate_yaml_project_optional(project, yaml_file):
     """Validate optional args in project in clowder loaded from yaml file"""
+
     if 'remote' in project:
         _validate_type_str(project['remote'], 'remote', yaml_file)
         del project['remote']
@@ -656,6 +688,7 @@ def _validate_yaml_project_optional(project, yaml_file):
 
 def _validate_yaml_projects(projects, yaml_file, is_import):
     """Validate projects in clowder loaded from yaml file"""
+
     _validate_type_list(projects, 'projects', yaml_file)
     if not projects:
         error = fmt.invalid_entries_error('projects', projects, yaml_file)
@@ -670,6 +703,7 @@ def _validate_yaml_projects(projects, yaml_file, is_import):
 
 def _validate_yaml_sources(sources, yaml_file):
     """Validate sources in clowder loaded from yaml file"""
+
     _validate_type_list(sources, 'sources', yaml_file)
     if not sources:
         error = fmt.invalid_entries_error('sources', sources, yaml_file)

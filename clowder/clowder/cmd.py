@@ -39,8 +39,9 @@ class Command(object):
         self.versions = None
         self._invalid_yaml = False
         self._version = '2.4.0'
-        # Load current clowder.yaml config if it exists
         clowder_path = os.path.join(self.root_directory, '.clowder')
+
+        # Load current clowder.yaml config if it exists
         if os.path.isdir(clowder_path):
             clowder_symlink = os.path.join(self.root_directory, 'clowder.yaml')
             self.clowder_repo = ClowderRepo(self.root_directory)
@@ -63,8 +64,10 @@ class Command(object):
         parser = argparse.ArgumentParser(description=command_description,
                                          formatter_class=argparse.RawDescriptionHelpFormatter)
         configure_argparse(parser, self.clowder, self.versions)
+
         # Argcomplete and arguments parsing
         argcomplete.autocomplete(parser)
+
         # Register exit handler to display trailing newline
         self._display_trailing_newline = True
         atexit.register(self._exit_handler_formatter)
@@ -73,8 +76,10 @@ class Command(object):
         self.args = parser.parse_args()
         self._display_trailing_newline = False
 
+        # Check for unrecognized command
         if self.args.clowder_command is None or not hasattr(self, self.args.clowder_command):
             exit_unrecognized_command(parser)
+
         # use dispatch pattern to invoke method with same name
         getattr(self, self.args.clowder_command)()
         print()
@@ -85,17 +90,21 @@ class Command(object):
         self._validate_clowder_yaml()
         if self.clowder_repo is None:
             exit_clowder_not_found()
+
         self.clowder_repo.print_status()
         if self.clowder is None:
             sys.exit(1)
+
         if self.args.all:
             self.clowder.branch(group_names=self.args.groups, project_names=self.args.projects,
                                 skip=self.args.skip, local=True, remote=True)
             return
+
         if self.args.remote:
             self.clowder.branch(group_names=self.args.groups, project_names=self.args.projects,
                                 skip=self.args.skip, remote=True)
             return
+
         self.clowder.branch(group_names=self.args.groups, project_names=self.args.projects,
                             skip=self.args.skip, local=True)
 
@@ -105,13 +114,16 @@ class Command(object):
         self._validate_clowder_yaml()
         if self.clowder_repo is None:
             exit_clowder_not_found()
+
         self.clowder_repo.print_status()
         if self.clowder is None:
             sys.exit(1)
+
         if self.args.all:
             self.clowder.clean_all(group_names=self.args.groups, project_names=self.args.projects,
                                    skip=self.args.skip)
             return
+
         clean_args = ''
         if self.args.d:
             clean_args += 'd'
@@ -130,9 +142,11 @@ class Command(object):
         self._validate_clowder_yaml()
         if self.clowder_repo is None:
             exit_clowder_not_found()
+
         self.clowder_repo.print_status()
         if self.clowder is None:
             sys.exit(1)
+
         self.clowder.diff(group_names=self.args.groups, project_names=self.args.projects)
 
     def forall(self):
@@ -141,9 +155,11 @@ class Command(object):
         self._validate_clowder_yaml()
         if self.clowder_repo is None:
             exit_clowder_not_found()
+
         self.clowder_repo.print_status()
         if self.clowder is None:
             sys.exit(1)
+
         self.clowder.forall(self.args.command[0], self.args.ignore_errors,
                             group_names=self.args.groups, project_names=self.args.projects,
                             skip=self.args.skip, parallel=self.args.parallel)
@@ -154,27 +170,18 @@ class Command(object):
         self._validate_clowder_yaml()
         if self.clowder_repo is None:
             exit_clowder_not_found()
+
         self.clowder_repo.print_status(fetch=True)
         if is_offline():
             print(fmt.offline_error())
             sys.exit(1)
+
         if self.clowder is None:
             sys.exit(1)
 
-        if self.args.branch is None:
-            branch = None
-        else:
-            branch = self.args.branch[0]
-
-        if self.args.tag is None:
-            tag = None
-        else:
-            tag = self.args.tag[0]
-
-        if self.args.depth is None:
-            depth = None
-        else:
-            depth = self.args.depth[0]
+        branch = None if self.args.branch is None else self.args.branch[0]
+        tag = None if self.args.tag is None else self.args.tag[0]
+        depth = None if self.args.depth is None else self.args.depth[0]
 
         args = {'group_names': self.args.groups, 'project_names': self.args.projects, 'skip': self.args.skip,
                 'branch': branch, 'tag': tag, 'depth': depth, 'rebase': self.args.rebase}
@@ -189,9 +196,11 @@ class Command(object):
         if self.clowder_repo:
             cprint('Clowder already initialized in this directory\n', 'red')
             sys.exit(1)
+
         if is_offline():
             print(fmt.offline_error())
             sys.exit(1)
+
         url_output = colored(self.args.url, 'green')
         print('Create clowder repo from ' + url_output + '\n')
         clowder_repo = ClowderRepo(self.root_directory)
@@ -206,6 +215,7 @@ class Command(object):
 
         if self.clowder_repo is None:
             exit_clowder_not_found()
+
         self.clowder_repo.print_status()
         if self.args.version is None:
             version = None
@@ -218,23 +228,29 @@ class Command(object):
         self._validate_clowder_yaml()
         if self.clowder_repo is None:
             exit_clowder_not_found()
+
         self.clowder_repo.print_status()
         if self.clowder is None:
             sys.exit(1)
+
         if self.args.all:
             if is_offline():
                 print(fmt.offline_error())
                 sys.exit(1)
+
             self.clowder.prune(self.args.groups, self.args.branch, project_names=self.args.projects,
                                skip=self.args.skip, force=self.args.force, local=True, remote=True)
             return
+
         if self.args.remote:
             if is_offline():
                 print(fmt.offline_error())
                 sys.exit(1)
+
             self.clowder.prune(self.args.groups, self.args.branch, project_names=self.args.projects,
                                skip=self.args.skip, remote=True)
             return
+
         self.clowder.prune(self.args.groups, self.args.branch, project_names=self.args.projects,
                            skip=self.args.skip, force=self.args.force, local=True)
 
@@ -243,6 +259,7 @@ class Command(object):
 
         if self.clowder_repo is None:
             exit_clowder_not_found()
+
         repo_command = 'repo_' + self.args.repo_command
         getattr(self, repo_command)()
 
@@ -251,6 +268,7 @@ class Command(object):
 
         if self.clowder_repo is None:
             exit_clowder_not_found()
+
         self.clowder_repo.print_status()
         self.clowder_repo.add(self.args.files)
 
@@ -259,6 +277,7 @@ class Command(object):
 
         if self.clowder_repo is None:
             exit_clowder_not_found()
+
         self.clowder_repo.print_status(fetch=True)
         self.clowder_repo.checkout(self.args.ref[0])
 
@@ -267,6 +286,7 @@ class Command(object):
 
         if self.clowder_repo is None:
             exit_clowder_not_found()
+
         self.clowder_repo.print_status()
         self.clowder_repo.clean()
 
@@ -275,6 +295,7 @@ class Command(object):
 
         if self.clowder_repo is None:
             exit_clowder_not_found()
+
         self.clowder_repo.print_status()
         self.clowder_repo.commit(self.args.message[0])
 
@@ -283,9 +304,11 @@ class Command(object):
 
         if self.clowder_repo is None:
             exit_clowder_not_found()
+
         if is_offline():
             print(fmt.offline_error())
             sys.exit(1)
+
         self.clowder_repo.print_status(fetch=True)
         self.clowder_repo.pull()
 
@@ -294,9 +317,11 @@ class Command(object):
 
         if self.clowder_repo is None:
             exit_clowder_not_found()
+
         if is_offline():
             print(fmt.offline_error())
             sys.exit(1)
+
         self.clowder_repo.print_status(fetch=True)
         self.clowder_repo.push()
 
@@ -305,6 +330,7 @@ class Command(object):
 
         if self.clowder_repo is None:
             exit_clowder_not_found()
+
         self.clowder_repo.print_status()
         self.clowder_repo.run_command(self.args.command[0])
 
@@ -312,6 +338,7 @@ class Command(object):
         """clowder repo status command"""
         if self.clowder_repo is None:
             exit_clowder_not_found()
+
         self.clowder_repo.print_status()
         self.clowder_repo.git_status()
 
@@ -321,12 +348,15 @@ class Command(object):
         self._validate_clowder_yaml()
         if self.clowder_repo is None:
             exit_clowder_not_found()
+
         self.clowder_repo.print_status(fetch=True)
         if is_offline():
             print(fmt.offline_error())
             sys.exit(1)
+
         if self.clowder is None:
             sys.exit(1)
+
         timestamp_project = None
         if self. args.timestamp:
             timestamp_project = self.args.timestamp[0]
@@ -338,8 +368,10 @@ class Command(object):
 
         if self.clowder_repo is None:
             exit_clowder_not_found()
+
         if self.clowder is None:
             sys.exit(1)
+
         self.clowder_repo.print_status()
         self.clowder.save_version(self.args.version)
 
@@ -349,13 +381,16 @@ class Command(object):
         self._validate_clowder_yaml()
         if self.clowder_repo is None:
             exit_clowder_not_found()
+
         self.clowder_repo.print_status()
         if self.clowder is None:
             sys.exit(1)
+
         if self.args.tracking:
             if is_offline():
                 print(fmt.offline_error())
                 sys.exit(1)
+
         if self.args.projects is None:
             self.clowder.start_groups(self.args.groups, self.args.skip, self.args.branch, self.args.tracking)
         else:
@@ -367,9 +402,11 @@ class Command(object):
         self._validate_clowder_yaml()
         if self.clowder_repo is None:
             exit_clowder_not_found()
+
         self.clowder_repo.print_status()
         if self.clowder is None:
             sys.exit(1)
+
         self.clowder.stash(group_names=self.args.groups, project_names=self.args.projects, skip=self.args.skip)
 
     def status(self):
@@ -378,15 +415,19 @@ class Command(object):
         self._validate_clowder_yaml()
         if self.clowder_repo is None:
             exit_clowder_not_found()
+
         self.clowder_repo.print_status(fetch=self.args.fetch)
         if self.clowder is None:
             sys.exit(1)
+
         if self.args.fetch:
             if is_offline():
                 print(fmt.offline_error())
                 sys.exit(1)
+
             print(' - Fetch upstream changes for projects\n')
             self.clowder.fetch(self.clowder.get_all_group_names())
+
         all_project_paths = self.clowder.get_all_project_paths()
         padding = len(max(all_project_paths, key=len))
         self.clowder.status(self.clowder.get_all_group_names(), padding)
@@ -397,12 +438,15 @@ class Command(object):
         self._validate_clowder_yaml()
         if self.clowder_repo is None:
             exit_clowder_not_found()
+
         self.clowder_repo.print_status(fetch=True)
         if self.clowder is None:
             sys.exit(1)
+
         if is_offline():
             print(fmt.offline_error())
             sys.exit(1)
+
         all_fork_projects = self.clowder.get_all_fork_project_names()
         if all_fork_projects == '':
             cprint(' - No forks to sync\n', 'red')
@@ -420,9 +464,11 @@ class Command(object):
 
         if self.clowder_repo is None:
             exit_clowder_not_found()
+
         self.clowder_repo.print_status()
         if self._invalid_yaml:
             sys.exit(1)
+
         self.clowder.print_yaml(self.args.resolved)
 
     def _exit_handler_formatter(self):

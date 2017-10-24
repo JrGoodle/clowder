@@ -27,6 +27,7 @@ class Progress(object):
 
         if self._bar:
             self._bar.close()
+
         bar_format = '{desc}: {percentage:3.0f}%|{bar}| {n_fmt}/{total_fmt} projects'
         self._bar = tqdm(total=count, unit='projects', bar_format=bar_format)
 

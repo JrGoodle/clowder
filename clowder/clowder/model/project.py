@@ -56,6 +56,7 @@ class Project(object):
         if not os.path.isdir(self.full_path()):
             print(colored(" - Project is missing\n", 'red'))
             return
+
         repo = ProjectRepo(self.full_path(), self._remote, self._ref)
         if not is_offline():
             if remote:
@@ -64,6 +65,7 @@ class Project(object):
                 else:
                     repo.fetch(self.fork.remote_name)
                     repo.fetch(self._remote)
+
         repo.print_branches(local=local, remote=remote)
 
     def clean(self, args='', recursive=False):
@@ -72,6 +74,7 @@ class Project(object):
         if not os.path.isdir(self.full_path()):
             print(colored(" - Project is missing\n", 'red'))
             return
+
         repo = self._repo(self.full_path(), self._remote, self._ref, self._recursive and recursive)
         repo.clean(args=args)
 
@@ -81,6 +84,7 @@ class Project(object):
         if not os.path.isdir(self.full_path()):
             print(colored(" - Project is missing\n", 'red'))
             return
+
         repo = self._repo(self.full_path(), self._remote, self._ref, self._recursive)
         repo.clean(args='fdx')
 
@@ -90,6 +94,7 @@ class Project(object):
         if not os.path.isdir(self.full_path()):
             print(colored(" - Project is missing\n", 'red'))
             return
+
         repo = ProjectRepo(self.full_path(), self._remote, self._ref)
         repo.status_verbose()
 
@@ -112,13 +117,16 @@ class Project(object):
     def fetch_all(self):
         """Fetch upstream changes if project exists on disk"""
 
-        repo = ProjectRepo(self.full_path(), self._remote, self._ref)
         if not self.exists():
             self.print_exists()
             return
+
+        repo = ProjectRepo(self.full_path(), self._remote, self._ref)
+
         if self.fork is None:
             repo.fetch(self._remote, depth=self._depth)
             return
+
         repo.fetch(self.fork.remote_name)
         repo.fetch(self._remote)
 
@@ -147,6 +155,7 @@ class Project(object):
         else:
             repo = ProjectRepo(self.full_path(), self._remote, self._ref)
             ref = repo.sha()
+
         project = {'name': self.name,
                    'path': self.path,
                    'depth': self._depth,
@@ -154,11 +163,14 @@ class Project(object):
                    'ref': ref,
                    'remote': self._remote,
                    'source': self._source.name}
+
         if self.fork:
             fork_yaml = self.fork.get_yaml()
             project['fork'] = fork_yaml
+
         if self._timestamp_author:
             project['timestamp_author'] = self._timestamp_author
+
         return project
 
     def herd(self, branch=None, tag=None, depth=None, rebase=False, parallel=False):
@@ -172,9 +184,11 @@ class Project(object):
         if branch:
             self._herd_branch(repo, branch, herd_depth, rebase)
             return
+
         if tag:
             self._herd_tag(repo, tag, herd_depth, rebase)
             return
+
         self._herd_ref(repo, herd_depth, rebase)
 
     def is_dirty(self):
@@ -208,6 +222,7 @@ class Project(object):
 
         if not ProjectRepo.existing_git_repository(self.full_path()):
             return
+
         if local and remote:
             self._prune_local(branch, force)
             self._prune_remote(branch)
@@ -240,6 +255,7 @@ class Project(object):
                       'PROJECT_NAME': self.name,
                       'PROJECT_REMOTE': self._remote,
                       'PROJECT_REF': self._ref}
+
         if self.fork:
             forall_env['FORK_REMOTE'] = self.fork.remote_name
 
@@ -253,16 +269,18 @@ class Project(object):
     def start(self, branch, tracking):
         """Start a new feature branch"""
 
-        repo = ProjectRepo(self.full_path(), self._remote, self._ref)
         if not ProjectRepo.existing_git_repository(self.full_path()):
             print(colored(" - Directory doesn't exist", 'red'))
             return
+
         if self.fork is None:
             remote = self._remote
             depth = self._depth
         else:
             remote = self.fork.remote_name
             depth = 0
+
+        repo = ProjectRepo(self.full_path(), self._remote, self._ref)
         repo.start(remote, branch, depth, tracking)
 
     def status(self, padding=None):
@@ -271,10 +289,13 @@ class Project(object):
         if not ProjectRepo.existing_git_repository(self.full_path()):
             print(colored(self.name, 'green'))
             return
+
         project_output = ProjectRepo.format_project_string(self.full_path(), self.path)
         current_ref_output = ProjectRepo.format_project_ref_string(self.full_path())
+
         if padding:
             project_output = project_output.ljust(padding)
+
         return project_output + ' ' + current_ref_output
 
     def stash(self):
@@ -307,10 +328,13 @@ class Project(object):
             self._print(self.status())
             repo.herd_branch(self._url, branch, depth=depth, rebase=rebase)
             return
+
         self._print(self.fork.status())
         repo.configure_remotes(self._remote, self._url, self.fork.remote_name, self.fork.url)
+
         self._print(fmt.fork_string(self.name))
         repo.herd_branch(self._url, branch, rebase=rebase, fork_remote=self.fork.remote_name)
+
         self._print(fmt.fork_string(self.fork.name))
         repo.herd_remote(self.fork.url, self.fork.remote_name, branch=branch)
 
@@ -321,10 +345,13 @@ class Project(object):
             self._print(self.status())
             repo.herd(self._url, depth=depth, rebase=rebase)
             return
+
         self._print(self.fork.status())
         repo.configure_remotes(self._remote, self._url, self.fork.remote_name, self.fork.url)
+
         self._print(fmt.fork_string(self.name))
         repo.herd(self._url, rebase=rebase)
+
         self._print(fmt.fork_string(self.fork.name))
         repo.herd_remote(self.fork.url, self.fork.remote_name)
 
@@ -335,10 +362,13 @@ class Project(object):
             self._print(self.status())
             repo.herd_tag(self._url, tag, depth=depth, rebase=rebase)
             return
+
         self._print(self.fork.status())
         repo.configure_remotes(self._remote, self._url, self.fork.remote_name, self.fork.url)
+
         self._print(fmt.fork_string(self.name))
         repo.herd_tag(self._url, tag, rebase=rebase)
+
         self._print(fmt.fork_string(self.fork.name))
         repo.herd_remote(self.fork.url, self.fork.remote_name)
 
@@ -359,7 +389,7 @@ class Project(object):
         """Prune remote branch"""
 
         remote = self._remote if self.fork is None else self.fork.remote_name
-        repo = ProjectRepo(self.full_path(), self._remote, self._ref)
+        repo = ProjectRepo(self.full_path(), remote, self._ref)
         if repo.existing_remote_branch(branch, remote):
             repo.prune_branch_remote(branch, remote)
 
@@ -381,12 +411,15 @@ class Project(object):
                 return
             repo.reset(depth=self._depth)
             return
+
         self._print(self.fork.status())
         repo.configure_remotes(self._remote, self._url, self.fork.remote_name, self.fork.url)
+
         self._print(fmt.fork_string(self.name))
         if timestamp:
             repo.reset_timestamp(timestamp, self._timestamp_author, self._ref)
             return
+
         repo.reset()
 
     def _sync(self, repo, rebase):
@@ -394,9 +427,12 @@ class Project(object):
 
         self._print(self.fork.status())
         repo.configure_remotes(self._remote, self._url, self.fork.remote_name, self.fork.url)
+
         self._print(fmt.fork_string(self.name))
         repo.herd(self._url, self._remote, rebase=rebase)
+
         self._print(fmt.fork_string(self.fork.name))
         repo.herd_remote(self.fork.url, self.fork.remote_name)
+
         self._print(self.fork.status())
         repo.sync(self.fork.remote_name, rebase=rebase)

@@ -101,6 +101,7 @@ class ClowderRepo(object):
         if not os.path.isfile(yaml_file):
             print(path_output + " doesn't seem to exist\n")
             sys.exit(1)
+
         yaml_symlink = os.path.join(self.root_directory, 'clowder.yaml')
         print(' - Symlink ' + path_output)
         force_symlink(yaml_file, yaml_symlink)
@@ -113,10 +114,12 @@ class ClowderRepo(object):
             output = colored('.clowder', 'green')
             print(output)
             return
+
         if not is_offline() and fetch:
             print(' - Fetch upstream changes for clowder repo')
             repo = ProjectRepo(self.clowder_path, self.remote, self.default_ref)
             repo.fetch(self.remote)
+
         project_output = ProjectRepo.format_project_string(repo_path, '.clowder')
         current_ref_output = ProjectRepo.format_project_ref_string(repo_path)
 
@@ -124,13 +127,13 @@ class ClowderRepo(object):
         if not os.path.islink(clowder_symlink):
             print(project_output + ' ' + current_ref_output)
             return
+
         real_path = os.path.realpath(clowder_symlink)
         symlink_output = fmt.path('clowder.yaml')
         clowder_path = fmt.remove_prefix(real_path + '/', self.root_directory)
         path_output = fmt.path(clowder_path[1:-1])
         print(project_output + ' ' + current_ref_output)
-        print(symlink_output + ' -> ' + path_output)
-        print()
+        print(symlink_output + ' -> ' + path_output + '\n')
 
     def pull(self):
         """Pull clowder repo upstream changes"""

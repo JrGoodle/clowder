@@ -130,18 +130,17 @@ class GitRepo(object):
             message = colored(' - Failed to fetch from ', 'red')
             error = message + remote_output
             command = ['git fetch', remote, '--prune --tags']
+        elif ref is None:
+            command = ['git fetch', remote, '--depth', str(depth), '--prune --tags']
+            message = colored(' - Failed to fetch remote ', 'red')
+            error = message + remote_output
         else:
-            if ref is None:
-                command = ['git fetch', remote, '--depth', str(depth), '--prune --tags']
-                message = colored(' - Failed to fetch remote ', 'red')
-                error = message + remote_output
-            else:
-                ref_output = fmt.ref_string(GitRepo.truncate_ref(ref))
-                self._print(' - Fetch from ' + remote_output + ' ' + ref_output)
-                message = colored(' - Failed to fetch from ', 'red')
-                error = message + remote_output + ' ' + ref_output
-                command = ['git fetch', remote, GitRepo.truncate_ref(ref),
-                           '--depth', str(depth), '--prune --tags']
+            ref_output = fmt.ref_string(GitRepo.truncate_ref(ref))
+            self._print(' - Fetch from ' + remote_output + ' ' + ref_output)
+            message = colored(' - Failed to fetch from ', 'red')
+            error = message + remote_output + ' ' + ref_output
+            command = ['git fetch', remote, GitRepo.truncate_ref(ref), '--depth', str(depth), '--prune --tags']
+
         return_code = execute_command(command, self.repo_path, print_output=self.print_output)
         if return_code != 0:
             if remove_dir:
@@ -218,6 +217,7 @@ class GitRepo(object):
             command = 'git branch -r'
         else:
             return
+
         return_code = execute_command(command, self.repo_path, print_output=self.print_output)
         if return_code != 0:
             message = colored(' - Failed to print branches', 'red')
@@ -230,6 +230,7 @@ class GitRepo(object):
         if self.repo.head.is_detached:
             self._print(' - HEAD is detached')
             return
+
         try:
             self._print(' - Pull latest changes')
             print(self.repo.git.pull())
@@ -247,6 +248,7 @@ class GitRepo(object):
         if self.repo.head.is_detached:
             self._print(' - HEAD is detached')
             return
+
         try:
             self._print(' - Push local changes')
             print(self.repo.git.push())
@@ -295,6 +297,7 @@ class GitRepo(object):
         if not self.repo.is_dirty():
             self._print(' - No changes to stash')
             return
+
         self._print(' - Stash current changes')
         self.repo.git.stash()
 
@@ -308,6 +311,7 @@ class GitRepo(object):
 
         command = 'git status -vv'
         self._print(fmt.command(command))
+
         return_code = execute_command(command, self.repo_path)
         if return_code != 0:
             message = colored(' - Failed to print status\n', 'red') + fmt.command_failed_error(command)
@@ -342,6 +346,7 @@ class GitRepo(object):
         repo = GitRepo(repo_path, DEFAULT_REMOTE, DEFAULT_REF)
         if not GitRepo.existing_git_repository(repo_path):
             return
+
         if not repo.validate_repo():
             print(' - Dirty repo. Please stash, commit, or discard your changes')
             repo.status_verbose()
@@ -351,6 +356,7 @@ class GitRepo(object):
 
         if not self._is_rebase_in_progress():
             return
+
         try:
             self.repo.git.rebase('--abort')
         except GitError as err:
@@ -388,11 +394,13 @@ class GitRepo(object):
         remote_output = fmt.remote_string(self.remote)
         self._remote(self.remote, remove_dir=True)
         self.fetch(self.remote, depth=depth, ref=branch, remove_dir=True)
+
         if not self.existing_remote_branch(branch, self.remote):
             remove_directory(self.repo_path)
             message = colored(' - No existing remote branch ', 'red') + remote_output + ' ' + branch_output
             self._print(message)
             self._exit(fmt.parallel_exception_error(self.repo_path, message))
+
         self._create_branch_local_tracking(branch, self.remote, depth=depth, fetch=False, remove_dir=True)
 
     def _checkout_new_repo_commit(self, commit, remote, depth):
@@ -401,6 +409,7 @@ class GitRepo(object):
         commit_output = fmt.ref_string(commit)
         self._remote(remote, remove_dir=True)
         self.fetch(remote, depth=depth, ref=commit, remove_dir=True)
+
         self._print(' - Checkout commit ' + commit_output)
         try:
             self.repo.git.checkout(commit)
@@ -420,6 +429,7 @@ class GitRepo(object):
         tag_output = fmt.ref_string(tag)
         self._remote(remote, remove_dir=remove_dir)
         self.fetch(remote, depth=depth, ref='refs/tags/' + tag, remove_dir=remove_dir)
+
         try:
             remote_tag = self.repo.tags[tag]
         except (GitError, IndexError):
@@ -478,6 +488,7 @@ class GitRepo(object):
         if tag not in self.repo.tags:
             self._print(' - No existing tag ' + tag_output)
             return 1
+
         try:
             same_commit = self.repo.head.commit == self.repo.tags[tag].commit
             is_detached = self.repo.head.is_detached
@@ -533,6 +544,7 @@ class GitRepo(object):
             return_code = self.fetch(remote, depth=depth, ref=branch, remove_dir=remove_dir)
             if return_code != 0:
                 return return_code
+
         try:
             self._print(' - Create branch ' + branch_output)
             self.repo.create_head(branch, origin.refs[branch])
@@ -559,8 +571,10 @@ class GitRepo(object):
         branch_output = fmt.ref_string(branch)
         origin = self._remote(remote)
         return_code = self.fetch(remote, depth=depth, ref=branch)
+
         if return_code != 0:
             self._exit('', return_code=return_code)
+
         if branch in origin.refs:
             try:
                 self.repo.git.config('--get', 'branch.' + branch + '.merge')
@@ -574,6 +588,7 @@ class GitRepo(object):
                 self._exit(message)
             except (KeyboardInterrupt, SystemExit):
                 self._exit('')
+
         try:
             self._print(' - Push remote branch ' + branch_output)
             self.repo.git.push(remote, branch)
@@ -594,6 +609,7 @@ class GitRepo(object):
         remote_names = [r.name for r in self.repo.remotes]
         if remote in remote_names:
             return 0
+
         remote_output = fmt.remote_string(remote)
         try:
             self._print(' - Create remote ' + remote_output)
@@ -656,6 +672,7 @@ class GitRepo(object):
 
         if GitRepo.existing_git_repository(self.repo_path):
             return
+
         try:
             self._print(' - Initialize repo at ' + fmt.path(self.repo_path))
             if not os.path.isdir(self.repo_path):
@@ -730,10 +747,12 @@ class GitRepo(object):
         if self.repo.head.is_detached:
             self._print(' - HEAD is detached')
             return
+
         branch_output = fmt.ref_string(branch)
         remote_output = fmt.remote_string(remote)
         self._print(' - Pull from ' + remote_output + ' ' + branch_output)
         command = ['git pull', remote, branch]
+
         return_code = execute_command(command, self.repo_path, print_output=self.print_output)
         if return_code != 0:
             message = colored(' - Failed to pull from ', 'red') + remote_output + ' ' + branch_output
@@ -746,10 +765,12 @@ class GitRepo(object):
         if self.repo.head.is_detached:
             self._print(' - HEAD is detached')
             return
+
         branch_output = fmt.ref_string(branch)
         remote_output = fmt.remote_string(remote)
         self._print(' - Rebase onto ' + remote_output + ' ' + branch_output)
         command = ['git pull --rebase', remote, branch]
+
         return_code = execute_command(command, self.repo_path, print_output=self.print_output)
         if return_code != 0:
             message = colored(' - Failed to rebase onto ', 'red') + remote_output + ' ' + branch_output

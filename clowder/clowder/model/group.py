@@ -48,6 +48,7 @@ class Group(object):
         """Return python object representation for resolved yaml"""
 
         projects_yaml = [p.get_yaml(resolved=True) for p in self.projects]
+
         group = {'name': self.name,
                  'depth': self.depth,
                  'ref': self.ref,
@@ -55,8 +56,10 @@ class Group(object):
                  'remote': self.remote_name,
                  'source': self.source.name,
                  'projects': projects_yaml}
+
         if self.timestamp_author:
             group['timestamp_author'] = self.timestamp_author
+
         return group
 
     def is_dirty(self):

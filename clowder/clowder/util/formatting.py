@@ -20,6 +20,7 @@ def command(cmd):
         command_output = " ".join(cmd)
     else:
         command_output = cmd
+
     return colored('$ ' + command_output, attrs=['bold'])
 
 
@@ -91,8 +92,6 @@ def invalid_entries_error(name, collection, yml):
     if isinstance(collection, list):
         return empty_output
 
-    dict_entries = ''.join('{}: {}\n'.format(key, val)
-                           for key, val in sorted(collection.items())).rstrip()
     length = len(collection)
     if length is 0:
         return empty_output
@@ -100,6 +99,8 @@ def invalid_entries_error(name, collection, yml):
         output_2 = colored(' - Error: Unknown entries in ', 'red')
     else:
         output_2 = colored(' - Error: Unknown entry in ', 'red')
+
+    dict_entries = ''.join('{}: {}\n'.format(key, val) for key, val in sorted(collection.items())).rstrip()
     output_3 = colored(name + '\n\n' + str(dict_entries), attrs=['bold'])
     return output_1 + output_2 + output_3
 

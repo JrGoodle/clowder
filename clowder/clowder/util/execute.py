@@ -45,11 +45,14 @@ def execute_command(command, path, shell=True, env=None, print_output=True):
     cmd_env = os.environ.copy()
     if env:
         cmd_env.update(env)
+
     if print_output:
         pipe = None
     else:
         pipe = subprocess.PIPE
+
     pool = ThreadPool()
+
     try:
         result = pool.apply(execute_subprocess_command,
                             args=(command, path),

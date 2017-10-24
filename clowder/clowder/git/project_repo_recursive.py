@@ -20,10 +20,13 @@ class ProjectRepoRecursive(ProjectRepo):
         """Discard changes for repo and submodules"""
 
         ProjectRepo.clean(self, args=args)
+
         self._print(' - Clean submodules recursively')
         self._submodules_clean()
+
         self._print(' - Reset submodules recursively')
         self._submodules_reset()
+
         self._print(' - Update submodules recursively')
         self._submodules_update()
 
@@ -59,10 +62,12 @@ class ProjectRepoRecursive(ProjectRepo):
         """Update submodules recursively and initialize if not present"""
 
         print(' - Recursively update and init submodules')
+
         if depth == 0:
             command = ['git', 'submodule', 'update', '--init', '--recursive']
         else:
             command = ['git', 'submodule', 'update', '--init', '--recursive', '--depth', depth]
+
         return_code = execute_command(command, self.repo_path)
         if return_code != 0:
             message = colored(' - Failed to update submodules\n', 'red') + fmt.command_failed_error(command)
@@ -80,10 +85,8 @@ class ProjectRepoRecursive(ProjectRepo):
 
         if not ProjectRepo.validate_repo(self):
             return False
-        for submodule in self.repo.submodules:
-            if not self.is_dirty_submodule(submodule.path):
-                return False
-        return True
+
+        return not any([self.is_dirty_submodule(s.path) for s in self.repo.submodules])
 
     def _submodules_clean(self):
         """Clean all submodules"""
