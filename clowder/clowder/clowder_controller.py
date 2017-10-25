@@ -383,7 +383,7 @@ class ClowderController(object):
         for group in groups:
             print(fmt.group_name(group.name))
             for project in group.projects:
-                project.status(padding=padding)
+                print(project.status(padding=padding))
 
     def sync(self, project_names, rebase=False, parallel=False):
         """Sync projects"""
