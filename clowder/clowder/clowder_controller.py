@@ -209,12 +209,7 @@ class ClowderController(object):
         versions_dir = os.path.join(self.root_directory, '.clowder', 'versions')
         if not os.path.exists(versions_dir):
             return None
-
-        versions = os.listdir(versions_dir)
-        for version in versions[:]:
-            if version.startswith('.'):
-                versions.remove(version)
-        return versions
+        return [v for v in os.listdir(versions_dir) if not v.startswith('.') if v.lower() != 'default']
 
     def herd(self, group_names, project_names=None, skip=None, branch=None, tag=None, depth=None, rebase=False):
         """Pull or rebase latest upstream changes for projects"""
