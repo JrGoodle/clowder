@@ -14,7 +14,7 @@ cd "$SWIFT_EXAMPLE_DIR" || exit 1
 if [ "$ACCESS_LEVEL" == "write" ]; then
     mkdir swift-source || exit 1
     pushd swift-source || exit 1
-    clowder init git@github.com:JrGoodle/swift-clowder.git || exit 1
+    clowder init git@github.com:JrGoodle/swift-clowder.git -b test || exit 1
     clowder link -v jrgoodle-fork || exit 1
 
     test_configure_remotes_herd() {
