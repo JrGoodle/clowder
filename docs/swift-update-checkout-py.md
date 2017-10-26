@@ -37,9 +37,3 @@ swift/utils/update-checkout --scheme swift-4.0-branch --match-timestamp
 clowder link -v swift-4.0-branch
 clowder reset --timestamp apple/swift
 ```
-
-# Issues
-
-https://bugs.swift.org/browse/SR-3800
-
-https://github.com/apple/swift/commit/421c62ea2dd8d9b0b48cc97bfc998606686c1569#diff-ed037b68ad5e78641d57aebc2973448c
