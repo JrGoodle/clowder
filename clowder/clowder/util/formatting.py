@@ -16,11 +16,7 @@ def clowder_command(cmd):
 def command(cmd):
     """Return formatted command name"""
 
-    if isinstance(cmd, list):
-        command_output = " ".join(cmd)
-    else:
-        command_output = cmd
-
+    command_output = " ".join(cmd) if isinstance(cmd, list) else cmd
     return colored('$ ' + command_output, attrs=['bold'])
 
 
