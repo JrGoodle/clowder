@@ -9,6 +9,4 @@ class ClowderGitError(Exception):
         self.msg = msg
 
     def __str__(self):
-        if self.msg is None:
-            return "ClowderGitException"
-        return self.msg
+        return self.msg if isinstance(self.msg, str) else "ClowderGitException"
