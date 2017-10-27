@@ -1,4 +1,9 @@
-"""File system utilities"""
+# -*- coding: utf-8 -*-
+"""File system utilities
+
+.. codeauthor:: Joe Decapo <joe@polka.cat>
+
+"""
 
 from __future__ import print_function
 
@@ -10,7 +15,11 @@ from termcolor import colored
 
 
 def remove_directory(path):
-    """Remove directory at path"""
+    """Remove directory at path
+
+    :param str path: Path to remove
+    :return:
+    """
 
     try:
         shutil.rmtree(path)
