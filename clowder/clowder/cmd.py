@@ -88,8 +88,7 @@ class Command(object):
         """clowder branch command"""
 
         self._validate_clowder_yaml()
-        if self.clowder_repo is None:
-            exit_clowder_not_found()
+        self._exit_clowder_not_found()
 
         self.clowder_repo.print_status()
         if self.clowder is None:
@@ -112,8 +111,7 @@ class Command(object):
         """clowder clean command"""
 
         self._validate_clowder_yaml()
-        if self.clowder_repo is None:
-            exit_clowder_not_found()
+        self._exit_clowder_not_found()
 
         self.clowder_repo.print_status()
         if self.clowder is None:
@@ -140,8 +138,7 @@ class Command(object):
         """clowder diff command"""
 
         self._validate_clowder_yaml()
-        if self.clowder_repo is None:
-            exit_clowder_not_found()
+        self._exit_clowder_not_found()
 
         self.clowder_repo.print_status()
         if self.clowder is None:
@@ -153,8 +150,7 @@ class Command(object):
         """clowder forall command"""
 
         self._validate_clowder_yaml()
-        if self.clowder_repo is None:
-            exit_clowder_not_found()
+        self._exit_clowder_not_found()
 
         self.clowder_repo.print_status()
         if self.clowder is None:
@@ -168,8 +164,7 @@ class Command(object):
         """clowder herd command"""
 
         self._validate_clowder_yaml()
-        if self.clowder_repo is None:
-            exit_clowder_not_found()
+        self._exit_clowder_not_found()
 
         self.clowder_repo.print_status(fetch=True)
         if is_offline():
@@ -213,8 +208,7 @@ class Command(object):
     def link(self):
         """clowder link command"""
 
-        if self.clowder_repo is None:
-            exit_clowder_not_found()
+        self._exit_clowder_not_found()
 
         self.clowder_repo.print_status()
         if self.args.version is None:
@@ -226,8 +220,7 @@ class Command(object):
     def prune(self):
         """clowder prune command"""
         self._validate_clowder_yaml()
-        if self.clowder_repo is None:
-            exit_clowder_not_found()
+        self._exit_clowder_not_found()
 
         self.clowder_repo.print_status()
         if self.clowder is None:
@@ -257,8 +250,7 @@ class Command(object):
     def repo(self):
         """clowder repo command"""
 
-        if self.clowder_repo is None:
-            exit_clowder_not_found()
+        self._exit_clowder_not_found()
 
         repo_command = 'repo_' + self.args.repo_command
         getattr(self, repo_command)()
@@ -266,8 +258,7 @@ class Command(object):
     def repo_add(self):
         """clowder repo add command"""
 
-        if self.clowder_repo is None:
-            exit_clowder_not_found()
+        self._exit_clowder_not_found()
 
         self.clowder_repo.print_status()
         self.clowder_repo.add(self.args.files)
@@ -275,8 +266,7 @@ class Command(object):
     def repo_checkout(self):
         """clowder repo checkout command"""
 
-        if self.clowder_repo is None:
-            exit_clowder_not_found()
+        self._exit_clowder_not_found()
 
         self.clowder_repo.print_status(fetch=True)
         self.clowder_repo.checkout(self.args.ref[0])
@@ -284,8 +274,7 @@ class Command(object):
     def repo_clean(self):
         """clowder repo clean command"""
 
-        if self.clowder_repo is None:
-            exit_clowder_not_found()
+        self._exit_clowder_not_found()
 
         self.clowder_repo.print_status()
         self.clowder_repo.clean()
@@ -293,8 +282,7 @@ class Command(object):
     def repo_commit(self):
         """clowder repo commit command"""
 
-        if self.clowder_repo is None:
-            exit_clowder_not_found()
+        self._exit_clowder_not_found()
 
         self.clowder_repo.print_status()
         self.clowder_repo.commit(self.args.message[0])
@@ -302,8 +290,7 @@ class Command(object):
     def repo_pull(self):
         """clowder repo pull command"""
 
-        if self.clowder_repo is None:
-            exit_clowder_not_found()
+        self._exit_clowder_not_found()
 
         if is_offline():
             print(fmt.offline_error())
@@ -315,8 +302,7 @@ class Command(object):
     def repo_push(self):
         """clowder repo push command"""
 
-        if self.clowder_repo is None:
-            exit_clowder_not_found()
+        self._exit_clowder_not_found()
 
         if is_offline():
             print(fmt.offline_error())
@@ -328,16 +314,15 @@ class Command(object):
     def repo_run(self):
         """clowder repo run command"""
 
-        if self.clowder_repo is None:
-            exit_clowder_not_found()
+        self._exit_clowder_not_found()
 
         self.clowder_repo.print_status()
         self.clowder_repo.run_command(self.args.command[0])
 
     def repo_status(self):
         """clowder repo status command"""
-        if self.clowder_repo is None:
-            exit_clowder_not_found()
+
+        self._exit_clowder_not_found()
 
         self.clowder_repo.print_status()
         self.clowder_repo.git_status()
@@ -346,8 +331,7 @@ class Command(object):
         """clowder reset command"""
 
         self._validate_clowder_yaml()
-        if self.clowder_repo is None:
-            exit_clowder_not_found()
+        self._exit_clowder_not_found()
 
         self.clowder_repo.print_status(fetch=True)
         if is_offline():
@@ -366,8 +350,7 @@ class Command(object):
     def save(self):
         """clowder save command"""
 
-        if self.clowder_repo is None:
-            exit_clowder_not_found()
+        self._exit_clowder_not_found()
 
         if self.clowder is None:
             sys.exit(1)
@@ -379,8 +362,7 @@ class Command(object):
         """clowder start command"""
 
         self._validate_clowder_yaml()
-        if self.clowder_repo is None:
-            exit_clowder_not_found()
+        self._exit_clowder_not_found()
 
         self.clowder_repo.print_status()
         if self.clowder is None:
@@ -400,8 +382,7 @@ class Command(object):
         """clowder stash command"""
 
         self._validate_clowder_yaml()
-        if self.clowder_repo is None:
-            exit_clowder_not_found()
+        self._exit_clowder_not_found()
 
         self.clowder_repo.print_status()
         if self.clowder is None:
@@ -413,8 +394,7 @@ class Command(object):
         """clowder status command"""
 
         self._validate_clowder_yaml()
-        if self.clowder_repo is None:
-            exit_clowder_not_found()
+        self._exit_clowder_not_found()
 
         self.clowder_repo.print_status(fetch=self.args.fetch)
         if self.clowder is None:
@@ -436,8 +416,7 @@ class Command(object):
         """clowder sync command"""
 
         self._validate_clowder_yaml()
-        if self.clowder_repo is None:
-            exit_clowder_not_found()
+        self._exit_clowder_not_found()
 
         self.clowder_repo.print_status(fetch=True)
         if self.clowder is None:
@@ -462,14 +441,20 @@ class Command(object):
     def yaml(self):
         """clowder yaml command"""
 
-        if self.clowder_repo is None:
-            exit_clowder_not_found()
+        self._exit_clowder_not_found()
 
         self.clowder_repo.print_status()
         if self._invalid_yaml:
             sys.exit(1)
 
         self.clowder.print_yaml(self.args.resolved)
+
+    def _exit_clowder_not_found(self):
+        """Print clowder not found message and exit"""
+
+        if self.clowder_repo is None:
+            cprint(' - No clowder found in the current directory\n', 'red')
+            sys.exit(1)
 
     def _exit_handler_formatter(self):
         """Exit handler to display trailing newline"""
@@ -491,11 +476,4 @@ def exit_unrecognized_command(parser):
 
     parser.print_help()
     print()
-    sys.exit(1)
-
-
-def exit_clowder_not_found():
-    """Print clowder not found message and exit"""
-
-    cprint(' - No clowder found in the current directory\n', 'red')
     sys.exit(1)
