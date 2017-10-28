@@ -2,6 +2,7 @@
 
 from __future__ import print_function
 
+import inspect
 import os
 import sys
 
@@ -163,19 +164,21 @@ class Project(object):
 
         self._print_output = not parallel
 
-        herd_depth = depth if depth is not None else self._depth
+        herd_depth = self._depth if depth is None else depth
         repo = self._repo(self.full_path(), self._remote, self._ref, self._recursive,
                           parallel=parallel, print_output=self._print_output)
 
         if branch:
-            self._herd_branch(repo, branch, herd_depth, rebase)
+            fork_remote = None if self.fork is None else self.fork.remote_name
+            self._run_herd_command('herd_branch', repo, self._url, branch,
+                                   depth=herd_depth, rebase=rebase, fork_remote=fork_remote)
             return
 
         if tag:
-            self._herd_tag(repo, tag, herd_depth, rebase)
+            self._run_herd_command('herd_tag', repo, self._url, tag, depth=herd_depth, rebase=rebase)
             return
 
-        self._herd_ref(repo, herd_depth, rebase)
+        self._run_herd_command('herd', repo, self._url, depth=herd_depth, rebase=rebase)
 
     def is_dirty(self):
         """Check if project is dirty"""
@@ -290,7 +293,9 @@ class Project(object):
 
         repo = self._repo(self.full_path(), self._remote, self._ref, self._recursive,
                           parallel=parallel, print_output=self._print_output)
-        self._sync(repo, rebase)
+        self._run_herd_command('herd', repo, self._url, rebase=rebase)
+        self._print(self.fork.status())
+        repo.sync(self.fork.remote_name, rebase=rebase)
 
     @staticmethod
     def _exit(message, parallel=False, return_code=1):
@@ -299,54 +304,6 @@ class Project(object):
         if parallel:
             raise ClowderError(message)
         sys.exit(return_code)
-
-    def _herd_branch(self, repo, branch, depth, rebase):
-        """Clone project or update latest from upstream"""
-
-        if self.fork is None:
-            repo.herd_branch(self._url, branch, depth=depth, rebase=rebase)
-            return
-
-        self._print(self.fork.status())
-        repo.configure_remotes(self._remote, self._url, self.fork.remote_name, self.fork.url)
-
-        self._print(fmt.fork_string(self.name))
-        repo.herd_branch(self._url, branch, rebase=rebase, fork_remote=self.fork.remote_name)
-
-        self._print(fmt.fork_string(self.fork.name))
-        repo.herd_remote(self.fork.url, self.fork.remote_name, branch=branch)
-
-    def _herd_ref(self, repo, depth, rebase):
-        """Clone project or update latest from upstream"""
-
-        if self.fork is None:
-            repo.herd(self._url, depth=depth, rebase=rebase)
-            return
-
-        self._print(self.fork.status())
-        repo.configure_remotes(self._remote, self._url, self.fork.remote_name, self.fork.url)
-
-        self._print(fmt.fork_string(self.name))
-        repo.herd(self._url, rebase=rebase)
-
-        self._print(fmt.fork_string(self.fork.name))
-        repo.herd_remote(self.fork.url, self.fork.remote_name)
-
-    def _herd_tag(self, repo, tag, depth, rebase):
-        """Clone project or update latest from upstream"""
-
-        if self.fork is None:
-            repo.herd_tag(self._url, tag, depth=depth, rebase=rebase)
-            return
-
-        self._print(self.fork.status())
-        repo.configure_remotes(self._remote, self._url, self.fork.remote_name, self.fork.url)
-
-        self._print(fmt.fork_string(self.name))
-        repo.herd_tag(self._url, tag, rebase=rebase)
-
-        self._print(fmt.fork_string(self.fork.name))
-        repo.herd_remote(self.fork.url, self.fork.remote_name)
 
     def _print(self, val):
         """Print output if self._print_output is True"""
@@ -398,17 +355,24 @@ class Project(object):
 
         repo.reset()
 
-    def _sync(self, repo, rebase):
-        """Sync fork project with upstream"""
+    def _run_herd_command(self, command, repo, *args, **kwargs):
+        """Run herd command"""
+
+        if self.fork is None:
+            getattr(repo, command)(*args, **kwargs)
+            return
 
         self._print(self.fork.status())
         repo.configure_remotes(self._remote, self._url, self.fork.remote_name, self.fork.url)
 
         self._print(fmt.fork_string(self.name))
-        repo.herd(self._url, self._remote, rebase=rebase)
+        kwargs['depth'] = 0
+        getattr(repo, command)(*args, **kwargs)
 
         self._print(fmt.fork_string(self.fork.name))
-        repo.herd_remote(self.fork.url, self.fork.remote_name)
 
-        self._print(self.fork.status())
-        repo.sync(self.fork.remote_name, rebase=rebase)
+        frame = inspect.currentframe()
+        vals = inspect.getargvalues(frame)
+        branch_arg = [a for a in vals.args if vals.locals[a] if vals.locals[a] == 'branch']
+        branch = branch_arg[0] if branch_arg else None
+        repo.herd_remote(self.fork.url, self.fork.remote_name, branch=branch)
