@@ -294,6 +294,14 @@ def _load_yaml_import_sources(imported_sources, sources):
         sources = combined_sources
 
 
+def _validate_optional_ref(dictionary, yaml_file):
+    """Check whether ref type is valid"""
+    if 'ref' in dictionary:
+        _validate_type(dictionary['ref'], 'ref', str, 'str', yaml_file)
+        _validate_ref_type(dictionary, yaml_file)
+        del dictionary['ref']
+
+
 def _valid_ref_type(ref):
     """Validate that ref is formatted correctly"""
 
@@ -308,10 +316,10 @@ def _valid_ref_type(ref):
     return False
 
 
-def _validate_ref_type(dictionary, value, yaml_file):
+def _validate_ref_type(dictionary, yaml_file):
     """Check whether ref type is valid"""
-    if not _valid_ref_type(dictionary[value]):
-        error = fmt.invalid_ref_error(dictionary[value], yaml_file)
+    if not _valid_ref_type(dictionary['ref']):
+        error = fmt.invalid_ref_error(dictionary['ref'], yaml_file)
         raise ClowderError(error)
 
 
@@ -341,10 +349,7 @@ def _validate_yaml_import_defaults(defaults, yaml_file):
         _validate_type(defaults['recursive'], 'recursive', bool, 'bool', yaml_file)
         del defaults['recursive']
 
-    if 'ref' in defaults:
-        _validate_type(defaults['ref'], 'ref', str, 'str', yaml_file)
-        _validate_ref_type(defaults, 'ref', yaml_file)
-        del defaults['ref']
+    _validate_optional_ref(defaults, yaml_file)
 
     if 'remote' in defaults:
         _validate_type(defaults['remote'], 'remote', str, 'str', yaml_file)
@@ -377,7 +382,7 @@ def _validate_yaml_defaults(defaults, yaml_file):
 
     _dict_contains_value(defaults, 'defaults', 'ref', yaml_file)
     _validate_type(defaults['ref'], 'ref', str, 'str', yaml_file)
-    _validate_ref_type(defaults, 'ref', yaml_file)
+    _validate_ref_type(defaults, yaml_file)
     del defaults['ref']
 
     _dict_contains_value(defaults, 'defaults', 'remote', yaml_file)
@@ -512,10 +517,7 @@ def _validate_yaml_import_group(group, yaml_file):
         _validate_type(group['recursive'], 'recursive', bool, 'bool', yaml_file)
         del group['recursive']
 
-    if 'ref' in group:
-        _validate_type(group['ref'], 'ref', str, 'str', yaml_file)
-        _validate_ref_type(group, 'ref', yaml_file)
-        del group['ref']
+    _validate_optional_ref(group, yaml_file)
 
     if 'remote' in group:
         _validate_type(group['remote'], 'remote', str, 'str', yaml_file)
@@ -563,10 +565,7 @@ def _validate_yaml_group(group, yaml_file):
         _validate_type(group['timestamp_author'], 'timestamp_author', str, 'str', yaml_file)
         del group['timestamp_author']
 
-    if 'ref' in group:
-        _validate_type(group['ref'], 'ref', str, 'str', yaml_file)
-        _validate_ref_type(group, 'ref', yaml_file)
-        del group['ref']
+    _validate_optional_ref(group, yaml_file)
 
     if 'remote' in group:
         _validate_type(group['remote'], 'remote', str, 'str', yaml_file)
@@ -624,10 +623,7 @@ def _validate_yaml_project_optional(project, yaml_file):
         _validate_type(project['timestamp_author'], 'timestamp_author', str, 'str', yaml_file)
         del project['timestamp_author']
 
-    if 'ref' in project:
-        _validate_type(project['ref'], 'ref', str, 'str', yaml_file)
-        _validate_ref_type(project, 'ref', yaml_file)
-        del project['ref']
+    _validate_optional_ref(project, yaml_file)
 
     if 'source' in project:
         _validate_type(project['source'], 'source', str, 'str', yaml_file)
