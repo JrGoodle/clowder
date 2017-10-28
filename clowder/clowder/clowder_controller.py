@@ -175,7 +175,6 @@ class ClowderController(object):
             self._forall_parallel(command, skip, ignore_errors, projects)
             return
 
-        # Serial
         for project in projects:
             self._run_project_command(project, skip, 'run', command, ignore_errors)
 
@@ -276,6 +275,7 @@ class ClowderController(object):
 
         if skip is None:
             skip = []
+
         if project_names is None:
             groups = [g for g in self.groups if g.name in group_names]
             self._validate_groups(groups)
@@ -291,11 +291,11 @@ class ClowderController(object):
 
         if skip is None:
             skip = []
+
         if parallel:
             self._reset_parallel(group_names, skip=skip, timestamp_project=timestamp_project)
             return
 
-        # Serial
         timestamp = None
         if timestamp_project:
             timestamp = self._get_timestamp(timestamp_project)
@@ -388,7 +388,6 @@ class ClowderController(object):
             self._sync_parallel(projects, rebase=rebase)
             return
 
-        # Serial
         for project in projects:
             project.sync(rebase=rebase)
 
