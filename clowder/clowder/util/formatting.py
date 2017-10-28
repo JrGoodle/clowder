@@ -43,7 +43,7 @@ def empty_yaml_error(yml):
     """Return formatted error string for empty clowder.yaml"""
 
     output_1 = yaml_path(yml) + colored(' - Error: No entries in ', 'red')
-    output_2 = yml('clowder.yaml')
+    output_2 = yaml_file('clowder.yaml')
     return output_1 + output_2
 
 
@@ -73,29 +73,6 @@ def group_name(name):
     return colored(name, attrs=['bold', 'underline'])
 
 
-def invalid_entries_error(name, collection, yml):
-    """Return formatted error string for invalid entry in collection"""
-
-    output_1 = yaml_path(yml) + colored(' - Error: No entries in ', 'red')
-    output_2 = colored(name, attrs=['bold'])
-    empty_output = output_1 + output_2
-
-    if isinstance(collection, list):
-        return empty_output
-
-    length = len(collection)
-    if length is 0:
-        return empty_output
-    elif length > 1:
-        output_2 = colored(' - Error: Unknown entries in ', 'red')
-    else:
-        output_2 = colored(' - Error: Unknown entry in ', 'red')
-
-    dict_entries = ''.join('{}: {}\n'.format(key, val) for key, val in sorted(collection.items())).rstrip()
-    output_3 = colored(name + '\n\n' + str(dict_entries), attrs=['bold'])
-    return output_1 + output_2 + output_3
-
-
 def invalid_ref_error(ref, yml):
     """Return formatted error string for incorrect ref"""
 
@@ -112,6 +89,14 @@ def invalid_yaml_error():
 
     clowder_output = yaml_file('clowder.yaml')
     return '\n' + clowder_output + ' appears to be invalid'
+
+
+def missing_entries_error(name, yml):
+    """Return formatted error string for invalid entry in collection"""
+
+    output_1 = yaml_path(yml) + colored(' - Error: Missing entries in ', 'red')
+    output_2 = colored(name, attrs=['bold'])
+    return output_1 + output_2
 
 
 def missing_entry_error(entry, name, yml):
@@ -265,6 +250,19 @@ def type_error(name, yml, type_name):
     output_3 = colored(' type should be ', 'red')
     output_4 = colored(type_name, 'yellow')
     return output_1 + output_2 + output_3 + output_4
+
+
+def unknown_entry_error(name, collection, yml):
+    """Return formatted error string for unknown entry in collection"""
+
+    if len(collection) > 1:
+        output_1 = yaml_path(yml) + colored(' - Error: Unknown entries in ', 'red')
+    else:
+        output_1 = yaml_path(yml) + colored(' - Error: Unknown entry in ', 'red')
+    output_2 = colored(name, attrs=['bold'])
+    dict_entries = ''.join('{}: {}\n'.format(key, val) for key, val in sorted(collection.items())).rstrip()
+    output_3 = colored('\n\n' + str(dict_entries), attrs=['bold'])
+    return output_1 + output_2 + output_3
 
 
 def version(version_name):

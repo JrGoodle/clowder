@@ -88,8 +88,17 @@ class ClowderController(object):
         self.sources = []
         self._max_import_depth = 10
         yaml_file = os.path.join(self.root_directory, 'clowder.yaml')
-        self._validate_yaml(yaml_file, self._max_import_depth)
-        self._load_yaml()
+
+        try:
+            self._validate_yaml(yaml_file, self._max_import_depth)
+        except ClowderError as err:
+            print(fmt.invalid_yaml_error())
+            print(fmt.error(err))
+            sys.exit(1)
+        except (KeyboardInterrupt, SystemExit):
+            sys.exit(1)
+        else:
+            self._load_yaml()
 
     def branch(self, group_names, project_names=None, skip=None, local=False, remote=False):
         """Show branches"""
