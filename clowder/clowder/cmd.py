@@ -42,6 +42,20 @@ def clowder_required(func):
     return wrapper
 
 
+def valid_clowder_yaml_required(func):
+    """If clowder.yaml is invalid, print invalid yaml message and exit"""
+
+    def wrapper(*args):
+        instance = args[0]
+        if instance.invalid_yaml:
+            print(fmt.invalid_yaml_error())
+            print(fmt.error(instance.error))
+            sys.exit(1)
+        return func(*args)
+
+    return wrapper
+
+
 class Command(object):
     """Command class for parsing commandline options"""
 
@@ -50,7 +64,7 @@ class Command(object):
         self.clowder = None
         self.clowder_repo = None
         self.versions = None
-        self._invalid_yaml = False
+        self.invalid_yaml = False
         self._version = '2.4.0'
         clowder_path = os.path.join(self.root_directory, '.clowder')
 
@@ -67,8 +81,8 @@ class Command(object):
                 self.clowder = ClowderController(self.root_directory)
                 self.versions = self.clowder.get_saved_version_names()
             except (ClowderError, KeyError) as err:
-                self._invalid_yaml = True
-                self._error = err
+                self.invalid_yaml = True
+                self.error = err
             except (KeyboardInterrupt, SystemExit):
                 sys.exit(1)
 
@@ -84,7 +98,7 @@ class Command(object):
         # Register exit handler to display trailing newline
         self._display_trailing_newline = True
         atexit.register(self._exit_handler_formatter)
-        if not self._invalid_yaml:
+        if not self.invalid_yaml:
             print()
         self.args = parser.parse_args()
         self._display_trailing_newline = False
@@ -98,10 +112,9 @@ class Command(object):
         print()
 
     @clowder_required
+    @valid_clowder_yaml_required
     def branch(self):
         """clowder branch command"""
-
-        self._validate_clowder_yaml()
 
         self.clowder_repo.print_status()
         if self.clowder is None:
@@ -121,10 +134,9 @@ class Command(object):
                             skip=self.args.skip, local=True)
 
     @clowder_required
+    @valid_clowder_yaml_required
     def clean(self):
         """clowder clean command"""
-
-        self._validate_clowder_yaml()
 
         self.clowder_repo.print_status()
         if self.clowder is None:
@@ -148,10 +160,9 @@ class Command(object):
                            skip=self.args.skip, args=clean_args, recursive=self.args.recursive)
 
     @clowder_required
+    @valid_clowder_yaml_required
     def diff(self):
         """clowder diff command"""
-
-        self._validate_clowder_yaml()
 
         self.clowder_repo.print_status()
         if self.clowder is None:
@@ -160,10 +171,9 @@ class Command(object):
         self.clowder.diff(group_names=self.args.groups, project_names=self.args.projects)
 
     @clowder_required
+    @valid_clowder_yaml_required
     def forall(self):
         """clowder forall command"""
-
-        self._validate_clowder_yaml()
 
         self.clowder_repo.print_status()
         if self.clowder is None:
@@ -174,10 +184,9 @@ class Command(object):
                             skip=self.args.skip, parallel=self.args.parallel)
 
     @clowder_required
+    @valid_clowder_yaml_required
     def herd(self):
         """clowder herd command"""
-
-        self._validate_clowder_yaml()
 
         self.clowder_repo.print_status(fetch=True)
         if is_offline():
@@ -230,10 +239,9 @@ class Command(object):
         self.clowder_repo.link(version)
 
     @clowder_required
+    @valid_clowder_yaml_required
     def prune(self):
         """clowder prune command"""
-
-        self._validate_clowder_yaml()
 
         self.clowder_repo.print_status()
         if self.clowder is None:
@@ -332,10 +340,9 @@ class Command(object):
         self.clowder_repo.git_status()
 
     @clowder_required
+    @valid_clowder_yaml_required
     def reset(self):
         """clowder reset command"""
-
-        self._validate_clowder_yaml()
 
         self.clowder_repo.print_status(fetch=True)
         if is_offline():
@@ -366,10 +373,9 @@ class Command(object):
         self.clowder.save_version(self.args.version)
 
     @clowder_required
+    @valid_clowder_yaml_required
     def start(self):
         """clowder start command"""
-
-        self._validate_clowder_yaml()
 
         self.clowder_repo.print_status()
         if self.clowder is None:
@@ -386,10 +392,9 @@ class Command(object):
             self.clowder.start_projects(self.args.projects, self.args.skip, self.args.branch, self.args.tracking)
 
     @clowder_required
+    @valid_clowder_yaml_required
     def stash(self):
         """clowder stash command"""
-
-        self._validate_clowder_yaml()
 
         self.clowder_repo.print_status()
         if self.clowder is None:
@@ -398,10 +403,9 @@ class Command(object):
         self.clowder.stash(group_names=self.args.groups, project_names=self.args.projects, skip=self.args.skip)
 
     @clowder_required
+    @valid_clowder_yaml_required
     def status(self):
         """clowder status command"""
-
-        self._validate_clowder_yaml()
 
         self.clowder_repo.print_status(fetch=self.args.fetch)
         if self.clowder is None:
@@ -420,10 +424,9 @@ class Command(object):
         self.clowder.status(self.clowder.get_all_group_names(), padding)
 
     @clowder_required
+    @valid_clowder_yaml_required
     def sync(self):
         """clowder sync command"""
-
-        self._validate_clowder_yaml()
 
         self.clowder_repo.print_status(fetch=True)
         if self.clowder is None:
@@ -446,13 +449,11 @@ class Command(object):
         sys.exit()
 
     @clowder_required
+    @valid_clowder_yaml_required
     def yaml(self):
         """clowder yaml command"""
 
         self.clowder_repo.print_status()
-        if self._invalid_yaml:
-            sys.exit(1)
-
         self.clowder.print_yaml(self.args.resolved)
 
     def _exit_handler_formatter(self):
@@ -460,14 +461,6 @@ class Command(object):
 
         if self._display_trailing_newline:
             print()
-
-    def _validate_clowder_yaml(self):
-        """Print invalid yaml message and exit if invalid"""
-
-        if self._invalid_yaml:
-            print(fmt.invalid_yaml_error())
-            print(fmt.error(self._error))
-            sys.exit(1)
 
 
 def exit_unrecognized_command(parser):
