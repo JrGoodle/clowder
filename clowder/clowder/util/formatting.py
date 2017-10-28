@@ -137,46 +137,6 @@ def missing_yaml_error():
     return clowder_output + ' appears to be missing'
 
 
-def not_list_error(name, yml):
-    """Return formatted error string for value that's not a list"""
-
-    output_1 = yaml_path(yml) + colored(' - Error: ', 'red')
-    output_2 = colored(name, attrs=['bold'])
-    output_3 = colored(' type should be ', 'red')
-    output_4 = colored('list', 'yellow')
-    return output_1 + output_2 + output_3 + output_4
-
-
-def not_dictionary_error(name, yml):
-    """Return formatted error string for value that's not a dictionary"""
-
-    output_1 = yaml_path(yml) + colored(' - Error: ', 'red')
-    output_2 = colored(name, attrs=['bold'])
-    output_3 = colored(' type should be ', 'red')
-    output_4 = colored('dict', 'yellow')
-    return output_1 + output_2 + output_3 + output_4
-
-
-def not_string_error(name, yml):
-    """Return formatted error string for value that's not a string"""
-
-    output_1 = yaml_path(yml) + colored(' - Error: ', 'red')
-    output_2 = colored(name, attrs=['bold'])
-    output_3 = colored(' type should be ', 'red')
-    output_4 = colored('str', 'yellow')
-    return output_1 + output_2 + output_3 + output_4
-
-
-def not_bool_error(name, yml):
-    """Return formatted error string for value that's not a boolean"""
-
-    output_1 = yaml_path(yml) + colored(' - Error: ', 'red')
-    output_2 = colored(name, attrs=['bold'])
-    output_3 = colored(' type should be ', 'red')
-    output_4 = colored('bool', 'yellow')
-    return output_1 + output_2 + output_3 + output_4
-
-
 def offline_error():
     """Return error message for no internet connection"""
 
@@ -295,6 +255,16 @@ def skip_project_message():
     """Return skip project message"""
 
     return ' - Skip project'
+
+
+def type_error(name, yml, type_name):
+    """Return formatted error string for value with wrong type"""
+
+    output_1 = yaml_path(yml) + colored(' - Error: ', 'red')
+    output_2 = colored(name, attrs=['bold'])
+    output_3 = colored(' type should be ', 'red')
+    output_4 = colored(type_name, 'yellow')
+    return output_1 + output_2 + output_3 + output_4
 
 
 def version(version_name):

@@ -319,7 +319,7 @@ def _validate_type_bool(value, name, yaml_file):
     """Validate value is a bool"""
 
     if not isinstance(value, bool):
-        error = fmt.not_bool_error(name, yaml_file)
+        error = fmt.type_error(name, yaml_file, 'bool')
         raise ClowderError(error)
 
 
@@ -337,7 +337,7 @@ def _validate_type_dict(value, name, yaml_file):
     """Validate value is a dict"""
 
     if not isinstance(value, dict):
-        error = fmt.not_dictionary_error(name, yaml_file)
+        error = fmt.type_error(name, yaml_file, 'dict')
         raise ClowderError(error)
 
 
@@ -345,7 +345,7 @@ def _validate_type_list(value, name, yaml_file):
     """Validate value is a list"""
 
     if not isinstance(value, list):
-        error = fmt.not_list_error(name, yaml_file)
+        error = fmt.type_error(name, yaml_file, 'list')
         raise ClowderError(error)
 
 
@@ -353,7 +353,7 @@ def _validate_type_str(value, name, yaml_file):
     """Validate value is a str"""
 
     if not isinstance(value, str):
-        error = fmt.not_string_error(name, yaml_file)
+        error = fmt.type_error(name, yaml_file, 'str')
         raise ClowderError(error)
 
 
