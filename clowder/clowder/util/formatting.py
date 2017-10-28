@@ -32,21 +32,19 @@ def command_failed_error(cmd):
 def depth_error(depth, yml):
     """Return formatted error string for invalid depth"""
 
-    output_1 = yaml_path(yml)
-    output_2 = colored(' - Error: ', 'red')
-    output_3 = colored('depth', attrs=['bold'])
-    output_4 = colored(' must be a positive integer\n', 'red')
-    output_5 = colored('depth: ' + str(depth), attrs=['bold'])
-    return output_1 + output_2 + output_3 + output_4 + output_5
+    output_1 = yaml_path(yml) + colored(' - Error: ', 'red')
+    output_2 = colored('depth', attrs=['bold'])
+    output_3 = colored(' must be a positive integer\n', 'red')
+    output_4 = colored('depth: ' + str(depth), attrs=['bold'])
+    return output_1 + output_2 + output_3 + output_4
 
 
 def empty_yaml_error(yml):
     """Return formatted error string for empty clowder.yaml"""
 
-    output_1 = yaml_path(yml)
-    output_2 = colored(' - Error: No entries in ', 'red')
-    output_3 = yml('clowder.yaml')
-    return output_1 + output_2 + output_3
+    output_1 = yaml_path(yml) + colored(' - Error: No entries in ', 'red')
+    output_2 = yml('clowder.yaml')
+    return output_1 + output_2
 
 
 def error(err):
@@ -78,10 +76,9 @@ def group_name(name):
 def invalid_entries_error(name, collection, yml):
     """Return formatted error string for invalid entry in collection"""
 
-    output_1 = yaml_path(yml)
-    output_2 = colored(' - Error: No entries in ', 'red')
-    output_3 = colored(name, attrs=['bold'])
-    empty_output = output_1 + output_2 + output_3
+    output_1 = yaml_path(yml) + colored(' - Error: No entries in ', 'red')
+    output_2 = colored(name, attrs=['bold'])
+    empty_output = output_1 + output_2
 
     if isinstance(collection, list):
         return empty_output
@@ -102,13 +99,12 @@ def invalid_entries_error(name, collection, yml):
 def invalid_ref_error(ref, yml):
     """Return formatted error string for incorrect ref"""
 
-    output_1 = yaml_path(yml)
-    output_2 = colored(' - Error: ', 'red')
-    output_3 = colored('ref', attrs=['bold'])
-    output_4 = colored(' value ', 'red')
-    output_5 = colored(ref, attrs=['bold'])
-    output_6 = colored(' is not formatted correctly', 'red')
-    return output_1 + output_2 + output_3 + output_4 + output_5 + output_6
+    output_1 = yaml_path(yml) + colored(' - Error: ', 'red')
+    output_2 = colored('ref', attrs=['bold'])
+    output_3 = colored(' value ', 'red')
+    output_4 = colored(ref, attrs=['bold'])
+    output_5 = colored(' is not formatted correctly', 'red')
+    return output_1 + output_2 + output_3 + output_4 + output_5
 
 
 def invalid_yaml_error():
@@ -121,21 +117,17 @@ def invalid_yaml_error():
 def missing_entry_error(entry, name, yml):
     """Return formatted error string for missing entry in dictionary"""
 
-    output_1 = yaml_path(yml)
-    output_2 = colored(' - Error: Missing ', 'red')
-    output_3 = colored(str(entry), attrs=['bold'])
-    output_4 = colored(' in ', 'red')
-    output_5 = colored(str(name), attrs=['bold'])
-    return output_1 + output_2 + output_3 + output_4 + output_5
+    output_1 = yaml_path(yml) + colored(' - Error: Missing ', 'red')
+    output_2 = colored(str(entry), attrs=['bold'])
+    output_3 = colored(' in ', 'red')
+    output_4 = colored(str(name), attrs=['bold'])
+    return output_1 + output_2 + output_3 + output_4
 
 
 def missing_imported_yaml_error(path, yml):
     """Return formatted error string for missing imported clowder.yaml"""
 
-    output_1 = yaml_path(yml)
-    output_2 = colored(' - Error: Missing imported file\n', 'red')
-    output_3 = get_path(path)
-    return output_1 + output_2 + output_3
+    return yaml_path(yml) + colored(' - Error: Missing imported file\n', 'red') + get_path(path)
 
 
 def missing_yaml_error():
@@ -148,45 +140,41 @@ def missing_yaml_error():
 def not_list_error(name, yml):
     """Return formatted error string for value that's not a list"""
 
-    output_1 = yaml_path(yml)
-    output_2 = colored(' - Error: ', 'red')
-    output_3 = colored(name, attrs=['bold'])
-    output_4 = colored(' type should be ', 'red')
-    output_5 = colored('list', 'yellow')
-    return output_1 + output_2 + output_3 + output_4 + output_5
+    output_1 = yaml_path(yml) + colored(' - Error: ', 'red')
+    output_2 = colored(name, attrs=['bold'])
+    output_3 = colored(' type should be ', 'red')
+    output_4 = colored('list', 'yellow')
+    return output_1 + output_2 + output_3 + output_4
 
 
 def not_dictionary_error(name, yml):
     """Return formatted error string for value that's not a dictionary"""
 
-    output_1 = yaml_path(yml)
-    output_2 = colored(' - Error: ', 'red')
-    output_3 = colored(name, attrs=['bold'])
-    output_4 = colored(' type should be ', 'red')
-    output_5 = colored('dict', 'yellow')
-    return output_1 + output_2 + output_3 + output_4 + output_5
+    output_1 = yaml_path(yml) + colored(' - Error: ', 'red')
+    output_2 = colored(name, attrs=['bold'])
+    output_3 = colored(' type should be ', 'red')
+    output_4 = colored('dict', 'yellow')
+    return output_1 + output_2 + output_3 + output_4
 
 
 def not_string_error(name, yml):
     """Return formatted error string for value that's not a string"""
 
-    output_1 = yaml_path(yml)
-    output_2 = colored(' - Error: ', 'red')
-    output_3 = colored(name, attrs=['bold'])
-    output_4 = colored(' type should be ', 'red')
-    output_5 = colored('str', 'yellow')
-    return output_1 + output_2 + output_3 + output_4 + output_5
+    output_1 = yaml_path(yml) + colored(' - Error: ', 'red')
+    output_2 = colored(name, attrs=['bold'])
+    output_3 = colored(' type should be ', 'red')
+    output_4 = colored('str', 'yellow')
+    return output_1 + output_2 + output_3 + output_4
 
 
 def not_bool_error(name, yml):
     """Return formatted error string for value that's not a boolean"""
 
-    output_1 = yaml_path(yml)
-    output_2 = colored(' - Error: ', 'red')
-    output_3 = colored(name, attrs=['bold'])
-    output_4 = colored(' type should be ', 'red')
-    output_5 = colored('bool', 'yellow')
-    return output_1 + output_2 + output_3 + output_4 + output_5
+    output_1 = yaml_path(yml) + colored(' - Error: ', 'red')
+    output_2 = colored(name, attrs=['bold'])
+    output_3 = colored(' type should be ', 'red')
+    output_4 = colored('bool', 'yellow')
+    return output_1 + output_2 + output_3 + output_4
 
 
 def offline_error():
