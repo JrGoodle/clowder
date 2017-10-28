@@ -19,11 +19,6 @@
 - [clowder herd](examples/clowder-herd.md)
 - [clowder prune and clowder start](examples/clowder-prune-start.md)
 
-## Development
-
-- [Development](development.md)
-    - Information for `clowder` development
-
 ## Swift
 
 - [Swift update_checkout json config](swift-update-checkout-config-json.md)

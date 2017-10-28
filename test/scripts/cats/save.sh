@@ -20,6 +20,9 @@ test_save() {
     clowder link -v v100 && exit 1
     echo "TEST: Fail saving a previously saved version"
     clowder save v0.1 && exit 1
+    echo "TEST: Fail saving a saved version named 'default'"
+    clowder save default && exit 1
+    clowder save DEFAULT && exit 1
     echo "TEST: Successfully save a new version"
     clowder save v0.11 || exit 1
     echo "TEST: Successfully save version with path separator in input name"

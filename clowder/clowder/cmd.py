@@ -355,6 +355,10 @@ class Command(object):
         if self.clowder is None:
             sys.exit(1)
 
+        if self.args.version.lower() == 'default':
+            print(fmt.save_default_error(self.args.version))
+            sys.exit(1)
+
         self.clowder_repo.print_status()
         self.clowder.save_version(self.args.version)
 

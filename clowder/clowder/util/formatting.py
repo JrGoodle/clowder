@@ -269,6 +269,14 @@ def remove_prefix(text, prefix):
     return text
 
 
+def save_default_error(name):
+    """Format error message for trying to save 'default' version"""
+    name_output = colored(name, attrs=['bold'])
+    output_1 = colored(' - Error: Version name ', 'red')
+    output_2 = colored(' is not allowed\n', 'red')
+    return output_1 + name_output + output_2
+
+
 def save_file_error(path):
     """Format error message for failing to save file"""
 
