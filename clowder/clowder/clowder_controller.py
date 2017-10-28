@@ -95,7 +95,7 @@ class ClowderController(object):
         except ClowderError as err:
             print(fmt.invalid_yaml_error())
             print(fmt.error(err))
-            sys.exit(1)
+            raise
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
         else:
