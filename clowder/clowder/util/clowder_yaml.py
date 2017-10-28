@@ -130,21 +130,15 @@ def validate_yaml(yaml_file):
         error = fmt.empty_yaml_error(yaml_file)
         raise ClowderError(error)
 
-    if 'defaults' not in parsed_yaml:
-        error = fmt.missing_entry_error('defaults', fmt.yaml_file('clowder.yaml'), yaml_file)
-        raise ClowderError(error)
+    _clowder_yaml_contains_value(parsed_yaml, 'defaults', yaml_file)
     _validate_yaml_defaults(parsed_yaml['defaults'], yaml_file)
     del parsed_yaml['defaults']
 
-    if 'sources' not in parsed_yaml:
-        error = fmt.missing_entry_error('sources', fmt.yaml_file('clowder.yaml'), yaml_file)
-        raise ClowderError(error)
+    _clowder_yaml_contains_value(parsed_yaml, 'sources', yaml_file)
     _validate_yaml_sources(parsed_yaml['sources'], yaml_file)
     del parsed_yaml['sources']
 
-    if 'groups' not in parsed_yaml:
-        error = fmt.missing_entry_error('groups', fmt.yaml_file('clowder.yaml'), yaml_file)
-        raise ClowderError(error)
+    _clowder_yaml_contains_value(parsed_yaml, 'groups', yaml_file)
     _validate_yaml_groups(parsed_yaml['groups'], yaml_file)
     del parsed_yaml['groups']
 
@@ -159,9 +153,7 @@ def validate_yaml_import(yaml_file):
     parsed_yaml = parse_yaml(yaml_file)
     _validate_type_dict(parsed_yaml, fmt.yaml_file('clowder.yaml'), yaml_file)
 
-    if 'import' not in parsed_yaml:
-        error = fmt.missing_entry_error('import', fmt.yaml_file('clowder.yaml'), yaml_file)
-        raise ClowderError(error)
+    _clowder_yaml_contains_value(parsed_yaml, 'import', yaml_file)
     _validate_type_str(parsed_yaml['import'], 'import', yaml_file)
     del parsed_yaml['import']
 
@@ -730,3 +722,10 @@ def _validate_yaml_sources(sources, yaml_file):
         if source:
             error = fmt.invalid_entries_error('source', source, yaml_file)
             raise ClowderError(error)
+
+
+def _clowder_yaml_contains_value(parsed_yaml, value, yaml_file):
+    """Check whether yaml file contains value"""
+    if value not in parsed_yaml:
+        error = fmt.missing_entry_error(value, fmt.yaml_file('clowder.yaml'), yaml_file)
+        raise ClowderError(error)
