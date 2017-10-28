@@ -32,7 +32,7 @@ def depth_error(depth, yml):
     """Return formatted error string for invalid depth"""
 
     yml = symlink_target(yml)
-    output_1 = path(yml) + '\n'
+    output_1 = get_path(yml) + '\n'
     output_2 = colored(' - Error: ', 'red')
     output_3 = colored('depth', attrs=['bold'])
     output_4 = colored(' must be a positive integer\n', 'red')
@@ -44,7 +44,7 @@ def empty_yaml_error(yml):
     """Return formatted error string for empty clowder.yaml"""
 
     yml = symlink_target(yml)
-    output_1 = path(yml) + '\n'
+    output_1 = get_path(yml) + '\n'
     output_2 = colored(' - Error: No entries in ', 'red')
     output_3 = yml('clowder.yaml')
     return output_1 + output_2 + output_3
@@ -60,7 +60,7 @@ def file_exists_error(pth):
     """Format error message for already existing file"""
 
     output_1 = colored(' - Error: File already exists\n', 'red')
-    output_2 = path(pth)
+    output_2 = get_path(pth)
     return output_1 + output_2
 
 
@@ -80,7 +80,7 @@ def invalid_entries_error(name, collection, yml):
     """Return formatted error string for invalid entry in collection"""
 
     yml = symlink_target(yml)
-    output_1 = path(yml) + '\n'
+    output_1 = get_path(yml) + '\n'
     output_2 = colored(' - Error: No entries in ', 'red')
     output_3 = colored(name, attrs=['bold'])
     empty_output = output_1 + output_2 + output_3
@@ -105,7 +105,7 @@ def invalid_ref_error(ref, yml):
     """Return formatted error string for incorrect ref"""
 
     yml = symlink_target(yml)
-    output_1 = path(yml) + '\n'
+    output_1 = get_path(yml) + '\n'
     output_2 = colored(' - Error: ', 'red')
     output_3 = colored('ref', attrs=['bold'])
     output_4 = colored(' value ', 'red')
@@ -125,7 +125,7 @@ def missing_entry_error(entry, name, yml):
     """Return formatted error string for missing entry in dictionary"""
 
     yml = symlink_target(yml)
-    output_1 = path(yml) + '\n'
+    output_1 = get_path(yml) + '\n'
     output_2 = colored(' - Error: Missing ', 'red')
     output_3 = colored(str(entry), attrs=['bold'])
     output_4 = colored(' in ', 'red')
@@ -133,13 +133,13 @@ def missing_entry_error(entry, name, yml):
     return output_1 + output_2 + output_3 + output_4 + output_5
 
 
-def missing_imported_yaml_error(pth, yml):
+def missing_imported_yaml_error(path, yml):
     """Return formatted error string for missing imported clowder.yaml"""
 
     yml = symlink_target(yml)
-    output_1 = pth(yml) + '\n'
+    output_1 = get_path(yml) + '\n'
     output_2 = colored(' - Error: Missing imported file\n', 'red')
-    output_3 = path(pth)
+    output_3 = get_path(path)
     return output_1 + output_2 + output_3
 
 
@@ -154,7 +154,7 @@ def not_list_error(name, yml):
     """Return formatted error string for value that's not a list"""
 
     yml = symlink_target(yml)
-    output_1 = path(yml) + '\n'
+    output_1 = get_path(yml) + '\n'
     output_2 = colored(' - Error: ', 'red')
     output_3 = colored(name, attrs=['bold'])
     output_4 = colored(' type should be ', 'red')
@@ -166,7 +166,7 @@ def not_dictionary_error(name, yml):
     """Return formatted error string for value that's not a dictionary"""
 
     yml = symlink_target(yml)
-    output_1 = path(yml) + '\n'
+    output_1 = get_path(yml) + '\n'
     output_2 = colored(' - Error: ', 'red')
     output_3 = colored(name, attrs=['bold'])
     output_4 = colored(' type should be ', 'red')
@@ -178,7 +178,7 @@ def not_string_error(name, yml):
     """Return formatted error string for value that's not a string"""
 
     yml = symlink_target(yml)
-    output_1 = path(yml) + '\n'
+    output_1 = get_path(yml) + '\n'
     output_2 = colored(' - Error: ', 'red')
     output_3 = colored(name, attrs=['bold'])
     output_4 = colored(' type should be ', 'red')
@@ -190,7 +190,7 @@ def not_bool_error(name, yml):
     """Return formatted error string for value that's not a boolean"""
 
     yml = symlink_target(yml)
-    output_1 = path(yml) + '\n'
+    output_1 = get_path(yml) + '\n'
     output_2 = colored(' - Error: ', 'red')
     output_3 = colored(name, attrs=['bold'])
     output_4 = colored(' type should be ', 'red')
@@ -204,24 +204,24 @@ def offline_error():
     colored('No available internet connection\n', 'red')
 
 
-def open_file_error(pth):
+def open_file_error(path):
     """Format error message for failing to open file"""
 
     output_1 = colored(' - Error: Failed to open file\n', 'red')
-    output_2 = path(pth)
+    output_2 = get_path(path)
     return output_1 + output_2
 
 
-def parallel_exception_error(pth, *args):
+def parallel_exception_error(path, *args):
     """Return formatted error string for parallel error"""
 
-    return path(pth) + '\n' + ''.join(args)
+    return get_path(path) + '\n' + ''.join(args)
 
 
-def path(pth):
+def get_path(path):
     """Return formatted path"""
 
-    return colored(pth, 'cyan')
+    return colored(path, 'cyan')
 
 
 def recursive_import_error(depth):
@@ -244,8 +244,8 @@ def remote_already_exists_error(remote_name, remote_url, actual_url):
     message_1 = colored(' - Remote ', 'red')
     remote_output = remote_string(remote_name)
     message_2 = colored(' already exists with a different url', 'red')
-    actual_url_output = path(actual_url)
-    remote_url_output = path(remote_url)
+    actual_url_output = get_path(actual_url)
+    remote_url_output = get_path(remote_url)
     return message_1 + remote_output + message_2 + '\n' + actual_url_output + ' should be ' + remote_url_output + '\n'
 
 
@@ -278,11 +278,11 @@ def remove_prefix(text, prefix):
     return text
 
 
-def save_file_error(pth):
+def save_file_error(path):
     """Format error message for failing to save file"""
 
     output_1 = colored(' - Error: Failed to save file\n', 'red')
-    output_2 = path(pth)
+    output_2 = get_path(path)
     return output_1 + output_2
 
 
@@ -290,7 +290,7 @@ def save_version(version_name, yml):
     """Format message for saving version"""
 
     output_1 = version(version_name)
-    output_2 = path(yml)
+    output_2 = get_path(yml)
     return ' - Save version ' + output_1 + '\n' + output_2
 
 
@@ -310,12 +310,12 @@ def skip_project_message():
     return ' - Skip project'
 
 
-def symlink_target(pth):
+def symlink_target(path):
     """Returns target path if input is a symlink"""
 
-    if os.path.islink(pth):
-        return os.readlink(pth)
-    return pth
+    if os.path.islink(path):
+        return os.readlink(path)
+    return path
 
 
 def version(version_name):

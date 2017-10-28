@@ -17,6 +17,6 @@ def remove_directory(path):
         shutil.rmtree(path)
     except shutil.Error:
         message = colored(" - Failed to remove directory ", 'red')
-        print(message + fmt.path(path))
+        print(message + fmt.get_path(path))
     except (KeyboardInterrupt, SystemExit):
         sys.exit(1)

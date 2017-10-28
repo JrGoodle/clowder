@@ -675,7 +675,7 @@ class GitRepo(object):
             return
 
         try:
-            self._print(' - Initialize repo at ' + fmt.path(self.repo_path))
+            self._print(' - Initialize repo at ' + fmt.get_path(self.repo_path))
             if not os.path.isdir(self.repo_path):
                 try:
                     os.makedirs(self.repo_path)
@@ -823,7 +823,7 @@ class GitRepo(object):
             repo = Repo(self.repo_path)
             return repo
         except GitError as err:
-            repo_path_output = fmt.path(self.repo_path)
+            repo_path_output = fmt.get_path(self.repo_path)
             message = colored(" - Failed to create Repo instance for ", 'red') + repo_path_output
             self._print(message)
             self._print(fmt.error(err))

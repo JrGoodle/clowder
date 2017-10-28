@@ -94,10 +94,10 @@ class ClowderRepo(object):
 
         if version is None:
             yaml_file = os.path.join(self.root_directory, '.clowder', 'clowder.yaml')
-            path_output = fmt.path('.clowder/clowder.yaml')
+            path_output = fmt.get_path('.clowder/clowder.yaml')
         else:
             relative_path = os.path.join('.clowder', 'versions', version, 'clowder.yaml')
-            path_output = fmt.path(relative_path)
+            path_output = fmt.get_path(relative_path)
             yaml_file = os.path.join(self.root_directory, relative_path)
 
         if not os.path.isfile(yaml_file):
@@ -131,9 +131,9 @@ class ClowderRepo(object):
             return
 
         real_path = os.path.realpath(clowder_symlink)
-        symlink_output = fmt.path('clowder.yaml')
+        symlink_output = fmt.get_path('clowder.yaml')
         clowder_path = fmt.remove_prefix(real_path + '/', self.root_directory)
-        path_output = fmt.path(clowder_path[1:-1])
+        path_output = fmt.get_path(clowder_path[1:-1])
         print(project_output + ' ' + current_ref_output)
         print(symlink_output + ' -> ' + path_output + '\n')
 

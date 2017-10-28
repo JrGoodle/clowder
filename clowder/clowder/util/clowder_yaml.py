@@ -86,12 +86,12 @@ def print_yaml(root_directory):
                         path = fmt.remove_prefix(path, root_directory)
                         path = fmt.remove_prefix(path, '/')
                         print()
-                        print(fmt.path('clowder.yaml') + ' -> ' + fmt.path(path))
+                        print(fmt.get_path('clowder.yaml') + ' -> ' + fmt.get_path(path))
                         print()
                     else:
                         path = fmt.remove_prefix(yaml_file, root_directory)
                         path = fmt.remove_prefix(path, '/')
-                        print('\n' + fmt.path(path) + '\n')
+                        print('\n' + fmt.get_path(path) + '\n')
                     print(contents)
             except IOError as err:
                 fmt.open_file_error(yaml_file)
