@@ -335,7 +335,7 @@ class ClowderController(object):
         print(fmt.save_version(version_name, yaml_file))
         clowder_yaml.save_yaml(self._get_yaml(), yaml_file)
 
-    def start_groups(self, group_names, skip, branch, tracking):
+    def start_groups(self, group_names, skip, branch, tracking=False):
         """Start feature branch for groups"""
 
         groups = [g for g in self.groups if g.name in group_names]
@@ -343,7 +343,7 @@ class ClowderController(object):
         for group in groups:
             self._run_group_command(group, skip, 'start', branch, tracking)
 
-    def start_projects(self, project_names, skip, branch, tracking):
+    def start_projects(self, project_names, skip, branch, tracking=False):
         """Start feature branch for projects"""
 
         projects = [p for g in self.groups for p in g.projects if p.name in project_names]
