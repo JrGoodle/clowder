@@ -7,7 +7,7 @@ import subprocess
 import sys
 
 from git import Repo, GitError
-from termcolor import colored, cprint
+from termcolor import colored
 
 import clowder.util.formatting as fmt
 from clowder.error.clowder_git_error import ClowderGitError
@@ -36,7 +36,7 @@ class GitRepo(object):
         try:
             print(self.repo.git.add(files))
         except GitError as err:
-            message = cprint(' - Failed to add files to git index\n', 'red') + fmt.error(err)
+            message = colored(' - Failed to add files to git index\n', 'red') + fmt.error(err)
             self._print(message)
             self._exit(message)
         except (KeyboardInterrupt, SystemExit):
