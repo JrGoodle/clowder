@@ -64,18 +64,14 @@ def execute_command(command, path, shell=True, env=None, print_output=True):
         if pool:
             pool.close()
             pool.terminate()
-        print()
-        cprint(' - Command failed', 'red')
-        print()
+        cprint('\n - Command failed\n', 'red')
         return 1
     except Exception as err:
         if pool:
             pool.close()
             pool.terminate()
-        print()
-        cprint(' - Command failed', 'red')
-        print(err)
-        print()
+        cprint('\n - Command failed', 'red')
+        print(err + '\n')
         return 1
 
 

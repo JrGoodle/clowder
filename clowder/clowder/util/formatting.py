@@ -24,27 +24,21 @@ def command(cmd):
 def command_failed_error(cmd):
     """Format error message for failed command"""
 
-    output_1 = colored(' - Error: Failed to run command ', 'red')
-    output_2 = command(cmd)
-    return output_1 + output_2 + '\n'
+    return colored(' - Error: Failed to run command ', 'red') + command(cmd) + '\n'
 
 
 def depth_error(depth, yml):
     """Return formatted error string for invalid depth"""
 
-    output_1 = yaml_path(yml) + colored(' - Error: ', 'red')
-    output_2 = colored('depth', attrs=['bold'])
-    output_3 = colored(' must be a positive integer\n', 'red')
-    output_4 = colored('depth: ' + str(depth), attrs=['bold'])
-    return output_1 + output_2 + output_3 + output_4
+    output_1 = yaml_path(yml) + colored(' - Error: ', 'red') + colored('depth', attrs=['bold'])
+    output_2 = colored(' must be a positive integer\n', 'red') + colored('depth: ' + str(depth), attrs=['bold'])
+    return output_1 + output_2
 
 
 def empty_yaml_error(yml):
     """Return formatted error string for empty clowder.yaml"""
 
-    output_1 = yaml_path(yml) + colored(' - Error: No entries in ', 'red')
-    output_2 = yaml_file('clowder.yaml')
-    return output_1 + output_2
+    return yaml_path(yml) + colored(' - Error: No entries in ', 'red') + yaml_file('clowder.yaml')
 
 
 def error(err):
@@ -53,12 +47,10 @@ def error(err):
     return str(err) + '\n'
 
 
-def file_exists_error(pth):
+def file_exists_error(path):
     """Format error message for already existing file"""
 
-    output_1 = colored(' - Error: File already exists\n', 'red')
-    output_2 = get_path(pth)
-    return output_1 + output_2
+    return colored(' - Error: File already exists\n', 'red') + get_path(path)
 
 
 def fork_string(name):
@@ -76,19 +68,16 @@ def group_name(name):
 def invalid_ref_error(ref, yml):
     """Return formatted error string for incorrect ref"""
 
-    output_1 = yaml_path(yml) + colored(' - Error: ', 'red')
-    output_2 = colored('ref', attrs=['bold'])
-    output_3 = colored(' value ', 'red')
-    output_4 = colored(ref, attrs=['bold'])
-    output_5 = colored(' is not formatted correctly', 'red')
-    return output_1 + output_2 + output_3 + output_4 + output_5
+    output_1 = yaml_path(yml) + colored(' - Error: ', 'red') + colored('ref', attrs=['bold'])
+    output_2 = colored(' value ', 'red') + colored(ref, attrs=['bold'])
+    output_3 = colored(' is not formatted correctly', 'red')
+    return output_1 + output_2 + output_3
 
 
 def invalid_yaml_error():
     """Return error message for invalid clowder.yaml"""
 
-    clowder_output = yaml_file('clowder.yaml')
-    return '\n' + clowder_output + ' appears to be invalid'
+    return '\n' + yaml_file('clowder.yaml') + ' appears to be invalid'
 
 
 def missing_entries_error(name, yml):
@@ -102,11 +91,9 @@ def missing_entries_error(name, yml):
 def missing_entry_error(entry, name, yml):
     """Return formatted error string for missing entry in dictionary"""
 
-    output_1 = yaml_path(yml) + colored(' - Error: Missing ', 'red')
-    output_2 = colored(str(entry), attrs=['bold'])
-    output_3 = colored(' in ', 'red')
-    output_4 = colored(str(name), attrs=['bold'])
-    return output_1 + output_2 + output_3 + output_4
+    output_1 = yaml_path(yml) + colored(' - Error: Missing ', 'red') + colored(str(entry), attrs=['bold'])
+    output_2 = colored(' in ', 'red') + colored(str(name), attrs=['bold'])
+    return output_1 + output_2
 
 
 def missing_imported_yaml_error(path, yml):
@@ -118,8 +105,7 @@ def missing_imported_yaml_error(path, yml):
 def missing_yaml_error():
     """Format error message for missing clowder.yaml"""
 
-    clowder_output = yaml_file('clowder.yaml')
-    return clowder_output + ' appears to be missing'
+    return yaml_file('clowder.yaml') + ' appears to be missing'
 
 
 def offline_error():
@@ -131,9 +117,7 @@ def offline_error():
 def open_file_error(path):
     """Format error message for failing to open file"""
 
-    output_1 = colored(' - Error: Failed to open file\n', 'red')
-    output_2 = get_path(path)
-    return output_1 + output_2
+    return colored(' - Error: Failed to open file\n', 'red') + get_path(path)
 
 
 def parallel_exception_error(path, *args):
@@ -165,26 +149,19 @@ def ref_string(ref):
 def remote_already_exists_error(remote_name, remote_url, actual_url):
     """Format error message when remote already exists with different url"""
 
-    message_1 = colored(' - Remote ', 'red')
-    remote_output = remote_string(remote_name)
-    message_2 = colored(' already exists with a different url', 'red')
-    actual_url_output = get_path(actual_url)
-    remote_url_output = get_path(remote_url)
-    return message_1 + remote_output + message_2 + '\n' + actual_url_output + ' should be ' + remote_url_output + '\n'
+    output_1 = colored(' - Remote ', 'red') + remote_string(remote_name)
+    output_2 = colored(' already exists with a different url', 'red')
+    output_3 = '\n' + get_path(actual_url) + ' should be ' + get_path(remote_url) + '\n'
+    return output_1 + output_2 + output_3
 
 
 def remote_name_error(fork, project, remote):
     """Return formatted error string for fork with same remote as project"""
 
-    # yaml_file = symlink_target(yaml_file)
-    # output_1 = path(yaml_file) + '\n'
-    output_1 = colored(' - Error: fork ', 'red')
-    output_2 = colored(fork, attrs=['bold'])
-    output_3 = colored(' and project ', 'red')
-    output_4 = colored(project, attrs=['bold'])
-    output_5 = colored(' have same remote name ', 'red')
-    output_6 = colored(remote, attrs=['bold'])
-    return output_1 + output_2 + output_3 + output_4 + output_5 + output_6
+    output_1 = colored(' - Error: fork ', 'red') + colored(fork, attrs=['bold'])
+    output_2 = colored(' and project ', 'red') + colored(project, attrs=['bold'])
+    output_3 = + colored(' have same remote name ', 'red') + colored(remote, attrs=['bold'])
+    return output_1 + output_2 + output_3
 
 
 def remote_string(remote):
@@ -193,47 +170,37 @@ def remote_string(remote):
     return colored(remote, 'yellow')
 
 
-# http://stackoverflow.com/questions/16891340/remove-a-prefix-from-a-string
 def remove_prefix(text, prefix):
     """Remove prefix from a string"""
 
-    if text.startswith(prefix):
-        return text[len(prefix):]
-    return text
+    return text[len(prefix):] if text.startswith(prefix) else text
 
 
 def save_default_error(name):
     """Format error message for trying to save 'default' version"""
-    name_output = colored(name, attrs=['bold'])
-    output_1 = colored(' - Error: Version name ', 'red')
+    output_1 = colored(' - Error: Version name ', 'red') + colored(name, attrs=['bold'])
     output_2 = colored(' is not allowed\n', 'red')
-    return output_1 + name_output + output_2
+    return output_1 + output_2
 
 
 def save_file_error(path):
     """Format error message for failing to save file"""
 
-    output_1 = colored(' - Error: Failed to save file\n', 'red')
-    output_2 = get_path(path)
-    return output_1 + output_2
+    return colored(' - Error: Failed to save file\n', 'red') + get_path(path)
 
 
 def save_version(version_name, yml):
     """Format message for saving version"""
 
-    output_1 = version(version_name)
-    output_2 = get_path(yml)
-    return ' - Save version ' + output_1 + '\n' + output_2
+    return ' - Save version ' + version(version_name) + '\n' + get_path(yml)
 
 
 def save_version_exists_error(version_name, yml):
     """Format error message previous existing saved version"""
 
-    output_1 = colored(' - Error: Version ', 'red')
-    output_2 = version(version_name)
-    output_3 = colored(' already exists\n', 'red')
-    output_4 = yaml_file(yml)
-    return output_1 + output_2 + output_3 + output_4
+    output_1 = colored(' - Error: Version ', 'red') + version(version_name)
+    output_2 = colored(' already exists\n', 'red') + yaml_file(yml)
+    return output_1 + output_2
 
 
 def skip_project_message():
@@ -245,11 +212,9 @@ def skip_project_message():
 def type_error(name, yml, type_name):
     """Return formatted error string for value with wrong type"""
 
-    output_1 = yaml_path(yml) + colored(' - Error: ', 'red')
-    output_2 = colored(name, attrs=['bold'])
-    output_3 = colored(' type should be ', 'red')
-    output_4 = colored(type_name, 'yellow')
-    return output_1 + output_2 + output_3 + output_4
+    output_1 = yaml_path(yml) + colored(' - Error: ', 'red') + colored(name, attrs=['bold'])
+    output_2 = colored(' type should be ', 'red') + colored(type_name, 'yellow')
+    return output_1 + output_2
 
 
 def unknown_entry_error(name, collection, yml):
@@ -259,10 +224,9 @@ def unknown_entry_error(name, collection, yml):
         output_1 = yaml_path(yml) + colored(' - Error: Unknown entries in ', 'red')
     else:
         output_1 = yaml_path(yml) + colored(' - Error: Unknown entry in ', 'red')
-    output_2 = colored(name, attrs=['bold'])
     dict_entries = ''.join('{}: {}\n'.format(key, val) for key, val in sorted(collection.items())).rstrip()
-    output_3 = colored('\n\n' + str(dict_entries), attrs=['bold'])
-    return output_1 + output_2 + output_3
+    output_2 = colored('\n\n' + str(dict_entries), attrs=['bold'])
+    return output_1 + colored(name, attrs=['bold']) + output_2
 
 
 def version(version_name):
@@ -274,8 +238,7 @@ def version(version_name):
 def yaml_path(yml):
     """Returns formatted yaml path"""
 
-    yml = symlink_target(yml)
-    return get_path(yml) + '\n'
+    return get_path(symlink_target(yml)) + '\n'
 
 
 def yaml_file(yml):
