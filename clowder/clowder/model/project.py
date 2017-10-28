@@ -285,8 +285,7 @@ class Project(object):
         """Return formatted status for project"""
 
         if not ProjectRepo.existing_git_repository(self.full_path()):
-            print(colored(self.name, 'green'))
-            return
+            return colored(self.name, 'green')
 
         project_output = ProjectRepo.format_project_string(self.full_path(), self.path)
         current_ref_output = ProjectRepo.format_project_ref_string(self.full_path())
