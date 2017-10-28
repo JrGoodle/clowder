@@ -162,12 +162,16 @@ class GitRepo(object):
         except (KeyboardInterrupt, SystemExit):
             self._exit()
 
-    def is_detached(self):
+    def is_detached(self, print_output=False):
         """Check if HEAD is detached"""
 
         if not os.path.isdir(self.repo_path):
             return False
-        return self.repo.head.is_detached
+        if self.repo.head.is_detached:
+            if print_output:
+                self._print(' - HEAD is detached')
+            return True
+        return False
 
     def is_dirty(self):
         """Check whether repo is dirty"""
@@ -228,8 +232,7 @@ class GitRepo(object):
     def pull(self):
         """Pull upstream changes"""
 
-        if self.repo.head.is_detached:
-            self._print(' - HEAD is detached')
+        if self.is_detached(print_output=True):
             return
 
         try:
@@ -246,8 +249,7 @@ class GitRepo(object):
     def push(self):
         """Push changes"""
 
-        if self.repo.head.is_detached:
-            self._print(' - HEAD is detached')
+        if self.is_detached(print_output=True):
             return
 
         try:
@@ -745,8 +747,7 @@ class GitRepo(object):
     def _pull(self, remote, branch):
         """Pull from remote branch"""
 
-        if self.repo.head.is_detached:
-            self._print(' - HEAD is detached')
+        if self.is_detached(print_output=True):
             return
 
         branch_output = fmt.ref_string(branch)
@@ -763,8 +764,7 @@ class GitRepo(object):
     def _rebase_remote_branch(self, remote, branch):
         """Rebase from remote branch"""
 
-        if self.repo.head.is_detached:
-            self._print(' - HEAD is detached')
+        if self.is_detached(print_output=True):
             return
 
         branch_output = fmt.ref_string(branch)
