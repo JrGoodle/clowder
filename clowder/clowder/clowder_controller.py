@@ -183,26 +183,22 @@ class ClowderController(object):
     def get_all_fork_project_names(self):
         """Returns all project names containing forks"""
 
-        project_names = sorted([p.name for g in self.groups for p in g.projects if p.fork])
-        return '' if project_names is None else project_names
+        return sorted([p.name for g in self.groups for p in g.projects if p.fork])
 
     def get_all_group_names(self):
         """Returns all group names for current clowder.yaml"""
 
-        names = sorted([g.name for g in self.groups])
-        return '' if names is None else names
+        return sorted([g.name for g in self.groups])
 
     def get_all_project_names(self):
         """Returns all project names for current clowder.yaml"""
 
-        names = sorted([p.name for g in self.groups for p in g.projects])
-        return '' if names is None else names
+        return sorted([p.name for g in self.groups for p in g.projects])
 
     def get_all_project_paths(self):
         """Returns all project paths for current clowder.yaml"""
 
-        paths = sorted([p.formatted_project_path() for g in self.groups for p in g.projects])
-        return '' if paths is None else paths
+        return sorted([p.formatted_project_path() for g in self.groups for p in g.projects])
 
     def get_saved_version_names(self):
         """Return list of all saved versions"""
