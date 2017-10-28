@@ -13,6 +13,7 @@ from clowder.git.project_repo import ProjectRepo
 from clowder.git.project_repo_recursive import ProjectRepoRecursive
 from clowder.model.fork import Fork
 from clowder.util.connectivity import is_offline
+from clowder.util.decorators import project_repo_exists
 from clowder.util.execute import execute_forall_command
 
 
@@ -50,12 +51,9 @@ class Project(object):
                 sys.exit(1)
             self.fork = Fork(fork, self._root_directory, self.path, self._source)
 
+    @project_repo_exists
     def branch(self, local=False, remote=False):
         """Print branches for project"""
-
-        if not os.path.isdir(self.full_path()):
-            print(colored(" - Project is missing\n", 'red'))
-            return
 
         repo = ProjectRepo(self.full_path(), self._remote, self._ref)
         if not is_offline():
@@ -68,32 +66,23 @@ class Project(object):
 
         repo.print_branches(local=local, remote=remote)
 
+    @project_repo_exists
     def clean(self, args='', recursive=False):
         """Discard changes for project"""
-
-        if not os.path.isdir(self.full_path()):
-            print(colored(" - Project is missing\n", 'red'))
-            return
 
         repo = self._repo(self.full_path(), self._remote, self._ref, self._recursive and recursive)
         repo.clean(args=args)
 
+    @project_repo_exists
     def clean_all(self):
         """Discard all changes for project"""
-
-        if not os.path.isdir(self.full_path()):
-            print(colored(" - Project is missing\n", 'red'))
-            return
 
         repo = self._repo(self.full_path(), self._remote, self._ref, self._recursive)
         repo.clean(args='fdx')
 
+    @project_repo_exists
     def diff(self):
         """Show git diff for project"""
-
-        if not os.path.isdir(self.full_path()):
-            print(colored(" - Project is missing\n", 'red'))
-            return
 
         repo = ProjectRepo(self.full_path(), self._remote, self._ref)
         repo.status_verbose()
@@ -114,15 +103,11 @@ class Project(object):
         rem = self._remote if self.fork is None else self.fork.remote_name
         return repo.existing_remote_branch(branch, rem)
 
+    @project_repo_exists
     def fetch_all(self):
         """Fetch upstream changes if project exists on disk"""
 
-        if not self.exists():
-            self.print_exists()
-            return
-
         repo = ProjectRepo(self.full_path(), self._remote, self._ref)
-
         if self.fork is None:
             repo.fetch(self._remote, depth=self._depth)
             return
@@ -218,11 +203,9 @@ class Project(object):
             print(self.status())
             ProjectRepo.validation(self.full_path())
 
+    @project_repo_exists
     def prune(self, branch, force=False, local=False, remote=False):
         """Prune branch"""
-
-        if not ProjectRepo.existing_git_repository(self.full_path()):
-            return
 
         if local and remote:
             self._prune_local(branch, force)
@@ -245,7 +228,7 @@ class Project(object):
         """Run command or script in project directory"""
 
         if not parallel:
-            if not os.path.isdir(self.full_path()):
+            if not self.exists():
                 print(colored(" - Project is missing\n", 'red'))
                 return
 
@@ -268,12 +251,9 @@ class Project(object):
                 self._print(err)
                 self._exit(err, return_code=return_code, parallel=parallel)
 
+    @project_repo_exists
     def start(self, branch, tracking):
         """Start a new feature branch"""
-
-        if not ProjectRepo.existing_git_repository(self.full_path()):
-            print(colored(" - Directory doesn't exist", 'red'))
-            return
 
         remote = self._remote if self.fork is None else self.fork.remote_name
         depth = self._depth if self.fork is None else 0
@@ -295,6 +275,7 @@ class Project(object):
 
         return project_output + ' ' + current_ref_output
 
+    @project_repo_exists
     def stash(self):
         """Stash changes for project if dirty"""
 
