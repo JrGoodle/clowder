@@ -15,10 +15,7 @@ def clowder_required(func):
     def wrapper(*args, **kwargs):
         """Wrapper"""
 
-        instance = args[0]
-        if instance.clowder_repo is None:
-            cprint(' - No clowder found in the current directory\n', 'red')
-            sys.exit(1)
+        _validate_clowder_repo_exists(args[0].clowder_repo)
         return func(*args, **kwargs)
 
     return wrapper
@@ -99,6 +96,7 @@ def valid_clowder_yaml_required(func):
         """Wrapper"""
 
         instance = args[0]
+        _validate_clowder_repo_exists(instance.clowder_repo)
         if instance.invalid_yaml:
             print(fmt.invalid_yaml_error())
             print(fmt.error(instance.error))
@@ -106,3 +104,11 @@ def valid_clowder_yaml_required(func):
         return func(*args, **kwargs)
 
     return wrapper
+
+
+def _validate_clowder_repo_exists(repo):
+    """If clowder repo doesn't exist, print message and exit"""
+
+    if repo is None:
+        cprint(' - No clowder found in the current directory\n', 'red')
+        sys.exit(1)
