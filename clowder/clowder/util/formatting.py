@@ -1,10 +1,11 @@
 """String formatting utilities"""
 
-import os
 import sys
 
 import yaml
 from termcolor import colored, cprint
+
+from clowder.util.file_system import symlink_target
 
 
 def clowder_command(cmd):
@@ -31,8 +32,7 @@ def command_failed_error(cmd):
 def depth_error(depth, yml):
     """Return formatted error string for invalid depth"""
 
-    yml = symlink_target(yml)
-    output_1 = get_path(yml) + '\n'
+    output_1 = yaml_path(yml)
     output_2 = colored(' - Error: ', 'red')
     output_3 = colored('depth', attrs=['bold'])
     output_4 = colored(' must be a positive integer\n', 'red')
@@ -43,8 +43,7 @@ def depth_error(depth, yml):
 def empty_yaml_error(yml):
     """Return formatted error string for empty clowder.yaml"""
 
-    yml = symlink_target(yml)
-    output_1 = get_path(yml) + '\n'
+    output_1 = yaml_path(yml)
     output_2 = colored(' - Error: No entries in ', 'red')
     output_3 = yml('clowder.yaml')
     return output_1 + output_2 + output_3
@@ -79,8 +78,7 @@ def group_name(name):
 def invalid_entries_error(name, collection, yml):
     """Return formatted error string for invalid entry in collection"""
 
-    yml = symlink_target(yml)
-    output_1 = get_path(yml) + '\n'
+    output_1 = yaml_path(yml)
     output_2 = colored(' - Error: No entries in ', 'red')
     output_3 = colored(name, attrs=['bold'])
     empty_output = output_1 + output_2 + output_3
@@ -104,8 +102,7 @@ def invalid_entries_error(name, collection, yml):
 def invalid_ref_error(ref, yml):
     """Return formatted error string for incorrect ref"""
 
-    yml = symlink_target(yml)
-    output_1 = get_path(yml) + '\n'
+    output_1 = yaml_path(yml)
     output_2 = colored(' - Error: ', 'red')
     output_3 = colored('ref', attrs=['bold'])
     output_4 = colored(' value ', 'red')
@@ -124,8 +121,7 @@ def invalid_yaml_error():
 def missing_entry_error(entry, name, yml):
     """Return formatted error string for missing entry in dictionary"""
 
-    yml = symlink_target(yml)
-    output_1 = get_path(yml) + '\n'
+    output_1 = yaml_path(yml)
     output_2 = colored(' - Error: Missing ', 'red')
     output_3 = colored(str(entry), attrs=['bold'])
     output_4 = colored(' in ', 'red')
@@ -136,8 +132,7 @@ def missing_entry_error(entry, name, yml):
 def missing_imported_yaml_error(path, yml):
     """Return formatted error string for missing imported clowder.yaml"""
 
-    yml = symlink_target(yml)
-    output_1 = get_path(yml) + '\n'
+    output_1 = yaml_path(yml)
     output_2 = colored(' - Error: Missing imported file\n', 'red')
     output_3 = get_path(path)
     return output_1 + output_2 + output_3
@@ -153,8 +148,7 @@ def missing_yaml_error():
 def not_list_error(name, yml):
     """Return formatted error string for value that's not a list"""
 
-    yml = symlink_target(yml)
-    output_1 = get_path(yml) + '\n'
+    output_1 = yaml_path(yml)
     output_2 = colored(' - Error: ', 'red')
     output_3 = colored(name, attrs=['bold'])
     output_4 = colored(' type should be ', 'red')
@@ -165,8 +159,7 @@ def not_list_error(name, yml):
 def not_dictionary_error(name, yml):
     """Return formatted error string for value that's not a dictionary"""
 
-    yml = symlink_target(yml)
-    output_1 = get_path(yml) + '\n'
+    output_1 = yaml_path(yml)
     output_2 = colored(' - Error: ', 'red')
     output_3 = colored(name, attrs=['bold'])
     output_4 = colored(' type should be ', 'red')
@@ -177,8 +170,7 @@ def not_dictionary_error(name, yml):
 def not_string_error(name, yml):
     """Return formatted error string for value that's not a string"""
 
-    yml = symlink_target(yml)
-    output_1 = get_path(yml) + '\n'
+    output_1 = yaml_path(yml)
     output_2 = colored(' - Error: ', 'red')
     output_3 = colored(name, attrs=['bold'])
     output_4 = colored(' type should be ', 'red')
@@ -189,8 +181,7 @@ def not_string_error(name, yml):
 def not_bool_error(name, yml):
     """Return formatted error string for value that's not a boolean"""
 
-    yml = symlink_target(yml)
-    output_1 = get_path(yml) + '\n'
+    output_1 = yaml_path(yml)
     output_2 = colored(' - Error: ', 'red')
     output_3 = colored(name, attrs=['bold'])
     output_4 = colored(' type should be ', 'red')
@@ -310,18 +301,17 @@ def skip_project_message():
     return ' - Skip project'
 
 
-def symlink_target(path):
-    """Returns target path if input is a symlink"""
-
-    if os.path.islink(path):
-        return os.readlink(path)
-    return path
-
-
 def version(version_name):
     """Return formatted string for clowder.yaml version"""
 
     return colored(version_name, attrs=['bold'])
+
+
+def yaml_path(yml):
+    """Returns formatted yaml path"""
+
+    yml = symlink_target(yml)
+    return get_path(yml) + '\n'
 
 
 def yaml_file(yml):
