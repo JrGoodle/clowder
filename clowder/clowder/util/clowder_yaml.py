@@ -12,6 +12,20 @@ import clowder.util.formatting as fmt
 from clowder.error.clowder_error import ClowderError
 
 
+def _clowder_yaml_contains_value(parsed_yaml, value, yaml_file):
+    """Check whether yaml file contains value"""
+    if value not in parsed_yaml:
+        error = fmt.missing_entry_error(value, fmt.yaml_file('clowder.yaml'), yaml_file)
+        raise ClowderError(error)
+
+
+def _dict_contains_value(dictionary, name, value, yaml_file):
+    """Check whether yaml file contains value"""
+    if value not in dictionary:
+        error = fmt.missing_entry_error(value, name, yaml_file)
+        raise ClowderError(error)
+
+
 def load_yaml_base(parsed_yaml, combined_yaml):
     """Load clowder from base yaml file"""
 
@@ -294,6 +308,13 @@ def _valid_ref_type(ref):
     return False
 
 
+def _validate_ref_type(dictionary, value, yaml_file):
+    """Check whether ref type is valid"""
+    if not _valid_ref_type(dictionary[value]):
+        error = fmt.invalid_ref_error(dictionary[value], yaml_file)
+        raise ClowderError(error)
+
+
 def _validate_type_bool(value, name, yaml_file):
     """Validate value is a bool"""
 
@@ -346,9 +367,7 @@ def _validate_yaml_import_defaults(defaults, yaml_file):
 
     if 'ref' in defaults:
         _validate_type_str(defaults['ref'], 'ref', yaml_file)
-        if not _valid_ref_type(defaults['ref']):
-            error = fmt.invalid_ref_error(defaults['ref'], yaml_file)
-            raise ClowderError(error)
+        _validate_ref_type(defaults, 'ref', yaml_file)
         del defaults['ref']
 
     if 'remote' in defaults:
@@ -382,9 +401,7 @@ def _validate_yaml_defaults(defaults, yaml_file):
 
     _dict_contains_value(defaults, 'defaults', 'ref', yaml_file)
     _validate_type_str(defaults['ref'], 'ref', yaml_file)
-    if not _valid_ref_type(defaults['ref']):
-        error = fmt.invalid_ref_error(defaults['ref'], yaml_file)
-        raise ClowderError(error)
+    _validate_ref_type(defaults, 'ref', yaml_file)
     del defaults['ref']
 
     _dict_contains_value(defaults, 'defaults', 'remote', yaml_file)
@@ -521,9 +538,7 @@ def _validate_yaml_import_group(group, yaml_file):
 
     if 'ref' in group:
         _validate_type_str(group['ref'], 'ref', yaml_file)
-        if not _valid_ref_type(group['ref']):
-            error = fmt.invalid_ref_error(group['ref'], yaml_file)
-            raise ClowderError(error)
+        _validate_ref_type(group, 'ref', yaml_file)
         del group['ref']
 
     if 'remote' in group:
@@ -574,9 +589,7 @@ def _validate_yaml_group(group, yaml_file):
 
     if 'ref' in group:
         _validate_type_str(group['ref'], 'ref', yaml_file)
-        if not _valid_ref_type(group['ref']):
-            error = fmt.invalid_ref_error(group['ref'], yaml_file)
-            raise ClowderError(error)
+        _validate_ref_type(group, 'ref', yaml_file)
         del group['ref']
 
     if 'remote' in group:
@@ -637,9 +650,7 @@ def _validate_yaml_project_optional(project, yaml_file):
 
     if 'ref' in project:
         _validate_type_str(project['ref'], 'ref', yaml_file)
-        if not _valid_ref_type(project['ref']):
-            error = fmt.invalid_ref_error(project['ref'], yaml_file)
-            raise ClowderError(error)
+        _validate_ref_type(project, 'ref', yaml_file)
         del project['ref']
 
     if 'source' in project:
@@ -696,17 +707,3 @@ def _validate_yaml_sources(sources, yaml_file):
         if source:
             error = fmt.invalid_entries_error('source', source, yaml_file)
             raise ClowderError(error)
-
-
-def _clowder_yaml_contains_value(parsed_yaml, value, yaml_file):
-    """Check whether yaml file contains value"""
-    if value not in parsed_yaml:
-        error = fmt.missing_entry_error(value, fmt.yaml_file('clowder.yaml'), yaml_file)
-        raise ClowderError(error)
-
-
-def _dict_contains_value(dictionary, name, value, yaml_file):
-    """Check whether yaml file contains value"""
-    if value not in dictionary:
-        error = fmt.missing_entry_error(value, name, yaml_file)
-        raise ClowderError(error)
