@@ -18,7 +18,11 @@ from termcolor import cprint
 
 
 def subprocess_exit_handler(process):
-    """terminate subprocess"""
+    """terminate subprocess
+
+    :param Popen process: Popen subprocess instance
+    :return:
+    """
 
     try:
         process.terminate()
@@ -27,7 +31,17 @@ def subprocess_exit_handler(process):
 
 
 def execute_subprocess_command(command, path, shell=True, env=None, stdout=None, stderr=None):
-    """Execute subprocess command"""
+    """Execute subprocess command
+
+    :param command: Command to run. Can be str or list of str
+    :param str path: Path to set as ``cwd``
+    :param Optional[bool] shell: Whether to execute subprocess as ``shell``
+    :param Optional[dict] env: Enviroment to set as ``env``
+    :param Optional[int] stdout: Value to set as ``stdout``
+    :param Optional[int] stderr: Value to set as ``stderr``
+    :return: Subprocess return code
+    :rtype: int
+    """
 
     if isinstance(command, list):
         cmd = ' '.join(command)
@@ -45,7 +59,16 @@ def execute_subprocess_command(command, path, shell=True, env=None, stdout=None,
 
 
 def execute_command(command, path, shell=True, env=None, print_output=True):
-    """Execute command via thread"""
+    """Execute command via thread
+
+    :param command: Command to run. Can be str or list of str
+    :param str path: Path to set as ``cwd``
+    :param Optional[bool] shell: Whether to execute subprocess as ``shell``
+    :param Optional[dict] env: Enviroment to set as ``env``
+    :param Optional[bool] print_output: Whether to print output
+    :return: Command return code
+    :rtype: int
+    """
 
     cmd_env = os.environ.copy()
     if env:
@@ -81,6 +104,14 @@ def execute_command(command, path, shell=True, env=None, print_output=True):
 
 
 def execute_forall_command(command, path, forall_env, print_output):
-    """Execute forall command with additional environment variables and display continuous output"""
+    """Execute forall command with additional environment variables and display continuous output
+
+    :param command: Command to run. Can be str or list of str
+    :param str path: Path to set as ``cwd``
+    :param dict forall_env: Enviroment to set as ``env``
+    :param bool print_output: Whether to print output
+    :return: Command return code
+    :rtype: int
+    """
 
     return execute_command(command, path, env=forall_env, print_output=print_output)
