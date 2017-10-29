@@ -10,6 +10,11 @@ class ClowderGitError(Exception):
     """Clowder git error type"""
 
     def __init__(self, msg=None):
+        """ClowderGitError __init__
+
+        :param Optional[str] msg: Error message
+        """
+
         super(ClowderGitError, self).__init__(msg)
         self.msg = msg
 

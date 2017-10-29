@@ -120,9 +120,21 @@ __clowder_progress__ = Progress()
 
 
 class ClowderController(object):
-    """Class encapsulating project information from clowder.yaml for controlling clowder"""
+    """Class encapsulating project information from clowder.yaml for controlling clowder
+
+    Attributes:
+        root_directory (str): Root directory of clowder projects
+        defaults (dict): Global clowder.yaml defaults
+        groups (list of Group): List of all Groups
+        sources (list of Source): List of all Sources
+    """
 
     def __init__(self, root_directory):
+        """ClowderController __init__
+
+        :param str root_directory: Root directory of clowder projects
+        """
+
         self.root_directory = root_directory
         self.defaults = None
         self.groups = []
