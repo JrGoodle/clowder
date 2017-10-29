@@ -1,4 +1,9 @@
-"""clowder.yaml parsing and functionality"""
+# -*- coding: utf-8 -*-
+"""Clowder command controller class
+
+.. codeauthor:: Joe Decapo <joe@polka.cat>
+
+"""
 
 from __future__ import print_function
 

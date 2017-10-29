@@ -1,4 +1,9 @@
-"""Subprocess execution"""
+# -*- coding: utf-8 -*-
+"""Subprocess execution utilities
+
+.. codeauthor:: Joe Decapo <joe@polka.cat>
+
+"""
 
 import atexit
 import os

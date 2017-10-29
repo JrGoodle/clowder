@@ -1,4 +1,9 @@
-"""Configure clowder subparsers"""
+# -*- coding: utf-8 -*-
+"""Clowder subparsers configuration
+
+.. codeauthor:: Joe Decapo <joe@polka.cat>
+
+"""
 
 
 def configure_argparse(parser, clowder, versions):

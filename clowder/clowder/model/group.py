@@ -36,7 +36,7 @@ class Group(object):
         """Checks if given branch exists in any project
 
         :param str branch: Branch to check for
-        :param bool is_remote:
+        :param bool is_remote: Check for remote branch
         :return: True, if at least one branch exists
         :rtype: bool
         """

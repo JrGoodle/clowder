@@ -1,4 +1,9 @@
-"""Clowder repo management"""
+# -*- coding: utf-8 -*-
+"""Clowder repo class
+
+.. codeauthor:: Joe Decapo <joe@polka.cat>
+
+"""
 
 from __future__ import print_function
 

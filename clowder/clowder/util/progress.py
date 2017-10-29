@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Progress bar
+"""Progress bar wrapper class
 
 .. codeauthor:: Joe Decapo <joe@polka.cat>
 

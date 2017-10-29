@@ -1,4 +1,9 @@
-"""Decorators"""
+# -*- coding: utf-8 -*-
+"""Various decorator utilities
+
+.. codeauthor:: Joe Decapo <joe@polka.cat>
+
+"""
 
 import sys
 

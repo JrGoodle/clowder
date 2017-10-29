@@ -1,4 +1,9 @@
-"""Representation of clowder.yaml project"""
+# -*- coding: utf-8 -*-
+"""Representation of clowder.yaml project
+
+.. codeauthor:: Joe Decapo <joe@polka.cat>
+
+"""
 
 from __future__ import print_function
 

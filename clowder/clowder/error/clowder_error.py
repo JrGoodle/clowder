@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Clowder exception
+"""Clowder general exception
 
 .. codeauthor:: Joe Decapo <joe@polka.cat>
 

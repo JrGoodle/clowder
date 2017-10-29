@@ -1,4 +1,9 @@
-"""clowder.yaml parsing and functionality"""
+# -*- coding: utf-8 -*-
+"""clowder.yaml parsing and validation functionality
+
+.. codeauthor:: Joe Decapo <joe@polka.cat>
+
+"""
 
 from __future__ import print_function
 

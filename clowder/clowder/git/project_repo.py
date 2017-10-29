@@ -1,4 +1,9 @@
-"""Project git utilities"""
+# -*- coding: utf-8 -*-
+"""Project Git utility class
+
+.. codeauthor:: Joe Decapo <joe@polka.cat>
+
+"""
 
 from __future__ import print_function
 

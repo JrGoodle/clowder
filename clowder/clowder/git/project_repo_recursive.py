@@ -1,4 +1,9 @@
-"""Git utilities"""
+# -*- coding: utf-8 -*-
+"""Project Git utility class with submodules
+
+.. codeauthor:: Joe Decapo <joe@polka.cat>
+
+"""
 
 from __future__ import print_function
 
