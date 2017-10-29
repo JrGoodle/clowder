@@ -75,7 +75,7 @@ def empty_yaml_error(yml):
 def error(err):
     """Return error message for generic error
 
-    :param str err: Generic error
+    :param Exception err: Generic error
     :return: Formatted generic error
     :rtype: str
     """

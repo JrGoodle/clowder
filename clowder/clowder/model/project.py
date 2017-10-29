@@ -61,8 +61,8 @@ class Project(object):
     def branch(self, local=False, remote=False):
         """Print branches for project
 
-        :param bool local: Print local branches
-        :param bool remote: Print remote branches
+        :param Optional[bool] local: Print local branches. Defaults to False
+        :param Optional[bool] remote: Print remote branches. Defaults to False
         :return:
         """
 
@@ -81,13 +81,12 @@ class Project(object):
     def clean(self, args='', recursive=False):
         """Discard changes for project
 
-        Args:
-            args (str): Git clean options
-                - ``d`` Remove untracked directories in addition to untracked files
-                - ``f`` Delete directories with .git sub directory or file
-                - ``X`` Remove only files ignored by git
-                - ``x`` Remove all untracked files
-            recursive (bool): Clean submodules recursively
+        :param Optional[str] args: Git clean options
+            - ``d`` Remove untracked directories in addition to untracked files
+            - ``f`` Delete directories with .git sub directory or file
+            - ``X`` Remove only files ignored by git
+            - ``x`` Remove all untracked files
+        :param Optional[bool] recursive: Clean submodules recursively. Defaults to False
 
         :return:
         """
@@ -181,7 +180,7 @@ class Project(object):
     def get_yaml(self, resolved=False):
         """Return python object representation for saving yaml
 
-        :param bool resolved: Return default ref rather than current commit sha
+        :param Optional[bool] resolved: Return default ref rather than current commit sha. Defaults to False
         :return: YAML python object
         :rtype: dict
         """
@@ -208,16 +207,25 @@ class Project(object):
 
         return project
 
-    def herd(self, branch=None, tag=None, depth=None, rebase=False, parallel=False):
+    def herd(self, **kwargs):
         """Clone project or update latest from upstream
 
-        :param str branch: Branch to attempt to herd
-        :param str tag: Tag to attempt to herd
-        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-        :param bool rebase: Whether to use rebase instead of pulling latest changes
-        :param bool parallel: Whether command is being run in parallel, affects output
+        Keyword Args:
+            branch (str): Branch to attempt to herd
+            tag (str): Tag to attempt to herd
+            depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+                Defaults to 0
+            rebase (bool): Whether to use rebase instead of pulling latest changes. Defaults to False
+            parallel (bool): Whether command is being run in parallel, affects output. Defaults to False
+
         :return:
         """
+
+        branch = kwargs.get('branch', None)
+        tag = kwargs.get('tag', None)
+        depth = kwargs.get('depth', 0)
+        rebase = kwargs.get('rebase', False)
+        parallel = kwargs.get('parallel', False)
 
         self._print_output = not parallel
 
@@ -270,9 +278,9 @@ class Project(object):
         """Prune branch
 
         :param str branch: Branch to prune
-        :param bool force: Force delete branch
-        :param bool local: Delete local branch
-        :param bool remote: Delete remote branch
+        :param Optional[bool] force: Force delete branch. Defaults to False
+        :param Optional[bool] local: Delete local branch. Defaults to False
+        :param Optional[bool] remote: Delete remote branch. Defaults to False
         :return:
         """
 
@@ -287,8 +295,8 @@ class Project(object):
     def reset(self, timestamp=None, parallel=False):
         """Reset project branch to upstream or checkout tag/sha as detached HEAD
 
-        :param str timestamp: If not None, reset to commit at timestamp, or closest previous commit
-        :param bool parallel: Whether command is being run in parallel, affects output
+        :param Optional[str] timestamp: Reset to commit at timestamp, or closest previous commit
+        :param Optional[bool] parallel: Whether command is being run in parallel, affects output. Defaults to False
         :return:
         """
 
@@ -303,7 +311,7 @@ class Project(object):
 
         :param str command: Command to run
         :param bool ignore_errors: Whether to exit if command returns a non-zero exit code
-        :param bool parallel: Whether command is being run in parallel, affects output
+        :param Optional[bool] parallel: Whether command is being run in parallel, affects output. Defaults to False
         :return:
         """
 
@@ -347,7 +355,7 @@ class Project(object):
     def status(self, padding=None):
         """Return formatted status for project
 
-        :param int padding: Amount of padding to use for printing project on left and current ref on right
+        :param Optional[int] padding: Amount of padding to use for printing project on left and current ref on right
         :return: Formatting project name and status
         :rtype: str
         """
@@ -376,8 +384,8 @@ class Project(object):
     def sync(self, rebase=False, parallel=False):
         """Sync fork project with upstream remote
 
-        :param bool rebase: Whether to use rebase instead of pulling latest changes
-        :param bool parallel: Whether command is being run in parallel, affects output
+        :param Optional[bool] rebase: Whether to use rebase instead of pulling latest changes. Defaults to False
+        :param Optional[bool] parallel: Whether command is being run in parallel, affects output. Defaults to False
         :return:
         """
 
@@ -394,8 +402,8 @@ class Project(object):
         """Exit based on serial or parallel job
 
         :param str message: Branch to check for
-        :param bool parallel: Whether command is being run in parallel, affects output
-        :param int return_code: Return code for sys.exit()
+        :param Optional[bool] parallel: Whether command is being run in parallel, affects output. Defaults to False
+        :param Optional[int] return_code: Return code for sys.exit()
         :return:
         :raise ClowderError: General ClowderError with message
         """
@@ -462,7 +470,7 @@ class Project(object):
         """Reset project branch to upstream or checkout tag/sha as detached HEAD
 
         :param ProjectRepo repo: ProjectRepo or ProjectRepoRecursive instance
-        :param str timestamp: If not None, reset to commit at timestamp, or closest previous commit
+        :param Optional[str] timestamp: Reset to commit at timestamp, or closest previous commit
         :return:
         """
 
