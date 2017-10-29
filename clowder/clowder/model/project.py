@@ -211,8 +211,8 @@ class Project(object):
     def herd(self, branch=None, tag=None, depth=None, rebase=False, parallel=False):
         """Clone project or update latest from upstream
 
-        :param str branch: Branch to attempt to check out
-        :param str tag: Tag to attempt to check out
+        :param str branch: Branch to attempt to herd
+        :param str tag: Tag to attempt to herd
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
         :param bool rebase: Whether to use rebase instead of pulling latest changes
         :param bool parallel: Whether command is being run in parallel, affects output
@@ -493,8 +493,8 @@ class Project(object):
 
         Other Parameters:
             url (str): URL to clone from
-            branch (str): Branch to attempt to check out
-            tag (str): Tag to attempt to check out
+            branch (str): Branch to attempt to herd
+            tag (str): Tag to attempt to herd
 
         Keyword Args:
             depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
