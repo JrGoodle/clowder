@@ -21,10 +21,10 @@ class ProjectRepoRecursive(ProjectRepo):
     def __init__(self, repo_path, remote, default_ref, parallel=False, print_output=True):
         ProjectRepo.__init__(self, repo_path, remote, default_ref, parallel=parallel, print_output=print_output)
 
-    def clean(self, args=None):
+    def clean(self, args=''):
         """Discard changes for repo and submodules
 
-        :param str args: Git clean options
+        :param Optional[str] args: Git clean options
             - ``d`` Remove untracked directories in addition to untracked files
             - ``f`` Delete directories with .git sub directory or file
             - ``X`` Remove only files ignored by git
@@ -52,42 +52,65 @@ class ProjectRepoRecursive(ProjectRepo):
 
         return len(self.repo.submodules) > 0
 
-    def herd(self, url, depth=0, fetch=True, rebase=False):
+    def herd(self, url, **kwargs):
         """Herd ref
 
         :param str url: URL of repo
-        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-        :param bool fetch: Whether to fetch
-        :param bool rebase: Whether to rebase instead of pull
+
+        Keyword Args:
+            depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+                Defaults to 0
+            fetch (bool): Whether to fetch. Defaults to True
+            rebase (bool): Whether to use rebase instead of pulling latest changes. Defaults to False
+
         :return:
         """
+
+        depth = kwargs.get('depth', 0)
+        fetch = kwargs.get('fetch', True)
+        rebase = kwargs.get('rebase', False)
 
         ProjectRepo.herd(self, url, depth=depth, fetch=fetch, rebase=rebase)
         self.submodule_update_recursive(depth)
 
-    def herd_branch(self, url, branch, depth=0, rebase=False, fork_remote=None):
+    def herd_branch(self, url, branch, **kwargs):
         """Herd branch
 
         :param str url: URL of repo
         :param str branch: Branch name
-        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-        :param bool rebase: Whether to rebase instead of pull
-        :param str fork_remote: Fork remote name
+
+        Keyword Args:
+            depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+                Defaults to 0
+            fork_remote (str): Fork remote name
+            rebase (bool): Whether to use rebase instead of pulling latest changes. Defaults to False
+
         :return:
         """
+
+        depth = kwargs.get('depth', 0)
+        rebase = kwargs.get('rebase', False)
+        fork_remote = kwargs.get('fork_remote', None)
 
         ProjectRepo.herd_branch(self, url, branch, depth=depth, rebase=rebase, fork_remote=fork_remote)
         self.submodule_update_recursive(depth)
 
-    def herd_tag(self, url, tag, depth=0, rebase=False):
+    def herd_tag(self, url, tag, **kwargs):
         """Herd tag
 
         :param str url: URL of repo
         :param str tag: Tag name
-        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-        :param bool rebase: Whether to rebase instead of pull
+
+        Keyword Args:
+            depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+                Defaults to 0
+            rebase (bool): Whether to use rebase instead of pulling latest changes. Defaults to False
+
         :return:
         """
+
+        depth = kwargs.get('depth', 0)
+        rebase = kwargs.get('rebase', False)
 
         ProjectRepo.herd_tag(self, url, tag, depth=depth, rebase=rebase)
         self.submodule_update_recursive(depth)
@@ -105,7 +128,8 @@ class ProjectRepoRecursive(ProjectRepo):
     def submodule_update_recursive(self, depth=0):
         """Update submodules recursively and initialize if not present
 
-        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :param Optional[int] depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer.
+            Defaults to 0
         :return:
         """
 
@@ -126,7 +150,7 @@ class ProjectRepoRecursive(ProjectRepo):
         """Sync fork with upstream remote
 
         :param str fork_remote: Fork remote name
-        :param bool rebase: Whether to use rebase instead of pulling latest changes
+        :param Optional[bool] rebase: Whether to use rebase instead of pulling latest changes. Defaults to False
         :return:
         """
 
