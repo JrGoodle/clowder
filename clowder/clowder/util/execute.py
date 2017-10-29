@@ -99,7 +99,7 @@ def execute_command(command, path, shell=True, env=None, print_output=True):
             pool.close()
             pool.terminate()
         cprint('\n - Command failed', 'red')
-        print(err + '\n')
+        print(str(err) + '\n')
         return 1
 
 
