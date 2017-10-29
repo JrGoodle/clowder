@@ -112,7 +112,11 @@ def valid_clowder_yaml_required(func):
 
 
 def _validate_clowder_repo_exists(repo):
-    """If clowder repo doesn't exist, print message and exit"""
+    """If clowder repo doesn't exist, print message and exit
+
+    :param ClowderRepo repo: Repo to check
+    :return:
+    """
 
     if repo is None:
         cprint(' - No clowder found in the current directory\n', 'red')
