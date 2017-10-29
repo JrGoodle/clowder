@@ -180,14 +180,14 @@ class GitRepo(object):
         Keyword Args:
             ref (str): Ref to fetch
             depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-                Defaults to None
+                Defaults to 0
             remove_dir (bool): Whether to remove the directory if commands fail. Defaults to False
 
         :return:
         """
 
         ref = kwargs.get('ref', None)
-        depth = kwargs.get('depth', None)
+        depth = kwargs.get('depth', 0)
         remove_dir = kwargs.get('remove_dir', False)
 
         remote_output = fmt.remote_string(remote)
