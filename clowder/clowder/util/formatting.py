@@ -160,7 +160,7 @@ def remote_name_error(fork, project, remote):
 
     output_1 = colored(' - Error: fork ', 'red') + colored(fork, attrs=['bold'])
     output_2 = colored(' and project ', 'red') + colored(project, attrs=['bold'])
-    output_3 = + colored(' have same remote name ', 'red') + colored(remote, attrs=['bold'])
+    output_3 = colored(' have same remote name ', 'red') + colored(remote, attrs=['bold'])
     return output_1 + output_2 + output_3
 
 

@@ -88,12 +88,6 @@ class Project(object):
         repo = ProjectRepo(self.full_path(), self._remote, self._ref)
         repo.status_verbose()
 
-    def exists(self):
-        """Check if project exists on disk"""
-
-        path = os.path.join(self.full_path())
-        return os.path.isdir(path)
-
     def existing_branch(self, branch, is_remote):
         """Check if branch exists"""
 
@@ -192,13 +186,6 @@ class Project(object):
         repo = ProjectRepo(self.full_path(), self._remote, self._ref)
         return repo.validate_repo()
 
-    def print_exists(self):
-        """Print existence validation message for project"""
-
-        if not self.exists():
-            print(self.status())
-            ProjectRepo.exists(self.full_path())
-
     def print_validation(self):
         """Print validation message for project"""
 
@@ -231,7 +218,7 @@ class Project(object):
         """Run command or script in project directory"""
 
         if not parallel:
-            if not self.exists():
+            if not ProjectRepo.existing_git_repository(self.full_path()):
                 print(colored(" - Project is missing\n", 'red'))
                 return
 

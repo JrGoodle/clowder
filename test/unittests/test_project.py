@@ -38,12 +38,6 @@ class ProjectTest(unittest.TestCase):
         self.kit_project = Project(self.cats_example_path, __kit_project_yaml__,
                                    __kit_group_yaml__, __defaults_yaml__, sources)
 
-    def test_exists(self):
-        """Test exists() method"""
-
-        self.assertFalse(self.jules_project.exists())
-        self.assertTrue(self.kit_project.exists())
-
     def test_full_path(self):
         """Test full_path() method"""
 

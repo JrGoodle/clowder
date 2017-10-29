@@ -5,7 +5,7 @@ from __future__ import print_function
 import sys
 
 from git import GitError
-from termcolor import colored, cprint
+from termcolor import colored
 
 import clowder.util.formatting as fmt
 from clowder.error.clowder_git_error import ClowderGitError
@@ -56,13 +56,6 @@ class ProjectRepo(GitRepo):
                 self._compare_remote_url(upstream_remote_name, upstream_remote_url)
             if fork_remote_name in remote_names:
                 self._compare_remote_url(fork_remote_name, fork_remote_url)
-
-    @staticmethod
-    def exists(repo_path):
-        """Print existence validation messages"""
-
-        if not ProjectRepo.existing_git_repository(repo_path):
-            cprint(' - Project is missing', 'red')
 
     @staticmethod
     def format_project_ref_string(repo_path):
