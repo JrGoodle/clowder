@@ -124,15 +124,23 @@ class ProjectRepo(GitRepo):
             symbol = ''
         return colored(name + symbol, color)
 
-    def herd(self, url, depth=0, fetch=True, rebase=False):
+    def herd(self, url, **kwargs):
         """Herd ref
 
         :param str url: URL of repo
-        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-        :param bool fetch: Whether to fetch
-        :param bool rebase: Whether to rebase instead of pull
+
+        Keyword Args:
+            depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+                Defaults to 0
+            fetch (bool): Whether to fetch. Defaults to True
+            rebase (bool): Whether to use rebase instead of pulling latest changes. Defaults to False
+
         :return:
         """
+
+        depth = kwargs.get('depth', 0)
+        fetch = kwargs.get('fetch', True)
+        rebase = kwargs.get('rebase', False)
 
         if not self.existing_git_repository(self.repo_path):
             self._herd_initial(url, depth=depth)
@@ -142,16 +150,24 @@ class ProjectRepo(GitRepo):
             raise ClowderGitError(msg=colored(' - Failed to create remote', 'red'))
         self._herd(self.remote, self.default_ref, depth=depth, fetch=fetch, rebase=rebase)
 
-    def herd_branch(self, url, branch, depth=0, rebase=False, fork_remote=None):
+    def herd_branch(self, url, branch, **kwargs):
         """Herd branch
 
         :param str url: URL of repo
         :param str branch: Branch name
-        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-        :param bool rebase: Whether to rebase instead of pull
-        :param str fork_remote: Fork remote name
+
+        Keyword Args:
+            depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+                Defaults to 0
+            fork_remote (str): Fork remote name
+            rebase (bool): Whether to use rebase instead of pulling latest changes. Defaults to False
+
         :return:
         """
+
+        depth = kwargs.get('depth', 0)
+        rebase = kwargs.get('rebase', False)
+        fork_remote = kwargs.get('fork_remote', None)
 
         if not self.existing_git_repository(self.repo_path):
             self._herd_branch_initial(url, branch, depth=depth)
@@ -190,15 +206,22 @@ class ProjectRepo(GitRepo):
         fetch = depth != 0
         self.herd(url, depth=depth, fetch=fetch, rebase=rebase)
 
-    def herd_tag(self, url, tag, depth=0, rebase=False):
+    def herd_tag(self, url, tag, **kwargs):
         """Herd tag
 
         :param str url: URL of repo
         :param str tag: Tag name
-        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-        :param bool rebase: Whether to rebase instead of pull
+
+        Keyword Args:
+            depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+                Defaults to 0
+            rebase (bool): Whether to use rebase instead of pulling latest changes. Defaults to False
+
         :return:
         """
+
+        depth = kwargs.get('depth', 0)
+        rebase = kwargs.get('rebase', False)
 
         if not self.existing_git_repository(self.repo_path):
             self._init_repo()
@@ -222,7 +245,7 @@ class ProjectRepo(GitRepo):
 
         :param str url: URL of repo
         :param str remote: Remote name
-        :param str branch: Branch name
+        :param Optional[str] branch: Branch name
         :return:
         """
 
@@ -300,7 +323,8 @@ class ProjectRepo(GitRepo):
     def reset(self, depth=0):
         """Reset branch to upstream or checkout tag/sha as detached HEAD
 
-        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :param Optional[int] depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer.
+            Defaults to 0
         :return:
         """
 
@@ -392,7 +416,7 @@ class ProjectRepo(GitRepo):
         """Sync fork with upstream remote
 
         :param str fork_remote: Fork remote name
-        :param bool rebase: Whether to use rebase instead of pulling latest changes
+        :param Optional[bool] rebase: Whether to use rebase instead of pulling latest changes. Defaults to False
         :return:
         """
 
@@ -432,16 +456,24 @@ class ProjectRepo(GitRepo):
             self._print(message)
             self._exit(message)
 
-    def _herd(self, remote, ref, depth=0, fetch=True, rebase=False):
+    def _herd(self, remote, ref, **kwargs):
         """Herd ref
 
         :param str remote: Remote name
         :param str ref: Git ref
-        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-        :param bool fetch: Whether to fetch
-        :param bool rebase: Whether to rebase instead of pull
+
+        Keyword Args:
+            depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+                Defaults to 0
+            fetch (bool): Whether to fetch. Defaults to True
+            rebase (bool): Whether to use rebase instead of pulling latest changes. Defaults to False
+
         :return:
         """
+
+        depth = kwargs.get('depth', 0)
+        fetch = kwargs.get('fetch', True)
+        rebase = kwargs.get('rebase', False)
 
         if self.ref_type(ref) == 'branch':
             branch = self.truncate_ref(ref)
@@ -477,7 +509,8 @@ class ProjectRepo(GitRepo):
         """Herd ref initial
 
         :param str url: URL of repo
-        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :param Optional[int] depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer.
+            Defaults to 0
         :return:
         """
 
@@ -495,7 +528,8 @@ class ProjectRepo(GitRepo):
 
         :param str url: URL of repo
         :param str branch: Branch name to attempt to herd
-        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :param Optional[int] depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer.
+            Defaults to 0
         :return:
         """
 
@@ -509,15 +543,22 @@ class ProjectRepo(GitRepo):
             return
         self._create_branch_local_tracking(branch, self.remote, depth=depth, fetch=False, remove_dir=True)
 
-    def _herd_remote_branch(self, remote, branch, depth=0, rebase=False):
+    def _herd_remote_branch(self, remote, branch, **kwargs):
         """Herd remote branch
 
         :param str remote: Remote name
         :param str branch: Branch name to attempt to herd
-        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-        :param bool rebase: Whether to rebase instead of pull
+
+        Keyword Args:
+            depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+                Defaults to 0
+            rebase (bool): Whether to use rebase instead of pulling latest changes. Defaults to False
+
         :return:
         """
+
+        depth = kwargs.get('depth', 0)
+        rebase = kwargs.get('rebase', False)
 
         if not self._is_tracking_branch(branch):
             self._set_tracking_branch_commit(branch, remote, depth)
