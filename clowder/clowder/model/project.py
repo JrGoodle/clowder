@@ -214,7 +214,7 @@ class Project(object):
             branch (str): Branch to attempt to herd
             tag (str): Tag to attempt to herd
             depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-                Defaults to 0
+                Defaults to None
             rebase (bool): Whether to use rebase instead of pulling latest changes. Defaults to False
             parallel (bool): Whether command is being run in parallel, affects output. Defaults to False
 
@@ -223,7 +223,7 @@ class Project(object):
 
         branch = kwargs.get('branch', None)
         tag = kwargs.get('tag', None)
-        depth = kwargs.get('depth', 0)
+        depth = kwargs.get('depth', None)
         rebase = kwargs.get('rebase', False)
         parallel = kwargs.get('parallel', False)
 

@@ -32,7 +32,8 @@ class ProjectRepo(GitRepo):
 
         :param str url: URL of repo
         :param str branch: Branch name
-        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :param Optional[int] depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+            Defaults to 0
         :return:
         """
 

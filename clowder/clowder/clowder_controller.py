@@ -346,7 +346,7 @@ class ClowderController(object):
             branch (str): Branch to attempt to herd
             tag (str): Tag to attempt to herd
             depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-                Defaults to 0
+                Defaults to None
             rebase (bool): Whether to use rebase instead of pulling latest changes. Defaults to False
             project_names (list of str): Project names to herd
             skip (list of str): Project names to skip
@@ -358,7 +358,7 @@ class ClowderController(object):
         skip = kwargs.get('skip', [])
         branch = kwargs.get('branch', None)
         tag = kwargs.get('tag', None)
-        depth = kwargs.get('depth', 0)
+        depth = kwargs.get('depth', None)
         rebase = kwargs.get('rebase', False)
 
         if project_names is None:
@@ -382,7 +382,7 @@ class ClowderController(object):
             branch (str): Branch to attempt to herd
             tag (str): Tag to attempt to herd
             depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-                Defaults to 0
+                Defaults to None
             rebase (bool): Whether to use rebase instead of pulling latest changes. Defaults to False
             project_names (list of str): Project names to herd
             skip (list of str): Project names to skip
@@ -394,7 +394,7 @@ class ClowderController(object):
         skip = kwargs.get('skip', [])
         branch = kwargs.get('branch', None)
         tag = kwargs.get('tag', None)
-        depth = kwargs.get('depth', 0)
+        depth = kwargs.get('depth', None)
         rebase = kwargs.get('rebase', False)
 
         print(' - Herd projects in parallel\n')
