@@ -15,10 +15,24 @@ from clowder.git.project_repo import ProjectRepo
 
 
 class Fork(object):
-    """clowder.yaml fork class"""
+    """clowder.yaml Project model class
+
+    Attributes:
+        name (str): Project name
+        path (str): Project relative path
+        fork (Fork): Project's associated Fork
+    """
 
     def __init__(self, fork, root_directory, path, source):
-        self.root_directory = root_directory
+        """Project __init__
+
+        :param dict fork: Parsed YAML python object for fork
+        :param str root_directory: Root directory of clowder projects
+        :param str path: Fork relative path
+        :param Source source: Source instance
+        """
+
+        self._root_directory = root_directory
         self.path = path
         self.name = fork['name']
         self.remote_name = fork['remote']
@@ -31,7 +45,7 @@ class Fork(object):
         :rtype: str
         """
 
-        return os.path.join(self.root_directory, self.path)
+        return os.path.join(self._root_directory, self.path)
 
     def get_yaml(self):
         """Return python object representation for saving yaml

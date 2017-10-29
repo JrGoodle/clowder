@@ -24,9 +24,24 @@ from clowder.util.execute import execute_forall_command
 
 
 class Project(object):
-    """clowder.yaml project class"""
+    """clowder.yaml Project model class
+
+    Attributes:
+        name (str): Project name
+        path (str): Project relative path
+        fork (Fork): Project's associated Fork
+    """
 
     def __init__(self, root_directory, project, group, defaults, sources):
+        """Project __init__
+
+        :param str root_directory: Root directory of clowder projects
+        :param dict project: Parsed YAML python object for project
+        :param dict group: Parsed YAML python object for group
+        :param dict defaults: Parsed YAML python object for defaults
+        :param list of Source sources: List of Source instances
+        """
+
         self.name = project['name']
         self.path = project['path']
 

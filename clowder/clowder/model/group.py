@@ -13,9 +13,27 @@ from clowder.model.project import Project
 
 
 class Group(object):
-    """clowder.yaml group class"""
+    """clowder.yaml Group model class
+
+    Attributes:
+        name (str): Group name
+        depth (int): Group depth default
+        recursive (bool): Group recursive default
+        timestamp_author (str): Group timestamp author default
+        ref (str): Group ref default
+        remote_name (str): Group remote name default
+        source (Source): Group source default
+        projects (list of Project): List of group's projects
+    """
 
     def __init__(self, root_directory, group, defaults, sources):
+        """Groups __init__
+
+        :param str root_directory: Root directory of clowder projects
+        :param dict group: Parsed YAML python object for group
+        :param dict defaults: Parsed YAML python object for defaults
+        :param list of Source sources: List of Source instances
+        """
 
         self.name = group['name']
         self.depth = group.get('depth', defaults['depth'])
