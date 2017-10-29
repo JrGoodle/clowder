@@ -26,19 +26,6 @@ def clowder_required(func):
     return wrapper
 
 
-def initialize_skip_projects(func):
-    """Initialize skip projects to empty list if necessary"""
-
-    def wrapper(*args, **kwargs):
-        """Wrapper"""
-
-        if kwargs['skip'] is None:
-            kwargs['skip'] = []
-        return func(*args, **kwargs)
-
-    return wrapper
-
-
 def not_detached(func):
     """If HEAD is detached, print error message and exit"""
 
