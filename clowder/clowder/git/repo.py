@@ -16,6 +16,7 @@ from termcolor import colored
 
 import clowder.util.formatting as fmt
 from clowder.error.clowder_git_error import ClowderGitError
+from clowder.util.decorators import not_detached
 from clowder.util.execute import execute_command
 from clowder.util.file_system import remove_directory
 
@@ -325,14 +326,12 @@ class GitRepo(object):
             print(' - Dirty repo. Please stash, commit, or discard your changes')
             repo.status_verbose()
 
+    @not_detached
     def pull(self):
         """Pull upstream changes
 
         :return:
         """
-
-        if self.is_detached(print_output=True):
-            return
 
         try:
             self._print(' - Pull latest changes')
@@ -345,14 +344,12 @@ class GitRepo(object):
         except (KeyboardInterrupt, SystemExit):
             self._exit()
 
+    @not_detached
     def push(self):
         """Push changes
 
         :return:
         """
-
-        if self.is_detached(print_output=True):
-            return
 
         try:
             self._print(' - Push local changes')
@@ -985,6 +982,7 @@ class GitRepo(object):
         if self.print_output:
             print(val)
 
+    @not_detached
     def _pull(self, remote, branch):
         """Pull from remote branch
 
@@ -992,9 +990,6 @@ class GitRepo(object):
         :param str branch: Branch name
         :return:
         """
-
-        if self.is_detached(print_output=True):
-            return
 
         branch_output = fmt.ref_string(branch)
         remote_output = fmt.remote_string(remote)
@@ -1007,6 +1002,7 @@ class GitRepo(object):
             self._print(message)
             self._exit(message)
 
+    @not_detached
     def _rebase_remote_branch(self, remote, branch):
         """Rebase onto remote branch
 
@@ -1014,9 +1010,6 @@ class GitRepo(object):
         :param str branch: Branch name
         :return:
         """
-
-        if self.is_detached(print_output=True):
-            return
 
         branch_output = fmt.ref_string(branch)
         remote_output = fmt.remote_string(remote)

@@ -39,6 +39,20 @@ def initialize_skip_projects(func):
     return wrapper
 
 
+def not_detached(func):
+    """If HEAD is detached, print error message and exit"""
+
+    def wrapper(*args, **kwargs):
+        """Wrapper"""
+
+        instance = args[0]
+        if instance.is_detached(print_output=True):
+            return
+        return func(*args, **kwargs)
+
+    return wrapper
+
+
 def project_repo_exists(func):
     """If no git repo exists, print error message and exit"""
 
