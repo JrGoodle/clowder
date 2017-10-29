@@ -1,4 +1,9 @@
-"""Representation of clowder.yaml fork"""
+# -*- coding: utf-8 -*-
+"""Representation of clowder.yaml fork
+
+.. codeauthor:: Joe Decapo <joe@polka.cat>
+
+"""
 
 from __future__ import print_function
 
@@ -20,17 +25,29 @@ class Fork(object):
         self.url = source.get_url_prefix() + self.name + ".git"
 
     def full_path(self):
-        """Return full path to project"""
+        """Return full path to project
+
+        :return: Project's full file path
+        :rtype: str
+        """
 
         return os.path.join(self.root_directory, self.path)
 
     def get_yaml(self):
-        """Return python object representation for saving yaml"""
+        """Return python object representation for saving yaml
+
+        :return: YAML python object
+        :rtype: dict
+        """
 
         return {'name': self.name, 'remote': self.remote_name}
 
     def status(self):
-        """Return formatted fork status"""
+        """Return formatted fork status
+
+        :return: Formatted fork status
+        :rtype: str
+        """
 
         if not ProjectRepo.existing_git_repository(self.path):
             return colored(self.path, 'green')

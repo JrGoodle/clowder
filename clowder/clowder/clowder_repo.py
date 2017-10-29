@@ -1,4 +1,9 @@
-"""Clowder repo management"""
+# -*- coding: utf-8 -*-
+"""Clowder repo class
+
+.. codeauthor:: Joe Decapo <joe@polka.cat>
+
+"""
 
 from __future__ import print_function
 
@@ -26,17 +31,28 @@ class ClowderRepo(object):
         self.clowder_path = os.path.join(self.root_directory, '.clowder')
 
     def add(self, files):
-        """Add files in clowder repo to git index"""
+        """Add files in clowder repo to git index
+
+        :param str files: Files to git add
+        :return:
+        """
 
         ProjectRepo(self.clowder_path, self.remote, self.default_ref).add(files)
 
     def branches(self):
-        """Print current local branches"""
+        """Print current local branches
+
+        :return:
+        """
 
         ProjectRepo(self.clowder_path, self.remote, self.default_ref).print_branches(local=True, remote=True)
 
     def checkout(self, ref):
-        """Checkout ref in clowder repo"""
+        """Checkout ref in clowder repo
+
+        :param str ref: Ref to git checkout
+        :return:
+        """
 
         repo = ProjectRepo(self.clowder_path, self.remote, self.default_ref)
         if self.is_dirty():
@@ -46,7 +62,12 @@ class ClowderRepo(object):
         repo.checkout(ref)
 
     def clean(self):
-        """Discard changes in clowder repo"""
+        """Discard changes in clowder repo
+
+        Equivalent to: ``git clean -ffdx``
+
+        :return:
+        """
 
         if self.is_dirty():
             print(' - Discard current changes')
@@ -56,12 +77,21 @@ class ClowderRepo(object):
         print(' - No changes to discard')
 
     def commit(self, message):
-        """Commit current changes in clowder repo"""
+        """Commit current changes in clowder repo
+
+        :param str message: Git commit message
+        :return:
+        """
 
         ProjectRepo(self.clowder_path, self.remote, self.default_ref).commit(message)
 
     def init(self, url, branch):
-        """Clone clowder repo from url"""
+        """Clone clowder repo from url
+
+        :param str url: URL of repo to clone
+        :param str branch: Branch to checkout
+        :return:
+        """
 
         # Register exit handler to remove files if cloning repo fails
         atexit.register(self.init_exit_handler)
@@ -70,7 +100,10 @@ class ClowderRepo(object):
         self.link()
 
     def init_exit_handler(self):
-        """Exit handler for deleting files if init fails"""
+        """Exit handler for deleting files if init fails
+
+        :return:
+        """
 
         if os.path.isdir(self.clowder_path):
             clowder_yaml = os.path.join(self.root_directory, 'clowder.yaml')
@@ -79,12 +112,20 @@ class ClowderRepo(object):
                 sys.exit(1)
 
     def is_dirty(self):
-        """Check if project is dirty"""
+        """Check if project is dirty
+
+        :return: True, if repo is dirty
+        :rtype: bool
+        """
 
         return ProjectRepo(self.clowder_path, self.remote, self.default_ref).is_dirty()
 
     def link(self, version=None):
-        """Create symlink pointing to clowder.yaml file"""
+        """Create symlink pointing to clowder.yaml file
+
+        :param Optional[str] version: Version name of clowder.yaml to link. Defaults to None for default clowder.yaml
+        :return:
+        """
 
         if version is None:
             yaml_file = os.path.join(self.root_directory, '.clowder', 'clowder.yaml')
@@ -103,7 +144,11 @@ class ClowderRepo(object):
         force_symlink(yaml_file, yaml_symlink)
 
     def print_status(self, fetch=False):
-        """Print clowder repo status"""
+        """Print clowder repo status
+
+        :param Optional[str] fetch: Fetch before printing status. Defaults to False
+        :return:
+        """
 
         repo_path = os.path.join(self.root_directory, '.clowder')
         if not ProjectRepo.existing_git_repository(repo_path):
@@ -132,17 +177,27 @@ class ClowderRepo(object):
         print(symlink_output + ' -> ' + path_output + '\n')
 
     def pull(self):
-        """Pull clowder repo upstream changes"""
+        """Pull clowder repo upstream changes
+
+        :return:
+        """
 
         ProjectRepo(self.clowder_path, self.remote, self.default_ref).pull()
 
     def push(self):
-        """Push clowder repo changes"""
+        """Push clowder repo changes
+
+        :return:
+        """
 
         ProjectRepo(self.clowder_path, self.remote, self.default_ref).push()
 
     def run_command(self, command):
-        """Run command in clowder repo"""
+        """Run command in clowder repo
+
+        :param str command: Command to run
+        :return:
+        """
 
         print(fmt.command(command))
         return_code = execute_command(command.split(), self.clowder_path)
@@ -151,21 +206,34 @@ class ClowderRepo(object):
             sys.exit(return_code)
 
     def git_status(self):
-        """Print clowder repo git status"""
+        """Print clowder repo git status
+
+        Equivalent to: ``git status -vv``
+
+        :return:
+        """
 
         ProjectRepo(self.clowder_path, self.remote, self.default_ref).status_verbose()
 
     def _validate_groups(self):
-        """Validate status of clowder repo"""
+        """Validate status of clowder repo
+
+        :return:
+        """
 
         if not ProjectRepo(self.clowder_path, self.remote, self.default_ref).validate_repo():
-            ProjectRepo.validation(self.clowder_path)
+            ProjectRepo.print_validation(self.clowder_path)
             print()
             sys.exit(1)
 
 
 def force_symlink(file1, file2):
-    """Force symlink creation"""
+    """Force symlink creation
+
+    :param str file1: File to create symlink pointing to
+    :param str file2: Symlink location
+    :return:
+    """
 
     try:
         os.symlink(file1, file2)

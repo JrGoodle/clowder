@@ -1,4 +1,9 @@
-"""Project git utilities"""
+# -*- coding: utf-8 -*-
+"""Project Git utility class
+
+.. codeauthor:: Joe Decapo <joe@polka.cat>
+
+"""
 
 from __future__ import print_function
 
@@ -23,7 +28,13 @@ class ProjectRepo(GitRepo):
         GitRepo.__init__(self, repo_path, remote, default_ref, parallel=parallel, print_output=print_output)
 
     def create_clowder_repo(self, url, branch, depth=0):
-        """Clone clowder git repo from url at path"""
+        """Clone clowder git repo from url at path
+
+        :param str url: URL of repo
+        :param str branch: Branch name
+        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :return:
+        """
 
         if self.existing_git_repository(self.repo_path):
             return
@@ -32,7 +43,14 @@ class ProjectRepo(GitRepo):
         self._checkout_new_repo_branch(branch, depth)
 
     def configure_remotes(self, upstream_remote_name, upstream_remote_url, fork_remote_name, fork_remote_url):
-        """Configure remotes names for fork and upstream"""
+        """Configure remotes names for fork and upstream
+
+        :param str upstream_remote_name: Upstream remote name
+        :param str upstream_remote_url: Upstream remote url
+        :param str fork_remote_name: Fork remote name
+        :param str fork_remote_url: Fork remote url
+        :return:
+        """
 
         if not self.existing_git_repository(self.repo_path):
             return
@@ -59,7 +77,12 @@ class ProjectRepo(GitRepo):
 
     @staticmethod
     def format_project_ref_string(repo_path):
-        """Return formatted repo ref name"""
+        """Return formatted project ref string
+
+        :param str repo_path: Repo path
+        :return: Formmatted repo ref
+        :rtype: str
+        """
 
         repo = ProjectRepo(repo_path, __project_repo_default_remote__, __project_repo_default_ref__)
         local_commits = repo.new_commits()
@@ -81,7 +104,13 @@ class ProjectRepo(GitRepo):
 
     @staticmethod
     def format_project_string(repo_path, name):
-        """Return formatted project name"""
+        """Return formatted project name
+
+        :param str repo_path: Repo path
+        :param str name: Project name
+        :return: Formmatted project name
+        :rtype: str
+        """
 
         if not ProjectRepo.existing_git_repository(repo_path):
             return colored(name, 'green')
@@ -95,7 +124,14 @@ class ProjectRepo(GitRepo):
         return colored(name + symbol, color)
 
     def herd(self, url, depth=0, fetch=True, rebase=False):
-        """Herd ref"""
+        """Herd ref
+
+        :param str url: URL of repo
+        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :param bool fetch: Whether to fetch
+        :param bool rebase: Whether to rebase instead of pull
+        :return:
+        """
 
         if not self.existing_git_repository(self.repo_path):
             self._herd_initial(url, depth=depth)
@@ -106,7 +142,15 @@ class ProjectRepo(GitRepo):
         self._herd(self.remote, self.default_ref, depth=depth, fetch=fetch, rebase=rebase)
 
     def herd_branch(self, url, branch, depth=0, rebase=False, fork_remote=None):
-        """Herd branch"""
+        """Herd branch
+
+        :param str url: URL of repo
+        :param str branch: Branch name
+        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :param bool rebase: Whether to rebase instead of pull
+        :param str fork_remote: Fork remote name
+        :return:
+        """
 
         if not self.existing_git_repository(self.repo_path):
             self._herd_branch_initial(url, branch, depth=depth)
@@ -146,7 +190,14 @@ class ProjectRepo(GitRepo):
         self.herd(url, depth=depth, fetch=fetch, rebase=rebase)
 
     def herd_tag(self, url, tag, depth=0, rebase=False):
-        """Herd tag"""
+        """Herd tag
+
+        :param str url: URL of repo
+        :param str tag: Tag name
+        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :param bool rebase: Whether to rebase instead of pull
+        :return:
+        """
 
         if not self.existing_git_repository(self.repo_path):
             self._init_repo()
@@ -166,7 +217,13 @@ class ProjectRepo(GitRepo):
         self.herd(url, depth=depth, fetch=fetch, rebase=rebase)
 
     def herd_remote(self, url, remote, branch=None):
-        """Herd remote repo"""
+        """Herd remote repo
+
+        :param str url: URL of repo
+        :param str remote: Remote name
+        :param str branch: Branch name
+        :return:
+        """
 
         return_code = self._create_remote(remote, url)
         if return_code != 0:
@@ -180,7 +237,12 @@ class ProjectRepo(GitRepo):
             raise ClowderGitError(msg=colored(' - Failed to fetch', 'red'))
 
     def prune_branch_local(self, branch, force):
-        """Prune branch in repository"""
+        """Prune local branch
+
+        :param str branch: Branch name to delete
+        :param bool force: Force delete branch
+        :return:
+        """
 
         branch_output = fmt.ref_string(branch)
         if branch not in self.repo.heads:
@@ -212,7 +274,12 @@ class ProjectRepo(GitRepo):
             self._exit()
 
     def prune_branch_remote(self, branch, remote):
-        """Prune remote branch in repository"""
+        """Prune remote branch in repository
+
+        :param str branch: Branch name to delete
+        :param str remote: Remote name
+        :return:
+        """
 
         branch_output = fmt.ref_string(branch)
         if not self.existing_remote_branch(branch, remote):
@@ -230,7 +297,11 @@ class ProjectRepo(GitRepo):
             self._exit()
 
     def reset(self, depth=0):
-        """Reset branch to upstream or checkout tag/sha as detached HEAD"""
+        """Reset branch to upstream or checkout tag/sha as detached HEAD
+
+        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :return:
+        """
 
         if self.ref_type(self.default_ref) == 'branch':
             branch = self.truncate_ref(self.default_ref)
@@ -263,7 +334,13 @@ class ProjectRepo(GitRepo):
             self._checkout_sha(self.default_ref)
 
     def reset_timestamp(self, timestamp, author, ref):
-        """Reset branch to upstream or checkout tag/sha as detached HEAD"""
+        """Reset branch to upstream or checkout tag/sha as detached HEAD
+
+        :param str timestamp: Commit ref timestamp
+        :param str author: Commit author
+        :param str ref: Reference ref
+        :return:
+        """
 
         rev = None
         if author:
@@ -277,7 +354,14 @@ class ProjectRepo(GitRepo):
         self._checkout_sha(rev)
 
     def start(self, remote, branch, depth, tracking):
-        """Start new branch in repository"""
+        """Start new branch in repository
+
+        :param str remote: Remote name
+        :param str branch: Local branch name to create
+        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :param bool tracking: Whether to create a remote branch with tracking relationship
+        :return:
+        """
 
         if branch not in self.repo.heads:
             if not is_offline():
@@ -304,7 +388,12 @@ class ProjectRepo(GitRepo):
             self._create_branch_remote_tracking(branch, remote, depth)
 
     def sync(self, fork_remote, rebase=False):
-        """Sync fork with upstream remote"""
+        """Sync fork with upstream remote
+
+        :param str fork_remote: Fork remote name
+        :param bool rebase: Whether to use rebase instead of pulling latest changes
+        :return:
+        """
 
         self._print(' - Sync fork with upstream remote')
         if self.ref_type(self.default_ref) != 'branch':
@@ -327,7 +416,14 @@ class ProjectRepo(GitRepo):
             self._exit(message)
 
     def _compare_remote_url(self, remote, url):
-        """Compare actual remote url to given url"""
+        """Compare actual remote url to given url
+
+        If URL's are different print error message and exit
+
+        :param str remote: Remote name
+        :param str url: URL to compare with remote's URL
+        :return:
+        """
 
         if url != self._remote_get_url(remote):
             actual_url = self._remote_get_url(remote)
@@ -336,7 +432,15 @@ class ProjectRepo(GitRepo):
             self._exit(message)
 
     def _herd(self, remote, ref, depth=0, fetch=True, rebase=False):
-        """Herd ref"""
+        """Herd ref
+
+        :param str remote: Remote name
+        :param str ref: Git ref
+        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :param bool fetch: Whether to fetch
+        :param bool rebase: Whether to rebase instead of pull
+        :return:
+        """
 
         if self.ref_type(ref) == 'branch':
             branch = self.truncate_ref(ref)
@@ -369,7 +473,12 @@ class ProjectRepo(GitRepo):
             self._checkout_sha(ref)
 
     def _herd_initial(self, url, depth=0):
-        """Herd ref initial"""
+        """Herd ref initial
+
+        :param str url: URL of repo
+        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :return:
+        """
 
         self._init_repo()
         self._create_remote(self.remote, url, remove_dir=True)
@@ -381,7 +490,13 @@ class ProjectRepo(GitRepo):
             self._checkout_new_repo_commit(self.default_ref, self.remote, depth)
 
     def _herd_branch_initial(self, url, branch, depth=0):
-        """Herd branch initial"""
+        """Herd branch initial
+
+        :param str url: URL of repo
+        :param str branch: Branch name to attempt to herd
+        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :return:
+        """
 
         self._init_repo()
         self._create_remote(self.remote, url, remove_dir=True)
@@ -394,7 +509,14 @@ class ProjectRepo(GitRepo):
         self._create_branch_local_tracking(branch, self.remote, depth=depth, fetch=False, remove_dir=True)
 
     def _herd_remote_branch(self, remote, branch, depth=0, rebase=False):
-        """Herd remote branch"""
+        """Herd remote branch
+
+        :param str remote: Remote name
+        :param str branch: Branch name to attempt to herd
+        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :param bool rebase: Whether to rebase instead of pull
+        :return:
+        """
 
         if not self._is_tracking_branch(branch):
             self._set_tracking_branch_commit(branch, remote, depth)
@@ -405,7 +527,13 @@ class ProjectRepo(GitRepo):
         self._pull(remote, branch)
 
     def _set_tracking_branch_commit(self, branch, remote, depth):
-        """Set tracking relationship between local and remote branch if on same commit"""
+        """Set tracking relationship between local and remote branch if on same commit
+
+        :param str branch: Branch name
+        :param str remote: Remote name
+        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :return:
+        """
 
         branch_output = fmt.ref_string(branch)
         origin = self._remote(remote)

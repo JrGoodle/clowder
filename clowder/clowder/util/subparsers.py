@@ -1,15 +1,32 @@
-"""Configure clowder subparsers"""
+# -*- coding: utf-8 -*-
+"""Clowder subparsers configuration
+
+.. codeauthor:: Joe Decapo <joe@polka.cat>
+
+"""
 
 
 def configure_argparse(parser, clowder, versions):
-    """Configure clowder argparse"""
+    """Configure clowder argparse
+
+    :param ArgumentParser parser: ArgParse ArgumentParser instance
+    :param ClowderController clowder: ClowderController instance
+    :param list of str versions: List of clowder.yaml versions
+    :return:
+    """
 
     subparsers = parser.add_subparsers(dest='clowder_command', metavar='SUBCOMMAND')
     _configure_subparsers(subparsers, clowder, versions)
 
 
 def _configure_subparsers(subparsers, clowder, versions):
-    """Configure clowder command subparsers"""
+    """Configure clowder command subparsers
+
+    :param ArgumentParser subparsers: ArgParse ArgumentParser instance returned from ``add_subparsers()``
+    :param ClowderController clowder: ClowderController instance
+    :param list of str versions: List of clowder.yaml versions
+    :return:
+    """
 
     _configure_subparser_branch(subparsers, clowder)
     _configure_subparser_clean(subparsers, clowder)
@@ -31,7 +48,12 @@ def _configure_subparsers(subparsers, clowder, versions):
 
 
 def _configure_subparser_branch(subparsers, clowder):
-    """Configure clowder branch subparser and arguments"""
+    """Configure clowder branch subparser and arguments
+
+    :param ArgumentParser subparsers: ArgParse ArgumentParser instance returned from ``add_subparsers()``
+    :param ClowderController clowder: ClowderController instance
+    :return:
+    """
 
     branch_help = 'Display current branches'
     group_names = _group_names(clowder)
@@ -62,7 +84,12 @@ def _configure_subparser_branch(subparsers, clowder):
 
 
 def _configure_subparser_clean(subparsers, clowder):
-    """Configure clowder clean subparser and arguments"""
+    """Configure clowder clean subparser and arguments
+
+    :param ArgumentParser subparsers: ArgParse ArgumentParser instance returned from ``add_subparsers()``
+    :param ClowderController clowder: ClowderController instance
+    :return:
+    """
 
     group_names = _group_names(clowder)
     project_names = _project_names(clowder)
@@ -97,7 +124,12 @@ def _configure_subparser_clean(subparsers, clowder):
 
 
 def _configure_subparser_diff(subparsers, clowder):
-    """Configure clowder diff subparser and arguments"""
+    """Configure clowder diff subparser and arguments
+
+    :param ArgumentParser subparsers: ArgParse ArgumentParser instance returned from ``add_subparsers()``
+    :param ClowderController clowder: ClowderController instance
+    :return:
+    """
 
     group_names = _group_names(clowder)
     project_names = _project_names(clowder)
@@ -116,7 +148,12 @@ def _configure_subparser_diff(subparsers, clowder):
 
 
 def _configure_subparser_forall(subparsers, clowder):
-    """Configure clowder forall subparser and arguments"""
+    """Configure clowder forall subparser and arguments
+
+    :param ArgumentParser subparsers: ArgParse ArgumentParser instance returned from ``add_subparsers()``
+    :param ClowderController clowder: ClowderController instance
+    :return:
+    """
 
     group_names = _group_names(clowder)
     project_names = _project_names(clowder)
@@ -148,7 +185,12 @@ def _configure_subparser_forall(subparsers, clowder):
 
 
 def _configure_subparser_herd(subparsers, clowder):
-    """Configure clowder herd subparser and arguments"""
+    """Configure clowder herd subparser and arguments
+
+    :param ArgumentParser subparsers: ArgParse ArgumentParser instance returned from ``add_subparsers()``
+    :param ClowderController clowder: ClowderController instance
+    :return:
+    """
 
     group_names = _group_names(clowder)
     project_names = _project_names(clowder)
@@ -183,7 +225,11 @@ def _configure_subparser_herd(subparsers, clowder):
 
 
 def _configure_subparser_init(subparsers):
-    """Configure clowder init subparser and arguments"""
+    """Configure clowder init subparser and arguments
+
+    :param ArgumentParser subparsers: ArgParse ArgumentParser instance returned from ``add_subparsers()``
+    :return:
+    """
 
     init_help = 'Clone repository to clowder directory and create clowder.yaml symlink'
     parser_init = subparsers.add_parser('init', help=init_help)
@@ -194,7 +240,12 @@ def _configure_subparser_init(subparsers):
 
 
 def _configure_subparser_link(subparsers, versions):
-    """Configure clowder link subparser and arguments"""
+    """Configure clowder link subparser and arguments
+
+    :param ArgumentParser subparsers: ArgParse ArgumentParser instance returned from ``add_subparsers()``
+    :param list of str versions: List of clowder.yaml versions
+    :return:
+    """
 
     parser_link = subparsers.add_parser('link', help='Symlink clowder.yaml version')
 
@@ -204,7 +255,12 @@ def _configure_subparser_link(subparsers, versions):
 
 
 def _configure_subparser_prune(subparsers, clowder):
-    """Configure clowder prune subparser and arguments"""
+    """Configure clowder prune subparser and arguments
+
+    :param ArgumentParser subparsers: ArgParse ArgumentParser instance returned from ``add_subparsers()``
+    :param ClowderController clowder: ClowderController instance
+    :return:
+    """
 
     group_names = _group_names(clowder)
     project_names = _project_names(clowder)
@@ -237,7 +293,11 @@ def _configure_subparser_prune(subparsers, clowder):
 
 
 def _configure_subparser_repo(subparsers):
-    """Configure clowder repo subparser and arguments"""
+    """Configure clowder repo subparser and arguments
+
+    :param ArgumentParser subparsers: ArgParse ArgumentParser instance returned from ``add_subparsers()``
+    :return:
+    """
 
     # clowder repo
     parser_repo = subparsers.add_parser('repo', help='Manage clowder repo')
@@ -280,7 +340,12 @@ def _configure_subparser_repo(subparsers):
 
 
 def _configure_subparser_reset(subparsers, clowder):
-    """Configure clowder reset subparser and arguments"""
+    """Configure clowder reset subparser and arguments
+
+    :param ArgumentParser subparsers: ArgParse ArgumentParser instance returned from ``add_subparsers()``
+    :param ClowderController clowder: ClowderController instance
+    :return:
+    """
 
     group_names = _group_names(clowder)
     project_names = _project_names(clowder)
@@ -309,7 +374,11 @@ def _configure_subparser_reset(subparsers, clowder):
 
 
 def _configure_subparser_save(subparsers):
-    """Configure clowder save subparser and arguments"""
+    """Configure clowder save subparser and arguments
+
+    :param ArgumentParser subparsers: ArgParse ArgumentParser instance returned from ``add_subparsers()``
+    :return:
+    """
 
     save_help = 'Create version of clowder.yaml for current repos'
     parser_save = subparsers.add_parser('save', help=save_help)
@@ -318,7 +387,12 @@ def _configure_subparser_save(subparsers):
 
 
 def _configure_subparser_start(subparsers, clowder):
-    """Configure clowder start subparser and arguments"""
+    """Configure clowder start subparser and arguments
+
+    :param ArgumentParser subparsers: ArgParse ArgumentParser instance returned from ``add_subparsers()``
+    :param ClowderController clowder: ClowderController instance
+    :return:
+    """
 
     group_names = _group_names(clowder)
     project_names = _project_names(clowder)
@@ -344,7 +418,12 @@ def _configure_subparser_start(subparsers, clowder):
 
 
 def _configure_subparser_stash(subparsers, clowder):
-    """Configure clowder stash subparser and arguments"""
+    """Configure clowder stash subparser and arguments
+
+    :param ArgumentParser subparsers: ArgParse ArgumentParser instance returned from ``add_subparsers()``
+    :param ClowderController clowder: ClowderController instance
+    :return:
+    """
 
     group_names = _group_names(clowder)
     project_names = _project_names(clowder)
@@ -366,7 +445,11 @@ def _configure_subparser_stash(subparsers, clowder):
 
 
 def _configure_subparser_status(subparsers):
-    """Configure clowder status subparser and arguments"""
+    """Configure clowder status subparser and arguments
+
+    :param ArgumentParser subparsers: ArgParse ArgumentParser instance returned from ``add_subparsers()``
+    :return:
+    """
 
     parser_status = subparsers.add_parser('status', help='Print project status')
 
@@ -374,7 +457,12 @@ def _configure_subparser_status(subparsers):
 
 
 def _configure_subparser_sync(subparsers, clowder):
-    """Configure clowder sync subparser and arguments"""
+    """Configure clowder sync subparser and arguments
+
+    :param ArgumentParser subparsers: ArgParse ArgumentParser instance returned from ``add_subparsers()``
+    :param ClowderController clowder: ClowderController instance
+    :return:
+    """
 
     project_names = _fork_project_names(clowder)
     parser_sync = subparsers.add_parser('sync', help='Sync fork with upstream remote')
@@ -389,13 +477,21 @@ def _configure_subparser_sync(subparsers, clowder):
 
 
 def _configure_subparser_version(subparsers):
-    """Configure clowder version subparser and arguments"""
+    """Configure clowder version subparser and arguments
+
+    :param ArgumentParser subparsers: ArgParse ArgumentParser instance returned from ``add_subparsers()``
+    :return:
+    """
 
     subparsers.add_parser('version', help='Print clowder version')
 
 
 def _configure_subparser_yaml(subparsers):
-    """Configure clowder yaml subparser and arguments"""
+    """Configure clowder yaml subparser and arguments
+
+    :param ArgumentParser subparsers: ArgParse ArgumentParser instance returned from ``add_subparsers()``
+    :return:
+    """
 
     parser_yaml = subparsers.add_parser('yaml', help='Print clowder.yaml information')
 
@@ -403,15 +499,25 @@ def _configure_subparser_yaml(subparsers):
 
 
 def _fork_project_names(clowder):
-    """Return group options"""
+    """Return group options
+
+    :param ClowderController clowder: ClowderController instance
+    :return: List of fork project names
+    :rtype: list of str
+    """
 
     if clowder:
         return clowder.get_all_fork_project_names()
-    return ''
+    return ['']
 
 
 def _group_names(clowder):
-    """Return group options"""
+    """Return group options
+
+    :param ClowderController clowder: ClowderController instance
+    :return: List of group names
+    :rtype: list of str
+    """
 
     if clowder:
         return clowder.get_all_group_names()
@@ -419,9 +525,15 @@ def _group_names(clowder):
 
 
 def _options_help_message(options, message):
-    """Help message for groups option"""
+    """Help message for groups option
 
-    if options == '' or options is None:
+    :param list of str options: List of options
+    :param str message: Help message
+    :return: Formatted options help message
+    :rtype: str
+    """
+
+    if options == [''] or options is None:
         return message
 
     help_message = '''
@@ -433,7 +545,12 @@ def _options_help_message(options, message):
 
 
 def _project_names(clowder):
-    """Return project options"""
+    """Return project options
+
+    :param ClowderController clowder: ClowderController instance
+    :return: List of project names
+    :rtype: list of str
+    """
 
     if clowder:
         return clowder.get_all_project_names()

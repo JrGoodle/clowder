@@ -1,4 +1,9 @@
-"""Clowder git exception"""
+# -*- coding: utf-8 -*-
+"""Clowder git exception
+
+.. codeauthor:: Joe Decapo <joe@polka.cat>
+
+"""
 
 
 class ClowderGitError(Exception):

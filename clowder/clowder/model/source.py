@@ -1,4 +1,9 @@
-"""Representation of clowder.yaml source"""
+# -*- coding: utf-8 -*-
+"""Representation of clowder.yaml source
+
+.. codeauthor:: Joe Decapo <joe@polka.cat>
+
+"""
 
 
 class Source(object):
@@ -9,7 +14,11 @@ class Source(object):
         self.url = source['url']
 
     def get_url_prefix(self):
-        """Return full remote url prefix for project"""
+        """Return full remote url prefix for project
+
+        :return: Remote URL prefix
+        :rtype: str
+        """
 
         source_url_prefix = None
         if self.url.startswith('https://'):
@@ -19,6 +28,10 @@ class Source(object):
         return source_url_prefix
 
     def get_yaml(self):
-        """Return python object representation for saving yaml"""
+        """Return python object representation for saving yaml
+
+        :return: YAML python object
+        :rtype: dict
+        """
 
         return {'name': self.name, 'url': self.url}
