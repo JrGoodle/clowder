@@ -30,18 +30,26 @@ def subprocess_exit_handler(process):
         del err
 
 
-def execute_subprocess_command(command, path, shell=True, env=None, stdout=None, stderr=None):
+def execute_subprocess_command(command, path, **kwargs):
     """Execute subprocess command
 
     :param command: Command to run. Can be str or list of str
     :param str path: Path to set as ``cwd``
-    :param Optional[bool] shell: Whether to execute subprocess as ``shell``
-    :param Optional[dict] env: Enviroment to set as ``env``
-    :param Optional[int] stdout: Value to set as ``stdout``
-    :param Optional[int] stderr: Value to set as ``stderr``
+
+    Keyword Args:
+        shell (bool): Whether to execute subprocess as ``shell``. Defaults to True
+        env (dict): Enviroment to set as ``env``
+        stdout (int): Value to set as ``stdout``
+        stderr (int): Value to set as ``stderr``
+
     :return: Subprocess return code
     :rtype: int
     """
+
+    shell = kwargs.get('shell', True)
+    env = kwargs.get('env', None)
+    stdout = kwargs.get('stdout', None)
+    stderr = kwargs.get('stderr', None)
 
     if isinstance(command, list):
         cmd = ' '.join(command)
@@ -58,17 +66,24 @@ def execute_subprocess_command(command, path, shell=True, env=None, stdout=None,
         return process.returncode
 
 
-def execute_command(command, path, shell=True, env=None, print_output=True):
+def execute_command(command, path, **kwargs):
     """Execute command via thread
 
     :param command: Command to run. Can be str or list of str
     :param str path: Path to set as ``cwd``
-    :param Optional[bool] shell: Whether to execute subprocess as ``shell``
-    :param Optional[dict] env: Enviroment to set as ``env``
-    :param Optional[bool] print_output: Whether to print output
+
+    Keyword Args:
+        shell (bool): Whether to execute subprocess as ``shell``. Defaults to True
+        env (dict): Enviroment to set as ``env``
+        print_output (bool): Whether to print output. Defaults to True
+
     :return: Command return code
     :rtype: int
     """
+
+    shell = kwargs.get('shell', True)
+    env = kwargs.get('env', None)
+    print_output = kwargs.get('print_output', True)
 
     cmd_env = os.environ.copy()
     if env:
