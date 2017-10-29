@@ -5,12 +5,12 @@
 
 """
 
+import os
 import sys
 
 from termcolor import cprint
 
 import clowder.util.formatting as fmt
-from clowder.git.project_repo import ProjectRepo
 from clowder.util.connectivity import is_offline
 
 
@@ -47,7 +47,7 @@ def project_repo_exists(func):
         """Wrapper"""
 
         instance = args[0]
-        if not ProjectRepo.existing_git_repository(instance.full_path()):
+        if not os.path.isdir(os.path.join(instance.full_path(), '.git')):
             cprint(" - Project repo is missing", 'red')
             return
         return func(*args, **kwargs)
