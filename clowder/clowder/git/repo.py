@@ -35,7 +35,11 @@ class GitRepo(object):
         self.repo = self._repo() if GitRepo.existing_git_repository(repo_path) else None
 
     def add(self, files):
-        """Add files to git index"""
+        """Add files to git index
+
+        :param str files: Files to git add
+        :return:
+        """
 
         self._print(' - Add files to git index')
         try:
@@ -50,7 +54,11 @@ class GitRepo(object):
             self.status_verbose()
 
     def checkout(self, truncated_ref):
-        """Checkout git ref"""
+        """Checkout git ref
+
+        :param str truncated_ref: Ref to git checkout
+        :return:
+        """
 
         ref_output = fmt.ref_string(truncated_ref)
         try:
@@ -68,7 +76,15 @@ class GitRepo(object):
             self._exit()
 
     def clean(self, args=''):
-        """Discard changes for repo"""
+        """Discard changes for repo
+
+        :param str args: Git clean options
+            - ``d`` Remove untracked directories in addition to untracked files
+            - ``f`` Delete directories with .git sub directory or file
+            - ``X`` Remove only files ignored by git
+            - ``x`` Remove all untracked files
+        :return:
+        """
 
         self._print(' - Clean project')
         clean_args = '-f' if args == '' else '-f' + args
@@ -80,7 +96,11 @@ class GitRepo(object):
             self._abort_rebase()
 
     def commit(self, message):
-        """Commit current changes"""
+        """Commit current changes
+
+        :param str message: Git commit message
+        :return:
+        """
 
         try:
             self._print(' - Commit current changes')
@@ -94,12 +114,22 @@ class GitRepo(object):
             self._exit()
 
     def current_branch(self):
-        """Return currently checked out branch of project"""
+        """Return currently checked out branch of project
+
+        :return: Name of currently checked out branch
+        :rtype: str
+        """
 
         return self.repo.head.ref.name
 
     def existing_remote_branch(self, branch, remote):
-        """Check if remote branch exists"""
+        """Check if remote branch exists
+
+        :param str branch: Branch name
+        :param str remote: Remote name
+        :return: True, if remote branch exists
+        :rtype: bool
+        """
 
         try:
             origin = self.repo.remotes[remote]
@@ -110,24 +140,46 @@ class GitRepo(object):
             self._exit()
 
     def existing_local_branch(self, branch):
-        """Check if local branch exists"""
+        """Check if local branch exists
+
+        :param str branch: Branch name
+        :return: True, if local branch exists
+        :rtype: bool
+        """
 
         return branch in self.repo.heads
 
     @staticmethod
     def existing_git_repository(path):
-        """Check if a git repository exists"""
+        """Check if a git repository exists
+
+        :param str path: Repo path
+        :return: True, if .git directory exists inside path
+        :rtype: bool
+        """
 
         return os.path.isdir(os.path.join(path, '.git'))
 
     @staticmethod
     def existing_git_submodule(path):
-        """Check if a git submodule exists"""
+        """Check if a git submodule exists
+
+        :param str path: Submodule path
+        :return: True, if .git file exists inside path
+        :rtype: bool
+        """
 
         return os.path.isfile(os.path.join(path, '.git'))
 
     def fetch(self, remote, ref=None, depth=0, remove_dir=False):
-        """Fetch from a specific remote ref"""
+        """Fetch from a specific remote ref
+
+        :param str remote: Remote name
+        :param str ref: Ref to fetch
+        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :param bool remove_dir: Whether to remove the directory if commands fail
+        :return:
+        """
 
         remote_output = fmt.remote_string(remote)
         if depth == 0:
@@ -155,7 +207,11 @@ class GitRepo(object):
         return return_code
 
     def get_current_timestamp(self):
-        """Get current timestamp of HEAD commit"""
+        """Get current timestamp of HEAD commit
+
+        :return: HEAD commit timestamp
+        :rtype: str
+        """
 
         try:
             return self.repo.git.log('-1', '--format=%cI')
@@ -168,7 +224,12 @@ class GitRepo(object):
             self._exit()
 
     def is_detached(self, print_output=False):
-        """Check if HEAD is detached"""
+        """Check if HEAD is detached
+
+        :param bool print_output: Whether to print output
+        :return: True, if HEAD is detached
+        :rtype: bool
+        """
 
         if not os.path.isdir(self.repo_path):
             return False
@@ -179,7 +240,11 @@ class GitRepo(object):
         return False
 
     def is_dirty(self):
-        """Check whether repo is dirty"""
+        """Check whether repo is dirty
+
+        :return: True, if repo is dirty
+        :rtype: bool
+        """
 
         if not os.path.isdir(self.repo_path):
             return False
@@ -187,7 +252,12 @@ class GitRepo(object):
         return self._is_dirty() or self._is_rebase_in_progress() or self._untracked_files()
 
     def new_commits(self, upstream=False):
-        """Returns the number of new commits"""
+        """Returns the number of new commits
+
+        :param bool upstream: Whether to find number of new upstream or local commits
+        :return: Int number of new commits
+        :rtype: int
+        """
 
         try:
             local_branch = self.repo.active_branch
@@ -217,7 +287,12 @@ class GitRepo(object):
                 self._exit()
 
     def print_branches(self, local=False, remote=False):
-        """Print branches"""
+        """Print branches
+
+        :param bool local: Print local branches
+        :param bool remote: Print remote branches
+        :return:
+        """
 
         if local and remote:
             command = 'git branch -a'
@@ -236,7 +311,11 @@ class GitRepo(object):
 
     @staticmethod
     def print_validation(repo_path):
-        """Print validation messages"""
+        """Print validation messages
+
+        :param str repo_path: Repo path
+        :return:
+        """
 
         repo = GitRepo(repo_path, __repo_default_remote__, __repo_default_ref__)
         if not GitRepo.existing_git_repository(repo_path):
@@ -247,7 +326,10 @@ class GitRepo(object):
             repo.status_verbose()
 
     def pull(self):
-        """Pull upstream changes"""
+        """Pull upstream changes
+
+        :return:
+        """
 
         if self.is_detached(print_output=True):
             return
@@ -264,7 +346,10 @@ class GitRepo(object):
             self._exit()
 
     def push(self):
-        """Push changes"""
+        """Push changes
+
+        :return:
+        """
 
         if self.is_detached(print_output=True):
             return
@@ -282,7 +367,12 @@ class GitRepo(object):
 
     @staticmethod
     def ref_type(ref):
-        """Return branch, tag, sha, or unknown ref type"""
+        """Return branch, tag, sha, or unknown ref type
+
+        :param str ref: Full pathspec
+        :return: 'branch', 'tag', 'sha', or 'unknown'
+        :rtype: str
+        """
 
         git_branch = "refs/heads/"
         git_tag = "refs/tags/"
@@ -295,14 +385,25 @@ class GitRepo(object):
         return 'unknown'
 
     def sha(self, short=False):
-        """Return sha for currently checked out commit"""
+        """Return sha for currently checked out commit
+
+        :param bool short: Whether to return short or long commit sha
+        :return: Commit sha
+        :rtype: str
+        """
 
         if short:
             return self.repo.git.rev_parse(self.repo.head.commit.hexsha, short=True)
         return self.repo.head.commit.hexsha
 
     def sha_branch_remote(self, remote, branch):
-        """Return sha for remote branch"""
+        """Return sha for remote branch
+
+        :param str remote: Remote name
+        :param str branch: Remote branch name
+        :return: Commit sha of remote branch
+        :rtype: str
+        """
 
         command = "git --git-dir={0}.git rev-parse {1}/{2}".format(self.repo_path, remote, branch)
         return_code = execute_command(command, self.repo_path)
@@ -312,7 +413,10 @@ class GitRepo(object):
             self._exit(message, return_code=return_code)
 
     def stash(self):
-        """Stash current changes in repository"""
+        """Stash current changes in repository
+
+        :return:
+        """
 
         if not self.repo.is_dirty():
             self._print(' - No changes to stash')
@@ -322,12 +426,22 @@ class GitRepo(object):
         self.repo.git.stash()
 
     def status(self):
-        """Print  git status"""
+        """Print  git status
+
+        Equivalent to: ``git status``
+
+        :return:
+        """
 
         self.repo.git.status()
 
     def status_verbose(self):
-        """Print git status"""
+        """Print git status
+
+        Equivalent to: ``git status -vv``
+
+        :return:
+        """
 
         command = 'git status -vv'
         self._print(fmt.command(command))
@@ -340,7 +454,12 @@ class GitRepo(object):
 
     @staticmethod
     def truncate_ref(ref):
-        """Return bare branch, tag, or sha"""
+        """Return bare branch, tag, or sha
+
+        :param str ref: Full pathspec or short ref
+        :return: Ref with 'refs/heads/' and 'refs/tags/' prefix removed
+        :rtype: str
+        """
 
         git_branch = "refs/heads/"
         git_tag = "refs/tags/"
@@ -353,14 +472,21 @@ class GitRepo(object):
         return ref[length:]
 
     def validate_repo(self):
-        """Validate repo state"""
+        """Validate repo state
+
+        :return: True, if repo not dirty or doesn't exist on disk
+        :rtype: bool
+        """
 
         if not GitRepo.existing_git_repository(self.repo_path):
             return True
         return not self.is_dirty()
 
     def _abort_rebase(self):
-        """Abort rebase"""
+        """Abort rebase
+
+        :return:
+        """
 
         if not self._is_rebase_in_progress():
             return
@@ -375,7 +501,12 @@ class GitRepo(object):
             self._exit()
 
     def _checkout_branch_local(self, branch, remove_dir=False):
-        """Checkout local branch"""
+        """Checkout local branch
+
+        :param str branch: Branch name
+        :param bool remove_dir: Whether to remove the directory if commands fail
+        :return:
+        """
 
         branch_output = fmt.ref_string(branch)
         try:
@@ -396,7 +527,12 @@ class GitRepo(object):
             self._exit()
 
     def _checkout_new_repo_branch(self, branch, depth):
-        """Checkout remote branch or fail and delete repo if it doesn't exist"""
+        """Checkout remote branch or fail and delete repo if it doesn't exist
+
+        :param str branch: Branch name
+        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :return:
+        """
 
         branch_output = fmt.ref_string(branch)
         remote_output = fmt.remote_string(self.remote)
@@ -412,7 +548,13 @@ class GitRepo(object):
         self._create_branch_local_tracking(branch, self.remote, depth=depth, fetch=False, remove_dir=True)
 
     def _checkout_new_repo_commit(self, commit, remote, depth):
-        """Checkout commit or fail and delete repo if it doesn't exist"""
+        """Checkout commit or fail and delete repo if it doesn't exist
+
+        :param str commit: Commit sha
+        :param str remote: Remote name
+        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :return:
+        """
 
         commit_output = fmt.ref_string(commit)
         self._remote(remote, remove_dir=True)
@@ -432,7 +574,14 @@ class GitRepo(object):
             self._exit()
 
     def _checkout_new_repo_tag(self, tag, remote, depth, remove_dir=False):
-        """Checkout tag or fail and delete repo if it doesn't exist"""
+        """Checkout tag or fail and delete repo if it doesn't exist
+
+        :param str tag: Tag name
+        :param str remote: Remote name
+        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :param bool remove_dir: Whether to remove the directory if commands fail
+        :return:
+        """
 
         tag_output = fmt.ref_string(tag)
         self._remote(remote, remove_dir=remove_dir)
@@ -472,7 +621,11 @@ class GitRepo(object):
                 self._exit()
 
     def _checkout_sha(self, sha):
-        """Checkout commit by sha"""
+        """Checkout commit by sha
+
+        :param str sha: Commit sha
+        :return:
+        """
 
         commit_output = fmt.ref_string(sha)
         try:
@@ -490,7 +643,11 @@ class GitRepo(object):
             self._exit()
 
     def _checkout_tag(self, tag):
-        """Checkout commit tag is pointing to"""
+        """Checkout commit tag is pointing to
+
+        :param str tag: Tag name
+        :return:
+        """
 
         tag_output = fmt.ref_string(tag)
         if tag not in self.repo.tags:
@@ -515,7 +672,11 @@ class GitRepo(object):
             self._exit()
 
     def _clean(self, args):
-        """Clean git directory"""
+        """Clean git directory
+
+        :param str args: Git clean args
+        :return:
+        """
 
         try:
             self.repo.git.clean(args)
@@ -528,7 +689,11 @@ class GitRepo(object):
             self._exit()
 
     def _create_branch_local(self, branch):
-        """Create local branch"""
+        """Create local branch
+
+        :param str branch: Branch name
+        :return:
+        """
 
         branch_output = fmt.ref_string(branch)
         try:
@@ -544,7 +709,15 @@ class GitRepo(object):
             self._exit()
 
     def _create_branch_local_tracking(self, branch, remote, depth, fetch=True, remove_dir=False):
-        """Create and checkout tracking branch"""
+        """Create and checkout tracking branch
+
+        :param str branch: Branch name
+        :param str remote: Remote name
+        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :param bool fetch: Whether to fetch before creating branch
+        :param bool remove_dir: Whether to remove the directory if commands fail
+        :return:
+        """
 
         branch_output = fmt.ref_string(branch)
         origin = self._remote(remote, remove_dir=remove_dir)
@@ -574,7 +747,13 @@ class GitRepo(object):
             return self._checkout_branch_local(branch, remove_dir=remove_dir)
 
     def _create_branch_remote_tracking(self, branch, remote, depth):
-        """Create remote tracking branch"""
+        """Create remote tracking branch
+
+        :param str branch: Branch name
+        :param str remote: Remote name
+        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :return:
+        """
 
         branch_output = fmt.ref_string(branch)
         origin = self._remote(remote)
@@ -612,7 +791,13 @@ class GitRepo(object):
             self._exit()
 
     def _create_remote(self, remote, url, remove_dir=False):
-        """Create new remote"""
+        """Create new remote
+
+        :param str remote: Remote name
+        :param str url: URL of repo
+        :param bool remove_dir: Whether to remove the directory if commands fail
+        :return:
+        """
 
         remote_names = [r.name for r in self.repo.remotes]
         if remote in remote_names:
@@ -636,21 +821,40 @@ class GitRepo(object):
             self._exit()
 
     def _existing_remote_tag(self, tag, remote, depth=0):
-        """Check if remote tag exists"""
+        """Check if remote tag exists
+
+        :param str tag: Tag name
+        :param str remote: Remote name
+        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :return: True, if remote tag exists
+        :rtype: bool
+        """
 
         origin = self._remote(remote, remove_dir=True)
         self.fetch(remote, depth=depth, ref=tag, remove_dir=True)
         return tag in origin.tags
 
     def _exit(self, message='', return_code=1):
-        """Exit based on serial or parallel job"""
+        """Exit based on serial or parallel job
+
+        :param str message: Error message
+        :param int return_code: Return code for sys.exit()
+        :return:
+        :raise ClowderGitError:
+        """
 
         if self.parallel:
             raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message))
         sys.exit(return_code)
 
     def _find_rev_by_timestamp(self, timestamp, ref):
-        """Find rev by timestamp"""
+        """Find rev by timestamp
+
+        :param str timestamp: Commit ref timestamp
+        :param str ref: Reference ref
+        :return: Commit sha at or before timestamp
+        :rtype: str
+        """
 
         try:
             return self.repo.git.log('-1', '--format=%H', '--before=' + timestamp, ref)
@@ -663,7 +867,14 @@ class GitRepo(object):
             self._exit()
 
     def _find_rev_by_timestamp_author(self, timestamp, author, ref):
-        """Find rev by timestamp and author"""
+        """Find rev by timestamp and author
+
+        :param str timestamp: Commit ref timestamp
+        :param str author: Commit author
+        :param str ref: Reference ref
+        :return: Commit sha at or before timestamp by author
+        :rtype: str
+        """
 
         try:
             return self.repo.git.log('-1', '--format=%H', '--before=' + timestamp, '--author', author, ref)
@@ -676,7 +887,10 @@ class GitRepo(object):
             self._exit()
 
     def _init_repo(self):
-        """Initialize repository"""
+        """Initialize repository
+
+        :return:
+        """
 
         if GitRepo.existing_git_repository(self.repo_path):
             return
@@ -701,7 +915,12 @@ class GitRepo(object):
             self._exit()
 
     def _is_branch_checked_out(self, branch):
-        """Check if branch is checked out"""
+        """Check if branch is checked out
+
+        :param str branch: Branch name
+        :return: True, if branch is checked out
+        :rtype: bool
+        """
 
         try:
             default_branch = self.repo.heads[branch]
@@ -714,12 +933,20 @@ class GitRepo(object):
             self._exit()
 
     def _is_dirty(self):
-        """Check if repo is dirty"""
+        """Check if repo is dirty
+
+        :return: True, if repo is dirty
+        :rtype: bool
+        """
 
         return self.repo.is_dirty()
 
     def _is_rebase_in_progress(self):
-        """Detect whether rebase is in progress"""
+        """Detect whether rebase is in progress
+
+        :return: True, if rebase is in progress
+        :rtype: bool
+        """
 
         rebase_apply = os.path.join(self.repo_path, '.git', 'rebase-apply')
         rebase_merge = os.path.join(self.repo_path, '.git', 'rebase-merge')
@@ -728,7 +955,12 @@ class GitRepo(object):
         return is_rebase_apply or is_rebase_merge
 
     def _is_tracking_branch(self, branch):
-        """Check if branch is a tracking branch"""
+        """Check if branch is a tracking branch
+
+        :param str branch: Branch name
+        :return: True, if branch has a tracking relationship
+        :rtype: bool
+        """
 
         branch_output = fmt.ref_string(branch)
         try:
@@ -744,13 +976,22 @@ class GitRepo(object):
             self._exit()
 
     def _print(self, val):
-        """Print output if print_output is True"""
+        """Print output if self.print_output is True
+
+        :param str val: Output to print
+        :return:
+        """
 
         if self.print_output:
             print(val)
 
     def _pull(self, remote, branch):
-        """Pull from remote branch"""
+        """Pull from remote branch
+
+        :param str remote: Remote name
+        :param str branch: Branch name
+        :return:
+        """
 
         if self.is_detached(print_output=True):
             return
@@ -767,7 +1008,12 @@ class GitRepo(object):
             self._exit(message)
 
     def _rebase_remote_branch(self, remote, branch):
-        """Rebase from remote branch"""
+        """Rebase onto remote branch
+
+        :param str remote: Remote name
+        :param str branch: Branch name
+        :return:
+        """
 
         if self.is_detached(print_output=True):
             return
@@ -785,7 +1031,13 @@ class GitRepo(object):
             self._exit(message)
 
     def _remote(self, remote, remove_dir=False):
-        """Get remote"""
+        """Get GitPython Remote instance
+
+        :param str remote: Remote name
+        :param bool remove_dir: Whether to remove the directory if commands fail
+        :return: GitPython Remote instance
+        :rtype: Remote
+        """
 
         remote_output = fmt.remote_string(remote)
         try:
@@ -801,12 +1053,22 @@ class GitRepo(object):
             self._exit()
 
     def _remote_get_url(self, remote):
-        """Get url of remote"""
+        """Get url of remote
+
+        :param str remote: Remote name
+        :return: URL of remote
+        :rtype: str
+        """
 
         return self.repo.git.remote('get-url', remote)
 
     def _rename_remote(self, remote_from, remote_to):
-        """Rename remote"""
+        """Rename remote
+
+        :param str remote_from: Name of remote to rename
+        :param str remote_to: Name to rename remote to
+        :return:
+        """
 
         remote_output_f = fmt.remote_string(remote_from)
         remote_output_t = fmt.remote_string(remote_to)
@@ -822,7 +1084,11 @@ class GitRepo(object):
             self._exit()
 
     def _repo(self):
-        """Create Repo instance for path"""
+        """Create Repo instance for self.repo_path
+
+        :return: GitPython Repo instance
+        :rtype: Repo
+        """
 
         try:
             repo = Repo(self.repo_path)
@@ -837,7 +1103,11 @@ class GitRepo(object):
             self._exit()
 
     def _reset_head(self, branch=None):
-        """Reset head of repo, discarding changes"""
+        """Reset head of repo, discarding changes
+
+        :param str Optional[branch]: Branch to reset head to. Defaults to None
+        :return:
+        """
 
         if branch is None:
             try:
@@ -865,7 +1135,13 @@ class GitRepo(object):
             self._exit()
 
     def _set_tracking_branch(self, remote, branch, remove_dir=False):
-        """Set tracking branch"""
+        """Set tracking branch
+
+        :param str remote: Remote name
+        :param str branch: Branch name
+        :param bool remove_dir: Whether to remove the directory if commands fail
+        :return:
+        """
 
         branch_output = fmt.ref_string(branch)
         remote_output = fmt.remote_string(remote)
@@ -889,7 +1165,11 @@ class GitRepo(object):
             self._exit()
 
     def _untracked_files(self):
-        """Execute command and display continuous output"""
+        """Check whether untracked files exist
+
+        :return: True, if untracked files exist
+        :rtype: bool
+        """
 
         command = "git ls-files -o -d --exclude-standard | sed q | wc -l| tr -d '[:space:]'"
         try:
