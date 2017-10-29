@@ -27,13 +27,13 @@ __repo_default_remote__ = 'origin'
 class GitRepo(object):
     """Class encapsulating git utilities"""
 
-    def __init__(self, repo_path, remote, default_ref, parallel=False, print_output=True):
+    def __init__(self, repo_path, remote, default_ref, parallel=False):
         self.repo_path = repo_path
         self.default_ref = default_ref
         self.remote = remote
-        self.print_output = print_output
         self.parallel = parallel
         self.repo = self._repo() if GitRepo.existing_git_repository(repo_path) else None
+        self._print_output = not parallel
 
     def add(self, files):
         """Add files to git index
@@ -64,7 +64,7 @@ class GitRepo(object):
         ref_output = fmt.ref_string(truncated_ref)
         try:
             self._print(' - Check out ' + ref_output)
-            if self.print_output:
+            if self._print_output:
                 print(self.repo.git.checkout(truncated_ref))
                 return
             self.repo.git.checkout(truncated_ref)
@@ -207,7 +207,7 @@ class GitRepo(object):
             error = message + remote_output + ' ' + ref_output
             command = ['git fetch', remote, GitRepo.truncate_ref(ref), '--depth', str(depth), '--prune --tags']
 
-        return_code = execute_command(command, self.repo_path, print_output=self.print_output)
+        return_code = execute_command(command, self.repo_path, print_output=self._print_output)
         if return_code != 0:
             if remove_dir:
                 remove_directory(self.repo_path)
@@ -312,7 +312,7 @@ class GitRepo(object):
         else:
             return
 
-        return_code = execute_command(command, self.repo_path, print_output=self.print_output)
+        return_code = execute_command(command, self.repo_path, print_output=self._print_output)
         if return_code != 0:
             message = colored(' - Failed to print branches', 'red')
             self._print(message)
@@ -600,7 +600,7 @@ class GitRepo(object):
                 remove_directory(self.repo_path)
                 self._print(colored(message, 'red') + tag_output)
                 self._exit(fmt.parallel_exception_error(self.repo_path, colored(message, 'red'), tag_output))
-            if self.print_output:
+            if self._print_output:
                 self._print(message + tag_output)
             return 1
         except (KeyboardInterrupt, SystemExit):
@@ -988,13 +988,13 @@ class GitRepo(object):
             self._exit()
 
     def _print(self, val):
-        """Print output if self.print_output is True
+        """Print output if self._print_output is True
 
         :param str val: Output to print
         :return:
         """
 
-        if self.print_output:
+        if self._print_output:
             print(val)
 
     @not_detached
@@ -1011,7 +1011,7 @@ class GitRepo(object):
         self._print(' - Pull from ' + remote_output + ' ' + branch_output)
         command = ['git pull', remote, branch]
 
-        return_code = execute_command(command, self.repo_path, print_output=self.print_output)
+        return_code = execute_command(command, self.repo_path, print_output=self._print_output)
         if return_code != 0:
             message = colored(' - Failed to pull from ', 'red') + remote_output + ' ' + branch_output
             self._print(message)
@@ -1031,7 +1031,7 @@ class GitRepo(object):
         self._print(' - Rebase onto ' + remote_output + ' ' + branch_output)
         command = ['git pull --rebase', remote, branch]
 
-        return_code = execute_command(command, self.repo_path, print_output=self.print_output)
+        return_code = execute_command(command, self.repo_path, print_output=self._print_output)
         if return_code != 0:
             message = colored(' - Failed to rebase onto ', 'red') + remote_output + ' ' + branch_output
             self._print(message)

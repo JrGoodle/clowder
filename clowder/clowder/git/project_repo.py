@@ -24,8 +24,8 @@ __project_repo_default_remote__ = 'origin'
 class ProjectRepo(GitRepo):
     """Class encapsulating git utilities"""
 
-    def __init__(self, repo_path, remote, default_ref, parallel=False, print_output=True):
-        GitRepo.__init__(self, repo_path, remote, default_ref, parallel=parallel, print_output=print_output)
+    def __init__(self, repo_path, remote, default_ref, parallel=False):
+        GitRepo.__init__(self, repo_path, remote, default_ref, parallel=parallel)
 
     def create_clowder_repo(self, url, branch, depth=0):
         """Clone clowder git repo from url at path
@@ -433,7 +433,7 @@ class ProjectRepo(GitRepo):
             self._pull(self.remote, self.truncate_ref(self.default_ref))
         self._print(' - Push to ' + fork_remote_output + ' ' + branch_output)
         command = ['git', 'push', fork_remote, self.truncate_ref(self.default_ref)]
-        return_code = execute_command(command, self.repo_path, print_output=self.print_output)
+        return_code = execute_command(command, self.repo_path, print_output=self._print_output)
         if return_code != 0:
             message = colored(' - Failed to push to ', 'red') + fork_remote_output + ' ' + branch_output
             self._print(message)

@@ -230,8 +230,7 @@ class Project(object):
         self._print_output = not parallel
 
         herd_depth = self._depth if depth is None else depth
-        repo = self._repo(self.full_path(), self._remote, self._ref, self._recursive,
-                          parallel=parallel, print_output=self._print_output)
+        repo = self._repo(self.full_path(), self._remote, self._ref, self._recursive, parallel=parallel)
 
         if branch:
             fork_remote = None if self.fork is None else self.fork.remote_name
@@ -302,8 +301,7 @@ class Project(object):
 
         self._print_output = not parallel
 
-        repo = self._repo(self.full_path(), self._remote, self._ref, self._recursive,
-                          parallel=parallel, print_output=self._print_output)
+        repo = self._repo(self.full_path(), self._remote, self._ref, self._recursive, parallel=parallel)
         self._reset(repo, timestamp=timestamp)
 
     def run(self, command, ignore_errors, parallel=False):
@@ -391,8 +389,7 @@ class Project(object):
 
         self._print_output = not parallel
 
-        repo = self._repo(self.full_path(), self._remote, self._ref, self._recursive,
-                          parallel=parallel, print_output=self._print_output)
+        repo = self._repo(self.full_path(), self._remote, self._ref, self._recursive, parallel=parallel)
         self._run_herd_command('herd', repo, self._url, rebase=rebase)
         self._print(self.fork.status())
         repo.sync(self.fork.remote_name, rebase=rebase)

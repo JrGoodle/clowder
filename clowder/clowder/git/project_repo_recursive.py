@@ -18,8 +18,8 @@ from clowder.git.repo import execute_command
 class ProjectRepoRecursive(ProjectRepo):
     """Class encapsulating git utilities"""
 
-    def __init__(self, repo_path, remote, default_ref, parallel=False, print_output=True):
-        ProjectRepo.__init__(self, repo_path, remote, default_ref, parallel=parallel, print_output=print_output)
+    def __init__(self, repo_path, remote, default_ref, parallel=False):
+        ProjectRepo.__init__(self, repo_path, remote, default_ref, parallel=parallel)
 
     def clean(self, args=''):
         """Discard changes for repo and submodules
