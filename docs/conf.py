@@ -153,6 +153,3 @@ texinfo_documents = [
      author, 'clowder', 'One line description of project.',
      'Miscellaneous'),
 ]
-
-
-
