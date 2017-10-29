@@ -234,6 +234,18 @@ class GitRepo(object):
             self._print(message)
             self._exit(message)
 
+    @staticmethod
+    def print_validation(repo_path):
+        """Print validation messages"""
+
+        repo = GitRepo(repo_path, __repo_default_remote__, __repo_default_ref__)
+        if not GitRepo.existing_git_repository(repo_path):
+            return
+
+        if not repo.validate_repo():
+            print(' - Dirty repo. Please stash, commit, or discard your changes')
+            repo.status_verbose()
+
     def pull(self):
         """Pull upstream changes"""
 
@@ -346,18 +358,6 @@ class GitRepo(object):
         if not GitRepo.existing_git_repository(self.repo_path):
             return True
         return not self.is_dirty()
-
-    @staticmethod
-    def validation(repo_path):
-        """Print validation messages"""
-
-        repo = GitRepo(repo_path, __repo_default_remote__, __repo_default_ref__)
-        if not GitRepo.existing_git_repository(repo_path):
-            return
-
-        if not repo.validate_repo():
-            print(' - Dirty repo. Please stash, commit, or discard your changes')
-            repo.status_verbose()
 
     def _abort_rebase(self):
         """Abort rebase"""

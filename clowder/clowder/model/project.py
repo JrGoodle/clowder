@@ -263,7 +263,7 @@ class Project(object):
 
         if not self.is_valid():
             print(self.status())
-            ProjectRepo.validation(self.full_path())
+            ProjectRepo.print_validation(self.full_path())
 
     @project_repo_exists
     def prune(self, branch, force=False, local=False, remote=False):
