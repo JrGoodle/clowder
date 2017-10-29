@@ -27,7 +27,7 @@ def clowder_command(cmd):
 def command(cmd):
     """Return formatted command name
 
-    :param str cmd: Clowder command name
+    :param cmd: Clowder command name. Can be list of str or str
     :return: Formatted clowder command name
     :rtype: str
     """
@@ -39,7 +39,7 @@ def command(cmd):
 def command_failed_error(cmd):
     """Format error message for failed command
 
-    :param str cmd: Clowder command name
+    :param cmd: Clowder command name. Can be list of str or str
     :return: Formatted clowder command name
     :rtype: str
     """
@@ -214,7 +214,7 @@ def parallel_exception_error(path, *args):
     """Return formatted error string for parallel error
 
     :param str path: Clowder file path
-    :param list of str args: Method arguments
+    :param args: Method arguments
     :return: Formatted parallel exception error
     :rtype: str
     """
