@@ -7,7 +7,7 @@ import subprocess
 import sys
 
 from git import Repo, GitError
-from termcolor import colored, cprint
+from termcolor import colored
 
 import clowder.util.formatting as fmt
 from clowder.error.clowder_git_error import ClowderGitError
@@ -36,7 +36,7 @@ class GitRepo(object):
         try:
             print(self.repo.git.add(files))
         except GitError as err:
-            message = cprint(' - Failed to add files to git index\n', 'red') + fmt.error(err)
+            message = colored(' - Failed to add files to git index\n', 'red') + fmt.error(err)
             self._print(message)
             self._exit(message)
         except (KeyboardInterrupt, SystemExit):
@@ -162,12 +162,16 @@ class GitRepo(object):
         except (KeyboardInterrupt, SystemExit):
             self._exit()
 
-    def is_detached(self):
+    def is_detached(self, print_output=False):
         """Check if HEAD is detached"""
 
         if not os.path.isdir(self.repo_path):
             return False
-        return self.repo.head.is_detached
+        if self.repo.head.is_detached:
+            if print_output:
+                self._print(' - HEAD is detached')
+            return True
+        return False
 
     def is_dirty(self):
         """Check whether repo is dirty"""
@@ -228,8 +232,7 @@ class GitRepo(object):
     def pull(self):
         """Pull upstream changes"""
 
-        if self.repo.head.is_detached:
-            self._print(' - HEAD is detached')
+        if self.is_detached(print_output=True):
             return
 
         try:
@@ -246,8 +249,7 @@ class GitRepo(object):
     def push(self):
         """Push changes"""
 
-        if self.repo.head.is_detached:
-            self._print(' - HEAD is detached')
+        if self.is_detached(print_output=True):
             return
 
         try:
@@ -675,7 +677,7 @@ class GitRepo(object):
             return
 
         try:
-            self._print(' - Initialize repo at ' + fmt.path(self.repo_path))
+            self._print(' - Initialize repo at ' + fmt.get_path(self.repo_path))
             if not os.path.isdir(self.repo_path):
                 try:
                     os.makedirs(self.repo_path)
@@ -745,8 +747,7 @@ class GitRepo(object):
     def _pull(self, remote, branch):
         """Pull from remote branch"""
 
-        if self.repo.head.is_detached:
-            self._print(' - HEAD is detached')
+        if self.is_detached(print_output=True):
             return
 
         branch_output = fmt.ref_string(branch)
@@ -763,8 +764,7 @@ class GitRepo(object):
     def _rebase_remote_branch(self, remote, branch):
         """Rebase from remote branch"""
 
-        if self.repo.head.is_detached:
-            self._print(' - HEAD is detached')
+        if self.is_detached(print_output=True):
             return
 
         branch_output = fmt.ref_string(branch)
@@ -823,7 +823,7 @@ class GitRepo(object):
             repo = Repo(self.repo_path)
             return repo
         except GitError as err:
-            repo_path_output = fmt.path(self.repo_path)
+            repo_path_output = fmt.get_path(self.repo_path)
             message = colored(" - Failed to create Repo instance for ", 'red') + repo_path_output
             self._print(message)
             self._print(fmt.error(err))

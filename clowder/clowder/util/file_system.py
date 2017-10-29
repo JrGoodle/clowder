@@ -2,12 +2,11 @@
 
 from __future__ import print_function
 
+import os
 import shutil
 import sys
 
 from termcolor import colored
-
-import clowder.util.formatting as fmt
 
 
 def remove_directory(path):
@@ -17,6 +16,14 @@ def remove_directory(path):
         shutil.rmtree(path)
     except shutil.Error:
         message = colored(" - Failed to remove directory ", 'red')
-        print(message + fmt.path(path))
+        print(message + colored(path, 'cyan'))
     except (KeyboardInterrupt, SystemExit):
         sys.exit(1)
+
+
+def symlink_target(path):
+    """Returns target path if input is a symlink"""
+
+    if os.path.islink(path):
+        return os.readlink(path)
+    return path

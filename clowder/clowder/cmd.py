@@ -15,7 +15,13 @@ import clowder.util.formatting as fmt
 from clowder.clowder_controller import ClowderController
 from clowder.clowder_repo import ClowderRepo
 from clowder.error.clowder_error import ClowderError
-from clowder.util.connectivity import is_offline
+from clowder.util.decorators import (
+    clowder_required,
+    print_clowder_repo_status,
+    print_clowder_repo_status_fetch,
+    network_connection_required,
+    valid_clowder_yaml_required
+)
 from clowder.util.subparsers import configure_argparse
 
 
@@ -37,7 +43,7 @@ class Command(object):
         self.clowder = None
         self.clowder_repo = None
         self.versions = None
-        self._invalid_yaml = False
+        self.invalid_yaml = False
         self._version = '2.4.0'
         clowder_path = os.path.join(self.root_directory, '.clowder')
 
@@ -46,16 +52,14 @@ class Command(object):
             clowder_symlink = os.path.join(self.root_directory, 'clowder.yaml')
             self.clowder_repo = ClowderRepo(self.root_directory)
             if not os.path.islink(clowder_symlink):
-                print()
-                clowder_output = colored('.clowder', 'green')
-                print(clowder_output)
+                cprint('\n.clowder', 'green')
                 self.clowder_repo.link()
             try:
                 self.clowder = ClowderController(self.root_directory)
                 self.versions = self.clowder.get_saved_version_names()
             except (ClowderError, KeyError) as err:
-                self._invalid_yaml = True
-                self._error = err
+                self.invalid_yaml = True
+                self.error = err
             except (KeyboardInterrupt, SystemExit):
                 sys.exit(1)
 
@@ -71,7 +75,7 @@ class Command(object):
         # Register exit handler to display trailing newline
         self._display_trailing_newline = True
         atexit.register(self._exit_handler_formatter)
-        if not self._invalid_yaml:
+        if not self.invalid_yaml:
             print()
         self.args = parser.parse_args()
         self._display_trailing_newline = False
@@ -84,16 +88,10 @@ class Command(object):
         getattr(self, self.args.clowder_command)()
         print()
 
+    @valid_clowder_yaml_required
+    @print_clowder_repo_status
     def branch(self):
         """clowder branch command"""
-
-        self._validate_clowder_yaml()
-        if self.clowder_repo is None:
-            exit_clowder_not_found()
-
-        self.clowder_repo.print_status()
-        if self.clowder is None:
-            sys.exit(1)
 
         if self.args.all:
             self.clowder.branch(group_names=self.args.groups, project_names=self.args.projects,
@@ -108,16 +106,10 @@ class Command(object):
         self.clowder.branch(group_names=self.args.groups, project_names=self.args.projects,
                             skip=self.args.skip, local=True)
 
+    @valid_clowder_yaml_required
+    @print_clowder_repo_status
     def clean(self):
         """clowder clean command"""
-
-        self._validate_clowder_yaml()
-        if self.clowder_repo is None:
-            exit_clowder_not_found()
-
-        self.clowder_repo.print_status()
-        if self.clowder is None:
-            sys.exit(1)
 
         if self.args.all:
             self.clowder.clean_all(group_names=self.args.groups, project_names=self.args.projects,
@@ -136,48 +128,27 @@ class Command(object):
         self.clowder.clean(group_names=self.args.groups, project_names=self.args.projects,
                            skip=self.args.skip, args=clean_args, recursive=self.args.recursive)
 
+    @valid_clowder_yaml_required
+    @print_clowder_repo_status
     def diff(self):
         """clowder diff command"""
 
-        self._validate_clowder_yaml()
-        if self.clowder_repo is None:
-            exit_clowder_not_found()
-
-        self.clowder_repo.print_status()
-        if self.clowder is None:
-            sys.exit(1)
-
         self.clowder.diff(group_names=self.args.groups, project_names=self.args.projects)
 
+    @valid_clowder_yaml_required
+    @print_clowder_repo_status
     def forall(self):
         """clowder forall command"""
-
-        self._validate_clowder_yaml()
-        if self.clowder_repo is None:
-            exit_clowder_not_found()
-
-        self.clowder_repo.print_status()
-        if self.clowder is None:
-            sys.exit(1)
 
         self.clowder.forall(self.args.command[0], self.args.ignore_errors,
                             group_names=self.args.groups, project_names=self.args.projects,
                             skip=self.args.skip, parallel=self.args.parallel)
 
+    @network_connection_required
+    @valid_clowder_yaml_required
+    @print_clowder_repo_status_fetch
     def herd(self):
         """clowder herd command"""
-
-        self._validate_clowder_yaml()
-        if self.clowder_repo is None:
-            exit_clowder_not_found()
-
-        self.clowder_repo.print_status(fetch=True)
-        if is_offline():
-            print(fmt.offline_error())
-            sys.exit(1)
-
-        if self.clowder is None:
-            sys.exit(1)
 
         branch = None if self.args.branch is None else self.args.branch[0]
         tag = None if self.args.tag is None else self.args.tag[0]
@@ -190,15 +161,12 @@ class Command(object):
             return
         self.clowder.herd(**args)
 
+    @network_connection_required
     def init(self):
         """clowder init command"""
 
         if self.clowder_repo:
             cprint('Clowder already initialized in this directory\n', 'red')
-            sys.exit(1)
-
-        if is_offline():
-            print(fmt.offline_error())
             sys.exit(1)
 
         url_output = colored(self.args.url, 'green')
@@ -210,152 +178,103 @@ class Command(object):
             branch = str(self.args.branch[0])
         clowder_repo.init(self.args.url, branch)
 
+    @clowder_required
+    @print_clowder_repo_status
     def link(self):
         """clowder link command"""
 
-        if self.clowder_repo is None:
-            exit_clowder_not_found()
-
-        self.clowder_repo.print_status()
         if self.args.version is None:
             version = None
         else:
             version = self.args.version[0]
         self.clowder_repo.link(version)
 
+    @valid_clowder_yaml_required
+    @print_clowder_repo_status
     def prune(self):
         """clowder prune command"""
-        self._validate_clowder_yaml()
-        if self.clowder_repo is None:
-            exit_clowder_not_found()
-
-        self.clowder_repo.print_status()
-        if self.clowder is None:
-            sys.exit(1)
 
         if self.args.all:
-            if is_offline():
-                print(fmt.offline_error())
-                sys.exit(1)
-
-            self.clowder.prune(self.args.groups, self.args.branch, project_names=self.args.projects,
-                               skip=self.args.skip, force=self.args.force, local=True, remote=True)
+            self._prune_all()
             return
 
         if self.args.remote:
-            if is_offline():
-                print(fmt.offline_error())
-                sys.exit(1)
-
-            self.clowder.prune(self.args.groups, self.args.branch, project_names=self.args.projects,
-                               skip=self.args.skip, remote=True)
+            self._prune_remote()
             return
 
         self.clowder.prune(self.args.groups, self.args.branch, project_names=self.args.projects,
                            skip=self.args.skip, force=self.args.force, local=True)
 
+    @clowder_required
     def repo(self):
         """clowder repo command"""
-
-        if self.clowder_repo is None:
-            exit_clowder_not_found()
 
         repo_command = 'repo_' + self.args.repo_command
         getattr(self, repo_command)()
 
+    @clowder_required
+    @print_clowder_repo_status
     def repo_add(self):
         """clowder repo add command"""
 
-        if self.clowder_repo is None:
-            exit_clowder_not_found()
-
-        self.clowder_repo.print_status()
         self.clowder_repo.add(self.args.files)
 
+    @clowder_required
+    @print_clowder_repo_status_fetch
     def repo_checkout(self):
         """clowder repo checkout command"""
 
-        if self.clowder_repo is None:
-            exit_clowder_not_found()
-
-        self.clowder_repo.print_status(fetch=True)
         self.clowder_repo.checkout(self.args.ref[0])
 
+    @clowder_required
+    @print_clowder_repo_status
     def repo_clean(self):
         """clowder repo clean command"""
 
-        if self.clowder_repo is None:
-            exit_clowder_not_found()
-
-        self.clowder_repo.print_status()
         self.clowder_repo.clean()
 
+    @clowder_required
+    @print_clowder_repo_status
     def repo_commit(self):
         """clowder repo commit command"""
 
-        if self.clowder_repo is None:
-            exit_clowder_not_found()
-
-        self.clowder_repo.print_status()
         self.clowder_repo.commit(self.args.message[0])
 
+    @network_connection_required
+    @clowder_required
+    @print_clowder_repo_status_fetch
     def repo_pull(self):
         """clowder repo pull command"""
 
-        if self.clowder_repo is None:
-            exit_clowder_not_found()
-
-        if is_offline():
-            print(fmt.offline_error())
-            sys.exit(1)
-
-        self.clowder_repo.print_status(fetch=True)
         self.clowder_repo.pull()
 
+    @network_connection_required
+    @clowder_required
+    @print_clowder_repo_status_fetch
     def repo_push(self):
         """clowder repo push command"""
 
-        if self.clowder_repo is None:
-            exit_clowder_not_found()
-
-        if is_offline():
-            print(fmt.offline_error())
-            sys.exit(1)
-
-        self.clowder_repo.print_status(fetch=True)
         self.clowder_repo.push()
 
+    @clowder_required
+    @print_clowder_repo_status
     def repo_run(self):
         """clowder repo run command"""
 
-        if self.clowder_repo is None:
-            exit_clowder_not_found()
-
-        self.clowder_repo.print_status()
         self.clowder_repo.run_command(self.args.command[0])
 
+    @clowder_required
+    @print_clowder_repo_status
     def repo_status(self):
         """clowder repo status command"""
-        if self.clowder_repo is None:
-            exit_clowder_not_found()
 
-        self.clowder_repo.print_status()
         self.clowder_repo.git_status()
 
+    @network_connection_required
+    @valid_clowder_yaml_required
+    @print_clowder_repo_status_fetch
     def reset(self):
         """clowder reset command"""
-
-        self._validate_clowder_yaml()
-        if self.clowder_repo is None:
-            exit_clowder_not_found()
-
-        self.clowder_repo.print_status(fetch=True)
-        if is_offline():
-            print(fmt.offline_error())
-            sys.exit(1)
-
-        if self.clowder is None:
-            sys.exit(1)
 
         timestamp_project = None
         if self. args.timestamp:
@@ -363,14 +282,9 @@ class Command(object):
         self.clowder.reset(group_names=self.args.groups, project_names=self.args.projects,
                            skip=self.args.skip, timestamp_project=timestamp_project, parallel=self.args.parallel)
 
+    @valid_clowder_yaml_required
     def save(self):
         """clowder save command"""
-
-        if self.clowder_repo is None:
-            exit_clowder_not_found()
-
-        if self.clowder is None:
-            sys.exit(1)
 
         if self.args.version.lower() == 'default':
             print(fmt.save_default_error(self.args.version))
@@ -379,77 +293,44 @@ class Command(object):
         self.clowder_repo.print_status()
         self.clowder.save_version(self.args.version)
 
+    @valid_clowder_yaml_required
+    @print_clowder_repo_status
     def start(self):
         """clowder start command"""
 
-        self._validate_clowder_yaml()
-        if self.clowder_repo is None:
-            exit_clowder_not_found()
-
-        self.clowder_repo.print_status()
-        if self.clowder is None:
-            sys.exit(1)
-
         if self.args.tracking:
-            if is_offline():
-                print(fmt.offline_error())
-                sys.exit(1)
+            self._start_tracking()
+            return
 
         if self.args.projects is None:
-            self.clowder.start_groups(self.args.groups, self.args.skip, self.args.branch, self.args.tracking)
+            self.clowder.start_groups(self.args.groups, self.args.skip, self.args.branch)
         else:
-            self.clowder.start_projects(self.args.projects, self.args.skip, self.args.branch, self.args.tracking)
+            self.clowder.start_projects(self.args.projects, self.args.skip, self.args.branch)
 
+    @valid_clowder_yaml_required
+    @print_clowder_repo_status
     def stash(self):
         """clowder stash command"""
 
-        self._validate_clowder_yaml()
-        if self.clowder_repo is None:
-            exit_clowder_not_found()
-
-        self.clowder_repo.print_status()
-        if self.clowder is None:
-            sys.exit(1)
-
         self.clowder.stash(group_names=self.args.groups, project_names=self.args.projects, skip=self.args.skip)
 
+    @valid_clowder_yaml_required
     def status(self):
         """clowder status command"""
 
-        self._validate_clowder_yaml()
-        if self.clowder_repo is None:
-            exit_clowder_not_found()
-
         self.clowder_repo.print_status(fetch=self.args.fetch)
-        if self.clowder is None:
-            sys.exit(1)
 
         if self.args.fetch:
-            if is_offline():
-                print(fmt.offline_error())
-                sys.exit(1)
+            self._fetch_clowder_projects()
 
-            print(' - Fetch upstream changes for projects\n')
-            self.clowder.fetch(self.clowder.get_all_group_names())
-
-        all_project_paths = self.clowder.get_all_project_paths()
-        padding = len(max(all_project_paths, key=len))
+        padding = len(max(self.clowder.get_all_project_paths(), key=len))
         self.clowder.status(self.clowder.get_all_group_names(), padding)
 
+    @network_connection_required
+    @valid_clowder_yaml_required
+    @print_clowder_repo_status_fetch
     def sync(self):
         """clowder sync command"""
-
-        self._validate_clowder_yaml()
-        if self.clowder_repo is None:
-            exit_clowder_not_found()
-
-        self.clowder_repo.print_status(fetch=True)
-        if self.clowder is None:
-            sys.exit(1)
-
-        if is_offline():
-            print(fmt.offline_error())
-            sys.exit(1)
 
         all_fork_projects = self.clowder.get_all_fork_project_names()
         if all_fork_projects == '':
@@ -463,17 +344,42 @@ class Command(object):
         print('clowder version ' + self._version + '\n')
         sys.exit()
 
+    @valid_clowder_yaml_required
+    @print_clowder_repo_status
     def yaml(self):
         """clowder yaml command"""
 
-        if self.clowder_repo is None:
-            exit_clowder_not_found()
-
-        self.clowder_repo.print_status()
-        if self._invalid_yaml:
-            sys.exit(1)
-
         self.clowder.print_yaml(self.args.resolved)
+
+    @network_connection_required
+    def _fetch_clowder_projects(self):
+        """fetch all projects"""
+
+        print(' - Fetch upstream changes for projects\n')
+        self.clowder.fetch(self.clowder.get_all_group_names())
+
+    @network_connection_required
+    def _prune_all(self):
+        """clowder prune all command"""
+
+        self.clowder.prune(self.args.groups, self.args.branch, project_names=self.args.projects,
+                           skip=self.args.skip, force=self.args.force, local=True, remote=True)
+
+    @network_connection_required
+    def _prune_remote(self):
+        """clowder prune remote command"""
+
+        self.clowder.prune(self.args.groups, self.args.branch, project_names=self.args.projects,
+                           skip=self.args.skip, remote=True)
+
+    @network_connection_required
+    def _start_tracking(self):
+        """clowder start tracking command"""
+
+        if self.args.projects is None:
+            self.clowder.start_groups(self.args.groups, self.args.skip, self.args.branch, tracking=True)
+        else:
+            self.clowder.start_projects(self.args.projects, self.args.skip, self.args.branch, tracking=True)
 
     def _exit_handler_formatter(self):
         """Exit handler to display trailing newline"""
@@ -481,25 +387,10 @@ class Command(object):
         if self._display_trailing_newline:
             print()
 
-    def _validate_clowder_yaml(self):
-        """Print invalid yaml message and exit if invalid"""
-
-        if self._invalid_yaml:
-            print(fmt.invalid_yaml_error())
-            print(fmt.error(self._error))
-            sys.exit(1)
-
 
 def exit_unrecognized_command(parser):
     """Print unrecognized command message and exit"""
 
     parser.print_help()
     print()
-    sys.exit(1)
-
-
-def exit_clowder_not_found():
-    """Print clowder not found message and exit"""
-
-    cprint(' - No clowder found in the current directory\n', 'red')
     sys.exit(1)

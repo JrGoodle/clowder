@@ -3,6 +3,7 @@
 from __future__ import print_function
 
 import clowder.util.formatting as fmt
+from clowder.git.project_repo import ProjectRepo
 from clowder.model.project import Project
 
 
@@ -34,7 +35,7 @@ class Group(object):
     def existing_projects(self):
         """Validate existence status of all projects"""
 
-        return all([project.exists() for project in self.projects])
+        return all([ProjectRepo.existing_git_repository(project.full_path()) for project in self.projects])
 
     def get_yaml(self):
         """Return python object representation for saving yaml"""
@@ -78,7 +79,9 @@ class Group(object):
 
         print(fmt.group_name(self.name))
         for project in self.projects:
-            project.print_exists()
+            if not ProjectRepo.existing_git_repository(project.full_path()):
+                print(project.status())
+                ProjectRepo.existing_git_repository(project.full_path())
 
     def print_validation(self):
         """Print validation message for projects in group"""

@@ -15,6 +15,7 @@ import clowder.util.clowder_yaml as clowder_yaml
 from clowder.error.clowder_error import ClowderError
 from clowder.model.group import Group
 from clowder.model.source import Source
+from clowder.util.decorators import initialize_skip_projects
 from clowder.util.progress import Progress
 
 
@@ -88,14 +89,21 @@ class ClowderController(object):
         self.sources = []
         self._max_import_depth = 10
         yaml_file = os.path.join(self.root_directory, 'clowder.yaml')
-        self._validate_yaml(yaml_file, self._max_import_depth)
-        self._load_yaml()
 
+        try:
+            self._validate_yaml(yaml_file, self._max_import_depth)
+        except ClowderError as err:
+            print(fmt.invalid_yaml_error())
+            print(fmt.error(err))
+            raise
+        except (KeyboardInterrupt, SystemExit):
+            sys.exit(1)
+        else:
+            self._load_yaml()
+
+    @initialize_skip_projects
     def branch(self, group_names, project_names=None, skip=None, local=False, remote=False):
         """Show branches"""
-
-        if skip is None:
-            skip = []
 
         if project_names is None:
             groups = [g for g in self.groups if g.name in group_names]
@@ -107,11 +115,9 @@ class ClowderController(object):
         for project in projects:
             self._run_project_command(project, skip, 'branch', local=local, remote=remote)
 
+    @initialize_skip_projects
     def clean(self, group_names, project_names=None, skip=None, args='', recursive=False):
         """Discard changes"""
-
-        if skip is None:
-            skip = []
 
         if project_names is None:
             groups = [g for g in self.groups if g.name in group_names]
@@ -123,11 +129,9 @@ class ClowderController(object):
         for project in projects:
             self._run_project_command(project, skip, 'clean', args=args, recursive=recursive)
 
+    @initialize_skip_projects
     def clean_all(self, group_names, skip=None, project_names=None):
         """Discard all changes"""
-
-        if skip is None:
-            skip = []
 
         if project_names is None:
             groups = [g for g in self.groups if g.name in group_names]
@@ -160,11 +164,9 @@ class ClowderController(object):
         for group in groups:
             self._run_group_command(group, [], 'fetch_all')
 
+    @initialize_skip_projects
     def forall(self, command, ignore_errors, group_names, project_names=None, skip=None, parallel=False):
         """Runs command or script in project directories specified"""
-
-        if skip is None:
-            skip = []
 
         if project_names is None:
             projects = [p for g in self.groups if g.name in group_names for p in g.projects]
@@ -175,33 +177,28 @@ class ClowderController(object):
             self._forall_parallel(command, skip, ignore_errors, projects)
             return
 
-        # Serial
         for project in projects:
             self._run_project_command(project, skip, 'run', command, ignore_errors)
 
     def get_all_fork_project_names(self):
         """Returns all project names containing forks"""
 
-        project_names = sorted([p.name for g in self.groups for p in g.projects if p.fork])
-        return '' if project_names is None else project_names
+        return sorted([p.name for g in self.groups for p in g.projects if p.fork])
 
     def get_all_group_names(self):
         """Returns all group names for current clowder.yaml"""
 
-        names = sorted([g.name for g in self.groups])
-        return '' if names is None else names
+        return sorted([g.name for g in self.groups])
 
     def get_all_project_names(self):
         """Returns all project names for current clowder.yaml"""
 
-        names = sorted([p.name for g in self.groups for p in g.projects])
-        return '' if names is None else names
+        return sorted([p.name for g in self.groups for p in g.projects])
 
     def get_all_project_paths(self):
         """Returns all project paths for current clowder.yaml"""
 
-        paths = sorted([p.formatted_project_path() for g in self.groups for p in g.projects])
-        return '' if paths is None else paths
+        return sorted([p.formatted_project_path() for g in self.groups for p in g.projects])
 
     def get_saved_version_names(self):
         """Return list of all saved versions"""
@@ -211,11 +208,9 @@ class ClowderController(object):
             return None
         return [v for v in os.listdir(versions_dir) if not v.startswith('.') if v.lower() != 'default']
 
+    @initialize_skip_projects
     def herd(self, group_names, project_names=None, skip=None, branch=None, tag=None, depth=None, rebase=False):
         """Pull or rebase latest upstream changes for projects"""
-
-        if skip is None:
-            skip = []
 
         if project_names is None:
             groups = [g for g in self.groups if g.name in group_names]
@@ -229,12 +224,10 @@ class ClowderController(object):
         for project in projects:
             self._run_project_command(project, skip, 'herd', branch=branch, tag=tag, depth=depth, rebase=rebase)
 
+    @initialize_skip_projects
     def herd_parallel(self, group_names, project_names=None, skip=None, branch=None, tag=None,
                       depth=None, rebase=False):
         """Pull or rebase latest upstream changes for projects in parallel"""
-
-        if skip is None:
-            skip = []
 
         print(' - Herd projects in parallel\n')
         if project_names is None:
@@ -271,11 +264,10 @@ class ClowderController(object):
             clowder_yaml.print_yaml(self.root_directory)
         sys.exit()  # exit early to prevent printing extra newline
 
+    @initialize_skip_projects
     def prune(self, group_names, branch, project_names=None, skip=None, force=False, local=False, remote=False):
         """Prune branches"""
 
-        if skip is None:
-            skip = []
         if project_names is None:
             groups = [g for g in self.groups if g.name in group_names]
             self._validate_groups(groups)
@@ -286,16 +278,14 @@ class ClowderController(object):
         self._validate_projects(projects)
         self._prune_projects(projects, branch, skip=skip, force=force, local=local, remote=remote)
 
+    @initialize_skip_projects
     def reset(self, group_names, project_names=None, skip=None, timestamp_project=None, parallel=False):
         """Reset project branches to upstream or checkout tag/sha as detached HEAD"""
 
-        if skip is None:
-            skip = []
         if parallel:
             self._reset_parallel(group_names, skip=skip, timestamp_project=timestamp_project)
             return
 
-        # Serial
         timestamp = None
         if timestamp_project:
             timestamp = self._get_timestamp(timestamp_project)
@@ -328,14 +318,13 @@ class ClowderController(object):
 
         yaml_file = os.path.join(version_dir, 'clowder.yaml')
         if os.path.exists(yaml_file):
-            print(fmt.save_version_exists_error(version_name, yaml_file))
-            print()
+            print(fmt.save_version_exists_error(version_name, yaml_file) + '\n')
             sys.exit(1)
 
         print(fmt.save_version(version_name, yaml_file))
         clowder_yaml.save_yaml(self._get_yaml(), yaml_file)
 
-    def start_groups(self, group_names, skip, branch, tracking):
+    def start_groups(self, group_names, skip, branch, tracking=False):
         """Start feature branch for groups"""
 
         groups = [g for g in self.groups if g.name in group_names]
@@ -343,7 +332,7 @@ class ClowderController(object):
         for group in groups:
             self._run_group_command(group, skip, 'start', branch, tracking)
 
-    def start_projects(self, project_names, skip, branch, tracking):
+    def start_projects(self, project_names, skip, branch, tracking=False):
         """Start feature branch for projects"""
 
         projects = [p for g in self.groups for p in g.projects if p.name in project_names]
@@ -351,11 +340,9 @@ class ClowderController(object):
         for project in projects:
             self._run_project_command(project, skip, 'start', branch, tracking)
 
+    @initialize_skip_projects
     def stash(self, group_names, skip=None, project_names=None):
         """Stash changes for projects with changes"""
-
-        if skip is None:
-            skip = []
 
         if not self._is_dirty():
             print('No changes to stash')
@@ -388,7 +375,6 @@ class ClowderController(object):
             self._sync_parallel(projects, rebase=rebase)
             return
 
-        # Serial
         for project in projects:
             project.sync(rebase=rebase)
 
@@ -500,8 +486,7 @@ class ClowderController(object):
             parsed_yaml = clowder_yaml.parse_yaml(imported_yaml_file)
             if len(imported_yaml_files) > self._max_import_depth:
                 print(fmt.invalid_yaml_error())
-                print(fmt.recursive_import_error(self._max_import_depth))
-                print()
+                print(fmt.recursive_import_error(self._max_import_depth) + '\n')
                 sys.exit(1)
 
         for parsed_yaml in reversed(imported_yaml_files):
@@ -609,11 +594,9 @@ class ClowderController(object):
             for project in projects:
                 self._run_project_command(project, skip, 'prune', branch, remote=True)
 
+    @initialize_skip_projects
     def _reset_parallel(self, group_names, project_names=None, skip=None, timestamp_project=None):
         """Reset project branches to upstream or checkout tag/sha as detached HEAD in parallel"""
-
-        if skip is None:
-            skip = []
 
         print(' - Reset projects in parallel\n')
         timestamp = None
@@ -720,8 +703,7 @@ class ClowderController(object):
         parsed_yaml = clowder_yaml.parse_yaml(yaml_file)
         if max_import_depth < 0:
             print(fmt.invalid_yaml_error())
-            print(fmt.recursive_import_error(self._max_import_depth))
-            print()
+            print(fmt.recursive_import_error(self._max_import_depth) + '\n')
             sys.exit(1)
 
         if 'import' not in parsed_yaml:
