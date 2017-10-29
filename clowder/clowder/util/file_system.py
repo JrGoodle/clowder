@@ -31,7 +31,12 @@ def remove_directory(path):
 
 
 def symlink_target(path):
-    """Returns target path if input is a symlink"""
+    """Returns target path if input is a symlink, otherwise returns original path
+
+    :param str path: Path of file or symlink
+    :return: Target path if input is a symlink, otherwise original path
+    :rtype: str
+    """
 
     if os.path.islink(path):
         return os.readlink(path)
