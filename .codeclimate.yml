@@ -1,4 +1,13 @@
 version: "2"
+
+engines:
+  pep8:
+    enabled: true
+
+ratings:
+   paths:
+   - "**.py"
+
 checks:
   argument-count:
     config:
