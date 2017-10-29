@@ -318,8 +318,7 @@ class ClowderController(object):
 
         yaml_file = os.path.join(version_dir, 'clowder.yaml')
         if os.path.exists(yaml_file):
-            print(fmt.save_version_exists_error(version_name, yaml_file))
-            print()
+            print(fmt.save_version_exists_error(version_name, yaml_file) + '\n')
             sys.exit(1)
 
         print(fmt.save_version(version_name, yaml_file))
@@ -487,8 +486,7 @@ class ClowderController(object):
             parsed_yaml = clowder_yaml.parse_yaml(imported_yaml_file)
             if len(imported_yaml_files) > self._max_import_depth:
                 print(fmt.invalid_yaml_error())
-                print(fmt.recursive_import_error(self._max_import_depth))
-                print()
+                print(fmt.recursive_import_error(self._max_import_depth) + '\n')
                 sys.exit(1)
 
         for parsed_yaml in reversed(imported_yaml_files):
@@ -705,8 +703,7 @@ class ClowderController(object):
         parsed_yaml = clowder_yaml.parse_yaml(yaml_file)
         if max_import_depth < 0:
             print(fmt.invalid_yaml_error())
-            print(fmt.recursive_import_error(self._max_import_depth))
-            print()
+            print(fmt.recursive_import_error(self._max_import_depth) + '\n')
             sys.exit(1)
 
         if 'import' not in parsed_yaml:

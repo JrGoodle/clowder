@@ -52,9 +52,7 @@ class Command(object):
             clowder_symlink = os.path.join(self.root_directory, 'clowder.yaml')
             self.clowder_repo = ClowderRepo(self.root_directory)
             if not os.path.islink(clowder_symlink):
-                print()
-                clowder_output = colored('.clowder', 'green')
-                print(clowder_output)
+                cprint('\n.clowder', 'green')
                 self.clowder_repo.link()
             try:
                 self.clowder = ClowderController(self.root_directory)
