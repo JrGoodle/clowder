@@ -16,9 +16,25 @@ from clowder.git.repo import execute_command
 
 
 class ProjectRepoRecursive(ProjectRepo):
-    """Class encapsulating git utilities"""
+    """Class encapsulating git utilities for projects with submodules
+
+    Attributes:
+        repo_path (str): Absolute path to repo
+        default_ref (str): Default ref
+        remote (str): Default remote name
+        parallel (bool): Whether command is being run in parallel, affects output
+        repo (Repo): Repo instance
+    """
 
     def __init__(self, repo_path, remote, default_ref, parallel=False):
+        """ProjectRepoRecursive __init__
+
+        :param str repo_path: Absolute path to repo
+        :param str remote: Default remote name
+        :param str default_ref: Default ref
+        :param Optional[bool] parallel: Whether command is being run in parallel, affects output. Defaults to False
+        """
+
         ProjectRepo.__init__(self, repo_path, remote, default_ref, parallel=parallel)
 
     def clean(self, args=''):
