@@ -83,9 +83,7 @@ def invalid_yaml_error():
 def missing_entries_error(name, yml):
     """Return formatted error string for invalid entry in collection"""
 
-    output_1 = yaml_path(yml) + colored(' - Error: Missing entries in ', 'red')
-    output_2 = colored(name, attrs=['bold'])
-    return output_1 + output_2
+    return yaml_path(yml) + colored(' - Error: Missing entries in ', 'red') + colored(name, attrs=['bold'])
 
 
 def missing_entry_error(entry, name, yml):
@@ -135,9 +133,8 @@ def get_path(path):
 def recursive_import_error(depth):
     """Format error message for too many recursive imports"""
 
-    output_1 = colored(' - Error: Too many recursive imports\n', 'red')
-    output_2 = colored(str(depth), attrs=['bold'])
-    return output_1 + 'Max imports: ' + output_2
+    output = colored(' - Error: Too many recursive imports\n', 'red')
+    return output + 'Max imports: ' + colored(str(depth), attrs=['bold'])
 
 
 def ref_string(ref):

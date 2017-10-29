@@ -71,22 +71,19 @@ class Project(object):
     def clean(self, args='', recursive=False):
         """Discard changes for project"""
 
-        repo = self._repo(self.full_path(), self._remote, self._ref, self._recursive and recursive)
-        repo.clean(args=args)
+        self._repo(self.full_path(), self._remote, self._ref, self._recursive and recursive).clean(args=args)
 
     @project_repo_exists
     def clean_all(self):
         """Discard all changes for project"""
 
-        repo = self._repo(self.full_path(), self._remote, self._ref, self._recursive)
-        repo.clean(args='fdx')
+        self._repo(self.full_path(), self._remote, self._ref, self._recursive).clean(args='fdx')
 
     @project_repo_exists
     def diff(self):
         """Show git diff for project"""
 
-        repo = ProjectRepo(self.full_path(), self._remote, self._ref)
-        repo.status_verbose()
+        ProjectRepo(self.full_path(), self._remote, self._ref).status_verbose()
 
     def existing_branch(self, branch, is_remote):
         """Check if branch exists"""
@@ -95,8 +92,8 @@ class Project(object):
         if not is_remote:
             return repo.existing_local_branch(branch)
 
-        rem = self._remote if self.fork is None else self.fork.remote_name
-        return repo.existing_remote_branch(branch, rem)
+        remote = self._remote if self.fork is None else self.fork.remote_name
+        return repo.existing_remote_branch(branch, remote)
 
     @project_repo_exists
     def fetch_all(self):
@@ -113,8 +110,7 @@ class Project(object):
     def formatted_project_path(self):
         """Return formatted project path"""
 
-        repo_path = os.path.join(self._root_directory, self.path)
-        return ProjectRepo.format_project_string(repo_path, self.path)
+        return ProjectRepo.format_project_string(os.path.join(self._root_directory, self.path), self.path)
 
     def full_path(self):
         """Return full path to project"""
@@ -124,8 +120,7 @@ class Project(object):
     def get_current_timestamp(self):
         """Clone project or update latest from upstream"""
 
-        repo = ProjectRepo(self.full_path(), self._remote, self._ref)
-        return repo.get_current_timestamp()
+        return ProjectRepo(self.full_path(), self._remote, self._ref).get_current_timestamp()
 
     def get_yaml(self, resolved=False):
         """Return python object representation for saving yaml"""
@@ -133,8 +128,7 @@ class Project(object):
         if resolved:
             ref = self._ref
         else:
-            repo = ProjectRepo(self.full_path(), self._remote, self._ref)
-            ref = repo.sha()
+            ref = ProjectRepo(self.full_path(), self._remote, self._ref).sha()
 
         project = {'name': self.name,
                    'path': self.path,
@@ -177,14 +171,12 @@ class Project(object):
     def is_dirty(self):
         """Check if project is dirty"""
 
-        repo = self._repo(self.full_path(), self._remote, self._ref, self._recursive)
-        return not repo.validate_repo()
+        return not self._repo(self.full_path(), self._remote, self._ref, self._recursive).validate_repo()
 
     def is_valid(self):
         """Validate status of project"""
 
-        repo = ProjectRepo(self.full_path(), self._remote, self._ref)
-        return repo.validate_repo()
+        return ProjectRepo(self.full_path(), self._remote, self._ref).validate_repo()
 
     def print_validation(self):
         """Print validation message for project"""
@@ -247,9 +239,7 @@ class Project(object):
 
         remote = self._remote if self.fork is None else self.fork.remote_name
         depth = self._depth if self.fork is None else 0
-
-        repo = ProjectRepo(self.full_path(), self._remote, self._ref)
-        repo.start(remote, branch, depth, tracking)
+        ProjectRepo(self.full_path(), self._remote, self._ref).start(remote, branch, depth, tracking)
 
     def status(self, padding=None):
         """Return formatted status for project"""
@@ -270,8 +260,7 @@ class Project(object):
         """Stash changes for project if dirty"""
 
         if self.is_dirty():
-            repo = ProjectRepo(self.full_path(), self._remote, self._ref)
-            repo.stash()
+            ProjectRepo(self.full_path(), self._remote, self._ref).stash()
 
     def sync(self, rebase=False, parallel=False):
         """Sync fork project with upstream"""
