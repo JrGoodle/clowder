@@ -96,12 +96,11 @@ def validate_yaml_project_optional(project, yaml_file):
         del project['fork']
 
 
-def validate_yaml_projects(projects, yaml_file, is_import):
-    """Validate projects in clowder loaded from yaml file
+def validate_yaml_import_projects(projects, yaml_file):
+    """Validate projects in clowder loaded from yaml file import
 
     :param dict projects: Parsed YAML python object for projects
     :param str yaml_file: Path to yaml file
-    :param bool is_import: Whether the clowder.yaml file is an imported file
     :return:
     :raise ClowderError:
     """
@@ -110,7 +109,20 @@ def validate_yaml_projects(projects, yaml_file, is_import):
     validate_not_empty(projects, 'projects', yaml_file)
 
     for project in projects:
-        if is_import:
-            validate_yaml_import_project(project, yaml_file)
-        else:
-            validate_yaml_project(project, yaml_file)
+        validate_yaml_import_project(project, yaml_file)
+
+
+def validate_yaml_projects(projects, yaml_file):
+    """Validate projects in clowder loaded from yaml file
+
+    :param dict projects: Parsed YAML python object for projects
+    :param str yaml_file: Path to yaml file
+    :return:
+    :raise ClowderError:
+    """
+
+    validate_type(projects, 'projects', list, 'list', yaml_file)
+    validate_not_empty(projects, 'projects', yaml_file)
+
+    for project in projects:
+        validate_yaml_project(project, yaml_file)

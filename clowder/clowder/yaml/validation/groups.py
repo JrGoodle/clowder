@@ -19,7 +19,10 @@ from clowder.yaml.util import (
     validate_type,
     validate_type_depth
 )
-from clowder.yaml.validation.projects import validate_yaml_projects
+from clowder.yaml.validation.projects import (
+    validate_yaml_import_projects,
+    validate_yaml_projects
+)
 
 
 def validate_yaml_import_groups(groups, yaml_file):
@@ -70,7 +73,7 @@ def validate_yaml_import_group(group, yaml_file):
     validate_not_empty(group, 'group', yaml_file)
 
     if 'projects' in group:
-        validate_yaml_projects(group['projects'], yaml_file, is_import=True)
+        validate_yaml_import_projects(group['projects'], yaml_file)
         del group['projects']
 
     validate_optional_bool(group, 'recursive', yaml_file)
@@ -104,7 +107,7 @@ def validate_yaml_group(group, yaml_file):
     validate_required_string(group, 'group', 'name', yaml_file)
 
     dict_contains_value(group, 'group', 'projects', yaml_file)
-    validate_yaml_projects(group['projects'], yaml_file, is_import=False)
+    validate_yaml_projects(group['projects'], yaml_file)
     del group['projects']
 
     validate_optional_bool(group, 'recursive', yaml_file)
