@@ -13,8 +13,6 @@ import signal
 import sys
 
 import clowder.util.formatting as fmt
-import clowder.yaml.loading as yaml_load
-import clowder.yaml.parsing as yaml_parse
 import clowder.yaml.printing as yaml_print
 import clowder.yaml.saving as yaml_save
 import psutil
@@ -22,6 +20,7 @@ from clowder.error.clowder_error import ClowderError
 from clowder.model.group import Group
 from clowder.model.source import Source
 from clowder.util.progress import Progress
+from clowder.yaml.loading import load_yaml
 from clowder.yaml.validating import validate_yaml
 from termcolor import cprint
 
@@ -773,52 +772,18 @@ class ClowderController(object):
         return any([g.is_dirty() for g in self.groups])
 
     def _load_yaml(self):
-        """Load clowder from yaml file
+        """Load clowder.yaml
 
         :return:
         """
+        yaml = load_yaml(self.root_directory)
 
-        yaml_file = os.path.join(self.root_directory, 'clowder.yaml')
-        parsed_yaml = yaml_parse.parse_yaml(yaml_file)
-        imported_yaml_files = []
-        combined_yaml = {}
-        while True:
-            if 'import' not in parsed_yaml:
-                yaml_load.load_yaml_base(parsed_yaml, combined_yaml)
-                break
-            imported_yaml_files.append(parsed_yaml)
-            imported_yaml = parsed_yaml['import']
-
-            if imported_yaml == 'default':
-                imported_yaml_file = os.path.join(self.root_directory, '.clowder', 'clowder.yaml')
-            else:
-                imported_yaml_file = os.path.join(self.root_directory, '.clowder', 'versions',
-                                                  imported_yaml, 'clowder.yaml')
-
-            parsed_yaml = yaml_parse.parse_yaml(imported_yaml_file)
-            if len(imported_yaml_files) > self._max_import_depth:
-                print(fmt.invalid_yaml_error())
-                print(fmt.recursive_import_error(self._max_import_depth) + '\n')
-                sys.exit(1)
-
-        for parsed_yaml in reversed(imported_yaml_files):
-            yaml_load.load_yaml_import(parsed_yaml, combined_yaml)
-
-        self._load_yaml_combined(combined_yaml)
-
-    def _load_yaml_combined(self, combined_yaml):
-        """Load clowder from combined yaml
-
-        :param dict combined_yaml: Combined yaml
-        :return:
-        """
-
-        self.defaults = combined_yaml['defaults']
+        self.defaults = yaml['defaults']
         if 'depth' not in self.defaults:
             self.defaults['depth'] = 0
 
-        self.sources = [Source(s) for s in combined_yaml['sources']]
-        for group in combined_yaml['groups']:
+        self.sources = [Source(s) for s in yaml['sources']]
+        for group in yaml['groups']:
             self.groups.append(Group(self.root_directory, group, self.defaults, self.sources))
 
     @staticmethod

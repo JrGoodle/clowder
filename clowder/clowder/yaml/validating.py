@@ -12,6 +12,7 @@ import sys
 
 import clowder.util.formatting as fmt
 from clowder.error.clowder_error import ClowderError
+from clowder.yaml import __MAX_IMPORT_DEPTH__
 from clowder.yaml.parsing import parse_yaml
 from clowder.yaml.validation.defaults import (
     validate_yaml_defaults,
@@ -28,9 +29,6 @@ from clowder.yaml.validation.util import (
     validate_optional_dict,
     validate_type
 )
-
-
-__MAX_IMPORT_DEPTH__ = 10
 
 
 def validate_yaml(yaml_file, root_directory, depth=__MAX_IMPORT_DEPTH__):

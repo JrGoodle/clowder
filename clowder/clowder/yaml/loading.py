@@ -7,14 +7,53 @@
 
 from __future__ import print_function
 
+import os
 import sys
 
 from termcolor import colored
 
 import clowder.util.formatting as fmt
+from clowder.yaml import __MAX_IMPORT_DEPTH__
+from clowder.yaml.parsing import parse_yaml
 
 
-def load_yaml_base(parsed_yaml, combined_yaml):
+def load_yaml(root_directory):
+    """Load clowder from yaml file
+
+    :param str root_directory: Root directory of clowder projects
+    :return:
+    """
+
+    yaml_file = os.path.join(root_directory, 'clowder.yaml')
+    parsed_yaml = parse_yaml(yaml_file)
+    imported_yaml_files = []
+    combined_yaml = {}
+    while True:
+        if 'import' not in parsed_yaml:
+            _load_yaml_base(parsed_yaml, combined_yaml)
+            break
+        imported_yaml_files.append(parsed_yaml)
+        imported_yaml = parsed_yaml['import']
+
+        if imported_yaml == 'default':
+            imported_yaml_file = os.path.join(root_directory, '.clowder', 'clowder.yaml')
+        else:
+            imported_yaml_file = os.path.join(root_directory, '.clowder', 'versions',
+                                              imported_yaml, 'clowder.yaml')
+
+        parsed_yaml = parse_yaml(imported_yaml_file)
+        if len(imported_yaml_files) > __MAX_IMPORT_DEPTH__:
+            print(fmt.invalid_yaml_error())
+            print(fmt.recursive_import_error(__MAX_IMPORT_DEPTH__) + '\n')
+            sys.exit(1)
+
+    for parsed_yaml in reversed(imported_yaml_files):
+        _load_yaml_import(parsed_yaml, combined_yaml)
+
+    return combined_yaml
+
+
+def _load_yaml_base(parsed_yaml, combined_yaml):
     """Load clowder from base yaml file
 
     :param dict parsed_yaml: Parsed YAML python object
@@ -29,7 +68,7 @@ def load_yaml_base(parsed_yaml, combined_yaml):
     combined_yaml['groups'] = parsed_yaml['groups']
 
 
-def load_yaml_import(parsed_yaml, combined_yaml):
+def _load_yaml_import(parsed_yaml, combined_yaml):
     """Load clowder from import yaml file
 
     :param dict parsed_yaml: Parsed YAML python object
