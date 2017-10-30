@@ -10,29 +10,15 @@ from __future__ import print_function
 import clowder.util.formatting as fmt
 from clowder.error.clowder_error import ClowderError
 from clowder.yaml.util import (
-    override_import_value,
     validate_optional_bool,
     validate_optional_string,
     dict_contains_value,
     validate_ref_type,
     validate_optional_ref,
-    validate_required_value,
+    validate_required_string,
     validate_type,
     validate_type_depth
 )
-
-
-def load_yaml_import_defaults(imported_defaults, defaults):
-    """Load clowder projects from imported group
-
-    :param dict imported_defaults: Parsed YAML python object for imported defaults
-    :param dict defaults: Parsed YAML python object for defaults
-    :return:
-    """
-
-    args = ['depth', 'recursive', 'ref', 'remote', 'source', 'timestamp_author']
-    for arg in args:
-        override_import_value(defaults, imported_defaults, arg)
 
 
 def validate_yaml_import_defaults(defaults, yaml_file):
@@ -79,24 +65,8 @@ def validate_yaml_defaults(defaults, yaml_file):
     validate_ref_type(defaults, yaml_file)
     del defaults['ref']
 
-    validate_required_value(defaults, 'defaults', 'remote', str, 'str', yaml_file)
-    validate_required_value(defaults, 'defaults', 'source', str, 'str', yaml_file)
-
-    validate_yaml_defaults_optional(defaults, yaml_file)
-
-    if defaults:
-        error = fmt.unknown_entry_error('defaults', defaults, yaml_file)
-        raise ClowderError(error)
-
-
-def validate_yaml_defaults_optional(defaults, yaml_file):
-    """Validate defaults optional args in clowder loaded from yaml file
-
-    :param dict defaults: Parsed YAML python object for defaults
-    :param str yaml_file: Path to yaml file
-    :return:
-    :raise ClowderError:
-    """
+    validate_required_string(defaults, 'defaults', 'remote', yaml_file)
+    validate_required_string(defaults, 'defaults', 'source', yaml_file)
 
     if 'depth' in defaults:
         validate_type_depth(defaults['depth'], yaml_file)
@@ -104,3 +74,7 @@ def validate_yaml_defaults_optional(defaults, yaml_file):
 
     validate_optional_bool(defaults, 'recursive', yaml_file)
     validate_optional_string(defaults, 'timestamp_author', yaml_file)
+
+    if defaults:
+        error = fmt.unknown_entry_error('defaults', defaults, yaml_file)
+        raise ClowderError(error)

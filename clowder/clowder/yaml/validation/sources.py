@@ -10,7 +10,7 @@ from __future__ import print_function
 import clowder.util.formatting as fmt
 from clowder.error.clowder_error import ClowderError
 from clowder.yaml.util import (
-    validate_required_value,
+    validate_required_string,
     validate_type
 )
 
@@ -58,8 +58,8 @@ def validate_yaml_sources(sources, yaml_file):
             error = fmt.missing_entries_error('source', yaml_file)
             raise ClowderError(error)
 
-        validate_required_value(source, 'source', 'name', str, 'str', yaml_file)
-        validate_required_value(source, 'source', 'url', str, 'str', yaml_file)
+        validate_required_string(source, 'source', 'name', yaml_file)
+        validate_required_string(source, 'source', 'url', yaml_file)
 
         if source:
             error = fmt.unknown_entry_error('source', source, yaml_file)

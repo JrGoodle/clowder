@@ -124,20 +124,18 @@ def validate_optional_string(dictionary, value, yaml_file):
     _validate_optional_value(dictionary, value, str, 'str', yaml_file)
 
 
-def validate_required_value(dictionary, dict_name, value, classinstance, type_name, yaml_file):
+def validate_required_string(dictionary, dict_name, value, yaml_file):
     """Check whether yaml file contains required value
 
     :param dict dictionary: Parsed YAML python object
     :param str dict_name: Name of dict to print if missing
     :param str value: Name of entry to check
-    :param type classinstance: Type to check
-    :param str type_name: Name of type to print if invalid
     :param str yaml_file: Path to yaml file
     :return:
     """
 
     dict_contains_value(dictionary, dict_name, value, yaml_file)
-    validate_type(dictionary[value], value, classinstance, type_name, yaml_file)
+    validate_type(dictionary[value], value, str, 'str', yaml_file)
     del dictionary[value]
 
 

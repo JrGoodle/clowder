@@ -9,43 +9,16 @@ from __future__ import print_function
 
 import clowder.util.formatting as fmt
 from clowder.error.clowder_error import ClowderError
-from clowder.yaml.loading import load_yaml_import_projects
 from clowder.yaml.util import (
     dict_contains_value,
-    override_import_value,
     validate_optional_ref,
     validate_optional_bool,
     validate_optional_string,
-    validate_required_value,
+    validate_required_string,
     validate_type,
     validate_type_depth
 )
 from clowder.yaml.validation.projects import validate_yaml_projects
-
-
-def load_yaml_import_groups(imported_groups, groups):
-    """Load clowder groups from imported yaml
-
-    :param dict imported_groups: Parsed YAML python object for imported groups
-    :param dict groups: Parsed YAML python object for groups
-    :return:
-    """
-
-    group_names = [g['name'] for g in groups]
-    for imported_group in imported_groups:
-        if imported_group['name'] not in group_names:
-            groups.append(imported_group)
-            continue
-        combined_groups = []
-        for group in groups:
-            if group['name'] == imported_group['name']:
-                args = ['depth', 'recursive', 'ref', 'remote', 'source', 'timestamp_author']
-                for arg in args:
-                    override_import_value(group, imported_group, arg)
-                if 'projects' in imported_group:
-                    load_yaml_import_projects(imported_group['projects'], group['projects'])
-            combined_groups.append(group)
-        groups = combined_groups
 
 
 def validate_yaml_import_groups(groups, yaml_file):
@@ -101,7 +74,7 @@ def validate_yaml_import_group(group, yaml_file):
         error = fmt.missing_entries_error('group', yaml_file)
         raise ClowderError(error)
 
-    validate_required_value(group, 'group', 'name', str, 'str', yaml_file)
+    validate_required_string(group, 'group', 'name', yaml_file)
 
     if not group:
         error = fmt.missing_entries_error('group', yaml_file)
@@ -142,16 +115,17 @@ def validate_yaml_group(group, yaml_file):
         error = fmt.missing_entries_error('group', yaml_file)
         raise ClowderError(error)
 
-    validate_required_value(group, 'group', 'name', str, 'str', yaml_file)
+    validate_required_string(group, 'group', 'name', yaml_file)
 
     dict_contains_value(group, 'group', 'projects', yaml_file)
     validate_yaml_projects(group['projects'], yaml_file, is_import=False)
     del group['projects']
 
     validate_optional_bool(group, 'recursive', yaml_file)
-    validate_optional_string(group, 'remote', yaml_file)
-    validate_optional_string(group, 'timestamp_author', yaml_file)
-    validate_optional_string(group, 'source', yaml_file)
+
+    string_args = ['remote', 'source', 'timestamp_author']
+    for arg in string_args:
+        validate_optional_string(group, arg, yaml_file)
 
     validate_optional_ref(group, yaml_file)
 

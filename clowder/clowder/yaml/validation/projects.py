@@ -13,7 +13,7 @@ from clowder.yaml.util import (
     validate_optional_ref,
     validate_optional_bool,
     validate_optional_string,
-    validate_required_value,
+    validate_required_string,
     validate_type,
     validate_type_depth
 )
@@ -35,7 +35,7 @@ def validate_yaml_import_project(project, yaml_file):
         error = fmt.missing_entries_error('project', yaml_file)
         raise ClowderError(error)
 
-    validate_required_value(project, 'project', 'name', str, 'str', yaml_file)
+    validate_required_string(project, 'project', 'name', yaml_file)
 
     if not project:
         error = fmt.missing_entries_error('project', yaml_file)
@@ -65,8 +65,8 @@ def validate_yaml_project(project, yaml_file):
         error = fmt.missing_entries_error('project', yaml_file)
         raise ClowderError(error)
 
-    validate_required_value(project, 'project', 'name', str, 'str', yaml_file)
-    validate_required_value(project, 'project', 'path', str, 'str', yaml_file)
+    validate_required_string(project, 'project', 'name', yaml_file)
+    validate_required_string(project, 'project', 'path', yaml_file)
 
     validate_yaml_project_optional(project, yaml_file)
 
