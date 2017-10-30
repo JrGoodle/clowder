@@ -19,7 +19,7 @@ from clowder.yaml.util import (
     validate_type,
     validate_type_depth
 )
-from clowder.yaml.validation.fork_validation import validate_yaml_fork
+from clowder.yaml.validation.forks import validate_yaml_fork
 
 
 def load_yaml_import_projects(imported_projects, projects):

@@ -16,7 +16,7 @@ from clowder.yaml.util import (
     validate_type,
     validate_type_depth
 )
-from clowder.yaml.validation.project_validation import validate_yaml_projects
+from clowder.yaml.validation.projects import validate_yaml_projects
 
 
 def load_yaml_import_groups(imported_groups, groups):

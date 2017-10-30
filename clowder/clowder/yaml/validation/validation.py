@@ -14,15 +14,15 @@ from clowder.yaml.util import (
     clowder_yaml_contains_value,
     validate_type
 )
-from clowder.yaml.validation.defaults_validation import (
+from clowder.yaml.validation.defaults import (
     validate_yaml_defaults,
     validate_yaml_import_defaults
 )
-from clowder.yaml.validation.group_validation import (
+from clowder.yaml.validation.groups import (
     validate_yaml_import_groups,
     validate_yaml_groups
 )
-from clowder.yaml.validation.source_validation import validate_yaml_sources
+from clowder.yaml.validation.sources import validate_yaml_sources
 
 
 def validate_yaml(yaml_file):
