@@ -7,9 +7,8 @@
 
 from __future__ import print_function
 
-import clowder.util.formatting as fmt
-from clowder.error.clowder_error import ClowderError
 from clowder.yaml.util import (
+    validate_empty,
     validate_not_empty,
     validate_required_string,
     validate_type
@@ -58,6 +57,4 @@ def validate_yaml_sources(sources, yaml_file):
         for arg in args:
             validate_required_string(source, 'source', arg, yaml_file)
 
-        if source:
-            error = fmt.unknown_entry_error('source', source, yaml_file)
-            raise ClowderError(error)
+        validate_empty(source, 'source', yaml_file)

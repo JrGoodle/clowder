@@ -7,9 +7,8 @@
 
 from __future__ import print_function
 
-import clowder.util.formatting as fmt
-from clowder.error.clowder_error import ClowderError
 from clowder.yaml.util import (
+    validate_empty,
     validate_not_empty,
     validate_required_string,
     validate_type
@@ -32,6 +31,4 @@ def validate_yaml_fork(fork, yaml_file):
     for arg in args:
         validate_required_string(fork, 'fork', arg, yaml_file)
 
-    if fork:
-        error = fmt.unknown_entry_error('fork', fork, yaml_file)
-        raise ClowderError(error)
+    validate_empty(fork, 'fork', yaml_file)

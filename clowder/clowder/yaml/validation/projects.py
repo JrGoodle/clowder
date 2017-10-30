@@ -7,9 +7,8 @@
 
 from __future__ import print_function
 
-import clowder.util.formatting as fmt
-from clowder.error.clowder_error import ClowderError
 from clowder.yaml.util import (
+    validate_empty,
     validate_not_empty,
     validate_optional_ref,
     validate_optional_bool,
@@ -35,17 +34,13 @@ def validate_yaml_import_project(project, yaml_file):
 
     validate_required_string(project, 'project', 'name', yaml_file)
 
-    if not project:
-        error = fmt.missing_entries_error('project', yaml_file)
-        raise ClowderError(error)
+    validate_not_empty(project, 'project', yaml_file)
 
     validate_optional_string(project, 'path', yaml_file)
 
     validate_yaml_project_optional(project, yaml_file)
 
-    if project:
-        error = fmt.unknown_entry_error('project', project, yaml_file)
-        raise ClowderError(error)
+    validate_empty(project, 'project', yaml_file)
 
 
 def validate_yaml_project(project, yaml_file):
@@ -65,9 +60,7 @@ def validate_yaml_project(project, yaml_file):
 
     validate_yaml_project_optional(project, yaml_file)
 
-    if project:
-        error = fmt.unknown_entry_error('project', project, yaml_file)
-        raise ClowderError(error)
+    validate_empty(project, 'project', yaml_file)
 
 
 def validate_yaml_project_optional(project, yaml_file):

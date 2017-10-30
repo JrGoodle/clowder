@@ -55,6 +55,20 @@ def override_import_value(dictionary, imported_dictionary, value):
         dictionary[value] = imported_dictionary[value]
 
 
+def validate_empty(collection, name, yaml_file):
+    """Check whether collection is not empty
+
+    :param collection: Parsed YAML python object
+    :param str name: Name of collection to print if empty
+    :param str yaml_file: Path to yaml file
+    :return:
+    """
+
+    if collection:
+        error = fmt.unknown_entry_error(name, collection, yaml_file)
+        raise ClowderError(error)
+
+
 def validate_not_empty(collection, name, yaml_file):
     """Check whether collection is empty
 
