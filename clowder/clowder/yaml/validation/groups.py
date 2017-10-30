@@ -8,7 +8,7 @@
 from __future__ import print_function
 
 from clowder.yaml.validation.projects import (
-    validate_yaml_import_projects,
+    validate_yaml_projects_import,
     validate_yaml_projects
 )
 from clowder.yaml.validation.util import (
@@ -24,7 +24,7 @@ from clowder.yaml.validation.util import (
 )
 
 
-def validate_yaml_import_groups(groups, yaml_file):
+def validate_yaml_groups_import(groups, yaml_file):
     """Validate groups in clowder loaded from yaml file with import
 
     :param dict groups: Parsed YAML python object for groups
@@ -43,7 +43,7 @@ def validate_yaml_import_groups(groups, yaml_file):
         validate_not_empty(group, 'group', yaml_file)
 
         if 'projects' in group:
-            validate_yaml_import_projects(group['projects'], yaml_file)
+            validate_yaml_projects_import(group['projects'], yaml_file)
             del group['projects']
 
         validate_optional_bool(group, 'recursive', yaml_file)

@@ -15,7 +15,7 @@ from clowder.yaml.validation.util import (
 )
 
 
-def load_yaml_import_sources(imported_sources, sources):
+def load_yaml_sources_import(imported_sources, sources):
     """Load clowder sources from imported yaml
 
     :param dict imported_sources: Parsed YAML python object for imported sources

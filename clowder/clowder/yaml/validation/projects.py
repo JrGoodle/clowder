@@ -20,7 +20,7 @@ from clowder.yaml.validation.util import (
 )
 
 
-def validate_yaml_import_projects(projects, yaml_file):
+def validate_yaml_projects_import(projects, yaml_file):
     """Validate projects in clowder loaded from yaml file import
 
     :param dict projects: Parsed YAML python object for projects
