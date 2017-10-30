@@ -56,12 +56,9 @@ def load_yaml_import_defaults(imported_defaults, defaults):
     :return:
     """
 
-    override_import_value(defaults, imported_defaults, 'recursive')
-    override_import_value(defaults, imported_defaults, 'ref')
-    override_import_value(defaults, imported_defaults, 'remote')
-    override_import_value(defaults, imported_defaults, 'source')
-    override_import_value(defaults, imported_defaults, 'depth')
-    override_import_value(defaults, imported_defaults, 'timestamp_author')
+    args = ['depth', 'recursive', 'ref', 'remote', 'source', 'timestamp_author']
+    for arg in args:
+        override_import_value(defaults, imported_defaults, arg)
 
 
 def load_yaml_import_groups(imported_groups, groups):
@@ -80,12 +77,9 @@ def load_yaml_import_groups(imported_groups, groups):
         combined_groups = []
         for group in groups:
             if group['name'] == imported_group['name']:
-                override_import_value(group, imported_group, 'recursive')
-                override_import_value(group, imported_group, 'ref')
-                override_import_value(group, imported_group, 'remote')
-                override_import_value(group, imported_group, 'source')
-                override_import_value(group, imported_group, 'depth')
-                override_import_value(group, imported_group, 'timestamp_author')
+                args = ['depth', 'recursive', 'ref', 'remote', 'source', 'timestamp_author']
+                for arg in args:
+                    override_import_value(group, imported_group, arg)
                 if 'projects' in imported_group:
                     load_yaml_import_projects(imported_group['projects'], group['projects'])
             combined_groups.append(group)
@@ -116,14 +110,9 @@ def load_yaml_import_projects(imported_projects, projects):
             if project['name'] != imported_project['name']:
                 combined_projects.append(project)
                 continue
-            override_import_value(project, imported_project, 'path')
-            override_import_value(project, imported_project, 'depth')
-            override_import_value(project, imported_project, 'timestamp_author')
-            override_import_value(project, imported_project, 'recursive')
-            override_import_value(project, imported_project, 'ref')
-            override_import_value(project, imported_project, 'remote')
-            override_import_value(project, imported_project, 'fork')
-            override_import_value(project, imported_project, 'source')
+            args = ['depth', 'fork', 'path', 'recursive', 'ref', 'remote', 'source', 'timestamp_author']
+            for arg in args:
+                override_import_value(project, imported_project, arg)
             combined_projects.append(imported_project)
         projects = combined_projects
 

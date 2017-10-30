@@ -38,12 +38,9 @@ def load_yaml_import_groups(imported_groups, groups):
         combined_groups = []
         for group in groups:
             if group['name'] == imported_group['name']:
-                override_import_value(group, imported_group, 'recursive')
-                override_import_value(group, imported_group, 'ref')
-                override_import_value(group, imported_group, 'remote')
-                override_import_value(group, imported_group, 'source')
-                override_import_value(group, imported_group, 'depth')
-                override_import_value(group, imported_group, 'timestamp_author')
+                args = ['depth', 'recursive', 'ref', 'remote', 'source', 'timestamp_author']
+                for arg in args:
+                    override_import_value(group, imported_group, arg)
                 if 'projects' in imported_group:
                     load_yaml_import_projects(imported_group['projects'], group['projects'])
             combined_groups.append(group)

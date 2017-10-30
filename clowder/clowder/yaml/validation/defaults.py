@@ -29,12 +29,9 @@ def load_yaml_import_defaults(imported_defaults, defaults):
     :return:
     """
 
-    override_import_value(defaults, imported_defaults, 'recursive')
-    override_import_value(defaults, imported_defaults, 'ref')
-    override_import_value(defaults, imported_defaults, 'remote')
-    override_import_value(defaults, imported_defaults, 'source')
-    override_import_value(defaults, imported_defaults, 'depth')
-    override_import_value(defaults, imported_defaults, 'timestamp_author')
+    args = ['depth', 'recursive', 'ref', 'remote', 'source', 'timestamp_author']
+    for arg in args:
+        override_import_value(defaults, imported_defaults, arg)
 
 
 def validate_yaml_import_defaults(defaults, yaml_file):

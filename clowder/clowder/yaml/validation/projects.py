@@ -7,10 +7,6 @@
 
 from __future__ import print_function
 
-import sys
-
-from termcolor import colored
-
 import clowder.util.formatting as fmt
 from clowder.error.clowder_error import ClowderError
 from clowder.yaml.util import (
