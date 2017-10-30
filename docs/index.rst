@@ -12,6 +12,9 @@ clowder
 .. image:: https://coveralls.io/repos/github/JrGoodle/clowder/badge.svg?branch=master
     :target: https://coveralls.io/github/JrGoodle/clowder?branch=master
 
+.. image:: https://codeclimate.com/github/JrGoodle/clowder/badges/issue_count.svg
+    :target: https://codeclimate.com/github/JrGoodle/clowder
+
 .. image:: https://badge.fury.io/py/clowder-repo.svg
     :target: https://badge.fury.io/py/clowder-repo
 
