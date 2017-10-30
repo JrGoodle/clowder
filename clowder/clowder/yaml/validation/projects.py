@@ -23,50 +23,6 @@ from clowder.yaml.util import (
 from clowder.yaml.validation.forks import validate_yaml_fork
 
 
-def load_yaml_import_projects(imported_projects, projects):
-    """Load clowder projects from imported group
-
-    :param dict imported_projects: Parsed YAML python object for imported projects
-    :param dict projects: Parsed YAML python object for projects
-    :return:
-    """
-
-    project_names = [p['name'] for p in projects]
-    for imported_project in imported_projects:
-        if imported_project['name'] not in project_names:
-            if 'path' not in imported_project:
-                # error = fmt.invalid_entries_error('defaults', defaults, yaml_file)
-                error = colored(' - Missing path in new project', 'red')
-                print(fmt.invalid_yaml_error())
-                print(fmt.error(error))
-                sys.exit(1)
-            projects.append(imported_project)
-            continue
-        combined_projects = []
-        for project in projects:
-            if project['name'] != imported_project['name']:
-                combined_projects.append(project)
-                continue
-            if 'path' in imported_project:
-                project['path'] = imported_project['path']
-            if 'depth' in imported_project:
-                project['depth'] = imported_project['depth']
-            if 'timestamp_author' in imported_project:
-                project['timestamp_author'] = imported_project['timestamp_author']
-            if 'recursive' in imported_project:
-                project['recursive'] = imported_project['recursive']
-            if 'ref' in imported_project:
-                project['ref'] = imported_project['ref']
-            if 'remote' in imported_project:
-                project['remote'] = imported_project['remote']
-            if 'fork' in imported_project:
-                project['fork'] = imported_project['fork']
-            if 'source' in imported_project:
-                project['source'] = imported_project['source']['name']
-            combined_projects.append(imported_project)
-        projects = combined_projects
-
-
 def validate_yaml_import_project(project, yaml_file):
     """Validate project in clowder loaded from yaml file with import
 
