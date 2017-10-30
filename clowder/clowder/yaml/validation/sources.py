@@ -10,6 +10,7 @@ from __future__ import print_function
 import clowder.util.formatting as fmt
 from clowder.error.clowder_error import ClowderError
 from clowder.yaml.util import (
+    validate_not_empty,
     validate_required_string,
     validate_type
 )
@@ -47,16 +48,11 @@ def validate_yaml_sources(sources, yaml_file):
     """
 
     validate_type(sources, 'sources', list, 'list', yaml_file)
-    if not sources:
-        error = fmt.missing_entries_error('sources', yaml_file)
-        raise ClowderError(error)
+    validate_not_empty(sources, 'sources', yaml_file)
 
     for source in sources:
         validate_type(source, 'source', dict, 'dict', yaml_file)
-
-        if not source:
-            error = fmt.missing_entries_error('source', yaml_file)
-            raise ClowderError(error)
+        validate_not_empty(source, 'source', yaml_file)
 
         args = ['name', 'url']
         for arg in args:

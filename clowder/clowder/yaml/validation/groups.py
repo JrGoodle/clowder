@@ -11,6 +11,7 @@ import clowder.util.formatting as fmt
 from clowder.error.clowder_error import ClowderError
 from clowder.yaml.util import (
     dict_contains_value,
+    validate_not_empty,
     validate_optional_ref,
     validate_optional_bool,
     validate_optional_string,
@@ -31,10 +32,7 @@ def validate_yaml_import_groups(groups, yaml_file):
     """
 
     validate_type(groups, 'groups', list, 'list', yaml_file)
-
-    if not groups:
-        error = fmt.missing_entries_error('groups', yaml_file)
-        raise ClowderError(error)
+    validate_not_empty(groups, 'groups', yaml_file)
 
     for group in groups:
         validate_yaml_import_group(group, yaml_file)
@@ -50,10 +48,7 @@ def validate_yaml_groups(groups, yaml_file):
     """
 
     validate_type(groups, 'groups', list, 'list', yaml_file)
-
-    if not groups:
-        error = fmt.missing_entries_error('groups', yaml_file)
-        raise ClowderError(error)
+    validate_not_empty(groups, 'groups', yaml_file)
 
     for group in groups:
         validate_yaml_group(group, yaml_file)
@@ -69,22 +64,17 @@ def validate_yaml_import_group(group, yaml_file):
     """
 
     validate_type(group, 'group', dict, 'dict', yaml_file)
-
-    if not group:
-        error = fmt.missing_entries_error('group', yaml_file)
-        raise ClowderError(error)
+    validate_not_empty(group, 'group', yaml_file)
 
     validate_required_string(group, 'group', 'name', yaml_file)
-
-    if not group:
-        error = fmt.missing_entries_error('group', yaml_file)
-        raise ClowderError(error)
+    validate_not_empty(group, 'group', yaml_file)
 
     if 'projects' in group:
         validate_yaml_projects(group['projects'], yaml_file, is_import=True)
         del group['projects']
 
     validate_optional_bool(group, 'recursive', yaml_file)
+
     args = ['remote', 'source', 'timestamp_author']
     for arg in args:
         validate_optional_string(group, arg, yaml_file)
@@ -109,10 +99,7 @@ def validate_yaml_group(group, yaml_file):
     """
 
     validate_type(group, 'group', dict, 'dict', yaml_file)
-
-    if not group:
-        error = fmt.missing_entries_error('group', yaml_file)
-        raise ClowderError(error)
+    validate_not_empty(group, 'group', yaml_file)
 
     validate_required_string(group, 'group', 'name', yaml_file)
 

@@ -10,6 +10,7 @@ from __future__ import print_function
 import clowder.util.formatting as fmt
 from clowder.error.clowder_error import ClowderError
 from clowder.yaml.util import (
+    validate_not_empty,
     validate_optional_bool,
     validate_optional_string,
     validate_optional_ref,
@@ -32,9 +33,9 @@ def validate_yaml_import_defaults(defaults, yaml_file):
     validate_type(defaults, 'defaults', dict, 'dict', yaml_file)
     validate_optional_ref(defaults, yaml_file)
     validate_optional_bool(defaults, 'recursive', yaml_file)
-    validate_optional_string(defaults, 'remote', yaml_file)
-    validate_optional_string(defaults, 'source', yaml_file)
-    validate_optional_string(defaults, 'timestamp_author', yaml_file)
+    args = ['remote', 'source', 'timestamp_author']
+    for arg in args:
+        validate_optional_string(defaults, arg, yaml_file)
 
     if 'depth' in defaults:
         validate_type_depth(defaults['depth'], yaml_file)
@@ -55,9 +56,7 @@ def validate_yaml_defaults(defaults, yaml_file):
     """
 
     validate_type(defaults, 'defaults', dict, 'dict', yaml_file)
-    if not defaults:
-        error = fmt.missing_entries_error('defaults', yaml_file)
-        raise ClowderError(error)
+    validate_not_empty(defaults, 'defaults', yaml_file)
 
     validate_required_ref(defaults, yaml_file)
 

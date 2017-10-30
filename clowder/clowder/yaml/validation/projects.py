@@ -10,6 +10,7 @@ from __future__ import print_function
 import clowder.util.formatting as fmt
 from clowder.error.clowder_error import ClowderError
 from clowder.yaml.util import (
+    validate_not_empty,
     validate_optional_ref,
     validate_optional_bool,
     validate_optional_string,
@@ -30,10 +31,7 @@ def validate_yaml_import_project(project, yaml_file):
     """
 
     validate_type(project, 'project', dict, 'dict', yaml_file)
-
-    if not project:
-        error = fmt.missing_entries_error('project', yaml_file)
-        raise ClowderError(error)
+    validate_not_empty(project, 'project', yaml_file)
 
     validate_required_string(project, 'project', 'name', yaml_file)
 
@@ -60,10 +58,7 @@ def validate_yaml_project(project, yaml_file):
     """
 
     validate_type(project, 'project', dict, 'dict', yaml_file)
-
-    if not project:
-        error = fmt.missing_entries_error('project', yaml_file)
-        raise ClowderError(error)
+    validate_not_empty(project, 'project', yaml_file)
 
     validate_required_string(project, 'project', 'name', yaml_file)
     validate_required_string(project, 'project', 'path', yaml_file)
@@ -112,9 +107,7 @@ def validate_yaml_projects(projects, yaml_file, is_import):
     """
 
     validate_type(projects, 'projects', list, 'list', yaml_file)
-    if not projects:
-        error = fmt.missing_entries_error('projects', yaml_file)
-        raise ClowderError(error)
+    validate_not_empty(projects, 'projects', yaml_file)
 
     for project in projects:
         if is_import:

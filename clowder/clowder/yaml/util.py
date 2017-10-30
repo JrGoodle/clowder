@@ -55,6 +55,20 @@ def override_import_value(dictionary, imported_dictionary, value):
         dictionary[value] = imported_dictionary[value]
 
 
+def validate_not_empty(collection, name, yaml_file):
+    """Check whether collection is empty
+
+    :param collection: Parsed YAML python object
+    :param str name: Name of collection to print if empty
+    :param str yaml_file: Path to yaml file
+    :return:
+    """
+
+    if not collection:
+        error = fmt.missing_entries_error(name, yaml_file)
+        raise ClowderError(error)
+
+
 def validate_optional_dict(dictionary, value, func, yaml_file):
     """Check whether yaml file contains optional value
 

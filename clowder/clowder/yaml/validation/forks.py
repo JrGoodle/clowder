@@ -10,6 +10,7 @@ from __future__ import print_function
 import clowder.util.formatting as fmt
 from clowder.error.clowder_error import ClowderError
 from clowder.yaml.util import (
+    validate_not_empty,
     validate_required_string,
     validate_type
 )
@@ -25,10 +26,7 @@ def validate_yaml_fork(fork, yaml_file):
     """
 
     validate_type(fork, 'fork', dict, 'dict', yaml_file)
-
-    if not fork:
-        error = fmt.missing_entries_error('fork', yaml_file)
-        raise ClowderError(error)
+    validate_not_empty(fork, 'fork', yaml_file)
 
     args = ['name', 'remote']
     for arg in args:
