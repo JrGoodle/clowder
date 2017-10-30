@@ -12,15 +12,17 @@ import os
 import signal
 import sys
 
-import psutil
-from termcolor import cprint
-
 import clowder.util.formatting as fmt
-import clowder.util.clowder_yaml as clowder_yaml
+import clowder.yaml.printing as yaml_print
+import clowder.yaml.saving as yaml_save
+import psutil
 from clowder.error.clowder_error import ClowderError
 from clowder.model.group import Group
 from clowder.model.source import Source
 from clowder.util.progress import Progress
+from clowder.yaml.loading import load_yaml
+from clowder.yaml.validating import validate_yaml
+from termcolor import cprint
 
 
 def herd_project(project, branch, tag, depth, rebase):
@@ -143,10 +145,8 @@ class ClowderController(object):
         yaml_file = os.path.join(self.root_directory, 'clowder.yaml')
 
         try:
-            self._validate_yaml(yaml_file, self._max_import_depth)
-        except ClowderError as err:
-            print(fmt.invalid_yaml_error())
-            print(fmt.error(err))
+            validate_yaml(yaml_file, self.root_directory)
+        except ClowderError:
             raise
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
@@ -445,7 +445,7 @@ class ClowderController(object):
         if resolved:
             print(fmt.yaml_string(self._get_yaml_resolved()))
         else:
-            clowder_yaml.print_yaml(self.root_directory)
+            yaml_print.print_yaml(self.root_directory)
         sys.exit()  # exit early to prevent printing extra newline
 
     def prune(self, group_names, branch, **kwargs):
@@ -543,7 +543,7 @@ class ClowderController(object):
             sys.exit(1)
 
         print(fmt.save_version(version_name, yaml_file))
-        clowder_yaml.save_yaml(self._get_yaml(), yaml_file)
+        yaml_save.save_yaml(self._get_yaml(), yaml_file)
 
     def start_groups(self, group_names, skip, branch, tracking=False):
         """Start feature branch for groups
@@ -772,52 +772,18 @@ class ClowderController(object):
         return any([g.is_dirty() for g in self.groups])
 
     def _load_yaml(self):
-        """Load clowder from yaml file
+        """Load clowder.yaml
 
         :return:
         """
+        yaml = load_yaml(self.root_directory)
 
-        yaml_file = os.path.join(self.root_directory, 'clowder.yaml')
-        parsed_yaml = clowder_yaml.parse_yaml(yaml_file)
-        imported_yaml_files = []
-        combined_yaml = {}
-        while True:
-            if 'import' not in parsed_yaml:
-                clowder_yaml.load_yaml_base(parsed_yaml, combined_yaml)
-                break
-            imported_yaml_files.append(parsed_yaml)
-            imported_yaml = parsed_yaml['import']
-
-            if imported_yaml == 'default':
-                imported_yaml_file = os.path.join(self.root_directory, '.clowder', 'clowder.yaml')
-            else:
-                imported_yaml_file = os.path.join(self.root_directory, '.clowder', 'versions',
-                                                  imported_yaml, 'clowder.yaml')
-
-            parsed_yaml = clowder_yaml.parse_yaml(imported_yaml_file)
-            if len(imported_yaml_files) > self._max_import_depth:
-                print(fmt.invalid_yaml_error())
-                print(fmt.recursive_import_error(self._max_import_depth) + '\n')
-                sys.exit(1)
-
-        for parsed_yaml in reversed(imported_yaml_files):
-            clowder_yaml.load_yaml_import(parsed_yaml, combined_yaml)
-
-        self._load_yaml_combined(combined_yaml)
-
-    def _load_yaml_combined(self, combined_yaml):
-        """Load clowder from combined yaml
-
-        :param dict combined_yaml: Combined yaml
-        :return:
-        """
-
-        self.defaults = combined_yaml['defaults']
+        self.defaults = yaml['defaults']
         if 'depth' not in self.defaults:
             self.defaults['depth'] = 0
 
-        self.sources = [Source(s) for s in combined_yaml['sources']]
-        for group in combined_yaml['groups']:
+        self.sources = [Source(s) for s in yaml['sources']]
+        for group in yaml['groups']:
             self.groups.append(Group(self.root_directory, group, self.defaults, self.sources))
 
     @staticmethod
@@ -1099,45 +1065,6 @@ class ClowderController(object):
         if not projects_exist:
             herd_output = fmt.clowder_command('clowder herd')
             print('\n - First run ' + herd_output + ' to clone missing projects\n')
-            sys.exit(1)
-
-    def _validate_yaml(self, yaml_file, max_import_depth):
-        """Validate clowder.yaml
-
-        :param str yaml_file: Yaml file path to validate
-        :param int max_import_depth: Max depth of clowder.yaml imports
-        :return:
-        """
-
-        parsed_yaml = clowder_yaml.parse_yaml(yaml_file)
-        if max_import_depth < 0:
-            print(fmt.invalid_yaml_error())
-            print(fmt.recursive_import_error(self._max_import_depth) + '\n')
-            sys.exit(1)
-
-        if 'import' not in parsed_yaml:
-            clowder_yaml.validate_yaml(yaml_file)
-            return
-
-        clowder_yaml.validate_yaml_import(yaml_file)
-        imported_clowder = parsed_yaml['import']
-
-        try:
-            if imported_clowder == 'default':
-                imported_yaml_file = os.path.join(self.root_directory, '.clowder', 'clowder.yaml')
-            else:
-                imported_yaml_file = os.path.join(self.root_directory, '.clowder', 'versions',
-                                                  imported_clowder, 'clowder.yaml')
-            if not os.path.isfile(imported_yaml_file):
-                error = fmt.missing_imported_yaml_error(imported_yaml_file, yaml_file)
-                raise ClowderError(error)
-            yaml_file = imported_yaml_file
-            self._validate_yaml(yaml_file, max_import_depth - 1)
-        except ClowderError as err:
-            print(fmt.invalid_yaml_error())
-            print(fmt.error(err))
-            sys.exit(1)
-        except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
 
 

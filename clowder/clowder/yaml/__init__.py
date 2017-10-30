@@ -1,0 +1,1 @@
+__MAX_IMPORT_DEPTH__ = 10
