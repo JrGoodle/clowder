@@ -42,6 +42,22 @@ def dict_contains_value(dictionary, dict_name, value, yaml_file):
         raise ClowderError(error)
 
 
+def validate_clowder_yaml_dict(dictionary, value, func, yaml_file):
+    """Check whether yaml file contains required value
+
+    :param dict dictionary: Parsed YAML python object
+    :param str value: Name of entry to check
+    :param callable func: Function to call to validate dict entries
+    :param str yaml_file: Path to yaml file
+    :return:
+    :raise ClowderError:
+    """
+
+    clowder_yaml_contains_value(dictionary, value, yaml_file)
+    func(dictionary[value], yaml_file)
+    del dictionary[value]
+
+
 def validate_optional_ref(dictionary, yaml_file):
     """Check whether ref type is valid
 
