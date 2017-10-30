@@ -20,46 +20,54 @@ from clowder.yaml.util import (
 from clowder.yaml.validation.forks import validate_yaml_fork
 
 
-def validate_yaml_import_project(project, yaml_file):
-    """Validate project in clowder loaded from yaml file with import
+def validate_yaml_import_projects(projects, yaml_file):
+    """Validate projects in clowder loaded from yaml file import
 
-    :param dict project: Parsed YAML python object for project
+    :param dict projects: Parsed YAML python object for projects
     :param str yaml_file: Path to yaml file
     :return:
     """
 
-    validate_type(project, 'project', dict, 'dict', yaml_file)
+    validate_type(projects, 'projects', list, 'list', yaml_file)
+    validate_not_empty(projects, 'projects', yaml_file)
 
-    validate_not_empty(project, 'project', yaml_file)
-    validate_required_string(project, 'project', 'name', yaml_file)
-    validate_not_empty(project, 'project', yaml_file)
+    for project in projects:
+        validate_type(project, 'project', dict, 'dict', yaml_file)
 
-    validate_optional_string(project, 'path', yaml_file)
-    validate_yaml_project_optional(project, yaml_file)
+        validate_not_empty(project, 'project', yaml_file)
+        validate_required_string(project, 'project', 'name', yaml_file)
+        validate_not_empty(project, 'project', yaml_file)
 
-    validate_empty(project, 'project', yaml_file)
+        validate_optional_string(project, 'path', yaml_file)
+        _validate_yaml_project_optional(project, yaml_file)
+
+        validate_empty(project, 'project', yaml_file)
 
 
-def validate_yaml_project(project, yaml_file):
-    """Validate project in clowder loaded from yaml file
+def validate_yaml_projects(projects, yaml_file):
+    """Validate projects in clowder loaded from yaml file
 
-    :param dict project: Parsed YAML python object for project
+    :param dict projects: Parsed YAML python object for projects
     :param str yaml_file: Path to yaml file
     :return:
     """
 
-    validate_type(project, 'project', dict, 'dict', yaml_file)
-    validate_not_empty(project, 'project', yaml_file)
+    validate_type(projects, 'projects', list, 'list', yaml_file)
+    validate_not_empty(projects, 'projects', yaml_file)
 
-    validate_required_string(project, 'project', 'name', yaml_file)
-    validate_required_string(project, 'project', 'path', yaml_file)
+    for project in projects:
+        validate_type(project, 'project', dict, 'dict', yaml_file)
+        validate_not_empty(project, 'project', yaml_file)
 
-    validate_yaml_project_optional(project, yaml_file)
+        validate_required_string(project, 'project', 'name', yaml_file)
+        validate_required_string(project, 'project', 'path', yaml_file)
 
-    validate_empty(project, 'project', yaml_file)
+        _validate_yaml_project_optional(project, yaml_file)
+
+        validate_empty(project, 'project', yaml_file)
 
 
-def validate_yaml_project_optional(project, yaml_file):
+def _validate_yaml_project_optional(project, yaml_file):
     """Validate optional args in project in clowder loaded from yaml file
 
     :param dict project: Parsed YAML python object for project
@@ -79,33 +87,3 @@ def validate_yaml_project_optional(project, yaml_file):
     if 'fork' in project:
         validate_yaml_fork(project['fork'], yaml_file)
         del project['fork']
-
-
-def validate_yaml_import_projects(projects, yaml_file):
-    """Validate projects in clowder loaded from yaml file import
-
-    :param dict projects: Parsed YAML python object for projects
-    :param str yaml_file: Path to yaml file
-    :return:
-    """
-
-    validate_type(projects, 'projects', list, 'list', yaml_file)
-    validate_not_empty(projects, 'projects', yaml_file)
-
-    for project in projects:
-        validate_yaml_import_project(project, yaml_file)
-
-
-def validate_yaml_projects(projects, yaml_file):
-    """Validate projects in clowder loaded from yaml file
-
-    :param dict projects: Parsed YAML python object for projects
-    :param str yaml_file: Path to yaml file
-    :return:
-    """
-
-    validate_type(projects, 'projects', list, 'list', yaml_file)
-    validate_not_empty(projects, 'projects', yaml_file)
-
-    for project in projects:
-        validate_yaml_project(project, yaml_file)
