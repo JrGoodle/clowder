@@ -5,12 +5,12 @@
 
 """
 
+import os
 import sys
 
 from termcolor import cprint
 
 import clowder.util.formatting as fmt
-from clowder.git.project_repo import ProjectRepo
 from clowder.util.connectivity import is_offline
 
 
@@ -26,14 +26,15 @@ def clowder_required(func):
     return wrapper
 
 
-def initialize_skip_projects(func):
-    """Initialize skip projects to empty list if necessary"""
+def not_detached(func):
+    """If HEAD is detached, print error message and exit"""
 
     def wrapper(*args, **kwargs):
         """Wrapper"""
 
-        if kwargs['skip'] is None:
-            kwargs['skip'] = []
+        instance = args[0]
+        if instance.is_detached(print_output=True):
+            return
         return func(*args, **kwargs)
 
     return wrapper
@@ -46,7 +47,7 @@ def project_repo_exists(func):
         """Wrapper"""
 
         instance = args[0]
-        if not ProjectRepo.existing_git_repository(instance.full_path()):
+        if not os.path.isdir(os.path.join(instance.full_path(), '.git')):
             cprint(" - Project repo is missing", 'red')
             return
         return func(*args, **kwargs)

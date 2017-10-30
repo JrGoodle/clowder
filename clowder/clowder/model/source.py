@@ -7,9 +7,19 @@
 
 
 class Source(object):
-    """clowder.yaml source class"""
+    """clowder.yaml Source model class
+
+    Attributes:
+        name (str): Source name
+        url (str): Source url
+    """
 
     def __init__(self, source):
+        """Source __init__
+
+        :param dict source: Parsed YAML python object for source
+        """
+
         self.name = source['name']
         self.url = source['url']
 

@@ -33,7 +33,7 @@ class ForkTest(unittest.TestCase):
     def test_member_variables(self):
         """Test the state of all project member variables initialized"""
 
-        self.assertEqual(self.fork.root_directory, self.root_directory)
+        self.assertEqual(self.fork._root_directory, self.root_directory)
         self.assertEqual(self.fork.path, self.path)
         self.assertEqual(self.fork.name, self.name)
         self.assertEqual(self.fork.remote_name, self.remote_name)

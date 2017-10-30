@@ -16,6 +16,7 @@ from termcolor import colored
 
 import clowder.util.formatting as fmt
 from clowder.error.clowder_git_error import ClowderGitError
+from clowder.util.decorators import not_detached
 from clowder.util.execute import execute_command
 from clowder.util.file_system import remove_directory
 
@@ -24,15 +25,31 @@ __repo_default_remote__ = 'origin'
 
 
 class GitRepo(object):
-    """Class encapsulating git utilities"""
+    """Class encapsulating base git utilities
 
-    def __init__(self, repo_path, remote, default_ref, parallel=False, print_output=True):
+    Attributes:
+        repo_path (str): Absolute path to repo
+        default_ref (str): Default ref
+        remote (str): Default remote name
+        parallel (bool): Whether command is being run in parallel, affects output
+        repo (Repo): Repo instance
+    """
+
+    def __init__(self, repo_path, remote, default_ref, parallel=False):
+        """GitRepo __init__
+
+        :param str repo_path: Absolute path to repo
+        :param str remote: Default remote name
+        :param str default_ref: Default ref
+        :param Optional[bool] parallel: Whether command is being run in parallel, affects output. Defaults to False
+        """
+
         self.repo_path = repo_path
         self.default_ref = default_ref
         self.remote = remote
-        self.print_output = print_output
         self.parallel = parallel
         self.repo = self._repo() if GitRepo.existing_git_repository(repo_path) else None
+        self._print_output = not parallel
 
     def add(self, files):
         """Add files to git index
@@ -63,7 +80,7 @@ class GitRepo(object):
         ref_output = fmt.ref_string(truncated_ref)
         try:
             self._print(' - Check out ' + ref_output)
-            if self.print_output:
+            if self._print_output:
                 print(self.repo.git.checkout(truncated_ref))
                 return
             self.repo.git.checkout(truncated_ref)
@@ -78,7 +95,7 @@ class GitRepo(object):
     def clean(self, args=''):
         """Discard changes for repo
 
-        :param str args: Git clean options
+        :param Optional[str] args: Git clean options
             - ``d`` Remove untracked directories in addition to untracked files
             - ``f`` Delete directories with .git sub directory or file
             - ``X`` Remove only files ignored by git
@@ -171,15 +188,23 @@ class GitRepo(object):
 
         return os.path.isfile(os.path.join(path, '.git'))
 
-    def fetch(self, remote, ref=None, depth=0, remove_dir=False):
+    def fetch(self, remote, **kwargs):
         """Fetch from a specific remote ref
 
         :param str remote: Remote name
-        :param str ref: Ref to fetch
-        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-        :param bool remove_dir: Whether to remove the directory if commands fail
+
+        Keyword Args:
+            ref (str): Ref to fetch
+            depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+                Defaults to 0
+            remove_dir (bool): Whether to remove the directory if commands fail. Defaults to False
+
         :return:
         """
+
+        ref = kwargs.get('ref', None)
+        depth = kwargs.get('depth', 0)
+        remove_dir = kwargs.get('remove_dir', False)
 
         remote_output = fmt.remote_string(remote)
         if depth == 0:
@@ -198,7 +223,7 @@ class GitRepo(object):
             error = message + remote_output + ' ' + ref_output
             command = ['git fetch', remote, GitRepo.truncate_ref(ref), '--depth', str(depth), '--prune --tags']
 
-        return_code = execute_command(command, self.repo_path, print_output=self.print_output)
+        return_code = execute_command(command, self.repo_path, print_output=self._print_output)
         if return_code != 0:
             if remove_dir:
                 remove_directory(self.repo_path)
@@ -226,7 +251,7 @@ class GitRepo(object):
     def is_detached(self, print_output=False):
         """Check if HEAD is detached
 
-        :param bool print_output: Whether to print output
+        :param Optional[bool] print_output: Whether to print output. Defaults to False
         :return: True, if HEAD is detached
         :rtype: bool
         """
@@ -254,7 +279,7 @@ class GitRepo(object):
     def new_commits(self, upstream=False):
         """Returns the number of new commits
 
-        :param bool upstream: Whether to find number of new upstream or local commits
+        :param Optional[bool] upstream: Whether to find number of new upstream or local commits. Defaults to False
         :return: Int number of new commits
         :rtype: int
         """
@@ -289,8 +314,8 @@ class GitRepo(object):
     def print_branches(self, local=False, remote=False):
         """Print branches
 
-        :param bool local: Print local branches
-        :param bool remote: Print remote branches
+        :param Optional[bool] local: Print local branches. Defaults to False
+        :param Optional[bool] remote: Print remote branches. Defaults to False
         :return:
         """
 
@@ -303,7 +328,7 @@ class GitRepo(object):
         else:
             return
 
-        return_code = execute_command(command, self.repo_path, print_output=self.print_output)
+        return_code = execute_command(command, self.repo_path, print_output=self._print_output)
         if return_code != 0:
             message = colored(' - Failed to print branches', 'red')
             self._print(message)
@@ -325,14 +350,12 @@ class GitRepo(object):
             print(' - Dirty repo. Please stash, commit, or discard your changes')
             repo.status_verbose()
 
+    @not_detached
     def pull(self):
         """Pull upstream changes
 
         :return:
         """
-
-        if self.is_detached(print_output=True):
-            return
 
         try:
             self._print(' - Pull latest changes')
@@ -345,14 +368,12 @@ class GitRepo(object):
         except (KeyboardInterrupt, SystemExit):
             self._exit()
 
+    @not_detached
     def push(self):
         """Push changes
 
         :return:
         """
-
-        if self.is_detached(print_output=True):
-            return
 
         try:
             self._print(' - Push local changes')
@@ -387,7 +408,7 @@ class GitRepo(object):
     def sha(self, short=False):
         """Return sha for currently checked out commit
 
-        :param bool short: Whether to return short or long commit sha
+        :param Optional[bool] short: Whether to return short or long commit sha. Defaults to False
         :return: Commit sha
         :rtype: str
         """
@@ -504,7 +525,7 @@ class GitRepo(object):
         """Checkout local branch
 
         :param str branch: Branch name
-        :param bool remove_dir: Whether to remove the directory if commands fail
+        :param Optional[bool] remove_dir: Whether to remove the directory if commands fail. Defaults to False
         :return:
         """
 
@@ -579,7 +600,7 @@ class GitRepo(object):
         :param str tag: Tag name
         :param str remote: Remote name
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-        :param bool remove_dir: Whether to remove the directory if commands fail
+        :param Optional[bool] remove_dir: Whether to remove the directory if commands fail. Defaults to False
         :return:
         """
 
@@ -595,7 +616,7 @@ class GitRepo(object):
                 remove_directory(self.repo_path)
                 self._print(colored(message, 'red') + tag_output)
                 self._exit(fmt.parallel_exception_error(self.repo_path, colored(message, 'red'), tag_output))
-            if self.print_output:
+            if self._print_output:
                 self._print(message + tag_output)
             return 1
         except (KeyboardInterrupt, SystemExit):
@@ -708,16 +729,22 @@ class GitRepo(object):
         except (KeyboardInterrupt, SystemExit):
             self._exit()
 
-    def _create_branch_local_tracking(self, branch, remote, depth, fetch=True, remove_dir=False):
+    def _create_branch_local_tracking(self, branch, remote, depth, **kwargs):
         """Create and checkout tracking branch
 
         :param str branch: Branch name
         :param str remote: Remote name
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-        :param bool fetch: Whether to fetch before creating branch
-        :param bool remove_dir: Whether to remove the directory if commands fail
+
+        Keyword Args:
+            fetch (bool): Whether to fetch before creating branch. Defaults to True
+            remove_dir (bool): Whether to remove the directory if commands fail. Defaults to False
+
         :return:
         """
+
+        fetch = kwargs.get('fetch', True)
+        remove_dir = kwargs.get('remove_dir', False)
 
         branch_output = fmt.ref_string(branch)
         origin = self._remote(remote, remove_dir=remove_dir)
@@ -795,7 +822,7 @@ class GitRepo(object):
 
         :param str remote: Remote name
         :param str url: URL of repo
-        :param bool remove_dir: Whether to remove the directory if commands fail
+        :param Optional[bool] remove_dir: Whether to remove the directory if commands fail. Defaults to False
         :return:
         """
 
@@ -825,7 +852,8 @@ class GitRepo(object):
 
         :param str tag: Tag name
         :param str remote: Remote name
-        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :param Optional[int] depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+            Defaults to 0
         :return: True, if remote tag exists
         :rtype: bool
         """
@@ -837,8 +865,8 @@ class GitRepo(object):
     def _exit(self, message='', return_code=1):
         """Exit based on serial or parallel job
 
-        :param str message: Error message
-        :param int return_code: Return code for sys.exit()
+        :param Optional[str] message: Error message
+        :param Optional[int] return_code: Return code for sys.exit()
         :return:
         :raise ClowderGitError:
         """
@@ -924,9 +952,9 @@ class GitRepo(object):
 
         try:
             default_branch = self.repo.heads[branch]
-            not_detached = not self.repo.head.is_detached
+            is_detached = self.repo.head.is_detached
             same_branch = self.repo.head.ref == default_branch
-            return not_detached and same_branch
+            return not is_detached and same_branch
         except (GitError, TypeError):
             return False
         except (KeyboardInterrupt, SystemExit):
@@ -976,15 +1004,16 @@ class GitRepo(object):
             self._exit()
 
     def _print(self, val):
-        """Print output if self.print_output is True
+        """Print output if self._print_output is True
 
         :param str val: Output to print
         :return:
         """
 
-        if self.print_output:
+        if self._print_output:
             print(val)
 
+    @not_detached
     def _pull(self, remote, branch):
         """Pull from remote branch
 
@@ -993,20 +1022,18 @@ class GitRepo(object):
         :return:
         """
 
-        if self.is_detached(print_output=True):
-            return
-
         branch_output = fmt.ref_string(branch)
         remote_output = fmt.remote_string(remote)
         self._print(' - Pull from ' + remote_output + ' ' + branch_output)
         command = ['git pull', remote, branch]
 
-        return_code = execute_command(command, self.repo_path, print_output=self.print_output)
+        return_code = execute_command(command, self.repo_path, print_output=self._print_output)
         if return_code != 0:
             message = colored(' - Failed to pull from ', 'red') + remote_output + ' ' + branch_output
             self._print(message)
             self._exit(message)
 
+    @not_detached
     def _rebase_remote_branch(self, remote, branch):
         """Rebase onto remote branch
 
@@ -1015,15 +1042,12 @@ class GitRepo(object):
         :return:
         """
 
-        if self.is_detached(print_output=True):
-            return
-
         branch_output = fmt.ref_string(branch)
         remote_output = fmt.remote_string(remote)
         self._print(' - Rebase onto ' + remote_output + ' ' + branch_output)
         command = ['git pull --rebase', remote, branch]
 
-        return_code = execute_command(command, self.repo_path, print_output=self.print_output)
+        return_code = execute_command(command, self.repo_path, print_output=self._print_output)
         if return_code != 0:
             message = colored(' - Failed to rebase onto ', 'red') + remote_output + ' ' + branch_output
             self._print(message)
@@ -1034,7 +1058,7 @@ class GitRepo(object):
         """Get GitPython Remote instance
 
         :param str remote: Remote name
-        :param bool remove_dir: Whether to remove the directory if commands fail
+        :param Optional[bool] remove_dir: Whether to remove the directory if commands fail. Defaults to False
         :return: GitPython Remote instance
         :rtype: Remote
         """
@@ -1105,7 +1129,7 @@ class GitRepo(object):
     def _reset_head(self, branch=None):
         """Reset head of repo, discarding changes
 
-        :param str Optional[branch]: Branch to reset head to. Defaults to None
+        :param Optional[str] branch: Branch to reset head to
         :return:
         """
 
@@ -1139,7 +1163,7 @@ class GitRepo(object):
 
         :param str remote: Remote name
         :param str branch: Branch name
-        :param bool remove_dir: Whether to remove the directory if commands fail
+        :param Optional[bool] remove_dir: Whether to remove the directory if commands fail. Defaults to False
         :return:
         """
 
