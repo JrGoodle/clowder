@@ -7,7 +7,11 @@
 
 from __future__ import print_function
 
-from clowder.yaml.util import (
+from clowder.yaml.validation.projects import (
+    validate_yaml_import_projects,
+    validate_yaml_projects
+)
+from clowder.yaml.validation.util import (
     validate_dict_contains_value,
     validate_depth,
     validate_empty,
@@ -17,10 +21,6 @@ from clowder.yaml.util import (
     validate_optional_string,
     validate_required_string,
     validate_type
-)
-from clowder.yaml.validation.projects import (
-    validate_yaml_import_projects,
-    validate_yaml_projects
 )
 
 

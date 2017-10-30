@@ -10,12 +10,6 @@ from __future__ import print_function
 import clowder.util.formatting as fmt
 from clowder.error.clowder_error import ClowderError
 from clowder.yaml.parsing import parse_yaml
-from clowder.yaml.util import (
-    validate_clowder_yaml_contains_value,
-    validate_required_dict,
-    validate_optional_dict,
-    validate_type
-)
 from clowder.yaml.validation.defaults import (
     validate_yaml_defaults,
     validate_yaml_import_defaults
@@ -25,6 +19,12 @@ from clowder.yaml.validation.groups import (
     validate_yaml_groups
 )
 from clowder.yaml.validation.sources import validate_yaml_sources
+from clowder.yaml.validation.util import (
+    validate_clowder_yaml_contains_value,
+    validate_required_dict,
+    validate_optional_dict,
+    validate_type
+)
 
 
 def validate_yaml(yaml_file):

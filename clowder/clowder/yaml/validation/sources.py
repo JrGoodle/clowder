@@ -7,7 +7,7 @@
 
 from __future__ import print_function
 
-from clowder.yaml.util import (
+from clowder.yaml.validation.util import (
     validate_empty,
     validate_not_empty,
     validate_required_string,

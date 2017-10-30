@@ -7,7 +7,8 @@
 
 from __future__ import print_function
 
-from clowder.yaml.util import (
+from clowder.yaml.validation.forks import validate_yaml_fork
+from clowder.yaml.validation.util import (
     validate_depth,
     validate_empty,
     validate_not_empty,
@@ -17,7 +18,6 @@ from clowder.yaml.util import (
     validate_required_string,
     validate_type
 )
-from clowder.yaml.validation.forks import validate_yaml_fork
 
 
 def validate_yaml_import_projects(projects, yaml_file):
