@@ -49,7 +49,6 @@ def override_import_value(dictionary, imported_dictionary, value):
     :param dict imported_dictionary: Imported parsed YAML python object
     :param str value: Name of entry to check
     :return:
-    :raise ClowderError:
     """
 
     if value in imported_dictionary:
@@ -64,12 +63,26 @@ def validate_clowder_yaml_dict(dictionary, value, func, yaml_file):
     :param callable func: Function to call to validate dict entries
     :param str yaml_file: Path to yaml file
     :return:
-    :raise ClowderError:
     """
 
     clowder_yaml_contains_value(dictionary, value, yaml_file)
     func(dictionary[value], yaml_file)
     del dictionary[value]
+
+
+def validate_optional_dict(dictionary, value, func, yaml_file):
+    """Check whether yaml file contains optional value
+
+    :param dict dictionary: Parsed YAML python object
+    :param str value: Name of entry to check
+    :param callabel func: Function to call to validate dictionary
+    :param str yaml_file: Path to yaml file
+    :return:
+    """
+
+    if value in dictionary:
+        func(dictionary[value], yaml_file)
+        del dictionary[value]
 
 
 def validate_optional_ref(dictionary, yaml_file):
@@ -95,7 +108,6 @@ def validate_optional_value(dictionary, value, classinstance, type_name, yaml_fi
     :param str type_name: Name of type to print if invalid
     :param str yaml_file: Path to yaml file
     :return:
-    :raise ClowderError:
     """
 
     if value in dictionary:
@@ -113,7 +125,6 @@ def validate_required_value(dictionary, dict_name, value, classinstance, type_na
     :param str type_name: Name of type to print if invalid
     :param str yaml_file: Path to yaml file
     :return:
-    :raise ClowderError:
     """
 
     dict_contains_value(dictionary, dict_name, value, yaml_file)

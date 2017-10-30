@@ -13,6 +13,7 @@ from clowder.yaml.parsing import parse_yaml
 from clowder.yaml.util import (
     clowder_yaml_contains_value,
     validate_clowder_yaml_dict,
+    validate_optional_dict,
     validate_type
 )
 from clowder.yaml.validation.defaults import (
@@ -69,17 +70,9 @@ def validate_yaml_import(yaml_file):
         error = fmt.empty_yaml_error(yaml_file)
         raise ClowderError(error)
 
-    if 'defaults' in parsed_yaml:
-        validate_yaml_import_defaults(parsed_yaml['defaults'], yaml_file)
-        del parsed_yaml['defaults']
-
-    if 'sources' in parsed_yaml:
-        validate_yaml_sources(parsed_yaml['sources'], yaml_file)
-        del parsed_yaml['sources']
-
-    if 'groups' in parsed_yaml:
-        validate_yaml_import_groups(parsed_yaml['groups'], yaml_file)
-        del parsed_yaml['groups']
+    validate_optional_dict(parsed_yaml, 'defaults', validate_yaml_import_defaults, yaml_file)
+    validate_optional_dict(parsed_yaml, 'sources', validate_yaml_sources, yaml_file)
+    validate_optional_dict(parsed_yaml, 'groups', validate_yaml_import_groups, yaml_file)
 
     if parsed_yaml:
         error = fmt.unknown_entry_error(fmt.yaml_file('clowder.yaml'), parsed_yaml, yaml_file)
