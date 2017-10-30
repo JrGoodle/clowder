@@ -35,6 +35,7 @@ clowder
    Models <clowder.model>
    Utils <clowder.util>
    Exceptions <clowder.error>
+   YAML Utilities <clowder.yaml>
 
 
 

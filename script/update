@@ -31,6 +31,14 @@ if [ "$1" == 'website' ]; then
     exit
 fi
 
+if [ "$1" == 'docs' ]; then
+    cd ..
+    sphinx-apidoc -o docs clowder
+    rm docs/modules.rst
+    rm docs/setup.rst
+    exit
+fi
+
 VERSION=${1:-python3}
 
 ./clean 'clowder' || exit 1
