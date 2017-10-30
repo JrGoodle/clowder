@@ -4,14 +4,6 @@ clowder.util package
 Submodules
 ----------
 
-clowder.util.clowder_yaml module
---------------------------------
-
-.. automodule:: clowder.util.clowder_yaml
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 clowder.util.connectivity module
 --------------------------------
 

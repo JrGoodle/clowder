@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
+
+if [ "$1" == 'docs' ]; then
+    cd ..
+    osascript -e 'tell application "Safari" to open location "127.0.0.1:8000"'
+    sphinx-autobuild docs docs/_build/html
+    exit
+fi
