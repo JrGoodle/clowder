@@ -55,6 +55,19 @@ def override_import_value(dictionary, imported_dictionary, value):
         dictionary[value] = imported_dictionary[value]
 
 
+def validate_depth(dictionary, yaml_file):
+    """Validate depth
+
+    :param dict dictionary: Parsed YAML python object
+    :param str yaml_file: Path to yaml file
+    :return:
+    """
+
+    if 'depth' in dictionary:
+        validate_type_depth(dictionary['depth'], yaml_file)
+        del dictionary['depth']
+
+
 def validate_empty(collection, name, yaml_file):
     """Check whether collection is not empty
 

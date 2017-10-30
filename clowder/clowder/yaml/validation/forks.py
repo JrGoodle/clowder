@@ -21,7 +21,6 @@ def validate_yaml_fork(fork, yaml_file):
     :param dict fork: Parsed YAML python object for fork
     :param str yaml_file: Path to yaml file
     :return:
-    :raise ClowderError:
     """
 
     validate_type(fork, 'fork', dict, 'dict', yaml_file)

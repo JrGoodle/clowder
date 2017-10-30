@@ -9,14 +9,14 @@ from __future__ import print_function
 
 from clowder.yaml.util import (
     dict_contains_value,
+    validate_depth,
     validate_empty,
     validate_not_empty,
     validate_optional_ref,
     validate_optional_bool,
     validate_optional_string,
     validate_required_string,
-    validate_type,
-    validate_type_depth
+    validate_type
 )
 from clowder.yaml.validation.projects import (
     validate_yaml_import_projects,
@@ -30,7 +30,6 @@ def validate_yaml_import_groups(groups, yaml_file):
     :param dict groups: Parsed YAML python object for groups
     :param str yaml_file: Path to yaml file
     :return:
-    :raise ClowderError:
     """
 
     validate_type(groups, 'groups', list, 'list', yaml_file)
@@ -46,7 +45,6 @@ def validate_yaml_groups(groups, yaml_file):
     :param dict groups: Parsed YAML python object for groups
     :param str yaml_file: Path to yaml file
     :return:
-    :raise ClowderError:
     """
 
     validate_type(groups, 'groups', list, 'list', yaml_file)
@@ -62,7 +60,6 @@ def validate_yaml_import_group(group, yaml_file):
     :param dict group: Parsed YAML python object for group
     :param str yaml_file: Path to yaml file
     :return:
-    :raise ClowderError:
     """
 
     validate_type(group, 'group', dict, 'dict', yaml_file)
@@ -76,15 +73,12 @@ def validate_yaml_import_group(group, yaml_file):
         del group['projects']
 
     validate_optional_bool(group, 'recursive', yaml_file)
+    validate_depth(group, yaml_file)
+    validate_optional_ref(group, yaml_file)
 
     args = ['remote', 'source', 'timestamp_author']
     for arg in args:
         validate_optional_string(group, arg, yaml_file)
-    validate_optional_ref(group, yaml_file)
-
-    if 'depth' in group:
-        validate_type_depth(group['depth'], yaml_file)
-        del group['depth']
 
     validate_empty(group, 'group', yaml_file)
 
@@ -95,7 +89,6 @@ def validate_yaml_group(group, yaml_file):
     :param dict group: Parsed YAML python object for group
     :param str yaml_file: Path to yaml file
     :return:
-    :raise ClowderError:
     """
 
     validate_type(group, 'group', dict, 'dict', yaml_file)
@@ -107,16 +100,12 @@ def validate_yaml_group(group, yaml_file):
     validate_yaml_projects(group['projects'], yaml_file)
     del group['projects']
 
+    validate_depth(group, yaml_file)
     validate_optional_bool(group, 'recursive', yaml_file)
+    validate_optional_ref(group, yaml_file)
 
     string_args = ['remote', 'source', 'timestamp_author']
     for arg in string_args:
         validate_optional_string(group, arg, yaml_file)
-
-    validate_optional_ref(group, yaml_file)
-
-    if 'depth' in group:
-        validate_type_depth(group['depth'], yaml_file)
-        del group['depth']
 
     validate_empty(group, 'group', yaml_file)

@@ -8,14 +8,14 @@
 from __future__ import print_function
 
 from clowder.yaml.util import (
+    validate_depth,
     validate_empty,
     validate_not_empty,
     validate_optional_ref,
     validate_optional_bool,
     validate_optional_string,
     validate_required_string,
-    validate_type,
-    validate_type_depth
+    validate_type
 )
 from clowder.yaml.validation.forks import validate_yaml_fork
 
@@ -26,18 +26,15 @@ def validate_yaml_import_project(project, yaml_file):
     :param dict project: Parsed YAML python object for project
     :param str yaml_file: Path to yaml file
     :return:
-    :raise ClowderError:
     """
 
     validate_type(project, 'project', dict, 'dict', yaml_file)
+
     validate_not_empty(project, 'project', yaml_file)
-
     validate_required_string(project, 'project', 'name', yaml_file)
-
     validate_not_empty(project, 'project', yaml_file)
 
     validate_optional_string(project, 'path', yaml_file)
-
     validate_yaml_project_optional(project, yaml_file)
 
     validate_empty(project, 'project', yaml_file)
@@ -49,7 +46,6 @@ def validate_yaml_project(project, yaml_file):
     :param dict project: Parsed YAML python object for project
     :param str yaml_file: Path to yaml file
     :return:
-    :raise ClowderError:
     """
 
     validate_type(project, 'project', dict, 'dict', yaml_file)
@@ -69,7 +65,6 @@ def validate_yaml_project_optional(project, yaml_file):
     :param dict project: Parsed YAML python object for project
     :param str yaml_file: Path to yaml file
     :return:
-    :raise ClowderError:
     """
 
     validate_optional_string(project, 'remote', yaml_file)
@@ -79,13 +74,10 @@ def validate_yaml_project_optional(project, yaml_file):
 
     validate_optional_ref(project, yaml_file)
 
-    if 'depth' in project:
-        validate_type_depth(project['depth'], yaml_file)
-        del project['depth']
+    validate_depth(project, yaml_file)
 
     if 'fork' in project:
-        fork = project['fork']
-        validate_yaml_fork(fork, yaml_file)
+        validate_yaml_fork(project['fork'], yaml_file)
         del project['fork']
 
 
@@ -95,7 +87,6 @@ def validate_yaml_import_projects(projects, yaml_file):
     :param dict projects: Parsed YAML python object for projects
     :param str yaml_file: Path to yaml file
     :return:
-    :raise ClowderError:
     """
 
     validate_type(projects, 'projects', list, 'list', yaml_file)
@@ -111,7 +102,6 @@ def validate_yaml_projects(projects, yaml_file):
     :param dict projects: Parsed YAML python object for projects
     :param str yaml_file: Path to yaml file
     :return:
-    :raise ClowderError:
     """
 
     validate_type(projects, 'projects', list, 'list', yaml_file)

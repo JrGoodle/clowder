@@ -43,7 +43,6 @@ def validate_yaml_sources(sources, yaml_file):
     :param dict sources: Parsed YAML python object for sources
     :param str yaml_file: Path to yaml file
     :return:
-    :raise ClowderError:
     """
 
     validate_type(sources, 'sources', list, 'list', yaml_file)
