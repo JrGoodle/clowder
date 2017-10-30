@@ -14,7 +14,8 @@ from clowder.yaml.util import (
     dict_contains_value,
     override_import_value,
     validate_optional_ref,
-    validate_optional_value,
+    validate_optional_bool,
+    validate_optional_string,
     validate_required_value,
     validate_type,
     validate_type_depth
@@ -110,10 +111,10 @@ def validate_yaml_import_group(group, yaml_file):
         validate_yaml_projects(group['projects'], yaml_file, is_import=True)
         del group['projects']
 
-    validate_optional_value(group, 'recursive', bool, 'bool', yaml_file)
-    validate_optional_value(group, 'remote', str, 'str', yaml_file)
-    validate_optional_value(group, 'source', str, 'str', yaml_file)
-    validate_optional_value(group, 'timestamp_author', str, 'str', yaml_file)
+    validate_optional_bool(group, 'recursive', yaml_file)
+    validate_optional_string(group, 'remote', yaml_file)
+    validate_optional_string(group, 'source', yaml_file)
+    validate_optional_string(group, 'timestamp_author', yaml_file)
 
     validate_optional_ref(group, yaml_file)
 
@@ -147,10 +148,10 @@ def validate_yaml_group(group, yaml_file):
     validate_yaml_projects(group['projects'], yaml_file, is_import=False)
     del group['projects']
 
-    validate_optional_value(group, 'recursive', bool, 'bool', yaml_file)
-    validate_optional_value(group, 'remote', str, 'str', yaml_file)
-    validate_optional_value(group, 'timestamp_author', str, 'str', yaml_file)
-    validate_optional_value(group, 'source', str, 'str', yaml_file)
+    validate_optional_bool(group, 'recursive', yaml_file)
+    validate_optional_string(group, 'remote', yaml_file)
+    validate_optional_string(group, 'timestamp_author', yaml_file)
+    validate_optional_string(group, 'source', yaml_file)
 
     validate_optional_ref(group, yaml_file)
 

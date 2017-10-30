@@ -11,7 +11,8 @@ import clowder.util.formatting as fmt
 from clowder.error.clowder_error import ClowderError
 from clowder.yaml.util import (
     validate_optional_ref,
-    validate_optional_value,
+    validate_optional_bool,
+    validate_optional_string,
     validate_required_value,
     validate_type,
     validate_type_depth
@@ -40,7 +41,7 @@ def validate_yaml_import_project(project, yaml_file):
         error = fmt.missing_entries_error('project', yaml_file)
         raise ClowderError(error)
 
-    validate_optional_value(project, 'path', str, 'str', yaml_file)
+    validate_optional_string(project, 'path', yaml_file)
 
     validate_yaml_project_optional(project, yaml_file)
 
@@ -83,10 +84,10 @@ def validate_yaml_project_optional(project, yaml_file):
     :raise ClowderError:
     """
 
-    validate_optional_value(project, 'remote', str, 'str', yaml_file)
-    validate_optional_value(project, 'recursive', bool, 'bool', yaml_file)
-    validate_optional_value(project, 'timestamp_author', str, 'str', yaml_file)
-    validate_optional_value(project, 'source', str, 'str', yaml_file)
+    validate_optional_string(project, 'remote', yaml_file)
+    validate_optional_bool(project, 'recursive', yaml_file)
+    validate_optional_string(project, 'timestamp_author', yaml_file)
+    validate_optional_string(project, 'source', yaml_file)
 
     validate_optional_ref(project, yaml_file)
 
