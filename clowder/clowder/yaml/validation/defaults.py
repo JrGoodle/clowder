@@ -12,9 +12,8 @@ from clowder.error.clowder_error import ClowderError
 from clowder.yaml.util import (
     validate_optional_bool,
     validate_optional_string,
-    dict_contains_value,
-    validate_ref_type,
     validate_optional_ref,
+    validate_required_ref,
     validate_required_string,
     validate_type,
     validate_type_depth
@@ -60,10 +59,7 @@ def validate_yaml_defaults(defaults, yaml_file):
         error = fmt.missing_entries_error('defaults', yaml_file)
         raise ClowderError(error)
 
-    dict_contains_value(defaults, 'defaults', 'ref', yaml_file)
-    validate_type(defaults['ref'], 'ref', str, 'str', yaml_file)
-    validate_ref_type(defaults, yaml_file)
-    del defaults['ref']
+    validate_required_ref(defaults, yaml_file)
 
     validate_required_string(defaults, 'defaults', 'remote', yaml_file)
     validate_required_string(defaults, 'defaults', 'source', yaml_file)

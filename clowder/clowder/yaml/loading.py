@@ -98,7 +98,6 @@ def load_yaml_import_projects(imported_projects, projects):
     for imported_project in imported_projects:
         if imported_project['name'] not in project_names:
             if 'path' not in imported_project:
-                # error = fmt.invalid_entries_error('defaults', defaults, yaml_file)
                 error = colored(' - Missing path in new project', 'red')
                 print(fmt.invalid_yaml_error())
                 print(fmt.error(error))

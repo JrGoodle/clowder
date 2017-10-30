@@ -85,10 +85,9 @@ def validate_yaml_import_group(group, yaml_file):
         del group['projects']
 
     validate_optional_bool(group, 'recursive', yaml_file)
-    validate_optional_string(group, 'remote', yaml_file)
-    validate_optional_string(group, 'source', yaml_file)
-    validate_optional_string(group, 'timestamp_author', yaml_file)
-
+    args = ['remote', 'source', 'timestamp_author']
+    for arg in args:
+        validate_optional_string(group, arg, yaml_file)
     validate_optional_ref(group, yaml_file)
 
     if 'depth' in group:

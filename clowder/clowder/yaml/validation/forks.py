@@ -30,8 +30,9 @@ def validate_yaml_fork(fork, yaml_file):
         error = fmt.missing_entries_error('fork', yaml_file)
         raise ClowderError(error)
 
-    validate_required_string(fork, 'fork', 'name', yaml_file)
-    validate_required_string(fork, 'fork', 'remote', yaml_file)
+    args = ['name', 'remote']
+    for arg in args:
+        validate_required_string(fork, 'fork', arg, yaml_file)
 
     if fork:
         error = fmt.unknown_entry_error('fork', fork, yaml_file)

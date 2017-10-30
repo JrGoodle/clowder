@@ -58,8 +58,9 @@ def validate_yaml_sources(sources, yaml_file):
             error = fmt.missing_entries_error('source', yaml_file)
             raise ClowderError(error)
 
-        validate_required_string(source, 'source', 'name', yaml_file)
-        validate_required_string(source, 'source', 'url', yaml_file)
+        args = ['name', 'url']
+        for arg in args:
+            validate_required_string(source, 'source', arg, yaml_file)
 
         if source:
             error = fmt.unknown_entry_error('source', source, yaml_file)

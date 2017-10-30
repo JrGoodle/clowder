@@ -55,22 +55,6 @@ def override_import_value(dictionary, imported_dictionary, value):
         dictionary[value] = imported_dictionary[value]
 
 
-def validate_clowder_yaml_dict(dictionary, value, func, yaml_file):
-    """Check whether yaml file contains required value
-
-    :param dict dictionary: Parsed YAML python object
-    :param str value: Name of entry to check
-    :param callable func: Function to call to validate dict entries
-    :param str yaml_file: Path to yaml file
-    :return:
-
-    """
-
-    clowder_yaml_contains_value(dictionary, value, yaml_file)
-    func(dictionary[value], yaml_file)
-    del dictionary[value]
-
-
 def validate_optional_dict(dictionary, value, func, yaml_file):
     """Check whether yaml file contains optional value
 
@@ -122,6 +106,36 @@ def validate_optional_string(dictionary, value, yaml_file):
     """
 
     _validate_optional_value(dictionary, value, str, 'str', yaml_file)
+
+
+def validate_required_dict(dictionary, value, func, yaml_file):
+    """Check whether yaml file contains required value
+
+    :param dict dictionary: Parsed YAML python object
+    :param str value: Name of entry to check
+    :param callable func: Function to call to validate dict entries
+    :param str yaml_file: Path to yaml file
+    :return:
+
+    """
+
+    clowder_yaml_contains_value(dictionary, value, yaml_file)
+    func(dictionary[value], yaml_file)
+    del dictionary[value]
+
+
+def validate_required_ref(dictionary, yaml_file):
+    """Check for required ref value
+
+    :param dict dictionary: Parsed YAML python object
+    :param str yaml_file: Path to yaml file
+    :return:
+    """
+
+    dict_contains_value(dictionary, 'defaults', 'ref', yaml_file)
+    validate_type(dictionary['ref'], 'ref', str, 'str', yaml_file)
+    validate_ref_type(dictionary, yaml_file)
+    del dictionary['ref']
 
 
 def validate_required_string(dictionary, dict_name, value, yaml_file):
