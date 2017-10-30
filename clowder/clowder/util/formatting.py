@@ -253,7 +253,7 @@ def ref_string(ref):
     :rtype: str
     """
 
-    return colored('(' + ref + ')', 'magenta')
+    return colored('[' + ref + ']', 'magenta')
 
 
 def remote_already_exists_error(remote_name, remote_url, actual_url):

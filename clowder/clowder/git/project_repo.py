@@ -111,13 +111,13 @@ class ProjectRepo(GitRepo):
         else:
             local_commits_output = colored('+' + str(local_commits), 'yellow')
             upstream_commits_output = colored('-' + str(upstream_commits), 'red')
-            status = '[' + local_commits_output + '/' + upstream_commits_output + ']'
+            status = '(' + local_commits_output + '/' + upstream_commits_output + ')'
 
         if repo.is_detached():
             current_ref = repo.sha(short=True)
-            return colored('(HEAD @ ' + current_ref + ')', 'magenta')
+            return colored('[HEAD @ ' + current_ref + ']', 'magenta')
         current_branch = repo.current_branch()
-        return colored('(' + current_branch + ')', 'magenta') + status
+        return colored('[' + current_branch + ']', 'magenta') + status
 
     @staticmethod
     def format_project_string(repo_path, name):
