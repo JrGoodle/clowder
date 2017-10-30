@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""clowder.yaml parsing and validation functionality
+"""clowder.yaml utilities
 
 .. codeauthor:: Joe Decapo <joe@polka.cat>
 
@@ -54,25 +54,6 @@ def validate_optional_ref(dictionary, yaml_file):
         del dictionary['ref']
 
 
-def valid_ref_type(ref):
-    """Validate that ref is formatted correctly
-
-    :param str ref: Ref string requiring format 'refs/heads/<branch>', 'refs/tags/<tag>', or 40 character commit sha
-    :return: True, if ref is properly formatted
-    :rtype: bool
-    """
-
-    git_branch = "refs/heads/"
-    git_tag = "refs/tags/"
-    if ref.startswith(git_branch):
-        return True
-    elif ref.startswith(git_tag):
-        return True
-    elif len(ref) == 40:
-        return True
-    return False
-
-
 def validate_ref_type(dictionary, yaml_file):
     """Check whether ref type is valid
 
@@ -81,7 +62,7 @@ def validate_ref_type(dictionary, yaml_file):
     :return:
     :raise ClowderError:
     """
-    if not valid_ref_type(dictionary['ref']):
+    if not _valid_ref_type(dictionary['ref']):
         error = fmt.invalid_ref_error(dictionary['ref'], yaml_file)
         raise ClowderError(error)
 
@@ -117,3 +98,22 @@ def validate_type(value, name, classinfo, type_name, yaml_file):
     if not isinstance(value, classinfo):
         error = fmt.type_error(name, yaml_file, type_name)
         raise ClowderError(error)
+
+
+def _valid_ref_type(ref):
+    """Validate that ref is formatted correctly
+
+    :param str ref: Ref string requiring format 'refs/heads/<branch>', 'refs/tags/<tag>', or 40 character commit sha
+    :return: True, if ref is properly formatted
+    :rtype: bool
+    """
+
+    git_branch = "refs/heads/"
+    git_tag = "refs/tags/"
+    if ref.startswith(git_branch):
+        return True
+    elif ref.startswith(git_tag):
+        return True
+    elif len(ref) == 40:
+        return True
+    return False

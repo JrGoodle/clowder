@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""clowder.yaml parsing and validation functionality
+"""clowder.yaml forks validation
 
 .. codeauthor:: Joe Decapo <joe@polka.cat>
 
