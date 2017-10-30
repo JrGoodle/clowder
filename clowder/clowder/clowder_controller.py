@@ -17,7 +17,7 @@ import clowder.yaml.loading as yaml_load
 import clowder.yaml.parsing as yaml_parse
 import clowder.yaml.printing as yaml_print
 import clowder.yaml.saving as yaml_save
-import clowder.yaml.validation.validation as yaml_validate
+import clowder.yaml.validating as yaml_validate
 import psutil
 from clowder.error.clowder_error import ClowderError
 from clowder.model.group import Group
