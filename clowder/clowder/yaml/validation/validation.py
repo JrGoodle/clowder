@@ -11,7 +11,7 @@ import clowder.util.formatting as fmt
 from clowder.error.clowder_error import ClowderError
 from clowder.yaml.parsing import parse_yaml
 from clowder.yaml.util import (
-    clowder_yaml_contains_value,
+    validate_clowder_yaml_contains_value,
     validate_required_dict,
     validate_optional_dict,
     validate_type
@@ -62,7 +62,7 @@ def validate_yaml_import(yaml_file):
     parsed_yaml = parse_yaml(yaml_file)
     validate_type(parsed_yaml, fmt.yaml_file('clowder.yaml'), dict, 'dict', yaml_file)
 
-    clowder_yaml_contains_value(parsed_yaml, 'import', yaml_file)
+    validate_clowder_yaml_contains_value(parsed_yaml, 'import', yaml_file)
     validate_type(parsed_yaml['import'], 'import', str, 'str', yaml_file)
     del parsed_yaml['import']
 

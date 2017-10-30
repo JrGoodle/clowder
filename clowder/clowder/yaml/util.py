@@ -11,7 +11,7 @@ import clowder.util.formatting as fmt
 from clowder.error.clowder_error import ClowderError
 
 
-def clowder_yaml_contains_value(parsed_yaml, value, yaml_file):
+def validate_clowder_yaml_contains_value(parsed_yaml, value, yaml_file):
     """Check whether yaml file contains value
 
     :param dict parsed_yaml: Parsed YAML python object
@@ -26,7 +26,20 @@ def clowder_yaml_contains_value(parsed_yaml, value, yaml_file):
         raise ClowderError(error)
 
 
-def dict_contains_value(dictionary, dict_name, value, yaml_file):
+def validate_depth(dictionary, yaml_file):
+    """Validate depth
+
+    :param dict dictionary: Parsed YAML python object
+    :param str yaml_file: Path to yaml file
+    :return:
+    """
+
+    if 'depth' in dictionary:
+        validate_type_depth(dictionary['depth'], yaml_file)
+        del dictionary['depth']
+
+
+def validate_dict_contains_value(dictionary, dict_name, value, yaml_file):
     """Check whether yaml file contains value
 
     :param dict dictionary: Parsed YAML python object
@@ -40,32 +53,6 @@ def dict_contains_value(dictionary, dict_name, value, yaml_file):
     if value not in dictionary:
         error = fmt.missing_entry_error(value, dict_name, yaml_file)
         raise ClowderError(error)
-
-
-def override_import_value(dictionary, imported_dictionary, value):
-    """Check whether yaml file contains required value
-
-    :param dict dictionary: Parsed YAML python object
-    :param dict imported_dictionary: Imported parsed YAML python object
-    :param str value: Name of entry to check
-    :return:
-    """
-
-    if value in imported_dictionary:
-        dictionary[value] = imported_dictionary[value]
-
-
-def validate_depth(dictionary, yaml_file):
-    """Validate depth
-
-    :param dict dictionary: Parsed YAML python object
-    :param str yaml_file: Path to yaml file
-    :return:
-    """
-
-    if 'depth' in dictionary:
-        validate_type_depth(dictionary['depth'], yaml_file)
-        del dictionary['depth']
 
 
 def validate_empty(collection, name, yaml_file):
@@ -160,7 +147,7 @@ def validate_required_dict(dictionary, value, func, yaml_file):
 
     """
 
-    clowder_yaml_contains_value(dictionary, value, yaml_file)
+    validate_clowder_yaml_contains_value(dictionary, value, yaml_file)
     func(dictionary[value], yaml_file)
     del dictionary[value]
 
@@ -173,7 +160,7 @@ def validate_required_ref(dictionary, yaml_file):
     :return:
     """
 
-    dict_contains_value(dictionary, 'defaults', 'ref', yaml_file)
+    validate_dict_contains_value(dictionary, 'defaults', 'ref', yaml_file)
     validate_type(dictionary['ref'], 'ref', str, 'str', yaml_file)
     validate_ref_type(dictionary, yaml_file)
     del dictionary['ref']
@@ -189,7 +176,7 @@ def validate_required_string(dictionary, dict_name, value, yaml_file):
     :return:
     """
 
-    dict_contains_value(dictionary, dict_name, value, yaml_file)
+    validate_dict_contains_value(dictionary, dict_name, value, yaml_file)
     validate_type(dictionary[value], value, str, 'str', yaml_file)
     del dictionary[value]
 

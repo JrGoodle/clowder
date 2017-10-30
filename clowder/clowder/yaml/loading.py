@@ -12,9 +12,6 @@ import sys
 from termcolor import colored
 
 import clowder.util.formatting as fmt
-from clowder.yaml.util import (
-    override_import_value
-)
 
 
 def load_yaml_base(parsed_yaml, combined_yaml):
@@ -58,7 +55,7 @@ def _load_yaml_import_defaults(imported_defaults, defaults):
 
     args = ['depth', 'recursive', 'ref', 'remote', 'source', 'timestamp_author']
     for arg in args:
-        override_import_value(defaults, imported_defaults, arg)
+        _override_import_value(defaults, imported_defaults, arg)
 
 
 def _load_yaml_import_groups(imported_groups, groups):
@@ -79,7 +76,7 @@ def _load_yaml_import_groups(imported_groups, groups):
             if group['name'] == imported_group['name']:
                 args = ['depth', 'recursive', 'ref', 'remote', 'source', 'timestamp_author']
                 for arg in args:
-                    override_import_value(group, imported_group, arg)
+                    _override_import_value(group, imported_group, arg)
                 if 'projects' in imported_group:
                     _load_yaml_import_projects(imported_group['projects'], group['projects'])
             combined_groups.append(group)
@@ -111,7 +108,7 @@ def _load_yaml_import_projects(imported_projects, projects):
                 continue
             args = ['depth', 'fork', 'path', 'recursive', 'ref', 'remote', 'source', 'timestamp_author']
             for arg in args:
-                override_import_value(project, imported_project, arg)
+                _override_import_value(project, imported_project, arg)
             combined_projects.append(imported_project)
         projects = combined_projects
 
@@ -136,3 +133,16 @@ def _load_yaml_import_sources(imported_sources, sources):
             else:
                 combined_sources.append(source)
         sources = combined_sources
+
+
+def _override_import_value(dictionary, imported_dictionary, value):
+    """Check whether yaml file contains required value
+
+    :param dict dictionary: Parsed YAML python object
+    :param dict imported_dictionary: Imported parsed YAML python object
+    :param str value: Name of entry to check
+    :return:
+    """
+
+    if value in imported_dictionary:
+        dictionary[value] = imported_dictionary[value]

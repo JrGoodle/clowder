@@ -8,7 +8,7 @@
 from __future__ import print_function
 
 from clowder.yaml.util import (
-    dict_contains_value,
+    validate_dict_contains_value,
     validate_depth,
     validate_empty,
     validate_not_empty,
@@ -74,7 +74,7 @@ def validate_yaml_groups(groups, yaml_file):
 
         validate_required_string(group, 'group', 'name', yaml_file)
 
-        dict_contains_value(group, 'group', 'projects', yaml_file)
+        validate_dict_contains_value(group, 'group', 'projects', yaml_file)
         validate_yaml_projects(group['projects'], yaml_file)
         del group['projects']
 
