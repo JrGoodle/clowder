@@ -42,6 +42,20 @@ def dict_contains_value(dictionary, dict_name, value, yaml_file):
         raise ClowderError(error)
 
 
+def override_import_value(dictionary, imported_dictionary, value):
+    """Check whether yaml file contains required value
+
+    :param dict dictionary: Parsed YAML python object
+    :param dict imported_dictionary: Imported parsed YAML python object
+    :param str value: Name of entry to check
+    :return:
+    :raise ClowderError:
+    """
+
+    if value in imported_dictionary:
+        dictionary[value] = imported_dictionary[value]
+
+
 def validate_clowder_yaml_dict(dictionary, value, func, yaml_file):
     """Check whether yaml file contains required value
 

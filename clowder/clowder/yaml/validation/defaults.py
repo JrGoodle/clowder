@@ -10,10 +10,12 @@ from __future__ import print_function
 import clowder.util.formatting as fmt
 from clowder.error.clowder_error import ClowderError
 from clowder.yaml.util import (
+    override_import_value,
     validate_optional_value,
     dict_contains_value,
     validate_ref_type,
     validate_optional_ref,
+    validate_required_value,
     validate_type,
     validate_type_depth
 )
@@ -27,18 +29,12 @@ def load_yaml_import_defaults(imported_defaults, defaults):
     :return:
     """
 
-    if 'recursive' in imported_defaults:
-        defaults['recursive'] = imported_defaults['recursive']
-    if 'ref' in imported_defaults:
-        defaults['ref'] = imported_defaults['ref']
-    if 'remote' in imported_defaults:
-        defaults['remote'] = imported_defaults['remote']
-    if 'source' in imported_defaults:
-        defaults['source'] = imported_defaults['source']
-    if 'depth' in imported_defaults:
-        defaults['depth'] = imported_defaults['depth']
-    if 'timestamp_author' in imported_defaults:
-        defaults['timestamp_author'] = imported_defaults['timestamp_author']
+    override_import_value(defaults, imported_defaults, 'recursive')
+    override_import_value(defaults, imported_defaults, 'ref')
+    override_import_value(defaults, imported_defaults, 'remote')
+    override_import_value(defaults, imported_defaults, 'source')
+    override_import_value(defaults, imported_defaults, 'depth')
+    override_import_value(defaults, imported_defaults, 'timestamp_author')
 
 
 def validate_yaml_import_defaults(defaults, yaml_file):
@@ -85,13 +81,8 @@ def validate_yaml_defaults(defaults, yaml_file):
     validate_ref_type(defaults, yaml_file)
     del defaults['ref']
 
-    dict_contains_value(defaults, 'defaults', 'remote', yaml_file)
-    validate_type(defaults['remote'], 'remote', str, 'str', yaml_file)
-    del defaults['remote']
-
-    dict_contains_value(defaults, 'defaults', 'source', yaml_file)
-    validate_type(defaults['source'], 'source', str, 'str', yaml_file)
-    del defaults['source']
+    validate_required_value(defaults, 'defaults', 'remote', str, 'str', yaml_file)
+    validate_required_value(defaults, 'defaults', 'source', str, 'str', yaml_file)
 
     validate_yaml_defaults_optional(defaults, yaml_file)
 

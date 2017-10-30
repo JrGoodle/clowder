@@ -12,6 +12,7 @@ from clowder.error.clowder_error import ClowderError
 from clowder.yaml.loading import load_yaml_import_projects
 from clowder.yaml.util import (
     dict_contains_value,
+    override_import_value,
     validate_optional_ref,
     validate_optional_value,
     validate_required_value,
@@ -37,18 +38,12 @@ def load_yaml_import_groups(imported_groups, groups):
         combined_groups = []
         for group in groups:
             if group['name'] == imported_group['name']:
-                if 'recursive' in imported_group:
-                    group['recursive'] = imported_group['recursive']
-                if 'ref' in imported_group:
-                    group['ref'] = imported_group['ref']
-                if 'remote' in imported_group:
-                    group['remote'] = imported_group['remote']
-                if 'source' in imported_group:
-                    group['source'] = imported_group['source']
-                if 'depth' in imported_group:
-                    group['depth'] = imported_group['depth']
-                if 'timestamp_author' in imported_group:
-                    group['timestamp_author'] = imported_group['timestamp_author']
+                override_import_value(group, imported_group, 'recursive')
+                override_import_value(group, imported_group, 'ref')
+                override_import_value(group, imported_group, 'remote')
+                override_import_value(group, imported_group, 'source')
+                override_import_value(group, imported_group, 'depth')
+                override_import_value(group, imported_group, 'timestamp_author')
                 if 'projects' in imported_group:
                     load_yaml_import_projects(imported_group['projects'], group['projects'])
             combined_groups.append(group)

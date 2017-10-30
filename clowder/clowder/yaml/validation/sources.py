@@ -10,7 +10,6 @@ from __future__ import print_function
 import clowder.util.formatting as fmt
 from clowder.error.clowder_error import ClowderError
 from clowder.yaml.util import (
-    dict_contains_value,
     validate_required_value,
     validate_type
 )

@@ -14,7 +14,6 @@ from termcolor import colored
 import clowder.util.formatting as fmt
 from clowder.error.clowder_error import ClowderError
 from clowder.yaml.util import (
-    dict_contains_value,
     validate_optional_ref,
     validate_optional_value,
     validate_required_value,
