@@ -11,6 +11,7 @@ import clowder.util.formatting as fmt
 from clowder.error.clowder_error import ClowderError
 from clowder.yaml.util import (
     dict_contains_value,
+    validate_required_value,
     validate_type
 )
 
@@ -53,17 +54,13 @@ def validate_yaml_sources(sources, yaml_file):
 
     for source in sources:
         validate_type(source, 'source', dict, 'dict', yaml_file)
+
         if not source:
             error = fmt.missing_entries_error('source', yaml_file)
             raise ClowderError(error)
 
-        dict_contains_value(source, 'source', 'name', yaml_file)
-        validate_type(source['name'], 'name', str, 'str', yaml_file)
-        del source['name']
-
-        dict_contains_value(source, 'source', 'url', yaml_file)
-        validate_type(source['url'], 'url', str, 'str', yaml_file)
-        del source['url']
+        validate_required_value(source, 'source', 'name', str, 'str', yaml_file)
+        validate_required_value(source, 'source', 'url', str, 'str', yaml_file)
 
         if source:
             error = fmt.unknown_entry_error('source', source, yaml_file)

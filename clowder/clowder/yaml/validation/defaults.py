@@ -10,6 +10,7 @@ from __future__ import print_function
 import clowder.util.formatting as fmt
 from clowder.error.clowder_error import ClowderError
 from clowder.yaml.util import (
+    validate_optional_value,
     dict_contains_value,
     validate_ref_type,
     validate_optional_ref,
@@ -50,27 +51,15 @@ def validate_yaml_import_defaults(defaults, yaml_file):
     """
 
     validate_type(defaults, 'defaults', dict, 'dict', yaml_file)
-    if 'recursive' in defaults:
-        validate_type(defaults['recursive'], 'recursive', bool, 'bool', yaml_file)
-        del defaults['recursive']
-
     validate_optional_ref(defaults, yaml_file)
-
-    if 'remote' in defaults:
-        validate_type(defaults['remote'], 'remote', str, 'str', yaml_file)
-        del defaults['remote']
-
-    if 'source' in defaults:
-        validate_type(defaults['source'], 'source', str, 'str', yaml_file)
-        del defaults['source']
+    validate_optional_value(defaults, 'recursive', bool, 'bool', yaml_file)
+    validate_optional_value(defaults, 'remote', str, 'str', yaml_file)
+    validate_optional_value(defaults, 'source', str, 'str', yaml_file)
+    validate_optional_value(defaults, 'timestamp_author', str, 'str', yaml_file)
 
     if 'depth' in defaults:
         validate_type_depth(defaults['depth'], yaml_file)
         del defaults['depth']
-
-    if 'timestamp_author' in defaults:
-        validate_type(defaults['timestamp_author'], 'timestamp_author', str, 'str', yaml_file)
-        del defaults['timestamp_author']
 
     if defaults:
         error = fmt.unknown_entry_error('defaults', defaults, yaml_file)
@@ -124,10 +113,5 @@ def validate_yaml_defaults_optional(defaults, yaml_file):
         validate_type_depth(defaults['depth'], yaml_file)
         del defaults['depth']
 
-    if 'recursive' in defaults:
-        validate_type(defaults['recursive'], 'recursive', bool, 'bool', yaml_file)
-        del defaults['recursive']
-
-    if 'timestamp_author' in defaults:
-        validate_type(defaults['timestamp_author'], 'timestamp_author', str, 'str', yaml_file)
-        del defaults['timestamp_author']
+    validate_optional_value(defaults, 'recursive', bool, 'bool', yaml_file)
+    validate_optional_value(defaults, 'timestamp_author', str, 'str', yaml_file)

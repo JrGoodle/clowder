@@ -13,6 +13,8 @@ from clowder.yaml.loading import load_yaml_import_projects
 from clowder.yaml.util import (
     dict_contains_value,
     validate_optional_ref,
+    validate_optional_value,
+    validate_required_value,
     validate_type,
     validate_type_depth
 )
@@ -106,9 +108,7 @@ def validate_yaml_import_group(group, yaml_file):
         error = fmt.missing_entries_error('group', yaml_file)
         raise ClowderError(error)
 
-    dict_contains_value(group, 'group', 'name', yaml_file)
-    validate_type(group['name'], 'name', str, 'str', yaml_file)
-    del group['name']
+    validate_required_value(group, 'group', 'name', str, 'str', yaml_file)
 
     if not group:
         error = fmt.missing_entries_error('group', yaml_file)
@@ -118,27 +118,16 @@ def validate_yaml_import_group(group, yaml_file):
         validate_yaml_projects(group['projects'], yaml_file, is_import=True)
         del group['projects']
 
-    if 'recursive' in group:
-        validate_type(group['recursive'], 'recursive', bool, 'bool', yaml_file)
-        del group['recursive']
+    validate_optional_value(group, 'recursive', bool, 'bool', yaml_file)
+    validate_optional_value(group, 'remote', str, 'str', yaml_file)
+    validate_optional_value(group, 'source', str, 'str', yaml_file)
+    validate_optional_value(group, 'timestamp_author', str, 'str', yaml_file)
 
     validate_optional_ref(group, yaml_file)
-
-    if 'remote' in group:
-        validate_type(group['remote'], 'remote', str, 'str', yaml_file)
-        del group['remote']
-
-    if 'source' in group:
-        validate_type(group['source'], 'source', str, 'str', yaml_file)
-        del group['source']
 
     if 'depth' in group:
         validate_type_depth(group['depth'], yaml_file)
         del group['depth']
-
-    if 'timestamp_author' in group:
-        validate_type(group['timestamp_author'], 'timestamp_author', str, 'str', yaml_file)
-        del group['timestamp_author']
 
     if group:
         error = fmt.unknown_entry_error('group', group, yaml_file)
@@ -160,31 +149,18 @@ def validate_yaml_group(group, yaml_file):
         error = fmt.missing_entries_error('group', yaml_file)
         raise ClowderError(error)
 
-    dict_contains_value(group, 'group', 'name', yaml_file)
-    validate_type(group['name'], 'name', str, 'str', yaml_file)
-    del group['name']
+    validate_required_value(group, 'group', 'name', str, 'str', yaml_file)
 
     dict_contains_value(group, 'group', 'projects', yaml_file)
     validate_yaml_projects(group['projects'], yaml_file, is_import=False)
     del group['projects']
 
-    if 'recursive' in group:
-        validate_type(group['recursive'], 'recursive', bool, 'bool', yaml_file)
-        del group['recursive']
-
-    if 'timestamp_author' in group:
-        validate_type(group['timestamp_author'], 'timestamp_author', str, 'str', yaml_file)
-        del group['timestamp_author']
+    validate_optional_value(group, 'recursive', bool, 'bool', yaml_file)
+    validate_optional_value(group, 'remote', str, 'str', yaml_file)
+    validate_optional_value(group, 'timestamp_author', str, 'str', yaml_file)
+    validate_optional_value(group, 'source', str, 'str', yaml_file)
 
     validate_optional_ref(group, yaml_file)
-
-    if 'remote' in group:
-        validate_type(group['remote'], 'remote', str, 'str', yaml_file)
-        del group['remote']
-
-    if 'source' in group:
-        validate_type(group['source'], 'source', str, 'str', yaml_file)
-        del group['source']
 
     if 'depth' in group:
         validate_type_depth(group['depth'], yaml_file)

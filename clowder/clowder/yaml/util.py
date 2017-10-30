@@ -26,18 +26,19 @@ def clowder_yaml_contains_value(parsed_yaml, value, yaml_file):
         raise ClowderError(error)
 
 
-def dict_contains_value(dictionary, name, value, yaml_file):
+def dict_contains_value(dictionary, dict_name, value, yaml_file):
     """Check whether yaml file contains value
 
     :param dict dictionary: Parsed YAML python object
-    :param str name: Name of entry to print if missing
+    :param str dict_name: Name of dict to print if missing
     :param str value: Name of entry to check
     :param str yaml_file: Path to yaml file
     :return:
     :raise ClowderError:
     """
+
     if value not in dictionary:
-        error = fmt.missing_entry_error(value, name, yaml_file)
+        error = fmt.missing_entry_error(value, dict_name, yaml_file)
         raise ClowderError(error)
 
 
@@ -48,10 +49,46 @@ def validate_optional_ref(dictionary, yaml_file):
     :param str yaml_file: Path to yaml file
     :return:
     """
+
     if 'ref' in dictionary:
         validate_type(dictionary['ref'], 'ref', str, 'str', yaml_file)
         validate_ref_type(dictionary, yaml_file)
         del dictionary['ref']
+
+
+def validate_optional_value(dictionary, value, classinstance, type_name, yaml_file):
+    """Check whether yaml file contains optional value
+
+    :param dict dictionary: Parsed YAML python object
+    :param str value: Name of entry to check
+    :param type classinstance: Type to check
+    :param str type_name: Name of type to print if invalid
+    :param str yaml_file: Path to yaml file
+    :return:
+    :raise ClowderError:
+    """
+
+    if value in dictionary:
+        validate_type(dictionary[value], value, classinstance, type_name, yaml_file)
+        del dictionary[value]
+
+
+def validate_required_value(dictionary, dict_name, value, classinstance, type_name, yaml_file):
+    """Check whether yaml file contains required value
+
+    :param dict dictionary: Parsed YAML python object
+    :param str dict_name: Name of dict to print if missing
+    :param str value: Name of entry to check
+    :param type classinstance: Type to check
+    :param str type_name: Name of type to print if invalid
+    :param str yaml_file: Path to yaml file
+    :return:
+    :raise ClowderError:
+    """
+
+    dict_contains_value(dictionary, dict_name, value, yaml_file)
+    validate_type(dictionary[value], value, classinstance, type_name, yaml_file)
+    del dictionary[value]
 
 
 def validate_ref_type(dictionary, yaml_file):
@@ -62,6 +99,7 @@ def validate_ref_type(dictionary, yaml_file):
     :return:
     :raise ClowderError:
     """
+
     if not _valid_ref_type(dictionary['ref']):
         error = fmt.invalid_ref_error(dictionary['ref'], yaml_file)
         raise ClowderError(error)

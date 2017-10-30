@@ -147,9 +147,7 @@ class ClowderController(object):
 
         try:
             self._validate_yaml(yaml_file, self._max_import_depth)
-        except ClowderError as err:
-            print(fmt.invalid_yaml_error())
-            print(fmt.error(err))
+        except ClowderError:
             raise
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)

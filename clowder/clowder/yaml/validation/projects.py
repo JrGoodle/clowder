@@ -16,6 +16,8 @@ from clowder.error.clowder_error import ClowderError
 from clowder.yaml.util import (
     dict_contains_value,
     validate_optional_ref,
+    validate_optional_value,
+    validate_required_value,
     validate_type,
     validate_type_depth
 )
@@ -81,17 +83,13 @@ def validate_yaml_import_project(project, yaml_file):
         error = fmt.missing_entries_error('project', yaml_file)
         raise ClowderError(error)
 
-    dict_contains_value(project, 'project', 'name', yaml_file)
-    validate_type(project['name'], 'name', str, 'str', yaml_file)
-    del project['name']
+    validate_required_value(project, 'project', 'name', str, 'str', yaml_file)
 
     if not project:
         error = fmt.missing_entries_error('project', yaml_file)
         raise ClowderError(error)
 
-    if 'path' in project:
-        validate_type(project['path'], 'path', str, 'str', yaml_file)
-        del project['path']
+    validate_optional_value(project, 'path', str, 'str', yaml_file)
 
     validate_yaml_project_optional(project, yaml_file)
 
@@ -115,13 +113,8 @@ def validate_yaml_project(project, yaml_file):
         error = fmt.missing_entries_error('project', yaml_file)
         raise ClowderError(error)
 
-    dict_contains_value(project, 'project', 'name', yaml_file)
-    validate_type(project['name'], 'name', str, 'str', yaml_file)
-    del project['name']
-
-    dict_contains_value(project, 'project', 'path', yaml_file)
-    validate_type(project['path'], 'path', str, 'str', yaml_file)
-    del project['path']
+    validate_required_value(project, 'project', 'name', str, 'str', yaml_file)
+    validate_required_value(project, 'project', 'path', str, 'str', yaml_file)
 
     validate_yaml_project_optional(project, yaml_file)
 
@@ -139,23 +132,12 @@ def validate_yaml_project_optional(project, yaml_file):
     :raise ClowderError:
     """
 
-    if 'remote' in project:
-        validate_type(project['remote'], 'remote', str, 'str', yaml_file)
-        del project['remote']
-
-    if 'recursive' in project:
-        validate_type(project['recursive'], 'recursive', bool, 'bool', yaml_file)
-        del project['recursive']
-
-    if 'timestamp_author' in project:
-        validate_type(project['timestamp_author'], 'timestamp_author', str, 'str', yaml_file)
-        del project['timestamp_author']
+    validate_optional_value(project, 'remote', str, 'str', yaml_file)
+    validate_optional_value(project, 'recursive', bool, 'bool', yaml_file)
+    validate_optional_value(project, 'timestamp_author', str, 'str', yaml_file)
+    validate_optional_value(project, 'source', str, 'str', yaml_file)
 
     validate_optional_ref(project, yaml_file)
-
-    if 'source' in project:
-        validate_type(project['source'], 'source', str, 'str', yaml_file)
-        del project['source']
 
     if 'depth' in project:
         validate_type_depth(project['depth'], yaml_file)
