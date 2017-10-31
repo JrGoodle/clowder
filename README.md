@@ -130,6 +130,7 @@ $ clowder status
 
 ```bash
 $ clowder branch # Print all local branches
+$ clowder checkout my_branch # Checkout my_branch in projects
 $ clowder clean # Discard any changes in projects
 $ clowder diff # Print git diff for all projects
 $ clowder forall -c 'git status' # Run command in all project directories

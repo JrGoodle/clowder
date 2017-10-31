@@ -89,6 +89,9 @@ print_single_separator
 echo 'TEST: clowder branch -a'
 clowder branch -a || enable_connection_exit
 print_single_separator
+echo 'TEST: clowder checkout'
+clowder checkout branch_name || enable_connection_exit
+print_single_separator
 echo 'TEST: clowder clean'
 clowder clean || enable_connection_exit
 print_single_separator

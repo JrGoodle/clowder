@@ -41,7 +41,7 @@ def not_detached(func):
 
 
 def project_repo_exists(func):
-    """If no git repo exists, print error message and exit"""
+    """If no git repo exists, print message and return"""
 
     def wrapper(*args, **kwargs):
         """Wrapper"""

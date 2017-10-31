@@ -93,6 +93,16 @@ class Project(object):
         repo.print_branches(local=local, remote=remote)
 
     @project_repo_exists
+    def checkout(self, branch):
+        """Checkout branch
+
+        :param str branch: Branch to check out
+        :return:
+        """
+
+        self._repo(self.full_path(), self._remote, self._ref, self._recursive).checkout(branch, allow_failure=True)
+
+    @project_repo_exists
     def clean(self, args='', recursive=False):
         """Discard changes for project
 
@@ -102,7 +112,6 @@ class Project(object):
             - ``X`` Remove only files ignored by git
             - ``x`` Remove all untracked files
         :param Optional[bool] recursive: Clean submodules recursively. Defaults to False
-
         :return:
         """
 

@@ -70,10 +70,11 @@ class GitRepo(object):
         else:
             self.status_verbose()
 
-    def checkout(self, truncated_ref):
+    def checkout(self, truncated_ref, allow_failure=False):
         """Checkout git ref
 
         :param str truncated_ref: Ref to git checkout
+        :param Optional[bool] allow_failure: Whether to allow failing to checkout branch. Defaults to False
         :return:
         """
 
@@ -85,8 +86,10 @@ class GitRepo(object):
                 return
             self.repo.git.checkout(truncated_ref)
         except GitError as err:
-            message = colored(' - Failed to checkout ref ', 'red')
+            message = colored(' - Failed to checkout ', 'red')
             self._print(message + ref_output)
+            if allow_failure:
+                return
             self._print(fmt.error(err))
             self._exit(fmt.parallel_exception_error(self.repo_path, message, ref_output))
         except (KeyboardInterrupt, SystemExit):
