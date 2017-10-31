@@ -238,6 +238,19 @@ class ClowderController(object):
             return None
         return [v for v in os.listdir(versions_dir) if not v.startswith('.') if v.lower() != 'default']
 
+    def get_yaml(self):
+        """Return python object representation for saving yaml
+
+        :return: YAML python object
+        :rtype: dict
+        """
+
+        groups_yaml = [g.get_yaml() for g in self.groups]
+        sources_yaml = [s.get_yaml() for s in self.sources]
+        return {'defaults': self.defaults,
+                'sources': sources_yaml,
+                'groups': groups_yaml}
+
     def herd(self, group_names, **kwargs):
         """Clone projects or update latest from upstream
 
@@ -366,32 +379,6 @@ class ClowderController(object):
         for project in projects:
             run_project_command(project, skip, 'reset', timestamp=timestamp)
 
-    def save_version(self, version):
-        """Save current commits to a clowder.yaml in the versions directory
-
-        :param str version: Name of saved version
-        """
-
-        self._validate_projects_exist()
-        validate_groups(self.groups)
-        versions_dir = os.path.join(self.root_directory, '.clowder', 'versions')
-        version_name = version.replace('/', '-')  # Replace path separators with dashes
-        version_dir = os.path.join(versions_dir, version_name)
-        if not os.path.exists(version_dir):
-            try:
-                os.makedirs(version_dir)
-            except OSError as err:
-                if err.errno != os.errno.EEXIST:
-                    raise
-
-        yaml_file = os.path.join(version_dir, 'clowder.yaml')
-        if os.path.exists(yaml_file):
-            print(fmt.save_version_exists_error(version_name, yaml_file) + '\n')
-            sys.exit(1)
-
-        print(fmt.save_version(version_name, yaml_file))
-        yaml_save.save_yaml(self._get_yaml(), yaml_file)
-
     def status(self, group_names, padding):
         """Print status for groups
 
@@ -490,19 +477,6 @@ class ClowderController(object):
             sys.exit(1)
 
         return timestamp
-
-    def _get_yaml(self):
-        """Return python object representation for saving yaml
-
-        :return: YAML python object
-        :rtype: dict
-        """
-
-        groups_yaml = [g.get_yaml() for g in self.groups]
-        sources_yaml = [s.get_yaml() for s in self.sources]
-        return {'defaults': self.defaults,
-                'sources': sources_yaml,
-                'groups': groups_yaml}
 
     def _get_yaml_resolved(self):
         """Return python object representation for resolved yaml
@@ -625,20 +599,6 @@ class ClowderController(object):
             result = __clowder_pool__.apply_async(sync_project, args=(project, rebase), callback=async_callback)
             __clowder_results__.append(result)
         pool_handler(len(projects))
-
-    def _validate_projects_exist(self):
-        """Validate existence status of all projects for specified groups"""
-
-        projects_exist = True
-        for group in self.groups:
-            group.print_existence_message()
-            if not group.existing_projects():
-                projects_exist = False
-
-        if not projects_exist:
-            herd_output = fmt.clowder_command('clowder herd')
-            print('\n - First run ' + herd_output + ' to clone missing projects\n')
-            sys.exit(1)
 
 
 # Disable warnings shown by pylint for catching too general exception

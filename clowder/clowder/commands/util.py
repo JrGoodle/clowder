@@ -97,3 +97,21 @@ def validate_projects(projects):
     if not all([p.is_valid() for p in projects]):
         print()
         sys.exit(1)
+
+
+def validate_projects_exist(clowder):
+    """Validate existence status of all projects for specified groups
+
+    :param ClowderController clowder: ClowderController instance
+    """
+
+    projects_exist = True
+    for group in clowder.groups:
+        group.print_existence_message()
+        if not group.existing_projects():
+            projects_exist = False
+
+    if not projects_exist:
+        herd_output = fmt.clowder_command('clowder herd')
+        print('\n - First run ' + herd_output + ' to clone missing projects\n')
+        sys.exit(1)

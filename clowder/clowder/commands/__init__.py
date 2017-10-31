@@ -6,6 +6,7 @@ from clowder.commands.clean import (
 )
 from clowder.commands.diff import diff
 from clowder.commands.prune import prune
+from clowder.commands.save import save
 from clowder.commands.start import (
     start_groups,
     start_projects

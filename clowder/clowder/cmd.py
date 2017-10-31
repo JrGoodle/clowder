@@ -314,7 +314,7 @@ class Command(object):
             sys.exit(1)
 
         self.clowder_repo.print_status()
-        self.clowder.save_version(self._args.version)
+        commands.save(self.clowder, self._args.version)
 
     @valid_clowder_yaml_required
     @print_clowder_repo_status
