@@ -1,3 +1,15 @@
+# 2.5.0
+
+- Add `clowder checkout` command
+- Add Sphinx documentation and update docstrings
+- Disallow saving a version named "default"
+- Add `--skip/-s` option to various commands
+- Add ability to reset projects based on timestamp with `clowder reset --timestamp`
+- Add `--parallel` option to `clowder herd`, `clowder sync`, `clowder reset`, and `clowder forall`
+- Add more badges and setup code climate
+- Various refactoring to reduce number of issues on code climate
+- Tweak output formatting for refs
+
 # 2.4.0
 
 - Add `clowder reset` command
