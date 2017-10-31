@@ -1,6 +1,7 @@
 # `clowder` Commands
 
 - [clowder branch](#clowder-branch)
+- [clowder checkout](#clowder-checkout)
 - [clowder clean](#clowder-clean)
 - [clowder diff](#clowder-diff)
 - [clowder forall](#clowder-forall)
@@ -37,6 +38,19 @@ $ clowder branch -g llvm
 
 # Print local branches in swift project
 $ clowder branch -p apple/swift
+```
+
+---
+
+```bash
+# Checkout branches
+$ clowder checkout branch_name
+
+# Checkout branches in llvm group
+$ clowder checkout branch_name -g llvm
+
+# Checkout branches in swift project
+$ clowder checkout branch_name -p apple/swift
 ```
 
 ---
