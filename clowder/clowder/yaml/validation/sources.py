@@ -15,27 +15,6 @@ from clowder.yaml.validation.util import (
 )
 
 
-def load_yaml_sources_import(imported_sources, sources):
-    """Load clowder sources from imported yaml
-
-    :param dict imported_sources: Parsed YAML python object for imported sources
-    :param dict sources: Parsed YAML python object for sources
-    """
-
-    source_names = [s['name'] for s in sources]
-    for imported_source in imported_sources:
-        if imported_source['name'] not in source_names:
-            sources.append(imported_source)
-            continue
-        combined_sources = []
-        for source in sources:
-            if source.name == imported_source['name']:
-                combined_sources.append(imported_source)
-            else:
-                combined_sources.append(source)
-        sources = combined_sources
-
-
 def validate_yaml_sources(sources, yaml_file):
     """Validate sources in clowder loaded from yaml file
 
