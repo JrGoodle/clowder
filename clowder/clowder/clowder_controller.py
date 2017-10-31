@@ -17,6 +17,12 @@ import psutil
 import clowder.util.formatting as fmt
 import clowder.yaml.printing as yaml_print
 import clowder.yaml.saving as yaml_save
+from clowder.commands.util import (
+    run_group_command,
+    run_project_command,
+    validate_groups,
+    validate_projects
+)
 from clowder.error.clowder_error import ClowderError
 from clowder.model.group import Group
 from clowder.model.source import Source
@@ -145,129 +151,6 @@ class ClowderController(object):
         else:
             self._load_yaml()
 
-    def branch(self, group_names, **kwargs):
-        """Print branches
-
-        .. py:function:: branch(group_names, local=False, remote=False, project_names=None, skip=[])
-
-        :param list(str) group_names: Group names to print branches for
-        :param bool local: Print local branches
-        :param bool remote: Print remote branches
-        :param list(str) project_names: Project names to print branches for
-        :param list(str) skip: Project names to skip
-        """
-
-        project_names = kwargs.get('project_names', None)
-        skip = kwargs.get('skip', [])
-        local = kwargs.get('local', False)
-        remote = kwargs.get('remote', False)
-
-        if project_names is None:
-            groups = [g for g in self.groups if g.name in group_names]
-            for group in groups:
-                self._run_group_command(group, skip, 'branch', local=local, remote=remote)
-            return
-
-        projects = [p for g in self.groups for p in g.projects if p.name in project_names]
-        for project in projects:
-            self._run_project_command(project, skip, 'branch', local=local, remote=remote)
-
-    def checkout(self, branch, group_names, **kwargs):
-        """Checkout branches
-
-        .. py:function:: checkout(branch, group_names, project_names=None, skip=[])
-
-        :param str branch: Branch to checkout
-        :param list(str) group_names: Group names to checkout branches for
-        :param list(str) project_names: Project names to clean
-        :param list(str) skip: Project names to skip
-        """
-
-        project_names = kwargs.get('project_names', None)
-        skip = kwargs.get('skip', [])
-
-        if project_names is None:
-            groups = [g for g in self.groups if g.name in group_names]
-            for group in groups:
-                self._run_group_command(group, skip, 'checkout', branch)
-            return
-
-        projects = [p for g in self.groups for p in g.projects if p.name in project_names]
-        for project in projects:
-            self._run_project_command(project, skip, 'checkout', branch)
-
-    def clean(self, group_names, **kwargs):
-        """Discard changes
-
-        .. py:function:: clean(group_names, args='', recursive=False, project_names=None, skip=[])
-
-        :param list(str) group_names: Group names to clean
-        :param str args: Git clean options
-            - ``d`` Remove untracked directories in addition to untracked files
-            - ``f`` Delete directories with .git sub directory or file
-            - ``X`` Remove only files ignored by git
-            - ``x`` Remove all untracked files
-        :param bool recursive: Clean submodules recursively
-        :param list(str) project_names: Project names to clean
-        :param list(str) skip: Project names to skip
-        """
-
-        project_names = kwargs.get('project_names', None)
-        skip = kwargs.get('skip', [])
-        args = kwargs.get('args', '')
-        recursive = kwargs.get('recursive', False)
-
-        if project_names is None:
-            groups = [g for g in self.groups if g.name in group_names]
-            for group in groups:
-                self._run_group_command(group, skip, 'clean', args=args, recursive=recursive)
-            return
-
-        projects = [p for g in self.groups for p in g.projects if p.name in project_names]
-        for project in projects:
-            self._run_project_command(project, skip, 'clean', args=args, recursive=recursive)
-
-    def clean_all(self, group_names, **kwargs):
-        """Discard all changes
-
-        .. py:function:: clean_all(group_names, project_names=None, skip=[])
-
-        :param list(str) group_names: Group names to clean
-        :param list(str) project_names: Project names to clean
-        :param list(str) skip: Project names to skip
-        """
-
-        project_names = kwargs.get('project_names', None)
-        skip = kwargs.get('skip', [])
-
-        if project_names is None:
-            groups = [g for g in self.groups if g.name in group_names]
-            for group in groups:
-                self._run_group_command(group, skip, 'clean_all')
-            return
-
-        projects = [p for g in self.groups for p in g.projects if p.name in project_names]
-        for project in projects:
-            self._run_project_command(project, skip, 'clean_all')
-
-    def diff(self, group_names, project_names=None):
-        """Show git diff
-
-        :param list(str) group_names: Group names to print diffs for
-        :param Optional[list(str)] project_names: Project names to print diffs for. Defaults to None
-        """
-
-        if project_names is None:
-            groups = [g for g in self.groups if g.name in group_names]
-            for group in groups:
-                self._run_group_command(group, [], 'diff')
-            return
-
-        projects = [p for g in self.groups for p in g.projects if p.name in project_names]
-        for project in projects:
-            print(project.status())
-            project.diff()
-
     def fetch(self, group_names):
         """Fetch groups
 
@@ -276,7 +159,7 @@ class ClowderController(object):
 
         groups = [g for g in self.groups if g.name in group_names]
         for group in groups:
-            self._run_group_command(group, [], 'fetch_all')
+            run_group_command(group, [], 'fetch_all')
 
     def forall(self, command, ignore_errors, group_names, **kwargs):
         """Runs command or script in project directories specified
@@ -305,7 +188,7 @@ class ClowderController(object):
             return
 
         for project in projects:
-            self._run_project_command(project, skip, 'run', command, ignore_errors)
+            run_project_command(project, skip, 'run', command, ignore_errors)
 
     def get_all_fork_project_names(self):
         """Returns all project names containing forks
@@ -378,15 +261,15 @@ class ClowderController(object):
 
         if project_names is None:
             groups = [g for g in self.groups if g.name in group_names]
-            self._validate_groups(groups)
+            validate_groups(groups)
             for group in groups:
-                self._run_group_command(group, skip, 'herd', branch=branch, tag=tag, depth=depth, rebase=rebase)
+                run_group_command(group, skip, 'herd', branch=branch, tag=tag, depth=depth, rebase=rebase)
             return
 
         projects = [p for g in self.groups for p in g.projects if p.name in project_names]
-        self._validate_projects(projects)
+        validate_projects(projects)
         for project in projects:
-            self._run_project_command(project, skip, 'herd', branch=branch, tag=tag, depth=depth, rebase=rebase)
+            run_project_command(project, skip, 'herd', branch=branch, tag=tag, depth=depth, rebase=rebase)
 
     def herd_parallel(self, group_names, **kwargs):
         """Clone projects or update latest from upstream in parallel
@@ -412,7 +295,7 @@ class ClowderController(object):
         print(' - Herd projects in parallel\n')
         if project_names is None:
             groups = [g for g in self.groups if g.name in group_names]
-            self._validate_groups(groups)
+            validate_groups(groups)
             projects = [p for g in self.groups if g.name in group_names for p in g.projects]
             self._print_parallel_groups_output(groups, skip)
             for project in projects:
@@ -425,7 +308,7 @@ class ClowderController(object):
             return
 
         projects = [p for g in self.groups for p in g.projects if p.name in project_names]
-        self._validate_projects(projects)
+        validate_projects(projects)
         self._print_parallel_projects_output(projects, skip)
         for project in projects:
             if project.name in skip:
@@ -446,36 +329,6 @@ class ClowderController(object):
         else:
             yaml_print.print_yaml(self.root_directory)
         sys.exit()  # exit early to prevent printing extra newline
-
-    def prune(self, group_names, branch, **kwargs):
-        """Prune branches
-
-        .. py:function:: prune(group_names, local=False, remote=False, force=False, project_names=None, skip=[])
-
-        :param list(str) group_names: Group names to prune branches for
-        :param str branch: Branch to prune
-        :param bool force: Force delete branch
-        :param bool local: Delete local branch
-        :param bool remote: Delete remote branch
-        :param list(str) project_names: Project names to prune
-        :param list(str) skip: Project names to skip
-        """
-
-        project_names = kwargs.get('project_names', None)
-        skip = kwargs.get('skip', [])
-        force = kwargs.get('force', False)
-        local = kwargs.get('local', False)
-        remote = kwargs.get('remote', False)
-
-        if project_names is None:
-            groups = [g for g in self.groups if g.name in group_names]
-            self._validate_groups(groups)
-            self._prune_groups(groups, branch, skip=skip, force=force, local=local, remote=remote)
-            return
-
-        projects = [p for g in self.groups for p in g.projects if p.name in project_names]
-        self._validate_projects(projects)
-        self._prune_projects(projects, branch, skip=skip, force=force, local=local, remote=remote)
 
     def reset(self, group_names, **kwargs):
         """Reset project branches to upstream or checkout tag/sha as detached HEAD
@@ -503,15 +356,15 @@ class ClowderController(object):
             timestamp = self._get_timestamp(timestamp_project)
         if project_names is None:
             groups = [g for g in self.groups if g.name in group_names]
-            self._validate_groups(groups)
+            validate_groups(groups)
             for group in groups:
-                self._run_group_command(group, skip, 'reset', timestamp=timestamp)
+                run_group_command(group, skip, 'reset', timestamp=timestamp)
             return
 
         projects = [p for g in self.groups for p in g.projects if p.name in project_names]
-        self._validate_projects(projects)
+        validate_projects(projects)
         for project in projects:
-            self._run_project_command(project, skip, 'reset', timestamp=timestamp)
+            run_project_command(project, skip, 'reset', timestamp=timestamp)
 
     def save_version(self, version):
         """Save current commits to a clowder.yaml in the versions directory
@@ -520,7 +373,7 @@ class ClowderController(object):
         """
 
         self._validate_projects_exist()
-        self._validate_groups(self.groups)
+        validate_groups(self.groups)
         versions_dir = os.path.join(self.root_directory, '.clowder', 'versions')
         version_name = version.replace('/', '-')  # Replace path separators with dashes
         version_dir = os.path.join(versions_dir, version_name)
@@ -538,63 +391,6 @@ class ClowderController(object):
 
         print(fmt.save_version(version_name, yaml_file))
         yaml_save.save_yaml(self._get_yaml(), yaml_file)
-
-    def start_groups(self, group_names, skip, branch, tracking=False):
-        """Start feature branch for groups
-
-        :param list(str) group_names: Group names to create branches for
-        :param list(str) skip: Project names to skip
-        :param str branch: Local branch name to create
-        :param Optional[bool] tracking: Whether to create a remote branch with tracking relationship.
-            Defaults to False
-        """
-
-        groups = [g for g in self.groups if g.name in group_names]
-        self._validate_groups(groups)
-        for group in groups:
-            self._run_group_command(group, skip, 'start', branch, tracking)
-
-    def start_projects(self, project_names, skip, branch, tracking=False):
-        """Start feature branch for projects
-
-        :param list(str) project_names: Project names to creat branches for
-        :param list(str) skip: Project names to skip
-        :param str branch: Local branch name to create
-        :param Optional[bool] tracking: Whether to create a remote branch with tracking relationship.
-            Defaults to False
-        """
-
-        projects = [p for g in self.groups for p in g.projects if p.name in project_names]
-        self._validate_projects(projects)
-        for project in projects:
-            self._run_project_command(project, skip, 'start', branch, tracking)
-
-    def stash(self, group_names, **kwargs):
-        """Stash changes for projects with changes
-
-        .. py:function:: clean(group_names, project_names=None, skip=[])
-
-        :param list(str) group_names: Group names to stash
-        :param list(str) project_names: Project names to clean
-        :param list(str) skip: Project names to skip
-        """
-
-        project_names = kwargs.get('project_names', None)
-        skip = kwargs.get('skip', [])
-
-        if not self._is_dirty():
-            print('No changes to stash')
-            return
-
-        if project_names is None:
-            groups = [g for g in self.groups if g.name in group_names]
-            for group in groups:
-                self._run_group_command(group, skip, 'stash')
-            return
-
-        projects = [p for g in self.groups for p in g.projects if p.name in project_names]
-        for project in projects:
-            self._run_project_command(project, skip, 'stash')
 
     def status(self, group_names, padding):
         """Print status for groups
@@ -626,32 +422,6 @@ class ClowderController(object):
 
         for project in projects:
             project.sync(rebase=rebase)
-
-    @staticmethod
-    def _existing_branch_groups(groups, branch, is_remote):
-        """Checks if given branch exists in any project
-
-        :param list(Group) groups: Groups to check
-        :param str branch: Branch to check for
-        :param bool is_remote: Check for remote branch
-        :return: True, if at least one branch exists
-        :rtype: bool
-        """
-
-        return any([p.existing_branch(branch, is_remote=is_remote) for g in groups for p in g.projects])
-
-    @staticmethod
-    def _existing_branch_projects(projects, branch, is_remote):
-        """Checks if given branch exists in any project
-
-        :param list(Project) projects: Projects to check
-        :param str branch: Branch to check for
-        :param bool is_remote: Check for remote branch
-        :return: True, if at least one branch exists
-        :rtype: bool
-        """
-
-        return any([p.existing_branch(branch, is_remote=is_remote) for p in projects])
 
     def _fetch_groups(self, group_names):
         """Fetch all projects for specified groups
@@ -747,15 +517,6 @@ class ClowderController(object):
                 'sources': sources_yaml,
                 'groups': groups_yaml}
 
-    def _is_dirty(self):
-        """Check if there are any dirty projects
-
-        :return: True, if dirty
-        :rtype: bool
-        """
-
-        return any([g.is_dirty() for g in self.groups])
-
     def _load_yaml(self):
         """Load clowder.yaml"""
         yaml = load_yaml(self.root_directory)
@@ -802,99 +563,6 @@ class ClowderController(object):
                 print('  ' + fmt.fork_string(project.name))
                 print('  ' + fmt.fork_string(project.fork.name))
 
-    def _prune_groups(self, groups, branch, **kwargs):
-        """Prune group branches
-
-        .. py:function:: _prune_groups(groups, branch, local=False, remote=False, force=False, skip=[])
-
-        :param list(Group) groups: Groups to prune
-        :param str branch: Branch to prune
-        :param bool force: Force delete branch
-        :param bool local: Delete local branch
-        :param bool remote: Delete remote branch
-        :param list(str) skip: Project names to skip
-        """
-
-        skip = kwargs.get('skip', [])
-        force = kwargs.get('force', False)
-        local = kwargs.get('local', False)
-        remote = kwargs.get('remote', False)
-
-        if local and remote:
-            local_branch_exists = self._existing_branch_groups(groups, branch, is_remote=False)
-            remote_branch_exists = self._existing_branch_groups(groups, branch, is_remote=True)
-            branch_exists = local_branch_exists or remote_branch_exists
-            if not branch_exists:
-                cprint(' - No local or remote branches to prune\n', 'red')
-                sys.exit()
-
-            print(' - Prune local and remote branches\n')
-            for group in groups:
-                local_branch_exists = group.existing_branch(branch, is_remote=False)
-                remote_branch_exists = group.existing_branch(branch, is_remote=True)
-                if local_branch_exists or remote_branch_exists:
-                    self._run_group_command(group, skip, 'prune', branch, force=force, local=True, remote=True)
-        elif local:
-            if not self._existing_branch_groups(groups, branch, is_remote=False):
-                print(' - No local branches to prune\n')
-                sys.exit()
-
-            for group in groups:
-                if group.existing_branch(branch, is_remote=False):
-                    self._run_group_command(group, skip, 'prune', branch, force=force, local=True)
-        elif remote:
-            if not self._existing_branch_groups(groups, branch, is_remote=True):
-                cprint(' - No remote branches to prune\n', 'red')
-                sys.exit()
-
-            for group in groups:
-                if group.existing_branch(branch, is_remote=True):
-                    self._run_group_command(group, skip, 'prune', branch, remote=True)
-
-    def _prune_projects(self, projects, branch, **kwargs):
-        """Prune project branches
-
-        .. py:function:: _prune_projects(projects, branch, local=False, remote=False, force=False, skip=[])
-
-        :param list(Project) projects: Projects to prune
-        :param str branch: Branch to prune
-        :param bool force: Force delete branch
-        :param bool local: Delete local branch
-        :param bool remote: Delete remote branch
-        :param list(str) skip: Project names to skip
-        """
-
-        skip = kwargs.get('skip', [])
-        force = kwargs.get('force', False)
-        local = kwargs.get('local', False)
-        remote = kwargs.get('remote', False)
-
-        if local and remote:
-            local_branch_exists = self._existing_branch_projects(projects, branch, is_remote=False)
-            remote_branch_exists = self._existing_branch_projects(projects, branch, is_remote=True)
-            branch_exists = local_branch_exists or remote_branch_exists
-            if not branch_exists:
-                cprint(' - No local or remote branches to prune\n', 'red')
-                sys.exit()
-
-            print(' - Prune local and remote branches\n')
-            for project in projects:
-                self._run_project_command(project, skip, 'prune', branch, force=force, local=True, remote=True)
-        elif local:
-            if not self._existing_branch_projects(projects, branch, is_remote=False):
-                print(' - No local branches to prune\n')
-                sys.exit()
-
-            for project in projects:
-                self._run_project_command(project, skip, 'prune', branch, force=force, local=True)
-        elif remote:
-            if not self._existing_branch_projects(projects, branch, is_remote=True):
-                cprint(' - No remote branches to prune\n', 'red')
-                sys.exit()
-
-            for project in projects:
-                self._run_project_command(project, skip, 'prune', branch, remote=True)
-
     def _reset_parallel(self, group_names, **kwargs):
         """Reset project branches to upstream or checkout tag/sha as detached HEAD in parallel
 
@@ -917,7 +585,7 @@ class ClowderController(object):
 
         if project_names is None:
             groups = [g for g in self.groups if g.name in group_names]
-            self._validate_groups(groups)
+            validate_groups(groups)
             projects = [p for g in self.groups if g.name in group_names for p in g.projects]
             self._print_parallel_groups_output(groups, skip)
             for project in projects:
@@ -929,7 +597,7 @@ class ClowderController(object):
             return
 
         projects = [p for g in self.groups for p in g.projects if p.name in project_names]
-        self._validate_projects(projects)
+        validate_projects(projects)
         self._print_parallel_projects_output(projects, skip)
         for project in projects:
             if project.name in skip:
@@ -937,42 +605,6 @@ class ClowderController(object):
             result = __clowder_pool__.apply_async(reset_project, args=(project, timestamp), callback=async_callback)
             __clowder_results__.append(result)
         pool_handler(len(projects))
-
-    @staticmethod
-    def _run_group_command(group, skip, command, *args, **kwargs):
-        """Run group command and print output
-
-        :param Group group: Group to run command for
-        :param list(str) skip: Project names to skip
-        :param str command: Name of method to invoke
-        :param args: List of arguments to pass to method invocation
-        :param kwargs: Dict of arguments to pass to method invocation
-        """
-
-        print(fmt.group_name(group.name))
-        for project in group.projects:
-            print(project.status())
-            if project.name in skip:
-                print(fmt.skip_project_message())
-                continue
-            getattr(project, command)(*args, **kwargs)
-
-    @staticmethod
-    def _run_project_command(project, skip, command, *args, **kwargs):
-        """Run project command and print output
-
-        :param Praject project: Project to run command for
-        :param list(str) skip: Project names to skip
-        :param str command: Name of method to invoke
-        :param args: List of arguments to pass to method invocation
-        :param kwargs: Dict of arguments to pass to method invocation
-        """
-
-        print(project.status())
-        if project.name in skip:
-            print(fmt.skip_project_message())
-            return
-        getattr(project, command)(*args, **kwargs)
 
     @staticmethod
     def _sync_parallel(projects, rebase=False):
@@ -993,31 +625,6 @@ class ClowderController(object):
             result = __clowder_pool__.apply_async(sync_project, args=(project, rebase), callback=async_callback)
             __clowder_results__.append(result)
         pool_handler(len(projects))
-
-    @staticmethod
-    def _validate_groups(groups):
-        """Validate status of all projects for specified groups
-
-        :param list(Group) groups: Groups to validate
-        """
-
-        for group in groups:
-            group.print_validation()
-
-        if not all([g.is_valid() for g in groups]):
-            print()
-            sys.exit(1)
-
-    @staticmethod
-    def _validate_projects(projects):
-        """Validate status of all projects
-
-        :param list(Project) projects: Projects to validate
-        """
-
-        if not all([p.is_valid() for p in projects]):
-            print()
-            sys.exit(1)
 
     def _validate_projects_exist(self):
         """Validate existence status of all projects for specified groups"""
