@@ -18,12 +18,11 @@ from clowder.git.repo import execute_command
 class ProjectRepoRecursive(ProjectRepo):
     """Class encapsulating git utilities for projects with submodules
 
-    Attributes:
-        repo_path (str): Absolute path to repo
-        default_ref (str): Default ref
-        remote (str): Default remote name
-        parallel (bool): Whether command is being run in parallel, affects output
-        repo (Repo): Repo instance
+    :ivar strt repo_path: Absolute path to repo
+    :ivar strt default_ref: Default ref
+    :ivar strt remote: Default remote name
+    :ivar bool parallel: Whether command is being run in parallel, affects output
+    :ivar Repo repo: Repo instance
     """
 
     def __init__(self, repo_path, remote, default_ref, parallel=False):

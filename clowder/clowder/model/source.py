@@ -9,9 +9,8 @@
 class Source(object):
     """clowder.yaml Source model class
 
-    Attributes:
-        name (str): Source name
-        url (str): Source url
+    :ivar str name: Source name
+    :ivar str url: Source url
     """
 
     def __init__(self, source):

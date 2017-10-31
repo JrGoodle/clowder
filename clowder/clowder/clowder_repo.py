@@ -24,11 +24,10 @@ from clowder.util.file_system import remove_directory
 class ClowderRepo(object):
     """Class encapsulating clowder repo information
 
-    Attributes:
-        root_directory (str): Root directory of clowder projects
-        default_ref (str): Default ref
-        remote (str): Remote name
-        clowder_path (path): Absolute path to clowder repo
+    :ivar str root_directory: Root directory of clowder projects
+    :ivar str default_ref: Default ref
+    :ivar str remote: Remote name
+    :ivar str clowder_path: Absolute path to clowder repo
     """
 
     def __init__(self, root_directory):

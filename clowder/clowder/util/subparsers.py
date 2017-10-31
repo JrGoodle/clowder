@@ -11,7 +11,7 @@ def configure_argparse(parser, clowder, versions):
 
     :param ArgumentParser parser: ArgParse ArgumentParser instance
     :param ClowderController clowder: ClowderController instance
-    :param list of str versions: List of clowder.yaml versions
+    :param list(str) versions: List of clowder.yaml versions
     :return:
     """
 
@@ -24,7 +24,7 @@ def _configure_subparsers(subparsers, clowder, versions):
 
     :param ArgumentParser subparsers: ArgParse ArgumentParser instance returned from ``add_subparsers()``
     :param ClowderController clowder: ClowderController instance
-    :param list of str versions: List of clowder.yaml versions
+    :param list(str) versions: List of clowder.yaml versions
     :return:
     """
 
@@ -275,7 +275,7 @@ def _configure_subparser_link(subparsers, versions):
     """Configure clowder link subparser and arguments
 
     :param ArgumentParser subparsers: ArgParse ArgumentParser instance returned from ``add_subparsers()``
-    :param list of str versions: List of clowder.yaml versions
+    :param list(str) versions: List of clowder.yaml versions
     :return:
     """
 
@@ -535,7 +535,7 @@ def _fork_project_names(clowder):
 
     :param ClowderController clowder: ClowderController instance
     :return: List of fork project names
-    :rtype: list of str
+    :rtype: list(str)
     """
 
     if clowder:
@@ -548,7 +548,7 @@ def _group_names(clowder):
 
     :param ClowderController clowder: ClowderController instance
     :return: List of group names
-    :rtype: list of str
+    :rtype: list(str)
     """
 
     if clowder:
@@ -559,7 +559,7 @@ def _group_names(clowder):
 def _options_help_message(options, message):
     """Help message for groups option
 
-    :param list of str options: List of options
+    :param list(str) options: List of options
     :param str message: Help message
     :return: Formatted options help message
     :rtype: str
@@ -581,7 +581,7 @@ def _project_names(clowder):
 
     :param ClowderController clowder: ClowderController instance
     :return: List of project names
-    :rtype: list of str
+    :rtype: list(str)
     """
 
     if clowder:

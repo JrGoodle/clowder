@@ -24,12 +24,11 @@ __project_repo_default_remote__ = 'origin'
 class ProjectRepo(GitRepo):
     """Class encapsulating git utilities for projects
 
-    Attributes:
-        repo_path (str): Absolute path to repo
-        default_ref (str): Default ref
-        remote (str): Default remote name
-        parallel (bool): Whether command is being run in parallel, affects output
-        repo (Repo): Repo instance
+    :ivar str repo_path: Absolute path to repo
+    :ivar str default_ref: Default ref
+    :ivar str remote: Default remote name
+    :ivar bool parallel: Whether command is being run in parallel, affects output
+    :ivar Repo repo: Repo instance
     """
 
     def __init__(self, repo_path, remote, default_ref, parallel=False):

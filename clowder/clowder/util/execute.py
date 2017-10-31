@@ -33,7 +33,7 @@ def subprocess_exit_handler(process):
 def execute_subprocess_command(command, path, **kwargs):
     """Execute subprocess command
 
-    :param command: Command to run. Can be str or list of str
+    :param command: Command to run. Can be str or list(str)
     :param str path: Path to set as ``cwd``
 
     Keyword Args:
@@ -69,7 +69,7 @@ def execute_subprocess_command(command, path, **kwargs):
 def execute_command(command, path, **kwargs):
     """Execute command via thread
 
-    :param command: Command to run. Can be str or list of str
+    :param command: Command to run. Can be str or list(str)
     :param str path: Path to set as ``cwd``
 
     Keyword Args:
@@ -121,7 +121,7 @@ def execute_command(command, path, **kwargs):
 def execute_forall_command(command, path, forall_env, print_output):
     """Execute forall command with additional environment variables and display continuous output
 
-    :param command: Command to run. Can be str or list of str
+    :param command: Command to run. Can be str or list(str)
     :param str path: Path to set as ``cwd``
     :param dict forall_env: Enviroment to set as ``env``
     :param bool print_output: Whether to print output

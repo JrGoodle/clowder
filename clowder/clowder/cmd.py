@@ -43,13 +43,12 @@ if __name__ == '__main__':
 class Command(object):
     """Command class for parsing command line options
 
-    Attributes:
-        root_directory (str): Root directory of clowder projects
-        clowder (ClowderController):
-        clowder_repo (ClowderRepo):
-        versions (list of str): List of all clowder.yaml versions
-        invalid_yaml (bool): Flag indicating whether current clowder.yaml is valid or invalid
-        error (Exception): Error associated with invalid yaml
+    :ivar str root_directory: Root directory of clowder projects
+    :ivar ClowderController clowder: ClowderController instance
+    :ivar ClowderRepo clowder_repo: ClowderRepo instance
+    :ivar list(str) versions: List of all clowder.yaml versions
+    :ivar bool invalid_yaml: Flag indicating whether current clowder.yaml is valid or invalid
+    :ivar Exception error: Error associated with invalid yaml
     """
 
     def __init__(self):
