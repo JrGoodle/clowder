@@ -21,7 +21,6 @@ def load_yaml(root_directory):
     """Load clowder from yaml file
 
     :param str root_directory: Root directory of clowder projects
-    :return:
     """
 
     yaml_file = os.path.join(root_directory, 'clowder.yaml')
@@ -58,7 +57,6 @@ def _load_yaml_base(parsed_yaml, combined_yaml):
 
     :param dict parsed_yaml: Parsed YAML python object
     :param dict combined_yaml: Combined YAML python object
-    :return:
     """
 
     combined_yaml['defaults'] = parsed_yaml['defaults']
@@ -73,7 +71,6 @@ def _load_yaml_import(parsed_yaml, combined_yaml):
 
     :param dict parsed_yaml: Parsed YAML python object
     :param dict combined_yaml: Combined YAML python object
-    :return:
     """
 
     if 'defaults' in parsed_yaml:
@@ -89,7 +86,6 @@ def _load_yaml_import_defaults(imported_defaults, defaults):
 
     :param dict imported_defaults: Parsed YAML python object for imported defaults
     :param dict defaults: Parsed YAML python object for defaults
-    :return:
     """
 
     args = ['depth', 'recursive', 'ref', 'remote', 'source', 'timestamp_author']
@@ -102,7 +98,6 @@ def _load_yaml_import_groups(imported_groups, groups):
 
     :param dict imported_groups: Parsed YAML python object for imported groups
     :param dict groups: Parsed YAML python object for groups
-    :return:
     """
 
     group_names = [g['name'] for g in groups]
@@ -127,7 +122,6 @@ def _load_yaml_import_projects(imported_projects, projects):
 
     :param dict imported_projects: Parsed YAML python object for imported projects
     :param dict projects: Parsed YAML python object for projects
-    :return:
     """
 
     project_names = [p['name'] for p in projects]
@@ -157,7 +151,6 @@ def _load_yaml_import_sources(imported_sources, sources):
 
     :param dict imported_sources: Parsed YAML python object for imported sources
     :param dict sources: Parsed YAML python object for sources
-    :return:
     """
 
     source_names = [s['name'] for s in sources]
@@ -180,7 +173,6 @@ def _override_import_value(dictionary, imported_dictionary, value):
     :param dict dictionary: Parsed YAML python object
     :param dict imported_dictionary: Imported parsed YAML python object
     :param str value: Name of entry to check
-    :return:
     """
 
     if value in imported_dictionary:

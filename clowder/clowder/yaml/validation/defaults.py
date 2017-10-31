@@ -25,7 +25,6 @@ def validate_yaml_defaults_import(defaults, yaml_file):
 
     :param dict defaults: Parsed YAML python object for defaults
     :param str yaml_file: Path to yaml file
-    :return:
     """
 
     validate_type(defaults, 'defaults', dict, 'dict', yaml_file)
@@ -44,7 +43,6 @@ def validate_yaml_defaults(defaults, yaml_file):
 
     :param dict defaults: Parsed YAML python object for defaults
     :param str yaml_file: Path to yaml file
-    :return:
     """
 
     validate_type(defaults, 'defaults', dict, 'dict', yaml_file)

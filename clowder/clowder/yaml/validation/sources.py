@@ -20,7 +20,6 @@ def load_yaml_sources_import(imported_sources, sources):
 
     :param dict imported_sources: Parsed YAML python object for imported sources
     :param dict sources: Parsed YAML python object for sources
-    :return:
     """
 
     source_names = [s['name'] for s in sources]
@@ -42,7 +41,6 @@ def validate_yaml_sources(sources, yaml_file):
 
     :param dict sources: Parsed YAML python object for sources
     :param str yaml_file: Path to yaml file
-    :return:
     """
 
     validate_type(sources, 'sources', list, 'list', yaml_file)

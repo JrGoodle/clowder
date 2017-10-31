@@ -1,9 +1,13 @@
-## The clowder repo
+# The Clowder Repo
 
-A git repository cloned into the `.clowder` directory when the `clowder init` command is run. The structure contains the following files and directories:
+The "clowder repo" is a git repository cloned into the `.clowder` directory when the `clowder init` command is run
 
-| Directory/File | Description |
-|----------------|-------------|
-| `clowder.yaml` | Primary `clowder.yaml` |
-| `versions` | Contains directories of versioned `clowder.yaml` files |
-| `versions/<version>/clowder.yaml` | Versioned `clowder.yaml` files |
+ ## Primary/Default `clowder.yaml`
+
+ At the root is the primary `clowder.yaml` that is symlinked by default during `clowder init`. This file can be symlinked later be running `clowder link`
+
+## Versions
+
+A `versions` directory can contain subdirectories of versioned `clowder.yaml` files. These can be symlinked with the `clowder link -v` command
+
+For example, `versions/my_version/clowder.yaml` would by symlinked by running `clowder link -v my_version`

@@ -18,7 +18,6 @@ def remove_directory(path):
     """Remove directory at path
 
     :param str path: Path to remove
-    :return:
     """
 
     try:

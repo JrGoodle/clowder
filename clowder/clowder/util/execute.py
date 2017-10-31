@@ -21,7 +21,6 @@ def subprocess_exit_handler(process):
     """terminate subprocess
 
     :param Popen process: Popen subprocess instance
-    :return:
     """
 
     try:
@@ -33,14 +32,15 @@ def subprocess_exit_handler(process):
 def execute_subprocess_command(command, path, **kwargs):
     """Execute subprocess command
 
-    :param command: Command to run. Can be str or list of str
-    :param str path: Path to set as ``cwd``
+    .. py:function:: execute_subprocess_command(command, path, shell=True, env=None, stdout=None, stderr=None)
 
-    Keyword Args:
-        shell (bool): Whether to execute subprocess as ``shell``. Defaults to True
-        env (dict): Enviroment to set as ``env``
-        stdout (int): Value to set as ``stdout``
-        stderr (int): Value to set as ``stderr``
+    :param command: Command to run
+    :type command: str or list(str)
+    :param str path: Path to set as ``cwd``
+    :param bool shell: Whether to execute subprocess as ``shell``
+    :param dict env: Enviroment to set as ``env``
+    :param int stdout: Value to set as ``stdout``
+    :param int stderr: Value to set as ``stderr``
 
     :return: Subprocess return code
     :rtype: int
@@ -69,13 +69,14 @@ def execute_subprocess_command(command, path, **kwargs):
 def execute_command(command, path, **kwargs):
     """Execute command via thread
 
-    :param command: Command to run. Can be str or list of str
-    :param str path: Path to set as ``cwd``
+    .. py:function:: execute_command(command, path, shell=True, env=None, print_output=True)
 
-    Keyword Args:
-        shell (bool): Whether to execute subprocess as ``shell``. Defaults to True
-        env (dict): Enviroment to set as ``env``
-        print_output (bool): Whether to print output. Defaults to True
+    :param command: Command to run
+    :type command: str or list(str)
+    :param str path: Path to set as ``cwd``
+    :param bool shell: Whether to execute subprocess as ``shell``
+    :param dict env: Enviroment to set as ``env``
+    :param bool print_output: Whether to print output
 
     :return: Command return code
     :rtype: int
@@ -121,7 +122,8 @@ def execute_command(command, path, **kwargs):
 def execute_forall_command(command, path, forall_env, print_output):
     """Execute forall command with additional environment variables and display continuous output
 
-    :param command: Command to run. Can be str or list of str
+    :param command: Command to run
+    :type command: str or list(str)
     :param str path: Path to set as ``cwd``
     :param dict forall_env: Enviroment to set as ``env``
     :param bool print_output: Whether to print output

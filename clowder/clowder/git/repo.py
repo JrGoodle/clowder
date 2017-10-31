@@ -27,12 +27,11 @@ __repo_default_remote__ = 'origin'
 class GitRepo(object):
     """Class encapsulating base git utilities
 
-    Attributes:
-        repo_path (str): Absolute path to repo
-        default_ref (str): Default ref
-        remote (str): Default remote name
-        parallel (bool): Whether command is being run in parallel, affects output
-        repo (Repo): Repo instance
+    :ivar str repo_path: Absolute path to repo
+    :ivar str default_ref: Default ref
+    :ivar str remote: Default remote name
+    :ivar bool parallel: Whether command is being run in parallel, affects output
+    :ivar Repo repo: Repo instance
     """
 
     def __init__(self, repo_path, remote, default_ref, parallel=False):
@@ -55,7 +54,6 @@ class GitRepo(object):
         """Add files to git index
 
         :param str files: Files to git add
-        :return:
         """
 
         self._print(' - Add files to git index')
@@ -75,7 +73,6 @@ class GitRepo(object):
 
         :param str truncated_ref: Ref to git checkout
         :param Optional[bool] allow_failure: Whether to allow failing to checkout branch. Defaults to False
-        :return:
         """
 
         ref_output = fmt.ref_string(truncated_ref)
@@ -103,7 +100,6 @@ class GitRepo(object):
             - ``f`` Delete directories with .git sub directory or file
             - ``X`` Remove only files ignored by git
             - ``x`` Remove all untracked files
-        :return:
         """
 
         self._print(' - Clean project')
@@ -119,7 +115,6 @@ class GitRepo(object):
         """Commit current changes
 
         :param str message: Git commit message
-        :return:
         """
 
         try:
@@ -194,15 +189,12 @@ class GitRepo(object):
     def fetch(self, remote, **kwargs):
         """Fetch from a specific remote ref
 
+        .. py:function:: fetch(remote, ref=None, depth=0, remove_dir=False)
+
         :param str remote: Remote name
-
-        Keyword Args:
-            ref (str): Ref to fetch
-            depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-                Defaults to 0
-            remove_dir (bool): Whether to remove the directory if commands fail. Defaults to False
-
-        :return:
+        :param str ref: Ref to fetch
+        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :param bool remove_dir: Whether to remove the directory if commands fail
         """
 
         ref = kwargs.get('ref', None)
@@ -319,7 +311,6 @@ class GitRepo(object):
 
         :param Optional[bool] local: Print local branches. Defaults to False
         :param Optional[bool] remote: Print remote branches. Defaults to False
-        :return:
         """
 
         if local and remote:
@@ -342,7 +333,6 @@ class GitRepo(object):
         """Print validation messages
 
         :param str repo_path: Repo path
-        :return:
         """
 
         repo = GitRepo(repo_path, __repo_default_remote__, __repo_default_ref__)
@@ -355,10 +345,7 @@ class GitRepo(object):
 
     @not_detached
     def pull(self):
-        """Pull upstream changes
-
-        :return:
-        """
+        """Pull upstream changes"""
 
         try:
             self._print(' - Pull latest changes')
@@ -373,10 +360,7 @@ class GitRepo(object):
 
     @not_detached
     def push(self):
-        """Push changes
-
-        :return:
-        """
+        """Push changes"""
 
         try:
             self._print(' - Push local changes')
@@ -437,10 +421,7 @@ class GitRepo(object):
             self._exit(message, return_code=return_code)
 
     def stash(self):
-        """Stash current changes in repository
-
-        :return:
-        """
+        """Stash current changes in repository"""
 
         if not self.repo.is_dirty():
             self._print(' - No changes to stash')
@@ -453,8 +434,6 @@ class GitRepo(object):
         """Print  git status
 
         Equivalent to: ``git status``
-
-        :return:
         """
 
         self.repo.git.status()
@@ -463,8 +442,6 @@ class GitRepo(object):
         """Print git status
 
         Equivalent to: ``git status -vv``
-
-        :return:
         """
 
         command = 'git status -vv'
@@ -507,10 +484,7 @@ class GitRepo(object):
         return not self.is_dirty()
 
     def _abort_rebase(self):
-        """Abort rebase
-
-        :return:
-        """
+        """Abort rebase"""
 
         if not self._is_rebase_in_progress():
             return
@@ -529,7 +503,6 @@ class GitRepo(object):
 
         :param str branch: Branch name
         :param Optional[bool] remove_dir: Whether to remove the directory if commands fail. Defaults to False
-        :return:
         """
 
         branch_output = fmt.ref_string(branch)
@@ -555,7 +528,6 @@ class GitRepo(object):
 
         :param str branch: Branch name
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-        :return:
         """
 
         branch_output = fmt.ref_string(branch)
@@ -577,7 +549,6 @@ class GitRepo(object):
         :param str commit: Commit sha
         :param str remote: Remote name
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-        :return:
         """
 
         commit_output = fmt.ref_string(commit)
@@ -604,7 +575,6 @@ class GitRepo(object):
         :param str remote: Remote name
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
         :param Optional[bool] remove_dir: Whether to remove the directory if commands fail. Defaults to False
-        :return:
         """
 
         tag_output = fmt.ref_string(tag)
@@ -648,7 +618,6 @@ class GitRepo(object):
         """Checkout commit by sha
 
         :param str sha: Commit sha
-        :return:
         """
 
         commit_output = fmt.ref_string(sha)
@@ -670,7 +639,6 @@ class GitRepo(object):
         """Checkout commit tag is pointing to
 
         :param str tag: Tag name
-        :return:
         """
 
         tag_output = fmt.ref_string(tag)
@@ -699,7 +667,6 @@ class GitRepo(object):
         """Clean git directory
 
         :param str args: Git clean args
-        :return:
         """
 
         try:
@@ -716,7 +683,6 @@ class GitRepo(object):
         """Create local branch
 
         :param str branch: Branch name
-        :return:
         """
 
         branch_output = fmt.ref_string(branch)
@@ -735,15 +701,13 @@ class GitRepo(object):
     def _create_branch_local_tracking(self, branch, remote, depth, **kwargs):
         """Create and checkout tracking branch
 
+        .. py:function:: _create_branch_local_tracking(self, branch, remote, depth, fetch=True, remove_dir=False)
+
         :param str branch: Branch name
         :param str remote: Remote name
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-
-        Keyword Args:
-            fetch (bool): Whether to fetch before creating branch. Defaults to True
-            remove_dir (bool): Whether to remove the directory if commands fail. Defaults to False
-
-        :return:
+        :param bool fetch: Whether to fetch before creating branch
+        :param bool remove_dir: Whether to remove the directory if commands fail
         """
 
         fetch = kwargs.get('fetch', True)
@@ -782,7 +746,6 @@ class GitRepo(object):
         :param str branch: Branch name
         :param str remote: Remote name
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-        :return:
         """
 
         branch_output = fmt.ref_string(branch)
@@ -826,7 +789,6 @@ class GitRepo(object):
         :param str remote: Remote name
         :param str url: URL of repo
         :param Optional[bool] remove_dir: Whether to remove the directory if commands fail. Defaults to False
-        :return:
         """
 
         remote_names = [r.name for r in self.repo.remotes]
@@ -918,10 +880,7 @@ class GitRepo(object):
             self._exit()
 
     def _init_repo(self):
-        """Initialize repository
-
-        :return:
-        """
+        """Initialize repository"""
 
         if GitRepo.existing_git_repository(self.repo_path):
             return
@@ -1010,7 +969,6 @@ class GitRepo(object):
         """Print output if self._print_output is True
 
         :param str val: Output to print
-        :return:
         """
 
         if self._print_output:
@@ -1022,7 +980,6 @@ class GitRepo(object):
 
         :param str remote: Remote name
         :param str branch: Branch name
-        :return:
         """
 
         branch_output = fmt.ref_string(branch)
@@ -1042,7 +999,6 @@ class GitRepo(object):
 
         :param str remote: Remote name
         :param str branch: Branch name
-        :return:
         """
 
         branch_output = fmt.ref_string(branch)
@@ -1094,7 +1050,6 @@ class GitRepo(object):
 
         :param str remote_from: Name of remote to rename
         :param str remote_to: Name to rename remote to
-        :return:
         """
 
         remote_output_f = fmt.remote_string(remote_from)
@@ -1133,7 +1088,6 @@ class GitRepo(object):
         """Reset head of repo, discarding changes
 
         :param Optional[str] branch: Branch to reset head to
-        :return:
         """
 
         if branch is None:
@@ -1167,7 +1121,6 @@ class GitRepo(object):
         :param str remote: Remote name
         :param str branch: Branch name
         :param Optional[bool] remove_dir: Whether to remove the directory if commands fail. Defaults to False
-        :return:
         """
 
         branch_output = fmt.ref_string(branch)

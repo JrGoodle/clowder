@@ -17,10 +17,9 @@ from clowder.git.project_repo import ProjectRepo
 class Fork(object):
     """clowder.yaml Project model class
 
-    Attributes:
-        name (str): Project name
-        path (str): Project relative path
-        fork (Fork): Project's associated Fork
+    :ivar str name: Project name
+    :ivar str path: Project relative path
+    :ivar Fork fork: Project's associated Fork
     """
 
     def __init__(self, fork, root_directory, path, source):

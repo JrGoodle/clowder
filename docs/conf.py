@@ -21,7 +21,6 @@ import sys
 CLOWDER_DIR = os.path.join('..', 'clowder')
 sys.path.insert(0, os.path.abspath(CLOWDER_DIR))
 
-
 import clowder
 
 # -- General configuration ------------------------------------------------
@@ -29,6 +28,11 @@ import clowder
 # If your documentation needs a minimal Sphinx version, state it here.
 #
 # needs_sphinx = '1.0'
+
+# Add Markdown support
+source_parsers = {
+   '.md': 'recommonmark.parser.CommonMarkParser',
+}
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
@@ -40,9 +44,7 @@ templates_path = ['_templates']
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
-#
-# source_suffix = ['.rst', '.md']
-source_suffix = '.rst'
+source_suffix = ['.rst', '.md']
 
 # The master toctree document.
 master_doc = 'index'

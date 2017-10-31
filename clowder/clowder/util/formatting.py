@@ -27,7 +27,8 @@ def clowder_command(cmd):
 def command(cmd):
     """Return formatted command name
 
-    :param cmd: Clowder command name. Can be list of str or str
+    :param cmd: Clowder command name
+    :type cmd: str or list(str)
     :return: Formatted clowder command name
     :rtype: str
     """
@@ -39,7 +40,8 @@ def command(cmd):
 def command_failed_error(cmd):
     """Format error message for failed command
 
-    :param cmd: Clowder command name. Can be list of str or str
+    :param cmd: Clowder command name
+    :type cmd: str or list(str)
     :return: Formatted clowder command name
     :rtype: str
     """
@@ -145,7 +147,7 @@ def missing_entries_error(name, yml):
 
     :param str name: Entry name
     :param str yml: Path to yaml file
-    :return: Formatted missong ertries error
+    :return: Formatted missing entries error
     :rtype: str
     """
 
@@ -158,7 +160,7 @@ def missing_entry_error(entry, name, yml):
     :param str entry: Name of entry to check
     :param str name:  Name of entry to print if missing
     :param str yml: Path to yaml file
-    :return:
+    :return: Formatted missing entry in dictionary error
     :rtype: str
     """
 

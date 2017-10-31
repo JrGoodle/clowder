@@ -15,15 +15,14 @@ from clowder.model.project import Project
 class Group(object):
     """clowder.yaml Group model class
 
-    Attributes:
-        name (str): Group name
-        depth (int): Group depth default
-        recursive (bool): Group recursive default
-        timestamp_author (str): Group timestamp author default
-        ref (str): Group ref default
-        remote_name (str): Group remote name default
-        source (Source): Group source default
-        projects (list of Project): List of group's projects
+    :ivar str name: Group name
+    :ivar int depth: Group depth default
+    :ivar bool recursive: Group recursive default
+    :ivar str timestamp_author: Group timestamp author default
+    :ivar str ref: Group ref default
+    :ivar str remote_name: Group remote name default
+    :ivar Source source: Group source default
+    :ivar list(Project) projects: List of group's projects
     """
 
     def __init__(self, root_directory, group, defaults, sources):
@@ -32,7 +31,7 @@ class Group(object):
         :param str root_directory: Root directory of clowder projects
         :param dict group: Parsed YAML python object for group
         :param dict defaults: Parsed YAML python object for defaults
-        :param list of Source sources: List of Source instances
+        :param list(Source) sources: List of Source instances
         """
 
         self.name = group['name']
@@ -121,10 +120,7 @@ class Group(object):
         return all([project.is_valid() for project in self.projects])
 
     def print_existence_message(self):
-        """Print existence validation message for projects in group
-
-        :return:
-        """
+        """Print existence validation message for projects in group"""
 
         if self.existing_projects():
             return
@@ -136,10 +132,7 @@ class Group(object):
                 ProjectRepo.existing_git_repository(project.full_path())
 
     def print_validation(self):
-        """Print validation message for projects in group
-
-        :return:
-        """
+        """Print validation message for projects in group"""
 
         if self.is_valid():
             return

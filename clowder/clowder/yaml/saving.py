@@ -20,7 +20,6 @@ def save_yaml(yaml_output, yaml_file):
 
     :param dict yaml_output: Parsed YAML python object
     :param str yaml_file: Path to save yaml file
-    :return:
     """
 
     if os.path.isfile(yaml_file):

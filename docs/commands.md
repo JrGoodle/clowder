@@ -1,27 +1,10 @@
 # `clowder` Commands
 
-- [clowder branch](#clowder-branch)
-- [clowder checkout](#clowder-checkout)
-- [clowder clean](#clowder-clean)
-- [clowder diff](#clowder-diff)
-- [clowder forall](#clowder-forall)
-- [clowder herd](#clowder-herd)
-- [clowder init](#clowder-init)
-- [clowder link](#clowder-link)
-- [clowder prune](#clowder-prune)
-- [clowder repo](#clowder-repo)
-- [clowder reset](#clowder-reset)
-- [clowder save](#clowder-save)
-- [clowder start](#clowder-start)
-- [clowder stash](#clowder-stash)
-- [clowder status](#clowder-status)
-- [clowder sync](#clowder-sync)
-- [clowder version](#clowder-version)
-- [clowder yaml](#clowder-yaml)
-
 Examples based on the [Swift projects clowder.yaml](https://github.com/JrGoodle/swift-clowder/blob/master/clowder.yaml)
 
 ---
+
+## `clowder branch`
 
 ```bash
 # Print all local branches
@@ -41,6 +24,8 @@ $ clowder branch -p apple/swift
 ```
 
 ---
+
+## `clowder checkout`
 
 ```bash
 # Checkout branches

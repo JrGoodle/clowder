@@ -34,12 +34,9 @@ clowder
 .. toctree::
    :maxdepth: 2
 
-   Git <clowder.git>
-   Models <clowder.model>
-   Utils <clowder.util>
-   Exceptions <clowder.error>
-   YAML Utilities <clowder.yaml>
-
+   General Documentation <general_documentation>
+   Comparisons To Similar Tools <comparisons>
+   API Reference <api_reference>
 
 
 Indices and tables
