@@ -44,7 +44,6 @@ class ProjectRepoRecursive(ProjectRepo):
             - ``f`` Delete directories with .git sub directory or file
             - ``X`` Remove only files ignored by git
             - ``x`` Remove all untracked files
-        :return:
         """
 
         ProjectRepo.clean(self, args=args)
@@ -77,8 +76,6 @@ class ProjectRepoRecursive(ProjectRepo):
                 Defaults to 0
             fetch (bool): Whether to fetch. Defaults to True
             rebase (bool): Whether to use rebase instead of pulling latest changes. Defaults to False
-
-        :return:
         """
 
         depth = kwargs.get('depth', 0)
@@ -99,8 +96,6 @@ class ProjectRepoRecursive(ProjectRepo):
                 Defaults to 0
             fork_remote (str): Fork remote name
             rebase (bool): Whether to use rebase instead of pulling latest changes. Defaults to False
-
-        :return:
         """
 
         depth = kwargs.get('depth', 0)
@@ -120,8 +115,6 @@ class ProjectRepoRecursive(ProjectRepo):
             depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
                 Defaults to 0
             rebase (bool): Whether to use rebase instead of pulling latest changes. Defaults to False
-
-        :return:
         """
 
         depth = kwargs.get('depth', 0)
@@ -145,7 +138,6 @@ class ProjectRepoRecursive(ProjectRepo):
 
         :param Optional[int] depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer.
             Defaults to 0
-        :return:
         """
 
         print(' - Recursively update and init submodules')
@@ -166,7 +158,6 @@ class ProjectRepoRecursive(ProjectRepo):
 
         :param str fork_remote: Fork remote name
         :param Optional[bool] rebase: Whether to use rebase instead of pulling latest changes. Defaults to False
-        :return:
         """
 
         ProjectRepo.sync(self, fork_remote, rebase=rebase)
@@ -188,8 +179,6 @@ class ProjectRepoRecursive(ProjectRepo):
         """Clean all submodules
 
         Equivalent to: ``git submodule foreach --recursive git clean -ffdx``
-
-        :return:
         """
 
         self._submodule_command('foreach', '--recursive', 'git', 'clean', '-ffdx',
@@ -199,7 +188,6 @@ class ProjectRepoRecursive(ProjectRepo):
         """Base submodule command
 
         :param args: List of args to pass to ``git submodule`` command
-        :return:
         """
 
         try:
@@ -216,8 +204,6 @@ class ProjectRepoRecursive(ProjectRepo):
         """Reset all submodules
 
         Equivalent to: ``git submodule foreach --recursive git reset --hard``
-
-        :return:
         """
 
         self._submodule_command('foreach', '--recursive', 'git', 'reset', '--hard',
@@ -227,8 +213,6 @@ class ProjectRepoRecursive(ProjectRepo):
         """Update all submodules
 
         Equivalent to: ``git submodule update --checkout --recursive --force``
-
-        :return:
         """
 
         self._submodule_command('update', '--checkout', '--recursive', '--force',

@@ -25,7 +25,6 @@ def validate_yaml_projects_import(projects, yaml_file):
 
     :param dict projects: Parsed YAML python object for projects
     :param str yaml_file: Path to yaml file
-    :return:
     """
 
     validate_type(projects, 'projects', list, 'list', yaml_file)
@@ -49,7 +48,6 @@ def validate_yaml_projects(projects, yaml_file):
 
     :param dict projects: Parsed YAML python object for projects
     :param str yaml_file: Path to yaml file
-    :return:
     """
 
     validate_type(projects, 'projects', list, 'list', yaml_file)
@@ -72,7 +70,6 @@ def _validate_yaml_project_optional(project, yaml_file):
 
     :param dict project: Parsed YAML python object for project
     :param str yaml_file: Path to yaml file
-    :return:
     """
 
     validate_optional_string(project, 'remote', yaml_file)

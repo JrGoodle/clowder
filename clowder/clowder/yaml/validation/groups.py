@@ -29,7 +29,6 @@ def validate_yaml_groups_import(groups, yaml_file):
 
     :param dict groups: Parsed YAML python object for groups
     :param str yaml_file: Path to yaml file
-    :return:
     """
 
     validate_type(groups, 'groups', list, 'list', yaml_file)
@@ -62,7 +61,6 @@ def validate_yaml_groups(groups, yaml_file):
 
     :param dict groups: Parsed YAML python object for groups
     :param str yaml_file: Path to yaml file
-    :return:
     """
 
     validate_type(groups, 'groups', list, 'list', yaml_file)

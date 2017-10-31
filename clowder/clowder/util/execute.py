@@ -21,7 +21,6 @@ def subprocess_exit_handler(process):
     """terminate subprocess
 
     :param Popen process: Popen subprocess instance
-    :return:
     """
 
     try:

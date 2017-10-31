@@ -104,10 +104,7 @@ class Command(object):
     @valid_clowder_yaml_required
     @print_clowder_repo_status
     def branch(self):
-        """clowder branch command
-
-        :return:
-        """
+        """clowder branch command"""
 
         if self._args.all:
             self.clowder.branch(group_names=self._args.groups, project_names=self._args.projects,
@@ -132,10 +129,7 @@ class Command(object):
     @valid_clowder_yaml_required
     @print_clowder_repo_status
     def clean(self):
-        """clowder clean command
-
-        :return:
-        """
+        """clowder clean command"""
 
         if self._args.all:
             self.clowder.clean_all(group_names=self._args.groups, project_names=self._args.projects,
@@ -157,20 +151,14 @@ class Command(object):
     @valid_clowder_yaml_required
     @print_clowder_repo_status
     def diff(self):
-        """clowder diff command
-
-        :return:
-        """
+        """clowder diff command"""
 
         self.clowder.diff(group_names=self._args.groups, project_names=self._args.projects)
 
     @valid_clowder_yaml_required
     @print_clowder_repo_status
     def forall(self):
-        """clowder forall command
-
-        :return:
-        """
+        """clowder forall command"""
 
         self.clowder.forall(self._args.command[0], self._args.ignore_errors,
                             group_names=self._args.groups, project_names=self._args.projects,
@@ -180,10 +168,7 @@ class Command(object):
     @valid_clowder_yaml_required
     @print_clowder_repo_status_fetch
     def herd(self):
-        """clowder herd command
-
-        :return:
-        """
+        """clowder herd command"""
 
         branch = None if self._args.branch is None else self._args.branch[0]
         tag = None if self._args.tag is None else self._args.tag[0]
@@ -198,10 +183,7 @@ class Command(object):
 
     @network_connection_required
     def init(self):
-        """clowder init command
-
-        :return:
-        """
+        """clowder init command"""
 
         if self.clowder_repo:
             cprint('Clowder already initialized in this directory\n', 'red')
@@ -219,10 +201,7 @@ class Command(object):
     @clowder_required
     @print_clowder_repo_status
     def link(self):
-        """clowder link command
-
-        :return:
-        """
+        """clowder link command"""
 
         if self._args.version is None:
             version = None
@@ -233,10 +212,7 @@ class Command(object):
     @valid_clowder_yaml_required
     @print_clowder_repo_status
     def prune(self):
-        """clowder prune command
-
-        :return:
-        """
+        """clowder prune command"""
 
         if self._args.all:
             self._prune_all()
@@ -251,10 +227,7 @@ class Command(object):
 
     @clowder_required
     def repo(self):
-        """clowder repo command
-
-        :return:
-        """
+        """clowder repo command"""
 
         repo_command = 'repo_' + self._args.repo_command
         getattr(self, repo_command)()
@@ -262,40 +235,28 @@ class Command(object):
     @clowder_required
     @print_clowder_repo_status
     def repo_add(self):
-        """clowder repo add command
-
-        :return:
-        """
+        """clowder repo add command"""
 
         self.clowder_repo.add(self._args.files)
 
     @clowder_required
     @print_clowder_repo_status_fetch
     def repo_checkout(self):
-        """clowder repo checkout command
-
-        :return:
-        """
+        """clowder repo checkout command"""
 
         self.clowder_repo.checkout(self._args.ref[0])
 
     @clowder_required
     @print_clowder_repo_status
     def repo_clean(self):
-        """clowder repo clean command
-
-        :return:
-        """
+        """clowder repo clean command"""
 
         self.clowder_repo.clean()
 
     @clowder_required
     @print_clowder_repo_status
     def repo_commit(self):
-        """clowder repo commit command
-
-        :return:
-        """
+        """clowder repo commit command"""
 
         self.clowder_repo.commit(self._args.message[0])
 
@@ -303,10 +264,7 @@ class Command(object):
     @clowder_required
     @print_clowder_repo_status_fetch
     def repo_pull(self):
-        """clowder repo pull command
-
-        :return:
-        """
+        """clowder repo pull command"""
 
         self.clowder_repo.pull()
 
@@ -314,30 +272,21 @@ class Command(object):
     @clowder_required
     @print_clowder_repo_status_fetch
     def repo_push(self):
-        """clowder repo push command
-
-        :return:
-        """
+        """clowder repo push command"""
 
         self.clowder_repo.push()
 
     @clowder_required
     @print_clowder_repo_status
     def repo_run(self):
-        """clowder repo run command
-
-        :return:
-        """
+        """clowder repo run command"""
 
         self.clowder_repo.run_command(self._args.command[0])
 
     @clowder_required
     @print_clowder_repo_status
     def repo_status(self):
-        """clowder repo status command
-
-        :return:
-        """
+        """clowder repo status command"""
 
         self.clowder_repo.git_status()
 
@@ -345,10 +294,7 @@ class Command(object):
     @valid_clowder_yaml_required
     @print_clowder_repo_status_fetch
     def reset(self):
-        """clowder reset command
-
-        :return:
-        """
+        """clowder reset command"""
 
         timestamp_project = None
         if self. _args.timestamp:
@@ -358,10 +304,7 @@ class Command(object):
 
     @valid_clowder_yaml_required
     def save(self):
-        """clowder save command
-
-        :return:
-        """
+        """clowder save command"""
 
         if self._args.version.lower() == 'default':
             print(fmt.save_default_error(self._args.version))
@@ -373,10 +316,7 @@ class Command(object):
     @valid_clowder_yaml_required
     @print_clowder_repo_status
     def start(self):
-        """clowder start command
-
-        :return:
-        """
+        """clowder start command"""
 
         if self._args.tracking:
             self._start_tracking()
@@ -390,19 +330,13 @@ class Command(object):
     @valid_clowder_yaml_required
     @print_clowder_repo_status
     def stash(self):
-        """clowder stash command
-
-        :return:
-        """
+        """clowder stash command"""
 
         self.clowder.stash(group_names=self._args.groups, project_names=self._args.projects, skip=self._args.skip)
 
     @valid_clowder_yaml_required
     def status(self):
-        """clowder status command
-
-        :return:
-        """
+        """clowder status command"""
 
         self.clowder_repo.print_status(fetch=self._args.fetch)
 
@@ -416,10 +350,7 @@ class Command(object):
     @valid_clowder_yaml_required
     @print_clowder_repo_status_fetch
     def sync(self):
-        """clowder sync command
-
-        :return:
-        """
+        """clowder sync command"""
 
         all_fork_projects = self.clowder.get_all_fork_project_names()
         if all_fork_projects == '':
@@ -428,10 +359,7 @@ class Command(object):
         self.clowder.sync(all_fork_projects, rebase=self._args.rebase, parallel=self._args.parallel)
 
     def version(self):
-        """clowder version command
-
-        :return:
-        """
+        """clowder version command"""
 
         print('clowder version ' + self._version + '\n')
         sys.exit()
@@ -439,49 +367,34 @@ class Command(object):
     @valid_clowder_yaml_required
     @print_clowder_repo_status
     def yaml(self):
-        """clowder yaml command
-
-        :return:
-        """
+        """clowder yaml command"""
 
         self.clowder.print_yaml(self._args.resolved)
 
     @network_connection_required
     def _fetch_clowder_projects(self):
-        """fetch all projects
-
-        :return:
-        """
+        """fetch all projects"""
 
         print(' - Fetch upstream changes for projects\n')
         self.clowder.fetch(self.clowder.get_all_group_names())
 
     @network_connection_required
     def _prune_all(self):
-        """clowder prune all command
-
-        :return:
-        """
+        """clowder prune all command"""
 
         self.clowder.prune(self._args.groups, self._args.branch, project_names=self._args.projects,
                            skip=self._args.skip, force=self._args.force, local=True, remote=True)
 
     @network_connection_required
     def _prune_remote(self):
-        """clowder prune remote command
-
-        :return:
-        """
+        """clowder prune remote command"""
 
         self.clowder.prune(self._args.groups, self._args.branch, project_names=self._args.projects,
                            skip=self._args.skip, remote=True)
 
     @network_connection_required
     def _start_tracking(self):
-        """clowder start tracking command
-
-        :return:
-        """
+        """clowder start tracking command"""
 
         if self._args.projects is None:
             self.clowder.start_groups(self._args.groups, self._args.skip, self._args.branch, tracking=True)
@@ -489,10 +402,7 @@ class Command(object):
             self.clowder.start_projects(self._args.projects, self._args.skip, self._args.branch, tracking=True)
 
     def _exit_handler_formatter(self):
-        """Exit handler to display trailing newline
-
-        :return:
-        """
+        """Exit handler to display trailing newline"""
 
         if self._display_trailing_newline:
             print()
@@ -502,7 +412,6 @@ def exit_unrecognized_command(parser):
     """Print unrecognized command message and exit
 
     :param ArgumentParser parser: ArgParse parser
-    :return:
     """
 
     parser.print_help()

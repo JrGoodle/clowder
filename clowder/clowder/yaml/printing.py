@@ -18,7 +18,6 @@ def print_yaml(root_directory):
     """Print current clowder yaml
 
     :param str root_directory: Path to root directory containing clowder.yaml symlink
-    :return:
     """
 
     yaml_file = os.path.join(root_directory, 'clowder.yaml')

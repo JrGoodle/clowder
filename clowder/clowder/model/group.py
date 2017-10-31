@@ -120,10 +120,7 @@ class Group(object):
         return all([project.is_valid() for project in self.projects])
 
     def print_existence_message(self):
-        """Print existence validation message for projects in group
-
-        :return:
-        """
+        """Print existence validation message for projects in group"""
 
         if self.existing_projects():
             return
@@ -135,10 +132,7 @@ class Group(object):
                 ProjectRepo.existing_git_repository(project.full_path())
 
     def print_validation(self):
-        """Print validation message for projects in group
-
-        :return:
-        """
+        """Print validation message for projects in group"""
 
         if self.is_valid():
             return

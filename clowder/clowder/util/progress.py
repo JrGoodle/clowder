@@ -15,19 +15,13 @@ class Progress(object):
         self._bar = None
 
     def close(self):
-        """Close progress bar
-
-        :return:
-        """
+        """Close progress bar"""
 
         if self._bar:
             self._bar.close()
 
     def complete(self):
-        """Complete progress bar
-
-        :return:
-        """
+        """Complete progress bar"""
 
         if self._bar:
             if self._bar.n < self._bar.total:
@@ -37,7 +31,6 @@ class Progress(object):
         """Start progress bar
 
         :param int count: Initial count
-        :return:
         """
 
         if self._bar:
@@ -47,10 +40,7 @@ class Progress(object):
         self._bar = tqdm(total=count, unit='projects', bar_format=bar_format)
 
     def update(self):
-        """Update progress bar
-
-        :return:
-        """
+        """Update progress bar"""
 
         if self._bar:
             self._bar.update()

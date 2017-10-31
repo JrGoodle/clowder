@@ -145,7 +145,7 @@ def missing_entries_error(name, yml):
 
     :param str name: Entry name
     :param str yml: Path to yaml file
-    :return: Formatted missong ertries error
+    :return: Formatted missing entries error
     :rtype: str
     """
 
@@ -158,7 +158,7 @@ def missing_entry_error(entry, name, yml):
     :param str entry: Name of entry to check
     :param str name:  Name of entry to print if missing
     :param str yml: Path to yaml file
-    :return:
+    :return: Formatted missing entry in dictionary error
     :rtype: str
     """
 

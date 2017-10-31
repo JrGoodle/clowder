@@ -77,7 +77,6 @@ class Project(object):
 
         :param Optional[bool] local: Print local branches. Defaults to False
         :param Optional[bool] remote: Print remote branches. Defaults to False
-        :return:
         """
 
         repo = ProjectRepo(self.full_path(), self._remote, self._ref)
@@ -96,7 +95,6 @@ class Project(object):
         """Checkout branch
 
         :param str branch: Branch to check out
-        :return:
         """
 
         self._repo(self.full_path(), self._remote, self._ref, self._recursive).checkout(branch, allow_failure=True)
@@ -111,7 +109,6 @@ class Project(object):
             - ``X`` Remove only files ignored by git
             - ``x`` Remove all untracked files
         :param Optional[bool] recursive: Clean submodules recursively. Defaults to False
-        :return:
         """
 
         self._repo(self.full_path(), self._remote, self._ref, self._recursive and recursive).clean(args=args)
@@ -125,8 +122,6 @@ class Project(object):
         ``git submodule foreach --recursive git clean -ffdx``
         ``git submodule foreach --recursive git reset --hard``
         ``git submodule update --checkout --recursive --force``
-
-        :return:
         """
 
         self._repo(self.full_path(), self._remote, self._ref, self._recursive).clean(args='fdx')
@@ -136,8 +131,6 @@ class Project(object):
         """Show git diff for project
 
         Equivalent to: ``git status -vv``
-
-        :return:
         """
 
         ProjectRepo(self.full_path(), self._remote, self._ref).status_verbose()
@@ -160,10 +153,7 @@ class Project(object):
 
     @project_repo_exists
     def fetch_all(self):
-        """Fetch upstream changes if project exists on disk
-
-        :return:
-        """
+        """Fetch upstream changes if project exists on disk"""
 
         repo = ProjectRepo(self.full_path(), self._remote, self._ref)
         if self.fork is None:
@@ -240,8 +230,6 @@ class Project(object):
                 Defaults to None
             rebase (bool): Whether to use rebase instead of pulling latest changes. Defaults to False
             parallel (bool): Whether command is being run in parallel, affects output. Defaults to False
-
-        :return:
         """
 
         branch = kwargs.get('branch', None)
@@ -286,10 +274,7 @@ class Project(object):
         return ProjectRepo(self.full_path(), self._remote, self._ref).validate_repo()
 
     def print_validation(self):
-        """Print validation message for project
-
-        :return:
-        """
+        """Print validation message for project"""
 
         if not self.is_valid():
             print(self.status())
@@ -303,7 +288,6 @@ class Project(object):
         :param Optional[bool] force: Force delete branch. Defaults to False
         :param Optional[bool] local: Delete local branch. Defaults to False
         :param Optional[bool] remote: Delete remote branch. Defaults to False
-        :return:
         """
 
         if local and remote:
@@ -319,7 +303,6 @@ class Project(object):
 
         :param Optional[str] timestamp: Reset to commit at timestamp, or closest previous commit
         :param Optional[bool] parallel: Whether command is being run in parallel, affects output. Defaults to False
-        :return:
         """
 
         self._print_output = not parallel
@@ -333,7 +316,6 @@ class Project(object):
         :param str command: Command to run
         :param bool ignore_errors: Whether to exit if command returns a non-zero exit code
         :param Optional[bool] parallel: Whether command is being run in parallel, affects output. Defaults to False
-        :return:
         """
 
         if not parallel:
@@ -366,7 +348,6 @@ class Project(object):
 
         :param str branch: Local branch name to create
         :param bool tracking: Whether to create a remote branch with tracking relationship
-        :return:
         """
 
         remote = self._remote if self.fork is None else self.fork.remote_name
@@ -394,10 +375,7 @@ class Project(object):
 
     @project_repo_exists
     def stash(self):
-        """Stash changes for project if dirty
-
-        :return:
-        """
+        """Stash changes for project if dirty"""
 
         if self.is_dirty():
             ProjectRepo(self.full_path(), self._remote, self._ref).stash()
@@ -407,7 +385,6 @@ class Project(object):
 
         :param Optional[bool] rebase: Whether to use rebase instead of pulling latest changes. Defaults to False
         :param Optional[bool] parallel: Whether command is being run in parallel, affects output. Defaults to False
-        :return:
         """
 
         self._print_output = not parallel
@@ -424,7 +401,6 @@ class Project(object):
         :param str message: Branch to check for
         :param Optional[bool] parallel: Whether command is being run in parallel, affects output. Defaults to False
         :param Optional[int] return_code: Return code for sys.exit()
-        :return:
         :raise ClowderError: General ClowderError with message
         """
 
@@ -436,7 +412,6 @@ class Project(object):
         """Print output if self._print_output is True
 
         :param str val: String to print
-        :return:
         """
 
         if self._print_output:
@@ -447,7 +422,6 @@ class Project(object):
 
         :param str branch: Local branch to delete
         :param bool force: Force delete branch
-        :return:
         """
 
         repo = ProjectRepo(self.full_path(), self._remote, self._ref)
@@ -458,7 +432,6 @@ class Project(object):
         """Prune remote branch
 
         :param str branch: Remote branch to delet
-        :return:
         """
 
         remote = self._remote if self.fork is None else self.fork.remote_name
@@ -478,8 +451,6 @@ class Project(object):
         Keyword Args:
             parallel (bool): Whether command is being run in parallel
             print_output (bool): Whether to print output
-
-        :return:
         """
 
         if recursive:
@@ -491,7 +462,6 @@ class Project(object):
 
         :param ProjectRepo repo: ProjectRepo or ProjectRepoRecursive instance
         :param Optional[str] timestamp: Reset to commit at timestamp, or closest previous commit
-        :return:
         """
 
         if self.fork is None:
@@ -528,8 +498,6 @@ class Project(object):
             depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
             rebase (bool): Whether to use rebase instead of pulling latest changes
             fork_remote (str): Fork remote name
-
-        :return:
         """
 
         if self.fork is None:
