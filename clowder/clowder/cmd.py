@@ -125,7 +125,7 @@ class Command(object):
     def checkout(self):
         """clowder checkout command"""
 
-        commands.checkout(self.clowder.groups, self._args.branch, group_names=self._args.groups,
+        commands.checkout(self.clowder, self._args.branch, group_names=self._args.groups,
                           project_names=self._args.projects)
 
     @valid_clowder_yaml_required
@@ -134,7 +134,7 @@ class Command(object):
         """clowder clean command"""
 
         if self._args.all:
-            commands.clean_all(self.clowder.groups, group_names=self._args.groups,
+            commands.clean_all(self.clowder, group_names=self._args.groups,
                                project_names=self._args.projects, skip=self._args.skip)
             return
 
@@ -147,7 +147,7 @@ class Command(object):
             clean_args += 'X'
         if self._args.x:
             clean_args += 'x'
-        commands.clean(self.clowder.groups, group_names=self._args.groups, project_names=self._args.projects,
+        commands.clean(self.clowder, group_names=self._args.groups, project_names=self._args.projects,
                        skip=self._args.skip, args=clean_args, recursive=self._args.recursive)
 
     @valid_clowder_yaml_required
@@ -155,7 +155,7 @@ class Command(object):
     def diff(self):
         """clowder diff command"""
 
-        commands.diff(self.clowder.groups, group_names=self._args.groups, project_names=self._args.projects)
+        commands.diff(self.clowder, group_names=self._args.groups, project_names=self._args.projects)
 
     @valid_clowder_yaml_required
     @print_clowder_repo_status
@@ -224,7 +224,7 @@ class Command(object):
             self._prune_remote()
             return
 
-        commands.prune(self.clowder.groups, self._args.groups, self._args.branch,
+        commands.prune(self.clowder, self._args.groups, self._args.branch,
                        project_names=self._args.projects,
                        skip=self._args.skip, force=self._args.force, local=True)
 
@@ -326,16 +326,16 @@ class Command(object):
             return
 
         if self._args.projects is None:
-            commands.start_groups(self.clowder.groups, self._args.groups, self._args.skip, self._args.branch)
+            commands.start_groups(self.clowder, self._args.groups, self._args.skip, self._args.branch)
         else:
-            commands.start_projects(self.clowder.groups, self._args.projects, self._args.skip, self._args.branch)
+            commands.start_projects(self.clowder, self._args.projects, self._args.skip, self._args.branch)
 
     @valid_clowder_yaml_required
     @print_clowder_repo_status
     def stash(self):
         """clowder stash command"""
 
-        commands.stash(self.clowder.groups, group_names=self._args.groups,
+        commands.stash(self.clowder, group_names=self._args.groups,
                        project_names=self._args.projects, skip=self._args.skip)
 
     @valid_clowder_yaml_required
@@ -386,7 +386,7 @@ class Command(object):
     def _prune_all(self):
         """clowder prune all command"""
 
-        commands.prune(self.clowder.groups, self._args.groups, self._args.branch,
+        commands.prune(self.clowder, self._args.groups, self._args.branch,
                        project_names=self._args.projects, skip=self._args.skip,
                        force=self._args.force, local=True, remote=True)
 
@@ -394,7 +394,7 @@ class Command(object):
     def _prune_remote(self):
         """clowder prune remote command"""
 
-        commands.prune(self.clowder.groups, self._args.groups, self._args.branch,
+        commands.prune(self.clowder, self._args.groups, self._args.branch,
                        project_names=self._args.projects,
                        skip=self._args.skip, remote=True)
 
@@ -403,10 +403,10 @@ class Command(object):
         """clowder start tracking command"""
 
         if self._args.projects is None:
-            commands.start_groups(self.clowder.groups, self._args.groups, self._args.skip, self._args.branch,
+            commands.start_groups(self.clowder, self._args.groups, self._args.skip, self._args.branch,
                                   tracking=True)
         else:
-            commands.start_projects(self.clowder.groups, self._args.projects, self._args.skip, self._args.branch,
+            commands.start_projects(self.clowder, self._args.projects, self._args.skip, self._args.branch,
                                     tracking=True)
 
     def _exit_handler_formatter(self):
