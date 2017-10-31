@@ -108,16 +108,16 @@ class Command(object):
         """clowder branch command"""
 
         if self._args.all:
-            commands.branch(self.clowder.groups, group_names=self._args.groups, project_names=self._args.projects,
+            commands.branch(self.clowder, group_names=self._args.groups, project_names=self._args.projects,
                             skip=self._args.skip, local=True, remote=True)
             return
 
         if self._args.remote:
-            commands.branch(self.clowder.groups, group_names=self._args.groups, project_names=self._args.projects,
+            commands.branch(self.clowder, group_names=self._args.groups, project_names=self._args.projects,
                             skip=self._args.skip, remote=True)
             return
 
-        commands.branch(self.clowder.groups, group_names=self._args.groups, project_names=self._args.projects,
+        commands.branch(self.clowder, group_names=self._args.groups, project_names=self._args.projects,
                         skip=self._args.skip, local=True)
 
     @valid_clowder_yaml_required

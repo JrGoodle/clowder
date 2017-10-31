@@ -13,12 +13,12 @@ from clowder.commands.util import (
 )
 
 
-def branch(groups, group_names, **kwargs):
+def branch(clowder, group_names, **kwargs):
     """Print branches
 
     .. py:function:: branch(group_names, local=False, remote=False, project_names=None, skip=[])
 
-    :param list(Group) groups: List of all groups
+    :param ClowderController clowder: ClowderController instance
     :param list(str) group_names: Group names to print branches for
     :param bool local: Print local branches
     :param bool remote: Print remote branches
@@ -32,11 +32,11 @@ def branch(groups, group_names, **kwargs):
     remote = kwargs.get('remote', False)
 
     if project_names is None:
-        branch_groups = [g for g in groups if g.name in group_names]
+        branch_groups = [g for g in clowder.groups if g.name in group_names]
         for group in branch_groups:
             run_group_command(group, skip, 'branch', local=local, remote=remote)
         return
 
-    projects = [p for g in groups for p in g.projects if p.name in project_names]
+    projects = [p for g in clowder.groups for p in g.projects if p.name in project_names]
     for project in projects:
         run_project_command(project, skip, 'branch', local=local, remote=remote)

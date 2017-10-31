@@ -11,12 +11,12 @@ from clowder.commands.util import (
 )
 
 
-def clean(groups, group_names, **kwargs):
+def clean(clowder, group_names, **kwargs):
     """Discard changes
 
     .. py:function:: clean(group_names, args='', recursive=False, project_names=None, skip=[])
 
-    :param list(Group) groups: List of all groups
+    :param ClowderController clowder: ClowderController instance
     :param list(str) group_names: Group names to clean
     :param str args: Git clean options
         - ``d`` Remove untracked directories in addition to untracked files
@@ -34,22 +34,22 @@ def clean(groups, group_names, **kwargs):
     recursive = kwargs.get('recursive', False)
 
     if project_names is None:
-        filtered_groups = [g for g in groups if g.name in group_names]
-        for group in filtered_groups:
+        groups = [g for g in clowder.groups if g.name in group_names]
+        for group in groups:
             run_group_command(group, skip, 'clean', args=args, recursive=recursive)
         return
 
-    projects = [p for g in groups for p in g.projects if p.name in project_names]
+    projects = [p for g in clowder.groups for p in g.projects if p.name in project_names]
     for project in projects:
         run_project_command(project, skip, 'clean', args=args, recursive=recursive)
 
 
-def clean_all(groups, group_names, **kwargs):
+def clean_all(clowder, group_names, **kwargs):
     """Discard all changes
 
     .. py:function:: clean_all(group_names, project_names=None, skip=[])
 
-    :param list(Group) groups: List of all groups
+    :param ClowderController clowder: ClowderController instance
     :param list(str) group_names: Group names to clean
     :param list(str) project_names: Project names to clean
     :param list(str) skip: Project names to skip
@@ -59,11 +59,11 @@ def clean_all(groups, group_names, **kwargs):
     skip = kwargs.get('skip', [])
 
     if project_names is None:
-        filtered_groups = [g for g in groups if g.name in group_names]
-        for group in filtered_groups:
+        groups = [g for g in clowder.groups if g.name in group_names]
+        for group in groups:
             run_group_command(group, skip, 'clean_all')
         return
 
-    projects = [p for g in groups for p in g.projects if p.name in project_names]
+    projects = [p for g in clowder.groups for p in g.projects if p.name in project_names]
     for project in projects:
         run_project_command(project, skip, 'clean_all')

@@ -19,12 +19,12 @@ from clowder.commands.util import (
 )
 
 
-def prune(groups, group_names, branch, **kwargs):
+def prune(clowder, group_names, branch, **kwargs):
     """Prune branches
 
     .. py:function:: prune(group_names, local=False, remote=False, force=False, project_names=None, skip=[])
 
-    :param list(Group) groups: List of all groups
+    :param ClowderController clowder: ClowderController instance
     :param list(str) group_names: Group names to prune branches for
     :param str branch: Branch to prune
     :param bool force: Force delete branch
@@ -41,12 +41,12 @@ def prune(groups, group_names, branch, **kwargs):
     remote = kwargs.get('remote', False)
 
     if project_names is None:
-        filtered_groups = [g for g in groups if g.name in group_names]
-        validate_groups(filtered_groups)
-        _prune_groups(filtered_groups, branch, skip=skip, force=force, local=local, remote=remote)
+        groups = [g for g in clowder.groups if g.name in group_names]
+        validate_groups(groups)
+        _prune_groups(groups, branch, skip=skip, force=force, local=local, remote=remote)
         return
 
-    projects = [p for g in groups for p in g.projects if p.name in project_names]
+    projects = [p for g in clowder.groups for p in g.projects if p.name in project_names]
     validate_projects(projects)
     _prune_projects(projects, branch, skip=skip, force=force, local=local, remote=remote)
 
