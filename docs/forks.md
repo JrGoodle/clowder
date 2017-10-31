@@ -2,12 +2,6 @@
 
 `clowder` simplifies some common fork workflows. Currently, it's only possible to add one fork for a project. Forks are handled specially by certain commands
 
-- [clowder herd](#clowder-herd)
-- [clowder prune](#clowder-prune)
-- [clowder reset](#clowder-reset)
-- [clowder start](#clowder-start)
-- [clowder sync](#clowder-sync)
-
 ---
 
 ## `clowder herd`
