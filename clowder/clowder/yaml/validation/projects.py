@@ -72,11 +72,11 @@ def _validate_yaml_project_optional(project, yaml_file):
     :param str yaml_file: Path to yaml file
     """
 
-    validate_optional_string(project, 'remote', yaml_file)
-    validate_optional_bool(project, 'recursive', yaml_file)
-    validate_optional_string(project, 'timestamp_author', yaml_file)
-    validate_optional_string(project, 'source', yaml_file)
+    args = ['remote', 'source', 'timestamp_author']
+    for arg in args:
+        validate_optional_string(project, arg, yaml_file)
 
+    validate_optional_bool(project, 'recursive', yaml_file)
     validate_optional_ref(project, yaml_file)
 
     validate_depth(project, yaml_file)
