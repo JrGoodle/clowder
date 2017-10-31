@@ -29,6 +29,7 @@ def _configure_subparsers(subparsers, clowder, versions):
     """
 
     _configure_subparser_branch(subparsers, clowder)
+    _configure_subparser_checkout(subparsers, clowder)
     _configure_subparser_clean(subparsers, clowder)
     _configure_subparser_diff(subparsers, clowder)
     _configure_subparser_forall(subparsers, clowder)
@@ -81,6 +82,37 @@ def _configure_subparser_branch(subparsers, clowder):
     branch_help_projects = _options_help_message(project_names, 'projects to show branches for')
     group_branch.add_argument('--projects', '-p', choices=project_names, nargs='+', metavar='PROJECT',
                               help=branch_help_projects)
+
+
+def _configure_subparser_checkout(subparsers, clowder):
+    """Configure clowder checkout subparser and arguments
+
+    :param ArgumentParser subparsers: ArgParse ArgumentParser instance returned from ``add_subparsers()``
+    :param ClowderController clowder: ClowderController instance
+    :return:
+    """
+
+    group_names = _group_names(clowder)
+    project_names = _project_names(clowder)
+    checkout_help = 'Checkout local branch in projects'
+    parser_checkout = subparsers.add_parser('checkout', help=checkout_help)
+
+    parser_checkout.add_argument('branch', help='branch to checkout', metavar='BRANCH')
+
+    checkout_help_skip = _options_help_message(project_names, 'projects to skip')
+    parser_checkout.add_argument('--skip', '-s', choices=project_names, nargs='+', metavar='PROJECT', default=[],
+                                 help=checkout_help_skip)
+
+    group_checkout = parser_checkout.add_mutually_exclusive_group()
+
+    checkout_help_groups = _options_help_message(group_names, 'groups to checkout branches for')
+    group_checkout.add_argument('--groups', '-g', choices=group_names,
+                                default=group_names, nargs='+', metavar='GROUP',
+                                help=checkout_help_groups)
+
+    checkout_help_projects = _options_help_message(project_names, 'projects to checkout branches for')
+    group_checkout.add_argument('--projects', '-p', choices=project_names, nargs='+', metavar='PROJECT',
+                                help=checkout_help_projects)
 
 
 def _configure_subparser_clean(subparsers, clowder):

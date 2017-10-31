@@ -125,6 +125,13 @@ class Command(object):
 
     @valid_clowder_yaml_required
     @print_clowder_repo_status
+    def checkout(self):
+        """clowder checkout command"""
+
+        self.clowder.checkout(self._args.branch, group_names=self._args.groups, project_names=self._args.projects)
+
+    @valid_clowder_yaml_required
+    @print_clowder_repo_status
     def clean(self):
         """clowder clean command
 

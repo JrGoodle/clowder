@@ -182,6 +182,32 @@ class ClowderController(object):
         for project in projects:
             self._run_project_command(project, skip, 'branch', local=local, remote=remote)
 
+    def checkout(self, branch, group_names, **kwargs):
+        """Checkout branches
+
+        :param str branch: Branch to checkout
+        :param list of str group_names: Group names to checkout branches for
+
+        Keyword Args:
+            project_names (list of str): Project names to clean
+            skip (list of str): Project names to skip
+
+        :return:
+        """
+
+        project_names = kwargs.get('project_names', None)
+        skip = kwargs.get('skip', [])
+
+        if project_names is None:
+            groups = [g for g in self.groups if g.name in group_names]
+            for group in groups:
+                self._run_group_command(group, skip, 'checkout', branch)
+            return
+
+        projects = [p for g in self.groups for p in g.projects if p.name in project_names]
+        for project in projects:
+            self._run_project_command(project, skip, 'checkout', branch)
+
     def clean(self, group_names, **kwargs):
         """Discard changes
 
