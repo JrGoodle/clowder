@@ -4,10 +4,9 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 
 if [ "$1" == 'version' ]; then
     cd ..
-    OLD_VERSION=$(awk "/version='/" setup.py | sed -n -e "s/^.*version='//p" | tr -d "',")
+    OLD_VERSION=$(awk "/version='/" clowder/setup.py | sed -n -e "s/^.*version='//p" | tr -d "',")
     NEW_VERSION=$2
 
-    perl -pi -e "s/$OLD_VERSION/$NEW_VERSION/g" README.md || exit 1
     perl -pi -e "s/$OLD_VERSION/$NEW_VERSION/g" clowder/setup.py || exit 1
     perl -pi -e "s/$OLD_VERSION/$NEW_VERSION/g" clowder/clowder/cmd.py || exit 1
     perl -pi -e "s/$OLD_VERSION/$NEW_VERSION/g" docs/issue_template.md || exit 1

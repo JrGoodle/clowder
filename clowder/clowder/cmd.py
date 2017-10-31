@@ -57,7 +57,7 @@ class Command(object):
         self.clowder_repo = None
         self.versions = None
         self.invalid_yaml = False
-        self._version = '2.4.0'
+        self._version = '2.5.0'
         clowder_path = os.path.join(self.root_directory, '.clowder')
 
         # Load current clowder.yaml config if it exists
