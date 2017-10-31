@@ -102,6 +102,12 @@ class Command(object):
         return_code = self._execute_command('./branch.sh', path)
         self._exit(return_code)
 
+    def cats_checkout(self, path):
+        """clowder cats checkout tests"""
+
+        return_code = self._execute_command('./checkout.sh', path)
+        self._exit(return_code)
+
     def cats_clean(self, path):
         """clowder cats clean tests"""
 
@@ -385,6 +391,7 @@ class Command(object):
         cats_subparser = parser.add_subparsers(dest='cats_command', metavar='SUBCOMMAND')
         cats_subparser.add_parser('all', help='Run all cats tests')
         cats_subparser.add_parser('branch', help='Run cats branch tests')
+        cats_subparser.add_parser('checkout', help='Run cats checkout tests')
         cats_subparser.add_parser('clean', help='Run cats clean tests')
         cats_subparser.add_parser('diff', help='Run cats diff tests')
         cats_subparser.add_parser('forall', help='Run cats forall tests')
