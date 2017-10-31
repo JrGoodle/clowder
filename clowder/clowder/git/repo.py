@@ -189,13 +189,12 @@ class GitRepo(object):
     def fetch(self, remote, **kwargs):
         """Fetch from a specific remote ref
 
-        :param str remote: Remote name
+        .. py:function:: fetch(remote, ref=None, depth=0, remove_dir=False)
 
-        Keyword Args:
-            ref (str): Ref to fetch
-            depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-                Defaults to 0
-            remove_dir (bool): Whether to remove the directory if commands fail. Defaults to False
+        :param str remote: Remote name
+        :param str ref: Ref to fetch
+        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :param bool remove_dir: Whether to remove the directory if commands fail
         """
 
         ref = kwargs.get('ref', None)
@@ -702,13 +701,13 @@ class GitRepo(object):
     def _create_branch_local_tracking(self, branch, remote, depth, **kwargs):
         """Create and checkout tracking branch
 
+        .. py:function:: _create_branch_local_tracking(self, branch, remote, depth, fetch=True, remove_dir=False)
+
         :param str branch: Branch name
         :param str remote: Remote name
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-
-        Keyword Args:
-            fetch (bool): Whether to fetch before creating branch. Defaults to True
-            remove_dir (bool): Whether to remove the directory if commands fail. Defaults to False
+        :param bool fetch: Whether to fetch before creating branch
+        :param bool remove_dir: Whether to remove the directory if commands fail
         """
 
         fetch = kwargs.get('fetch', True)

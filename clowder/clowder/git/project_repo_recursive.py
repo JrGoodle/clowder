@@ -69,13 +69,12 @@ class ProjectRepoRecursive(ProjectRepo):
     def herd(self, url, **kwargs):
         """Herd ref
 
-        :param str url: URL of repo
+        .. py:function:: herd(url, depth=0, fetch=True, rebase=False)
 
-        Keyword Args:
-            depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-                Defaults to 0
-            fetch (bool): Whether to fetch. Defaults to True
-            rebase (bool): Whether to use rebase instead of pulling latest changes. Defaults to False
+        :param str url: URL of repo
+        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :param bool fetch: Whether to fetch
+        :param bool rebase: Whether to use rebase instead of pulling latest changes
         """
 
         depth = kwargs.get('depth', 0)
@@ -88,14 +87,13 @@ class ProjectRepoRecursive(ProjectRepo):
     def herd_branch(self, url, branch, **kwargs):
         """Herd branch
 
+        .. py:function:: herd(url, branch, depth=0, fork_remote=None, rebase=False)
+
         :param str url: URL of repo
         :param str branch: Branch name
-
-        Keyword Args:
-            depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-                Defaults to 0
-            fork_remote (str): Fork remote name
-            rebase (bool): Whether to use rebase instead of pulling latest changes. Defaults to False
+        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :param str fork_remote: Fork remote name
+        :param bool rebase: Whether to use rebase instead of pulling latest changes
         """
 
         depth = kwargs.get('depth', 0)
@@ -108,13 +106,12 @@ class ProjectRepoRecursive(ProjectRepo):
     def herd_tag(self, url, tag, **kwargs):
         """Herd tag
 
+        .. py:function:: herd_tag(url, tag, depth=0, rebase=False)
+
         :param str url: URL of repo
         :param str tag: Tag name
-
-        Keyword Args:
-            depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-                Defaults to 0
-            rebase (bool): Whether to use rebase instead of pulling latest changes. Defaults to False
+        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :param bool rebase: Whether to use rebase instead of pulling latest changes
         """
 
         depth = kwargs.get('depth', 0)
