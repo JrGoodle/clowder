@@ -16,6 +16,9 @@ import psutil
 
 import clowder.util.formatting as fmt
 from clowder.commands.util import (
+    filter_groups,
+    filter_projects_on_group_names,
+    filter_projects_on_project_names,
     print_parallel_groups_output,
     print_parallel_projects_output,
     run_group_command,
@@ -169,9 +172,9 @@ class ClowderController(object):
         parallel = kwargs.get('parallel', False)
 
         if project_names is None:
-            projects = [p for g in self.groups if g.name in group_names for p in g.projects]
+            projects = filter_projects_on_group_names(self.groups, group_names)
         else:
-            projects = [p for g in self.groups for p in g.projects if p.name in project_names]
+            projects = filter_projects_on_project_names(self.groups, project_names)
 
         if parallel:
             self._forall_parallel(command, skip, ignore_errors, projects)
@@ -276,13 +279,13 @@ class ClowderController(object):
         rebase = kwargs.get('rebase', False)
 
         if project_names is None:
-            groups = [g for g in self.groups if g.name in group_names]
+            groups = filter_groups(self.groups, group_names)
             validate_groups(groups)
             for group in groups:
                 run_group_command(group, skip, 'herd', branch=branch, tag=tag, depth=depth, rebase=rebase)
             return
 
-        projects = [p for g in self.groups for p in g.projects if p.name in project_names]
+        projects = filter_projects_on_project_names(self.groups, project_names)
         validate_projects(projects)
         for project in projects:
             run_project_command(project, skip, 'herd', branch=branch, tag=tag, depth=depth, rebase=rebase)
@@ -310,9 +313,9 @@ class ClowderController(object):
 
         print(' - Herd projects in parallel\n')
         if project_names is None:
-            groups = [g for g in self.groups if g.name in group_names]
+            groups = filter_groups(self.groups, group_names)
             validate_groups(groups)
-            projects = [p for g in self.groups if g.name in group_names for p in g.projects]
+            projects = filter_projects_on_group_names(self.groups, group_names)
             print_parallel_groups_output(groups, skip)
             for project in projects:
                 if project.name in skip:
@@ -323,7 +326,7 @@ class ClowderController(object):
             pool_handler(len(projects))
             return
 
-        projects = [p for g in self.groups for p in g.projects if p.name in project_names]
+        projects = filter_projects_on_project_names(self.groups, project_names)
         validate_projects(projects)
         print_parallel_projects_output(projects, skip)
         for project in projects:
@@ -359,13 +362,13 @@ class ClowderController(object):
         if timestamp_project:
             timestamp = self._get_timestamp(timestamp_project)
         if project_names is None:
-            groups = [g for g in self.groups if g.name in group_names]
+            groups = filter_groups(self.groups, group_names)
             validate_groups(groups)
             for group in groups:
                 run_group_command(group, skip, 'reset', timestamp=timestamp)
             return
 
-        projects = [p for g in self.groups for p in g.projects if p.name in project_names]
+        projects = filter_projects_on_project_names(self.groups, project_names)
         validate_projects(projects)
         for project in projects:
             run_project_command(project, skip, 'reset', timestamp=timestamp)
@@ -380,7 +383,7 @@ class ClowderController(object):
             Defaults to False
         """
 
-        projects = [p for g in self.groups for p in g.projects if p.name in project_names]
+        projects = filter_projects_on_project_names(self.groups, project_names)
         if parallel:
             self._sync_parallel(projects, rebase=rebase)
             return
@@ -469,9 +472,9 @@ class ClowderController(object):
             timestamp = self._get_timestamp(timestamp_project)
 
         if project_names is None:
-            groups = [g for g in self.groups if g.name in group_names]
+            groups = filter_groups(self.groups, group_names)
             validate_groups(groups)
-            projects = [p for g in self.groups if g.name in group_names for p in g.projects]
+            projects = filter_projects_on_group_names(self.groups, group_names)
             print_parallel_groups_output(groups, skip)
             for project in projects:
                 if project.name in skip:
@@ -481,7 +484,7 @@ class ClowderController(object):
             pool_handler(len(projects))
             return
 
-        projects = [p for g in self.groups for p in g.projects if p.name in project_names]
+        projects = filter_projects_on_project_names(self.groups, project_names)
         validate_projects(projects)
         print_parallel_projects_output(projects, skip)
         for project in projects:

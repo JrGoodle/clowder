@@ -6,6 +6,8 @@
 """
 
 from clowder.commands.util import (
+    filter_groups,
+    filter_projects_on_project_names,
     run_group_command,
     run_project_command
 )
@@ -34,12 +36,12 @@ def clean(clowder, group_names, **kwargs):
     recursive = kwargs.get('recursive', False)
 
     if project_names is None:
-        groups = [g for g in clowder.groups if g.name in group_names]
+        groups = filter_groups(clowder.groups, group_names)
         for group in groups:
             run_group_command(group, skip, 'clean', args=args, recursive=recursive)
         return
 
-    projects = [p for g in clowder.groups for p in g.projects if p.name in project_names]
+    projects = filter_projects_on_project_names(clowder.groups, project_names)
     for project in projects:
         run_project_command(project, skip, 'clean', args=args, recursive=recursive)
 
@@ -59,11 +61,11 @@ def clean_all(clowder, group_names, **kwargs):
     skip = kwargs.get('skip', [])
 
     if project_names is None:
-        groups = [g for g in clowder.groups if g.name in group_names]
+        groups = filter_groups(clowder.groups, group_names)
         for group in groups:
             run_group_command(group, skip, 'clean_all')
         return
 
-    projects = [p for g in clowder.groups for p in g.projects if p.name in project_names]
+    projects = filter_projects_on_project_names(clowder.groups, project_names)
     for project in projects:
         run_project_command(project, skip, 'clean_all')

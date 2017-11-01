@@ -8,6 +8,8 @@
 from __future__ import print_function
 
 from clowder.commands.util import (
+    filter_groups,
+    filter_projects_on_project_names,
     run_group_command,
     run_project_command
 )
@@ -29,11 +31,11 @@ def checkout(clowder, branch, group_names, **kwargs):
     skip = kwargs.get('skip', [])
 
     if project_names is None:
-        groups = [g for g in clowder.groups if g.name in group_names]
+        groups = filter_groups(clowder.groups, group_names)
         for group in groups:
             run_group_command(group, skip, 'checkout', branch)
         return
 
-    projects = [p for g in clowder.groups for p in g.projects if p.name in project_names]
+    projects = filter_projects_on_project_names(clowder.groups, project_names)
     for project in projects:
         run_project_command(project, skip, 'checkout', branch)

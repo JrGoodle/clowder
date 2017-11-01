@@ -38,6 +38,42 @@ def existing_branch_projects(projects, branch, is_remote):
     return any([p.existing_branch(branch, is_remote=is_remote) for p in projects])
 
 
+def filter_groups(groups, group_names):
+    """Filter groups based on given group names
+
+    :param list(Group) groups: Groups to filter
+    :param list(str) group_names: Group names to match against
+    :return: List of groups in groups matching given names
+    :rtype: list(Group)
+    """
+
+    return [g for g in groups if g.name in group_names]
+
+
+def filter_projects_on_project_names(groups, project_names):
+    """Filter projects based on given project names
+
+    :param list(Group) groups: Groups to filter
+    :param list(str) project_names: Project names to match against
+    :return: List of projects in groups matching given names
+    :rtype: list(Project)
+    """
+
+    return [p for g in groups for p in g.projects if p.name in project_names]
+
+
+def filter_projects_on_group_names(groups, group_names):
+    """Filter projects based on given group names
+
+    :param list(Group) groups: Groups to filter
+    :param list(str) group_names: Group names to match against
+    :return: List of projects in groups matching given names
+    :rtype: list(Project)
+    """
+
+    return [p for g in groups if g.name in group_names for p in g.projects]
+
+
 def print_parallel_groups_output(groups, skip):
     """Print output for parallel group command
 

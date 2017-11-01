@@ -10,6 +10,8 @@ import sys
 from termcolor import cprint
 
 from clowder.commands.util import (
+    filter_groups,
+    filter_projects_on_project_names,
     existing_branch_groups,
     existing_branch_projects,
     run_group_command,
@@ -41,12 +43,12 @@ def prune(clowder, group_names, branch, **kwargs):
     remote = kwargs.get('remote', False)
 
     if project_names is None:
-        groups = [g for g in clowder.groups if g.name in group_names]
+        groups = filter_groups(clowder.groups, group_names)
         validate_groups(groups)
         _prune_groups(groups, branch, skip=skip, force=force, local=local, remote=remote)
         return
 
-    projects = [p for g in clowder.groups for p in g.projects if p.name in project_names]
+    projects = filter_projects_on_project_names(clowder.groups, project_names)
     validate_projects(projects)
     _prune_projects(projects, branch, skip=skip, force=force, local=local, remote=remote)
 
