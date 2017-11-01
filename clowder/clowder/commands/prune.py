@@ -125,13 +125,16 @@ def _validate_branches(local, remote, local_branch_exists, remote_branch_exists)
             cprint(' - No local or remote branches to prune\n', 'red')
             sys.exit()
         print(' - Prune local and remote branches\n')
-    elif local:
-        if not local_branch_exists:
-            print(' - No local branches to prune\n')
-            sys.exit()
-        print(' - Prune local branches\n')
-    elif remote:
+        return
+
+    if remote:
         if not remote_branch_exists:
             cprint(' - No remote branches to prune\n', 'red')
             sys.exit()
         print(' - Prune remote branches\n')
+        return
+
+    if not local_branch_exists:
+        print(' - No local branches to prune\n')
+        sys.exit()
+    print(' - Prune local branches\n')
