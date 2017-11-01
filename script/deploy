@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
-
 echo "deploy"
 
 if [[ "$TRAVIS_PULL_REQUEST" != "false" ]]; then
@@ -16,7 +14,7 @@ fi
 export GITHUB_USER='JrGoodle'
 export GITHUB_REPO='clowder'
 
-cd "${TRAVIS_BUILD_DIR}" || exit 1
+cd "${TRAVIS_BUILD_DIR}/clowder" || exit 1
 
 SETUP_PY="${TRAVIS_BUILD_DIR}/clowder/setup.py"
 VERSION=$(awk "/version='/" "${SETUP_PY}" | sed -n -e "s/^.*version='//p" | tr -d "',")
@@ -31,12 +29,12 @@ else
 
     echo 'Create source distribution'
     echo '--------------------------'
-    sudo python3 clowder/setup.py sdist
+    sudo python3 setup.py sdist
     echo ''
 
     echo 'Create wheel'
     echo '------------'
-    sudo python3 clowder/setup.py bdist_wheel
+    sudo python3 setup.py bdist_wheel
     echo ''
 
     echo "Creating new tag and GitHub Release"
