@@ -15,7 +15,6 @@ import sys
 import psutil
 
 import clowder.util.formatting as fmt
-import clowder.yaml.printing as yaml_print
 from clowder.commands.util import (
     run_group_command,
     run_project_command,
@@ -240,6 +239,19 @@ class ClowderController(object):
                 'sources': sources_yaml,
                 'groups': groups_yaml}
 
+    def get_yaml_resolved(self):
+        """Return python object representation for resolved yaml
+
+        :return: YAML python object
+        :rtype: dict
+        """
+
+        groups_yaml = [g.get_yaml_resolved() for g in self.groups]
+        sources_yaml = [s.get_yaml() for s in self.sources]
+        return {'defaults': self.defaults,
+                'sources': sources_yaml,
+                'groups': groups_yaml}
+
     def herd(self, group_names, **kwargs):
         """Clone projects or update latest from upstream
 
@@ -319,18 +331,6 @@ class ClowderController(object):
                                                   callback=async_callback)
             __clowder_results__.append(result)
         pool_handler(len(projects))
-
-    def print_yaml(self, resolved):
-        """Print clowder.yaml
-
-        :param bool resolved: Print default ref rather than current commit sha
-        """
-
-        if resolved:
-            print(fmt.yaml_string(self._get_yaml_resolved()))
-        else:
-            yaml_print.print_yaml(self.root_directory)
-        sys.exit()  # exit early to prevent printing extra newline
 
     def reset(self, group_names, **kwargs):
         """Reset project branches to upstream or checkout tag/sha as detached HEAD
@@ -433,19 +433,6 @@ class ClowderController(object):
             sys.exit(1)
 
         return timestamp
-
-    def _get_yaml_resolved(self):
-        """Return python object representation for resolved yaml
-
-        :return: YAML python object
-        :rtype: dict
-        """
-
-        groups_yaml = [g.get_yaml_resolved() for g in self.groups]
-        sources_yaml = [s.get_yaml() for s in self.sources]
-        return {'defaults': self.defaults,
-                'sources': sources_yaml,
-                'groups': groups_yaml}
 
     def _load_yaml(self):
         """Load clowder.yaml"""

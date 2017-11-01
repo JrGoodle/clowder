@@ -13,3 +13,4 @@ from clowder.commands.start import (
 )
 from clowder.commands.stash import stash
 from clowder.commands.status import status
+from clowder.commands.yaml import yaml

@@ -367,7 +367,7 @@ class Command(object):
     def yaml(self):
         """clowder yaml command"""
 
-        self.clowder.print_yaml(self._args.resolved)
+        commands.yaml(self.clowder, self._args.resolved)
 
     @network_connection_required
     def _prune_all(self):
@@ -390,11 +390,10 @@ class Command(object):
         """clowder start tracking command"""
 
         if self._args.projects is None:
-            commands.start_groups(self.clowder, self._args.groups, self._args.skip, self._args.branch,
-                                  tracking=True)
-        else:
-            commands.start_projects(self.clowder, self._args.projects, self._args.skip, self._args.branch,
-                                    tracking=True)
+            commands.start_groups(self.clowder, self._args.groups, self._args.skip, self._args.branch, tracking=True)
+            return
+
+        commands.start_projects(self.clowder, self._args.projects, self._args.skip, self._args.branch, tracking=True)
 
     def _exit_handler_formatter(self):
         """Exit handler to display trailing newline"""
