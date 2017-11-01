@@ -83,13 +83,7 @@ def print_parallel_groups_output(groups, skip):
 
     for group in groups:
         print(fmt.group_name(group.name))
-        for project in group.projects:
-            if project.name in skip:
-                continue
-            print(project.status())
-            if project.fork:
-                print('  ' + fmt.fork_string(project.name))
-                print('  ' + fmt.fork_string(project.fork.name))
+        print_parallel_projects_output(group.projects, skip)
 
 
 def print_parallel_projects_output(projects, skip):
@@ -103,9 +97,7 @@ def print_parallel_projects_output(projects, skip):
         if project.name in skip:
             continue
         print(project.status())
-        if project.fork:
-            print('  ' + fmt.fork_string(project.name))
-            print('  ' + fmt.fork_string(project.fork.name))
+        _print_fork_output(project)
 
 
 def run_group_command(group, skip, command, *args, **kwargs):
@@ -185,3 +177,14 @@ def validate_projects_exist(clowder):
         herd_output = fmt.clowder_command('clowder herd')
         print('\n - First run ' + herd_output + ' to clone missing projects\n')
         sys.exit(1)
+
+
+def _print_fork_output(project):
+    """Print fork output if a fork exists
+
+    :param Project project: Project to print fork status for
+    """
+
+    if project.fork:
+        print('  ' + fmt.fork_string(project.name))
+        print('  ' + fmt.fork_string(project.fork.name))
