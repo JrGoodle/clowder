@@ -143,9 +143,11 @@ class ProjectRepo(GitRepo):
         .. py:function:: herd(url, depth=0, fetch=True, rebase=False)
 
         :param str url: URL of repo
-        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-        :param bool fetch: Whether to fetch
-        :param bool rebase: Whether to use rebase instead of pulling latest changes
+
+        Keyword Args:
+            depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+            fetch (bool): Whether to fetch
+            rebase (bool): Whether to use rebase instead of pulling latest changes
         """
 
         depth = kwargs.get('depth', 0)
@@ -167,9 +169,11 @@ class ProjectRepo(GitRepo):
 
         :param str url: URL of repo
         :param str branch: Branch name
-        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-        :param str fork_remote: Fork remote name
-        :param bool rebase: Whether to use rebase instead of pulling latest changes
+
+        Keyword Args:
+            depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+            fork_remote (str): Fork remote name
+            rebase (bool): Whether to use rebase instead of pulling latest changes
         """
 
         depth = kwargs.get('depth', 0)
@@ -220,8 +224,10 @@ class ProjectRepo(GitRepo):
 
         :param str url: URL of repo
         :param str tag: Tag name
-        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-        :param bool rebase: Whether to use rebase instead of pulling latest changes
+
+        Keyword Args:
+            depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+            rebase (bool): Whether to use rebase instead of pulling latest changes
         """
 
         depth = kwargs.get('depth', 0)
@@ -459,9 +465,11 @@ class ProjectRepo(GitRepo):
 
         :param str remote: Remote name
         :param str ref: Git ref
-        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-        :param bool fetch: Whether to fetch
-        :param bool rebase: Whether to use rebase instead of pulling latest changes
+
+        Keyword Args:
+            depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+            fetch (bool): Whether to fetch
+            rebase (bool): Whether to use rebase instead of pulling latest changes
         """
 
         depth = kwargs.get('depth', 0)
@@ -541,8 +549,10 @@ class ProjectRepo(GitRepo):
 
         :param str remote: Remote name
         :param str branch: Branch name to attempt to herd
-        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-        :param bool rebase: Whether to use rebase instead of pulling latest changes
+
+        Keyword Args:
+            depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+            rebase (bool): Whether to use rebase instead of pulling latest changes
         """
 
         depth = kwargs.get('depth', 0)

@@ -72,9 +72,11 @@ class ProjectRepoRecursive(ProjectRepo):
         .. py:function:: herd(url, depth=0, fetch=True, rebase=False)
 
         :param str url: URL of repo
-        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-        :param bool fetch: Whether to fetch
-        :param bool rebase: Whether to use rebase instead of pulling latest changes
+
+        Keyword Args:
+            depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+            fetch (bool): Whether to fetch
+            rebase (bool): Whether to use rebase instead of pulling latest changes
         """
 
         depth = kwargs.get('depth', 0)
@@ -91,9 +93,11 @@ class ProjectRepoRecursive(ProjectRepo):
 
         :param str url: URL of repo
         :param str branch: Branch name
-        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-        :param str fork_remote: Fork remote name
-        :param bool rebase: Whether to use rebase instead of pulling latest changes
+
+        Keyword Args:
+            depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+            fork_remote (str): Fork remote name
+            rebase (bool): Whether to use rebase instead of pulling latest changes
         """
 
         depth = kwargs.get('depth', 0)
@@ -110,8 +114,10 @@ class ProjectRepoRecursive(ProjectRepo):
 
         :param str url: URL of repo
         :param str tag: Tag name
-        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-        :param bool rebase: Whether to use rebase instead of pulling latest changes
+
+        Keyword Args:
+            depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+            rebase (bool): Whether to use rebase instead of pulling latest changes
         """
 
         depth = kwargs.get('depth', 0)
@@ -184,7 +190,7 @@ class ProjectRepoRecursive(ProjectRepo):
     def _submodule_command(self, *args, **kwargs):
         """Base submodule command
 
-        :param args: List of args to pass to ``git submodule`` command
+        :param *args: List of args to pass to ``git submodule`` command
         """
 
         try:

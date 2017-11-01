@@ -36,11 +36,13 @@ def execute_subprocess_command(command, path, **kwargs):
 
     :param command: Command to run
     :type command: str or list(str)
-    :param str path: Path to set as ``cwd``
-    :param bool shell: Whether to execute subprocess as ``shell``
-    :param dict env: Enviroment to set as ``env``
-    :param int stdout: Value to set as ``stdout``
-    :param int stderr: Value to set as ``stderr``
+
+    Keyword Args:
+        path (str): Path to set as ``cwd``
+        shell (bool): Whether to execute subprocess as ``shell``
+        env (dict): Enviroment to set as ``env``
+        stdout (int): Value to set as ``stdout``
+        stderr (int): Value to set as ``stderr``
 
     :return: Subprocess return code
     :rtype: int
@@ -74,9 +76,11 @@ def execute_command(command, path, **kwargs):
     :param command: Command to run
     :type command: str or list(str)
     :param str path: Path to set as ``cwd``
-    :param bool shell: Whether to execute subprocess as ``shell``
-    :param dict env: Enviroment to set as ``env``
-    :param bool print_output: Whether to print output
+
+    Keyword Args:
+        shell (bool): Whether to execute subprocess as ``shell``
+        env (dict): Enviroment to set as ``env``
+        print_output (bool): Whether to print output
 
     :return: Command return code
     :rtype: int

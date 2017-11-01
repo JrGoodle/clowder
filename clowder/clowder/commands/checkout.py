@@ -23,8 +23,10 @@ def checkout(clowder, branch, group_names, **kwargs):
     :param ClowderController clowder: ClowderController instance
     :param str branch: Branch to checkout
     :param list(str) group_names: Group names to checkout branches for
-    :param list(str) project_names: Project names to clean
-    :param list(str) skip: Project names to skip
+
+    Keyword Args:
+        project_names (list(str)): Project names to clean
+        skip (list(str)): Project names to skip
     """
 
     project_names = kwargs.get('project_names', None)

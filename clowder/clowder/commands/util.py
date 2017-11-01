@@ -106,8 +106,8 @@ def run_group_command(group, skip, command, *args, **kwargs):
     :param Group group: Group to run command for
     :param list(str) skip: Project names to skip
     :param str command: Name of method to invoke
-    :param args: List of arguments to pass to method invocation
-    :param kwargs: Dict of arguments to pass to method invocation
+    :param *args: List of arguments to pass to method invocation
+    :param **kwargs: Dict of arguments to pass to method invocation
     """
 
     print(fmt.group_name(group.name))
@@ -125,8 +125,8 @@ def run_project_command(project, skip, command, *args, **kwargs):
     :param Praject project: Project to run command for
     :param list(str) skip: Project names to skip
     :param str command: Name of method to invoke
-    :param args: List of arguments to pass to method invocation
-    :param kwargs: Dict of arguments to pass to method invocation
+    :param *args: List of arguments to pass to method invocation
+    :param **kwargs: Dict of arguments to pass to method invocation
     """
 
     print(project.status())

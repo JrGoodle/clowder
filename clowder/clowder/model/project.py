@@ -225,11 +225,12 @@ class Project(object):
 
         .. py:function:: herd(branch=None, tag=None, depth=0, rebase=False, parallel=False)
 
-        :param str branch: Branch to attempt to herd
-        :param str tag: Tag to attempt to herd
-        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-        :param bool rebase: Whether to use rebase instead of pulling latest changes
-        :param bool parallel: Whether command is being run in parallel, affects output
+        Keyword Args:
+            branch (str): Branch to attempt to herd
+            tag (str): Tag to attempt to herd
+            depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+            rebase (bool): Whether to use rebase instead of pulling latest changes
+            parallel (bool): Whether command is being run in parallel, affects output
         """
 
         branch = kwargs.get('branch', None)

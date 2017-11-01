@@ -127,9 +127,11 @@ def forall(clowder, command, ignore_errors, group_names, **kwargs):
     :param str command: Command to run
     :param bool ignore_errors: Whether to exit if command returns a non-zero exit code
     :param list(str) group_names: Group names to run command for
-    :param list(str) project_names: Project names to clean
-    :param list(str) skip: Project names to skip
-    :param bool parallel: Whether command is being run in parallel, affects output
+
+    Keyword Args:
+        project_names (list(str)): Project names to clean
+        skip list(str): Project names to skip
+        parallel bool: Whether command is being run in parallel, affects output
     """
 
     project_names = kwargs.get('project_names', None)
@@ -156,12 +158,14 @@ def herd(clowder, group_names, **kwargs):
 
     :param ClowderController clowder: ClowderController instance
     :param list(str) group_names: Group names to herd
-    :param str branch: Branch to attempt to herd
-    :param str tag: Tag to attempt to herd
-    :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-    :param bool rebase: Whether to use rebase instead of pulling latest changes. Defaults to False
-    :param list(str) project_names: Project names to herd
-    :param list(str) skip: Project names to skip
+
+    Keyword Args:
+        branch (str): Branch to attempt to herd
+        tag (str): Tag to attempt to herd
+        depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        rebase (bool): Whether to use rebase instead of pulling latest changes. Defaults to False
+        project_names (list[str]) project_names: Project names to herd
+        skip (list[str]): Project names to skip
     """
 
     project_names = kwargs.get('project_names', None)
@@ -191,12 +195,14 @@ def herd_parallel(clowder, group_names, **kwargs):
 
     :param ClowderController clowder: ClowderController instance
     :param list(str) group_names: Group names to herd
-    :param str branch: Branch to attempt to herd
-    :param str tag: Tag to attempt to herd
-    :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-    :param bool rebase: Whether to use rebase instead of pulling latest changes. Defaults to False
-    :param list(str) project_names: Project names to herd
-    :param list(str) skip: Project names to skip
+
+    Keyword Args:
+        branch (str): Branch to attempt to herd
+        tag (str): Tag to attempt to herd
+        depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        rebase (bool): Whether to use rebase instead of pulling latest changes. Defaults to False
+        project_names (list(str)): Project names to herd
+        skip (list(str)): Project names to skip
     """
 
     project_names = kwargs.get('project_names', None)
@@ -240,10 +246,12 @@ def reset(clowder, group_names, **kwargs):
 
     :param ClowderController clowder: ClowderController instance
     :param list(str) group_names: Group names to reset
-    :param str timestamp_project: Reference project to checkout commit timestamps of other projects relative to
-    :param bool parallel: Whether command is being run in parallel, affects output
-    :param list(str) project_names: Project names to reset
-    :param list(str) skip: Project names to skip
+
+    Keyword Args:
+        timestamp_project (str): Reference project to checkout commit timestamps of other projects relative to
+        parallel (bool): Whether command is being run in parallel, affects output
+        project_names (list(str)): Project names to reset
+        skip (list(str)): Project names to skip
     """
 
     project_names = kwargs.get('project_names', None)
@@ -326,9 +334,11 @@ def _reset_parallel(clowder, group_names, **kwargs):
 
     :param ClowderController clowder: ClowderController instance
     :param list(str) group_names: Group names to reset
-    :param str timestamp_project: Reference project to checkout commit timestamps of other projects relative to
-    :param list(str) project_names: Project names to reset
-    :param list(str) skip: Project names to skip
+
+    Keyword Args:
+        timestamp_project (str): Reference project to checkout commit timestamps of other projects relative to
+        project_names (list(str)): Project names to reset
+        skip (list(str)): Project names to skip
     """
 
     project_names = kwargs.get('project_names', None)

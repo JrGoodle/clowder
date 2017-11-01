@@ -36,6 +36,14 @@ clowder\.commands\.diff module
     :undoc-members:
     :show-inheritance:
 
+clowder\.commands\.parallel module
+----------------------------------
+
+.. automodule:: clowder.commands.parallel
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 clowder\.commands\.prune module
 -------------------------------
 

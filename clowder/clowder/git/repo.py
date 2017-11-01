@@ -192,9 +192,11 @@ class GitRepo(object):
         .. py:function:: fetch(remote, ref=None, depth=0, remove_dir=False)
 
         :param str remote: Remote name
-        :param str ref: Ref to fetch
-        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-        :param bool remove_dir: Whether to remove the directory if commands fail
+
+        Keyword Args:
+            ref (str): Ref to fetch
+            depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+            remove_dir (bool): Whether to remove the directory if commands fail
         """
 
         ref = kwargs.get('ref', None)
@@ -706,8 +708,10 @@ class GitRepo(object):
         :param str branch: Branch name
         :param str remote: Remote name
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-        :param bool fetch: Whether to fetch before creating branch
-        :param bool remove_dir: Whether to remove the directory if commands fail
+
+        Keyword Args:
+            fetch (bool): Whether to fetch before creating branch
+            remove_dir (bool): Whether to remove the directory if commands fail
         """
 
         fetch = kwargs.get('fetch', True)
