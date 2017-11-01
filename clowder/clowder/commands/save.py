@@ -25,15 +25,10 @@ def save(clowder, version):
 
     validate_projects_exist(clowder)
     validate_groups(clowder.groups)
-    versions_dir = os.path.join(clowder.root_directory, '.clowder', 'versions')
+
     version_name = version.replace('/', '-')  # Replace path separators with dashes
-    version_dir = os.path.join(versions_dir, version_name)
-    if not os.path.exists(version_dir):
-        try:
-            os.makedirs(version_dir)
-        except OSError as err:
-            if err.errno != os.errno.EEXIST:
-                raise
+    version_dir = os.path.join(clowder.root_directory, '.clowder', 'versions', version_name)
+    _make_dir(version_dir)
 
     yaml_file = os.path.join(version_dir, 'clowder.yaml')
     if os.path.exists(yaml_file):
@@ -42,3 +37,18 @@ def save(clowder, version):
 
     print(fmt.save_version(version_name, yaml_file))
     save_yaml(clowder.get_yaml(), yaml_file)
+
+
+def _make_dir(directory):
+    """Make directory if it doesn't exist
+
+    :param str directory: Directory path to create
+    :raise OSError:
+    """
+
+    if not os.path.exists(directory):
+        try:
+            os.makedirs(directory)
+        except OSError as err:
+            if err.errno != os.errno.EEXIST:
+                raise
