@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Clowder command controller class
+"""Clowder branch command
 
 .. codeauthor:: Joe Decapo <joe@polka.cat>
 
