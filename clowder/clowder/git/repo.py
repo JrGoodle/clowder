@@ -832,7 +832,6 @@ class GitRepo(object):
 
         :param Optional[str] message: Error message
         :param Optional[int] return_code: Return code for sys.exit()
-        :return:
         :raise ClowderGitError:
         """
 
