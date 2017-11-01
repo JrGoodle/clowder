@@ -69,36 +69,14 @@ def _prune_groups(groups, branch, **kwargs):
     local = kwargs.get('local', False)
     remote = kwargs.get('remote', False)
 
-    if local and remote:
-        local_branch_exists = existing_branch_groups(groups, branch, is_remote=False)
-        remote_branch_exists = existing_branch_groups(groups, branch, is_remote=True)
-        branch_exists = local_branch_exists or remote_branch_exists
-        if not branch_exists:
-            cprint(' - No local or remote branches to prune\n', 'red')
-            sys.exit()
+    local_branch_exists = existing_branch_groups(groups, branch, is_remote=False)
+    remote_branch_exists = existing_branch_groups(groups, branch, is_remote=True)
 
-        print(' - Prune local and remote branches\n')
-        for group in groups:
-            local_branch_exists = group.existing_branch(branch, is_remote=False)
-            remote_branch_exists = group.existing_branch(branch, is_remote=True)
-            if local_branch_exists or remote_branch_exists:
-                run_group_command(group, skip, 'prune', branch, force=force, local=True, remote=True)
-    elif local:
-        if not existing_branch_groups(groups, branch, is_remote=False):
-            print(' - No local branches to prune\n')
-            sys.exit()
+    _validate_branches(local, remote, local_branch_exists, remote_branch_exists)
 
-        for group in groups:
-            if group.existing_branch(branch, is_remote=False):
-                run_group_command(group, skip, 'prune', branch, force=force, local=True)
-    elif remote:
-        if not existing_branch_groups(groups, branch, is_remote=True):
-            cprint(' - No remote branches to prune\n', 'red')
-            sys.exit()
-
-        for group in groups:
-            if group.existing_branch(branch, is_remote=True):
-                run_group_command(group, skip, 'prune', branch, remote=True)
+    for group in groups:
+        if group.existing_branch(branch, is_remote=remote):
+            run_group_command(group, skip, 'prune', branch, force=force, local=local, remote=remote)
 
 
 def _prune_projects(projects, branch, **kwargs):
@@ -119,28 +97,39 @@ def _prune_projects(projects, branch, **kwargs):
     local = kwargs.get('local', False)
     remote = kwargs.get('remote', False)
 
+    local_branch_exists = existing_branch_projects(projects, branch, is_remote=False)
+    remote_branch_exists = existing_branch_projects(projects, branch, is_remote=True)
+
+    _validate_branches(local, remote, local_branch_exists, remote_branch_exists)
+
+    for project in projects:
+        run_project_command(project, skip, 'prune', branch, force=force, local=local, remote=remote)
+
+
+def _validate_branches(local, remote, local_branch_exists, remote_branch_exists):
+    """Prune project branches
+
+    .. py:function:: _prune_projects(projects, branch, local=False, remote=False, force=False, skip=[])
+
+    :param bool local: Delete local branch
+    :param bool remote: Delete remote branch
+    :param bool local_branch_exists: Whether a local branch exists
+    :param bool remote_branch_exists: Whether a remote branch exists
+    """
+
     if local and remote:
-        local_branch_exists = existing_branch_projects(projects, branch, is_remote=False)
-        remote_branch_exists = existing_branch_projects(projects, branch, is_remote=True)
         branch_exists = local_branch_exists or remote_branch_exists
         if not branch_exists:
             cprint(' - No local or remote branches to prune\n', 'red')
             sys.exit()
-
         print(' - Prune local and remote branches\n')
-        for project in projects:
-            run_project_command(project, skip, 'prune', branch, force=force, local=True, remote=True)
     elif local:
-        if not existing_branch_projects(projects, branch, is_remote=False):
+        if not local_branch_exists:
             print(' - No local branches to prune\n')
             sys.exit()
-
-        for project in projects:
-            run_project_command(project, skip, 'prune', branch, force=force, local=True)
+        print(' - Prune local branches\n')
     elif remote:
-        if not existing_branch_projects(projects, branch, is_remote=True):
+        if not remote_branch_exists:
             cprint(' - No remote branches to prune\n', 'red')
             sys.exit()
-
-        for project in projects:
-            run_project_command(project, skip, 'prune', branch, remote=True)
+        print(' - Prune remote branches\n')
