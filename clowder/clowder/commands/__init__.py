@@ -5,6 +5,13 @@ from clowder.commands.clean import (
     clean_all
 )
 from clowder.commands.diff import diff
+from clowder.commands.parallel import (
+    forall,
+    herd,
+    herd_parallel,
+    reset,
+    sync
+)
 from clowder.commands.prune import prune
 from clowder.commands.save import save
 from clowder.commands.start import (

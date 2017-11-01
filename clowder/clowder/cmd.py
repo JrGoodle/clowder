@@ -162,9 +162,9 @@ class Command(object):
     def forall(self):
         """clowder forall command"""
 
-        self.clowder.forall(self._args.command[0], self._args.ignore_errors,
-                            group_names=self._args.groups, project_names=self._args.projects,
-                            skip=self._args.skip, parallel=self._args.parallel)
+        commands.forall(self.clowder, self._args.command[0], self._args.ignore_errors,
+                        group_names=self._args.groups, project_names=self._args.projects,
+                        skip=self._args.skip, parallel=self._args.parallel)
 
     @network_connection_required
     @valid_clowder_yaml_required
@@ -176,12 +176,12 @@ class Command(object):
         tag = None if self._args.tag is None else self._args.tag[0]
         depth = None if self._args.depth is None else self._args.depth[0]
 
-        args = {'group_names': self._args.groups, 'project_names': self._args.projects, 'skip': self._args.skip,
-                'branch': branch, 'tag': tag, 'depth': depth, 'rebase': self._args.rebase}
+        kwargs = {'group_names': self._args.groups, 'project_names': self._args.projects, 'skip': self._args.skip,
+                  'branch': branch, 'tag': tag, 'depth': depth, 'rebase': self._args.rebase}
         if self._args.parallel:
-            self.clowder.herd_parallel(**args)
+            commands.herd_parallel(self.clowder, **kwargs)
             return
-        self.clowder.herd(**args)
+        commands.herd(self.clowder, **kwargs)
 
     @network_connection_required
     def init(self):
@@ -302,8 +302,8 @@ class Command(object):
         timestamp_project = None
         if self. _args.timestamp:
             timestamp_project = self._args.timestamp[0]
-        self.clowder.reset(group_names=self._args.groups, project_names=self._args.projects,
-                           skip=self._args.skip, timestamp_project=timestamp_project, parallel=self._args.parallel)
+        commands.reset(self.clowder, group_names=self._args.groups, project_names=self._args.projects,
+                       skip=self._args.skip, timestamp_project=timestamp_project, parallel=self._args.parallel)
 
     @valid_clowder_yaml_required
     def save(self):
@@ -354,7 +354,7 @@ class Command(object):
         if all_fork_projects == '':
             cprint(' - No forks to sync\n', 'red')
             sys.exit()
-        self.clowder.sync(all_fork_projects, rebase=self._args.rebase, parallel=self._args.parallel)
+        commands.sync(self.clowder, all_fork_projects, rebase=self._args.rebase, parallel=self._args.parallel)
 
     def version(self):
         """clowder version command"""
