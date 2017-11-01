@@ -38,7 +38,7 @@ class Project(object):
         :param dict project: Parsed YAML python object for project
         :param dict group: Parsed YAML python object for group
         :param dict defaults: Parsed YAML python object for defaults
-        :param list(Source) sources: List of Source instances
+        :param list[Source] sources: List of Source instances
         """
 
         self.name = project['name']

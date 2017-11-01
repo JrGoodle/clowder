@@ -126,11 +126,11 @@ def forall(clowder, command, ignore_errors, group_names, **kwargs):
     :param ClowderController clowder: ClowderController instance
     :param str command: Command to run
     :param bool ignore_errors: Whether to exit if command returns a non-zero exit code
-    :param list(str) group_names: Group names to run command for
+    :param list[str] group_names: Group names to run command for
 
     Keyword Args:
-        project_names (list(str)): Project names to clean
-        skip list(str): Project names to skip
+        project_names (list[str]): Project names to clean
+        skip list[str]: Project names to skip
         parallel bool: Whether command is being run in parallel, affects output
     """
 
@@ -157,7 +157,7 @@ def herd(clowder, group_names, **kwargs):
     .. py:function:: herd(group_names, branch=None, tag=None, depth=0, rebase=False, project_names=None, skip=[])
 
     :param ClowderController clowder: ClowderController instance
-    :param list(str) group_names: Group names to herd
+    :param list[str] group_names: Group names to herd
 
     Keyword Args:
         branch (str): Branch to attempt to herd
@@ -194,15 +194,15 @@ def herd_parallel(clowder, group_names, **kwargs):
     .. py:function:: herd_parallel(group_names, branch=None, tag=None, depth=0, rebase=False, project_names=None, skip=[])
 
     :param ClowderController clowder: ClowderController instance
-    :param list(str) group_names: Group names to herd
+    :param list[str] group_names: Group names to herd
 
     Keyword Args:
         branch (str): Branch to attempt to herd
         tag (str): Tag to attempt to herd
         depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
         rebase (bool): Whether to use rebase instead of pulling latest changes. Defaults to False
-        project_names (list(str)): Project names to herd
-        skip (list(str)): Project names to skip
+        project_names (list[str]): Project names to herd
+        skip (list[str]): Project names to skip
     """
 
     project_names = kwargs.get('project_names', None)
@@ -245,13 +245,13 @@ def reset(clowder, group_names, **kwargs):
     .. py:function:: reset(group_names, timestamp_project=None, parallel=False, project_names=None, skip=[])
 
     :param ClowderController clowder: ClowderController instance
-    :param list(str) group_names: Group names to reset
+    :param list[str] group_names: Group names to reset
 
     Keyword Args:
         timestamp_project (str): Reference project to checkout commit timestamps of other projects relative to
         parallel (bool): Whether command is being run in parallel, affects output
-        project_names (list(str)): Project names to reset
-        skip (list(str)): Project names to skip
+        project_names (list[str]): Project names to reset
+        skip (list[str]): Project names to skip
     """
 
     project_names = kwargs.get('project_names', None)
@@ -283,7 +283,7 @@ def sync(clowder, project_names, rebase=False, parallel=False):
     """Sync projects
 
     :param ClowderController clowder: ClowderController instance
-    :param list(str) project_names: Project names to sync
+    :param list[str] project_names: Project names to sync
     :param Optional[bool] rebase: Whether to use rebase instead of pulling latest changes.
         Defaults to False
     :param Optional[bool] parallel: Whether command is being run in parallel, affects output.
@@ -303,9 +303,9 @@ def _forall_parallel(command, skip, ignore_errors, projects):
     """Runs command or script for projects in parallel
 
     :param str command: Command to run
-    :param list(str) skip: Project names to skip
+    :param list[str] skip: Project names to skip
     :param bool ignore_errors: Whether to exit if command returns a non-zero exit code
-    :param list(Project) projects: Projects to run command for
+    :param list[Project] projects: Projects to run command for
     """
 
     print(' - Run forall commands in parallel\n')
@@ -333,12 +333,12 @@ def _reset_parallel(clowder, group_names, **kwargs):
     .. py:function:: _reset_parallel(group_names, timestamp_project=None, project_names=None, skip=[])
 
     :param ClowderController clowder: ClowderController instance
-    :param list(str) group_names: Group names to reset
+    :param list[str] group_names: Group names to reset
 
     Keyword Args:
         timestamp_project (str): Reference project to checkout commit timestamps of other projects relative to
-        project_names (list(str)): Project names to reset
-        skip (list(str)): Project names to skip
+        project_names (list[str]): Project names to reset
+        skip (list[str]): Project names to skip
     """
 
     project_names = kwargs.get('project_names', None)
@@ -377,7 +377,7 @@ def _reset_parallel(clowder, group_names, **kwargs):
 def _sync_parallel(projects, rebase=False):
     """Sync projects in parallel
 
-    :param list(Project) projects: Projects to sync
+    :param list[Project] projects: Projects to sync
     :param Optional[bool] rebase: Whether to use rebase instead of pulling latest changes. Defaults to False
     """
 

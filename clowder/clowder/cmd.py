@@ -47,7 +47,7 @@ class Command(object):
     :ivar str root_directory: Root directory of clowder projects
     :ivar ClowderController clowder: ClowderController instance
     :ivar ClowderRepo clowder_repo: ClowderRepo instance
-    :ivar list(str) versions: List of all clowder.yaml versions
+    :ivar list[str] versions: List of all clowder.yaml versions
     :ivar bool invalid_yaml: Flag indicating whether current clowder.yaml is valid or invalid
     :ivar Exception error: Error associated with invalid yaml
     """

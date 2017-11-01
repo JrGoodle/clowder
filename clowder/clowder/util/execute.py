@@ -35,7 +35,7 @@ def execute_subprocess_command(command, path, **kwargs):
     .. py:function:: execute_subprocess_command(command, path, shell=True, env=None, stdout=None, stderr=None)
 
     :param command: Command to run
-    :type command: str or list(str)
+    :type command: str or list[str]
 
     Keyword Args:
         path (str): Path to set as ``cwd``
@@ -74,7 +74,7 @@ def execute_command(command, path, **kwargs):
     .. py:function:: execute_command(command, path, shell=True, env=None, print_output=True)
 
     :param command: Command to run
-    :type command: str or list(str)
+    :type command: str or list[str]
     :param str path: Path to set as ``cwd``
 
     Keyword Args:
@@ -127,7 +127,7 @@ def execute_forall_command(command, path, forall_env, print_output):
     """Execute forall command with additional environment variables and display continuous output
 
     :param command: Command to run
-    :type command: str or list(str)
+    :type command: str or list[str]
     :param str path: Path to set as ``cwd``
     :param dict forall_env: Enviroment to set as ``env``
     :param bool print_output: Whether to print output

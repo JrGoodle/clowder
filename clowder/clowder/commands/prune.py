@@ -27,15 +27,15 @@ def prune(clowder, group_names, branch, **kwargs):
     .. py:function:: prune(group_names, local=False, remote=False, force=False, project_names=None, skip=[])
 
     :param ClowderController clowder: ClowderController instance
-    :param list(str) group_names: Group names to prune branches for
+    :param list[str] group_names: Group names to prune branches for
     :param str branch: Branch to prune
 
     Keyword Args:
         force (bool): Force delete branch
         local (bool): Delete local branch
         remote (bool): Delete remote branch
-        project_names (list(str)): Project names to prune
-        skip (list(str)): Project names to skip
+        project_names (list[str]): Project names to prune
+        skip (list[str]): Project names to skip
     """
 
     project_names = kwargs.get('project_names', None)
@@ -60,14 +60,14 @@ def _prune_groups(groups, branch, **kwargs):
 
     .. py:function:: _prune_groups(groups, branch, local=False, remote=False, force=False, skip=[])
 
-    :param list(Group) groups: Groups to prune
+    :param list[Group] groups: Groups to prune
     :param str branch: Branch to prune
 
     Keyword Args:
         force (bool): Force delete branch
         local (bool): Delete local branch
         remote (bool): Delete remote branch
-        skip (list(str)): Project names to skip
+        skip (list[str]): Project names to skip
     """
 
     skip = kwargs.get('skip', [])
@@ -90,14 +90,14 @@ def _prune_projects(projects, branch, **kwargs):
 
     .. py:function:: _prune_projects(projects, branch, local=False, remote=False, force=False, skip=[])
 
-    :param list(Project) projects: Projects to prune
+    :param list[Project] projects: Projects to prune
     :param str branch: Branch to prune
 
     Keyword Args:
         force (bool): Force delete branch
         local (bool): Delete local branch
         remote (bool): Delete remote branch
-        skip (list(str)): Project names to skip
+        skip (list[str]): Project names to skip
     """
 
     skip = kwargs.get('skip', [])

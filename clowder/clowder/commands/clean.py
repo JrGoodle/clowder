@@ -19,7 +19,7 @@ def clean(clowder, group_names, **kwargs):
     .. py:function:: clean(group_names, args='', recursive=False, project_names=None, skip=[])
 
     :param ClowderController clowder: ClowderController instance
-    :param list(str) group_names: Group names to clean
+    :param list[str] group_names: Group names to clean
 
     Keyword Args:
         args (str): Git clean options
@@ -28,8 +28,8 @@ def clean(clowder, group_names, **kwargs):
             - ``X`` Remove only files ignored by git
             - ``x`` Remove all untracked files
         recursive (bool): Clean submodules recursively
-        project_names (list(str)): Project names to clean
-        skip (list(str)): Project names to skip
+        project_names (list[str]): Project names to clean
+        skip (list[str]): Project names to skip
     """
 
     project_names = kwargs.get('project_names', None)
@@ -54,11 +54,11 @@ def clean_all(clowder, group_names, **kwargs):
     .. py:function:: clean_all(group_names, project_names=None, skip=[])
 
     :param ClowderController clowder: ClowderController instance
-    :param list(str) group_names: Group names to clean
+    :param list[str] group_names: Group names to clean
 
     Keyword Args:
-        project_names (list(str)): Project names to clean
-        skip (list(str)): Project names to skip
+        project_names (list[str]): Project names to clean
+        skip (list[str]): Project names to skip
     """
 
     project_names = kwargs.get('project_names', None)

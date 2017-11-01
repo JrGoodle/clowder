@@ -24,8 +24,8 @@ class ClowderController(object):
 
     :ivar str root_directory: Root directory of clowder projects
     :ivar dict defaults: Global clowder.yaml defaults
-    :ivar list(Group) groups: List of all Groups
-    :ivar list(Source) sources: List of all Sources
+    :ivar list[Group] groups: List of all Groups
+    :ivar list[Source] sources: List of all Sources
     """
 
     def __init__(self, root_directory):
@@ -54,7 +54,7 @@ class ClowderController(object):
         """Returns all project names containing forks
 
         :return: List of project names containing forks
-        :rtype: list(str)
+        :rtype: list[str]
         """
 
         return sorted([p.name for g in self.groups for p in g.projects if p.fork])
@@ -63,7 +63,7 @@ class ClowderController(object):
         """Returns all group names for current clowder.yaml
 
         :return: List of all group names
-        :rtype: list(str)
+        :rtype: list[str]
         """
 
         return sorted([g.name for g in self.groups])
@@ -72,7 +72,7 @@ class ClowderController(object):
         """Returns all project names for current clowder.yaml
 
         :return: List of all project names
-        :rtype: list(str)
+        :rtype: list[str]
         """
 
         return sorted([p.name for g in self.groups for p in g.projects])
@@ -81,7 +81,7 @@ class ClowderController(object):
         """Returns all project paths for current clowder.yaml
 
         :return: List of all project paths
-        :rtype: list(str)
+        :rtype: list[str]
         """
 
         return sorted([p.formatted_project_path() for g in self.groups for p in g.projects])
@@ -90,7 +90,7 @@ class ClowderController(object):
         """Return list of all saved versions
 
         :return: List of all saved version names
-        :rtype: list(str)
+        :rtype: list[str]
         """
 
         versions_dir = os.path.join(self.root_directory, '.clowder', 'versions')

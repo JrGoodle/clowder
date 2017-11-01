@@ -22,7 +22,7 @@ class Group(object):
     :ivar str ref: Group ref default
     :ivar str remote_name: Group remote name default
     :ivar Source source: Group source default
-    :ivar list(Project) projects: List of group's projects
+    :ivar list[Project] projects: List of group's projects
     """
 
     def __init__(self, root_directory, group, defaults, sources):
@@ -31,7 +31,7 @@ class Group(object):
         :param str root_directory: Root directory of clowder projects
         :param dict group: Parsed YAML python object for group
         :param dict defaults: Parsed YAML python object for defaults
-        :param list(Source) sources: List of Source instances
+        :param list[Source] sources: List of Source instances
         """
 
         self.name = group['name']

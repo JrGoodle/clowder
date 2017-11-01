@@ -17,8 +17,8 @@ def diff(clowder, group_names, project_names=None):
     """Show git diff
 
     :param ClowderController clowder: ClowderController instance
-    :param list(str) group_names: Group names to print diffs for
-    :param Optional[list(str)] project_names: Project names to print diffs for. Defaults to None
+    :param list[str] group_names: Group names to print diffs for
+    :param Optional[list[str]] project_names: Project names to print diffs for. Defaults to None
     """
 
     if project_names is None:

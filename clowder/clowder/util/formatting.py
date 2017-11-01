@@ -28,7 +28,7 @@ def command(cmd):
     """Return formatted command name
 
     :param cmd: Clowder command name
-    :type cmd: str or list(str)
+    :type cmd: str or list[str]
     :return: Formatted clowder command name
     :rtype: str
     """
@@ -41,7 +41,7 @@ def command_failed_error(cmd):
     """Format error message for failed command
 
     :param cmd: Clowder command name
-    :type cmd: str or list(str)
+    :type cmd: str or list[str]
     :return: Formatted clowder command name
     :rtype: str
     """

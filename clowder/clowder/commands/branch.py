@@ -21,13 +21,13 @@ def branch(clowder, group_names, **kwargs):
     .. py:function:: branch(group_names, local=False, remote=False, project_names=None, skip=[])
 
     :param ClowderController clowder: ClowderController instance
-    :param list(str) group_names: Group names to print branches for
+    :param list[str] group_names: Group names to print branches for
 
     Keyword Args:
         local (bool): Print local branches
         remote (bool): Print remote branches
-        project_names (list(str)): Project names to print branches for
-        skip (list(str)): Project names to skip
+        project_names (list[str]): Project names to print branches for
+        skip (list[str]): Project names to skip
     """
 
     project_names = kwargs.get('project_names', None)
