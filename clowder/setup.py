@@ -24,6 +24,7 @@ setup(
         'Programming Language :: Python :: 3.6'
     ],
     packages=['clowder',
+              'clowder.commands',
               'clowder.error',
               'clowder.git',
               'clowder.model',

@@ -28,48 +28,18 @@ All of these have their own approach, but many are based on submodules or subtre
 
 The primary purpose of `clowder` is synchronization of multiple repositories, so normal development still takes place in individual repositories with the usual `git` commands
 
-# Getting Started
-
-## Requirements
-
-- [git](https://git-scm.com)
-- [Python 3](https://www.python.org/downloads/)
-
-### macOS
-
-macOS comes with `git` preinstalled. To install Python 3 with [Homebrew](https://brew.sh)
-
-```bash
-$ brew install python3
-```
-
-### Ubuntu 16.04
-
-```bash
-$ sudo apt install git
-$ sudo apt install python3-pip
-```
-
-### Windows
-
-Currently `clowder` has only been tested on Windows with [Cygwin](https://cygwin.com/install.html). The following dependencies should be installed
-
-- git
-- python3-pip
-- python3
-
-## Installation
+# Installation
 
 To install `clowder` from PyPI
 
 ```bash
-$ sudo pip3 install clowder-repo
+$ sudo pip install clowder-repo
 ```
 
 To upgrade to the latest version
 
 ```bash
-$ sudo pip3 install clowder-repo --upgrade
+$ sudo pip install clowder-repo --upgrade
 ```
 
 For terminal autocompletion add the following line to your bash profile
@@ -164,6 +134,6 @@ for a description of the structure of the clowder repo cloned in the `.clowder` 
 See the [forks doc](https://github.com/JrGoodle/clowder/blob/master/docs/forks.md)
 for a description of the behavior of `clowder` commands with forks
 
-## Development
+# Development
 
 See [CONTRIBUTING.md](https://github.com/JrGoodle/clowder/blob/master/CONTRIBUTING.md) for information on setting up your environment for development and for contribution guidelines

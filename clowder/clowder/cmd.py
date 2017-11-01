@@ -16,6 +16,7 @@ import argcomplete
 import colorama
 from termcolor import cprint, colored
 
+import clowder.commands as commands
 import clowder.util.formatting as fmt
 from clowder.clowder_controller import ClowderController
 from clowder.clowder_repo import ClowderRepo
@@ -46,7 +47,7 @@ class Command(object):
     :ivar str root_directory: Root directory of clowder projects
     :ivar ClowderController clowder: ClowderController instance
     :ivar ClowderRepo clowder_repo: ClowderRepo instance
-    :ivar list(str) versions: List of all clowder.yaml versions
+    :ivar list[str] versions: List of all clowder.yaml versions
     :ivar bool invalid_yaml: Flag indicating whether current clowder.yaml is valid or invalid
     :ivar Exception error: Error associated with invalid yaml
     """
@@ -107,24 +108,25 @@ class Command(object):
         """clowder branch command"""
 
         if self._args.all:
-            self.clowder.branch(group_names=self._args.groups, project_names=self._args.projects,
-                                skip=self._args.skip, local=True, remote=True)
+            commands.branch(self.clowder, group_names=self._args.groups, project_names=self._args.projects,
+                            skip=self._args.skip, local=True, remote=True)
             return
 
         if self._args.remote:
-            self.clowder.branch(group_names=self._args.groups, project_names=self._args.projects,
-                                skip=self._args.skip, remote=True)
+            commands.branch(self.clowder, group_names=self._args.groups, project_names=self._args.projects,
+                            skip=self._args.skip, remote=True)
             return
 
-        self.clowder.branch(group_names=self._args.groups, project_names=self._args.projects,
-                            skip=self._args.skip, local=True)
+        commands.branch(self.clowder, group_names=self._args.groups, project_names=self._args.projects,
+                        skip=self._args.skip, local=True)
 
     @valid_clowder_yaml_required
     @print_clowder_repo_status
     def checkout(self):
         """clowder checkout command"""
 
-        self.clowder.checkout(self._args.branch, group_names=self._args.groups, project_names=self._args.projects)
+        commands.checkout(self.clowder, self._args.branch, group_names=self._args.groups,
+                          project_names=self._args.projects)
 
     @valid_clowder_yaml_required
     @print_clowder_repo_status
@@ -132,8 +134,8 @@ class Command(object):
         """clowder clean command"""
 
         if self._args.all:
-            self.clowder.clean_all(group_names=self._args.groups, project_names=self._args.projects,
-                                   skip=self._args.skip)
+            commands.clean_all(self.clowder, group_names=self._args.groups,
+                               project_names=self._args.projects, skip=self._args.skip)
             return
 
         clean_args = ''
@@ -145,24 +147,24 @@ class Command(object):
             clean_args += 'X'
         if self._args.x:
             clean_args += 'x'
-        self.clowder.clean(group_names=self._args.groups, project_names=self._args.projects,
-                           skip=self._args.skip, args=clean_args, recursive=self._args.recursive)
+        commands.clean(self.clowder, group_names=self._args.groups, project_names=self._args.projects,
+                       skip=self._args.skip, args=clean_args, recursive=self._args.recursive)
 
     @valid_clowder_yaml_required
     @print_clowder_repo_status
     def diff(self):
         """clowder diff command"""
 
-        self.clowder.diff(group_names=self._args.groups, project_names=self._args.projects)
+        commands.diff(self.clowder, group_names=self._args.groups, project_names=self._args.projects)
 
     @valid_clowder_yaml_required
     @print_clowder_repo_status
     def forall(self):
         """clowder forall command"""
 
-        self.clowder.forall(self._args.command[0], self._args.ignore_errors,
-                            group_names=self._args.groups, project_names=self._args.projects,
-                            skip=self._args.skip, parallel=self._args.parallel)
+        commands.forall(self.clowder, self._args.command[0], self._args.ignore_errors,
+                        group_names=self._args.groups, project_names=self._args.projects,
+                        skip=self._args.skip, parallel=self._args.parallel)
 
     @network_connection_required
     @valid_clowder_yaml_required
@@ -174,12 +176,12 @@ class Command(object):
         tag = None if self._args.tag is None else self._args.tag[0]
         depth = None if self._args.depth is None else self._args.depth[0]
 
-        args = {'group_names': self._args.groups, 'project_names': self._args.projects, 'skip': self._args.skip,
-                'branch': branch, 'tag': tag, 'depth': depth, 'rebase': self._args.rebase}
+        kwargs = {'group_names': self._args.groups, 'project_names': self._args.projects, 'skip': self._args.skip,
+                  'branch': branch, 'tag': tag, 'depth': depth, 'rebase': self._args.rebase}
         if self._args.parallel:
-            self.clowder.herd_parallel(**args)
+            commands.herd_parallel(self.clowder, **kwargs)
             return
-        self.clowder.herd(**args)
+        commands.herd(self.clowder, **kwargs)
 
     @network_connection_required
     def init(self):
@@ -222,8 +224,9 @@ class Command(object):
             self._prune_remote()
             return
 
-        self.clowder.prune(self._args.groups, self._args.branch, project_names=self._args.projects,
-                           skip=self._args.skip, force=self._args.force, local=True)
+        commands.prune(self.clowder, self._args.groups, self._args.branch,
+                       project_names=self._args.projects,
+                       skip=self._args.skip, force=self._args.force, local=True)
 
     @clowder_required
     def repo(self):
@@ -299,8 +302,8 @@ class Command(object):
         timestamp_project = None
         if self. _args.timestamp:
             timestamp_project = self._args.timestamp[0]
-        self.clowder.reset(group_names=self._args.groups, project_names=self._args.projects,
-                           skip=self._args.skip, timestamp_project=timestamp_project, parallel=self._args.parallel)
+        commands.reset(self.clowder, group_names=self._args.groups, project_names=self._args.projects,
+                       skip=self._args.skip, timestamp_project=timestamp_project, parallel=self._args.parallel)
 
     @valid_clowder_yaml_required
     def save(self):
@@ -311,7 +314,7 @@ class Command(object):
             sys.exit(1)
 
         self.clowder_repo.print_status()
-        self.clowder.save_version(self._args.version)
+        commands.save(self.clowder, self._args.version)
 
     @valid_clowder_yaml_required
     @print_clowder_repo_status
@@ -323,28 +326,23 @@ class Command(object):
             return
 
         if self._args.projects is None:
-            self.clowder.start_groups(self._args.groups, self._args.skip, self._args.branch)
+            commands.start_groups(self.clowder, self._args.groups, self._args.skip, self._args.branch)
         else:
-            self.clowder.start_projects(self._args.projects, self._args.skip, self._args.branch)
+            commands.start_projects(self.clowder, self._args.projects, self._args.skip, self._args.branch)
 
     @valid_clowder_yaml_required
     @print_clowder_repo_status
     def stash(self):
         """clowder stash command"""
 
-        self.clowder.stash(group_names=self._args.groups, project_names=self._args.projects, skip=self._args.skip)
+        commands.stash(self.clowder, group_names=self._args.groups,
+                       project_names=self._args.projects, skip=self._args.skip)
 
     @valid_clowder_yaml_required
     def status(self):
         """clowder status command"""
 
-        self.clowder_repo.print_status(fetch=self._args.fetch)
-
-        if self._args.fetch:
-            self._fetch_clowder_projects()
-
-        padding = len(max(self.clowder.get_all_project_paths(), key=len))
-        self.clowder.status(self.clowder.get_all_group_names(), padding)
+        commands.status(self.clowder_repo, self.clowder, self._args.fetch)
 
     @network_connection_required
     @valid_clowder_yaml_required
@@ -356,7 +354,7 @@ class Command(object):
         if all_fork_projects == '':
             cprint(' - No forks to sync\n', 'red')
             sys.exit()
-        self.clowder.sync(all_fork_projects, rebase=self._args.rebase, parallel=self._args.parallel)
+        commands.sync(self.clowder, all_fork_projects, rebase=self._args.rebase, parallel=self._args.parallel)
 
     def version(self):
         """clowder version command"""
@@ -369,37 +367,33 @@ class Command(object):
     def yaml(self):
         """clowder yaml command"""
 
-        self.clowder.print_yaml(self._args.resolved)
-
-    @network_connection_required
-    def _fetch_clowder_projects(self):
-        """fetch all projects"""
-
-        print(' - Fetch upstream changes for projects\n')
-        self.clowder.fetch(self.clowder.get_all_group_names())
+        commands.yaml(self.clowder, self._args.resolved)
 
     @network_connection_required
     def _prune_all(self):
         """clowder prune all command"""
 
-        self.clowder.prune(self._args.groups, self._args.branch, project_names=self._args.projects,
-                           skip=self._args.skip, force=self._args.force, local=True, remote=True)
+        commands.prune(self.clowder, self._args.groups, self._args.branch,
+                       project_names=self._args.projects, skip=self._args.skip,
+                       force=self._args.force, local=True, remote=True)
 
     @network_connection_required
     def _prune_remote(self):
         """clowder prune remote command"""
 
-        self.clowder.prune(self._args.groups, self._args.branch, project_names=self._args.projects,
-                           skip=self._args.skip, remote=True)
+        commands.prune(self.clowder, self._args.groups, self._args.branch,
+                       project_names=self._args.projects,
+                       skip=self._args.skip, remote=True)
 
     @network_connection_required
     def _start_tracking(self):
         """clowder start tracking command"""
 
         if self._args.projects is None:
-            self.clowder.start_groups(self._args.groups, self._args.skip, self._args.branch, tracking=True)
-        else:
-            self.clowder.start_projects(self._args.projects, self._args.skip, self._args.branch, tracking=True)
+            commands.start_groups(self.clowder, self._args.groups, self._args.skip, self._args.branch, tracking=True)
+            return
+
+        commands.start_projects(self.clowder, self._args.projects, self._args.skip, self._args.branch, tracking=True)
 
     def _exit_handler_formatter(self):
         """Exit handler to display trailing newline"""
