@@ -503,11 +503,7 @@ class ClowderController(object):
         """
 
         print(' - Sync forks in parallel\n')
-        for project in projects:
-            print(project.status())
-            if project.fork:
-                print('  ' + fmt.fork_string(project.name))
-                print('  ' + fmt.fork_string(project.fork.name))
+        print_parallel_projects_output(projects, [])
 
         for project in projects:
             result = __clowder_pool__.apply_async(sync_project, args=(project, rebase), callback=async_callback)
