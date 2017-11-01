@@ -16,7 +16,6 @@ import psutil
 
 import clowder.util.formatting as fmt
 import clowder.yaml.printing as yaml_print
-import clowder.yaml.saving as yaml_save
 from clowder.commands.util import (
     run_group_command,
     run_project_command,
@@ -150,16 +149,6 @@ class ClowderController(object):
             sys.exit(1)
         else:
             self._load_yaml()
-
-    def fetch(self, group_names):
-        """Fetch groups
-
-        :param list(str) group_names: Group names to fetch
-        """
-
-        groups = [g for g in self.groups if g.name in group_names]
-        for group in groups:
-            run_group_command(group, [], 'fetch_all')
 
     def forall(self, command, ignore_errors, group_names, **kwargs):
         """Runs command or script in project directories specified
@@ -379,19 +368,6 @@ class ClowderController(object):
         for project in projects:
             run_project_command(project, skip, 'reset', timestamp=timestamp)
 
-    def status(self, group_names, padding):
-        """Print status for groups
-
-        :param list(str) group_names: Group names to print status for
-        :param int padding: Amount of padding to use for printing project on left and current ref on right
-        """
-
-        groups = [g for g in self.groups if g.name in group_names]
-        for group in groups:
-            print(fmt.group_name(group.name))
-            for project in group.projects:
-                print(project.status(padding=padding))
-
     def sync(self, project_names, rebase=False, parallel=False):
         """Sync projects
 
@@ -409,26 +385,6 @@ class ClowderController(object):
 
         for project in projects:
             project.sync(rebase=rebase)
-
-    def _fetch_groups(self, group_names):
-        """Fetch all projects for specified groups
-
-        :param list(str) group_names: Group names to fetch
-        """
-
-        groups = [g for g in self.groups if g.name in group_names]
-        for group in groups:
-            group.fetch_all()
-
-    def _fetch_projects(self, project_names):
-        """Fetch specified projects
-
-        :param list(str) project_names: Project names to fetch
-        """
-
-        projects = [p for g in self.groups for p in g.projects if p.name in project_names]
-        for project in projects:
-            project.fetch_all()
 
     @staticmethod
     def _forall_parallel(command, skip, ignore_errors, projects):

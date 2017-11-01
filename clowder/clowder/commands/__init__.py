@@ -12,3 +12,4 @@ from clowder.commands.start import (
     start_projects
 )
 from clowder.commands.stash import stash
+from clowder.commands.status import status

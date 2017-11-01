@@ -342,13 +342,7 @@ class Command(object):
     def status(self):
         """clowder status command"""
 
-        self.clowder_repo.print_status(fetch=self._args.fetch)
-
-        if self._args.fetch:
-            self._fetch_clowder_projects()
-
-        padding = len(max(self.clowder.get_all_project_paths(), key=len))
-        self.clowder.status(self.clowder.get_all_group_names(), padding)
+        commands.status(self.clowder_repo, self.clowder, self._args.fetch)
 
     @network_connection_required
     @valid_clowder_yaml_required
@@ -374,13 +368,6 @@ class Command(object):
         """clowder yaml command"""
 
         self.clowder.print_yaml(self._args.resolved)
-
-    @network_connection_required
-    def _fetch_clowder_projects(self):
-        """fetch all projects"""
-
-        print(' - Fetch upstream changes for projects\n')
-        self.clowder.fetch(self.clowder.get_all_group_names())
 
     @network_connection_required
     def _prune_all(self):
