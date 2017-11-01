@@ -16,6 +16,8 @@ import psutil
 
 import clowder.util.formatting as fmt
 from clowder.commands.util import (
+    print_parallel_groups_output,
+    print_parallel_projects_output,
     run_group_command,
     run_project_command,
     validate_groups,
@@ -311,7 +313,7 @@ class ClowderController(object):
             groups = [g for g in self.groups if g.name in group_names]
             validate_groups(groups)
             projects = [p for g in self.groups if g.name in group_names for p in g.projects]
-            self._print_parallel_groups_output(groups, skip)
+            print_parallel_groups_output(groups, skip)
             for project in projects:
                 if project.name in skip:
                     continue
@@ -323,7 +325,7 @@ class ClowderController(object):
 
         projects = [p for g in self.groups for p in g.projects if p.name in project_names]
         validate_projects(projects)
-        self._print_parallel_projects_output(projects, skip)
+        print_parallel_projects_output(projects, skip)
         for project in projects:
             if project.name in skip:
                 continue
@@ -446,40 +448,6 @@ class ClowderController(object):
         for group in yaml['groups']:
             self.groups.append(Group(self.root_directory, group, self.defaults, self.sources))
 
-    @staticmethod
-    def _print_parallel_groups_output(groups, skip):
-        """Print output for parallel group command
-
-        :param list(Group) groups: Groups to print output for
-        :param list(str) skip: Project names to skip
-        """
-
-        for group in groups:
-            print(fmt.group_name(group.name))
-            for project in group.projects:
-                if project.name in skip:
-                    continue
-                print(project.status())
-                if project.fork:
-                    print('  ' + fmt.fork_string(project.name))
-                    print('  ' + fmt.fork_string(project.fork.name))
-
-    @staticmethod
-    def _print_parallel_projects_output(projects, skip):
-        """Print output for parallel project command
-
-        :param list(Project) projects: Projects to print output for
-        :param list(str) skip: Project names to skip
-        """
-
-        for project in projects:
-            if project.name in skip:
-                continue
-            print(project.status())
-            if project.fork:
-                print('  ' + fmt.fork_string(project.name))
-                print('  ' + fmt.fork_string(project.fork.name))
-
     def _reset_parallel(self, group_names, **kwargs):
         """Reset project branches to upstream or checkout tag/sha as detached HEAD in parallel
 
@@ -504,7 +472,7 @@ class ClowderController(object):
             groups = [g for g in self.groups if g.name in group_names]
             validate_groups(groups)
             projects = [p for g in self.groups if g.name in group_names for p in g.projects]
-            self._print_parallel_groups_output(groups, skip)
+            print_parallel_groups_output(groups, skip)
             for project in projects:
                 if project.name in skip:
                     continue
@@ -515,7 +483,7 @@ class ClowderController(object):
 
         projects = [p for g in self.groups for p in g.projects if p.name in project_names]
         validate_projects(projects)
-        self._print_parallel_projects_output(projects, skip)
+        print_parallel_projects_output(projects, skip)
         for project in projects:
             if project.name in skip:
                 continue

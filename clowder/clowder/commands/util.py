@@ -38,6 +38,40 @@ def existing_branch_projects(projects, branch, is_remote):
     return any([p.existing_branch(branch, is_remote=is_remote) for p in projects])
 
 
+def print_parallel_groups_output(groups, skip):
+    """Print output for parallel group command
+
+    :param list(Group) groups: Groups to print output for
+    :param list(str) skip: Project names to skip
+    """
+
+    for group in groups:
+        print(fmt.group_name(group.name))
+        for project in group.projects:
+            if project.name in skip:
+                continue
+            print(project.status())
+            if project.fork:
+                print('  ' + fmt.fork_string(project.name))
+                print('  ' + fmt.fork_string(project.fork.name))
+
+
+def print_parallel_projects_output(projects, skip):
+    """Print output for parallel project command
+
+    :param list(Project) projects: Projects to print output for
+    :param list(str) skip: Project names to skip
+    """
+
+    for project in projects:
+        if project.name in skip:
+            continue
+        print(project.status())
+        if project.fork:
+            print('  ' + fmt.fork_string(project.name))
+            print('  ' + fmt.fork_string(project.fork.name))
+
+
 def run_group_command(group, skip, command, *args, **kwargs):
     """Run group command and print output
 
