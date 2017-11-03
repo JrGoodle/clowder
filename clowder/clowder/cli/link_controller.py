@@ -5,14 +5,16 @@
 
 """
 
+import os
+
 from cement.ext.ext_argparse import ArgparseController, expose
 
-from clowder.cli.globals import CLOWDER_REPO
 from clowder.cli.util import (
     get_saved_version_names,
     options_help_message
 )
-from clowder.util.decorators import (
+from clowder.clowder_repo import (
+    CLOWDER_REPO,
     clowder_required,
     print_clowder_repo_status
 )

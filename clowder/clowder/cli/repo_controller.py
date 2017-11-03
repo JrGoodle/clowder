@@ -5,15 +5,17 @@
 
 """
 
+import os
+
 from cement.ext.ext_argparse import ArgparseController, expose
 
-from clowder.cli.globals import CLOWDER_REPO
-from clowder.util.decorators import (
+from clowder.clowder_repo import (
+    CLOWDER_REPO,
     clowder_required,
     print_clowder_repo_status,
-    print_clowder_repo_status_fetch,
-    network_connection_required
+    print_clowder_repo_status_fetch
 )
+from clowder.util.decorators import network_connection_required
 
 
 class RepoController(ArgparseController):

@@ -5,12 +5,13 @@
 
 """
 
+import os
 import sys
 
 from cement.ext.ext_argparse import ArgparseController, expose
 from termcolor import colored, cprint
 
-from clowder.cli.globals import CLOWDER_REPO
+from clowder.clowder_repo import CLOWDER_REPO
 from clowder.util.decorators import network_connection_required
 
 
@@ -33,7 +34,7 @@ class InitController(ArgparseController):
 
     @network_connection_required
     def _init(self):
-        if CLOWDER_REPO:
+        if os.path.isdir(CLOWDER_REPO.clowder_path):
             cprint('Clowder already initialized in this directory\n', 'red')
             sys.exit(1)
 

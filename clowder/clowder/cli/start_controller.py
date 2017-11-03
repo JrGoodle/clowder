@@ -7,6 +7,10 @@
 
 from cement.ext.ext_argparse import ArgparseController, expose
 
+from clowder.clowder_repo import (
+    print_clowder_repo_status,
+    valid_clowder_yaml_required
+)
 from clowder.cli.globals import CLOWDER_CONTROLLER
 from clowder.commands.util import (
     filter_groups,
@@ -16,11 +20,7 @@ from clowder.commands.util import (
     validate_groups,
     validate_projects
 )
-from clowder.util.decorators import (
-    print_clowder_repo_status,
-    network_connection_required,
-    valid_clowder_yaml_required
-)
+from clowder.util.decorators import network_connection_required
 
 
 class StartController(ArgparseController):

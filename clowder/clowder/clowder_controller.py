@@ -7,16 +7,13 @@
 
 from __future__ import print_function
 
-import os
 import sys
 
 from termcolor import cprint
 
-from clowder.error.clowder_error import ClowderError
 from clowder.model.group import Group
 from clowder.model.source import Source
 from clowder.yaml.loading import load_yaml
-from clowder.yaml.validating import validate_yaml
 
 
 class ClowderController(object):
@@ -39,18 +36,11 @@ class ClowderController(object):
         self.groups = []
         self.sources = []
         self._max_import_depth = 10
-        self.is_yaml_valid = False
-        self.err = None
 
         try:
-            validate_yaml(os.path.join(self.root_directory, 'clowder.yaml'), self.root_directory)
-        except ClowderError as err:
-            self.err = err
+            self._load_yaml()
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
-        else:
-            self.is_yaml_valid = True
-            self._load_yaml()
 
     def get_all_fork_project_names(self):
         """Returns all project names containing forks

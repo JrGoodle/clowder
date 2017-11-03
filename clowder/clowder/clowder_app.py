@@ -47,8 +47,10 @@ class ClowderApp(CementApp):
 
 
 def main():
+    print()
     with ClowderApp() as app:
         app.run()
+        print()
 
 
 if __name__ == '__main__':

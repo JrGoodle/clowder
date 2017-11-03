@@ -8,13 +8,13 @@
 from cement.ext.ext_argparse import ArgparseController, expose
 
 import clowder.commands as commands
-from clowder.cli.globals import CLOWDER_CONTROLLER
-from clowder.cli.util import project_names
-from clowder.util.decorators import (
+from clowder.clowder_repo import (
     print_clowder_repo_status_fetch,
-    network_connection_required,
     valid_clowder_yaml_required
 )
+from clowder.cli.globals import CLOWDER_CONTROLLER
+from clowder.cli.util import project_names
+from clowder.util.decorators import network_connection_required
 
 
 class ResetController(ArgparseController):
