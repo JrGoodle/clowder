@@ -41,6 +41,12 @@ class ClowderRepo(object):
         self.remote = 'origin'
         self.clowder_path = os.path.join(self.root_directory, '.clowder')
 
+        # Create clowder.yaml symlink if .clowder dir and yaml file exist
+        if os.path.isdir(self.clowder_path):
+            clowder_symlink = os.path.join(self.root_directory, 'clowder.yaml')
+            if not os.path.islink(clowder_symlink):
+                self.link()
+
     def add(self, files):
         """Add files in clowder repo to git index
 

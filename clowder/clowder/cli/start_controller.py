@@ -5,9 +5,9 @@
 
 """
 
-from cement.ext.ext_argparse import expose
+from cement.ext.ext_argparse import ArgparseController, expose
 
-from clowder.cli.abstract_base_controller import AbstractBaseController
+from clowder.cli import CLOWDER_CONTROLLER
 from clowder.commands.util import (
     filter_groups,
     filter_projects_on_project_names,
@@ -23,15 +23,22 @@ from clowder.util.decorators import (
 )
 
 
-class StartController(AbstractBaseController):
+class StartController(ArgparseController):
     class Meta:
         label = 'start'
         stacked_on = 'base'
         stacked_type = 'nested'
         description = 'Start a new branch'
-        arguments = AbstractBaseController.Meta.arguments + [
+        arguments = [
             (['branch'], dict(help='name of branch to create', metavar='BRANCH')),
-            (['--tracking', '-t'], dict(action='store_true', help='create remote tracking branch'))
+            (['--tracking', '-t'], dict(action='store_true', help='create remote tracking branch')),
+            (['--groups', '-g'], dict(choices=CLOWDER_CONTROLLER.get_all_group_names(),
+                                      default=CLOWDER_CONTROLLER.get_all_group_names(),
+                                      nargs='+', metavar='GROUP', help='groups to herd')),
+            (['--projects', '-p'], dict(choices=CLOWDER_CONTROLLER.get_all_project_names(),
+                                        nargs='+', metavar='PROJECT', help='projects to herd')),
+            (['--skip', '-s'], dict(choices=CLOWDER_CONTROLLER.get_all_project_names(),
+                                    nargs='+', metavar='PROJECT', default=[], help='projects to skip'))
             ]
 
     @expose(help="second-controller default command", hide=True)
@@ -43,20 +50,20 @@ class StartController(AbstractBaseController):
             return
 
         if self.app.pargs.projects is None:
-            _start_groups(self.clowder, self.app.pargs.groups, self.app.pargs.skip, self.app.pargs.branch)
+            _start_groups(CLOWDER_CONTROLLER, self.app.pargs.groups, self.app.pargs.skip, self.app.pargs.branch)
         else:
-            _start_projects(self.clowder, self.app.pargs.projects, self.app.pargs.skip, self.app.pargs.branch)
+            _start_projects(CLOWDER_CONTROLLER, self.app.pargs.projects, self.app.pargs.skip, self.app.pargs.branch)
 
     @network_connection_required
     def _start_tracking(self):
         """clowder start tracking command"""
 
         if self.app.pargs.projects is None:
-            _start_groups(self.clowder, self.app.pargs.groups, self.app.pargs.skip,
+            _start_groups(CLOWDER_CONTROLLER, self.app.pargs.groups, self.app.pargs.skip,
                           self.app.pargs.branch, tracking=True)
             return
 
-        _start_projects(self.clowder, self.app.pargs.projects, self.app.pargs.skip,
+        _start_projects(CLOWDER_CONTROLLER, self.app.pargs.projects, self.app.pargs.skip,
                         self.app.pargs.branch, tracking=True)
 
 

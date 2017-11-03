@@ -5,9 +5,9 @@
 
 """
 
-from cement.ext.ext_argparse import expose
+from cement.ext.ext_argparse import ArgparseController, expose
 
-from clowder.cli.abstract_base_controller import AbstractBaseController
+from clowder.cli import CLOWDER_CONTROLLER
 from clowder.commands.util import (
     filter_groups,
     filter_projects_on_project_names,
@@ -20,13 +20,13 @@ from clowder.util.decorators import (
 )
 
 
-class BranchController(AbstractBaseController):
+class BranchController(ArgparseController):
     class Meta:
         label = 'branch'
         stacked_on = 'base'
         stacked_type = 'nested'
         description = 'Display current branches'
-        arguments = AbstractBaseController.Meta.arguments + [
+        arguments = [
             (['--all', '-a'], dict(action='store_true', help='show local and remote branches')),
             (['--remote', '-r'], dict(action='store_true', help='show remote branches'))
             ]
@@ -44,11 +44,11 @@ class BranchController(AbstractBaseController):
             remote = True
 
         if self.app.pargs.projects is None:
-            groups = filter_groups(self.clowder.groups, self.app.pargs.groups)
+            groups = filter_groups(CLOWDER_CONTROLLER.groups, self.app.pargs.groups)
             for group in groups:
                 run_group_command(group, self.app.pargs.skip, 'branch', local=local, remote=remote)
             return
 
-        projects = filter_projects_on_project_names(self.clowder.groups, self.app.pargs.projects)
+        projects = filter_projects_on_project_names(CLOWDER_CONTROLLER.groups, self.app.pargs.projects)
         for project in projects:
             run_project_command(project, self.app.pargs.skip, 'branch', local=local, remote=remote)

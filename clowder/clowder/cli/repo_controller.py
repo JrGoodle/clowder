@@ -5,9 +5,9 @@
 
 """
 
-from cement.ext.ext_argparse import expose
+from cement.ext.ext_argparse import ArgparseController, expose
 
-from clowder.cli.abstract_base_controller import AbstractBaseController
+from clowder.cli import CLOWDER_REPO
 from clowder.util.decorators import (
     clowder_required,
     print_clowder_repo_status,
@@ -16,7 +16,7 @@ from clowder.util.decorators import (
 )
 
 
-class RepoController(AbstractBaseController):
+class RepoController(ArgparseController):
     class Meta:
         label = 'repo'
         stacked_on = 'base'
@@ -30,7 +30,7 @@ class RepoController(AbstractBaseController):
         print("Inside SecondController.default()")
 
 
-class RepoAddController(AbstractBaseController):
+class RepoAddController(ArgparseController):
     class Meta:
         label = 'add'
         stacked_on = 'repo'
@@ -42,10 +42,10 @@ class RepoAddController(AbstractBaseController):
     @clowder_required
     @print_clowder_repo_status
     def default(self):
-        self.clowder_repo.add(self.app.pargs.files)
+        CLOWDER_REPO.add(self.app.pargs.files)
 
 
-class RepoCheckoutController(AbstractBaseController):
+class RepoCheckoutController(ArgparseController):
     class Meta:
         label = 'checkout'
         stacked_on = 'repo'
@@ -57,10 +57,10 @@ class RepoCheckoutController(AbstractBaseController):
     @clowder_required
     @print_clowder_repo_status_fetch
     def default(self):
-        self.clowder_repo.checkout(self.app.pargs.ref[0])
+        CLOWDER_REPO.checkout(self.app.pargs.ref[0])
 
 
-class RepoCleanController(AbstractBaseController):
+class RepoCleanController(ArgparseController):
     class Meta:
         label = 'clean'
         stacked_on = 'repo'
@@ -72,10 +72,10 @@ class RepoCleanController(AbstractBaseController):
     @clowder_required
     @print_clowder_repo_status
     def default(self):
-        self.clowder_repo.clean()
+        CLOWDER_REPO.clean()
 
 
-class RepoCommitController(AbstractBaseController):
+class RepoCommitController(ArgparseController):
     class Meta:
         label = 'commit'
         stacked_on = 'repo'
@@ -87,10 +87,10 @@ class RepoCommitController(AbstractBaseController):
     @clowder_required
     @print_clowder_repo_status
     def default(self):
-        self.clowder_repo.commit(self.app.pargs.message[0])
+        CLOWDER_REPO.commit(self.app.pargs.message[0])
 
 
-class RepoPullController(AbstractBaseController):
+class RepoPullController(ArgparseController):
     class Meta:
         label = 'pull'
         stacked_on = 'repo'
@@ -103,10 +103,10 @@ class RepoPullController(AbstractBaseController):
     @clowder_required
     @print_clowder_repo_status_fetch
     def default(self):
-        self.clowder_repo.pull()
+        CLOWDER_REPO.pull()
 
 
-class RepoPushController(AbstractBaseController):
+class RepoPushController(ArgparseController):
     class Meta:
         label = 'push'
         stacked_on = 'repo'
@@ -119,10 +119,10 @@ class RepoPushController(AbstractBaseController):
     @clowder_required
     @print_clowder_repo_status_fetch
     def default(self):
-        self.clowder_repo.push()
+        CLOWDER_REPO.push()
 
 
-class RepoRunController(AbstractBaseController):
+class RepoRunController(ArgparseController):
     class Meta:
         label = 'run'
         stacked_on = 'repo'
@@ -134,10 +134,10 @@ class RepoRunController(AbstractBaseController):
     @clowder_required
     @print_clowder_repo_status
     def default(self):
-        self.clowder_repo.run_command(self.app.pargs.command[0])
+        CLOWDER_REPO.run_command(self.app.pargs.command[0])
 
 
-class RepoStatusController(AbstractBaseController):
+class RepoStatusController(ArgparseController):
     class Meta:
         label = 'status'
         stacked_on = 'repo'
@@ -149,4 +149,4 @@ class RepoStatusController(AbstractBaseController):
     @clowder_required
     @print_clowder_repo_status
     def default(self):
-        self.clowder_repo.git_status()
+        CLOWDER_REPO.git_status()

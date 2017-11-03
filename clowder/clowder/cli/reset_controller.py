@@ -5,15 +5,11 @@
 
 """
 
-import os
-import sys
-
-from cement.ext.ext_argparse import expose
+from cement.ext.ext_argparse import ArgparseController, expose
 
 import clowder.commands as commands
-from clowder.cli.abstract_base_controller import AbstractBaseController
+from clowder.cli import CLOWDER_CONTROLLER
 from clowder.cli.util import project_names
-from clowder.clowder_controller import ClowderController
 from clowder.util.decorators import (
     print_clowder_repo_status_fetch,
     network_connection_required,
@@ -21,27 +17,25 @@ from clowder.util.decorators import (
 )
 
 
-class ResetController(AbstractBaseController):
+class ResetController(ArgparseController):
     class Meta:
         label = 'reset'
         stacked_on = 'base'
         stacked_type = 'nested'
         description = 'Reset branches to upstream commits or check out detached HEADs for tags and shas'
-
-        clowder = None
-        try:
-            clowder = ClowderController(os.getcwd())
-        except (KeyboardInterrupt, SystemExit):
-            sys.exit(1)
-        except:
-            pass
-        finally:
-            project_names = project_names(clowder)
-            arguments = AbstractBaseController.Meta.arguments + [
-                (['--parallel'], dict(action='store_true', help='run commands in parallel')),
-                (['--timestamp', '-t'], dict(choices=project_names, default=None, nargs=1, metavar='TIMESTAMP',
-                                             help='project to reset timestamps relative to'))
-                ]
+        project_names = project_names(CLOWDER_CONTROLLER)
+        arguments = [
+            (['--parallel'], dict(action='store_true', help='run commands in parallel')),
+            (['--timestamp', '-t'], dict(choices=project_names, default=None, nargs=1, metavar='TIMESTAMP',
+                                         help='project to reset timestamps relative to')),
+            (['--groups', '-g'], dict(choices=CLOWDER_CONTROLLER.get_all_group_names(),
+                                      default=CLOWDER_CONTROLLER.get_all_group_names(),
+                                      nargs='+', metavar='GROUP', help='groups to herd')),
+            (['--projects', '-p'], dict(choices=project_names, nargs='+', metavar='PROJECT',
+                                        help='projects to herd')),
+            (['--skip', '-s'], dict(choices=project_names, nargs='+', metavar='PROJECT', default=[],
+                                    help='projects to skip'))
+            ]
 
     @expose(help="second-controller default command", hide=True)
     @network_connection_required
@@ -51,5 +45,5 @@ class ResetController(AbstractBaseController):
         timestamp_project = None
         if self.app.pargs.timestamp:
             timestamp_project = self.app.pargs.timestamp[0]
-        commands.reset(self.clowder, group_names=self.app.pargs.groups, project_names=self.app.pargs.projects,
+        commands.reset(CLOWDER_CONTROLLER, group_names=self.app.pargs.groups, project_names=self.app.pargs.projects,
                        skip=self.app.pargs.skip, timestamp_project=timestamp_project, parallel=self.app.pargs.parallel)

@@ -5,9 +5,9 @@
 
 """
 
-from cement.ext.ext_argparse import expose
+from cement.ext.ext_argparse import ArgparseController, expose
 
-from clowder.cli.abstract_base_controller import AbstractBaseController
+from clowder.cli import CLOWDER_CONTROLLER
 from clowder.commands.util import (
     filter_groups,
     filter_projects_on_project_names,
@@ -20,19 +20,26 @@ from clowder.util.decorators import (
 )
 
 
-class CleanController(AbstractBaseController):
+class CleanController(ArgparseController):
     class Meta:
         label = 'clean'
         stacked_on = 'base'
         stacked_type = 'nested'
         description = 'Discard current changes in projects'
-        arguments = AbstractBaseController.Meta.arguments + [
+        arguments = [
             (['--all', '-a'], dict(action='store_true', help='clean all the things')),
             (['--recursive', '-r'], dict(action='store_true', help='clean submodules recursively')),
             (['-d'], dict(action='store_true', help='remove untracked directories')),
             (['-f'], dict(action='store_true', help='remove directories with .git subdirectory or file')),
             (['-X'], dict(action='store_true', help='remove only files ignored by git')),
-            (['-x'], dict(action='store_true', help='remove all untracked files'))
+            (['-x'], dict(action='store_true', help='remove all untracked files')),
+            (['--groups', '-g'], dict(choices=CLOWDER_CONTROLLER.get_all_group_names(),
+                                      default=CLOWDER_CONTROLLER.get_all_group_names(),
+                                      nargs='+', metavar='GROUP', help='groups to herd')),
+            (['--projects', '-p'], dict(choices=CLOWDER_CONTROLLER.get_all_project_names(),
+                                        nargs='+', metavar='PROJECT', help='projects to herd')),
+            (['--skip', '-s'], dict(choices=CLOWDER_CONTROLLER.get_all_project_names(),
+                                    nargs='+', metavar='PROJECT', default=[], help='projects to skip'))
             ]
 
     @expose(help="second-controller default command", hide=True)
@@ -40,7 +47,7 @@ class CleanController(AbstractBaseController):
     @print_clowder_repo_status
     def default(self):
         if self.app.pargs.all:
-            _clean_all(self.clowder, group_names=self.app.pargs.groups,
+            _clean_all(CLOWDER_CONTROLLER, group_names=self.app.pargs.groups,
                        project_names=self.app.pargs.projects, skip=self.app.pargs.skip)
             return
 
@@ -53,7 +60,7 @@ class CleanController(AbstractBaseController):
             clean_args += 'X'
         if self.app.pargs.x:
             clean_args += 'x'
-        _clean(self.clowder, group_names=self.app.pargs.groups, project_names=self.app.pargs.projects,
+        _clean(CLOWDER_CONTROLLER, group_names=self.app.pargs.groups, project_names=self.app.pargs.projects,
                skip=self.app.pargs.skip, args=clean_args, recursive=self.app.pargs.recursive)
 
 

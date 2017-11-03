@@ -5,10 +5,10 @@
 
 """
 
-from cement.ext.ext_argparse import expose
+from cement.ext.ext_argparse import ArgparseController, expose
 
 import clowder.commands as commands
-from clowder.cli.abstract_base_controller import AbstractBaseController
+from clowder.cli import CLOWDER_CONTROLLER
 from clowder.util.decorators import (
     print_clowder_repo_status_fetch,
     network_connection_required,
@@ -16,18 +16,25 @@ from clowder.util.decorators import (
 )
 
 
-class HerdController(AbstractBaseController):
+class HerdController(ArgparseController):
     class Meta:
         label = 'herd'
         stacked_on = 'base'
         stacked_type = 'nested'
         description = 'Clone and update projects with latest changes'
-        arguments = AbstractBaseController.Meta.arguments + [
+        arguments = [
             (['--parallel'], dict(action='store_true', help='run commands in parallel')),
             (['--rebase', '-r'], dict(action='store_true', help='use rebase instead of pull')),
             (['--depth', '-d'], dict(default=None, type=int, nargs=1, metavar='DEPTH', help='depth to herd')),
             (['--branch', '-b'], dict(nargs=1, default=None, metavar='BRANCH', help='branch to herd if present')),
-            (['--tag', '-t'], dict(nargs=1, default=None, metavar='TAG', help='tag to herd if present'))
+            (['--tag', '-t'], dict(nargs=1, default=None, metavar='TAG', help='tag to herd if present')),
+            (['--groups', '-g'], dict(choices=CLOWDER_CONTROLLER.get_all_group_names(),
+                                      default=CLOWDER_CONTROLLER.get_all_group_names(),
+                                      nargs='+', metavar='GROUP', help='groups to herd')),
+            (['--projects', '-p'], dict(choices=CLOWDER_CONTROLLER.get_all_project_names(),
+                                        nargs='+', metavar='PROJECT', help='projects to herd')),
+            (['--skip', '-s'], dict(choices=CLOWDER_CONTROLLER.get_all_project_names(),
+                                    nargs='+', metavar='PROJECT', default=[], help='projects to skip'))
             ]
 
     @expose(help="second-controller default command", hide=True)
@@ -43,6 +50,6 @@ class HerdController(AbstractBaseController):
                   'skip': self.app.pargs.skip, 'branch': branch, 'tag': tag,
                   'depth': depth, 'rebase': self.app.pargs.rebase}
         if self.app.pargs.parallel:
-            commands.herd_parallel(self.clowder, **kwargs)
+            commands.herd_parallel(CLOWDER_CONTROLLER, **kwargs)
             return
-        commands.herd(self.clowder, **kwargs)
+        commands.herd(CLOWDER_CONTROLLER, **kwargs)

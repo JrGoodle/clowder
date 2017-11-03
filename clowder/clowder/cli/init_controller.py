@@ -7,14 +7,14 @@
 
 import sys
 
-from cement.ext.ext_argparse import expose
+from cement.ext.ext_argparse import ArgparseController, expose
 from termcolor import colored, cprint
 
-from clowder.cli.abstract_base_controller import AbstractBaseController
+from clowder.cli import CLOWDER_REPO
 from clowder.util.decorators import network_connection_required
 
 
-class InitController(AbstractBaseController):
+class InitController(ArgparseController):
     class Meta:
         label = 'init'
         stacked_on = 'base'
@@ -34,7 +34,7 @@ class InitController(AbstractBaseController):
 
     @network_connection_required
     def _init(self):
-        if self.clowder_repo:
+        if CLOWDER_REPO:
             cprint('Clowder already initialized in this directory\n', 'red')
             sys.exit(1)
 
@@ -44,4 +44,4 @@ class InitController(AbstractBaseController):
             branch = 'master'
         else:
             branch = str(self.app.pargs.branch[0])
-        self.clowder_repo.init(self.app.pargs.url, branch)
+        CLOWDER_REPO.init(self.app.pargs.url, branch)

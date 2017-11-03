@@ -5,7 +5,7 @@
 
 """
 
-from cement.ext.ext_argparse import ArgparseController, expose
+from cement.ext.ext_argparse import ArgparseController
 
 
 VERSION = '2.5.0'

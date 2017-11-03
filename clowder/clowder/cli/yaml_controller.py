@@ -9,10 +9,10 @@ from __future__ import print_function
 
 import sys
 
-from cement.ext.ext_argparse import expose
+from cement.ext.ext_argparse import ArgparseController, expose
 
+from clowder.cli import CLOWDER_CONTROLLER
 import clowder.util.formatting as fmt
-from clowder.cli.abstract_base_controller import AbstractBaseController
 from clowder.util.decorators import (
     print_clowder_repo_status,
     valid_clowder_yaml_required
@@ -20,11 +20,11 @@ from clowder.util.decorators import (
 from clowder.yaml.printing import print_yaml
 
 
-class YAMLController(AbstractBaseController):
+class YAMLController(ArgparseController):
     class Meta:
         label = 'yaml'
         stacked_on = 'base'
-        stacked_type = 'nested'
+        stacked_type = 'embedded'
         description = 'Print clowder.yaml information'
         arguments = [
             (['--resolved', '-r'], dict(action='store_true', help='print resolved clowder.yaml'))
@@ -33,9 +33,9 @@ class YAMLController(AbstractBaseController):
     @expose(help="second-controller default command", hide=True)
     @valid_clowder_yaml_required
     @print_clowder_repo_status
-    def default(self):
+    def yaml(self):
         if self.app.pargs.resolved:
-            print(fmt.yaml_string(self.clowder.get_yaml_resolved()))
+            print(fmt.yaml_string(CLOWDER_CONTROLLER.get_yaml_resolved()))
         else:
-            print_yaml(self.clowder.root_directory)
+            print_yaml(CLOWDER_CONTROLLER.root_directory)
         sys.exit()  # exit early to prevent printing extra newline

@@ -5,9 +5,9 @@
 
 """
 
-from cement.ext.ext_argparse import expose
+from cement.ext.ext_argparse import ArgparseController, expose
 
-from clowder.cli.abstract_base_controller import AbstractBaseController
+from clowder.cli import CLOWDER_REPO
 from clowder.cli.util import (
     get_saved_version_names,
     options_help_message
@@ -18,7 +18,7 @@ from clowder.util.decorators import (
 )
 
 
-class LinkController(AbstractBaseController):
+class LinkController(ArgparseController):
     class Meta:
         label = 'link'
         stacked_on = 'base'
@@ -38,4 +38,4 @@ class LinkController(AbstractBaseController):
             version = None
         else:
             version = self.app.pargs.version[0]
-        self.clowder_repo.link(version)
+        CLOWDER_REPO.link(version)
