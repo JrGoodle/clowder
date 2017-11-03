@@ -11,7 +11,7 @@ import sys
 from cement.ext.ext_argparse import ArgparseController, expose
 
 import clowder.util.formatting as fmt
-from clowder.cli import (
+from clowder.cli.globals import (
     CLOWDER_CONTROLLER,
     CLOWDER_REPO
 )
@@ -27,15 +27,20 @@ class SaveController(ArgparseController):
     class Meta:
         label = 'save'
         stacked_on = 'base'
-        stacked_type = 'nested'
+        stacked_type = 'embedded'
         description = 'Create version of clowder.yaml for current repos'
-        arguments = [
-            (['version'], dict(help='version to save', metavar='VERSION'))
-            ]
 
-    @expose(help="second-controller default command", hide=True)
+    @expose(
+        help='this is the help message for clowder save',
+        arguments=[
+            (['version'], dict(help='version to save', metavar='VERSION'))
+        ]
+    )
+    def save(self):
+        self._save()
+
     @valid_clowder_yaml_required
-    def default(self):
+    def _save(self):
         if self.app.pargs.version.lower() == 'default':
             print(fmt.save_default_error(self.app.pargs.version))
             sys.exit(1)

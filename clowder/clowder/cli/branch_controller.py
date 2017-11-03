@@ -7,7 +7,7 @@
 
 from cement.ext.ext_argparse import ArgparseController, expose
 
-from clowder.cli import CLOWDER_CONTROLLER
+from clowder.cli.globals import CLOWDER_CONTROLLER
 from clowder.commands.util import (
     filter_groups,
     filter_projects_on_project_names,
@@ -24,17 +24,22 @@ class BranchController(ArgparseController):
     class Meta:
         label = 'branch'
         stacked_on = 'base'
-        stacked_type = 'nested'
+        stacked_type = 'embedded'
         description = 'Display current branches'
-        arguments = [
+
+    @expose(
+        help='this is the help message for clowder branch',
+        arguments=[
             (['--all', '-a'], dict(action='store_true', help='show local and remote branches')),
             (['--remote', '-r'], dict(action='store_true', help='show remote branches'))
             ]
+    )
+    def branch(self):
+        self._branch()
 
-    @expose(help="second-controller default command", hide=True)
     @valid_clowder_yaml_required
     @print_clowder_repo_status
-    def default(self):
+    def _branch(self):
         local = True
         remote = False
         if self.app.pargs.all:

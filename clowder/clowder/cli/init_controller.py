@@ -10,7 +10,7 @@ import sys
 from cement.ext.ext_argparse import ArgparseController, expose
 from termcolor import colored, cprint
 
-from clowder.cli import CLOWDER_REPO
+from clowder.cli.globals import CLOWDER_REPO
 from clowder.util.decorators import network_connection_required
 
 
@@ -20,7 +20,6 @@ class InitController(ArgparseController):
         stacked_on = 'base'
         stacked_type = 'embedded'
         description = 'Clone repository to clowder directory and create clowder.yaml symlink'
-        arguments = []
 
     @expose(
         help='this is the help message for clowder init',

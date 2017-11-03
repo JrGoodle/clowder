@@ -8,7 +8,7 @@
 from cement.ext.ext_argparse import ArgparseController, expose
 
 import clowder.util.formatting as fmt
-from clowder.cli import (
+from clowder.cli.globals import (
     CLOWDER_CONTROLLER,
     CLOWDER_REPO
 )
@@ -20,14 +20,19 @@ class StatusController(ArgparseController):
     class Meta:
         label = 'status'
         stacked_on = 'base'
-        stacked_type = 'nested'
+        stacked_type = 'embedded'
         description = 'Print project status'
-        arguments = [
+
+    @expose(
+        help='this is the help message for clowder status',
+        arguments=[
             (['--fetch', '-f'], dict(action='store_true', help='fetch projects before printing status'))
             ]
+    )
+    def status(self):
+        self._status()
 
-    @expose(help="second-controller default command", hide=True)
-    def default(self):
+    def _status(self):
         if self.app.pargs.fetch:
             _fetch_projects(CLOWDER_REPO, CLOWDER_CONTROLLER)
         else:

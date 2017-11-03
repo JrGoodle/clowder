@@ -7,7 +7,7 @@
 
 from cement.ext.ext_argparse import ArgparseController, expose
 
-from clowder.cli import CLOWDER_CONTROLLER
+from clowder.cli.globals import CLOWDER_CONTROLLER
 from clowder.commands.util import (
     filter_groups,
     filter_projects_on_project_names,
@@ -24,9 +24,12 @@ class CleanController(ArgparseController):
     class Meta:
         label = 'clean'
         stacked_on = 'base'
-        stacked_type = 'nested'
+        stacked_type = 'embedded'
         description = 'Discard current changes in projects'
-        arguments = [
+
+    @expose(
+        help='this is the help message for clowder clean',
+        arguments=[
             (['--all', '-a'], dict(action='store_true', help='clean all the things')),
             (['--recursive', '-r'], dict(action='store_true', help='clean submodules recursively')),
             (['-d'], dict(action='store_true', help='remove untracked directories')),
@@ -41,11 +44,13 @@ class CleanController(ArgparseController):
             (['--skip', '-s'], dict(choices=CLOWDER_CONTROLLER.get_all_project_names(),
                                     nargs='+', metavar='PROJECT', default=[], help='projects to skip'))
             ]
+    )
+    def clean(self):
+        self._clean()
 
-    @expose(help="second-controller default command", hide=True)
     @valid_clowder_yaml_required
     @print_clowder_repo_status
-    def default(self):
+    def _clean(self):
         if self.app.pargs.all:
             _clean_all(CLOWDER_CONTROLLER, group_names=self.app.pargs.groups,
                        project_names=self.app.pargs.projects, skip=self.app.pargs.skip)

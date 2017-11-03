@@ -8,7 +8,7 @@
 from cement.ext.ext_argparse import ArgparseController, expose
 
 import clowder.commands as commands
-from clowder.cli import CLOWDER_CONTROLLER
+from clowder.cli.globals import CLOWDER_CONTROLLER
 from clowder.cli.util import project_names
 from clowder.util.decorators import (
     print_clowder_repo_status_fetch,
@@ -21,27 +21,31 @@ class ResetController(ArgparseController):
     class Meta:
         label = 'reset'
         stacked_on = 'base'
-        stacked_type = 'nested'
+        stacked_type = 'embedded'
         description = 'Reset branches to upstream commits or check out detached HEADs for tags and shas'
-        project_names = project_names(CLOWDER_CONTROLLER)
-        arguments = [
+
+    @expose(
+        help='this is the help message for clowder reset',
+        arguments=[
             (['--parallel'], dict(action='store_true', help='run commands in parallel')),
             (['--timestamp', '-t'], dict(choices=project_names, default=None, nargs=1, metavar='TIMESTAMP',
                                          help='project to reset timestamps relative to')),
             (['--groups', '-g'], dict(choices=CLOWDER_CONTROLLER.get_all_group_names(),
                                       default=CLOWDER_CONTROLLER.get_all_group_names(),
                                       nargs='+', metavar='GROUP', help='groups to herd')),
-            (['--projects', '-p'], dict(choices=project_names, nargs='+', metavar='PROJECT',
-                                        help='projects to herd')),
-            (['--skip', '-s'], dict(choices=project_names, nargs='+', metavar='PROJECT', default=[],
-                                    help='projects to skip'))
+            (['--projects', '-p'], dict(choices=project_names(CLOWDER_CONTROLLER),
+                                        nargs='+', metavar='PROJECT', help='projects to herd')),
+            (['--skip', '-s'], dict(choices=project_names(CLOWDER_CONTROLLER),
+                                    nargs='+', metavar='PROJECT', default=[], help='projects to skip'))
             ]
+    )
+    def reset(self):
+        self._reset()
 
-    @expose(help="second-controller default command", hide=True)
     @network_connection_required
     @valid_clowder_yaml_required
     @print_clowder_repo_status_fetch
-    def default(self):
+    def _reset(self):
         timestamp_project = None
         if self.app.pargs.timestamp:
             timestamp_project = self.app.pargs.timestamp[0]

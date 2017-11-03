@@ -7,7 +7,7 @@
 
 from cement.ext.ext_argparse import ArgparseController, expose
 
-from clowder.cli import CLOWDER_CONTROLLER
+from clowder.cli.globals import CLOWDER_CONTROLLER
 from clowder.commands.util import (
     filter_groups,
     filter_projects_on_project_names,

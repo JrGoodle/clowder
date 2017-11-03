@@ -10,7 +10,7 @@ import sys
 from cement.ext.ext_argparse import ArgparseController, expose
 from termcolor import cprint
 
-from clowder.cli import CLOWDER_CONTROLLER
+from clowder.cli.globals import CLOWDER_CONTROLLER
 from clowder.commands.util import (
     existing_branch_groups,
     existing_branch_projects,

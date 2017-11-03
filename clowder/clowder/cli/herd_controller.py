@@ -8,7 +8,7 @@
 from cement.ext.ext_argparse import ArgparseController, expose
 
 import clowder.commands as commands
-from clowder.cli import CLOWDER_CONTROLLER
+from clowder.cli.globals import CLOWDER_CONTROLLER
 from clowder.util.decorators import (
     print_clowder_repo_status_fetch,
     network_connection_required,
@@ -20,9 +20,12 @@ class HerdController(ArgparseController):
     class Meta:
         label = 'herd'
         stacked_on = 'base'
-        stacked_type = 'nested'
+        stacked_type = 'embedded'
         description = 'Clone and update projects with latest changes'
-        arguments = [
+
+    @expose(
+        help='this is the help message for clowder herd',
+        arguments=[
             (['--parallel'], dict(action='store_true', help='run commands in parallel')),
             (['--rebase', '-r'], dict(action='store_true', help='use rebase instead of pull')),
             (['--depth', '-d'], dict(default=None, type=int, nargs=1, metavar='DEPTH', help='depth to herd')),
@@ -36,12 +39,14 @@ class HerdController(ArgparseController):
             (['--skip', '-s'], dict(choices=CLOWDER_CONTROLLER.get_all_project_names(),
                                     nargs='+', metavar='PROJECT', default=[], help='projects to skip'))
             ]
+    )
+    def herd(self):
+        self._herd()
 
-    @expose(help="second-controller default command", hide=True)
     @network_connection_required
     @valid_clowder_yaml_required
     @print_clowder_repo_status_fetch
-    def default(self):
+    def _herd(self):
         branch = None if self.app.pargs.branch is None else self.app.pargs.branch[0]
         tag = None if self.app.pargs.tag is None else self.app.pargs.tag[0]
         depth = None if self.app.pargs.depth is None else self.app.pargs.depth[0]

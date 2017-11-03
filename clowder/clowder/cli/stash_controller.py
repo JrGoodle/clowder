@@ -7,7 +7,7 @@
 
 from cement.ext.ext_argparse import ArgparseController, expose
 
-from clowder.cli import CLOWDER_CONTROLLER
+from clowder.cli.globals import CLOWDER_CONTROLLER
 from clowder.commands.util import (
     filter_groups,
     filter_projects_on_project_names,
@@ -24,9 +24,12 @@ class StashController(ArgparseController):
     class Meta:
         label = 'stash'
         stacked_on = 'base'
-        stacked_type = 'nested'
+        stacked_type = 'embedded'
         description = 'Stash current changes'
-        arguments = [
+
+    @expose(
+        help='this is the help message for clowder stash',
+        arguments=[
             (['--groups', '-g'], dict(choices=CLOWDER_CONTROLLER.get_all_group_names(),
                                       default=CLOWDER_CONTROLLER.get_all_group_names(),
                                       nargs='+', metavar='GROUP', help='groups to herd')),
@@ -35,11 +38,13 @@ class StashController(ArgparseController):
             (['--skip', '-s'], dict(choices=CLOWDER_CONTROLLER.get_all_project_names(),
                                     nargs='+', metavar='PROJECT', default=[], help='projects to skip'))
         ]
+    )
+    def status(self):
+        self._status()
 
-    @expose(help="second-controller default command", hide=True)
     @valid_clowder_yaml_required
     @print_clowder_repo_status
-    def default(self):
+    def _status(self):
         if not any([g.is_dirty() for g in CLOWDER_CONTROLLER.groups]):
             print('No changes to stash')
             return

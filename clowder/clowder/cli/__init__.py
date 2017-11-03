@@ -1,6 +1,3 @@
-import os
-from clowder.clowder_controller import ClowderController
-from clowder.clowder_repo import ClowderRepo
 from clowder.cli.base_controller import BaseController
 from clowder.cli.branch_controller import BranchController
 from clowder.cli.checkout_controller import CheckoutController
@@ -29,6 +26,3 @@ from clowder.cli.stash_controller import StashController
 from clowder.cli.status_controller import StatusController
 from clowder.cli.sync_controller import SyncController
 from clowder.cli.yaml_controller import YAMLController
-
-CLOWDER_CONTROLLER = ClowderController(os.getcwd())
-CLOWDER_REPO = ClowderRepo(os.getcwd())

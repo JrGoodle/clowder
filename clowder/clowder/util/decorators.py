@@ -11,6 +11,7 @@ import sys
 from termcolor import cprint
 
 import clowder.util.formatting as fmt
+from clowder.cli.globals import CLOWDER_REPO
 from clowder.util.connectivity import is_offline
 
 
@@ -20,7 +21,7 @@ def clowder_required(func):
     def wrapper(*args, **kwargs):
         """Wrapper"""
 
-        _validate_clowder_repo_exists(args[0].clowder_repo)
+        _validate_clowder_repo_exists(CLOWDER_REPO)
         return func(*args, **kwargs)
 
     return wrapper
@@ -61,8 +62,7 @@ def print_clowder_repo_status(func):
     def wrapper(*args, **kwargs):
         """Wrapper"""
 
-        instance = args[0]
-        instance.clowder_repo.print_status()
+        CLOWDER_REPO.print_status()
         return func(*args, **kwargs)
 
     return wrapper
@@ -74,8 +74,7 @@ def print_clowder_repo_status_fetch(func):
     def wrapper(*args, **kwargs):
         """Wrapper"""
 
-        instance = args[0]
-        instance.clowder_repo.print_status(fetch=True)
+        CLOWDER_REPO.print_status(fetch=True)
         return func(*args, **kwargs)
 
     return wrapper

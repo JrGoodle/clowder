@@ -11,7 +11,7 @@ import sys
 
 from cement.ext.ext_argparse import ArgparseController, expose
 
-from clowder.cli import CLOWDER_CONTROLLER
+from clowder.cli.globals import CLOWDER_CONTROLLER
 import clowder.util.formatting as fmt
 from clowder.util.decorators import (
     print_clowder_repo_status,
@@ -26,14 +26,19 @@ class YAMLController(ArgparseController):
         stacked_on = 'base'
         stacked_type = 'embedded'
         description = 'Print clowder.yaml information'
-        arguments = [
-            (['--resolved', '-r'], dict(action='store_true', help='print resolved clowder.yaml'))
-            ]
 
-    @expose(help="second-controller default command", hide=True)
+    @expose(
+        help='this is the help message for clowder yaml',
+        arguments=[
+            (['--resolved', '-r'], dict(action='store_true', help='print resolved clowder.yaml'))
+        ]
+    )
+    def yaml(self):
+        self._yaml()
+
     @valid_clowder_yaml_required
     @print_clowder_repo_status
-    def yaml(self):
+    def _yaml(self):
         if self.app.pargs.resolved:
             print(fmt.yaml_string(CLOWDER_CONTROLLER.get_yaml_resolved()))
         else:
