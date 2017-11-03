@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""Clowder command line prune controller
+
+.. codeauthor:: Joe Decapo <joe@polka.cat>
+
+"""
+
 import sys
 
 from cement.ext.ext_argparse import expose

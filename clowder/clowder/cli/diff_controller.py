@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""Clowder command line diff controller
+
+.. codeauthor:: Joe Decapo <joe@polka.cat>
+
+"""
+
 from cement.ext.ext_argparse import expose
 
 from clowder.cli.abstract_base_controller import AbstractBaseController

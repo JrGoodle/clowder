@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""Clowder command line forall controller
+
+.. codeauthor:: Joe Decapo <joe@polka.cat>
+
+"""
+
 from cement.ext.ext_argparse import expose
 
 import clowder.commands as commands

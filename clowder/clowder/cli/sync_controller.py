@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""Clowder command line status controller
+
+.. codeauthor:: Joe Decapo <joe@polka.cat>
+
+"""
+
 import os
 import sys
 

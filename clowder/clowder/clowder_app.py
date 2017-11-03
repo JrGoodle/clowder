@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""Clowder command line app
+
+.. codeauthor:: Joe Decapo <joe@polka.cat>
+
+"""
+
 import colorama
 from cement.core.foundation import CementApp
 

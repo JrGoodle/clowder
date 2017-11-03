@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""Clowder command line utilities
+
+.. codeauthor:: Joe Decapo <joe@polka.cat>
+
+"""
+
 import os
 
 

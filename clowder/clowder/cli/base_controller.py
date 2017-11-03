@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""Clowder command line base controller
+
+.. codeauthor:: Joe Decapo <joe@polka.cat>
+
+"""
+
 from cement.ext.ext_argparse import ArgparseController, expose
 
 

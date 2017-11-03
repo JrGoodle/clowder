@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""Clowder command line status controller
+
+.. codeauthor:: Joe Decapo <joe@polka.cat>
+
+"""
+
 from cement.ext.ext_argparse import expose
 
 import clowder.util.formatting as fmt

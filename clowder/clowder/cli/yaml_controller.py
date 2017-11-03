@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""Clowder command line yaml controller
+
+.. codeauthor:: Joe Decapo <joe@polka.cat>
+
+"""
+
 from __future__ import print_function
 
 import sys

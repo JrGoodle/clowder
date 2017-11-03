@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""Clowder command line herd controller
+
+.. codeauthor:: Joe Decapo <joe@polka.cat>
+
+"""
+
 from cement.ext.ext_argparse import expose
 
 import clowder.commands as commands
