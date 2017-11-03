@@ -1,11 +1,13 @@
-import os
-
 from cement.ext.ext_argparse import expose
 
 from clowder.cli.abstract_base_controller import AbstractBaseController
 from clowder.cli.util import (
     get_saved_version_names,
     options_help_message
+)
+from clowder.util.decorators import (
+    clowder_required,
+    print_clowder_repo_status
 )
 
 
@@ -22,5 +24,11 @@ class LinkController(AbstractBaseController):
             ]
 
     @expose(help="second-controller default command", hide=True)
+    @clowder_required
+    @print_clowder_repo_status
     def default(self):
-        print("Inside SecondController.default()")
+        if self.app.pargs.version is None:
+            version = None
+        else:
+            version = self.app.pargs.version[0]
+        self.clowder_repo.link(version)
