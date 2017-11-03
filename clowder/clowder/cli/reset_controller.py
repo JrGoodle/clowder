@@ -28,7 +28,8 @@ class ResetController(ArgparseController):
         help='this is the help message for clowder reset',
         arguments=[
             (['--parallel'], dict(action='store_true', help='run commands in parallel')),
-            (['--timestamp', '-t'], dict(choices=project_names, default=None, nargs=1, metavar='TIMESTAMP',
+            (['--timestamp', '-t'], dict(choices=project_names(CLOWDER_CONTROLLER),
+                                         default=None, nargs=1, metavar='TIMESTAMP',
                                          help='project to reset timestamps relative to')),
             (['--groups', '-g'], dict(choices=CLOWDER_CONTROLLER.get_all_group_names(),
                                       default=CLOWDER_CONTROLLER.get_all_group_names(),

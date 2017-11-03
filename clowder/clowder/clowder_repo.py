@@ -108,6 +108,14 @@ class ClowderRepo(object):
 
         ProjectRepo(self.clowder_path, self.remote, self.default_ref).commit(message)
 
+    def git_status(self):
+        """Print clowder repo git status
+
+        Equivalent to: ``git status -vv``
+        """
+
+        ProjectRepo(self.clowder_path, self.remote, self.default_ref).status_verbose()
+
     def init(self, url, branch):
         """Clone clowder repo from url
 
@@ -159,7 +167,7 @@ class ClowderRepo(object):
 
         yaml_symlink = os.path.join(self.root_directory, 'clowder.yaml')
         print(' - Symlink ' + path_output)
-        force_symlink(yaml_file, yaml_symlink)
+        self._force_symlink(yaml_file, yaml_symlink)
 
     def print_status(self, fetch=False):
         """Print clowder repo status
@@ -215,13 +223,24 @@ class ClowderRepo(object):
             print(fmt.command_failed_error(command))
             sys.exit(return_code)
 
-    def git_status(self):
-        """Print clowder repo git status
+    @staticmethod
+    def _force_symlink(file1, file2):
+        """Force symlink creation
 
-        Equivalent to: ``git status -vv``
+        :param str file1: File to create symlink pointing to
+        :param str file2: Symlink location
         """
 
-        ProjectRepo(self.clowder_path, self.remote, self.default_ref).status_verbose()
+        try:
+            os.symlink(file1, file2)
+        except OSError as error:
+            if error.errno == errno.EEXIST:
+                os.remove(file2)
+                os.symlink(file1, file2)
+        except (KeyboardInterrupt, SystemExit):
+            os.remove(file2)
+            os.symlink(file1, file2)
+            sys.exit(1)
 
     def _validate_groups(self):
         """Validate status of clowder repo"""
@@ -241,29 +260,10 @@ def clowder_required(func):
     def wrapper(*args, **kwargs):
         """Wrapper"""
 
-        _validate_clowder_repo_exists(CLOWDER_REPO)
+        _validate_clowder_repo_exists()
         return func(*args, **kwargs)
 
     return wrapper
-
-
-def force_symlink(file1, file2):
-    """Force symlink creation
-
-    :param str file1: File to create symlink pointing to
-    :param str file2: Symlink location
-    """
-
-    try:
-        os.symlink(file1, file2)
-    except OSError as error:
-        if error.errno == errno.EEXIST:
-            os.remove(file2)
-            os.symlink(file1, file2)
-    except (KeyboardInterrupt, SystemExit):
-        os.remove(file2)
-        os.symlink(file1, file2)
-        sys.exit(1)
 
 
 def print_clowder_repo_status(func):
@@ -296,7 +296,7 @@ def valid_clowder_yaml_required(func):
     def wrapper(*args, **kwargs):
         """Wrapper"""
 
-        _validate_clowder_repo_exists(CLOWDER_REPO)
+        _validate_clowder_repo_exists()
         if not CLOWDER_REPO.is_yaml_valid:
             print(fmt.invalid_yaml_error())
             print(fmt.error(CLOWDER_REPO.error))
@@ -306,7 +306,7 @@ def valid_clowder_yaml_required(func):
     return wrapper
 
 
-def _validate_clowder_repo_exists(repo):
+def _validate_clowder_repo_exists():
     """If clowder repo doesn't exist, print message and exit
 
     :param ClowderRepo repo: Repo to check

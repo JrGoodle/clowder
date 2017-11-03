@@ -308,6 +308,7 @@ class Command(object):
     def parallel(self, path):
         """clowder parallel tests"""
 
+        self.test_env["PARALLEL"] = '--parallel'
         return_code = self._execute_command('./test_parallel.sh', path)
         self._exit(return_code)
 

@@ -5,6 +5,8 @@
 
 """
 
+from __future__ import print_function
+
 import sys
 
 from cement.ext.ext_argparse import ArgparseController, expose

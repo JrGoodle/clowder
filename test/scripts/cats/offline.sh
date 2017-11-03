@@ -120,13 +120,13 @@ print_single_separator
 echo 'TEST: clowder repo add'
 clowder repo add . || enable_connection_exit
 print_single_separator
-echo 'TEST: clowder repo checkout'
-clowder repo checkout tags || enable_connection_exit
-clowder repo checkout master || enable_connection_exit
-print_single_separator
-echo 'TEST: clowder repo clean'
-clowder repo clean || enable_connection_exit
-print_single_separator
+# echo 'TEST: clowder repo checkout'
+# clowder repo checkout tags || enable_connection_exit
+# clowder repo checkout master || enable_connection_exit
+# print_single_separator
+# echo 'TEST: clowder repo clean'
+# clowder repo clean || enable_connection_exit
+# print_single_separator
 echo 'TEST: clowder repo commit'
 pushd .clowder || exit 1
 touch newfile || enable_connection_exit
@@ -146,9 +146,9 @@ print_single_separator
 echo 'TEST: clowder repo run'
 clowder repo run 'git status' || enable_connection_exit
 print_single_separator
-echo 'TEST: clowder repo status'
-clowder repo status || enable_connection_exit
-print_single_separator
+# echo 'TEST: clowder repo status'
+# clowder repo status || enable_connection_exit
+# print_single_separator
 echo 'TEST: clowder save'
 clowder save offline_version || enable_connection_exit
 print_single_separator

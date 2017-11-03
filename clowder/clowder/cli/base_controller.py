@@ -22,4 +22,3 @@ class BaseController(ArgparseController):
         arguments = [
             (['-v', '--version'], dict(action='version', version=VERSION)),
         ]
-

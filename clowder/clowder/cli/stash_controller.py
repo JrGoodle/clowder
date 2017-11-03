@@ -5,6 +5,8 @@
 
 """
 
+from __future__ import print_function
+
 from cement.ext.ext_argparse import ArgparseController, expose
 
 from clowder.clowder_repo import (
@@ -39,12 +41,12 @@ class StashController(ArgparseController):
                                     nargs='+', metavar='PROJECT', default=[], help='projects to skip'))
         ]
     )
-    def status(self):
-        self._status()
+    def stash(self):
+        self._stash()
 
     @valid_clowder_yaml_required
     @print_clowder_repo_status
-    def _status(self):
+    def _stash(self):
         if not any([g.is_dirty() for g in CLOWDER_CONTROLLER.groups]):
             print('No changes to stash')
             return
