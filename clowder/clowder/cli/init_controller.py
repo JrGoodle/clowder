@@ -18,16 +18,22 @@ class InitController(AbstractBaseController):
     class Meta:
         label = 'init'
         stacked_on = 'base'
-        stacked_type = 'nested'
+        stacked_type = 'embedded'
         description = 'Clone repository to clowder directory and create clowder.yaml symlink'
-        arguments = [
+        arguments = []
+
+    @expose(
+        help='this is the help message for clowder init',
+        arguments=[
             (['url'], dict(metavar='URL', help='url of repo containing clowder.yaml')),
             (['--branch', '-b'], dict(nargs=1, metavar='BRANCH', help='branch of repo containing clowder.yaml'))
-            ]
+        ]
+    )
+    def init(self):
+        self._init()
 
-    @expose(help="second-controller default command", hide=True)
     @network_connection_required
-    def default(self):
+    def _init(self):
         if self.clowder_repo:
             cprint('Clowder already initialized in this directory\n', 'red')
             sys.exit(1)
