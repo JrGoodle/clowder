@@ -28,7 +28,7 @@ from clowder.util.decorators import (
     network_connection_required,
     valid_clowder_yaml_required
 )
-from clowder.util.subparsers import configure_argparse
+# from clowder.util.subparsers import configure_argparse
 
 
 def main():
@@ -81,7 +81,7 @@ class Command(object):
         command_description = 'Utility for managing multiple git repositories'
         parser = argparse.ArgumentParser(description=command_description,
                                          formatter_class=argparse.RawDescriptionHelpFormatter)
-        configure_argparse(parser, self.clowder, self.versions)
+        # configure_argparse(parser, self.clowder, self.versions)
 
         # Argcomplete and arguments parsing
         argcomplete.autocomplete(parser)
