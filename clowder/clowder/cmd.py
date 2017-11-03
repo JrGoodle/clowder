@@ -70,7 +70,7 @@ class Command(object):
                 self.clowder_repo.link()
             try:
                 self.clowder = ClowderController(self.root_directory)
-                self.versions = self.clowder.get_saved_version_names()
+                # self.versions = self.clowder.get_saved_version_names()
             except (ClowderError, KeyError) as err:
                 self.invalid_yaml = True
                 self.error = err
