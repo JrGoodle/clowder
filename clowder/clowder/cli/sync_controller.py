@@ -12,12 +12,12 @@ import sys
 from cement.ext.ext_argparse import ArgparseController, expose
 from termcolor import cprint
 
-import clowder.commands as commands
 from clowder.clowder_repo import (
     print_clowder_repo_status_fetch,
     valid_clowder_yaml_required
 )
 from clowder.cli.globals import CLOWDER_CONTROLLER
+from clowder.cli.parallel import sync
 from clowder.cli.util import options_help_message
 from clowder.util.decorators import network_connection_required
 
@@ -51,5 +51,4 @@ class SyncController(ArgparseController):
         if all_fork_projects == '':
             cprint(' - No forks to sync\n', 'red')
             sys.exit()
-        commands.sync(CLOWDER_CONTROLLER, all_fork_projects, rebase=self.app.pargs.rebase,
-                      parallel=self.app.pargs.parallel)
+        sync(CLOWDER_CONTROLLER, all_fork_projects, rebase=self.app.pargs.rebase, parallel=self.app.pargs.parallel)

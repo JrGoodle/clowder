@@ -7,7 +7,7 @@
 
 from cement.ext.ext_argparse import ArgparseController, expose
 
-import clowder.commands as commands
+from clowder.cli.parallel import forall
 from clowder.clowder_repo import (
     print_clowder_repo_status,
     valid_clowder_yaml_required
@@ -44,6 +44,6 @@ class ForallController(ArgparseController):
     @valid_clowder_yaml_required
     @print_clowder_repo_status
     def _forall(self):
-        commands.forall(CLOWDER_CONTROLLER, self.app.pargs.command[0], self.app.pargs.ignore_errors,
-                        group_names=self.app.pargs.groups, project_names=self.app.pargs.projects,
-                        skip=self.app.pargs.skip, parallel=self.app.pargs.parallel)
+        forall(CLOWDER_CONTROLLER, self.app.pargs.command[0], self.app.pargs.ignore_errors,
+               group_names=self.app.pargs.groups, project_names=self.app.pargs.projects,
+               skip=self.app.pargs.skip, parallel=self.app.pargs.parallel)

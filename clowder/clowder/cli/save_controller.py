@@ -18,7 +18,7 @@ from clowder.clowder_repo import (
     valid_clowder_yaml_required
 )
 from clowder.cli.globals import CLOWDER_CONTROLLER
-from clowder.commands.util import (
+from clowder.cli.util import (
     validate_groups,
     validate_projects_exist
 )

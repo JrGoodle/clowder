@@ -7,7 +7,10 @@
 
 from cement.ext.ext_argparse import ArgparseController, expose
 
-import clowder.commands as commands
+from clowder.cli.parallel import (
+    herd,
+    herd_parallel
+)
 from clowder.clowder_repo import (
     print_clowder_repo_status_fetch,
     valid_clowder_yaml_required
@@ -55,6 +58,6 @@ class HerdController(ArgparseController):
                   'skip': self.app.pargs.skip, 'branch': branch, 'tag': tag,
                   'depth': depth, 'rebase': self.app.pargs.rebase}
         if self.app.pargs.parallel:
-            commands.herd_parallel(CLOWDER_CONTROLLER, **kwargs)
+            herd_parallel(CLOWDER_CONTROLLER, **kwargs)
             return
-        commands.herd(CLOWDER_CONTROLLER, **kwargs)
+        herd(CLOWDER_CONTROLLER, **kwargs)

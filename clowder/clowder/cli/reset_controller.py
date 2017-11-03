@@ -7,7 +7,7 @@
 
 from cement.ext.ext_argparse import ArgparseController, expose
 
-import clowder.commands as commands
+from clowder.cli.parallel import reset
 from clowder.clowder_repo import (
     print_clowder_repo_status_fetch,
     valid_clowder_yaml_required
@@ -50,5 +50,5 @@ class ResetController(ArgparseController):
         timestamp_project = None
         if self.app.pargs.timestamp:
             timestamp_project = self.app.pargs.timestamp[0]
-        commands.reset(CLOWDER_CONTROLLER, group_names=self.app.pargs.groups, project_names=self.app.pargs.projects,
-                       skip=self.app.pargs.skip, timestamp_project=timestamp_project, parallel=self.app.pargs.parallel)
+        reset(CLOWDER_CONTROLLER, group_names=self.app.pargs.groups, project_names=self.app.pargs.projects,
+              skip=self.app.pargs.skip, timestamp_project=timestamp_project, parallel=self.app.pargs.parallel)
