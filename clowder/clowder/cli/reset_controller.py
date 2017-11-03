@@ -3,9 +3,15 @@ import sys
 
 from cement.ext.ext_argparse import expose
 
+import clowder.commands as commands
 from clowder.cli.abstract_base_controller import AbstractBaseController
 from clowder.cli.util import project_names
 from clowder.clowder_controller import ClowderController
+from clowder.util.decorators import (
+    print_clowder_repo_status_fetch,
+    network_connection_required,
+    valid_clowder_yaml_required
+)
 
 
 class ResetController(AbstractBaseController):
@@ -31,5 +37,12 @@ class ResetController(AbstractBaseController):
                 ]
 
     @expose(help="second-controller default command", hide=True)
+    @network_connection_required
+    @valid_clowder_yaml_required
+    @print_clowder_repo_status_fetch
     def default(self):
-        print("Inside SecondController.default()")
+        timestamp_project = None
+        if self.app.pargs.timestamp:
+            timestamp_project = self.app.pargs.timestamp[0]
+        commands.reset(self.clowder, group_names=self.app.pargs.groups, project_names=self.app.pargs.projects,
+                       skip=self.app.pargs.skip, timestamp_project=timestamp_project, parallel=self.app.pargs.parallel)

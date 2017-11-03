@@ -1,6 +1,11 @@
 from cement.ext.ext_argparse import expose
 
+import clowder.commands as commands
 from clowder.cli.abstract_base_controller import AbstractBaseController
+from clowder.util.decorators import (
+    print_clowder_repo_status,
+    valid_clowder_yaml_required
+)
 
 
 class ForallController(AbstractBaseController):
@@ -17,5 +22,9 @@ class ForallController(AbstractBaseController):
             ]
 
     @expose(help="second-controller default command", hide=True)
+    @valid_clowder_yaml_required
+    @print_clowder_repo_status
     def default(self):
-        print("Inside SecondController.default()")
+        commands.forall(self.clowder, self.app.pargs.command[0], self.app.pargs.ignore_errors,
+                        group_names=self.app.pargs.groups, project_names=self.app.pargs.projects,
+                        skip=self.app.pargs.skip, parallel=self.app.pargs.parallel)

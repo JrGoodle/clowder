@@ -2,12 +2,19 @@ import os
 import sys
 
 from cement.ext.ext_argparse import expose
+from termcolor import cprint
 
+import clowder.commands as commands
 from clowder.clowder_controller import ClowderController
 from clowder.cli.abstract_base_controller import AbstractBaseController
 from clowder.cli.util import (
     fork_project_names,
     options_help_message
+)
+from clowder.util.decorators import (
+    print_clowder_repo_status_fetch,
+    network_connection_required,
+    valid_clowder_yaml_required
 )
 
 
@@ -34,6 +41,12 @@ class SyncController(AbstractBaseController):
                 ]
 
     @expose(help="second-controller default command", hide=True)
+    @network_connection_required
+    @valid_clowder_yaml_required
+    @print_clowder_repo_status_fetch
     def default(self):
-        print("Inside SecondController.default()")
-
+        all_fork_projects = self.clowder.get_all_fork_project_names()
+        if all_fork_projects == '':
+            cprint(' - No forks to sync\n', 'red')
+            sys.exit()
+        commands.sync(self.clowder, all_fork_projects, rebase=self.app.pargs.rebase, parallel=self.app.pargs.parallel)
