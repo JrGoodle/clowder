@@ -13,6 +13,7 @@ import sys
 import yaml
 
 import clowder.util.formatting as fmt
+from clowder.error.clowder_error import ClowderError
 
 
 def parse_yaml(yaml_file):
@@ -38,5 +39,4 @@ def parse_yaml(yaml_file):
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
     else:
-        print('\n' + fmt.missing_yaml_error() + '\n')
-        sys.exit(1)
+        raise ClowderError('\n' + fmt.missing_yaml_error() + '\n')

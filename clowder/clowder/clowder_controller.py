@@ -86,18 +86,6 @@ class ClowderController(object):
 
         return sorted([p.formatted_project_path() for g in self.groups for p in g.projects])
 
-    def get_saved_version_names(self):
-        """Return list of all saved versions
-
-        :return: List of all saved version names
-        :rtype: list[str]
-        """
-
-        versions_dir = os.path.join(self.root_directory, '.clowder', 'versions')
-        if not os.path.exists(versions_dir):
-            return None
-        return [v for v in os.listdir(versions_dir) if not v.startswith('.') if v.lower() != 'default']
-
     def get_timestamp(self, timestamp_project):
         """Return timestamp for project
 
