@@ -1,6 +1,10 @@
+import sys
+
 from cement.ext.ext_argparse import expose
+from termcolor import colored, cprint
 
 from clowder.cli.abstract_base_controller import AbstractBaseController
+from clowder.util.decorators import network_connection_required
 
 
 class InitController(AbstractBaseController):
@@ -15,5 +19,16 @@ class InitController(AbstractBaseController):
             ]
 
     @expose(help="second-controller default command", hide=True)
+    @network_connection_required
     def default(self):
-        print("Inside SecondController.default()")
+        if self.clowder_repo:
+            cprint('Clowder already initialized in this directory\n', 'red')
+            sys.exit(1)
+
+        url_output = colored(self.app.pargs.url, 'green')
+        print('Create clowder repo from ' + url_output + '\n')
+        if self.app.pargs.branch is None:
+            branch = 'master'
+        else:
+            branch = str(self.app.pargs.branch[0])
+        self.clowder_repo.init(self.app.pargs.url, branch)
