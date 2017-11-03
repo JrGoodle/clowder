@@ -76,26 +76,26 @@ class AbstractBaseController(ArgparseController):
             except (KeyboardInterrupt, SystemExit):
                 sys.exit(1)
 
-    @expose(hide=True)
-    def default(self):
-        """
-        This command will be shared within all controllers that sub-class
-        from here.  It can also be overridden in the sub-class, but for
-        this example we are making it dynamic.
-
-        """
-        # # do something with self.my_shared_obj here?
-        # if 'some_key' in self.reusable_dict.keys():
-        #     pass
-
-        print(self.root_directory)
-        print(self.clowder_repo.default_ref)
-        print(self.clowder.groups)
-
-        # or do something with parsed args?
-        # if self.app.pargs.groups:
-        #     print("Groups option was passed with value: %s" % self.app.pargs.groups)
-
-        # or maybe do something dynamically
-        print("Inside %s.default()" % self.__class__.__name__)
+    # @expose(hide=True)
+    # def default(self):
+    #     """
+    #     This command will be shared within all controllers that sub-class
+    #     from here.  It can also be overridden in the sub-class, but for
+    #     this example we are making it dynamic.
+    #
+    #     """
+    #     # # do something with self.my_shared_obj here?
+    #     # if 'some_key' in self.reusable_dict.keys():
+    #     #     pass
+    #
+    #     print(self.root_directory)
+    #     print(self.clowder_repo.default_ref)
+    #     print(self.clowder.groups)
+    #
+    #     # or do something with parsed args?
+    #     # if self.app.pargs.groups:
+    #     #     print("Groups option was passed with value: %s" % self.app.pargs.groups)
+    #
+    #     # or maybe do something dynamically
+    #     print("Inside %s.default()" % self.__class__.__name__)
 

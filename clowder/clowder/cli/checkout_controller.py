@@ -24,16 +24,21 @@ class CheckoutController(AbstractBaseController):
     class Meta:
         label = 'checkout'
         stacked_on = 'base'
-        stacked_type = 'nested'
+        stacked_type = 'embedded'
         description = 'Checkout local branch in projects'
-        arguments = AbstractBaseController.Meta.arguments + [
-            (['branch'], dict(nargs=1, action='store', help='branch to checkout', metavar='BRANCH'))
-            ]
 
-    @expose(help="second-controller default command", hide=True)
+    @expose(
+        help='this is the help message for clowder checkout',
+        arguments=AbstractBaseController.Meta.arguments + [
+            (['branch'], dict(nargs=1, action='store', help='branch to checkout', metavar='BRANCH'))
+        ]
+    )
+    def checkout(self):
+        self._checkout()
+
     @valid_clowder_yaml_required
     @print_clowder_repo_status
-    def default(self):
+    def _checkout(self):
         if self.app.pargs.projects is None:
             groups = filter_groups(self.clowder.groups, self.app.pargs.groups)
             for group in groups:

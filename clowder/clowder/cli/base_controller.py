@@ -23,6 +23,3 @@ class BaseController(ArgparseController):
             (['-v', '--version'], dict(action='version', version=VERSION)),
         ]
 
-    @expose(hide=True)
-    def default(self):
-        print("Inside MyAppBaseController.default()")
