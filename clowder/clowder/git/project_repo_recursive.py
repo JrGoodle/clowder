@@ -12,7 +12,7 @@ from termcolor import colored
 
 import clowder.util.formatting as fmt
 from clowder.git.project_repo import ProjectRepo
-from clowder.git.repo import execute_command
+from clowder.util.execute import execute_command
 
 
 class ProjectRepoRecursive(ProjectRepo):
