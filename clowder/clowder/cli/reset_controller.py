@@ -13,10 +13,7 @@ from clowder.clowder_repo import (
     valid_clowder_yaml_required
 )
 from clowder.cli.globals import CLOWDER_CONTROLLER
-from clowder.cli.util import (
-    options_help_message,
-    project_names
-)
+from clowder.cli.util import options_help_message
 from clowder.util.connectivity import network_connection_required
 
 
@@ -35,7 +32,7 @@ class ResetController(ArgparseController):
         help='Reset branches to upstream commits or check out detached HEADs for tags and shas',
         arguments=[
             (['--parallel'], dict(action='store_true', help='run commands in parallel')),
-            (['--timestamp', '-t'], dict(choices=project_names(CLOWDER_CONTROLLER),
+            (['--timestamp', '-t'], dict(choices=CLOWDER_CONTROLLER.get_all_project_names(),
                                          default=None, nargs=1, metavar='TIMESTAMP',
                                          help='project to reset timestamps relative to')),
             (['--groups', '-g'], dict(choices=CLOWDER_CONTROLLER.get_all_group_names(),
