@@ -284,22 +284,11 @@ class ProjectRepoImpl(GitRepo):
         """
 
         branch_output = fmt.ref_string(branch)
-        origin = self._remote(remote)
         self.fetch(remote, depth=depth, ref=branch)
 
-        if branch in origin.refs:
-            try:
-                self.repo.git.config('--get', 'branch.' + branch + '.merge')
-                self._print(' - Tracking branch ' + branch_output + ' already exists')
-                return
-            except GitError:
-                message_1 = colored(' - Remote branch ', 'red')
-                message_2 = colored(' already exists', 'red')
-                message = message_1 + branch_output + message_2 + '\n'
-                self._print(message)
-                self._exit(message)
-            except (KeyboardInterrupt, SystemExit):
-                self._exit()
+        if branch in self._remote(remote).refs:
+            self._print_existing_remote_branch_message(branch)
+            return
 
         try:
             self._print(' - Push remote branch ' + branch_output)
@@ -651,6 +640,24 @@ class ProjectRepoImpl(GitRepo):
             self._exit(message)
         except (KeyboardInterrupt, SystemExit):
             self._exit()
+
+    def _print_existing_remote_branch_message(self, branch):
+        """Print output message for existing remote branch
+
+        :param str branch: Branch name
+        """
+
+        branch_output = fmt.ref_string(branch)
+        try:
+            self.repo.git.config('--get', 'branch.' + branch + '.merge')
+        except GitError:
+            message = colored(' - Remote branch ', 'red') + branch_output + colored(' already exists\n', 'red')
+            self._print(message)
+            self._exit(message)
+        except (KeyboardInterrupt, SystemExit):
+            self._exit()
+        else:
+            self._print(' - Tracking branch ' + branch_output + ' already exists')
 
     @not_detached
     def _pull(self, remote, branch):
