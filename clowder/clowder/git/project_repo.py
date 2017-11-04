@@ -341,10 +341,11 @@ class ProjectRepo(ProjectRepoImpl):
         :param str ref: Reference ref
         """
 
-        rev = self._find_rev_by_timestamp(timestamp, ref)
+        rev = None
         if author:
             rev = self._find_rev_by_timestamp_author(timestamp, author, ref)
-
+        if not rev:
+            rev = self._find_rev_by_timestamp(timestamp, ref)
         if not rev:
             message = colored(' - Failed to find rev', 'red')
             self._print(message)
