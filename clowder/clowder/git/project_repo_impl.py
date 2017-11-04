@@ -132,42 +132,27 @@ class ProjectRepoImpl(GitRepo):
         :param Optional[bool] remove_dir: Whether to remove the directory if commands fail
         """
 
-        tag_output = fmt.ref_string(tag)
-        self._remote(remote, remove_dir=remove_dir)
-        self.fetch(remote, depth=depth, ref='refs/tags/' + tag, remove_dir=remove_dir)
+        remote_tag = self._get_remote_tag(tag, remote, depth=depth, remove_dir=remove_dir)
+        if remote_tag is None:
+            return 1
 
+        tag_output = fmt.ref_string(tag)
         try:
-            remote_tag = self.repo.tags[tag]
-        except (GitError, IndexError):
-            message = ' - No existing tag '
+            self._print(' - Checkout tag ' + tag_output)
+            self.repo.git.checkout(remote_tag)
+            return 0
+        except GitError as err:
+            message = colored(' - Failed to checkout tag ', 'red')
+            self._print(message + tag_output)
+            self._print(fmt.error(err))
             if remove_dir:
                 remove_directory(self.repo_path)
-                self._print(colored(message, 'red') + tag_output)
-                self._exit(fmt.parallel_exception_error(self.repo_path, colored(message, 'red'), tag_output))
-            if self._print_output:
-                self._print(message + tag_output)
+                self._exit(fmt.parallel_exception_error(self.repo_path, message, tag_output))
             return 1
         except (KeyboardInterrupt, SystemExit):
             if remove_dir:
                 remove_directory(self.repo_path)
             self._exit()
-        else:
-            try:
-                self._print(' - Checkout tag ' + tag_output)
-                self.repo.git.checkout(remote_tag)
-                return 0
-            except GitError as err:
-                message = colored(' - Failed to checkout tag ', 'red')
-                self._print(message + tag_output)
-                self._print(fmt.error(err))
-                if remove_dir:
-                    remove_directory(self.repo_path)
-                    self._exit(fmt.parallel_exception_error(self.repo_path, message, tag_output))
-                return 1
-            except (KeyboardInterrupt, SystemExit):
-                if remove_dir:
-                    remove_directory(self.repo_path)
-                self._exit()
 
     def _checkout_sha(self, sha):
         """Checkout commit by sha
@@ -407,6 +392,39 @@ class ProjectRepoImpl(GitRepo):
             self._print(fmt.error(err))
             self._exit(fmt.error(err))
         except (KeyboardInterrupt, SystemExit):
+            self._exit()
+
+    def _get_remote_tag(self, tag, remote, depth=0, remove_dir=False):
+        """Returns Tag object
+
+        .. py:function:: _get_remote_tag(tag, remote, depth=0, remove_dir=False)
+
+        :param str tag: Tag name
+        :param str remote: Remote name
+        :param Optional[int] depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :param Optional[bool] remove_dir: Whether to remove the directory if commands fail
+        :return: GitPython Tag object if it exists, otherwise None
+        :rtype: Tag
+        """
+
+        tag_output = fmt.ref_string(tag)
+        self._remote(remote, remove_dir=remove_dir)
+        self.fetch(remote, depth=depth, ref='refs/tags/' + tag, remove_dir=remove_dir)
+
+        try:
+            return self.repo.tags[tag]
+        except (GitError, IndexError):
+            message = ' - No existing tag '
+            if remove_dir:
+                remove_directory(self.repo_path)
+                self._print(colored(message, 'red') + tag_output)
+                self._exit(fmt.parallel_exception_error(self.repo_path, colored(message, 'red'), tag_output))
+            if self._print_output:
+                self._print(message + tag_output)
+            return None
+        except (KeyboardInterrupt, SystemExit):
+            if remove_dir:
+                remove_directory(self.repo_path)
             self._exit()
 
     def _herd(self, remote, ref, **kwargs):
