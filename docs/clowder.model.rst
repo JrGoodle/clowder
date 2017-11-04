@@ -1,35 +1,35 @@
-clowder.model package
-=====================
+clowder\.model package
+======================
 
 Submodules
 ----------
 
-clowder.model.fork module
--------------------------
+clowder\.model\.fork module
+---------------------------
 
 .. automodule:: clowder.model.fork
     :members:
     :undoc-members:
     :show-inheritance:
 
-clowder.model.group module
---------------------------
+clowder\.model\.group module
+----------------------------
 
 .. automodule:: clowder.model.group
     :members:
     :undoc-members:
     :show-inheritance:
 
-clowder.model.project module
-----------------------------
+clowder\.model\.project module
+------------------------------
 
 .. automodule:: clowder.model.project
     :members:
     :undoc-members:
     :show-inheritance:
 
-clowder.model.source module
----------------------------
+clowder\.model\.source module
+-----------------------------
 
 .. automodule:: clowder.model.source
     :members:

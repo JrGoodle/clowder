@@ -1,53 +1,45 @@
-clowder.util package
-====================
+clowder\.util package
+=====================
 
 Submodules
 ----------
 
-clowder.util.connectivity module
---------------------------------
+clowder\.util\.connectivity module
+----------------------------------
 
 .. automodule:: clowder.util.connectivity
     :members:
     :undoc-members:
     :show-inheritance:
 
-clowder.util.execute module
----------------------------
+clowder\.util\.execute module
+-----------------------------
 
 .. automodule:: clowder.util.execute
     :members:
     :undoc-members:
     :show-inheritance:
 
-clowder.util.file_system module
--------------------------------
+clowder\.util\.file\_system module
+----------------------------------
 
 .. automodule:: clowder.util.file_system
     :members:
     :undoc-members:
     :show-inheritance:
 
-clowder.util.formatting module
-------------------------------
+clowder\.util\.formatting module
+--------------------------------
 
 .. automodule:: clowder.util.formatting
     :members:
     :undoc-members:
     :show-inheritance:
 
-clowder.util.progress module
-----------------------------
-
-.. automodule:: clowder.util.progress
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-clowder.util.subparsers module
+clowder\.util\.progress module
 ------------------------------
 
-.. automodule:: clowder.util.subparsers
+.. automodule:: clowder.util.progress
     :members:
     :undoc-members:
     :show-inheritance:
