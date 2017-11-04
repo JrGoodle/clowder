@@ -85,12 +85,14 @@ class GitRepo(object):
             if self._print_output:
                 print(self.repo.git.checkout(truncated_ref))
                 return
+
             self.repo.git.checkout(truncated_ref)
         except GitError as err:
             message = colored(' - Failed to checkout ', 'red')
             self._print(message + ref_output)
             if allow_failure:
                 return
+
             self._print(fmt.error(err))
             self._exit(fmt.parallel_exception_error(self.repo_path, message, ref_output))
         except (KeyboardInterrupt, SystemExit):
@@ -280,15 +282,16 @@ class GitRepo(object):
             try:
                 commits = local_branch.commit.hexsha + '...' + tracking_branch.commit.hexsha
                 rev_list_count = self.repo.git.rev_list('--count', '--left-right', commits)
+            except (GitError, ValueError):
+                return 0
+            except (KeyboardInterrupt, SystemExit):
+                self._exit()
+            else:
                 if upstream:
                     count = str(rev_list_count).split()[1]
                 else:
                     count = str(rev_list_count).split()[0]
                 return count
-            except (GitError, ValueError):
-                return 0
-            except (KeyboardInterrupt, SystemExit):
-                self._exit()
 
     def print_branches(self, local=False, remote=False):
         """Print branches
@@ -352,6 +355,7 @@ class GitRepo(object):
 
         if short:
             return self.repo.git.rev_parse(self.repo.head.commit.hexsha, short=True)
+
         return self.repo.head.commit.hexsha
 
     def sha_branch_remote(self, remote, branch):
@@ -412,6 +416,7 @@ class GitRepo(object):
 
         if not existing_git_repository(self.repo_path):
             return True
+
         return not self.is_dirty()
 
     def _abort_rebase(self):
@@ -470,6 +475,7 @@ class GitRepo(object):
 
         if self.parallel:
             raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message))
+
         sys.exit(return_code)
 
     def _is_rebase_in_progress(self):
@@ -503,7 +509,6 @@ class GitRepo(object):
 
         try:
             repo = Repo(self.repo_path)
-            return repo
         except GitError as err:
             repo_path_output = fmt.get_path(self.repo_path)
             message = colored(" - Failed to create Repo instance for ", 'red') + repo_path_output
@@ -512,6 +517,8 @@ class GitRepo(object):
             self._exit(message)
         except (KeyboardInterrupt, SystemExit):
             self._exit()
+        else:
+            return repo
 
     def _reset_head(self, branch=None):
         """Reset head of repo, discarding changes
@@ -522,7 +529,6 @@ class GitRepo(object):
         if branch is None:
             try:
                 self.repo.head.reset(index=True, working_tree=True)
-                return 0
             except GitError as err:
                 ref_output = fmt.ref_string('HEAD')
                 message = colored(' - Failed to reset ', 'red') + ref_output
@@ -531,10 +537,11 @@ class GitRepo(object):
                 self._exit(message)
             except (KeyboardInterrupt, SystemExit):
                 self._exit()
+            else:
+                return 0
 
         try:
             self.repo.git.reset('--hard', branch)
-            return 0
         except GitError as err:
             branch_output = fmt.ref_string(branch)
             message = colored(' - Failed to reset to ', 'red') + branch_output
@@ -543,6 +550,8 @@ class GitRepo(object):
             self._exit(message)
         except (KeyboardInterrupt, SystemExit):
             self._exit()
+        else:
+            return 0
 
     def _untracked_files(self):
         """Check whether untracked files exist
@@ -554,7 +563,6 @@ class GitRepo(object):
         command = "git ls-files -o -d --exclude-standard | sed q | wc -l| tr -d '[:space:]'"
         try:
             output = subprocess.check_output(command, shell=True, cwd=self.repo_path)
-            return output.decode('utf-8') == '1'
         except GitError as err:
             message = colored(' - Failed to check untracked files', 'red')
             self._print(message)
@@ -562,3 +570,5 @@ class GitRepo(object):
             self._exit(message)
         except (KeyboardInterrupt, SystemExit):
             self._exit()
+        else:
+            return output.decode('utf-8') == '1'

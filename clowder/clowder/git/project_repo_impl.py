@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Project Git utility class
+"""Project Git abstract utility class
 
 .. codeauthor:: Joe Decapo <joe@polka.cat>
 
