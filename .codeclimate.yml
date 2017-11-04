@@ -18,9 +18,15 @@ checks:
   argument-count:
     config:
       threshold: 5
+  complex-logic:
+    config:
+      threshold: 7
   file-lines:
     config:
       threshold: 1000
+  method-complexity:
+    config:
+      threshold: 7
   method-count:
     config:
       threshold: 30
