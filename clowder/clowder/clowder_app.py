@@ -80,7 +80,7 @@ def main():
             # app.exit_code = 300
 
             app.args.print_help()
-            sys.exit(1)
+            app.exit_code = 1
         finally:
             # Maybe we want to see a full-stack trace for the above
             # exceptions, but only if --debug was passed?
@@ -88,6 +88,7 @@ def main():
                 import traceback
                 traceback.print_exc()
             print()
+            sys.exit(app.exit_code)
 
 
 if __name__ == '__main__':
