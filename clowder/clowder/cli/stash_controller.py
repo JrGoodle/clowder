@@ -17,6 +17,7 @@ from clowder.cli.globals import CLOWDER_CONTROLLER
 from clowder.cli.util import (
     filter_groups,
     filter_projects_on_project_names,
+    options_help_message,
     run_group_command,
     run_project_command
 )
@@ -34,15 +35,21 @@ class StashController(ArgparseController):
         description = 'Stash current changes'
 
     @expose(
-        help='this is the help message for clowder stash',
+        help='Stash current changes',
         arguments=[
             (['--groups', '-g'], dict(choices=CLOWDER_CONTROLLER.get_all_group_names(),
                                       default=CLOWDER_CONTROLLER.get_all_group_names(),
-                                      nargs='+', metavar='GROUP', help='groups to herd')),
+                                      nargs='+', metavar='GROUP',
+                                      help=options_help_message(CLOWDER_CONTROLLER.get_all_group_names(),
+                                                                'groups to stash'))),
             (['--projects', '-p'], dict(choices=CLOWDER_CONTROLLER.get_all_project_names(),
-                                        nargs='+', metavar='PROJECT', help='projects to herd')),
+                                        nargs='+', metavar='PROJECT',
+                                        help=options_help_message(CLOWDER_CONTROLLER.get_all_project_names(),
+                                                                  'projects to stash'))),
             (['--skip', '-s'], dict(choices=CLOWDER_CONTROLLER.get_all_project_names(),
-                                    nargs='+', metavar='PROJECT', default=[], help='projects to skip'))
+                                    nargs='+', metavar='PROJECT', default=[],
+                                    help=options_help_message(CLOWDER_CONTROLLER.get_all_project_names(),
+                                                              'projects to skip')))
         ]
     )
     def stash(self):

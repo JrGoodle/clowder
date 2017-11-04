@@ -15,6 +15,7 @@ from clowder.cli.globals import CLOWDER_CONTROLLER
 from clowder.cli.util import (
     filter_groups,
     filter_projects_on_project_names,
+    options_help_message,
     run_group_command,
     run_project_command
 )
@@ -32,16 +33,22 @@ class CheckoutController(ArgparseController):
         description = 'Checkout local branch in projects'
 
     @expose(
-        help='this is the help message for clowder checkout',
+        help='Checkout local branch in projects',
         arguments=[
             (['branch'], dict(nargs=1, action='store', help='branch to checkout', metavar='BRANCH')),
             (['--groups', '-g'], dict(choices=CLOWDER_CONTROLLER.get_all_group_names(),
                                       default=CLOWDER_CONTROLLER.get_all_group_names(),
-                                      nargs='+', metavar='GROUP', help='groups to herd')),
+                                      nargs='+', metavar='GROUP',
+                                      help=options_help_message(CLOWDER_CONTROLLER.get_all_group_names(),
+                                                                'groups to checkout branches for'))),
             (['--projects', '-p'], dict(choices=CLOWDER_CONTROLLER.get_all_project_names(),
-                                        nargs='+', metavar='PROJECT', help='projects to herd')),
+                                        nargs='+', metavar='PROJECT',
+                                        help=options_help_message(CLOWDER_CONTROLLER.get_all_project_names(),
+                                                                  'projects to checkout branches for'))),
             (['--skip', '-s'], dict(choices=CLOWDER_CONTROLLER.get_all_project_names(),
-                                    nargs='+', metavar='PROJECT', default=[], help='projects to skip'))
+                                    nargs='+', metavar='PROJECT', default=[],
+                                    help=options_help_message(CLOWDER_CONTROLLER.get_all_project_names(),
+                                                              'projects to skip')))
         ]
     )
     def checkout(self):

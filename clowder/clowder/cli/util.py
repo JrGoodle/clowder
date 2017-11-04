@@ -237,7 +237,7 @@ def options_help_message(options, message):
     :rtype: str
     """
 
-    if options == [''] or options is None:
+    if options == [''] or options is None or options == []:
         return message
 
     help_message = '''

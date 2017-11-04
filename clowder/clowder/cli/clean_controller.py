@@ -15,6 +15,7 @@ from clowder.cli.globals import CLOWDER_CONTROLLER
 from clowder.cli.util import (
     filter_groups,
     filter_projects_on_project_names,
+    options_help_message,
     run_group_command,
     run_project_command
 )
@@ -32,7 +33,7 @@ class CleanController(ArgparseController):
         description = 'Discard current changes in projects'
 
     @expose(
-        help='this is the help message for clowder clean',
+        help='Discard current changes in projects',
         arguments=[
             (['--all', '-a'], dict(action='store_true', help='clean all the things')),
             (['--recursive', '-r'], dict(action='store_true', help='clean submodules recursively')),
@@ -42,11 +43,17 @@ class CleanController(ArgparseController):
             (['-x'], dict(action='store_true', help='remove all untracked files')),
             (['--groups', '-g'], dict(choices=CLOWDER_CONTROLLER.get_all_group_names(),
                                       default=CLOWDER_CONTROLLER.get_all_group_names(),
-                                      nargs='+', metavar='GROUP', help='groups to herd')),
+                                      nargs='+', metavar='GROUP',
+                                      help=options_help_message(CLOWDER_CONTROLLER.get_all_group_names(),
+                                                                'groups to clean'))),
             (['--projects', '-p'], dict(choices=CLOWDER_CONTROLLER.get_all_project_names(),
-                                        nargs='+', metavar='PROJECT', help='projects to herd')),
+                                        nargs='+', metavar='PROJECT',
+                                        help=options_help_message(CLOWDER_CONTROLLER.get_all_project_names(),
+                                                                  'projects to clean'))),
             (['--skip', '-s'], dict(choices=CLOWDER_CONTROLLER.get_all_project_names(),
-                                    nargs='+', metavar='PROJECT', default=[], help='projects to skip'))
+                                    nargs='+', metavar='PROJECT', default=[],
+                                    help=options_help_message(CLOWDER_CONTROLLER.get_all_project_names(),
+                                                              'projects to skip')))
             ]
     )
     def clean(self):

@@ -26,6 +26,7 @@ class RepoController(ArgparseController):
         stacked_on = 'base'
         stacked_type = 'nested'
         description = 'Manage clowder repo'
+        help = 'Manage clowder repo'
 
 
 class RepoAddController(ArgparseController):
@@ -40,7 +41,7 @@ class RepoAddController(ArgparseController):
         description = 'Add files in clowder repo'
 
     @expose(
-        help='this is the help message for clowder repo add',
+        help='Add files in clowder repo',
         arguments=[(['files'], dict(nargs='+', metavar='FILE', help='files to add'))]
     )
     def add(self):
@@ -68,7 +69,7 @@ class RepoCheckoutController(ArgparseController):
         description = 'Checkout ref in clowder repo'
 
     @expose(
-        help='this is the help message for clowder repo checkout',
+        help='Checkout ref in clowder repo',
         arguments=[(['ref'], dict(nargs=1, metavar='REF', help='git ref to checkout'))]
     )
     def checkout(self):
@@ -96,7 +97,7 @@ class RepoCleanController(ArgparseController):
         description = 'Discard changes in clowder repo'
 
     @expose(
-        help='this is the help message for clowder repo clean',
+        help='Discard changes in clowder repo'
     )
     def clean(self):
         """Clowder repo clean command entry point"""
@@ -124,7 +125,7 @@ class RepoCommitController(ArgparseController):
         description = 'Commit current changes in clowder repo yaml files'
 
     @expose(
-        help='this is the help message for clowder repo commit',
+        help='Commit current changes in clowder repo yaml files',
         arguments=[(['message'], dict(nargs=1, metavar='MESSAGE', help='commit message'))]
     )
     def commit(self):
@@ -152,7 +153,7 @@ class RepoPullController(ArgparseController):
         description = 'Pull upstream changes in clowder repo'
 
     @expose(
-        help='this is the help message for clowder repo pull',
+        help='Pull upstream changes in clowder repo'
     )
     def pull(self):
         """Clowder repo pull command entry point"""
@@ -181,7 +182,7 @@ class RepoPushController(ArgparseController):
         description = 'Push changes in clowder repo'
 
     @expose(
-        help='this is the help message for clowder repo push',
+        help='Push changes in clowder repo'
     )
     def push(self):
         """Clowder repo push command entry point"""
@@ -210,7 +211,7 @@ class RepoRunController(ArgparseController):
         description = 'Run command in clowder repo'
 
     @expose(
-        help='this is the help message for clowder repo add',
+        help='Run command in clowder repo',
         arguments=[
             (['command'], dict(nargs=1, metavar='COMMAND', help='command to run in clowder repo directory'))
         ]
@@ -240,7 +241,7 @@ class RepoStatusController(ArgparseController):
         description = 'Print clowder repo git status'
 
     @expose(
-        help='this is the help message for clowder repo status',
+        help='Print clowder repo git status'
     )
     def status(self):
         """Clowder repo status command entry point"""

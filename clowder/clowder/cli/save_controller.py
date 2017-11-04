@@ -37,7 +37,7 @@ class SaveController(ArgparseController):
         description = 'Create version of clowder.yaml for current repos'
 
     @expose(
-        help='this is the help message for clowder save',
+        help='Create version of clowder.yaml for current repos',
         arguments=[
             (['version'], dict(help='version to save', metavar='VERSION'))
         ]

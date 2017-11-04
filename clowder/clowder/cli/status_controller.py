@@ -28,7 +28,7 @@ class StatusController(ArgparseController):
         description = 'Print project status'
 
     @expose(
-        help='this is the help message for clowder status',
+        help='Print project status',
         arguments=[
             (['--fetch', '-f'], dict(action='store_true', help='fetch projects before printing status'))
             ]

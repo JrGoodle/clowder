@@ -11,6 +11,7 @@ from clowder.cli.parallel import (
     herd,
     herd_parallel
 )
+from clowder.cli.util import options_help_message
 from clowder.clowder_repo import (
     print_clowder_repo_status_fetch,
     valid_clowder_yaml_required
@@ -31,7 +32,7 @@ class HerdController(ArgparseController):
         description = 'Clone and update projects with latest changes'
 
     @expose(
-        help='this is the help message for clowder herd',
+        help='Clone and update projects with latest changes',
         arguments=[
             (['--parallel'], dict(action='store_true', help='run commands in parallel')),
             (['--rebase', '-r'], dict(action='store_true', help='use rebase instead of pull')),
@@ -40,11 +41,17 @@ class HerdController(ArgparseController):
             (['--tag', '-t'], dict(nargs=1, default=None, metavar='TAG', help='tag to herd if present')),
             (['--groups', '-g'], dict(choices=CLOWDER_CONTROLLER.get_all_group_names(),
                                       default=CLOWDER_CONTROLLER.get_all_group_names(),
-                                      nargs='+', metavar='GROUP', help='groups to herd')),
+                                      nargs='+', metavar='GROUP',
+                                      help=options_help_message(CLOWDER_CONTROLLER.get_all_group_names(),
+                                                                'groups to herd'))),
             (['--projects', '-p'], dict(choices=CLOWDER_CONTROLLER.get_all_project_names(),
-                                        nargs='+', metavar='PROJECT', help='projects to herd')),
+                                        nargs='+', metavar='PROJECT',
+                                        help=options_help_message(CLOWDER_CONTROLLER.get_all_project_names(),
+                                                                  'projects to herd'))),
             (['--skip', '-s'], dict(choices=CLOWDER_CONTROLLER.get_all_project_names(),
-                                    nargs='+', metavar='PROJECT', default=[], help='projects to skip'))
+                                    nargs='+', metavar='PROJECT', default=[],
+                                    help=options_help_message(CLOWDER_CONTROLLER.get_all_project_names(),
+                                                              'projects to skip')))
             ]
     )
     def herd(self):

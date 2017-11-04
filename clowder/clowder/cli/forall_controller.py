@@ -8,6 +8,7 @@
 from cement.ext.ext_argparse import ArgparseController, expose
 
 from clowder.cli.parallel import forall
+from clowder.cli.util import options_help_message
 from clowder.clowder_repo import (
     print_clowder_repo_status,
     valid_clowder_yaml_required
@@ -27,7 +28,7 @@ class ForallController(ArgparseController):
         description = 'Run command or script in project directories'
 
     @expose(
-        help='this is the help message for clowder forall',
+        help='Run command or script in project directories',
         arguments=[
             (['--command', '-c'], dict(nargs=1, metavar='COMMAND',
                                        help='command or script to run in project directories')),
@@ -35,11 +36,17 @@ class ForallController(ArgparseController):
             (['--parallel'], dict(action='store_true', help='run commands in parallel')),
             (['--groups', '-g'], dict(choices=CLOWDER_CONTROLLER.get_all_group_names(),
                                       default=CLOWDER_CONTROLLER.get_all_group_names(),
-                                      nargs='+', metavar='GROUP', help='groups to herd')),
+                                      nargs='+', metavar='GROUP',
+                                      help=options_help_message(CLOWDER_CONTROLLER.get_all_group_names(),
+                                                                'groups to run command for'))),
             (['--projects', '-p'], dict(choices=CLOWDER_CONTROLLER.get_all_project_names(),
-                                        nargs='+', metavar='PROJECT', help='projects to herd')),
+                                        nargs='+', metavar='PROJECT',
+                                        help=options_help_message(CLOWDER_CONTROLLER.get_all_project_names(),
+                                                                  'projects to run command for'))),
             (['--skip', '-s'], dict(choices=CLOWDER_CONTROLLER.get_all_project_names(),
-                                    nargs='+', metavar='PROJECT', default=[], help='projects to skip'))
+                                    nargs='+', metavar='PROJECT', default=[],
+                                    help=options_help_message(CLOWDER_CONTROLLER.get_all_project_names(),
+                                                              'projects to skip')))
             ]
     )
     def forall(self):

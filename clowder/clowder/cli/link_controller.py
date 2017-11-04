@@ -30,7 +30,7 @@ class LinkController(ArgparseController):
         description = 'Symlink clowder.yaml version'
 
     @expose(
-        help='this is the help message for clowder link',
+        help='Symlink clowder.yaml version',
         arguments=[
             (['--version', '-v'], dict(choices=get_saved_version_names(),
                                        nargs=1, default=None, metavar='VERSION',

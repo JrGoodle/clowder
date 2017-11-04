@@ -34,7 +34,7 @@ class SyncController(ArgparseController):
         description = 'Sync fork with upstream remote'
 
     @expose(
-        help='this is the help message for clowder sync',
+        help='Sync fork with upstream remote',
         arguments=[
             (['--projects', '-p'], dict(choices=CLOWDER_CONTROLLER.get_all_fork_project_names(),
                                         nargs='+', metavar='PROJECT',

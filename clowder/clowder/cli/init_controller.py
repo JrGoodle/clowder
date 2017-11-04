@@ -29,7 +29,7 @@ class InitController(ArgparseController):
         description = 'Clone repository to clowder directory and create clowder.yaml symlink'
 
     @expose(
-        help='this is the help message for clowder init',
+        help='Clone repository to clowder directory and create clowder.yaml symlink',
         arguments=[
             (['url'], dict(metavar='URL', help='url of repo containing clowder.yaml')),
             (['--branch', '-b'], dict(nargs=1, metavar='BRANCH', help='branch of repo containing clowder.yaml'))

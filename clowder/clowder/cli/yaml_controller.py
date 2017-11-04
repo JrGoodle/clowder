@@ -32,7 +32,7 @@ class YAMLController(ArgparseController):
         description = 'Print clowder.yaml information'
 
     @expose(
-        help='this is the help message for clowder yaml',
+        help='Print clowder.yaml information',
         arguments=[
             (['--resolved', '-r'], dict(action='store_true', help='print resolved clowder.yaml'))
         ]

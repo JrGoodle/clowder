@@ -13,7 +13,10 @@ from clowder.clowder_repo import (
     valid_clowder_yaml_required
 )
 from clowder.cli.globals import CLOWDER_CONTROLLER
-from clowder.cli.util import project_names
+from clowder.cli.util import (
+    options_help_message,
+    project_names
+)
 from clowder.util.connectivity import network_connection_required
 
 
@@ -29,7 +32,7 @@ class ResetController(ArgparseController):
         description = 'Reset branches to upstream commits or check out detached HEADs for tags and shas'
 
     @expose(
-        help='this is the help message for clowder reset',
+        help='Reset branches to upstream commits or check out detached HEADs for tags and shas',
         arguments=[
             (['--parallel'], dict(action='store_true', help='run commands in parallel')),
             (['--timestamp', '-t'], dict(choices=project_names(CLOWDER_CONTROLLER),
@@ -37,11 +40,17 @@ class ResetController(ArgparseController):
                                          help='project to reset timestamps relative to')),
             (['--groups', '-g'], dict(choices=CLOWDER_CONTROLLER.get_all_group_names(),
                                       default=CLOWDER_CONTROLLER.get_all_group_names(),
-                                      nargs='+', metavar='GROUP', help='groups to herd')),
-            (['--projects', '-p'], dict(choices=project_names(CLOWDER_CONTROLLER),
-                                        nargs='+', metavar='PROJECT', help='projects to herd')),
-            (['--skip', '-s'], dict(choices=project_names(CLOWDER_CONTROLLER),
-                                    nargs='+', metavar='PROJECT', default=[], help='projects to skip'))
+                                      nargs='+', metavar='GROUP',
+                                      help=options_help_message(CLOWDER_CONTROLLER.get_all_group_names(),
+                                                                'groups to reset'))),
+            (['--projects', '-p'], dict(choices=CLOWDER_CONTROLLER.get_all_project_names(),
+                                        nargs='+', metavar='PROJECT',
+                                        help=options_help_message(CLOWDER_CONTROLLER.get_all_project_names(),
+                                                                  'projects to reset'))),
+            (['--skip', '-s'], dict(choices=CLOWDER_CONTROLLER.get_all_project_names(),
+                                    nargs='+', metavar='PROJECT', default=[],
+                                    help=options_help_message(CLOWDER_CONTROLLER.get_all_project_names(),
+                                                              'projects to skip')))
             ]
     )
     def reset(self):
