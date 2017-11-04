@@ -5,7 +5,7 @@ API Reference
 .. toctree::
    :maxdepth: 2
 
-   Commands API Reference <clowder.commands>
+   CLI API Reference <clowder.cli>
    Models API Reference <clowder.model>
    Git Utilities API Reference <clowder.git>
    YAML Utilities API Reference <clowder.yaml>

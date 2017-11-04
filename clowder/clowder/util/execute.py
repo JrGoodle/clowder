@@ -36,9 +36,9 @@ def execute_subprocess_command(command, path, **kwargs):
 
     :param command: Command to run
     :type command: str or list[str]
+    :param str path: Path to set as ``cwd``
 
     Keyword Args:
-        path (str): Path to set as ``cwd``
         shell (bool): Whether to execute subprocess as ``shell``
         env (dict): Enviroment to set as ``env``
         stdout (int): Value to set as ``stdout``

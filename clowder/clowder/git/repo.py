@@ -16,12 +16,25 @@ from termcolor import colored
 
 import clowder.util.formatting as fmt
 from clowder.error.clowder_git_error import ClowderGitError
-from clowder.util.decorators import not_detached
 from clowder.util.execute import execute_command
 from clowder.util.file_system import remove_directory
 
 __repo_default_ref__ = 'refs/heads/master'
 __repo_default_remote__ = 'origin'
+
+
+def not_detached(func):
+    """If HEAD is detached, print error message and exit"""
+
+    def wrapper(*args, **kwargs):
+        """Wrapper"""
+
+        instance = args[0]
+        if instance.is_detached(print_output=True):
+            return
+        return func(*args, **kwargs)
+
+    return wrapper
 
 
 class GitRepo(object):

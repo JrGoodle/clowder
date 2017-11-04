@@ -18,41 +18,41 @@ test_clowder_repo_add() {
 }
 test_clowder_repo_add
 
-test_clowder_repo_checkout() {
-    print_single_separator
-    echo "TEST: Test clowder repo checkout command"
-    clowder repo checkout tags || exit 1
-    pushd .clowder || exit 1
-    test_branch tags
-    popd || exit 1
-    clowder repo checkout ref_that_doesnt_exist && exit 1
-    pushd .clowder || exit 1
-    test_branch tags
-    popd || exit 1
-    clowder repo checkout master || exit 1
-    pushd .clowder || exit 1
-    test_branch master
-    popd || exit 1
-}
-test_clowder_repo_checkout
+# test_clowder_repo_checkout() {
+#     print_single_separator
+#     echo "TEST: Test clowder repo checkout command"
+#     clowder repo checkout tags || exit 1
+#     pushd .clowder || exit 1
+#     test_branch tags
+#     popd || exit 1
+#     clowder repo checkout ref_that_doesnt_exist && exit 1
+#     pushd .clowder || exit 1
+#     test_branch tags
+#     popd || exit 1
+#     clowder repo checkout master || exit 1
+#     pushd .clowder || exit 1
+#     test_branch master
+#     popd || exit 1
+# }
+# test_clowder_repo_checkout
 
-test_clowder_repo_clean() {
-    print_single_separator
-    echo "TEST: Test clowder repo clean command"
-    pushd .clowder || exit 1
-    test_git_clean
-    popd || exit 1
-    clowder repo run 'touch newfile' || exit 1
-    clowder repo add 'newfile' || exit 1
-    pushd .clowder || exit 1
-    test_git_dirty
-    popd || exit 1
-    clowder repo clean || exit 1
-    pushd .clowder || exit 1
-    test_git_clean
-    popd || exit 1
-}
-test_clowder_repo_clean
+# test_clowder_repo_clean() {
+#     print_single_separator
+#     echo "TEST: Test clowder repo clean command"
+#     pushd .clowder || exit 1
+#     test_git_clean
+#     popd || exit 1
+#     clowder repo run 'touch newfile' || exit 1
+#     clowder repo add 'newfile' || exit 1
+#     pushd .clowder || exit 1
+#     test_git_dirty
+#     popd || exit 1
+#     clowder repo clean || exit 1
+#     pushd .clowder || exit 1
+#     test_git_clean
+#     popd || exit 1
+# }
+# test_clowder_repo_clean
 
 if [ "$ACCESS_LEVEL" == "write" ]; then
     "$TEST_SCRIPT_DIR/cats/write_repo.sh"
@@ -69,9 +69,9 @@ test_clowder_repo_run() {
 }
 test_clowder_repo_run
 
-test_clowder_repo_status() {
-    print_single_separator
-    echo "TEST: Test clowder repo status command"
-    clowder repo status || exit 1
-}
-test_clowder_repo_status
+# test_clowder_repo_status() {
+#     print_single_separator
+#     echo "TEST: Test clowder repo status command"
+#     clowder repo status || exit 1
+# }
+# test_clowder_repo_status

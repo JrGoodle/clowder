@@ -16,7 +16,7 @@ import psutil
 from termcolor import cprint
 
 import clowder.util.formatting as fmt
-from clowder.commands.util import (
+from clowder.cli.util import (
     filter_groups,
     filter_projects_on_group_names,
     filter_projects_on_project_names,

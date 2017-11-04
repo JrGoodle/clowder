@@ -16,13 +16,13 @@ export commands=( 'branch' \
                   'prune' \
                   'repo' \
                   'repo add' \
-                  'repo checkout' \
-                  'repo clean' \
+                #   'repo checkout' \
+                #   'repo clean' \
                   'repo commit' \
                   'repo pull' \
                   'repo push' \
                   'repo run' \
-                  'repo status' \
+                #   'repo status' \
                   'save' \
                   'start' \
                   'stash' \
@@ -38,7 +38,7 @@ echo "TEST: clowder -h"
 clowder -h || exit 1
 
 for command in "${commands[@]}"; do
-	print_single_separator
+    print_single_separator
     echo "TEST: clowder $command -h"
     clowder $command -h || exit 1
 done

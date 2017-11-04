@@ -31,5 +31,5 @@ test_command
 "$TEST_SCRIPT_DIR/cats/repo.sh" || exit 1
 "$TEST_SCRIPT_DIR/cats/reset.sh" || exit 1
 "$TEST_SCRIPT_DIR/cats/yaml.sh" || exit 1
-"$TEST_SCRIPT_DIR/cats/import.sh" || exit 1
+"$TEST_SCRIPT_DIR/cats/yaml_import.sh" || exit 1
 "$TEST_SCRIPT_DIR/cats/help.sh" || exit 1

@@ -9,6 +9,8 @@
 import socket
 import sys
 
+import clowder.util.formatting as fmt
+
 
 def is_offline(host='8.8.8.8', port=53, timeout=3):
     """Returns True if offline, False otherwise
@@ -32,3 +34,17 @@ def is_offline(host='8.8.8.8', port=53, timeout=3):
         return True
     except (KeyboardInterrupt, SystemExit):
         sys.exit(1)
+
+
+def network_connection_required(func):
+    """If no network connection, print offline message and exit"""
+
+    def wrapper(*args, **kwargs):
+        """Wrapper"""
+
+        if is_offline():
+            print(fmt.offline_error())
+            sys.exit(1)
+        return func(*args, **kwargs)
+
+    return wrapper

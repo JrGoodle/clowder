@@ -13,8 +13,8 @@ clean_clowder_repo() {
     sudo -H rm -rf $clowder_path/build
     echo "Removing .pyc and __pycache__"
     local path=$clowder_path/clowder
-    sudo -H rm $path/*.pyc $path/*/*.pyc
-    sudo -H rm -rf $path/__pycache__ $path/*/__pycache__
+    sudo -H rm $path/*.pyc $path/*/*.pyc $path/*/*/*.pyc
+    sudo -H rm -rf $path/__pycache__ $path/*/__pycache__ $path/*/*/__pycache__
     echo "pip uninstall clowder"
     pushd $REPO_PATH || exit 1
     sudo -H pip2 uninstall clowder-repo
@@ -28,8 +28,8 @@ clean_clowder_test() {
     sudo -H rm -rf $REPO_PATH/clowder_test/clowder_test.egg-info
     echo "Removing clowder_test .pyc and __pycache__"
     local path=$REPO_PATH/clowder_test/clowder_test
-    sudo -H rm $path/*.pyc
-    sudo -H rm -rf $path/__pycache__
+    sudo -H rm $path/*.pyc $path/*/*.pyc
+    sudo -H rm -rf $path/__pycache__ $path/*/__pycache__
     echo "Removing unitests .pyc and __pycache__"
     local path=$REPO_PATH/test/unittests
     sudo -H rm $path/*.pyc

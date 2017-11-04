@@ -8,17 +8,21 @@
 from __future__ import print_function
 
 import atexit
-import errno
 import os
 import sys
 
-from termcolor import colored
+from termcolor import colored, cprint
 
 import clowder.util.formatting as fmt
+from clowder.error.clowder_error import ClowderError
 from clowder.git.project_repo import ProjectRepo
 from clowder.util.connectivity import is_offline
 from clowder.util.execute import execute_command
-from clowder.util.file_system import remove_directory
+from clowder.util.file_system import (
+    force_symlink,
+    remove_directory
+)
+from clowder.yaml.validating import validate_yaml
 
 
 class ClowderRepo(object):
@@ -40,6 +44,24 @@ class ClowderRepo(object):
         self.default_ref = 'refs/heads/master'
         self.remote = 'origin'
         self.clowder_path = os.path.join(self.root_directory, '.clowder')
+
+        # Create clowder.yaml symlink if .clowder dir and yaml file exist
+        clowder_symlink = os.path.join(self.root_directory, 'clowder.yaml')
+        if os.path.isdir(self.clowder_path):
+            if not os.path.islink(clowder_symlink):
+                self.link()
+
+        self.is_yaml_valid = False
+        self.error = None
+        if os.path.islink(clowder_symlink):
+            try:
+                validate_yaml(os.path.join(self.root_directory, 'clowder.yaml'), self.root_directory)
+            except ClowderError as err:
+                self.error = err
+            except (KeyboardInterrupt, SystemExit):
+                sys.exit(1)
+            else:
+                self.is_yaml_valid = True
 
     def add(self, files):
         """Add files in clowder repo to git index
@@ -87,6 +109,14 @@ class ClowderRepo(object):
         """
 
         ProjectRepo(self.clowder_path, self.remote, self.default_ref).commit(message)
+
+    def git_status(self):
+        """Print clowder repo git status
+
+        Equivalent to: ``git status -vv``
+        """
+
+        ProjectRepo(self.clowder_path, self.remote, self.default_ref).status_verbose()
 
     def init(self, url, branch):
         """Clone clowder repo from url
@@ -195,14 +225,6 @@ class ClowderRepo(object):
             print(fmt.command_failed_error(command))
             sys.exit(return_code)
 
-    def git_status(self):
-        """Print clowder repo git status
-
-        Equivalent to: ``git status -vv``
-        """
-
-        ProjectRepo(self.clowder_path, self.remote, self.default_ref).status_verbose()
-
     def _validate_groups(self):
         """Validate status of clowder repo"""
 
@@ -212,20 +234,64 @@ class ClowderRepo(object):
             sys.exit(1)
 
 
-def force_symlink(file1, file2):
-    """Force symlink creation
+CLOWDER_REPO = ClowderRepo(os.getcwd())
 
-    :param str file1: File to create symlink pointing to
-    :param str file2: Symlink location
-    """
 
-    try:
-        os.symlink(file1, file2)
-    except OSError as error:
-        if error.errno == errno.EEXIST:
-            os.remove(file2)
-            os.symlink(file1, file2)
-    except (KeyboardInterrupt, SystemExit):
-        os.remove(file2)
-        os.symlink(file1, file2)
+def clowder_required(func):
+    """If no clowder repo, print clowder not found message and exit"""
+
+    def wrapper(*args, **kwargs):
+        """Wrapper"""
+
+        _validate_clowder_repo_exists()
+        return func(*args, **kwargs)
+
+    return wrapper
+
+
+def print_clowder_repo_status(func):
+    """Print clowder repo status"""
+
+    def wrapper(*args, **kwargs):
+        """Wrapper"""
+
+        CLOWDER_REPO.print_status()
+        return func(*args, **kwargs)
+
+    return wrapper
+
+
+def print_clowder_repo_status_fetch(func):
+    """Print clowder repo status"""
+
+    def wrapper(*args, **kwargs):
+        """Wrapper"""
+
+        CLOWDER_REPO.print_status(fetch=True)
+        return func(*args, **kwargs)
+
+    return wrapper
+
+
+def valid_clowder_yaml_required(func):
+    """If clowder.yaml is invalid, print invalid yaml message and exit"""
+
+    def wrapper(*args, **kwargs):
+        """Wrapper"""
+
+        _validate_clowder_repo_exists()
+        if not CLOWDER_REPO.is_yaml_valid:
+            print(fmt.invalid_yaml_error())
+            print(fmt.error(CLOWDER_REPO.error))
+            sys.exit(1)
+        return func(*args, **kwargs)
+
+    return wrapper
+
+
+def _validate_clowder_repo_exists():
+    """If clowder repo doesn't exist, print message and exit"""
+
+    if not os.path.isdir(CLOWDER_REPO.clowder_path):
+        cprint(' - No .clowder found in the current directory\n', 'red')
         sys.exit(1)

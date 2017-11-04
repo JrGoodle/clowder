@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
-"""Clowder command utilities
+"""Clowder command line utilities
 
 .. codeauthor:: Joe Decapo <joe@polka.cat>
 
 """
 
-from __future__ import print_function
-
+import os
 import sys
 
 import clowder.util.formatting as fmt
@@ -38,40 +37,73 @@ def existing_branch_projects(projects, branch, is_remote):
     return any([p.existing_branch(branch, is_remote=is_remote) for p in projects])
 
 
-def filter_groups(groups, group_names):
+def filter_groups(groups, names):
     """Filter groups based on given group names
 
     :param list[Group] groups: Groups to filter
-    :param list[str] group_names: Group names to match against
+    :param list[str] names: Group names to match against
     :return: List of groups in groups matching given names
     :rtype: list[Group]
     """
 
-    return [g for g in groups if g.name in group_names]
+    return [g for g in groups if g.name in names]
 
 
-def filter_projects_on_project_names(groups, project_names):
+def filter_projects_on_project_names(groups, names):
     """Filter projects based on given project names
 
     :param list[Group] groups: Groups to filter
-    :param list[str] project_names: Project names to match against
+    :param list[str] names: Project names to match against
     :return: List of projects in groups matching given names
     :rtype: list[Project]
     """
 
-    return [p for g in groups for p in g.projects if p.name in project_names]
+    return [p for g in groups for p in g.projects if p.name in names]
 
 
-def filter_projects_on_group_names(groups, group_names):
+def filter_projects_on_group_names(groups, names):
     """Filter projects based on given group names
 
     :param list[Group] groups: Groups to filter
-    :param list[str] group_names: Group names to match against
+    :param list[str] names: Group names to match against
     :return: List of projects in groups matching given names
     :rtype: list[Project]
     """
 
-    return [p for g in groups if g.name in group_names for p in g.projects]
+    return [p for g in groups if g.name in names for p in g.projects]
+
+
+def get_saved_version_names():
+    """Return list of all saved versions
+
+    :return: List of all saved version names
+    :rtype: list[str]
+    """
+
+    versions_dir = os.path.join(os.getcwd(), '.clowder', 'versions')
+    if not os.path.exists(versions_dir):
+        return None
+    return [v for v in os.listdir(versions_dir) if not v.startswith('.') if v.lower() != 'default']
+
+
+def options_help_message(options, message):
+    """Help message for groups option
+
+    :param list[str] options: List of options
+    :param str message: Help message
+    :return: Formatted options help message
+    :rtype: str
+    """
+
+    if options == [''] or options is None or options == []:
+        return message
+
+    help_message = '''
+                   {0}:
+                   {1}
+                   '''
+
+    return help_message.format(message, ', '.join(options))
 
 
 def print_parallel_groups_output(groups, skip):
@@ -106,8 +138,8 @@ def run_group_command(group, skip, command, *args, **kwargs):
     :param Group group: Group to run command for
     :param list[str] skip: Project names to skip
     :param str command: Name of method to invoke
-    :param *args: List of arguments to pass to method invocation
-    :param **kwargs: Dict of arguments to pass to method invocation
+    :param args: List of arguments to pass to method invocation
+    :param kwargs: Dict of arguments to pass to method invocation
     """
 
     print(fmt.group_name(group.name))
@@ -125,8 +157,8 @@ def run_project_command(project, skip, command, *args, **kwargs):
     :param Praject project: Project to run command for
     :param list[str] skip: Project names to skip
     :param str command: Name of method to invoke
-    :param *args: List of arguments to pass to method invocation
-    :param **kwargs: Dict of arguments to pass to method invocation
+    :param args: List of arguments to pass to method invocation
+    :param kwargs: Dict of arguments to pass to method invocation
     """
 
     print(project.status())

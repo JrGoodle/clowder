@@ -24,7 +24,7 @@ setup(
         'Programming Language :: Python :: 3.6'
     ],
     packages=['clowder',
-              'clowder.commands',
+              'clowder.cli',
               'clowder.error',
               'clowder.git',
               'clowder.model',
@@ -33,8 +33,8 @@ setup(
               'clowder.yaml.validation'],
     entry_points={
         'console_scripts': [
-            'clowder=clowder.cmd:main',
+            'clowder=clowder.clowder_app:main',
         ]
     },
-    install_requires=['argcomplete', 'colorama', 'GitPython', 'PyYAML', 'termcolor', 'psutil', 'tqdm']
+    install_requires=['argcomplete', 'cement', 'colorama', 'GitPython', 'PyYAML', 'termcolor', 'psutil', 'tqdm']
 )

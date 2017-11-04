@@ -32,6 +32,8 @@ fi
 
 if [ "$1" == 'docs' ]; then
     cd ..
+    rm docs/clowder.rst
+    rm docs/clowder.*.rst
     sphinx-apidoc -o docs clowder
     rm docs/modules.rst
     rm docs/setup.rst

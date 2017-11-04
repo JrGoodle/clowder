@@ -6,34 +6,36 @@ Subpackages
 
 .. toctree::
 
+    clowder.cli
     clowder.error
     clowder.git
     clowder.model
     clowder.util
+    clowder.yaml
 
 Submodules
 ----------
 
-clowder.clowder_controller module
----------------------------------
+clowder\.clowder\_app module
+----------------------------
+
+.. automodule:: clowder.clowder_app
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+clowder\.clowder\_controller module
+-----------------------------------
 
 .. automodule:: clowder.clowder_controller
     :members:
     :undoc-members:
     :show-inheritance:
 
-clowder.clowder_repo module
----------------------------
+clowder\.clowder\_repo module
+-----------------------------
 
 .. automodule:: clowder.clowder_repo
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-clowder.cmd module
-------------------
-
-.. automodule:: clowder.cmd
     :members:
     :undoc-members:
     :show-inheritance:

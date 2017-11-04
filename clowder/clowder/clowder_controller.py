@@ -7,7 +7,6 @@
 
 from __future__ import print_function
 
-import os
 import sys
 
 from termcolor import cprint
@@ -16,7 +15,6 @@ from clowder.error.clowder_error import ClowderError
 from clowder.model.group import Group
 from clowder.model.source import Source
 from clowder.yaml.loading import load_yaml
-from clowder.yaml.validating import validate_yaml
 
 
 class ClowderController(object):
@@ -39,16 +37,13 @@ class ClowderController(object):
         self.groups = []
         self.sources = []
         self._max_import_depth = 10
-        yaml_file = os.path.join(self.root_directory, 'clowder.yaml')
-
+        self.error = None
         try:
-            validate_yaml(yaml_file, self.root_directory)
-        except ClowderError:
-            raise
+            self._load_yaml()
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
-        else:
-            self._load_yaml()
+        except (ClowderError, KeyError) as err:
+            self.error = err
 
     def get_all_fork_project_names(self):
         """Returns all project names containing forks
@@ -85,18 +80,6 @@ class ClowderController(object):
         """
 
         return sorted([p.formatted_project_path() for g in self.groups for p in g.projects])
-
-    def get_saved_version_names(self):
-        """Return list of all saved versions
-
-        :return: List of all saved version names
-        :rtype: list[str]
-        """
-
-        versions_dir = os.path.join(self.root_directory, '.clowder', 'versions')
-        if not os.path.exists(versions_dir):
-            return None
-        return [v for v in os.listdir(versions_dir) if not v.startswith('.') if v.lower() != 'default']
 
     def get_timestamp(self, timestamp_project):
         """Return timestamp for project

@@ -375,7 +375,7 @@ $ clowder sync -p apple/swift
 Print version of `clowder` command line tool
 
 ```bash
-$ clowder version
+$ clowder --version
 ```
 
 ---
