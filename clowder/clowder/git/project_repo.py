@@ -7,12 +7,11 @@
 
 from __future__ import print_function
 
-import sys
-
 from git import GitError
 from termcolor import colored
 
 import clowder.util.formatting as fmt
+from clowder.error.clowder_error import ClowderError
 from clowder.error.clowder_git_error import ClowderGitError
 from clowder.git.project_repo_impl import ProjectRepoImpl
 from clowder.git.util import (
@@ -119,10 +118,7 @@ class ProjectRepo(ProjectRepoImpl):
             self._herd_initial(url, depth=depth)
             return
 
-        return_code = self._create_remote(self.remote, url)
-        if return_code != 0:
-            raise ClowderGitError(msg=colored(' - Failed to create remote', 'red'))
-
+        self._create_remote(self.remote, url)
         self._herd(self.remote, self.default_ref, depth=depth, fetch=fetch, rebase=rebase)
 
     def herd_branch(self, url, branch, **kwargs):
@@ -191,22 +187,19 @@ class ProjectRepo(ProjectRepoImpl):
         if not existing_git_repository(self.repo_path):
             self._init_repo()
             self._create_remote(self.remote, url, remove_dir=True)
-            return_code = self._checkout_new_repo_tag(tag, self.remote, depth)
-            if return_code == 0:
+            try:
+                self._checkout_new_repo_tag(tag, self.remote, depth)
+            except ClowderGitError:
+                fetch = depth != 0
+                self.herd(url, depth=depth, fetch=fetch, rebase=rebase)
                 return
 
+        try:
+            self.fetch(self.remote, ref='refs/tags/' + tag, depth=depth)
+            self._checkout_tag(tag)
+        except ClowderGitError:
             fetch = depth != 0
             self.herd(url, depth=depth, fetch=fetch, rebase=rebase)
-            return
-
-        return_code = self.fetch(self.remote, ref='refs/tags/' + tag, depth=depth)
-        if return_code == 0:
-            return_code = self._checkout_tag(tag)
-            if return_code == 0:
-                return
-
-        fetch = depth != 0
-        self.herd(url, depth=depth, fetch=fetch, rebase=rebase)
 
     def herd_remote(self, url, remote, branch=None):
         """Herd remote repo
@@ -216,18 +209,16 @@ class ProjectRepo(ProjectRepoImpl):
         :param Optional[str] branch: Branch name
         """
 
-        return_code = self._create_remote(remote, url)
-        if return_code != 0:
-            raise ClowderGitError(msg=colored(' - Failed to create remote', 'red'))
+        self._create_remote(remote, url)
 
-        if branch:
-            return_code = self.fetch(remote, ref=branch)
-            if return_code == 0:
-                return
+        if branch is None:
+            self.fetch(remote, ref=self.default_ref)
+            return
 
-        return_code = self.fetch(remote, ref=self.default_ref)
-        if return_code != 0:
-            raise ClowderGitError(msg=colored(' - Failed to fetch', 'red'))
+        try:
+            self.fetch(remote, ref=branch)
+        except ClowderGitError:
+            self.fetch(remote, ref=self.default_ref)
 
     def prune_branch_local(self, branch, force):
         """Prune local branch
@@ -310,11 +301,7 @@ class ProjectRepo(ProjectRepoImpl):
         branch = truncate_ref(self.default_ref)
         branch_output = fmt.ref_string(branch)
         if not self.existing_local_branch(branch):
-            return_code = self._create_branch_local_tracking(branch, self.remote, depth=depth, fetch=True)
-            if return_code != 0:
-                message = colored(' - Failed to create tracking branch ', 'red') + branch_output
-                self._print(message)
-                self._exit(message)
+            self._create_branch_local_tracking(branch, self.remote, depth=depth, fetch=True)
             return
 
         if self._is_branch_checked_out(branch):
@@ -364,15 +351,12 @@ class ProjectRepo(ProjectRepoImpl):
 
         if branch not in self.repo.heads:
             if not is_offline():
-                return_code = self.fetch(remote, ref=branch, depth=depth)
-                if return_code != 0:
-                    sys.exit(1)
-            return_code = self._create_branch_local(branch)
-            if return_code != 0:
-                self._exit('', return_code=return_code)
-            return_code = self._checkout_branch_local(branch)
-            if return_code != 0:
-                self._exit('', return_code=return_code)
+                self.fetch(remote, ref=branch, depth=depth)
+            try:
+                self._create_branch_local(branch)
+                self._checkout_branch_local(branch)
+            except ClowderGitError:
+                self._exit()
         else:
             branch_output = fmt.ref_string(branch)
             print(' - ' + branch_output + ' already exists')
@@ -380,9 +364,10 @@ class ProjectRepo(ProjectRepoImpl):
             if correct_branch:
                 print(' - On correct branch')
             else:
-                return_code = self._checkout_branch_local(branch)
-                if return_code != 0:
-                    self._exit('', return_code=return_code)
+                try:
+                    self._checkout_branch_local(branch)
+                except ClowderGitError:
+                    self._exit()
 
         if tracking and not is_offline():
             self._create_branch_remote_tracking(branch, remote, depth)
@@ -411,8 +396,9 @@ class ProjectRepo(ProjectRepoImpl):
 
         self._print(' - Push to ' + fork_remote_output + ' ' + branch_output)
         command = ['git', 'push', fork_remote, truncate_ref(self.default_ref)]
-        return_code = execute_command(command, self.repo_path, print_output=self._print_output)
-        if return_code != 0:
+        try:
+            execute_command(command, self.repo_path, print_output=self._print_output)
+        except ClowderError:
             message = colored(' - Failed to push to ', 'red') + fork_remote_output + ' ' + branch_output
             self._print(message)
             self._print(fmt.command_failed_error(command))

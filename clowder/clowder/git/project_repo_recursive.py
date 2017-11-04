@@ -11,6 +11,7 @@ from git import GitError
 from termcolor import colored
 
 import clowder.util.formatting as fmt
+from clowder.error.clowder_error import ClowderError
 from clowder.git.project_repo import ProjectRepo
 from clowder.util.execute import execute_command
 
@@ -151,8 +152,9 @@ class ProjectRepoRecursive(ProjectRepo):
         else:
             command = ['git', 'submodule', 'update', '--init', '--recursive', '--depth', depth]
 
-        return_code = execute_command(command, self.repo_path)
-        if return_code != 0:
+        try:
+            execute_command(command, self.repo_path)
+        except ClowderError:
             message = colored(' - Failed to update submodules\n', 'red') + fmt.command_failed_error(command)
             self._print(message)
             self._exit(message)

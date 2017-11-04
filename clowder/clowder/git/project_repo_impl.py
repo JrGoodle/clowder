@@ -13,6 +13,7 @@ from git import Repo, GitError
 from termcolor import colored
 
 import clowder.util.formatting as fmt
+from clowder.error.clowder_error import ClowderError
 from clowder.error.clowder_git_error import ClowderGitError
 from clowder.git.repo import GitRepo
 from clowder.git.util import (
@@ -63,7 +64,6 @@ class ProjectRepoImpl(GitRepo):
             self._print(' - Checkout branch ' + branch_output)
             default_branch = self.repo.heads[branch]
             default_branch.checkout()
-            return 0
         except GitError as err:
             if remove_dir:
                 remove_directory(self.repo_path)
@@ -183,18 +183,16 @@ class ProjectRepoImpl(GitRepo):
 
         tag_output = fmt.ref_string(tag)
         if tag not in self.repo.tags:
-            self._print(' - No existing tag ' + tag_output)
-            return 1
+            raise ClowderGitError(msg=' - No existing tag ' + tag_output)
 
         try:
             same_commit = self.repo.head.commit == self.repo.tags[tag].commit
             is_detached = self.repo.head.is_detached
             if same_commit and is_detached:
                 self._print(' - On correct commit for tag')
-                return 0
+                return
             self._print(' - Checkout tag ' + tag_output)
             self.repo.git.checkout('refs/tags/' + tag)
-            return 0
         except (GitError, ValueError) as err:
             message = colored(' - Failed to checkout tag ', 'red')
             self._print(message + tag_output)
@@ -222,18 +220,18 @@ class ProjectRepoImpl(GitRepo):
         """Create local branch
 
         :param str branch: Branch name
+        :raise ClowderGitError:
         """
 
         branch_output = fmt.ref_string(branch)
         try:
             self._print(' - Create branch ' + branch_output)
             self.repo.create_head(branch)
-            return 0
         except GitError as err:
             message = colored(' - Failed to create branch ', 'red')
             self._print(message + branch_output)
             self._print(fmt.error(err))
-            return 1
+            raise ClowderGitError(err)
         except (KeyboardInterrupt, SystemExit):
             self._exit()
 
@@ -257,9 +255,7 @@ class ProjectRepoImpl(GitRepo):
         branch_output = fmt.ref_string(branch)
         origin = self._remote(remote, remove_dir=remove_dir)
         if fetch:
-            return_code = self.fetch(remote, depth=depth, ref=branch, remove_dir=remove_dir)
-            if return_code != 0:
-                return return_code
+            self.fetch(remote, depth=depth, ref=branch, remove_dir=remove_dir)
 
         try:
             self._print(' - Create branch ' + branch_output)
@@ -276,10 +272,8 @@ class ProjectRepoImpl(GitRepo):
                 remove_directory(self.repo_path)
             self._exit()
         else:
-            return_code = self._set_tracking_branch(remote, branch, remove_dir=remove_dir)
-            if return_code != 0:
-                return return_code
-            return self._checkout_branch_local(branch, remove_dir=remove_dir)
+            self._set_tracking_branch(remote, branch, remove_dir=remove_dir)
+            self._checkout_branch_local(branch, remove_dir=remove_dir)
 
     def _create_branch_remote_tracking(self, branch, remote, depth):
         """Create remote tracking branch
@@ -291,10 +285,7 @@ class ProjectRepoImpl(GitRepo):
 
         branch_output = fmt.ref_string(branch)
         origin = self._remote(remote)
-        return_code = self.fetch(remote, depth=depth, ref=branch)
-
-        if return_code != 0:
-            self._exit('', return_code=return_code)
+        self.fetch(remote, depth=depth, ref=branch)
 
         if branch in origin.refs:
             try:
@@ -313,9 +304,7 @@ class ProjectRepoImpl(GitRepo):
         try:
             self._print(' - Push remote branch ' + branch_output)
             self.repo.git.push(remote, branch)
-            return_code = self._set_tracking_branch(remote, branch)
-            if return_code != 0:
-                self._exit('', return_code=return_code)
+            self._set_tracking_branch(remote, branch)
         except GitError as err:
             message = colored(' - Failed to push remote branch ', 'red') + branch_output
             self._print(message)
@@ -445,35 +434,39 @@ class ProjectRepoImpl(GitRepo):
         fetch = kwargs.get('fetch', True)
         rebase = kwargs.get('rebase', False)
 
-        if ref_type(ref) == 'branch':
-            branch = truncate_ref(ref)
-            branch_output = fmt.ref_string(branch)
-            if not self.existing_local_branch(branch):
-                return_code = self._create_branch_local_tracking(branch, remote, depth=depth, fetch=fetch)
-                if return_code != 0:
-                    message = colored(' - Failed to create tracking branch ', 'red') + branch_output
-                    self._print(message)
-                    self._exit(message)
-                return
-            elif self._is_branch_checked_out(branch):
-                self._print(' - Branch ' + branch_output + ' already checked out')
-            else:
-                self._checkout_branch_local(branch)
-            if not self.existing_remote_branch(branch, remote):
-                return
-            if not self._is_tracking_branch(branch):
-                self._set_tracking_branch_commit(branch, remote, depth)
-                return
-            if rebase:
-                self._rebase_remote_branch(remote, branch)
-                return
-            self._pull(remote, branch)
-        elif ref_type(ref) == 'tag':
+        if ref_type(ref) == 'tag':
             self.fetch(remote, depth=depth, ref=ref)
             self._checkout_tag(truncate_ref(ref))
-        elif ref_type(ref) == 'sha':
+            return
+
+        if ref_type(ref) == 'sha':
             self.fetch(remote, depth=depth, ref=ref)
             self._checkout_sha(ref)
+            return
+
+        branch = truncate_ref(ref)
+        branch_output = fmt.ref_string(branch)
+        if not self.existing_local_branch(branch):
+            self._create_branch_local_tracking(branch, remote, depth=depth, fetch=fetch)
+            return
+
+        if self._is_branch_checked_out(branch):
+            self._print(' - Branch ' + branch_output + ' already checked out')
+        else:
+            self._checkout_branch_local(branch)
+
+        if not self.existing_remote_branch(branch, remote):
+            return
+
+        if not self._is_tracking_branch(branch):
+            self._set_tracking_branch_commit(branch, remote, depth)
+            return
+
+        if rebase:
+            self._rebase_remote_branch(remote, branch)
+            return
+
+        self._pull(remote, branch)
 
     def _herd_initial(self, url, depth=0):
         """Herd ref initial
@@ -566,13 +559,18 @@ class ProjectRepoImpl(GitRepo):
         if not self._is_tracking_branch(branch):
             self._set_tracking_branch_commit(branch, remote, depth)
             return
+
         if rebase:
             self._rebase_remote_branch(remote, branch)
             return
+
         self._pull(remote, branch)
 
     def _init_repo(self):
-        """Initialize repository"""
+        """Initialize repository
+
+        :raise OSError:
+        """
 
         if existing_git_repository(self.repo_path):
             return
@@ -648,8 +646,9 @@ class ProjectRepoImpl(GitRepo):
         self._print(' - Pull from ' + remote_output + ' ' + branch_output)
         command = ['git pull', remote, branch]
 
-        return_code = execute_command(command, self.repo_path, print_output=self._print_output)
-        if return_code != 0:
+        try:
+            execute_command(command, self.repo_path, print_output=self._print_output)
+        except ClowderError:
             message = colored(' - Failed to pull from ', 'red') + remote_output + ' ' + branch_output
             self._print(message)
             self._exit(message)
@@ -667,8 +666,9 @@ class ProjectRepoImpl(GitRepo):
         self._print(' - Rebase onto ' + remote_output + ' ' + branch_output)
         command = ['git pull --rebase', remote, branch]
 
-        return_code = execute_command(command, self.repo_path, print_output=self._print_output)
-        if return_code != 0:
+        try:
+            execute_command(command, self.repo_path, print_output=self._print_output)
+        except ClowderError:
             message = colored(' - Failed to rebase onto ', 'red') + remote_output + ' ' + branch_output
             self._print(message)
             self._print(fmt.command_failed_error(command))
@@ -746,7 +746,6 @@ class ProjectRepoImpl(GitRepo):
             remote_branch = origin.refs[branch]
             self._print(' - Set tracking branch ' + branch_output + ' -> ' + remote_output + ' ' + branch_output)
             local_branch.set_tracking_branch(remote_branch)
-            return 0
         except GitError as err:
             message = colored(' - Failed to set tracking branch ', 'red') + branch_output
             if remove_dir:
@@ -769,17 +768,18 @@ class ProjectRepoImpl(GitRepo):
 
         branch_output = fmt.ref_string(branch)
         origin = self._remote(remote)
-        return_code = self.fetch(remote, depth=depth, ref=branch)
-        if return_code != 0:
-            raise ClowderGitError(msg=colored(' - Failed to fech', 'red'))
+        self.fetch(remote, depth=depth, ref=branch)
+
         if not self.existing_local_branch(branch):
             message = colored(' - No local branch ', 'red') + branch_output + '\n'
             self._print(message)
             self._exit(message)
+
         if not self.existing_remote_branch(branch, remote):
             message = colored(' - No remote branch ', 'red') + branch_output + '\n'
             self._print(message)
             self._exit(message)
+
         local_branch = self.repo.heads[branch]
         remote_branch = origin.refs[branch]
         if local_branch.commit != remote_branch.commit:
@@ -788,6 +788,5 @@ class ProjectRepoImpl(GitRepo):
             message = message_1 + branch_output + message_2 + '\n'
             self._print(message)
             self._exit(message_1)
-        return_code = self._set_tracking_branch(remote, branch)
-        if return_code != 0:
-            self._exit(colored(' - Failed to set tracking branch', 'red'))
+
+        self._set_tracking_branch(remote, branch)

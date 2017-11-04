@@ -8,7 +8,7 @@
 from __future__ import print_function
 
 import clowder.util.formatting as fmt
-from clowder.error.clowder_error import ClowderError
+from clowder.error.clowder_yaml_error import ClowderYAMLError
 
 
 def validate_clowder_yaml_contains_value(parsed_yaml, value, yaml_file):
@@ -17,12 +17,12 @@ def validate_clowder_yaml_contains_value(parsed_yaml, value, yaml_file):
     :param dict parsed_yaml: Parsed YAML python object
     :param str value: Name of entry to check
     :param str yaml_file: Path to yaml file
-    :raise ClowderError:
+    :raise ClowderYAMLError:
     """
 
     if value not in parsed_yaml:
         error = fmt.missing_entry_error(value, fmt.yaml_file('clowder.yaml'), yaml_file)
-        raise ClowderError(error)
+        raise ClowderYAMLError(error)
 
 
 def validate_depth(dictionary, yaml_file):
@@ -49,7 +49,7 @@ def validate_dict_contains_value(dictionary, dict_name, value, yaml_file):
 
     if value not in dictionary:
         error = fmt.missing_entry_error(value, dict_name, yaml_file)
-        raise ClowderError(error)
+        raise ClowderYAMLError(error)
 
 
 def validate_empty(collection, name, yaml_file):
@@ -58,11 +58,12 @@ def validate_empty(collection, name, yaml_file):
     :param collection: Parsed YAML python object
     :param str name: Name of collection to print if empty
     :param str yaml_file: Path to yaml file
+    :raise ClowderYAMLError:
     """
 
     if collection:
         error = fmt.unknown_entry_error(name, collection, yaml_file)
-        raise ClowderError(error)
+        raise ClowderYAMLError(error)
 
 
 def validate_not_empty(collection, name, yaml_file):
@@ -71,11 +72,12 @@ def validate_not_empty(collection, name, yaml_file):
     :param collection: Parsed YAML python object
     :param str name: Name of collection to print if empty
     :param str yaml_file: Path to yaml file
+    :raise ClowderYAMLError:
     """
 
     if not collection:
         error = fmt.missing_entries_error(name, yaml_file)
-        raise ClowderError(error)
+        raise ClowderYAMLError(error)
 
 
 def validate_optional_dict(dictionary, value, func, yaml_file):
@@ -173,12 +175,12 @@ def validate_ref_type(dictionary, yaml_file):
 
     :param dict dictionary: Parsed YAML python object
     :param str yaml_file: Path to yaml file
-    :raise ClowderError:
+    :raise ClowderYAMLError:
     """
 
     if not _valid_ref_type(dictionary['ref']):
         error = fmt.invalid_ref_error(dictionary['ref'], yaml_file)
-        raise ClowderError(error)
+        raise ClowderYAMLError(error)
 
 
 def validate_type_depth(value, yaml_file):
@@ -186,14 +188,14 @@ def validate_type_depth(value, yaml_file):
 
     :param int value: Integer depth value
     :param str yaml_file: Path to yaml file
-    :raise ClowderError:
+    :raise ClowderYAMLError:
     """
 
     error = fmt.depth_error(value, yaml_file)
     if not isinstance(value, int):
-        raise ClowderError(error)
+        raise ClowderYAMLError(error)
     if int(value) < 0:
-        raise ClowderError(error)
+        raise ClowderYAMLError(error)
 
 
 def validate_type(value, name, classinfo, type_name, yaml_file):
@@ -204,12 +206,12 @@ def validate_type(value, name, classinfo, type_name, yaml_file):
     :param type classinfo: Type to check
     :param str type_name: Name of type to print if invalid
     :param str yaml_file: Path to yaml file
-    :raise ClowderError:
+    :raise ClowderYAMLError:
     """
 
     if not isinstance(value, classinfo):
         error = fmt.type_error(name, yaml_file, type_name)
-        raise ClowderError(error)
+        raise ClowderYAMLError(error)
 
 
 def _validate_optional_value(dictionary, value, classinstance, type_name, yaml_file):

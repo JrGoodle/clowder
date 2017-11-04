@@ -37,6 +37,7 @@ def validate_yaml(yaml_file, root_directory, depth=__MAX_IMPORT_DEPTH__):
     :param str yaml_file: Yaml file path to validate
     :param str root_directory: Clowder projects root directory
     :param Optional[int] depth: Max depth of clowder.yaml imports
+    :raise ClowderYAMLError:
     """
 
     parsed_yaml = parse_yaml(yaml_file)
@@ -75,7 +76,7 @@ def _validate_yaml(yaml_file):
     """Validate clowder.yaml with no import
 
     :param str yaml_file: Path to yaml file
-    :raise ClowderError:
+    :raise ClowderYAMLError:
     """
 
     parsed_yaml = parse_yaml(yaml_file)
@@ -98,7 +99,7 @@ def _validate_yaml_import(yaml_file):
     """Validate clowder.yaml with an import
 
     :param str yaml_file: Path to yaml file
-    :raise ClowderError:
+    :raise ClowderYAMLError:
     """
 
     parsed_yaml = parse_yaml(yaml_file)

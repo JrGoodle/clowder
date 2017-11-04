@@ -372,12 +372,13 @@ class Project(object):
         if self.fork:
             forall_env['FORK_REMOTE'] = self.fork.remote_name
 
-        return_code = execute_forall_command(command.split(), self.full_path(), forall_env, self._print_output)
-        if not ignore_errors:
-            err = fmt.command_failed_error(command)
-            if return_code != 0:
+        try:
+            execute_forall_command(command.split(), self.full_path(), forall_env, self._print_output)
+        except ClowderError:
+            if not ignore_errors:
+                err = fmt.command_failed_error(command)
                 self._print(err)
-                self._exit(err, return_code=return_code, parallel=parallel)
+                self._exit(err, parallel=parallel)
 
     @project_repo_exists
     def start(self, branch, tracking):
@@ -437,20 +438,19 @@ class Project(object):
         repo.sync(self.fork.remote_name, rebase=rebase)
 
     @staticmethod
-    def _exit(message, parallel=False, return_code=1):
+    def _exit(message, parallel=False):
         """Exit based on serial or parallel job
 
         .. py:function:: _exit(message, parallel=False, return_code=1)
 
         :param str message: Branch to check for
         :param Optional[bool] parallel: Whether command is being run in parallel, affects output
-        :param Optional[int] return_code: Return code for sys.exit()
         :raise ClowderError: General ClowderError with message
         """
 
         if parallel:
             raise ClowderError(message)
-        sys.exit(return_code)
+        sys.exit(1)
 
     def _print(self, val):
         """Print output if self._print_output is True

@@ -15,6 +15,7 @@ from git import Repo, GitError
 from termcolor import colored
 
 import clowder.util.formatting as fmt
+from clowder.error.clowder_error import ClowderError
 from clowder.error.clowder_git_error import ClowderGitError
 from clowder.git.util import (
     existing_git_repository,
@@ -206,13 +207,13 @@ class GitRepo(object):
             error = message + remote_output + ' ' + ref_output
             command = ['git fetch', remote, truncate_ref(ref), '--depth', str(depth), '--prune --tags']
 
-        return_code = execute_command(command, self.repo_path, print_output=self._print_output)
-        if return_code != 0:
+        try:
+            execute_command(command, self.repo_path, print_output=self._print_output)
+        except ClowderError:
             if remove_dir:
                 remove_directory(self.repo_path)
             self._print(error)
             self._exit(error)
-        return return_code
 
     def get_current_timestamp(self):
         """Get current timestamp of HEAD commit
@@ -317,8 +318,9 @@ class GitRepo(object):
         else:
             return
 
-        return_code = execute_command(command, self.repo_path, print_output=self._print_output)
-        if return_code != 0:
+        try:
+            execute_command(command, self.repo_path, print_output=self._print_output)
+        except ClowderError:
             message = colored(' - Failed to print branches', 'red')
             self._print(message)
             self._exit(message)
@@ -378,11 +380,12 @@ class GitRepo(object):
         """
 
         command = "git --git-dir={0}.git rev-parse {1}/{2}".format(self.repo_path, remote, branch)
-        return_code = execute_command(command, self.repo_path)
-        if return_code != 0:
+        try:
+            execute_command(command, self.repo_path)
+        except ClowderError:
             message = colored(' - Failed to get remote sha\n', 'red') + fmt.command_failed_error(command)
             self._print(message)
-            self._exit(message, return_code=return_code)
+            self._exit(message)
 
     def stash(self):
         """Stash current changes in repository"""
@@ -411,11 +414,12 @@ class GitRepo(object):
         command = 'git status -vv'
         self._print(fmt.command(command))
 
-        return_code = execute_command(command, self.repo_path)
-        if return_code != 0:
+        try:
+            execute_command(command, self.repo_path)
+        except ClowderError:
             message = colored(' - Failed to print status\n', 'red') + fmt.command_failed_error(command)
             self._print(message)
-            self._exit(message, return_code=return_code)
+            self._exit(message)
 
     def validate_repo(self):
         """Validate repo state
@@ -475,18 +479,17 @@ class GitRepo(object):
     #     self.fetch(remote, depth=depth, ref=tag, remove_dir=True)
     #     return tag in origin.tags
 
-    def _exit(self, message='', return_code=1):
+    def _exit(self, message=''):
         """Exit based on serial or parallel job
 
         :param Optional[str] message: Error message
-        :param Optional[int] return_code: Return code for sys.exit()
         :raise ClowderGitError:
         """
 
         if self.parallel:
             raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message))
 
-        sys.exit(return_code)
+        sys.exit(1)
 
     def _is_rebase_in_progress(self):
         """Detect whether rebase is in progress

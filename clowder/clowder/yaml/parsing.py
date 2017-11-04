@@ -13,7 +13,7 @@ import sys
 import yaml
 
 import clowder.util.formatting as fmt
-from clowder.error.clowder_error import ClowderError
+from clowder.error.clowder_yaml_error import ClowderYAMLError
 
 
 def parse_yaml(yaml_file):
@@ -22,6 +22,7 @@ def parse_yaml(yaml_file):
     :param str yaml_file: Path to yaml file
     :return: YAML python object
     :rtype: dict
+    :raise ClowderYAMLError:
     """
 
     if os.path.isfile(yaml_file):
@@ -39,4 +40,4 @@ def parse_yaml(yaml_file):
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
     else:
-        raise ClowderError('\n' + fmt.missing_yaml_error() + '\n')
+        raise ClowderYAMLError('\n' + fmt.missing_yaml_error() + '\n')

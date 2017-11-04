@@ -14,6 +14,7 @@ import sys
 from termcolor import colored, cprint
 
 import clowder.util.formatting as fmt
+from clowder.error.clowder_error import ClowderError
 from clowder.error.clowder_yaml_error import ClowderYAMLError
 from clowder.git.project_repo import ProjectRepo
 from clowder.git.util import (
@@ -226,13 +227,15 @@ class ClowderRepo(object):
         """Run command in clowder repo
 
         :param str command: Command to run
+        :raise ClowderError:
         """
 
         print(fmt.command(command))
-        return_code = execute_command(command.split(), self.clowder_path)
-        if return_code != 0:
+        try:
+            execute_command(command.split(), self.clowder_path)
+        except ClowderError as err:
             print(fmt.command_failed_error(command))
-            sys.exit(return_code)
+            raise err
 
     def _validate_groups(self):
         """Validate status of clowder repo"""
