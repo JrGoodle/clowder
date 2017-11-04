@@ -8,7 +8,6 @@
 from __future__ import print_function
 
 import atexit
-import errno
 import os
 import sys
 
@@ -19,7 +18,10 @@ from clowder.error.clowder_error import ClowderError
 from clowder.git.project_repo import ProjectRepo
 from clowder.util.connectivity import is_offline
 from clowder.util.execute import execute_command
-from clowder.util.file_system import remove_directory
+from clowder.util.file_system import (
+    force_symlink,
+    remove_directory
+)
 from clowder.yaml.validating import validate_yaml
 
 
@@ -167,7 +169,7 @@ class ClowderRepo(object):
 
         yaml_symlink = os.path.join(self.root_directory, 'clowder.yaml')
         print(' - Symlink ' + path_output)
-        self._force_symlink(yaml_file, yaml_symlink)
+        force_symlink(yaml_file, yaml_symlink)
 
     def print_status(self, fetch=False):
         """Print clowder repo status
@@ -222,25 +224,6 @@ class ClowderRepo(object):
         if return_code != 0:
             print(fmt.command_failed_error(command))
             sys.exit(return_code)
-
-    @staticmethod
-    def _force_symlink(file1, file2):
-        """Force symlink creation
-
-        :param str file1: File to create symlink pointing to
-        :param str file2: Symlink location
-        """
-
-        try:
-            os.symlink(file1, file2)
-        except OSError as error:
-            if error.errno == errno.EEXIST:
-                os.remove(file2)
-                os.symlink(file1, file2)
-        except (KeyboardInterrupt, SystemExit):
-            os.remove(file2)
-            os.symlink(file1, file2)
-            sys.exit(1)
 
     def _validate_groups(self):
         """Validate status of clowder repo"""
@@ -307,10 +290,7 @@ def valid_clowder_yaml_required(func):
 
 
 def _validate_clowder_repo_exists():
-    """If clowder repo doesn't exist, print message and exit
-
-    :param ClowderRepo repo: Repo to check
-    """
+    """If clowder repo doesn't exist, print message and exit"""
 
     if not os.path.isdir(CLOWDER_REPO.clowder_path):
         cprint(' - No .clowder found in the current directory\n', 'red')

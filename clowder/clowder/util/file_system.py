@@ -7,11 +7,31 @@
 
 from __future__ import print_function
 
+import errno
 import os
 import shutil
 import sys
 
 from termcolor import colored
+
+
+def force_symlink(file1, file2):
+    """Force symlink creation
+
+    :param str file1: File to create symlink pointing to
+    :param str file2: Symlink location
+    """
+
+    try:
+        os.symlink(file1, file2)
+    except OSError as error:
+        if error.errno == errno.EEXIST:
+            os.remove(file2)
+            os.symlink(file1, file2)
+    except (KeyboardInterrupt, SystemExit):
+        os.remove(file2)
+        os.symlink(file1, file2)
+        sys.exit(1)
 
 
 def remove_directory(path):
