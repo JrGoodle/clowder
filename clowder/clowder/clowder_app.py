@@ -62,14 +62,14 @@ def main():
     with ClowderApp() as app:
         try:
             app.run()
-        except CaughtSignal as e:
+        except CaughtSignal as err:
             # determine what the signal is, and do something with it?
             from signal import SIGINT, SIGABRT
 
-            if e.signum == SIGINT:
+            if err.signum == SIGINT:
                 # do something... maybe change the exit code?
                 app.exit_code = 110
-            elif e.signum == SIGABRT:
+            elif err.signum == SIGABRT:
                 # do something else...
                 app.exit_code = 111
         except FrameworkError:

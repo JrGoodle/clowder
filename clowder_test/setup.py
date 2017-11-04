@@ -23,11 +23,12 @@ setup(
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3.6'
     ],
-    packages=['clowder_test'],
+    packages=['clowder_test',
+              'clowder_test.cli'],
     entry_points={
         'console_scripts': [
-            'clowder-test=clowder_test.cmd:main',
+            'clowder-test=clowder_test.clowder_test_app:main',
         ]
     },
-    install_requires=['argcomplete', 'cprint', 'psutil', 'termcolor']
+    install_requires=['argcomplete', 'cement', 'cprint', 'psutil', 'termcolor']
 )
