@@ -30,5 +30,5 @@ setup(
             'clowder-test=clowder_test.clowder_test_app:main',
         ]
     },
-    install_requires=['argcomplete', 'cement', 'cprint', 'psutil', 'termcolor']
+    install_requires=['argcomplete', 'cement', 'colorama', 'cprint', 'psutil', 'termcolor']
 )
