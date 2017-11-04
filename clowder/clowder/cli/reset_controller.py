@@ -14,7 +14,7 @@ from clowder.clowder_repo import (
 )
 from clowder.cli.globals import CLOWDER_CONTROLLER
 from clowder.cli.util import project_names
-from clowder.util.decorators import network_connection_required
+from clowder.util.connectivity import network_connection_required
 
 
 class ResetController(ArgparseController):

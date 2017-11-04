@@ -13,7 +13,7 @@ from clowder.clowder_repo import (
     print_clowder_repo_status,
     print_clowder_repo_status_fetch
 )
-from clowder.util.decorators import network_connection_required
+from clowder.util.connectivity import network_connection_required
 
 
 class RepoController(ArgparseController):

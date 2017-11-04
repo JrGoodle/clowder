@@ -27,7 +27,7 @@ from clowder.cli.util import (
     validate_groups,
     validate_projects
 )
-from clowder.util.decorators import network_connection_required
+from clowder.util.connectivity import network_connection_required
 
 
 class PruneController(ArgparseController):

@@ -19,7 +19,7 @@ from clowder.clowder_repo import (
 from clowder.cli.globals import CLOWDER_CONTROLLER
 from clowder.cli.parallel import sync
 from clowder.cli.util import options_help_message
-from clowder.util.decorators import network_connection_required
+from clowder.util.connectivity import network_connection_required
 
 
 class SyncController(ArgparseController):

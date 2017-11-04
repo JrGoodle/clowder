@@ -14,7 +14,7 @@ from cement.ext.ext_argparse import ArgparseController, expose
 from termcolor import colored, cprint
 
 from clowder.clowder_repo import CLOWDER_REPO
-from clowder.util.decorators import network_connection_required
+from clowder.util.connectivity import network_connection_required
 
 
 class InitController(ArgparseController):

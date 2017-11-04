@@ -16,7 +16,7 @@ from clowder.clowder_repo import (
     valid_clowder_yaml_required
 )
 from clowder.cli.globals import CLOWDER_CONTROLLER
-from clowder.util.decorators import network_connection_required
+from clowder.util.connectivity import network_connection_required
 
 
 class HerdController(ArgparseController):

@@ -11,7 +11,7 @@ import inspect
 import os
 import sys
 
-from termcolor import colored
+from termcolor import colored, cprint
 
 import clowder.util.formatting as fmt
 from clowder.error.clowder_error import ClowderError
@@ -19,8 +19,22 @@ from clowder.git.project_repo import ProjectRepo
 from clowder.git.project_repo_recursive import ProjectRepoRecursive
 from clowder.model.fork import Fork
 from clowder.util.connectivity import is_offline
-from clowder.util.decorators import project_repo_exists
 from clowder.util.execute import execute_forall_command
+
+
+def project_repo_exists(func):
+    """If no git repo exists, print message and return"""
+
+    def wrapper(*args, **kwargs):
+        """Wrapper"""
+
+        instance = args[0]
+        if not os.path.isdir(os.path.join(instance.full_path(), '.git')):
+            cprint(" - Project repo is missing", 'red')
+            return
+        return func(*args, **kwargs)
+
+    return wrapper
 
 
 class Project(object):
