@@ -15,6 +15,11 @@ from termcolor import colored
 import clowder.util.formatting as fmt
 from clowder.error.clowder_git_error import ClowderGitError
 from clowder.git.repo import execute_command, GitRepo
+from clowder.git.util import (
+    existing_git_repository,
+    ref_type,
+    truncate_ref
+)
 from clowder.util.connectivity import is_offline
 
 __project_repo_default_ref__ = 'refs/heads/master'
@@ -51,7 +56,7 @@ class ProjectRepo(GitRepo):
             Defaults to 0
         """
 
-        if self.existing_git_repository(self.repo_path):
+        if existing_git_repository(self.repo_path):
             return
         self._init_repo()
         self._create_remote(self.remote, url, remove_dir=True)
@@ -66,7 +71,7 @@ class ProjectRepo(GitRepo):
         :param str fork_remote_url: Fork remote url
         """
 
-        if not self.existing_git_repository(self.repo_path):
+        if not existing_git_repository(self.repo_path):
             return
         try:
             remotes = self.repo.remotes
@@ -89,54 +94,6 @@ class ProjectRepo(GitRepo):
             if fork_remote_name in remote_names:
                 self._compare_remote_url(fork_remote_name, fork_remote_url)
 
-    @staticmethod
-    def format_project_ref_string(repo_path):
-        """Return formatted project ref string
-
-        :param str repo_path: Repo path
-        :return: Formmatted repo ref
-        :rtype: str
-        """
-
-        repo = ProjectRepo(repo_path, __project_repo_default_remote__, __project_repo_default_ref__)
-        local_commits = repo.new_commits()
-        upstream_commits = repo.new_commits(upstream=True)
-        no_local_commits = local_commits == 0 or local_commits == '0'
-        no_upstream_commits = upstream_commits == 0 or upstream_commits == '0'
-        if no_local_commits and no_upstream_commits:
-            status = ''
-        else:
-            local_commits_output = colored('+' + str(local_commits), 'yellow')
-            upstream_commits_output = colored('-' + str(upstream_commits), 'red')
-            status = '(' + local_commits_output + '/' + upstream_commits_output + ')'
-
-        if repo.is_detached():
-            current_ref = repo.sha(short=True)
-            return colored('[HEAD @ ' + current_ref + ']', 'magenta')
-        current_branch = repo.current_branch()
-        return colored('[' + current_branch + ']', 'magenta') + status
-
-    @staticmethod
-    def format_project_string(repo_path, name):
-        """Return formatted project name
-
-        :param str repo_path: Repo path
-        :param str name: Project name
-        :return: Formmatted project name
-        :rtype: str
-        """
-
-        if not ProjectRepo.existing_git_repository(repo_path):
-            return colored(name, 'green')
-        repo = ProjectRepo(repo_path, __project_repo_default_remote__, __project_repo_default_ref__)
-        if not repo.validate_repo():
-            color = 'red'
-            symbol = '*'
-        else:
-            color = 'green'
-            symbol = ''
-        return colored(name + symbol, color)
-
     def herd(self, url, **kwargs):
         """Herd ref
 
@@ -154,7 +111,7 @@ class ProjectRepo(GitRepo):
         fetch = kwargs.get('fetch', True)
         rebase = kwargs.get('rebase', False)
 
-        if not self.existing_git_repository(self.repo_path):
+        if not existing_git_repository(self.repo_path):
             self._herd_initial(url, depth=depth)
             return
         return_code = self._create_remote(self.remote, url)
@@ -180,7 +137,7 @@ class ProjectRepo(GitRepo):
         rebase = kwargs.get('rebase', False)
         fork_remote = kwargs.get('fork_remote', None)
 
-        if not self.existing_git_repository(self.repo_path):
+        if not existing_git_repository(self.repo_path):
             self._herd_branch_initial(url, branch, depth=depth)
             return
         branch_output = fmt.ref_string(branch)
@@ -233,7 +190,7 @@ class ProjectRepo(GitRepo):
         depth = kwargs.get('depth', 0)
         rebase = kwargs.get('rebase', False)
 
-        if not self.existing_git_repository(self.repo_path):
+        if not existing_git_repository(self.repo_path):
             self._init_repo()
             self._create_remote(self.remote, url, remove_dir=True)
             return_code = self._checkout_new_repo_tag(tag, self.remote, depth)
@@ -282,10 +239,10 @@ class ProjectRepo(GitRepo):
             return
         prune_branch = self.repo.heads[branch]
         if self.repo.head.ref == prune_branch:
-            ref_output = fmt.ref_string(self.truncate_ref(self.default_ref))
+            ref_output = fmt.ref_string(truncate_ref(self.default_ref))
             try:
                 self._print(' - Checkout ref ' + ref_output)
-                self.repo.git.checkout(self.truncate_ref(self.default_ref))
+                self.repo.git.checkout(truncate_ref(self.default_ref))
             except GitError as err:
                 message = colored(' - Failed to checkout ref', 'red') + ref_output
                 self._print(message)
@@ -334,8 +291,8 @@ class ProjectRepo(GitRepo):
             Defaults to 0
         """
 
-        if self.ref_type(self.default_ref) == 'branch':
-            branch = self.truncate_ref(self.default_ref)
+        if ref_type(self.default_ref) == 'branch':
+            branch = truncate_ref(self.default_ref)
             branch_output = fmt.ref_string(branch)
             if not self.existing_local_branch(branch):
                 return_code = self._create_branch_local_tracking(branch, self.remote, depth=depth, fetch=True)
@@ -357,10 +314,10 @@ class ProjectRepo(GitRepo):
             self._print(' - Reset branch ' + branch_output + ' to ' + remote_output + ' ' + branch_output)
             remote_branch = self.remote + '/' + branch
             self._reset_head(branch=remote_branch)
-        elif self.ref_type(self.default_ref) == 'tag':
+        elif ref_type(self.default_ref) == 'tag':
             self.fetch(self.remote, ref=self.default_ref, depth=depth)
-            self._checkout_tag(self.truncate_ref(self.default_ref))
-        elif self.ref_type(self.default_ref) == 'sha':
+            self._checkout_tag(truncate_ref(self.default_ref))
+        elif ref_type(self.default_ref) == 'sha':
             self.fetch(self.remote, ref=self.default_ref, depth=depth)
             self._checkout_sha(self.default_ref)
 
@@ -424,18 +381,18 @@ class ProjectRepo(GitRepo):
         """
 
         self._print(' - Sync fork with upstream remote')
-        if self.ref_type(self.default_ref) != 'branch':
+        if ref_type(self.default_ref) != 'branch':
             message = colored(' - Can only sync branches', 'red')
             self._print(message)
             self._exit(message)
         fork_remote_output = fmt.remote_string(fork_remote)
-        branch_output = fmt.ref_string(self.truncate_ref(self.default_ref))
+        branch_output = fmt.ref_string(truncate_ref(self.default_ref))
         if rebase:
-            self._rebase_remote_branch(self.remote, self.truncate_ref(self.default_ref))
+            self._rebase_remote_branch(self.remote, truncate_ref(self.default_ref))
         else:
-            self._pull(self.remote, self.truncate_ref(self.default_ref))
+            self._pull(self.remote, truncate_ref(self.default_ref))
         self._print(' - Push to ' + fork_remote_output + ' ' + branch_output)
-        command = ['git', 'push', fork_remote, self.truncate_ref(self.default_ref)]
+        command = ['git', 'push', fork_remote, truncate_ref(self.default_ref)]
         return_code = execute_command(command, self.repo_path, print_output=self._print_output)
         if return_code != 0:
             message = colored(' - Failed to push to ', 'red') + fork_remote_output + ' ' + branch_output
@@ -476,8 +433,8 @@ class ProjectRepo(GitRepo):
         fetch = kwargs.get('fetch', True)
         rebase = kwargs.get('rebase', False)
 
-        if self.ref_type(ref) == 'branch':
-            branch = self.truncate_ref(ref)
+        if ref_type(ref) == 'branch':
+            branch = truncate_ref(ref)
             branch_output = fmt.ref_string(branch)
             if not self.existing_local_branch(branch):
                 return_code = self._create_branch_local_tracking(branch, remote, depth=depth, fetch=fetch)
@@ -499,10 +456,10 @@ class ProjectRepo(GitRepo):
                 self._rebase_remote_branch(remote, branch)
                 return
             self._pull(remote, branch)
-        elif self.ref_type(ref) == 'tag':
+        elif ref_type(ref) == 'tag':
             self.fetch(remote, depth=depth, ref=ref)
-            self._checkout_tag(self.truncate_ref(ref))
-        elif self.ref_type(ref) == 'sha':
+            self._checkout_tag(truncate_ref(ref))
+        elif ref_type(ref) == 'sha':
             self.fetch(remote, depth=depth, ref=ref)
             self._checkout_sha(ref)
 
@@ -516,11 +473,11 @@ class ProjectRepo(GitRepo):
 
         self._init_repo()
         self._create_remote(self.remote, url, remove_dir=True)
-        if self.ref_type(self.default_ref) == 'branch':
-            self._checkout_new_repo_branch(self.truncate_ref(self.default_ref), depth)
-        elif self.ref_type(self.default_ref) == 'tag':
-            self._checkout_new_repo_tag(self.truncate_ref(self.default_ref), self.remote, depth, remove_dir=True)
-        elif self.ref_type(self.default_ref) == 'sha':
+        if ref_type(self.default_ref) == 'branch':
+            self._checkout_new_repo_branch(truncate_ref(self.default_ref), depth)
+        elif ref_type(self.default_ref) == 'tag':
+            self._checkout_new_repo_tag(truncate_ref(self.default_ref), self.remote, depth, remove_dir=True)
+        elif ref_type(self.default_ref) == 'sha':
             self._checkout_new_repo_commit(self.default_ref, self.remote, depth)
 
     def _herd_branch_initial(self, url, branch, depth=0):

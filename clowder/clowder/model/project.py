@@ -17,6 +17,12 @@ import clowder.util.formatting as fmt
 from clowder.error.clowder_error import ClowderError
 from clowder.git.project_repo import ProjectRepo
 from clowder.git.project_repo_recursive import ProjectRepoRecursive
+from clowder.git.util import (
+    existing_git_repository,
+    format_project_ref_string,
+    format_project_string,
+    print_validation
+)
 from clowder.model.fork import Fork
 from clowder.util.connectivity import is_offline
 from clowder.util.execute import execute_forall_command
@@ -184,7 +190,8 @@ class Project(object):
         :rtype: str
         """
 
-        return ProjectRepo.format_project_string(os.path.join(self._root_directory, self.path), self.path)
+        repo = ProjectRepo(self.full_path(), self._remote, self._ref)
+        return format_project_string(repo, self.path)
 
     def full_path(self):
         """Return full path to project
@@ -202,7 +209,8 @@ class Project(object):
         :rtype: str
         """
 
-        return ProjectRepo(self.full_path(), self._remote, self._ref).get_current_timestamp()
+        repo = ProjectRepo(self.full_path(), self._remote, self._ref)
+        return repo.get_current_timestamp()
 
     def get_yaml(self, resolved=False):
         """Return python object representation for saving yaml
@@ -215,7 +223,8 @@ class Project(object):
         if resolved:
             ref = self._ref
         else:
-            ref = ProjectRepo(self.full_path(), self._remote, self._ref).sha()
+            repo = ProjectRepo(self.full_path(), self._remote, self._ref)
+            ref = repo.sha()
 
         project = {'name': self.name,
                    'path': self.path,
@@ -293,7 +302,8 @@ class Project(object):
 
         if not self.is_valid():
             print(self.status())
-            ProjectRepo.print_validation(self.full_path())
+            repo = ProjectRepo(self.full_path(), self._remote, self._ref)
+            print_validation(repo)
 
     @project_repo_exists
     def prune(self, branch, force=False, local=False, remote=False):
@@ -334,7 +344,7 @@ class Project(object):
         """
 
         if not parallel:
-            if not ProjectRepo.existing_git_repository(self.full_path()):
+            if not existing_git_repository(self.full_path()):
                 print(colored(" - Project is missing\n", 'red'))
                 return
 
@@ -367,7 +377,8 @@ class Project(object):
 
         remote = self._remote if self.fork is None else self.fork.remote_name
         depth = self._depth if self.fork is None else 0
-        ProjectRepo(self.full_path(), self._remote, self._ref).start(remote, branch, depth, tracking)
+        repo = ProjectRepo(self.full_path(), self._remote, self._ref)
+        repo.start(remote, branch, depth, tracking)
 
     def status(self, padding=None):
         """Return formatted status for project
@@ -377,11 +388,12 @@ class Project(object):
         :rtype: str
         """
 
-        if not ProjectRepo.existing_git_repository(self.full_path()):
+        if not existing_git_repository(self.full_path()):
             return colored(self.name, 'green')
 
-        project_output = ProjectRepo.format_project_string(self.full_path(), self.path)
-        current_ref_output = ProjectRepo.format_project_ref_string(self.full_path())
+        repo = ProjectRepo(self.full_path(), self._remote, self._ref)
+        project_output = format_project_string(repo, self.path)
+        current_ref_output = format_project_ref_string(repo)
 
         if padding:
             project_output = project_output.ljust(padding)
@@ -393,7 +405,8 @@ class Project(object):
         """Stash changes for project if dirty"""
 
         if self.is_dirty():
-            ProjectRepo(self.full_path(), self._remote, self._ref).stash()
+            repo = ProjectRepo(self.full_path(), self._remote, self._ref)
+            repo.stash()
 
     def sync(self, rebase=False, parallel=False):
         """Sync fork project with upstream remote

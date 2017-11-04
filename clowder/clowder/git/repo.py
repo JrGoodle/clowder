@@ -16,25 +16,16 @@ from termcolor import colored
 
 import clowder.util.formatting as fmt
 from clowder.error.clowder_git_error import ClowderGitError
+from clowder.git.util import (
+    existing_git_repository,
+    not_detached,
+    truncate_ref,
+)
 from clowder.util.execute import execute_command
 from clowder.util.file_system import remove_directory
 
 __repo_default_ref__ = 'refs/heads/master'
 __repo_default_remote__ = 'origin'
-
-
-def not_detached(func):
-    """If HEAD is detached, print error message and exit"""
-
-    def wrapper(*args, **kwargs):
-        """Wrapper"""
-
-        instance = args[0]
-        if instance.is_detached(print_output=True):
-            return
-        return func(*args, **kwargs)
-
-    return wrapper
 
 
 class GitRepo(object):
@@ -60,7 +51,7 @@ class GitRepo(object):
         self.default_ref = default_ref
         self.remote = remote
         self.parallel = parallel
-        self.repo = self._repo() if GitRepo.existing_git_repository(repo_path) else None
+        self.repo = self._repo() if existing_git_repository(repo_path) else None
         self._print_output = not parallel
 
     def add(self, files):
@@ -177,28 +168,6 @@ class GitRepo(object):
 
         return branch in self.repo.heads
 
-    @staticmethod
-    def existing_git_repository(path):
-        """Check if a git repository exists
-
-        :param str path: Repo path
-        :return: True, if .git directory exists inside path
-        :rtype: bool
-        """
-
-        return os.path.isdir(os.path.join(path, '.git'))
-
-    @staticmethod
-    def existing_git_submodule(path):
-        """Check if a git submodule exists
-
-        :param str path: Submodule path
-        :return: True, if .git file exists inside path
-        :rtype: bool
-        """
-
-        return os.path.isfile(os.path.join(path, '.git'))
-
     def fetch(self, remote, **kwargs):
         """Fetch from a specific remote ref
 
@@ -227,11 +196,11 @@ class GitRepo(object):
             message = colored(' - Failed to fetch remote ', 'red')
             error = message + remote_output
         else:
-            ref_output = fmt.ref_string(GitRepo.truncate_ref(ref))
+            ref_output = fmt.ref_string(truncate_ref(ref))
             self._print(' - Fetch from ' + remote_output + ' ' + ref_output)
             message = colored(' - Failed to fetch from ', 'red')
             error = message + remote_output + ' ' + ref_output
-            command = ['git fetch', remote, GitRepo.truncate_ref(ref), '--depth', str(depth), '--prune --tags']
+            command = ['git fetch', remote, truncate_ref(ref), '--depth', str(depth), '--prune --tags']
 
         return_code = execute_command(command, self.repo_path, print_output=self._print_output)
         if return_code != 0:
@@ -343,21 +312,6 @@ class GitRepo(object):
             self._print(message)
             self._exit(message)
 
-    @staticmethod
-    def print_validation(repo_path):
-        """Print validation messages
-
-        :param str repo_path: Repo path
-        """
-
-        repo = GitRepo(repo_path, __repo_default_remote__, __repo_default_ref__)
-        if not GitRepo.existing_git_repository(repo_path):
-            return
-
-        if not repo.validate_repo():
-            print(' - Dirty repo. Please stash, commit, or discard your changes')
-            repo.status_verbose()
-
     @not_detached
     def pull(self):
         """Pull upstream changes"""
@@ -387,25 +341,6 @@ class GitRepo(object):
             self._exit(message)
         except (KeyboardInterrupt, SystemExit):
             self._exit()
-
-    @staticmethod
-    def ref_type(ref):
-        """Return branch, tag, sha, or unknown ref type
-
-        :param str ref: Full pathspec
-        :return: 'branch', 'tag', 'sha', or 'unknown'
-        :rtype: str
-        """
-
-        git_branch = "refs/heads/"
-        git_tag = "refs/tags/"
-        if ref.startswith(git_branch):
-            return 'branch'
-        elif ref.startswith(git_tag):
-            return 'tag'
-        elif len(ref) == 40:
-            return 'sha'
-        return 'unknown'
 
     def sha(self, short=False):
         """Return sha for currently checked out commit
@@ -468,25 +403,6 @@ class GitRepo(object):
             self._print(message)
             self._exit(message, return_code=return_code)
 
-    @staticmethod
-    def truncate_ref(ref):
-        """Return bare branch, tag, or sha
-
-        :param str ref: Full pathspec or short ref
-        :return: Ref with 'refs/heads/' and 'refs/tags/' prefix removed
-        :rtype: str
-        """
-
-        git_branch = "refs/heads/"
-        git_tag = "refs/tags/"
-        if ref.startswith(git_branch):
-            length = len(git_branch)
-        elif ref.startswith(git_tag):
-            length = len(git_tag)
-        else:
-            length = 0
-        return ref[length:]
-
     def validate_repo(self):
         """Validate repo state
 
@@ -494,7 +410,7 @@ class GitRepo(object):
         :rtype: bool
         """
 
-        if not GitRepo.existing_git_repository(self.repo_path):
+        if not existing_git_repository(self.repo_path):
             return True
         return not self.is_dirty()
 
@@ -898,7 +814,7 @@ class GitRepo(object):
     def _init_repo(self):
         """Initialize repository"""
 
-        if GitRepo.existing_git_repository(self.repo_path):
+        if existing_git_repository(self.repo_path):
             return
 
         try:
