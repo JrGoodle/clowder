@@ -12,7 +12,7 @@ from termcolor import colored
 
 import clowder.util.formatting as fmt
 from clowder.git.project_repo import ProjectRepo
-from clowder.git.repo import execute_command
+from clowder.util.execute import execute_command
 
 
 class ProjectRepoRecursive(ProjectRepo):
@@ -139,8 +139,9 @@ class ProjectRepoRecursive(ProjectRepo):
     def submodule_update_recursive(self, depth=0):
         """Update submodules recursively and initialize if not present
 
-        :param Optional[int] depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer.
-            Defaults to 0
+        .. py:function:: submodule_update_recursive(depth=0)
+
+        :param Optional[int] depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
         """
 
         print(' - Recursively update and init submodules')
@@ -159,8 +160,10 @@ class ProjectRepoRecursive(ProjectRepo):
     def sync(self, fork_remote, rebase=False):
         """Sync fork with upstream remote
 
+        .. py:function:: sync(fork_remote, rebase=False)
+
         :param str fork_remote: Fork remote name
-        :param Optional[bool] rebase: Whether to use rebase instead of pulling latest changes. Defaults to False
+        :param Optional[bool] rebase: Whether to use rebase instead of pulling latest changes
         """
 
         ProjectRepo.sync(self, fork_remote, rebase=rebase)

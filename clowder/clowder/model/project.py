@@ -17,6 +17,12 @@ import clowder.util.formatting as fmt
 from clowder.error.clowder_error import ClowderError
 from clowder.git.project_repo import ProjectRepo
 from clowder.git.project_repo_recursive import ProjectRepoRecursive
+from clowder.git.util import (
+    existing_git_repository,
+    format_project_ref_string,
+    format_project_string,
+    print_validation
+)
 from clowder.model.fork import Fork
 from clowder.util.connectivity import is_offline
 from clowder.util.execute import execute_forall_command
@@ -89,8 +95,10 @@ class Project(object):
     def branch(self, local=False, remote=False):
         """Print branches for project
 
-        :param Optional[bool] local: Print local branches. Defaults to False
-        :param Optional[bool] remote: Print remote branches. Defaults to False
+        .. py:function:: branch(local=False, remote=False)
+
+        :param Optional[bool] local: Print local branches
+        :param Optional[bool] remote: Print remote branches
         """
 
         repo = ProjectRepo(self.full_path(), self._remote, self._ref)
@@ -117,12 +125,14 @@ class Project(object):
     def clean(self, args='', recursive=False):
         """Discard changes for project
 
+        .. py:function:: clean(args='', recursive=False)
+
         :param Optional[str] args: Git clean options
             - ``d`` Remove untracked directories in addition to untracked files
             - ``f`` Delete directories with .git sub directory or file
             - ``X`` Remove only files ignored by git
             - ``x`` Remove all untracked files
-        :param Optional[bool] recursive: Clean submodules recursively. Defaults to False
+        :param Optional[bool] recursive: Clean submodules recursively
         """
 
         self._repo(self.full_path(), self._remote, self._ref, self._recursive and recursive).clean(args=args)
@@ -184,7 +194,8 @@ class Project(object):
         :rtype: str
         """
 
-        return ProjectRepo.format_project_string(os.path.join(self._root_directory, self.path), self.path)
+        repo = ProjectRepo(self.full_path(), self._remote, self._ref)
+        return format_project_string(repo, self.path)
 
     def full_path(self):
         """Return full path to project
@@ -202,12 +213,15 @@ class Project(object):
         :rtype: str
         """
 
-        return ProjectRepo(self.full_path(), self._remote, self._ref).get_current_timestamp()
+        repo = ProjectRepo(self.full_path(), self._remote, self._ref)
+        return repo.get_current_timestamp()
 
     def get_yaml(self, resolved=False):
         """Return python object representation for saving yaml
 
-        :param Optional[bool] resolved: Return default ref rather than current commit sha. Defaults to False
+        .. py:function:: get_yaml(resolved=False)
+
+        :param Optional[bool] resolved: Return default ref rather than current commit sha
         :return: YAML python object
         :rtype: dict
         """
@@ -215,7 +229,8 @@ class Project(object):
         if resolved:
             ref = self._ref
         else:
-            ref = ProjectRepo(self.full_path(), self._remote, self._ref).sha()
+            repo = ProjectRepo(self.full_path(), self._remote, self._ref)
+            ref = repo.sha()
 
         project = {'name': self.name,
                    'path': self.path,
@@ -293,16 +308,19 @@ class Project(object):
 
         if not self.is_valid():
             print(self.status())
-            ProjectRepo.print_validation(self.full_path())
+            repo = ProjectRepo(self.full_path(), self._remote, self._ref)
+            print_validation(repo)
 
     @project_repo_exists
     def prune(self, branch, force=False, local=False, remote=False):
         """Prune branch
 
+        .. py:function:: prune(branch, force=False, local=False, remote=False)
+
         :param str branch: Branch to prune
-        :param Optional[bool] force: Force delete branch. Defaults to False
-        :param Optional[bool] local: Delete local branch. Defaults to False
-        :param Optional[bool] remote: Delete remote branch. Defaults to False
+        :param Optional[bool] force: Force delete branch
+        :param Optional[bool] local: Delete local branch
+        :param Optional[bool] remote: Delete remote branch
         """
 
         if local and remote:
@@ -316,8 +334,10 @@ class Project(object):
     def reset(self, timestamp=None, parallel=False):
         """Reset project branch to upstream or checkout tag/sha as detached HEAD
 
+        .. py:function:: reset(timestamp=None, parallel=False)
+
         :param Optional[str] timestamp: Reset to commit at timestamp, or closest previous commit
-        :param Optional[bool] parallel: Whether command is being run in parallel, affects output. Defaults to False
+        :param Optional[bool] parallel: Whether command is being run in parallel, affects output
         """
 
         self._print_output = not parallel
@@ -328,13 +348,15 @@ class Project(object):
     def run(self, command, ignore_errors, parallel=False):
         """Run command or script in project directory
 
+        .. py:function:: run(command, ignore_errors, parallel=False)
+
         :param str command: Command to run
         :param bool ignore_errors: Whether to exit if command returns a non-zero exit code
-        :param Optional[bool] parallel: Whether command is being run in parallel, affects output. Defaults to False
+        :param Optional[bool] parallel: Whether command is being run in parallel, affects output
         """
 
         if not parallel:
-            if not ProjectRepo.existing_git_repository(self.full_path()):
+            if not existing_git_repository(self.full_path()):
                 print(colored(" - Project is missing\n", 'red'))
                 return
 
@@ -367,7 +389,8 @@ class Project(object):
 
         remote = self._remote if self.fork is None else self.fork.remote_name
         depth = self._depth if self.fork is None else 0
-        ProjectRepo(self.full_path(), self._remote, self._ref).start(remote, branch, depth, tracking)
+        repo = ProjectRepo(self.full_path(), self._remote, self._ref)
+        repo.start(remote, branch, depth, tracking)
 
     def status(self, padding=None):
         """Return formatted status for project
@@ -377,11 +400,12 @@ class Project(object):
         :rtype: str
         """
 
-        if not ProjectRepo.existing_git_repository(self.full_path()):
+        if not existing_git_repository(self.full_path()):
             return colored(self.name, 'green')
 
-        project_output = ProjectRepo.format_project_string(self.full_path(), self.path)
-        current_ref_output = ProjectRepo.format_project_ref_string(self.full_path())
+        repo = ProjectRepo(self.full_path(), self._remote, self._ref)
+        project_output = format_project_string(repo, self.path)
+        current_ref_output = format_project_ref_string(repo)
 
         if padding:
             project_output = project_output.ljust(padding)
@@ -393,13 +417,16 @@ class Project(object):
         """Stash changes for project if dirty"""
 
         if self.is_dirty():
-            ProjectRepo(self.full_path(), self._remote, self._ref).stash()
+            repo = ProjectRepo(self.full_path(), self._remote, self._ref)
+            repo.stash()
 
     def sync(self, rebase=False, parallel=False):
         """Sync fork project with upstream remote
 
-        :param Optional[bool] rebase: Whether to use rebase instead of pulling latest changes. Defaults to False
-        :param Optional[bool] parallel: Whether command is being run in parallel, affects output. Defaults to False
+        .. py:function:: sync(rebase=False, parallel=False)
+
+        :param Optional[bool] rebase: Whether to use rebase instead of pulling latest changes
+        :param Optional[bool] parallel: Whether command is being run in parallel, affects output
         """
 
         self._print_output = not parallel
@@ -413,8 +440,10 @@ class Project(object):
     def _exit(message, parallel=False, return_code=1):
         """Exit based on serial or parallel job
 
+        .. py:function:: _exit(message, parallel=False, return_code=1)
+
         :param str message: Branch to check for
-        :param Optional[bool] parallel: Whether command is being run in parallel, affects output. Defaults to False
+        :param Optional[bool] parallel: Whether command is being run in parallel, affects output
         :param Optional[int] return_code: Return code for sys.exit()
         :raise ClowderError: General ClowderError with message
         """

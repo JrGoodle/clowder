@@ -163,7 +163,7 @@ def herd(clowder, group_names, **kwargs):
         branch (str): Branch to attempt to herd
         tag (str): Tag to attempt to herd
         depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-        rebase (bool): Whether to use rebase instead of pulling latest changes. Defaults to False
+        rebase (bool): Whether to use rebase instead of pulling latest changes
         project_names (list[str]) project_names: Project names to herd
         skip (list[str]): Project names to skip
     """
@@ -200,7 +200,7 @@ def herd_parallel(clowder, group_names, **kwargs):
         branch (str): Branch to attempt to herd
         tag (str): Tag to attempt to herd
         depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-        rebase (bool): Whether to use rebase instead of pulling latest changes. Defaults to False
+        rebase (bool): Whether to use rebase instead of pulling latest changes
         project_names (list[str]): Project names to herd
         skip (list[str]): Project names to skip
     """
@@ -282,12 +282,12 @@ def reset(clowder, group_names, **kwargs):
 def sync(clowder, project_names, rebase=False, parallel=False):
     """Sync projects
 
+    .. py:function:: sync(clowder, project_names, rebase=False, parallel=False)
+
     :param ClowderController clowder: ClowderController instance
     :param list[str] project_names: Project names to sync
-    :param Optional[bool] rebase: Whether to use rebase instead of pulling latest changes.
-        Defaults to False
-    :param Optional[bool] parallel: Whether command is being run in parallel, affects output.
-        Defaults to False
+    :param Optional[bool] rebase: Whether to use rebase instead of pulling latest changes
+    :param Optional[bool] parallel: Whether command is being run in parallel, affects output
     """
 
     projects = filter_projects_on_project_names(clowder.groups, project_names)
@@ -377,8 +377,10 @@ def _reset_parallel(clowder, group_names, **kwargs):
 def _sync_parallel(projects, rebase=False):
     """Sync projects in parallel
 
+    .. py:function:: sync(projects, rebase=False)
+
     :param list[Project] projects: Projects to sync
-    :param Optional[bool] rebase: Whether to use rebase instead of pulling latest changes. Defaults to False
+    :param Optional[bool] rebase: Whether to use rebase instead of pulling latest changes
     """
 
     print(' - Sync forks in parallel\n')

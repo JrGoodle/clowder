@@ -9,6 +9,7 @@ from __future__ import print_function
 
 import clowder.util.formatting as fmt
 from clowder.git.project_repo import ProjectRepo
+from clowder.git.util import existing_git_repository
 from clowder.model.project import Project
 
 
@@ -67,7 +68,7 @@ class Group(object):
         :rtype: bool
         """
 
-        return all([ProjectRepo.existing_git_repository(project.full_path()) for project in self.projects])
+        return all([existing_git_repository(project.full_path()) for project in self.projects])
 
     def get_yaml(self):
         """Return python object representation for saving yaml
@@ -127,9 +128,9 @@ class Group(object):
 
         print(fmt.group_name(self.name))
         for project in self.projects:
-            if not ProjectRepo.existing_git_repository(project.full_path()):
+            if not existing_git_repository(project.full_path()):
                 print(project.status())
-                ProjectRepo.existing_git_repository(project.full_path())
+                existing_git_repository(project.full_path())
 
     def print_validation(self):
         """Print validation message for projects in group"""

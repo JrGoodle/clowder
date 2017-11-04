@@ -16,6 +16,12 @@ from termcolor import colored, cprint
 import clowder.util.formatting as fmt
 from clowder.error.clowder_error import ClowderError
 from clowder.git.project_repo import ProjectRepo
+from clowder.git.util import (
+    existing_git_repository,
+    format_project_ref_string,
+    format_project_string,
+    print_validation
+)
 from clowder.util.connectivity import is_offline
 from clowder.util.execute import execute_command
 from clowder.util.file_system import (
@@ -44,6 +50,7 @@ class ClowderRepo(object):
         self.default_ref = 'refs/heads/master'
         self.remote = 'origin'
         self.clowder_path = os.path.join(self.root_directory, '.clowder')
+        self.repo = ProjectRepo(self.clowder_path, self.remote, self.default_ref)
 
         # Create clowder.yaml symlink if .clowder dir and yaml file exist
         clowder_symlink = os.path.join(self.root_directory, 'clowder.yaml')
@@ -69,12 +76,12 @@ class ClowderRepo(object):
         :param str files: Files to git add
         """
 
-        ProjectRepo(self.clowder_path, self.remote, self.default_ref).add(files)
+        self.repo.add(files)
 
     def branches(self):
         """Print current local branches"""
 
-        ProjectRepo(self.clowder_path, self.remote, self.default_ref).print_branches(local=True, remote=True)
+        self.repo.print_branches(local=True, remote=True)
 
     def checkout(self, ref):
         """Checkout ref in clowder repo
@@ -82,12 +89,11 @@ class ClowderRepo(object):
         :param str ref: Ref to git checkout
         """
 
-        repo = ProjectRepo(self.clowder_path, self.remote, self.default_ref)
         if self.is_dirty():
             print(' - Dirty repo. Please stash, commit, or discard your changes')
-            repo.status_verbose()
+            self.repo.status_verbose()
             return
-        repo.checkout(ref)
+        self.repo.checkout(ref)
 
     def clean(self):
         """Discard changes in clowder repo
@@ -97,7 +103,7 @@ class ClowderRepo(object):
 
         if self.is_dirty():
             print(' - Discard current changes')
-            ProjectRepo(self.clowder_path, self.remote, self.default_ref).clean(args='fdx')
+            self.repo.clean(args='fdx')
             return
 
         print(' - No changes to discard')
@@ -108,7 +114,7 @@ class ClowderRepo(object):
         :param str message: Git commit message
         """
 
-        ProjectRepo(self.clowder_path, self.remote, self.default_ref).commit(message)
+        self.repo.commit(message)
 
     def git_status(self):
         """Print clowder repo git status
@@ -116,7 +122,7 @@ class ClowderRepo(object):
         Equivalent to: ``git status -vv``
         """
 
-        ProjectRepo(self.clowder_path, self.remote, self.default_ref).status_verbose()
+        self.repo.status_verbose()
 
     def init(self, url, branch):
         """Clone clowder repo from url
@@ -128,7 +134,7 @@ class ClowderRepo(object):
         # Register exit handler to remove files if cloning repo fails
         atexit.register(self.init_exit_handler)
 
-        ProjectRepo(self.clowder_path, self.remote, self.default_ref).create_clowder_repo(url, branch)
+        self.repo.create_clowder_repo(url, branch)
         self.link()
 
     def init_exit_handler(self):
@@ -147,12 +153,14 @@ class ClowderRepo(object):
         :rtype: bool
         """
 
-        return ProjectRepo(self.clowder_path, self.remote, self.default_ref).is_dirty()
+        return self.repo.is_dirty()
 
     def link(self, version=None):
         """Create symlink pointing to clowder.yaml file
 
-        :param Optional[str] version: Version name of clowder.yaml to link. Defaults to None for default clowder.yaml
+        .. py:function:: link(version=None)
+
+        :param Optional[str] version: Version name of clowder.yaml to link
         """
 
         if version is None:
@@ -174,22 +182,23 @@ class ClowderRepo(object):
     def print_status(self, fetch=False):
         """Print clowder repo status
 
-        :param Optional[str] fetch: Fetch before printing status. Defaults to False
+        .. py:function:: print_status(fetch=False)
+
+        :param Optional[str] fetch: Fetch before printing status
         """
 
         repo_path = os.path.join(self.root_directory, '.clowder')
-        if not ProjectRepo.existing_git_repository(repo_path):
+        if not existing_git_repository(repo_path):
             output = colored('.clowder', 'green')
             print(output)
             return
 
         if not is_offline() and fetch:
             print(' - Fetch upstream changes for clowder repo')
-            repo = ProjectRepo(self.clowder_path, self.remote, self.default_ref)
-            repo.fetch(self.remote)
+            self.repo.fetch(self.remote)
 
-        project_output = ProjectRepo.format_project_string(repo_path, '.clowder')
-        current_ref_output = ProjectRepo.format_project_ref_string(repo_path)
+        project_output = format_project_string(self.repo, '.clowder')
+        current_ref_output = format_project_ref_string(self.repo)
 
         clowder_symlink = os.path.join(self.root_directory, 'clowder.yaml')
         if not os.path.islink(clowder_symlink):
@@ -228,8 +237,8 @@ class ClowderRepo(object):
     def _validate_groups(self):
         """Validate status of clowder repo"""
 
-        if not ProjectRepo(self.clowder_path, self.remote, self.default_ref).validate_repo():
-            ProjectRepo.print_validation(self.clowder_path)
+        if not self.repo.validate_repo():
+            print_validation(self.repo)
             print()
             sys.exit(1)
 

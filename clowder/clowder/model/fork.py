@@ -12,6 +12,11 @@ import os
 from termcolor import colored
 
 from clowder.git.project_repo import ProjectRepo
+from clowder.git.util import (
+    existing_git_repository,
+    format_project_ref_string,
+    format_project_string
+)
 
 
 class Fork(object):
@@ -62,9 +67,10 @@ class Fork(object):
         :rtype: str
         """
 
-        if not ProjectRepo.existing_git_repository(self.path):
+        if not existing_git_repository(self.path):
             return colored(self.path, 'green')
 
-        project_output = ProjectRepo.format_project_string(self.path, self.path)
-        current_ref_output = ProjectRepo.format_project_ref_string(self.full_path())
+        repo = ProjectRepo(self.full_path(), self.remote_name, 'refs/heads/master')
+        project_output = format_project_string(repo, self.path)
+        current_ref_output = format_project_ref_string(repo)
         return project_output + ' ' + current_ref_output
