@@ -20,7 +20,11 @@ from clowder.util.decorators import network_connection_required
 
 
 class HerdController(ArgparseController):
+    """Clowder herd command controller"""
+
     class Meta:
+        """Clowder herd Meta configuration"""
+
         label = 'herd'
         stacked_on = 'base'
         stacked_type = 'embedded'
@@ -44,12 +48,16 @@ class HerdController(ArgparseController):
             ]
     )
     def herd(self):
+        """Clowder herd command entry point"""
+
         self._herd()
 
     @network_connection_required
     @valid_clowder_yaml_required
     @print_clowder_repo_status_fetch
     def _herd(self):
+        """Clowder herd command private implementation"""
+
         branch = None if self.app.pargs.branch is None else self.app.pargs.branch[0]
         tag = None if self.app.pargs.tag is None else self.app.pargs.tag[0]
         depth = None if self.app.pargs.depth is None else self.app.pargs.depth[0]

@@ -14,7 +14,11 @@ import clowder.cli as cmd
 
 
 class ClowderApp(CementApp):
+    """Clowder command CLI app"""
+
     class Meta:
+        """Clowder command CLI Meta configuration"""
+
         label = 'clowder'
         extensions = ['argcomplete']
         base_controller = 'base'
@@ -49,6 +53,8 @@ class ClowderApp(CementApp):
 
 
 def main():
+    """Clowder command CLI main function"""
+
     print()
     with ClowderApp() as app:
         app.run()

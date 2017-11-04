@@ -21,7 +21,11 @@ from clowder.cli.util import (
 
 
 class DiffController(ArgparseController):
+    """Clowder diff command controller"""
+
     class Meta:
+        """Clowder diff Meta configuration"""
+
         label = 'diff'
         stacked_on = 'base'
         stacked_type = 'embedded'
@@ -41,11 +45,15 @@ class DiffController(ArgparseController):
         ]
     )
     def diff(self):
+        """Clowder diff command entry point"""
+
         self._diff()
 
     @valid_clowder_yaml_required
     @print_clowder_repo_status
     def _diff(self):
+        """Clowder diff command private implementation"""
+
         if self.app.pargs.projects is None:
             groups = filter_groups(CLOWDER_CONTROLLER.groups, self.app.pargs.groups)
             for group in groups:

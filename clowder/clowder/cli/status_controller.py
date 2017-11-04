@@ -7,8 +7,6 @@
 
 from __future__ import print_function
 
-import os
-
 from cement.ext.ext_argparse import ArgparseController, expose
 
 import clowder.util.formatting as fmt
@@ -19,7 +17,11 @@ from clowder.util.decorators import network_connection_required
 
 
 class StatusController(ArgparseController):
+    """Clowder status command controller"""
+
     class Meta:
+        """Clowder status Meta configuration"""
+
         label = 'status'
         stacked_on = 'base'
         stacked_type = 'embedded'
@@ -32,9 +34,13 @@ class StatusController(ArgparseController):
             ]
     )
     def status(self):
+        """Clowder status command entry point"""
+
         self._status()
 
     def _status(self):
+        """Clowder status command private implementation"""
+
         if self.app.pargs.fetch:
             _fetch_projects(CLOWDER_REPO, CLOWDER_CONTROLLER)
         else:

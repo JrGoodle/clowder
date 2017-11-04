@@ -18,7 +18,11 @@ from clowder.util.decorators import network_connection_required
 
 
 class InitController(ArgparseController):
+    """Clowder init command controller"""
+
     class Meta:
+        """Clowder init Meta configuration"""
+
         label = 'init'
         stacked_on = 'base'
         stacked_type = 'embedded'
@@ -32,10 +36,14 @@ class InitController(ArgparseController):
         ]
     )
     def init(self):
+        """Clowder init command entry point"""
+
         self._init()
 
     @network_connection_required
     def _init(self):
+        """Clowder init command private implementation"""
+
         if os.path.isdir(CLOWDER_REPO.clowder_path):
             cprint('Clowder already initialized in this directory\n', 'red')
             sys.exit(1)

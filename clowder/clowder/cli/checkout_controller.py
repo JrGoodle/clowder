@@ -21,7 +21,11 @@ from clowder.cli.util import (
 
 
 class CheckoutController(ArgparseController):
+    """Clowder checkout command controller"""
+
     class Meta:
+        """Clowder checkout Meta configuration"""
+
         label = 'checkout'
         stacked_on = 'base'
         stacked_type = 'embedded'
@@ -41,11 +45,15 @@ class CheckoutController(ArgparseController):
         ]
     )
     def checkout(self):
+        """Clowder checkout command entry point"""
+
         self._checkout()
 
     @valid_clowder_yaml_required
     @print_clowder_repo_status
     def _checkout(self):
+        """Clowder checkout command private implementation"""
+
         if self.app.pargs.projects is None:
             groups = filter_groups(CLOWDER_CONTROLLER.groups, self.app.pargs.groups)
             for group in groups:

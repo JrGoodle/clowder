@@ -24,7 +24,11 @@ from clowder.util.decorators import network_connection_required
 
 
 class StartController(ArgparseController):
+    """Clowder start command controller"""
+
     class Meta:
+        """Clowder start Meta configuration"""
+
         label = 'start'
         stacked_on = 'base'
         stacked_type = 'embedded'
@@ -45,11 +49,15 @@ class StartController(ArgparseController):
         ]
     )
     def start(self):
+        """Clowder start command entry point"""
+
         self._start()
 
     @valid_clowder_yaml_required
     @print_clowder_repo_status
     def _start(self):
+        """Clowder start command private implementation"""
+
         if self.app.pargs.tracking:
             self._start_tracking()
             return

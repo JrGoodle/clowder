@@ -21,7 +21,11 @@ from clowder.yaml.printing import print_yaml
 
 
 class YAMLController(ArgparseController):
+    """Clowder yaml command controller"""
+
     class Meta:
+        """Clowder yaml Meta configuration"""
+
         label = 'yaml'
         stacked_on = 'base'
         stacked_type = 'embedded'
@@ -34,11 +38,15 @@ class YAMLController(ArgparseController):
         ]
     )
     def yaml(self):
+        """Clowder yaml command entry point"""
+
         self._yaml()
 
     @valid_clowder_yaml_required
     @print_clowder_repo_status
     def _yaml(self):
+        """Clowder yaml command private implementation"""
+
         if self.app.pargs.resolved:
             print(fmt.yaml_string(CLOWDER_CONTROLLER.get_yaml_resolved()))
         else:

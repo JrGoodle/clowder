@@ -26,7 +26,11 @@ from clowder.yaml.saving import save_yaml
 
 
 class SaveController(ArgparseController):
+    """Clowder save command controller"""
+
     class Meta:
+        """Clowder save Meta configuration"""
+
         label = 'save'
         stacked_on = 'base'
         stacked_type = 'embedded'
@@ -39,10 +43,14 @@ class SaveController(ArgparseController):
         ]
     )
     def save(self):
+        """Clowder save command entry point"""
+
         self._save()
 
     @valid_clowder_yaml_required
     def _save(self):
+        """Clowder save command private implementation"""
+
         if self.app.pargs.version.lower() == 'default':
             print(fmt.save_default_error(self.app.pargs.version))
             sys.exit(1)

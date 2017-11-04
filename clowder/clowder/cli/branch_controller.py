@@ -21,7 +21,11 @@ from clowder.cli.util import (
 
 
 class BranchController(ArgparseController):
+    """Clowder branch command controller"""
+
     class Meta:
+        """Clowder branch Meta configuration"""
+
         label = 'branch'
         stacked_on = 'base'
         stacked_type = 'embedded'
@@ -42,11 +46,13 @@ class BranchController(ArgparseController):
             ]
     )
     def branch(self):
+        """Clowder branch command entry point"""
         self._branch()
 
     @valid_clowder_yaml_required
     @print_clowder_repo_status
     def _branch(self):
+        """Clowder branch command private implementation"""
         local = True
         remote = False
         if self.app.pargs.all:

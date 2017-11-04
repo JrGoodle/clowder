@@ -16,7 +16,11 @@ from clowder.cli.globals import CLOWDER_CONTROLLER
 
 
 class ForallController(ArgparseController):
+    """Clowder forall command controller"""
+
     class Meta:
+        """Clowder forall Meta configuration"""
+
         label = 'forall'
         stacked_on = 'base'
         stacked_type = 'embedded'
@@ -39,11 +43,15 @@ class ForallController(ArgparseController):
             ]
     )
     def forall(self):
+        """Clowder forall command entry point"""
+
         self._forall()
 
     @valid_clowder_yaml_required
     @print_clowder_repo_status
     def _forall(self):
+        """Clowder forall command private implementation"""
+
         forall(CLOWDER_CONTROLLER, self.app.pargs.command[0], self.app.pargs.ignore_errors,
                group_names=self.app.pargs.groups, project_names=self.app.pargs.projects,
                skip=self.app.pargs.skip, parallel=self.app.pargs.parallel)

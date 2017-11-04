@@ -5,8 +5,6 @@
 
 """
 
-import os
-
 from cement.ext.ext_argparse import ArgparseController, expose
 
 from clowder.cli.util import (
@@ -21,7 +19,11 @@ from clowder.clowder_repo import (
 
 
 class LinkController(ArgparseController):
+    """Clowder link command controller"""
+
     class Meta:
+        """Clowder link Meta configuration"""
+
         label = 'link'
         stacked_on = 'base'
         stacked_type = 'embedded'
@@ -36,11 +38,15 @@ class LinkController(ArgparseController):
             ]
     )
     def link(self):
+        """Clowder link command entry point"""
+
         self._link()
 
     @clowder_required
     @print_clowder_repo_status
     def _link(self):
+        """Clowder link command private implementation"""
+
         if self.app.pargs.version is None:
             version = None
         else:

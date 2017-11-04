@@ -31,7 +31,11 @@ from clowder.util.decorators import network_connection_required
 
 
 class PruneController(ArgparseController):
+    """Clowder prune command controller"""
+
     class Meta:
+        """Clowder prune Meta configuration"""
+
         label = 'prune'
         stacked_on = 'base'
         stacked_type = 'embedded'
@@ -54,11 +58,14 @@ class PruneController(ArgparseController):
         ]
     )
     def prune(self):
+        """Clowder prune command entry point"""
+
         self._prune()
 
     @valid_clowder_yaml_required
     @print_clowder_repo_status
     def _prune(self):
+        """Clowder prune command private implementation"""
 
         if self.app.pargs.all:
             self._prune_all()

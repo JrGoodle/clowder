@@ -23,7 +23,11 @@ from clowder.cli.util import (
 
 
 class StashController(ArgparseController):
+    """Clowder stash command controller"""
+
     class Meta:
+        """Clowder stash Meta configuration"""
+
         label = 'stash'
         stacked_on = 'base'
         stacked_type = 'embedded'
@@ -42,11 +46,15 @@ class StashController(ArgparseController):
         ]
     )
     def stash(self):
+        """Clowder stash command entry point"""
+
         self._stash()
 
     @valid_clowder_yaml_required
     @print_clowder_repo_status
     def _stash(self):
+        """Clowder stash command private implementation"""
+
         if not any([g.is_dirty() for g in CLOWDER_CONTROLLER.groups]):
             print('No changes to stash')
             return

@@ -12,12 +12,11 @@ VERSION = '2.5.0'
 
 
 class BaseController(ArgparseController):
-    """
-    This is the application base controller, but we don't want to use our
-    abstract base class here.
+    """Clowder app base controller"""
 
-    """
     class Meta:
+        """Clowder app base Meta configuration"""
+
         label = 'base'
         arguments = [
             (['-v', '--version'], dict(action='version', version=VERSION)),

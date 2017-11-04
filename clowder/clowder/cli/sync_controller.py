@@ -23,7 +23,11 @@ from clowder.util.decorators import network_connection_required
 
 
 class SyncController(ArgparseController):
+    """Clowder sync command controller"""
+
     class Meta:
+        """Clowder sync Meta configuration"""
+
         label = 'sync'
         stacked_on = 'base'
         stacked_type = 'embedded'
@@ -41,12 +45,16 @@ class SyncController(ArgparseController):
         ]
     )
     def sync(self):
+        """Clowder sync command entry point"""
+
         self._sync()
 
     @network_connection_required
     @valid_clowder_yaml_required
     @print_clowder_repo_status_fetch
     def _sync(self):
+        """Clowder sync command private implementation"""
+
         all_fork_projects = CLOWDER_CONTROLLER.get_all_fork_project_names()
         if all_fork_projects == '':
             cprint(' - No forks to sync\n', 'red')

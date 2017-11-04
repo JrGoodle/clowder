@@ -21,7 +21,11 @@ from clowder.cli.util import (
 
 
 class CleanController(ArgparseController):
+    """Clowder clean command controller"""
+
     class Meta:
+        """Clowder clean Meta configuration"""
+
         label = 'clean'
         stacked_on = 'base'
         stacked_type = 'embedded'
@@ -46,11 +50,15 @@ class CleanController(ArgparseController):
             ]
     )
     def clean(self):
+        """Clowder clean command entry point"""
+
         self._clean()
 
     @valid_clowder_yaml_required
     @print_clowder_repo_status
     def _clean(self):
+        """Clowder clean command private implementation"""
+
         if self.app.pargs.all:
             _clean_all(CLOWDER_CONTROLLER, group_names=self.app.pargs.groups,
                        project_names=self.app.pargs.projects, skip=self.app.pargs.skip)

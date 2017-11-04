@@ -18,7 +18,11 @@ from clowder.util.decorators import network_connection_required
 
 
 class ResetController(ArgparseController):
+    """Clowder reset command controller"""
+
     class Meta:
+        """Clowder reset Meta configuration"""
+
         label = 'reset'
         stacked_on = 'base'
         stacked_type = 'embedded'
@@ -41,12 +45,16 @@ class ResetController(ArgparseController):
             ]
     )
     def reset(self):
+        """Clowder reset command entry point"""
+
         self._reset()
 
     @network_connection_required
     @valid_clowder_yaml_required
     @print_clowder_repo_status_fetch
     def _reset(self):
+        """Clowder reset command private implementation"""
+
         timestamp_project = None
         if self.app.pargs.timestamp:
             timestamp_project = self.app.pargs.timestamp[0]
