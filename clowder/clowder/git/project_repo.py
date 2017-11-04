@@ -51,10 +51,11 @@ class ProjectRepo(ProjectRepoImpl):
     def create_clowder_repo(self, url, branch, depth=0):
         """Clone clowder git repo from url at path
 
+        .. py:function:: create_clowder_repo(url, branch, depth=0)
+
         :param str url: URL of repo
         :param str branch: Branch name
         :param Optional[int] depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-            Defaults to 0
         """
 
         if existing_git_repository(self.repo_path):
@@ -149,20 +150,7 @@ class ProjectRepo(ProjectRepoImpl):
         branch_output = fmt.ref_string(branch)
         branch_ref = 'refs/heads/' + branch
         if self.existing_local_branch(branch):
-            if self._is_branch_checked_out(branch):
-                self._print(' - Branch ' + branch_output + ' already checked out')
-            else:
-                self._checkout_branch_local(branch)
-
-            self.fetch(self.remote, depth=depth, ref=branch_ref)
-            if self.existing_remote_branch(branch, self.remote):
-                self._herd_remote_branch(self.remote, branch, depth=depth, rebase=rebase)
-                return
-
-            if fork_remote:
-                self.fetch(fork_remote, depth=depth, ref=branch_ref)
-                if self.existing_remote_branch(branch, fork_remote):
-                    self._herd_remote_branch(fork_remote, branch, depth=depth, rebase=rebase)
+            self._herd_branch_existing_local(branch, depth=depth, rebase=rebase, fork_remote=fork_remote)
             return
 
         self.fetch(self.remote, depth=depth, ref=branch_ref)
@@ -304,8 +292,9 @@ class ProjectRepo(ProjectRepoImpl):
     def reset(self, depth=0):
         """Reset branch to upstream or checkout tag/sha as detached HEAD
 
-        :param Optional[int] depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer.
-            Defaults to 0
+        .. py:function:: reset(depth=0)
+
+        :param Optional[int] depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
         """
 
         if ref_type(self.default_ref) == 'tag':
@@ -400,8 +389,10 @@ class ProjectRepo(ProjectRepoImpl):
     def sync(self, fork_remote, rebase=False):
         """Sync fork with upstream remote
 
+        .. py:function:: sync(fork_remote, rebase=False)
+
         :param str fork_remote: Fork remote name
-        :param Optional[bool] rebase: Whether to use rebase instead of pulling latest changes. Defaults to False
+        :param Optional[bool] rebase: Whether to use rebase instead of pulling latest changes.
         """
 
         self._print(' - Sync fork with upstream remote')

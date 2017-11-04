@@ -75,8 +75,10 @@ class GitRepo(object):
     def checkout(self, truncated_ref, allow_failure=False):
         """Checkout git ref
 
+        .. py:function:: checkout(truncated_ref, allow_failure=False)
+
         :param str truncated_ref: Ref to git checkout
-        :param Optional[bool] allow_failure: Whether to allow failing to checkout branch. Defaults to False
+        :param Optional[bool] allow_failure: Whether to allow failing to checkout branch
         """
 
         ref_output = fmt.ref_string(truncated_ref)
@@ -232,7 +234,9 @@ class GitRepo(object):
     def is_detached(self, print_output=False):
         """Check if HEAD is detached
 
-        :param Optional[bool] print_output: Whether to print output. Defaults to False
+        .. py:function:: is_detached(print_output=False)
+
+        :param Optional[bool] print_output: Whether to print output
         :return: True, if HEAD is detached
         :rtype: bool
         """
@@ -260,7 +264,9 @@ class GitRepo(object):
     def new_commits(self, upstream=False):
         """Returns the number of new commits
 
-        :param Optional[bool] upstream: Whether to find number of new upstream or local commits. Defaults to False
+        .. py:function:: new_commits(upstream=False)
+
+        :param Optional[bool] upstream: Whether to find number of new upstream or local commits
         :return: Int number of new commits
         :rtype: int
         """
@@ -296,8 +302,10 @@ class GitRepo(object):
     def print_branches(self, local=False, remote=False):
         """Print branches
 
-        :param Optional[bool] local: Print local branches. Defaults to False
-        :param Optional[bool] remote: Print remote branches. Defaults to False
+        .. py:function:: print_branches(local=False, remote=False)
+
+        :param Optional[bool] local: Print local branches
+        :param Optional[bool] remote: Print remote branches
         """
 
         if local and remote:
@@ -348,7 +356,9 @@ class GitRepo(object):
     def sha(self, short=False):
         """Return sha for currently checked out commit
 
-        :param Optional[bool] short: Whether to return short or long commit sha. Defaults to False
+        .. py:function:: sha(short=False)
+
+        :param Optional[bool] short: Whether to return short or long commit sha
         :return: Commit sha
         :rtype: str
         """

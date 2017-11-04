@@ -158,7 +158,9 @@ class ClowderRepo(object):
     def link(self, version=None):
         """Create symlink pointing to clowder.yaml file
 
-        :param Optional[str] version: Version name of clowder.yaml to link. Defaults to None for default clowder.yaml
+        .. py:function:: link(version=None)
+
+        :param Optional[str] version: Version name of clowder.yaml to link
         """
 
         if version is None:
@@ -180,7 +182,9 @@ class ClowderRepo(object):
     def print_status(self, fetch=False):
         """Print clowder repo status
 
-        :param Optional[str] fetch: Fetch before printing status. Defaults to False
+        .. py:function:: print_status(fetch=False)
+
+        :param Optional[str] fetch: Fetch before printing status
         """
 
         repo_path = os.path.join(self.root_directory, '.clowder')

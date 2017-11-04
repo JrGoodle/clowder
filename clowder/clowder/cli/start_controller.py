@@ -90,12 +90,13 @@ class StartController(ArgparseController):
 def _start_groups(clowder, group_names, skip, branch, tracking=False):
     """Start feature branch for groups
 
+    .. py:function:: _start_groups(clowder, group_names, skip, branch, tracking=False)
+
     :param ClowderController clowder: ClowderController instance
     :param list[str] group_names: Group names to create branches for
     :param list[str] skip: Project names to skip
     :param str branch: Local branch name to create
-    :param Optional[bool] tracking: Whether to create a remote branch with tracking relationship.
-        Defaults to False
+    :param Optional[bool] tracking: Whether to create a remote branch with tracking relationship
     """
 
     groups = filter_groups(clowder.groups, group_names)
@@ -107,12 +108,13 @@ def _start_groups(clowder, group_names, skip, branch, tracking=False):
 def _start_projects(clowder, project_names, skip, branch, tracking=False):
     """Start feature branch for projects
 
+    .. py:function:: _start_projects(clowder, project_names, skip, branch, tracking=False)
+
     :param ClowderController clowder: ClowderController instance
     :param list[str] project_names: Project names to creat branches for
     :param list[str] skip: Project names to skip
     :param str branch: Local branch name to create
-    :param Optional[bool] tracking: Whether to create a remote branch with tracking relationship.
-        Defaults to False
+    :param Optional[bool] tracking: Whether to create a remote branch with tracking relationship
     """
 
     projects = filter_projects_on_project_names(clowder.groups, project_names)

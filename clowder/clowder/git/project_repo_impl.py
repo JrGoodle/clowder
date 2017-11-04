@@ -52,8 +52,10 @@ class ProjectRepoImpl(GitRepo):
     def _checkout_branch_local(self, branch, remove_dir=False):
         """Checkout local branch
 
+        .. py:function:: _checkout_branch_local(branch, remove_dir=False)
+
         :param str branch: Branch name
-        :param Optional[bool] remove_dir: Whether to remove the directory if commands fail. Defaults to False
+        :param Optional[bool] remove_dir: Whether to remove the directory if commands fail
         """
 
         branch_output = fmt.ref_string(branch)
@@ -122,10 +124,12 @@ class ProjectRepoImpl(GitRepo):
     def _checkout_new_repo_tag(self, tag, remote, depth, remove_dir=False):
         """Checkout tag or fail and delete repo if it doesn't exist
 
+        .. py:function:: _checkout_new_repo_tag(tag, remote, depth, remove_dir=False)
+
         :param str tag: Tag name
         :param str remote: Remote name
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-        :param Optional[bool] remove_dir: Whether to remove the directory if commands fail. Defaults to False
+        :param Optional[bool] remove_dir: Whether to remove the directory if commands fail
         """
 
         tag_output = fmt.ref_string(tag)
@@ -338,9 +342,11 @@ class ProjectRepoImpl(GitRepo):
     def _create_remote(self, remote, url, remove_dir=False):
         """Create new remote
 
+        .. py:function:: _create_remote(remote, url, remove_dir=False)
+
         :param str remote: Remote name
         :param str url: URL of repo
-        :param Optional[bool] remove_dir: Whether to remove the directory if commands fail. Defaults to False
+        :param Optional[bool] remove_dir: Whether to remove the directory if commands fail
         """
 
         remote_names = [r.name for r in self.repo.remotes]
@@ -454,9 +460,10 @@ class ProjectRepoImpl(GitRepo):
     def _herd_initial(self, url, depth=0):
         """Herd ref initial
 
+        .. py:function:: _herd_initial(url, depth=0)
+
         :param str url: URL of repo
-        :param Optional[int] depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer.
-            Defaults to 0
+        :param Optional[int] depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
         """
 
         self._init_repo()
@@ -468,13 +475,48 @@ class ProjectRepoImpl(GitRepo):
         elif ref_type(self.default_ref) == 'sha':
             self._checkout_new_repo_commit(self.default_ref, self.remote, depth)
 
+    def _herd_branch_existing_local(self, branch, **kwargs):
+        """Herd branch for existing local branch
+
+        .. py:function:: herd_branch_existing_local(branch, depth=0, fork_remote=None, rebase=False)
+
+        :param str branch: Branch name
+
+        Keyword Args:
+            depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+            fork_remote (str): Fork remote name
+            rebase (bool): Whether to use rebase instead of pulling latest changes
+        """
+
+        depth = kwargs.get('depth', 0)
+        rebase = kwargs.get('rebase', False)
+        fork_remote = kwargs.get('fork_remote', None)
+
+        branch_output = fmt.ref_string(branch)
+        branch_ref = 'refs/heads/' + branch
+        if self._is_branch_checked_out(branch):
+            self._print(' - Branch ' + branch_output + ' already checked out')
+        else:
+            self._checkout_branch_local(branch)
+
+        self.fetch(self.remote, depth=depth, ref=branch_ref)
+        if self.existing_remote_branch(branch, self.remote):
+            self._herd_remote_branch(self.remote, branch, depth=depth, rebase=rebase)
+            return
+
+        if fork_remote:
+            self.fetch(fork_remote, depth=depth, ref=branch_ref)
+            if self.existing_remote_branch(branch, fork_remote):
+                self._herd_remote_branch(fork_remote, branch, depth=depth, rebase=rebase)
+
     def _herd_branch_initial(self, url, branch, depth=0):
         """Herd branch initial
 
+        .. py:function:: _herd_branch_initial(url, branch, depth=0)
+
         :param str url: URL of repo
         :param str branch: Branch name to attempt to herd
-        :param Optional[int] depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer.
-            Defaults to 0
+        :param Optional[int] depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
         """
 
         self._init_repo()
@@ -617,8 +659,10 @@ class ProjectRepoImpl(GitRepo):
     def _remote(self, remote, remove_dir=False):
         """Get GitPython Remote instance
 
+        .. py:function:: _remote(remote, remove_dir=False)
+
         :param str remote: Remote name
-        :param Optional[bool] remove_dir: Whether to remove the directory if commands fail. Defaults to False
+        :param Optional[bool] remove_dir: Whether to remove the directory if commands fail
         :return: GitPython Remote instance
         :rtype: Remote
         """
@@ -669,9 +713,11 @@ class ProjectRepoImpl(GitRepo):
     def _set_tracking_branch(self, remote, branch, remove_dir=False):
         """Set tracking branch
 
+        .. py:function:: _set_tracking_branch(remote, branch, remove_dir=False)
+
         :param str remote: Remote name
         :param str branch: Branch name
-        :param Optional[bool] remove_dir: Whether to remove the directory if commands fail. Defaults to False
+        :param Optional[bool] remove_dir: Whether to remove the directory if commands fail
         """
 
         branch_output = fmt.ref_string(branch)
