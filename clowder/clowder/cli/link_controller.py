@@ -13,9 +13,9 @@ from clowder.cli.util import (
 )
 from clowder.clowder_repo import (
     CLOWDER_REPO,
-    clowder_required,
     print_clowder_repo_status
 )
+from clowder.util.decorators import clowder_required
 
 
 class LinkController(ArgparseController):

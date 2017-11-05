@@ -13,15 +13,13 @@ import sys
 from cement.ext.ext_argparse import ArgparseController, expose
 
 import clowder.util.formatting as fmt
-from clowder.clowder_repo import (
-    CLOWDER_REPO,
-    valid_clowder_yaml_required
-)
 from clowder.cli.globals import CLOWDER_CONTROLLER
 from clowder.cli.util import (
     validate_groups,
     validate_projects_exist
 )
+from clowder.clowder_repo import CLOWDER_REPO
+from clowder.util.decorators import valid_clowder_yaml_required
 from clowder.yaml.saving import save_yaml
 
 
