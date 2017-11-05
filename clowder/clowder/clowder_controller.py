@@ -11,7 +11,7 @@ import sys
 
 from termcolor import cprint
 
-from clowder.error.clowder_error import ClowderError
+from clowder.error.clowder_yaml_error import ClowderYAMLError
 from clowder.model.group import Group
 from clowder.model.source import Source
 from clowder.yaml.loading import load_yaml
@@ -42,7 +42,7 @@ class ClowderController(object):
             self._load_yaml()
         except (KeyboardInterrupt, SystemExit):
             sys.exit(1)
-        except (ClowderError, KeyError) as err:
+        except (ClowderYAMLError, KeyError) as err:
             self.error = err
 
     def get_all_fork_project_names(self):

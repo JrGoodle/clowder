@@ -15,6 +15,7 @@ from termcolor import colored, cprint
 
 import clowder.util.formatting as fmt
 from clowder.error.clowder_error import ClowderError
+from clowder.error.clowder_yaml_error import ClowderYAMLError
 from clowder.git.project_repo import ProjectRepo
 from clowder.git.util import (
     existing_git_repository,
@@ -63,7 +64,7 @@ class ClowderRepo(object):
         if os.path.islink(clowder_symlink):
             try:
                 validate_yaml(os.path.join(self.root_directory, 'clowder.yaml'), self.root_directory)
-            except ClowderError as err:
+            except ClowderYAMLError as err:
                 self.error = err
             except (KeyboardInterrupt, SystemExit):
                 sys.exit(1)
@@ -142,7 +143,7 @@ class ClowderRepo(object):
 
         if os.path.isdir(self.clowder_path):
             clowder_yaml = os.path.join(self.root_directory, 'clowder.yaml')
-            if not os.path.isfile(clowder_yaml):
+            if not os.path.islink(clowder_yaml):
                 remove_directory(self.clowder_path)
                 sys.exit(1)
 
@@ -226,13 +227,15 @@ class ClowderRepo(object):
         """Run command in clowder repo
 
         :param str command: Command to run
+        :raise ClowderError:
         """
 
         print(fmt.command(command))
-        return_code = execute_command(command.split(), self.clowder_path)
-        if return_code != 0:
+        try:
+            execute_command(command.split(), self.clowder_path)
+        except ClowderError as err:
             print(fmt.command_failed_error(command))
-            sys.exit(return_code)
+            raise err
 
     def _validate_groups(self):
         """Validate status of clowder repo"""

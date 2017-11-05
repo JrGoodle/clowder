@@ -12,6 +12,8 @@ from multiprocessing.pool import ThreadPool
 
 from termcolor import cprint
 
+from clowder.error.clowder_error import ClowderError
+
 
 # Disable errors shown by pylint for catching too general exception
 # pylint: disable=W0703
@@ -46,6 +48,11 @@ def execute_subprocess_command(command, path, **kwargs):
 
     :return: Subprocess return code
     :rtype: int
+
+    Raises:
+        KeyboardInterrupt:
+        SystemExit:
+        ClowderGitError:
     """
 
     shell = kwargs.get('shell', True)
@@ -62,10 +69,12 @@ def execute_subprocess_command(command, path, **kwargs):
                                    stdout=stdout, stderr=stderr)
         atexit.register(subprocess_exit_handler, process)
         process.communicate()
+        if process.returncode != 0:
+            raise ClowderError
     except (KeyboardInterrupt, SystemExit):
         raise
-    else:
-        return process.returncode
+    except Exception as err:
+        raise ClowderError(err)
 
 
 def execute_command(command, path, **kwargs):
@@ -113,14 +122,14 @@ def execute_command(command, path, **kwargs):
             pool.close()
             pool.terminate()
         cprint('\n - Command failed\n', 'red')
-        return 1
+        raise ClowderError()
     except Exception as err:
         if pool:
             pool.close()
             pool.terminate()
         cprint('\n - Command failed', 'red')
         print(str(err) + '\n')
-        return 1
+        raise ClowderError(err)
 
 
 def execute_forall_command(command, path, forall_env, print_output):
@@ -135,4 +144,4 @@ def execute_forall_command(command, path, forall_env, print_output):
     :rtype: int
     """
 
-    return execute_command(command, path, env=forall_env, print_output=print_output)
+    execute_command(command, path, env=forall_env, print_output=print_output)

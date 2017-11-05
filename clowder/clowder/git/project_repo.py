@@ -7,12 +7,11 @@
 
 from __future__ import print_function
 
-import sys
-
 from git import GitError
 from termcolor import colored
 
 import clowder.util.formatting as fmt
+from clowder.error.clowder_error import ClowderError
 from clowder.error.clowder_git_error import ClowderGitError
 from clowder.git.project_repo_impl import ProjectRepoImpl
 from clowder.git.util import (
@@ -119,10 +118,7 @@ class ProjectRepo(ProjectRepoImpl):
             self._herd_initial(url, depth=depth)
             return
 
-        return_code = self._create_remote(self.remote, url)
-        if return_code != 0:
-            raise ClowderGitError(msg=colored(' - Failed to create remote', 'red'))
-
+        self._create_remote(self.remote, url)
         self._herd(self.remote, self.default_ref, depth=depth, fetch=fetch, rebase=rebase)
 
     def herd_branch(self, url, branch, **kwargs):
@@ -191,22 +187,19 @@ class ProjectRepo(ProjectRepoImpl):
         if not existing_git_repository(self.repo_path):
             self._init_repo()
             self._create_remote(self.remote, url, remove_dir=True)
-            return_code = self._checkout_new_repo_tag(tag, self.remote, depth)
-            if return_code == 0:
+            try:
+                self._checkout_new_repo_tag(tag, self.remote, depth)
+            except ClowderGitError:
+                fetch = depth != 0
+                self.herd(url, depth=depth, fetch=fetch, rebase=rebase)
                 return
 
+        try:
+            self.fetch(self.remote, ref='refs/tags/' + tag, depth=depth)
+            self._checkout_tag(tag)
+        except ClowderGitError:
             fetch = depth != 0
             self.herd(url, depth=depth, fetch=fetch, rebase=rebase)
-            return
-
-        return_code = self.fetch(self.remote, ref='refs/tags/' + tag, depth=depth)
-        if return_code == 0:
-            return_code = self._checkout_tag(tag)
-            if return_code == 0:
-                return
-
-        fetch = depth != 0
-        self.herd(url, depth=depth, fetch=fetch, rebase=rebase)
 
     def herd_remote(self, url, remote, branch=None):
         """Herd remote repo
@@ -216,18 +209,16 @@ class ProjectRepo(ProjectRepoImpl):
         :param Optional[str] branch: Branch name
         """
 
-        return_code = self._create_remote(remote, url)
-        if return_code != 0:
-            raise ClowderGitError(msg=colored(' - Failed to create remote', 'red'))
+        self._create_remote(remote, url)
 
-        if branch:
-            return_code = self.fetch(remote, ref=branch)
-            if return_code == 0:
-                return
+        if branch is None:
+            self.fetch(remote, ref=self.default_ref)
+            return
 
-        return_code = self.fetch(remote, ref=self.default_ref)
-        if return_code != 0:
-            raise ClowderGitError(msg=colored(' - Failed to fetch', 'red'))
+        try:
+            self.fetch(remote, ref=branch)
+        except ClowderGitError:
+            self.fetch(remote, ref=self.default_ref)
 
     def prune_branch_local(self, branch, force):
         """Prune local branch
@@ -310,11 +301,7 @@ class ProjectRepo(ProjectRepoImpl):
         branch = truncate_ref(self.default_ref)
         branch_output = fmt.ref_string(branch)
         if not self.existing_local_branch(branch):
-            return_code = self._create_branch_local_tracking(branch, self.remote, depth=depth, fetch=True)
-            if return_code != 0:
-                message = colored(' - Failed to create tracking branch ', 'red') + branch_output
-                self._print(message)
-                self._exit(message)
+            self._create_branch_local_tracking(branch, self.remote, depth=depth, fetch=True)
             return
 
         if self._is_branch_checked_out(branch):
@@ -364,15 +351,12 @@ class ProjectRepo(ProjectRepoImpl):
 
         if branch not in self.repo.heads:
             if not is_offline():
-                return_code = self.fetch(remote, ref=branch, depth=depth)
-                if return_code != 0:
-                    sys.exit(1)
-            return_code = self._create_branch_local(branch)
-            if return_code != 0:
-                self._exit('', return_code=return_code)
-            return_code = self._checkout_branch_local(branch)
-            if return_code != 0:
-                self._exit('', return_code=return_code)
+                self.fetch(remote, ref=branch, depth=depth)
+            try:
+                self._create_branch_local(branch)
+                self._checkout_branch_local(branch)
+            except ClowderGitError:
+                self._exit()
         else:
             branch_output = fmt.ref_string(branch)
             print(' - ' + branch_output + ' already exists')
@@ -380,9 +364,10 @@ class ProjectRepo(ProjectRepoImpl):
             if correct_branch:
                 print(' - On correct branch')
             else:
-                return_code = self._checkout_branch_local(branch)
-                if return_code != 0:
-                    self._exit('', return_code=return_code)
+                try:
+                    self._checkout_branch_local(branch)
+                except ClowderGitError:
+                    self._exit()
 
         if tracking and not is_offline():
             self._create_branch_remote_tracking(branch, remote, depth)
@@ -411,9 +396,179 @@ class ProjectRepo(ProjectRepoImpl):
 
         self._print(' - Push to ' + fork_remote_output + ' ' + branch_output)
         command = ['git', 'push', fork_remote, truncate_ref(self.default_ref)]
-        return_code = execute_command(command, self.repo_path, print_output=self._print_output)
-        if return_code != 0:
+        try:
+            execute_command(command, self.repo_path, print_output=self._print_output)
+        except ClowderError:
             message = colored(' - Failed to push to ', 'red') + fork_remote_output + ' ' + branch_output
             self._print(message)
             self._print(fmt.command_failed_error(command))
             self._exit(message)
+
+    def _herd(self, remote, ref, **kwargs):
+        """Herd ref
+
+        .. py:function:: _herd(remote, ref, depth=0, fetch=True, rebase=False)
+
+        :param str remote: Remote name
+        :param str ref: Git ref
+
+        Keyword Args:
+            depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+            fetch (bool): Whether to fetch
+            rebase (bool): Whether to use rebase instead of pulling latest changes
+        """
+
+        depth = kwargs.get('depth', 0)
+        fetch = kwargs.get('fetch', True)
+        rebase = kwargs.get('rebase', False)
+
+        if ref_type(ref) == 'tag':
+            self.fetch(remote, depth=depth, ref=ref)
+            self._checkout_tag(truncate_ref(ref))
+            return
+
+        if ref_type(ref) == 'sha':
+            self.fetch(remote, depth=depth, ref=ref)
+            self._checkout_sha(ref)
+            return
+
+        branch = truncate_ref(ref)
+        if not self.existing_local_branch(branch):
+            self._create_branch_local_tracking(branch, remote, depth=depth, fetch=fetch)
+            return
+
+        self._herd_existing_local(remote, branch, depth=depth, rebase=rebase)
+
+    def _herd_branch_existing_local(self, branch, **kwargs):
+        """Herd branch for existing local branch
+
+        .. py:function:: herd_branch_existing_local(branch, depth=0, fork_remote=None, rebase=False)
+
+        :param str branch: Branch name
+
+        Keyword Args:
+            depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+            fork_remote (str): Fork remote name
+            rebase (bool): Whether to use rebase instead of pulling latest changes
+        """
+
+        depth = kwargs.get('depth', 0)
+        rebase = kwargs.get('rebase', False)
+        fork_remote = kwargs.get('fork_remote', None)
+
+        branch_output = fmt.ref_string(branch)
+        branch_ref = 'refs/heads/' + branch
+        if self._is_branch_checked_out(branch):
+            self._print(' - Branch ' + branch_output + ' already checked out')
+        else:
+            self._checkout_branch_local(branch)
+
+        self.fetch(self.remote, depth=depth, ref=branch_ref)
+        if self.existing_remote_branch(branch, self.remote):
+            self._herd_remote_branch(self.remote, branch, depth=depth, rebase=rebase)
+            return
+
+        if fork_remote:
+            self.fetch(fork_remote, depth=depth, ref=branch_ref)
+            if self.existing_remote_branch(branch, fork_remote):
+                self._herd_remote_branch(fork_remote, branch, depth=depth, rebase=rebase)
+
+    def _herd_branch_initial(self, url, branch, depth=0):
+        """Herd branch initial
+
+        .. py:function:: _herd_branch_initial(url, branch, depth=0)
+
+        :param str url: URL of repo
+        :param str branch: Branch name to attempt to herd
+        :param Optional[int] depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        """
+
+        self._init_repo()
+        self._create_remote(self.remote, url, remove_dir=True)
+        self.fetch(self.remote, depth=depth, ref=branch)
+        if not self.existing_remote_branch(branch, self.remote):
+            remote_output = fmt.remote_string(self.remote)
+            self._print(' - No existing remote branch ' + remote_output + ' ' + fmt.ref_string(branch))
+            self._herd_initial(url, depth=depth)
+            return
+        self._create_branch_local_tracking(branch, self.remote, depth=depth, fetch=False, remove_dir=True)
+
+    def _herd_existing_local(self, remote, branch, **kwargs):
+        """Herd ref
+
+        .. py:function:: _herd_existing_local(remote, ref, depth=0, fetch=True, rebase=False)
+
+        :param str remote: Remote name
+        :param str branch: Git branch name
+
+        Keyword Args:
+            depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+            rebase (bool): Whether to use rebase instead of pulling latest changes
+        """
+
+        depth = kwargs.get('depth', 0)
+        rebase = kwargs.get('rebase', False)
+
+        branch_output = fmt.ref_string(branch)
+
+        if self._is_branch_checked_out(branch):
+            self._print(' - Branch ' + branch_output + ' already checked out')
+        else:
+            self._checkout_branch_local(branch)
+
+        if not self.existing_remote_branch(branch, remote):
+            return
+
+        if not self._is_tracking_branch(branch):
+            self._set_tracking_branch_commit(branch, remote, depth)
+            return
+
+        if rebase:
+            self._rebase_remote_branch(remote, branch)
+            return
+
+        self._pull(remote, branch)
+
+    def _herd_initial(self, url, depth=0):
+        """Herd ref initial
+
+        .. py:function:: _herd_initial(url, depth=0)
+
+        :param str url: URL of repo
+        :param Optional[int] depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        """
+
+        self._init_repo()
+        self._create_remote(self.remote, url, remove_dir=True)
+        if ref_type(self.default_ref) == 'branch':
+            self._checkout_new_repo_branch(truncate_ref(self.default_ref), depth)
+        elif ref_type(self.default_ref) == 'tag':
+            self._checkout_new_repo_tag(truncate_ref(self.default_ref), self.remote, depth, remove_dir=True)
+        elif ref_type(self.default_ref) == 'sha':
+            self._checkout_new_repo_commit(self.default_ref, self.remote, depth)
+
+    def _herd_remote_branch(self, remote, branch, **kwargs):
+        """Herd remote branch
+
+        .. py:function:: _herd_remote_branch(remote, branch, depth=0, rebase=False)
+
+        :param str remote: Remote name
+        :param str branch: Branch name to attempt to herd
+
+        Keyword Args:
+            depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+            rebase (bool): Whether to use rebase instead of pulling latest changes
+        """
+
+        depth = kwargs.get('depth', 0)
+        rebase = kwargs.get('rebase', False)
+
+        if not self._is_tracking_branch(branch):
+            self._set_tracking_branch_commit(branch, remote, depth)
+            return
+
+        if rebase:
+            self._rebase_remote_branch(remote, branch)
+            return
+
+        self._pull(remote, branch)

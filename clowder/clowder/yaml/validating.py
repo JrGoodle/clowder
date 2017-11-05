@@ -11,7 +11,7 @@ import os
 import sys
 
 import clowder.util.formatting as fmt
-from clowder.error.clowder_error import ClowderError
+from clowder.error.clowder_yaml_error import ClowderYAMLError
 from clowder.yaml import __MAX_IMPORT_DEPTH__
 from clowder.yaml.parsing import parse_yaml
 from clowder.yaml.validation.defaults import (
@@ -37,6 +37,7 @@ def validate_yaml(yaml_file, root_directory, depth=__MAX_IMPORT_DEPTH__):
     :param str yaml_file: Yaml file path to validate
     :param str root_directory: Clowder projects root directory
     :param Optional[int] depth: Max depth of clowder.yaml imports
+    :raise ClowderYAMLError:
     """
 
     parsed_yaml = parse_yaml(yaml_file)
@@ -60,10 +61,10 @@ def validate_yaml(yaml_file, root_directory, depth=__MAX_IMPORT_DEPTH__):
                                               imported_clowder, 'clowder.yaml')
         if not os.path.isfile(imported_yaml_file):
             error = fmt.missing_imported_yaml_error(imported_yaml_file, yaml_file)
-            raise ClowderError(error)
+            raise ClowderYAMLError(error)
         yaml_file = imported_yaml_file
         validate_yaml(yaml_file, root_directory, depth=depth - 1)
-    except ClowderError as err:
+    except ClowderYAMLError as err:
         print(fmt.invalid_yaml_error())
         print(fmt.error(err))
         sys.exit(1)
@@ -75,7 +76,7 @@ def _validate_yaml(yaml_file):
     """Validate clowder.yaml with no import
 
     :param str yaml_file: Path to yaml file
-    :raise ClowderError:
+    :raise ClowderYAMLError:
     """
 
     parsed_yaml = parse_yaml(yaml_file)
@@ -83,7 +84,7 @@ def _validate_yaml(yaml_file):
 
     if not parsed_yaml:
         error = fmt.empty_yaml_error(yaml_file)
-        raise ClowderError(error)
+        raise ClowderYAMLError(error)
 
     validate_required_dict(parsed_yaml, 'defaults', validate_yaml_defaults, yaml_file)
     validate_required_dict(parsed_yaml, 'sources', validate_yaml_sources, yaml_file)
@@ -91,14 +92,14 @@ def _validate_yaml(yaml_file):
 
     if parsed_yaml:
         error = fmt.unknown_entry_error(fmt.yaml_file('clowder.yaml'), parsed_yaml, yaml_file)
-        raise ClowderError(error)
+        raise ClowderYAMLError(error)
 
 
 def _validate_yaml_import(yaml_file):
     """Validate clowder.yaml with an import
 
     :param str yaml_file: Path to yaml file
-    :raise ClowderError:
+    :raise ClowderYAMLError:
     """
 
     parsed_yaml = parse_yaml(yaml_file)
@@ -110,7 +111,7 @@ def _validate_yaml_import(yaml_file):
 
     if not parsed_yaml:
         error = fmt.empty_yaml_error(yaml_file)
-        raise ClowderError(error)
+        raise ClowderYAMLError(error)
 
     validate_optional_dict(parsed_yaml, 'defaults', validate_yaml_defaults_import, yaml_file)
     validate_optional_dict(parsed_yaml, 'sources', validate_yaml_sources, yaml_file)
@@ -118,4 +119,4 @@ def _validate_yaml_import(yaml_file):
 
     if parsed_yaml:
         error = fmt.unknown_entry_error(fmt.yaml_file('clowder.yaml'), parsed_yaml, yaml_file)
-        raise ClowderError(error)
+        raise ClowderYAMLError(error)
