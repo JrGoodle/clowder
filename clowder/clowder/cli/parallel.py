@@ -30,7 +30,7 @@ from clowder.cli.util import (
 from clowder.util.progress import Progress
 
 
-def herd_project(project, branch, tag, depth, rebase):
+def herd_project(project, branch, tag, depth, rebase, protocol):
     """Herd command wrapper function for multiprocessing Pool execution
 
     :param Project project: Project instance
@@ -38,9 +38,10 @@ def herd_project(project, branch, tag, depth, rebase):
     :param str tag: Tag to attempt to herd
     :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
     :param bool rebase: Whether to use rebase instead of pulling latest changes
+    :param str protocol: Git protocol ('ssh' or 'https')
     """
 
-    project.herd(branch=branch, tag=tag, depth=depth, rebase=rebase, parallel=True)
+    project.herd(branch=branch, tag=tag, depth=depth, rebase=rebase, parallel=True, protocol=protocol)
 
 
 def reset_project(project, timestamp):
@@ -154,7 +155,7 @@ def forall(clowder, command, ignore_errors, group_names, **kwargs):
 def herd(clowder, group_names, **kwargs):
     """Clone projects or update latest from upstream
 
-    .. py:function:: herd(group_names, branch=None, tag=None, depth=0, rebase=False, project_names=None, skip=[])
+    .. py:function:: herd(group_names, branch=None, tag=None, depth=0, rebase=False, project_names=None, skip=[], protocol=None)
 
     :param ClowderController clowder: ClowderController instance
     :param list[str] group_names: Group names to herd
@@ -163,6 +164,7 @@ def herd(clowder, group_names, **kwargs):
         branch (str): Branch to attempt to herd
         tag (str): Tag to attempt to herd
         depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        protocol (str): Git protocol ('ssh' or 'https')
         rebase (bool): Whether to use rebase instead of pulling latest changes
         project_names (list[str]) project_names: Project names to herd
         skip (list[str]): Project names to skip
@@ -174,24 +176,27 @@ def herd(clowder, group_names, **kwargs):
     tag = kwargs.get('tag', None)
     depth = kwargs.get('depth', None)
     rebase = kwargs.get('rebase', False)
+    protocol = kwargs.get('protocol', None)
 
     if project_names is None:
         groups = filter_groups(clowder.groups, group_names)
         validate_groups(groups)
         for group in groups:
-            run_group_command(group, skip, 'herd', branch=branch, tag=tag, depth=depth, rebase=rebase)
+            run_group_command(group, skip, 'herd', branch=branch, tag=tag,
+                              depth=depth, rebase=rebase, protocol=protocol)
         return
 
     projects = filter_projects_on_project_names(clowder.groups, project_names)
     validate_projects(projects)
     for project in projects:
-        run_project_command(project, skip, 'herd', branch=branch, tag=tag, depth=depth, rebase=rebase)
+        run_project_command(project, skip, 'herd', branch=branch, tag=tag,
+                            depth=depth, rebase=rebase, protocol=protocol)
 
 
 def herd_parallel(clowder, group_names, **kwargs):
     """Clone projects or update latest from upstream in parallel
 
-    .. py:function:: herd_parallel(group_names, branch=None, tag=None, depth=0, rebase=False, project_names=None, skip=[])
+    .. py:function:: herd_parallel(group_names, branch=None, tag=None, depth=0, rebase=False, project_names=None, skip=[], protocol=None)
 
     :param ClowderController clowder: ClowderController instance
     :param list[str] group_names: Group names to herd
@@ -200,6 +205,7 @@ def herd_parallel(clowder, group_names, **kwargs):
         branch (str): Branch to attempt to herd
         tag (str): Tag to attempt to herd
         depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        protocol (str): Git protocol ('ssh' or 'https')
         rebase (bool): Whether to use rebase instead of pulling latest changes
         project_names (list[str]): Project names to herd
         skip (list[str]): Project names to skip
@@ -211,6 +217,7 @@ def herd_parallel(clowder, group_names, **kwargs):
     tag = kwargs.get('tag', None)
     depth = kwargs.get('depth', None)
     rebase = kwargs.get('rebase', False)
+    protocol = kwargs.get('protocol', None)
 
     print(' - Herd projects in parallel\n')
     if project_names is None:
@@ -221,7 +228,7 @@ def herd_parallel(clowder, group_names, **kwargs):
         for project in projects:
             if project.name in skip:
                 continue
-            result = __clowder_pool__.apply_async(herd_project, args=(project, branch, tag, depth, rebase),
+            result = __clowder_pool__.apply_async(herd_project, args=(project, branch, tag, depth, rebase, protocol),
                                                   callback=async_callback)
             __clowder_results__.append(result)
         pool_handler(len(projects))
@@ -233,7 +240,7 @@ def herd_parallel(clowder, group_names, **kwargs):
     for project in projects:
         if project.name in skip:
             continue
-        result = __clowder_pool__.apply_async(herd_project, args=(project, branch, tag, depth, rebase),
+        result = __clowder_pool__.apply_async(herd_project, args=(project, branch, tag, depth, rebase, protocol),
                                               callback=async_callback)
         __clowder_results__.append(result)
     pool_handler(len(projects))

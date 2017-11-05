@@ -35,6 +35,8 @@ class HerdController(ArgparseController):
         help='Clone and update projects with latest changes',
         arguments=[
             (['--parallel'], dict(action='store_true', help='run commands in parallel')),
+            (['--protocol'], dict(choices=['https', 'ssh'], nargs=1, default=None, metavar='PROTOCOL',
+                                  help='Protocol to clone new repos with')),
             (['--rebase', '-r'], dict(action='store_true', help='use rebase instead of pull')),
             (['--depth', '-d'], dict(default=None, type=int, nargs=1, metavar='DEPTH', help='depth to herd')),
             (['--branch', '-b'], dict(nargs=1, default=None, metavar='BRANCH', help='branch to herd if present')),
@@ -71,7 +73,7 @@ class HerdController(ArgparseController):
 
         kwargs = {'group_names': self.app.pargs.groups, 'project_names': self.app.pargs.projects,
                   'skip': self.app.pargs.skip, 'branch': branch, 'tag': tag,
-                  'depth': depth, 'rebase': self.app.pargs.rebase}
+                  'depth': depth, 'rebase': self.app.pargs.rebase, 'protocol': self.app.pargs.protocol}
         if self.app.pargs.parallel:
             herd_parallel(CLOWDER_CONTROLLER, **kwargs)
             return

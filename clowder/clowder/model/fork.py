@@ -40,7 +40,7 @@ class Fork(object):
         self.path = path
         self.name = fork['name']
         self.remote_name = fork['remote']
-        self.url = source.get_url_prefix() + self.name + ".git"
+        self._source = source
 
     def full_path(self):
         """Return full path to project
@@ -74,3 +74,9 @@ class Fork(object):
         project_output = format_project_string(repo, self.path)
         current_ref_output = format_project_ref_string(repo)
         return project_output + ' ' + current_ref_output
+
+    def url(self, protocol):
+        """Return project url"""
+        if protocol == 'ssh':
+            return 'git@' + self._source.name + ':' + self.name + ".git"
+        return 'https://' + self._source.name + '/' + self.name + ".git"

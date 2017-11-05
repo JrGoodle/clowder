@@ -94,6 +94,19 @@ def validate_optional_dict(dictionary, value, func, yaml_file):
         del dictionary[value]
 
 
+def validate_optional_protocol(dictionary, yaml_file):
+    """Check whether protocol type is valid
+
+    :param dict dictionary: Parsed YAML python object
+    :param str yaml_file: Path to yaml file
+    """
+
+    if 'protocol' in dictionary:
+        validate_type(dictionary['protocol'], 'protocol', str, 'protocol', yaml_file)
+        validate_protocol_type(dictionary, yaml_file)
+        del dictionary['protocol']
+
+
 def validate_optional_ref(dictionary, yaml_file):
     """Check whether ref type is valid
 
@@ -129,6 +142,19 @@ def validate_optional_string(dictionary, value, yaml_file):
     _validate_optional_value(dictionary, value, str, 'str', yaml_file)
 
 
+def validate_protocol_type(dictionary, yaml_file):
+    """Check whether protocol type is valid
+
+    :param dict dictionary: Parsed YAML python object
+    :param str yaml_file: Path to yaml file
+    :raise ClowderYAMLError:
+    """
+
+    if not _valid_protocol_type(dictionary['protocol']):
+        error = fmt.invalid_protocol_error(dictionary['protocol'], yaml_file)
+        raise ClowderYAMLError(error)
+
+
 def validate_required_dict(dictionary, value, func, yaml_file):
     """Check whether yaml file contains required value
 
@@ -141,6 +167,19 @@ def validate_required_dict(dictionary, value, func, yaml_file):
     validate_clowder_yaml_contains_value(dictionary, value, yaml_file)
     func(dictionary[value], yaml_file)
     del dictionary[value]
+
+
+def validate_required_protocol(dictionary, yaml_file):
+    """Check for required protocol value
+
+    :param dict dictionary: Parsed YAML python object
+    :param str yaml_file: Path to yaml file
+    """
+
+    validate_dict_contains_value(dictionary, 'defaults', 'protocol', yaml_file)
+    validate_type(dictionary['protocol'], 'protocol', str, 'str', yaml_file)
+    validate_protocol_type(dictionary, yaml_file)
+    del dictionary['protocol']
 
 
 def validate_required_ref(dictionary, yaml_file):
@@ -227,6 +266,20 @@ def _validate_optional_value(dictionary, value, classinstance, type_name, yaml_f
     if value in dictionary:
         validate_type(dictionary[value], value, classinstance, type_name, yaml_file)
         del dictionary[value]
+
+
+def _valid_protocol_type(protocol):
+    """Validate that protocol is formatted correctly
+
+    :param str protocol: Protocol can only take on the values of 'ssh' or 'https'
+    :return: True, if protocol is properly formatted
+    :rtype: bool
+    """
+
+    if protocol == 'ssh' or protocol == 'https':
+        return True
+
+    return False
 
 
 def _valid_ref_type(ref):
