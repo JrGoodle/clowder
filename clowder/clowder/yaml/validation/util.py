@@ -21,8 +21,7 @@ def validate_clowder_yaml_contains_value(parsed_yaml, value, yaml_file):
     """
 
     if value not in parsed_yaml:
-        error = fmt.missing_entry_error(value, fmt.yaml_file('clowder.yaml'), yaml_file)
-        raise ClowderYAMLError(error)
+        raise ClowderYAMLError(fmt.missing_entry_error(value, fmt.yaml_file('clowder.yaml'), yaml_file))
 
 
 def validate_depth(dictionary, yaml_file):
@@ -44,12 +43,11 @@ def validate_dict_contains_value(dictionary, dict_name, value, yaml_file):
     :param str dict_name: Name of dict to print if missing
     :param str value: Name of entry to check
     :param str yaml_file: Path to yaml file
-    :raise ClowderError:
+    :raise ClowderYAMLError:
     """
 
     if value not in dictionary:
-        error = fmt.missing_entry_error(value, dict_name, yaml_file)
-        raise ClowderYAMLError(error)
+        raise ClowderYAMLError(fmt.missing_entry_error(value, dict_name, yaml_file))
 
 
 def validate_empty(collection, name, yaml_file):
@@ -62,8 +60,7 @@ def validate_empty(collection, name, yaml_file):
     """
 
     if collection:
-        error = fmt.unknown_entry_error(name, collection, yaml_file)
-        raise ClowderYAMLError(error)
+        raise ClowderYAMLError(fmt.unknown_entry_error(name, collection, yaml_file))
 
 
 def validate_not_empty(collection, name, yaml_file):
@@ -76,8 +73,7 @@ def validate_not_empty(collection, name, yaml_file):
     """
 
     if not collection:
-        error = fmt.missing_entries_error(name, yaml_file)
-        raise ClowderYAMLError(error)
+        raise ClowderYAMLError(fmt.missing_entries_error(name, yaml_file))
 
 
 def validate_optional_dict(dictionary, value, func, yaml_file):
@@ -151,8 +147,7 @@ def validate_protocol_type(dictionary, yaml_file):
     """
 
     if not _valid_protocol_type(dictionary['protocol']):
-        error = fmt.invalid_protocol_error(dictionary['protocol'], yaml_file)
-        raise ClowderYAMLError(error)
+        raise ClowderYAMLError(fmt.invalid_protocol_error(dictionary['protocol'], yaml_file))
 
 
 def validate_required_dict(dictionary, value, func, yaml_file):
@@ -218,8 +213,7 @@ def validate_ref_type(dictionary, yaml_file):
     """
 
     if not _valid_ref_type(dictionary['ref']):
-        error = fmt.invalid_ref_error(dictionary['ref'], yaml_file)
-        raise ClowderYAMLError(error)
+        raise ClowderYAMLError(fmt.invalid_ref_error(dictionary['ref'], yaml_file))
 
 
 def validate_type_depth(value, yaml_file):
@@ -230,11 +224,8 @@ def validate_type_depth(value, yaml_file):
     :raise ClowderYAMLError:
     """
 
-    error = fmt.depth_error(value, yaml_file)
-    if not isinstance(value, int):
-        raise ClowderYAMLError(error)
-    if int(value) < 0:
-        raise ClowderYAMLError(error)
+    if not isinstance(value, int) or int(value) < 0:
+        raise ClowderYAMLError(fmt.depth_error(value, yaml_file))
 
 
 def validate_type(value, name, classinfo, type_name, yaml_file):
@@ -249,8 +240,7 @@ def validate_type(value, name, classinfo, type_name, yaml_file):
     """
 
     if not isinstance(value, classinfo):
-        error = fmt.type_error(name, yaml_file, type_name)
-        raise ClowderYAMLError(error)
+        raise ClowderYAMLError(fmt.type_error(name, yaml_file, type_name))
 
 
 def _validate_optional_value(dictionary, value, classinstance, type_name, yaml_file):

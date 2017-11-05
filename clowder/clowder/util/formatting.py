@@ -153,7 +153,7 @@ def invalid_yaml_error():
     :rtype: str
     """
 
-    return '\n' + yaml_file('clowder.yaml') + ' appears to be invalid'
+    return yaml_file('clowder.yaml') + ' appears to be invalid'
 
 
 def missing_entries_error(name, yml):

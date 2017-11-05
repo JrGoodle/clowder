@@ -14,6 +14,7 @@ import sys
 from termcolor import colored, cprint
 
 import clowder.util.formatting as fmt
+from clowder.cli.globals import CLOWDER_CONTROLLER
 from clowder.error.clowder_error import ClowderError
 from clowder.error.clowder_yaml_error import ClowderYAMLError
 from clowder.git.project_repo import ProjectRepo
@@ -59,7 +60,6 @@ class ClowderRepo(object):
             if not os.path.islink(clowder_symlink):
                 self.link()
 
-        self.is_yaml_valid = False
         self.error = None
         if os.path.islink(clowder_symlink):
             try:
@@ -68,8 +68,6 @@ class ClowderRepo(object):
                 self.error = err
             except (KeyboardInterrupt, SystemExit):
                 sys.exit(1)
-            else:
-                self.is_yaml_valid = True
 
     def add(self, files):
         """Add files in clowder repo to git index
@@ -292,10 +290,14 @@ def valid_clowder_yaml_required(func):
         """Wrapper"""
 
         _validate_clowder_repo_exists()
-        if not CLOWDER_REPO.is_yaml_valid:
+        if CLOWDER_REPO.error:
             print(fmt.invalid_yaml_error())
             print(fmt.error(CLOWDER_REPO.error))
-            sys.exit(1)
+            sys.exit(42)
+        if CLOWDER_CONTROLLER.error:
+            print(fmt.invalid_yaml_error())
+            print(fmt.error(CLOWDER_CONTROLLER.error))
+            sys.exit(42)
         return func(*args, **kwargs)
 
     return wrapper

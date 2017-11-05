@@ -15,6 +15,7 @@ from termcolor import colored, cprint
 
 import clowder.util.formatting as fmt
 from clowder.error.clowder_error import ClowderError
+from clowder.error.clowder_yaml_error import ClowderYAMLError
 from clowder.git.project_repo import ProjectRepo
 from clowder.git.project_repo_recursive import ProjectRepoRecursive
 from clowder.git.util import (
@@ -59,6 +60,7 @@ class Project(object):
         :param dict group: Parsed YAML python object for group
         :param dict defaults: Parsed YAML python object for defaults
         :param list[Source] sources: List of Source instances
+        :raise ClowderYAMLError:
         """
 
         self.name = project['name']
@@ -84,10 +86,7 @@ class Project(object):
         if 'fork' in project:
             fork = project['fork']
             if fork['remote'] == self._remote:
-                error = fmt.remote_name_error(fork['name'], self.name, self._remote)
-                print(fmt.invalid_yaml_error())
-                print(error + '\n')
-                sys.exit(1)
+                raise ClowderYAMLError(fmt.remote_name_error(fork['name'], self.name, self._remote))
             self.fork = Fork(fork, self._root_directory, self.path, self._source)
 
     @project_repo_exists
