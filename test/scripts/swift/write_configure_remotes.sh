@@ -6,12 +6,12 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
 
 . test_utilities.sh
 
-print_double_separator
-echo 'TEST: swift configure remotes write'
-cd "$SWIFT_EXAMPLE_DIR" || exit 1
-./init.sh
-
 if [ "$ACCESS_LEVEL" == "write" ]; then
+    print_double_separator
+    echo 'TEST: swift configure remotes write'
+    cd "$SWIFT_EXAMPLE_DIR" || exit 1
+    ./init.sh
+
     mkdir swift-source || exit 1
     pushd swift-source || exit 1
     clowder init git@github.com:JrGoodle/swift-clowder.git -b test || exit 1

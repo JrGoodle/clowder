@@ -142,32 +142,20 @@ test_herd_missing_branches
 test_herd_sha() {
     print_single_separator
     echo "TEST: Test herd of static commit hash refs"
-    # clowder repo checkout static-refs || exit 1
-    pushd .clowder || exit 1
-    git checkout static-refs || exit 1
-    popd || exit 1
+    clowder link -v static-refs || exit 1
     clowder herd $PARALLEL || exit 1
     clowder status || exit 1
-    # clowder repo checkout master || exit 1
-    pushd .clowder || exit 1
-    git checkout master || exit 1
-    popd || exit 1
+    clowder link || exit 1
 }
 test_herd_sha
 
 test_herd_tag() {
     print_single_separator
     echo "TEST: Test herd of tag refs"
-    # clowder repo checkout tags || exit 1
-    pushd .clowder || exit 1
-    git checkout tags || exit 1
-    popd || exit 1
+    clowder link -v tags || exit 1
     clowder herd $PARALLEL || exit 1
     clowder status || exit 1
-    # clowder repo checkout master || exit 1
-    pushd .clowder || exit 1
-    git checkout master || exit 1
-    popd || exit 1
+    clowder link || exit 1
 }
 test_herd_tag
 

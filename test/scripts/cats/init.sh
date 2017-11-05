@@ -26,10 +26,10 @@ test_init_branch() {
     echo "TEST: Test clowder init branch"
 
     "$CATS_EXAMPLE_DIR/clean.sh"
-    clowder init https://github.com/jrgoodle/cats.git -b tags || exit 1
+    clowder init https://github.com/jrgoodle/cats.git -b no-versions || exit 1
 
     pushd .clowder || exit 1
-    test_branch tags
+    test_branch no-versions
     popd || exit 1
 
     rm -rf .clowder clowder.yaml

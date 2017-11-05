@@ -6,7 +6,7 @@ import unittest
 
 from clowder.model.fork import Fork
 from clowder.model.source import Source
-from unittests.shared import __github_ssh_source_yaml__
+from unittests.shared import __github_source_yaml__
 
 
 class ForkTest(unittest.TestCase):
@@ -20,7 +20,7 @@ class ForkTest(unittest.TestCase):
         self.name = 'test_fork'
         self.remote_name = 'origin'
         self.fork_yaml = {'name': self.name, 'remote': self.remote_name}
-        self.source = Source(__github_ssh_source_yaml__)
+        self.source = Source(__github_source_yaml__)
         self.root_directory = self.cats_example_path
         self.path = 'fork/path'
         self.fork = Fork(self.fork_yaml, self.root_directory, self.path, self.source)

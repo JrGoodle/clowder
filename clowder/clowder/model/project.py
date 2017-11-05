@@ -469,9 +469,8 @@ class Project(object):
         """
 
         if protocol == 'ssh':
-            return 'git@' + self._source.name + ':' + self.name + ".git"
-
-        return 'https://' + self._source.name + '/' + self.name + ".git"
+            return 'git@' + self._source.url + ':' + self.name + ".git"
+        return 'https://' + self._source.url + '/' + self.name + ".git"
 
     def _prune_local(self, branch, force):
         """Prune local branch

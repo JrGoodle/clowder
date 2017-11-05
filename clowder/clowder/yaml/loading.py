@@ -88,7 +88,7 @@ def _load_yaml_import_defaults(imported_defaults, defaults):
     :param dict defaults: Parsed YAML python object for defaults
     """
 
-    args = ['depth', 'recursive', 'ref', 'remote', 'source', 'timestamp_author']
+    args = ['depth', 'recursive', 'ref', 'remote', 'source', 'timestamp_author', 'protocol']
     for arg in args:
         _override_import_value(defaults, imported_defaults, arg)
 
