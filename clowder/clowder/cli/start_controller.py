@@ -67,55 +67,25 @@ class StartController(ArgparseController):
             self._start_tracking()
             return
 
-        if self.app.pargs.projects is None:
-            _start_groups(CLOWDER_CONTROLLER, self.app.pargs.groups, self.app.pargs.skip, self.app.pargs.branch)
-        else:
-            _start_projects(CLOWDER_CONTROLLER, self.app.pargs.projects, self.app.pargs.skip, self.app.pargs.branch)
+        self._start_branches(False)
 
     @network_connection_required
     def _start_tracking(self):
         """clowder start tracking command"""
 
+        self._start_branches(True)
+
+    def _start_branches(self, tracking):
+        """clowder start branches command"""
+
         if self.app.pargs.projects is None:
-            _start_groups(CLOWDER_CONTROLLER, self.app.pargs.groups, self.app.pargs.skip,
-                          self.app.pargs.branch, tracking=True)
+            groups = filter_groups(CLOWDER_CONTROLLER.groups, self.app.pargs.groups)
+            validate_groups(groups)
+            for group in groups:
+                run_group_command(group, self.app.pargs.skip, 'start', self.app.pargs.branch, tracking)
             return
 
-        _start_projects(CLOWDER_CONTROLLER, self.app.pargs.projects, self.app.pargs.skip,
-                        self.app.pargs.branch, tracking=True)
-
-
-def _start_groups(clowder, group_names, skip, branch, tracking=False):
-    """Start feature branch for groups
-
-    .. py:function:: _start_groups(clowder, group_names, skip, branch, tracking=False)
-
-    :param ClowderController clowder: ClowderController instance
-    :param list[str] group_names: Group names to create branches for
-    :param list[str] skip: Project names to skip
-    :param str branch: Local branch name to create
-    :param Optional[bool] tracking: Whether to create a remote branch with tracking relationship
-    """
-
-    groups = filter_groups(clowder.groups, group_names)
-    validate_groups(groups)
-    for group in groups:
-        run_group_command(group, skip, 'start', branch, tracking)
-
-
-def _start_projects(clowder, project_names, skip, branch, tracking=False):
-    """Start feature branch for projects
-
-    .. py:function:: _start_projects(clowder, project_names, skip, branch, tracking=False)
-
-    :param ClowderController clowder: ClowderController instance
-    :param list[str] project_names: Project names to creat branches for
-    :param list[str] skip: Project names to skip
-    :param str branch: Local branch name to create
-    :param Optional[bool] tracking: Whether to create a remote branch with tracking relationship
-    """
-
-    projects = filter_projects_on_project_names(clowder.groups, project_names)
-    validate_projects(projects)
-    for project in projects:
-        run_project_command(project, skip, 'start', branch, tracking)
+        projects = filter_projects_on_project_names(CLOWDER_CONTROLLER.groups, self.app.pargs.projects)
+        validate_projects(projects)
+        for project in projects:
+            run_project_command(project, self.app.pargs.skip, 'start', self.app.pargs.branch, tracking)
