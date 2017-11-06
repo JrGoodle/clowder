@@ -26,6 +26,7 @@ test_forall_branches() {
         test_branch v0.1
         popd || exit 1
     done
+    clowder herd $PARALLEL || exit 1
 }
 test_forall_branches
 
@@ -33,6 +34,8 @@ test_forall_command() {
     print_single_separator
     echo "TEST: Run forall command"
     clowder forall $PARALLEL -c 'git status' || exit 1
+    # echo "TEST: Run forall command with multiple arguments"
+    # clowder forall $PARALLEL -c 'git status' 'echo "hi"'|| exit 1
     echo "TEST: Run forall command for specific groups"
     clowder forall $PARALLEL -c 'git status' -g "$@" || exit 1
     echo "TEST: Run forall command with error"
@@ -46,6 +49,12 @@ test_forall_script() {
     print_single_separator
     echo "TEST: Run forall script"
     clowder forall $PARALLEL -c "$TEST_SCRIPT_DIR/test_forall_script.sh" || exit 1
+    echo "TEST: Run forall script with arguments"
+    clowder forall $PARALLEL -c "$TEST_SCRIPT_DIR/test_forall_script_args.sh" "one" "two" || exit 1
+    echo "TEST: Fail running forall script with arguments"
+    clowder forall $PARALLEL -c "$TEST_SCRIPT_DIR/test_forall_script_args.sh" "one" && exit 1
+    echo "TEST: Ignore failures running forall script with arguments"
+    clowder forall $PARALLEL -ic "$TEST_SCRIPT_DIR/test_forall_script_args.sh" "one" || exit 1
     echo "TEST: Run forall script for specific groups"
     clowder forall $PARALLEL -c "$TEST_SCRIPT_DIR/test_forall_script.sh" -g "$@" || exit 1
     echo "TEST: Run forall script with error"

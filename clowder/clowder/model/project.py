@@ -345,12 +345,12 @@ class Project(object):
         repo = self._repo(self.full_path(), self._remote, self._ref, self._recursive, parallel=parallel)
         self._reset(repo, timestamp=timestamp)
 
-    def run(self, command, ignore_errors, parallel=False):
+    def run(self, commands, ignore_errors, parallel=False):
         """Run command or script in project directory
 
-        .. py:function:: run(command, ignore_errors, parallel=False)
+        .. py:function:: run(commands, ignore_errors, parallel=False)
 
-        :param str command: Command to run
+        :param list[str] commands: Command to run
         :param bool ignore_errors: Whether to exit if command returns a non-zero exit code
         :param Optional[bool] parallel: Whether command is being run in parallel, affects output
         """
@@ -361,7 +361,6 @@ class Project(object):
                 return
 
         self._print_output = not parallel
-        self._print(fmt.command(command))
 
         forall_env = {'CLOWDER_PATH': self._root_directory,
                       'PROJECT_PATH': self.full_path(),
@@ -372,13 +371,15 @@ class Project(object):
         if self.fork:
             forall_env['FORK_REMOTE'] = self.fork.remote_name
 
-        try:
-            execute_forall_command(command.split(), self.full_path(), forall_env, self._print_output)
-        except ClowderError:
-            if not ignore_errors:
-                err = fmt.command_failed_error(command)
-                self._print(err)
-                self._exit(err, parallel=parallel)
+        for cmd in commands:
+            self._print(fmt.command(cmd))
+            try:
+                execute_forall_command(cmd, self.full_path(), forall_env, self._print_output)
+            except ClowderError:
+                if not ignore_errors:
+                    err = fmt.command_failed_error(cmd)
+                    self._print(err)
+                    self._exit(err, parallel=parallel)
 
     @project_repo_exists
     def start(self, branch, tracking):
