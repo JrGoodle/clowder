@@ -48,11 +48,7 @@ def execute_subprocess_command(command, path, **kwargs):
 
     :return: Subprocess return code
     :rtype: int
-
-    Raises:
-        KeyboardInterrupt:
-        SystemExit:
-        ClowderGitError:
+    :raise ClowderError:
     """
 
     shell = kwargs.get('shell', True)
@@ -64,6 +60,7 @@ def execute_subprocess_command(command, path, **kwargs):
         cmd = ' '.join(command)
     else:
         cmd = command
+
     try:
         process = subprocess.Popen(cmd, shell=shell, env=env, cwd=path,
                                    stdout=stdout, stderr=stderr)
@@ -93,6 +90,7 @@ def execute_command(command, path, **kwargs):
 
     :return: Command return code
     :rtype: int
+    :raise ClowderError:
     """
 
     shell = kwargs.get('shell', True)
@@ -122,7 +120,7 @@ def execute_command(command, path, **kwargs):
             pool.close()
             pool.terminate()
         cprint('\n - Command failed\n', 'red')
-        raise ClowderError()
+        raise ClowderError('Command interrupted')
     except Exception as err:
         if pool:
             pool.close()

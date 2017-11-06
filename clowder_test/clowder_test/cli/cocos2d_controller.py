@@ -9,10 +9,7 @@ import os
 
 from cement.ext.ext_argparse import ArgparseController, expose
 
-from clowder_test.execute import (
-    execute_test_command,
-    clowder_test_exit
-)
+from clowder_test.execute import execute_test_command
 
 from clowder_test import ROOT_DIR
 
@@ -36,9 +33,7 @@ class Cocos2dController(ArgparseController):
     def all(self):
         """clowder cocos2d tests"""
 
-        path = os.path.join(ROOT_DIR, 'test', 'scripts')
-        return_code = self._execute_command('./test_example_cocos2d.sh', path)
-        clowder_test_exit(return_code)
+        self._execute_command('./test_example_cocos2d.sh', os.path.join(ROOT_DIR, 'test', 'scripts'))
 
     @expose(
         help='Run clean cocos2d tests'
@@ -46,8 +41,7 @@ class Cocos2dController(ArgparseController):
     def clean(self):
         """clowder cocos2d clean tests"""
 
-        return_code = self._execute_command('./clean.sh', self.path)
-        clowder_test_exit(return_code)
+        self._execute_command('./clean.sh', self.path)
 
     @expose(
         help='Run herd cocos2d tests'
@@ -55,8 +49,7 @@ class Cocos2dController(ArgparseController):
     def herd(self):
         """clowder cocos2d herd tests"""
 
-        return_code = self._execute_command('./herd.sh', self.path)
-        clowder_test_exit(return_code)
+        self._execute_command('./herd.sh', self.path)
 
     @expose(
         help='Run protocol cocos2d tests'
@@ -64,8 +57,7 @@ class Cocos2dController(ArgparseController):
     def protocol(self):
         """clowder cocos2d protocol tests"""
 
-        return_code = self._execute_command('./protocol.sh', self.path)
-        clowder_test_exit(return_code)
+        self._execute_command('./protocol.sh', self.path)
 
     @expose(
         help='Run skip cocos2d tests'
@@ -73,13 +65,12 @@ class Cocos2dController(ArgparseController):
     def skip(self):
         """clowder cocos2d skip tests"""
 
-        return_code = self._execute_command('./skip.sh', self.path)
-        clowder_test_exit(return_code)
+        self._execute_command('./skip.sh', self.path)
 
     def _execute_command(self, command, path):
         """Private execute command"""
 
-        return execute_test_command(command, path,
-                                    parallel=self.app.pargs.parallel,
-                                    write=self.app.pargs.write,
-                                    coverage=self.app.pargs.coverage)
+        execute_test_command(command, path,
+                             parallel=self.app.pargs.parallel,
+                             write=self.app.pargs.write,
+                             coverage=self.app.pargs.coverage)

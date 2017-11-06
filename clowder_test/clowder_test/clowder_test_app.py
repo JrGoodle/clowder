@@ -45,11 +45,7 @@ def main():
 
     print()
 
-    scripts_dir = os.path.join(ROOT_DIR, 'test', 'scripts')
-    return_code = execute_command('./setup_local_test_directory.sh', scripts_dir)
-    if return_code != 0:
-        print(' - Failed to setup local test directory')
-        sys.exit(return_code)
+    execute_command('./setup_local_test_directory.sh', os.path.join(ROOT_DIR, 'test', 'scripts'))
 
     with ClowderApp() as app:
         app.run()
