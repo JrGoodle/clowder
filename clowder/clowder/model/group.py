@@ -68,24 +68,19 @@ class Group(object):
 
         return all([existing_git_repository(project.full_path()) for project in self.projects])
 
-    def get_yaml(self):
-        """Return python object representation for saving yaml
+    def get_yaml(self, resolved=False):
+        """Return python object representation of model objects
 
+        .. py:function:: get_yaml(self, resolved=False)
+
+        :param Optional[bool] resolved: Whether to return resolved yaml
         :return: YAML python object
         :rtype: dict
         """
 
-        projects_yaml = [p.get_yaml() for p in self.projects]
-        return {'name': self.name, 'projects': projects_yaml}
-
-    def get_yaml_resolved(self):
-        """Return python object representation for resolved yaml
-
-        :return: YAML python object
-        :rtype: dict
-        """
-
-        projects_yaml = [p.get_yaml(resolved=True) for p in self.projects]
+        if not resolved:
+            return {'name': self.name,
+                    'projects': [p.get_yaml() for p in self.projects]}
 
         group = {'name': self.name,
                  'depth': self.depth,
@@ -93,7 +88,7 @@ class Group(object):
                  'recursive': self.recursive,
                  'remote': self.remote_name,
                  'source': self.source.name,
-                 'projects': projects_yaml}
+                 'projects': [p.get_yaml(resolved=True) for p in self.projects]}
 
         if self.timestamp_author:
             group['timestamp_author'] = self.timestamp_author
