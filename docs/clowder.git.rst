@@ -12,6 +12,14 @@ clowder\.git\.project\_repo module
     :undoc-members:
     :show-inheritance:
 
+clowder\.git\.project\_repo\_impl module
+----------------------------------------
+
+.. automodule:: clowder.git.project_repo_impl
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 clowder\.git\.project\_repo\_recursive module
 ---------------------------------------------
 
@@ -24,6 +32,14 @@ clowder\.git\.repo module
 -------------------------
 
 .. automodule:: clowder.git.repo
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+clowder\.git\.util module
+-------------------------
+
+.. automodule:: clowder.git.util
     :members:
     :undoc-members:
     :show-inheritance:

@@ -20,6 +20,14 @@ clowder\.error\.clowder\_git\_error module
     :undoc-members:
     :show-inheritance:
 
+clowder\.error\.clowder\_yaml\_error module
+-------------------------------------------
+
+.. automodule:: clowder.error.clowder_yaml_error
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 Module contents
 ---------------

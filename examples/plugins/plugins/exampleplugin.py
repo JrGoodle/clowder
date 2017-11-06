@@ -5,6 +5,8 @@
 
 """
 
+from __future__ import print_function
+
 from cement.ext.ext_argparse import ArgparseController, expose
 
 from clowder.cli.globals import CLOWDER_CONTROLLER
