@@ -2,6 +2,12 @@
 
 cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
 
+if [ "$1" == 'plugins' ]; then
+    plugin_dir="$( cd examples/plugins && pwd )"
+    ln -s "$plugin_dir" "$HOME/.clowder"
+    exit
+fi
+
 script/clean 'test' || exit 1
 
 cd clowder_test || exit 1
