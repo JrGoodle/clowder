@@ -33,6 +33,8 @@ test_forall_command() {
     print_single_separator
     echo "TEST: Run forall command"
     clowder forall $PARALLEL -c 'git status' || exit 1
+    echo "TEST: Run forall command with multiple arguments"
+    clowder forall $PARALLEL -c 'git status' 'echo "hi"'|| exit 1
     echo "TEST: Run forall command for specific groups"
     clowder forall $PARALLEL -c 'git status' -g "$@" || exit 1
     echo "TEST: Run forall command with error"

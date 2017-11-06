@@ -54,15 +54,15 @@ def reset_project(project, timestamp):
     project.reset(timestamp=timestamp, parallel=True)
 
 
-def run_project(project, command, ignore_errors):
+def run_project(project, commands, ignore_errors):
     """Run command wrapper function for multiprocessing Pool execution
 
     :param Project project: Project instance
-    :param str command: Command to run
+    :param list[str] commands: Commands to run
     :param bool ignore_errors: Whether to exit if command returns a non-zero exit code
     """
 
-    project.run(command, ignore_errors, parallel=True)
+    project.run(commands, ignore_errors, parallel=True)
 
 
 def sync_project(project, rebase):
@@ -119,13 +119,13 @@ __clowder_pool__ = mp.Pool(initializer=worker_init)
 __clowder_progress__ = Progress()
 
 
-def forall(clowder, command, ignore_errors, group_names, **kwargs):
+def forall(clowder, commands, ignore_errors, group_names, **kwargs):
     """Runs command or script in project directories specified
 
     .. py:function:: forall(command, ignore_errors, group_names, project_names=None, skip=[], parallel=False)
 
     :param ClowderController clowder: ClowderController instance
-    :param str command: Command to run
+    :param list[str] commands: Commands to run
     :param bool ignore_errors: Whether to exit if command returns a non-zero exit code
     :param list[str] group_names: Group names to run command for
 
@@ -145,11 +145,11 @@ def forall(clowder, command, ignore_errors, group_names, **kwargs):
         projects = filter_projects_on_project_names(clowder.groups, project_names)
 
     if parallel:
-        _forall_parallel(command, skip, ignore_errors, projects)
+        _forall_parallel(commands, skip, ignore_errors, projects)
         return
 
     for project in projects:
-        run_project_command(project, skip, 'run', command, ignore_errors)
+        run_project_command(project, skip, 'run', commands, ignore_errors)
 
 
 def herd(clowder, group_names, **kwargs):
@@ -306,10 +306,10 @@ def sync(clowder, project_names, rebase=False, parallel=False):
         project.sync(rebase=rebase)
 
 
-def _forall_parallel(command, skip, ignore_errors, projects):
+def _forall_parallel(commands, skip, ignore_errors, projects):
     """Runs command or script for projects in parallel
 
-    :param str command: Command to run
+    :param list[str] commands: Command to run
     :param list[str] skip: Project names to skip
     :param bool ignore_errors: Whether to exit if command returns a non-zero exit code
     :param list[Project] projects: Projects to run command for
@@ -323,11 +323,12 @@ def _forall_parallel(command, skip, ignore_errors, projects):
         if not os.path.isdir(project.full_path()):
             cprint(" - Project is missing", 'red')
 
-    print('\n' + fmt.command(command))
+    for cmd in commands:
+        print('\n' + fmt.command(cmd))
     for project in projects:
         if project.name in skip:
             continue
-        result = __clowder_pool__.apply_async(run_project, args=(project, command, ignore_errors),
+        result = __clowder_pool__.apply_async(run_project, args=(project, commands, ignore_errors),
                                               callback=async_callback)
         __clowder_results__.append(result)
 

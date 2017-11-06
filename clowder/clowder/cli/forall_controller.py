@@ -28,7 +28,7 @@ class ForallController(ArgparseController):
     @expose(
         help='Run command or script in project directories',
         arguments=[
-            (['--command', '-c'], dict(nargs=1, metavar='COMMAND',
+            (['--command', '-c'], dict(nargs='+', metavar='COMMAND',
                                        help='command or script to run in project directories')),
             (['--ignore-errors', '-i'], dict(action='store_true', help='ignore errors in command or script')),
             (['--parallel'], dict(action='store_true', help='run commands in parallel')),
@@ -57,6 +57,6 @@ class ForallController(ArgparseController):
     def _forall(self):
         """Clowder forall command private implementation"""
 
-        forall(CLOWDER_CONTROLLER, self.app.pargs.command[0], self.app.pargs.ignore_errors,
+        forall(CLOWDER_CONTROLLER, self.app.pargs.command, self.app.pargs.ignore_errors,
                group_names=self.app.pargs.groups, project_names=self.app.pargs.projects,
                skip=self.app.pargs.skip, parallel=self.app.pargs.parallel)
