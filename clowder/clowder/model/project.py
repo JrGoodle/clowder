@@ -63,7 +63,7 @@ class Project(object):
         :param str root_directory: Root directory of clowder projects
         :param dict project: Parsed YAML python object for project
         :param dict group: Parsed YAML python object for group
-        :param dict defaults: Parsed YAML python object for defaults
+        :param Defaults defaults: Defaults instance
         :param list[Source] sources: List of Source instances
         :raise ClowderYAMLError:
         """
@@ -72,13 +72,13 @@ class Project(object):
         self.path = project['path']
 
         self._root_directory = root_directory
-        self.ref = project.get('ref', group.get('ref', defaults['ref']))
-        self.remote = project.get('remote', group.get('remote', defaults['remote']))
-        self.depth = project.get('depth', group.get('depth', defaults['depth']))
-        self.recursive = project.get('recursive', group.get('recursive', defaults.get('recursive', False)))
+        self.ref = project.get('ref', group.get('ref', defaults.ref))
+        self.remote = project.get('remote', group.get('remote', defaults.remote))
+        self.depth = project.get('depth', group.get('depth', defaults.depth))
+        self.recursive = project.get('recursive', group.get('recursive', defaults.recursive))
 
         self.source = None
-        source_name = project.get('source', group.get('source', defaults['source']))
+        source_name = project.get('source', group.get('source', defaults.source))
         for source in sources:
             if source.name == source_name:
                 self.source = source
@@ -90,9 +90,9 @@ class Project(object):
                 raise ClowderYAMLError(fmt.remote_name_error(fork['name'], self.name, self.remote))
             self.fork = Fork(fork, self._root_directory, self.path, self.source)
 
-        self._protocol = defaults['protocol']
-        self._timestamp_author = project.get('timestamp_author', group.get('timestamp_author',
-                                                                           defaults.get('timestamp_author', None)))
+        self._protocol = defaults.protocol
+        self._timestamp_author = project.get('timestamp_author',
+                                             group.get('timestamp_author', defaults.timestamp_author))
         self._print_output = True
 
     @project_repo_exists

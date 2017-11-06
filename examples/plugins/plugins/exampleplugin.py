@@ -48,15 +48,25 @@ class ExamplePluginController(ArgparseController):
 
         print("foo: " + self.app.pargs.foo + '\n')
 
-        print("Clowder information")
+        print("Clowder information\n")
+
+        defaults = CLOWDER_CONTROLLER.defaults
+        print("Default ref: " + defaults.ref)
+        print("Default remote name: " + defaults.remote)
+        print("Default source name: " + defaults.source)
+        print("Default git protocol: " + defaults.protocol)
+        print("Default depth: " + str(defaults.depth))
+        print("Default recursive value: " + str(defaults.recursive))
+        print("Default timestamp author: " + str(defaults.timestamp_author))
+
         for group in CLOWDER_CONTROLLER.groups:
             print('\n' + fmt.group_name(group.name))
             print("Group name: " + group.name)
-            print("Group depth default: " + str(group.depth))
-            print("Group recursive default: " + str(group.recursive))
-            print("Group timestamp author default: " + str(group.timestamp_author))
-            print("Group ref default: " + group.ref)
-            print("Group remote name default: " + group.remote_name)
+            print("Group depth: " + str(group.depth))
+            print("Group recursive: " + str(group.recursive))
+            print("Group timestamp author: " + str(group.timestamp_author))
+            print("Group ref: " + group.ref)
+            print("Group remote name: " + group.remote_name)
             for project in group.projects:
                 print("\nProject name: " + project.name)
                 print("Project path: " + project.path)
