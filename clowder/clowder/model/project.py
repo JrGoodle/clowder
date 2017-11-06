@@ -14,6 +14,7 @@ import sys
 from termcolor import colored, cprint
 
 import clowder.util.formatting as fmt
+from clowder import ROOT_DIR
 from clowder.error.clowder_error import ClowderError
 from clowder.error.clowder_yaml_error import ClowderYAMLError
 from clowder.git.project_repo import ProjectRepo
@@ -57,10 +58,9 @@ class Project(object):
     :ivar Fork fork: Project's associated Fork
     """
 
-    def __init__(self, root_directory, project, group, defaults, sources):
+    def __init__(self, project, group, defaults, sources):
         """Project __init__
 
-        :param str root_directory: Root directory of clowder projects
         :param dict project: Parsed YAML python object for project
         :param dict group: Parsed YAML python object for group
         :param Defaults defaults: Defaults instance
@@ -71,7 +71,6 @@ class Project(object):
         self.name = project['name']
         self.path = project['path']
 
-        self._root_directory = root_directory
         self.ref = project.get('ref', group.get('ref', defaults.ref))
         self.remote = project.get('remote', group.get('remote', defaults.remote))
         self.depth = project.get('depth', group.get('depth', defaults.depth))
@@ -88,7 +87,7 @@ class Project(object):
             fork = project['fork']
             if fork['remote'] == self.remote:
                 raise ClowderYAMLError(fmt.remote_name_error(fork['name'], self.name, self.remote))
-            self.fork = Fork(fork, self._root_directory, self.path, self.source)
+            self.fork = Fork(fork, self.path, self.source)
 
         self._protocol = defaults.protocol
         self._timestamp_author = project.get('timestamp_author',
@@ -208,7 +207,7 @@ class Project(object):
         :rtype: str
         """
 
-        return os.path.join(self._root_directory, self.path)
+        return os.path.join(ROOT_DIR, self.path)
 
     def get_current_timestamp(self):
         """Return timestamp of current HEAD commit
@@ -368,7 +367,7 @@ class Project(object):
 
         self._print_output = not parallel
 
-        forall_env = {'CLOWDER_PATH': self._root_directory,
+        forall_env = {'CLOWDER_PATH': ROOT_DIR,
                       'PROJECT_PATH': self.full_path(),
                       'PROJECT_NAME': self.name,
                       'PROJECT_REMOTE': self.remote,

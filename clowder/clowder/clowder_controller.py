@@ -21,19 +21,14 @@ from clowder.yaml.loading import load_yaml
 class ClowderController(object):
     """Class encapsulating project information from clowder.yaml for controlling clowder
 
-    :ivar str root_directory: Root directory of clowder projects
     :ivar dict defaults: Global clowder.yaml defaults
     :ivar list[Group] groups: List of all Groups
     :ivar list[Source] sources: List of all Sources
     """
 
-    def __init__(self, root_directory):
-        """ClowderController __init__
+    def __init__(self):
+        """ClowderController __init__"""
 
-        :param str root_directory: Root directory of clowder projects
-        """
-
-        self.root_directory = root_directory
         self.defaults = None
         self.groups = []
         self.sources = []
@@ -139,11 +134,11 @@ class ClowderController(object):
     def _load_yaml(self):
         """Load clowder.yaml"""
         try:
-            yaml = load_yaml(self.root_directory)
+            yaml = load_yaml()
             self.defaults = Defaults(yaml['defaults'])
             self.sources = [Source(s) for s in yaml['sources']]
             for group in yaml['groups']:
-                self.groups.append(Group(self.root_directory, group, self.defaults, self.sources))
+                self.groups.append(Group(group, self.defaults, self.sources))
         except (AttributeError, TypeError):
             self.defaults = None
             self.sources = []

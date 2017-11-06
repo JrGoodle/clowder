@@ -48,5 +48,5 @@ class YAMLController(ArgparseController):
         if self.app.pargs.resolved:
             print(fmt.yaml_string(CLOWDER_CONTROLLER.get_yaml_resolved()))
         else:
-            print_yaml(CLOWDER_CONTROLLER.root_directory)
+            print_yaml()
         sys.exit()  # exit early to prevent printing extra newline

@@ -5,9 +5,7 @@
 
 """
 
-import os
-
 from clowder.clowder_controller import ClowderController
 
 
-CLOWDER_CONTROLLER = ClowderController(os.getcwd())
+CLOWDER_CONTROLLER = ClowderController()

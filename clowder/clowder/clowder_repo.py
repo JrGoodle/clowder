@@ -14,6 +14,7 @@ import sys
 from termcolor import colored
 
 import clowder.util.formatting as fmt
+from clowder import ROOT_DIR
 from clowder.error.clowder_error import ClowderError
 from clowder.error.clowder_yaml_error import ClowderYAMLError
 from clowder.git.project_repo import ProjectRepo
@@ -35,26 +36,21 @@ from clowder.yaml.validating import validate_yaml
 class ClowderRepo(object):
     """Class encapsulating clowder repo information
 
-    :ivar str root_directory: Root directory of clowder projects
     :ivar str default_ref: Default ref
     :ivar str remote: Remote name
     :ivar str clowder_path: Absolute path to clowder repo
     """
 
-    def __init__(self, root_directory):
-        """ClowderController __init__
+    def __init__(self):
+        """ClowderController __init__"""
 
-        :param str root_directory: Root directory of clowder projects
-        """
-
-        self.root_directory = root_directory
         self.default_ref = 'refs/heads/master'
         self.remote = 'origin'
-        self.clowder_path = os.path.join(self.root_directory, '.clowder')
+        self.clowder_path = os.path.join(ROOT_DIR, '.clowder')
         self.repo = ProjectRepo(self.clowder_path, self.remote, self.default_ref)
 
         # Create clowder.yaml symlink if .clowder dir and yaml file exist
-        clowder_symlink = os.path.join(self.root_directory, 'clowder.yaml')
+        clowder_symlink = os.path.join(ROOT_DIR, 'clowder.yaml')
         if os.path.isdir(self.clowder_path):
             if not os.path.islink(clowder_symlink):
                 self.link()
@@ -62,7 +58,7 @@ class ClowderRepo(object):
         self.error = None
         if os.path.islink(clowder_symlink):
             try:
-                validate_yaml(os.path.join(self.root_directory, 'clowder.yaml'), self.root_directory)
+                validate_yaml(os.path.join(ROOT_DIR, 'clowder.yaml'))
             except ClowderYAMLError as err:
                 self.error = err
             except (KeyboardInterrupt, SystemExit):
@@ -139,7 +135,7 @@ class ClowderRepo(object):
         """Exit handler for deleting files if init fails"""
 
         if os.path.isdir(self.clowder_path):
-            clowder_yaml = os.path.join(self.root_directory, 'clowder.yaml')
+            clowder_yaml = os.path.join(ROOT_DIR, 'clowder.yaml')
             if not os.path.islink(clowder_yaml):
                 remove_directory(self.clowder_path)
                 sys.exit(1)
@@ -162,18 +158,18 @@ class ClowderRepo(object):
         """
 
         if version is None:
-            yaml_file = os.path.join(self.root_directory, '.clowder', 'clowder.yaml')
+            yaml_file = os.path.join(ROOT_DIR, '.clowder', 'clowder.yaml')
             path_output = fmt.get_path('.clowder/clowder.yaml')
         else:
             relative_path = os.path.join('.clowder', 'versions', version, 'clowder.yaml')
             path_output = fmt.get_path(relative_path)
-            yaml_file = os.path.join(self.root_directory, relative_path)
+            yaml_file = os.path.join(ROOT_DIR, relative_path)
 
         if not os.path.isfile(yaml_file):
             print('\n' + path_output + " doesn't seem to exist\n")
             sys.exit(1)
 
-        yaml_symlink = os.path.join(self.root_directory, 'clowder.yaml')
+        yaml_symlink = os.path.join(ROOT_DIR, 'clowder.yaml')
         print(' - Symlink ' + path_output)
         force_symlink(yaml_file, yaml_symlink)
 
@@ -185,7 +181,7 @@ class ClowderRepo(object):
         :param Optional[str] fetch: Fetch before printing status
         """
 
-        repo_path = os.path.join(self.root_directory, '.clowder')
+        repo_path = os.path.join(ROOT_DIR, '.clowder')
         if not existing_git_repository(repo_path):
             output = colored('.clowder', 'green')
             print(output)
@@ -198,14 +194,14 @@ class ClowderRepo(object):
         project_output = format_project_string(self.repo, '.clowder')
         current_ref_output = format_project_ref_string(self.repo)
 
-        clowder_symlink = os.path.join(self.root_directory, 'clowder.yaml')
+        clowder_symlink = os.path.join(ROOT_DIR, 'clowder.yaml')
         if not os.path.islink(clowder_symlink):
             print(project_output + ' ' + current_ref_output)
             return
 
         real_path = os.path.realpath(clowder_symlink)
         symlink_output = fmt.get_path('clowder.yaml')
-        clowder_path = fmt.remove_prefix(real_path + '/', self.root_directory)
+        clowder_path = fmt.remove_prefix(real_path + '/', ROOT_DIR)
         path_output = fmt.get_path(clowder_path[1:-1])
         print(project_output + ' ' + current_ref_output)
         print(symlink_output + ' -> ' + path_output + '\n')
@@ -243,7 +239,7 @@ class ClowderRepo(object):
             sys.exit(1)
 
 
-CLOWDER_REPO = ClowderRepo(os.getcwd())
+CLOWDER_REPO = ClowderRepo()
 
 
 def print_clowder_repo_status(func):

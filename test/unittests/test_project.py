@@ -63,7 +63,6 @@ class ProjectTest(unittest.TestCase):
         self.assertEqual(self.kit_project.path, 'black-cats/kit')
         self.assertEqual(self.kit_project.ref, 'f2e20031ddce5cb097105f4d8ccbc77f4ac20709')
         self.assertEqual(self.kit_project.remote, 'origin')
-        self.assertEqual(self.kit_project._root_directory, self.cats_example_path)
         self.assertEqual(self.kit_project._url(), 'git@github.com:jrgoodle/kit.git')
 
     def test_get_yaml(self):

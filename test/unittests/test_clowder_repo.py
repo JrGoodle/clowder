@@ -21,7 +21,6 @@ class ClowderRepoTest(unittest.TestCase):
     def test_member_variables(self):
         """Test the state of all project member variables initialized"""
 
-        self.assertEqual(self.clowder_repo.root_directory, self.cats_example_path)
         clowder_path = os.path.join(self.cats_example_path, '.clowder')
         self.assertEqual(self.clowder_repo.clowder_path, clowder_path)
 

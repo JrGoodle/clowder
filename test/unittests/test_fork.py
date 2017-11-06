@@ -21,9 +21,8 @@ class ForkTest(unittest.TestCase):
         self.remote_name = 'origin'
         self.fork_yaml = {'name': self.name, 'remote': self.remote_name}
         self.source = Source(__github_source_yaml__)
-        self.root_directory = self.cats_example_path
         self.path = 'fork/path'
-        self.fork = Fork(self.fork_yaml, self.root_directory, self.path, self.source)
+        self.fork = Fork(self.fork_yaml, self.path, self.source)
 
     def test_get_yaml(self):
         """Test get_yaml() method"""
@@ -33,7 +32,6 @@ class ForkTest(unittest.TestCase):
     def test_member_variables(self):
         """Test the state of all project member variables initialized"""
 
-        self.assertEqual(self.fork._root_directory, self.root_directory)
         self.assertEqual(self.fork.path, self.path)
         self.assertEqual(self.fork.name, self.name)
         self.assertEqual(self.fork.remote_name, self.remote_name)
