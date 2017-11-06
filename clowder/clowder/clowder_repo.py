@@ -149,7 +149,8 @@ class ClowderRepo(object):
 
         return self.repo.is_dirty()
 
-    def link(self, version=None):
+    @staticmethod
+    def link(version=None):
         """Create symlink pointing to clowder.yaml file
 
         .. py:function:: link(version=None)
