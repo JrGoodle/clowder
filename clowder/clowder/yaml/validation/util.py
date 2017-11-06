@@ -21,8 +21,7 @@ def validate_clowder_yaml_contains_value(parsed_yaml, value, yaml_file):
     """
 
     if value not in parsed_yaml:
-        error = fmt.missing_entry_error(value, fmt.yaml_file('clowder.yaml'), yaml_file)
-        raise ClowderYAMLError(error)
+        raise ClowderYAMLError(fmt.missing_entry_error(value, fmt.yaml_file('clowder.yaml'), yaml_file))
 
 
 def validate_depth(dictionary, yaml_file):
@@ -44,12 +43,11 @@ def validate_dict_contains_value(dictionary, dict_name, value, yaml_file):
     :param str dict_name: Name of dict to print if missing
     :param str value: Name of entry to check
     :param str yaml_file: Path to yaml file
-    :raise ClowderError:
+    :raise ClowderYAMLError:
     """
 
     if value not in dictionary:
-        error = fmt.missing_entry_error(value, dict_name, yaml_file)
-        raise ClowderYAMLError(error)
+        raise ClowderYAMLError(fmt.missing_entry_error(value, dict_name, yaml_file))
 
 
 def validate_empty(collection, name, yaml_file):
@@ -62,8 +60,7 @@ def validate_empty(collection, name, yaml_file):
     """
 
     if collection:
-        error = fmt.unknown_entry_error(name, collection, yaml_file)
-        raise ClowderYAMLError(error)
+        raise ClowderYAMLError(fmt.unknown_entry_error(name, collection, yaml_file))
 
 
 def validate_not_empty(collection, name, yaml_file):
@@ -76,8 +73,7 @@ def validate_not_empty(collection, name, yaml_file):
     """
 
     if not collection:
-        error = fmt.missing_entries_error(name, yaml_file)
-        raise ClowderYAMLError(error)
+        raise ClowderYAMLError(fmt.missing_entries_error(name, yaml_file))
 
 
 def validate_optional_dict(dictionary, value, func, yaml_file):
@@ -92,6 +88,19 @@ def validate_optional_dict(dictionary, value, func, yaml_file):
     if value in dictionary:
         func(dictionary[value], yaml_file)
         del dictionary[value]
+
+
+def validate_optional_protocol(dictionary, yaml_file):
+    """Check whether protocol type is valid
+
+    :param dict dictionary: Parsed YAML python object
+    :param str yaml_file: Path to yaml file
+    """
+
+    if 'protocol' in dictionary:
+        validate_type(dictionary['protocol'], 'protocol', str, 'protocol', yaml_file)
+        validate_protocol_type(dictionary, yaml_file)
+        del dictionary['protocol']
 
 
 def validate_optional_ref(dictionary, yaml_file):
@@ -129,6 +138,18 @@ def validate_optional_string(dictionary, value, yaml_file):
     _validate_optional_value(dictionary, value, str, 'str', yaml_file)
 
 
+def validate_protocol_type(dictionary, yaml_file):
+    """Check whether protocol type is valid
+
+    :param dict dictionary: Parsed YAML python object
+    :param str yaml_file: Path to yaml file
+    :raise ClowderYAMLError:
+    """
+
+    if not _valid_protocol_type(dictionary['protocol']):
+        raise ClowderYAMLError(fmt.invalid_protocol_error(dictionary['protocol'], yaml_file))
+
+
 def validate_required_dict(dictionary, value, func, yaml_file):
     """Check whether yaml file contains required value
 
@@ -141,6 +162,19 @@ def validate_required_dict(dictionary, value, func, yaml_file):
     validate_clowder_yaml_contains_value(dictionary, value, yaml_file)
     func(dictionary[value], yaml_file)
     del dictionary[value]
+
+
+def validate_required_protocol(dictionary, yaml_file):
+    """Check for required protocol value
+
+    :param dict dictionary: Parsed YAML python object
+    :param str yaml_file: Path to yaml file
+    """
+
+    validate_dict_contains_value(dictionary, 'defaults', 'protocol', yaml_file)
+    validate_type(dictionary['protocol'], 'protocol', str, 'str', yaml_file)
+    validate_protocol_type(dictionary, yaml_file)
+    del dictionary['protocol']
 
 
 def validate_required_ref(dictionary, yaml_file):
@@ -179,8 +213,7 @@ def validate_ref_type(dictionary, yaml_file):
     """
 
     if not _valid_ref_type(dictionary['ref']):
-        error = fmt.invalid_ref_error(dictionary['ref'], yaml_file)
-        raise ClowderYAMLError(error)
+        raise ClowderYAMLError(fmt.invalid_ref_error(dictionary['ref'], yaml_file))
 
 
 def validate_type_depth(value, yaml_file):
@@ -191,11 +224,8 @@ def validate_type_depth(value, yaml_file):
     :raise ClowderYAMLError:
     """
 
-    error = fmt.depth_error(value, yaml_file)
-    if not isinstance(value, int):
-        raise ClowderYAMLError(error)
-    if int(value) < 0:
-        raise ClowderYAMLError(error)
+    if not isinstance(value, int) or int(value) < 0:
+        raise ClowderYAMLError(fmt.depth_error(value, yaml_file))
 
 
 def validate_type(value, name, classinfo, type_name, yaml_file):
@@ -210,8 +240,7 @@ def validate_type(value, name, classinfo, type_name, yaml_file):
     """
 
     if not isinstance(value, classinfo):
-        error = fmt.type_error(name, yaml_file, type_name)
-        raise ClowderYAMLError(error)
+        raise ClowderYAMLError(fmt.type_error(name, yaml_file, type_name))
 
 
 def _validate_optional_value(dictionary, value, classinstance, type_name, yaml_file):
@@ -227,6 +256,20 @@ def _validate_optional_value(dictionary, value, classinstance, type_name, yaml_f
     if value in dictionary:
         validate_type(dictionary[value], value, classinstance, type_name, yaml_file)
         del dictionary[value]
+
+
+def _valid_protocol_type(protocol):
+    """Validate that protocol is formatted correctly
+
+    :param str protocol: Protocol can only take on the values of 'ssh' or 'https'
+    :return: True, if protocol is properly formatted
+    :rtype: bool
+    """
+
+    if protocol == 'ssh' or protocol == 'https':
+        return True
+
+    return False
 
 
 def _valid_ref_type(ref):

@@ -7,10 +7,6 @@
 
 from cement.ext.ext_argparse import ArgparseController, expose
 
-from clowder.clowder_repo import (
-    print_clowder_repo_status,
-    valid_clowder_yaml_required
-)
 from clowder.cli.globals import CLOWDER_CONTROLLER
 from clowder.cli.util import (
     filter_groups,
@@ -19,6 +15,8 @@ from clowder.cli.util import (
     run_group_command,
     run_project_command
 )
+from clowder.clowder_repo import print_clowder_repo_status
+from clowder.util.decorators import valid_clowder_yaml_required
 
 
 class BranchController(ArgparseController):

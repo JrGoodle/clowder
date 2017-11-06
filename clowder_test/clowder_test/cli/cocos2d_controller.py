@@ -57,6 +57,15 @@ class Cocos2dController(ArgparseController):
         clowder_test_exit(return_code)
 
     @expose(
+        help='Run protocol cocos2d tests'
+    )
+    def protocol(self):
+        """clowder cocos2d protocol tests"""
+
+        return_code = self._execute_command('./protocol.sh', self.path)
+        clowder_test_exit(return_code)
+
+    @expose(
         help='Run skip cocos2d tests'
     )
     def skip(self):

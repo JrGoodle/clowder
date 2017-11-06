@@ -40,10 +40,10 @@ class ClowderController(object):
         self.error = None
         try:
             self._load_yaml()
-        except (KeyboardInterrupt, SystemExit):
-            sys.exit(1)
         except (ClowderYAMLError, KeyError) as err:
             self.error = err
+        except (KeyboardInterrupt, SystemExit):
+            sys.exit(1)
 
     def get_all_fork_project_names(self):
         """Returns all project names containing forks
@@ -52,7 +52,10 @@ class ClowderController(object):
         :rtype: list[str]
         """
 
-        return sorted([p.name for g in self.groups for p in g.projects if p.fork])
+        try:
+            return sorted([p.name for g in self.groups for p in g.projects if p.fork])
+        except TypeError:
+            return []
 
     def get_all_group_names(self):
         """Returns all group names for current clowder.yaml
@@ -61,7 +64,10 @@ class ClowderController(object):
         :rtype: list[str]
         """
 
-        return sorted([g.name for g in self.groups])
+        try:
+            return sorted([g.name for g in self.groups])
+        except TypeError:
+            return []
 
     def get_all_project_names(self):
         """Returns all project names for current clowder.yaml
@@ -70,7 +76,10 @@ class ClowderController(object):
         :rtype: list[str]
         """
 
-        return sorted([p.name for g in self.groups for p in g.projects])
+        try:
+            return sorted([p.name for g in self.groups for p in g.projects])
+        except TypeError:
+            return []
 
     def get_all_project_paths(self):
         """Returns all project paths for current clowder.yaml
@@ -79,7 +88,10 @@ class ClowderController(object):
         :rtype: list[str]
         """
 
-        return sorted([p.formatted_project_path() for g in self.groups for p in g.projects])
+        try:
+            return sorted([p.formatted_project_path() for g in self.groups for p in g.projects])
+        except TypeError:
+            return []
 
     def get_timestamp(self, timestamp_project):
         """Return timestamp for project
@@ -129,12 +141,16 @@ class ClowderController(object):
 
     def _load_yaml(self):
         """Load clowder.yaml"""
-        yaml = load_yaml(self.root_directory)
+        try:
+            yaml = load_yaml(self.root_directory)
+            self.defaults = yaml['defaults']
+            if 'depth' not in self.defaults:
+                self.defaults['depth'] = 0
 
-        self.defaults = yaml['defaults']
-        if 'depth' not in self.defaults:
-            self.defaults['depth'] = 0
-
-        self.sources = [Source(s) for s in yaml['sources']]
-        for group in yaml['groups']:
-            self.groups.append(Group(self.root_directory, group, self.defaults, self.sources))
+            self.sources = [Source(s) for s in yaml['sources']]
+            for group in yaml['groups']:
+                self.groups.append(Group(self.root_directory, group, self.defaults, self.sources))
+        except (AttributeError, TypeError):
+            self.defaults = None
+            self.sources = []
+            self.groups = []

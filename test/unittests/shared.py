@@ -1,9 +1,9 @@
 """Shared resources for tests"""
 
-__defaults_yaml__ = {'ref': 'refs/heads/master', 'remote': 'origin', 'source': 'github', 'depth': 0}
+__defaults_yaml__ = {'ref': 'refs/heads/master', 'remote': 'origin',
+                     'source': 'github', 'depth': 0, 'protocol': 'ssh'}
 
-__github_ssh_source_yaml__ = {'name': 'github-ssh', 'url': 'ssh://git@github.com'}
-__github_https_source_yaml__ = {'name': 'github', 'url': 'https://github.com'}
+__github_source_yaml__ = {'name': 'github', 'url': 'github.com'}
 
 __jules_project_yaml__ = {'name': 'jrgoodle/jules', 'path': 'black-cats/jules'}
 __kishka_project_yaml__ = {'name': 'jrgoodle/kishka', 'path': 'black-cats/kishka'}

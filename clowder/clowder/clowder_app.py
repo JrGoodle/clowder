@@ -7,10 +7,7 @@
 
 from __future__ import print_function
 
-import sys
-
 import colorama
-from cement.core.exc import FrameworkError, CaughtSignal
 from cement.core.foundation import CementApp
 
 import clowder.cli as cmd

@@ -95,7 +95,7 @@ def options_help_message(options, message):
     :rtype: str
     """
 
-    if options == [''] or options is None or options == []:
+    if options == [''] or options is None or options == [] or not all(isinstance(n, str) for n in options):
         return message
 
     help_message = '''

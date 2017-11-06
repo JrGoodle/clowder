@@ -8,8 +8,7 @@ from clowder.model.project import Project
 from clowder.model.source import Source
 from unittests.shared import (
     __defaults_yaml__,
-    __github_https_source_yaml__,
-    __github_ssh_source_yaml__,
+    __github_source_yaml__,
     __jules_group_yaml__,
     __jules_project_yaml__,
     __kishka_group_yaml__,
@@ -30,7 +29,7 @@ class ProjectTest(unittest.TestCase):
         # self.jules_project_path = os.path.join(self.CATS_EXAMPLE_PATH, 'black-cats', 'jules')
         # self.kishka_project_path = os.path.join(self.CATS_EXAMPLE_PATH, 'black-cats', 'kishka')
         self.kit_project_path = os.path.join(self.cats_example_path, 'black-cats', 'kit')
-        sources = [Source(__github_ssh_source_yaml__), Source(__github_https_source_yaml__)]
+        sources = [Source(__github_source_yaml__)]
         self.jules_project = Project(self.cats_example_path, __jules_project_yaml__,
                                      __jules_group_yaml__, __defaults_yaml__, sources)
         self.kishka_project = Project(self.cats_example_path, __kishka_project_yaml__,
@@ -64,7 +63,7 @@ class ProjectTest(unittest.TestCase):
         self.assertEqual(self.kit_project._ref, 'f2e20031ddce5cb097105f4d8ccbc77f4ac20709')
         self.assertEqual(self.kit_project._remote, 'origin')
         self.assertEqual(self.kit_project._root_directory, self.cats_example_path)
-        self.assertEqual(self.kit_project._url, 'https://github.com/jrgoodle/kit.git')
+        self.assertEqual(self.kit_project._url(), 'git@github.com:jrgoodle/kit.git')
 
     def test_get_yaml(self):
         """Test get_yaml() method"""

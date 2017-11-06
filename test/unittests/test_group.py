@@ -8,8 +8,7 @@ from clowder.model.group import Group
 from clowder.model.source import Source
 from unittests.shared import (
     __defaults_yaml__,
-    __github_https_source_yaml__,
-    __github_ssh_source_yaml__,
+    __github_source_yaml__,
     __jules_group_yaml__,
     __kishka_group_yaml__,
     __kit_group_yaml__
@@ -24,7 +23,7 @@ class GroupTest(unittest.TestCase):
 
     def setUp(self):
 
-        sources = [Source(__github_ssh_source_yaml__), Source(__github_https_source_yaml__)]
+        sources = [Source(__github_source_yaml__)]
         self.jules_group = Group(self.cats_example_path, __jules_group_yaml__, __defaults_yaml__, sources)
         self.kishka_group = Group(self.cats_example_path, __kishka_group_yaml__, __defaults_yaml__, sources)
         self.kit_group = Group(self.cats_example_path, __kit_group_yaml__, __defaults_yaml__, sources)

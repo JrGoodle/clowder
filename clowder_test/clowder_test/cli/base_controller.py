@@ -112,6 +112,10 @@ class BaseController(ArgparseController):
             return_code = self._execute_command(script, example_dir, test_env=test_env)
             clowder_test_exit(return_code)
 
+        example_dir = os.path.join(self.path, 'cocos2d')
+        return_code = self._execute_command('./write_protocol.sh', example_dir, test_env=test_env)
+        clowder_test_exit(return_code)
+
         example_dir = os.path.join(self.path, 'llvm')
         llvm_scripts = ['./write_forks.sh', './write_sync.sh']
         for script in llvm_scripts:

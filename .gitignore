@@ -61,6 +61,7 @@ examples/cocos2d-objc/.clowder
 examples/cocos2d-objc/clowder.yaml
 examples/cocos2d-objc/peru.yaml
 examples/cocos2d-objc/cocos2d-objc
+examples/cocos2d-objc/cocos2d-x
 
 # Created by https://www.gitignore.io/api/osx,python
 

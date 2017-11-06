@@ -12,4 +12,5 @@ print_double_separator
 
 "$TEST_SCRIPT_DIR/cocos2d/clean.sh" || exit 1
 "$TEST_SCRIPT_DIR/cocos2d/herd.sh" || exit 1
+"$TEST_SCRIPT_DIR/cocos2d/protocol.sh" || exit 1
 "$TEST_SCRIPT_DIR/cocos2d/skip.sh" || exit 1

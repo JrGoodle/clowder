@@ -25,19 +25,16 @@ def parse_yaml(yaml_file):
     :raise ClowderYAMLError:
     """
 
-    if os.path.isfile(yaml_file):
-        try:
-            with open(yaml_file) as raw_file:
-                parsed_yaml = yaml.safe_load(raw_file)
-                if parsed_yaml is None:
-                    print(fmt.invalid_yaml_error())
-                    print(fmt.empty_yaml_error(yaml_file) + '\n')
-                    sys.exit(1)
-                return parsed_yaml
-        except yaml.YAMLError:
-            print(fmt.open_file_error(yaml_file))
-            sys.exit(1)
-        except (KeyboardInterrupt, SystemExit):
-            sys.exit(1)
-    else:
-        raise ClowderYAMLError('\n' + fmt.missing_yaml_error() + '\n')
+    if not os.path.isfile(yaml_file):
+        raise ClowderYAMLError(fmt.missing_yaml_error())
+
+    try:
+        with open(yaml_file) as raw_file:
+            parsed_yaml = yaml.safe_load(raw_file)
+            if parsed_yaml is None:
+                raise ClowderYAMLError(fmt.empty_yaml_error(yaml_file))
+            return parsed_yaml
+    except yaml.YAMLError:
+        raise ClowderYAMLError(fmt.open_file_error(yaml_file))
+    except (KeyboardInterrupt, SystemExit):
+        sys.exit(1)

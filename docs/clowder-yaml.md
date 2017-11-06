@@ -11,6 +11,7 @@ defaults:
     ref: refs/heads/master
     remote: origin
     source: github
+    protocol: ssh
 ```
 
 ## Sources
@@ -19,12 +20,10 @@ Multiple `sources` can be specified. A `name` and `url` are required
 
 ```yaml
 sources:
-    - name: github-ssh
-      url: ssh://git@github.com
     - name: github
-      url: https://github.com
+      url: github.com
     - name: bitbucket
-      url: ssh://git@bitbucket.org
+      url: bitbucket.org
 ```
 
 ## Groups and Projects

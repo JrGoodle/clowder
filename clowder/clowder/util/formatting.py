@@ -118,6 +118,20 @@ def group_name(name):
     return colored(name, attrs=['bold', 'underline'])
 
 
+def invalid_protocol_error(protocol, yml):
+    """Return formatted error string for incorrect protocol
+
+    :param str protocol: Git protocol
+    :param str yml: Path to yaml file
+    :return: Formatted invalid ref error
+    """
+
+    output_1 = yaml_path(yml) + colored(' - Error: ', 'red') + colored('protocol', attrs=['bold'])
+    output_2 = colored(' value ', 'red') + colored(protocol, attrs=['bold'])
+    output_3 = colored(' is not valid', 'red')
+    return output_1 + output_2 + output_3
+
+
 def invalid_ref_error(ref, yml):
     """Return formatted error string for incorrect ref
 
@@ -139,7 +153,7 @@ def invalid_yaml_error():
     :rtype: str
     """
 
-    return '\n' + yaml_file('clowder.yaml') + ' appears to be invalid'
+    return yaml_file('clowder.yaml') + ' appears to be invalid'
 
 
 def missing_entries_error(name, yml):

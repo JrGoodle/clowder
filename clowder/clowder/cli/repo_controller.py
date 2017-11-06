@@ -9,10 +9,10 @@ from cement.ext.ext_argparse import ArgparseController, expose
 
 from clowder.clowder_repo import (
     CLOWDER_REPO,
-    clowder_required,
     print_clowder_repo_status,
     print_clowder_repo_status_fetch
 )
+from clowder.util.decorators import clowder_required
 from clowder.util.connectivity import network_connection_required
 
 
