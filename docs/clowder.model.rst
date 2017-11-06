@@ -4,6 +4,14 @@ clowder\.model package
 Submodules
 ----------
 
+clowder\.model\.defaults module
+-------------------------------
+
+.. automodule:: clowder.model.defaults
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 clowder\.model\.fork module
 ---------------------------
 

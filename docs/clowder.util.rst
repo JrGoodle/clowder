@@ -12,6 +12,14 @@ clowder\.util\.connectivity module
     :undoc-members:
     :show-inheritance:
 
+clowder\.util\.decorators module
+--------------------------------
+
+.. automodule:: clowder.util.decorators
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 clowder\.util\.execute module
 -----------------------------
 

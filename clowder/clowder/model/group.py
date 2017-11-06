@@ -31,17 +31,17 @@ class Group(object):
 
         :param str root_directory: Root directory of clowder projects
         :param dict group: Parsed YAML python object for group
-        :param dict defaults: Parsed YAML python object for defaults
+        :param Defaults defaults: Defaults instance
         :param list[Source] sources: List of Source instances
         """
 
         self.name = group['name']
-        self.depth = group.get('depth', defaults['depth'])
-        self.recursive = group.get('recursive', defaults.get('recursive', False))
-        self.timestamp_author = group.get('timestamp_author', defaults.get('timestamp_author', None))
-        self.ref = group.get('ref', defaults['ref'])
-        self.remote_name = group.get('remote', defaults['remote'])
-        source_name = group.get('source', defaults['source'])
+        self.depth = group.get('depth', defaults.depth)
+        self.recursive = group.get('recursive', defaults.recursive)
+        self.timestamp_author = group.get('timestamp_author', defaults.timestamp_author)
+        self.ref = group.get('ref', defaults.ref)
+        self.remote_name = group.get('remote', defaults.remote)
+        source_name = group.get('source', defaults.source)
 
         for source in sources:
             if source.name == source_name:

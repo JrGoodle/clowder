@@ -12,6 +12,7 @@ import sys
 from termcolor import cprint
 
 from clowder.error.clowder_yaml_error import ClowderYAMLError
+from clowder.model.defaults import Defaults
 from clowder.model.group import Group
 from clowder.model.source import Source
 from clowder.yaml.loading import load_yaml
@@ -120,11 +121,9 @@ class ClowderController(object):
         :rtype: dict
         """
 
-        groups_yaml = [g.get_yaml() for g in self.groups]
-        sources_yaml = [s.get_yaml() for s in self.sources]
-        return {'defaults': self.defaults,
-                'sources': sources_yaml,
-                'groups': groups_yaml}
+        return {'defaults': self.defaults.get_yaml(),
+                'sources': [s.get_yaml() for s in self.sources],
+                'groups': [g.get_yaml() for g in self.groups]}
 
     def get_yaml_resolved(self):
         """Return python object representation for resolved yaml
@@ -133,20 +132,15 @@ class ClowderController(object):
         :rtype: dict
         """
 
-        groups_yaml = [g.get_yaml_resolved() for g in self.groups]
-        sources_yaml = [s.get_yaml() for s in self.sources]
-        return {'defaults': self.defaults,
-                'sources': sources_yaml,
-                'groups': groups_yaml}
+        return {'defaults': self.defaults.get_yaml(),
+                'sources': [s.get_yaml() for s in self.sources],
+                'groups': [g.get_yaml_resolved() for g in self.groups]}
 
     def _load_yaml(self):
         """Load clowder.yaml"""
         try:
             yaml = load_yaml(self.root_directory)
-            self.defaults = yaml['defaults']
-            if 'depth' not in self.defaults:
-                self.defaults['depth'] = 0
-
+            self.defaults = Defaults(yaml['defaults'])
             self.sources = [Source(s) for s in yaml['sources']]
             for group in yaml['groups']:
                 self.groups.append(Group(self.root_directory, group, self.defaults, self.sources))

@@ -4,10 +4,11 @@
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/clowder" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/clowder_test" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/test/unittests" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/test" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/clowder/clowder_repo.egg-info" />
       <excludeFolder url="file://$MODULE_DIR$/clowder_test/clowder_test.egg-info" />
       <excludeFolder url="file://$MODULE_DIR$/examples" />
+      <excludeFolder url="file://$MODULE_DIR$/test/scripts" />
     </content>
     <orderEntry type="jdk" jdkName="Python 3.6.3 (/usr/local/Cellar/python3/3.6.3/Frameworks/Python.framework/Versions/3.6/bin/python3.6)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
