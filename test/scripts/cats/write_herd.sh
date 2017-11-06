@@ -15,8 +15,8 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
     test_herd_rebase_conflict() {
         print_single_separator
         echo "TEST: clowder herd rebase conflict"
-        clowder link || exit 1
-        clowder herd $PARALLEL || exit 1
+        $COMMAND link || exit 1
+        $COMMAND herd $PARALLEL || exit 1
 
         pushd mu || exit 1
         touch rebasefile || exit 1
@@ -32,13 +32,13 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
         test_no_rebase_in_progress
         popd || exit 1
 
-        clowder herd $PARALLEL -r && exit 1
+        $COMMAND herd $PARALLEL -r && exit 1
 
         pushd mu || exit 1
         test_rebase_in_progress
         popd || exit 1
 
-        clowder clean -a || exit 1
+        $COMMAND clean -a || exit 1
 
         pushd mu || exit 1
         test_no_rebase_in_progress

@@ -19,7 +19,7 @@ test_configure_remotes_herd() {
     pushd swift || exit 1
     test_remote_url 'origin' 'https://github.com/apple/swift.git'
     popd || exit 1
-    clowder herd $PARALLEL || exit 1
+    $COMMAND herd $PARALLEL || exit 1
     pushd swift || exit 1
     test_remote_url 'origin' 'https://github.com/JrGoodle/swift.git'
     test_remote_url 'upstream' 'https://github.com/apple/swift.git'
@@ -35,7 +35,7 @@ test_configure_remotes_fail_existing_remote() {
     test_remote_url 'origin' 'https://github.com/apple/swift.git'
     test_remote_url 'upstream' 'https://github.com/apple/swift.git'
     popd || exit 1
-    clowder herd && exit 1
+    $COMMAND herd && exit 1
     pushd swift || exit 1
     test_remote_url 'origin' 'https://github.com/apple/swift.git'
     test_remote_url 'upstream' 'https://github.com/apple/swift.git'
@@ -46,7 +46,7 @@ test_configure_remotes_fail_existing_remote() {
     test_remote_url 'origin' 'git@github.com:apple/swift.git'
     test_remote_url 'upstream' 'git@github.com:apple/swift.git'
     popd || exit 1
-    clowder herd && exit 1
+    $COMMAND herd && exit 1
     pushd swift || exit 1
     test_remote_url 'origin' 'git@github.com:apple/swift.git'
     test_remote_url 'upstream' 'git@github.com:apple/swift.git'
@@ -58,8 +58,8 @@ test_local_swift_example() {
     mkdir swift-source || exit 1
     pushd swift-source || exit 1
 
-    clowder init https://github.com/JrGoodle/swift-clowder.git -b test || exit 1
-    clowder link -v jrgoodle-fork-travis-ci || exit 1
+    $COMMAND init https://github.com/JrGoodle/swift-clowder.git -b test || exit 1
+    $COMMAND link -v jrgoodle-fork-travis-ci || exit 1
 
     test_configure_remotes_herd
     test_configure_remotes_fail_existing_remote

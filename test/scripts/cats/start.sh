@@ -26,8 +26,8 @@ test_start() {
     print_single_separator
     echo "TEST: Start new branch"
 
-    clowder herd $PARALLEL || exit 1
-    clowder start start_branch -g cats || exit 1
+    $COMMAND herd $PARALLEL || exit 1
+    $COMMAND start start_branch -g cats || exit 1
 
     pushd mu || exit 1
     test_branch start_branch
@@ -45,7 +45,7 @@ test_start() {
         popd || exit 1
     done
 
-    clowder start start_branch || exit 1
+    $COMMAND start start_branch || exit 1
 
     for project in "${all_projects[@]}"; do
         pushd $project || exit 1

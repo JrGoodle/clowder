@@ -20,7 +20,7 @@ test_help() {
     print_double_separator
     cd "$SWIFT_EXAMPLE_DIR" || exit 1
     ./init.sh
-    clowder link -v jrgoodle-fork-travis-ci || exit 1
+    $COMMAND link -v jrgoodle-fork-travis-ci || exit 1
     "$TEST_SCRIPT_DIR/test_help.sh" "$SWIFT_EXAMPLE_DIR" || exit 1
 }
 test_help

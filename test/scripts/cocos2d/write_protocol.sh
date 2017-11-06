@@ -13,7 +13,7 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
     cd "$COCOS2D_EXAMPLE_DIR" || exit 1
     ./clean.sh
     ./init.sh
-    clowder herd $PARALLEL || exit 1
+    $COMMAND herd $PARALLEL || exit 1
 
     pushd cocos2d-objc || exit 1
     test_remote_url 'origin' 'https://github.com/cocos2d/cocos2d-objc.git'
@@ -33,7 +33,7 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
 
     ./clean.sh
     ./init.sh
-    clowder herd $PARALLEL --protocol 'ssh' || exit 1
+    $COMMAND herd $PARALLEL --protocol 'ssh' || exit 1
 
     pushd cocos2d-objc || exit 1
     test_remote_url 'origin' 'git@github.com:cocos2d/cocos2d-objc.git'

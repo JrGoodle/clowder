@@ -29,6 +29,7 @@ class BaseController(ArgparseController):
         label = 'base'
         description = 'Clowder test runner'
         arguments = [
+            (['--coverage', '-c'], dict(action='store_true', help='run tests with code coverage')),
             (['--parallel', '-p'], dict(action='store_true', help='run tests with parallel commands')),
             (['--write', '-w'], dict(action='store_true', help='run tests requiring test repo write access')),
             (['-v', '--version'], dict(action='version', version=VERSION))
@@ -104,7 +105,7 @@ class BaseController(ArgparseController):
 
         test_env = {'ACCESS_LEVEL': 'write'}
         if self.app.pargs.parallel:
-            test_env["PARALLEL"] = '--parallel'
+            test_env['PARALLEL'] = '--parallel'
 
         example_dir = os.path.join(self.path, 'cats')
         cats_scripts = ['./write_herd.sh', './write_prune.sh', './write_repo.sh', './write_start.sh']
@@ -133,6 +134,11 @@ class BaseController(ArgparseController):
             access = 'write' if self.app.pargs.write else 'read'
             test_env = {'ACCESS_LEVEL': access}
             if self.app.pargs.parallel:
-                test_env["PARALLEL"] = '--parallel'
+                test_env['PARALLEL'] = '--parallel'
+
+        if self.app.pargs.coverage:
+            test_env['COMMAND'] = 'coverage run -m clowder.clowder_app'
+        else:
+            test_env['COMMAND'] = 'clowder'
 
         return execute_command(command, path, env=test_env)

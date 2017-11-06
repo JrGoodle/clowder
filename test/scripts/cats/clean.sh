@@ -20,7 +20,7 @@ export all_projects=( 'mu' 'duke' \
 cd "$CATS_EXAMPLE_DIR" || exit 1
 ./clean.sh
 ./init.sh
-clowder herd $PARALLEL || exit 1
+$COMMAND herd $PARALLEL || exit 1
 
 print_double_separator
 echo "TEST: Test clowder clean"
@@ -36,7 +36,7 @@ test_clean_groups() {
         popd || exit 1
     done
 
-    clowder clean -g 'black-cats' || exit 1
+    $COMMAND clean -g 'black-cats' || exit 1
 
     for project in "${black_cats_projects[@]}"; do
         pushd $project || exit 1
@@ -60,7 +60,7 @@ test_clean_groups() {
         popd || exit 1
     done
 
-    clowder clean || exit 1
+    $COMMAND clean || exit 1
 
     for project in "${all_projects[@]}"; do
         pushd $project || exit 1
@@ -82,7 +82,7 @@ test_clean_projects() {
         popd || exit 1
     done
 
-    clowder clean -p "$@" || exit 1
+    $COMMAND clean -p "$@" || exit 1
 
     for project in "${black_cats_projects[@]}"; do
         pushd $project || exit 1
@@ -97,7 +97,7 @@ test_clean_projects() {
     popd || exit 1
 
     echo "TEST: Clean all when dirty"
-    clowder clean || exit 1
+    $COMMAND clean || exit 1
 
     for project in "${all_projects[@]}"; do
         pushd $project || exit 1
@@ -118,7 +118,7 @@ test_clean_all() {
         popd || exit 1
     done
 
-    clowder clean || exit 1
+    $COMMAND clean || exit 1
 
     for project in "${all_projects[@]}"; do
         pushd $project || exit 1
@@ -127,7 +127,7 @@ test_clean_all() {
     done
 
     echo "TEST: Clean when clean"
-    clowder clean || exit 1
+    $COMMAND clean || exit 1
 
     for project in "${all_projects[@]}"; do
         pushd $project || exit 1
@@ -153,7 +153,7 @@ test_clean_missing_directories() {
     done
 
     echo "TEST: Clean when directories are missing"
-    clowder clean || exit 1
+    $COMMAND clean || exit 1
 
     for project in "${cats_projects[@]}"; do
         test_no_directory_exists "$project"
@@ -166,7 +166,7 @@ test_clean_missing_directories() {
         popd || exit 1
     done
 
-    clowder herd $PARALLEL || exit 1
+    $COMMAND herd $PARALLEL || exit 1
 }
 test_clean_missing_directories 'mu' 'duke'
 
@@ -174,8 +174,8 @@ test_clean_abort_rebase() {
     print_single_separator
     echo "TEST: Clean when in the middle of a rebase"
 
-    clowder link || exit 1
-    clowder herd $PARALLEL || exit 1
+    $COMMAND link || exit 1
+    $COMMAND herd $PARALLEL || exit 1
 
     pushd mu || exit 1
         touch newfile
@@ -195,7 +195,7 @@ test_clean_abort_rebase() {
         test_rebase_in_progress
     popd || exit 1
 
-    clowder clean || exit 1
+    $COMMAND clean || exit 1
 
     pushd mu || exit 1
         test_no_rebase_in_progress
@@ -209,8 +209,8 @@ test_clean_untracked_files() {
     print_single_separator
     echo "TEST: Clean untracked files"
 
-    clowder link || exit 1
-    clowder herd $PARALLEL || exit 1
+    $COMMAND link || exit 1
+    $COMMAND herd $PARALLEL || exit 1
 
     pushd mu || exit 1
         touch newfile
@@ -220,8 +220,8 @@ test_clean_untracked_files() {
         test_untracked_files
     popd || exit 1
 
-    clowder herd && exit 1
-    clowder clean -d || exit 1
+    $COMMAND herd && exit 1
+    $COMMAND clean -d || exit 1
 
     pushd mu || exit 1
         test_no_directory_exists 'something'

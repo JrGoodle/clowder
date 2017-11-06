@@ -234,4 +234,8 @@ class CatsController(ArgparseController):
         test_env = {'ACCESS_LEVEL': access}
         if self.app.pargs.parallel:
             test_env["PARALLEL"] = '--parallel'
+        if self.app.pargs.coverage:
+            test_env['COMMAND'] = 'coverage run -m clowder.clowder_app'
+        else:
+            test_env['COMMAND'] = 'clowder'
         return execute_command(command, path, env=test_env)

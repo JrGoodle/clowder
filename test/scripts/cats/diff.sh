@@ -7,7 +7,7 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
 cd "$CATS_EXAMPLE_DIR" || exit 1
 ./clean.sh
 ./init.sh
-clowder herd $PARALLEL || exit 1
+$COMMAND herd $PARALLEL || exit 1
 
 export black_cats_projects=( 'black-cats/kit' \
                              'black-cats/kishka' \
@@ -28,8 +28,8 @@ test_diff() {
     done
 
     echo "TEST: Display diff"
-    clowder status || exit 1
-    clowder diff || exit 1
-    clowder clean || exit 1
+    $COMMAND status || exit 1
+    $COMMAND diff || exit 1
+    $COMMAND clean || exit 1
 }
 test_diff

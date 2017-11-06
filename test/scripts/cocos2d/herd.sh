@@ -20,8 +20,8 @@ cd "$COCOS2D_EXAMPLE_DIR" || exit 1
 test_recurse() {
     print_single_separator
     echo "TEST: Herd recursive submodules"
-    clowder herd $PARALLEL || exit 1
-    clowder status || exit 1
+    $COMMAND herd $PARALLEL || exit 1
+    $COMMAND status || exit 1
     for project in "${external_projects[@]}"; do
         echo "TEST: Check that $project submodule was initialized"
         if [ ! -f "$project/.git" ]; then
@@ -38,9 +38,9 @@ test_recurse
 test_no_recurse() {
     print_single_separator
     echo "TEST: Herd without updating submodules"
-    clowder link -v no-recurse || exit 1
-    clowder herd $PARALLEL || exit 1
-    clowder status || exit 1
+    $COMMAND link -v no-recurse || exit 1
+    $COMMAND herd $PARALLEL || exit 1
+    $COMMAND status || exit 1
     for project in "${external_projects[@]}"; do
         echo "TEST: Check that $project submodule wasn't initialized"
         if [ -f "$project/.git" ]; then

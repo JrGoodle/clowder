@@ -14,8 +14,8 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
 
     mkdir swift-source || exit 1
     pushd swift-source || exit 1
-    clowder init git@github.com:JrGoodle/swift-clowder.git -b test || exit 1
-    clowder link -v jrgoodle-fork || exit 1
+    $COMMAND init git@github.com:JrGoodle/swift-clowder.git -b test || exit 1
+    $COMMAND link -v jrgoodle-fork || exit 1
 
     test_configure_remotes_herd() {
         git clone git@github.com:apple/swift.git || exit 1
@@ -23,7 +23,7 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
         pushd swift || exit 1
         test_remote_url 'origin' 'git@github.com:apple/swift.git'
         popd || exit 1
-        clowder herd $PARALLEL || exit 1
+        $COMMAND herd $PARALLEL || exit 1
         pushd swift || exit 1
         test_remote_url 'origin' 'git@github.com:JrGoodle/swift.git'
         test_remote_url 'upstream' 'git@github.com:apple/swift.git'
@@ -38,7 +38,7 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
         pushd swift || exit 1
         test_remote_url 'origin' 'git@github.com:apple/swift.git'
         popd || exit 1
-        clowder sync $PARALLEL || exit 1
+        $COMMAND sync $PARALLEL || exit 1
         pushd swift || exit 1
         test_remote_url 'origin' 'git@github.com:JrGoodle/swift.git'
         test_remote_url 'upstream' 'git@github.com:apple/swift.git'

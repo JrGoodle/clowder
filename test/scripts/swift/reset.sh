@@ -126,10 +126,10 @@ test_reset_swift_4_0_branch() {
     export_commits
 
     ./init.sh || exit 1
-    clowder herd $PARALLEL || exit 1
-    clowder link -v reset-timestamp-swift-4.0-branch || exit 1
-    clowder herd $PARALLEL || exit 1
-    clowder reset $PARALLEL --timestamp apple/swift || exit 1
+    $COMMAND herd $PARALLEL || exit 1
+    $COMMAND link -v reset-timestamp-swift-4.0-branch || exit 1
+    $COMMAND herd $PARALLEL || exit 1
+    $COMMAND reset $PARALLEL --timestamp apple/swift || exit 1
 
     test_commits
 }
@@ -146,10 +146,10 @@ test_reset_swift_4_1_branch() {
     export_commits
 
     ./init.sh || exit 1
-    clowder herd $PARALLEL || exit 1
-    clowder link -v reset-timestamp-swift-4.1-branch || exit 1
-    clowder herd $PARALLEL || exit 1
-    clowder reset $PARALLEL --timestamp apple/swift || exit 1
+    $COMMAND herd $PARALLEL || exit 1
+    $COMMAND link -v reset-timestamp-swift-4.1-branch || exit 1
+    $COMMAND herd $PARALLEL || exit 1
+    $COMMAND reset $PARALLEL --timestamp apple/swift || exit 1
 
     test_commits
 }

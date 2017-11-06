@@ -42,7 +42,7 @@ cd "$CATS_EXAMPLE_DIR" || exit 1
 test_checkout() {
     print_single_separator
     echo "TEST: Check projects are on correct branches"
-    clowder herd $PARALLEL || exit 1
+    $COMMAND herd $PARALLEL || exit 1
     local branch='checkout_branch'
 
     pushd duke || exit 1
@@ -54,7 +54,7 @@ test_checkout() {
 
     test_cats_default_herd_branches
 
-    clowder checkout $branch || exit 1
+    $COMMAND checkout $branch || exit 1
 
     pushd duke || exit 1
     test_branch $branch || exit 1

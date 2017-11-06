@@ -21,8 +21,8 @@ test_clowder_version
 test_help() {
     print_double_separator
     cd "$LLVM_EXAMPLE_DIR" || exit 1
-    clowder link || exit 1
-    clowder herd $PARALLEL || exit 1
+    $COMMAND link || exit 1
+    $COMMAND herd $PARALLEL || exit 1
     "$TEST_SCRIPT_DIR/test_help.sh" "$LLVM_EXAMPLE_DIR" || exit 1
 }
 test_help

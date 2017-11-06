@@ -7,7 +7,7 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
 cd "$CATS_EXAMPLE_DIR" || exit 1
 ./clean.sh
 ./init.sh
-clowder herd $PARALLEL || exit 1
+$COMMAND herd $PARALLEL || exit 1
 
 export cats_projects=( 'duke' 'mu' )
 
@@ -34,14 +34,14 @@ test_stash() {
         popd || exit 1
     done
     echo "TEST: Fail herd with dirty repos"
-    clowder herd && exit 1
+    $COMMAND herd && exit 1
     for project in "${all_projects[@]}"; do
         pushd $project || exit 1
         test_git_dirty
         popd || exit 1
     done
     echo "TEST: Stash specific groups when dirty"
-    clowder stash -g "$@" || exit 1
+    $COMMAND stash -g "$@" || exit 1
     for project in "${black_cats_projects[@]}"; do
         pushd $project || exit 1
         test_git_clean
@@ -53,14 +53,14 @@ test_stash() {
         popd || exit 1
     done
     echo "TEST: Stash all changes when dirty"
-    clowder stash || exit 1
+    $COMMAND stash || exit 1
     for project in "${all_projects[@]}"; do
         pushd $project || exit 1
         test_git_clean
         popd || exit 1
     done
     echo "TEST: Stash changes when clean"
-    clowder stash || exit 1
+    $COMMAND stash || exit 1
     for project in "${all_projects[@]}"; do
         pushd $project || exit 1
         test_git_clean
@@ -78,7 +78,7 @@ test_stash_projects() {
         test_git_dirty
         popd || exit 1
     done
-    clowder stash -p "$@" || exit 1
+    $COMMAND stash -p "$@" || exit 1
     for project in "${cats_projects[@]}"; do
         pushd $project || exit 1
         test_git_clean
@@ -90,7 +90,7 @@ test_stash_projects() {
         popd || exit 1
     done
     echo "TEST: Stash all changes when dirty"
-    clowder stash || exit 1
+    $COMMAND stash || exit 1
     for project in "${all_projects[@]}"; do
         pushd $project || exit 1
         test_git_clean
@@ -111,7 +111,7 @@ test_stash_missing_directories() {
         test_git_dirty
         popd || exit 1
     done
-    clowder stash || exit 1
+    $COMMAND stash || exit 1
     test_no_directory_exists 'duke'
     test_no_directory_exists 'mu'
     for project in "${black_cats_projects[@]}"; do
@@ -119,8 +119,8 @@ test_stash_missing_directories() {
         test_git_clean
         popd || exit 1
     done
-    clowder status || exit 1
-    clowder herd $PARALLEL || exit 1
+    $COMMAND status || exit 1
+    $COMMAND herd $PARALLEL || exit 1
     for project in "${all_projects[@]}"; do
         pushd $project || exit 1
         test_git_clean

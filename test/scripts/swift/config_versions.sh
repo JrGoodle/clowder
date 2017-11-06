@@ -171,9 +171,9 @@ test_init_herd() {
     echo "TEST: Normal herd after init"
     ./clean.sh
     ./init.sh  || exit 1
-    clowder link -v travis-ci || exit 1
-    clowder herd $PARALLEL || exit 1
-    clowder status || exit 1
+    $COMMAND link -v travis-ci || exit 1
+    $COMMAND herd $PARALLEL || exit 1
+    $COMMAND status || exit 1
 }
 test_init_herd
 
@@ -191,12 +191,12 @@ test_swift_configs() {
         config_function="test_${config}_branches"
         config_function="${config_function//-/_}"
         config_function="${config_function//./_}"
-        clowder link -v travis-ci || exit 1
-        clowder herd $PARALLEL || exit 1
+        $COMMAND link -v travis-ci || exit 1
+        $COMMAND herd $PARALLEL || exit 1
         test_default_branches
-        clowder link -v "$config" || exit 1
-        clowder herd $PARALLEL || exit 1
-        clowder status || exit 1
+        $COMMAND link -v "$config" || exit 1
+        $COMMAND herd $PARALLEL || exit 1
+        $COMMAND status || exit 1
         "$config_function"
         pushd swift || exit 1
             # need to checkout master for latest update-checkout script changes
@@ -204,10 +204,10 @@ test_swift_configs() {
             git checkout master || exit 1
         popd || exit 1
         ./swift/utils/update-checkout --clone --scheme master --reset-to-remote || exit 1
-        clowder status || exit 1
+        $COMMAND status || exit 1
         test_default_branches
         ./swift/utils/update-checkout --scheme "$config" --clone --reset-to-remote || exit 1
-        clowder status || exit 1
+        $COMMAND status || exit 1
         "$config_function"
     done
 }

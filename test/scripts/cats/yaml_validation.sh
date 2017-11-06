@@ -18,9 +18,9 @@ test_invalid_yaml() {
 
     for test in "${test_cases[@]}"
     do
-        clowder link -v $test || exit 1
+        $COMMAND link -v $test || exit 1
         print_single_separator
-        clowder herd
+        $COMMAND herd
         exit_code=$?
         if [ "$exit_code" != '42' ]; then
             exit 1

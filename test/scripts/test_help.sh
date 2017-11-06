@@ -35,10 +35,10 @@ echo "TEST: Clowder help output"
 
 print_single_separator
 echo "TEST: clowder -h"
-clowder -h || exit 1
+$COMMAND -h || exit 1
 
 for command in "${commands[@]}"; do
     print_single_separator
     echo "TEST: clowder $command -h"
-    clowder $command -h || exit 1
+    $COMMAND $command -h || exit 1
 done

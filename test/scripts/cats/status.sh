@@ -7,7 +7,7 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
 cd "$CATS_EXAMPLE_DIR" || exit 1
 ./clean.sh
 ./init.sh
-clowder herd $PARALLEL || exit 1
+$COMMAND herd $PARALLEL || exit 1
 
 print_double_separator
 echo "TEST: Test clowder status"
@@ -15,13 +15,13 @@ echo "TEST: Test clowder status"
 test_status() {
     print_single_separator
     echo "TEST: Test status"
-    clowder status || exit 1
+    $COMMAND status || exit 1
 }
 test_status
 
 test_status_fetch() {
     print_single_separator
     echo "TEST: Test status with fetching"
-    clowder status -f || exit 1
+    $COMMAND status -f || exit 1
 }
 test_status_fetch

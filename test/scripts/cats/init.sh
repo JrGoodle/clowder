@@ -16,8 +16,8 @@ test_init_herd() {
     echo "TEST: Normal herd after init"
     "$CATS_EXAMPLE_DIR/clean.sh"
     "$CATS_EXAMPLE_DIR/init.sh"  || exit 1
-    clowder herd $PARALLEL || exit 1
-    clowder status -f || exit 1
+    $COMMAND herd $PARALLEL || exit 1
+    $COMMAND status -f || exit 1
 }
 test_init_herd
 
@@ -26,7 +26,7 @@ test_init_branch() {
     echo "TEST: Test clowder init branch"
 
     "$CATS_EXAMPLE_DIR/clean.sh"
-    clowder init https://github.com/jrgoodle/cats.git -b no-versions || exit 1
+    $COMMAND init https://github.com/jrgoodle/cats.git -b no-versions || exit 1
 
     pushd .clowder || exit 1
     test_branch no-versions
@@ -41,7 +41,7 @@ test_init_herd_version() {
     echo "TEST: Herd version after init"
     "$CATS_EXAMPLE_DIR/clean.sh" || exit 1
     "$CATS_EXAMPLE_DIR/init.sh" || exit 1
-    clowder link -v v0.1 || exit 1
-    clowder herd $PARALLEL || exit 1
+    $COMMAND link -v v0.1 || exit 1
+    $COMMAND herd $PARALLEL || exit 1
 }
 test_init_herd_version
