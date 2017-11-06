@@ -119,46 +119,13 @@ __clowder_pool__ = mp.Pool(initializer=worker_init)
 __clowder_progress__ = Progress()
 
 
-def forall_command(clowder, commands, ignore_errors, group_names, **kwargs):
-    """Runs command(s) in project directories specified
-
-    .. py:function:: forall_command(commands, ignore_errors, group_names, project_names=None, skip=[], parallel=False)
-
-    :param ClowderController clowder: ClowderController instance
-    :param list[str] commands: Commands to run
-    :param bool ignore_errors: Whether to exit if command returns a non-zero exit code
-    :param list[str] group_names: Group names to run command for
-
-    Keyword Args:
-        project_names (list[str]): Project names to clean
-        skip list[str]: Project names to skip
-        parallel bool: Whether command is being run in parallel, affects output
-    """
-
-    project_names = kwargs.get('project_names', None)
-    skip = kwargs.get('skip', [])
-    parallel = kwargs.get('parallel', False)
-
-    if project_names is None:
-        projects = filter_projects_on_group_names(clowder.groups, group_names)
-    else:
-        projects = filter_projects_on_project_names(clowder.groups, project_names)
-
-    if parallel:
-        _forall_parallel(commands, skip, ignore_errors, projects)
-        return
-
-    for project in projects:
-        run_project_command(project, skip, 'run', commands, ignore_errors)
-
-
-def forall_script(clowder, script_command, ignore_errors, group_names, **kwargs):
+def forall(clowder, command, ignore_errors, group_names, **kwargs):
     """Runs script in project directories specified
 
     .. py:function:: forall_script(script_command, ignore_errors, group_names, project_names=None, skip=[], parallel=False)
 
     :param ClowderController clowder: ClowderController instance
-    :param list[str] script_command: Script and optional arguments
+    :param list[str] command: Command or script and optional arguments
     :param bool ignore_errors: Whether to exit if command returns a non-zero exit code
     :param list[str] group_names: Group names to run command for
 
@@ -178,11 +145,11 @@ def forall_script(clowder, script_command, ignore_errors, group_names, **kwargs)
         projects = filter_projects_on_project_names(clowder.groups, project_names)
 
     if parallel:
-        _forall_parallel([" ".join(script_command)], skip, ignore_errors, projects)
+        _forall_parallel([" ".join(command)], skip, ignore_errors, projects)
         return
 
     for project in projects:
-        run_project_command(project, skip, 'run', [" ".join(script_command)], ignore_errors)
+        run_project_command(project, skip, 'run', [" ".join(command)], ignore_errors)
 
 
 def herd(clowder, group_names, **kwargs):
