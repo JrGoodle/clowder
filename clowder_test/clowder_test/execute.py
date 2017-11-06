@@ -15,6 +15,8 @@ from multiprocessing.pool import ThreadPool
 
 from termcolor import cprint
 
+from clowder_test import ROOT_DIR
+
 
 # Disable errors shown by pylint for catching too general exception
 # pylint: disable=W0703
@@ -32,7 +34,8 @@ def execute_test_command(command, path, parallel=False, write=False, coverage=Fa
         test_env['PARALLEL'] = '--parallel'
 
     if coverage:
-        test_env['COMMAND'] = 'coverage run --parallel-mode -m clowder.clowder_app'
+        rc_file = os.path.join(ROOT_DIR, '.coveragerc')
+        test_env['COMMAND'] = 'coverage run --rcfile=' + rc_file + ' -m clowder.clowder_app'
     else:
         test_env['COMMAND'] = 'clowder'
 

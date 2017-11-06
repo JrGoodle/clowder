@@ -14,11 +14,13 @@ from clowder_test.execute import (
     clowder_test_exit
 )
 
+from clowder_test import ROOT_DIR
+
 
 class LLVMController(ArgparseController):
     """Clowder test command llvm controller"""
 
-    path = os.path.join(os.getcwd(), 'test', 'scripts', 'llvm')
+    path = os.path.join(ROOT_DIR, 'test', 'scripts', 'llvm')
 
     class Meta:
         """Clowder test llvm Meta configuration"""
@@ -34,7 +36,7 @@ class LLVMController(ArgparseController):
     def all(self):
         """clowder llvm tests"""
 
-        path = os.path.join(os.getcwd(), 'test', 'scripts')
+        path = os.path.join(ROOT_DIR, 'test', 'scripts')
         return_code = self._execute_command('./test_example_llvm.sh', path)
         clowder_test_exit(return_code)
 

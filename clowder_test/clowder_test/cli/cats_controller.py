@@ -14,11 +14,13 @@ from clowder_test.execute import (
     clowder_test_exit
 )
 
+from clowder_test import ROOT_DIR
+
 
 class CatsController(ArgparseController):
     """Clowder test command cats controller"""
 
-    path = os.path.join(os.getcwd(), 'test', 'scripts', 'cats')
+    path = os.path.join(ROOT_DIR, 'test', 'scripts', 'cats')
 
     class Meta:
         """Clowder test cats Meta configuration"""
@@ -34,7 +36,7 @@ class CatsController(ArgparseController):
     def all(self):
         """clowder cats tests"""
 
-        path = os.path.join(os.getcwd(), 'test', 'scripts')
+        path = os.path.join(ROOT_DIR, 'test', 'scripts')
         return_code = self._execute_command('./test_example_cats.sh', path)
         clowder_test_exit(return_code)
 

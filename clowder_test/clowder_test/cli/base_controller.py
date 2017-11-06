@@ -14,6 +14,8 @@ from clowder_test.execute import (
     clowder_test_exit
 )
 
+from clowder_test import ROOT_DIR
+
 
 VERSION = '0.1.0'
 
@@ -21,7 +23,7 @@ VERSION = '0.1.0'
 class BaseController(ArgparseController):
     """Clowder app base controller"""
 
-    path = os.path.join(os.getcwd(), 'test', 'scripts')
+    path = os.path.join(ROOT_DIR, 'test', 'scripts')
 
     class Meta:
         """Clowder app base Meta configuration"""

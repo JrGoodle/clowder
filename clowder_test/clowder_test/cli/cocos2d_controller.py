@@ -14,11 +14,13 @@ from clowder_test.execute import (
     clowder_test_exit
 )
 
+from clowder_test import ROOT_DIR
+
 
 class Cocos2dController(ArgparseController):
     """Clowder test command cocos2d controller"""
 
-    path = os.path.join(os.getcwd(), 'test', 'scripts', 'cocos2d')
+    path = os.path.join(ROOT_DIR, 'test', 'scripts', 'cocos2d')
 
     class Meta:
         """Clowder test cocos2d Meta configuration"""
@@ -34,7 +36,7 @@ class Cocos2dController(ArgparseController):
     def all(self):
         """clowder cocos2d tests"""
 
-        path = os.path.join(os.getcwd(), 'test', 'scripts')
+        path = os.path.join(ROOT_DIR, 'test', 'scripts')
         return_code = self._execute_command('./test_example_cocos2d.sh', path)
         clowder_test_exit(return_code)
 

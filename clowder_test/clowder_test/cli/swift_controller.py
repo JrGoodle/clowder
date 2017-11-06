@@ -14,11 +14,13 @@ from clowder_test.execute import (
     clowder_test_exit
 )
 
+from clowder_test import ROOT_DIR
+
 
 class SwiftController(ArgparseController):
     """Clowder test command swift controller"""
 
-    path = os.path.join(os.getcwd(), 'test', 'scripts', 'swift')
+    path = os.path.join(ROOT_DIR, 'test', 'scripts', 'swift')
 
     class Meta:
         """Clowder test swift Meta configuration"""
@@ -34,7 +36,7 @@ class SwiftController(ArgparseController):
     def all(self):
         """clowder swift tests"""
 
-        path = os.path.join(os.getcwd(), 'test', 'scripts')
+        path = os.path.join(ROOT_DIR, 'test', 'scripts')
         return_code = self._execute_command('./test_example_swift.sh', path)
         clowder_test_exit(return_code)
 
