@@ -225,7 +225,7 @@ class GitRepo(object):
         try:
             return self.repo.git.log('-1', '--format=%cI')
         except GitError as err:
-            message = colored(' - Failed to find rev from timestamp', 'red')
+            message = colored(' - Failed to find current timestamp', 'red')
             self._print(message)
             self._print(fmt.error(err))
             self._exit(fmt.error(err))
