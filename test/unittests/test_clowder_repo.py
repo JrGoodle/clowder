@@ -15,7 +15,7 @@ class ClowderRepoTest(unittest.TestCase):
 
     def setUp(self):
 
-        self.clowder_repo = ClowderRepo(self.cats_example_path)
+        self.clowder_repo = ClowderRepo()
         self.clowder_yaml_path = os.path.join(self.cats_example_path, 'clowder.yaml')
 
     def test_member_variables(self):

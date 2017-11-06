@@ -31,12 +31,12 @@ class ProjectTest(unittest.TestCase):
         # self.kishka_project_path = os.path.join(self.CATS_EXAMPLE_PATH, 'black-cats', 'kishka')
         self.kit_project_path = os.path.join(self.cats_example_path, 'black-cats', 'kit')
         sources = [Source(__github_source_yaml__)]
-        self.jules_project = Project(self.cats_example_path, __jules_project_yaml__,
-                                     __jules_group_yaml__, Defaults(__defaults_yaml__), sources)
-        self.kishka_project = Project(self.cats_example_path, __kishka_project_yaml__,
-                                      __kishka_group_yaml__, Defaults(__defaults_yaml__), sources)
-        self.kit_project = Project(self.cats_example_path, __kit_project_yaml__,
-                                   __kit_group_yaml__, Defaults(__defaults_yaml__), sources)
+        self.jules_project = Project(__jules_project_yaml__, __jules_group_yaml__,
+                                     Defaults(__defaults_yaml__), sources)
+        self.kishka_project = Project(__kishka_project_yaml__, __kishka_group_yaml__,
+                                      Defaults(__defaults_yaml__), sources)
+        self.kit_project = Project(__kit_project_yaml__, __kit_group_yaml__,
+                                   Defaults(__defaults_yaml__), sources)
 
     def test_full_path(self):
         """Test full_path() method"""
