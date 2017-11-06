@@ -20,6 +20,25 @@ from termcolor import cprint
 # pylint: disable=W0703
 
 
+def execute_test_command(command, path, parallel=False, write=False, coverage=False, test_env=None):
+    """Execute test command"""
+
+    if test_env is None:
+        test_env = {}
+
+    test_env['ACCESS_LEVEL'] = 'write' if write else 'read'
+
+    if parallel:
+        test_env['PARALLEL'] = '--parallel'
+
+    if coverage:
+        test_env['COMMAND'] = 'coverage run --parallel-mode -m clowder.clowder_app'
+    else:
+        test_env['COMMAND'] = 'clowder'
+
+    return execute_command(command, path, env=test_env)
+
+
 def clowder_test_exit(return_code):
     """Custom exit function"""
 

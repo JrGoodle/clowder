@@ -10,7 +10,7 @@ import os
 from cement.ext.ext_argparse import ArgparseController, expose
 
 from clowder_test.execute import (
-    execute_command,
+    execute_test_command,
     clowder_test_exit
 )
 
@@ -68,12 +68,7 @@ class SwiftController(ArgparseController):
     def _execute_command(self, command, path):
         """Private execute command"""
 
-        access = 'write' if self.app.pargs.write else 'read'
-        test_env = {'ACCESS_LEVEL': access}
-        if self.app.pargs.parallel:
-            test_env["PARALLEL"] = '--parallel'
-        if self.app.pargs.coverage:
-            test_env['COMMAND'] = 'coverage run -m clowder.clowder_app'
-        else:
-            test_env['COMMAND'] = 'clowder'
-        return execute_command(command, path, env=test_env)
+        return execute_test_command(command, path,
+                                    parallel=self.app.pargs.parallel,
+                                    write=self.app.pargs.write,
+                                    coverage=self.app.pargs.coverage)
