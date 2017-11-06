@@ -22,11 +22,29 @@ from clowder_test import ROOT_DIR
 # pylint: disable=W0703
 
 
-def execute_test_command(command, path, parallel=False, write=False, coverage=False, test_env=None):
-    """Execute test command"""
+def execute_test_command(command, path, **kwargs):
+    """Execute test command
 
-    if test_env is None:
-        test_env = {}
+    .. py:function:: execute_test_command(command, path, parallel=False, write=False, coverage=False, test_env=None)
+
+    :param command: Command to run
+    :type command: str
+    :param str path: Path to set as ``cwd``
+
+    Keyword Args:
+        parallel (bool): Whether to run tests in parallel
+        write (bool): Whether to run tests requiring write permission
+        coverage (bool): Whether to run tests with code coverage
+        test_env (dict): Custom dict of environment variables
+
+    :return: Subprocess return code
+    :rtype: int
+    """
+
+    parallel = kwargs.get('parallel', False)
+    write = kwargs.get('write', False)
+    coverage = kwargs.get('coverage', False)
+    test_env = kwargs.get('test_env', {})
 
     test_env['ACCESS_LEVEL'] = 'write' if write else 'read'
 
