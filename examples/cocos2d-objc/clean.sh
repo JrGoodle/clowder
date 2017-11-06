@@ -6,3 +6,4 @@ rm -f clowder.yaml
 rm -rf clowder
 rm -rf .clowder
 rm -rf cocos2d-objc
+rm -rf cocos2d-x

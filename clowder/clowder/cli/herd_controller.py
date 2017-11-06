@@ -68,10 +68,11 @@ class HerdController(ArgparseController):
         branch = None if self.app.pargs.branch is None else self.app.pargs.branch[0]
         tag = None if self.app.pargs.tag is None else self.app.pargs.tag[0]
         depth = None if self.app.pargs.depth is None else self.app.pargs.depth[0]
+        protocol = None if self.app.pargs.protocol is None else self.app.pargs.protocol[0]
 
         kwargs = {'group_names': self.app.pargs.groups, 'project_names': self.app.pargs.projects,
                   'skip': self.app.pargs.skip, 'branch': branch, 'tag': tag,
-                  'depth': depth, 'rebase': self.app.pargs.rebase, 'protocol': self.app.pargs.protocol}
+                  'depth': depth, 'rebase': self.app.pargs.rebase, 'protocol': protocol}
         if self.app.pargs.parallel:
             herd_parallel(CLOWDER_CONTROLLER, **kwargs)
             return
