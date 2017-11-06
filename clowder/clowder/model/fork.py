@@ -24,7 +24,7 @@ class Fork(object):
 
     :ivar str name: Project name
     :ivar str path: Project relative path
-    :ivar Fork fork: Project's associated Fork
+    :ivar str remote_name: Git remote name
     """
 
     def __init__(self, fork, root_directory, path, source):
