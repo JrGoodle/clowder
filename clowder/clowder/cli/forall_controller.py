@@ -7,7 +7,7 @@
 
 from cement.ext.ext_argparse import ArgparseController, expose
 
-from clowder.cli.globals import CLOWDER_CONTROLLER
+from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.cli.parallel import forall
 from clowder.cli.util import options_help_message
 from clowder.clowder_repo import print_clowder_repo_status

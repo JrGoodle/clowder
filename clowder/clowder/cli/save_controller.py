@@ -14,7 +14,7 @@ from cement.ext.ext_argparse import ArgparseController, expose
 
 import clowder.util.formatting as fmt
 from clowder import ROOT_DIR
-from clowder.cli.globals import CLOWDER_CONTROLLER
+from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.cli.util import (
     validate_groups,
     validate_projects_exist

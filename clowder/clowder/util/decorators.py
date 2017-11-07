@@ -13,7 +13,7 @@ import sys
 from termcolor import cprint
 
 import clowder.util.formatting as fmt
-from clowder.cli.globals import CLOWDER_CONTROLLER
+from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.clowder_repo import CLOWDER_REPO
 
 

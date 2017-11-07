@@ -157,12 +157,9 @@ def execute_command(command, path, **kwargs):
         if pool:
             pool.close()
             pool.terminate()
-        cprint('\n - Command failed\n', 'red')
         raise ClowderTestError('Command interrupted')
     except Exception as err:
         if pool:
             pool.close()
             pool.terminate()
-        cprint('\n - Command failed', 'red')
-        print(str(err) + '\n')
         raise ClowderTestError(err)
