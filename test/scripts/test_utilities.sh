@@ -189,7 +189,7 @@ test_untracked_files() {
 test_clowder_version() {
     print_double_separator
     echo "TEST: Print clowder version"
-    clowder --version || exit 1
+    $COMMAND --version || exit 1
 }
 
 test_command() {
@@ -197,9 +197,9 @@ test_command() {
     echo "TEST: Clowder command"
     print_single_separator
     echo "TEST: Fail with unrecognized command"
-    clowder cat && exit 1
+    $COMMAND cat && exit 1
     echo "TEST: Fail with no arguments"
-    clowder && exit 1
+    $COMMAND && exit 1
     echo ''
 }
 

@@ -20,7 +20,7 @@ cd "$COCOS2D_EXAMPLE_DIR" || exit 1
 teast_clean_d() {
     print_single_separator
     echo "TEST: Clean untracked directories"
-    clowder herd $PARALLEL || exit 1
+    $COMMAND herd $PARALLEL || exit 1
 
     pushd cocos2d-objc || exit 1
     touch newfile
@@ -31,7 +31,7 @@ teast_clean_d() {
     test_file_exists 'newfile'
     popd || exit 1
 
-    clowder clean || exit 1
+    $COMMAND clean || exit 1
 
     pushd cocos2d-objc || exit 1
     test_directory_exists 'something'
@@ -39,7 +39,7 @@ teast_clean_d() {
     test_no_file_exists 'newfile'
     popd || exit 1
 
-    clowder clean -d || exit 1
+    $COMMAND clean -d || exit 1
 
     pushd cocos2d-objc || exit 1
     test_no_directory_exists 'something'
@@ -52,20 +52,20 @@ teast_clean_d
 test_clean_f() {
     print_single_separator
     echo "TEST: Clean git directories"
-    clowder herd $PARALLEL || exit 1
+    $COMMAND herd $PARALLEL || exit 1
 
     pushd cocos2d-objc || exit 1
     git clone https://github.com/JrGoodle/cats.git
     test_directory_exists 'cats'
     popd || exit 1
 
-    clowder clean || exit 1
+    $COMMAND clean || exit 1
 
     pushd cocos2d-objc || exit 1
     test_directory_exists 'cats'
     popd || exit 1
 
-    clowder clean -fd || exit 1
+    $COMMAND clean -fd || exit 1
 
     pushd cocos2d-objc || exit 1
     test_no_directory_exists 'cats'
@@ -76,7 +76,7 @@ test_clean_f
 test_clean_X() {
     print_single_separator
     echo "TEST: Clean only files ignored by git"
-    clowder herd $PARALLEL || exit 1
+    $COMMAND herd $PARALLEL || exit 1
 
     pushd cocos2d-objc || exit 1
     touch .idea
@@ -85,7 +85,7 @@ test_clean_X() {
     test_file_exists 'something'
     popd || exit 1
 
-    clowder clean -X || exit 1
+    $COMMAND clean -X || exit 1
 
     pushd cocos2d-objc || exit 1
     test_no_file_exists '.idea'
@@ -103,7 +103,7 @@ test_clean_X
 test_clean_x() {
     print_single_separator
     echo "TEST: Clean all untracked files"
-    clowder herd $PARALLEL || exit 1
+    $COMMAND herd $PARALLEL || exit 1
 
     pushd cocos2d-objc || exit 1
     touch xcuserdata
@@ -112,7 +112,7 @@ test_clean_x() {
     test_file_exists 'something'
     popd || exit 1
 
-    clowder clean -x || exit 1
+    $COMMAND clean -x || exit 1
 
     pushd cocos2d-objc || exit 1
     test_no_file_exists 'xcuserdata'
@@ -124,7 +124,7 @@ test_clean_x
 test_clean_a() {
     print_single_separator
     echo "TEST: Clean all"
-    clowder herd $PARALLEL || exit 1
+    $COMMAND herd $PARALLEL || exit 1
     for project in "${external_projects[@]}"; do
         pushd $project || exit 1
         touch newfile
@@ -150,7 +150,7 @@ test_clean_a() {
         popd || exit 1
     done
 
-    clowder clean -a || exit 1
+    $COMMAND clean -a || exit 1
 
     for project in "${external_projects[@]}"; do
         pushd $project || exit 1
@@ -174,7 +174,7 @@ test_clean_a
 test_clean_submodules_untracked() {
     print_single_separator
     echo "TEST: Clean untracked files in submodules"
-    clowder herd $PARALLEL || exit 1
+    $COMMAND herd $PARALLEL || exit 1
     for project in "${external_projects[@]}"; do
         pushd $project || exit 1
         touch newfile
@@ -186,7 +186,7 @@ test_clean_submodules_untracked() {
         popd || exit 1
     done
 
-    clowder clean -r || exit 1
+    $COMMAND clean -r || exit 1
 
     for project in "${external_projects[@]}"; do
         pushd $project || exit 1
@@ -201,7 +201,7 @@ test_clean_submodules_untracked
 test_clean_submodules_dirty() {
     print_single_separator
     echo "TEST: Clean dirty submodules"
-    clowder herd $PARALLEL || exit 1
+    $COMMAND herd $PARALLEL || exit 1
     for project in "${external_projects[@]}"; do
         pushd $project || exit 1
         touch newfile
@@ -217,7 +217,7 @@ test_clean_submodules_dirty() {
         popd || exit 1
     done
 
-    clowder clean -r || exit 1
+    $COMMAND clean -r || exit 1
 
     for project in "${external_projects[@]}"; do
         pushd $project || exit 1

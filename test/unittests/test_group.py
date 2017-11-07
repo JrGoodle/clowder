@@ -25,9 +25,9 @@ class GroupTest(unittest.TestCase):
     def setUp(self):
 
         sources = [Source(__github_source_yaml__)]
-        self.jules_group = Group(self.cats_example_path, __jules_group_yaml__, Defaults(__defaults_yaml__), sources)
-        self.kishka_group = Group(self.cats_example_path, __kishka_group_yaml__, Defaults(__defaults_yaml__), sources)
-        self.kit_group = Group(self.cats_example_path, __kit_group_yaml__, Defaults(__defaults_yaml__), sources)
+        self.jules_group = Group(__jules_group_yaml__, Defaults(__defaults_yaml__), sources)
+        self.kishka_group = Group(__kishka_group_yaml__, Defaults(__defaults_yaml__), sources)
+        self.kit_group = Group(__kit_group_yaml__, Defaults(__defaults_yaml__), sources)
 
     def test_get_yaml(self):
         """Test get_yaml() method"""

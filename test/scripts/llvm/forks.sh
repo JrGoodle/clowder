@@ -57,9 +57,9 @@ cd "$LLVM_EXAMPLE_DIR" || exit 1
 
 test_forks_env() {
     echo "TEST: Fork remote environment variable in script"
-    clowder forall $PARALLEL -c "$TEST_SCRIPT_DIR/test_forall_script_env_fork.sh" -p "llvm-mirror/clang" || exit 1
-    clowder forall $PARALLEL -c "$TEST_SCRIPT_DIR/test_forall_script_env_fork.sh" -p "llvm-mirror/llvm" && exit 1
+    $COMMAND forall $PARALLEL -c "$TEST_SCRIPT_DIR/test_forall_script_env_fork.sh" -p "llvm-mirror/clang" || exit 1
+    $COMMAND forall $PARALLEL -c "$TEST_SCRIPT_DIR/test_forall_script_env_fork.sh" -p "llvm-mirror/llvm" && exit 1
     echo "TEST: Fork remote environment variable in command"
-    clowder forall $PARALLEL -c 'if [ $PROJECT_REMOTE != upstream ]; then exit 1; fi' -p 'llvm-mirror/clang' || exit 1
-    clowder forall $PARALLEL -c 'if [ $FORK_REMOTE != origin ]; then exit 1; fi' -p 'llvm-mirror/clang' || exit 1
+    $COMMAND forall $PARALLEL -c 'if [ $PROJECT_REMOTE != upstream ]; then exit 1; fi' -p 'llvm-mirror/clang' || exit 1
+    $COMMAND forall $PARALLEL -c 'if [ $FORK_REMOTE != origin ]; then exit 1; fi' -p 'llvm-mirror/clang' || exit 1
 }

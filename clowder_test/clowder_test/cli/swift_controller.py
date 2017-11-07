@@ -9,16 +9,15 @@ import os
 
 from cement.ext.ext_argparse import ArgparseController, expose
 
-from clowder_test.execute import (
-    execute_command,
-    clowder_test_exit
-)
+from clowder_test.execute import execute_test_command
+
+from clowder_test import ROOT_DIR
 
 
 class SwiftController(ArgparseController):
     """Clowder test command swift controller"""
 
-    path = os.path.join(os.getcwd(), 'test', 'scripts', 'swift')
+    path = os.path.join(ROOT_DIR, 'test', 'scripts', 'swift')
 
     class Meta:
         """Clowder test swift Meta configuration"""
@@ -34,9 +33,7 @@ class SwiftController(ArgparseController):
     def all(self):
         """clowder swift tests"""
 
-        path = os.path.join(os.getcwd(), 'test', 'scripts')
-        return_code = self._execute_command('./test_example_swift.sh', path)
-        clowder_test_exit(return_code)
+        self._execute_command('./test_example_swift.sh', os.path.join(ROOT_DIR, 'test', 'scripts'))
 
     @expose(
         help='Run swift config versions tests'
@@ -44,8 +41,7 @@ class SwiftController(ArgparseController):
     def config_versions(self):
         """clowder swift config versions tests"""
 
-        return_code = self._execute_command('./config_versions.sh', self.path)
-        clowder_test_exit(return_code)
+        self._execute_command('./config_versions.sh', self.path)
 
     @expose(
         help='Run swift configure remotes tests'
@@ -53,8 +49,7 @@ class SwiftController(ArgparseController):
     def configure_remotes(self):
         """clowder swift configure remotes tests"""
 
-        return_code = self._execute_command('./configure_remotes.sh', self.path)
-        clowder_test_exit(return_code)
+        self._execute_command('./configure_remotes.sh', self.path)
 
     @expose(
         help='Run swift reset tests'
@@ -62,14 +57,12 @@ class SwiftController(ArgparseController):
     def reset(self):
         """clowder swift reset tests"""
 
-        return_code = self._execute_command('./reset.sh', self.path)
-        clowder_test_exit(return_code)
+        self._execute_command('./reset.sh', self.path)
 
     def _execute_command(self, command, path):
         """Private execute command"""
 
-        access = 'write' if self.app.pargs.write else 'read'
-        test_env = {'ACCESS_LEVEL': access}
-        if self.app.pargs.parallel:
-            test_env["PARALLEL"] = '--parallel'
-        return execute_command(command, path, env=test_env)
+        execute_test_command(command, path,
+                             parallel=self.app.pargs.parallel,
+                             write=self.app.pargs.write,
+                             coverage=self.app.pargs.coverage)

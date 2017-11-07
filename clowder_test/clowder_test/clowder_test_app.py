@@ -13,6 +13,7 @@ import sys
 import colorama
 from cement.core.foundation import CementApp
 
+from clowder_test import ROOT_DIR
 from clowder_test.cli.base_controller import BaseController
 from clowder_test.cli.cats_controller import CatsController
 from clowder_test.cli.cocos2d_controller import Cocos2dController
@@ -44,11 +45,7 @@ def main():
 
     print()
 
-    scripts_dir = os.path.join(os.getcwd(), 'test', 'scripts')
-    return_code = execute_command('./setup_local_test_directory.sh', scripts_dir)
-    if return_code != 0:
-        print(' - Failed to setup local test directory')
-        sys.exit(return_code)
+    execute_command('./setup_local_test_directory.sh', os.path.join(ROOT_DIR, 'test', 'scripts'))
 
     with ClowderApp() as app:
         app.run()

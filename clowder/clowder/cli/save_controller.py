@@ -13,6 +13,7 @@ import sys
 from cement.ext.ext_argparse import ArgparseController, expose
 
 import clowder.util.formatting as fmt
+from clowder import ROOT_DIR
 from clowder.cli.globals import CLOWDER_CONTROLLER
 from clowder.cli.util import (
     validate_groups,
@@ -58,7 +59,7 @@ class SaveController(ArgparseController):
         validate_groups(CLOWDER_CONTROLLER.groups)
 
         version_name = self.app.pargs.version.replace('/', '-')  # Replace path separators with dashes
-        version_dir = os.path.join(CLOWDER_CONTROLLER.root_directory, '.clowder', 'versions', version_name)
+        version_dir = os.path.join(ROOT_DIR, '.clowder', 'versions', version_name)
         _make_dir(version_dir)
 
         yaml_file = os.path.join(version_dir, 'clowder.yaml')

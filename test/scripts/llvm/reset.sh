@@ -56,8 +56,8 @@ cd "$LLVM_EXAMPLE_DIR" || exit 1
 test_reset() {
     print_single_separator
     echo "TEST: clowder reset"
-    clowder link || exit 1
-    clowder herd $PARALLEL || exit 1
+    $COMMAND link || exit 1
+    $COMMAND herd $PARALLEL || exit 1
 
     COMMIT_MESSAGE='Add new commits'
     pushd 'llvm/tools/clang' || exit 1
@@ -69,7 +69,7 @@ test_reset() {
     test_not_commit "$UPSTREAM_COMMIT"
     popd || exit 1
 
-    clowder reset $PARALLEL || exit 1
+    $COMMAND reset $PARALLEL || exit 1
 
     pushd 'llvm/tools/clang' || exit 1
     test_number_commits 'HEAD' 'upstream/master' '0'
@@ -84,7 +84,7 @@ test_reset() {
     test_not_commit "$UPSTREAM_COMMIT"
     popd || exit 1
 
-    clowder reset $PARALLEL || exit 1
+    $COMMAND reset $PARALLEL || exit 1
 
     pushd 'llvm/tools/clang' || exit 1
     test_number_commits 'HEAD' 'upstream/master' '0'
@@ -102,7 +102,7 @@ test_reset() {
     test_not_commit "$UPSTREAM_COMMIT"
     popd || exit 1
 
-    clowder reset  $PARALLEL || exit 1
+    $COMMAND reset  $PARALLEL || exit 1
 
     pushd 'llvm/tools/clang' || exit 1
     test_number_commits 'HEAD' 'upstream/master' '0'

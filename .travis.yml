@@ -39,11 +39,16 @@ before_script:
     - script/test
 
 script:
-    - if [ "$TARGET" = "cats" ]; then clowder-test unittests "$PYVERSION" || exit 1; clowder-test cats all; fi
+    - if [ "$TARGET" = "cats" ]; then clowder-test --coverage cats all; fi
     - if [ "$TARGET" = "cocos2d" ]; then clowder-test cocos2d all; fi
     - if [ "$TARGET" = "llvm" ]; then clowder-test llvm all; fi
     - if [ "$TARGET" = "parallel" ]; then clowder-test parallel; fi
     - if [ "$TARGET" = "swift" ]; then clowder-test swift all; fi
+
+after_script:
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then coverage combine examples/cats; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then coverage xml; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT; fi
 
 after_success: if [ "$TRAVIS_OS_NAME" = "osx" ]; then script/deploy; fi
 

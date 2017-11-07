@@ -69,13 +69,13 @@ NO_TAG='test-herd-no-tag'
 test_herd_tag_no_repo_existing_tag() {
     print_single_separator
     echo "TEST: Herd tag - No repo, existing remote tag"
-    clowder link || exit 1
+    $COMMAND link || exit 1
     for project in "${all_projects[@]}"; do
         rm -rf $project
         test_no_directory_exists "$project"
     done
-    clowder herd $PARALLEL -t $EXISTING_TAG || exit 1
-    clowder status || exit 1
+    $COMMAND herd $PARALLEL -t $EXISTING_TAG || exit 1
+    $COMMAND status || exit 1
     test_cats_herd_tag
 }
 test_herd_tag_no_repo_existing_tag
@@ -83,12 +83,12 @@ test_herd_tag_no_repo_existing_tag
 test_herd_tag_no_repo_no_tag() {
     print_single_separator
     echo "TEST: Herd tag - No repo, no tag"
-    clowder link || exit 1
+    $COMMAND link || exit 1
     for project in "${all_projects[@]}"; do
         rm -rf $project
         test_no_directory_exists "$project"
     done
-    clowder herd $PARALLEL -t $NO_TAG || exit 1
+    $COMMAND herd $PARALLEL -t $NO_TAG || exit 1
     test_cats_default_herd_branches
 }
 test_herd_tag_no_repo_no_tag
@@ -96,11 +96,11 @@ test_herd_tag_no_repo_no_tag
 test_herd_tag_existing_tag() {
     print_single_separator
     echo "TEST: Herd tag - Existing tag"
-    clowder link || exit 1
-    clowder herd $PARALLEL || exit 1
+    $COMMAND link || exit 1
+    $COMMAND herd $PARALLEL || exit 1
     test_cats_default_herd_branches
-    clowder herd $PARALLEL -t $EXISTING_TAG || exit 1
-    clowder status || exit 1
+    $COMMAND herd $PARALLEL -t $EXISTING_TAG || exit 1
+    $COMMAND status || exit 1
     test_cats_herd_tag
 }
 test_herd_tag_existing_tag
@@ -108,10 +108,10 @@ test_herd_tag_existing_tag
 test_herd_tag_no_tag() {
     print_single_separator
     echo "TEST: Herd tag - No existing tag"
-    clowder link || exit 1
-    clowder herd $PARALLEL || exit 1
+    $COMMAND link || exit 1
+    $COMMAND herd $PARALLEL || exit 1
     test_cats_default_herd_branches
-    clowder herd $PARALLEL -t $NO_TAG || exit 1
+    $COMMAND herd $PARALLEL -t $NO_TAG || exit 1
     test_cats_default_herd_branches
 }
 test_herd_tag_no_tag

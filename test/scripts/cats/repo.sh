@@ -14,22 +14,22 @@ echo "TEST: Test clowder repo"
 test_clowder_repo_add() {
     print_single_separator
     echo "TEST: Test clowder repo add command"
-    clowder repo add file_that_doesnt_exist && exit 1
+    $COMMAND repo add file_that_doesnt_exist && exit 1
 }
 test_clowder_repo_add
 
 # test_clowder_repo_checkout() {
 #     print_single_separator
 #     echo "TEST: Test clowder repo checkout command"
-#     clowder repo checkout tags || exit 1
+#     $COMMAND repo checkout tags || exit 1
 #     pushd .clowder || exit 1
 #     test_branch tags
 #     popd || exit 1
-#     clowder repo checkout ref_that_doesnt_exist && exit 1
+#     $COMMAND repo checkout ref_that_doesnt_exist && exit 1
 #     pushd .clowder || exit 1
 #     test_branch tags
 #     popd || exit 1
-#     clowder repo checkout master || exit 1
+#     $COMMAND repo checkout master || exit 1
 #     pushd .clowder || exit 1
 #     test_branch master
 #     popd || exit 1
@@ -42,12 +42,12 @@ test_clowder_repo_add
 #     pushd .clowder || exit 1
 #     test_git_clean
 #     popd || exit 1
-#     clowder repo run 'touch newfile' || exit 1
-#     clowder repo add 'newfile' || exit 1
+#     $COMMAND repo run 'touch newfile' || exit 1
+#     $COMMAND repo add 'newfile' || exit 1
 #     pushd .clowder || exit 1
 #     test_git_dirty
 #     popd || exit 1
-#     clowder repo clean || exit 1
+#     $COMMAND repo clean || exit 1
 #     pushd .clowder || exit 1
 #     test_git_clean
 #     popd || exit 1
@@ -62,9 +62,9 @@ test_clowder_repo_run() {
     print_single_separator
     echo "TEST: Test clowder repo run command"
     test_no_file_exists '.clowder/newfile'
-    clowder repo run 'touch newfile'
+    $COMMAND repo run 'touch newfile'
     test_file_exists '.clowder/newfile'
-    clowder repo run 'rm newfile'
+    $COMMAND repo run 'rm newfile'
     test_no_file_exists '.clowder/newfile'
 }
 test_clowder_repo_run
@@ -72,6 +72,6 @@ test_clowder_repo_run
 # test_clowder_repo_status() {
 #     print_single_separator
 #     echo "TEST: Test clowder repo status command"
-#     clowder repo status || exit 1
+#     $COMMAND repo status || exit 1
 # }
 # test_clowder_repo_status

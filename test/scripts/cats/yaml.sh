@@ -19,18 +19,18 @@ test_clowder_yaml() {
     popd || exit 1
 
     print_double_separator
-    clowder link || exit 1
-    clowder yaml || exit 1
+    $COMMAND link || exit 1
+    $COMMAND yaml || exit 1
     print_single_separator
-    clowder yaml -r || exit 1
+    $COMMAND yaml -r || exit 1
 
     for test in "${test_cases[@]}"
     do
         print_double_separator
-        clowder link -v $test || exit 1
-        clowder yaml || exit 1
+        $COMMAND link -v $test || exit 1
+        $COMMAND yaml || exit 1
         print_single_separator
-        clowder yaml -r || exit 1
+        $COMMAND yaml -r || exit 1
     done
 }
 test_clowder_yaml

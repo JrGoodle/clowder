@@ -13,19 +13,19 @@ import sys
 from termcolor import colored
 
 import clowder.util.formatting as fmt
+from clowder import ROOT_DIR
 from clowder.error.clowder_yaml_error import ClowderYAMLError
 from clowder.yaml import __MAX_IMPORT_DEPTH__
 from clowder.yaml.parsing import parse_yaml
 
 
-def load_yaml(root_directory):
+def load_yaml():
     """Load clowder from yaml file
 
-    :param str root_directory: Root directory of clowder projects
     :raise ClowderYAMLError:
     """
 
-    yaml_file = os.path.join(root_directory, 'clowder.yaml')
+    yaml_file = os.path.join(ROOT_DIR, 'clowder.yaml')
     parsed_yaml = parse_yaml(yaml_file)
     imported_yaml_files = []
     combined_yaml = {}
@@ -37,9 +37,9 @@ def load_yaml(root_directory):
         imported_yaml = parsed_yaml['import']
 
         if imported_yaml == 'default':
-            imported_yaml_file = os.path.join(root_directory, '.clowder', 'clowder.yaml')
+            imported_yaml_file = os.path.join(ROOT_DIR, '.clowder', 'clowder.yaml')
         else:
-            imported_yaml_file = os.path.join(root_directory, '.clowder', 'versions',
+            imported_yaml_file = os.path.join(ROOT_DIR, '.clowder', 'versions',
                                               imported_yaml, 'clowder.yaml')
 
         parsed_yaml = parse_yaml(imported_yaml_file)

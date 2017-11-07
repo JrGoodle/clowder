@@ -11,6 +11,7 @@ import os
 
 from termcolor import colored
 
+from clowder import ROOT_DIR
 from clowder.git.project_repo import ProjectRepo
 from clowder.git.util import (
     existing_git_repository,
@@ -27,16 +28,14 @@ class Fork(object):
     :ivar str remote_name: Git remote name
     """
 
-    def __init__(self, fork, root_directory, path, source):
+    def __init__(self, fork, path, source):
         """Project __init__
 
         :param dict fork: Parsed YAML python object for fork
-        :param str root_directory: Root directory of clowder projects
         :param str path: Fork relative path
         :param Source source: Source instance
         """
 
-        self._root_directory = root_directory
         self.path = path
         self.name = fork['name']
         self.remote_name = fork['remote']
@@ -49,7 +48,7 @@ class Fork(object):
         :rtype: str
         """
 
-        return os.path.join(self._root_directory, self.path)
+        return os.path.join(ROOT_DIR, self.path)
 
     def get_yaml(self):
         """Return python object representation for saving yaml

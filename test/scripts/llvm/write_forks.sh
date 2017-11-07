@@ -57,10 +57,10 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
     test_forks() {
         print_double_separator
         echo "TEST: Forks"
-        clowder link || exit 1
-        clowder herd $PARALLEL || exit 1
-        clowder start -t fail_start && exit 1
-        clowder prune -a fail_start || exit 1
+        $COMMAND link || exit 1
+        $COMMAND herd $PARALLEL || exit 1
+        $COMMAND start -t fail_start && exit 1
+        $COMMAND prune -a fail_start || exit 1
 
         for project in "${project_paths[@]}"; do
             pushd $project || exit 1
@@ -75,13 +75,13 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
             popd || exit 1
         done
 
-        clowder prune -af start_tracking || exit 1
+        $COMMAND prune -af start_tracking || exit 1
 
         for project in "${fork_projects[@]}"; do
-            clowder start -t start_tracking -p $project || exit 1
+            $COMMAND start -t start_tracking -p $project || exit 1
         done
 
-        clowder status || exit 1
+        $COMMAND status || exit 1
 
         for project in "${project_paths[@]}"; do
             pushd $project || exit 1
@@ -95,8 +95,8 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
             popd || exit 1
         done
 
-        clowder herd $PARALLEL || exit 1
-        clowder status || exit 1
+        $COMMAND herd $PARALLEL || exit 1
+        $COMMAND status || exit 1
 
         for project in "${project_paths[@]}"; do
             pushd $project || exit 1
@@ -110,7 +110,7 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
         done
 
         for project in "${fork_projects[@]}"; do
-            clowder prune start_tracking -p $project || exit 1
+            $COMMAND prune start_tracking -p $project || exit 1
         done
 
         for project in "${fork_paths[@]}"; do
@@ -120,8 +120,8 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
             popd || exit 1
         done
 
-        clowder herd $PARALLEL -b start_tracking || exit 1
-        clowder status || exit 1
+        $COMMAND herd $PARALLEL -b start_tracking || exit 1
+        $COMMAND status || exit 1
 
         for project in "${project_paths[@]}"; do
             pushd $project || exit 1
@@ -136,7 +136,7 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
         done
 
         for project in "${fork_projects[@]}"; do
-            clowder prune -a start_tracking -p $project || exit 1
+            $COMMAND prune -a start_tracking -p $project || exit 1
         done
 
         for project in "${fork_paths[@]}"; do

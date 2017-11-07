@@ -21,19 +21,14 @@ from clowder.yaml.loading import load_yaml
 class ClowderController(object):
     """Class encapsulating project information from clowder.yaml for controlling clowder
 
-    :ivar str root_directory: Root directory of clowder projects
     :ivar dict defaults: Global clowder.yaml defaults
     :ivar list[Group] groups: List of all Groups
     :ivar list[Source] sources: List of all Sources
     """
 
-    def __init__(self, root_directory):
-        """ClowderController __init__
+    def __init__(self):
+        """ClowderController __init__"""
 
-        :param str root_directory: Root directory of clowder projects
-        """
-
-        self.root_directory = root_directory
         self.defaults = None
         self.groups = []
         self.sources = []
@@ -114,36 +109,33 @@ class ClowderController(object):
 
         return timestamp
 
-    def get_yaml(self):
-        """Return python object representation for saving yaml
+    def get_yaml(self, resolved=False):
+        """Return python object representation of model objects
 
+        .. py:function:: get_yaml(self, resolved=False)
+
+        :param Optional[bool] resolved: Whether to return resolved yaml
         :return: YAML python object
         :rtype: dict
         """
 
-        return {'defaults': self.defaults.get_yaml(),
-                'sources': [s.get_yaml() for s in self.sources],
-                'groups': [g.get_yaml() for g in self.groups]}
-
-    def get_yaml_resolved(self):
-        """Return python object representation for resolved yaml
-
-        :return: YAML python object
-        :rtype: dict
-        """
+        if resolved:
+            groups = [g.get_yaml(resolved=True) for g in self.groups]
+        else:
+            groups = [g.get_yaml() for g in self.groups]
 
         return {'defaults': self.defaults.get_yaml(),
                 'sources': [s.get_yaml() for s in self.sources],
-                'groups': [g.get_yaml_resolved() for g in self.groups]}
+                'groups': groups}
 
     def _load_yaml(self):
         """Load clowder.yaml"""
         try:
-            yaml = load_yaml(self.root_directory)
+            yaml = load_yaml()
             self.defaults = Defaults(yaml['defaults'])
             self.sources = [Source(s) for s in yaml['sources']]
             for group in yaml['groups']:
-                self.groups.append(Group(self.root_directory, group, self.defaults, self.sources))
+                self.groups.append(Group(group, self.defaults, self.sources))
         except (AttributeError, TypeError):
             self.defaults = None
             self.sources = []

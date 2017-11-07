@@ -9,10 +9,9 @@ import os
 
 from cement.ext.ext_argparse import ArgparseController, expose
 
-from clowder_test.execute import (
-    execute_command,
-    clowder_test_exit
-)
+from clowder_test.execute import execute_test_command
+
+from clowder_test import ROOT_DIR
 
 
 VERSION = '0.1.0'
@@ -21,7 +20,7 @@ VERSION = '0.1.0'
 class BaseController(ArgparseController):
     """Clowder app base controller"""
 
-    path = os.path.join(os.getcwd(), 'test', 'scripts')
+    path = os.path.join(ROOT_DIR, 'test', 'scripts')
 
     class Meta:
         """Clowder app base Meta configuration"""
@@ -29,6 +28,7 @@ class BaseController(ArgparseController):
         label = 'base'
         description = 'Clowder test runner'
         arguments = [
+            (['--coverage', '-c'], dict(action='store_true', help='run tests with code coverage')),
             (['--parallel', '-p'], dict(action='store_true', help='run tests with parallel commands')),
             (['--write', '-w'], dict(action='store_true', help='run tests requiring test repo write access')),
             (['-v', '--version'], dict(action='version', version=VERSION))
@@ -43,8 +43,10 @@ class BaseController(ArgparseController):
         scripts = ['./test_example_cats.sh', './test_example_cocos2d.sh',
                    './test_example_llvm.sh', './test_example_swift.sh']
         for script in scripts:
-            return_code = self._execute_command(script, self.path)
-            clowder_test_exit(return_code)
+            execute_test_command(script, self.path,
+                                 parallel=self.app.pargs.parallel,
+                                 write=self.app.pargs.write,
+                                 coverage=self.app.pargs.coverage)
 
         self.offline()
         self.parallel()
@@ -56,9 +58,10 @@ class BaseController(ArgparseController):
     def offline(self):
         """clowder offline tests"""
 
-        path = os.path.join(self.path, 'cats')
-        return_code = self._execute_command('./offline.sh', path)
-        clowder_test_exit(return_code)
+        execute_test_command('./offline.sh', os.path.join(self.path, 'cats'),
+                             parallel=self.app.pargs.parallel,
+                             write=self.app.pargs.write,
+                             coverage=self.app.pargs.coverage)
 
     @expose(
         help='Run parallel tests',
@@ -69,11 +72,10 @@ class BaseController(ArgparseController):
     def parallel(self):
         """clowder parallel tests"""
 
-        access = 'write' if self.app.pargs.write else 'read'
-        test_env = {'ACCESS_LEVEL': access, "PARALLEL": '--parallel'}
-
-        return_code = self._execute_command('./test_parallel.sh', self.path, test_env=test_env)
-        clowder_test_exit(return_code)
+        execute_test_command('./test_parallel.sh', self.path,
+                             parallel=True,
+                             write=self.app.pargs.write,
+                             coverage=self.app.pargs.coverage)
 
     @expose(
         help='Run unit tests',
@@ -90,8 +92,11 @@ class BaseController(ArgparseController):
         else:
             test_env = {"PYTHON_VERSION": 'python3'}
 
-        return_code = self._execute_command('./unittests.sh', self.path, test_env=test_env)
-        clowder_test_exit(return_code)
+        execute_test_command('./unittests.sh', self.path,
+                             parallel=self.app.pargs.parallel,
+                             write=self.app.pargs.write,
+                             coverage=self.app.pargs.coverage,
+                             test_env=test_env)
 
     @expose(
         help='Run tests requiring remote write permissions',
@@ -102,37 +107,26 @@ class BaseController(ArgparseController):
     def write(self):
         """clowder write tests"""
 
-        test_env = {'ACCESS_LEVEL': 'write'}
-        if self.app.pargs.parallel:
-            test_env["PARALLEL"] = '--parallel'
-
-        example_dir = os.path.join(self.path, 'cats')
         cats_scripts = ['./write_herd.sh', './write_prune.sh', './write_repo.sh', './write_start.sh']
         for script in cats_scripts:
-            return_code = self._execute_command(script, example_dir, test_env=test_env)
-            clowder_test_exit(return_code)
+            execute_test_command(script, os.path.join(self.path, 'cats'),
+                                 parallel=self.app.pargs.parallel,
+                                 write=True,
+                                 coverage=self.app.pargs.coverage)
 
-        example_dir = os.path.join(self.path, 'cocos2d')
-        return_code = self._execute_command('./write_protocol.sh', example_dir, test_env=test_env)
-        clowder_test_exit(return_code)
+        execute_test_command('./write_protocol.sh', os.path.join(self.path, 'cocos2d'),
+                             parallel=self.app.pargs.parallel,
+                             write=True,
+                             coverage=self.app.pargs.coverage)
 
-        example_dir = os.path.join(self.path, 'llvm')
         llvm_scripts = ['./write_forks.sh', './write_sync.sh']
         for script in llvm_scripts:
-            return_code = self._execute_command(script, example_dir, test_env=test_env)
-            clowder_test_exit(return_code)
+            execute_test_command(script, os.path.join(self.path, 'llvm'),
+                                 parallel=self.app.pargs.parallel,
+                                 write=True,
+                                 coverage=self.app.pargs.coverage)
 
-        example_dir = os.path.join(self.path, 'swift')
-        return_code = self._execute_command('./write_configure_remotes.sh', example_dir, test_env=test_env)
-        clowder_test_exit(return_code)
-
-    def _execute_command(self, command, path, test_env=None):
-        """Private execute command"""
-
-        if test_env is None:
-            access = 'write' if self.app.pargs.write else 'read'
-            test_env = {'ACCESS_LEVEL': access}
-            if self.app.pargs.parallel:
-                test_env["PARALLEL"] = '--parallel'
-
-        return execute_command(command, path, env=test_env)
+        execute_test_command('./write_configure_remotes.sh', os.path.join(self.path, 'swift'),
+                             parallel=self.app.pargs.parallel,
+                             write=True,
+                             coverage=self.app.pargs.coverage)

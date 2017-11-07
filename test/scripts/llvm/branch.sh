@@ -13,16 +13,16 @@ cd "$LLVM_EXAMPLE_DIR" || exit 1
 
 test_branch() {
     echo "TEST: clowder branch"
-    clowder link || exit 1
-    clowder herd $PARALLEL || exit 1
-    clowder branch || exit 1
-    clowder branch -r || exit 1
-    clowder branch -a || exit 1
-    clowder branch -p 'llvm-mirror/llvm' || exit 1
-    clowder branch -rp 'llvm-mirror/llvm' || exit 1
-    clowder branch -ap 'llvm-mirror/llvm' || exit 1
-    clowder branch -g 'clang' || exit 1
-    clowder branch -rg 'clang' || exit 1
-    clowder branch -ag 'clang' || exit 1
+    $COMMAND link || exit 1
+    $COMMAND herd $PARALLEL || exit 1
+    $COMMAND branch || exit 1
+    $COMMAND branch -r || exit 1
+    $COMMAND branch -a || exit 1
+    $COMMAND branch -p 'llvm-mirror/llvm' || exit 1
+    $COMMAND branch -rp 'llvm-mirror/llvm' || exit 1
+    $COMMAND branch -ap 'llvm-mirror/llvm' || exit 1
+    $COMMAND branch -g 'clang' || exit 1
+    $COMMAND branch -rg 'clang' || exit 1
+    $COMMAND branch -ag 'clang' || exit 1
 }
 test_branch

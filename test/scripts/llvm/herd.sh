@@ -39,7 +39,7 @@ cd "$LLVM_EXAMPLE_DIR" || exit 1
 test_init_herd() {
     print_double_separator
     echo "TEST: Normal herd after init"
-    clowder herd $PARALLEL || exit 1
+    $COMMAND herd $PARALLEL || exit 1
     echo "TEST: Check current branches are on master"
     for project in "${project_paths[@]}"; do
         pushd $project || exit 1
@@ -56,4 +56,4 @@ test_init_herd() {
 }
 test_init_herd
 
-clowder status || exit 1
+$COMMAND status || exit 1

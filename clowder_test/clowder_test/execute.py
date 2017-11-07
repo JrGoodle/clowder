@@ -10,21 +10,54 @@ from __future__ import print_function
 import atexit
 import os
 import subprocess
-import sys
 from multiprocessing.pool import ThreadPool
 
 from termcolor import cprint
+
+from clowder_test import ROOT_DIR
+from clowder_test.clowder_test_error import ClowderTestError
 
 
 # Disable errors shown by pylint for catching too general exception
 # pylint: disable=W0703
 
 
-def clowder_test_exit(return_code):
-    """Custom exit function"""
+def execute_test_command(command, path, **kwargs):
+    """Execute test command
 
-    if return_code != 0:
-        sys.exit(return_code)
+    .. py:function:: execute_test_command(command, path, parallel=False, write=False, coverage=False, test_env=None)
+
+    :param command: Command to run
+    :type command: str
+    :param str path: Path to set as ``cwd``
+
+    Keyword Args:
+        parallel (bool): Whether to run tests in parallel
+        write (bool): Whether to run tests requiring write permission
+        coverage (bool): Whether to run tests with code coverage
+        test_env (dict): Custom dict of environment variables
+
+    :return: Subprocess return code
+    :rtype: int
+    """
+
+    parallel = kwargs.get('parallel', False)
+    write = kwargs.get('write', False)
+    coverage = kwargs.get('coverage', False)
+    test_env = kwargs.get('test_env', {})
+
+    test_env['ACCESS_LEVEL'] = 'write' if write else 'read'
+
+    if parallel:
+        test_env['PARALLEL'] = '--parallel'
+
+    if coverage:
+        rc_file = os.path.join(ROOT_DIR, '.coveragerc')
+        test_env['COMMAND'] = 'coverage run --rcfile=' + rc_file + ' -m clowder.clowder_app'
+    else:
+        test_env['COMMAND'] = 'clowder'
+
+    execute_command(command, path, env=test_env)
 
 
 def subprocess_exit_handler(process):
@@ -53,6 +86,7 @@ def execute_subprocess_command(command, path, **kwargs):
 
     :return: Subprocess return code
     :rtype: int
+    :raise ClowderTestError:
     """
 
     shell = kwargs.get('shell', True)
@@ -64,18 +98,18 @@ def execute_subprocess_command(command, path, **kwargs):
         cmd = ' '.join(command)
     else:
         cmd = command
+
     try:
         process = subprocess.Popen(cmd, shell=shell, env=env, cwd=path,
                                    stdout=stdout, stderr=stderr)
         atexit.register(subprocess_exit_handler, process)
         process.communicate()
+        if process.returncode != 0:
+            raise ClowderTestError
     except (KeyboardInterrupt, SystemExit):
         raise
     except Exception as err:
-        print(err)
-        raise
-    else:
-        return process.returncode
+        raise ClowderTestError(err)
 
 
 def execute_command(command, path, **kwargs):
@@ -94,6 +128,7 @@ def execute_command(command, path, **kwargs):
 
     :return: Command return code
     :rtype: int
+    :raise ClowderTestError:
     """
 
     shell = kwargs.get('shell', True)
@@ -103,11 +138,14 @@ def execute_command(command, path, **kwargs):
     cmd_env = os.environ.copy()
     if env:
         cmd_env.update(env)
+
     if print_output:
         pipe = None
     else:
         pipe = subprocess.PIPE
+
     pool = ThreadPool()
+
     try:
         result = pool.apply(execute_subprocess_command,
                             args=(command, path),
@@ -119,16 +157,12 @@ def execute_command(command, path, **kwargs):
         if pool:
             pool.close()
             pool.terminate()
-        print()
-        cprint(' - Command failed', 'red')
-        print()
-        return 1
+        cprint('\n - Command failed\n', 'red')
+        raise ClowderTestError('Command interrupted')
     except Exception as err:
         if pool:
             pool.close()
             pool.terminate()
-        print()
-        cprint(' - Command failed', 'red')
-        print(err)
-        print()
-        return 1
+        cprint('\n - Command failed', 'red')
+        print(str(err) + '\n')
+        raise ClowderTestError(err)

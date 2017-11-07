@@ -9,16 +9,15 @@ import os
 
 from cement.ext.ext_argparse import ArgparseController, expose
 
-from clowder_test.execute import (
-    execute_command,
-    clowder_test_exit
-)
+from clowder_test.execute import execute_test_command
+
+from clowder_test import ROOT_DIR
 
 
 class LLVMController(ArgparseController):
     """Clowder test command llvm controller"""
 
-    path = os.path.join(os.getcwd(), 'test', 'scripts', 'llvm')
+    path = os.path.join(ROOT_DIR, 'test', 'scripts', 'llvm')
 
     class Meta:
         """Clowder test llvm Meta configuration"""
@@ -34,9 +33,7 @@ class LLVMController(ArgparseController):
     def all(self):
         """clowder llvm tests"""
 
-        path = os.path.join(os.getcwd(), 'test', 'scripts')
-        return_code = self._execute_command('./test_example_llvm.sh', path)
-        clowder_test_exit(return_code)
+        self._execute_command('./test_example_llvm.sh', os.path.join(ROOT_DIR, 'test', 'scripts'))
 
     @expose(
         help='Run llvm branch tests'
@@ -44,8 +41,7 @@ class LLVMController(ArgparseController):
     def branch(self):
         """clowder llvm branch tests"""
 
-        return_code = self._execute_command('./branch.sh', self.path)
-        clowder_test_exit(return_code)
+        self._execute_command('./branch.sh', self.path)
 
     @expose(
         help='Run llvm forks tests'
@@ -53,8 +49,7 @@ class LLVMController(ArgparseController):
     def forks(self):
         """clowder llvm forks tests"""
 
-        return_code = self._execute_command('./forks.sh', self.path)
-        clowder_test_exit(return_code)
+        self._execute_command('./forks.sh', self.path)
 
     @expose(
         help='Run llvm herd tests'
@@ -62,8 +57,7 @@ class LLVMController(ArgparseController):
     def herd(self):
         """clowder llvm herd tests"""
 
-        return_code = self._execute_command('./herd.sh', self.path)
-        clowder_test_exit(return_code)
+        self._execute_command('./herd.sh', self.path)
 
     @expose(
         help='Run llvm reset tests'
@@ -71,8 +65,7 @@ class LLVMController(ArgparseController):
     def reset(self):
         """clowder llvm reset tests"""
 
-        return_code = self._execute_command('./reset.sh', self.path)
-        clowder_test_exit(return_code)
+        self._execute_command('./reset.sh', self.path)
 
     @expose(
         help='Run llvm sync tests'
@@ -80,14 +73,12 @@ class LLVMController(ArgparseController):
     def sync(self):
         """clowder llvm sync tests"""
 
-        return_code = self._execute_command('./sync.sh', self.path)
-        clowder_test_exit(return_code)
+        self._execute_command('./sync.sh', self.path)
 
     def _execute_command(self, command, path):
         """Private execute command"""
 
-        access = 'write' if self.app.pargs.write else 'read'
-        test_env = {'ACCESS_LEVEL': access}
-        if self.app.pargs.parallel:
-            test_env["PARALLEL"] = '--parallel'
-        return execute_command(command, path, env=test_env)
+        execute_test_command(command, path,
+                             parallel=self.app.pargs.parallel,
+                             write=self.app.pargs.write,
+                             coverage=self.app.pargs.coverage)

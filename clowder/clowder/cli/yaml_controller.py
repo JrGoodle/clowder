@@ -46,7 +46,7 @@ class YAMLController(ArgparseController):
         """Clowder yaml command private implementation"""
 
         if self.app.pargs.resolved:
-            print(fmt.yaml_string(CLOWDER_CONTROLLER.get_yaml_resolved()))
+            print(fmt.yaml_string(CLOWDER_CONTROLLER.get_yaml(resolved=True)))
         else:
-            print_yaml(CLOWDER_CONTROLLER.root_directory)
+            print_yaml()
         sys.exit()  # exit early to prevent printing extra newline

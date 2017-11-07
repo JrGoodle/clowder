@@ -8,7 +8,6 @@
 from __future__ import print_function
 
 import clowder.util.formatting as fmt
-from clowder.git.project_repo import ProjectRepo
 from clowder.git.util import existing_git_repository
 from clowder.model.project import Project
 
@@ -26,10 +25,9 @@ class Group(object):
     :ivar list[Project] projects: List of group's projects
     """
 
-    def __init__(self, root_directory, group, defaults, sources):
+    def __init__(self, group, defaults, sources):
         """Groups __init__
 
-        :param str root_directory: Root directory of clowder projects
         :param dict group: Parsed YAML python object for group
         :param Defaults defaults: Defaults instance
         :param list[Source] sources: List of Source instances
@@ -47,7 +45,7 @@ class Group(object):
             if source.name == source_name:
                 self.source = source
 
-        self.projects = [Project(root_directory, p, group, defaults, sources) for p in group['projects']]
+        self.projects = [Project(p, group, defaults, sources) for p in group['projects']]
         self.projects.sort(key=lambda p: p.path)
 
     def existing_branch(self, branch, is_remote):
@@ -70,24 +68,19 @@ class Group(object):
 
         return all([existing_git_repository(project.full_path()) for project in self.projects])
 
-    def get_yaml(self):
-        """Return python object representation for saving yaml
+    def get_yaml(self, resolved=False):
+        """Return python object representation of model objects
 
+        .. py:function:: get_yaml(self, resolved=False)
+
+        :param Optional[bool] resolved: Whether to return resolved yaml
         :return: YAML python object
         :rtype: dict
         """
 
-        projects_yaml = [p.get_yaml() for p in self.projects]
-        return {'name': self.name, 'projects': projects_yaml}
-
-    def get_yaml_resolved(self):
-        """Return python object representation for resolved yaml
-
-        :return: YAML python object
-        :rtype: dict
-        """
-
-        projects_yaml = [p.get_yaml(resolved=True) for p in self.projects]
+        if not resolved:
+            return {'name': self.name,
+                    'projects': [p.get_yaml() for p in self.projects]}
 
         group = {'name': self.name,
                  'depth': self.depth,
@@ -95,7 +88,7 @@ class Group(object):
                  'recursive': self.recursive,
                  'remote': self.remote_name,
                  'source': self.source.name,
-                 'projects': projects_yaml}
+                 'projects': [p.get_yaml(resolved=True) for p in self.projects]}
 
         if self.timestamp_author:
             group['timestamp_author'] = self.timestamp_author

@@ -25,9 +25,9 @@ echo "TEST: Test clowder prune"
 test_prune() {
     print_single_separator
     echo "TEST: Test clowder prune branch"
-    clowder herd $PARALLEL || exit 1
+    $COMMAND herd $PARALLEL || exit 1
 
-    clowder start prune_branch || exit 1
+    $COMMAND start prune_branch || exit 1
 
     for project in "${all_projects[@]}"; do
         pushd $project || exit 1
@@ -35,7 +35,7 @@ test_prune() {
         popd || exit 1
     done
 
-    clowder prune -f prune_branch || exit 1
+    $COMMAND prune -f prune_branch || exit 1
 
     pushd duke || exit 1
     test_branch purr
@@ -52,7 +52,7 @@ test_prune() {
         popd || exit 1
     done
 
-    clowder start prune_branch >/dev/null
+    $COMMAND start prune_branch >/dev/null
 
     for project in "${all_projects[@]}"; do
         pushd $project || exit 1
@@ -60,7 +60,7 @@ test_prune() {
         popd || exit 1
     done
 
-    clowder prune -f prune_branch -g black-cats || exit 1
+    $COMMAND prune -f prune_branch -g black-cats || exit 1
 
     pushd duke || exit 1
     test_branch prune_branch
@@ -81,7 +81,7 @@ test_prune_force() {
     print_single_separator
     echo "TEST: Test clowder force prune branch"
 
-    clowder start prune_branch || exit 1
+    $COMMAND start prune_branch || exit 1
 
     for project in "${all_projects[@]}"; do
         pushd $project || exit 1
@@ -92,7 +92,7 @@ test_prune_force() {
         popd || exit 1
     done
 
-    clowder prune prune_branch && exit 1
+    $COMMAND prune prune_branch && exit 1
 
     for project in "${all_projects[@]}"; do
         pushd $project || exit 1
@@ -100,7 +100,7 @@ test_prune_force() {
         popd || exit 1
     done
 
-    clowder prune -f prune_branch || exit 1
+    $COMMAND prune -f prune_branch || exit 1
 
     pushd duke || exit 1
     test_branch purr

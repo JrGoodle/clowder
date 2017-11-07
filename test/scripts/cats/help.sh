@@ -18,14 +18,14 @@ test_help() {
     ./clean.sh
     ./init.sh || exit 1
     echo "TEST: Print help with invalid clowder.yaml"
-    clowder link -v 'test-missing-default-ref' || exit 1
+    $COMMAND link -v 'test-missing-default-ref' || exit 1
     "$TEST_SCRIPT_DIR/test_help.sh" "$CATS_EXAMPLE_DIR" || exit 1
 
     print_double_separator
     echo "TEST: Print help with valid clowder.yaml"
-    clowder link || exit 1
-    clowder herd $PARALLEL || exit 1
-    clowder status || exit 1
+    $COMMAND link || exit 1
+    $COMMAND herd $PARALLEL || exit 1
+    $COMMAND status || exit 1
     "$TEST_SCRIPT_DIR/test_help.sh" "$CATS_EXAMPLE_DIR" || exit 1
 }
 test_help
