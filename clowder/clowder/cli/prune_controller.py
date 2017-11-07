@@ -13,7 +13,10 @@ from cement.ext.ext_argparse import ArgparseController, expose
 from termcolor import cprint
 
 from clowder.clowder_controller import CLOWDER_CONTROLLER
-from clowder.cli.util import (
+from clowder.clowder_repo import print_clowder_repo_status
+from clowder.util.connectivity import network_connection_required
+from clowder.util.decorators import valid_clowder_yaml_required
+from clowder.util.clowder_utils import (
     existing_branch_groups,
     existing_branch_projects,
     filter_groups,
@@ -24,9 +27,6 @@ from clowder.cli.util import (
     validate_groups,
     validate_projects
 )
-from clowder.clowder_repo import print_clowder_repo_status
-from clowder.util.decorators import valid_clowder_yaml_required
-from clowder.util.connectivity import network_connection_required
 
 
 class PruneController(ArgparseController):

@@ -10,15 +10,15 @@ from __future__ import print_function
 from cement.ext.ext_argparse import ArgparseController, expose
 
 from clowder.clowder_controller import CLOWDER_CONTROLLER
-from clowder.cli.util import (
+from clowder.clowder_repo import print_clowder_repo_status
+from clowder.util.decorators import valid_clowder_yaml_required
+from clowder.util.clowder_utils import (
     filter_groups,
     filter_projects_on_project_names,
     options_help_message,
     run_group_command,
     run_project_command
 )
-from clowder.clowder_repo import print_clowder_repo_status
-from clowder.util.decorators import valid_clowder_yaml_required
 
 
 class StashController(ArgparseController):

@@ -16,7 +16,8 @@ import psutil
 from termcolor import cprint
 
 import clowder.util.formatting as fmt
-from clowder.cli.util import (
+from clowder.util.progress import Progress
+from clowder.util.clowder_utils import (
     filter_groups,
     filter_projects_on_group_names,
     filter_projects_on_project_names,
@@ -27,7 +28,6 @@ from clowder.cli.util import (
     validate_groups,
     validate_projects
 )
-from clowder.util.progress import Progress
 
 
 def herd_project(project, branch, tag, depth, rebase, protocol):
