@@ -299,16 +299,13 @@ class ProjectRepo(ProjectRepoImpl):
             return
 
         branch = truncate_ref(self.default_ref)
-        branch_output = fmt.ref_string(branch)
         if not self.existing_local_branch(branch):
             self._create_branch_local_tracking(branch, self.remote, depth=depth, fetch=True)
             return
 
-        if self._is_branch_checked_out(branch):
-            self._print(' - Branch ' + branch_output + ' already checked out')
-        else:
-            self._checkout_branch_local(branch)
+        self._checkout_branch(branch)
 
+        branch_output = fmt.ref_string(branch)
         remote_output = fmt.remote_string(self.remote)
         if not self.existing_remote_branch(branch, self.remote):
             message = colored(' - No existing remote branch ', 'red') + remote_output + ' ' + branch_output
@@ -456,13 +453,9 @@ class ProjectRepo(ProjectRepoImpl):
         rebase = kwargs.get('rebase', False)
         fork_remote = kwargs.get('fork_remote', None)
 
-        branch_output = fmt.ref_string(branch)
-        branch_ref = 'refs/heads/' + branch
-        if self._is_branch_checked_out(branch):
-            self._print(' - Branch ' + branch_output + ' already checked out')
-        else:
-            self._checkout_branch_local(branch)
+        self._checkout_branch(branch)
 
+        branch_ref = 'refs/heads/' + branch
         self.fetch(self.remote, depth=depth, ref=branch_ref)
         if self.existing_remote_branch(branch, self.remote):
             self._herd_remote_branch(self.remote, branch, depth=depth, rebase=rebase)
@@ -509,12 +502,7 @@ class ProjectRepo(ProjectRepoImpl):
         depth = kwargs.get('depth', 0)
         rebase = kwargs.get('rebase', False)
 
-        branch_output = fmt.ref_string(branch)
-
-        if self._is_branch_checked_out(branch):
-            self._print(' - Branch ' + branch_output + ' already checked out')
-        else:
-            self._checkout_branch_local(branch)
+        self._checkout_branch(branch)
 
         if not self.existing_remote_branch(branch, remote):
             return

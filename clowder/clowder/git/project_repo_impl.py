@@ -18,9 +18,7 @@ from clowder.error.clowder_git_error import ClowderGitError
 from clowder.git.repo import GitRepo
 from clowder.git.util import (
     existing_git_repository,
-    not_detached,
-    ref_type,
-    truncate_ref
+    not_detached
 )
 from clowder.util.execute import execute_command
 from clowder.util.file_system import remove_directory
@@ -49,6 +47,19 @@ class ProjectRepoImpl(GitRepo):
         """
 
         GitRepo.__init__(self, repo_path, remote, default_ref, parallel=parallel)
+
+    def _checkout_branch(self, branch):
+        """Checkout local branch or print message if already checked out
+
+        .. py:function:: _checkout_branch(branch)
+
+        :param str branch: Branch name
+        """
+
+        if self._is_branch_checked_out(branch):
+            self._print(' - Branch ' + fmt.ref_string(branch) + ' already checked out')
+        else:
+            self._checkout_branch_local(branch)
 
     def _checkout_branch_local(self, branch, remove_dir=False):
         """Checkout local branch
