@@ -20,21 +20,7 @@ def print_yaml():
 
     for yaml_file in _get_yaml_files():
         if os.path.isfile(yaml_file):
-            try:
-                with open(yaml_file) as raw_file:
-                    contents = raw_file.read()
-                    print('-' * 80)
-                    if os.path.islink(yaml_file):
-                        print(_format_yaml_symlink(yaml_file))
-                    else:
-                        print(_format_yaml_file(yaml_file))
-                    print(contents)
-            except IOError as err:
-                print(fmt.open_file_error(yaml_file))
-                print(err)
-                sys.exit(1)
-            except (KeyboardInterrupt, SystemExit):
-                sys.exit(1)
+            _print_yaml(yaml_file)
 
 
 def _format_yaml_symlink(yaml_file):
@@ -77,3 +63,29 @@ def _get_yaml_files():
         else:
             yaml_file = os.path.join(ROOT_DIR, '.clowder', 'versions', imported_yaml, 'clowder.yaml')
         parsed_yaml = parse_yaml(yaml_file)
+
+
+def _print_yaml(yaml_file):
+    """Private print current clowder yaml"""
+
+    try:
+        with open(yaml_file) as raw_file:
+            contents = raw_file.read()
+            print('-' * 80)
+            _print_yaml_path(yaml_file)
+            print(contents)
+    except IOError as err:
+        print(fmt.open_file_error(yaml_file))
+        print(err)
+        sys.exit(1)
+    except (KeyboardInterrupt, SystemExit):
+        sys.exit(1)
+
+
+def _print_yaml_path(yaml_file):
+    """Print clowder yaml path"""
+
+    if os.path.islink(yaml_file):
+        print(_format_yaml_symlink(yaml_file))
+    else:
+        print(_format_yaml_file(yaml_file))
