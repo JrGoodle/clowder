@@ -73,7 +73,9 @@ class HerdController(ArgparseController):
         kwargs = {'group_names': self.app.pargs.groups, 'project_names': self.app.pargs.projects,
                   'skip': self.app.pargs.skip, 'branch': branch, 'tag': tag,
                   'depth': depth, 'rebase': self.app.pargs.rebase, 'protocol': protocol}
+
         if self.app.pargs.parallel:
             herd_parallel(CLOWDER_CONTROLLER, **kwargs)
             return
+
         herd(CLOWDER_CONTROLLER, **kwargs)

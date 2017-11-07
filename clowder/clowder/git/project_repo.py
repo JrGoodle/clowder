@@ -91,11 +91,7 @@ class ProjectRepo(ProjectRepoImpl):
                 if fork_remote_url == self._remote_get_url(remote.name):
                     if remote.name != fork_remote_name:
                         self._rename_remote(remote.name, fork_remote_name)
-            remote_names = [r.name for r in self.repo.remotes]
-            if upstream_remote_name in remote_names:
-                self._compare_remote_url(upstream_remote_name, upstream_remote_url)
-            if fork_remote_name in remote_names:
-                self._compare_remote_url(fork_remote_name, fork_remote_url)
+            self._compare_remotes(upstream_remote_name, upstream_remote_url, fork_remote_name, fork_remote_url)
 
     def herd(self, url, **kwargs):
         """Herd ref
@@ -400,6 +396,21 @@ class ProjectRepo(ProjectRepoImpl):
             self._print(message)
             self._print(fmt.command_failed_error(command))
             self._exit(message)
+
+    def _compare_remotes(self, upstream_remote_name, upstream_remote_url, fork_remote_name, fork_remote_url):
+        """Compare remotes names for fork and upstream
+
+        :param str upstream_remote_name: Upstream remote name
+        :param str upstream_remote_url: Upstream remote url
+        :param str fork_remote_name: Fork remote name
+        :param str fork_remote_url: Fork remote url
+        """
+
+        remote_names = [r.name for r in self.repo.remotes]
+        if upstream_remote_name in remote_names:
+            self._compare_remote_url(upstream_remote_name, upstream_remote_url)
+        if fork_remote_name in remote_names:
+            self._compare_remote_url(fork_remote_name, fork_remote_url)
 
     def _herd(self, remote, ref, **kwargs):
         """Herd ref
