@@ -7,15 +7,15 @@
 
 from cement.ext.ext_argparse import ArgparseController, expose
 
-from clowder.cli.globals import CLOWDER_CONTROLLER
-from clowder.cli.parallel import (
+from clowder.cli.parallel_commands import (
     herd,
     herd_parallel
 )
-from clowder.cli.util import options_help_message
+from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.clowder_repo import print_clowder_repo_status_fetch
-from clowder.util.decorators import valid_clowder_yaml_required
 from clowder.util.connectivity import network_connection_required
+from clowder.util.decorators import valid_clowder_yaml_required
+from clowder.util.clowder_utils import options_help_message
 
 
 class HerdController(ArgparseController):
@@ -73,7 +73,9 @@ class HerdController(ArgparseController):
         kwargs = {'group_names': self.app.pargs.groups, 'project_names': self.app.pargs.projects,
                   'skip': self.app.pargs.skip, 'branch': branch, 'tag': tag,
                   'depth': depth, 'rebase': self.app.pargs.rebase, 'protocol': protocol}
+
         if self.app.pargs.parallel:
             herd_parallel(CLOWDER_CONTROLLER, **kwargs)
             return
+
         herd(CLOWDER_CONTROLLER, **kwargs)

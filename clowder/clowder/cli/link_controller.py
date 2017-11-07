@@ -7,15 +7,15 @@
 
 from cement.ext.ext_argparse import ArgparseController, expose
 
-from clowder.cli.util import (
-    get_saved_version_names,
-    options_help_message
-)
 from clowder.clowder_repo import (
     CLOWDER_REPO,
     print_clowder_repo_status
 )
 from clowder.util.decorators import clowder_required
+from clowder.util.clowder_utils import (
+    get_saved_version_names,
+    options_help_message
+)
 
 
 class LinkController(ArgparseController):

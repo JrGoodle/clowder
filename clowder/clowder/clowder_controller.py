@@ -140,3 +140,6 @@ class ClowderController(object):
             self.defaults = None
             self.sources = []
             self.groups = []
+
+
+CLOWDER_CONTROLLER = ClowderController()

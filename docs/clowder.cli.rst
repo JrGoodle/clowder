@@ -52,14 +52,6 @@ clowder\.cli\.forall\_controller module
     :undoc-members:
     :show-inheritance:
 
-clowder\.cli\.globals module
-----------------------------
-
-.. automodule:: clowder.cli.globals
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 clowder\.cli\.herd\_controller module
 -------------------------------------
 

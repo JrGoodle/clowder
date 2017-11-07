@@ -10,10 +10,10 @@ from __future__ import print_function
 from cement.ext.ext_argparse import ArgparseController, expose
 
 import clowder.util.formatting as fmt
+from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.clowder_repo import CLOWDER_REPO
-from clowder.cli.globals import CLOWDER_CONTROLLER
-from clowder.cli.util import run_group_command
 from clowder.util.connectivity import network_connection_required
+from clowder.util.clowder_utils import run_group_command
 
 
 class StatusController(ArgparseController):

@@ -12,7 +12,7 @@ import sys
 from cement.ext.ext_argparse import ArgparseController, expose
 
 import clowder.util.formatting as fmt
-from clowder.cli.globals import CLOWDER_CONTROLLER
+from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.clowder_repo import print_clowder_repo_status
 from clowder.util.decorators import valid_clowder_yaml_required
 from clowder.yaml.printing import print_yaml

@@ -23,6 +23,7 @@ from clowder.git.util import (
     existing_git_repository,
     format_project_ref_string,
     format_project_string,
+    git_url,
     print_validation
 )
 from clowder.model.fork import Fork
@@ -328,13 +329,16 @@ class Project(object):
         :param Optional[bool] remote: Delete remote branch
         """
 
-        if local and remote:
-            self._prune_local(branch, force)
-            self._prune_remote(branch)
-        elif local:
-            self._prune_local(branch, force)
-        elif remote:
-            self._prune_remote(branch)
+        repo = ProjectRepo(self.full_path(), self.remote, self.ref)
+
+        if local:
+            if repo.existing_local_branch(branch):
+                repo.prune_branch_local(branch, force)
+
+        if remote:
+            git_remote = self.remote if self.fork is None else self.fork.remote_name
+            if repo.existing_remote_branch(branch, git_remote):
+                repo.prune_branch_remote(branch, git_remote)
 
     def reset(self, timestamp=None, parallel=False):
         """Reset project branch to upstream or checkout tag/sha as detached HEAD
@@ -348,7 +352,24 @@ class Project(object):
         self._print_output = not parallel
 
         repo = self._repo(self.full_path(), self.remote, self.ref, self.recursive, parallel=parallel)
-        self._reset(repo, timestamp=timestamp)
+
+        if self.fork is None:
+            if timestamp:
+                repo.reset_timestamp(timestamp, self._timestamp_author, self.ref)
+                return
+
+            repo.reset(depth=self.depth)
+            return
+
+        self._print(self.fork.status())
+        repo.configure_remotes(self.remote, self._url(), self.fork.remote_name, self.fork.url(self._protocol))
+
+        self._print(fmt.fork_string(self.name))
+        if timestamp:
+            repo.reset_timestamp(timestamp, self._timestamp_author, self.ref)
+            return
+
+        repo.reset()
 
     def run(self, commands, ignore_errors, parallel=False):
         """Run command or script in project directory
@@ -384,7 +405,9 @@ class Project(object):
                 if not ignore_errors:
                     err = fmt.command_failed_error(cmd)
                     self._print(err)
-                    self._exit(err, parallel=parallel)
+                    if parallel:
+                        raise ClowderError(err)
+                    sys.exit(1)
 
     @project_repo_exists
     def start(self, branch, tracking):
@@ -443,21 +466,6 @@ class Project(object):
         self._print(self.fork.status())
         repo.sync(self.fork.remote_name, rebase=rebase)
 
-    @staticmethod
-    def _exit(message, parallel=False):
-        """Exit based on serial or parallel job
-
-        .. py:function:: _exit(message, parallel=False, return_code=1)
-
-        :param str message: Branch to check for
-        :param Optional[bool] parallel: Whether command is being run in parallel, affects output
-        :raise ClowderError: General ClowderError with message
-        """
-
-        if parallel:
-            raise ClowderError(message)
-        sys.exit(1)
-
     def _print(self, val):
         """Print output if self._print_output is True
 
@@ -466,38 +474,6 @@ class Project(object):
 
         if self._print_output:
             print(val)
-
-    def _protocol_url(self, protocol):
-        """Return project url
-
-        :param str protocol: Git protocol ('ssh' or 'https')
-        """
-
-        if protocol == 'ssh':
-            return 'git@' + self.source.url + ':' + self.name + ".git"
-        return 'https://' + self.source.url + '/' + self.name + ".git"
-
-    def _prune_local(self, branch, force):
-        """Prune local branch
-
-        :param str branch: Local branch to delete
-        :param bool force: Force delete branch
-        """
-
-        repo = ProjectRepo(self.full_path(), self.remote, self.ref)
-        if repo.existing_local_branch(branch):
-            repo.prune_branch_local(branch, force)
-
-    def _prune_remote(self, branch):
-        """Prune remote branch
-
-        :param str branch: Remote branch to delet
-        """
-
-        remote = self.remote if self.fork is None else self.fork.remote_name
-        repo = ProjectRepo(self.full_path(), remote, self.ref)
-        if repo.existing_remote_branch(branch, remote):
-            repo.prune_branch_remote(branch, remote)
 
     @staticmethod
     def _repo(path, remote, ref, recursive, **kwargs):
@@ -516,31 +492,6 @@ class Project(object):
         if recursive:
             return ProjectRepoRecursive(path, remote, ref, **kwargs)
         return ProjectRepo(path, remote, ref, **kwargs)
-
-    def _reset(self, repo, timestamp=None):
-        """Reset project branch to upstream or checkout tag/sha as detached HEAD
-
-        :param ProjectRepo repo: ProjectRepo or ProjectRepoRecursive instance
-        :param Optional[str] timestamp: Reset to commit at timestamp, or closest previous commit
-        """
-
-        if self.fork is None:
-            if timestamp:
-                repo.reset_timestamp(timestamp, self._timestamp_author, self.ref)
-                return
-
-            repo.reset(depth=self.depth)
-            return
-
-        self._print(self.fork.status())
-        repo.configure_remotes(self.remote, self._url(), self.fork.remote_name, self.fork.url(self._protocol))
-
-        self._print(fmt.fork_string(self.name))
-        if timestamp:
-            repo.reset_timestamp(timestamp, self._timestamp_author, self.ref)
-            return
-
-        repo.reset()
 
     def _run_herd_command(self, command, repo, protocol, *args, **kwargs):
         """Run herd command
@@ -585,5 +536,5 @@ class Project(object):
         """
 
         if protocol:
-            return self._protocol_url(protocol)
-        return self._protocol_url(self._protocol)
+            return git_url(protocol, self.source.url, self.name)
+        return git_url(self._protocol, self.source.url, self.name)

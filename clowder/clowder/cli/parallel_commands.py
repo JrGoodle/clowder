@@ -16,7 +16,8 @@ import psutil
 from termcolor import cprint
 
 import clowder.util.formatting as fmt
-from clowder.cli.util import (
+from clowder.util.progress import Progress
+from clowder.util.clowder_utils import (
     filter_groups,
     filter_projects_on_group_names,
     filter_projects_on_project_names,
@@ -27,7 +28,6 @@ from clowder.cli.util import (
     validate_groups,
     validate_projects
 )
-from clowder.util.progress import Progress
 
 
 def herd_project(project, branch, tag, depth, rebase, protocol):
@@ -225,22 +225,16 @@ def herd_parallel(clowder, group_names, **kwargs):
         validate_groups(groups)
         projects = filter_projects_on_group_names(clowder.groups, group_names)
         print_parallel_groups_output(groups, skip)
-        for project in projects:
-            if project.name in skip:
-                continue
-            result = __clowder_pool__.apply_async(herd_project, args=(project, branch, tag, depth, rebase, protocol),
-                                                  callback=async_callback)
-            __clowder_results__.append(result)
-        pool_handler(len(projects))
-        return
+    else:
+        projects = filter_projects_on_project_names(clowder.groups, project_names)
+        validate_projects(projects)
+        print_parallel_projects_output(projects, skip)
 
-    projects = filter_projects_on_project_names(clowder.groups, project_names)
-    validate_projects(projects)
-    print_parallel_projects_output(projects, skip)
     for project in projects:
         if project.name in skip:
             continue
-        result = __clowder_pool__.apply_async(herd_project, args=(project, branch, tag, depth, rebase, protocol),
+        result = __clowder_pool__.apply_async(herd_project,
+                                              args=(project, branch, tag, depth, rebase, protocol),
                                               callback=async_callback)
         __clowder_results__.append(result)
     pool_handler(len(projects))
@@ -325,6 +319,7 @@ def _forall_parallel(commands, skip, ignore_errors, projects):
 
     for cmd in commands:
         print('\n' + fmt.command(cmd))
+
     for project in projects:
         if project.name in skip:
             continue
@@ -363,17 +358,11 @@ def _reset_parallel(clowder, group_names, **kwargs):
         validate_groups(groups)
         projects = filter_projects_on_group_names(clowder.groups, group_names)
         print_parallel_groups_output(groups, skip)
-        for project in projects:
-            if project.name in skip:
-                continue
-            result = __clowder_pool__.apply_async(reset_project, args=(project, timestamp), callback=async_callback)
-            __clowder_results__.append(result)
-        pool_handler(len(projects))
-        return
+    else:
+        projects = filter_projects_on_project_names(clowder.groups, project_names)
+        validate_projects(projects)
+        print_parallel_projects_output(projects, skip)
 
-    projects = filter_projects_on_project_names(clowder.groups, project_names)
-    validate_projects(projects)
-    print_parallel_projects_output(projects, skip)
     for project in projects:
         if project.name in skip:
             continue
