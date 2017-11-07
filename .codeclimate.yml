@@ -1,8 +1,6 @@
 version: "2"
 
 engines:
-  markdownlint:
-    enabled: true
   pep8:
     enabled: true
   shellcheck:
@@ -12,7 +10,6 @@ ratings:
   paths:
   - "**.py"
   - "**.sh"
-  - "**.md"
 
 checks:
   argument-count:
