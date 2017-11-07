@@ -16,7 +16,8 @@ from clowder.git.project_repo import ProjectRepo
 from clowder.git.util import (
     existing_git_repository,
     format_project_ref_string,
-    format_project_string
+    format_project_string,
+    git_url
 )
 
 
@@ -76,6 +77,5 @@ class Fork(object):
 
     def url(self, protocol):
         """Return project url"""
-        if protocol == 'ssh':
-            return 'git@' + self._source.url + ':' + self.name + ".git"
-        return 'https://' + self._source.url + '/' + self.name + ".git"
+
+        return git_url(protocol, self._source.url, self.name)

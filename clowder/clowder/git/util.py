@@ -106,6 +106,19 @@ def print_validation(repo):
         repo.status_verbose()
 
 
+def git_url(protocol, url, name):
+    """Return git url
+
+    :param str protocol: Git protocol ('ssh' or 'https')
+    :param str url: Repo url
+    :param str name: Repo name
+    """
+
+    if protocol == 'ssh':
+        return 'git@' + url + ':' + name + ".git"
+    return 'https://' + url + '/' + name + ".git"
+
+
 def ref_type(ref):
     """Return branch, tag, sha, or unknown ref type
 
