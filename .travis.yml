@@ -46,8 +46,8 @@ script:
     - if [ "$TARGET" = "swift" ]; then clowder-test swift all; fi
 
 after_script:
-  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then coverage combine examples/cats; fi
-  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then cd $TRAVIS_BUILD_DIR; coverage combine examples/cats; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then cd $TRAVIS_BUILD_DIR; ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT; fi
 
 after_success: if [ "$TRAVIS_OS_NAME" = "osx" ]; then script/deploy; fi
 
