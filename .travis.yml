@@ -33,6 +33,7 @@ before_install: script/bootstrap "$PYVERSION"
 install:
     - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew install github-release; fi
     - if [ "$TRAVIS_OS_NAME" = "osx" ]; then sudo -H pip3 install twine wheel; fi
+    - sudo pip install awscli
 
 before_script:
     - script/setup "$PYVERSION"
@@ -46,9 +47,10 @@ script:
     - if [ "$TARGET" = "swift" ]; then clowder-test swift all; fi
 
 after_script:
-  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then coverage combine examples/cats; fi
-  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then coverage xml; fi
-  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT; fi
+  - coverage combine examples/cats
+  - coverage xml
+  - ./cc-test-reporter format-coverage --output "coverage/codeclimate.$N.json"
+  - aws s3 sync coverage/ "s3://clowder-coverage/coverage/$TRAVIS_BUILD_NUMBER"
 
 after_success: if [ "$TRAVIS_OS_NAME" = "osx" ]; then script/deploy; fi
 
