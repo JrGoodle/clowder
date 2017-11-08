@@ -276,14 +276,9 @@ class GitRepo(object):
             local_branch = self.repo.active_branch
         except (GitError, TypeError):
             return 0
-        except (KeyboardInterrupt, SystemExit):
-            self._exit()
         else:
-            if local_branch is None:
-                return 0
-
             tracking_branch = local_branch.tracking_branch()
-            if tracking_branch is None:
+            if local_branch is None or tracking_branch is None:
                 return 0
 
             try:
@@ -291,14 +286,9 @@ class GitRepo(object):
                 rev_list_count = self.repo.git.rev_list('--count', '--left-right', commits)
             except (GitError, ValueError):
                 return 0
-            except (KeyboardInterrupt, SystemExit):
-                self._exit()
             else:
-                if upstream:
-                    count = str(rev_list_count).split()[1]
-                else:
-                    count = str(rev_list_count).split()[0]
-                return count
+                index = 1 if upstream else 0
+                return str(rev_list_count).split()[index]
 
     def print_branches(self, local=False, remote=False):
         """Print branches
