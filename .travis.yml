@@ -49,7 +49,7 @@ script:
 after_script:
   - coverage combine examples/cats
   - coverage xml
-  - ./cc-test-reporter format-coverage --output "coverage/codeclimate.$N.json"
+  - ./cc-test-reporter format-coverage --output "coverage/codeclimate.$TRAVIS_JOB_NUMBER.json"
   - aws s3 sync coverage/ "s3://clowder-coverage/coverage/$TRAVIS_BUILD_NUMBER"
 
 after_success: if [ "$TRAVIS_OS_NAME" = "osx" ]; then script/deploy; fi
