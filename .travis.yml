@@ -40,11 +40,11 @@ before_script:
     - script/test
 
 script:
-    - if [ "$TARGET" = "cats" ]; then clowder-test --coverage cats all; fi
-    - if [ "$TARGET" = "cocos2d" ]; then clowder-test cocos2d all; fi
-    - if [ "$TARGET" = "llvm" ]; then clowder-test llvm all; fi
-    - if [ "$TARGET" = "parallel" ]; then clowder-test parallel; fi
-    - if [ "$TARGET" = "swift" ]; then clowder-test swift all; fi
+    - if [ "$TARGET" = "cats" ]; then clowder-test -c cats all; fi
+    - if [ "$TARGET" = "cocos2d" ]; then clowder-test -c cocos2d all; fi
+    - if [ "$TARGET" = "llvm" ]; then clowder-test -c llvm all; fi
+    - if [ "$TARGET" = "parallel" ]; then clowder-test -c parallel; fi
+    - if [ "$TARGET" = "swift" ]; then clowder-test -c swift all; fi
 
 after_script:
   - coverage combine examples/cats
