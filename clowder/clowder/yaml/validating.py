@@ -10,9 +10,9 @@ from __future__ import print_function
 import os
 
 import clowder.util.formatting as fmt
-from clowder import ROOT_DIR
 from clowder.error.clowder_exit import ClowderExit
 from clowder.error.clowder_yaml_error import ClowderYAMLError
+from clowder.util.clowder_utils import get_clowder_yaml_import_path
 from clowder.yaml import __MAX_IMPORT_DEPTH__
 from clowder.yaml.parsing import parse_yaml
 from clowder.yaml.validation.defaults import (
@@ -51,18 +51,13 @@ def validate_yaml(yaml_file, depth=__MAX_IMPORT_DEPTH__):
         return
 
     _validate_yaml_import(yaml_file)
-    imported_clowder = parsed_yaml['import']
+    imported_yaml_file = get_clowder_yaml_import_path(parsed_yaml['import'])
+
+    if not os.path.isfile(imported_yaml_file):
+        raise ClowderYAMLError(fmt.missing_imported_yaml_error(imported_yaml_file, yaml_file))
 
     try:
-        if imported_clowder == 'default':
-            imported_yaml_file = os.path.join(ROOT_DIR, '.clowder', 'clowder.yaml')
-        else:
-            imported_yaml_file = os.path.join(ROOT_DIR, '.clowder', 'versions',
-                                              imported_clowder, 'clowder.yaml')
-        if not os.path.isfile(imported_yaml_file):
-            raise ClowderYAMLError(fmt.missing_imported_yaml_error(imported_yaml_file, yaml_file))
-        yaml_file = imported_yaml_file
-        validate_yaml(yaml_file, depth=depth - 1)
+        validate_yaml(imported_yaml_file, depth=depth - 1)
     except ClowderYAMLError as err:
         raise ClowderYAMLError(err)
     except (KeyboardInterrupt, SystemExit):

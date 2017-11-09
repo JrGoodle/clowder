@@ -12,6 +12,7 @@ import os
 import clowder.util.formatting as fmt
 from clowder import ROOT_DIR
 from clowder.error.clowder_exit import ClowderExit
+from clowder.util.clowder_utils import get_clowder_yaml_import_path
 from clowder.yaml.parsing import parse_yaml
 
 
@@ -57,11 +58,7 @@ def _get_yaml_files():
         if 'import' not in parsed_yaml:
             return yaml_files
 
-        imported_yaml = parsed_yaml['import']
-        if imported_yaml == 'default':
-            yaml_file = os.path.join(ROOT_DIR, '.clowder', 'clowder.yaml')
-        else:
-            yaml_file = os.path.join(ROOT_DIR, '.clowder', 'versions', imported_yaml, 'clowder.yaml')
+        yaml_file = get_clowder_yaml_import_path(parsed_yaml['import'])
         parsed_yaml = parse_yaml(yaml_file)
 
 

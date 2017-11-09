@@ -8,6 +8,7 @@
 import os
 
 import clowder.util.formatting as fmt
+from clowder import ROOT_DIR
 from clowder.error.clowder_exit import ClowderExit
 
 
@@ -35,6 +36,20 @@ def existing_branch_projects(projects, branch, is_remote):
     """
 
     return any([p.existing_branch(branch, is_remote=is_remote) for p in projects])
+
+
+def get_clowder_yaml_import_path(import_name):
+    """Return path to imported clowder.yaml file
+
+    :param str import_name: Name of imported clowder.yaml
+    :return: Path to imported clowder.yaml file
+    :rtype: str
+    """
+
+    if import_name == 'default':
+        return os.path.join(ROOT_DIR, '.clowder', 'clowder.yaml')
+
+    return os.path.join(ROOT_DIR, '.clowder', 'versions', import_name, 'clowder.yaml')
 
 
 def filter_groups(groups, names):

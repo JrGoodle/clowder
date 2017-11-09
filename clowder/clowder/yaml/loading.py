@@ -15,6 +15,7 @@ import clowder.util.formatting as fmt
 from clowder import ROOT_DIR
 from clowder.error.clowder_exit import ClowderExit
 from clowder.error.clowder_yaml_error import ClowderYAMLError
+from clowder.util.clowder_utils import get_clowder_yaml_import_path
 from clowder.yaml import __MAX_IMPORT_DEPTH__
 from clowder.yaml.parsing import parse_yaml
 
@@ -35,13 +36,7 @@ def load_yaml():
             break
 
         imported_yaml_files.append(parsed_yaml)
-        imported_yaml = parsed_yaml['import']
-
-        if imported_yaml == 'default':
-            imported_yaml_file = os.path.join(ROOT_DIR, '.clowder', 'clowder.yaml')
-        else:
-            imported_yaml_file = os.path.join(ROOT_DIR, '.clowder', 'versions',
-                                              imported_yaml, 'clowder.yaml')
+        imported_yaml_file = get_clowder_yaml_import_path(parsed_yaml['import'])
 
         parsed_yaml = parse_yaml(imported_yaml_file)
         if len(imported_yaml_files) > __MAX_IMPORT_DEPTH__:
