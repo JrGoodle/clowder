@@ -19,8 +19,7 @@ from clowder.error.clowder_exit import ClowderExit
 from clowder.util.progress import Progress
 from clowder.util.clowder_utils import (
     filter_groups,
-    filter_projects_on_group_names,
-    filter_projects_on_project_names,
+    filter_projects,
     print_parallel_groups_output,
     print_parallel_projects_output,
     run_group_command,
@@ -140,9 +139,9 @@ def forall(clowder, command, ignore_errors, group_names, **kwargs):
     parallel = kwargs.get('parallel', False)
 
     if project_names is None:
-        projects = filter_projects_on_group_names(clowder.groups, group_names)
+        projects = filter_projects(clowder.groups, group_names=group_names)
     else:
-        projects = filter_projects_on_project_names(clowder.groups, project_names)
+        projects = filter_projects(clowder.groups, project_names=project_names)
 
     if parallel:
         _forall_parallel([" ".join(command)], skip, ignore_errors, projects)
@@ -186,7 +185,7 @@ def herd(clowder, group_names, **kwargs):
                               depth=depth, rebase=rebase, protocol=protocol)
         return
 
-    projects = filter_projects_on_project_names(clowder.groups, project_names)
+    projects = filter_projects(clowder.groups, project_names=project_names)
     validate_projects(projects)
     for project in projects:
         run_project_command(project, skip, 'herd', branch=branch, tag=tag,
@@ -223,9 +222,9 @@ def herd_parallel(clowder, group_names, **kwargs):
     _validate_print_output(clowder, group_names, project_names=project_names, skip=skip)
 
     if project_names is None:
-        projects = filter_projects_on_group_names(clowder.groups, group_names)
+        projects = filter_projects(clowder.groups, group_names=group_names)
     else:
-        projects = filter_projects_on_project_names(clowder.groups, project_names)
+        projects = filter_projects(clowder.groups, project_names=project_names)
 
     for project in projects:
         if project.name in skip:
@@ -271,7 +270,7 @@ def reset(clowder, group_names, **kwargs):
             run_group_command(group, skip, 'reset', timestamp=timestamp)
         return
 
-    projects = filter_projects_on_project_names(clowder.groups, project_names)
+    projects = filter_projects(clowder.groups, project_names=project_names)
     validate_projects(projects)
     for project in projects:
         run_project_command(project, skip, 'reset', timestamp=timestamp)
@@ -288,7 +287,7 @@ def sync(clowder, project_names, rebase=False, parallel=False):
     :param Optional[bool] parallel: Whether command is being run in parallel, affects output
     """
 
-    projects = filter_projects_on_project_names(clowder.groups, project_names)
+    projects = filter_projects(clowder.groups, project_names=project_names)
     if parallel:
         _sync_parallel(projects, rebase=rebase)
         return
@@ -353,9 +352,9 @@ def _reset_parallel(clowder, group_names, **kwargs):
     _validate_print_output(clowder, group_names, project_names=project_names, skip=skip)
 
     if project_names is None:
-        projects = filter_projects_on_group_names(clowder.groups, group_names)
+        projects = filter_projects(clowder.groups, group_names=group_names)
     else:
-        projects = filter_projects_on_project_names(clowder.groups, project_names)
+        projects = filter_projects(clowder.groups, project_names=project_names)
 
     for project in projects:
         if project.name in skip:
@@ -402,11 +401,11 @@ def _validate_print_output(clowder, group_names, **kwargs):
     if project_names is None:
         groups = filter_groups(clowder.groups, group_names)
         validate_groups(groups)
-        projects = filter_projects_on_group_names(clowder.groups, group_names)
+        projects = filter_projects(clowder.groups, group_names=group_names)
         print_parallel_groups_output(groups, skip)
         return
 
-    projects = filter_projects_on_project_names(clowder.groups, project_names)
+    projects = filter_projects(clowder.groups, project_names=project_names)
     validate_projects(projects)
     print_parallel_projects_output(projects, skip)
 
