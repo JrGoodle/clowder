@@ -12,8 +12,6 @@ import os
 import subprocess
 from multiprocessing.pool import ThreadPool
 
-from termcolor import cprint
-
 from clowder_test import ROOT_DIR
 from clowder_test.clowder_test_error import ClowderTestError
 
@@ -53,6 +51,7 @@ def execute_test_command(command, path, **kwargs):
 
     if coverage:
         rc_file = os.path.join(ROOT_DIR, '.coveragerc')
+        test_env['COVERAGE_PROCESS_START'] = rc_file
         test_env['COMMAND'] = 'coverage run --rcfile=' + rc_file + ' -m clowder.clowder_app'
     else:
         test_env['COMMAND'] = 'clowder'
