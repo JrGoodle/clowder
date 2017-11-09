@@ -106,13 +106,12 @@ class Project(object):
         """
 
         repo = ProjectRepo(self.full_path(), self.remote, self.ref)
-        if not is_offline():
-            if remote:
-                if self.fork is None:
-                    repo.fetch(self.remote, depth=self.depth)
-                else:
-                    repo.fetch(self.fork.remote_name)
-                    repo.fetch(self.remote)
+        if not is_offline() and remote:
+            if self.fork is None:
+                repo.fetch(self.remote, depth=self.depth)
+            else:
+                repo.fetch(self.fork.remote_name)
+                repo.fetch(self.remote)
 
         repo.print_branches(local=local, remote=remote)
 
@@ -331,9 +330,8 @@ class Project(object):
 
         repo = ProjectRepo(self.full_path(), self.remote, self.ref)
 
-        if local:
-            if repo.existing_local_branch(branch):
-                repo.prune_branch_local(branch, force)
+        if local and repo.existing_local_branch(branch):
+            repo.prune_branch_local(branch, force)
 
         if remote:
             git_remote = self.remote if self.fork is None else self.fork.remote_name
@@ -381,10 +379,9 @@ class Project(object):
         :param Optional[bool] parallel: Whether command is being run in parallel, affects output
         """
 
-        if not parallel:
-            if not existing_git_repository(self.full_path()):
-                print(colored(" - Project is missing\n", 'red'))
-                return
+        if not parallel and not existing_git_repository(self.full_path()):
+            print(colored(" - Project is missing\n", 'red'))
+            return
 
         self._print_output = not parallel
 

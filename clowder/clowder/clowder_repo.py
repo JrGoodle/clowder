@@ -51,9 +51,8 @@ class ClowderRepo(object):
 
         # Create clowder.yaml symlink if .clowder dir and yaml file exist
         clowder_symlink = os.path.join(ROOT_DIR, 'clowder.yaml')
-        if os.path.isdir(self.clowder_path):
-            if not os.path.islink(clowder_symlink):
-                self.link()
+        if os.path.isdir(self.clowder_path) and not os.path.islink(clowder_symlink):
+            self.link()
 
         self.error = None
         if os.path.islink(clowder_symlink):

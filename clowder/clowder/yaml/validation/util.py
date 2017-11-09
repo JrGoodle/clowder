@@ -282,10 +282,6 @@ def _valid_ref_type(ref):
 
     git_branch = "refs/heads/"
     git_tag = "refs/tags/"
-    if ref.startswith(git_branch):
-        return True
-    elif ref.startswith(git_tag):
-        return True
-    elif len(ref) == 40:
+    if ref.startswith(git_branch) or ref.startswith(git_tag) or len(ref) == 40:
         return True
     return False

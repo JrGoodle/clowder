@@ -84,13 +84,11 @@ class ProjectRepo(ProjectRepoImpl):
             self._exit()
         else:
             for remote in remotes:
-                if upstream_remote_url == self._remote_get_url(remote.name):
-                    if remote.name != upstream_remote_name:
-                        self._rename_remote(remote.name, upstream_remote_name)
-                        continue
-                if fork_remote_url == self._remote_get_url(remote.name):
-                    if remote.name != fork_remote_name:
-                        self._rename_remote(remote.name, fork_remote_name)
+                if upstream_remote_url == self._remote_get_url(remote.name) and remote.name != upstream_remote_name:
+                    self._rename_remote(remote.name, upstream_remote_name)
+                    continue
+                if fork_remote_url == self._remote_get_url(remote.name) and remote.name != fork_remote_name:
+                    self._rename_remote(remote.name, fork_remote_name)
             self._compare_remotes(upstream_remote_name, upstream_remote_url, fork_remote_name, fork_remote_url)
 
     def herd(self, url, **kwargs):
