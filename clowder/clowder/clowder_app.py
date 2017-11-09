@@ -7,10 +7,13 @@
 
 from __future__ import print_function
 
+import sys
+
 import colorama
 from cement.core.foundation import CementApp
 
 import clowder.cli as cmd
+from clowder.error.clowder_exit import ClowderExit
 
 
 class ClowderApp(CementApp):
@@ -57,7 +60,11 @@ def main():
 
     print()
     with ClowderApp() as app:
-        app.run()
+        try:
+            app.run()
+        except ClowderExit:
+            sys.tracebacklimit = 0
+            raise
         print()
 
 

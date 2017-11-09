@@ -8,10 +8,10 @@
 from __future__ import print_function
 
 import os
-import sys
 
 import clowder.util.formatting as fmt
 from clowder import ROOT_DIR
+from clowder.error.clowder_exit import ClowderExit
 from clowder.yaml.parsing import parse_yaml
 
 
@@ -66,7 +66,10 @@ def _get_yaml_files():
 
 
 def _print_yaml(yaml_file):
-    """Private print current clowder yaml"""
+    """Private print current clowder yaml
+
+    :raise ClowderExit:
+    """
 
     try:
         with open(yaml_file) as raw_file:
@@ -77,9 +80,9 @@ def _print_yaml(yaml_file):
     except IOError as err:
         print(fmt.open_file_error(yaml_file))
         print(err)
-        sys.exit(1)
+        raise ClowderExit(1)
     except (KeyboardInterrupt, SystemExit):
-        sys.exit(1)
+        raise ClowderExit(1)
 
 
 def _print_yaml_path(yaml_file):

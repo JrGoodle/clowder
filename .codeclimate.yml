@@ -5,6 +5,8 @@ engines:
     enabled: true
   shellcheck:
     enabled: true
+  sonar-python:
+    enabled: true
 
 ratings:
   paths:

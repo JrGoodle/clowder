@@ -9,13 +9,13 @@ from __future__ import print_function
 
 import inspect
 import os
-import sys
 
 from termcolor import colored, cprint
 
 import clowder.util.formatting as fmt
 from clowder import ROOT_DIR
 from clowder.error.clowder_error import ClowderError
+from clowder.error.clowder_exit import ClowderExit
 from clowder.error.clowder_yaml_error import ClowderYAMLError
 from clowder.git.project_repo import ProjectRepo
 from clowder.git.project_repo_recursive import ProjectRepoRecursive
@@ -106,13 +106,12 @@ class Project(object):
         """
 
         repo = ProjectRepo(self.full_path(), self.remote, self.ref)
-        if not is_offline():
-            if remote:
-                if self.fork is None:
-                    repo.fetch(self.remote, depth=self.depth)
-                else:
-                    repo.fetch(self.fork.remote_name)
-                    repo.fetch(self.remote)
+        if not is_offline() and remote:
+            if self.fork is None:
+                repo.fetch(self.remote, depth=self.depth)
+            else:
+                repo.fetch(self.fork.remote_name)
+                repo.fetch(self.remote)
 
         repo.print_branches(local=local, remote=remote)
 
@@ -331,9 +330,8 @@ class Project(object):
 
         repo = ProjectRepo(self.full_path(), self.remote, self.ref)
 
-        if local:
-            if repo.existing_local_branch(branch):
-                repo.prune_branch_local(branch, force)
+        if local and repo.existing_local_branch(branch):
+            repo.prune_branch_local(branch, force)
 
         if remote:
             git_remote = self.remote if self.fork is None else self.fork.remote_name
@@ -379,12 +377,12 @@ class Project(object):
         :param list[str] commands: Command to run
         :param bool ignore_errors: Whether to exit if command returns a non-zero exit code
         :param Optional[bool] parallel: Whether command is being run in parallel, affects output
+        :raise ClowderExit:
         """
 
-        if not parallel:
-            if not existing_git_repository(self.full_path()):
-                print(colored(" - Project is missing\n", 'red'))
-                return
+        if not parallel and not existing_git_repository(self.full_path()):
+            print(colored(" - Project is missing\n", 'red'))
+            return
 
         self._print_output = not parallel
 
@@ -407,7 +405,7 @@ class Project(object):
                     self._print(err)
                     if parallel:
                         raise ClowderError(err)
-                    sys.exit(1)
+                    raise ClowderExit(1)
 
     @project_repo_exists
     def start(self, branch, tracking):

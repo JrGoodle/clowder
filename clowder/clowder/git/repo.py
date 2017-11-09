@@ -9,13 +9,13 @@ from __future__ import print_function
 
 import os
 import subprocess
-import sys
 
 from git import Repo, GitError
 from termcolor import colored
 
 import clowder.util.formatting as fmt
 from clowder.error.clowder_error import ClowderError
+from clowder.error.clowder_exit import ClowderExit
 from clowder.error.clowder_git_error import ClowderGitError
 from clowder.git.util import (
     existing_git_repository,
@@ -276,14 +276,9 @@ class GitRepo(object):
             local_branch = self.repo.active_branch
         except (GitError, TypeError):
             return 0
-        except (KeyboardInterrupt, SystemExit):
-            self._exit()
         else:
-            if local_branch is None:
-                return 0
-
             tracking_branch = local_branch.tracking_branch()
-            if tracking_branch is None:
+            if local_branch is None or tracking_branch is None:
                 return 0
 
             try:
@@ -291,14 +286,9 @@ class GitRepo(object):
                 rev_list_count = self.repo.git.rev_list('--count', '--left-right', commits)
             except (GitError, ValueError):
                 return 0
-            except (KeyboardInterrupt, SystemExit):
-                self._exit()
             else:
-                if upstream:
-                    count = str(rev_list_count).split()[1]
-                else:
-                    count = str(rev_list_count).split()[0]
-                return count
+                index = 1 if upstream else 0
+                return str(rev_list_count).split()[index]
 
     def print_branches(self, local=False, remote=False):
         """Print branches
@@ -483,13 +473,16 @@ class GitRepo(object):
         """Exit based on serial or parallel job
 
         :param Optional[str] message: Error message
-        :raise ClowderGitError:
+
+        Raises:
+            ClowderGitError
+            ClowderExit
         """
 
         if self.parallel:
             raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message))
 
-        sys.exit(1)
+        raise ClowderExit(1)
 
     def _is_rebase_in_progress(self):
         """Detect whether rebase is in progress

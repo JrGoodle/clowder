@@ -7,8 +7,6 @@
 
 from __future__ import print_function
 
-import sys
-
 from cement.ext.ext_argparse import ArgparseController, expose
 
 import clowder.util.formatting as fmt
@@ -49,4 +47,3 @@ class YAMLController(ArgparseController):
             print(fmt.yaml_string(CLOWDER_CONTROLLER.get_yaml(resolved=True)))
         else:
             print_yaml()
-        sys.exit()  # exit early to prevent printing extra newline

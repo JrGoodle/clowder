@@ -1,6 +1,5 @@
 # `clowder`
 [![Build Status](https://travis-ci.org/JrGoodle/clowder.svg)](https://travis-ci.org/JrGoodle/clowder)
-[![Coverage Status](https://coveralls.io/repos/github/JrGoodle/clowder/badge.svg?branch=master)](https://coveralls.io/github/JrGoodle/clowder?branch=master)
 [![Maintainability](https://api.codeclimate.com/v1/badges/56c92799de08f9ef9258/maintainability)](https://codeclimate.com/github/JrGoodle/clowder/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/56c92799de08f9ef9258/test_coverage)](https://codeclimate.com/github/JrGoodle/clowder/test_coverage)
 [![PyPI version](https://badge.fury.io/py/clowder-repo.svg)](https://badge.fury.io/py/clowder-repo)

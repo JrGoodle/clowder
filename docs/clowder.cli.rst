@@ -76,10 +76,10 @@ clowder\.cli\.link\_controller module
     :undoc-members:
     :show-inheritance:
 
-clowder\.cli\.parallel module
------------------------------
+clowder\.cli\.parallel\_commands module
+---------------------------------------
 
-.. automodule:: clowder.cli.parallel
+.. automodule:: clowder.cli.parallel_commands
     :members:
     :undoc-members:
     :show-inheritance:
@@ -144,14 +144,6 @@ clowder\.cli\.sync\_controller module
 -------------------------------------
 
 .. automodule:: clowder.cli.sync_controller
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-clowder\.cli\.util module
--------------------------
-
-.. automodule:: clowder.cli.util
     :members:
     :undoc-members:
     :show-inheritance:

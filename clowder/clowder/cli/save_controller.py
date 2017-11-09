@@ -8,7 +8,6 @@
 from __future__ import print_function
 
 import os
-import sys
 
 from cement.ext.ext_argparse import ArgparseController, expose
 
@@ -16,6 +15,7 @@ import clowder.util.formatting as fmt
 from clowder import ROOT_DIR
 from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.clowder_repo import CLOWDER_REPO
+from clowder.error.clowder_exit import ClowderExit
 from clowder.util.decorators import valid_clowder_yaml_required
 from clowder.util.clowder_utils import (
     validate_groups,
@@ -48,11 +48,14 @@ class SaveController(ArgparseController):
 
     @valid_clowder_yaml_required
     def _save(self):
-        """Clowder save command private implementation"""
+        """Clowder save command private implementation
+
+        :raise ClowderExit:
+        """
 
         if self.app.pargs.version.lower() == 'default':
             print(fmt.save_default_error(self.app.pargs.version))
-            sys.exit(1)
+            raise ClowderExit(1)
 
         CLOWDER_REPO.print_status()
         validate_projects_exist(CLOWDER_CONTROLLER)
@@ -65,7 +68,7 @@ class SaveController(ArgparseController):
         yaml_file = os.path.join(version_dir, 'clowder.yaml')
         if os.path.exists(yaml_file):
             print(fmt.save_version_exists_error(version_name, yaml_file) + '\n')
-            sys.exit(1)
+            raise ClowderExit(1)
 
         print(fmt.save_version(version_name, yaml_file))
         save_yaml(CLOWDER_CONTROLLER.get_yaml(), yaml_file)

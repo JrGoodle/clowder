@@ -30,27 +30,18 @@ matrix:
 
 before_install: script/bootstrap "$PYVERSION"
 
-install:
-    - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew install github-release; fi
-    - if [ "$TRAVIS_OS_NAME" = "osx" ]; then sudo -H pip3 install twine wheel; fi
-    - sudo pip install awscli
+install: script/travis/install
 
-before_script:
-    - script/setup "$PYVERSION"
-    - script/test
+before_script: script/travis/before_script
 
 script:
     - if [ "$TARGET" = "cats" ]; then clowder-test -c cats all; fi
     - if [ "$TARGET" = "cocos2d" ]; then clowder-test -c cocos2d all; fi
     - if [ "$TARGET" = "llvm" ]; then clowder-test -c llvm all; fi
-    - if [ "$TARGET" = "parallel" ]; then clowder-test -c parallel; fi
+    - if [ "$TARGET" = "parallel" ]; then clowder-test parallel; fi
     - if [ "$TARGET" = "swift" ]; then clowder-test -c swift all; fi
 
-after_script:
-  - coverage combine examples/cats examples/cocos2d-objc examples/llvm-projects examples/swift-projects
-  - coverage xml
-  - ./cc-test-reporter format-coverage --output "coverage/codeclimate.$TRAVIS_JOB_NUMBER.json"
-  - aws s3 sync coverage/ "s3://clowder-coverage/coverage/$TRAVIS_BUILD_NUMBER"
+after_script: script/travis/after_script
 
 after_success: if [ "$TRAVIS_OS_NAME" = "osx" ]; then script/deploy; fi
 

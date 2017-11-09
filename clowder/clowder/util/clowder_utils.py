@@ -6,9 +6,9 @@
 """
 
 import os
-import sys
 
 import clowder.util.formatting as fmt
+from clowder.error.clowder_exit import ClowderExit
 
 
 def existing_branch_groups(groups, branch, is_remote):
@@ -172,6 +172,7 @@ def validate_groups(groups):
     """Validate status of all projects for specified groups
 
     :param list[Group] groups: Groups to validate
+    :raise ClowderExit:
     """
 
     for group in groups:
@@ -179,24 +180,26 @@ def validate_groups(groups):
 
     if not all([g.is_valid() for g in groups]):
         print()
-        sys.exit(1)
+        raise ClowderExit(1)
 
 
 def validate_projects(projects):
     """Validate status of all projects
 
     :param list[Project] projects: Projects to validate
+    :raise ClowderExit:
     """
 
     if not all([p.is_valid() for p in projects]):
         print()
-        sys.exit(1)
+        raise ClowderExit(1)
 
 
 def validate_projects_exist(clowder):
     """Validate existence status of all projects for specified groups
 
     :param ClowderController clowder: ClowderController instance
+    :raise ClowderExit:
     """
 
     projects_exist = True
@@ -208,7 +211,7 @@ def validate_projects_exist(clowder):
     if not projects_exist:
         herd_output = fmt.clowder_command('clowder herd')
         print('\n - First run ' + herd_output + ' to clone missing projects\n')
-        sys.exit(1)
+        raise ClowderExit(1)
 
 
 def _print_fork_output(project):

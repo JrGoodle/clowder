@@ -8,12 +8,12 @@
 from __future__ import print_function
 
 import os
-import sys
 
 from cement.ext.ext_argparse import ArgparseController, expose
 from termcolor import colored, cprint
 
 from clowder.clowder_repo import CLOWDER_REPO
+from clowder.error.clowder_exit import ClowderExit
 from clowder.util.connectivity import network_connection_required
 
 
@@ -42,11 +42,14 @@ class InitController(ArgparseController):
 
     @network_connection_required
     def _init(self):
-        """Clowder init command private implementation"""
+        """Clowder init command private implementation
+
+        :raise ClowderExit:
+        """
 
         if os.path.isdir(CLOWDER_REPO.clowder_path):
             cprint('Clowder already initialized in this directory\n', 'red')
-            sys.exit(1)
+            raise ClowderExit(1)
 
         url_output = colored(self.app.pargs.url, 'green')
         print('Create clowder repo from ' + url_output + '\n')

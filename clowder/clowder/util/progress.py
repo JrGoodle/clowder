@@ -23,8 +23,7 @@ class Progress(object):
     def complete(self):
         """Complete progress bar"""
 
-        if self._bar:
-            if self._bar.n < self._bar.total:
+        if self._bar and self._bar.n < self._bar.total:
                 self._bar.n = self._bar.total
 
     def start(self, count):

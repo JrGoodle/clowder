@@ -9,11 +9,11 @@ clowder
 .. image:: https://travis-ci.org/JrGoodle/clowder.svg
     :target: https://travis-ci.org/JrGoodle/clowder
 
-.. image:: https://coveralls.io/repos/github/JrGoodle/clowder/badge.svg?branch=master
-    :target: https://coveralls.io/github/JrGoodle/clowder?branch=master
+.. image:: https://api.codeclimate.com/v1/badges/56c92799de08f9ef9258/maintainability
+    :target: https://codeclimate.com/github/JrGoodle/clowder/maintainability
 
-.. image:: https://codeclimate.com/github/JrGoodle/clowder/badges/issue_count.svg
-    :target: https://codeclimate.com/github/JrGoodle/clowder
+.. image:: https://api.codeclimate.com/v1/badges/56c92799de08f9ef9258/test_coverage
+    :target: https://codeclimate.com/github/JrGoodle/clowder/test_coverage
 
 .. image:: https://badge.fury.io/py/clowder-repo.svg
     :target: https://badge.fury.io/py/clowder-repo
