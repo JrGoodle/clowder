@@ -12,22 +12,3 @@ script/clean 'test' || exit 1
 
 cd clowder_test || exit 1
 sudo -H pip install -e . || exit 1
-
-if [ -n "$TRAVIS_OS_NAME" ]; then
-    cd "$TRAVIS_BUILD_DIR" || exit 1
-    if [ "$TRAVIS_OS_NAME" = "osx" ]; then
-        sudo pip3 install coverage
-        curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-darwin-amd64 > ./cc-test-reporter
-        chmod +x ./cc-test-reporter
-        ./cc-test-reporter before-build
-    elif [ "$TRAVIS_OS_NAME" = "linux" ]; then
-        if [ "$PYVERSION" = 'python2' ]; then
-            sudo pip install coverage
-        else
-            sudo pip3 install coverage
-        fi
-        curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-        chmod +x ./cc-test-reporter
-        ./cc-test-reporter before-build
-    fi
-fi
