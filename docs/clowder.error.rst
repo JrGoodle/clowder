@@ -12,6 +12,14 @@ clowder\.error\.clowder\_error module
     :undoc-members:
     :show-inheritance:
 
+clowder\.error\.clowder\_exit module
+------------------------------------
+
+.. automodule:: clowder.error.clowder_exit
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 clowder\.error\.clowder\_git\_error module
 ------------------------------------------
 

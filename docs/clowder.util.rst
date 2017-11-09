@@ -4,6 +4,14 @@ clowder\.util package
 Submodules
 ----------
 
+clowder\.util\.clowder\_utils module
+------------------------------------
+
+.. automodule:: clowder.util.clowder_utils
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 clowder\.util\.connectivity module
 ----------------------------------
 
