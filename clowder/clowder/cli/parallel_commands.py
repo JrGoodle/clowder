@@ -138,10 +138,7 @@ def forall(clowder, command, ignore_errors, group_names, **kwargs):
     skip = kwargs.get('skip', [])
     parallel = kwargs.get('parallel', False)
 
-    if project_names is None:
-        projects = filter_projects(clowder.groups, group_names=group_names)
-    else:
-        projects = filter_projects(clowder.groups, project_names=project_names)
+    projects = filter_projects(clowder.groups, group_names=group_names, project_names=project_names)
 
     if parallel:
         _forall_parallel([" ".join(command)], skip, ignore_errors, projects)
@@ -221,10 +218,7 @@ def herd_parallel(clowder, group_names, **kwargs):
     print(' - Herd projects in parallel\n')
     _validate_print_output(clowder, group_names, project_names=project_names, skip=skip)
 
-    if project_names is None:
-        projects = filter_projects(clowder.groups, group_names=group_names)
-    else:
-        projects = filter_projects(clowder.groups, project_names=project_names)
+    projects = filter_projects(clowder.groups, group_names=group_names, project_names=project_names)
 
     for project in projects:
         if project.name in skip:
@@ -351,10 +345,7 @@ def _reset_parallel(clowder, group_names, **kwargs):
 
     _validate_print_output(clowder, group_names, project_names=project_names, skip=skip)
 
-    if project_names is None:
-        projects = filter_projects(clowder.groups, group_names=group_names)
-    else:
-        projects = filter_projects(clowder.groups, project_names=project_names)
+    projects = filter_projects(clowder.groups, group_names=group_names, project_names=project_names)
 
     for project in projects:
         if project.name in skip:
