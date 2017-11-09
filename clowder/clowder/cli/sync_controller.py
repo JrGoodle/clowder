@@ -56,5 +56,5 @@ class SyncController(ArgparseController):
         all_fork_projects = CLOWDER_CONTROLLER.get_all_fork_project_names()
         if all_fork_projects == '':
             cprint(' - No forks to sync\n', 'red')
-            sys.exit()
+            return
         sync(CLOWDER_CONTROLLER, all_fork_projects, rebase=self.app.pargs.rebase, parallel=self.app.pargs.parallel)

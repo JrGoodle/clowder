@@ -5,11 +5,10 @@
 
 """
 
-import sys
-
 import yaml
 from termcolor import colored, cprint
 
+from clowder.error.clowder_exit import ClowderExit
 from clowder.util.file_system import symlink_target
 
 
@@ -460,12 +459,13 @@ def yaml_string(yaml_output):
     :param dict yaml_output: YAML python object
     :return: YAML as a string
     :rtype: str
+    :raise ClowderExit:
     """
 
     try:
         return yaml.safe_dump(yaml_output, default_flow_style=False, indent=4)
     except yaml.YAMLError:
         cprint('Failed to dump yaml', 'red')
-        sys.exit(1)
+        raise ClowderExit(1)
     except (KeyboardInterrupt, SystemExit):
-        sys.exit(1)
+        raise ClowderExit(1)

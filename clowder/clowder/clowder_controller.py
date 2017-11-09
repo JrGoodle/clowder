@@ -7,10 +7,9 @@
 
 from __future__ import print_function
 
-import sys
-
 from termcolor import cprint
 
+from clowder.error.clowder_exit import ClowderExit
 from clowder.error.clowder_yaml_error import ClowderYAMLError
 from clowder.model.defaults import Defaults
 from clowder.model.group import Group
@@ -27,7 +26,10 @@ class ClowderController(object):
     """
 
     def __init__(self):
-        """ClowderController __init__"""
+        """ClowderController __init__
+
+        :raise ClowderExit:
+        """
 
         self.defaults = None
         self.groups = []
@@ -39,7 +41,7 @@ class ClowderController(object):
         except (ClowderYAMLError, KeyError) as err:
             self.error = err
         except (KeyboardInterrupt, SystemExit):
-            sys.exit(1)
+            raise ClowderExit(1)
 
     def get_all_fork_project_names(self):
         """Returns all project names containing forks
@@ -95,6 +97,7 @@ class ClowderController(object):
         :param str timestamp_project: Project to get timestamp of current HEAD commit
         :return: Commit timestamp string
         :rtype: str
+        :raise ClowderExit:
         """
 
         timestamp = None
@@ -105,7 +108,7 @@ class ClowderController(object):
 
         if timestamp is None:
             cprint(' - Failed to find timestamp\n', 'red')
-            sys.exit(1)
+            raise ClowderExit(1)
 
         return timestamp
 

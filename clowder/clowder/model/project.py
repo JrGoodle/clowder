@@ -9,13 +9,13 @@ from __future__ import print_function
 
 import inspect
 import os
-import sys
 
 from termcolor import colored, cprint
 
 import clowder.util.formatting as fmt
 from clowder import ROOT_DIR
 from clowder.error.clowder_error import ClowderError
+from clowder.error.clowder_exit import ClowderExit
 from clowder.error.clowder_yaml_error import ClowderYAMLError
 from clowder.git.project_repo import ProjectRepo
 from clowder.git.project_repo_recursive import ProjectRepoRecursive
@@ -377,6 +377,7 @@ class Project(object):
         :param list[str] commands: Command to run
         :param bool ignore_errors: Whether to exit if command returns a non-zero exit code
         :param Optional[bool] parallel: Whether command is being run in parallel, affects output
+        :raise ClowderExit:
         """
 
         if not parallel and not existing_git_repository(self.full_path()):
@@ -404,7 +405,7 @@ class Project(object):
                     self._print(err)
                     if parallel:
                         raise ClowderError(err)
-                    sys.exit(1)
+                    raise ClowderExit(1)
 
     @project_repo_exists
     def start(self, branch, tracking):

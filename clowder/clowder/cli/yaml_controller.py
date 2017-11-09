@@ -49,4 +49,3 @@ class YAMLController(ArgparseController):
             print(fmt.yaml_string(CLOWDER_CONTROLLER.get_yaml(resolved=True)))
         else:
             print_yaml()
-        sys.exit()  # exit early to prevent printing extra newline

@@ -8,10 +8,10 @@
 from __future__ import print_function
 
 import os
-import sys
 
 import clowder.util.formatting as fmt
 from clowder import ROOT_DIR
+from clowder.error.clowder_exit import ClowderExit
 from clowder.error.clowder_yaml_error import ClowderYAMLError
 from clowder.yaml import __MAX_IMPORT_DEPTH__
 from clowder.yaml.parsing import parse_yaml
@@ -37,7 +37,9 @@ def validate_yaml(yaml_file, depth=__MAX_IMPORT_DEPTH__):
 
     :param str yaml_file: Yaml file path to validate
     :param Optional[int] depth: Max depth of clowder.yaml imports
-    :raise ClowderYAMLError:
+    Raises:
+        ClowderExit
+        ClowderYAMLError
     """
 
     parsed_yaml = parse_yaml(yaml_file)
@@ -64,7 +66,7 @@ def validate_yaml(yaml_file, depth=__MAX_IMPORT_DEPTH__):
     except ClowderYAMLError as err:
         raise ClowderYAMLError(err)
     except (KeyboardInterrupt, SystemExit):
-        sys.exit(1)
+        raise ClowderExit(1)
 
 
 def _validate_yaml(yaml_file):

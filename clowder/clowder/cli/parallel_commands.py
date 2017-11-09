@@ -10,12 +10,12 @@ from __future__ import print_function
 import multiprocessing as mp
 import os
 import signal
-import sys
 
 import psutil
 from termcolor import cprint
 
 import clowder.util.formatting as fmt
+from clowder.error.clowder_exit import ClowderExit
 from clowder.util.progress import Progress
 from clowder.util.clowder_utils import (
     filter_groups,
@@ -397,6 +397,7 @@ def pool_handler(count):
     """Pool handler for finishing parallel jobs
 
     :param int count: Total count of projects in progress bar
+    :raise ClowderExit:
     """
 
     print()
@@ -410,13 +411,13 @@ def pool_handler(count):
                 __clowder_pool__.close()
                 __clowder_pool__.terminate()
                 cprint('\n - Command failed\n', 'red')
-                sys.exit(1)
+                raise ClowderExit(1)
     except Exception as err:
         __clowder_progress__.close()
         __clowder_pool__.close()
         __clowder_pool__.terminate()
         cprint('\n' + str(err) + '\n', 'red')
-        sys.exit(1)
+        raise ClowderExit(1)
     else:
         __clowder_progress__.complete()
         __clowder_progress__.close()

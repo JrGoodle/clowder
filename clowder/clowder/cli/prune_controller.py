@@ -7,13 +7,12 @@
 
 from __future__ import print_function
 
-import sys
-
 from cement.ext.ext_argparse import ArgparseController, expose
 from termcolor import cprint
 
 from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.clowder_repo import print_clowder_repo_status
+from clowder.error.clowder_error import ClowderError
 from clowder.util.connectivity import network_connection_required
 from clowder.util.decorators import valid_clowder_yaml_required
 from clowder.util.clowder_utils import (
@@ -158,11 +157,14 @@ def _prune_groups(groups, branch, **kwargs):
     local_branch_exists = existing_branch_groups(groups, branch, is_remote=False)
     remote_branch_exists = existing_branch_groups(groups, branch, is_remote=True)
 
-    _validate_branches(local, remote, local_branch_exists, remote_branch_exists)
-
-    for group in groups:
-        if group.existing_branch(branch, is_remote=remote):
-            run_group_command(group, skip, 'prune', branch, force=force, local=local, remote=remote)
+    try:
+        _validate_branches(local, remote, local_branch_exists, remote_branch_exists)
+    except ClowderError:
+        pass
+    else:
+        for group in groups:
+            if group.existing_branch(branch, is_remote=remote):
+                run_group_command(group, skip, 'prune', branch, force=force, local=local, remote=remote)
 
 
 def _prune_projects(projects, branch, **kwargs):
@@ -188,10 +190,13 @@ def _prune_projects(projects, branch, **kwargs):
     local_branch_exists = existing_branch_projects(projects, branch, is_remote=False)
     remote_branch_exists = existing_branch_projects(projects, branch, is_remote=True)
 
-    _validate_branches(local, remote, local_branch_exists, remote_branch_exists)
-
-    for project in projects:
-        run_project_command(project, skip, 'prune', branch, force=force, local=local, remote=remote)
+    try:
+        _validate_branches(local, remote, local_branch_exists, remote_branch_exists)
+    except ClowderError:
+        pass
+    else:
+        for project in projects:
+            run_project_command(project, skip, 'prune', branch, force=force, local=local, remote=remote)
 
 
 def _validate_branches(local, remote, local_branch_exists, remote_branch_exists):
@@ -203,24 +208,25 @@ def _validate_branches(local, remote, local_branch_exists, remote_branch_exists)
     :param bool remote: Delete remote branch
     :param bool local_branch_exists: Whether a local branch exists
     :param bool remote_branch_exists: Whether a remote branch exists
+    :raise ClowderError:
     """
 
     if local and remote:
         branch_exists = local_branch_exists or remote_branch_exists
         if not branch_exists:
             cprint(' - No local or remote branches to prune\n', 'red')
-            sys.exit()
+            raise ClowderError
         print(' - Prune local and remote branches\n')
         return
 
     if remote:
         if not remote_branch_exists:
             cprint(' - No remote branches to prune\n', 'red')
-            sys.exit()
+            raise ClowderError
         print(' - Prune remote branches\n')
         return
 
     if not local_branch_exists:
         print(' - No local branches to prune\n')
-        sys.exit()
+        raise ClowderError
     print(' - Prune local branches\n')

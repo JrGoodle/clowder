@@ -10,9 +10,10 @@ from __future__ import print_function
 import errno
 import os
 import shutil
-import sys
 
 from termcolor import colored
+
+from clowder.error.clowder_exit import ClowderExit
 
 
 def force_symlink(file1, file2):
@@ -20,6 +21,7 @@ def force_symlink(file1, file2):
 
     :param str file1: File to create symlink pointing to
     :param str file2: Symlink location
+    :raise ClowderExit:
     """
 
     try:
@@ -31,13 +33,14 @@ def force_symlink(file1, file2):
     except (KeyboardInterrupt, SystemExit):
         os.remove(file2)
         os.symlink(file1, file2)
-        sys.exit(1)
+        raise ClowderExit(1)
 
 
 def remove_directory(path):
     """Remove directory at path
 
     :param str path: Path to remove
+    :raise ClowderExit:
     """
 
     try:
@@ -46,7 +49,7 @@ def remove_directory(path):
         message = colored(" - Failed to remove directory ", 'red')
         print(message + colored(path, 'cyan'))
     except (KeyboardInterrupt, SystemExit):
-        sys.exit(1)
+        raise ClowderExit(1)
 
 
 def symlink_target(path):

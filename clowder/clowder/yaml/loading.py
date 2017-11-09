@@ -8,12 +8,12 @@
 from __future__ import print_function
 
 import os
-import sys
 
 from termcolor import colored
 
 import clowder.util.formatting as fmt
 from clowder import ROOT_DIR
+from clowder.error.clowder_exit import ClowderExit
 from clowder.error.clowder_yaml_error import ClowderYAMLError
 from clowder.yaml import __MAX_IMPORT_DEPTH__
 from clowder.yaml.parsing import parse_yaml
@@ -181,6 +181,7 @@ def _load_yaml_import_projects(imported_projects, projects):
 
     :param dict imported_projects: Parsed YAML python object for imported projects
     :param list projects: Parsed YAML python object for projects
+    :raise ClowderExit:
     """
 
     project_names = [p['name'] for p in projects]
@@ -193,7 +194,7 @@ def _load_yaml_import_projects(imported_projects, projects):
             error = colored(' - Missing path in new project', 'red')
             print(fmt.invalid_yaml_error())
             print(fmt.error(error))
-            sys.exit(1)
+            raise ClowderExit(1)
 
         projects.append(imported_project)
 

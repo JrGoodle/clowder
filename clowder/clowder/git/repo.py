@@ -9,13 +9,13 @@ from __future__ import print_function
 
 import os
 import subprocess
-import sys
 
 from git import Repo, GitError
 from termcolor import colored
 
 import clowder.util.formatting as fmt
 from clowder.error.clowder_error import ClowderError
+from clowder.error.clowder_exit import ClowderExit
 from clowder.error.clowder_git_error import ClowderGitError
 from clowder.git.util import (
     existing_git_repository,
@@ -473,13 +473,16 @@ class GitRepo(object):
         """Exit based on serial or parallel job
 
         :param Optional[str] message: Error message
-        :raise ClowderGitError:
+
+        Raises:
+            ClowderGitError
+            ClowderExit
         """
 
         if self.parallel:
             raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message))
 
-        sys.exit(1)
+        raise ClowderExit(1)
 
     def _is_rebase_in_progress(self):
         """Detect whether rebase is in progress
