@@ -8,7 +8,6 @@
 from __future__ import print_function
 
 import os
-import sys
 
 from termcolor import cprint
 
@@ -34,23 +33,28 @@ def valid_clowder_yaml_required(func):
     """If clowder.yaml is invalid, print invalid yaml message and exit"""
 
     def wrapper(*args, **kwargs):
-        """Wrapper
-
-        :raise ClowderExit:
-        """
+        """Wrapper"""
 
         _validate_clowder_repo_exists()
         if CLOWDER_REPO.error:
-            print(fmt.invalid_yaml_error())
-            print(fmt.error(CLOWDER_REPO.error))
-            raise ClowderExit(42)
+            _invalid_yaml_error(CLOWDER_REPO.error)
         if CLOWDER_CONTROLLER.error:
-            print(fmt.invalid_yaml_error())
-            print(fmt.error(CLOWDER_CONTROLLER.error))
-            raise ClowderExit(42)
+            _invalid_yaml_error(CLOWDER_CONTROLLER.error)
         return func(*args, **kwargs)
 
     return wrapper
+
+
+def _invalid_yaml_error(error):
+    """Print invalid yaml message and raise exception
+
+    :param Exception error: Exception raised during yaml validation/loading
+    :raise ClowderExit:
+    """
+
+    print(fmt.invalid_yaml_error())
+    print(fmt.error(error))
+    raise ClowderExit(42)
 
 
 def _validate_clowder_repo_exists():
