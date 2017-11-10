@@ -50,7 +50,6 @@ class BaseController(ArgparseController):
 
         self.offline()
         self.parallel()
-        self.unittests()
 
     @expose(
         help='Run offline tests'

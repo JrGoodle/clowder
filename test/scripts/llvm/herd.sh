@@ -27,8 +27,6 @@ export fork_paths=( 'llvm/tools/clang' \
                     'llvm/tools/clang/tools/extra' \
                     'llvm/projects/compiler-rt' )
 
-test_clowder_version
-
 print_double_separator
 echo 'TEST: llvm projects example test script'
 print_double_separator

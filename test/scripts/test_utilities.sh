@@ -171,7 +171,7 @@ test_number_commits() {
     [[ "$COUNT" = "$commit_count" ]] && echo "TEST: Correct number of commits: $COUNT" || exit 1
 }
 
-function test_commit_messages() {
+test_commit_messages() {
     echo "TEST: Commit messages are the same"
     if [ "$1" != "$2" ]; then
         exit 1
@@ -184,23 +184,6 @@ test_untracked_files() {
     if [ "$files" != "1" ]; then
         exit 1
     fi
-}
-
-test_clowder_version() {
-    print_double_separator
-    echo "TEST: Print clowder version"
-    $COMMAND --version || exit 1
-}
-
-test_command() {
-    print_double_separator
-    echo "TEST: Clowder command"
-    print_single_separator
-    echo "TEST: Fail with unrecognized command"
-    $COMMAND cat && exit 1
-    echo "TEST: Fail with no arguments"
-    $COMMAND && exit 1
-    echo ''
 }
 
 test_directory_exists() {
