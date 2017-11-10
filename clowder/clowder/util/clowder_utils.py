@@ -74,11 +74,11 @@ def filter_projects(groups, group_names=None, project_names=None):
     :rtype: list[Project]
     """
 
-    if group_names is not None:
-        return [p for g in groups if g.name in group_names for p in g.projects]
-
     if project_names is not None:
         return [p for g in groups for p in g.projects if p.name in project_names]
+
+    if group_names is not None:
+        return [p for g in groups if g.name in group_names for p in g.projects]
 
     return []
 
