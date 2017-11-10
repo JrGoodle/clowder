@@ -12,7 +12,7 @@ from clowder.clowder_repo import print_clowder_repo_status
 from clowder.util.decorators import valid_clowder_yaml_required
 from clowder.util.clowder_utils import (
     filter_groups,
-    filter_projects_on_project_names,
+    filter_projects,
     options_help_message,
     run_group_command,
     run_project_command
@@ -112,7 +112,7 @@ def _clean(clowder, group_names, **kwargs):
             run_group_command(group, skip, 'clean', args=args, recursive=recursive)
         return
 
-    projects = filter_projects_on_project_names(clowder.groups, project_names)
+    projects = filter_projects(clowder.groups, project_names=project_names)
     for project in projects:
         run_project_command(project, skip, 'clean', args=args, recursive=recursive)
 
@@ -139,6 +139,6 @@ def _clean_all(clowder, group_names, **kwargs):
             run_group_command(group, skip, 'clean_all')
         return
 
-    projects = filter_projects_on_project_names(clowder.groups, project_names)
+    projects = filter_projects(clowder.groups, project_names=project_names)
     for project in projects:
         run_project_command(project, skip, 'clean_all')

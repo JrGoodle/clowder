@@ -19,7 +19,7 @@ from clowder.util.clowder_utils import (
     existing_branch_groups,
     existing_branch_projects,
     filter_groups,
-    filter_projects_on_project_names,
+    filter_projects,
     options_help_message,
     run_group_command,
     run_project_command,
@@ -129,7 +129,7 @@ def _prune(clowder, group_names, branch, **kwargs):
         _prune_groups(groups, branch, skip=skip, force=force, local=local, remote=remote)
         return
 
-    projects = filter_projects_on_project_names(clowder.groups, project_names)
+    projects = filter_projects(clowder.groups, project_names=project_names)
     validate_projects(projects)
     _prune_projects(projects, branch, skip=skip, force=force, local=local, remote=remote)
 

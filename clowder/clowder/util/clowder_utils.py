@@ -8,6 +8,7 @@
 import os
 
 import clowder.util.formatting as fmt
+from clowder import ROOT_DIR
 from clowder.error.clowder_exit import ClowderExit
 
 
@@ -37,6 +38,20 @@ def existing_branch_projects(projects, branch, is_remote):
     return any([p.existing_branch(branch, is_remote=is_remote) for p in projects])
 
 
+def get_clowder_yaml_import_path(import_name):
+    """Return path to imported clowder.yaml file
+
+    :param str import_name: Name of imported clowder.yaml
+    :return: Path to imported clowder.yaml file
+    :rtype: str
+    """
+
+    if import_name == 'default':
+        return os.path.join(ROOT_DIR, '.clowder', 'clowder.yaml')
+
+    return os.path.join(ROOT_DIR, '.clowder', 'versions', import_name, 'clowder.yaml')
+
+
 def filter_groups(groups, names):
     """Filter groups based on given group names
 
@@ -49,28 +64,23 @@ def filter_groups(groups, names):
     return [g for g in groups if g.name in names]
 
 
-def filter_projects_on_project_names(groups, names):
-    """Filter projects based on given project names
+def filter_projects(groups, group_names=None, project_names=None):
+    """Filter projects based on given project or group names
 
     :param list[Group] groups: Groups to filter
-    :param list[str] names: Project names to match against
+    :param list[str] group_names: Group names to match against
+    :param list[str] project_names: Project names to match against
     :return: List of projects in groups matching given names
     :rtype: list[Project]
     """
 
-    return [p for g in groups for p in g.projects if p.name in names]
+    if project_names is not None:
+        return [p for g in groups for p in g.projects if p.name in project_names]
 
+    if group_names is not None:
+        return [p for g in groups if g.name in group_names for p in g.projects]
 
-def filter_projects_on_group_names(groups, names):
-    """Filter projects based on given group names
-
-    :param list[Group] groups: Groups to filter
-    :param list[str] names: Group names to match against
-    :return: List of projects in groups matching given names
-    :rtype: list[Project]
-    """
-
-    return [p for g in groups if g.name in names for p in g.projects]
+    return []
 
 
 def get_saved_version_names():

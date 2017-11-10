@@ -13,7 +13,7 @@ from clowder.util.connectivity import network_connection_required
 from clowder.util.decorators import valid_clowder_yaml_required
 from clowder.util.clowder_utils import (
     filter_groups,
-    filter_projects_on_project_names,
+    filter_projects,
     options_help_message,
     run_group_command,
     run_project_command,
@@ -85,7 +85,7 @@ class StartController(ArgparseController):
                 run_group_command(group, self.app.pargs.skip, 'start', self.app.pargs.branch, tracking)
             return
 
-        projects = filter_projects_on_project_names(CLOWDER_CONTROLLER.groups, self.app.pargs.projects)
+        projects = filter_projects(CLOWDER_CONTROLLER.groups, project_names=self.app.pargs.projects)
         validate_projects(projects)
         for project in projects:
             run_project_command(project, self.app.pargs.skip, 'start', self.app.pargs.branch, tracking)

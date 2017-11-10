@@ -5,3 +5,8 @@ parallel = True
 omit =
     # omit everything in /usr
     /usr/*
+
+[paths]
+source =
+    clowder/clowder
+    /home/travis/build/*/clowder/clowder
