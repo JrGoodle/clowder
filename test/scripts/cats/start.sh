@@ -7,13 +7,13 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
 export black_cats_projects=( 'black-cats/kit' \
                              'black-cats/kishka' \
                              'black-cats/sasha' \
-                             'black-cats/jules' )
+                             'black-cats/june' )
 
 export all_projects=( 'mu' 'duke' \
                       'black-cats/kit' \
                       'black-cats/kishka' \
                       'black-cats/sasha' \
-                      'black-cats/jules' )
+                      'black-cats/june' )
 
 cd "$CATS_EXAMPLE_DIR" || exit 1
 ./clean.sh

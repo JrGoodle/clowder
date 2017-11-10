@@ -19,7 +19,7 @@ class GitUtilitiesTest(unittest.TestCase):
 
     def setUp(self):
 
-        self.jules_project_path = os.path.join(self.cats_example_path, 'black-cats', 'jules')
+        self.june_project_path = os.path.join(self.cats_example_path, 'black-cats', 'june')
         self.kishka_project_path = os.path.join(self.cats_example_path, 'black-cats', 'kishka')
         self.kit_project_path = os.path.join(self.cats_example_path, 'black-cats', 'kit')
         self.sasha_project_path = os.path.join(self.cats_example_path, 'black-cats', 'sasha')
@@ -43,7 +43,7 @@ class GitUtilitiesTest(unittest.TestCase):
     def test_git_is_detached(self):
         """Test git_is_detached() function"""
 
-        repo = GitRepo(self.jules_project_path, self.remote, self.branch_ref)
+        repo = GitRepo(self.june_project_path, self.remote, self.branch_ref)
         self.assertFalse(repo.is_detached())
         repo = GitRepo(self.kit_project_path, self.remote, self.branch_ref)
         self.assertFalse(repo.is_detached())
@@ -53,7 +53,7 @@ class GitUtilitiesTest(unittest.TestCase):
     def test_git_is_dirty(self):
         """Test git_is_dirty() function"""
 
-        repo = GitRepo(self.jules_project_path, self.remote, self.branch_ref)
+        repo = GitRepo(self.june_project_path, self.remote, self.branch_ref)
         self.assertFalse(repo.is_dirty())
         repo = GitRepo(self.kishka_project_path, self.remote, self.branch_ref)
         self.assertTrue(repo.is_dirty())

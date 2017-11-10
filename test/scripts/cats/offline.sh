@@ -8,7 +8,7 @@ export all_projects=( 'mu' 'duke' \
                       'black-cats/kit' \
                       'black-cats/kishka' \
                       'black-cats/sasha' \
-                      'black-cats/jules' )
+                      'black-cats/june' )
 
 enable_network_connection() {
     case "$(uname)" in

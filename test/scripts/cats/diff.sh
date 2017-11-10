@@ -12,7 +12,7 @@ $COMMAND herd $PARALLEL || exit 1
 export black_cats_projects=( 'black-cats/kit' \
                              'black-cats/kishka' \
                              'black-cats/sasha' \
-                             'black-cats/jules' )
+                             'black-cats/june' )
 
 print_double_separator
 echo "TEST: Test clowder diff"

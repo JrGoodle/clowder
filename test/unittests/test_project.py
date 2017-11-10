@@ -10,8 +10,8 @@ from clowder.model.source import Source
 from unittests.shared import (
     __defaults_yaml__,
     __github_source_yaml__,
-    __jules_group_yaml__,
-    __jules_project_yaml__,
+    __june_group_yaml__,
+    __june_project_yaml__,
     __kishka_group_yaml__,
     __kishka_project_yaml__,
     __kit_group_yaml__,
@@ -27,11 +27,11 @@ class ProjectTest(unittest.TestCase):
 
     def setUp(self):
 
-        # self.jules_project_path = os.path.join(self.CATS_EXAMPLE_PATH, 'black-cats', 'jules')
+        # self.june_project_path = os.path.join(self.CATS_EXAMPLE_PATH, 'black-cats', 'june')
         # self.kishka_project_path = os.path.join(self.CATS_EXAMPLE_PATH, 'black-cats', 'kishka')
         self.kit_project_path = os.path.join(self.cats_example_path, 'black-cats', 'kit')
         sources = [Source(__github_source_yaml__)]
-        self.jules_project = Project(__jules_project_yaml__, __jules_group_yaml__,
+        self.june_project = Project(__june_project_yaml__, __june_group_yaml__,
                                      Defaults(__defaults_yaml__), sources)
         self.kishka_project = Project(__kishka_project_yaml__, __kishka_group_yaml__,
                                       Defaults(__defaults_yaml__), sources)
@@ -52,7 +52,7 @@ class ProjectTest(unittest.TestCase):
     def test_is_valid(self):
         """Test is_valid() method"""
 
-        self.assertTrue(self.jules_project.is_valid())
+        self.assertTrue(self.june_project.is_valid())
         self.assertFalse(self.kishka_project.is_valid())
         self.assertTrue(self.kit_project.is_valid())
 

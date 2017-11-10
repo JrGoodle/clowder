@@ -9,13 +9,13 @@ export cats_projects=( 'duke' 'mu' )
 export black_cats_projects=( 'black-cats/kit' \
                              'black-cats/kishka' \
                              'black-cats/sasha' \
-                             'black-cats/jules' )
+                             'black-cats/june' )
 
 export all_projects=( 'mu' 'duke' \
                       'black-cats/kit' \
                       'black-cats/kishka' \
                       'black-cats/sasha' \
-                      'black-cats/jules' )
+                      'black-cats/june' )
 
 test_cats_default_herd_branches() {
     echo "TEST: cats projects on default branches"

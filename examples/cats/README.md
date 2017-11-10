@@ -8,7 +8,7 @@ Run [init.sh](init.sh) script to set up clowder directory for cat repos. Clones 
 
 | Directory | Repository |
 |-----------|------------|
-| `black-cats/jules` | https://github.com/JrGoodle/jules |
+| `black-cats/june` | https://github.com/JrGoodle/june |
 | `black-cats/kishka` | https://github.com/JrGoodle/kishka |
 | `black-cats/kit` | https://github.com/JrGoodle/kit |
 | `black-cats/sasha` | https://github.com/JrGoodle/sasha |

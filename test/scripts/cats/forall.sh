@@ -7,7 +7,7 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
 export black_cats_projects=( 'black-cats/kit' \
                              'black-cats/kishka' \
                              'black-cats/sasha' \
-                             'black-cats/jules' )
+                             'black-cats/june' )
 
 print_double_separator
 echo "TEST: Test clowder forall"

@@ -10,7 +10,7 @@ from clowder.model.source import Source
 from unittests.shared import (
     __defaults_yaml__,
     __github_source_yaml__,
-    __jules_group_yaml__,
+    __june_group_yaml__,
     __kishka_group_yaml__,
     __kit_group_yaml__
 )
@@ -25,7 +25,7 @@ class GroupTest(unittest.TestCase):
     def setUp(self):
 
         sources = [Source(__github_source_yaml__)]
-        self.jules_group = Group(__jules_group_yaml__, Defaults(__defaults_yaml__), sources)
+        self.june_group = Group(__june_group_yaml__, Defaults(__defaults_yaml__), sources)
         self.kishka_group = Group(__kishka_group_yaml__, Defaults(__defaults_yaml__), sources)
         self.kit_group = Group(__kit_group_yaml__, Defaults(__defaults_yaml__), sources)
 
@@ -51,7 +51,7 @@ class GroupTest(unittest.TestCase):
     def test_is_valid(self):
         """Test is_valid() method"""
 
-        self.assertTrue(self.jules_group.is_valid())
+        self.assertTrue(self.june_group.is_valid())
         self.assertFalse(self.kishka_group.is_valid())
         self.assertTrue(self.kit_group.is_valid())
 
@@ -64,7 +64,7 @@ class GroupTest(unittest.TestCase):
     def test_projects_exist(self):
         """Test projects_exist() method"""
 
-        self.assertFalse(self.jules_group.existing_projects())
+        self.assertFalse(self.june_group.existing_projects())
         self.assertTrue(self.kit_group.existing_projects())
 
 

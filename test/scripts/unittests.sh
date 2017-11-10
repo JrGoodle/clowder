@@ -17,8 +17,8 @@ prepare_unittest_repos() {
     ./init.sh || exit 1
     $COMMAND clean || exit 1
     $COMMAND herd $PARALLEL || exit 1
-    # Remove jules repository
-    rm -rf black-cats/jules || exit 1
+    # Remove june repository
+    rm -rf black-cats/june || exit 1
     # Make kishka repo dirty
     pushd black-cats/kishka || exit 1
     touch newfile || exit 1
