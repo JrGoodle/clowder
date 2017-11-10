@@ -370,14 +370,13 @@ class Project(object):
         repo.reset()
 
     def run(self, commands, ignore_errors, parallel=False):
-        """Run command or script in project directory
+        """Run commands or script in project directory
 
         .. py:function:: run(commands, ignore_errors, parallel=False)
 
-        :param list[str] commands: Command to run
+        :param list[str] commands: Commands to run
         :param bool ignore_errors: Whether to exit if command returns a non-zero exit code
-        :param Optional[bool] parallel: Whether command is being run in parallel, affects output
-        :raise ClowderExit:
+        :param Optional[bool] parallel: Whether commands are being run in parallel, affects output
         """
 
         if not parallel and not existing_git_repository(self.full_path()):
@@ -396,16 +395,7 @@ class Project(object):
             forall_env['FORK_REMOTE'] = self.fork.remote_name
 
         for cmd in commands:
-            self._print(fmt.command(cmd))
-            try:
-                execute_forall_command(cmd, self.full_path(), forall_env, self._print_output)
-            except ClowderError:
-                if not ignore_errors:
-                    err = fmt.command_failed_error(cmd)
-                    self._print(err)
-                    if parallel:
-                        raise ClowderError(err)
-                    raise ClowderExit(1)
+            self._run_forall_command(cmd, forall_env, ignore_errors, parallel)
 
     @project_repo_exists
     def start(self, branch, tracking):
@@ -490,6 +480,30 @@ class Project(object):
         if recursive:
             return ProjectRepoRecursive(path, remote, ref, **kwargs)
         return ProjectRepo(path, remote, ref, **kwargs)
+
+    def _run_forall_command(self, command, env, ignore_errors, parallel):
+        """Run command or script in project directory
+
+        :param str command: Command to run
+        :param dict env: Environment variables
+        :param bool ignore_errors: Whether to exit if command returns a non-zero exit code
+        :param bool parallel: Whether command is being run in parallel, affects output
+
+        Raises:
+            ClowderError
+            ClowderExit
+        """
+
+        self._print(fmt.command(command))
+        try:
+            execute_forall_command(command, self.full_path(), env, self._print_output)
+        except ClowderError:
+            if not ignore_errors:
+                err = fmt.command_failed_error(command)
+                self._print(err)
+                if parallel:
+                    raise ClowderError(err)
+                raise ClowderExit(1)
 
     def _run_herd_command(self, command, repo, protocol, *args, **kwargs):
         """Run herd command
