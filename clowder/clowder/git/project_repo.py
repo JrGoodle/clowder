@@ -349,10 +349,8 @@ class ProjectRepo(ProjectRepoImpl):
             except ClowderGitError:
                 self._exit()
         else:
-            branch_output = fmt.ref_string(branch)
-            print(' - ' + branch_output + ' already exists')
-            correct_branch = self._is_branch_checked_out(branch)
-            if correct_branch:
+            print(' - ' + fmt.ref_string(branch) + ' already exists')
+            if self._is_branch_checked_out(branch):
                 print(' - On correct branch')
             else:
                 try:
