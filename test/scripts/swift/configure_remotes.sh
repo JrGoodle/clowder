@@ -11,8 +11,6 @@ echo 'TEST: swift configure remotes'
 cd "$SWIFT_EXAMPLE_DIR" || exit 1
 ./init.sh
 
-"$TEST_SCRIPT_DIR/swift/write_configure_remotes.sh" || exit 1
-
 test_configure_remotes_herd() {
     git clone https://github.com/apple/swift.git || exit 1
     ./swift/utils/update-checkout --clone
@@ -68,3 +66,5 @@ test_local_swift_example() {
     rm -rf swift-source
 }
 test_local_swift_example
+
+"$TEST_SCRIPT_DIR/swift/write_configure_remotes.sh" || exit 1

@@ -214,31 +214,37 @@ reset_remotes_cats_travis_ci_write() {
     pushd 'mu' || exit 1
     git remote rm origin
     git remote add origin https://${GITHUB_TOKEN}@github.com/JrGoodle/mu.git > /dev/null 2>&1
+    git fetch
     test_remote_url 'origin' "https://${GITHUB_TOKEN}@github.com/JrGoodle/mu.git"
     popd || exit 1
     pushd 'duke' || exit 1
     git remote rm origin
     git remote add origin https://${GITHUB_TOKEN}@github.com/JrGoodle/duke.git > /dev/null 2>&1
+    git fetch
     test_remote_url 'origin' "https://${GITHUB_TOKEN}@github.com/JrGoodle/duke.git"
     popd || exit 1
     pushd 'black-cats/kit' || exit 1
     git remote rm origin
     git remote add origin https://${GITHUB_TOKEN}@github.com/JrGoodle/kit.git > /dev/null 2>&1
+    git fetch
     test_remote_url 'origin' "https://${GITHUB_TOKEN}@github.com/JrGoodle/kit.git"
     popd || exit 1
     pushd 'black-cats/kishka' || exit 1
     git remote rm origin
     git remote add origin https://${GITHUB_TOKEN}@github.com/JrGoodle/kishka.git > /dev/null 2>&1
+    git fetch
     test_remote_url 'origin' "https://${GITHUB_TOKEN}@github.com/JrGoodle/kishka.git"
     popd || exit 1
     pushd 'black-cats/sasha' || exit 1
     git remote rm origin
     git remote add origin https://${GITHUB_TOKEN}@github.com/JrGoodle/sasha.git > /dev/null 2>&1
+    git fetch
     test_remote_url 'origin' "https://${GITHUB_TOKEN}@github.com/JrGoodle/sasha.git"
     popd || exit 1
     pushd 'black-cats/jules' || exit 1
     git remote rm origin
     git remote add origin https://${GITHUB_TOKEN}@github.com/JrGoodle/jules.git > /dev/null 2>&1
+    git fetch
     test_remote_url 'origin' "https://${GITHUB_TOKEN}@github.com/JrGoodle/jules.git"
     popd || exit 1
 }

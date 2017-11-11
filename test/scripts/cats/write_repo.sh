@@ -13,11 +13,15 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
     ./clean.sh
     ./init.sh
     $COMMAND herd $PARALLEL || exit 1
-    pushd '.clowder' || exit 1
-    git remote rm origin
-    git remote add origin https://${GITHUB_TOKEN}@github.com/JrGoodle/cats.git > /dev/null 2>&1
-    test_remote_url 'origin' "https://${GITHUB_TOKEN}@github.com/JrGoodle/cats.git"
-    popd || exit 1
+
+    if [ -n "$TRAVIS_OS_NAME" ]; then
+        pushd '.clowder' || exit 1
+        git remote rm origin
+        git remote add origin https://${GITHUB_TOKEN}@github.com/JrGoodle/cats.git > /dev/null 2>&1
+        git fetch
+        test_remote_url 'origin' "https://${GITHUB_TOKEN}@github.com/JrGoodle/cats.git"
+        popd || exit 1
+    fi
 
     test_clowder_repo_commit_pull_push() {
         print_single_separator
