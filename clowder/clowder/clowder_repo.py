@@ -24,12 +24,10 @@ from clowder.git.util import (
     format_project_string,
     print_validation
 )
+from clowder.util.clowder_utils import link_clowder_yaml
 from clowder.util.connectivity import is_offline
 from clowder.util.execute import execute_command
-from clowder.util.file_system import (
-    force_symlink,
-    remove_directory
-)
+from clowder.util.file_system import remove_directory
 from clowder.yaml.validating import validate_yaml
 
 
@@ -55,7 +53,7 @@ class ClowderRepo(object):
         # Create clowder.yaml symlink if .clowder dir and yaml file exist
         clowder_symlink = os.path.join(ROOT_DIR, 'clowder.yaml')
         if os.path.isdir(self.clowder_path) and not os.path.islink(clowder_symlink):
-            self.link()
+            link_clowder_yaml()
 
         self.error = None
         if os.path.islink(clowder_symlink):
@@ -131,7 +129,7 @@ class ClowderRepo(object):
         atexit.register(self.init_exit_handler)
 
         self.repo.create_clowder_repo(url, branch)
-        self.link()
+        link_clowder_yaml()
 
     def init_exit_handler(self):
         """Exit handler for deleting files if init fails
@@ -153,32 +151,6 @@ class ClowderRepo(object):
         """
 
         return self.repo.is_dirty()
-
-    @staticmethod
-    def link(version=None):
-        """Create symlink pointing to clowder.yaml file
-
-        .. py:function:: link(version=None)
-
-        :param Optional[str] version: Version name of clowder.yaml to link
-        :raise ClowderExit:
-        """
-
-        if version is None:
-            yaml_file = os.path.join(ROOT_DIR, '.clowder', 'clowder.yaml')
-            path_output = fmt.get_path('.clowder/clowder.yaml')
-        else:
-            relative_path = os.path.join('.clowder', 'versions', version, 'clowder.yaml')
-            path_output = fmt.get_path(relative_path)
-            yaml_file = os.path.join(ROOT_DIR, relative_path)
-
-        if not os.path.isfile(yaml_file):
-            print('\n' + path_output + " doesn't seem to exist\n")
-            raise ClowderExit(1)
-
-        yaml_symlink = os.path.join(ROOT_DIR, 'clowder.yaml')
-        print(' - Symlink ' + path_output)
-        force_symlink(yaml_file, yaml_symlink)
 
     def print_status(self, fetch=False):
         """Print clowder repo status

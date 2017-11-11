@@ -20,11 +20,11 @@ test_invalid_yaml() {
     do
         $COMMAND link -v $test || exit 1
         print_single_separator
-        $COMMAND herd && exit 1
-        # exit_code=$?
-        # if [ "$exit_code" != '42' ]; then
-        #     exit 1
-        # fi
+        $COMMAND herd
+        exit_code=$?
+        if [ "$exit_code" != '42' ]; then
+            exit 1
+        fi
         print_single_separator
         rm clowder.yaml || exit 1
     done

@@ -10,6 +10,7 @@ import os
 import clowder.util.formatting as fmt
 from clowder import ROOT_DIR
 from clowder.error.clowder_exit import ClowderExit
+from clowder.util.file_system import force_symlink
 
 
 def existing_branch_groups(groups, branch, is_remote):
@@ -94,6 +95,30 @@ def get_saved_version_names():
     if not os.path.exists(versions_dir):
         return None
     return [v for v in os.listdir(versions_dir) if not v.startswith('.') if v.lower() != 'default']
+
+
+def link_clowder_yaml(version=None):
+    """Create symlink pointing to clowder.yaml file
+
+    :param Optional[str] version: Version name of clowder.yaml to link
+    :raise ClowderExit:
+    """
+
+    if version is None:
+        yaml_file = os.path.join(ROOT_DIR, '.clowder', 'clowder.yaml')
+        path_output = fmt.get_path('.clowder/clowder.yaml')
+    else:
+        relative_path = os.path.join('.clowder', 'versions', version, 'clowder.yaml')
+        path_output = fmt.get_path(relative_path)
+        yaml_file = os.path.join(ROOT_DIR, relative_path)
+
+    if not os.path.isfile(yaml_file):
+        print('\n' + path_output + " doesn't seem to exist\n")
+        raise ClowderExit(1)
+
+    yaml_symlink = os.path.join(ROOT_DIR, 'clowder.yaml')
+    print(' - Symlink ' + path_output)
+    force_symlink(yaml_file, yaml_symlink)
 
 
 def options_help_message(options, message):
