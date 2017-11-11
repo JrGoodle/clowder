@@ -73,4 +73,6 @@ class Cocos2dController(ArgparseController):
         execute_test_command(command, path,
                              parallel=self.app.pargs.parallel,
                              write=self.app.pargs.write,
-                             coverage=self.app.pargs.coverage)
+                             coverage=self.app.pargs.coverage,
+                             debug=self.app.debug,
+                             quiet=self.app.pargs.silent)

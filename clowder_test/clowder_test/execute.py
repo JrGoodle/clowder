@@ -23,7 +23,7 @@ from clowder_test.clowder_test_error import ClowderTestError
 def execute_test_command(command, path, **kwargs):
     """Execute test command
 
-    .. py:function:: execute_test_command(command, path, parallel=False, write=False, coverage=False, test_env=None)
+    .. py:function:: execute_test_command(command, path, parallel=False, write=False, coverage=False, test_env=None, debug=False, quiet=False)
 
     :param command: Command to run
     :type command: str
@@ -34,6 +34,8 @@ def execute_test_command(command, path, **kwargs):
         write (bool): Whether to run tests requiring write permission
         coverage (bool): Whether to run tests with code coverage
         test_env (dict): Custom dict of environment variables
+        debug (bool): Toggle debug output
+        quiet (bool): Suppress all output
 
     :return: Subprocess return code
     :rtype: int
@@ -43,6 +45,8 @@ def execute_test_command(command, path, **kwargs):
     write = kwargs.get('write', False)
     coverage = kwargs.get('coverage', False)
     test_env = kwargs.get('test_env', {})
+    debug = kwargs.get('debug', False)
+    quiet = kwargs.get('quiet', False)
 
     test_env['ACCESS_LEVEL'] = 'write' if write else 'read'
 
@@ -56,7 +60,14 @@ def execute_test_command(command, path, **kwargs):
     else:
         test_env['COMMAND'] = 'clowder'
 
-    execute_command(command, path, env=test_env)
+    if debug:
+        test_env['COMMAND'] = test_env['COMMAND'] + ' --debug'
+
+    if quiet:
+        test_env['COMMAND'] = test_env['COMMAND'] + ' --quiet'
+        execute_command(command, path, print_output=False, env=test_env)
+    else:
+        execute_command(command, path, env=test_env)
 
 
 def subprocess_exit_handler(process):
