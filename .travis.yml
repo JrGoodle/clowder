@@ -27,6 +27,8 @@ matrix:
     env: TARGET="parallel" PYVERSION="python3"
   - os: linux
     env: TARGET="swift" PYVERSION="python3"
+  - os: linux
+    env: TARGET="write" PYVERSION="python3"
 
 before_install: script/bootstrap "$PYVERSION"
 
@@ -40,6 +42,7 @@ script:
     - if [ "$TARGET" = "llvm" ]; then clowder-test -c llvm all; fi
     - if [ "$TARGET" = "parallel" ]; then clowder-test parallel; fi
     - if [ "$TARGET" = "swift" ]; then clowder-test -c swift all; fi
+    - if [ "$TARGET" = "write" ]; then clowder-test --silent -c write; fi
 
 after_script: script/travis/after_script
 

@@ -67,4 +67,4 @@ test_local_swift_example() {
 }
 test_local_swift_example
 
-"$TEST_SCRIPT_DIR/swift/write_configure_remotes.sh" || exit 1
+"$TEST_SCRIPT_DIR/swift/ssh_configure_remotes.sh" || exit 1

@@ -249,6 +249,27 @@ reset_remotes_cats_travis_ci_write() {
     popd || exit 1
 }
 
+reset_remotes_llvm_travis_ci_write() {
+    pushd 'llvm/tools/clang' || exit 1
+    git remote rm origin
+    git remote add origin https://${GITHUB_TOKEN}@github.com/JrGoodle/clang.git > /dev/null 2>&1
+    git fetch origin
+    test_remote_url 'origin' "https://${GITHUB_TOKEN}@github.com/JrGoodle/clang.git"
+    popd || exit 1
+    pushd 'llvm/tools/clang/tools/extra' || exit 1
+    git remote rm origin
+    git remote add origin https://${GITHUB_TOKEN}@github.com/JrGoodle/clang-tools-extra.git > /dev/null 2>&1
+    git fetch origin
+    test_remote_url 'origin' "https://${GITHUB_TOKEN}@github.com/JrGoodle/clang-tools-extra.git"
+    popd || exit 1
+    pushd 'llvm/projects/compiler-rt' || exit 1
+    git remote rm origin
+    git remote add origin https://${GITHUB_TOKEN}@github.com/JrGoodle/compiler-rt.git > /dev/null 2>&1
+    git fetch origin
+    test_remote_url 'origin' "https://${GITHUB_TOKEN}@github.com/JrGoodle/compiler-rt.git"
+    popd || exit 1
+}
+
 print_single_separator() {
     echo '--------------------------------------------------------------------------------'
 }

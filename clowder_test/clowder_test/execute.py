@@ -23,7 +23,7 @@ from clowder_test.clowder_test_error import ClowderTestError
 def execute_test_command(command, path, **kwargs):
     """Execute test command
 
-    .. py:function:: execute_test_command(command, path, parallel=False, write=False, coverage=False, test_env=None, debug=False, quiet=False)
+    .. py:function:: execute_test_command(command, path, parallel=False, write=False, coverage=False, test_env=None, debug=False, quiet=False, ssh=False)
 
     :param command: Command to run
     :type command: str
@@ -36,6 +36,7 @@ def execute_test_command(command, path, **kwargs):
         test_env (dict): Custom dict of environment variables
         debug (bool): Toggle debug output
         quiet (bool): Suppress all output
+        ssh (bool): Whether to run test scripts requiring ssh credentials
 
     :return: Subprocess return code
     :rtype: int
@@ -47,11 +48,15 @@ def execute_test_command(command, path, **kwargs):
     test_env = kwargs.get('test_env', {})
     debug = kwargs.get('debug', False)
     quiet = kwargs.get('quiet', False)
+    ssh = kwargs.get('ssh', False)
 
     test_env['ACCESS_LEVEL'] = 'write' if write else 'read'
 
     if parallel:
         test_env['PARALLEL'] = '--parallel'
+
+    if ssh:
+        test_env['PROTOCOL'] = 'ssh'
 
     if coverage:
         rc_file = os.path.join(ROOT_DIR, '.coveragerc')

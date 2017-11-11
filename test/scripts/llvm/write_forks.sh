@@ -59,6 +59,11 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
         echo "TEST: Forks"
         $COMMAND link || exit 1
         $COMMAND herd $PARALLEL || exit 1
+
+        if [ -n "$TRAVIS_OS_NAME" ]; then
+            reset_remotes_llvm_travis_ci_write
+        fi
+
         $COMMAND start -t fail_start && exit 1
         $COMMAND prune -a fail_start || exit 1
 

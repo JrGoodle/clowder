@@ -60,6 +60,10 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
         $COMMAND link || exit 1
         $COMMAND herd $PARALLEL || exit 1
 
+        if [ -n "$TRAVIS_OS_NAME" ]; then
+            reset_remotes_llvm_travis_ci_write
+        fi
+
         pushd 'llvm/tools/clang' || exit 1
         git pull upstream master || exit 1
         UPSTREAM_COMMIT="$(git rev-parse HEAD)"
