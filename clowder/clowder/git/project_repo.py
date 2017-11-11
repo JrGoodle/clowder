@@ -143,7 +143,7 @@ class ProjectRepo(ProjectRepoImpl):
             self._herd_branch_existing_local(branch, depth=depth, rebase=rebase, fork_remote=fork_remote)
             return
 
-        self.fetch(self.remote, depth=depth, ref=branch_ref)
+        self.fetch(self.remote, depth=depth, ref=branch_ref, allow_failure=True)
         if self.existing_remote_branch(branch, self.remote):
             self._herd(self.remote, branch_ref, depth=depth, fetch=False, rebase=rebase)
             return
