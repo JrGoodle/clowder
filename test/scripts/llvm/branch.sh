@@ -2,7 +2,7 @@
 
 # set -xv
 
-cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
+cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
 
 . test_utilities.sh
 
