@@ -76,6 +76,10 @@ class Project(object):
         self.remote = project.get('remote', group.get('remote', defaults.remote))
         self.depth = project.get('depth', group.get('depth', defaults.depth))
         self.recursive = project.get('recursive', group.get('recursive', defaults.recursive))
+        self._protocol = defaults.protocol
+        self._timestamp_author = project.get('timestamp_author',
+                                             group.get('timestamp_author', defaults.timestamp_author))
+        self._print_output = True
 
         self.source = None
         source_name = project.get('source', group.get('source', defaults.source))
@@ -88,12 +92,7 @@ class Project(object):
             fork = project['fork']
             if fork['remote'] == self.remote:
                 raise ClowderYAMLError(fmt.remote_name_error(fork['name'], self.name, self.remote))
-            self.fork = Fork(fork, self.path, self.source)
-
-        self._protocol = defaults.protocol
-        self._timestamp_author = project.get('timestamp_author',
-                                             group.get('timestamp_author', defaults.timestamp_author))
-        self._print_output = True
+            self.fork = Fork(fork, self.path, self.source, self._protocol)
 
     @project_repo_exists
     def branch(self, local=False, remote=False):
@@ -450,7 +449,7 @@ class Project(object):
         self._print_output = not parallel
 
         repo = self._repo(self.full_path(), self.remote, self.ref, self.recursive, parallel=parallel)
-        self._run_herd_command('herd', repo, self._url(), rebase=rebase)
+        self._run_herd_command('herd', repo, self._protocol, rebase=rebase)
         self._print(self.fork.status())
         repo.sync(self.fork.remote_name, rebase=rebase)
 
@@ -549,4 +548,5 @@ class Project(object):
 
         if protocol:
             return git_url(protocol, self.source.url, self.name)
+
         return git_url(self._protocol, self.source.url, self.name)
