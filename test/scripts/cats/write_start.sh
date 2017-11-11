@@ -24,10 +24,6 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
     ./init.sh
     $COMMAND herd $PARALLEL || exit 1
 
-    if [ -n "$TRAVIS_OS_NAME" ]; then
-        reset_remotes_cats_travis_ci_write
-    fi
-
     test_start_tracking() {
         print_single_separator
         echo "TEST: Test start tracking branch"

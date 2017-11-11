@@ -14,10 +14,6 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
     $COMMAND link || exit 1
     $COMMAND herd $PARALLEL || exit 1
 
-    if [ -n "$TRAVIS_OS_NAME" ]; then
-        reset_remotes_cats_travis_ci_write
-    fi
-
     test_herd_rebase_conflict() {
         print_single_separator
         echo "TEST: clowder herd rebase conflict"
