@@ -48,12 +48,12 @@ export fork_projects=( 'llvm-mirror/clang' \
                        'llvm-mirror/clang-tools-extra' \
                        'llvm-mirror/compiler-rt' )
 
-print_double_separator
-echo "TEST: Test clowder sync"
-cd "$LLVM_EXAMPLE_DIR" || exit 1
-./init.sh
-
 if [ "$ACCESS_LEVEL" == "write" ]; then
+    print_double_separator
+    echo "TEST: Test clowder sync"
+    cd "$LLVM_EXAMPLE_DIR" || exit 1
+    ./init.sh
+
     test_sync() {
         print_double_separator
         echo "TEST: clowder sync"

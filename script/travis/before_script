@@ -7,7 +7,7 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
 
 if [ "$TARGET" != "parallel" ]; then
     cd "$TRAVIS_BUILD_DIR" || exit 1
-    
+
     if [ "$PYVERSION" = 'python2' ]; then
         sudo pip install coverage
     else
@@ -24,3 +24,9 @@ if [ "$TARGET" != "parallel" ]; then
     chmod +x ./cc-test-reporter
     ./cc-test-reporter before-build
 fi
+
+setup_git() {
+  git config --global user.email "travis@travis-ci.org"
+  git config --global user.name "Travis CI"
+}
+setup_git

@@ -4,15 +4,21 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
 
 . test_utilities.sh
 
-print_double_separator
-echo "TEST: Test clowder repo write"
-
-cd "$CATS_EXAMPLE_DIR" || exit 1
-./clean.sh
-./init.sh
-$COMMAND herd $PARALLEL || exit 1
 
 if [ "$ACCESS_LEVEL" == "write" ]; then
+    print_double_separator
+    echo "TEST: Test clowder repo write"
+
+    cd "$CATS_EXAMPLE_DIR" || exit 1
+    ./clean.sh
+    ./init.sh
+    $COMMAND herd $PARALLEL || exit 1
+    pushd '.clowder' || exit 1
+    git remote rm origin
+    git remote add origin https://${GITHUB_TOKEN}@github.com/JrGoodle/cats.git > /dev/null 2>&1
+    test_remote_url 'origin' "https://${GITHUB_TOKEN}@github.com/JrGoodle/cats.git"
+    popd || exit 1
+
     test_clowder_repo_commit_pull_push() {
         print_single_separator
         echo "TEST: Test clowder repo commit, clowder repo pull, clowder repo push commands"

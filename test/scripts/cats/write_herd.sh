@@ -4,19 +4,20 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
 
 . test_utilities.sh
 
-print_double_separator
-echo "TEST: Test clowder herd write"
-
-cd "$CATS_EXAMPLE_DIR" || exit 1
-./clean.sh
-./init.sh
-
 if [ "$ACCESS_LEVEL" == "write" ]; then
+    print_double_separator
+    echo "TEST: Test clowder herd write"
+
+    cd "$CATS_EXAMPLE_DIR" || exit 1
+    ./clean.sh
+    ./init.sh
+    $COMMAND link || exit 1
+    $COMMAND herd $PARALLEL || exit 1
+    reset_remotes_cats_travis_ci_write
+
     test_herd_rebase_conflict() {
         print_single_separator
         echo "TEST: clowder herd rebase conflict"
-        $COMMAND link || exit 1
-        $COMMAND herd $PARALLEL || exit 1
 
         pushd mu || exit 1
         touch rebasefile || exit 1
