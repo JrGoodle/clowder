@@ -114,8 +114,11 @@ def worker_init():
 
 
 __clowder_results__ = []
-__clowder_pool__ = mp.Pool(initializer=worker_init)
 __clowder_progress__ = Progress()
+
+if __name__ == '__main__':
+    mp.freeze_support()
+    __clowder_pool__ = mp.Pool(initializer=worker_init)
 
 
 def forall(clowder, command, ignore_errors, group_names, **kwargs):
