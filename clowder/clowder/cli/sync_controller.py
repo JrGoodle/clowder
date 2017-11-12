@@ -10,18 +10,18 @@ from __future__ import print_function
 from cement.ext.ext_argparse import ArgparseController, expose
 from termcolor import cprint
 
-from clowder.cli.parallel_commands import (
-    run_parallel_command,
-    sync_project
-)
 from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.clowder_repo import print_clowder_repo_status_fetch
-from clowder.util.connectivity import network_connection_required
-from clowder.util.decorators import valid_clowder_yaml_required
 from clowder.util.clowder_utils import (
     filter_projects,
     options_help_message,
     print_parallel_projects_output
+)
+from clowder.util.connectivity import network_connection_required
+from clowder.util.decorators import valid_clowder_yaml_required
+from clowder.util.parallel_commands import (
+    run_parallel_command,
+    sync_project
 )
 
 

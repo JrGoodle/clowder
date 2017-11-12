@@ -7,14 +7,8 @@
 
 from cement.ext.ext_argparse import ArgparseController, expose
 
-from clowder.cli.parallel_commands import (
-    herd_project,
-    run_parallel_command
-)
 from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.clowder_repo import print_clowder_repo_status_fetch
-from clowder.util.connectivity import network_connection_required
-from clowder.util.decorators import valid_clowder_yaml_required
 from clowder.util.clowder_utils import (
     filter_groups,
     filter_projects,
@@ -24,6 +18,12 @@ from clowder.util.clowder_utils import (
     validate_groups,
     validate_print_output,
     validate_projects
+)
+from clowder.util.connectivity import network_connection_required
+from clowder.util.decorators import valid_clowder_yaml_required
+from clowder.util.parallel_commands import (
+    herd_project,
+    run_parallel_command
 )
 
 

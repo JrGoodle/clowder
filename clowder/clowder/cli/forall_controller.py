@@ -11,17 +11,17 @@ from cement.ext.ext_argparse import ArgparseController, expose
 from termcolor import cprint
 
 import clowder.util.formatting as fmt
-from clowder.cli.parallel_commands import (
-    run_parallel_command,
-    run_project
-)
 from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.clowder_repo import print_clowder_repo_status
-from clowder.util.decorators import valid_clowder_yaml_required
 from clowder.util.clowder_utils import (
     filter_projects,
     options_help_message,
     run_project_command
+)
+from clowder.util.decorators import valid_clowder_yaml_required
+from clowder.util.parallel_commands import (
+    run_parallel_command,
+    run_project
 )
 
 
