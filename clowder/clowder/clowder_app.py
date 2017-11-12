@@ -7,9 +7,8 @@
 
 from __future__ import print_function
 
-import sys
-
 import colorama
+from cement.core.exc import FrameworkError, CaughtSignal
 from cement.core.foundation import CementApp
 
 import clowder.cli as cmd
@@ -23,6 +22,7 @@ class ClowderApp(CementApp):
         """Clowder command CLI Meta configuration"""
 
         label = 'clowder'
+        exit_on_close = True
         extensions = ['argcomplete']
         base_controller = 'base'
         handlers = [
@@ -62,10 +62,31 @@ def main():
     with ClowderApp() as app:
         try:
             app.run()
-        except ClowderExit:
-            sys.tracebacklimit = 0
-            raise
-        print()
+        except CaughtSignal as err:
+            # determine what the signal is, and do something with it?
+            from signal import SIGINT, SIGABRT
+
+            if err.signum == SIGINT:
+                # do something... maybe change the exit code?
+                app.exit_code = 110
+            elif err.signum == SIGABRT:
+                # do something else...
+                app.exit_code = 111
+        except FrameworkError as err:
+            # do something when a framework error happens
+            app.args.print_help()
+
+            # and maybe set the exit code to something unique as well
+            app.exit_code = 300
+        except ClowderExit as err:
+            app.exit_code = err.code
+        finally:
+            # Maybe we want to see a full-stack trace for the above
+            # exceptions, but only if --debug was passed?
+            print()
+            if app.debug:
+                import traceback
+                traceback.print_exc()
 
 
 if __name__ == '__main__':

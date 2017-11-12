@@ -10,9 +10,8 @@ print_double_separator
 echo 'TEST: cats example test script'
 print_double_separator
 
-test_clowder_version
-test_command
-
+"$TEST_SCRIPT_DIR/cats/version.sh" || exit 1
+"$TEST_SCRIPT_DIR/cats/command.sh" || exit 1
 "$TEST_SCRIPT_DIR/cats/init.sh" || exit 1
 "$TEST_SCRIPT_DIR/cats/branch.sh" || exit 1
 "$TEST_SCRIPT_DIR/cats/checkout.sh" || exit 1

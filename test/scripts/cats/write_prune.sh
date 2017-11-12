@@ -10,15 +10,15 @@ export all_projects=( 'mu' 'duke' \
                       'black-cats/sasha' \
                       'black-cats/jules' )
 
-print_double_separator
-echo "TEST: Test clowder prune write"
-
-cd "$CATS_EXAMPLE_DIR" || exit 1
-./clean.sh
-./init.sh
-$COMMAND herd $PARALLEL || exit 1
-
 if [ "$ACCESS_LEVEL" == "write" ]; then
+    print_double_separator
+    echo "TEST: Test clowder prune write"
+
+    cd "$CATS_EXAMPLE_DIR" || exit 1
+    ./clean.sh
+    ./init.sh
+    $COMMAND herd $PARALLEL || exit 1
+
     test_prune_remote() {
         print_single_separator
         echo "TEST: Test clowder prune remote branch"

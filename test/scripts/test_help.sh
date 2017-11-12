@@ -37,8 +37,8 @@ print_single_separator
 echo "TEST: clowder -h"
 $COMMAND -h || exit 1
 
-for command in "${commands[@]}"; do
+for cmd in "${commands[@]}"; do
     print_single_separator
-    echo "TEST: clowder $command -h"
-    $COMMAND $command -h || exit 1
+    echo "TEST: clowder $cmd -h"
+    $COMMAND $cmd -h || exit 1
 done

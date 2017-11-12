@@ -106,8 +106,7 @@ class RepoCleanController(ArgparseController):
 
     @clowder_required
     @print_clowder_repo_status
-    @staticmethod
-    def _clean():
+    def _clean(self):
         """Clowder repo clean command private implementation"""
 
         CLOWDER_REPO.clean()
@@ -163,8 +162,7 @@ class RepoPullController(ArgparseController):
     @network_connection_required
     @clowder_required
     @print_clowder_repo_status_fetch
-    @staticmethod
-    def _pull():
+    def _pull(self):
         """Clowder repo pull command private implementation"""
 
         CLOWDER_REPO.pull()
@@ -192,8 +190,7 @@ class RepoPushController(ArgparseController):
     @network_connection_required
     @clowder_required
     @print_clowder_repo_status_fetch
-    @staticmethod
-    def _push():
+    def _push(self):
         """Clowder repo push command private implementation"""
 
         CLOWDER_REPO.push()
@@ -250,8 +247,7 @@ class RepoStatusController(ArgparseController):
 
     @clowder_required
     @print_clowder_repo_status
-    @staticmethod
-    def _status():
+    def _status(self):
         """Clowder repo status command private implementation"""
 
         CLOWDER_REPO.git_status()

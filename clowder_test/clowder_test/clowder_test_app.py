@@ -21,6 +21,10 @@ from clowder_test.cli.swift_controller import SwiftController
 from clowder_test.execute import execute_command
 
 
+def post_argument_parsing_hook(app):
+    execute_command('./setup_local_test_directory.sh', os.path.join(ROOT_DIR, 'test', 'scripts'))
+
+
 class ClowderApp(CementApp):
     """Clowder command CLI app"""
 
@@ -30,6 +34,9 @@ class ClowderApp(CementApp):
         label = 'clowder'
         extensions = ['argcomplete']
         base_controller = 'base'
+        hooks = [
+            ('post_argument_parsing', post_argument_parsing_hook)
+        ]
         handlers = [
             BaseController,
             CatsController,
@@ -43,9 +50,6 @@ def main():
     """Clowder command CLI main function"""
 
     print()
-
-    execute_command('./setup_local_test_directory.sh', os.path.join(ROOT_DIR, 'test', 'scripts'))
-
     with ClowderApp() as app:
         app.run()
 

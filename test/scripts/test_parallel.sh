@@ -12,8 +12,6 @@ print_double_separator
 
 cd "$CATS_EXAMPLE_DIR" || exit 1
 
-test_clowder_version
-
 "$TEST_SCRIPT_DIR/cats/herd.sh" || exit 1
 "$TEST_SCRIPT_DIR/cats/herd_branch.sh" || exit 1
 "$TEST_SCRIPT_DIR/cats/herd_tag.sh" || exit 1

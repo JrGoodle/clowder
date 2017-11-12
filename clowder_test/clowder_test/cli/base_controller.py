@@ -31,7 +31,8 @@ class BaseController(ArgparseController):
             (['--coverage', '-c'], dict(action='store_true', help='run tests with code coverage')),
             (['--parallel', '-p'], dict(action='store_true', help='run tests with parallel commands')),
             (['--write', '-w'], dict(action='store_true', help='run tests requiring test repo write access')),
-            (['-v', '--version'], dict(action='version', version=VERSION))
+            (['-v', '--version'], dict(action='version', version=VERSION)),
+            (['--silent'], dict(action='store_true', help='suppress all output of subcommands'))
         ]
 
     @expose(
@@ -46,11 +47,12 @@ class BaseController(ArgparseController):
             execute_test_command(script, self.path,
                                  parallel=self.app.pargs.parallel,
                                  write=self.app.pargs.write,
-                                 coverage=self.app.pargs.coverage)
+                                 coverage=self.app.pargs.coverage,
+                                 debug=self.app.debug,
+                                 quiet=self.app.pargs.silent)
 
         self.offline()
         self.parallel()
-        self.unittests()
 
     @expose(
         help='Run offline tests'
@@ -61,13 +63,12 @@ class BaseController(ArgparseController):
         execute_test_command('./offline.sh', os.path.join(self.path, 'cats'),
                              parallel=self.app.pargs.parallel,
                              write=self.app.pargs.write,
-                             coverage=self.app.pargs.coverage)
+                             coverage=self.app.pargs.coverage,
+                             debug=self.app.debug,
+                             quiet=self.app.pargs.silent)
 
     @expose(
-        help='Run parallel tests',
-        arguments=[
-            (['--write', '-w'], dict(action='store_true', help='run tests requiring test repo write access'))
-        ]
+        help='Run parallel tests'
     )
     def parallel(self):
         """clowder parallel tests"""
@@ -75,7 +76,31 @@ class BaseController(ArgparseController):
         execute_test_command('./test_parallel.sh', self.path,
                              parallel=True,
                              write=self.app.pargs.write,
-                             coverage=self.app.pargs.coverage)
+                             coverage=self.app.pargs.coverage,
+                             debug=self.app.debug,
+                             quiet=self.app.pargs.silent)
+
+    @expose(
+        help='Run tests requiring ssh credentials'
+    )
+    def ssh(self):
+        """clowder ssh tests"""
+
+        execute_test_command('./ssh_protocol.sh', os.path.join(self.path, 'cocos2d'),
+                             parallel=self.app.pargs.parallel,
+                             write=True,
+                             coverage=self.app.pargs.coverage,
+                             debug=self.app.debug,
+                             quiet=self.app.pargs.silent,
+                             ssh=True)
+
+        execute_test_command('./ssh_configure_remotes.sh', os.path.join(self.path, 'swift'),
+                             parallel=self.app.pargs.parallel,
+                             write=True,
+                             coverage=self.app.pargs.coverage,
+                             debug=self.app.debug,
+                             quiet=self.app.pargs.silent,
+                             ssh=True)
 
     @expose(
         help='Run unit tests',
@@ -96,13 +121,12 @@ class BaseController(ArgparseController):
                              parallel=self.app.pargs.parallel,
                              write=self.app.pargs.write,
                              coverage=self.app.pargs.coverage,
-                             test_env=test_env)
+                             test_env=test_env,
+                             debug=self.app.debug,
+                             quiet=self.app.pargs.silent)
 
     @expose(
-        help='Run tests requiring remote write permissions',
-        arguments=[
-            (['--parallel', '-p'], dict(action='store_true', help='run tests with parallel commands'))
-        ]
+        help='Run tests requiring remote write permissions'
     )
     def write(self):
         """clowder write tests"""
@@ -112,21 +136,15 @@ class BaseController(ArgparseController):
             execute_test_command(script, os.path.join(self.path, 'cats'),
                                  parallel=self.app.pargs.parallel,
                                  write=True,
-                                 coverage=self.app.pargs.coverage)
-
-        execute_test_command('./write_protocol.sh', os.path.join(self.path, 'cocos2d'),
-                             parallel=self.app.pargs.parallel,
-                             write=True,
-                             coverage=self.app.pargs.coverage)
+                                 coverage=self.app.pargs.coverage,
+                                 debug=self.app.debug,
+                                 quiet=self.app.pargs.silent)
 
         llvm_scripts = ['./write_forks.sh', './write_sync.sh']
         for script in llvm_scripts:
             execute_test_command(script, os.path.join(self.path, 'llvm'),
                                  parallel=self.app.pargs.parallel,
                                  write=True,
-                                 coverage=self.app.pargs.coverage)
-
-        execute_test_command('./write_configure_remotes.sh', os.path.join(self.path, 'swift'),
-                             parallel=self.app.pargs.parallel,
-                             write=True,
-                             coverage=self.app.pargs.coverage)
+                                 coverage=self.app.pargs.coverage,
+                                 debug=self.app.debug,
+                                 quiet=self.app.pargs.silent)

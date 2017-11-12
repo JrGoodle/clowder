@@ -15,18 +15,18 @@ export all_projects=( 'mu' 'duke' \
                       'black-cats/sasha' \
                       'black-cats/jules' )
 
-print_double_separator
-echo "TEST: Test clowder start"
-
-cd "$CATS_EXAMPLE_DIR" || exit 1
-./clean.sh
-./init.sh
-
 if [ "$ACCESS_LEVEL" == "write" ]; then
+    print_double_separator
+    echo "TEST: Test clowder start"
+
+    cd "$CATS_EXAMPLE_DIR" || exit 1
+    ./clean.sh
+    ./init.sh
+    $COMMAND herd $PARALLEL || exit 1
+
     test_start_tracking() {
         print_single_separator
         echo "TEST: Test start tracking branch"
-        $COMMAND herd $PARALLEL || exit 1
 
         echo "TEST: No local or remote branches"
         $COMMAND prune -af tracking_branch || exit 1

@@ -2,7 +2,7 @@
 
 # set -xv
 
-cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
+cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
 
 . test_utilities.sh
 
@@ -26,8 +26,6 @@ export project_paths=( 'llvm' \
 export fork_paths=( 'llvm/tools/clang' \
                     'llvm/tools/clang/tools/extra' \
                     'llvm/projects/compiler-rt' )
-
-test_clowder_version
 
 print_double_separator
 echo 'TEST: llvm projects example test script'

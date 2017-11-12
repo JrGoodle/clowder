@@ -29,18 +29,20 @@ class Fork(object):
     :ivar str remote_name: Git remote name
     """
 
-    def __init__(self, fork, path, source):
+    def __init__(self, fork, path, source, protocol):
         """Project __init__
 
         :param dict fork: Parsed YAML python object for fork
         :param str path: Fork relative path
         :param Source source: Source instance
+        :param str protocol: Git protocol ('ssh' or 'https')
         """
 
         self.path = path
         self.name = fork['name']
         self.remote_name = fork['remote']
         self._source = source
+        self._protocol = protocol
 
     def full_path(self):
         """Return full path to project
@@ -76,6 +78,12 @@ class Fork(object):
         return project_output + ' ' + current_ref_output
 
     def url(self, protocol):
-        """Return project url"""
+        """Return project url
 
-        return git_url(protocol, self._source.url, self.name)
+        :param str protocol: Git protocol ('ssh' or 'https')
+        """
+
+        if protocol:
+            return git_url(protocol, self._source.url, self.name)
+
+        return git_url(self._protocol, self._source.url, self.name)

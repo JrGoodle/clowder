@@ -10,7 +10,7 @@ import os
 import subprocess
 from multiprocessing.pool import ThreadPool
 
-from termcolor import cprint
+from termcolor import colored
 
 from clowder.error.clowder_error import ClowderError
 
@@ -119,15 +119,12 @@ def execute_command(command, path, **kwargs):
         if pool:
             pool.close()
             pool.terminate()
-        cprint('\n - Command failed\n', 'red')
-        raise ClowderError('Command interrupted')
+        raise ClowderError(colored('- Command interrupted', 'red'))
     except Exception as err:
         if pool:
             pool.close()
             pool.terminate()
-        cprint('\n - Command failed', 'red')
-        print(str(err) + '\n')
-        raise ClowderError(err)
+        raise ClowderError(colored('\n - Command failed', 'red') + str(err) + '\n')
 
 
 def execute_forall_command(command, path, forall_env, print_output):

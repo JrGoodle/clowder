@@ -9,6 +9,8 @@ import os
 
 from termcolor import colored
 
+from clowder.error. clowder_error import ClowderError
+
 
 def existing_git_repository(path):
     """Check if a git repository exists
@@ -112,11 +114,18 @@ def git_url(protocol, url, name):
     :param str protocol: Git protocol ('ssh' or 'https')
     :param str url: Repo url
     :param str name: Repo name
+    :return: Full git repo url for specified protocol
+    :rtype: str
+    :raise ClowderError:
     """
 
     if protocol == 'ssh':
         return 'git@' + url + ':' + name + ".git"
-    return 'https://' + url + '/' + name + ".git"
+
+    if protocol == 'https':
+        return 'https://' + url + '/' + name + ".git"
+
+    raise ClowderError
 
 
 def ref_type(ref):

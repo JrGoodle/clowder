@@ -176,7 +176,7 @@ class GitRepo(object):
     def fetch(self, remote, **kwargs):
         """Fetch from a specific remote ref
 
-        .. py:function:: fetch(remote, ref=None, depth=0, remove_dir=False)
+        .. py:function:: fetch(remote, ref=None, depth=0, remove_dir=False, allow_failure=False)
 
         :param str remote: Remote name
 
@@ -184,11 +184,13 @@ class GitRepo(object):
             ref (str): Ref to fetch
             depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
             remove_dir (bool): Whether to remove the directory if commands fail
+            allow_failure (bool): Whether to allow failure
         """
 
         ref = kwargs.get('ref', None)
         depth = kwargs.get('depth', 0)
         remove_dir = kwargs.get('remove_dir', False)
+        allow_failure = kwargs.get('allow_failure', False)
 
         remote_output = fmt.remote_string(remote)
         if depth == 0:
@@ -212,8 +214,9 @@ class GitRepo(object):
         except ClowderError:
             if remove_dir:
                 remove_directory(self.repo_path)
-            self._print(error)
-            self._exit(error)
+            if not allow_failure:
+                self._print(error)
+                self._exit(error)
 
     def get_current_timestamp(self):
         """Get current timestamp of HEAD commit
