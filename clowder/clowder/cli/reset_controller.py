@@ -99,11 +99,7 @@ def reset(clowder, group_names, **kwargs):
     parallel = kwargs.get('parallel', False)
 
     if parallel:
-        if os.name == "posix":
-            reset_parallel(clowder, group_names, skip=skip, timestamp_project=timestamp_project)
-        else:
-            print(' - Parallel commands are only available on posix operating systems')
-        return
+        reset_parallel(clowder, group_names, skip=skip, timestamp_project=timestamp_project)
 
     timestamp = None
     if timestamp_project:

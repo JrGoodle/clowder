@@ -93,11 +93,7 @@ def forall(clowder, command, ignore_errors, group_names, **kwargs):
     projects = filter_projects(clowder.groups, group_names=group_names, project_names=project_names)
 
     if parallel:
-        if os.name == "posix":
-            forall_parallel([" ".join(command)], skip, ignore_errors, projects)
-        else:
-            print(' - Parallel commands are only available on posix operating systems')
-        return
+        forall_parallel([" ".join(command)], skip, ignore_errors, projects)
 
     for project in projects:
         run_project_command(project, skip, 'run', [" ".join(command)], ignore_errors)

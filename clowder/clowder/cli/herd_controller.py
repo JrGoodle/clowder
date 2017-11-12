@@ -84,11 +84,7 @@ class HerdController(ArgparseController):
                   'depth': depth, 'rebase': self.app.pargs.rebase, 'protocol': protocol}
 
         if self.app.pargs.parallel:
-            if os.name == "posix":
-                herd_parallel(CLOWDER_CONTROLLER, **kwargs)
-            else:
-                print(' - Parallel commands are only available on posix operating systems')
-            return
+            herd_parallel(CLOWDER_CONTROLLER, **kwargs)
 
         herd(CLOWDER_CONTROLLER, **kwargs)
 
