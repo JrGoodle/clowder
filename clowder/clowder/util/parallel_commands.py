@@ -12,6 +12,7 @@ import os
 import signal
 
 import psutil
+from cement.core.foundation import CementApp
 from termcolor import cprint
 
 from clowder.error.clowder_exit import ClowderExit
@@ -63,6 +64,36 @@ def sync_project(project, rebase):
     project.sync(rebase, parallel=True)
 
 
+__process_parent_id__ = os.getpid()
+
+
+def worker_init():
+    """
+    Process pool terminator
+
+    .. note:: Implementation source https://stackoverflow.com/a/45259908
+    """
+
+    def sig_int(signum, frame):
+        """Signal handler
+
+        :param signum: Dummy parameter to satisfy callback interface
+        :param frame: Dummy parameter to satisfy callback interface
+        """
+
+        # Terminate subprocesses
+        del signum, frame
+        parent = psutil.Process(__process_parent_id__)
+        for child in parent.children(recursive=True):
+            if child.pid != os.getpid():
+                child.terminate()
+        parent.terminate()
+        psutil.Process(os.getpid()).terminate()
+        print('\n\n')
+
+    signal.signal(signal.SIGINT, sig_int)
+
+
 # Disable warnings shown by pylint for catching too general exception
 # pylint: disable=W0703
 
@@ -75,33 +106,6 @@ def run_parallel_command(command, projects, skip, *args):
     :param list[str] skip: Project names to skip
     :param args: Aguments to pass to function
     """
-
-    __process_parent_id__ = os.getpid()
-
-    def worker_init():
-        """
-        Process pool terminator
-
-        .. note:: Implementation source https://stackoverflow.com/a/45259908
-        """
-
-        def sig_int(signal_num, frame):
-            """Signal handler
-
-            :param signal_num: Dummy parameter to satisfy callback interface
-            :param frame: Dummy parameter to satisfy callback interface
-            """
-
-            del signal_num, frame
-            parent = psutil.Process(__process_parent_id__)
-            for child in parent.children(recursive=True):
-                if child.pid != os.getpid():
-                    child.terminate()
-            parent.terminate()
-            psutil.Process(os.getpid()).terminate()
-            print('\n\n')
-
-        signal.signal(signal.SIGINT, sig_int)
 
     __results__ = []
     __progress__ = Progress()
