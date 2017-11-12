@@ -52,6 +52,14 @@ clowder\.util\.formatting module
     :undoc-members:
     :show-inheritance:
 
+clowder\.util\.parallel\_commands module
+----------------------------------------
+
+.. automodule:: clowder.util.parallel_commands
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 clowder\.util\.progress module
 ------------------------------
 

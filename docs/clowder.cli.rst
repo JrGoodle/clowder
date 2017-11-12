@@ -76,14 +76,6 @@ clowder\.cli\.link\_controller module
     :undoc-members:
     :show-inheritance:
 
-clowder\.cli\.parallel\_commands module
----------------------------------------
-
-.. automodule:: clowder.cli.parallel_commands
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 clowder\.cli\.prune\_controller module
 --------------------------------------
 
