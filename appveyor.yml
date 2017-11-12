@@ -39,7 +39,7 @@ test_script:
   - cd examples\cats
   - clowder init https://github.com/jrgoodle/cats.git
   - clowder herd
-  # - clowder herd --parallel
+  - clowder herd --parallel
   - clowder status
   - clowder branch
   # - clowder forall -c 'copy NUL empty-file.txt'
