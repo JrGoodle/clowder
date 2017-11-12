@@ -7,6 +7,8 @@
 
 from __future__ import print_function
 
+from multiprocessing import freeze_support
+
 import colorama
 from cement.core.exc import FrameworkError, CaughtSignal
 from cement.core.foundation import CementApp
@@ -90,5 +92,6 @@ def main():
 
 
 if __name__ == '__main__':
+    freeze_support()
     colorama.init()
     main()

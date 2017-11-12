@@ -145,7 +145,7 @@ class ProjectRepoRecursive(ProjectRepo):
         :param Optional[int] depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
         """
 
-        print(' - Recursively update and init submodules')
+        self._print(' - Recursively update and init submodules')
 
         if depth == 0:
             command = ['git', 'submodule', 'update', '--init', '--recursive']

@@ -33,7 +33,6 @@ class DiffController(ArgparseController):
     @expose(
         help='Show git diff for projects',
         arguments=[
-            (['branch'], dict(nargs=1, action='store', help='branch to checkout', metavar='BRANCH')),
             (['--groups', '-g'], dict(choices=CLOWDER_CONTROLLER.get_all_group_names(),
                                       default=CLOWDER_CONTROLLER.get_all_group_names(),
                                       nargs='+', metavar='GROUP',
@@ -62,9 +61,9 @@ class DiffController(ArgparseController):
         if self.app.pargs.projects is None:
             groups = filter_groups(CLOWDER_CONTROLLER.groups, self.app.pargs.groups)
             for group in groups:
-                run_group_command(group, [], 'diff')
+                run_group_command(group, self.app.pargs.skip, 'diff')
             return
 
         projects = filter_projects(CLOWDER_CONTROLLER.groups, project_names=self.app.pargs.projects)
         for project in projects:
-            run_project_command(project, [], 'diff')
+            run_project_command(project, self.app.pargs.skip, 'diff')
