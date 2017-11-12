@@ -5,6 +5,10 @@
 
 """
 
+from __future__ import print_function
+
+import os
+
 from cement.ext.ext_argparse import ArgparseController, expose
 
 from clowder.clowder_controller import CLOWDER_CONTROLLER
@@ -16,15 +20,11 @@ from clowder.util.clowder_utils import (
     run_group_command,
     run_project_command,
     validate_groups,
-    validate_print_output,
     validate_projects
 )
 from clowder.util.connectivity import network_connection_required
 from clowder.util.decorators import valid_clowder_yaml_required
-from clowder.util.parallel_commands import (
-    herd_project,
-    run_parallel_command
-)
+from clowder.util.parallel_commands import herd_parallel
 
 
 class HerdController(ArgparseController):
@@ -84,7 +84,10 @@ class HerdController(ArgparseController):
                   'depth': depth, 'rebase': self.app.pargs.rebase, 'protocol': protocol}
 
         if self.app.pargs.parallel:
-            herd_parallel(CLOWDER_CONTROLLER, **kwargs)
+            if os.name == "posix":
+                herd_parallel(CLOWDER_CONTROLLER, **kwargs)
+            else:
+                print(' - Parallel commands are only available on posix operating systems')
             return
 
         herd(CLOWDER_CONTROLLER, **kwargs)
@@ -129,35 +132,3 @@ def herd(clowder, group_names, **kwargs):
     for project in projects:
         run_project_command(project, skip, 'herd', branch=branch, tag=tag,
                             depth=depth, rebase=rebase, protocol=protocol)
-
-
-def herd_parallel(clowder, group_names, **kwargs):
-    """Clone projects or update latest from upstream in parallel
-
-    .. py:function:: herd_parallel(clowder, group_names, branch=None, tag=None, depth=0, rebase=False, project_names=None, skip=[], protocol=None)
-
-    :param ClowderController clowder: ClowderController instance
-    :param list[str] group_names: Group names to herd
-
-    Keyword Args:
-        branch (str): Branch to attempt to herd
-        tag (str): Tag to attempt to herd
-        depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-        protocol (str): Git protocol ('ssh' or 'https')
-        rebase (bool): Whether to use rebase instead of pulling latest changes
-        project_names (list[str]): Project names to herd
-        skip (list[str]): Project names to skip
-    """
-
-    project_names = kwargs.get('project_names', None)
-    skip = kwargs.get('skip', [])
-    branch = kwargs.get('branch', None)
-    tag = kwargs.get('tag', None)
-    depth = kwargs.get('depth', None)
-    rebase = kwargs.get('rebase', False)
-    protocol = kwargs.get('protocol', None)
-
-    print(' - Herd projects in parallel\n')
-    validate_print_output(clowder, group_names, project_names=project_names, skip=skip)
-    projects = filter_projects(clowder.groups, group_names=group_names, project_names=project_names)
-    run_parallel_command(herd_project, projects, skip, branch, tag, depth, rebase, protocol)

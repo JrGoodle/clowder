@@ -7,6 +7,8 @@
 
 from __future__ import print_function
 
+import os
+
 from cement.ext.ext_argparse import ArgparseController, expose
 from termcolor import cprint
 
@@ -14,15 +16,11 @@ from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.clowder_repo import print_clowder_repo_status_fetch
 from clowder.util.clowder_utils import (
     filter_projects,
-    options_help_message,
-    print_parallel_projects_output
+    options_help_message
 )
 from clowder.util.connectivity import network_connection_required
 from clowder.util.decorators import valid_clowder_yaml_required
-from clowder.util.parallel_commands import (
-    run_parallel_command,
-    sync_project
-)
+from clowder.util.parallel_commands import sync_parallel
 
 
 class SyncController(ArgparseController):
@@ -78,22 +76,11 @@ def sync(clowder, project_names, rebase=False, parallel=False):
 
     projects = filter_projects(clowder.groups, project_names=project_names)
     if parallel:
-        sync_parallel(projects, rebase=rebase)
+        if os.name == "posix":
+            sync_parallel(projects, rebase=rebase)
+        else:
+            print(' - Parallel commands are only available on posix operating systems')
         return
 
     for project in projects:
         project.sync(rebase=rebase)
-
-
-def sync_parallel(projects, rebase=False):
-    """Sync projects in parallel
-
-    .. py:function:: sync(projects, rebase=False)
-
-    :param list[Project] projects: Projects to sync
-    :param Optional[bool] rebase: Whether to use rebase instead of pulling latest changes
-    """
-
-    print(' - Sync forks in parallel\n')
-    print_parallel_projects_output(projects, [])
-    run_parallel_command(sync_project, projects, [], rebase)
