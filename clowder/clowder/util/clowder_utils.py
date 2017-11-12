@@ -218,6 +218,33 @@ def validate_groups(groups):
         raise ClowderExit(1)
 
 
+def validate_print_output(clowder, group_names, **kwargs):
+    """Validate projects/groups and print output
+
+    .. py:function:: validate_print_output(clowder, group_names, project_names=None, skip=[])
+
+    :param ClowderController clowder: ClowderController instance
+    :param list[str] group_names: Group names to validate/print
+
+    Keyword Args:
+        project_names (list[str]): Project names to validate/print
+        skip (list[str]): Project names to skip
+    """
+
+    project_names = kwargs.get('project_names', None)
+    skip = kwargs.get('skip', [])
+
+    if project_names is None:
+        groups = filter_groups(clowder.groups, group_names)
+        validate_groups(groups)
+        print_parallel_groups_output(groups, skip)
+        return
+
+    projects = filter_projects(clowder.groups, project_names=project_names)
+    validate_projects(projects)
+    print_parallel_projects_output(projects, skip)
+
+
 def validate_projects(projects):
     """Validate status of all projects
 

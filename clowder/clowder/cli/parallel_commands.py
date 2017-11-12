@@ -18,12 +18,9 @@ import clowder.util.formatting as fmt
 from clowder.error.clowder_exit import ClowderExit
 from clowder.util.progress import Progress
 from clowder.util.clowder_utils import (
-    filter_groups,
     filter_projects,
-    print_parallel_groups_output,
     print_parallel_projects_output,
-    validate_groups,
-    validate_projects
+    validate_print_output
 )
 
 
@@ -177,7 +174,7 @@ def herd_parallel(clowder, group_names, **kwargs):
     protocol = kwargs.get('protocol', None)
 
     print(' - Herd projects in parallel\n')
-    _validate_print_output(clowder, group_names, project_names=project_names, skip=skip)
+    validate_print_output(clowder, group_names, project_names=project_names, skip=skip)
 
     projects = filter_projects(clowder.groups, group_names=group_names, project_names=project_names)
 
@@ -214,7 +211,7 @@ def reset_parallel(clowder, group_names, **kwargs):
     if timestamp_project:
         timestamp = clowder.get_timestamp(timestamp_project)
 
-    _validate_print_output(clowder, group_names, project_names=project_names, skip=skip)
+    validate_print_output(clowder, group_names, project_names=project_names, skip=skip)
 
     projects = filter_projects(clowder.groups, group_names=group_names, project_names=project_names)
 
@@ -242,33 +239,6 @@ def sync_parallel(projects, rebase=False):
         result = __clowder_pool__.apply_async(sync_project, args=(project, rebase), callback=async_callback)
         __clowder_results__.append(result)
     pool_handler(len(projects))
-
-
-def _validate_print_output(clowder, group_names, **kwargs):
-    """Validate projects/groups and print output
-
-    .. py:function:: _validate_print_output(clowder, group_names, project_names=None, skip=[])
-
-    :param ClowderController clowder: ClowderController instance
-    :param list[str] group_names: Group names to validate/print
-
-    Keyword Args:
-        project_names (list[str]): Project names to validate/print
-        skip (list[str]): Project names to skip
-    """
-
-    project_names = kwargs.get('project_names', None)
-    skip = kwargs.get('skip', [])
-
-    if project_names is None:
-        groups = filter_groups(clowder.groups, group_names)
-        validate_groups(groups)
-        print_parallel_groups_output(groups, skip)
-        return
-
-    projects = filter_projects(clowder.groups, project_names=project_names)
-    validate_projects(projects)
-    print_parallel_projects_output(projects, skip)
 
 
 # Disable warnings shown by pylint for catching too general exception
