@@ -27,8 +27,6 @@ matrix:
     env: TARGET="parallel" PYVERSION="python3"
   - os: linux
     env: TARGET="swift" PYVERSION="python3"
-  - os: linux
-    env: TARGET="write" PYVERSION="python3"
 
 before_install: script/bootstrap "$PYVERSION"
 
