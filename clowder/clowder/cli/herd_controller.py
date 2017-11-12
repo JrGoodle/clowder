@@ -85,6 +85,8 @@ class HerdController(ArgparseController):
 
         if self.app.pargs.parallel:
             herd_parallel(CLOWDER_CONTROLLER, **kwargs)
+            if os.name == "posix":
+                return
 
         herd(CLOWDER_CONTROLLER, **kwargs)
 

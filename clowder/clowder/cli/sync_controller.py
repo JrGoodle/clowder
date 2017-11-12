@@ -77,6 +77,8 @@ def sync(clowder, project_names, rebase=False, parallel=False):
     projects = filter_projects(clowder.groups, project_names=project_names)
     if parallel:
         sync_parallel(projects, rebase=rebase)
+        if os.name == "posix":
+            return
 
     for project in projects:
         project.sync(rebase=rebase)

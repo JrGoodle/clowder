@@ -261,19 +261,19 @@ else:
     def forall_parallel(*args, **kwargs):
         """Stub for non-posix forall parallel command"""
 
-        print(' - Parallel commands are only available on posix operating systems')
+        print(' - Parallel commands are only available on posix operating systems\n')
 
     def herd_parallel(*args, **kwargs):
         """Stub for non-posix herd parallel command"""
 
-        print(' - Parallel commands are only available on posix operating systems')
+        print(' - Parallel commands are only available on posix operating systems\n')
 
     def reset_parallel(*args, **kwargs):
         """Stub for non-posix reset parallel command"""
 
-        print(' - Parallel commands are only available on posix operating systems')
+        print(' - Parallel commands are only available on posix operating systems\n')
 
     def sync_parallel(*args, **kwargs):
         """Stub for non-posix sync parallel command"""
 
-        print(' - Parallel commands are only available on posix operating systems')
+        print(' - Parallel commands are only available on posix operating systems\n')

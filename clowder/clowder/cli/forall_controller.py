@@ -94,6 +94,8 @@ def forall(clowder, command, ignore_errors, group_names, **kwargs):
 
     if parallel:
         forall_parallel([" ".join(command)], skip, ignore_errors, projects)
+        if os.name == "posix":
+            return
 
     for project in projects:
         run_project_command(project, skip, 'run', [" ".join(command)], ignore_errors)

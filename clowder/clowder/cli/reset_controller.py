@@ -100,6 +100,8 @@ def reset(clowder, group_names, **kwargs):
 
     if parallel:
         reset_parallel(clowder, group_names, skip=skip, timestamp_project=timestamp_project)
+        if os.name == "posix":
+            return
 
     timestamp = None
     if timestamp_project:
