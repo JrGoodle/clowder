@@ -7,15 +7,20 @@
 
 from __future__ import print_function
 
+import os
+
 from cement.ext.ext_argparse import ArgparseController, expose
 from termcolor import cprint
 
-from clowder.cli.parallel_commands import sync
 from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.clowder_repo import print_clowder_repo_status_fetch
+from clowder.util.clowder_utils import (
+    filter_projects,
+    options_help_message
+)
 from clowder.util.connectivity import network_connection_required
 from clowder.util.decorators import valid_clowder_yaml_required
-from clowder.util.clowder_utils import options_help_message
+from clowder.util.parallel_commands import sync_parallel
 
 
 class SyncController(ArgparseController):
@@ -56,3 +61,24 @@ class SyncController(ArgparseController):
             cprint(' - No forks to sync\n', 'red')
             return
         sync(CLOWDER_CONTROLLER, all_fork_projects, rebase=self.app.pargs.rebase, parallel=self.app.pargs.parallel)
+
+
+def sync(clowder, project_names, rebase=False, parallel=False):
+    """Sync projects
+
+    .. py:function:: sync(clowder, project_names, rebase=False, parallel=False)
+
+    :param ClowderController clowder: ClowderController instance
+    :param list[str] project_names: Project names to sync
+    :param Optional[bool] rebase: Whether to use rebase instead of pulling latest changes
+    :param Optional[bool] parallel: Whether command is being run in parallel, affects output
+    """
+
+    projects = filter_projects(clowder.groups, project_names=project_names)
+    if parallel:
+        sync_parallel(projects, rebase=rebase)
+        if os.name == "posix":
+            return
+
+    for project in projects:
+        project.sync(rebase=rebase)

@@ -5,13 +5,21 @@
 
 """
 
+from __future__ import print_function
+
+import os
+
 from cement.ext.ext_argparse import ArgparseController, expose
 
-from clowder.cli.parallel_commands import forall
 from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.clowder_repo import print_clowder_repo_status
+from clowder.util.clowder_utils import (
+    filter_projects,
+    options_help_message,
+    run_project_command
+)
 from clowder.util.decorators import valid_clowder_yaml_required
-from clowder.util.clowder_utils import options_help_message
+from clowder.util.parallel_commands import forall_parallel
 
 
 class ForallController(ArgparseController):
@@ -60,3 +68,34 @@ class ForallController(ArgparseController):
         forall(CLOWDER_CONTROLLER, self.app.pargs.command, self.app.pargs.ignore_errors,
                group_names=self.app.pargs.groups, project_names=self.app.pargs.projects,
                skip=self.app.pargs.skip, parallel=self.app.pargs.parallel)
+
+
+def forall(clowder, command, ignore_errors, group_names, **kwargs):
+    """Runs script in project directories specified
+
+    .. py:function:: forall_script(clowder, command, ignore_errors, group_names, project_names=None, skip=[], parallel=False)
+
+    :param ClowderController clowder: ClowderController instance
+    :param list[str] command: Command or script and optional arguments
+    :param bool ignore_errors: Whether to exit if command returns a non-zero exit code
+    :param list[str] group_names: Group names to run command for
+
+    Keyword Args:
+        project_names (list[str]): Project names to clean
+        skip list[str]: Project names to skip
+        parallel bool: Whether command is being run in parallel, affects output
+    """
+
+    project_names = kwargs.get('project_names', None)
+    skip = kwargs.get('skip', [])
+    parallel = kwargs.get('parallel', False)
+
+    projects = filter_projects(clowder.groups, group_names=group_names, project_names=project_names)
+
+    if parallel:
+        forall_parallel([" ".join(command)], skip, ignore_errors, projects)
+        if os.name == "posix":
+            return
+
+    for project in projects:
+        run_project_command(project, skip, 'run', [" ".join(command)], ignore_errors)

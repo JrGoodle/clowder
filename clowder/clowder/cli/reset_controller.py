@@ -5,14 +5,26 @@
 
 """
 
+from __future__ import print_function
+
+import os
+
 from cement.ext.ext_argparse import ArgparseController, expose
 
-from clowder.cli.parallel_commands import reset
 from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.clowder_repo import print_clowder_repo_status_fetch
+from clowder.util.clowder_utils import (
+    filter_groups,
+    filter_projects,
+    options_help_message,
+    run_group_command,
+    run_project_command,
+    validate_groups,
+    validate_projects
+)
 from clowder.util.connectivity import network_connection_required
 from clowder.util.decorators import valid_clowder_yaml_required
-from clowder.util.clowder_utils import options_help_message
+from clowder.util.parallel_commands import reset_parallel
 
 
 class ResetController(ArgparseController):
@@ -64,3 +76,44 @@ class ResetController(ArgparseController):
             timestamp_project = self.app.pargs.timestamp[0]
         reset(CLOWDER_CONTROLLER, group_names=self.app.pargs.groups, project_names=self.app.pargs.projects,
               skip=self.app.pargs.skip, timestamp_project=timestamp_project, parallel=self.app.pargs.parallel)
+
+
+def reset(clowder, group_names, **kwargs):
+    """Reset project branches to upstream or checkout tag/sha as detached HEAD
+
+    .. py:function:: reset(clowder, group_names, timestamp_project=None, parallel=False, project_names=None, skip=[])
+
+    :param ClowderController clowder: ClowderController instance
+    :param list[str] group_names: Group names to reset
+
+    Keyword Args:
+        timestamp_project (str): Reference project to checkout commit timestamps of other projects relative to
+        parallel (bool): Whether command is being run in parallel, affects output
+        project_names (list[str]): Project names to reset
+        skip (list[str]): Project names to skip
+    """
+
+    project_names = kwargs.get('project_names', None)
+    skip = kwargs.get('skip', [])
+    timestamp_project = kwargs.get('timestamp_project', None)
+    parallel = kwargs.get('parallel', False)
+
+    if parallel:
+        reset_parallel(clowder, group_names, skip=skip, timestamp_project=timestamp_project)
+        if os.name == "posix":
+            return
+
+    timestamp = None
+    if timestamp_project:
+        timestamp = clowder.get_timestamp(timestamp_project)
+    if project_names is None:
+        groups = filter_groups(clowder.groups, group_names)
+        validate_groups(groups)
+        for group in groups:
+            run_group_command(group, skip, 'reset', timestamp=timestamp)
+        return
+
+    projects = filter_projects(clowder.groups, project_names=project_names)
+    validate_projects(projects)
+    for project in projects:
+        run_project_command(project, skip, 'reset', timestamp=timestamp)
