@@ -5,9 +5,16 @@
 
 """
 
-from cement.ext.ext_argparse import ArgparseController, expose
+import os
 
-from clowder.cli.parallel_commands import forall_parallel
+from cement.ext.ext_argparse import ArgparseController, expose
+from termcolor import cprint
+
+import clowder.util.formatting as fmt
+from clowder.cli.parallel_commands import (
+    run_parallel_command,
+    run_project
+)
 from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.clowder_repo import print_clowder_repo_status
 from clowder.util.decorators import valid_clowder_yaml_required
@@ -94,3 +101,26 @@ def forall(clowder, command, ignore_errors, group_names, **kwargs):
 
     for project in projects:
         run_project_command(project, skip, 'run', [" ".join(command)], ignore_errors)
+
+
+def forall_parallel(commands, skip, ignore_errors, projects):
+    """Runs command or script for projects in parallel
+
+    :param list[str] commands: Command to run
+    :param list[str] skip: Project names to skip
+    :param bool ignore_errors: Whether to exit if command returns a non-zero exit code
+    :param list[Project] projects: Projects to run command for
+    """
+
+    print(' - Run forall commands in parallel\n')
+    for project in projects:
+        if project.name in skip:
+            continue
+        print(project.status())
+        if not os.path.isdir(project.full_path()):
+            cprint(" - Project is missing", 'red')
+
+    for cmd in commands:
+        print('\n' + fmt.command(cmd))
+
+    run_parallel_command(run_project, projects, skip, commands, ignore_errors)

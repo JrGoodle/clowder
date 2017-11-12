@@ -14,14 +14,8 @@ import signal
 import psutil
 from termcolor import cprint
 
-import clowder.util.formatting as fmt
 from clowder.error.clowder_exit import ClowderExit
 from clowder.util.progress import Progress
-from clowder.util.clowder_utils import (
-    filter_projects,
-    print_parallel_projects_output,
-    validate_print_output
-)
 
 
 def herd_project(project, branch, tag, depth, rebase, protocol):
@@ -69,17 +63,7 @@ def sync_project(project, rebase):
     project.sync(rebase, parallel=True)
 
 
-def async_callback(val):
-    """Increment async progress bar
-
-    :param val: Dummy parameter to satisfy callback interface
-    """
-
-    del val
-    __clowder_progress__.update()
-
-
-__clowder_parent_id__ = os.getpid()
+__process_parent_id__ = os.getpid()
 
 
 def worker_init():
@@ -97,7 +81,7 @@ def worker_init():
         """
 
         del signal_num, frame
-        parent = psutil.Process(__clowder_parent_id__)
+        parent = psutil.Process(__process_parent_id__)
         for child in parent.children(recursive=True):
             if child.pid != os.getpid():
                 child.terminate()
@@ -108,170 +92,61 @@ def worker_init():
     signal.signal(signal.SIGINT, sig_int)
 
 
-if __name__ == '__main__':
-    mp.freeze_support()
-
-
-__clowder_results__ = []
-__clowder_progress__ = Progress()
-__clowder_pool__ = mp.Pool(initializer=worker_init)
-
-
-def forall_parallel(commands, skip, ignore_errors, projects):
-    """Runs command or script for projects in parallel
-
-    :param list[str] commands: Command to run
-    :param list[str] skip: Project names to skip
-    :param bool ignore_errors: Whether to exit if command returns a non-zero exit code
-    :param list[Project] projects: Projects to run command for
-    """
-
-    print(' - Run forall commands in parallel\n')
-    for project in projects:
-        if project.name in skip:
-            continue
-        print(project.status())
-        if not os.path.isdir(project.full_path()):
-            cprint(" - Project is missing", 'red')
-
-    for cmd in commands:
-        print('\n' + fmt.command(cmd))
-
-    for project in projects:
-        if project.name in skip:
-            continue
-        result = __clowder_pool__.apply_async(run_project, args=(project, commands, ignore_errors),
-                                              callback=async_callback)
-        __clowder_results__.append(result)
-
-    pool_handler(len(projects))
-
-
-def herd_parallel(clowder, group_names, **kwargs):
-    """Clone projects or update latest from upstream in parallel
-
-    .. py:function:: herd_parallel(clowder, group_names, branch=None, tag=None, depth=0, rebase=False, project_names=None, skip=[], protocol=None)
-
-    :param ClowderController clowder: ClowderController instance
-    :param list[str] group_names: Group names to herd
-
-    Keyword Args:
-        branch (str): Branch to attempt to herd
-        tag (str): Tag to attempt to herd
-        depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-        protocol (str): Git protocol ('ssh' or 'https')
-        rebase (bool): Whether to use rebase instead of pulling latest changes
-        project_names (list[str]): Project names to herd
-        skip (list[str]): Project names to skip
-    """
-
-    project_names = kwargs.get('project_names', None)
-    skip = kwargs.get('skip', [])
-    branch = kwargs.get('branch', None)
-    tag = kwargs.get('tag', None)
-    depth = kwargs.get('depth', None)
-    rebase = kwargs.get('rebase', False)
-    protocol = kwargs.get('protocol', None)
-
-    print(' - Herd projects in parallel\n')
-    validate_print_output(clowder, group_names, project_names=project_names, skip=skip)
-
-    projects = filter_projects(clowder.groups, group_names=group_names, project_names=project_names)
-
-    for project in projects:
-        if project.name in skip:
-            continue
-        result = __clowder_pool__.apply_async(herd_project,
-                                              args=(project, branch, tag, depth, rebase, protocol),
-                                              callback=async_callback)
-        __clowder_results__.append(result)
-    pool_handler(len(projects))
-
-
-def reset_parallel(clowder, group_names, **kwargs):
-    """Reset project branches to upstream or checkout tag/sha as detached HEAD in parallel
-
-    .. py:function:: reset_parallel(clowder, group_names, timestamp_project=None, project_names=None, skip=[])
-
-    :param ClowderController clowder: ClowderController instance
-    :param list[str] group_names: Group names to reset
-
-    Keyword Args:
-        timestamp_project (str): Reference project to checkout commit timestamps of other projects relative to
-        project_names (list[str]): Project names to reset
-        skip (list[str]): Project names to skip
-    """
-
-    project_names = kwargs.get('project_names', None)
-    skip = kwargs.get('skip', [])
-    timestamp_project = kwargs.get('timestamp_project', None)
-
-    print(' - Reset projects in parallel\n')
-    timestamp = None
-    if timestamp_project:
-        timestamp = clowder.get_timestamp(timestamp_project)
-
-    validate_print_output(clowder, group_names, project_names=project_names, skip=skip)
-
-    projects = filter_projects(clowder.groups, group_names=group_names, project_names=project_names)
-
-    for project in projects:
-        if project.name in skip:
-            continue
-        result = __clowder_pool__.apply_async(reset_project, args=(project, timestamp), callback=async_callback)
-        __clowder_results__.append(result)
-    pool_handler(len(projects))
-
-
-def sync_parallel(projects, rebase=False):
-    """Sync projects in parallel
-
-    .. py:function:: sync(projects, rebase=False)
-
-    :param list[Project] projects: Projects to sync
-    :param Optional[bool] rebase: Whether to use rebase instead of pulling latest changes
-    """
-
-    print(' - Sync forks in parallel\n')
-    print_parallel_projects_output(projects, [])
-
-    for project in projects:
-        result = __clowder_pool__.apply_async(sync_project, args=(project, rebase), callback=async_callback)
-        __clowder_results__.append(result)
-    pool_handler(len(projects))
-
-
 # Disable warnings shown by pylint for catching too general exception
 # pylint: disable=W0703
 
 
-def pool_handler(count):
-    """Pool handler for finishing parallel jobs
+def run_parallel_command(command, projects, skip, *args):
+    """Run parallel command"""
 
-    :param int count: Total count of projects in progress bar
-    :raise ClowderExit:
-    """
+    __results__ = []
+    __progress__ = Progress()
+    __pool__ = mp.Pool(initializer=worker_init)
 
-    print()
-    __clowder_progress__.start(count)
+    def async_callback(val):
+        """Increment async progress bar
 
-    try:
-        for result in __clowder_results__:
-            result.get()
-            if not result.successful():
-                __clowder_progress__.close()
-                __clowder_pool__.close()
-                __clowder_pool__.terminate()
-                cprint('\n - Command failed\n', 'red')
-                raise ClowderExit(1)
-    except Exception as err:
-        __clowder_progress__.close()
-        __clowder_pool__.close()
-        __clowder_pool__.terminate()
-        cprint('\n' + str(err) + '\n', 'red')
-        raise ClowderExit(1)
-    else:
-        __clowder_progress__.complete()
-        __clowder_progress__.close()
-        __clowder_pool__.close()
-        __clowder_pool__.join()
+        :param val: Dummy parameter to satisfy callback interface
+        """
+
+        del val
+        __progress__.update()
+
+    def pool_handler(count):
+        """Pool handler for finishing parallel jobs
+
+        :param int count: Total count of projects in progress bar
+        :raise ClowderExit:
+        """
+
+        print()
+        __progress__.start(count)
+
+        try:
+            for result in __results__:
+                result.get()
+                if not result.successful():
+                    __progress__.close()
+                    __pool__.close()
+                    __pool__.terminate()
+                    cprint('\n - Command failed\n', 'red')
+                    raise ClowderExit(1)
+        except Exception as err:
+            __progress__.close()
+            __pool__.close()
+            __pool__.terminate()
+            cprint('\n' + str(err) + '\n', 'red')
+            raise ClowderExit(1)
+        else:
+            __progress__.complete()
+            __progress__.close()
+            __pool__.close()
+            __pool__.join()
+
+    for project in projects:
+        if project.name in skip:
+            continue
+        parallel_args = tuple([project] + list(args))
+        __results__.append(__pool__.apply_async(command, args=parallel_args, callback=async_callback))
+
+    pool_handler(len(projects))
