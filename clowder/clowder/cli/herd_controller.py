@@ -7,15 +7,20 @@
 
 from cement.ext.ext_argparse import ArgparseController, expose
 
-from clowder.cli.parallel_commands import (
-    herd,
-    herd_parallel
-)
+from clowder.cli.parallel_commands import herd_parallel
 from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.clowder_repo import print_clowder_repo_status_fetch
 from clowder.util.connectivity import network_connection_required
 from clowder.util.decorators import valid_clowder_yaml_required
-from clowder.util.clowder_utils import options_help_message
+from clowder.util.clowder_utils import (
+    filter_groups,
+    filter_projects,
+    options_help_message,
+    run_group_command,
+    run_project_command,
+    validate_groups,
+    validate_projects
+)
 
 
 class HerdController(ArgparseController):
@@ -79,3 +84,44 @@ class HerdController(ArgparseController):
             return
 
         herd(CLOWDER_CONTROLLER, **kwargs)
+
+
+def herd(clowder, group_names, **kwargs):
+    """Clone projects or update latest from upstream
+
+    .. py:function:: herd(clowder, group_names, branch=None, tag=None, depth=0, rebase=False, project_names=None, skip=[], protocol=None)
+
+    :param ClowderController clowder: ClowderController instance
+    :param list[str] group_names: Group names to herd
+
+    Keyword Args:
+        branch (str): Branch to attempt to herd
+        tag (str): Tag to attempt to herd
+        depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        protocol (str): Git protocol ('ssh' or 'https')
+        rebase (bool): Whether to use rebase instead of pulling latest changes
+        project_names (list[str]) project_names: Project names to herd
+        skip (list[str]): Project names to skip
+    """
+
+    project_names = kwargs.get('project_names', None)
+    skip = kwargs.get('skip', [])
+    branch = kwargs.get('branch', None)
+    tag = kwargs.get('tag', None)
+    depth = kwargs.get('depth', None)
+    rebase = kwargs.get('rebase', False)
+    protocol = kwargs.get('protocol', None)
+
+    if project_names is None:
+        groups = filter_groups(clowder.groups, group_names)
+        validate_groups(groups)
+        for group in groups:
+            run_group_command(group, skip, 'herd', branch=branch, tag=tag,
+                              depth=depth, rebase=rebase, protocol=protocol)
+        return
+
+    projects = filter_projects(clowder.groups, project_names=project_names)
+    validate_projects(projects)
+    for project in projects:
+        run_project_command(project, skip, 'herd', branch=branch, tag=tag,
+                            depth=depth, rebase=rebase, protocol=protocol)
