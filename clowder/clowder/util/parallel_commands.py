@@ -81,6 +81,13 @@ def worker_init():
         :param frame: Dummy parameter to satisfy callback interface
         """
 
+        # Cement signal hook
+        for f_global in frame.f_globals.values():
+            if isinstance(f_global, CementApp):
+                app = f_global
+                for res in app.hook.run('signal', app, signum, frame):
+                    pass
+
         # Terminate subprocesses
         del signum, frame
         parent = psutil.Process(__process_parent_id__)
@@ -139,12 +146,12 @@ def run_parallel_command(command, projects, skip, *args):
                     __pool__.terminate()
                     cprint('\n - Command failed\n', 'red')
                     raise ClowderExit(1)
-        except Exception as err:
+        except Exception:
             __progress__.close()
             __pool__.close()
             __pool__.terminate()
-            cprint('\n' + str(err) + '\n', 'red')
-            raise ClowderExit(1)
+            # cprint('\n' + str(err) + '\n', 'red')
+            raise
         else:
             __progress__.complete()
             __progress__.close()
@@ -155,6 +162,8 @@ def run_parallel_command(command, projects, skip, *args):
         if project.name in skip:
             continue
         parallel_args = tuple([project] + list(args))
-        __results__.append(__pool__.apply_async(command, args=parallel_args, callback=async_callback))
+        rslt = __pool__.apply_async(command, args=parallel_args, callback=async_callback)
+        __results__.append(rslt)
 
     pool_handler(len(projects))
+
