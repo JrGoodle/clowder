@@ -258,22 +258,22 @@ if os.name == "posix":
             __clowder_pool__.close()
             __clowder_pool__.join()
 else:
-    def forall_parallel():
+    def forall_parallel(*args, **kwargs):
         """Stub for non-posix forall parallel command"""
 
         print(' - Parallel commands are only available on posix operating systems')
 
-    def herd_parallel():
+    def herd_parallel(*args, **kwargs):
         """Stub for non-posix herd parallel command"""
 
         print(' - Parallel commands are only available on posix operating systems')
 
-    def reset_parallel():
+    def reset_parallel(*args, **kwargs):
         """Stub for non-posix reset parallel command"""
 
         print(' - Parallel commands are only available on posix operating systems')
 
-    def sync_parallel():
+    def sync_parallel(*args, **kwargs):
         """Stub for non-posix sync parallel command"""
 
         print(' - Parallel commands are only available on posix operating systems')
