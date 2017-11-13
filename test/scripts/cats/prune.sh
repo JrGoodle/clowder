@@ -60,6 +60,17 @@ test_prune() {
         popd || exit 1
     done
 
+    $COMMAND prune -f prune_branch -p jrgoodle/kit jrgoodle/kishka || exit 1
+
+    pushd black-cats/kit || exit 1
+    test_branch master
+    test_no_local_branch_exists prune_branch
+    popd || exit 1
+    pushd black-cats/kishka || exit 1
+    test_branch master
+    test_no_local_branch_exists prune_branch
+    popd || exit 1
+
     $COMMAND prune -f prune_branch -g black-cats || exit 1
 
     pushd duke || exit 1
