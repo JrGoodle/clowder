@@ -73,12 +73,11 @@ defaults:
     remote: origin
     source: github
     recursive: true
+    protocol: https
 
 sources:
     - name: github
-      url: ssh://git@github.com
-    - name: github-https
-      url: https://github.com
+      url: github.com
 
 groups:
     - name: swift

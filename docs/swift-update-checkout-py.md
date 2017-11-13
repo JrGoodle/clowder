@@ -9,7 +9,7 @@ Swift uses the [update_checkout.py](https://github.com/apple/swift/blob/master/u
 ```bash
 mkdir swift-source
 cd swift-source
-git clone https://github.com/apple/swift.git
+git clone git@github.com:apple/swift.git
 ./swift/utils/update-checkout --clone-with-ssh
 ```
 
@@ -19,7 +19,7 @@ git clone https://github.com/apple/swift.git
 mkdir swift-source
 cd swift-source
 clowder init git@github.com:JrGoodle/swift-clowder.git
-clowder herd --parallel
+clowder herd --parallel --protocol ssh
 ```
 
 ## Checkout Version
