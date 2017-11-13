@@ -27,7 +27,7 @@ test_start() {
     echo "TEST: Start new branch"
 
     $COMMAND herd $PARALLEL || exit 1
-    $COMMAND start start_branch -g cats || exit 1
+    $COMMAND start start_branch -p jrgoodle/duke jrgoodle/mu || exit 1
 
     pushd mu || exit 1
     test_branch start_branch

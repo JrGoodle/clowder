@@ -30,6 +30,7 @@ test_diff() {
     echo "TEST: Display diff"
     $COMMAND status || exit 1
     $COMMAND diff || exit 1
+    $COMMAND diff -p jrgoodle/mu jrgoodle/duke || exit 1
     $COMMAND clean || exit 1
 }
 test_diff

@@ -40,7 +40,7 @@ test_reset() {
     test_not_commit "$UPSTREAM_COMMIT"
     popd || exit 1
 
-    $COMMAND reset $PARALLEL || exit 1
+    $COMMAND reset $PARALLEL -p jrgoodle/mu || exit 1
 
     pushd 'mu' || exit 1
     test_number_commits 'HEAD' 'origin/knead' '0'
