@@ -4,7 +4,7 @@ The examples are based on the [swift projects clowder.yaml files](https://github
 
 ## Defaults
 
-The `defaults` specify the default `ref`, `source`, and `remote` for projects. Optionally, a default `depth` can be specified
+The `defaults` specify the default `ref`, `source`, `remote`, and `protocol` for projects. Optionally, a default `depth` can be specified
 
 ```yaml
 defaults:
