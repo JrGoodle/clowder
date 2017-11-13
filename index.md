@@ -1,3 +1,13 @@
+[![Build status](https://ci.appveyor.com/api/projects/status/pmf4h6etnb3bbd9y?svg=true)](https://ci.appveyor.com/project/JrGoodle/clowder)
+[![Maintainability](https://api.codeclimate.com/v1/badges/56c92799de08f9ef9258/maintainability)](https://codeclimate.com/github/JrGoodle/clowder/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/56c92799de08f9ef9258/test_coverage)](https://codeclimate.com/github/JrGoodle/clowder/test_coverage)
+[![PyPI version](https://badge.fury.io/py/clowder-repo.svg)](https://badge.fury.io/py/clowder-repo)
+[![Python version](https://img.shields.io/pypi/pyversions/clowder-repo.svg)](https://pypi.python.org/pypi/clowder-repo)
+[![License](https://img.shields.io/pypi/l/clowder-repo.svg)](https://pypi.python.org/pypi/clowder-repo)
+[![Status](https://img.shields.io/pypi/status/clowder-repo.svg)](https://pypi.python.org/pypi/clowder-repo)
+[![Requirements Status](https://requires.io/github/JrGoodle/clowder/requirements.svg?branch=master)](https://requires.io/github/JrGoodle/clowder/requirements/?branch=master)
+[![Documentation Status](https://readthedocs.org/projects/clowder/badge/?version=latest)](http://clowder.readthedocs.io)
+
 > **clowder** - A group of cats
 
 > **herding cats** - An idiom that refers to a frustrating attempt to control or organize a class of entities which are uncontrollable or chaotic
@@ -17,48 +27,18 @@ All of these have their own approach, but many are based on submodules or subtre
 
 The primary purpose of `clowder` is synchronization of multiple repositories, so normal development still takes place in individual repositories with the usual `git` commands
 
-# Getting Started
-
-## Requirements
-
-- [git](https://git-scm.com)
-- [Python 3](https://www.python.org/downloads/)
-
-### macOS
-
-macOS comes with `git` preinstalled. To install Python 3 with [Homebrew](https://brew.sh)
-
-```bash
-$ brew install python3
-```
-
-### Ubuntu 16.04
-
-```bash
-$ sudo apt install git
-$ sudo apt install python3-pip
-```
-
-### Windows
-
-Currently `clowder` has only been tested on Windows with [Cygwin](https://cygwin.com/install.html). The following dependencies should be installed
-
-- git
-- python3-pip
-- python3
-
-## Installation
+# Installation
 
 To install `clowder` from PyPI
 
 ```bash
-$ sudo pip3 install clowder-repo
+$ sudo pip install clowder-repo
 ```
 
 To upgrade to the latest version
 
 ```bash
-$ sudo pip3 install clowder-repo --upgrade
+$ sudo pip install clowder-repo --upgrade
 ```
 
 For terminal autocompletion add the following line to your bash profile
@@ -119,6 +99,7 @@ $ clowder status
 
 ```bash
 $ clowder branch # Print all local branches
+$ clowder checkout my_branch # Checkout my_branch in projects
 $ clowder clean # Discard any changes in projects
 $ clowder diff # Print git diff for all projects
 $ clowder forall -c 'git status' # Run command in all project directories
@@ -152,6 +133,6 @@ for a description of the structure of the clowder repo cloned in the `.clowder` 
 See the [forks doc](https://github.com/JrGoodle/clowder/blob/master/docs/forks.md)
 for a description of the behavior of `clowder` commands with forks
 
-## Development
+# Development
 
 See [CONTRIBUTING.md](https://github.com/JrGoodle/clowder/blob/master/CONTRIBUTING.md) for information on setting up your environment for development and for contribution guidelines
