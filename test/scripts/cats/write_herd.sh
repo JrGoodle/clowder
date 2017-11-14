@@ -12,7 +12,7 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
     ./clean.sh
     ./init.sh
     $COMMAND link || exit 1
-    $COMMAND herd $PARALLEL || exit 1
+    $COMMAND herd $PROTOCOL $PARALLEL || exit 1
 
     test_herd_rebase_conflict() {
         print_single_separator
@@ -32,7 +32,7 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
         test_no_rebase_in_progress
         popd || exit 1
 
-        $COMMAND herd $PARALLEL -r && exit 1
+        $COMMAND herd $PROTOCOL $PARALLEL -r && exit 1
 
         pushd mu || exit 1
         test_rebase_in_progress

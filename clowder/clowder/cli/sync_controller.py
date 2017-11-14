@@ -41,6 +41,8 @@ class SyncController(ArgparseController):
                                         nargs='+', metavar='PROJECT',
                                         help=options_help_message(CLOWDER_CONTROLLER.get_all_fork_project_names(),
                                                                   'projects to sync'))),
+            (['--protocol'], dict(choices=['https', 'ssh'], nargs=1, default=None, metavar='PROTOCOL',
+                                  help='Protocol to clone new repos with')),
             (['--rebase', '-r'], dict(action='store_true', help='use rebase instead of pull')),
             (['--parallel'], dict(action='store_true', help='run commands in parallel'))
         ]
@@ -56,29 +58,34 @@ class SyncController(ArgparseController):
     def _sync(self):
         """Clowder sync command private implementation"""
 
+        protocol = None if self.app.pargs.protocol is None else self.app.pargs.protocol[0]
+
         all_fork_projects = CLOWDER_CONTROLLER.get_all_fork_project_names()
         if all_fork_projects == '':
             cprint(' - No forks to sync\n', 'red')
             return
-        sync(CLOWDER_CONTROLLER, all_fork_projects, rebase=self.app.pargs.rebase, parallel=self.app.pargs.parallel)
+        sync(CLOWDER_CONTROLLER, all_fork_projects, protocol=protocol,
+             rebase=self.app.pargs.rebase,
+             parallel=self.app.pargs.parallel)
 
 
-def sync(clowder, project_names, rebase=False, parallel=False):
+def sync(clowder, project_names, protocol, rebase=False, parallel=False):
     """Sync projects
 
-    .. py:function:: sync(clowder, project_names, rebase=False, parallel=False)
+    .. py:function:: sync(clowder, project_names, protocol, rebase=False, parallel=False)
 
     :param ClowderController clowder: ClowderController instance
     :param list[str] project_names: Project names to sync
+    :param str protocol: Git protocol, 'ssh' or 'https'
     :param Optional[bool] rebase: Whether to use rebase instead of pulling latest changes
     :param Optional[bool] parallel: Whether command is being run in parallel, affects output
     """
 
     projects = filter_projects(clowder.groups, project_names=project_names)
     if parallel:
-        sync_parallel(projects, rebase=rebase)
+        sync_parallel(projects, protocol, rebase=rebase)
         if os.name == "posix":
             return
 
     for project in projects:
-        project.sync(rebase=rebase)
+        project.sync(protocol, rebase=rebase)

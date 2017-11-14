@@ -22,7 +22,7 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
     cd "$CATS_EXAMPLE_DIR" || exit 1
     ./clean.sh
     ./init.sh
-    $COMMAND herd $PARALLEL || exit 1
+    $COMMAND herd $PROTOCOL $PARALLEL || exit 1
 
     test_start_tracking() {
         print_single_separator

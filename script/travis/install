@@ -2,6 +2,8 @@
 
 cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
 
+sudo pip install codecov
+
 if [ "$TRAVIS_OS_NAME" = "osx" ]; then
     brew install github-release
     sudo -H pip3 install twine wheel

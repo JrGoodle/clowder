@@ -6,9 +6,9 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
 
 . test_utilities.sh
 
-if [ "$PROTOCOL" == "ssh" ]; then
+if [ "$ACCESS_LEVEL" == "write" ]; then
     print_double_separator
-    echo 'TEST: swift configure remotes ssh'
+    echo 'TEST: swift configure remotes write'
     cd "$SWIFT_EXAMPLE_DIR" || exit 1
     ./clean.sh
     ./init.sh
@@ -20,7 +20,7 @@ if [ "$PROTOCOL" == "ssh" ]; then
         pushd swift || exit 1
         test_remote_url 'origin' 'git@github.com:apple/swift.git'
         popd || exit 1
-        $COMMAND herd $PARALLEL || exit 1
+        $COMMAND herd $PROTOCOL $PARALLEL || exit 1
         pushd swift || exit 1
         test_remote_url 'origin' 'git@github.com:JrGoodle/swift.git'
         test_remote_url 'upstream' 'git@github.com:apple/swift.git'
@@ -35,7 +35,7 @@ if [ "$PROTOCOL" == "ssh" ]; then
         pushd swift || exit 1
         test_remote_url 'origin' 'git@github.com:apple/swift.git'
         popd || exit 1
-        $COMMAND sync $PARALLEL || exit 1
+        $COMMAND sync $PROTOCOL $PARALLEL || exit 1
         pushd swift || exit 1
         test_remote_url 'origin' 'git@github.com:JrGoodle/swift.git'
         test_remote_url 'upstream' 'git@github.com:apple/swift.git'
