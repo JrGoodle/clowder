@@ -6,7 +6,7 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
 
 . test_utilities.sh
 
-if [ "$PROTOCOL" == "ssh" ]; then
+if [ "$ACCESS_LEVEL" == "write" ]; then
     print_double_separator
     echo 'TEST: cocos2d protocol'
     print_double_separator
@@ -24,7 +24,7 @@ if [ "$PROTOCOL" == "ssh" ]; then
 
     ./clean.sh
     ./init.sh
-    $COMMAND herd $PARALLEL --protocol 'ssh' || exit 1
+    $COMMAND herd $PROTOCOL $PARALLEL || exit 1
 
     pushd cocos2d-objc || exit 1
     test_remote_url 'origin' 'git@github.com:cocos2d/cocos2d-objc.git'

@@ -81,28 +81,6 @@ class BaseController(ArgparseController):
                              quiet=self.app.pargs.silent)
 
     @expose(
-        help='Run tests requiring ssh credentials'
-    )
-    def ssh(self):
-        """clowder ssh tests"""
-
-        execute_test_command('./ssh_protocol.sh', os.path.join(self.path, 'cocos2d'),
-                             parallel=self.app.pargs.parallel,
-                             write=True,
-                             coverage=self.app.pargs.coverage,
-                             debug=self.app.debug,
-                             quiet=self.app.pargs.silent,
-                             ssh=True)
-
-        execute_test_command('./ssh_configure_remotes.sh', os.path.join(self.path, 'swift'),
-                             parallel=self.app.pargs.parallel,
-                             write=True,
-                             coverage=self.app.pargs.coverage,
-                             debug=self.app.debug,
-                             quiet=self.app.pargs.silent,
-                             ssh=True)
-
-    @expose(
         help='Run unit tests',
         arguments=[
             (['version'], dict(choices=['python2', 'python3'], metavar='PYTHON_VERSION',
@@ -148,3 +126,19 @@ class BaseController(ArgparseController):
                                  coverage=self.app.pargs.coverage,
                                  debug=self.app.debug,
                                  quiet=self.app.pargs.silent)
+
+        execute_test_command('./write_protocol.sh', os.path.join(self.path, 'cocos2d'),
+                             parallel=self.app.pargs.parallel,
+                             write=True,
+                             coverage=self.app.pargs.coverage,
+                             debug=self.app.debug,
+                             quiet=self.app.pargs.silent,
+                             ssh=True)
+
+        execute_test_command('./write_configure_remotes.sh', os.path.join(self.path, 'swift'),
+                             parallel=self.app.pargs.parallel,
+                             write=True,
+                             coverage=self.app.pargs.coverage,
+                             debug=self.app.debug,
+                             quiet=self.app.pargs.silent,
+                             ssh=True)

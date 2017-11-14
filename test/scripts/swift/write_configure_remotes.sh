@@ -6,9 +6,9 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
 
 . test_utilities.sh
 
-if [ "$PROTOCOL" == "ssh" ]; then
+if [ "$ACCESS_LEVEL" == "write" ]; then
     print_double_separator
-    echo 'TEST: swift configure remotes ssh'
+    echo 'TEST: swift configure remotes write'
     cd "$SWIFT_EXAMPLE_DIR" || exit 1
     ./clean.sh
     ./init.sh

@@ -4,7 +4,6 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
 
 . test_utilities.sh
 
-
 if [ "$ACCESS_LEVEL" == "write" ]; then
     print_double_separator
     echo "TEST: Test clowder repo write"
@@ -12,7 +11,7 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
     cd "$CATS_EXAMPLE_DIR" || exit 1
     ./clean.sh
     ./init.sh
-    $COMMAND herd $PARALLEL || exit 1
+    $COMMAND herd $PROTOCOL $PARALLEL || exit 1
 
     test_clowder_repo_commit_pull_push() {
         print_single_separator

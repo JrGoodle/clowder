@@ -58,7 +58,7 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
         print_double_separator
         echo "TEST: clowder sync"
         $COMMAND link || exit 1
-        $COMMAND herd $PARALLEL || exit 1
+        $COMMAND herd $PROTOCOL $PARALLEL || exit 1
 
         pushd 'llvm/tools/clang' || exit 1
         git pull upstream master || exit 1
@@ -85,7 +85,7 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
         print_single_separator
         echo "TEST: clowder sync rebase"
         $COMMAND link || exit 1
-        $COMMAND herd $PARALLEL || exit 1
+        $COMMAND herd $PROTOCOL $PARALLEL || exit 1
         $COMMAND sync $PARALLEL || exit 1
 
         REBASE_MESSAGE='Add rebase file'
