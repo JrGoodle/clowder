@@ -6,6 +6,6 @@ if [ "$TARGET" != "parallel" ]; then
     coverage combine examples/cats examples/cocos2d-objc examples/llvm-projects examples/swift-projects
     coverage xml
     ./cc-test-reporter format-coverage --output "coverage/codeclimate.$TRAVIS_JOB_NUMBER.json"
-    mv .coverage "coverage/.coverage.$TRAVIS_OS_NAME.$TARGET"
+    mv .coverage "coverage/.coverage.$TRAVIS_OS_NAME.$TARGET.$PYVERSION"
     aws s3 sync coverage/ "s3://clowder-coverage/coverage/$TRAVIS_BUILD_NUMBER"
 fi
