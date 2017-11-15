@@ -437,7 +437,7 @@ class Project(object):
             repo = ProjectRepo(self.full_path(), self.remote, self.ref)
             repo.stash()
 
-    def sync(self, rebase=False, parallel=False):
+    def sync(self, protocol, rebase=False, parallel=False):
         """Sync fork project with upstream remote
 
         .. py:function:: sync(rebase=False, parallel=False)
@@ -448,8 +448,11 @@ class Project(object):
 
         self._print_output = not parallel
 
+        if protocol is None:
+            protocol = self._protocol
+
         repo = self._repo(self.full_path(), self.remote, self.ref, self.recursive, parallel=parallel)
-        self._run_herd_command('herd', repo, self._protocol, rebase=rebase)
+        self._run_herd_command('herd', repo, protocol, rebase=rebase)
         self._print(self.fork.status())
         repo.sync(self.fork.remote_name, rebase=rebase)
 

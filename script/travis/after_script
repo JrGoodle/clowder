@@ -1,11 +1,8 @@
 #!/usr/bin/env bash
 
-if [ "$TARGET" != "parallel" ]; then
-    cd "$TRAVIS_BUILD_DIR" || exit 1
-
-    coverage combine examples/cats examples/cocos2d-objc examples/llvm-projects examples/swift-projects
-    coverage xml
-    ./cc-test-reporter format-coverage --output "coverage/codeclimate.$TRAVIS_JOB_NUMBER.json"
-    mv .coverage "coverage/.coverage.$TRAVIS_OS_NAME.$TARGET"
-    aws s3 sync coverage/ "s3://clowder-coverage/coverage/$TRAVIS_BUILD_NUMBER"
-fi
+cd "$TRAVIS_BUILD_DIR" || exit 1
+coverage combine examples/cats examples/cocos2d-objc examples/llvm-projects examples/swift-projects
+codecov
+./cc-test-reporter format-coverage --output "coverage/codeclimate.$TRAVIS_JOB_NUMBER.json"
+mv .coverage "coverage/.coverage.$TRAVIS_OS_NAME.$TARGET.$PYVERSION"
+aws s3 sync coverage/ "s3://clowder-coverage/coverage/$TRAVIS_BUILD_NUMBER"

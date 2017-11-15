@@ -10,5 +10,11 @@ fi
 
 script/clean 'test' || exit 1
 
+if [ "$PYVERSION" == 'python2' ]; then
+    PIP='pip'
+else
+    PIP='pip3'
+fi
+
 cd clowder_test || exit 1
-sudo -H pip install -e . || exit 1
+sudo -H $PIP install -e . || exit 1

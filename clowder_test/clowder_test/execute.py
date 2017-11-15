@@ -48,15 +48,11 @@ def execute_test_command(command, path, **kwargs):
     test_env = kwargs.get('test_env', {})
     debug = kwargs.get('debug', False)
     quiet = kwargs.get('quiet', False)
-    ssh = kwargs.get('ssh', False)
 
     test_env['ACCESS_LEVEL'] = 'write' if write else 'read'
 
     if parallel:
         test_env['PARALLEL'] = '--parallel'
-
-    if ssh:
-        test_env['PROTOCOL'] = 'ssh'
 
     if coverage:
         rc_file = os.path.join(ROOT_DIR, '.coveragerc')

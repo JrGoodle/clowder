@@ -9,7 +9,11 @@ TEST_SCRIPT_DIR="$( cd $CURRENT_DIR && pwd)"
 export CLOWDER_PROJECT_DIR
 CLOWDER_PROJECT_DIR="$( cd $CURRENT_DIR/../.. && pwd)"
 
-if [ -n "$TRAVIS_OS_NAME" ]; then
+if [ -n "$CIRCLECI" ]; then
+    export PROTOCOL=' --protocol ssh '
+fi
+
+if [ -n "$TRAVIS_OS_NAME" ] || [ -n "$CIRCLECI" ]; then
     export CATS_EXAMPLE_DIR="$CURRENT_DIR/../../examples/cats"
     export LLVM_EXAMPLE_DIR="$CURRENT_DIR/../../examples/llvm-projects"
     export SWIFT_EXAMPLE_DIR="$CURRENT_DIR/../../examples/swift-projects"

@@ -1,0 +1,77 @@
+# Python CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-python/ for more details
+#
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/python:3.6.1
+
+    working_directory: ~/clowder
+
+    steps:
+      - checkout
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "clowder/requirements.txt" }}
+          # fallback to using the latest cache if no exact match is found
+          - v1-dependencies-
+
+      - run:
+          name: install dependencies
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            sudo pip install -r clowder/requirements.txt
+
+      - run:
+          name: run setup scripts
+          command: |
+            script/update
+            script/test
+
+      - save_cache:
+          paths:
+            - ./venv
+          key: v1-dependencies-{{ checksum "clowder/requirements.txt" }}
+
+      - add_ssh_keys:
+          fingerprints:
+            - "3a:38:b7:1e:b7:eb:c5:8f:4a:79:bd:4f:f0:9a:ea:61"
+
+      - run:
+          name: install git 2.13.6
+          command: |
+            sudo apt-get remove git
+            sudo apt-get update -y
+            sudo apt-get install libcurl4-openssl-dev libexpat1-dev gettext libz-dev libssl-dev build-essential autoconf
+            mkdir tmp-git-build
+            pushd tmp-git-build
+            curl -L --progress https://github.com/git/git/archive/v2.13.6.tar.gz | tar xz
+            pushd git-2.13.6/
+            sudo make configure
+            sudo ./configure
+            sudo make prefix=/usr/local all
+            sudo make prefix=/usr/local install
+            popd
+            popd
+
+      - run:
+          name: setup git config
+          command: |
+            git config --global user.email "circle@circleci.org"
+            git config --global user.name "CircleCI"
+            git config --global push.default simple
+
+      - run:
+          name: run write tests
+          command: clowder-test -c write
+
+      - run:
+          name: upload code coverage results
+          command: |
+            coverage combine examples/cats examples/cocos2d-objc examples/llvm-projects examples/swift-projects
+            codecov

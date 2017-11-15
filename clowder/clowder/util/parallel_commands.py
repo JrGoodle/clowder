@@ -56,14 +56,15 @@ if os.name == "posix":
 
         project.run(commands, ignore_errors, parallel=True)
 
-    def sync_project(project, rebase):
+    def sync_project(project, protocol, rebase):
         """Sync command wrapper function for multiprocessing Pool execution
 
         :param Project project: Project instance
+        :param str protocol: Git protocol, 'ssh' or 'https'
         :param bool rebase: Whether to use rebase instead of pulling latest changes
         """
 
-        project.sync(rebase, parallel=True)
+        project.sync(protocol, rebase, parallel=True)
 
     def async_callback(val):
         """Increment async progress bar
@@ -209,10 +210,11 @@ if os.name == "posix":
             __clowder_results__.append(result)
         pool_handler(len(projects))
 
-    def sync_parallel(projects, rebase=False):
+    def sync_parallel(projects, protocol, rebase=False):
         """Sync projects in parallel
 
         :param list[Project] projects: Projects to sync
+        :param str protocol: Git protocol, 'ssh' or 'https'
         :param Optional[bool] rebase: Whether to use rebase instead of pulling latest changes
         """
 
@@ -220,7 +222,8 @@ if os.name == "posix":
         print_parallel_projects_output(projects, [])
 
         for project in projects:
-            result = __clowder_pool__.apply_async(sync_project, args=(project, rebase), callback=async_callback)
+            result = __clowder_pool__.apply_async(sync_project, args=(project, protocol, rebase),
+                                                  callback=async_callback)
             __clowder_results__.append(result)
         pool_handler(len(projects))
 
