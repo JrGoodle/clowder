@@ -25,8 +25,7 @@ jobs:
           command: |
             python3 -m venv venv
             . venv/bin/activate
-            pip install -r clowder/requirements.txt
-            sudo pip install codecov
+            sudo pip install -r clowder/requirements.txt
 
       - run:
           name: run setup scripts
