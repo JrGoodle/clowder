@@ -21,9 +21,8 @@ environment:
 
 install:
   - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
+  - pip install -r clowder\requirements.txt
   - pip install -e clowder
-  # # We need wheel installed to build wheels
-  # - "%PYTHON%\\python.exe -m pip install wheel"
 
 build: off
 
@@ -37,34 +36,27 @@ test_script:
   # to put the Python version you want to use on PATH.
   # - "build.cmd %PYTHON%\\python.exe clowder\\setup.py"
   - cd examples\cats
-  - clowder init https://github.com/jrgoodle/cats.git
-  - clowder herd
-  - clowder herd --parallel
-  - clowder status
-  - clowder branch
-  # - clowder forall -c 'copy NUL empty-file.txt'
-  - clowder diff
-  - clowder clean -g black-cats
-  - clowder stash -g cats
-  - clowder start new_branch
-  - clowder checkout master -g black-cats
-  - clowder reset
-  - clowder prune new_branch
-  - clowder save vWin
-  - clowder yaml
+  - coverage run --rcfile=%APPVEYOR_BUILD_FOLDER%\.coveragerc -m clowder.clowder_app init https://github.com/jrgoodle/cats.git
+  - coverage run --rcfile=%APPVEYOR_BUILD_FOLDER%\.coveragerc -m clowder.clowder_app herd
+  - coverage run --rcfile=%APPVEYOR_BUILD_FOLDER%\.coveragerc -m clowder.clowder_app herd --parallel
+  - coverage run --rcfile=%APPVEYOR_BUILD_FOLDER%\.coveragerc -m clowder.clowder_app status
+  - coverage run --rcfile=%APPVEYOR_BUILD_FOLDER%\.coveragerc -m clowder.clowder_app branch
+  # - coverage run --rcfile=%APPVEYOR_BUILD_FOLDER%\.coveragerc -m clowder.clowder_app forall -c 'copy NUL empty-file.txt'
+  # - coverage run --rcfile=%APPVEYOR_BUILD_FOLDER%\.coveragerc -m clowder.clowder_app forall --parallel -c 'copy NUL empty-file.txt'
+  - coverage run --rcfile=%APPVEYOR_BUILD_FOLDER%\.coveragerc -m clowder.clowder_app diff
+  - coverage run --rcfile=%APPVEYOR_BUILD_FOLDER%\.coveragerc -m clowder.clowder_app clean -g black-cats
+  - coverage run --rcfile=%APPVEYOR_BUILD_FOLDER%\.coveragerc -m clowder.clowder_app stash -g cats
+  - coverage run --rcfile=%APPVEYOR_BUILD_FOLDER%\.coveragerc -m clowder.clowder_app start new_branch
+  - coverage run --rcfile=%APPVEYOR_BUILD_FOLDER%\.coveragerc -m clowder.clowder_app checkout master -g black-cats
+  - coverage run --rcfile=%APPVEYOR_BUILD_FOLDER%\.coveragerc -m clowder.clowder_app reset
+  - coverage run --rcfile=%APPVEYOR_BUILD_FOLDER%\.coveragerc -m clowder.clowder_app reset --parallel
+  - coverage run --rcfile=%APPVEYOR_BUILD_FOLDER%\.coveragerc -m clowder.clowder_app prune new_branch
+  - coverage run --rcfile=%APPVEYOR_BUILD_FOLDER%\.coveragerc -m clowder.clowder_app save vWin
+  - coverage run --rcfile=%APPVEYOR_BUILD_FOLDER%\.coveragerc -m clowder.clowder_app sync --parallel
+  - coverage run --rcfile=%APPVEYOR_BUILD_FOLDER%\.coveragerc -m clowder.clowder_app yaml
 
-# after_test:
-#   # This step builds your wheels.
-#   # Again, you only need build.cmd if you're building C extensions for
-#   # 64-bit Python 3.3/3.4. And you need to use %PYTHON% to get the correct
-#   # interpreter
-#   - "build.cmd %PYTHON%\\python.exe setup.py bdist_wheel"
-
-# artifacts:
-#   # bdist_wheel puts your built wheel in the dist directory
-#   - path: dist\*
-
-#on_success:
-#  You can use this step to upload your artifacts to a public website.
-#  See Appveyor's documentation for more details. Or you can simply
-#  access your wheels from the Appveyor "artifacts" tab for your build.
+after_test:
+  # Combine and submit test coverage results
+  - cd %APPVEYOR_BUILD_FOLDER%
+  - coverage combine examples\cats
+  - codecov
