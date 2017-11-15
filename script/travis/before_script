@@ -5,25 +5,23 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
 ./setup "$PYVERSION"
 ./test
 
-if [ "$TARGET" != "parallel" ]; then
-    cd "$TRAVIS_BUILD_DIR" || exit 1
+cd "$TRAVIS_BUILD_DIR" || exit 1
 
-    if [ "$PYVERSION" = 'python2' ]; then
-        sudo pip install coverage
-    else
-        sudo pip3 install coverage
-    fi
-
-    if [ "$TRAVIS_OS_NAME" = "osx" ]; then
-        PLATFORM='darwin'
-    elif [ "$TRAVIS_OS_NAME" = "linux" ]; then
-        PLATFORM='linux'
-    fi
-
-    curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-$PLATFORM-amd64 > ./cc-test-reporter
-    chmod +x ./cc-test-reporter
-    ./cc-test-reporter before-build
+if [ "$PYVERSION" = 'python2' ]; then
+    sudo pip install coverage
+else
+    sudo pip3 install coverage
 fi
+
+if [ "$TRAVIS_OS_NAME" = "osx" ]; then
+    PLATFORM='darwin'
+elif [ "$TRAVIS_OS_NAME" = "linux" ]; then
+    PLATFORM='linux'
+fi
+
+curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-$PLATFORM-amd64 > ./cc-test-reporter
+chmod +x ./cc-test-reporter
+./cc-test-reporter before-build
 
 setup_git() {
   git config --global user.email "travis@travis-ci.org"

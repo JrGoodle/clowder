@@ -9,6 +9,4 @@ if [ "$TRAVIS_OS_NAME" = "osx" ]; then
     sudo -H pip3 install twine wheel
 fi
 
-if [ "$TARGET" != "parallel" ]; then
-    sudo pip install awscli
-fi
+sudo pip install awscli
