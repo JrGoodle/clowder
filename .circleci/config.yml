@@ -74,4 +74,5 @@ jobs:
           name: upload code coverage results
           command: |
             coverage combine examples/cats examples/cocos2d-objc examples/llvm-projects examples/swift-projects
+            aws s3 cp .coverage "s3://clowder-coverage/coverage/circleci/$CIRCLE_BUILD_NUM/"
             codecov -X gcov
