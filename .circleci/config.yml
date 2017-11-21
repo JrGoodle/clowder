@@ -26,6 +26,7 @@ jobs:
             python3 -m venv venv
             . venv/bin/activate
             sudo pip install -r clowder/requirements.txt
+            sudo pip install https://github.com/JrGoodle/codecov-python/releases/download/encoding-fix/codecov-2.0.9-py2.py3-none-any.whl
 
       - run:
           name: run setup scripts

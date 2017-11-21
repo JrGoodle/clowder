@@ -1,7 +1,6 @@
 argcomplete>=1.9.0
 awscli>=1.11.186
 cement>=2.10.2
-codecov>=2.0.9
 colorama>=0.3.9
 coverage>=4.4.2
 GitPython>=2.1.0
