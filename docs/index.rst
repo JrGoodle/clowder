@@ -15,8 +15,8 @@ clowder
 .. image:: https://api.codeclimate.com/v1/badges/56c92799de08f9ef9258/maintainability
     :target: https://codeclimate.com/github/JrGoodle/clowder/maintainability
 
-.. image:: https://api.codeclimate.com/v1/badges/56c92799de08f9ef9258/test_coverage
-    :target: https://codeclimate.com/github/JrGoodle/clowder/test_coverage
+.. image:: https://codecov.io/gh/JrGoodle/clowder/branch/master/graph/badge.svg
+    :target: https://codecov.io/gh/JrGoodle/clowder
 
 .. image:: https://badge.fury.io/py/clowder-repo.svg
     :target: https://badge.fury.io/py/clowder-repo
