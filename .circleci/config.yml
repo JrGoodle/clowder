@@ -26,6 +26,7 @@ jobs:
             python3 -m venv venv
             . venv/bin/activate
             sudo pip install -r clowder/requirements.txt
+            sudo pip install https://github.com/JrGoodle/codecov-python/releases/download/encoding-fix/codecov-2.0.9-py2.py3-none-any.whl
 
       - run:
           name: run setup scripts
@@ -74,4 +75,5 @@ jobs:
           name: upload code coverage results
           command: |
             coverage combine examples/cats examples/cocos2d-objc examples/llvm-projects examples/swift-projects
-            codecov
+            aws s3 cp .coverage "s3://clowder-coverage/coverage/circleci/$CIRCLE_BUILD_NUM/"
+            codecov -X gcov
