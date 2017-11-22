@@ -38,6 +38,7 @@ groups:
       projects:
         - name: apple/swift
           path: swift
+          remote: upstream
           fork:
               name: JrGoodle/swift
               remote: origin
