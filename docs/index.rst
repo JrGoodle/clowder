@@ -9,6 +9,9 @@ clowder
 .. image:: https://travis-ci.org/JrGoodle/clowder.svg
     :target: https://travis-ci.org/JrGoodle/clowder
 
+.. image:: https://circleci.com/gh/JrGoodle/clowder.svg?style=shield
+    :target: https://circleci.com/gh/JrGoodle/clowder
+
 .. image:: https://ci.appveyor.com/api/projects/status/pmf4h6etnb3bbd9y?svg=true
     :target: https://ci.appveyor.com/project/JrGoodle/clowder
 

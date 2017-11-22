@@ -1,6 +1,6 @@
 # `clowder`
 [![Build Status](https://travis-ci.org/JrGoodle/clowder.svg)](https://travis-ci.org/JrGoodle/clowder)
-[![CircleCI](https://circleci.com/gh/JrGoodle/clowder.svg?style=svg)](https://circleci.com/gh/JrGoodle/clowder)
+[![CircleCI](https://circleci.com/gh/JrGoodle/clowder.svg?style=shield)](https://circleci.com/gh/JrGoodle/clowder)
 [![Build status](https://ci.appveyor.com/api/projects/status/pmf4h6etnb3bbd9y?svg=true)](https://ci.appveyor.com/project/JrGoodle/clowder)
 [![Maintainability](https://api.codeclimate.com/v1/badges/56c92799de08f9ef9258/maintainability)](https://codeclimate.com/github/JrGoodle/clowder/maintainability)
 [![codecov](https://codecov.io/gh/JrGoodle/clowder/branch/master/graph/badge.svg)](https://codecov.io/gh/JrGoodle/clowder)
