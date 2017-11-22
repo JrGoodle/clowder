@@ -1,6 +1,7 @@
+[![CircleCI](https://circleci.com/gh/JrGoodle/clowder.svg?style=svg)](https://circleci.com/gh/JrGoodle/clowder)
 [![Build status](https://ci.appveyor.com/api/projects/status/pmf4h6etnb3bbd9y?svg=true)](https://ci.appveyor.com/project/JrGoodle/clowder)
 [![Maintainability](https://api.codeclimate.com/v1/badges/56c92799de08f9ef9258/maintainability)](https://codeclimate.com/github/JrGoodle/clowder/maintainability)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/56c92799de08f9ef9258/test_coverage)](https://codeclimate.com/github/JrGoodle/clowder/test_coverage)
+[![codecov](https://codecov.io/gh/JrGoodle/clowder/branch/master/graph/badge.svg)](https://codecov.io/gh/JrGoodle/clowder)
 [![PyPI version](https://badge.fury.io/py/clowder-repo.svg)](https://badge.fury.io/py/clowder-repo)
 [![Python version](https://img.shields.io/pypi/pyversions/clowder-repo.svg)](https://pypi.python.org/pypi/clowder-repo)
 [![License](https://img.shields.io/pypi/l/clowder-repo.svg)](https://pypi.python.org/pypi/clowder-repo)
@@ -112,27 +113,8 @@ $ clowder stash # Stash changes in all projects
 $ clowder prune stale_branch # Prune branch 'stale_branch' for all projects
 ```
 
-See the [clowder commands doc](https://github.com/JrGoodle/clowder/blob/master/docs/commands.md)
-for documentation of all command options
-
-For example output from individual commands see the [clowder command examples](https://github.com/JrGoodle/clowder/tree/master/docs#commands)
-
-## The `clowder.yaml` file
-
-See the [clowder.yaml doc](https://github.com/JrGoodle/clowder/blob/master/docs/clowder-yaml.md)
-for an explanation of the `clowder.yaml` configuration file
-
-## The clowder repo
-
-See the [clowder repo doc](https://github.com/JrGoodle/clowder/blob/master/docs/clowder-repo.md)
-for a description of the structure of the clowder repo cloned in the `.clowder` directory
-
-
-## Using `clowder` with forks
-
-See the [forks doc](https://github.com/JrGoodle/clowder/blob/master/docs/forks.md)
-for a description of the behavior of `clowder` commands with forks
+For more information, see [the docs](http://clowder.readthedocs.io/en/latest/)
 
 # Development
 
-See [CONTRIBUTING.md](https://github.com/JrGoodle/clowder/blob/master/CONTRIBUTING.md) for information on setting up your environment for development and for contribution guidelines
+See [CONTRIBUTING.md](https://github.com/JrGoodle/clowder/blob/master/CONTRIBUTING.md) for information on setting up your environment for development and contribution guidelines
