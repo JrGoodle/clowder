@@ -1,4 +1,3 @@
-# `clowder`
 [![Build Status](https://travis-ci.org/JrGoodle/clowder.svg)](https://travis-ci.org/JrGoodle/clowder)
 [![CircleCI](https://circleci.com/gh/JrGoodle/clowder.svg?style=svg)](https://circleci.com/gh/JrGoodle/clowder)
 [![Build status](https://ci.appveyor.com/api/projects/status/pmf4h6etnb3bbd9y?svg=true)](https://ci.appveyor.com/project/JrGoodle/clowder)
