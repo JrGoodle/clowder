@@ -32,13 +32,7 @@ The primary purpose of `clowder` is synchronization of multiple repositories, so
 
 # Installation
 
-To install `clowder` from PyPI
-
-```bash
-$ sudo pip install clowder-repo
-```
-
-To upgrade to the latest version
+To install or upgrade `clowder` from PyPI
 
 ```bash
 $ sudo pip install clowder-repo --upgrade
