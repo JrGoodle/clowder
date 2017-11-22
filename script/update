@@ -19,7 +19,7 @@ if [ "$1" == 'website' ]; then
     rm -rf $GH_PAGES_DIR || exit 1
     git clone git@github.com:JrGoodle/clowder.git -b gh-pages $GH_PAGES_DIR || exit 1
 
-    tail -n+3 "README.md" > "$GH_PAGES_DIR/index.md" || exit 1
+    tail -n+2 "README.md" > "$GH_PAGES_DIR/index.md" || exit 1
     rm -rf "$GH_PAGES_DIR/docs/README" || exit 1
     cp -R 'docs/README' "$GH_PAGES_DIR/docs/README" || exit 1
 
