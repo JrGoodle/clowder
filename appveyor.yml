@@ -60,4 +60,4 @@ after_test:
   # Combine and submit test coverage results
   - cd %APPVEYOR_BUILD_FOLDER%
   - coverage combine examples\cats
-  - codecov
+  - codecov -X gcov
