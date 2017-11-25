@@ -65,14 +65,17 @@ class RepoCheckoutController(ArgparseController):
 
         label = 'repo_checkout'
         stacked_on = 'repo'
-        stacked_type = 'nested'
+        stacked_type = 'embedded'
         aliases = ['checkout']
         aliases_only = True
         description = 'Checkout ref in clowder repo'
-        arguments = [(['ref'], dict(nargs=1, metavar='REF', help='git ref to checkout'))]
-        help = 'Checkout ref in clowder repo'
 
-    def default(self):
+    @expose(
+        arguments=[(['ref'], dict(nargs=1, metavar='REF', help='git ref to checkout'))],
+        aliases=['checkout'],
+        help='Checkout ref in clowder repo'
+    )
+    def repo_checkout(self):
         """Clowder repo checkout command entry point"""
 
         self._checkout()
@@ -93,13 +96,16 @@ class RepoCleanController(ArgparseController):
 
         label = 'repo_clean'
         stacked_on = 'repo'
-        stacked_type = 'nested'
+        stacked_type = 'embedded'
         aliases = ['clean']
         aliases_only = True
         description = 'Discard changes in clowder repo'
-        help = 'Discard changes in clowder repo'
 
-    def default(self):
+    @expose(
+        aliases=['clean'],
+        help='Discard changes in clowder repo'
+    )
+    def repo_clean(self):
         """Clowder repo clean command entry point"""
 
         self._clean()
@@ -234,13 +240,16 @@ class RepoStatusController(ArgparseController):
 
         label = 'repo_status'
         stacked_on = 'repo'
-        stacked_type = 'nested'
+        stacked_type = 'embedded'
         aliases = ['status']
         aliases_only = True
         description = 'Print clowder repo git status'
-        help = 'Print clowder repo git status'
 
-    def status(self):
+    @expose(
+        aliases=['status'],
+        help='Print clowder repo git status'
+    )
+    def repo_status(self):
         """Clowder repo status command entry point"""
 
         self._status()
