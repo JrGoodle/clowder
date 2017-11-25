@@ -63,16 +63,16 @@ class RepoCheckoutController(ArgparseController):
     class Meta:
         """Clowder repo checkout Meta configuration"""
 
-        label = 'checkout'
+        label = 'repo_checkout'
         stacked_on = 'repo'
-        stacked_type = 'embedded'
+        stacked_type = 'nested'
+        aliases = ['checkout']
+        aliases_only = True
         description = 'Checkout ref in clowder repo'
+        arguments = [(['ref'], dict(nargs=1, metavar='REF', help='git ref to checkout'))]
+        help = 'Checkout ref in clowder repo'
 
-    @expose(
-        help='Checkout ref in clowder repo',
-        arguments=[(['ref'], dict(nargs=1, metavar='REF', help='git ref to checkout'))]
-    )
-    def checkout(self):
+    def default(self):
         """Clowder repo checkout command entry point"""
 
         self._checkout()
@@ -91,15 +91,15 @@ class RepoCleanController(ArgparseController):
     class Meta:
         """Clowder repo clean Meta configuration"""
 
-        label = 'clean'
+        label = 'repo_clean'
         stacked_on = 'repo'
-        stacked_type = 'embedded'
+        stacked_type = 'nested'
+        aliases = ['clean']
+        aliases_only = True
         description = 'Discard changes in clowder repo'
+        help = 'Discard changes in clowder repo'
 
-    @expose(
-        help='Discard changes in clowder repo'
-    )
-    def clean(self):
+    def default(self):
         """Clowder repo clean command entry point"""
 
         self._clean()
@@ -232,14 +232,14 @@ class RepoStatusController(ArgparseController):
     class Meta:
         """Clowder repo status Meta configuration"""
 
-        label = 'status'
+        label = 'repo_status'
         stacked_on = 'repo'
-        stacked_type = 'embedded'
+        stacked_type = 'nested'
+        aliases = ['status']
+        aliases_only = True
         description = 'Print clowder repo git status'
+        help = 'Print clowder repo git status'
 
-    @expose(
-        help='Print clowder repo git status'
-    )
     def status(self):
         """Clowder repo status command entry point"""
 
