@@ -82,6 +82,10 @@ $ clowder herd
 - If the current git ref checked out doesn't match the `clowder.yaml` configuration, the correct ref will be checked out
 - The latest changes are pulled for branches. For commits and tags, the commits are checked out into a detached `HEAD` state
 
+It's also possible to run `clowder herd` in parallel
+
+![clowder herd parallel](docs/README/clowder-herd-parallel.png)
+
 ## `clowder status`
 
 ```bash
