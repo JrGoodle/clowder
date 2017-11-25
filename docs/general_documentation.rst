@@ -10,3 +10,4 @@ General Documentation
    The clowder repo <clowder-repo>
    Forks <forks>
    Plugins <plugins>
+   Examples <examples>
