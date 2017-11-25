@@ -166,7 +166,6 @@ test_herd_projects() {
 }
 test_herd_projects 'jrgoodle/kit' 'jrgoodle/kishka'
 
-# clowder repo checkout master || exit 1
 pushd .clowder || exit 1
 git checkout master || exit 1
 popd || exit 1

@@ -18,42 +18,6 @@ test_clowder_repo_add() {
 }
 test_clowder_repo_add
 
-# test_clowder_repo_checkout() {
-#     print_single_separator
-#     echo "TEST: Test clowder repo checkout command"
-#     $COMMAND repo checkout tags || exit 1
-#     pushd .clowder || exit 1
-#     test_branch tags
-#     popd || exit 1
-#     $COMMAND repo checkout ref_that_doesnt_exist && exit 1
-#     pushd .clowder || exit 1
-#     test_branch tags
-#     popd || exit 1
-#     $COMMAND repo checkout master || exit 1
-#     pushd .clowder || exit 1
-#     test_branch master
-#     popd || exit 1
-# }
-# test_clowder_repo_checkout
-
-# test_clowder_repo_clean() {
-#     print_single_separator
-#     echo "TEST: Test clowder repo clean command"
-#     pushd .clowder || exit 1
-#     test_git_clean
-#     popd || exit 1
-#     $COMMAND repo run 'touch newfile' || exit 1
-#     $COMMAND repo add 'newfile' || exit 1
-#     pushd .clowder || exit 1
-#     test_git_dirty
-#     popd || exit 1
-#     $COMMAND repo clean || exit 1
-#     pushd .clowder || exit 1
-#     test_git_clean
-#     popd || exit 1
-# }
-# test_clowder_repo_clean
-
 if [ "$ACCESS_LEVEL" == "write" ]; then
     "$TEST_SCRIPT_DIR/cats/write_repo.sh"
 fi
@@ -69,9 +33,49 @@ test_clowder_repo_run() {
 }
 test_clowder_repo_run
 
-# test_clowder_repo_status() {
-#     print_single_separator
-#     echo "TEST: Test clowder repo status command"
-#     $COMMAND repo status || exit 1
-# }
-# test_clowder_repo_status
+if [ "$PYVERSION" == 'python2' ]; then
+    exit
+fi
+
+test_clowder_repo_checkout() {
+    print_single_separator
+    echo "TEST: Test clowder repo checkout command"
+    $COMMAND repo checkout repo-test || exit 1
+    pushd .clowder || exit 1
+    test_branch repo-test
+    popd || exit 1
+    $COMMAND repo checkout ref_that_doesnt_exist && exit 1
+    pushd .clowder || exit 1
+    test_branch repo-test
+    popd || exit 1
+    $COMMAND repo checkout master || exit 1
+    pushd .clowder || exit 1
+    test_branch master
+    popd || exit 1
+}
+test_clowder_repo_checkout
+
+test_clowder_repo_clean() {
+    print_single_separator
+    echo "TEST: Test clowder repo clean command"
+    pushd .clowder || exit 1
+    test_git_clean
+    popd || exit 1
+    $COMMAND repo run 'touch newfile' || exit 1
+    $COMMAND repo add 'newfile' || exit 1
+    pushd .clowder || exit 1
+    test_git_dirty
+    popd || exit 1
+    $COMMAND repo clean || exit 1
+    pushd .clowder || exit 1
+    test_git_clean
+    popd || exit 1
+}
+test_clowder_repo_clean
+
+test_clowder_repo_status() {
+    print_single_separator
+    echo "TEST: Test clowder repo status command"
+    $COMMAND repo status || exit 1
+}
+test_clowder_repo_status
