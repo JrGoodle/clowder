@@ -1,3 +1,7 @@
+"""Clowder cli __init__.py"""
+
+import sys
+
 from clowder.cli.base_controller import BaseController
 from clowder.cli.branch_controller import BranchController
 from clowder.cli.checkout_controller import CheckoutController
@@ -11,13 +15,10 @@ from clowder.cli.prune_controller import PruneController
 from clowder.cli.repo_controller import (
     RepoController,
     RepoAddController,
-    RepoCheckoutController,
-    RepoCleanController,
     RepoCommitController,
     RepoRunController,
     RepoPullController,
-    RepoPushController,
-    RepoStatusController
+    RepoPushController
 )
 from clowder.cli.reset_controller import ResetController
 from clowder.cli.save_controller import SaveController
@@ -26,3 +27,10 @@ from clowder.cli.stash_controller import StashController
 from clowder.cli.status_controller import StatusController
 from clowder.cli.sync_controller import SyncController
 from clowder.cli.yaml_controller import YAMLController
+
+if sys.version_info[0] >= 3:
+    from clowder.cli.repo_controller import (
+        RepoCheckoutController,
+        RepoCleanController,
+        RepoStatusController
+    )

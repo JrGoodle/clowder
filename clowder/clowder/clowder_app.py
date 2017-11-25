@@ -7,6 +7,7 @@
 
 from __future__ import print_function
 
+import sys
 from multiprocessing import freeze_support
 
 import colorama
@@ -40,13 +41,10 @@ class ClowderApp(CementApp):
             cmd.PruneController,
             cmd.RepoController,
             cmd.RepoAddController,
-            cmd.RepoCheckoutController,
-            cmd.RepoCleanController,
             cmd.RepoCommitController,
             cmd.RepoRunController,
             cmd.RepoPullController,
             cmd.RepoPushController,
-            cmd.RepoStatusController,
             cmd.ResetController,
             cmd.SaveController,
             cmd.StartController,
@@ -55,6 +53,15 @@ class ClowderApp(CementApp):
             cmd.SyncController,
             cmd.YAMLController
             ]
+
+        # Add commands that are only available on Python 3+
+        if sys.version_info[0] >= 3:
+            alias_handlers = [
+                cmd.RepoCheckoutController,
+                cmd.RepoCleanController,
+                cmd.RepoStatusController
+            ]
+            handlers = handlers + alias_handlers
 
 
 def main():

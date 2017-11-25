@@ -120,13 +120,13 @@ print_single_separator
 echo 'TEST: clowder repo add'
 $COMMAND repo add . || enable_connection_exit
 print_single_separator
-# echo 'TEST: clowder repo checkout'
-# $COMMAND repo checkout tags || enable_connection_exit
-# $COMMAND repo checkout master || enable_connection_exit
-# print_single_separator
-# echo 'TEST: clowder repo clean'
-# $COMMAND repo clean || enable_connection_exit
-# print_single_separator
+echo 'TEST: clowder repo checkout'
+$COMMAND repo checkout repo-test || enable_connection_exit
+$COMMAND repo checkout master || enable_connection_exit
+print_single_separator
+echo 'TEST: clowder repo clean'
+$COMMAND repo clean || enable_connection_exit
+print_single_separator
 echo 'TEST: clowder repo commit'
 pushd .clowder || exit 1
 touch newfile || enable_connection_exit

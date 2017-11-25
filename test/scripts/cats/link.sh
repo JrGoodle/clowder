@@ -14,16 +14,14 @@ echo "TEST: Test clowder link"
 test_no_versions() {
     print_single_separator
     echo "TEST: Test clowder repo with no versions saved"
-    $COMMAND repo checkout no-versions || exit 1
-    # pushd .clowder || exit 1
-    # git checkout no-versions || exit 1
-    # popd || exit 1
+    pushd .clowder || exit 1
+    git checkout no-versions || exit 1
+    popd || exit 1
     $COMMAND link -v saved-version && exit 1
     $COMMAND herd $PARALLEL || exit 1
     $COMMAND status || exit 1
-    $COMMAND repo checkout master || exit 1
-    # pushd .clowder || exit 1
-    # git checkout master || exit 1
-    # popd || exit 1
+    pushd .clowder || exit 1
+    git checkout master || exit 1
+    popd || exit 1
 }
 test_no_versions

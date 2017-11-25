@@ -18,16 +18,35 @@ test_clowder_repo_add() {
 }
 test_clowder_repo_add
 
+if [ "$ACCESS_LEVEL" == "write" ]; then
+    "$TEST_SCRIPT_DIR/cats/write_repo.sh"
+fi
+
+test_clowder_repo_run() {
+    print_single_separator
+    echo "TEST: Test clowder repo run command"
+    test_no_file_exists '.clowder/newfile'
+    $COMMAND repo run 'touch newfile'
+    test_file_exists '.clowder/newfile'
+    $COMMAND repo run 'rm newfile'
+    test_no_file_exists '.clowder/newfile'
+}
+test_clowder_repo_run
+
+if [ "$PYVERSION" == 'python2' ]; then
+    exit
+fi
+
 test_clowder_repo_checkout() {
     print_single_separator
     echo "TEST: Test clowder repo checkout command"
-    $COMMAND repo checkout tags || exit 1
+    $COMMAND repo checkout repo-test || exit 1
     pushd .clowder || exit 1
-    test_branch tags
+    test_branch repo-test
     popd || exit 1
     $COMMAND repo checkout ref_that_doesnt_exist && exit 1
     pushd .clowder || exit 1
-    test_branch tags
+    test_branch repo-test
     popd || exit 1
     $COMMAND repo checkout master || exit 1
     pushd .clowder || exit 1
@@ -53,21 +72,6 @@ test_clowder_repo_clean() {
     popd || exit 1
 }
 test_clowder_repo_clean
-
-if [ "$ACCESS_LEVEL" == "write" ]; then
-    "$TEST_SCRIPT_DIR/cats/write_repo.sh"
-fi
-
-test_clowder_repo_run() {
-    print_single_separator
-    echo "TEST: Test clowder repo run command"
-    test_no_file_exists '.clowder/newfile'
-    $COMMAND repo run 'touch newfile'
-    test_file_exists '.clowder/newfile'
-    $COMMAND repo run 'rm newfile'
-    test_no_file_exists '.clowder/newfile'
-}
-test_clowder_repo_run
 
 test_clowder_repo_status() {
     print_single_separator

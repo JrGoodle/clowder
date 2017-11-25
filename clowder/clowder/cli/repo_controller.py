@@ -5,6 +5,8 @@
 
 """
 
+import sys
+
 from cement.ext.ext_argparse import ArgparseController, expose
 
 from clowder.clowder_repo import (
@@ -55,67 +57,6 @@ class RepoAddController(ArgparseController):
         """Clowder repo add command private implementation"""
 
         CLOWDER_REPO.add(self.app.pargs.files)
-
-
-class RepoCheckoutController(ArgparseController):
-    """Clowder repo checkout command controller"""
-
-    class Meta:
-        """Clowder repo checkout Meta configuration"""
-
-        label = 'repo_checkout'
-        stacked_on = 'repo'
-        stacked_type = 'embedded'
-        aliases = ['checkout']
-        aliases_only = True
-        description = 'Checkout ref in clowder repo'
-
-    @expose(
-        arguments=[(['ref'], dict(nargs=1, metavar='REF', help='git ref to checkout'))],
-        aliases=['checkout'],
-        help='Checkout ref in clowder repo'
-    )
-    def repo_checkout(self):
-        """Clowder repo checkout command entry point"""
-
-        self._checkout()
-
-    @clowder_required
-    @print_clowder_repo_status_fetch
-    def _checkout(self):
-        """Clowder repo checkout command private implementation"""
-
-        CLOWDER_REPO.checkout(self.app.pargs.ref[0])
-
-
-class RepoCleanController(ArgparseController):
-    """Clowder repo clean command controller"""
-
-    class Meta:
-        """Clowder repo clean Meta configuration"""
-
-        label = 'repo_clean'
-        stacked_on = 'repo'
-        stacked_type = 'embedded'
-        aliases = ['clean']
-        aliases_only = True
-        description = 'Discard changes in clowder repo'
-
-    @expose(
-        aliases=['clean'],
-        help='Discard changes in clowder repo'
-    )
-    def repo_clean(self):
-        """Clowder repo clean command entry point"""
-
-        self._clean()
-
-    @clowder_required
-    @print_clowder_repo_status
-    def _clean(self):
-        """Clowder repo clean command private implementation"""
-
-        CLOWDER_REPO.clean()
 
 
 class RepoCommitController(ArgparseController):
@@ -231,32 +172,93 @@ class RepoRunController(ArgparseController):
 
         CLOWDER_REPO.run_command(self.app.pargs.command[0])
 
+# Add commands that are only available on Python 3+
+if sys.version_info[0] >= 3:
 
-class RepoStatusController(ArgparseController):
-    """Clowder repo status command controller"""
+    class RepoCheckoutController(ArgparseController):
+        """Clowder repo checkout command controller"""
 
-    class Meta:
-        """Clowder repo status Meta configuration"""
+        class Meta:
+            """Clowder repo checkout Meta configuration"""
 
-        label = 'repo_status'
-        stacked_on = 'repo'
-        stacked_type = 'embedded'
-        aliases = ['status']
-        aliases_only = True
-        description = 'Print clowder repo git status'
+            label = 'repo_checkout'
+            stacked_on = 'repo'
+            stacked_type = 'embedded'
+            aliases = ['checkout']
+            aliases_only = True
+            description = 'Checkout ref in clowder repo'
 
-    @expose(
-        aliases=['status'],
-        help='Print clowder repo git status'
-    )
-    def repo_status(self):
-        """Clowder repo status command entry point"""
+        @expose(
+            arguments=[(['ref'], dict(nargs=1, metavar='REF', help='git ref to checkout'))],
+            aliases=['checkout'],
+            help='Checkout ref in clowder repo'
+        )
+        def repo_checkout(self):
+            """Clowder repo checkout command entry point"""
 
-        self._status()
+            self._checkout()
 
-    @clowder_required
-    @print_clowder_repo_status
-    def _status(self):
-        """Clowder repo status command private implementation"""
+        @clowder_required
+        @print_clowder_repo_status_fetch
+        def _checkout(self):
+            """Clowder repo checkout command private implementation"""
 
-        CLOWDER_REPO.git_status()
+            CLOWDER_REPO.checkout(self.app.pargs.ref[0])
+
+    class RepoCleanController(ArgparseController):
+        """Clowder repo clean command controller"""
+
+        class Meta:
+            """Clowder repo clean Meta configuration"""
+
+            label = 'repo_clean'
+            stacked_on = 'repo'
+            stacked_type = 'embedded'
+            aliases = ['clean']
+            aliases_only = True
+            description = 'Discard changes in clowder repo'
+
+        @expose(
+            aliases=['clean'],
+            help='Discard changes in clowder repo'
+        )
+        def repo_clean(self):
+            """Clowder repo clean command entry point"""
+
+            self._clean()
+
+        @clowder_required
+        @print_clowder_repo_status
+        def _clean(self):
+            """Clowder repo clean command private implementation"""
+
+            CLOWDER_REPO.clean()
+
+    class RepoStatusController(ArgparseController):
+        """Clowder repo status command controller"""
+
+        class Meta:
+            """Clowder repo status Meta configuration"""
+
+            label = 'repo_status'
+            stacked_on = 'repo'
+            stacked_type = 'embedded'
+            aliases = ['status']
+            aliases_only = True
+            description = 'Print clowder repo git status'
+
+        @expose(
+            aliases=['status'],
+            help='Print clowder repo git status'
+        )
+        def repo_status(self):
+            """Clowder repo status command entry point"""
+
+            self._status()
+
+        @clowder_required
+        @print_clowder_repo_status
+        def _status(self):
+            """Clowder repo status command private implementation"""
+
+            CLOWDER_REPO.git_status()

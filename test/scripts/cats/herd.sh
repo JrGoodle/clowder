@@ -166,10 +166,9 @@ test_herd_projects() {
 }
 test_herd_projects 'jrgoodle/kit' 'jrgoodle/kishka'
 
-$COMMAND repo checkout master || exit 1
-# pushd .clowder || exit 1
-# git checkout master || exit 1
-# popd || exit 1
+pushd .clowder || exit 1
+git checkout master || exit 1
+popd || exit 1
 
 test_herd_override_groups() {
     print_single_separator
