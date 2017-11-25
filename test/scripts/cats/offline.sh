@@ -130,8 +130,9 @@ print_single_separator
 echo 'TEST: clowder repo commit'
 pushd .clowder || exit 1
 touch newfile || enable_connection_exit
-git add newfile || enable_connection_exit
+# git add newfile || enable_connection_exit
 popd || exit 1
+$COMMAND repo add newfile || enable_connection_exit
 $COMMAND repo commit 'Add newfile' || enable_connection_exit
 pushd .clowder || exit 1
 git reset --hard HEAD~1 || enable_connection_exit
