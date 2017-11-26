@@ -14,9 +14,9 @@ fi
 export GITHUB_USER='JrGoodle'
 export GITHUB_REPO='clowder'
 
-cd "${TRAVIS_BUILD_DIR}/clowder" || exit 1
+cd "${TRAVIS_BUILD_DIR}/src" || exit 1
 
-SETUP_PY="${TRAVIS_BUILD_DIR}/clowder/setup.py"
+SETUP_PY="${TRAVIS_BUILD_DIR}/src/setup.py"
 VERSION=$(awk "/version='/" "${SETUP_PY}" | sed -n -e "s/^.*version='//p" | tr -d "',")
 echo "VERSION=${VERSION}"
 TAG="${VERSION}"
@@ -48,7 +48,7 @@ else
 
     echo "Uploading artifacts to GitHub Releases"
     echo '--------------------------------------'
-    pushd "${TRAVIS_BUILD_DIR}/clowder/dist" || exit 1
+    pushd "${TRAVIS_BUILD_DIR}/src/dist" || exit 1
     artifacts=( "clowder_repo-${VERSION}-py3-none-any.whl" \
                  "clowder-repo-${VERSION}.tar.gz" )
     for artifact in "${artifacts[@]}"; do

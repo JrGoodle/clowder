@@ -4,11 +4,11 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 
 if [ "$1" == 'version' ]; then
     cd ..
-    OLD_VERSION=$(awk "/version='/" clowder/setup.py | sed -n -e "s/^.*version='//p" | tr -d "',")
+    OLD_VERSION=$(awk "/version='/" src/setup.py | sed -n -e "s/^.*version='//p" | tr -d "',")
     NEW_VERSION=$2
 
-    perl -pi -e "s/$OLD_VERSION/$NEW_VERSION/g" clowder/setup.py || exit 1
-    perl -pi -e "s/$OLD_VERSION/$NEW_VERSION/g" clowder/clowder/cmd.py || exit 1
+    perl -pi -e "s/$OLD_VERSION/$NEW_VERSION/g" src/setup.py || exit 1
+    perl -pi -e "s/$OLD_VERSION/$NEW_VERSION/g" src/clowder/cli/base_controller.py || exit 1
     perl -pi -e "s/$OLD_VERSION/$NEW_VERSION/g" docs/issue_template.md || exit 1
     exit
 fi
@@ -34,7 +34,7 @@ if [ "$1" == 'docs' ]; then
     cd ..
     rm docs/clowder.rst
     rm docs/clowder.*.rst
-    sphinx-apidoc -o docs clowder
+    sphinx-apidoc -o docs src
     rm docs/modules.rst
     rm docs/setup.rst
     exit

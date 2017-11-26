@@ -5,7 +5,7 @@ REPO_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
 clean_clowder_repo() {
     echo "Cleaning clowder command files"
     echo "Removing clowder_repo.egg-info"
-    local clowder_path=$REPO_PATH/clowder
+    local clowder_path=$REPO_PATH/src
     sudo -H rm -rf $clowder_path/clowder_repo.egg-info
     echo "Removing dist"
     sudo -H rm -rf $clowder_path/dist
