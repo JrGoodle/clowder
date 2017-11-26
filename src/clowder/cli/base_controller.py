@@ -8,7 +8,7 @@
 from cement.ext.ext_argparse import ArgparseController
 
 
-VERSION = '2.5.0'
+VERSION = '3.0.0'
 
 
 class BaseController(ArgparseController):

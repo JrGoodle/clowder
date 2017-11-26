@@ -1,3 +1,12 @@
+# 3.0.0
+
+- Migrate to Cement for CLI logic
+- Add ability to create plug-ins via Cement
+- Add separate `clowder.yaml` parameter for git protocol
+- Add test coverage
+- Add AppVeyor support for Windows testing
+- Add Circle CI support for write tests
+
 # 2.5.0
 
 - Add `clowder checkout` command
