@@ -21,8 +21,8 @@ environment:
 
 install:
   - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
-  - pip install -r clowder\requirements.txt
-  - pip install -e clowder
+  - pip install -r src\requirements.txt
+  - pip install -e src
   - pip install https://github.com/JrGoodle/codecov-python/releases/download/encoding-fix/codecov-2.0.9-py2.py3-none-any.whl
 
 build: off
@@ -35,7 +35,7 @@ test_script:
   # Note that you must use the environment variable %PYTHON% to refer to
   # the interpreter you're using - Appveyor does not do anything special
   # to put the Python version you want to use on PATH.
-  # - "build.cmd %PYTHON%\\python.exe clowder\\setup.py"
+  # - "build.cmd %PYTHON%\\python.exe src\\setup.py"
   - cd examples\cats
   - coverage run --rcfile=%APPVEYOR_BUILD_FOLDER%\.coveragerc -m clowder.clowder_app init https://github.com/jrgoodle/cats.git
   - coverage run --rcfile=%APPVEYOR_BUILD_FOLDER%\.coveragerc -m clowder.clowder_app herd

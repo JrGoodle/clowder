@@ -8,5 +8,5 @@ omit =
 
 [paths]
 source =
-    clowder/clowder
-    /home/travis/build/*/clowder/clowder
+    src/clowder
+    /home/travis/build/*/src/clowder
