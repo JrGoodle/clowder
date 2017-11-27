@@ -29,12 +29,45 @@ All of these have their own approach, but many are based on submodules or subtre
 
 The primary purpose of `clowder` is synchronization of multiple repositories, so normal development still takes place in individual repositories with the usual `git` commands
 
-# Installation
+# Getting Started
+
+## Requirements
+
+- [git](https://git-scm.com)
+- [Python 3](https://www.python.org/downloads/)
+    + Note: Python 3 isn't required, but it's strongly encouraged if possible since there are a few issues with `Cement` currently preventing full command availability in Python 2
+
+### macOS
+
+macOS comes with `git` preinstalled. To install Python 3 with [Homebrew](https://brew.sh)
+
+```bash
+$ brew install python3
+```
+
+### Ubuntu 16.04
+
+```bash
+$ sudo apt install git
+$ sudo apt install python3-pip
+```
+
+### Windows
+
+When using with [Cygwin](https://cygwin.com/install.html) the following dependencies should be installed
+
+- `git`
+- `python3-pip`
+- `python3`
+
+When using in the Windows CLI, `git` and a compatible Python version should be installed (see [appveyor.yml](https://github.com/JrGoodle/clowder/blob/docs/appveyor.yml) for supported Python versions on Windows)
+
+## Installation
 
 To install or upgrade `clowder` from PyPI
 
 ```bash
-$ sudo pip install clowder-repo --upgrade
+$ sudo pip3 install clowder-repo --upgrade
 ```
 
 For terminal autocompletion add the following line to your bash profile
