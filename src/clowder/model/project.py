@@ -10,7 +10,7 @@ from __future__ import print_function
 import inspect
 import os
 
-from termcolor import colored, cprint
+from termcolor import colored
 
 import clowder.util.formatting as fmt
 from clowder import ROOT_DIR
@@ -29,6 +29,8 @@ from clowder.git.util import (
 from clowder.model.fork import Fork
 from clowder.util.connectivity import is_offline
 from clowder.util.execute import execute_forall_command
+from clowder.util.file_system import git_dir_exists
+from clowder.util.formatting import missing_project_repo
 
 
 def project_repo_exists(func):
@@ -38,8 +40,8 @@ def project_repo_exists(func):
         """Wrapper"""
 
         instance = args[0]
-        if not os.path.isdir(os.path.join(instance.full_path(), '.git')):
-            cprint(" - Project repo is missing", 'red')
+        if not git_dir_exists(instance.full_path()):
+            print(missing_project_repo())
             return
         return func(*args, **kwargs)
 
@@ -337,6 +339,7 @@ class Project(object):
             if repo.existing_remote_branch(branch, git_remote):
                 repo.prune_branch_remote(branch, git_remote)
 
+    @project_repo_exists
     def reset(self, timestamp=None, parallel=False):
         """Reset project branch to upstream or checkout tag/sha as detached HEAD
 
@@ -368,6 +371,7 @@ class Project(object):
 
         repo.reset()
 
+    @project_repo_exists
     def run(self, commands, ignore_errors, parallel=False):
         """Run commands or script in project directory
 
@@ -440,13 +444,20 @@ class Project(object):
     def sync(self, protocol, rebase=False, parallel=False):
         """Sync fork project with upstream remote
 
-        .. py:function:: sync(rebase=False, parallel=False)
+        .. py:function:: sync(protocol, rebase=False, parallel=False)
 
+        :param str protocol: Git protocol ('ssh' or 'https')
         :param Optional[bool] rebase: Whether to use rebase instead of pulling latest changes
         :param Optional[bool] parallel: Whether command is being run in parallel, affects output
         """
 
         self._print_output = not parallel
+
+        if not git_dir_exists(self.full_path()):
+            if self._print_output:
+                print(self.status())
+                print(missing_project_repo())
+            return
 
         if protocol is None:
             protocol = self._protocol

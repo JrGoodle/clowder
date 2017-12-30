@@ -194,6 +194,16 @@ def missing_imported_yaml_error(path, yml):
     return yaml_path(yml) + colored(' - Error: Missing imported file\n', 'red') + get_path(path)
 
 
+def missing_project_repo():
+    """Format message for missing project repo
+
+    :return: Formatted missing project repo message
+    :rtype: str
+    """
+
+    return colored(" - Project repo is missing", 'red')
+
+
 def missing_yaml_error():
     """Format error message for missing clowder.yaml
 

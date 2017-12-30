@@ -36,6 +36,16 @@ def force_symlink(file1, file2):
         raise ClowderExit(1)
 
 
+def git_dir_exists(path):
+    """Check if .git directory exists at path
+
+    :param str path: Path to check for .git directory
+    :return: Return bool indicating whether .git directory exists at path
+    :rtype: bool
+    """
+    return os.path.isdir(os.path.join(path, '.git'))
+
+
 def remove_directory(path):
     """Remove directory at path
 
