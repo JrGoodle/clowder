@@ -82,3 +82,14 @@ test_reset() {
     popd || exit 1
 }
 test_reset
+
+test_reset_missing_project() {
+    print_single_separator
+    echo "TEST: clowder reset missing project"
+    $COMMAND herd $PARALLEL || exit 1
+
+    rm -rf mu duke || exit 1
+
+    $COMMAND reset $PARALLEL || exit 1
+}
+test_reset_missing_project

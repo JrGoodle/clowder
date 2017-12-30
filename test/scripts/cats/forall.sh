@@ -92,3 +92,14 @@ test_forall_environment_variables() {
 
 }
 test_forall_environment_variables
+
+test_forall_missing_project() {
+    print_single_separator
+    echo "TEST: clowder forall missing project"
+    $COMMAND herd $PARALLEL || exit 1
+
+    rm -rf mu duke || exit 1
+
+    $COMMAND forall -c 'git status' $PARALLEL || exit 1
+}
+test_forall_missing_project

@@ -128,4 +128,15 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
         popd || exit 1
     }
     test_sync_rebase
+
+    test_sync_missing_project() {
+        print_single_separator
+        echo "TEST: clowder sync missing project"
+        $COMMAND herd $PARALLEL || exit 1
+
+        rm -rf 'llvm/tools/clang' || exit 1
+
+        $COMMAND sync $PROTOCOL $PARALLEL || exit 1
+    }
+    test_sync_missing_project
 fi
