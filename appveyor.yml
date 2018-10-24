@@ -23,7 +23,6 @@ install:
   - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
   - pip install -r src\requirements.txt
   - pip install -e src
-  - pip install https://github.com/JrGoodle/codecov-python/releases/download/encoding-fix/codecov-2.0.9-py2.py3-none-any.whl
 
 build: off
 

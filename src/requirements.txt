@@ -12,3 +12,4 @@ sphinx-autobuild>=0.7.0
 sphinx-rtd-theme>=0.2.4
 termcolor>=1.1.0
 tqdm>=4.19.0
+codecov>=2.0.15
