@@ -2,23 +2,15 @@
 
 cd "$( dirname "${BASH_SOURCE[0]}" )/../src" || exit 1
 
-VERSION=${1:-python3}
-
-if [ "$VERSION" == 'python2' ]; then
-    PIP='pip'
-else
-    PIP='pip3'
-fi
-
 case "$(uname)" in
     Linux*) export MY_PLATFORM="linux";
-        sudo -H $PIP install -e . || exit 1
+        sudo -H pip install -e . || exit 1
         ;;
     Darwin*) export MY_PLATFORM="osx";
-        sudo -H $PIP install -e . || exit 1
+        sudo -H pip install -e . || exit 1
         ;;
     CYGWIN*) export MY_PLATFORM="windows";
-        $PIP install -e . || exit 1
+        pip install -e . || exit 1
         ;;
 esac
 

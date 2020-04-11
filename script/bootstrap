@@ -1,9 +1,5 @@
 #!/usr/bin/env bash
 
-if [ "$1" == 'python2' ]; then
-    exit
-fi
-
 case "$(uname)" in
     Linux*) export MY_PLATFORM="linux";
         sudo apt-get update
@@ -13,7 +9,7 @@ case "$(uname)" in
     Darwin*) export MY_PLATFORM="osx";
         which brew || exit 1
         brew update
-        brew install python3
+        brew install python
         ;;
     CYGWIN*) export MY_PLATFORM="windows";
         ;;

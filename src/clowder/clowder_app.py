@@ -5,8 +5,6 @@
 
 """
 
-from __future__ import print_function
-
 import sys
 from multiprocessing import freeze_support
 

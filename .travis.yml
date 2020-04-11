@@ -11,24 +11,20 @@ env:
   global:
     - PYTHONPATH="$PYTHONPATH:$TRAVIS_BUILD_DIR/clowder:$TRAVIS_BUILD_DIR/clowder_test:$TRAVIS_BUILD_DIR/test"
   matrix:
-    - TARGET="cats" PYVERSION="python3"
+    - TARGET="cats"
 
 matrix:
   include:
   - os: linux
-    env: TARGET="cats" PYVERSION="python2"
+    env: TARGET="cocos2d"
   - os: linux
-    env: TARGET="cocos2d" PYVERSION="python3"
+    env: TARGET="llvm"
   - os: linux
-    env: TARGET="llvm" PYVERSION="python3"
+    env: TARGET="parallel"
   - os: linux
-    env: TARGET="parallel" PYVERSION="python2"
-  - os: linux
-    env: TARGET="parallel" PYVERSION="python3"
-  - os: linux
-    env: TARGET="swift" PYVERSION="python3"
+    env: TARGET="swift"
 
-before_install: script/bootstrap "$PYVERSION"
+before_install: script/bootstrap
 
 install: script/travis/install
 
