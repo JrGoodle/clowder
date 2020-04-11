@@ -5,7 +5,7 @@ os:
   - osx
 
 sudo: required
-dist: trusty
+dist: bionic
 
 env:
   global:
@@ -49,6 +49,4 @@ notifications:
   email: false
   slack:
     secure: G5UcsKT8xMjddtTSUPXECI3uobS5/sRn87iC+fMilbpnDK3yAGoKkyCfPK4E/kJSEPZ8hBKz3uHNzpb0DdOSsjbAItiI+RQ3Glgs86B1sg2pqB2uwVPDCyPn8XHnpYPkKxFYlG19/JG9SEDej4N3kjnB4FVBm7n38ZFWjZh7s2fOjlpPKiHz8pe3B8XYfXTyQGIr9Q2I1eHbQJOEzs4PO1j/uKC1jgwe7nZnOE3sYsfcabScEHTz4Z7s9xhRXcwvorhQYQtBS7id9Gg5E4ANhoVVs7QifazDE1EK3vWjvoFYgYKnCbXzQunB09XlymrWTJZx80JOmgALU0UPUEI8Wvt/kXQP9oxqsMEeoP7UbZvXTfmeOVlm+5f5oesp/JQeBvaPj5qnbWVzcMGqi/hev4qwNv01jQOWrzVmZazw+HgeQcuaHKprK7KLdPFQR5c6CJJtwIxwdRGLmHVTtKIVQo45mEEnjHpYOmbkmmN2VETdgRlkV8t0WdCQpXXVH7uniwa7cYzb9shpiq0o+G3uHN1eUIuia/0XIVgWRL0baN6JitEBvc032M/3UrJESStQFpMF/Nw+NXm38xp7sQWReZM1ZVIBNIR1XPnaZxuLzBhKKCYcByYz7PEF71o/SkWHhAa3EKPO+9q4zceTbWunjRlp1ycUIMyhqDlCpHM8c2Y=
-
-notifications:
   webhooks: https://clowder-repo.herokuapp.com/coverage
