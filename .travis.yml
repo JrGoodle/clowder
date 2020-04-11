@@ -1,6 +1,6 @@
 language: c
 
-dist: bionic
+# dist: bionic
 
 env:
   global:
@@ -10,14 +10,15 @@ jobs:
   include:
   - os: osx
     env: TARGET="cats"
-  - os: linux
-    env: TARGET="cocos2d"
-  - os: linux
-    env: TARGET="llvm"
-  - os: linux
-    env: TARGET="parallel"
-  - os: linux
-    env: TARGET="swift"
+    script: clowder-test -c cats all
+#   - os: linux
+#     env: TARGET="cocos2d"
+#   - os: linux
+#     env: TARGET="llvm"
+#   - os: linux
+#     env: TARGET="parallel"
+#   - os: linux
+#     env: TARGET="swift"
 
 before_install: script/bootstrap
 
@@ -25,14 +26,14 @@ install: script/travis/install
 
 before_script: script/travis/before_script
 
-script:
-    - if [ "$TARGET" = "cats" ]; then clowder-test -c cats all; fi
-    - if [ "$TARGET" = "cocos2d" ]; then clowder-test -c cocos2d all; fi
-    - if [ "$TARGET" = "llvm" ]; then clowder-test -c llvm all; fi
-    - if [ "$TARGET" = "parallel" ]; then clowder-test -c parallel; fi
-    - if [ "$TARGET" = "swift" ]; then clowder-test -c swift all; fi
+# script:
+#     - if [ "$TARGET" = "cats" ]; then clowder-test -c cats all; fi
+#     - if [ "$TARGET" = "cocos2d" ]; then clowder-test -c cocos2d all; fi
+#     - if [ "$TARGET" = "llvm" ]; then clowder-test -c llvm all; fi
+#     - if [ "$TARGET" = "parallel" ]; then clowder-test -c parallel; fi
+#     - if [ "$TARGET" = "swift" ]; then clowder-test -c swift all; fi
 
-after_script: script/travis/after_script
+# after_script: script/travis/after_script
 
 # after_success: if [ "$TRAVIS_OS_NAME" = "osx" ]; then script/deploy; fi
 
