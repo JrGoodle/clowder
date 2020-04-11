@@ -1,6 +1,6 @@
 language: c
 
-# dist: bionic
+dist: bionic
 
 env:
   global:
