@@ -8,7 +8,7 @@
 import os
 
 import colorama
-from cement.core.foundation import CementApp
+from cement import App
 
 from clowder_test import ROOT_DIR
 from clowder_test.cli.base_controller import BaseController
@@ -23,7 +23,7 @@ def post_argument_parsing_hook(app):
     execute_command('./setup_local_test_directory.sh', os.path.join(ROOT_DIR, 'test', 'scripts'))
 
 
-class ClowderApp(CementApp):
+class ClowderApp(App):
     """Clowder command CLI app"""
 
     class Meta:

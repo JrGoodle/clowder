@@ -81,19 +81,10 @@ class BaseController(ArgparseController):
                              quiet=self.app.pargs.silent)
 
     @expose(
-        help='Run unit tests',
-        arguments=[
-            (['version'], dict(choices=['python2', 'python3'], metavar='PYTHON_VERSION',
-                               help='Python vesion to run unit tests for'))
-        ]
+        help='Run unit tests'
     )
     def unittests(self):
         """clowder unit tests"""
-
-        if self.app.pargs.version == 'python2':
-            test_env = {"PYTHON_VERSION": 'python'}
-        else:
-            test_env = {"PYTHON_VERSION": 'python3'}
 
         execute_test_command('./unittests.sh', self.path,
                              parallel=self.app.pargs.parallel,

@@ -39,17 +39,17 @@ echo ''
 
 UNITTTEST_PATH="$TEST_SCRIPT_DIR/../unittests"
 if [ -n "$TRAVIS_OS_NAME" ]; then
-    $PYTHON_VERSION "$UNITTTEST_PATH/test_clowder_repo.py" -v "$CATS_EXAMPLE_DIR" || exit 1
-    $PYTHON_VERSION "$UNITTTEST_PATH/test_fork.py" -v "$CATS_EXAMPLE_DIR" || exit 1
-    $PYTHON_VERSION "$UNITTTEST_PATH/test_git_utilities.py" -v "$CATS_EXAMPLE_DIR" || exit 1
-    $PYTHON_VERSION "$UNITTTEST_PATH/test_group.py" -v "$CATS_EXAMPLE_DIR" || exit 1
-    $PYTHON_VERSION "$UNITTTEST_PATH/test_project.py" -v "$CATS_EXAMPLE_DIR" || exit 1
-    $PYTHON_VERSION "$UNITTTEST_PATH/test_source.py" -v "$CATS_EXAMPLE_DIR" || exit 1
+    python "$UNITTTEST_PATH/test_clowder_repo.py" -v "$CATS_EXAMPLE_DIR" || exit 1
+    python "$UNITTTEST_PATH/test_fork.py" -v "$CATS_EXAMPLE_DIR" || exit 1
+    python "$UNITTTEST_PATH/test_git_utilities.py" -v "$CATS_EXAMPLE_DIR" || exit 1
+    python "$UNITTTEST_PATH/test_group.py" -v "$CATS_EXAMPLE_DIR" || exit 1
+    python "$UNITTTEST_PATH/test_project.py" -v "$CATS_EXAMPLE_DIR" || exit 1
+    python "$UNITTTEST_PATH/test_source.py" -v "$CATS_EXAMPLE_DIR" || exit 1
 else
-    $PYTHON_VERSION "$UNITTTEST_PATH/test_clowder_repo.py" -v "$CATS_EXAMPLE_DIR" || exit 1
-    $PYTHON_VERSION "$UNITTTEST_PATH/test_fork.py" -v "$CATS_EXAMPLE_DIR" || exit 1
-    $PYTHON_VERSION "$UNITTTEST_PATH/test_git_utilities.py" -v "$CATS_EXAMPLE_DIR" || exit 1
-    $PYTHON_VERSION "$UNITTTEST_PATH/test_group.py" -v "$CATS_EXAMPLE_DIR" || exit 1
-    $PYTHON_VERSION "$UNITTTEST_PATH/test_project.py" -v "$CATS_EXAMPLE_DIR" || exit 1
-    $PYTHON_VERSION "$UNITTTEST_PATH/test_source.py" -v "$CATS_EXAMPLE_DIR" || exit 1
+    python "$UNITTTEST_PATH/test_clowder_repo.py" -v "$CATS_EXAMPLE_DIR" || exit 1
+    python "$UNITTTEST_PATH/test_fork.py" -v "$CATS_EXAMPLE_DIR" || exit 1
+    python "$UNITTTEST_PATH/test_git_utilities.py" -v "$CATS_EXAMPLE_DIR" || exit 1
+    python "$UNITTTEST_PATH/test_group.py" -v "$CATS_EXAMPLE_DIR" || exit 1
+    python "$UNITTTEST_PATH/test_project.py" -v "$CATS_EXAMPLE_DIR" || exit 1
+    python "$UNITTTEST_PATH/test_source.py" -v "$CATS_EXAMPLE_DIR" || exit 1
 fi

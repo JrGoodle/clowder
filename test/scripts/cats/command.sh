@@ -13,7 +13,7 @@ test_command() {
     echo "TEST: Fail with unrecognized command"
     $COMMAND cat && exit 1
     echo "TEST: Fail with no arguments"
-    $COMMAND && exit 1
+    $COMMAND || exit 1
     echo ''
 }
 test_command

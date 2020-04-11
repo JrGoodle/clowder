@@ -5,18 +5,17 @@
 
 """
 
-import sys
 from multiprocessing import freeze_support
 
 import colorama
 from cement.core.exc import FrameworkError, CaughtSignal
-from cement.core.foundation import CementApp
+from cement import App
 
 import clowder.cli as cmd
 from clowder.error.clowder_exit import ClowderExit
 
 
-class ClowderApp(CementApp):
+class ClowderApp(App):
     """Clowder command CLI app"""
 
     class Meta:
@@ -39,10 +38,13 @@ class ClowderApp(CementApp):
             cmd.PruneController,
             cmd.RepoController,
             cmd.RepoAddController,
+            cmd.RepoCheckoutController,
+            cmd.RepoCleanController,
             cmd.RepoCommitController,
             cmd.RepoRunController,
             cmd.RepoPullController,
             cmd.RepoPushController,
+            cmd.RepoStatusController,
             cmd.ResetController,
             cmd.SaveController,
             cmd.StartController,
@@ -51,15 +53,6 @@ class ClowderApp(CementApp):
             cmd.SyncController,
             cmd.YAMLController
             ]
-
-        # Add commands that are only available on Python 3+
-        if sys.version_info[0] >= 3:
-            alias_handlers = [
-                cmd.RepoCheckoutController,
-                cmd.RepoCleanController,
-                cmd.RepoStatusController
-            ]
-            handlers = handlers + alias_handlers
 
 
 def main():
