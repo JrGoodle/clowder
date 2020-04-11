@@ -13,9 +13,9 @@ elif [ "$TRAVIS_OS_NAME" = "linux" ]; then
     PLATFORM='linux'
 fi
 
-curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-$PLATFORM-amd64 > ./cc-test-reporter
-chmod +x ./cc-test-reporter
-./cc-test-reporter before-build
+# curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-$PLATFORM-amd64 > ./cc-test-reporter
+# chmod +x ./cc-test-reporter
+# ./cc-test-reporter before-build
 
 setup_git() {
   git config --global user.email "travis@travis-ci.org"
