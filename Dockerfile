@@ -28,5 +28,5 @@ RUN apt-get update -y && apt-get install python-dev -y
 ############################################################
 
 WORKDIR /src
-RUN pip install -e .
+RUN pip3 install -e .
 CMD ["/bin/bash"]

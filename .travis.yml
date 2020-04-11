@@ -1,45 +1,34 @@
-language: c
-
-os:
-  - linux
-  - osx
-
-sudo: required
-dist: trusty
+os: linux
+dist: bionic
+language: python
+python: 3.7
 
 env:
   global:
     - PYTHONPATH="$PYTHONPATH:$TRAVIS_BUILD_DIR/clowder:$TRAVIS_BUILD_DIR/clowder_test:$TRAVIS_BUILD_DIR/test"
-  matrix:
-    - TARGET="cats" PYVERSION="python3"
 
-matrix:
+jobs:
   include:
-  - os: linux
-    env: TARGET="cats" PYVERSION="python2"
-  - os: linux
-    env: TARGET="cocos2d" PYVERSION="python3"
-  - os: linux
-    env: TARGET="llvm" PYVERSION="python3"
-  - os: linux
-    env: TARGET="parallel" PYVERSION="python2"
-  - os: linux
-    env: TARGET="parallel" PYVERSION="python3"
-  - os: linux
-    env: TARGET="swift" PYVERSION="python3"
+  - os: osx
+    language: c
+    env:
+      - TARGET="cats"
+      - PATH="/usr/local/bin:$PATH"
+    script: clowder-test -c cats all
+  # - env: TARGET="cocos2d"
+  #   script: clowder-test -c cocos2d all
+  - env: TARGET="llvm"
+    script: clowder-test -c llvm all
+  - env: TARGET="parallel"
+    script: clowder-test -c parallel
+  # - env: TARGET="swift"
+  #   script: clowder-test -c swift all
 
-before_install: script/bootstrap "$PYVERSION"
+before_install: script/bootstrap
 
 install: script/travis/install
 
 before_script: script/travis/before_script
-
-script:
-    - if [ "$TARGET" = "cats" ]; then clowder-test -c cats all; fi
-    - if [ "$TARGET" = "cocos2d" ]; then clowder-test -c cocos2d all; fi
-    - if [ "$TARGET" = "llvm" ]; then clowder-test -c llvm all; fi
-    - if [ "$TARGET" = "parallel" ]; then clowder-test -c parallel; fi
-    - if [ "$TARGET" = "swift" ]; then clowder-test -c swift all; fi
 
 after_script: script/travis/after_script
 
@@ -53,6 +42,4 @@ notifications:
   email: false
   slack:
     secure: G5UcsKT8xMjddtTSUPXECI3uobS5/sRn87iC+fMilbpnDK3yAGoKkyCfPK4E/kJSEPZ8hBKz3uHNzpb0DdOSsjbAItiI+RQ3Glgs86B1sg2pqB2uwVPDCyPn8XHnpYPkKxFYlG19/JG9SEDej4N3kjnB4FVBm7n38ZFWjZh7s2fOjlpPKiHz8pe3B8XYfXTyQGIr9Q2I1eHbQJOEzs4PO1j/uKC1jgwe7nZnOE3sYsfcabScEHTz4Z7s9xhRXcwvorhQYQtBS7id9Gg5E4ANhoVVs7QifazDE1EK3vWjvoFYgYKnCbXzQunB09XlymrWTJZx80JOmgALU0UPUEI8Wvt/kXQP9oxqsMEeoP7UbZvXTfmeOVlm+5f5oesp/JQeBvaPj5qnbWVzcMGqi/hev4qwNv01jQOWrzVmZazw+HgeQcuaHKprK7KLdPFQR5c6CJJtwIxwdRGLmHVTtKIVQo45mEEnjHpYOmbkmmN2VETdgRlkV8t0WdCQpXXVH7uniwa7cYzb9shpiq0o+G3uHN1eUIuia/0XIVgWRL0baN6JitEBvc032M/3UrJESStQFpMF/Nw+NXm38xp7sQWReZM1ZVIBNIR1XPnaZxuLzBhKKCYcByYz7PEF71o/SkWHhAa3EKPO+9q4zceTbWunjRlp1ycUIMyhqDlCpHM8c2Y=
-
-notifications:
   webhooks: https://clowder-repo.herokuapp.com/coverage

@@ -1,19 +1,17 @@
 #!/usr/bin/env bash
 
-if [ "$1" == 'python2' ]; then
-    exit
-fi
-
 case "$(uname)" in
     Linux*) export MY_PLATFORM="linux";
-        sudo apt-get update
-        sudo apt-get install -y python3-setuptools
-        sudo apt-get install -y python3-pip
+        # sudo apt-get update
+        # sudo apt-get install python3
+        # sudo apt-get upgrade python3
+        # sudo apt-get install python3-pip
+        # sudo apt-get upgrade python3-pip
         ;;
     Darwin*) export MY_PLATFORM="osx";
-        which brew || exit 1
-        brew update
+        # brew update
         brew install python3
+        brew upgrade python3
         ;;
     CYGWIN*) export MY_PLATFORM="windows";
         ;;

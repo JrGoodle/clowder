@@ -81,19 +81,10 @@ class BaseController(ArgparseController):
                              quiet=self.app.pargs.silent)
 
     @expose(
-        help='Run unit tests',
-        arguments=[
-            (['version'], dict(choices=['python2', 'python3'], metavar='PYTHON_VERSION',
-                               help='Python vesion to run unit tests for'))
-        ]
+        help='Run unit tests'
     )
     def unittests(self):
         """clowder unit tests"""
-
-        if self.app.pargs.version == 'python2':
-            test_env = {"PYTHON_VERSION": 'python'}
-        else:
-            test_env = {"PYTHON_VERSION": 'python3'}
 
         execute_test_command('./unittests.sh', self.path,
                              parallel=self.app.pargs.parallel,
@@ -118,27 +109,27 @@ class BaseController(ArgparseController):
                                  debug=self.app.debug,
                                  quiet=self.app.pargs.silent)
 
-        llvm_scripts = ['./write_forks.sh', './write_sync.sh']
-        for script in llvm_scripts:
-            execute_test_command(script, os.path.join(self.path, 'llvm'),
-                                 parallel=self.app.pargs.parallel,
-                                 write=True,
-                                 coverage=self.app.pargs.coverage,
-                                 debug=self.app.debug,
-                                 quiet=self.app.pargs.silent)
+        # llvm_scripts = ['./write_forks.sh', './write_sync.sh']
+        # for script in llvm_scripts:
+        #     execute_test_command(script, os.path.join(self.path, 'llvm'),
+        #                          parallel=self.app.pargs.parallel,
+        #                          write=True,
+        #                          coverage=self.app.pargs.coverage,
+        #                          debug=self.app.debug,
+        #                          quiet=self.app.pargs.silent)
 
-        execute_test_command('./write_protocol.sh', os.path.join(self.path, 'cocos2d'),
-                             parallel=self.app.pargs.parallel,
-                             write=True,
-                             coverage=self.app.pargs.coverage,
-                             debug=self.app.debug,
-                             quiet=self.app.pargs.silent,
-                             ssh=True)
+        # execute_test_command('./write_protocol.sh', os.path.join(self.path, 'cocos2d'),
+        #                      parallel=self.app.pargs.parallel,
+        #                      write=True,
+        #                      coverage=self.app.pargs.coverage,
+        #                      debug=self.app.debug,
+        #                      quiet=self.app.pargs.silent,
+        #                      ssh=True)
 
-        execute_test_command('./write_configure_remotes.sh', os.path.join(self.path, 'swift'),
-                             parallel=self.app.pargs.parallel,
-                             write=True,
-                             coverage=self.app.pargs.coverage,
-                             debug=self.app.debug,
-                             quiet=self.app.pargs.silent,
-                             ssh=True)
+        # execute_test_command('./write_configure_remotes.sh', os.path.join(self.path, 'swift'),
+        #                      parallel=self.app.pargs.parallel,
+        #                      write=True,
+        #                      coverage=self.app.pargs.coverage,
+        #                      debug=self.app.debug,
+        #                      quiet=self.app.pargs.silent,
+        #                      ssh=True)
