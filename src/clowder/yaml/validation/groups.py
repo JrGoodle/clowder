@@ -5,8 +5,6 @@
 
 """
 
-from __future__ import print_function
-
 from clowder.yaml.validation.projects import (
     validate_yaml_projects_import,
     validate_yaml_projects

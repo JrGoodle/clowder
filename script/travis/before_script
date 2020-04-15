@@ -2,7 +2,7 @@
 
 cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
 
-./setup "$PYVERSION"
+./setup
 ./test
 
 cd "$TRAVIS_BUILD_DIR" || exit 1
@@ -11,6 +11,10 @@ if [ "$TRAVIS_OS_NAME" = "osx" ]; then
     PLATFORM='darwin'
 elif [ "$TRAVIS_OS_NAME" = "linux" ]; then
     PLATFORM='linux'
+fi
+
+if [ "$TARGET" = 'write' ]; then
+    echo 'Set up ssh'
 fi
 
 curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-$PLATFORM-amd64 > ./cc-test-reporter

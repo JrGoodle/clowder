@@ -5,8 +5,6 @@
 
 """
 
-from __future__ import print_function
-
 from git import GitError
 from termcolor import colored
 

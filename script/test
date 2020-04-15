@@ -10,11 +10,16 @@ fi
 
 script/clean 'test' || exit 1
 
-if [ "$PYVERSION" == 'python2' ]; then
-    PIP='pip'
-else
-    PIP='pip3'
-fi
-
 cd clowder_test || exit 1
-sudo -H $PIP install -e . || exit 1
+
+case "$(uname)" in
+    Linux*) export MY_PLATFORM="linux";
+        pip3 install -e . || exit 1
+        ;;
+    Darwin*) export MY_PLATFORM="osx";
+        sudo -H pip3 install -e . || exit 1
+        ;;
+    CYGWIN*) export MY_PLATFORM="windows";
+        pip3 install -e . || exit 1
+        ;;
+esac

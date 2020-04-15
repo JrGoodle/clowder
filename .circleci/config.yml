@@ -2,11 +2,11 @@
 #
 # Check https://circleci.com/docs/2.0/language-python/ for more details
 #
-version: 2
+version: 2.1
 jobs:
   build:
     docker:
-      - image: circleci/python:3.6.1
+      - image: circleci/python:3.7.7
 
     working_directory: ~/clowder
 
@@ -25,8 +25,7 @@ jobs:
           command: |
             python3 -m venv venv
             . venv/bin/activate
-            sudo pip install -r src/requirements.txt
-            sudo pip install https://github.com/JrGoodle/codecov-python/releases/download/encoding-fix/codecov-2.0.9-py2.py3-none-any.whl
+            sudo pip3 install -r src/requirements.txt
 
       - run:
           name: run setup scripts
@@ -38,27 +37,6 @@ jobs:
           paths:
             - ./venv
           key: v1-dependencies-{{ checksum "src/requirements.txt" }}
-
-      - add_ssh_keys:
-          fingerprints:
-            - "3a:38:b7:1e:b7:eb:c5:8f:4a:79:bd:4f:f0:9a:ea:61"
-
-      - run:
-          name: install git 2.13.6
-          command: |
-            sudo apt-get remove git
-            sudo apt-get update -y
-            sudo apt-get install libcurl4-openssl-dev libexpat1-dev gettext libz-dev libssl-dev build-essential autoconf
-            mkdir tmp-git-build
-            pushd tmp-git-build
-            curl -L --progress https://github.com/git/git/archive/v2.13.6.tar.gz | tar xz
-            pushd git-2.13.6/
-            sudo make configure
-            sudo ./configure
-            sudo make prefix=/usr/local all
-            sudo make prefix=/usr/local install
-            popd
-            popd
 
       - run:
           name: setup git config

@@ -5,8 +5,6 @@
 
 """
 
-from __future__ import print_function
-
 from clowder.yaml.validation.forks import validate_yaml_fork
 from clowder.yaml.validation.util import (
     validate_depth,

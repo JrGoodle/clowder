@@ -33,10 +33,6 @@ test_clowder_repo_run() {
 }
 test_clowder_repo_run
 
-if [ "$PYVERSION" == 'python2' ]; then
-    exit
-fi
-
 test_clowder_repo_checkout() {
     print_single_separator
     echo "TEST: Test clowder repo checkout command"

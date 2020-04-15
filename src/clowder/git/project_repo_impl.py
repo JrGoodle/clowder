@@ -5,8 +5,6 @@
 
 """
 
-from __future__ import print_function
-
 import os
 
 from git import Repo, GitError

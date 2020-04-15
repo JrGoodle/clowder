@@ -5,8 +5,6 @@
 
 """
 
-from __future__ import print_function
-
 import clowder.util.formatting as fmt
 from clowder.git.util import existing_git_repository
 from clowder.model.project import Project

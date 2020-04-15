@@ -2,16 +2,13 @@
 
 cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/../.." || exit 1
 
-if [ "$PYVERSION" == 'python2' ]; then
-    PIP='pip'
-else
-    PIP='pip3'
-fi
+# if [ "$TRAVIS_OS_NAME" = "osx" ]; then
+#     brew install github-release
+#     sudo -H pip3 install twine wheel
+# fi
 
 if [ "$TRAVIS_OS_NAME" = "osx" ]; then
-    brew install github-release
-    sudo -H $PIP install twine wheel
+    pip3 install -r src/requirements.txt
+elif [ "$TRAVIS_OS_NAME" = "linux" ]; then
+    python3 -m pip install -r src/requirements.txt
 fi
-
-sudo $PIP install -r src/requirements.txt
-sudo $PIP install https://github.com/JrGoodle/codecov-python/releases/download/encoding-fix/codecov-2.0.9-py2.py3-none-any.whl

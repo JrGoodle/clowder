@@ -5,8 +5,6 @@
 
 """
 
-from __future__ import print_function
-
 from termcolor import cprint
 
 from clowder.error.clowder_exit import ClowderExit

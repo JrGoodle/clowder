@@ -5,8 +5,6 @@
 
 """
 
-from __future__ import print_function
-
 import clowder.util.formatting as fmt
 from clowder.error.clowder_yaml_error import ClowderYAMLError
 
