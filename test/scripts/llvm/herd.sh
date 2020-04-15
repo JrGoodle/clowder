@@ -28,7 +28,7 @@ export fork_paths=( 'llvm/tools/clang' \
                     'llvm/projects/compiler-rt' )
 
 print_double_separator
-echo 'TEST: llvm projects example test script'
+echo 'TEST: Test clowder herd'
 print_double_separator
 cd "$LLVM_EXAMPLE_DIR" || exit 1
 ./clean.sh
