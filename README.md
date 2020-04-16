@@ -35,14 +35,13 @@ The primary purpose of `clowder` is synchronization of multiple repositories, so
 
 - [git](https://git-scm.com)
 - [Python 3](https://www.python.org/downloads/)
-    + Note: Python 3 isn't required, but it's strongly encouraged if possible since there are a few issues with `Cement` currently preventing full command availability in Python 2
 
 ### macOS
 
 macOS comes with `git` preinstalled. To install Python 3 with [Homebrew](https://brew.sh)
 
 ```bash
-$ brew install python3
+$ brew install python
 ```
 
 ### Ubuntu 16.04
