@@ -68,7 +68,6 @@ test_clean_groups() {
         popd || exit 1
     done
 }
-test_clean_groups
 
 test_clean_projects() {
     print_single_separator
@@ -105,7 +104,6 @@ test_clean_projects() {
         popd || exit 1
     done
 }
-test_clean_projects 'jrgoodle/duke' 'jrgoodle/mu'
 
 test_clean_all() {
     print_single_separator
@@ -135,7 +133,6 @@ test_clean_all() {
         popd || exit 1
     done
 }
-test_clean_all 'black-cats'
 
 test_clean_missing_directories() {
     print_single_separator
@@ -168,7 +165,6 @@ test_clean_missing_directories() {
 
     $COMMAND herd $PARALLEL || exit 1
 }
-test_clean_missing_directories 'mu' 'duke'
 
 test_clean_abort_rebase() {
     print_single_separator
@@ -203,30 +199,125 @@ test_clean_abort_rebase() {
         git reset --hard HEAD~1 || exit 1
     popd || exit 1
 }
-test_clean_abort_rebase
 
-test_clean_untracked_files() {
+test_clean_d() {
     print_single_separator
-    echo "TEST: Clean untracked files"
+    echo "TEST: Clean untracked files and directories"
 
     $COMMAND link || exit 1
     $COMMAND herd $PARALLEL || exit 1
 
     pushd mu || exit 1
-        touch newfile
-        mkdir something
-        touch something/something
-        mkdir something_else
-        test_untracked_files
+    touch newfile
+    mkdir something
+    touch something/something
+    mkdir something_else
+    test_directory_exists 'something'
+    test_file_exists 'something/something'
+    test_file_exists 'newfile'
+    test_directory_exists 'something_else'
+    test_untracked_files
     popd || exit 1
 
     $COMMAND herd && exit 1
+    $COMMAND clean || exit 1
+
+    pushd mu || exit 1
+    test_directory_exists 'something'
+    test_file_exists 'something/something'
+    test_no_file_exists 'newfile'
+    test_directory_exists 'something_else'
+    test_untracked_files
+    popd || exit 1
+
     $COMMAND clean -d || exit 1
 
     pushd mu || exit 1
-        test_no_directory_exists 'something'
-        test_no_file_exists 'something/something'
-        test_no_file_exists 'something_else'
+    test_no_directory_exists 'something'
+    test_no_file_exists 'something/something'
+    test_no_file_exists 'something_else'
+    test_no_directory_exists 'something_else'
+    test_no_untracked_files
     popd || exit 1
 }
-test_clean_untracked_files
+
+test_clean_f() {
+    print_single_separator
+    echo "TEST: Clean git directories"
+
+    $COMMAND link || exit 1
+    $COMMAND herd $PARALLEL || exit 1
+
+    pushd mu || exit 1
+    git clone https://github.com/JrGoodle/cats.git
+    test_directory_exists 'cats'
+    popd || exit 1
+
+    $COMMAND clean || exit 1
+
+    pushd mu || exit 1
+    test_directory_exists 'cats'
+    popd || exit 1
+
+    $COMMAND clean -fd || exit 1
+
+    pushd mu || exit 1
+    test_no_directory_exists 'cats'
+    popd || exit 1
+}
+
+test_clean_X() {
+    print_single_separator
+    echo "TEST: Clean only files ignored by git"
+    $COMMAND herd $PARALLEL || exit 1
+
+    pushd mu || exit 1
+    touch ignored_file
+    touch something
+    test_file_exists 'ignored_file'
+    test_file_exists 'something'
+    popd || exit 1
+
+    $COMMAND clean -X || exit 1
+
+    pushd mu || exit 1
+    test_no_file_exists 'ignored_file'
+    test_file_exists 'something'
+    popd || exit 1
+
+    pushd mu || exit 1
+    rm -f something
+    test_no_file_exists 'ignored_file'
+    test_no_file_exists 'something'
+    popd || exit 1
+}
+
+test_clean_x() {
+    print_single_separator
+    echo "TEST: Clean all untracked files"
+    $COMMAND herd $PARALLEL || exit 1
+
+    pushd mu || exit 1
+    touch xcuserdata
+    touch something
+    test_file_exists 'xcuserdata'
+    test_file_exists 'something'
+    popd || exit 1
+
+    $COMMAND clean -x || exit 1
+
+    pushd mu || exit 1
+    test_no_file_exists 'xcuserdata'
+    test_no_file_exists 'something'
+    popd || exit 1
+}
+
+test_clean_groups
+test_clean_projects 'jrgoodle/duke' 'jrgoodle/mu'
+test_clean_all 'black-cats'
+test_clean_missing_directories 'mu' 'duke'
+test_clean_abort_rebase
+test_clean_d
+test_clean_f
+test_clean_X
+test_clean_x

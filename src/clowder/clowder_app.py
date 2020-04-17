@@ -52,7 +52,7 @@ class ClowderApp(App):
             cmd.StatusController,
             cmd.SyncController,
             cmd.YAMLController
-            ]
+        ]
 
 
 def main():
