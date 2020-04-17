@@ -17,10 +17,10 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
 
     if [ -z "$CIRCLECI" ]; then
         pushd mu || exit 1
-        test_remote_url 'origin' 'https://github.com/JrGoodle/mu.git'
+        test_remote_url 'origin' 'https://github.com/jrgodle/mu.git'
         popd || exit 1
         pushd duke || exit 1
-        test_remote_url 'origin' 'https://github.com/JrGoodle/duke.git'
+        test_remote_url 'origin' 'https://github.com/jrgoodle/duke.git'
         popd || exit 1
     fi
 
@@ -29,9 +29,9 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
     $COMMAND herd --protocol 'ssh' $PARALLEL || exit 1
 
     pushd mu || exit 1
-    test_remote_url 'origin' 'git@github.com:JrGoodle/mu.git'
+    test_remote_url 'origin' 'git@github.com:jrgoodle/mu.git'
     popd || exit 1
     pushd duke || exit 1
-    test_remote_url 'origin' 'git@github.com:JrGoodle/duke.git'
+    test_remote_url 'origin' 'git@github.com:jrgoodle/duke.git'
     popd || exit 1
 fi
