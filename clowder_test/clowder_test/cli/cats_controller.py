@@ -132,6 +132,14 @@ class CatsController(ArgparseController):
         self._execute_command('./link.sh', self.path)
 
     @expose(
+        help='Run cats protocol tests'
+    )
+    def protocol(self):
+        """clowder cats protocol tests"""
+
+        self._execute_command('./protocol.sh', self.path)
+
+    @expose(
         help='Run cats prune tests'
     )
     def prune(self):
