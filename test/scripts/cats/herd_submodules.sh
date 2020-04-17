@@ -6,20 +6,20 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
 
 . test_utilities.sh
 
-export external_projects=( 'cocos2d-objc/external/Chipmunk' \
-                           'cocos2d-objc/external/ObjectAL' \
-                           'cocos2d-objc/external/SSZipArchive' )
+export external_projects=( 'mu/ash' \
+                           'mu/ash/duffy')
 
 print_double_separator
-echo 'TEST: cocos2d herd recursive'
+echo 'TEST: cats herd submodules'
 print_double_separator
-cd "$COCOS2D_EXAMPLE_DIR" || exit 1
+cd "$CATS_EXAMPLE_DIR" || exit 1
 ./clean.sh
 ./init.sh
 
 test_recurse() {
     print_single_separator
     echo "TEST: Herd recursive submodules"
+    clowder link -v submodules || exit 1
     $COMMAND herd $PARALLEL || exit 1
     $COMMAND status || exit 1
     for project in "${external_projects[@]}"; do
@@ -38,7 +38,7 @@ test_recurse
 test_no_recurse() {
     print_single_separator
     echo "TEST: Herd without updating submodules"
-    $COMMAND link -v no-recurse || exit 1
+    $COMMAND link -v submodules-no-recurse || exit 1
     $COMMAND herd $PARALLEL || exit 1
     $COMMAND status || exit 1
     for project in "${external_projects[@]}"; do

@@ -10,5 +10,4 @@ print_double_separator
 echo 'TEST: cocos2d example test script'
 print_double_separator
 
-"$TEST_SCRIPT_DIR/cocos2d/herd.sh" || exit 1
 "$TEST_SCRIPT_DIR/cocos2d/protocol.sh" || exit 1

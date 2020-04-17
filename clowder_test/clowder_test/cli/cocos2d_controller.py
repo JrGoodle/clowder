@@ -36,14 +36,6 @@ class Cocos2dController(ArgparseController):
         self._execute_command('./test_example_cocos2d.sh', os.path.join(ROOT_DIR, 'test', 'scripts'))
 
     @expose(
-        help='Run herd cocos2d tests'
-    )
-    def herd(self):
-        """clowder cocos2d herd tests"""
-
-        self._execute_command('./herd.sh', self.path)
-
-    @expose(
         help='Run protocol cocos2d tests'
     )
     def protocol(self):
