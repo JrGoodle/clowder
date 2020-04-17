@@ -5,9 +5,6 @@
 - Test invalid yaml files
 - Test `clowder.yaml` file with an import
 - Test all clowder commands
-
-## [test_example_cocos2d.sh](test_example_cocos2d.sh)
-
 - Test submodules
 
 ## [test_example_llvm.sh](test_example_llvm.sh)

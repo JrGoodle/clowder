@@ -41,8 +41,11 @@ class BaseController(ArgparseController):
     def all(self):
         """clowder test all command"""
 
-        scripts = ['./test_example_cats.sh', './test_example_cocos2d.sh',
-                   './test_example_llvm.sh', './test_example_swift.sh']
+        scripts = [
+            './test_example_cats.sh',
+            './test_example_llvm.sh',
+            './test_example_swift.sh'
+        ]
         for script in scripts:
             execute_test_command(script, self.path,
                                  parallel=self.app.pargs.parallel,
