@@ -59,14 +59,6 @@ class Cocos2dController(ArgparseController):
 
         self._execute_command('./protocol.sh', self.path)
 
-    @expose(
-        help='Run skip cocos2d tests'
-    )
-    def skip(self):
-        """clowder cocos2d skip tests"""
-
-        self._execute_command('./skip.sh', self.path)
-
     def _execute_command(self, command, path):
         """Private execute command"""
 

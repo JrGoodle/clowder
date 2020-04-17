@@ -23,6 +23,7 @@ print_double_separator
 "$TEST_SCRIPT_DIR/cats/herd_tag.sh" || exit 1
 "$TEST_SCRIPT_DIR/cats/forall.sh" || exit 1
 "$TEST_SCRIPT_DIR/cats/save.sh" || exit 1
+"$TEST_SCRIPT_DIR/cats/skip.sh" || exit 1
 "$TEST_SCRIPT_DIR/cats/stash.sh" || exit 1
 "$TEST_SCRIPT_DIR/cats/link.sh" || exit 1
 "$TEST_SCRIPT_DIR/cats/yaml_validation.sh" || exit 1

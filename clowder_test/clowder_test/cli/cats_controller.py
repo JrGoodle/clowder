@@ -156,6 +156,14 @@ class CatsController(ArgparseController):
         self._execute_command('./save.sh', self.path)
 
     @expose(
+        help='Run cats skip tests'
+    )
+    def skip(self):
+        """clowder cats skip tests"""
+
+        self._execute_command('./skip.sh', self.path)
+
+    @expose(
         help='Run cats start tests'
     )
     def start(self):
