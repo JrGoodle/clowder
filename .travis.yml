@@ -23,8 +23,6 @@ jobs:
   - env: TARGET="parallel"
     python: 3.7
     script: clowder-test -c parallel
-  # - env: TARGET="cocos2d"
-  #   script: clowder-test -c cocos2d all
   # - env: TARGET="swift"
   #   script: clowder-test -c swift all
 

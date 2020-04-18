@@ -309,12 +309,15 @@ class GitRepo(object):
         else:
             return
 
-        try:
-            execute_command(command, self.repo_path, print_output=self._print_output)
-        except ClowderError:
-            message = colored(' - Failed to print branches', 'red')
-            self._print(message)
-            self._exit(message)
+        print('FIXME: Implement')
+        return
+
+        # try:
+        #     execute_command(command, self.repo_path, print_output=self._print_output)
+        # except ClowderError:
+        #     message = colored(' - Failed to print branches', 'red')
+        #     self._print(message)
+        #     self._exit(message)
 
     @not_detached
     def pull(self):

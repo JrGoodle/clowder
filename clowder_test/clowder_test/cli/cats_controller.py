@@ -92,6 +92,14 @@ class CatsController(ArgparseController):
         self._execute_command('./herd_branch.sh', self.path)
 
     @expose(
+        help='Run cats herd submodules tests'
+    )
+    def herd_submodules(self):
+        """clowder cats herd submodules tests"""
+
+        self._execute_command('./herd_submodules.sh', self.path)
+
+    @expose(
         help='Run cats herd tag tests'
     )
     def herd_tag(self):
@@ -124,6 +132,14 @@ class CatsController(ArgparseController):
         self._execute_command('./link.sh', self.path)
 
     @expose(
+        help='Run cats protocol tests'
+    )
+    def protocol(self):
+        """clowder cats protocol tests"""
+
+        self._execute_command('./protocol.sh', self.path)
+
+    @expose(
         help='Run cats prune tests'
     )
     def prune(self):
@@ -154,6 +170,14 @@ class CatsController(ArgparseController):
         """clowder cats save tests"""
 
         self._execute_command('./save.sh', self.path)
+
+    @expose(
+        help='Run cats skip tests'
+    )
+    def skip(self):
+        """clowder cats skip tests"""
+
+        self._execute_command('./skip.sh', self.path)
 
     @expose(
         help='Run cats start tests'

@@ -32,7 +32,6 @@ test_reset() {
 
     COMMIT_MESSAGE='Add new commits'
     pushd 'mu' || exit 1
-    git pull origin master || exit 1
     test_number_commits 'HEAD' 'origin/knead' '0'
     UPSTREAM_COMMIT=$(git rev-parse HEAD)
     git reset --hard HEAD~3 || exit 1

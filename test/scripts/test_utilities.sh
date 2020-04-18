@@ -17,12 +17,10 @@ if [ -n "$TRAVIS_OS_NAME" ] || [ -n "$CIRCLECI" ]; then
     export CATS_EXAMPLE_DIR="$CURRENT_DIR/../../examples/cats"
     export LLVM_EXAMPLE_DIR="$CURRENT_DIR/../../examples/llvm-projects"
     export SWIFT_EXAMPLE_DIR="$CURRENT_DIR/../../examples/swift-projects"
-    export COCOS2D_EXAMPLE_DIR="$CURRENT_DIR/../../examples/cocos2d-objc"
 else
     export CATS_EXAMPLE_DIR="$HOME/.clowder_tests/cats"
     export LLVM_EXAMPLE_DIR="$HOME/.clowder_tests/llvm-projects"
     export SWIFT_EXAMPLE_DIR="$HOME/.clowder_tests//swift-projects"
-    export COCOS2D_EXAMPLE_DIR="$HOME/.clowder_tests/cocos2d-objc"
 fi
 
 make_dirty_repos() {
@@ -189,24 +187,28 @@ test_untracked_files() {
 }
 
 test_directory_exists() {
+    echo "TEST: Directory exists"
     if [ ! -d "$1" ]; then
         exit 1
     fi
 }
 
 test_no_directory_exists() {
+    echo "TEST: No drectory exists"
     if [ -d "$1" ]; then
         exit 1
     fi
 }
 
 test_file_exists() {
+    echo "TEST: File exists"
     if [ ! -f "$1" ]; then
         exit 1
     fi
 }
 
 test_no_file_exists() {
+    echo "TEST: No file exists"
     if [ -f "$1" ]; then
         exit 1
     fi

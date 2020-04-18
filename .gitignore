@@ -56,14 +56,6 @@ examples/fastlane/clowder.yaml
 examples/fastlane/fastlane
 examples/fastlane/snapshot
 
-examples/cocos2d-objc/clowder
-examples/cocos2d-objc/.clowder
-examples/cocos2d-objc/clowder.yaml
-examples/cocos2d-objc/peru.yaml
-examples/cocos2d-objc/cocos2d-objc
-examples/cocos2d-objc/cocos2d-x
-
-
 # Created by https://www.gitignore.io/api/macos,swift,xcode,vapor,python,swiftpm,pycharm
 
 ### macOS ###

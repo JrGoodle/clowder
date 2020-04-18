@@ -30,7 +30,7 @@ sources:
 
 The `groups` each require a `name` and associated `projects`
 
-At a minimum, `projects` require the `name` from the project's url, and the `path` to clone relative to the base directory. The default `remote`, `source`, `ref`, `depth`, and `timestamp_author` values can be overridden on a per-project basis. It's also possible to add a reference to a fork by adding `fork` to a project, with a required `name` and `remote`. When a `fork` is present the `clowder start -t`, `clowder prune -r`, and `clowder prune -a` commands will apply to the fork's remote
+At a minimum, `projects` require the `name` from the project's url, and the `path` to clone relative to the base directory. The default `remote`, `source`, `ref`, `depth`, and `timestamp_author` (most recent commit by author) values can be overridden on a per-project basis. It's also possible to add a reference to a fork by adding `fork` to a project, with a required `name` and `remote`. When a `fork` is present the `clowder start -t`, `clowder prune -r`, and `clowder prune -a` commands will apply to the fork's remote
 
 ```yaml
 groups:
@@ -87,7 +87,7 @@ ref: 3416108abd0df3997a533a14c5ad06de20ba8a60 # point to commit hash
 
 A `clowder.yaml` file can `import` another `clowder.yaml` file and override values from the other file, add new `groups`, and add new `projects`. If a file contains an `import`, then the normal requirements for a base `clowder.yaml` are relaxed. There must be at least one additional customization specified for a `clowder.yaml` with an `import` to be considered valid. To import the primary `clowder.yaml` specify `default`, otherwise specify the version name
 
-The [swift-4.1-branch-import clowder.yaml](https://github.com/JrGoodle/swift-clowder/blob/master/versions/swift-4.1-branch-import/clowder.yaml) file demonstrates `import` usage. This version will import the primary `clowder.yaml` and override the default `ref` with `refs/heads/swift-4.1-branch`. The `llvm` group `ref` also requires an override since it was specified to be `refs/heads/stable` in the [default clowder.yaml](https://github.com/JrGoodle/swift-clowder/blob/master/clowder.yaml)
+The [swift-4.1-branch-import clowder.yaml](https://github.com/JrGoodle/swift-clowder/blob/master/versions/swift-4.1-branch/clowder.yaml) file demonstrates `import` usage. This version will import the primary `clowder.yaml` and override the default `ref` with `refs/heads/swift-4.1-branch`. The `llvm` group `ref` also requires an override since it was specified to be `refs/heads/stable` in the [default clowder.yaml](https://github.com/JrGoodle/swift-clowder/blob/master/clowder.yaml)
 
 ```yaml
 import default
