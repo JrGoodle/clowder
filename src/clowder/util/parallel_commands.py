@@ -22,7 +22,7 @@ from clowder.util.clowder_utils import (
 )
 
 if os.name == "posix":
-    def herd_project(project, branch, tag, depth, rebase, protocol):
+    def herd_project(project, branch, tag, depth, rebase):
         """Herd command wrapper function for multiprocessing Pool execution
 
         :param Project project: Project instance
@@ -30,10 +30,9 @@ if os.name == "posix":
         :param str tag: Tag to attempt to herd
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
         :param bool rebase: Whether to use rebase instead of pulling latest changes
-        :param str protocol: Git protocol ('ssh' or 'https')
         """
 
-        project.herd(branch=branch, tag=tag, depth=depth, rebase=rebase, parallel=True, protocol=protocol)
+        project.herd(branch=branch, tag=tag, depth=depth, rebase=rebase, parallel=True)
 
     def reset_project(project, timestamp):
         """Reset command wrapper function for multiprocessing Pool execution
@@ -54,15 +53,14 @@ if os.name == "posix":
 
         project.run(commands, ignore_errors, parallel=True)
 
-    def sync_project(project, protocol, rebase):
+    def sync_project(project, rebase):
         """Sync command wrapper function for multiprocessing Pool execution
 
         :param Project project: Project instance
-        :param str protocol: Git protocol, 'ssh' or 'https'
         :param bool rebase: Whether to use rebase instead of pulling latest changes
         """
 
-        project.sync(protocol, rebase, parallel=True)
+        project.sync(rebase, parallel=True)
 
     def async_callback(val):
         """Increment async progress bar
@@ -116,7 +114,6 @@ if os.name == "posix":
             branch (str): Branch to attempt to herd
             tag (str): Tag to attempt to herd
             depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-            protocol (str): Git protocol ('ssh' or 'https')
             rebase (bool): Whether to use rebase instead of pulling latest changes
             project_names (list[str]): Project names to herd
             skip (list[str]): Project names to skip
@@ -128,7 +125,6 @@ if os.name == "posix":
         tag = kwargs.get('tag', None)
         depth = kwargs.get('depth', None)
         rebase = kwargs.get('rebase', False)
-        protocol = kwargs.get('protocol', None)
 
         print(' - Herd projects in parallel\n')
         validate_print_output(clowder, group_names, project_names=project_names, skip=skip)
@@ -139,7 +135,7 @@ if os.name == "posix":
             if project.name in skip:
                 continue
             result = __clowder_pool__.apply_async(herd_project,
-                                                  args=(project, branch, tag, depth, rebase, protocol),
+                                                  args=(project, branch, tag, depth, rebase),
                                                   callback=async_callback)
             __clowder_results__.append(result)
 
@@ -208,11 +204,10 @@ if os.name == "posix":
             __clowder_results__.append(result)
         pool_handler(len(projects))
 
-    def sync_parallel(projects, protocol, rebase=False):
+    def sync_parallel(projects, rebase=False):
         """Sync projects in parallel
 
         :param list[Project] projects: Projects to sync
-        :param str protocol: Git protocol, 'ssh' or 'https'
         :param Optional[bool] rebase: Whether to use rebase instead of pulling latest changes
         """
 
@@ -220,7 +215,7 @@ if os.name == "posix":
         print_parallel_projects_output(projects, [])
 
         for project in projects:
-            result = __clowder_pool__.apply_async(sync_project, args=(project, protocol, rebase),
+            result = __clowder_pool__.apply_async(sync_project, args=(project, rebase),
                                                   callback=async_callback)
             __clowder_results__.append(result)
         pool_handler(len(projects))

@@ -134,7 +134,7 @@ class ClowderController(object):
         try:
             yaml = load_yaml()
             self.defaults = Defaults(yaml['defaults'])
-            self.sources = [Source(s) for s in yaml['sources']]
+            self.sources = [Source(s, self.defaults) for s in yaml['sources']]
             for group in yaml['groups']:
                 self.groups.append(Group(group, self.defaults, self.sources))
         except (AttributeError, TypeError):

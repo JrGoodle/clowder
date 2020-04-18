@@ -19,7 +19,7 @@ git clone git@github.com:apple/swift.git
 mkdir swift-source
 cd swift-source
 clowder init git@github.com:JrGoodle/swift-clowder.git
-clowder herd --parallel --protocol ssh
+clowder herd --parallel
 ```
 
 ## Checkout Version
