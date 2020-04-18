@@ -36,36 +36,12 @@ class LLVMController(ArgparseController):
         self._execute_command('./test_example_llvm.sh', os.path.join(ROOT_DIR, 'test', 'scripts'))
 
     @expose(
-        help='Run llvm branch tests'
-    )
-    def branch(self):
-        """clowder llvm branch tests"""
-
-        self._execute_command('./branch.sh', self.path)
-
-    @expose(
         help='Run llvm forks tests'
     )
     def forks(self):
         """clowder llvm forks tests"""
 
         self._execute_command('./forks.sh', self.path)
-
-    @expose(
-        help='Run llvm herd tests'
-    )
-    def herd(self):
-        """clowder llvm herd tests"""
-
-        self._execute_command('./herd.sh', self.path)
-
-    @expose(
-        help='Run llvm reset tests'
-    )
-    def reset(self):
-        """clowder llvm reset tests"""
-
-        self._execute_command('./reset.sh', self.path)
 
     @expose(
         help='Run llvm sync tests'
