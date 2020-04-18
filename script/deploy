@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
+
 echo "deploy"
 
 if [[ "$TRAVIS_PULL_REQUEST" != "false" ]]; then
@@ -14,9 +16,9 @@ fi
 export GITHUB_USER='JrGoodle'
 export GITHUB_REPO='clowder'
 
-cd "${TRAVIS_BUILD_DIR}/src" || exit 1
+pushd "src" || exit 1
 
-SETUP_PY="${TRAVIS_BUILD_DIR}/src/setup.py"
+SETUP_PY="$(pwd)/setup.py"
 VERSION=$(awk "/version='/" "${SETUP_PY}" | sed -n -e "s/^.*version='//p" | tr -d "',")
 echo "VERSION=${VERSION}"
 TAG="${VERSION}"
@@ -39,7 +41,6 @@ else
 
     echo "Creating new tag and GitHub Release"
     echo '-----------------------------------'
-    # Create new GitHub Release from tag
     github-release release \
         --tag "${TAG}" \
         --name "${TAG}" \
@@ -48,7 +49,7 @@ else
 
     echo "Uploading artifacts to GitHub Releases"
     echo '--------------------------------------'
-    pushd "${TRAVIS_BUILD_DIR}/src/dist" || exit 1
+    pushd "dist" || exit 1
     artifacts=( "clowder_repo-${VERSION}-py3-none-any.whl" \
                  "clowder-repo-${VERSION}.tar.gz" )
     for artifact in "${artifacts[@]}"; do
@@ -58,7 +59,7 @@ else
             --name "${artifact}" \
             --file "${artifact}"
     done
-    popd
+    popd || exit 1
     echo ''
 
     echo 'Uploading to PyPI'
