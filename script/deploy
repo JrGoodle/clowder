@@ -13,8 +13,6 @@ if [[ "$TRAVIS_BRANCH" != "master" ]]; then
   exit 0
 fi
 
-echo "python version: $(python --version)"
-
 export GITHUB_USER='JrGoodle'
 export GITHUB_REPO='clowder'
 
@@ -33,12 +31,12 @@ else
 
     echo 'Create source distribution'
     echo '--------------------------'
-    python setup.py sdist
+    sudo -H python3 setup.py sdist
     echo ''
 
     echo 'Create wheel'
     echo '------------'
-    python setup.py bdist_wheel
+    sudo -H python3 setup.py bdist_wheel
     echo ''
 
     echo "Creating new tag and GitHub Release"
