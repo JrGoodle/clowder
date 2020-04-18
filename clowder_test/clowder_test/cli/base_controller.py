@@ -93,7 +93,6 @@ class BaseController(ArgparseController):
                              parallel=self.app.pargs.parallel,
                              write=self.app.pargs.write,
                              coverage=self.app.pargs.coverage,
-                             test_env=test_env,
                              debug=self.app.debug,
                              quiet=self.app.pargs.silent)
 
