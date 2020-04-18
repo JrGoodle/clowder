@@ -31,12 +31,12 @@ else
 
     echo 'Create source distribution'
     echo '--------------------------'
-    sudo python3 setup.py sdist
+    python3 setup.py sdist
     echo ''
 
     echo 'Create wheel'
     echo '------------'
-    sudo python3 setup.py bdist_wheel
+    python3 setup.py bdist_wheel
     echo ''
 
     echo "Creating new tag and GitHub Release"
@@ -60,10 +60,11 @@ else
             --file "${artifact}"
     done
     popd || exit 1
+    popd || exit 1
     echo ''
 
     echo 'Uploading to PyPI'
     echo '-----------------'
-    twine upload dist/*
+    twine upload src/dist/*
     echo ''
 fi
