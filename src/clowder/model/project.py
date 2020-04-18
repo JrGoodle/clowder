@@ -103,12 +103,13 @@ class Project(object):
         """
 
         repo = ProjectRepo(self.full_path(), self.remote, self.ref)
-        if not is_offline() and remote:
-            if self.fork is None:
-                repo.fetch(self.remote, depth=self.depth)
-            else:
-                repo.fetch(self.fork.remote_name)
-                repo.fetch(self.remote)
+        # TODO: Rethink aggressively fetching for printing remote branches
+        # if not is_offline() and remote:
+        #     if self.fork is None:
+        #         repo.fetch(self.remote, depth=self.depth)
+        #     else:
+        #         repo.fetch(self.fork.remote_name)
+        #         repo.fetch(self.remote)
 
         repo.print_branches(local=local, remote=remote)
 
