@@ -38,7 +38,7 @@ class BaseController(ArgparseController):
     @expose(
         help='Run all tests'
     )
-    def all(self):
+    def all(self) -> None:
         """clowder test all command"""
 
         scripts = [
@@ -60,7 +60,7 @@ class BaseController(ArgparseController):
     @expose(
         help='Run offline tests'
     )
-    def offline(self):
+    def offline(self) -> None:
         """clowder offline tests"""
 
         execute_test_command('./offline.sh', os.path.join(self.path, 'cats'),
@@ -73,7 +73,7 @@ class BaseController(ArgparseController):
     @expose(
         help='Run parallel tests'
     )
-    def parallel(self):
+    def parallel(self) -> None:
         """clowder parallel tests"""
 
         execute_test_command('./test_parallel.sh', self.path,
@@ -83,24 +83,24 @@ class BaseController(ArgparseController):
                              debug=self.app.debug,
                              quiet=self.app.pargs.silent)
 
-    @expose(
-        help='Run unit tests'
-    )
-    def unittests(self):
-        """clowder unit tests"""
-
-        execute_test_command('./unittests.sh', self.path,
-                             parallel=self.app.pargs.parallel,
-                             write=self.app.pargs.write,
-                             coverage=self.app.pargs.coverage,
-                             test_env=test_env,
-                             debug=self.app.debug,
-                             quiet=self.app.pargs.silent)
+    # @expose(
+    #     help='Run unit tests'
+    # )
+    # def unittests(self) -> None:
+    #     """clowder unit tests"""
+    #
+    #     execute_test_command('./unittests.sh', self.path,
+    #                          parallel=self.app.pargs.parallel,
+    #                          write=self.app.pargs.write,
+    #                          coverage=self.app.pargs.coverage,
+    #                          test_env=test_env,
+    #                          debug=self.app.debug,
+    #                          quiet=self.app.pargs.silent)
 
     @expose(
         help='Run tests requiring remote write permissions'
     )
-    def write(self):
+    def write(self) -> None:
         """clowder write tests"""
 
         cats_scripts = ['./write_herd.sh', './write_prune.sh', './write_repo.sh', './write_start.sh']

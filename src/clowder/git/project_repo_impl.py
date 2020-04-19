@@ -7,8 +7,9 @@
 
 import errno
 import os
+from typing import Optional
 
-from git import Repo, GitError
+from git import GitError, Remote, Repo, Tag
 from termcolor import colored
 
 import clowder.util.formatting as fmt
@@ -36,18 +37,18 @@ class ProjectRepoImpl(GitRepo):
     :ivar Repo repo: Repo instance
     """
 
-    def __init__(self, repo_path, remote, default_ref, parallel=False):
+    def __init__(self, repo_path: str, remote: str, default_ref: str, parallel: bool = False):
         """ProjectRepo __init__
 
         :param str repo_path: Absolute path to repo
         :param str remote: Default remote name
         :param str default_ref: Default ref
-        :param Optional[bool] parallel: Whether command is being run in parallel, affects output. Defaults to False
+        :param bool parallel: Whether command is being run in parallel, affects output. Defaults to False
         """
 
         GitRepo.__init__(self, repo_path, remote, default_ref, parallel=parallel)
 
-    def _checkout_branch(self, branch):
+    def _checkout_branch(self, branch: str) -> None:
         """Checkout local branch or print message if already checked out
 
         .. py:function:: _checkout_branch(branch)
@@ -60,13 +61,13 @@ class ProjectRepoImpl(GitRepo):
         else:
             self._checkout_branch_local(branch)
 
-    def _checkout_branch_local(self, branch, remove_dir=False):
+    def _checkout_branch_local(self, branch: str, remove_dir: bool = False) -> None:
         """Checkout local branch
 
         .. py:function:: _checkout_branch_local(branch, remove_dir=False)
 
         :param str branch: Branch name
-        :param Optional[bool] remove_dir: Whether to remove the directory if commands fail
+        :param bool remove_dir: Whether to remove the directory if commands fail
         """
 
         branch_output = fmt.ref_string(branch)
@@ -86,7 +87,7 @@ class ProjectRepoImpl(GitRepo):
                 remove_directory(self.repo_path)
             self._exit()
 
-    def _checkout_new_repo_branch(self, branch, depth):
+    def _checkout_new_repo_branch(self, branch: str, depth: int) -> None:
         """Checkout remote branch or fail and delete repo if it doesn't exist
 
         :param str branch: Branch name
@@ -106,7 +107,7 @@ class ProjectRepoImpl(GitRepo):
 
         self._create_branch_local_tracking(branch, self.remote, depth=depth, fetch=False, remove_dir=True)
 
-    def _checkout_new_repo_commit(self, commit, remote, depth):
+    def _checkout_new_repo_commit(self, commit: str, remote: str, depth: int) -> None:
         """Checkout commit or fail and delete repo if it doesn't exist
 
         :param str commit: Commit sha
@@ -131,7 +132,7 @@ class ProjectRepoImpl(GitRepo):
             remove_directory(self.repo_path)
             self._exit()
 
-    def _checkout_new_repo_tag(self, tag, remote, depth, remove_dir=False):
+    def _checkout_new_repo_tag(self, tag: str, remote: str, depth: int, remove_dir: bool = False) -> None:
         """Checkout tag or fail and delete repo if it doesn't exist
 
         .. py:function:: _checkout_new_repo_tag(tag, remote, depth, remove_dir=False)
@@ -139,18 +140,18 @@ class ProjectRepoImpl(GitRepo):
         :param str tag: Tag name
         :param str remote: Remote name
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-        :param Optional[bool] remove_dir: Whether to remove the directory if commands fail
+        :param bool remove_dir: Whether to remove the directory if commands fail
         """
 
         remote_tag = self._get_remote_tag(tag, remote, depth=depth, remove_dir=remove_dir)
         if remote_tag is None:
-            return 1
+            return
 
         tag_output = fmt.ref_string(tag)
         try:
             self._print(' - Checkout tag ' + tag_output)
             self.repo.git.checkout(remote_tag)
-            return 0
+            return
         except GitError as err:
             message = colored(' - Failed to checkout tag ', 'red')
             self._print(message + tag_output)
@@ -158,13 +159,13 @@ class ProjectRepoImpl(GitRepo):
             if remove_dir:
                 remove_directory(self.repo_path)
                 self._exit(fmt.parallel_exception_error(self.repo_path, message, tag_output))
-            return 1
+            return
         except (KeyboardInterrupt, SystemExit):
             if remove_dir:
                 remove_directory(self.repo_path)
             self._exit()
 
-    def _checkout_sha(self, sha):
+    def _checkout_sha(self, sha: str) -> None:
         """Checkout commit by sha
 
         :param str sha: Commit sha
@@ -174,7 +175,7 @@ class ProjectRepoImpl(GitRepo):
         try:
             if self.repo.head.commit.hexsha == sha:
                 self._print(' - On correct commit')
-                return 0
+                return
             self._print(' - Checkout commit ' + commit_output)
             self.repo.git.checkout(sha)
         except GitError as err:
@@ -185,7 +186,7 @@ class ProjectRepoImpl(GitRepo):
         except (KeyboardInterrupt, SystemExit):
             self._exit()
 
-    def _checkout_tag(self, tag):
+    def _checkout_tag(self, tag: str) -> None:
         """Checkout commit tag is pointing to
 
         :param str tag: Tag name
@@ -211,7 +212,7 @@ class ProjectRepoImpl(GitRepo):
         except (KeyboardInterrupt, SystemExit):
             self._exit()
 
-    def _compare_remote_url(self, remote, url):
+    def _compare_remote_url(self, remote: str, url: str) -> None:
         """Compare actual remote url to given url
 
         If URL's are different print error message and exit
@@ -226,7 +227,7 @@ class ProjectRepoImpl(GitRepo):
             self._print(message)
             self._exit(message)
 
-    def _create_branch_local(self, branch):
+    def _create_branch_local(self, branch: str) -> None:
         """Create local branch
 
         :param str branch: Branch name
@@ -241,11 +242,11 @@ class ProjectRepoImpl(GitRepo):
             message = colored(' - Failed to create branch ', 'red')
             self._print(message + branch_output)
             self._print(fmt.error(err))
-            raise ClowderGitError(err)
+            raise ClowderGitError(msg=fmt.error(err))
         except (KeyboardInterrupt, SystemExit):
             self._exit()
 
-    def _create_branch_local_tracking(self, branch, remote, depth, **kwargs):
+    def _create_branch_local_tracking(self, branch: str, remote: str, depth: int, **kwargs) -> None:
         """Create and checkout tracking branch
 
         .. py:function:: _create_branch_local_tracking(self, branch, remote, depth, fetch=True, remove_dir=False)
@@ -285,7 +286,7 @@ class ProjectRepoImpl(GitRepo):
             self._set_tracking_branch(remote, branch, remove_dir=remove_dir)
             self._checkout_branch_local(branch, remove_dir=remove_dir)
 
-    def _create_branch_remote_tracking(self, branch, remote, depth):
+    def _create_branch_remote_tracking(self, branch: str, remote: str, depth: int) -> None:
         """Create remote tracking branch
 
         :param str branch: Branch name
@@ -312,14 +313,14 @@ class ProjectRepoImpl(GitRepo):
         except (KeyboardInterrupt, SystemExit):
             self._exit()
 
-    def _create_remote(self, remote, url, remove_dir=False):
+    def _create_remote(self, remote: str, url: str, remove_dir: bool = False) -> None:
         """Create new remote
 
         .. py:function:: _create_remote(remote, url, remove_dir=False)
 
         :param str remote: Remote name
         :param str url: URL of repo
-        :param Optional[bool] remove_dir: Whether to remove the directory if commands fail
+        :param bool remove_dir: Whether to remove the directory if commands fail
         """
 
         remote_names = [r.name for r in self.repo.remotes]
@@ -343,7 +344,7 @@ class ProjectRepoImpl(GitRepo):
                 remove_directory(self.repo_path)
             self._exit()
 
-    def _find_rev_by_timestamp(self, timestamp, ref):
+    def _find_rev_by_timestamp(self, timestamp: str, ref: str) -> str:
         """Find rev by timestamp
 
         :param str timestamp: Commit ref timestamp
@@ -362,7 +363,7 @@ class ProjectRepoImpl(GitRepo):
         except (KeyboardInterrupt, SystemExit):
             self._exit()
 
-    def _find_rev_by_timestamp_author(self, timestamp, author, ref):
+    def _find_rev_by_timestamp_author(self, timestamp: str, author: str, ref: str) -> str:
         """Find rev by timestamp and author
 
         :param str timestamp: Commit ref timestamp
@@ -382,15 +383,16 @@ class ProjectRepoImpl(GitRepo):
         except (KeyboardInterrupt, SystemExit):
             self._exit()
 
-    def _get_remote_tag(self, tag, remote, depth=0, remove_dir=False):
+    def _get_remote_tag(self, tag: str, remote: str, depth: int = 0,
+                        remove_dir: bool = False) -> Optional[Tag]:
         """Returns Tag object
 
         .. py:function:: _get_remote_tag(tag, remote, depth=0, remove_dir=False)
 
         :param str tag: Tag name
         :param str remote: Remote name
-        :param Optional[int] depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-        :param Optional[bool] remove_dir: Whether to remove the directory if commands fail
+        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :param bool remove_dir: Whether to remove the directory if commands fail
         :return: GitPython Tag object if it exists, otherwise None
         :rtype: Tag
         """
@@ -415,7 +417,7 @@ class ProjectRepoImpl(GitRepo):
                 remove_directory(self.repo_path)
             self._exit()
 
-    def _init_repo(self):
+    def _init_repo(self) -> None:
         """Initialize repository
 
         :raise OSError:
@@ -443,7 +445,7 @@ class ProjectRepoImpl(GitRepo):
             remove_directory(self.repo_path)
             self._exit()
 
-    def _is_branch_checked_out(self, branch):
+    def _is_branch_checked_out(self, branch: str) -> bool:
         """Check if branch is checked out
 
         :param str branch: Branch name
@@ -461,7 +463,7 @@ class ProjectRepoImpl(GitRepo):
         except (KeyboardInterrupt, SystemExit):
             self._exit()
 
-    def _is_tracking_branch(self, branch):
+    def _is_tracking_branch(self, branch: str) -> bool:
         """Check if branch is a tracking branch
 
         :param str branch: Branch name
@@ -482,7 +484,7 @@ class ProjectRepoImpl(GitRepo):
         except (KeyboardInterrupt, SystemExit):
             self._exit()
 
-    def _print_existing_remote_branch_message(self, branch):
+    def _print_existing_remote_branch_message(self, branch: str) -> None:
         """Print output message for existing remote branch
 
         :param str branch: Branch name
@@ -501,7 +503,7 @@ class ProjectRepoImpl(GitRepo):
             self._print(' - Tracking branch ' + branch_output + ' already exists')
 
     @not_detached
-    def _pull(self, remote, branch):
+    def _pull(self, remote: str, branch: str) -> None:
         """Pull from remote branch
 
         :param str remote: Remote name
@@ -521,7 +523,7 @@ class ProjectRepoImpl(GitRepo):
             self._exit(message)
 
     @not_detached
-    def _rebase_remote_branch(self, remote, branch):
+    def _rebase_remote_branch(self, remote: str, branch: str) -> None:
         """Rebase onto remote branch
 
         :param str remote: Remote name
@@ -541,13 +543,13 @@ class ProjectRepoImpl(GitRepo):
             self._print(fmt.command_failed_error(command))
             self._exit(message)
 
-    def _remote(self, remote, remove_dir=False):
+    def _remote(self, remote: str, remove_dir: bool = False) -> Remote:
         """Get GitPython Remote instance
 
         .. py:function:: _remote(remote, remove_dir=False)
 
         :param str remote: Remote name
-        :param Optional[bool] remove_dir: Whether to remove the directory if commands fail
+        :param bool remove_dir: Whether to remove the directory if commands fail
         :return: GitPython Remote instance
         :rtype: Remote
         """
@@ -565,7 +567,7 @@ class ProjectRepoImpl(GitRepo):
         except (KeyboardInterrupt, SystemExit):
             self._exit()
 
-    def _remote_get_url(self, remote):
+    def _remote_get_url(self, remote: str) -> str:
         """Get url of remote
 
         :param str remote: Remote name
@@ -575,7 +577,7 @@ class ProjectRepoImpl(GitRepo):
 
         return self.repo.git.remote('get-url', remote)
 
-    def _rename_remote(self, remote_from, remote_to):
+    def _rename_remote(self, remote_from: str, remote_to: str) -> None:
         """Rename remote
 
         :param str remote_from: Name of remote to rename
@@ -595,14 +597,14 @@ class ProjectRepoImpl(GitRepo):
         except (KeyboardInterrupt, SystemExit):
             self._exit()
 
-    def _set_tracking_branch(self, remote, branch, remove_dir=False):
+    def _set_tracking_branch(self, remote: str, branch: str, remove_dir: bool = False) -> None:
         """Set tracking branch
 
         .. py:function:: _set_tracking_branch(remote, branch, remove_dir=False)
 
         :param str remote: Remote name
         :param str branch: Branch name
-        :param Optional[bool] remove_dir: Whether to remove the directory if commands fail
+        :param bool remove_dir: Whether to remove the directory if commands fail
         """
 
         branch_output = fmt.ref_string(branch)
@@ -625,7 +627,7 @@ class ProjectRepoImpl(GitRepo):
                 remove_directory(self.repo_path)
             self._exit()
 
-    def _set_tracking_branch_commit(self, branch, remote, depth):
+    def _set_tracking_branch_commit(self, branch: str, remote: str, depth: int) -> None:
         """Set tracking relationship between local and remote branch if on same commit
 
         :param str branch: Branch name

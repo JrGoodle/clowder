@@ -5,8 +5,6 @@
 
 """
 
-import sys
-
 from cement.ext.ext_argparse import ArgparseController, expose
 
 from clowder.clowder_repo import (
@@ -46,14 +44,14 @@ class RepoAddController(ArgparseController):
         help='Add files in clowder repo',
         arguments=[(['files'], dict(nargs='+', metavar='FILE', help='files to add'))]
     )
-    def add(self):
+    def add(self) -> None:
         """Clowder repo add command entry point"""
 
         self._add()
 
     @clowder_required
     @print_clowder_repo_status
-    def _add(self):
+    def _add(self) -> None:
         """Clowder repo add command private implementation"""
 
         CLOWDER_REPO.add(self.app.pargs.files)
@@ -74,14 +72,14 @@ class RepoCommitController(ArgparseController):
         help='Commit current changes in clowder repo yaml files',
         arguments=[(['message'], dict(nargs=1, metavar='MESSAGE', help='commit message'))]
     )
-    def commit(self):
+    def commit(self) -> None:
         """Clowder repo commit command entry point"""
 
         self._commit()
 
     @clowder_required
     @print_clowder_repo_status
-    def _commit(self):
+    def _commit(self) -> None:
         """Clowder repo commit command private implementation"""
 
         CLOWDER_REPO.commit(self.app.pargs.message[0])
@@ -101,7 +99,7 @@ class RepoPullController(ArgparseController):
     @expose(
         help='Pull upstream changes in clowder repo'
     )
-    def pull(self):
+    def pull(self) -> None:
         """Clowder repo pull command entry point"""
 
         self._pull()
@@ -109,7 +107,7 @@ class RepoPullController(ArgparseController):
     @network_connection_required
     @clowder_required
     @print_clowder_repo_status_fetch
-    def _pull(self):
+    def _pull(self) -> None:
         """Clowder repo pull command private implementation"""
 
         CLOWDER_REPO.pull()
@@ -129,7 +127,7 @@ class RepoPushController(ArgparseController):
     @expose(
         help='Push changes in clowder repo'
     )
-    def push(self):
+    def push(self) -> None:
         """Clowder repo push command entry point"""
 
         self._push()
@@ -137,7 +135,7 @@ class RepoPushController(ArgparseController):
     @network_connection_required
     @clowder_required
     @print_clowder_repo_status_fetch
-    def _push(self):
+    def _push(self) -> None:
         """Clowder repo push command private implementation"""
 
         CLOWDER_REPO.push()
@@ -160,17 +158,18 @@ class RepoRunController(ArgparseController):
             (['command'], dict(nargs=1, metavar='COMMAND', help='command to run in clowder repo directory'))
         ]
     )
-    def run(self):
+    def run(self) -> None:
         """Clowder repo run command entry point"""
 
         self._run()
 
     @clowder_required
     @print_clowder_repo_status
-    def _run(self):
+    def _run(self) -> None:
         """Clowder repo run command private implementation"""
 
         CLOWDER_REPO.run_command(self.app.pargs.command[0])
+
 
 class RepoCheckoutController(ArgparseController):
     """Clowder repo checkout command controller"""
@@ -190,17 +189,18 @@ class RepoCheckoutController(ArgparseController):
         aliases=['checkout'],
         help='Checkout ref in clowder repo'
     )
-    def repo_checkout(self):
+    def repo_checkout(self) -> None:
         """Clowder repo checkout command entry point"""
 
         self._checkout()
 
     @clowder_required
     @print_clowder_repo_status_fetch
-    def _checkout(self):
+    def _checkout(self) -> None:
         """Clowder repo checkout command private implementation"""
 
         CLOWDER_REPO.checkout(self.app.pargs.ref[0])
+
 
 class RepoCleanController(ArgparseController):
     """Clowder repo clean command controller"""
@@ -219,17 +219,18 @@ class RepoCleanController(ArgparseController):
         aliases=['clean'],
         help='Discard changes in clowder repo'
     )
-    def repo_clean(self):
+    def repo_clean(self) -> None:
         """Clowder repo clean command entry point"""
 
         self._clean()
 
     @clowder_required
     @print_clowder_repo_status
-    def _clean(self):
+    def _clean(self) -> None:
         """Clowder repo clean command private implementation"""
 
         CLOWDER_REPO.clean()
+
 
 class RepoStatusController(ArgparseController):
     """Clowder repo status command controller"""
@@ -248,14 +249,14 @@ class RepoStatusController(ArgparseController):
         aliases=['status'],
         help='Print clowder repo git status'
     )
-    def repo_status(self):
+    def repo_status(self) -> None:
         """Clowder repo status command entry point"""
 
         self._status()
 
     @clowder_required
     @print_clowder_repo_status
-    def _status(self):
+    def _status(self) -> None:
         """Clowder repo status command private implementation"""
 
         CLOWDER_REPO.git_status()

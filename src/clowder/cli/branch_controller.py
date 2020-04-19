@@ -50,13 +50,13 @@ class BranchController(ArgparseController):
                                                               'projects to skip')))
             ]
     )
-    def branch(self):
+    def branch(self) -> None:
         """Clowder branch command entry point"""
         self._branch()
 
     @valid_clowder_yaml_required
     @print_clowder_repo_status
-    def _branch(self):
+    def _branch(self) -> None:
         """Clowder branch command private implementation"""
         local = True
         remote = False

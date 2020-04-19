@@ -8,8 +8,8 @@
 from cement.ext.ext_argparse import ArgparseController, expose
 
 import clowder.util.formatting as fmt
-from clowder.clowder_controller import CLOWDER_CONTROLLER
-from clowder.clowder_repo import CLOWDER_REPO
+from clowder.clowder_controller import CLOWDER_CONTROLLER, ClowderController
+from clowder.clowder_repo import CLOWDER_REPO, ClowderRepo
 from clowder.util.connectivity import network_connection_required
 from clowder.util.clowder_utils import run_group_command
 
@@ -31,12 +31,12 @@ class StatusController(ArgparseController):
             (['--fetch', '-f'], dict(action='store_true', help='fetch projects before printing status'))
             ]
     )
-    def status(self):
+    def status(self) -> None:
         """Clowder status command entry point"""
 
         self._status()
 
-    def _status(self):
+    def _status(self) -> None:
         """Clowder status command private implementation"""
 
         if self.app.pargs.fetch:
@@ -53,7 +53,7 @@ class StatusController(ArgparseController):
 
 
 @network_connection_required
-def _fetch_projects(clowder_repo, clowder):
+def _fetch_projects(clowder_repo: ClowderRepo, clowder: ClowderController) -> None:
     """fetch all projects
 
     :param ClowderRepo clowder_repo: ClowderRepo instance

@@ -7,12 +7,10 @@
 
 import os
 
-from termcolor import colored
-
 from clowder.error. clowder_error import ClowderError
 
 
-def existing_git_repository(path):
+def existing_git_repository(path: str) -> bool:
     """Check if a git repository exists
 
     :param str path: Repo path
@@ -23,7 +21,7 @@ def existing_git_repository(path):
     return os.path.isdir(os.path.join(path, '.git'))
 
 
-def existing_git_submodule(path):
+def existing_git_submodule(path: str) -> bool:
     """Check if a git submodule exists
 
     :param str path: Submodule path
@@ -32,52 +30,6 @@ def existing_git_submodule(path):
     """
 
     return os.path.isfile(os.path.join(path, '.git'))
-
-
-def format_project_ref_string(repo):
-    """Return formatted project ref string
-
-    :param GitRepo repo: Git repo
-    :return: Formmatted repo ref
-    :rtype: str
-    """
-
-    local_commits = repo.new_commits()
-    upstream_commits = repo.new_commits(upstream=True)
-    no_local_commits = local_commits == 0 or local_commits == '0'
-    no_upstream_commits = upstream_commits == 0 or upstream_commits == '0'
-    if no_local_commits and no_upstream_commits:
-        status = ''
-    else:
-        local_commits_output = colored('+' + str(local_commits), 'yellow')
-        upstream_commits_output = colored('-' + str(upstream_commits), 'red')
-        status = '(' + local_commits_output + '/' + upstream_commits_output + ')'
-
-    if repo.is_detached():
-        current_ref = repo.sha(short=True)
-        return colored('[HEAD @ ' + current_ref + ']', 'magenta')
-    current_branch = repo.current_branch()
-    return colored('[' + current_branch + ']', 'magenta') + status
-
-
-def format_project_string(repo, path):
-    """Return formatted project name
-
-    :param GitRepo repo: Git repo
-    :param str path: Relative project path
-    :return: Formatted project name
-    :rtype: str
-    """
-
-    if not existing_git_repository(repo.repo_path):
-        return colored(path, 'green')
-    if not repo.validate_repo():
-        color = 'red'
-        symbol = '*'
-    else:
-        color = 'green'
-        symbol = ''
-    return colored(path + symbol, color)
 
 
 def not_detached(func):
@@ -94,21 +46,7 @@ def not_detached(func):
     return wrapper
 
 
-def print_validation(repo):
-    """Print validation messages
-
-    :param GitRepo repo: Git repo
-    """
-
-    if not existing_git_repository(repo.repo_path):
-        return
-
-    if not repo.validate_repo():
-        print(' - Dirty repo. Please stash, commit, or discard your changes')
-        repo.status_verbose()
-
-
-def git_url(protocol, url, name):
+def git_url(protocol: str, url: str, name: str) -> str:
     """Return git url
 
     :param str protocol: Git protocol ('ssh' or 'https')
@@ -128,7 +66,7 @@ def git_url(protocol, url, name):
     raise ClowderError
 
 
-def ref_type(ref):
+def ref_type(ref: str) -> str:
     """Return branch, tag, sha, or unknown ref type
 
     :param str ref: Full pathspec
@@ -147,7 +85,7 @@ def ref_type(ref):
     return 'unknown'
 
 
-def truncate_ref(ref):
+def truncate_ref(ref: str) -> str:
     """Return bare branch, tag, or sha
 
     :param str ref: Full pathspec or short ref

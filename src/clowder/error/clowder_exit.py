@@ -9,7 +9,7 @@
 class ClowderExit(Exception):
     """Clowder exit error type"""
 
-    def __init__(self, code):
+    def __init__(self, code: int):
         """ClowderExit __init__
 
         :param int code: Exit code

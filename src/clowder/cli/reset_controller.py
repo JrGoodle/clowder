@@ -6,10 +6,11 @@
 """
 
 import os
+from typing import List
 
 from cement.ext.ext_argparse import ArgparseController, expose
 
-from clowder.clowder_controller import CLOWDER_CONTROLLER
+from clowder.clowder_controller import CLOWDER_CONTROLLER, ClowderController
 from clowder.clowder_repo import print_clowder_repo_status_fetch
 from clowder.util.clowder_utils import (
     filter_groups,
@@ -58,7 +59,7 @@ class ResetController(ArgparseController):
                                                               'projects to skip')))
             ]
     )
-    def reset(self):
+    def reset(self) -> None:
         """Clowder reset command entry point"""
 
         self._reset()
@@ -66,7 +67,7 @@ class ResetController(ArgparseController):
     @network_connection_required
     @valid_clowder_yaml_required
     @print_clowder_repo_status_fetch
-    def _reset(self):
+    def _reset(self) -> None:
         """Clowder reset command private implementation"""
 
         timestamp_project = None
@@ -76,7 +77,7 @@ class ResetController(ArgparseController):
               skip=self.app.pargs.skip, timestamp_project=timestamp_project, parallel=self.app.pargs.parallel)
 
 
-def reset(clowder, group_names, **kwargs):
+def reset(clowder: ClowderController, group_names: List[str], **kwargs) -> None:
     """Reset project branches to upstream or checkout tag/sha as detached HEAD
 
     .. py:function:: reset(clowder, group_names, timestamp_project=None, parallel=False, project_names=None, skip=[])

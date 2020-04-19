@@ -72,7 +72,7 @@ def main():
             elif err.signum == SIGABRT:
                 # do something else...
                 app.exit_code = 111
-        except FrameworkError as err:
+        except FrameworkError:
             # do something when a framework error happens
             app.args.print_help()
 

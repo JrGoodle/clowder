@@ -30,11 +30,11 @@ from clowder.yaml.validation.util import (
 )
 
 
-def validate_yaml(yaml_file, depth=__MAX_IMPORT_DEPTH__):
+def validate_yaml(yaml_file: str, depth: int = __MAX_IMPORT_DEPTH__):
     """Validate clowder.yaml
 
     :param str yaml_file: Yaml file path to validate
-    :param Optional[int] depth: Max depth of clowder.yaml imports
+    :param int depth: Max depth of clowder.yaml imports
     Raises:
         ClowderExit
         ClowderYAMLError
@@ -62,7 +62,7 @@ def validate_yaml(yaml_file, depth=__MAX_IMPORT_DEPTH__):
         raise ClowderExit(1)
 
 
-def _validate_yaml(yaml_file):
+def _validate_yaml(yaml_file: str):
     """Validate clowder.yaml with no import
 
     :param str yaml_file: Path to yaml file
@@ -83,7 +83,7 @@ def _validate_yaml(yaml_file):
         raise ClowderYAMLError(fmt.unknown_entry_error(fmt.yaml_file('clowder.yaml'), parsed_yaml, yaml_file))
 
 
-def _validate_yaml_import(yaml_file):
+def _validate_yaml_import(yaml_file: str):
     """Validate clowder.yaml with an import
 
     :param str yaml_file: Path to yaml file

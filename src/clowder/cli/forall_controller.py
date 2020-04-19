@@ -6,10 +6,11 @@
 """
 
 import os
+from typing import List
 
 from cement.ext.ext_argparse import ArgparseController, expose
 
-from clowder.clowder_controller import CLOWDER_CONTROLLER
+from clowder.clowder_controller import CLOWDER_CONTROLLER, ClowderController
 from clowder.clowder_repo import print_clowder_repo_status
 from clowder.util.clowder_utils import (
     filter_projects,
@@ -53,14 +54,14 @@ class ForallController(ArgparseController):
                                                               'projects to skip')))
             ]
     )
-    def forall(self):
+    def forall(self) -> None:
         """Clowder forall command entry point"""
 
         self._forall()
 
     @valid_clowder_yaml_required
     @print_clowder_repo_status
-    def _forall(self):
+    def _forall(self) -> None:
         """Clowder forall command private implementation"""
 
         forall(CLOWDER_CONTROLLER, self.app.pargs.command, self.app.pargs.ignore_errors,
@@ -68,7 +69,8 @@ class ForallController(ArgparseController):
                skip=self.app.pargs.skip, parallel=self.app.pargs.parallel)
 
 
-def forall(clowder, command, ignore_errors, group_names, **kwargs):
+def forall(clowder: ClowderController, command: List[str], ignore_errors: bool,
+           group_names: List[str], **kwargs) -> None:
     """Runs script in project directories specified
 
     .. py:function:: forall_script(clowder, command, ignore_errors, group_names, project_names=None, skip=[], parallel=False)

@@ -15,7 +15,7 @@ from clowder.yaml.validation.util import (
 )
 
 
-def validate_yaml_fork(fork, yaml_file):
+def validate_yaml_fork(fork: dict, yaml_file: str) -> None:
     """Validate fork in clowder loaded from yaml file
 
     :param dict fork: Parsed YAML python object for fork

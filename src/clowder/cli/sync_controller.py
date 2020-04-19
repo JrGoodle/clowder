@@ -6,11 +6,12 @@
 """
 
 import os
+from typing import List
 
 from cement.ext.ext_argparse import ArgparseController, expose
 from termcolor import cprint
 
-from clowder.clowder_controller import CLOWDER_CONTROLLER
+from clowder.clowder_controller import CLOWDER_CONTROLLER, ClowderController
 from clowder.clowder_repo import print_clowder_repo_status_fetch
 from clowder.util.clowder_utils import (
     filter_projects,
@@ -43,7 +44,7 @@ class SyncController(ArgparseController):
             (['--parallel'], dict(action='store_true', help='run commands in parallel'))
         ]
     )
-    def sync(self):
+    def sync(self) -> None:
         """Clowder sync command entry point"""
 
         self._sync()
@@ -51,7 +52,7 @@ class SyncController(ArgparseController):
     @network_connection_required
     @valid_clowder_yaml_required
     @print_clowder_repo_status_fetch
-    def _sync(self):
+    def _sync(self) -> None:
         """Clowder sync command private implementation"""
 
         all_fork_projects = CLOWDER_CONTROLLER.get_all_fork_project_names()
@@ -63,15 +64,16 @@ class SyncController(ArgparseController):
              parallel=self.app.pargs.parallel)
 
 
-def sync(clowder, project_names, rebase=False, parallel=False):
+def sync(clowder: ClowderController, project_names: List[str],
+         rebase: bool = False, parallel: bool = False) -> None:
     """Sync projects
 
     .. py:function:: sync(clowder, project_names, rebase=False, parallel=False)
 
     :param ClowderController clowder: ClowderController instance
     :param list[str] project_names: Project names to sync
-    :param Optional[bool] rebase: Whether to use rebase instead of pulling latest changes
-    :param Optional[bool] parallel: Whether command is being run in parallel, affects output
+    :param bool rebase: Whether to use rebase instead of pulling latest changes
+    :param bool parallel: Whether command is being run in parallel, affects output
     """
 
     projects = filter_projects(clowder.groups, project_names=project_names)

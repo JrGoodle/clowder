@@ -46,7 +46,7 @@ def load_yaml():
     return combined_yaml
 
 
-def _load_yaml_base(parsed_yaml, combined_yaml):
+def _load_yaml_base(parsed_yaml: dict, combined_yaml: dict):
     """Load clowder from base yaml file
 
     :param dict parsed_yaml: Parsed YAML python object
@@ -60,7 +60,7 @@ def _load_yaml_base(parsed_yaml, combined_yaml):
     combined_yaml['groups'] = parsed_yaml['groups']
 
 
-def _load_yaml_import(parsed_yaml, combined_yaml):
+def _load_yaml_import(parsed_yaml: dict, combined_yaml: dict):
     """Load clowder from import yaml file
 
     :param dict parsed_yaml: Parsed YAML python object
@@ -75,7 +75,7 @@ def _load_yaml_import(parsed_yaml, combined_yaml):
         _load_yaml_import_groups(parsed_yaml['groups'], combined_yaml['groups'])
 
 
-def _load_yaml_import_combine_group(imported_group, groups):
+def _load_yaml_import_combine_group(imported_group: dict, groups: list) -> list:
     """Combine imported group with existing groups
 
     :param dict imported_group: Parsed YAML python object for imported group
@@ -99,7 +99,7 @@ def _load_yaml_import_combine_group(imported_group, groups):
     return combined_groups
 
 
-def _load_yaml_import_combine_project(imported_project, projects):
+def _load_yaml_import_combine_project(imported_project: dict, projects: list) -> list:
     """Combine imported project with existing projects
 
     :param dict imported_project: Parsed YAML python object for imported project
@@ -122,7 +122,7 @@ def _load_yaml_import_combine_project(imported_project, projects):
     return combined_projects
 
 
-def _load_yaml_import_combine_source(imported_source, sources):
+def _load_yaml_import_combine_source(imported_source: dict, sources: list) -> list:
     """Combine imported source with existing sources
 
     :param dict imported_source: Parsed YAML python object for imported source
@@ -141,7 +141,7 @@ def _load_yaml_import_combine_source(imported_source, sources):
     return combined_sources
 
 
-def _load_yaml_import_defaults(imported_defaults, defaults):
+def _load_yaml_import_defaults(imported_defaults: dict, defaults: dict):
     """Load clowder projects from imported group
 
     :param dict imported_defaults: Parsed YAML python object for imported defaults
@@ -153,7 +153,7 @@ def _load_yaml_import_defaults(imported_defaults, defaults):
         _override_import_value(defaults, imported_defaults, arg)
 
 
-def _load_yaml_import_groups(imported_groups, groups):
+def _load_yaml_import_groups(imported_groups: dict, groups: list):
     """Load clowder groups from imported yaml
 
     :param dict imported_groups: Parsed YAML python object for imported groups
@@ -169,7 +169,7 @@ def _load_yaml_import_groups(imported_groups, groups):
         groups.append(imported_group)
 
 
-def _load_yaml_import_projects(imported_projects, projects):
+def _load_yaml_import_projects(imported_projects: dict, projects: list):
     """Load clowder projects from imported group
 
     :param dict imported_projects: Parsed YAML python object for imported projects
@@ -192,7 +192,7 @@ def _load_yaml_import_projects(imported_projects, projects):
         projects.append(imported_project)
 
 
-def _load_yaml_import_sources(imported_sources, sources):
+def _load_yaml_import_sources(imported_sources: dict, sources: list):
     """Load clowder sources from imported yaml
 
     :param dict imported_sources: Parsed YAML python object for imported sources
@@ -208,7 +208,7 @@ def _load_yaml_import_sources(imported_sources, sources):
         sources.append(imported_source)
 
 
-def _override_import_value(dictionary, imported_dictionary, value):
+def _override_import_value(dictionary: dict, imported_dictionary: dict, value: str):
     """Check whether yaml file contains required value
 
     :param dict dictionary: Parsed YAML python object

@@ -14,7 +14,7 @@ from clowder.yaml.validation.util import (
 )
 
 
-def validate_yaml_sources(sources, yaml_file):
+def validate_yaml_sources(sources: dict, yaml_file: str) -> None:
     """Validate sources in clowder loaded from yaml file
 
     :param dict sources: Parsed YAML python object for sources

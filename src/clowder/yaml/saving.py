@@ -7,13 +7,14 @@
 
 import os
 
+# noinspection PyPackageRequirements
 import yaml
 
 import clowder.util.formatting as fmt
 from clowder.error.clowder_exit import ClowderExit
 
 
-def save_yaml(yaml_output, yaml_file):
+def save_yaml(yaml_output: dict, yaml_file: str):
     """Save yaml file to disk
 
     :param dict yaml_output: Parsed YAML python object

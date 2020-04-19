@@ -22,7 +22,7 @@ def print_yaml():
             _print_yaml(yaml_file)
 
 
-def _format_yaml_symlink(yaml_file):
+def _format_yaml_symlink(yaml_file: str):
     """Return formatted string for yaml file
 
     :param str yaml_file: Yaml file path
@@ -34,7 +34,7 @@ def _format_yaml_symlink(yaml_file):
     return '\n' + fmt.get_path('clowder.yaml') + ' -> ' + fmt.get_path(path) + '\n'
 
 
-def _format_yaml_file(yaml_file):
+def _format_yaml_file(yaml_file: str):
     """Return formatted string for yaml file
 
     :param str yaml_file: Yaml file path

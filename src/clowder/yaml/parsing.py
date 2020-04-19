@@ -7,6 +7,7 @@
 
 import os
 
+# noinspection PyPackageRequirements
 import yaml
 
 import clowder.util.formatting as fmt
@@ -14,7 +15,7 @@ from clowder.error.clowder_exit import ClowderExit
 from clowder.error.clowder_yaml_error import ClowderYAMLError
 
 
-def parse_yaml(yaml_file):
+def parse_yaml(yaml_file: str) -> dict:
     """Parse yaml file
 
     :param str yaml_file: Path to yaml file

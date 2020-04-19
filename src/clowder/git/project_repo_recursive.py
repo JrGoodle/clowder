@@ -24,21 +24,21 @@ class ProjectRepoRecursive(ProjectRepo):
     :ivar Repo repo: Repo instance
     """
 
-    def __init__(self, repo_path, remote, default_ref, parallel=False):
+    def __init__(self, repo_path: str, remote: str, default_ref: str, parallel: bool = False):
         """ProjectRepoRecursive __init__
 
         :param str repo_path: Absolute path to repo
         :param str remote: Default remote name
         :param str default_ref: Default ref
-        :param Optional[bool] parallel: Whether command is being run in parallel, affects output. Defaults to False
+        :param bool parallel: Whether command is being run in parallel, affects output. Defaults to False
         """
 
         ProjectRepo.__init__(self, repo_path, remote, default_ref, parallel=parallel)
 
-    def clean(self, args=''):
+    def clean(self, args: str = '') -> None:
         """Discard changes for repo and submodules
 
-        :param Optional[str] args: Git clean options
+        :param str args: Git clean options
             - ``d`` Remove untracked directories in addition to untracked files
             - ``f`` Delete directories with .git sub directory or file
             - ``X`` Remove only files ignored by git
@@ -56,7 +56,7 @@ class ProjectRepoRecursive(ProjectRepo):
         self._print(' - Update submodules recursively')
         self._submodules_update()
 
-    def has_submodules(self):
+    def has_submodules(self) -> bool:
         """Repo has submodules
 
         :return: True, if repo has submodules
@@ -65,7 +65,7 @@ class ProjectRepoRecursive(ProjectRepo):
 
         return len(self.repo.submodules) > 0
 
-    def herd(self, url, **kwargs):
+    def herd(self, url: str, **kwargs) -> None:
         """Herd ref
 
         .. py:function:: herd(url, depth=0, fetch=True, rebase=False)
@@ -85,7 +85,7 @@ class ProjectRepoRecursive(ProjectRepo):
         ProjectRepo.herd(self, url, depth=depth, fetch=fetch, rebase=rebase)
         self.submodule_update_recursive(depth)
 
-    def herd_branch(self, url, branch, **kwargs):
+    def herd_branch(self, url: str, branch: str, **kwargs) -> None:
         """Herd branch
 
         .. py:function:: herd(url, branch, depth=0, fork_remote=None, rebase=False)
@@ -106,7 +106,7 @@ class ProjectRepoRecursive(ProjectRepo):
         ProjectRepo.herd_branch(self, url, branch, depth=depth, rebase=rebase, fork_remote=fork_remote)
         self.submodule_update_recursive(depth)
 
-    def herd_tag(self, url, tag, **kwargs):
+    def herd_tag(self, url: str, tag: str, **kwargs) -> None:
         """Herd tag
 
         .. py:function:: herd_tag(url, tag, depth=0, rebase=False)
@@ -125,7 +125,7 @@ class ProjectRepoRecursive(ProjectRepo):
         ProjectRepo.herd_tag(self, url, tag, depth=depth, rebase=rebase)
         self.submodule_update_recursive(depth)
 
-    def is_dirty_submodule(self, path):
+    def is_dirty_submodule(self, path: str) -> bool:
         """Check whether submodule repo is dirty
 
         :param str path: Submodule path
@@ -135,12 +135,12 @@ class ProjectRepoRecursive(ProjectRepo):
 
         return not self.repo.is_dirty(path)
 
-    def submodule_update_recursive(self, depth=0):
+    def submodule_update_recursive(self, depth: int = 0) -> None:
         """Update submodules recursively and initialize if not present
 
         .. py:function:: submodule_update_recursive(depth=0)
 
-        :param Optional[int] depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
         """
 
         self._print(' - Recursively update and init submodules')
@@ -157,19 +157,19 @@ class ProjectRepoRecursive(ProjectRepo):
             self._print(message)
             self._exit(message)
 
-    def sync(self, fork_remote, rebase=False):
+    def sync(self, fork_remote: str, rebase: bool = False) -> None:
         """Sync fork with upstream remote
 
         .. py:function:: sync(fork_remote, rebase=False)
 
         :param str fork_remote: Fork remote name
-        :param Optional[bool] rebase: Whether to use rebase instead of pulling latest changes
+        :param bool rebase: Whether to use rebase instead of pulling latest changes
         """
 
         ProjectRepo.sync(self, fork_remote, rebase=rebase)
         self.submodule_update_recursive()
 
-    def validate_repo(self):
+    def validate_repo(self) -> bool:
         """Validate repo state
 
         :return: True, if repo and submodules not dirty or repo doesn't exist on disk
@@ -181,7 +181,7 @@ class ProjectRepoRecursive(ProjectRepo):
 
         return not any([self.is_dirty_submodule(s.path) for s in self.repo.submodules])
 
-    def _submodules_clean(self):
+    def _submodules_clean(self) -> None:
         """Clean all submodules
 
         Equivalent to: ``git submodule foreach --recursive git clean -ffdx``
@@ -190,7 +190,7 @@ class ProjectRepoRecursive(ProjectRepo):
         self._submodule_command('foreach', '--recursive', 'git', 'clean', '-ffdx',
                                 error_msg=' - Failed to clean submodules')
 
-    def _submodule_command(self, *args, **kwargs):
+    def _submodule_command(self, *args, **kwargs) -> None:
         """Base submodule command
 
         :param *args: List of args to pass to ``git submodule`` command
@@ -206,7 +206,7 @@ class ProjectRepoRecursive(ProjectRepo):
         except (KeyboardInterrupt, SystemExit):
             self._exit()
 
-    def _submodules_reset(self):
+    def _submodules_reset(self) -> None:
         """Reset all submodules
 
         Equivalent to: ``git submodule foreach --recursive git reset --hard``
@@ -215,7 +215,7 @@ class ProjectRepoRecursive(ProjectRepo):
         self._submodule_command('foreach', '--recursive', 'git', 'reset', '--hard',
                                 error_msg=' - Failed to reset submodules')
 
-    def _submodules_update(self):
+    def _submodules_update(self) -> None:
         """Update all submodules
 
         Equivalent to: ``git submodule update --checkout --recursive --force``

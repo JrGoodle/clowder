@@ -8,21 +8,23 @@
 import multiprocessing as mp
 import os
 import signal
+from typing import List
 
 import psutil
 from termcolor import cprint
 
 import clowder.util.formatting as fmt
+from clowder.clowder_controller import ClowderController
 from clowder.error.clowder_exit import ClowderExit
+from clowder.model.project import Project
 from clowder.util.progress import Progress
 from clowder.util.clowder_utils import (
     filter_projects,
-    print_parallel_projects_output,
-    validate_print_output
+    print_parallel_projects_output
 )
 
 if os.name == "posix":
-    def herd_project(project, branch, tag, depth, rebase):
+    def herd_project(project: Project, branch: str, tag: str, depth: int, rebase: bool) -> None:
         """Herd command wrapper function for multiprocessing Pool execution
 
         :param Project project: Project instance
@@ -34,7 +36,7 @@ if os.name == "posix":
 
         project.herd(branch=branch, tag=tag, depth=depth, rebase=rebase, parallel=True)
 
-    def reset_project(project, timestamp):
+    def reset_project(project: Project, timestamp: str) -> None:
         """Reset command wrapper function for multiprocessing Pool execution
 
         :param Project project: Project instance
@@ -43,7 +45,7 @@ if os.name == "posix":
 
         project.reset(timestamp=timestamp, parallel=True)
 
-    def run_project(project, commands, ignore_errors):
+    def run_project(project: Project, commands: List[str], ignore_errors: bool) -> None:
         """Run command wrapper function for multiprocessing Pool execution
 
         :param Project project: Project instance
@@ -53,7 +55,7 @@ if os.name == "posix":
 
         project.run(commands, ignore_errors, parallel=True)
 
-    def sync_project(project, rebase):
+    def sync_project(project: Project, rebase: bool) -> None:
         """Sync command wrapper function for multiprocessing Pool execution
 
         :param Project project: Project instance
@@ -62,7 +64,7 @@ if os.name == "posix":
 
         project.sync(rebase, parallel=True)
 
-    def async_callback(val):
+    def async_callback(val) -> None:
         """Increment async progress bar
 
         :param val: Dummy parameter to satisfy callback interface
@@ -73,14 +75,14 @@ if os.name == "posix":
 
     __clowder_parent_id__ = os.getpid()
 
-    def worker_init():
+    def worker_init() -> None:
         """
         Process pool terminator
 
         .. note:: Implementation source https://stackoverflow.com/a/45259908
         """
 
-        def sig_int(signal_num, frame):
+        def sig_int(signal_num, frame) -> None:
             """Signal handler
 
             :param signal_num: Dummy parameter to satisfy callback interface
@@ -102,7 +104,7 @@ if os.name == "posix":
     __clowder_pool__ = mp.Pool(initializer=worker_init)
     __clowder_progress__ = Progress()
 
-    def herd_parallel(clowder, group_names, **kwargs):
+    def herd_parallel(clowder: ClowderController, group_names: List[str], **kwargs) -> None:
         """Clone projects or update latest from upstream in parallel
 
         .. py:function:: herd_parallel(clowder, group_names, branch=None, tag=None, depth=0, rebase=False, project_names=None, skip=[], protocol=None)
@@ -127,7 +129,7 @@ if os.name == "posix":
         rebase = kwargs.get('rebase', False)
 
         print(' - Herd projects in parallel\n')
-        validate_print_output(clowder, group_names, project_names=project_names, skip=skip)
+        clowder.validate_print_output(group_names, project_names=project_names, skip=skip)
 
         projects = filter_projects(clowder.groups, group_names=group_names, project_names=project_names)
 
@@ -141,7 +143,7 @@ if os.name == "posix":
 
         pool_handler(len(projects))
 
-    def forall_parallel(commands, skip, ignore_errors, projects):
+    def forall_parallel(commands: List[str], skip: List[str], ignore_errors: bool, projects: List[Project]) -> None:
         """Runs command or script for projects in parallel
 
         :param list[str] commands: Command to run
@@ -170,7 +172,7 @@ if os.name == "posix":
 
         pool_handler(len(projects))
 
-    def reset_parallel(clowder, group_names, **kwargs):
+    def reset_parallel(clowder: ClowderController, group_names: List[str], **kwargs) -> None:
         """Reset project branches to upstream or checkout tag/sha as detached HEAD in parallel
 
         .. py:function:: reset_parallel(clowder, group_names, timestamp_project=None, project_names=None, skip=[])
@@ -193,7 +195,7 @@ if os.name == "posix":
         if timestamp_project:
             timestamp = clowder.get_timestamp(timestamp_project)
 
-        validate_print_output(clowder, group_names, project_names=project_names, skip=skip)
+        clowder.validate_print_output(group_names, project_names=project_names, skip=skip)
 
         projects = filter_projects(clowder.groups, group_names=group_names, project_names=project_names)
 
@@ -204,11 +206,11 @@ if os.name == "posix":
             __clowder_results__.append(result)
         pool_handler(len(projects))
 
-    def sync_parallel(projects, rebase=False):
+    def sync_parallel(projects: List[Project], rebase: bool = False) -> None:
         """Sync projects in parallel
 
         :param list[Project] projects: Projects to sync
-        :param Optional[bool] rebase: Whether to use rebase instead of pulling latest changes
+        :param bool rebase: Whether to use rebase instead of pulling latest changes
         """
 
         print(' - Sync forks in parallel\n')
@@ -223,7 +225,7 @@ if os.name == "posix":
     # Disable warnings shown by pylint for catching too general exception
     # pylint: disable=W0703
 
-    def pool_handler(count):
+    def pool_handler(count: int):
         """Pool handler for finishing parallel jobs
 
         :param int count: Total count of projects in progress bar

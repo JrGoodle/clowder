@@ -1,7 +1,5 @@
 """Clowder cli __init__.py"""
 
-import sys
-
 from clowder.cli.base_controller import BaseController
 from clowder.cli.branch_controller import BranchController
 from clowder.cli.checkout_controller import CheckoutController

@@ -31,14 +31,14 @@ class YAMLController(ArgparseController):
             (['--resolved', '-r'], dict(action='store_true', help='print resolved clowder.yaml'))
         ]
     )
-    def yaml(self):
+    def yaml(self) -> None:
         """Clowder yaml command entry point"""
 
         self._yaml()
 
     @valid_clowder_yaml_required
     @print_clowder_repo_status
-    def _yaml(self):
+    def _yaml(self) -> None:
         """Clowder yaml command private implementation"""
 
         if self.app.pargs.resolved:

@@ -6,10 +6,11 @@
 """
 
 import os
+from typing import List
 
 from cement.ext.ext_argparse import ArgparseController, expose
 
-from clowder.clowder_controller import CLOWDER_CONTROLLER
+from clowder.clowder_controller import CLOWDER_CONTROLLER, ClowderController
 from clowder.clowder_repo import print_clowder_repo_status_fetch
 from clowder.util.clowder_utils import (
     filter_groups,
@@ -59,7 +60,7 @@ class HerdController(ArgparseController):
                                                               'projects to skip')))
             ]
     )
-    def herd(self):
+    def herd(self) -> None:
         """Clowder herd command entry point"""
 
         self._herd()
@@ -67,7 +68,7 @@ class HerdController(ArgparseController):
     @network_connection_required
     @valid_clowder_yaml_required
     @print_clowder_repo_status_fetch
-    def _herd(self):
+    def _herd(self) -> None:
         """Clowder herd command private implementation"""
 
         branch = None if self.app.pargs.branch is None else self.app.pargs.branch[0]
@@ -86,7 +87,7 @@ class HerdController(ArgparseController):
         herd(CLOWDER_CONTROLLER, **kwargs)
 
 
-def herd(clowder, group_names, **kwargs):
+def herd(clowder: ClowderController, group_names: List[str], **kwargs) -> None:
     """Clone projects or update latest from upstream
 
     .. py:function:: herd(clowder, group_names, branch=None, tag=None, depth=0, rebase=False, project_names=None, skip=[])

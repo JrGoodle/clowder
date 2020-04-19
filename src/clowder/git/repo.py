@@ -7,6 +7,7 @@
 
 import os
 import subprocess
+from typing import Optional
 
 from git import Repo, GitError
 from termcolor import colored
@@ -37,13 +38,13 @@ class GitRepo(object):
     :ivar Repo repo: Repo instance
     """
 
-    def __init__(self, repo_path, remote, default_ref, parallel=False):
+    def __init__(self, repo_path: str, remote: str, default_ref: str, parallel: bool = False):
         """GitRepo __init__
 
         :param str repo_path: Absolute path to repo
         :param str remote: Default remote name
         :param str default_ref: Default ref
-        :param Optional[bool] parallel: Whether command is being run in parallel, affects output. Defaults to False
+        :param bool parallel: Whether command is being run in parallel, affects output. Defaults to False
         """
 
         self.repo_path = repo_path
@@ -53,7 +54,7 @@ class GitRepo(object):
         self.repo = self._repo() if existing_git_repository(repo_path) else None
         self._print_output = not parallel
 
-    def add(self, files):
+    def add(self, files: str) -> None:
         """Add files to git index
 
         :param str files: Files to git add
@@ -71,13 +72,13 @@ class GitRepo(object):
         else:
             self.status_verbose()
 
-    def checkout(self, truncated_ref, allow_failure=False):
+    def checkout(self, truncated_ref: str, allow_failure: bool = False) -> None:
         """Checkout git ref
 
         .. py:function:: checkout(truncated_ref, allow_failure=False)
 
         :param str truncated_ref: Ref to git checkout
-        :param Optional[bool] allow_failure: Whether to allow failing to checkout branch
+        :param bool allow_failure: Whether to allow failing to checkout branch
         """
 
         ref_output = fmt.ref_string(truncated_ref)
@@ -99,10 +100,10 @@ class GitRepo(object):
         except (KeyboardInterrupt, SystemExit):
             self._exit()
 
-    def clean(self, args=''):
+    def clean(self, args: str = '') -> None:
         """Discard changes for repo
 
-        :param Optional[str] args: Git clean options
+        :param str args: Git clean options
             - ``d`` Remove untracked directories in addition to untracked files
             - ``f`` Delete directories with .git sub directory or file
             - ``X`` Remove only files ignored by git
@@ -118,7 +119,7 @@ class GitRepo(object):
             self._print(' - Abort rebase in progress')
             self._abort_rebase()
 
-    def commit(self, message):
+    def commit(self, message: str) -> None:
         """Commit current changes
 
         :param str message: Git commit message
@@ -135,7 +136,7 @@ class GitRepo(object):
         except (KeyboardInterrupt, SystemExit):
             self._exit()
 
-    def current_branch(self):
+    def current_branch(self) -> str:
         """Return currently checked out branch of project
 
         :return: Name of currently checked out branch
@@ -144,7 +145,7 @@ class GitRepo(object):
 
         return self.repo.head.ref.name
 
-    def existing_remote_branch(self, branch, remote):
+    def existing_remote_branch(self, branch: str, remote: str) -> bool:
         """Check if remote branch exists
 
         :param str branch: Branch name
@@ -161,7 +162,7 @@ class GitRepo(object):
         except (KeyboardInterrupt, SystemExit):
             self._exit()
 
-    def existing_local_branch(self, branch):
+    def existing_local_branch(self, branch: str) -> bool:
         """Check if local branch exists
 
         :param str branch: Branch name
@@ -171,7 +172,7 @@ class GitRepo(object):
 
         return branch in self.repo.heads
 
-    def fetch(self, remote, **kwargs):
+    def fetch(self, remote: str, **kwargs) -> None:
         """Fetch from a specific remote ref
 
         .. py:function:: fetch(remote, ref=None, depth=0, remove_dir=False, allow_failure=False)
@@ -216,7 +217,49 @@ class GitRepo(object):
                 self._print(error)
                 self._exit(error)
 
-    def get_current_timestamp(self):
+    def format_project_ref_string(self) -> str:
+        """Return formatted project ref string
+
+        :return: Formmatted repo ref
+        :rtype: str
+        """
+
+        local_commits = self.new_commits()
+        upstream_commits = self.new_commits(upstream=True)
+        no_local_commits = local_commits == 0 or local_commits == '0'
+        no_upstream_commits = upstream_commits == 0 or upstream_commits == '0'
+        if no_local_commits and no_upstream_commits:
+            status = ''
+        else:
+            local_commits_output = colored('+' + str(local_commits), 'yellow')
+            upstream_commits_output = colored('-' + str(upstream_commits), 'red')
+            status = '(' + local_commits_output + '/' + upstream_commits_output + ')'
+
+        if self.is_detached():
+            current_ref = self.sha(short=True)
+            return colored('[HEAD @ ' + current_ref + ']', 'magenta')
+        current_branch = self.current_branch()
+        return colored('[' + current_branch + ']', 'magenta') + status
+
+    def format_project_string(self, path: str) -> str:
+        """Return formatted project name
+
+        :param str path: Relative project path
+        :return: Formatted project name
+        :rtype: str
+        """
+
+        if not existing_git_repository(self.repo_path):
+            return colored(path, 'green')
+        if not self.validate_repo():
+            color = 'red'
+            symbol = '*'
+        else:
+            color = 'green'
+            symbol = ''
+        return colored(path + symbol, color)
+
+    def get_current_timestamp(self) -> str:
         """Get current timestamp of HEAD commit
 
         :return: HEAD commit timestamp
@@ -233,12 +276,12 @@ class GitRepo(object):
         except (KeyboardInterrupt, SystemExit):
             self._exit()
 
-    def is_detached(self, print_output=False):
+    def is_detached(self, print_output: bool = False) -> bool:
         """Check if HEAD is detached
 
         .. py:function:: is_detached(print_output=False)
 
-        :param Optional[bool] print_output: Whether to print output
+        :param bool print_output: Whether to print output
         :return: True, if HEAD is detached
         :rtype: bool
         """
@@ -251,7 +294,7 @@ class GitRepo(object):
             return True
         return False
 
-    def is_dirty(self):
+    def is_dirty(self) -> bool:
         """Check whether repo is dirty
 
         :return: True, if repo is dirty
@@ -263,12 +306,12 @@ class GitRepo(object):
 
         return self.repo.is_dirty() or self._is_rebase_in_progress() or self._untracked_files()
 
-    def new_commits(self, upstream=False):
+    def new_commits(self, upstream: bool = False) -> int:
         """Returns the number of new commits
 
         .. py:function:: new_commits(upstream=False)
 
-        :param Optional[bool] upstream: Whether to find number of new upstream or local commits
+        :param bool upstream: Whether to find number of new upstream or local commits
         :return: Int number of new commits
         :rtype: int
         """
@@ -289,15 +332,15 @@ class GitRepo(object):
                 return 0
             else:
                 index = 1 if upstream else 0
-                return str(rev_list_count).split()[index]
+                return int(str(rev_list_count).split()[index])
 
-    def print_branches(self, local=False, remote=False):
+    def print_branches(self, local: bool = False, remote: bool = False) -> None:
         """Print branches
 
         .. py:function:: print_branches(local=False, remote=False)
 
-        :param Optional[bool] local: Print local branches
-        :param Optional[bool] remote: Print remote branches
+        :param bool local: Print local branches
+        :param bool remote: Print remote branches
         """
 
         if local:
@@ -305,8 +348,18 @@ class GitRepo(object):
         if remote:
             self._print_remote_branches()
 
+    def print_validation(self) -> None:
+        """Print validation messages"""
+
+        if not existing_git_repository(self.repo_path):
+            return
+
+        if not self.validate_repo():
+            print(' - Dirty repo. Please stash, commit, or discard your changes')
+            self.status_verbose()
+
     @not_detached
-    def pull(self):
+    def pull(self) -> None:
         """Pull upstream changes"""
 
         try:
@@ -321,7 +374,7 @@ class GitRepo(object):
             self._exit()
 
     @not_detached
-    def push(self):
+    def push(self) -> None:
         """Push changes"""
 
         try:
@@ -335,12 +388,12 @@ class GitRepo(object):
         except (KeyboardInterrupt, SystemExit):
             self._exit()
 
-    def sha(self, short=False):
+    def sha(self, short: bool = False) -> str:
         """Return sha for currently checked out commit
 
         .. py:function:: sha(short=False)
 
-        :param Optional[bool] short: Whether to return short or long commit sha
+        :param bool short: Whether to return short or long commit sha
         :return: Commit sha
         :rtype: str
         """
@@ -350,24 +403,24 @@ class GitRepo(object):
 
         return self.repo.head.commit.hexsha
 
-    def sha_branch_remote(self, remote, branch):
-        """Return sha for remote branch
+    # def sha_branch_remote(self, remote: str, branch: str) -> str:
+    #     """Return sha for remote branch
+    #
+    #     :param str remote: Remote name
+    #     :param str branch: Remote branch name
+    #     :return: Commit sha of remote branch
+    #     :rtype: str
+    #     """
+    #
+    #     command = "git --git-dir={0}.git rev-parse {1}/{2}".format(self.repo_path, remote, branch)
+    #     try:
+    #         execute_command(command, self.repo_path)
+    #     except ClowderError:
+    #         message = colored(' - Failed to get remote sha\n', 'red') + fmt.command_failed_error(command)
+    #         self._print(message)
+    #         self._exit(message)
 
-        :param str remote: Remote name
-        :param str branch: Remote branch name
-        :return: Commit sha of remote branch
-        :rtype: str
-        """
-
-        command = "git --git-dir={0}.git rev-parse {1}/{2}".format(self.repo_path, remote, branch)
-        try:
-            execute_command(command, self.repo_path)
-        except ClowderError:
-            message = colored(' - Failed to get remote sha\n', 'red') + fmt.command_failed_error(command)
-            self._print(message)
-            self._exit(message)
-
-    def stash(self):
+    def stash(self) -> None:
         """Stash current changes in repository"""
 
         if not self.repo.is_dirty():
@@ -377,7 +430,7 @@ class GitRepo(object):
         self._print(' - Stash current changes')
         self.repo.git.stash()
 
-    def status(self):
+    def status(self) -> None:
         """Print  git status
 
         Equivalent to: ``git status``
@@ -385,7 +438,7 @@ class GitRepo(object):
 
         self.repo.git.status()
 
-    def status_verbose(self):
+    def status_verbose(self) -> None:
         """Print git status
 
         Equivalent to: ``git status -vv``
@@ -401,7 +454,7 @@ class GitRepo(object):
             self._print(message)
             self._exit(message)
 
-    def validate_repo(self):
+    def validate_repo(self) -> bool:
         """Validate repo state
 
         :return: True, if repo not dirty or doesn't exist on disk
@@ -413,7 +466,7 @@ class GitRepo(object):
 
         return not self.is_dirty()
 
-    def _abort_rebase(self):
+    def _abort_rebase(self) -> None:
         """Abort rebase"""
 
         if not self._is_rebase_in_progress():
@@ -428,7 +481,7 @@ class GitRepo(object):
         except (KeyboardInterrupt, SystemExit):
             self._exit()
 
-    def _clean(self, args):
+    def _clean(self, args: str) -> None:
         """Clean git directory
 
         :param str args: Git clean args
@@ -449,7 +502,7 @@ class GitRepo(object):
     #
     #     :param str tag: Tag name
     #     :param str remote: Remote name
-    #     :param Optional[int] depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+    #     :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
     #         Defaults to 0
     #     :return: True, if remote tag exists
     #     :rtype: bool
@@ -459,10 +512,10 @@ class GitRepo(object):
     #     self.fetch(remote, depth=depth, ref=tag, remove_dir=True)
     #     return tag in origin.tags
 
-    def _exit(self, message=''):
+    def _exit(self, message: str = '') -> None:
         """Exit based on serial or parallel job
 
-        :param Optional[str] message: Error message
+        :param str message: Error message
 
         Raises:
             ClowderGitError
@@ -474,7 +527,7 @@ class GitRepo(object):
 
         raise ClowderExit(1)
 
-    def _is_rebase_in_progress(self):
+    def _is_rebase_in_progress(self) -> bool:
         """Detect whether rebase is in progress
 
         :return: True, if rebase is in progress
@@ -487,7 +540,7 @@ class GitRepo(object):
         is_rebase_merge = os.path.isdir(rebase_merge)
         return is_rebase_apply or is_rebase_merge
 
-    def _print(self, val):
+    def _print(self, val: str) -> None:
         """Print output if self._print_output is True
 
         :param str val: Output to print
@@ -496,7 +549,7 @@ class GitRepo(object):
         if self._print_output:
             print(val)
 
-    def _print_local_branches(self):
+    def _print_local_branches(self) -> None:
         """Print local git branches"""
 
         for branch in self.repo.git.branch().split('\n'):
@@ -505,7 +558,7 @@ class GitRepo(object):
             else:
                 print(branch)
 
-    def _print_remote_branches(self):
+    def _print_remote_branches(self) -> None:
         """Print output if self._print_output is True"""
 
         for branch in self.repo.git.branch('-r').split('\n'):
@@ -515,7 +568,7 @@ class GitRepo(object):
             else:
                 print(colored(branch), 'red')
 
-    def _repo(self):
+    def _repo(self) -> Repo:
         """Create Repo instance for self.repo_path
 
         :return: GitPython Repo instance
@@ -535,7 +588,7 @@ class GitRepo(object):
         else:
             return repo
 
-    def _reset_head(self, branch=None):
+    def _reset_head(self, branch: Optional[str] = None) -> None:
         """Reset head of repo, discarding changes
 
         :param Optional[str] branch: Branch to reset head to
@@ -553,7 +606,7 @@ class GitRepo(object):
             except (KeyboardInterrupt, SystemExit):
                 self._exit()
             else:
-                return 0
+                return
 
         try:
             self.repo.git.reset('--hard', branch)
@@ -566,9 +619,9 @@ class GitRepo(object):
         except (KeyboardInterrupt, SystemExit):
             self._exit()
         else:
-            return 0
+            return
 
-    def _untracked_files(self):
+    def _untracked_files(self) -> bool:
         """Check whether untracked files exist
 
         :return: True, if untracked files exist

@@ -22,7 +22,7 @@ from clowder.yaml.validation.util import (
 )
 
 
-def validate_yaml_groups_import(groups, yaml_file):
+def validate_yaml_groups_import(groups: dict, yaml_file: str) -> None:
     """Validate groups in clowder loaded from yaml file with import
 
     :param dict groups: Parsed YAML python object for groups
@@ -54,7 +54,7 @@ def validate_yaml_groups_import(groups, yaml_file):
         validate_empty(group, 'group', yaml_file)
 
 
-def validate_yaml_groups(groups, yaml_file):
+def validate_yaml_groups(groups: dict, yaml_file: str) -> None:
     """Validate groups in clowder loaded from yaml file
 
     :param dict groups: Parsed YAML python object for groups

@@ -5,9 +5,11 @@
 
 """
 
+from typing import List
+
 from cement.ext.ext_argparse import ArgparseController, expose
 
-from clowder.clowder_controller import CLOWDER_CONTROLLER
+from clowder.clowder_controller import CLOWDER_CONTROLLER, ClowderController
 from clowder.clowder_repo import print_clowder_repo_status
 from clowder.util.decorators import valid_clowder_yaml_required
 from clowder.util.clowder_utils import (
@@ -54,14 +56,14 @@ class CleanController(ArgparseController):
                                                               'projects to skip')))
             ]
     )
-    def clean(self):
+    def clean(self) -> None:
         """Clowder clean command entry point"""
 
         self._clean()
 
     @valid_clowder_yaml_required
     @print_clowder_repo_status
-    def _clean(self):
+    def _clean(self) -> None:
         """Clowder clean command private implementation"""
 
         if self.app.pargs.all:
@@ -82,7 +84,7 @@ class CleanController(ArgparseController):
                skip=self.app.pargs.skip, args=clean_args, recursive=self.app.pargs.recursive)
 
 
-def _clean(clowder, group_names, **kwargs):
+def _clean(clowder: ClowderController, group_names: List[str], **kwargs) -> None:
     """Discard changes
 
     .. py:function:: clean(group_names, args='', recursive=False, project_names=None, skip=[])
@@ -117,7 +119,7 @@ def _clean(clowder, group_names, **kwargs):
         run_project_command(project, skip, 'clean', args=args, recursive=recursive)
 
 
-def _clean_all(clowder, group_names, **kwargs):
+def _clean_all(clowder: ClowderController, group_names: List[str], **kwargs) -> None:
     """Discard all changes
 
     .. py:function:: clean_all(group_names, project_names=None, skip=[])

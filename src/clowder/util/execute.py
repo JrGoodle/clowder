@@ -9,6 +9,7 @@ import atexit
 import os
 import subprocess
 from multiprocessing.pool import ThreadPool
+from typing import List, Union
 
 from termcolor import colored
 
@@ -19,7 +20,7 @@ from clowder.error.clowder_error import ClowderError
 # pylint: disable=W0703
 
 
-def subprocess_exit_handler(process):
+def subprocess_exit_handler(process: subprocess.Popen) -> None:
     """terminate subprocess
 
     :param Popen process: Popen subprocess instance
@@ -31,7 +32,7 @@ def subprocess_exit_handler(process):
         del err
 
 
-def execute_subprocess_command(command, path, **kwargs):
+def execute_subprocess_command(command: Union[str, List[str]], path: str, **kwargs) -> None:
     """Execute subprocess command
 
     .. py:function:: execute_subprocess_command(command, path, shell=True, env=None, stdout=None, stderr=None)
@@ -46,8 +47,6 @@ def execute_subprocess_command(command, path, **kwargs):
         stdout (int): Value to set as ``stdout``
         stderr (int): Value to set as ``stderr``
 
-    :return: Subprocess return code
-    :rtype: int
     :raise ClowderError:
     """
 
@@ -74,7 +73,7 @@ def execute_subprocess_command(command, path, **kwargs):
         raise ClowderError(err)
 
 
-def execute_command(command, path, **kwargs):
+def execute_command(command: Union[str, List[str]], path: str, **kwargs) -> int:
     """Execute command via thread
 
     .. py:function:: execute_command(command, path, shell=True, env=None, print_output=True)
@@ -127,7 +126,7 @@ def execute_command(command, path, **kwargs):
         raise ClowderError(colored('\n - Command failed', 'red') + str(err) + '\n')
 
 
-def execute_forall_command(command, path, forall_env, print_output):
+def execute_forall_command(command: Union[str, List[str]], path: str, forall_env: dict, print_output: bool) -> int:
     """Execute forall command with additional environment variables and display continuous output
 
     :param command: Command to run
@@ -139,4 +138,4 @@ def execute_forall_command(command, path, forall_env, print_output):
     :rtype: int
     """
 
-    execute_command(command, path, env=forall_env, print_output=print_output)
+    return execute_command(command, path, env=forall_env, print_output=print_output)

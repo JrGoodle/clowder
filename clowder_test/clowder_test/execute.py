@@ -9,6 +9,7 @@ import atexit
 import os
 import subprocess
 from multiprocessing.pool import ThreadPool
+from typing import List, Union
 
 from clowder_test import ROOT_DIR
 from clowder_test.clowder_test_error import ClowderTestError
@@ -18,13 +19,12 @@ from clowder_test.clowder_test_error import ClowderTestError
 # pylint: disable=W0703
 
 
-def execute_test_command(command, path, **kwargs):
+def execute_test_command(command: str, path: str, **kwargs) -> int:
     """Execute test command
 
     .. py:function:: execute_test_command(command, path, parallel=False, write=False, coverage=False, test_env=None, debug=False, quiet=False, ssh=False)
 
-    :param command: Command to run
-    :type command: str
+    :param str command: Command to run
     :param str path: Path to set as ``cwd``
 
     Keyword Args:
@@ -66,11 +66,14 @@ def execute_test_command(command, path, **kwargs):
         test_env['COMMAND'] = test_env['COMMAND'] + ' --quiet'
         execute_command(command, path, print_output=False, env=test_env)
     else:
-        execute_command(command, path, env=test_env)
+        return execute_command(command, path, env=test_env)
 
 
-def subprocess_exit_handler(process):
-    """terminate subprocess"""
+def subprocess_exit_handler(process: subprocess.Popen):
+    """terminate subprocess
+
+    :param subprocess.Popen process: Process
+    """
 
     try:
         process.terminate()
@@ -78,7 +81,7 @@ def subprocess_exit_handler(process):
         del err
 
 
-def execute_subprocess_command(command, path, **kwargs):
+def execute_subprocess_command(command: Union[str, List[str]], path: str, **kwargs) -> None:
     """Execute subprocess command
 
     .. py:function:: execute_subprocess_command(command, path, shell=True, env=None, stdout=None, stderr=None)
@@ -93,8 +96,6 @@ def execute_subprocess_command(command, path, **kwargs):
         stdout (int): Value to set as ``stdout``
         stderr (int): Value to set as ``stderr``
 
-    :return: Subprocess return code
-    :rtype: int
     :raise ClowderTestError:
     """
 
@@ -121,7 +122,7 @@ def execute_subprocess_command(command, path, **kwargs):
         raise ClowderTestError(err)
 
 
-def execute_command(command, path, **kwargs):
+def execute_command(command: Union[str, List[str]], path: str, **kwargs) -> int:
     """Execute command via thread
 
     .. py:function:: execute_command(command, path, shell=True, env=None, print_output=True)

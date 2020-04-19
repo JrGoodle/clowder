@@ -5,11 +5,13 @@
 
 """
 
+from typing import Optional
+
 
 class ClowderGitError(Exception):
     """Clowder git error type"""
 
-    def __init__(self, msg=None):
+    def __init__(self, msg: Optional[str] = None):
         """ClowderGitError __init__
 
         :param Optional[str] msg: Error message

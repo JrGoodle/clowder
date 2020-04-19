@@ -5,6 +5,7 @@
 
 """
 
+import errno
 import os
 
 from cement.ext.ext_argparse import ArgparseController, expose
@@ -15,10 +16,7 @@ from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.clowder_repo import CLOWDER_REPO
 from clowder.error.clowder_exit import ClowderExit
 from clowder.util.decorators import valid_clowder_yaml_required
-from clowder.util.clowder_utils import (
-    validate_groups,
-    validate_projects_exist
-)
+from clowder.util.clowder_utils import validate_groups
 from clowder.yaml.saving import save_yaml
 
 
@@ -39,13 +37,13 @@ class SaveController(ArgparseController):
             (['version'], dict(help='version to save', metavar='VERSION'))
         ]
     )
-    def save(self):
+    def save(self) -> None:
         """Clowder save command entry point"""
 
         self._save()
 
     @valid_clowder_yaml_required
-    def _save(self):
+    def _save(self) -> None:
         """Clowder save command private implementation
 
         :raise ClowderExit:
@@ -56,7 +54,7 @@ class SaveController(ArgparseController):
             raise ClowderExit(1)
 
         CLOWDER_REPO.print_status()
-        validate_projects_exist(CLOWDER_CONTROLLER)
+        CLOWDER_CONTROLLER.validate_projects_exist()
         validate_groups(CLOWDER_CONTROLLER.groups)
 
         version_name = self.app.pargs.version.replace('/', '-')  # Replace path separators with dashes
@@ -72,7 +70,7 @@ class SaveController(ArgparseController):
         save_yaml(CLOWDER_CONTROLLER.get_yaml(), yaml_file)
 
 
-def _make_dir(directory):
+def _make_dir(directory: str) -> None:
     """Make directory if it doesn't exist
 
     :param str directory: Directory path to create
@@ -83,5 +81,5 @@ def _make_dir(directory):
         try:
             os.makedirs(directory)
         except OSError as err:
-            if err.errno != os.errno.EEXIST:
+            if err.errno != errno.EEXIST:
                 raise

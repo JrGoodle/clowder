@@ -48,14 +48,14 @@ class StashController(ArgparseController):
                                                               'projects to skip')))
         ]
     )
-    def stash(self):
+    def stash(self) -> None:
         """Clowder stash command entry point"""
 
         self._stash()
 
     @valid_clowder_yaml_required
     @print_clowder_repo_status
-    def _stash(self):
+    def _stash(self) -> None:
         """Clowder stash command private implementation"""
 
         if not any([g.is_dirty() for g in CLOWDER_CONTROLLER.groups]):
