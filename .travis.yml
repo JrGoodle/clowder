@@ -26,7 +26,11 @@ jobs:
   # - env: TARGET="swift"
   #   script: clowder-test -c swift all
 
-before_install: script/bootstrap
+addons:
+  homebrew:
+    packages:
+    - python3
+    - github-release
 
 install: script/travis/install
 
