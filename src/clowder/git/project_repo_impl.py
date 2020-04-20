@@ -5,6 +5,7 @@
 
 """
 
+import errno
 import os
 
 from git import Repo, GitError
@@ -429,7 +430,7 @@ class ProjectRepoImpl(GitRepo):
                 try:
                     os.makedirs(self.repo_path)
                 except OSError as err:
-                    if err.errno != os.errno.EEXIST:
+                    if err.errno != errno.EEXIST:
                         raise
             self.repo = Repo.init(self.repo_path)
         except GitError as err:

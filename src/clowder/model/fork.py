@@ -11,6 +11,7 @@ from termcolor import colored
 
 from clowder import ROOT_DIR
 from clowder.git.project_repo import ProjectRepo
+from clowder.git.project_repo_recursive import ProjectRepoRecursive
 from clowder.git.util import (
     existing_git_repository,
     format_project_ref_string,
@@ -24,23 +25,31 @@ class Fork(object):
 
     :ivar str name: Project name
     :ivar str path: Project relative path
-    :ivar str remote_name: Git remote name
+    :ivar str remote: Git remote name
     """
 
-    def __init__(self, fork, path, source, protocol):
+    def __init__(self, fork, path, project_source, sources, project_ref, recursive):
         """Project __init__
 
         :param dict fork: Parsed YAML python object for fork
         :param str path: Fork relative path
-        :param Source source: Source instance
-        :param str protocol: Git protocol ('ssh' or 'https')
+        :param Source project_source: Source instance from project
+        :param list[Source] sources: List of Source instances
+        :param str project_ref: Git ref from project
+        :param bool recursive: Whether to handle submodules
         """
 
         self.path = path
         self.name = fork['name']
-        self.remote_name = fork['remote']
-        self._source = source
-        self._protocol = protocol
+        self.remote = fork['remote']
+        self._ref = fork.get('ref', project_ref)
+        self._recursive = recursive
+
+        self._source = None
+        source_name = fork.get('source', project_source.name)
+        for s in sources:
+            if s.name == source_name:
+                self._source = s
 
     def full_path(self):
         """Return full path to project
@@ -58,7 +67,19 @@ class Fork(object):
         :rtype: dict
         """
 
-        return {'name': self.name, 'remote': self.remote_name}
+        return {'name': self.name, 'remote': self.remote}
+
+    def repo(self, **kwargs):
+        """Return ProjectRepo or ProjectRepoRecursive instance
+
+        Keyword Args:
+            parallel (bool): Whether command is being run in parallel
+            print_output (bool): Whether to print output
+        """
+
+        if self._recursive:
+            return ProjectRepoRecursive(self.full_path(), self.remote, self._ref, **kwargs)
+        return ProjectRepo(self.full_path(), self.remote, self._ref, **kwargs)
 
     def status(self):
         """Return formatted fork status
@@ -70,18 +91,12 @@ class Fork(object):
         if not existing_git_repository(self.path):
             return colored(self.path, 'green')
 
-        repo = ProjectRepo(self.full_path(), self.remote_name, 'refs/heads/master')
+        repo = ProjectRepo(self.full_path(), self.remote, self._ref)
         project_output = format_project_string(repo, self.path)
         current_ref_output = format_project_ref_string(repo)
         return project_output + ' ' + current_ref_output
 
-    def url(self, protocol):
-        """Return project url
+    def url(self):
+        """Return project url"""
 
-        :param str protocol: Git protocol ('ssh' or 'https')
-        """
-
-        if protocol:
-            return git_url(protocol, self._source.url, self.name)
-
-        return git_url(self._protocol, self._source.url, self.name)
+        return git_url(self._source.protocol, self._source.url, self.name)

@@ -18,8 +18,8 @@ class ForkTest(unittest.TestCase):
     def setUp(self):
 
         self.name = 'test_fork'
-        self.remote_name = 'origin'
-        self.fork_yaml = {'name': self.name, 'remote': self.remote_name}
+        self.remote = 'origin'
+        self.fork_yaml = {'name': self.name, 'remote': self.remote}
         self.source = Source(__github_source_yaml__)
         self.path = 'fork/path'
         self.fork = Fork(self.fork_yaml, self.path, self.source)
@@ -34,7 +34,7 @@ class ForkTest(unittest.TestCase):
 
         self.assertEqual(self.fork.path, self.path)
         self.assertEqual(self.fork.name, self.name)
-        self.assertEqual(self.fork.remote_name, self.remote_name)
+        self.assertEqual(self.fork.remote, self.remote)
 
 
 if __name__ == '__main__':

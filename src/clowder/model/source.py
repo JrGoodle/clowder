@@ -13,14 +13,16 @@ class Source(object):
     :ivar str url: Source url
     """
 
-    def __init__(self, source):
+    def __init__(self, source, defaults):
         """Source __init__
 
         :param dict source: Parsed YAML python object for source
+        :param Defaults defaults: Defaults instance
         """
 
         self.name = source['name']
         self.url = source['url']
+        self.protocol = source.get('protocol', defaults.protocol)
 
     def get_yaml(self):
         """Return python object representation for saving yaml
@@ -29,4 +31,4 @@ class Source(object):
         :rtype: dict
         """
 
-        return {'name': self.name, 'url': self.url}
+        return {'name': self.name, 'url': self.url, 'protocol': self.protocol}

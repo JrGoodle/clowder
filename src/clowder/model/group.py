@@ -18,7 +18,7 @@ class Group(object):
     :ivar bool recursive: Group recursive default
     :ivar str timestamp_author: Group timestamp author default
     :ivar str ref: Group ref default
-    :ivar str remote_name: Group remote name default
+    :ivar str remote: Group remote name default
     :ivar Source source: Group source default
     :ivar list[Project] projects: List of group's projects
     """
@@ -36,7 +36,7 @@ class Group(object):
         self.recursive = group.get('recursive', defaults.recursive)
         self.timestamp_author = group.get('timestamp_author', defaults.timestamp_author)
         self.ref = group.get('ref', defaults.ref)
-        self.remote_name = group.get('remote', defaults.remote)
+        self.remote = group.get('remote', defaults.remote)
         source_name = group.get('source', defaults.source)
 
         for source in sources:
@@ -84,7 +84,7 @@ class Group(object):
                  'depth': self.depth,
                  'ref': self.ref,
                  'recursive': self.recursive,
-                 'remote': self.remote_name,
+                 'remote': self.remote,
                  'source': self.source.name,
                  'projects': [p.get_yaml(resolved=True) for p in self.projects]}
 
