@@ -172,24 +172,18 @@ class GitRepo(object):
 
         return branch in self.repo.heads
 
-    def fetch(self, remote: str, **kwargs) -> None:
+    def fetch(self, remote: str, ref: Optional[str] = None, depth: int = 0,
+              remove_dir: bool = False, allow_failure: bool = False) -> None:
         """Fetch from a specific remote ref
 
         .. py:function:: fetch(remote, ref=None, depth=0, remove_dir=False, allow_failure=False)
 
         :param str remote: Remote name
-
-        Keyword Args:
-            ref (str): Ref to fetch
-            depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-            remove_dir (bool): Whether to remove the directory if commands fail
-            allow_failure (bool): Whether to allow failure
+        :param Optional[str] ref: Ref to fetch
+        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :param bool remove_dir: Whether to remove the directory if commands fail
+        :param bool allow_failure: Whether to allow failure
         """
-
-        ref = kwargs.get('ref', None)
-        depth = kwargs.get('depth', 0)
-        remove_dir = kwargs.get('remove_dir', False)
-        allow_failure = kwargs.get('allow_failure', False)
 
         remote_output = fmt.remote_string(remote)
         if depth == 0:

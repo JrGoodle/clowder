@@ -5,7 +5,7 @@
 
 """
 
-from typing import List
+from typing import List, Optional
 
 from termcolor import cprint
 
@@ -140,20 +140,18 @@ class ClowderController(object):
                 'sources': [s.get_yaml() for s in self.sources],
                 'groups': groups}
 
-    def validate_print_output(self, group_names: List[str], **kwargs) -> None:
+    def validate_print_output(self, group_names: List[str], project_names: Optional[List[str]] = None,
+                              skip: Optional[List[str]] = None) -> None:
         """Validate projects/groups and print output
 
         .. py:function:: validate_print_output(group_names, project_names=None, skip=[])
 
         :param list[str] group_names: Group names to validate/print
-
-        Keyword Args:
-            project_names (list[str]): Project names to validate/print
-            skip (list[str]): Project names to skip
+        :param Optional[List[str]] project_names: Project names to validate/print
+        :param Optional[List[str]] skip: Project names to skip
         """
 
-        project_names = kwargs.get('project_names', None)
-        skip = kwargs.get('skip', [])
+        skip = [] if skip is None else skip
 
         if project_names is None:
             groups = filter_groups(self.groups, group_names)

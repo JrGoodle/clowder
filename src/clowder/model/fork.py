@@ -12,7 +12,6 @@ from termcolor import colored
 
 from clowder import ROOT_DIR
 from clowder.git.project_repo import ProjectRepo
-from clowder.git.project_repo_recursive import ProjectRepoRecursive
 from clowder.git.util import (
     existing_git_repository,
     git_url
@@ -69,21 +68,6 @@ class Fork(object):
         """
 
         return {'name': self.name, 'remote': self.remote}
-
-    def repo(self, **kwargs) -> ProjectRepo:
-        """Return ProjectRepo or ProjectRepoRecursive instance
-
-        Keyword Args:
-            parallel (bool): Whether command is being run in parallel
-            print_output (bool): Whether to print output
-
-        :return: Project repo instance
-        :rtype: ProjectRepo
-        """
-
-        if self._recursive:
-            return ProjectRepoRecursive(self.full_path(), self.remote, self._ref, **kwargs)
-        return ProjectRepo(self.full_path(), self.remote, self._ref, **kwargs)
 
     def status(self) -> str:
         """Return formatted fork status

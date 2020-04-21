@@ -249,24 +249,18 @@ class Project(object):
 
         return project
 
-    def herd(self, **kwargs) -> None:
+    def herd(self, branch: Optional[str] = None, tag: Optional[str] = None, depth: Optional[int] = None,
+             rebase: bool = False, parallel: bool = False) -> None:
         """Clone project or update latest from upstream
 
         .. py:function:: herd(branch=None, tag=None, depth=0, rebase=False, parallel=False)
 
-        Keyword Args:
-            branch (str): Branch to attempt to herd
-            tag (str): Tag to attempt to herd
-            depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-            rebase (bool): Whether to use rebase instead of pulling latest changes
-            parallel (bool): Whether command is being run in parallel, affects output
+        :param Optional[str] branch: Branch to attempt to herd
+        :param Optional[str] tag: Tag to attempt to herd
+        :param Optional[int] depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :param bool rebase: Whether to use rebase instead of pulling latest changes
+        :param bool parallel: Whether command is being run in parallel, affects output
         """
-
-        branch = kwargs.get('branch', None)
-        tag = kwargs.get('tag', None)
-        depth = kwargs.get('depth', None)
-        rebase = kwargs.get('rebase', False)
-        parallel = kwargs.get('parallel', False)
 
         self._print_output = not parallel
 
@@ -459,22 +453,19 @@ class Project(object):
         if self._print_output:
             print(val)
 
-    def _repo(self, recursive: bool, **kwargs) -> ProjectRepo:
+    def _repo(self, recursive: bool, parallel: bool = False) -> ProjectRepo:
         """Return ProjectRepo or ProjectRepoRecursive instance
 
         :param bool recursive: Whether to handle submodules
-
-        Keyword Args:
-            parallel (bool): Whether command is being run in parallel
-            print_output (bool): Whether to print output
+        :param bool parallel: Whether command is being run in parallel
 
         :return: Project repo instance
         :rtype: ProjectRepo
         """
 
         if recursive:
-            return ProjectRepoRecursive(self.full_path(), self.remote, self.ref, **kwargs)
-        return ProjectRepo(self.full_path(), self.remote, self.ref, **kwargs)
+            return ProjectRepoRecursive(self.full_path(), self.remote, self.ref, parallel=parallel)
+        return ProjectRepo(self.full_path(), self.remote, self.ref, parallel=parallel)
 
     def _run_forall_command(self, command: str, env: dict, ignore_errors: bool, parallel: bool) -> None:
         """Run command or script in project directory

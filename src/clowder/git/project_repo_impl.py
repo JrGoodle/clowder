@@ -246,7 +246,7 @@ class ProjectRepoImpl(GitRepo):
         except (KeyboardInterrupt, SystemExit):
             self._exit()
 
-    def _create_branch_local_tracking(self, branch: str, remote: str, depth: int, **kwargs) -> None:
+    def _create_branch_local_tracking(self, branch: str, remote: str, depth: int, fetch: bool = True, remove_dir: bool = False) -> None:
         """Create and checkout tracking branch
 
         .. py:function:: _create_branch_local_tracking(self, branch, remote, depth, fetch=True, remove_dir=False)
@@ -254,14 +254,9 @@ class ProjectRepoImpl(GitRepo):
         :param str branch: Branch name
         :param str remote: Remote name
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-
-        Keyword Args:
-            fetch (bool): Whether to fetch before creating branch
-            remove_dir (bool): Whether to remove the directory if commands fail
+        :param bool fetch: Whether to fetch before creating branch
+        :param bool remove_dir: Whether to remove the directory if commands fail
         """
-
-        fetch = kwargs.get('fetch', True)
-        remove_dir = kwargs.get('remove_dir', False)
 
         branch_output = fmt.ref_string(branch)
         origin = self._remote(remote, remove_dir=remove_dir)
@@ -325,13 +320,13 @@ class ProjectRepoImpl(GitRepo):
 
         remote_names = [r.name for r in self.repo.remotes]
         if remote in remote_names:
-            return 0
+            return
 
         remote_output = fmt.remote_string(remote)
         try:
             self._print(' - Create remote ' + remote_output)
             self.repo.create_remote(remote, url)
-            return 0
+            return
         except GitError as err:
             message = colored(' - Failed to create remote ', 'red')
             if remove_dir:
