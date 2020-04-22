@@ -49,14 +49,14 @@ class CheckoutController(ArgparseController):
                                                               'projects to skip')))
         ]
     )
-    def checkout(self):
+    def checkout(self) -> None:
         """Clowder checkout command entry point"""
 
         self._checkout()
 
     @valid_clowder_yaml_required
     @print_clowder_repo_status
-    def _checkout(self):
+    def _checkout(self) -> None:
         """Clowder checkout command private implementation"""
 
         if self.app.pargs.projects is None:

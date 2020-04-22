@@ -33,13 +33,13 @@ class InitController(ArgparseController):
             (['--branch', '-b'], dict(nargs=1, metavar='BRANCH', help='branch of repo containing clowder.yaml'))
         ]
     )
-    def init(self):
+    def init(self) -> None:
         """Clowder init command entry point"""
 
         self._init()
 
     @network_connection_required
-    def _init(self):
+    def _init(self) -> None:
         """Clowder init command private implementation
 
         :raise ClowderExit:

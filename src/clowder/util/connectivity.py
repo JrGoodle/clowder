@@ -12,7 +12,7 @@ import clowder.util.formatting as fmt
 from clowder.error.clowder_exit import ClowderExit
 
 
-def is_offline(host='8.8.8.8', port=53, timeout=3):
+def is_offline(host: str = '8.8.8.8', port: int = 53, timeout: int = 3) -> bool:
     """Returns True if offline, False otherwise
 
     Service: domain (DNS/TCP)

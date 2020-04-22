@@ -14,7 +14,7 @@ from termcolor import colored
 from clowder.error.clowder_exit import ClowderExit
 
 
-def force_symlink(file1, file2):
+def force_symlink(file1: str, file2: str) -> None:
     """Force symlink creation
 
     :param str file1: File to create symlink pointing to
@@ -34,7 +34,7 @@ def force_symlink(file1, file2):
         raise ClowderExit(1)
 
 
-def remove_directory(path):
+def remove_directory(path: str) -> None:
     """Remove directory at path
 
     :param str path: Path to remove
@@ -50,7 +50,7 @@ def remove_directory(path):
         raise ClowderExit(1)
 
 
-def symlink_target(path):
+def symlink_target(path: str) -> str:
     """Returns target path if input is a symlink, otherwise returns original path
 
     :param str path: Path of file or symlink

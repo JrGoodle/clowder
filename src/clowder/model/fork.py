@@ -6,6 +6,7 @@
 """
 
 import os
+from typing import List
 
 from termcolor import colored
 
@@ -14,10 +15,9 @@ from clowder.git.project_repo import ProjectRepo
 from clowder.git.project_repo_recursive import ProjectRepoRecursive
 from clowder.git.util import (
     existing_git_repository,
-    format_project_ref_string,
-    format_project_string,
     git_url
 )
+from clowder.model.source import Source
 
 
 class Fork(object):
@@ -28,7 +28,8 @@ class Fork(object):
     :ivar str remote: Git remote name
     """
 
-    def __init__(self, fork, path, project_source, sources, project_ref, recursive):
+    def __init__(self, fork: dict, path: str, project_source: Source,
+                 sources: List[Source], project_ref: str, recursive: bool):
         """Project __init__
 
         :param dict fork: Parsed YAML python object for fork
@@ -51,7 +52,7 @@ class Fork(object):
             if s.name == source_name:
                 self._source = s
 
-    def full_path(self):
+    def full_path(self) -> str:
         """Return full path to project
 
         :return: Project's full file path
@@ -60,7 +61,7 @@ class Fork(object):
 
         return os.path.join(ROOT_DIR, self.path)
 
-    def get_yaml(self):
+    def get_yaml(self) -> dict:
         """Return python object representation for saving yaml
 
         :return: YAML python object
@@ -69,19 +70,22 @@ class Fork(object):
 
         return {'name': self.name, 'remote': self.remote}
 
-    def repo(self, **kwargs):
+    def repo(self, **kwargs) -> ProjectRepo:
         """Return ProjectRepo or ProjectRepoRecursive instance
 
         Keyword Args:
             parallel (bool): Whether command is being run in parallel
             print_output (bool): Whether to print output
+
+        :return: Project repo instance
+        :rtype: ProjectRepo
         """
 
         if self._recursive:
             return ProjectRepoRecursive(self.full_path(), self.remote, self._ref, **kwargs)
         return ProjectRepo(self.full_path(), self.remote, self._ref, **kwargs)
 
-    def status(self):
+    def status(self) -> str:
         """Return formatted fork status
 
         :return: Formatted fork status
@@ -92,11 +96,11 @@ class Fork(object):
             return colored(self.path, 'green')
 
         repo = ProjectRepo(self.full_path(), self.remote, self._ref)
-        project_output = format_project_string(repo, self.path)
-        current_ref_output = format_project_ref_string(repo)
+        project_output = repo.format_project_string(self.path)
+        current_ref_output = repo.format_project_ref_string()
         return project_output + ' ' + current_ref_output
 
-    def url(self):
+    def url(self) -> str:
         """Return project url"""
 
         return git_url(self._source.protocol, self._source.url, self.name)

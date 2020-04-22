@@ -30,7 +30,7 @@ class LLVMController(ArgparseController):
     @expose(
         help='Run all llvm tests'
     )
-    def all(self):
+    def all(self) -> None:
         """clowder llvm tests"""
 
         self._execute_command('./test_example_llvm.sh', os.path.join(ROOT_DIR, 'test', 'scripts'))
@@ -38,7 +38,7 @@ class LLVMController(ArgparseController):
     @expose(
         help='Run llvm forks tests'
     )
-    def forks(self):
+    def forks(self) -> None:
         """clowder llvm forks tests"""
 
         self._execute_command('./forks.sh', self.path)
@@ -46,13 +46,17 @@ class LLVMController(ArgparseController):
     @expose(
         help='Run llvm sync tests'
     )
-    def sync(self):
+    def sync(self) -> None:
         """clowder llvm sync tests"""
 
         self._execute_command('./sync.sh', self.path)
 
-    def _execute_command(self, command, path):
-        """Private execute command"""
+    def _execute_command(self, command: str, path: str) -> None:
+        """Private execute command
+
+        :param str command: Command to run
+        :param str path: Path to set as ``cwd``
+        """
 
         execute_test_command(command, path,
                              parallel=self.app.pargs.parallel,

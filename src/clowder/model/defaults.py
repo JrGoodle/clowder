@@ -18,7 +18,7 @@ class Defaults(object):
     :ivar str timestamp_author: Default timestamp author
     """
 
-    def __init__(self, defaults):
+    def __init__(self, defaults: dict):
         """Defaults __init__
 
         :param dict defaults: Parsed YAML python object for defaults
@@ -32,7 +32,7 @@ class Defaults(object):
         self.recursive = defaults.get("recursive", False)
         self.timestamp_author = defaults.get("timestamp_author", None)
 
-    def get_yaml(self):
+    def get_yaml(self) -> dict:
         """Return python object representation for saving yaml
 
         :return: YAML python object

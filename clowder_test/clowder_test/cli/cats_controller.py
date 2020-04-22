@@ -30,7 +30,7 @@ class CatsController(ArgparseController):
     @expose(
         help='Run all cats tests'
     )
-    def all(self):
+    def all(self) -> None:
         """clowder cats tests"""
 
         self._execute_command('./test_example_cats.sh', os.path.join(ROOT_DIR, 'test', 'scripts'))
@@ -38,7 +38,7 @@ class CatsController(ArgparseController):
     @expose(
         help='Run cats branch tests'
     )
-    def branch(self):
+    def branch(self) -> None:
         """clowder cats branch tests"""
 
         self._execute_command('./branch.sh', self.path)
@@ -46,7 +46,7 @@ class CatsController(ArgparseController):
     @expose(
         help='Run cats checkout tests'
     )
-    def checkout(self):
+    def checkout(self) -> None:
         """clowder cats checkout tests"""
 
         self._execute_command('./checkout.sh', self.path)
@@ -54,7 +54,7 @@ class CatsController(ArgparseController):
     @expose(
         help='Run cats clean tests'
     )
-    def clean(self):
+    def clean(self) -> None:
         """clowder cats clean tests"""
 
         self._execute_command('./clean.sh', self.path)
@@ -62,7 +62,7 @@ class CatsController(ArgparseController):
     @expose(
         help='Run cats diff tests'
     )
-    def diff(self):
+    def diff(self) -> None:
         """clowder cats diff tests"""
 
         self._execute_command('./diff.sh', self.path)
@@ -70,7 +70,7 @@ class CatsController(ArgparseController):
     @expose(
         help='Run cats forall tests'
     )
-    def forall(self):
+    def forall(self) -> None:
         """clowder cats forall tests"""
 
         self._execute_command('./forall.sh', self.path)
@@ -78,7 +78,7 @@ class CatsController(ArgparseController):
     @expose(
         help='Run cats help tests'
     )
-    def help(self):
+    def help(self) -> None:
         """clowder cats help tests"""
 
         self._execute_command('./help.sh', self.path)
@@ -86,7 +86,7 @@ class CatsController(ArgparseController):
     @expose(
         help='Run cats herd branch tests'
     )
-    def herd_branch(self):
+    def herd_branch(self) -> None:
         """clowder cats herd branch tests"""
 
         self._execute_command('./herd_branch.sh', self.path)
@@ -94,7 +94,7 @@ class CatsController(ArgparseController):
     @expose(
         help='Run cats herd submodules tests'
     )
-    def herd_submodules(self):
+    def herd_submodules(self) -> None:
         """clowder cats herd submodules tests"""
 
         self._execute_command('./herd_submodules.sh', self.path)
@@ -102,7 +102,7 @@ class CatsController(ArgparseController):
     @expose(
         help='Run cats herd tag tests'
     )
-    def herd_tag(self):
+    def herd_tag(self) -> None:
         """clowder cats herd tag tests"""
 
         self._execute_command('./herd_tag.sh', self.path)
@@ -110,7 +110,7 @@ class CatsController(ArgparseController):
     @expose(
         help='Run cats herd tests'
     )
-    def herd(self):
+    def herd(self) -> None:
         """clowder cats herd tests"""
 
         self._execute_command('./herd.sh', self.path)
@@ -118,7 +118,7 @@ class CatsController(ArgparseController):
     @expose(
         help='Run cats init tests'
     )
-    def init(self):
+    def init(self) -> None:
         """clowder cats init tests"""
 
         self._execute_command('./init.sh', self.path)
@@ -126,7 +126,7 @@ class CatsController(ArgparseController):
     @expose(
         help='Run cats link tests'
     )
-    def link(self):
+    def link(self) -> None:
         """clowder cats link tests"""
 
         self._execute_command('./link.sh', self.path)
@@ -134,7 +134,7 @@ class CatsController(ArgparseController):
     @expose(
         help='Run cats prune tests'
     )
-    def prune(self):
+    def prune(self) -> None:
         """clowder cats prune tests"""
 
         self._execute_command('./prune.sh', self.path)
@@ -142,7 +142,7 @@ class CatsController(ArgparseController):
     @expose(
         help='Run cats repo tests'
     )
-    def repo(self):
+    def repo(self) -> None:
         """clowder cats repo tests"""
 
         self._execute_command('./repo.sh', self.path)
@@ -150,7 +150,7 @@ class CatsController(ArgparseController):
     @expose(
         help='Run cats reset tests'
     )
-    def reset(self):
+    def reset(self) -> None:
         """clowder cats reset tests"""
 
         self._execute_command('./reset.sh', self.path)
@@ -158,7 +158,7 @@ class CatsController(ArgparseController):
     @expose(
         help='Run cats save tests'
     )
-    def save(self):
+    def save(self) -> None:
         """clowder cats save tests"""
 
         self._execute_command('./save.sh', self.path)
@@ -166,7 +166,7 @@ class CatsController(ArgparseController):
     @expose(
         help='Run cats skip tests'
     )
-    def skip(self):
+    def skip(self) -> None:
         """clowder cats skip tests"""
 
         self._execute_command('./skip.sh', self.path)
@@ -174,7 +174,7 @@ class CatsController(ArgparseController):
     @expose(
         help='Run cats start tests'
     )
-    def start(self):
+    def start(self) -> None:
         """clowder cats start tests"""
 
         self._execute_command('./start.sh', self.path)
@@ -182,7 +182,7 @@ class CatsController(ArgparseController):
     @expose(
         help='Run cats stash tests'
     )
-    def stash(self):
+    def stash(self) -> None:
         """clowder cats stash tests"""
 
         self._execute_command('./stash.sh', self.path)
@@ -190,7 +190,7 @@ class CatsController(ArgparseController):
     @expose(
         help='Run cats status tests'
     )
-    def status(self):
+    def status(self) -> None:
         """clowder cats status tests"""
 
         self._execute_command('./status.sh', self.path)
@@ -198,7 +198,7 @@ class CatsController(ArgparseController):
     @expose(
         help='Run cats yaml tests'
     )
-    def yaml(self):
+    def yaml(self) -> None:
         """clowder cats yaml tests"""
 
         self._execute_command('./yaml.sh', self.path)
@@ -206,7 +206,7 @@ class CatsController(ArgparseController):
     @expose(
         help='Run cats yaml import tests'
     )
-    def yaml_import(self):
+    def yaml_import(self) -> None:
         """clowder cats yaml import tests"""
 
         self._execute_command('./yaml_import.sh', self.path)
@@ -214,13 +214,17 @@ class CatsController(ArgparseController):
     @expose(
         help='Run cats yaml validation tests'
     )
-    def yaml_validation(self):
+    def yaml_validation(self) -> None:
         """clowder cats yaml validation tests"""
 
         self._execute_command('./yaml_validation.sh', self.path)
 
-    def _execute_command(self, command, path):
-        """Private execute command"""
+    def _execute_command(self, command: str, path: str) -> None:
+        """Private execute command
+
+        :param str command: Command to run
+        :param str path: Path to set as ``cwd``
+        """
 
         execute_test_command(command, path,
                              parallel=self.app.pargs.parallel,

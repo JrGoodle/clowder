@@ -20,7 +20,7 @@ from clowder.yaml.validation.util import (
 )
 
 
-def validate_yaml_defaults_import(defaults, yaml_file):
+def validate_yaml_defaults_import(defaults: dict, yaml_file: str) -> None:
     """Validate clowder.yaml defaults with an import
 
     :param dict defaults: Parsed YAML python object for defaults
@@ -39,7 +39,7 @@ def validate_yaml_defaults_import(defaults, yaml_file):
     validate_empty(defaults, 'defaults', yaml_file)
 
 
-def validate_yaml_defaults(defaults, yaml_file):
+def validate_yaml_defaults(defaults: dict, yaml_file: str) -> None:
     """Validate defaults in clowder loaded from yaml file
 
     :param dict defaults: Parsed YAML python object for defaults

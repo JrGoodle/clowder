@@ -6,14 +6,17 @@
 """
 
 import os
+from typing import List, Optional
 
 import clowder.util.formatting as fmt
 from clowder import ROOT_DIR
 from clowder.error.clowder_exit import ClowderExit
+from clowder.model.group import Group
+from clowder.model.project import Project
 from clowder.util.file_system import force_symlink
 
 
-def existing_branch_groups(groups, branch, is_remote):
+def existing_branch_groups(groups: List[Group], branch: str, is_remote: bool) -> bool:
     """Checks if given branch exists in any project
 
     :param list[Group] groups: Groups to check
@@ -26,7 +29,7 @@ def existing_branch_groups(groups, branch, is_remote):
     return any([p.existing_branch(branch, is_remote=is_remote) for g in groups for p in g.projects])
 
 
-def existing_branch_projects(projects, branch, is_remote):
+def existing_branch_projects(projects: List[Project], branch: str, is_remote: bool) -> bool:
     """Checks if given branch exists in any project
 
     :param list[Project] projects: Projects to check
@@ -39,7 +42,7 @@ def existing_branch_projects(projects, branch, is_remote):
     return any([p.existing_branch(branch, is_remote=is_remote) for p in projects])
 
 
-def get_clowder_yaml_import_path(import_name):
+def get_clowder_yaml_import_path(import_name: str) -> str:
     """Return path to imported clowder.yaml file
 
     :param str import_name: Name of imported clowder.yaml
@@ -53,7 +56,7 @@ def get_clowder_yaml_import_path(import_name):
     return os.path.join(ROOT_DIR, '.clowder', 'versions', import_name, 'clowder.yaml')
 
 
-def filter_groups(groups, names):
+def filter_groups(groups: List[Group], names: List[str]) -> List[Group]:
     """Filter groups based on given group names
 
     :param list[Group] groups: Groups to filter
@@ -65,7 +68,8 @@ def filter_groups(groups, names):
     return [g for g in groups if g.name in names]
 
 
-def filter_projects(groups, group_names=None, project_names=None):
+def filter_projects(groups: List[Group], group_names: List[str] = None,
+                    project_names: List[str] = None) -> List[Project]:
     """Filter projects based on given project or group names
 
     :param list[Group] groups: Groups to filter
@@ -84,11 +88,11 @@ def filter_projects(groups, group_names=None, project_names=None):
     return []
 
 
-def get_saved_version_names():
+def get_saved_version_names() -> Optional[List[str]]:
     """Return list of all saved versions
 
     :return: List of all saved version names
-    :rtype: list[str]
+    :rtype: Optional[list[str]]
     """
 
     versions_dir = os.path.join(os.getcwd(), '.clowder', 'versions')
@@ -97,7 +101,7 @@ def get_saved_version_names():
     return [v for v in os.listdir(versions_dir) if not v.startswith('.') if v.lower() != 'default']
 
 
-def link_clowder_yaml(version=None):
+def link_clowder_yaml(version: Optional[str] = None) -> None:
     """Create symlink pointing to clowder.yaml file
 
     :param Optional[str] version: Version name of clowder.yaml to link
@@ -121,7 +125,7 @@ def link_clowder_yaml(version=None):
     force_symlink(yaml_file, yaml_symlink)
 
 
-def options_help_message(options, message):
+def options_help_message(options: List[str], message: str) -> str:
     """Help message for groups option
 
     :param list[str] options: List of options
@@ -141,7 +145,7 @@ def options_help_message(options, message):
     return help_message.format(message, ', '.join(options))
 
 
-def print_parallel_groups_output(groups, skip):
+def print_parallel_groups_output(groups: List[Group], skip: List[str]) -> None:
     """Print output for parallel group command
 
     :param list[Group] groups: Groups to print output for
@@ -153,7 +157,7 @@ def print_parallel_groups_output(groups, skip):
         print_parallel_projects_output(group.projects, skip)
 
 
-def print_parallel_projects_output(projects, skip):
+def print_parallel_projects_output(projects: List[Project], skip: List[str]) -> None:
     """Print output for parallel project command
 
     :param list[Project] projects: Projects to print output for
@@ -167,7 +171,7 @@ def print_parallel_projects_output(projects, skip):
         _print_fork_output(project)
 
 
-def run_group_command(group, skip, command, *args, **kwargs):
+def run_group_command(group: Group, skip: List[str], command: str, *args, **kwargs) -> None:
     """Run group command and print output
 
     :param Group group: Group to run command for
@@ -186,7 +190,7 @@ def run_group_command(group, skip, command, *args, **kwargs):
         getattr(project, command)(*args, **kwargs)
 
 
-def run_project_command(project, skip, command, *args, **kwargs):
+def run_project_command(project: Project, skip: List[str], command: str, *args, **kwargs) -> None:
     """Run project command and print output
 
     :param Praject project: Project to run command for
@@ -203,7 +207,7 @@ def run_project_command(project, skip, command, *args, **kwargs):
     getattr(project, command)(*args, **kwargs)
 
 
-def validate_groups(groups):
+def validate_groups(groups: List[Group]) -> None:
     """Validate status of all projects for specified groups
 
     :param list[Group] groups: Groups to validate
@@ -218,34 +222,7 @@ def validate_groups(groups):
         raise ClowderExit(1)
 
 
-def validate_print_output(clowder, group_names, **kwargs):
-    """Validate projects/groups and print output
-
-    .. py:function:: validate_print_output(clowder, group_names, project_names=None, skip=[])
-
-    :param ClowderController clowder: ClowderController instance
-    :param list[str] group_names: Group names to validate/print
-
-    Keyword Args:
-        project_names (list[str]): Project names to validate/print
-        skip (list[str]): Project names to skip
-    """
-
-    project_names = kwargs.get('project_names', None)
-    skip = kwargs.get('skip', [])
-
-    if project_names is None:
-        groups = filter_groups(clowder.groups, group_names)
-        validate_groups(groups)
-        print_parallel_groups_output(groups, skip)
-        return
-
-    projects = filter_projects(clowder.groups, project_names=project_names)
-    validate_projects(projects)
-    print_parallel_projects_output(projects, skip)
-
-
-def validate_projects(projects):
+def validate_projects(projects: List[Project]) -> None:
     """Validate status of all projects
 
     :param list[Project] projects: Projects to validate
@@ -257,26 +234,7 @@ def validate_projects(projects):
         raise ClowderExit(1)
 
 
-def validate_projects_exist(clowder):
-    """Validate existence status of all projects for specified groups
-
-    :param ClowderController clowder: ClowderController instance
-    :raise ClowderExit:
-    """
-
-    projects_exist = True
-    for group in clowder.groups:
-        group.print_existence_message()
-        if not group.existing_projects():
-            projects_exist = False
-
-    if not projects_exist:
-        herd_output = fmt.clowder_command('clowder herd')
-        print('\n - First run ' + herd_output + ' to clone missing projects\n')
-        raise ClowderExit(1)
-
-
-def _print_fork_output(project):
+def _print_fork_output(project: Project) -> None:
     """Print fork output if a fork exists
 
     :param Project project: Project to print fork status for

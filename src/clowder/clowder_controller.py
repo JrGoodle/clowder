@@ -5,13 +5,24 @@
 
 """
 
+from typing import List
+
 from termcolor import cprint
 
+import clowder.util.formatting as fmt
 from clowder.error.clowder_exit import ClowderExit
 from clowder.error.clowder_yaml_error import ClowderYAMLError
 from clowder.model.defaults import Defaults
 from clowder.model.group import Group
 from clowder.model.source import Source
+from clowder.util.clowder_utils import (
+    filter_groups,
+    filter_projects,
+    print_parallel_groups_output,
+    print_parallel_projects_output,
+    validate_groups,
+    validate_projects
+)
 from clowder.yaml.loading import load_yaml
 
 
@@ -41,7 +52,7 @@ class ClowderController(object):
         except (KeyboardInterrupt, SystemExit):
             raise ClowderExit(1)
 
-    def get_all_fork_project_names(self):
+    def get_all_fork_project_names(self) -> List[str]:
         """Returns all project names containing forks
 
         :return: List of project names containing forks
@@ -53,7 +64,7 @@ class ClowderController(object):
         except TypeError:
             return []
 
-    def get_all_group_names(self):
+    def get_all_group_names(self) -> List[str]:
         """Returns all group names for current clowder.yaml
 
         :return: List of all group names
@@ -65,7 +76,7 @@ class ClowderController(object):
         except TypeError:
             return []
 
-    def get_all_project_names(self):
+    def get_all_project_names(self) -> List[str]:
         """Returns all project names for current clowder.yaml
 
         :return: List of all project names
@@ -77,7 +88,7 @@ class ClowderController(object):
         except TypeError:
             return []
 
-    def get_all_project_paths(self):
+    def get_all_project_paths(self) -> List[str]:
         """Returns all project paths for current clowder.yaml
 
         :return: List of all project paths
@@ -89,7 +100,7 @@ class ClowderController(object):
         except TypeError:
             return []
 
-    def get_timestamp(self, timestamp_project):
+    def get_timestamp(self, timestamp_project: str) -> str:
         """Return timestamp for project
 
         :param str timestamp_project: Project to get timestamp of current HEAD commit
@@ -110,12 +121,12 @@ class ClowderController(object):
 
         return timestamp
 
-    def get_yaml(self, resolved=False):
+    def get_yaml(self, resolved: bool = False) -> dict:
         """Return python object representation of model objects
 
         .. py:function:: get_yaml(self, resolved=False)
 
-        :param Optional[bool] resolved: Whether to return resolved yaml
+        :param bool resolved: Whether to return resolved yaml
         :return: YAML python object
         :rtype: dict
         """
@@ -129,7 +140,49 @@ class ClowderController(object):
                 'sources': [s.get_yaml() for s in self.sources],
                 'groups': groups}
 
-    def _load_yaml(self):
+    def validate_print_output(self, group_names: List[str], **kwargs) -> None:
+        """Validate projects/groups and print output
+
+        .. py:function:: validate_print_output(group_names, project_names=None, skip=[])
+
+        :param list[str] group_names: Group names to validate/print
+
+        Keyword Args:
+            project_names (list[str]): Project names to validate/print
+            skip (list[str]): Project names to skip
+        """
+
+        project_names = kwargs.get('project_names', None)
+        skip = kwargs.get('skip', [])
+
+        if project_names is None:
+            groups = filter_groups(self.groups, group_names)
+            validate_groups(groups)
+            print_parallel_groups_output(groups, skip)
+            return
+
+        projects = filter_projects(self.groups, project_names=project_names)
+        validate_projects(projects)
+        print_parallel_projects_output(projects, skip)
+
+    def validate_projects_exist(self) -> None:
+        """Validate existence status of all projects for specified groups
+
+        :raise ClowderExit:
+        """
+
+        projects_exist = True
+        for group in self.groups:
+            group.print_existence_message()
+            if not group.existing_projects():
+                projects_exist = False
+
+        if not projects_exist:
+            herd_output = fmt.clowder_command('clowder herd')
+            print('\n - First run ' + herd_output + ' to clone missing projects\n')
+            raise ClowderExit(1)
+
+    def _load_yaml(self) -> None:
         """Load clowder.yaml"""
         try:
             yaml = load_yaml()

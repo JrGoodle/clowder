@@ -18,7 +18,7 @@ from clowder.yaml.validation.util import (
 )
 
 
-def validate_yaml_projects_import(projects, yaml_file):
+def validate_yaml_projects_import(projects: dict, yaml_file: str) -> None:
     """Validate projects in clowder loaded from yaml file import
 
     :param dict projects: Parsed YAML python object for projects
@@ -41,7 +41,7 @@ def validate_yaml_projects_import(projects, yaml_file):
         validate_empty(project, 'project', yaml_file)
 
 
-def validate_yaml_projects(projects, yaml_file):
+def validate_yaml_projects(projects: dict, yaml_file: str) -> None:
     """Validate projects in clowder loaded from yaml file
 
     :param dict projects: Parsed YAML python object for projects
@@ -63,7 +63,7 @@ def validate_yaml_projects(projects, yaml_file):
         validate_empty(project, 'project', yaml_file)
 
 
-def _validate_yaml_project_optional(project, yaml_file):
+def _validate_yaml_project_optional(project: dict, yaml_file: str) -> None:
     """Validate optional args in project in clowder loaded from yaml file
 
     :param dict project: Parsed YAML python object for project

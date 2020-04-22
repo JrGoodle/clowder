@@ -35,14 +35,14 @@ class LinkController(ArgparseController):
                                        help=options_help_message(get_saved_version_names(), 'version to symlink')))
             ]
     )
-    def link(self):
+    def link(self) -> None:
         """Clowder link command entry point"""
 
         self._link()
 
     @clowder_required
     @print_clowder_repo_status
-    def _link(self):
+    def _link(self) -> None:
         """Clowder link command private implementation"""
 
         if self.app.pargs.version is None:

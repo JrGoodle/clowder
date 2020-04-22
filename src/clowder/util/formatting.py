@@ -5,14 +5,16 @@
 
 """
 
+# noinspection PyPackageRequirements
 import yaml
 from termcolor import colored, cprint
+from typing import List, Union
 
 from clowder.error.clowder_exit import ClowderExit
 from clowder.util.file_system import symlink_target
 
 
-def clowder_command(cmd):
+def clowder_command(cmd: str) -> str:
     """Return formatted clowder command name
 
     :param str cmd: Clowder command name
@@ -23,7 +25,7 @@ def clowder_command(cmd):
     return colored(cmd, attrs=['bold'])
 
 
-def command(cmd):
+def command(cmd: Union[str, List[str]]) -> str:
     """Return formatted command name
 
     :param cmd: Clowder command name
@@ -36,7 +38,7 @@ def command(cmd):
     return colored('$ ' + command_output, attrs=['bold'])
 
 
-def command_failed_error(cmd):
+def command_failed_error(cmd: Union[str, List[str]]) -> str:
     """Format error message for failed command
 
     :param cmd: Clowder command name
@@ -48,7 +50,7 @@ def command_failed_error(cmd):
     return colored(' - Error: Failed to run command ', 'red') + command(cmd) + '\n'
 
 
-def depth_error(depth, yml):
+def depth_error(depth: int, yml: str) -> str:
     """Return formatted error string for invalid depth
 
     :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
@@ -62,7 +64,7 @@ def depth_error(depth, yml):
     return output_1 + output_2
 
 
-def empty_yaml_error(yml):
+def empty_yaml_error(yml: str) -> str:
     """Return formatted error string for empty clowder.yaml
 
     :param str yml: Path to yaml file
@@ -73,7 +75,7 @@ def empty_yaml_error(yml):
     return yaml_path(yml) + colored(' - Error: No entries in ', 'red') + yaml_file('clowder.yaml')
 
 
-def error(err):
+def error(err: Exception) -> str:
     """Return error message for generic error
 
     :param Exception err: Generic error
@@ -84,7 +86,7 @@ def error(err):
     return str(err) + '\n'
 
 
-def file_exists_error(path):
+def file_exists_error(path: str) -> str:
     """Format error message for already existing file
 
     :param str path: File path name
@@ -95,7 +97,7 @@ def file_exists_error(path):
     return colored(' - Error: File already exists\n', 'red') + get_path(path)
 
 
-def fork_string(name):
+def fork_string(name: str) -> str:
     """Return formatted fork name
 
     :param str name: Fork name
@@ -106,7 +108,7 @@ def fork_string(name):
     return colored(name, 'cyan')
 
 
-def group_name(name):
+def group_name(name: str) -> str:
     """Print formatted group name
 
     :param str name: Group name
@@ -117,7 +119,7 @@ def group_name(name):
     return colored(name, attrs=['bold', 'underline'])
 
 
-def invalid_protocol_error(protocol, yml):
+def invalid_protocol_error(protocol: str, yml: str) -> str:
     """Return formatted error string for incorrect protocol
 
     :param str protocol: Git protocol
@@ -131,7 +133,7 @@ def invalid_protocol_error(protocol, yml):
     return output_1 + output_2 + output_3
 
 
-def invalid_ref_error(ref, yml):
+def invalid_ref_error(ref: str, yml: str) -> str:
     """Return formatted error string for incorrect ref
 
     :param str ref: Git reference
@@ -145,7 +147,7 @@ def invalid_ref_error(ref, yml):
     return output_1 + output_2 + output_3
 
 
-def invalid_yaml_error():
+def invalid_yaml_error() -> str:
     """Return error message for invalid clowder.yaml
 
     :return: Formatted yaml error
@@ -155,7 +157,7 @@ def invalid_yaml_error():
     return yaml_file('clowder.yaml') + ' appears to be invalid'
 
 
-def missing_entries_error(name, yml):
+def missing_entries_error(name: str, yml: str) -> str:
     """Return formatted error string for invalid entry in collection
 
     :param str name: Entry name
@@ -167,7 +169,7 @@ def missing_entries_error(name, yml):
     return yaml_path(yml) + colored(' - Error: Missing entries in ', 'red') + colored(name, attrs=['bold'])
 
 
-def missing_entry_error(entry, name, yml):
+def missing_entry_error(entry: str, name: str, yml: str) -> str:
     """Return formatted error string for missing entry in dictionary
 
     :param str entry: Name of entry to check
@@ -182,7 +184,7 @@ def missing_entry_error(entry, name, yml):
     return output_1 + output_2
 
 
-def missing_imported_yaml_error(path, yml):
+def missing_imported_yaml_error(path: str, yml: str) -> str:
     """Return formatted error string for missing imported clowder.yaml
 
     :param str path: File path
@@ -194,7 +196,7 @@ def missing_imported_yaml_error(path, yml):
     return yaml_path(yml) + colored(' - Error: Missing imported file\n', 'red') + get_path(path)
 
 
-def missing_yaml_error():
+def missing_yaml_error() -> str:
     """Format error message for missing clowder.yaml
 
     :return: Formatted missing YAML error
@@ -204,7 +206,7 @@ def missing_yaml_error():
     return yaml_file('clowder.yaml') + ' appears to be missing'
 
 
-def offline_error():
+def offline_error() -> str:
     """Return error message for no internet connection
 
     :return: Offline error message
@@ -214,7 +216,7 @@ def offline_error():
     return colored('No available internet connection\n', 'red')
 
 
-def open_file_error(path):
+def open_file_error(path: str) -> str:
     """Format error message for failing to open file
 
     :param str path: File path
@@ -225,7 +227,7 @@ def open_file_error(path):
     return colored(' - Error: Failed to open file\n', 'red') + get_path(path)
 
 
-def parallel_exception_error(path, *args):
+def parallel_exception_error(path: str, *args) -> str:
     """Return formatted error string for parallel error
 
     :param str path: Clowder file path
@@ -237,7 +239,7 @@ def parallel_exception_error(path, *args):
     return get_path(path) + '\n' + ''.join(args)
 
 
-def get_path(path):
+def get_path(path: str) -> str:
     """Return formatted path
 
     :param str path: Path name
@@ -248,7 +250,7 @@ def get_path(path):
     return colored(path, 'cyan')
 
 
-def recursive_import_error(depth):
+def recursive_import_error(depth: int) -> str:
     """Format error message for too many recursive imports
 
     :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
@@ -260,10 +262,10 @@ def recursive_import_error(depth):
     return output + 'Max imports: ' + colored(str(depth), attrs=['bold'])
 
 
-def ref_string(ref):
+def ref_string(ref: str) -> str:
     """Return formatted ref name
 
-    :param ref: Git reference
+    :param str ref: Git reference
     :return: Formatted ref name
     :rtype: str
     """
@@ -271,7 +273,7 @@ def ref_string(ref):
     return colored('[' + ref + ']', 'magenta')
 
 
-def remote_already_exists_error(remote_name, remote_url, actual_url):
+def remote_already_exists_error(remote_name: str, remote_url: str, actual_url: str) -> str:
     """Format error message when remote already exists with different url
 
     :param str remote_name: Remote name
@@ -287,7 +289,7 @@ def remote_already_exists_error(remote_name, remote_url, actual_url):
     return output_1 + output_2 + output_3
 
 
-def remote_name_error(fork, project, remote):
+def remote_name_error(fork: str, project: str, remote: str) -> str:
     """Return formatted error string for fork with same remote as project
 
     :param str fork: Fork name
@@ -303,7 +305,7 @@ def remote_name_error(fork, project, remote):
     return output_1 + output_2 + output_3
 
 
-def remote_string(remote):
+def remote_string(remote: str) -> str:
     """Return formatted remote name
 
     :param str remote: Remote branch name
@@ -314,7 +316,7 @@ def remote_string(remote):
     return colored(remote, 'yellow')
 
 
-def remove_prefix(text, prefix):
+def remove_prefix(text: str, prefix: str) -> str:
     """Remove prefix from a string
 
     :param str text: String to remove prefix from
@@ -326,7 +328,7 @@ def remove_prefix(text, prefix):
     return text[len(prefix):] if text.startswith(prefix) else text
 
 
-def save_default_error(name):
+def save_default_error(name: str) -> str:
     """Format error message for trying to save 'default' version
 
     :param str name: Version name
@@ -339,7 +341,7 @@ def save_default_error(name):
     return output_1 + output_2
 
 
-def save_file_error(path):
+def save_file_error(path: str) -> str:
     """Format error message for failing to save file
 
     :param str path: File path
@@ -350,7 +352,7 @@ def save_file_error(path):
     return colored(' - Error: Failed to save file\n', 'red') + get_path(path)
 
 
-def save_version(version_name, yml):
+def save_version(version_name: str, yml: str) -> str:
     """Format message for saving version
 
     :param str version_name: Clowder version name
@@ -362,7 +364,7 @@ def save_version(version_name, yml):
     return ' - Save version ' + version(version_name) + '\n' + get_path(yml)
 
 
-def save_version_exists_error(version_name, yml):
+def save_version_exists_error(version_name: str, yml: str) -> str:
     """Format error message previous existing saved version
 
     :param str version_name: Version name
@@ -376,7 +378,7 @@ def save_version_exists_error(version_name, yml):
     return output_1 + output_2
 
 
-def skip_project_message():
+def skip_project_message() -> str:
     """Return skip project message
 
     :return: Skip project message
@@ -386,7 +388,7 @@ def skip_project_message():
     return ' - Skip project'
 
 
-def type_error(name, yml, type_name):
+def type_error(name: str, yml: str, type_name: str) -> str:
     """Return formatted error string for value with wrong type
 
     :param str name: Value name
@@ -401,7 +403,7 @@ def type_error(name, yml, type_name):
     return output_1 + output_2
 
 
-def unknown_entry_error(name, collection, yml):
+def unknown_entry_error(name: str, collection: dict, yml: str) -> str:
     """Return formatted error string for unknown entry in collection
 
     :param str name: Entry name
@@ -420,7 +422,7 @@ def unknown_entry_error(name, collection, yml):
     return output_1 + colored(name, attrs=['bold']) + output_2
 
 
-def version(version_name):
+def version(version_name: str) -> str:
     """Return formatted string for clowder.yaml version
 
     :param str version_name: Clowder version name
@@ -431,7 +433,7 @@ def version(version_name):
     return colored(version_name, attrs=['bold'])
 
 
-def yaml_path(yml):
+def yaml_path(yml: str) -> str:
     """Returns formatted yaml path
 
     :param str yml: Path to yaml file
@@ -442,7 +444,7 @@ def yaml_path(yml):
     return get_path(symlink_target(yml)) + '\n'
 
 
-def yaml_file(yml):
+def yaml_file(yml: str) -> str:
     """Return formatted string for clowder.yaml file
 
     :param str yml: Path to yaml file
@@ -453,7 +455,7 @@ def yaml_file(yml):
     return colored(yml, 'cyan')
 
 
-def yaml_string(yaml_output):
+def yaml_string(yaml_output: dict) -> str:
     """Return yaml string from python data structures
 
     :param dict yaml_output: YAML python object

@@ -7,6 +7,7 @@
 
 import inspect
 import os
+from typing import List, Optional
 
 from termcolor import colored, cprint
 
@@ -19,12 +20,11 @@ from clowder.git.project_repo import ProjectRepo
 from clowder.git.project_repo_recursive import ProjectRepoRecursive
 from clowder.git.util import (
     existing_git_repository,
-    format_project_ref_string,
-    format_project_string,
-    git_url,
-    print_validation
+    git_url
 )
+from clowder.model.defaults import Defaults
 from clowder.model.fork import Fork
+from clowder.model.source import Source
 # from clowder.util.connectivity import is_offline
 from clowder.util.execute import execute_forall_command
 
@@ -57,7 +57,7 @@ class Project(object):
     :ivar Fork fork: Project's associated Fork
     """
 
-    def __init__(self, project, group, defaults, sources):
+    def __init__(self, project: dict, group: dict, defaults: Defaults, sources: List[Source]):
         """Project __init__
 
         :param dict project: Parsed YAML python object for project
@@ -92,13 +92,13 @@ class Project(object):
             self.fork = Fork(fork, self.path, self.source, sources, self.ref, self.recursive)
 
     @project_repo_exists
-    def branch(self, local=False, remote=False):
+    def branch(self, local: bool = False, remote: bool = False) -> None:
         """Print branches for project
 
         .. py:function:: branch(local=False, remote=False)
 
-        :param Optional[bool] local: Print local branches
-        :param Optional[bool] remote: Print remote branches
+        :param bool local: Print local branches
+        :param bool remote: Print remote branches
         """
 
         repo = ProjectRepo(self.full_path(), self.remote, self.ref)
@@ -113,7 +113,7 @@ class Project(object):
         repo.print_branches(local=local, remote=remote)
 
     @project_repo_exists
-    def checkout(self, branch):
+    def checkout(self, branch: str) -> None:
         """Checkout branch
 
         :param str branch: Branch to check out
@@ -122,7 +122,7 @@ class Project(object):
         self._repo(self.recursive).checkout(branch, allow_failure=True)
 
     @project_repo_exists
-    def clean(self, args='', recursive=False):
+    def clean(self, args: Optional[str] = '', recursive: bool = False) -> None:
         """Discard changes for project
 
         .. py:function:: clean(args='', recursive=False)
@@ -132,13 +132,13 @@ class Project(object):
             - ``f`` Delete directories with .git sub directory or file
             - ``X`` Remove only files ignored by git
             - ``x`` Remove all untracked files
-        :param Optional[bool] recursive: Clean submodules recursively
+        :param bool recursive: Clean submodules recursively
         """
 
         self._repo(self.recursive or recursive).clean(args=args)
 
     @project_repo_exists
-    def clean_all(self):
+    def clean_all(self) -> None:
         """Discard all changes for project
 
         Equivalent to:
@@ -151,15 +151,15 @@ class Project(object):
         self._repo(self.recursive).clean(args='fdx')
 
     @project_repo_exists
-    def diff(self):
+    def diff(self) -> None:
         """Show git diff for project
 
         Equivalent to: ``git status -vv``
         """
 
-        ProjectRepo(self.full_path(), self.remote, self.ref).status_verbose()
+        self._repo(self.recursive).status_verbose()
 
-    def existing_branch(self, branch, is_remote):
+    def existing_branch(self, branch: str, is_remote: bool) -> bool:
         """Check if branch exists
 
         :param str branch: Branch to check for
@@ -176,7 +176,7 @@ class Project(object):
         return repo.existing_remote_branch(branch, remote)
 
     @project_repo_exists
-    def fetch_all(self):
+    def fetch_all(self) -> None:
         """Fetch upstream changes if project exists on disk"""
 
         repo = ProjectRepo(self.full_path(), self.remote, self.ref)
@@ -187,7 +187,7 @@ class Project(object):
         repo.fetch(self.fork.remote)
         repo.fetch(self.remote)
 
-    def formatted_project_path(self):
+    def formatted_project_path(self) -> str:
         """Return formatted project path
 
         :return: Formatted string of full file path
@@ -195,9 +195,9 @@ class Project(object):
         """
 
         repo = ProjectRepo(self.full_path(), self.remote, self.ref)
-        return format_project_string(repo, self.path)
+        return repo.format_project_string(self.path)
 
-    def full_path(self):
+    def full_path(self) -> str:
         """Return full path to project
 
         :return: Project's full file path
@@ -206,7 +206,7 @@ class Project(object):
 
         return os.path.join(ROOT_DIR, self.path)
 
-    def get_current_timestamp(self):
+    def get_current_timestamp(self) -> str:
         """Return timestamp of current HEAD commit
 
         :return: HEAD commit timestamp
@@ -216,12 +216,12 @@ class Project(object):
         repo = ProjectRepo(self.full_path(), self.remote, self.ref)
         return repo.get_current_timestamp()
 
-    def get_yaml(self, resolved=False):
+    def get_yaml(self, resolved: bool = False) -> dict:
         """Return python object representation for saving yaml
 
         .. py:function:: get_yaml(resolved=False)
 
-        :param Optional[bool] resolved: Return default ref rather than current commit sha
+        :param bool resolved: Return default ref rather than current commit sha
         :return: YAML python object
         :rtype: dict
         """
@@ -249,7 +249,7 @@ class Project(object):
 
         return project
 
-    def herd(self, **kwargs):
+    def herd(self, **kwargs) -> None:
         """Clone project or update latest from upstream
 
         .. py:function:: herd(branch=None, tag=None, depth=0, rebase=False, parallel=False)
@@ -285,7 +285,7 @@ class Project(object):
 
         self._run_herd_command('herd', repo, depth=herd_depth, rebase=rebase)
 
-    def is_dirty(self):
+    def is_dirty(self) -> bool:
         """Check if project is dirty
 
         :return: True, if dirty
@@ -294,7 +294,7 @@ class Project(object):
 
         return not self._repo(self.recursive).validate_repo()
 
-    def is_valid(self):
+    def is_valid(self) -> bool:
         """Validate status of project
 
         :return: True, if not dirty or if the project doesn't exist on disk
@@ -303,24 +303,25 @@ class Project(object):
 
         return ProjectRepo(self.full_path(), self.remote, self.ref).validate_repo()
 
-    def print_validation(self):
+    def print_validation(self) -> None:
         """Print validation message for project"""
 
         if not self.is_valid():
             print(self.status())
             repo = ProjectRepo(self.full_path(), self.remote, self.ref)
-            print_validation(repo)
+            repo.print_validation()
 
     @project_repo_exists
-    def prune(self, branch, force=False, local=False, remote=False):
+    def prune(self, branch: str, force: bool = False,
+              local: bool = False, remote: bool = False) -> None:
         """Prune branch
 
         .. py:function:: prune(branch, force=False, local=False, remote=False)
 
         :param str branch: Branch to prune
-        :param Optional[bool] force: Force delete branch
-        :param Optional[bool] local: Delete local branch
-        :param Optional[bool] remote: Delete remote branch
+        :param bool force: Force delete branch
+        :param bool local: Delete local branch
+        :param bool remote: Delete remote branch
         """
 
         repo = ProjectRepo(self.full_path(), self.remote, self.ref)
@@ -333,13 +334,13 @@ class Project(object):
             if repo.existing_remote_branch(branch, git_remote):
                 repo.prune_branch_remote(branch, git_remote)
 
-    def reset(self, timestamp=None, parallel=False):
+    def reset(self, timestamp: Optional[str] = None, parallel: bool = False) -> None:
         """Reset project branch to upstream or checkout tag/sha as detached HEAD
 
         .. py:function:: reset(timestamp=None, parallel=False)
 
         :param Optional[str] timestamp: Reset to commit at timestamp, or closest previous commit
-        :param Optional[bool] parallel: Whether command is being run in parallel, affects output
+        :param bool parallel: Whether command is being run in parallel, affects output
         """
 
         self._print_output = not parallel
@@ -364,14 +365,14 @@ class Project(object):
 
         repo.reset()
 
-    def run(self, commands, ignore_errors, parallel=False):
+    def run(self, commands: List[str], ignore_errors: bool, parallel: bool = False) -> None:
         """Run commands or script in project directory
 
         .. py:function:: run(commands, ignore_errors, parallel=False)
 
         :param list[str] commands: Commands to run
         :param bool ignore_errors: Whether to exit if command returns a non-zero exit code
-        :param Optional[bool] parallel: Whether commands are being run in parallel, affects output
+        :param bool parallel: Whether commands are being run in parallel, affects output
         """
 
         if not parallel and not existing_git_repository(self.full_path()):
@@ -393,7 +394,7 @@ class Project(object):
             self._run_forall_command(cmd, forall_env, ignore_errors, parallel)
 
     @project_repo_exists
-    def start(self, branch, tracking):
+    def start(self, branch: str, tracking: bool) -> None:
         """Start a new feature branch
 
         :param str branch: Local branch name to create
@@ -405,7 +406,7 @@ class Project(object):
         repo = ProjectRepo(self.full_path(), self.remote, self.ref)
         repo.start(remote, branch, depth, tracking)
 
-    def status(self, padding=None):
+    def status(self, padding: Optional[int] = None) -> str:
         """Return formatted status for project
 
         :param Optional[int] padding: Amount of padding to use for printing project on left and current ref on right
@@ -417,8 +418,8 @@ class Project(object):
             return colored(self.name, 'green')
 
         repo = ProjectRepo(self.full_path(), self.remote, self.ref)
-        project_output = format_project_string(repo, self.path)
-        current_ref_output = format_project_ref_string(repo)
+        project_output = repo.format_project_string(self.path)
+        current_ref_output = repo.format_project_ref_string()
 
         if padding:
             project_output = project_output.ljust(padding)
@@ -426,20 +427,20 @@ class Project(object):
         return project_output + ' ' + current_ref_output
 
     @project_repo_exists
-    def stash(self):
+    def stash(self) -> None:
         """Stash changes for project if dirty"""
 
         if self.is_dirty():
             repo = ProjectRepo(self.full_path(), self.remote, self.ref)
             repo.stash()
 
-    def sync(self, rebase=False, parallel=False):
+    def sync(self, rebase: bool = False, parallel: bool = False) -> None:
         """Sync fork project with upstream remote
 
         .. py:function:: sync(rebase=False, parallel=False)
 
-        :param Optional[bool] rebase: Whether to use rebase instead of pulling latest changes
-        :param Optional[bool] parallel: Whether command is being run in parallel, affects output
+        :param bool rebase: Whether to use rebase instead of pulling latest changes
+        :param bool parallel: Whether command is being run in parallel, affects output
         """
 
         self._print_output = not parallel
@@ -449,7 +450,7 @@ class Project(object):
         self._print(self.fork.status())
         repo.sync(self.fork.remote, rebase=rebase)
 
-    def _print(self, val):
+    def _print(self, val: str) -> None:
         """Print output if self._print_output is True
 
         :param str val: String to print
@@ -458,7 +459,7 @@ class Project(object):
         if self._print_output:
             print(val)
 
-    def _repo(self, recursive, **kwargs):
+    def _repo(self, recursive: bool, **kwargs) -> ProjectRepo:
         """Return ProjectRepo or ProjectRepoRecursive instance
 
         :param bool recursive: Whether to handle submodules
@@ -466,13 +467,16 @@ class Project(object):
         Keyword Args:
             parallel (bool): Whether command is being run in parallel
             print_output (bool): Whether to print output
+
+        :return: Project repo instance
+        :rtype: ProjectRepo
         """
 
         if recursive:
             return ProjectRepoRecursive(self.full_path(), self.remote, self.ref, **kwargs)
         return ProjectRepo(self.full_path(), self.remote, self.ref, **kwargs)
 
-    def _run_forall_command(self, command, env, ignore_errors, parallel):
+    def _run_forall_command(self, command: str, env: dict, ignore_errors: bool, parallel: bool) -> None:
         """Run command or script in project directory
 
         :param str command: Command to run
@@ -496,7 +500,7 @@ class Project(object):
                     raise ClowderError(err)
                 raise ClowderExit(1)
 
-    def _run_herd_command(self, command, repo, *args, **kwargs):
+    def _run_herd_command(self, command: str, repo: ProjectRepo, *args, **kwargs) -> None:
         """Run herd command
 
         :param str command: Repo path
@@ -531,7 +535,7 @@ class Project(object):
         branch = branch_arg[0] if branch_arg else None
         repo.herd_remote(self.fork.url(), self.fork.remote, branch=branch)
 
-    def _url(self):
+    def _url(self) -> str:
         """Return project url"""
 
         return git_url(self.source.protocol, self.source.url, self.name)

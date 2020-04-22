@@ -43,7 +43,7 @@ def valid_clowder_yaml_required(func):
     return wrapper
 
 
-def _invalid_yaml_error(error):
+def _invalid_yaml_error(error: Exception):
     """Print invalid yaml message and raise exception
 
     :param Exception error: Exception raised during yaml validation/loading

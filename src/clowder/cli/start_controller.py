@@ -53,14 +53,14 @@ class StartController(ArgparseController):
                                                               'projects to skip')))
         ]
     )
-    def start(self):
+    def start(self) -> None:
         """Clowder start command entry point"""
 
         self._start()
 
     @valid_clowder_yaml_required
     @print_clowder_repo_status
-    def _start(self):
+    def _start(self) -> None:
         """Clowder start command private implementation"""
 
         if self.app.pargs.tracking:
@@ -70,13 +70,16 @@ class StartController(ArgparseController):
         self._start_branches(False)
 
     @network_connection_required
-    def _start_tracking(self):
+    def _start_tracking(self) -> None:
         """clowder start tracking command"""
 
         self._start_branches(True)
 
-    def _start_branches(self, tracking):
-        """clowder start branches command"""
+    def _start_branches(self, tracking: bool) -> None:
+        """clowder start branches command
+
+        :param bool tracking: Whether to create tracking branches
+        """
 
         if self.app.pargs.projects is None:
             groups = filter_groups(CLOWDER_CONTROLLER.groups, self.app.pargs.groups)

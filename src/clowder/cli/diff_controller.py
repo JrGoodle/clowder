@@ -48,14 +48,14 @@ class DiffController(ArgparseController):
                                                               'projects to skip')))
         ]
     )
-    def diff(self):
+    def diff(self) -> None:
         """Clowder diff command entry point"""
 
         self._diff()
 
     @valid_clowder_yaml_required
     @print_clowder_repo_status
-    def _diff(self):
+    def _diff(self) -> None:
         """Clowder diff command private implementation"""
 
         if self.app.pargs.projects is None:
