@@ -5,7 +5,6 @@
 
 """
 
-import inspect
 import os
 from typing import List, Optional
 
@@ -25,7 +24,6 @@ from clowder.git.util import (
 from clowder.model.defaults import Defaults
 from clowder.model.fork import Fork
 from clowder.model.source import Source
-# from clowder.util.connectivity import is_offline
 from clowder.util.execute import execute_forall_command
 
 
@@ -266,18 +264,34 @@ class Project(object):
 
         herd_depth = self.depth if depth is None else depth
         repo = self._repo(self.recursive, parallel=parallel)
+        fork_remote = None if self.fork is None else self.fork.remote
 
         if branch:
-            fork_remote = None if self.fork is None else self.fork.remote
-            self._run_herd_command('herd_branch', repo, branch,
-                                   depth=herd_depth, rebase=rebase, fork_remote=fork_remote)
+            command = 'herd_branch'
+            args = (branch,)
+            kwargs = {'depth': herd_depth, 'rebase': rebase, 'fork_remote': fork_remote}
+        elif tag:
+            command = 'herd_tag'
+            args = (tag,)
+            kwargs = {'depth': herd_depth, 'rebase': rebase}
+        else:
+            command = 'herd'
+            args = ()
+            kwargs = {'depth': herd_depth, 'rebase': rebase}
+
+        if self.fork is None:
+            getattr(repo, command)(self._url(), *args, **kwargs)
             return
 
-        if tag:
-            self._run_herd_command('herd_tag', repo, tag, depth=herd_depth, rebase=rebase)
-            return
+        self._print(self.fork.status())
+        repo.configure_remotes(self.remote, self._url(), self.fork.remote, self.fork.url())
 
-        self._run_herd_command('herd', repo, depth=herd_depth, rebase=rebase)
+        self._print(fmt.fork_string(self.name))
+        kwargs['depth'] = 0  # TODO: Can this be removed?
+        getattr(repo, command)(self._url(), *args, **kwargs)
+
+        self._print(fmt.fork_string(self.fork.name))
+        repo.herd_remote(self.fork.url(), self.fork.remote, branch=branch)
 
     def is_dirty(self) -> bool:
         """Check if project is dirty
@@ -439,9 +453,9 @@ class Project(object):
 
         self._print_output = not parallel
 
-        repo = self._repo(self.recursive, parallel=parallel)
-        self._run_herd_command('herd', repo, rebase=rebase)
+        self.herd(rebase=rebase, parallel=parallel)
         self._print(self.fork.status())
+        repo = self._repo(self.recursive, parallel=parallel)
         repo.sync(self.fork.remote, rebase=rebase)
 
     def _print(self, val: str) -> None:
@@ -490,41 +504,6 @@ class Project(object):
                 if parallel:
                     raise ClowderError(err)
                 raise ClowderExit(1)
-
-    def _run_herd_command(self, command: str, repo: ProjectRepo, *args, **kwargs) -> None:
-        """Run herd command
-
-        :param str command: Repo path
-        :param ProjectRepo repo: ProjectRepo or ProjectRepoRecursive instance
-
-        Other Parameters:
-            branch (str): Branch to attempt to herd
-            tag (str): Tag to attempt to herd
-
-        Keyword Args:
-            depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-            rebase (bool): Whether to use rebase instead of pulling latest changes
-            fork_remote (str): Fork remote name
-        """
-
-        if self.fork is None:
-            getattr(repo, command)(self._url(), *args, **kwargs)
-            return
-
-        self._print(self.fork.status())
-        repo.configure_remotes(self.remote, self._url(), self.fork.remote, self.fork.url())
-
-        self._print(fmt.fork_string(self.name))
-        kwargs['depth'] = 0
-        getattr(repo, command)(self._url(), *args, **kwargs)
-
-        self._print(fmt.fork_string(self.fork.name))
-
-        frame = inspect.currentframe()
-        vals = inspect.getargvalues(frame)
-        branch_arg = [a for a in vals.args if vals.locals[a] if vals.locals[a] == 'branch']
-        branch = branch_arg[0] if branch_arg else None
-        repo.herd_remote(self.fork.url(), self.fork.remote, branch=branch)
 
     def _url(self) -> str:
         """Return project url"""
