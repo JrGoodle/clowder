@@ -6,7 +6,7 @@
 """
 
 import os
-from typing import List
+from typing import List, Optional
 
 from cement.ext.ext_argparse import ArgparseController, expose
 
@@ -74,53 +74,48 @@ class HerdController(ArgparseController):
         branch = None if self.app.pargs.branch is None else self.app.pargs.branch[0]
         tag = None if self.app.pargs.tag is None else self.app.pargs.tag[0]
         depth = None if self.app.pargs.depth is None else self.app.pargs.depth[0]
-
-        kwargs = {'group_names': self.app.pargs.groups, 'project_names': self.app.pargs.projects,
-                  'skip': self.app.pargs.skip, 'branch': branch, 'tag': tag,
-                  'depth': depth, 'rebase': self.app.pargs.rebase}
+        group_names = self.app.pargs.groups
+        project_names = self.app.pargs.projects
+        skip = self.app.pargs.skip
+        rebase = self.app.pargs.rebase
 
         if self.app.pargs.parallel:
-            herd_parallel(CLOWDER_CONTROLLER, **kwargs)
+            herd_parallel(CLOWDER_CONTROLLER, branch=branch, tag=tag, depth=depth,
+                          group_names=group_names, project_names=project_names, skip=skip, rebase=rebase)
             if os.name == "posix":
                 return
 
-        herd(CLOWDER_CONTROLLER, **kwargs)
+        herd(CLOWDER_CONTROLLER, branch=branch, tag=tag, depth=depth,
+             group_names=group_names, project_names=project_names, skip=skip, rebase=rebase)
 
 
-def herd(clowder: ClowderController, group_names: List[str], **kwargs) -> None:
+def herd(clowder: ClowderController, group_names: List[str], branch: Optional[str] = None,
+         tag: Optional[str] = None, depth: Optional[int] = None, rebase: bool = False,
+         project_names: Optional[List[str]] = None, skip: Optional[List[str]] = None) -> None:
     """Clone projects or update latest from upstream
 
     .. py:function:: herd(clowder, group_names, branch=None, tag=None, depth=0, rebase=False, project_names=None, skip=[])
 
     :param ClowderController clowder: ClowderController instance
-    :param list[str] group_names: Group names to herd
-
-    Keyword Args:
-        branch (str): Branch to attempt to herd
-        tag (str): Tag to attempt to herd
-        depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-        rebase (bool): Whether to use rebase instead of pulling latest changes
-        project_names (list[str]) project_names: Project names to herd
-        skip (list[str]): Project names to skip
+    :param List[str] group_names: Group names to herd
+    :param Optional[str] branch: Branch to attempt to herd
+    :param Optional[str] tag: Tag to attempt to herd
+    :param Optonal[int] depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+    :param bool rebase: Whether to use rebase instead of pulling latest changes
+    :param Optional[List[str]] project_names: Project names to herd
+    :param Optional[List[str]] skip: Project names to skip
     """
 
-    project_names = kwargs.get('project_names', None)
-    skip = kwargs.get('skip', [])
-    branch = kwargs.get('branch', None)
-    tag = kwargs.get('tag', None)
-    depth = kwargs.get('depth', None)
-    rebase = kwargs.get('rebase', False)
+    skip = [] if skip is None else skip
 
     if project_names is None:
         groups = filter_groups(clowder.groups, group_names)
         validate_groups(groups)
         for group in groups:
-            run_group_command(group, skip, 'herd', branch=branch, tag=tag,
-                              depth=depth, rebase=rebase)
+            run_group_command(group, skip, 'herd', branch=branch, tag=tag, depth=depth, rebase=rebase)
         return
 
     projects = filter_projects(clowder.groups, project_names=project_names)
     validate_projects(projects)
     for project in projects:
-        run_project_command(project, skip, 'herd', branch=branch, tag=tag,
-                            depth=depth, rebase=rebase)
+        run_project_command(project, skip, 'herd', branch=branch, tag=tag, depth=depth, rebase=rebase)

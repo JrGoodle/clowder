@@ -8,7 +8,7 @@
 import multiprocessing as mp
 import os
 import signal
-from typing import List
+from typing import List, Optional
 
 import psutil
 from termcolor import cprint
@@ -104,52 +104,13 @@ if os.name == "posix":
     __clowder_pool__ = mp.Pool(initializer=worker_init)
     __clowder_progress__ = Progress()
 
-    def herd_parallel(clowder: ClowderController, group_names: List[str], **kwargs) -> None:
-        """Clone projects or update latest from upstream in parallel
-
-        .. py:function:: herd_parallel(clowder, group_names, branch=None, tag=None, depth=0, rebase=False, project_names=None, skip=[], protocol=None)
-
-        :param ClowderController clowder: ClowderController instance
-        :param list[str] group_names: Group names to herd
-
-        Keyword Args:
-            branch (str): Branch to attempt to herd
-            tag (str): Tag to attempt to herd
-            depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-            rebase (bool): Whether to use rebase instead of pulling latest changes
-            project_names (list[str]): Project names to herd
-            skip (list[str]): Project names to skip
-        """
-
-        project_names = kwargs.get('project_names', None)
-        skip = kwargs.get('skip', [])
-        branch = kwargs.get('branch', None)
-        tag = kwargs.get('tag', None)
-        depth = kwargs.get('depth', None)
-        rebase = kwargs.get('rebase', False)
-
-        print(' - Herd projects in parallel\n')
-        clowder.validate_print_output(group_names, project_names=project_names, skip=skip)
-
-        projects = filter_projects(clowder.groups, group_names=group_names, project_names=project_names)
-
-        for project in projects:
-            if project.name in skip:
-                continue
-            result = __clowder_pool__.apply_async(herd_project,
-                                                  args=(project, branch, tag, depth, rebase),
-                                                  callback=async_callback)
-            __clowder_results__.append(result)
-
-        pool_handler(len(projects))
-
     def forall_parallel(commands: List[str], skip: List[str], ignore_errors: bool, projects: List[Project]) -> None:
         """Runs command or script for projects in parallel
 
-        :param list[str] commands: Command to run
-        :param list[str] skip: Project names to skip
+        :param List[str] commands: Command to run
+        :param List[str] skip: Project names to skip
         :param bool ignore_errors: Whether to exit if command returns a non-zero exit code
-        :param list[Project] projects: Projects to run command for
+        :param List[Project] projects: Projects to run command for
         """
 
         print(' - Run forall commands in parallel\n')
@@ -172,23 +133,54 @@ if os.name == "posix":
 
         pool_handler(len(projects))
 
-    def reset_parallel(clowder: ClowderController, group_names: List[str], **kwargs) -> None:
+    def herd_parallel(clowder: ClowderController, group_names: List[str], branch: Optional[str] = None,
+                      tag: Optional[str] = None, depth: Optional[int] = None, rebase: bool = False,
+                      project_names: Optional[List[str]] = None, skip: Optional[List[str]] = None) -> None:
+        """Clone projects or update latest from upstream in parallel
+
+        .. py:function:: herd_parallel(clowder, group_names, branch=None, tag=None, depth=0, rebase=False, project_names=None, skip=[], protocol=None)
+
+        :param ClowderController clowder: ClowderController instance
+        :param list[str] group_names: Group names to herd
+        :param Optional[str] branch: Branch to attempt to herd
+        :param Optional[str] tag: Tag to attempt to herd
+        :param Optional[int] depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :param bool rebase: Whether to use rebase instead of pulling latest changes
+        :param Optional[List[str]] project_names: Project names to herd
+        :param Optional[List[str]] skip: Project names to skip
+        """
+
+        skip = [] if skip is None else skip
+
+        print(' - Herd projects in parallel\n')
+        clowder.validate_print_output(group_names, project_names=project_names, skip=skip)
+
+        projects = filter_projects(clowder.groups, group_names=group_names, project_names=project_names)
+
+        for project in projects:
+            if project.name in skip:
+                continue
+            result = __clowder_pool__.apply_async(herd_project,
+                                                  args=(project, branch, tag, depth, rebase),
+                                                  callback=async_callback)
+            __clowder_results__.append(result)
+
+        pool_handler(len(projects))
+
+    def reset_parallel(clowder: ClowderController, group_names: List[str], timestamp_project: Optional[str] = None,
+                       project_names: Optional[List[str]] = None, skip: Optional[List[str]] = None) -> None:
         """Reset project branches to upstream or checkout tag/sha as detached HEAD in parallel
 
         .. py:function:: reset_parallel(clowder, group_names, timestamp_project=None, project_names=None, skip=[])
 
         :param ClowderController clowder: ClowderController instance
-        :param list[str] group_names: Group names to reset
-
-        Keyword Args:
-            timestamp_project (str): Reference project to checkout commit timestamps of other projects relative to
-            project_names (list[str]): Project names to reset
-            skip (list[str]): Project names to skip
+        :param List[str] group_names: Group names to reset
+        :param Optional[str] timestamp_project: Reference project to checkout commit timestamps of other projects relative to
+        :param Optional[List[str]] project_names: Project names to reset
+        :param Optional[List[str]] skip: Project names to skip
         """
 
-        project_names = kwargs.get('project_names', None)
-        skip = kwargs.get('skip', [])
-        timestamp_project = kwargs.get('timestamp_project', None)
+        skip = [] if skip is None else skip
 
         print(' - Reset projects in parallel\n')
         timestamp = None
@@ -256,22 +248,25 @@ if os.name == "posix":
             __clowder_pool__.close()
             __clowder_pool__.join()
 else:
-    def forall_parallel(*args, **kwargs):
+    def forall_parallel(commands: List[str], skip: List[str], ignore_errors: bool, projects: List[Project]) -> None:
         """Stub for non-posix forall parallel command"""
 
         print(' - Parallel commands are only available on posix operating systems\n')
 
-    def herd_parallel(*args, **kwargs):
+    def herd_parallel(clowder: ClowderController, group_names: List[str], branch: Optional[str] = None,
+                      tag: Optional[str] = None, depth: Optional[int] = None, rebase: bool = False,
+                      project_names: Optional[List[str]] = None, skip: Optional[List[str]] = None) -> None:
         """Stub for non-posix herd parallel command"""
 
         print(' - Parallel commands are only available on posix operating systems\n')
 
-    def reset_parallel(*args, **kwargs):
+    def reset_parallel(clowder: ClowderController, group_names: List[str], timestamp_project: Optional[str] = None,
+                       project_names: Optional[List[str]] = None, skip: Optional[List[str]] = None) -> None:
         """Stub for non-posix reset parallel command"""
 
         print(' - Parallel commands are only available on posix operating systems\n')
 
-    def sync_parallel(*args, **kwargs):
+    def sync_parallel(projects: List[Project], rebase: bool = False) -> None:
         """Stub for non-posix sync parallel command"""
 
         print(' - Parallel commands are only available on posix operating systems\n')
