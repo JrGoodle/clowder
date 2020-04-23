@@ -13,21 +13,9 @@ echo "deploy"
 #   exit 0
 # fi
 
-echo "TEST: PATH: $PATH"
-echo "TEST: /usr/local/bin/python3 version: $(/usr/local/bin/python3 --version)"
-echo "TEST: brew info python3: $(brew info python3)"
 echo "TEST: python3 version: $(python3 --version)"
 echo "TEST: python3 which: $(which python3)"
 echo "TEST: github-release version: $(github-release --version)"
-echo "TEST: pip3 version: $(pip3 --version)"
-echo "TEST: pip3 which: $(which pip3)"
-
-echo 'TEST: Link python3'
-brew link --overwrite python
-echo "TEST: python3 version: $(python3 --version)"
-echo "TEST: python3 which: $(which python3)"
-echo "TEST: python version: $(python --version)"
-echo "TEST: python which: $(which python)"
 
 export GITHUB_USER='JrGoodle'
 export GITHUB_REPO='clowder'
