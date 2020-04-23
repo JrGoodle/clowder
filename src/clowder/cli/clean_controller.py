@@ -88,8 +88,6 @@ def _clean(clowder: ClowderController, group_names: List[str], clean_args: str =
            project_names: Optional[List[str]] = None, skip: Optional[List[str]] = None) -> None:
     """Discard changes
 
-    .. py:function:: clean(group_names, args='', recursive=False, project_names=None, skip=[])
-
     :param ClowderController clowder: ClowderController instance
     :param list[str] group_names: Group names to clean
     :param str clean_args: Git clean options
@@ -118,8 +116,6 @@ def _clean(clowder: ClowderController, group_names: List[str], clean_args: str =
 def _clean_all(clowder: ClowderController, group_names: List[str],
                project_names: Optional[List[str]] = None, skip: Optional[List[str]] = None) -> None:
     """Discard all changes
-
-    .. py:function:: clean_all(group_names, project_names=None, skip=[])
 
     :param ClowderController clowder: ClowderController instance
     :param list[str] group_names: Group names to clean

@@ -81,8 +81,6 @@ def reset(clowder: ClowderController, group_names: List[str], timestamp_project:
           parallel: bool = False, project_names: Optional[List[str]] = None, skip: Optional[List[str]] = None) -> None:
     """Reset project branches to upstream or checkout tag/sha as detached HEAD
 
-    .. py:function:: reset(clowder, group_names, timestamp_project=None, parallel=False, project_names=None, skip=[])
-
     :param ClowderController clowder: ClowderController instance
     :param list[str] group_names: Group names to reset
     :param Optional[str] timestamp_project: Reference project to checkout commit timestamps of other projects relative to

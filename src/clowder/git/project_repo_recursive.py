@@ -96,8 +96,6 @@ class ProjectRepoRecursive(ProjectRepo):
     def herd_tag(self, url: str, tag: str, depth: int = 0, rebase: bool = False) -> None:
         """Herd tag
 
-        .. py:function:: herd_tag(url, tag, depth=0, rebase=False)
-
         :param str url: URL of repo
         :param str tag: Tag name
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer

@@ -148,8 +148,6 @@ class ClowderRepo(object):
     def print_status(self, fetch: bool = False) -> None:
         """Print clowder repo status
 
-        .. py:function:: print_status(fetch=False)
-
         :param bool fetch: Fetch before printing status
         """
 

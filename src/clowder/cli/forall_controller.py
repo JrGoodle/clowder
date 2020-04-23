@@ -74,8 +74,6 @@ def forall(clowder: ClowderController, command: List[str], ignore_errors: bool,
            skip: Optional[List[str]] = None, parallel: bool = False) -> None:
     """Runs script in project directories specified
 
-    .. py:function:: forall_script(clowder, command, ignore_errors, group_names, project_names=None, skip=[], parallel=False)
-
     :param ClowderController clowder: ClowderController instance
     :param list[str] command: Command or script and optional arguments
     :param bool ignore_errors: Whether to exit if command returns a non-zero exit code

@@ -50,8 +50,6 @@ class ProjectRepo(ProjectRepoImpl):
     def create_clowder_repo(self, url: str, branch: str, depth: int = 0) -> None:
         """Clone clowder git repo from url at path
 
-        .. py:function:: create_clowder_repo(url, branch, depth=0)
-
         :param str url: URL of repo
         :param str branch: Branch name
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
@@ -150,8 +148,6 @@ class ProjectRepo(ProjectRepoImpl):
 
     def herd_tag(self, url: str, tag: str, depth: int = 0, rebase: bool = False) -> None:
         """Herd tag
-
-        .. py:function:: herd_tag(url, tag, depth=0, rebase=False)
 
         :param str url: URL of repo
         :param str tag: Tag name
@@ -258,8 +254,6 @@ class ProjectRepo(ProjectRepoImpl):
     def reset(self, depth: int = 0) -> None:
         """Reset branch to upstream or checkout tag/sha as detached HEAD
 
-        .. py:function:: reset(depth=0)
-
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
         """
 
@@ -345,8 +339,6 @@ class ProjectRepo(ProjectRepoImpl):
     def sync(self, fork_remote: str, rebase: bool = False) -> None:
         """Sync fork with upstream remote
 
-        .. py:function:: sync(fork_remote, rebase=False)
-
         :param str fork_remote: Fork remote name
         :param bool rebase: Whether to use rebase instead of pulling latest changes.
         """
@@ -393,8 +385,6 @@ class ProjectRepo(ProjectRepoImpl):
     def _herd(self, remote: str, ref: str, depth: int = 0, fetch: bool = True, rebase: bool = False) -> None:
         """Herd ref
 
-        .. py:function:: _herd(remote, ref, depth=0, fetch=True, rebase=False)
-
         :param str remote: Remote name
         :param str ref: Git ref
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
@@ -423,8 +413,6 @@ class ProjectRepo(ProjectRepoImpl):
                                     fork_remote: Optional[str] = None) -> None:
         """Herd branch for existing local branch
 
-        .. py:function:: herd_branch_existing_local(branch, depth=0, fork_remote=None, rebase=False)
-
         :param str branch: Branch name
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
         :param bool rebase: Whether to use rebase instead of pulling latest changes
@@ -447,8 +435,6 @@ class ProjectRepo(ProjectRepoImpl):
     def _herd_branch_initial(self, url: str, branch: str, depth: int = 0) -> None:
         """Herd branch initial
 
-        .. py:function:: _herd_branch_initial(url, branch, depth=0)
-
         :param str url: URL of repo
         :param str branch: Branch name to attempt to herd
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
@@ -466,8 +452,6 @@ class ProjectRepo(ProjectRepoImpl):
 
     def _herd_existing_local(self, remote: str, branch: str, depth: int = 0, rebase: bool = False) -> None:
         """Herd ref
-
-        .. py:function:: _herd_existing_local(remote, ref, depth=0, fetch=True, rebase=False)
 
         :param str remote: Remote name
         :param str branch: Git branch name
@@ -508,8 +492,6 @@ class ProjectRepo(ProjectRepoImpl):
 
     def _herd_remote_branch(self, remote: str, branch: str, depth: int = 0, rebase: bool = False) -> None:
         """Herd remote branch
-
-        .. py:function:: _herd_remote_branch(remote, branch, depth=0, rebase=False)
 
         :param str remote: Remote name
         :param str branch: Branch name to attempt to herd

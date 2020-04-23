@@ -138,8 +138,6 @@ if os.name == "posix":
                       project_names: Optional[List[str]] = None, skip: Optional[List[str]] = None) -> None:
         """Clone projects or update latest from upstream in parallel
 
-        .. py:function:: herd_parallel(clowder, group_names, branch=None, tag=None, depth=0, rebase=False, project_names=None, skip=[], protocol=None)
-
         :param ClowderController clowder: ClowderController instance
         :param list[str] group_names: Group names to herd
         :param Optional[str] branch: Branch to attempt to herd
@@ -170,8 +168,6 @@ if os.name == "posix":
     def reset_parallel(clowder: ClowderController, group_names: List[str], timestamp_project: Optional[str] = None,
                        project_names: Optional[List[str]] = None, skip: Optional[List[str]] = None) -> None:
         """Reset project branches to upstream or checkout tag/sha as detached HEAD in parallel
-
-        .. py:function:: reset_parallel(clowder, group_names, timestamp_project=None, project_names=None, skip=[])
 
         :param ClowderController clowder: ClowderController instance
         :param List[str] group_names: Group names to reset

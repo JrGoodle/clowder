@@ -75,8 +75,6 @@ class GitRepo(object):
     def checkout(self, truncated_ref: str, allow_failure: bool = False) -> None:
         """Checkout git ref
 
-        .. py:function:: checkout(truncated_ref, allow_failure=False)
-
         :param str truncated_ref: Ref to git checkout
         :param bool allow_failure: Whether to allow failing to checkout branch
         """
@@ -176,8 +174,6 @@ class GitRepo(object):
               remove_dir: bool = False, allow_failure: bool = False) -> None:
         """Fetch from a specific remote ref
 
-        .. py:function:: fetch(remote, ref=None, depth=0, remove_dir=False, allow_failure=False)
-
         :param str remote: Remote name
         :param Optional[str] ref: Ref to fetch
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
@@ -273,8 +269,6 @@ class GitRepo(object):
     def is_detached(self, print_output: bool = False) -> bool:
         """Check if HEAD is detached
 
-        .. py:function:: is_detached(print_output=False)
-
         :param bool print_output: Whether to print output
         :return: True, if HEAD is detached
         :rtype: bool
@@ -303,8 +297,6 @@ class GitRepo(object):
     def new_commits(self, upstream: bool = False) -> int:
         """Returns the number of new commits
 
-        .. py:function:: new_commits(upstream=False)
-
         :param bool upstream: Whether to find number of new upstream or local commits
         :return: Int number of new commits
         :rtype: int
@@ -330,8 +322,6 @@ class GitRepo(object):
 
     def print_branches(self, local: bool = False, remote: bool = False) -> None:
         """Print branches
-
-        .. py:function:: print_branches(local=False, remote=False)
 
         :param bool local: Print local branches
         :param bool remote: Print remote branches
@@ -384,8 +374,6 @@ class GitRepo(object):
 
     def sha(self, short: bool = False) -> str:
         """Return sha for currently checked out commit
-
-        .. py:function:: sha(short=False)
 
         :param bool short: Whether to return short or long commit sha
         :return: Commit sha

@@ -107,8 +107,6 @@ def _prune(clowder: ClowderController, group_names: List[str], branch: str,
            project_names: Optional[List[str]] = None, skip: Optional[List[str]] = None) -> None:
     """Prune branches
 
-    .. py:function:: prune(group_names, local=False, remote=False, force=False, project_names=None, skip=[])
-
     :param ClowderController clowder: ClowderController instance
     :param list[str] group_names: Group names to prune branches for
     :param str branch: Branch to prune
@@ -135,8 +133,6 @@ def _prune(clowder: ClowderController, group_names: List[str], branch: str,
 def _prune_groups(groups: List[Group], branch: str, force: bool = False, local: bool = False,
                   remote: bool = False, skip: Optional[List[str]] = None) -> None:
     """Prune group branches
-
-    .. py:function:: _prune_groups(groups, branch, local=False, remote=False, force=False, skip=[])
 
     :param list[Group] groups: Groups to prune
     :param str branch: Branch to prune
@@ -165,8 +161,6 @@ def _prune_projects(projects: List[Project], branch: str, force: bool = False, l
                     remote: bool = False, skip: Optional[List[str]] = None) -> None:
     """Prune project branches
 
-    .. py:function:: _prune_projects(projects, branch, local=False, remote=False, force=False, skip=[])
-
     :param list[Project] projects: Projects to prune
     :param str branch: Branch to prune
     :param bool force: Force delete branch
@@ -191,8 +185,6 @@ def _prune_projects(projects: List[Project], branch: str, force: bool = False, l
 
 def _validate_branches(local: bool, remote: bool, local_branch_exists: bool, remote_branch_exists: bool) -> None:
     """Prune project branches
-
-    .. py:function:: _prune_projects(projects, branch, local=False, remote=False, force=False, skip=[])
 
     :param bool local: Delete local branch
     :param bool remote: Delete remote branch

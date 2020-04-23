@@ -93,8 +93,6 @@ class Project(object):
     def branch(self, local: bool = False, remote: bool = False) -> None:
         """Print branches for project
 
-        .. py:function:: branch(local=False, remote=False)
-
         :param bool local: Print local branches
         :param bool remote: Print remote branches
         """
@@ -120,12 +118,10 @@ class Project(object):
         self._repo(self.recursive).checkout(branch, allow_failure=True)
 
     @project_repo_exists
-    def clean(self, args: Optional[str] = '', recursive: bool = False) -> None:
+    def clean(self, args: str = '', recursive: bool = False) -> None:
         """Discard changes for project
 
-        .. py:function:: clean(args='', recursive=False)
-
-        :param Optional[str] args: Git clean options
+        :param str args: Git clean options
             - ``d`` Remove untracked directories in addition to untracked files
             - ``f`` Delete directories with .git sub directory or file
             - ``X`` Remove only files ignored by git
@@ -217,8 +213,6 @@ class Project(object):
     def get_yaml(self, resolved: bool = False) -> dict:
         """Return python object representation for saving yaml
 
-        .. py:function:: get_yaml(resolved=False)
-
         :param bool resolved: Return default ref rather than current commit sha
         :return: YAML python object
         :rtype: dict
@@ -250,8 +244,6 @@ class Project(object):
     def herd(self, branch: Optional[str] = None, tag: Optional[str] = None, depth: Optional[int] = None,
              rebase: bool = False, parallel: bool = False) -> None:
         """Clone project or update latest from upstream
-
-        .. py:function:: herd(branch=None, tag=None, depth=0, rebase=False, parallel=False)
 
         :param Optional[str] branch: Branch to attempt to herd
         :param Optional[str] tag: Tag to attempt to herd
@@ -324,8 +316,6 @@ class Project(object):
               local: bool = False, remote: bool = False) -> None:
         """Prune branch
 
-        .. py:function:: prune(branch, force=False, local=False, remote=False)
-
         :param str branch: Branch to prune
         :param bool force: Force delete branch
         :param bool local: Delete local branch
@@ -344,8 +334,6 @@ class Project(object):
 
     def reset(self, timestamp: Optional[str] = None, parallel: bool = False) -> None:
         """Reset project branch to upstream or checkout tag/sha as detached HEAD
-
-        .. py:function:: reset(timestamp=None, parallel=False)
 
         :param Optional[str] timestamp: Reset to commit at timestamp, or closest previous commit
         :param bool parallel: Whether command is being run in parallel, affects output
@@ -375,8 +363,6 @@ class Project(object):
 
     def run(self, commands: List[str], ignore_errors: bool, parallel: bool = False) -> None:
         """Run commands or script in project directory
-
-        .. py:function:: run(commands, ignore_errors, parallel=False)
 
         :param list[str] commands: Commands to run
         :param bool ignore_errors: Whether to exit if command returns a non-zero exit code
@@ -444,8 +430,6 @@ class Project(object):
 
     def sync(self, rebase: bool = False, parallel: bool = False) -> None:
         """Sync fork project with upstream remote
-
-        .. py:function:: sync(rebase=False, parallel=False)
 
         :param bool rebase: Whether to use rebase instead of pulling latest changes
         :param bool parallel: Whether command is being run in parallel, affects output

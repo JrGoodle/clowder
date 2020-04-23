@@ -73,8 +73,6 @@ class Group(object):
     def get_yaml(self, resolved: bool = False) -> dict:
         """Return python object representation of model objects
 
-        .. py:function:: get_yaml(self, resolved=False)
-
         :param bool resolved: Whether to return resolved yaml
         :return: YAML python object
         :rtype: dict

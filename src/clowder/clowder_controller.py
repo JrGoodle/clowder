@@ -124,8 +124,6 @@ class ClowderController(object):
     def get_yaml(self, resolved: bool = False) -> dict:
         """Return python object representation of model objects
 
-        .. py:function:: get_yaml(self, resolved=False)
-
         :param bool resolved: Whether to return resolved yaml
         :return: YAML python object
         :rtype: dict
@@ -143,8 +141,6 @@ class ClowderController(object):
     def validate_print_output(self, group_names: List[str], project_names: Optional[List[str]] = None,
                               skip: Optional[List[str]] = None) -> None:
         """Validate projects/groups and print output
-
-        .. py:function:: validate_print_output(group_names, project_names=None, skip=[])
 
         :param list[str] group_names: Group names to validate/print
         :param Optional[List[str]] project_names: Project names to validate/print

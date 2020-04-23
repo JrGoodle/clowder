@@ -94,8 +94,6 @@ def herd(clowder: ClowderController, group_names: List[str], branch: Optional[st
          project_names: Optional[List[str]] = None, skip: Optional[List[str]] = None) -> None:
     """Clone projects or update latest from upstream
 
-    .. py:function:: herd(clowder, group_names, branch=None, tag=None, depth=0, rebase=False, project_names=None, skip=[])
-
     :param ClowderController clowder: ClowderController instance
     :param List[str] group_names: Group names to herd
     :param Optional[str] branch: Branch to attempt to herd

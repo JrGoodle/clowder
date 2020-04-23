@@ -9,7 +9,7 @@ import atexit
 import os
 import subprocess
 from multiprocessing.pool import ThreadPool
-from typing import List, Union
+from typing import List, Optional, Union
 
 from termcolor import colored
 
@@ -32,28 +32,21 @@ def subprocess_exit_handler(process: subprocess.Popen) -> None:
         del err
 
 
-def execute_subprocess_command(command: Union[str, List[str]], path: str, **kwargs) -> None:
+def execute_subprocess_command(command: Union[str, List[str]], path: str, shell: bool = True,
+                               env: Optional[dict] = None, stdout: Optional[int] = None,
+                               stderr: Optional[int] = None) -> None:
     """Execute subprocess command
-
-    .. py:function:: execute_subprocess_command(command, path, shell=True, env=None, stdout=None, stderr=None)
 
     :param command: Command to run
     :type command: str or list[str]
     :param str path: Path to set as ``cwd``
-
-    Keyword Args:
-        shell (bool): Whether to execute subprocess as ``shell``
-        env (dict): Enviroment to set as ``env``
-        stdout (int): Value to set as ``stdout``
-        stderr (int): Value to set as ``stderr``
+    :param bool shell: Whether to execute subprocess as ``shell``
+    :param Optional[dict] env: Enviroment to set as ``env``
+    :param Optional[int] stdout: Value to set as ``stdout``
+    :param Optional[int] stderr: Value to set as ``stderr``
 
     :raise ClowderError:
     """
-
-    shell = kwargs.get('shell', True)
-    env = kwargs.get('env', None)
-    stdout = kwargs.get('stdout', None)
-    stderr = kwargs.get('stderr', None)
 
     if isinstance(command, list):
         cmd = ' '.join(command)
@@ -73,28 +66,21 @@ def execute_subprocess_command(command: Union[str, List[str]], path: str, **kwar
         raise ClowderError(err)
 
 
-def execute_command(command: Union[str, List[str]], path: str, **kwargs) -> int:
+def execute_command(command: Union[str, List[str]], path: str, shell: bool = True,
+                    env: Optional[dict] = None, print_output: bool = True) -> int:
     """Execute command via thread
-
-    .. py:function:: execute_command(command, path, shell=True, env=None, print_output=True)
 
     :param command: Command to run
     :type command: str or list[str]
     :param str path: Path to set as ``cwd``
-
-    Keyword Args:
-        shell (bool): Whether to execute subprocess as ``shell``
-        env (dict): Enviroment to set as ``env``
-        print_output (bool): Whether to print output
+    :param bool shell: Whether to execute subprocess as ``shell``
+    :param Optional[dict] env: Enviroment to set as ``env``
+    :param bool print_output: Whether to print output
 
     :return: Command return code
     :rtype: int
     :raise ClowderError:
     """
-
-    shell = kwargs.get('shell', True)
-    env = kwargs.get('env', None)
-    print_output = kwargs.get('print_output', True)
 
     cmd_env = os.environ.copy()
     if env:
