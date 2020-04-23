@@ -51,8 +51,6 @@ class ProjectRepoImpl(GitRepo):
     def _checkout_branch(self, branch: str) -> None:
         """Checkout local branch or print message if already checked out
 
-        .. py:function:: _checkout_branch(branch)
-
         :param str branch: Branch name
         """
 
@@ -63,8 +61,6 @@ class ProjectRepoImpl(GitRepo):
 
     def _checkout_branch_local(self, branch: str, remove_dir: bool = False) -> None:
         """Checkout local branch
-
-        .. py:function:: _checkout_branch_local(branch, remove_dir=False)
 
         :param str branch: Branch name
         :param bool remove_dir: Whether to remove the directory if commands fail
@@ -134,8 +130,6 @@ class ProjectRepoImpl(GitRepo):
 
     def _checkout_new_repo_tag(self, tag: str, remote: str, depth: int, remove_dir: bool = False) -> None:
         """Checkout tag or fail and delete repo if it doesn't exist
-
-        .. py:function:: _checkout_new_repo_tag(tag, remote, depth, remove_dir=False)
 
         :param str tag: Tag name
         :param str remote: Remote name
@@ -246,22 +240,15 @@ class ProjectRepoImpl(GitRepo):
         except (KeyboardInterrupt, SystemExit):
             self._exit()
 
-    def _create_branch_local_tracking(self, branch: str, remote: str, depth: int, **kwargs) -> None:
+    def _create_branch_local_tracking(self, branch: str, remote: str, depth: int, fetch: bool = True, remove_dir: bool = False) -> None:
         """Create and checkout tracking branch
-
-        .. py:function:: _create_branch_local_tracking(self, branch, remote, depth, fetch=True, remove_dir=False)
 
         :param str branch: Branch name
         :param str remote: Remote name
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-
-        Keyword Args:
-            fetch (bool): Whether to fetch before creating branch
-            remove_dir (bool): Whether to remove the directory if commands fail
+        :param bool fetch: Whether to fetch before creating branch
+        :param bool remove_dir: Whether to remove the directory if commands fail
         """
-
-        fetch = kwargs.get('fetch', True)
-        remove_dir = kwargs.get('remove_dir', False)
 
         branch_output = fmt.ref_string(branch)
         origin = self._remote(remote, remove_dir=remove_dir)
@@ -316,8 +303,6 @@ class ProjectRepoImpl(GitRepo):
     def _create_remote(self, remote: str, url: str, remove_dir: bool = False) -> None:
         """Create new remote
 
-        .. py:function:: _create_remote(remote, url, remove_dir=False)
-
         :param str remote: Remote name
         :param str url: URL of repo
         :param bool remove_dir: Whether to remove the directory if commands fail
@@ -325,13 +310,13 @@ class ProjectRepoImpl(GitRepo):
 
         remote_names = [r.name for r in self.repo.remotes]
         if remote in remote_names:
-            return 0
+            return
 
         remote_output = fmt.remote_string(remote)
         try:
             self._print(' - Create remote ' + remote_output)
             self.repo.create_remote(remote, url)
-            return 0
+            return
         except GitError as err:
             message = colored(' - Failed to create remote ', 'red')
             if remove_dir:
@@ -386,8 +371,6 @@ class ProjectRepoImpl(GitRepo):
     def _get_remote_tag(self, tag: str, remote: str, depth: int = 0,
                         remove_dir: bool = False) -> Optional[Tag]:
         """Returns Tag object
-
-        .. py:function:: _get_remote_tag(tag, remote, depth=0, remove_dir=False)
 
         :param str tag: Tag name
         :param str remote: Remote name
@@ -546,8 +529,6 @@ class ProjectRepoImpl(GitRepo):
     def _remote(self, remote: str, remove_dir: bool = False) -> Remote:
         """Get GitPython Remote instance
 
-        .. py:function:: _remote(remote, remove_dir=False)
-
         :param str remote: Remote name
         :param bool remove_dir: Whether to remove the directory if commands fail
         :return: GitPython Remote instance
@@ -599,8 +580,6 @@ class ProjectRepoImpl(GitRepo):
 
     def _set_tracking_branch(self, remote: str, branch: str, remove_dir: bool = False) -> None:
         """Set tracking branch
-
-        .. py:function:: _set_tracking_branch(remote, branch, remove_dir=False)
 
         :param str remote: Remote name
         :param str branch: Branch name

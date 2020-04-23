@@ -5,7 +5,6 @@
 
 """
 
-import inspect
 import os
 from typing import List, Optional
 
@@ -25,7 +24,6 @@ from clowder.git.util import (
 from clowder.model.defaults import Defaults
 from clowder.model.fork import Fork
 from clowder.model.source import Source
-# from clowder.util.connectivity import is_offline
 from clowder.util.execute import execute_forall_command
 
 
@@ -95,8 +93,6 @@ class Project(object):
     def branch(self, local: bool = False, remote: bool = False) -> None:
         """Print branches for project
 
-        .. py:function:: branch(local=False, remote=False)
-
         :param bool local: Print local branches
         :param bool remote: Print remote branches
         """
@@ -122,12 +118,10 @@ class Project(object):
         self._repo(self.recursive).checkout(branch, allow_failure=True)
 
     @project_repo_exists
-    def clean(self, args: Optional[str] = '', recursive: bool = False) -> None:
+    def clean(self, args: str = '', recursive: bool = False) -> None:
         """Discard changes for project
 
-        .. py:function:: clean(args='', recursive=False)
-
-        :param Optional[str] args: Git clean options
+        :param str args: Git clean options
             - ``d`` Remove untracked directories in addition to untracked files
             - ``f`` Delete directories with .git sub directory or file
             - ``X`` Remove only files ignored by git
@@ -219,8 +213,6 @@ class Project(object):
     def get_yaml(self, resolved: bool = False) -> dict:
         """Return python object representation for saving yaml
 
-        .. py:function:: get_yaml(resolved=False)
-
         :param bool resolved: Return default ref rather than current commit sha
         :return: YAML python object
         :rtype: dict
@@ -249,41 +241,49 @@ class Project(object):
 
         return project
 
-    def herd(self, **kwargs) -> None:
+    def herd(self, branch: Optional[str] = None, tag: Optional[str] = None, depth: Optional[int] = None,
+             rebase: bool = False, parallel: bool = False) -> None:
         """Clone project or update latest from upstream
 
-        .. py:function:: herd(branch=None, tag=None, depth=0, rebase=False, parallel=False)
-
-        Keyword Args:
-            branch (str): Branch to attempt to herd
-            tag (str): Tag to attempt to herd
-            depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-            rebase (bool): Whether to use rebase instead of pulling latest changes
-            parallel (bool): Whether command is being run in parallel, affects output
+        :param Optional[str] branch: Branch to attempt to herd
+        :param Optional[str] tag: Tag to attempt to herd
+        :param Optional[int] depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :param bool rebase: Whether to use rebase instead of pulling latest changes
+        :param bool parallel: Whether command is being run in parallel, affects output
         """
-
-        branch = kwargs.get('branch', None)
-        tag = kwargs.get('tag', None)
-        depth = kwargs.get('depth', None)
-        rebase = kwargs.get('rebase', False)
-        parallel = kwargs.get('parallel', False)
 
         self._print_output = not parallel
 
         herd_depth = self.depth if depth is None else depth
         repo = self._repo(self.recursive, parallel=parallel)
+        fork_remote = None if self.fork is None else self.fork.remote
 
         if branch:
-            fork_remote = None if self.fork is None else self.fork.remote
-            self._run_herd_command('herd_branch', repo, branch,
-                                   depth=herd_depth, rebase=rebase, fork_remote=fork_remote)
+            command = 'herd_branch'
+            args = (branch,)
+            kwargs = {'depth': herd_depth, 'rebase': rebase, 'fork_remote': fork_remote}
+        elif tag:
+            command = 'herd_tag'
+            args = (tag,)
+            kwargs = {'depth': herd_depth, 'rebase': rebase}
+        else:
+            command = 'herd'
+            args = ()
+            kwargs = {'depth': herd_depth, 'rebase': rebase}
+
+        if self.fork is None:
+            getattr(repo, command)(self._url(), *args, **kwargs)
             return
 
-        if tag:
-            self._run_herd_command('herd_tag', repo, tag, depth=herd_depth, rebase=rebase)
-            return
+        self._print(self.fork.status())
+        repo.configure_remotes(self.remote, self._url(), self.fork.remote, self.fork.url())
 
-        self._run_herd_command('herd', repo, depth=herd_depth, rebase=rebase)
+        self._print(fmt.fork_string(self.name))
+        kwargs['depth'] = 0  # TODO: Can this be removed?
+        getattr(repo, command)(self._url(), *args, **kwargs)
+
+        self._print(fmt.fork_string(self.fork.name))
+        repo.herd_remote(self.fork.url(), self.fork.remote, branch=branch)
 
     def is_dirty(self) -> bool:
         """Check if project is dirty
@@ -316,8 +316,6 @@ class Project(object):
               local: bool = False, remote: bool = False) -> None:
         """Prune branch
 
-        .. py:function:: prune(branch, force=False, local=False, remote=False)
-
         :param str branch: Branch to prune
         :param bool force: Force delete branch
         :param bool local: Delete local branch
@@ -336,8 +334,6 @@ class Project(object):
 
     def reset(self, timestamp: Optional[str] = None, parallel: bool = False) -> None:
         """Reset project branch to upstream or checkout tag/sha as detached HEAD
-
-        .. py:function:: reset(timestamp=None, parallel=False)
 
         :param Optional[str] timestamp: Reset to commit at timestamp, or closest previous commit
         :param bool parallel: Whether command is being run in parallel, affects output
@@ -367,8 +363,6 @@ class Project(object):
 
     def run(self, commands: List[str], ignore_errors: bool, parallel: bool = False) -> None:
         """Run commands or script in project directory
-
-        .. py:function:: run(commands, ignore_errors, parallel=False)
 
         :param list[str] commands: Commands to run
         :param bool ignore_errors: Whether to exit if command returns a non-zero exit code
@@ -437,17 +431,15 @@ class Project(object):
     def sync(self, rebase: bool = False, parallel: bool = False) -> None:
         """Sync fork project with upstream remote
 
-        .. py:function:: sync(rebase=False, parallel=False)
-
         :param bool rebase: Whether to use rebase instead of pulling latest changes
         :param bool parallel: Whether command is being run in parallel, affects output
         """
 
         self._print_output = not parallel
 
-        repo = self._repo(self.recursive, parallel=parallel)
-        self._run_herd_command('herd', repo, rebase=rebase)
+        self.herd(rebase=rebase, parallel=parallel)
         self._print(self.fork.status())
+        repo = self._repo(self.recursive, parallel=parallel)
         repo.sync(self.fork.remote, rebase=rebase)
 
     def _print(self, val: str) -> None:
@@ -459,22 +451,19 @@ class Project(object):
         if self._print_output:
             print(val)
 
-    def _repo(self, recursive: bool, **kwargs) -> ProjectRepo:
+    def _repo(self, recursive: bool, parallel: bool = False) -> ProjectRepo:
         """Return ProjectRepo or ProjectRepoRecursive instance
 
         :param bool recursive: Whether to handle submodules
-
-        Keyword Args:
-            parallel (bool): Whether command is being run in parallel
-            print_output (bool): Whether to print output
+        :param bool parallel: Whether command is being run in parallel
 
         :return: Project repo instance
         :rtype: ProjectRepo
         """
 
         if recursive:
-            return ProjectRepoRecursive(self.full_path(), self.remote, self.ref, **kwargs)
-        return ProjectRepo(self.full_path(), self.remote, self.ref, **kwargs)
+            return ProjectRepoRecursive(self.full_path(), self.remote, self.ref, parallel=parallel)
+        return ProjectRepo(self.full_path(), self.remote, self.ref, parallel=parallel)
 
     def _run_forall_command(self, command: str, env: dict, ignore_errors: bool, parallel: bool) -> None:
         """Run command or script in project directory
@@ -499,41 +488,6 @@ class Project(object):
                 if parallel:
                     raise ClowderError(err)
                 raise ClowderExit(1)
-
-    def _run_herd_command(self, command: str, repo: ProjectRepo, *args, **kwargs) -> None:
-        """Run herd command
-
-        :param str command: Repo path
-        :param ProjectRepo repo: ProjectRepo or ProjectRepoRecursive instance
-
-        Other Parameters:
-            branch (str): Branch to attempt to herd
-            tag (str): Tag to attempt to herd
-
-        Keyword Args:
-            depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-            rebase (bool): Whether to use rebase instead of pulling latest changes
-            fork_remote (str): Fork remote name
-        """
-
-        if self.fork is None:
-            getattr(repo, command)(self._url(), *args, **kwargs)
-            return
-
-        self._print(self.fork.status())
-        repo.configure_remotes(self.remote, self._url(), self.fork.remote, self.fork.url())
-
-        self._print(fmt.fork_string(self.name))
-        kwargs['depth'] = 0
-        getattr(repo, command)(self._url(), *args, **kwargs)
-
-        self._print(fmt.fork_string(self.fork.name))
-
-        frame = inspect.currentframe()
-        vals = inspect.getargvalues(frame)
-        branch_arg = [a for a in vals.args if vals.locals[a] if vals.locals[a] == 'branch']
-        branch = branch_arg[0] if branch_arg else None
-        repo.herd_remote(self.fork.url(), self.fork.remote, branch=branch)
 
     def _url(self) -> str:
         """Return project url"""

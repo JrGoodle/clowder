@@ -68,8 +68,6 @@ def sync(clowder: ClowderController, project_names: List[str],
          rebase: bool = False, parallel: bool = False) -> None:
     """Sync projects
 
-    .. py:function:: sync(clowder, project_names, rebase=False, parallel=False)
-
     :param ClowderController clowder: ClowderController instance
     :param list[str] project_names: Project names to sync
     :param bool rebase: Whether to use rebase instead of pulling latest changes

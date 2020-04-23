@@ -6,7 +6,7 @@
 """
 
 import os
-from typing import List
+from typing import List, Optional
 
 from cement.ext.ext_argparse import ArgparseController, expose
 
@@ -77,25 +77,19 @@ class ResetController(ArgparseController):
               skip=self.app.pargs.skip, timestamp_project=timestamp_project, parallel=self.app.pargs.parallel)
 
 
-def reset(clowder: ClowderController, group_names: List[str], **kwargs) -> None:
+def reset(clowder: ClowderController, group_names: List[str], timestamp_project: Optional[str] = None,
+          parallel: bool = False, project_names: Optional[List[str]] = None, skip: Optional[List[str]] = None) -> None:
     """Reset project branches to upstream or checkout tag/sha as detached HEAD
-
-    .. py:function:: reset(clowder, group_names, timestamp_project=None, parallel=False, project_names=None, skip=[])
 
     :param ClowderController clowder: ClowderController instance
     :param list[str] group_names: Group names to reset
-
-    Keyword Args:
-        timestamp_project (str): Reference project to checkout commit timestamps of other projects relative to
-        parallel (bool): Whether command is being run in parallel, affects output
-        project_names (list[str]): Project names to reset
-        skip (list[str]): Project names to skip
+    :param Optional[str] timestamp_project: Reference project to checkout commit timestamps of other projects relative to
+    :param bool parallel: Whether command is being run in parallel, affects output
+    :param Optional[List[str]] project_names: Project names to reset
+    :param Optional[List[str]] skip: Project names to skip
     """
 
-    project_names = kwargs.get('project_names', None)
-    skip = kwargs.get('skip', [])
-    timestamp_project = kwargs.get('timestamp_project', None)
-    parallel = kwargs.get('parallel', False)
+    skip = [] if skip is None else skip
 
     if parallel:
         reset_parallel(clowder, group_names, skip=skip, timestamp_project=timestamp_project)

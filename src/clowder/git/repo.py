@@ -75,8 +75,6 @@ class GitRepo(object):
     def checkout(self, truncated_ref: str, allow_failure: bool = False) -> None:
         """Checkout git ref
 
-        .. py:function:: checkout(truncated_ref, allow_failure=False)
-
         :param str truncated_ref: Ref to git checkout
         :param bool allow_failure: Whether to allow failing to checkout branch
         """
@@ -172,24 +170,16 @@ class GitRepo(object):
 
         return branch in self.repo.heads
 
-    def fetch(self, remote: str, **kwargs) -> None:
+    def fetch(self, remote: str, ref: Optional[str] = None, depth: int = 0,
+              remove_dir: bool = False, allow_failure: bool = False) -> None:
         """Fetch from a specific remote ref
 
-        .. py:function:: fetch(remote, ref=None, depth=0, remove_dir=False, allow_failure=False)
-
         :param str remote: Remote name
-
-        Keyword Args:
-            ref (str): Ref to fetch
-            depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-            remove_dir (bool): Whether to remove the directory if commands fail
-            allow_failure (bool): Whether to allow failure
+        :param Optional[str] ref: Ref to fetch
+        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :param bool remove_dir: Whether to remove the directory if commands fail
+        :param bool allow_failure: Whether to allow failure
         """
-
-        ref = kwargs.get('ref', None)
-        depth = kwargs.get('depth', 0)
-        remove_dir = kwargs.get('remove_dir', False)
-        allow_failure = kwargs.get('allow_failure', False)
 
         remote_output = fmt.remote_string(remote)
         if depth == 0:
@@ -279,8 +269,6 @@ class GitRepo(object):
     def is_detached(self, print_output: bool = False) -> bool:
         """Check if HEAD is detached
 
-        .. py:function:: is_detached(print_output=False)
-
         :param bool print_output: Whether to print output
         :return: True, if HEAD is detached
         :rtype: bool
@@ -309,8 +297,6 @@ class GitRepo(object):
     def new_commits(self, upstream: bool = False) -> int:
         """Returns the number of new commits
 
-        .. py:function:: new_commits(upstream=False)
-
         :param bool upstream: Whether to find number of new upstream or local commits
         :return: Int number of new commits
         :rtype: int
@@ -336,8 +322,6 @@ class GitRepo(object):
 
     def print_branches(self, local: bool = False, remote: bool = False) -> None:
         """Print branches
-
-        .. py:function:: print_branches(local=False, remote=False)
 
         :param bool local: Print local branches
         :param bool remote: Print remote branches
@@ -390,8 +374,6 @@ class GitRepo(object):
 
     def sha(self, short: bool = False) -> str:
         """Return sha for currently checked out commit
-
-        .. py:function:: sha(short=False)
 
         :param bool short: Whether to return short or long commit sha
         :return: Commit sha

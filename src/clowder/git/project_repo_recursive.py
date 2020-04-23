@@ -5,6 +5,8 @@
 
 """
 
+from typing import Optional
+
 from git import GitError
 from termcolor import colored
 
@@ -65,62 +67,40 @@ class ProjectRepoRecursive(ProjectRepo):
 
         return len(self.repo.submodules) > 0
 
-    def herd(self, url: str, **kwargs) -> None:
+    def herd(self, url: str, depth: int = 0, fetch: bool = True, rebase: bool = False) -> None:
         """Herd ref
 
-        .. py:function:: herd(url, depth=0, fetch=True, rebase=False)
-
         :param str url: URL of repo
-
-        Keyword Args:
-            depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-            fetch (bool): Whether to fetch
-            rebase (bool): Whether to use rebase instead of pulling latest changes
+        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :param bool fetch: Whether to fetch
+        :param bool rebase: Whether to use rebase instead of pulling latest changes
         """
-
-        depth = kwargs.get('depth', 0)
-        fetch = kwargs.get('fetch', True)
-        rebase = kwargs.get('rebase', False)
 
         ProjectRepo.herd(self, url, depth=depth, fetch=fetch, rebase=rebase)
         self.submodule_update_recursive(depth)
 
-    def herd_branch(self, url: str, branch: str, **kwargs) -> None:
+    def herd_branch(self, url: str, branch: str, depth: int = 0, rebase: bool = False,
+                    fork_remote: Optional[str] = None) -> None:
         """Herd branch
-
-        .. py:function:: herd(url, branch, depth=0, fork_remote=None, rebase=False)
 
         :param str url: URL of repo
         :param str branch: Branch name
-
-        Keyword Args:
-            depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-            fork_remote (str): Fork remote name
-            rebase (bool): Whether to use rebase instead of pulling latest changes
+        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :param bool rebase: Whether to use rebase instead of pulling latest changes
+        :param Optional[str] fork_remote: Fork remote name
         """
-
-        depth = kwargs.get('depth', 0)
-        rebase = kwargs.get('rebase', False)
-        fork_remote = kwargs.get('fork_remote', None)
 
         ProjectRepo.herd_branch(self, url, branch, depth=depth, rebase=rebase, fork_remote=fork_remote)
         self.submodule_update_recursive(depth)
 
-    def herd_tag(self, url: str, tag: str, **kwargs) -> None:
+    def herd_tag(self, url: str, tag: str, depth: int = 0, rebase: bool = False) -> None:
         """Herd tag
-
-        .. py:function:: herd_tag(url, tag, depth=0, rebase=False)
 
         :param str url: URL of repo
         :param str tag: Tag name
-
-        Keyword Args:
-            depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-            rebase (bool): Whether to use rebase instead of pulling latest changes
+        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :param bool rebase: Whether to use rebase instead of pulling latest changes
         """
-
-        depth = kwargs.get('depth', 0)
-        rebase = kwargs.get('rebase', False)
 
         ProjectRepo.herd_tag(self, url, tag, depth=depth, rebase=rebase)
         self.submodule_update_recursive(depth)
@@ -137,8 +117,6 @@ class ProjectRepoRecursive(ProjectRepo):
 
     def submodule_update_recursive(self, depth: int = 0) -> None:
         """Update submodules recursively and initialize if not present
-
-        .. py:function:: submodule_update_recursive(depth=0)
 
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
         """
@@ -159,8 +137,6 @@ class ProjectRepoRecursive(ProjectRepo):
 
     def sync(self, fork_remote: str, rebase: bool = False) -> None:
         """Sync fork with upstream remote
-
-        .. py:function:: sync(fork_remote, rebase=False)
 
         :param str fork_remote: Fork remote name
         :param bool rebase: Whether to use rebase instead of pulling latest changes
@@ -190,16 +166,16 @@ class ProjectRepoRecursive(ProjectRepo):
         self._submodule_command('foreach', '--recursive', 'git', 'clean', '-ffdx',
                                 error_msg=' - Failed to clean submodules')
 
-    def _submodule_command(self, *args, **kwargs) -> None:
+    def _submodule_command(self, *args, error_msg: str) -> None:
         """Base submodule command
 
-        :param *args: List of args to pass to ``git submodule`` command
+        :param str error_msg: Error message
         """
 
         try:
             self.repo.git.submodule(*args)
         except (GitError, ValueError) as err:
-            message = colored(str(kwargs.get('error_msg', ' - Submodule command failed')), 'red')
+            message = colored(error_msg, 'red')
             self._print(message)
             self._print(fmt.error(err))
             self._exit(message)

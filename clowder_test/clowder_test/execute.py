@@ -9,7 +9,7 @@ import atexit
 import os
 import subprocess
 from multiprocessing.pool import ThreadPool
-from typing import List, Union
+from typing import List, Optional, Union
 
 from clowder_test import ROOT_DIR
 from clowder_test.clowder_test_error import ClowderTestError
@@ -19,33 +19,25 @@ from clowder_test.clowder_test_error import ClowderTestError
 # pylint: disable=W0703
 
 
-def execute_test_command(command: str, path: str, **kwargs) -> int:
+def execute_test_command(command: str, path: str, parallel: bool = False, write: bool = False,
+                         coverage: bool = False, test_env: Optional[dict] = None, debug: bool = False,
+                         quiet: bool = False) -> int:
     """Execute test command
-
-    .. py:function:: execute_test_command(command, path, parallel=False, write=False, coverage=False, test_env=None, debug=False, quiet=False, ssh=False)
 
     :param str command: Command to run
     :param str path: Path to set as ``cwd``
-
-    Keyword Args:
-        parallel (bool): Whether to run tests in parallel
-        write (bool): Whether to run tests requiring write permission
-        coverage (bool): Whether to run tests with code coverage
-        test_env (dict): Custom dict of environment variables
-        debug (bool): Toggle debug output
-        quiet (bool): Suppress all output
-        ssh (bool): Whether to run test scripts requiring ssh credentials
+    :param bool parallel: Whether to run tests in parallel
+    :param bool write: Whether to run tests requiring write permission
+    :param bool coverage: Whether to run tests with code coverage
+    :param Optional[dict] test_env: Custom dict of environment variables
+    :param bool debug: Toggle debug output
+    :param bool quiet: Suppress all output
 
     :return: Subprocess return code
     :rtype: int
     """
 
-    parallel = kwargs.get('parallel', False)
-    write = kwargs.get('write', False)
-    coverage = kwargs.get('coverage', False)
-    test_env = kwargs.get('test_env', {})
-    debug = kwargs.get('debug', False)
-    quiet = kwargs.get('quiet', False)
+    test_env = {} if test_env is None else test_env
 
     test_env['ACCESS_LEVEL'] = 'write' if write else 'read'
 
@@ -81,28 +73,21 @@ def subprocess_exit_handler(process: subprocess.Popen):
         del err
 
 
-def execute_subprocess_command(command: Union[str, List[str]], path: str, **kwargs) -> None:
+def execute_subprocess_command(command: Union[str, List[str]], path: str, shell: bool = True,
+                               env: Optional[dict] = None, stdout: Optional[int] = None,
+                               stderr: Optional[int] = None) -> None:
     """Execute subprocess command
-
-    .. py:function:: execute_subprocess_command(command, path, shell=True, env=None, stdout=None, stderr=None)
 
     :param command: Command to run
     :type command: str or list[str]
     :param str path: Path to set as ``cwd``
-
-    Keyword Args:
-        shell (bool): Whether to execute subprocess as ``shell``
-        env (dict): Enviroment to set as ``env``
-        stdout (int): Value to set as ``stdout``
-        stderr (int): Value to set as ``stderr``
+    :param bool shell: Whether to execute subprocess as ``shell``
+    :param Optional[dict] env: Enviroment to set as ``env``
+    :param Optional[int] stdout: Value to set as ``stdout``
+    :param Optional[int] stderr: Value to set as ``stderr``
 
     :raise ClowderTestError:
     """
-
-    shell = kwargs.get('shell', True)
-    env = kwargs.get('env', None)
-    stdout = kwargs.get('stdout', None)
-    stderr = kwargs.get('stderr', None)
 
     if isinstance(command, list):
         cmd = ' '.join(command)
@@ -122,28 +107,21 @@ def execute_subprocess_command(command: Union[str, List[str]], path: str, **kwar
         raise ClowderTestError(err)
 
 
-def execute_command(command: Union[str, List[str]], path: str, **kwargs) -> int:
+def execute_command(command: Union[str, List[str]], path: str, shell: bool = True,
+                    env: Optional[dict] = None, print_output: bool = True) -> int:
     """Execute command via thread
-
-    .. py:function:: execute_command(command, path, shell=True, env=None, print_output=True)
 
     :param command: Command to run
     :type command: str or list[str]
     :param str path: Path to set as ``cwd``
-
-    Keyword Args:
-        shell (bool): Whether to execute subprocess as ``shell``
-        env (dict): Enviroment to set as ``env``
-        print_output (bool): Whether to print output
+    :param bool shell: Whether to execute subprocess as ``shell``
+    :param Optional[dict] env: Enviroment to set as ``env``
+    :param bool print_output: Whether to print output
 
     :return: Command return code
     :rtype: int
     :raise ClowderTestError:
     """
-
-    shell = kwargs.get('shell', True)
-    env = kwargs.get('env', None)
-    print_output = kwargs.get('print_output', True)
 
     cmd_env = os.environ.copy()
     if env:

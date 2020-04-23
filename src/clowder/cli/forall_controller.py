@@ -6,7 +6,7 @@
 """
 
 import os
-from typing import List
+from typing import List, Optional
 
 from cement.ext.ext_argparse import ArgparseController, expose
 
@@ -70,25 +70,20 @@ class ForallController(ArgparseController):
 
 
 def forall(clowder: ClowderController, command: List[str], ignore_errors: bool,
-           group_names: List[str], **kwargs) -> None:
+           group_names: List[str], project_names: Optional[List[str]] = None,
+           skip: Optional[List[str]] = None, parallel: bool = False) -> None:
     """Runs script in project directories specified
-
-    .. py:function:: forall_script(clowder, command, ignore_errors, group_names, project_names=None, skip=[], parallel=False)
 
     :param ClowderController clowder: ClowderController instance
     :param list[str] command: Command or script and optional arguments
     :param bool ignore_errors: Whether to exit if command returns a non-zero exit code
     :param list[str] group_names: Group names to run command for
-
-    Keyword Args:
-        project_names (list[str]): Project names to clean
-        skip list[str]: Project names to skip
-        parallel bool: Whether command is being run in parallel, affects output
+    :param Optional[List[str]] project_names: Project names to clean
+    :param Optional[List[str]] skip: Project names to skip
+    :param bool parallel: Whether command is being run in parallel, affects output
     """
 
-    project_names = kwargs.get('project_names', None)
-    skip = kwargs.get('skip', [])
-    parallel = kwargs.get('parallel', False)
+    skip = [] if skip is None else skip
 
     projects = filter_projects(clowder.groups, group_names=group_names, project_names=project_names)
 

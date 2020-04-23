@@ -5,7 +5,7 @@
 
 """
 
-from typing import List
+from typing import List, Optional
 
 from cement.ext.ext_argparse import ArgparseController, expose
 
@@ -81,59 +81,49 @@ class CleanController(ArgparseController):
         if self.app.pargs.x:
             clean_args += 'x'
         _clean(CLOWDER_CONTROLLER, group_names=self.app.pargs.groups, project_names=self.app.pargs.projects,
-               skip=self.app.pargs.skip, args=clean_args, recursive=self.app.pargs.recursive)
+               skip=self.app.pargs.skip, clean_args=clean_args, recursive=self.app.pargs.recursive)
 
 
-def _clean(clowder: ClowderController, group_names: List[str], **kwargs) -> None:
+def _clean(clowder: ClowderController, group_names: List[str], clean_args: str = '', recursive: bool = False,
+           project_names: Optional[List[str]] = None, skip: Optional[List[str]] = None) -> None:
     """Discard changes
-
-    .. py:function:: clean(group_names, args='', recursive=False, project_names=None, skip=[])
 
     :param ClowderController clowder: ClowderController instance
     :param list[str] group_names: Group names to clean
-
-    Keyword Args:
-        args (str): Git clean options
-            - ``d`` Remove untracked directories in addition to untracked files
-            - ``f`` Delete directories with .git sub directory or file
-            - ``X`` Remove only files ignored by git
-            - ``x`` Remove all untracked files
-        recursive (bool): Clean submodules recursively
-        project_names (list[str]): Project names to clean
-        skip (list[str]): Project names to skip
+    :param str clean_args: Git clean options
+        - ``d`` Remove untracked directories in addition to untracked files
+        - ``f`` Delete directories with .git sub directory or file
+        - ``X`` Remove only files ignored by git
+        - ``x`` Remove all untracked files
+    :param bool recursive: Clean submodules recursively
+    :param Optional[List[str]] project_names: Project names to clean
+    :param Optional[List[str]] skip: Project names to skip
     """
 
-    project_names = kwargs.get('project_names', None)
-    skip = kwargs.get('skip', [])
-    args = kwargs.get('args', '')
-    recursive = kwargs.get('recursive', False)
+    skip = [] if skip is None else skip
 
     if project_names is None:
         groups = filter_groups(clowder.groups, group_names)
         for group in groups:
-            run_group_command(group, skip, 'clean', args=args, recursive=recursive)
+            run_group_command(group, skip, 'clean', args=clean_args, recursive=recursive)
         return
 
     projects = filter_projects(clowder.groups, project_names=project_names)
     for project in projects:
-        run_project_command(project, skip, 'clean', args=args, recursive=recursive)
+        run_project_command(project, skip, 'clean', args=clean_args, recursive=recursive)
 
 
-def _clean_all(clowder: ClowderController, group_names: List[str], **kwargs) -> None:
+def _clean_all(clowder: ClowderController, group_names: List[str],
+               project_names: Optional[List[str]] = None, skip: Optional[List[str]] = None) -> None:
     """Discard all changes
-
-    .. py:function:: clean_all(group_names, project_names=None, skip=[])
 
     :param ClowderController clowder: ClowderController instance
     :param list[str] group_names: Group names to clean
-
-    Keyword Args:
-        project_names (list[str]): Project names to clean
-        skip (list[str]): Project names to skip
+    :param Optional[List[str]] project_names: Project names to clean
+    :param Optional[List[str]] skip: Project names to skip
     """
 
-    project_names = kwargs.get('project_names', None)
-    skip = kwargs.get('skip', [])
+    skip = [] if skip is None else skip
 
     if project_names is None:
         groups = filter_groups(clowder.groups, group_names)

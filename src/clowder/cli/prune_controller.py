@@ -5,7 +5,7 @@
 
 """
 
-from typing import List
+from typing import List, Optional
 
 from cement.ext.ext_argparse import ArgparseController, expose
 from termcolor import cprint
@@ -102,28 +102,22 @@ class PruneController(ArgparseController):
                skip=self.app.pargs.skip, remote=True)
 
 
-def _prune(clowder: ClowderController, group_names: List[str], branch: str, **kwargs) -> None:
+def _prune(clowder: ClowderController, group_names: List[str], branch: str,
+           force: bool = False, local: bool = False, remote: bool = False,
+           project_names: Optional[List[str]] = None, skip: Optional[List[str]] = None) -> None:
     """Prune branches
-
-    .. py:function:: prune(group_names, local=False, remote=False, force=False, project_names=None, skip=[])
 
     :param ClowderController clowder: ClowderController instance
     :param list[str] group_names: Group names to prune branches for
     :param str branch: Branch to prune
-
-    Keyword Args:
-        force (bool): Force delete branch
-        local (bool): Delete local branch
-        remote (bool): Delete remote branch
-        project_names (list[str]): Project names to prune
-        skip (list[str]): Project names to skip
+    :param bool force: Force delete branch
+    :param bool local: Delete local branch
+    :param bool remote: Delete remote branch
+    :param Optional[List[str]] project_names: Project names to prune
+    :param Optional[List[str]] skip: Project names to skip
     """
 
-    project_names = kwargs.get('project_names', None)
-    skip = kwargs.get('skip', [])
-    force = kwargs.get('force', False)
-    local = kwargs.get('local', False)
-    remote = kwargs.get('remote', False)
+    skip = [] if skip is None else skip
 
     if project_names is None:
         groups = filter_groups(clowder.groups, group_names)
@@ -136,25 +130,19 @@ def _prune(clowder: ClowderController, group_names: List[str], branch: str, **kw
     _prune_projects(projects, branch, skip=skip, force=force, local=local, remote=remote)
 
 
-def _prune_groups(groups: List[Group], branch: str, **kwargs) -> None:
+def _prune_groups(groups: List[Group], branch: str, force: bool = False, local: bool = False,
+                  remote: bool = False, skip: Optional[List[str]] = None) -> None:
     """Prune group branches
-
-    .. py:function:: _prune_groups(groups, branch, local=False, remote=False, force=False, skip=[])
 
     :param list[Group] groups: Groups to prune
     :param str branch: Branch to prune
-
-    Keyword Args:
-        force (bool): Force delete branch
-        local (bool): Delete local branch
-        remote (bool): Delete remote branch
-        skip (list[str]): Project names to skip
+    :param bool force: Force delete branch
+    :param bool local: Delete local branch
+    :param bool remote: Delete remote branch
+    :param Optional[List[str]] skip: Project names to skip
     """
 
-    skip = kwargs.get('skip', [])
-    force = kwargs.get('force', False)
-    local = kwargs.get('local', False)
-    remote = kwargs.get('remote', False)
+    skip = [] if skip is None else skip
 
     local_branch_exists = existing_branch_groups(groups, branch, is_remote=False)
     remote_branch_exists = existing_branch_groups(groups, branch, is_remote=True)
@@ -169,25 +157,19 @@ def _prune_groups(groups: List[Group], branch: str, **kwargs) -> None:
                 run_group_command(group, skip, 'prune', branch, force=force, local=local, remote=remote)
 
 
-def _prune_projects(projects: List[Project], branch: str, **kwargs) -> None:
+def _prune_projects(projects: List[Project], branch: str, force: bool = False, local: bool = False,
+                    remote: bool = False, skip: Optional[List[str]] = None) -> None:
     """Prune project branches
-
-    .. py:function:: _prune_projects(projects, branch, local=False, remote=False, force=False, skip=[])
 
     :param list[Project] projects: Projects to prune
     :param str branch: Branch to prune
-
-    Keyword Args:
-        force (bool): Force delete branch
-        local (bool): Delete local branch
-        remote (bool): Delete remote branch
-        skip (list[str]): Project names to skip
+    :param bool force: Force delete branch
+    :param bool local: Delete local branch
+    :param bool remote: Delete remote branch
+    :param Optional[List[str]] skip: Project names to skip
     """
 
-    skip = kwargs.get('skip', [])
-    force = kwargs.get('force', False)
-    local = kwargs.get('local', False)
-    remote = kwargs.get('remote', False)
+    skip = [] if skip is None else skip
 
     local_branch_exists = existing_branch_projects(projects, branch, is_remote=False)
     remote_branch_exists = existing_branch_projects(projects, branch, is_remote=True)
@@ -203,8 +185,6 @@ def _prune_projects(projects: List[Project], branch: str, **kwargs) -> None:
 
 def _validate_branches(local: bool, remote: bool, local_branch_exists: bool, remote_branch_exists: bool) -> None:
     """Prune project branches
-
-    .. py:function:: _prune_projects(projects, branch, local=False, remote=False, force=False, skip=[])
 
     :param bool local: Delete local branch
     :param bool remote: Delete remote branch

@@ -50,8 +50,6 @@ class ProjectRepo(ProjectRepoImpl):
     def create_clowder_repo(self, url: str, branch: str, depth: int = 0) -> None:
         """Clone clowder git repo from url at path
 
-        .. py:function:: create_clowder_repo(url, branch, depth=0)
-
         :param str url: URL of repo
         :param str branch: Branch name
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
@@ -92,22 +90,14 @@ class ProjectRepo(ProjectRepoImpl):
                     self._rename_remote(remote.name, fork_remote_name)
             self._compare_remotes(upstream_remote_name, upstream_remote_url, fork_remote_name, fork_remote_url)
 
-    def herd(self, url: str, **kwargs) -> None:
+    def herd(self, url: str, depth: int = 0, fetch: bool = True, rebase: bool = False) -> None:
         """Herd ref
 
-        .. py:function:: herd(url, depth=0, fetch=True, rebase=False)
-
         :param str url: URL of repo
-
-        Keyword Args:
-            depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-            fetch (bool): Whether to fetch
-            rebase (bool): Whether to use rebase instead of pulling latest changes
+        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :param bool fetch: Whether to fetch
+        :param bool rebase: Whether to use rebase instead of pulling latest changes
         """
-
-        depth = kwargs.get('depth', 0)
-        fetch = kwargs.get('fetch', True)
-        rebase = kwargs.get('rebase', False)
 
         if not existing_git_repository(self.repo_path):
             self._herd_initial(url, depth=depth)
@@ -116,23 +106,16 @@ class ProjectRepo(ProjectRepoImpl):
         self._create_remote(self.remote, url)
         self._herd(self.remote, self.default_ref, depth=depth, fetch=fetch, rebase=rebase)
 
-    def herd_branch(self, url: str, branch: str, **kwargs) -> None:
+    def herd_branch(self, url: str, branch: str, depth: int = 0, rebase: bool = False,
+                    fork_remote: Optional[str] = None) -> None:
         """Herd branch
-
-        .. py:function:: herd_branch(url, branch, depth=0, fork_remote=None, rebase=False)
 
         :param str url: URL of repo
         :param str branch: Branch name
-
-        Keyword Args:
-            depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-            fork_remote (str): Fork remote name
-            rebase (bool): Whether to use rebase instead of pulling latest changes
+        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :param bool rebase: Whether to use rebase instead of pulling latest changes
+        :param Optional[str] fork_remote: Fork remote name
         """
-
-        depth = kwargs.get('depth', 0)
-        rebase = kwargs.get('rebase', False)
-        fork_remote = kwargs.get('fork_remote', None)
 
         if not existing_git_repository(self.repo_path):
             self._herd_branch_initial(url, branch, depth=depth)
@@ -163,21 +146,14 @@ class ProjectRepo(ProjectRepoImpl):
         fetch = depth != 0
         self.herd(url, depth=depth, fetch=fetch, rebase=rebase)
 
-    def herd_tag(self, url: str, tag: str, **kwargs) -> None:
+    def herd_tag(self, url: str, tag: str, depth: int = 0, rebase: bool = False) -> None:
         """Herd tag
-
-        .. py:function:: herd_tag(url, tag, depth=0, rebase=False)
 
         :param str url: URL of repo
         :param str tag: Tag name
-
-        Keyword Args:
-            depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-            rebase (bool): Whether to use rebase instead of pulling latest changes
+        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :param bool rebase: Whether to use rebase instead of pulling latest changes
         """
-
-        depth = kwargs.get('depth', 0)
-        rebase = kwargs.get('rebase', False)
 
         if not existing_git_repository(self.repo_path):
             self._init_repo()
@@ -278,8 +254,6 @@ class ProjectRepo(ProjectRepoImpl):
     def reset(self, depth: int = 0) -> None:
         """Reset branch to upstream or checkout tag/sha as detached HEAD
 
-        .. py:function:: reset(depth=0)
-
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
         """
 
@@ -365,8 +339,6 @@ class ProjectRepo(ProjectRepoImpl):
     def sync(self, fork_remote: str, rebase: bool = False) -> None:
         """Sync fork with upstream remote
 
-        .. py:function:: sync(fork_remote, rebase=False)
-
         :param str fork_remote: Fork remote name
         :param bool rebase: Whether to use rebase instead of pulling latest changes.
         """
@@ -410,23 +382,15 @@ class ProjectRepo(ProjectRepoImpl):
         if fork_remote_name in remote_names:
             self._compare_remote_url(fork_remote_name, fork_remote_url)
 
-    def _herd(self, remote: str, ref: str, **kwargs) -> None:
+    def _herd(self, remote: str, ref: str, depth: int = 0, fetch: bool = True, rebase: bool = False) -> None:
         """Herd ref
-
-        .. py:function:: _herd(remote, ref, depth=0, fetch=True, rebase=False)
 
         :param str remote: Remote name
         :param str ref: Git ref
-
-        Keyword Args:
-            depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-            fetch (bool): Whether to fetch
-            rebase (bool): Whether to use rebase instead of pulling latest changes
+        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :param bool fetch: Whether to fetch
+        :param bool rebase: Whether to use rebase instead of pulling latest changes
         """
-
-        depth = kwargs.get('depth', 0)
-        fetch = kwargs.get('fetch', True)
-        rebase = kwargs.get('rebase', False)
 
         if ref_type(ref) == 'tag':
             self.fetch(remote, depth=depth, ref=ref)
@@ -445,22 +409,15 @@ class ProjectRepo(ProjectRepoImpl):
 
         self._herd_existing_local(remote, branch, depth=depth, rebase=rebase)
 
-    def _herd_branch_existing_local(self, branch: str, **kwargs) -> None:
+    def _herd_branch_existing_local(self, branch: str, depth: int = 0, rebase: bool = False,
+                                    fork_remote: Optional[str] = None) -> None:
         """Herd branch for existing local branch
 
-        .. py:function:: herd_branch_existing_local(branch, depth=0, fork_remote=None, rebase=False)
-
         :param str branch: Branch name
-
-        Keyword Args:
-            depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-            fork_remote (str): Fork remote name
-            rebase (bool): Whether to use rebase instead of pulling latest changes
+        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :param bool rebase: Whether to use rebase instead of pulling latest changes
+        :param Optional[str] fork_remote: Fork remote name
         """
-
-        depth = kwargs.get('depth', 0)
-        rebase = kwargs.get('rebase', False)
-        fork_remote = kwargs.get('fork_remote', None)
 
         self._checkout_branch(branch)
 
@@ -478,8 +435,6 @@ class ProjectRepo(ProjectRepoImpl):
     def _herd_branch_initial(self, url: str, branch: str, depth: int = 0) -> None:
         """Herd branch initial
 
-        .. py:function:: _herd_branch_initial(url, branch, depth=0)
-
         :param str url: URL of repo
         :param str branch: Branch name to attempt to herd
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
@@ -495,21 +450,14 @@ class ProjectRepo(ProjectRepoImpl):
             return
         self._create_branch_local_tracking(branch, self.remote, depth=depth, fetch=False, remove_dir=True)
 
-    def _herd_existing_local(self, remote: str, branch: str, **kwargs) -> None:
+    def _herd_existing_local(self, remote: str, branch: str, depth: int = 0, rebase: bool = False) -> None:
         """Herd ref
-
-        .. py:function:: _herd_existing_local(remote, ref, depth=0, fetch=True, rebase=False)
 
         :param str remote: Remote name
         :param str branch: Git branch name
-
-        Keyword Args:
-            depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-            rebase (bool): Whether to use rebase instead of pulling latest changes
+        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :param bool rebase: Whether to use rebase instead of pulling latest changes
         """
-
-        depth = kwargs.get('depth', 0)
-        rebase = kwargs.get('rebase', False)
 
         self._checkout_branch(branch)
 
@@ -529,8 +477,6 @@ class ProjectRepo(ProjectRepoImpl):
     def _herd_initial(self, url: str, depth: int = 0) -> None:
         """Herd ref initial
 
-        .. py:function:: _herd_initial(url, depth=0)
-
         :param str url: URL of repo
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
         """
@@ -544,21 +490,14 @@ class ProjectRepo(ProjectRepoImpl):
         elif ref_type(self.default_ref) == 'sha':
             self._checkout_new_repo_commit(self.default_ref, self.remote, depth)
 
-    def _herd_remote_branch(self, remote: str, branch: str, **kwargs) -> None:
+    def _herd_remote_branch(self, remote: str, branch: str, depth: int = 0, rebase: bool = False) -> None:
         """Herd remote branch
-
-        .. py:function:: _herd_remote_branch(remote, branch, depth=0, rebase=False)
 
         :param str remote: Remote name
         :param str branch: Branch name to attempt to herd
-
-        Keyword Args:
-            depth (int): Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-            rebase (bool): Whether to use rebase instead of pulling latest changes
+        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :param bool rebase: Whether to use rebase instead of pulling latest changes
         """
-
-        depth = kwargs.get('depth', 0)
-        rebase = kwargs.get('rebase', False)
 
         if not self._is_tracking_branch(branch):
             self._set_tracking_branch_commit(branch, remote, depth)
