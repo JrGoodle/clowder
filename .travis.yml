@@ -29,9 +29,9 @@ jobs:
 addons:
   homebrew:
     packages:
-    - python3
+    # - python3
     - github-release
-    # update: true
+    update: true
 
 install: script/travis/install
 
