@@ -14,6 +14,7 @@ echo "deploy"
 # fi
 
 echo "TEST: PATH: $PATH"
+echo "TEST: brew info python3: $(brew info python3)"
 echo "TEST: python3 version: $(python3 --version)"
 echo "TEST: python3 which: $(which python3)"
 echo "TEST: github-release version: $(github-release --version)"

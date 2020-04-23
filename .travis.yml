@@ -29,7 +29,7 @@ jobs:
 addons:
   homebrew:
     packages:
-    # - python3
+    - python3
     - github-release
     update: true
 
