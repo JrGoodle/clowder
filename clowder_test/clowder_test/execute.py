@@ -53,7 +53,7 @@ def execute_test_command(command: str, path: str, parallel: bool = False, write:
 
 
 def execute_command(command: str, path: str, env: Optional[dict] = None, print_output: bool = True) -> None:
-    """Execute command via thread
+    """Execute command via subprocess
 
     :param str command: Command to run
     :param str path: Path to set as ``cwd``

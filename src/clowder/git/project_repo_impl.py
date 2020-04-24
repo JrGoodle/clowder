@@ -240,7 +240,8 @@ class ProjectRepoImpl(GitRepo):
         except (KeyboardInterrupt, SystemExit):
             self._exit()
 
-    def _create_branch_local_tracking(self, branch: str, remote: str, depth: int, fetch: bool = True, remove_dir: bool = False) -> None:
+    def _create_branch_local_tracking(self, branch: str, remote: str, depth: int,
+                                      fetch: bool = True, remove_dir: bool = False) -> None:
         """Create and checkout tracking branch
 
         :param str branch: Branch name

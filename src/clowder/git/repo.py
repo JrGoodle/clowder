@@ -6,7 +6,6 @@
 """
 
 import os
-import subprocess
 from typing import Optional
 
 from git import Repo, GitError
@@ -292,7 +291,7 @@ class GitRepo(object):
         if not os.path.isdir(self.repo_path):
             return False
 
-        return self.repo.is_dirty() or self._is_rebase_in_progress() or self._untracked_files()
+        return self.repo.is_dirty() or self._is_rebase_in_progress() or self._has_untracked_files()
 
     def new_commits(self, upstream: bool = False) -> int:
         """Returns the number of new commits
@@ -603,22 +602,11 @@ class GitRepo(object):
         else:
             return
 
-    def _untracked_files(self) -> bool:
+    def _has_untracked_files(self) -> bool:
         """Check whether untracked files exist
 
         :return: True, if untracked files exist
         :rtype: bool
         """
 
-        command = "git ls-files -o -d --exclude-standard | sed q | wc -l| tr -d '[:space:]'"
-        try:
-            output = subprocess.check_output(command, shell=True, cwd=self.repo_path)
-        except GitError as err:
-            message = colored(' - Failed to check untracked files', 'red')
-            self._print(message)
-            self._print(fmt.error(err))
-            self._exit(message)
-        except (KeyboardInterrupt, SystemExit):
-            self._exit()
-        else:
-            return output.decode('utf-8') == '1'
+        return True if self.repo.untracked_files else False
