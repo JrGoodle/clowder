@@ -599,8 +599,6 @@ class GitRepo(object):
             self._exit(message)
         except (KeyboardInterrupt, SystemExit):
             self._exit()
-        else:
-            return
 
     def _has_untracked_files(self) -> bool:
         """Check whether untracked files exist

@@ -145,7 +145,6 @@ class ProjectRepoImpl(GitRepo):
         try:
             self._print(' - Checkout tag ' + tag_output)
             self.repo.git.checkout(remote_tag)
-            return
         except GitError as err:
             message = colored(' - Failed to checkout tag ', 'red')
             self._print(message + tag_output)
@@ -153,7 +152,6 @@ class ProjectRepoImpl(GitRepo):
             if remove_dir:
                 remove_directory(self.repo_path)
                 self._exit(fmt.parallel_exception_error(self.repo_path, message, tag_output))
-            return
         except (KeyboardInterrupt, SystemExit):
             if remove_dir:
                 remove_directory(self.repo_path)
@@ -378,7 +376,7 @@ class ProjectRepoImpl(GitRepo):
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
         :param bool remove_dir: Whether to remove the directory if commands fail
         :return: GitPython Tag object if it exists, otherwise None
-        :rtype: Tag
+        :rtype: Optional[Tag]
         """
 
         tag_output = fmt.ref_string(tag)
