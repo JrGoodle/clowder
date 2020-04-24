@@ -22,7 +22,7 @@ def post_argument_parsing_hook(app):
     execute_command('./setup_local_test_directory.sh', os.path.join(ROOT_DIR, 'test', 'scripts'))
 
 
-class ClowderApp(App):
+class ClowderTestApp(App):
     """Clowder command CLI app"""
 
     class Meta:
@@ -46,7 +46,7 @@ def main():
     """Clowder command CLI main function"""
 
     print()
-    with ClowderApp() as app:
+    with ClowderTestApp() as app:
         app.run()
 
 
