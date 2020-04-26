@@ -55,7 +55,8 @@ def validate_yaml(yaml_file: str, depth: int = __MAX_IMPORT_DEPTH__):
         raise ClowderYAMLError(fmt.missing_imported_yaml_error(imported_yaml_file, yaml_file))
 
     try:
-        validate_yaml(imported_yaml_file, depth=depth - 1)
+        current_depth = depth - 1
+        validate_yaml(imported_yaml_file, depth=current_depth)
     except ClowderYAMLError as err:
         raise ClowderYAMLError(err)
     except (KeyboardInterrupt, SystemExit):
