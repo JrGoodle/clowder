@@ -43,3 +43,4 @@ class ClowderYAMLYErrorType(IntEnum):
     DEPTH = 111
     TYPE = 112
     MISSING_REPO = 113
+    SOURCE_NOT_FOUND = 114

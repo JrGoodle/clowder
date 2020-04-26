@@ -10,7 +10,9 @@ from typing import List
 
 from termcolor import colored
 
+import clowder.util.formatting as fmt
 from clowder import ROOT_DIR
+from clowder.error.clowder_yaml_error import ClowderYAMLError, ClowderYAMLYErrorType
 from clowder.git.project_repo import ProjectRepo
 from clowder.git.util import (
     existing_git_repository,
@@ -27,12 +29,13 @@ class Fork(object):
     :ivar str remote: Git remote name
     """
 
-    def __init__(self, fork: dict, path: str, project_source: Source,
+    def __init__(self, fork: dict, path: str, project_name: str, project_source: Source,
                  sources: List[Source], project_ref: str, recursive: bool):
         """Project __init__
 
         :param dict fork: Parsed YAML python object for fork
         :param str path: Fork relative path
+        :param str project_name: Parent project name
         :param Source project_source: Source instance from project
         :param list[Source] sources: List of Source instances
         :param str project_ref: Git ref from project
@@ -50,6 +53,10 @@ class Fork(object):
         for s in sources:
             if s.name == source_name:
                 self._source = s
+        if self._source is None:
+            # FIXME: This should be in validation
+            raise ClowderYAMLError(fmt.source_not_found_error(source_name, project_name, fork=self.name),
+                                   ClowderYAMLYErrorType.SOURCE_NOT_FOUND)
 
     def full_path(self) -> str:
         """Return full path to project

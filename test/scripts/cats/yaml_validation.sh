@@ -69,6 +69,7 @@ test_invalid_yaml() {
     _test_invalid_yaml 'ls -d test-arg-type-root*' '112'
     _test_invalid_yaml 'ls -d test-arg-type-source*' '112'
     _test_invalid_yaml 'ls -d test-arg-type-timestamp*' '112'
+    _test_invalid_yaml 'ls -d test-source-not-found*' '114'
 
     $COMMAND repo checkout master || exit 1
     pushd .clowder || exit 1
