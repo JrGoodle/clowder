@@ -12,6 +12,10 @@ print_double_separator
 echo "TEST: Test yaml validation"
 
 test_invalid_yaml() {
+    $COMMAND repo checkout yaml-validation || exit 1
+    pushd .clowder || exit 1
+    test_branch yaml-validation
+    popd || exit 1
     pushd .clowder/versions || exit 1
     test_cases=( $(ls -d test-*) )
     popd || exit 1
@@ -28,5 +32,9 @@ test_invalid_yaml() {
         print_single_separator
         rm clowder.yaml || exit 1
     done
+    $COMMAND repo checkout master || exit 1
+    pushd .clowder || exit 1
+    test_branch master
+    popd || exit 1
 }
 test_invalid_yaml

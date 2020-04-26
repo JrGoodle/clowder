@@ -54,6 +54,11 @@ test_help() {
     ./clean.sh
     ./init.sh || exit 1
 
+    $COMMAND repo checkout yaml-validation || exit 1
+    pushd .clowder || exit 1
+    test_branch yaml-validation
+    popd || exit 1
+
     echo "TEST: Print help with invalid clowder.yaml"
     $COMMAND link -v 'test-missing-default-ref' || exit 1
     _test_help
@@ -62,5 +67,10 @@ test_help() {
     echo "TEST: Print help with valid clowder.yaml"
     $COMMAND link || exit 1
     _test_help
+
+    $COMMAND repo checkout master || exit 1
+    pushd .clowder || exit 1
+    test_branch master
+    popd || exit 1
 }
 test_help
