@@ -14,7 +14,7 @@ import clowder.util.formatting as fmt
 from clowder import ROOT_DIR
 from clowder.error.clowder_error import ClowderError
 from clowder.error.clowder_exit import ClowderExit
-from clowder.error.clowder_yaml_error import ClowderYAMLError
+from clowder.error.clowder_yaml_error import ClowderYAMLError, ClowderYAMLYErrorType
 from clowder.git.project_repo import ProjectRepo
 from clowder.git.project_repo_recursive import ProjectRepoRecursive
 from clowder.git.util import (
@@ -86,7 +86,9 @@ class Project(object):
         if 'fork' in project:
             fork = project['fork']
             if fork['remote'] == self.remote:
-                raise ClowderYAMLError(fmt.remote_name_error(fork['name'], self.name, self.remote))
+                # FIXME: This should be in validation
+                raise ClowderYAMLError(fmt.remote_name_error(fork['name'], self.name, self.remote),
+                                       ClowderYAMLYErrorType.REMOTE_NAME)
             self.fork = Fork(fork, self.path, self.source, sources, self.ref, self.recursive)
 
     @project_repo_exists

@@ -13,6 +13,7 @@ import clowder.util.formatting as fmt
 from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.clowder_repo import CLOWDER_REPO
 from clowder.error.clowder_exit import ClowderExit
+from clowder.error.clowder_yaml_error import ClowderYAMLError, ClowderYAMLYErrorType
 
 
 def clowder_required(func):
@@ -52,7 +53,9 @@ def _invalid_yaml_error(error: Exception):
 
     print(fmt.invalid_yaml_error())
     print(fmt.error(error))
-    raise ClowderExit(42)
+    if isinstance(error, ClowderYAMLError):
+        raise ClowderExit(error.code)
+    raise ClowderExit(ClowderYAMLYErrorType.UNKNOWN)
 
 
 def _validate_clowder_repo_exists():
@@ -63,4 +66,4 @@ def _validate_clowder_repo_exists():
 
     if not os.path.isdir(CLOWDER_REPO.clowder_path):
         cprint(' - No .clowder found in the current directory\n', 'red')
-        raise ClowderExit(1)
+        raise ClowderExit(ClowderYAMLYErrorType.MISSING_REPO)

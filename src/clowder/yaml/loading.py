@@ -12,7 +12,7 @@ from termcolor import colored
 import clowder.util.formatting as fmt
 from clowder import ROOT_DIR
 from clowder.error.clowder_exit import ClowderExit
-from clowder.error.clowder_yaml_error import ClowderYAMLError
+from clowder.error.clowder_yaml_error import ClowderYAMLError, ClowderYAMLYErrorType
 from clowder.util.clowder_utils import get_clowder_yaml_import_path
 from clowder.yaml import __MAX_IMPORT_DEPTH__
 from clowder.yaml.parsing import parse_yaml
@@ -38,7 +38,8 @@ def load_yaml():
 
         parsed_yaml = parse_yaml(imported_yaml_file)
         if len(imported_yaml_files) > __MAX_IMPORT_DEPTH__:
-            raise ClowderYAMLError(fmt.recursive_import_error(__MAX_IMPORT_DEPTH__))
+            raise ClowderYAMLError(fmt.recursive_import_error(__MAX_IMPORT_DEPTH__),
+                                   ClowderYAMLYErrorType.RECURSIVE_IMPORT)
 
     for parsed_yaml in reversed(imported_yaml_files):
         _load_yaml_import(parsed_yaml, combined_yaml)
