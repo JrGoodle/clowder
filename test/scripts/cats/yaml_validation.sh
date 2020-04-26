@@ -6,10 +6,38 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
 
 cd "$CATS_EXAMPLE_DIR" || exit 1
 ./clean.sh
-./init.sh
 
 print_double_separator
 echo "TEST: Test yaml validation"
+
+test_missing_repo() {
+    print_single_separator
+    $COMMAND herd
+    exit_code=$?
+    echo "Expected exit code: $1"
+    echo "Actual exit code: $exit_code"
+    if [ "$exit_code" != "$1" ]; then
+        exit 1
+    fi
+    print_single_separator
+}
+test_missing_repo '113'
+
+./init.sh
+
+test_missing_yaml() {
+    print_single_separator
+    rm -f clowder.yaml || exit 1
+    $COMMAND herd
+    exit_code=$?
+    echo "Expected exit code: $1"
+    echo "Actual exit code: $exit_code"
+    if [ "$exit_code" != "$1" ]; then
+        exit 1
+    fi
+    print_single_separator
+}
+test_missing_yaml '104'
 
 _test_invalid_yaml() {
     pushd .clowder/versions || exit 1
@@ -58,6 +86,7 @@ test_invalid_yaml() {
     _test_invalid_yaml 'ls -d test-import-missing-clowder*' '105'
     _test_invalid_yaml 'ls -d test-empty-import*' '106'
     _test_invalid_yaml 'ls -d test-empty-yaml*' '106'
+    _test_invalid_yaml 'ls -d test-arg-value-protocol*' '108'
     _test_invalid_yaml 'ls -d test-arg-value-ref*' '109'
     _test_invalid_yaml 'ls -d test-arg-type-depth*' '111'
     _test_invalid_yaml 'ls -d test-arg-type-defaults*' '112'
