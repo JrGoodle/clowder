@@ -58,7 +58,7 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
         print_double_separator
         echo "TEST: Forks"
         $COMMAND link || exit 1
-        $COMMAND herd $PROTOCOL $PARALLEL || exit 1
+        $COMMAND herd $PARALLEL || exit 1
 
         $COMMAND start -t fail_start && exit 1
         $COMMAND prune -a fail_start || exit 1
@@ -96,7 +96,7 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
             popd || exit 1
         done
 
-        $COMMAND herd $PROTOCOL $PARALLEL || exit 1
+        $COMMAND herd $PARALLEL || exit 1
         $COMMAND status || exit 1
 
         for project in "${project_paths[@]}"; do
@@ -121,7 +121,7 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
             popd || exit 1
         done
 
-        $COMMAND herd $PROTOCOL $PARALLEL -b start_tracking || exit 1
+        $COMMAND herd $PARALLEL -b start_tracking || exit 1
         $COMMAND status || exit 1
 
         for project in "${project_paths[@]}"; do
