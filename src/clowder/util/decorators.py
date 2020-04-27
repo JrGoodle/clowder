@@ -6,6 +6,7 @@
 """
 
 import os
+from functools import wraps
 
 from termcolor import cprint
 
@@ -19,6 +20,7 @@ from clowder.error.clowder_yaml_error import ClowderYAMLError, ClowderYAMLYError
 def clowder_required(func):
     """If no clowder repo, print clowder not found message and exit"""
 
+    @wraps(func)
     def wrapper(*args, **kwargs):
         """Wrapper"""
 
@@ -31,6 +33,7 @@ def clowder_required(func):
 def valid_clowder_yaml_required(func):
     """If clowder.yaml is invalid, print invalid yaml message and exit"""
 
+    @wraps(func)
     def wrapper(*args, **kwargs):
         """Wrapper"""
 

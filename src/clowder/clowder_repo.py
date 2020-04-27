@@ -7,6 +7,7 @@
 
 import atexit
 import os
+from functools import wraps
 
 from termcolor import colored
 
@@ -218,6 +219,7 @@ CLOWDER_REPO = ClowderRepo()
 def print_clowder_repo_status(func):
     """Print clowder repo status"""
 
+    @wraps(func)
     def wrapper(*args, **kwargs):
         """Wrapper"""
 
@@ -230,6 +232,7 @@ def print_clowder_repo_status(func):
 def print_clowder_repo_status_fetch(func):
     """Print clowder repo status"""
 
+    @wraps(func)
     def wrapper(*args, **kwargs):
         """Wrapper"""
 

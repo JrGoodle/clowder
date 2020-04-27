@@ -6,6 +6,7 @@
 """
 
 import os
+from functools import wraps
 from typing import List, Optional
 
 from termcolor import colored, cprint
@@ -30,6 +31,7 @@ from clowder.util.execute import execute_forall_command
 def project_repo_exists(func):
     """If no git repo exists, print message and return"""
 
+    @wraps(func)
     def wrapper(*args, **kwargs):
         """Wrapper"""
 

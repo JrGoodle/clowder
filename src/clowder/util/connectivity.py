@@ -5,8 +5,8 @@
 
 """
 
-
 import socket
+from functools import wraps
 
 import clowder.util.formatting as fmt
 from clowder.error.clowder_exit import ClowderExit
@@ -40,6 +40,7 @@ def is_offline(host: str = '8.8.8.8', port: int = 53, timeout: int = 3) -> bool:
 def network_connection_required(func):
     """If no network connection, print offline message and exit"""
 
+    @wraps(func)
     def wrapper(*args, **kwargs):
         """Wrapper
 
