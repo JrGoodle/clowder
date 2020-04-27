@@ -14,7 +14,7 @@ import clowder.util.formatting as fmt
 from clowder import ROOT_DIR
 from clowder.error.clowder_error import ClowderError
 from clowder.error.clowder_exit import ClowderExit
-from clowder.error.clowder_yaml_error import ClowderYAMLError
+from clowder.error.clowder_yaml_error import ClowderYAMLError, ClowderYAMLYErrorType
 from clowder.git.project_repo import ProjectRepo
 from clowder.git.project_repo_recursive import ProjectRepoRecursive
 from clowder.git.util import (
@@ -52,7 +52,7 @@ class Project(object):
     :ivar int depth: Depth to clone project repo
     :ivar bool recursive: Whether to recursively clone submodules
     :ivar Source source: Default source
-    :ivar Fork fork: Project's associated Fork
+    :ivar Optional[Fork] fork: Project's associated Fork
     """
 
     def __init__(self, project: dict, group: dict, defaults: Defaults, sources: List[Source]):
@@ -81,13 +81,19 @@ class Project(object):
         for source in sources:
             if source.name == source_name:
                 self.source = source
+        if self.source is None:
+            # FIXME: This should be in validation
+            raise ClowderYAMLError(fmt.source_not_found_error(source_name, self.name),
+                                   ClowderYAMLYErrorType.SOURCE_NOT_FOUND)
 
         self.fork = None
         if 'fork' in project:
             fork = project['fork']
             if fork['remote'] == self.remote:
-                raise ClowderYAMLError(fmt.remote_name_error(fork['name'], self.name, self.remote))
-            self.fork = Fork(fork, self.path, self.source, sources, self.ref, self.recursive)
+                # FIXME: This should be in validation
+                raise ClowderYAMLError(fmt.remote_name_error(fork['name'], self.name, self.remote),
+                                       ClowderYAMLYErrorType.REMOTE_NAME)
+            self.fork = Fork(fork, self.path, self.name, self.source, sources, self.ref, self.recursive)
 
     @project_repo_exists
     def branch(self, local: bool = False, remote: bool = False) -> None:

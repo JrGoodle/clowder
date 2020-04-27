@@ -5,6 +5,8 @@
 
 """
 
+from typing import Optional
+
 # noinspection PyPackageRequirements
 import yaml
 from termcolor import colored, cprint
@@ -386,6 +388,25 @@ def skip_project_message() -> str:
     """
 
     return ' - Skip project'
+
+
+def source_not_found_error(source: str, project: str, fork: Optional[str] = None) -> str:
+    """Return formatted error string for project with unknown source specified
+
+    :param str source: Source name
+    :param str project: Project name
+    :param Optional[str] fork: Fork name
+    :return: Formatted source not found error
+    :rtype: str
+    """
+
+    output_1 = colored(' - Error: source ', 'red') + colored(source, attrs=['bold'])
+    output_2 = ''
+    if fork:
+        output_2 = colored(' for fork ', 'red') + colored(fork, attrs=['bold'])
+    output_3 = colored(' specified in project ', 'red') + colored(project, attrs=['bold'])
+    output_4 = colored(' not found in sources', 'red')
+    return output_1 + output_2 + output_3 + output_4
 
 
 def type_error(name: str, yml: str, type_name: str) -> str:

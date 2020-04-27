@@ -8,7 +8,7 @@
 from clowder.yaml.validation.util import (
     validate_empty,
     validate_not_empty,
-    validate_optional_string,
+    validate_optional_protocol,
     validate_required_string,
     validate_type
 )
@@ -32,6 +32,6 @@ def validate_yaml_sources(sources: dict, yaml_file: str) -> None:
         for arg in args:
             validate_required_string(source, 'source', arg, yaml_file)
 
-        validate_optional_string(source, 'protocol', yaml_file)
+        validate_optional_protocol(source, yaml_file)
 
         validate_empty(source, 'source', yaml_file)

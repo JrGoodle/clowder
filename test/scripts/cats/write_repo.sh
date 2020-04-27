@@ -18,7 +18,6 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
         echo "TEST: Test clowder repo commit, clowder repo pull, clowder repo push commands"
         $COMMAND repo checkout repo-test || exit 1
         pushd .clowder || exit 1
-        # git checkout repo-test || exit 1
         ORIGINAL_COMMIT="$(git rev-parse HEAD)"
         test_branch repo-test
         popd || exit 1
@@ -43,9 +42,9 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
         $COMMAND repo run 'git reset --hard HEAD~1' || exit 1
         $COMMAND repo run 'git push origin repo-test --force' || exit 1
         $COMMAND repo checkout master || exit 1
-        # pushd .clowder || exit 1
-        # git checkout master || exit 1
-        # popd || exit 1
+        pushd .clowder || exit 1
+        test_branch master || exit 1
+        popd || exit 1
     }
     test_clowder_repo_commit_pull_push
 fi

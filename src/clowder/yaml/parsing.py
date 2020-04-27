@@ -12,7 +12,7 @@ import yaml
 
 import clowder.util.formatting as fmt
 from clowder.error.clowder_exit import ClowderExit
-from clowder.error.clowder_yaml_error import ClowderYAMLError
+from clowder.error.clowder_yaml_error import ClowderYAMLError, ClowderYAMLYErrorType
 
 
 def parse_yaml(yaml_file: str) -> dict:
@@ -27,15 +27,15 @@ def parse_yaml(yaml_file: str) -> dict:
     """
 
     if not os.path.isfile(yaml_file):
-        raise ClowderYAMLError(fmt.missing_yaml_error())
+        raise ClowderYAMLError(fmt.missing_yaml_error(), ClowderYAMLYErrorType.MISSING_YAML)
 
     try:
         with open(yaml_file) as raw_file:
             parsed_yaml = yaml.safe_load(raw_file)
             if parsed_yaml is None:
-                raise ClowderYAMLError(fmt.empty_yaml_error(yaml_file))
+                raise ClowderYAMLError(fmt.empty_yaml_error(yaml_file), ClowderYAMLYErrorType.EMPTY_YAML)
             return parsed_yaml
     except yaml.YAMLError:
-        raise ClowderYAMLError(fmt.open_file_error(yaml_file))
+        raise ClowderYAMLError(fmt.open_file_error(yaml_file), ClowderYAMLYErrorType.OPEN_FILE)
     except (KeyboardInterrupt, SystemExit):
         raise ClowderExit(1)

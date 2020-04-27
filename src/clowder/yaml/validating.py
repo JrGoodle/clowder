@@ -9,7 +9,7 @@ import os
 
 import clowder.util.formatting as fmt
 from clowder.error.clowder_exit import ClowderExit
-from clowder.error.clowder_yaml_error import ClowderYAMLError
+from clowder.error.clowder_yaml_error import ClowderYAMLError, ClowderYAMLYErrorType
 from clowder.util.clowder_utils import get_clowder_yaml_import_path
 from clowder.yaml import __MAX_IMPORT_DEPTH__
 from clowder.yaml.parsing import parse_yaml
@@ -42,7 +42,7 @@ def validate_yaml(yaml_file: str, depth: int = __MAX_IMPORT_DEPTH__):
 
     parsed_yaml = parse_yaml(yaml_file)
     if depth < 0:
-        raise ClowderYAMLError(fmt.recursive_import_error(__MAX_IMPORT_DEPTH__))
+        raise ClowderYAMLError(fmt.recursive_import_error(__MAX_IMPORT_DEPTH__), ClowderYAMLYErrorType.RECURSIVE_IMPORT)
 
     if 'import' not in parsed_yaml:
         _validate_yaml(yaml_file)
@@ -52,12 +52,12 @@ def validate_yaml(yaml_file: str, depth: int = __MAX_IMPORT_DEPTH__):
     imported_yaml_file = get_clowder_yaml_import_path(parsed_yaml['import'])
 
     if not os.path.isfile(imported_yaml_file):
-        raise ClowderYAMLError(fmt.missing_imported_yaml_error(imported_yaml_file, yaml_file))
+        raise ClowderYAMLError(fmt.missing_imported_yaml_error(imported_yaml_file, yaml_file),
+                               ClowderYAMLYErrorType.MISSING_IMPORTED_YAML)
 
     try:
-        validate_yaml(imported_yaml_file, depth=depth - 1)
-    except ClowderYAMLError as err:
-        raise ClowderYAMLError(err)
+        current_depth = depth - 1
+        validate_yaml(imported_yaml_file, depth=current_depth)
     except (KeyboardInterrupt, SystemExit):
         raise ClowderExit(1)
 
@@ -73,14 +73,15 @@ def _validate_yaml(yaml_file: str):
     validate_type(parsed_yaml, fmt.yaml_file('clowder.yaml'), dict, 'dict', yaml_file)
 
     if not parsed_yaml:
-        raise ClowderYAMLError(fmt.empty_yaml_error(yaml_file))
+        raise ClowderYAMLError(fmt.empty_yaml_error(yaml_file), ClowderYAMLYErrorType.EMPTY_YAML)
 
     validate_required_dict(parsed_yaml, 'defaults', validate_yaml_defaults, yaml_file)
     validate_required_dict(parsed_yaml, 'sources', validate_yaml_sources, yaml_file)
     validate_required_dict(parsed_yaml, 'groups', validate_yaml_groups, yaml_file)
 
     if parsed_yaml:
-        raise ClowderYAMLError(fmt.unknown_entry_error(fmt.yaml_file('clowder.yaml'), parsed_yaml, yaml_file))
+        raise ClowderYAMLError(fmt.unknown_entry_error(fmt.yaml_file('clowder.yaml'), parsed_yaml, yaml_file),
+                               ClowderYAMLYErrorType.UNKNOWN_ENTRY)
 
 
 def _validate_yaml_import(yaml_file: str):
@@ -98,11 +99,12 @@ def _validate_yaml_import(yaml_file: str):
     del parsed_yaml['import']
 
     if not parsed_yaml:
-        raise ClowderYAMLError(fmt.empty_yaml_error(yaml_file))
+        raise ClowderYAMLError(fmt.empty_yaml_error(yaml_file), ClowderYAMLYErrorType.EMPTY_YAML)
 
     validate_optional_dict(parsed_yaml, 'defaults', validate_yaml_defaults_import, yaml_file)
     validate_optional_dict(parsed_yaml, 'sources', validate_yaml_sources, yaml_file)
     validate_optional_dict(parsed_yaml, 'groups', validate_yaml_groups_import, yaml_file)
 
     if parsed_yaml:
-        raise ClowderYAMLError(fmt.unknown_entry_error(fmt.yaml_file('clowder.yaml'), parsed_yaml, yaml_file))
+        raise ClowderYAMLError(fmt.unknown_entry_error(fmt.yaml_file('clowder.yaml'), parsed_yaml, yaml_file),
+                               ClowderYAMLYErrorType.UNKNOWN_ENTRY)
