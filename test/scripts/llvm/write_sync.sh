@@ -58,7 +58,7 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
         print_double_separator
         echo "TEST: clowder sync"
         $COMMAND link || exit 1
-        $COMMAND herd $PROTOCOL $PARALLEL || exit 1
+        $COMMAND herd $PARALLEL || exit 1
 
         pushd 'llvm/tools/clang' || exit 1
         git pull upstream master || exit 1
@@ -69,7 +69,7 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
         test_not_commit "$UPSTREAM_COMMIT"
         popd || exit 1
 
-        $COMMAND sync $PROTOCOL $PARALLEL || exit 1
+        $COMMAND sync $PARALLEL || exit 1
 
         pushd 'llvm/tools/clang' || exit 1
         test_commit "$UPSTREAM_COMMIT"
@@ -85,8 +85,8 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
         print_single_separator
         echo "TEST: clowder sync rebase"
         $COMMAND link || exit 1
-        $COMMAND herd $PROTOCOL $PARALLEL || exit 1
-        $COMMAND sync $PROTOCOL $PARALLEL || exit 1
+        $COMMAND herd $PARALLEL || exit 1
+        $COMMAND sync $PARALLEL || exit 1
 
         REBASE_MESSAGE='Add rebase file'
         pushd 'llvm/tools/clang' || exit 1
@@ -107,7 +107,7 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
         test_commit_messages "$(git log --format=%B -n 1 HEAD~1)" "$COMMIT_MESSAGE_2"
         popd || exit 1
 
-        $COMMAND sync $PROTOCOL $PARALLEL -r || exit 1
+        $COMMAND sync $PARALLEL -r || exit 1
 
         pushd 'llvm/tools/clang' || exit 1
         test_commit_messages "$(git log --format=%B -n 1 HEAD)" "$REBASE_MESSAGE"
