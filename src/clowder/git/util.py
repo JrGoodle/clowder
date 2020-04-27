@@ -6,6 +6,7 @@
 """
 
 import os
+from functools import wraps
 
 from clowder.error. clowder_error import ClowderError
 
@@ -35,6 +36,7 @@ def existing_git_submodule(path: str) -> bool:
 def not_detached(func):
     """If HEAD is detached, print error message and exit"""
 
+    @wraps(func)
     def wrapper(*args, **kwargs):
         """Wrapper"""
 
