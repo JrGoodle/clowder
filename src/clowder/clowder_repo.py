@@ -22,7 +22,7 @@ from clowder.util.clowder_utils import link_clowder_yaml
 from clowder.util.connectivity import is_offline
 from clowder.util.execute import execute_command
 from clowder.util.file_system import remove_directory
-from clowder.yaml.validating import validate_yaml
+from clowder.util.yaml import validate_yaml
 
 
 class ClowderRepo(object):
