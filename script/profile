@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+rm -f clowder-profile.txt clowder-profile-human-readable.txt
+
+python -m cProfile -o clowder-profile.txt -m clowder.clowder_app status
+
+echo 'stats' | python3 -m pstats clowder-profile.txt > clowder-profile-human-readable.txt
+# echo -e 'sort cumtime\nreverse\nstats' | python3 -m pstats clowder-profile.txt > clowder-profile-human-readable.txt
+# echo -e 'sort tottime\nstats' | python3 -m pstats clowder-profile.txt > clowder-profile-human-readable.txt
