@@ -10,7 +10,6 @@ import os
 from cement.ext.ext_argparse import ArgparseController, expose
 
 from clowder_test.execute import execute_test_command
-
 from clowder_test import ROOT_DIR
 
 
@@ -202,14 +201,6 @@ class CatsController(ArgparseController):
         """clowder cats yaml tests"""
 
         self._execute_command('./yaml.sh', self.path)
-
-    @expose(
-        help='Run cats yaml import tests'
-    )
-    def yaml_import(self) -> None:
-        """clowder cats yaml import tests"""
-
-        self._execute_command('./yaml_import.sh', self.path)
 
     @expose(
         help='Run cats yaml validation tests'

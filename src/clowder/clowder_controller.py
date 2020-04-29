@@ -23,7 +23,7 @@ from clowder.util.clowder_utils import (
     validate_groups,
     validate_projects
 )
-from clowder.yaml.loading import load_yaml
+from clowder.util.yaml import load_yaml
 
 
 class ClowderController(object):

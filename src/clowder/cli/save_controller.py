@@ -17,7 +17,7 @@ from clowder.clowder_repo import CLOWDER_REPO
 from clowder.error.clowder_exit import ClowderExit
 from clowder.util.decorators import valid_clowder_yaml_required
 from clowder.util.clowder_utils import validate_groups
-from clowder.yaml.saving import save_yaml
+from clowder.util.yaml import save_yaml
 
 
 class SaveController(ArgparseController):

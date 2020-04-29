@@ -10,7 +10,6 @@ import os
 from cement.ext.ext_argparse import ArgparseController, expose
 
 from clowder_test.execute import execute_test_command
-
 from clowder_test import ROOT_DIR
 
 
