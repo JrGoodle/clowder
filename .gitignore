@@ -56,6 +56,13 @@ examples/fastlane/clowder.yaml
 examples/fastlane/fastlane
 examples/fastlane/snapshot
 
+examples/misc/clowder
+examples/misc/.clowder
+examples/misc/clowder.yaml
+examples/misc/djinni
+examples/misc/gyp
+examples/misc/sox
+
 # Created by https://www.gitignore.io/api/macos,swift,xcode,vapor,python,swiftpm,pycharm
 
 ### macOS ###

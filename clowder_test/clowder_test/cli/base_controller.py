@@ -44,7 +44,8 @@ class BaseController(ArgparseController):
         scripts = [
             './test_example_cats.sh',
             './test_example_llvm.sh',
-            './test_example_swift.sh'
+            './test_example_swift.sh',
+            './test_example_misc.sh'
         ]
         for script in scripts:
             execute_test_command(script, self.path,
@@ -56,6 +57,19 @@ class BaseController(ArgparseController):
 
         self.offline()
         self.parallel()
+
+    @expose(
+        help='Run misc tests'
+    )
+    def misc(self) -> None:
+        """clowder misc tests"""
+
+        execute_test_command('./test_example_misc.sh', self.path,
+                             parallel=self.app.pargs.parallel,
+                             write=self.app.pargs.write,
+                             coverage=self.app.pargs.coverage,
+                             debug=self.app.debug,
+                             quiet=self.app.pargs.silent)
 
     @expose(
         help='Run offline tests'
