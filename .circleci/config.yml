@@ -50,8 +50,12 @@ jobs:
           command: clowder-test -c write
 
       - run:
+          name: run misc tests
+          command: clowder-test -c misc
+
+      - run:
           name: upload code coverage results
           command: |
-            coverage combine examples/cats examples/llvm-projects examples/swift-projects
+            coverage combine examples/cats examples/llvm-projects examples/swift-projects examples/misc
             aws s3 cp .coverage "s3://clowder-coverage/coverage/circleci/$CIRCLE_BUILD_NUM/"
             codecov -X gcov
