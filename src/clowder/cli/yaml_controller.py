@@ -11,7 +11,7 @@ import clowder.util.formatting as fmt
 from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.clowder_repo import print_clowder_repo_status
 from clowder.util.decorators import valid_clowder_yaml_required
-from clowder.yaml.printing import print_yaml
+from clowder.util.yaml import print_yaml
 
 
 class YAMLController(ArgparseController):

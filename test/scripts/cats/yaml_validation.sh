@@ -66,10 +66,7 @@ test_invalid_yaml() {
     test_branch yaml-validation
     popd || exit 1
 
-    _test_invalid_yaml 'ls -d test-import-loop*' '100'
     _test_invalid_yaml 'ls -d test-duplicate-fork-project-remote*' '101'
-    _test_invalid_yaml 'ls -d test-import-missing-group*' '102'
-    _test_invalid_yaml 'ls -d test-import-missing-source*' '102'
     _test_invalid_yaml 'ls -d test-missing-default*' '102'
     _test_invalid_yaml 'ls -d test-missing-fork*' '102'
     _test_invalid_yaml 'ls -d test-missing-group*' '102'
@@ -80,11 +77,7 @@ test_invalid_yaml() {
     _test_invalid_yaml 'ls -d test-empty-group*' '102'
     _test_invalid_yaml 'ls -d test-empty-project*' '102'
     _test_invalid_yaml 'ls -d test-empty-source*' '102'
-    _test_invalid_yaml 'ls -d test-import-unknown*' '103'
     _test_invalid_yaml 'ls -d test-unknown*' '103'
-    _test_invalid_yaml 'ls -d test-missing-import*' '105'
-    _test_invalid_yaml 'ls -d test-import-missing-clowder*' '105'
-    _test_invalid_yaml 'ls -d test-empty-import*' '106'
     _test_invalid_yaml 'ls -d test-empty-yaml*' '106'
     _test_invalid_yaml 'ls -d test-arg-value-protocol*' '108'
     _test_invalid_yaml 'ls -d test-arg-value-ref*' '109'
@@ -92,7 +85,6 @@ test_invalid_yaml() {
     _test_invalid_yaml 'ls -d test-arg-type-defaults*' '112'
     _test_invalid_yaml 'ls -d test-arg-type-fork*' '112'
     _test_invalid_yaml 'ls -d test-arg-type-group*' '112'
-    _test_invalid_yaml 'ls -d test-arg-type-import*' '112'
     _test_invalid_yaml 'ls -d test-arg-type-project*' '112'
     _test_invalid_yaml 'ls -d test-arg-type-recursive*' '112'
     _test_invalid_yaml 'ls -d test-arg-type-root*' '112'

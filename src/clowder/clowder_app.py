@@ -55,7 +55,7 @@ class ClowderApp(App):
         ]
 
 
-def main():
+def main() -> None:
     """Clowder command CLI main function"""
 
     print()
