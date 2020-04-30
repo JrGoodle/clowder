@@ -29,7 +29,6 @@ class ClowderTestApp(App):
         """Clowder command CLI Meta configuration"""
 
         label = 'clowder'
-        # extensions = ['argcomplete']
         base_controller = 'base'
         hooks = [
             ('post_argument_parsing', post_argument_parsing_hook)
