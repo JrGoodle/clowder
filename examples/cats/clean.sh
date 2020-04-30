@@ -2,6 +2,8 @@
 
 cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 
+echo 'Clean cats example directory'
+
 rm -rf clowder
 rm -rf .clowder
 rm -rf black-cats

@@ -16,7 +16,7 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
 
     cd "$CATS_EXAMPLE_DIR" || exit 1
     ./clean.sh
-    ./init.sh
+    ./init.sh || exit 1
 
     $COMMAND repo checkout repo-test || exit 1
     pushd .clowder || exit 1

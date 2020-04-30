@@ -68,9 +68,8 @@ print_double_separator
 echo "TEST: Test clowder offline"
 
 cd "$CATS_EXAMPLE_DIR" || exit 1
-./clean.sh || exit 1
-./init.sh || exit 1
-$COMMAND herd $PARALLEL || exit 1
+./clean.sh
+./copy-cache.sh
 
 # echo 'Disable your network connection'
 # # https://unix.stackexchange.com/a/293941

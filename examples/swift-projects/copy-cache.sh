@@ -2,11 +2,9 @@
 
 cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 
-echo 'Clean misc example directory'
+echo 'Copy swift cache'
 
-rm -rf clowder
-rm -rf .clowder
+./clean.sh
+cp -a cached/. ./
 rm -f clowder.yaml
-rm -rf djinni
-rm -rf gyp
-rm -rf sox
+clowder link || exit 1

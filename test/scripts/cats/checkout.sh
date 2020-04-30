@@ -37,7 +37,7 @@ echo "TEST: Test clowder checkout"
 
 cd "$CATS_EXAMPLE_DIR" || exit 1
 ./clean.sh
-./init.sh
+./copy-cache.sh
 
 test_checkout() {
     print_single_separator

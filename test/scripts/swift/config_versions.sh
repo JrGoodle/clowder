@@ -10,7 +10,6 @@ print_double_separator
 echo 'TEST: swift projects example test script'
 print_double_separator
 cd "$SWIFT_EXAMPLE_DIR" || exit 1
-./init.sh
 
 export project_paths=( 'cmark' \
                        'llbuild' \

@@ -9,7 +9,7 @@ import os
 
 from cement.ext.ext_argparse import ArgparseController, expose
 
-from clowder_test.execute import execute_test_command
+from clowder_test.execute import create_llvm_cache, execute_test_command
 from clowder_test import ROOT_DIR
 
 
@@ -37,6 +37,7 @@ class LLVMController(ArgparseController):
     @expose(
         help='Run llvm forks tests'
     )
+    @create_llvm_cache
     def forks(self) -> None:
         """clowder llvm forks tests"""
 
@@ -45,6 +46,7 @@ class LLVMController(ArgparseController):
     @expose(
         help='Run llvm sync tests'
     )
+    @create_llvm_cache
     def sync(self) -> None:
         """clowder llvm sync tests"""
 

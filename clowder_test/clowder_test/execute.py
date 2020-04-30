@@ -7,9 +7,66 @@
 
 import os
 import subprocess
+from functools import wraps
 from typing import Optional
 
 from clowder_test import ROOT_DIR
+
+
+def create_cats_cache(func):
+    """Create cats cache"""
+
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        """Wrapper"""
+
+        path = os.path.join(ROOT_DIR, 'test', 'scripts')
+        execute_test_command('./create_cache.sh cats', path)
+        return func(*args, **kwargs)
+
+    return wrapper
+
+
+def create_llvm_cache(func):
+    """Create llvm cache"""
+
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        """Wrapper"""
+
+        path = os.path.join(ROOT_DIR, 'test', 'scripts')
+        execute_test_command('./create_cache.sh llvm', path)
+        return func(*args, **kwargs)
+
+    return wrapper
+
+
+def create_misc_cache(func):
+    """Create misc cache"""
+
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        """Wrapper"""
+
+        path = os.path.join(ROOT_DIR, 'test', 'scripts')
+        execute_test_command('./create_cache.sh misc', path)
+        return func(*args, **kwargs)
+
+    return wrapper
+
+
+def create_swift_cache(func):
+    """Create swift cache"""
+
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        """Wrapper"""
+
+        path = os.path.join(ROOT_DIR, 'test', 'scripts')
+        execute_test_command('./create_cache.sh swift', path)
+        return func(*args, **kwargs)
+
+    return wrapper
 
 
 def execute_test_command(command: str, path: str, parallel: bool = False, write: bool = False,

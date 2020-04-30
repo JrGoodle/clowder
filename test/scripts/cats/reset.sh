@@ -19,7 +19,7 @@ export all_projects=( 'mu' 'duke' \
 
 cd "$CATS_EXAMPLE_DIR" || exit 1
 ./clean.sh
-./init.sh
+./copy-cache.sh
 
 print_double_separator
 echo "TEST: Test clowder reset"
@@ -27,8 +27,6 @@ echo "TEST: Test clowder reset"
 test_reset() {
     print_single_separator
     echo "TEST: clowder reset"
-    $COMMAND link || exit 1
-    $COMMAND herd $PARALLEL || exit 1
 
     COMMIT_MESSAGE='Add new commits'
     pushd 'mu' || exit 1

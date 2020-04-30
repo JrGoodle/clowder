@@ -11,7 +11,7 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
     echo 'TEST: swift configure remotes write'
     cd "$SWIFT_EXAMPLE_DIR" || exit 1
     ./clean.sh
-    ./init.sh
+    ./init.sh || exit 1
     $COMMAND link -v jrgoodle-fork || exit 1
 
     test_configure_remotes_herd() {

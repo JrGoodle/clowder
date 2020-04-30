@@ -52,13 +52,12 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
     print_double_separator
     echo "TEST: Test clowder sync"
     cd "$LLVM_EXAMPLE_DIR" || exit 1
-    ./init.sh
+    ./clean.sh
+    ./copy-cache.sh
 
     test_sync() {
         print_double_separator
         echo "TEST: clowder sync"
-        $COMMAND link || exit 1
-        $COMMAND herd $PARALLEL || exit 1
 
         pushd 'llvm/tools/clang' || exit 1
         git pull upstream master || exit 1

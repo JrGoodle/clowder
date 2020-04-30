@@ -46,7 +46,7 @@ test_herd_missing_clowder() {
 test_herd_missing_clowder
 
 ./clean.sh
-./init.sh
+./init.sh || exit 1
 
 test_herd() {
     print_single_separator

@@ -36,7 +36,7 @@ print_double_separator
 echo "TEST: Test clowder herd branch"
 cd "$CATS_EXAMPLE_DIR" || exit 1
 ./clean.sh
-./init.sh
+./copy-cache.sh
 
 EXISTING_REMOTE_BRANCH='test-herd-branch'
 NO_REMOTE_BRANCH='test-herd-branch-no-remote-branch'

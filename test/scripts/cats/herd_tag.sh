@@ -61,7 +61,7 @@ print_double_separator
 echo "TEST: Test clowder herd tag"
 cd "$CATS_EXAMPLE_DIR" || exit 1
 ./clean.sh
-./init.sh
+./init.sh || exit 1
 
 EXISTING_TAG='test-herd-tag'
 NO_TAG='test-herd-no-tag'

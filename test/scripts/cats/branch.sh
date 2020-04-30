@@ -6,13 +6,10 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
 
 cd "$CATS_EXAMPLE_DIR" || exit 1
 ./clean.sh
-./init.sh
+./copy-cache.sh
 
 print_double_separator
 echo "TEST: Test clowder branch"
-
-$COMMAND link || exit 1
-$COMMAND herd $PARALLEL || exit 1
 
 $COMMAND branch || exit 1
 $COMMAND branch -r || exit 1
