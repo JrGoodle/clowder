@@ -49,7 +49,6 @@ class ClowderApp(App):
             cmd.StartController,
             cmd.StashController,
             cmd.StatusController,
-            cmd.SyncController,
             cmd.YAMLController
         ]
 
