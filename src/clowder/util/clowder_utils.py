@@ -84,7 +84,7 @@ def get_saved_version_names() -> Optional[List[str]]:
     versions_dir = os.path.join(os.getcwd(), '.clowder', 'versions')
     if not os.path.exists(versions_dir):
         return None
-    return [v for v in os.listdir(versions_dir) if not v.startswith('.') if v.lower() != 'default']
+    return [v[:-5] for v in os.listdir(versions_dir) if v.endswith('.yaml')]
 
 
 def link_clowder_yaml(version: Optional[str] = None) -> None:
@@ -98,7 +98,7 @@ def link_clowder_yaml(version: Optional[str] = None) -> None:
         yaml_file = os.path.join(ROOT_DIR, '.clowder', 'clowder.yaml')
         path_output = fmt.get_path('.clowder/clowder.yaml')
     else:
-        relative_path = os.path.join('.clowder', 'versions', version, 'clowder.yaml')
+        relative_path = os.path.join('.clowder', 'versions', f'{version}.yaml')
         path_output = fmt.get_path(relative_path)
         yaml_file = os.path.join(ROOT_DIR, relative_path)
 

@@ -54,10 +54,4 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
         popd || exit 1
     }
     test_clowder_repo_commit_pull_push
-
-    $COMMAND repo checkout master || exit 1
-    pushd .clowder || exit 1
-    test_branch master
-    popd || exit 1
-    clowder link || exit 1
 fi

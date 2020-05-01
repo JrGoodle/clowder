@@ -46,7 +46,8 @@ _test_invalid_yaml() {
 
     for test in "${test_cases[@]}"
     do
-        $COMMAND link -v $test || exit 1
+        version=${test%.yaml}
+        $COMMAND link -v $version || exit 1
         print_single_separator
         $COMMAND herd
         exit_code=$?

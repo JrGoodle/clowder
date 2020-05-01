@@ -35,7 +35,7 @@ class ClowderRepoTest(unittest.TestCase):
         """Test link() method"""
 
         self.clowder_repo.link('v0.1')
-        version_path = os.path.join('.clowder', 'versions', 'v0.1', 'clowder.yaml')
+        version_path = os.path.join('.clowder', 'versions', 'v0.1.yaml')
         self.assertEqual(os.readlink(self.clowder_yaml_path), os.path.join(self.cats_example_path, version_path))
 
 

@@ -19,14 +19,14 @@ test_save() {
     $COMMAND link -v v100 && exit 1
     echo "TEST: Fail saving a previously saved version"
     $COMMAND save v0.1 && exit 1
-    echo "TEST: Fail saving a saved version named 'default'"
-    $COMMAND save default && exit 1
-    $COMMAND save DEFAULT && exit 1
     echo "TEST: Successfully save a new version"
     $COMMAND save v0.11 || exit 1
+    $COMMAND link -v v0.11 || exit 1
+    # TODO: Check whether symlink is correct
     echo "TEST: Successfully save version with path separator in input name"
     $COMMAND save path/separator || exit 1
     $COMMAND link -v path-separator || exit 1
+    # TODO: Check whether symlink is correct
     $COMMAND herd $PARALLEL || exit 1
     $COMMAND status || exit 1
 }
