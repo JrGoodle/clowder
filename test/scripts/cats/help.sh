@@ -24,18 +24,14 @@ export commands=( 'branch' \
                   'prune' \
                   'repo' \
                   'repo add' \
-                #   'repo checkout' \
-                #   'repo clean' \
                   'repo commit' \
                   'repo pull' \
                   'repo push' \
                   'repo run' \
-                #   'repo status' \
                   'save' \
                   'start' \
                   'stash' \
                   'status' \
-                  'sync' \
                   'yaml' )
 
 _test_help() {

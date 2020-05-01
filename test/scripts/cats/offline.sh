@@ -171,9 +171,9 @@ $COMMAND status || enable_connection_exit
 print_single_separator
 echo 'TEST: clowder status -f'
 $COMMAND status -f && enable_connection_exit
-print_single_separator
-echo 'TEST: clowder sync'
-$COMMAND sync && enable_connection_exit
+# print_single_separator
+# echo 'TEST: clowder sync'
+# $COMMAND sync && enable_connection_exit
 print_single_separator
 echo 'TEST: clowder init'
 rm -rf .clowder || enable_connection_exit

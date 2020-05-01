@@ -43,14 +43,14 @@ class LLVMController(ArgparseController):
 
         self._execute_command('./forks.sh', self.path)
 
-    @expose(
-        help='Run llvm sync tests'
-    )
-    @create_llvm_cache
-    def sync(self) -> None:
-        """clowder llvm sync tests"""
+    # @expose(
+    #     help='Run llvm sync tests'
+    # )
+    # @create_llvm_cache
+    # def sync(self) -> None:
+    #     """clowder llvm sync tests"""
 
-        self._execute_command('./sync.sh', self.path)
+    #     self._execute_command('./sync.sh', self.path)
 
     def _execute_command(self, command: str, path: str) -> None:
         """Private execute command

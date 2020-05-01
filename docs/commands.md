@@ -353,23 +353,6 @@ $ clowder status -f
 
 ---
 
-## `clowder sync`
-
-Sync default fork branches with upstream remotes
-
-```bash
-# Sync all forks with upstream remotes
-$ clowder sync
-
-# Sync using rebase instead of pull
-$ clowder sync -r
-
-# Sync swift fork with upstream remote
-$ clowder sync -p apple/swift
-```
-
----
-
 ## `clowder version`
 
 Print version of `clowder` command line tool
