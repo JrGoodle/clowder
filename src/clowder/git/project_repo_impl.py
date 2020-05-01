@@ -68,7 +68,7 @@ class ProjectRepoImpl(GitRepo):
 
         branch_output = fmt.ref_string(branch)
         try:
-            self._print(' - Checkout branch ' + branch_output)
+            self._print(f' - Checkout branch {branch_output}')
             default_branch = self.repo.heads[branch]
             default_branch.checkout()
         except GitError as err:
@@ -97,7 +97,7 @@ class ProjectRepoImpl(GitRepo):
 
         if not self.existing_remote_branch(branch, self.remote):
             remove_directory(self.repo_path)
-            message = colored(' - No existing remote branch ', 'red') + remote_output + ' ' + branch_output
+            message = colored(' - No existing remote branch ', 'red') + f'{remote_output} {branch_output}'
             self._print(message)
             self._exit(fmt.parallel_exception_error(self.repo_path, message))
 
@@ -168,7 +168,7 @@ class ProjectRepoImpl(GitRepo):
             if self.repo.head.commit.hexsha == sha:
                 self._print(' - On correct commit')
                 return
-            self._print(' - Checkout commit ' + commit_output)
+            self._print(f' - Checkout commit {commit_output}')
             self.repo.git.checkout(sha)
         except GitError as err:
             message = colored(' - Failed to checkout commit ', 'red')
@@ -186,7 +186,7 @@ class ProjectRepoImpl(GitRepo):
 
         tag_output = fmt.ref_string(tag)
         if tag not in self.repo.tags:
-            raise ClowderGitError(msg=' - No existing tag ' + tag_output)
+            raise ClowderGitError(msg=f' - No existing tag {tag_output}')
 
         try:
             same_commit = self.repo.head.commit == self.repo.tags[tag].commit
@@ -194,8 +194,8 @@ class ProjectRepoImpl(GitRepo):
             if same_commit and is_detached:
                 self._print(' - On correct commit for tag')
                 return
-            self._print(' - Checkout tag ' + tag_output)
-            self.repo.git.checkout('refs/tags/' + tag)
+            self._print(f' - Checkout tag {tag_output}')
+            self.repo.git.checkout(f'refs/tags/{tag}')
         except (GitError, ValueError) as err:
             message = colored(' - Failed to checkout tag ', 'red')
             self._print(message + tag_output)
@@ -228,7 +228,7 @@ class ProjectRepoImpl(GitRepo):
 
         branch_output = fmt.ref_string(branch)
         try:
-            self._print(' - Create branch ' + branch_output)
+            self._print(f' - Create branch {branch_output}')
             self.repo.create_head(branch)
         except GitError as err:
             message = colored(' - Failed to create branch ', 'red')
@@ -255,7 +255,7 @@ class ProjectRepoImpl(GitRepo):
             self.fetch(remote, depth=depth, ref=branch, remove_dir=remove_dir)
 
         try:
-            self._print(' - Create branch ' + branch_output)
+            self._print(f' - Create branch {branch_output}')
             self.repo.create_head(branch, origin.refs[branch])
         except (GitError, IndexError) as err:
             message = colored(' - Failed to create branch ', 'red') + branch_output
@@ -288,7 +288,7 @@ class ProjectRepoImpl(GitRepo):
             return
 
         try:
-            self._print(' - Push remote branch ' + branch_output)
+            self._print(f' - Push remote branch {branch_output}')
             self.repo.git.push(remote, branch)
             self._set_tracking_branch(remote, branch)
         except GitError as err:
@@ -313,7 +313,7 @@ class ProjectRepoImpl(GitRepo):
 
         remote_output = fmt.remote_string(remote)
         try:
-            self._print(' - Create remote ' + remote_output)
+            self._print(f' - Create remote {remote_output}')
             self.repo.create_remote(remote, url)
             return
         except GitError as err:
@@ -381,7 +381,7 @@ class ProjectRepoImpl(GitRepo):
 
         tag_output = fmt.ref_string(tag)
         self._remote(remote, remove_dir=remove_dir)
-        self.fetch(remote, depth=depth, ref='refs/tags/' + tag, remove_dir=remove_dir)
+        self.fetch(remote, depth=depth, ref=f'refs/tags/{tag}', remove_dir=remove_dir)
 
         try:
             return self.repo.tags[tag]
@@ -409,7 +409,7 @@ class ProjectRepoImpl(GitRepo):
             return
 
         try:
-            self._print(' - Initialize repo at ' + fmt.get_path(self.repo_path))
+            self._print(f' - Initialize repo at {fmt.get_path(self.repo_path)}')
             if not os.path.isdir(self.repo_path):
                 try:
                     os.makedirs(self.repo_path)
@@ -482,7 +482,7 @@ class ProjectRepoImpl(GitRepo):
         except (KeyboardInterrupt, SystemExit):
             self._exit()
         else:
-            self._print(' - Tracking branch ' + branch_output + ' already exists')
+            self._print(f' - Tracking branch {branch_output} already exists')
 
     @not_detached
     def _pull(self, remote: str, branch: str) -> None:
@@ -494,13 +494,13 @@ class ProjectRepoImpl(GitRepo):
 
         branch_output = fmt.ref_string(branch)
         remote_output = fmt.remote_string(remote)
-        self._print(' - Pull from ' + remote_output + ' ' + branch_output)
+        self._print(f' - Pull from {remote_output} {branch_output}')
         command = ['git pull', remote, branch]
 
         try:
             execute_command(command, self.repo_path, print_output=self._print_output)
         except ClowderError:
-            message = colored(' - Failed to pull from ', 'red') + remote_output + ' ' + branch_output
+            message = colored(' - Failed to pull from ', 'red') + f'{remote_output} {branch_output}'
             self._print(message)
             self._exit(message)
 
@@ -514,13 +514,13 @@ class ProjectRepoImpl(GitRepo):
 
         branch_output = fmt.ref_string(branch)
         remote_output = fmt.remote_string(remote)
-        self._print(' - Rebase onto ' + remote_output + ' ' + branch_output)
+        self._print(f' - Rebase onto {remote_output} {branch_output}')
         command = ['git pull --rebase', remote, branch]
 
         try:
             execute_command(command, self.repo_path, print_output=self._print_output)
         except ClowderError:
-            message = colored(' - Failed to rebase onto ', 'red') + remote_output + ' ' + branch_output
+            message = colored(' - Failed to rebase onto ', 'red') + f'{remote_output} {branch_output}'
             self._print(message)
             self._print(fmt.command_failed_error(command))
             self._exit(message)
@@ -566,11 +566,11 @@ class ProjectRepoImpl(GitRepo):
 
         remote_output_f = fmt.remote_string(remote_from)
         remote_output_t = fmt.remote_string(remote_to)
-        self._print(' - Rename remote ' + remote_output_f + ' to ' + remote_output_t)
+        self._print(f' - Rename remote {remote_output_f} to {remote_output_t}')
         try:
             self.repo.git.remote('rename', remote_from, remote_to)
         except GitError as err:
-            message = colored(' - Failed to rename remote from ', 'red') + remote_output_f + ' to ' + remote_output_t
+            message = colored(' - Failed to rename remote from ', 'red') + f'{remote_output_f} to {remote_output_t}'
             self._print(message)
             self._print(fmt.error(err))
             self._exit(message)
@@ -591,7 +591,7 @@ class ProjectRepoImpl(GitRepo):
         try:
             local_branch = self.repo.heads[branch]
             remote_branch = origin.refs[branch]
-            self._print(' - Set tracking branch ' + branch_output + ' -> ' + remote_output + ' ' + branch_output)
+            self._print(f' - Set tracking branch {branch_output} -> {remote_output} {branch_output}')
             local_branch.set_tracking_branch(remote_branch)
         except GitError as err:
             message = colored(' - Failed to set tracking branch ', 'red') + branch_output
@@ -618,12 +618,12 @@ class ProjectRepoImpl(GitRepo):
         self.fetch(remote, depth=depth, ref=branch)
 
         if not self.existing_local_branch(branch):
-            message = colored(' - No local branch ', 'red') + branch_output + '\n'
+            message = colored(' - No local branch ', 'red') + f'{branch_output}\n'
             self._print(message)
             self._exit(message)
 
         if not self.existing_remote_branch(branch, remote):
-            message = colored(' - No remote branch ', 'red') + branch_output + '\n'
+            message = colored(' - No remote branch ', 'red') + f'{branch_output}\n'
             self._print(message)
             self._exit(message)
 
@@ -634,6 +634,6 @@ class ProjectRepoImpl(GitRepo):
             message_2 = colored(' on different commit', 'red')
             message = message_1 + branch_output + message_2 + '\n'
             self._print(message)
-            self._exit(message_1)
+            self._exit(message)
 
         self._set_tracking_branch(remote, branch)

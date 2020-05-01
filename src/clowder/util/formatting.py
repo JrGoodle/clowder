@@ -85,7 +85,7 @@ def error(err: Exception) -> str:
     :rtype: str
     """
 
-    return str(err) + '\n'
+    return f'{str(err)}\n'
 
 
 def file_exists_error(path: str) -> str:
@@ -156,7 +156,8 @@ def invalid_yaml_error() -> str:
     :rtype: str
     """
 
-    return yaml_file('clowder.yaml') + ' appears to be invalid'
+    file = yaml_file('clowder.yaml')
+    return f'{file} appears to be invalid'
 
 
 def missing_entries_error(name: str, yml: str) -> str:
@@ -205,7 +206,8 @@ def missing_yaml_error() -> str:
     :rtype: str
     """
 
-    return yaml_file('clowder.yaml') + ' appears to be missing'
+    file = yaml_file('clowder.yaml')
+    return f'{file} appears to be missing'
 
 
 def offline_error() -> str:

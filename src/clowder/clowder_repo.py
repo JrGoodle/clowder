@@ -172,10 +172,10 @@ class ClowderRepo(object):
 
         real_path = os.path.realpath(clowder_symlink)
         symlink_output = fmt.get_path('clowder.yaml')
-        clowder_path = fmt.remove_prefix(real_path + '/', ROOT_DIR)
+        clowder_path = fmt.remove_prefix(f'{real_path}/', ROOT_DIR)
         path_output = fmt.get_path(clowder_path[1:-1])
-        print(project_output + ' ' + current_ref_output)
-        print(symlink_output + ' -> ' + path_output + '\n')
+        print(f'{project_output} {current_ref_output}')
+        print(f'{symlink_output} -> {path_output}\n')
 
     def pull(self) -> None:
         """Pull clowder repo upstream changes"""

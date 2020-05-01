@@ -80,7 +80,7 @@ class GitRepo(object):
 
         ref_output = fmt.ref_string(truncated_ref)
         try:
-            self._print(' - Check out ' + ref_output)
+            self._print(f' - Check out {ref_output}')
             if self._print_output:
                 print(self.repo.git.checkout(truncated_ref))
                 return
@@ -182,7 +182,7 @@ class GitRepo(object):
 
         remote_output = fmt.remote_string(remote)
         if depth == 0:
-            self._print(' - Fetch from ' + remote_output)
+            self._print(f' - Fetch from {remote_output}')
             message = colored(' - Failed to fetch from ', 'red')
             error = message + remote_output
             command = ['git fetch', remote, '--prune --tags']
@@ -194,7 +194,7 @@ class GitRepo(object):
             ref_output = fmt.ref_string(truncate_ref(ref))
             self._print(' - Fetch from ' + remote_output + ' ' + ref_output)
             message = colored(' - Failed to fetch from ', 'red')
-            error = message + remote_output + ' ' + ref_output
+            error = message + f'{remote_output} {ref_output}'
             command = ['git fetch', remote, truncate_ref(ref), '--depth', str(depth), '--prune --tags']
 
         try:
@@ -222,13 +222,13 @@ class GitRepo(object):
         else:
             local_commits_output = colored('+' + str(local_commits), 'yellow')
             upstream_commits_output = colored('-' + str(upstream_commits), 'red')
-            status = '(' + local_commits_output + '/' + upstream_commits_output + ')'
+            status = f'({local_commits_output}/{upstream_commits_output})'
 
         if self.is_detached():
             current_ref = self.sha(short=True)
-            return colored('[HEAD @ ' + current_ref + ']', 'magenta')
+            return colored(f'[HEAD @ {current_ref}]', 'magenta')
         current_branch = self.current_branch()
-        return colored('[' + current_branch + ']', 'magenta') + status
+        return colored(f'[{current_branch}]', 'magenta') + status
 
     def format_project_string(self, path: str) -> str:
         """Return formatted project name
@@ -311,7 +311,7 @@ class GitRepo(object):
                 return 0
 
             try:
-                commits = local_branch.commit.hexsha + '...' + tracking_branch.commit.hexsha
+                commits = f'{local_branch.commit.hexsha}...{tracking_branch.commit.hexsha}'
                 rev_list_count = self.repo.git.rev_list('--count', '--left-right', commits)
             except (GitError, ValueError):
                 return 0
@@ -535,7 +535,7 @@ class GitRepo(object):
 
         for branch in self.repo.git.branch().split('\n'):
             if branch.startswith('* '):
-                print('* ' + colored(branch[2:], 'green'))
+                print(f"* {colored(branch[2:], 'green')}")
             else:
                 print(branch)
 
@@ -545,7 +545,7 @@ class GitRepo(object):
         for branch in self.repo.git.branch('-r').split('\n'):
             if ' -> ' in branch:
                 components = branch.split(' -> ')
-                print('  ' + colored(components[0], 'red') + ' -> ' + components[1])
+                print(f"  {colored(components[0], 'red')} -> {components[1]}")
             else:
                 print(colored(branch), 'red')
 
