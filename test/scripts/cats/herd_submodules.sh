@@ -14,7 +14,7 @@ echo 'TEST: cats herd submodules'
 print_double_separator
 cd "$CATS_EXAMPLE_DIR" || exit 1
 ./clean.sh
-./init.sh
+./init.sh || exit 1
 
 test_recurse() {
     print_single_separator

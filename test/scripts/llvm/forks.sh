@@ -51,7 +51,8 @@ export fork_projects=( 'llvm-mirror/clang' \
 print_double_separator
 echo "TEST: Test clowder forks"
 cd "$LLVM_EXAMPLE_DIR" || exit 1
-./init.sh
+./clean.sh
+./init.sh || exit 1
 
 "$TEST_SCRIPT_DIR/llvm/write_forks.sh" $1 || exit 1
 

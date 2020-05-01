@@ -11,15 +11,18 @@ jobs:
   - os: osx
     language: c
     env:
-      - TARGET="parallel"
+      - TARGET="cats"
       - PATH="/usr/local/bin:$PATH"
-    script: clowder-test -c parallel
+    script: clowder-test -c cats all
   - env: TARGET="cats"
     python: 3.6
     script: clowder-test -c cats all
   - env: TARGET="cats"
     python: 3.7
     script: clowder-test -c cats all
+  - env: TARGET="parallel"
+    python: 3.7
+    script: clowder-test -c parallel
   # - env: TARGET="llvm"
   #   script: clowder-test -c llvm all
   # - env: TARGET="swift"

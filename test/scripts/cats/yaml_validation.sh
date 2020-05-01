@@ -23,7 +23,7 @@ test_missing_repo() {
 }
 test_missing_repo '113'
 
-./init.sh
+./init.sh || exit 1
 
 test_missing_yaml() {
     print_single_separator

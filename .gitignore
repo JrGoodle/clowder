@@ -1,5 +1,6 @@
 # Example files
 
+examples/cats/cached
 examples/cats/clowder
 examples/cats/.clowder
 examples/cats/clowder.yaml
@@ -10,6 +11,7 @@ examples/cats/duke
 examples/cats/polkabot
 examples/cats/videos
 
+examples/llvm-projects/cached
 examples/llvm-projects/clowder
 examples/llvm-projects/.clowder
 examples/llvm-projects/clowder.yaml
@@ -22,6 +24,7 @@ examples/llvm-projects/t*
 examples/llvm-projects/v*
 examples/llvm-projects/z*
 
+examples/swift-projects/cached
 examples/swift-projects/clowder
 examples/swift-projects/.clowder
 examples/swift-projects/clowder.yaml
@@ -41,21 +44,7 @@ examples/swift-projects/swift-integration-tests
 examples/swift-projects/swift-xcode-playground-support
 examples/swift-projects/swiftpm
 
-examples/srclib/clowder
-examples/srclib/.clowder
-examples/srclib/clowder.yaml
-examples/srclib/samples
-examples/srclib/sourcegraph-talks
-examples/srclib/srcco
-examples/srclib/srclib
-examples/srclib/toolchains
-
-examples/fastlane/clowder
-examples/fastlane/.clowder
-examples/fastlane/clowder.yaml
-examples/fastlane/fastlane
-examples/fastlane/snapshot
-
+examples/misc/cached
 examples/misc/clowder
 examples/misc/.clowder
 examples/misc/clowder.yaml

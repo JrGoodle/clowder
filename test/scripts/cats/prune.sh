@@ -6,7 +6,7 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
 
 cd "$CATS_EXAMPLE_DIR" || exit 1
 ./clean.sh
-./init.sh
+./copy-cache.sh
 
 export black_cats_projects=( 'black-cats/kit' \
                              'black-cats/kishka' \
@@ -25,7 +25,6 @@ echo "TEST: Test clowder prune"
 test_prune() {
     print_single_separator
     echo "TEST: Test clowder prune branch"
-    $COMMAND herd $PARALLEL || exit 1
 
     $COMMAND start prune_branch || exit 1
 

@@ -11,10 +11,9 @@ echo 'TEST: cats skip'
 print_double_separator
 cd "$CATS_EXAMPLE_DIR" || exit 1
 ./clean.sh
-./init.sh
+./copy-cache.sh
 
 test_skip_herd() {
-    $COMMAND herd $PARALLEL || exit 1
     pushd 'mu' || exit 1
     git checkout HEAD~2 || exit 1
     test_head_detached

@@ -6,8 +6,7 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
 
 cd "$CATS_EXAMPLE_DIR" || exit 1
 ./clean.sh
-./init.sh
-$COMMAND herd $PARALLEL || exit 1
+./copy-cache.sh
 
 export cats_projects=( 'duke' 'mu' )
 

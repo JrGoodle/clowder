@@ -9,7 +9,7 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
 print_double_separator
 echo 'TEST: swift configure remotes'
 cd "$SWIFT_EXAMPLE_DIR" || exit 1
-./init.sh
+./init.sh || exit 1
 
 test_configure_remotes_herd() {
     git clone https://github.com/apple/swift.git || exit 1

@@ -11,7 +11,8 @@ echo 'TEST: cats help test script'
 print_double_separator
 
 cd "$CATS_EXAMPLE_DIR" || exit 1
-./init.sh
+./clean.sh
+./copy-cache.sh
 
 export commands=( 'branch' \
                   'clean' \
@@ -51,8 +52,6 @@ _test_help() {
 
 test_help() {
     print_double_separator
-    ./clean.sh
-    ./init.sh || exit 1
 
     $COMMAND repo checkout yaml-validation || exit 1
     pushd .clowder || exit 1

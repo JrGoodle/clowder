@@ -22,7 +22,7 @@ if [ "$1" == 'website' ]; then
 
     tail -n+2 "README.md" > "$GH_PAGES_DIR/index.md" || exit 1
     rm -rf "$GH_PAGES_DIR/docs/README" || exit 1
-    cp -R 'docs/README' "$GH_PAGES_DIR/docs/README" || exit 1
+    cp -a 'docs/README' "$GH_PAGES_DIR/docs/README" || exit 1
 
     cd $GH_PAGES_DIR || exit 1
     git add index.md docs/README || exit 1
