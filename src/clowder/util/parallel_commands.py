@@ -236,7 +236,7 @@ if os.name == "posix":
             __clowder_progress__.close()
             __clowder_pool__.close()
             __clowder_pool__.terminate()
-            cprint('\n' + str(err) + '\n', 'red')
+            cprint(f'\n{str(err)}\n', 'red')
             raise ClowderExit(1)
         else:
             __clowder_progress__.complete()

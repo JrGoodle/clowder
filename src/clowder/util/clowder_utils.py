@@ -103,11 +103,11 @@ def link_clowder_yaml(version: Optional[str] = None) -> None:
         yaml_file = os.path.join(ROOT_DIR, relative_path)
 
     if not os.path.isfile(yaml_file):
-        print('\n' + path_output + " doesn't seem to exist\n")
+        print(f"\n{path_output} doesn't seem to exist\n")
         raise ClowderExit(1)
 
     yaml_symlink = os.path.join(ROOT_DIR, 'clowder.yaml')
-    print(' - Symlink ' + path_output)
+    print(f' - Symlink {path_output}')
     force_symlink(yaml_file, yaml_symlink)
 
 
