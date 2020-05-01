@@ -69,12 +69,6 @@ To install or upgrade `clowder` from PyPI
 $ sudo pip3 install clowder-repo --upgrade
 ```
 
-For terminal autocompletion add the following line to your bash profile
-
-```bash
-command -v clowder >/dev/null 2>&1 && eval "$(register-python-argcomplete clowder)"
-```
-
 # Usage
 
 This example is based on the [Swift projects](https://github.com/apple/swift) (see the full [Swift projects clowder.yaml](https://github.com/JrGoodle/swift-clowder/blob/master/clowder.yaml))

@@ -23,7 +23,6 @@ class ClowderApp(App):
 
         label = 'clowder'
         exit_on_close = True
-        # extensions = ['argcomplete']
         base_controller = 'base'
         handlers = [
             cmd.BaseController,
