@@ -25,3 +25,5 @@ test_no_versions() {
     popd || exit 1
 }
 test_no_versions
+
+# TODO: Add test where linking version succeeds and check symlink

@@ -49,19 +49,17 @@ class SaveController(ArgparseController):
         :raise ClowderExit:
         """
 
-        if self.app.pargs.version.lower() == 'default':
-            print(fmt.save_default_error(self.app.pargs.version))
-            raise ClowderExit(1)
-
         CLOWDER_REPO.print_status()
         CLOWDER_CONTROLLER.validate_projects_exist()
         validate_groups(CLOWDER_CONTROLLER.groups)
 
-        version_name = self.app.pargs.version.replace('/', '-')  # Replace path separators with dashes
-        version_dir = os.path.join(ROOT_DIR, '.clowder', 'versions', version_name)
-        _make_dir(version_dir)
+        # Replace path separators with dashes to avoid creating directories
+        version_name = self.app.pargs.version.replace('/', '-')
 
-        yaml_file = os.path.join(version_dir, 'clowder.yaml')
+        versions_dir = os.path.join(ROOT_DIR, '.clowder', 'versions')
+        _make_dir(versions_dir)
+
+        yaml_file = os.path.join(versions_dir, f'{version_name}.yaml')
         if os.path.exists(yaml_file):
             print(fmt.save_version_exists_error(version_name, yaml_file) + '\n')
             raise ClowderExit(1)

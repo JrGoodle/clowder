@@ -18,10 +18,6 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
     ./clean.sh
     ./init.sh || exit 1
 
-    $COMMAND repo checkout repo-test || exit 1
-    pushd .clowder || exit 1
-    test_branch repo-test
-    popd || exit 1
     clowder link -v ssh || exit 1
 
     $COMMAND herd $PARALLEL || exit 1
@@ -74,10 +70,4 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
         done
     }
     test_prune_all
-
-    $COMMAND repo checkout master || exit 1
-    pushd .clowder || exit 1
-    test_branch master
-    popd || exit 1
-    clowder link || exit 1
 fi
