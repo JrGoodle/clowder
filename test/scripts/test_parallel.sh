@@ -18,6 +18,5 @@ print_double_separator
 "$TEST_SCRIPT_DIR/cats/forall.sh" || exit 1
 "$TEST_SCRIPT_DIR/cats/reset.sh" || exit 1
 "$TEST_SCRIPT_DIR/cats/herd_submodules.sh" || exit 1
-"$TEST_SCRIPT_DIR/cats/skip.sh" || exit 1
 "$TEST_SCRIPT_DIR/test_example_llvm.sh" || exit 1
 # "$TEST_SCRIPT_DIR/swift/reset.sh" || exit 1

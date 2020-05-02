@@ -5,7 +5,7 @@
 
 """
 
-from typing import List, Optional
+from typing import List
 
 from cement.ext.ext_argparse import ArgparseController, expose
 from termcolor import cprint
@@ -13,19 +13,13 @@ from termcolor import cprint
 from clowder.clowder_controller import CLOWDER_CONTROLLER, ClowderController
 from clowder.clowder_repo import print_clowder_repo_status
 from clowder.error.clowder_error import ClowderError
-from clowder.model.group import Group
 from clowder.model.project import Project
 from clowder.util.connectivity import network_connection_required
 from clowder.util.decorators import valid_clowder_yaml_required
 from clowder.util.clowder_utils import (
-    existing_branch_groups,
     existing_branch_projects,
-    filter_groups,
     filter_projects,
     options_help_message,
-    run_group_command,
-    run_project_command,
-    validate_groups,
     validate_projects
 )
 
@@ -48,19 +42,10 @@ class PruneController(ArgparseController):
             (['--force', '-f'], dict(action='store_true', help='force prune branches')),
             (['--all', '-a'], dict(action='store_true', help='prune local and remote branches')),
             (['--remote', '-r'], dict(action='store_true', help='prune remote branches')),
-            (['--groups', '-g'], dict(choices=CLOWDER_CONTROLLER.get_all_group_names(),
-                                      default=CLOWDER_CONTROLLER.get_all_group_names(),
-                                      nargs='+', metavar='GROUP',
-                                      help=options_help_message(CLOWDER_CONTROLLER.get_all_group_names(),
-                                                                'groups to prune'))),
             (['--projects', '-p'], dict(choices=CLOWDER_CONTROLLER.get_all_project_names(),
-                                        nargs='+', metavar='PROJECT',
+                                        default=['all'], nargs='+', metavar='PROJECT',
                                         help=options_help_message(CLOWDER_CONTROLLER.get_all_project_names(),
-                                                                  'projects to prune'))),
-            (['--skip', '-s'], dict(choices=CLOWDER_CONTROLLER.get_all_project_names(),
-                                    nargs='+', metavar='PROJECT', default=[],
-                                    help=options_help_message(CLOWDER_CONTROLLER.get_all_project_names(),
-                                                              'projects to skip')))
+                                                                  'projects to prune')))
         ]
     )
     def prune(self) -> None:
@@ -81,84 +66,42 @@ class PruneController(ArgparseController):
             self._prune_remote()
             return
 
-        _prune(CLOWDER_CONTROLLER, self.app.pargs.groups, self.app.pargs.branch,
-               project_names=self.app.pargs.projects,
-               skip=self.app.pargs.skip, force=self.app.pargs.force, local=True)
+        _prune(CLOWDER_CONTROLLER, self.app.pargs.projects, self.app.pargs.branch,
+               force=self.app.pargs.force, local=True)
 
     @network_connection_required
     def _prune_all(self) -> None:
         """clowder prune all command"""
 
-        _prune(CLOWDER_CONTROLLER, self.app.pargs.groups, self.app.pargs.branch,
-               project_names=self.app.pargs.projects, skip=self.app.pargs.skip,
+        _prune(CLOWDER_CONTROLLER, self.app.pargs.projects, self.app.pargs.branch,
                force=self.app.pargs.force, local=True, remote=True)
 
     @network_connection_required
     def _prune_remote(self) -> None:
         """clowder prune remote command"""
 
-        _prune(CLOWDER_CONTROLLER, self.app.pargs.groups, self.app.pargs.branch,
-               project_names=self.app.pargs.projects,
-               skip=self.app.pargs.skip, remote=True)
+        _prune(CLOWDER_CONTROLLER, self.app.pargs.projects, self.app.pargs.branch, remote=True)
 
 
-def _prune(clowder: ClowderController, group_names: List[str], branch: str,
-           force: bool = False, local: bool = False, remote: bool = False,
-           project_names: Optional[List[str]] = None, skip: Optional[List[str]] = None) -> None:
+def _prune(clowder: ClowderController, project_names: List[str], branch: str, force: bool = False,
+           local: bool = False, remote: bool = False) -> None:
     """Prune branches
 
     :param ClowderController clowder: ClowderController instance
-    :param list[str] group_names: Group names to prune branches for
+    :param List[str] project_names: Project names to prune
     :param str branch: Branch to prune
     :param bool force: Force delete branch
     :param bool local: Delete local branch
     :param bool remote: Delete remote branch
-    :param Optional[List[str]] project_names: Project names to prune
-    :param Optional[List[str]] skip: Project names to skip
     """
 
-    skip = [] if skip is None else skip
-
-    if project_names is None:
-        groups = filter_groups(clowder.groups, group_names)
-        validate_groups(groups)
-        _prune_groups(groups, branch, skip=skip, force=force, local=local, remote=remote)
-        return
-
-    projects = filter_projects(clowder.groups, project_names=project_names)
+    projects = filter_projects(clowder.projects, project_names)
     validate_projects(projects)
-    _prune_projects(projects, branch, skip=skip, force=force, local=local, remote=remote)
-
-
-def _prune_groups(groups: List[Group], branch: str, force: bool = False, local: bool = False,
-                  remote: bool = False, skip: Optional[List[str]] = None) -> None:
-    """Prune group branches
-
-    :param list[Group] groups: Groups to prune
-    :param str branch: Branch to prune
-    :param bool force: Force delete branch
-    :param bool local: Delete local branch
-    :param bool remote: Delete remote branch
-    :param Optional[List[str]] skip: Project names to skip
-    """
-
-    skip = [] if skip is None else skip
-
-    local_branch_exists = existing_branch_groups(groups, branch, is_remote=False)
-    remote_branch_exists = existing_branch_groups(groups, branch, is_remote=True)
-
-    try:
-        _validate_branches(local, remote, local_branch_exists, remote_branch_exists)
-    except ClowderError:
-        pass
-    else:
-        for group in groups:
-            if group.existing_branch(branch, is_remote=remote):
-                run_group_command(group, skip, 'prune', branch, force=force, local=local, remote=remote)
+    _prune_projects(projects, branch, force=force, local=local, remote=remote)
 
 
 def _prune_projects(projects: List[Project], branch: str, force: bool = False, local: bool = False,
-                    remote: bool = False, skip: Optional[List[str]] = None) -> None:
+                    remote: bool = False) -> None:
     """Prune project branches
 
     :param list[Project] projects: Projects to prune
@@ -166,10 +109,7 @@ def _prune_projects(projects: List[Project], branch: str, force: bool = False, l
     :param bool force: Force delete branch
     :param bool local: Delete local branch
     :param bool remote: Delete remote branch
-    :param Optional[List[str]] skip: Project names to skip
     """
-
-    skip = [] if skip is None else skip
 
     local_branch_exists = existing_branch_projects(projects, branch, is_remote=False)
     remote_branch_exists = existing_branch_projects(projects, branch, is_remote=True)
@@ -180,7 +120,8 @@ def _prune_projects(projects: List[Project], branch: str, force: bool = False, l
         pass
     else:
         for project in projects:
-            run_project_command(project, skip, 'prune', branch, force=force, local=local, remote=remote)
+            print(project.status())
+            project.prune(branch, force=force, local=local, remote=remote)
 
 
 def _validate_branches(local: bool, remote: bool, local_branch_exists: bool, remote_branch_exists: bool) -> None:

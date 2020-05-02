@@ -5,7 +5,7 @@
 
 """
 
-from typing import List, Optional
+from typing import List
 
 from cement.ext.ext_argparse import ArgparseController, expose
 
@@ -13,11 +13,8 @@ from clowder.clowder_controller import CLOWDER_CONTROLLER, ClowderController
 from clowder.clowder_repo import print_clowder_repo_status
 from clowder.util.decorators import valid_clowder_yaml_required
 from clowder.util.clowder_utils import (
-    filter_groups,
     filter_projects,
-    options_help_message,
-    run_group_command,
-    run_project_command
+    options_help_message
 )
 
 
@@ -41,19 +38,10 @@ class CleanController(ArgparseController):
             (['-f'], dict(action='store_true', help='remove directories with .git subdirectory or file')),
             (['-X'], dict(action='store_true', help='remove only files ignored by git')),
             (['-x'], dict(action='store_true', help='remove all untracked files')),
-            (['--groups', '-g'], dict(choices=CLOWDER_CONTROLLER.get_all_group_names(),
-                                      default=CLOWDER_CONTROLLER.get_all_group_names(),
-                                      nargs='+', metavar='GROUP',
-                                      help=options_help_message(CLOWDER_CONTROLLER.get_all_group_names(),
-                                                                'groups to clean'))),
             (['--projects', '-p'], dict(choices=CLOWDER_CONTROLLER.get_all_project_names(),
-                                        nargs='+', metavar='PROJECT',
+                                        default=['all'], nargs='+', metavar='PROJECT',
                                         help=options_help_message(CLOWDER_CONTROLLER.get_all_project_names(),
-                                                                  'projects to clean'))),
-            (['--skip', '-s'], dict(choices=CLOWDER_CONTROLLER.get_all_project_names(),
-                                    nargs='+', metavar='PROJECT', default=[],
-                                    help=options_help_message(CLOWDER_CONTROLLER.get_all_project_names(),
-                                                              'projects to skip')))
+                                                                  'projects to clean')))
             ]
     )
     def clean(self) -> None:
@@ -67,8 +55,10 @@ class CleanController(ArgparseController):
         """Clowder clean command private implementation"""
 
         if self.app.pargs.all:
-            _clean_all(CLOWDER_CONTROLLER, group_names=self.app.pargs.groups,
-                       project_names=self.app.pargs.projects, skip=self.app.pargs.skip)
+            projects = filter_projects(CLOWDER_CONTROLLER.projects, self.app.pargs.projects)
+            for project in projects:
+                print(project.status())
+                project.clean_all()
             return
 
         clean_args = ''
@@ -80,57 +70,23 @@ class CleanController(ArgparseController):
             clean_args += 'X'
         if self.app.pargs.x:
             clean_args += 'x'
-        _clean(CLOWDER_CONTROLLER, group_names=self.app.pargs.groups, project_names=self.app.pargs.projects,
-               skip=self.app.pargs.skip, clean_args=clean_args, recursive=self.app.pargs.recursive)
+        _clean(CLOWDER_CONTROLLER, self.app.pargs.projects, clean_args=clean_args, recursive=self.app.pargs.recursive)
 
 
-def _clean(clowder: ClowderController, group_names: List[str], clean_args: str = '', recursive: bool = False,
-           project_names: Optional[List[str]] = None, skip: Optional[List[str]] = None) -> None:
+def _clean(clowder: ClowderController, project_names: List[str], clean_args: str = '', recursive: bool = False) -> None:
     """Discard changes
 
     :param ClowderController clowder: ClowderController instance
-    :param list[str] group_names: Group names to clean
+    :param List[str] project_names: Project names to clean
     :param str clean_args: Git clean options
         - ``d`` Remove untracked directories in addition to untracked files
         - ``f`` Delete directories with .git sub directory or file
         - ``X`` Remove only files ignored by git
         - ``x`` Remove all untracked files
     :param bool recursive: Clean submodules recursively
-    :param Optional[List[str]] project_names: Project names to clean
-    :param Optional[List[str]] skip: Project names to skip
     """
 
-    skip = [] if skip is None else skip
-
-    if project_names is None:
-        groups = filter_groups(clowder.groups, group_names)
-        for group in groups:
-            run_group_command(group, skip, 'clean', args=clean_args, recursive=recursive)
-        return
-
-    projects = filter_projects(clowder.groups, project_names=project_names)
+    projects = filter_projects(clowder.projects, project_names)
     for project in projects:
-        run_project_command(project, skip, 'clean', args=clean_args, recursive=recursive)
-
-
-def _clean_all(clowder: ClowderController, group_names: List[str],
-               project_names: Optional[List[str]] = None, skip: Optional[List[str]] = None) -> None:
-    """Discard all changes
-
-    :param ClowderController clowder: ClowderController instance
-    :param list[str] group_names: Group names to clean
-    :param Optional[List[str]] project_names: Project names to clean
-    :param Optional[List[str]] skip: Project names to skip
-    """
-
-    skip = [] if skip is None else skip
-
-    if project_names is None:
-        groups = filter_groups(clowder.groups, group_names)
-        for group in groups:
-            run_group_command(group, skip, 'clean_all')
-        return
-
-    projects = filter_projects(clowder.groups, project_names=project_names)
-    for project in projects:
-        run_project_command(project, skip, 'clean_all')
+        print(project.status())
+        project.clean(args=clean_args, recursive=recursive)

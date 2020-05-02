@@ -5,7 +5,7 @@
 
 """
 
-from typing import List, Optional
+from typing import List
 
 from termcolor import cprint
 
@@ -13,14 +13,11 @@ import clowder.util.formatting as fmt
 from clowder.error.clowder_exit import ClowderExit
 from clowder.error.clowder_yaml_error import ClowderYAMLError
 from clowder.model.defaults import Defaults
-from clowder.model.group import Group
+from clowder.model.project import Project
 from clowder.model.source import Source
 from clowder.util.clowder_utils import (
-    filter_groups,
     filter_projects,
-    print_parallel_groups_output,
     print_parallel_projects_output,
-    validate_groups,
     validate_projects
 )
 from clowder.util.yaml import load_yaml
@@ -41,7 +38,7 @@ class ClowderController(object):
         """
 
         self.defaults = None
-        self.groups = []
+        self.projects = []
         self.sources = []
         self._max_import_depth = 10
         self.error = None
@@ -60,19 +57,7 @@ class ClowderController(object):
         """
 
         try:
-            return sorted([p.name for g in self.groups for p in g.projects if p.fork])
-        except TypeError:
-            return []
-
-    def get_all_group_names(self) -> List[str]:
-        """Returns all group names for current clowder.yaml
-
-        :return: List of all group names
-        :rtype: list[str]
-        """
-
-        try:
-            return sorted([g.name for g in self.groups])
+            return sorted([p.name for p in self.projects if p.fork])
         except TypeError:
             return []
 
@@ -84,7 +69,8 @@ class ClowderController(object):
         """
 
         try:
-            return sorted([p.name for g in self.groups for p in g.projects])
+            names = [g for p in self.projects for g in p.groups]
+            return sorted(list(set(names)))
         except TypeError:
             return []
 
@@ -96,7 +82,7 @@ class ClowderController(object):
         """
 
         try:
-            return sorted([p.formatted_project_path() for g in self.groups for p in g.projects])
+            return sorted([p.formatted_project_path() for p in self.projects])
         except TypeError:
             return []
 
@@ -110,8 +96,7 @@ class ClowderController(object):
         """
 
         timestamp = None
-        all_projects = [p for g in self.groups for p in g.projects]
-        for project in all_projects:
+        for project in self.projects:
             if project.name == timestamp_project:
                 timestamp = project.get_current_timestamp()
 
@@ -130,34 +115,23 @@ class ClowderController(object):
         """
 
         if resolved:
-            groups = [g.get_yaml(resolved=True) for g in self.groups]
+            projects = [p.get_yaml(resolved=True) for p in self.projects]
         else:
-            groups = [g.get_yaml() for g in self.groups]
+            projects = [p.get_yaml() for p in self.projects]
 
         return {'defaults': self.defaults.get_yaml(),
                 'sources': [s.get_yaml() for s in self.sources],
-                'groups': groups}
+                'projects': projects}
 
-    def validate_print_output(self, group_names: List[str], project_names: Optional[List[str]] = None,
-                              skip: Optional[List[str]] = None) -> None:
+    def validate_print_output(self, project_names: List[str]) -> None:
         """Validate projects/groups and print output
 
-        :param list[str] group_names: Group names to validate/print
         :param Optional[List[str]] project_names: Project names to validate/print
-        :param Optional[List[str]] skip: Project names to skip
         """
 
-        skip = [] if skip is None else skip
-
-        if project_names is None:
-            groups = filter_groups(self.groups, group_names)
-            validate_groups(groups)
-            print_parallel_groups_output(groups, skip)
-            return
-
-        projects = filter_projects(self.groups, project_names=project_names)
+        projects = filter_projects(self.projects, project_names)
         validate_projects(projects)
-        print_parallel_projects_output(projects, skip)
+        print_parallel_projects_output(projects)
 
     def validate_projects_exist(self) -> None:
         """Validate existence status of all projects for specified groups
@@ -166,9 +140,9 @@ class ClowderController(object):
         """
 
         projects_exist = True
-        for group in self.groups:
-            group.print_existence_message()
-            if not group.existing_projects():
+        for project in self.projects:
+            project.print_existence_message()
+            if not project.exists():
                 projects_exist = False
 
         if not projects_exist:
@@ -182,12 +156,12 @@ class ClowderController(object):
             yaml = load_yaml()
             self.defaults = Defaults(yaml['defaults'])
             self.sources = [Source(s, self.defaults) for s in yaml['sources']]
-            for group in yaml['groups']:
-                self.groups.append(Group(group, self.defaults, self.sources))
+            for project in yaml['projects']:
+                self.projects.append(Project(project, self.defaults, self.sources))
         except (AttributeError, TypeError):
             self.defaults = None
             self.sources = []
-            self.groups = []
+            self.projects = []
 
 
 CLOWDER_CONTROLLER = ClowderController()

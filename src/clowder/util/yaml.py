@@ -18,7 +18,7 @@ from clowder.util.validation import (
     validate_required_dict,
     validate_type,
     validate_yaml_defaults,
-    validate_yaml_groups,
+    validate_yaml_projects,
     validate_yaml_sources
 )
 
@@ -111,7 +111,7 @@ def validate_yaml(yaml_file: str) -> None:
 
     validate_required_dict(parsed_yaml, 'defaults', validate_yaml_defaults, yaml_file)
     validate_required_dict(parsed_yaml, 'sources', validate_yaml_sources, yaml_file)
-    validate_required_dict(parsed_yaml, 'groups', validate_yaml_groups, yaml_file)
+    validate_required_dict(parsed_yaml, 'projects', validate_yaml_projects, yaml_file)
 
     if parsed_yaml:
         raise ClowderYAMLError(fmt.unknown_entry_error(fmt.yaml_file('clowder.yaml'), parsed_yaml, yaml_file),

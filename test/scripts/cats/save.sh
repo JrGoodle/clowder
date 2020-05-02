@@ -19,6 +19,11 @@ test_save() {
     $COMMAND link -v v100 && exit 1
     echo "TEST: Fail saving a previously saved version"
     $COMMAND save v0.1 && exit 1
+    echo "TEST: Fail saving a saved version named 'default'"
+    echo "TEST: Try to save version named 'default'"
+    $COMMAND save default && exit 1
+    echo "TEST: Try to save version named 'DEFAULT'"
+    $COMMAND save DEFAULT && exit 1
     echo "TEST: Successfully save a new version"
     $COMMAND save v0.11 || exit 1
     $COMMAND link -v v0.11 || exit 1
@@ -43,3 +48,7 @@ test_save_missing_directories() {
     echo ''
 }
 test_save_missing_directories 'duke' 'mu'
+
+# TODO: Add test for saving version when versions directory doesn't exist
+
+# TODO: Add tests for saving projects with forks using differnt sources

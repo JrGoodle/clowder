@@ -16,7 +16,7 @@ from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.clowder_repo import CLOWDER_REPO
 from clowder.error.clowder_exit import ClowderExit
 from clowder.util.decorators import valid_clowder_yaml_required
-from clowder.util.clowder_utils import validate_groups
+from clowder.util.clowder_utils import validate_projects
 from clowder.util.yaml import save_yaml
 
 
@@ -49,9 +49,14 @@ class SaveController(ArgparseController):
         :raise ClowderExit:
         """
 
+        if self.app.pargs.version.lower() == 'default':
+            print(fmt.save_default_error(self.app.pargs.version))
+            raise ClowderExit(1)
+
         CLOWDER_REPO.print_status()
         CLOWDER_CONTROLLER.validate_projects_exist()
-        validate_groups(CLOWDER_CONTROLLER.groups)
+        # TODO: Get all projects
+        validate_projects(CLOWDER_CONTROLLER.projects)
 
         # Replace path separators with dashes to avoid creating directories
         version_name = self.app.pargs.version.replace('/', '-')

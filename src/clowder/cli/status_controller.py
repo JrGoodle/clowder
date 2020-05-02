@@ -7,11 +7,10 @@
 
 from cement.ext.ext_argparse import ArgparseController, expose
 
-import clowder.util.formatting as fmt
 from clowder.clowder_controller import CLOWDER_CONTROLLER, ClowderController
 from clowder.clowder_repo import CLOWDER_REPO, ClowderRepo
 from clowder.util.connectivity import network_connection_required
-from clowder.util.clowder_utils import run_group_command
+from clowder.util.decorators import valid_clowder_yaml_required
 
 
 class StatusController(ArgparseController):
@@ -29,13 +28,14 @@ class StatusController(ArgparseController):
         help='Print project status',
         arguments=[
             (['--fetch', '-f'], dict(action='store_true', help='fetch projects before printing status'))
-            ]
+        ]
     )
     def status(self) -> None:
         """Clowder status command entry point"""
 
         self._status()
 
+    @valid_clowder_yaml_required
     def _status(self) -> None:
         """Clowder status command private implementation"""
 
@@ -46,10 +46,8 @@ class StatusController(ArgparseController):
 
         padding = len(max(CLOWDER_CONTROLLER.get_all_project_paths(), key=len))
 
-        for group in CLOWDER_CONTROLLER.groups:
-            print(fmt.group_name(group.name))
-            for project in group.projects:
-                print(project.status(padding=padding))
+        for project in CLOWDER_CONTROLLER.projects:
+            print(project.status(padding=padding))
 
 
 @network_connection_required
@@ -63,5 +61,6 @@ def _fetch_projects(clowder_repo: ClowderRepo, clowder: ClowderController) -> No
     clowder_repo.print_status(fetch=True)
 
     print(' - Fetch upstream changes for projects\n')
-    for group in clowder.groups:
-        run_group_command(group, [], 'fetch_all')
+    for project in clowder.projects:
+        print(project.status())
+        project.fetch_all()

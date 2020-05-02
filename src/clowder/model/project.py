@@ -49,6 +49,7 @@ class Project(object):
 
     :ivar str name: Project name
     :ivar str path: Project relative path
+    :ivar List[str] groups: Groups project belongs to
     :ivar str ref: Default git ref
     :ivar str remote: Default remote name
     :ivar int depth: Depth to clone project repo
@@ -57,29 +58,35 @@ class Project(object):
     :ivar Optional[Fork] fork: Project's associated Fork
     """
 
-    def __init__(self, project: dict, group: dict, defaults: Defaults, sources: List[Source]):
+    def __init__(self, project: dict, defaults: Defaults, sources: List[Source]):
         """Project __init__
 
         :param dict project: Parsed YAML python object for project
-        :param dict group: Parsed YAML python object for group
         :param Defaults defaults: Defaults instance
-        :param list[Source] sources: List of Source instances
+        :param List[Source] sources: List of Source instances
         :raise ClowderYAMLError:
         """
 
         self.name = project['name']
         self.path = project['path']
 
-        self.ref = project.get('ref', group.get('ref', defaults.ref))
-        self.remote = project.get('remote', group.get('remote', defaults.remote))
-        self.depth = project.get('depth', group.get('depth', defaults.depth))
-        self.recursive = project.get('recursive', group.get('recursive', defaults.recursive))
-        self._timestamp_author = project.get('timestamp_author',
-                                             group.get('timestamp_author', defaults.timestamp_author))
+        self.ref = project.get('ref', defaults.ref)
+        self.remote = project.get('remote', defaults.remote)
+        self.depth = project.get('depth', defaults.depth)
+        self.recursive = project.get('recursive', defaults.recursive)
+        self._timestamp_author = project.get('timestamp_author', defaults.timestamp_author)
         self._print_output = True
 
+        groups = [self.name, 'all']
+        custom_groups = project.get('groups', None)
+        if custom_groups:
+            groups += custom_groups
+        if 'notdefault' in groups:
+            groups.remove('all')
+        self.groups = list(set(groups))
+
         self.source = None
-        source_name = project.get('source', group.get('source', defaults.source))
+        source_name = project.get('source', defaults.source)
         for source in sources:
             if source.name == source_name:
                 self.source = source
@@ -91,11 +98,11 @@ class Project(object):
         self.fork = None
         if 'fork' in project:
             fork = project['fork']
-            if fork['remote'] == self.remote:
-                # FIXME: This should be in validation
-                raise ClowderYAMLError(fmt.remote_name_error(fork['name'], self.name, self.remote),
-                                       ClowderYAMLYErrorType.REMOTE_NAME)
-            self.fork = Fork(fork, self.path, self.name, self.source, sources, self.ref, self.recursive)
+            # if fork['remote'] == self.remote:
+            #     # FIXME: This should be in validation
+            #     raise ClowderYAMLError(fmt.remote_name_error(fork['name'], self.name, self.remote),
+            #                            ClowderYAMLYErrorType.REMOTE_NAME)
+            self.fork = Fork(fork, self.path, self.name, self.source, sources, self.ref, self.recursive, defaults)
 
     @project_repo_exists
     def branch(self, local: bool = False, remote: bool = False) -> None:
@@ -177,6 +184,15 @@ class Project(object):
         remote = self.remote if self.fork is None else self.fork.remote
         return repo.existing_remote_branch(branch, remote)
 
+    def exists(self) -> bool:
+        """Check if branch exists
+
+        :return: True, if repo exists
+        :rtype: bool
+        """
+
+        return existing_git_repository(self.full_path())
+
     @project_repo_exists
     def fetch_all(self) -> None:
         """Fetch upstream changes if project exists on disk"""
@@ -234,6 +250,7 @@ class Project(object):
 
         project = {'name': self.name,
                    'path': self.path,
+                   'groups': self.groups,
                    'depth': self.depth,
                    'recursive': self.recursive,
                    'ref': ref,
@@ -310,6 +327,12 @@ class Project(object):
         """
 
         return ProjectRepo(self.full_path(), self.remote, self.ref).validate_repo()
+
+    def print_existence_message(self) -> None:
+        """Print existence validation message for project"""
+
+        if not existing_git_repository(self.full_path()):
+            print(self.status())
 
     def print_validation(self) -> None:
         """Print validation message for project"""
@@ -426,7 +449,7 @@ class Project(object):
         if padding:
             project_output = project_output.ljust(padding)
 
-        return project_output + ' ' + current_ref_output
+        return f'{project_output} {current_ref_output}'
 
     @project_repo_exists
     def stash(self) -> None:

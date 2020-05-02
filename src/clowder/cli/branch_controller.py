@@ -11,11 +11,8 @@ from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.clowder_repo import print_clowder_repo_status
 from clowder.util.decorators import valid_clowder_yaml_required
 from clowder.util.clowder_utils import (
-    filter_groups,
     filter_projects,
-    options_help_message,
-    run_group_command,
-    run_project_command
+    options_help_message
 )
 
 
@@ -35,19 +32,10 @@ class BranchController(ArgparseController):
         arguments=[
             (['--all', '-a'], dict(action='store_true', help='show local and remote branches')),
             (['--remote', '-r'], dict(action='store_true', help='show remote branches')),
-            (['--groups', '-g'], dict(choices=CLOWDER_CONTROLLER.get_all_group_names(),
-                                      default=CLOWDER_CONTROLLER.get_all_group_names(),
-                                      nargs='+', metavar='GROUP',
-                                      help=options_help_message(CLOWDER_CONTROLLER.get_all_group_names(),
-                                                                'groups to show branches for'))),
             (['--projects', '-p'], dict(choices=CLOWDER_CONTROLLER.get_all_project_names(),
-                                        nargs='+', metavar='PROJECT',
+                                        default=['all'], nargs='+', metavar='PROJECT',
                                         help=options_help_message(CLOWDER_CONTROLLER.get_all_project_names(),
-                                                                  'projects to show branches for'))),
-            (['--skip', '-s'], dict(choices=CLOWDER_CONTROLLER.get_all_project_names(),
-                                    nargs='+', metavar='PROJECT', default=[],
-                                    help=options_help_message(CLOWDER_CONTROLLER.get_all_project_names(),
-                                                              'projects to skip')))
+                                                                  'projects to show branches for')))
             ]
     )
     def branch(self) -> None:
@@ -66,12 +54,7 @@ class BranchController(ArgparseController):
         elif self.app.pargs.remote:
             remote = True
 
-        if self.app.pargs.projects is None:
-            groups = filter_groups(CLOWDER_CONTROLLER.groups, self.app.pargs.groups)
-            for group in groups:
-                run_group_command(group, self.app.pargs.skip, 'branch', local=local, remote=remote)
-            return
-
-        projects = filter_projects(CLOWDER_CONTROLLER.groups, project_names=self.app.pargs.projects)
+        projects = filter_projects(CLOWDER_CONTROLLER.projects, self.app.pargs.projects)
         for project in projects:
-            run_project_command(project, self.app.pargs.skip, 'branch', local=local, remote=remote)
+            print(project.status())
+            project.branch(local=local, remote=remote)

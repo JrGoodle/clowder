@@ -17,6 +17,6 @@ $COMMAND branch -a || exit 1
 $COMMAND branch -p 'jrgoodle/mu' 'jrgoodle/duke' || exit 1
 $COMMAND branch -rp 'jrgoodle/mu' 'jrgoodle/duke' || exit 1
 $COMMAND branch -ap 'jrgoodle/mu' 'jrgoodle/duke' || exit 1
-$COMMAND branch -g 'black-cats' || exit 1
-$COMMAND branch -rg 'black-cats' || exit 1
-$COMMAND branch -ag 'black-cats' || exit 1
+$COMMAND branch -p 'black-cats' || exit 1
+$COMMAND branch -rp 'black-cats' || exit 1
+$COMMAND branch -ap 'black-cats' || exit 1
