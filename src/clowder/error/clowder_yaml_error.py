@@ -29,7 +29,7 @@ class ClowderYAMLError(Exception):
 @unique
 class ClowderYAMLYErrorType(IntEnum):
     UNKNOWN = 99
-    REMOTE_NAME = 101
+    DUPLICATE_REMOTE_NAME = 101
     MISSING_ENTRY = 102
     UNKNOWN_ENTRY = 103
     MISSING_YAML = 104
@@ -37,9 +37,10 @@ class ClowderYAMLYErrorType(IntEnum):
     OPEN_FILE = 107
     INVALID_PROTOCOL = 108
     INVALID_REF = 109
-    DEPTH = 111
-    TYPE = 112
+    INVALID_DEPTH = 111
+    WRONG_TYPE = 112
     MISSING_REPO = 113
     SOURCE_NOT_FOUND = 114
     GROUPS_CONTAINS_ALL = 115
     DUPLICATE_PATH = 116
+    DUPLICATE_ALIAS = 117
