@@ -90,18 +90,10 @@ class Project(object):
         for source in sources:
             if source.name == source_name:
                 self.source = source
-        if self.source is None:
-            # FIXME: This should be in validation
-            raise ClowderYAMLError(fmt.source_not_found_error(source_name, self.name),
-                                   ClowderYAMLYErrorType.SOURCE_NOT_FOUND)
 
         self.fork = None
         if 'fork' in project:
             fork = project['fork']
-            # if fork['remote'] == self.remote:
-            #     # FIXME: This should be in validation
-            #     raise ClowderYAMLError(fmt.remote_name_error(fork['name'], self.name, self.remote),
-            #                            ClowderYAMLYErrorType.REMOTE_NAME)
             self.fork = Fork(fork, self.path, self.name, self.source, sources, self.ref, self.recursive, defaults)
 
     @project_repo_exists

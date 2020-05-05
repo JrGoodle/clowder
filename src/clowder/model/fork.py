@@ -55,10 +55,6 @@ class Fork(object):
         for s in sources:
             if s.name == source_name:
                 self._source = s
-        if self._source is None:
-            # FIXME: This should be in validation
-            raise ClowderYAMLError(fmt.source_not_found_error(source_name, project_name, fork=self.name),
-                                   ClowderYAMLYErrorType.SOURCE_NOT_FOUND)
 
     def full_path(self) -> str:
         """Return full path to project
