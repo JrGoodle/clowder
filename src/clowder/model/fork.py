@@ -18,6 +18,7 @@ from clowder.git.util import (
     existing_git_repository,
     git_url
 )
+from clowder.model.defaults import Defaults
 from clowder.model.source import Source
 
 
@@ -30,7 +31,7 @@ class Fork(object):
     """
 
     def __init__(self, fork: dict, path: str, project_name: str, project_source: Source,
-                 sources: List[Source], project_ref: str, recursive: bool):
+                 sources: List[Source], project_ref: str, recursive: bool, defaults: Defaults):
         """Project __init__
 
         :param dict fork: Parsed YAML python object for fork
@@ -40,11 +41,12 @@ class Fork(object):
         :param list[Source] sources: List of Source instances
         :param str project_ref: Git ref from project
         :param bool recursive: Whether to handle submodules
+        :param Defaults defaults: Defaults instance
         """
 
         self.path = path
         self.name = fork['name']
-        self.remote = fork['remote']
+        self.remote = fork.get('remote', defaults.remote)
         self._ref = fork.get('ref', project_ref)
         self._recursive = recursive
 
@@ -53,10 +55,6 @@ class Fork(object):
         for s in sources:
             if s.name == source_name:
                 self._source = s
-        if self._source is None:
-            # FIXME: This should be in validation
-            raise ClowderYAMLError(fmt.source_not_found_error(source_name, project_name, fork=self.name),
-                                   ClowderYAMLYErrorType.SOURCE_NOT_FOUND)
 
     def full_path(self) -> str:
         """Return full path to project
@@ -74,7 +72,17 @@ class Fork(object):
         :rtype: dict
         """
 
-        return {'name': self.name, 'remote': self.remote}
+        # TODO: Should this be added for forks as well as projects?
+        # if resolved:
+        #     ref = self.ref
+        # else:
+        #     repo = ProjectRepo(self.full_path(), self.remote, self.ref)
+        #     ref = repo.sha()
+
+        return {'name': self.name,
+                'remote': self.remote,
+                'source': self._source.name,
+                'ref': self._ref}
 
     def status(self) -> str:
         """Return formatted fork status

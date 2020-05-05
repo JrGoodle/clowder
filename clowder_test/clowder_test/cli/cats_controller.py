@@ -179,15 +179,6 @@ class CatsController(ArgparseController):
         self._execute_command('./save.sh', self.path)
 
     @expose(
-        help='Run cats skip tests'
-    )
-    @create_cats_cache
-    def skip(self) -> None:
-        """clowder cats skip tests"""
-
-        self._execute_command('./skip.sh', self.path)
-
-    @expose(
         help='Run cats start tests'
     )
     @create_cats_cache

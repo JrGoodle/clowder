@@ -115,7 +115,7 @@ test_herd_groups() {
     $COMMAND herd $PARALLEL || exit 1
 
     echo "TEST: Herd only specific groups"
-    $COMMAND herd $PARALLEL -g "$@" || exit 1
+    $COMMAND herd $PARALLEL -p "$@" || exit 1
     $COMMAND status || exit 1
 }
 test_herd_groups 'cats'
@@ -169,22 +169,6 @@ test_herd_projects 'jrgoodle/kit' 'jrgoodle/kishka'
 pushd .clowder || exit 1
 git checkout master || exit 1
 popd || exit 1
-
-test_herd_override_groups() {
-    print_single_separator
-    echo "TEST: Override values at group level"
-    $COMMAND link || exit 1
-    $COMMAND herd $PARALLEL -b alt-branch || exit 1
-    for project in "${all_projects[@]}"; do
-        pushd $project || exit 1
-        test_branch 'alt-branch'
-        popd || exit 1
-    done
-    $COMMAND link -v override-group-ref || exit 1
-    $COMMAND herd $PARALLEL || exit 1
-    test_cats_default_herd_branches
-}
-test_herd_override_groups
 
 EXISTING_REMOTE_BRANCH='test-herd-existing-remote-branch'
 NO_REMOTE_BRANCH='test-herd-no-remote-branch'

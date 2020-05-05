@@ -70,7 +70,7 @@ test_prune() {
     test_no_local_branch_exists prune_branch
     popd || exit 1
 
-    $COMMAND prune -f prune_branch -g black-cats || exit 1
+    $COMMAND prune -f prune_branch -p black-cats || exit 1
 
     pushd duke || exit 1
     test_branch prune_branch

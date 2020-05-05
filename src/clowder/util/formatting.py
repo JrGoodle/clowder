@@ -66,6 +66,18 @@ def depth_error(depth: int, yml: str) -> str:
     return output_1 + output_2
 
 
+def duplicate_project_path_error(path: str, yml: str) -> str:
+    """Return formatted error string for duplicate project path
+
+    :param str path: Duplicate project path
+    :param str yml: Path to yaml file
+    :return: Formatted duplicate remote fork name error
+    :rtype: str
+    """
+
+    return yaml_path(yml) + colored(' - Error: Multiple projects with path ', 'red') + colored(path, attrs=['bold'])
+
+
 def empty_yaml_error(yml: str) -> str:
     """Return formatted error string for empty clowder.yaml
 
@@ -110,15 +122,19 @@ def fork_string(name: str) -> str:
     return colored(name, 'cyan')
 
 
-def group_name(name: str) -> str:
-    """Print formatted group name
+def groups_contains_all_error(yml: str) -> str:
+    """Return formatted error string for invalid entry in collection
 
-    :param str name: Group name
-    :return: Formatted group name
+    :param str yml: Path to yaml file
+    :return: Formatted missing entries error
     :rtype: str
     """
 
-    return colored(name, attrs=['bold', 'underline'])
+    output_1 = colored(' - Error: ', 'red')
+    output_2 = colored('groups', attrs=['bold'])
+    output_3 = colored(' cannot contain ', 'red')
+    output_4 = colored('all', attrs=['bold'])
+    return f'{yaml_path(yml)}{output_1}{output_2}{output_3}{output_4}'
 
 
 def invalid_protocol_error(protocol: str, yml: str) -> str:
@@ -262,8 +278,9 @@ def recursive_import_error(depth: int) -> str:
     :rtype: str
     """
 
-    output = colored(' - Error: Too many recursive imports\n', 'red')
-    return output + 'Max imports: ' + colored(str(depth), attrs=['bold'])
+    output_1 = colored(' - Error: Too many recursive imports', 'red')
+    output_2 = colored(str(depth), attrs=['bold'])
+    return f'{output_1}\nMax imports: {output_2}'
 
 
 def ref_string(ref: str) -> str:
@@ -274,7 +291,7 @@ def ref_string(ref: str) -> str:
     :rtype: str
     """
 
-    return colored('[' + ref + ']', 'magenta')
+    return colored(f'[{ref}]', 'magenta')
 
 
 def remote_already_exists_error(remote_name: str, remote_url: str, actual_url: str) -> str:
@@ -289,21 +306,22 @@ def remote_already_exists_error(remote_name: str, remote_url: str, actual_url: s
 
     output_1 = colored(' - Remote ', 'red') + remote_string(remote_name)
     output_2 = colored(' already exists with a different url', 'red')
-    output_3 = '\n' + get_path(actual_url) + ' should be ' + get_path(remote_url) + '\n'
+    output_3 = f'\n{get_path(actual_url)} should be {get_path(remote_url)}\n'
     return output_1 + output_2 + output_3
 
 
-def remote_name_error(fork: str, project: str, remote: str) -> str:
+def remote_name_error(fork: str, project: str, remote: str, yml: str) -> str:
     """Return formatted error string for fork with same remote as project
 
     :param str fork: Fork name
     :param str project: Project name
     :param str remote: Remote name
+    :param str yml: Path to yaml file
     :return: Formatted duplicate remote fork name error
     :rtype: str
     """
 
-    output_1 = colored(' - Error: fork ', 'red') + colored(fork, attrs=['bold'])
+    output_1 = yaml_path(yml) + colored(' - Error: fork ', 'red') + colored(fork, attrs=['bold'])
     output_2 = colored(' and project ', 'red') + colored(project, attrs=['bold'])
     output_3 = colored(' have same remote name ', 'red') + colored(remote, attrs=['bold'])
     return output_1 + output_2 + output_3
@@ -341,7 +359,7 @@ def save_default_error(name: str) -> str:
     """
 
     output_1 = colored(' - Error: Version name ', 'red') + colored(name, attrs=['bold'])
-    output_2 = colored(' is not allowed\n', 'red')
+    output_2 = colored(' is not allowed', 'red')
     return output_1 + output_2
 
 
@@ -353,7 +371,7 @@ def save_file_error(path: str) -> str:
     :rtype: str
     """
 
-    return colored(' - Error: Failed to save file\n', 'red') + get_path(path)
+    return colored(' - Error: Failed to save file', 'red') + get_path(path)
 
 
 def save_version(version_name: str, yml: str) -> str:
@@ -378,31 +396,36 @@ def save_version_exists_error(version_name: str, yml: str) -> str:
     """
 
     output_1 = colored(' - Error: Version ', 'red') + version(version_name)
-    output_2 = colored(' already exists\n', 'red') + yaml_file(yml)
+    output_2 = colored(' already exists', 'red') + yaml_file(yml)
     return output_1 + output_2
 
 
-def skip_project_message() -> str:
-    """Return skip project message
-
-    :return: Skip project message
-    :rtype: str
-    """
-
-    return ' - Skip project'
-
-
-def source_not_found_error(source: str, project: str, fork: Optional[str] = None) -> str:
+def source_default_not_found_error(source: str, yml: str) -> str:
     """Return formatted error string for project with unknown source specified
 
     :param str source: Source name
+    :param str yml: Path to yaml file
+    :return: Formatted source not found error
+    :rtype: str
+    """
+
+    output_1 = yaml_path(yml) + colored(' - Error: source ', 'red') + colored(source, attrs=['bold'])
+    output_2 = colored(' not found in ', 'red') + colored('defaults', attrs=['bold'])
+    return output_1 + output_2
+
+
+def source_not_found_error(source: str, yml: str, project: str, fork: Optional[str] = None) -> str:
+    """Return formatted error string for project with unknown source specified
+
+    :param str source: Source name
+    :param str yml: Path to yaml file
     :param str project: Project name
     :param Optional[str] fork: Fork name
     :return: Formatted source not found error
     :rtype: str
     """
 
-    output_1 = colored(' - Error: source ', 'red') + colored(source, attrs=['bold'])
+    output_1 = yaml_path(yml) + colored(' - Error: source ', 'red') + colored(source, attrs=['bold'])
     output_2 = ''
     if fork:
         output_2 = colored(' for fork ', 'red') + colored(fork, attrs=['bold'])

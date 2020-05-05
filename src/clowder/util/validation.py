@@ -5,7 +5,7 @@
 
 """
 
-from typing import Any, Callable
+from typing import Any, Callable, List, Optional
 
 import clowder.util.formatting as fmt
 from clowder.error.clowder_yaml_error import ClowderYAMLError, ClowderYAMLYErrorType
@@ -40,6 +40,79 @@ def validate_type(value: Any, name: str, classinfo: type, type_name: str, yaml_f
         raise ClowderYAMLError(fmt.type_error(name, yaml_file, type_name), ClowderYAMLYErrorType.TYPE)
 
 
+def validate_yaml_contents(yaml: dict, yaml_file: str) -> None:
+    """Validate contents in clowder loaded from yaml file
+
+    :param dict yaml: Parsed YAML python object
+    :param str yaml_file: Path to yaml file
+    """
+
+    sources = []
+    for source in yaml['sources']:
+        sources.append(source['name'])
+
+    defaults = yaml['defaults']
+    # Validate default source is defined in sources
+    if defaults['source'] not in sources:
+        raise ClowderYAMLError(fmt.source_default_not_found_error(defaults['source'], yaml_file),
+                               ClowderYAMLYErrorType.SOURCE_NOT_FOUND)
+
+    projects = []
+    projects_with_forks = []
+    for p in yaml['projects']:
+        project = {'name': p['name'],
+                   'path': p['path'] if 'path' in p else p['name']}
+        if 'remote' in p:
+            project['remote'] = p['remote']
+        if 'source' in p:
+            # Validate custom project source is defined in sources
+            if p['source'] not in sources:
+                raise ClowderYAMLError(fmt.source_not_found_error(p['source'], yaml_file, project['name']),
+                                       ClowderYAMLYErrorType.SOURCE_NOT_FOUND)
+        projects.append(project)
+        if 'fork' in p:
+            f = p['fork']
+            fork = {'name': f['name']}
+            if 'remote' in f:
+                fork['remote'] = f['remote']
+            if 'source' in f:
+                # Validate custom fork source is defined in sources
+                if f['source'] not in sources:
+                    raise ClowderYAMLError(fmt.source_not_found_error(f['source'], yaml_file, project['name']),
+                                           ClowderYAMLYErrorType.SOURCE_NOT_FOUND)
+            project['fork'] = fork
+            projects_with_forks.append(project)
+
+    # Validate projects and forks have different remote names
+    for project in projects_with_forks:
+        fork = project['fork']
+        default_remote = defaults['remote']
+        if 'remote' in project and 'remote' in fork:
+            if project['remote'] == fork['remote']:
+                message = fmt.remote_name_error(fork['name'], project['name'], project['remote'], yaml_file)
+                raise ClowderYAMLError(message, ClowderYAMLYErrorType.REMOTE_NAME)
+        elif 'remote' in project:
+            if project['remote'] == default_remote:
+                message = fmt.remote_name_error(fork['name'], project['name'], default_remote, yaml_file)
+                raise ClowderYAMLError(message, ClowderYAMLYErrorType.REMOTE_NAME)
+        elif 'remote' in fork:
+            if fork['remote'] == default_remote:
+                message = fmt.remote_name_error(fork['name'], project['name'], default_remote, yaml_file)
+                raise ClowderYAMLError(message, ClowderYAMLYErrorType.REMOTE_NAME)
+        else:
+            message = fmt.remote_name_error(fork['name'], project['name'], default_remote, yaml_file)
+            raise ClowderYAMLError(message, ClowderYAMLYErrorType.REMOTE_NAME)
+
+    # Validate projects don't share share directories
+    paths = [p['path'] for p in projects]
+    duplicate = _check_for_duplicates(paths)
+    if duplicate is not None:
+        message = fmt.duplicate_project_path_error(duplicate, yaml_file)
+        raise ClowderYAMLError(message, ClowderYAMLYErrorType.DUPLICATE_PATH)
+
+    # TODO: Validate projects have unique name/alias
+
+
 def validate_yaml_defaults(defaults: dict, yaml_file: str) -> None:
     """Validate defaults in clowder loaded from yaml file
 
@@ -71,45 +144,15 @@ def validate_yaml_fork(fork: dict, yaml_file: str) -> None:
     validate_type(fork, 'fork', dict, 'dict', yaml_file)
     _validate_not_empty(fork, 'fork', yaml_file)
 
-    args = ['name', 'remote']
-    for arg in args:
-        _validate_required_string(fork, 'fork', arg, yaml_file)
+    _validate_required_string(fork, 'fork', 'name', yaml_file)
 
-    _validate_optional_string(fork, 'source', yaml_file)
+    args = ['source', 'remote']
+    for arg in args:
+        _validate_optional_string(fork, arg, yaml_file)
+
     _validate_optional_ref(fork, yaml_file)
 
     _validate_empty(fork, 'fork', yaml_file)
-
-
-def validate_yaml_groups(groups: dict, yaml_file: str) -> None:
-    """Validate groups in clowder loaded from yaml file
-
-    :param dict groups: Parsed YAML python object for groups
-    :param str yaml_file: Path to yaml file
-    """
-
-    validate_type(groups, 'groups', list, 'list', yaml_file)
-    _validate_not_empty(groups, 'groups', yaml_file)
-
-    for group in groups:
-        validate_type(group, 'group', dict, 'dict', yaml_file)
-        _validate_not_empty(group, 'group', yaml_file)
-
-        _validate_required_string(group, 'group', 'name', yaml_file)
-
-        _validate_dict_contains_value(group, 'group', 'projects', yaml_file)
-        validate_yaml_projects(group['projects'], yaml_file)
-        del group['projects']
-
-        _validate_depth(group, yaml_file)
-        _validate_optional_bool(group, 'recursive', yaml_file)
-        _validate_optional_ref(group, yaml_file)
-
-        string_args = ['remote', 'source', 'timestamp_author']
-        for arg in string_args:
-            _validate_optional_string(group, arg, yaml_file)
-
-        _validate_empty(group, 'group', yaml_file)
 
 
 def validate_yaml_projects(projects: dict, yaml_file: str) -> None:
@@ -129,30 +172,21 @@ def validate_yaml_projects(projects: dict, yaml_file: str) -> None:
         _validate_required_string(project, 'project', 'name', yaml_file)
         _validate_required_string(project, 'project', 'path', yaml_file)
 
-        _validate_yaml_project_optional(project, yaml_file)
+        args = ['remote', 'source', 'timestamp_author']
+        for arg in args:
+            _validate_optional_string(project, arg, yaml_file)
+
+        _validate_optional_bool(project, 'recursive', yaml_file)
+        _validate_optional_ref(project, yaml_file)
+        _validate_optional_groups(project, yaml_file)
+
+        _validate_depth(project, yaml_file)
+
+        if 'fork' in project:
+            validate_yaml_fork(project['fork'], yaml_file)
+            del project['fork']
 
         _validate_empty(project, 'project', yaml_file)
-
-
-def _validate_yaml_project_optional(project: dict, yaml_file: str) -> None:
-    """Validate optional args in project in clowder loaded from yaml file
-
-    :param dict project: Parsed YAML python object for project
-    :param str yaml_file: Path to yaml file
-    """
-
-    args = ['remote', 'source', 'timestamp_author']
-    for arg in args:
-        _validate_optional_string(project, arg, yaml_file)
-
-    _validate_optional_bool(project, 'recursive', yaml_file)
-    _validate_optional_ref(project, yaml_file)
-
-    _validate_depth(project, yaml_file)
-
-    if 'fork' in project:
-        validate_yaml_fork(project['fork'], yaml_file)
-        del project['fork']
 
 
 def validate_yaml_sources(sources: dict, yaml_file: str) -> None:
@@ -176,6 +210,23 @@ def validate_yaml_sources(sources: dict, yaml_file: str) -> None:
         _validate_optional_protocol(source, yaml_file)
 
         _validate_empty(source, 'source', yaml_file)
+
+
+def _check_for_duplicates(list_of_elements: List[str]) -> Optional[str]:
+    """Check if given list contains any duplicates
+
+    :param List[str] list_of_elements: List of strings to check for duplicates
+    :return: First duplicate encountered, or None if no duplicates found
+    :rtype: Optional[str]
+    """
+
+    set_of_elements = set()
+    for elem in list_of_elements:
+        if elem in set_of_elements:
+            return elem
+        else:
+            set_of_elements.add(elem)
+    return None
 
 
 def _is_valid_protocol_type(protocol: str) -> bool:
@@ -275,18 +326,22 @@ def _validate_not_empty(collection: dict, name: str, yaml_file: str) -> None:
         raise ClowderYAMLError(fmt.missing_entries_error(name, yaml_file), ClowderYAMLYErrorType.MISSING_ENTRY)
 
 
-def _validate_optional_dict(dictionary: dict, value: str, func: Callable, yaml_file: str) -> None:
-    """Check whether yaml file contains optional value
+def _validate_optional_groups(dictionary: dict, yaml_file: str) -> None:
+    """Check whether yaml file contains optional groups
 
     :param dict dictionary: Parsed YAML python object
-    :param str value: Name of entry to check
-    :param callabel func: Function to call to validate dictionary
     :param str yaml_file: Path to yaml file
     """
 
-    if value in dictionary:
-        func(dictionary[value], yaml_file)
-        del dictionary[value]
+    if 'groups' in dictionary:
+        groups = dictionary['groups']
+        validate_type(groups, 'groups', list, 'list', yaml_file)
+        for group in groups:
+            validate_type(group, 'group', str, 'str', yaml_file)
+        if 'all' in groups:
+            ClowderYAMLError(fmt.groups_contains_all_error(yaml_file), ClowderYAMLYErrorType.GROUPS_CONTAINS_ALL)
+        # TODO: Check for duplicates in list
+        del dictionary['groups']
 
 
 def _validate_optional_protocol(dictionary: dict, yaml_file: str) -> None:
@@ -297,7 +352,7 @@ def _validate_optional_protocol(dictionary: dict, yaml_file: str) -> None:
     """
 
     if 'protocol' in dictionary:
-        validate_type(dictionary['protocol'], 'protocol', str, 'protocol', yaml_file)
+        validate_type(dictionary['protocol'], 'protocol', str, 'str', yaml_file)
         _validate_protocol_type(dictionary, yaml_file)
         del dictionary['protocol']
 

@@ -41,3 +41,5 @@ class ClowderYAMLYErrorType(IntEnum):
     TYPE = 112
     MISSING_REPO = 113
     SOURCE_NOT_FOUND = 114
+    GROUPS_CONTAINS_ALL = 115
+    DUPLICATE_PATH = 116

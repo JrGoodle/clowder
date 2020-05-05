@@ -5,6 +5,7 @@
 
 """
 
+import copy
 import os
 
 # noinspection PyPackageRequirements
@@ -17,8 +18,9 @@ from clowder.error.clowder_yaml_error import ClowderYAMLError, ClowderYAMLYError
 from clowder.util.validation import (
     validate_required_dict,
     validate_type,
+    validate_yaml_contents,
     validate_yaml_defaults,
-    validate_yaml_groups,
+    validate_yaml_projects,
     validate_yaml_sources
 )
 
@@ -104,6 +106,7 @@ def validate_yaml(yaml_file: str) -> None:
     """
 
     parsed_yaml = parse_yaml(yaml_file)
+    parsed_yaml_copy = copy.deepcopy(parsed_yaml)
     validate_type(parsed_yaml, fmt.yaml_file('clowder.yaml'), dict, 'dict', yaml_file)
 
     if not parsed_yaml:
@@ -111,11 +114,13 @@ def validate_yaml(yaml_file: str) -> None:
 
     validate_required_dict(parsed_yaml, 'defaults', validate_yaml_defaults, yaml_file)
     validate_required_dict(parsed_yaml, 'sources', validate_yaml_sources, yaml_file)
-    validate_required_dict(parsed_yaml, 'groups', validate_yaml_groups, yaml_file)
+    validate_required_dict(parsed_yaml, 'projects', validate_yaml_projects, yaml_file)
 
     if parsed_yaml:
         raise ClowderYAMLError(fmt.unknown_entry_error(fmt.yaml_file('clowder.yaml'), parsed_yaml, yaml_file),
                                ClowderYAMLYErrorType.UNKNOWN_ENTRY)
+
+    validate_yaml_contents(parsed_yaml_copy, yaml_file)
 
 
 def _format_yaml_symlink(yaml_file: str) -> str:

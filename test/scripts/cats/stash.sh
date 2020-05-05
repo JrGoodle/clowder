@@ -40,7 +40,7 @@ test_stash() {
         popd || exit 1
     done
     echo "TEST: Stash specific groups when dirty"
-    $COMMAND stash -g "$@" || exit 1
+    $COMMAND stash -p "$@" || exit 1
     for project in "${black_cats_projects[@]}"; do
         pushd $project || exit 1
         test_git_clean

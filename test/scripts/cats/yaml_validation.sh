@@ -70,12 +70,10 @@ test_invalid_yaml() {
     _test_invalid_yaml 'ls -d test-duplicate-fork-project-remote*' '101'
     _test_invalid_yaml 'ls -d test-missing-default*' '102'
     _test_invalid_yaml 'ls -d test-missing-fork*' '102'
-    _test_invalid_yaml 'ls -d test-missing-group*' '102'
     _test_invalid_yaml 'ls -d test-missing-project*' '102'
     _test_invalid_yaml 'ls -d test-missing-source*' '102'
     _test_invalid_yaml 'ls -d test-empty-defaults*' '102'
     _test_invalid_yaml 'ls -d test-empty-fork*' '102'
-    _test_invalid_yaml 'ls -d test-empty-group*' '102'
     _test_invalid_yaml 'ls -d test-empty-project*' '102'
     _test_invalid_yaml 'ls -d test-empty-source*' '102'
     _test_invalid_yaml 'ls -d test-unknown*' '103'
@@ -92,6 +90,7 @@ test_invalid_yaml() {
     _test_invalid_yaml 'ls -d test-arg-type-source*' '112'
     _test_invalid_yaml 'ls -d test-arg-type-timestamp*' '112'
     _test_invalid_yaml 'ls -d test-source-not-found*' '114'
+    _test_invalid_yaml 'ls -d test-duplicate-project-directories*' '116'
 
     $COMMAND repo checkout master || exit 1
     pushd .clowder || exit 1
@@ -99,3 +98,5 @@ test_invalid_yaml() {
     popd || exit 1
 }
 test_invalid_yaml
+
+# TODO: Test all commands requiring @valid_clowder_yaml_required

@@ -36,7 +36,7 @@ test_forall_command() {
     # echo "TEST: Run forall command with multiple arguments"
     # $COMMAND forall $PARALLEL -c 'git status' 'echo "hi"'|| exit 1
     echo "TEST: Run forall command for specific groups"
-    $COMMAND forall $PARALLEL -c 'git status' -g "$@" || exit 1
+    $COMMAND forall $PARALLEL -c 'git status' -p "$@" || exit 1
     echo "TEST: Run forall command with error"
     $COMMAND forall $PARALLEL -c 'exit 1' && exit 1
     echo "TEST: Run forall command with --ignore-error"
@@ -55,7 +55,7 @@ test_forall_script() {
     echo "TEST: Ignore failures running forall script with arguments"
     $COMMAND forall $PARALLEL -ic "$TEST_SCRIPT_DIR/test_forall_script_args.sh" "one" || exit 1
     echo "TEST: Run forall script for specific groups"
-    $COMMAND forall $PARALLEL -c "$TEST_SCRIPT_DIR/test_forall_script.sh" -g "$@" || exit 1
+    $COMMAND forall $PARALLEL -c "$TEST_SCRIPT_DIR/test_forall_script.sh" -p "$@" || exit 1
     echo "TEST: Run forall script with error"
     $COMMAND forall $PARALLEL -c "$TEST_SCRIPT_DIR/test_forall_script_error.sh" && exit 1
     echo "TEST: Run forall script with --ignore-error"

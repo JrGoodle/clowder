@@ -37,7 +37,7 @@ class SyncController(ArgparseController):
         help='Sync fork with upstream remote',
         arguments=[
             (['--projects', '-p'], dict(choices=CLOWDER_CONTROLLER.get_all_fork_project_names(),
-                                        nargs='+', metavar='PROJECT',
+                                        default=['all'], nargs='+', metavar='PROJECT',
                                         help=options_help_message(CLOWDER_CONTROLLER.get_all_fork_project_names(),
                                                                   'projects to sync'))),
             (['--rebase', '-r'], dict(action='store_true', help='use rebase instead of pull')),
@@ -56,7 +56,7 @@ class SyncController(ArgparseController):
         """Clowder sync command private implementation"""
 
         all_fork_projects = CLOWDER_CONTROLLER.get_all_fork_project_names()
-        if all_fork_projects == '':
+        if not all_fork_projects:
             cprint(' - No forks to sync\n', 'red')
             return
         sync(CLOWDER_CONTROLLER, all_fork_projects,
@@ -74,7 +74,7 @@ def sync(clowder: ClowderController, project_names: List[str],
     :param bool parallel: Whether command is being run in parallel, affects output
     """
 
-    projects = filter_projects(clowder.groups, project_names=project_names)
+    projects = filter_projects(clowder.projects, project_names)
     if parallel:
         sync_parallel(projects, rebase=rebase)
         if os.name == "posix":
