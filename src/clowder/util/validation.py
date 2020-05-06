@@ -37,7 +37,7 @@ def validate_type(value: Any, name: str, classinfo: type, type_name: str, yaml_f
     """
 
     if not isinstance(value, classinfo):
-        raise ClowderYAMLError(fmt.type_error(name, yaml_file, type_name), ClowderYAMLYErrorType.TYPE)
+        raise ClowderYAMLError(fmt.type_error(name, yaml_file, type_name), ClowderYAMLYErrorType.WRONG_TYPE)
 
 
 def validate_yaml_contents(yaml: dict, yaml_file: str) -> None:
@@ -61,7 +61,9 @@ def validate_yaml_contents(yaml: dict, yaml_file: str) -> None:
     projects_with_forks = []
     for p in yaml['projects']:
         project = {'name': p['name'],
-                   'path': p['path'] if 'path' in p else p['name']}
+                   'path': p.get('path', p['name'])}
+        if 'alias' in p:
+            project['alias'] = p['alias']
         if 'remote' in p:
             project['remote'] = p['remote']
         if 'source' in p:
@@ -90,18 +92,18 @@ def validate_yaml_contents(yaml: dict, yaml_file: str) -> None:
         if 'remote' in project and 'remote' in fork:
             if project['remote'] == fork['remote']:
                 message = fmt.remote_name_error(fork['name'], project['name'], project['remote'], yaml_file)
-                raise ClowderYAMLError(message, ClowderYAMLYErrorType.REMOTE_NAME)
+                raise ClowderYAMLError(message, ClowderYAMLYErrorType.DUPLICATE_REMOTE_NAME)
         elif 'remote' in project:
             if project['remote'] == default_remote:
                 message = fmt.remote_name_error(fork['name'], project['name'], default_remote, yaml_file)
-                raise ClowderYAMLError(message, ClowderYAMLYErrorType.REMOTE_NAME)
+                raise ClowderYAMLError(message, ClowderYAMLYErrorType.DUPLICATE_REMOTE_NAME)
         elif 'remote' in fork:
             if fork['remote'] == default_remote:
                 message = fmt.remote_name_error(fork['name'], project['name'], default_remote, yaml_file)
-                raise ClowderYAMLError(message, ClowderYAMLYErrorType.REMOTE_NAME)
+                raise ClowderYAMLError(message, ClowderYAMLYErrorType.DUPLICATE_REMOTE_NAME)
         else:
             message = fmt.remote_name_error(fork['name'], project['name'], default_remote, yaml_file)
-            raise ClowderYAMLError(message, ClowderYAMLYErrorType.REMOTE_NAME)
+            raise ClowderYAMLError(message, ClowderYAMLYErrorType.DUPLICATE_REMOTE_NAME)
 
     # Validate projects don't share share directories
     paths = [p['path'] for p in projects]
@@ -110,7 +112,18 @@ def validate_yaml_contents(yaml: dict, yaml_file: str) -> None:
         message = fmt.duplicate_project_path_error(duplicate, yaml_file)
         raise ClowderYAMLError(message, ClowderYAMLYErrorType.DUPLICATE_PATH)
 
-    # TODO: Validate projects have unique name/alias
+    # Validate projects have unique name/alias
+    # names = [p['alias'] if 'alias' in p else p['name'] for p in projects]
+    names = []
+    for project in projects:
+        if 'alias' in project:
+            names.append(project['alias'])
+        else:
+            names.append(project['name'])
+    duplicate = _check_for_duplicates(names)
+    if duplicate is not None:
+        message = fmt.duplicate_project_name_alias_error(duplicate, yaml_file)
+        raise ClowderYAMLError(message, ClowderYAMLYErrorType.DUPLICATE_ALIAS)
 
 
 def validate_yaml_defaults(defaults: dict, yaml_file: str) -> None:
@@ -172,7 +185,7 @@ def validate_yaml_projects(projects: dict, yaml_file: str) -> None:
         _validate_required_string(project, 'project', 'name', yaml_file)
         _validate_required_string(project, 'project', 'path', yaml_file)
 
-        args = ['remote', 'source', 'timestamp_author']
+        args = ['alias', 'remote', 'source', 'timestamp_author']
         for arg in args:
             _validate_optional_string(project, arg, yaml_file)
 
@@ -481,4 +494,4 @@ def _validate_type_depth(value: int, yaml_file: str) -> None:
     """
 
     if not isinstance(value, int) or int(value) < 0:
-        raise ClowderYAMLError(fmt.depth_error(value, yaml_file), ClowderYAMLYErrorType.DEPTH)
+        raise ClowderYAMLError(fmt.depth_error(value, yaml_file), ClowderYAMLYErrorType.INVALID_DEPTH)

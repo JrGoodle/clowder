@@ -10,9 +10,7 @@ from typing import List
 
 from termcolor import colored
 
-import clowder.util.formatting as fmt
 from clowder import ROOT_DIR
-from clowder.error.clowder_yaml_error import ClowderYAMLError, ClowderYAMLYErrorType
 from clowder.git.project_repo import ProjectRepo
 from clowder.git.util import (
     existing_git_repository,

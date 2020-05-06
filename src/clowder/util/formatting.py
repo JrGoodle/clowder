@@ -66,6 +66,18 @@ def depth_error(depth: int, yml: str) -> str:
     return output_1 + output_2
 
 
+def duplicate_project_name_alias_error(name: str, yml: str) -> str:
+    """Return formatted error string for duplicate project name/alias
+
+    :param str name: Duplicate project alias/name
+    :param str yml: Path to yaml file
+    :return: Formatted duplicate remote fork name error
+    :rtype: str
+    """
+
+    return yaml_path(yml) + colored(' - Error: Multiple projects with name/alias ', 'red') + colored(name, attrs=['bold'])
+
+
 def duplicate_project_path_error(path: str, yml: str) -> str:
     """Return formatted error string for duplicate project path
 

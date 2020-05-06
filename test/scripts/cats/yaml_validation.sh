@@ -91,6 +91,8 @@ test_invalid_yaml() {
     _test_invalid_yaml 'ls -d test-arg-type-timestamp*' '112'
     _test_invalid_yaml 'ls -d test-source-not-found*' '114'
     _test_invalid_yaml 'ls -d test-duplicate-project-directories*' '116'
+    _test_invalid_yaml 'ls -d test-duplicate-alias*' '117'
+    _test_invalid_yaml 'ls -d test-duplicate-name*' '117'
 
     $COMMAND repo checkout master || exit 1
     pushd .clowder || exit 1

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""clowder.yaml validation
+"""Decorators
 
 .. codeauthor:: Joe Decapo <joe@polka.cat>
 
