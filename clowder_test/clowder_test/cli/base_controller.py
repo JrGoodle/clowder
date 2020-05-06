@@ -9,7 +9,7 @@ import os
 
 from cement.ext.ext_argparse import ArgparseController, expose
 
-from clowder_test.execute import execute_test_command
+from clowder_test.execute import create_misc_cache, execute_test_command
 from clowder_test import ROOT_DIR
 
 
@@ -58,19 +58,6 @@ class BaseController(ArgparseController):
         self.parallel()
 
     @expose(
-        help='Run misc tests'
-    )
-    def misc(self) -> None:
-        """clowder misc tests"""
-
-        execute_test_command('./test_example_misc.sh', self.path,
-                             parallel=self.app.pargs.parallel,
-                             write=self.app.pargs.write,
-                             coverage=self.app.pargs.coverage,
-                             debug=self.app.debug,
-                             quiet=self.app.pargs.silent)
-
-    @expose(
         help='Run offline tests'
     )
     def offline(self) -> None:
@@ -113,6 +100,7 @@ class BaseController(ArgparseController):
     @expose(
         help='Run tests requiring remote write permissions'
     )
+    @create_misc_cache
     def write(self) -> None:
         """clowder write tests"""
 
@@ -125,14 +113,14 @@ class BaseController(ArgparseController):
                                  debug=self.app.debug,
                                  quiet=self.app.pargs.silent)
 
-        # llvm_scripts = ['./write_forks.sh', './write_sync.sh']
-        # for script in llvm_scripts:
-        #     execute_test_command(script, os.path.join(self.path, 'llvm'),
-        #                          parallel=self.app.pargs.parallel,
-        #                          write=True,
-        #                          coverage=self.app.pargs.coverage,
-        #                          debug=self.app.debug,
-        #                          quiet=self.app.pargs.silent)
+        misc_scripts = ['./write_forks.sh']
+        for script in misc_scripts:
+            execute_test_command(script, os.path.join(self.path, 'misc'),
+                                 parallel=self.app.pargs.parallel,
+                                 write=True,
+                                 coverage=self.app.pargs.coverage,
+                                 debug=self.app.debug,
+                                 quiet=self.app.pargs.silent)
 
         # execute_test_command('./write_configure_remotes.sh', os.path.join(self.path, 'swift'),
         #                      parallel=self.app.pargs.parallel,

@@ -51,7 +51,7 @@ jobs:
 
       - run:
           name: run misc tests
-          command: clowder-test -c misc
+          command: clowder-test -c misc all
 
       - run:
           name: upload code coverage results
