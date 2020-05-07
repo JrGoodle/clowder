@@ -31,12 +31,12 @@ else
 
     echo 'Create source distribution'
     echo '--------------------------'
-    sudo -H python3 setup.py sdist
+    sudo -H python3 setup.py sdist || exit 1
     echo ''
 
     echo 'Create wheel'
     echo '------------'
-    sudo -H python3 setup.py bdist_wheel
+    sudo -H python3 setup.py bdist_wheel || exit 1
     echo ''
 
     echo "Creating new tag and GitHub Release"
@@ -44,7 +44,7 @@ else
     github-release release \
         --tag "${TAG}" \
         --name "${TAG}" \
-        --description "Release ${TAG}"
+        --description "Release ${TAG}" || exit 1
     echo ''
 
     echo "Uploading artifacts to GitHub Releases"
@@ -57,7 +57,7 @@ else
         github-release upload \
             --tag "${TAG}" \
             --name "${artifact}" \
-            --file "${artifact}"
+            --file "${artifact}" || exit 1
     done
     popd || exit 1
     popd || exit 1
@@ -65,6 +65,6 @@ else
 
     echo 'Uploading to PyPI'
     echo '-----------------'
-    twine upload src/dist/*
+    twine upload src/dist/* || exit 1
     echo ''
 fi
