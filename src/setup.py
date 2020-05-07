@@ -10,7 +10,7 @@ from setuptools import setup
 setup(
     name='clowder-repo',
     description='A tool for managing code',
-    version='3.1.0',
+    version='3.1.1',
     url='http://clowder.cat',
     author='Joe DeCapo',
     author_email='joe@polka.cat',
