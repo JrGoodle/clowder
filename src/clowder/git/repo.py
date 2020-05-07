@@ -12,7 +12,6 @@ from git import Repo, GitError
 from termcolor import colored
 
 import clowder.util.formatting as fmt
-from clowder.error.clowder_error import ClowderError
 from clowder.error.clowder_exit import ClowderExit
 from clowder.error.clowder_git_error import ClowderGitError
 from clowder.git.util import (
@@ -20,7 +19,6 @@ from clowder.git.util import (
     not_detached,
     truncate_ref,
 )
-from clowder.util.execute import execute_command
 from clowder.util.file_system import remove_directory
 
 __repo_default_ref__ = 'refs/heads/master'
@@ -181,30 +179,36 @@ class GitRepo(object):
         """
 
         remote_output = fmt.remote_string(remote)
+        quiet = not self._print_output
         if depth == 0:
             self._print(f' - Fetch from {remote_output}')
             message = colored(' - Failed to fetch from ', 'red')
-            error = message + remote_output
-            command = ['git fetch', remote, '--prune --tags']
+            error_message = message + remote_output
         elif ref is None:
-            command = ['git fetch', remote, '--depth', str(depth), '--prune --tags']
             message = colored(' - Failed to fetch remote ', 'red')
-            error = message + remote_output
+            error_message = message + remote_output
         else:
             ref_output = fmt.ref_string(truncate_ref(ref))
             self._print(' - Fetch from ' + remote_output + ' ' + ref_output)
             message = colored(' - Failed to fetch from ', 'red')
-            error = message + f'{remote_output} {ref_output}'
-            command = ['git fetch', remote, truncate_ref(ref), '--depth', str(depth), '--prune --tags']
+            error_message = message + f'{remote_output} {ref_output}'
 
         try:
-            execute_command(command, self.repo_path, print_output=self._print_output)
-        except ClowderError:
+            if depth == 0:
+                self.repo.git.fetch(remote, prune=True, tags=True, quiet=quiet)
+            elif ref is None:
+                self.repo.git.fetch(remote, depth=depth, prune=True, tags=True, quiet=quiet)
+            else:
+                self.repo.git.fetch(remote, truncate_ref(ref), depth=depth, prune=True, tags=True, quiet=quiet)
+        except GitError as err:
             if remove_dir:
                 remove_directory(self.repo_path)
             if not allow_failure:
-                self._print(error)
-                self._exit(error)
+                self._print(error_message)
+                self._print(fmt.error(err))
+                self._exit(error_message)
+        except (KeyboardInterrupt, SystemExit):
+            self._exit()
 
     def format_project_ref_string(self) -> str:
         """Return formatted project ref string
@@ -429,11 +433,14 @@ class GitRepo(object):
         self._print(fmt.command(command))
 
         try:
-            execute_command(command, self.repo_path)
-        except ClowderError:
-            message = colored(' - Failed to print status\n', 'red') + fmt.command_failed_error(command)
+            self.repo.git.status('-vv')
+        except GitError as err:
+            message = colored(' - Failed to print verbose status', 'red')
             self._print(message)
-            self._exit(message)
+            self._print(fmt.error(err))
+            self._exit(fmt.error(err))
+        except (KeyboardInterrupt, SystemExit):
+            self._exit()
 
     def validate_repo(self) -> bool:
         """Validate repo state

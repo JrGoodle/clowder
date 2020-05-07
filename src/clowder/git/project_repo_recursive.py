@@ -11,9 +11,7 @@ from git import GitError
 from termcolor import colored
 
 import clowder.util.formatting as fmt
-from clowder.error.clowder_error import ClowderError
 from clowder.git.project_repo import ProjectRepo
-from clowder.util.execute import execute_command
 
 
 class ProjectRepoRecursive(ProjectRepo):
@@ -123,17 +121,13 @@ class ProjectRepoRecursive(ProjectRepo):
 
         self._print(' - Recursively update and init submodules')
 
+        error_message = ' - Failed to update submodules'
         if depth == 0:
-            command = ['git', 'submodule', 'update', '--init', '--recursive']
+            self._submodule_command('update', '--init', '--recursive',
+                                    error_msg=error_message)
         else:
-            command = ['git', 'submodule', 'update', '--init', '--recursive', '--depth', depth]
-
-        try:
-            execute_command(command, self.repo_path)
-        except ClowderError:
-            message = colored(' - Failed to update submodules\n', 'red') + fmt.command_failed_error(command)
-            self._print(message)
-            self._exit(message)
+            self._submodule_command('update', '--init', '--recursive', '--depth', depth,
+                                    error_msg=error_message)
 
     def sync(self, fork_remote: str, rebase: bool = False) -> None:
         """Sync fork with upstream remote
