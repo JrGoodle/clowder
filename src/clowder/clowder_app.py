@@ -13,6 +13,7 @@ from cement import App
 
 import clowder.cli as cmd
 from clowder.error.clowder_exit import ClowderExit
+from clowder.util.parallel_commands import __clowder_pool__
 
 
 class ClowderApp(App):
@@ -87,6 +88,13 @@ def main():
             if app.debug:
                 import traceback
                 traceback.print_exc()
+
+            # Make sure mp pool is closed
+            try:
+                __clowder_pool__.close()
+                __clowder_pool__.join()
+            except: # noqa
+                __clowder_pool__.terminate()
 
 
 if __name__ == '__main__':
