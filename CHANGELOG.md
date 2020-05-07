@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.2.0
+
+- Fix an issue causing commands to hang on Python 3.8
+
 ## 3.1.0
 
 - Drop support for Python 2

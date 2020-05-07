@@ -16,12 +16,14 @@ fi
 export GITHUB_USER='JrGoodle'
 export GITHUB_REPO='clowder'
 
-pushd "src" || exit 1
+pushd 'src' || exit 1
 
 SETUP_PY="$(pwd)/setup.py"
 VERSION=$(awk "/version='/" "${SETUP_PY}" | sed -n -e "s/^.*version='//p" | tr -d "',")
 echo "VERSION=${VERSION}"
 TAG="${VERSION}"
+
+popd || exit 1
 
 git fetch --tags
 if git rev-list "${TAG}" >/dev/null; then
@@ -29,14 +31,28 @@ if git rev-list "${TAG}" >/dev/null; then
 else
     echo "${TAG} tag not found. Deploying..."
 
+    echo 'Clean any existing build artifacts'
+    echo '----------------------------------'
+    script/clean all || exit 1
+    echo ''
+
+    echo 'Create tag and push to GitHub'
+    echo '-----------------------------'
+    git tag "${TAG}" -a -m "${TAG}"
+    git push origin "${TAG}"
+    echo ''
+
+    pushd 'src' || exit 1
+    echo ''
+
     echo 'Create source distribution'
     echo '--------------------------'
-    sudo -H python3 setup.py sdist
+    sudo -H python3 setup.py sdist || exit 1
     echo ''
 
     echo 'Create wheel'
     echo '------------'
-    sudo -H python3 setup.py bdist_wheel
+    sudo -H python3 setup.py bdist_wheel || exit 1
     echo ''
 
     echo "Creating new tag and GitHub Release"
@@ -44,7 +60,7 @@ else
     github-release release \
         --tag "${TAG}" \
         --name "${TAG}" \
-        --description "Release ${TAG}"
+        --description "Release ${TAG}" || exit 1
     echo ''
 
     echo "Uploading artifacts to GitHub Releases"
@@ -57,7 +73,7 @@ else
         github-release upload \
             --tag "${TAG}" \
             --name "${artifact}" \
-            --file "${artifact}"
+            --file "${artifact}" || exit 1
     done
     popd || exit 1
     popd || exit 1
@@ -65,6 +81,6 @@ else
 
     echo 'Uploading to PyPI'
     echo '-----------------'
-    twine upload src/dist/*
+    twine upload src/dist/* || exit 1
     echo ''
 fi
