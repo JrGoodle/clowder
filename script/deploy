@@ -29,6 +29,12 @@ if git rev-list "${TAG}" >/dev/null; then
 else
     echo "${TAG} tag not found. Deploying..."
 
+    echo 'Create tag and push to GitHub'
+    echo '-----------------------------'
+    git tag "${TAG}" -a -m "${TAG}"
+    git push origin "${TAG}"
+    echo ''
+
     echo 'Create source distribution'
     echo '--------------------------'
     sudo -H python3 setup.py sdist || exit 1
