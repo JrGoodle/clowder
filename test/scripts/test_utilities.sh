@@ -171,6 +171,8 @@ test_number_commits() {
 
 test_commit_messages() {
     echo "TEST: Commit messages are the same"
+    echo "First message: $1"
+    echo "Second message: $2"
     if [ "$1" != "$2" ]; then
         exit 1
     fi
