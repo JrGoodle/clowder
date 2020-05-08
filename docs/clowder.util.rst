@@ -68,6 +68,14 @@ clowder\.util\.progress module
     :undoc-members:
     :show-inheritance:
 
+clowder\.util\.yaml module
+------------------------------
+
+.. automodule:: clowder.util.yaml
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 Module contents
 ---------------

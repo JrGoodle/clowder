@@ -8,19 +8,19 @@ Examples based on the [Swift projects clowder.yaml](https://github.com/JrGoodle/
 
 ```bash
 # Print all local branches
-$ clowder branch
+clowder branch
 
 # Print all remote branches
-$ clowder branch -r
+clowder branch -r
 
 # Print all local and remote branches
-$ clowder branch -a
+clowder branch -a
 
 # Print local branches in llvm group
-$ clowder branch -g llvm
+clowder branch -p llvm
 
 # Print local branches in swift project
-$ clowder branch -p apple/swift
+clowder branch -p apple/swift
 ```
 
 ---
@@ -29,13 +29,13 @@ $ clowder branch -p apple/swift
 
 ```bash
 # Checkout branches
-$ clowder checkout branch_name
+clowder checkout branch_name
 
 # Checkout branches in llvm group
-$ clowder checkout branch_name -g llvm
+clowder checkout branch_name -p llvm
 
 # Checkout branches in swift project
-$ clowder checkout branch_name -p apple/swift
+clowder checkout branch_name -p apple/swift
 ```
 
 ---
@@ -48,7 +48,7 @@ Discards changes in dirty repositories
 # Discard changes in all projects
 # Equivalent to:
 # git clean -f; git reset --hard; git rebase --abort
-$ clowder clean
+clowder clean
 
 # Clean all the things
 # Equivalent to:
@@ -56,33 +56,33 @@ $ clowder clean
 # git submodule foreach --recursive git clean -ffdx
 # git submodule foreach --recursive git reset --hard
 # git submodule update --checkout --recursive --force
-$ clowder clean -a
+clowder clean -a
 
 # Discard changes in projects in llvm group
-$ clowder clean -g llvm
+clowder clean -p llvm
 
 # Discard changes in swift project
-$ clowder clean -p apple/swift
+clowder clean -p apple/swift
 
 # Remove untracked directories in addition to untracked files
 # Equivalent to:
 # git clean -fd; git reset --hard; git rebase --abort
-$ clowder clean -d
+clowder clean -d
 
 # Delete directories with .git sub directory or file
 # Equivalent to:
 # git clean -ff; git reset --hard; git rebase --abort
-$ clowder clean -f
+clowder clean -f
 
 # Remove only files ignored by git
 # Equivalent to:
 # git clean -fX; git reset --hard; git rebase --abort
-$ clowder clean -X
+clowder clean -X
 
 # Remove all untracked files
 # Equivalent to:
 # git clean -fx; git reset --hard; git rebase --abort
-$ clowder clean -x
+clowder clean -x
 
 # Recursively clean submodules
 # Equivalent to:
@@ -90,7 +90,7 @@ $ clowder clean -x
 # git submodule foreach --recursive git clean -ffdx
 # git submodule foreach --recursive git reset --hard
 # git submodule update --checkout --recursive --force
-$ clowder clean -r
+clowder clean -r
 ```
 
 ---
@@ -101,13 +101,13 @@ Equivalent to running `git status -vv` in project directories
 
 ```bash
 # Print git diff status for all projects
-$ clowder diff
+clowder diff
 
 # Print git diff status for projects in llvm group
-$ clowder diff -g llvm
+clowder diff -p llvm
 
 # Print git diff status for swift project
-$ clowder diff -p apple/swift
+clowder diff -p apple/swift
 ```
 
 ---
@@ -118,28 +118,28 @@ Runs command or script in project directories
 
 ```bash
 # Run command in all project directories
-$ clowder forall -c "git status"
+clowder forall -c "git status"
 
 # Run script in all project directories
-$ clowder forall -c "/path/to/script.sh"
+clowder forall -c "/path/to/script.sh"
 
 # Run command in all project directories, ignoring errors
-$ clowder forall -ic "git status"
+clowder forall -ic "git status"
 
 # Run script in all project directories, ignoring errors
-$ clowder forall -ic "/path/to/script.sh"
+clowder forall -ic "/path/to/script.sh"
 
 # Run command for projects in llvm group
-$ clowder forall -c "git status" -g llvm
+clowder forall -c "git status" -g llvm
 
 # Run script for projects in llvm group
-$ clowder forall -c "/path/to/script.sh" -g llvm
+clowder forall -c "/path/to/script.sh" -g llvm
 
 # Run command for swift project
-$ clowder forall -c "git status" -p apple/swift
+clowder forall -c "git status" -p apple/swift
 
 # Run script for swift project
-$ clowder forall -c "/path/to/script.sh" -p apple/swift
+clowder forall -c "/path/to/script.sh" -p apple/swift
 ```
 
 The following environment variables are available for use in commands and scripts:
@@ -150,6 +150,12 @@ The following environment variables are available for use in commands and script
 - `PROJECT_REMOTE` is the name of the project's remote
 - `PROJECT_REF` is the project ref as written in the `clowder.yaml` file
 
+If a fork is specified, the following environment variables are also available for use in commands and scripts:
+
+- `FORK_REMOTE` is the name of the fork's remote
+- `FORK_NAME` is the unique name of the fork
+- `FORK_REF` is the project ref as written in the `clowder.yaml` file
+
 ---
 
 ## `clowder herd`
@@ -158,22 +164,22 @@ Update with latest changes
 
 ```bash
 # Herd a shallow clone to specified depth
-$ clowder herd -d 1
+clowder herd -d 1
 
 # Herd using rebase instead of pull
-$ clowder herd -r
+clowder herd -r
 
 # Herd a specified branch if it exists, otherwise use default ref
-$ clowder herd -b my_branch
+clowder herd -b my_branch
 
 # Herd a specified tag if it exists, otherwise use default ref
-$ clowder herd -t my_tag
+clowder herd -t my_tag
 
 # Only herd projects in swift and llvm groups
-$ clowder herd -g swift llvm
+clowder herd -p swift llvm
 
 # Only herd swift project
-$ clowder herd -p apple/swift
+clowder herd -p apple/swift
 ```
 
 ---
@@ -184,10 +190,10 @@ Clone repo containing `clowder.yaml` file (referred to as the "clowder repo")
 
 ```bash
 # Clone clowder repo
-$ clowder init https://github.com/jrgoodle/swift-clowder.git
+clowder init https://github.com/jrgoodle/swift-clowder.git
 
 # Clone clowder repo from branch 'tags'
-$ clowder init https://github.com/jrgoodle/cats.git -b tags
+clowder init https://github.com/jrgoodle/cats.git -b tags
 ```
 
 ---
@@ -198,10 +204,10 @@ Set `clowder.yaml` symlink
 
 ```bash
 # Point clowder.yaml symlink to default clowder.yaml file
-$ clowder link
+clowder link
 
 # Point clowder.yaml symlink to saved version
-$ clowder link -v 0.1
+clowder link -v 0.1
 ```
 
 ---
@@ -212,25 +218,25 @@ Prune local or remote branches
 
 ```bash
 # Prune branch 'stale_branch' for all projects
-$ clowder prune stale_branch
+clowder prune stale_branch
 
 # Force prune branch 'stale_branch' for all projects
-$ clowder prune -f stale_branch
+clowder prune -f stale_branch
 
 # Prune remote branch 'stale_branch' for all projects
-$ clowder prune -r stale_branch
+clowder prune -r stale_branch
 
 # Prune local and remote branch 'stale_branch' for all projects
-$ clowder prune -a stale_branch
+clowder prune -a stale_branch
 
 # Force prune local and remote branch 'stale_branch' for all projects
-$ clowder prune -af stale_branch
+clowder prune -af stale_branch
 
 # Prune branch 'stale_branch' for projects in llvm group
-$ clowder prune stale_branch -g llvm
+clowder prune stale_branch -p llvm
 
 # Prune branch 'stale_branch' in swift project
-$ clowder prune stale_branch -p apple/swift
+clowder prune stale_branch -p apple/swift
 ```
 
 ---
@@ -243,28 +249,28 @@ More advanced needs may require changing to the `.clowder` directory and running
 
 ```bash
 # Add modified files in working tree to the index
-$ clowder repo add .
+clowder repo add .
 
 # Checkout git ref in clowder repo
-$ clowder repo checkout my_branch
+clowder repo checkout my_branch
 
 # Discard current changes in clowder repo
-$ clowder repo clean
+clowder repo clean
 
 # Commit changes to yaml files in clowder repo
-$ clowder repo commit 'commit message'
+clowder repo commit 'commit message'
 
 # Pull latest changes in clowder repo
-$ clowder repo pull
+clowder repo pull
 
 # Push latest changes in clowder repo
-$ clowder repo push
+clowder repo push
 
 # Run command in .clowder directory
-$ clowder repo run 'git status'
+clowder repo run 'git status'
 
 # Print clowder repo git status
-$ clowder repo status
+clowder repo status
 ```
 
 ---
@@ -275,16 +281,16 @@ Reset branches to upstream state
 
 ```bash
 # Reset branches in all projects
-$ clowder reset
+clowder reset
 
 # Reset branches in all projects to closest timestamp to swift project
-$ clowder reset --timestamp apple/swift
+clowder reset --timestamp apple/swift
 
 # Reset branches in projects in llvm group
-$ clowder reset -g llvm
+clowder reset -p llvm
 
 # Reset branches in swift project
-$ clowder reset -p apple/swift
+clowder reset -p apple/swift
 ```
 
 ---
@@ -293,11 +299,11 @@ $ clowder reset -p apple/swift
 
 Save a `clowder.yaml` version with the information from currently checked out repositories
 
-Versions are saved to `.clowder/versions/<version_name>/clowder.yaml`
+Versions are saved to `.clowder/versions/<version_name>.yaml`
 
 ```bash
 # Save a version of clowder.yaml with current commit sha's
-$ clowder save 0.1
+clowder save 0.1
 ```
 
 ---
@@ -308,16 +314,16 @@ Start a new feature branch or check out if it already exists
 
 ```bash
 # Create new local branch 'my_feature' for all projects
-$ clowder start my_feature
+clowder start my_feature
 
 # Create new local and remote tracking branch 'my_feature' for all projects
-$ clowder start -t my_feature
+clowder start -t my_feature
 
 # Create new local branch 'my_feature' for projects in llvm group
-$ clowder start my_feature -g llvm
+clowder start my_feature -p llvm
 
 # Create new local branch 'my_feature' in swift project
-$ clowder start my_feature -p apple/swift
+clowder start my_feature -p apple/swift
 ```
 
 ---
@@ -328,13 +334,13 @@ Stash changes in dirty repositories
 
 ```bash
 # Stash changes in all projects
-$ clowder stash
+clowder stash
 
 # Stash changes in projects in llvm group
-$ clowder stash -g llvm
+clowder stash -p llvm
 
 # Stash changes in swift project
-$ clowder stash -p apple/swift
+clowder stash -p apple/swift
 ```
 
 ---
@@ -345,10 +351,10 @@ Print status of projects
 
 ```bash
 # Print status of projects
-$ clowder status
+clowder status
 
 # Fetch upstream changes for projects before printing status
-$ clowder status -f
+clowder status -f
 ```
 
 ---
@@ -358,7 +364,7 @@ $ clowder status -f
 Print version of `clowder` command line tool
 
 ```bash
-$ clowder --version
+clowder --version
 ```
 
 ---
@@ -369,8 +375,8 @@ Print information about clowder.yaml files
 
 ```bash
 # Print clowder.yaml file(s) referenced from current symlink and imports
-$ clowder yaml
+clowder yaml
 
 # Print resolved clowder.yaml
-$ clowder yaml -r
+clowder yaml -r
 ```

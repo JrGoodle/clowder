@@ -11,7 +11,6 @@ Subpackages
     clowder.git
     clowder.model
     clowder.util
-    clowder.yaml
 
 Submodules
 ----------

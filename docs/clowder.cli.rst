@@ -132,14 +132,6 @@ clowder\.cli\.status\_controller module
     :undoc-members:
     :show-inheritance:
 
-clowder\.cli\.sync\_controller module
--------------------------------------
-
-.. automodule:: clowder.cli.sync_controller
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 clowder\.cli\.yaml\_controller module
 -------------------------------------
 

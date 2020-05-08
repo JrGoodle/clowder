@@ -20,14 +20,6 @@ clowder\.model\.fork module
     :undoc-members:
     :show-inheritance:
 
-clowder\.model\.group module
-----------------------------
-
-.. automodule:: clowder.model.group
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 clowder\.model\.project module
 ------------------------------
 

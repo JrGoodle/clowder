@@ -1,5 +1,22 @@
 # Changelog
 
+## 4.0.0 (Pending Changes)
+
+- Add official support for Python 3.8
+- Add GitHub Action workflow test
+- Versions are now stored as named yaml files in the `versions` directory rather than in subdirectories
+- Remove imported `clowder.yaml` files
+- Remove `argcomplete`
+- Remove `sync` command
+- Remove `--groups/-g` command option
+- Remove `--skip/-s` command option
+- Remove `--protocol` command option
+- Schema changes:
+  - `groups` is now an array of strrings in a project, rather than a top level item
+  - Add `protocol` option to `source`
+  - Add `source` option to `fork`
+- Various refactoring
+
 ## 3.2.0
 
 - Fix an issue causing commands to hang on Python 3.8
