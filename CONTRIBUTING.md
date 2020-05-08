@@ -5,14 +5,14 @@
 Clone the repository:
 
 ```bash
-$ git clone git@github.com:JrGoodle/clowder.git
-$ cd clowder
+git clone git@github.com:JrGoodle/clowder.git
+cd clowder
 ```
 
 Add the directory you cloned the repo into to `PYTHONPATH` in your shell profile. For example, if cloned into `$HOME/clowder`
 
 ```bash
-export PYTHONPATH=$PYTHONPATH:$HOME/src/clowder
+export PYTHONPATH=$PYTHONPATH:$HOME/clowder/src/clowder
 ```
 
 ## Building
@@ -20,13 +20,13 @@ export PYTHONPATH=$PYTHONPATH:$HOME/src/clowder
 Install `clowder` for local development
 
 ```bash
-$ script/update
+script/update
 ```
 
 Remove `clowder` and clean test directories
 
 ```bash
-$ script/clean all
+script/clean all
 ```
 
 ## Testing
@@ -34,15 +34,15 @@ $ script/clean all
 Install `clowder-test` command runner
 
 ```bash
-$ script/test
+script/test
 ```
 
 Run test scripts
 
 ```bash
-$ clowder-test swift all
-$ clowder-test cats herd
-$ clowder-test unittests
+clowder-test swift all
+clowder-test cats herd
+clowder-test unittests
 ```
 
 ## Pull requests

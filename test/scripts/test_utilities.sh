@@ -36,6 +36,8 @@ test_branch() {
     echo "TEST: Check local branch $1 is checked out"
     local git_branch
     git_branch=$(git rev-parse --abbrev-ref HEAD)
+    echo "Expected branch: $1"
+    echo "Current branch: $git_branch"
     [[ "$1" = "$git_branch" ]] && echo "TEST: On correct branch: $1" || exit 1
 }
 
@@ -48,6 +50,8 @@ test_commit() {
     echo "TEST: Check commit is checked out"
     local git_commit
     git_commit=$(git rev-parse HEAD)
+    echo "Expected commit: $1"
+    echo "Current commit: $git_commit"
     [[ "$1" = "$git_commit" ]] && echo "TEST: On correct commit: $1" || exit 1
 }
 
@@ -55,6 +59,8 @@ test_commit_author_email() {
     echo "TEST: Check commit is checked out by author email"
     local git_author
     git_author=$(git log -1 --format="%ae" HEAD)
+    echo "Expected author email: $1"
+    echo "Current author email: $git_author"
     [[ "$1" = "$git_author" ]] && echo "TEST: Commit author is $1" || exit 1
 }
 
@@ -62,6 +68,8 @@ test_commit_author_name() {
     echo "TEST: Check commit is checked out by author name"
     local git_author
     git_author=$(git log -1 --format="%an" HEAD)
+    echo "Expected author name: $1"
+    echo "Current author name: $git_author"
     [[ "$1" = "$git_author" ]] && echo "TEST: Commit author is $1" || exit 1
 }
 
@@ -69,6 +77,8 @@ test_commit_timestamp() {
     echo "TEST: Check commit timestamp"
     local git_timestamp
     git_timestamp=$(git log -1 --format=%cI)
+    echo "Expected timestamp: $1"
+    echo "Current timestamp: $git_timestamp"
     [[ "$1" = "$git_timestamp" ]] && echo "TEST: Commit timestamp is $1" || exit 1
 }
 
@@ -171,6 +181,8 @@ test_number_commits() {
 
 test_commit_messages() {
     echo "TEST: Commit messages are the same"
+    echo "First message: $1"
+    echo "Second message: $2"
     if [ "$1" != "$2" ]; then
         exit 1
     fi

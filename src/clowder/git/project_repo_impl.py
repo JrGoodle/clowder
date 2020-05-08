@@ -13,14 +13,12 @@ from git import GitError, Remote, Repo, Tag
 from termcolor import colored
 
 import clowder.util.formatting as fmt
-from clowder.error.clowder_error import ClowderError
 from clowder.error.clowder_git_error import ClowderGitError
 from clowder.git.repo import GitRepo
 from clowder.git.util import (
     existing_git_repository,
     not_detached
 )
-from clowder.util.execute import execute_command
 from clowder.util.file_system import remove_directory
 
 __project_repo_default_ref__ = 'refs/heads/master'
@@ -495,14 +493,16 @@ class ProjectRepoImpl(GitRepo):
         branch_output = fmt.ref_string(branch)
         remote_output = fmt.remote_string(remote)
         self._print(f' - Pull from {remote_output} {branch_output}')
-        command = ['git pull', remote, branch]
-
+        quiet = not self._print_output
         try:
-            execute_command(command, self.repo_path, print_output=self._print_output)
-        except ClowderError:
+            self.repo.git.pull(remote, branch, quiet=quiet)
+        except GitError as err:
             message = colored(' - Failed to pull from ', 'red') + f'{remote_output} {branch_output}'
             self._print(message)
+            self._print(fmt.error(err))
             self._exit(message)
+        except (KeyboardInterrupt, SystemExit):
+            self._exit()
 
     @not_detached
     def _rebase_remote_branch(self, remote: str, branch: str) -> None:
@@ -515,15 +515,16 @@ class ProjectRepoImpl(GitRepo):
         branch_output = fmt.ref_string(branch)
         remote_output = fmt.remote_string(remote)
         self._print(f' - Rebase onto {remote_output} {branch_output}')
-        command = ['git pull --rebase', remote, branch]
-
+        quiet = not self._print_output
         try:
-            execute_command(command, self.repo_path, print_output=self._print_output)
-        except ClowderError:
+            self.repo.git.pull(remote, branch, rebase=True, quiet=quiet)
+        except GitError as err:
             message = colored(' - Failed to rebase onto ', 'red') + f'{remote_output} {branch_output}'
             self._print(message)
-            self._print(fmt.command_failed_error(command))
+            self._print(fmt.error(err))
             self._exit(message)
+        except (KeyboardInterrupt, SystemExit):
+            self._exit()
 
     def _remote(self, remote: str, remove_dir: bool = False) -> Remote:
         """Get GitPython Remote instance
