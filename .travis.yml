@@ -20,6 +20,9 @@ jobs:
   - env: TARGET="cats"
     python: 3.7
     script: clowder-test -c cats all
+  - env: TARGET="cats"
+    python: 3.8
+    script: clowder-test -c cats all
   - env: TARGET="parallel"
     python: 3.7
     script: clowder-test -c parallel
