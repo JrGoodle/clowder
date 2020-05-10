@@ -25,7 +25,8 @@ class Fork(object):
 
     :ivar str name: Project name
     :ivar str path: Project relative path
-    :ivar str remote: Git remote name
+    :ivar str remote: Fork remote name
+    :ivar str ref: Fork git ref
     """
 
     def __init__(self, fork: dict, path: str, project_name: str, project_source: Source,
@@ -45,7 +46,7 @@ class Fork(object):
         self.path = path
         self.name = fork['name']
         self.remote = fork.get('remote', defaults.remote)
-        self._ref = fork.get('ref', project_ref)
+        self.ref = fork.get('ref', project_ref)
         self._recursive = recursive
 
         self._source = None
@@ -92,7 +93,7 @@ class Fork(object):
         if not existing_git_repository(self.path):
             return colored(self.path, 'green')
 
-        repo = ProjectRepo(self.full_path(), self.remote, self._ref)
+        repo = ProjectRepo(self.full_path(), self.remote, self.ref)
         project_output = repo.format_project_string(self.path)
         current_ref_output = repo.format_project_ref_string()
         return project_output + ' ' + current_ref_output

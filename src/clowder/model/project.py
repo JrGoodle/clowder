@@ -50,8 +50,8 @@ class Project(object):
     :ivar Optional[str] alias: Alias for project
     :ivar str path: Project relative path
     :ivar List[str] groups: Groups project belongs to
-    :ivar str ref: Default git ref
-    :ivar str remote: Default remote name
+    :ivar str ref: Project git ref
+    :ivar str remote: Project remote name
     :ivar int depth: Depth to clone project repo
     :ivar bool recursive: Whether to recursively clone submodules
     :ivar Source source: Default source
@@ -240,8 +240,11 @@ class Project(object):
         if resolved:
             ref = self.ref
         else:
-            repo = ProjectRepo(self.full_path(), self.remote, self.ref)
-            ref = repo.sha()
+            if self.fork is None:
+                ref = self.ref
+            else:
+                repo = ProjectRepo(self.full_path(), self.remote, self.ref)
+                ref = repo.sha()
 
         project = {'name': self.name,
                    'path': self.path,
@@ -279,34 +282,35 @@ class Project(object):
 
         herd_depth = self.depth if depth is None else depth
         repo = self._repo(self.recursive, parallel=parallel)
-        fork_remote = None if self.fork is None else self.fork.remote
-
-        if branch:
-            command = 'herd_branch'
-            args = (branch,)
-            kwargs = {'depth': herd_depth, 'rebase': rebase, 'fork_remote': fork_remote}
-        elif tag:
-            command = 'herd_tag'
-            args = (tag,)
-            kwargs = {'depth': herd_depth, 'rebase': rebase}
-        else:
-            command = 'herd'
-            args = ()
-            kwargs = {'depth': herd_depth, 'rebase': rebase}
 
         if self.fork is None:
-            getattr(repo, command)(self._url(), *args, **kwargs)
+            if branch:
+                repo.herd_branch(self._url(), branch, depth=herd_depth, rebase=rebase)
+            elif tag:
+                repo.herd_tag(self._url(), tag, depth=herd_depth, rebase=rebase)
+            else:
+                repo.herd(self._url(), depth=herd_depth, rebase=rebase)
             return
 
         self._print(self.fork.status())
         repo.configure_remotes(self.remote, self._url(), self.fork.remote, self.fork.url())
 
         self._print(fmt.fork_string(self.output_name()))
-        kwargs['depth'] = 0  # TODO: Can this be removed?
-        getattr(repo, command)(self._url(), *args, **kwargs)
+        # Modify repo to prefer fork
+        repo.default_ref = self.fork.ref
+        repo.remote = self.fork.remote
+        if branch:
+            repo.herd_branch(self.fork.url(), branch, depth=herd_depth, rebase=rebase)
+        elif tag:
+            repo.herd_tag(self.fork.url(), tag, depth=herd_depth, rebase=rebase)
+        else:
+            repo.herd(self.fork.url(), depth=herd_depth, rebase=rebase)
 
-        self._print(fmt.fork_string(self.fork.name))
-        repo.herd_remote(self.fork.url(), self.fork.remote, branch=branch)
+        self._print(fmt.fork_string(self.name))
+        # Restore repo configuration
+        repo.default_ref = self.ref
+        repo.remote = self.remote
+        repo.herd_remote(self._url(), self.remote, branch=branch)
 
     def is_dirty(self) -> bool:
         """Check if project is dirty
@@ -366,6 +370,10 @@ class Project(object):
         repo = ProjectRepo(self.full_path(), self.remote, self.ref)
 
         if local and repo.existing_local_branch(branch):
+            if self.fork:
+                # Modify repo to prefer fork
+                repo.default_ref = self.fork.ref
+                repo.remote = self.fork.remote
             repo.prune_branch_local(branch, force)
 
         if remote:
@@ -427,6 +435,8 @@ class Project(object):
 
         if self.fork:
             forall_env['FORK_REMOTE'] = self.fork.remote
+            forall_env['FORK_NAME'] = self.fork.name
+            forall_env['FORK_REF'] = self.fork.ref
 
         for cmd in commands:
             self._run_forall_command(cmd, forall_env, ignore_errors, parallel)

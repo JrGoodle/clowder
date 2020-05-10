@@ -14,11 +14,12 @@ from clowder_test import ROOT_DIR
 from clowder_test.cli.base_controller import BaseController
 from clowder_test.cli.cats_controller import CatsController
 from clowder_test.cli.llvm_controller import LLVMController
+from clowder_test.cli.misc_controller import MiscController
 from clowder_test.cli.swift_controller import SwiftController
 from clowder_test.execute import execute_command
 
 
-def post_argument_parsing_hook(app):
+def post_argument_parsing_hook(app): # noqa
     execute_command('./setup_local_test_directory.sh', os.path.join(ROOT_DIR, 'test', 'scripts'))
 
 
@@ -37,6 +38,7 @@ class ClowderTestApp(App):
             BaseController,
             CatsController,
             LLVMController,
+            MiscController,
             SwiftController
         ]
 

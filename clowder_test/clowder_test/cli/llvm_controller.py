@@ -34,14 +34,14 @@ class LLVMController(ArgparseController):
 
         self._execute_command('./test_example_llvm.sh', os.path.join(ROOT_DIR, 'test', 'scripts'))
 
-    @expose(
-        help='Run llvm forks tests'
-    )
-    @create_llvm_cache
-    def forks(self) -> None:
-        """clowder llvm forks tests"""
-
-        self._execute_command('./forks.sh', self.path)
+    # @expose(
+    #     help='Run llvm forks tests'
+    # )
+    # @create_llvm_cache
+    # def forks(self) -> None:
+    #     """clowder llvm forks tests"""
+    #
+    #     self._execute_command('./forks.sh', self.path)
 
     # @expose(
     #     help='Run llvm sync tests'
