@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/JrGoodle/clowder.svg)](https://travis-ci.org/JrGoodle/clowder)
 [![CircleCI](https://circleci.com/gh/JrGoodle/clowder.svg?style=shield)](https://circleci.com/gh/JrGoodle/clowder)
+[![GitHub Action Workflow](https://github.com/JrGoodle/clowder/workflows/CI/badge.svg)](https://github.com/JrGoodle/clowder/actions?query=workflow%3ACI)
 [![Maintainability](https://api.codeclimate.com/v1/badges/56c92799de08f9ef9258/maintainability)](https://codeclimate.com/github/JrGoodle/clowder/maintainability)
 [![codecov](https://codecov.io/gh/JrGoodle/clowder/branch/master/graph/badge.svg)](https://codecov.io/gh/JrGoodle/clowder)
 [![PyPI version](https://badge.fury.io/py/clowder-repo.svg)](https://badge.fury.io/py/clowder-repo)
