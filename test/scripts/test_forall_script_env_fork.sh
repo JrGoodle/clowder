@@ -27,11 +27,6 @@ if [ $PROJECT_REF != "refs/heads/master" ]; then
     exit 1
 fi
 
-echo "PROJECT_ALIAS = $PROJECT_ALIAS"
-if [ $PROJECT_ALIAS != "gyp" ]; then
-    exit 1
-fi
-
 echo "FORK_REMOTE = $FORK_REMOTE"
 if [ -z "$FORK_REMOTE" ]; then
     exit 1

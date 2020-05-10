@@ -62,8 +62,6 @@ def validate_yaml_contents(yaml: dict, yaml_file: str) -> None:
     for p in yaml['projects']:
         project = {'name': p['name'],
                    'path': p.get('path', p['name'])}
-        if 'alias' in p:
-            project['alias'] = p['alias']
         if 'remote' in p:
             project['remote'] = p['remote']
         if 'source' in p:
@@ -111,19 +109,6 @@ def validate_yaml_contents(yaml: dict, yaml_file: str) -> None:
     if duplicate is not None:
         message = fmt.duplicate_project_path_error(duplicate, yaml_file)
         raise ClowderYAMLError(message, ClowderYAMLYErrorType.DUPLICATE_PATH)
-
-    # Validate projects have unique name/alias
-    # names = [p['alias'] if 'alias' in p else p['name'] for p in projects]
-    names = []
-    for project in projects:
-        if 'alias' in project:
-            names.append(project['alias'])
-        else:
-            names.append(project['name'])
-    duplicate = _check_for_duplicates(names)
-    if duplicate is not None:
-        message = fmt.duplicate_project_name_alias_error(duplicate, yaml_file)
-        raise ClowderYAMLError(message, ClowderYAMLYErrorType.DUPLICATE_ALIAS)
 
 
 def validate_yaml_defaults(defaults: dict, yaml_file: str) -> None:
@@ -185,7 +170,7 @@ def validate_yaml_projects(projects: dict, yaml_file: str) -> None:
         _validate_required_string(project, 'project', 'name', yaml_file)
         _validate_required_string(project, 'project', 'path', yaml_file)
 
-        args = ['alias', 'remote', 'source', 'timestamp_author']
+        args = ['remote', 'source', 'timestamp_author']
         for arg in args:
             _validate_optional_string(project, arg, yaml_file)
 

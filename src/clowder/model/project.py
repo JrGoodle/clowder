@@ -47,7 +47,6 @@ class Project(object):
     """clowder.yaml Project model class
 
     :ivar str name: Project name
-    :ivar Optional[str] alias: Alias for project
     :ivar str path: Project relative path
     :ivar List[str] groups: Groups project belongs to
     :ivar str ref: Project git ref
@@ -69,7 +68,6 @@ class Project(object):
 
         self.name = project['name']
         self.path = project['path']
-        self.alias = project.get('alias', None)
         self.ref = project.get('ref', defaults.ref)
         self.remote = project.get('remote', defaults.remote)
         self.depth = project.get('depth', defaults.depth)
@@ -83,9 +81,6 @@ class Project(object):
             groups += custom_groups
         if 'notdefault' in groups:
             groups.remove('all')
-        if self.alias:
-            groups.append(self.alias)
-            groups.remove(self.name)
         self.groups = list(set(groups))
 
         self.source = None
@@ -255,9 +250,6 @@ class Project(object):
                    'remote': self.remote,
                    'source': self.source.name}
 
-        if self.alias:
-            project['alias'] = self.alias
-
         if self.fork:
             fork_yaml = self.fork.get_yaml()
             project['fork'] = fork_yaml
@@ -295,7 +287,7 @@ class Project(object):
         self._print(self.fork.status())
         repo.configure_remotes(self.remote, self._url(), self.fork.remote, self.fork.url())
 
-        self._print(fmt.fork_string(self.output_name()))
+        self._print(fmt.fork_string(self.name))
         # Modify repo to prefer fork
         repo.default_ref = self.fork.ref
         repo.remote = self.fork.remote
@@ -329,18 +321,6 @@ class Project(object):
         """
 
         return ProjectRepo(self.full_path(), self.remote, self.ref).validate_repo()
-
-    def output_name(self) -> str:
-        """Name to use for output
-
-        :return: Alias if set, otherwise project name
-        :rtype: str
-        """
-
-        if self.alias:
-            return self.alias
-
-        return self.name
 
     def print_existence_message(self) -> None:
         """Print existence validation message for project"""
@@ -403,7 +383,7 @@ class Project(object):
         self._print(self.fork.status())
         repo.configure_remotes(self.remote, self._url(), self.fork.remote, self.fork.url())
 
-        self._print(fmt.fork_string(self.output_name()))
+        self._print(fmt.fork_string(self.name))
         if timestamp:
             repo.reset_timestamp(timestamp, self._timestamp_author, self.ref)
             return
@@ -429,9 +409,6 @@ class Project(object):
                       'PROJECT_NAME': self.name,
                       'PROJECT_REMOTE': self.remote,
                       'PROJECT_REF': self.ref}
-
-        if self.alias:
-            forall_env['PROJECT_ALIAS'] = self.alias
 
         if self.fork:
             forall_env['FORK_REMOTE'] = self.fork.remote
@@ -463,7 +440,7 @@ class Project(object):
         """
 
         if not existing_git_repository(self.full_path()):
-            return colored(self.output_name(), 'green')
+            return colored(self.name, 'green')
 
         repo = ProjectRepo(self.full_path(), self.remote, self.ref)
         project_output = repo.format_project_string(self.path)
