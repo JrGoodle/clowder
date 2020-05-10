@@ -3,7 +3,13 @@
 name: CI
 
 # Controls when the action will run. Triggers the workflow on push or pull request events
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
 
 defaults:
   run:
@@ -27,4 +33,6 @@ jobs:
     - run: script/update
     - run: script/test
     - run: clowder init https://github.com/jrgoodle/cats.git
+      working-directory: examples/cats
+    - run: clowder herd
       working-directory: examples/cats
