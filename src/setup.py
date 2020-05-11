@@ -30,10 +30,13 @@ setup(
               'clowder.git',
               'clowder.model',
               'clowder.util'],
+    package_data={
+        "clowder": ["clowder.schema.json"],
+    },
     entry_points={
         'console_scripts': [
             'clowder=clowder.clowder_app:main',
         ]
     },
-    install_requires=['cement', 'colorama', 'GitPython', 'PyYAML', 'termcolor', 'psutil', 'tqdm']
+    install_requires=['cement', 'colorama', 'jsonschema', 'GitPython', 'PyYAML', 'termcolor', 'psutil', 'tqdm']
 )

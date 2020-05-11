@@ -1,0 +1,233 @@
+{
+  "title": "JSON schema for Clowder configuration files",
+  "$id": "http://json.schemastore.org/clowder",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "definitions": {
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "arrayOfNonEmptyStrings": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/nonEmptyString"
+      }
+    },
+    "stringArrayUnique": {
+      "type": "array",
+      "uniqueItems": true,
+      "minItems": 1,
+      "items": {
+        "$ref": "#/definitions/nonEmptyString"
+      }
+    },
+    "gitProjectName": {
+      "description": "A unique name for this project. The project's name is appended onto its source's URL to generate the actual URL to configure the Git remote with. The URL gets formed as: ${source_url}/${project_name}.git where ${source_url} is the source's url and ${project_name} is the project’s name. The suffix '.git' is always appended as repo assumes the upstream is a forest of bare Git repositories.",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/nonEmptyString"
+        }
+      ]
+    },
+    "gitSourceName": {
+      "description": "Git source name",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/nonEmptyString"
+        }
+      ]
+    },
+    "gitRemoteName": {
+      "description": "The name specified here is used as the remote name in each project's .git/config, and is therefore automatically available to commands like git fetch, git remote, git pull and git push.",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/nonEmptyString"
+        }
+      ]
+    },
+    "depth": {
+      "description": "Git clone depth",
+      "type": "integer",
+      "minimum": 0,
+      "default": 0
+    },
+    "recursive": {
+      "description": "Whether to clone project submodules recursively",
+      "type": "boolean"
+    },
+    "ref": {
+      "description": "Name of the Git ref to track for this project. Names must be absolute (e.g. 'refs/heads/master' or 'refs/tags/tag_name'). Explicit 40 character SHA-1s are accepted as well. If not supplied the ref specified in the defaults is used if applicable, else the default value 'origin' is used.",
+      "type": "string",
+      "pattern": "^(refs/heads/.+|refs/tags/.+|[a-fA-F0-9]{40})"
+    },
+    "protocol": {
+      "description": "The Git URL protocol prefix for all projects which use this remote source. Each project's source url and name are appended to this prefix to form the actual URL used to clone the project. Accepted values are 'ssh' or 'https', forming URL's of the form 'git@${remote_url}:${project_name}.git' or 'https://${remote_url}/${project_name}.git', respectively.",
+      "type": "string",
+      "enum": [
+        "https",
+        "ssh"
+      ]
+    },
+    "source": {
+      "description": "A map defining a git repo source",
+      "type": "object",
+      "required": [
+        "name",
+        "url"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "description": "Unique name of git repository's remote source",
+          "oneOf": [
+            {
+              "$ref": "#/definitions/nonEmptyString"
+            }
+          ]
+        },
+        "url": {
+          "description": "The Git URL prefix for all projects which use this source. Each project's name is appended to this prefix to form the actual URL used to clone the project.",
+          "oneOf": [
+            {
+              "$ref": "#/definitions/nonEmptyString"
+            }
+          ]
+        },
+        "protocol": {
+          "$ref": "#/definitions/protocol"
+        }
+      }
+    },
+    "fork": {
+      "description": "A map defining a fork",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "$ref": "#/definitions/gitProjectName"
+        },
+        "source": {
+          "$ref": "#/definitions/gitSourceName"
+        },
+        "ref": {
+          "$ref": "#/definitions/ref"
+        },
+        "remote": {
+          "$ref": "#/definitions/gitRemoteName"
+        }
+      }
+    },
+    "project": {
+      "description": "A map defining a project",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "$ref": "#/definitions/gitProjectName"
+        },
+        "path": {
+          "description": "Path to clone project on disk",
+          "oneOf": [
+            {
+              "$ref": "#/definitions/nonEmptyString"
+            }
+          ]
+        },
+        "source": {
+          "$ref": "#/definitions/gitSourceName"
+        },
+        "ref": {
+          "$ref": "#/definitions/ref"
+        },
+        "remote": {
+          "$ref": "#/definitions/gitRemoteName"
+        },
+        "groups": {
+          "description": "Groups project belongs to",
+          "oneOf": [
+            {
+              "$ref": "#/definitions/stringArrayUnique"
+            }
+          ]
+        },
+        "fork": {
+          "$ref": "#/definitions/fork"
+        },
+        "depth": {
+          "$ref": "#/definitions/depth"
+        },
+        "recursive": {
+          "$ref": "#/definitions/recursive"
+        }
+      }
+    }
+  },
+  "type": "object",
+  "required": [
+    "defaults",
+    "sources",
+    "projects"
+  ],
+  "properties": {
+    "version": {
+      "description": "The version field is intended to be used in order to issue warnings for deprecation or breaking changes.",
+      "default": 2,
+      "enum": [
+        2
+      ]
+    },
+    "defaults": {
+      "description": "Default values inherited by projects and sources",
+      "type": "object",
+      "required": [
+        "ref",
+        "remote",
+        "source",
+        "protocol"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "source": {
+          "$ref": "#/definitions/gitSourceName"
+        },
+        "ref": {
+          "$ref": "#/definitions/ref"
+        },
+        "remote": {
+          "$ref": "#/definitions/gitRemoteName"
+        },
+        "protocol": {
+          "$ref": "#/definitions/protocol"
+        },
+        "recursive": {
+          "$ref": "#/definitions/recursive"
+        },
+        "depth": {
+          "$ref": "#/definitions/depth"
+        }
+      }
+    },
+    "sources": {
+      "description": "List of sources",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/definitions/source"
+      }
+    },
+    "projects": {
+      "description": "List of projects",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/definitions/project"
+      }
+    }
+  }
+}

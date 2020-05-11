@@ -363,7 +363,7 @@ class ProjectRepo(ProjectRepoImpl):
         except ClowderError:
             message = colored(' - Failed to push to ', 'red') + f'{fork_remote_output} {branch_output}'
             self._print(message)
-            self._print(fmt.command_failed_error(command))
+            self._print(fmt.error_command_failed(command))
             self._exit(message)
 
     def _compare_remotes(self, upstream_remote_name: str, upstream_remote_url: str,

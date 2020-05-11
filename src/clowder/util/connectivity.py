@@ -48,7 +48,7 @@ def network_connection_required(func):
         """
 
         if is_offline():
-            print(fmt.offline_error())
+            print(fmt.error_offline())
             raise ClowderExit(1)
         return func(*args, **kwargs)
 

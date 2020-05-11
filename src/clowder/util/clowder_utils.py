@@ -65,10 +65,10 @@ def link_clowder_yaml(version: Optional[str] = None) -> None:
 
     if version is None:
         yaml_file = os.path.join(ROOT_DIR, '.clowder', 'clowder.yaml')
-        path_output = fmt.get_path('.clowder/clowder.yaml')
+        path_output = fmt.path_string('.clowder/clowder.yaml')
     else:
         relative_path = os.path.join('.clowder', 'versions', f'{version}.yaml')
-        path_output = fmt.get_path(relative_path)
+        path_output = fmt.path_string(relative_path)
         yaml_file = os.path.join(ROOT_DIR, relative_path)
 
     if not os.path.isfile(yaml_file):

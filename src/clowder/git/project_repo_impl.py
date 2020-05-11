@@ -75,7 +75,7 @@ class ProjectRepoImpl(GitRepo):
             message = colored(' - Failed to checkout branch ', 'red')
             self._print(message + branch_output)
             self._print(fmt.error(err))
-            self._exit(fmt.parallel_exception_error(self.repo_path, message, branch_output))
+            self._exit(fmt.error_parallel_exception(self.repo_path, message, branch_output))
         except (KeyboardInterrupt, SystemExit):
             if remove_dir:
                 remove_directory(self.repo_path)
@@ -97,7 +97,7 @@ class ProjectRepoImpl(GitRepo):
             remove_directory(self.repo_path)
             message = colored(' - No existing remote branch ', 'red') + f'{remote_output} {branch_output}'
             self._print(message)
-            self._exit(fmt.parallel_exception_error(self.repo_path, message))
+            self._exit(fmt.error_parallel_exception(self.repo_path, message))
 
         self._create_branch_local_tracking(branch, self.remote, depth=depth, fetch=False, remove_dir=True)
 
@@ -121,7 +121,7 @@ class ProjectRepoImpl(GitRepo):
             message = colored(' - Failed to checkout commit ', 'red')
             self._print(message + commit_output)
             self._print(fmt.error(err))
-            self._exit(fmt.parallel_exception_error(self.repo_path, message, commit_output))
+            self._exit(fmt.error_parallel_exception(self.repo_path, message, commit_output))
         except (KeyboardInterrupt, SystemExit):
             remove_directory(self.repo_path)
             self._exit()
@@ -149,7 +149,7 @@ class ProjectRepoImpl(GitRepo):
             self._print(fmt.error(err))
             if remove_dir:
                 remove_directory(self.repo_path)
-                self._exit(fmt.parallel_exception_error(self.repo_path, message, tag_output))
+                self._exit(fmt.error_parallel_exception(self.repo_path, message, tag_output))
         except (KeyboardInterrupt, SystemExit):
             if remove_dir:
                 remove_directory(self.repo_path)
@@ -172,7 +172,7 @@ class ProjectRepoImpl(GitRepo):
             message = colored(' - Failed to checkout commit ', 'red')
             self._print(message + commit_output)
             self._print(fmt.error(err))
-            self._exit(fmt.parallel_exception_error(self.repo_path, message, commit_output))
+            self._exit(fmt.error_parallel_exception(self.repo_path, message, commit_output))
         except (KeyboardInterrupt, SystemExit):
             self._exit()
 
@@ -198,7 +198,7 @@ class ProjectRepoImpl(GitRepo):
             message = colored(' - Failed to checkout tag ', 'red')
             self._print(message + tag_output)
             self._print(fmt.error(err))
-            self._exit(fmt.parallel_exception_error(self.repo_path, message, tag_output))
+            self._exit(fmt.error_parallel_exception(self.repo_path, message, tag_output))
         except (KeyboardInterrupt, SystemExit):
             self._exit()
 
@@ -213,7 +213,7 @@ class ProjectRepoImpl(GitRepo):
 
         if url != self._remote_get_url(remote):
             actual_url = self._remote_get_url(remote)
-            message = fmt.remote_already_exists_error(remote, url, actual_url)
+            message = fmt.error_remote_already_exists(remote, url, actual_url)
             self._print(message)
             self._exit(message)
 
@@ -320,7 +320,7 @@ class ProjectRepoImpl(GitRepo):
                 remove_directory(self.repo_path)
             self._print(message + remote_output)
             self._print(fmt.error(err))
-            self._exit(fmt.parallel_exception_error(self.repo_path, message, remote_output))
+            self._exit(fmt.error_parallel_exception(self.repo_path, message, remote_output))
         except (KeyboardInterrupt, SystemExit):
             if remove_dir:
                 remove_directory(self.repo_path)
@@ -388,7 +388,7 @@ class ProjectRepoImpl(GitRepo):
             if remove_dir:
                 remove_directory(self.repo_path)
                 self._print(colored(message, 'red') + tag_output)
-                self._exit(fmt.parallel_exception_error(self.repo_path, colored(message, 'red'), tag_output))
+                self._exit(fmt.error_parallel_exception(self.repo_path, colored(message, 'red'), tag_output))
             if self._print_output:
                 self._print(message + tag_output)
             return None
@@ -407,7 +407,7 @@ class ProjectRepoImpl(GitRepo):
             return
 
         try:
-            self._print(f' - Initialize repo at {fmt.get_path(self.repo_path)}')
+            self._print(f' - Initialize repo at {fmt.path_string(self.repo_path)}')
             if not os.path.isdir(self.repo_path):
                 try:
                     os.makedirs(self.repo_path)

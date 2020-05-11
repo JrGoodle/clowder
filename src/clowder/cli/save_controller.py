@@ -50,7 +50,7 @@ class SaveController(ArgparseController):
         """
 
         if self.app.pargs.version.lower() == 'default':
-            print(fmt.save_default_error(self.app.pargs.version))
+            print(fmt.error_save_default(self.app.pargs.version))
             raise ClowderExit(1)
 
         CLOWDER_REPO.print_status()
@@ -66,10 +66,10 @@ class SaveController(ArgparseController):
 
         yaml_file = os.path.join(versions_dir, f'{version_name}.yaml')
         if os.path.exists(yaml_file):
-            print(fmt.save_version_exists_error(version_name, yaml_file) + '\n')
+            print(fmt.error_save_version_exists(version_name, yaml_file) + '\n')
             raise ClowderExit(1)
 
-        print(fmt.save_version(version_name, yaml_file))
+        print(fmt.save_version_message(version_name, yaml_file))
         save_yaml(CLOWDER_CONTROLLER.get_yaml(), yaml_file)
 
 

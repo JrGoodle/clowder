@@ -514,7 +514,7 @@ class Project(object):
             execute_forall_command(command, self.full_path(), env, self._print_output)
         except ClowderError:
             if not ignore_errors:
-                err = fmt.command_failed_error(command)
+                err = fmt.error_command_failed(command)
                 self._print(err)
                 if parallel:
                     raise ClowderError(err)
