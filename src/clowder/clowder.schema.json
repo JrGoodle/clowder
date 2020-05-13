@@ -175,13 +175,6 @@
     "projects"
   ],
   "properties": {
-    "version": {
-      "description": "The version field is intended to be used in order to issue warnings for deprecation or breaking changes.",
-      "default": 2,
-      "enum": [
-        2
-      ]
-    },
     "defaults": {
       "description": "Default values inherited by projects and sources",
       "type": "object",
