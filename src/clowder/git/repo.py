@@ -269,6 +269,20 @@ class GitRepo(object):
         except (KeyboardInterrupt, SystemExit):
             self._exit()
 
+    def install_lfs_hooks(self):
+        """Install git lfs hooks"""
+
+        self._print(" - Update git lfs hooks")
+        try:
+            self.repo.git.lfs('install')
+        except GitError as err:
+            message = colored(' - Failed to update git lfs hooks', 'red')
+            self._print(message)
+            self._print(fmt.error(err))
+            self._exit(fmt.error(err))
+        except (KeyboardInterrupt, SystemExit):
+            self._exit()
+
     def is_detached(self, print_output: bool = False) -> bool:
         """Check if HEAD is detached
 
@@ -296,6 +310,23 @@ class GitRepo(object):
             return False
 
         return self.repo.is_dirty() or self._is_rebase_in_progress() or self._has_untracked_files()
+
+    def is_lfs_installed(self) -> bool:
+        """Check whether git lfs hooks are installed
+
+        :return: True, if lfs hooks are installed
+        :rtype: bool
+        """
+
+        try:
+            # FIXME: Probably need to inspect .git hooks
+            self.repo.git.config('--get', 'filter.lfs.smudge')
+            self.repo.git.config('--get', 'filter.lfs.clean')
+            self.repo.git.config('--get', 'filter.lfs.process')
+        except GitError:
+            return False
+        else:
+            return True
 
     def new_commits(self, upstream: bool = False) -> int:
         """Returns the number of new commits
@@ -361,6 +392,20 @@ class GitRepo(object):
             print(self.repo.git.pull())
         except GitError as err:
             message = colored(' - Failed to pull latest changes', 'red')
+            self._print(message)
+            self._print(fmt.error(err))
+            self._exit(message)
+        except (KeyboardInterrupt, SystemExit):
+            self._exit()
+
+    def pull_lfs(self) -> None:
+        """Pull lfs files"""
+
+        try:
+            self._print(' - Pull git lfs files')
+            self.repo.git.lfs('pull')
+        except GitError as err:
+            message = colored(' - Failed to pull git lfs files', 'red')
             self._print(message)
             self._print(fmt.error(err))
             self._exit(message)

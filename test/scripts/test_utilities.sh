@@ -85,6 +85,56 @@ test_git_dirty() {
     git diff --cached --quiet && exit 1
 }
 
+test_git_lfs_hooks_installed() {
+    echo "TEST: git lfs hooks are installed"
+    grep -m 1 'git lfs pre-push' '.git/hooks/pre-push' || exit 1
+    grep -m 1 'git lfs post-checkout' '.git/hooks/post-checkout' || exit 1
+    grep -m 1 'git lfs post-commit' '.git/hooks/post-commit' || exit 1
+    grep -m 1 'git lfs post-merge' '.git/hooks/post-merge' || exit 1
+}
+
+test_git_lfs_hooks_not_installed() {
+    echo "TEST: git lfs hooks are not installed"
+    grep -m 1 'git lfs pre-push' '.git/hooks/pre-push' && exit 1
+    grep -m 1 'git lfs post-checkout' '.git/hooks/post-checkout' && exit 1
+    grep -m 1 'git lfs post-commit' '.git/hooks/post-commit' && exit 1
+    grep -m 1 'git lfs post-merge' '.git/hooks/post-merge' && exit 1
+}
+
+test_git_lfs_filters_installed() {
+    echo "TEST: git lfs filters are installed"
+    git config --get filter.lfs.smudge || exit 1
+    git config --get filter.lfs.clean || exit 1
+    git config --get filter.lfs.process || exit 1
+}
+
+test_git_lfs_filters_not_installed() {
+    echo "TEST: git lfs filters are not installed"
+    git config --get filter.lfs.smudge && exit 1
+    git config --get filter.lfs.clean && exit 1
+    git config --get filter.lfs.process && exit 1
+}
+
+test_file_is_lfs_pointer() {
+    echo "TEST: Check $1 is git lfs pointer"
+    output=$(git lfs ls-files -I "$1")
+    output_components=($output)
+    if [[ ${output_components[1]} != '-' ]]; then
+        exit 1
+    fi
+}
+
+test_file_is_not_lfs_pointer() {
+    echo "TEST: Check $1 is not git lfs pointer"
+    output=$(git lfs ls-files -I "jrgoodle.png")
+    set -f # Temporarily disable globbing as we need to check for '*'
+    output_components=($output)
+    set +f
+    if [[ ${output_components[1]} != '*' ]]; then
+        exit 1
+    fi
+}
+
 test_head_detached() {
     echo "TEST: HEAD is detached"
     output="$(git status | head -1)"
@@ -159,7 +209,7 @@ test_no_untracked_files() {
 }
 
 test_not_commit() {
-    echo "TEST: Check commit is not checked out"
+    echo "TEST: Check commit $1 is not checked out"
     if [ "$1" == "$(git rev-parse HEAD)" ]; then
         echo "TEST: On different commit than $1"
         exit 1
@@ -195,28 +245,28 @@ test_untracked_files() {
 }
 
 test_directory_exists() {
-    echo "TEST: Directory exists"
+    echo "TEST: Directory $1 exists"
     if [ ! -d "$1" ]; then
         exit 1
     fi
 }
 
 test_no_directory_exists() {
-    echo "TEST: No drectory exists"
+    echo "TEST: No drectory $1 exists"
     if [ -d "$1" ]; then
         exit 1
     fi
 }
 
 test_file_exists() {
-    echo "TEST: File exists"
+    echo "TEST: File $1 exists"
     if [ ! -f "$1" ]; then
         exit 1
     fi
 }
 
 test_no_file_exists() {
-    echo "TEST: No file exists"
+    echo "TEST: No file $1 exists"
     if [ -f "$1" ]; then
         exit 1
     fi

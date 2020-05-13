@@ -53,7 +53,13 @@
     },
     "recursive": {
       "description": "Whether to clone project submodules recursively",
-      "type": "boolean"
+      "type": "boolean",
+      "default": false
+    },
+    "lfs": {
+      "description": "Whether repository uses git lfs",
+      "type": "boolean",
+      "default": false
     },
     "branch": {
       "description": "Name of the Git branch to track for this project. If not supplied the ref specified in the defaults is used if applicable, else the default branch 'master' is used.",
@@ -226,6 +232,9 @@
             },
             "recursive": {
               "$ref": "#/definitions/recursive"
+            },
+            "lfs": {
+              "$ref": "#/definitions/lfs"
             }
           }
         },
@@ -271,6 +280,9 @@
             },
             "recursive": {
               "$ref": "#/definitions/recursive"
+            },
+            "lfs": {
+              "$ref": "#/definitions/lfs"
             }
           }
         },
@@ -316,6 +328,9 @@
             },
             "recursive": {
               "$ref": "#/definitions/recursive"
+            },
+            "lfs": {
+              "$ref": "#/definitions/lfs"
             }
           }
         }
@@ -358,6 +373,9 @@
             },
             "depth": {
               "$ref": "#/definitions/depth"
+            },
+            "lfs": {
+              "$ref": "#/definitions/lfs"
             }
           }
         },
@@ -385,6 +403,9 @@
             },
             "depth": {
               "$ref": "#/definitions/depth"
+            },
+            "lfs": {
+              "$ref": "#/definitions/lfs"
             }
           }
         },

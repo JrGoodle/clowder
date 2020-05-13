@@ -24,6 +24,7 @@ class Defaults(object):
     :ivar int depth: Default depth
     :ivar bool recursive: Default recursive value
     :ivar str timestamp_author: Default timestamp author
+    :ivar bool lfs: Default git lfs value
     """
 
     def __init__(self, defaults: dict):
@@ -38,6 +39,7 @@ class Defaults(object):
         self.depth = defaults.get("depth", 0)
         self.recursive = defaults.get("recursive", False)
         self.timestamp_author = defaults.get("timestamp_author", None)
+        self.lfs = defaults.get("lfs", False)
 
         self.branch = defaults.get("branch", None)
         self.tag = defaults.get("tag", None)
