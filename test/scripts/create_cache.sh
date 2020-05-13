@@ -19,9 +19,6 @@ case "$1" in
     'cats')
         "$CATS_EXAMPLE_DIR/create-cache.sh" || exit 1
         ;;
-    'llvm')
-        "$LLVM_EXAMPLE_DIR/create-cache.sh" || exit 1
-        ;;
     'misc')
         "$MISC_EXAMPLE_DIR/create-cache.sh" || exit 1
         ;;

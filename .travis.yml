@@ -26,8 +26,6 @@ jobs:
   - env: TARGET="parallel"
     python: 3.7
     script: clowder-test -c parallel
-  # - env: TARGET="llvm"
-  #   script: clowder-test -c llvm all
   # - env: TARGET="swift"
   #   script: clowder-test -c swift all
 

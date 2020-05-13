@@ -42,7 +42,6 @@ class BaseController(ArgparseController):
 
         scripts = [
             './test_example_cats.sh',
-            './test_example_llvm.sh',
             './test_example_swift.sh',
             './test_example_misc.sh'
         ]
