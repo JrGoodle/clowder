@@ -6,6 +6,9 @@
 """
 
 import os
+import pkg_resources
 
 
 ROOT_DIR = os.getcwd()
+
+CLOWDER_SCHEMA = pkg_resources.resource_string(__name__, "clowder.schema.json")

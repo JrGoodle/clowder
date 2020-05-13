@@ -171,9 +171,9 @@ class ClowderRepo(object):
             return
 
         real_path = os.path.realpath(clowder_symlink)
-        symlink_output = fmt.get_path('clowder.yaml')
+        symlink_output = fmt.path_string('clowder.yaml')
         clowder_path = fmt.remove_prefix(f'{real_path}/', ROOT_DIR)
-        path_output = fmt.get_path(clowder_path[1:-1])
+        path_output = fmt.path_string(clowder_path[1:-1])
         print(f'{project_output} {current_ref_output}')
         print(f'{symlink_output} -> {path_output}\n')
 
@@ -198,7 +198,7 @@ class ClowderRepo(object):
         try:
             execute_command(command.split(), self.clowder_path)
         except ClowderError as err:
-            print(fmt.command_failed_error(command))
+            print(fmt.error_command_failed(command))
             raise err
 
     def _validate_groups(self) -> None:

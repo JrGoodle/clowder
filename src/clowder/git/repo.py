@@ -91,7 +91,7 @@ class GitRepo(object):
                 return
 
             self._print(fmt.error(err))
-            self._exit(fmt.parallel_exception_error(self.repo_path, message, ref_output))
+            self._exit(fmt.error_parallel_exception(self.repo_path, message, ref_output))
         except (KeyboardInterrupt, SystemExit):
             self._exit()
 
@@ -511,7 +511,7 @@ class GitRepo(object):
         """
 
         if self.parallel:
-            raise ClowderGitError(msg=fmt.parallel_exception_error(self.repo_path, message))
+            raise ClowderGitError(msg=fmt.error_parallel_exception(self.repo_path, message))
 
         raise ClowderExit(1)
 
@@ -566,7 +566,7 @@ class GitRepo(object):
         try:
             repo = Repo(self.repo_path)
         except GitError as err:
-            repo_path_output = fmt.get_path(self.repo_path)
+            repo_path_output = fmt.path_string(self.repo_path)
             message = colored(" - Failed to create Repo instance for ", 'red') + repo_path_output
             self._print(message)
             self._print(fmt.error(err))

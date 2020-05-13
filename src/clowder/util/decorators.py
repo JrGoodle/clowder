@@ -8,8 +8,6 @@
 import os
 from functools import wraps
 
-from termcolor import cprint
-
 import clowder.util.formatting as fmt
 from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.clowder_repo import CLOWDER_REPO
@@ -54,7 +52,6 @@ def _invalid_yaml_error(error: Exception):
     :raise ClowderExit:
     """
 
-    print(fmt.invalid_yaml_error())
     print(fmt.error(error))
     if isinstance(error, ClowderYAMLError):
         raise ClowderExit(error.code)
@@ -68,5 +65,5 @@ def _validate_clowder_repo_exists():
     """
 
     if not os.path.isdir(CLOWDER_REPO.clowder_path):
-        cprint(' - No .clowder found in the current directory\n', 'red')
+        print(f"{fmt.ERROR} No '.clowder' directory found in the current directory\n")
         raise ClowderExit(ClowderYAMLYErrorType.MISSING_REPO)

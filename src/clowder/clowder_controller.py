@@ -7,8 +7,6 @@
 
 from typing import List
 
-from termcolor import cprint
-
 import clowder.util.formatting as fmt
 from clowder.error.clowder_exit import ClowderExit
 from clowder.error.clowder_yaml_error import ClowderYAMLError
@@ -44,7 +42,7 @@ class ClowderController(object):
         self.error = None
         try:
             self._load_yaml()
-        except (ClowderYAMLError, KeyError) as err:
+        except ClowderYAMLError as err:
             self.error = err
         except (KeyboardInterrupt, SystemExit):
             raise ClowderExit(1)
@@ -101,7 +99,7 @@ class ClowderController(object):
                 timestamp = project.get_current_timestamp()
 
         if timestamp is None:
-            cprint(' - Failed to find timestamp\n', 'red')
+            print(fmt.error_timestamp_not_found())
             raise ClowderExit(1)
 
         return timestamp
@@ -146,8 +144,7 @@ class ClowderController(object):
                 projects_exist = False
 
         if not projects_exist:
-            herd_output = fmt.clowder_command('clowder herd')
-            print('\n - First run ' + herd_output + ' to clone missing projects\n')
+            print(f"\n - First run {fmt.clowder_command('clowder herd')} to clone missing projects\n")
             raise ClowderExit(1)
 
     def _load_yaml(self) -> None:
@@ -158,7 +155,7 @@ class ClowderController(object):
             self.sources = [Source(s, self.defaults) for s in yaml['sources']]
             for project in yaml['projects']:
                 self.projects.append(Project(project, self.defaults, self.sources))
-        except (AttributeError, TypeError):
+        except (AttributeError, KeyError, TypeError):
             self.defaults = None
             self.sources = []
             self.projects = []
