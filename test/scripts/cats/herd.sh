@@ -48,6 +48,35 @@ test_herd_missing_clowder
 ./clean.sh
 ./init.sh || exit 1
 
+test_herd_implicit_project_paths() {
+    print_single_separator
+    echo "TEST: Check projects are on correct branches"
+    $COMMAND link -v implicit-paths || exit 1
+    $COMMAND herd $PARALLEL || exit 1
+    pushd jrgoodle/mu || exit 1
+    test_branch knead
+    popd || exit 1
+    pushd jrgoodle/duke || exit 1
+    test_branch purr
+    popd || exit 1
+    pushd jrgoodle/kit || exit 1
+    test_branch master
+    popd || exit 1
+    pushd jrgoodle/kishka || exit 1
+    test_branch master
+    popd || exit 1
+    pushd jrgoodle/sasha || exit 1
+    test_branch master
+    popd || exit 1
+    pushd jrgoodle/june || exit 1
+    test_branch master
+    popd || exit 1
+}
+test_herd_implicit_project_paths
+
+./clean.sh
+./init.sh || exit 1
+
 test_herd() {
     print_single_separator
     echo "TEST: Check projects are on correct branches"

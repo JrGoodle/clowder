@@ -67,7 +67,7 @@ class Project(object):
         """
 
         self.name = project['name']
-        self.path = project['path']
+        self.path = project.get('path', self.name)
         self.ref = project.get('ref', defaults.ref)
         self.remote = project.get('remote', defaults.remote)
         self.depth = project.get('depth', defaults.depth)

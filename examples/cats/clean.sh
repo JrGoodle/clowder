@@ -9,4 +9,5 @@ rm -rf .clowder
 rm -rf black-cats
 rm -rf duke
 rm -rf mu
+rm -rf jrgoodle
 rm -f clowder.yaml
