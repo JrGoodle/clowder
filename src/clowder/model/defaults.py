@@ -24,10 +24,10 @@ class Defaults(object):
         :param dict defaults: Parsed YAML python object for defaults
         """
 
-        self.ref = defaults["ref"]
         self.protocol = defaults["protocol"]
-        self.remote = defaults["remote"]
         self.source = defaults["source"]
+        self.ref = defaults.get("ref", "refs/heads/master")
+        self.remote = defaults.get("remote", "origin")
         self.depth = defaults.get("depth", 0)
         self.recursive = defaults.get("recursive", False)
         self.timestamp_author = defaults.get("timestamp_author", None)
