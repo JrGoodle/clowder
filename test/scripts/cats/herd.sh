@@ -50,7 +50,7 @@ test_herd_missing_clowder
 
 test_herd_implicit_project_paths() {
     print_single_separator
-    echo "TEST: Check projects are on correct branches"
+    echo "TEST: Check projects are on correct branches with implicit project paths"
     $COMMAND link -v implicit-paths || exit 1
     $COMMAND herd $PARALLEL || exit 1
     pushd jrgoodle/mu || exit 1
@@ -73,6 +73,34 @@ test_herd_implicit_project_paths() {
     popd || exit 1
 }
 test_herd_implicit_project_paths
+
+./clean.sh
+./init.sh || exit 1
+
+test_herd_implicit_defaults() {
+    print_single_separator
+    echo "TEST: Check projects are on correct branches with implicit defaults"
+    $COMMAND link -v implicit-defaults || exit 1
+    $COMMAND herd $PARALLEL || exit 1
+    echo "TEST: cats projects on default branches with implicit defaults"
+    for project in "${black_cats_projects[@]}"; do
+        pushd $project || exit 1
+        test_branch master
+        name=${project#"black-cats/"}
+        test_remote_url 'origin' "https://github.com/jrgoodle/$name.git"
+        popd || exit 1
+    done
+    pushd mu || exit 1
+    test_branch knead
+    test_remote_url 'origin' "https://github.com/jrgoodle/mu.git"
+    popd || exit 1
+    pushd duke || exit 1
+    test_branch purr
+    test_remote_url 'origin' "https://github.com/jrgoodle/duke.git"
+    popd || exit 1
+
+}
+test_herd_implicit_defaults
 
 ./clean.sh
 ./init.sh || exit 1

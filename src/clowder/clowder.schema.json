@@ -186,8 +186,6 @@
       "description": "Default values inherited by projects and sources",
       "type": "object",
       "required": [
-        "ref",
-        "remote",
         "source",
         "protocol"
       ],
