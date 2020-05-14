@@ -67,11 +67,12 @@ test_invalid_yaml() {
     test_branch yaml-validation
     popd || exit 1
 
-    _test_invalid_yaml 'ls -d test-missing*' '99'
-    _test_invalid_yaml 'ls -d test-empty-*' '99'
-    _test_invalid_yaml 'ls -d test-unknown-arg*' '99'
-    _test_invalid_yaml 'ls -d test-arg-value*' '99'
     _test_invalid_yaml 'ls -d test-arg-type*' '99'
+    _test_invalid_yaml 'ls -d test-arg-value*' '99'
+    _test_invalid_yaml 'ls -d test-empty-*' '99'
+    _test_invalid_yaml 'ls -d test-missing*' '99'
+    _test_invalid_yaml 'ls -d test-multiple-refs*' '99'
+    _test_invalid_yaml 'ls -d test-unknown-arg*' '99'
     _test_invalid_yaml 'ls -d test-duplicate-fork-project-remote*' '101'
     _test_invalid_yaml 'ls -d test-empty.clowder.yaml' '106'
     _test_invalid_yaml 'ls -d test-source-not-found*' '114'
