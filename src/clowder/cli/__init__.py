@@ -1,4 +1,9 @@
-"""Clowder cli __init__.py"""
+# -*- coding: utf-8 -*-
+"""clowder.cli module __init__
+
+.. codeauthor:: Joe Decapo <joe@polka.cat>
+
+"""
 
 from clowder.cli.base_controller import BaseController
 from clowder.cli.branch_controller import BranchController

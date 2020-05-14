@@ -14,10 +14,13 @@ from clowder import ROOT_DIR
 from clowder.git.project_repo import ProjectRepo
 from clowder.git.util import (
     existing_git_repository,
+    format_git_branch,
+    format_git_tag,
     git_url
 )
-from clowder.model.defaults import Defaults
-from clowder.model.source import Source
+from clowder.model import Defaults
+from clowder.model import Source
+from clowder.model import Project
 
 
 class Fork(object):
@@ -29,28 +32,38 @@ class Fork(object):
     :ivar str ref: Fork git ref
     """
 
-    def __init__(self, fork: dict, path: str, project_name: str, project_source: Source,
-                 sources: List[Source], project_ref: str, recursive: bool, defaults: Defaults):
+    def __init__(self, fork: dict, project: Project, sources: List[Source], defaults: Defaults):
         """Project __init__
 
         :param dict fork: Parsed YAML python object for fork
-        :param str path: Fork relative path
-        :param str project_name: Parent project name
-        :param Source project_source: Source instance from project
+        :param Project project: Parent project
         :param list[Source] sources: List of Source instances
-        :param str project_ref: Git ref from project
-        :param bool recursive: Whether to handle submodules
         :param Defaults defaults: Defaults instance
         """
 
-        self.path = path
+        self.path = project.path
         self.name = fork['name']
         self.remote = fork.get('remote', defaults.remote)
-        self.ref = fork.get('ref', project_ref)
-        self._recursive = recursive
+        self._recursive = project.recursive
+
+        self._branch = fork.get("branch", None)
+        self._tag = fork.get("tag", None)
+        self._commit = fork.get("commit", None)
+
+        if self._branch is not None:
+            self.ref = format_git_branch(self._branch)
+        elif self._tag is not None:
+            self.ref = format_git_tag(self._tag)
+        elif self._commit is not None:
+            self.ref = self._commit
+        else:
+            self._branch = defaults.branch
+            self._tag = defaults.tag
+            self._commit = defaults.commit
+            self.ref = defaults.ref
 
         self._source = None
-        source_name = fork.get('source', project_source.name)
+        source_name = fork.get('source', project.source.name)
         for s in sources:
             if s.name == source_name:
                 self._source = s
@@ -81,7 +94,7 @@ class Fork(object):
         return {'name': self.name,
                 'remote': self.remote,
                 'source': self._source.name,
-                'ref': self._ref}
+                'ref': self.ref}
 
     def status(self) -> str:
         """Return formatted fork status
