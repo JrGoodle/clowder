@@ -55,10 +55,26 @@
       "description": "Whether to clone project submodules recursively",
       "type": "boolean"
     },
-    "ref": {
-      "description": "Name of the Git ref to track for this project. Names must be absolute (e.g. 'refs/heads/master' or 'refs/tags/tag_name'). Explicit 40 character SHA-1s are accepted as well. If not supplied the ref specified in the defaults is used if applicable, else the default value 'origin' is used.",
+    "branch": {
+      "description": "Name of the Git branch to track for this project. If not supplied the ref specified in the defaults is used if applicable, else the default branch 'master' is used.",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/nonEmptyString"
+        }
+      ]
+    },
+    "tag": {
+      "description": "Name of the Git tag to track for this project. If not supplied the ref specified in the defaults is used if applicable, else the default branch 'master' is used.",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/nonEmptyString"
+        }
+      ]
+    },
+    "commit": {
+      "description": "Git commit SHA-1 to track for this project. Must be full 40 character SHA-1. If not supplied the ref specified in the defaults is used if applicable, else the default branch 'master' is used.",
       "type": "string",
-      "pattern": "^(refs/heads/.+|refs/tags/.+|[a-fA-F0-9]{40})"
+      "pattern": "[a-fA-F0-9]{40}"
     },
     "protocol": {
       "description": "The Git URL protocol prefix for all projects which use this remote source. Each project's source url and name are appended to this prefix to form the actual URL used to clone the project. Accepted values are 'ssh' or 'https', forming URL's of the form 'git@${remote_url}:${project_name}.git' or 'https://${remote_url}/${project_name}.git', respectively.",
@@ -101,71 +117,209 @@
     "fork": {
       "description": "A map defining a fork",
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "name"
-      ],
-      "properties": {
-        "name": {
-          "$ref": "#/definitions/gitProjectName"
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "required": [
+            "name"
+          ],
+          "properties": {
+            "name": {
+              "$ref": "#/definitions/gitProjectName"
+            },
+            "source": {
+              "$ref": "#/definitions/gitSourceName"
+            },
+            "branch": {
+              "$ref": "#/definitions/branch"
+            },
+            "remote": {
+              "$ref": "#/definitions/gitRemoteName"
+            }
+          }
         },
-        "source": {
-          "$ref": "#/definitions/gitSourceName"
+        {
+          "additionalProperties": false,
+          "required": [
+            "name"
+          ],
+          "properties": {
+            "name": {
+              "$ref": "#/definitions/gitProjectName"
+            },
+            "source": {
+              "$ref": "#/definitions/gitSourceName"
+            },
+            "tag": {
+              "$ref": "#/definitions/tag"
+            },
+            "remote": {
+              "$ref": "#/definitions/gitRemoteName"
+            }
+          }
         },
-        "ref": {
-          "$ref": "#/definitions/ref"
-        },
-        "remote": {
-          "$ref": "#/definitions/gitRemoteName"
+        {
+          "additionalProperties": false,
+          "required": [
+            "name"
+          ],
+          "properties": {
+            "name": {
+              "$ref": "#/definitions/gitProjectName"
+            },
+            "source": {
+              "$ref": "#/definitions/gitSourceName"
+            },
+            "commit": {
+              "$ref": "#/definitions/commit"
+            },
+            "remote": {
+              "$ref": "#/definitions/gitRemoteName"
+            }
+          }
         }
-      }
+      ]
     },
     "project": {
       "description": "A map defining a project",
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "name"
-      ],
-      "properties": {
-        "name": {
-          "$ref": "#/definitions/gitProjectName"
-        },
-        "path": {
-          "description": "Path to clone project on disk",
-          "oneOf": [
-            {
-              "$ref": "#/definitions/nonEmptyString"
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "required": [
+            "name"
+          ],
+          "properties": {
+            "name": {
+              "$ref": "#/definitions/gitProjectName"
+            },
+            "path": {
+              "description": "Path to clone project on disk",
+              "oneOf": [
+                {
+                  "$ref": "#/definitions/nonEmptyString"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/definitions/gitSourceName"
+            },
+            "branch": {
+              "$ref": "#/definitions/branch"
+            },
+            "remote": {
+              "$ref": "#/definitions/gitRemoteName"
+            },
+            "groups": {
+              "description": "Groups project belongs to",
+              "oneOf": [
+                {
+                  "$ref": "#/definitions/stringArrayUnique"
+                }
+              ]
+            },
+            "fork": {
+              "$ref": "#/definitions/fork"
+            },
+            "depth": {
+              "$ref": "#/definitions/depth"
+            },
+            "recursive": {
+              "$ref": "#/definitions/recursive"
             }
-          ]
+          }
         },
-        "source": {
-          "$ref": "#/definitions/gitSourceName"
-        },
-        "ref": {
-          "$ref": "#/definitions/ref"
-        },
-        "remote": {
-          "$ref": "#/definitions/gitRemoteName"
-        },
-        "groups": {
-          "description": "Groups project belongs to",
-          "oneOf": [
-            {
-              "$ref": "#/definitions/stringArrayUnique"
+        {
+          "additionalProperties": false,
+          "required": [
+            "name"
+          ],
+          "properties": {
+            "name": {
+              "$ref": "#/definitions/gitProjectName"
+            },
+            "path": {
+              "description": "Path to clone project on disk",
+              "oneOf": [
+                {
+                  "$ref": "#/definitions/nonEmptyString"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/definitions/gitSourceName"
+            },
+            "tag": {
+              "$ref": "#/definitions/tag"
+            },
+            "remote": {
+              "$ref": "#/definitions/gitRemoteName"
+            },
+            "groups": {
+              "description": "Groups project belongs to",
+              "oneOf": [
+                {
+                  "$ref": "#/definitions/stringArrayUnique"
+                }
+              ]
+            },
+            "fork": {
+              "$ref": "#/definitions/fork"
+            },
+            "depth": {
+              "$ref": "#/definitions/depth"
+            },
+            "recursive": {
+              "$ref": "#/definitions/recursive"
             }
-          ]
+          }
         },
-        "fork": {
-          "$ref": "#/definitions/fork"
-        },
-        "depth": {
-          "$ref": "#/definitions/depth"
-        },
-        "recursive": {
-          "$ref": "#/definitions/recursive"
+        {
+          "additionalProperties": false,
+          "required": [
+            "name"
+          ],
+          "properties": {
+            "name": {
+              "$ref": "#/definitions/gitProjectName"
+            },
+            "path": {
+              "description": "Path to clone project on disk",
+              "oneOf": [
+                {
+                  "$ref": "#/definitions/nonEmptyString"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/definitions/gitSourceName"
+            },
+            "commit": {
+              "$ref": "#/definitions/commit"
+            },
+            "remote": {
+              "$ref": "#/definitions/gitRemoteName"
+            },
+            "groups": {
+              "description": "Groups project belongs to",
+              "oneOf": [
+                {
+                  "$ref": "#/definitions/stringArrayUnique"
+                }
+              ]
+            },
+            "fork": {
+              "$ref": "#/definitions/fork"
+            },
+            "depth": {
+              "$ref": "#/definitions/depth"
+            },
+            "recursive": {
+              "$ref": "#/definitions/recursive"
+            }
+          }
         }
-      }
+      ]
     }
   },
   "type": "object",
@@ -178,31 +332,89 @@
     "defaults": {
       "description": "Default values inherited by projects and sources",
       "type": "object",
-      "required": [
-        "source",
-        "protocol"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "source": {
-          "$ref": "#/definitions/gitSourceName"
+      "anyOf": [
+        {
+          "required": [
+            "source",
+            "protocol"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "source": {
+              "$ref": "#/definitions/gitSourceName"
+            },
+            "branch": {
+              "$ref": "#/definitions/branch"
+            },
+            "remote": {
+              "$ref": "#/definitions/gitRemoteName"
+            },
+            "protocol": {
+              "$ref": "#/definitions/protocol"
+            },
+            "recursive": {
+              "$ref": "#/definitions/recursive"
+            },
+            "depth": {
+              "$ref": "#/definitions/depth"
+            }
+          }
         },
-        "ref": {
-          "$ref": "#/definitions/ref"
+        {
+          "required": [
+            "source",
+            "protocol"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "source": {
+              "$ref": "#/definitions/gitSourceName"
+            },
+            "tag": {
+              "$ref": "#/definitions/tag"
+            },
+            "remote": {
+              "$ref": "#/definitions/gitRemoteName"
+            },
+            "protocol": {
+              "$ref": "#/definitions/protocol"
+            },
+            "recursive": {
+              "$ref": "#/definitions/recursive"
+            },
+            "depth": {
+              "$ref": "#/definitions/depth"
+            }
+          }
         },
-        "remote": {
-          "$ref": "#/definitions/gitRemoteName"
-        },
-        "protocol": {
-          "$ref": "#/definitions/protocol"
-        },
-        "recursive": {
-          "$ref": "#/definitions/recursive"
-        },
-        "depth": {
-          "$ref": "#/definitions/depth"
+        {
+          "required": [
+            "source",
+            "protocol"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "source": {
+              "$ref": "#/definitions/gitSourceName"
+            },
+            "commit": {
+              "$ref": "#/definitions/commit"
+            },
+            "remote": {
+              "$ref": "#/definitions/gitRemoteName"
+            },
+            "protocol": {
+              "$ref": "#/definitions/protocol"
+            },
+            "recursive": {
+              "$ref": "#/definitions/recursive"
+            },
+            "depth": {
+              "$ref": "#/definitions/depth"
+            }
+          }
         }
-      }
+      ]
     },
     "sources": {
       "description": "List of sources",
