@@ -53,22 +53,22 @@ test_herd_implicit_project_paths() {
     echo "TEST: Check projects are on correct branches with implicit project paths"
     $COMMAND link -v implicit-paths || exit 1
     $COMMAND herd $PARALLEL || exit 1
-    pushd jrgoodle/mu || exit 1
+    pushd mu || exit 1
     test_branch knead
     popd || exit 1
-    pushd jrgoodle/duke || exit 1
+    pushd duke || exit 1
     test_branch purr
     popd || exit 1
-    pushd jrgoodle/kit || exit 1
+    pushd kit || exit 1
     test_branch master
     popd || exit 1
-    pushd jrgoodle/kishka || exit 1
+    pushd kishka || exit 1
     test_branch master
     popd || exit 1
-    pushd jrgoodle/sasha || exit 1
+    pushd sasha || exit 1
     test_branch master
     popd || exit 1
-    pushd jrgoodle/june || exit 1
+    pushd june || exit 1
     test_branch master
     popd || exit 1
 }

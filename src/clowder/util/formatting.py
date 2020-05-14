@@ -5,6 +5,7 @@
 
 """
 
+import os
 from typing import Optional
 
 # noinspection PyPackageRequirements
@@ -301,6 +302,17 @@ def fork_string(name: str) -> str:
     """
 
     return colored(name, 'cyan')
+
+
+def last_path_component(path: str) -> str:
+    """Return last path component
+
+    :param str path: Path string
+    :return: Last path component
+    :rtype: str
+    """
+
+    return os.path.basename(os.path.normpath(path))
 
 
 def path_string(path: str) -> str:
