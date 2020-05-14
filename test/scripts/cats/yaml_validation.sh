@@ -21,7 +21,7 @@ test_missing_repo() {
     fi
     print_single_separator
 }
-test_missing_repo '113'
+test_missing_repo '10'
 
 ./init.sh || exit 1
 
@@ -37,7 +37,7 @@ test_missing_yaml() {
     fi
     print_single_separator
 }
-test_missing_yaml '104'
+test_missing_yaml '11'
 
 _test_invalid_yaml() {
     pushd .clowder/versions || exit 1
@@ -67,16 +67,17 @@ test_invalid_yaml() {
     test_branch yaml-validation
     popd || exit 1
 
-    _test_invalid_yaml 'ls -d test-arg-type*' '99'
-    _test_invalid_yaml 'ls -d test-arg-value*' '99'
-    _test_invalid_yaml 'ls -d test-empty-*' '99'
-    _test_invalid_yaml 'ls -d test-missing*' '99'
-    _test_invalid_yaml 'ls -d test-multiple-refs*' '99'
-    _test_invalid_yaml 'ls -d test-unknown-arg*' '99'
-    _test_invalid_yaml 'ls -d test-duplicate-fork-project-remote*' '101'
-    _test_invalid_yaml 'ls -d test-empty.clowder.yaml' '106'
-    _test_invalid_yaml 'ls -d test-source-not-found*' '114'
-    _test_invalid_yaml 'ls -d test-duplicate-project-directories*' '116'
+    _test_invalid_yaml 'ls -d test-empty.clowder.yaml' '12'
+    # _test_open_file '13'
+    _test_invalid_yaml 'ls -d test-arg-type*' '14'
+    _test_invalid_yaml 'ls -d test-arg-value*' '14'
+    _test_invalid_yaml 'ls -d test-empty-*' '14'
+    _test_invalid_yaml 'ls -d test-missing*' '14'
+    _test_invalid_yaml 'ls -d test-multiple-refs*' '14'
+    _test_invalid_yaml 'ls -d test-unknown-arg*' '14'
+    _test_invalid_yaml 'ls -d test-duplicate-fork-project-remote*' '15'
+    _test_invalid_yaml 'ls -d test-source-not-found*' '16'
+    _test_invalid_yaml 'ls -d test-duplicate-project-directories*' '17'
 
     $COMMAND repo checkout master || exit 1
     pushd .clowder || exit 1
