@@ -46,7 +46,7 @@ _test_invalid_yaml() {
 
     for test in "${test_cases[@]}"
     do
-        version=${test%.yaml}
+        version=${test%'.clowder.yaml'}
         $COMMAND link -v $version || exit 1
         print_single_separator
         $COMMAND herd
@@ -67,28 +67,13 @@ test_invalid_yaml() {
     test_branch yaml-validation
     popd || exit 1
 
+    _test_invalid_yaml 'ls -d test-missing*' '99'
+    _test_invalid_yaml 'ls -d test-empty-*' '99'
+    _test_invalid_yaml 'ls -d test-unknown-arg*' '99'
+    _test_invalid_yaml 'ls -d test-arg-value*' '99'
+    _test_invalid_yaml 'ls -d test-arg-type*' '99'
     _test_invalid_yaml 'ls -d test-duplicate-fork-project-remote*' '101'
-    _test_invalid_yaml 'ls -d test-missing-default*' '99'
-    _test_invalid_yaml 'ls -d test-missing-fork*' '99'
-    _test_invalid_yaml 'ls -d test-missing-project*' '99'
-    _test_invalid_yaml 'ls -d test-missing-source*' '99'
-    _test_invalid_yaml 'ls -d test-empty-defaults*' '99'
-    _test_invalid_yaml 'ls -d test-empty-fork*' '99'
-    _test_invalid_yaml 'ls -d test-empty-project*' '99'
-    _test_invalid_yaml 'ls -d test-empty-source*' '99'
-    _test_invalid_yaml 'ls -d test-unknown*' '99'
-    _test_invalid_yaml 'ls -d test-empty-yaml*' '106'
-    _test_invalid_yaml 'ls -d test-arg-value-protocol*' '99'
-    _test_invalid_yaml 'ls -d test-arg-value-ref*' '99'
-    _test_invalid_yaml 'ls -d test-arg-type-depth*' '99'
-    _test_invalid_yaml 'ls -d test-arg-type-defaults*' '99'
-    _test_invalid_yaml 'ls -d test-arg-type-fork*' '99'
-    _test_invalid_yaml 'ls -d test-arg-type-group*' '99'
-    _test_invalid_yaml 'ls -d test-arg-type-project*' '99'
-    _test_invalid_yaml 'ls -d test-arg-type-recursive*' '99'
-    _test_invalid_yaml 'ls -d test-arg-type-root*' '99'
-    _test_invalid_yaml 'ls -d test-arg-type-source*' '99'
-    _test_invalid_yaml 'ls -d test-arg-type-timestamp*' '99'
+    _test_invalid_yaml 'ls -d test-empty.clowder.yaml' '106'
     _test_invalid_yaml 'ls -d test-source-not-found*' '114'
     _test_invalid_yaml 'ls -d test-duplicate-project-directories*' '116'
 
