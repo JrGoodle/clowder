@@ -11,12 +11,10 @@ CLOWDER_PROJECT_DIR="$( cd $CURRENT_DIR/../.. && pwd)"
 
 if [ -n "$TRAVIS_OS_NAME" ] || [ -n "$CIRCLECI" ]; then
     export CATS_EXAMPLE_DIR="$CURRENT_DIR/../../examples/cats"
-    export LLVM_EXAMPLE_DIR="$CURRENT_DIR/../../examples/llvm-projects"
     export SWIFT_EXAMPLE_DIR="$CURRENT_DIR/../../examples/swift-projects"
     export MISC_EXAMPLE_DIR="$CURRENT_DIR/../../examples/misc"
 else
     export CATS_EXAMPLE_DIR="$HOME/.clowder_tests/cats"
-    export LLVM_EXAMPLE_DIR="$HOME/.clowder_tests/llvm-projects"
     export SWIFT_EXAMPLE_DIR="$HOME/.clowder_tests/swift-projects"
     export MISC_EXAMPLE_DIR="$HOME/.clowder_tests/misc"
 fi

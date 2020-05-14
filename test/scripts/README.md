@@ -6,11 +6,6 @@
 - Test all clowder commands
 - Test submodules
 
-## [test_example_llvm.sh](test_example_llvm.sh)
-
-- Test forks
-- Test depth option
-
 ## [test_example_swift.sh](test_example_swift.sh)
 
 - Test forks

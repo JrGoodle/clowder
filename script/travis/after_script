@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 cd "$TRAVIS_BUILD_DIR" || exit 1
-coverage combine examples/cats examples/llvm-projects examples/swift-projects
+coverage combine examples/cats examples/swift-projects
 codecov
 ./cc-test-reporter format-coverage --output "coverage/codeclimate.$TRAVIS_JOB_NUMBER.json"
 mv .coverage "coverage/.coverage.$TRAVIS_OS_NAME.$TARGET"

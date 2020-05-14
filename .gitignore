@@ -10,19 +10,7 @@ examples/cats/mu
 examples/cats/duke
 examples/cats/polkabot
 examples/cats/videos
-
-examples/llvm-projects/cached
-examples/llvm-projects/clowder
-examples/llvm-projects/.clowder
-examples/llvm-projects/clowder.yaml
-examples/llvm-projects/peru.yaml
-examples/llvm-projects/k*
-examples/llvm-projects/l*
-examples/llvm-projects/o*
-examples/llvm-projects/p*
-examples/llvm-projects/t*
-examples/llvm-projects/v*
-examples/llvm-projects/z*
+examples/cats/jrgoodle
 
 examples/swift-projects/cached
 examples/swift-projects/clowder

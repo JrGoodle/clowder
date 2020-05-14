@@ -12,7 +12,6 @@ setup_local_test_directory() {
     mkdir -p "$HOME/.clowder_tests" || exit 1
 
     cp -a "$EXAMPLES_DIR/cats" "$CATS_EXAMPLE_DIR" || exit 1
-    cp -a "$EXAMPLES_DIR/llvm-projects" "$LLVM_EXAMPLE_DIR" || exit 1
     cp -a "$EXAMPLES_DIR/swift-projects" "$SWIFT_EXAMPLE_DIR" || exit 1
     cp -a "$EXAMPLES_DIR/misc" "$MISC_EXAMPLE_DIR" || exit 1
 }

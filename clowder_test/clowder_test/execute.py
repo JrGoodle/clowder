@@ -27,20 +27,6 @@ def create_cats_cache(func):
     return wrapper
 
 
-def create_llvm_cache(func):
-    """Create llvm cache"""
-
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        """Wrapper"""
-
-        path = os.path.join(ROOT_DIR, 'test', 'scripts')
-        execute_test_command('./create_cache.sh llvm', path)
-        return func(*args, **kwargs)
-
-    return wrapper
-
-
 def create_misc_cache(func):
     """Create misc cache"""
 
