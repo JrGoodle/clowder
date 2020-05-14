@@ -64,9 +64,9 @@ class SaveController(ArgparseController):
         versions_dir = os.path.join(ROOT_DIR, '.clowder', 'versions')
         _make_dir(versions_dir)
 
-        yaml_file = os.path.join(versions_dir, f'{version_name}.yaml')
+        yaml_file = os.path.join(versions_dir, f"{version_name}.clowder.yaml")
         if os.path.exists(yaml_file):
-            print(fmt.error_save_version_exists(version_name, yaml_file) + '\n')
+            print(f"{fmt.error_save_version_exists(version_name, yaml_file)}\n")
             raise ClowderExit(1)
 
         print(fmt.save_version_message(version_name, yaml_file))

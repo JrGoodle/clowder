@@ -18,9 +18,8 @@ from clowder.git.util import (
     format_git_tag,
     git_url
 )
-from clowder.model import Defaults
-from clowder.model import Source
-from clowder.model import Project
+from clowder.model.defaults import Defaults
+from clowder.model.source import Source
 
 
 class Fork(object):
@@ -32,19 +31,22 @@ class Fork(object):
     :ivar str ref: Fork git ref
     """
 
-    def __init__(self, fork: dict, project: Project, sources: List[Source], defaults: Defaults):
+    def __init__(self, fork: dict, path: str, project_source: Source,
+                 recursive: bool, sources: List[Source], defaults: Defaults):
         """Project __init__
 
         :param dict fork: Parsed YAML python object for fork
-        :param Project project: Parent project
+        :param str path: Fork relative path
+        :param Source project_source: Source instance from project
+        :param bool recursive: Whether to handle submodules
         :param list[Source] sources: List of Source instances
         :param Defaults defaults: Defaults instance
         """
 
-        self.path = project.path
+        self.path = path
         self.name = fork['name']
         self.remote = fork.get('remote', defaults.remote)
-        self._recursive = project.recursive
+        self._recursive = recursive
 
         self._branch = fork.get("branch", None)
         self._tag = fork.get("tag", None)
@@ -63,7 +65,7 @@ class Fork(object):
             self.ref = defaults.ref
 
         self._source = None
-        source_name = fork.get('source', project.source.name)
+        source_name = fork.get('source', project_source.name)
         for s in sources:
             if s.name == source_name:
                 self._source = s

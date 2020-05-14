@@ -5,7 +5,7 @@
 
 """
 
-from clowder.model import Defaults
+from clowder.model.defaults import Defaults
 
 
 class Source(object):

@@ -23,9 +23,9 @@ from clowder.git.util import (
     format_git_tag,
     git_url
 )
-from clowder.model import Defaults
-from clowder.model import Fork
-from clowder.model import Source
+from clowder.model.defaults import Defaults
+from clowder.model.fork import Fork
+from clowder.model.source import Source
 from clowder.util.execute import execute_forall_command
 
 
@@ -70,7 +70,6 @@ class Project(object):
 
         self.name = project['name']
         self.path = project.get('path', self.name)
-        self.ref = project.get('ref', defaults.ref)
         self.remote = project.get('remote', defaults.remote)
         self.depth = project.get('depth', defaults.depth)
         self.recursive = project.get('recursive', defaults.recursive)
@@ -110,7 +109,7 @@ class Project(object):
         self.fork = None
         if 'fork' in project:
             fork = project['fork']
-            self.fork = Fork(fork, self, sources, defaults)
+            self.fork = Fork(fork, self.path, self.source, self.recursive, sources, defaults)
 
     @project_repo_exists
     def branch(self, local: bool = False, remote: bool = False) -> None:

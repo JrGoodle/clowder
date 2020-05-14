@@ -57,7 +57,7 @@ def format_git_branch(branch: str) -> str:
     """
 
     prefix = "refs/heads/"
-    return branch if branch.startswith(prefix) else branch[len(prefix):]
+    return branch if branch.startswith(prefix) else f"{prefix}{branch}"
 
 
 def format_git_tag(tag: str) -> str:
@@ -69,7 +69,7 @@ def format_git_tag(tag: str) -> str:
     """
 
     prefix = "refs/tags/"
-    return tag if tag.startswith(prefix) else tag[len(prefix):]
+    return tag if tag.startswith(prefix) else f"{prefix}{tag}"
 
 
 def git_url(protocol: str, url: str, name: str) -> str:
