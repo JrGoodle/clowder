@@ -51,7 +51,7 @@ class Defaults(object):
             self.ref = self.commit
         else:
             self.branch = 'master'
-            self.ref = 'refs/heads/master'
+            self.ref = format_git_branch(self.branch)
 
     def get_yaml(self) -> dict:
         """Return python object representation for saving yaml
@@ -60,12 +60,18 @@ class Defaults(object):
         :rtype: dict
         """
 
-        defaults = {'ref': self.ref,
-                    'recursive': self.recursive,
+        defaults = {'recursive': self.recursive,
                     'remote': self.remote,
                     'source': self.source,
                     'depth': self.depth,
                     'protocol': self.protocol}
+
+        if self.branch is not None:
+            defaults['branch'] = self.branch
+        elif self.tag is not None:
+            defaults['tag'] = self.tag
+        elif self.commit is not None:
+            defaults['commit'] = self.commit
 
         if self.timestamp_author:
             defaults['timestamp_author'] = self.timestamp_author

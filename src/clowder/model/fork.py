@@ -79,24 +79,30 @@ class Fork(object):
 
         return os.path.join(ROOT_DIR, self.path)
 
-    def get_yaml(self) -> dict:
+    def get_yaml(self, resolved: bool = False) -> dict:
         """Return python object representation for saving yaml
 
+        :param bool resolved: Return default ref rather than current commit sha
         :return: YAML python object
         :rtype: dict
         """
 
-        # TODO: Should this be added for forks as well as projects?
-        # if resolved:
-        #     ref = self.ref
-        # else:
-        #     repo = ProjectRepo(self.full_path(), self.remote, self.ref)
-        #     ref = repo.sha()
-
-        return {'name': self.name,
+        fork = {'name': self.name,
                 'remote': self.remote,
-                'source': self._source.name,
-                'ref': self.ref}
+                'source': self._source.name}
+
+        if resolved:
+            if self._branch is not None:
+                fork['branch'] = self._branch
+            elif self._tag is not None:
+                fork['tag'] = self._tag
+            elif self._commit is not None:
+                fork['commit'] = self._commit
+        else:
+            repo = ProjectRepo(self.full_path(), self.remote, self.ref)
+            fork['commit'] = repo.sha()
+
+        return fork
 
     def status(self) -> str:
         """Return formatted fork status

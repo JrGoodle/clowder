@@ -216,6 +216,9 @@ def _validate_yaml_contents(yaml: dict, yaml_file: str) -> None:
         sources.append(source['name'])
 
     defaults = yaml['defaults']
+    if 'remote' not in defaults:
+        defaults['remote'] = 'origin'
+
     # Validate default source is defined in sources
     if defaults['source'] not in sources:
         err = f"{err_prefix}{fmt.error_source_default_not_found(defaults['source'], yaml_file)}"

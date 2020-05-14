@@ -249,27 +249,35 @@ class Project(object):
         :rtype: dict
         """
 
-        if resolved:
-            ref = self.ref
-        else:
-            if self.fork is None:
-                ref = self.ref
-            else:
-                repo = ProjectRepo(self.full_path(), self.remote, self.ref)
-                ref = repo.sha()
-
         project = {'name': self.name,
                    'path': self.path,
                    'groups': self.groups,
                    'depth': self.depth,
                    'recursive': self.recursive,
-                   'ref': ref,
                    'remote': self.remote,
                    'source': self.source.name}
 
+        if resolved:
+            if self._branch is not None:
+                project['branch'] = self._branch
+            elif self._tag is not None:
+                project['tag'] = self._tag
+            elif self._commit is not None:
+                project['commit'] = self._commit
+        else:
+            if self.fork is not None:
+                if self._branch is not None:
+                    project['branch'] = self._branch
+                elif self._tag is not None:
+                    project['tag'] = self._tag
+                elif self._commit is not None:
+                    project['commit'] = self._commit
+            else:
+                repo = ProjectRepo(self.full_path(), self.remote, self.ref)
+                project['commit'] = repo.sha()
+
         if self.fork:
-            fork_yaml = self.fork.get_yaml()
-            project['fork'] = fork_yaml
+            project['fork'] = self.fork.get_yaml(resolved=resolved)
 
         if self._timestamp_author:
             project['timestamp_author'] = self._timestamp_author

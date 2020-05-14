@@ -22,7 +22,7 @@
       }
     },
     "gitProjectName": {
-      "description": "A unique name for this project. The project's name is appended onto its source's URL to generate the actual URL to configure the Git remote with. The URL gets formed as: ${source_url}/${project_name}.git where ${source_url} is the source's url and ${project_name} is the project’s name. The suffix '.git' is always appended as repo assumes the upstream is a forest of bare Git repositories.",
+      "description": "A unique name for this project. The project's name is appended onto its source's URL to generate the actual URL to configure the Git remote with. The URL gets formed as: ${source_url}/${project_name}.git where ${source_url} is the source's url and ${project_name} is the project’s name. The suffix '.git' is always appended as clowder assumes the upstream is a forest of bare Git repositories.",
       "oneOf": [
         {
           "$ref": "#/definitions/nonEmptyString"
@@ -85,7 +85,7 @@
       ]
     },
     "source": {
-      "description": "A map defining a git repo source",
+      "description": "A map defining a git repository source",
       "type": "object",
       "required": [
         "name",
