@@ -9,7 +9,7 @@ import os
 from typing import List, Optional
 
 import clowder.util.formatting as fmt
-from clowder import ROOT_DIR
+from clowder import CLOWDER_REPO_VERSIONS_DIR
 from clowder.error.clowder_exit import ClowderExit
 from clowder.model.project import Project
 from clowder.util.file_system import force_symlink
@@ -50,34 +50,34 @@ def get_saved_version_names() -> Optional[List[str]]:
     :rtype: Optional[list[str]]
     """
 
-    versions_dir = os.path.join(os.getcwd(), '.clowder', 'versions')
-    if not os.path.exists(versions_dir):
+    if CLOWDER_REPO_VERSIONS_DIR is None:
         return None
-    return [v[:-13] for v in os.listdir(versions_dir) if v.endswith('.clowder.yaml')]
+
+    return [v[:-13] for v in os.listdir(CLOWDER_REPO_VERSIONS_DIR) if v.endswith('.clowder.yaml')]
 
 
-def link_clowder_yaml(version: Optional[str] = None) -> None:
+def link_clowder_yaml(clowder_dir: str, version: Optional[str] = None) -> None:
     """Create symlink pointing to clowder.yaml file
 
+    :param str clowder_dir: Directory to create symlink in
     :param Optional[str] version: Version name of clowder.yaml to link
     :raise ClowderExit:
     """
 
     if version is None:
-        yaml_file = os.path.join(ROOT_DIR, '.clowder', 'clowder.yaml')
+        yaml_file = os.path.join(clowder_dir, '.clowder', 'clowder.yaml')
         path_output = fmt.path_string('.clowder/clowder.yaml')
     else:
         relative_path = os.path.join('.clowder', 'versions', f'{version}.clowder.yaml')
         path_output = fmt.path_string(relative_path)
-        yaml_file = os.path.join(ROOT_DIR, relative_path)
+        yaml_file = os.path.join(clowder_dir, relative_path)
 
     if not os.path.isfile(yaml_file):
         print(f"\n{path_output} doesn't seem to exist\n")
         raise ClowderExit(1)
 
-    yaml_symlink = os.path.join(ROOT_DIR, 'clowder.yaml')
     print(f' - Symlink {path_output}')
-    force_symlink(yaml_file, yaml_symlink)
+    force_symlink(yaml_file, os.path.join(clowder_dir, 'clowder.yaml'))
 
 
 def options_help_message(options: List[str], message: str) -> str:

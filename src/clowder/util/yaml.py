@@ -15,7 +15,11 @@ import jsonschema
 import yaml as pyyaml
 
 import clowder.util.formatting as fmt
-from clowder import ROOT_DIR, CLOWDER_SCHEMA
+from clowder import (
+    CLOWDER_DIR,
+    CLOWDER_SCHEMA,
+    CLOWDER_YAML
+)
 from clowder.error.clowder_exit import ClowderExit
 from clowder.error.clowder_yaml_error import ClowderYAMLError, ClowderYAMLYErrorType
 
@@ -28,47 +32,18 @@ def load_yaml() -> dict:
     :raise ClowderYAMLError:
     """
 
-    yaml_file = os.path.join(ROOT_DIR, 'clowder.yaml')
-    validate_yaml(yaml_file)
-    parsed_yaml = parse_yaml(yaml_file)
+    parsed_yaml = _parse_yaml(CLOWDER_YAML)
     if 'depth' not in parsed_yaml['defaults']:
         parsed_yaml['defaults']['depth'] = 0
 
     return parsed_yaml
 
 
-def parse_yaml(yaml_file: str) -> dict:
-    """Parse yaml file
-
-    :param str yaml_file: Path to yaml file
-    :return: YAML python object
-    :rtype: dict
-    Raises:
-        ClowderExit
-        ClowderYAMLError
-    """
-
-    if not os.path.isfile(yaml_file):
-        raise ClowderYAMLError(fmt.error_missing_yaml(), ClowderYAMLYErrorType.MISSING_YAML)
-
-    try:
-        with open(yaml_file) as raw_file:
-            parsed_yaml = pyyaml.safe_load(raw_file)
-            if parsed_yaml is None:
-                raise ClowderYAMLError(fmt.error_empty_yaml(yaml_file), ClowderYAMLYErrorType.EMPTY_FILE)
-            return parsed_yaml
-    except pyyaml.YAMLError:
-        raise ClowderYAMLError(fmt.error_open_file(yaml_file), ClowderYAMLYErrorType.OPEN_FILE)
-    except (KeyboardInterrupt, SystemExit):
-        raise ClowderExit(1)
-
-
 def print_yaml() -> None:
     """Print current clowder yaml"""
 
-    yaml_file = os.path.join(ROOT_DIR, 'clowder.yaml')
-    if os.path.isfile(yaml_file):
-        _print_yaml(yaml_file)
+    if os.path.isfile(CLOWDER_YAML):
+        _print_yaml(CLOWDER_YAML)
 
 
 def save_yaml(yaml_output: dict, yaml_file: str) -> None:
@@ -94,17 +69,16 @@ def save_yaml(yaml_output: dict, yaml_file: str) -> None:
         raise ClowderExit(1)
 
 
-def validate_yaml(yaml_file: str) -> None:
+def validate_yaml() -> None:
     """Validate clowder.yaml
 
-    :param str yaml_file: Yaml file path to validate
     Raises:
         ClowderExit
         ClowderYAMLError
     """
 
     json_schema = _load_json_schema()
-    parsed_yaml = parse_yaml(yaml_file)
+    parsed_yaml = _parse_yaml(CLOWDER_YAML)
     parsed_yaml_copy = copy.deepcopy(parsed_yaml)
     try:
         jsonschema.validate(parsed_yaml, json_schema)
@@ -112,7 +86,7 @@ def validate_yaml(yaml_file: str) -> None:
         error_message = f"{fmt.error_invalid_yaml()}\n{fmt.ERROR} {err.message}"
         raise ClowderYAMLError(error_message, ClowderYAMLYErrorType.JSONSCHEMA_VALIDATION_FAILED)
 
-    _validate_yaml_contents(parsed_yaml_copy, yaml_file)
+    _validate_yaml_contents(parsed_yaml_copy, CLOWDER_YAML)
 
 
 def _check_for_duplicates(list_of_elements: List[str]) -> Optional[str]:
@@ -141,8 +115,7 @@ def _format_yaml_symlink(yaml_file: str) -> str:
     """
 
     path = fmt.symlink_target(yaml_file)
-    path = fmt.remove_prefix(path, ROOT_DIR)
-    path = fmt.remove_prefix(path, '/')
+    path = fmt.remove_prefix(path, f"{CLOWDER_DIR}/")
     return '\n' + fmt.path_string('clowder.yaml') + ' -> ' + fmt.path_string(path) + '\n'
 
 
@@ -154,9 +127,8 @@ def _format_yaml_file(yaml_file: str) -> str:
     :rtype: str
     """
 
-    path = fmt.remove_prefix(yaml_file, ROOT_DIR)
-    path = fmt.remove_prefix(path, '/')
-    return '\n' + fmt.path_string(path) + '\n'
+    path = fmt.remove_prefix(yaml_file, f"{CLOWDER_DIR}/")
+    return f"\n{fmt.path_string(path)}\n"
 
 
 def _load_json_schema() -> dict:
@@ -167,6 +139,29 @@ def _load_json_schema() -> dict:
     """
 
     return pyyaml.safe_load(CLOWDER_SCHEMA)
+
+
+def _parse_yaml(yaml_file: str) -> dict:
+    """Parse yaml file
+
+    :param str yaml_file: Path to yaml file
+    :return: YAML python object
+    :rtype: dict
+    Raises:
+        ClowderExit
+        ClowderYAMLError
+    """
+
+    try:
+        with open(yaml_file) as raw_file:
+            parsed_yaml = pyyaml.safe_load(raw_file)
+            if parsed_yaml is None:
+                raise ClowderYAMLError(fmt.error_empty_yaml(yaml_file), ClowderYAMLYErrorType.EMPTY_FILE)
+            return parsed_yaml
+    except pyyaml.YAMLError:
+        raise ClowderYAMLError(fmt.error_open_file(yaml_file), ClowderYAMLYErrorType.OPEN_FILE)
+    except (KeyboardInterrupt, SystemExit):
+        raise ClowderExit(1)
 
 
 def _print_yaml(yaml_file: str) -> None:

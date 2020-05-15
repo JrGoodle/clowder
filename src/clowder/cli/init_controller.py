@@ -10,8 +10,10 @@ import os
 from cement.ext.ext_argparse import ArgparseController, expose
 from termcolor import colored, cprint
 
-from clowder.clowder_repo import CLOWDER_REPO
+import clowder.clowder_repo as clowder_repo
+from clowder import CURRENT_DIR
 from clowder.error.clowder_exit import ClowderExit
+from clowder.git.util import existing_git_repository
 from clowder.util.connectivity import network_connection_required
 
 
@@ -45,14 +47,15 @@ class InitController(ArgparseController):
         :raise ClowderExit:
         """
 
-        if os.path.isdir(CLOWDER_REPO.clowder_path):
+        clowder_repo_dir = os.path.join(CURRENT_DIR, '.clowder')
+        if existing_git_repository(clowder_repo_dir):
             cprint('Clowder already initialized in this directory\n', 'red')
             raise ClowderExit(1)
 
         url_output = colored(self.app.pargs.url, 'green')
-        print('Create clowder repo from ' + url_output + '\n')
+        print(f"Create clowder repo from {url_output}\n")
         if self.app.pargs.branch is None:
             branch = 'master'
         else:
             branch = str(self.app.pargs.branch[0])
-        CLOWDER_REPO.init(self.app.pargs.url, branch)
+        clowder_repo.init(self.app.pargs.url, branch)

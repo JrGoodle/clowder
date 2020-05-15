@@ -10,10 +10,10 @@ import os
 
 from cement.ext.ext_argparse import ArgparseController, expose
 
+import clowder.clowder_repo as clowder_repo
 import clowder.util.formatting as fmt
-from clowder import ROOT_DIR
+from clowder import CLOWDER_REPO_DIR
 from clowder.clowder_controller import CLOWDER_CONTROLLER
-from clowder.clowder_repo import CLOWDER_REPO
 from clowder.error.clowder_exit import ClowderExit
 from clowder.util.decorators import valid_clowder_yaml_required
 from clowder.util.clowder_utils import validate_projects
@@ -53,7 +53,7 @@ class SaveController(ArgparseController):
             print(fmt.error_save_default(self.app.pargs.version))
             raise ClowderExit(1)
 
-        CLOWDER_REPO.print_status()
+        clowder_repo.print_status()
         CLOWDER_CONTROLLER.validate_projects_exist()
         # TODO: Get all projects
         validate_projects(CLOWDER_CONTROLLER.projects)
@@ -61,7 +61,7 @@ class SaveController(ArgparseController):
         # Replace path separators with dashes to avoid creating directories
         version_name = self.app.pargs.version.replace('/', '-')
 
-        versions_dir = os.path.join(ROOT_DIR, '.clowder', 'versions')
+        versions_dir = os.path.join(CLOWDER_REPO_DIR, 'versions')
         _make_dir(versions_dir)
 
         yaml_file = os.path.join(versions_dir, f"{version_name}.clowder.yaml")

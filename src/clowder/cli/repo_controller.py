@@ -7,12 +7,12 @@
 
 from cement.ext.ext_argparse import ArgparseController, expose
 
-from clowder.clowder_repo import (
-    CLOWDER_REPO,
+import clowder.clowder_repo as clowder_repo
+from clowder.util.decorators import (
+    clowder_required,
     print_clowder_repo_status,
     print_clowder_repo_status_fetch
 )
-from clowder.util.decorators import clowder_required
 from clowder.util.connectivity import network_connection_required
 
 
@@ -54,7 +54,7 @@ class RepoAddController(ArgparseController):
     def _add(self) -> None:
         """Clowder repo add command private implementation"""
 
-        CLOWDER_REPO.add(self.app.pargs.files)
+        clowder_repo.add(self.app.pargs.files)
 
 
 class RepoCommitController(ArgparseController):
@@ -82,7 +82,7 @@ class RepoCommitController(ArgparseController):
     def _commit(self) -> None:
         """Clowder repo commit command private implementation"""
 
-        CLOWDER_REPO.commit(self.app.pargs.message[0])
+        clowder_repo.commit(self.app.pargs.message[0])
 
 
 class RepoPullController(ArgparseController):
@@ -110,7 +110,7 @@ class RepoPullController(ArgparseController):
     def _pull(self) -> None:
         """Clowder repo pull command private implementation"""
 
-        CLOWDER_REPO.pull()
+        clowder_repo.pull()
 
 
 class RepoPushController(ArgparseController):
@@ -138,7 +138,7 @@ class RepoPushController(ArgparseController):
     def _push(self) -> None:
         """Clowder repo push command private implementation"""
 
-        CLOWDER_REPO.push()
+        clowder_repo.push()
 
 
 class RepoRunController(ArgparseController):
@@ -168,7 +168,7 @@ class RepoRunController(ArgparseController):
     def _run(self) -> None:
         """Clowder repo run command private implementation"""
 
-        CLOWDER_REPO.run_command(self.app.pargs.command[0])
+        clowder_repo.run_command(self.app.pargs.command[0])
 
 
 class RepoCheckoutController(ArgparseController):
@@ -199,7 +199,7 @@ class RepoCheckoutController(ArgparseController):
     def _checkout(self) -> None:
         """Clowder repo checkout command private implementation"""
 
-        CLOWDER_REPO.checkout(self.app.pargs.ref[0])
+        clowder_repo.checkout(self.app.pargs.ref[0])
 
 
 class RepoCleanController(ArgparseController):
@@ -229,7 +229,7 @@ class RepoCleanController(ArgparseController):
     def _clean(self) -> None:
         """Clowder repo clean command private implementation"""
 
-        CLOWDER_REPO.clean()
+        clowder_repo.clean()
 
 
 class RepoStatusController(ArgparseController):
@@ -259,4 +259,4 @@ class RepoStatusController(ArgparseController):
     def _status(self) -> None:
         """Clowder repo status command private implementation"""
 
-        CLOWDER_REPO.git_status()
+        clowder_repo.git_status()

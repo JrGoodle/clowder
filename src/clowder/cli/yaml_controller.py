@@ -9,8 +9,10 @@ from cement.ext.ext_argparse import ArgparseController, expose
 
 import clowder.util.formatting as fmt
 from clowder.clowder_controller import CLOWDER_CONTROLLER
-from clowder.clowder_repo import print_clowder_repo_status
-from clowder.util.decorators import valid_clowder_yaml_required
+from clowder.util.decorators import (
+    print_clowder_repo_status,
+    valid_clowder_yaml_required
+)
 from clowder.util.yaml import print_yaml
 
 
