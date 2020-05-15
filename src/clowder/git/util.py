@@ -48,6 +48,30 @@ def not_detached(func):
     return wrapper
 
 
+def format_git_branch(branch: str) -> str:
+    """Returns properly formatted git branch
+
+    :param str branch: Git branch name
+    :return: Branch prefixed with 'refs/heads/'
+    :rtype: str
+    """
+
+    prefix = "refs/heads/"
+    return branch if branch.startswith(prefix) else f"{prefix}{branch}"
+
+
+def format_git_tag(tag: str) -> str:
+    """Returns properly formatted git tag
+
+    :param str tag: Git tag name
+    :return: Tag prefixed with 'refs/heads/'
+    :rtype: str
+    """
+
+    prefix = "refs/tags/"
+    return tag if tag.startswith(prefix) else f"{prefix}{tag}"
+
+
 def git_url(protocol: str, url: str, name: str) -> str:
     """Return git url
 

@@ -33,4 +33,6 @@ class Source(object):
         :rtype: dict
         """
 
-        return {'name': self.name, 'url': self.url, 'protocol': self.protocol}
+        return {'name': self.name,
+                'url': self.url,
+                'protocol': self.protocol}

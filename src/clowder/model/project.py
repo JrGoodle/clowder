@@ -19,6 +19,8 @@ from clowder.git.project_repo import ProjectRepo
 from clowder.git.project_repo_recursive import ProjectRepoRecursive
 from clowder.git.util import (
     existing_git_repository,
+    format_git_branch,
+    format_git_tag,
     git_url
 )
 from clowder.model.defaults import Defaults
@@ -68,12 +70,27 @@ class Project(object):
 
         self.name = project['name']
         self.path = project.get('path', self.name)
-        self.ref = project.get('ref', defaults.ref)
         self.remote = project.get('remote', defaults.remote)
         self.depth = project.get('depth', defaults.depth)
         self.recursive = project.get('recursive', defaults.recursive)
         self._timestamp_author = project.get('timestamp_author', defaults.timestamp_author)
         self._print_output = True
+
+        self._branch = project.get("branch", None)
+        self._tag = project.get("tag", None)
+        self._commit = project.get("commit", None)
+
+        if self._branch is not None:
+            self.ref = format_git_branch(self._branch)
+        elif self._tag is not None:
+            self.ref = format_git_tag(self._tag)
+        elif self._commit is not None:
+            self.ref = self._commit
+        else:
+            self._branch = defaults.branch
+            self._tag = defaults.tag
+            self._commit = defaults.commit
+            self.ref = defaults.ref
 
         groups = [self.name, 'all']
         custom_groups = project.get('groups', None)
@@ -92,7 +109,7 @@ class Project(object):
         self.fork = None
         if 'fork' in project:
             fork = project['fork']
-            self.fork = Fork(fork, self.path, self.name, self.source, sources, self.ref, self.recursive, defaults)
+            self.fork = Fork(fork, self.path, self.source, self.recursive, sources, defaults)
 
     @project_repo_exists
     def branch(self, local: bool = False, remote: bool = False) -> None:
@@ -232,27 +249,35 @@ class Project(object):
         :rtype: dict
         """
 
-        if resolved:
-            ref = self.ref
-        else:
-            if self.fork is None:
-                ref = self.ref
-            else:
-                repo = ProjectRepo(self.full_path(), self.remote, self.ref)
-                ref = repo.sha()
-
         project = {'name': self.name,
                    'path': self.path,
                    'groups': self.groups,
                    'depth': self.depth,
                    'recursive': self.recursive,
-                   'ref': ref,
                    'remote': self.remote,
                    'source': self.source.name}
 
+        if resolved:
+            if self._branch is not None:
+                project['branch'] = self._branch
+            elif self._tag is not None:
+                project['tag'] = self._tag
+            elif self._commit is not None:
+                project['commit'] = self._commit
+        else:
+            if self.fork is not None:
+                if self._branch is not None:
+                    project['branch'] = self._branch
+                elif self._tag is not None:
+                    project['tag'] = self._tag
+                elif self._commit is not None:
+                    project['commit'] = self._commit
+            else:
+                repo = ProjectRepo(self.full_path(), self.remote, self.ref)
+                project['commit'] = repo.sha()
+
         if self.fork:
-            fork_yaml = self.fork.get_yaml()
-            project['fork'] = fork_yaml
+            project['fork'] = self.fork.get_yaml(resolved=resolved)
 
         if self._timestamp_author:
             project['timestamp_author'] = self._timestamp_author

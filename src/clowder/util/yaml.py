@@ -55,7 +55,7 @@ def parse_yaml(yaml_file: str) -> dict:
         with open(yaml_file) as raw_file:
             parsed_yaml = pyyaml.safe_load(raw_file)
             if parsed_yaml is None:
-                raise ClowderYAMLError(fmt.error_empty_yaml(yaml_file), ClowderYAMLYErrorType.EMPTY_YAML)
+                raise ClowderYAMLError(fmt.error_empty_yaml(yaml_file), ClowderYAMLYErrorType.EMPTY_FILE)
             return parsed_yaml
     except pyyaml.YAMLError:
         raise ClowderYAMLError(fmt.error_open_file(yaml_file), ClowderYAMLYErrorType.OPEN_FILE)
@@ -110,7 +110,7 @@ def validate_yaml(yaml_file: str) -> None:
         jsonschema.validate(parsed_yaml, json_schema)
     except jsonschema.exceptions.ValidationError as err:
         error_message = f"{fmt.error_invalid_yaml()}\n{fmt.ERROR} {err.message}"
-        raise ClowderYAMLError(error_message, ClowderYAMLYErrorType.UNKNOWN)
+        raise ClowderYAMLError(error_message, ClowderYAMLYErrorType.JSONSCHEMA_VALIDATION_FAILED)
 
     _validate_yaml_contents(parsed_yaml_copy, yaml_file)
 
@@ -216,6 +216,9 @@ def _validate_yaml_contents(yaml: dict, yaml_file: str) -> None:
         sources.append(source['name'])
 
     defaults = yaml['defaults']
+    if 'remote' not in defaults:
+        defaults['remote'] = 'origin'
+
     # Validate default source is defined in sources
     if defaults['source'] not in sources:
         err = f"{err_prefix}{fmt.error_source_default_not_found(defaults['source'], yaml_file)}"
