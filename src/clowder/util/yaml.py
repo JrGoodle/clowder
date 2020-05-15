@@ -228,7 +228,7 @@ def _validate_yaml_contents(yaml: dict, yaml_file: str) -> None:
     projects_with_forks = []
     for p in yaml['projects']:
         project = {'name': p['name'],
-                   'path': p.get('path', p['name'])}
+                   'path': p.get('path', fmt.last_path_component(p['name']))}
         if 'remote' in p:
             project['remote'] = p['remote']
         if 'source' in p:

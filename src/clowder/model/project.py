@@ -69,7 +69,7 @@ class Project(object):
         """
 
         self.name = project['name']
-        self.path = project.get('path', self.name)
+        self.path = project.get('path', fmt.last_path_component(self.name))
         self.remote = project.get('remote', defaults.remote)
         self.depth = project.get('depth', defaults.depth)
         self.recursive = project.get('recursive', defaults.recursive)

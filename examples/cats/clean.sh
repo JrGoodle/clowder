@@ -9,5 +9,9 @@ rm -rf .clowder
 rm -rf black-cats
 rm -rf duke
 rm -rf mu
+rm -rf kit
+rm -rf kishka
+rm -rf june
+rm -rf sasha
 rm -rf jrgoodle
 rm -f clowder.yaml
