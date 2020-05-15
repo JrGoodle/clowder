@@ -40,14 +40,14 @@ class PruneController(ArgparseController):
     @expose(
         help='Prune branches',
         arguments=[
+            (['projects'], dict(metavar='PROJECT', default=['all'], nargs='+',
+                                choices=CLOWDER_CONTROLLER.project_names,
+                                help=options_help_message(CLOWDER_CONTROLLER.project_names,
+                                                          'projects and groups to prune'))),
             (['branch'], dict(help='name of branch to remove', metavar='BRANCH')),
             (['--force', '-f'], dict(action='store_true', help='force prune branches')),
             (['--all', '-a'], dict(action='store_true', help='prune local and remote branches')),
-            (['--remote', '-r'], dict(action='store_true', help='prune remote branches')),
-            (['--projects', '-p'], dict(choices=CLOWDER_CONTROLLER.get_all_project_names(),
-                                        default=['all'], nargs='+', metavar='PROJECT',
-                                        help=options_help_message(CLOWDER_CONTROLLER.get_all_project_names(),
-                                                                  'projects to prune')))
+            (['--remote', '-r'], dict(action='store_true', help='prune remote branches'))
         ]
     )
     def prune(self) -> None:

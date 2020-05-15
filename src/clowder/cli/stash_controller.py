@@ -32,10 +32,10 @@ class StashController(ArgparseController):
     @expose(
         help='Stash current changes',
         arguments=[
-            (['--projects', '-p'], dict(choices=CLOWDER_CONTROLLER.get_all_project_names(),
-                                        default=['all'], nargs='+', metavar='PROJECT',
-                                        help=options_help_message(CLOWDER_CONTROLLER.get_all_project_names(),
-                                                                  'projects to stash')))
+            (['projects'], dict(metavar='PROJECT', default=['all'], nargs='+',
+                                choices=CLOWDER_CONTROLLER.project_names,
+                                help=options_help_message(CLOWDER_CONTROLLER.project_names,
+                                                          'projects and groups to stash changes for'))),
         ]
     )
     def stash(self) -> None:

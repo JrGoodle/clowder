@@ -34,17 +34,17 @@ class CleanController(ArgparseController):
     @expose(
         help='Discard current changes in projects',
         arguments=[
+            (['projects'], dict(metavar='PROJECT', default=['all'], nargs='+',
+                                choices=CLOWDER_CONTROLLER.project_names,
+                                help=options_help_message(CLOWDER_CONTROLLER.project_names,
+                                                          'projects and groups to clean'))),
             (['--all', '-a'], dict(action='store_true', help='clean all the things')),
             (['--recursive', '-r'], dict(action='store_true', help='clean submodules recursively')),
             (['-d'], dict(action='store_true', help='remove untracked directories')),
             (['-f'], dict(action='store_true', help='remove directories with .git subdirectory or file')),
             (['-X'], dict(action='store_true', help='remove only files ignored by git')),
-            (['-x'], dict(action='store_true', help='remove all untracked files')),
-            (['--projects', '-p'], dict(choices=CLOWDER_CONTROLLER.get_all_project_names(),
-                                        default=['all'], nargs='+', metavar='PROJECT',
-                                        help=options_help_message(CLOWDER_CONTROLLER.get_all_project_names(),
-                                                                  'projects to clean')))
-            ]
+            (['-x'], dict(action='store_true', help='remove all untracked files'))
+        ]
     )
     def clean(self) -> None:
         """Clowder clean command entry point"""

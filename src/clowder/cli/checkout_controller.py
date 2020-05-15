@@ -33,10 +33,10 @@ class CheckoutController(ArgparseController):
         help='Checkout local branch in projects',
         arguments=[
             (['branch'], dict(nargs=1, action='store', help='branch to checkout', metavar='BRANCH')),
-            (['--projects', '-p'], dict(choices=CLOWDER_CONTROLLER.get_all_project_names(),
-                                        default=['all'], nargs='+', metavar='PROJECT',
-                                        help=options_help_message(CLOWDER_CONTROLLER.get_all_project_names(),
-                                                                  'projects to checkout branches for')))
+            (['projects'], dict(metavar='PROJECT', default=['all'], nargs='+',
+                                choices=CLOWDER_CONTROLLER.project_names,
+                                help=options_help_message(CLOWDER_CONTROLLER.project_names,
+                                                          'projects and groups to checkout branches for')))
         ]
     )
     def checkout(self) -> None:

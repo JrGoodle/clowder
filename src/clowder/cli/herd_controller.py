@@ -38,16 +38,16 @@ class HerdController(ArgparseController):
     @expose(
         help='Clone and update projects with latest changes',
         arguments=[
+            (['projects'], dict(metavar='PROJECT', default=['all'], nargs='+',
+                                choices=CLOWDER_CONTROLLER.project_names,
+                                help=options_help_message(CLOWDER_CONTROLLER.project_names,
+                                                          'projects and groups to show branches for'))),
             (['--parallel'], dict(action='store_true', help='run commands in parallel')),
             (['--rebase', '-r'], dict(action='store_true', help='use rebase instead of pull')),
             (['--depth', '-d'], dict(default=None, type=int, nargs=1, metavar='DEPTH', help='depth to herd')),
             (['--branch', '-b'], dict(nargs=1, default=None, metavar='BRANCH', help='branch to herd if present')),
-            (['--tag', '-t'], dict(nargs=1, default=None, metavar='TAG', help='tag to herd if present')),
-            (['--projects', '-p'], dict(choices=CLOWDER_CONTROLLER.get_all_project_names(),
-                                        default=['all'], nargs='+', metavar='PROJECT',
-                                        help=options_help_message(CLOWDER_CONTROLLER.get_all_project_names(),
-                                                                  'projects to herd'))),
-            ]
+            (['--tag', '-t'], dict(nargs=1, default=None, metavar='TAG', help='tag to herd if present'))
+        ]
     )
     def herd(self) -> None:
         """Clowder herd command entry point"""

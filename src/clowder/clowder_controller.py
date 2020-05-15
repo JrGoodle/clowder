@@ -41,6 +41,7 @@ class ClowderController(object):
         self.sources = []
         self.projects = []
         self.error = None
+        self.project_names = []
 
         try:
             if CLOWDER_YAML is None:
@@ -61,19 +62,6 @@ class ClowderController(object):
 
         try:
             return sorted([p.name for p in self.projects if p.fork is not None])
-        except TypeError:
-            return []
-
-    def get_all_project_names(self) -> List[str]:
-        """Returns all project names for current clowder.yaml
-
-        :return: List of all project names
-        :rtype: list[str]
-        """
-
-        try:
-            names = [g for p in self.projects for g in p.groups]
-            return sorted(list(set(names)))
         except TypeError:
             return []
 
@@ -152,6 +140,19 @@ class ClowderController(object):
             print(f"\n - First run {fmt.clowder_command('clowder herd')} to clone missing projects\n")
             raise ClowderExit(1)
 
+    def _get_all_project_names(self) -> List[str]:
+        """Returns all project names for current clowder.yaml
+
+        :return: List of all project names
+        :rtype: list[str]
+        """
+
+        try:
+            names = [g for p in self.projects for g in p.groups]
+            return sorted(list(set(names)))
+        except TypeError:
+            return []
+
     def _load_yaml(self) -> None:
         """Load clowder.yaml"""
         try:
@@ -160,6 +161,7 @@ class ClowderController(object):
             self.sources = [Source(s, self.defaults) for s in yaml['sources']]
             for project in yaml['projects']:
                 self.projects.append(Project(project, self.defaults, self.sources))
+            self.project_names = self._get_all_project_names()
         except (AttributeError, KeyError, TypeError):
             self.defaults = None
             self.sources = []

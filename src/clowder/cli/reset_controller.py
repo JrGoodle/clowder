@@ -38,15 +38,15 @@ class ResetController(ArgparseController):
     @expose(
         help='Reset branches to upstream commits or check out detached HEADs for tags and shas',
         arguments=[
+            (['projects'], dict(metavar='PROJECT', default=['all'], nargs='+',
+                                choices=CLOWDER_CONTROLLER.project_names,
+                                help=options_help_message(CLOWDER_CONTROLLER.project_names,
+                                                          'projects and groups to reset'))),
             (['--parallel'], dict(action='store_true', help='run commands in parallel')),
-            (['--timestamp', '-t'], dict(choices=CLOWDER_CONTROLLER.get_all_project_names(),
+            (['--timestamp', '-t'], dict(choices=CLOWDER_CONTROLLER.project_names,
                                          default=None, nargs=1, metavar='TIMESTAMP',
-                                         help='project to reset timestamps relative to')),
-            (['--projects', '-p'], dict(choices=CLOWDER_CONTROLLER.get_all_project_names(),
-                                        default=['all'], nargs='+', metavar='PROJECT',
-                                        help=options_help_message(CLOWDER_CONTROLLER.get_all_project_names(),
-                                                                  'projects to reset')))
-            ]
+                                         help='project to reset timestamps relative to'))
+        ]
     )
     def reset(self) -> None:
         """Clowder reset command entry point"""

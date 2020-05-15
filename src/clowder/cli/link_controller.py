@@ -30,13 +30,14 @@ class LinkController(ArgparseController):
         stacked_type = 'embedded'
         description = 'Symlink clowder.yaml version'
 
+    versions = get_saved_version_names()
+
     @expose(
         help='Symlink clowder.yaml version',
         arguments=[
-            (['--version', '-v'], dict(choices=get_saved_version_names(),
-                                       nargs=1, default=None, metavar='VERSION',
-                                       help=options_help_message(get_saved_version_names(), 'version to symlink')))
-            ]
+            (['version'], dict(metavar='VERSION', choices=versions, nargs=1, default=None,
+                               help=options_help_message(versions, 'version to symlink')))
+        ]
     )
     def link(self) -> None:
         """Clowder link command entry point"""
@@ -51,5 +52,5 @@ class LinkController(ArgparseController):
         if self.app.pargs.version is None:
             version = None
         else:
-            version = self.app.pargs.version[0]
+            version = self.app.pargs.version
         link_clowder_yaml(CLOWDER_DIR, version)

@@ -36,15 +36,15 @@ class ForallController(ArgparseController):
     @expose(
         help='Run command or script in project directories',
         arguments=[
+            (['projects'], dict(metavar='PROJECT', default=['all'], nargs='+',
+                                choices=CLOWDER_CONTROLLER.project_names,
+                                help=options_help_message(CLOWDER_CONTROLLER.project_names,
+                                                          'projects and groups to run command for'))),
             (['--command', '-c'], dict(nargs='+', metavar='COMMAND', default=None,
                                        help='command or script to run in project directories')),
             (['--ignore-errors', '-i'], dict(action='store_true', help='ignore errors in command or script')),
-            (['--parallel'], dict(action='store_true', help='run commands in parallel')),
-            (['--projects', '-p'], dict(choices=CLOWDER_CONTROLLER.get_all_project_names(),
-                                        default=['all'], nargs='+', metavar='PROJECT',
-                                        help=options_help_message(CLOWDER_CONTROLLER.get_all_project_names(),
-                                                                  'projects to run command for')))
-            ]
+            (['--parallel'], dict(action='store_true', help='run commands in parallel'))
+        ]
     )
     def forall(self) -> None:
         """Clowder forall command entry point"""

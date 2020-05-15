@@ -31,5 +31,4 @@ from clowder.cli.save_controller import SaveController
 from clowder.cli.start_controller import StartController
 from clowder.cli.stash_controller import StashController
 from clowder.cli.status_controller import StatusController
-from clowder.cli.sync_controller import SyncController
 from clowder.cli.yaml_controller import YAMLController

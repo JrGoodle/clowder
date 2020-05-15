@@ -32,13 +32,13 @@ class BranchController(ArgparseController):
     @expose(
         help='Display current branches',
         arguments=[
+            (['projects'], dict(metavar='PROJECT', default=['all'], nargs='+',
+                                choices=CLOWDER_CONTROLLER.project_names,
+                                help=options_help_message(CLOWDER_CONTROLLER.project_names,
+                                                          'projects and groups to show branches for'))),
             (['--all', '-a'], dict(action='store_true', help='show local and remote branches')),
-            (['--remote', '-r'], dict(action='store_true', help='show remote branches')),
-            (['--projects', '-p'], dict(choices=CLOWDER_CONTROLLER.get_all_project_names(),
-                                        default=['all'], nargs='+', metavar='PROJECT',
-                                        help=options_help_message(CLOWDER_CONTROLLER.get_all_project_names(),
-                                                                  'projects to show branches for')))
-            ]
+            (['--remote', '-r'], dict(action='store_true', help='show remote branches'))
+        ]
     )
     def branch(self) -> None:
         """Clowder branch command entry point"""
