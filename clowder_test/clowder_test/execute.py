@@ -56,7 +56,7 @@ def create_swift_cache(func):
 
 
 def execute_test_command(command: str, path: str, parallel: bool = False, write: bool = False,
-                         coverage: bool = False, test_env: Optional[dict] = None, debug: bool = False,
+                         coverage: bool = False, test_env: Optional[dict] = None, debug: bool = True,
                          quiet: bool = False) -> None:
     """Execute test command
 

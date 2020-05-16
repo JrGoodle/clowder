@@ -206,6 +206,15 @@ class CatsController(ArgparseController):
         self._execute_command('./status.sh', self.path)
 
     @expose(
+        help='Run cats subdirectory tests'
+    )
+    @create_cats_cache
+    def subdirectory(self) -> None:
+        """clowder cats subdirectory tests"""
+
+        self._execute_command('./subdirectory.sh', self.path)
+
+    @expose(
         help='Run cats yaml tests'
     )
     @create_cats_cache

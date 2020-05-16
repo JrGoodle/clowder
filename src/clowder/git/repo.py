@@ -195,11 +195,11 @@ class GitRepo(object):
 
         try:
             if depth == 0:
-                self.repo.git.fetch(remote, prune=True, tags=True, quiet=quiet)
+                print(self.repo.git.fetch(remote, prune=True, tags=True, quiet=quiet))
             elif ref is None:
-                self.repo.git.fetch(remote, depth=depth, prune=True, tags=True, quiet=quiet)
+                print(self.repo.git.fetch(remote, depth=depth, prune=True, tags=True, quiet=quiet))
             else:
-                self.repo.git.fetch(remote, truncate_ref(ref), depth=depth, prune=True, tags=True, quiet=quiet)
+                print(self.repo.git.fetch(remote, truncate_ref(ref), depth=depth, prune=True, tags=True, quiet=quiet))
         except GitError as err:
             if remove_dir:
                 remove_directory(self.repo_path)
@@ -421,7 +421,7 @@ class GitRepo(object):
         Equivalent to: ``git status``
         """
 
-        self.repo.git.status()
+        print(self.repo.git.status())
 
     def status_verbose(self) -> None:
         """Print git status
@@ -433,7 +433,7 @@ class GitRepo(object):
         self._print(fmt.command(command))
 
         try:
-            self.repo.git.status('-vv')
+            print(self.repo.git.status('-vv'))
         except GitError as err:
             message = colored(' - Failed to print verbose status', 'red')
             self._print(message)

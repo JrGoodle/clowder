@@ -8,9 +8,11 @@
 from cement.ext.ext_argparse import ArgparseController, expose
 
 from clowder.clowder_controller import CLOWDER_CONTROLLER
-from clowder.clowder_repo import print_clowder_repo_status
 from clowder.util.connectivity import network_connection_required
-from clowder.util.decorators import valid_clowder_yaml_required
+from clowder.util.decorators import (
+    print_clowder_repo_status,
+    valid_clowder_yaml_required
+)
 from clowder.util.clowder_utils import (
     filter_projects,
     options_help_message,

@@ -7,8 +7,11 @@
 
 from cement.ext.ext_argparse import ArgparseController, expose
 
-from clowder.clowder_repo import print_clowder_repo_status
-from clowder.util.decorators import clowder_required
+from clowder import CLOWDER_DIR
+from clowder.util.decorators import (
+    clowder_required,
+    print_clowder_repo_status
+)
 from clowder.util.clowder_utils import (
     get_saved_version_names,
     link_clowder_yaml,
@@ -49,4 +52,4 @@ class LinkController(ArgparseController):
             version = None
         else:
             version = self.app.pargs.version[0]
-        link_clowder_yaml(version)
+        link_clowder_yaml(CLOWDER_DIR, version)

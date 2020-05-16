@@ -12,7 +12,7 @@ from typing import List, Optional
 from termcolor import colored, cprint
 
 import clowder.util.formatting as fmt
-from clowder import ROOT_DIR
+from clowder import CLOWDER_DIR
 from clowder.error.clowder_error import ClowderError
 from clowder.error.clowder_exit import ClowderExit
 from clowder.git.project_repo import ProjectRepo
@@ -229,7 +229,7 @@ class Project(object):
         :rtype: str
         """
 
-        return os.path.join(ROOT_DIR, self.path)
+        return os.path.join(CLOWDER_DIR, self.path)
 
     def get_current_timestamp(self) -> str:
         """Return timestamp of current HEAD commit
@@ -429,7 +429,7 @@ class Project(object):
 
         self._print_output = not parallel
 
-        forall_env = {'CLOWDER_PATH': ROOT_DIR,
+        forall_env = {'CLOWDER_PATH': CLOWDER_DIR,
                       'PROJECT_PATH': self.full_path(),
                       'PROJECT_NAME': self.name,
                       'PROJECT_REMOTE': self.remote,

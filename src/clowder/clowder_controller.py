@@ -8,8 +8,9 @@
 from typing import List
 
 import clowder.util.formatting as fmt
+from clowder import CLOWDER_YAML
 from clowder.error.clowder_exit import ClowderExit
-from clowder.error.clowder_yaml_error import ClowderYAMLError
+from clowder.error.clowder_yaml_error import ClowderYAMLError, ClowderYAMLYErrorType
 from clowder.model.defaults import Defaults
 from clowder.model.project import Project
 from clowder.model.source import Source
@@ -18,7 +19,7 @@ from clowder.util.clowder_utils import (
     print_parallel_projects_output,
     validate_projects
 )
-from clowder.util.yaml import load_yaml
+from clowder.util.yaml import load_yaml, validate_yaml
 
 
 class ClowderController(object):
@@ -27,6 +28,7 @@ class ClowderController(object):
     :ivar dict defaults: Global clowder.yaml defaults
     :ivar list[Group] groups: List of all Groups
     :ivar list[Source] sources: List of all Sources
+    :ivar Optional[Exception] error: Exception from failing to load clowder.yaml
     """
 
     def __init__(self):
@@ -36,11 +38,14 @@ class ClowderController(object):
         """
 
         self.defaults = None
-        self.projects = []
         self.sources = []
-        self._max_import_depth = 10
+        self.projects = []
         self.error = None
+
         try:
+            if CLOWDER_YAML is None:
+                raise ClowderYAMLError(fmt.error_missing_yaml(), ClowderYAMLYErrorType.MISSING_YAML)
+            validate_yaml()
             self._load_yaml()
         except ClowderYAMLError as err:
             self.error = err
@@ -55,7 +60,7 @@ class ClowderController(object):
         """
 
         try:
-            return sorted([p.name for p in self.projects if p.fork])
+            return sorted([p.name for p in self.projects if p.fork is not None])
         except TypeError:
             return []
 

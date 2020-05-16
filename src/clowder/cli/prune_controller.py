@@ -11,11 +11,13 @@ from cement.ext.ext_argparse import ArgparseController, expose
 from termcolor import cprint
 
 from clowder.clowder_controller import CLOWDER_CONTROLLER, ClowderController
-from clowder.clowder_repo import print_clowder_repo_status
 from clowder.error.clowder_error import ClowderError
 from clowder.model.project import Project
 from clowder.util.connectivity import network_connection_required
-from clowder.util.decorators import valid_clowder_yaml_required
+from clowder.util.decorators import (
+    print_clowder_repo_status,
+    valid_clowder_yaml_required
+)
 from clowder.util.clowder_utils import (
     existing_branch_projects,
     filter_projects,

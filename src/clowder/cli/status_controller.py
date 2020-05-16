@@ -7,8 +7,8 @@
 
 from cement.ext.ext_argparse import ArgparseController, expose
 
+import clowder.clowder_repo as clowder_repo
 from clowder.clowder_controller import CLOWDER_CONTROLLER, ClowderController
-from clowder.clowder_repo import CLOWDER_REPO, ClowderRepo
 from clowder.util.connectivity import network_connection_required
 from clowder.util.decorators import valid_clowder_yaml_required
 
@@ -40,9 +40,9 @@ class StatusController(ArgparseController):
         """Clowder status command private implementation"""
 
         if self.app.pargs.fetch:
-            _fetch_projects(CLOWDER_REPO, CLOWDER_CONTROLLER)
+            _fetch_projects(CLOWDER_CONTROLLER)
         else:
-            CLOWDER_REPO.print_status()
+            clowder_repo.print_status()
 
         padding = len(max(CLOWDER_CONTROLLER.get_all_project_paths(), key=len))
 
@@ -51,10 +51,9 @@ class StatusController(ArgparseController):
 
 
 @network_connection_required
-def _fetch_projects(clowder_repo: ClowderRepo, clowder: ClowderController) -> None:
+def _fetch_projects(clowder: ClowderController) -> None:
     """fetch all projects
 
-    :param ClowderRepo clowder_repo: ClowderRepo instance
     :param ClowderController clowder: ClowderController instance
     """
 
