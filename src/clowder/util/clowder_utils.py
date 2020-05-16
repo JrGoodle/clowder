@@ -118,6 +118,8 @@ def validate_projects(projects: List[Project]) -> None:
     :raise ClowderExit:
     """
 
+    for p in projects:
+        p.print_validation()
     if not all([p.is_valid() for p in projects]):
         print()
         raise ClowderExit(1)

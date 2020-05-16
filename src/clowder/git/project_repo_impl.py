@@ -495,7 +495,7 @@ class ProjectRepoImpl(GitRepo):
         self._print(f' - Pull from {remote_output} {branch_output}')
         quiet = not self._print_output
         try:
-            self.repo.git.pull(remote, branch, quiet=quiet)
+            print(self.repo.git.pull(remote, branch, quiet=quiet))
         except GitError as err:
             message = colored(' - Failed to pull from ', 'red') + f'{remote_output} {branch_output}'
             self._print(message)
@@ -517,7 +517,7 @@ class ProjectRepoImpl(GitRepo):
         self._print(f' - Rebase onto {remote_output} {branch_output}')
         quiet = not self._print_output
         try:
-            self.repo.git.pull(remote, branch, rebase=True, quiet=quiet)
+            print(self.repo.git.pull(remote, branch, rebase=True, quiet=quiet))
         except GitError as err:
             message = colored(' - Failed to rebase onto ', 'red') + f'{remote_output} {branch_output}'
             self._print(message)
