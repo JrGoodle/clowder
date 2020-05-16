@@ -10,7 +10,5 @@ print_double_separator
 echo 'TEST: misc examples test script'
 print_double_separator
 
-"$TEST_SCRIPT_DIR/create_cache.sh" 'misc' || exit 1
-
 "$TEST_SCRIPT_DIR/misc/sources.sh" || exit 1
 "$TEST_SCRIPT_DIR/misc/forks.sh" || exit 1

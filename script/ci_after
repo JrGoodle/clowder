@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+
+cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
+
+if [ -n "$CIRCLECI" ]; then
+    echo 'Circle CI'
+    IDENTIFIER="$CIRCLE_JOB.$CIRCLE_BUILD_NUM"
+    COVERAGE_FILE=".coverage.$IDENTIFIER"
+    CODECLIMATE_FILE="codeclimate.$IDENTIFIER.json"
+    S3_PATH="s3://clowder-coverage/coverage/circleci/$CIRCLE_SHA1"
+elif [ -n "$GITHUB_ACTIONS" ]; then
+    echo 'GitHub Actions workflow'
+    IDENTIFIER="$GITHUB_JOB.$OS_NAME.$PYTHON_VERSION"
+    COVERAGE_FILE=".coverage.$IDENTIFIER"
+    CODECLIMATE_FILE="codeclimate.$IDENTIFIER.json"
+    S3_PATH="s3://clowder-coverage/coverage/github-actions-workflows/$GITHUB_SHA"
+else
+    echo 'Unsupported environment'
+    exit 1
+fi
+
+
+## Coverage.py ##
+echo 'Combine all .coverage files with Coverage.py'
+coverage combine --append \
+    examples/cats \
+    examples/swift-projects \
+    examples/misc
+
+
+## Codecov ##
+echo 'Upload codecov results'
+bash <(curl -s https://codecov.io/bash) -X gcov
+# echo 'Upload workflow coverage results to s3'
+# cp .coverage "coverage/codecov/${COVERAGE_FILE}"
+# aws s3 sync coverage/codecov/ "${S3_PATH}/codecov"
+
+
+# ## Code Climate ##
+# # TODO: Aggregate and upload code climate results for all jobs across CI's
+# echo 'Create Code Climate coverage report'
+# # Sync existing partial coverage results to local directory
+# aws s3 sync "${S3_PATH}/codeclimate" 'coverage/codeclimate'
+# # Format coverage results for current job
+# ./cc-test-reporter format-coverage --output "coverage/codeclimate/$CODECLIMATE_FILE"
+# # Sync local coverage results back to s3
+# aws s3 sync 'coverage/codeclimate' "${S3_PATH}/codeclimate"
+# # Sum all partial coverage results
+# ./cc-test-reporter sum-coverage --output "coverage/codeclimate.combined.json" coverage/codeclimate/codeclimate.*
+# # Upload combined coverage results
+# ./cc-test-reporter upload-coverage --input "coverage/codeclimate.combined.json"

@@ -16,6 +16,6 @@ setup_local_test_directory() {
     cp -a "$EXAMPLES_DIR/misc" "$MISC_EXAMPLE_DIR" || exit 1
 }
 
-if [ -z "$TRAVIS_OS_NAME" ] && [ -z "$CIRCLECI" ]; then
+if [ -z "$CI" ]; then
     setup_local_test_directory
 fi

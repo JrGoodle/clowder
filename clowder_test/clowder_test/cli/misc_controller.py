@@ -9,7 +9,7 @@ import os
 
 from cement.ext.ext_argparse import ArgparseController, expose
 
-from clowder_test.execute import create_misc_cache, execute_test_command
+from clowder_test.execute import execute_test_command
 from clowder_test import ROOT_DIR
 
 
@@ -37,7 +37,6 @@ class MiscController(ArgparseController):
     @expose(
         help='Run misc forks tests'
     )
-    @create_misc_cache
     def forks(self) -> None:
         """clowder misc forks tests"""
 
@@ -46,7 +45,6 @@ class MiscController(ArgparseController):
     @expose(
         help='Run misc sources tests'
     )
-    @create_misc_cache
     def sources(self) -> None:
         """clowder misc sources tests"""
 

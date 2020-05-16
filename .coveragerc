@@ -2,6 +2,7 @@
 branch = True
 concurrency = multiprocessing
 parallel = True
+# data_file = coverage/.coverage
 omit =
     # omit everything in /usr
     /usr/*
@@ -9,4 +10,24 @@ omit =
 [paths]
 source =
     src/clowder
-    /home/travis/build/*/src/clowder
+
+[report]
+# Regexes for lines to exclude from consideration
+exclude_lines =
+    # Have to re-enable the standard pragma
+    pragma: no cover
+
+    # Don't complain about missing debug-only code:
+    def __repr__
+    if self\.debug
+
+    # Don't complain if tests don't hit defensive assertion code:
+    raise AssertionError
+    raise NotImplementedError
+
+    # Don't complain if tests don't hit certain exceptions
+    except \(KeyboardInterrupt, SystemExit\):
+
+    # Don't complain if non-runnable code isn't run:
+    if 0:
+    if __name__ == .__main__.:

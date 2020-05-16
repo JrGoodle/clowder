@@ -22,7 +22,8 @@ export submodule_projects=( 'mu/ash' \
 
 cd "$CATS_EXAMPLE_DIR" || exit 1
 ./clean.sh
-./copy-cache.sh
+./init.sh || exit 1
+$COMMAND herd $PARALLEL || exit 1
 
 print_double_separator
 echo "TEST: Test clowder clean"

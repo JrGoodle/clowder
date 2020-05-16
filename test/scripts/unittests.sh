@@ -38,7 +38,7 @@ echo 'TEST: Run unittests'
 echo ''
 
 UNITTTEST_PATH="$TEST_SCRIPT_DIR/../unittests"
-if [ -n "$TRAVIS_OS_NAME" ]; then
+if [ -n "$CI" ]; then
     python3 "$UNITTTEST_PATH/test_clowder_repo.py" -v "$CATS_EXAMPLE_DIR" || exit 1
     python3 "$UNITTTEST_PATH/test_fork.py" -v "$CATS_EXAMPLE_DIR" || exit 1
     python3 "$UNITTTEST_PATH/test_git_utilities.py" -v "$CATS_EXAMPLE_DIR" || exit 1

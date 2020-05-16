@@ -26,7 +26,7 @@ enable_network_connection() {
             ;;
         *)
             echo "Offline test only runs on macOS and Ubuntu"
-            exit
+            exit 1
             ;;
     esac
 }
@@ -47,7 +47,7 @@ disable_network_connection() {
             ;;
         *)
             echo "Offline test only runs on macOS and Ubuntu"
-            exit
+            exit 1
             ;;
     esac
 }
@@ -69,7 +69,8 @@ echo "TEST: Test clowder offline"
 
 cd "$CATS_EXAMPLE_DIR" || exit 1
 ./clean.sh
-./copy-cache.sh
+./init.sh || exit 1
+$COMMAND herd $PARALLEL || exit 1
 
 # echo 'Disable your network connection'
 # # https://unix.stackexchange.com/a/293941

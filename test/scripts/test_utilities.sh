@@ -9,7 +9,7 @@ TEST_SCRIPT_DIR="$( cd $CURRENT_DIR && pwd)"
 export CLOWDER_PROJECT_DIR
 CLOWDER_PROJECT_DIR="$( cd $CURRENT_DIR/../.. && pwd)"
 
-if [ -n "$TRAVIS_OS_NAME" ] || [ -n "$CIRCLECI" ]; then
+if [ -n "$CI" ]; then
     export CATS_EXAMPLE_DIR="$CURRENT_DIR/../../examples/cats"
     export SWIFT_EXAMPLE_DIR="$CURRENT_DIR/../../examples/swift-projects"
     export MISC_EXAMPLE_DIR="$CURRENT_DIR/../../examples/misc"

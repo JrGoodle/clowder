@@ -19,7 +19,8 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
 
     cd "$MISC_EXAMPLE_DIR" || exit 1
     ./clean.sh
-    ./copy-cache.sh
+    ./init.sh || exit 1
+    $COMMAND herd $PARALLEL || exit 1
 
     test_start_prune_forks() {
         print_single_separator

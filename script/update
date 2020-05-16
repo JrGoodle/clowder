@@ -42,4 +42,20 @@ if [ "$1" == 'docs' ]; then
 fi
 
 ./clean 'clowder' || exit 1
-./setup || exit 1
+
+pushd '../src' || exit 1
+
+case "$(uname)" in
+    Linux*) export PLATFORM="linux";
+        pip3 install -e . || exit 1
+        ;;
+    Darwin*) export PLATFORM="darwin";
+        sudo -H pip3 install -e . || exit 1
+        ;;
+    CYGWIN*) export PLATFORM="windows";
+        pip3 install -e . || exit 1
+        ;;
+esac
+
+echo "Installed clowder for $PLATFORM"
+

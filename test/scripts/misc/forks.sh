@@ -18,7 +18,8 @@ print_double_separator
 echo "TEST: Test clowder sources"
 cd "$MISC_EXAMPLE_DIR" || exit 1
 ./clean.sh
-./copy-cache.sh
+./init.sh || exit 1
+$COMMAND herd $PARALLEL || exit 1
 
 test_forks_env() {
     # echo "TEST: Fork remote environment variable in script"
@@ -31,7 +32,7 @@ test_forks_env() {
 test_forks_env
 
 ./clean.sh
-./copy-cache.sh
+./init.sh || exit 1
 
 test_fork_herd() {
     $COMMAND herd $PARALLEL || exit 1
