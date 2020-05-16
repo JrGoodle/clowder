@@ -38,7 +38,7 @@ test_clean_groups() {
         popd || exit 1
     done
 
-    $COMMAND clean -p 'black-cats' || exit 1
+    $COMMAND clean 'black-cats' || exit 1
 
     for project in "${black_cats_projects[@]}"; do
         pushd $project || exit 1
@@ -83,7 +83,7 @@ test_clean_projects() {
         popd || exit 1
     done
 
-    $COMMAND clean -p "$@" || exit 1
+    $COMMAND clean "$@" || exit 1
 
     for project in "${black_cats_projects[@]}"; do
         pushd $project || exit 1

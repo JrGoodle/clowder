@@ -68,8 +68,8 @@ test_checkout() {
         popd || exit 1
     done
 
-    $COMMAND checkout knead -p jrgoodle/mu || exit 1
-    $COMMAND checkout purr -p jrgoodle/duke || exit 1
+    $COMMAND checkout knead jrgoodle/mu || exit 1
+    $COMMAND checkout purr jrgoodle/duke || exit 1
 
     test_cats_default_herd_branches
 }

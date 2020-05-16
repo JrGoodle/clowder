@@ -65,10 +65,10 @@ test_forall_environment_subdirectory() {
     print_single_separator
     echo "TEST: Check that forall environment variables are set correctly when invoked from subdirectory"
     pushd mu || exit 1
-    $COMMAND forall $PARALLEL -c "$TEST_SCRIPT_DIR/test_forall_script_env_duke.sh" -p "jrgoodle/duke" || exit 1
+    $COMMAND forall $PARALLEL "jrgoodle/duke" -c "$TEST_SCRIPT_DIR/test_forall_script_env_duke.sh" || exit 1
     popd || exit 1
     pushd black-cats/kit || exit 1
-    $COMMAND forall $PARALLEL -c "$TEST_SCRIPT_DIR/test_forall_script_env_duke.sh" -p "jrgoodle/duke" || exit 1
+    $COMMAND forall $PARALLEL "jrgoodle/duke" -c "$TEST_SCRIPT_DIR/test_forall_script_env_duke.sh" || exit 1
     popd || exit 1
 }
 test_forall_environment_subdirectory
@@ -89,13 +89,13 @@ test_commands_subdirectory() {
     cp -a .coverage* ../
     rm -rf .coverage*
     # !!
-    $COMMAND start 'subdir-branch' -p 'jrgoodle/mu' || exit 1
+    $COMMAND start 'subdir-branch' 'jrgoodle/mu' || exit 1
     test_local_branch_exists 'subdir-branch'
     # !! Move coverage files to root and clean so further commands work
     cp -a .coverage* ../
     rm -rf .coverage*
     # !!
-    $COMMAND prune 'subdir-branch' -p 'jrgoodle/mu' || exit 1
+    $COMMAND prune 'subdir-branch' 'jrgoodle/mu' || exit 1
     test_no_local_branch_exists 'subdir-branch'
     # !! Move coverage files to root and clean so further commands work
     cp -a .coverage* ../

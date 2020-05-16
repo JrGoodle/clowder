@@ -22,11 +22,11 @@ cd "$MISC_EXAMPLE_DIR" || exit 1
 
 test_forks_env() {
     # echo "TEST: Fork remote environment variable in script"
-    $COMMAND forall $PARALLEL -c "$TEST_SCRIPT_DIR/test_forall_script_env_fork.sh" -p "gyp" || exit 1
-    $COMMAND forall $PARALLEL -c "$TEST_SCRIPT_DIR/test_forall_script_env_fork.sh" -p "dropbox/djinni" && exit 1
+    $COMMAND forall $PARALLEL "gyp" -c "$TEST_SCRIPT_DIR/test_forall_script_env_fork.sh" || exit 1
+    $COMMAND forall $PARALLEL "dropbox/djinni" -c "$TEST_SCRIPT_DIR/test_forall_script_env_fork.sh" && exit 1
     # echo "TEST: Fork remote environment variable in command"
-    $COMMAND forall $PARALLEL -c 'if [ $PROJECT_REMOTE != upstream ]; then exit 1; fi' -p 'gyp' || exit 1
-    $COMMAND forall $PARALLEL -c 'if [ $FORK_REMOTE != origin ]; then exit 1; fi' -p 'gyp' || exit 1
+    $COMMAND forall $PARALLEL 'gyp' -c 'if [ $PROJECT_REMOTE != upstream ]; then exit 1; fi' || exit 1
+    $COMMAND forall $PARALLEL 'gyp' -c 'if [ $FORK_REMOTE != origin ]; then exit 1; fi' || exit 1
 }
 test_forks_env
 

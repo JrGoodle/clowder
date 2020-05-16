@@ -172,7 +172,7 @@ test_herd_groups() {
     $COMMAND herd $PARALLEL || exit 1
 
     echo "TEST: Herd only specific groups"
-    $COMMAND herd $PARALLEL -p "$@" || exit 1
+    $COMMAND herd $PARALLEL "$@" || exit 1
     $COMMAND status || exit 1
 }
 test_herd_groups 'cats'
@@ -219,7 +219,7 @@ test_herd_tag
 test_herd_projects() {
     print_single_separator
     echo "TEST: Successfully herd specific projects"
-    $COMMAND herd $PARALLEL -p "$@" || exit 1
+    $COMMAND herd $PARALLEL "$@" || exit 1
 }
 test_herd_projects 'jrgoodle/kit' 'jrgoodle/kishka'
 

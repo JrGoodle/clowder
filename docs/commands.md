@@ -17,10 +17,10 @@ clowder branch -r
 clowder branch -a
 
 # Print local branches in llvm group
-clowder branch -p llvm
+clowder branch llvm
 
 # Print local branches in swift project
-clowder branch -p apple/swift
+clowder branch apple/swift
 ```
 
 ---
@@ -32,10 +32,10 @@ clowder branch -p apple/swift
 clowder checkout branch_name
 
 # Checkout branches in llvm group
-clowder checkout branch_name -p llvm
+clowder checkout branch_name llvm
 
 # Checkout branches in swift project
-clowder checkout branch_name -p apple/swift
+clowder checkout branch_name apple/swift
 ```
 
 ---
@@ -59,10 +59,10 @@ clowder clean
 clowder clean -a
 
 # Discard changes in projects in llvm group
-clowder clean -p llvm
+clowder clean llvm
 
 # Discard changes in swift project
-clowder clean -p apple/swift
+clowder clean apple/swift
 
 # Remove untracked directories in addition to untracked files
 # Equivalent to:
@@ -104,10 +104,10 @@ Equivalent to running `git status -vv` in project directories
 clowder diff
 
 # Print git diff status for projects in llvm group
-clowder diff -p llvm
+clowder diff llvm
 
 # Print git diff status for swift project
-clowder diff -p apple/swift
+clowder diff apple/swift
 ```
 
 ---
@@ -136,10 +136,10 @@ clowder forall -c "git status" -g llvm
 clowder forall -c "/path/to/script.sh" -g llvm
 
 # Run command for swift project
-clowder forall -c "git status" -p apple/swift
+clowder forall apple/swift -c "git status"
 
 # Run script for swift project
-clowder forall -c "/path/to/script.sh" -p apple/swift
+clowder forall apple/swift -c "/path/to/script.sh"
 ```
 
 The following environment variables are available for use in commands and scripts:
@@ -176,10 +176,10 @@ clowder herd -b my_branch
 clowder herd -t my_tag
 
 # Only herd projects in swift and llvm groups
-clowder herd -p swift llvm
+clowder herd swift llvm
 
 # Only herd swift project
-clowder herd -p apple/swift
+clowder herd apple/swift
 ```
 
 ---
@@ -233,10 +233,10 @@ clowder prune -a stale_branch
 clowder prune -af stale_branch
 
 # Prune branch 'stale_branch' for projects in llvm group
-clowder prune stale_branch -p llvm
+clowder prune stale_branch llvm
 
 # Prune branch 'stale_branch' in swift project
-clowder prune stale_branch -p apple/swift
+clowder prune stale_branch apple/swift
 ```
 
 ---
@@ -287,10 +287,10 @@ clowder reset
 clowder reset --timestamp apple/swift
 
 # Reset branches in projects in llvm group
-clowder reset -p llvm
+clowder reset llvm
 
 # Reset branches in swift project
-clowder reset -p apple/swift
+clowder reset apple/swift
 ```
 
 ---
@@ -320,10 +320,10 @@ clowder start my_feature
 clowder start -t my_feature
 
 # Create new local branch 'my_feature' for projects in llvm group
-clowder start my_feature -p llvm
+clowder start my_feature llvm
 
 # Create new local branch 'my_feature' in swift project
-clowder start my_feature -p apple/swift
+clowder start my_feature apple/swift
 ```
 
 ---
@@ -337,10 +337,10 @@ Stash changes in dirty repositories
 clowder stash
 
 # Stash changes in projects in llvm group
-clowder stash -p llvm
+clowder stash llvm
 
 # Stash changes in swift project
-clowder stash -p apple/swift
+clowder stash apple/swift
 ```
 
 ---
