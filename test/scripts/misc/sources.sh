@@ -18,7 +18,8 @@ print_double_separator
 echo "TEST: Test clowder sources"
 cd "$MISC_EXAMPLE_DIR" || exit 1
 ./clean.sh
-./copy-cache.sh
+./init.sh || exit 1
+$COMMAND herd $PARALLEL || exit 1
 
 test_djinni_remotes() {
     pushd djinni || exit 1

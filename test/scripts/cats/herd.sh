@@ -363,7 +363,7 @@ test_herd_existing_local_existing_remote_no_tracking() {
         popd || exit 1
     done
 
-    # FIXME: Fix this test on Travis CI
+    # FIXME: Fix this test on CI
     # print_single_separator
     # echo "TEST: Herd - Existing local branch, existing remote branch, no tracking, different commits"
     # $COMMAND link || exit 1

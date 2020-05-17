@@ -9,7 +9,7 @@ import os
 
 from cement.ext.ext_argparse import ArgparseController, expose
 
-from clowder_test.execute import create_cats_cache, execute_test_command
+from clowder_test.execute import execute_test_command
 from clowder_test import ROOT_DIR
 
 
@@ -37,7 +37,6 @@ class CatsController(ArgparseController):
     @expose(
         help='Run cats branch tests'
     )
-    @create_cats_cache
     def branch(self) -> None:
         """clowder cats branch tests"""
 
@@ -46,7 +45,6 @@ class CatsController(ArgparseController):
     @expose(
         help='Run cats checkout tests'
     )
-    @create_cats_cache
     def checkout(self) -> None:
         """clowder cats checkout tests"""
 
@@ -55,7 +53,6 @@ class CatsController(ArgparseController):
     @expose(
         help='Run cats clean tests'
     )
-    @create_cats_cache
     def clean(self) -> None:
         """clowder cats clean tests"""
 
@@ -64,7 +61,6 @@ class CatsController(ArgparseController):
     @expose(
         help='Run cats diff tests'
     )
-    @create_cats_cache
     def diff(self) -> None:
         """clowder cats diff tests"""
 
@@ -73,7 +69,6 @@ class CatsController(ArgparseController):
     @expose(
         help='Run cats forall tests'
     )
-    @create_cats_cache
     def forall(self) -> None:
         """clowder cats forall tests"""
 
@@ -82,7 +77,6 @@ class CatsController(ArgparseController):
     @expose(
         help='Run cats help tests'
     )
-    @create_cats_cache
     def help(self) -> None:
         """clowder cats help tests"""
 
@@ -91,7 +85,6 @@ class CatsController(ArgparseController):
     @expose(
         help='Run cats herd branch tests'
     )
-    @create_cats_cache
     def herd_branch(self) -> None:
         """clowder cats herd branch tests"""
 
@@ -100,7 +93,6 @@ class CatsController(ArgparseController):
     @expose(
         help='Run cats herd submodules tests'
     )
-    @create_cats_cache
     def herd_submodules(self) -> None:
         """clowder cats herd submodules tests"""
 
@@ -109,7 +101,6 @@ class CatsController(ArgparseController):
     @expose(
         help='Run cats herd tag tests'
     )
-    @create_cats_cache
     def herd_tag(self) -> None:
         """clowder cats herd tag tests"""
 
@@ -118,7 +109,6 @@ class CatsController(ArgparseController):
     @expose(
         help='Run cats herd tests'
     )
-    @create_cats_cache
     def herd(self) -> None:
         """clowder cats herd tests"""
 
@@ -127,7 +117,6 @@ class CatsController(ArgparseController):
     @expose(
         help='Run cats init tests'
     )
-    @create_cats_cache
     def init(self) -> None:
         """clowder cats init tests"""
 
@@ -136,7 +125,6 @@ class CatsController(ArgparseController):
     @expose(
         help='Run cats link tests'
     )
-    @create_cats_cache
     def link(self) -> None:
         """clowder cats link tests"""
 
@@ -145,7 +133,6 @@ class CatsController(ArgparseController):
     @expose(
         help='Run cats prune tests'
     )
-    @create_cats_cache
     def prune(self) -> None:
         """clowder cats prune tests"""
 
@@ -154,7 +141,6 @@ class CatsController(ArgparseController):
     @expose(
         help='Run cats repo tests'
     )
-    @create_cats_cache
     def repo(self) -> None:
         """clowder cats repo tests"""
 
@@ -163,7 +149,6 @@ class CatsController(ArgparseController):
     @expose(
         help='Run cats reset tests'
     )
-    @create_cats_cache
     def reset(self) -> None:
         """clowder cats reset tests"""
 
@@ -172,7 +157,6 @@ class CatsController(ArgparseController):
     @expose(
         help='Run cats save tests'
     )
-    @create_cats_cache
     def save(self) -> None:
         """clowder cats save tests"""
 
@@ -181,7 +165,6 @@ class CatsController(ArgparseController):
     @expose(
         help='Run cats start tests'
     )
-    @create_cats_cache
     def start(self) -> None:
         """clowder cats start tests"""
 
@@ -190,7 +173,6 @@ class CatsController(ArgparseController):
     @expose(
         help='Run cats stash tests'
     )
-    @create_cats_cache
     def stash(self) -> None:
         """clowder cats stash tests"""
 
@@ -199,7 +181,6 @@ class CatsController(ArgparseController):
     @expose(
         help='Run cats status tests'
     )
-    @create_cats_cache
     def status(self) -> None:
         """clowder cats status tests"""
 
@@ -208,7 +189,6 @@ class CatsController(ArgparseController):
     @expose(
         help='Run cats subdirectory tests'
     )
-    @create_cats_cache
     def subdirectory(self) -> None:
         """clowder cats subdirectory tests"""
 
@@ -217,7 +197,6 @@ class CatsController(ArgparseController):
     @expose(
         help='Run cats yaml tests'
     )
-    @create_cats_cache
     def yaml(self) -> None:
         """clowder cats yaml tests"""
 
@@ -226,7 +205,6 @@ class CatsController(ArgparseController):
     @expose(
         help='Run cats yaml validation tests'
     )
-    @create_cats_cache
     def yaml_validation(self) -> None:
         """clowder cats yaml validation tests"""
 

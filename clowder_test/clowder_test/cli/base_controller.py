@@ -9,7 +9,7 @@ import os
 
 from cement.ext.ext_argparse import ArgparseController, expose
 
-from clowder_test.execute import create_misc_cache, execute_test_command
+from clowder_test.execute import execute_test_command
 from clowder_test import ROOT_DIR
 
 
@@ -99,7 +99,6 @@ class BaseController(ArgparseController):
     @expose(
         help='Run tests requiring remote write permissions'
     )
-    @create_misc_cache
     def write(self) -> None:
         """clowder write tests"""
 

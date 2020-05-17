@@ -38,7 +38,8 @@ echo "TEST: Test clowder herd"
 cd "$CATS_EXAMPLE_DIR" || exit 1
 
 ./clean.sh
-./copy-cache.sh
+./init.sh || exit 1
+$COMMAND herd $PARALLEL || exit 1
 
 test_init_existing_clowder() {
     print_single_separator
@@ -54,27 +55,41 @@ test_init_existing_clowder_parent() {
     $COMMAND init https://github.com/jrgoodle/cats.git || exit 1
     $COMMAND herd $PARALLEL || exit 1
     test_cats_default_herd_branches
+    # !! Move coverage files to root and clean so further commands work
+    cp -a .coverage* ../
+    rm -rf .coverage*
+    # !!
     popd || exit 1
 }
 test_init_existing_clowder_parent
 
 ./clean.sh
-./copy-cache.sh
+./init.sh || exit 1
+$COMMAND herd $PARALLEL || exit 1
 
 test_forall_environment_subdirectory() {
     print_single_separator
     echo "TEST: Check that forall environment variables are set correctly when invoked from subdirectory"
     pushd mu || exit 1
     $COMMAND forall $PARALLEL -c "$TEST_SCRIPT_DIR/test_forall_script_env_duke.sh" -p "jrgoodle/duke" || exit 1
+    # !! Move coverage files to root and clean so further commands work
+    cp -a .coverage* ../
+    rm -rf .coverage*
+    # !!
     popd || exit 1
     pushd black-cats/kit || exit 1
     $COMMAND forall $PARALLEL -c "$TEST_SCRIPT_DIR/test_forall_script_env_duke.sh" -p "jrgoodle/duke" || exit 1
+    # !! Move coverage files to root and clean so further commands work
+    cp -a .coverage* ../../
+    rm -rf .coverage*
+    # !!
     popd || exit 1
 }
 test_forall_environment_subdirectory
 
 ./clean.sh
-./copy-cache.sh
+./init.sh || exit 1
+$COMMAND herd $PARALLEL || exit 1
 
 test_commands_subdirectory() {
     print_single_separator

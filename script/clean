@@ -46,7 +46,7 @@ clean_examples() {
     "$examples_path/cats/clean.sh"
     "$examples_path/swift-projects/clean.sh"
     "$examples_path/misc/clean.sh"
-    if [ -z "$TRAVIS_OS_NAME" ] &&  [ -z "$CIRCLECI" ]; then
+    if [ -z "$CI" ]; then
         echo 'Clean home directory examples...'
         rm -rf "$HOME/.clowder_tests"
     fi

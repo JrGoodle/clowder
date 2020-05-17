@@ -9,7 +9,7 @@ import os
 
 from cement.ext.ext_argparse import ArgparseController, expose
 
-from clowder_test.execute import create_swift_cache, execute_test_command
+from clowder_test.execute import execute_test_command
 from clowder_test import ROOT_DIR
 
 
@@ -37,7 +37,6 @@ class SwiftController(ArgparseController):
     @expose(
         help='Run swift config versions tests'
     )
-    @create_swift_cache
     def config_versions(self) -> None:
         """clowder swift config versions tests"""
 
@@ -46,7 +45,6 @@ class SwiftController(ArgparseController):
     @expose(
         help='Run swift configure remotes tests'
     )
-    @create_swift_cache
     def configure_remotes(self) -> None:
         """clowder swift configure remotes tests"""
 
@@ -55,7 +53,6 @@ class SwiftController(ArgparseController):
     @expose(
         help='Run swift reset tests'
     )
-    @create_swift_cache
     def reset(self) -> None:
         """clowder swift reset tests"""
 

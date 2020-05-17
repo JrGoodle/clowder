@@ -14,7 +14,8 @@ echo "TEST: Test clowder forall"
 
 cd "$CATS_EXAMPLE_DIR" || exit 1
 ./clean.sh
-./copy-cache.sh
+./init.sh || exit 1
+$COMMAND herd $PARALLEL || exit 1
 
 test_forall_branches() {
     print_single_separator

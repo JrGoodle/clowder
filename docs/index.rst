@@ -6,9 +6,6 @@
 clowder
 =======
 
-.. image:: https://travis-ci.org/JrGoodle/clowder.svg
-    :target: https://travis-ci.org/JrGoodle/clowder
-
 .. image:: https://circleci.com/gh/JrGoodle/clowder.svg?style=shield
     :target: https://circleci.com/gh/JrGoodle/clowder
 

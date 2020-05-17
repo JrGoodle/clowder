@@ -195,11 +195,12 @@ class GitRepo(object):
 
         try:
             if depth == 0:
-                print(self.repo.git.fetch(remote, prune=True, tags=True, quiet=quiet))
+                print(self.repo.git.fetch(remote, prune=True, tags=True, quiet=quiet), end='')
             elif ref is None:
-                print(self.repo.git.fetch(remote, depth=depth, prune=True, tags=True, quiet=quiet))
+                print(self.repo.git.fetch(remote, depth=depth, prune=True, tags=True, quiet=quiet), end='')
             else:
-                print(self.repo.git.fetch(remote, truncate_ref(ref), depth=depth, prune=True, tags=True, quiet=quiet))
+                print(self.repo.git.fetch(remote, truncate_ref(ref),
+                                          depth=depth, prune=True, tags=True, quiet=quiet), end='')
         except GitError as err:
             if remove_dir:
                 remove_directory(self.repo_path)

@@ -10,8 +10,6 @@ print_double_separator
 echo 'TEST: parallel tests script'
 print_double_separator
 
-"$TEST_SCRIPT_DIR/create_cache.sh" 'cats' || exit 1
-
 "$TEST_SCRIPT_DIR/cats/herd.sh" || exit 1
 "$TEST_SCRIPT_DIR/cats/herd_branch.sh" || exit 1
 "$TEST_SCRIPT_DIR/cats/herd_tag.sh" || exit 1
