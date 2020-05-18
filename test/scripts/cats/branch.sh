@@ -15,9 +15,9 @@ echo "TEST: Test clowder branch"
 $COMMAND branch || exit 1
 $COMMAND branch -r || exit 1
 $COMMAND branch -a || exit 1
-$COMMAND branch -p 'jrgoodle/mu' 'jrgoodle/duke' || exit 1
-$COMMAND branch -rp 'jrgoodle/mu' 'jrgoodle/duke' || exit 1
-$COMMAND branch -ap 'jrgoodle/mu' 'jrgoodle/duke' || exit 1
-$COMMAND branch -p 'black-cats' || exit 1
-$COMMAND branch -rp 'black-cats' || exit 1
-$COMMAND branch -ap 'black-cats' || exit 1
+$COMMAND branch 'jrgoodle/mu' 'jrgoodle/duke' || exit 1
+$COMMAND branch -r 'jrgoodle/mu' 'jrgoodle/duke' || exit 1
+$COMMAND branch -a 'jrgoodle/mu' 'jrgoodle/duke' || exit 1
+$COMMAND branch 'black-cats' || exit 1
+$COMMAND branch -r 'black-cats' || exit 1
+$COMMAND branch -a 'black-cats' || exit 1

@@ -13,7 +13,7 @@ from git import GitError, Remote, Repo, Tag
 from termcolor import colored
 
 import clowder.util.formatting as fmt
-from clowder.error.clowder_git_error import ClowderGitError
+from clowder.error import ClowderGitError
 from clowder.git.repo import GitRepo
 from clowder.git.util import (
     existing_git_repository,

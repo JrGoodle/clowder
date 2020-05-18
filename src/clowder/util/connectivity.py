@@ -9,7 +9,7 @@ import socket
 from functools import wraps
 
 import clowder.util.formatting as fmt
-from clowder.error.clowder_exit import ClowderExit
+from clowder.error import ClowderExit
 
 
 def is_offline(host: str = '8.8.8.8', port: int = 53, timeout: int = 3) -> bool:

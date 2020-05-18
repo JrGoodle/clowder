@@ -127,7 +127,7 @@ test_reset_swift_4_0_branch() {
 
     ./init.sh || exit 1
     $COMMAND herd $PARALLEL || exit 1
-    $COMMAND link -v reset-timestamp-swift-4.0-branch || exit 1
+    $COMMAND link reset-timestamp-swift-4.0-branch || exit 1
     $COMMAND herd $PARALLEL || exit 1
     $COMMAND reset $PARALLEL --timestamp apple/swift || exit 1
 
@@ -147,7 +147,7 @@ test_reset_swift_4_1_branch() {
 
     ./init.sh || exit 1
     $COMMAND herd $PARALLEL || exit 1
-    $COMMAND link -v reset-timestamp-swift-4.1-branch || exit 1
+    $COMMAND link reset-timestamp-swift-4.1-branch || exit 1
     $COMMAND herd $PARALLEL || exit 1
     $COMMAND reset $PARALLEL --timestamp apple/swift || exit 1
 

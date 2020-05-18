@@ -13,7 +13,7 @@ import yaml
 from termcolor import colored
 from typing import List, Union
 
-from clowder.error.clowder_exit import ClowderExit
+from clowder.error import ClowderExit
 from clowder.util.file_system import symlink_target
 
 
@@ -157,7 +157,7 @@ def error_offline() -> str:
     :rtype: str
     """
 
-    return f"{ERROR} No available internet connection\n"
+    return f"{ERROR} No available internet connection"
 
 
 def error_open_file(path: str) -> str:
@@ -196,9 +196,8 @@ def error_remote_already_exists(remote_name: str, remote_url: str, actual_url: s
     """
 
     remote = remote_string(remote_name)
-    output_1 = f"{ERROR} Remote {remote} already exists with a different url\n"
-    output_2 = f"{path_string(actual_url)} should be {path_string(remote_url)}\n"
-    return output_1 + output_2
+    return f"{ERROR} Remote {remote} already exists with a different url\n" \
+           f"{path_string(actual_url)} should be {path_string(remote_url)}"
 
 
 def error_remote_dup(fork: str, project: str, remote: str, yml: str) -> str:

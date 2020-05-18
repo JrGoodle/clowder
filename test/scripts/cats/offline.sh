@@ -105,7 +105,7 @@ echo 'TEST: clowder herd'
 $COMMAND herd && enable_connection_exit
 print_single_separator
 echo 'TEST: clowder link'
-$COMMAND link -v v0.1 || enable_connection_exit
+$COMMAND link v0.1 || enable_connection_exit
 $COMMAND link || enable_connection_exit
 print_single_separator
 echo 'TEST: clowder prune'
@@ -172,9 +172,6 @@ $COMMAND status || enable_connection_exit
 print_single_separator
 echo 'TEST: clowder status -f'
 $COMMAND status -f && enable_connection_exit
-# print_single_separator
-# echo 'TEST: clowder sync'
-# $COMMAND sync && enable_connection_exit
 print_single_separator
 echo 'TEST: clowder init'
 rm -rf .clowder || enable_connection_exit

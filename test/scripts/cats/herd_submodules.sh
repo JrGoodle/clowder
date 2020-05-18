@@ -19,7 +19,7 @@ cd "$CATS_EXAMPLE_DIR" || exit 1
 test_recurse() {
     print_single_separator
     echo "TEST: Herd recursive submodules"
-    clowder link -v submodules || exit 1
+    clowder link submodules || exit 1
     $COMMAND herd $PARALLEL || exit 1
     $COMMAND status || exit 1
     for project in "${external_projects[@]}"; do
@@ -38,7 +38,7 @@ test_recurse
 test_no_recurse() {
     print_single_separator
     echo "TEST: Herd without updating submodules"
-    $COMMAND link -v submodules-no-recurse || exit 1
+    $COMMAND link submodules-no-recurse || exit 1
     $COMMAND herd $PARALLEL || exit 1
     $COMMAND status || exit 1
     for project in "${external_projects[@]}"; do

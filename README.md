@@ -132,7 +132,7 @@ clowder clean # Discard any changes in projects
 clowder diff # Print git diff for all projects
 clowder forall -c 'git status' # Run command in all project directories
 clowder herd -b my_branch # Herd a specified branch if it exists, otherwise use default ref
-clowder link -v 0.1 # Set clowder.yaml symlink to a previously saved version
+clowder link 0.1 # Set clowder.yaml symlink to a previously saved version
 clowder repo run 'git status' # Run command in .clowder directory
 clowder save 0.1 # Save a version of clowder.yaml with current commit sha's
 clowder start my_feature # Create new branch 'my_feature' for all projects

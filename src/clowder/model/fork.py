@@ -6,7 +6,7 @@
 """
 
 import os
-from typing import List
+from typing import Tuple
 
 from termcolor import colored
 
@@ -32,14 +32,14 @@ class Fork(object):
     """
 
     def __init__(self, fork: dict, path: str, project_source: Source,
-                 recursive: bool, sources: List[Source], defaults: Defaults):
+                 recursive: bool, sources: Tuple[Source, ...], defaults: Defaults):
         """Project __init__
 
         :param dict fork: Parsed YAML python object for fork
         :param str path: Fork relative path
         :param Source project_source: Source instance from project
         :param bool recursive: Whether to handle submodules
-        :param list[Source] sources: List of Source instances
+        :param Tuple[Source, ...] sources: List of Source instances
         :param Defaults defaults: Defaults instance
         """
 

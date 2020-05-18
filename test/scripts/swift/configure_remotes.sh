@@ -57,7 +57,7 @@ test_local_swift_example() {
     pushd swift-source || exit 1
 
     $COMMAND init https://github.com/JrGoodle/swift-clowder.git -b test || exit 1
-    $COMMAND link -v jrgoodle-fork-travis-ci || exit 1
+    $COMMAND link jrgoodle-fork-travis-ci || exit 1
 
     test_configure_remotes_herd
     test_configure_remotes_fail_existing_remote

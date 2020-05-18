@@ -11,8 +11,7 @@ import clowder.clowder_repo as clowder_repo
 import clowder.util.formatting as fmt
 from clowder import CLOWDER_REPO_DIR
 from clowder.clowder_controller import CLOWDER_CONTROLLER
-from clowder.error.clowder_exit import ClowderExit
-from clowder.error.clowder_yaml_error import ClowderYAMLError, ClowderYAMLYErrorType
+from clowder.error import ClowderExit, ClowderYAMLError, ClowderYAMLErrorType
 
 
 def clowder_required(func):
@@ -79,7 +78,7 @@ def _invalid_yaml_error(error: Exception):
     print(fmt.error(error))
     if isinstance(error, ClowderYAMLError):
         raise ClowderExit(error.code)
-    raise ClowderExit(ClowderYAMLYErrorType.UNKNOWN)
+    raise ClowderExit(ClowderYAMLErrorType.UNKNOWN)
 
 
 def _validate_clowder_repo_exists():
@@ -90,4 +89,4 @@ def _validate_clowder_repo_exists():
 
     if CLOWDER_REPO_DIR is None:
         print(f"{fmt.ERROR} No '.clowder' directory found")
-        raise ClowderExit(ClowderYAMLYErrorType.MISSING_REPO)
+        raise ClowderExit(ClowderYAMLErrorType.MISSING_REPO)

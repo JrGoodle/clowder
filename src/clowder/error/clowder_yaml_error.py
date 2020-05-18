@@ -27,7 +27,7 @@ class ClowderYAMLError(Exception):
 
 
 @unique
-class ClowderYAMLYErrorType(IntEnum):
+class ClowderYAMLErrorType(IntEnum):
     UNKNOWN = 9
     MISSING_REPO = 10
     MISSING_YAML = 11

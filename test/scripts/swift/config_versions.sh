@@ -170,7 +170,7 @@ test_init_herd() {
     echo "TEST: Normal herd after init"
     ./clean.sh
     ./init.sh  || exit 1
-    $COMMAND link -v travis-ci || exit 1
+    $COMMAND link travis-ci || exit 1
     $COMMAND herd $PARALLEL || exit 1
     $COMMAND status || exit 1
 }
@@ -190,10 +190,10 @@ test_swift_configs() {
         config_function="test_${config}_branches"
         config_function="${config_function//-/_}"
         config_function="${config_function//./_}"
-        $COMMAND link -v travis-ci || exit 1
+        $COMMAND link travis-ci || exit 1
         $COMMAND herd $PARALLEL || exit 1
         test_default_branches
-        $COMMAND link -v "$config" || exit 1
+        $COMMAND link "$config" || exit 1
         $COMMAND herd $PARALLEL || exit 1
         $COMMAND status || exit 1
         "$config_function"

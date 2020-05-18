@@ -11,8 +11,7 @@ from git import GitError
 from termcolor import colored
 
 import clowder.util.formatting as fmt
-from clowder.error.clowder_error import ClowderError
-from clowder.error.clowder_git_error import ClowderGitError
+from clowder.error import ClowderError, ClowderGitError
 from clowder.git.project_repo_impl import ProjectRepoImpl
 from clowder.git.util import (
     existing_git_repository,
@@ -335,36 +334,6 @@ class ProjectRepo(ProjectRepoImpl):
 
         if tracking and not is_offline():
             self._create_branch_remote_tracking(branch, remote, depth)
-
-    def sync(self, fork_remote: str, rebase: bool = False) -> None:
-        """Sync fork with upstream remote
-
-        :param str fork_remote: Fork remote name
-        :param bool rebase: Whether to use rebase instead of pulling latest changes.
-        """
-
-        self._print(' - Sync fork with upstream remote')
-        if ref_type(self.default_ref) != 'branch':
-            message = colored(' - Can only sync branches', 'red')
-            self._print(message)
-            self._exit(message)
-
-        fork_remote_output = fmt.remote_string(fork_remote)
-        branch_output = fmt.ref_string(truncate_ref(self.default_ref))
-        if rebase:
-            self._rebase_remote_branch(self.remote, truncate_ref(self.default_ref))
-        else:
-            self._pull(self.remote, truncate_ref(self.default_ref))
-
-        self._print(f' - Push to {fork_remote_output} {branch_output}')
-        command = ['git', 'push', fork_remote, truncate_ref(self.default_ref)]
-        try:
-            execute_command(command, self.repo_path, print_output=self._print_output)
-        except ClowderError:
-            message = colored(' - Failed to push to ', 'red') + f'{fork_remote_output} {branch_output}'
-            self._print(message)
-            self._print(fmt.error_command_failed(command))
-            self._exit(message)
 
     def _compare_remotes(self, upstream_remote_name: str, upstream_remote_url: str,
                          fork_remote_name: str, fork_remote_url: str) -> None:

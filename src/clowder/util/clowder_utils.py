@@ -5,20 +5,35 @@
 
 """
 
+import argparse
 import os
-from typing import List, Optional
+from typing import List, Optional, Tuple, Union
 
 import clowder.util.formatting as fmt
 from clowder import CLOWDER_REPO_VERSIONS_DIR
-from clowder.error.clowder_exit import ClowderExit
+from clowder.error import ClowderExit
 from clowder.model.project import Project
 from clowder.util.file_system import force_symlink
 
+Parser = Union[argparse.ArgumentParser, argparse._MutuallyExclusiveGroup, argparse._ArgumentGroup] # noqa
+Arguments = List[Tuple[list, dict]]
 
-def existing_branch_projects(projects: List[Project], branch: str, is_remote: bool) -> bool:
+
+def add_parser_arguments(parser: Parser, arguments: Arguments) -> None:
+    """Add arguments to parser
+
+    :param Parser parser: Parser to add arguments to
+    :param Arguments arguments: Arguments to add to parser
+    """
+
+    for argument in arguments:
+        parser.add_argument(*argument[0], **argument[1])
+
+
+def existing_branch_projects(projects: Tuple[Project, ...], branch: str, is_remote: bool) -> bool:
     """Checks if given branch exists in any project
 
-    :param list[Project] projects: Projects to check
+    :param Tuple[Project, ...] projects: Projects to check
     :param str branch: Branch to check for
     :param bool is_remote: Check for remote branch
     :return: True, if at least one branch exists
@@ -28,32 +43,32 @@ def existing_branch_projects(projects: List[Project], branch: str, is_remote: bo
     return any([p.existing_branch(branch, is_remote=is_remote) for p in projects])
 
 
-def filter_projects(projects: List[Project], project_names: List[str]) -> List[Project]:
+def filter_projects(projects: Tuple[Project, ...], project_names: Tuple[str, ...]) -> Tuple[Project, ...]:
     """Filter projects based on given project or group names
 
-    :param list[Project] projects: Projects to filter
-    :param list[str] project_names: Project names to match against
-    :return: List of projects in groups matching given names
-    :rtype: list[Project]
+    :param Tuple[Project, ...] projects: Projects to filter
+    :param Tuple[str, ...] project_names: Project names to match against
+    :return: Projects in groups matching given names
+    :rtype: Tuple[Project, ...]
     """
 
     filtered_projects = []
     for name in project_names:
         filtered_projects += [p for p in projects if name in p.groups]
-    return list(set(filtered_projects))
+    return tuple(set(filtered_projects))
 
 
-def get_saved_version_names() -> Optional[List[str]]:
+def get_saved_version_names() -> Optional[Tuple[str, ...]]:
     """Return list of all saved versions
 
-    :return: List of all saved version names
-    :rtype: Optional[list[str]]
+    :return: All saved version names
+    :rtype: Optional[Tuple[str, ...]]
     """
 
     if CLOWDER_REPO_VERSIONS_DIR is None:
         return None
 
-    return [v[:-13] for v in os.listdir(CLOWDER_REPO_VERSIONS_DIR) if v.endswith('.clowder.yaml')]
+    return tuple([v[:-13] for v in os.listdir(CLOWDER_REPO_VERSIONS_DIR) if v.endswith('.clowder.yaml')])
 
 
 def link_clowder_yaml(clowder_dir: str, version: Optional[str] = None) -> None:
@@ -80,10 +95,10 @@ def link_clowder_yaml(clowder_dir: str, version: Optional[str] = None) -> None:
     force_symlink(yaml_file, os.path.join(clowder_dir, 'clowder.yaml'))
 
 
-def options_help_message(options: List[str], message: str) -> str:
+def options_help_message(options: Tuple[str, ...], message: str) -> str:
     """Help message for groups option
 
-    :param list[str] options: List of options
+    :param Tuple[str, ...] options: List of options
     :param str message: Help message
     :return: Formatted options help message
     :rtype: str
@@ -100,10 +115,10 @@ def options_help_message(options: List[str], message: str) -> str:
     return help_message.format(message, ', '.join(options))
 
 
-def print_parallel_projects_output(projects: List[Project]) -> None:
+def print_parallel_projects_output(projects: Tuple[Project, ...]) -> None:
     """Print output for parallel project command
 
-    :param list[Project] projects: Projects to print output for
+    :param Tuple[Project, ...] projects: Projects to print output for
     """
 
     for project in projects:
@@ -111,10 +126,10 @@ def print_parallel_projects_output(projects: List[Project]) -> None:
         _print_fork_output(project)
 
 
-def validate_projects(projects: List[Project]) -> None:
+def validate_projects(projects: Tuple[Project, ...]) -> None:
     """Validate status of all projects
 
-    :param list[Project] projects: Projects to validate
+    :param Tuple[Project, ...] projects: Projects to validate
     :raise ClowderExit:
     """
 

@@ -47,7 +47,7 @@ _test_invalid_yaml() {
     for test in "${test_cases[@]}"
     do
         version=${test%'.clowder.yaml'}
-        $COMMAND link -v $version || exit 1
+        $COMMAND link $version || exit 1
         print_single_separator
         $COMMAND herd
         exit_code=$?

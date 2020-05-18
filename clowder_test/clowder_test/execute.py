@@ -41,8 +41,9 @@ def execute_test_command(command: str, path: str, parallel: bool = False, write:
     else:
         test_env['COMMAND'] = 'clowder'
 
-    if debug:
-        test_env['COMMAND'] = test_env['COMMAND'] + ' --debug'
+    # TODO: Remove this since cement is no longer used?
+    # if debug:
+    #     test_env['COMMAND'] = test_env['COMMAND'] + ' --debug'
 
     if quiet:
         test_env['COMMAND'] = test_env['COMMAND'] + ' --quiet'
