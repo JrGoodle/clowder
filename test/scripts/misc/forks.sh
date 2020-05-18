@@ -19,15 +19,25 @@ echo "TEST: Test clowder sources"
 cd "$MISC_EXAMPLE_DIR" || exit 1
 ./clean.sh
 ./init.sh || exit 1
+begin_command
 $COMMAND herd $PARALLEL || exit 1
+end_command
 
 test_forks_env() {
     # echo "TEST: Fork remote environment variable in script"
+    begin_command
     $COMMAND forall $PARALLEL "gyp" -c "$TEST_SCRIPT_DIR/test_forall_script_env_fork.sh" || exit 1
+    end_command
+    begin_command
     $COMMAND forall $PARALLEL "dropbox/djinni" -c "$TEST_SCRIPT_DIR/test_forall_script_env_fork.sh" && exit 1
+    end_command
     # echo "TEST: Fork remote environment variable in command"
+    begin_command
     $COMMAND forall $PARALLEL 'gyp' -c 'if [ $PROJECT_REMOTE != upstream ]; then exit 1; fi' || exit 1
+    end_command
+    begin_command
     $COMMAND forall $PARALLEL 'gyp' -c 'if [ $FORK_REMOTE != origin ]; then exit 1; fi' || exit 1
+    end_command
 }
 test_forks_env
 
@@ -35,7 +45,9 @@ test_forks_env
 ./init.sh || exit 1
 
 test_fork_herd() {
+    begin_command
     $COMMAND herd $PARALLEL || exit 1
+    end_command
     pushd 'gyp' || exit 1
     test_tracking_branch_exists 'fork-branch'
     fork_branch_commit=''bd11dd1c51ef17592384df927c47023071639f96''

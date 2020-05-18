@@ -23,7 +23,9 @@ export submodule_projects=( 'mu/ash' \
 cd "$CATS_EXAMPLE_DIR" || exit 1
 ./clean.sh
 ./init.sh || exit 1
+begin_command
 $COMMAND herd $PARALLEL || exit 1
+end_command
 
 print_double_separator
 echo "TEST: Test clowder clean"
@@ -39,7 +41,9 @@ test_clean_groups() {
         popd || exit 1
     done
 
+    begin_command
     $COMMAND clean 'black-cats' || exit 1
+    end_command
 
     for project in "${black_cats_projects[@]}"; do
         pushd $project || exit 1
@@ -63,7 +67,9 @@ test_clean_groups() {
         popd || exit 1
     done
 
+    begin_command
     $COMMAND clean || exit 1
+    end_command
 
     for project in "${all_projects[@]}"; do
         pushd $project || exit 1
@@ -84,7 +90,9 @@ test_clean_projects() {
         popd || exit 1
     done
 
+    begin_command
     $COMMAND clean "$@" || exit 1
+    end_command
 
     for project in "${black_cats_projects[@]}"; do
         pushd $project || exit 1
@@ -99,7 +107,9 @@ test_clean_projects() {
     popd || exit 1
 
     echo "TEST: Clean all when dirty"
+    begin_command
     $COMMAND clean || exit 1
+    end_command
 
     for project in "${all_projects[@]}"; do
         pushd $project || exit 1
@@ -119,7 +129,9 @@ test_clean_all() {
         popd || exit 1
     done
 
+    begin_command
     $COMMAND clean || exit 1
+    end_command
 
     for project in "${all_projects[@]}"; do
         pushd $project || exit 1
@@ -128,7 +140,9 @@ test_clean_all() {
     done
 
     echo "TEST: Clean when clean"
+    begin_command
     $COMMAND clean || exit 1
+    end_command
 
     for project in "${all_projects[@]}"; do
         pushd $project || exit 1
@@ -153,7 +167,9 @@ test_clean_missing_directories() {
     done
 
     echo "TEST: Clean when directories are missing"
+    begin_command
     $COMMAND clean || exit 1
+    end_command
 
     for project in "${cats_projects[@]}"; do
         test_no_directory_exists "$project"
@@ -166,15 +182,20 @@ test_clean_missing_directories() {
         popd || exit 1
     done
 
+    begin_command
     $COMMAND herd $PARALLEL || exit 1
+    end_command
 }
 
 test_clean_abort_rebase() {
     print_single_separator
     echo "TEST: Clean when in the middle of a rebase"
-
+    begin_command
     $COMMAND link || exit 1
+    end_command
+    begin_command
     $COMMAND herd $PARALLEL || exit 1
+    end_command
 
     pushd mu || exit 1
         touch newfile
@@ -194,7 +215,9 @@ test_clean_abort_rebase() {
         test_rebase_in_progress
     popd || exit 1
 
+    begin_command
     $COMMAND clean || exit 1
+    end_command
 
     pushd mu || exit 1
         test_no_rebase_in_progress
@@ -207,8 +230,12 @@ test_clean_d() {
     print_single_separator
     echo "TEST: Clean untracked files and directories"
 
+    begin_command
     $COMMAND link || exit 1
+    end_command
+    begin_command
     $COMMAND herd $PARALLEL || exit 1
+    end_command
 
     pushd mu || exit 1
     touch newfile
@@ -222,8 +249,12 @@ test_clean_d() {
     test_untracked_files
     popd || exit 1
 
+    begin_command
     $COMMAND herd && exit 1
+    end_command
+    begin_command
     $COMMAND clean || exit 1
+    end_command
 
     pushd mu || exit 1
     test_directory_exists 'something'
@@ -233,7 +264,9 @@ test_clean_d() {
     test_untracked_files
     popd || exit 1
 
+    begin_command
     $COMMAND clean -d || exit 1
+    end_command
 
     pushd mu || exit 1
     test_no_directory_exists 'something'
@@ -248,21 +281,29 @@ test_clean_f() {
     print_single_separator
     echo "TEST: Clean git directories"
 
+    begin_command
     $COMMAND link || exit 1
+    end_command
+    begin_command
     $COMMAND herd $PARALLEL || exit 1
+    end_command
 
     pushd mu || exit 1
     git clone https://github.com/JrGoodle/cats.git
     test_directory_exists 'cats'
     popd || exit 1
 
+    begin_command
     $COMMAND clean || exit 1
+    end_command
 
     pushd mu || exit 1
     test_directory_exists 'cats'
     popd || exit 1
 
+    begin_command
     $COMMAND clean -fd || exit 1
+    end_command
 
     pushd mu || exit 1
     test_no_directory_exists 'cats'
@@ -272,7 +313,9 @@ test_clean_f() {
 test_clean_X() {
     print_single_separator
     echo "TEST: Clean only files ignored by git"
+    begin_command
     $COMMAND herd $PARALLEL || exit 1
+    end_command
 
     pushd mu || exit 1
     touch ignored_file
@@ -281,7 +324,9 @@ test_clean_X() {
     test_file_exists 'something'
     popd || exit 1
 
+    begin_command
     $COMMAND clean -X || exit 1
+    end_command
 
     pushd mu || exit 1
     test_no_file_exists 'ignored_file'
@@ -298,7 +343,9 @@ test_clean_X() {
 test_clean_x() {
     print_single_separator
     echo "TEST: Clean all untracked files"
+    begin_command
     $COMMAND herd $PARALLEL || exit 1
+    end_command
 
     pushd mu || exit 1
     touch xcuserdata
@@ -307,7 +354,9 @@ test_clean_x() {
     test_file_exists 'something'
     popd || exit 1
 
+    begin_command
     $COMMAND clean -x || exit 1
+    end_command
 
     pushd mu || exit 1
     test_no_file_exists 'xcuserdata'
@@ -318,8 +367,12 @@ test_clean_x() {
 test_clean_a() {
     print_single_separator
     echo "TEST: Clean all"
-    clowder link submodules || exit 1
+    begin_command
+    $COMMAND link submodules || exit 1
+    end_command
+    begin_command
     $COMMAND herd $PARALLEL || exit 1
+    end_command
     for project in "${submodule_projects[@]}"; do
         pushd $project || exit 1
         touch newfile
@@ -345,7 +398,9 @@ test_clean_a() {
         popd || exit 1
     done
 
+    begin_command
     $COMMAND clean -a || exit 1
+    end_command
 
     for project in "${submodule_projects[@]}"; do
         pushd $project || exit 1
@@ -363,15 +418,20 @@ test_clean_a() {
         test_no_file_exists 'newfile'
         popd || exit 1
     done
-
-    clowder link || exit 1
+    begin_command
+    $COMMAND link || exit 1
+    end_command
 }
 
 test_clean_submodules_untracked() {
     print_single_separator
     echo "TEST: Clean untracked files in submodules"
-    clowder link submodules || exit 1
+    begin_command
+    $COMMAND link submodules || exit 1
+    end_command
+    begin_command
     $COMMAND herd $PARALLEL || exit 1
+    end_command
     for project in "${submodule_projects[@]}"; do
         pushd $project || exit 1
         touch newfile
@@ -383,7 +443,9 @@ test_clean_submodules_untracked() {
         popd || exit 1
     done
 
+    begin_command
     $COMMAND clean -r || exit 1
+    end_command
 
     for project in "${submodule_projects[@]}"; do
         pushd $project || exit 1
@@ -399,8 +461,12 @@ test_clean_submodules_untracked() {
 test_clean_submodules_dirty() {
     print_single_separator
     echo "TEST: Clean dirty submodules"
-    clowder link submodules || exit 1
+    begin_command
+    $COMMAND link submodules || exit 1
+    end_command
+    begin_command
     $COMMAND herd $PARALLEL || exit 1
+    end_command
     for project in "${submodule_projects[@]}"; do
         pushd $project || exit 1
         touch newfile
@@ -416,7 +482,9 @@ test_clean_submodules_dirty() {
         popd || exit 1
     done
 
+    begin_command
     $COMMAND clean -r || exit 1
+    end_command
 
     for project in "${submodule_projects[@]}"; do
         pushd $project || exit 1
@@ -428,7 +496,9 @@ test_clean_submodules_dirty() {
         popd || exit 1
     done
 
-    clowder link || exit 1
+    begin_command
+    $COMMAND link || exit 1
+    end_command
 }
 
 test_clean_groups

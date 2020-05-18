@@ -69,13 +69,19 @@ NO_TAG='test-herd-no-tag'
 test_herd_tag_no_repo_existing_tag() {
     print_single_separator
     echo "TEST: Herd tag - No repo, existing remote tag"
+    begin_command
     $COMMAND link || exit 1
+    end_command
     for project in "${all_projects[@]}"; do
         rm -rf $project
         test_no_directory_exists "$project"
     done
+    begin_command
     $COMMAND herd $PARALLEL -t $EXISTING_TAG || exit 1
+    end_command
+    begin_command
     $COMMAND status || exit 1
+    end_command
     test_cats_herd_tag
 }
 test_herd_tag_no_repo_existing_tag
@@ -83,12 +89,16 @@ test_herd_tag_no_repo_existing_tag
 test_herd_tag_no_repo_no_tag() {
     print_single_separator
     echo "TEST: Herd tag - No repo, no tag"
+    begin_command
     $COMMAND link || exit 1
+    end_command
     for project in "${all_projects[@]}"; do
         rm -rf $project
         test_no_directory_exists "$project"
     done
+    begin_command
     $COMMAND herd $PARALLEL -t $NO_TAG || exit 1
+    end_command
     test_cats_default_herd_branches
 }
 test_herd_tag_no_repo_no_tag
@@ -96,11 +106,19 @@ test_herd_tag_no_repo_no_tag
 test_herd_tag_existing_tag() {
     print_single_separator
     echo "TEST: Herd tag - Existing tag"
+    begin_command
     $COMMAND link || exit 1
+    end_command
+    begin_command
     $COMMAND herd $PARALLEL || exit 1
+    end_command
     test_cats_default_herd_branches
+    begin_command
     $COMMAND herd $PARALLEL -t $EXISTING_TAG || exit 1
+    end_command
+    begin_command
     $COMMAND status || exit 1
+    end_command
     test_cats_herd_tag
 }
 test_herd_tag_existing_tag
@@ -108,10 +126,16 @@ test_herd_tag_existing_tag
 test_herd_tag_no_tag() {
     print_single_separator
     echo "TEST: Herd tag - No existing tag"
+    begin_command
     $COMMAND link || exit 1
+    end_command
+    begin_command
     $COMMAND herd $PARALLEL || exit 1
+    end_command
     test_cats_default_herd_branches
+    begin_command
     $COMMAND herd $PARALLEL -t $NO_TAG || exit 1
+    end_command
     test_cats_default_herd_branches
 }
 test_herd_tag_no_tag

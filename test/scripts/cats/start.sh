@@ -18,7 +18,9 @@ export all_projects=( 'mu' 'duke' \
 cd "$CATS_EXAMPLE_DIR" || exit 1
 ./clean.sh
 ./init.sh || exit 1
+begin_command
 $COMMAND herd $PARALLEL || exit 1
+end_command
 
 print_double_separator
 echo "TEST: Test clowder start"
@@ -27,7 +29,9 @@ test_start() {
     print_single_separator
     echo "TEST: Start new branch"
 
+    begin_command
     $COMMAND start start_branch jrgoodle/duke jrgoodle/mu || exit 1
+    end_command
 
     pushd mu || exit 1
     test_branch start_branch
@@ -45,7 +49,9 @@ test_start() {
         popd || exit 1
     done
 
+    begin_command
     $COMMAND start start_branch || exit 1
+    end_command
 
     for project in "${all_projects[@]}"; do
         pushd $project || exit 1

@@ -20,7 +20,9 @@ export all_projects=( 'mu' 'duke' \
 cd "$CATS_EXAMPLE_DIR" || exit 1
 ./clean.sh
 ./init.sh || exit 1
+begin_command
 $COMMAND herd $PARALLEL || exit 1
+end_command
 
 print_double_separator
 echo "TEST: Test clowder reset"
@@ -38,7 +40,9 @@ test_reset() {
     test_not_commit "$UPSTREAM_COMMIT"
     popd || exit 1
 
+    begin_command
     $COMMAND reset $PARALLEL jrgoodle/mu || exit 1
+    end_command
 
     pushd 'mu' || exit 1
     test_number_commits 'HEAD' 'origin/knead' '0'
@@ -53,7 +57,9 @@ test_reset() {
     test_not_commit "$UPSTREAM_COMMIT"
     popd || exit 1
 
+    begin_command
     $COMMAND reset $PARALLEL || exit 1
+    end_command
 
     pushd 'mu' || exit 1
     test_number_commits 'HEAD' 'origin/knead' '0'
@@ -71,7 +77,9 @@ test_reset() {
     test_not_commit "$UPSTREAM_COMMIT"
     popd || exit 1
 
+    begin_command
     $COMMAND reset $PARALLEL || exit 1
+    end_command
 
     pushd 'mu' || exit 1
     test_number_commits 'HEAD' 'origin/knead' '0'

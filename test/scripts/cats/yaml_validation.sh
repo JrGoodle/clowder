@@ -12,8 +12,10 @@ echo "TEST: Test yaml validation"
 
 test_missing_repo() {
     print_single_separator
-    $COMMAND herd
+    begin_command
+    $COMMAND herd # Get exit code after completions
     exit_code=$?
+    end_command
     echo "Expected exit code: $1"
     echo "Actual exit code: $exit_code"
     if [ "$exit_code" != "$1" ]; then
@@ -28,8 +30,10 @@ test_missing_repo '10'
 test_missing_yaml() {
     print_single_separator
     rm -f clowder.yaml || exit 1
-    $COMMAND herd
+    begin_command
+    $COMMAND herd # Get exit code after completions
     exit_code=$?
+    end_command
     echo "Expected exit code: $1"
     echo "Actual exit code: $exit_code"
     if [ "$exit_code" != "$1" ]; then
@@ -47,10 +51,14 @@ _test_invalid_yaml() {
     for test in "${test_cases[@]}"
     do
         version=${test%'.clowder.yaml'}
+        begin_command
         $COMMAND link $version || exit 1
+        end_command
         print_single_separator
-        $COMMAND herd
+        begin_command
+        $COMMAND herd # Get exit code after completions
         exit_code=$?
+        end_command
         echo "Expected exit code: $2"
         echo "Actual exit code: $exit_code"
         if [ "$exit_code" != "$2" ]; then
@@ -62,7 +70,9 @@ _test_invalid_yaml() {
 }
 
 test_invalid_yaml() {
+    begin_command
     $COMMAND repo checkout yaml-validation || exit 1
+    end_command
     pushd .clowder || exit 1
     test_branch yaml-validation
     popd || exit 1
@@ -79,7 +89,9 @@ test_invalid_yaml() {
     _test_invalid_yaml 'ls -d test-source-not-found*' '16'
     _test_invalid_yaml 'ls -d test-duplicate-project-directories*' '17'
 
+    begin_command
     $COMMAND repo checkout master || exit 1
+    end_command
     pushd .clowder || exit 1
     test_branch master
     popd || exit 1
