@@ -233,7 +233,9 @@ print_double_separator() {
 begin_command() {
     echo '====================================**BEGIN**===================================='
 }
+export -f begin_command
 
 end_command() {
     echo '=====================================**END**====================================='
 }
+export -f end_command

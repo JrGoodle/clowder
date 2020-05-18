@@ -31,3 +31,12 @@ test_status_fetch() {
     end_command
 }
 test_status_fetch
+
+test_status_groups() {
+    print_single_separator
+    echo "TEST: Test status groups"
+    begin_command
+    $COMMAND status black-cats || exit 1
+    end_command
+}
+test_status_groups

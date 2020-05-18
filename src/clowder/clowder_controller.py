@@ -67,15 +67,16 @@ class ClowderController(object):
         except TypeError:
             return ()
 
-    def get_all_project_paths(self) -> Tuple[str, ...]:
-        """Returns all project paths for current clowder.yaml
+    def get_project_paths(self, projects: Tuple[Project, ...]) -> Tuple[str, ...]: # noqa
+        """Returns all project paths for specified projects
 
+        :param Tuple[Project, ... projects: Projects to get paths of
         :return: All project paths
         :rtype: Tuple[str, ...]
         """
 
         try:
-            return tuple(sorted([p.formatted_project_path() for p in self.projects]))
+            return tuple(sorted([p.formatted_project_path() for p in projects]))
         except TypeError:
             return ()
 
@@ -119,7 +120,7 @@ class ClowderController(object):
     def validate_print_output(self, project_names: Tuple[str, ...]) -> None:
         """Validate projects/groups and print output
 
-        :param Optional[List[str]] project_names: Project names to validate/print
+        :param Tuple[str, ...] project_names: Project names to validate/print
         """
 
         projects = filter_projects(self.projects, project_names)

@@ -92,13 +92,14 @@ class Project(object):
             self._commit = defaults.commit
             self.ref = defaults.ref
 
-        groups = [self.name, 'all']
+        groups = ['all', self.name, fmt.last_path_component(self.name), self.path]
         custom_groups = project.get('groups', None)
         if custom_groups:
             groups += custom_groups
+        groups = list(set(groups))
         if 'notdefault' in groups:
             groups.remove('all')
-        self.groups = list(set(groups))
+        self.groups = groups
 
         self.source = None
         source_name = project.get('source', defaults.source)
