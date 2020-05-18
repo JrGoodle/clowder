@@ -12,8 +12,7 @@ from git import Repo, GitError
 from termcolor import colored
 
 import clowder.util.formatting as fmt
-from clowder.error.clowder_exit import ClowderExit
-from clowder.error.clowder_git_error import ClowderGitError
+from clowder.error import ClowderExit, ClowderGitError
 from clowder.git.util import (
     existing_git_repository,
     not_detached,
@@ -21,8 +20,8 @@ from clowder.git.util import (
 )
 from clowder.util.file_system import remove_directory
 
-__repo_default_ref__ = 'refs/heads/master'
-__repo_default_remote__ = 'origin'
+__REPO_DEFAULT_REF__ = 'refs/heads/master'
+__REPO_DEFAULT_REMOTE__ = 'origin'
 
 
 class GitRepo(object):

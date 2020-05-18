@@ -5,31 +5,19 @@
 
 """
 
-from clowder.cli.base_controller import BaseController
-from clowder.cli.branch_controller import BranchController
-from clowder.cli.checkout_controller import CheckoutController
-from clowder.cli.clean_controller import CleanController
-from clowder.cli.diff_controller import DiffController
-from clowder.cli.forall_controller import ForallController
-from clowder.cli.herd_controller import HerdController
-from clowder.cli.init_controller import InitController
-from clowder.cli.link_controller import LinkController
-from clowder.cli.prune_controller import PruneController
-from clowder.cli.repo_controller import (
-    RepoCheckoutController,
-    RepoCleanController,
-    RepoController,
-    RepoAddController,
-    RepoCommitController,
-    RepoRunController,
-    RepoPullController,
-    RepoPushController,
-    RepoStatusController
-)
-from clowder.cli.reset_controller import ResetController
-from clowder.cli.save_controller import SaveController
-from clowder.cli.start_controller import StartController
-from clowder.cli.stash_controller import StashController
-from clowder.cli.status_controller import StatusController
-from clowder.cli.sync_controller import SyncController
-from clowder.cli.yaml_controller import YAMLController
+from clowder.cli.branch import add_branch_parser
+from clowder.cli.checkout import add_checkout_parser
+from clowder.cli.clean import add_clean_parser
+from clowder.cli.diff import add_diff_parser
+from clowder.cli.forall import add_forall_parser
+from clowder.cli.herd import add_herd_parser
+from clowder.cli.init import add_init_parser
+from clowder.cli.link import add_link_parser
+from clowder.cli.prune import add_prune_parser
+from clowder.cli.repo import add_repo_parser
+from clowder.cli.reset import add_reset_parser
+from clowder.cli.save import add_save_parser
+from clowder.cli.start import add_start_parser
+from clowder.cli.stash import add_stash_parser
+from clowder.cli.status import add_status_parser
+from clowder.cli.yaml import add_yaml_parser

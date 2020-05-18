@@ -1,5 +1,4 @@
 awscli
-cement
 codecov
 colorama
 coverage

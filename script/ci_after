@@ -30,7 +30,7 @@ coverage combine --append \
 
 ## Codecov ##
 echo 'Upload codecov results'
-bash <(curl -s https://codecov.io/bash) -X gcov
+bash <(curl -s https://codecov.io/bash) -X gcov || echo "Codecov did not collect coverage reports"
 # echo 'Upload workflow coverage results to s3'
 # cp .coverage "coverage/codecov/${COVERAGE_FILE}"
 # aws s3 sync coverage/codecov/ "${S3_PATH}/codecov"

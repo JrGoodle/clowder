@@ -50,7 +50,6 @@ test_script:
   - coverage run --rcfile=%APPVEYOR_BUILD_FOLDER%\.coveragerc -m clowder.clowder_app reset --parallel
   - coverage run --rcfile=%APPVEYOR_BUILD_FOLDER%\.coveragerc -m clowder.clowder_app prune new_branch
   - coverage run --rcfile=%APPVEYOR_BUILD_FOLDER%\.coveragerc -m clowder.clowder_app save vWin
-  - coverage run --rcfile=%APPVEYOR_BUILD_FOLDER%\.coveragerc -m clowder.clowder_app sync --parallel
   - coverage run --rcfile=%APPVEYOR_BUILD_FOLDER%\.coveragerc -m clowder.clowder_app yaml
 
 after_test:

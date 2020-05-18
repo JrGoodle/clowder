@@ -13,7 +13,7 @@ from typing import Optional
 CLOWDER_SCHEMA = pkg_resources.resource_string(__name__, "clowder.schema.json")
 
 
-CURRENT_DIR: str = os.getcwd()
+CURRENT_DIR = os.getcwd()
 CLOWDER_DIR: Optional[str] = None
 CLOWDER_REPO_DIR: Optional[str] = None
 CLOWDER_REPO_VERSIONS_DIR: Optional[str] = None
@@ -42,4 +42,3 @@ if CLOWDER_REPO_DIR is not None:
     clowder_versions = os.path.join(CLOWDER_REPO_DIR, 'versions')
     if os.path.isdir(clowder_versions):
         CLOWDER_REPO_VERSIONS_DIR = clowder_versions
-

@@ -38,5 +38,5 @@ setup(
             'clowder=clowder.clowder_app:main',
         ]
     },
-    install_requires=['cement', 'colorama', 'jsonschema', 'GitPython', 'PyYAML', 'termcolor', 'psutil', 'tqdm']
+    install_requires=['colorama', 'jsonschema', 'GitPython', 'PyYAML', 'termcolor', 'psutil', 'tqdm']
 )

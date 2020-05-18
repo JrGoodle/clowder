@@ -39,7 +39,7 @@ test_clean_groups() {
         popd || exit 1
     done
 
-    $COMMAND clean -p 'black-cats' || exit 1
+    $COMMAND clean 'black-cats' || exit 1
 
     for project in "${black_cats_projects[@]}"; do
         pushd $project || exit 1
@@ -84,7 +84,7 @@ test_clean_projects() {
         popd || exit 1
     done
 
-    $COMMAND clean -p "$@" || exit 1
+    $COMMAND clean "$@" || exit 1
 
     for project in "${black_cats_projects[@]}"; do
         pushd $project || exit 1
@@ -318,7 +318,7 @@ test_clean_x() {
 test_clean_a() {
     print_single_separator
     echo "TEST: Clean all"
-    clowder link -v submodules || exit 1
+    clowder link submodules || exit 1
     $COMMAND herd $PARALLEL || exit 1
     for project in "${submodule_projects[@]}"; do
         pushd $project || exit 1
@@ -370,7 +370,7 @@ test_clean_a() {
 test_clean_submodules_untracked() {
     print_single_separator
     echo "TEST: Clean untracked files in submodules"
-    clowder link -v submodules || exit 1
+    clowder link submodules || exit 1
     $COMMAND herd $PARALLEL || exit 1
     for project in "${submodule_projects[@]}"; do
         pushd $project || exit 1
@@ -399,7 +399,7 @@ test_clean_submodules_untracked() {
 test_clean_submodules_dirty() {
     print_single_separator
     echo "TEST: Clean dirty submodules"
-    clowder link -v submodules || exit 1
+    clowder link submodules || exit 1
     $COMMAND herd $PARALLEL || exit 1
     for project in "${submodule_projects[@]}"; do
         pushd $project || exit 1

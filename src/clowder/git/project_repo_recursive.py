@@ -129,16 +129,6 @@ class ProjectRepoRecursive(ProjectRepo):
             self._submodule_command('update', '--init', '--recursive', '--depth', depth,
                                     error_msg=error_message)
 
-    def sync(self, fork_remote: str, rebase: bool = False) -> None:
-        """Sync fork with upstream remote
-
-        :param str fork_remote: Fork remote name
-        :param bool rebase: Whether to use rebase instead of pulling latest changes
-        """
-
-        ProjectRepo.sync(self, fork_remote, rebase=rebase)
-        self.submodule_update_recursive()
-
     def validate_repo(self) -> bool:
         """Validate repo state
 

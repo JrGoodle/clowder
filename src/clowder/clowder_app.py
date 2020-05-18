@@ -5,95 +5,100 @@
 
 """
 
+import argparse
 from multiprocessing import freeze_support
 
 import colorama
-from cement.core.exc import FrameworkError, CaughtSignal
-from cement import App
 
 import clowder.cli as cmd
-from clowder.error.clowder_exit import ClowderExit
+from clowder.error import ClowderExit
+from clowder.util.clowder_utils import add_parser_arguments
 from clowder.util.parallel_commands import __clowder_pool__
 
+VERSION = '3.2.0'
 
-class ClowderApp(App):
+
+class ClowderArgumentParser(argparse.ArgumentParser):
+
+    def error(self, message):
+        # Make sure mp pool is closed
+        close_mp_pool()
+
+        argparse.ArgumentParser.error(self, message)
+
+    def exit(self, status=0, message=None):
+        # Make sure mp pool is closed
+        close_mp_pool()
+
+        argparse.ArgumentParser.exit(self, status, message)
+
+
+class ClowderApp(object):
     """Clowder command CLI app"""
 
-    class Meta:
-        """Clowder command CLI Meta configuration"""
-
-        label = 'clowder'
-        exit_on_close = True
-        base_controller = 'base'
-        handlers = [
-            cmd.BaseController,
-            cmd.BranchController,
-            cmd.CheckoutController,
-            cmd.CleanController,
-            cmd.DiffController,
-            cmd.ForallController,
-            cmd.HerdController,
-            cmd.InitController,
-            cmd.LinkController,
-            cmd.PruneController,
-            cmd.RepoController,
-            cmd.RepoAddController,
-            cmd.RepoCheckoutController,
-            cmd.RepoCleanController,
-            cmd.RepoCommitController,
-            cmd.RepoRunController,
-            cmd.RepoPullController,
-            cmd.RepoPushController,
-            cmd.RepoStatusController,
-            cmd.ResetController,
-            cmd.SaveController,
-            cmd.StartController,
-            cmd.StashController,
-            cmd.StatusController,
-            cmd.YAMLController
+    def create_parsers(self) -> ClowderArgumentParser:
+        parser = ClowderArgumentParser(prog='clowder')
+        arguments = [
+            (['-v', '--version'], dict(action='version', version=VERSION)),
         ]
+        add_parser_arguments(parser, arguments)
+        subparsers = parser.add_subparsers(help='sub-command help')
+
+        cmd.add_branch_parser(subparsers)
+        cmd.add_checkout_parser(subparsers)
+        cmd.add_clean_parser(subparsers)
+        cmd.add_diff_parser(subparsers)
+        cmd.add_forall_parser(subparsers)
+        cmd.add_herd_parser(subparsers)
+        cmd.add_init_parser(subparsers)
+        cmd.add_link_parser(subparsers)
+        cmd.add_prune_parser(subparsers)
+        cmd.add_repo_parser(subparsers)
+        cmd.add_reset_parser(subparsers)
+        cmd.add_save_parser(subparsers)
+        cmd.add_start_parser(subparsers)
+        cmd.add_stash_parser(subparsers)
+        cmd.add_status_parser(subparsers)
+        cmd.add_yaml_parser(subparsers)
+
+        return parser
 
 
 def main() -> None:
     """Clowder command CLI main function"""
 
     print()
-    with ClowderApp() as app:
-        try:
-            app.run()
-        except CaughtSignal as err:
-            # determine what the signal is, and do something with it?
-            from signal import SIGINT, SIGABRT
 
-            if err.signum == SIGINT:
-                # do something... maybe change the exit code?
-                app.exit_code = 110
-            elif err.signum == SIGABRT:
-                # do something else...
-                app.exit_code = 111
-        except FrameworkError:
-            # do something when a framework error happens
-            app.args.print_help()
+    app = ClowderApp()
+    parser = app.create_parsers()
+    args = parser.parse_args()
+    if 'projects' in args:
+        if isinstance(args.projects, str):
+            args.projects = [args.projects]
 
-            # and maybe set the exit code to something unique as well
-            app.exit_code = 300
-        except ClowderExit as err:
-            app.exit_code = err.code
-        finally:
-            # Maybe we want to see a full-stack trace for the above
-            # exceptions, but only if --debug was passed?
-            print()
-            if app.debug:
-                import traceback
-                traceback.print_exc()
+    exit_code = 0
+    try:
+        args.func(args) # noqa
+    except ClowderExit as err:
+        exit_code = err.code
+    except AttributeError:
+        exit_code = 1
+        parser.print_help()
+    finally:
+        print()
 
-            # Make sure mp pool is closed
-            try:
-                __clowder_pool__.close()
-                __clowder_pool__.join()
-            except: # noqa
-                __clowder_pool__.terminate()
+        # Make sure mp pool is closed
+        close_mp_pool()
 
+        exit(exit_code)
+
+
+def close_mp_pool():
+    try:
+        __clowder_pool__.close()
+        __clowder_pool__.join()
+    except:  # noqa
+        __clowder_pool__.terminate()
 
 if __name__ == '__main__':
     freeze_support()

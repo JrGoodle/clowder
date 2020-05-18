@@ -37,7 +37,7 @@ test_init_herd_version() {
     echo "TEST: Herd version after init"
     ./clean.sh || exit 1
     ./init.sh || exit 1
-    $COMMAND link -v v0.1 || exit 1
+    $COMMAND link v0.1 || exit 1
     $COMMAND herd $PARALLEL || exit 1
     # FIXME: Test the state of repos after herd
 }

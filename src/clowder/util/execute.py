@@ -11,7 +11,7 @@ from typing import List, Optional, Union
 
 from termcolor import colored
 
-from clowder.error.clowder_error import ClowderError
+from clowder.error import ClowderError
 
 
 def execute_command(command: Union[str, List[str]], path: str,

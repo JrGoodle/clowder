@@ -200,7 +200,7 @@ test_herd_branch_existing_local_existing_remote_no_tracking() {
     echo "TEST: Herd branch - Existing local branch, existing remote branch, no tracking, same commit"
     $COMMAND link || exit 1
     $COMMAND prune $EXISTING_REMOTE_BRANCH || exit 1
-    $COMMAND forall $PARALLEL -c "git checkout -b $EXISTING_REMOTE_BRANCH" -p cats || exit 1
+    $COMMAND forall $PARALLEL cats -c "git checkout -b $EXISTING_REMOTE_BRANCH" || exit 1
     $COMMAND forall $PARALLEL -ic "git checkout $EXISTING_REMOTE_BRANCH" || exit 1
     $COMMAND forall $PARALLEL -ic 'git branch --unset-upstream' || exit 1
     pushd mu || exit 1
@@ -280,7 +280,7 @@ test_herd_branch_existing_local_existing_remote_tracking() {
     echo "TEST: Herd branch - Existing local branch, existing remote branch, tracking"
     $COMMAND link || exit 1
     $COMMAND prune $EXISTING_REMOTE_BRANCH || exit 1
-    $COMMAND forall -p black-cats -c "git checkout $EXISTING_REMOTE_BRANCH" || exit 1
+    $COMMAND forall black-cats -c "git checkout $EXISTING_REMOTE_BRANCH" || exit 1
     $COMMAND herd $PARALLEL || exit 1
     test_cats_default_herd_branches
     for project in "${black_cats_projects[@]}"; do

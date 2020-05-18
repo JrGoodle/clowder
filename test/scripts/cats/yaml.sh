@@ -27,7 +27,7 @@ test_clowder_yaml() {
     # for test in "${test_cases[@]}"
     # do
     #     print_double_separator
-    #     $COMMAND link -v $test || exit 1
+    #     $COMMAND link $test || exit 1
     #     $COMMAND yaml || exit 1
     #     print_single_separator
     #     $COMMAND yaml -r || exit 1

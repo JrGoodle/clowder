@@ -35,6 +35,6 @@ swift/utils/update-checkout --scheme swift-4.0-branch --match-timestamp
 
 ```bash
 # Assuming repos were previously cloned
-clowder link -v swift-4.0-branch
+clowder link swift-4.0-branch
 clowder reset --timestamp apple/swift
 ```

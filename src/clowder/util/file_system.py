@@ -11,7 +11,7 @@ import shutil
 
 from termcolor import colored
 
-from clowder.error.clowder_exit import ClowderExit
+from clowder.error import ClowderExit
 
 
 def force_symlink(file1: str, file2: str) -> None:
@@ -32,6 +32,21 @@ def force_symlink(file1: str, file2: str) -> None:
         os.remove(file2)
         os.symlink(file1, file2)
         raise ClowderExit(1)
+
+
+def make_dir(directory: str) -> None:
+    """Make directory if it doesn't exist
+
+    :param str directory: Directory path to create
+    :raise OSError:
+    """
+
+    if not os.path.exists(directory):
+        try:
+            os.makedirs(directory)
+        except OSError as err:
+            if err.errno != errno.EEXIST:
+                raise
 
 
 def remove_directory(path: str) -> None:

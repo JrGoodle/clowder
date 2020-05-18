@@ -16,7 +16,7 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
     pushd .clowder || exit 1
     test_branch repo-test
     popd || exit 1
-    clowder link -v ssh || exit 1
+    clowder link ssh || exit 1
 
     $COMMAND herd $PARALLEL || exit 1
 

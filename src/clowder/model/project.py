@@ -7,14 +7,14 @@
 
 import os
 from functools import wraps
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 from termcolor import colored, cprint
 
 import clowder.util.formatting as fmt
 from clowder import CLOWDER_DIR
-from clowder.error.clowder_error import ClowderError
-from clowder.error.clowder_exit import ClowderExit
+from clowder.error import ClowderError
+from clowder.error import ClowderExit
 from clowder.git.project_repo import ProjectRepo
 from clowder.git.project_repo_recursive import ProjectRepoRecursive
 from clowder.git.util import (
@@ -59,12 +59,12 @@ class Project(object):
     :ivar Optional[Fork] fork: Project's associated Fork
     """
 
-    def __init__(self, project: dict, defaults: Defaults, sources: List[Source]):
+    def __init__(self, project: dict, defaults: Defaults, sources: Tuple[Source, ...]):
         """Project __init__
 
         :param dict project: Parsed YAML python object for project
         :param Defaults defaults: Defaults instance
-        :param List[Source] sources: List of Source instances
+        :param Tuple[Source, ...] sources: List of Source instances
         :raise ClowderYAMLError:
         """
 
@@ -483,20 +483,6 @@ class Project(object):
         if self.is_dirty():
             repo = ProjectRepo(self.full_path(), self.remote, self.ref)
             repo.stash()
-
-    def sync(self, rebase: bool = False, parallel: bool = False) -> None:
-        """Sync fork project with upstream remote
-
-        :param bool rebase: Whether to use rebase instead of pulling latest changes
-        :param bool parallel: Whether command is being run in parallel, affects output
-        """
-
-        self._print_output = not parallel
-
-        self.herd(rebase=rebase, parallel=parallel)
-        self._print(self.fork.status())
-        repo = self._repo(self.recursive, parallel=parallel)
-        repo.sync(self.fork.remote, rebase=rebase)
 
     def _print(self, val: str) -> None:
         """Print output if self._print_output is True

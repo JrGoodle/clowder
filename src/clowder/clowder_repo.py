@@ -11,14 +11,8 @@ import os
 from termcolor import colored
 
 import clowder.util.formatting as fmt
-from clowder import (
-    CLOWDER_DIR,
-    CLOWDER_REPO_DIR,
-    CLOWDER_YAML,
-    CURRENT_DIR
-)
-from clowder.error.clowder_error import ClowderError
-from clowder.error.clowder_exit import ClowderExit
+from clowder import CLOWDER_DIR, CLOWDER_REPO_DIR, CLOWDER_YAML, CURRENT_DIR
+from clowder.error import ClowderError, ClowderExit
 from clowder.git.project_repo import ProjectRepo
 from clowder.git.util import existing_git_repository
 from clowder.util.clowder_utils import link_clowder_yaml
@@ -27,8 +21,8 @@ from clowder.util.execute import execute_command
 from clowder.util.file_system import remove_directory
 
 
-clowder_repo_ref = 'refs/heads/master'
-clowder_repo_remote = 'origin'
+clowder_repo_ref: str = 'refs/heads/master'
+clowder_repo_remote: str = 'origin'
 
 
 def add(files: str) -> None:

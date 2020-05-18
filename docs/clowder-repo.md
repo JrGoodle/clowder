@@ -10,4 +10,4 @@ The "clowder repo" is a git repository cloned into the `.clowder` directory when
 
 A `versions` directory can contain versioned `clowder.yaml` files. These can be symlinked with the `clowder link -v` command
 
-For example, `versions/my_version.yaml` would by symlinked by running `clowder link -v my_version`
+For example, `versions/my_version.yaml` would by symlinked by running `clowder link my_version`

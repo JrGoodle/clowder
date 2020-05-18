@@ -56,7 +56,7 @@ test_help() {
     popd || exit 1
 
     echo "TEST: Print help with invalid clowder.yaml"
-    $COMMAND link -v 'test-empty-project' || exit 1
+    $COMMAND link 'test-empty-project' || exit 1
     _test_help
 
     print_double_separator
