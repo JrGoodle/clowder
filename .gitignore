@@ -7,6 +7,7 @@ examples/cats/clowder.yaml
 examples/cats/peru.yaml
 examples/cats/black*
 examples/cats/mu
+examples/cats/mu-cat
 examples/cats/duke
 examples/cats/kit
 examples/cats/kishka
@@ -43,6 +44,7 @@ examples/misc/clowder.yaml
 examples/misc/djinni
 examples/misc/gyp
 examples/misc/sox
+examples/misc/sox-code
 
 # Created by https://www.gitignore.io/api/macos,swift,xcode,vapor,python,swiftpm,pycharm
 

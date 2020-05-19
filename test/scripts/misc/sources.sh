@@ -38,7 +38,7 @@ test_gyp_remotes() {
 }
 
 test_sox_remotes() {
-    pushd sox || exit 1
+    pushd sox-code || exit 1
     test_remote_url 'origin' 'git@github.com:JrGoodle/sox.git'
     test_remote_url 'upstream' 'https://git.code.sf.net/p/sox/code.git'
     popd || exit 1
