@@ -84,5 +84,4 @@ def _reset_impl(clowder: ClowderController, project_names: Tuple[str, ...], time
     projects = filter_projects(clowder.projects, project_names)
     validate_projects(projects)
     for project in projects:
-        print(project.status())
         project.reset(timestamp=timestamp)
