@@ -24,13 +24,19 @@ def add_branch_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
     arguments = [
         (['projects'], dict(metavar='PROJECT', default='all', nargs='*', choices=CLOWDER_CONTROLLER.project_choices,
                             help=options_help_message(CLOWDER_CONTROLLER.project_names,
-                                                      'projects and groups to show branches for'))),
-        (['--all', '-a'], dict(action='store_true', help='show local and remote branches')),
-        (['--remote', '-r'], dict(action='store_true', help='show remote branches'))
+                                                      'projects and groups to show branches for')))
     ]
 
     parser = subparsers.add_parser('branch', help='Display current branches')
     add_parser_arguments(parser, arguments)
+
+    mutually_exclusive_arguments = [
+        (['--all', '-a'], dict(action='store_true', help='show local and remote branches')),
+        (['--remote', '-r'], dict(action='store_true', help='show remote branches'))
+    ]
+    mutually_exclusive_group = parser.add_mutually_exclusive_group()
+    add_parser_arguments(mutually_exclusive_group, mutually_exclusive_arguments)
+
     parser.set_defaults(func=branch)
 
 
@@ -43,13 +49,15 @@ def branch(args) -> None:
 @print_clowder_repo_status
 def _branch(args) -> None:
     """Clowder branch command private implementation"""
-    local = True
-    remote = False
-    if args.all:
+    if args.remote:
+        local = False
+        remote = True
+    elif args.all:
         local = True
         remote = True
-    elif args.remote:
-        remote = True
+    else:
+        local = True
+        remote = False
 
     projects = filter_projects(CLOWDER_CONTROLLER.projects, args.projects)
     for project in projects:

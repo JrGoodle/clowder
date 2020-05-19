@@ -124,6 +124,7 @@ class Project(object):
         """
 
         repo = ProjectRepo(self.full_path(), self.remote, self.ref)
+
         # TODO: Rethink aggressively fetching for printing remote branches
         # if not is_offline() and remote:
         #     if self.fork is None:
@@ -132,7 +133,30 @@ class Project(object):
         #         repo.fetch(self.fork.remote)
         #         repo.fetch(self.remote)
 
-        repo.print_branches(local=local, remote=remote)
+        if self.fork is None:
+            if local:
+                repo.print_local_branches()
+
+            if remote:
+                repo.print_remote_branches()
+            return
+
+        if local:
+            repo.print_local_branches()
+
+        if remote:
+            self._print(fmt.fork_string(self.fork.name))
+            # Modify repo to prefer fork
+            repo.default_ref = self.fork.ref
+            repo.remote = self.fork.remote
+            repo.print_remote_branches()
+
+            self._print(fmt.fork_string(self.name))
+            # Restore repo configuration
+            repo.default_ref = self.ref
+            repo.remote = self.remote
+            repo.print_remote_branches()
+
 
     @project_repo_exists
     def checkout(self, branch: str) -> None:
@@ -305,6 +329,7 @@ class Project(object):
         repo = self._repo(self.recursive, parallel=parallel)
 
         if self.fork is None:
+            self._print(self.status())
             if branch:
                 repo.herd_branch(self._url(), branch, depth=herd_depth, rebase=rebase)
             elif tag:
@@ -316,7 +341,7 @@ class Project(object):
         self._print(self.fork.status())
         repo.configure_remotes(self.remote, self._url(), self.fork.remote, self.fork.url())
 
-        self._print(fmt.fork_string(self.name))
+        self._print(fmt.fork_string(self.fork.name))
         # Modify repo to prefer fork
         repo.default_ref = self.fork.ref
         repo.remote = self.fork.remote
@@ -412,7 +437,7 @@ class Project(object):
         self._print(self.fork.status())
         repo.configure_remotes(self.remote, self._url(), self.fork.remote, self.fork.url())
 
-        self._print(fmt.fork_string(self.name))
+        self._print(fmt.fork_string(self.fork.name))
         if timestamp:
             repo.reset_timestamp(timestamp, self._timestamp_author, self.ref)
             return

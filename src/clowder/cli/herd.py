@@ -90,5 +90,4 @@ def _herd_impl(clowder: ClowderController, project_names: Tuple[str, ...], branc
     projects = filter_projects(clowder.projects, project_names)
     validate_projects(projects)
     for project in projects:
-        print(project.status())
         project.herd(branch=branch, tag=tag, depth=depth, rebase=rebase)

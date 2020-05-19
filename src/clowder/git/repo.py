@@ -323,17 +323,24 @@ class GitRepo(object):
                 index = 1 if upstream else 0
                 return int(str(rev_list_count).split()[index])
 
-    def print_branches(self, local: bool = False, remote: bool = False) -> None:
-        """Print branches
+    def print_local_branches(self) -> None:
+        """Print local git branches"""
 
-        :param bool local: Print local branches
-        :param bool remote: Print remote branches
-        """
+        for branch in self.repo.git.branch().split('\n'):
+            if branch.startswith('* '):
+                print(f"* {colored(branch[2:], 'green')}")
+            else:
+                print(branch)
 
-        if local:
-            self._print_local_branches()
-        if remote:
-            self._print_remote_branches()
+    def print_remote_branches(self) -> None:
+        """Print output if self._print_output is True"""
+
+        for branch in self.repo.git.branch('-r', '-l', f"{self.remote}*").split('\n'):
+            if ' -> ' in branch:
+                components = branch.split(' -> ')
+                print(f"  {colored(components[0], 'red')} -> {components[1]}")
+            else:
+                print(colored(branch, 'red'))
 
     def print_validation(self) -> None:
         """Print validation messages"""
@@ -536,25 +543,6 @@ class GitRepo(object):
 
         if self._print_output:
             print(val)
-
-    def _print_local_branches(self) -> None:
-        """Print local git branches"""
-
-        for branch in self.repo.git.branch().split('\n'):
-            if branch.startswith('* '):
-                print(f"* {colored(branch[2:], 'green')}")
-            else:
-                print(branch)
-
-    def _print_remote_branches(self) -> None:
-        """Print output if self._print_output is True"""
-
-        for branch in self.repo.git.branch('-r').split('\n'):
-            if ' -> ' in branch:
-                components = branch.split(' -> ')
-                print(f"  {colored(components[0], 'red')} -> {components[1]}")
-            else:
-                print(colored(branch), 'red')
 
     def _repo(self) -> Repo:
         """Create Repo instance for self.repo_path
