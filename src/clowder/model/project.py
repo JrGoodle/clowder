@@ -109,7 +109,7 @@ class Project(object):
         if custom_groups:
             groups += custom_groups
         if self.fork is not None:
-            groups += self.fork.name
+            groups += [self.fork.name, fmt.last_path_component(self.fork.name)]
         groups = list(set(groups))
         if 'notdefault' in groups:
             groups.remove('all')

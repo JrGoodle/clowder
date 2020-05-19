@@ -8,10 +8,10 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
 
 export all_projects=( 'djinni' \
                       'gyp' \
-                      'sox' )
+                      'sox-code' )
 
 export master_projects=( 'djinni' \
-                         'sox' )
+                         'sox-code' )
 
 if [ "$ACCESS_LEVEL" == "write" ]; then
     print_double_separator

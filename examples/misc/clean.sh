@@ -10,3 +10,4 @@ rm -f clowder.yaml
 rm -rf djinni
 rm -rf gyp
 rm -rf sox
+rm -rf sox-code
