@@ -18,17 +18,27 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
     ./clean.sh
     ./init.sh || exit 1
 
-    clowder link ssh || exit 1
+    begin_command
+    $COMMAND link ssh || exit 1
+    end_command
 
+    begin_command
     $COMMAND herd $PARALLEL || exit 1
+    end_command
 
     test_prune_remote() {
         print_single_separator
         echo "TEST: Test clowder prune remote branch"
 
+        begin_command
         $COMMAND prune -af prune_branch || exit 1
+        end_command
+        begin_command
         $COMMAND start -t prune_branch || exit 1
+        end_command
+        begin_command
         $COMMAND prune prune_branch || exit 1
+        end_command
 
         for project in "${all_projects[@]}"; do
             pushd $project || exit 1
@@ -37,7 +47,9 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
             popd || exit 1
         done
 
+        begin_command
         $COMMAND prune -r prune_branch || exit 1
+        end_command
 
         for project in "${all_projects[@]}"; do
             pushd $project || exit 1
@@ -51,7 +63,9 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
     test_prune_all() {
         print_single_separator
         echo "TEST: Test clowder prune all - delete local and remote branch"
+        begin_command
         $COMMAND start -t prune_branch || exit 1
+        end_command
 
         for project in "${all_projects[@]}"; do
             pushd $project || exit 1
@@ -60,7 +74,9 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
             popd || exit 1
         done
 
+        begin_command
         $COMMAND prune -af prune_branch || exit 1
+        end_command
 
         for project in "${all_projects[@]}"; do
             pushd $project || exit 1

@@ -11,9 +11,13 @@ test_command() {
     echo "TEST: Clowder command"
     print_single_separator
     echo "TEST: Fail with unrecognized command"
+    begin_command
     $COMMAND cat && exit 1
+    end_command
     echo "TEST: Fail with no arguments"
+    begin_command
     $COMMAND && exit 1
+    end_command
     echo ''
 }
 test_command

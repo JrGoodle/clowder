@@ -16,10 +16,16 @@ test_clowder_yaml() {
     echo "TEST: Test clowder yaml command"
 
     print_double_separator
+    begin_command
     $COMMAND link || exit 1
+    end_command
+    begin_command
     $COMMAND yaml || exit 1
+    end_command
     print_single_separator
+    begin_command
     $COMMAND yaml -r || exit 1
+    end_command
 
     # pushd .clowder/versions || exit 1
     # test_cases=( $(ls -d import-*) )

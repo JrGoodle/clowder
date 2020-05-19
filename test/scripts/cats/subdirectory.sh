@@ -39,12 +39,16 @@ cd "$CATS_EXAMPLE_DIR" || exit 1
 
 ./clean.sh
 ./init.sh || exit 1
+begin_command
 $COMMAND herd $PARALLEL || exit 1
+end_command
 
 test_init_existing_clowder() {
     print_single_separator
     echo "TEST: Fail init with existing .clowder directory in current working directory"
+    begin_command
     $COMMAND init https://github.com/jrgoodle/cats.git && exit 1
+    end_command
 }
 test_init_existing_clowder
 
@@ -52,8 +56,12 @@ test_init_existing_clowder_parent() {
     print_single_separator
     echo "TEST: Successfully init with existing .clowder directory in parent directory"
     pushd mu || exit 1
+    begin_command
     $COMMAND init https://github.com/jrgoodle/cats.git || exit 1
+    end_command
+    begin_command
     $COMMAND herd $PARALLEL || exit 1
+    end_command
     test_cats_default_herd_branches
     # !! Move coverage files to root and clean so further commands work
     cp -a .coverage* ../
@@ -65,20 +73,26 @@ test_init_existing_clowder_parent
 
 ./clean.sh
 ./init.sh || exit 1
+begin_command
 $COMMAND herd $PARALLEL || exit 1
+end_command
 
 test_forall_environment_subdirectory() {
     print_single_separator
     echo "TEST: Check that forall environment variables are set correctly when invoked from subdirectory"
     pushd mu || exit 1
+    begin_command
     $COMMAND forall $PARALLEL "jrgoodle/duke" -c "$TEST_SCRIPT_DIR/test_forall_script_env_duke.sh" || exit 1
+    end_command
     # !! Move coverage files to root and clean so further commands work
     cp -a .coverage* ../
     rm -rf .coverage*
     # !!
     popd || exit 1
     pushd black-cats/kit || exit 1
+    begin_command
     $COMMAND forall $PARALLEL "jrgoodle/duke" -c "$TEST_SCRIPT_DIR/test_forall_script_env_duke.sh" || exit 1
+    end_command
     # !! Move coverage files to root and clean so further commands work
     cp -a .coverage* ../../
     rm -rf .coverage*
@@ -89,28 +103,42 @@ test_forall_environment_subdirectory
 
 ./clean.sh
 ./init.sh || exit 1
+begin_command
 $COMMAND herd $PARALLEL || exit 1
+end_command
 
 test_commands_subdirectory() {
     print_single_separator
     echo "TEST: Check that various commands work when invoked from subdirectory"
     pushd mu || exit 1
+    begin_command
     $COMMAND branch || exit 1
+    end_command
+    begin_command
     $COMMAND status || exit 1
+    end_command
+    begin_command
     $COMMAND link v0.1 || exit 1
+    end_command
+    begin_command
     $COMMAND link || exit 1
+    end_command
     test_no_local_branch_exists 'subdir-branch'
     # !! Move coverage files to root and clean so further commands work
     cp -a .coverage* ../
     rm -rf .coverage*
     # !!
+    begin_command
     $COMMAND start 'subdir-branch' 'jrgoodle/mu' || exit 1
+    end_command
     test_local_branch_exists 'subdir-branch'
     # !! Move coverage files to root and clean so further commands work
     cp -a .coverage* ../
     rm -rf .coverage*
     # !!
+    begin_command
     $COMMAND prune 'subdir-branch' 'jrgoodle/mu' || exit 1
+    end_command
     test_no_local_branch_exists 'subdir-branch'
     # !! Move coverage files to root and clean so further commands work
     cp -a .coverage* ../
@@ -121,16 +149,26 @@ test_commands_subdirectory() {
     test_no_local_branch_exists 'subdir-branch'
     popd || exit 1
     pushd black-cats/kit || exit 1
+    begin_command
     $COMMAND branch || exit 1
+    end_command
+    begin_command
     $COMMAND status || exit 1
+    end_command
+    begin_command
     $COMMAND link v0.1 || exit 1
+    end_command
+    begin_command
     $COMMAND link || exit 1
+    end_command
     test_no_local_branch_exists 'subdir-branch'
     # !! Move coverage files to root and clean so further commands work
     cp -a .coverage* ../../
     rm -rf .coverage*
     # !!
+    begin_command
     $COMMAND start 'subdir-branch' || exit 1
+    end_command
     test_local_branch_exists 'subdir-branch'
     # !! Move coverage files to root and clean so further commands work
     cp -a .coverage* ../../

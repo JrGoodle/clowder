@@ -19,9 +19,15 @@ cd "$CATS_EXAMPLE_DIR" || exit 1
 test_recurse() {
     print_single_separator
     echo "TEST: Herd recursive submodules"
-    clowder link submodules || exit 1
+    begin_command
+    $COMMAND link submodules || exit 1
+    end_command
+    begin_command
     $COMMAND herd $PARALLEL || exit 1
+    end_command
+    begin_command
     $COMMAND status || exit 1
+    end_command
     for project in "${external_projects[@]}"; do
         echo "TEST: Check that $project submodule was initialized"
         if [ ! -f "$project/.git" ]; then
@@ -38,9 +44,15 @@ test_recurse
 test_no_recurse() {
     print_single_separator
     echo "TEST: Herd without updating submodules"
+    begin_command
     $COMMAND link submodules-no-recurse || exit 1
+    end_command
+    begin_command
     $COMMAND herd $PARALLEL || exit 1
+    end_command
+    begin_command
     $COMMAND status || exit 1
+    end_command
     for project in "${external_projects[@]}"; do
         echo "TEST: Check that $project submodule wasn't initialized"
         if [ -f "$project/.git" ]; then

@@ -19,7 +19,9 @@ echo "TEST: Test clowder sources"
 cd "$MISC_EXAMPLE_DIR" || exit 1
 ./clean.sh
 ./init.sh || exit 1
+begin_command
 $COMMAND herd $PARALLEL || exit 1
+end_command
 
 test_djinni_remotes() {
     pushd djinni || exit 1

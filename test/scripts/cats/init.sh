@@ -14,8 +14,12 @@ test_init_herd() {
     echo "TEST: Normal herd after init"
     ./clean.sh
     ./init.sh  || exit 1
+    begin_command
     $COMMAND herd $PARALLEL || exit 1
+    end_command
+    begin_command
     $COMMAND status -f || exit 1
+    end_command
 }
 test_init_herd
 
@@ -24,7 +28,9 @@ test_init_branch() {
     echo "TEST: Test clowder init branch"
 
     ./clean.sh
+    begin_command
     $COMMAND init https://github.com/jrgoodle/cats.git -b no-versions || exit 1
+    end_command
 
     pushd .clowder || exit 1
     test_branch no-versions
@@ -37,8 +43,12 @@ test_init_herd_version() {
     echo "TEST: Herd version after init"
     ./clean.sh || exit 1
     ./init.sh || exit 1
+    begin_command
     $COMMAND link v0.1 || exit 1
+    end_command
+    begin_command
     $COMMAND herd $PARALLEL || exit 1
+    end_command
     # FIXME: Test the state of repos after herd
 }
 test_init_herd_version

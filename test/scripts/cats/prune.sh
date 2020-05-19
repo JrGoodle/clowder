@@ -7,7 +7,9 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
 cd "$CATS_EXAMPLE_DIR" || exit 1
 ./clean.sh
 ./init.sh || exit 1
+begin_command
 $COMMAND herd $PARALLEL || exit 1
+end_command
 
 export black_cats_projects=( 'black-cats/kit' \
                              'black-cats/kishka' \
@@ -27,7 +29,9 @@ test_prune() {
     print_single_separator
     echo "TEST: Test clowder prune branch"
 
+    begin_command
     $COMMAND start prune_branch || exit 1
+    end_command
 
     for project in "${all_projects[@]}"; do
         pushd $project || exit 1
@@ -35,7 +39,9 @@ test_prune() {
         popd || exit 1
     done
 
+    begin_command
     $COMMAND prune -f prune_branch || exit 1
+    end_command
 
     pushd duke || exit 1
     test_branch purr
@@ -52,7 +58,9 @@ test_prune() {
         popd || exit 1
     done
 
+    begin_command
     $COMMAND start prune_branch >/dev/null
+    end_command
 
     for project in "${all_projects[@]}"; do
         pushd $project || exit 1
@@ -60,7 +68,9 @@ test_prune() {
         popd || exit 1
     done
 
+    begin_command
     $COMMAND prune -f prune_branch jrgoodle/kit jrgoodle/kishka || exit 1
+    end_command
 
     pushd black-cats/kit || exit 1
     test_branch master
@@ -71,7 +81,9 @@ test_prune() {
     test_no_local_branch_exists prune_branch
     popd || exit 1
 
+    begin_command
     $COMMAND prune -f prune_branch black-cats || exit 1
+    end_command
 
     pushd duke || exit 1
     test_branch prune_branch
@@ -92,7 +104,9 @@ test_prune_force() {
     print_single_separator
     echo "TEST: Test clowder force prune branch"
 
+    begin_command
     $COMMAND start prune_branch || exit 1
+    end_command
 
     for project in "${all_projects[@]}"; do
         pushd $project || exit 1
@@ -103,7 +117,9 @@ test_prune_force() {
         popd || exit 1
     done
 
+    begin_command
     $COMMAND prune prune_branch && exit 1
+    end_command
 
     for project in "${all_projects[@]}"; do
         pushd $project || exit 1
@@ -111,7 +127,9 @@ test_prune_force() {
         popd || exit 1
     done
 
+    begin_command
     $COMMAND prune -f prune_branch || exit 1
+    end_command
 
     pushd duke || exit 1
     test_branch purr

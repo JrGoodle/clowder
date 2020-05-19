@@ -170,9 +170,15 @@ test_init_herd() {
     echo "TEST: Normal herd after init"
     ./clean.sh
     ./init.sh  || exit 1
+    begin_command
     $COMMAND link travis-ci || exit 1
+    end_command
+    begin_command
     $COMMAND herd $PARALLEL || exit 1
+    end_command
+    begin_command
     $COMMAND status || exit 1
+    end_command
 }
 test_init_herd
 
@@ -190,12 +196,22 @@ test_swift_configs() {
         config_function="test_${config}_branches"
         config_function="${config_function//-/_}"
         config_function="${config_function//./_}"
+        begin_command
         $COMMAND link travis-ci || exit 1
+        end_command
+        begin_command
         $COMMAND herd $PARALLEL || exit 1
+        end_command
         test_default_branches
+        begin_command
         $COMMAND link "$config" || exit 1
+        end_command
+        begin_command
         $COMMAND herd $PARALLEL || exit 1
+        end_command
+        begin_command
         $COMMAND status || exit 1
+        end_command
         "$config_function"
         pushd swift || exit 1
             # need to checkout master for latest update-checkout script changes
@@ -203,10 +219,14 @@ test_swift_configs() {
             git checkout master || exit 1
         popd || exit 1
         ./swift/utils/update-checkout --clone --scheme master --reset-to-remote || exit 1
+        begin_command
         $COMMAND status || exit 1
+        end_command
         test_default_branches
         ./swift/utils/update-checkout --scheme "$config" --clone --reset-to-remote || exit 1
+        begin_command
         $COMMAND status || exit 1
+        end_command
         "$config_function"
     done
 }

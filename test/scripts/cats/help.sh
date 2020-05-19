@@ -13,7 +13,9 @@ print_double_separator
 cd "$CATS_EXAMPLE_DIR" || exit 1
 ./clean.sh
 ./init.sh || exit 1
+begin_command
 $COMMAND herd $PARALLEL || exit 1
+end_command
 
 export commands=( 'branch' \
                   'clean' \
@@ -38,33 +40,45 @@ export commands=( 'branch' \
 _test_help() {
     print_single_separator
     echo "TEST: clowder -h"
+    begin_command
     $COMMAND -h || exit 1
+    end_command
 
     for cmd in "${commands[@]}"; do
         print_single_separator
         echo "TEST: clowder $cmd -h"
+        begin_command
         $COMMAND $cmd -h || exit 1
+        end_command
     done
 }
 
 test_help() {
     print_double_separator
 
+    begin_command
     $COMMAND repo checkout yaml-validation || exit 1
+    end_command
     pushd .clowder || exit 1
     test_branch yaml-validation
     popd || exit 1
 
     echo "TEST: Print help with invalid clowder.yaml"
+    begin_command
     $COMMAND link 'test-empty-project' || exit 1
+    end_command
     _test_help
 
     print_double_separator
     echo "TEST: Print help with valid clowder.yaml"
+    begin_command
     $COMMAND link || exit 1
+    end_command
     _test_help
 
+    begin_command
     $COMMAND repo checkout master || exit 1
+    end_command
     pushd .clowder || exit 1
     test_branch master
     popd || exit 1

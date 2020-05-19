@@ -12,9 +12,13 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
     ./clean.sh
     ./init.sh || exit 1
 
-    clowder link ssh || exit 1
+    begin_command
+    $COMMAND link ssh || exit 1
+    end_command
 
+    begin_command
     $COMMAND herd $PARALLEL || exit 1
+    end_command
 
     test_herd_rebase_conflict() {
         print_single_separator
@@ -34,13 +38,17 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
         test_no_rebase_in_progress
         popd || exit 1
 
+        begin_command
         $COMMAND herd $PARALLEL -r && exit 1
+        end_command
 
         pushd mu || exit 1
         test_rebase_in_progress
         popd || exit 1
 
+        begin_command
         $COMMAND clean -a || exit 1
+        end_command
 
         pushd mu || exit 1
         test_no_rebase_in_progress
