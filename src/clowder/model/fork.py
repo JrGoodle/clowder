@@ -31,13 +31,11 @@ class Fork(object):
     :ivar str ref: Fork git ref
     """
 
-    def __init__(self, fork: dict, path: str, project_source: Source,
-                 recursive: bool, sources: Tuple[Source, ...], defaults: Defaults):
+    def __init__(self, fork: dict, path: str, recursive: bool, sources: Tuple[Source, ...], defaults: Defaults):
         """Project __init__
 
         :param dict fork: Parsed YAML python object for fork
         :param str path: Fork relative path
-        :param Source project_source: Source instance from project
         :param bool recursive: Whether to handle submodules
         :param Tuple[Source, ...] sources: List of Source instances
         :param Defaults defaults: Defaults instance
@@ -65,7 +63,7 @@ class Fork(object):
             self.ref = defaults.ref
 
         self._source = None
-        source_name = fork.get('source', project_source.name)
+        source_name = fork.get('source', defaults.source)
         for s in sources:
             if s.name == source_name:
                 self._source = s

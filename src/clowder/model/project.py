@@ -92,25 +92,28 @@ class Project(object):
             self._commit = defaults.commit
             self.ref = defaults.ref
 
-        groups = ['all', self.name, fmt.last_path_component(self.name), self.path]
-        custom_groups = project.get('groups', None)
-        if custom_groups:
-            groups += custom_groups
-        groups = list(set(groups))
-        if 'notdefault' in groups:
-            groups.remove('all')
-        self.groups = groups
-
         self.source = None
         source_name = project.get('source', defaults.source)
         for source in sources:
             if source.name == source_name:
                 self.source = source
+                break
 
         self.fork = None
         if 'fork' in project:
             fork = project['fork']
-            self.fork = Fork(fork, self.path, self.source, self.recursive, sources, defaults)
+            self.fork = Fork(fork, self.path, self.recursive, sources, defaults)
+
+        groups = ['all', self.name, fmt.last_path_component(self.name), self.path]
+        custom_groups = project.get('groups', None)
+        if custom_groups:
+            groups += custom_groups
+        if self.fork is not None:
+            groups += self.fork.name
+        groups = list(set(groups))
+        if 'notdefault' in groups:
+            groups.remove('all')
+        self.groups = groups
 
     @project_repo_exists
     def branch(self, local: bool = False, remote: bool = False) -> None:
