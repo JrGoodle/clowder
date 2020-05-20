@@ -44,12 +44,10 @@ test_missing_yaml() {
 test_missing_yaml '11'
 
 _test_invalid_yaml() {
-    pushd .clowder/versions || exit 1
     test_cases=( $($1) )
-    popd || exit 1
-
     for test in "${test_cases[@]}"
     do
+        echo "TEST: Validate $test"
         version=${test%'.clowder.yaml'}
         begin_command
         $COMMAND link $version || exit 1

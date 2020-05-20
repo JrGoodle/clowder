@@ -15,9 +15,12 @@ from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.error import ClowderExit
 from clowder.util.clowder_utils import (
     add_parser_arguments,
-    validate_projects
+    validate_project_statuses
 )
-from clowder.util.decorators import valid_clowder_yaml_required
+from clowder.util.decorators import (
+    print_clowder_name,
+    valid_clowder_yaml_required
+)
 from clowder.util.file_system import make_dir
 from clowder.util.yaml import save_yaml
 
@@ -33,14 +36,9 @@ def add_save_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
     parser.set_defaults(func=save)
 
 
-def save(args) -> None:
-    """Clowder save command entry point"""
-
-    _save(args)
-
-
 @valid_clowder_yaml_required
-def _save(args) -> None:
+@print_clowder_name
+def save(args) -> None:
     """Clowder save command private implementation
 
     :raise ClowderExit:
@@ -53,8 +51,9 @@ def _save(args) -> None:
     clowder_repo.print_status()
     CLOWDER_CONTROLLER.validate_projects_exist()
     # TODO: Get all projects
-    validate_projects(CLOWDER_CONTROLLER.projects)
+    validate_project_statuses(CLOWDER_CONTROLLER.projects)
 
+    # TODO: Better validate version name (no spaces, no ~, etc.)
     # Replace path separators with dashes to avoid creating directories
     version_name = args.version.replace('/', '-')
 

@@ -6,14 +6,14 @@
 """
 
 import os
-import pkg_resources
+from pathlib import Path
 from typing import Optional
 
 
-CLOWDER_SCHEMA = pkg_resources.resource_string(__name__, "clowder.schema.json")
-
-
+PRINT_DEBUG_OUTPUT = "CLOWDER_DEBUG" in os.environ
 CURRENT_DIR = os.getcwd()
+CLOWDER_CONFIG_DIR = str(Path.home()/'.config'/'clowder')
+CLOWDER_CONFIG_YAML = str(Path(CLOWDER_CONFIG_DIR)/'clowder.config.yaml')
 CLOWDER_DIR: Optional[str] = None
 CLOWDER_REPO_DIR: Optional[str] = None
 CLOWDER_REPO_VERSIONS_DIR: Optional[str] = None
@@ -32,6 +32,7 @@ while old_dir != temp_dir:
         break
     else:
         temp_dir = os.path.dirname(temp_dir)
+
 
 # If clowder repo exists, try to set other global path variables
 if CLOWDER_REPO_DIR is not None:

@@ -7,6 +7,7 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
 cd "$CATS_EXAMPLE_DIR" || exit 1
 ./clean.sh
 ./init.sh || exit 1
+
 begin_command
 $COMMAND herd $PARALLEL || exit 1
 end_command

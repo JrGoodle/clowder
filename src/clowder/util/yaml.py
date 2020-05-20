@@ -7,6 +7,7 @@
 
 import copy
 import os
+import pkg_resources
 from typing import List, Optional
 
 # noinspection PyPackageRequirements
@@ -15,24 +16,60 @@ import jsonschema
 import yaml as pyyaml
 
 import clowder.util.formatting as fmt
-from clowder import CLOWDER_DIR, CLOWDER_SCHEMA, CLOWDER_YAML
-from clowder.error import ClowderExit
-from clowder.error import ClowderYAMLError, ClowderYAMLErrorType
+from clowder import CLOWDER_CONFIG_YAML, CLOWDER_DIR, CLOWDER_YAML
+from clowder.error import (
+    ClowderExit,
+    ClowderConfigYAMLError, ClowderConfigYAMLErrorType,
+    ClowderYAMLError, ClowderYAMLErrorType
+)
 
 
-def load_yaml() -> dict:
+def load_clowder_config_yaml() -> dict:
+    """Load clowder config from yaml file
+
+    :return: YAML python object
+    :rtype: dict
+    Raises:
+        ClowderExit
+        ClowderConfigYAMLError
+    """
+
+    try:
+        with open(CLOWDER_CONFIG_YAML) as raw_file:
+            parsed_yaml = pyyaml.safe_load(raw_file)
+            if parsed_yaml is None:
+                raise ClowderConfigYAMLError(fmt.error_empty_yaml(CLOWDER_CONFIG_YAML, 'clowder.config.yaml'),
+                                             ClowderConfigYAMLErrorType.EMPTY_FILE)
+            return parsed_yaml
+    except pyyaml.YAMLError:
+        raise ClowderConfigYAMLError(fmt.error_open_file(CLOWDER_CONFIG_YAML),
+                                     ClowderConfigYAMLErrorType.OPEN_FILE)
+    except (KeyboardInterrupt, SystemExit):
+        raise ClowderExit(1)
+
+
+def load_clowder_yaml() -> dict:
     """Load clowder from yaml file
 
     :return: YAML python object
     :rtype: dict
-    :raise ClowderYAMLError:
+    Raises:
+        ClowderExit
+        ClowderYAMLError
     """
 
-    parsed_yaml = _parse_yaml(CLOWDER_YAML)
-    if 'depth' not in parsed_yaml['defaults']:
-        parsed_yaml['defaults']['depth'] = 0
-
-    return parsed_yaml
+    try:
+        with open(CLOWDER_YAML) as raw_file:
+            parsed_yaml = pyyaml.safe_load(raw_file)
+            if parsed_yaml is None:
+                raise ClowderYAMLError(fmt.error_empty_yaml(CLOWDER_YAML, 'clowder.yaml'),
+                                       ClowderYAMLErrorType.EMPTY_FILE)
+            return parsed_yaml
+    except pyyaml.YAMLError:
+        raise ClowderYAMLError(fmt.error_open_file(CLOWDER_YAML),
+                               ClowderYAMLErrorType.OPEN_FILE)
+    except (KeyboardInterrupt, SystemExit):
+        raise ClowderExit(1)
 
 
 def print_yaml() -> None:
@@ -56,7 +93,7 @@ def save_yaml(yaml_output: dict, yaml_file: str) -> None:
 
     try:
         with open(yaml_file, 'w') as raw_file:
-            print(" - Save yaml to file")
+            print(f" - Save yaml to file at {fmt.path_string(yaml_file)}")
             pyyaml.safe_dump(yaml_output, raw_file, default_flow_style=False, indent=4)
     except pyyaml.YAMLError:
         print(fmt.error_save_file(yaml_file))
@@ -65,24 +102,40 @@ def save_yaml(yaml_output: dict, yaml_file: str) -> None:
         raise ClowderExit(1)
 
 
-def validate_yaml() -> None:
-    """Validate clowder.yaml
+def validate_clowder_config_yaml(parsed_yaml: dict) -> None:
+    """Validate clowder.config.yaml
 
     Raises:
         ClowderExit
         ClowderYAMLError
     """
 
-    json_schema = _load_json_schema()
-    parsed_yaml = _parse_yaml(CLOWDER_YAML)
-    parsed_yaml_copy = copy.deepcopy(parsed_yaml)
+    json_schema = _load_clowder_config_json_schema()
     try:
         jsonschema.validate(parsed_yaml, json_schema)
     except jsonschema.exceptions.ValidationError as err:
-        error_message = f"{fmt.error_invalid_yaml()}\n{fmt.ERROR} {err.message}"
+        error_message = f"{fmt.error_invalid_clowder_config_yaml()}\n{fmt.ERROR} {err.message}"
         raise ClowderYAMLError(error_message, ClowderYAMLErrorType.JSONSCHEMA_VALIDATION_FAILED)
 
-    _validate_yaml_contents(parsed_yaml_copy, CLOWDER_YAML)
+
+def validate_clowder_yaml(parsed_yaml: dict) -> None:
+    """Validate clowder.yaml
+
+    :param dict parsed_yaml: Parsed yaml dictionary
+    Raises:
+        ClowderExit
+        ClowderYAMLError
+    """
+
+    json_schema = _load_clowder_json_schema()
+    parsed_yaml_content_validation_copy = copy.deepcopy(parsed_yaml)
+    try:
+        jsonschema.validate(parsed_yaml, json_schema)
+    except jsonschema.exceptions.ValidationError as err:
+        error_message = f"{fmt.error_invalid_clowder_yaml()}\n{fmt.ERROR} {err.message}"
+        raise ClowderYAMLError(error_message, ClowderYAMLErrorType.JSONSCHEMA_VALIDATION_FAILED)
+
+    _validate_yaml_contents(parsed_yaml_content_validation_copy, CLOWDER_YAML)
 
 
 def _check_for_duplicates(list_of_elements: List[str]) -> Optional[str]:
@@ -127,37 +180,26 @@ def _format_yaml_file(yaml_file: str) -> str:
     return f"\n{fmt.path_string(path)}\n"
 
 
-def _load_json_schema() -> dict:
-    """Return json schema file
+def _load_clowder_config_json_schema() -> dict:
+    """Return json schema file for clowder.config.yaml
 
     :return: Loaded json dict
     :rtype: dict
     """
 
-    return pyyaml.safe_load(CLOWDER_SCHEMA)
+    clowder_config_schema = pkg_resources.resource_string(__name__, "clowder.config.schema.json")
+    return pyyaml.safe_load(clowder_config_schema)
 
 
-def _parse_yaml(yaml_file: str) -> dict:
-    """Parse yaml file
+def _load_clowder_json_schema() -> dict:
+    """Return json schema file for clowder.yaml
 
-    :param str yaml_file: Path to yaml file
-    :return: YAML python object
+    :return: Loaded json dict
     :rtype: dict
-    Raises:
-        ClowderExit
-        ClowderYAMLError
     """
 
-    try:
-        with open(yaml_file) as raw_file:
-            parsed_yaml = pyyaml.safe_load(raw_file)
-            if parsed_yaml is None:
-                raise ClowderYAMLError(fmt.error_empty_yaml(yaml_file), ClowderYAMLErrorType.EMPTY_FILE)
-            return parsed_yaml
-    except pyyaml.YAMLError:
-        raise ClowderYAMLError(fmt.error_open_file(yaml_file), ClowderYAMLErrorType.OPEN_FILE)
-    except (KeyboardInterrupt, SystemExit):
-        raise ClowderExit(1)
+    clowder_schema = pkg_resources.resource_string(__name__, "clowder.schema.json")
+    return pyyaml.safe_load(clowder_schema)
 
 
 def _print_yaml(yaml_file: str) -> None:
@@ -193,6 +235,7 @@ def _print_yaml_path(yaml_file: str) -> None:
         print(_format_yaml_file(yaml_file))
 
 
+# TODO: Should probably just go ahead and move this logic into ClowderController to reduce duplication
 def _validate_yaml_contents(yaml: dict, yaml_file: str) -> None:
     """Validate contents in clowder loaded from yaml file
 
@@ -200,7 +243,7 @@ def _validate_yaml_contents(yaml: dict, yaml_file: str) -> None:
     :param str yaml_file: Path to yaml file
     """
 
-    err_prefix = f"{fmt.error_invalid_yaml()}\n{fmt.ERROR} "
+    err_prefix = f"{fmt.error_invalid_clowder_yaml()}\n{fmt.ERROR} "
 
     sources = []
     for source in yaml['sources']:

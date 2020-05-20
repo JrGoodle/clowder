@@ -1,5 +1,8 @@
 # Example files
 
+test/config/*/invalid/*.json
+test/config/*/*.json
+
 examples/cats/cached
 examples/cats/clowder
 examples/cats/.clowder

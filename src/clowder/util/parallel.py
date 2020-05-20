@@ -14,16 +14,19 @@ import psutil
 from termcolor import cprint
 
 import clowder.util.formatting as fmt
-from clowder.clowder_controller import ClowderController
+from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.error import ClowderExit
-from clowder.model.project import Project
-from clowder.util.progress import Progress
-from clowder.util.clowder_utils import (
-    filter_projects,
-    print_parallel_projects_output
-)
+from clowder.model import Project
+
+from .progress import Progress
 
 if os.name == "posix":
+
+    __clowder_results__ = []
+    __clowder_pool__: Optional[mp.Pool] = None
+    __clowder_progress__: Optional[Progress] = None
+    __clowder_parent_id__ = os.getpid()
+
     def herd_project(project: Project, branch: str, tag: str, depth: int, rebase: bool) -> None:
         """Herd command wrapper function for multiprocessing Pool execution
 
@@ -64,8 +67,6 @@ if os.name == "posix":
         del val
         __clowder_progress__.update()
 
-    __clowder_parent_id__ = os.getpid()
-
     def worker_init() -> None:
         """
         Process pool terminator
@@ -91,10 +92,6 @@ if os.name == "posix":
 
         signal.signal(signal.SIGINT, sig_int)
 
-    __clowder_results__ = []
-    __clowder_pool__ = mp.Pool(initializer=worker_init)
-    __clowder_progress__ = Progress()
-
     def forall_parallel(commands: List[str], projects: Tuple[Project, ...], ignore_errors: bool) -> None:
         """Runs command or script for projects in parallel
 
@@ -112,6 +109,11 @@ if os.name == "posix":
         for cmd in commands:
             print('\n' + fmt.command(cmd))
 
+        global __clowder_pool__
+        __clowder_pool__ = mp.Pool(initializer=worker_init)
+        global __clowder_progress__
+        __clowder_progress__ = Progress()
+
         for project in projects:
             result = __clowder_pool__.apply_async(run_project, args=(project, commands, ignore_errors),
                                                   callback=async_callback)
@@ -119,12 +121,11 @@ if os.name == "posix":
 
         pool_handler(len(projects))
 
-    def herd_parallel(clowder: ClowderController, project_names: Tuple[str, ...], branch: Optional[str] = None,
+    def herd_parallel(projects: Tuple[Project, ...], branch: Optional[str] = None,
                       tag: Optional[str] = None, depth: Optional[int] = None, rebase: bool = False) -> None:
         """Clone projects or update latest from upstream in parallel
 
-        :param ClowderController clowder: ClowderController instance
-        :param Tuple[str, ...] project_names: Project names to herd
+        :param Tuple[Project, ...] projects: Projects to herd
         :param Optional[str] branch: Branch to attempt to herd
         :param Optional[str] tag: Tag to attempt to herd
         :param Optional[int] depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
@@ -132,9 +133,12 @@ if os.name == "posix":
         """
 
         print(' - Herd projects in parallel\n')
-        clowder.validate_print_output(project_names=project_names)
+        CLOWDER_CONTROLLER.validate_print_output(projects)
 
-        projects = filter_projects(clowder.projects, project_names)
+        global __clowder_pool__
+        __clowder_pool__ = mp.Pool(initializer=worker_init)
+        global __clowder_progress__
+        __clowder_progress__ = Progress()
 
         for project in projects:
             result = __clowder_pool__.apply_async(herd_project,
@@ -144,23 +148,24 @@ if os.name == "posix":
 
         pool_handler(len(projects))
 
-    def reset_parallel(clowder: ClowderController, project_names: Tuple[str, ...],
-                       timestamp_project: Optional[str] = None) -> None:
+    def reset_parallel(projects: Tuple[Project, ...], timestamp_project: Optional[str] = None) -> None:
         """Reset project branches to upstream or checkout tag/sha as detached HEAD in parallel
 
-        :param ClowderController clowder: ClowderController instance
-        :param Tuple[str, ...] project_names: Project names to reset
+        :param Tuple[Project, ...] projects: Project names to reset
         :param Optional[str] timestamp_project: Reference project to checkout other project commit timestamps relative to # noqa
         """
 
         print(' - Reset projects in parallel\n')
+        CLOWDER_CONTROLLER.validate_print_output(projects)
+
         timestamp = None
         if timestamp_project:
-            timestamp = clowder.get_timestamp(timestamp_project)
+            timestamp = CLOWDER_CONTROLLER.get_timestamp(timestamp_project)
 
-        clowder.validate_print_output(project_names=project_names)
-
-        projects = filter_projects(clowder.projects, project_names)
+        global __clowder_pool__
+        __clowder_pool__ = mp.Pool(initializer=worker_init)
+        global __clowder_progress__
+        __clowder_progress__ = Progress()
 
         for project in projects:
             result = __clowder_pool__.apply_async(reset_project, args=(project, timestamp), callback=async_callback)
@@ -206,14 +211,13 @@ else:
 
         print(' - Parallel commands are only available on posix operating systems\n')
 
-    def herd_parallel(clowder: ClowderController, project_names: Tuple[str, ...], branch: Optional[str] = None, # noqa
+    def herd_parallel(projects: Tuple[Project, ...], branch: Optional[str] = None, # noqa
                       tag: Optional[str] = None, depth: Optional[int] = None, rebase: bool = False) -> None: # noqa
         """Stub for non-posix herd parallel command"""
 
         print(' - Parallel commands are only available on posix operating systems\n')
 
-    def reset_parallel(clowder: ClowderController, project_names: Tuple[str, ...], # noqa
-                       timestamp_project: Optional[str] = None) -> None: # noqa
+    def reset_parallel(projects: Tuple[Project, ...], timestamp_project: Optional[str] = None) -> None: # noqa
         """Stub for non-posix reset parallel command"""
 
         print(' - Parallel commands are only available on posix operating systems\n')

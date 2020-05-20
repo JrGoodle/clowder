@@ -59,6 +59,14 @@ class CatsController(ArgparseController):
         self._execute_command('./clean.sh', self.path)
 
     @expose(
+        help='Run cats config tests'
+    )
+    def config(self) -> None:
+        """clowder cats config tests"""
+
+        self._execute_command('./config.sh', self.path)
+
+    @expose(
         help='Run cats diff tests'
     )
     def diff(self) -> None:

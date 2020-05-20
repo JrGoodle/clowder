@@ -7,15 +7,16 @@
 
 import argparse
 
+import clowder.util.formatting as fmt
 from clowder import CLOWDER_DIR
 from clowder.util.clowder_utils import (
     add_parser_arguments,
     get_saved_version_names,
-    link_clowder_yaml,
-    options_help_message
+    link_clowder_yaml
 )
 from clowder.util.decorators import (
-    clowder_required,
+    print_clowder_name,
+    clowder_repo_required,
     print_clowder_repo_status
 )
 
@@ -26,7 +27,7 @@ def add_link_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
 
     arguments = [
         (['version'], dict(metavar='VERSION', choices=versions, nargs='?', default=None,
-                           help=options_help_message(versions, 'version to symlink')))
+                           help=fmt.options_help_message(versions, 'version to symlink')))
     ]
 
     parser = subparsers.add_parser('link', help='Symlink clowder.yaml version')
@@ -34,15 +35,10 @@ def add_link_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
     parser.set_defaults(func=link)
 
 
-def link(args) -> None:
-    """Clowder link command entry point"""
-
-    _link(args)
-
-
-@clowder_required
+@clowder_repo_required
+@print_clowder_name
 @print_clowder_repo_status
-def _link(args) -> None:
+def link(args) -> None:
     """Clowder link command private implementation"""
 
     link_clowder_yaml(CLOWDER_DIR, args.version)

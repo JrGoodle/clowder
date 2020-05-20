@@ -11,15 +11,15 @@ from git import GitError
 from termcolor import colored
 
 import clowder.util.formatting as fmt
-from clowder.error import ClowderError, ClowderGitError
-from clowder.git.project_repo_impl import ProjectRepoImpl
-from clowder.git.util import (
+from clowder.error import ClowderGitError
+from clowder.util.connectivity import is_offline
+
+from .project_repo_impl import ProjectRepoImpl
+from .util import (
     existing_git_repository,
     ref_type,
     truncate_ref
 )
-from clowder.util.connectivity import is_offline
-from clowder.util.execute import execute_command
 
 __project_repo_default_ref__ = 'refs/heads/master'
 __project_repo_default_remote__ = 'origin'
@@ -323,9 +323,9 @@ class ProjectRepo(ProjectRepoImpl):
             except ClowderGitError:
                 self._exit()
         else:
-            print(f' - {fmt.ref_string(branch)} already exists')
+            self._print(f' - {fmt.ref_string(branch)} already exists')
             if self._is_branch_checked_out(branch):
-                print(' - On correct branch')
+                self._print(' - On correct branch')
             else:
                 try:
                     self._checkout_branch_local(branch)

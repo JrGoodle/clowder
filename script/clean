@@ -37,6 +37,8 @@ clean_clowder_test() {
     pushd $REPO_PATH || exit 1
     sudo -H pip3 uninstall clowder_test
     popd || exit 1
+    sudo -H rm -rf $REPO_PATH/test/config/*/invalid/*.json
+    sudo -H rm -rf $REPO_PATH/test/config/*/*.json
 }
 
 clean_examples() {

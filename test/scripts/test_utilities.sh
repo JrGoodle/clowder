@@ -252,7 +252,7 @@ test_directory_exists() {
 }
 
 test_no_directory_exists() {
-    echo "TEST: No drectory $1 exists"
+    echo "TEST: No directory $1 exists"
     if [ -d "$1" ]; then
         exit 1
     fi

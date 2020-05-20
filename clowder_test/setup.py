@@ -29,5 +29,5 @@ setup(
             'clowder-test=clowder_test.clowder_test_app:main',
         ]
     },
-    install_requires=['cement', 'colorama', 'coverage', 'cprint', 'psutil', 'termcolor']
+    install_requires=['cement', 'colorama', 'coverage', 'cprint', 'psutil', 'remarshal', 'termcolor']
 )

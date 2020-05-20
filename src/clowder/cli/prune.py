@@ -6,22 +6,24 @@
 """
 
 import argparse
-from typing import Tuple
+from typing import List, Tuple
 
 from termcolor import cprint
 
-from clowder.clowder_controller import CLOWDER_CONTROLLER, ClowderController
+import clowder.util.formatting as fmt
+from clowder.clowder_controller import CLOWDER_CONTROLLER
+from clowder.config import Config
 from clowder.error import ClowderError
-from clowder.model.project import Project
+from clowder.model import Project
 from clowder.util.clowder_utils import (
     add_parser_arguments,
     existing_branch_projects,
     filter_projects,
-    options_help_message,
-    validate_projects
+    validate_project_statuses
 )
 from clowder.util.connectivity import network_connection_required
 from clowder.util.decorators import (
+    print_clowder_name,
     print_clowder_repo_status,
     valid_clowder_yaml_required
 )
@@ -31,10 +33,10 @@ def add_prune_parser(subparsers: argparse._SubParsersAction): # noqa
 
     arguments = [
         (['branch'], dict(help='name of branch to remove', metavar='BRANCH')),
-        (['projects'], dict(metavar='PROJECT', default='all', nargs='*',
-                            choices=CLOWDER_CONTROLLER.project_choices,
-                            help=options_help_message(CLOWDER_CONTROLLER.project_names,
-                                                      'projects and groups to prune'))),
+        (['projects'], dict(metavar='PROJECT', default='default', nargs='*',
+                            choices=CLOWDER_CONTROLLER.project_choices_with_default,
+                            help=fmt.options_help_message(CLOWDER_CONTROLLER.project_choices,
+                                                          'projects and groups to prune'))),
         (['--force', '-f'], dict(action='store_true', help='force prune branches'))
     ]
 
@@ -51,15 +53,10 @@ def add_prune_parser(subparsers: argparse._SubParsersAction): # noqa
     parser.set_defaults(func=prune)
 
 
-def prune(args) -> None:
-    """Clowder prune command entry point"""
-
-    _prune(args)
-
-
 @valid_clowder_yaml_required
+@print_clowder_name
 @print_clowder_repo_status
-def _prune(args) -> None:
+def prune(args) -> None:
     """Clowder prune command private implementation"""
 
     if args.all:
@@ -70,39 +67,39 @@ def _prune(args) -> None:
         _prune_remote(args)
         return
 
-    _prune_impl(CLOWDER_CONTROLLER, args.projects, args.branch,
-                force=args.force, local=True)
+    _prune_impl(args.projects, args.branch, force=args.force, local=True)
 
 
 @network_connection_required
 def _prune_all(args) -> None:
     """clowder prune all command"""
 
-    _prune_impl(CLOWDER_CONTROLLER, args.projects, args.branch,
-                force=args.force, local=True, remote=True)
+    _prune_impl(args.projects, args.branch, force=args.force, local=True, remote=True)
 
 
 @network_connection_required
 def _prune_remote(args) -> None:
     """clowder prune remote command"""
 
-    _prune_impl(CLOWDER_CONTROLLER, args.projects, args.branch, remote=True)
+    _prune_impl(args.projects, args.branch, remote=True)
 
 
-def _prune_impl(clowder: ClowderController, project_names: Tuple[str, ...], branch: str, force: bool = False,
+def _prune_impl(project_names: List[str], branch: str, force: bool = False,
                 local: bool = False, remote: bool = False) -> None:
     """Prune branches
 
-    :param ClowderController clowder: ClowderController instance
-    :param Tuple[str, ...] project_names: Project names to prune
+    :param List[str] project_names: Project names to prune
     :param str branch: Branch to prune
     :param bool force: Force delete branch
     :param bool local: Delete local branch
     :param bool remote: Delete remote branch
     """
 
-    projects = filter_projects(clowder.projects, project_names)
-    validate_projects(projects)
+    config = Config(CLOWDER_CONTROLLER.name, CLOWDER_CONTROLLER.project_choices)
+    projects = config.process_projects_arg(project_names)
+    projects = filter_projects(CLOWDER_CONTROLLER.projects, projects)
+
+    validate_project_statuses(projects)
     _prune_projects(projects, branch, force=force, local=local, remote=remote)
 
 

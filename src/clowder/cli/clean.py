@@ -8,13 +8,16 @@
 import argparse
 from typing import Tuple
 
-from clowder.clowder_controller import CLOWDER_CONTROLLER, ClowderController
+import clowder.util.formatting as fmt
+from clowder.clowder_controller import CLOWDER_CONTROLLER
+from clowder.config import Config
+from clowder.model import Project
 from clowder.util.clowder_utils import (
     add_parser_arguments,
-    filter_projects,
-    options_help_message
+    filter_projects
 )
 from clowder.util.decorators import (
+    print_clowder_name,
     print_clowder_repo_status,
     valid_clowder_yaml_required
 )
@@ -23,10 +26,10 @@ from clowder.util.decorators import (
 def add_clean_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
 
     arguments = [
-        (['projects'], dict(metavar='PROJECT', default='all', nargs='*',
-                            choices=CLOWDER_CONTROLLER.project_choices,
-                            help=options_help_message(CLOWDER_CONTROLLER.project_names,
-                                                      'projects and groups to clean'))),
+        (['projects'], dict(metavar='PROJECT', default='default', nargs='*',
+                            choices=CLOWDER_CONTROLLER.project_choices_with_default,
+                            help=fmt.options_help_message(CLOWDER_CONTROLLER.project_choices,
+                                                          'projects and groups to clean'))),
         (['--recursive', '-r'], dict(action='store_true', help='clean submodules recursively'))
     ]
 
@@ -46,19 +49,17 @@ def add_clean_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
     parser.set_defaults(func=clean)
 
 
-def clean(args) -> None:
-    """Clowder clean command entry point"""
-
-    _clean(args)
-
-
 @valid_clowder_yaml_required
+@print_clowder_name
 @print_clowder_repo_status
-def _clean(args) -> None:
+def clean(args) -> None:
     """Clowder clean command private implementation"""
 
+    config = Config(CLOWDER_CONTROLLER.name, CLOWDER_CONTROLLER.project_choices)
+    projects = config.process_projects_arg(args.projects)
+    projects = filter_projects(CLOWDER_CONTROLLER.projects, projects)
+
     if args.all:
-        projects = filter_projects(CLOWDER_CONTROLLER.projects, args.projects)
         for project in projects:
             print(project.status())
             project.clean_all()
@@ -73,15 +74,13 @@ def _clean(args) -> None:
         clean_args += 'X'
     if args.x:
         clean_args += 'x'
-    _clean_impl(CLOWDER_CONTROLLER, args.projects, clean_args=clean_args, recursive=args.recursive)
+    _clean_impl(projects, clean_args=clean_args, recursive=args.recursive)
 
 
-def _clean_impl(clowder: ClowderController, project_names: Tuple[str, ...],
-                clean_args: str = '', recursive: bool = False) -> None:
+def _clean_impl(projects: Tuple[Project, ...], clean_args: str = '', recursive: bool = False) -> None:
     """Discard changes
 
-    :param ClowderController clowder: ClowderController instance
-    :param Tuple[str, ...] project_names: Project names to clean
+    :param Tuple[Project, ...] projects: Projects to clean
     :param str clean_args: Git clean options
         - ``d`` Remove untracked directories in addition to untracked files
         - ``f`` Delete directories with .git sub directory or file
@@ -90,7 +89,6 @@ def _clean_impl(clowder: ClowderController, project_names: Tuple[str, ...],
     :param bool recursive: Clean submodules recursively
     """
 
-    projects = filter_projects(clowder.projects, project_names)
     for project in projects:
         print(project.status())
         project.clean(args=clean_args, recursive=recursive)

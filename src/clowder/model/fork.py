@@ -18,8 +18,9 @@ from clowder.git.util import (
     format_git_tag,
     git_url
 )
-from clowder.model.defaults import Defaults
-from clowder.model.source import Source
+
+from .defaults import Defaults
+from .source import Source
 
 
 class Fork(object):

@@ -4,9 +4,9 @@ import os
 import sys
 import unittest
 
-from clowder.model.defaults import Defaults
+from clowder.model import Defaults
 from clowder.model.group import Group
-from clowder.model.source import Source
+from clowder.model import Source
 from unittests.shared import (
     __defaults_yaml__,
     __github_source_yaml__,

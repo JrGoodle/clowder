@@ -26,17 +26,18 @@ setup(
     ],
     packages=['clowder',
               'clowder.cli',
+              'clowder.config',
               'clowder.error',
               'clowder.git',
               'clowder.model',
               'clowder.util'],
     package_data={
-        "clowder": ["clowder.schema.json"],
+        "clowder.util": ["clowder.schema.json", "clowder.config.schema.json"],
     },
     entry_points={
         'console_scripts': [
             'clowder=clowder.clowder_app:main',
         ]
     },
-    install_requires=['colorama', 'jsonschema', 'GitPython', 'PyYAML', 'termcolor', 'psutil', 'tqdm']
+    install_requires=['argcomplete', 'colorama', 'jsonschema', 'GitPython', 'PyYAML', 'termcolor', 'psutil', 'tqdm']
 )

@@ -8,6 +8,7 @@
 from clowder.cli.branch import add_branch_parser
 from clowder.cli.checkout import add_checkout_parser
 from clowder.cli.clean import add_clean_parser
+from clowder.cli.config import add_config_parser
 from clowder.cli.diff import add_diff_parser
 from clowder.cli.forall import add_forall_parser
 from clowder.cli.herd import add_herd_parser

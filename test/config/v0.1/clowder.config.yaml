@@ -1,0 +1,11 @@
+version: 0.1
+
+clowder_configs:
+  - name: cats
+    clowder_dir: DIRECTORY_PLACEHOLDER
+    defaults:
+      parallel: true
+      projects: [jrgoodle/kit, jrgoodle/kishka]
+      protocol: https
+      rebase: true
+
