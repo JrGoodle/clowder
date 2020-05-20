@@ -74,6 +74,7 @@ class Project(object):
         self.depth = project.get('depth', defaults.depth)
         self.recursive = project.get('recursive', defaults.recursive)
         self._timestamp_author = project.get('timestamp_author', defaults.timestamp_author)
+        self._lfs = project.get('lfs', defaults.lfs)
         self._print_output = True
 
         self._branch = project.get("branch", None)
@@ -136,14 +137,12 @@ class Project(object):
         if self.fork is None:
             if local:
                 repo.print_local_branches()
-
             if remote:
                 repo.print_remote_branches()
             return
 
         if local:
             repo.print_local_branches()
-
         if remote:
             self._print(fmt.fork_string(self.fork.name))
             # Modify repo to prefer fork
@@ -157,7 +156,6 @@ class Project(object):
             repo.remote = self.remote
             repo.print_remote_branches()
 
-
     @project_repo_exists
     def checkout(self, branch: str) -> None:
         """Checkout branch
@@ -165,7 +163,9 @@ class Project(object):
         :param str branch: Branch to check out
         """
 
-        self._repo(self.recursive).checkout(branch, allow_failure=True)
+        repo = self._repo(self.recursive)
+        repo.checkout(branch, allow_failure=True)
+        self._pull_lfs(repo)
 
     @project_repo_exists
     def clean(self, args: str = '', recursive: bool = False) -> None:
@@ -330,12 +330,15 @@ class Project(object):
 
         if self.fork is None:
             self._print(self.status())
+
             if branch:
                 repo.herd_branch(self._url(), branch, depth=herd_depth, rebase=rebase)
             elif tag:
                 repo.herd_tag(self._url(), tag, depth=herd_depth, rebase=rebase)
             else:
                 repo.herd(self._url(), depth=herd_depth, rebase=rebase)
+            self._pull_lfs(repo)
+
             return
 
         self._print(self.fork.status())
@@ -351,6 +354,7 @@ class Project(object):
             repo.herd_tag(self.fork.url(), tag, depth=herd_depth, rebase=rebase)
         else:
             repo.herd(self.fork.url(), depth=herd_depth, rebase=rebase)
+        self._pull_lfs(repo)
 
         self._print(fmt.fork_string(self.name))
         # Restore repo configuration
@@ -429,9 +433,11 @@ class Project(object):
         if self.fork is None:
             if timestamp:
                 repo.reset_timestamp(timestamp, self._timestamp_author, self.ref)
+                self._pull_lfs(repo)
                 return
 
             repo.reset(depth=self.depth)
+            self._pull_lfs(repo)
             return
 
         self._print(self.fork.status())
@@ -440,9 +446,11 @@ class Project(object):
         self._print(fmt.fork_string(self.fork.name))
         if timestamp:
             repo.reset_timestamp(timestamp, self._timestamp_author, self.ref)
+            self._pull_lfs(repo)
             return
 
         repo.reset()
+        self._pull_lfs(repo)
 
     def run(self, commands: List[str], ignore_errors: bool, parallel: bool = False) -> None:
         """Run commands or script in project directory
@@ -512,6 +520,17 @@ class Project(object):
         if self.is_dirty():
             repo = ProjectRepo(self.full_path(), self.remote, self.ref)
             repo.stash()
+
+    def _pull_lfs(self, repo: ProjectRepo) -> None:
+        """Check if git lfs is installed and if not install them
+
+        :param ProjectRepo repo: Repo object
+        """
+        if not self._lfs:
+            return
+
+        repo.install_lfs_hooks()
+        repo.pull_lfs()
 
     def _print(self, val: str) -> None:
         """Print output if self._print_output is True
