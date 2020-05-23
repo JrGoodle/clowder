@@ -12,12 +12,13 @@ from typing import Optional
 
 
 PRINT_DEBUG_OUTPUT = "CLOWDER_DEBUG" in os.environ
-logging.basicConfig()
-if PRINT_DEBUG_OUTPUT:
-    logging.getLogger("CLOWDER DEBUG").setLevel(logging.DEBUG)
-else:
-    logging.getLogger("CLOWDER DEBUG").setLevel(logging.ERROR)
-LOG_DEBUG = logging.getLogger("CLOWDER DEBUG")
+# logging.basicConfig()
+# logging.raiseExceptions = True
+# if PRINT_DEBUG_OUTPUT:
+#     logging.getLogger("CLOWDER DEBUG").setLevel(logging.DEBUG)
+# else:
+#     logging.getLogger("CLOWDER DEBUG").setLevel(logging.ERROR)
+# LOG_DEBUG = logging.getLogger("CLOWDER DEBUG")
 
 CURRENT_DIR = Path.cwd()
 CLOWDER_CONFIG_DIR = Path.home() / '.config' / 'clowder'

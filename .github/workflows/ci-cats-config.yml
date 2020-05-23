@@ -21,6 +21,7 @@ jobs:
     env:
       PYTHON_VERSION: ${{ matrix.python-version }}
       OS_NAME: ${{ matrix.os }}
+      CLOWDER_DEBUG: true
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
