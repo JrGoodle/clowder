@@ -5,6 +5,7 @@
 
 """
 
+from pathlib import Path
 from typing import Optional
 
 from git import GitError
@@ -35,10 +36,10 @@ class ProjectRepo(ProjectRepoImpl):
     :ivar Repo repo: Repo instance
     """
 
-    def __init__(self, repo_path: str, remote: str, default_ref: str, parallel: bool = False):
+    def __init__(self, repo_path: Path, remote: str, default_ref: str, parallel: bool = False):
         """ProjectRepo __init__
 
-        :param str repo_path: Absolute path to repo
+        :param Path repo_path: Absolute path to repo
         :param str remote: Default remote name
         :param str default_ref: Default ref
         :param bool parallel: Whether command is being run in parallel, affects output. Defaults to False

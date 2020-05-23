@@ -6,7 +6,6 @@
 """
 
 import argparse
-import os
 
 from termcolor import colored, cprint
 
@@ -37,7 +36,7 @@ def init(args) -> None:
     :raise ClowderExit:
     """
 
-    clowder_repo_dir = os.path.join(CURRENT_DIR, '.clowder')
+    clowder_repo_dir = CURRENT_DIR / '.clowder'
     if existing_git_repository(clowder_repo_dir):
         cprint('Clowder already initialized in this directory\n', 'red')
         raise ClowderExit(1)

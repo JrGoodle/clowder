@@ -73,10 +73,9 @@ def herd(args) -> None:
     projects = config.process_projects_arg(args.projects)
     projects = filter_projects(CLOWDER_CONTROLLER.projects, projects)
 
-    if parallel:
+    if parallel and os.name == "posix":
         herd_parallel(projects, branch=branch, tag=tag, depth=depth, rebase=rebase)
-        if os.name == "posix":
-            return
+        return
 
     validate_project_statuses(projects)
     for project in projects:

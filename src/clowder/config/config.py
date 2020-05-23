@@ -5,7 +5,6 @@
 
 """
 
-import os
 from typing import List, Optional, Tuple
 
 import clowder.util.formatting as fmt
@@ -44,7 +43,7 @@ class Config(object):
         self._project_options = project_options
 
         # Config file doesn't currently exist
-        if not os.path.isfile(CLOWDER_CONFIG_YAML):
+        if not CLOWDER_CONFIG_YAML.is_file():
             self.version = CONFIG_VERSION
             current_clowder_config = ClowderConfig(current_clowder_name=current_clowder_name,
                                                    project_options=self._project_options)
@@ -57,6 +56,9 @@ class Config(object):
             self._load_clowder_config_yaml()
         except ClowderConfigYAMLError as err:
             self.error = err
+        except Exception as err: # noqa
+            self.error = err
+            # TODO: Remove file?
         except (KeyboardInterrupt, SystemExit):
             raise ClowderExit(1)
 
@@ -105,7 +107,7 @@ class Config(object):
         make_dir(CLOWDER_CONFIG_DIR)
 
         # If file doesn't exist, save it
-        if not os.path.isfile(CLOWDER_CONFIG_YAML):
+        if not CLOWDER_CONFIG_YAML.is_file():
             save_yaml(self._get_yaml(), CLOWDER_CONFIG_YAML)
             return
 
@@ -160,7 +162,7 @@ class Config(object):
             self.current_clowder_config = None
             if CLOWDER_DIR is not None:
                 for config in self.clowder_configs:
-                    if os.path.abspath(config.clowder_dir) == os.path.abspath(CLOWDER_DIR):
+                    if config.clowder_dir.resolve() == CLOWDER_DIR.resolve():
                         self.current_clowder_config = config
                         break
         except (AttributeError, KeyError, TypeError) as err:

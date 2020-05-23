@@ -6,7 +6,6 @@
 """
 
 import argparse
-import os
 
 import clowder.clowder_repo as clowder_repo
 import clowder.util.formatting as fmt
@@ -57,11 +56,11 @@ def save(args) -> None:
     # Replace path separators with dashes to avoid creating directories
     version_name = args.version.replace('/', '-')
 
-    versions_dir = os.path.join(CLOWDER_REPO_DIR, 'versions')
+    versions_dir = CLOWDER_REPO_DIR / 'versions'
     make_dir(versions_dir)
 
-    yaml_file = os.path.join(versions_dir, f"{version_name}.clowder.yaml")
-    if os.path.exists(yaml_file):
+    yaml_file = versions_dir / f"{version_name}.clowder.yaml"
+    if yaml_file.exists():
         print(f"{fmt.error_save_version_exists(version_name, yaml_file)}\n")
         raise ClowderExit(1)
 

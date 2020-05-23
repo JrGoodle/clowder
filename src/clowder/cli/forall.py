@@ -67,10 +67,9 @@ def _forall_impl(command: List[str], ignore_errors: bool, projects: List[str], p
     parallel_config = config.current_clowder_config.parallel
     parallel = parallel_config if parallel_config is not None else parallel
 
-    if parallel:
+    if parallel and os.name == "posix":
         forall_parallel([" ".join(command)], projects, ignore_errors)
-        if os.name == "posix":
-            return
+        return
 
     for project in projects:
         print(project.status())

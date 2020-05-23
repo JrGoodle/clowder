@@ -8,20 +8,23 @@
 import errno
 import os
 import shutil
+from pathlib import Path
 
 from termcolor import colored
 
 from clowder.error import ClowderExit
 
 
-def force_symlink(file1: str, file2: str) -> None:
+def force_symlink(file1: Path, file2: Path) -> None:
     """Force symlink creation
 
-    :param str file1: File to create symlink pointing to
-    :param str file2: Symlink location
+    :param Path file1: File to create symlink pointing to
+    :param Path file2: Symlink location
     :raise ClowderExit:
     """
 
+    file1 = str(file1)
+    file2 = str(file2)
     try:
         os.symlink(file1, file2)
     except OSError as error:
@@ -34,52 +37,52 @@ def force_symlink(file1: str, file2: str) -> None:
         raise ClowderExit(1)
 
 
-def remove_file(file: str) -> None:
+def remove_file(file: Path) -> None:
     """Remove file
 
-    :param str file: File path to remove
+    :param Path file: File path to remove
     :raise OSError:
     """
 
-    os.remove(file)
+    os.remove(str(file))
 
 
-def create_backup_file(file: str) -> None:
+def create_backup_file(file: Path) -> None:
     """Copy file to {file}.backup
 
-    :param str file: File path to copy
+    :param Path file: File path to copy
     :raise OSError:
     """
 
-    shutil.copyfile(file, f"{file}.backup")
+    shutil.copyfile(str(file), f"{str(file)}.backup")
 
 
-def restore_from_backup_file(file: str) -> None:
+def restore_from_backup_file(file: Path) -> None:
     """Copy {file}.backup to file
 
-    :param str file: File path to copy
+    :param Path file: File path to copy
     :raise OSError:
     """
 
     shutil.copyfile(f"{file}.backup", file)
 
 
-def make_dir(directory: str) -> None:
+def make_dir(directory: Path) -> None:
     """Make directory if it doesn't exist
 
     :param str directory: Directory path to create
     :raise OSError:
     """
 
-    if not os.path.exists(directory):
+    if not directory.exists():
         try:
-            os.makedirs(directory)
+            os.makedirs(str(directory))
         except OSError as err:
             if err.errno != errno.EEXIST:
                 raise
 
 
-def remove_directory(path: str) -> None:
+def remove_directory(path: Path) -> None:
     """Remove directory at path
 
     :param str path: Path to remove
@@ -93,16 +96,3 @@ def remove_directory(path: str) -> None:
         print(message + colored(path, 'cyan'))
     except (KeyboardInterrupt, SystemExit):
         raise ClowderExit(1)
-
-
-def symlink_target(path: str) -> str:
-    """Returns target path if input is a symlink, otherwise returns original path
-
-    :param str path: Path of file or symlink
-    :return: Target path if input is a symlink, otherwise original path
-    :rtype: str
-    """
-
-    if os.path.islink(path):
-        return os.readlink(path)
-    return path

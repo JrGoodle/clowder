@@ -13,7 +13,7 @@ import argcomplete
 import colorama
 
 import clowder.cli as cmd
-from clowder import PRINT_DEBUG_OUTPUT
+from clowder import LOG_DEBUG, PRINT_DEBUG_OUTPUT
 from clowder.error import ClowderExit
 from clowder.util.clowder_utils import add_parser_arguments
 from clowder.util.parallel import __clowder_pool__
@@ -83,19 +83,19 @@ def main() -> None:
         args.func(args) # noqa
     except ClowderExit as err:
         if PRINT_DEBUG_OUTPUT:
-            print('\nClowderExit exception')
-            print(err)
+            LOG_DEBUG('ClowderExit exception')
+            LOG_DEBUG(err)
         exit_code = err.code
     except AttributeError as err:
         if PRINT_DEBUG_OUTPUT:
-            print('\nAttributeError exception')
-            print(err)
+            LOG_DEBUG('AttributeError exception')
+            LOG_DEBUG(err)
         exit_code = 1
         parser.print_help()
     except Exception as err: # noqa
         if PRINT_DEBUG_OUTPUT:
-            print('\nUnhandled generic exception')
-            print(err)
+            LOG_DEBUG('Unhandled generic exception')
+            LOG_DEBUG(err)
         exit_code = 1
     finally:
         print()

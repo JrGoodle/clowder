@@ -5,8 +5,8 @@
 
 """
 
-import os
 from enum import auto, Enum, unique
+from pathlib import Path
 from typing import Optional, Tuple
 
 from termcolor import cprint
@@ -30,7 +30,7 @@ class ClowderConfig(object):
     """Clowder config class
 
     :ivar str name: Name of clowder
-    :ivar str clowder_dir: Path to clowder directory
+    :ivar Path clowder_dir: Path to clowder directory
     :ivar Optional[Tuple[str, ...]] projects: Default projects
     :ivar Optional[str] protocol: Default protocol
     :ivar Optional[bool] rebase: Default rebase
@@ -59,10 +59,10 @@ class ClowderConfig(object):
             self.rebase = None
             return
 
-        self.clowder_dir = clowder_config['clowder_dir']
+        self.clowder_dir = Path(clowder_config['clowder_dir'])
 
         # Validate path is a valid clowder directory
-        if not os.path.isdir(self.clowder_dir):
+        if not self.clowder_dir.is_dir():
             raise ClowderConfigYAMLError(f"No clowder found at {self.clowder_dir}",
                                          ClowderConfigYAMLErrorType.INVALID_CLOWDER_PATH)
 
@@ -114,7 +114,7 @@ class ClowderConfig(object):
             defaults['rebase'] = self.rebase
         if self.parallel is not None:
             defaults['parallel'] = self.parallel
-        config = {'clowder_dir': self.clowder_dir,
+        config = {'clowder_dir': str(self.clowder_dir),
                   'name': self.name,
                   'defaults': defaults}
         return config

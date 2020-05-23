@@ -30,7 +30,7 @@ def add_start_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
         (['projects'], dict(metavar='PROJECT', default='default', nargs='*',
                             choices=CLOWDER_CONTROLLER.project_choices_with_default,
                             help=fmt.options_help_message(CLOWDER_CONTROLLER.project_choices,
-                                                      'projects and groups to start branches for'))),
+                                                          'projects and groups to start branches for'))),
         (['--tracking', '-t'], dict(action='store_true', help='create remote tracking branch'))
     ]
 

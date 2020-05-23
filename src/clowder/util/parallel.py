@@ -103,7 +103,7 @@ if os.name == "posix":
         print(' - Run forall commands in parallel\n')
         for project in projects:
             print(project.status())
-            if not os.path.isdir(project.full_path()):
+            if not project.full_path().is_dir():
                 cprint(" - Project is missing", 'red')
 
         for cmd in commands:

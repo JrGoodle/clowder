@@ -5,8 +5,8 @@
 
 """
 
-import os
 from functools import wraps
+from pathlib import Path
 from typing import List, Optional, Tuple
 
 from termcolor import colored, cprint
@@ -38,7 +38,7 @@ def project_repo_exists(func):
         """Wrapper"""
 
         instance = args[0]
-        if not os.path.isdir(os.path.join(instance.full_path(), '.git')):
+        if not Path(instance.full_path() / '.git').is_dir():
             cprint(" - Project repo is missing", 'red')
             return
         return func(*args, **kwargs)
@@ -50,7 +50,7 @@ class Project(object):
     """clowder.yaml Project model class
 
     :ivar str name: Project name
-    :ivar str path: Project relative path
+    :ivar Path path: Project relative path
     :ivar List[str] groups: Groups project belongs to
     :ivar str ref: Project git ref
     :ivar str remote: Project remote name
@@ -70,7 +70,7 @@ class Project(object):
         """
 
         self.name = project['name']
-        self.path = project.get('path', fmt.last_path_component(self.name))
+        self.path = Path(project.get('path', Path(self.name).name))
         self.remote = project.get('remote', defaults.remote)
         self.depth = project.get('depth', defaults.depth)
         self.recursive = project.get('recursive', defaults.recursive)
@@ -106,12 +106,12 @@ class Project(object):
             fork = project['fork']
             self.fork = Fork(fork, self.path, self.recursive, sources, defaults)
 
-        groups = ['all', self.name, fmt.last_path_component(self.name), self.path]
+        groups = ['all', self.name, str(Path(self.name).name), str(self.path)]
         custom_groups = project.get('groups', None)
         if custom_groups:
             groups += custom_groups
         if self.fork is not None:
-            groups += [self.fork.name, fmt.last_path_component(self.fork.name)]
+            groups += [self.fork.name, str(Path(self.fork.name).name)]
         groups = list(set(groups))
         if 'notdefault' in groups:
             groups.remove('all')
@@ -251,14 +251,14 @@ class Project(object):
         repo = ProjectRepo(self.full_path(), self.remote, self.ref)
         return repo.format_project_string(self.path)
 
-    def full_path(self) -> str:
+    def full_path(self) -> Path:
         """Return full path to project
 
         :return: Project's full file path
         :rtype: str
         """
 
-        return os.path.join(CLOWDER_DIR, self.path)
+        return CLOWDER_DIR / self.path
 
     def get_current_timestamp(self) -> str:
         """Return timestamp of current HEAD commit
@@ -279,7 +279,7 @@ class Project(object):
         """
 
         project = {'name': self.name,
-                   'path': self.path,
+                   'path': str(self.path),
                    'groups': self.groups,
                    'depth': self.depth,
                    'recursive': self.recursive,
