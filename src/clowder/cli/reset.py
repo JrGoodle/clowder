@@ -74,10 +74,9 @@ def _reset_impl(project_names: List[str], timestamp_project: Optional[str] = Non
     projects = config.process_projects_arg(project_names)
     projects = filter_projects(CLOWDER_CONTROLLER.projects, projects)
 
-    if parallel:
+    if parallel and os.name == "posix":
         reset_parallel(projects, timestamp_project=timestamp_project)
-        if os.name == "posix":
-            return
+        return
 
     timestamp = None
     if timestamp_project:

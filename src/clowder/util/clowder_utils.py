@@ -7,6 +7,7 @@
 
 import argparse
 import os
+from pathlib import Path
 from typing import List, Optional, Tuple, Union
 
 import clowder.util.formatting as fmt
@@ -69,31 +70,31 @@ def get_saved_version_names() -> Optional[Tuple[str, ...]]:
     if CLOWDER_REPO_VERSIONS_DIR is None:
         return None
 
-    return tuple(sorted([v[:-13] for v in os.listdir(CLOWDER_REPO_VERSIONS_DIR) if v.endswith('.clowder.yaml')]))
+    return tuple(sorted([v[:-13] for v in os.listdir(str(CLOWDER_REPO_VERSIONS_DIR)) if v.endswith('.clowder.yaml')]))
 
 
-def link_clowder_yaml(clowder_dir: str, version: Optional[str] = None) -> None:
+def link_clowder_yaml(clowder_dir: Path, version: Optional[str] = None) -> None:
     """Create symlink pointing to clowder.yaml file
 
-    :param str clowder_dir: Directory to create symlink in
+    :param Path clowder_dir: Directory to create symlink in
     :param Optional[str] version: Version name of clowder.yaml to link
     :raise ClowderExit:
     """
 
     if version is None:
-        yaml_file = os.path.join(clowder_dir, '.clowder', 'clowder.yaml')
-        path_output = fmt.path_string('.clowder/clowder.yaml')
+        yaml_file = clowder_dir / '.clowder' / 'clowder.yaml'
+        path_output = fmt.path_string(Path('.clowder/clowder.yaml'))
     else:
-        relative_path = os.path.join('.clowder', 'versions', f'{version}.clowder.yaml')
+        relative_path = Path('.clowder', 'versions', f'{version}.clowder.yaml')
         path_output = fmt.path_string(relative_path)
-        yaml_file = os.path.join(clowder_dir, relative_path)
+        yaml_file = clowder_dir.joinpath(relative_path)
 
-    if not os.path.isfile(yaml_file):
+    if not yaml_file.is_file():
         print(f"\n{path_output} doesn't seem to exist\n")
         raise ClowderExit(1)
 
     print(f' - Symlink {path_output}')
-    force_symlink(yaml_file, os.path.join(clowder_dir, 'clowder.yaml'))
+    force_symlink(yaml_file, clowder_dir / 'clowder.yaml')
 
 
 def print_parallel_projects_output(projects: Tuple[Project, ...]) -> None:

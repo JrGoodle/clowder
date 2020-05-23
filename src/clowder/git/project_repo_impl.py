@@ -7,6 +7,7 @@
 
 import errno
 import os
+from pathlib import Path
 from typing import Optional
 
 from git import GitError, Remote, Repo, Tag
@@ -36,10 +37,10 @@ class ProjectRepoImpl(GitRepo):
     :ivar Repo repo: Repo instance
     """
 
-    def __init__(self, repo_path: str, remote: str, default_ref: str, parallel: bool = False):
+    def __init__(self, repo_path: Path, remote: str, default_ref: str, parallel: bool = False):
         """ProjectRepo __init__
 
-        :param str repo_path: Absolute path to repo
+        :param Path repo_path: Absolute path to repo
         :param str remote: Default remote name
         :param str default_ref: Default ref
         :param bool parallel: Whether command is being run in parallel, affects output. Defaults to False
@@ -409,9 +410,9 @@ class ProjectRepoImpl(GitRepo):
 
         try:
             self._print(f' - Initialize repo at {fmt.path_string(self.repo_path)}')
-            if not os.path.isdir(self.repo_path):
+            if not self.repo_path.is_dir():
                 try:
-                    os.makedirs(self.repo_path)
+                    os.makedirs(str(self.repo_path))
                 except OSError as err:
                     if err.errno != errno.EEXIST:
                         raise

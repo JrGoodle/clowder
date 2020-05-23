@@ -83,18 +83,18 @@ def main() -> None:
         args.func(args) # noqa
     except ClowderExit as err:
         if PRINT_DEBUG_OUTPUT:
-            print('\nClowderExit exception')
+            print('ClowderExit exception')
             print(err)
         exit_code = err.code
     except AttributeError as err:
         if PRINT_DEBUG_OUTPUT:
-            print('\nAttributeError exception')
+            print('AttributeError exception')
             print(err)
         exit_code = 1
         parser.print_help()
     except Exception as err: # noqa
         if PRINT_DEBUG_OUTPUT:
-            print('\nUnhandled generic exception')
+            print('Unhandled generic exception')
             print(err)
         exit_code = 1
     finally:

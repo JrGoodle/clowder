@@ -5,8 +5,8 @@
 
 """
 
-import os
 from functools import wraps
+from pathlib import Path
 
 from git import Repo, GitError
 
@@ -29,26 +29,26 @@ def check_ref_format(ref: str) -> bool:
         return True
 
 
-def existing_git_repository(path: str) -> bool:
+def existing_git_repository(path: Path) -> bool:
     """Check if a git repository exists
 
-    :param str path: Repo path
+    :param Path path: Repo path
     :return: True, if .git directory exists inside path
     :rtype: bool
     """
 
-    return os.path.isdir(os.path.join(path, '.git'))
+    return Path(path / '.git').is_dir()
 
 
-def existing_git_submodule(path: str) -> bool:
+def existing_git_submodule(path: Path) -> bool:
     """Check if a git submodule exists
 
-    :param str path: Submodule path
+    :param Path path: Submodule path
     :return: True, if .git file exists inside path
     :rtype: bool
     """
 
-    return os.path.isfile(os.path.join(path, '.git'))
+    return Path(path / '.git').is_file()
 
 
 def not_detached(func):
@@ -102,10 +102,10 @@ def git_url(protocol: str, url: str, name: str) -> str:
     """
 
     if protocol == 'ssh':
-        return 'git@' + url + ':' + name + ".git"
+        return f"git@{url}:{name}.git"
 
     if protocol == 'https':
-        return 'https://' + url + '/' + name + ".git"
+        return f"https://{url}/{name}.git"
 
     raise ClowderError
 

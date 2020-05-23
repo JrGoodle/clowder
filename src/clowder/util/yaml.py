@@ -6,8 +6,8 @@
 """
 
 import copy
-import os
 import pkg_resources
+from pathlib import Path
 from typing import List, Optional
 
 # noinspection PyPackageRequirements
@@ -38,7 +38,8 @@ def load_clowder_config_yaml() -> dict:
         with open(CLOWDER_CONFIG_YAML) as raw_file:
             parsed_yaml = pyyaml.safe_load(raw_file)
             if parsed_yaml is None:
-                raise ClowderConfigYAMLError(fmt.error_empty_yaml(CLOWDER_CONFIG_YAML, 'clowder.config.yaml'),
+                config_yaml = Path('clowder.config.yaml')
+                raise ClowderConfigYAMLError(fmt.error_empty_yaml(CLOWDER_CONFIG_YAML, config_yaml),
                                              ClowderConfigYAMLErrorType.EMPTY_FILE)
             return parsed_yaml
     except pyyaml.YAMLError:
@@ -59,10 +60,11 @@ def load_clowder_yaml() -> dict:
     """
 
     try:
-        with open(CLOWDER_YAML) as raw_file:
+        with CLOWDER_YAML.open() as raw_file:
             parsed_yaml = pyyaml.safe_load(raw_file)
             if parsed_yaml is None:
-                raise ClowderYAMLError(fmt.error_empty_yaml(CLOWDER_YAML, 'clowder.yaml'),
+                clowder_yaml = Path('clowder.yaml')
+                raise ClowderYAMLError(fmt.error_empty_yaml(CLOWDER_YAML, clowder_yaml),
                                        ClowderYAMLErrorType.EMPTY_FILE)
             return parsed_yaml
     except pyyaml.YAMLError:
@@ -75,24 +77,24 @@ def load_clowder_yaml() -> dict:
 def print_yaml() -> None:
     """Print current clowder yaml"""
 
-    if os.path.isfile(CLOWDER_YAML):
+    if CLOWDER_YAML.is_file():
         _print_yaml(CLOWDER_YAML)
 
 
-def save_yaml(yaml_output: dict, yaml_file: str) -> None:
+def save_yaml(yaml_output: dict, yaml_file: Path) -> None:
     """Save yaml file to disk
 
     :param dict yaml_output: Parsed YAML python object
-    :param str yaml_file: Path to save yaml file
+    :param Path yaml_file: Path to save yaml file
     :raise ClowderExit:
     """
 
-    if os.path.isfile(yaml_file):
+    if yaml_file.is_file():
         print(fmt.error_file_exists(yaml_file) + '\n')
         raise ClowderExit(1)
 
     try:
-        with open(yaml_file, 'w') as raw_file:
+        with yaml_file.open(mode="w") as raw_file:
             print(f" - Save yaml to file at {fmt.path_string(yaml_file)}")
             pyyaml.safe_dump(yaml_output, raw_file, default_flow_style=False, indent=4)
     except pyyaml.YAMLError:
@@ -155,29 +157,29 @@ def _check_for_duplicates(list_of_elements: List[str]) -> Optional[str]:
     return None
 
 
-def _format_yaml_symlink(yaml_file: str) -> str:
+def _format_yaml_symlink(yaml_file: Path) -> str:
     """Return formatted string for yaml symlink
 
-    :param str yaml_file: Yaml file path
+    :param Path yaml_file: Yaml file path
     :return: Formatted string for yaml symlink
     :rtype: str
     """
 
-    path = fmt.symlink_target(yaml_file)
-    path = fmt.remove_prefix(path, f"{CLOWDER_DIR}/")
-    return '\n' + fmt.path_string('clowder.yaml') + ' -> ' + fmt.path_string(path) + '\n'
+    path = yaml_file.resolve().relative_to(CLOWDER_DIR)
+    clowder_file = Path('clowder.yaml')
+    return '\n' + fmt.path_string(clowder_file) + ' -> ' + fmt.path_string(path) + '\n'
 
 
-def _format_yaml_file(yaml_file: str) -> str:
+def _format_yaml_file(yaml_file: Path) -> str:
     """Return formatted string for yaml file
 
-    :param str yaml_file: Yaml file path
+    :param Path yaml_file: Yaml file path
     :return: Formatted string for yaml file
     :rtype: str
     """
 
-    path = fmt.remove_prefix(yaml_file, f"{CLOWDER_DIR}/")
-    return f"\n{fmt.path_string(path)}\n"
+    path = yaml_file.resolve().relative_to(CLOWDER_DIR)
+    return f"\n{fmt.path_string(Path(path))}\n"
 
 
 def _load_clowder_config_json_schema() -> dict:
@@ -202,15 +204,15 @@ def _load_clowder_json_schema() -> dict:
     return pyyaml.safe_load(clowder_schema)
 
 
-def _print_yaml(yaml_file: str) -> None:
+def _print_yaml(yaml_file: Path) -> None:
     """Private print current clowder yaml
 
-    :param str yaml_file: Path to yaml file
+    :param Path yaml_file: Path to yaml file
     :raise ClowderExit:
     """
 
     try:
-        with open(yaml_file) as raw_file:
+        with yaml_file.open() as raw_file:
             contents = raw_file.read()
             print('-' * 80)
             _print_yaml_path(yaml_file)
@@ -223,24 +225,24 @@ def _print_yaml(yaml_file: str) -> None:
         raise ClowderExit(1)
 
 
-def _print_yaml_path(yaml_file: str) -> None:
+def _print_yaml_path(yaml_file: Path) -> None:
     """Print clowder yaml path
 
-    :param str yaml_file: Path to yaml file
+    :param Path yaml_file: Path to yaml file
     """
 
-    if os.path.islink(yaml_file):
+    if yaml_file.is_symlink():
         print(_format_yaml_symlink(yaml_file))
     else:
         print(_format_yaml_file(yaml_file))
 
 
 # TODO: Should probably just go ahead and move this logic into ClowderController to reduce duplication
-def _validate_yaml_contents(yaml: dict, yaml_file: str) -> None:
+def _validate_yaml_contents(yaml: dict, yaml_file: Path) -> None:
     """Validate contents in clowder loaded from yaml file
 
     :param dict yaml: Parsed YAML python object
-    :param str yaml_file: Path to yaml file
+    :param Path yaml_file: Path to yaml file
     """
 
     err_prefix = f"{fmt.error_invalid_clowder_yaml()}\n{fmt.ERROR} "
@@ -262,7 +264,7 @@ def _validate_yaml_contents(yaml: dict, yaml_file: str) -> None:
     projects_with_forks = []
     for p in yaml['projects']:
         project = {'name': p['name'],
-                   'path': p.get('path', fmt.last_path_component(p['name']))}
+                   'path': p.get('path', str(Path(p['name']).name))}
         if 'remote' in p:
             project['remote'] = p['remote']
         if 'source' in p:
@@ -305,8 +307,8 @@ def _validate_yaml_contents(yaml: dict, yaml_file: str) -> None:
             raise ClowderYAMLError(err, ClowderYAMLErrorType.DUPLICATE_REMOTE_NAME)
 
     # Validate projects don't share share directories
-    paths = [p['path'] for p in projects]
+    paths = [str(Path(p['path']).resolve()) for p in projects]
     duplicate = _check_for_duplicates(paths)
     if duplicate is not None:
-        err = f"{err_prefix}{fmt.error_duplicate_project_path(duplicate, yaml_file)}"
+        err = f"{err_prefix}{fmt.error_duplicate_project_path(Path(duplicate), yaml_file)}"
         raise ClowderYAMLError(err, ClowderYAMLErrorType.DUPLICATE_PATH)

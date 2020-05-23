@@ -5,7 +5,7 @@
 
 """
 
-import os
+from pathlib import Path
 from typing import Tuple
 
 from termcolor import colored
@@ -32,11 +32,11 @@ class Fork(object):
     :ivar str ref: Fork git ref
     """
 
-    def __init__(self, fork: dict, path: str, recursive: bool, sources: Tuple[Source, ...], defaults: Defaults):
+    def __init__(self, fork: dict, path: Path, recursive: bool, sources: Tuple[Source, ...], defaults: Defaults):
         """Project __init__
 
         :param dict fork: Parsed YAML python object for fork
-        :param str path: Fork relative path
+        :param Path path: Fork relative path
         :param bool recursive: Whether to handle submodules
         :param Tuple[Source, ...] sources: List of Source instances
         :param Defaults defaults: Defaults instance
@@ -69,14 +69,14 @@ class Fork(object):
             if s.name == source_name:
                 self._source = s
 
-    def full_path(self) -> str:
+    def full_path(self) -> Path:
         """Return full path to project
 
         :return: Project's full file path
-        :rtype: str
+        :rtype: Path
         """
 
-        return os.path.join(CLOWDER_DIR, self.path)
+        return CLOWDER_DIR / self.path
 
     def get_yaml(self, resolved: bool = False) -> dict:
         """Return python object representation for saving yaml

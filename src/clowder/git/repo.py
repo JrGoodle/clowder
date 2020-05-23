@@ -5,7 +5,7 @@
 
 """
 
-import os
+from pathlib import Path
 from typing import Optional
 
 from git import Repo, GitError
@@ -35,10 +35,10 @@ class GitRepo(object):
     :ivar Repo repo: Repo instance
     """
 
-    def __init__(self, repo_path: str, remote: str, default_ref: str, parallel: bool = False):
+    def __init__(self, repo_path: Path, remote: str, default_ref: str, parallel: bool = False):
         """GitRepo __init__
 
-        :param str repo_path: Absolute path to repo
+        :param Path repo_path: Absolute path to repo
         :param str remote: Default remote name
         :param str default_ref: Default ref
         :param bool parallel: Whether command is being run in parallel, affects output. Defaults to False
@@ -235,10 +235,10 @@ class GitRepo(object):
         current_branch = self.current_branch()
         return colored(f'[{current_branch}]', 'magenta') + status
 
-    def format_project_string(self, path: str) -> str:
+    def format_project_string(self, path: Path) -> str:
         """Return formatted project name
 
-        :param str path: Relative project path
+        :param Path path: Relative project path
         :return: Formatted project name
         :rtype: str
         """
@@ -251,7 +251,7 @@ class GitRepo(object):
         else:
             color = 'green'
             symbol = ''
-        return colored(path + symbol, color)
+        return colored(str(path) + symbol, color)
 
     def get_current_timestamp(self) -> str:
         """Get current timestamp of HEAD commit
@@ -292,7 +292,7 @@ class GitRepo(object):
         :rtype: bool
         """
 
-        if not os.path.isdir(self.repo_path):
+        if not self.repo_path.is_dir():
             return False
         if self.repo.head.is_detached:
             if print_output:
@@ -307,7 +307,7 @@ class GitRepo(object):
         :rtype: bool
         """
 
-        if not os.path.isdir(self.repo_path):
+        if not self.repo_path.is_dir():
             return False
 
         return self.repo.is_dirty() or self._is_rebase_in_progress() or self._has_untracked_files()
@@ -575,10 +575,8 @@ class GitRepo(object):
         :rtype: bool
         """
 
-        rebase_apply = os.path.join(self.repo_path, '.git', 'rebase-apply')
-        rebase_merge = os.path.join(self.repo_path, '.git', 'rebase-merge')
-        is_rebase_apply = os.path.isdir(rebase_apply)
-        is_rebase_merge = os.path.isdir(rebase_merge)
+        is_rebase_apply = Path(self.repo_path / '.git' / 'rebase-apply').is_dir()
+        is_rebase_merge = Path(self.repo_path / '.git' / 'rebase-merge').is_dir()
         return is_rebase_apply or is_rebase_merge
 
     def _print(self, val: str) -> None:
