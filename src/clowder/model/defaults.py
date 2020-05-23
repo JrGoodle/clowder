@@ -5,6 +5,7 @@
 
 """
 
+from clowder.git import GitProtocol
 from clowder.git.util import (
     format_git_branch,
     format_git_tag
@@ -20,7 +21,7 @@ class Defaults(object):
     :ivar Optional[str] commit: Default commit sha-1
     :ivar str remote: Default remote name
     :ivar str source: Default source name
-    :ivar str protocol: Default git protocol
+    :ivar GitProtocol protocol: Default git protocol
     :ivar int depth: Default depth
     :ivar bool recursive: Default recursive value
     :ivar str timestamp_author: Default timestamp author
@@ -33,7 +34,7 @@ class Defaults(object):
         :param dict defaults: Parsed YAML python object for defaults
         """
 
-        self.protocol = defaults["protocol"]
+        self.protocol = GitProtocol(defaults["protocol"])
         self.source = defaults["source"]
         self.remote = defaults.get("remote", "origin")
         self.depth = defaults.get("depth", 0)
@@ -66,7 +67,7 @@ class Defaults(object):
                     'remote': self.remote,
                     'source': self.source,
                     'depth': self.depth,
-                    'protocol': self.protocol}
+                    'protocol': self.protocol.value}
 
         if self.branch is not None:
             defaults['branch'] = self.branch

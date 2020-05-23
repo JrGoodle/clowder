@@ -13,10 +13,8 @@ from termcolor import colored, cprint
 
 import clowder.util.formatting as fmt
 from clowder import CLOWDER_DIR
-from clowder.error import ClowderError
-from clowder.error import ClowderExit
-from clowder.git.project_repo import ProjectRepo
-from clowder.git.project_repo_recursive import ProjectRepoRecursive
+from clowder.error import ClowderError, ClowderExit
+from clowder.git import ProjectRepo, ProjectRepoRecursive
 from clowder.git.util import (
     existing_git_repository,
     format_git_branch,
@@ -583,4 +581,4 @@ class Project(object):
     def _url(self) -> str:
         """Return project url"""
 
-        return git_url(self.source.protocol, self.source.url, self.name)
+        return git_url(self.source.protocol.value, self.source.url, self.name)

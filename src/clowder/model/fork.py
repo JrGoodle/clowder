@@ -11,7 +11,7 @@ from typing import Tuple
 from termcolor import colored
 
 from clowder import CLOWDER_DIR
-from clowder.git.project_repo import ProjectRepo
+from clowder.git import ProjectRepo
 from clowder.git.util import (
     existing_git_repository,
     format_git_branch,
@@ -121,4 +121,4 @@ class Fork(object):
     def url(self) -> str:
         """Return project url"""
 
-        return git_url(self._source.protocol, self._source.url, self.name)
+        return git_url(self._source.protocol.value, self._source.url, self.name)

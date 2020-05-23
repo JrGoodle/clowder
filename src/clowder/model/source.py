@@ -5,6 +5,8 @@
 
 """
 
+from clowder.git import GitProtocol
+
 from .defaults import Defaults
 
 
@@ -13,6 +15,7 @@ class Source(object):
 
     :ivar str name: Source name
     :ivar str url: Source url
+    :ivar GitProtocol protocol Git protocol
     """
 
     def __init__(self, source: dict, defaults: Defaults):
@@ -24,7 +27,7 @@ class Source(object):
 
         self.name = source['name']
         self.url = source['url']
-        self.protocol = source.get('protocol', defaults.protocol)
+        self.protocol = GitProtocol(source.get('protocol', defaults.protocol))
 
     def get_yaml(self) -> dict:
         """Return python object representation for saving yaml
@@ -35,4 +38,4 @@ class Source(object):
 
         return {'name': self.name,
                 'url': self.url,
-                'protocol': self.protocol}
+                'protocol': self.protocol.value}
