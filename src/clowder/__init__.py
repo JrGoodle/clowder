@@ -5,7 +5,7 @@
 
 """
 
-import logging
+# import logging
 import os
 from pathlib import Path
 from typing import Optional
@@ -22,7 +22,7 @@ PRINT_DEBUG_OUTPUT = "CLOWDER_DEBUG" in os.environ
 
 CURRENT_DIR = Path.cwd()
 CLOWDER_CONFIG_DIR = Path.home() / '.config' / 'clowder'
-CLOWDER_CONFIG_YAML = Path(CLOWDER_CONFIG_DIR) / 'clowder.config.yaml'
+CLOWDER_CONFIG_YAML = CLOWDER_CONFIG_DIR / 'clowder.config.yaml'
 CLOWDER_DIR: Optional[Path] = None
 CLOWDER_REPO_DIR: Optional[Path] = None
 CLOWDER_REPO_VERSIONS_DIR: Optional[Path] = None

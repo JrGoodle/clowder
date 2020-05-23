@@ -4,11 +4,7 @@ import os
 import sys
 import unittest
 
-from clowder.git.repo import GitRepo
-from clowder.git.util import (
-    ref_type,
-    truncate_ref
-)
+from clowder.git import GitRepo, ref_type, truncate_ref
 
 
 class GitUtilitiesTest(unittest.TestCase):

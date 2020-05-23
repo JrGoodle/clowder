@@ -17,7 +17,7 @@ import clowder.util.formatting as fmt
 from clowder.error import ClowderGitError
 from clowder.util.file_system import remove_directory
 
-from .repo import GitRepo
+from .git_repo import GitRepo
 from .util import (
     existing_git_repository,
     not_detached

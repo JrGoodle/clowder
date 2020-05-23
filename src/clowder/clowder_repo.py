@@ -14,7 +14,7 @@ from termcolor import colored
 import clowder.util.formatting as fmt
 from clowder import CLOWDER_DIR, CLOWDER_REPO_DIR, CLOWDER_YAML, CURRENT_DIR
 from clowder.error import ClowderError, ClowderExit
-from clowder.git.project_repo import ProjectRepo
+from clowder.git import ProjectRepo
 from clowder.git.util import existing_git_repository
 from clowder.util.clowder_utils import link_clowder_yaml
 from clowder.util.connectivity import is_offline
@@ -127,7 +127,8 @@ def print_status(fetch: bool = False) -> None:
         print(' - Fetch upstream changes for clowder repo')
         repo.fetch(clowder_repo_remote)
 
-    project_output = repo.format_project_string('.clowder')
+    clowder_path = Path('.clowder')
+    project_output = repo.format_project_string(clowder_path)
     current_ref_output = repo.format_project_ref_string()
 
     if CLOWDER_YAML is None or not CLOWDER_YAML.is_symlink():
