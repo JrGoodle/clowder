@@ -9,26 +9,30 @@ from typing import Tuple
 
 import clowder.util.formatting as fmt
 from clowder import CLOWDER_YAML
-from clowder.error import ClowderExit, ClowderYAMLError, ClowderYAMLErrorType
-from clowder.model.defaults import Defaults
-from clowder.model.project import Project
-from clowder.model.source import Source
-from clowder.util.clowder_utils import (
-    filter_projects,
-    print_parallel_projects_output,
-    validate_projects
+from clowder.error import (
+    ClowderExit,
+    ClowderYAMLError, ClowderYAMLErrorType
 )
-from clowder.util.yaml import load_yaml, validate_yaml
+from clowder.model import Defaults
+from clowder.model import Project
+from clowder.model import Source
+from clowder.util.clowder_utils import (
+    print_parallel_projects_output,
+    validate_project_statuses
+)
+from clowder.util.yaml import load_clowder_yaml, validate_clowder_yaml
 
 
 class ClowderController(object):
     """Class encapsulating project information from clowder.yaml for controlling clowder
 
+    :ivar Optional[str] name: Name of clowder
     :ivar Optional[Defaults] defaults: Global clowder.yaml defaults
     :ivar Tuple[Group, ...] groups: List of all Groups
     :ivar Tuple[Source, ...] sources: List of all Sources
     :ivar Tuple[str, ...] project_names: All possible project and group names
     :ivar Tuple[str, ...] project_choices: All possible project and group choices
+    :ivar Tuple[str, ...] project_choices_with_default: All possible project and group choices, including 'default'
     :ivar Optional[Exception] error: Exception from failing to load clowder.yaml
     """
 
@@ -38,18 +42,22 @@ class ClowderController(object):
         :raise ClowderExit:
         """
 
+        self.error = None
+
+        self.name = None
         self.defaults = None
         self.sources = ()
         self.projects = ()
         self.project_names = ()
-        self.project_choices = ('all',)
-        self.error = None
+        self.project_choices = ()
+        self.project_choices_with_default = ('default',)
 
         try:
             if CLOWDER_YAML is None:
-                raise ClowderYAMLError(fmt.error_missing_yaml(), ClowderYAMLErrorType.MISSING_YAML)
-            validate_yaml()
-            self._load_yaml()
+                raise ClowderYAMLError(fmt.error_missing_clowder_yaml(), ClowderYAMLErrorType.MISSING_YAML)
+            yaml = load_clowder_yaml()
+            validate_clowder_yaml(yaml)
+            self._load_clowder_yaml(yaml)
         except ClowderYAMLError as err:
             self.error = err
         except (KeyboardInterrupt, SystemExit):
@@ -70,7 +78,7 @@ class ClowderController(object):
     def get_project_paths(self, projects: Tuple[Project, ...]) -> Tuple[str, ...]: # noqa
         """Returns all project paths for specified projects
 
-        :param Tuple[Project, ... projects: Projects to get paths of
+        :param Tuple[Project, ...] projects: Projects to get paths of
         :return: All project paths
         :rtype: Tuple[str, ...]
         """
@@ -113,22 +121,22 @@ class ClowderController(object):
         else:
             projects = [p.get_yaml() for p in self.projects]
 
-        return {'defaults': self.defaults.get_yaml(),
+        return {'name': self.name,
+                'defaults': self.defaults.get_yaml(),
                 'sources': [s.get_yaml() for s in self.sources],
                 'projects': projects}
 
-    def validate_print_output(self, project_names: Tuple[str, ...]) -> None:
+    def validate_print_output(self, projects: Tuple[Project, ...]) -> None: # noqa
         """Validate projects/groups and print output
 
-        :param Tuple[str, ...] project_names: Project names to validate/print
+        :param Tuple[Project, ...] projects: Projects to validate/print
         """
 
-        projects = filter_projects(self.projects, project_names)
-        validate_projects(projects)
+        validate_project_statuses(projects)
         print_parallel_projects_output(projects)
 
     def validate_projects_exist(self) -> None:
-        """Validate existence status of all projects for specified groups
+        """Validate all projects exist on disk
 
         :raise ClowderExit:
         """
@@ -156,23 +164,34 @@ class ClowderController(object):
         except TypeError:
             return ()
 
-    def _load_yaml(self) -> None:
-        """Load clowder.yaml"""
+    def _load_clowder_yaml(self, yaml: dict) -> None:
+        """Load clowder.yaml
+
+        :param dict yaml: Parsed yaml dict
+        """
         try:
-            yaml = load_yaml()
+            self.name = yaml['name']
             self.defaults = Defaults(yaml['defaults'])
-            self.sources = tuple([Source(s, self.defaults) for s in yaml['sources']])
-            self.projects = tuple([Project(p, self.defaults, self.sources) for p in yaml['projects']])
+            self.sources = tuple(sorted([Source(s, self.defaults) for s in yaml['sources']],
+                                        key=lambda source: source.name))
+            self.projects = tuple(sorted([Project(p, self.defaults, self.sources) for p in yaml['projects']],
+                                         key=lambda project: project.name))
             self.project_names = self._get_all_project_names()
             names = list(self.project_names)
-            names.append('all')
-            self.project_choices = tuple(set(names))
-        except (AttributeError, KeyError, TypeError):
+            self.project_choices = tuple(sorted(set(names)))
+            names.append('default')
+            self.project_choices_with_default = tuple(sorted(set(names)))
+        except (AttributeError, KeyError, TypeError) as err:
+            self.name = None
             self.defaults = None
             self.sources = ()
             self.projects = ()
             self.project_names = ()
-            self.project_choices = ('all',)
+            self.project_choices = ()
+            self.project_choices_with_default = ('default',)
+            self.error = err
+        except (KeyboardInterrupt, SystemExit):
+            raise ClowderExit(1)
 
 
 CLOWDER_CONTROLLER: ClowderController = ClowderController()

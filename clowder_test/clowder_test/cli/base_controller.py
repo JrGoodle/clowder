@@ -57,6 +57,19 @@ class BaseController(ArgparseController):
         self.parallel()
 
     @expose(
+        help='Run config yaml validation tests'
+    )
+    def config_yaml_validation(self) -> None:
+        """clowder config yaml validation tests"""
+
+        execute_test_command('./test_config_yaml_validation.sh', self.path,
+                             parallel=True,
+                             write=self.app.pargs.write,
+                             coverage=self.app.pargs.coverage,
+                             debug=self.app.debug,
+                             quiet=self.app.pargs.silent)
+
+    @expose(
         help='Run offline tests'
     )
     def offline(self) -> None:

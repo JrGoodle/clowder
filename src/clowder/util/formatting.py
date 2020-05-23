@@ -6,7 +6,7 @@
 """
 
 import os
-from typing import Optional
+from typing import Optional, Tuple
 
 # noinspection PyPackageRequirements
 import yaml
@@ -14,7 +14,8 @@ from termcolor import colored
 from typing import List, Union
 
 from clowder.error import ClowderExit
-from clowder.util.file_system import symlink_target
+
+from .file_system import symlink_target
 
 
 ERROR = colored(' - Error:', 'red')
@@ -29,6 +30,17 @@ def clowder_command(cmd: str) -> str:
     """
 
     return colored(cmd, attrs=['bold'])
+
+
+def clowder_name(name: str) -> str:
+    """Return formatted clowder name
+
+    :param str name: Clowder name
+    :return: Formatted clowder name
+    :rtype: str
+    """
+
+    return colored(name, attrs=['bold'])
 
 
 def command(cmd: Union[str, List[str]]) -> str:
@@ -79,16 +91,17 @@ def error_duplicate_project_path(path: str, yml: str) -> str:
     return f"{_yaml_path(yml)}\n{ERROR} Multiple projects with path '{path}'"
 
 
-def error_empty_yaml(yml: str) -> str:
+def error_empty_yaml(yml: str, name: str) -> str:
     """Return formatted error string for empty clowder.yaml
 
     :param str yml: Path to yaml file
+    :param str name: Name to use in error message
     :return: Formatted empty yaml error
     :rtype: str
     """
 
     path = _yaml_path(yml)
-    file = _yaml_file('clowder.yaml')
+    file = _yaml_file(name)
     return f"{path}\n{ERROR} No entries in {file}"
 
 
@@ -128,7 +141,18 @@ def error_invalid_ref(ref: str, yml: str) -> str:
     return f"{path}\n{ERROR} 'ref' value '{ref}' is not formatted correctly"
 
 
-def error_invalid_yaml() -> str:
+def error_invalid_clowder_config_yaml() -> str:
+    """Return error message for invalid clowder.config.yaml
+
+    :return: Formatted yaml error
+    :rtype: str
+    """
+
+    file = _yaml_file('clowder.config.yaml')
+    return f"{file} appears to be invalid"
+
+
+def error_invalid_clowder_yaml() -> str:
     """Return error message for invalid clowder.yaml
 
     :return: Formatted yaml error
@@ -139,7 +163,7 @@ def error_invalid_yaml() -> str:
     return f"{file} appears to be invalid"
 
 
-def error_missing_yaml() -> str:
+def error_missing_clowder_yaml() -> str:
     """Format error message for missing clowder.yaml
 
     :return: Formatted missing YAML error
@@ -312,6 +336,26 @@ def last_path_component(path: str) -> str:
     """
 
     return os.path.basename(os.path.normpath(path))
+
+
+def options_help_message(options: Tuple[str, ...], message: str) -> str:
+    """Help message for groups option
+
+    :param Tuple[str, ...] options: List of options
+    :param str message: Help message
+    :return: Formatted options help message
+    :rtype: str
+    """
+
+    if options == [''] or options is None or options == [] or not all(isinstance(n, str) for n in options):
+        return message
+
+    help_message = '''
+                   {0}:
+                   {1}
+                   '''
+
+    return help_message.format(message, ', '.join(options))
 
 
 def path_string(path: str) -> str:

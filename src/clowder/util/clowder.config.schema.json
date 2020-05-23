@@ -1,0 +1,122 @@
+{
+  "title": "JSON schema for Clowder configuration files",
+  "$id": "http://json.schemastore.org/clowder.config",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "definitions": {
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "arrayOfNonEmptyStrings": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/nonEmptyString"
+      }
+    },
+    "stringArrayUnique": {
+      "type": "array",
+      "uniqueItems": true,
+      "minItems": 1,
+      "items": {
+        "$ref": "#/definitions/nonEmptyString"
+      }
+    },
+    "depth": {
+      "description": "Git clone depth",
+      "type": "integer",
+      "minimum": 0,
+      "default": 0
+    },
+    "protocol": {
+      "description": "The Git URL protocol prefix for all projects which use this remote source. Each project's source url and name are appended to this prefix to form the actual URL used to clone the project. Accepted values are 'ssh' or 'https', forming URL's of the form 'git@${remote_url}:${project_name}.git' or 'https://${remote_url}/${project_name}.git', respectively.",
+      "type": "string",
+      "enum": [
+        "https",
+        "ssh"
+      ]
+    },
+    "defaults": {
+      "description": "A map defining clowder defaults",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "projects": {
+          "description": "Projects and groups to pass to clowder command",
+          "oneOf": [
+            {
+              "$ref": "#/definitions/arrayOfNonEmptyStrings"
+            }
+          ]
+        },
+        "depth": {
+          "$ref": "#/definitions/depth"
+        },
+        "protocol": {
+          "$ref": "#/definitions/protocol"
+        },
+        "rebase": {
+          "description": "Whether to rebase when herding",
+          "type": "boolean",
+          "default": false
+        },
+        "parallel": {
+          "description": "Whether to run parallel commands by default",
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "clowder": {
+      "description": "A map defining a clowder",
+      "type": "object",
+      "required": [
+        "clowder_dir"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "description": "Name of clowder",
+          "oneOf": [
+            {
+              "$ref": "#/definitions/nonEmptyString"
+            }
+          ]
+        },
+        "clowder_dir": {
+          "description": "Path to clowder directory",
+          "oneOf": [
+            {
+              "$ref": "#/definitions/nonEmptyString"
+            }
+          ]
+        },
+        "defaults": {
+          "description": "The Git URL prefix for all projects which use this source. Each project's name is appended to this prefix to form the actual URL used to clone the project.",
+          "oneOf": [
+            {
+              "$ref": "#/definitions/defaults"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version"
+  ],
+  "properties": {
+    "version": {
+      "description": "Version of config file. Used for migrations to new versions.",
+      "type": "number"
+    },
+    "clowder_configs": {
+      "description": "List of clowder configs",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/clowder"
+      }
+    }
+  }
+}

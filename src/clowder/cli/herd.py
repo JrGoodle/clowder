@@ -7,30 +7,31 @@
 
 import argparse
 import os
-from typing import Optional, Tuple
 
-from clowder.clowder_controller import CLOWDER_CONTROLLER, ClowderController
+import clowder.util.formatting as fmt
+from clowder.clowder_controller import CLOWDER_CONTROLLER
+from clowder.config import Config
 from clowder.util.clowder_utils import (
     add_parser_arguments,
     filter_projects,
-    options_help_message,
-    validate_projects
+    validate_project_statuses
 )
 from clowder.util.connectivity import network_connection_required
 from clowder.util.decorators import (
+    print_clowder_name,
     print_clowder_repo_status_fetch,
     valid_clowder_yaml_required
 )
-from clowder.util.parallel_commands import herd_parallel
+from clowder.util.parallel import herd_parallel
 
 
 def add_herd_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
 
     arguments = [
-        (['projects'], dict(metavar='PROJECT', default='all', nargs='*',
-                            choices=CLOWDER_CONTROLLER.project_choices,
-                            help=options_help_message(CLOWDER_CONTROLLER.project_names,
-                                                      'projects and groups to show branches for'))),
+        (['projects'], dict(metavar='PROJECT', default='default', nargs='*',
+                            choices=CLOWDER_CONTROLLER.project_choices_with_default,
+                            help=fmt.options_help_message(CLOWDER_CONTROLLER.project_choices,
+                                                          'projects and groups to show branches for'))),
         (['--parallel', '-p'], dict(action='store_true', help='run commands in parallel')),
         (['--rebase', '-r'], dict(action='store_true', help='use rebase instead of pull')),
         (['--depth', '-d'], dict(default=None, type=int, nargs=1, metavar='DEPTH', help='depth to herd'))
@@ -49,45 +50,34 @@ def add_herd_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
     parser.set_defaults(func=herd)
 
 
-def herd(args) -> None:
-    """Clowder herd command entry point"""
-
-    _herd(args)
-
-
 @network_connection_required
 @valid_clowder_yaml_required
+@print_clowder_name
 @print_clowder_repo_status_fetch
-def _herd(args) -> None:
+def herd(args) -> None:
     """Clowder herd command private implementation"""
 
     branch = None if args.branch is None else args.branch[0]
     tag = None if args.tag is None else args.tag[0]
     depth = None if args.depth is None else args.depth[0]
-    project_names = args.projects
     rebase = args.rebase
 
-    if args.parallel:
-        herd_parallel(CLOWDER_CONTROLLER, project_names, branch=branch, tag=tag, depth=depth, rebase=rebase)
+    config = Config(CLOWDER_CONTROLLER.name, CLOWDER_CONTROLLER.project_choices)
+
+    rebase_config = config.current_clowder_config.rebase
+    rebase = rebase_config if rebase_config is not None else rebase
+
+    parallel_config = config.current_clowder_config.parallel
+    parallel = parallel_config if parallel_config is not None else args.parallel
+
+    projects = config.process_projects_arg(args.projects)
+    projects = filter_projects(CLOWDER_CONTROLLER.projects, projects)
+
+    if parallel:
+        herd_parallel(projects, branch=branch, tag=tag, depth=depth, rebase=rebase)
         if os.name == "posix":
             return
 
-    _herd_impl(CLOWDER_CONTROLLER, project_names, branch=branch, tag=tag, depth=depth, rebase=rebase)
-
-
-def _herd_impl(clowder: ClowderController, project_names: Tuple[str, ...], branch: Optional[str] = None,
-               tag: Optional[str] = None, depth: Optional[int] = None, rebase: bool = False) -> None:
-    """Clone projects or update latest from upstream
-
-    :param ClowderController clowder: ClowderController instance
-    :param Tuple[str, ...] project_names: Project names to herd
-    :param Optional[str] branch: Branch to attempt to herd
-    :param Optional[str] tag: Tag to attempt to herd
-    :param Optonal[int] depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-    :param bool rebase: Whether to use rebase instead of pulling latest changes
-    """
-
-    projects = filter_projects(clowder.projects, project_names)
-    validate_projects(projects)
+    validate_project_statuses(projects)
     for project in projects:
         project.herd(branch=branch, tag=tag, depth=depth, rebase=rebase)

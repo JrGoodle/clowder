@@ -11,7 +11,8 @@ from git import GitError
 from termcolor import colored
 
 import clowder.util.formatting as fmt
-from clowder.git.project_repo import ProjectRepo
+
+from .project_repo import ProjectRepo
 
 
 class ProjectRepoRecursive(ProjectRepo):

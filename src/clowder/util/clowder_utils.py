@@ -12,8 +12,9 @@ from typing import List, Optional, Tuple, Union
 import clowder.util.formatting as fmt
 from clowder import CLOWDER_REPO_VERSIONS_DIR
 from clowder.error import ClowderExit
-from clowder.model.project import Project
-from clowder.util.file_system import force_symlink
+from clowder.model import Project
+
+from .file_system import force_symlink
 
 Parser = Union[argparse.ArgumentParser, argparse._MutuallyExclusiveGroup, argparse._ArgumentGroup] # noqa
 Arguments = List[Tuple[list, dict]]
@@ -55,7 +56,7 @@ def filter_projects(projects: Tuple[Project, ...], project_names: Tuple[str, ...
     filtered_projects = []
     for name in project_names:
         filtered_projects += [p for p in projects if name in p.groups]
-    return tuple(set(filtered_projects))
+    return tuple(sorted(set(filtered_projects), key=lambda project: project.name))
 
 
 def get_saved_version_names() -> Optional[Tuple[str, ...]]:
@@ -68,7 +69,7 @@ def get_saved_version_names() -> Optional[Tuple[str, ...]]:
     if CLOWDER_REPO_VERSIONS_DIR is None:
         return None
 
-    return tuple([v[:-13] for v in os.listdir(CLOWDER_REPO_VERSIONS_DIR) if v.endswith('.clowder.yaml')])
+    return tuple(sorted([v[:-13] for v in os.listdir(CLOWDER_REPO_VERSIONS_DIR) if v.endswith('.clowder.yaml')]))
 
 
 def link_clowder_yaml(clowder_dir: str, version: Optional[str] = None) -> None:
@@ -95,26 +96,6 @@ def link_clowder_yaml(clowder_dir: str, version: Optional[str] = None) -> None:
     force_symlink(yaml_file, os.path.join(clowder_dir, 'clowder.yaml'))
 
 
-def options_help_message(options: Tuple[str, ...], message: str) -> str:
-    """Help message for groups option
-
-    :param Tuple[str, ...] options: List of options
-    :param str message: Help message
-    :return: Formatted options help message
-    :rtype: str
-    """
-
-    if options == [''] or options is None or options == [] or not all(isinstance(n, str) for n in options):
-        return message
-
-    help_message = '''
-                   {0}:
-                   {1}
-                   '''
-
-    return help_message.format(message, ', '.join(options))
-
-
 def print_parallel_projects_output(projects: Tuple[Project, ...]) -> None:
     """Print output for parallel project command
 
@@ -126,7 +107,7 @@ def print_parallel_projects_output(projects: Tuple[Project, ...]) -> None:
         _print_fork_output(project)
 
 
-def validate_projects(projects: Tuple[Project, ...]) -> None:
+def validate_project_statuses(projects: Tuple[Project, ...]) -> None:
     """Validate status of all projects
 
     :param Tuple[Project, ...] projects: Projects to validate

@@ -4,3 +4,7 @@
 .. codeauthor:: Joe Decapo <joe@polka.cat>
 
 """
+
+from .project import Project
+from .defaults import Defaults
+from .source import Source

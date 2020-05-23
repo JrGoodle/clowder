@@ -7,13 +7,15 @@
 
 import argparse
 
+import clowder.util.formatting as fmt
 from clowder.clowder_controller import CLOWDER_CONTROLLER
+from clowder.config import Config
 from clowder.util.clowder_utils import (
     add_parser_arguments,
-    filter_projects,
-    options_help_message
+    filter_projects
 )
 from clowder.util.decorators import (
+    print_clowder_name,
     print_clowder_repo_status,
     valid_clowder_yaml_required
 )
@@ -23,10 +25,10 @@ def add_checkout_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
 
     arguments = [
         (['branch'], dict(nargs=1, action='store', help='branch to checkout', metavar='BRANCH')),
-        (['projects'], dict(metavar='PROJECT', default='all', nargs='*',
-                            choices=CLOWDER_CONTROLLER.project_choices,
-                            help=options_help_message(CLOWDER_CONTROLLER.project_names,
-                                                      'projects and groups to checkout branches for')))
+        (['projects'], dict(metavar='PROJECT', default='default', nargs='*',
+                            choices=CLOWDER_CONTROLLER.project_choices_with_default,
+                            help=fmt.options_help_message(CLOWDER_CONTROLLER.project_choices,
+                                                          'projects and groups to checkout branches for')))
     ]
 
     parser = subparsers.add_parser('checkout', help='Checkout local branch in projects')
@@ -34,18 +36,16 @@ def add_checkout_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
     parser.set_defaults(func=checkout)
 
 
-def checkout(args) -> None:
-    """Clowder checkout command entry point"""
-
-    _checkout(args)
-
-
 @valid_clowder_yaml_required
+@print_clowder_name
 @print_clowder_repo_status
-def _checkout(args) -> None:
+def checkout(args) -> None:
     """Clowder checkout command private implementation"""
 
-    projects = filter_projects(CLOWDER_CONTROLLER.projects, args.projects)
+    config = Config(CLOWDER_CONTROLLER.name, CLOWDER_CONTROLLER.project_choices)
+    projects = config.process_projects_arg(args.projects)
+    projects = filter_projects(CLOWDER_CONTROLLER.projects, projects)
+
     for project in projects:
         print(project.status())
         project.checkout(args.branch[0])

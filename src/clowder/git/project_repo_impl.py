@@ -14,12 +14,13 @@ from termcolor import colored
 
 import clowder.util.formatting as fmt
 from clowder.error import ClowderGitError
-from clowder.git.repo import GitRepo
-from clowder.git.util import (
+from clowder.util.file_system import remove_directory
+
+from .repo import GitRepo
+from .util import (
     existing_git_repository,
     not_detached
 )
-from clowder.util.file_system import remove_directory
 
 __project_repo_default_ref__ = 'refs/heads/master'
 __project_repo_default_remote__ = 'origin'
@@ -495,7 +496,7 @@ class ProjectRepoImpl(GitRepo):
         self._print(f' - Pull from {remote_output} {branch_output}')
         quiet = not self._print_output
         try:
-            print(self.repo.git.pull(remote, branch, quiet=quiet))
+            self._print(self.repo.git.pull(remote, branch, quiet=quiet))
         except GitError as err:
             message = colored(' - Failed to pull from ', 'red') + f'{remote_output} {branch_output}'
             self._print(message)
@@ -517,7 +518,7 @@ class ProjectRepoImpl(GitRepo):
         self._print(f' - Rebase onto {remote_output} {branch_output}')
         quiet = not self._print_output
         try:
-            print(self.repo.git.pull(remote, branch, rebase=True, quiet=quiet))
+            self._print(self.repo.git.pull(remote, branch, rebase=True, quiet=quiet))
         except GitError as err:
             message = colored(' - Failed to rebase onto ', 'red') + f'{remote_output} {branch_output}'
             self._print(message)

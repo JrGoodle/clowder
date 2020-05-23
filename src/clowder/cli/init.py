@@ -30,14 +30,8 @@ def add_init_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
     parser.set_defaults(func=init)
 
 
-def init(args) -> None:
-    """Clowder init command entry point"""
-
-    _init(args)
-
-
 @network_connection_required
-def _init(args) -> None:
+def init(args) -> None:
     """Clowder init command private implementation
 
     :raise ClowderExit:

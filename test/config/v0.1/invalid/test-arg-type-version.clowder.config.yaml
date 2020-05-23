@@ -1,0 +1,10 @@
+version: [0.1] # ERROR
+
+clowder_configs:
+  - name: cats
+    clowder_dir: /Users/jrgoodle/projects/cats
+    defaults:
+      parallel: true
+      projects: [kit, kishka]
+      protocol: https
+

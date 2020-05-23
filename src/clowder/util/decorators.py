@@ -14,7 +14,7 @@ from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.error import ClowderExit, ClowderYAMLError, ClowderYAMLErrorType
 
 
-def clowder_required(func):
+def clowder_repo_required(func):
     """If no clowder repo, print clowder not found message and exit"""
 
     @wraps(func)
@@ -22,6 +22,19 @@ def clowder_required(func):
         """Wrapper"""
 
         _validate_clowder_repo_exists()
+        return func(*args, **kwargs)
+
+    return wrapper
+
+
+def print_clowder_name(func):
+    """Print clowder name"""
+
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        """Wrapper"""
+
+        print(fmt.clowder_name(f"{CLOWDER_CONTROLLER.name}\n"))
         return func(*args, **kwargs)
 
     return wrapper

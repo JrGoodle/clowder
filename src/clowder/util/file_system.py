@@ -34,6 +34,36 @@ def force_symlink(file1: str, file2: str) -> None:
         raise ClowderExit(1)
 
 
+def remove_file(file: str) -> None:
+    """Remove file
+
+    :param str file: File path to remove
+    :raise OSError:
+    """
+
+    os.remove(file)
+
+
+def create_backup_file(file: str) -> None:
+    """Copy file to {file}.backup
+
+    :param str file: File path to copy
+    :raise OSError:
+    """
+
+    shutil.copyfile(file, f"{file}.backup")
+
+
+def restore_from_backup_file(file: str) -> None:
+    """Copy {file}.backup to file
+
+    :param str file: File path to copy
+    :raise OSError:
+    """
+
+    shutil.copyfile(f"{file}.backup", file)
+
+
 def make_dir(directory: str) -> None:
     """Make directory if it doesn't exist
 

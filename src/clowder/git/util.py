@@ -8,7 +8,25 @@
 import os
 from functools import wraps
 
-from clowder.error. clowder_error import ClowderError
+from git import Repo, GitError
+
+from clowder.error import ClowderError
+
+
+def check_ref_format(ref: str) -> bool:
+    """Check if git ref is correctly formatted
+
+    :param str ref: Git ref
+    :return: True, if git ref is a valid format
+    :rtype: bool
+    """
+    try:
+        Repo().git.check_ref_format('--normalize', ref)
+    except GitError as err:
+        print(err)
+        return False
+    else:
+        return True
 
 
 def existing_git_repository(path: str) -> bool:

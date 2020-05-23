@@ -1,3 +1,4 @@
+argcomplete
 awscli
 codecov
 colorama
@@ -7,6 +8,7 @@ GitPython
 psutil
 PyYAML
 recommonmark
+remarshal
 sphinx
 sphinx-autobuild
 sphinx-rtd-theme

@@ -7,6 +7,16 @@
       "type": "string",
       "minLength": 1
     },
+    "nonEmptyStringNoSpaces": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^((?! ).)*$"
+    },
+    "nonEmptyStringNoDefault": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!default$).*$"
+    },
     "arrayOfNonEmptyStrings": {
       "type": "array",
       "items": {
@@ -20,6 +30,19 @@
       "items": {
         "$ref": "#/definitions/nonEmptyString"
       }
+    },
+    "stringArrayUniqueNoDefault": {
+      "type": "array",
+      "uniqueItems": true,
+      "minItems": 1,
+      "items": {
+        "$ref": "#/definitions/nonEmptyStringNoDefault"
+      }
+    },
+    "relativePath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!\/.*$).*"
     },
     "gitProjectName": {
       "description": "A unique name for this project. The project's name is appended onto its source's URL to generate the actual URL to configure the Git remote with. The URL gets formed as: ${source_url}/${project_name}.git where ${source_url} is the source's url and ${project_name} is the project’s name. The suffix '.git' is always appended as clowder assumes the upstream is a forest of bare Git repositories.",
@@ -65,7 +88,7 @@
       "description": "Name of the Git branch to track for this project. If not supplied the ref specified in the defaults is used if applicable, else the default branch 'master' is used.",
       "oneOf": [
         {
-          "$ref": "#/definitions/nonEmptyString"
+          "$ref": "#/definitions/nonEmptyStringNoSpaces"
         }
       ]
     },
@@ -203,7 +226,7 @@
               "description": "Path to clone project on disk",
               "oneOf": [
                 {
-                  "$ref": "#/definitions/nonEmptyString"
+                  "$ref": "#/definitions/relativePath"
                 }
               ]
             },
@@ -220,7 +243,7 @@
               "description": "Groups project belongs to",
               "oneOf": [
                 {
-                  "$ref": "#/definitions/stringArrayUnique"
+                  "$ref": "#/definitions/stringArrayUniqueNoDefault"
                 }
               ]
             },
@@ -251,7 +274,7 @@
               "description": "Path to clone project on disk",
               "oneOf": [
                 {
-                  "$ref": "#/definitions/nonEmptyString"
+                  "$ref": "#/definitions/relativePath"
                 }
               ]
             },
@@ -268,7 +291,7 @@
               "description": "Groups project belongs to",
               "oneOf": [
                 {
-                  "$ref": "#/definitions/stringArrayUnique"
+                  "$ref": "#/definitions/stringArrayUniqueNoDefault"
                 }
               ]
             },
@@ -299,7 +322,7 @@
               "description": "Path to clone project on disk",
               "oneOf": [
                 {
-                  "$ref": "#/definitions/nonEmptyString"
+                  "$ref": "#/definitions/relativePath"
                 }
               ]
             },
@@ -316,7 +339,7 @@
               "description": "Groups project belongs to",
               "oneOf": [
                 {
-                  "$ref": "#/definitions/stringArrayUnique"
+                  "$ref": "#/definitions/stringArrayUniqueNoDefault"
                 }
               ]
             },
@@ -340,11 +363,20 @@
   "type": "object",
   "additionalProperties": false,
   "required": [
+    "name",
     "defaults",
     "sources",
     "projects"
   ],
   "properties": {
+    "name": {
+      "description": "A name describing the projects",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/nonEmptyString"
+        }
+      ]
+    },
     "defaults": {
       "description": "Default values inherited by projects and sources",
       "type": "object",

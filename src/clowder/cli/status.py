@@ -9,24 +9,28 @@ import argparse
 from typing import Tuple
 
 import clowder.clowder_repo as clowder_repo
+import clowder.util.formatting as fmt
 from clowder.clowder_controller import CLOWDER_CONTROLLER
-from clowder.model.project import Project
+from clowder.config import Config
+from clowder.model import Project
 from clowder.util.clowder_utils import (
     add_parser_arguments,
-    filter_projects,
-    options_help_message
+    filter_projects
 )
 from clowder.util.connectivity import network_connection_required
-from clowder.util.decorators import valid_clowder_yaml_required
+from clowder.util.decorators import (
+    print_clowder_name,
+    valid_clowder_yaml_required
+)
 
 
 def add_status_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
 
     arguments = [
-        (['projects'], dict(metavar='PROJECT', default='all', nargs='*',
-                            choices=CLOWDER_CONTROLLER.project_choices,
-                            help=options_help_message(CLOWDER_CONTROLLER.project_names,
-                                                      'projects and groups to print status of'))),
+        (['projects'], dict(metavar='PROJECT', default='default', nargs='*',
+                            choices=CLOWDER_CONTROLLER.project_choices_with_default,
+                            help=fmt.options_help_message(CLOWDER_CONTROLLER.project_choices,
+                                                          'projects and groups to print status of'))),
         (['--fetch', '-f'], dict(action='store_true', help='fetch projects before printing status'))
     ]
 
@@ -35,17 +39,14 @@ def add_status_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
     parser.set_defaults(func=status)
 
 
-def status(args) -> None:
-    """Clowder status command entry point"""
-
-    _status(args)
-
-
 @valid_clowder_yaml_required
-def _status(args) -> None:
+@print_clowder_name
+def status(args) -> None:
     """Clowder status command private implementation"""
 
-    projects = filter_projects(CLOWDER_CONTROLLER.projects, args.projects)
+    config = Config(CLOWDER_CONTROLLER.name, CLOWDER_CONTROLLER.project_choices)
+    projects = config.process_projects_arg(args.projects)
+    projects = filter_projects(CLOWDER_CONTROLLER.projects, projects)
 
     if args.fetch:
         _fetch_projects(projects)

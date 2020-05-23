@@ -23,10 +23,11 @@ from clowder.git.util import (
     format_git_tag,
     git_url
 )
-from clowder.model.defaults import Defaults
-from clowder.model.fork import Fork
-from clowder.model.source import Source
 from clowder.util.execute import execute_forall_command
+
+from .defaults import Defaults
+from .fork import Fork
+from .source import Source
 
 
 def project_repo_exists(func):
