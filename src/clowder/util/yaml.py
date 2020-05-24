@@ -8,7 +8,6 @@
 import copy
 import pkg_resources
 from pathlib import Path
-from typing import List, Optional
 
 # noinspection PyPackageRequirements
 import jsonschema
@@ -16,12 +15,14 @@ import jsonschema
 import yaml as pyyaml
 
 import clowder.util.formatting as fmt
-from clowder import CLOWDER_CONFIG_YAML, CLOWDER_DIR, CLOWDER_YAML
+from clowder import CLOWDER_CONFIG_DIR, CLOWDER_CONFIG_YAML, CLOWDER_DIR, CLOWDER_YAML
 from clowder.error import (
     ClowderExit,
     ClowderConfigYAMLError, ClowderConfigYAMLErrorType,
     ClowderYAMLError, ClowderYAMLErrorType
 )
+
+from .clowder_utils import check_for_duplicates
 
 
 def load_clowder_config_yaml() -> dict:
@@ -38,7 +39,7 @@ def load_clowder_config_yaml() -> dict:
         with open(CLOWDER_CONFIG_YAML) as raw_file:
             parsed_yaml = pyyaml.safe_load(raw_file)
             if parsed_yaml is None:
-                config_yaml = Path('clowder.config.yaml')
+                config_yaml = CLOWDER_CONFIG_YAML.relative_to(CLOWDER_CONFIG_DIR)
                 raise ClowderConfigYAMLError(fmt.error_empty_yaml(CLOWDER_CONFIG_YAML, config_yaml),
                                              ClowderConfigYAMLErrorType.EMPTY_FILE)
             return parsed_yaml
@@ -63,7 +64,7 @@ def load_clowder_yaml() -> dict:
         with CLOWDER_YAML.open() as raw_file:
             parsed_yaml = pyyaml.safe_load(raw_file)
             if parsed_yaml is None:
-                clowder_yaml = Path('clowder.yaml')
+                clowder_yaml = CLOWDER_YAML.relative_to(CLOWDER_DIR)
                 raise ClowderYAMLError(fmt.error_empty_yaml(CLOWDER_YAML, clowder_yaml),
                                        ClowderYAMLErrorType.EMPTY_FILE)
             return parsed_yaml
@@ -105,7 +106,7 @@ def save_yaml(yaml_output: dict, yaml_file: Path) -> None:
 
 
 def validate_clowder_config_yaml(parsed_yaml: dict) -> None:
-    """Validate clowder.config.yaml
+    """Validate clowder config yaml file
 
     Raises:
         ClowderExit
@@ -116,12 +117,12 @@ def validate_clowder_config_yaml(parsed_yaml: dict) -> None:
     try:
         jsonschema.validate(parsed_yaml, json_schema)
     except jsonschema.exceptions.ValidationError as err:
-        error_message = f"{fmt.error_invalid_clowder_config_yaml()}\n{fmt.ERROR} {err.message}"
+        error_message = f"{fmt.error_invalid_yaml_file(CLOWDER_CONFIG_YAML.name)}\n{fmt.ERROR} {err.message}"
         raise ClowderYAMLError(error_message, ClowderYAMLErrorType.JSONSCHEMA_VALIDATION_FAILED)
 
 
 def validate_clowder_yaml(parsed_yaml: dict) -> None:
-    """Validate clowder.yaml
+    """Validate clowder yaml file
 
     :param dict parsed_yaml: Parsed yaml dictionary
     Raises:
@@ -134,40 +135,22 @@ def validate_clowder_yaml(parsed_yaml: dict) -> None:
     try:
         jsonschema.validate(parsed_yaml, json_schema)
     except jsonschema.exceptions.ValidationError as err:
-        error_message = f"{fmt.error_invalid_clowder_yaml()}\n{fmt.ERROR} {err.message}"
+        error_message = f"{fmt.error_invalid_yaml_file(CLOWDER_YAML.name)}\n{fmt.ERROR} {err.message}"
         raise ClowderYAMLError(error_message, ClowderYAMLErrorType.JSONSCHEMA_VALIDATION_FAILED)
 
     _validate_yaml_contents(parsed_yaml_content_validation_copy, CLOWDER_YAML)
 
 
-def _check_for_duplicates(list_of_elements: List[str]) -> Optional[str]:
-    """Check if given list contains any duplicates
-
-    :param List[str] list_of_elements: List of strings to check for duplicates
-    :return: First duplicate encountered, or None if no duplicates found
-    :rtype: Optional[str]
-    """
-
-    set_of_elements = set()
-    for elem in list_of_elements:
-        if elem in set_of_elements:
-            return elem
-        else:
-            set_of_elements.add(elem)
-    return None
-
-
-def _format_yaml_symlink(yaml_file: Path) -> str:
+def _format_yaml_symlink(yaml_symlink: Path, yaml_file: Path) -> str:
     """Return formatted string for yaml symlink
 
-    :param Path yaml_file: Yaml file path
+    :param Path yaml_symlink: Yaml symlink
+    :param Path yaml_file: File pointed to by yaml symlink
     :return: Formatted string for yaml symlink
     :rtype: str
     """
 
-    path = yaml_file.resolve().relative_to(CLOWDER_DIR)
-    clowder_file = Path('clowder.yaml')
-    return '\n' + fmt.path_string(clowder_file) + ' -> ' + fmt.path_string(path) + '\n'
+    return f"\n{fmt.path_string(yaml_symlink)} -> {fmt.path_string(yaml_file)}\n"
 
 
 def _format_yaml_file(yaml_file: Path) -> str:
@@ -183,7 +166,7 @@ def _format_yaml_file(yaml_file: Path) -> str:
 
 
 def _load_clowder_config_json_schema() -> dict:
-    """Return json schema file for clowder.config.yaml
+    """Return json schema file for clowder config yaml file
 
     :return: Loaded json dict
     :rtype: dict
@@ -194,7 +177,7 @@ def _load_clowder_config_json_schema() -> dict:
 
 
 def _load_clowder_json_schema() -> dict:
-    """Return json schema file for clowder.yaml
+    """Return json schema file for clowder yaml file
 
     :return: Loaded json dict
     :rtype: dict
@@ -205,7 +188,7 @@ def _load_clowder_json_schema() -> dict:
 
 
 def _print_yaml(yaml_file: Path) -> None:
-    """Private print current clowder yaml
+    """Private print current clowder yaml file
 
     :param Path yaml_file: Path to yaml file
     :raise ClowderExit:
@@ -226,13 +209,14 @@ def _print_yaml(yaml_file: Path) -> None:
 
 
 def _print_yaml_path(yaml_file: Path) -> None:
-    """Print clowder yaml path
+    """Print clowder yaml file path
 
     :param Path yaml_file: Path to yaml file
     """
 
     if yaml_file.is_symlink():
-        print(_format_yaml_symlink(yaml_file))
+        path = yaml_file.resolve().relative_to(CLOWDER_DIR)
+        print(_format_yaml_symlink(Path(yaml_file.name), path))
     else:
         print(_format_yaml_file(yaml_file))
 
@@ -245,7 +229,7 @@ def _validate_yaml_contents(yaml: dict, yaml_file: Path) -> None:
     :param Path yaml_file: Path to yaml file
     """
 
-    err_prefix = f"{fmt.error_invalid_clowder_yaml()}\n{fmt.ERROR} "
+    err_prefix = f"{fmt.error_invalid_yaml_file(yaml_file.name)}\n{fmt.ERROR} "
 
     sources = []
     for source in yaml['sources']:
@@ -308,7 +292,7 @@ def _validate_yaml_contents(yaml: dict, yaml_file: Path) -> None:
 
     # Validate projects don't share share directories
     paths = [str(Path(p['path']).resolve()) for p in projects]
-    duplicate = _check_for_duplicates(paths)
+    duplicate = check_for_duplicates(paths)
     if duplicate is not None:
         err = f"{err_prefix}{fmt.error_duplicate_project_path(Path(duplicate), yaml_file)}"
         raise ClowderYAMLError(err, ClowderYAMLErrorType.DUPLICATE_PATH)

@@ -33,7 +33,8 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
         $COMMAND repo checkout repo-test || exit 1
         end_command
         pushd .clowder || exit 1
-        ORIGINAL_COMMIT="$(git rev-parse HEAD)"
+        local original_commit
+        original_commit="$(git rev-parse HEAD)"
         test_branch repo-test
         popd || exit 1
         begin_command
@@ -46,9 +47,10 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
         $COMMAND repo commit 'Add newfile for $COMMAND repo test' || exit 1
         end_command
         pushd .clowder || exit 1
-        NEW_COMMIT="$(git rev-parse HEAD)"
+        local new_commit
+        new_commit="$(git rev-parse HEAD)"
         popd || exit 1
-        if [ "$ORIGINAL_COMMIT" == "$NEW_COMMIT" ]; then
+        if [ "$original_commit" == "$new_commit" ]; then
             exit 1
         fi
         begin_command
@@ -58,13 +60,13 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
         $COMMAND repo run 'git reset --hard HEAD~1' || exit 1
         end_command
         pushd .clowder || exit 1
-        test_commit "$ORIGINAL_COMMIT"
+        test_commit "$original_commit"
         popd || exit 1
         begin_command
         $COMMAND repo pull || exit 1
         end_command
         pushd .clowder || exit 1
-        test_commit "$NEW_COMMIT"
+        test_commit "$new_commit"
         popd || exit 1
         begin_command
         $COMMAND repo run 'git reset --hard HEAD~1' || exit 1

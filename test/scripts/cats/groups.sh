@@ -114,7 +114,7 @@ test_groups_4() {
     test_branch knead
     popd || exit 1
     pushd duke || exit 1
-    test_branch purr
+    test_branch heads/purr
     popd || exit 1
     test_no_directory_exists 'black-cats'
 }
@@ -139,7 +139,7 @@ test_groups_5() {
     test_branch knead
     popd || exit 1
     pushd duke || exit 1
-    test_branch purr
+    test_branch heads/purr
     popd || exit 1
     for project in "${black_cats_projects[@]}"; do
         pushd $project || exit 1
@@ -165,7 +165,7 @@ test_groups_6() {
     test_branch knead
     popd || exit 1
     pushd duke || exit 1
-    test_branch purr
+    test_branch heads/purr
     popd || exit 1
     test_no_directory_exists 'mu-cat'
     test_no_directory_exists 'black-cats'
@@ -191,7 +191,7 @@ test_groups_7() {
     test_branch knead
     popd || exit 1
     pushd duke || exit 1
-    test_branch purr
+    test_branch heads/purr
     popd || exit 1
     for project in "${black_cats_projects[@]}"; do
         pushd $project || exit 1

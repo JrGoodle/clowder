@@ -34,7 +34,7 @@ class ProjectRepoImpl(GitRepo):
     :ivar str default_ref: Default ref
     :ivar str remote: Default remote name
     :ivar bool parallel: Whether command is being run in parallel, affects output
-    :ivar Repo repo: Repo instance
+    :ivar Repo Optional[repo]: Repo instance
     """
 
     def __init__(self, repo_path: Path, remote: str, default_ref: str, parallel: bool = False):
@@ -46,7 +46,7 @@ class ProjectRepoImpl(GitRepo):
         :param bool parallel: Whether command is being run in parallel, affects output. Defaults to False
         """
 
-        GitRepo.__init__(self, repo_path, remote, default_ref, parallel=parallel)
+        super().__init__(repo_path, remote, default_ref, parallel=parallel)
 
     def _checkout_branch(self, branch: str) -> None:
         """Checkout local branch or print message if already checked out

@@ -44,8 +44,7 @@ def clowder_name(name: str) -> str:
 def command(cmd: Union[str, List[str]]) -> str:
     """Return formatted command name
 
-    :param cmd: Clowder command name
-    :type cmd: str or list[str]
+    :param Union[str, List[str]] cmd: Clowder command name
     :return: Formatted clowder command name
     :rtype: str
     """
@@ -68,13 +67,23 @@ def error(err: Exception) -> str:
 def error_command_failed(cmd: Union[str, List[str]]) -> str:
     """Format error message for failed command
 
-    :param cmd: Clowder command name
-    :type cmd: str or list[str]
+    :param Union[str, List[str]] cmd: Clowder command name
     :return: Formatted clowder command name
     :rtype: str
     """
 
     return f"{ERROR} Failed to run command {command(cmd)}\n"
+
+
+def error_duplicate_version(version: str) -> str:
+    """Format error message for duplicate clowder version
+
+    :param str version: Clowder version name
+    :return: Formatted duplicate clowder version error
+    :rtype: str
+    """
+
+    return f"{ERROR} Duplicate version found: {_yaml_file(Path(version))}\n"
 
 
 def error_duplicate_project_path(path: Path, yml: Path) -> str:
@@ -90,7 +99,7 @@ def error_duplicate_project_path(path: Path, yml: Path) -> str:
 
 
 def error_empty_yaml(yml: Path, name: Path) -> str:
-    """Return formatted error string for empty clowder.yaml
+    """Return formatted error string for empty clowder yaml file
 
     :param Path yml: Path to yaml file
     :param Path name: Path to use in error message
@@ -133,44 +142,33 @@ def error_invalid_ref(ref: str, yml: Path) -> str:
     :param str ref: Git reference
     :param Path yml: Path to yaml file
     :return: Formatted invalid ref error
+    :rtype: str
     """
 
     path = _yaml_path(yml)
     return f"{path}\n{ERROR} 'ref' value '{ref}' is not formatted correctly"
 
 
-def error_invalid_clowder_config_yaml() -> str:
-    """Return error message for invalid clowder.config.yaml
+def error_invalid_yaml_file(name: str) -> str:
+    """Return error message for invalid yaml file
 
+    :param str name: Invalid file's name
     :return: Formatted yaml error
     :rtype: str
     """
 
-    config_file = Path('clowder.config.yaml')
-    file = _yaml_file(config_file)
-    return f"{file} appears to be invalid"
-
-
-def error_invalid_clowder_yaml() -> str:
-    """Return error message for invalid clowder.yaml
-
-    :return: Formatted yaml error
-    :rtype: str
-    """
-
-    clowder_file = Path('clowder.yaml')
-    file = _yaml_file(clowder_file)
+    file = _yaml_file(Path(name))
     return f"{file} appears to be invalid"
 
 
 def error_missing_clowder_yaml() -> str:
-    """Format error message for missing clowder.yaml
+    """Format error message for missing clowder yaml file
 
     :return: Formatted missing YAML error
     :rtype: str
     """
 
-    clowder_file = Path('clowder.yaml')
+    clowder_file = Path('clowder.yml')
     file = _yaml_file(clowder_file)
     return f"{file} appears to be missing"
 
@@ -207,7 +205,7 @@ def error_parallel_exception(path: Path, *args) -> str:
     """
 
     path = path_string(path)
-    return f"{path}\n" + ''.join(args)
+    return f"{path}\n{''.join(args)}"
 
 
 def error_remote_already_exists(remote_name: str, remote_url: str, actual_url: str) -> str:
@@ -407,7 +405,7 @@ def url_string(url: str) -> str:
 
 
 def version_string(version_name: str) -> str:
-    """Return formatted string for clowder.yaml version
+    """Return formatted string for clowder yaml version
 
     :param str version_name: Clowder version name
     :return: Formatted clowder version name
@@ -429,7 +427,7 @@ def yaml_string(yaml_output: dict) -> str:
     try:
         return yaml.safe_dump(yaml_output, default_flow_style=False, indent=4)
     except yaml.YAMLError:
-        print(f"{ERROR} Failed to dump yaml")
+        print(f"{ERROR} Failed to dump yaml file contents")
         raise ClowderExit(1)
     except (KeyboardInterrupt, SystemExit):
         raise ClowderExit(1)
@@ -447,7 +445,7 @@ def _yaml_path(yml: Path) -> str:
 
 
 def _yaml_file(yml: Path) -> str:
-    """Return formatted string for clowder.yaml file
+    """Return formatted string for clowder yaml file
 
     :param Path yml: Path to yaml file
     :return: Formatted YAML string

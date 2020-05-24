@@ -77,6 +77,7 @@ test_clean_groups() {
         popd || exit 1
     done
 }
+test_clean_groups
 
 test_clean_projects() {
     print_single_separator
@@ -117,6 +118,7 @@ test_clean_projects() {
         popd || exit 1
     done
 }
+test_clean_projects 'jrgoodle/duke' 'jrgoodle/mu'
 
 test_clean_all() {
     print_single_separator
@@ -150,6 +152,7 @@ test_clean_all() {
         popd || exit 1
     done
 }
+test_clean_all 'black-cats'
 
 test_clean_missing_directories() {
     print_single_separator
@@ -186,6 +189,7 @@ test_clean_missing_directories() {
     $COMMAND herd $PARALLEL || exit 1
     end_command
 }
+test_clean_missing_directories 'mu' 'duke'
 
 test_clean_abort_rebase() {
     print_single_separator
@@ -225,6 +229,7 @@ test_clean_abort_rebase() {
         git reset --hard HEAD~1 || exit 1
     popd || exit 1
 }
+test_clean_abort_rebase
 
 test_clean_d() {
     print_single_separator
@@ -276,6 +281,7 @@ test_clean_d() {
     test_no_untracked_files
     popd || exit 1
 }
+test_clean_d
 
 test_clean_f() {
     print_single_separator
@@ -309,6 +315,7 @@ test_clean_f() {
     test_no_directory_exists 'cats'
     popd || exit 1
 }
+test_clean_f
 
 test_clean_X() {
     print_single_separator
@@ -339,6 +346,7 @@ test_clean_X() {
     test_no_file_exists 'something'
     popd || exit 1
 }
+test_clean_X
 
 test_clean_x() {
     print_single_separator
@@ -363,6 +371,7 @@ test_clean_x() {
     test_no_file_exists 'something'
     popd || exit 1
 }
+test_clean_x
 
 test_clean_a() {
     print_single_separator
@@ -422,6 +431,7 @@ test_clean_a() {
     $COMMAND link || exit 1
     end_command
 }
+test_clean_a
 
 test_clean_submodules_untracked() {
     print_single_separator
@@ -457,6 +467,7 @@ test_clean_submodules_untracked() {
 
     clowder link || exit 1
 }
+test_clean_submodules_untracked
 
 test_clean_submodules_dirty() {
     print_single_separator
@@ -492,7 +503,7 @@ test_clean_submodules_dirty() {
         test_no_directory_exists 'something'
         test_no_file_exists 'something/something'
         test_no_file_exists 'newfile'
-        git branch -D something
+        git branch -D something || exit 1
         popd || exit 1
     done
 
@@ -500,17 +511,4 @@ test_clean_submodules_dirty() {
     $COMMAND link || exit 1
     end_command
 }
-
-test_clean_groups
-test_clean_projects 'jrgoodle/duke' 'jrgoodle/mu'
-test_clean_all 'black-cats'
-test_clean_missing_directories 'mu' 'duke'
-test_clean_abort_rebase
-test_clean_d
-test_clean_f
-test_clean_X
-test_clean_x
-
-test_clean_a
-test_clean_submodules_untracked
 test_clean_submodules_dirty

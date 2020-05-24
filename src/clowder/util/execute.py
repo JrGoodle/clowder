@@ -49,8 +49,7 @@ def execute_command(command: Union[str, List[str]], path: Path,
 def execute_forall_command(command: Union[str, List[str]], path: Path, forall_env: dict, print_output: bool) -> None:
     """Execute forall command with additional environment variables and display continuous output
 
-    :param command: Command to run
-    :type command: str or list[str]
+    :param Union[str, List[str]] command: Command to run
     :param Path path: Path to set as ``cwd``
     :param dict forall_env: Enviroment to set as ``env``
     :param bool print_output: Whether to print output

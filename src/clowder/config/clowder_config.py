@@ -182,7 +182,7 @@ class ClowderConfig(object):
 
     @staticmethod
     def validate_config_projects_defined(project_names: Tuple[str, ...], project_options: Tuple[str, ...]) -> None:
-        """Validate all projects were defined in clowder.yaml
+        """Validate all projects were defined in clowder yaml file
 
         :param Tuple[str, ...] project_names: Project names to validate
         :param Tuple[str, ...] project_options: Projects to validate against

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Representation of clowder.yaml fork
+"""Representation of clowder yaml fork
 
 .. codeauthor:: Joe Decapo <joe@polka.cat>
 
@@ -24,7 +24,7 @@ from .source import Source
 
 
 class Fork(object):
-    """clowder.yaml Project model class
+    """clowder yaml Project model class
 
     :ivar str name: Project name
     :ivar str path: Project relative path

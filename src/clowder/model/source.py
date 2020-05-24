@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Representation of clowder.yaml source
+"""Representation of clowder yaml source
 
 .. codeauthor:: Joe Decapo <joe@polka.cat>
 
@@ -11,7 +11,7 @@ from .defaults import Defaults
 
 
 class Source(object):
-    """clowder.yaml Source model class
+    """clowder yaml Source model class
 
     :ivar str name: Source name
     :ivar str url: Source url

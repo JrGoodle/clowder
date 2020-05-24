@@ -7,6 +7,7 @@ echo 'Clean misc example directory'
 rm -rf clowder
 rm -rf .clowder
 rm -f clowder.yaml
+rm -f clowder.yml
 rm -rf djinni
 rm -rf gyp
 rm -rf sox

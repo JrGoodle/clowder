@@ -15,25 +15,23 @@ from termcolor import colored
 from clowder.error import ClowderExit
 
 
-def force_symlink(file1: Path, file2: Path) -> None:
+def force_symlink(source: Path, target: Path) -> None:
     """Force symlink creation
 
-    :param Path file1: File to create symlink pointing to
-    :param Path file2: Symlink location
+    :param Path source: File to create symlink pointing to
+    :param Path target: Symlink location
     :raise ClowderExit:
     """
 
-    file1 = str(file1)
-    file2 = str(file2)
+    source = str(source)
+    target = str(target)
     try:
-        os.symlink(file1, file2)
+        os.symlink(source, target)
     except OSError as error:
         if error.errno == errno.EEXIST:
-            os.remove(file2)
-            os.symlink(file1, file2)
+            os.remove(target)
+            os.symlink(source, target)
     except (KeyboardInterrupt, SystemExit):
-        os.remove(file2)
-        os.symlink(file1, file2)
         raise ClowderExit(1)
 
 

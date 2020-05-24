@@ -30,7 +30,7 @@ def add_save_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
         (['version'], dict(help='version to save', metavar='VERSION'))
     ]
 
-    parser = subparsers.add_parser('save', help='Create version of clowder.yaml for current repos')
+    parser = subparsers.add_parser('save', help='Create clowder yaml version for current repos')
     add_parser_arguments(parser, arguments)
     parser.set_defaults(func=save)
 
@@ -59,10 +59,14 @@ def save(args) -> None:
     versions_dir = CLOWDER_REPO_DIR / 'versions'
     make_dir(versions_dir)
 
+    yml_file = versions_dir / f"{version_name}.clowder.yml"
     yaml_file = versions_dir / f"{version_name}.clowder.yaml"
-    if yaml_file.exists():
+    if yml_file.exists():
+        print(f"{fmt.error_save_version_exists(version_name, yml_file)}\n")
+        raise ClowderExit(1)
+    elif yaml_file.exists():
         print(f"{fmt.error_save_version_exists(version_name, yaml_file)}\n")
         raise ClowderExit(1)
 
-    print(fmt.save_version_message(version_name, yaml_file))
-    save_yaml(CLOWDER_CONTROLLER.get_yaml(), yaml_file)
+    print(fmt.save_version_message(version_name, yml_file))
+    save_yaml(CLOWDER_CONTROLLER.get_yaml(), yml_file)

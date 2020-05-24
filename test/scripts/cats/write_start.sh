@@ -143,7 +143,7 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
         test_no_local_branch_exists tracking_branch
         popd || exit 1
         pushd duke || exit 1
-        test_branch purr
+        test_branch heads/purr
         test_remote_branch_exists tracking_branch
         test_no_local_branch_exists tracking_branch
         popd || exit 1

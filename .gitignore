@@ -7,7 +7,7 @@ examples/cats/cached
 examples/cats/clowder
 examples/cats/.clowder
 examples/cats/clowder.yaml
-examples/cats/peru.yaml
+examples/cats/clowder.yml
 examples/cats/black*
 examples/cats/mu
 examples/cats/mu-cat
@@ -23,8 +23,8 @@ examples/cats/jrgoodle
 examples/swift-projects/cached
 examples/swift-projects/clowder
 examples/swift-projects/.clowder
+examples/swift-projects/clowder.yml
 examples/swift-projects/clowder.yaml
-examples/swift-projects/peru.yaml
 examples/swift-projects/clang
 examples/swift-projects/cmark
 examples/swift-projects/compiler-rt
@@ -43,6 +43,7 @@ examples/swift-projects/swiftpm
 examples/misc/cached
 examples/misc/clowder
 examples/misc/.clowder
+examples/misc/clowder.yml
 examples/misc/clowder.yaml
 examples/misc/djinni
 examples/misc/gyp

@@ -90,7 +90,7 @@ test_fork_herd() {
     end_command
     pushd 'gyp' || exit 1
     test_tracking_branch_exists 'fork-branch'
-    fork_branch_commit=''bd11dd1c51ef17592384df927c47023071639f96''
+    local fork_branch_commit='bd11dd1c51ef17592384df927c47023071639f96'
     test_commit $fork_branch_commit
     git pull upstream master
     test_not_commit $fork_branch_commit

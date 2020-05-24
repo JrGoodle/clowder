@@ -28,7 +28,7 @@ test_cats_default_herd_branches() {
     test_branch knead
     popd || exit 1
     pushd duke || exit 1
-    test_branch purr
+    test_branch heads/purr
     popd || exit 1
 }
 
@@ -81,7 +81,7 @@ test_herd_branch_no_repo_existing_remote() {
     test_no_remote_branch_exists $EXISTING_REMOTE_BRANCH
     popd || exit 1
     pushd duke || exit 1
-    test_branch purr
+    test_branch heads/purr
     test_no_local_branch_exists $EXISTING_REMOTE_BRANCH
     test_no_remote_branch_exists $EXISTING_REMOTE_BRANCH
     popd || exit 1
@@ -163,7 +163,7 @@ test_herd_branch_no_local_existing_remote() {
     test_no_remote_branch_exists $EXISTING_REMOTE_BRANCH
     popd || exit 1
     pushd duke || exit 1
-    test_branch purr
+    test_branch heads/purr
     test_no_local_branch_exists $EXISTING_REMOTE_BRANCH
     test_no_remote_branch_exists $EXISTING_REMOTE_BRANCH
     popd || exit 1
@@ -288,6 +288,7 @@ test_herd_branch_existing_local_existing_remote_no_tracking() {
         test_tracking_branch_exists $EXISTING_REMOTE_BRANCH
         popd || exit 1
     done
+
     echo "TEST: Herd branch - Existing local branch, existing remote branch, no tracking, different commits"
     begin_command
     $COMMAND herd $PARALLEL || exit 1
@@ -299,7 +300,7 @@ test_herd_branch_existing_local_existing_remote_no_tracking() {
     $COMMAND forall $PARALLEL -c 'git reset --hard HEAD~1' || exit 1
     end_command
     begin_command
-    $COMMAND forall $PARALLEL -c "git branch $EXISTING_REMOTE_BRANCH" || exit 1
+    $COMMAND forall $PARALLEL -c "git branch $EXISTING_REMOTE_BRANCH HEAD" || exit 1
     end_command
     pushd mu || exit 1
     test_local_branch_exists $EXISTING_REMOTE_BRANCH
@@ -374,7 +375,7 @@ test_herd_branch_existing_local_existing_remote_tracking() {
     test_no_remote_branch_exists $EXISTING_REMOTE_BRANCH
     popd || exit 1
     pushd duke || exit 1
-    test_branch purr
+    test_branch heads/purr
     test_no_local_branch_exists $EXISTING_REMOTE_BRANCH
     test_no_remote_branch_exists $EXISTING_REMOTE_BRANCH
     popd || exit 1

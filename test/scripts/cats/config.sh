@@ -20,7 +20,7 @@ test_cats_default_herd_branches() {
     test_branch knead
     popd || exit 1
     pushd duke || exit 1
-    test_branch purr
+    test_branch heads/purr
     popd || exit 1
 }
 
@@ -32,9 +32,9 @@ print_double_separator
 echo "TEST: Test clowder config"
 
 CONFIG_DIR="$HOME/.config/clowder"
-CONFIG_FILE="$CONFIG_DIR/clowder.config.yaml"
+CONFIG_FILE="$CONFIG_DIR/clowder.config.yml"
 CONFIG_FILE_BACKUP="$CONFIG_FILE.backup"
-TEST_CONFIG_FILE="$CLOWDER_PROJECT_DIR/test/config/v0.1/clowder.config.yaml"
+TEST_CONFIG_FILE="$CLOWDER_PROJECT_DIR/test/config/v0.1/clowder.config.yml"
 
 # If config file already exists, move to backup
 if [ -f "$CONFIG_FILE" ]; then
@@ -49,7 +49,7 @@ copy_config_file() {
     echo "Make config directory if it doesn't exist"
     mkdir -p "$CONFIG_DIR" || exit 1
     echo 'Copy test config file to config directory'
-    cp "$TEST_CONFIG_FILE" "$CONFIG_DIR/clowder.config.yaml" || exit 1
+    cp "$TEST_CONFIG_FILE" "$CONFIG_DIR/clowder.config.yml" || exit 1
     echo 'Discard changes to test config file'
     pushd "$CLOWDER_PROJECT_DIR" || exit 1
     git checkout -- "$TEST_CONFIG_FILE" || exit 1
@@ -130,7 +130,7 @@ test_config_projects() {
     test_branch knead
     popd || exit 1
     pushd duke || exit 1
-    test_branch purr
+    test_branch heads/purr
     popd || exit 1
     test_no_directory_exists 'black-cats'
 

@@ -16,3 +16,4 @@ rm -rf june
 rm -rf sasha
 rm -rf jrgoodle
 rm -f clowder.yaml
+rm -f clowder.yml

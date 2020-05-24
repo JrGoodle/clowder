@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Representation of clowder.yaml defaults
+"""Representation of clowder yaml defaults
 
 .. codeauthor:: Joe Decapo <joe@polka.cat>
 
@@ -13,7 +13,7 @@ from clowder.git.util import (
 
 
 class Defaults(object):
-    """clowder.yaml Defaults model class
+    """clowder yaml Defaults model class
 
     :ivar str ref: Default ref
     :ivar Optional[str] branch: Default git branch

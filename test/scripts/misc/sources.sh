@@ -29,6 +29,7 @@ test_djinni_remotes() {
     test_remote_url 'upstream' 'git@github.com:dropbox/djinni.git'
     popd || exit 1
 }
+test_djinni_remotes
 
 test_gyp_remotes() {
     pushd gyp || exit 1
@@ -36,6 +37,7 @@ test_gyp_remotes() {
     test_remote_url 'upstream' 'https://chromium.googlesource.com/external/gyp.git'
     popd || exit 1
 }
+test_gyp_remotes
 
 test_sox_remotes() {
     pushd sox-code || exit 1
@@ -43,7 +45,4 @@ test_sox_remotes() {
     test_remote_url 'upstream' 'https://git.code.sf.net/p/sox/code.git'
     popd || exit 1
 }
-
-test_djinni_remotes
-test_gyp_remotes
 test_sox_remotes
