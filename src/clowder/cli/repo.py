@@ -8,7 +8,6 @@
 import argparse
 
 import clowder.clowder_repo as clowder_repo
-from clowder.util.clowder_utils import add_parser_arguments
 from clowder.util.connectivity import network_connection_required
 from clowder.util.decorators import (
     print_clowder_name,
@@ -16,6 +15,8 @@ from clowder.util.decorators import (
     print_clowder_repo_status,
     print_clowder_repo_status_fetch
 )
+
+from .util import add_parser_arguments
 
 
 def add_repo_parser(subparsers: argparse._SubParsersAction) -> None: # noqa

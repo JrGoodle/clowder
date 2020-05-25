@@ -22,7 +22,105 @@ from clowder.error import (
     ClowderYAMLError, ClowderYAMLErrorType
 )
 
-from .clowder_utils import check_for_duplicates
+from .file_system import (
+    force_symlink,
+    remove_file
+)
+
+
+def link_clowder_yaml_default(clowder_dir: Path) -> None:
+    """Create symlink pointing to clowder yaml file
+
+    :param Path clowder_dir: Directory to create symlink in
+    :raise ClowderExit:
+    """
+
+    yml_relative_path = Path('.clowder', 'clowder.yml')
+    yml_absolute_path = clowder_dir / yml_relative_path
+    yaml_relative_path = Path('.clowder', 'clowder.yaml')
+    yaml_absolute_path = clowder_dir / yaml_relative_path
+
+    if yml_absolute_path.is_file():
+        relative_source_file = yml_relative_path
+    elif yaml_absolute_path.is_file():
+        relative_source_file = yaml_relative_path
+    else:
+        print(f"{fmt.ERROR} .clowder/clowder.yml doesn't seem to exist\n")
+        raise ClowderExit(1)
+
+    source_file = clowder_dir / relative_source_file
+    target_file = clowder_dir / source_file.name
+
+    print(f" - Symlink {fmt.path_string(Path(target_file.name))} -> {fmt.path_string(relative_source_file)}")
+
+    force_symlink(source_file, clowder_dir / target_file)
+
+    existing_file = None
+    if target_file.suffix == '.yaml':
+        file = clowder_dir / 'clowder.yml'
+        if file.exists():
+            existing_file = file
+    elif target_file.suffix == '.yml':
+        file = clowder_dir / 'clowder.yaml'
+        if file.exists():
+            existing_file = file
+
+    if existing_file is not None:
+        print(f" - Remove previously existing file {fmt.path_string(existing_file)}")
+        try:
+            remove_file(existing_file)
+        except OSError as err:
+            print(f"{fmt.ERROR} Failed to remove file {existing_file}")
+            print(err)
+            ClowderExit(1)
+
+
+def link_clowder_yaml_version(clowder_dir: Path, version: str) -> None:
+    """Create symlink pointing to clowder yaml file
+
+    :param Path clowder_dir: Directory to create symlink in
+    :param str version: Version name of clowder yaml file to link
+    :raise ClowderExit:
+    """
+
+    yml_relative_path = Path('.clowder', 'versions', f'{version}.clowder.yml')
+    yml_absolute_path = clowder_dir / yml_relative_path
+    yaml_relative_path = Path('.clowder', 'versions', f'{version}.clowder.yaml')
+    yaml_absolute_path = clowder_dir / yaml_relative_path
+
+    if yml_absolute_path.is_file():
+        relative_source_file = yml_relative_path
+    elif yaml_absolute_path.is_file():
+        relative_source_file = yaml_relative_path
+    else:
+        print(f"{fmt.ERROR} .clowder/versions/{version}.clowder.yml doesn't seem to exist\n")
+        raise ClowderExit(1)
+
+    source_file = clowder_dir / relative_source_file
+    target_file = clowder_dir / fmt.remove_prefix(source_file.name, f"{version}.")
+
+    print(f" - Symlink {fmt.path_string(Path(target_file.name))} -> {fmt.path_string(relative_source_file)}")
+
+    force_symlink(source_file, target_file)
+
+    existing_file = None
+    if target_file.suffix == '.yaml':
+        file = clowder_dir / 'clowder.yml'
+        if file.exists():
+            existing_file = file
+    elif target_file.suffix == '.yml':
+        file = clowder_dir / 'clowder.yaml'
+        if file.exists():
+            existing_file = file
+
+    if existing_file is not None:
+        print(f" - Remove previously existing file {fmt.path_string(existing_file)}")
+        try:
+            remove_file(existing_file)
+        except OSError as err:
+            print(f"{fmt.ERROR} Failed to remove file {existing_file}")
+            print(err)
+            ClowderExit(1)
 
 
 def load_clowder_config_yaml() -> dict:
@@ -292,7 +390,7 @@ def _validate_yaml_contents(yaml: dict, yaml_file: Path) -> None:
 
     # Validate projects don't share share directories
     paths = [str(Path(p['path']).resolve()) for p in projects]
-    duplicate = check_for_duplicates(paths)
+    duplicate = fmt.check_for_duplicates(paths)
     if duplicate is not None:
         err = f"{err_prefix}{fmt.error_duplicate_project_path(Path(duplicate), yaml_file)}"
         raise ClowderYAMLError(err, ClowderYAMLErrorType.DUPLICATE_PATH)

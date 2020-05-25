@@ -14,7 +14,6 @@ from typing import Optional
 from clowder.error import ClowderExit
 from clowder.util.formatting import ERROR
 
-
 # Set up logging #
 
 PRINT_DEBUG_OUTPUT = "CLOWDER_DEBUG" in os.environ

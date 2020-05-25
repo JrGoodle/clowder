@@ -22,3 +22,5 @@ from clowder.cli.start import add_start_parser
 from clowder.cli.stash import add_stash_parser
 from clowder.cli.status import add_status_parser
 from clowder.cli.yaml import add_yaml_parser
+
+from clowder.cli.util import add_parser_arguments

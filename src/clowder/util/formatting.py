@@ -19,6 +19,24 @@ from clowder.error import ClowderExit
 ERROR = colored(' - Error:', 'red')
 
 
+# TODO: Update to return list of all duplicates found
+def check_for_duplicates(list_of_elements: List[str]) -> Optional[str]:
+    """Check if given list contains any duplicates
+
+    :param List[str] list_of_elements: List of strings to check for duplicates
+    :return: First duplicate encountered, or None if no duplicates found
+    :rtype: Optional[str]
+    """
+
+    set_of_elements = set()
+    for elem in list_of_elements:
+        if elem in set_of_elements:
+            return elem
+        else:
+            set_of_elements.add(elem)
+    return None
+
+
 def clowder_command(cmd: str) -> str:
     """Return formatted clowder command name
 
@@ -377,6 +395,20 @@ def remote_string(remote: str) -> str:
     """
 
     return colored(remote, 'yellow')
+
+
+def remove_prefix(text: str, prefix: str) -> str:
+    """Remove prefix from string
+
+    :param str text: Text to remove prefix from
+    :param str prefix: Prefix to remoe
+    :return: Text with prefix removed if present
+    :rtype: str
+    """
+
+    if text.startswith(prefix):
+        return text[len(prefix):]
+    return text
 
 
 def save_version_message(version: str, yml: Path) -> str:

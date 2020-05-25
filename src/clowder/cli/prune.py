@@ -15,8 +15,7 @@ from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.config import Config
 from clowder.error import ClowderError
 from clowder.model import Project
-from clowder.util.clowder_utils import (
-    add_parser_arguments,
+from clowder.model.util import (
     existing_branch_projects,
     filter_projects,
     validate_project_statuses
@@ -27,6 +26,8 @@ from clowder.util.decorators import (
     print_clowder_repo_status,
     valid_clowder_yaml_required
 )
+
+from .util import add_parser_arguments
 
 
 def add_prune_parser(subparsers: argparse._SubParsersAction): # noqa

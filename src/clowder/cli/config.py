@@ -14,7 +14,8 @@ from clowder.util.decorators import (
     valid_clowder_yaml_required
 )
 from clowder.config import Config, ClowderConfigType
-from clowder.util.clowder_utils import add_parser_arguments
+
+from .util import add_parser_arguments
 
 
 def add_config_parser(subparsers: argparse._SubParsersAction) -> None: # noqa

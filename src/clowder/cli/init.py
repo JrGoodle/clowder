@@ -13,8 +13,9 @@ import clowder.clowder_repo as clowder_repo
 from clowder import CURRENT_DIR
 from clowder.error import ClowderExit
 from clowder.git.util import existing_git_repository
-from clowder.util.clowder_utils import add_parser_arguments
 from clowder.util.connectivity import network_connection_required
+
+from .util import add_parser_arguments
 
 
 def add_init_parser(subparsers: argparse._SubParsersAction) -> None: # noqa

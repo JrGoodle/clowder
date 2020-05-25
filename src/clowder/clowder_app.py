@@ -7,6 +7,7 @@
 
 import argparse
 from multiprocessing import freeze_support
+from typing import List, Tuple
 
 # noinspection PyPackageRequirements
 import argcomplete
@@ -15,7 +16,6 @@ import colorama
 import clowder.cli as cmd
 from clowder import LOG_DEBUG
 from clowder.error import ClowderExit
-from clowder.util.clowder_utils import add_parser_arguments
 from clowder.util.parallel import __clowder_pool__
 
 VERSION = '3.2.0'
@@ -43,7 +43,7 @@ def create_parsers() -> ClowderArgumentParser:
     arguments = [
         (['-v', '--version'], dict(action='version', version=VERSION))
     ]
-    add_parser_arguments(parser, arguments)
+    cmd.add_parser_arguments(parser, arguments)
     subparsers = parser.add_subparsers(help='sub-command help')
 
     cmd.add_branch_parser(subparsers)

@@ -8,18 +8,19 @@
 import atexit
 import os
 from pathlib import Path
+from typing import Optional, Tuple
 
 from termcolor import colored
 
 import clowder.util.formatting as fmt
-from clowder import CLOWDER_DIR, CLOWDER_REPO_DIR, CLOWDER_YAML, CURRENT_DIR
+from clowder import CLOWDER_DIR, CLOWDER_REPO_DIR, CLOWDER_REPO_VERSIONS_DIR, CLOWDER_YAML, CURRENT_DIR
 from clowder.error import ClowderError, ClowderExit
 from clowder.git import ProjectRepo
 from clowder.git.util import existing_git_repository
-from clowder.util.clowder_utils import link_clowder_yaml_default
 from clowder.util.connectivity import is_offline
 from clowder.util.execute import execute_command
 from clowder.util.file_system import remove_directory
+from clowder.util.yaml import link_clowder_yaml_default
 
 
 clowder_repo_ref: str = 'refs/heads/master'
@@ -82,6 +83,28 @@ def commit(message: str) -> None:
 
     repo = ProjectRepo(CLOWDER_REPO_DIR, clowder_repo_remote, clowder_repo_ref)
     repo.commit(message)
+
+
+def get_saved_version_names() -> Optional[Tuple[str, ...]]:
+    """Return list of all saved versions
+
+    :return: All saved version names
+    :rtype: Optional[Tuple[str, ...]]
+    :raise ClowderExit:
+    """
+
+    if CLOWDER_REPO_VERSIONS_DIR is None:
+        return None
+
+    versions = [Path(Path(v).stem).stem for v in os.listdir(str(CLOWDER_REPO_VERSIONS_DIR))
+                if v.endswith('.clowder.yml') or v.endswith('.clowder.yaml')]
+
+    duplicate = fmt.check_for_duplicates(versions)
+    if duplicate is not None:
+        print(fmt.error_duplicate_version(duplicate))
+        raise ClowderExit(1)
+
+    return tuple(sorted(versions))
 
 
 def git_status() -> None:
