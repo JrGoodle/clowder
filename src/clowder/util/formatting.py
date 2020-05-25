@@ -8,12 +8,8 @@
 from pathlib import Path
 from typing import Optional, Tuple
 
-# noinspection PyPackageRequirements
-import yaml
 from termcolor import colored
 from typing import List, Union
-
-from clowder.error import ClowderError, ClowderErrorType
 
 
 ERROR = colored(' - Error:', 'red')
@@ -633,23 +629,6 @@ def version_string(version_name: str) -> str:
     """
 
     return colored(version_name, attrs=['bold'])
-
-
-def yaml_string(yaml_output: dict) -> str:
-    """Return yaml string from python data structures
-
-    :param dict yaml_output: YAML python object
-    :return: YAML as a string
-    :rtype: str
-    :raise ClowderError:
-    """
-
-    try:
-        return yaml.safe_dump(yaml_output, default_flow_style=False, indent=4)
-    except yaml.YAMLError:
-        raise ClowderError(ClowderErrorType.FAILED_YAML_DUMP, f"{ERROR} Failed to dump yaml file contents")
-    except (KeyboardInterrupt, SystemExit):
-        raise ClowderError(ClowderErrorType.USER_INTERRUPT, error_user_interrupt())
 
 
 def _project_name(name: str) -> str:

@@ -9,9 +9,10 @@ from pathlib import Path
 from typing import Optional
 
 from git import GitError
-from termcolor import colored
 
 import clowder.util.formatting as fmt
+from clowder import LOG_DEBUG
+from clowder.error import ClowderError, ClowderErrorType
 
 from .project_repo import ProjectRepo
 
@@ -123,7 +124,7 @@ class ProjectRepoRecursive(ProjectRepo):
 
         self._print(' - Recursively update and init submodules')
 
-        error_message = ' - Failed to update submodules'
+        error_message = f'{fmt.ERROR} Failed to update submodules'
         if depth == 0:
             self._submodule_command('update', '--init', '--recursive',
                                     error_msg=error_message)
@@ -150,21 +151,21 @@ class ProjectRepoRecursive(ProjectRepo):
         """
 
         self._submodule_command('foreach', '--recursive', 'git', 'clean', '-ffdx',
-                                error_msg=' - Failed to clean submodules')
+                                error_msg=f'{fmt.ERROR} Failed to clean submodules')
 
     def _submodule_command(self, *args, error_msg: str) -> None:
         """Base submodule command
 
         :param str error_msg: Error message
+        :raise ClowderError:
         """
 
         try:
             self.repo.git.submodule(*args)
         except (GitError, ValueError) as err:
-            message = colored(error_msg, 'red')
-            self._print(message)
-            self._print(fmt.error(err))
-            self._exit(message)
+            LOG_DEBUG('Git error', err)
+            message = self._format_error_message(error_msg)
+            raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
         except (KeyboardInterrupt, SystemExit):
             raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
@@ -175,7 +176,7 @@ class ProjectRepoRecursive(ProjectRepo):
         """
 
         self._submodule_command('foreach', '--recursive', 'git', 'reset', '--hard',
-                                error_msg=' - Failed to reset submodules')
+                                error_msg=f'{fmt.ERROR} Failed to reset submodules')
 
     def _submodules_update(self) -> None:
         """Update all submodules
@@ -184,4 +185,4 @@ class ProjectRepoRecursive(ProjectRepo):
         """
 
         self._submodule_command('update', '--checkout', '--recursive', '--force',
-                                error_msg=' - Failed to update submodules')
+                                error_msg=f'{fmt.ERROR} Failed to update submodules')

@@ -84,10 +84,12 @@ def make_dir(directory: Path) -> None:
             LOG_DEBUG('Failed to create directory', err)
             if err.errno == errno.EEXIST:
                 raise ClowderError(ClowderErrorType.DIRECTORY_EXISTS,
-                                   fmt.error_directory_exists(directory))
+                                   fmt.error_directory_exists(directory),
+                                   error=err)
             else:
                 raise ClowderError(ClowderErrorType.FAILED_CREATE_DIRECTORY,
-                                   fmt.error_failed_create_directory(directory))
+                                   fmt.error_failed_create_directory(directory),
+                                   error=err)
 
 
 def remove_directory(dir_path: Path) -> None:
@@ -101,6 +103,8 @@ def remove_directory(dir_path: Path) -> None:
         shutil.rmtree(dir_path)
     except shutil.Error as err:
         LOG_DEBUG('Failed to remove directory', err)
-        raise ClowderError(ClowderErrorType.FAILED_REMOVE_DIRECTORY, fmt.error_failed_remove_directory(dir_path))
+        raise ClowderError(ClowderErrorType.FAILED_REMOVE_DIRECTORY,
+                           fmt.error_failed_remove_directory(dir_path),
+                           error=err)
     except (KeyboardInterrupt, SystemExit):
         raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())

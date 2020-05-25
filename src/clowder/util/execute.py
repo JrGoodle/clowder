@@ -41,7 +41,7 @@ def execute_command(command: Union[str, List[str]], path: Path,
         subprocess.run(cmd, shell=True, env=cmd_env, cwd=str(path), stdout=pipe, stderr=pipe, check=True)
     except subprocess.CalledProcessError as err:
         LOG_DEBUG('Subprocess run failed', err)
-        raise ClowderError(ClowderErrorType.FAILED_EXECUTE_COMMAND, fmt.error_command_failed(cmd))
+        raise ClowderError(ClowderErrorType.FAILED_EXECUTE_COMMAND, fmt.error_command_failed(cmd), error=err)
     except (KeyboardInterrupt, SystemExit):
         raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 

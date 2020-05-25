@@ -72,7 +72,9 @@ def link_clowder_yaml_default(clowder_dir: Path) -> None:
             remove_file(existing_file)
         except OSError as err:
             LOG_DEBUG('Failed to remove file', err)
-            ClowderError(ClowderErrorType.FAILED_REMOVE_FILE, fmt.error_failed_remove_file(existing_file))
+            ClowderError(ClowderErrorType.FAILED_REMOVE_FILE,
+                         fmt.error_failed_remove_file(existing_file),
+                         error=err)
 
 
 def link_clowder_yaml_version(clowder_dir: Path, version: str) -> None:
@@ -119,7 +121,9 @@ def link_clowder_yaml_version(clowder_dir: Path, version: str) -> None:
             remove_file(existing_file)
         except OSError as err:
             LOG_DEBUG('Failed to remove file', err)
-            raise ClowderError(ClowderErrorType.FAILED_REMOVE_FILE, fmt.error_failed_remove_file(existing_file))
+            raise ClowderError(ClowderErrorType.FAILED_REMOVE_FILE,
+                               fmt.error_failed_remove_file(existing_file),
+                               error=err)
 
 
 def load_clowder_config_yaml() -> dict:
@@ -140,7 +144,9 @@ def load_clowder_config_yaml() -> dict:
             return parsed_yaml
     except pyyaml.YAMLError as err:
         LOG_DEBUG('Failed to load yaml file', err)
-        raise ClowderError(ClowderConfigYAMLErrorType.OPEN_FILE, fmt.error_open_file(CLOWDER_CONFIG_YAML))
+        raise ClowderError(ClowderConfigYAMLErrorType.OPEN_FILE,
+                           fmt.error_open_file(CLOWDER_CONFIG_YAML),
+                           error=err)
     except (KeyboardInterrupt, SystemExit):
         raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
@@ -158,10 +164,14 @@ def load_clowder_yaml() -> dict:
             parsed_yaml = pyyaml.safe_load(raw_file)
             if parsed_yaml is None:
                 clowder_yaml = CLOWDER_YAML.relative_to(CLOWDER_DIR)
-                raise ClowderError(ClowderYAMLErrorType.EMPTY_FILE, fmt.error_empty_yaml(CLOWDER_YAML, clowder_yaml))
+                raise ClowderError(ClowderYAMLErrorType.EMPTY_FILE,
+                                   fmt.error_empty_yaml(CLOWDER_YAML, clowder_yaml))
             return parsed_yaml
-    except pyyaml.YAMLError:
-        raise ClowderError(ClowderYAMLErrorType.OPEN_FILE, fmt.error_open_file(CLOWDER_YAML))
+    except pyyaml.YAMLError as err:
+        LOG_DEBUG('Failed to load clowder yaml', err)
+        raise ClowderError(ClowderYAMLErrorType.OPEN_FILE,
+                           fmt.error_open_file(CLOWDER_YAML),
+                           error=err)
     except (KeyboardInterrupt, SystemExit):
         raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
@@ -182,15 +192,18 @@ def save_yaml(yaml_output: dict, yaml_file: Path) -> None:
     """
 
     if yaml_file.is_file():
-        raise ClowderError(ClowderErrorType.FILE_EXISTS, fmt.error_file_exists(yaml_file))
+        raise ClowderError(ClowderErrorType.FILE_EXISTS,
+                           fmt.error_file_exists(yaml_file))
 
+    print(f" - Save yaml to file at {fmt.path_string(yaml_file)}")
     try:
         with yaml_file.open(mode="w") as raw_file:
-            print(f" - Save yaml to file at {fmt.path_string(yaml_file)}")
             pyyaml.safe_dump(yaml_output, raw_file, default_flow_style=False, indent=4)
     except pyyaml.YAMLError as err:
         LOG_DEBUG('Failed to save yaml file', err)
-        raise ClowderError(ClowderErrorType.FAILED_SAVE_FILE, fmt.error_save_file(yaml_file))
+        raise ClowderError(ClowderErrorType.FAILED_SAVE_FILE,
+                           fmt.error_save_file(yaml_file),
+                           error=err)
     except (KeyboardInterrupt, SystemExit):
         raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
@@ -205,8 +218,10 @@ def validate_clowder_config_yaml(parsed_yaml: dict) -> None:
     try:
         jsonschema.validate(parsed_yaml, json_schema)
     except jsonschema.exceptions.ValidationError as err:
-        error_message = f"{fmt.error_invalid_yaml_file(CLOWDER_CONFIG_YAML.name)}\n{fmt.ERROR} {err.message}"
-        raise ClowderError(ClowderConfigYAMLErrorType.JSONSCHEMA_VALIDATION_FAILED, error_message)
+        LOG_DEBUG('Clowder config yaml json schema validation failed', err)
+        raise ClowderError(ClowderConfigYAMLErrorType.JSONSCHEMA_VALIDATION_FAILED,
+                           fmt.error_invalid_yaml_file(CLOWDER_CONFIG_YAML.name),
+                           error=err)
 
 
 def validate_clowder_yaml(parsed_yaml: dict) -> None:
@@ -221,10 +236,32 @@ def validate_clowder_yaml(parsed_yaml: dict) -> None:
     try:
         jsonschema.validate(parsed_yaml, json_schema)
     except jsonschema.exceptions.ValidationError as err:
-        error_message = f"{fmt.error_invalid_yaml_file(CLOWDER_YAML.name)}\n{fmt.ERROR} {err.message}"
-        raise ClowderError(ClowderYAMLErrorType.JSONSCHEMA_VALIDATION_FAILED, error_message)
+        LOG_DEBUG('Clowder yaml json schema validation failed', err)
+        raise ClowderError(ClowderYAMLErrorType.JSONSCHEMA_VALIDATION_FAILED,
+                           fmt.error_invalid_yaml_file(CLOWDER_YAML.name),
+                           error=err)
 
     _validate_yaml_contents(parsed_yaml_content_validation_copy, CLOWDER_YAML)
+
+
+def yaml_string(yaml_output: dict) -> str:
+    """Return yaml string from python data structures
+
+    :param dict yaml_output: YAML python object
+    :return: YAML as a string
+    :rtype: str
+    :raise ClowderError:
+    """
+
+    try:
+        return pyyaml.safe_dump(yaml_output, default_flow_style=False, indent=4)
+    except pyyaml.YAMLError as err:
+        LOG_DEBUG('Failed to dump yaml file contents', err)
+        raise ClowderError(ClowderErrorType.FAILED_YAML_DUMP,
+                           f"{fmt.ERROR} Failed to dump yaml file contents",
+                           error=err)
+    except (KeyboardInterrupt, SystemExit):
+        raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
 
 def _format_yaml_symlink(yaml_symlink: Path, yaml_file: Path) -> str:
@@ -288,7 +325,9 @@ def _print_yaml(yaml_file: Path) -> None:
             print(contents)
     except IOError as err:
         LOG_DEBUG('Failed to open file', err)
-        raise ClowderError(ClowderErrorType.FAILED_OPEN_FILE, fmt.error_open_file(yaml_file))
+        raise ClowderError(ClowderErrorType.FAILED_OPEN_FILE,
+                           fmt.error_open_file(yaml_file),
+                           error=err)
     except (KeyboardInterrupt, SystemExit):
         raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 

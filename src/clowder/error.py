@@ -6,6 +6,9 @@
 """
 
 from enum import IntEnum, unique
+from typing import Optional
+
+import clowder.util.formatting as fmt
 
 
 # Reserve range 3-30
@@ -39,18 +42,22 @@ class ClowderErrorType(IntEnum):
 class ClowderError(Exception):
     """Clowder error type"""
 
-    def __init__(self, error_type: ClowderErrorType, message: str):
+    def __init__(self, error_type: ClowderErrorType, message: str, error: Optional[Exception] = None):
         """ClowderError __init__
 
         :param ClowderErrorType error_type: Clowder error type
         :param str message: Error message
+        :param Optional[Exception] error: Optional error to print
         """
 
         super().__init__(error_type)
         self.message = message
         self.error_type = error_type
+        self.error = error
 
     def __str__(self):
+        if self.error is not None:
+            return f"{self.message}\n{fmt.error(self.error)}"
         return self.message
 
 

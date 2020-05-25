@@ -7,14 +7,13 @@
 
 import argparse
 
-import clowder.util.formatting as fmt
 from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.util.decorators import (
     print_clowder_name,
     print_clowder_repo_status,
     valid_clowder_yaml_required
 )
-from clowder.util.yaml import print_yaml
+from clowder.util.yaml import print_yaml, yaml_string
 
 from .util import add_parser_arguments
 
@@ -41,6 +40,6 @@ def yaml(args) -> None:
     """Clowder yaml command private implementation"""
 
     if args.resolved:
-        print(fmt.yaml_string(CLOWDER_CONTROLLER.get_yaml(resolved=True)))
+        print(yaml_string(CLOWDER_CONTROLLER.get_yaml(resolved=True)))
     else:
         print_yaml()

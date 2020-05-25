@@ -9,10 +9,10 @@ from pathlib import Path
 from typing import Optional
 
 from git import GitError
-from termcolor import colored
 
 import clowder.util.formatting as fmt
-from clowder.error import ClowderGitError
+from clowder import LOG_DEBUG
+from clowder.error import ClowderError, ClowderErrorType
 from clowder.util.connectivity import is_offline
 
 from .project_repo_impl import ProjectRepoImpl
@@ -70,6 +70,7 @@ class ProjectRepo(ProjectRepoImpl):
         :param str upstream_remote_url: Upstream remote url
         :param str fork_remote_name: Fork remote name
         :param str fork_remote_url: Fork remote url
+        :raise ClowderError:
         """
 
         if not existing_git_repository(self.repo_path):
@@ -77,7 +78,8 @@ class ProjectRepo(ProjectRepoImpl):
 
         try:
             remotes = self.repo.remotes
-        except GitError:
+        except GitError as err:
+            LOG_DEBUG('Git error', err)
             return
         except (KeyboardInterrupt, SystemExit):
             raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
@@ -160,7 +162,8 @@ class ProjectRepo(ProjectRepoImpl):
             self._create_remote(self.remote, url, remove_dir=True)
             try:
                 self._checkout_new_repo_tag(tag, self.remote, depth)
-            except ClowderGitError:
+            except ClowderError as err:
+                LOG_DEBUG('Failed checkout new repo tag', err)
                 fetch = depth != 0
                 self.herd(url, depth=depth, fetch=fetch, rebase=rebase)
                 return
@@ -168,7 +171,8 @@ class ProjectRepo(ProjectRepoImpl):
         try:
             self.fetch(self.remote, ref=f'refs/tags/{tag}', depth=depth)
             self._checkout_tag(tag)
-        except ClowderGitError:
+        except ClowderError as err:
+            LOG_DEBUG('Failed fetch and checkout tag', err)
             fetch = depth != 0
             self.herd(url, depth=depth, fetch=fetch, rebase=rebase)
 
@@ -188,7 +192,8 @@ class ProjectRepo(ProjectRepoImpl):
 
         try:
             self.fetch(remote, ref=branch)
-        except ClowderGitError:
+        except ClowderError as err:
+            LOG_DEBUG('Failed fetch', err)
             self.fetch(remote, ref=self.default_ref)
 
     def prune_branch_local(self, branch: str, force: bool) -> None:
@@ -196,6 +201,7 @@ class ProjectRepo(ProjectRepoImpl):
 
         :param str branch: Branch name to delete
         :param bool force: Force delete branch
+        :raise ClowderError:
         """
 
         branch_output = fmt.ref_string(branch)
@@ -210,10 +216,10 @@ class ProjectRepo(ProjectRepoImpl):
                 self._print(f' - Checkout ref {ref_output}')
                 self.repo.git.checkout(truncate_ref(self.default_ref))
             except GitError as err:
-                message = colored(' - Failed to checkout ref', 'red') + ref_output
-                self._print(message)
-                self._print(fmt.error(err))
-                self._exit(message)
+                LOG_DEBUG('Git error', err)
+                message = f'{fmt.ERROR} Failed to checkout ref {ref_output}'
+                message = self._format_error_message(message)
+                raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
             except (KeyboardInterrupt, SystemExit):
                 raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
@@ -221,10 +227,10 @@ class ProjectRepo(ProjectRepoImpl):
             self._print(f' - Delete local branch {branch_output}')
             self.repo.delete_head(branch, force=force)
         except GitError as err:
-            message = colored(' - Failed to delete local branch ', 'red') + branch_output
-            self._print(message)
-            self._print(fmt.error(err))
-            self._exit(message)
+            LOG_DEBUG('Git error', err)
+            message = f'{fmt.ERROR} Failed to delete local branch {branch_output}'
+            message = self._format_error_message(message)
+            raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
         except (KeyboardInterrupt, SystemExit):
             raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
@@ -233,6 +239,7 @@ class ProjectRepo(ProjectRepoImpl):
 
         :param str branch: Branch name to delete
         :param str remote: Remote name
+        :raise ClowderError:
         """
 
         branch_output = fmt.ref_string(branch)
@@ -244,10 +251,10 @@ class ProjectRepo(ProjectRepoImpl):
             self._print(f' - Delete remote branch {branch_output}')
             self.repo.git.push(remote, '--delete', branch)
         except GitError as err:
-            message = colored(' - Failed to delete remote branch ', 'red') + branch_output
-            self._print(message)
-            self._print(fmt.error(err))
-            self._exit(message)
+            LOG_DEBUG('Git error', err)
+            message = f'{fmt.ERROR} Failed to delete remote branch {branch_output}'
+            message = self._format_error_message(message)
+            raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
         except (KeyboardInterrupt, SystemExit):
             raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
@@ -255,6 +262,7 @@ class ProjectRepo(ProjectRepoImpl):
         """Reset branch to upstream or checkout tag/sha as detached HEAD
 
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :raise ClowderError:
         """
 
         if ref_type(self.default_ref) == 'tag':
@@ -277,9 +285,9 @@ class ProjectRepo(ProjectRepoImpl):
         branch_output = fmt.ref_string(branch)
         remote_output = fmt.remote_string(self.remote)
         if not self.existing_remote_branch(branch, self.remote):
-            message = colored(' - No existing remote branch ', 'red') + f'{remote_output} {branch_output}'
-            self._print(message)
-            self._exit(message)
+            message = f'{fmt.ERROR} No existing remote branch {remote_output} {branch_output}'
+            message = self._format_error_message(message)
+            raise ClowderError(ClowderErrorType.GIT_ERROR, message)
 
         self.fetch(self.remote, ref=self.default_ref, depth=depth)
         self._print(f' - Reset branch {branch_output} to {remote_output} {branch_output}')
@@ -292,6 +300,7 @@ class ProjectRepo(ProjectRepoImpl):
         :param str timestamp: Commit ref timestamp
         :param str author: Commit author
         :param str ref: Reference ref
+        :raise ClowderError:
         """
 
         rev = None
@@ -300,9 +309,9 @@ class ProjectRepo(ProjectRepoImpl):
         if not rev:
             rev = self._find_rev_by_timestamp(timestamp, ref)
         if not rev:
-            message = colored(' - Failed to find rev', 'red')
-            self._print(message)
-            self._exit(message)
+            message = f'{fmt.ERROR} Failed to find revision'
+            message = self._format_error_message(message)
+            raise ClowderError(ClowderErrorType.GIT_ERROR, message)
 
         self._checkout_sha(rev)
 
@@ -313,6 +322,7 @@ class ProjectRepo(ProjectRepoImpl):
         :param str branch: Local branch name to create
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
         :param bool tracking: Whether to create a remote branch with tracking relationship
+        :raise ClowderError:
         """
 
         if branch not in self.repo.heads:
@@ -321,8 +331,9 @@ class ProjectRepo(ProjectRepoImpl):
             try:
                 self._create_branch_local(branch)
                 self._checkout_branch_local(branch)
-            except ClowderGitError:
-                self._exit()
+            except ClowderError as err:
+                LOG_DEBUG('Failed to create and checkout branch', err)
+                raise
         else:
             self._print(f' - {fmt.ref_string(branch)} already exists')
             if self._is_branch_checked_out(branch):
@@ -330,8 +341,9 @@ class ProjectRepo(ProjectRepoImpl):
             else:
                 try:
                     self._checkout_branch_local(branch)
-                except ClowderGitError:
-                    self._exit()
+                except ClowderError as err:
+                    LOG_DEBUG('Failed to checkout local branch', err)
+                    raise
 
         if tracking and not is_offline():
             self._create_branch_remote_tracking(branch, remote, depth)
