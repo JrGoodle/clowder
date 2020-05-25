@@ -15,7 +15,7 @@ import colorama
 
 import clowder.cli as cmd
 from clowder import LOG_DEBUG
-from clowder.error import ClowderExit
+from clowder.error import ClowderConfigYAMLError, ClowderExit
 from clowder.util.parallel import __clowder_pool__
 
 VERSION = '3.2.0'
@@ -83,6 +83,10 @@ def main() -> None:
         args.func(args) # noqa
     except ClowderExit as err:
         LOG_DEBUG('ClowderExit exception', err)
+        exit_code = err.code
+    except ClowderConfigYAMLError as err:
+        print(err.message)
+        LOG_DEBUG('ClowderConfigYAMLError exception', err)
         exit_code = err.code
     except AttributeError as err:
         LOG_DEBUG('AttributeError exception', err)

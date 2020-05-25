@@ -31,7 +31,6 @@ def LOG_DEBUG(message: str, exception: Optional[Exception] = None): # noqa
     if PRINT_DEBUG_OUTPUT:
         logger.log(logging.DEBUG, f" {message}")
         if exception is not None:
-            logger.log(logging.DEBUG, str(exception))
             # TODO: Format the output for clowder debug
             traceback.print_exc()
 

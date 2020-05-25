@@ -65,7 +65,7 @@ copy_invalid_config_file() {
     echo "Make config directory if it doesn't exist"
     mkdir -p "$CONFIG_DIR" || exit 1
     echo 'Copy test config file to config directory'
-    cp "$config_file" "$CONFIG_DIR/clowder.config.yml" || exit 1
+    cp -f "$config_file" "$CONFIG_DIR/clowder.config.yml" || exit 1
 }
 
 restore_config_file() {
@@ -166,15 +166,27 @@ test_config_projects() {
 }
 test_config_projects
 
-test_invalid_config_files() {
-    create_backup_config
-    copy_invalid_config_file "$CLOWDER_PROJECT_DIR/test/config/v0.1/invalid/test-empty.clowder.config.yml"
+test_invalid_config() {
+    echo 'TEST: cats invalid config'
 
-    # TODO: Test running command with invalid config file
+    create_backup_config
+
+    local test_cases
+    test_cases=( $(ls -d $CLOWDER_PROJECT_DIR/test/config/v0.1/invalid/test-*.clowder.config.yml || exit 1) )
+    for test in "${test_cases[@]}"
+    do
+        print_single_separator
+        echo "TEST: Invalid config file $test"
+        copy_invalid_config_file "$test"
+
+        begin_command
+        $COMMAND herd $PARALLEL && exit 1
+        end_command
+    done
 
     restore_config_file
 }
-test_invalid_config_files
+test_invalid_config
 
 # TODO: Add test for linking ssh version but using https protocol config
 # test_remote

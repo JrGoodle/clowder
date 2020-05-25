@@ -216,7 +216,7 @@ def validate_clowder_config_yaml(parsed_yaml: dict) -> None:
         jsonschema.validate(parsed_yaml, json_schema)
     except jsonschema.exceptions.ValidationError as err:
         error_message = f"{fmt.error_invalid_yaml_file(CLOWDER_CONFIG_YAML.name)}\n{fmt.ERROR} {err.message}"
-        raise ClowderYAMLError(error_message, ClowderYAMLErrorType.JSONSCHEMA_VALIDATION_FAILED)
+        raise ClowderConfigYAMLError(error_message, ClowderConfigYAMLErrorType.JSONSCHEMA_VALIDATION_FAILED)
 
 
 def validate_clowder_yaml(parsed_yaml: dict) -> None:
