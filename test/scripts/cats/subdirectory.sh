@@ -28,7 +28,7 @@ test_cats_default_herd_branches() {
     test_branch knead
     popd || exit 1
     pushd duke || exit 1
-    test_branch purr
+    test_branch heads/purr
     popd || exit 1
 }
 

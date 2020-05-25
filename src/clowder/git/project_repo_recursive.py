@@ -23,7 +23,7 @@ class ProjectRepoRecursive(ProjectRepo):
     :ivar strt default_ref: Default ref
     :ivar strt remote: Default remote name
     :ivar bool parallel: Whether command is being run in parallel, affects output
-    :ivar Repo repo: Repo instance
+    :ivar Repo Optional[repo]: Repo instance
     """
 
     def __init__(self, repo_path: Path, remote: str, default_ref: str, parallel: bool = False):
@@ -35,7 +35,7 @@ class ProjectRepoRecursive(ProjectRepo):
         :param bool parallel: Whether command is being run in parallel, affects output. Defaults to False
         """
 
-        ProjectRepo.__init__(self, repo_path, remote, default_ref, parallel=parallel)
+        super().__init__(repo_path, remote, default_ref, parallel=parallel)
 
     def clean(self, args: str = '') -> None:
         """Discard changes for repo and submodules

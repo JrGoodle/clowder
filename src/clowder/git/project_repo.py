@@ -33,7 +33,7 @@ class ProjectRepo(ProjectRepoImpl):
     :ivar str default_ref: Default ref
     :ivar str remote: Default remote name
     :ivar bool parallel: Whether command is being run in parallel, affects output
-    :ivar Repo repo: Repo instance
+    :ivar Repo Optional[repo]: Repo instance
     """
 
     def __init__(self, repo_path: Path, remote: str, default_ref: str, parallel: bool = False):
@@ -45,7 +45,7 @@ class ProjectRepo(ProjectRepoImpl):
         :param bool parallel: Whether command is being run in parallel, affects output. Defaults to False
         """
 
-        ProjectRepoImpl.__init__(self, repo_path, remote, default_ref, parallel=parallel)
+        super().__init__(repo_path, remote, default_ref, parallel=parallel)
 
     def create_clowder_repo(self, url: str, branch: str, depth: int = 0) -> None:
         """Clone clowder git repo from url at path

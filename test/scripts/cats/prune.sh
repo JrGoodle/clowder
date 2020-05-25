@@ -44,7 +44,7 @@ test_prune() {
     end_command
 
     pushd duke || exit 1
-    test_branch purr
+    test_branch heads/purr
     test_no_local_branch_exists prune_branch
     popd || exit 1
     pushd mu || exit 1
@@ -132,7 +132,7 @@ test_prune_force() {
     end_command
 
     pushd duke || exit 1
-    test_branch purr
+    test_branch heads/purr
     test_no_local_branch_exists prune_branch
     popd || exit 1
     pushd mu || exit 1

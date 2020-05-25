@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Representation of clowder.yaml project
+"""Representation of clowder yaml project
 
 .. codeauthor:: Joe Decapo <joe@polka.cat>
 
@@ -45,7 +45,7 @@ def project_repo_exists(func):
 
 
 class Project(object):
-    """clowder.yaml Project model class
+    """clowder yaml Project model class
 
     :ivar str name: Project name
     :ivar Path path: Project relative path
@@ -470,6 +470,14 @@ class Project(object):
                       'PROJECT_NAME': self.name,
                       'PROJECT_REMOTE': self.remote,
                       'PROJECT_REF': self.ref}
+
+        # TODO: Add tests for presence of these variables in test scripts
+        if self._branch:
+            forall_env['PROJECT_BRANCH'] = self._branch
+        if self._tag:
+            forall_env['PROJECT_TAG'] = self._tag
+        if self._commit:
+            forall_env['PROJECT_COMMIT'] = self._commit
 
         if self.fork:
             forall_env['FORK_REMOTE'] = self.fork.remote

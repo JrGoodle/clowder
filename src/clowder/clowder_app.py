@@ -13,7 +13,7 @@ import argcomplete
 import colorama
 
 import clowder.cli as cmd
-from clowder import PRINT_DEBUG_OUTPUT
+from clowder import LOG_DEBUG
 from clowder.error import ClowderExit
 from clowder.util.clowder_utils import add_parser_arguments
 from clowder.util.parallel import __clowder_pool__
@@ -71,31 +71,26 @@ def main() -> None:
     """Clowder command CLI main function"""
 
     print()
+    exit_code = 0
+
     parser = create_parsers()
     argcomplete.autocomplete(parser)
     args = parser.parse_args()
     if 'projects' in args:
         if isinstance(args.projects, str):
             args.projects = [args.projects]
-
-    exit_code = 0
     try:
         args.func(args) # noqa
     except ClowderExit as err:
-        if PRINT_DEBUG_OUTPUT:
-            print('ClowderExit exception')
-            print(err)
+        LOG_DEBUG('ClowderExit exception', err)
         exit_code = err.code
     except AttributeError as err:
-        if PRINT_DEBUG_OUTPUT:
-            print('AttributeError exception')
-            print(err)
+        LOG_DEBUG('AttributeError exception', err)
         exit_code = 1
-        parser.print_help()
+        if parser is not None:
+            parser.print_help()
     except Exception as err: # noqa
-        if PRINT_DEBUG_OUTPUT:
-            print('Unhandled generic exception')
-            print(err)
+        LOG_DEBUG('Unhandled generic exception', err)
         exit_code = 1
     finally:
         print()

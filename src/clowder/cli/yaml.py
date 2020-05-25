@@ -21,10 +21,10 @@ from clowder.util.yaml import print_yaml
 def add_yaml_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
 
     arguments = [
-        (['--resolved', '-r'], dict(action='store_true', help='print resolved clowder.yaml'))
+        (['--resolved', '-r'], dict(action='store_true', help='print resolved clowder yaml file'))
     ]
 
-    parser = subparsers.add_parser('yaml', help='Print clowder.yaml information')
+    parser = subparsers.add_parser('yaml', help='Print clowder yaml file information')
     add_parser_arguments(parser, arguments)
     parser.set_defaults(func=yaml)
 

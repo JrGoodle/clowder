@@ -16,7 +16,7 @@ from clowder import CLOWDER_DIR, CLOWDER_REPO_DIR, CLOWDER_YAML, CURRENT_DIR
 from clowder.error import ClowderError, ClowderExit
 from clowder.git import ProjectRepo
 from clowder.git.util import existing_git_repository
-from clowder.util.clowder_utils import link_clowder_yaml
+from clowder.util.clowder_utils import link_clowder_yaml_default
 from clowder.util.connectivity import is_offline
 from clowder.util.execute import execute_command
 from clowder.util.file_system import remove_directory
@@ -107,7 +107,7 @@ def init(url: str, branch: str) -> None:
     clowder_repo_dir = CURRENT_DIR / '.clowder'
     repo = ProjectRepo(clowder_repo_dir, clowder_repo_remote, clowder_repo_ref)
     repo.create_clowder_repo(url, branch)
-    link_clowder_yaml(CURRENT_DIR)
+    link_clowder_yaml_default(CURRENT_DIR)
 
 
 def print_status(fetch: bool = False) -> None:
@@ -132,15 +132,13 @@ def print_status(fetch: bool = False) -> None:
     current_ref_output = repo.format_project_ref_string()
 
     if CLOWDER_YAML is None or not CLOWDER_YAML.is_symlink():
-        print(project_output + ' ' + current_ref_output)
+        print(f"{project_output} {current_ref_output}")
         return
 
-    clowder_file = Path('clowder.yaml')
-    symlink_output = fmt.path_string(clowder_file)
-    clowder_path = CLOWDER_YAML.resolve().relative_to(CLOWDER_DIR)
-    path_output = fmt.path_string(Path(str(clowder_path)[1:-1]))
-    print(f'{project_output} {current_ref_output}')
-    print(f'{symlink_output} -> {path_output}\n')
+    symlink_path = fmt.path_string(Path(CLOWDER_YAML.name))
+    file_path = fmt.path_string(CLOWDER_YAML.resolve().relative_to(CLOWDER_DIR))
+    print(f"{project_output} {current_ref_output}")
+    print(f"{symlink_path} -> {file_path}\n")
 
 
 def pull() -> None:
@@ -171,14 +169,15 @@ def run_command(command: str) -> None:
 
 
 def _init_exit_handler() -> None:
-    """Exit handler for deleting files if init fails
+    """Exit handler for deleting files if clowder init fails
 
     :raise ClowderExit:
     """
 
     clowder_path = CURRENT_DIR / '.clowder'
     if os.path.isdir(clowder_path):
+        clowder_yml = CURRENT_DIR / 'clowder.yml'
         clowder_yaml = CURRENT_DIR / 'clowder.yaml'
-        if not clowder_yaml.is_symlink():
+        if not clowder_yml.is_symlink() and not clowder_yaml.is_symlink():
             remove_directory(clowder_path)
             raise ClowderExit(1)

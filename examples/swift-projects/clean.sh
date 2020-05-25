@@ -21,3 +21,4 @@ rm -rf swift-integration-tests
 rm -rf swift-xcode-playground-support
 rm -rf swiftpm
 rm -f clowder.yaml
+rm -f clowder.yml

@@ -53,6 +53,16 @@ test_commit() {
     [[ "$1" = "$git_commit" ]] && echo "TEST: On correct commit: $1" || exit 1
 }
 
+test_tag_commit() {
+    echo "TEST: Check tag $1 commit is checked out"
+    local git_commit
+    git_commit=$(git rev-parse HEAD)
+    tag_commit=$(git rev-parse "$1"^0)
+    echo "Expected tag commit: $tag_commit"
+    echo "Current commit: $git_commit"
+    [[ "$tag_commit" = "$git_commit" ]] && echo "TEST: On correct tag commit: $1" || exit 1
+}
+
 test_commit_author_email() {
     echo "TEST: Check commit is checked out by author email"
     local git_author
@@ -117,8 +127,9 @@ test_git_lfs_filters_not_installed() {
 
 test_file_is_lfs_pointer() {
     echo "TEST: Check $1 is git lfs pointer"
+    local output
     output=$(git lfs ls-files -I "$1")
-    output_components=($output)
+    local output_components=($output)
     if [[ ${output_components[1]} != '-' ]]; then
         exit 1
     fi
@@ -126,9 +137,10 @@ test_file_is_lfs_pointer() {
 
 test_file_is_not_lfs_pointer() {
     echo "TEST: Check $1 is not git lfs pointer"
+    local output
     output=$(git lfs ls-files -I "jrgoodle.png")
     set -f # Temporarily disable globbing as we need to check for '*'
-    output_components=($output)
+    local output_components=($output)
     set +f
     if [[ ${output_components[1]} != '*' ]]; then
         exit 1
@@ -137,6 +149,7 @@ test_file_is_not_lfs_pointer() {
 
 test_head_detached() {
     echo "TEST: HEAD is detached"
+    local output
     output="$(git status | head -1)"
     if [[ $output != 'HEAD detached at'* ]]; then
         exit 1
@@ -202,6 +215,7 @@ test_no_tracking_branch_exists() {
 
 test_no_untracked_files() {
     echo "TEST: No untracked files exist"
+    local files
     files="$(git ls-files -o -d --exclude-standard | sed q | wc -l| tr -d '[:space:]')"
     if [ "$files" != "0" ]; then
         exit 1
@@ -236,8 +250,20 @@ test_commit_messages() {
     fi
 }
 
+test_symlink_path() {
+    echo "TEST: Symlink at $1 is pointing to correct file path"
+    local symlink_path
+    symlink_path=$(readlink "$1")
+    echo "Expected path: $2"
+    echo "Actual path: $symlink_path"
+    if [ "$2" != "$symlink_path" ]; then
+        exit 1
+    fi
+}
+
 test_untracked_files() {
     echo "TEST: Untracked files exist"
+    local files
     files="$(git ls-files -o -d --exclude-standard | sed q | wc -l| tr -d '[:space:]')"
     if [ "$files" != "1" ]; then
         exit 1

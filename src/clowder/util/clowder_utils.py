@@ -15,7 +15,10 @@ from clowder import CLOWDER_REPO_VERSIONS_DIR
 from clowder.error import ClowderExit
 from clowder.model import Project
 
-from .file_system import force_symlink
+from .file_system import (
+    force_symlink,
+    remove_file
+)
 
 Parser = Union[argparse.ArgumentParser, argparse._MutuallyExclusiveGroup, argparse._ArgumentGroup] # noqa
 Arguments = List[Tuple[list, dict]]
@@ -30,6 +33,24 @@ def add_parser_arguments(parser: Parser, arguments: Arguments) -> None:
 
     for argument in arguments:
         parser.add_argument(*argument[0], **argument[1])
+
+
+# TODO: Update to return list of all duplicates found
+def check_for_duplicates(list_of_elements: List[str]) -> Optional[str]:
+    """Check if given list contains any duplicates
+
+    :param List[str] list_of_elements: List of strings to check for duplicates
+    :return: First duplicate encountered, or None if no duplicates found
+    :rtype: Optional[str]
+    """
+
+    set_of_elements = set()
+    for elem in list_of_elements:
+        if elem in set_of_elements:
+            return elem
+        else:
+            set_of_elements.add(elem)
+    return None
 
 
 def existing_branch_projects(projects: Tuple[Project, ...], branch: str, is_remote: bool) -> bool:
@@ -65,36 +86,116 @@ def get_saved_version_names() -> Optional[Tuple[str, ...]]:
 
     :return: All saved version names
     :rtype: Optional[Tuple[str, ...]]
+    :raise ClowderExit:
     """
 
     if CLOWDER_REPO_VERSIONS_DIR is None:
         return None
 
-    return tuple(sorted([v[:-13] for v in os.listdir(str(CLOWDER_REPO_VERSIONS_DIR)) if v.endswith('.clowder.yaml')]))
+    versions = [Path(Path(v).stem).stem for v in os.listdir(str(CLOWDER_REPO_VERSIONS_DIR))
+                if v.endswith('.clowder.yml') or v.endswith('.clowder.yaml')]
+
+    duplicate = check_for_duplicates(versions)
+    if duplicate is not None:
+        print(fmt.error_duplicate_version(duplicate))
+        raise ClowderExit(1)
+
+    return tuple(sorted(versions))
 
 
-def link_clowder_yaml(clowder_dir: Path, version: Optional[str] = None) -> None:
-    """Create symlink pointing to clowder.yaml file
+def link_clowder_yaml_default(clowder_dir: Path) -> None:
+    """Create symlink pointing to clowder yaml file
 
     :param Path clowder_dir: Directory to create symlink in
-    :param Optional[str] version: Version name of clowder.yaml to link
     :raise ClowderExit:
     """
 
-    if version is None:
-        yaml_file = clowder_dir / '.clowder' / 'clowder.yaml'
-        path_output = fmt.path_string(Path('.clowder/clowder.yaml'))
-    else:
-        relative_path = Path('.clowder', 'versions', f'{version}.clowder.yaml')
-        path_output = fmt.path_string(relative_path)
-        yaml_file = clowder_dir.joinpath(relative_path)
+    yml_relative_path = Path('.clowder', 'clowder.yml')
+    yml_absolute_path = clowder_dir / yml_relative_path
+    yaml_relative_path = Path('.clowder', 'clowder.yaml')
+    yaml_absolute_path = clowder_dir / yaml_relative_path
 
-    if not yaml_file.is_file():
-        print(f"\n{path_output} doesn't seem to exist\n")
+    if yml_absolute_path.is_file():
+        relative_source_file = yml_relative_path
+    elif yaml_absolute_path.is_file():
+        relative_source_file = yaml_relative_path
+    else:
+        print(f"{fmt.ERROR} .clowder/clowder.yml doesn't seem to exist\n")
         raise ClowderExit(1)
 
-    print(f' - Symlink {path_output}')
-    force_symlink(yaml_file, clowder_dir / 'clowder.yaml')
+    source_file = clowder_dir / relative_source_file
+    target_file = clowder_dir / source_file.name
+
+    print(f" - Symlink {fmt.path_string(Path(target_file.name))} -> {fmt.path_string(relative_source_file)}")
+
+    force_symlink(source_file, clowder_dir / target_file)
+
+    existing_file = None
+    if target_file.suffix == '.yaml':
+        file = clowder_dir / 'clowder.yml'
+        if file.exists():
+            existing_file = file
+    elif target_file.suffix == '.yml':
+        file = clowder_dir / 'clowder.yaml'
+        if file.exists():
+            existing_file = file
+
+    if existing_file is not None:
+        print(f" - Remove previously existing file {fmt.path_string(existing_file)}")
+        try:
+            remove_file(existing_file)
+        except OSError as err:
+            print(f"{fmt.ERROR} Failed to remove file {existing_file}")
+            print(err)
+            ClowderExit(1)
+
+
+def link_clowder_yaml_version(clowder_dir: Path, version: str) -> None:
+    """Create symlink pointing to clowder yaml file
+
+    :param Path clowder_dir: Directory to create symlink in
+    :param str version: Version name of clowder yaml file to link
+    :raise ClowderExit:
+    """
+
+    yml_relative_path = Path('.clowder', 'versions', f'{version}.clowder.yml')
+    yml_absolute_path = clowder_dir / yml_relative_path
+    yaml_relative_path = Path('.clowder', 'versions', f'{version}.clowder.yaml')
+    yaml_absolute_path = clowder_dir / yaml_relative_path
+
+    if yml_absolute_path.is_file():
+        relative_source_file = yml_relative_path
+    elif yaml_absolute_path.is_file():
+        relative_source_file = yaml_relative_path
+    else:
+        print(f"{fmt.ERROR} .clowder/versions/{version}.clowder.yml doesn't seem to exist\n")
+        raise ClowderExit(1)
+
+    source_file = clowder_dir / relative_source_file
+    target_file = clowder_dir / remove_prefix(source_file.name, f"{version}.")
+
+    print(f" - Symlink {fmt.path_string(Path(target_file.name))} -> {fmt.path_string(relative_source_file)}")
+
+    force_symlink(source_file, target_file)
+
+    existing_file = None
+    if target_file.suffix == '.yaml':
+        file = clowder_dir / 'clowder.yml'
+        if file.exists():
+            existing_file = file
+    elif target_file.suffix == '.yml':
+        file = clowder_dir / 'clowder.yaml'
+        if file.exists():
+            existing_file = file
+
+    if existing_file is not None:
+        print(f" - Remove previously existing file {fmt.path_string(existing_file)}")
+        try:
+            remove_file(existing_file)
+        except OSError as err:
+            print(f"{fmt.ERROR} Failed to remove file {existing_file}")
+            print(err)
+            ClowderExit(1)
 
 
 def print_parallel_projects_output(projects: Tuple[Project, ...]) -> None:
@@ -106,6 +207,20 @@ def print_parallel_projects_output(projects: Tuple[Project, ...]) -> None:
     for project in projects:
         print(project.status())
         _print_fork_output(project)
+
+
+def remove_prefix(text: str, prefix: str) -> str:
+    """Remove prefix from string
+
+    :param str text: Text to remove prefix from
+    :param str prefix: Prefix to remoe
+    :return: Text with prefix removed if present
+    :rtype: str
+    """
+
+    if text.startswith(prefix):
+        return text[len(prefix):]
+    return text
 
 
 def validate_project_statuses(projects: Tuple[Project, ...]) -> None:

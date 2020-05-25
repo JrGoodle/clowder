@@ -32,7 +32,7 @@ class GitRepo(object):
     :ivar str default_ref: Default ref
     :ivar str remote: Default remote name
     :ivar bool parallel: Whether command is being run in parallel, affects output
-    :ivar Repo repo: Repo instance
+    :ivar Repo Optional[repo]: Repo instance
     """
 
     def __init__(self, repo_path: Path, remote: str, default_ref: str, parallel: bool = False):
@@ -230,7 +230,7 @@ class GitRepo(object):
             status = f'({local_commits_output}/{upstream_commits_output})'
 
         if self.is_detached():
-            current_ref = self.sha(short=True)
+            current_ref = self.sha()
             return colored(f'[HEAD @ {current_ref}]', 'magenta')
         current_branch = self.current_branch()
         return colored(f'[{current_branch}]', 'magenta') + status

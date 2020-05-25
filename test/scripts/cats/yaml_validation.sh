@@ -14,7 +14,7 @@ test_missing_repo() {
     print_single_separator
     begin_command
     $COMMAND herd # Get exit code after completions
-    exit_code=$?
+    local exit_code=$?
     end_command
     echo "Expected exit code: $1"
     echo "Actual exit code: $exit_code"
@@ -32,7 +32,7 @@ test_missing_yaml() {
     rm -f clowder.yaml || exit 1
     begin_command
     $COMMAND herd # Get exit code after completions
-    exit_code=$?
+    local exit_code=$?
     end_command
     echo "Expected exit code: $1"
     echo "Actual exit code: $exit_code"
@@ -44,18 +44,18 @@ test_missing_yaml() {
 test_missing_yaml '11'
 
 _test_invalid_yaml() {
-    test_cases=( $($1) )
+    local test_cases=( $($1) )
     for test in "${test_cases[@]}"
     do
         echo "TEST: Validate $test"
-        version=${test%'.clowder.yaml'}
+        local version=${test%'.clowder.yaml'}
         begin_command
         $COMMAND link $version || exit 1
         end_command
         print_single_separator
         begin_command
         $COMMAND herd # Get exit code after completions
-        exit_code=$?
+        local exit_code=$?
         end_command
         echo "Expected exit code: $2"
         echo "Actual exit code: $exit_code"

@@ -24,16 +24,16 @@ from clowder.util.yaml import load_clowder_yaml, validate_clowder_yaml
 
 
 class ClowderController(object):
-    """Class encapsulating project information from clowder.yaml for controlling clowder
+    """Class encapsulating project information from clowder yaml for controlling clowder
 
     :ivar Optional[str] name: Name of clowder
-    :ivar Optional[Defaults] defaults: Global clowder.yaml defaults
+    :ivar Optional[Defaults] defaults: Global clowder yaml defaults
     :ivar Tuple[Group, ...] groups: List of all Groups
     :ivar Tuple[Source, ...] sources: List of all Sources
     :ivar Tuple[str, ...] project_names: All possible project and group names
     :ivar Tuple[str, ...] project_choices: All possible project and group choices
     :ivar Tuple[str, ...] project_choices_with_default: All possible project and group choices, including 'default'
-    :ivar Optional[Exception] error: Exception from failing to load clowder.yaml
+    :ivar Optional[Exception] error: Exception from failing to load clowder yaml file
     """
 
     def __init__(self):
@@ -152,7 +152,7 @@ class ClowderController(object):
             raise ClowderExit(1)
 
     def _get_all_project_names(self) -> Tuple[str, ...]:
-        """Returns all project names for current clowder.yaml
+        """Returns all project names for current clowder yaml file
 
         :return: All project and group names
         :rtype: Tuple
@@ -165,7 +165,7 @@ class ClowderController(object):
             return ()
 
     def _load_clowder_yaml(self, yaml: dict) -> None:
-        """Load clowder.yaml
+        """Load clowder yaml file
 
         :param dict yaml: Parsed yaml dict
         """

@@ -67,7 +67,7 @@ def print_clowder_repo_status_fetch(func):
 
 
 def valid_clowder_yaml_required(func):
-    """If clowder.yaml is invalid, print invalid yaml message and exit"""
+    """If clowder yaml file is invalid, print invalid yaml message and exit"""
 
     @wraps(func)
     def wrapper(*args, **kwargs):

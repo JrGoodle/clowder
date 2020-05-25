@@ -33,7 +33,7 @@ class Config(object):
     :ivar float version: Version number of config file
     :ivar Tuple[ClowderConfig, ...] clowder_configs: Configs for clowders
     :ivar Optional[ClowderConfig] current_clowder_config: Config for current clowder
-    :ivar Optional[Exception] error: Exception from failing to load clowder.config.yaml
+    :ivar Optional[Exception] error: Exception from failing to load clowder config yaml file
     """
 
     def __init__(self, current_clowder_name: Optional[str], project_options: Tuple[str, ...]):
@@ -141,7 +141,7 @@ class Config(object):
         return config
 
     def _load_clowder_config_yaml(self) -> None:
-        """Load clowder.config.yaml
+        """Load clowder config yaml file
 
         :raise ClowderExit:
         """

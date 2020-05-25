@@ -28,7 +28,7 @@ test_cats_default_herd_branches() {
     test_branch knead
     popd || exit 1
     pushd duke || exit 1
-    test_branch purr
+    test_branch heads/purr
     popd || exit 1
 }
 
@@ -52,7 +52,7 @@ test_checkout() {
     local branch='checkout_branch'
 
     pushd duke || exit 1
-    git branch $branch || exit 1
+    git branch $branch HEAD || exit 1
     popd || exit 1
     pushd mu || exit 1
     git branch $branch || exit 1
