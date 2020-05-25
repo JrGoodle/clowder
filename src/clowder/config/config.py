@@ -9,7 +9,7 @@ from typing import List, Optional, Tuple
 
 import clowder.util.formatting as fmt
 from clowder import CLOWDER_DIR, CLOWDER_CONFIG_DIR, CLOWDER_CONFIG_YAML
-from clowder.error import ClowderConfigYAMLError, ClowderExit
+from clowder.error import ClowderConfigYAMLError, ClowderConfigYAMLErrorType, ClowderExit
 from clowder.util.file_system import (
     create_backup_file,
     make_dir,
@@ -40,6 +40,8 @@ class Config(object):
         """Config __init__"""
 
         self.error = None
+        self.current_clowder_config = None
+        self.clowder_configs = ()
         self._project_options = project_options
 
         # Config file doesn't currently exist
@@ -52,37 +54,21 @@ class Config(object):
             return
 
         # Config file does exist, try to load
-        try:
-            self._load_clowder_config_yaml()
-        except ClowderConfigYAMLError as err:
-            self.error = err
-        except Exception as err: # noqa
-            self.error = err
-            # TODO: Remove file?
-        except (KeyboardInterrupt, SystemExit):
-            raise ClowderExit(1)
+        self._load_clowder_config_yaml()
 
-        # If current clowder config doesn't exist, create empty one
+        # If current clowder exists, return
         if self.current_clowder_config is not None:
-            if self.error:
-                raise ClowderExit(self.error.code)
             return
 
         # If current clowder config doesn't exist, create empty one
-        try:
-            self.current_clowder_config = ClowderConfig(current_clowder_name=current_clowder_name,
-                                                        project_options=self._project_options)
-        except ClowderConfigYAMLError as err:
-            self.error = err
-        except (KeyboardInterrupt, SystemExit):
-            raise ClowderExit(1)
+        self.current_clowder_config = ClowderConfig(current_clowder_name=current_clowder_name,
+                                                    project_options=self._project_options)
+        if not self.clowder_configs:
+            self.clowder_configs = (self.current_clowder_config,)
         else:
-            if not self.clowder_configs:
-                self.clowder_configs = (self.current_clowder_config,)
-            else:
-                configs = list(self.clowder_configs)
-                configs.append(self.current_clowder_config)
-                self.clowder_configs = tuple(configs)
+            configs = list(self.clowder_configs)
+            configs.append(self.current_clowder_config)
+            self.clowder_configs = tuple(configs)
 
     def process_projects_arg(self, projects: List[str]) -> Tuple[str, ...]:
         """Process project args based on parameters and config
@@ -159,16 +145,15 @@ class Config(object):
                                                      project_options=self._project_options))
             self.clowder_configs = tuple(clowder_configs)
 
-            self.current_clowder_config = None
             if CLOWDER_DIR is not None:
                 for config in self.clowder_configs:
                     if config.clowder_dir.resolve() == CLOWDER_DIR.resolve():
                         self.current_clowder_config = config
                         break
-        except (AttributeError, KeyError, TypeError) as err:
+        except (AttributeError, KeyError, TypeError):
             self.version = CONFIG_VERSION
             self.clowder_configs = ()
             self.current_clowder_config = None
-            self.error = err
+            raise ClowderConfigYAMLError(f"{fmt.ERROR} Invalid config yaml file", ClowderConfigYAMLErrorType.UNKNOWN)
         except (KeyboardInterrupt, SystemExit):
             raise ClowderExit(1)

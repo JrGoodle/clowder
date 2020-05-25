@@ -72,7 +72,8 @@ class ClowderConfig(object):
             projects = defaults.get('projects', None)
             self.projects: Optional[Tuple[str, ...]] = None if projects is None else tuple(sorted(projects))
             # TODO: Confirm projects exist, otherwise throw error, maybe offer to clean up?
-            self.validate_config_projects_defined(self.projects, project_options)
+            if self.projects is not None:
+                self.validate_config_projects_defined(self.projects, project_options)
             self.protocol: Optional[str] = defaults.get('protocol', None)
             self.rebase: Optional[bool] = defaults.get('rebase', None)
             self.parallel: Optional[bool] = defaults.get('parallel', None)

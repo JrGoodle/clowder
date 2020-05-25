@@ -79,7 +79,19 @@ def error(err: Exception) -> str:
     :rtype: str
     """
 
-    return f"{ERROR} {str(err)}\n"
+    return f"{ERROR} {str(err)}"
+
+
+def error_ambiguous_clowder_yaml() -> str:
+    """Return formatted error string for ambiguous clowder yaml file
+
+    :return: Formatted ambigious clowder yaml error
+    :rtype: str
+    """
+
+    yml_file = _yaml_file(Path('clowder.yml'))
+    yaml_file = _yaml_file(Path('clowder.yaml'))
+    return f"\n{ERROR} Found {yml_file} and {yaml_file} files in same directory"
 
 
 def error_command_failed(cmd: Union[str, List[str]]) -> str:
@@ -90,7 +102,7 @@ def error_command_failed(cmd: Union[str, List[str]]) -> str:
     :rtype: str
     """
 
-    return f"{ERROR} Failed to run command {command(cmd)}\n"
+    return f"{ERROR} Failed to run command {command(cmd)}"
 
 
 def error_duplicate_version(version: str) -> str:
@@ -101,7 +113,7 @@ def error_duplicate_version(version: str) -> str:
     :rtype: str
     """
 
-    return f"{ERROR} Duplicate version found: {_yaml_file(Path(version))}\n"
+    return f"{ERROR} Duplicate version found: {_yaml_file(Path(version))}"
 
 
 def error_duplicate_project_path(path: Path, yml: Path) -> str:

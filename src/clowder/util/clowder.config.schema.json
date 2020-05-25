@@ -13,6 +13,11 @@
         "$ref": "#/definitions/nonEmptyString"
       }
     },
+    "projectPath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^\/.+"
+    },
     "stringArrayUnique": {
       "type": "array",
       "uniqueItems": true,
@@ -86,7 +91,7 @@
           "description": "Path to clowder directory",
           "oneOf": [
             {
-              "$ref": "#/definitions/nonEmptyString"
+              "$ref": "#/definitions/projectPath"
             }
           ]
         },
@@ -104,7 +109,8 @@
   "type": "object",
   "additionalProperties": false,
   "required": [
-    "version"
+    "version",
+    "clowder_configs"
   ],
   "properties": {
     "version": {

@@ -44,7 +44,9 @@ test_missing_yaml() {
 test_missing_yaml '11'
 
 _test_invalid_yaml() {
-    local test_cases=( $($1) )
+    pushd "$CATS_EXAMPLE_DIR/.clowder/versions" || exit 1
+    local test_cases=( $($1 || exit 1) )
+    popd || exit 1
     for test in "${test_cases[@]}"
     do
         echo "TEST: Validate $test"
@@ -63,7 +65,8 @@ _test_invalid_yaml() {
             exit 1
         fi
         print_single_separator
-        rm clowder.yaml || exit 1
+        rm -f clowder.yaml || exit 1
+        rm -f clowder.yml || exit 1
     done
 }
 

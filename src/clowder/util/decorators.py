@@ -34,7 +34,8 @@ def print_clowder_name(func):
     def wrapper(*args, **kwargs):
         """Wrapper"""
 
-        print(fmt.clowder_name(f"{CLOWDER_CONTROLLER.name}\n"))
+        if CLOWDER_CONTROLLER.name is not None:
+            print(fmt.clowder_name(f"{CLOWDER_CONTROLLER.name}\n"))
         return func(*args, **kwargs)
 
     return wrapper

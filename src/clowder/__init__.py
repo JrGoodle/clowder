@@ -12,7 +12,7 @@ from pathlib import Path
 from typing import Optional
 
 from clowder.error import ClowderExit
-from clowder.util.formatting import ERROR
+from clowder.util.formatting import error_ambiguous_clowder_yaml
 from clowder.git.util import existing_git_repository
 
 # Set up logging #
@@ -31,7 +31,6 @@ def LOG_DEBUG(message: str, exception: Optional[Exception] = None): # noqa
     if PRINT_DEBUG_OUTPUT:
         logger.log(logging.DEBUG, f" {message}")
         if exception is not None:
-            logger.log(logging.DEBUG, str(exception))
             # TODO: Format the output for clowder debug
             traceback.print_exc()
 
@@ -75,11 +74,12 @@ if CLOWDER_REPO_DIR is not None:
     clowder_yml = CLOWDER_DIR / 'clowder.yml'
     clowder_yaml = CLOWDER_DIR / 'clowder.yaml'
     if clowder_yml.is_symlink() and clowder_yaml.is_symlink():
-        print(f"\n{ERROR} Found clowder.yml and clowder.yaml files in same directory\n")
+        print(error_ambiguous_clowder_yaml())
         try:
             raise ClowderExit(1)
         except ClowderExit as err:
             LOG_DEBUG('Ambigiuous clowder file', err)
+            print()
             exit(err.code)
     if clowder_yml.is_symlink():
         CLOWDER_YAML = clowder_yml
