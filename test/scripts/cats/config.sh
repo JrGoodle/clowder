@@ -34,26 +34,38 @@ echo "TEST: Test clowder config"
 CONFIG_DIR="$HOME/.config/clowder"
 CONFIG_FILE="$CONFIG_DIR/clowder.config.yml"
 CONFIG_FILE_BACKUP="$CONFIG_FILE.backup"
-TEST_CONFIG_FILE="$CLOWDER_PROJECT_DIR/test/config/v0.1/clowder.config.yml"
 
-# If config file already exists, move to backup
-if [ -f "$CONFIG_FILE" ]; then
-    mv -fv "$CONFIG_FILE" "$CONFIG_FILE_BACKUP" || exit 1
-fi
+create_backup_config() {
+    echo 'If config file already exists, move to backup'
+    if [ -f "$CONFIG_FILE" ]; then
+        mv -fv "$CONFIG_FILE" "$CONFIG_FILE_BACKUP" || exit 1
+    fi
+}
 
 copy_config_file() {
+    local config_file="$1"
     echo 'Replace placeholder text in test file with current cats example directory'
-    perl -pi -e "s:DIRECTORY_PLACEHOLDER:$CATS_EXAMPLE_DIR:g" "$TEST_CONFIG_FILE" || exit 1
+    perl -pi -e "s:DIRECTORY_PLACEHOLDER:$CATS_EXAMPLE_DIR:g" "$config_file" || exit 1
     echo 'Config file contents:'
-    cat "$TEST_CONFIG_FILE"
+    cat "$config_file"
     echo "Make config directory if it doesn't exist"
     mkdir -p "$CONFIG_DIR" || exit 1
     echo 'Copy test config file to config directory'
-    cp "$TEST_CONFIG_FILE" "$CONFIG_DIR/clowder.config.yml" || exit 1
+    cp "$config_file" "$CONFIG_DIR/clowder.config.yml" || exit 1
     echo 'Discard changes to test config file'
     pushd "$CLOWDER_PROJECT_DIR" || exit 1
-    git checkout -- "$TEST_CONFIG_FILE" || exit 1
+    git checkout -- "$config_file" || exit 1
     popd || exit 1
+}
+
+copy_invalid_config_file() {
+    local config_file="$1"
+    echo 'Config file contents:'
+    cat "$config_file"
+    echo "Make config directory if it doesn't exist"
+    mkdir -p "$CONFIG_DIR" || exit 1
+    echo 'Copy test config file to config directory'
+    cp "$config_file" "$CONFIG_DIR/clowder.config.yml" || exit 1
 }
 
 restore_config_file() {
@@ -67,7 +79,8 @@ test_config_projects() {
     echo 'TEST: cats config projects'
     print_single_separator
 
-    copy_config_file
+    create_backup_config
+    copy_config_file "$CLOWDER_PROJECT_DIR/test/config/v0.1/clowder.config.yml"
     ls -al $HOME/.config
     ls -al $HOME/.config/clowder
 
@@ -148,8 +161,20 @@ test_config_projects() {
     end_command
 
     test_cats_default_herd_branches
+
+    restore_config_file
 }
 test_config_projects
+
+test_invalid_config_files() {
+    create_backup_config
+    copy_invalid_config_file "$CLOWDER_PROJECT_DIR/test/config/v0.1/invalid/test-empty.clowder.config.yml"
+
+    # TODO: Test running command with invalid config file
+
+    restore_config_file
+}
+test_invalid_config_files
 
 # TODO: Add test for linking ssh version but using https protocol config
 # test_remote
