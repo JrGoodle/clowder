@@ -10,15 +10,14 @@ import argparse
 import clowder.util.formatting as fmt
 from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.config import Config
-from clowder.util.clowder_utils import (
-    add_parser_arguments,
-    filter_projects
-)
+from clowder.model.util import filter_projects
 from clowder.util.decorators import (
     print_clowder_name,
     print_clowder_repo_status,
     valid_clowder_yaml_required
 )
+
+from .util import add_parser_arguments
 
 
 def add_diff_parser(subparsers: argparse._SubParsersAction) -> None: # noqa

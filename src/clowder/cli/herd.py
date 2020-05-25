@@ -11,8 +11,7 @@ import os
 import clowder.util.formatting as fmt
 from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.config import Config
-from clowder.util.clowder_utils import (
-    add_parser_arguments,
+from clowder.model.util import (
     filter_projects,
     validate_project_statuses
 )
@@ -23,6 +22,8 @@ from clowder.util.decorators import (
     valid_clowder_yaml_required
 )
 from clowder.util.parallel import herd_parallel
+
+from .util import add_parser_arguments
 
 
 def add_herd_parser(subparsers: argparse._SubParsersAction) -> None: # noqa

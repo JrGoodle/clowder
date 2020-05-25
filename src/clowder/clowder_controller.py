@@ -13,10 +13,8 @@ from clowder.error import (
     ClowderExit,
     ClowderYAMLError, ClowderYAMLErrorType
 )
-from clowder.model import Defaults
-from clowder.model import Project
-from clowder.model import Source
-from clowder.util.clowder_utils import (
+from clowder.model import Defaults, Project, Source
+from clowder.model.util import (
     print_parallel_projects_output,
     validate_project_statuses
 )

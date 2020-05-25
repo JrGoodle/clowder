@@ -9,9 +9,8 @@ import argparse
 
 import clowder.util.formatting as fmt
 from clowder import CLOWDER_DIR
-from clowder.util.clowder_utils import (
-    add_parser_arguments,
-    get_saved_version_names,
+from clowder.clowder_repo import get_saved_version_names
+from clowder.util.yaml import (
     link_clowder_yaml_default,
     link_clowder_yaml_version
 )
@@ -20,6 +19,8 @@ from clowder.util.decorators import (
     clowder_repo_required,
     print_clowder_repo_status
 )
+
+from .util import add_parser_arguments
 
 
 def add_link_parser(subparsers: argparse._SubParsersAction) -> None: # noqa

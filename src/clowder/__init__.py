@@ -13,7 +13,7 @@ from typing import Optional
 
 from clowder.error import ClowderExit
 from clowder.util.formatting import ERROR
-
+from clowder.git.util import existing_git_repository
 
 # Set up logging #
 
@@ -47,11 +47,22 @@ CLOWDER_REPO_VERSIONS_DIR: Optional[Path] = None
 CLOWDER_YAML: Optional[Path] = None
 
 
+def existing_clowder_repo(directory: Path) -> bool:
+    """Check if directory is a clowder repository
+
+    :param Path directory: Path to check
+    :return: True, if it looks like it's a clowder repository
+    :rtype: bool
+    """
+
+    return directory.is_dir() and existing_git_repository(directory)
+
+
 # Walk up directory tree to find possible clowder repo (.clowder directory) and set global variable
 path = Path.cwd()
 while str(path) != path.root:
     clowder_repo_dir = path / '.clowder'
-    if clowder_repo_dir.is_dir():
+    if existing_clowder_repo(clowder_repo_dir):
         CLOWDER_DIR = path
         CLOWDER_REPO_DIR = clowder_repo_dir
         break

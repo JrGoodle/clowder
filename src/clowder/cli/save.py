@@ -12,16 +12,15 @@ import clowder.util.formatting as fmt
 from clowder import CLOWDER_REPO_DIR
 from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.error import ClowderExit
-from clowder.util.clowder_utils import (
-    add_parser_arguments,
-    validate_project_statuses
-)
+from clowder.model.util import validate_project_statuses
 from clowder.util.decorators import (
     print_clowder_name,
     valid_clowder_yaml_required
 )
 from clowder.util.file_system import make_dir
 from clowder.util.yaml import save_yaml
+
+from .util import add_parser_arguments
 
 
 def add_save_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
