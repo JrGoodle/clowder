@@ -10,9 +10,8 @@ import argparse
 from termcolor import colored, cprint
 
 import clowder.clowder_repo as clowder_repo
-from clowder import CURRENT_DIR
+from clowder import CURRENT_DIR, existing_clowder_repo
 from clowder.error import ClowderExit
-from clowder.git.util import existing_git_repository
 from clowder.util.connectivity import network_connection_required
 
 from .util import add_parser_arguments
@@ -38,7 +37,7 @@ def init(args) -> None:
     """
 
     clowder_repo_dir = CURRENT_DIR / '.clowder'
-    if existing_git_repository(clowder_repo_dir):
+    if existing_clowder_repo(clowder_repo_dir):
         cprint('Clowder already initialized in this directory\n', 'red')
         raise ClowderExit(1)
 
