@@ -8,7 +8,6 @@ if [ "$1" == 'version' ]; then
     NEW_VERSION=$2
 
     perl -pi -e "s/$OLD_VERSION/$NEW_VERSION/g" src/setup.py || exit 1
-    perl -pi -e "s/$OLD_VERSION/$NEW_VERSION/g" src/clowder/clowder_app.py || exit 1
     perl -pi -e "s/$OLD_VERSION/$NEW_VERSION/g" .github/issue_template.md || exit 1
     perl -pi -e "s/$OLD_VERSION/$NEW_VERSION/g" docs/conf.py || exit 1
     exit

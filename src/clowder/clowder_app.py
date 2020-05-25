@@ -6,8 +6,8 @@
 """
 
 import argparse
+import pkg_resources
 from multiprocessing import freeze_support
-from typing import List, Tuple
 
 # noinspection PyPackageRequirements
 import argcomplete
@@ -16,21 +16,16 @@ import colorama
 import clowder.cli as cmd
 from clowder import LOG_DEBUG
 from clowder.error import ClowderConfigYAMLError, ClowderExit
-from clowder.util.parallel import __clowder_pool__
-
-VERSION = '3.2.0'
 
 
 class ClowderArgumentParser(argparse.ArgumentParser):
 
     def error(self, message):
         # Make sure mp pool is closed
-        close_mp_pool()
         argparse.ArgumentParser.error(self, message)
 
     def exit(self, status=0, message=None):
         # Make sure mp pool is closed
-        close_mp_pool()
         if message is not None:
             message = f"{message}\n"
         else:
@@ -40,8 +35,9 @@ class ClowderArgumentParser(argparse.ArgumentParser):
 
 def create_parsers() -> ClowderArgumentParser:
     parser = ClowderArgumentParser(prog='clowder')
+    version_message = f"clowder version {pkg_resources.require('clowder-repo')[0].version}"
     arguments = [
-        (['-v', '--version'], dict(action='version', version=VERSION))
+        (['-v', '--version'], dict(action='version', version=version_message))
     ]
     cmd.add_parser_arguments(parser, arguments)
     subparsers = parser.add_subparsers(help='sub-command help')
@@ -71,50 +67,34 @@ def main() -> None:
     """Clowder command CLI main function"""
 
     print()
-    exit_code = 0
-
-    parser = create_parsers()
-    argcomplete.autocomplete(parser)
-    args = parser.parse_args()
-    if 'projects' in args:
-        if isinstance(args.projects, str):
-            args.projects = [args.projects]
+    parser = None
     try:
+        parser = create_parsers()
+        argcomplete.autocomplete(parser)
+        args = parser.parse_args()
+        if 'projects' in args:
+            if isinstance(args.projects, str):
+                args.projects = [args.projects]
         args.func(args) # noqa
     except ClowderExit as err:
         LOG_DEBUG('ClowderExit exception', err)
-        exit_code = err.code
+        print()
+        exit(err.code)
     except ClowderConfigYAMLError as err:
         print(err.message)
         LOG_DEBUG('ClowderConfigYAMLError exception', err)
-        exit_code = err.code
+        print()
+        exit(err.code)
     except AttributeError as err:
         LOG_DEBUG('AttributeError exception', err)
-        exit_code = 1
         if parser is not None:
             parser.print_help()
+        print()
+        exit(1)
     except Exception as err: # noqa
         LOG_DEBUG('Unhandled generic exception', err)
-        exit_code = 1
-    finally:
         print()
-
-        # Make sure mp pool is closed
-        close_mp_pool()
-
-        exit(exit_code)
-
-
-def close_mp_pool():
-    """Helper function to close multiprocessing pool"""
-    if __clowder_pool__ is None:
-        return
-
-    try:
-        __clowder_pool__.close()
-        __clowder_pool__.join()
-    except:  # noqa
-        __clowder_pool__.terminate()
+        exit(1)
 
 
 if __name__ == '__main__':

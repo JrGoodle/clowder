@@ -82,6 +82,18 @@ def error(err: Exception) -> str:
     return f"{ERROR} {str(err)}"
 
 
+def error_ambiguous_clowder_yaml() -> str:
+    """Return formatted error string for ambiguous clowder yaml file
+
+    :return: Formatted ambigious clowder yaml error
+    :rtype: str
+    """
+
+    yml_file = _yaml_file(Path('clowder.yml'))
+    yaml_file = _yaml_file(Path('clowder.yaml'))
+    return f"\n{ERROR} Found {yml_file} and {yaml_file} files in same directory"
+
+
 def error_command_failed(cmd: Union[str, List[str]]) -> str:
     """Format error message for failed command
 
