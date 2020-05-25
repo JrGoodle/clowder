@@ -14,19 +14,17 @@ import argcomplete
 import colorama
 
 import clowder.cli as cmd
-from clowder import LOG_DEBUG
 from clowder.error import ClowderError, ClowderErrorType
+from clowder.logging import LOG_DEBUG
 
 
 class ClowderArgumentParser(argparse.ArgumentParser):
     """Custom argument parser subclass"""
 
     def error(self, message):
-        # Make sure mp pool is closed
         argparse.ArgumentParser.error(self, message)
 
     def exit(self, status=0, message=None):
-        # Make sure mp pool is closed
         if message is not None:
             message = f"{message}\n"
         else:
@@ -82,22 +80,25 @@ def main() -> None:
         if 'projects' in args:
             if isinstance(args.projects, str):
                 args.projects = [args.projects]
-        args.func(args) # noqa
+        args.func(args)
     except ClowderError as err:
-        LOG_DEBUG('ClowderError exception', err)
+        LOG_DEBUG('** ClowderError **', err)
         print(err)
         print()
         exit(err.error_type.value)
     except AttributeError as err:
-        LOG_DEBUG('AttributeError exception', err)
+        LOG_DEBUG('** AttributeError exception **', err)
+        print(err)
         if parser is not None:
             parser.print_help()
         print()
         exit(ClowderErrorType.UNKNOWN.value)
-    except Exception as err: # noqa
-        LOG_DEBUG('Unhandled generic exception', err)
+    except Exception as err:
+        LOG_DEBUG('** Unhandled generic exception **', err)
         print()
         exit(ClowderErrorType.UNKNOWN.value)
+    else:
+        print()
 
 
 if __name__ == '__main__':

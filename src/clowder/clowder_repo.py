@@ -167,7 +167,8 @@ def print_status(fetch: bool = False) -> None:
     symlink_path = fmt.path_string(Path(CLOWDER_YAML.name))
     file_path = fmt.path_string(CLOWDER_YAML.resolve().relative_to(CLOWDER_DIR))
     print(f"{project_output} {current_ref_output}")
-    print(f"{symlink_path} -> {file_path}\n")
+    print(f"{symlink_path} -> {file_path}")
+    print()
 
 
 def pull() -> None:

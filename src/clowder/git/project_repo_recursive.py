@@ -11,8 +11,8 @@ from typing import Optional
 from git import GitError
 
 import clowder.util.formatting as fmt
-from clowder import LOG_DEBUG
 from clowder.error import ClowderError, ClowderErrorType
+from clowder.logging import LOG_DEBUG
 
 from .project_repo import ProjectRepo
 
@@ -48,7 +48,7 @@ class ProjectRepoRecursive(ProjectRepo):
             - ``x`` Remove all untracked files
         """
 
-        ProjectRepo.clean(self, args=args)
+        super().clean(args=args)
 
         self._print(' - Clean submodules recursively')
         self._submodules_clean()
@@ -77,7 +77,7 @@ class ProjectRepoRecursive(ProjectRepo):
         :param bool rebase: Whether to use rebase instead of pulling latest changes
         """
 
-        ProjectRepo.herd(self, url, depth=depth, fetch=fetch, rebase=rebase)
+        super().herd(url, depth=depth, fetch=fetch, rebase=rebase)
         self.submodule_update_recursive(depth)
 
     def herd_branch(self, url: str, branch: str, depth: int = 0, rebase: bool = False,
@@ -91,7 +91,7 @@ class ProjectRepoRecursive(ProjectRepo):
         :param Optional[str] fork_remote: Fork remote name
         """
 
-        ProjectRepo.herd_branch(self, url, branch, depth=depth, rebase=rebase, fork_remote=fork_remote)
+        super().herd_branch(url, branch, depth=depth, rebase=rebase, fork_remote=fork_remote)
         self.submodule_update_recursive(depth)
 
     def herd_tag(self, url: str, tag: str, depth: int = 0, rebase: bool = False) -> None:
@@ -103,7 +103,7 @@ class ProjectRepoRecursive(ProjectRepo):
         :param bool rebase: Whether to use rebase instead of pulling latest changes
         """
 
-        ProjectRepo.herd_tag(self, url, tag, depth=depth, rebase=rebase)
+        super().herd_tag(url, tag, depth=depth, rebase=rebase)
         self.submodule_update_recursive(depth)
 
     def is_dirty_submodule(self, path: str) -> bool:
@@ -114,7 +114,7 @@ class ProjectRepoRecursive(ProjectRepo):
         :rtype: bool
         """
 
-        return not self.repo.is_dirty(path)
+        return self.repo.is_dirty(path)
 
     def submodule_update_recursive(self, depth: int = 0) -> None:
         """Update submodules recursively and initialize if not present
@@ -139,8 +139,11 @@ class ProjectRepoRecursive(ProjectRepo):
         :rtype: bool
         """
 
-        if not ProjectRepo.validate_repo(self):
+        if not super().validate_repo:
             return False
+
+        if self.repo is None:
+            return True
 
         return not any([self.is_dirty_submodule(s.path) for s in self.repo.submodules])
 

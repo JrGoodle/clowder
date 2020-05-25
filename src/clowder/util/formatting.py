@@ -153,7 +153,10 @@ def error_duplicate_project_path(path: Path, yml: Path) -> str:
     :rtype: str
     """
 
-    return f"{_yaml_path(yml)}\n{ERROR} Multiple projects with path '{path}'"
+    messages = [error_invalid_yaml_file(yml.name),
+                f"{ERROR} {_yaml_path(yml)}",
+                f"{ERROR} Multiple projects with path '{path}'"]
+    return "\n".join(messages)
 
 
 def error_empty_yaml(yml: Path, name: Path) -> str:
@@ -305,11 +308,10 @@ def error_missing_clowder_yaml() -> str:
     """
 
     clowder_file = Path('clowder.yml')
-    file = _yaml_file(clowder_file)
-    return f"{file} appears to be missing"
+    return error_missing_file(clowder_file)
 
 
-def error_missing_linked_clowder_yaml(yaml_file: Path) -> str:
+def error_missing_file(yaml_file: Path) -> str:
     """Format error message for missing linked clowder yaml file
 
     :param Path yaml_file: Path to missing yaml file
@@ -365,6 +367,16 @@ def error_parallel_command_failed() -> str:
     return f"{ERROR} Parrallel ommand failed"
 
 
+def error_parallel_commands_unavailable() -> str:
+    """Return formatted error string for parallel command unavailable
+
+    :return: Formatted parallel command unavailable error
+    :rtype: str
+    """
+
+    return f'{ERROR} Parallel commands are only available on posix operating systems'
+
+
 def error_parallel_exception(file_path: Path, *args) -> str:
     """Return formatted error string for parallel error
 
@@ -404,8 +416,10 @@ def error_remote_dup(fork: str, project: str, remote: str, yml: Path) -> str:
     :rtype: str
     """
 
-    path = _yaml_path(yml)
-    return f"{ERROR} {path}\n{ERROR} fork '{fork}' and project '{project}' have same remote name '{remote}'"
+    messages = [error_invalid_yaml_file(yml.name),
+                f"{ERROR} {_yaml_path(yml)}",
+                f"{ERROR} fork '{fork}' and project '{project}' have same remote name '{remote}'"]
+    return "\n".join(messages)
 
 
 def error_save_default(name: str) -> str:
@@ -454,7 +468,11 @@ def error_source_default_not_found(source: str, yml: Path) -> str:
     :rtype: str
     """
 
-    return f"{ERROR} {_yaml_path(yml)}\n{ERROR} source '{source}' not found in 'defaults'"
+    error_invalid_yaml_file(yml.name)
+    messages = [error_invalid_yaml_file(yml.name),
+                f"{ERROR} {_yaml_path(yml)}",
+                f"{ERROR} source '{source}' not found in 'defaults'"]
+    return "\n".join(messages)
 
 
 def error_source_not_found(source: str, yml: Path, project: str, fork: Optional[str] = None) -> str:
@@ -472,9 +490,10 @@ def error_source_not_found(source: str, yml: Path, project: str, fork: Optional[
     if fork:
         fork_output = f" for fork '{fork}'"
 
-    path = _yaml_path(yml)
-    return f"{ERROR} {path}\n" \
-           f"{ERROR} source '{source}'{fork_output} specified in project '{project}' not found in 'sources'"
+    messages = [error_invalid_yaml_file(yml.name),
+                f"{ERROR} {_yaml_path(yml)}",
+                f"{ERROR} source '{source}'{fork_output} specified in project '{project}' not found in 'sources'"]
+    return "\n".join(messages)
 
 
 def error_timestamp_not_found() -> str:

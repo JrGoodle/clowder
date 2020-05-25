@@ -12,8 +12,8 @@ from git import Repo, GitError
 from termcolor import colored
 
 import clowder.util.formatting as fmt
-from clowder import LOG_DEBUG
 from clowder.error import ClowderError, ClowderErrorType
+from clowder.logging import LOG_DEBUG
 from clowder.util.file_system import remove_directory
 
 from .util import (

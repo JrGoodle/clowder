@@ -11,8 +11,8 @@ from typing import Optional
 from git import GitError
 
 import clowder.util.formatting as fmt
-from clowder import LOG_DEBUG
 from clowder.error import ClowderError, ClowderErrorType
+from clowder.logging import LOG_DEBUG
 from clowder.util.connectivity import is_offline
 
 from .project_repo_impl import ProjectRepoImpl

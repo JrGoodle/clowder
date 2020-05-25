@@ -197,7 +197,8 @@ def config_clear_rebase(args) -> None: # noqa
 def config_get_all(args) -> None: # noqa
     """Clowder config get all command entry point"""
 
-    print(' - Get all config values\n')
+    print(' - Get all config values')
+    print()
     config = Config(CLOWDER_CONTROLLER.name, CLOWDER_CONTROLLER.project_choices)
     config.current_clowder_config.print_configuration()
 

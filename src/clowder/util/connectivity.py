@@ -44,7 +44,7 @@ def network_connection_required(func):
     def wrapper(*args, **kwargs):
         """Wrapper
 
-        :raise ClowderExit:
+        :raise ClowderError:
         """
 
         if is_offline():

@@ -39,7 +39,7 @@ def add_save_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
 def save(args) -> None:
     """Clowder save command private implementation
 
-    :raise ClowderExit:
+    :raise ClowderError:
     """
 
     if args.version.lower() == 'default':

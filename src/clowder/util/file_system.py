@@ -11,8 +11,8 @@ import shutil
 from pathlib import Path
 
 import clowder.util.formatting as fmt
-from clowder import LOG_DEBUG
 from clowder.error import ClowderError, ClowderErrorType
+from clowder.logging import LOG_DEBUG
 
 
 def force_symlink(source: Path, target: Path) -> None:

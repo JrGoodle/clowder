@@ -9,7 +9,7 @@ from typing import Tuple
 
 import clowder.util.formatting as fmt
 from clowder import CLOWDER_YAML
-from clowder.error import ClowderError, ClowderErrorType, ClowderYAMLErrorType
+from clowder.error import ClowderError, ClowderErrorType
 from clowder.model import Defaults, Project, Source
 from clowder.model.util import (
     print_parallel_projects_output,
@@ -49,7 +49,7 @@ class ClowderController(object):
 
         try:
             if CLOWDER_YAML is None:
-                raise ClowderError(ClowderYAMLErrorType.MISSING_YAML, fmt.error_missing_clowder_yaml())
+                raise ClowderError(ClowderErrorType.YAML_MISSING_FILE, fmt.error_missing_clowder_yaml())
             yaml = load_clowder_yaml()
             validate_clowder_yaml(yaml)
             self._load_clowder_yaml(yaml)
@@ -70,7 +70,8 @@ class ClowderController(object):
         except TypeError:
             return ()
 
-    def get_project_paths(self, projects: Tuple[Project, ...]) -> Tuple[str, ...]: # noqa
+    @staticmethod
+    def get_project_paths(projects: Tuple[Project, ...]) -> Tuple[str, ...]:
         """Returns all project paths for specified projects
 
         :param Tuple[Project, ...] projects: Projects to get paths of
@@ -120,7 +121,8 @@ class ClowderController(object):
                 'sources': [s.get_yaml() for s in self.sources],
                 'projects': projects}
 
-    def validate_print_output(self, projects: Tuple[Project, ...]) -> None: # noqa
+    @staticmethod
+    def validate_print_output(projects: Tuple[Project, ...]) -> None:
         """Validate projects/groups and print output
 
         :param Tuple[Project, ...] projects: Projects to validate/print

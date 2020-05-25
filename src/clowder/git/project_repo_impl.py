@@ -13,8 +13,8 @@ from typing import Optional
 from git import GitError, Remote, Repo, Tag
 
 import clowder.util.formatting as fmt
-from clowder import LOG_DEBUG
 from clowder.error import ClowderError, ClowderErrorType
+from clowder.logging import LOG_DEBUG
 from clowder.util.file_system import remove_directory
 
 from .git_repo import GitRepo

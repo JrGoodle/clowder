@@ -526,6 +526,8 @@ class Project(object):
         if self.is_dirty():
             repo = ProjectRepo(self.full_path(), self.remote, self.ref)
             repo.stash()
+        else:
+            print(" - No changes to stash")
 
     def _pull_lfs(self, repo: ProjectRepo) -> None:
         """Check if git lfs is installed and if not install them

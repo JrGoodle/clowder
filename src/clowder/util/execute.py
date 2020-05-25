@@ -11,8 +11,8 @@ from pathlib import Path
 from typing import List, Optional, Union
 
 import clowder.util.formatting as fmt
-from clowder import LOG_DEBUG
 from clowder.error import ClowderError, ClowderErrorType
+from clowder.logging import LOG_DEBUG
 
 
 def execute_command(command: Union[str, List[str]], path: Path,

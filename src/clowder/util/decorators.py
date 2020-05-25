@@ -11,7 +11,7 @@ import clowder.clowder_repo as clowder_repo
 import clowder.util.formatting as fmt
 from clowder import CLOWDER_REPO_DIR, LOG_DEBUG
 from clowder.clowder_controller import CLOWDER_CONTROLLER
-from clowder.error import ClowderError, ClowderErrorType, ClowderYAMLErrorType
+from clowder.error import ClowderError, ClowderErrorType
 
 
 def clowder_repo_required(func):
@@ -35,7 +35,8 @@ def print_clowder_name(func):
         """Wrapper"""
 
         if CLOWDER_CONTROLLER.name is not None:
-            print(fmt.clowder_name(f"{CLOWDER_CONTROLLER.name}\n"))
+            print(fmt.clowder_name(CLOWDER_CONTROLLER.name))
+            print()
         return func(*args, **kwargs)
 
     return wrapper
@@ -103,4 +104,4 @@ def _validate_clowder_repo_exists():
     """
 
     if CLOWDER_REPO_DIR is None:
-        raise ClowderError(ClowderYAMLErrorType.MISSING_REPO, fmt.error_missing_clowder_repo())
+        raise ClowderError(ClowderErrorType.MISSING_REPO, fmt.error_missing_clowder_repo())
