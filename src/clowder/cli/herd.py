@@ -27,6 +27,10 @@ from .util import add_parser_arguments
 
 
 def add_herd_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
+    """Add clowder herd parser
+
+    :param argparse._SubParsersAction subparsers: Subparsers action to add parser to
+    """
 
     arguments = [
         (['projects'], dict(metavar='PROJECT', default='default', nargs='*',

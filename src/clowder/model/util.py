@@ -8,7 +8,7 @@
 from typing import Tuple
 
 import clowder.util.formatting as fmt
-from clowder.error import ClowderExit
+from clowder.error import ClowderError, ClowderErrorType
 
 from .project import Project
 
@@ -56,14 +56,13 @@ def validate_project_statuses(projects: Tuple[Project, ...]) -> None:
     """Validate status of all projects
 
     :param Tuple[Project, ...] projects: Projects to validate
-    :raise ClowderExit:
+    :raise ClowderError:
     """
 
     for p in projects:
         p.print_validation()
     if not all([p.is_valid() for p in projects]):
-        print()
-        raise ClowderExit(1)
+        raise ClowderError(ClowderErrorType.INVALID_PROJECT_STATUS, fmt.error_invalid_project_state())
 
 
 def _print_fork_output(project: Project) -> None:

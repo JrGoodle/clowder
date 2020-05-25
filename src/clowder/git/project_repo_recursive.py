@@ -166,7 +166,7 @@ class ProjectRepoRecursive(ProjectRepo):
             self._print(fmt.error(err))
             self._exit(message)
         except (KeyboardInterrupt, SystemExit):
-            self._exit()
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def _submodules_reset(self) -> None:
         """Reset all submodules

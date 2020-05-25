@@ -21,6 +21,10 @@ from .util import add_parser_arguments
 
 
 def add_branch_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
+    """Add clowder branch parser
+
+    :param argparse._SubParsersAction subparsers: Subparsers action to add parser to
+    """
 
     arguments = [
         (['projects'], dict(metavar='PROJECT', default='default', nargs='*',
@@ -47,6 +51,7 @@ def add_branch_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
 @print_clowder_repo_status
 def branch(args) -> None:
     """Clowder branch command private implementation"""
+
     if args.remote:
         local = False
         remote = True

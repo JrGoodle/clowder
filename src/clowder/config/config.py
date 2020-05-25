@@ -8,8 +8,8 @@
 from typing import List, Optional, Tuple
 
 import clowder.util.formatting as fmt
-from clowder import CLOWDER_DIR, CLOWDER_CONFIG_DIR, CLOWDER_CONFIG_YAML
-from clowder.error import ClowderConfigYAMLError, ClowderConfigYAMLErrorType, ClowderExit
+from clowder import CLOWDER_DIR, CLOWDER_CONFIG_DIR, CLOWDER_CONFIG_YAML, LOG_DEBUG
+from clowder.error import ClowderError, ClowderErrorType, ClowderConfigYAMLErrorType
 from clowder.util.file_system import (
     create_backup_file,
     make_dir,
@@ -108,13 +108,6 @@ class Config(object):
             # If failed, restore backup
             restore_from_backup_file(CLOWDER_CONFIG_YAML)
 
-    def validate(self) -> None:
-        """Check that config was created successfully"""
-
-        if self.error is not None:
-            print(f"{fmt.ERROR} Clowder config file appears to be invalid")
-            raise ClowderExit(self.error.code)
-
     def _get_yaml(self) -> dict:
         """Get yaml representation of config
 
@@ -129,7 +122,7 @@ class Config(object):
     def _load_clowder_config_yaml(self) -> None:
         """Load clowder config yaml file
 
-        :raise ClowderExit:
+        :raise ClowderError:
         """
 
         try:
@@ -150,10 +143,11 @@ class Config(object):
                     if config.clowder_dir.resolve() == CLOWDER_DIR.resolve():
                         self.current_clowder_config = config
                         break
-        except (AttributeError, KeyError, TypeError):
+        except (AttributeError, KeyError, TypeError) as err:
             self.version = CONFIG_VERSION
             self.clowder_configs = ()
             self.current_clowder_config = None
-            raise ClowderConfigYAMLError(f"{fmt.ERROR} Invalid config yaml file", ClowderConfigYAMLErrorType.UNKNOWN)
+            LOG_DEBUG('Failed to load clowder config', err)
+            raise ClowderError(ClowderConfigYAMLErrorType.UNKNOWN, fmt.error_invalid_config_file(CLOWDER_CONFIG_YAML))
         except (KeyboardInterrupt, SystemExit):
-            raise ClowderExit(1)
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())

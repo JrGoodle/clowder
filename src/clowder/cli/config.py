@@ -19,7 +19,10 @@ from .util import add_parser_arguments
 
 
 def add_config_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
-    """Clowder config command controller"""
+    """Add clowder config parser
+
+    :param argparse._SubParsersAction subparsers: Subparsers action to add parser to
+    """
 
     parser = subparsers.add_parser('config', help='Manage clowder config (EXPERIMENTAL)')
     config_subparsers = parser.add_subparsers()
@@ -30,7 +33,10 @@ def add_config_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
 
 
 def add_config_clear_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
-    """Clowder config clear command controller"""
+    """Add clowder config clear parser
+
+    :param argparse._SubParsersAction subparsers: Subparsers action to add parser to
+    """
 
     # clowder config clear
     config_clear_parser = subparsers.add_parser('clear', help='Clear clowder config options')
@@ -56,7 +62,10 @@ def add_config_clear_parser(subparsers: argparse._SubParsersAction) -> None: # n
 
 
 def add_config_get_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
-    """Clowder config get command controller"""
+    """Add clowder config get parser
+
+    :param argparse._SubParsersAction subparsers: Subparsers action to add parser to
+    """
 
     # clowder config get
     config_get_parser = subparsers.add_parser('get', help='Get clowder config options')
@@ -82,7 +91,10 @@ def add_config_get_parser(subparsers: argparse._SubParsersAction) -> None: # noq
 
 
 def add_config_set_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
-    """Clowder config set command controller"""
+    """Add clowder config set parser
+
+    :param argparse._SubParsersAction subparsers: Subparsers action to add parser to
+    """
 
     # clowder config set
     parser = subparsers.add_parser('set', help='Set clowder config options')

@@ -12,8 +12,8 @@ from typing import List, Optional, Tuple
 from termcolor import colored, cprint
 
 import clowder.util.formatting as fmt
-from clowder import CLOWDER_DIR
-from clowder.error import ClowderError, ClowderExit
+from clowder import CLOWDER_DIR, LOG_DEBUG
+from clowder.error import ClowderError
 from clowder.git import ProjectRepo, ProjectRepoRecursive
 from clowder.git.util import (
     existing_git_repository,
@@ -64,7 +64,6 @@ class Project(object):
         :param dict project: Parsed YAML python object for project
         :param Defaults defaults: Defaults instance
         :param Tuple[Source, ...] sources: List of Source instances
-        :raise ClowderYAMLError:
         """
 
         self.name = project['name']
@@ -485,7 +484,7 @@ class Project(object):
             forall_env['FORK_REF'] = self.fork.ref
 
         for cmd in commands:
-            self._run_forall_command(cmd, forall_env, ignore_errors, parallel)
+            self._run_forall_command(cmd, forall_env, ignore_errors)
 
     @project_repo_exists
     def start(self, branch: str, tracking: bool) -> None:
@@ -562,29 +561,22 @@ class Project(object):
             return ProjectRepoRecursive(self.full_path(), self.remote, self.ref, parallel=parallel)
         return ProjectRepo(self.full_path(), self.remote, self.ref, parallel=parallel)
 
-    def _run_forall_command(self, command: str, env: dict, ignore_errors: bool, parallel: bool) -> None:
+    def _run_forall_command(self, command: str, env: dict, ignore_errors: bool) -> None:
         """Run command or script in project directory
 
         :param str command: Command to run
         :param dict env: Environment variables
         :param bool ignore_errors: Whether to exit if command returns a non-zero exit code
-        :param bool parallel: Whether command is being run in parallel, affects output
-
-        Raises:
-            ClowderError
-            ClowderExit
+        :raise ClowderError:
         """
 
         self._print(fmt.command(command))
         try:
             execute_forall_command(command, self.full_path(), env, self._print_output)
-        except ClowderError:
+        except ClowderError as err:
+            LOG_DEBUG('Execute command failed', err)
             if not ignore_errors:
-                err = fmt.error_command_failed(command)
-                self._print(err)
-                if parallel:
-                    raise ClowderError(err)
-                raise ClowderExit(1)
+                raise
 
     def _url(self) -> str:
         """Return project url"""

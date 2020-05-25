@@ -80,7 +80,7 @@ class ProjectRepo(ProjectRepoImpl):
         except GitError:
             return
         except (KeyboardInterrupt, SystemExit):
-            self._exit()
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
         else:
             for remote in remotes:
                 if upstream_remote_url == self._remote_get_url(remote.name) and remote.name != upstream_remote_name:
@@ -215,7 +215,7 @@ class ProjectRepo(ProjectRepoImpl):
                 self._print(fmt.error(err))
                 self._exit(message)
             except (KeyboardInterrupt, SystemExit):
-                self._exit()
+                raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
         try:
             self._print(f' - Delete local branch {branch_output}')
@@ -226,7 +226,7 @@ class ProjectRepo(ProjectRepoImpl):
             self._print(fmt.error(err))
             self._exit(message)
         except (KeyboardInterrupt, SystemExit):
-            self._exit()
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def prune_branch_remote(self, branch: str, remote: str) -> None:
         """Prune remote branch in repository
@@ -249,7 +249,7 @@ class ProjectRepo(ProjectRepoImpl):
             self._print(fmt.error(err))
             self._exit(message)
         except (KeyboardInterrupt, SystemExit):
-            self._exit()
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def reset(self, depth: int = 0) -> None:
         """Reset branch to upstream or checkout tag/sha as detached HEAD

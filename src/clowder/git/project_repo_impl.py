@@ -81,7 +81,7 @@ class ProjectRepoImpl(GitRepo):
         except (KeyboardInterrupt, SystemExit):
             if remove_dir:
                 remove_directory(self.repo_path)
-            self._exit()
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def _checkout_new_repo_branch(self, branch: str, depth: int) -> None:
         """Checkout remote branch or fail and delete repo if it doesn't exist
@@ -126,7 +126,7 @@ class ProjectRepoImpl(GitRepo):
             self._exit(fmt.error_parallel_exception(self.repo_path, message, commit_output))
         except (KeyboardInterrupt, SystemExit):
             remove_directory(self.repo_path)
-            self._exit()
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def _checkout_new_repo_tag(self, tag: str, remote: str, depth: int, remove_dir: bool = False) -> None:
         """Checkout tag or fail and delete repo if it doesn't exist
@@ -155,7 +155,7 @@ class ProjectRepoImpl(GitRepo):
         except (KeyboardInterrupt, SystemExit):
             if remove_dir:
                 remove_directory(self.repo_path)
-            self._exit()
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def _checkout_sha(self, sha: str) -> None:
         """Checkout commit by sha
@@ -176,7 +176,7 @@ class ProjectRepoImpl(GitRepo):
             self._print(fmt.error(err))
             self._exit(fmt.error_parallel_exception(self.repo_path, message, commit_output))
         except (KeyboardInterrupt, SystemExit):
-            self._exit()
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def _checkout_tag(self, tag: str) -> None:
         """Checkout commit tag is pointing to
@@ -202,7 +202,7 @@ class ProjectRepoImpl(GitRepo):
             self._print(fmt.error(err))
             self._exit(fmt.error_parallel_exception(self.repo_path, message, tag_output))
         except (KeyboardInterrupt, SystemExit):
-            self._exit()
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def _compare_remote_url(self, remote: str, url: str) -> None:
         """Compare actual remote url to given url
@@ -236,7 +236,7 @@ class ProjectRepoImpl(GitRepo):
             self._print(fmt.error(err))
             raise ClowderGitError(msg=fmt.error(err))
         except (KeyboardInterrupt, SystemExit):
-            self._exit()
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def _create_branch_local_tracking(self, branch: str, remote: str, depth: int,
                                       fetch: bool = True, remove_dir: bool = False) -> None:
@@ -267,7 +267,7 @@ class ProjectRepoImpl(GitRepo):
         except (KeyboardInterrupt, SystemExit):
             if remove_dir:
                 remove_directory(self.repo_path)
-            self._exit()
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
         else:
             self._set_tracking_branch(remote, branch, remove_dir=remove_dir)
             self._checkout_branch_local(branch, remove_dir=remove_dir)
@@ -297,7 +297,7 @@ class ProjectRepoImpl(GitRepo):
             self._print(fmt.error(err))
             self._exit(fmt.error(err))
         except (KeyboardInterrupt, SystemExit):
-            self._exit()
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def _create_remote(self, remote: str, url: str, remove_dir: bool = False) -> None:
         """Create new remote
@@ -326,7 +326,7 @@ class ProjectRepoImpl(GitRepo):
         except (KeyboardInterrupt, SystemExit):
             if remove_dir:
                 remove_directory(self.repo_path)
-            self._exit()
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def _find_rev_by_timestamp(self, timestamp: str, ref: str) -> str:
         """Find rev by timestamp
@@ -345,7 +345,7 @@ class ProjectRepoImpl(GitRepo):
             self._print(fmt.error(err))
             self._exit(fmt.error(err))
         except (KeyboardInterrupt, SystemExit):
-            self._exit()
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def _find_rev_by_timestamp_author(self, timestamp: str, author: str, ref: str) -> str:
         """Find rev by timestamp and author
@@ -365,7 +365,7 @@ class ProjectRepoImpl(GitRepo):
             self._print(fmt.error(err))
             self._exit(fmt.error(err))
         except (KeyboardInterrupt, SystemExit):
-            self._exit()
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def _get_remote_tag(self, tag: str, remote: str, depth: int = 0,
                         remove_dir: bool = False) -> Optional[Tag]:
@@ -397,7 +397,7 @@ class ProjectRepoImpl(GitRepo):
         except (KeyboardInterrupt, SystemExit):
             if remove_dir:
                 remove_directory(self.repo_path)
-            self._exit()
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def _init_repo(self) -> None:
         """Initialize repository
@@ -425,7 +425,7 @@ class ProjectRepoImpl(GitRepo):
             self._exit(message)
         except (KeyboardInterrupt, SystemExit):
             remove_directory(self.repo_path)
-            self._exit()
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def _is_branch_checked_out(self, branch: str) -> bool:
         """Check if branch is checked out
@@ -443,7 +443,7 @@ class ProjectRepoImpl(GitRepo):
         except (GitError, TypeError):
             return False
         except (KeyboardInterrupt, SystemExit):
-            self._exit()
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def _is_tracking_branch(self, branch: str) -> bool:
         """Check if branch is a tracking branch
@@ -464,7 +464,7 @@ class ProjectRepoImpl(GitRepo):
             self._print(fmt.error(err))
             self._exit(message)
         except (KeyboardInterrupt, SystemExit):
-            self._exit()
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def _print_existing_remote_branch_message(self, branch: str) -> None:
         """Print output message for existing remote branch
@@ -480,7 +480,7 @@ class ProjectRepoImpl(GitRepo):
             self._print(message)
             self._exit(message)
         except (KeyboardInterrupt, SystemExit):
-            self._exit()
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
         else:
             self._print(f' - Tracking branch {branch_output} already exists')
 
@@ -504,7 +504,7 @@ class ProjectRepoImpl(GitRepo):
             self._print(fmt.error(err))
             self._exit(message)
         except (KeyboardInterrupt, SystemExit):
-            self._exit()
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     @not_detached
     def _rebase_remote_branch(self, remote: str, branch: str) -> None:
@@ -526,7 +526,7 @@ class ProjectRepoImpl(GitRepo):
             self._print(fmt.error(err))
             self._exit(message)
         except (KeyboardInterrupt, SystemExit):
-            self._exit()
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def _remote(self, remote: str, remove_dir: bool = False) -> Remote:
         """Get GitPython Remote instance
@@ -548,7 +548,7 @@ class ProjectRepoImpl(GitRepo):
             self._print(fmt.error(err))
             self._exit(message)
         except (KeyboardInterrupt, SystemExit):
-            self._exit()
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def _remote_get_url(self, remote: str) -> str:
         """Get url of remote
@@ -578,7 +578,7 @@ class ProjectRepoImpl(GitRepo):
             self._print(fmt.error(err))
             self._exit(message)
         except (KeyboardInterrupt, SystemExit):
-            self._exit()
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def _set_tracking_branch(self, remote: str, branch: str, remove_dir: bool = False) -> None:
         """Set tracking branch
@@ -606,7 +606,7 @@ class ProjectRepoImpl(GitRepo):
         except (KeyboardInterrupt, SystemExit):
             if remove_dir:
                 remove_directory(self.repo_path)
-            self._exit()
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def _set_tracking_branch_commit(self, branch: str, remote: str, depth: int) -> None:
         """Set tracking relationship between local and remote branch if on same commit

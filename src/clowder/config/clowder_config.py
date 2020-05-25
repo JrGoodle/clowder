@@ -11,11 +11,9 @@ from typing import Optional, Tuple
 
 from termcolor import cprint
 
+import clowder.util.formatting as fmt
 from clowder import CLOWDER_DIR
-from clowder.error import (
-    ClowderExit,
-    ClowderConfigYAMLError, ClowderConfigYAMLErrorType
-)
+from clowder.error import ClowderError, ClowderErrorType, ClowderConfigYAMLErrorType
 
 
 @unique
@@ -45,9 +43,7 @@ class ClowderConfig(object):
         :param Optional[dict] clowder_config: Parsed YAML python object for clowder config
         :param Optional[str] current_clowder_name: Name of current clowder
         :param Tuple[str, ...] project_options: Existing project options from parsed clowder yaml
-        Raises:
-            ClowderExit
-            ClowderConfigYAMLError
+        :raise ClowderError:
         """
 
         if clowder_config is None:
@@ -63,8 +59,8 @@ class ClowderConfig(object):
 
         # Validate path is a valid clowder directory
         if not self.clowder_dir.is_dir():
-            raise ClowderConfigYAMLError(f"No clowder found at {self.clowder_dir}",
-                                         ClowderConfigYAMLErrorType.INVALID_CLOWDER_PATH)
+            raise ClowderError(ClowderConfigYAMLErrorType.INVALID_CLOWDER_PATH,
+                               fmt.error_no_clowder_found(self.clowder_dir))
 
         self.name = clowder_config['name']
         defaults = clowder_config.get('defaults', None)
@@ -121,7 +117,10 @@ class ClowderConfig(object):
         return config
 
     def is_config_value_set(self, value: ClowderConfigType) -> None:
-        """Determine if config value is set"""
+        """Determine if config value is set
+
+        :raise ClowderError:
+        """
 
         if value is ClowderConfigType.PARALLEL:
             return self.parallel is not None
@@ -132,10 +131,13 @@ class ClowderConfig(object):
         elif value is ClowderConfigType.REBASE:
             return self.rebase is not None
         else:
-            raise ClowderExit(1)
+            raise ClowderError(ClowderErrorType.UNKNOWN_CONFIG_TYPE, fmt.error_unknown_config_type())
 
     def print_config_value(self, value: ClowderConfigType) -> None:
-        """Print current configuration"""
+        """Print current configuration
+
+        :raise ClowderError:
+        """
 
         if value is ClowderConfigType.PARALLEL:
             if self.parallel is None:
@@ -158,7 +160,7 @@ class ClowderConfig(object):
             else:
                 print(f" - rebase: {self.rebase}")
         else:
-            raise ClowderExit(1)
+            raise ClowderError(ClowderErrorType.UNKNOWN_CONFIG_TYPE, fmt.error_unknown_config_type())
 
     def print_configuration(self) -> None:
         """Print current configuration"""
@@ -187,12 +189,12 @@ class ClowderConfig(object):
 
         :param Tuple[str, ...] project_names: Project names to validate
         :param Tuple[str, ...] project_options: Projects to validate against
-        :raise ClowderConfigYAMLError:
+        :raise ClowderError:
         """
 
         for project in project_names:
             if project not in project_options:
-                raise ClowderConfigYAMLError(f"Unknown project found: {project}",
-                                             ClowderConfigYAMLErrorType.MISSING_PROJECT)
+                raise ClowderError(ClowderConfigYAMLErrorType.UNKNOWN_PROJECT,
+                                   fmt.error_unknown_project(project))
 
         # FIXME: Assemble all undefined projects in message rather than raising on first instance not found

@@ -24,6 +24,10 @@ from .util import add_parser_arguments
 
 
 def add_forall_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
+    """Add clowder forall parser
+
+    :param argparse._SubParsersAction subparsers: Subparsers action to add parser to
+    """
 
     arguments = [
         (['projects'], dict(metavar='PROJECT', default='default', nargs='*',

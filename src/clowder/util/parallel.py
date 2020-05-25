@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Clowder parallel commands
+"""Clowder parallel command
 
 .. codeauthor:: Joe Decapo <joe@polka.cat>
 
@@ -14,8 +14,9 @@ import psutil
 from termcolor import cprint
 
 import clowder.util.formatting as fmt
+from clowder import LOG_DEBUG
 from clowder.clowder_controller import CLOWDER_CONTROLLER
-from clowder.error import ClowderExit
+from clowder.error import ClowderError, ClowderErrorType
 from clowder.model import Project
 
 from .progress import Progress
@@ -179,7 +180,7 @@ if os.name == "posix":
         """Pool handler for finishing parallel jobs
 
         :param int count: Total count of projects in progress bar
-        :raise ClowderExit:
+        :raise ClowderError:
         """
 
         print()
@@ -192,14 +193,13 @@ if os.name == "posix":
                     __clowder_progress__.close()
                     __clowder_pool__.close()
                     __clowder_pool__.terminate()
-                    cprint('\n - Command failed\n', 'red')
-                    raise ClowderExit(1)
+                    raise ClowderError(ClowderErrorType.PARALLEL_COMMAND_FAILED, fmt.error_parallel_command_failed())
         except Exception as err:
             __clowder_progress__.close()
             __clowder_pool__.close()
             __clowder_pool__.terminate()
-            cprint(f'\n{str(err)}\n', 'red')
-            raise ClowderExit(1)
+            LOG_DEBUG('Pool handler exception', err)
+            raise ClowderError(ClowderErrorType.PARALLEL_COMMAND_FAILED, fmt.error_parallel_command_failed())
         else:
             __clowder_progress__.complete()
             __clowder_progress__.close()

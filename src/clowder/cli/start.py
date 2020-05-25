@@ -25,6 +25,10 @@ from .util import add_parser_arguments
 
 
 def add_start_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
+    """Add clowder start parser
+
+    :param argparse._SubParsersAction subparsers: Subparsers action to add parser to
+    """
 
     arguments = [
         (['branch'], dict(help='name of branch to create', nargs=1, default=None, metavar='BRANCH')),

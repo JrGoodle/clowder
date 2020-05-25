@@ -13,8 +13,15 @@ from typing import Optional, Tuple
 from termcolor import colored
 
 import clowder.util.formatting as fmt
-from clowder import CLOWDER_DIR, CLOWDER_REPO_DIR, CLOWDER_REPO_VERSIONS_DIR, CLOWDER_YAML, CURRENT_DIR
-from clowder.error import ClowderError, ClowderExit
+from clowder import (
+    CLOWDER_DIR,
+    CLOWDER_REPO_DIR,
+    CLOWDER_REPO_VERSIONS_DIR,
+    CLOWDER_YAML,
+    CURRENT_DIR,
+    LOG_DEBUG
+)
+from clowder.error import ClowderError, ClowderErrorType
 from clowder.git import ProjectRepo
 from clowder.git.util import existing_git_repository
 from clowder.util.connectivity import is_offline
@@ -90,7 +97,7 @@ def get_saved_version_names() -> Optional[Tuple[str, ...]]:
 
     :return: All saved version names
     :rtype: Optional[Tuple[str, ...]]
-    :raise ClowderExit:
+    :raise ClowderError:
     """
 
     if CLOWDER_REPO_VERSIONS_DIR is None:
@@ -101,8 +108,7 @@ def get_saved_version_names() -> Optional[Tuple[str, ...]]:
 
     duplicate = fmt.check_for_duplicates(versions)
     if duplicate is not None:
-        print(fmt.error_duplicate_version(duplicate))
-        raise ClowderExit(1)
+        raise ClowderError(ClowderErrorType.DUPLICATE_SAVED_VERSIONS, fmt.error_duplicate_version(duplicate))
 
     return tuple(sorted(versions))
 
@@ -180,21 +186,16 @@ def run_command(command: str) -> None:
     """Run command in clowder repo
 
     :param str command: Command to run
-    :raise ClowderError:
     """
 
     print(fmt.command(command))
-    try:
-        execute_command(command.split(), CLOWDER_REPO_DIR)
-    except ClowderError as err:
-        print(fmt.error_command_failed(command))
-        raise err
+    execute_command(command.split(), CLOWDER_REPO_DIR)
 
 
 def _init_exit_handler() -> None:
     """Exit handler for deleting files if clowder init fails
 
-    :raise ClowderExit:
+    :raise ClowderError:
     """
 
     clowder_path = CURRENT_DIR / '.clowder'
@@ -203,4 +204,5 @@ def _init_exit_handler() -> None:
         clowder_yaml = CURRENT_DIR / 'clowder.yaml'
         if not clowder_yml.is_symlink() and not clowder_yaml.is_symlink():
             remove_directory(clowder_path)
-            raise ClowderExit(1)
+            LOG_DEBUG('Failed clowder init')
+            raise ClowderError(ClowderErrorType.FAILED_INIT, fmt.error_failed_clowder_init())

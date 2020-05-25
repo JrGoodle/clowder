@@ -20,7 +20,10 @@ from .util import add_parser_arguments
 
 
 def add_repo_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
-    """Clowder repo command controller"""
+    """Add clowder repo parser
+
+    :param argparse._SubParsersAction subparsers: Subparsers action to add parser to
+    """
 
     parser = subparsers.add_parser('repo', help='Manage clowder repo')
     repo_subparsers = parser.add_subparsers()
@@ -36,7 +39,10 @@ def add_repo_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
 
 
 def add_repo_add_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
-    """Clowder repo add command controller"""
+    """Add clowder repo add parser
+
+    :param argparse._SubParsersAction subparsers: Subparsers action to add parser to
+    """
 
     arguments = [
         (['files'], dict(nargs='+', metavar='FILE', help='files to add'))
@@ -48,7 +54,10 @@ def add_repo_add_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
 
 
 def add_repo_checkout_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
-    """Clowder repo checkout command controller"""
+    """Add clowder repo checkout parser
+
+    :param argparse._SubParsersAction subparsers: Subparsers action to add parser to
+    """
 
     arguments = [
         (['ref'], dict(nargs=1, metavar='REF', help='git ref to checkout'))
@@ -60,14 +69,20 @@ def add_repo_checkout_parser(subparsers: argparse._SubParsersAction) -> None: # 
 
 
 def add_repo_clean_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
-    """Clowder repo clean command controller"""
+    """Add clowder repo clean parser
+
+    :param argparse._SubParsersAction subparsers: Subparsers action to add parser to
+    """
 
     parser = subparsers.add_parser('clean', help='Discard changes in clowder repo')
     parser.set_defaults(func=clean)
 
 
 def add_repo_commit_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
-    """Clowder repo commit command controller"""
+    """Add clowder repo commit parser
+
+    :param argparse._SubParsersAction subparsers: Subparsers action to add parser to
+    """
 
     arguments = [
         (['message'], dict(nargs=1, metavar='MESSAGE', help='commit message'))
@@ -79,21 +94,30 @@ def add_repo_commit_parser(subparsers: argparse._SubParsersAction) -> None: # no
 
 
 def add_repo_pull_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
-    """Clowder repo pull command controller"""
+    """Add clowder repo pull parser
+
+    :param argparse._SubParsersAction subparsers: Subparsers action to add parser to
+    """
 
     parser = subparsers.add_parser('pull', help='Pull upstream changes in clowder repo')
     parser.set_defaults(func=pull)
 
 
 def add_repo_push_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
-    """Clowder repo push command controller"""
+    """Add clowder repo push parser
+
+    :param argparse._SubParsersAction subparsers: Subparsers action to add parser to
+    """
 
     parser = subparsers.add_parser('push', help='Push changes in clowder repo')
     parser.set_defaults(func=push)
 
 
 def add_repo_run_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
-    """Clowder repo run command controller"""
+    """Add clowder repo run parser
+
+    :param argparse._SubParsersAction subparsers: Subparsers action to add parser to
+    """
 
     arguments = [
         (['command'], dict(nargs=1, metavar='COMMAND', help='command to run in clowder repo directory'))
@@ -105,7 +129,10 @@ def add_repo_run_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
 
 
 def add_repo_status_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
-    """Clowder repo status command controller"""
+    """Add clowder repo status parser
+
+    :param argparse._SubParsersAction subparsers: Subparsers action to add parser to
+    """
 
     parser = subparsers.add_parser('status', help='Print clowder repo git status')
     parser.set_defaults(func=status)

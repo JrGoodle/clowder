@@ -10,9 +10,9 @@ import subprocess
 from pathlib import Path
 from typing import List, Optional, Union
 
-from termcolor import colored
-
-from clowder.error import ClowderError
+import clowder.util.formatting as fmt
+from clowder import LOG_DEBUG
+from clowder.error import ClowderError, ClowderErrorType
 
 
 def execute_command(command: Union[str, List[str]], path: Path,
@@ -23,7 +23,6 @@ def execute_command(command: Union[str, List[str]], path: Path,
     :param Path path: Path to set as ``cwd``
     :param Optional[dict] env: Enviroment to set as ``env``
     :param bool print_output: Whether to print output
-
     :raise ClowderError:
     """
 
@@ -40,10 +39,11 @@ def execute_command(command: Union[str, List[str]], path: Path,
 
     try:
         subprocess.run(cmd, shell=True, env=cmd_env, cwd=str(path), stdout=pipe, stderr=pipe, check=True)
-    except (KeyboardInterrupt, SystemExit):
-        raise ClowderError(colored('- Command interrupted', 'red'))
     except subprocess.CalledProcessError as err:
-        raise ClowderError(colored('\n - Command failed', 'red') + str(err) + '\n')
+        LOG_DEBUG('Subprocess run failed', err)
+        raise ClowderError(ClowderErrorType.FAILED_EXECUTE_COMMAND, fmt.error_command_failed(cmd))
+    except (KeyboardInterrupt, SystemExit):
+        raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
 
 def execute_forall_command(command: Union[str, List[str]], path: Path, forall_env: dict, print_output: bool) -> None:
@@ -53,7 +53,6 @@ def execute_forall_command(command: Union[str, List[str]], path: Path, forall_en
     :param Path path: Path to set as ``cwd``
     :param dict forall_env: Enviroment to set as ``env``
     :param bool print_output: Whether to print output
-
     :raise ClowderError:
     """
 

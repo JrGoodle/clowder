@@ -65,7 +65,7 @@ class GitRepo(object):
             self._print(message)
             self._exit(message)
         except (KeyboardInterrupt, SystemExit):
-            self._exit()
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
         else:
             self.status_verbose()
 
@@ -93,7 +93,7 @@ class GitRepo(object):
             self._print(fmt.error(err))
             self._exit(fmt.error_parallel_exception(self.repo_path, message, ref_output))
         except (KeyboardInterrupt, SystemExit):
-            self._exit()
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def clean(self, args: str = '') -> None:
         """Discard changes for repo
@@ -129,7 +129,7 @@ class GitRepo(object):
             self._print(fmt.error(err))
             self._exit(message)
         except (KeyboardInterrupt, SystemExit):
-            self._exit()
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def current_branch(self) -> str:
         """Return currently checked out branch of project
@@ -155,7 +155,7 @@ class GitRepo(object):
         except (GitError, IndexError):
             return False
         except (KeyboardInterrupt, SystemExit):
-            self._exit()
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def existing_local_branch(self, branch: str) -> bool:
         """Check if local branch exists
@@ -209,7 +209,7 @@ class GitRepo(object):
                 self._print(fmt.error(err))
                 self._exit(error_message)
         except (KeyboardInterrupt, SystemExit):
-            self._exit()
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def format_project_ref_string(self) -> str:
         """Return formatted project ref string
@@ -268,7 +268,7 @@ class GitRepo(object):
             self._print(fmt.error(err))
             self._exit(fmt.error(err))
         except (KeyboardInterrupt, SystemExit):
-            self._exit()
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def install_lfs_hooks(self):
         """Install git lfs hooks"""
@@ -282,7 +282,7 @@ class GitRepo(object):
             self._print(fmt.error(err))
             self._exit(fmt.error(err))
         except (KeyboardInterrupt, SystemExit):
-            self._exit()
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def is_detached(self, print_output: bool = False) -> bool:
         """Check if HEAD is detached
@@ -381,7 +381,7 @@ class GitRepo(object):
             return
 
         if not self.validate_repo():
-            print(' - Dirty repo. Please stash, commit, or discard your changes')
+            print(f'{fmt.ERROR} Dirty repo. Please stash, commit, or discard your changes')
             self.status_verbose()
 
     @not_detached
@@ -397,7 +397,7 @@ class GitRepo(object):
             self._print(fmt.error(err))
             self._exit(message)
         except (KeyboardInterrupt, SystemExit):
-            self._exit()
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def pull_lfs(self) -> None:
         """Pull lfs files"""
@@ -411,7 +411,7 @@ class GitRepo(object):
             self._print(fmt.error(err))
             self._exit(message)
         except (KeyboardInterrupt, SystemExit):
-            self._exit()
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     @not_detached
     def push(self) -> None:
@@ -426,7 +426,7 @@ class GitRepo(object):
             self._print(fmt.error(err))
             self._exit(message)
         except (KeyboardInterrupt, SystemExit):
-            self._exit()
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def sha(self, short: bool = False) -> str:
         """Return sha for currently checked out commit
@@ -493,7 +493,7 @@ class GitRepo(object):
             self._print(fmt.error(err))
             self._exit(fmt.error(err))
         except (KeyboardInterrupt, SystemExit):
-            self._exit()
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def validate_repo(self) -> bool:
         """Validate repo state
@@ -520,7 +520,7 @@ class GitRepo(object):
             self._print(fmt.error(err))
             self._exit(fmt.error(err))
         except (KeyboardInterrupt, SystemExit):
-            self._exit()
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def _clean(self, args: str) -> None:
         """Clean git directory
@@ -536,7 +536,7 @@ class GitRepo(object):
             self._print(fmt.error(err))
             self._exit(fmt.error(err))
         except (KeyboardInterrupt, SystemExit):
-            self._exit()
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     # def _existing_remote_tag(self, tag, remote, depth=0):
     #     """Check if remote tag exists
@@ -604,7 +604,7 @@ class GitRepo(object):
             self._print(fmt.error(err))
             self._exit(message)
         except (KeyboardInterrupt, SystemExit):
-            self._exit()
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
         else:
             return repo
 
@@ -624,7 +624,7 @@ class GitRepo(object):
                 self._print(fmt.error(err))
                 self._exit(message)
             except (KeyboardInterrupt, SystemExit):
-                self._exit()
+                raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
             else:
                 return
 
@@ -637,7 +637,7 @@ class GitRepo(object):
             self._print(fmt.error(err))
             self._exit(message)
         except (KeyboardInterrupt, SystemExit):
-            self._exit()
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def _has_untracked_files(self) -> bool:
         """Check whether untracked files exist

@@ -7,11 +7,12 @@
 
 import argparse
 
-from termcolor import colored, cprint
+from termcolor import colored
 
 import clowder.clowder_repo as clowder_repo
+import clowder.util.formatting as fmt
 from clowder import CURRENT_DIR, existing_clowder_repo
-from clowder.error import ClowderExit
+from clowder.error import ClowderError, ClowderErrorType
 from clowder.util.connectivity import network_connection_required
 
 from .util import add_parser_arguments
@@ -33,13 +34,12 @@ def add_init_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
 def init(args) -> None:
     """Clowder init command private implementation
 
-    :raise ClowderExit:
+    :raise ClowderError:
     """
 
     clowder_repo_dir = CURRENT_DIR / '.clowder'
     if existing_clowder_repo(clowder_repo_dir):
-        cprint('Clowder already initialized in this directory\n', 'red')
-        raise ClowderExit(1)
+        raise ClowderError(ClowderErrorType.CLOWDER_ALREADY_INITIALIZED, fmt.error_clowder_already_initialized())
 
     url_output = colored(args.url, 'green')
     print(f"Create clowder repo from {url_output}\n")

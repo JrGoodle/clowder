@@ -9,10 +9,7 @@ from typing import Tuple
 
 import clowder.util.formatting as fmt
 from clowder import CLOWDER_YAML
-from clowder.error import (
-    ClowderExit,
-    ClowderYAMLError, ClowderYAMLErrorType
-)
+from clowder.error import ClowderError, ClowderErrorType, ClowderYAMLErrorType
 from clowder.model import Defaults, Project, Source
 from clowder.model.util import (
     print_parallel_projects_output,
@@ -37,7 +34,7 @@ class ClowderController(object):
     def __init__(self):
         """ClowderController __init__
 
-        :raise ClowderExit:
+        :raise ClowderError:
         """
 
         self.error = None
@@ -52,14 +49,14 @@ class ClowderController(object):
 
         try:
             if CLOWDER_YAML is None:
-                raise ClowderYAMLError(fmt.error_missing_clowder_yaml(), ClowderYAMLErrorType.MISSING_YAML)
+                raise ClowderError(ClowderYAMLErrorType.MISSING_YAML, fmt.error_missing_clowder_yaml())
             yaml = load_clowder_yaml()
             validate_clowder_yaml(yaml)
             self._load_clowder_yaml(yaml)
-        except ClowderYAMLError as err:
+        except ClowderError as err:
             self.error = err
         except (KeyboardInterrupt, SystemExit):
-            raise ClowderExit(1)
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def get_all_fork_project_names(self) -> Tuple[str, ...]:
         """Returns all project names containing forks
@@ -92,7 +89,7 @@ class ClowderController(object):
         :param str timestamp_project: Project to get timestamp of current HEAD commit
         :return: Commit timestamp string
         :rtype: str
-        :raise ClowderExit:
+        :raise ClowderError:
         """
 
         timestamp = None
@@ -101,8 +98,7 @@ class ClowderController(object):
                 timestamp = project.get_current_timestamp()
 
         if timestamp is None:
-            print(fmt.error_timestamp_not_found())
-            raise ClowderExit(1)
+            raise ClowderError(ClowderErrorType.GIT_ERROR, fmt.error_timestamp_not_found())
 
         return timestamp
 
@@ -136,7 +132,7 @@ class ClowderController(object):
     def validate_projects_exist(self) -> None:
         """Validate all projects exist on disk
 
-        :raise ClowderExit:
+        :raise ClowderError:
         """
 
         projects_exist = True
@@ -146,8 +142,7 @@ class ClowderController(object):
                 projects_exist = False
 
         if not projects_exist:
-            print(f"\n - First run {fmt.clowder_command('clowder herd')} to clone missing projects\n")
-            raise ClowderExit(1)
+            raise ClowderError(ClowderErrorType.INVALID_PROJECT_STATUS, fmt.error_clone_missing_projects())
 
     def _get_all_project_names(self) -> Tuple[str, ...]:
         """Returns all project names for current clowder yaml file
@@ -189,7 +184,7 @@ class ClowderController(object):
             self.project_choices_with_default = ('default',)
             self.error = err
         except (KeyboardInterrupt, SystemExit):
-            raise ClowderExit(1)
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
 
 CLOWDER_CONTROLLER: ClowderController = ClowderController()

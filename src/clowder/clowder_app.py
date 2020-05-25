@@ -15,10 +15,11 @@ import colorama
 
 import clowder.cli as cmd
 from clowder import LOG_DEBUG
-from clowder.error import ClowderConfigYAMLError, ClowderExit
+from clowder.error import ClowderError, ClowderErrorType
 
 
 class ClowderArgumentParser(argparse.ArgumentParser):
+    """Custom argument parser subclass"""
 
     def error(self, message):
         # Make sure mp pool is closed
@@ -34,6 +35,12 @@ class ClowderArgumentParser(argparse.ArgumentParser):
 
 
 def create_parsers() -> ClowderArgumentParser:
+    """Clowder command CLI main function
+
+    :return: Configured argument parser for clowder command
+    :rtype: ClowderArgumentParser
+    """
+
     parser = ClowderArgumentParser(prog='clowder')
     version_message = f"clowder version {pkg_resources.require('clowder-repo')[0].version}"
     arguments = [
@@ -76,25 +83,21 @@ def main() -> None:
             if isinstance(args.projects, str):
                 args.projects = [args.projects]
         args.func(args) # noqa
-    except ClowderExit as err:
-        LOG_DEBUG('ClowderExit exception', err)
+    except ClowderError as err:
+        LOG_DEBUG('ClowderError exception', err)
+        print(err)
         print()
-        exit(err.code)
-    except ClowderConfigYAMLError as err:
-        print(err.message)
-        LOG_DEBUG('ClowderConfigYAMLError exception', err)
-        print()
-        exit(err.code)
+        exit(err.error_type.value)
     except AttributeError as err:
         LOG_DEBUG('AttributeError exception', err)
         if parser is not None:
             parser.print_help()
         print()
-        exit(1)
+        exit(ClowderErrorType.UNKNOWN.value)
     except Exception as err: # noqa
         LOG_DEBUG('Unhandled generic exception', err)
         print()
-        exit(1)
+        exit(ClowderErrorType.UNKNOWN.value)
 
 
 if __name__ == '__main__':
