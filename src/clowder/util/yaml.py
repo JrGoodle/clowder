@@ -5,7 +5,6 @@
 
 """
 
-import copy
 import pkg_resources
 from pathlib import Path
 
@@ -138,7 +137,7 @@ def load_clowder_config_yaml() -> dict:
                                    fmt.error_empty_yaml(CLOWDER_CONFIG_YAML, config_yaml))
             return parsed_yaml
     except pyyaml.YAMLError as err:
-        LOG_DEBUG('Failed to load yaml file', err)
+        LOG_DEBUG('Failed to load clowder config file', err)
         raise ClowderError(ClowderErrorType.OPEN_FILE,
                            fmt.error_open_file(CLOWDER_CONFIG_YAML),
                            error=err)
@@ -163,7 +162,7 @@ def load_clowder_yaml() -> dict:
                                    fmt.error_empty_yaml(CLOWDER_YAML, clowder_yaml))
             return parsed_yaml
     except pyyaml.YAMLError as err:
-        LOG_DEBUG('Failed to load clowder yaml', err)
+        LOG_DEBUG('Failed to load clowder yaml file', err)
         raise ClowderError(ClowderErrorType.OPEN_FILE,
                            fmt.error_open_file(CLOWDER_YAML),
                            error=err)
@@ -227,7 +226,6 @@ def validate_clowder_yaml(parsed_yaml: dict) -> None:
     """
 
     json_schema = _load_clowder_json_schema()
-    parsed_yaml_content_validation_copy = copy.deepcopy(parsed_yaml)
     try:
         jsonschema.validate(parsed_yaml, json_schema)
     except jsonschema.exceptions.ValidationError as err:
@@ -235,8 +233,6 @@ def validate_clowder_yaml(parsed_yaml: dict) -> None:
         messages = [fmt.error_invalid_yaml_file(CLOWDER_YAML.name),
                     f"{fmt.ERROR} {err.message}"]
         raise ClowderError(ClowderErrorType.YAML_JSONSCHEMA_VALIDATION_FAILED, messages)
-
-    _validate_yaml_contents(parsed_yaml_content_validation_copy, CLOWDER_YAML)
 
 
 def yaml_string(yaml_output: dict) -> str:
@@ -338,78 +334,3 @@ def _print_yaml_path(yaml_file: Path) -> None:
         print(_format_yaml_symlink(Path(yaml_file.name), path))
     else:
         print(_format_yaml_file(yaml_file))
-
-
-# TODO: Should probably just go ahead and move this logic into ClowderController to reduce duplication
-def _validate_yaml_contents(yaml: dict, yaml_file: Path) -> None:
-    """Validate contents in clowder loaded from yaml file
-
-    :param dict yaml: Parsed YAML python object
-    :param Path yaml_file: Path to yaml file
-    """
-
-    sources = []
-    for source in yaml['sources']:
-        sources.append(source['name'])
-
-    defaults = yaml['defaults']
-    if 'remote' not in defaults:
-        defaults['remote'] = 'origin'
-
-    # Validate default source is defined in sources
-    if defaults['source'] not in sources:
-        message = fmt.error_source_default_not_found(defaults['source'], yaml_file)
-        raise ClowderError(ClowderErrorType.CLOWDER_YAML_SOURCE_NOT_FOUND, message)
-
-    projects = []
-    projects_with_forks = []
-    for p in yaml['projects']:
-        project = {'name': p['name'],
-                   'path': p.get('path', str(Path(p['name']).name))}
-        if 'remote' in p:
-            project['remote'] = p['remote']
-        if 'source' in p:
-            # Validate custom project source is defined in sources
-            if p['source'] not in sources:
-                message = fmt.error_source_not_found(p['source'], yaml_file, project['name'])
-                raise ClowderError(ClowderErrorType.CLOWDER_YAML_SOURCE_NOT_FOUND, message)
-        projects.append(project)
-        if 'fork' in p:
-            f = p['fork']
-            fork = {'name': f['name']}
-            if 'remote' in f:
-                fork['remote'] = f['remote']
-            if 'source' in f:
-                # Validate custom fork source is defined in sources
-                if f['source'] not in sources:
-                    message = fmt.error_source_not_found(f['source'], yaml_file, project['name'])
-                    raise ClowderError(ClowderErrorType.CLOWDER_YAML_SOURCE_NOT_FOUND, message)
-            project['fork'] = fork
-            projects_with_forks.append(project)
-
-    # Validate projects and forks have different remote names
-    for project in projects_with_forks:
-        fork = project['fork']
-        default_remote = defaults['remote']
-        if 'remote' in project and 'remote' in fork:
-            if project['remote'] == fork['remote']:
-                message = fmt.error_remote_dup(fork['name'], project['name'], project['remote'], yaml_file)
-                raise ClowderError(ClowderErrorType.CLOWDER_YAML_DUPLICATE_REMOTE_NAME, message)
-        elif 'remote' in project:
-            if project['remote'] == default_remote:
-                message = fmt.error_remote_dup(fork['name'], project['name'], default_remote, yaml_file)
-                raise ClowderError(ClowderErrorType.CLOWDER_YAML_DUPLICATE_REMOTE_NAME, message)
-        elif 'remote' in fork:
-            if fork['remote'] == default_remote:
-                message = fmt.error_remote_dup(fork['name'], project['name'], default_remote, yaml_file)
-                raise ClowderError(ClowderErrorType.CLOWDER_YAML_DUPLICATE_REMOTE_NAME, message)
-        else:
-            message = fmt.error_remote_dup(fork['name'], project['name'], default_remote, yaml_file)
-            raise ClowderError(ClowderErrorType.CLOWDER_YAML_DUPLICATE_REMOTE_NAME, message)
-
-    # Validate projects don't share share directories
-    paths = [str(Path(p['path']).resolve()) for p in projects]
-    duplicate = fmt.check_for_duplicates(paths)
-    if duplicate is not None:
-        message = fmt.error_duplicate_project_path(Path(duplicate), yaml_file)
-        raise ClowderError(ClowderErrorType.CLOWDER_YAML_DUPLICATE_PATH, message)

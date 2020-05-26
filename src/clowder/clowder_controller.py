@@ -5,6 +5,7 @@
 
 """
 
+from pathlib import Path
 from typing import Tuple
 
 import clowder.util.formatting as fmt
@@ -169,8 +170,20 @@ class ClowderController(object):
             self.defaults = Defaults(yaml['defaults'])
             self.sources = tuple(sorted([Source(s, self.defaults) for s in yaml['sources']],
                                         key=lambda source: source.name))
+
+            if not any([s.name == self.defaults.source for s in self.sources]):
+                message = fmt.error_source_default_not_found(self.defaults.source, CLOWDER_YAML)
+                raise ClowderError(ClowderErrorType.CLOWDER_YAML_SOURCE_NOT_FOUND, message)
+
             self.projects = tuple(sorted([Project(p, self.defaults, self.sources) for p in yaml['projects']],
                                          key=lambda project: project.name))
+            # Validate projects don't share share directories
+            paths = [str(p.path.resolve()) for p in self.projects]
+            duplicate = fmt.check_for_duplicates(paths)
+            if duplicate is not None:
+                message = fmt.error_duplicate_project_path(Path(duplicate), CLOWDER_YAML)
+                raise ClowderError(ClowderErrorType.CLOWDER_YAML_DUPLICATE_PATH, message)
+
             self.project_names = self._get_all_project_names()
             names = list(self.project_names)
             self.project_choices = tuple(sorted(set(names)))

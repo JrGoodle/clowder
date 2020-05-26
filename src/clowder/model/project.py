@@ -12,8 +12,8 @@ from typing import List, Optional, Tuple
 from termcolor import colored, cprint
 
 import clowder.util.formatting as fmt
-from clowder import CLOWDER_DIR, LOG_DEBUG
-from clowder.error import ClowderError
+from clowder import CLOWDER_DIR, CLOWDER_YAML, LOG_DEBUG
+from clowder.error import ClowderError, ClowderErrorType
 from clowder.git import ProjectRepo, ProjectRepoRecursive
 from clowder.git.util import (
     existing_git_repository,
@@ -97,11 +97,17 @@ class Project(object):
             if source.name == source_name:
                 self.source = source
                 break
+        if self.source is None:
+            message = fmt.error_source_not_found(source_name, CLOWDER_YAML, self.name)
+            raise ClowderError(ClowderErrorType.CLOWDER_YAML_SOURCE_NOT_FOUND, message)
 
         self.fork = None
         if 'fork' in project:
             fork = project['fork']
-            self.fork = Fork(fork, self.path, self.recursive, sources, defaults)
+            self.fork = Fork(fork, self.path, self.name, self.recursive, sources, defaults)
+            if self.remote == self.fork.remote:
+                message = fmt.error_remote_dup(self.fork.name, self.name, self.remote, CLOWDER_YAML)
+                raise ClowderError(ClowderErrorType.CLOWDER_YAML_DUPLICATE_REMOTE_NAME, message)
 
         groups = ['all', self.name, str(Path(self.name).name), str(self.path)]
         custom_groups = project.get('groups', None)
