@@ -364,7 +364,7 @@ def error_parallel_command_failed() -> str:
     :rtype: str
     """
 
-    return f"{ERROR} Parrallel ommand failed"
+    return f"{ERROR} Parallel command failed"
 
 
 def error_parallel_commands_unavailable() -> str:

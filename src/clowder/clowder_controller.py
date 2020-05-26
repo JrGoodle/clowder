@@ -9,14 +9,14 @@ from pathlib import Path
 from typing import Tuple
 
 import clowder.util.formatting as fmt
-from clowder import CLOWDER_YAML
+from clowder import CLOWDER_DIR, CLOWDER_YAML
 from clowder.error import ClowderError, ClowderErrorType
 from clowder.model import Defaults, Project, Source
 from clowder.model.util import (
     print_parallel_projects_output,
     validate_project_statuses
 )
-from clowder.util.yaml import load_clowder_yaml, validate_clowder_yaml
+from clowder.util.yaml import load_yaml_file, validate_yaml_file
 
 
 class ClowderController(object):
@@ -51,8 +51,8 @@ class ClowderController(object):
         try:
             if CLOWDER_YAML is None:
                 raise ClowderError(ClowderErrorType.YAML_MISSING_FILE, fmt.error_missing_clowder_yaml())
-            yaml = load_clowder_yaml()
-            validate_clowder_yaml(yaml)
+            yaml = load_yaml_file(CLOWDER_YAML, CLOWDER_DIR)
+            validate_yaml_file(yaml, CLOWDER_YAML)
             self._load_clowder_yaml(yaml)
         except ClowderError as err:
             self.error = err

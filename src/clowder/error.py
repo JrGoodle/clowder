@@ -78,7 +78,6 @@ class ClowderError(Exception):
         :param Optional[Exception] error: Optional error to print
         """
 
-        super().__init__(error_type)
         if isinstance(messages, str):
             self.messages = [messages]
         else:

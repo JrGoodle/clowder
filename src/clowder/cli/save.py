@@ -18,7 +18,7 @@ from clowder.util.decorators import (
     valid_clowder_yaml_required
 )
 from clowder.util.file_system import make_dir
-from clowder.util.yaml import save_yaml
+from clowder.util.yaml import save_yaml_file
 
 from .util import add_parser_arguments
 
@@ -66,4 +66,4 @@ def save(args) -> None:
                            fmt.error_save_version_exists(version_name, yaml_file))
 
     print(fmt.save_version_message(version_name, yml_file))
-    save_yaml(CLOWDER_CONTROLLER.get_yaml(), yml_file)
+    save_yaml_file(CLOWDER_CONTROLLER.get_yaml(), yml_file)

@@ -13,7 +13,7 @@ from clowder.util.decorators import (
     print_clowder_repo_status,
     valid_clowder_yaml_required
 )
-from clowder.util.yaml import print_yaml, yaml_string
+from clowder.util.yaml import print_clowder_yaml, yaml_string
 
 from .util import add_parser_arguments
 
@@ -42,4 +42,4 @@ def yaml(args) -> None:
     if args.resolved:
         print(yaml_string(CLOWDER_CONTROLLER.get_yaml(resolved=True)))
     else:
-        print_yaml()
+        print_clowder_yaml()

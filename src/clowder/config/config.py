@@ -17,9 +17,9 @@ from clowder.util.file_system import (
     restore_from_backup_file
 )
 from clowder.util.yaml import (
-    load_clowder_config_yaml,
-    save_yaml,
-    validate_clowder_config_yaml
+    load_yaml_file,
+    save_yaml_file,
+    validate_yaml_file
 )
 
 from .clowder_config import ClowderConfig
@@ -92,7 +92,7 @@ class Config(object):
 
         # If file doesn't exist, save it
         if not CLOWDER_CONFIG_YAML.is_file():
-            save_yaml(self._get_yaml(), CLOWDER_CONFIG_YAML)
+            save_yaml_file(self._get_yaml(), CLOWDER_CONFIG_YAML)
             return
 
         # If file does exist, move to .backup
@@ -101,7 +101,7 @@ class Config(object):
         try:
             # Save new file
             remove_file(CLOWDER_CONFIG_YAML)
-            save_yaml(self._get_yaml(), CLOWDER_CONFIG_YAML)
+            save_yaml_file(self._get_yaml(), CLOWDER_CONFIG_YAML)
         except ClowderError as err:
             LOG_DEBUG('Failed to save configuration file', err)
             # If failed, restore backup
@@ -133,8 +133,8 @@ class Config(object):
         """
 
         try:
-            parsed_yaml = load_clowder_config_yaml()
-            validate_clowder_config_yaml(parsed_yaml)
+            parsed_yaml = load_yaml_file(CLOWDER_CONFIG_YAML, CLOWDER_CONFIG_DIR)
+            validate_yaml_file(parsed_yaml, CLOWDER_CONFIG_YAML)
 
             self.version = parsed_yaml['version']
 
