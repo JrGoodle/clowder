@@ -73,8 +73,12 @@ def herd(args) -> None:
     rebase_config = config.current_clowder_config.rebase
     rebase = rebase_config if rebase_config is not None else rebase
 
+    jobs = None
+    if args.jobs:
+        jobs = args.jobs[0]
+
     jobs_config = config.current_clowder_config.jobs
-    jobs = jobs_config if jobs_config is not None else args.jobs
+    jobs = jobs_config if jobs_config is not None else jobs
 
     projects = config.process_projects_arg(args.projects)
     projects = filter_projects(CLOWDER_CONTROLLER.projects, projects)

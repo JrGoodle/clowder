@@ -52,7 +52,11 @@ def add_forall_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
 def forall(args) -> None:
     """Clowder forall command private implementation"""
 
-    _forall_impl(args.command, args.ignore_errors, projects=args.projects, jobs=args.jobs)
+    jobs = None
+    if args.jobs:
+        jobs = args.jobs[0]
+
+    _forall_impl(args.command, args.ignore_errors, projects=args.projects, jobs=jobs)
 
 
 def _forall_impl(command: List[str], ignore_errors: bool, projects: List[str], jobs: Optional[int] = None) -> None:

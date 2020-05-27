@@ -48,7 +48,7 @@ test_forall_command() {
     # end_command
     echo "TEST: Run forall command for specific groups"
     begin_command
-    $COMMAND forall $PARALLEL "$@" -c 'git status' || exit 1
+    $COMMAND forall "$@" -c 'git status' $PARALLEL || exit 1
     end_command
     echo "TEST: Run forall command with error"
     begin_command
@@ -89,7 +89,7 @@ test_forall_script() {
     end_command
     echo "TEST: Run forall script for specific groups"
     begin_command
-    $COMMAND forall $PARALLEL "$@" -c "$TEST_SCRIPT_DIR/test_forall_script.sh" || exit 1
+    $COMMAND forall "$@" -c "$TEST_SCRIPT_DIR/test_forall_script.sh" $PARALLEL || exit 1
     end_command
     echo "TEST: Run forall script with error"
     begin_command
@@ -106,11 +106,11 @@ test_forall_projects() {
     print_single_separator
     echo "TEST: Run forall command for specific projects"
     begin_command
-    $COMMAND forall $PARALLEL "$@" -c 'git status' || exit 1
+    $COMMAND forall "$@" -c 'git status' $PARALLEL || exit 1
     end_command
     echo "TEST: Run forall script for specific projects"
     begin_command
-    $COMMAND forall $PARALLEL "$@" -c "$TEST_SCRIPT_DIR/test_forall_script.sh" || exit 1
+    $COMMAND forall "$@" -c "$TEST_SCRIPT_DIR/test_forall_script.sh" $PARALLEL || exit 1
     end_command
 }
 test_forall_projects 'jrgoodle/kit' 'jrgoodle/kishka'
@@ -125,10 +125,10 @@ test_forall_environment_variables() {
     $COMMAND herd $PARALLEL || exit 1
     end_command
     begin_command
-    $COMMAND forall $PARALLEL "jrgoodle/kit" -c "$TEST_SCRIPT_DIR/test_forall_script_env_kit.sh" || exit 1
+    $COMMAND forall "jrgoodle/kit" -c "$TEST_SCRIPT_DIR/test_forall_script_env_kit.sh" $PARALLEL || exit 1
     end_command
     begin_command
-    $COMMAND forall $PARALLEL "jrgoodle/duke" -c "$TEST_SCRIPT_DIR/test_forall_script_env_duke.sh" || exit 1
+    $COMMAND forall "jrgoodle/duke" -c "$TEST_SCRIPT_DIR/test_forall_script_env_duke.sh" $PARALLEL || exit 1
     end_command
     begin_command
     $COMMAND forall $PARALLEL -c "$TEST_SCRIPT_DIR/test_forall_script_env_duke.sh" && exit 1
@@ -138,22 +138,22 @@ test_forall_environment_variables() {
     end_command
     echo "TEST: Test forall environment variables in command"
     begin_command
-    $COMMAND forall $PARALLEL 'jrgoodle/kit' -c 'if [ $PROJECT_NAME != jrgoodle/kit ]; then exit 1; fi' || exit 1
+    $COMMAND forall 'jrgoodle/kit' -c 'if [ $PROJECT_NAME != jrgoodle/kit ]; then exit 1; fi' $PARALLEL || exit 1
     end_command
     begin_command
-    $COMMAND forall $PARALLEL 'jrgoodle/kit' -c 'if [ $PROJECT_REMOTE != origin ]; then exit 1; fi' || exit 1
+    $COMMAND forall 'jrgoodle/kit' -c 'if [ $PROJECT_REMOTE != origin ]; then exit 1; fi' $PARALLEL || exit 1
     end_command
     begin_command
-    $COMMAND forall $PARALLEL 'jrgoodle/kit' -c 'if [ $PROJECT_REF != refs/heads/master ]; then exit 1; fi' || exit 1
+    $COMMAND forall 'jrgoodle/kit' -c 'if [ $PROJECT_REF != refs/heads/master ]; then exit 1; fi' $PARALLEL || exit 1
     end_command
     begin_command
-    $COMMAND forall $PARALLEL 'jrgoodle/duke' -c 'if [ $PROJECT_NAME != jrgoodle/duke ]; then exit 1; fi' || exit 1
+    $COMMAND forall 'jrgoodle/duke' -c 'if [ $PROJECT_NAME != jrgoodle/duke ]; then exit 1; fi' $PARALLEL || exit 1
     end_command
     begin_command
-    $COMMAND forall $PARALLEL 'jrgoodle/duke' -c 'if [ $PROJECT_REMOTE != origin ]; then exit 1; fi' || exit 1
+    $COMMAND forall 'jrgoodle/duke' -c 'if [ $PROJECT_REMOTE != origin ]; then exit 1; fi' $PARALLEL || exit 1
     end_command
     begin_command
-    $COMMAND forall $PARALLEL 'jrgoodle/duke' -c 'if [ $PROJECT_REF != refs/heads/purr ]; then exit 1; fi' || exit 1
+    $COMMAND forall 'jrgoodle/duke' -c 'if [ $PROJECT_REF != refs/heads/purr ]; then exit 1; fi' $PARALLEL || exit 1
     end_command
 }
 test_forall_environment_variables

@@ -85,7 +85,7 @@ test_config_projects() {
     ls -al $HOME/.config/clowder
 
     begin_command
-    $COMMAND config get parallel || exit 1
+    $COMMAND config get jobs || exit 1
     end_command
     begin_command
     $COMMAND config get projects || exit 1

@@ -82,7 +82,7 @@ test_forall_environment_subdirectory() {
     echo "TEST: Check that forall environment variables are set correctly when invoked from subdirectory"
     pushd mu || exit 1
     begin_command
-    $COMMAND forall $PARALLEL "jrgoodle/duke" -c "$TEST_SCRIPT_DIR/test_forall_script_env_duke.sh" || exit 1
+    $COMMAND forall "jrgoodle/duke" -c "$TEST_SCRIPT_DIR/test_forall_script_env_duke.sh" $PARALLEL || exit 1
     end_command
     # !! Move coverage files to root and clean so further commands work
     cp -a .coverage* ../
@@ -91,7 +91,7 @@ test_forall_environment_subdirectory() {
     popd || exit 1
     pushd black-cats/kit || exit 1
     begin_command
-    $COMMAND forall $PARALLEL "jrgoodle/duke" -c "$TEST_SCRIPT_DIR/test_forall_script_env_duke.sh" || exit 1
+    $COMMAND forall "jrgoodle/duke" -c "$TEST_SCRIPT_DIR/test_forall_script_env_duke.sh" $PARALLEL || exit 1
     end_command
     # !! Move coverage files to root and clean so further commands work
     cp -a .coverage* ../../

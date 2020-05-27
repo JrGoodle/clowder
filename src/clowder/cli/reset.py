@@ -61,7 +61,12 @@ def reset(args) -> None:
     timestamp_project = None
     if args.timestamp:
         timestamp_project = args.timestamp[0]
-    _reset_impl(args.projects, timestamp_project=timestamp_project, jobs=args.jobs)
+
+    jobs = None
+    if args.jobs:
+        jobs = args.jobs[0]
+
+    _reset_impl(args.projects, timestamp_project=timestamp_project, jobs=jobs)
 
 
 def _reset_impl(project_names: List[str], timestamp_project: Optional[str] = None, jobs: Optional[int] = None) -> None:
