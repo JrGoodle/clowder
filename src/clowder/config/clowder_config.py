@@ -18,7 +18,7 @@ from clowder.error import ClowderError, ClowderErrorType
 
 @unique
 class ClowderConfigType(Enum):
-    PARALLEL = auto()
+    JOBS = auto()
     PROJECTS = auto()
     PROTOCOL = auto()
     REBASE = auto()
@@ -32,7 +32,7 @@ class ClowderConfig(object):
     :ivar Optional[Tuple[str, ...]] projects: Default projects
     :ivar Optional[str] protocol: Default protocol
     :ivar Optional[bool] rebase: Default rebase
-    :ivar Optional[bool] parallel: Default parallel
+    :ivar Optional[int] jobs: Default number of jobs
     """
 
     def __init__(self, clowder_config: Optional[dict] = None,
@@ -47,7 +47,7 @@ class ClowderConfig(object):
         if clowder_config is None:
             self.clowder_dir = CLOWDER_DIR
             self.name = current_clowder_name
-            self.parallel = None
+            self.jobs = None
             self.projects = None
             self.protocol = None
             self.rebase = None
@@ -67,7 +67,7 @@ class ClowderConfig(object):
             self.projects: Optional[Tuple[str, ...]] = None if projects is None else tuple(sorted(projects))
             self.protocol: Optional[str] = defaults.get('protocol', None)
             self.rebase: Optional[bool] = defaults.get('rebase', None)
-            self.parallel: Optional[bool] = defaults.get('parallel', None)
+            self.jobs: Optional[int] = defaults.get('jobs', None)
 
     def is_empty(self) -> bool:
         """Determine if any config values are set
@@ -76,7 +76,7 @@ class ClowderConfig(object):
         :rtype: bool
         """
 
-        config_status = [self.is_config_value_set(ClowderConfigType.PARALLEL),
+        config_status = [self.is_config_value_set(ClowderConfigType.JOBS),
                          self.is_config_value_set(ClowderConfigType.PROJECTS),
                          self.is_config_value_set(ClowderConfigType.PROTOCOL),
                          self.is_config_value_set(ClowderConfigType.REBASE)]
@@ -85,7 +85,7 @@ class ClowderConfig(object):
     def clear(self) -> None:
         """Clear all config settings"""
 
-        self.parallel = None
+        self.jobs = None
         self.projects = None
         self.protocol = None
         self.rebase = None
@@ -104,8 +104,8 @@ class ClowderConfig(object):
             defaults['protocol'] = self.protocol
         if self.rebase is not None:
             defaults['rebase'] = self.rebase
-        if self.parallel is not None:
-            defaults['parallel'] = self.parallel
+        if self.jobs is not None:
+            defaults['jobs'] = self.jobs
         config = {'clowder_dir': str(self.clowder_dir),
                   'name': self.name,
                   'defaults': defaults}
@@ -117,8 +117,8 @@ class ClowderConfig(object):
         :raise ClowderError:
         """
 
-        if value is ClowderConfigType.PARALLEL:
-            return self.parallel is not None
+        if value is ClowderConfigType.JOBS:
+            return self.jobs is not None
         elif value is ClowderConfigType.PROJECTS:
             return self.projects is not None
         elif value is ClowderConfigType.PROTOCOL:
@@ -134,11 +134,11 @@ class ClowderConfig(object):
         :raise ClowderError:
         """
 
-        if value is ClowderConfigType.PARALLEL:
-            if self.parallel is None:
-                print(" - parallel not set")
+        if value is ClowderConfigType.JOBS:
+            if self.jobs is None:
+                print(" - jobs not set")
             else:
-                print(f" - parallel: {self.parallel}")
+                print(f" - jobs: {self.jobs}")
         elif value is ClowderConfigType.PROJECTS:
             if self.projects is None:
                 print(" - projects not set")
@@ -167,8 +167,8 @@ class ClowderConfig(object):
             return
 
         output = ''
-        if self.parallel is not None:
-            output += f" - parallel: {self.parallel}\n"
+        if self.jobs is not None:
+            output += f" - jobs: {self.jobs}\n"
         if self.projects is not None:
             output += f" - projects: {', '.join(self.projects)}\n"
         if self.protocol is not None:

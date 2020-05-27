@@ -18,6 +18,11 @@
       "minLength": 1,
       "pattern": "^\/.+"
     },
+    "jobs": {
+      "description": "Number of jobs to use for parallel commands",
+      "type": "integer",
+      "minimum": 1
+    },
     "stringArrayUnique": {
       "type": "array",
       "uniqueItems": true,
@@ -64,10 +69,8 @@
           "type": "boolean",
           "default": false
         },
-        "parallel": {
-          "description": "Whether to run parallel commands by default",
-          "type": "boolean",
-          "default": false
+        "jobs": {
+          "$ref": "#/definitions/jobs"
         }
       }
     },

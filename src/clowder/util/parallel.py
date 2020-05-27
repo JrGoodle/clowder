@@ -93,11 +93,12 @@ if os.name == "posix":
 
         signal.signal(signal.SIGINT, sig_int)
 
-    def forall_parallel(commands: List[str], projects: Tuple[Project, ...], ignore_errors: bool) -> None:
+    def forall_parallel(commands: List[str], projects: Tuple[Project, ...], jobs: int, ignore_errors: bool) -> None:
         """Runs command or script for projects in parallel
 
         :param List[str] commands: Command to run
         :param Tuple[Project, ...] projects: Projects to run command for
+        :param int jobs: Number of jobs to use running parallel commands
         :param bool ignore_errors: Whether to exit if command returns a non-zero exit code
         """
 
@@ -112,7 +113,7 @@ if os.name == "posix":
             print('\n' + fmt.command(cmd))
 
         global __clowder_pool__
-        __clowder_pool__ = mp.Pool(initializer=worker_init)
+        __clowder_pool__ = mp.Pool(processes=jobs, initializer=worker_init)
         global __clowder_progress__
         __clowder_progress__ = Progress()
 
@@ -123,11 +124,12 @@ if os.name == "posix":
 
         pool_handler(len(projects))
 
-    def herd_parallel(projects: Tuple[Project, ...], branch: Optional[str] = None,
+    def herd_parallel(projects: Tuple[Project, ...], jobs: int, branch: Optional[str] = None,
                       tag: Optional[str] = None, depth: Optional[int] = None, rebase: bool = False) -> None:
         """Clone projects or update latest from upstream in parallel
 
         :param Tuple[Project, ...] projects: Projects to herd
+        :param int jobs: Number of jobs to use running parallel commands
         :param Optional[str] branch: Branch to attempt to herd
         :param Optional[str] tag: Tag to attempt to herd
         :param Optional[int] depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
@@ -139,7 +141,7 @@ if os.name == "posix":
         CLOWDER_CONTROLLER.validate_print_output(projects)
 
         global __clowder_pool__
-        __clowder_pool__ = mp.Pool(initializer=worker_init)
+        __clowder_pool__ = mp.Pool(processes=jobs, initializer=worker_init)
         global __clowder_progress__
         __clowder_progress__ = Progress()
 
@@ -151,10 +153,11 @@ if os.name == "posix":
 
         pool_handler(len(projects))
 
-    def reset_parallel(projects: Tuple[Project, ...], timestamp_project: Optional[str] = None) -> None:
+    def reset_parallel(projects: Tuple[Project, ...], jobs: int, timestamp_project: Optional[str] = None) -> None:
         """Reset project branches to upstream or checkout tag/sha as detached HEAD in parallel
 
         :param Tuple[Project, ...] projects: Project names to reset
+        :param int jobs: Number of jobs to use running parallel commands
         :param Optional[str] timestamp_project: Reference project to checkout other project commit timestamps relative to # noqa
         """
 
@@ -167,7 +170,7 @@ if os.name == "posix":
             timestamp = CLOWDER_CONTROLLER.get_timestamp(timestamp_project)
 
         global __clowder_pool__
-        __clowder_pool__ = mp.Pool(initializer=worker_init)
+        __clowder_pool__ = mp.Pool(processes=jobs, initializer=worker_init)
         global __clowder_progress__
         __clowder_progress__ = Progress()
 
@@ -210,19 +213,21 @@ if os.name == "posix":
             __clowder_pool__.close()
             __clowder_pool__.join()
 else:
-    def forall_parallel(commands: List[str], ignore_errors: bool, projects: Tuple[Project, ...]) -> None: # noqa
+    def forall_parallel(commands: List[str], projects: Tuple[Project, ...], # noqa
+                        jobs: int, ignore_errors: bool) -> None: # noqa
         """Stub for non-posix forall parallel command"""
 
         ClowderError(ClowderErrorType.PARALLEL_COMMAND_UNAVAILABLE, fmt.error_parallel_commands_unavailable())
 
 
-    def herd_parallel(projects: Tuple[Project, ...], branch: Optional[str] = None, # noqa
+    def herd_parallel(projects: Tuple[Project, ...], jobs: int, branch: Optional[str] = None, # noqa
                       tag: Optional[str] = None, depth: Optional[int] = None, rebase: bool = False) -> None: # noqa
         """Stub for non-posix herd parallel command"""
 
         ClowderError(ClowderErrorType.PARALLEL_COMMAND_UNAVAILABLE, fmt.error_parallel_commands_unavailable())
 
-    def reset_parallel(projects: Tuple[Project, ...], timestamp_project: Optional[str] = None) -> None: # noqa
+    def reset_parallel(projects: Tuple[Project, ...], jobs: int, # noqa
+                       timestamp_project: Optional[str] = None) -> None: # noqa
         """Stub for non-posix reset parallel command"""
 
         ClowderError(ClowderErrorType.PARALLEL_COMMAND_UNAVAILABLE, fmt.error_parallel_commands_unavailable())

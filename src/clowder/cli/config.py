@@ -48,9 +48,9 @@ def add_config_clear_parser(subparsers: argparse._SubParsersAction) -> None: # n
     rebase_parser = config_clear_subparsers.add_parser('rebase', help='Clear use rebase with herd command')
     rebase_parser.set_defaults(func=config_clear_rebase)
 
-    # clowder config clear parallel
-    parallel_parser = config_clear_subparsers.add_parser('parallel', help='Clear use parallel commands')
-    parallel_parser.set_defaults(func=config_clear_parallel)
+    # clowder config clear jobs
+    jobs_parser = config_clear_subparsers.add_parser('jobs', help='Clear use jobs commands')
+    jobs_parser.set_defaults(func=config_clear_jobs)
 
     # clowder config clear projects
     projects_parser = config_clear_subparsers.add_parser('projects', help='Clear default projects and groups')
@@ -77,9 +77,9 @@ def add_config_get_parser(subparsers: argparse._SubParsersAction) -> None: # noq
     rebase_parser = config_get_subparsers.add_parser('rebase', help='Get use rebase with herd command')
     rebase_parser.set_defaults(func=config_get_rebase)
 
-    # clowder config get parallel
-    parallel_parser = config_get_subparsers.add_parser('parallel', help='Get use parallel commands')
-    parallel_parser.set_defaults(func=config_get_parallel)
+    # clowder config get jobs
+    jobs_parser = config_get_subparsers.add_parser('jobs', help='Get use jobs commands')
+    jobs_parser.set_defaults(func=config_get_jobs)
 
     # clowder config get projects
     projects_parser = config_get_subparsers.add_parser('projects', help='Get default projects and groups')
@@ -104,9 +104,9 @@ def add_config_set_parser(subparsers: argparse._SubParsersAction) -> None: # noq
     rebase_parser = config_set_subparsers.add_parser('rebase', help='Set use rebase with herd command')
     rebase_parser.set_defaults(func=config_set_rebase)
 
-    # clowder config set parallel
-    parallel_parser = config_set_subparsers.add_parser('parallel', help='Set use parallel commands')
-    parallel_parser.set_defaults(func=config_set_parallel)
+    # clowder config set jobs
+    jobs_parser = config_set_subparsers.add_parser('jobs', help='Set use jobs commands')
+    jobs_parser.set_defaults(func=config_set_jobs)
 
     # clowder config set projects
     projects_arguments = [
@@ -142,12 +142,12 @@ def config_clear_all(args) -> None: # noqa
 
 @valid_clowder_yaml_required
 @print_clowder_name
-def config_clear_parallel(args) -> None: # noqa
-    """Clowder config clear parallel command entry point"""
+def config_clear_jobs(args) -> None: # noqa
+    """Clowder config clear jobs command entry point"""
 
-    print(' - Clear parallel config value')
+    print(' - Clear jobs config value')
     config = Config(CLOWDER_CONTROLLER.name, CLOWDER_CONTROLLER.project_choices)
-    config.current_clowder_config.parallel = None
+    config.current_clowder_config.jobs = None
     config.save()
     print()
     config.current_clowder_config.print_configuration()
@@ -205,12 +205,12 @@ def config_get_all(args) -> None: # noqa
 
 @valid_clowder_yaml_required
 @print_clowder_name
-def config_get_parallel(args) -> None: # noqa
-    """Clowder config get parallel command entry point"""
+def config_get_jobs(args) -> None: # noqa
+    """Clowder config get jobs command entry point"""
 
-    print(' - Get parallel config value')
+    print(' - Get jobs config value')
     config = Config(CLOWDER_CONTROLLER.name, CLOWDER_CONTROLLER.project_choices)
-    config.current_clowder_config.print_config_value(ClowderConfigType.PARALLEL)
+    config.current_clowder_config.print_config_value(ClowderConfigType.JOBS)
 
 
 @valid_clowder_yaml_required
@@ -245,12 +245,12 @@ def config_get_rebase(args) -> None: # noqa
 
 @valid_clowder_yaml_required
 @print_clowder_name
-def config_set_parallel(args) -> None: # noqa
-    """Clowder config set parallel command entry point"""
+def config_set_jobs(args) -> None: # noqa
+    """Clowder config set jobs command entry point"""
 
-    print(' - Set parallel config value')
+    print(' - Set jobs config value')
     config = Config(CLOWDER_CONTROLLER.name, CLOWDER_CONTROLLER.project_choices)
-    config.current_clowder_config.parallel = True
+    config.current_clowder_config.jobs = True
     config.save()
     print()
     config.current_clowder_config.print_configuration()
