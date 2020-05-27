@@ -1,7 +1,7 @@
 {
   "title": "JSON schema for Clowder configuration files",
   "$id": "http://json.schemastore.org/clowder.config",
-  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "definitions": {
     "nonEmptyString": {
       "type": "string",
@@ -21,7 +21,7 @@
     "jobs": {
       "description": "Number of jobs to use for parallel commands",
       "type": "integer",
-      "minimum": 1
+      "minimum": 0
     },
     "stringArrayUnique": {
       "type": "array",

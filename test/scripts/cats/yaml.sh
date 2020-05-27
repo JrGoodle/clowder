@@ -24,6 +24,12 @@ test_clowder_yaml() {
     end_command
     print_single_separator
     begin_command
+    $COMMAND yaml -r && exit 1
+    end_command
+    begin_command
+    $COMMAND herd $PARALLEL || exit 1
+    end_command
+    begin_command
     $COMMAND yaml -r || exit 1
     end_command
 }

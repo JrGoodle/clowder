@@ -60,7 +60,7 @@ class ClowderConfig(object):
             raise ClowderError(ClowderErrorType.CONFIG_YAML_INVALID_CLOWDER_PATH,
                                fmt.error_no_clowder_found(self.clowder_dir))
 
-        self.name = clowder_config['name']
+        self.name: str = clowder_config['name']
         defaults = clowder_config.get('defaults', None)
         if defaults is not None:
             projects = defaults.get('projects', None)

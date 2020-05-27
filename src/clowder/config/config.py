@@ -24,7 +24,7 @@ from clowder.util.yaml import (
 
 from .clowder_config import ClowderConfig
 
-CONFIG_VERSION = 0.1
+CONFIG_VERSION = '0.1'
 
 
 class Config(object):
@@ -39,9 +39,9 @@ class Config(object):
     def __init__(self, current_clowder_name: Optional[str], project_options: Tuple[str, ...]):
         """Config __init__"""
 
-        self.error = None
-        self.current_clowder_config = None
-        self.clowder_configs = ()
+        self.error: Optional[Exception] = None
+        self.current_clowder_config: Optional[ClowderConfig] = None
+        self.clowder_configs: Tuple[ClowderConfig, ...] = ()
         self._project_options = project_options
 
         # Config file doesn't currently exist

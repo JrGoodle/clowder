@@ -1,7 +1,7 @@
 {
   "title": "JSON schema for Clowder configuration files",
   "$id": "http://json.schemastore.org/clowder",
-  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "definitions": {
     "nonEmptyString": {
       "type": "string",
@@ -12,43 +12,84 @@
       "minLength": 1,
       "pattern": "^((?! ).)*$"
     },
-    "nonEmptyStringNoDefault": {
+    "projectGroup": {
       "type": "string",
       "minLength": 1,
-      "pattern": "^(?!default$).*$"
+      "pattern": "^(?!default$)[a-zA-Z0-9-_]*$"
     },
-    "arrayOfNonEmptyStrings": {
-      "type": "array",
-      "items": {
-        "$ref": "#/definitions/nonEmptyString"
-      }
-    },
-    "stringArrayUnique": {
+    "projectGroups": {
       "type": "array",
       "uniqueItems": true,
       "minItems": 1,
       "items": {
-        "$ref": "#/definitions/nonEmptyString"
-      }
-    },
-    "stringArrayUniqueNoDefault": {
-      "type": "array",
-      "uniqueItems": true,
-      "minItems": 1,
-      "items": {
-        "$ref": "#/definitions/nonEmptyStringNoDefault"
+        "$ref": "#/definitions/projectGroup"
       }
     },
     "relativePath": {
+      "description": "Relative file system path",
       "type": "string",
       "minLength": 1,
       "pattern": "^(?!\/.*$).*"
+    },
+    "gitConfigVariableName": {
+      "description": "Fully qualified git config variable name",
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z][a-zA-Z0-9-]*[.]([^\n]+[.]){0,1}[a-zA-Z][a-zA-Z0-9-]*$"
+    },
+    "gitConfigVariableValue": {
+      "description": "Git config variable value",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/nonEmptyString"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "gitConfig": {
+      "description": "Git config settings",
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": {
+        "$ref": "#/definitions/gitConfigVariableName"
+      },
+      "additionalProperties": {
+        "$ref": "#/definitions/gitConfigVariableValue"
+      }
+    },
+    "gitSettings": {
+      "description": "Git settings",
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": false,
+      "properties": {
+        "lfs": {
+          "$ref": "#/definitions/lfs"
+        },
+        "recursive": {
+          "$ref": "#/definitions/recursive"
+        },
+        "depth": {
+          "$ref": "#/definitions/depth"
+        },
+        "config": {
+          "$ref": "#/definitions/gitConfig"
+        }
+      }
     },
     "gitProjectName": {
       "description": "A unique name for this project. The project's name is appended onto its source's URL to generate the actual URL to configure the Git remote with. The URL gets formed as: ${source_url}/${project_name}.git where ${source_url} is the source's url and ${project_name} is the project’s name. The suffix '.git' is always appended as clowder assumes the upstream is a forest of bare Git repositories.",
       "oneOf": [
         {
-          "$ref": "#/definitions/nonEmptyString"
+          "$ref": "#/definitions/nonEmptyStringNoSpaces"
         }
       ]
     },
@@ -56,7 +97,7 @@
       "description": "Git source name",
       "oneOf": [
         {
-          "$ref": "#/definitions/nonEmptyString"
+          "$ref": "#/definitions/nonEmptyStringNoSpaces"
         }
       ]
     },
@@ -64,7 +105,7 @@
       "description": "The name specified here is used as the remote name in each project's .git/config, and is therefore automatically available to commands like git fetch, git remote, git pull and git push.",
       "oneOf": [
         {
-          "$ref": "#/definitions/nonEmptyString"
+          "$ref": "#/definitions/nonEmptyStringNoSpaces"
         }
       ]
     },
@@ -75,7 +116,7 @@
       "default": 0
     },
     "recursive": {
-      "description": "Whether to clone project submodules recursively",
+      "description": "Whether to clone and fetch project submodules recursively",
       "type": "boolean",
       "default": false
     },
@@ -96,7 +137,7 @@
       "description": "Name of the Git tag to track for this project. If not supplied the ref specified in the defaults is used if applicable, else the default branch 'master' is used.",
       "oneOf": [
         {
-          "$ref": "#/definitions/nonEmptyString"
+          "$ref": "#/definitions/nonEmptyStringNoSpaces"
         }
       ]
     },
@@ -126,7 +167,7 @@
           "description": "Unique name of git repository's remote source",
           "oneOf": [
             {
-              "$ref": "#/definitions/nonEmptyString"
+              "$ref": "#/definitions/nonEmptyStringNoSpaces"
             }
           ]
         },
@@ -134,7 +175,7 @@
           "description": "The Git URL prefix for all projects which use this source. Each project's name is appended to this prefix to form the actual URL used to clone the project.",
           "oneOf": [
             {
-              "$ref": "#/definitions/nonEmptyString"
+              "$ref": "#/definitions/nonEmptyStringNoSpaces"
             }
           ]
         },
@@ -243,21 +284,15 @@
               "description": "Groups project belongs to",
               "oneOf": [
                 {
-                  "$ref": "#/definitions/stringArrayUniqueNoDefault"
+                  "$ref": "#/definitions/projectGroups"
                 }
               ]
             },
             "fork": {
               "$ref": "#/definitions/fork"
             },
-            "depth": {
-              "$ref": "#/definitions/depth"
-            },
-            "recursive": {
-              "$ref": "#/definitions/recursive"
-            },
-            "lfs": {
-              "$ref": "#/definitions/lfs"
+            "git": {
+              "$ref": "#/definitions/gitSettings"
             }
           }
         },
@@ -291,21 +326,15 @@
               "description": "Groups project belongs to",
               "oneOf": [
                 {
-                  "$ref": "#/definitions/stringArrayUniqueNoDefault"
+                  "$ref": "#/definitions/projectGroups"
                 }
               ]
             },
             "fork": {
               "$ref": "#/definitions/fork"
             },
-            "depth": {
-              "$ref": "#/definitions/depth"
-            },
-            "recursive": {
-              "$ref": "#/definitions/recursive"
-            },
-            "lfs": {
-              "$ref": "#/definitions/lfs"
+            "git": {
+              "$ref": "#/definitions/gitSettings"
             }
           }
         },
@@ -339,7 +368,7 @@
               "description": "Groups project belongs to",
               "oneOf": [
                 {
-                  "$ref": "#/definitions/stringArrayUniqueNoDefault"
+                  "$ref": "#/definitions/projectGroups"
                 }
               ]
             },
@@ -349,11 +378,8 @@
             "depth": {
               "$ref": "#/definitions/depth"
             },
-            "recursive": {
-              "$ref": "#/definitions/recursive"
-            },
-            "lfs": {
-              "$ref": "#/definitions/lfs"
+            "git": {
+              "$ref": "#/definitions/gitSettings"
             }
           }
         }
@@ -373,7 +399,7 @@
       "description": "A name describing the projects",
       "oneOf": [
         {
-          "$ref": "#/definitions/nonEmptyString"
+          "$ref": "#/definitions/nonEmptyStringNoSpaces"
         }
       ]
     },
@@ -400,14 +426,8 @@
             "protocol": {
               "$ref": "#/definitions/protocol"
             },
-            "recursive": {
-              "$ref": "#/definitions/recursive"
-            },
-            "depth": {
-              "$ref": "#/definitions/depth"
-            },
-            "lfs": {
-              "$ref": "#/definitions/lfs"
+            "git": {
+              "$ref": "#/definitions/gitSettings"
             }
           }
         },
@@ -430,14 +450,8 @@
             "protocol": {
               "$ref": "#/definitions/protocol"
             },
-            "recursive": {
-              "$ref": "#/definitions/recursive"
-            },
-            "depth": {
-              "$ref": "#/definitions/depth"
-            },
-            "lfs": {
-              "$ref": "#/definitions/lfs"
+            "git": {
+              "$ref": "#/definitions/gitSettings"
             }
           }
         },
@@ -460,11 +474,8 @@
             "protocol": {
               "$ref": "#/definitions/protocol"
             },
-            "recursive": {
-              "$ref": "#/definitions/recursive"
-            },
-            "depth": {
-              "$ref": "#/definitions/depth"
+            "git": {
+              "$ref": "#/definitions/gitSettings"
             }
           }
         }
