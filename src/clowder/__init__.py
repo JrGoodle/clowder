@@ -5,34 +5,13 @@
 
 """
 
-import logging
-import os
-import traceback
 from pathlib import Path
 from typing import Optional
 
-from clowder.error import ClowderExit
+from clowder.error import ClowderError, ClowderErrorType
+from clowder.logging import LOG_DEBUG
 from clowder.util.formatting import error_ambiguous_clowder_yaml
 from clowder.git.util import existing_git_repository
-
-# Set up logging #
-
-PRINT_DEBUG_OUTPUT = "CLOWDER_DEBUG" in os.environ
-logging.basicConfig()
-logging.raiseExceptions = True
-logger = logging.getLogger("CLOWDER")
-if PRINT_DEBUG_OUTPUT:
-    logger.setLevel(logging.DEBUG)
-else:
-    logger.setLevel(logging.ERROR)
-
-
-def LOG_DEBUG(message: str, exception: Optional[Exception] = None): # noqa
-    if PRINT_DEBUG_OUTPUT:
-        logger.log(logging.DEBUG, f" {message}")
-        if exception is not None:
-            # TODO: Format the output for clowder debug
-            traceback.print_exc()
 
 
 # Set up global paths #
@@ -76,11 +55,11 @@ if CLOWDER_REPO_DIR is not None:
     if clowder_yml.is_symlink() and clowder_yaml.is_symlink():
         print(error_ambiguous_clowder_yaml())
         try:
-            raise ClowderExit(1)
-        except ClowderExit as err:
+            raise ClowderError(ClowderErrorType.AMBIGUOUS_CLOWDER_YAML, error_ambiguous_clowder_yaml())
+        except ClowderError as err:
             LOG_DEBUG('Ambigiuous clowder file', err)
             print()
-            exit(err.code)
+            exit(err.error_type.value)
     if clowder_yml.is_symlink():
         CLOWDER_YAML = clowder_yml
     elif clowder_yaml.is_symlink():

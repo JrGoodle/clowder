@@ -12,7 +12,8 @@ from git import Repo, GitError
 from termcolor import colored
 
 import clowder.util.formatting as fmt
-from clowder.error import ClowderExit, ClowderGitError
+from clowder.error import ClowderError, ClowderErrorType
+from clowder.logging import LOG_DEBUG
 from clowder.util.file_system import remove_directory
 
 from .util import (
@@ -55,17 +56,19 @@ class GitRepo(object):
         """Add files to git index
 
         :param str files: Files to git add
+        :raise ClowderError:
         """
 
         self._print(' - Add files to git index')
         try:
             print(self.repo.git.add(files))
         except GitError as err:
-            message = colored(' - Failed to add files to git index\n', 'red') + fmt.error(err)
-            self._print(message)
-            self._exit(message)
+            LOG_DEBUG('Git error', err)
+            message = f"{fmt.ERROR} Failed to add files to git index"
+            message = self._format_error_message(message)
+            raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
         except (KeyboardInterrupt, SystemExit):
-            self._exit()
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
         else:
             self.status_verbose()
 
@@ -74,6 +77,7 @@ class GitRepo(object):
 
         :param str truncated_ref: Ref to git checkout
         :param bool allow_failure: Whether to allow failing to checkout branch
+        :raise ClowderError:
         """
 
         ref_output = fmt.ref_string(truncated_ref)
@@ -85,15 +89,15 @@ class GitRepo(object):
 
             self.repo.git.checkout(truncated_ref)
         except GitError as err:
-            message = colored(' - Failed to checkout ', 'red')
-            self._print(message + ref_output)
+            LOG_DEBUG('Git error', err)
+            message = f'{fmt.ERROR} Failed to checkout {ref_output}'
             if allow_failure:
+                self._print(message)
                 return
-
-            self._print(fmt.error(err))
-            self._exit(fmt.error_parallel_exception(self.repo_path, message, ref_output))
+            message = self._format_error_message(message)
+            raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
         except (KeyboardInterrupt, SystemExit):
-            self._exit()
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def clean(self, args: str = '') -> None:
         """Discard changes for repo
@@ -118,18 +122,19 @@ class GitRepo(object):
         """Commit current changes
 
         :param str message: Git commit message
+        :raise ClowderError:
         """
 
         try:
             self._print(' - Commit current changes')
             print(self.repo.git.commit(message=message))
         except GitError as err:
-            message = colored(' - Failed to commit current changes', 'red')
-            self._print(message)
-            self._print(fmt.error(err))
-            self._exit(message)
+            LOG_DEBUG('Git error', err)
+            message = f'{fmt.ERROR} Failed to commit current changes'
+            message = self._format_error_message(message)
+            raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
         except (KeyboardInterrupt, SystemExit):
-            self._exit()
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def current_branch(self) -> str:
         """Return currently checked out branch of project
@@ -147,6 +152,7 @@ class GitRepo(object):
         :param str remote: Remote name
         :return: True, if remote branch exists
         :rtype: bool
+        :raise ClowderError:
         """
 
         try:
@@ -155,7 +161,7 @@ class GitRepo(object):
         except (GitError, IndexError):
             return False
         except (KeyboardInterrupt, SystemExit):
-            self._exit()
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def existing_local_branch(self, branch: str) -> bool:
         """Check if local branch exists
@@ -176,6 +182,7 @@ class GitRepo(object):
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
         :param bool remove_dir: Whether to remove the directory if commands fail
         :param bool allow_failure: Whether to allow failure
+        :raise ClowderError:
         """
 
         remote_output = fmt.remote_string(remote)
@@ -202,14 +209,15 @@ class GitRepo(object):
                 print(self.repo.git.fetch(remote, truncate_ref(ref),
                                           depth=depth, prune=True, tags=True, quiet=quiet), end='')
         except GitError as err:
+            LOG_DEBUG('Git error', err)
             if remove_dir:
+                # TODO: Handle possible exceptions
                 remove_directory(self.repo_path)
             if not allow_failure:
-                self._print(error_message)
-                self._print(fmt.error(err))
-                self._exit(error_message)
+                message = self._format_error_message(error_message)
+                raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
         except (KeyboardInterrupt, SystemExit):
-            self._exit()
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def format_project_ref_string(self) -> str:
         """Return formatted project ref string
@@ -225,8 +233,8 @@ class GitRepo(object):
         if no_local_commits and no_upstream_commits:
             status = ''
         else:
-            local_commits_output = colored('+' + str(local_commits), 'yellow')
-            upstream_commits_output = colored('-' + str(upstream_commits), 'red')
+            local_commits_output = colored(f'+{local_commits}', 'yellow')
+            upstream_commits_output = colored(f'-{upstream_commits}', 'red')
             status = f'({local_commits_output}/{upstream_commits_output})'
 
         if self.is_detached():
@@ -258,31 +266,35 @@ class GitRepo(object):
 
         :return: HEAD commit timestamp
         :rtype: str
+        :raise ClowderError:
         """
 
         try:
             return self.repo.git.log('-1', '--format=%cI')
         except GitError as err:
-            message = colored(' - Failed to find current timestamp', 'red')
-            self._print(message)
-            self._print(fmt.error(err))
-            self._exit(fmt.error(err))
+            LOG_DEBUG('Git error', err)
+            message = f'{fmt.ERROR} Failed to find current timestamp'
+            message = self._format_error_message(message)
+            raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
         except (KeyboardInterrupt, SystemExit):
-            self._exit()
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
-    def install_lfs_hooks(self):
-        """Install git lfs hooks"""
+    def install_lfs_hooks(self) -> None:
+        """Install git lfs hooks
+
+        :raise ClowderError:
+        """
 
         self._print(" - Update git lfs hooks")
         try:
             self.repo.git.lfs('install')
         except GitError as err:
-            message = colored(' - Failed to update git lfs hooks', 'red')
-            self._print(message)
-            self._print(fmt.error(err))
-            self._exit(fmt.error(err))
+            LOG_DEBUG('Git error', err)
+            message = f'{fmt.ERROR} Failed to update git lfs hooks'
+            message = self._format_error_message(message)
+            raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
         except (KeyboardInterrupt, SystemExit):
-            self._exit()
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def is_detached(self, print_output: bool = False) -> bool:
         """Check if HEAD is detached
@@ -381,52 +393,61 @@ class GitRepo(object):
             return
 
         if not self.validate_repo():
-            print(' - Dirty repo. Please stash, commit, or discard your changes')
+            print(f'{fmt.ERROR} Dirty repo. Please stash, commit, or discard your changes')
             self.status_verbose()
 
     @not_detached
     def pull(self) -> None:
-        """Pull upstream changes"""
+        """Pull upstream changes
+
+        :raise ClowderError:
+        """
 
         try:
             self._print(' - Pull latest changes')
             print(self.repo.git.pull())
         except GitError as err:
-            message = colored(' - Failed to pull latest changes', 'red')
-            self._print(message)
-            self._print(fmt.error(err))
-            self._exit(message)
+            LOG_DEBUG('Git error', err)
+            message = f'{fmt.ERROR} Failed to pull latest changes'
+            message = self._format_error_message(message)
+            raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
         except (KeyboardInterrupt, SystemExit):
-            self._exit()
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def pull_lfs(self) -> None:
-        """Pull lfs files"""
+        """Pull lfs files
+
+        :raise ClowderError:
+        """
 
         try:
             self._print(' - Pull git lfs files')
             self.repo.git.lfs('pull')
         except GitError as err:
-            message = colored(' - Failed to pull git lfs files', 'red')
-            self._print(message)
-            self._print(fmt.error(err))
-            self._exit(message)
+            LOG_DEBUG('Git error', err)
+            message = f'{fmt.ERROR} Failed to pull git lfs files'
+            message = self._format_error_message(message)
+            raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
         except (KeyboardInterrupt, SystemExit):
-            self._exit()
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     @not_detached
     def push(self) -> None:
-        """Push changes"""
+        """Push changes
+
+        :raise ClowderError:
+        """
 
         try:
             self._print(' - Push local changes')
             print(self.repo.git.push())
         except GitError as err:
-            message = colored(' - Failed to push local changes', 'red')
-            self._print(message)
-            self._print(fmt.error(err))
-            self._exit(message)
+            LOG_DEBUG('Git error', err)
+            message = f'{fmt.ERROR} Failed to push local changes'
+            message = self._format_error_message(message)
+            raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
         except (KeyboardInterrupt, SystemExit):
-            self._exit()
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def sha(self, short: bool = False) -> str:
         """Return sha for currently checked out commit
@@ -440,23 +461,6 @@ class GitRepo(object):
             return self.repo.git.rev_parse(self.repo.head.commit.hexsha, short=True)
 
         return self.repo.head.commit.hexsha
-
-    # def sha_branch_remote(self, remote: str, branch: str) -> str:
-    #     """Return sha for remote branch
-    #
-    #     :param str remote: Remote name
-    #     :param str branch: Remote branch name
-    #     :return: Commit sha of remote branch
-    #     :rtype: str
-    #     """
-    #
-    #     command = "git --git-dir={0}.git rev-parse {1}/{2}".format(self.repo_path, remote, branch)
-    #     try:
-    #         execute_command(command, self.repo_path)
-    #     except ClowderError:
-    #         message = colored(' - Failed to get remote sha\n', 'red') + fmt.command_failed_error(command)
-    #         self._print(message)
-    #         self._exit(message)
 
     def stash(self) -> None:
         """Stash current changes in repository"""
@@ -480,6 +484,8 @@ class GitRepo(object):
         """Print git status
 
         Equivalent to: ``git status -vv``
+
+        :raise ClowderError:
         """
 
         command = 'git status -vv'
@@ -488,12 +494,12 @@ class GitRepo(object):
         try:
             print(self.repo.git.status('-vv'))
         except GitError as err:
-            message = colored(' - Failed to print verbose status', 'red')
-            self._print(message)
-            self._print(fmt.error(err))
-            self._exit(fmt.error(err))
+            LOG_DEBUG('Git error', err)
+            message = f'{fmt.ERROR} Failed to print verbose status'
+            message = self._format_error_message(message)
+            raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
         except (KeyboardInterrupt, SystemExit):
-            self._exit()
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def validate_repo(self) -> bool:
         """Validate repo state
@@ -508,7 +514,10 @@ class GitRepo(object):
         return not self.is_dirty()
 
     def _abort_rebase(self) -> None:
-        """Abort rebase"""
+        """Abort rebase
+
+        :raise ClowderError:
+        """
 
         if not self._is_rebase_in_progress():
             return
@@ -516,27 +525,29 @@ class GitRepo(object):
         try:
             self.repo.git.rebase('--abort')
         except GitError as err:
-            self._print(colored(' - Failed to abort rebase', 'red'))
-            self._print(fmt.error(err))
-            self._exit(fmt.error(err))
+            LOG_DEBUG('Git error', err)
+            message = f'{fmt.ERROR} Failed to abort rebase'
+            message = self._format_error_message(message)
+            raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
         except (KeyboardInterrupt, SystemExit):
-            self._exit()
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def _clean(self, args: str) -> None:
         """Clean git directory
 
         :param str args: Git clean args
+        :raise ClowderError:
         """
 
         try:
             self.repo.git.clean(args)
         except GitError as err:
-            message = colored(' - Failed to clean git repo', 'red')
-            self._print(message)
-            self._print(fmt.error(err))
-            self._exit(fmt.error(err))
+            LOG_DEBUG('Git error', err)
+            message = f'{fmt.ERROR} Failed to clean git repo'
+            message = self._format_error_message(message)
+            raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
         except (KeyboardInterrupt, SystemExit):
-            self._exit()
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     # def _existing_remote_tag(self, tag, remote, depth=0):
     #     """Check if remote tag exists
@@ -553,20 +564,16 @@ class GitRepo(object):
     #     self.fetch(remote, depth=depth, ref=tag, remove_dir=True)
     #     return tag in origin.tags
 
-    def _exit(self, message: str = '') -> None:
-        """Exit based on serial or parallel job
+    def _format_error_message(self, message: str) -> str:
+        """Format message based on whether clowder command was run serial or parallel
 
         :param str message: Error message
-
-        Raises:
-            ClowderGitError
-            ClowderExit
         """
 
         if self.parallel:
-            raise ClowderGitError(msg=fmt.error_parallel_exception(self.repo_path, message))
-
-        raise ClowderExit(1)
+            fmt.error_parallel_exception(self.repo_path, message)
+        else:
+            return message
 
     def _is_rebase_in_progress(self) -> bool:
         """Detect whether rebase is in progress
@@ -593,18 +600,19 @@ class GitRepo(object):
 
         :return: GitPython Repo instance
         :rtype: Repo
+        :raise ClowderError:
         """
 
         try:
             repo = Repo(self.repo_path)
         except GitError as err:
+            LOG_DEBUG('Git error', err)
             repo_path_output = fmt.path_string(self.repo_path)
-            message = colored(" - Failed to create Repo instance for ", 'red') + repo_path_output
-            self._print(message)
-            self._print(fmt.error(err))
-            self._exit(message)
+            message = f"{fmt.ERROR} Failed to create Repo instance for {repo_path_output}"
+            message = self._format_error_message(message)
+            raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
         except (KeyboardInterrupt, SystemExit):
-            self._exit()
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
         else:
             return repo
 
@@ -612,32 +620,33 @@ class GitRepo(object):
         """Reset head of repo, discarding changes
 
         :param Optional[str] branch: Branch to reset head to
+        :raise ClowderError:
         """
 
         if branch is None:
             try:
                 self.repo.head.reset(index=True, working_tree=True)
             except GitError as err:
+                LOG_DEBUG('Git error', err)
                 ref_output = fmt.ref_string('HEAD')
-                message = colored(' - Failed to reset ', 'red') + ref_output
-                self._print(message)
-                self._print(fmt.error(err))
-                self._exit(message)
+                message = f'{fmt.ERROR} Failed to reset {ref_output}'
+                message = self._format_error_message(message)
+                raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
             except (KeyboardInterrupt, SystemExit):
-                self._exit()
+                raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
             else:
                 return
 
         try:
             self.repo.git.reset('--hard', branch)
         except GitError as err:
+            LOG_DEBUG('Git error', err)
             branch_output = fmt.ref_string(branch)
-            message = colored(' - Failed to reset to ', 'red') + branch_output
-            self._print(message)
-            self._print(fmt.error(err))
-            self._exit(message)
+            message = f'{fmt.ERROR} Failed to reset to {branch_output}'
+            message = self._format_error_message(message)
+            raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
         except (KeyboardInterrupt, SystemExit):
-            self._exit()
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def _has_untracked_files(self) -> bool:
         """Check whether untracked files exist

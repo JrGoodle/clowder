@@ -9,9 +9,9 @@ from functools import wraps
 
 import clowder.clowder_repo as clowder_repo
 import clowder.util.formatting as fmt
-from clowder import CLOWDER_REPO_DIR
+from clowder import CLOWDER_REPO_DIR, LOG_DEBUG
 from clowder.clowder_controller import CLOWDER_CONTROLLER
-from clowder.error import ClowderExit, ClowderYAMLError, ClowderYAMLErrorType
+from clowder.error import ClowderError, ClowderErrorType
 
 
 def clowder_repo_required(func):
@@ -35,7 +35,8 @@ def print_clowder_name(func):
         """Wrapper"""
 
         if CLOWDER_CONTROLLER.name is not None:
-            print(fmt.clowder_name(f"{CLOWDER_CONTROLLER.name}\n"))
+            print(fmt.clowder_name(CLOWDER_CONTROLLER.name))
+            print()
         return func(*args, **kwargs)
 
     return wrapper
@@ -86,21 +87,21 @@ def _invalid_yaml_error(error: Exception):
     """Print invalid yaml message and raise exception
 
     :param Exception error: Exception raised during yaml validation/loading
-    :raise ClowderExit:
+    :raise ClowderError:
     """
 
-    print(fmt.error(error))
-    if isinstance(error, ClowderYAMLError):
-        raise ClowderExit(error.code)
-    raise ClowderExit(ClowderYAMLErrorType.UNKNOWN)
+    LOG_DEBUG('Invalid yaml', error)
+    if isinstance(error, ClowderError):
+        raise error
+    else:
+        raise ClowderError(ClowderErrorType.UNKNOWN, fmt.error(error))
 
 
 def _validate_clowder_repo_exists():
     """If clowder repo doesn't exist, print message and exit
 
-    :raise ClowderExit:
+    :raise ClowderError:
     """
 
     if CLOWDER_REPO_DIR is None:
-        print(f"{fmt.ERROR} No '.clowder' directory found")
-        raise ClowderExit(ClowderYAMLErrorType.MISSING_REPO)
+        raise ClowderError(ClowderErrorType.MISSING_REPO, fmt.error_missing_clowder_repo())

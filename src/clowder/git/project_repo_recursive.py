@@ -9,9 +9,10 @@ from pathlib import Path
 from typing import Optional
 
 from git import GitError
-from termcolor import colored
 
 import clowder.util.formatting as fmt
+from clowder.error import ClowderError, ClowderErrorType
+from clowder.logging import LOG_DEBUG
 
 from .project_repo import ProjectRepo
 
@@ -47,7 +48,7 @@ class ProjectRepoRecursive(ProjectRepo):
             - ``x`` Remove all untracked files
         """
 
-        ProjectRepo.clean(self, args=args)
+        super().clean(args=args)
 
         self._print(' - Clean submodules recursively')
         self._submodules_clean()
@@ -76,7 +77,7 @@ class ProjectRepoRecursive(ProjectRepo):
         :param bool rebase: Whether to use rebase instead of pulling latest changes
         """
 
-        ProjectRepo.herd(self, url, depth=depth, fetch=fetch, rebase=rebase)
+        super().herd(url, depth=depth, fetch=fetch, rebase=rebase)
         self.submodule_update_recursive(depth)
 
     def herd_branch(self, url: str, branch: str, depth: int = 0, rebase: bool = False,
@@ -90,7 +91,7 @@ class ProjectRepoRecursive(ProjectRepo):
         :param Optional[str] fork_remote: Fork remote name
         """
 
-        ProjectRepo.herd_branch(self, url, branch, depth=depth, rebase=rebase, fork_remote=fork_remote)
+        super().herd_branch(url, branch, depth=depth, rebase=rebase, fork_remote=fork_remote)
         self.submodule_update_recursive(depth)
 
     def herd_tag(self, url: str, tag: str, depth: int = 0, rebase: bool = False) -> None:
@@ -102,7 +103,7 @@ class ProjectRepoRecursive(ProjectRepo):
         :param bool rebase: Whether to use rebase instead of pulling latest changes
         """
 
-        ProjectRepo.herd_tag(self, url, tag, depth=depth, rebase=rebase)
+        super().herd_tag(url, tag, depth=depth, rebase=rebase)
         self.submodule_update_recursive(depth)
 
     def is_dirty_submodule(self, path: str) -> bool:
@@ -113,7 +114,7 @@ class ProjectRepoRecursive(ProjectRepo):
         :rtype: bool
         """
 
-        return not self.repo.is_dirty(path)
+        return self.repo.is_dirty(path)
 
     def submodule_update_recursive(self, depth: int = 0) -> None:
         """Update submodules recursively and initialize if not present
@@ -123,7 +124,7 @@ class ProjectRepoRecursive(ProjectRepo):
 
         self._print(' - Recursively update and init submodules')
 
-        error_message = ' - Failed to update submodules'
+        error_message = f'{fmt.ERROR} Failed to update submodules'
         if depth == 0:
             self._submodule_command('update', '--init', '--recursive',
                                     error_msg=error_message)
@@ -138,8 +139,11 @@ class ProjectRepoRecursive(ProjectRepo):
         :rtype: bool
         """
 
-        if not ProjectRepo.validate_repo(self):
+        if not super().validate_repo:
             return False
+
+        if self.repo is None:
+            return True
 
         return not any([self.is_dirty_submodule(s.path) for s in self.repo.submodules])
 
@@ -150,23 +154,23 @@ class ProjectRepoRecursive(ProjectRepo):
         """
 
         self._submodule_command('foreach', '--recursive', 'git', 'clean', '-ffdx',
-                                error_msg=' - Failed to clean submodules')
+                                error_msg=f'{fmt.ERROR} Failed to clean submodules')
 
     def _submodule_command(self, *args, error_msg: str) -> None:
         """Base submodule command
 
         :param str error_msg: Error message
+        :raise ClowderError:
         """
 
         try:
             self.repo.git.submodule(*args)
         except (GitError, ValueError) as err:
-            message = colored(error_msg, 'red')
-            self._print(message)
-            self._print(fmt.error(err))
-            self._exit(message)
+            LOG_DEBUG('Git error', err)
+            message = self._format_error_message(error_msg)
+            raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
         except (KeyboardInterrupt, SystemExit):
-            self._exit()
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def _submodules_reset(self) -> None:
         """Reset all submodules
@@ -175,7 +179,7 @@ class ProjectRepoRecursive(ProjectRepo):
         """
 
         self._submodule_command('foreach', '--recursive', 'git', 'reset', '--hard',
-                                error_msg=' - Failed to reset submodules')
+                                error_msg=f'{fmt.ERROR} Failed to reset submodules')
 
     def _submodules_update(self) -> None:
         """Update all submodules
@@ -184,4 +188,4 @@ class ProjectRepoRecursive(ProjectRepo):
         """
 
         self._submodule_command('update', '--checkout', '--recursive', '--force',
-                                error_msg=' - Failed to update submodules')
+                                error_msg=f'{fmt.ERROR} Failed to update submodules')

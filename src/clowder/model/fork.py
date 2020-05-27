@@ -10,7 +10,9 @@ from typing import Tuple
 
 from termcolor import colored
 
-from clowder import CLOWDER_DIR
+import clowder.util.formatting as fmt
+from clowder import CLOWDER_DIR, CLOWDER_YAML
+from clowder.error import ClowderError, ClowderErrorType
 from clowder.git import ProjectRepo
 from clowder.git.util import (
     existing_git_repository,
@@ -32,11 +34,13 @@ class Fork(object):
     :ivar str ref: Fork git ref
     """
 
-    def __init__(self, fork: dict, path: Path, recursive: bool, sources: Tuple[Source, ...], defaults: Defaults):
+    def __init__(self, fork: dict, path: Path, project_name: str, recursive: bool,
+                 sources: Tuple[Source, ...], defaults: Defaults):
         """Project __init__
 
         :param dict fork: Parsed YAML python object for fork
         :param Path path: Fork relative path
+        :param str project_name: Parent project name
         :param bool recursive: Whether to handle submodules
         :param Tuple[Source, ...] sources: List of Source instances
         :param Defaults defaults: Defaults instance
@@ -68,6 +72,9 @@ class Fork(object):
         for s in sources:
             if s.name == source_name:
                 self._source = s
+        if self._source is None:
+            message = fmt.error_source_not_found(source_name, CLOWDER_YAML, project_name, self.name)
+            raise ClowderError(ClowderErrorType.CLOWDER_YAML_SOURCE_NOT_FOUND, message)
 
     def full_path(self) -> Path:
         """Return full path to project

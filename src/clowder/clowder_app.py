@@ -14,18 +14,17 @@ import argcomplete
 import colorama
 
 import clowder.cli as cmd
-from clowder import LOG_DEBUG
-from clowder.error import ClowderConfigYAMLError, ClowderExit
+from clowder.error import ClowderError, ClowderErrorType
+from clowder.logging import LOG_DEBUG
 
 
 class ClowderArgumentParser(argparse.ArgumentParser):
+    """Custom argument parser subclass"""
 
     def error(self, message):
-        # Make sure mp pool is closed
         argparse.ArgumentParser.error(self, message)
 
     def exit(self, status=0, message=None):
-        # Make sure mp pool is closed
         if message is not None:
             message = f"{message}\n"
         else:
@@ -34,6 +33,12 @@ class ClowderArgumentParser(argparse.ArgumentParser):
 
 
 def create_parsers() -> ClowderArgumentParser:
+    """Clowder command CLI main function
+
+    :return: Configured argument parser for clowder command
+    :rtype: ClowderArgumentParser
+    """
+
     parser = ClowderArgumentParser(prog='clowder')
     version_message = f"clowder version {pkg_resources.require('clowder-repo')[0].version}"
     arguments = [
@@ -75,26 +80,28 @@ def main() -> None:
         if 'projects' in args:
             if isinstance(args.projects, str):
                 args.projects = [args.projects]
-        args.func(args) # noqa
-    except ClowderExit as err:
-        LOG_DEBUG('ClowderExit exception', err)
+        args.func(args)
+    except ClowderError as err:
+        LOG_DEBUG('** ClowderError **', err)
+        print(err)
         print()
-        exit(err.code)
-    except ClowderConfigYAMLError as err:
-        print(err.message)
-        LOG_DEBUG('ClowderConfigYAMLError exception', err)
-        print()
-        exit(err.code)
+        if err.exit_code is not None:
+            exit(err.exit_code)
+        else:
+            exit(err.error_type.value)
     except AttributeError as err:
-        LOG_DEBUG('AttributeError exception', err)
+        LOG_DEBUG('** AttributeError exception **', err)
+        print(err)
         if parser is not None:
             parser.print_help()
         print()
-        exit(1)
-    except Exception as err: # noqa
-        LOG_DEBUG('Unhandled generic exception', err)
+        exit(ClowderErrorType.UNKNOWN.value)
+    except Exception as err:
+        LOG_DEBUG('** Unhandled generic exception **', err)
         print()
-        exit(1)
+        exit(ClowderErrorType.UNKNOWN.value)
+    else:
+        print()
 
 
 if __name__ == '__main__':

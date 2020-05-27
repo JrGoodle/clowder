@@ -27,7 +27,6 @@ setup(
     packages=['clowder',
               'clowder.cli',
               'clowder.config',
-              'clowder.error',
               'clowder.git',
               'clowder.model',
               'clowder.util'],

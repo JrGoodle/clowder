@@ -5,20 +5,18 @@
 
 """
 
+from pathlib import Path
 from typing import Tuple
 
 import clowder.util.formatting as fmt
-from clowder import CLOWDER_YAML
-from clowder.error import (
-    ClowderExit,
-    ClowderYAMLError, ClowderYAMLErrorType
-)
+from clowder import CLOWDER_DIR, CLOWDER_YAML
+from clowder.error import ClowderError, ClowderErrorType
 from clowder.model import Defaults, Project, Source
 from clowder.model.util import (
     print_parallel_projects_output,
     validate_project_statuses
 )
-from clowder.util.yaml import load_clowder_yaml, validate_clowder_yaml
+from clowder.util.yaml import load_yaml_file, validate_yaml_file
 
 
 class ClowderController(object):
@@ -37,7 +35,7 @@ class ClowderController(object):
     def __init__(self):
         """ClowderController __init__
 
-        :raise ClowderExit:
+        :raise ClowderError:
         """
 
         self.error = None
@@ -52,14 +50,14 @@ class ClowderController(object):
 
         try:
             if CLOWDER_YAML is None:
-                raise ClowderYAMLError(fmt.error_missing_clowder_yaml(), ClowderYAMLErrorType.MISSING_YAML)
-            yaml = load_clowder_yaml()
-            validate_clowder_yaml(yaml)
+                raise ClowderError(ClowderErrorType.YAML_MISSING_FILE, fmt.error_missing_clowder_yaml())
+            yaml = load_yaml_file(CLOWDER_YAML, CLOWDER_DIR)
+            validate_yaml_file(yaml, CLOWDER_YAML)
             self._load_clowder_yaml(yaml)
-        except ClowderYAMLError as err:
+        except ClowderError as err:
             self.error = err
         except (KeyboardInterrupt, SystemExit):
-            raise ClowderExit(1)
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def get_all_fork_project_names(self) -> Tuple[str, ...]:
         """Returns all project names containing forks
@@ -73,7 +71,8 @@ class ClowderController(object):
         except TypeError:
             return ()
 
-    def get_project_paths(self, projects: Tuple[Project, ...]) -> Tuple[str, ...]: # noqa
+    @staticmethod
+    def get_project_paths(projects: Tuple[Project, ...]) -> Tuple[str, ...]:
         """Returns all project paths for specified projects
 
         :param Tuple[Project, ...] projects: Projects to get paths of
@@ -92,7 +91,7 @@ class ClowderController(object):
         :param str timestamp_project: Project to get timestamp of current HEAD commit
         :return: Commit timestamp string
         :rtype: str
-        :raise ClowderExit:
+        :raise ClowderError:
         """
 
         timestamp = None
@@ -101,8 +100,7 @@ class ClowderController(object):
                 timestamp = project.get_current_timestamp()
 
         if timestamp is None:
-            print(fmt.error_timestamp_not_found())
-            raise ClowderExit(1)
+            raise ClowderError(ClowderErrorType.GIT_ERROR, fmt.error_timestamp_not_found())
 
         return timestamp
 
@@ -124,7 +122,8 @@ class ClowderController(object):
                 'sources': [s.get_yaml() for s in self.sources],
                 'projects': projects}
 
-    def validate_print_output(self, projects: Tuple[Project, ...]) -> None: # noqa
+    @staticmethod
+    def validate_print_output(projects: Tuple[Project, ...]) -> None:
         """Validate projects/groups and print output
 
         :param Tuple[Project, ...] projects: Projects to validate/print
@@ -136,7 +135,7 @@ class ClowderController(object):
     def validate_projects_exist(self) -> None:
         """Validate all projects exist on disk
 
-        :raise ClowderExit:
+        :raise ClowderError:
         """
 
         projects_exist = True
@@ -146,8 +145,7 @@ class ClowderController(object):
                 projects_exist = False
 
         if not projects_exist:
-            print(f"\n - First run {fmt.clowder_command('clowder herd')} to clone missing projects\n")
-            raise ClowderExit(1)
+            raise ClowderError(ClowderErrorType.INVALID_PROJECT_STATUS, fmt.error_clone_missing_projects())
 
     def _get_all_project_names(self) -> Tuple[str, ...]:
         """Returns all project names for current clowder yaml file
@@ -172,8 +170,20 @@ class ClowderController(object):
             self.defaults = Defaults(yaml['defaults'])
             self.sources = tuple(sorted([Source(s, self.defaults) for s in yaml['sources']],
                                         key=lambda source: source.name))
+
+            if not any([s.name == self.defaults.source for s in self.sources]):
+                message = fmt.error_source_default_not_found(self.defaults.source, CLOWDER_YAML)
+                raise ClowderError(ClowderErrorType.CLOWDER_YAML_SOURCE_NOT_FOUND, message)
+
             self.projects = tuple(sorted([Project(p, self.defaults, self.sources) for p in yaml['projects']],
                                          key=lambda project: project.name))
+            # Validate projects don't share share directories
+            paths = [str(p.path.resolve()) for p in self.projects]
+            duplicate = fmt.check_for_duplicates(paths)
+            if duplicate is not None:
+                message = fmt.error_duplicate_project_path(Path(duplicate), CLOWDER_YAML)
+                raise ClowderError(ClowderErrorType.CLOWDER_YAML_DUPLICATE_PATH, message)
+
             self.project_names = self._get_all_project_names()
             names = list(self.project_names)
             self.project_choices = tuple(sorted(set(names)))
@@ -189,7 +199,7 @@ class ClowderController(object):
             self.project_choices_with_default = ('default',)
             self.error = err
         except (KeyboardInterrupt, SystemExit):
-            raise ClowderExit(1)
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
 
 CLOWDER_CONTROLLER: ClowderController = ClowderController()

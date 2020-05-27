@@ -8,12 +8,8 @@
 from pathlib import Path
 from typing import Optional, Tuple
 
-# noinspection PyPackageRequirements
-import yaml
 from termcolor import colored
 from typing import List, Union
-
-from clowder.error import ClowderExit
 
 
 ERROR = colored(' - Error:', 'red')
@@ -94,6 +90,26 @@ def error_ambiguous_clowder_yaml() -> str:
     return f"\n{ERROR} Found {yml_file} and {yaml_file} files in same directory"
 
 
+def error_clone_missing_projects() -> str:
+    """Format error message for clone missing projects
+
+    :return: Formatted error message for clone missing projects
+    :rtype: str
+    """
+
+    return f"{ERROR} First run {clowder_command('clowder herd')} to clone missing projects"
+
+
+def error_clowder_already_initialized() -> str:
+    """Format error message for clowder already initialized
+
+    :return: Formatted message for clowder already initialized error
+    :rtype: str
+    """
+
+    return f"{ERROR} Clowder already initialized in this directory"
+
+
 def error_command_failed(cmd: Union[str, List[str]]) -> str:
     """Format error message for failed command
 
@@ -103,6 +119,18 @@ def error_command_failed(cmd: Union[str, List[str]]) -> str:
     """
 
     return f"{ERROR} Failed to run command {command(cmd)}"
+
+
+def error_directory_exists(dir_path: Path) -> str:
+    """Format error message for already existing directory
+
+    :param Path dir_path: Directory path
+    :return: Formatted directory exists error
+    :rtype: str
+    """
+
+    dir_path = path_string(dir_path)
+    return f"{ERROR} Directory already exists {dir_path}"
 
 
 def error_duplicate_version(version: str) -> str:
@@ -125,7 +153,10 @@ def error_duplicate_project_path(path: Path, yml: Path) -> str:
     :rtype: str
     """
 
-    return f"{_yaml_path(yml)}\n{ERROR} Multiple projects with path '{path}'"
+    messages = [error_invalid_yaml_file(yml.name),
+                f"{ERROR} {_yaml_path(yml)}",
+                f"{ERROR} Multiple projects with path '{path}'"]
+    return "\n".join(messages)
 
 
 def error_empty_yaml(yml: Path, name: Path) -> str:
@@ -142,16 +173,62 @@ def error_empty_yaml(yml: Path, name: Path) -> str:
     return f"{path}\n{ERROR} No entries in {file}"
 
 
-def error_file_exists(path: Path) -> str:
+def error_failed_clowder_init() -> str:
+    """Format error message for failed clowder init
+
+    :return: Formatted failed clowder init error
+    :rtype: str
+    """
+
+    return f"{ERROR} Failed to initialize clowder repo"
+
+
+def error_failed_create_directory(dir_path: Path) -> str:
+    """Format error message for failing to create directory
+
+    :param Path dir_path: Directory path to create
+    :return: Formatted create directory error
+    :rtype: str
+    """
+
+    dir_path = path_string(dir_path)
+    return f"{ERROR} Failed to create directory {dir_path}"
+
+
+def error_failed_remove_directory(dir_path: Path) -> str:
+    """Format error message for failing to remove directory
+
+    :param Path dir_path: Directory path to remove
+    :return: Formatted remove directory error
+    :rtype: str
+    """
+
+    dir_path = path_string(dir_path)
+    return f"{ERROR} Failed to remove directory {dir_path}"
+
+
+def error_failed_remove_file(file_path: Path) -> str:
+    """Format error message for failing to remove file
+
+    :param Path file_path: File path
+    :return: Formatted remove file error
+    :rtype: str
+    """
+
+    file_path = path_string(file_path)
+    return f"{ERROR} Failed to remove file {file_path}"
+
+
+def error_file_exists(file_path: Path) -> str:
     """Format error message for already existing file
 
-    :param Path path: File path name
+    :param Path file_path: File path name
     :return: Formatted file exists error
     :rtype: str
     """
 
-    file = path_string(path)
-    return f"{ERROR} File already exists {file}"
+    file_path = path_string(file_path)
+    return f"{ERROR} File already exists {file_path}"
 
 
 def error_groups_contains_all(yml: Path) -> str:
@@ -166,6 +243,28 @@ def error_groups_contains_all(yml: Path) -> str:
     return f"{path}\n{ERROR} 'groups' cannot contain 'all'"
 
 
+def error_invalid_config_file(file_path: Path) -> str:
+    """Return error message for invalid config file
+
+    :param Path file_path: Invalid config file path
+    :return: Formatted invalid config file error
+    :rtype: str
+    """
+
+    file = _yaml_file(file_path)
+    return f"{ERROR} {file}\n{ERROR} Clowder config file appears to be invalid"
+
+
+def error_invalid_project_state() -> str:
+    """Format error message for invalid project state
+
+    :return: Formatted error message for invalid project state
+    :rtype: str
+    """
+
+    return f"{ERROR} Invalid project state"
+
+
 def error_invalid_ref(ref: str, yml: Path) -> str:
     """Return formatted error string for incorrect ref
 
@@ -176,7 +275,7 @@ def error_invalid_ref(ref: str, yml: Path) -> str:
     """
 
     path = _yaml_path(yml)
-    return f"{path}\n{ERROR} 'ref' value '{ref}' is not formatted correctly"
+    return f"{ERROR} {path}\n{ERROR} 'ref' value '{ref}' is not formatted correctly"
 
 
 def error_invalid_yaml_file(name: str) -> str:
@@ -188,7 +287,17 @@ def error_invalid_yaml_file(name: str) -> str:
     """
 
     file = _yaml_file(Path(name))
-    return f"{file} appears to be invalid"
+    return f"{ERROR} {file} appears to be invalid"
+
+
+def error_missing_clowder_repo() -> str:
+    """Format error message for missing clowder repo
+
+    :return: Formatted missing clowder repo
+    :rtype: str
+    """
+
+    return f"{ERROR} No '.clowder' directory found"
 
 
 def error_missing_clowder_yaml() -> str:
@@ -199,8 +308,31 @@ def error_missing_clowder_yaml() -> str:
     """
 
     clowder_file = Path('clowder.yml')
-    file = _yaml_file(clowder_file)
-    return f"{file} appears to be missing"
+    return error_missing_file(clowder_file)
+
+
+def error_missing_file(yaml_file: Path) -> str:
+    """Format error message for missing linked clowder yaml file
+
+    :param Path yaml_file: Path to missing yaml file
+    :return: Formatted missing YAML error
+    :rtype: str
+    """
+
+    file = _yaml_file(yaml_file)
+    return f"{ERROR} {file} appears to be missing"
+
+
+def error_no_clowder_found(dir_path: Path) -> str:
+    """Format error message for no clowder found
+
+    :param Path dir_path: Missing clowder directory path
+    :return: Formatted no clowder found error
+    :rtype: str
+    """
+
+    dir_path = path_string(dir_path)
+    return f"{ERROR} No clowder found at {dir_path}"
 
 
 def error_offline() -> str:
@@ -225,17 +357,37 @@ def error_open_file(path: Path) -> str:
     return f"{ERROR} Failed to open file '{path}'"
 
 
-def error_parallel_exception(path: Path, *args) -> str:
+def error_parallel_command_failed() -> str:
+    """Return formatted error string for parallel command failed
+
+    :return: Formatted parallel command failed error
+    :rtype: str
+    """
+
+    return f"{ERROR} Parallel command failed"
+
+
+def error_parallel_commands_unavailable() -> str:
+    """Return formatted error string for parallel command unavailable
+
+    :return: Formatted parallel command unavailable error
+    :rtype: str
+    """
+
+    return f'{ERROR} Parallel commands are only available on posix operating systems'
+
+
+def error_parallel_exception(file_path: Path, *args) -> str:
     """Return formatted error string for parallel error
 
-    :param Path path: Clowder file path
+    :param Path file_path: Clowder file path
     :param args: Method arguments
     :return: Formatted parallel exception error
     :rtype: str
     """
 
-    path = path_string(path)
-    return f"{path}\n{''.join(args)}"
+    file_path = path_string(file_path)
+    return f"{ERROR} {file_path}\n{ERROR} {''.join(args)}"
 
 
 def error_remote_already_exists(remote_name: str, remote_url: str, actual_url: str) -> str:
@@ -264,8 +416,10 @@ def error_remote_dup(fork: str, project: str, remote: str, yml: Path) -> str:
     :rtype: str
     """
 
-    path = _yaml_path(yml)
-    return f"{path}\n{ERROR} fork '{fork}' and project '{project}' have same remote name '{remote}'"
+    messages = [error_invalid_yaml_file(yml.name),
+                f"{ERROR} {_yaml_path(yml)}",
+                f"{ERROR} fork '{fork}' and project '{project}' have same remote name '{remote}'"]
+    return "\n".join(messages)
 
 
 def error_save_default(name: str) -> str:
@@ -279,16 +433,16 @@ def error_save_default(name: str) -> str:
     return f"{ERROR} Version name '{name}' is not allowed"
 
 
-def error_save_file(path: Path) -> str:
+def error_save_file(file_path: Path) -> str:
     """Format error message for failing to save file
 
-    :param Path path: File path
+    :param Path file_path: File path
     :return: Formatted save failure error
     :rtype: str
     """
 
-    path = path_string(path)
-    return f"{ERROR} Failed to save file {path}"
+    file_path = path_string(file_path)
+    return f"{ERROR} Failed to save file {file_path}"
 
 
 def error_save_version_exists(version_name: str, yml: Path) -> str:
@@ -302,7 +456,7 @@ def error_save_version_exists(version_name: str, yml: Path) -> str:
 
     file = _yaml_file(yml)
     version = version_string(version_name)
-    return f"{ERROR} Version '{version}' already exists\n{file}"
+    return f"{ERROR} {file}\n{ERROR} Version '{version}' already exists"
 
 
 def error_source_default_not_found(source: str, yml: Path) -> str:
@@ -314,7 +468,11 @@ def error_source_default_not_found(source: str, yml: Path) -> str:
     :rtype: str
     """
 
-    return f"{_yaml_path(yml)}\n{ERROR} source '{source}' not found in 'defaults'"
+    error_invalid_yaml_file(yml.name)
+    messages = [error_invalid_yaml_file(yml.name),
+                f"{ERROR} {_yaml_path(yml)}",
+                f"{ERROR} source '{source}' not found in 'defaults'"]
+    return "\n".join(messages)
 
 
 def error_source_not_found(source: str, yml: Path, project: str, fork: Optional[str] = None) -> str:
@@ -332,8 +490,10 @@ def error_source_not_found(source: str, yml: Path, project: str, fork: Optional[
     if fork:
         fork_output = f" for fork '{fork}'"
 
-    path = _yaml_path(yml)
-    return f"{path}\n{ERROR} source '{source}'{fork_output} specified in project '{project}' not found in 'sources'"
+    messages = [error_invalid_yaml_file(yml.name),
+                f"{ERROR} {_yaml_path(yml)}",
+                f"{ERROR} source '{source}'{fork_output} specified in project '{project}' not found in 'sources'"]
+    return "\n".join(messages)
 
 
 def error_timestamp_not_found() -> str:
@@ -343,6 +503,37 @@ def error_timestamp_not_found() -> str:
     :rtype: str
     """
     return f"{ERROR} Failed to find timestamp\n"
+
+
+def error_unknown_config_type() -> str:
+    """Format error message for unknown config type
+
+    :return: Formatted error message for unknown config type
+    :rtype: str
+    """
+
+    return f"{ERROR} Unknown config type"
+
+
+def error_unknown_project(name: str) -> str:
+    """Return formatted unknown project name error
+
+    :param str name: Project name
+    :return: Formatted unknown project name error
+    :rtype: str
+    """
+
+    return f"{ERROR} Unknown project {_project_name(name)}"
+
+
+def error_user_interrupt() -> str:
+    """Format error message for user interrupt
+
+    :return: Formatted user interrupt
+    :rtype: str
+    """
+
+    return f"{ERROR} User interruption"
 
 
 def fork_string(name: str) -> str:
@@ -459,22 +650,15 @@ def version_string(version_name: str) -> str:
     return colored(version_name, attrs=['bold'])
 
 
-def yaml_string(yaml_output: dict) -> str:
-    """Return yaml string from python data structures
+def _project_name(name: str) -> str:
+    """Return formatted string for project name
 
-    :param dict yaml_output: YAML python object
-    :return: YAML as a string
+    :param str name: Project name
+    :return: Formatted project name
     :rtype: str
-    :raise ClowderExit:
     """
 
-    try:
-        return yaml.safe_dump(yaml_output, default_flow_style=False, indent=4)
-    except yaml.YAMLError:
-        print(f"{ERROR} Failed to dump yaml file contents")
-        raise ClowderExit(1)
-    except (KeyboardInterrupt, SystemExit):
-        raise ClowderExit(1)
+    return colored(name, 'green')
 
 
 def _yaml_path(yml: Path) -> str:

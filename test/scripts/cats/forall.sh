@@ -58,6 +58,14 @@ test_forall_command() {
     begin_command
     $COMMAND forall $PARALLEL -ic 'exit 1' || exit 1
     end_command
+    echo "TEST: Check exit code from forall command"
+    begin_command
+    $COMMAND forall $PARALLEL -c 'exit 150'
+    local exit_code="$?"
+    end_command
+    if [ "$exit_code" != '150' ]; then
+        exit 1
+    fi
 }
 test_forall_command 'cats'
 

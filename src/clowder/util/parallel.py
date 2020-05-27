@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Clowder parallel commands
+"""Clowder parallel command
 
 .. codeauthor:: Joe Decapo <joe@polka.cat>
 
@@ -15,7 +15,8 @@ from termcolor import cprint
 
 import clowder.util.formatting as fmt
 from clowder.clowder_controller import CLOWDER_CONTROLLER
-from clowder.error import ClowderExit
+from clowder.error import ClowderError, ClowderErrorType
+from clowder.logging import LOG_DEBUG
 from clowder.model import Project
 
 from .progress import Progress
@@ -88,7 +89,7 @@ if os.name == "posix":
                     child.terminate()
             parent.terminate()
             psutil.Process(os.getpid()).terminate()
-            print('\n\n')
+            print()
 
         signal.signal(signal.SIGINT, sig_int)
 
@@ -100,7 +101,8 @@ if os.name == "posix":
         :param bool ignore_errors: Whether to exit if command returns a non-zero exit code
         """
 
-        print(' - Run forall commands in parallel\n')
+        print(' - Run forall commands in parallel')
+        print()
         for project in projects:
             print(project.status())
             if not project.full_path().is_dir():
@@ -132,7 +134,8 @@ if os.name == "posix":
         :param bool rebase: Whether to use rebase instead of pulling latest changes
         """
 
-        print(' - Herd projects in parallel\n')
+        print(' - Herd projects in parallel')
+        print()
         CLOWDER_CONTROLLER.validate_print_output(projects)
 
         global __clowder_pool__
@@ -155,7 +158,8 @@ if os.name == "posix":
         :param Optional[str] timestamp_project: Reference project to checkout other project commit timestamps relative to # noqa
         """
 
-        print(' - Reset projects in parallel\n')
+        print(' - Reset projects in parallel')
+        print()
         CLOWDER_CONTROLLER.validate_print_output(projects)
 
         timestamp = None
@@ -179,7 +183,7 @@ if os.name == "posix":
         """Pool handler for finishing parallel jobs
 
         :param int count: Total count of projects in progress bar
-        :raise ClowderExit:
+        :raise ClowderError:
         """
 
         print()
@@ -188,18 +192,18 @@ if os.name == "posix":
         try:
             for result in __clowder_results__:
                 result.get()
-                if not result.successful():
-                    __clowder_progress__.close()
-                    __clowder_pool__.close()
-                    __clowder_pool__.terminate()
-                    cprint('\n - Command failed\n', 'red')
-                    raise ClowderExit(1)
-        except Exception as err:
+        except ClowderError as err:
+            LOG_DEBUG('ClowderErro pool handler exception', err)
             __clowder_progress__.close()
             __clowder_pool__.close()
             __clowder_pool__.terminate()
-            cprint(f'\n{str(err)}\n', 'red')
-            raise ClowderExit(1)
+            raise
+        except Exception as err:
+            LOG_DEBUG('Generic pool handler exception', err)
+            __clowder_progress__.close()
+            __clowder_pool__.close()
+            __clowder_pool__.terminate()
+            raise ClowderError(ClowderErrorType.PARALLEL_COMMAND_FAILED, fmt.error_parallel_command_failed())
         else:
             __clowder_progress__.complete()
             __clowder_progress__.close()
@@ -209,15 +213,16 @@ else:
     def forall_parallel(commands: List[str], ignore_errors: bool, projects: Tuple[Project, ...]) -> None: # noqa
         """Stub for non-posix forall parallel command"""
 
-        print(' - Parallel commands are only available on posix operating systems\n')
+        ClowderError(ClowderErrorType.PARALLEL_COMMAND_UNAVAILABLE, fmt.error_parallel_commands_unavailable())
+
 
     def herd_parallel(projects: Tuple[Project, ...], branch: Optional[str] = None, # noqa
                       tag: Optional[str] = None, depth: Optional[int] = None, rebase: bool = False) -> None: # noqa
         """Stub for non-posix herd parallel command"""
 
-        print(' - Parallel commands are only available on posix operating systems\n')
+        ClowderError(ClowderErrorType.PARALLEL_COMMAND_UNAVAILABLE, fmt.error_parallel_commands_unavailable())
 
     def reset_parallel(projects: Tuple[Project, ...], timestamp_project: Optional[str] = None) -> None: # noqa
         """Stub for non-posix reset parallel command"""
 
-        print(' - Parallel commands are only available on posix operating systems\n')
+        ClowderError(ClowderErrorType.PARALLEL_COMMAND_UNAVAILABLE, fmt.error_parallel_commands_unavailable())

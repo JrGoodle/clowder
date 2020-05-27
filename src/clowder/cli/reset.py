@@ -28,6 +28,10 @@ from .util import add_parser_arguments
 
 
 def add_reset_parser(subparsers: argparse._SubParsersAction): # noqa
+    """Add clowder reset parser
+
+    :param argparse._SubParsersAction subparsers: Subparsers action to add parser to
+    """
 
     arguments = [
         (['projects'], dict(metavar='PROJECT', default='default', nargs='*',

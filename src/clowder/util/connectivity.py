@@ -9,7 +9,7 @@ import socket
 from functools import wraps
 
 import clowder.util.formatting as fmt
-from clowder.error import ClowderExit
+from clowder.error import ClowderError, ClowderErrorType
 
 
 def is_offline(host: str = '8.8.8.8', port: int = 53, timeout: int = 3) -> bool:
@@ -24,7 +24,7 @@ def is_offline(host: str = '8.8.8.8', port: int = 53, timeout: int = 3) -> bool:
     :param int timeout: Seconds to wait until timeout
     :return: True, if offline
     :rtype: bool
-    :raise ClowderExit:
+    :raise ClowderError:
     """
 
     try:
@@ -34,7 +34,7 @@ def is_offline(host: str = '8.8.8.8', port: int = 53, timeout: int = 3) -> bool:
     except socket.error:
         return True
     except (KeyboardInterrupt, SystemExit):
-        raise ClowderExit(1)
+        raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
 
 def network_connection_required(func):
@@ -44,12 +44,11 @@ def network_connection_required(func):
     def wrapper(*args, **kwargs):
         """Wrapper
 
-        :raise ClowderExit:
+        :raise ClowderError:
         """
 
         if is_offline():
-            print(fmt.error_offline())
-            raise ClowderExit(1)
+            raise ClowderError(ClowderErrorType.OFFLINE, fmt.error_offline())
         return func(*args, **kwargs)
 
     return wrapper

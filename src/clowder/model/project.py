@@ -12,8 +12,8 @@ from typing import List, Optional, Tuple
 from termcolor import colored, cprint
 
 import clowder.util.formatting as fmt
-from clowder import CLOWDER_DIR
-from clowder.error import ClowderError, ClowderExit
+from clowder import CLOWDER_DIR, CLOWDER_YAML, LOG_DEBUG
+from clowder.error import ClowderError, ClowderErrorType
 from clowder.git import ProjectRepo, ProjectRepoRecursive
 from clowder.git.util import (
     existing_git_repository,
@@ -64,7 +64,6 @@ class Project(object):
         :param dict project: Parsed YAML python object for project
         :param Defaults defaults: Defaults instance
         :param Tuple[Source, ...] sources: List of Source instances
-        :raise ClowderYAMLError:
         """
 
         self.name = project['name']
@@ -98,11 +97,17 @@ class Project(object):
             if source.name == source_name:
                 self.source = source
                 break
+        if self.source is None:
+            message = fmt.error_source_not_found(source_name, CLOWDER_YAML, self.name)
+            raise ClowderError(ClowderErrorType.CLOWDER_YAML_SOURCE_NOT_FOUND, message)
 
         self.fork = None
         if 'fork' in project:
             fork = project['fork']
-            self.fork = Fork(fork, self.path, self.recursive, sources, defaults)
+            self.fork = Fork(fork, self.path, self.name, self.recursive, sources, defaults)
+            if self.remote == self.fork.remote:
+                message = fmt.error_remote_dup(self.fork.name, self.name, self.remote, CLOWDER_YAML)
+                raise ClowderError(ClowderErrorType.CLOWDER_YAML_DUPLICATE_REMOTE_NAME, message)
 
         groups = ['all', self.name, str(Path(self.name).name), str(self.path)]
         custom_groups = project.get('groups', None)
@@ -485,7 +490,7 @@ class Project(object):
             forall_env['FORK_REF'] = self.fork.ref
 
         for cmd in commands:
-            self._run_forall_command(cmd, forall_env, ignore_errors, parallel)
+            self._run_forall_command(cmd, forall_env, ignore_errors)
 
     @project_repo_exists
     def start(self, branch: str, tracking: bool) -> None:
@@ -527,6 +532,8 @@ class Project(object):
         if self.is_dirty():
             repo = ProjectRepo(self.full_path(), self.remote, self.ref)
             repo.stash()
+        else:
+            print(" - No changes to stash")
 
     def _pull_lfs(self, repo: ProjectRepo) -> None:
         """Check if git lfs is installed and if not install them
@@ -562,29 +569,22 @@ class Project(object):
             return ProjectRepoRecursive(self.full_path(), self.remote, self.ref, parallel=parallel)
         return ProjectRepo(self.full_path(), self.remote, self.ref, parallel=parallel)
 
-    def _run_forall_command(self, command: str, env: dict, ignore_errors: bool, parallel: bool) -> None:
+    def _run_forall_command(self, command: str, env: dict, ignore_errors: bool) -> None:
         """Run command or script in project directory
 
         :param str command: Command to run
         :param dict env: Environment variables
         :param bool ignore_errors: Whether to exit if command returns a non-zero exit code
-        :param bool parallel: Whether command is being run in parallel, affects output
-
-        Raises:
-            ClowderError
-            ClowderExit
+        :raise ClowderError:
         """
 
         self._print(fmt.command(command))
         try:
             execute_forall_command(command, self.full_path(), env, self._print_output)
-        except ClowderError:
+        except ClowderError as err:
+            LOG_DEBUG('Execute command failed', err)
             if not ignore_errors:
-                err = fmt.error_command_failed(command)
-                self._print(err)
-                if parallel:
-                    raise ClowderError(err)
-                raise ClowderExit(1)
+                raise
 
     def _url(self) -> str:
         """Return project url"""
