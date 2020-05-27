@@ -192,13 +192,14 @@ if os.name == "posix":
         try:
             for result in __clowder_results__:
                 result.get()
-                if not result.successful():
-                    __clowder_progress__.close()
-                    __clowder_pool__.close()
-                    __clowder_pool__.terminate()
-                    raise ClowderError(ClowderErrorType.PARALLEL_COMMAND_FAILED, fmt.error_parallel_command_failed())
+        except ClowderError as err:
+            LOG_DEBUG('ClowderErro pool handler exception', err)
+            __clowder_progress__.close()
+            __clowder_pool__.close()
+            __clowder_pool__.terminate()
+            raise
         except Exception as err:
-            LOG_DEBUG('Pool handler exception', err)
+            LOG_DEBUG('Generic pool handler exception', err)
             __clowder_progress__.close()
             __clowder_pool__.close()
             __clowder_pool__.terminate()

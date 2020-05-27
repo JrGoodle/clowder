@@ -85,7 +85,10 @@ def main() -> None:
         LOG_DEBUG('** ClowderError **', err)
         print(err)
         print()
-        exit(err.error_type.value)
+        if err.exit_code is not None:
+            exit(err.exit_code)
+        else:
+            exit(err.error_type.value)
     except AttributeError as err:
         LOG_DEBUG('** AttributeError exception **', err)
         print(err)

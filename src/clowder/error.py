@@ -5,6 +5,7 @@
 
 """
 
+import copy
 from enum import IntEnum, unique
 from typing import List, Optional, Union
 
@@ -69,13 +70,14 @@ class ClowderError(Exception):
     :ivar Tuple[Group, ...] groups: List of all Groups
     """
 
-    def __init__(self, error_type: ClowderErrorType,
-                 messages: Union[str, List[str]], error: Optional[Exception] = None):
+    def __init__(self, error_type: ClowderErrorType, messages: Union[str, List[str]],
+                 error: Optional[Exception] = None, exit_code: Optional[int] = None):
         """ClowderError __init__
 
         :param ClowderErrorType error_type: Clowder error type
         :param Union[str, List[str]] messages: Error message
         :param Optional[Exception] error: Optional error to print
+        :param Optional[int] exit_code: Custom error code
         """
 
         if isinstance(messages, str):
@@ -84,9 +86,10 @@ class ClowderError(Exception):
             self.messages = messages
         self.error_type = error_type
         self.error = error
+        self.exit_code = exit_code
 
     def __str__(self):
-        messages = self.messages
+        messages = copy.deepcopy(self.messages)
         if self.error is not None:
             messages.append(fmt.error(self.error))
         return "\n".join(messages)
