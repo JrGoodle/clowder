@@ -37,7 +37,8 @@ def add_herd_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
                             choices=CLOWDER_CONTROLLER.project_choices_with_default,
                             help=fmt.options_help_message(CLOWDER_CONTROLLER.project_choices,
                                                           'projects and groups to show branches for'))),
-        (['--parallel', '-p'], dict(action='store_true', help='run commands in parallel')),
+        (['--jobs', '-j'], dict(metavar='JOBS', nargs=1, default=None, type=int,
+                                help='number of jobs to use runnning commands in parallel')),
         (['--rebase', '-r'], dict(action='store_true', help='use rebase instead of pull')),
         (['--depth', '-d'], dict(default=None, type=int, nargs=1, metavar='DEPTH', help='depth to herd'))
     ]
@@ -72,14 +73,20 @@ def herd(args) -> None:
     rebase_config = config.current_clowder_config.rebase
     rebase = rebase_config if rebase_config is not None else rebase
 
-    parallel_config = config.current_clowder_config.parallel
-    parallel = parallel_config if parallel_config is not None else args.parallel
+    jobs = None
+    if args.jobs:
+        jobs = args.jobs[0]
+
+    jobs_config = config.current_clowder_config.jobs
+    jobs = jobs_config if jobs_config is not None else jobs
 
     projects = config.process_projects_arg(args.projects)
     projects = filter_projects(CLOWDER_CONTROLLER.projects, projects)
 
-    if parallel and os.name == "posix":
-        herd_parallel(projects, branch=branch, tag=tag, depth=depth, rebase=rebase)
+    if jobs is not None and jobs != 1 and os.name == "posix":
+        if jobs <= 0:
+            jobs = 4
+        herd_parallel(projects, jobs, branch=branch, tag=tag, depth=depth, rebase=rebase)
         return
 
     validate_project_statuses(projects)

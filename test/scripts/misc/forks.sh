@@ -25,7 +25,7 @@ test_fork_groups_1() {
     test_no_directory_exists 'djinni'
     test_no_directory_exists 'gyp'
     begin_command
-    $COMMAND herd $PARALLEL JrGoodle/sox || exit 1
+    $COMMAND herd JrGoodle/sox $PARALLEL || exit 1
     end_command
     pushd sox-code || exit 1
     test_branch 'master'
@@ -45,7 +45,7 @@ test_fork_groups_2() {
     test_no_directory_exists 'djinni'
     test_no_directory_exists 'gyp'
     begin_command
-    $COMMAND herd $PARALLEL sox || exit 1
+    $COMMAND herd sox $PARALLEL || exit 1
     end_command
     pushd sox-code || exit 1
     test_branch 'master'
@@ -66,17 +66,17 @@ test_forks_env() {
     end_command
     # echo "TEST: Fork remote environment variable in script"
     begin_command
-    $COMMAND forall $PARALLEL "gyp" -c "$TEST_SCRIPT_DIR/test_forall_script_env_fork.sh" || exit 1
+    $COMMAND forall "gyp" -c "$TEST_SCRIPT_DIR/test_forall_script_env_fork.sh" $PARALLEL || exit 1
     end_command
     begin_command
-    $COMMAND forall $PARALLEL "dropbox/djinni" -c "$TEST_SCRIPT_DIR/test_forall_script_env_fork.sh" && exit 1
+    $COMMAND forall "dropbox/djinni" -c "$TEST_SCRIPT_DIR/test_forall_script_env_fork.sh" $PARALLEL && exit 1
     end_command
     # echo "TEST: Fork remote environment variable in command"
     begin_command
-    $COMMAND forall $PARALLEL 'gyp' -c 'if [ $PROJECT_REMOTE != upstream ]; then exit 1; fi' || exit 1
+    $COMMAND forall 'gyp' -c 'if [ $PROJECT_REMOTE != upstream ]; then exit 1; fi' $PARALLEL || exit 1
     end_command
     begin_command
-    $COMMAND forall $PARALLEL 'gyp' -c 'if [ $FORK_REMOTE != origin ]; then exit 1; fi' || exit 1
+    $COMMAND forall 'gyp' -c 'if [ $FORK_REMOTE != origin ]; then exit 1; fi' $PARALLEL || exit 1
     end_command
 }
 test_forks_env

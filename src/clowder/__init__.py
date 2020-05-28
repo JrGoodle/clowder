@@ -61,8 +61,10 @@ if CLOWDER_REPO_DIR is not None:
             print()
             exit(err.error_type.value)
     if clowder_yml.is_symlink():
+        # TODO: Check whether symlink source exists
         CLOWDER_YAML = clowder_yml
     elif clowder_yaml.is_symlink():
+        # TODO: Check whether symlink source exists
         CLOWDER_YAML = clowder_yaml
 
     clowder_versions = CLOWDER_REPO_DIR / 'versions'

@@ -7,7 +7,7 @@
 
 import argparse
 import os
-from typing import List
+from typing import List, Optional
 
 import clowder.util.formatting as fmt
 from clowder.clowder_controller import CLOWDER_CONTROLLER
@@ -37,7 +37,8 @@ def add_forall_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
         (['--command', '-c'], dict(nargs='+', metavar='COMMAND', default=None,
                                    help='command or script to run in project directories')),
         (['--ignore-errors', '-i'], dict(action='store_true', help='ignore errors in command or script')),
-        (['--parallel', '-p'], dict(action='store_true', help='run commands in parallel'))
+        (['--jobs', '-j'], dict(metavar='JOBS', nargs=1, default=None, type=int,
+                                help='number of jobs to use runnning commands in parallel')),
     ]
 
     parser = subparsers.add_parser('forall', help='Run command or script in project directories')
@@ -51,29 +52,35 @@ def add_forall_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
 def forall(args) -> None:
     """Clowder forall command private implementation"""
 
-    _forall_impl(args.command, args.ignore_errors, projects=args.projects, parallel=args.parallel)
+    jobs = None
+    if args.jobs:
+        jobs = args.jobs[0]
+
+    _forall_impl(args.command, args.ignore_errors, projects=args.projects, jobs=jobs)
 
 
-def _forall_impl(command: List[str], ignore_errors: bool, projects: List[str], parallel: bool = False) -> None:
+def _forall_impl(command: List[str], ignore_errors: bool, projects: List[str], jobs: Optional[int] = None) -> None:
     """Runs script in project directories specified
 
     :param list[str] command: Command or script and optional arguments
     :param bool ignore_errors: Whether to exit if command returns a non-zero exit code
     :param List[str] projects: Project names to clean
-    :param bool parallel: Whether command is being run in parallel, affects output
+    :param Optional[int] jobs: Number of jobs to use running parallel commands
     """
 
     config = Config(CLOWDER_CONTROLLER.name, CLOWDER_CONTROLLER.project_choices)
     projects = config.process_projects_arg(projects)
     projects = filter_projects(CLOWDER_CONTROLLER.projects, projects)
 
-    parallel_config = config.current_clowder_config.parallel
-    parallel = parallel_config if parallel_config is not None else parallel
+    jobs_config = config.current_clowder_config.jobs
+    jobs = jobs_config if jobs_config is not None else jobs
 
-    if parallel and os.name == "posix":
-        forall_parallel([" ".join(command)], projects, ignore_errors)
+    if jobs is not None and jobs != 1 and os.name == "posix":
+        if jobs <= 0:
+            jobs = 4
+        forall_parallel([" ".join(command)], projects, jobs, ignore_errors=ignore_errors)
         return
 
     for project in projects:
         print(project.status())
-        project.run([" ".join(command)], ignore_errors)
+        project.run([" ".join(command)], ignore_errors=ignore_errors)

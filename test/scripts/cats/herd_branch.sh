@@ -243,13 +243,13 @@ test_herd_branch_existing_local_existing_remote_no_tracking() {
     $COMMAND prune $EXISTING_REMOTE_BRANCH || exit 1
     end_command
     begin_command
-    $COMMAND forall $PARALLEL cats -c "git checkout -b $EXISTING_REMOTE_BRANCH" || exit 1
+    $COMMAND forall cats -c "git checkout -b $EXISTING_REMOTE_BRANCH" $PARALLEL || exit 1
     end_command
     begin_command
-    $COMMAND forall $PARALLEL -ic "git checkout $EXISTING_REMOTE_BRANCH" || exit 1
+    $COMMAND forall -ic "git checkout $EXISTING_REMOTE_BRANCH" $PARALLEL || exit 1
     end_command
     begin_command
-    $COMMAND forall $PARALLEL -ic 'git branch --unset-upstream' || exit 1
+    $COMMAND forall -ic 'git branch --unset-upstream' $PARALLEL || exit 1
     end_command
     pushd mu || exit 1
     test_local_branch_exists $EXISTING_REMOTE_BRANCH

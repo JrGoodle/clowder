@@ -42,7 +42,7 @@ test_reset() {
     popd || exit 1
 
     begin_command
-    $COMMAND reset $PARALLEL jrgoodle/mu || exit 1
+    $COMMAND reset jrgoodle/mu $PARALLEL || exit 1
     end_command
 
     pushd 'mu' || exit 1

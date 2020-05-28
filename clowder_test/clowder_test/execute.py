@@ -32,7 +32,7 @@ def execute_test_command(command: str, path: str, parallel: bool = False, write:
     test_env['ACCESS_LEVEL'] = 'write' if write else 'read'
 
     if parallel:
-        test_env['PARALLEL'] = '--parallel'
+        test_env['PARALLEL'] = '--jobs 4'
 
     if coverage:
         rc_file = os.path.join(ROOT_DIR, '.coveragerc')

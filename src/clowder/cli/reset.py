@@ -38,7 +38,8 @@ def add_reset_parser(subparsers: argparse._SubParsersAction): # noqa
                             choices=CLOWDER_CONTROLLER.project_choices_with_default,
                             help=fmt.options_help_message(CLOWDER_CONTROLLER.project_choices,
                                                           'projects and groups to reset'))),
-        (['--parallel', '-p'], dict(action='store_true', help='run commands in parallel')),
+        (['--jobs', '-j'], dict(metavar='JOBS', nargs=1, default=None, type=int,
+                                help='number of jobs to use runnning commands in parallel')),
         (['--timestamp', '-t'], dict(choices=CLOWDER_CONTROLLER.project_names,
                                      default=None, nargs=1, metavar='TIMESTAMP',
                                      help='project to reset timestamps relative to'))
@@ -60,27 +61,34 @@ def reset(args) -> None:
     timestamp_project = None
     if args.timestamp:
         timestamp_project = args.timestamp[0]
-    _reset_impl(args.projects, timestamp_project=timestamp_project, parallel=args.parallel)
+
+    jobs = None
+    if args.jobs:
+        jobs = args.jobs[0]
+
+    _reset_impl(args.projects, timestamp_project=timestamp_project, jobs=jobs)
 
 
-def _reset_impl(project_names: List[str], timestamp_project: Optional[str] = None, parallel: bool = False) -> None:
+def _reset_impl(project_names: List[str], timestamp_project: Optional[str] = None, jobs: Optional[int] = None) -> None:
     """Reset project branches to upstream or checkout tag/sha as detached HEAD
 
     :param List[str] project_names: Project names to reset
     :param Optional[str] timestamp_project: Reference project to checkout other project commit timestamps relative to
-    :param bool parallel: Whether command is being run in parallel, affects output
+    :param Optional[int] jobs: Number of jobs to use runnning commands in parallel
     """
 
     config = Config(CLOWDER_CONTROLLER.name, CLOWDER_CONTROLLER.project_choices)
 
-    parallel_config = config.current_clowder_config.parallel
-    parallel = parallel_config if parallel_config is not None else parallel
+    jobs_config = config.current_clowder_config.jobs
+    jobs = jobs_config if jobs_config is not None else jobs
 
     projects = config.process_projects_arg(project_names)
     projects = filter_projects(CLOWDER_CONTROLLER.projects, projects)
 
-    if parallel and os.name == "posix":
-        reset_parallel(projects, timestamp_project=timestamp_project)
+    if jobs is not None and jobs != 1 and os.name == "posix":
+        if jobs <= 0:
+            jobs = 4
+        reset_parallel(projects, jobs, timestamp_project=timestamp_project)
         return
 
     timestamp = None

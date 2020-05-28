@@ -34,7 +34,7 @@ test_groups_1() {
     $COMMAND link groups || exit 1
     end_command
     begin_command
-    $COMMAND herd $PARALLEL jrgoodle/mu || exit 1
+    $COMMAND herd jrgoodle/mu $PARALLEL || exit 1
     end_command
     pushd mu || exit 1
     test_branch knead
@@ -57,7 +57,7 @@ test_groups_2() {
     $COMMAND link groups || exit 1
     end_command
     begin_command
-    $COMMAND herd $PARALLEL mu || exit 1
+    $COMMAND herd mu $PARALLEL || exit 1
     end_command
     pushd mu || exit 1
     test_branch knead
@@ -105,7 +105,7 @@ test_groups_4() {
     $COMMAND link groups || exit 1
     end_command
     begin_command
-    $COMMAND herd $PARALLEL cats || exit 1
+    $COMMAND herd cats $PARALLEL || exit 1
     end_command
     pushd mu-cat || exit 1
     test_branch knead
@@ -130,7 +130,7 @@ test_groups_5() {
     $COMMAND link groups || exit 1
     end_command
     begin_command
-    $COMMAND herd $PARALLEL all notdefault || exit 1
+    $COMMAND herd all notdefault $PARALLEL || exit 1
     end_command
     pushd mu-cat || exit 1
     test_branch knead
@@ -159,7 +159,7 @@ test_groups_6() {
     $COMMAND link groups || exit 1
     end_command
     begin_command
-    $COMMAND herd $PARALLEL notdefault || exit 1
+    $COMMAND herd notdefault $PARALLEL || exit 1
     end_command
     pushd mu || exit 1
     test_branch knead
@@ -182,7 +182,7 @@ test_groups_7() {
     $COMMAND link groups || exit 1
     end_command
     begin_command
-    $COMMAND herd $PARALLEL cats black-cats || exit 1
+    $COMMAND herd cats black-cats $PARALLEL || exit 1
     end_command
     pushd mu-cat || exit 1
     test_branch knead

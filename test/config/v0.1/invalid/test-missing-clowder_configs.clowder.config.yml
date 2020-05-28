@@ -4,6 +4,6 @@ version: 0.1
 #   - name: cats
 #     clowder_dir: /Users/jrgoodle/projects/cats
 #     defaults:
-#       parallel: true
+#       jobs: 4
 #       projects: [kit, kishka]
 

@@ -213,7 +213,7 @@ test_herd_groups() {
 
     echo "TEST: Herd only specific groups"
     begin_command
-    $COMMAND herd $PARALLEL "$@" || exit 1
+    $COMMAND herd "$@" $PARALLEL || exit 1
     end_command
     begin_command
     $COMMAND status || exit 1
@@ -328,7 +328,7 @@ test_herd_projects() {
     print_single_separator
     echo "TEST: Successfully herd specific projects"
     begin_command
-    $COMMAND herd $PARALLEL "$@" || exit 1
+    $COMMAND herd "$@" $PARALLEL || exit 1
     end_command
 }
 test_herd_projects 'jrgoodle/kit' 'jrgoodle/kishka'
@@ -336,7 +336,6 @@ test_herd_projects 'jrgoodle/kit' 'jrgoodle/kishka'
 begin_command
 $COMMAND repo checkout master || exit 1
 end_command
-
 
 EXISTING_REMOTE_BRANCH='test-herd-existing-remote-branch'
 NO_REMOTE_BRANCH='test-herd-no-remote-branch'
