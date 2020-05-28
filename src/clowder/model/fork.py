@@ -41,15 +41,17 @@ class Fork(object):
         :param dict fork: Parsed YAML python object for fork
         :param Path path: Fork relative path
         :param str project_name: Parent project name
-        :param bool recursive: Whether to handle submodules
+        :param bool recursive: Whether git commands are run recursively
         :param Tuple[Source, ...] sources: List of Source instances
         :param Defaults defaults: Defaults instance
         """
 
         self.path = path
         self.name = fork['name']
+        self.recursive = recursive
+
+        self._remote = fork.get('remote', None)
         self.remote = fork.get('remote', defaults.remote)
-        self._recursive = recursive
 
         self._branch = fork.get("branch", None)
         self._tag = fork.get("tag", None)
@@ -62,17 +64,15 @@ class Fork(object):
         elif self._commit is not None:
             self.ref = self._commit
         else:
-            self._branch = defaults.branch
-            self._tag = defaults.tag
-            self._commit = defaults.commit
             self.ref = defaults.ref
 
-        self._source = None
+        self._source = fork.get('source', None)
+        self.source = None
         source_name = fork.get('source', defaults.source)
         for s in sources:
             if s.name == source_name:
-                self._source = s
-        if self._source is None:
+                self.source = s
+        if self.source is None:
             message = fmt.error_source_not_found(source_name, CLOWDER_YAML, project_name, self.name)
             raise ClowderError(ClowderErrorType.CLOWDER_YAML_SOURCE_NOT_FOUND, message)
 
@@ -93,9 +93,12 @@ class Fork(object):
         :rtype: dict
         """
 
-        fork = {'name': self.name,
-                'remote': self.remote,
-                'source': self._source.name}
+        fork = {'name': self.name}
+
+        if self._remote is not None:
+            fork['remote'] = self._remote
+        if self._source is not None:
+            fork['source'] = self._source
 
         if resolved:
             if self._branch is not None:
@@ -123,9 +126,9 @@ class Fork(object):
         repo = ProjectRepo(self.full_path(), self.remote, self.ref)
         project_output = repo.format_project_string(self.path)
         current_ref_output = repo.format_project_ref_string()
-        return project_output + ' ' + current_ref_output
+        return f"{project_output} {current_ref_output}"
 
     def url(self) -> str:
         """Return project url"""
 
-        return git_url(self._source.protocol.value, self._source.url, self.name)
+        return git_url(self.source.protocol.value, self.source.url, self.name)

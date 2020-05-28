@@ -25,6 +25,7 @@ from clowder.util.execute import execute_forall_command
 
 from .defaults import Defaults
 from .fork import Fork
+from .git_settings import GitSettings
 from .source import Source
 
 
@@ -52,9 +53,8 @@ class Project(object):
     :ivar List[str] groups: Groups project belongs to
     :ivar str ref: Project git ref
     :ivar str remote: Project remote name
-    :ivar int depth: Depth to clone project repo
-    :ivar bool recursive: Whether to recursively clone submodules
     :ivar Source source: Default source
+    :ivar Optional[GitSettings] git_settings: Custom git settings
     :ivar Optional[Fork] fork: Project's associated Fork
     """
 
@@ -67,12 +67,16 @@ class Project(object):
         """
 
         self.name = project['name']
+
+        self._path = project.get('path', None)
         self.path = Path(project.get('path', Path(self.name).name))
+
+        self._remote = project.get('remote', None)
         self.remote = project.get('remote', defaults.remote)
-        self.depth = project.get('depth', defaults.depth)
-        self.recursive = project.get('recursive', defaults.recursive)
-        self._timestamp_author = project.get('timestamp_author', defaults.timestamp_author)
-        self._lfs = project.get('lfs', defaults.lfs)
+
+        self._timestamp_author = project.get('timestamp_author', None)
+        self.timestamp_author = project.get('timestamp_author', defaults.timestamp_author)
+
         self._print_output = True
 
         self._branch = project.get("branch", None)
@@ -86,11 +90,24 @@ class Project(object):
         elif self._commit is not None:
             self.ref = self._commit
         else:
-            self._branch = defaults.branch
-            self._tag = defaults.tag
-            self._commit = defaults.commit
             self.ref = defaults.ref
 
+        git_settings = project.get("git", None)
+        if git_settings is not None:
+            self._git_settings = git_settings
+            if defaults.git_settings is not None:
+                self.git_settings = GitSettings(self._git_settings,
+                                                default_git_settings=defaults.git_settings.get_yaml())
+            else:
+                self.git_settings = GitSettings(self._git_settings)
+        else:
+            self._git_settings = None
+            if defaults.git_settings is not None:
+                self.git_settings = defaults.git_settings
+            else:
+                self.git_settings = None
+
+        self._source = project.get('source', None)
         self.source = None
         source_name = project.get('source', defaults.source)
         for source in sources:
@@ -101,16 +118,19 @@ class Project(object):
             message = fmt.error_source_not_found(source_name, CLOWDER_YAML, self.name)
             raise ClowderError(ClowderErrorType.CLOWDER_YAML_SOURCE_NOT_FOUND, message)
 
+        self._fork = project.get('fork', None)
         self.fork = None
         if 'fork' in project:
             fork = project['fork']
-            self.fork = Fork(fork, self.path, self.name, self.recursive, sources, defaults)
+            recursive = self.git_settings.recursive if self.git_settings is not None else GitSettings.recursive
+            self.fork = Fork(fork, self.path, self.name, recursive, sources, defaults)
             if self.remote == self.fork.remote:
                 message = fmt.error_remote_dup(self.fork.name, self.name, self.remote, CLOWDER_YAML)
                 raise ClowderError(ClowderErrorType.CLOWDER_YAML_DUPLICATE_REMOTE_NAME, message)
 
         groups = ['all', self.name, str(Path(self.name).name), str(self.path)]
         custom_groups = project.get('groups', None)
+        self._groups = custom_groups
         if custom_groups:
             groups += custom_groups
         if self.fork is not None:
@@ -167,7 +187,8 @@ class Project(object):
         :param str branch: Branch to check out
         """
 
-        repo = self._repo(self.recursive)
+        recursive = self.git_settings.recursive if self.git_settings is not None else GitSettings.recursive
+        repo = self._repo(recursive)
         repo.checkout(branch, allow_failure=True)
         self._pull_lfs(repo)
 
@@ -183,7 +204,8 @@ class Project(object):
         :param bool recursive: Clean submodules recursively
         """
 
-        self._repo(self.recursive or recursive).clean(args=args)
+        _recursive = self.git_settings.recursive if self.git_settings is not None else GitSettings.recursive
+        self._repo(_recursive or recursive).clean(args=args)
 
     @project_repo_exists
     def clean_all(self) -> None:
@@ -196,7 +218,8 @@ class Project(object):
         ``git submodule update --checkout --recursive --force``
         """
 
-        self._repo(self.recursive).clean(args='fdx')
+        recursive = self.git_settings.recursive if self.git_settings is not None else GitSettings.recursive
+        self._repo(recursive).clean(args='fdx')
 
     @project_repo_exists
     def diff(self) -> None:
@@ -205,7 +228,8 @@ class Project(object):
         Equivalent to: ``git status -vv``
         """
 
-        self._repo(self.recursive).status_verbose()
+        recursive = self.git_settings.recursive if self.git_settings is not None else GitSettings.recursive
+        self._repo(recursive).status_verbose()
 
     def existing_branch(self, branch: str, is_remote: bool) -> bool:
         """Check if branch exists
@@ -238,7 +262,8 @@ class Project(object):
 
         repo = ProjectRepo(self.full_path(), self.remote, self.ref)
         if self.fork is None:
-            repo.fetch(self.remote, depth=self.depth)
+            depth = self.git_settings.depth if self.git_settings is not None else GitSettings.depth
+            repo.fetch(self.remote, depth=depth)
             return
 
         repo.fetch(self.fork.remote)
@@ -281,13 +306,16 @@ class Project(object):
         :rtype: dict
         """
 
-        project = {'name': self.name,
-                   'path': str(self.path),
-                   'groups': self.groups,
-                   'depth': self.depth,
-                   'recursive': self.recursive,
-                   'remote': self.remote,
-                   'source': self.source.name}
+        project = {'name': self.name}
+
+        if self._path is not None:
+            project['path'] = self._path
+        if self._remote is not None:
+            project['remote'] = self._remote
+        if self._source is not None:
+            project['source'] = self._source
+        if self._groups is not None:
+            project['groups'] = self._groups
 
         if resolved:
             if self._branch is not None:
@@ -329,8 +357,10 @@ class Project(object):
 
         self._print_output = not parallel
 
-        herd_depth = self.depth if depth is None else depth
-        repo = self._repo(self.recursive, parallel=parallel)
+        _depth = self.git_settings.depth if self.git_settings is not None else GitSettings.depth
+        herd_depth = _depth if depth is None else depth
+        recursive = self.git_settings.recursive if self.git_settings is not None else GitSettings.recursive
+        repo = self._repo(recursive, parallel=parallel)
 
         if self.fork is None:
             self._print(self.status())
@@ -373,7 +403,8 @@ class Project(object):
         :rtype: bool
         """
 
-        return not self._repo(self.recursive).validate_repo()
+        recursive = self.git_settings.recursive if self.git_settings is not None else GitSettings.recursive
+        return not self._repo(recursive).validate_repo()
 
     def is_valid(self) -> bool:
         """Validate status of project
@@ -432,15 +463,17 @@ class Project(object):
 
         self._print_output = not parallel
 
-        repo = self._repo(self.recursive, parallel=parallel)
+        recursive = self.git_settings.recursive if self.git_settings is not None else GitSettings.recursive
+        repo = self._repo(recursive, parallel=parallel)
 
         if self.fork is None:
             if timestamp:
-                repo.reset_timestamp(timestamp, self._timestamp_author, self.ref)
+                repo.reset_timestamp(timestamp, self.timestamp_author, self.ref)
                 self._pull_lfs(repo)
                 return
 
-            repo.reset(depth=self.depth)
+            depth = self.git_settings.depth if self.git_settings is not None else GitSettings.depth
+            repo.reset(depth=depth)
             self._pull_lfs(repo)
             return
 
@@ -449,7 +482,7 @@ class Project(object):
 
         self._print(fmt.fork_string(self.fork.name))
         if timestamp:
-            repo.reset_timestamp(timestamp, self._timestamp_author, self.ref)
+            repo.reset_timestamp(timestamp, self.timestamp_author, self.ref)
             self._pull_lfs(repo)
             return
 
@@ -501,7 +534,8 @@ class Project(object):
         """
 
         remote = self.remote if self.fork is None else self.fork.remote
-        depth = self.depth if self.fork is None else 0
+        _depth = self.git_settings.depth if self.git_settings is not None else GitSettings.depth
+        depth = _depth if self.fork is None else GitSettings.depth
         repo = ProjectRepo(self.full_path(), self.remote, self.ref)
         repo.start(remote, branch, depth, tracking)
 
@@ -540,7 +574,9 @@ class Project(object):
 
         :param ProjectRepo repo: Repo object
         """
-        if not self._lfs:
+
+        lfs = self.git_settings.lfs if self.git_settings is not None else GitSettings.lfs
+        if not lfs:
             return
 
         repo.install_lfs_hooks()

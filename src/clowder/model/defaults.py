@@ -11,6 +11,8 @@ from clowder.git.util import (
     format_git_tag
 )
 
+from .git_settings import GitSettings
+
 
 class Defaults(object):
     """clowder yaml Defaults model class
@@ -22,10 +24,8 @@ class Defaults(object):
     :ivar str remote: Default remote name
     :ivar str source: Default source name
     :ivar GitProtocol protocol: Default git protocol
-    :ivar int depth: Default depth
-    :ivar bool recursive: Default recursive value
+    :ivar GitSettings git_settings: Custom git settings
     :ivar str timestamp_author: Default timestamp author
-    :ivar bool lfs: Default git lfs value
     """
 
     def __init__(self, defaults: dict):
@@ -36,25 +36,31 @@ class Defaults(object):
 
         self.protocol = GitProtocol(defaults["protocol"])
         self.source = defaults["source"]
+
+        self._remote = defaults.get("remote", None)
         self.remote = defaults.get("remote", "origin")
-        self.depth = defaults.get("depth", 0)
-        self.recursive = defaults.get("recursive", False)
+
         self.timestamp_author = defaults.get("timestamp_author", None)
-        self.lfs = defaults.get("lfs", False)
 
-        self.branch = defaults.get("branch", None)
-        self.tag = defaults.get("tag", None)
-        self.commit = defaults.get("commit", None)
-
-        if self.branch is not None:
-            self.ref = format_git_branch(self.branch)
-        elif self.tag is not None:
-            self.ref = format_git_tag(self.tag)
-        elif self.commit is not None:
-            self.ref = self.commit
+        git_settings = defaults.get("git", None)
+        if git_settings is not None:
+            self.git_settings = GitSettings(git_settings)
         else:
-            self.branch = 'master'
+            self.git_settings = None
+
+        self._branch = defaults.get("branch", None)
+        self._tag = defaults.get("tag", None)
+        self._commit = defaults.get("commit", None)
+
+        if self._branch is not None:
+            self.branch = self._branch
             self.ref = format_git_branch(self.branch)
+        elif self._tag is not None:
+            self.ref = format_git_tag(self._tag)
+        elif self._commit is not None:
+            self.ref = self._commit
+        else:
+            self.ref = format_git_branch('master')
 
     def get_yaml(self) -> dict:
         """Return python object representation for saving yaml
@@ -63,18 +69,19 @@ class Defaults(object):
         :rtype: dict
         """
 
-        defaults = {'recursive': self.recursive,
-                    'remote': self.remote,
-                    'source': self.source,
-                    'depth': self.depth,
+        defaults = {'source': self.source,
                     'protocol': self.protocol.value}
 
-        if self.branch is not None:
+        if self._remote is not None:
+            defaults['remote'] = self._remote
+        if self.git_settings is not None:
+            defaults['git'] = self.git_settings.get_yaml()
+        if self._branch is not None:
             defaults['branch'] = self.branch
-        elif self.tag is not None:
-            defaults['tag'] = self.tag
-        elif self.commit is not None:
-            defaults['commit'] = self.commit
+        elif self._tag is not None:
+            defaults['tag'] = self._tag
+        elif self._commit is not None:
+            defaults['commit'] = self._commit
 
         if self.timestamp_author:
             defaults['timestamp_author'] = self.timestamp_author

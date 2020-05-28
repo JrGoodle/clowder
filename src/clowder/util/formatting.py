@@ -255,6 +255,18 @@ def error_invalid_config_file(file_path: Path) -> str:
     return f"{ERROR} {file}\n{ERROR} Clowder config file appears to be invalid"
 
 
+def error_invalid_git_config_value(key: str, value: str) -> str:
+    """Format error message for invalid git config value
+
+    :param str key: Key for value with invalid git type
+    :param str value: Value with invalid git type
+    :return: Formatted error message for invalid git config value
+    :rtype: str
+    """
+
+    return f"{ERROR} Invalid git config value - {key}: {value}"
+
+
 def error_invalid_project_state() -> str:
     """Format error message for invalid project state
 

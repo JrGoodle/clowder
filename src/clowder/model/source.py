@@ -27,6 +27,7 @@ class Source(object):
 
         self.name = source['name']
         self.url = source['url']
+        self._protocol = source.get('protocol', None)
         self.protocol = GitProtocol(source.get('protocol', defaults.protocol))
 
     def get_yaml(self) -> dict:
@@ -36,6 +37,10 @@ class Source(object):
         :rtype: dict
         """
 
-        return {'name': self.name,
-                'url': self.url,
-                'protocol': self.protocol.value}
+        source = {'name': self.name,
+                  'url': self.url}
+
+        if self._protocol is not None:
+            source['protocol'] = self._protocol
+
+        return source
