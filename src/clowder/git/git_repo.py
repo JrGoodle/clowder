@@ -22,9 +22,6 @@ from .util import (
     truncate_ref,
 )
 
-__REPO_DEFAULT_REF__ = 'refs/heads/master'
-__REPO_DEFAULT_REMOTE__ = 'origin'
-
 
 class GitRepo(object):
     """Class encapsulating base git utilities

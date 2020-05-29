@@ -5,23 +5,20 @@
 
 """
 
+from typing import Optional
+
 from clowder.git import GitProtocol
 from clowder.git.util import (
     format_git_branch,
     format_git_tag
 )
 
-from .git_settings import GitSettings
+from .git_settings import GitSettings, GitSettingsImpl
 
 
-class Defaults(object):
-    """clowder yaml Defaults model class
+class DefaultsImpl(object):
+    """clowder yaml Defaults model impl class
 
-    :ivar str ref: Default ref
-    :ivar Optional[str] branch: Default git branch
-    :ivar Optional[str] tag: Default git tag
-    :ivar Optional[str] commit: Default commit sha-1
-    :ivar str remote: Default remote name
     :ivar str source: Default source name
     :ivar GitProtocol protocol: Default git protocol
     :ivar GitSettings git_settings: Custom git settings
@@ -35,32 +32,19 @@ class Defaults(object):
         """
 
         self.protocol = GitProtocol(defaults["protocol"])
-        self.source = defaults["source"]
+        self.source: str = defaults["source"]
 
-        self._remote = defaults.get("remote", None)
-        self.remote = defaults.get("remote", "origin")
-
-        self.timestamp_author = defaults.get("timestamp_author", None)
+        self._remote: Optional[str] = defaults.get("remote", None)
+        self._branch: Optional[str] = defaults.get("branch", None)
+        self._tag: Optional[str] = defaults.get("tag", None)
+        self._commit: Optional[str] = defaults.get("commit", None)
+        self.timestamp_author: Optional[str] = defaults.get("timestamp_author", None)
 
         git_settings = defaults.get("git", None)
         if git_settings is not None:
-            self.git_settings = GitSettings(git_settings)
+            self._git_settings = GitSettingsImpl(git_settings)
         else:
-            self.git_settings = None
-
-        self._branch = defaults.get("branch", None)
-        self._tag = defaults.get("tag", None)
-        self._commit = defaults.get("commit", None)
-
-        if self._branch is not None:
-            self.branch = self._branch
-            self.ref = format_git_branch(self.branch)
-        elif self._tag is not None:
-            self.ref = format_git_tag(self._tag)
-        elif self._commit is not None:
-            self.ref = self._commit
-        else:
-            self.ref = format_git_branch('master')
+            self._git_settings = None
 
     def get_yaml(self) -> dict:
         """Return python object representation for saving yaml
@@ -74,16 +58,48 @@ class Defaults(object):
 
         if self._remote is not None:
             defaults['remote'] = self._remote
-        if self.git_settings is not None:
-            defaults['git'] = self.git_settings.get_yaml()
+        if self._git_settings is not None:
+            defaults['git'] = self._git_settings.get_yaml()
         if self._branch is not None:
-            defaults['branch'] = self.branch
+            defaults['branch'] = self._branch
         elif self._tag is not None:
             defaults['tag'] = self._tag
         elif self._commit is not None:
             defaults['commit'] = self._commit
 
-        if self.timestamp_author:
+        if self.timestamp_author is not None:
             defaults['timestamp_author'] = self.timestamp_author
 
         return defaults
+
+
+class Defaults(DefaultsImpl):
+    """clowder yaml Defaults model class
+
+    :ivar str ref: Default ref
+    :ivar str remote: Default remote name
+    :ivar GitSettings git_settings: Custom git settings
+    :ivar Optional[str] branch: Default git branch
+    :ivar Optional[str] tag: Default git tag
+    :ivar Optional[str] commit: Default commit sha-1
+    """
+
+    def __init__(self, defaults: dict):
+        """Defaults __init__
+
+        :param dict defaults: Parsed YAML python object for defaults
+        """
+
+        super().__init__(defaults)
+
+        self.remote: str = defaults.get("remote", "origin")
+        self.git_settings = GitSettings(git_settings=defaults.get("git", None))
+
+        if self._branch is not None:
+            self.ref = format_git_branch(self._branch)
+        elif self._tag is not None:
+            self.ref = format_git_tag(self._tag)
+        elif self._commit is not None:
+            self.ref = self._commit
+        else:
+            self.ref = format_git_branch('master')

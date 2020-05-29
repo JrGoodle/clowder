@@ -6,7 +6,7 @@
 """
 
 from pathlib import Path
-from typing import Tuple
+from typing import Optional, Tuple
 
 import clowder.util.formatting as fmt
 from clowder import CLOWDER_DIR, CLOWDER_YAML
@@ -38,14 +38,14 @@ class ClowderController(object):
         :raise ClowderError:
         """
 
-        self.error = None
+        self.error: Optional[Exception] = None
 
-        self.name = None
-        self.defaults = None
-        self.sources = ()
-        self.projects = ()
-        self.project_names = ()
-        self.project_choices = ()
+        self.name: Optional[str] = None
+        self.defaults: Optional[Defaults] = None
+        self.sources: Tuple[Source, ...] = ()
+        self.projects: Tuple[Project, ...] = ()
+        self.project_names: Tuple[str, ...] = ()
+        self.project_choices: Tuple[str, ...] = ()
         self.project_choices_with_default = ('default',)
 
         try:
@@ -113,7 +113,7 @@ class ClowderController(object):
         """
 
         if resolved:
-            projects = [p.get_yaml(resolved=True) for p in self.projects]
+            projects = [p.get_yaml(resolved_sha=p.sha()) for p in self.projects]
         else:
             projects = [p.get_yaml() for p in self.projects]
 

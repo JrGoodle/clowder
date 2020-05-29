@@ -6,7 +6,7 @@
 """
 
 from pathlib import Path
-from typing import Tuple
+from typing import Optional, Tuple, TYPE_CHECKING
 
 from termcolor import colored
 
@@ -24,71 +24,33 @@ from clowder.git.util import (
 from .defaults import Defaults
 from .source import Source
 
+if TYPE_CHECKING:
+    from .project import Project
 
-class Fork(object):
-    """clowder yaml Project model class
+
+class ForkImpl(object):
+    """clowder yaml Fork model impl class
 
     :ivar str name: Project name
-    :ivar str path: Project relative path
-    :ivar str remote: Fork remote name
-    :ivar str ref: Fork git ref
     """
 
-    def __init__(self, fork: dict, path: Path, project_name: str, recursive: bool,
-                 sources: Tuple[Source, ...], defaults: Defaults):
-        """Project __init__
+    def __init__(self, fork: dict):
+        """ForkImpl __init__
 
         :param dict fork: Parsed YAML python object for fork
-        :param Path path: Fork relative path
-        :param str project_name: Parent project name
-        :param bool recursive: Whether git commands are run recursively
-        :param Tuple[Source, ...] sources: List of Source instances
-        :param Defaults defaults: Defaults instance
         """
 
-        self.path = path
-        self.name = fork['name']
-        self.recursive = recursive
+        self.name: str = fork['name']
+        self._remote: Optional[str] = fork.get('remote', None)
+        self._branch: Optional[str] = fork.get("branch", None)
+        self._tag: Optional[str] = fork.get("tag", None)
+        self._commit: Optional[str] = fork.get("commit", None)
+        self._source: Optional[str] = fork.get('source', None)
 
-        self._remote = fork.get('remote', None)
-        self.remote = fork.get('remote', defaults.remote)
-
-        self._branch = fork.get("branch", None)
-        self._tag = fork.get("tag", None)
-        self._commit = fork.get("commit", None)
-
-        if self._branch is not None:
-            self.ref = format_git_branch(self._branch)
-        elif self._tag is not None:
-            self.ref = format_git_tag(self._tag)
-        elif self._commit is not None:
-            self.ref = self._commit
-        else:
-            self.ref = defaults.ref
-
-        self._source = fork.get('source', None)
-        self.source = None
-        source_name = fork.get('source', defaults.source)
-        for s in sources:
-            if s.name == source_name:
-                self.source = s
-        if self.source is None:
-            message = fmt.error_source_not_found(source_name, CLOWDER_YAML, project_name, self.name)
-            raise ClowderError(ClowderErrorType.CLOWDER_YAML_SOURCE_NOT_FOUND, message)
-
-    def full_path(self) -> Path:
-        """Return full path to project
-
-        :return: Project's full file path
-        :rtype: Path
-        """
-
-        return CLOWDER_DIR / self.path
-
-    def get_yaml(self, resolved: bool = False) -> dict:
+    def get_yaml(self, resolved_sha: Optional[str] = None) -> dict:
         """Return python object representation for saving yaml
 
-        :param bool resolved: Return default ref rather than current commit sha
+        :param Optional[str] resolved_sha: Current commit sha
         :return: YAML python object
         :rtype: dict
         """
@@ -100,7 +62,7 @@ class Fork(object):
         if self._source is not None:
             fork['source'] = self._source
 
-        if resolved:
+        if resolved_sha is None:
             if self._branch is not None:
                 fork['branch'] = self._branch
             elif self._tag is not None:
@@ -108,10 +70,60 @@ class Fork(object):
             elif self._commit is not None:
                 fork['commit'] = self._commit
         else:
-            repo = ProjectRepo(self.full_path(), self.remote, self.ref)
-            fork['commit'] = repo.sha()
+            fork['commit'] = resolved_sha
 
         return fork
+
+
+class Fork(ForkImpl):
+    """clowder yaml Fork model class
+
+    :ivar str path: Project relative path
+    :ivar str remote: Fork remote name
+    :ivar str ref: Fork git ref
+    """
+
+    def __init__(self, fork: dict, project: Project, sources: Tuple[Source, ...], defaults: Defaults):
+        """Fork __init__
+
+        :param dict fork: Parsed YAML python object for fork
+        :param Project project: Parent project
+        :param Tuple[Source, ...] sources: List of Source instances
+        :param Defaults defaults: Defaults instance
+        """
+
+        super().__init__(fork)
+
+        self.path = project.path
+        self.recursive = project.git_settings.recursive
+        self.remote = fork.get('remote', defaults.remote)
+
+        if self._branch is not None:
+            self.ref = format_git_branch(self._branch)
+        elif self._tag is not None:
+            self.ref = format_git_tag(self._tag)
+        elif self._commit is not None:
+            self.ref = self._commit
+        else:
+            self.ref = defaults.ref
+
+        self.source = None
+        source_name = fork.get('source', defaults.source)
+        for s in sources:
+            if s.name == source_name:
+                self.source = s
+        if self.source is None:
+            message = fmt.error_source_not_found(source_name, CLOWDER_YAML, project.name, self.name)
+            raise ClowderError(ClowderErrorType.CLOWDER_YAML_SOURCE_NOT_FOUND, message)
+
+    def full_path(self) -> Path:
+        """Return full path to project
+
+        :return: Project's full file path
+        :rtype: Path
+        """
+
+        return CLOWDER_DIR / self.path
 
     def status(self) -> str:
         """Return formatted fork status
