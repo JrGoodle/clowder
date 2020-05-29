@@ -52,6 +52,7 @@ class GitSettings(object):
             self.lfs = yaml.get('lfs', default_git_settings.get('lfs', None))
             self.depth = yaml.get('depth', default_git_settings.get('depth', None))
             self.jobs = yaml.get('jobs', default_git_settings.get('jobs', None))
+            # TODO: Combine configs, eliminating null entries
             self.config = yaml.get('config', default_git_settings.get('config', None))
         else:
             self.recursive = yaml.get('name', None)
@@ -70,17 +71,20 @@ class GitSettings(object):
         if self.config is None:
             return None
 
-        config = copy.deepcopy(self.config)
-        for key, value in config:
-            if isinstance(config[key], bool):
+        config = {}
+        for key, value in self.config:
+            if isinstance(self.config[key], bool):
                 config[key] = str(value).lower()
-            elif isinstance(config[key], int) or isinstance(config[key], float):
+            elif isinstance(self.config[key], int) or isinstance(self.config[key], float):
                 config[key] = str(value)
-            elif isinstance(config[key], str):
+            elif isinstance(self.config[key], str):
                 config[key] = value
+            elif self.config[key] is None:
+                pass
             else:
                 raise ClowderError(ClowderErrorType.INVALID_GIT_CONFIG_VALUE,
                                    fmt.error_invalid_git_config_value(key, value))
+        return config
 
     def get_yaml(self) -> dict:
         """Return python object representation for saving yaml
