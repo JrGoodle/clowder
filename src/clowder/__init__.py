@@ -44,8 +44,7 @@ while str(path) != path.root:
         CLOWDER_DIR = path
         CLOWDER_REPO_DIR = clowder_repo_dir
         break
-    else:
-        path = path.parent
+    path = path.parent
 
 
 # If clowder repo exists, try to set other global path variables

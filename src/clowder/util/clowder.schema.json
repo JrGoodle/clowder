@@ -12,31 +12,17 @@
       "minLength": 1,
       "pattern": "^((?! ).)*$"
     },
-    "nonEmptyStringNoDefault": {
+    "projectGroup": {
       "type": "string",
       "minLength": 1,
-      "pattern": "^(?!default$).*$"
+      "pattern": "^(?!default$)[a-zA-Z0-9-_]*$"
     },
-    "arrayOfNonEmptyStrings": {
-      "type": "array",
-      "items": {
-        "$ref": "#/definitions/nonEmptyString"
-      }
-    },
-    "stringArrayUnique": {
+    "projectGroups": {
       "type": "array",
       "uniqueItems": true,
       "minItems": 1,
       "items": {
-        "$ref": "#/definitions/nonEmptyString"
-      }
-    },
-    "stringArrayUniqueNoDefault": {
-      "type": "array",
-      "uniqueItems": true,
-      "minItems": 1,
-      "items": {
-        "$ref": "#/definitions/nonEmptyStringNoDefault"
+        "$ref": "#/definitions/projectGroup"
       }
     },
     "relativePath": {
@@ -109,7 +95,7 @@
       "description": "A unique name for this project. The project's name is appended onto its source's URL to generate the actual URL to configure the Git remote with. The URL gets formed as: ${source_url}/${project_name}.git where ${source_url} is the source's url and ${project_name} is the project’s name. The suffix '.git' is always appended as clowder assumes the upstream is a forest of bare Git repositories.",
       "oneOf": [
         {
-          "$ref": "#/definitions/nonEmptyString"
+          "$ref": "#/definitions/nonEmptyStringNoSpaces"
         }
       ]
     },
@@ -117,7 +103,7 @@
       "description": "Git source name",
       "oneOf": [
         {
-          "$ref": "#/definitions/nonEmptyString"
+          "$ref": "#/definitions/nonEmptyStringNoSpaces"
         }
       ]
     },
@@ -125,7 +111,7 @@
       "description": "The name specified here is used as the remote name in each project's .git/config, and is therefore automatically available to commands like git fetch, git remote, git pull and git push.",
       "oneOf": [
         {
-          "$ref": "#/definitions/nonEmptyString"
+          "$ref": "#/definitions/nonEmptyStringNoSpaces"
         }
       ]
     },
@@ -157,7 +143,7 @@
       "description": "Name of the Git tag to track for this project. If not supplied the ref specified in the defaults is used if applicable, else the default branch 'master' is used.",
       "oneOf": [
         {
-          "$ref": "#/definitions/nonEmptyString"
+          "$ref": "#/definitions/nonEmptyStringNoSpaces"
         }
       ]
     },
@@ -187,7 +173,7 @@
           "description": "Unique name of git repository's remote source",
           "oneOf": [
             {
-              "$ref": "#/definitions/nonEmptyString"
+              "$ref": "#/definitions/nonEmptyStringNoSpaces"
             }
           ]
         },
@@ -195,7 +181,7 @@
           "description": "The Git URL prefix for all projects which use this source. Each project's name is appended to this prefix to form the actual URL used to clone the project.",
           "oneOf": [
             {
-              "$ref": "#/definitions/nonEmptyString"
+              "$ref": "#/definitions/nonEmptyStringNoSpaces"
             }
           ]
         },
@@ -304,7 +290,7 @@
               "description": "Groups project belongs to",
               "oneOf": [
                 {
-                  "$ref": "#/definitions/stringArrayUniqueNoDefault"
+                  "$ref": "#/definitions/projectGroups"
                 }
               ]
             },
@@ -346,7 +332,7 @@
               "description": "Groups project belongs to",
               "oneOf": [
                 {
-                  "$ref": "#/definitions/stringArrayUniqueNoDefault"
+                  "$ref": "#/definitions/projectGroups"
                 }
               ]
             },
@@ -388,7 +374,7 @@
               "description": "Groups project belongs to",
               "oneOf": [
                 {
-                  "$ref": "#/definitions/stringArrayUniqueNoDefault"
+                  "$ref": "#/definitions/projectGroups"
                 }
               ]
             },
@@ -419,7 +405,7 @@
       "description": "A name describing the projects",
       "oneOf": [
         {
-          "$ref": "#/definitions/nonEmptyString"
+          "$ref": "#/definitions/nonEmptyStringNoSpaces"
         }
       ]
     },
