@@ -362,11 +362,14 @@ class Project(ProjectImpl):
             self._print(self.status())
 
             if branch:
-                repo.herd_branch(self._url(), branch, depth=herd_depth, rebase=rebase)
+                repo.herd_branch(self._url(), branch, depth=herd_depth,
+                                 rebase=rebase, config=self.git_settings.get_processed_config())
             elif tag:
-                repo.herd_tag(self._url(), tag, depth=herd_depth, rebase=rebase)
+                repo.herd_tag(self._url(), tag, depth=herd_depth, rebase=rebase,
+                              config=self.git_settings.get_processed_config())
             else:
-                repo.herd(self._url(), depth=herd_depth, rebase=rebase)
+                repo.herd(self._url(), depth=herd_depth, rebase=rebase,
+                          config=self.git_settings.get_processed_config())
             self._pull_lfs(repo)
 
             return
@@ -379,11 +382,14 @@ class Project(ProjectImpl):
         repo.default_ref = self.fork.ref
         repo.remote = self.fork.remote
         if branch:
-            repo.herd_branch(self.fork.url(), branch, depth=herd_depth, rebase=rebase)
+            repo.herd_branch(self.fork.url(), branch, depth=herd_depth, rebase=rebase,
+                             config=self.git_settings.get_processed_config())
         elif tag:
-            repo.herd_tag(self.fork.url(), tag, depth=herd_depth, rebase=rebase)
+            repo.herd_tag(self.fork.url(), tag, depth=herd_depth, rebase=rebase,
+                          config=self.git_settings.get_processed_config())
         else:
-            repo.herd(self.fork.url(), depth=herd_depth, rebase=rebase)
+            repo.herd(self.fork.url(), depth=herd_depth, rebase=rebase,
+                      config=self.git_settings.get_processed_config())
         self._pull_lfs(repo)
 
         self._print(fmt.fork_string(self.name))

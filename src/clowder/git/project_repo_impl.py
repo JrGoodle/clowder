@@ -8,7 +8,7 @@
 import errno
 import os
 from pathlib import Path
-from typing import Optional
+from typing import Dict, Optional
 
 from git import GitError, Remote, Repo, Tag
 
@@ -23,8 +23,7 @@ from .util import (
     not_detached
 )
 
-__project_repo_default_ref__ = 'refs/heads/master'
-__project_repo_default_remote__ = 'origin'
+GitConfig = Dict[str, str]
 
 
 class ProjectRepoImpl(GitRepo):
@@ -681,3 +680,15 @@ class ProjectRepoImpl(GitRepo):
             raise ClowderError(ClowderErrorType.GIT_ERROR, message)
 
         self._set_tracking_branch(remote, branch)
+
+    def _update_git_config(self, config: GitConfig) -> None:
+        """Update custom git config
+
+        :param GitConfig config: Custom git config
+        :raise ClowderError:
+        """
+
+        self._print(" - Update git config")
+        for key, value in config.items():
+            self.git_config_unset_all_local(key)
+            self.git_config_add_local(key, value)

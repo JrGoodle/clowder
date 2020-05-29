@@ -83,7 +83,7 @@ class Fork(ForkImpl):
     :ivar str ref: Fork git ref
     """
 
-    def __init__(self, fork: dict, project: Project, sources: Tuple[Source, ...], defaults: Defaults):
+    def __init__(self, fork: dict, project: 'Project', sources: Tuple[Source, ...], defaults: Defaults):
         """Fork __init__
 
         :param dict fork: Parsed YAML python object for fork

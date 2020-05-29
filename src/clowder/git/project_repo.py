@@ -15,15 +15,12 @@ from clowder.error import ClowderError, ClowderErrorType
 from clowder.logging import LOG_DEBUG
 from clowder.util.connectivity import is_offline
 
-from .project_repo_impl import ProjectRepoImpl
+from .project_repo_impl import GitConfig, ProjectRepoImpl
 from .util import (
     existing_git_repository,
     ref_type,
     truncate_ref
 )
-
-__project_repo_default_ref__ = 'refs/heads/master'
-__project_repo_default_remote__ = 'origin'
 
 
 class ProjectRepo(ProjectRepoImpl):
@@ -92,24 +89,30 @@ class ProjectRepo(ProjectRepoImpl):
                     self._rename_remote(remote.name, fork_remote_name)
             self._compare_remotes(upstream_remote_name, upstream_remote_url, fork_remote_name, fork_remote_url)
 
-    def herd(self, url: str, depth: int = 0, fetch: bool = True, rebase: bool = False) -> None:
+    def herd(self, url: str, depth: int = 0, fetch: bool = True,
+             rebase: bool = False, config: Optional[GitConfig] = None) -> None:
         """Herd ref
 
         :param str url: URL of repo
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
         :param bool fetch: Whether to fetch
         :param bool rebase: Whether to use rebase instead of pulling latest changes
+        :param Optional[GitConfig] config: Custom git config
         """
 
         if not existing_git_repository(self.repo_path):
             self._herd_initial(url, depth=depth)
+            if config is not None:
+                self._update_git_config(config)
             return
 
+        if config is not None:
+            self._update_git_config(config)
         self._create_remote(self.remote, url)
         self._herd(self.remote, self.default_ref, depth=depth, fetch=fetch, rebase=rebase)
 
     def herd_branch(self, url: str, branch: str, depth: int = 0, rebase: bool = False,
-                    fork_remote: Optional[str] = None) -> None:
+                    fork_remote: Optional[str] = None, config: Optional[GitConfig] = None) -> None:
         """Herd branch
 
         :param str url: URL of repo
@@ -117,11 +120,17 @@ class ProjectRepo(ProjectRepoImpl):
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
         :param bool rebase: Whether to use rebase instead of pulling latest changes
         :param Optional[str] fork_remote: Fork remote name
+        :param Optional[GitConfig] config: Custom git config
         """
 
         if not existing_git_repository(self.repo_path):
             self._herd_branch_initial(url, branch, depth=depth)
+            if config is not None:
+                self._update_git_config(config)
             return
+
+        if config is not None:
+            self._update_git_config(config)
 
         branch_output = fmt.ref_string(branch)
         branch_ref = f'refs/heads/{branch}'
@@ -148,13 +157,15 @@ class ProjectRepo(ProjectRepoImpl):
         fetch = depth != 0
         self.herd(url, depth=depth, fetch=fetch, rebase=rebase)
 
-    def herd_tag(self, url: str, tag: str, depth: int = 0, rebase: bool = False) -> None:
+    def herd_tag(self, url: str, tag: str, depth: int = 0,
+                 rebase: bool = False, config: Optional[GitConfig] = None) -> None:
         """Herd tag
 
         :param str url: URL of repo
         :param str tag: Tag name
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
         :param bool rebase: Whether to use rebase instead of pulling latest changes
+        :param Optional[GitConfig] config: Custom git config
         """
 
         if not existing_git_repository(self.repo_path):
@@ -167,7 +178,12 @@ class ProjectRepo(ProjectRepoImpl):
                 fetch = depth != 0
                 self.herd(url, depth=depth, fetch=fetch, rebase=rebase)
                 return
+            else:
+                if config is not None:
+                    self._update_git_config(config)
 
+        if config is not None:
+            self._update_git_config(config)
         try:
             self.fetch(self.remote, ref=f'refs/tags/{tag}', depth=depth)
             self._checkout_tag(tag)

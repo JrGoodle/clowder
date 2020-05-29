@@ -90,17 +90,17 @@ class GitSettings(GitSettingsImpl):
         super().__init__(git_settings)
 
         if default_git_settings is not None:
-            self.recursive = git_settings.get('recursive', default_git_settings.recursive)
-            self.lfs = git_settings.get('lfs', default_git_settings.lfs)
-            self.depth = git_settings.get('depth', default_git_settings.depth)
-            self.jobs = git_settings.get('jobs', default_git_settings.jobs)
-            self.config = self._combine_configs(git_settings.get('config', None), default_git_settings.config)
+            self.recursive: bool = git_settings.get('recursive', default_git_settings.recursive)
+            self.lfs: bool = git_settings.get('lfs', default_git_settings.lfs)
+            self.depth: int = git_settings.get('depth', default_git_settings.depth)
+            self.jobs: int = git_settings.get('jobs', default_git_settings.jobs)
+            self.config: Optional[GitConfig] = self._combine_configs(git_settings.get('config', None), default_git_settings.config)
         else:
-            self.recursive = git_settings.get('recursive', GitSettings.recursive)
-            self.lfs = git_settings.get('lfs', GitSettings.lfs)
-            self.depth = git_settings.get('depth', GitSettings.depth)
-            self.jobs = git_settings.get('jobs', GitSettings.jobs)
-            self.config = git_settings.get('config', None)
+            self.recursive: bool = git_settings.get('recursive', GitSettings.recursive)
+            self.lfs: bool = git_settings.get('lfs', GitSettings.lfs)
+            self.depth: int = git_settings.get('depth', GitSettings.depth)
+            self.jobs: int = git_settings.get('jobs', GitSettings.jobs)
+            self.config: Optional[GitConfig] = git_settings.get('config', None)
 
     def get_processed_config(self) -> Optional[Dict[str, str]]:
         """Return version of config converted to strings
@@ -112,8 +112,8 @@ class GitSettings(GitSettingsImpl):
         if self.config is None:
             return None
 
-        config = {}
-        for key, value in self.config:
+        config: Dict[str, str] = {}
+        for key, value in self.config.items():
             if isinstance(self.config[key], bool):
                 config[key] = str(value).lower()
             elif isinstance(self.config[key], int) or isinstance(self.config[key], float):
@@ -148,7 +148,7 @@ class GitSettings(GitSettingsImpl):
             return ancestor_config
 
         config = copy.deepcopy(ancestor_config)
-        for key, value in current_config:
+        for key, value in current_config.items():
             if key in config and value is None:
                 del config[key]
                 continue

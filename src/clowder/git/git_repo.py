@@ -8,7 +8,7 @@
 from pathlib import Path
 from typing import Optional
 
-from git import Repo, GitError
+from git import Repo, GitCommandError, GitError
 from termcolor import colored
 
 import clowder.util.formatting as fmt
@@ -184,18 +184,13 @@ class GitRepo(object):
 
         remote_output = fmt.remote_string(remote)
         quiet = not self._print_output
-        if depth == 0:
+        if depth == 0 or ref is None:
             self._print(f' - Fetch from {remote_output}')
-            message = colored(' - Failed to fetch from ', 'red')
-            error_message = message + remote_output
-        elif ref is None:
-            message = colored(' - Failed to fetch remote ', 'red')
-            error_message = message + remote_output
+            error_message = f'{fmt.ERROR} Failed to fetch from remote {remote_output}'
         else:
             ref_output = fmt.ref_string(truncate_ref(ref))
-            self._print(' - Fetch from ' + remote_output + ' ' + ref_output)
-            message = colored(' - Failed to fetch from ', 'red')
-            error_message = message + f'{remote_output} {ref_output}'
+            self._print(f' - Fetch from {remote_output} {ref_output}')
+            error_message = f'{fmt.ERROR} Failed to fetch from {remote_output} {ref_output}'
 
         try:
             if depth == 0:
@@ -271,6 +266,47 @@ class GitRepo(object):
         except GitError as err:
             LOG_DEBUG('Git error', err)
             message = f'{fmt.ERROR} Failed to find current timestamp'
+            message = self._format_error_message(message)
+            raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
+        except (KeyboardInterrupt, SystemExit):
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
+
+    def git_config_unset_all_local(self, variable: str) -> None:
+        """Unset all local git config values for given variable key
+
+        :param str variable: Fully qualified git config variable
+        :raise ClowderError:
+        """
+
+        try:
+            self.repo.git.config('--local', '--unset-all', variable)
+        except GitCommandError as err:
+            LOG_DEBUG('Git command error', err)
+            if err.status != 5:  # git returns error code 5 when trying to unset variable that doesn't exist
+                message = f'{fmt.ERROR} Failed to unset all local git config values for {variable}'
+                message = self._format_error_message(message)
+                raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
+        except GitError as err:
+            LOG_DEBUG('Git error', err)
+            message = f'{fmt.ERROR} Failed to unset all local git config values for {variable}'
+            message = self._format_error_message(message)
+            raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
+        except (KeyboardInterrupt, SystemExit):
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
+
+    def git_config_add_local(self, variable: str, value: str) -> None:
+        """Add local git config value for given variable key
+
+        :param str variable: Fully qualified git config variable
+        :param str value: Git config value
+        :raise ClowderError:
+        """
+
+        try:
+            self.repo.git.config('--local', '--add', variable, value)
+        except GitError as err:
+            LOG_DEBUG('Git error', err)
+            message = f'{fmt.ERROR} Failed to add local git config value {value} for variable {variable}'
             message = self._format_error_message(message)
             raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
         except (KeyboardInterrupt, SystemExit):
