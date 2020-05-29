@@ -44,12 +44,13 @@ class ProjectRepo(ProjectRepoImpl):
 
         super().__init__(repo_path, remote, default_ref, parallel=parallel)
 
-    def create_clowder_repo(self, url: str, branch: str, depth: int = 0) -> None:
+    def create_clowder_repo(self, url: str, branch: str, depth: int = 0, jobs: int = 1) -> None:
         """Clone clowder git repo from url at path
 
         :param str url: URL of repo
         :param str branch: Branch name
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :param int jobs: Number of jobs to use for fetching
         """
 
         if existing_git_repository(self.repo_path):
@@ -57,7 +58,7 @@ class ProjectRepo(ProjectRepoImpl):
 
         self._init_repo()
         self._create_remote(self.remote, url, remove_dir=True)
-        self._checkout_new_repo_branch(branch, depth)
+        self._checkout_new_repo_branch(branch, depth, jobs)
 
     def configure_remotes(self, upstream_remote_name: str, upstream_remote_url: str,
                           fork_remote_name: str, fork_remote_url: str) -> None:
@@ -89,12 +90,13 @@ class ProjectRepo(ProjectRepoImpl):
                     self._rename_remote(remote.name, fork_remote_name)
             self._compare_remotes(upstream_remote_name, upstream_remote_url, fork_remote_name, fork_remote_url)
 
-    def herd(self, url: str, depth: int = 0, fetch: bool = True,
+    def herd(self, url: str, depth: int = 0, jobs: int = 1, fetch: bool = True,
              rebase: bool = False, config: Optional[GitConfig] = None) -> None:
         """Herd ref
 
         :param str url: URL of repo
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :param int jobs: Number of jobs to use for fetching
         :param bool fetch: Whether to fetch
         :param bool rebase: Whether to use rebase instead of pulling latest changes
         :param Optional[GitConfig] config: Custom git config
@@ -111,13 +113,14 @@ class ProjectRepo(ProjectRepoImpl):
         self._create_remote(self.remote, url)
         self._herd(self.remote, self.default_ref, depth=depth, fetch=fetch, rebase=rebase)
 
-    def herd_branch(self, url: str, branch: str, depth: int = 0, rebase: bool = False,
+    def herd_branch(self, url: str, branch: str, depth: int = 0, jobs: int = 1, rebase: bool = False,
                     fork_remote: Optional[str] = None, config: Optional[GitConfig] = None) -> None:
         """Herd branch
 
         :param str url: URL of repo
         :param str branch: Branch name
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :param int jobs: Number of jobs to use for fetching
         :param bool rebase: Whether to use rebase instead of pulling latest changes
         :param Optional[str] fork_remote: Fork remote name
         :param Optional[GitConfig] config: Custom git config
@@ -135,35 +138,36 @@ class ProjectRepo(ProjectRepoImpl):
         branch_output = fmt.ref_string(branch)
         branch_ref = f'refs/heads/{branch}'
         if self.existing_local_branch(branch):
-            self._herd_branch_existing_local(branch, depth=depth, rebase=rebase, fork_remote=fork_remote)
+            self._herd_branch_existing_local(branch, depth=depth, jobs=jobs, rebase=rebase, fork_remote=fork_remote)
             return
 
-        self.fetch(self.remote, depth=depth, ref=branch_ref, allow_failure=True)
+        self.fetch(self.remote, depth=depth, jobs=jobs, ref=branch_ref, allow_failure=True)
         if self.existing_remote_branch(branch, self.remote):
-            self._herd(self.remote, branch_ref, depth=depth, fetch=False, rebase=rebase)
+            self._herd(self.remote, branch_ref, depth=depth, jobs=jobs, fetch=False, rebase=rebase)
             return
 
         remote_output = fmt.remote_string(self.remote)
         self._print(f' - No existing remote branch {remote_output} {branch_output}')
         if fork_remote:
-            self.fetch(fork_remote, depth=depth, ref=branch_ref)
+            self.fetch(fork_remote, jobs=jobs, depth=depth, ref=branch_ref)
             if self.existing_remote_branch(branch, fork_remote):
-                self._herd(fork_remote, branch_ref, depth=depth, fetch=False, rebase=rebase)
+                self._herd(fork_remote, branch_ref, depth=depth, jobs=jobs, fetch=False, rebase=rebase)
                 return
 
             remote_output = fmt.remote_string(fork_remote)
             self._print(f' - No existing remote branch {remote_output} {branch_output}')
 
         fetch = depth != 0
-        self.herd(url, depth=depth, fetch=fetch, rebase=rebase)
+        self.herd(url, depth=depth, jobs=jobs, fetch=fetch, rebase=rebase)
 
-    def herd_tag(self, url: str, tag: str, depth: int = 0,
+    def herd_tag(self, url: str, tag: str, depth: int = 0, jobs: int = 1,
                  rebase: bool = False, config: Optional[GitConfig] = None) -> None:
         """Herd tag
 
         :param str url: URL of repo
         :param str tag: Tag name
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :param int jobs: Number of jobs to use for fetching
         :param bool rebase: Whether to use rebase instead of pulling latest changes
         :param Optional[GitConfig] config: Custom git config
         """
@@ -176,7 +180,7 @@ class ProjectRepo(ProjectRepoImpl):
             except ClowderError as err:
                 LOG_DEBUG('Failed checkout new repo tag', err)
                 fetch = depth != 0
-                self.herd(url, depth=depth, fetch=fetch, rebase=rebase)
+                self.herd(url, depth=depth, jobs=jobs, fetch=fetch, rebase=rebase)
                 return
             else:
                 if config is not None:
@@ -190,7 +194,7 @@ class ProjectRepo(ProjectRepoImpl):
         except ClowderError as err:
             LOG_DEBUG('Failed fetch and checkout tag', err)
             fetch = depth != 0
-            self.herd(url, depth=depth, fetch=fetch, rebase=rebase)
+            self.herd(url, depth=depth, jobs=jobs, fetch=fetch, rebase=rebase)
 
     def herd_remote(self, url: str, remote: str, branch: Optional[str] = None) -> None:
         """Herd remote repo
@@ -274,26 +278,27 @@ class ProjectRepo(ProjectRepoImpl):
         except (KeyboardInterrupt, SystemExit):
             raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
-    def reset(self, depth: int = 0) -> None:
+    def reset(self, depth: int = 0, jobs: int = 1) -> None:
         """Reset branch to upstream or checkout tag/sha as detached HEAD
 
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :param int jobs: Number of jobs to use for fetching
         :raise ClowderError:
         """
 
         if ref_type(self.default_ref) == 'tag':
-            self.fetch(self.remote, ref=self.default_ref, depth=depth)
+            self.fetch(self.remote, ref=self.default_ref, depth=depth, jobs=jobs)
             self._checkout_tag(truncate_ref(self.default_ref))
             return
 
         if ref_type(self.default_ref) == 'sha':
-            self.fetch(self.remote, ref=self.default_ref, depth=depth)
+            self.fetch(self.remote, ref=self.default_ref, depth=depth, jobs=jobs)
             self._checkout_sha(self.default_ref)
             return
 
         branch = truncate_ref(self.default_ref)
         if not self.existing_local_branch(branch):
-            self._create_branch_local_tracking(branch, self.remote, depth=depth, fetch=True)
+            self._create_branch_local_tracking(branch, self.remote, depth=depth, fetch=True, jobs=jobs)
             return
 
         self._checkout_branch(branch)
@@ -380,12 +385,14 @@ class ProjectRepo(ProjectRepoImpl):
         if fork_remote_name in remote_names:
             self._compare_remote_url(fork_remote_name, fork_remote_url)
 
-    def _herd(self, remote: str, ref: str, depth: int = 0, fetch: bool = True, rebase: bool = False) -> None:
+    def _herd(self, remote: str, ref: str, depth: int = 0, jobs: int = 1,
+              fetch: bool = True, rebase: bool = False) -> None:
         """Herd ref
 
         :param str remote: Remote name
         :param str ref: Git ref
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :param int jobs: Number of jobs to use for fetching
         :param bool fetch: Whether to fetch
         :param bool rebase: Whether to use rebase instead of pulling latest changes
         """
@@ -402,17 +409,18 @@ class ProjectRepo(ProjectRepoImpl):
 
         branch = truncate_ref(ref)
         if not self.existing_local_branch(branch):
-            self._create_branch_local_tracking(branch, remote, depth=depth, fetch=fetch)
+            self._create_branch_local_tracking(branch, remote, depth=depth, fetch=fetch, jobs=jobs)
             return
 
         self._herd_existing_local(remote, branch, depth=depth, rebase=rebase)
 
-    def _herd_branch_existing_local(self, branch: str, depth: int = 0, rebase: bool = False,
+    def _herd_branch_existing_local(self, branch: str, depth: int = 0, jobs: int = 1, rebase: bool = False,
                                     fork_remote: Optional[str] = None) -> None:
         """Herd branch for existing local branch
 
         :param str branch: Branch name
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :param int jobs: Number of jobs to use for fetching
         :param bool rebase: Whether to use rebase instead of pulling latest changes
         :param Optional[str] fork_remote: Fork remote name
         """
@@ -426,16 +434,17 @@ class ProjectRepo(ProjectRepoImpl):
             return
 
         if fork_remote:
-            self.fetch(fork_remote, depth=depth, ref=branch_ref)
+            self.fetch(fork_remote, depth=depth, jobs=jobs, ref=branch_ref)
             if self.existing_remote_branch(branch, fork_remote):
                 self._herd_remote_branch(fork_remote, branch, depth=depth, rebase=rebase)
 
-    def _herd_branch_initial(self, url: str, branch: str, depth: int = 0) -> None:
+    def _herd_branch_initial(self, url: str, branch: str, depth: int = 0, jobs: int = 1) -> None:
         """Herd branch initial
 
         :param str url: URL of repo
         :param str branch: Branch name to attempt to herd
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :param int jobs: Number of jobs to use for fetching
         """
 
         self._init_repo()
@@ -446,14 +455,16 @@ class ProjectRepo(ProjectRepoImpl):
             self._print(f' - No existing remote branch {remote_output} {fmt.ref_string(branch)}')
             self._herd_initial(url, depth=depth)
             return
-        self._create_branch_local_tracking(branch, self.remote, depth=depth, fetch=False, remove_dir=True)
+        self._create_branch_local_tracking(branch, self.remote, depth=depth, jobs=jobs, fetch=False, remove_dir=True)
 
-    def _herd_existing_local(self, remote: str, branch: str, depth: int = 0, rebase: bool = False) -> None:
+    def _herd_existing_local(self, remote: str, branch: str, depth: int = 0,
+                             jobs: int = 1, rebase: bool = False) -> None:
         """Herd ref
 
         :param str remote: Remote name
         :param str branch: Git branch name
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :param int jobs: Number of jobs to use for fetching
         :param bool rebase: Whether to use rebase instead of pulling latest changes
         """
 
@@ -463,7 +474,7 @@ class ProjectRepo(ProjectRepoImpl):
             return
 
         if not self._is_tracking_branch(branch):
-            self._set_tracking_branch_commit(branch, remote, depth)
+            self._set_tracking_branch_commit(branch, remote, depth, jobs)
             return
 
         if rebase:
@@ -472,37 +483,40 @@ class ProjectRepo(ProjectRepoImpl):
 
         self._pull(remote, branch)
 
-    def _herd_initial(self, url: str, depth: int = 0) -> None:
+    def _herd_initial(self, url: str, depth: int = 0, jobs: int = 1) -> None:
         """Herd ref initial
 
         :param str url: URL of repo
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :param int jobs: Number of jobs to use for fetching
         """
 
         self._init_repo()
         self._create_remote(self.remote, url, remove_dir=True)
         if ref_type(self.default_ref) == 'branch':
-            self._checkout_new_repo_branch(truncate_ref(self.default_ref), depth)
+            self._checkout_new_repo_branch(truncate_ref(self.default_ref), depth, jobs)
         elif ref_type(self.default_ref) == 'tag':
             self._checkout_new_repo_tag(truncate_ref(self.default_ref), self.remote, depth, remove_dir=True)
         elif ref_type(self.default_ref) == 'sha':
-            self._checkout_new_repo_commit(self.default_ref, self.remote, depth)
+            self._checkout_new_repo_commit(self.default_ref, self.remote, depth, jobs)
 
-    def _herd_remote_branch(self, remote: str, branch: str, depth: int = 0, rebase: bool = False) -> None:
+    def _herd_remote_branch(self, remote: str, branch: str, depth: int = 0,
+                            jobs: int = 1, rebase: bool = False) -> None:
         """Herd remote branch
 
         :param str remote: Remote name
         :param str branch: Branch name to attempt to herd
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :param int jobs: Number of jobs to use for fetching
         :param bool rebase: Whether to use rebase instead of pulling latest changes
         """
 
         if not self._is_tracking_branch(branch):
-            self._set_tracking_branch_commit(branch, remote, depth)
+            self._set_tracking_branch_commit(branch, remote, depth, jobs)
             return
 
         if rebase:
-            self._rebase_remote_branch(remote, branch)
+            self._rebase_remote_branch(remote, branch, jobs)
             return
 
         self._pull(remote, branch)

@@ -85,18 +85,19 @@ class ProjectRepoImpl(GitRepo):
                 remove_directory(self.repo_path)
             raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
-    def _checkout_new_repo_branch(self, branch: str, depth: int) -> None:
+    def _checkout_new_repo_branch(self, branch: str, depth: int, jobs: int) -> None:
         """Checkout remote branch or fail and delete repo if it doesn't exist
 
         :param str branch: Branch name
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :param int jobs: Number of jobs to use for fetching
         :raise ClowderError:
         """
 
         branch_output = fmt.ref_string(branch)
         remote_output = fmt.remote_string(self.remote)
         self._remote(self.remote, remove_dir=True)
-        self.fetch(self.remote, depth=depth, ref=branch, remove_dir=True)
+        self.fetch(self.remote, depth=depth, jobs=jobs, ref=branch, remove_dir=True)
 
         if not self.existing_remote_branch(branch, self.remote):
             # TODO: Handle possible exceptions
@@ -105,20 +106,21 @@ class ProjectRepoImpl(GitRepo):
             message = self._format_error_message(message)
             raise ClowderError(ClowderErrorType.GIT_ERROR, message)
 
-        self._create_branch_local_tracking(branch, self.remote, depth=depth, fetch=False, remove_dir=True)
+        self._create_branch_local_tracking(branch, self.remote, depth=depth, jobs=jobs, fetch=False, remove_dir=True)
 
-    def _checkout_new_repo_commit(self, commit: str, remote: str, depth: int) -> None:
+    def _checkout_new_repo_commit(self, commit: str, remote: str, depth: int, jobs: int) -> None:
         """Checkout commit or fail and delete repo if it doesn't exist
 
         :param str commit: Commit sha
         :param str remote: Remote name
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :param int jobs: Number of jobs to use for fetching
         :raise ClowderError:
         """
 
         commit_output = fmt.ref_string(commit)
         self._remote(remote, remove_dir=True)
-        self.fetch(remote, depth=depth, ref=commit, remove_dir=True)
+        self.fetch(remote, depth=depth, jobs=jobs, ref=commit, remove_dir=True)
 
         self._print(' - Checkout commit ' + commit_output)
         try:
@@ -253,13 +255,14 @@ class ProjectRepoImpl(GitRepo):
         except (KeyboardInterrupt, SystemExit):
             raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
-    def _create_branch_local_tracking(self, branch: str, remote: str, depth: int,
+    def _create_branch_local_tracking(self, branch: str, remote: str, depth: int, jobs: int,
                                       fetch: bool = True, remove_dir: bool = False) -> None:
         """Create and checkout tracking branch
 
         :param str branch: Branch name
         :param str remote: Remote name
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :param int jobs: Number of jobs to use for fetching
         :param bool fetch: Whether to fetch before creating branch
         :param bool remove_dir: Whether to remove the directory if commands fail
         :raise ClowderError:
@@ -268,7 +271,7 @@ class ProjectRepoImpl(GitRepo):
         branch_output = fmt.ref_string(branch)
         origin = self._remote(remote, remove_dir=remove_dir)
         if fetch:
-            self.fetch(remote, depth=depth, ref=branch, remove_dir=remove_dir)
+            self.fetch(remote, depth=depth, ref=branch, jobs=jobs, remove_dir=remove_dir)
 
         try:
             self._print(f' - Create branch {branch_output}')
@@ -389,13 +392,14 @@ class ProjectRepoImpl(GitRepo):
         except (KeyboardInterrupt, SystemExit):
             raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
-    def _get_remote_tag(self, tag: str, remote: str, depth: int = 0,
+    def _get_remote_tag(self, tag: str, remote: str, depth: int = 0, jobs: int = 1,
                         remove_dir: bool = False) -> Optional[Tag]:
         """Returns Tag object
 
         :param str tag: Tag name
         :param str remote: Remote name
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :param int jobs: Number of jobs to use for fetching
         :param bool remove_dir: Whether to remove the directory if commands fail
         :return: GitPython Tag object if it exists, otherwise None
         :rtype: Optional[Tag]
@@ -404,7 +408,7 @@ class ProjectRepoImpl(GitRepo):
 
         tag_output = fmt.ref_string(tag)
         self._remote(remote, remove_dir=remove_dir)
-        self.fetch(remote, depth=depth, ref=f'refs/tags/{tag}', remove_dir=remove_dir)
+        self.fetch(remote, depth=depth, jobs=jobs, ref=f'refs/tags/{tag}', remove_dir=remove_dir)
 
         try:
             return self.repo.tags[tag]
@@ -649,18 +653,19 @@ class ProjectRepoImpl(GitRepo):
                 remove_directory(self.repo_path)
             raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
-    def _set_tracking_branch_commit(self, branch: str, remote: str, depth: int) -> None:
+    def _set_tracking_branch_commit(self, branch: str, remote: str, depth: int, jobs: int) -> None:
         """Set tracking relationship between local and remote branch if on same commit
 
         :param str branch: Branch name
         :param str remote: Remote name
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :param int jobs: Number of jobs to use for fetching
         :raise ClowderError:
         """
 
         branch_output = fmt.ref_string(branch)
         origin = self._remote(remote)
-        self.fetch(remote, depth=depth, ref=branch)
+        self.fetch(remote, depth=depth, jobs=jobs, ref=branch)
 
         if not self.existing_local_branch(branch):
             message = f'{fmt.ERROR} No local branch {branch_output}'

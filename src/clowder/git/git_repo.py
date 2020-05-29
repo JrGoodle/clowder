@@ -170,13 +170,14 @@ class GitRepo(object):
 
         return branch in self.repo.heads
 
-    def fetch(self, remote: str, ref: Optional[str] = None, depth: int = 0,
+    def fetch(self, remote: str, ref: Optional[str] = None, depth: int = 0, jobs: int = 1,
               remove_dir: bool = False, allow_failure: bool = False) -> None:
         """Fetch from a specific remote ref
 
         :param str remote: Remote name
         :param Optional[str] ref: Ref to fetch
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :param int jobs: Number of jobs to use for fetching
         :param bool remove_dir: Whether to remove the directory if commands fail
         :param bool allow_failure: Whether to allow failure
         :raise ClowderError:
@@ -194,12 +195,12 @@ class GitRepo(object):
 
         try:
             if depth == 0:
-                print(self.repo.git.fetch(remote, prune=True, tags=True, quiet=quiet), end='')
+                print(self.repo.git.fetch(remote, prune=True, tags=True, jobs=jobs, quiet=quiet), end='')
             elif ref is None:
-                print(self.repo.git.fetch(remote, depth=depth, prune=True, tags=True, quiet=quiet), end='')
+                print(self.repo.git.fetch(remote, depth=depth, prune=True, tags=True, jobs=jobs, quiet=quiet), end='')
             else:
                 print(self.repo.git.fetch(remote, truncate_ref(ref),
-                                          depth=depth, prune=True, tags=True, quiet=quiet), end='')
+                                          depth=depth, prune=True, tags=True, jobs=jobs, quiet=quiet), end='')
         except GitError as err:
             LOG_DEBUG('Git error', err)
             if remove_dir:
