@@ -298,6 +298,20 @@ test_no_file_exists() {
     fi
 }
 
+test_file_is_symlink() {
+    echo "TEST: File $1 is a symlink"
+    if [ ! -h "$1" ]; then
+        exit 1
+    fi
+}
+
+test_file_not_symlink() {
+    echo "TEST: File $1 is not a symlink"
+    if [ -h "$1" ]; then
+        exit 1
+    fi
+}
+
 print_single_separator() {
     echo '--------------------------------------------------------------------------------'
 }

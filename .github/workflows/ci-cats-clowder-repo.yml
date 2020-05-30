@@ -1,4 +1,4 @@
-name: 'CI - cats no-repo'
+name: 'CI - cats clowder repo configurations'
 
 on:
   push:
@@ -17,7 +17,7 @@ defaults:
     shell: bash
 
 jobs:
-  cats_no_repo:
+  cats_clowder_repo:
     env:
       PYTHON_VERSION: ${{ matrix.python-version }}
       OS_NAME: ${{ matrix.os }}
@@ -50,7 +50,7 @@ jobs:
       run: script/update
     - name: Install clowder test
       run: script/test
-    - name: Test no repo commands
-      run: clowder-test -c cats no-repo
+    - name: Test commands for various clowder repo and clowder yaml configurations
+      run: clowder-test -c cats clowder-repo
     - name: CI after script
       run: script/ci_after

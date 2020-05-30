@@ -14,6 +14,7 @@ from clowder.environment import ENVIRONMENT
 from clowder.error import ClowderError, ClowderErrorType
 from clowder.model.util import validate_project_statuses
 from clowder.util.decorators import (
+    clowder_repo_required,
     print_clowder_name,
     valid_clowder_yaml_required
 )
@@ -36,6 +37,7 @@ def add_save_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
 
 @valid_clowder_yaml_required
 @print_clowder_name
+@clowder_repo_required
 def save(args) -> None:
     """Clowder save command private implementation
 

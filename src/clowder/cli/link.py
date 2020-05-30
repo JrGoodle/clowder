@@ -10,6 +10,7 @@ import argparse
 import clowder.util.formatting as fmt
 from clowder.clowder_repo import get_saved_version_names
 from clowder.environment import ENVIRONMENT
+from clowder.error import ClowderError, ClowderErrorType
 from clowder.util.yaml import (
     link_clowder_yaml_default,
     link_clowder_yaml_version
@@ -41,11 +42,15 @@ def add_link_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
     parser.set_defaults(func=link)
 
 
-@clowder_repo_required
 @print_clowder_name
+@clowder_repo_required
 @print_clowder_repo_status
 def link(args) -> None:
     """Clowder link command private implementation"""
+
+    if ENVIRONMENT.CLOWDER_YAML is not None and not ENVIRONMENT.CLOWDER_YAML.is_symlink():
+        raise ClowderError(ClowderErrorType.EXISTING_FILE_AT_SYMLINK_TARGET_PATH,
+                           fmt.error_existing_file_at_symlink_target_path(ENVIRONMENT.CLOWDER_YAML))
 
     if args.version is None:
         link_clowder_yaml_default(ENVIRONMENT.CLOWDER_DIR)

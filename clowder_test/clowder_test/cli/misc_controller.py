@@ -61,5 +61,4 @@ class MiscController(ArgparseController):
                              parallel=self.app.pargs.parallel,
                              write=self.app.pargs.write,
                              coverage=self.app.pargs.coverage,
-                             debug=self.app.debug,
-                             quiet=self.app.pargs.silent)
+                             debug=self.app.debug)

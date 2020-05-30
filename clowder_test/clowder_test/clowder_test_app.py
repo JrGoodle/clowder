@@ -5,6 +5,8 @@
 
 """
 
+from subprocess import CalledProcessError
+
 import colorama
 from cement import App
 
@@ -43,8 +45,19 @@ def main():
     """Clowder command CLI main function"""
 
     print()
-    with ClowderTestApp() as app:
-        app.run()
+    try:
+        with ClowderTestApp() as app:
+            app.run()
+    except CalledProcessError as err:
+        print('CLOWDER_TEST: CalledProcessError')
+        print(f"CLOWDER_TEST: {err}")
+        print()
+        exit(err.returncode)
+    except Exception as err:
+        print('CLOWDER_TEST: Exception')
+        print(f"CLOWDER_TEST: {err}")
+        print()
+        exit(1)
 
 
 if __name__ == '__main__':

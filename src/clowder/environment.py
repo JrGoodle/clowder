@@ -31,6 +31,7 @@ class ClowderEnvironment(object):
     CLOWDER_CONFIG_YAML = CLOWDER_CONFIG_DIR / 'clowder.config.yml'
     CLOWDER_DIR: Optional[Path] = None
     CLOWDER_REPO_DIR: Optional[Path] = None
+    CLOWDER_GIT_REPO_DIR: Optional[Path] = None
     CLOWDER_REPO_VERSIONS_DIR: Optional[Path] = None
     CLOWDER_YAML: Optional[Path] = None
 
@@ -42,31 +43,41 @@ class ClowderEnvironment(object):
         self.configure_directories()
         self.configure_clowder_yaml()
 
-        if self.CLOWDER_REPO_DIR is not None and self.CLOWDER_YAML is not None and not self.CLOWDER_YAML.is_symlink():
-            print(fmt.warning_clowder_yaml_not_symlink_with_clowder_repo(self.CLOWDER_YAML.name))
-
     def configure_directories(self) -> None:
         """Configure clowder directories"""
 
-        # Walk up directory tree to find possible clowder repo (.clowder directory) and set global variable
+        # Walk up directory tree to find possible .clowder directory,
+        # clowder.yml file, or clowder.yaml and set environment variables
+
         path = Path.cwd()
         while str(path) != path.root:
             clowder_repo_dir = path / '.clowder'
-            if existing_clowder_repo(clowder_repo_dir):
+            clowder_yml = path / 'clowder.yml'
+            clowder_yaml = path / 'clowder.yaml'
+            if clowder_repo_dir.is_dir() and existing_clowder_repo(clowder_repo_dir):
+                self.CLOWDER_DIR = path
+                self.CLOWDER_REPO_DIR = clowder_repo_dir
+                self.CLOWDER_GIT_REPO_DIR = clowder_repo_dir
+                break
+            elif clowder_repo_dir.is_dir():
                 self.CLOWDER_DIR = path
                 self.CLOWDER_REPO_DIR = clowder_repo_dir
                 break
+            elif clowder_yml.is_file() or clowder_yaml.is_file():
+                self.CLOWDER_DIR = path
+                break
             path = path.parent
 
-        clowder_versions = self.CLOWDER_REPO_DIR / 'versions'
-        if clowder_versions.is_dir():
-            self.CLOWDER_REPO_VERSIONS_DIR = clowder_versions
+        if self.CLOWDER_REPO_DIR is not None:
+            clowder_versions = self.CLOWDER_REPO_DIR / 'versions'
+            if clowder_versions.is_dir():
+                self.CLOWDER_REPO_VERSIONS_DIR = clowder_versions
 
     def configure_clowder_yaml(self) -> None:
         """Configure clowder directories"""
 
-        # If clowder repo exists, try to set other global path variables
-        if self.CLOWDER_REPO_DIR is not None:
+        # If clowder directory exists, try to set other environment path variables
+        if self.CLOWDER_DIR is not None:
             clowder_yml = self.CLOWDER_DIR / 'clowder.yml'
             clowder_yaml = self.CLOWDER_DIR / 'clowder.yaml'
         else:

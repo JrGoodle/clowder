@@ -434,6 +434,7 @@ class Project(ProjectImpl):
             print(self.status())
             repo = ProjectRepo(self.full_path(), self.remote, self.ref)
             repo.print_validation()
+            print()
 
     @project_repo_exists
     def prune(self, branch: str, force: bool = False,

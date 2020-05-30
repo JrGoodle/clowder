@@ -77,29 +77,31 @@ test_save_missing_directories 'duke' 'mu'
 test_save_first_version_no_existing_versions_directory() {
     print_single_separator
     echo "TEST: Test saving first version when versions directory doesn't currently exist"
+    ./clean.sh
     begin_command
-    $COMMAND repo checkout no-versions || exit 1
-    end_command
-    begin_command
-    $COMMAND link || exit 1
+    $COMMAND init https://github.com/jrgoodle/cats.git -b no-versions || exit 1
     end_command
     test_symlink_path 'clowder.yaml' "$(pwd)/.clowder/clowder.yaml"
     begin_command
     $COMMAND herd $PARALLEL || exit 1
     end_command
-    pushd '.clowder' || exit 1
-    test_no_directory_exists 'versions'
-    popd || exit 1
+    test_no_directory_exists '.clowder/versions'
     begin_command
     $COMMAND save first-version || exit 1
     end_command
-    pushd '.clowder' || exit 1
-    test_directory_exists 'versions'
-    popd || exit 1
+    test_directory_exists '.clowder/versions'
+    test_file_exists '.clowder/versions/first-version.clowder.yml'
+    test_no_file_exists 'clowder.yml'
+    test_file_exists 'clowder.yaml'
+    test_file_is_symlink 'clowder.yaml'
+    test_symlink_path 'clowder.yaml' "$(pwd)/.clowder/clowder.yaml"
     begin_command
     $COMMAND link first-version || exit 1
     end_command
-    test_symlink_path 'clowder.yaml' "$(pwd)/.clowder/versions/first-version-clowder.yaml"
+    test_no_file_exists 'clowder.yaml'
+    test_file_exists 'clowder.yml'
+    test_file_is_symlink 'clowder.yml'
+    test_symlink_path 'clowder.yml' "$(pwd)/.clowder/versions/first-version.clowder.yml"
     begin_command
     $COMMAND herd $PARALLEL || exit 1
     end_command

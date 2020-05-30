@@ -48,8 +48,7 @@ class BaseController(ArgparseController):
                                  parallel=self.app.pargs.parallel,
                                  write=self.app.pargs.write,
                                  coverage=self.app.pargs.coverage,
-                                 debug=self.app.debug,
-                                 quiet=self.app.pargs.silent)
+                                 debug=self.app.debug)
 
         self.offline()
         self.parallel()
@@ -64,8 +63,7 @@ class BaseController(ArgparseController):
                              parallel=True,
                              write=self.app.pargs.write,
                              coverage=self.app.pargs.coverage,
-                             debug=self.app.debug,
-                             quiet=self.app.pargs.silent)
+                             debug=self.app.debug)
 
     @expose(
         help='Run offline tests'
@@ -77,8 +75,7 @@ class BaseController(ArgparseController):
                              parallel=self.app.pargs.parallel,
                              write=self.app.pargs.write,
                              coverage=self.app.pargs.coverage,
-                             debug=self.app.debug,
-                             quiet=self.app.pargs.silent)
+                             debug=self.app.debug)
 
     @expose(
         help='Run parallel tests'
@@ -90,8 +87,7 @@ class BaseController(ArgparseController):
                              parallel=True,
                              write=self.app.pargs.write,
                              coverage=self.app.pargs.coverage,
-                             debug=self.app.debug,
-                             quiet=self.app.pargs.silent)
+                             debug=self.app.debug)
 
     # @expose(
     #     help='Run unit tests'
@@ -119,8 +115,7 @@ class BaseController(ArgparseController):
                                  parallel=self.app.pargs.parallel,
                                  write=True,
                                  coverage=self.app.pargs.coverage,
-                                 debug=self.app.debug,
-                                 quiet=self.app.pargs.silent)
+                                 debug=self.app.debug)
 
         misc_scripts = ['./write_forks.sh']
         for script in misc_scripts:
@@ -128,8 +123,7 @@ class BaseController(ArgparseController):
                                  parallel=self.app.pargs.parallel,
                                  write=True,
                                  coverage=self.app.pargs.coverage,
-                                 debug=self.app.debug,
-                                 quiet=self.app.pargs.silent)
+                                 debug=self.app.debug)
 
         # execute_test_command('./write_configure_remotes.sh', os.path.join(self.path, 'swift'),
         #                      parallel=self.app.pargs.parallel,

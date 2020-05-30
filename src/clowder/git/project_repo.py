@@ -11,7 +11,6 @@ from typing import Optional
 from git import GitError
 
 import clowder.util.formatting as fmt
-from clowder.environment import ENVIRONMENT
 from clowder.error import ClowderError, ClowderErrorType
 from clowder.logging import LOG_DEBUG
 from clowder.util.connectivity import is_offline
@@ -222,6 +221,7 @@ class ProjectRepo(ProjectRepoImpl):
     def install_project_git_herd_alias(self) -> None:
         """Install 'git herd' alias for project"""
 
+        from clowder.environment import ENVIRONMENT
         config_variable = 'alias.herd'
         config_value = f'!clowder herd {self.repo_path.relative_to(ENVIRONMENT.CLOWDER_DIR)}'
         self._print(" - Update git herd alias")
@@ -348,7 +348,7 @@ class ProjectRepo(ProjectRepoImpl):
         self._checkout_sha(rev)
 
     def start(self, remote: str, branch: str, depth: int, tracking: bool) -> None:
-        """Start new branch in repository
+        """Start new branch in repository and checkout
 
         :param str remote: Remote name
         :param str branch: Local branch name to create

@@ -59,6 +59,14 @@ class CatsController(ArgparseController):
         self._execute_command('./clean.sh', self.path)
 
     @expose(
+        help='Run cats clowder-repo tests'
+    )
+    def clowder_repo(self) -> None:
+        """clowder cats clowder-repo tests"""
+
+        self._execute_command('./clowder-repo.sh', self.path)
+
+    @expose(
         help='Run cats config tests'
     )
     def config(self) -> None:
@@ -163,14 +171,6 @@ class CatsController(ArgparseController):
         self._execute_command('./lfs.sh', self.path)
 
     @expose(
-        help='Run cats no-repo tests'
-    )
-    def no_repo(self) -> None:
-        """clowder cats no-repo tests"""
-
-        self._execute_command('./no-repo.sh', self.path)
-
-    @expose(
         help='Run cats prune tests'
     )
     def prune(self) -> None:
@@ -261,5 +261,4 @@ class CatsController(ArgparseController):
                              parallel=self.app.pargs.parallel,
                              write=self.app.pargs.write,
                              coverage=self.app.pargs.coverage,
-                             debug=self.app.debug,
-                             quiet=self.app.pargs.silent)
+                             debug=self.app.debug)
