@@ -180,11 +180,11 @@ class Project(ProjectImpl):
                 message = fmt.error_remote_dup(self.fork.name, self.name, self.remote, CLOWDER_YAML)
                 raise ClowderError(ClowderErrorType.CLOWDER_YAML_DUPLICATE_REMOTE_NAME, message)
 
-        groups = ['all', self.name, str(Path(self.name).name), str(self.path)]
+        groups = ['all', self.name, str(self.path)]
         if self._groups is not None:
             groups += copy.deepcopy(self._groups)
         if self.fork is not None:
-            groups += [self.fork.name, str(Path(self.fork.name).name)]
+            groups += [self.fork.name]
         groups = list(set(groups))
         if 'notdefault' in groups:
             groups.remove('all')

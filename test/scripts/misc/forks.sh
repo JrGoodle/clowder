@@ -21,13 +21,13 @@ cd "$MISC_EXAMPLE_DIR" || exit 1
 ./init.sh || exit 1
 
 test_fork_groups_1() {
-    test_no_directory_exists 'sox-code'
+    test_no_directory_exists 'sox'
     test_no_directory_exists 'djinni'
     test_no_directory_exists 'gyp'
     begin_command
     $COMMAND herd JrGoodle/sox $PARALLEL || exit 1
     end_command
-    pushd sox-code || exit 1
+    pushd sox || exit 1
     test_branch 'master'
     test_remote_url 'origin' 'git@github.com:JrGoodle/sox.git'
     test_remote_url 'upstream' 'https://git.code.sf.net/p/sox/code.git'
@@ -41,13 +41,13 @@ test_fork_groups_1
 ./init.sh || exit 1
 
 test_fork_groups_2() {
-    test_no_directory_exists 'sox-code'
+    test_no_directory_exists 'sox'
     test_no_directory_exists 'djinni'
     test_no_directory_exists 'gyp'
     begin_command
     $COMMAND herd sox $PARALLEL || exit 1
     end_command
-    pushd sox-code || exit 1
+    pushd sox || exit 1
     test_branch 'master'
     test_remote_url 'origin' 'git@github.com:JrGoodle/sox.git'
     test_remote_url 'upstream' 'https://git.code.sf.net/p/sox/code.git'
