@@ -8,8 +8,8 @@
 import argparse
 
 import clowder.util.formatting as fmt
-from clowder import CLOWDER_DIR
 from clowder.clowder_repo import get_saved_version_names
+from clowder.environment import ENVIRONMENT
 from clowder.util.yaml import (
     link_clowder_yaml_default,
     link_clowder_yaml_version
@@ -48,6 +48,6 @@ def link(args) -> None:
     """Clowder link command private implementation"""
 
     if args.version is None:
-        link_clowder_yaml_default(CLOWDER_DIR)
+        link_clowder_yaml_default(ENVIRONMENT.CLOWDER_DIR)
     else:
-        link_clowder_yaml_version(CLOWDER_DIR, args.version)
+        link_clowder_yaml_version(ENVIRONMENT.CLOWDER_DIR, args.version)

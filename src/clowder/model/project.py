@@ -13,7 +13,7 @@ from typing import List, Optional, Tuple
 from termcolor import colored, cprint
 
 import clowder.util.formatting as fmt
-from clowder import CLOWDER_DIR, CLOWDER_YAML, LOG_DEBUG
+from clowder.environment import ENVIRONMENT
 from clowder.error import ClowderError, ClowderErrorType
 from clowder.git import ProjectRepo, ProjectRepoRecursive
 from clowder.git.util import (
@@ -22,6 +22,7 @@ from clowder.git.util import (
     format_git_tag,
     git_url
 )
+from clowder.logging import LOG_DEBUG
 from clowder.util.connectivity import is_offline
 from clowder.util.execute import execute_forall_command
 
@@ -169,7 +170,7 @@ class Project(ProjectImpl):
                 self.source = source
                 break
         if self.source is None:
-            message = fmt.error_source_not_found(source_name, CLOWDER_YAML, self.name)
+            message = fmt.error_source_not_found(source_name, ENVIRONMENT.CLOWDER_YAML, self.name)
             raise ClowderError(ClowderErrorType.CLOWDER_YAML_SOURCE_NOT_FOUND, message)
 
         self.fork = None
@@ -177,7 +178,7 @@ class Project(ProjectImpl):
             fork = project['fork']
             self.fork = Fork(fork, self, sources, defaults)
             if self.remote == self.fork.remote:
-                message = fmt.error_remote_dup(self.fork.name, self.name, self.remote, CLOWDER_YAML)
+                message = fmt.error_remote_dup(self.fork.name, self.name, self.remote, ENVIRONMENT.CLOWDER_YAML)
                 raise ClowderError(ClowderErrorType.CLOWDER_YAML_DUPLICATE_REMOTE_NAME, message)
 
         groups = ['all', self.name, str(self.path)]
@@ -330,7 +331,7 @@ class Project(ProjectImpl):
         :rtype: str
         """
 
-        return CLOWDER_DIR / self.path
+        return ENVIRONMENT.CLOWDER_DIR / self.path
 
     def get_current_timestamp(self) -> str:
         """Return timestamp of current HEAD commit
@@ -506,7 +507,7 @@ class Project(ProjectImpl):
 
         self._print_output = not parallel
 
-        forall_env = {'CLOWDER_PATH': CLOWDER_DIR,
+        forall_env = {'CLOWDER_PATH': ENVIRONMENT.CLOWDER_DIR,
                       'PROJECT_PATH': self.full_path(),
                       'PROJECT_NAME': self.name,
                       'PROJECT_REMOTE': self.remote,

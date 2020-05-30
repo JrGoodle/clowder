@@ -9,9 +9,10 @@ from functools import wraps
 
 import clowder.clowder_repo as clowder_repo
 import clowder.util.formatting as fmt
-from clowder import CLOWDER_REPO_DIR, LOG_DEBUG
 from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.error import ClowderError, ClowderErrorType
+from clowder.logging import LOG_DEBUG
+from clowder.environment import ENVIRONMENT
 
 
 def clowder_repo_required(func):
@@ -75,6 +76,8 @@ def valid_clowder_yaml_required(func):
     def wrapper(*args, **kwargs):
         """Wrapper"""
 
+        if ENVIRONMENT.CLOWDER_YAML_ERROR is not None:
+            raise ENVIRONMENT.CLOWDER_YAML_ERROR
         _validate_clowder_repo_exists()
         if CLOWDER_CONTROLLER.error:
             _invalid_yaml_error(CLOWDER_CONTROLLER.error)
@@ -103,5 +106,5 @@ def _validate_clowder_repo_exists():
     :raise ClowderError:
     """
 
-    if CLOWDER_REPO_DIR is None:
+    if ENVIRONMENT.CLOWDER_REPO_DIR is None:
         raise ClowderError(ClowderErrorType.MISSING_REPO, fmt.error_missing_clowder_repo())

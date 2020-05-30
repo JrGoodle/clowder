@@ -14,8 +14,9 @@ import jsonschema
 import yaml as pyyaml
 
 import clowder.util.formatting as fmt
-from clowder import CLOWDER_DIR, CLOWDER_YAML, LOG_DEBUG
+from clowder.environment import ENVIRONMENT
 from clowder.error import ClowderError, ClowderErrorType
+from clowder.logging import LOG_DEBUG
 
 from .file_system import (
     force_symlink,
@@ -150,8 +151,8 @@ def load_yaml_file(yaml_file: Path, relative_dir: Path) -> dict:
 def print_clowder_yaml() -> None:
     """Print current clowder yaml"""
 
-    if CLOWDER_YAML.is_file():
-        _print_yaml(CLOWDER_YAML)
+    if ENVIRONMENT.CLOWDER_YAML.is_file():
+        _print_yaml(ENVIRONMENT.CLOWDER_YAML)
 
 
 def save_yaml_file(yaml_output: dict, yaml_file: Path) -> None:
@@ -237,7 +238,7 @@ def _format_yaml_file(yaml_file: Path) -> str:
     :rtype: str
     """
 
-    path = yaml_file.resolve().relative_to(CLOWDER_DIR)
+    path = yaml_file.resolve().relative_to(ENVIRONMENT.CLOWDER_DIR)
     return f"\n{fmt.path_string(Path(path))}\n"
 
 
@@ -282,7 +283,7 @@ def _print_yaml_path(yaml_file: Path) -> None:
     """
 
     if yaml_file.is_symlink():
-        path = yaml_file.resolve().relative_to(CLOWDER_DIR)
+        path = yaml_file.resolve().relative_to(ENVIRONMENT.CLOWDER_DIR)
         print(_format_yaml_symlink(Path(yaml_file.name), path))
     else:
         print(_format_yaml_file(yaml_file))

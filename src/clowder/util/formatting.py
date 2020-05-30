@@ -13,6 +13,7 @@ from typing import List, Union
 
 
 ERROR = colored(' - Error:', 'red')
+WARNING = colored(' - Warning:', 'yellow')
 
 
 # TODO: Update to return list of all duplicates found
@@ -87,7 +88,7 @@ def error_ambiguous_clowder_yaml() -> str:
 
     yml_file = _yaml_file(Path('clowder.yml'))
     yaml_file = _yaml_file(Path('clowder.yaml'))
-    return f"\n{ERROR} Found {yml_file} and {yaml_file} files in same directory"
+    return f"{ERROR} Found {yml_file} and {yaml_file} files in same directory"
 
 
 def error_clone_missing_projects() -> str:
@@ -108,6 +109,20 @@ def error_clowder_already_initialized() -> str:
     """
 
     return f"{ERROR} Clowder already initialized in this directory"
+
+
+def error_clowder_symlink_source_missing(symlink_path: Path, clowder_dir: Path) -> str:
+    """Return formatted error string for clowder symlink source not found
+
+    :param Path symlink_path: Clowder yaml symlink path
+    :param Path clowder_dir: Clowder directory
+    :return: Formatted clowder symlink source not found warning
+    :rtype: str
+    """
+
+    target = _yaml_file(symlink_path.relative_to(clowder_dir))
+    source = _yaml_file(symlink_path.resolve().relative_to(clowder_dir))
+    return f"{ERROR} Found symink {target} -> {source} but source appears to be missing"
 
 
 def error_command_failed(cmd: Union[str, List[str]]) -> str:
@@ -169,7 +184,7 @@ def error_empty_yaml(yml: Path, name: Path) -> str:
     """
 
     path = _yaml_path(yml)
-    file = _yaml_file(name)
+    file = _yaml_file(str(name))
     return f"{path}\n{ERROR} No entries in {file}"
 
 
@@ -251,7 +266,7 @@ def error_invalid_config_file(file_path: Path) -> str:
     :rtype: str
     """
 
-    file = _yaml_file(file_path)
+    file = _yaml_file(str(file_path))
     return f"{ERROR} {file}\n{ERROR} Clowder config file appears to be invalid"
 
 
@@ -331,7 +346,7 @@ def error_missing_file(yaml_file: Path) -> str:
     :rtype: str
     """
 
-    file = _yaml_file(yaml_file)
+    file = _yaml_file(str(yaml_file))
     return f"{ERROR} {file} appears to be missing"
 
 
@@ -466,7 +481,7 @@ def error_save_version_exists(version_name: str, yml: Path) -> str:
     :rtype: str
     """
 
-    file = _yaml_file(yml)
+    file = _yaml_file(str(yml))
     version = version_string(version_name)
     return f"{ERROR} {file}\n{ERROR} Version '{version}' already exists"
 
@@ -662,6 +677,18 @@ def version_string(version_name: str) -> str:
     return colored(version_name, attrs=['bold'])
 
 
+def warning_clowder_yaml_not_symlink_with_clowder_repo(name: str) -> str:
+    """Return formatted warning string for non-symlink clowder yaml file with an existing clowder repo
+
+    :param str name: Clowder yaml file name
+    :return: Formatted warning string for non-symlink clowder yaml file with an existing clowder repo
+    :rtype: str
+    """
+
+    return f"{WARNING} Found file {_yaml_file(name)} but it is not a symlink " \
+           f"to file stored in existing {path_string(Path('.clowder'))} repo"
+
+
 def _project_name(name: str) -> str:
     """Return formatted string for project name
 
@@ -684,12 +711,12 @@ def _yaml_path(yml: Path) -> str:
     return path_string(yml.resolve())
 
 
-def _yaml_file(yml: Path) -> str:
+def _yaml_file(yml: str) -> str:
     """Return formatted string for clowder yaml file
 
-    :param Path yml: Path to yaml file
+    :param str yml: Path to yaml file
     :return: Formatted YAML string
     :rtype: str
     """
 
-    return colored(str(yml), 'cyan')
+    return colored(yml, 'cyan')

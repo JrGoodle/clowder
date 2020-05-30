@@ -251,7 +251,7 @@ test_commit_messages() {
 }
 
 test_symlink_path() {
-    echo "TEST: Symlink at $1 is pointing to correct file path"
+    echo "TEST: Symlink at $1 is pointing to correct file path $2"
     local symlink_path
     symlink_path=$(readlink "$1")
     echo "Expected path: $2"

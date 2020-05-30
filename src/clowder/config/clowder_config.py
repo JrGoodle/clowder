@@ -12,7 +12,7 @@ from typing import Optional, Tuple
 from termcolor import cprint
 
 import clowder.util.formatting as fmt
-from clowder import CLOWDER_DIR, CLOWDER_CONFIG_YAML
+from clowder.environment import ENVIRONMENT
 from clowder.error import ClowderError, ClowderErrorType
 
 
@@ -45,7 +45,7 @@ class ClowderConfig(object):
         """
 
         if clowder_config is None:
-            self.clowder_dir = CLOWDER_DIR
+            self.clowder_dir = ENVIRONMENT.CLOWDER_DIR
             self.name = current_clowder_name
             self.jobs = None
             self.projects = None
@@ -190,7 +190,7 @@ class ClowderConfig(object):
 
         for project in self.projects:
             if project not in project_options:
-                messages = [f"{fmt.error_invalid_config_file(CLOWDER_CONFIG_YAML)}",
+                messages = [f"{fmt.error_invalid_config_file(ENVIRONMENT.CLOWDER_CONFIG_YAML)}",
                             f"{fmt.error_unknown_project(project)}"]
                 raise ClowderError(ClowderErrorType.CONFIG_YAML_UNKNOWN_PROJECT, messages)
 

@@ -5,8 +5,6 @@
 
 """
 
-import os
-
 import colorama
 from cement import App
 
@@ -19,7 +17,7 @@ from clowder_test.execute import execute_command
 
 
 def post_argument_parsing_hook(app): # noqa
-    execute_command('./setup_local_test_directory.sh', os.path.join(ROOT_DIR, 'test', 'scripts'))
+    execute_command('./setup_local_test_directory.sh', ROOT_DIR / 'test' / 'scripts')
 
 
 class ClowderTestApp(App):

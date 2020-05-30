@@ -5,7 +5,7 @@
 
 """
 
-import os
+from pathlib import Path
 
 from cement.ext.ext_argparse import ArgparseController, expose
 
@@ -16,7 +16,7 @@ from clowder_test import ROOT_DIR
 class CatsController(ArgparseController):
     """Clowder test command cats controller"""
 
-    path = os.path.join(ROOT_DIR, 'test', 'scripts', 'cats')
+    path = ROOT_DIR / 'test' / 'scripts' / 'cats'
 
     class Meta:
         """Clowder test cats Meta configuration"""
@@ -32,7 +32,7 @@ class CatsController(ArgparseController):
     def all(self) -> None:
         """clowder cats tests"""
 
-        self._execute_command('./test_example_cats.sh', os.path.join(ROOT_DIR, 'test', 'scripts'))
+        self._execute_command('./test_example_cats.sh', ROOT_DIR / 'test' / 'scripts')
 
     @expose(
         help='Run cats branch tests'
@@ -163,6 +163,14 @@ class CatsController(ArgparseController):
         self._execute_command('./lfs.sh', self.path)
 
     @expose(
+        help='Run cats no-repo tests'
+    )
+    def no_repo(self) -> None:
+        """clowder cats no-repo tests"""
+
+        self._execute_command('./no-repo.sh', self.path)
+
+    @expose(
         help='Run cats prune tests'
     )
     def prune(self) -> None:
@@ -242,11 +250,11 @@ class CatsController(ArgparseController):
 
         self._execute_command('./yaml_validation.sh', self.path)
 
-    def _execute_command(self, command: str, path: str) -> None:
+    def _execute_command(self, command: str, path: Path) -> None:
         """Private execute command
 
         :param str command: Command to run
-        :param str path: Path to set as ``cwd``
+        :param Path path: Path to set as ``cwd``
         """
 
         execute_test_command(command, path,

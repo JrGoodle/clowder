@@ -11,8 +11,9 @@ from termcolor import colored
 
 import clowder.clowder_repo as clowder_repo
 import clowder.util.formatting as fmt
-from clowder import CURRENT_DIR, existing_clowder_repo
+from clowder.environment import ENVIRONMENT
 from clowder.error import ClowderError, ClowderErrorType
+from clowder.git.util import existing_clowder_repo
 from clowder.util.connectivity import network_connection_required
 
 from .util import add_parser_arguments
@@ -37,7 +38,7 @@ def init(args) -> None:
     :raise ClowderError:
     """
 
-    clowder_repo_dir = CURRENT_DIR / '.clowder'
+    clowder_repo_dir = ENVIRONMENT.CURRENT_DIR / '.clowder'
     if existing_clowder_repo(clowder_repo_dir):
         raise ClowderError(ClowderErrorType.CLOWDER_ALREADY_INITIALIZED, fmt.error_clowder_already_initialized())
 

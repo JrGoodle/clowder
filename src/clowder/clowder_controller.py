@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Optional, Tuple
 
 import clowder.util.formatting as fmt
-from clowder import CLOWDER_DIR, CLOWDER_YAML
+from clowder.environment import ENVIRONMENT
 from clowder.error import ClowderError, ClowderErrorType
 from clowder.model import Defaults, Project, Source
 from clowder.model.util import (
@@ -49,10 +49,10 @@ class ClowderController(object):
         self.project_choices_with_default = ('default',)
 
         try:
-            if CLOWDER_YAML is None:
+            if ENVIRONMENT.CLOWDER_YAML is None:
                 raise ClowderError(ClowderErrorType.YAML_MISSING_FILE, fmt.error_missing_clowder_yaml())
-            yaml = load_yaml_file(CLOWDER_YAML, CLOWDER_DIR)
-            validate_yaml_file(yaml, CLOWDER_YAML)
+            yaml = load_yaml_file(ENVIRONMENT.CLOWDER_YAML, ENVIRONMENT.CLOWDER_DIR)
+            validate_yaml_file(yaml, ENVIRONMENT.CLOWDER_YAML)
             self._load_clowder_yaml(yaml)
         except ClowderError as err:
             self.error = err
@@ -172,7 +172,7 @@ class ClowderController(object):
                                         key=lambda source: source.name))
 
             if not any([s.name == self.defaults.source for s in self.sources]):
-                message = fmt.error_source_default_not_found(self.defaults.source, CLOWDER_YAML)
+                message = fmt.error_source_default_not_found(self.defaults.source, ENVIRONMENT.CLOWDER_YAML)
                 raise ClowderError(ClowderErrorType.CLOWDER_YAML_SOURCE_NOT_FOUND, message)
 
             self.projects = tuple(sorted([Project(p, self.defaults, self.sources) for p in yaml['projects']],
@@ -181,7 +181,7 @@ class ClowderController(object):
             paths = [str(p.path.resolve()) for p in self.projects]
             duplicate = fmt.check_for_duplicates(paths)
             if duplicate is not None:
-                message = fmt.error_duplicate_project_path(Path(duplicate), CLOWDER_YAML)
+                message = fmt.error_duplicate_project_path(Path(duplicate), ENVIRONMENT.CLOWDER_YAML)
                 raise ClowderError(ClowderErrorType.CLOWDER_YAML_DUPLICATE_PATH, message)
 
             self.project_names = self._get_all_project_names()
