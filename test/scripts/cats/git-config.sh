@@ -239,3 +239,27 @@ test_defaults_project_git_config() {
     popd || exit 1
 }
 test_defaults_project_git_config
+
+./clean.sh
+./init.sh || exit 1
+
+test_project_git_herd_alias() {
+    print_single_separator
+    echo "TEST: Custom git herd config alias in project"
+    begin_command
+    $COMMAND herd $PARALLEL || exit 1
+    end_command
+
+    echo "TEST: Custom git herd config alias in project is installed"
+    for project in "${all_projects[@]}"; do
+        pushd $project || exit 1
+        begin_command
+        git herd || exit 1
+        end_command
+        popd || exit 1
+    done
+
+    # TODO: Add test setting projects to a known older state, running 'git herd' on select projects,
+    # and validating that only the correct ones have been update
+}
+test_project_git_herd_alias

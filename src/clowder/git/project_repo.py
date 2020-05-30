@@ -102,10 +102,12 @@ class ProjectRepo(ProjectRepoImpl):
 
         if not existing_git_repository(self.repo_path):
             self._herd_initial(url, depth=depth)
+            self.install_project_git_herd_alias()
             if config is not None:
                 self._update_git_config(config)
             return
 
+        self.install_project_git_herd_alias()
         if config is not None:
             self._update_git_config(config)
         self._create_remote(self.remote, url)
@@ -125,11 +127,13 @@ class ProjectRepo(ProjectRepoImpl):
 
         if not existing_git_repository(self.repo_path):
             self._herd_branch_initial(url, branch, depth=depth)
+            self.install_project_git_herd_alias()
             if config is not None:
                 self._update_git_config(config)
             return
 
         if config is not None:
+            self.install_project_git_herd_alias()
             self._update_git_config(config)
 
         branch_output = fmt.ref_string(branch)
@@ -179,9 +183,11 @@ class ProjectRepo(ProjectRepoImpl):
                 self.herd(url, depth=depth, fetch=fetch, rebase=rebase)
                 return
             else:
+                self.install_project_git_herd_alias()
                 if config is not None:
                     self._update_git_config(config)
 
+        self.install_project_git_herd_alias()
         if config is not None:
             self._update_git_config(config)
         try:
@@ -211,6 +217,16 @@ class ProjectRepo(ProjectRepoImpl):
         except ClowderError as err:
             LOG_DEBUG('Failed fetch', err)
             self.fetch(remote, ref=self.default_ref)
+
+    def install_project_git_herd_alias(self) -> None:
+        """Install 'git herd' alias for project"""
+
+        from clowder import CLOWDER_DIR
+        config_variable = 'alias.herd'
+        config_value = f'!clowder herd {self.repo_path.relative_to(CLOWDER_DIR)}'
+        self._print(" - Update git herd alias")
+        self.git_config_unset_all_local(config_variable)
+        self.git_config_add_local(config_variable, config_value)
 
     def prune_branch_local(self, branch: str, force: bool) -> None:
         """Prune local branch

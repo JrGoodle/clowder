@@ -62,9 +62,7 @@ test_groups_2() {
     pushd mu || exit 1
     test_branch knead
     popd || exit 1
-    pushd mu-cat || exit 1
-    test_branch knead
-    popd || exit 1
+    test_no_directory_exists 'mu-cat'
     test_no_directory_exists 'duke'
     test_no_directory_exists 'black-cats'
 }
