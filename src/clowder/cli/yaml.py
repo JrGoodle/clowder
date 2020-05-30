@@ -8,6 +8,7 @@
 import argparse
 
 from clowder.clowder_controller import CLOWDER_CONTROLLER
+from clowder.model.util import validate_project_statuses
 from clowder.util.decorators import (
     print_clowder_name,
     print_clowder_repo_status,
@@ -40,6 +41,7 @@ def yaml(args) -> None:
     """Clowder yaml command private implementation"""
 
     if args.resolved:
+        validate_project_statuses(CLOWDER_CONTROLLER.projects, allow_missing_repo=False)
         print(yaml_string(CLOWDER_CONTROLLER.get_yaml(resolved=True)))
     else:
         print_clowder_yaml()

@@ -38,7 +38,7 @@ def existing_git_repository(path: Path) -> bool:
     :rtype: bool
     """
 
-    return Path(path / '.git').is_dir()
+    return path.is_dir() and Path(path / '.git').is_dir()
 
 
 def existing_git_submodule(path: Path) -> bool:

@@ -14,7 +14,7 @@ import clowder.util.formatting as fmt
 from clowder.error import ClowderError, ClowderErrorType
 from clowder.logging import LOG_DEBUG
 
-from .project_repo import ProjectRepo
+from .project_repo import GitConfig, ProjectRepo
 
 
 class ProjectRepoRecursive(ProjectRepo):
@@ -68,20 +68,22 @@ class ProjectRepoRecursive(ProjectRepo):
 
         return len(self.repo.submodules) > 0
 
-    def herd(self, url: str, depth: int = 0, fetch: bool = True, rebase: bool = False) -> None:
+    def herd(self, url: str, depth: int = 0, fetch: bool = True,
+             rebase: bool = False, config: Optional[GitConfig] = None) -> None:
         """Herd ref
 
         :param str url: URL of repo
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
         :param bool fetch: Whether to fetch
         :param bool rebase: Whether to use rebase instead of pulling latest changes
+        :param Optional[GitConfig] config: Custom git config
         """
 
-        super().herd(url, depth=depth, fetch=fetch, rebase=rebase)
+        super().herd(url, depth=depth, fetch=fetch, rebase=rebase, config=config)
         self.submodule_update_recursive(depth)
 
     def herd_branch(self, url: str, branch: str, depth: int = 0, rebase: bool = False,
-                    fork_remote: Optional[str] = None) -> None:
+                    fork_remote: Optional[str] = None, config: Optional[GitConfig] = None) -> None:
         """Herd branch
 
         :param str url: URL of repo
@@ -89,21 +91,24 @@ class ProjectRepoRecursive(ProjectRepo):
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
         :param bool rebase: Whether to use rebase instead of pulling latest changes
         :param Optional[str] fork_remote: Fork remote name
+        :param Optional[GitConfig] config: Custom git config
         """
 
-        super().herd_branch(url, branch, depth=depth, rebase=rebase, fork_remote=fork_remote)
+        super().herd_branch(url, branch, depth=depth, rebase=rebase, fork_remote=fork_remote, config=config)
         self.submodule_update_recursive(depth)
 
-    def herd_tag(self, url: str, tag: str, depth: int = 0, rebase: bool = False) -> None:
+    def herd_tag(self, url: str, tag: str, depth: int = 0,
+                 rebase: bool = False, config: Optional[GitConfig] = None) -> None:
         """Herd tag
 
         :param str url: URL of repo
         :param str tag: Tag name
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
         :param bool rebase: Whether to use rebase instead of pulling latest changes
+        :param Optional[GitConfig] config: Custom git config
         """
 
-        super().herd_tag(url, tag, depth=depth, rebase=rebase)
+        super().herd_tag(url, tag, depth=depth, rebase=rebase, config=config)
         self.submodule_update_recursive(depth)
 
     def is_dirty_submodule(self, path: str) -> bool:
@@ -132,18 +137,16 @@ class ProjectRepoRecursive(ProjectRepo):
             self._submodule_command('update', '--init', '--recursive', '--depth', depth,
                                     error_msg=error_message)
 
-    def validate_repo(self) -> bool:
+    def validate_repo(self, allow_missing_repo: bool = True) -> bool:
         """Validate repo state
 
+        :param bool allow_missing_repo: Whether to allow validation to succeed with missing repo
         :return: True, if repo and submodules not dirty or repo doesn't exist on disk
         :rtype: bool
         """
 
-        if not super().validate_repo:
+        if not super().validate_repo(allow_missing_repo=allow_missing_repo):
             return False
-
-        if self.repo is None:
-            return True
 
         return not any([self.is_dirty_submodule(s.path) for s in self.repo.submodules])
 

@@ -10,11 +10,42 @@ from clowder.git import GitProtocol
 from .defaults import Defaults
 
 
-class Source(object):
-    """clowder yaml Source model class
+class SourceImpl(object):
+    """clowder yaml SourceImpl model class
 
     :ivar str name: Source name
     :ivar str url: Source url
+    """
+
+    def __init__(self, source: dict):
+        """Source __init__
+
+        :param dict source: Parsed YAML python object for source
+        """
+
+        self.name = source['name']
+        self.url = source['url']
+        self._protocol = source.get('protocol', None)
+
+    def get_yaml(self) -> dict:
+        """Return python object representation for saving yaml
+
+        :return: YAML python object
+        :rtype: dict
+        """
+
+        source = {'name': self.name,
+                  'url': self.url}
+
+        if self._protocol is not None:
+            source['protocol'] = self._protocol
+
+        return source
+
+
+class Source(SourceImpl):
+    """clowder yaml Source model class
+
     :ivar GitProtocol protocol Git protocol
     """
 
@@ -25,17 +56,6 @@ class Source(object):
         :param Defaults defaults: Defaults instance
         """
 
-        self.name = source['name']
-        self.url = source['url']
+        super().__init__(source)
+
         self.protocol = GitProtocol(source.get('protocol', defaults.protocol))
-
-    def get_yaml(self) -> dict:
-        """Return python object representation for saving yaml
-
-        :return: YAML python object
-        :rtype: dict
-        """
-
-        return {'name': self.name,
-                'url': self.url,
-                'protocol': self.protocol.value}
