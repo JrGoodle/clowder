@@ -69,6 +69,12 @@ To install or upgrade `clowder` from PyPI
 sudo pip3 install clowder-repo --upgrade
 ```
 
+To install the latest pre-release version
+
+```bash
+sudo pip3 install clowder-repo --force-reinstall --pre
+```
+
 ## Usage
 
 This example is based on the [Swift projects](https://github.com/apple/swift) (see the full [Swift projects clowder.yaml](https://github.com/JrGoodle/swift-clowder/blob/master/clowder.yaml))
