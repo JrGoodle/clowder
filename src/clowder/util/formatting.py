@@ -577,7 +577,7 @@ def error_symlink_source_missing(source: Path) -> str:
     :rtype: str
     """
 
-    source = _yaml_file(source)
+    source = _yaml_file(str(source))
     return f"{ERROR} Symlink source {source} appears to be missing"
 
 
@@ -755,6 +755,18 @@ def warning_clowder_yaml_not_symlink_with_clowder_repo(name: str) -> str:
 
     return f"{WARNING} Found a {_yaml_file(name)} file but it is not a symlink " \
            f"to a file stored in the existing {path_string(Path('.clowder'))} repo"
+
+
+def warning_invalid_config_file(file_path: Path) -> str:
+    """Return warning message for invalid config file
+
+    :param Path file_path: Invalid config file path
+    :return: Formatted invalid config file warning
+    :rtype: str
+    """
+
+    file = _yaml_file(str(file_path))
+    return f"{WARNING} Clowder config file at {file} appears to be invalid"
 
 
 def _project_name(name: str) -> str:

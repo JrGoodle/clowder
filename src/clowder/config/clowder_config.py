@@ -114,6 +114,7 @@ class ClowderConfig(object):
     def is_config_value_set(self, value: ClowderConfigType) -> None:
         """Determine if config value is set
 
+        :param ClowderConfigType value: Clowder config value
         :raise ClowderError:
         """
 
@@ -131,6 +132,7 @@ class ClowderConfig(object):
     def print_config_value(self, value: ClowderConfigType) -> None:
         """Print current configuration
 
+        :param ClowderConfigType value: Clowder config value
         :raise ClowderError:
         """
 
@@ -161,7 +163,7 @@ class ClowderConfig(object):
         """Print current configuration"""
 
         cprint('Current config', attrs=['bold'])
-
+        print()
         if self.is_empty():
             print(' - No config values set')
             return

@@ -84,7 +84,7 @@ class ClowderError(Exception):
         """ClowderError __init__
 
         :param ClowderErrorType error_type: Clowder error type
-        :param Union[str, List[str]] messages: Error message
+        :param Union[str, List[str]] messages: Error message(s)
         :param Optional[Exception] error: Optional error to print
         :param Optional[int] exit_code: Custom error code
         """

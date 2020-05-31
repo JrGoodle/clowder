@@ -85,16 +85,7 @@ test_config_projects() {
     ls -al $HOME/.config/clowder
 
     begin_command
-    $COMMAND config get jobs || exit 1
-    end_command
-    begin_command
-    $COMMAND config get projects || exit 1
-    end_command
-    begin_command
-    $COMMAND config get protocol || exit 1
-    end_command
-    begin_command
-    $COMMAND config get rebase || exit 1
+    $COMMAND config get || exit 1
     end_command
     begin_command
     $COMMAND herd $PARALLEL || exit 1
@@ -180,7 +171,16 @@ test_invalid_config() {
         copy_invalid_config_file "$test"
 
         begin_command
-        $COMMAND herd $PARALLEL && exit 1
+        $COMMAND herd $PARALLEL || exit 1
+        end_command
+        begin_command
+        $COMMAND config get && exit 1
+        end_command
+        begin_command
+        $COMMAND config set rebase && exit 1
+        end_command
+        begin_command
+        $COMMAND config clear && exit 1
         end_command
     done
 
