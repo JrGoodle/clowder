@@ -5,7 +5,6 @@
 
 """
 
-import atexit
 import os
 from pathlib import Path
 from typing import Optional, Tuple
@@ -123,13 +122,26 @@ def init(url: str, branch: str) -> None:
     :param str branch: Branch to checkout
     """
 
-    # Register exit handler to remove files if cloning repo fails
-    atexit.register(_init_exit_handler)
-
     clowder_repo_dir = ENVIRONMENT.current_dir / '.clowder'
-    repo = ProjectRepo(clowder_repo_dir, clowder_repo_remote, clowder_repo_ref)
-    repo.create_clowder_repo(url, branch)
-    link_clowder_yaml_default(ENVIRONMENT.current_dir)
+    try:
+        repo = ProjectRepo(clowder_repo_dir, clowder_repo_remote, clowder_repo_ref)
+        repo.create_clowder_repo(url, branch)
+    except ClowderError as err:
+        LOG_DEBUG('Failed to init clowder repo', err)
+        if clowder_repo_dir.is_dir():
+            remove_directory(clowder_repo_dir)
+        raise ClowderError(ClowderErrorType.FAILED_INIT, fmt.error_failed_clowder_init(), err)
+    except Exception as err:
+        LOG_DEBUG('Failed to init clowder repo', err)
+        if clowder_repo_dir.is_dir():
+            remove_directory(clowder_repo_dir)
+        raise ClowderError(ClowderErrorType.FAILED_INIT, fmt.error_failed_clowder_init(), err)
+    else:
+        try:
+            link_clowder_yaml_default(ENVIRONMENT.current_dir)
+        except ClowderError as err:
+            LOG_DEBUG('Failed to link yaml file after clowder repo init', err)
+            raise
 
 
 def print_status(fetch: bool = False) -> None:
@@ -147,12 +159,16 @@ def print_status(fetch: bool = False) -> None:
         print(fmt.warning_clowder_yaml_not_symlink_with_clowder_repo(ENVIRONMENT.clowder_yaml.name))
         print()
 
-    target_path = fmt.path_string(Path(ENVIRONMENT.clowder_yaml.name))
-    source_path = fmt.path_string(ENVIRONMENT.clowder_yaml.resolve().relative_to(ENVIRONMENT.clowder_dir))
+    symlink_output: Optional[str] = None
+    if ENVIRONMENT.clowder_yaml is not None and ENVIRONMENT.clowder_yaml.is_symlink():
+        target_path = fmt.path_string(Path(ENVIRONMENT.clowder_yaml.name))
+        source_path = fmt.path_string(ENVIRONMENT.clowder_yaml.resolve().relative_to(ENVIRONMENT.clowder_dir))
+        symlink_output = f"{target_path} -> {source_path}"
 
     if ENVIRONMENT.clowder_git_repo_dir is None:
         print(clowder_repo_output)
-        print(f"{target_path} -> {source_path}")
+        if symlink_output is not None:
+            print(symlink_output)
         print()
         return
 
@@ -165,13 +181,9 @@ def print_status(fetch: bool = False) -> None:
     clowder_git_repo_output = repo.format_project_string(ENVIRONMENT.clowder_git_repo_dir.name)
     current_ref_output = repo.format_project_ref_string()
 
-    if ENVIRONMENT.clowder_yaml is None or not ENVIRONMENT.clowder_yaml.is_symlink():
-        print(f"{clowder_git_repo_output} {current_ref_output}")
-        print()
-        return
-
     print(f"{clowder_git_repo_output} {current_ref_output}")
-    print(f"{target_path} -> {source_path}")
+    if symlink_output is not None:
+        print(symlink_output)
     print()
 
 
@@ -195,19 +207,3 @@ def run_command(command: str) -> None:
 
     print(fmt.command(command))
     execute_command(command.split(), ENVIRONMENT.clowder_repo_dir)
-
-
-def _init_exit_handler() -> None:
-    """Exit handler for deleting files if clowder init fails
-
-    :raise ClowderError:
-    """
-
-    clowder_path = ENVIRONMENT.current_dir / '.clowder'
-    if os.path.isdir(clowder_path):
-        clowder_yml = ENVIRONMENT.current_dir / 'clowder.yml'
-        clowder_yaml = ENVIRONMENT.current_dir / 'clowder.yaml'
-        if not clowder_yml.is_symlink() and not clowder_yaml.is_symlink():
-            remove_directory(clowder_path)
-            LOG_DEBUG('Failed clowder init')
-            raise ClowderError(ClowderErrorType.FAILED_INIT, fmt.error_failed_clowder_init())

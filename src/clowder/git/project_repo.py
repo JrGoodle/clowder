@@ -53,6 +53,7 @@ class ProjectRepo(ProjectRepoImpl):
         """
 
         if existing_git_repository(self.repo_path):
+            # TODO: Throw error if repo doesn't match one trying to create
             return
 
         self._init_repo()

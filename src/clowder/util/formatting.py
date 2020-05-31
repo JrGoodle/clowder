@@ -245,6 +245,20 @@ def error_failed_remove_file(file_path: Path) -> str:
     return f"{ERROR} Failed to remove file {file_path}"
 
 
+def error_failed_symlink_file(target: Path, source: Path) -> str:
+    """Format error message for failing to symlink file
+
+    :param Path target: Target file path
+    :param Path source: Source file path
+    :return: Formatted remove file error
+    :rtype: str
+    """
+
+    target_path = path_string(target)
+    source_path = path_string(source)
+    return f"{ERROR} Failed to symlink file {target_path} -> {source_path}"
+
+
 def error_file_exists(file_path: Path) -> str:
     """Format error message for already existing file
 
@@ -542,6 +556,18 @@ def error_source_not_found(source: str, yml: Path, project: str, fork: Optional[
                 f"{ERROR} {_yaml_path(yml)}",
                 f"{ERROR} source '{source}'{fork_output} specified in project '{project}' not found in 'sources'"]
     return "\n".join(messages)
+
+
+def error_symlink_source_missing(source: Path) -> str:
+    """Return formatted error string for symlink source not found
+
+    :param Path source: Symlink source path
+    :return: Formatted clowder symlink source not found warning
+    :rtype: str
+    """
+
+    source = _yaml_file(source)
+    return f"{ERROR} Symlink source {source} appears to be missing"
 
 
 def error_timestamp_not_found() -> str:

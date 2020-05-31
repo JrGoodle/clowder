@@ -172,6 +172,10 @@ test_commands_with_yaml_file_no_clowder_repo() {
     begin_command
     $COMMAND status || exit 1
     end_command
+    # !! Move coverage files to root and clean so further commands work
+    cp -a .coverage* ../
+    rm -rf .coverage*
+    # !!
     popd || exit 1
 
     begin_command
@@ -321,6 +325,10 @@ test_commands_with_yaml_file_clowder_repo_missing_git_dir() {
     begin_command
     $COMMAND status || exit 1
     end_command
+    # !! Move coverage files to root and clean so further commands work
+    cp -a .coverage* ../
+    rm -rf .coverage*
+    # !!
     popd || exit 1
 
     test_file_exists 'clowder.yaml'
@@ -527,6 +535,10 @@ test_commands_with_yaml_file_clowder_repo_git_dir() {
     begin_command
     $COMMAND status || exit 1
     end_command
+    # !! Move coverage files to root and clean so further commands work
+    cp -a .coverage* ../
+    rm -rf .coverage*
+    # !!
     popd || exit 1
 
     test_file_exists 'clowder.yaml'
@@ -694,6 +706,10 @@ test_commands_with_yaml_symlink_clowder_repo_missing_git_dir() {
     begin_command
     $COMMAND status || exit 1
     end_command
+    # !! Move coverage files to root and clean so further commands work
+    cp -a .coverage* ../
+    rm -rf .coverage*
+    # !!
     popd || exit 1
 
     test_file_exists 'clowder.yaml'

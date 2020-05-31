@@ -80,6 +80,7 @@ test_init_existing_empty_clowder_repo_dir() {
     echo "TEST: Clowder init successfully with empty .clowder directory present"
     ./clean.sh || exit 1
     mkdir '.clowder' || exit 1
+    test_directory_exists '.clowder'
     begin_command
     $COMMAND init https://github.com/jrgoodle/cats.git || exit 1
     end_command
@@ -92,9 +93,12 @@ test_init_existing_empty_clowder_repo_dir
 
 test_init_existing_non_empty_clowder_repo_dir() {
     print_single_separator
-    echo "TEST: Fail init with existing non-empty .clowder directorp present"
+    echo "TEST: Fail init with existing non-empty .clowder directory present"
     ./clean.sh || exit 1
     mkdir '.clowder' || exit 1
+    touch '.clowder/something' || exit 1
+    test_directory_exists '.clowder'
+    test_file_exists '.clowder/something'
     begin_command
     $COMMAND init https://github.com/jrgoodle/cats.git && exit 1
     end_command
@@ -103,3 +107,55 @@ test_init_existing_non_empty_clowder_repo_dir() {
     end_command
 }
 test_init_existing_non_empty_clowder_repo_dir
+
+test_init_existing_clowder_yaml_file_no_clowder_repo_dir() {
+    print_single_separator
+    echo "TEST: Clowder init with existing non-symlink clowder.yaml file and no existing clowder repo dir"
+    ./clean.sh
+    ./init.sh || exit 1
+    rm -f clowder.yaml || exit 1
+    cp .clowder/clowder.yaml clowder.yaml || exit 1
+    rm -rf .clowder || exit
+    test_file_exists 'clowder.yaml'
+    test_file_not_symlink 'clowder.yaml'
+    test_no_directory_exists '.clowder'
+    begin_command
+    $COMMAND init https://github.com/jrgoodle/cats.git && exit 1
+    end_command
+    test_file_exists 'clowder.yaml'
+    test_file_not_symlink 'clowder.yaml'
+    test_directory_exists '.clowder'
+    test_directory_exists '.clowder/.git'
+    test_file_exists '.clowder/clowder.yaml'
+    begin_command
+    $COMMAND herd $PARALLEL || exit 1
+    end_command
+}
+test_init_existing_clowder_yaml_file_no_clowder_repo_dir
+
+test_init_existing_clowder_yaml_symlink_no_clowder_repo_dir() {
+    print_single_separator
+    echo "TEST: Clowder init with existing clowder.yaml symlink file and no existing clowder repo dir"
+    ./clean.sh
+    ./init.sh || exit 1
+    rm -rf .clowder || exit
+    mv 'clowder.yaml' 'clowder.yml' || exit 1
+    test_no_file_exists 'clowder.yaml'
+    test_file_is_symlink 'clowder.yml'
+    test_symlink_path 'clowder.yml' "$(pwd)/.clowder/clowder.yaml"
+    test_no_directory_exists '.clowder'
+    begin_command
+    $COMMAND init https://github.com/jrgoodle/cats.git || exit 1
+    end_command
+    test_no_file_exists 'clowder.yml'
+    test_file_exists 'clowder.yaml'
+    test_file_is_symlink 'clowder.yaml'
+    test_symlink_path 'clowder.yaml' "$(pwd)/.clowder/clowder.yaml"
+    test_directory_exists '.clowder'
+    test_directory_exists '.clowder/.git'
+    test_file_exists '.clowder/clowder.yaml'
+    begin_command
+    $COMMAND herd $PARALLEL || exit 1
+    end_command
+}
+test_init_existing_clowder_yaml_symlink_no_clowder_repo_dir

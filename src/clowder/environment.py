@@ -10,20 +10,20 @@ from typing import Optional
 
 import clowder.util.formatting as fmt
 from clowder.error import ClowderError, ClowderErrorType
-from clowder.git.util import existing_clowder_repo
+from clowder.git.util import existing_git_repository
 
 
 class ClowderEnvironment(object):
     """clowder paths class
 
-    :cvar Path CURRENT_DIR: Current directory command was run in
-    :cvar Path CLOWDER_CONFIG_DIR: Path to clowder config directory
-    :cvar Path CLOWDER_CONFIG_YAML: Path to clowder config yaml file
-    :cvar Optional[Path] CLOWDER_DIR: Path to clowder directory if it exists
-    :cvar Optional[Path] CLOWDER_REPO_DIR: Path to clowder repo directory if it exists
-    :cvar Optional[Path] CLOWDER_REPO_VERSIONS_DIR: Path to clowder repo versions directory
-    :cvar Optional[Path] CLOWDER_YAML:
-    :cvar Optional[ClowderError] CLOWDER_YAML_ERROR:
+    :cvar Path current_dir: Current directory command was run in
+    :cvar Path clowder_config_dir: Path to clowder config directory
+    :cvar Path clowder_config_yaml: Path to clowder config yaml file
+    :cvar Optional[Path] clowder_dir: Path to clowder directory if it exists
+    :cvar Optional[Path] clowder_repo_dir: Path to clowder repo directory if it exists
+    :cvar Optional[Path] clowder_repo_versaions_dir: Path to clowder repo versions directory
+    :cvar Optional[Path] clowder_yaml: Path to clowder yaml file if it exists
+    :cvar Optional[ClowderError] CLOWDER_YAML_ERROR: Possible error loading clowder yaml file
     """
 
     current_dir = Path.cwd()
@@ -54,7 +54,7 @@ class ClowderEnvironment(object):
             clowder_repo_dir = path / '.clowder'
             clowder_yml = path / 'clowder.yml'
             clowder_yaml = path / 'clowder.yaml'
-            if clowder_repo_dir.is_dir() and existing_clowder_repo(clowder_repo_dir):
+            if clowder_repo_dir.is_dir() and existing_git_repository(clowder_repo_dir):
                 self.clowder_dir = path
                 self.clowder_repo_dir = clowder_repo_dir
                 self.clowder_git_repo_dir = clowder_repo_dir

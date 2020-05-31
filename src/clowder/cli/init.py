@@ -13,7 +13,6 @@ import clowder.clowder_repo as clowder_repo
 import clowder.util.formatting as fmt
 from clowder.environment import ENVIRONMENT
 from clowder.error import ClowderError, ClowderErrorType
-from clowder.git.util import existing_clowder_repo
 from clowder.logging import LOG_DEBUG
 from clowder.util.connectivity import network_connection_required
 

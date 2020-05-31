@@ -30,17 +30,6 @@ def check_ref_format(ref: str) -> bool:
         return True
 
 
-def existing_clowder_repo(directory: Path) -> bool:
-    """Check if directory is a clowder repository
-
-    :param Path directory: Path to check
-    :return: True, if it looks like it's a clowder repository
-    :rtype: bool
-    """
-
-    return directory.is_dir() and existing_git_repository(directory)
-
-
 def existing_git_repository(path: Path) -> bool:
     """Check if a git repository exists
 

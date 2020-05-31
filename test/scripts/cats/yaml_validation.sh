@@ -5,26 +5,11 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
 . test_utilities.sh
 
 cd "$CATS_EXAMPLE_DIR" || exit 1
-./clean.sh
 
 print_double_separator
 echo "TEST: Test yaml validation"
 
-test_missing_repo() {
-    print_single_separator
-    begin_command
-    $COMMAND herd # Get exit code after completions
-    local exit_code=$?
-    end_command
-    echo "Expected exit code: $1"
-    echo "Actual exit code: $exit_code"
-    if [ "$exit_code" != "$1" ]; then
-        exit 1
-    fi
-    print_single_separator
-}
-test_missing_repo '42'
-
+./clean.sh
 ./init.sh || exit 1
 
 test_missing_yaml() {
@@ -41,7 +26,7 @@ test_missing_yaml() {
     fi
     print_single_separator
 }
-test_missing_yaml '43'
+test_missing_yaml '42'
 
 _test_invalid_yaml() {
     pushd "$CATS_EXAMPLE_DIR/.clowder/versions" || exit 1
