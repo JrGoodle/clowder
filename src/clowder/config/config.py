@@ -37,8 +37,15 @@ class Config(object):
     :ivar Optional[Exception] error: Exception from failing to load clowder config yaml file
     """
 
-    def __init__(self, current_clowder_name: Optional[str], project_options: Tuple[str, ...]):
-        """Config __init__"""
+    def __init__(self, current_clowder_name: Optional[str],
+                 project_options: Tuple[str, ...], raise_exceptions: bool = False):
+        """Config __init__
+
+        :param Optional[str] current_clowder_name: Name of currently loaded clowder if present
+        :param Tuple[str, ...] project_options: Name of current clowder project options
+        :param bool raise_exceptions: Whether to raise exception when from initializing invalid config file
+        :raise ClowderError:
+        """
 
         self.error: Optional[Exception] = None
         self.current_clowder_config: Optional[ClowderConfig] = None
@@ -53,21 +60,36 @@ class Config(object):
             self.current_clowder_config = current_clowder_config
             return
 
-        # Config file does exist, try to load
-        self._load_clowder_config_yaml()
+        try:
+            # Config file does exist, try to load
+            self._load_clowder_config_yaml()
+        except ClowderError as err:
+            if raise_exceptions:
+                raise err
+            LOG_DEBUG('Failed to load clowder config file', err)
+            self.error = err
+            print(fmt.warning_invalid_config_file(ENVIRONMENT.clowder_config_yaml))
+            print()
+        except Exception as err:
+            if raise_exceptions:
+                raise err
+            LOG_DEBUG('Failed to load clowder config file', err)
+            self.error = err
+            print(fmt.warning_invalid_config_file(ENVIRONMENT.clowder_config_yaml))
+            print()
+        finally:
+            # If current clowder exists, return
+            if self.current_clowder_config is not None:
+                return
 
-        # If current clowder exists, return
-        if self.current_clowder_config is not None:
-            return
-
-        # If current clowder config doesn't exist, create empty one
-        self.current_clowder_config = ClowderConfig(current_clowder_name=current_clowder_name)
-        if not self.clowder_configs:
-            self.clowder_configs = (self.current_clowder_config,)
-        else:
-            configs = list(self.clowder_configs)
-            configs.append(self.current_clowder_config)
-            self.clowder_configs = tuple(configs)
+            # If current clowder config doesn't exist, create empty one
+            self.current_clowder_config = ClowderConfig(current_clowder_name=current_clowder_name)
+            if not self.clowder_configs:
+                self.clowder_configs = (self.current_clowder_config,)
+            else:
+                configs = list(self.clowder_configs)
+                configs.append(self.current_clowder_config)
+                self.clowder_configs = tuple(configs)
 
     def process_projects_arg(self, projects: List[str]) -> Tuple[str, ...]:
         """Process project args based on parameters and config
