@@ -735,4 +735,227 @@ test_commands_with_yaml_symlink_clowder_repo_missing_git_dir() {
 }
 test_commands_with_yaml_symlink_clowder_repo_missing_git_dir
 
+test_commands_with_clowder_repo_symlink() {
+    print_single_separator
+    echo "TEST: Run commands with .clowder repo symlink to existing git repository"
+    ./clean.sh
+    ./init.sh || exit 1
+    mv '.clowder' 'clowder-symlink-source-dir'  || exit
+    ln -s "$(pwd)/clowder-symlink-source-dir" '.clowder'
+    test_file_is_symlink '.clowder'
+    test_symlink_path '.clowder' "$(pwd)/clowder-symlink-source-dir"
+    test_directory_exists 'clowder-symlink-source-dir'
+    test_file_exists 'clowder.yaml'
+    test_file_is_symlink 'clowder.yaml'
+    test_symlink_path 'clowder.yaml' "$(pwd)/.clowder/clowder.yaml"
+
+    begin_command
+    $COMMAND herd $PARALLEL || exit 1
+    end_command
+    test_cats_default_herd_branches
+    begin_command
+    $COMMAND status || exit 1
+    end_command
+    begin_command
+    $COMMAND branch || exit 1
+    end_command
+    begin_command
+    $COMMAND checkout master || exit 1
+    end_command
+    begin_command
+    $COMMAND herd $PARALLEL || exit 1
+    end_command
+    test_cats_default_herd_branches
+    pushd 'mu' || exit 1
+    touch 'new-file' || exit 1
+    git add . || exit 1
+    popd || exit 1
+    pushd 'duke' || exit 1
+    touch 'new-file' || exit 1
+    git add . || exit 1
+    popd || exit 1
+    begin_command
+    $COMMAND herd $PARALLEL && exit 1
+    end_command
+    begin_command
+    $COMMAND clean || exit 1
+    end_command
+    begin_command
+    $COMMAND herd $PARALLEL || exit 1
+    end_command
+    test_cats_default_herd_branches
+    begin_command
+    $COMMAND diff || exit 1
+    end_command
+    begin_command
+    $COMMAND forall -c 'git checkout -b new-branch' || exit 1
+    end_command
+    for project in "${all_projects[@]}"; do
+        pushd $project || exit 1
+        test_branch 'new-branch'
+        popd || exit 1
+    done
+    begin_command
+    $COMMAND prune 'new-branch' || exit 1
+    end_command
+    for project in "${all_projects[@]}"; do
+        pushd $project || exit 1
+        test_no_local_branch_exists 'new-branch'
+        popd || exit 1
+    done
+    test_cats_default_herd_branches
+    begin_command
+    $COMMAND start 'new-branch' || exit 1
+    end_command
+    for project in "${all_projects[@]}"; do
+        pushd $project || exit 1
+        test_branch 'new-branch'
+        popd || exit 1
+    done
+    begin_command
+    $COMMAND reset || exit 1
+    end_command
+    test_cats_default_herd_branches
+    pushd '.clowder' || exit 1
+    test_git_clean
+    touch 'new-file' || exit 1
+    test_file_exists 'new-file'
+    popd || exit 1
+    begin_command
+    $COMMAND repo add 'new-file' || exit 1
+    end_command
+    pushd '.clowder' || exit 1
+    test_git_dirty
+    popd || exit 1
+    begin_command
+    $COMMAND repo clean || exit 1
+    end_command
+    pushd '.clowder' || exit 1
+    test_git_clean
+    test_no_file_exists 'new-file'
+    popd || exit 1
+    begin_command
+    $COMMAND repo run 'git branch new-branch' || exit 1
+    end_command
+    pushd '.clowder' || exit 1
+    test_branch 'master'
+    test_local_branch_exists 'new-branch'
+    popd || exit 1
+    begin_command
+    $COMMAND repo checkout 'new-branch' || exit 1
+    end_command
+    pushd '.clowder' || exit 1
+    test_branch 'new-branch'
+    popd || exit 1
+    pushd '.clowder' || exit 1
+    test_git_clean
+    touch 'new-file' || exit 1
+    test_file_exists 'new-file'
+    popd || exit 1
+    begin_command
+    $COMMAND repo add 'new-file' || exit 1
+    end_command
+    pushd '.clowder' || exit 1
+    test_git_dirty
+    popd || exit 1
+    begin_command
+    $COMMAND repo commit 'new-message' || exit 1
+    end_command
+    pushd '.clowder' || exit 1
+    test_commit_messages "$(git log --format=%B -n 1 HEAD)" 'new-message'
+    test_git_clean
+    popd || exit 1
+    #TODO: Set back commit and check after pull that it was updated
+    begin_command
+    $COMMAND repo checkout master || exit 1
+    end_command
+    begin_command
+    $COMMAND repo pull || exit 1
+    end_command
+    # TODO: Add this to write tests
+    # begin_command
+    # $COMMAND repo push && exit 1
+    # end_command
+    begin_command
+    $COMMAND repo run 'touch newfile' || exit 1
+    end_command
+    test_file_exists '.clowder/newfile'
+    begin_command
+    $COMMAND repo status || exit 1
+    end_command
+    pushd 'mu' || exit 1
+    touch 'new-file' || exit 1
+    git add . || exit 1
+    popd || exit 1
+    pushd 'duke' || exit 1
+    touch 'new-file' || exit 1
+    git add . || exit 1
+    popd || exit 1
+    begin_command
+    $COMMAND herd $PARALLEL && exit 1
+    end_command
+    begin_command
+    $COMMAND stash || exit 1
+    end_command
+    begin_command
+    $COMMAND herd $PARALLEL || exit 1
+    end_command
+    begin_command
+    $COMMAND status || exit 1
+    end_command
+    begin_command
+    $COMMAND yaml || exit 1
+    end_command
+    begin_command
+    $COMMAND yaml -r || exit 1
+    end_command
+
+    # TODO: Test more commands in subdirectory
+    pushd 'mu' || exit 1
+    begin_command
+    $COMMAND status || exit 1
+    end_command
+    # !! Move coverage files to root and clean so further commands work
+    cp -a .coverage* ../
+    rm -rf .coverage*
+    # !!
+    popd || exit 1
+
+    test_file_exists 'clowder.yaml'
+    test_file_is_symlink 'clowder.yaml'
+    test_symlink_path 'clowder.yaml' "$(pwd)/.clowder/clowder.yaml"
+    test_file_is_symlink '.clowder'
+    test_symlink_path '.clowder' "$(pwd)/clowder-symlink-source-dir"
+    test_directory_exists '.clowder'
+    test_directory_exists 'clowder-symlink-source-dir'
+    begin_command
+    $COMMAND save new-version || exit 1
+    end_command
+    test_file_exists 'clowder-symlink-source-dir/versions/new-version.clowder.yml'
+    test_file_exists 'clowder.yaml'
+    test_file_is_symlink 'clowder.yaml'
+    test_symlink_path 'clowder.yaml' "$(pwd)/.clowder/clowder.yaml"
+    test_file_is_symlink '.clowder'
+    test_symlink_path '.clowder' "$(pwd)/clowder-symlink-source-dir"
+    test_directory_exists '.clowder'
+    test_directory_exists 'clowder-symlink-source-dir'
+    begin_command
+    $COMMAND link new-version || exit 1
+    end_command
+    test_file_exists 'clowder.yml'
+    test_file_is_symlink 'clowder.yml'
+    test_symlink_path 'clowder.yml' "$(pwd)/.clowder/versions/new-version.clowder.yml"
+    test_no_file_exists 'clowder.yaml'
+    test_file_is_symlink '.clowder'
+    test_symlink_path '.clowder' "$(pwd)/clowder-symlink-source-dir"
+    test_directory_exists '.clowder'
+    test_directory_exists 'clowder-symlink-source-dir'
+}
+test_commands_with_clowder_repo_symlink
+
 # TODO: Add test for non-symlink clowder.yaml file and empty .clowder dir
+# TODO: Might need to consolidate checks for what constitutes a vallid clowder repo and valid clowder git repo
+
+# TODO: Add test for empty .clowder dir
+# TODO: Clowder link should fail
+# TODO: Show warning when empty directory is found with no default clowder.yml file

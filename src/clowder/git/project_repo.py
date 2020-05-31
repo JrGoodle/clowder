@@ -12,6 +12,7 @@ from git import GitError
 
 import clowder.util.formatting as fmt
 from clowder.error import ClowderError, ClowderErrorType
+from clowder.util.file_system import remove_file
 from clowder.logging import LOG_DEBUG
 from clowder.util.connectivity import is_offline
 
@@ -50,11 +51,28 @@ class ProjectRepo(ProjectRepoImpl):
         :param str url: URL of repo
         :param str branch: Branch name
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :raise ClowderError:
         """
 
         if existing_git_repository(self.repo_path):
             # TODO: Throw error if repo doesn't match one trying to create
             return
+
+        if self.repo_path.is_dir():
+            try:
+                self.repo_path.rmdir()
+            except OSError as err:
+                LOG_DEBUG('Failed to remove existing .clowder directory', err)
+                raise ClowderError(ClowderErrorType.DIRECTORY_EXISTS,
+                                   fmt.error_directory_exists(self.repo_path),
+                                   error=err)
+
+        if self.repo_path.is_symlink():
+            remove_file(self.repo_path)
+        else:
+            from clowder.environment import ENVIRONMENT
+            if ENVIRONMENT.clowder_repo_existing_file_error:
+                raise ENVIRONMENT.clowder_repo_existing_file_error
 
         self._init_repo()
         self._create_remote(self.remote, url, remove_dir=True)

@@ -145,7 +145,7 @@ def error_directory_exists(dir_path: Path) -> str:
     """
 
     dir_path = path_string(dir_path)
-    return f"{ERROR} Directory already exists {dir_path}"
+    return f"{ERROR} Directory already exists at {dir_path}"
 
 
 def error_duplicate_version(version: str) -> str:
@@ -186,6 +186,17 @@ def error_empty_yaml(yml: Path, name: Path) -> str:
     path = _yaml_path(yml)
     file = _yaml_file(str(name))
     return f"{path}\n{ERROR} No entries in {file}"
+
+
+def error_existing_file_at_clowder_repo_path(file_path: Path) -> str:
+    """Format error message for existing file at .clowder path
+
+    :param Path file_path: Path to existing .clowder file
+    :return: Formatted existing file at .clowder path error
+    :rtype: str
+    """
+
+    return f"{ERROR} Found non-directory file {path_string(file_path)} where clowder repo directory should be"
 
 
 def error_existing_file_at_symlink_target_path(name: Path) -> str:

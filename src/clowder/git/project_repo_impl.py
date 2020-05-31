@@ -434,6 +434,7 @@ class ProjectRepoImpl(GitRepo):
         """
 
         if existing_git_repository(self.repo_path):
+            # TODO: Raise exception here?
             return
 
         try:

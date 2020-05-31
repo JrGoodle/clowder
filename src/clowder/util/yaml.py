@@ -24,6 +24,7 @@ from .file_system import (
 )
 
 
+# TODO: Combine this function with link_clowder_yaml_version()
 def link_clowder_yaml_default(clowder_dir: Path) -> None:
     """Create symlink pointing to clowder yaml file
 
@@ -61,7 +62,7 @@ def link_clowder_yaml_default(clowder_dir: Path) -> None:
         if file.exists():
             existing_file = file
 
-    if existing_file is not None:
+    if existing_file is not None and existing_file.is_symlink():
         print(f" - Remove previously existing file {fmt.path_string(existing_file)}")
         try:
             remove_file(existing_file)
@@ -110,7 +111,7 @@ def link_clowder_yaml_version(clowder_dir: Path, version: str) -> None:
         if file.exists():
             existing_file = file
 
-    if existing_file is not None:
+    if existing_file is not None and existing_file.is_symlink():
         print(f" - Remove previously existing file {fmt.path_string(existing_file)}")
         try:
             remove_file(existing_file)

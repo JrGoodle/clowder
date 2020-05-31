@@ -142,6 +142,9 @@ def init(url: str, branch: str) -> None:
         except ClowderError as err:
             LOG_DEBUG('Failed to link yaml file after clowder repo init', err)
             raise
+        else:
+            if ENVIRONMENT.has_ambiguous_clowder_yaml_files():
+                raise ENVIRONMENT.ambiguous_clowder_yaml_error
 
 
 def print_status(fetch: bool = False) -> None:

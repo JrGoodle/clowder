@@ -21,8 +21,11 @@ def clowder_repo_required(func):
     def wrapper(*args, **kwargs):
         """Wrapper"""
 
+        if ENVIRONMENT.clowder_repo_existing_file_error is not None:
+            raise ENVIRONMENT.clowder_repo_existing_file_error
         if ENVIRONMENT.clowder_repo_dir is None:
             raise ClowderError(ClowderErrorType.MISSING_CLOWDER_REPO, fmt.error_missing_clowder_repo())
+
         return func(*args, **kwargs)
 
     return wrapper
@@ -90,8 +93,10 @@ def valid_clowder_yaml_required(func):
     def wrapper(*args, **kwargs):
         """Wrapper"""
 
-        if ENVIRONMENT.clowder_yaml_error is not None:
-            raise ENVIRONMENT.clowder_yaml_error
+        if ENVIRONMENT.ambiguous_clowder_yaml_error is not None:
+            raise ENVIRONMENT.ambiguous_clowder_yaml_error
+        if ENVIRONMENT.clowder_yaml_missing_source_error is not None:
+            raise ENVIRONMENT.clowder_yaml_missing_source_error
         if CLOWDER_CONTROLLER.error is not None:
             raise CLOWDER_CONTROLLER.error
         return func(*args, **kwargs)
