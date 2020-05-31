@@ -33,14 +33,14 @@ def add(files: str) -> None:
     :param str files: Files to git add
     """
 
-    repo = ProjectRepo(ENVIRONMENT.CLOWDER_GIT_REPO_DIR, clowder_repo_remote, clowder_repo_ref)
+    repo = ProjectRepo(ENVIRONMENT.clowder_git_repo_dir, clowder_repo_remote, clowder_repo_ref)
     repo.add(files)
 
 
 def branches() -> None:
     """Print current local branches"""
 
-    repo = ProjectRepo(ENVIRONMENT.CLOWDER_GIT_REPO_DIR, clowder_repo_remote, clowder_repo_ref)
+    repo = ProjectRepo(ENVIRONMENT.clowder_git_repo_dir, clowder_repo_remote, clowder_repo_ref)
     repo.print_local_branches()
     repo.print_remote_branches()
 
@@ -51,7 +51,7 @@ def checkout(ref: str) -> None:
     :param str ref: Ref to git checkout
     """
 
-    repo = ProjectRepo(ENVIRONMENT.CLOWDER_GIT_REPO_DIR, clowder_repo_remote, clowder_repo_ref)
+    repo = ProjectRepo(ENVIRONMENT.clowder_git_repo_dir, clowder_repo_remote, clowder_repo_ref)
     if repo.is_dirty():
         print(' - Dirty repo. Please stash, commit, or discard your changes')
         repo.status_verbose()
@@ -65,10 +65,10 @@ def clean() -> None:
     Equivalent to: ``git clean -ffdx``
     """
 
-    repo = ProjectRepo(ENVIRONMENT.CLOWDER_GIT_REPO_DIR, clowder_repo_remote, clowder_repo_ref)
+    repo = ProjectRepo(ENVIRONMENT.clowder_git_repo_dir, clowder_repo_remote, clowder_repo_ref)
     if repo.is_dirty():
         print(' - Discard current changes')
-        repo = ProjectRepo(ENVIRONMENT.CLOWDER_GIT_REPO_DIR, clowder_repo_remote, clowder_repo_ref)
+        repo = ProjectRepo(ENVIRONMENT.clowder_git_repo_dir, clowder_repo_remote, clowder_repo_ref)
         repo.clean(args='fdx')
         return
 
@@ -81,7 +81,7 @@ def commit(message: str) -> None:
     :param str message: Git commit message
     """
 
-    repo = ProjectRepo(ENVIRONMENT.CLOWDER_GIT_REPO_DIR, clowder_repo_remote, clowder_repo_ref)
+    repo = ProjectRepo(ENVIRONMENT.clowder_git_repo_dir, clowder_repo_remote, clowder_repo_ref)
     repo.commit(message)
 
 
@@ -93,10 +93,10 @@ def get_saved_version_names() -> Optional[Tuple[str, ...]]:
     :raise ClowderError:
     """
 
-    if ENVIRONMENT.CLOWDER_REPO_VERSIONS_DIR is None:
+    if ENVIRONMENT.clowder_repo_versions_dir is None:
         return None
 
-    versions = [Path(Path(v).stem).stem for v in os.listdir(str(ENVIRONMENT.CLOWDER_REPO_VERSIONS_DIR))
+    versions = [Path(Path(v).stem).stem for v in os.listdir(str(ENVIRONMENT.clowder_repo_versions_dir))
                 if v.endswith('.clowder.yml') or v.endswith('.clowder.yaml')]
 
     duplicate = fmt.check_for_duplicates(versions)
@@ -112,7 +112,7 @@ def git_status() -> None:
     Equivalent to: ``git status -vv``
     """
 
-    repo = ProjectRepo(ENVIRONMENT.CLOWDER_GIT_REPO_DIR, clowder_repo_remote, clowder_repo_ref)
+    repo = ProjectRepo(ENVIRONMENT.clowder_git_repo_dir, clowder_repo_remote, clowder_repo_ref)
     repo.status_verbose()
 
 
@@ -126,10 +126,10 @@ def init(url: str, branch: str) -> None:
     # Register exit handler to remove files if cloning repo fails
     atexit.register(_init_exit_handler)
 
-    clowder_repo_dir = ENVIRONMENT.CURRENT_DIR / '.clowder'
+    clowder_repo_dir = ENVIRONMENT.current_dir / '.clowder'
     repo = ProjectRepo(clowder_repo_dir, clowder_repo_remote, clowder_repo_ref)
     repo.create_clowder_repo(url, branch)
-    link_clowder_yaml_default(ENVIRONMENT.CURRENT_DIR)
+    link_clowder_yaml_default(ENVIRONMENT.current_dir)
 
 
 def print_status(fetch: bool = False) -> None:
@@ -138,34 +138,34 @@ def print_status(fetch: bool = False) -> None:
     :param bool fetch: Fetch before printing status
     """
 
-    if ENVIRONMENT.CLOWDER_REPO_DIR is None:
+    if ENVIRONMENT.clowder_repo_dir is None:
         return
 
-    clowder_repo_output = colored(ENVIRONMENT.CLOWDER_REPO_DIR.name, 'green')
+    clowder_repo_output = colored(ENVIRONMENT.clowder_repo_dir.name, 'green')
 
-    if ENVIRONMENT.CLOWDER_YAML is not None and not ENVIRONMENT.CLOWDER_YAML.is_symlink():
-        print(fmt.warning_clowder_yaml_not_symlink_with_clowder_repo(ENVIRONMENT.CLOWDER_YAML.name))
+    if ENVIRONMENT.clowder_yaml is not None and not ENVIRONMENT.clowder_yaml.is_symlink():
+        print(fmt.warning_clowder_yaml_not_symlink_with_clowder_repo(ENVIRONMENT.clowder_yaml.name))
         print()
 
-    target_path = fmt.path_string(Path(ENVIRONMENT.CLOWDER_YAML.name))
-    source_path = fmt.path_string(ENVIRONMENT.CLOWDER_YAML.resolve().relative_to(ENVIRONMENT.CLOWDER_DIR))
+    target_path = fmt.path_string(Path(ENVIRONMENT.clowder_yaml.name))
+    source_path = fmt.path_string(ENVIRONMENT.clowder_yaml.resolve().relative_to(ENVIRONMENT.clowder_dir))
 
-    if ENVIRONMENT.CLOWDER_GIT_REPO_DIR is None:
+    if ENVIRONMENT.clowder_git_repo_dir is None:
         print(clowder_repo_output)
         print(f"{target_path} -> {source_path}")
         print()
         return
 
-    repo = ProjectRepo(ENVIRONMENT.CLOWDER_GIT_REPO_DIR, clowder_repo_remote, clowder_repo_ref)
+    repo = ProjectRepo(ENVIRONMENT.clowder_git_repo_dir, clowder_repo_remote, clowder_repo_ref)
 
     if fetch and not is_offline():
         print(' - Fetch upstream changes for clowder repo')
         repo.fetch(clowder_repo_remote)
 
-    clowder_git_repo_output = repo.format_project_string(ENVIRONMENT.CLOWDER_GIT_REPO_DIR.name)
+    clowder_git_repo_output = repo.format_project_string(ENVIRONMENT.clowder_git_repo_dir.name)
     current_ref_output = repo.format_project_ref_string()
 
-    if ENVIRONMENT.CLOWDER_YAML is None or not ENVIRONMENT.CLOWDER_YAML.is_symlink():
+    if ENVIRONMENT.clowder_yaml is None or not ENVIRONMENT.clowder_yaml.is_symlink():
         print(f"{clowder_git_repo_output} {current_ref_output}")
         print()
         return
@@ -178,13 +178,13 @@ def print_status(fetch: bool = False) -> None:
 def pull() -> None:
     """Pull clowder repo upstream changes"""
 
-    ProjectRepo(ENVIRONMENT.CLOWDER_GIT_REPO_DIR, clowder_repo_remote, clowder_repo_ref).pull()
+    ProjectRepo(ENVIRONMENT.clowder_git_repo_dir, clowder_repo_remote, clowder_repo_ref).pull()
 
 
 def push() -> None:
     """Push clowder repo changes"""
 
-    ProjectRepo(ENVIRONMENT.CLOWDER_GIT_REPO_DIR, clowder_repo_remote, clowder_repo_ref).push()
+    ProjectRepo(ENVIRONMENT.clowder_git_repo_dir, clowder_repo_remote, clowder_repo_ref).push()
 
 
 def run_command(command: str) -> None:
@@ -194,7 +194,7 @@ def run_command(command: str) -> None:
     """
 
     print(fmt.command(command))
-    execute_command(command.split(), ENVIRONMENT.CLOWDER_REPO_DIR)
+    execute_command(command.split(), ENVIRONMENT.clowder_repo_dir)
 
 
 def _init_exit_handler() -> None:
@@ -203,10 +203,10 @@ def _init_exit_handler() -> None:
     :raise ClowderError:
     """
 
-    clowder_path = ENVIRONMENT.CURRENT_DIR / '.clowder'
+    clowder_path = ENVIRONMENT.current_dir / '.clowder'
     if os.path.isdir(clowder_path):
-        clowder_yml = ENVIRONMENT.CURRENT_DIR / 'clowder.yml'
-        clowder_yaml = ENVIRONMENT.CURRENT_DIR / 'clowder.yaml'
+        clowder_yml = ENVIRONMENT.current_dir / 'clowder.yml'
+        clowder_yaml = ENVIRONMENT.current_dir / 'clowder.yaml'
         if not clowder_yml.is_symlink() and not clowder_yaml.is_symlink():
             remove_directory(clowder_path)
             LOG_DEBUG('Failed clowder init')

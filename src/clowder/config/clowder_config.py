@@ -45,7 +45,7 @@ class ClowderConfig(object):
         """
 
         if clowder_config is None:
-            self.clowder_dir = ENVIRONMENT.CLOWDER_DIR
+            self.clowder_dir = ENVIRONMENT.clowder_dir
             self.name = current_clowder_name
             self.jobs = None
             self.projects = None
@@ -190,7 +190,7 @@ class ClowderConfig(object):
 
         for project in self.projects:
             if project not in project_options:
-                messages = [f"{fmt.error_invalid_config_file(ENVIRONMENT.CLOWDER_CONFIG_YAML)}",
+                messages = [f"{fmt.error_invalid_config_file(ENVIRONMENT.clowder_config_yaml)}",
                             f"{fmt.error_unknown_project(project)}"]
                 raise ClowderError(ClowderErrorType.CONFIG_YAML_UNKNOWN_PROJECT, messages)
 

@@ -170,7 +170,7 @@ class Project(ProjectImpl):
                 self.source = source
                 break
         if self.source is None:
-            message = fmt.error_source_not_found(source_name, ENVIRONMENT.CLOWDER_YAML, self.name)
+            message = fmt.error_source_not_found(source_name, ENVIRONMENT.clowder_yaml, self.name)
             raise ClowderError(ClowderErrorType.CLOWDER_YAML_SOURCE_NOT_FOUND, message)
 
         self.fork = None
@@ -178,7 +178,7 @@ class Project(ProjectImpl):
             fork = project['fork']
             self.fork = Fork(fork, self, sources, defaults)
             if self.remote == self.fork.remote:
-                message = fmt.error_remote_dup(self.fork.name, self.name, self.remote, ENVIRONMENT.CLOWDER_YAML)
+                message = fmt.error_remote_dup(self.fork.name, self.name, self.remote, ENVIRONMENT.clowder_yaml)
                 raise ClowderError(ClowderErrorType.CLOWDER_YAML_DUPLICATE_REMOTE_NAME, message)
 
         groups = ['all', self.name, str(self.path)]
@@ -331,7 +331,7 @@ class Project(ProjectImpl):
         :rtype: str
         """
 
-        return ENVIRONMENT.CLOWDER_DIR / self.path
+        return ENVIRONMENT.clowder_dir / self.path
 
     def get_current_timestamp(self) -> str:
         """Return timestamp of current HEAD commit
@@ -508,7 +508,7 @@ class Project(ProjectImpl):
 
         self._print_output = not parallel
 
-        forall_env = {'CLOWDER_PATH': ENVIRONMENT.CLOWDER_DIR,
+        forall_env = {'CLOWDER_PATH': ENVIRONMENT.clowder_dir,
                       'PROJECT_PATH': self.full_path(),
                       'PROJECT_NAME': self.name,
                       'PROJECT_REMOTE': self.remote,

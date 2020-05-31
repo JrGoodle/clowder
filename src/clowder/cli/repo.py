@@ -211,5 +211,5 @@ def run(args) -> None:
 def status(args) -> None: # noqa
     """Clowder repo status command entry point"""
 
-    if ENVIRONMENT.CLOWDER_GIT_REPO_DIR is not None:
+    if ENVIRONMENT.clowder_git_repo_dir is not None:
         clowder_repo.git_status()

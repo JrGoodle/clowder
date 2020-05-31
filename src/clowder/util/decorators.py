@@ -21,7 +21,7 @@ def clowder_repo_required(func):
     def wrapper(*args, **kwargs):
         """Wrapper"""
 
-        if ENVIRONMENT.CLOWDER_REPO_DIR is None:
+        if ENVIRONMENT.clowder_repo_dir is None:
             raise ClowderError(ClowderErrorType.MISSING_CLOWDER_REPO, fmt.error_missing_clowder_repo())
         return func(*args, **kwargs)
 
@@ -35,7 +35,7 @@ def clowder_git_repo_required(func):
     def wrapper(*args, **kwargs):
         """Wrapper"""
 
-        if ENVIRONMENT.CLOWDER_GIT_REPO_DIR is None:
+        if ENVIRONMENT.clowder_git_repo_dir is None:
             raise ClowderError(ClowderErrorType.MISSING_CLOWDER_GIT_REPO, fmt.error_missing_clowder_git_repo())
         return func(*args, **kwargs)
 
@@ -90,8 +90,8 @@ def valid_clowder_yaml_required(func):
     def wrapper(*args, **kwargs):
         """Wrapper"""
 
-        if ENVIRONMENT.CLOWDER_YAML_ERROR is not None:
-            raise ENVIRONMENT.CLOWDER_YAML_ERROR
+        if ENVIRONMENT.clowder_yaml_error is not None:
+            raise ENVIRONMENT.clowder_yaml_error
         if CLOWDER_CONTROLLER.error is not None:
             raise CLOWDER_CONTROLLER.error
         return func(*args, **kwargs)

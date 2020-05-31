@@ -48,11 +48,11 @@ def add_link_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
 def link(args) -> None:
     """Clowder link command private implementation"""
 
-    if ENVIRONMENT.CLOWDER_YAML is not None and not ENVIRONMENT.CLOWDER_YAML.is_symlink():
+    if ENVIRONMENT.clowder_yaml is not None and not ENVIRONMENT.clowder_yaml.is_symlink():
         raise ClowderError(ClowderErrorType.EXISTING_FILE_AT_SYMLINK_TARGET_PATH,
-                           fmt.error_existing_file_at_symlink_target_path(ENVIRONMENT.CLOWDER_YAML))
+                           fmt.error_existing_file_at_symlink_target_path(ENVIRONMENT.clowder_yaml))
 
     if args.version is None:
-        link_clowder_yaml_default(ENVIRONMENT.CLOWDER_DIR)
+        link_clowder_yaml_default(ENVIRONMENT.clowder_dir)
     else:
-        link_clowder_yaml_version(ENVIRONMENT.CLOWDER_DIR, args.version)
+        link_clowder_yaml_version(ENVIRONMENT.clowder_dir, args.version)

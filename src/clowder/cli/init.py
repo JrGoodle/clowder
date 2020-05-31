@@ -39,7 +39,7 @@ def init(args) -> None:
     :raise ClowderError:
     """
 
-    clowder_repo_dir = ENVIRONMENT.CURRENT_DIR / '.clowder'
+    clowder_repo_dir = ENVIRONMENT.current_dir / '.clowder'
     if clowder_repo_dir.is_dir():
         try:
             clowder_repo_dir.rmdir()

@@ -26,16 +26,16 @@ class ClowderEnvironment(object):
     :cvar Optional[ClowderError] CLOWDER_YAML_ERROR:
     """
 
-    CURRENT_DIR = Path.cwd()
-    CLOWDER_CONFIG_DIR = Path.home() / '.config' / 'clowder'
-    CLOWDER_CONFIG_YAML = CLOWDER_CONFIG_DIR / 'clowder.config.yml'
-    CLOWDER_DIR: Optional[Path] = None
-    CLOWDER_REPO_DIR: Optional[Path] = None
-    CLOWDER_GIT_REPO_DIR: Optional[Path] = None
-    CLOWDER_REPO_VERSIONS_DIR: Optional[Path] = None
-    CLOWDER_YAML: Optional[Path] = None
+    current_dir = Path.cwd()
+    clowder_config_dir = Path.home() / '.config' / 'clowder'
+    clowder_config_yaml = clowder_config_dir / 'clowder.config.yml'
+    clowder_dir: Optional[Path] = None
+    clowder_repo_dir: Optional[Path] = None
+    clowder_git_repo_dir: Optional[Path] = None
+    clowder_repo_versions_dir: Optional[Path] = None
+    clowder_yaml: Optional[Path] = None
 
-    CLOWDER_YAML_ERROR: Optional[ClowderError] = None
+    clowder_yaml_error: Optional[ClowderError] = None
 
     def __init__(self):
         """ClowderEnvironment __init__"""
@@ -55,37 +55,37 @@ class ClowderEnvironment(object):
             clowder_yml = path / 'clowder.yml'
             clowder_yaml = path / 'clowder.yaml'
             if clowder_repo_dir.is_dir() and existing_clowder_repo(clowder_repo_dir):
-                self.CLOWDER_DIR = path
-                self.CLOWDER_REPO_DIR = clowder_repo_dir
-                self.CLOWDER_GIT_REPO_DIR = clowder_repo_dir
+                self.clowder_dir = path
+                self.clowder_repo_dir = clowder_repo_dir
+                self.clowder_git_repo_dir = clowder_repo_dir
                 break
             elif clowder_repo_dir.is_dir():
-                self.CLOWDER_DIR = path
-                self.CLOWDER_REPO_DIR = clowder_repo_dir
+                self.clowder_dir = path
+                self.clowder_repo_dir = clowder_repo_dir
                 break
             elif clowder_yml.is_file() or clowder_yaml.is_file():
-                self.CLOWDER_DIR = path
+                self.clowder_dir = path
                 break
             path = path.parent
 
-        if self.CLOWDER_REPO_DIR is not None:
-            clowder_versions = self.CLOWDER_REPO_DIR / 'versions'
+        if self.clowder_repo_dir is not None:
+            clowder_versions = self.clowder_repo_dir / 'versions'
             if clowder_versions.is_dir():
-                self.CLOWDER_REPO_VERSIONS_DIR = clowder_versions
+                self.clowder_repo_versions_dir = clowder_versions
 
     def configure_clowder_yaml(self) -> None:
         """Configure clowder directories"""
 
         # If clowder directory exists, try to set other environment path variables
-        if self.CLOWDER_DIR is not None:
-            clowder_yml = self.CLOWDER_DIR / 'clowder.yml'
-            clowder_yaml = self.CLOWDER_DIR / 'clowder.yaml'
+        if self.clowder_dir is not None:
+            clowder_yml = self.clowder_dir / 'clowder.yml'
+            clowder_yaml = self.clowder_dir / 'clowder.yaml'
         else:
-            clowder_yml = self.CURRENT_DIR / 'clowder.yml'
-            clowder_yaml = self.CURRENT_DIR / 'clowder.yaml'
+            clowder_yml = self.current_dir / 'clowder.yml'
+            clowder_yaml = self.current_dir / 'clowder.yaml'
 
         if clowder_yml.is_file() and clowder_yaml.is_file():
-            self.CLOWDER_YAML_ERROR = ClowderError(ClowderErrorType.AMBIGUOUS_CLOWDER_YAML,
+            self.clowder_yaml_error = ClowderError(ClowderErrorType.AMBIGUOUS_CLOWDER_YAML,
                                                    fmt.error_ambiguous_clowder_yaml())
             return
 
@@ -102,15 +102,15 @@ class ClowderEnvironment(object):
             return
 
         if not yaml_file.is_symlink():
-            self.CLOWDER_YAML = yaml_file
+            self.clowder_yaml = yaml_file
             return
 
         if yaml_file.exists():
-            self.CLOWDER_YAML = yaml_file
+            self.clowder_yaml = yaml_file
             return
 
-        message = fmt.error_clowder_symlink_source_missing(yaml_file, self.CLOWDER_DIR)
-        self.CLOWDER_YAML_ERROR = ClowderError(ClowderErrorType.CLOWDER_SYMLINK_SOURCE_MISSING, message)
+        message = fmt.error_clowder_symlink_source_missing(yaml_file, self.clowder_dir)
+        self.clowder_yaml_error = ClowderError(ClowderErrorType.CLOWDER_SYMLINK_SOURCE_MISSING, message)
 
 
 ENVIRONMENT = ClowderEnvironment()

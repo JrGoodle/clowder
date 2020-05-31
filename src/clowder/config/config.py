@@ -46,7 +46,7 @@ class Config(object):
         self._project_options = project_options
 
         # Config file doesn't currently exist
-        if not ENVIRONMENT.CLOWDER_CONFIG_YAML.is_file():
+        if not ENVIRONMENT.clowder_config_yaml.is_file():
             self.version = CONFIG_VERSION
             current_clowder_config = ClowderConfig(current_clowder_name=current_clowder_name)
             self.clowder_configs = (current_clowder_config,)
@@ -89,31 +89,31 @@ class Config(object):
         """Save configuration to file"""
 
         # If directory doesn't exist, create it
-        make_dir(ENVIRONMENT.CLOWDER_CONFIG_DIR)
+        make_dir(ENVIRONMENT.clowder_config_dir)
 
         # If file doesn't exist, save it
-        if not ENVIRONMENT.CLOWDER_CONFIG_YAML.is_file():
-            save_yaml_file(self._get_yaml(), ENVIRONMENT.CLOWDER_CONFIG_YAML)
+        if not ENVIRONMENT.clowder_config_yaml.is_file():
+            save_yaml_file(self._get_yaml(), ENVIRONMENT.clowder_config_yaml)
             return
 
         # If file does exist, move to .backup
-        create_backup_file(ENVIRONMENT.CLOWDER_CONFIG_YAML)
+        create_backup_file(ENVIRONMENT.clowder_config_yaml)
 
         try:
             # Save new file
-            remove_file(ENVIRONMENT.CLOWDER_CONFIG_YAML)
-            save_yaml_file(self._get_yaml(), ENVIRONMENT.CLOWDER_CONFIG_YAML)
+            remove_file(ENVIRONMENT.clowder_config_yaml)
+            save_yaml_file(self._get_yaml(), ENVIRONMENT.clowder_config_yaml)
         except ClowderError as err:
             LOG_DEBUG('Failed to save configuration file', err)
             # If failed, restore backup
             # TODO: Handle possible exception
-            restore_from_backup_file(ENVIRONMENT.CLOWDER_CONFIG_YAML)
+            restore_from_backup_file(ENVIRONMENT.clowder_config_yaml)
             raise
         except Exception as err:
             LOG_DEBUG('Failed to save configuration file', err)
             # If failed, restore backup
             # TODO: Handle possible exception
-            restore_from_backup_file(ENVIRONMENT.CLOWDER_CONFIG_YAML)
+            restore_from_backup_file(ENVIRONMENT.clowder_config_yaml)
             raise
 
     def _get_yaml(self) -> dict:
@@ -134,8 +134,8 @@ class Config(object):
         """
 
         try:
-            parsed_yaml = load_yaml_file(ENVIRONMENT.CLOWDER_CONFIG_YAML, ENVIRONMENT.CLOWDER_CONFIG_DIR)
-            validate_yaml_file(parsed_yaml, ENVIRONMENT.CLOWDER_CONFIG_YAML)
+            parsed_yaml = load_yaml_file(ENVIRONMENT.clowder_config_yaml, ENVIRONMENT.clowder_config_dir)
+            validate_yaml_file(parsed_yaml, ENVIRONMENT.clowder_config_yaml)
 
             self.version = parsed_yaml['version']
 
@@ -145,9 +145,9 @@ class Config(object):
                 clowder_configs.append(ClowderConfig(clowder_config=config))
             self.clowder_configs = tuple(clowder_configs)
 
-            if ENVIRONMENT.CLOWDER_DIR is not None:
+            if ENVIRONMENT.clowder_dir is not None:
                 for config in self.clowder_configs:
-                    if config.clowder_dir.resolve() == ENVIRONMENT.CLOWDER_DIR.resolve():
+                    if config.clowder_dir.resolve() == ENVIRONMENT.clowder_dir.resolve():
                         self.current_clowder_config = config
                         self.current_clowder_config.validate_config_projects_defined(self._project_options)
                         break
@@ -157,6 +157,6 @@ class Config(object):
             self.current_clowder_config = None
             LOG_DEBUG('Failed to load clowder config', err)
             raise ClowderError(ClowderErrorType.CONFIG_YAML_UNKNOWN,
-                               fmt.error_invalid_config_file(ENVIRONMENT.CLOWDER_CONFIG_YAML))
+                               fmt.error_invalid_config_file(ENVIRONMENT.clowder_config_yaml))
         except (KeyboardInterrupt, SystemExit):
             raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())

@@ -223,7 +223,7 @@ class ProjectRepo(ProjectRepoImpl):
 
         from clowder.environment import ENVIRONMENT
         config_variable = 'alias.herd'
-        config_value = f'!clowder herd {self.repo_path.relative_to(ENVIRONMENT.CLOWDER_DIR)}'
+        config_value = f'!clowder herd {self.repo_path.relative_to(ENVIRONMENT.clowder_dir)}'
         self._print(" - Update git herd alias")
         self.git_config_unset_all_local(config_variable)
         self.git_config_add_local(config_variable, config_value)

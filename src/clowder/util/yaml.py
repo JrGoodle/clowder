@@ -151,8 +151,8 @@ def load_yaml_file(yaml_file: Path, relative_dir: Path) -> dict:
 def print_clowder_yaml() -> None:
     """Print current clowder yaml"""
 
-    if ENVIRONMENT.CLOWDER_YAML.is_file():
-        _print_yaml(ENVIRONMENT.CLOWDER_YAML)
+    if ENVIRONMENT.clowder_yaml.is_file():
+        _print_yaml(ENVIRONMENT.clowder_yaml)
 
 
 def save_yaml_file(yaml_output: dict, yaml_file: Path) -> None:
@@ -238,7 +238,7 @@ def _format_yaml_file(yaml_file: Path) -> str:
     :rtype: str
     """
 
-    path = yaml_file.resolve().relative_to(ENVIRONMENT.CLOWDER_DIR)
+    path = yaml_file.resolve().relative_to(ENVIRONMENT.clowder_dir)
     return f"\n{fmt.path_string(Path(path))}\n"
 
 
@@ -283,7 +283,7 @@ def _print_yaml_path(yaml_file: Path) -> None:
     """
 
     if yaml_file.is_symlink():
-        path = yaml_file.resolve().relative_to(ENVIRONMENT.CLOWDER_DIR)
+        path = yaml_file.resolve().relative_to(ENVIRONMENT.clowder_dir)
         print(_format_yaml_symlink(Path(yaml_file.name), path))
     else:
         print(_format_yaml_file(yaml_file))
