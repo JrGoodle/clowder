@@ -74,6 +74,42 @@ test_save_missing_directories() {
 }
 test_save_missing_directories 'duke' 'mu'
 
-# TODO: Add test for saving version when versions directory doesn't exist
+test_save_first_version_no_existing_versions_directory() {
+    print_single_separator
+    echo "TEST: Test saving first version when versions directory doesn't currently exist"
+    ./clean.sh
+    begin_command
+    $COMMAND init https://github.com/jrgoodle/cats.git -b no-versions || exit 1
+    end_command
+    test_symlink_path 'clowder.yaml' "$(pwd)/.clowder/clowder.yaml"
+    begin_command
+    $COMMAND herd $PARALLEL || exit 1
+    end_command
+    test_no_directory_exists '.clowder/versions'
+    begin_command
+    $COMMAND save first-version || exit 1
+    end_command
+    test_directory_exists '.clowder/versions'
+    test_file_exists '.clowder/versions/first-version.clowder.yml'
+    test_no_file_exists 'clowder.yml'
+    test_file_exists 'clowder.yaml'
+    test_file_is_symlink 'clowder.yaml'
+    test_symlink_path 'clowder.yaml' "$(pwd)/.clowder/clowder.yaml"
+    begin_command
+    $COMMAND link first-version || exit 1
+    end_command
+    test_no_file_exists 'clowder.yaml'
+    test_file_exists 'clowder.yml'
+    test_file_is_symlink 'clowder.yml'
+    test_symlink_path 'clowder.yml' "$(pwd)/.clowder/versions/first-version.clowder.yml"
+    begin_command
+    $COMMAND herd $PARALLEL || exit 1
+    end_command
+    begin_command
+    $COMMAND status || exit 1
+    end_command
+}
+test_save_first_version_no_existing_versions_directory
+
 
 # TODO: Add tests for saving projects with forks using differnt sources

@@ -23,10 +23,10 @@ from .progress import Progress
 
 if os.name == "posix":
 
-    __clowder_results__ = []
-    __clowder_pool__: Optional[mp.Pool] = None
-    __clowder_progress__: Optional[Progress] = None
-    __clowder_parent_id__ = os.getpid()
+    clowder_results = []
+    clowder_pool: Optional[mp.Pool] = None
+    clowder_progress: Optional[Progress] = None
+    clowder_parent_id = os.getpid()
 
     def herd_project(project: Project, branch: str, tag: str, depth: int, rebase: bool) -> None:
         """Herd command wrapper function for multiprocessing Pool execution
@@ -66,7 +66,7 @@ if os.name == "posix":
         """
 
         del val
-        __clowder_progress__.update()
+        clowder_progress.update()
 
     def worker_init() -> None:
         """
@@ -83,7 +83,7 @@ if os.name == "posix":
             """
 
             del signal_num, frame
-            parent = psutil.Process(__clowder_parent_id__)
+            parent = psutil.Process(clowder_parent_id)
             for child in parent.children(recursive=True):
                 if child.pid != os.getpid():
                     child.terminate()
@@ -112,15 +112,16 @@ if os.name == "posix":
         for cmd in commands:
             print('\n' + fmt.command(cmd))
 
-        global __clowder_pool__
-        __clowder_pool__ = mp.Pool(processes=jobs, initializer=worker_init)
-        global __clowder_progress__
-        __clowder_progress__ = Progress()
+        global clowder_pool
+        clowder_pool = mp.Pool(processes=jobs, initializer=worker_init)
+        global clowder_progress
+        clowder_progress = Progress()
 
         for project in projects:
-            result = __clowder_pool__.apply_async(run_project, args=(project, commands, ignore_errors),
-                                                  callback=async_callback)
-            __clowder_results__.append(result)
+            result = clowder_pool.apply_async(run_project,
+                                              args=(project, commands, ignore_errors),
+                                              callback=async_callback)
+            clowder_results.append(result)
 
         pool_handler(len(projects))
 
@@ -140,16 +141,16 @@ if os.name == "posix":
         print()
         CLOWDER_CONTROLLER.validate_print_output(projects)
 
-        global __clowder_pool__
-        __clowder_pool__ = mp.Pool(processes=jobs, initializer=worker_init)
-        global __clowder_progress__
-        __clowder_progress__ = Progress()
+        global clowder_pool
+        clowder_pool = mp.Pool(processes=jobs, initializer=worker_init)
+        global clowder_progress
+        clowder_progress = Progress()
 
         for project in projects:
-            result = __clowder_pool__.apply_async(herd_project,
-                                                  args=(project, branch, tag, depth, rebase),
-                                                  callback=async_callback)
-            __clowder_results__.append(result)
+            result = clowder_pool.apply_async(herd_project,
+                                              args=(project, branch, tag, depth, rebase),
+                                              callback=async_callback)
+            clowder_results.append(result)
 
         pool_handler(len(projects))
 
@@ -169,14 +170,14 @@ if os.name == "posix":
         if timestamp_project:
             timestamp = CLOWDER_CONTROLLER.get_timestamp(timestamp_project)
 
-        global __clowder_pool__
-        __clowder_pool__ = mp.Pool(processes=jobs, initializer=worker_init)
-        global __clowder_progress__
-        __clowder_progress__ = Progress()
+        global clowder_pool
+        clowder_pool = mp.Pool(processes=jobs, initializer=worker_init)
+        global clowder_progress
+        clowder_progress = Progress()
 
         for project in projects:
-            result = __clowder_pool__.apply_async(reset_project, args=(project, timestamp), callback=async_callback)
-            __clowder_results__.append(result)
+            result = clowder_pool.apply_async(reset_project, args=(project, timestamp), callback=async_callback)
+            clowder_results.append(result)
         pool_handler(len(projects))
 
     # Disable warnings shown by pylint for catching too general exception
@@ -190,28 +191,28 @@ if os.name == "posix":
         """
 
         print()
-        __clowder_progress__.start(count)
+        clowder_progress.start(count)
 
         try:
-            for result in __clowder_results__:
+            for result in clowder_results:
                 result.get()
         except ClowderError as err:
             LOG_DEBUG('ClowderErro pool handler exception', err)
-            __clowder_progress__.close()
-            __clowder_pool__.close()
-            __clowder_pool__.terminate()
+            clowder_progress.close()
+            clowder_pool.close()
+            clowder_pool.terminate()
             raise
         except Exception as err:
             LOG_DEBUG('Generic pool handler exception', err)
-            __clowder_progress__.close()
-            __clowder_pool__.close()
-            __clowder_pool__.terminate()
+            clowder_progress.close()
+            clowder_pool.close()
+            clowder_pool.terminate()
             raise ClowderError(ClowderErrorType.PARALLEL_COMMAND_FAILED, fmt.error_parallel_command_failed())
         else:
-            __clowder_progress__.complete()
-            __clowder_progress__.close()
-            __clowder_pool__.close()
-            __clowder_pool__.join()
+            clowder_progress.complete()
+            clowder_progress.close()
+            clowder_pool.close()
+            clowder_pool.join()
 else:
     def forall_parallel(commands: List[str], projects: Tuple[Project, ...], # noqa
                         jobs: int, ignore_errors: bool) -> None: # noqa

@@ -5,8 +5,6 @@
 
 """
 
-import os
-
 from cement.ext.ext_argparse import ArgparseController, expose
 
 from clowder_test.execute import execute_test_command
@@ -19,7 +17,7 @@ VERSION = '0.1.0'
 class BaseController(ArgparseController):
     """Clowder app base controller"""
 
-    path = os.path.join(ROOT_DIR, 'test', 'scripts')
+    path = ROOT_DIR / 'test' / 'scripts'
 
     class Meta:
         """Clowder app base Meta configuration"""
@@ -50,8 +48,7 @@ class BaseController(ArgparseController):
                                  parallel=self.app.pargs.parallel,
                                  write=self.app.pargs.write,
                                  coverage=self.app.pargs.coverage,
-                                 debug=self.app.debug,
-                                 quiet=self.app.pargs.silent)
+                                 debug=self.app.debug)
 
         self.offline()
         self.parallel()
@@ -66,8 +63,7 @@ class BaseController(ArgparseController):
                              parallel=True,
                              write=self.app.pargs.write,
                              coverage=self.app.pargs.coverage,
-                             debug=self.app.debug,
-                             quiet=self.app.pargs.silent)
+                             debug=self.app.debug)
 
     @expose(
         help='Run offline tests'
@@ -75,12 +71,11 @@ class BaseController(ArgparseController):
     def offline(self) -> None:
         """clowder offline tests"""
 
-        execute_test_command('./offline.sh', os.path.join(self.path, 'cats'),
+        execute_test_command('./offline.sh', self.path / 'cats',
                              parallel=self.app.pargs.parallel,
                              write=self.app.pargs.write,
                              coverage=self.app.pargs.coverage,
-                             debug=self.app.debug,
-                             quiet=self.app.pargs.silent)
+                             debug=self.app.debug)
 
     @expose(
         help='Run parallel tests'
@@ -92,8 +87,7 @@ class BaseController(ArgparseController):
                              parallel=True,
                              write=self.app.pargs.write,
                              coverage=self.app.pargs.coverage,
-                             debug=self.app.debug,
-                             quiet=self.app.pargs.silent)
+                             debug=self.app.debug)
 
     # @expose(
     #     help='Run unit tests'
@@ -117,21 +111,19 @@ class BaseController(ArgparseController):
 
         cats_scripts = ['./write_herd.sh', './write_prune.sh', './write_repo.sh', './write_start.sh']
         for script in cats_scripts:
-            execute_test_command(script, os.path.join(self.path, 'cats'),
+            execute_test_command(script, self.path / 'cats',
                                  parallel=self.app.pargs.parallel,
                                  write=True,
                                  coverage=self.app.pargs.coverage,
-                                 debug=self.app.debug,
-                                 quiet=self.app.pargs.silent)
+                                 debug=self.app.debug)
 
         misc_scripts = ['./write_forks.sh']
         for script in misc_scripts:
-            execute_test_command(script, os.path.join(self.path, 'misc'),
+            execute_test_command(script, self.path / 'misc',
                                  parallel=self.app.pargs.parallel,
                                  write=True,
                                  coverage=self.app.pargs.coverage,
-                                 debug=self.app.debug,
-                                 quiet=self.app.pargs.silent)
+                                 debug=self.app.debug)
 
         # execute_test_command('./write_configure_remotes.sh', os.path.join(self.path, 'swift'),
         #                      parallel=self.app.pargs.parallel,

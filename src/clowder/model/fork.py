@@ -11,7 +11,7 @@ from typing import Optional, Tuple, TYPE_CHECKING
 from termcolor import colored
 
 import clowder.util.formatting as fmt
-from clowder import CLOWDER_DIR, CLOWDER_YAML
+from clowder.environment import ENVIRONMENT
 from clowder.error import ClowderError, ClowderErrorType
 from clowder.git import ProjectRepo
 from clowder.git.util import (
@@ -113,7 +113,7 @@ class Fork(ForkImpl):
             if s.name == source_name:
                 self.source = s
         if self.source is None:
-            message = fmt.error_source_not_found(source_name, CLOWDER_YAML, project.name, self.name)
+            message = fmt.error_source_not_found(source_name, ENVIRONMENT.clowder_yaml, project.name, self.name)
             raise ClowderError(ClowderErrorType.CLOWDER_YAML_SOURCE_NOT_FOUND, message)
 
     def full_path(self) -> Path:
@@ -123,7 +123,7 @@ class Fork(ForkImpl):
         :rtype: Path
         """
 
-        return CLOWDER_DIR / self.path
+        return ENVIRONMENT.clowder_dir / self.path
 
     def status(self) -> str:
         """Return formatted fork status

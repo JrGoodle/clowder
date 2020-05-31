@@ -13,6 +13,7 @@ from typing import List, Union
 
 
 ERROR = colored(' - Error:', 'red')
+WARNING = colored(' - Warning:', 'yellow')
 
 
 # TODO: Update to return list of all duplicates found
@@ -87,7 +88,7 @@ def error_ambiguous_clowder_yaml() -> str:
 
     yml_file = _yaml_file(Path('clowder.yml'))
     yaml_file = _yaml_file(Path('clowder.yaml'))
-    return f"\n{ERROR} Found {yml_file} and {yaml_file} files in same directory"
+    return f"{ERROR} Found {yml_file} and {yaml_file} files in same directory"
 
 
 def error_clone_missing_projects() -> str:
@@ -110,6 +111,20 @@ def error_clowder_already_initialized() -> str:
     return f"{ERROR} Clowder already initialized in this directory"
 
 
+def error_clowder_symlink_source_missing(symlink_path: Path, clowder_dir: Path) -> str:
+    """Return formatted error string for clowder symlink source not found
+
+    :param Path symlink_path: Clowder yaml symlink path
+    :param Path clowder_dir: Clowder directory
+    :return: Formatted clowder symlink source not found warning
+    :rtype: str
+    """
+
+    target = _yaml_file(symlink_path.relative_to(clowder_dir))
+    source = _yaml_file(symlink_path.resolve().relative_to(clowder_dir))
+    return f"{ERROR} Found symink {target} -> {source} but source appears to be missing"
+
+
 def error_command_failed(cmd: Union[str, List[str]]) -> str:
     """Format error message for failed command
 
@@ -130,7 +145,7 @@ def error_directory_exists(dir_path: Path) -> str:
     """
 
     dir_path = path_string(dir_path)
-    return f"{ERROR} Directory already exists {dir_path}"
+    return f"{ERROR} Directory already exists at {dir_path}"
 
 
 def error_duplicate_version(version: str) -> str:
@@ -169,8 +184,30 @@ def error_empty_yaml(yml: Path, name: Path) -> str:
     """
 
     path = _yaml_path(yml)
-    file = _yaml_file(name)
+    file = _yaml_file(str(name))
     return f"{path}\n{ERROR} No entries in {file}"
+
+
+def error_existing_file_at_clowder_repo_path(file_path: Path) -> str:
+    """Format error message for existing file at .clowder path
+
+    :param Path file_path: Path to existing .clowder file
+    :return: Formatted existing file at .clowder path error
+    :rtype: str
+    """
+
+    return f"{ERROR} Found non-directory file {path_string(file_path)} where clowder repo directory should be"
+
+
+def error_existing_file_at_symlink_target_path(name: Path) -> str:
+    """Format error message for existing non-symlink file at symlink target path
+
+    :param Path name: Path to use in error message
+    :return: Formatted existing non-symlink file at symlink target path error
+    :rtype: str
+    """
+
+    return f"{ERROR} Found non-symlink file {path_string(name)} at target path"
 
 
 def error_failed_clowder_init() -> str:
@@ -219,6 +256,20 @@ def error_failed_remove_file(file_path: Path) -> str:
     return f"{ERROR} Failed to remove file {file_path}"
 
 
+def error_failed_symlink_file(target: Path, source: Path) -> str:
+    """Format error message for failing to symlink file
+
+    :param Path target: Target file path
+    :param Path source: Source file path
+    :return: Formatted remove file error
+    :rtype: str
+    """
+
+    target_path = path_string(target)
+    source_path = path_string(source)
+    return f"{ERROR} Failed to symlink file {target_path} -> {source_path}"
+
+
 def error_file_exists(file_path: Path) -> str:
     """Format error message for already existing file
 
@@ -251,7 +302,7 @@ def error_invalid_config_file(file_path: Path) -> str:
     :rtype: str
     """
 
-    file = _yaml_file(file_path)
+    file = _yaml_file(str(file_path))
     return f"{ERROR} {file}\n{ERROR} Clowder config file appears to be invalid"
 
 
@@ -305,11 +356,21 @@ def error_invalid_yaml_file(name: str) -> str:
 def error_missing_clowder_repo() -> str:
     """Format error message for missing clowder repo
 
-    :return: Formatted missing clowder repo
+    :return: Formatted missing clowder repo error
     :rtype: str
     """
 
-    return f"{ERROR} No '.clowder' directory found"
+    return f"{ERROR} No {path_string(Path('.clowder'))} directory found"
+
+
+def error_missing_clowder_git_repo() -> str:
+    """Format error message for missing clowder git repo
+
+    :return: Formatted missing clowder git repo error
+    :rtype: str
+    """
+
+    return f"{ERROR} No {path_string(Path('.clowder'))} git repository found"
 
 
 def error_missing_clowder_yaml() -> str:
@@ -331,7 +392,7 @@ def error_missing_file(yaml_file: Path) -> str:
     :rtype: str
     """
 
-    file = _yaml_file(yaml_file)
+    file = _yaml_file(str(yaml_file))
     return f"{ERROR} {file} appears to be missing"
 
 
@@ -466,7 +527,7 @@ def error_save_version_exists(version_name: str, yml: Path) -> str:
     :rtype: str
     """
 
-    file = _yaml_file(yml)
+    file = _yaml_file(str(yml))
     version = version_string(version_name)
     return f"{ERROR} {file}\n{ERROR} Version '{version}' already exists"
 
@@ -506,6 +567,18 @@ def error_source_not_found(source: str, yml: Path, project: str, fork: Optional[
                 f"{ERROR} {_yaml_path(yml)}",
                 f"{ERROR} source '{source}'{fork_output} specified in project '{project}' not found in 'sources'"]
     return "\n".join(messages)
+
+
+def error_symlink_source_missing(source: Path) -> str:
+    """Return formatted error string for symlink source not found
+
+    :param Path source: Symlink source path
+    :return: Formatted clowder symlink source not found warning
+    :rtype: str
+    """
+
+    source = _yaml_file(source)
+    return f"{ERROR} Symlink source {source} appears to be missing"
 
 
 def error_timestamp_not_found() -> str:
@@ -662,6 +735,28 @@ def version_string(version_name: str) -> str:
     return colored(version_name, attrs=['bold'])
 
 
+def warning_clowder_repo_missing_git_dir() -> str:
+    """Return formatted warning string for existing .clowder directory that isn't a git repository
+
+    :return: Formatted warning string for existing .clowder directory that isn't a git repository
+    :rtype: str
+    """
+
+    return f"{WARNING} Found {path_string(Path('.clowder'))} directory that is not a git repository"
+
+
+def warning_clowder_yaml_not_symlink_with_clowder_repo(name: str) -> str:
+    """Return formatted warning string for non-symlink clowder yaml file with an existing clowder repo
+
+    :param str name: Clowder yaml file name
+    :return: Formatted warning string for non-symlink clowder yaml file with an existing clowder repo
+    :rtype: str
+    """
+
+    return f"{WARNING} Found a {_yaml_file(name)} file but it is not a symlink " \
+           f"to a file stored in the existing {path_string(Path('.clowder'))} repo"
+
+
 def _project_name(name: str) -> str:
     """Return formatted string for project name
 
@@ -684,12 +779,12 @@ def _yaml_path(yml: Path) -> str:
     return path_string(yml.resolve())
 
 
-def _yaml_file(yml: Path) -> str:
+def _yaml_file(yml: str) -> str:
     """Return formatted string for clowder yaml file
 
-    :param Path yml: Path to yaml file
+    :param str yml: Path to yaml file
     :return: Formatted YAML string
     :rtype: str
     """
 
-    return colored(str(yml), 'cyan')
+    return colored(yml, 'cyan')

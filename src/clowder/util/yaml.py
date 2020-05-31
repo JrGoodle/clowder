@@ -14,8 +14,9 @@ import jsonschema
 import yaml as pyyaml
 
 import clowder.util.formatting as fmt
-from clowder import CLOWDER_DIR, CLOWDER_YAML, LOG_DEBUG
+from clowder.environment import ENVIRONMENT
 from clowder.error import ClowderError, ClowderErrorType
+from clowder.logging import LOG_DEBUG
 
 from .file_system import (
     force_symlink,
@@ -23,6 +24,7 @@ from .file_system import (
 )
 
 
+# TODO: Combine this function with link_clowder_yaml_version()
 def link_clowder_yaml_default(clowder_dir: Path) -> None:
     """Create symlink pointing to clowder yaml file
 
@@ -60,7 +62,7 @@ def link_clowder_yaml_default(clowder_dir: Path) -> None:
         if file.exists():
             existing_file = file
 
-    if existing_file is not None:
+    if existing_file is not None and existing_file.is_symlink():
         print(f" - Remove previously existing file {fmt.path_string(existing_file)}")
         try:
             remove_file(existing_file)
@@ -109,7 +111,7 @@ def link_clowder_yaml_version(clowder_dir: Path, version: str) -> None:
         if file.exists():
             existing_file = file
 
-    if existing_file is not None:
+    if existing_file is not None and existing_file.is_symlink():
         print(f" - Remove previously existing file {fmt.path_string(existing_file)}")
         try:
             remove_file(existing_file)
@@ -150,8 +152,8 @@ def load_yaml_file(yaml_file: Path, relative_dir: Path) -> dict:
 def print_clowder_yaml() -> None:
     """Print current clowder yaml"""
 
-    if CLOWDER_YAML.is_file():
-        _print_yaml(CLOWDER_YAML)
+    if ENVIRONMENT.clowder_yaml.is_file():
+        _print_yaml(ENVIRONMENT.clowder_yaml)
 
 
 def save_yaml_file(yaml_output: dict, yaml_file: Path) -> None:
@@ -237,7 +239,7 @@ def _format_yaml_file(yaml_file: Path) -> str:
     :rtype: str
     """
 
-    path = yaml_file.resolve().relative_to(CLOWDER_DIR)
+    path = yaml_file.resolve().relative_to(ENVIRONMENT.clowder_dir)
     return f"\n{fmt.path_string(Path(path))}\n"
 
 
@@ -282,7 +284,7 @@ def _print_yaml_path(yaml_file: Path) -> None:
     """
 
     if yaml_file.is_symlink():
-        path = yaml_file.resolve().relative_to(CLOWDER_DIR)
+        path = yaml_file.resolve().relative_to(ENVIRONMENT.clowder_dir)
         print(_format_yaml_symlink(Path(yaml_file.name), path))
     else:
         print(_format_yaml_file(yaml_file))

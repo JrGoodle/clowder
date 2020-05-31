@@ -9,19 +9,37 @@ from functools import wraps
 
 import clowder.clowder_repo as clowder_repo
 import clowder.util.formatting as fmt
-from clowder import CLOWDER_REPO_DIR, LOG_DEBUG
 from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.error import ClowderError, ClowderErrorType
+from clowder.environment import ENVIRONMENT
 
 
 def clowder_repo_required(func):
-    """If no clowder repo, print clowder not found message and exit"""
+    """If no clowder repo exists, print clowder repo not found message and exit"""
 
     @wraps(func)
     def wrapper(*args, **kwargs):
         """Wrapper"""
 
-        _validate_clowder_repo_exists()
+        if ENVIRONMENT.clowder_repo_existing_file_error is not None:
+            raise ENVIRONMENT.clowder_repo_existing_file_error
+        if ENVIRONMENT.clowder_repo_dir is None:
+            raise ClowderError(ClowderErrorType.MISSING_CLOWDER_REPO, fmt.error_missing_clowder_repo())
+
+        return func(*args, **kwargs)
+
+    return wrapper
+
+
+def clowder_git_repo_required(func):
+    """If no clowder git repo exists, print clowder git repo not found message and exit"""
+
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        """Wrapper"""
+
+        if ENVIRONMENT.clowder_git_repo_dir is None:
+            raise ClowderError(ClowderErrorType.MISSING_CLOWDER_GIT_REPO, fmt.error_missing_clowder_git_repo())
         return func(*args, **kwargs)
 
     return wrapper
@@ -75,33 +93,12 @@ def valid_clowder_yaml_required(func):
     def wrapper(*args, **kwargs):
         """Wrapper"""
 
-        _validate_clowder_repo_exists()
-        if CLOWDER_CONTROLLER.error:
-            _invalid_yaml_error(CLOWDER_CONTROLLER.error)
+        if ENVIRONMENT.ambiguous_clowder_yaml_error is not None:
+            raise ENVIRONMENT.ambiguous_clowder_yaml_error
+        if ENVIRONMENT.clowder_yaml_missing_source_error is not None:
+            raise ENVIRONMENT.clowder_yaml_missing_source_error
+        if CLOWDER_CONTROLLER.error is not None:
+            raise CLOWDER_CONTROLLER.error
         return func(*args, **kwargs)
 
     return wrapper
-
-
-def _invalid_yaml_error(error: Exception):
-    """Print invalid yaml message and raise exception
-
-    :param Exception error: Exception raised during yaml validation/loading
-    :raise ClowderError:
-    """
-
-    LOG_DEBUG('Invalid yaml', error)
-    if isinstance(error, ClowderError):
-        raise error
-    else:
-        raise ClowderError(ClowderErrorType.UNKNOWN, fmt.error(error))
-
-
-def _validate_clowder_repo_exists():
-    """If clowder repo doesn't exist, print message and exit
-
-    :raise ClowderError:
-    """
-
-    if CLOWDER_REPO_DIR is None:
-        raise ClowderError(ClowderErrorType.MISSING_REPO, fmt.error_missing_clowder_repo())

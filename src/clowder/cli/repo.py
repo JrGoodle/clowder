@@ -8,9 +8,11 @@
 import argparse
 
 import clowder.clowder_repo as clowder_repo
+from clowder.environment import ENVIRONMENT
 from clowder.util.connectivity import network_connection_required
 from clowder.util.decorators import (
     print_clowder_name,
+    clowder_git_repo_required,
     clowder_repo_required,
     print_clowder_repo_status,
     print_clowder_repo_status_fetch
@@ -138,8 +140,8 @@ def add_repo_status_parser(subparsers: argparse._SubParsersAction) -> None: # no
     parser.set_defaults(func=status)
 
 
-@clowder_repo_required
 @print_clowder_name
+@clowder_git_repo_required
 @print_clowder_repo_status
 def add(args) -> None:
     """Clowder repo add command private implementation"""
@@ -147,8 +149,8 @@ def add(args) -> None:
     clowder_repo.add(args.files)
 
 
-@clowder_repo_required
 @print_clowder_name
+@clowder_git_repo_required
 @print_clowder_repo_status_fetch
 def checkout(args) -> None:
     """Clowder repo checkout command private implementation"""
@@ -156,8 +158,8 @@ def checkout(args) -> None:
     clowder_repo.checkout(args.ref[0])
 
 
-@clowder_repo_required
 @print_clowder_name
+@clowder_git_repo_required
 @print_clowder_repo_status
 def clean(args) -> None: # noqa
     """Clowder repo clean command private implementation"""
@@ -165,8 +167,8 @@ def clean(args) -> None: # noqa
     clowder_repo.clean()
 
 
-@clowder_repo_required
 @print_clowder_name
+@clowder_git_repo_required
 @print_clowder_repo_status
 def commit(args) -> None:
     """Clowder repo commit command private implementation"""
@@ -174,9 +176,9 @@ def commit(args) -> None:
     clowder_repo.commit(args.message[0])
 
 
-@network_connection_required
-@clowder_repo_required
 @print_clowder_name
+@clowder_git_repo_required
+@network_connection_required
 @print_clowder_repo_status_fetch
 def pull(args) -> None: # noqa
     """Clowder repo pull command private implementation"""
@@ -184,9 +186,9 @@ def pull(args) -> None: # noqa
     clowder_repo.pull()
 
 
-@network_connection_required
-@clowder_repo_required
 @print_clowder_name
+@clowder_git_repo_required
+@network_connection_required
 @print_clowder_repo_status_fetch
 def push(args) -> None: # noqa
     """Clowder repo push command private implementation"""
@@ -194,8 +196,8 @@ def push(args) -> None: # noqa
     clowder_repo.push()
 
 
-@clowder_repo_required
 @print_clowder_name
+@clowder_repo_required
 @print_clowder_repo_status
 def run(args) -> None:
     """Clowder repo run command private implementation"""
@@ -203,10 +205,11 @@ def run(args) -> None:
     clowder_repo.run_command(args.command[0])
 
 
-@clowder_repo_required
 @print_clowder_name
+@clowder_repo_required
 @print_clowder_repo_status
 def status(args) -> None: # noqa
     """Clowder repo status command entry point"""
 
-    clowder_repo.git_status()
+    if ENVIRONMENT.clowder_git_repo_dir is not None:
+        clowder_repo.git_status()

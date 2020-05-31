@@ -7,24 +7,23 @@
 
 import os
 import subprocess
+from pathlib import Path
 from typing import Optional
 
 from clowder_test import ROOT_DIR
 
 
-def execute_test_command(command: str, path: str, parallel: bool = False, write: bool = False,
-                         coverage: bool = False, test_env: Optional[dict] = None, debug: bool = False,
-                         quiet: bool = False) -> None:
+def execute_test_command(command: str, path: Path, parallel: bool = False, write: bool = False,
+                         coverage: bool = False, test_env: Optional[dict] = None, debug: bool = False) -> None:
     """Execute test command
 
     :param str command: Command to run
-    :param str path: Path to set as ``cwd``
+    :param Path path: Path to set as ``cwd``
     :param bool parallel: Whether to run tests in parallel
     :param bool write: Whether to run tests requiring write permission
     :param bool coverage: Whether to run tests with code coverage
     :param Optional[dict] test_env: Custom dict of environment variables
     :param bool debug: Toggle debug output
-    :param bool quiet: Suppress all output
     """
 
     test_env = {} if test_env is None else test_env
@@ -41,25 +40,18 @@ def execute_test_command(command: str, path: str, parallel: bool = False, write:
     else:
         test_env['COMMAND'] = 'clowder'
 
-    # TODO: Remove this since cement is no longer used?
-    # if debug:
-    #     test_env['COMMAND'] = test_env['COMMAND'] + ' --debug'
+    if debug:
+        test_env['CLOWDER_DEBUG'] = 'true'
 
-    if quiet:
-        test_env['COMMAND'] = test_env['COMMAND'] + ' --quiet'
-
-    print_output = not quiet
-
-    execute_command(command, path, print_output=print_output, env=test_env)
+    execute_command(command, path, env=test_env)
 
 
-def execute_command(command: str, path: str, env: Optional[dict] = None, print_output: bool = True) -> None:
+def execute_command(command: str, path: Path, env: Optional[dict] = None) -> None:
     """Execute command via subprocess
 
     :param str command: Command to run
-    :param str path: Path to set as ``cwd``
+    :param Path path: Path to set as ``cwd``
     :param Optional[dict] env: Enviroment to set as ``env``
-    :param bool print_output: Whether to print output
 
     :raise subprocess.CalledProcessError:
     """
@@ -68,6 +60,4 @@ def execute_command(command: str, path: str, env: Optional[dict] = None, print_o
     if env:
         cmd_env.update(env)
 
-    pipe = None if print_output else subprocess.PIPE
-
-    subprocess.run(command, shell=True, env=cmd_env, cwd=path, stdout=pipe, stderr=pipe, check=True)
+    subprocess.run(command, shell=True, env=cmd_env, cwd=str(path), check=True)

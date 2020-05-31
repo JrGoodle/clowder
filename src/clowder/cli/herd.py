@@ -56,9 +56,9 @@ def add_herd_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
     parser.set_defaults(func=herd)
 
 
-@network_connection_required
 @valid_clowder_yaml_required
 @print_clowder_name
+@network_connection_required
 @print_clowder_repo_status_fetch
 def herd(args) -> None:
     """Clowder herd command private implementation"""

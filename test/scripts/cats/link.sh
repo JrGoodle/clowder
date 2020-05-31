@@ -77,3 +77,38 @@ test_link_versions() {
     end_command
 }
 test_link_versions
+
+./clean.sh
+./init.sh || exit 1
+
+test_link_source_missing() {
+    print_single_separator
+    echo "TEST: Test clowder source missing"
+    begin_command
+    $COMMAND herd $PARALLEL || exit 1
+    end_command
+    test_symlink_path 'clowder.yaml' "$(pwd)/.clowder/clowder.yaml"
+    begin_command
+    $COMMAND link 'v0.1' || exit 1
+    end_command
+    test_symlink_path 'clowder.yaml' "$(pwd)/.clowder/versions/v0.1.clowder.yaml"
+    begin_command
+    $COMMAND repo checkout no-versions || exit 1
+    end_command
+    test_symlink_path 'clowder.yaml' "$(pwd)/.clowder/versions/v0.1.clowder.yaml"
+    begin_command
+    $COMMAND status && exit 1
+    end_command
+    begin_command
+    $COMMAND herd $PARALLEL && exit 1
+    end_command
+    test_symlink_path 'clowder.yaml' "$(pwd)/.clowder/versions/v0.1.clowder.yaml"
+    begin_command
+    $COMMAND link || exit 1
+    end_command
+    test_symlink_path 'clowder.yaml' "$(pwd)/.clowder/clowder.yaml"
+    begin_command
+    $COMMAND status || exit 1
+    end_command
+}
+test_link_source_missing

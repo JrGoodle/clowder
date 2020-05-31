@@ -251,7 +251,7 @@ test_commit_messages() {
 }
 
 test_symlink_path() {
-    echo "TEST: Symlink at $1 is pointing to correct file path"
+    echo "TEST: Symlink at $1 is pointing to correct file path $2"
     local symlink_path
     symlink_path=$(readlink "$1")
     echo "Expected path: $2"
@@ -294,6 +294,20 @@ test_file_exists() {
 test_no_file_exists() {
     echo "TEST: No file $1 exists"
     if [ -f "$1" ]; then
+        exit 1
+    fi
+}
+
+test_file_is_symlink() {
+    echo "TEST: File $1 is a symlink"
+    if [ ! -L "$1" ]; then
+        exit 1
+    fi
+}
+
+test_file_not_symlink() {
+    echo "TEST: File $1 is not a symlink"
+    if [ -L "$1" ]; then
         exit 1
     fi
 }

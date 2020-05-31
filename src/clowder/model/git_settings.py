@@ -94,7 +94,8 @@ class GitSettings(GitSettingsImpl):
             self.lfs: bool = git_settings.get('lfs', default_git_settings.lfs)
             self.depth: int = git_settings.get('depth', default_git_settings.depth)
             self.jobs: int = git_settings.get('jobs', default_git_settings.jobs)
-            self.config: Optional[GitConfig] = self._combine_configs(git_settings.get('config', None), default_git_settings.config)
+            self.config: Optional[GitConfig] = self._combine_configs(git_settings.get('config', None),
+                                                                     default_git_settings.config)
         else:
             self.recursive: bool = git_settings.get('recursive', GitSettings.recursive)
             self.lfs: bool = git_settings.get('lfs', GitSettings.lfs)

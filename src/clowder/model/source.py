@@ -46,7 +46,7 @@ class SourceImpl(object):
 class Source(SourceImpl):
     """clowder yaml Source model class
 
-    :ivar GitProtocol protocol Git protocol
+    :ivar 'GitProtocol' protocol Git protocol
     """
 
     def __init__(self, source: dict, defaults: Defaults):

@@ -12,6 +12,7 @@ from git import GitError
 
 import clowder.util.formatting as fmt
 from clowder.error import ClowderError, ClowderErrorType
+from clowder.util.file_system import remove_file
 from clowder.logging import LOG_DEBUG
 from clowder.util.connectivity import is_offline
 
@@ -50,10 +51,28 @@ class ProjectRepo(ProjectRepoImpl):
         :param str url: URL of repo
         :param str branch: Branch name
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :raise ClowderError:
         """
 
         if existing_git_repository(self.repo_path):
+            # TODO: Throw error if repo doesn't match one trying to create
             return
+
+        if self.repo_path.is_dir():
+            try:
+                self.repo_path.rmdir()
+            except OSError as err:
+                LOG_DEBUG('Failed to remove existing .clowder directory', err)
+                raise ClowderError(ClowderErrorType.DIRECTORY_EXISTS,
+                                   fmt.error_directory_exists(self.repo_path),
+                                   error=err)
+
+        if self.repo_path.is_symlink():
+            remove_file(self.repo_path)
+        else:
+            from clowder.environment import ENVIRONMENT
+            if ENVIRONMENT.clowder_repo_existing_file_error:
+                raise ENVIRONMENT.clowder_repo_existing_file_error
 
         self._init_repo()
         self._create_remote(self.remote, url, remove_dir=True)
@@ -221,9 +240,9 @@ class ProjectRepo(ProjectRepoImpl):
     def install_project_git_herd_alias(self) -> None:
         """Install 'git herd' alias for project"""
 
-        from clowder import CLOWDER_DIR
+        from clowder.environment import ENVIRONMENT
         config_variable = 'alias.herd'
-        config_value = f'!clowder herd {self.repo_path.relative_to(CLOWDER_DIR)}'
+        config_value = f'!clowder herd {self.repo_path.relative_to(ENVIRONMENT.clowder_dir)}'
         self._print(" - Update git herd alias")
         self.git_config_unset_all_local(config_variable)
         self.git_config_add_local(config_variable, config_value)
@@ -348,7 +367,7 @@ class ProjectRepo(ProjectRepoImpl):
         self._checkout_sha(rev)
 
     def start(self, remote: str, branch: str, depth: int, tracking: bool) -> None:
-        """Start new branch in repository
+        """Start new branch in repository and checkout
 
         :param str remote: Remote name
         :param str branch: Local branch name to create

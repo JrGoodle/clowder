@@ -5,7 +5,7 @@
 
 """
 
-import os
+from pathlib import Path
 
 from cement.ext.ext_argparse import ArgparseController, expose
 
@@ -16,7 +16,7 @@ from clowder_test import ROOT_DIR
 class SwiftController(ArgparseController):
     """Clowder test command swift controller"""
 
-    path = os.path.join(ROOT_DIR, 'test', 'scripts', 'swift')
+    path = ROOT_DIR / 'test' / 'scripts' / 'swift'
 
     class Meta:
         """Clowder test swift Meta configuration"""
@@ -32,7 +32,7 @@ class SwiftController(ArgparseController):
     def all(self) -> None:
         """clowder swift tests"""
 
-        self._execute_command('./test_example_swift.sh', os.path.join(ROOT_DIR, 'test', 'scripts'))
+        self._execute_command('./test_example_swift.sh', ROOT_DIR / 'test' / 'scripts')
 
     @expose(
         help='Run swift config versions tests'
@@ -58,16 +58,15 @@ class SwiftController(ArgparseController):
 
         self._execute_command('./reset.sh', self.path)
 
-    def _execute_command(self, command: str, path: str) -> None:
+    def _execute_command(self, command: str, path: Path) -> None:
         """Private execute command
 
         :param str command: Command to run
-        :param str path: Path to set as ``cwd``
+        :param Path path: Path to set as ``cwd``
         """
 
         execute_test_command(command, path,
                              parallel=self.app.pargs.parallel,
                              write=self.app.pargs.write,
                              coverage=self.app.pargs.coverage,
-                             debug=self.app.debug,
-                             quiet=self.app.pargs.silent)
+                             debug=self.app.debug)

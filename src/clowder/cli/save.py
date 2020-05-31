@@ -9,11 +9,12 @@ import argparse
 
 import clowder.clowder_repo as clowder_repo
 import clowder.util.formatting as fmt
-from clowder import CLOWDER_REPO_DIR
 from clowder.clowder_controller import CLOWDER_CONTROLLER
+from clowder.environment import ENVIRONMENT
 from clowder.error import ClowderError, ClowderErrorType
 from clowder.model.util import validate_project_statuses
 from clowder.util.decorators import (
+    clowder_repo_required,
     print_clowder_name,
     valid_clowder_yaml_required
 )
@@ -36,6 +37,7 @@ def add_save_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
 
 @valid_clowder_yaml_required
 @print_clowder_name
+@clowder_repo_required
 def save(args) -> None:
     """Clowder save command private implementation
 
@@ -53,7 +55,7 @@ def save(args) -> None:
     # Replace path separators with dashes to avoid creating directories
     version_name = args.version.lower().replace('/', '-')
 
-    versions_dir = CLOWDER_REPO_DIR / 'versions'
+    versions_dir = ENVIRONMENT.clowder_repo_dir / 'versions'
     make_dir(versions_dir)
 
     yml_file = versions_dir / f"{version_name}.clowder.yml"

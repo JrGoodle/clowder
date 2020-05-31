@@ -23,18 +23,20 @@ def force_symlink(source: Path, target: Path) -> None:
     :raise ClowderError:
     """
 
-    source = str(source)
-    target = str(target)
+    if not target.is_symlink() and target.is_file():
+        raise ClowderError(ClowderErrorType.EXISTING_FILE_AT_SYMLINK_TARGET_PATH,
+                           fmt.error_existing_file_at_symlink_target_path(target))
+    if not source.exists():
+        raise ClowderError(ClowderErrorType.SYMLINK_SOURCE_NOT_FOUND,
+                           fmt.error_symlink_source_missing(source))
+    if target.is_symlink():
+        remove_file(target)
     try:
-        os.symlink(source, target)
-    except OSError as error:
-        LOG_DEBUG('Symlink error', error)
-        if error.errno == errno.EEXIST:
-            # TODO: Handle possible exceptions thrown here
-            os.remove(target)
-            os.symlink(source, target)
-    except (KeyboardInterrupt, SystemExit):
-        raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
+        os.symlink(str(source), str(target))
+    except OSError as err:
+        LOG_DEBUG('Failed symlink file', err)
+        raise ClowderError(ClowderErrorType.FAILED_SYMLINK_FILE,
+                           fmt.error_failed_symlink_file(target, source), err)
 
 
 def remove_file(file: Path) -> None:

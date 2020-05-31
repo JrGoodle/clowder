@@ -5,7 +5,7 @@
 
 """
 
-import os
+from pathlib import Path
 
 from cement.ext.ext_argparse import ArgparseController, expose
 
@@ -16,7 +16,7 @@ from clowder_test import ROOT_DIR
 class MiscController(ArgparseController):
     """Clowder test command misc controller"""
 
-    path = os.path.join(ROOT_DIR, 'test', 'scripts', 'misc')
+    path = ROOT_DIR / 'test' / 'scripts' / 'misc'
 
     class Meta:
         """Clowder test misc Meta configuration"""
@@ -32,7 +32,7 @@ class MiscController(ArgparseController):
     def all(self) -> None:
         """clowder misc tests"""
 
-        self._execute_command('./test_example_misc.sh', os.path.join(ROOT_DIR, 'test', 'scripts'))
+        self._execute_command('./test_example_misc.sh', ROOT_DIR / 'test' / 'scripts')
 
     @expose(
         help='Run misc forks tests'
@@ -50,16 +50,15 @@ class MiscController(ArgparseController):
 
         self._execute_command('./sources.sh', self.path)
 
-    def _execute_command(self, command: str, path: str) -> None:
+    def _execute_command(self, command: str, path: Path) -> None:
         """Private execute command
 
         :param str command: Command to run
-        :param str path: Path to set as ``cwd``
+        :param Path path: Path to set as ``cwd``
         """
 
         execute_test_command(command, path,
                              parallel=self.app.pargs.parallel,
                              write=self.app.pargs.write,
                              coverage=self.app.pargs.coverage,
-                             debug=self.app.debug,
-                             quiet=self.app.pargs.silent)
+                             debug=self.app.debug)
