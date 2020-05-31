@@ -10,19 +10,23 @@ from setuptools import setup
 setup(
     name='clowder-repo',
     description='A tool for managing code',
-    version='3.2.0',
+    version='4.0b1',
     url='http://clowder.cat',
     author='Joe DeCapo',
     author_email='joe@polka.cat',
     license='MIT',
     classifiers=[
-        'Development Status :: 5 - Production/Stable',
-        'Intended Audience :: Developers',
-        'Topic :: Software Development :: Build Tools',
+        # 'Development Status :: 5 - Production/Stable',
+        'Development Status :: 4 - Beta',
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
-        'Programming Language :: Python :: 3.8'
+        'Programming Language :: Python :: 3.8',
+        'Operating System :: MacOS',
+        'Operating System :: POSIX :: Linux',
+        'Intended Audience :: Developers',
+        'Topic :: Software Development :: Build Tools',
+        'Topic :: Software Development :: Version Control :: Git'
     ],
     packages=['clowder',
               'clowder.cli',
