@@ -39,6 +39,30 @@ clowder\.clowder\_repo module
     :undoc-members:
     :show-inheritance:
 
+clowder\.environment module
+-----------------------------
+
+.. automodule:: clowder.environment
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+clowder\.error module
+-----------------------------
+
+.. automodule:: clowder.error
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+clowder\.logging module
+-----------------------------
+
+.. automodule:: clowder.logging
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 Module contents
 ---------------
