@@ -7,6 +7,6 @@ if [ -z "$COMMAND" ]; then
 fi
 
 declare -f begin_command > /dev/null && begin_command
-$COMMAND init https://github.com/jrgoodle/swift-clowder.git -b test || exit 1
+$COMMAND init https://github.com/jrgoodle/swift-clowder.git || exit 1
 declare -f end_command > /dev/null && end_command
 exit # Don't propagate error

@@ -124,11 +124,3 @@ class BaseController(ArgparseController):
                                  write=True,
                                  coverage=self.app.pargs.coverage,
                                  debug=self.app.debug)
-
-        # execute_test_command('./write_configure_remotes.sh', os.path.join(self.path, 'swift'),
-        #                      parallel=self.app.pargs.parallel,
-        #                      write=True,
-        #                      coverage=self.app.pargs.coverage,
-        #                      debug=self.app.debug,
-        #                      quiet=self.app.pargs.silent,
-        #                      ssh=True)

@@ -98,6 +98,8 @@ test_fork_herd() {
 }
 test_fork_gyp
 
+# TODO: Add tests for logic renaming remotes
+
 if [ "$ACCESS_LEVEL" == "write" ]; then
     "$TEST_SCRIPT_DIR/misc/write_forks.sh" $1
 fi
