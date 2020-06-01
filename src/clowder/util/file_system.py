@@ -25,7 +25,7 @@ def force_symlink(source: Path, target: Path) -> None:
 
     if not target.is_symlink() and target.is_file():
         raise ClowderError(ClowderErrorType.EXISTING_FILE_AT_SYMLINK_TARGET_PATH,
-                           fmt.error_existing_file_at_symlink_target_path(target))
+                           fmt.error_existing_file_at_symlink_target_path(str(target)))
     if not source.exists():
         raise ClowderError(ClowderErrorType.SYMLINK_SOURCE_NOT_FOUND,
                            fmt.error_symlink_source_missing(source))
@@ -36,7 +36,7 @@ def force_symlink(source: Path, target: Path) -> None:
     except OSError as err:
         LOG_DEBUG('Failed symlink file', err)
         raise ClowderError(ClowderErrorType.FAILED_SYMLINK_FILE,
-                           fmt.error_failed_symlink_file(target, source), err)
+                           fmt.error_failed_symlink_file(str(target), str(source)), err)
 
 
 def remove_file(file: Path) -> None:
@@ -86,11 +86,11 @@ def make_dir(directory: Path) -> None:
             LOG_DEBUG('Failed to create directory', err)
             if err.errno == errno.EEXIST:
                 raise ClowderError(ClowderErrorType.DIRECTORY_EXISTS,
-                                   fmt.error_directory_exists(directory),
+                                   fmt.error_directory_exists(str(directory)),
                                    error=err)
             else:
                 raise ClowderError(ClowderErrorType.FAILED_CREATE_DIRECTORY,
-                                   fmt.error_failed_create_directory(directory),
+                                   fmt.error_failed_create_directory(str(directory)),
                                    error=err)
 
 
@@ -106,7 +106,7 @@ def remove_directory(dir_path: Path) -> None:
     except shutil.Error as err:
         LOG_DEBUG('Failed to remove directory', err)
         raise ClowderError(ClowderErrorType.FAILED_REMOVE_DIRECTORY,
-                           fmt.error_failed_remove_directory(dir_path),
+                           fmt.error_failed_remove_directory(str(dir_path)),
                            error=err)
     except (KeyboardInterrupt, SystemExit):
         raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())

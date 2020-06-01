@@ -439,7 +439,7 @@ class ProjectRepoImpl(GitRepo):
             return
 
         try:
-            self._print(f' - Initialize repo at {fmt.path_string(self.repo_path)}')
+            self._print(f' - Initialize repo at {fmt.path_string(str(self.repo_path))}')
             if not self.repo_path.is_dir():
                 try:
                     os.makedirs(str(self.repo_path))
