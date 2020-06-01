@@ -9,8 +9,6 @@ import copy
 from enum import IntEnum, unique
 from typing import List, Optional, Union
 
-import clowder.util.formatting as fmt
-
 
 # Reserve range 3-30
 # For reserved error codes see: http://tldp.org/LDP/abs/html/exitcodes.html
@@ -100,5 +98,5 @@ class ClowderError(Exception):
     def __str__(self):
         messages = copy.deepcopy(self.messages)
         if self.error is not None:
-            messages.append(fmt.error(self.error))
+            messages.append(str(self.error))
         return "\n".join(messages)
