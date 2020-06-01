@@ -14,6 +14,7 @@ from termcolor import colored
 import clowder.util.formatting as fmt
 from clowder.error import ClowderError, ClowderErrorType
 from clowder.logging import LOG_DEBUG
+from clowder.util.execute import execute_command
 from clowder.util.file_system import remove_directory
 
 from .util import (
@@ -183,7 +184,6 @@ class GitRepo(object):
         """
 
         remote_output = fmt.remote_string(remote)
-        quiet = not self._print_output
         if depth == 0 or ref is None:
             self._print(f' - Fetch from {remote_output}')
             error_message = f'{fmt.ERROR} Failed to fetch from remote {remote_output}'
@@ -194,14 +194,15 @@ class GitRepo(object):
 
         try:
             if depth == 0:
-                print(self.repo.git.fetch(remote, prune=True, tags=True, quiet=quiet), end='')
+                execute_command(f'git fetch {remote} --prune --tags', self.repo_path, print_output=self._print_output)
             elif ref is None:
-                print(self.repo.git.fetch(remote, depth=depth, prune=True, tags=True, quiet=quiet), end='')
+                command = f'git fetch {remote} --depth {depth} --prune --tags'
+                execute_command(command, self.repo_path, print_output=self._print_output)
             else:
-                print(self.repo.git.fetch(remote, truncate_ref(ref),
-                                          depth=depth, prune=True, tags=True, quiet=quiet), end='')
-        except GitError as err:
-            LOG_DEBUG('Git error', err)
+                command = f'git fetch {remote} {truncate_ref(ref)} --depth {depth} --prune --tags'
+                execute_command(command, self.repo_path, print_output=self._print_output)
+        except ClowderError as err:
+            LOG_DEBUG('Failed to fetch', err)
             if remove_dir:
                 # TODO: Handle possible exceptions
                 remove_directory(self.repo_path)
@@ -523,11 +524,10 @@ class GitRepo(object):
 
         command = 'git status -vv'
         self._print(fmt.command(command))
-
         try:
-            print(self.repo.git.status('-vv'))
-        except GitError as err:
-            LOG_DEBUG('Git error', err)
+            execute_command(command, self.repo_path)
+        except ClowderError as err:
+            LOG_DEBUG('Failed to print git status verbase', err)
             message = f'{fmt.ERROR} Failed to print verbose status'
             message = self._format_error_message(message)
             raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
