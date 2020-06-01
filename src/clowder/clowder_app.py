@@ -14,6 +14,7 @@ import argcomplete
 import colorama
 
 import clowder.cli as cmd
+import clowder.util.formatting as fmt
 from clowder.error import ClowderError, ClowderErrorType
 from clowder.logging import LOG_DEBUG
 
@@ -91,13 +92,23 @@ def main() -> None:
             exit(err.error_type.value)
     except AttributeError as err:
         LOG_DEBUG('** AttributeError exception **', err)
-        print(err)
+        # print(err)
         if parser is not None:
             parser.print_help()
         print()
         exit(ClowderErrorType.UNKNOWN.value)
+    except SystemExit as err:
+        LOG_DEBUG('** SystemExit **', err)
+        # print()
+        exit(err.code)
+    except KeyboardInterrupt as err:
+        LOG_DEBUG('** KeyboardInterrupt **', err)
+        print(fmt.error_user_interrupt())
+        print()
+        exit(ClowderErrorType.USER_INTERRUPT.value)
     except Exception as err:
         LOG_DEBUG('** Unhandled generic exception **', err)
+        print(fmt.error_unknown_error())
         print()
         exit(ClowderErrorType.UNKNOWN.value)
     else:

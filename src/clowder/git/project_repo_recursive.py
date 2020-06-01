@@ -142,8 +142,6 @@ class ProjectRepoRecursive(ProjectRepo):
             message = f'{fmt.ERROR} Failed to update submodules'
             message = self._format_error_message(message)
             raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
-        except (KeyboardInterrupt, SystemExit):
-            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def validate_repo(self, allow_missing_repo: bool = True) -> bool:
         """Validate repo state
@@ -180,8 +178,6 @@ class ProjectRepoRecursive(ProjectRepo):
             LOG_DEBUG('Git error', err)
             message = self._format_error_message(error_msg)
             raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
-        except (KeyboardInterrupt, SystemExit):
-            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def _submodules_reset(self) -> None:
         """Reset all submodules

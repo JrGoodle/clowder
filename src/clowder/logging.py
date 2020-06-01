@@ -23,7 +23,7 @@ else:
     logger.setLevel(logging.ERROR)
 
 
-def LOG_DEBUG(message: str, exception: Optional[Exception] = None) -> None: # noqa
+def LOG_DEBUG(message: str, exception: Optional[BaseException] = None) -> None: # noqa
     if PRINT_DEBUG_OUTPUT:
         print('=================== CLOWDER DEBUG - BEGIN ===================')
         logger.log(logging.DEBUG, f" {message}")

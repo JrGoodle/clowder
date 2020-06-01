@@ -145,8 +145,6 @@ def load_yaml_file(yaml_file: Path, relative_dir: Path) -> dict:
         raise ClowderError(ClowderErrorType.OPEN_FILE,
                            fmt.error_open_file(str(yaml_file)),
                            error=err)
-    except (KeyboardInterrupt, SystemExit):
-        raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
 
 def print_clowder_yaml() -> None:
@@ -177,8 +175,6 @@ def save_yaml_file(yaml_output: dict, yaml_file: Path) -> None:
         raise ClowderError(ClowderErrorType.FAILED_SAVE_FILE,
                            fmt.error_save_file(str(yaml_file)),
                            error=err)
-    except (KeyboardInterrupt, SystemExit):
-        raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
 
 def validate_yaml_file(parsed_yaml: dict, file_path: Path) -> None:
@@ -215,8 +211,6 @@ def yaml_string(yaml_output: dict) -> str:
         raise ClowderError(ClowderErrorType.FAILED_YAML_DUMP,
                            f"{fmt.ERROR} Failed to dump yaml file contents",
                            error=err)
-    except (KeyboardInterrupt, SystemExit):
-        raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
 
 def _format_yaml_symlink(yaml_symlink: Path, yaml_file: Path) -> str:
@@ -273,8 +267,6 @@ def _print_yaml(yaml_file: Path) -> None:
         raise ClowderError(ClowderErrorType.FAILED_OPEN_FILE,
                            fmt.error_open_file(str(yaml_file)),
                            error=err)
-    except (KeyboardInterrupt, SystemExit):
-        raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
 
 def _print_yaml_path(yaml_file: Path) -> None:

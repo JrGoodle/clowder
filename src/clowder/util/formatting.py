@@ -569,6 +569,16 @@ def error_symlink_source_missing(source: Path) -> str:
     return f"{ERROR} Symlink source {source} appears to be missing"
 
 
+def error_system_exit() -> str:
+    """Format error message for system exit
+
+    :return: Formatted system exit error
+    :rtype: str
+    """
+
+    return f"{ERROR} System exit"
+
+
 def error_timestamp_not_found() -> str:
     """Return timestamp not found error message
 
@@ -588,6 +598,16 @@ def error_unknown_config_type() -> str:
     return f"{ERROR} Unknown config type"
 
 
+def error_unknown_error() -> str:
+    """Format error message for unknown error
+
+    :return: Formatted unknown error message
+    :rtype: str
+    """
+
+    return f"{ERROR} Unknown error occurred"
+
+
 def error_unknown_project(name: str) -> str:
     """Return formatted unknown project name error
 
@@ -602,7 +622,7 @@ def error_unknown_project(name: str) -> str:
 def error_user_interrupt() -> str:
     """Format error message for user interrupt
 
-    :return: Formatted user interrupt
+    :return: Formatted user interrupt error
     :rtype: str
     """
 

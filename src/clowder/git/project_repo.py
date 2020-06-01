@@ -97,8 +97,6 @@ class ProjectRepo(ProjectRepoImpl):
         except GitError as err:
             LOG_DEBUG('Git error', err)
             return
-        except (KeyboardInterrupt, SystemExit):
-            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
         else:
             for remote in remotes:
                 if upstream_remote_url == self._remote_get_url(remote.name) and remote.name != upstream_remote_name:
@@ -271,8 +269,6 @@ class ProjectRepo(ProjectRepoImpl):
                 message = f'{fmt.ERROR} Failed to checkout ref {ref_output}'
                 message = self._format_error_message(message)
                 raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
-            except (KeyboardInterrupt, SystemExit):
-                raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
         try:
             self._print(f' - Delete local branch {branch_output}')
@@ -282,8 +278,6 @@ class ProjectRepo(ProjectRepoImpl):
             message = f'{fmt.ERROR} Failed to delete local branch {branch_output}'
             message = self._format_error_message(message)
             raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
-        except (KeyboardInterrupt, SystemExit):
-            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def prune_branch_remote(self, branch: str, remote: str) -> None:
         """Prune remote branch in repository
@@ -306,8 +300,6 @@ class ProjectRepo(ProjectRepoImpl):
             message = f'{fmt.ERROR} Failed to delete remote branch {branch_output}'
             message = self._format_error_message(message)
             raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
-        except (KeyboardInterrupt, SystemExit):
-            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def reset(self, depth: int = 0) -> None:
         """Reset branch to upstream or checkout tag/sha as detached HEAD

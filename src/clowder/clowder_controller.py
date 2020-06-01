@@ -58,8 +58,6 @@ class ClowderController(object):
         except ClowderError as err:
             LOG_DEBUG('Failed to init clowder controller', err)
             self.error = err
-        except (KeyboardInterrupt, SystemExit):
-            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def get_all_fork_project_names(self) -> Tuple[str, ...]:
         """Returns all project names containing forks
@@ -204,8 +202,6 @@ class ClowderController(object):
             self.project_choices = ()
             self.project_choices_with_default = ('default',)
             self.error = err
-        except (KeyboardInterrupt, SystemExit):
-            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
 
 CLOWDER_CONTROLLER: ClowderController = ClowderController()

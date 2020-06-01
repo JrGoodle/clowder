@@ -108,5 +108,3 @@ def remove_directory(dir_path: Path) -> None:
         raise ClowderError(ClowderErrorType.FAILED_REMOVE_DIRECTORY,
                            fmt.error_failed_remove_directory(str(dir_path)),
                            error=err)
-    except (KeyboardInterrupt, SystemExit):
-        raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())

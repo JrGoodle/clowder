@@ -65,8 +65,6 @@ class GitRepo(object):
             message = f"{fmt.ERROR} Failed to add files to git index"
             message = self._format_error_message(message)
             raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
-        except (KeyboardInterrupt, SystemExit):
-            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
         else:
             self.status_verbose()
 
@@ -94,8 +92,6 @@ class GitRepo(object):
                 return
             message = self._format_error_message(message)
             raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
-        except (KeyboardInterrupt, SystemExit):
-            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def clean(self, args: str = '') -> None:
         """Discard changes for repo
@@ -131,8 +127,6 @@ class GitRepo(object):
             message = f'{fmt.ERROR} Failed to commit current changes'
             message = self._format_error_message(message)
             raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
-        except (KeyboardInterrupt, SystemExit):
-            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def current_branch(self) -> str:
         """Return currently checked out branch of project
@@ -158,8 +152,6 @@ class GitRepo(object):
             return branch in origin.refs
         except (GitError, IndexError):
             return False
-        except (KeyboardInterrupt, SystemExit):
-            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def existing_local_branch(self, branch: str) -> bool:
         """Check if local branch exists
@@ -209,8 +201,6 @@ class GitRepo(object):
             if not allow_failure:
                 message = self._format_error_message(error_message)
                 raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
-        except (KeyboardInterrupt, SystemExit):
-            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def format_project_ref_string(self) -> str:
         """Return formatted project ref string
@@ -269,8 +259,6 @@ class GitRepo(object):
             message = f'{fmt.ERROR} Failed to find current timestamp'
             message = self._format_error_message(message)
             raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
-        except (KeyboardInterrupt, SystemExit):
-            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def git_config_unset_all_local(self, variable: str) -> None:
         """Unset all local git config values for given variable key
@@ -292,8 +280,6 @@ class GitRepo(object):
             message = f'{fmt.ERROR} Failed to unset all local git config values for {variable}'
             message = self._format_error_message(message)
             raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
-        except (KeyboardInterrupt, SystemExit):
-            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def git_config_add_local(self, variable: str, value: str) -> None:
         """Add local git config value for given variable key
@@ -310,8 +296,6 @@ class GitRepo(object):
             message = f'{fmt.ERROR} Failed to add local git config value {value} for variable {variable}'
             message = self._format_error_message(message)
             raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
-        except (KeyboardInterrupt, SystemExit):
-            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def install_lfs_hooks(self) -> None:
         """Install git lfs hooks
@@ -327,8 +311,6 @@ class GitRepo(object):
             message = f'{fmt.ERROR} Failed to update git lfs hooks'
             message = self._format_error_message(message)
             raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
-        except (KeyboardInterrupt, SystemExit):
-            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def is_detached(self, print_output: bool = False) -> bool:
         """Check if HEAD is detached
@@ -445,8 +427,6 @@ class GitRepo(object):
             message = f'{fmt.ERROR} Failed to pull latest changes'
             message = self._format_error_message(message)
             raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
-        except (KeyboardInterrupt, SystemExit):
-            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def pull_lfs(self) -> None:
         """Pull lfs files
@@ -462,8 +442,6 @@ class GitRepo(object):
             message = f'{fmt.ERROR} Failed to pull git lfs files'
             message = self._format_error_message(message)
             raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
-        except (KeyboardInterrupt, SystemExit):
-            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     @not_detached
     def push(self) -> None:
@@ -480,8 +458,6 @@ class GitRepo(object):
             message = f'{fmt.ERROR} Failed to push local changes'
             message = self._format_error_message(message)
             raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
-        except (KeyboardInterrupt, SystemExit):
-            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def sha(self, short: bool = False) -> str:
         """Return sha for currently checked out commit
@@ -531,8 +507,6 @@ class GitRepo(object):
             message = f'{fmt.ERROR} Failed to print verbose status'
             message = self._format_error_message(message)
             raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
-        except (KeyboardInterrupt, SystemExit):
-            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def validate_repo(self, allow_missing_repo: bool = True) -> bool:
         """Validate repo state
@@ -567,8 +541,6 @@ class GitRepo(object):
             message = f'{fmt.ERROR} Failed to abort rebase'
             message = self._format_error_message(message)
             raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
-        except (KeyboardInterrupt, SystemExit):
-            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def _clean(self, args: str) -> None:
         """Clean git directory
@@ -584,8 +556,6 @@ class GitRepo(object):
             message = f'{fmt.ERROR} Failed to clean git repo'
             message = self._format_error_message(message)
             raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
-        except (KeyboardInterrupt, SystemExit):
-            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     # def _existing_remote_tag(self, tag, remote, depth=0):
     #     """Check if remote tag exists
@@ -649,8 +619,6 @@ class GitRepo(object):
             message = f"{fmt.ERROR} Failed to create Repo instance for {repo_path_output}"
             message = self._format_error_message(message)
             raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
-        except (KeyboardInterrupt, SystemExit):
-            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
         else:
             return repo
 
@@ -670,8 +638,6 @@ class GitRepo(object):
                 message = f'{fmt.ERROR} Failed to reset {ref_output}'
                 message = self._format_error_message(message)
                 raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
-            except (KeyboardInterrupt, SystemExit):
-                raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
             else:
                 return
 
@@ -683,8 +649,6 @@ class GitRepo(object):
             message = f'{fmt.ERROR} Failed to reset to {branch_output}'
             message = self._format_error_message(message)
             raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
-        except (KeyboardInterrupt, SystemExit):
-            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def _has_untracked_files(self) -> bool:
         """Check whether untracked files exist
