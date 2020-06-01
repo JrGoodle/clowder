@@ -41,7 +41,7 @@ def project_repo_exists(func):
 
         instance = args[0]
         if not Path(instance.full_path() / '.git').is_dir():
-            cprint(" - Project repo is missing", 'red')
+            cprint(" - Project missing", 'red')
             return
         return func(*args, **kwargs)
 
@@ -142,7 +142,7 @@ class Project(ProjectImpl):
 
         super().__init__(project)
 
-        self.path = Path(project.get('path', Path(self.name).name))
+        self.path: Path = Path(project.get('path', Path(self.name).name))
         self.remote: str = project.get('remote', defaults.remote)
         self.timestamp_author: Optional[str] = project.get('timestamp_author', defaults.timestamp_author)
 
@@ -314,15 +314,17 @@ class Project(ProjectImpl):
         repo.fetch(self.fork.remote)
         repo.fetch(self.remote)
 
-    def formatted_project_path(self) -> str:
-        """Return formatted project path
+    def formatted_project_output(self) -> str:
+        """Return formatted project path/name
 
-        :return: Formatted string of full file path
+        :return: Formatted string of full file path if cloned, otherwise project name
         :rtype: str
         """
 
-        repo = ProjectRepo(self.full_path(), self.remote, self.ref)
-        return repo.format_project_string(self.path)
+        if existing_git_repository(self.full_path()):
+            return colored(str(self.path), 'green')
+
+        return colored(self.name, 'green')
 
     def full_path(self) -> Path:
         """Return full path to project
@@ -503,7 +505,7 @@ class Project(ProjectImpl):
         """
 
         if not parallel and not existing_git_repository(self.full_path()):
-            print(colored(" - Project is missing\n", 'red'))
+            print(colored(" - Project missing\n", 'red'))
             return
 
         self._print_output = not parallel
@@ -563,7 +565,11 @@ class Project(ProjectImpl):
         """
 
         if not existing_git_repository(self.full_path()):
-            return colored(self.name, 'green')
+            project_output = colored(self.name, 'green')
+            missing_output = colored('-', 'red')
+            if padding:
+                project_output = project_output.ljust(padding)
+            return f'{project_output} {missing_output}'
 
         repo = ProjectRepo(self.full_path(), self.remote, self.ref)
         project_output = repo.format_project_string(self.path)

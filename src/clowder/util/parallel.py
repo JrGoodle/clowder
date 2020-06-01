@@ -107,7 +107,7 @@ if os.name == "posix":
         for project in projects:
             print(project.status())
             if not project.full_path().is_dir():
-                cprint(" - Project is missing", 'red')
+                cprint(" - Project missing", 'red')
 
         for cmd in commands:
             print('\n' + fmt.command(cmd))

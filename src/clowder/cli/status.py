@@ -56,7 +56,7 @@ def status(args) -> None:
     else:
         clowder_repo.print_status()
 
-    padding = len(max(CLOWDER_CONTROLLER.get_project_paths(projects), key=len))
+    padding = len(max(CLOWDER_CONTROLLER.get_projects_output(projects), key=len))
 
     for project in projects:
         print(project.status(padding=padding))

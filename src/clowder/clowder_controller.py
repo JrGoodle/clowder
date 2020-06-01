@@ -11,6 +11,7 @@ from typing import Optional, Tuple
 import clowder.util.formatting as fmt
 from clowder.environment import ENVIRONMENT
 from clowder.error import ClowderError, ClowderErrorType
+from clowder.logging import LOG_DEBUG
 from clowder.model import Defaults, Project, Source
 from clowder.model.util import (
     print_parallel_projects_output,
@@ -55,6 +56,7 @@ class ClowderController(object):
             validate_yaml_file(yaml, ENVIRONMENT.clowder_yaml)
             self._load_clowder_yaml(yaml)
         except ClowderError as err:
+            LOG_DEBUG('Failed to init clowder controller', err)
             self.error = err
         except (KeyboardInterrupt, SystemExit):
             raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
@@ -68,21 +70,23 @@ class ClowderController(object):
 
         try:
             return tuple(sorted([p.name for p in self.projects if p.fork is not None]))
-        except TypeError:
+        except TypeError as err:
+            LOG_DEBUG('Failed to get fork project names', err)
             return ()
 
     @staticmethod
-    def get_project_paths(projects: Tuple[Project, ...]) -> Tuple[str, ...]:
-        """Returns all project paths for specified projects
+    def get_projects_output(projects: Tuple[Project, ...]) -> Tuple[str, ...]:
+        """Returns all project paths/names output for specified projects
 
-        :param Tuple[Project, ...] projects: Projects to get paths of
+        :param Tuple[Project, ...] projects: Projects to get paths/names output of
         :return: All project paths
         :rtype: Tuple[str, ...]
         """
 
         try:
-            return tuple(sorted([p.formatted_project_path() for p in projects]))
-        except TypeError:
+            return tuple(sorted([p.formatted_project_output() for p in projects]))
+        except TypeError as err:
+            LOG_DEBUG('Failed to get projects output', err)
             return ()
 
     def get_timestamp(self, timestamp_project: str) -> str:
@@ -157,7 +161,8 @@ class ClowderController(object):
         try:
             names = [g for p in self.projects for g in p.groups]
             return tuple(sorted(set(names)))
-        except TypeError:
+        except TypeError as err:
+            LOG_DEBUG('Failed to get project names', err)
             return ()
 
     def _load_clowder_yaml(self, yaml: dict) -> None:
@@ -190,6 +195,7 @@ class ClowderController(object):
             names.append('default')
             self.project_choices_with_default = tuple(sorted(set(names)))
         except (AttributeError, KeyError, TypeError) as err:
+            LOG_DEBUG('Failed to load clowder yaml', err)
             self.name = None
             self.defaults = None
             self.sources = ()
