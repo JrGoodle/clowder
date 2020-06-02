@@ -13,6 +13,7 @@ from git import GitError
 import clowder.util.formatting as fmt
 from clowder.error import ClowderError, ClowderErrorType
 from clowder.logging import LOG_DEBUG
+from clowder.util.execute import execute_command
 
 from .project_repo import GitConfig, ProjectRepo
 
@@ -129,13 +130,20 @@ class ProjectRepoRecursive(ProjectRepo):
 
         self._print(' - Recursively update and init submodules')
 
-        error_message = f'{fmt.ERROR} Failed to update submodules'
         if depth == 0:
-            self._submodule_command('update', '--init', '--recursive',
-                                    error_msg=error_message)
+            command = f"git submodule update --init --recursive"
         else:
-            self._submodule_command('update', '--init', '--recursive', '--depth', depth,
-                                    error_msg=error_message)
+            command = f"git submodule update --init --recursive --depth {depth}"
+
+        try:
+            execute_command(command, self.repo_path, print_output=self._print_output)
+        except ClowderError as err:
+            LOG_DEBUG('Failed to update submodules', err)
+            message = f'{fmt.ERROR} Failed to update submodules'
+            message = self._format_error_message(message)
+            raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
+        except (KeyboardInterrupt, SystemExit):
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
     def validate_repo(self, allow_missing_repo: bool = True) -> bool:
         """Validate repo state

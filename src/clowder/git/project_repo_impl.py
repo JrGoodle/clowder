@@ -15,6 +15,7 @@ from git import GitError, Remote, Repo, Tag
 import clowder.util.formatting as fmt
 from clowder.error import ClowderError, ClowderErrorType
 from clowder.logging import LOG_DEBUG
+from clowder.util.execute import execute_command
 from clowder.util.file_system import remove_directory
 
 from .git_repo import GitRepo
@@ -531,11 +532,10 @@ class ProjectRepoImpl(GitRepo):
         branch_output = fmt.ref_string(branch)
         remote_output = fmt.remote_string(remote)
         self._print(f' - Pull from {remote_output} {branch_output}')
-        quiet = not self._print_output
         try:
-            self._print(self.repo.git.pull(remote, branch, quiet=quiet))
-        except GitError as err:
-            LOG_DEBUG('Git error', err)
+            execute_command(f"git pull {remote} {branch}", self.repo_path, print_output=self._print_output)
+        except ClowderError as err:
+            LOG_DEBUG('Failed to pull', err)
             message = f'{fmt.ERROR} Failed to pull from {remote_output} {branch_output}'
             message = self._format_error_message(message)
             raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
@@ -554,11 +554,10 @@ class ProjectRepoImpl(GitRepo):
         branch_output = fmt.ref_string(branch)
         remote_output = fmt.remote_string(remote)
         self._print(f' - Rebase onto {remote_output} {branch_output}')
-        quiet = not self._print_output
         try:
-            self._print(self.repo.git.pull(remote, branch, rebase=True, quiet=quiet))
-        except GitError as err:
-            LOG_DEBUG('Git error', err)
+            execute_command(f"git pull {remote} {branch} --rebase", self.repo_path, print_output=self._print_output)
+        except ClowderError as err:
+            LOG_DEBUG('Failed pull with rebase', err)
             message = f'{fmt.ERROR} Failed to rebase onto {remote_output} {branch_output}'
             message = self._format_error_message(message)
             raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
