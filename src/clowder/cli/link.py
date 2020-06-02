@@ -33,7 +33,7 @@ def add_link_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
     versions = get_saved_version_names()
 
     arguments = [
-        (['version'], dict(metavar='VERSION', choices=versions, nargs='?', default=None,
+        (['version'], dict(metavar='<version>', choices=versions, nargs='?', default=None,
                            help=fmt.options_help_message(versions, 'version to symlink')))
     ]
 

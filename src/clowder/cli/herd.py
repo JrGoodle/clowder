@@ -33,22 +33,22 @@ def add_herd_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
     """
 
     arguments = [
-        (['projects'], dict(metavar='PROJECT', default='default', nargs='*',
+        (['projects'], dict(metavar='<project|group>', default='default', nargs='*',
                             choices=CLOWDER_CONTROLLER.project_choices_with_default,
                             help=fmt.options_help_message(CLOWDER_CONTROLLER.project_choices,
                                                           'projects and groups to show branches for'))),
-        (['--jobs', '-j'], dict(metavar='JOBS', nargs=1, default=None, type=int,
+        (['--jobs', '-j'], dict(metavar='<n>', nargs=1, default=None, type=int,
                                 help='number of jobs to use runnning commands in parallel')),
         (['--rebase', '-r'], dict(action='store_true', help='use rebase instead of pull')),
-        (['--depth', '-d'], dict(default=None, type=int, nargs=1, metavar='DEPTH', help='depth to herd'))
+        (['--depth', '-d'], dict(default=None, type=int, nargs=1, metavar='<n>', help='depth to herd'))
     ]
 
     parser = subparsers.add_parser('herd', help='Clone and update projects with latest changes')
     add_parser_arguments(parser, arguments)
 
     mutually_exclusive_arguments = [
-        (['--branch', '-b'], dict(nargs=1, default=None, metavar='BRANCH', help='branch to herd if present')),
-        (['--tag', '-t'], dict(nargs=1, default=None, metavar='TAG', help='tag to herd if present'))
+        (['--branch', '-b'], dict(nargs=1, default=None, metavar='<branch>', help='branch to herd if present')),
+        (['--tag', '-t'], dict(nargs=1, default=None, metavar='<tag>', help='tag to herd if present'))
     ]
     mutually_exclusive_group = parser.add_mutually_exclusive_group()
     add_parser_arguments(mutually_exclusive_group, mutually_exclusive_arguments)

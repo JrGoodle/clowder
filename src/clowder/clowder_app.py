@@ -8,6 +8,7 @@
 import argparse
 import pkg_resources
 from multiprocessing import freeze_support
+from typing import Optional
 
 # noinspection PyPackageRequirements
 import argcomplete
@@ -19,34 +20,45 @@ from clowder.error import ClowderError, ClowderErrorType
 from clowder.logging import LOG_DEBUG
 
 
-class ClowderArgumentParser(argparse.ArgumentParser):
-    """Custom argument parser subclass"""
+# class ClowderArgumentParser(argparse.ArgumentParser):
+#     """Custom argument parser subclass"""
+#
+#     def error(self, message):
+#         argparse.ArgumentParser.error(self, message)
+#
+#     def exit(self, status=0, message=None):
+#         if message is not None:
+#             message = f"{message}\n"
+#         else:
+#             print()
+#         argparse.ArgumentParser.exit(self, status, message)
 
-    def error(self, message):
-        argparse.ArgumentParser.error(self, message)
 
-    def exit(self, status=0, message=None):
-        if message is not None:
-            message = f"{message}\n"
-        else:
-            print()
-        argparse.ArgumentParser.exit(self, status, message)
+clowder_parser: Optional[argparse.ArgumentParser] = None
 
 
-def create_parsers() -> ClowderArgumentParser:
-    """Clowder command CLI main function
+def clowder_help(args): # noqa
+    """Clowder help handler"""
+
+    clowder_parser.print_help()
+
+
+def create_parsers() -> argparse.ArgumentParser:
+    """Configure clowder CLI parsers
 
     :return: Configured argument parser for clowder command
-    :rtype: ClowderArgumentParser
+    :rtype: argparse.ArgumentParser
     """
 
-    parser = ClowderArgumentParser(prog='clowder')
+    global clowder_parser
+    clowder_parser = argparse.ArgumentParser(prog='clowder')
+    clowder_parser.set_defaults(func=clowder_help)
     version_message = f"clowder version {pkg_resources.require('clowder-repo')[0].version}"
     arguments = [
         (['-v', '--version'], dict(action='version', version=version_message))
     ]
-    cmd.add_parser_arguments(parser, arguments)
-    subparsers = parser.add_subparsers(help='sub-command help')
+    cmd.add_parser_arguments(clowder_parser, arguments)
+    subparsers = clowder_parser.add_subparsers(help='sub-command help')
 
     cmd.add_branch_parser(subparsers)
     cmd.add_checkout_parser(subparsers)
@@ -66,14 +78,13 @@ def create_parsers() -> ClowderArgumentParser:
     cmd.add_status_parser(subparsers)
     cmd.add_yaml_parser(subparsers)
 
-    return parser
+    return clowder_parser
 
 
 def main() -> None:
     """Clowder command CLI main function"""
 
     print()
-    parser = None
     try:
         parser = create_parsers()
         argcomplete.autocomplete(parser)
@@ -90,16 +101,9 @@ def main() -> None:
             exit(err.exit_code)
         else:
             exit(err.error_type.value)
-    except AttributeError as err:
-        LOG_DEBUG('** AttributeError exception **', err)
-        # print(err)
-        if parser is not None:
-            parser.print_help()
-        print()
-        exit(ClowderErrorType.UNKNOWN.value)
     except SystemExit as err:
         LOG_DEBUG('** SystemExit **', err)
-        # print()
+        print()
         exit(err.code)
     except KeyboardInterrupt as err:
         LOG_DEBUG('** KeyboardInterrupt **', err)
@@ -107,7 +111,7 @@ def main() -> None:
         print()
         exit(ClowderErrorType.USER_INTERRUPT.value)
     except Exception as err:
-        LOG_DEBUG('** Unhandled generic exception **', err)
+        LOG_DEBUG('** Unhandled exception **', err)
         print(fmt.error_unknown_error())
         print()
         exit(ClowderErrorType.UNKNOWN.value)

@@ -31,8 +31,8 @@ def add_start_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
     """
 
     arguments = [
-        (['branch'], dict(help='name of branch to create', nargs=1, default=None, metavar='BRANCH')),
-        (['projects'], dict(metavar='PROJECT', default='default', nargs='*',
+        (['branch'], dict(help='name of branch to create', nargs=1, default=None, metavar='<branch>')),
+        (['projects'], dict(metavar='<project|group>', default='default', nargs='*',
                             choices=CLOWDER_CONTROLLER.project_choices_with_default,
                             help=fmt.options_help_message(CLOWDER_CONTROLLER.project_choices,
                                                           'projects and groups to start branches for'))),

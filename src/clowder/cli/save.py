@@ -27,7 +27,7 @@ from .util import add_parser_arguments
 def add_save_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
 
     arguments = [
-        (['version'], dict(help='version to save', metavar='VERSION'))
+        (['version'], dict(help='version to save', metavar='<version>'))
     ]
 
     parser = subparsers.add_parser('save', help='Create clowder yaml version for current repos')

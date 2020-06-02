@@ -36,8 +36,8 @@ def add_prune_parser(subparsers: argparse._SubParsersAction): # noqa
     """
 
     arguments = [
-        (['branch'], dict(help='name of branch to remove', metavar='BRANCH')),
-        (['projects'], dict(metavar='PROJECT', default='default', nargs='*',
+        (['branch'], dict(help='name of branch to remove', metavar='<branch>')),
+        (['projects'], dict(metavar='<project|group>', default='default', nargs='*',
                             choices=CLOWDER_CONTROLLER.project_choices_with_default,
                             help=fmt.options_help_message(CLOWDER_CONTROLLER.project_choices,
                                                           'projects and groups to prune'))),

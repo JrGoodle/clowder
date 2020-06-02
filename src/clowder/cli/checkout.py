@@ -27,8 +27,8 @@ def add_checkout_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
     """
 
     arguments = [
-        (['branch'], dict(nargs=1, action='store', help='branch to checkout', metavar='BRANCH')),
-        (['projects'], dict(metavar='PROJECT', default='default', nargs='*',
+        (['branch'], dict(nargs=1, action='store', help='branch to checkout', metavar='<branch>')),
+        (['projects'], dict(metavar='<project|group>', default='default', nargs='*',
                             choices=CLOWDER_CONTROLLER.project_choices_with_default,
                             help=fmt.options_help_message(CLOWDER_CONTROLLER.project_choices,
                                                           'projects and groups to checkout branches for')))
