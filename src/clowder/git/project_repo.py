@@ -64,7 +64,7 @@ class ProjectRepo(ProjectRepoImpl):
             except OSError as err:
                 LOG_DEBUG('Failed to remove existing .clowder directory', err)
                 raise ClowderError(ClowderErrorType.DIRECTORY_EXISTS,
-                                   fmt.error_directory_exists(self.repo_path),
+                                   fmt.error_directory_exists(str(self.repo_path)),
                                    error=err)
 
         if self.repo_path.is_symlink():

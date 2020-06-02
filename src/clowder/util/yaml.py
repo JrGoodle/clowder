@@ -63,13 +63,13 @@ def link_clowder_yaml_default(clowder_dir: Path) -> None:
             existing_file = file
 
     if existing_file is not None and existing_file.is_symlink():
-        print(f" - Remove previously existing file {fmt.path_string(existing_file)}")
+        print(f" - Remove previously existing file {fmt.path_string(str(existing_file))}")
         try:
             remove_file(existing_file)
         except OSError as err:
             LOG_DEBUG('Failed to remove file', err)
             ClowderError(ClowderErrorType.FAILED_REMOVE_FILE,
-                         fmt.error_failed_remove_file(existing_file),
+                         fmt.error_failed_remove_file(str(existing_file)),
                          error=err)
 
 
@@ -112,13 +112,13 @@ def link_clowder_yaml_version(clowder_dir: Path, version: str) -> None:
             existing_file = file
 
     if existing_file is not None and existing_file.is_symlink():
-        print(f" - Remove previously existing file {fmt.path_string(existing_file)}")
+        print(f" - Remove previously existing file {fmt.path_string(str(existing_file))}")
         try:
             remove_file(existing_file)
         except OSError as err:
             LOG_DEBUG('Failed to remove file', err)
             raise ClowderError(ClowderErrorType.FAILED_REMOVE_FILE,
-                               fmt.error_failed_remove_file(existing_file),
+                               fmt.error_failed_remove_file(str(existing_file)),
                                error=err)
 
 
@@ -143,7 +143,7 @@ def load_yaml_file(yaml_file: Path, relative_dir: Path) -> dict:
     except pyyaml.YAMLError as err:
         LOG_DEBUG('Failed to load yaml file', err)
         raise ClowderError(ClowderErrorType.OPEN_FILE,
-                           fmt.error_open_file(yaml_file),
+                           fmt.error_open_file(str(yaml_file)),
                            error=err)
     except (KeyboardInterrupt, SystemExit):
         raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
@@ -166,16 +166,16 @@ def save_yaml_file(yaml_output: dict, yaml_file: Path) -> None:
 
     if yaml_file.is_file():
         raise ClowderError(ClowderErrorType.FILE_EXISTS,
-                           fmt.error_file_exists(yaml_file))
+                           fmt.error_file_exists(str(yaml_file)))
 
-    print(f" - Save yaml to file at {fmt.path_string(yaml_file)}")
+    print(f" - Save yaml to file at {fmt.path_string(str(yaml_file))}")
     try:
         with yaml_file.open(mode="w") as raw_file:
             pyyaml.safe_dump(yaml_output, raw_file, default_flow_style=False, indent=2)
     except pyyaml.YAMLError as err:
         LOG_DEBUG('Failed to save yaml file', err)
         raise ClowderError(ClowderErrorType.FAILED_SAVE_FILE,
-                           fmt.error_save_file(yaml_file),
+                           fmt.error_save_file(str(yaml_file)),
                            error=err)
     except (KeyboardInterrupt, SystemExit):
         raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
@@ -228,7 +228,7 @@ def _format_yaml_symlink(yaml_symlink: Path, yaml_file: Path) -> str:
     :rtype: str
     """
 
-    return f"\n{fmt.path_string(yaml_symlink)} -> {fmt.path_string(yaml_file)}\n"
+    return f"\n{fmt.path_string(str(yaml_symlink))} -> {fmt.path_string(str(yaml_file))}\n"
 
 
 def _format_yaml_file(yaml_file: Path) -> str:
@@ -271,7 +271,7 @@ def _print_yaml(yaml_file: Path) -> None:
     except IOError as err:
         LOG_DEBUG('Failed to open file', err)
         raise ClowderError(ClowderErrorType.FAILED_OPEN_FILE,
-                           fmt.error_open_file(yaml_file),
+                           fmt.error_open_file(str(yaml_file)),
                            error=err)
     except (KeyboardInterrupt, SystemExit):
         raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())

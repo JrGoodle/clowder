@@ -1,10 +1,21 @@
-codecov:
-  require_ci_to_pass: no
-
 coverage:
   precision: 2
   round: down
   range: "70...100"
+  status:
+    project:
+      default: off
+      clowder:
+        paths:
+          - 'src/'
+          - '!src/clowder/util/clowder.schema.json'
+          - '!src/clowder/util/clowder.config.schema.json'
+        target: 70
+        threshold: 20
+    patch:
+       default: off
+        #  enabled: no
+        #  target: '50'
 
 parsers:
   gcov:
@@ -14,6 +25,7 @@ parsers:
       method: no
       macro: no
 
+comment: off
 # comment:
 #   # layout: "reach,diff,flags,tree"
 #   # layout: "files"
@@ -29,6 +41,3 @@ ignore:
   - "docs/**/*"
   - "script/**/*"
   - "test/**/*"
-
-# fixes:
-#    - "/home/circleci/::"

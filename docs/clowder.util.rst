@@ -4,14 +4,6 @@ clowder\.util package
 Submodules
 ----------
 
-clowder\.util\.clowder\_utils module
-------------------------------------
-
-.. automodule:: clowder.util.clowder_utils
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 clowder\.util\.connectivity module
 ----------------------------------
 
@@ -52,10 +44,10 @@ clowder\.util\.formatting module
     :undoc-members:
     :show-inheritance:
 
-clowder\.util\.parallel\_commands module
+clowder\.util\.parallel module
 ----------------------------------------
 
-.. automodule:: clowder.util.parallel_commands
+.. automodule:: clowder.util.parallel
     :members:
     :undoc-members:
     :show-inheritance:

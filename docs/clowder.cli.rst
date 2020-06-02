@@ -36,6 +36,14 @@ clowder\.cli\.clean\_controller module
     :undoc-members:
     :show-inheritance:
 
+clowder\.cli\.config\_controller module
+--------------------------------------
+
+.. automodule:: clowder.cli.config_controller
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 clowder\.cli\.diff\_controller module
 -------------------------------------
 
@@ -128,6 +136,14 @@ clowder\.cli\.status\_controller module
 ---------------------------------------
 
 .. automodule:: clowder.cli.status_controller
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+clowder\.cli\.util module
+--------------------------------------
+
+.. automodule:: clowder.cli.util
     :members:
     :undoc-members:
     :show-inheritance:

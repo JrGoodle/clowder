@@ -609,7 +609,7 @@ class GitRepo(object):
         """
 
         if self.parallel:
-            fmt.error_parallel_exception(self.repo_path, message)
+            fmt.error_parallel_exception(str(self.repo_path), message)
         else:
             return message
 
@@ -645,7 +645,7 @@ class GitRepo(object):
             repo = Repo(self.repo_path)
         except GitError as err:
             LOG_DEBUG('Git error', err)
-            repo_path_output = fmt.path_string(self.repo_path)
+            repo_path_output = fmt.path_string(str(self.repo_path))
             message = f"{fmt.ERROR} Failed to create Repo instance for {repo_path_output}"
             message = self._format_error_message(message)
             raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)

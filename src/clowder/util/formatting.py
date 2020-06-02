@@ -136,7 +136,7 @@ def error_command_failed(cmd: Union[str, List[str]]) -> str:
     return f"{ERROR} Failed to run command {command(cmd)}"
 
 
-def error_directory_exists(dir_path: Path) -> str:
+def error_directory_exists(dir_path: str) -> str:
     """Format error message for already existing directory
 
     :param Path dir_path: Directory path
@@ -144,8 +144,7 @@ def error_directory_exists(dir_path: Path) -> str:
     :rtype: str
     """
 
-    dir_path = path_string(dir_path)
-    return f"{ERROR} Directory already exists at {dir_path}"
+    return f"{ERROR} Directory already exists at {path_string(dir_path)}"
 
 
 def error_duplicate_version(version: str) -> str:
@@ -188,10 +187,10 @@ def error_empty_yaml(yml: Path, name: Path) -> str:
     return f"{path}\n{ERROR} No entries in {file}"
 
 
-def error_existing_file_at_clowder_repo_path(file_path: Path) -> str:
+def error_existing_file_at_clowder_repo_path(file_path: str) -> str:
     """Format error message for existing file at .clowder path
 
-    :param Path file_path: Path to existing .clowder file
+    :param str file_path: Path to existing .clowder file
     :return: Formatted existing file at .clowder path error
     :rtype: str
     """
@@ -199,10 +198,10 @@ def error_existing_file_at_clowder_repo_path(file_path: Path) -> str:
     return f"{ERROR} Found non-directory file {path_string(file_path)} where clowder repo directory should be"
 
 
-def error_existing_file_at_symlink_target_path(name: Path) -> str:
+def error_existing_file_at_symlink_target_path(name: str) -> str:
     """Format error message for existing non-symlink file at symlink target path
 
-    :param Path name: Path to use in error message
+    :param str name: Path to use in error message
     :return: Formatted existing non-symlink file at symlink target path error
     :rtype: str
     """
@@ -220,66 +219,60 @@ def error_failed_clowder_init() -> str:
     return f"{ERROR} Failed to initialize clowder repo"
 
 
-def error_failed_create_directory(dir_path: Path) -> str:
+def error_failed_create_directory(dir_path: str) -> str:
     """Format error message for failing to create directory
 
-    :param Path dir_path: Directory path to create
+    :param str dir_path: Directory path to create
     :return: Formatted create directory error
     :rtype: str
     """
 
-    dir_path = path_string(dir_path)
-    return f"{ERROR} Failed to create directory {dir_path}"
+    return f"{ERROR} Failed to create directory {path_string(dir_path)}"
 
 
-def error_failed_remove_directory(dir_path: Path) -> str:
+def error_failed_remove_directory(dir_path: str) -> str:
     """Format error message for failing to remove directory
 
-    :param Path dir_path: Directory path to remove
+    :param str dir_path: Directory path to remove
     :return: Formatted remove directory error
     :rtype: str
     """
 
-    dir_path = path_string(dir_path)
-    return f"{ERROR} Failed to remove directory {dir_path}"
+    return f"{ERROR} Failed to remove directory {path_string(dir_path)}"
 
 
-def error_failed_remove_file(file_path: Path) -> str:
+def error_failed_remove_file(file_path: str) -> str:
     """Format error message for failing to remove file
 
-    :param Path file_path: File path
+    :param str file_path: File path
     :return: Formatted remove file error
     :rtype: str
     """
 
-    file_path = path_string(file_path)
-    return f"{ERROR} Failed to remove file {file_path}"
+    return f"{ERROR} Failed to remove file {path_string(file_path)}"
 
 
-def error_failed_symlink_file(target: Path, source: Path) -> str:
+def error_failed_symlink_file(target: str, source: str) -> str:
     """Format error message for failing to symlink file
 
-    :param Path target: Target file path
-    :param Path source: Source file path
+    :param str target: Target file path
+    :param str source: Source file path
     :return: Formatted remove file error
     :rtype: str
     """
 
-    target_path = path_string(target)
-    source_path = path_string(source)
-    return f"{ERROR} Failed to symlink file {target_path} -> {source_path}"
+    return f"{ERROR} Failed to symlink file {path_string(target)} -> {path_string(source)}"
 
 
-def error_file_exists(file_path: Path) -> str:
+def error_file_exists(file_path: str) -> str:
     """Format error message for already existing file
 
-    :param Path file_path: File path name
+    :param str file_path: File path name
     :return: Formatted file exists error
     :rtype: str
     """
 
-    file_path = path_string(file_path)
-    return f"{ERROR} File already exists {file_path}"
+    return f"{ERROR} File already exists {path_string(file_path)}"
 
 
 def error_groups_contains_all(yml: Path) -> str:
@@ -290,20 +283,18 @@ def error_groups_contains_all(yml: Path) -> str:
     :rtype: str
     """
 
-    path = _yaml_path(yml)
-    return f"{path}\n{ERROR} 'groups' cannot contain 'all'"
+    return f"{_yaml_path(yml)}\n{ERROR} 'groups' cannot contain 'all'"
 
 
-def error_invalid_config_file(file_path: Path) -> str:
+def error_invalid_config_file(file_path: str) -> str:
     """Return error message for invalid config file
 
-    :param Path file_path: Invalid config file path
+    :param str file_path: Invalid config file path
     :return: Formatted invalid config file error
     :rtype: str
     """
 
-    file = _yaml_file(str(file_path))
-    return f"{ERROR} {file}\n{ERROR} Clowder config file appears to be invalid"
+    return f"{ERROR} {_yaml_file(file_path)}\n{ERROR} Clowder config file appears to be invalid"
 
 
 def error_invalid_git_config_value(key: str, value: str) -> str:
@@ -384,28 +375,27 @@ def error_missing_clowder_yaml() -> str:
     return error_missing_file(clowder_file)
 
 
-def error_missing_file(yaml_file: Path) -> str:
+def error_missing_file(yaml_file: str) -> str:
     """Format error message for missing linked clowder yaml file
 
-    :param Path yaml_file: Path to missing yaml file
+    :param str yaml_file: Path to missing yaml file
     :return: Formatted missing YAML error
     :rtype: str
     """
 
-    file = _yaml_file(str(yaml_file))
+    file = _yaml_file(yaml_file)
     return f"{ERROR} {file} appears to be missing"
 
 
-def error_no_clowder_found(dir_path: Path) -> str:
+def error_no_clowder_found(dir_path: str) -> str:
     """Format error message for no clowder found
 
-    :param Path dir_path: Missing clowder directory path
+    :param str dir_path: Missing clowder directory path
     :return: Formatted no clowder found error
     :rtype: str
     """
 
-    dir_path = path_string(dir_path)
-    return f"{ERROR} No clowder found at {dir_path}"
+    return f"{ERROR} No clowder found at {path_string(dir_path)}"
 
 
 def error_offline() -> str:
@@ -418,10 +408,10 @@ def error_offline() -> str:
     return f"{ERROR} No available internet connection"
 
 
-def error_open_file(path: Path) -> str:
+def error_open_file(path: str) -> str:
     """Format error message for failing to open file
 
-    :param Path path: File path
+    :param str path: File path
     :return: Formatted file error
     :rtype: str
     """
@@ -450,17 +440,16 @@ def error_parallel_commands_unavailable() -> str:
     return f'{ERROR} Parallel commands are only available on posix operating systems'
 
 
-def error_parallel_exception(file_path: Path, *args) -> str:
+def error_parallel_exception(file_path: str, *args) -> str:
     """Return formatted error string for parallel error
 
-    :param Path file_path: Clowder file path
+    :param str file_path: Clowder file path
     :param args: Method arguments
     :return: Formatted parallel exception error
     :rtype: str
     """
 
-    file_path = path_string(file_path)
-    return f"{ERROR} {file_path}\n{ERROR} {''.join(args)}"
+    return f"{ERROR} {path_string(file_path)}\n{ERROR} {''.join(args)}"
 
 
 def error_remote_already_exists(remote_name: str, remote_url: str, actual_url: str) -> str:
@@ -506,7 +495,7 @@ def error_save_default(name: str) -> str:
     return f"{ERROR} Version name '{name}' is not allowed"
 
 
-def error_save_file(file_path: Path) -> str:
+def error_save_file(file_path: str) -> str:
     """Format error message for failing to save file
 
     :param Path file_path: File path
@@ -514,8 +503,7 @@ def error_save_file(file_path: Path) -> str:
     :rtype: str
     """
 
-    file_path = path_string(file_path)
-    return f"{ERROR} Failed to save file {file_path}"
+    return f"{ERROR} Failed to save file {path_string(file_path)}"
 
 
 def error_save_version_exists(version_name: str, yml: Path) -> str:
@@ -652,7 +640,7 @@ def options_help_message(options: Tuple[str, ...], message: str) -> str:
     return help_message.format(message, ', '.join(options))
 
 
-def path_string(path: Path) -> str:
+def path_string(path: str) -> str:
     """Return formatted path
 
     :param Path path: Path name
@@ -660,7 +648,7 @@ def path_string(path: Path) -> str:
     :rtype: str
     """
 
-    return colored(str(path), 'cyan')
+    return colored(path, 'cyan')
 
 
 def ref_string(ref: str) -> str:
@@ -699,11 +687,11 @@ def remove_prefix(text: str, prefix: str) -> str:
     return text
 
 
-def save_version_message(version: str, yml: Path) -> str:
+def save_version_message(version: str, yml: str) -> str:
     """Format message for saving version
 
     :param str version: Clowder version name
-    :param Path yml: Path to yaml file
+    :param str yml: Path to yaml file
     :return: Formatted version name
     :rtype: str
     """
@@ -757,7 +745,7 @@ def warning_clowder_yaml_not_symlink_with_clowder_repo(name: str) -> str:
            f"to a file stored in the existing {path_string(Path('.clowder'))} repo"
 
 
-def warning_invalid_config_file(file_path: Path) -> str:
+def warning_invalid_config_file(file_path: str) -> str:
     """Return warning message for invalid config file
 
     :param Path file_path: Invalid config file path
@@ -765,8 +753,7 @@ def warning_invalid_config_file(file_path: Path) -> str:
     :rtype: str
     """
 
-    file = _yaml_file(str(file_path))
-    return f"{WARNING} Clowder config file at {file} appears to be invalid"
+    return f"{WARNING} Clowder config file at {_yaml_file(file_path)} appears to be invalid"
 
 
 def _project_name(name: str) -> str:
@@ -788,7 +775,7 @@ def _yaml_path(yml: Path) -> str:
     :rtype: str
     """
 
-    return path_string(yml.resolve())
+    return path_string(str(yml.resolve()))
 
 
 def _yaml_file(yml: str) -> str:

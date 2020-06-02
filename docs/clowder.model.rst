@@ -20,6 +20,14 @@ clowder\.model\.fork module
     :undoc-members:
     :show-inheritance:
 
+clowder\.model\.git\_settings module
+-----------------------------
+
+.. automodule:: clowder.model.git_settings
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 clowder\.model\.project module
 ------------------------------
 
@@ -32,6 +40,14 @@ clowder\.model\.source module
 -----------------------------
 
 .. automodule:: clowder.model.source
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+clowder\.model\.util module
+-----------------------------
+
+.. automodule:: clowder.model.util
     :members:
     :undoc-members:
     :show-inheritance:
