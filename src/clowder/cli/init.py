@@ -22,8 +22,8 @@ from .util import add_parser_arguments
 def add_init_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
 
     arguments = [
-        (['url'], dict(metavar='URL', help='url of repo containing clowder yaml file')),
-        (['--branch', '-b'], dict(nargs=1, metavar='BRANCH', help='branch of repo containing clowder yaml file'))
+        (['url'], dict(metavar='<url>', help='url of repo containing clowder yaml file')),
+        (['--branch', '-b'], dict(nargs=1, metavar='<branch>', help='branch of repo containing clowder yaml file'))
     ]
 
     parser = subparsers.add_parser('init', help='Clone repository to clowder directory and create clowder yaml symlink')

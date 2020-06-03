@@ -25,9 +25,6 @@ exclude_lines =
     raise AssertionError
     raise NotImplementedError
 
-    # Don't complain if tests don't hit certain exceptions
-    except \(KeyboardInterrupt, SystemExit\):
-
     # Don't complain if non-runnable code isn't run:
     if 0:
     if __name__ == .__main__.:

@@ -77,6 +77,8 @@ class Config(object):
             self.error = err
             print(fmt.warning_invalid_config_file(ENVIRONMENT.clowder_config_yaml))
             print()
+        except (KeyboardInterrupt, SystemExit):
+            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
         finally:
             # If current clowder exists, return
             if self.current_clowder_config is not None:
@@ -180,5 +182,3 @@ class Config(object):
             LOG_DEBUG('Failed to load clowder config', err)
             raise ClowderError(ClowderErrorType.CONFIG_YAML_UNKNOWN,
                                fmt.error_invalid_config_file(ENVIRONMENT.clowder_config_yaml))
-        except (KeyboardInterrupt, SystemExit):
-            raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())

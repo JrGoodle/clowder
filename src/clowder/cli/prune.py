@@ -36,15 +36,15 @@ def add_prune_parser(subparsers: argparse._SubParsersAction): # noqa
     """
 
     arguments = [
-        (['branch'], dict(help='name of branch to remove', metavar='BRANCH')),
-        (['projects'], dict(metavar='PROJECT', default='default', nargs='*',
+        (['branch'], dict(help='name of branch to remove', metavar='<branch>')),
+        (['projects'], dict(metavar='<project|group>', default='default', nargs='*',
                             choices=CLOWDER_CONTROLLER.project_choices_with_default,
-                            help=fmt.options_help_message(CLOWDER_CONTROLLER.project_choices,
-                                                          'projects and groups to prune'))),
+                            help=fmt.project_options_help_message('projects and groups to prune'))),
         (['--force', '-f'], dict(action='store_true', help='force prune branches'))
     ]
 
     parser = subparsers.add_parser('prune', help='Prune branches')
+    parser.formatter_class = argparse.RawTextHelpFormatter
     add_parser_arguments(parser, arguments)
 
     mutually_exclusive_arguments = [

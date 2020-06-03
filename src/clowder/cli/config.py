@@ -6,6 +6,7 @@
 """
 
 import argparse
+from typing import Optional
 
 import clowder.util.formatting as fmt
 from clowder.clowder_controller import CLOWDER_CONTROLLER
@@ -18,14 +19,20 @@ from clowder.config import Config
 from .util import add_parser_arguments
 
 
+config_parser: Optional[argparse.ArgumentParser] = None
+config_set_parser: Optional[argparse.ArgumentParser] = None
+
+
 def add_config_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
     """Add clowder config parser
 
     :param argparse._SubParsersAction subparsers: Subparsers action to add parser to
     """
 
-    parser = subparsers.add_parser('config', help='Manage clowder config (EXPERIMENTAL)')
-    config_subparsers = parser.add_subparsers()
+    global config_parser
+    config_parser = subparsers.add_parser('config', help='Manage clowder config (EXPERIMENTAL)')
+    config_parser.set_defaults(func=config_help)
+    config_subparsers = config_parser.add_subparsers()
 
     add_config_clear_parser(config_subparsers)
     add_config_get_parser(config_subparsers)
@@ -79,8 +86,10 @@ def add_config_set_parser(subparsers: argparse._SubParsersAction) -> None: # noq
     """
 
     # clowder config set
-    parser = subparsers.add_parser('set', help='Set clowder config options')
-    config_set_subparsers = parser.add_subparsers()
+    global config_set_parser
+    config_set_parser = subparsers.add_parser('set', help='Set clowder config options')
+    config_set_parser.set_defaults(func=config_help_set)
+    config_set_subparsers = config_set_parser.add_subparsers()
 
     # clowder config set rebase
     rebase_parser = config_set_subparsers.add_parser('rebase', help='Set use rebase with herd command')
@@ -93,8 +102,7 @@ def add_config_set_parser(subparsers: argparse._SubParsersAction) -> None: # noq
     # clowder config set projects
     projects_arguments = [
         (['projects'], dict(metavar='PROJECT', nargs='+', choices=CLOWDER_CONTROLLER.project_choices,
-                            help=fmt.options_help_message(CLOWDER_CONTROLLER.project_choices,
-                                                          'Default projects and groups to run commands for')))
+                            help=fmt.project_options_help_message('Default projects and groups to run commands for')))
     ]
     projects_parser = config_set_subparsers.add_parser('projects', help='Set default projects and groups')
     add_parser_arguments(projects_parser, projects_arguments)
@@ -183,6 +191,18 @@ def config_get_all(args) -> None: # noqa
 
     config = _config(print_newline=False)
     config.current_clowder_config.print_configuration()
+
+
+def config_help(args): # noqa
+    """Clowder config help handler"""
+
+    config_parser.print_help()
+
+
+def config_help_set(args): # noqa
+    """Clowder config set help handler"""
+
+    config_set_parser.print_help()
 
 
 @valid_clowder_yaml_required

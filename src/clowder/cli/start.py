@@ -31,15 +31,15 @@ def add_start_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
     """
 
     arguments = [
-        (['branch'], dict(help='name of branch to create', nargs=1, default=None, metavar='BRANCH')),
-        (['projects'], dict(metavar='PROJECT', default='default', nargs='*',
+        (['branch'], dict(help='name of branch to create', nargs=1, default=None, metavar='<branch>')),
+        (['projects'], dict(metavar='<project|group>', default='default', nargs='*',
                             choices=CLOWDER_CONTROLLER.project_choices_with_default,
-                            help=fmt.options_help_message(CLOWDER_CONTROLLER.project_choices,
-                                                          'projects and groups to start branches for'))),
+                            help=fmt.project_options_help_message('projects and groups to start branches for'))),
         (['--tracking', '-t'], dict(action='store_true', help='create remote tracking branch'))
     ]
 
     parser = subparsers.add_parser('start', help='Start a new branch')
+    parser.formatter_class = argparse.RawTextHelpFormatter
     add_parser_arguments(parser, arguments)
     parser.set_defaults(func=start)
 

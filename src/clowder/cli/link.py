@@ -33,11 +33,12 @@ def add_link_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
     versions = get_saved_version_names()
 
     arguments = [
-        (['version'], dict(metavar='VERSION', choices=versions, nargs='?', default=None,
-                           help=fmt.options_help_message(versions, 'version to symlink')))
+        (['version'], dict(metavar='<version>', choices=versions, nargs='?', default=None,
+                           help=fmt.version_options_help_message('version to symlink', versions)))
     ]
 
     parser = subparsers.add_parser('link', help='Symlink clowder yaml version')
+    parser.formatter_class = argparse.RawTextHelpFormatter
     add_parser_arguments(parser, arguments)
     parser.set_defaults(func=link)
 

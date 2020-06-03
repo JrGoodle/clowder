@@ -34,19 +34,19 @@ def add_reset_parser(subparsers: argparse._SubParsersAction): # noqa
     """
 
     arguments = [
-        (['projects'], dict(metavar='PROJECT', default='default', nargs='*',
+        (['projects'], dict(metavar='<project|group>', default='default', nargs='*',
                             choices=CLOWDER_CONTROLLER.project_choices_with_default,
-                            help=fmt.options_help_message(CLOWDER_CONTROLLER.project_choices,
-                                                          'projects and groups to reset'))),
-        (['--jobs', '-j'], dict(metavar='JOBS', nargs=1, default=None, type=int,
+                            help=fmt.project_options_help_message('projects and groups to reset'))),
+        (['--jobs', '-j'], dict(metavar='<n>', nargs=1, default=None, type=int,
                                 help='number of jobs to use runnning commands in parallel')),
-        (['--timestamp', '-t'], dict(choices=CLOWDER_CONTROLLER.project_names,
-                                     default=None, nargs=1, metavar='TIMESTAMP',
-                                     help='project to reset timestamps relative to'))
+        # (['--timestamp', '-t'], dict(choices=CLOWDER_CONTROLLER.project_names,
+        #                              default=None, nargs=1, metavar='<timestamp>',
+        #                              help='project to reset timestamps relative to'))
     ]
 
     parser = subparsers.add_parser('reset', help='Reset branches to upstream commits or '
                                                  'check out detached HEADs for tags and shas')
+    parser.formatter_class = argparse.RawTextHelpFormatter
     add_parser_arguments(parser, arguments)
     parser.set_defaults(func=reset)
 
@@ -59,8 +59,8 @@ def reset(args) -> None:
     """Clowder reset command private implementation"""
 
     timestamp_project = None
-    if args.timestamp:
-        timestamp_project = args.timestamp[0]
+    # if args.timestamp:
+    #     timestamp_project = args.timestamp[0]
 
     jobs = None
     if args.jobs:

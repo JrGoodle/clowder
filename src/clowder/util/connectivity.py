@@ -33,8 +33,6 @@ def is_offline(host: str = '8.8.8.8', port: int = 53, timeout: int = 3) -> bool:
         return False
     except socket.error:
         return True
-    except (KeyboardInterrupt, SystemExit):
-        raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
 
 def network_connection_required(func):

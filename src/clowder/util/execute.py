@@ -45,8 +45,6 @@ def execute_command(command: Union[str, List[str]], path: Path,
                            fmt.error_command_failed(cmd),
                            error=err,
                            exit_code=err.returncode)
-    except (KeyboardInterrupt, SystemExit):
-        raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
 
 
 def execute_forall_command(command: Union[str, List[str]], path: Path, forall_env: dict, print_output: bool) -> None:

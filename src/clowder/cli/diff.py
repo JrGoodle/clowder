@@ -27,13 +27,13 @@ def add_diff_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
     """
 
     arguments = [
-        (['projects'], dict(metavar='PROJECT', default='default', nargs='*',
+        (['projects'], dict(metavar='<project|group>', default='default', nargs='*',
                             choices=CLOWDER_CONTROLLER.project_choices_with_default,
-                            help=fmt.options_help_message(CLOWDER_CONTROLLER.project_choices,
-                                                          'projects and groups to show diff for'))),
+                            help=fmt.project_options_help_message('projects and groups to show diff for'))),
     ]
 
     parser = subparsers.add_parser('diff', help='Show git diff for projects')
+    parser.formatter_class = argparse.RawTextHelpFormatter
     add_parser_arguments(parser, arguments)
     parser.set_defaults(func=diff)
 
