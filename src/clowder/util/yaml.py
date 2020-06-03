@@ -259,9 +259,7 @@ def _print_yaml(yaml_file: Path) -> None:
     try:
         with yaml_file.open() as raw_file:
             contents = raw_file.read()
-            print('-' * 80)
-            _print_yaml_path(yaml_file)
-            print(contents)
+            print(contents.rstrip())
     except IOError as err:
         LOG_DEBUG('Failed to open file', err)
         raise ClowderError(ClowderErrorType.FAILED_OPEN_FILE,

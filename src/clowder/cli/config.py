@@ -102,8 +102,7 @@ def add_config_set_parser(subparsers: argparse._SubParsersAction) -> None: # noq
     # clowder config set projects
     projects_arguments = [
         (['projects'], dict(metavar='PROJECT', nargs='+', choices=CLOWDER_CONTROLLER.project_choices,
-                            help=fmt.options_help_message(CLOWDER_CONTROLLER.project_choices,
-                                                          'Default projects and groups to run commands for')))
+                            help=fmt.project_options_help_message('Default projects and groups to run commands for')))
     ]
     projects_parser = config_set_subparsers.add_parser('projects', help='Set default projects and groups')
     add_parser_arguments(projects_parser, projects_arguments)

@@ -18,7 +18,12 @@ $COMMAND herd $PARALLEL || exit 1
 end_command
 
 export commands=( 'branch' \
+                  'checkout' \
                   'clean' \
+                  'config' \
+                  'config clear' \
+                  'config get' \
+                  'config set' \
                   'diff' \
                   'forall' \
                   'herd' \
@@ -27,10 +32,13 @@ export commands=( 'branch' \
                   'prune' \
                   'repo' \
                   'repo add' \
+                  'repo checkout' \
+                  'repo clean' \
                   'repo commit' \
                   'repo pull' \
                   'repo push' \
                   'repo run' \
+                  'repo status' \
                   'save' \
                   'start' \
                   'stash' \
@@ -42,6 +50,12 @@ _test_help() {
     echo "TEST: clowder -h"
     begin_command
     $COMMAND -h || exit 1
+    end_command
+    begin_command
+    $COMMAND || exit 1
+    end_command
+    begin_command
+    $COMMAND config set || exit 1
     end_command
 
     for cmd in "${commands[@]}"; do
@@ -75,12 +89,5 @@ test_help() {
     $COMMAND link || exit 1
     end_command
     _test_help
-
-    begin_command
-    $COMMAND repo checkout master || exit 1
-    end_command
-    pushd .clowder || exit 1
-    test_branch master
-    popd || exit 1
 }
 test_help

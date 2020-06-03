@@ -32,8 +32,7 @@ def add_forall_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
     arguments = [
         (['projects'], dict(metavar='<project|group>', default='default', nargs='*',
                             choices=CLOWDER_CONTROLLER.project_choices_with_default,
-                            help=fmt.options_help_message(CLOWDER_CONTROLLER.project_choices,
-                                                          'projects and groups to run command for'))),
+                            help=fmt.project_options_help_message('projects and groups to run command for'))),
         (['--command', '-c'], dict(nargs='+', metavar='<command>', default=None,
                                    help='command or script to run in project directories')),
         (['--ignore-errors', '-i'], dict(action='store_true', help='ignore errors in command or script')),
@@ -42,6 +41,7 @@ def add_forall_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
     ]
 
     parser = subparsers.add_parser('forall', help='Run command or script in project directories')
+    parser.formatter_class = argparse.RawTextHelpFormatter
     add_parser_arguments(parser, arguments)
     parser.set_defaults(func=forall)
 

@@ -436,7 +436,6 @@ class Project(ProjectImpl):
             print(self.status())
             repo = ProjectRepo(self.full_path(), self.remote, self.ref)
             repo.print_validation()
-            print()
 
     @project_repo_exists
     def prune(self, branch: str, force: bool = False,
@@ -566,10 +565,11 @@ class Project(ProjectImpl):
 
         if not existing_git_repository(self.full_path()):
             project_output = colored(self.name, 'green')
-            missing_output = colored('-', 'red')
             if padding:
                 project_output = project_output.ljust(padding)
-            return f'{project_output} {missing_output}'
+                missing_output = colored('-', 'red')
+                return f'{project_output} {missing_output}'
+            return project_output
 
         repo = ProjectRepo(self.full_path(), self.remote, self.ref)
         project_output = repo.format_project_string(self.path)

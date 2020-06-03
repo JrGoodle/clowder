@@ -31,6 +31,7 @@ def add_save_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
     ]
 
     parser = subparsers.add_parser('save', help='Create clowder yaml version for current repos')
+    parser.formatter_class = argparse.RawTextHelpFormatter
     add_parser_arguments(parser, arguments)
     parser.set_defaults(func=save)
 

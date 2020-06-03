@@ -63,6 +63,7 @@ def validate_project_statuses(projects: Tuple[Project, ...], allow_missing_repo:
     for p in projects:
         p.print_validation(allow_missing_repo=allow_missing_repo)
     if not all([p.is_valid(allow_missing_repo=allow_missing_repo) for p in projects]):
+        print()
         raise ClowderError(ClowderErrorType.INVALID_PROJECT_STATUS, fmt.error_invalid_project_state())
 
 

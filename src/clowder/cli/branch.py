@@ -29,11 +29,11 @@ def add_branch_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
     arguments = [
         (['projects'], dict(metavar='<project|group>', default='default', nargs='*',
                             choices=CLOWDER_CONTROLLER.project_choices_with_default,
-                            help=fmt.options_help_message(CLOWDER_CONTROLLER.project_choices,
-                                                          'projects and groups to show branches for')))
+                            help=fmt.project_options_help_message('projects and groups to show branches for')))
     ]
 
     parser = subparsers.add_parser('branch', help='Display current branches')
+    parser.formatter_class = argparse.RawTextHelpFormatter
     add_parser_arguments(parser, arguments)
 
     mutually_exclusive_arguments = [

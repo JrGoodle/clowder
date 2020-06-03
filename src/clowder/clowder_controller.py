@@ -27,7 +27,11 @@ class ClowderController(object):
     :ivar Optional[Defaults] defaults: Global clowder yaml defaults
     :ivar Tuple[Group, ...] groups: List of all Groups
     :ivar Tuple[Source, ...] sources: List of all Sources
-    :ivar Tuple[str, ...] project_names: All possible project and group names
+    :ivar Tuple[str, ...] project_names: All possible project names
+    :ivar Tuple[str, ...] fork_names: All possible fork names
+    :ivar Tuple[str, ...] project_fork_names: All possible project and fork names
+    :ivar Tuple[str, ...] project_paths: All possible project paths
+    :ivar Tuple[str, ...] project_groups: All possible project groups
     :ivar Tuple[str, ...] project_choices: All possible project and group choices
     :ivar Tuple[str, ...] project_choices_with_default: All possible project and group choices, including 'default'
     :ivar Optional[Exception] error: Exception from failing to load clowder yaml file
@@ -46,8 +50,12 @@ class ClowderController(object):
         self.sources: Tuple[Source, ...] = ()
         self.projects: Tuple[Project, ...] = ()
         self.project_names: Tuple[str, ...] = ()
+        self.fork_names: Tuple[str, ...] = ()
+        self.project_fork_names: Tuple[str, ...] = ()
+        self.project_paths: Tuple[str, ...] = ()
+        self.project_groups: Tuple[str, ...] = ()
         self.project_choices: Tuple[str, ...] = ()
-        self.project_choices_with_default = ('default',)
+        self.project_choices_with_default: Tuple[str, ...] = ('default',)
 
         try:
             if ENVIRONMENT.clowder_yaml is None:
@@ -149,10 +157,77 @@ class ClowderController(object):
         if not projects_exist:
             raise ClowderError(ClowderErrorType.INVALID_PROJECT_STATUS, fmt.error_clone_missing_projects())
 
+    def _get_all_fork_names(self) -> Tuple[str, ...]:
+        """Returns all fork names for current clowder yaml file
+
+        :return: All fork names
+        :rtype: Tuple
+        """
+
+        try:
+            fork_names = [str(p.fork.name) for p in self.projects if p.fork is not None]
+            return tuple(sorted(set(fork_names)))
+        except TypeError as err:
+            LOG_DEBUG('Failed to get fork names', err)
+            return ()
+
+    @staticmethod
+    def _get_all_project_fork_names(project_names, fork_names) -> Tuple[str, ...]:
+        """Returns all project names for current clowder yaml file
+
+        :return: All project and fork names
+        :rtype: Tuple
+        """
+
+        return tuple(sorted(set(project_names + fork_names)))
+
     def _get_all_project_names(self) -> Tuple[str, ...]:
         """Returns all project names for current clowder yaml file
 
-        :return: All project and group names
+        :return: All project names
+        :rtype: Tuple
+        """
+
+        try:
+            project_names = [str(p.name) for p in self.projects]
+            return tuple(sorted(set(project_names)))
+        except TypeError as err:
+            LOG_DEBUG('Failed to get project names', err)
+            return ()
+
+    def _get_all_project_paths(self) -> Tuple[str, ...]:
+        """Returns all project paths for current clowder yaml file
+
+        :return: All project paths
+        :rtype: Tuple
+        """
+
+        try:
+            paths = [str(p.path) for p in self.projects]
+            return tuple(sorted(set(paths)))
+        except TypeError as err:
+            LOG_DEBUG('Failed to get project paths', err)
+            return ()
+
+    def _get_all_project_groups(self, project_fork_names, project_paths) -> Tuple[str, ...]:
+        """Returns all project paths for current clowder yaml file
+
+        :return: All project paths
+        :rtype: Tuple
+        """
+
+        try:
+            groups = [g for p in self.projects for g in p.groups]
+            groups = [g for g in groups if g not in project_fork_names and g not in project_paths]
+            return tuple(sorted(set(groups)))
+        except TypeError as err:
+            LOG_DEBUG('Failed to get group names', err)
+            return ()
+
+    def _get_all_project_choices(self) -> Tuple[str, ...]:
+        """Returns all project choices current clowder yaml file
+
+        :return: All project paths
         :rtype: Tuple
         """
 
@@ -160,7 +235,22 @@ class ClowderController(object):
             names = [g for p in self.projects for g in p.groups]
             return tuple(sorted(set(names)))
         except TypeError as err:
-            LOG_DEBUG('Failed to get project names', err)
+            LOG_DEBUG('Failed to get project choices', err)
+            return ()
+
+    def _get_all_project_choices_with_default(self) -> Tuple[str, ...]:
+        """Returns all project choices current clowder yaml file
+
+        :return: All project paths
+        :rtype: Tuple
+        """
+
+        try:
+            names = [g for p in self.projects for g in p.groups]
+            names.append('default')
+            return tuple(sorted(set(names)))
+        except TypeError as err:
+            LOG_DEBUG('Failed to get project choices with default', err)
             return ()
 
     def _load_clowder_yaml(self, yaml: dict) -> None:
@@ -187,11 +277,15 @@ class ClowderController(object):
                 message = fmt.error_duplicate_project_path(Path(duplicate), ENVIRONMENT.clowder_yaml)
                 raise ClowderError(ClowderErrorType.CLOWDER_YAML_DUPLICATE_PATH, message)
 
-            self.project_names = self._get_all_project_names()
-            names = list(self.project_names)
-            self.project_choices = tuple(sorted(set(names)))
-            names.append('default')
-            self.project_choices_with_default = tuple(sorted(set(names)))
+            self.project_names: Tuple[str, ...] = self._get_all_project_names()
+            self.fork_names: Tuple[str, ...] = self._get_all_fork_names()
+            self.project_fork_names: Tuple[str, ...] = self._get_all_project_fork_names(self.project_names,
+                                                                                        self.fork_names)
+            self.project_paths: Tuple[str, ...] = self._get_all_project_paths()
+            self.project_groups: Tuple[str, ...] = self._get_all_project_groups(self.project_fork_names,
+                                                                                self.project_paths)
+            self.project_choices = self._get_all_project_choices()
+            self.project_choices_with_default = self._get_all_project_choices_with_default()
         except (AttributeError, KeyError, TypeError) as err:
             LOG_DEBUG('Failed to load clowder yaml', err)
             self.name = None
@@ -199,6 +293,8 @@ class ClowderController(object):
             self.sources = ()
             self.projects = ()
             self.project_names = ()
+            self.fork_names = ()
+            self.project_fork_names = ()
             self.project_choices = ()
             self.project_choices_with_default = ('default',)
             self.error = err

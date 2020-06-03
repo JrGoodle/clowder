@@ -35,8 +35,7 @@ def add_herd_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
     arguments = [
         (['projects'], dict(metavar='<project|group>', default='default', nargs='*',
                             choices=CLOWDER_CONTROLLER.project_choices_with_default,
-                            help=fmt.options_help_message(CLOWDER_CONTROLLER.project_choices,
-                                                          'projects and groups to show branches for'))),
+                            help=fmt.project_options_help_message('projects and groups to show branches for'))),
         (['--jobs', '-j'], dict(metavar='<n>', nargs=1, default=None, type=int,
                                 help='number of jobs to use runnning commands in parallel')),
         (['--rebase', '-r'], dict(action='store_true', help='use rebase instead of pull')),
@@ -44,6 +43,7 @@ def add_herd_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
     ]
 
     parser = subparsers.add_parser('herd', help='Clone and update projects with latest changes')
+    parser.formatter_class = argparse.RawTextHelpFormatter
     add_parser_arguments(parser, arguments)
 
     mutually_exclusive_arguments = [
