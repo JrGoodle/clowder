@@ -409,7 +409,6 @@
       "anyOf": [
         {
           "required": [
-            "source",
             "protocol"
           ],
           "additionalProperties": false,
@@ -433,7 +432,6 @@
         },
         {
           "required": [
-            "source",
             "protocol"
           ],
           "additionalProperties": false,
@@ -457,7 +455,6 @@
         },
         {
           "required": [
-            "source",
             "protocol"
           ],
           "additionalProperties": false,

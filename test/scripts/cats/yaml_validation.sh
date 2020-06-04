@@ -74,6 +74,7 @@ test_invalid_yaml() {
     _test_invalid_yaml 'ls -d test-duplicate-fork-project-remote*' '47'
     _test_invalid_yaml 'ls -d test-source-not-found*' '48'
     _test_invalid_yaml 'ls -d test-duplicate-project-directories*' '49'
+    _test_invalid_yaml 'ls -d test-multiple-sources-missing-default' '72'
 
     begin_command
     $COMMAND repo checkout master || exit 1

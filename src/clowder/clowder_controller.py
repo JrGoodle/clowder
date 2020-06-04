@@ -264,6 +264,11 @@ class ClowderController(object):
             self.sources = tuple(sorted([Source(s, self.defaults) for s in yaml['sources']],
                                         key=lambda source: source.name))
 
+            if len(self.sources) == 1 and self.defaults.source is None:
+                self.defaults.source = self.sources[0].name
+            elif len(self.sources) > 1 and self.defaults.source is None:
+                raise ClowderError(ClowderErrorType.MISSING_DEFAULT_SOURCE, fmt.error_missing_default_source())
+
             if not any([s.name == self.defaults.source for s in self.sources]):
                 message = fmt.error_source_default_not_found(self.defaults.source, ENVIRONMENT.clowder_yaml)
                 raise ClowderError(ClowderErrorType.CLOWDER_YAML_SOURCE_NOT_FOUND, message)
