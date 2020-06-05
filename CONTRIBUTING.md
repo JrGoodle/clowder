@@ -40,11 +40,9 @@ script/test
 Run test scripts
 
 ```bash
-clowder-test swift all
-clowder-test cats herd
-clowder-test unittests
+clowder-test cats <option>
 ```
 
 ## Pull requests
 
-Any new functionality or bug fixes must have associated tests, in order to prevent future regressions. There are a few Python unit tests, but the majority of the tests are located in bash scripts in [test/scripts](test/scripts)
+Any new functionality or bug fixes must have associated tests, in order to prevent future regressions. As of now, the tests are all functional tests located in bash scripts in [test/scripts](test/scripts)

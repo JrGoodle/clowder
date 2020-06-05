@@ -32,7 +32,7 @@ class DefaultsImpl(object):
         """
 
         self.protocol = GitProtocol(defaults["protocol"])
-        self.source: str = defaults["source"]
+        self._source: str = defaults.get("source", None)
 
         self._remote: Optional[str] = defaults.get("remote", None)
         self._branch: Optional[str] = defaults.get("branch", None)
@@ -53,9 +53,10 @@ class DefaultsImpl(object):
         :rtype: dict
         """
 
-        defaults = {'source': self.source,
-                    'protocol': self.protocol.value}
+        defaults = {'protocol': self.protocol.value}
 
+        if self._source is not None:
+            defaults['source'] = self._source
         if self._remote is not None:
             defaults['remote'] = self._remote
         if self._git_settings is not None:
@@ -92,6 +93,7 @@ class Defaults(DefaultsImpl):
 
         super().__init__(defaults)
 
+        self.source: str = defaults.get("source", None)
         self.remote: str = defaults.get("remote", "origin")
         self.git_settings = GitSettings(git_settings=defaults.get("git", None))
 

@@ -276,7 +276,7 @@ test_herd_sha() {
     popd || exit 1
     pushd black-cats/june || exit 1
     test_head_detached
-    test_commit '7b725e4953281347594585b8d1d02a3561201f72'
+    test_commit 'b6e1316cc62cb2ba18fa982fc3d67ef4408c8bfd'
     popd || exit 1
     pushd black-cats/sasha || exit 1
     test_head_detached
@@ -615,6 +615,22 @@ test_herd_rebase() {
     popd || exit 1
 }
 test_herd_rebase
+
+test_herd_infer_default_source() {
+    print_single_separator
+    echo "TEST: clowder herd infer default source"
+    ./clean.sh
+    ./init.sh || exit 1
+    begin_command
+    $COMMAND link infer-default-source || exit 1
+    end_command
+    test_symlink_path 'clowder.yaml' "$(pwd)/.clowder/versions/infer-default-source.clowder.yaml"
+    begin_command
+    $COMMAND herd $PARALLEL || exit 1
+    end_command
+    test_cats_default_herd_branches
+}
+test_herd_infer_default_source
 
 if [ "$ACCESS_LEVEL" == "write" ]; then
     "$TEST_SCRIPT_DIR/cats/write_herd.sh" $1

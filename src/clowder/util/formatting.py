@@ -388,6 +388,16 @@ def error_missing_clowder_yaml() -> str:
     return error_missing_file(clowder_file)
 
 
+def error_missing_default_source() -> str:
+    """Format error message for missing default source
+
+    :return: Formatted error message for missing default source
+    :rtype: str
+    """
+
+    return f"{ERROR} Default 'source' is required when multiple sources are specified"
+
+
 def error_missing_file(yaml_file: str) -> str:
     """Format error message for missing linked clowder yaml file
 
