@@ -1,6 +1,6 @@
 # `clowder` Commands
 
-Examples based on the [Swift projects clowder.yaml](https://github.com/JrGoodle/swift-clowder/blob/master/clowder.yaml)
+Examples based on the [Swift projects clowder.yml](https://github.com/JrGoodle/swift-clowder/blob/master/clowder.yml)
 
 ---
 
@@ -148,13 +148,13 @@ The following environment variables are available for use in commands and script
 - `PROJECT_PATH` is the absolute path to the project directory
 - `PROJECT_NAME` is the unique name of the project
 - `PROJECT_REMOTE` is the name of the project's remote
-- `PROJECT_REF` is the project ref as written in the `clowder.yaml` file
+- `PROJECT_REF` is the project ref as written in the `clowder.yml` file
 
 If a fork is specified, the following environment variables are also available for use in commands and scripts:
 
 - `FORK_REMOTE` is the name of the fork's remote
 - `FORK_NAME` is the unique name of the fork
-- `FORK_REF` is the project ref as written in the `clowder.yaml` file
+- `FORK_REF` is the project ref as written in the `clowder.yml` file
 
 ---
 
@@ -186,7 +186,7 @@ clowder herd apple/swift
 
 ## `clowder init`
 
-Clone repo containing `clowder.yaml` file (referred to as the "clowder repo")
+Clone repo containing `clowder.yml` file (referred to as the "clowder repo")
 
 ```bash
 # Clone clowder repo
@@ -200,13 +200,13 @@ clowder init https://github.com/jrgoodle/cats.git -b tags
 
 ## `clowder link`
 
-Set `clowder.yaml` symlink
+Set `clowder.yml` symlink
 
 ```bash
-# Point clowder.yaml symlink to default clowder.yaml file
+# Point clowder.yml symlink to default clowder.yml file
 clowder link
 
-# Point clowder.yaml symlink to saved version
+# Point clowder.yml symlink to saved version
 clowder link 0.1
 ```
 
@@ -297,12 +297,12 @@ clowder reset apple/swift
 
 ## `clowder save`
 
-Save a `clowder.yaml` version with the information from currently checked out repositories
+Save a `clowder.yml` version with the information from currently checked out repositories
 
-Versions are saved to `.clowder/versions/<version_name>.yaml`
+Versions are saved to `.clowder/<version_name>.clowder.yml`
 
 ```bash
-# Save a version of clowder.yaml with current commit sha's
+# Save a version of clowder.yml with current commit sha's
 clowder save 0.1
 ```
 
@@ -371,12 +371,12 @@ clowder --version
 
 ## `clowder yaml`
 
-Print information about clowder.yaml files
+Print information about clowder.yml files
 
 ```bash
-# Print clowder.yaml file(s) referenced from current symlink and imports
+# Print clowder.yml file(s) referenced from current symlink and imports
 clowder yaml
 
-# Print resolved clowder.yaml
+# Print resolved clowder.yml
 clowder yaml -r
 ```

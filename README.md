@@ -14,16 +14,31 @@
 
 > **herding cats** - An idiom that refers to a frustrating attempt to control or organize a class of entities which are uncontrollable or chaotic
 
-Managing multiple repositories can be pretty frustrating. There are a number of existing options, the primary being git submodules and subtrees. Google's [repo](https://code.google.com/p/git-repo) tool takes a different approach, but is closely tied to Google's development workflow. `clowder` uses a similar approach as `repo`, but without the ties to Google's Android workflows. Detailed information about projects are specified in a `clowder.yml` (or `clowder.yaml`) file, but each repository is still essentially independent. Projects can track branches, or be tied to specific tags or commits. This file can be checked into its own repository so it can be versioned and shared across teams. The primary purpose of `clowder` is synchronization of multiple repositories, so normal development still takes place in individual repositories with the usual `git` commands
+Managing multiple repositories can be pretty frustrating. There are a number of existing options, the primary being git submodules and subtrees. Google's [repo](https://code.google.com/p/git-repo) tool takes a different approach, but is closely tied to Google's development workflow. `clowder` uses a similar approach as `repo`, but without the ties to Google's Android workflows. Detailed information about projects are specified in a `clowder.yml` file, but each repository is still essentially independent. Projects can track branches, or be tied to specific tags or commits. This file can be checked into its own repository so it can be versioned and shared across teams. The primary purpose of `clowder` is synchronization of multiple repositories, so normal development still takes place in individual repositories with the usual `git` commands
 
 TODO: Why clowder?
+
+## Table of Contents
+
+* [Getting Started](#getting-started)
+  * [Requirements](#requirements)
+  * [Installation](#installation)
+* [The clowder.yml file](#the-clowderyml-file)
+  * [Breakdown](#breakdown)
+* [Basic usage](#basic-usage)
+  * [clowder init](#clowder-init)
+  * [clowder herd](#clowder-herd)
+  * [clowder status](#clowder-status)
+* [Further Information](#further-information)
+  * [More commands](#more-commands)
+* [Development](#development)
 
 ## Getting Started
 
 ### Requirements
 
-- [git](https://git-scm.com)
-- [Python 3](https://www.python.org/downloads/)
+* [git](https://git-scm.com)
+* [Python 3](https://www.python.org/downloads/)
 
 ### Installation
 
@@ -111,9 +126,9 @@ There's much more cusomization possible with `clowder`. For some more complex ex
 
 [clowder.yml Syntax](docs/clowder-yml-syntax.md)
 
-## Usage
+## Basic Usage
 
-First create a directory where all the prrojects will be cloned
+First create a directory where all the projects will be cloned
 
 ```bash
 mkdir cats
@@ -122,7 +137,7 @@ cd cats
 
 ### `clowder init`
 
-It's possible to just create a local `clowder.yml` file, but it's recommended to check the file into the root of a dedicated repository. This exammple uses an [existing repository](https://github.com/JrGoodle/clowder-examples) containing a `clowder.yml` file
+It's possible to just create a local `clowder.yml` file, but it's recommended to check the file into the root of a dedicated repository. This exammple uses an [existing repository](https://github.com/JrGoodle/clowder-examples) containing a [clowder.yml](https://github.com/JrGoodle/clowder-examples/blob/master/clowder.yml) file
 
 ```bash
 clowder init git@github.com:JrGoodle/clowder-examples.git
@@ -132,8 +147,8 @@ clowder init git@github.com:JrGoodle/clowder-examples.git
 
 The `clowder init` command does the following
 
-- Clones the [examples clowder repo](https://github.com/JrGoodle/clowder-examples) in the `cats/.clowder` directory
-- Creates a symlink in the `cats` directory: `clowder.yaml` -> `.clowder/clowder.yml`
+* Clones the [examples clowder repo](https://github.com/JrGoodle/clowder-examples) in the `cats/.clowder` directory
+* Creates a symlink in the `cats` directory: `clowder.yaml` -> `.clowder/clowder.yml`
 
 ### `clowder herd`
 
@@ -145,11 +160,11 @@ clowder herd
 
 `clowder herd` updates the state of the projects. When the command is run, the following happens
 
-- If any projects don't have a clean git status then `clowder` exits
-- Projects are cloned if they don't currently exist
-- Each project fetches the latest changes
-- If the current git ref checked out doesn't match the `clowder.yml` configuration, the correct ref will be checked out
-- The latest changes are pulled for branches. For commits and tags, the commits are checked out into a detached `HEAD` state
+* If any projects don't have a clean git status then `clowder` exits
+* Projects are cloned if they don't currently exist
+* Each project fetches the latest changes
+* If the current git ref checked out doesn't match the `clowder.yml` configuration, the correct ref will be checked out
+* The latest changes are pulled for branches. For commits and tags, the commits are checked out into a detached `HEAD` state
 
 ### `clowder status`
 
@@ -170,7 +185,7 @@ clowder branch # Print all local branches
 clowder checkout 'my_branch' # Checkout 'my_branch' in projects
 clowder clean # Discard any changes in projects
 clowder config get # EXPERIMENTAL: Get config values
-clowder config set projects 'my_goup' # EXPERIMENTAL: Set config values
+clowder config set projects 'my_group' # EXPERIMENTAL: Set config values
 clowder config clear projects # EXPERIMENTAL: Clear config values
 clowder diff # Print git diff for all projects
 clowder forall -c 'git status' # Run command in all project directories

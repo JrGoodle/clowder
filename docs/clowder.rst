@@ -7,7 +7,7 @@ Subpackages
 .. toctree::
 
     clowder.cli
-    clowder.error
+    clowder.config
     clowder.git
     clowder.model
     clowder.util
@@ -40,7 +40,7 @@ clowder\.clowder\_repo module
     :show-inheritance:
 
 clowder\.environment module
------------------------------
+---------------------------
 
 .. automodule:: clowder.environment
     :members:
@@ -48,7 +48,7 @@ clowder\.environment module
     :show-inheritance:
 
 clowder\.error module
------------------------------
+---------------------
 
 .. automodule:: clowder.error
     :members:
@@ -56,7 +56,7 @@ clowder\.error module
     :show-inheritance:
 
 clowder\.logging module
------------------------------
+-----------------------
 
 .. automodule:: clowder.logging
     :members:

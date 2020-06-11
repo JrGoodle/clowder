@@ -45,7 +45,7 @@ clowder\.util\.formatting module
     :show-inheritance:
 
 clowder\.util\.parallel module
-----------------------------------------
+------------------------------
 
 .. automodule:: clowder.util.parallel
     :members:
@@ -61,7 +61,7 @@ clowder\.util\.progress module
     :show-inheritance:
 
 clowder\.util\.yaml module
-------------------------------
+--------------------------
 
 .. automodule:: clowder.util.yaml
     :members:

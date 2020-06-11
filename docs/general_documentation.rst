@@ -6,8 +6,7 @@ General Documentation
    :maxdepth: 2
 
    Command Reference <commands>
-   The clowder.yaml File <clowder-yaml>
+   clowder.yml Syntax <clowder-yml-syntax>
    The clowder repo <clowder-repo>
    Forks <forks>
-   Plugins <plugins>
    Examples <examples>

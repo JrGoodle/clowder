@@ -4,154 +4,146 @@ clowder\.cli package
 Submodules
 ----------
 
-clowder\.cli\.base\_controller module
--------------------------------------
+clowder\.cli\.branch module
+---------------------------
 
-.. automodule:: clowder.cli.base_controller
+.. automodule:: clowder.cli.branch
     :members:
     :undoc-members:
     :show-inheritance:
 
-clowder\.cli\.branch\_controller module
----------------------------------------
+clowder\.cli\.checkout module
+-----------------------------
 
-.. automodule:: clowder.cli.branch_controller
+.. automodule:: clowder.cli.checkout
     :members:
     :undoc-members:
     :show-inheritance:
 
-clowder\.cli\.checkout\_controller module
------------------------------------------
+clowder\.cli\.clean module
+--------------------------
 
-.. automodule:: clowder.cli.checkout_controller
+.. automodule:: clowder.cli.clean
     :members:
     :undoc-members:
     :show-inheritance:
 
-clowder\.cli\.clean\_controller module
---------------------------------------
+clowder\.cli\.config module
+---------------------------
 
-.. automodule:: clowder.cli.clean_controller
+.. automodule:: clowder.cli.config
     :members:
     :undoc-members:
     :show-inheritance:
 
-clowder\.cli\.config\_controller module
---------------------------------------
+clowder\.cli\.diff module
+-------------------------
 
-.. automodule:: clowder.cli.config_controller
+.. automodule:: clowder.cli.diff
     :members:
     :undoc-members:
     :show-inheritance:
 
-clowder\.cli\.diff\_controller module
--------------------------------------
+clowder\.cli\.forall module
+---------------------------
 
-.. automodule:: clowder.cli.diff_controller
+.. automodule:: clowder.cli.forall
     :members:
     :undoc-members:
     :show-inheritance:
 
-clowder\.cli\.forall\_controller module
----------------------------------------
+clowder\.cli\.herd module
+-------------------------
 
-.. automodule:: clowder.cli.forall_controller
+.. automodule:: clowder.cli.herd
     :members:
     :undoc-members:
     :show-inheritance:
 
-clowder\.cli\.herd\_controller module
--------------------------------------
+clowder\.cli\.init module
+-------------------------
 
-.. automodule:: clowder.cli.herd_controller
+.. automodule:: clowder.cli.init
     :members:
     :undoc-members:
     :show-inheritance:
 
-clowder\.cli\.init\_controller module
--------------------------------------
+clowder\.cli\.link module
+-------------------------
 
-.. automodule:: clowder.cli.init_controller
+.. automodule:: clowder.cli.link
     :members:
     :undoc-members:
     :show-inheritance:
 
-clowder\.cli\.link\_controller module
--------------------------------------
+clowder\.cli\.prune module
+--------------------------
 
-.. automodule:: clowder.cli.link_controller
+.. automodule:: clowder.cli.prune
     :members:
     :undoc-members:
     :show-inheritance:
 
-clowder\.cli\.prune\_controller module
---------------------------------------
+clowder\.cli\.repo module
+-------------------------
 
-.. automodule:: clowder.cli.prune_controller
+.. automodule:: clowder.cli.repo
     :members:
     :undoc-members:
     :show-inheritance:
 
-clowder\.cli\.repo\_controller module
--------------------------------------
+clowder\.cli\.reset module
+--------------------------
 
-.. automodule:: clowder.cli.repo_controller
+.. automodule:: clowder.cli.reset
     :members:
     :undoc-members:
     :show-inheritance:
 
-clowder\.cli\.reset\_controller module
---------------------------------------
+clowder\.cli\.save module
+-------------------------
 
-.. automodule:: clowder.cli.reset_controller
+.. automodule:: clowder.cli.save
     :members:
     :undoc-members:
     :show-inheritance:
 
-clowder\.cli\.save\_controller module
--------------------------------------
+clowder\.cli\.start module
+--------------------------
 
-.. automodule:: clowder.cli.save_controller
+.. automodule:: clowder.cli.start
     :members:
     :undoc-members:
     :show-inheritance:
 
-clowder\.cli\.start\_controller module
---------------------------------------
+clowder\.cli\.stash module
+--------------------------
 
-.. automodule:: clowder.cli.start_controller
+.. automodule:: clowder.cli.stash
     :members:
     :undoc-members:
     :show-inheritance:
 
-clowder\.cli\.stash\_controller module
---------------------------------------
+clowder\.cli\.status module
+---------------------------
 
-.. automodule:: clowder.cli.stash_controller
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-clowder\.cli\.status\_controller module
----------------------------------------
-
-.. automodule:: clowder.cli.status_controller
+.. automodule:: clowder.cli.status
     :members:
     :undoc-members:
     :show-inheritance:
 
 clowder\.cli\.util module
---------------------------------------
+-------------------------
 
 .. automodule:: clowder.cli.util
     :members:
     :undoc-members:
     :show-inheritance:
 
-clowder\.cli\.yaml\_controller module
--------------------------------------
+clowder\.cli\.yaml module
+-------------------------
 
-.. automodule:: clowder.cli.yaml_controller
+.. automodule:: clowder.cli.yaml
     :members:
     :undoc-members:
     :show-inheritance:

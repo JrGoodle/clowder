@@ -21,7 +21,7 @@ clowder\.model\.fork module
     :show-inheritance:
 
 clowder\.model\.git\_settings module
------------------------------
+------------------------------------
 
 .. automodule:: clowder.model.git_settings
     :members:
@@ -45,7 +45,7 @@ clowder\.model\.source module
     :show-inheritance:
 
 clowder\.model\.util module
------------------------------
+---------------------------
 
 .. automodule:: clowder.model.util
     :members:

@@ -5,7 +5,7 @@ Submodules
 ----------
 
 clowder\.git\.git\_repo module
--------------------------
+------------------------------
 
 .. automodule:: clowder.git.git_repo
     :members:

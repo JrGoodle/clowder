@@ -38,11 +38,11 @@
 
 ### `name`
 
-The name of your clowder. The name will be displayed when running commands.
+Name to be displayed when running commands.
 
 ### `defaults`
 
-Default settings that will apply to all projects or sources. These values can be overridden at the source, project, or fork levels.
+Default settings that will apply to all projects or sources.
 
 ### `defaults.protocol`
 
@@ -50,39 +50,39 @@ Default settings that will apply to all projects or sources. These values can be
 
 ### `defaults.source`
 
-__REQUIRED*__ The name of the default source to use when cloning project repositories. This can be overridden at the project and fork levels. If only one source is present in `sources` then this value is optional. If more than one is specified, this value is required.
+__REQUIRED*__ The name of the default source to use when cloning project repositories. This can be overridden by setting [projects.source](#projectssource) or [projects.fork.source](#projectsforksource). If only one source is present in `sources` then this value is optional. If more than one is specified, this value is required.
 
 ### `defaults.remote`
 
-The default name of the remote created for projects. This can be overridden at the project and fork levels.
+The default name of the git remote. This can be overridden by setting [projects.remote](#projectsremote) or [projects.fork.remote](#projectsforkremote).
 
 ### `defaults.branch`
 
-The default name of the branch projects should track. This can be overridden at the project and fork levels. Only one of `branch`, `tag`, or `commit` can be present.
+The default name of the branch projects should track. This can be overridden by setting [projects.branch](#projectsbranch) or [projects.fork.branch](#projectsforkbranch). Only one of `branch`, `tag`, or `commit` can be present.
 
 ### `defaults.tag`
 
-The default name of the tag projects should track. This can be overridden at the project and fork levels. Only one of `branch`, `tag`, or `commit` can be present.
+The default name of the tag projects should track. This can be overridden by setting [projects.tag](#projectstag) or [projects.fork.tag](#projectsforktag). Only one of `branch`, `tag`, or `commit` can be present.
 
 ### `defaults.commit`
 
-The default commit projects should track. This can be overridden at the project and fork levels. Only one of `branch`, `tag`, or `commit` can be present. Must be the full 40-character sha-1.
+The default commit projects should track. This can be overridden by setting [projects.commit](#projectscommit) or [projects.fork.commit](#projectsforkcommit). Only one of `branch`, `tag`, or `commit` can be present. Must be the full 40-character sha-1.
 
 ### `defaults.git.lfs`
 
-Setting this value to true will cause clowder to install git lfs hooks and pull lfs files when `clowde herd` is run.
+Setting this value to `true` will cause clowder to install git lfs hooks and pull lfs files when `clowder herd` is run. This can be overridden by setting [projects.git.lfs](#projectsgitlfs).
 
 ### `defaults.git.recursive`
 
-Setting this value to true will cause clowder to recursively init and update submodules when `clowde herd` is run.
+Setting this value to `true` will cause clowder to recursively init and update submodules when `clowder herd` is run. This can be overridden by setting [projects.git.recursive](#projectsgitrecursive).
 
 ### `defaults.git.depth`
 
-The default depth git will clone repositories. Must be a positive integer. If set to `0` the full repository history will be cloned.
+The default depth git will clone repositories. Must be a positive integer. If set to `0` the full repository history will be cloned. This can be overridden by setting [projects.git.depth](#projectsgitdepth).
 
 ### `defaults.git.config`
 
-A map of git config values to install in projects. During an initial clone, they will be installed at the end. Later invocations of `clowder herd` will install the config values before running other commands. This can be overridden at the project level. Git config values from defaults will be combined with those in a project. If the same keys are present, the project value will take priority. To prevent a default git config value from being inherited by a project, it must be set to `null` in the `projects.git.config` settings.
+A map of git config values to install in projects. During an initial clone, they will be installed at the end. Later invocations of `clowder herd` will install the config values before running other commands. This can be overridden by setting [projects.git.config](#projectsgitconfig). Git config values from defaults will be combined with those in [projects.git.confg](#projects.git.config). If the same keys are present, the project value will take priority. To prevent a default git config value from being inherited by a project, it must be set to `null` in [projects.git.config](#projectsgitconfig).
 
 ### `sources`
 
@@ -90,15 +90,15 @@ A map of git config values to install in projects. During an initial clone, they
 
 ### `sources.name`
 
-**REQUIRED** The name used to identify the repository source when used in the `remote` entry in defaults, project, or fork.
+**REQUIRED** The name used to identify the repository source for [defaults.remote](#defaultsremote), [projects.remote](#projectsremote), and [projects.fork.remote](#projectsforkremote).
 
 ### `sources.url`
 
-**REQUIRED** This is combined with the `protocol` and `projects.name` to form the full url for cloning the repository, taking the form of  `git@${source.url}:${project.name}.git` or `https://${source.url}/${project.name}.git` depending on the protocol specified.
+**REQUIRED** The Git URL prefix for all projects which use this source. This is combined with [defaults.protocol](#defaultsprotocol) or [sources.protocol](#sourcesprotocol) and [projects.name](#projectsname) to form the full url for cloning the repository, taking the form of `git@${defaults.url/sources.url}:${projects.name}.git` or `https://${defaults.url/sources.url}/${projects.name}.git` depending on the protocol specified.
 
 ### `sources.protocol`
 
-The git protocol to use when cloning repositories. Options are `ssh` and `https`. This is combined with the `source.url` and `project.name` to form the full url for cloning the repository, taking the form of  `git@${source.url}:${project.name}.git` or `https://${source.url}/${project.name}.git` depending on the protocol specified.
+The Git URL protocol prefix for all projects which use this source. Accepted values are `ssh` and `https`. This is combined with [sources.url](#sourcesurl) and [projects.name](#projectsname) to form the full url for cloning the repository, taking the form of `git@${defaults.url/sources.url}:${projects.name}.git` or `https://${defaults.url/sources.url}/${projects.name}.git` depending on the protocol specified.
 
 ### `projects`
 
@@ -106,35 +106,35 @@ The git protocol to use when cloning repositories. Options are `ssh` and `https`
 
 ### `projects.name`
 
-**REQUIRED** This is combined with the `protocol` and `sources.url` to form the full url for cloning the repository, taking the form of  `git@${source.url}:${project.name}.git` or `https://${source.url}/${project.name}.git` depending on the protocol specified.
+**REQUIRED** A unique name for this project. The project's name is appended onto its source's URL to generate the actual URL to configure the Git remote with. This is combined with [defaults.protocol](#defaultsprotocol) or [sources.protocol](#sourcesprotocol) and [sources.url](#sourcesurl) to form the full url for cloning the repository, taking the form of `git@${defaults.url/sources.url}:${projects.name}.git` or `https://${defaults.url/sources.url}/${projects.name}.git` depending on the protocol specified.
 
 ### `projects.source`
 
-Name from `source.name` to use for forming git clone url.
+Name from [sources.name](#sourcesname) to use for forming git clone url. See also [defaults.source](#defaultssource).
 
 ### `projects.branch`
 
-See [defaults.branch](#defaultsbranch)
+Name of the Git branch to track for this project. Only one of `branch`, `tag`, or `commit` can be present. If not supplied and `tag` or `commit` are not specified in [projects](#projects) or [defaults](#defaults), the default branch `master` is used.
 
 ### `projects.tag`
 
-See [defaults.tag](#defaultstag)
+Name of the Git tag to track for this project. Only one of `tag`, `tag`, or `commit` can be present. If not supplied and `branch` or `commit` are not specified in [projects](#projects) or [defaults](#defaults), the default branch `master` is used.
 
 ### `projects.commit`
 
-See [defaults.commit](#defaultscommit)
+A git commit SHA-1 to track for this project. Must be full 40 character SHA-1. Only one of `commit`, `tag`, or `commit` can be present. If not supplied and `branch` and `tag` are not specified in [projects](#projects) or [defaults](#defaults), the default branch `master` is used.
 
 ### `projects.path`
 
-Relative path to clone git repository to. If not present, then the last path component of `project.name` will be used as the git clone path.
+Relative path to clone git repository. If not present, then the last path component of [projects.name](#projectsname) will be used as the git clone path.
 
 ### `projects.remote`
 
-Git remote name.
+The git remote name. See also [defaults.remote](#defaultsremote).
 
 ### `projects.groups`
 
-Projects can specify custom `groups` to run commands for only certain projects. By default, all projects are added to the `all` group, and a group of their `name` and `path`. If `notdefault` is present then the project will not be included in commands unless another group argument is given that it belongs to.
+Projects can specify custom groups to run commands for only certain projects. By default, all projects are added to the `all` group, and a group of their `name` and `path`. If `notdefault` is present, then the project will not be included in commands unless another group argument is given that it belongs to. The values of `all` and `default` are reserved and not allowed to be specified in this list.
 
 ### `projects.fork`
 
@@ -142,28 +142,28 @@ A map of values defining a git fork.
 
 ### `projects.fork.name`
 
-This is combined with the `protocol` and `sources.url` to form the full url for cloning the repository, taking the form of  `git@${source.url}:${fork.name}.git` or `https://${source.url}/${fork.name}.git` depending on the protocol specified.
+This is combined with [defaults.protocol](#defaultsprotocol) or [sources.protocol](#sourcesprotocol) and [sources.url](#sourcesurl) to form the full url for cloning the repository, taking the form of `git@${defaults.url/sources.url}:${projects.fork.name}.git` or `https://${defaults.url/sources.url}/${projects.fork.name}.git` depending on the protocol specified.
 
 ### `projects.fork.source`
 
-See [projects.source](#projectssource)
+Name from [sources.name](#sourcesname) to use for forming git clone url. See also [defaults.source](#defaultssource).
 
 ### `projects.fork.remote`
 
-Git remote name.
+Git remote name. See also [defaults.remote](#defaultsremote).
 
 ### `projects.git.lfs`
 
-See [defaults.git.lfs](#defaultsgitlfs)
+Setting this value to `true` will cause clowder to install git lfs hooks and pull lfs files when `clowder herd` is run. See also [defaults.git.lfs](#defaultsgitlfs)
 
 ### `projects.git.recursive`
 
-See [defaults.git.recursive](#defaultsgitrecursive)
+Setting this value to `true` will cause clowder to recursively init and update submodules when `clowder herd` is run. See also [defaults.git.recursive](#defaultsgitrecursive)
 
 ### `projects.git.depth`
 
-See [defaults.git.depth](#defaultsgitdepth)
+The default depth git will clone repositories. Must be a positive integer. If set to `0` the full repository history will be cloned. See also [defaults.git.depth](#defaultsgitdepth)
 
 ### `projects.git.config`
 
-See [defaults.git.config](#defaultsgitconfig)
+A map of git config values to install in the project. During an initial clone, they will be installed at the end. Later invocations of `clowder herd` will install the config values before running other commands. Git config values from [defaults.git.confg](#defaults.git.config) will be combined with those in the project. If the same keys are present, the project value will take priority. To prevent a value from [defaults.git.config](#defaultsgitconfig) from being inherited by the project, it must be set to `null`. See also [defaults.git.config](#defaultsgitconfig)

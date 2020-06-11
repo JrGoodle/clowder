@@ -1,11 +1,11 @@
 clowder\.config package
-====================
+=======================
 
 Submodules
 ----------
 
 clowder\.config\.clowder\_config module
--------------------------------------
+---------------------------------------
 
 .. automodule:: clowder.config.clowder_config
     :members:
@@ -13,7 +13,7 @@ clowder\.config\.clowder\_config module
     :show-inheritance:
 
 clowder\.config\.config module
----------------------------------------
+------------------------------
 
 .. automodule:: clowder.config.config
     :members:
