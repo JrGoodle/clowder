@@ -124,7 +124,7 @@ There's much more cusomization possible with `clowder`. For some more complex ex
 
 [Forks clowder.yml](docs/clowder-yml-forks.md)
 
-[clowder.yml Syntax](docs/clowder-yml-syntax.md)
+[clowder.yml Syntax Reference](docs/clowder-yml-syntax-reference.md)
 
 ## Basic Usage
 

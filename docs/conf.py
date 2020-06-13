@@ -16,12 +16,52 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 
-import os
 import sys
-CLOWDER_DIR = os.path.join('..', 'clowder')
-sys.path.insert(0, os.path.abspath(CLOWDER_DIR))
+from pathlib import Path
+
+CLOWDER_DIR = str(Path('../clowder').resolve())
+sys.path.insert(0, CLOWDER_DIR)
 
 import clowder
+
+# -- Fix header links in markdown files -----------------------------------
+
+clowder_yaml_syntax_reference_file = Path('clowder-yml-syntax-reference.md').resolve()
+clowder_yaml_syntax_reference_contents = clowder_yaml_syntax_reference_file.read_text()
+clowder_yaml_syntax_reference_contents = clowder_yaml_syntax_reference_contents.replace("#defaultsprotocol", "#defaults-protocol")
+clowder_yaml_syntax_reference_contents = clowder_yaml_syntax_reference_contents.replace("#defaultssource", "#defaults-source")
+clowder_yaml_syntax_reference_contents = clowder_yaml_syntax_reference_contents.replace("#defaultsremote", "#defaults-remote")
+clowder_yaml_syntax_reference_contents = clowder_yaml_syntax_reference_contents.replace("#defaultsbranch", "#defaults-branch")
+clowder_yaml_syntax_reference_contents = clowder_yaml_syntax_reference_contents.replace("#defaultstag", "#defaults-tag")
+clowder_yaml_syntax_reference_contents = clowder_yaml_syntax_reference_contents.replace("#defaultscommit", "#defaults-commit")
+clowder_yaml_syntax_reference_contents = clowder_yaml_syntax_reference_contents.replace("#defaultsgitlfs", "#defaults-git-lfs")
+clowder_yaml_syntax_reference_contents = clowder_yaml_syntax_reference_contents.replace("#defaultsgitrecursive", "#defaults-git-recursive")
+clowder_yaml_syntax_reference_contents = clowder_yaml_syntax_reference_contents.replace("#defaultsgitdepth", "#defaults-git-depth")
+clowder_yaml_syntax_reference_contents = clowder_yaml_syntax_reference_contents.replace("#defaultsgitconfig", "#defaults-git-config")
+clowder_yaml_syntax_reference_contents = clowder_yaml_syntax_reference_contents.replace("#sourcesname", "#sources-name")
+clowder_yaml_syntax_reference_contents = clowder_yaml_syntax_reference_contents.replace("#sourcesurl", "#sources-url")
+clowder_yaml_syntax_reference_contents = clowder_yaml_syntax_reference_contents.replace("#sourcesprotocol", "#sources-protocol")
+clowder_yaml_syntax_reference_contents = clowder_yaml_syntax_reference_contents.replace("#projectsname", "#projects-name")
+clowder_yaml_syntax_reference_contents = clowder_yaml_syntax_reference_contents.replace("#projectssource", "#projects-source")
+clowder_yaml_syntax_reference_contents = clowder_yaml_syntax_reference_contents.replace("#projectsbranch", "#projects-branch")
+clowder_yaml_syntax_reference_contents = clowder_yaml_syntax_reference_contents.replace("#projectstag", "#projects-tag")
+clowder_yaml_syntax_reference_contents = clowder_yaml_syntax_reference_contents.replace("#projectscommit", "#projects-commit")
+clowder_yaml_syntax_reference_contents = clowder_yaml_syntax_reference_contents.replace("#projectspath", "#projects-path")
+clowder_yaml_syntax_reference_contents = clowder_yaml_syntax_reference_contents.replace("#projectsremote", "#projects-remote")
+clowder_yaml_syntax_reference_contents = clowder_yaml_syntax_reference_contents.replace("#projectsgroups", "#projects-groups")
+clowder_yaml_syntax_reference_contents = clowder_yaml_syntax_reference_contents.replace("#projectsforkname", "#projects-fork-name")
+clowder_yaml_syntax_reference_contents = clowder_yaml_syntax_reference_contents.replace("#projectsforksource", "#projects-fork-source")
+clowder_yaml_syntax_reference_contents = clowder_yaml_syntax_reference_contents.replace("#projectsforkremote", "#projects-fork-remote")
+clowder_yaml_syntax_reference_contents = clowder_yaml_syntax_reference_contents.replace("#projectsforkbranch", "#projects-fork-branch")
+clowder_yaml_syntax_reference_contents = clowder_yaml_syntax_reference_contents.replace("#projectsforktag", "#projects-fork-tag")
+clowder_yaml_syntax_reference_contents = clowder_yaml_syntax_reference_contents.replace("#projectsforkcommit", "#projects-fork-commit")
+clowder_yaml_syntax_reference_contents = clowder_yaml_syntax_reference_contents.replace("#projectsgitlfs", "#projects-git-lfs")
+clowder_yaml_syntax_reference_contents = clowder_yaml_syntax_reference_contents.replace("#projectsgitrecursive", "#projects-git-recursive")
+clowder_yaml_syntax_reference_contents = clowder_yaml_syntax_reference_contents.replace("#projectsgitdepth", "#projects-git-depth")
+clowder_yaml_syntax_reference_contents = clowder_yaml_syntax_reference_contents.replace("#projectsgitconfig", "#projects-git-config")
+clowder_yaml_syntax_reference_contents = clowder_yaml_syntax_reference_contents.replace("#projectsfork", "#projects-fork")
+with clowder_yaml_syntax_reference_file.open("w", encoding="utf-8") as f:
+    f.write(clowder_yaml_syntax_reference_contents)
 
 # -- General configuration ------------------------------------------------
 

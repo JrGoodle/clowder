@@ -1,4 +1,4 @@
-# `clowder.yml` Syntax
+# `clowder.yml` Syntax Reference
 
 - [name](#name) **Required**
 - [defaults](#defaults) **Required**
@@ -29,6 +29,9 @@
 - [projects.fork.name](#projectsforkname)
 - [projects.fork.source](#projectsforksource)
 - [projects.fork.remote](#projectsforkremote)
+- [projects.fork.branch](#projectsforkbranch)
+- [projects.fork.tag](#projectsforktag)
+- [projects.fork.commit](#projectsforkcommit)
 - [projects.git.lfs](#projectsgitlfs)
 - [projects.git.recursive](#projectsgitrecursive)
 - [projects.git.depth](#projectsgitdepth)
@@ -82,7 +85,7 @@ The default depth git will clone repositories. Must be a positive integer. If se
 
 ### `defaults.git.config`
 
-A map of git config values to install in projects. During an initial clone, they will be installed at the end. Later invocations of `clowder herd` will install the config values before running other commands. This can be overridden by setting [projects.git.config](#projectsgitconfig). Git config values from defaults will be combined with those in [projects.git.confg](#projects.git.config). If the same keys are present, the project value will take priority. To prevent a default git config value from being inherited by a project, it must be set to `null` in [projects.git.config](#projectsgitconfig).
+A map of git config values to install in projects. During an initial clone, they will be installed at the end. Later invocations of `clowder herd` will install the config values before running other commands. This can be overridden by setting [projects.git.config](#projectsgitconfig). Git config values from defaults will be combined with those in [projects.git.confg](#projectsgitconfig). If the same keys are present, the project value will take priority. To prevent a default git config value from being inherited by a project, it must be set to `null` in [projects.git.config](#projectsgitconfig).
 
 ### `sources`
 
@@ -152,6 +155,18 @@ Name from [sources.name](#sourcesname) to use for forming git clone url. See als
 
 Git remote name. See also [defaults.remote](#defaultsremote).
 
+### `projects.fork.branch`
+
+Name of the Git branch to track for this project fork. Only one of `branch`, `tag`, or `commit` can be present. If not supplied and `tag` or `commit` are not specified in [projects.fork](#projectsfork) or [defaults](#defaults), the default branch `master` is used.
+
+### `projects.fork.tag`
+
+Name of the Git tag to track for this project fork. Only one of `tag`, `tag`, or `commit` can be present. If not supplied and `branch` or `commit` are not specified in [projects.fork](#projectsfork) or [defaults](#defaults), the default branch `master` is used.
+
+### `projects.fork.commit`
+
+A git commit SHA-1 to track for this project fork. Must be full 40 character SHA-1. Only one of `commit`, `tag`, or `commit` can be present. If not supplied and `branch` and `tag` are not specified in [projects.fork](#projectsfork) or [defaults](#defaults), the default branch `master` is used.
+
 ### `projects.git.lfs`
 
 Setting this value to `true` will cause clowder to install git lfs hooks and pull lfs files when `clowder herd` is run. See also [defaults.git.lfs](#defaultsgitlfs)
@@ -166,4 +181,4 @@ The default depth git will clone repositories. Must be a positive integer. If se
 
 ### `projects.git.config`
 
-A map of git config values to install in the project. During an initial clone, they will be installed at the end. Later invocations of `clowder herd` will install the config values before running other commands. Git config values from [defaults.git.confg](#defaults.git.config) will be combined with those in the project. If the same keys are present, the project value will take priority. To prevent a value from [defaults.git.config](#defaultsgitconfig) from being inherited by the project, it must be set to `null`. See also [defaults.git.config](#defaultsgitconfig)
+A map of git config values to install in the project. During an initial clone, they will be installed at the end. Later invocations of `clowder herd` will install the config values before running other commands. Git config values from [defaults.git.confg](#defaultsgitconfig) will be combined with those in the project. If the same keys are present, the project value will take priority. To prevent a value from [defaults.git.config](#defaultsgitconfig) from being inherited by the project, it must be set to `null`. See also [defaults.git.config](#defaultsgitconfig)

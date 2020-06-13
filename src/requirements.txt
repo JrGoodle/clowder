@@ -12,6 +12,7 @@ remarshal
 sphinx
 sphinx-autobuild
 sphinx-rtd-theme
+# sphinx_rtd_theme
 termcolor
 tqdm
 twine
