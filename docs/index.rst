@@ -34,9 +34,8 @@ clowder
 .. toctree::
    :maxdepth: 2
 
-   General Documentation <general_documentation>
-   Comparisons To Similar Tools <comparisons>
-   API Reference <api_reference>
+   General Documentation <rst/general_documentation>
+   API Reference <rst/api_reference>
 
 
 Indices and tables

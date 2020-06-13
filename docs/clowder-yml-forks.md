@@ -38,7 +38,9 @@ projects:
       name: JrGoodle/sox
 ```
 
-## Breakdown
+## Syntax
+
+See also: [clowder.yml syntax reference](clowder-yml-syntax-reference.md)
 
 ```yaml
 defaults:

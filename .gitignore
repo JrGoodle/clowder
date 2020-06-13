@@ -1,5 +1,16 @@
 # Example files
 
+docs/examples/clowder.yml
+docs/examples/.clowder
+docs/examples/duke
+docs/examples/mu
+docs/examples/kit
+docs/examples/kishka
+docs/examples/sasha
+docs/examples/june
+docs/examples/black-cats
+docs/examples/render*.gif
+
 test/config/*/invalid/*.json
 test/config/*/*.json
 

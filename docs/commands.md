@@ -2,9 +2,127 @@
 
 Examples based on the [Swift projects clowder.yml](https://github.com/JrGoodle/swift-clowder/blob/master/clowder.yml)
 
----
+## Table of Contents
 
-## `clowder branch`
+* [main commands](#main-commands)
+  * [clowder init](#clowder-init)
+  * [clowder herd](#clowder-herd)
+  * [clowder status](#clowder-status)
+  * [clowder forall](#clowder-forall)
+* [git commands](#git-commands)
+  * [clowder branch](#clowder-branch)
+  * [clowder checkout](#clowder-checkout)
+  * [clowder clean](#clowder-clean)
+  * [clowder diff](#clowder-diff)
+  * [clowder prune](#clowder-prune)
+  * [clowder reset](#clowder-reset)
+  * [clowder start](#clowder-start)
+  * [clowder stash](#clowder-stash)
+* [clowder repo commands](#clowder-repo-commands)
+  * [clowder link](#clowder-link)
+  * [clowder repo](#clowder-repo)
+  * [clowder save](#clowder-save)
+* [other commands](#other-commands)
+  * [clowder version](#clowder-version)
+  * [clowder yaml](#clowder-yaml)
+
+## main commands
+
+### clowder init
+
+Clone repo containing `clowder.yml` file (referred to as the "clowder repo")
+
+```bash
+# Clone clowder repo
+clowder init https://github.com/jrgoodle/swift-clowder.git
+
+# Clone clowder repo from branch 'tags'
+clowder init https://github.com/jrgoodle/cats.git -b tags
+```
+
+### clowder herd
+
+Update with latest changes
+
+```bash
+# Herd a shallow clone to specified depth
+clowder herd -d 1
+
+# Herd using rebase instead of pull
+clowder herd -r
+
+# Herd a specified branch if it exists, otherwise use default ref
+clowder herd -b my_branch
+
+# Herd a specified tag if it exists, otherwise use default ref
+clowder herd -t my_tag
+
+# Only herd projects in swift and llvm groups
+clowder herd swift llvm
+
+# Only herd swift project
+clowder herd apple/swift
+```
+
+### clowder status
+
+Print status of projects
+
+```bash
+# Print status of projects
+clowder status
+
+# Fetch upstream changes for projects before printing status
+clowder status -f
+```
+
+### clowder forall
+
+Runs command or script in project directories
+
+```bash
+# Run command in all project directories
+clowder forall -c "git status"
+
+# Run script in all project directories
+clowder forall -c "/path/to/script.sh"
+
+# Run command in all project directories, ignoring errors
+clowder forall -ic "git status"
+
+# Run script in all project directories, ignoring errors
+clowder forall -ic "/path/to/script.sh"
+
+# Run command for projects in llvm group
+clowder forall -c "git status" -g llvm
+
+# Run script for projects in llvm group
+clowder forall -c "/path/to/script.sh" -g llvm
+
+# Run command for swift project
+clowder forall apple/swift -c "git status"
+
+# Run script for swift project
+clowder forall apple/swift -c "/path/to/script.sh"
+```
+
+The following environment variables are available for use in commands and scripts:
+
+* `CLOWDER_PATH` is the absolute path to the root directory the clowder repo was initialized in
+* `PROJECT_PATH` is the absolute path to the project directory
+* `PROJECT_NAME` is the unique name of the project
+* `PROJECT_REMOTE` is the name of the project's remote
+* `PROJECT_REF` is the project ref as written in the `clowder.yml` file
+
+If a fork is specified, the following environment variables are also available for use in commands and scripts:
+
+* `FORK_REMOTE` is the name of the fork's remote
+* `FORK_NAME` is the unique name of the fork
+* `FORK_REF` is the project ref as written in the `clowder.yml` file
+
+## git commands
+
+### clowder branch
 
 ```bash
 # Print all local branches
@@ -23,9 +141,7 @@ clowder branch llvm
 clowder branch apple/swift
 ```
 
----
-
-## `clowder checkout`
+### clowder checkout
 
 ```bash
 # Checkout branches
@@ -38,9 +154,7 @@ clowder checkout branch_name llvm
 clowder checkout branch_name apple/swift
 ```
 
----
-
-## `clowder clean`
+### clowder clean
 
 Discards changes in dirty repositories
 
@@ -93,9 +207,7 @@ clowder clean -x
 clowder clean -r
 ```
 
----
-
-## `clowder diff`
+### clowder diff
 
 Equivalent to running `git status -vv` in project directories
 
@@ -110,109 +222,7 @@ clowder diff llvm
 clowder diff apple/swift
 ```
 
----
-
-## `clowder forall`
-
-Runs command or script in project directories
-
-```bash
-# Run command in all project directories
-clowder forall -c "git status"
-
-# Run script in all project directories
-clowder forall -c "/path/to/script.sh"
-
-# Run command in all project directories, ignoring errors
-clowder forall -ic "git status"
-
-# Run script in all project directories, ignoring errors
-clowder forall -ic "/path/to/script.sh"
-
-# Run command for projects in llvm group
-clowder forall -c "git status" -g llvm
-
-# Run script for projects in llvm group
-clowder forall -c "/path/to/script.sh" -g llvm
-
-# Run command for swift project
-clowder forall apple/swift -c "git status"
-
-# Run script for swift project
-clowder forall apple/swift -c "/path/to/script.sh"
-```
-
-The following environment variables are available for use in commands and scripts:
-
-- `CLOWDER_PATH` is the absolute path to the root directory the clowder repo was initialized in
-- `PROJECT_PATH` is the absolute path to the project directory
-- `PROJECT_NAME` is the unique name of the project
-- `PROJECT_REMOTE` is the name of the project's remote
-- `PROJECT_REF` is the project ref as written in the `clowder.yml` file
-
-If a fork is specified, the following environment variables are also available for use in commands and scripts:
-
-- `FORK_REMOTE` is the name of the fork's remote
-- `FORK_NAME` is the unique name of the fork
-- `FORK_REF` is the project ref as written in the `clowder.yml` file
-
----
-
-## `clowder herd`
-
-Update with latest changes
-
-```bash
-# Herd a shallow clone to specified depth
-clowder herd -d 1
-
-# Herd using rebase instead of pull
-clowder herd -r
-
-# Herd a specified branch if it exists, otherwise use default ref
-clowder herd -b my_branch
-
-# Herd a specified tag if it exists, otherwise use default ref
-clowder herd -t my_tag
-
-# Only herd projects in swift and llvm groups
-clowder herd swift llvm
-
-# Only herd swift project
-clowder herd apple/swift
-```
-
----
-
-## `clowder init`
-
-Clone repo containing `clowder.yml` file (referred to as the "clowder repo")
-
-```bash
-# Clone clowder repo
-clowder init https://github.com/jrgoodle/swift-clowder.git
-
-# Clone clowder repo from branch 'tags'
-clowder init https://github.com/jrgoodle/cats.git -b tags
-```
-
----
-
-## `clowder link`
-
-Set `clowder.yml` symlink
-
-```bash
-# Point clowder.yml symlink to default clowder.yml file
-clowder link
-
-# Point clowder.yml symlink to saved version
-clowder link 0.1
-```
-
----
-
-## `clowder prune`
+### clowder prune
 
 Prune local or remote branches
 
@@ -239,9 +249,72 @@ clowder prune stale_branch llvm
 clowder prune stale_branch apple/swift
 ```
 
----
+### clowder reset
 
-## `clowder repo`
+Reset branches to upstream state
+
+```bash
+# Reset branches in all projects
+clowder reset
+
+# Reset branches in all projects to closest timestamp to swift project
+clowder reset --timestamp apple/swift
+
+# Reset branches in projects in llvm group
+clowder reset llvm
+
+# Reset branches in swift project
+clowder reset apple/swift
+```
+
+### clowder start
+
+Start a new feature branch or check out if it already exists
+
+```bash
+# Create new local branch 'my_feature' for all projects
+clowder start my_feature
+
+# Create new local and remote tracking branch 'my_feature' for all projects
+clowder start -t my_feature
+
+# Create new local branch 'my_feature' for projects in llvm group
+clowder start my_feature llvm
+
+# Create new local branch 'my_feature' in swift project
+clowder start my_feature apple/swift
+```
+
+### clowder stash
+
+Stash changes in dirty repositories
+
+```bash
+# Stash changes in all projects
+clowder stash
+
+# Stash changes in projects in llvm group
+clowder stash llvm
+
+# Stash changes in swift project
+clowder stash apple/swift
+```
+
+## clowder repo commands
+
+### clowder link
+
+Set `clowder.yml` symlink
+
+```bash
+# Point clowder.yml symlink to default clowder.yml file
+clowder link
+
+# Point clowder.yml symlink to saved version
+clowder link 0.1
+```
+
+### clowder repo
 
 Convenience commands for managing clowder repo (the `.clowder` directory)
 
@@ -273,29 +346,7 @@ clowder repo run 'git status'
 clowder repo status
 ```
 
----
-
-## `clowder reset`
-
-Reset branches to upstream state
-
-```bash
-# Reset branches in all projects
-clowder reset
-
-# Reset branches in all projects to closest timestamp to swift project
-clowder reset --timestamp apple/swift
-
-# Reset branches in projects in llvm group
-clowder reset llvm
-
-# Reset branches in swift project
-clowder reset apple/swift
-```
-
----
-
-## `clowder save`
+### clowder save
 
 Save a `clowder.yml` version with the information from currently checked out repositories
 
@@ -306,60 +357,9 @@ Versions are saved to `.clowder/<version_name>.clowder.yml`
 clowder save 0.1
 ```
 
----
+## other commands
 
-## `clowder start`
-
-Start a new feature branch or check out if it already exists
-
-```bash
-# Create new local branch 'my_feature' for all projects
-clowder start my_feature
-
-# Create new local and remote tracking branch 'my_feature' for all projects
-clowder start -t my_feature
-
-# Create new local branch 'my_feature' for projects in llvm group
-clowder start my_feature llvm
-
-# Create new local branch 'my_feature' in swift project
-clowder start my_feature apple/swift
-```
-
----
-
-## `clowder stash`
-
-Stash changes in dirty repositories
-
-```bash
-# Stash changes in all projects
-clowder stash
-
-# Stash changes in projects in llvm group
-clowder stash llvm
-
-# Stash changes in swift project
-clowder stash apple/swift
-```
-
----
-
-## `clowder status`
-
-Print status of projects
-
-```bash
-# Print status of projects
-clowder status
-
-# Fetch upstream changes for projects before printing status
-clowder status -f
-```
-
----
-
-## `clowder version`
+### clowder version
 
 Print version of `clowder` command line tool
 
@@ -367,9 +367,7 @@ Print version of `clowder` command line tool
 clowder --version
 ```
 
----
-
-## `clowder yaml`
+### clowder yaml
 
 Print information about clowder.yml files
 
