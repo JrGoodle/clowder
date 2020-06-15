@@ -8,5 +8,6 @@ General Documentation
    Command Reference <../commands>
    Command behavior with forks <../forks>
    clowder.yml Syntax Reference <../clowder-yml-syntax-reference>
-   Examples <examples>
+   Cats Example <../clowder-yml-cats>
+   Forks Example <../clowder-yml-forks>
    The clowder repo <../clowder-repo>
