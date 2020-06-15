@@ -1,5 +1,7 @@
 # Cats `clowder.yml` example
 
+See also: [clowder.yml syntax reference](clowder-yml-syntax-reference.md)
+
 ```yaml
 name: cats-clowder
 
@@ -40,9 +42,7 @@ projects:
     remote: catnip
 ```
 
-## Syntax
-
-See also: [clowder.yml syntax reference](clowder-yml-syntax-reference.md)
+---
 
 ```yaml
 defaults:
@@ -107,7 +107,3 @@ To unset a git config entry in `defaults`, set the value to `null`
 ```
 
 Adding a `remote` entry will create a remote named `catnip` instead of `origin`
-
-## Usage
-
-TODO

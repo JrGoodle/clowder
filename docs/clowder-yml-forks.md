@@ -1,5 +1,7 @@
 # Forks `clowder.yml` example
 
+See also: [clowder.yml syntax reference](clowder-yml-syntax-reference.md)
+
 ```yaml
 name: forks-clowder
 
@@ -38,9 +40,7 @@ projects:
       name: JrGoodle/sox
 ```
 
-## Syntax
-
-See also: [clowder.yml syntax reference](clowder-yml-syntax-reference.md)
+---
 
 ```yaml
 defaults:
@@ -96,7 +96,3 @@ The user's fork will track the `fork-branch`.
 ```
 
 This example will check out the repository to the `sox` directory, rather than `code`.
-
-## Usage
-
-When a `fork` is present the `clowder start -t`, `clowder prune -r`, and `clowder prune -a` commands will apply to the fork's remote.

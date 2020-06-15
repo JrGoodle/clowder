@@ -2,8 +2,6 @@
 
 Examples based on the [Swift projects clowder.yml](https://github.com/JrGoodle/swift-clowder/blob/master/clowder.yml)
 
-## Table of Contents
-
 * [main commands](#main-commands)
   * [clowder init](#clowder-init)
   * [clowder herd](#clowder-herd)
