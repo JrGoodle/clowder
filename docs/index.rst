@@ -34,7 +34,12 @@ clowder
 .. toctree::
    :maxdepth: 2
 
-   General Documentation <rst/general_documentation>
+   Command Reference <commands>
+   Command behavior with forks <forks>
+   clowder.yml Syntax Reference <clowder-yml-syntax-reference>
+   Cats clowder.yml Example <clowder-yml-cats>
+   Forks clowder.yml Example <clowder-yml-forks>
+   The clowder repo <clowder-repo>
    API Reference <rst/api_reference>
 
 

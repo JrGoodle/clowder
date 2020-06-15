@@ -23,7 +23,7 @@ Examples based on the [Swift projects clowder.yml](https://github.com/JrGoodle/s
   * [clowder repo](#clowder-repo)
   * [clowder save](#clowder-save)
 * [other commands](#other-commands)
-  * [clowder version](#clowder-version)
+  * [clowder config](#clowder-config)
   * [clowder yaml](#clowder-yaml)
 
 ## main commands
@@ -359,13 +359,9 @@ clowder save 0.1
 
 ## other commands
 
-### clowder version
+### clowder config
 
-Print version of `clowder` command line tool
-
-```bash
-clowder --version
-```
+TODO: Add content
 
 ### clowder yaml
 
