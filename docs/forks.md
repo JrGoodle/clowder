@@ -1,6 +1,6 @@
 # Forks
 
-`clowder` simplifies some common fork workflows. Currently, it's only possible to add one fork for a project. Forks are handled specially by certain commands
+`clowder` simplifies some common fork workflows. Currently, it's only possible to add one fork for a project. Forks are handled specially by certain commands.
 
 ---
 
@@ -16,7 +16,7 @@ $ clowder herd -d 1
 - If any projects don't have a clean git status then `clowder` exits
 - Projects are cloned from the upstream remote if they don't currently exist
 - Each project fetches the latest changes from upstream
-- If the current git ref checked out doesn't match the `clowder.yaml` configuration, the correct ref will be checked out
+- If the current git ref checked out doesn't match the `clowder.yml` configuration, the correct ref will be checked out
 - The latest changes are pulled from upstream for branches. For commits and tags, the commits are checked out into a detached `HEAD` state
 
 ```bash
