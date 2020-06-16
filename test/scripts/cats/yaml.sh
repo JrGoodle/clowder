@@ -21,7 +21,6 @@ test_clowder_yaml() {
     begin_command
     $COMMAND yaml || exit 1
     end_command
-    print_single_separator
     begin_command
     $COMMAND yaml -r && exit 1
     end_command
@@ -31,8 +30,34 @@ test_clowder_yaml() {
     begin_command
     $COMMAND yaml -r || exit 1
     end_command
+    begin_command
+    $COMMAND yaml -f || exit 1
+    end_command
 }
 test_clowder_yaml
+
+test_clowder_yaml_contents() {
+    print_single_separator
+    echo "TEST: Test clowder yaml command contents"
+
+    unset CLOWDER_DEBUG
+    print_double_separator
+
+    test_output=$(cat clowder-yaml.txt)
+    command_output=$($COMMAND yaml)
+    test_strings_equal "$test_output" "$command_output"
+
+    test_output=$(cat clowder-yaml-r.txt)
+    command_output=$($COMMAND yaml -r)
+    test_strings_equal "$test_output" "$command_output"
+
+    test_output=$(cat clowder-yaml-f.txt)
+    command_output=$($COMMAND yaml -f)
+    test_strings_equal "$test_output" "$command_output"
+
+    export CLOWDER_DEBUG='true'
+}
+test_clowder_yaml_contents
 
 test_clowder_yml_extension() {
     print_single_separator

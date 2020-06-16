@@ -312,6 +312,17 @@ test_file_not_symlink() {
     fi
 }
 
+test_strings_equal() {
+    echo 'TEST: Strings are equal'
+    echo 'String 1:'
+    echo "$1"
+    echo 'String 2:'
+    echo "$2"
+    if [ "$1" != "$2" ]; then
+        exit 1
+    fi
+}
+
 print_single_separator() {
     echo '--------------------------------------------------------------------------------'
 }
