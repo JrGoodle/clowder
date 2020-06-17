@@ -1,0 +1,37 @@
+
+defaults:
+  branch: master
+  protocol: https
+  remote: origin
+  source: github
+name: cats-default-test
+projects:
+- branch: purr
+  groups:
+  - cats
+  name: jrgoodle/duke
+  path: duke
+- groups:
+  - black-cats
+  name: jrgoodle/june
+  path: black-cats/june
+- groups:
+  - black-cats
+  name: jrgoodle/kishka
+  path: black-cats/kishka
+- groups:
+  - black-cats
+  name: jrgoodle/kit
+  path: black-cats/kit
+- branch: knead
+  groups:
+  - cats
+  name: jrgoodle/mu
+  path: mu
+- groups:
+  - black-cats
+  name: jrgoodle/sasha
+  path: black-cats/sasha
+sources:
+- name: github
+  url: github.com

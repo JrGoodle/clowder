@@ -114,23 +114,27 @@ class ClowderController(object):
 
         return timestamp
 
-    def get_yaml(self, resolved: bool = False) -> dict:
+    def get_yaml(self, resolved: bool = False, projects: Optional[Tuple[Project, ...]] = None) -> dict:
         """Return python object representation of model objects
 
         :param bool resolved: Whether to return resolved yaml
+        :param Optional[Tuple[Project, ...]] projects: Projects to get yaml for
         :return: YAML python object
         :rtype: dict
         """
 
+        if projects is None:
+            projects = self.projects
+
         if resolved:
-            projects = [p.get_yaml(resolved_sha=p.sha()) for p in self.projects]
+            projects_yaml = [p.get_yaml(resolved_sha=p.sha()) for p in projects]
         else:
-            projects = [p.get_yaml() for p in self.projects]
+            projects_yaml = [p.get_yaml() for p in projects]
 
         return {'name': self.name,
                 'defaults': self.defaults.get_yaml(),
                 'sources': [s.get_yaml() for s in self.sources],
-                'projects': projects}
+                'projects': projects_yaml}
 
     @staticmethod
     def validate_print_output(projects: Tuple[Project, ...]) -> None:

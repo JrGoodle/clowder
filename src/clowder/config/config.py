@@ -25,7 +25,7 @@ from clowder.util.yaml import (
 
 from .clowder_config import ClowderConfig
 
-CONFIG_VERSION = '0.1'
+CONFIG_VERSION = 0.1
 
 
 class Config(object):
