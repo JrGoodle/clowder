@@ -114,18 +114,17 @@ def error_clowder_already_initialized() -> str:
     return f"{ERROR} Clowder already initialized in this directory"
 
 
-def error_clowder_symlink_source_missing(symlink_path: Path, clowder_dir: Path) -> str:
+def error_clowder_symlink_source_missing(symlink_path: Path) -> str:
     """Return formatted error string for clowder symlink source not found
 
     :param Path symlink_path: Clowder yaml symlink path
-    :param Path clowder_dir: Clowder directory
     :return: Formatted clowder symlink source not found warning
     :rtype: str
     """
 
-    target = _yaml_file(symlink_path.relative_to(clowder_dir))
-    source = _yaml_file(symlink_path.resolve().relative_to(clowder_dir))
-    return f"{ERROR} Found symink {target} -> {source} but source appears to be missing"
+    target = _yaml_file(str(symlink_path))
+    source = _yaml_file(str(symlink_path.resolve()))
+    return f"{ERROR} Found symink {target} but source {source} appears to be missing"
 
 
 def error_command_failed(cmd: Union[str, List[str]]) -> str:
