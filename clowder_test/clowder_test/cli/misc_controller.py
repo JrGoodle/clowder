@@ -43,6 +43,14 @@ class MiscController(ArgparseController):
         self._execute_command('./forks.sh', self.path)
 
     @expose(
+        help='Run misc protocol tests'
+    )
+    def protocol(self) -> None:
+        """clowder misc protocol tests"""
+
+        self._execute_command('./protocol.sh', self.path)
+
+    @expose(
         help='Run misc sources tests'
     )
     def sources(self) -> None:

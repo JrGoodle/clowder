@@ -45,6 +45,7 @@ jobs:
             git config --global user.email "circle@circleci.org"
             git config --global user.name "CircleCI"
             git config --global push.default simple
+            git config --global --unset url.ssh://git@github.com.insteadOf
 
       - run:
           name: run write tests

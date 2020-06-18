@@ -198,6 +198,7 @@ test_remote_url() {
     echo "TEST: Remote url of $1 is $2"
     local remote_url
     remote_url="$(git remote get-url $1)"
+    echo "TEST: Actual url: $remote_url"
     if [ "$remote_url" != "$2" ]; then
         exit 1
     fi

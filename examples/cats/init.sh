@@ -7,6 +7,9 @@ if [ -z "$COMMAND" ]; then
 fi
 
 declare -f begin_command > /dev/null && begin_command
-$COMMAND init https://github.com/jrgoodle/cats.git || exit 1
+if [ -n "$CIRCLECI" ]; then
+    $COMMAND init git@github.com:jrgoodle/cats.git || exit 1
+else
+    $COMMAND init https://github.com/jrgoodle/cats.git || exit 1
+fi
 declare -f end_command > /dev/null && end_command
-exit # Don't propagate error

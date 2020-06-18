@@ -5,6 +5,8 @@
 
 """
 
+from typing import Optional
+
 from clowder.git import GitProtocol
 
 from .defaults import Defaults
@@ -59,3 +61,12 @@ class Source(SourceImpl):
         super().__init__(source)
 
         self.protocol = GitProtocol(source.get('protocol', defaults.protocol))
+
+    def update_protocol(self, protocol: Optional[str]):
+        """Updates git protocol if it wasn't explicitly set for this source in the clowder yaml file
+
+        :param Optional[str] protocol: Git protocol to use for cloning
+        """
+
+        if protocol is not None and self._protocol is None:
+            self.protocol = GitProtocol(protocol)

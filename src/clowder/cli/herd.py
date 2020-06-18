@@ -39,7 +39,9 @@ def add_herd_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
         (['--jobs', '-j'], dict(metavar='<n>', nargs=1, default=None, type=int,
                                 help='number of jobs to use runnning commands in parallel')),
         (['--rebase', '-r'], dict(action='store_true', help='use rebase instead of pull')),
-        (['--depth', '-d'], dict(default=None, type=int, nargs=1, metavar='<n>', help='depth to herd'))
+        (['--depth', '-d'], dict(default=None, type=int, nargs=1, metavar='<n>', help='depth to herd')),
+        (['--protocol', '-p'], dict(default=None, nargs=1, metavar='<protocol>', choices=('ssh', 'https'),
+                                    help='git protocol to use for cloning'))
     ]
 
     parser = subparsers.add_parser('herd', help='Clone and update projects with latest changes')
@@ -66,12 +68,18 @@ def herd(args) -> None:
     branch = None if args.branch is None else args.branch[0]
     tag = None if args.tag is None else args.tag[0]
     depth = None if args.depth is None else args.depth[0]
+    protocol = None if args.protocol is None else args.protocol[0]
     rebase = args.rebase
 
     config = Config(CLOWDER_CONTROLLER.name, CLOWDER_CONTROLLER.project_choices)
 
     rebase_config = config.current_clowder_config.rebase
     rebase = rebase_config if rebase_config is not None else rebase
+
+    protocol_config = config.current_clowder_config.protocol
+    protocol = protocol_config if protocol_config is not None else protocol
+    for s in CLOWDER_CONTROLLER.sources:
+        s.update_protocol(protocol)
 
     jobs = None
     if args.jobs:

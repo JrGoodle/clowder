@@ -12,3 +12,5 @@ rm -rf djinni
 rm -rf gyp
 rm -rf sox
 rm -rf sox-code
+rm -f $HOME/.config/clowder/clowder.config.yml
+rm -f $HOME/.config/clowder/clowder.config.yml.backup
