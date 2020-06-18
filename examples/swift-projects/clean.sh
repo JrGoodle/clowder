@@ -35,3 +35,6 @@ export files=( 'swift' \
 for file in "${files[@]}"; do
     rm -rf "$file"
 done
+
+rm -f $HOME/.config/clowder/clowder.config.yml
+rm -f $HOME/.config/clowder/clowder.config.yml.backup

@@ -17,3 +17,5 @@ rm -rf sasha
 rm -rf jrgoodle
 rm -f clowder.yaml
 rm -f clowder.yml
+rm -f $HOME/.config/clowder/clowder.config.yml
+rm -f $HOME/.config/clowder/clowder.config.yml.backup

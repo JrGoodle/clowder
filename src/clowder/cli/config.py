@@ -238,7 +238,7 @@ def config_set_protocol(args) -> None:
 
     print(' - Set protocol config value')
     config = _config()
-    config.current_clowder_config.protocol = args.protocol
+    config.current_clowder_config.protocol = args.protocol[0]
     config.save()
     print()
     config.current_clowder_config.print_configuration()

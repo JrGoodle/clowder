@@ -6,14 +6,6 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
 
 . test_utilities.sh
 
-export project_paths=( 'djinni' \
-                       'gyp' \
-                       'sox' )
-
-export projects=( 'dropbox/djinni' \
-                  'external/gyp' \
-                  'p/sox/code' )
-
 print_double_separator
 echo "TEST: Test clowder sources"
 cd "$MISC_EXAMPLE_DIR" || exit 1
