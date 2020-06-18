@@ -37,6 +37,32 @@ echo "TEST: Test clowder commands with various states of clowder repo dir and cl
 
 cd "$CATS_EXAMPLE_DIR" || exit 1
 
+test_move_clowder_repo() {
+    print_single_separator
+    echo "TEST: "
+    ./clean.sh
+    ./init.sh || exit 1
+    begin_command
+    $COMMAND herd $PARALLEL || exit 1
+    end_command
+    cd '..' || exit 1
+    mv 'cats' 'cats-moved' || exit 1
+    cd 'cats-moved' || exit 1
+    begin_command
+    $COMMAND herd $PARALLEL && exit 1
+    end_command
+    begin_command
+    $COMMAND link || exit 1
+    end_command
+    begin_command
+    $COMMAND herd $PARALLEL || exit 1
+    end_command
+    cd '..' || exit 1
+    mv 'cats-moved' 'cats' || exit 1
+    cd 'cats' || exit 1
+}
+test_move_clowder_repo
+
 test_commands_with_yaml_file_no_clowder_repo() {
     print_single_separator
     echo "TEST: Run commands with clowder.yaml file that is not a symlink and no existing .clowder directory"

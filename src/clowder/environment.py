@@ -145,7 +145,7 @@ class ClowderEnvironment(object):
 
         # Broken symlink pointing to missing source
         if yaml_file.is_symlink() and not yaml_file.exists():
-            message = fmt.error_clowder_symlink_source_missing(yaml_file, self.clowder_dir)
+            message = fmt.error_clowder_symlink_source_missing(yaml_file)
             self.clowder_yaml_missing_source_error = ClowderError(ClowderErrorType.CLOWDER_SYMLINK_SOURCE_MISSING,
                                                                   message)
             return
