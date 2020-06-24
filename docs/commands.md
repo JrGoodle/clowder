@@ -22,9 +22,9 @@ Examples based on the [Swift projects clowder.yml](https://github.com/JrGoodle/s
   * [clowder save](#clowder-save)
 * [other commands](#other-commands)
   * [clowder config](#clowder-config-EXPERIMENTAL)
-    * [clowder config get](#clowder-config-get-EXPERIMENTAL)
-    * [clowder config set](#clowder-config-set-EXPERIMENTAL)
-    * [clowder config clear](#clowder-config-clear-EXPERIMENTAL)
+    * [clowder config get](#clowder-config-get)
+    * [clowder config set](#clowder-config-set)
+    * [clowder config clear](#clowder-config-clear)
   * [clowder yaml](#clowder-yaml)
 
 ## main commands
@@ -360,16 +360,18 @@ clowder save swift-42.0
 
 ## other commands
 
-### clowder config **_EXPERIMENTAL_**
+### clowder config
 
-#### clowder config get **_EXPERIMENTAL_**
+**_NOTE: EXPERIMENTAL_**
+
+#### clowder config get
 
 ```bash
 # Print all set config values
 clowder config get
 ```
 
-#### clowder config set **_EXPERIMENTAL_**
+#### clowder config set
 
 ```bash
 # Set config values
@@ -379,7 +381,7 @@ clowder config set projects swift
 clowder config set protocol ssh
 ```
 
-#### clowder config clear **_EXPERIMENTAL_**
+#### clowder config clear
 
 ```bash
 # Clear config values
@@ -399,4 +401,7 @@ clowder yaml
 
 # Print resolved clowder.yml with current commit sha's
 clowder yaml -r
+
+# Print full clowder.yml file
+clowder yaml -f
 ```

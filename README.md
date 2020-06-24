@@ -1,29 +1,24 @@
 # `clowder`
 
+[![Documentation Status](https://readthedocs.org/projects/clowder/badge/?version=latest)](http://clowder.readthedocs.io)
 [![CircleCI](https://circleci.com/gh/JrGoodle/clowder.svg?style=shield)](https://circleci.com/gh/JrGoodle/clowder)
 [![Maintainability](https://api.codeclimate.com/v1/badges/56c92799de08f9ef9258/maintainability)](https://codeclimate.com/github/JrGoodle/clowder/maintainability)
 [![codecov](https://codecov.io/gh/JrGoodle/clowder/branch/master/graph/badge.svg)](https://codecov.io/gh/JrGoodle/clowder)
 [![PyPI version](https://badge.fury.io/py/clowder-repo.svg)](https://badge.fury.io/py/clowder-repo)
 [![Python version](https://img.shields.io/pypi/pyversions/clowder-repo.svg)](https://pypi.python.org/pypi/clowder-repo)
-[![License](https://img.shields.io/pypi/l/clowder-repo.svg)](https://pypi.python.org/pypi/clowder-repo)
-[![Status](https://img.shields.io/pypi/status/clowder-repo.svg)](https://pypi.python.org/pypi/clowder-repo)
 [![Requirements Status](https://requires.io/github/JrGoodle/clowder/requirements.svg?branch=master)](https://requires.io/github/JrGoodle/clowder/requirements/?branch=master)
-[![Documentation Status](https://readthedocs.org/projects/clowder/badge/?version=latest)](http://clowder.readthedocs.io)
 
 > **clowder** - A group of cats
 >
 > **herding cats** - An idiom that refers to a frustrating attempt to control or organize a class of entities which are uncontrollable or chaotic
 
-Managing multiple repositories can be pretty frustrating. There are a number of existing options, the primary being git submodules and subtrees. Google's [repo](https://code.google.com/p/git-repo) tool takes a different approach, but is closely tied to Google's development workflow. `clowder` uses a similar approach as `repo`, but without the ties to Google's Android workflows. Detailed information about projects are specified in a `clowder.yml` file, but each repository is still essentially independent. Projects can track branches, or be tied to specific tags or commits. This file can be checked into its own repository so it can be versioned and shared across teams. The primary purpose of `clowder` is synchronization of multiple repositories, so normal development still takes place in individual repositories with the usual `git` commands.
-
 ## Table of Contents
 
-* [Getting Started](#getting-started)
-  * [Requirements](#requirements)
-  * [Installation](#installation)
+* [Why clowder](#why-clowder)
+* [Installation](#installation)
 * [The clowder.yml file](#the-clowderyml-file)
   * [Syntax](#syntax)
-* [Basic usage](#basic-usage)
+* [Basic command usage](#basic-command-usage)
   * [clowder init](#clowder-init)
   * [clowder herd](#clowder-herd)
   * [clowder status](#clowder-status)
@@ -33,14 +28,16 @@ Managing multiple repositories can be pretty frustrating. There are a number of 
   * [config commands](#config-commands)
 * [Development](#development)
 
-## Getting Started
+## Why clowder
 
-### Requirements
+Managing multiple repositories can be pretty frustrating. There are a number of existing options, the primary being git submodules and subtrees. Google's [repo](https://code.google.com/p/git-repo) tool takes a different approach, but is closely tied to Google's development workflow. `clowder` uses a similar approach as `repo`, but without the ties to Google's Android workflows. Information about projects is specified in a `clowder.yml` file. Projects can track branches, or be tied to specific tags or commits. This file can be checked into its own repository so it can be versioned and shared across teams. The primary purpose of `clowder` is synchronization of multiple repositories, so normal development still takes place in individual repositories with the usual `git` commands.
+
+## Installation
+
+Requirements:
 
 * [git](https://git-scm.com)
 * [Python 3](https://www.python.org/downloads/)
-
-### Installation
 
 To install or upgrade `clowder` from PyPI:
 
@@ -81,7 +78,7 @@ projects:
 
 ### Syntax
 
-See also: [clowder.yml syntax reference](docs/clowder-yml-syntax-reference.md)
+For more information, see [the clowder.yml syntax reference](docs/clowder-yml-syntax-reference.md)
 
 ```yaml
 name: my-first-clowder
@@ -102,7 +99,7 @@ sources:
     url: github.com
 ```
 
-The `sources` section contains all the places to clone repositories from.
+The `sources` section contains all the locations to clone repositories from.
 
 ```yaml
 projects:
@@ -118,17 +115,17 @@ projects:
     groups: [black-cats, notdefault]
 ```
 
-A project requires at minimum the `name` of the repository. This is combined with the `defaults.protocol` or `sources.protocol` and `sources.url` to form the full url for cloning the repository, taking the form of  `git@${sources.url}:${projects.name}.git` or `https://${sources.url}/${projects.name}.git` depending on the protocol specified. If no `path` is specified, the last component of the `name` is used for the directory the project is cloned to. Projects can specify custom `groups` to run commands for only certain projects. By default, all projects are added to the `all` group, and a group of their `name` and `path`. If `notdefault` is present then the project will not be included in commands unless another group argument is given that it belongs to.
+A project requires at minimum the `name` of the repository. This is combined with `defaults.protocol` or `sources.protocol` to form the full url for cloning the repository, taking the form of  `git@${sources.url}:${projects.name}.git` or `https://${sources.url}/${projects.name}.git`, depending on the protocol specified. If no `path` is specified, the last component of the `name` is used for the directory the project is cloned to. Projects can specify custom `groups` in order to run commands for only certain projects. By default, all projects are added to the `all` group, and a group of their `name` and `path`. If `notdefault` is present, then the project will not be included in commands unless another `group` argument is given that it belongs to.
 
 There's much more cusomization possible with `clowder`. For some more complex examples see:
 
-[Cats clowder.yml](docs/clowder-yml-cats.md)
+[Cats clowder.yml example](docs/clowder-yml-cats.md)
 
-[Forks clowder.yml](docs/clowder-yml-forks.md)
+[Forks clowder.yml example](docs/clowder-yml-forks.md)
 
-## Basic Usage
+## Basic Command Usage
 
-For more information, see [the docs](http://clowder.readthedocs.io/en/latest/)
+For more information, see [the commands doc](docs/commands.md)
 
 First create a directory where all the projects will be cloned:
 
@@ -178,6 +175,8 @@ clowder forall -c 'git status' # Run command in all project directories
 
 ### git commands
 
+For more information, see [the commands doc](docs/commands.md#git-commands)
+
 ```bash
 clowder branch # Print all local branches
 clowder checkout 'my_branch' # Checkout 'my_branch' in projects if it exists
@@ -190,6 +189,8 @@ clowder prune 'stale_branch' # Prune branch 'stale_branch' for all projects
 
 ### clowder repo commands
 
+For more information, see [the commands doc](docs/commands.md#clowder-repo-commands)
+
 ```bash
 clowder link 'v0.1' # Set clowder.yml symlink to a previously saved version
 clowder repo run 'git status' # Run command in .clowder directory
@@ -199,6 +200,8 @@ clowder save 'v0.1' # Save a version of clowder.yml with current commit sha's
 ### config commands
 
 **_NOTE: EXPERIMENTAL_**
+
+For more information, see [the commands doc](docs/commands.md#clowder-config)
 
 ```bash
 clowder config get # Get config values
