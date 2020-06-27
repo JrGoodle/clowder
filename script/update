@@ -15,18 +15,22 @@ fi
 
 if [ "$1" == 'website' ]; then
     cd ..
+    export GH_PAGES_DIR
     GH_PAGES_DIR="$( cd .. && pwd)/clowder-gh-pages"
     rm -rf $GH_PAGES_DIR || exit 1
     git clone git@github.com:JrGoodle/clowder.git -b gh-pages $GH_PAGES_DIR || exit 1
 
-    tail -n+2 "README.md" > "$GH_PAGES_DIR/index.md" || exit 1
-    rm -rf "$GH_PAGES_DIR/docs/README" || exit 1
-    cp -a 'docs/README' "$GH_PAGES_DIR/docs/README" || exit 1
+    script/update_website_index.py
 
-    cd $GH_PAGES_DIR || exit 1
-    git add index.md docs/README || exit 1
-    git commit -m 'Update web site from latest in master branch' || exit 1
-    git push || exit 1
+    rm -rf "$GH_PAGES_DIR/docs/examples" || exit 1
+    cp -a 'docs/examples' "$GH_PAGES_DIR/docs/examples" || exit 1
+    rm -rf $GH_PAGES_DIR/docs/examples/*.yml || exit 1
+    rm -rf $GH_PAGES_DIR/docs/examples/*.sh || exit 1
+
+    # cd $GH_PAGES_DIR || exit 1
+    # git add index.md docs/README || exit 1
+    # git commit -m 'Update web site from latest in master branch' || exit 1
+    # git push || exit 1
     exit
 fi
 
@@ -57,4 +61,3 @@ case "$(uname)" in
 esac
 
 echo "Installed clowder for $PLATFORM"
-

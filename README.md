@@ -211,4 +211,4 @@ clowder config clear projects # Clear config values
 
 ## Development
 
-See [CONTRIBUTING.md](https://github.com/JrGoodle/clowder/blob/master/CONTRIBUTING.md) for information on setting up your environment for development and contribution guidelines
+See [CONTRIBUTING.md](CONTRIBUTING.md) for information on setting up your environment for development and contribution guidelines
