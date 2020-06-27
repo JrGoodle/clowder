@@ -76,7 +76,7 @@ projects:
 
 ### Syntax
 
-For more information, see [the clowder.yml syntax reference](docs/clowder-yml-syntax-reference.md)
+For more information, see [the clowder.yml syntax reference](https://github.com/JrGoodle/clowder/blob/master/docs/clowder-yml-syntax-reference.md)
 
 ```yaml
 name: my-first-clowder
@@ -117,13 +117,13 @@ A project requires at minimum the `name` of the repository. This is combined wit
 
 There's much more cusomization possible with `clowder`. For some more complex examples see:
 
-[Cats clowder.yml example](docs/clowder-yml-cats.md)
+[Cats clowder.yml example](https://github.com/JrGoodle/clowder/blob/master/docs/clowder-yml-cats.md)
 
-[Forks clowder.yml example](docs/clowder-yml-forks.md)
+[Forks clowder.yml example](https://github.com/JrGoodle/clowder/blob/master/docs/clowder-yml-forks.md)
 
 ## Basic Command Usage
 
-For more information, see [the commands doc](docs/commands.md)
+For more information, see [the commands doc](https://github.com/JrGoodle/clowder/blob/master/docs/commands.md)
 
 First create a directory where all the projects will be cloned:
 
@@ -145,7 +145,7 @@ The `clowder init` command does the following:
 * Clones the [examples clowder repo](https://github.com/JrGoodle/clowder-examples) in the `cats/.clowder` directory
 * Creates a symlink in the `cats` directory: `clowder.yml` -> `.clowder/clowder.yml`
 
-![clowder init](docs/examples/clowder-init.gif)
+![clowder init](https://github.com/JrGoodle/clowder/blob/master/docs/examples/clowder-init.gif)
 
 ### clowder herd
 
@@ -157,13 +157,13 @@ The `clowder herd` command updates the state of the projects. When the command i
 * If the current git ref checked out doesn't match the `clowder.yml` configuration, the correct ref will be checked out
 * The latest changes are pulled for branches. For commits and tags, the commits are checked out into a detached `HEAD` state
 
-![clowder herd](docs/examples/clowder-herd.gif)
+![clowder herd](https://github.com/JrGoodle/clowder/blob/master/docs/examples/clowder-herd.gif)
 
 ### clowder status
 
 The `clowder status` command prints the current state of all projects.
 
-![clowder status](docs/examples/clowder-status.gif)
+![clowder status](https://github.com/JrGoodle/clowder/blob/master/docs/examples/clowder-status.gif)
 
 ### clowder forall
 
@@ -173,7 +173,7 @@ clowder forall -c 'git status' # Run command in all project directories
 
 ### git commands
 
-For more information, see [the commands doc](docs/commands.md#git-commands)
+For more information, see [the commands doc](https://github.com/JrGoodle/clowder/blob/master/docs/commands.md#git-commands)
 
 ```bash
 clowder branch # Print all local branches
@@ -187,7 +187,7 @@ clowder prune 'stale_branch' # Prune branch 'stale_branch' for all projects
 
 ### clowder repo commands
 
-For more information, see [the commands doc](docs/commands.md#clowder-repo-commands)
+For more information, see [the commands doc](https://github.com/JrGoodle/clowder/blob/master/docs/commands.md#clowder-repo-commands)
 
 ```bash
 clowder link 'v0.1' # Set clowder.yml symlink to a previously saved version
@@ -199,7 +199,7 @@ clowder save 'v0.1' # Save a version of clowder.yml with current commit sha's
 
 **_NOTE: EXPERIMENTAL_**
 
-For more information, see [the commands doc](docs/commands.md#clowder-config)
+For more information, see [the commands doc](https://github.com/JrGoodle/clowder/blob/master/docs/commands.md#clowder-config)
 
 ```bash
 clowder config get # Get config values
