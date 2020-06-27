@@ -1,0 +1,490 @@
+# The configurations that used for the recording, feel free to edit them
+config:
+
+  # Specify a command to be executed
+  # like `/bin/bash -l`, `ls`, or any other commands
+  # the default is bash for Linux
+  # or powershell.exe for Windows
+  command: bash -l
+
+  # Specify the current working directory path
+  # the default is the current working directory path
+  cwd: /Users/jrgoodle/projects/clowder-projects/clowder/docs/clowder-examples
+
+  # Export additional ENV variables
+  env:
+    recording: true
+
+  # Explicitly set the number of columns
+  # or use `auto` to take the current
+  # number of columns of your shell
+  cols: 100
+
+  # Explicitly set the number of rows
+  # or use `auto` to take the current
+  # number of rows of your shell
+  rows: 30
+
+  # Amount of times to repeat GIF
+  # If value is -1, play once
+  # If value is 0, loop indefinitely
+  # If value is a positive number, loop n times
+  repeat: 0
+
+  # Quality
+  # 1 - 100
+  quality: 100
+
+  # Delay between frames in ms
+  # If the value is `auto` use the actual recording delays
+  frameDelay: auto
+
+  # Maximum delay between frames in ms
+  # Ignored if the `frameDelay` isn't set to `auto`
+  # Set to `auto` to prevent limiting the max idle time
+  maxIdleTime: 100000
+
+  # The surrounding frame box
+  # The `type` can be null, window, floating, or solid`
+  # To hide the title use the value null
+  # Don't forget to add a backgroundColor style with a null as type
+  frameBox:
+    type: window
+    title: null
+    style:
+      border: 0px black solid
+      fontSize: 16px
+      # boxShadow: none
+      # margin: 0px
+
+  # Add a watermark image to the rendered gif
+  # You need to specify an absolute path for
+  # the image on your machine or a URL, and you can also
+  # add your own CSS styles
+  watermark:
+    imagePath: null
+    style:
+      position: absolute
+      right: 15px
+      bottom: 15px
+      width: 100px
+      opacity: 0.9
+
+  # Cursor style can be one of
+  # `block`, `underline`, or `bar`
+  cursorStyle: block
+
+  # Font family
+  # You can use any font that is installed on your machine
+  # in CSS-like syntax
+  fontFamily: "Source Code Pro, Monospace"
+
+  # The size of the font
+  fontSize: 16
+
+  # The height of lines
+  lineHeight: 1
+
+  # The spacing between letters
+  letterSpacing: 0
+
+  # Theme
+  theme:
+    background: "transparent"
+    foreground: "#afafaf"
+    cursor: "#c7c7c7"
+    black: "#232628"
+    red: "#fc4384"
+    green: "#b3e33b"
+    yellow: "#ffa727"
+    blue: "#75dff2"
+    magenta: "#ae89fe"
+    cyan: "#708387"
+    white: "#d5d5d0"
+    brightBlack: "#626566"
+    brightRed: "#ff7fac"
+    brightGreen: "#c8ed71"
+    brightYellow: "#ebdf86"
+    brightBlue: "#75dff2"
+    brightMagenta: "#ae89fe"
+    brightCyan: "#b1c6ca"
+    brightWhite: "#f9f9f4"
+
+# Records, feel free to edit them
+records:
+  - delay: 10
+    content: "~ $ "
+  - delay: 1109
+    content: c
+  - delay: 159
+    content: l
+  - delay: 178
+    content: o
+  - delay: 112
+    content: w
+  - delay: 148
+    content: d
+  - delay: 208
+    content: e
+  - delay: 105
+    content: r
+  - delay: 133
+    content: ' '
+  - delay: 181
+    content: h
+  - delay: 179
+    content: e
+  - delay: 84
+    content: r
+  - delay: 50
+    content: d
+  - delay: 200
+    content: "\r\n\r\n"
+  - delay: 500
+    content: "\e[1mmy-first-clowder\e[0m\r\n\r\n"
+  - delay: 48
+    content: " - Fetch upstream changes for clowder repo\r\n"
+  - delay: 23
+    content: " - Fetch from \e[33morigin\e[0m\r\n"
+  - delay: 175
+    content: "\e[32m.clowder\e[0m \e[35m[master]\e[0m\r\n"
+  - delay: 175
+    content: "\e[36mclowder.yml\e[0m -> \e[36m.clowder/clowder.yml\e[0m\r\n\r\n"
+  - delay: 175
+    content: "\e[32mjrgoodle/duke\e[0m\r\n"
+  - delay: 175
+    content: " - Initialize repo at \e[36m/Users/jrgoodle/duke\e[0m\r\n"
+  - delay: 23
+    content: " - Create remote \e[33morigin\e[0m\r\n"
+  - delay: 8
+    content: " - Fetch from \e[33morigin\e[0m\r\n"
+  - delay: 300
+    content: "remote: Enumerating objects: 9, done.\e[K\r\n"
+  - delay: 300
+    content: "remote: Total 9 (delta 0), reused 0 (delta 0), pack-reused 9\e[K\r\n"
+  - delay: 7
+    content: "Unpacking objects:  11% (1/9)\r"
+  - delay: 7
+    content: "Unpacking objects:  22% (2/9)\r"
+  - delay: 7
+    content: "Unpacking objects:  33% (3/9)\r"
+  - delay: 7
+    content: "Unpacking objects:  44% (4/9)\r"
+  - delay: 7
+    content: "Unpacking objects:  55% (5/9)\r"
+  - delay: 7
+    content: "Unpacking objects:  66% (6/9)\r"
+  - delay: 7
+    content: "Unpacking objects:  77% (7/9)\r"
+  - delay: 7
+    content: "Unpacking objects:  88% (8/9)\r"
+  - delay: 7
+    content: "Unpacking objects: 100% (9/9)\r"
+  - delay: 7
+    content: "Unpacking objects: 100% (9/9), 742 bytes | 148.00 KiB/s, done.\r\n"
+  - delay: 10
+    content: "From github.com:jrgoodle/duke\r\n"
+  - delay: 23
+    content: " * [new branch]      alt-branch                       -> origin/alt-branch\r\n"
+  - delay: 23
+    content: " * [new branch]      master                           -> origin/master\r\n"
+  - delay: 23
+    content: " * [new branch]      purr                             -> origin/purr\r\n"
+  - delay: 23
+    content: " * [new branch]      test-herd-existing-remote-branch -> origin/test-herd-existing-remote-branch\r\n"
+  - delay: 23
+    content: " * [new branch]      tracking_branch                  -> origin/tracking_branch\r\n"
+  - delay: 23
+    content: " * [new tag]         purr                             -> purr\r\n"
+  - delay: 23
+    content: " * [new tag]         v0.01                            -> v0.01\r\n"
+  - delay: 9
+    content: " - Create branch \e[35m[master]\e[0m\r\n"
+  - delay: 9
+    content: " - Set tracking branch \e[35m[master]\e[0m -> \e[33morigin\e[0m \e[35m[master]\e[0m\r\n"
+  - delay: 23
+    content: " - Checkout branch \e[35m[master]\e[0m\r\n"
+  - delay: 10
+    content: " - Update git herd alias\r\n"
+  - delay: 14
+    content: "\e[32mjrgoodle/kishka\e[0m\r\n"
+  - delay: 23
+    content: " - Initialize repo at \e[36m/Users/jrgoodle/kishka\e[0m\r\n"
+  - delay: 15
+    content: " - Create remote \e[33morigin\e[0m\r\n"
+  - delay: 8
+    content: " - Fetch from \e[33morigin\e[0m\r\n"
+  - delay: 634
+    content: "remote: Enumerating objects: 15, done.\e[K\r\n"
+  - delay: 23
+    content: "remote: Total 15 (delta 0), reused 0 (delta 0), pack-reused 15\e[K\r\n"
+  - delay: 8
+    content: "Unpacking objects:   6% (1/15)\r"
+  - delay: 7
+    content: "Unpacking objects:  13% (2/15)\r"
+  - delay: 7
+    content: "Unpacking objects:  20% (3/15)\r"
+  - delay: 7
+    content: "Unpacking objects:  26% (4/15)\r"
+  - delay: 7
+    content: "Unpacking objects:  33% (5/15)\r"
+  - delay: 7
+    content: "Unpacking objects:  40% (6/15)\r"
+  - delay: 7
+    content: "Unpacking objects:  46% (7/15)\r"
+  - delay: 7
+    content: "Unpacking objects:  53% (8/15)\r"
+  - delay: 7
+    content: "Unpacking objects:  60% (9/15)\r"
+  - delay: 7
+    content: "Unpacking objects:  66% (10/15)\r"
+  - delay: 7
+    content: "Unpacking objects:  73% (11/15)\r"
+  - delay: 7
+    content: "Unpacking objects:  80% (12/15)\r"
+  - delay: 7
+    content: "Unpacking objects:  86% (13/15)\r"
+  - delay: 7
+    content: "Unpacking objects:  93% (14/15)\r"
+  - delay: 7
+    content: "Unpacking objects: 100% (15/15)\r"
+  - delay: 7
+    content: "Unpacking objects: 100% (15/15), 1.17 KiB | 133.00 KiB/s, done.\r\n"
+  - delay: 12
+    content: "From github.com:jrgoodle/kishka\r\n"
+  - delay: 23
+    content: " * [new branch]      alt-branch                       -> origin/alt-branch\r\n"
+  - delay: 23
+    content: " * [new branch]      cat                              -> origin/cat\r\n"
+  - delay: 23
+    content: " * [new branch]      import-default                   -> origin/import-default\r\n"
+  - delay: 23
+    content: " * [new branch]      import-group-branch              -> origin/import-group-branch\r\n"
+  - delay: 23
+    content: " * [new branch]      import-version                   -> origin/import-version\r\n"
+  - delay: 23
+    content: " * [new branch]      master                           -> origin/master\r\n"
+  - delay: 23
+    content: " * [new branch]      recursive-import                 -> origin/recursive-import\r\n"
+  - delay: 23
+    content: " * [new branch]      recursive-import-intermediate    -> origin/recursive-import-intermediate\r\n"
+  - delay: 23
+    content: " * [new branch]      test-herd-branch                 -> origin/test-herd-branch\r\n"
+  - delay: 23
+    content: " * [new branch]      test-herd-existing-remote-branch -> origin/test-herd-existing-remote-branch\r\n"
+  - delay: 23
+    content: " * [new branch]      tracking_branch                  -> origin/tracking_branch\r\n"
+  - delay: 23
+    content: " * [new tag]         test-herd-tag                    -> test-herd-tag\r\n"
+  - delay: 23
+    content: " * [new tag]         v0.01                            -> v0.01\r\n"
+  - delay: 9
+    content: " - Create branch \e[35m[master]\e[0m\r\n"
+  - delay: 9
+    content: " - Set tracking branch \e[35m[master]\e[0m -> \e[33morigin\e[0m \e[35m[master]\e[0m\r\n"
+  - delay: 23
+    content: " - Checkout branch \e[35m[master]\e[0m\r\n"
+  - delay: 11
+    content: " - Update git herd alias\r\n"
+  - delay: 15
+    content: "\e[32mjrgoodle/kit\e[0m\r\n"
+  - delay: 23
+    content: " - Initialize repo at \e[36m/Users/jrgoodle/kit\e[0m\r\n"
+  - delay: 16
+    content: " - Create remote \e[33morigin\e[0m\r\n"
+  - delay: 9
+    content: " - Fetch from \e[33morigin\e[0m\r\n"
+  - delay: 653
+    content: "remote: Enumerating objects: 17, done.\e[K\r\n"
+  - delay: 23
+    content: "remote: Total 17 (delta 0), reused 0 (delta 0), pack-reused 17\e[K\r\n"
+  - delay: 6
+    content: "Unpacking objects:   5% (1/17)\r"
+  - delay: 7
+    content: "Unpacking objects:  11% (2/17)\r"
+  - delay: 7
+    content: "Unpacking objects:  17% (3/17)\r"
+  - delay: 7
+    content: "Unpacking objects:  23% (4/17)\r"
+  - delay: 7
+    content: "Unpacking objects:  29% (5/17)\r"
+  - delay: 7
+    content: "Unpacking objects:  35% (6/17)\r"
+  - delay: 7
+    content: "Unpacking objects:  41% (7/17)\r"
+  - delay: 7
+    content: "Unpacking objects:  47% (8/17)\r"
+  - delay: 7
+    content: "Unpacking objects:  52% (9/17)\r"
+  - delay: 7
+    content: "Unpacking objects:  58% (10/17)\r"
+  - delay: 7
+    content: "Unpacking objects:  64% (11/17)\r"
+  - delay: 7
+    content: "Unpacking objects:  70% (12/17)\r"
+  - delay: 7
+    content: "Unpacking objects:  76% (13/17)\r"
+  - delay: 7
+    content: "Unpacking objects:  82% (14/17)\r"
+  - delay: 7
+    content: "Unpacking objects:  88% (15/17)\r"
+  - delay: 7
+    content: "Unpacking objects:  94% (16/17)\r"
+  - delay: 7
+    content: "Unpacking objects: 100% (17/17)\r"
+  - delay: 7
+    content: "Unpacking objects: 100% (17/17), 1.64 KiB | 168.00 KiB/s, done.\r\n"
+  - delay: 11
+    content: "From github.com:jrgoodle/kit\r\n"
+  - delay: 23
+    content: " * [new branch]      alt-branch                       -> origin/alt-branch\r\n"
+  - delay: 23
+    content: " * [new branch]      cat                              -> origin/cat\r\n"
+  - delay: 23
+    content: " * [new branch]      import-default                   -> origin/import-default\r\n"
+  - delay: 23
+    content: " * [new branch]      import-group-branch              -> origin/import-group-branch\r\n"
+  - delay: 23
+    content: " * [new branch]      import-version                   -> origin/import-version\r\n"
+  - delay: 23
+    content: " * [new branch]      master                           -> origin/master\r\n"
+  - delay: 23
+    content: " * [new branch]      recursive-import                 -> origin/recursive-import\r\n"
+  - delay: 23
+    content: " * [new branch]      recursive-import-intermediate    -> origin/recursive-import-intermediate\r\n"
+  - delay: 23
+    content: " * [new branch]      test-herd-branch                 -> origin/test-herd-branch\r\n"
+  - delay: 23
+    content: " * [new branch]      test-herd-existing-remote-branch -> origin/test-herd-existing-remote-branch\r\n"
+  - delay: 23
+    content: " * [new branch]      tracking_branch                  -> origin/tracking_branch\r\n"
+  - delay: 23
+    content: " * [new tag]         test-herd-tag                    -> test-herd-tag\r\n"
+  - delay: 23
+    content: " * [new tag]         v0.01                            -> v0.01\r\n"
+  - delay: 9
+    content: " - Create branch \e[35m[master]\e[0m\r\n"
+  - delay: 10
+    content: " - Set tracking branch \e[35m[master]\e[0m -> \e[33morigin\e[0m \e[35m[master]\e[0m\r\n"
+  - delay: 23
+    content: " - Checkout branch \e[35m[master]\e[0m\r\n"
+  - delay: 10
+    content: " - Update git herd alias\r\n"
+  - delay: 15
+    content: "\e[32mjrgoodle/mu\e[0m\r\n"
+  - delay: 23
+    content: " - Initialize repo at \e[36m/Users/jrgoodle/mu\e[0m\r\n"
+  - delay: 15
+    content: " - Create remote \e[33morigin\e[0m\r\n"
+  - delay: 8
+    content: " - Fetch from \e[33morigin\e[0m\r\n"
+  - delay: 663
+    content: "remote: Enumerating objects: 31, done.\e[K\r\n"
+  - delay: 23
+    content: "remote: Total 31 (delta 0), reused 0 (delta 0), pack-reused 31\e[K\r\n"
+  - delay: 8
+    content: "Unpacking objects:   3% (1/31)\r"
+  - delay: 7
+    content: "Unpacking objects:   6% (2/31)\r"
+  - delay: 7
+    content: "Unpacking objects:   9% (3/31)\r"
+  - delay: 7
+    content: "Unpacking objects:  12% (4/31)\r"
+  - delay: 7
+    content: "Unpacking objects:  16% (5/31)\r"
+  - delay: 7
+    content: "Unpacking objects:  19% (6/31)\r"
+  - delay: 7
+    content: "Unpacking objects:  22% (7/31)\r"
+  - delay: 7
+    content: "Unpacking objects:  25% (8/31)\r"
+  - delay: 7
+    content: "Unpacking objects:  29% (9/31)\r"
+  - delay: 7
+    content: "Unpacking objects:  32% (10/31)\r"
+  - delay: 7
+    content: "Unpacking objects:  35% (11/31)\r"
+  - delay: 7
+    content: "Unpacking objects:  38% (12/31)\r"
+  - delay: 7
+    content: "Unpacking objects:  41% (13/31)\r"
+  - delay: 7
+    content: "Unpacking objects:  45% (14/31)\r"
+  - delay: 7
+    content: "Unpacking objects:  48% (15/31)\r"
+  - delay: 7
+    content: "Unpacking objects:  51% (16/31)\r"
+  - delay: 7
+    content: "Unpacking objects:  54% (17/31)\r"
+  - delay: 7
+    content: "Unpacking objects:  58% (18/31)\r"
+  - delay: 7
+    content: "Unpacking objects:  61% (19/31)\r"
+  - delay: 7
+    content: "Unpacking objects:  64% (20/31)\r"
+  - delay: 7
+    content: "Unpacking objects:  67% (21/31)\r"
+  - delay: 7
+    content: "Unpacking objects:  70% (22/31)\r"
+  - delay: 7
+    content: "Unpacking objects:  74% (23/31)\r"
+  - delay: 7
+    content: "Unpacking objects:  77% (24/31)\r"
+  - delay: 7
+    content: "Unpacking objects:  80% (25/31)\r"
+  - delay: 7
+    content: "Unpacking objects:  83% (26/31)\r"
+  - delay: 7
+    content: "Unpacking objects:  87% (27/31)\r"
+  - delay: 7
+    content: "Unpacking objects:  90% (28/31)\r"
+  - delay: 7
+    content: "Unpacking objects:  93% (29/31)\r"
+  - delay: 7
+    content: "Unpacking objects:  96% (30/31)\r"
+  - delay: 7
+    content: "Unpacking objects: 100% (31/31)\r"
+  - delay: 7
+    content: "Unpacking objects: 100% (31/31), 3.84 KiB | 206.00 KiB/s, done.\r\n"
+  - delay: 12
+    content: "From github.com:jrgoodle/mu\r\n"
+  - delay: 23
+    content: " * [new branch]      alt-branch                       -> origin/alt-branch\r\n"
+  - delay: 23
+    content: " * [new branch]      groom                            -> origin/groom\r\n"
+  - delay: 23
+    content: " * [new branch]      knead                            -> origin/knead\r\n"
+  - delay: 23
+    content: " * [new branch]      lfs                              -> origin/lfs\r\n"
+  - delay: 23
+    content: " * [new branch]      master                           -> origin/master\r\n"
+  - delay: 23
+    content: " * [new branch]      recursive-import                 -> origin/recursive-import\r\n"
+  - delay: 23
+    content: " * [new branch]      recursive-import-intermediate    -> origin/recursive-import-intermediate\r\n"
+  - delay: 23
+    content: " * [new branch]      submodules                       -> origin/submodules\r\n"
+  - delay: 23
+    content: " * [new branch]      test-herd-existing-remote-branch -> origin/test-herd-existing-remote-branch\r\n"
+  - delay: 23
+    content: " * [new branch]      tracking_branch                  -> origin/tracking_branch\r\n"
+  - delay: 23
+    content: " * [new tag]         test-clowder-yaml-tag            -> test-clowder-yaml-tag\r\n"
+  - delay: 23
+    content: " * [new tag]         test-herd-tag                    -> test-herd-tag\r\n"
+  - delay: 23
+    content: " * [new tag]         v0.01                            -> v0.01\r\n"
+  - delay: 8
+    content: " - Create branch \e[35m[master]\e[0m\r\n"
+  - delay: 8
+    content: " - Set tracking branch \e[35m[master]\e[0m -> \e[33morigin\e[0m \e[35m[master]\e[0m\r\n"
+  - delay: 23
+    content: " - Checkout branch \e[35m[master]\e[0m\r\n"
+  - delay: 11
+    content: " - Update git herd alias\r\n"
+  - delay: 50
+    content: "\r\n~ $ "
+  - delay: 1
+    content: "\u200E" # Contains an empty unicode character
+  - delay: 5000
+    content: "\u200E" # Contains an empty unicode character
