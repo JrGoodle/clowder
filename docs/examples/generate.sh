@@ -4,8 +4,8 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
 
 export examples=( \
     # 'init' \
-    'herd' \
-    # 'status' \
+    # 'herd' \
+    'status' \
 )
 
 for example in "${examples[@]}"; do

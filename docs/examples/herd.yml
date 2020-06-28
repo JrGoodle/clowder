@@ -33,7 +33,7 @@ config:
 
   # Quality
   # 1 - 100
-  quality: 100
+  quality: 50
 
   # Delay between frames in ms
   # If the value is `auto` use the actual recording delays
@@ -49,13 +49,11 @@ config:
   # To hide the title use the value null
   # Don't forget to add a backgroundColor style with a null as type
   frameBox:
-    type: window
+    type: solid
     title: null
     style:
-      border: 0px black solid
-      fontSize: 16px
-      # boxShadow: none
-      # margin: 0px
+      boxShadow: none
+      margin: 0px
 
   # Add a watermark image to the rendered gif
   # You need to specify an absolute path for
@@ -74,13 +72,13 @@ config:
   # `block`, `underline`, or `bar`
   cursorStyle: block
 
-  # Font family
+  # Font famil
   # You can use any font that is installed on your machine
   # in CSS-like syntax
   fontFamily: "Source Code Pro, Monospace"
 
   # The size of the font
-  fontSize: 16
+  fontSize: 10
 
   # The height of lines
   lineHeight: 1

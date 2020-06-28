@@ -23,7 +23,7 @@ config:
   # Explicitly set the number of rows
   # or use `auto` to take the current
   # number of rows of your shell
-  rows: 20
+  rows: 15
 
   # Amount of times to repeat GIF
   # If value is -1, play once
@@ -49,13 +49,11 @@ config:
   # To hide the title use the value null
   # Don't forget to add a backgroundColor style with a null as type
   frameBox:
-    type: window
+    type: solid
     title: null
     style:
-      border: 0px black solid
-      fontSize: 16px
-      # boxShadow: none
-      # margin: 0px
+      boxShadow: none
+      margin: 0px
 
   # Add a watermark image to the rendered gif
   # You need to specify an absolute path for
@@ -80,7 +78,7 @@ config:
   fontFamily: "Source Code Pro, Monospace"
 
   # The size of the font
-  fontSize: 16
+  fontSize: 12
 
   # The height of lines
   lineHeight: 1

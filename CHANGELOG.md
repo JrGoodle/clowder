@@ -1,12 +1,12 @@
 # Changelog
 
-## [4.0.0b4](https://github.com/JrGoodle/clowder/releases/tag/4.0.0b4)
+## [4.0b4](https://github.com/JrGoodle/clowder/releases/tag/4.0b4)
 
-## [4.0.0b3](https://github.com/JrGoodle/clowder/releases/tag/4.0.0b3)
+## [4.0b3](https://github.com/JrGoodle/clowder/releases/tag/4.0b3)
 
-## [4.0.0b2](https://github.com/JrGoodle/clowder/releases/tag/4.0.0b2)
+## [4.0b2](https://github.com/JrGoodle/clowder/releases/tag/4.0b2)
 
-## [4.0.0b1](https://github.com/JrGoodle/clowder/releases/tag/4.0.0b1)
+## [4.0b1](https://github.com/JrGoodle/clowder/releases/tag/4.0b1)
 
 - Add official support for Python 3.8
 - Add GitHub Action workflow test
