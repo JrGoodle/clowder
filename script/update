@@ -15,17 +15,15 @@ fi
 
 if [ "$1" == 'website' ]; then
     cd ..
-    export GH_PAGES_DIR
     GH_PAGES_DIR="$( cd .. && pwd)/clowder-gh-pages"
     rm -rf $GH_PAGES_DIR || exit 1
     git clone git@github.com:JrGoodle/clowder.git -b gh-pages $GH_PAGES_DIR || exit 1
 
-    script/update_website_index.py
+    script/process_readme.py || exit 1
 
-    rm -rf "$GH_PAGES_DIR/docs/examples" || exit 1
-    cp -a 'docs/examples' "$GH_PAGES_DIR/docs/examples" || exit 1
-    rm -rf $GH_PAGES_DIR/docs/examples/*.yml || exit 1
-    rm -rf $GH_PAGES_DIR/docs/examples/*.sh || exit 1
+    INDEX_FILE="$GH_PAGES_DIR/index.md"
+    rm -f "$INDEX_FILE" || exit 1
+    mv 'README-processed.md' "$INDEX_FILE" || exit 1
 
     # cd $GH_PAGES_DIR || exit 1
     # git add index.md docs/README || exit 1

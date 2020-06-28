@@ -2,22 +2,30 @@
 Setup file for clowder
 """
 
+from pathlib import Path
 from setuptools import setup
 
 # Written according to the docs at
 # https://packaging.python.org/en/latest/distributing.html
 
+repo_dir = Path(__file__).parent.parent.absolute()
+process_readme_script = repo_dir / 'scripts' / 'process_readme.py'
+exec(process_readme_script.read_text())
+processed_readme = repo_dir / 'README-processed.md'
+long_description = processed_readme.read_text()
+
 setup(
     name='clowder-repo',
-    description='A tool for managing code',
+    description='Utility for managing multiple git repositories',
+    long_description=long_description,
+    long_description_content_type='text/markdown',
     version='4.0b3',
     url='http://clowder.cat',
     author='Joe DeCapo',
     author_email='joe@polka.cat',
     license='MIT',
     classifiers=[
-        # 'Development Status :: 5 - Production/Stable',
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable',
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
