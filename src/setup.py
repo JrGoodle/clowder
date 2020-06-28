@@ -8,7 +8,7 @@ from setuptools import setup
 # Written according to the docs at
 # https://packaging.python.org/en/latest/distributing.html
 
-repo_dir = Path(__file__).parent.parent.absolute()
+repo_dir = Path(__file__).resolve().parent.parent.resolve()
 process_readme_script = repo_dir / 'script' / 'process_readme.py'
 exec(process_readme_script.read_text())
 processed_readme = repo_dir / 'README-processed.md'

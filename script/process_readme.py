@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import List, Optional
 
 
-repo_dir = Path(__file__).parent.parent.absolute()
+repo_dir = Path(__file__).resolve().parent.parent.resolve()
 
 
 def main():
