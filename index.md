@@ -145,7 +145,7 @@ The `clowder init` command does the following:
 * Clones the [examples clowder repo](https://github.com/JrGoodle/clowder-examples) in the `cats/.clowder` directory
 * Creates a symlink in the `cats` directory: `clowder.yml` -> `.clowder/clowder.yml`
 
-![clowder init](https://github.com/JrGoodle/clowder/blob/master/docs/examples/clowder-init.gif)
+![clowder init](https://github.com/JrGoodle/clowder/blob/master/docs/examples/clowder-init.gif?raw=true)
 
 ### clowder herd
 
@@ -157,13 +157,13 @@ The `clowder herd` command updates the state of the projects. When the command i
 * If the current git ref checked out doesn't match the `clowder.yml` configuration, the correct ref will be checked out
 * The latest changes are pulled for branches. For commits and tags, the commits are checked out into a detached `HEAD` state
 
-![clowder herd](https://github.com/JrGoodle/clowder/blob/master/docs/examples/clowder-herd.gif)
+![clowder herd](https://github.com/JrGoodle/clowder/blob/master/docs/examples/clowder-herd.gif?raw=true)
 
 ### clowder status
 
 The `clowder status` command prints the current state of all projects.
 
-![clowder status](https://github.com/JrGoodle/clowder/blob/master/docs/examples/clowder-status.gif)
+![clowder status](https://github.com/JrGoodle/clowder/blob/master/docs/examples/clowder-status.gif?raw=true)
 
 ### clowder forall
 
