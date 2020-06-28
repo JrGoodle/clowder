@@ -9,7 +9,7 @@ from setuptools import setup
 # https://packaging.python.org/en/latest/distributing.html
 
 repo_dir = Path(__file__).parent.parent.absolute()
-process_readme_script = repo_dir / 'scripts' / 'process_readme.py'
+process_readme_script = repo_dir / 'script' / 'process_readme.py'
 exec(process_readme_script.read_text())
 processed_readme = repo_dir / 'README-processed.md'
 long_description = processed_readme.read_text()
@@ -19,7 +19,7 @@ setup(
     description='Utility for managing multiple git repositories',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    version='4.0b3',
+    version='4.0b4',
     url='http://clowder.cat',
     author='Joe DeCapo',
     author_email='joe@polka.cat',
