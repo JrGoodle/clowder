@@ -3,6 +3,7 @@ description: Utility for managing multiple git repositories
 google_analytics: 
 show_downloads: true
 theme: jekyll-theme-architect
+markdown: GFM
 
 gems:
   - jekyll-mentions
