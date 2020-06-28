@@ -31,7 +31,7 @@ script/clean all
 
 ## Testing
 
-Install `clowder-test` command runner
+Install [clowder-test](clowder_test/README.md) command runner
 
 ```bash
 script/test
