@@ -2,17 +2,21 @@
 Setup file for clowder
 """
 
+import os
 from pathlib import Path
 from setuptools import setup
 
 # Written according to the docs at
 # https://packaging.python.org/en/latest/distributing.html
 
-repo_dir = Path(__file__).resolve().parent.parent.resolve()
-process_readme_script = repo_dir / 'script' / 'process_readme.py'
-exec(process_readme_script.read_text())
-processed_readme = repo_dir / 'README-processed.md'
-long_description = processed_readme.read_text()
+if 'READTHEDOCS' in os.environ:
+    long_description = 'Utility for managing multiple git repositories'
+else:
+    repo_dir = Path(__file__).resolve().parent.parent.resolve()
+    process_readme_script = repo_dir / 'script' / 'process_readme.py'
+    exec(process_readme_script.read_text())
+    processed_readme = repo_dir / 'README-processed.md'
+    long_description = processed_readme.read_text()
 
 setup(
     name='clowder-repo',
