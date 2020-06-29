@@ -6,6 +6,9 @@
 clowder
 =======
 
+.. image:: https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2FJrGoodle%2Fclowder%2Fbadge&style=flat
+    :target: https://actions-badge.atrox.dev/JrGoodle/clowder/goto
+
 .. image:: https://circleci.com/gh/JrGoodle/clowder.svg?style=shield
     :target: https://circleci.com/gh/JrGoodle/clowder
 
@@ -19,9 +22,6 @@ clowder
     :target: https://badge.fury.io/py/clowder-repo
 
 .. image:: https://img.shields.io/pypi/pyversions/clowder-repo.svg
-    :target: https://pypi.python.org/pypi/clowder-repo
-
-.. image:: https://img.shields.io/pypi/l/clowder-repo.svg
     :target: https://pypi.python.org/pypi/clowder-repo
 
 .. image:: https://requires.io/github/JrGoodle/clowder/requirements.svg?branch=master

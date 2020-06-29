@@ -14,7 +14,7 @@ if 'READTHEDOCS' in os.environ:
 else:
     repo_dir = Path(__file__).resolve().parent.parent.resolve()
     process_readme_script = repo_dir / 'script' / 'process_readme.py'
-    exec(process_readme_script.read_text())
+    exec(process_readme_script.read_text(), {'SETUP_PY': True, 'REPO_DIR': str(repo_dir)})
     processed_readme = repo_dir / 'README-processed.md'
     long_description = processed_readme.read_text()
 
@@ -24,7 +24,10 @@ setup(
     long_description=long_description,
     long_description_content_type='text/markdown',
     version='4.0b4',
-    url='http://clowder.cat',
+    url='https://github.com/JrGoodle/clowder',
+    project_urls={
+        "Documentation": "https://clowder.readthedocs.io/en/latest/"
+    },
     author='Joe DeCapo',
     author_email='joe@polka.cat',
     license='MIT',

@@ -63,7 +63,7 @@ else
     github-release release \
         --tag "${TAG}" \
         --name "${TAG}" \
-        --description "Release ${TAG}" || exit 1
+        --description "[${TAG} on PyPI](https://pypi.org/project/clowder-repo/${TAG}/)" || exit 1
     echo ''
 
     echo "Upload artifacts to GitHub Releases"

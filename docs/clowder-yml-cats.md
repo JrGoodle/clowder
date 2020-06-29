@@ -53,7 +53,7 @@ defaults:
       alias.cat: '!echo "😸"'
 ```
 
-This example specifies a default `branch` of `trracking_branch` that all projects will inherit. It's also possible to specify a default `tag` or `commit`. The `git`section can contain custom git config entries that will be installed for all projects.
+This example specifies a default `branch` of `tracking_branch` that all projects will inherit. It's also possible to specify a default `tag` or `commit`. The `git`section can contain custom git config entries that will be installed for all projects.
 
 ```yaml
 - name: jrgoodle/mu

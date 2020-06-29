@@ -7,8 +7,10 @@ import subprocess
 from pathlib import Path
 from typing import List, Optional
 
-
-repo_dir = Path(__file__).resolve().parent.parent.resolve()
+if 'SETUP_PY' in globals():
+    repo_dir = Path(globals()['REPO_DIR'])
+else:
+    repo_dir = Path(__file__).resolve().parent.parent.resolve()
 
 
 def main():
@@ -21,9 +23,13 @@ def main():
     output = output.replace('](CONTRIBUTING', '](https://github.com/JrGoodle/clowder/blob/master/CONTRIBUTING')
 
     pattern = r'\]\(docs\/(.+?)\)'
-    # matches = re.findall(pattern, output)
     replace = r'](https://github.com/JrGoodle/clowder/blob/master/docs/\1)'
     output = re.sub(pattern, replace, output)
+
+    if 'SETUP_PY' in globals():
+        pattern = r'(## Table of Contents.+?##)'
+        replace = r'##'
+        output = re.sub(pattern, replace, output, flags=re.DOTALL)
 
     output = output.replace('.gif)', '.gif?raw=true)')
 

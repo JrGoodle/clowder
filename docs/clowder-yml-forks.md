@@ -64,7 +64,7 @@ sources:
     protocol: https
 ```
 
-The`protocol is set specifically to https for repositories where the user may not have the ability to clone via ssh.
+The `protocol` is set specifically to `https` for repositories where the user may not have the ability to clone via `ssh`.
 
 ```yaml
 - name: dropbox/djinni
