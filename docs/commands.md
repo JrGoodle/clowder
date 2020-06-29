@@ -21,7 +21,7 @@ Examples based on the [Swift projects clowder.yml](https://github.com/JrGoodle/s
   * [clowder repo](#clowder-repo)
   * [clowder save](#clowder-save)
 * [other commands](#other-commands)
-  * [clowder config](#clowder-config-EXPERIMENTAL)
+  * [clowder config](#clowder-config)
     * [clowder config get](#clowder-config-get)
     * [clowder config set](#clowder-config-set)
     * [clowder config clear](#clowder-config-clear)
@@ -126,10 +126,10 @@ If a fork is specified, the following environment variables are also available f
 ### clowder branch
 
 ```bash
-# Print all local branches
+# Print local branches
 clowder branch
 
-# Print all remote branches
+# Print remote branches
 clowder branch -r
 
 # Print all local and remote branches
@@ -374,17 +374,26 @@ clowder config get
 #### clowder config set
 
 ```bash
-# Set config values
+# Set 'rebase' config value to true
 clowder config set rebase
-clowder config set jobs
-clowder config set projects swift
+
+# Set 'jobs' config value to 4
+clowder config set jobs 4
+
+# Set 'projects' config value to contain 'all' and 'linux'
+clowder config set projects all linux
+
+# Set 'protocol' config value to ssh
 clowder config set protocol ssh
 ```
 
 #### clowder config clear
 
 ```bash
-# Clear config values
+# Clear all config values
+clowder config clear
+
+# Clear specified config values
 clowder config clear rebase
 clowder config clear jobs
 clowder config clear projects

@@ -19,7 +19,7 @@
 * [Installation](#installation)
 * [The clowder.yml file](#the-clowderyml-file)
   * [Syntax](#syntax)
-* [Basic command usage](#basic-command-usage)
+* [Command Usage](#command-usage)
   * [clowder init](#clowder-init)
   * [clowder herd](#clowder-herd)
   * [clowder status](#clowder-status)
@@ -124,7 +124,7 @@ There's much more cusomization possible with `clowder`. For some more complex ex
 
 [Forks clowder.yml example](docs/clowder-yml-forks.md)
 
-## Basic Command Usage
+## Command Usage
 
 For more information, see [the commands doc](docs/commands.md)
 

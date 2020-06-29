@@ -1,27 +1,33 @@
 # Changelog
 
-## [4.0b4](https://github.com/JrGoodle/clowder/releases/tag/4.0b4)
+## 4.0
 
-## [4.0b3](https://github.com/JrGoodle/clowder/releases/tag/4.0b3)
-
-## [4.0b2](https://github.com/JrGoodle/clowder/releases/tag/4.0b2)
-
-## [4.0b1](https://github.com/JrGoodle/clowder/releases/tag/4.0b1)
-
+- Support `.yml` and `.yaml` extensions (use `.yml` by default)
+- Support `clowder.yml` files that aren't symlinks, and without `.clowder` directory
+- Infer default `source` when only one is present
+- Commands take groups/projects as positional arguments
+- Use last path component of `name` if `path` not specified
 - Add official support for Python 3.8
-- Add GitHub Action workflow test
 - Versions are now stored as named yaml files in the `versions` directory rather than in subdirectories
+- Add `clowder config` experimental command
+- Add `git herd` alias in projects
+- Allow clowder to be called from subdirectories
+
+- Replace Travis CI tests with GitHub Action workflow tests
 - Remove imported `clowder.yaml` files
-- Remove `argcomplete`
 - Remove `sync` command
 - Remove `--groups/-g` command option
 - Remove `--skip/-s` command option
-- Remove `--protocol` command option
+
 - Schema changes:
   - `groups` is now an array of strrings in a project, rather than a top level item
   - Add `protocol` option to `source`
   - Add `source` option to `fork`
-- Various refactoring
+  - Add `git.config` to `defaults` and `projects`
+  - Add `git.rebase` to `defaults` and `projects`
+  - Add `git.protocol` to `defaults` and `projects`
+  - Add `git.lfs` to `defaults` and `projects`
+  - Change `--parallel` to `--jobs` for parallel commands
 
 ## [3.2.0](https://github.com/JrGoodle/clowder/releases/tag/3.2.0)
 

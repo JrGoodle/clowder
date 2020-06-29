@@ -73,7 +73,7 @@ The `protocol` is set specifically to `https` for repositories where the user ma
     name: JrGoodle/djinni
 ```
 
-The original repository will be cloned with a remote named `upstream`. The `fork` inherits the default `origin` remote name.
+The original repository will be cloned with a remote named `upstream`. The `fork` inherits the default remote `origin`.
 
 ```yaml
 - name: external/gyp
@@ -84,7 +84,7 @@ The original repository will be cloned with a remote named `upstream`. The `fork
     branch: fork-branch
 ```
 
-The user's fork will track the `fork-branch`.
+The user's fork will track `fork-branch`.
 
 ```yaml
 - name: p/sox/code

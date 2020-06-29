@@ -63,7 +63,7 @@ This example specifies a default `branch` of `tracking_branch` that all projects
     recursive: true
 ```
 
-This project will track the `groom` `branch`. The `git` configuration enables git lfs and submodules. Running `clowder herd` will install git lfs hooks, pull lfs files, and clone submodules recursively.
+This project will track the `groom` branch. The `git` configuration enables git lfs and submodules. Running `clowder herd` will install git lfs hooks, pull lfs files, and clone submodules recursively.
 
 ```yaml
 - name: jrgoodle/duke
@@ -98,7 +98,7 @@ When specified at the project level, the same git config values override any of 
       alias.cat: null
 ```
 
-To unset a git config entry in `defaults`, set the value to `null`
+To unset a git config entry in `defaults`, set the value to `null`.
 
 ```yaml
 - name: jrgoodle/sasha
@@ -106,4 +106,4 @@ To unset a git config entry in `defaults`, set the value to `null`
   remote: catnip
 ```
 
-Adding a `remote` entry will create a remote named `catnip` instead of `origin`
+Adding a `remote` entry will create a remote named `catnip` instead of `origin`.
