@@ -153,6 +153,24 @@ test_config_projects() {
 
     test_cats_default_herd_branches
 
+    ./clean.sh
+    ./init.sh || exit 1
+
+    begin_command
+    $COMMAND config clear || exit 1
+    end_command
+    begin_command
+    $COMMAND config set jobs 4 || exit 1
+    end_command
+    begin_command
+    $COMMAND config get || exit 1
+    end_command
+    begin_command
+    $COMMAND herd || exit 1
+    end_command
+
+    test_cats_default_herd_branches
+
     restore_config_file
 }
 test_config_projects
