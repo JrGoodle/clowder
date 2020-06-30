@@ -1,10 +1,11 @@
-[![Documentation Status](https://readthedocs.org/projects/clowder/badge/?version=latest)](http://clowder.readthedocs.io)
+[![GitHub Actions Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2FJrGoodle%2Fclowder%2Fbadge&style=flat)](https://actions-badge.atrox.dev/JrGoodle/clowder/goto)
 [![CircleCI](https://circleci.com/gh/JrGoodle/clowder.svg?style=shield)](https://circleci.com/gh/JrGoodle/clowder)
-[![Maintainability](https://api.codeclimate.com/v1/badges/56c92799de08f9ef9258/maintainability)](https://codeclimate.com/github/JrGoodle/clowder/maintainability)
-[![codecov](https://codecov.io/gh/JrGoodle/clowder/branch/master/graph/badge.svg)](https://codecov.io/gh/JrGoodle/clowder)
+[![Code Climate Maintainability](https://api.codeclimate.com/v1/badges/56c92799de08f9ef9258/maintainability)](https://codeclimate.com/github/JrGoodle/clowder/maintainability)
+[![codecov coverage](https://codecov.io/gh/JrGoodle/clowder/branch/master/graph/badge.svg)](https://codecov.io/gh/JrGoodle/clowder)
 [![PyPI version](https://badge.fury.io/py/clowder-repo.svg)](https://badge.fury.io/py/clowder-repo)
-[![Python version](https://img.shields.io/pypi/pyversions/clowder-repo.svg)](https://pypi.python.org/pypi/clowder-repo)
+[![Python versions](https://img.shields.io/pypi/pyversions/clowder-repo.svg)](https://pypi.python.org/pypi/clowder-repo)
 [![Requirements Status](https://requires.io/github/JrGoodle/clowder/requirements.svg?branch=master)](https://requires.io/github/JrGoodle/clowder/requirements/?branch=master)
+[![Documentation Status](https://readthedocs.org/projects/clowder/badge/?version=latest)](http://clowder.readthedocs.io)
 
 > **clowder** - A group of cats
 >
@@ -16,7 +17,7 @@
 * [Installation](#installation)
 * [The clowder.yml file](#the-clowderyml-file)
   * [Syntax](#syntax)
-* [Basic command usage](#basic-command-usage)
+* [Command Usage](#command-usage)
   * [clowder init](#clowder-init)
   * [clowder herd](#clowder-herd)
   * [clowder status](#clowder-status)
@@ -121,7 +122,7 @@ There's much more cusomization possible with `clowder`. For some more complex ex
 
 [Forks clowder.yml example](https://github.com/JrGoodle/clowder/blob/master/docs/clowder-yml-forks.md)
 
-## Basic Command Usage
+## Command Usage
 
 For more information, see [the commands doc](https://github.com/JrGoodle/clowder/blob/master/docs/commands.md)
 
