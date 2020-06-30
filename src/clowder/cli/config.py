@@ -96,7 +96,12 @@ def add_config_set_parser(subparsers: argparse._SubParsersAction) -> None: # noq
     rebase_parser.set_defaults(func=config_set_rebase)
 
     # clowder config set jobs
-    jobs_parser = config_set_subparsers.add_parser('jobs', help='Set use jobs commands')
+    jobs_arguments = [
+        (['jobs'], dict(metavar='<n>', nargs=1, default=None, type=int,
+                                help='Set default number of jobs to use runnning commands in parallel'))
+    ]
+    jobs_parser = config_set_subparsers.add_parser('jobs', help='Set default number of jobs for relevant commands')
+    add_parser_arguments(jobs_parser, jobs_arguments)
     jobs_parser.set_defaults(func=config_set_jobs)
 
     # clowder config set projects
@@ -212,7 +217,7 @@ def config_set_jobs(args) -> None: # noqa
 
     print(' - Set jobs config value')
     config = _config()
-    config.current_clowder_config.jobs = True
+    config.current_clowder_config.jobs = args.jobs[0]
     config.save()
     print()
     config.current_clowder_config.print_configuration()
