@@ -12,6 +12,11 @@
       "minLength": 1,
       "pattern": "^((?! ).)*$"
     },
+    "projectName": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "[a-zA-Z0-9-_]+"
+    },
     "projectGroup": {
       "type": "string",
       "minLength": 1,
@@ -390,16 +395,14 @@
   "additionalProperties": false,
   "required": [
     "name",
-    "defaults",
-    "sources",
     "projects"
   ],
   "properties": {
     "name": {
-      "description": "A name describing the projects",
+      "description": "A name describing the projects. Must be a string containing any combination of letters, numbers, - or _",
       "oneOf": [
         {
-          "$ref": "#/definitions/nonEmptyStringNoSpaces"
+          "$ref": "#/definitions/projectName"
         }
       ]
     },
@@ -408,9 +411,7 @@
       "type": "object",
       "anyOf": [
         {
-          "required": [
-            "protocol"
-          ],
+          "minProperties": 1,
           "additionalProperties": false,
           "properties": {
             "source": {
@@ -431,9 +432,7 @@
           }
         },
         {
-          "required": [
-            "protocol"
-          ],
+          "minProperties": 1,
           "additionalProperties": false,
           "properties": {
             "source": {
@@ -454,9 +453,7 @@
           }
         },
         {
-          "required": [
-            "protocol"
-          ],
+          "minProperties": 1,
           "additionalProperties": false,
           "properties": {
             "source": {

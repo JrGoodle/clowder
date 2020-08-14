@@ -18,7 +18,6 @@
 * [Why clowder](#why-clowder)
 * [Installation](#installation)
 * [The clowder.yml file](#the-clowderyml-file)
-  * [Syntax](#syntax)
 * [Command Usage](#command-usage)
   * [clowder init](#clowder-init)
   * [clowder herd](#clowder-herd)
@@ -26,12 +25,16 @@
   * [clowder forall](#clowder-forall)
   * [git commands](#git-commands)
   * [clowder repo commands](#clowder-repo-commands)
-  * [config commands](#config-commands)
+  * [config commands](#config-command
 * [Development](#development)
 
 ## Why clowder
 
-Managing multiple repositories can be pretty frustrating. There are a number of existing options, the primary being git submodules and subtrees. Google's [repo](https://code.google.com/p/git-repo) tool takes a different approach, but is closely tied to Google's development workflow. `clowder` uses a similar approach as `repo`, but without the ties to Google's Android workflows. Information about projects is specified in a `clowder.yml` file. Projects can track branches, or be tied to specific tags or commits. This file can be checked into its own repository so it can be versioned and shared across teams. The primary purpose of `clowder` is synchronization of multiple repositories, so normal development still takes place in individual repositories with the usual `git` commands.
+There are many ways to organize projects with git. Monorepos, submodules, subtrees, or [some](https://github.com/cristibalan/braid) [other](https://github.com/mixu/gr) [tool](https://github.com/ingydotnet/git-subrepo). `clowder` is one of these other tools. Its approach is heavily influeced by the [repo tool](https://gerrit.googlesource.com/git-repo) Google uses to manage the Android Open Source Project.
+
+Projects are specified in a `clowder.yml` file that can be checked into its own repo, allowing it to be shared across teams. `clowder` essentially makes this file executable, allowing commands to be run across projects. `clowder` can update submodules, lfs files, and custom git config entries. Projects can track branches, or be tied to specific tags or commits. Forks can be configured along with their upstream source, wherever they may live. Snapshots of project states can be saved for later restoration. And probably more things...
+
+Daily development still takes place in individual repos, with normal `git` commands. But `clowder` is there if you need to synchronize or run commands on multiple repos.
 
 ## Installation
 
@@ -54,88 +57,111 @@ sudo pip3 install clowder-repo --force-reinstall --pre
 
 ## The clowder.yml file
 
+For the full specification, see [the clowder.yml syntax reference](docs/clowder-yml-syntax-reference.md)
+
+An example `clowder.yml` for [some](https://github.com/llvm/llvm-project) [well](https://github.com/apple/swift)-[known](https://github.com/tensorflow/tensorflow) [projects](https://gerrit.googlesource.com/git-repo):
+
 ```yaml
-name: my-first-clowder
+name: cool-projects
 
 defaults:
+  branch: master
+  remote: origin
+  source: github
   protocol: ssh
 
 sources:
   - name: github
     url: github.com
+  - name: google
+    url: gerrit.googlesource.com
+    protocol: https
 
 projects:
-  - name: jrgoodle/mu
-  - name: jrgoodle/duke
-  - name: jrgoodle/kit
-    groups: [black-cats]
-  - name: jrgoodle/kishka
-    groups: [black-cats]
-  - name: jrgoodle/june
-    groups: [black-cats, notdefault]
-  - name: jrgoodle/sasha
-    groups: [black-cats, notdefault]
+  - name: llvm/llvm-project
+  - name: apple/swift
+  - name: tensorflow/tensorflow
+  - name: git-repo
+    path: repo
+    source: google
 ```
 
-### Syntax
+The `name` is simply a descriptive label. The `defaults` section contains the protocol to use for cloning repositories, the git remote and branch, and the source to clone from. `clowder` assumes the following defaults:
 
-For more information, see [the clowder.yml syntax reference](docs/clowder-yml-syntax-reference.md)
+* `remote`: `origin`
+* `branch`: `master`
+* `protocol`: `ssh`
+* `source`: `github`
 
-```yaml
-name: my-first-clowder
-```
+The `sources` section contains all the git hosting providers. The following sources are built in to `clowder`:
 
-The `name` is simply a descriptive identifier. It must be a string that doesn't contain any spaces
+* `github`: `github.com`
+* `gitlab`: `gitlab.com`
+* `bitbucket`: `bitbucket.org`
 
-```yaml
-defaults:
-  protocol: ssh
-```
-
-The `defaults` section requires the `protocol` to use for cloning repositories. The default `remote` is assumed to be `origin` and the default `branch` is assumed to to be `master`
+So the previous `clowder.yml` can be simplified to:
 
 ```yaml
+name: cool-projects
+
 sources:
-  - name: github
-    url: github.com
+  - name: google
+    url: gerrit.googlesource.com
+    protocol: https
+
+projects:
+  - name: llvm/llvm-project
+  - name: apple/swift
+  - name: tensorflow/tensorflow
+  - name: git-repo
+    path: repo
+    source: google
 ```
 
-The `sources` section contains all the locations to clone repositories from.
+A project requires a `name`, the path component of the git clone url. This is combined with `defaults.protocol` or `sources.protocol` to form the full git clone url, taking the form of  `git@${sources.url}:${projects.name}.git` or `https://${sources.url}/${projects.name}.git`. If `path` is not specified, the last component of the name is used for the local directory.
+
+In order to be able to run commands for only certain sets of projects, there are groups:
 
 ```yaml
+name: cool-projects
+
+sources:
+  - name: google
+    url: gerrit.googlesource.com
+    protocol: https
+
 projects:
-  - name: jrgoodle/mu
-  - name: jrgoodle/duke
-  - name: jrgoodle/kit
-    groups: [black-cats]
-  - name: jrgoodle/kishka
-    groups: [black-cats]
-  - name: jrgoodle/june
-    groups: [black-cats, notdefault]
-  - name: jrgoodle/sasha
-    groups: [black-cats, notdefault]
+  - name: llvm/llvm-project
+    groups: [notdefault, clattner]
+  - name: apple/swift
+    groups: [clattner]
+  - name: tensorflow/tensorflow
+    groups: [google, clattner]
+  - name: git-repo
+    path: repo
+    source: google
+    groups: [google]
 ```
 
-A project requires at minimum the `name` of the repository. This is combined with `defaults.protocol` or `sources.protocol` to form the full url for cloning the repository, taking the form of  `git@${sources.url}:${projects.name}.git` or `https://${sources.url}/${projects.name}.git`, depending on the protocol specified. If no `path` is specified, the last component of the `name` is used for the directory the project is cloned to. Projects can specify custom `groups` in order to run commands for only certain projects. By default, all projects are added to the `all` group, and a group of their `name` and `path`. If `notdefault` is present, then the project will not be included in commands unless another `group` argument is given that it belongs to.
+Projects are automatically added to the `all` group, a group of their `name`, and a group of their `path`. If `notdefault` is specified, the project will not be included in commands unless another group argument is given that it belongs to.
 
-There's much more cusomization possible with `clowder`. For some more complex examples see:
+For some more custom examples, see:
 
-[Cats clowder.yml example](docs/clowder-yml-cats.md)
-
-[Forks clowder.yml example](docs/clowder-yml-forks.md)
+* [Cats clowder.yml example](docs/clowder-yml-cats.md)
+* [Forks clowder.yml example](docs/clowder-yml-forks.md)
 
 ## Command Usage
 
-For more information, see [the commands doc](docs/commands.md)
+For the full command reference, see [the commands doc](docs/commands.md)
 
-First create a directory where all the projects will be cloned:
+The following examples use an [existing repo](https://github.com/JrGoodle/clowder-examples) containing a [clowder.yml](https://github.com/JrGoodle/clowder-examples/blob/master/clowder.yml) file.
+
+First, create a directory where all the projects will be cloned:
 
 ```bash
 mkdir cats
 cd cats
 ```
-
-It's possible to just create a local `clowder.yml` file, but it's recommended to check the file into the root of a dedicated repository. These examples use an [existing repository](https://github.com/JrGoodle/clowder-examples) containing a [clowder.yml](https://github.com/JrGoodle/clowder-examples/blob/master/clowder.yml) file.
 
 ### clowder init
 
@@ -145,7 +171,7 @@ clowder init git@github.com:JrGoodle/clowder-examples.git
 
 The `clowder init` command does the following:
 
-* Clones the [examples clowder repo](https://github.com/JrGoodle/clowder-examples) in the `cats/.clowder` directory
+* Clones the [examples clowder repo](https://github.com/JrGoodle/clowder-examples) in the `.clowder` directory
 * Creates a symlink in the `cats` directory: `clowder.yml` -> `.clowder/clowder.yml`
 
 ![clowder init](docs/examples/clowder-init.gif)

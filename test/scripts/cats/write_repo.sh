@@ -47,7 +47,7 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
         $COMMAND repo add 'newfile' || exit 1
         end_command
         begin_command
-        $COMMAND repo commit 'Add newfile for $COMMAND repo test' || exit 1
+        $COMMAND repo commit 'Add newfile for clowder repo test' || exit 1
         end_command
         pushd .clowder || exit 1
         local new_commit
