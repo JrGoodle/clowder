@@ -25,12 +25,12 @@
   * [clowder forall](#clowder-forall)
   * [git commands](#git-commands)
   * [clowder repo commands](#clowder-repo-commands)
-  * [config commands](#config-command
+  * [config commands](#config-command)
 * [Development](#development)
 
 ## Why clowder
 
-There are many ways to organize projects with git. Monorepos, submodules, subtrees, or [some](https://github.com/cristibalan/braid) [other](https://github.com/mixu/gr) [tool](https://github.com/ingydotnet/git-subrepo). `clowder` is one of these other tools. Its approach is heavily influeced by the [repo tool](https://gerrit.googlesource.com/git-repo) Google uses to manage the Android Open Source Project.
+There are many ways to organize projects with git. Monorepos, submodules, subtrees, or [some](https://github.com/cristibalan/braid) [other](https://github.com/mixu/gr) [tool](https://github.com/ingydotnet/git-subrepo). `clowder` is one of the other tools. Its approach is heavily influeced by the [repo tool](https://gerrit.googlesource.com/git-repo) Google uses to manage the Android Open Source Project.
 
 Projects are specified in a `clowder.yml` file that can be checked into its own repo, allowing it to be shared across teams. `clowder` essentially makes this file executable, allowing commands to be run across projects. `clowder` can update submodules, lfs files, and custom git config entries. Projects can track branches, or be tied to specific tags or commits. Forks can be configured along with their upstream source, wherever they may live. Snapshots of project states can be saved for later restoration. And probably more things...
 
