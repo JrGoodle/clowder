@@ -1,0 +1,48 @@
+# File used to verify yaml validation descriptions for all possiblle fields
+
+name: yaml-validation-description-test
+
+defaults:
+  branch: master
+  source: github
+  protocol: ssh
+  git:
+    recursive: true
+    lfs: true
+    depth: 0
+    config:
+      alias.cat: '!echo "😸"'
+
+sources:
+  - name: chromium
+    url: chromium.googlesource.com
+    protocol: https
+
+projects:
+  - name: dropbox/djinni
+    branch: something
+    remote: upstream
+    git:
+      recursive: true
+      lfs: true
+      depth: 0
+      config:
+        alias.cat: '!echo "😸"'
+    fork:
+      branch: something
+      name: JrGoodle/djinni
+      source: github
+  - name: external/gyp
+    tag: something
+    source: chromium
+    remote: upstream
+    fork:
+      name: JrGoodle/gyp
+      tag: something
+  - name: external/gyp
+    commit: e87d37d6bce611abed35e854d5ae1a401e9ce04c
+    source: chromium
+    remote: upstream
+    fork:
+      name: JrGoodle/gyp
+      commit: e87d37d6bce611abed35e854d5ae1a401e9ce04c
