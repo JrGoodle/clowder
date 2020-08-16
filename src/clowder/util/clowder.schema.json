@@ -31,7 +31,6 @@
       }
     },
     "relativePath": {
-      "description": "Relative file system path",
       "type": "string",
       "minLength": 1,
       "pattern": "^(?!\/.*$).*"
@@ -43,7 +42,7 @@
       "pattern": "^[a-zA-Z][a-zA-Z0-9-]*[.]([^\n]+[.]){0,1}[a-zA-Z][a-zA-Z0-9-]*$"
     },
     "gitConfigVariableValue": {
-      "description": "Git config variable value",
+      "description": "Fully qualified git config variable name as key. Git config variable value.",
       "oneOf": [
         {
           "$ref": "#/definitions/nonEmptyString"
@@ -60,7 +59,7 @@
       ]
     },
     "gitConfigProject": {
-      "description": "Project git config settings",
+      "description": "Project git config",
       "type": "object",
       "minProperties": 1,
       "propertyNames": {
@@ -71,7 +70,7 @@
       }
     },
     "gitConfigDefault": {
-      "description": "Defaults git config settings",
+      "description": "Default git config",
       "type": "object",
       "minProperties": 1,
       "propertyNames": {
@@ -82,7 +81,7 @@
       }
     },
     "gitSettingsDefault": {
-      "description": "Git settings",
+      "description": "Default git settings",
       "type": "object",
       "minProperties": 1,
       "additionalProperties": false,
@@ -102,7 +101,7 @@
       }
     },
     "gitSettingsProject": {
-      "description": "Git settings",
+      "description": "Project git settings",
       "type": "object",
       "minProperties": 1,
       "additionalProperties": false,
@@ -122,7 +121,7 @@
       }
     },
     "projectName": {
-      "description": "A unique name for this project. The project's name is appended onto its source's URL to generate the actual URL to configure the Git remote with. The URL gets formed as: ${source_url}/${project_name}.git where ${source_url} is the source's url and ${project_name} is the project’s name. The suffix '.git' is always appended as clowder assumes the upstream is a forest of bare Git repositories.",
+      "description": "A unique name for this project.\nThe project's name is appended onto its source's URL to generate the full URL to configure the Git remote with. The full URL gets formed as:\ngit@${source_url}:${project_name/fork_name}.git\nhttps://${source_url}/${project_name/fork_name}.git",
       "oneOf": [
         {
           "$ref": "#/definitions/nonEmptyStringNoSpaces"
@@ -130,7 +129,7 @@
       ]
     },
     "forkName": {
-      "description": "A unique name for this project. The project's name is appended onto its source's URL to generate the actual URL to configure the Git remote with. The URL gets formed as: ${source_url}/${project_name}.git where ${source_url} is the source's url and ${project_name} is the project’s name. The suffix '.git' is always appended as clowder assumes the upstream is a forest of bare Git repositories.",
+      "description": "A unique name for this fork. The fork's name is appended onto its source's URL to generate the full URL to configure the Git remote with. The full URL gets formed as:\ngit@${source_url}:${project_name/fork_name}.git\nhttps://${source_url}/${project_name/fork_name}.git",
       "oneOf": [
         {
           "$ref": "#/definitions/nonEmptyStringNoSpaces"
@@ -138,7 +137,7 @@
       ]
     },
     "sourceNameDefault": {
-      "description": "Git source name",
+      "description": "Default git hosting provider source name",
       "oneOf": [
         {
           "$ref": "#/definitions/nonEmptyStringNoSpaces"
@@ -146,7 +145,7 @@
       ]
     },
     "sourceNameProject": {
-      "description": "Git source name",
+      "description": "Project git hosting provider source name",
       "oneOf": [
         {
           "$ref": "#/definitions/nonEmptyStringNoSpaces"
@@ -154,7 +153,7 @@
       ]
     },
     "sourceNameFork": {
-      "description": "Git source name",
+      "description": "Fork git hosting provider source name",
       "oneOf": [
         {
           "$ref": "#/definitions/nonEmptyStringNoSpaces"
@@ -162,7 +161,7 @@
       ]
     },
     "remoteNameProject": {
-      "description": "The name specified here is used as the remote name in each project's .git/config, and is therefore automatically available to commands like git fetch, git remote, git pull and git push.",
+      "description": "The name specified here is used as the remote name in the project .git/config, and is therefore automatically available to commands like git fetch, git remote, git pull and git push.",
       "oneOf": [
         {
           "$ref": "#/definitions/nonEmptyStringNoSpaces"
@@ -170,7 +169,7 @@
       ]
     },
     "remoteNameFork": {
-      "description": "The name specified here is used as the remote name in each project's .git/config, and is therefore automatically available to commands like git fetch, git remote, git pull and git push.",
+      "description": "The name specified here is used as the remote name in the fork's .git/config, and is therefore automatically available to commands like git fetch, git remote, git pull and git push.",
       "oneOf": [
         {
           "$ref": "#/definitions/nonEmptyStringNoSpaces"
@@ -178,7 +177,7 @@
       ]
     },
     "remoteNameDefault": {
-      "description": "The name specified here is used as the remote name in each project's .git/config, and is therefore automatically available to commands like git fetch, git remote, git pull and git push.",
+      "description": "The name specified here is used as the default remote name in the project's .git/config, and is therefore automatically available to commands like git fetch, git remote, git pull and git push.",
       "oneOf": [
         {
           "$ref": "#/definitions/nonEmptyStringNoSpaces"
@@ -186,39 +185,39 @@
       ]
     },
     "depthDefault": {
-      "description": "Git clone depth",
+      "description": "Default git clone depth",
       "type": "integer",
       "minimum": 0,
       "default": 0
     },
     "depthProject": {
-      "description": "Git clone depth",
+      "description": "Project git clone depth",
       "type": "integer",
       "minimum": 0,
       "default": 0
     },
     "recursiveDefault": {
-      "description": "Whether to clone and fetch project submodules recursively",
+      "description": "Default for whether to clone and fetch project and fork submodules recursively",
       "type": "boolean",
       "default": false
     },
     "recursiveProject": {
-      "description": "Whether to clone and fetch project submodules recursively",
+      "description": "Whether to clone and fetch project and fork submodules recursively",
       "type": "boolean",
       "default": false
     },
     "lfsDefault": {
-      "description": "Whether repository uses git lfs",
+      "description": "Default for whether projects and forks should install git lfs hooks and update lfs files",
       "type": "boolean",
       "default": false
     },
     "lfsProject": {
-      "description": "Whether repository uses git lfs",
+      "description": "Whether project and fork should install git lfs hooks and update lfs files",
       "type": "boolean",
       "default": false
     },
     "branchDefault": {
-      "description": "Name of the Git branch to track for this project. If not supplied the ref specified in the defaults is used if applicable, else the default branch 'master' is used.",
+      "description": "Default name of the git branch to track for projects and forks. If not supplied the default branch 'master' is used.",
       "oneOf": [
         {
           "$ref": "#/definitions/nonEmptyStringNoSpaces"
@@ -226,7 +225,7 @@
       ]
     },
     "branchProject": {
-      "description": "Name of the Git branch to track for this project. If not supplied the ref specified in the defaults is used if applicable, else the default branch 'master' is used.",
+      "description": "Name of the git branch to track for this project. If not supplied the ref specified in the defaults is used if applicable, else the default branch 'master' is used.",
       "oneOf": [
         {
           "$ref": "#/definitions/nonEmptyStringNoSpaces"
@@ -234,7 +233,7 @@
       ]
     },
     "branchFork": {
-      "description": "Name of the Git branch to track for this project. If not supplied the ref specified in the defaults is used if applicable, else the default branch 'master' is used.",
+      "description": "Name of the git branch to track for this fork. If not supplied the ref specified in the defaults is used if applicable, else the default branch 'master' is used.",
       "oneOf": [
         {
           "$ref": "#/definitions/nonEmptyStringNoSpaces"
@@ -242,7 +241,7 @@
       ]
     },
     "tagDefault": {
-      "description": "Name of the Git tag to track for this project. If not supplied the ref specified in the defaults is used if applicable, else the default branch 'master' is used.",
+      "description": "Default name of the git tag to track for projects and forks.",
       "oneOf": [
         {
           "$ref": "#/definitions/nonEmptyStringNoSpaces"
@@ -250,7 +249,7 @@
       ]
     },
     "tagProject": {
-      "description": "Name of the Git tag to track for this project. If not supplied the ref specified in the defaults is used if applicable, else the default branch 'master' is used.",
+      "description": "Name of the git tag to track for this project.",
       "oneOf": [
         {
           "$ref": "#/definitions/nonEmptyStringNoSpaces"
@@ -258,7 +257,7 @@
       ]
     },
     "tagFork": {
-      "description": "Name of the Git tag to track for this project. If not supplied the ref specified in the defaults is used if applicable, else the default branch 'master' is used.",
+      "description": "Name of the git tag to track for this fork.",
       "oneOf": [
         {
           "$ref": "#/definitions/nonEmptyStringNoSpaces"
@@ -266,22 +265,22 @@
       ]
     },
     "commitDefault": {
-      "description": "Git commit SHA-1 to track for this project. Must be full 40 character SHA-1. If not supplied the ref specified in the defaults is used if applicable, else the default branch 'master' is used.",
+      "description": "Default git commit SHA-1 to track for this projects and forks. Must be full 40 character SHA-1.",
       "type": "string",
       "pattern": "[a-fA-F0-9]{40}"
     },
     "commitProject": {
-      "description": "Git commit SHA-1 to track for this project. Must be full 40 character SHA-1. If not supplied the ref specified in the defaults is used if applicable, else the default branch 'master' is used.",
+      "description": "Git commit SHA-1 to track for this project. Must be full 40 character SHA-1.",
       "type": "string",
       "pattern": "[a-fA-F0-9]{40}"
     },
     "commitFork": {
-      "description": "Git commit SHA-1 to track for this project. Must be full 40 character SHA-1. If not supplied the ref specified in the defaults is used if applicable, else the default branch 'master' is used.",
+      "description": "Git commit SHA-1 to track for this fork. Must be full 40 character SHA-1.",
       "type": "string",
       "pattern": "[a-fA-F0-9]{40}"
     },
     "protocolDefault": {
-      "description": "The Git URL protocol prefix for all projects which use this remote source. Each project's source url and name are appended to this prefix to form the actual URL used to clone the project. Accepted values are 'ssh' or 'https', forming URL's of the form 'git@${remote_url}:${project_name}.git' or 'https://${remote_url}/${project_name}.git', respectively.",
+      "description": "Default git URL protocol for git hosting provider sources. Accepted values are 'ssh' or 'https'. If not supplied, defaults to 'ssh'. The full URL gets formed as:\ngit@${source_url}:${project_name/fork_name}.git\nhttps://${source_url}/${project_name/fork_name}.git",
       "type": "string",
       "enum": [
         "https",
@@ -289,7 +288,7 @@
       ]
     },
     "protocolSource": {
-      "description": "The Git URL protocol prefix for all projects which use this remote source. Each project's source url and name are appended to this prefix to form the actual URL used to clone the project. Accepted values are 'ssh' or 'https', forming URL's of the form 'git@${remote_url}:${project_name}.git' or 'https://${remote_url}/${project_name}.git', respectively.",
+      "description": "The git URL protocol for the git hosting provider source. Accepted values are 'ssh' or 'https'. If not supplied, defaults to 'ssh'. The full URL gets formed as:\ngit@${source_url}:${project_name/fork_name}.git\nhttps://${source_url}/${project_name/fork_name}.git",
       "type": "string",
       "enum": [
         "https",
@@ -297,7 +296,7 @@
       ]
     },
     "source": {
-      "description": "A map defining a git repository source",
+      "description": "Git repository hosting provider source",
       "type": "object",
       "required": [
         "name",
@@ -306,7 +305,7 @@
       "additionalProperties": false,
       "properties": {
         "name": {
-          "description": "Unique name of git repository's remote source",
+          "description": "Unique identifier for git hosting provider source",
           "oneOf": [
             {
               "$ref": "#/definitions/nonEmptyStringNoSpaces"
@@ -314,7 +313,7 @@
           ]
         },
         "url": {
-          "description": "The Git URL prefix for all projects which use this source. Each project's name is appended to this prefix to form the actual URL used to clone the project.",
+          "description": "The base URL of the git hosting provider. The full URL gets formed as:\ngit@${source_url}:${project_name/fork_name}.git\nhttps://${source_url}/${project_name/fork_name}.git",
           "oneOf": [
             {
               "$ref": "#/definitions/nonEmptyStringNoSpaces"
@@ -327,7 +326,7 @@
       }
     },
     "fork": {
-      "description": "A map defining a fork",
+      "description": "Git project fork",
       "type": "object",
       "anyOf": [
         {
@@ -393,7 +392,7 @@
       ]
     },
     "project": {
-      "description": "A map defining a project",
+      "description": "Git project",
       "type": "object",
       "anyOf": [
         {
@@ -544,7 +543,7 @@
       ]
     },
     "defaults": {
-      "description": "Default values inherited by projects and sources",
+      "description": "Default values inherited by projects, sources, and forks",
       "type": "object",
       "anyOf": [
         {
@@ -613,7 +612,7 @@
       ]
     },
     "sources": {
-      "description": "List of sources",
+      "description": "List of git hosting provider sources",
       "type": "array",
       "minItems": 1,
       "items": {
@@ -621,7 +620,7 @@
       }
     },
     "projects": {
-      "description": "List of projects",
+      "description": "List of git projects",
       "type": "array",
       "minItems": 1,
       "items": {
