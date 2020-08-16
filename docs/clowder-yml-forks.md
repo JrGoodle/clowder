@@ -6,14 +6,10 @@ See also: [clowder.yml syntax reference](clowder-yml-syntax-reference.md)
 name: forks-clowder
 
 defaults:
-  protocol: ssh
-  source: github
   git:
     recursive: true
 
 sources:
-  - name: github
-    url: github.com
   - name: chromium
     url: chromium.googlesource.com
     protocol: https
@@ -44,18 +40,14 @@ projects:
 
 ```yaml
 defaults:
-  protocol: ssh
-  source: github
   git:
     recursive: true
 ```
 
-Because more than one source is specified, the default `source` to use to clone projects must be given. All projects will recursively init and update submodules by default.
+All projects will recursively init and update submodules by default.
 
 ```yaml
 sources:
-  - name: github
-    url: github.com
   - name: chromium
     url: chromium.googlesource.com
     protocol: https
@@ -73,7 +65,7 @@ The `protocol` is set specifically to `https` for repositories where the user ma
     name: JrGoodle/djinni
 ```
 
-The original repository will be cloned with a remote named `upstream`. The `fork` inherits the default remote `origin`.
+The original repository will be cloned with a remote named `upstream`. The `fork` uses the default remote `origin`.
 
 ```yaml
 - name: external/gyp
@@ -95,4 +87,4 @@ The user's fork will track `fork-branch`.
     name: JrGoodle/sox
 ```
 
-This example will check out the repository to the `sox` directory, rather than `code`.
+The project is cloned to to the `sox` directory, rather than `code`.

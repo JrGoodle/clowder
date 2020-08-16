@@ -2,14 +2,7 @@
 name: cats-default-test
 
 defaults:
-  branch: master
-  remote: origin
-  source: github
   protocol: https
-
-sources:
-  - name: github
-    url: github.com
 
 projects:
   - name: jrgoodle/mu

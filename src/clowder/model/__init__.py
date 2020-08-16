@@ -8,3 +8,4 @@
 from .project import Project
 from .defaults import Defaults
 from .source import Source
+from .source import DEFAULT_SOURCES

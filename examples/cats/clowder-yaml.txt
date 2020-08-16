@@ -1,9 +1,6 @@
 
 defaults:
-  branch: master
   protocol: https
-  remote: origin
-  source: github
 name: cats-default-test
 projects:
 - branch: purr
@@ -32,6 +29,3 @@ projects:
   - black-cats
   name: jrgoodle/sasha
   path: black-cats/sasha
-sources:
-- name: github
-  url: github.com

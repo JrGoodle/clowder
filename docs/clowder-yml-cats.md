@@ -6,15 +6,11 @@ See also: [clowder.yml syntax reference](clowder-yml-syntax-reference.md)
 name: cats-clowder
 
 defaults:
-  protocol: ssh
+  protocol: https
   branch: tracking_branch
   git:
     config:
       alias.cat: '!echo "😸"'
-
-sources:
-  - name: github
-    url: github.com
 
 projects:
   - name: jrgoodle/mu
@@ -46,14 +42,14 @@ projects:
 
 ```yaml
 defaults:
-  protocol: ssh
+  protocol: https
   branch: tracking_branch
   git:
     config:
       alias.cat: '!echo "😸"'
 ```
 
-This example specifies a default `branch` of `tracking_branch` that all projects will inherit. It's also possible to specify a default `tag` or `commit`. The `git`section can contain custom git config entries that will be installed for all projects.
+This example specifies a default branch of `tracking_branch` that all projects will inherit. It's also possible to specify a default `tag` or `commit`. The `git`section can contain custom git config entries that will be installed for all projects.
 
 ```yaml
 - name: jrgoodle/mu
@@ -78,7 +74,7 @@ This project will check out the repository to the commit the `v0.01` tag points 
   commit: f2e20031ddce5cb097105f4d8ccbc77f4ac20709
 ```
 
-This project will check out the repository to the commit specified by the full sha-1. The `path` the repository will be cloned at is `black-cats/kit`
+This project will check out the repository to the commit specified by the full sha-1. The path the repository will be cloned at is `black-cats/kit`
 
 ```yaml
 - name: jrgoodle/kishka

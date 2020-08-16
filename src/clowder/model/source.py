@@ -5,11 +5,30 @@
 
 """
 
-from typing import Optional
+from typing import Dict, List, Optional
 
 from clowder.git import GitProtocol
 
 from .defaults import Defaults
+
+SourceDict = Dict[str, str]
+
+GITHUB: SourceDict = {
+    'name': 'github',
+    'url': 'github.com'
+}
+
+GITLAB: SourceDict = {
+    'name': 'gitlab',
+    'url': 'gitlab.com'
+}
+
+BITBUCKET: SourceDict = {
+    'name': 'bitbucket',
+    'url': 'bitbucket.org'
+}
+
+DEFAULT_SOURCES: List[SourceDict] = [GITHUB, GITLAB, BITBUCKET]
 
 
 class SourceImpl(object):
@@ -19,10 +38,10 @@ class SourceImpl(object):
     :ivar str url: Source url
     """
 
-    def __init__(self, source: dict):
+    def __init__(self, source: Dict[str, str]):
         """Source __init__
 
-        :param dict source: Parsed YAML python object for source
+        :param Dict[str, str] source: Parsed YAML python object for source
         """
 
         self.name = source['name']
@@ -48,18 +67,21 @@ class SourceImpl(object):
 class Source(SourceImpl):
     """clowder yaml Source model class
 
-    :ivar 'GitProtocol' protocol Git protocol
+    :ivar GitProtocol protocol: Git protocol
+    :ivar bool is_custom: Whether this is a custom user-defined source
     """
 
-    def __init__(self, source: dict, defaults: Defaults):
+    def __init__(self, source: Dict[str, str], defaults: Defaults, is_custom: bool):
         """Source __init__
 
         :param dict source: Parsed YAML python object for source
         :param Defaults defaults: Defaults instance
+        :param bool is_custom: Whether this is a custom user-defined source
         """
 
         super().__init__(source)
 
+        self.is_custom = is_custom
         self.protocol = GitProtocol(source.get('protocol', defaults.protocol))
 
     def update_protocol(self, protocol: Optional[str]):

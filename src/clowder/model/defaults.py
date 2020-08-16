@@ -31,9 +31,8 @@ class DefaultsImpl(object):
         :param dict defaults: Parsed YAML python object for defaults
         """
 
-        self.protocol = GitProtocol(defaults["protocol"])
+        self._protocol: str = defaults.get("protocol", None)
         self._source: str = defaults.get("source", None)
-
         self._remote: Optional[str] = defaults.get("remote", None)
         self._branch: Optional[str] = defaults.get("branch", None)
         self._tag: Optional[str] = defaults.get("tag", None)
@@ -53,8 +52,10 @@ class DefaultsImpl(object):
         :rtype: dict
         """
 
-        defaults = {'protocol': self.protocol.value}
+        defaults = {}
 
+        if self._protocol is not None:
+            defaults['protocol'] = self._protocol
         if self._source is not None:
             defaults['source'] = self._source
         if self._remote is not None:
@@ -93,7 +94,8 @@ class Defaults(DefaultsImpl):
 
         super().__init__(defaults)
 
-        self.source: str = defaults.get("source", None)
+        self.protocol = GitProtocol(defaults.get("protocol", "ssh"))
+        self.source: str = defaults.get("source", "github")
         self.remote: str = defaults.get("remote", "origin")
         self.git_settings = GitSettings(git_settings=defaults.get("git", None))
 

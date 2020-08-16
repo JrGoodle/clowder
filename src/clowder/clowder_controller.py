@@ -12,7 +12,7 @@ import clowder.util.formatting as fmt
 from clowder.environment import ENVIRONMENT
 from clowder.error import ClowderError, ClowderErrorType
 from clowder.logging import LOG_DEBUG
-from clowder.model import Defaults, Project, Source
+from clowder.model import Defaults, Project, Source, DEFAULT_SOURCES
 from clowder.model.util import (
     print_parallel_projects_output,
     validate_project_statuses
@@ -131,10 +131,20 @@ class ClowderController(object):
         else:
             projects_yaml = [p.get_yaml() for p in projects]
 
-        return {'name': self.name,
-                'defaults': self.defaults.get_yaml(),
-                'sources': [s.get_yaml() for s in self.sources],
-                'projects': projects_yaml}
+        result = {
+            'name': self.name,
+            'projects': projects_yaml
+        }
+
+        defaults = self.defaults.get_yaml()
+        if defaults:
+            result['defaults'] = defaults
+
+        sources = [s.get_yaml() for s in self.sources if s.is_custom]
+        if sources:
+            result['sources'] = sources
+
+        return result
 
     @staticmethod
     def validate_print_output(projects: Tuple[Project, ...]) -> None:
@@ -264,19 +274,21 @@ class ClowderController(object):
         """
         try:
             self.name = yaml['name']
-            self.defaults = Defaults(yaml['defaults'])
-            self.sources = tuple(sorted([Source(s, self.defaults) for s in yaml['sources']],
-                                        key=lambda source: source.name))
+            self.defaults = Defaults(yaml.get('defaults', {}))
 
-            if len(self.sources) == 1 and self.defaults.source is None:
-                self.defaults.source = self.sources[0].name
-            elif len(self.sources) > 1 and self.defaults.source is None:
-                raise ClowderError(ClowderErrorType.MISSING_DEFAULT_SOURCE, fmt.error_missing_default_source())
-
+            # Load sources
+            self.sources = [Source(s, self.defaults, True) for s in yaml.get('sources', [])]
+            # Load default sources if not already specified
+            for ds in DEFAULT_SOURCES:
+                if not any([s.name == ds['name'] for s in self.sources]):
+                    self.sources.append(Source(ds, self.defaults, False))
+            self.sources = tuple(sorted(self.sources, key=lambda source: source.name))
+            # Check for unknown sources
             if not any([s.name == self.defaults.source for s in self.sources]):
                 message = fmt.error_source_default_not_found(self.defaults.source, ENVIRONMENT.clowder_yaml)
                 raise ClowderError(ClowderErrorType.CLOWDER_YAML_SOURCE_NOT_FOUND, message)
 
+            # Load projects
             self.projects = tuple(sorted([Project(p, self.defaults, self.sources) for p in yaml['projects']],
                                          key=lambda project: project.name))
             # Validate projects don't share share directories
