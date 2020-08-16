@@ -131,10 +131,20 @@ class ClowderController(object):
         else:
             projects_yaml = [p.get_yaml() for p in projects]
 
-        return {'name': self.name,
-                'defaults': self.defaults.get_yaml(),
-                'sources': [s.get_yaml() for s in self.sources if s.is_custom],
-                'projects': projects_yaml}
+        result = {
+            'name': self.name,
+            'projects': projects_yaml
+        }
+
+        defaults = self.defaults.get_yaml()
+        if defaults:
+            result['defaults'] = defaults
+
+        sources = [s.get_yaml() for s in self.sources if s.is_custom]
+        if sources:
+            result['sources'] = sources
+
+        return result
 
     @staticmethod
     def validate_print_output(projects: Tuple[Project, ...]) -> None:
