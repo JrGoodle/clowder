@@ -12,7 +12,7 @@
       "minLength": 1,
       "pattern": "^((?! ).)*$"
     },
-    "projectName": {
+    "clowderName": {
       "type": "string",
       "minLength": 1,
       "pattern": "[a-zA-Z0-9-_]+"
@@ -59,8 +59,8 @@
         }
       ]
     },
-    "gitConfig": {
-      "description": "Git config settings",
+    "gitConfigProject": {
+      "description": "Project git config settings",
       "type": "object",
       "minProperties": 1,
       "propertyNames": {
@@ -70,27 +70,58 @@
         "$ref": "#/definitions/gitConfigVariableValue"
       }
     },
-    "gitSettings": {
+    "gitConfigDefault": {
+      "description": "Defaults git config settings",
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": {
+        "$ref": "#/definitions/gitConfigVariableName"
+      },
+      "additionalProperties": {
+        "$ref": "#/definitions/gitConfigVariableValue"
+      }
+    },
+    "gitSettingsDefault": {
       "description": "Git settings",
       "type": "object",
       "minProperties": 1,
       "additionalProperties": false,
       "properties": {
         "lfs": {
-          "$ref": "#/definitions/lfs"
+          "$ref": "#/definitions/lfsDefault"
         },
         "recursive": {
-          "$ref": "#/definitions/recursive"
+          "$ref": "#/definitions/recursiveDefault"
         },
         "depth": {
-          "$ref": "#/definitions/depth"
+          "$ref": "#/definitions/depthDefault"
         },
         "config": {
-          "$ref": "#/definitions/gitConfig"
+          "$ref": "#/definitions/gitConfigDefault"
         }
       }
     },
-    "gitProjectName": {
+    "gitSettingsProject": {
+      "description": "Git settings",
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": false,
+      "properties": {
+        "lfs": {
+          "$ref": "#/definitions/lfsProject"
+        },
+        "recursive": {
+          "$ref": "#/definitions/recursiveProject"
+        },
+        "depth": {
+          "$ref": "#/definitions/depthProject"
+        },
+        "config": {
+          "$ref": "#/definitions/gitConfigProject"
+        }
+      }
+    },
+    "projectName": {
       "description": "A unique name for this project. The project's name is appended onto its source's URL to generate the actual URL to configure the Git remote with. The URL gets formed as: ${source_url}/${project_name}.git where ${source_url} is the source's url and ${project_name} is the project’s name. The suffix '.git' is always appended as clowder assumes the upstream is a forest of bare Git repositories.",
       "oneOf": [
         {
@@ -98,7 +129,15 @@
         }
       ]
     },
-    "gitSourceName": {
+    "forkName": {
+      "description": "A unique name for this project. The project's name is appended onto its source's URL to generate the actual URL to configure the Git remote with. The URL gets formed as: ${source_url}/${project_name}.git where ${source_url} is the source's url and ${project_name} is the project’s name. The suffix '.git' is always appended as clowder assumes the upstream is a forest of bare Git repositories.",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/nonEmptyStringNoSpaces"
+        }
+      ]
+    },
+    "sourceNameDefault": {
       "description": "Git source name",
       "oneOf": [
         {
@@ -106,7 +145,23 @@
         }
       ]
     },
-    "gitRemoteName": {
+    "sourceNameProject": {
+      "description": "Git source name",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/nonEmptyStringNoSpaces"
+        }
+      ]
+    },
+    "sourceNameFork": {
+      "description": "Git source name",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/nonEmptyStringNoSpaces"
+        }
+      ]
+    },
+    "remoteNameProject": {
       "description": "The name specified here is used as the remote name in each project's .git/config, and is therefore automatically available to commands like git fetch, git remote, git pull and git push.",
       "oneOf": [
         {
@@ -114,23 +169,55 @@
         }
       ]
     },
-    "depth": {
+    "remoteNameFork": {
+      "description": "The name specified here is used as the remote name in each project's .git/config, and is therefore automatically available to commands like git fetch, git remote, git pull and git push.",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/nonEmptyStringNoSpaces"
+        }
+      ]
+    },
+    "remoteNameDefault": {
+      "description": "The name specified here is used as the remote name in each project's .git/config, and is therefore automatically available to commands like git fetch, git remote, git pull and git push.",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/nonEmptyStringNoSpaces"
+        }
+      ]
+    },
+    "depthDefault": {
       "description": "Git clone depth",
       "type": "integer",
       "minimum": 0,
       "default": 0
     },
-    "recursive": {
+    "depthProject": {
+      "description": "Git clone depth",
+      "type": "integer",
+      "minimum": 0,
+      "default": 0
+    },
+    "recursiveDefault": {
       "description": "Whether to clone and fetch project submodules recursively",
       "type": "boolean",
       "default": false
     },
-    "lfs": {
+    "recursiveProject": {
+      "description": "Whether to clone and fetch project submodules recursively",
+      "type": "boolean",
+      "default": false
+    },
+    "lfsDefault": {
       "description": "Whether repository uses git lfs",
       "type": "boolean",
       "default": false
     },
-    "branch": {
+    "lfsProject": {
+      "description": "Whether repository uses git lfs",
+      "type": "boolean",
+      "default": false
+    },
+    "branchDefault": {
       "description": "Name of the Git branch to track for this project. If not supplied the ref specified in the defaults is used if applicable, else the default branch 'master' is used.",
       "oneOf": [
         {
@@ -138,7 +225,23 @@
         }
       ]
     },
-    "tag": {
+    "branchProject": {
+      "description": "Name of the Git branch to track for this project. If not supplied the ref specified in the defaults is used if applicable, else the default branch 'master' is used.",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/nonEmptyStringNoSpaces"
+        }
+      ]
+    },
+    "branchFork": {
+      "description": "Name of the Git branch to track for this project. If not supplied the ref specified in the defaults is used if applicable, else the default branch 'master' is used.",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/nonEmptyStringNoSpaces"
+        }
+      ]
+    },
+    "tagDefault": {
       "description": "Name of the Git tag to track for this project. If not supplied the ref specified in the defaults is used if applicable, else the default branch 'master' is used.",
       "oneOf": [
         {
@@ -146,12 +249,46 @@
         }
       ]
     },
-    "commit": {
+    "tagProject": {
+      "description": "Name of the Git tag to track for this project. If not supplied the ref specified in the defaults is used if applicable, else the default branch 'master' is used.",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/nonEmptyStringNoSpaces"
+        }
+      ]
+    },
+    "tagFork": {
+      "description": "Name of the Git tag to track for this project. If not supplied the ref specified in the defaults is used if applicable, else the default branch 'master' is used.",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/nonEmptyStringNoSpaces"
+        }
+      ]
+    },
+    "commitDefault": {
       "description": "Git commit SHA-1 to track for this project. Must be full 40 character SHA-1. If not supplied the ref specified in the defaults is used if applicable, else the default branch 'master' is used.",
       "type": "string",
       "pattern": "[a-fA-F0-9]{40}"
     },
-    "protocol": {
+    "commitProject": {
+      "description": "Git commit SHA-1 to track for this project. Must be full 40 character SHA-1. If not supplied the ref specified in the defaults is used if applicable, else the default branch 'master' is used.",
+      "type": "string",
+      "pattern": "[a-fA-F0-9]{40}"
+    },
+    "commitFork": {
+      "description": "Git commit SHA-1 to track for this project. Must be full 40 character SHA-1. If not supplied the ref specified in the defaults is used if applicable, else the default branch 'master' is used.",
+      "type": "string",
+      "pattern": "[a-fA-F0-9]{40}"
+    },
+    "protocolDefault": {
+      "description": "The Git URL protocol prefix for all projects which use this remote source. Each project's source url and name are appended to this prefix to form the actual URL used to clone the project. Accepted values are 'ssh' or 'https', forming URL's of the form 'git@${remote_url}:${project_name}.git' or 'https://${remote_url}/${project_name}.git', respectively.",
+      "type": "string",
+      "enum": [
+        "https",
+        "ssh"
+      ]
+    },
+    "protocolSource": {
       "description": "The Git URL protocol prefix for all projects which use this remote source. Each project's source url and name are appended to this prefix to form the actual URL used to clone the project. Accepted values are 'ssh' or 'https', forming URL's of the form 'git@${remote_url}:${project_name}.git' or 'https://${remote_url}/${project_name}.git', respectively.",
       "type": "string",
       "enum": [
@@ -185,7 +322,7 @@
           ]
         },
         "protocol": {
-          "$ref": "#/definitions/protocol"
+          "$ref": "#/definitions/protocolSource"
         }
       }
     },
@@ -200,16 +337,16 @@
           ],
           "properties": {
             "name": {
-              "$ref": "#/definitions/gitProjectName"
+              "$ref": "#/definitions/forkName"
             },
             "source": {
-              "$ref": "#/definitions/gitSourceName"
+              "$ref": "#/definitions/sourceNameFork"
             },
             "branch": {
-              "$ref": "#/definitions/branch"
+              "$ref": "#/definitions/branchFork"
             },
             "remote": {
-              "$ref": "#/definitions/gitRemoteName"
+              "$ref": "#/definitions/remoteNameFork"
             }
           }
         },
@@ -220,16 +357,16 @@
           ],
           "properties": {
             "name": {
-              "$ref": "#/definitions/gitProjectName"
+              "$ref": "#/definitions/forkName"
             },
             "source": {
-              "$ref": "#/definitions/gitSourceName"
+              "$ref": "#/definitions/sourceNameFork"
             },
             "tag": {
-              "$ref": "#/definitions/tag"
+              "$ref": "#/definitions/tagFork"
             },
             "remote": {
-              "$ref": "#/definitions/gitRemoteName"
+              "$ref": "#/definitions/remoteNameFork"
             }
           }
         },
@@ -240,16 +377,16 @@
           ],
           "properties": {
             "name": {
-              "$ref": "#/definitions/gitProjectName"
+              "$ref": "#/definitions/forkName"
             },
             "source": {
-              "$ref": "#/definitions/gitSourceName"
+              "$ref": "#/definitions/sourceNameFork"
             },
             "commit": {
-              "$ref": "#/definitions/commit"
+              "$ref": "#/definitions/commitFork"
             },
             "remote": {
-              "$ref": "#/definitions/gitRemoteName"
+              "$ref": "#/definitions/remoteNameFork"
             }
           }
         }
@@ -266,7 +403,7 @@
           ],
           "properties": {
             "name": {
-              "$ref": "#/definitions/gitProjectName"
+              "$ref": "#/definitions/projectName"
             },
             "path": {
               "description": "Path to clone project on disk",
@@ -277,13 +414,13 @@
               ]
             },
             "source": {
-              "$ref": "#/definitions/gitSourceName"
+              "$ref": "#/definitions/sourceNameProject"
             },
             "branch": {
-              "$ref": "#/definitions/branch"
+              "$ref": "#/definitions/branchProject"
             },
             "remote": {
-              "$ref": "#/definitions/gitRemoteName"
+              "$ref": "#/definitions/remoteNameProject"
             },
             "groups": {
               "description": "Groups project belongs to",
@@ -297,7 +434,7 @@
               "$ref": "#/definitions/fork"
             },
             "git": {
-              "$ref": "#/definitions/gitSettings"
+              "$ref": "#/definitions/gitSettingsProject"
             }
           }
         },
@@ -308,7 +445,7 @@
           ],
           "properties": {
             "name": {
-              "$ref": "#/definitions/gitProjectName"
+              "$ref": "#/definitions/projectName"
             },
             "path": {
               "description": "Path to clone project on disk",
@@ -319,13 +456,13 @@
               ]
             },
             "source": {
-              "$ref": "#/definitions/gitSourceName"
+              "$ref": "#/definitions/sourceNameProject"
             },
             "tag": {
-              "$ref": "#/definitions/tag"
+              "$ref": "#/definitions/tagProject"
             },
             "remote": {
-              "$ref": "#/definitions/gitRemoteName"
+              "$ref": "#/definitions/remoteNameProject"
             },
             "groups": {
               "description": "Groups project belongs to",
@@ -339,7 +476,7 @@
               "$ref": "#/definitions/fork"
             },
             "git": {
-              "$ref": "#/definitions/gitSettings"
+              "$ref": "#/definitions/gitSettingsProject"
             }
           }
         },
@@ -350,7 +487,7 @@
           ],
           "properties": {
             "name": {
-              "$ref": "#/definitions/gitProjectName"
+              "$ref": "#/definitions/projectName"
             },
             "path": {
               "description": "Path to clone project on disk",
@@ -361,13 +498,13 @@
               ]
             },
             "source": {
-              "$ref": "#/definitions/gitSourceName"
+              "$ref": "#/definitions/sourceNameProject"
             },
             "commit": {
-              "$ref": "#/definitions/commit"
+              "$ref": "#/definitions/commitProject"
             },
             "remote": {
-              "$ref": "#/definitions/gitRemoteName"
+              "$ref": "#/definitions/remoteNameProject"
             },
             "groups": {
               "description": "Groups project belongs to",
@@ -381,10 +518,10 @@
               "$ref": "#/definitions/fork"
             },
             "depth": {
-              "$ref": "#/definitions/depth"
+              "$ref": "#/definitions/depthProject"
             },
             "git": {
-              "$ref": "#/definitions/gitSettings"
+              "$ref": "#/definitions/gitSettingsProject"
             }
           }
         }
@@ -402,7 +539,7 @@
       "description": "A name describing the projects. Must be a string containing any combination of letters, numbers, - or _",
       "oneOf": [
         {
-          "$ref": "#/definitions/projectName"
+          "$ref": "#/definitions/clowderName"
         }
       ]
     },
@@ -415,19 +552,19 @@
           "additionalProperties": false,
           "properties": {
             "source": {
-              "$ref": "#/definitions/gitSourceName"
+              "$ref": "#/definitions/sourceNameDefault"
             },
             "branch": {
-              "$ref": "#/definitions/branch"
+              "$ref": "#/definitions/branchDefault"
             },
             "remote": {
-              "$ref": "#/definitions/gitRemoteName"
+              "$ref": "#/definitions/remoteNameDefault"
             },
             "protocol": {
-              "$ref": "#/definitions/protocol"
+              "$ref": "#/definitions/protocolDefault"
             },
             "git": {
-              "$ref": "#/definitions/gitSettings"
+              "$ref": "#/definitions/gitSettingsDefault"
             }
           }
         },
@@ -436,19 +573,19 @@
           "additionalProperties": false,
           "properties": {
             "source": {
-              "$ref": "#/definitions/gitSourceName"
+              "$ref": "#/definitions/sourceNameDefault"
             },
             "tag": {
-              "$ref": "#/definitions/tag"
+              "$ref": "#/definitions/tagDefault"
             },
             "remote": {
-              "$ref": "#/definitions/gitRemoteName"
+              "$ref": "#/definitions/remoteNameDefault"
             },
             "protocol": {
-              "$ref": "#/definitions/protocol"
+              "$ref": "#/definitions/protocolDefault"
             },
             "git": {
-              "$ref": "#/definitions/gitSettings"
+              "$ref": "#/definitions/gitSettingsDefault"
             }
           }
         },
@@ -457,19 +594,19 @@
           "additionalProperties": false,
           "properties": {
             "source": {
-              "$ref": "#/definitions/gitSourceName"
+              "$ref": "#/definitions/sourceNameDefault"
             },
             "commit": {
-              "$ref": "#/definitions/commit"
+              "$ref": "#/definitions/commitDefault"
             },
             "remote": {
-              "$ref": "#/definitions/gitRemoteName"
+              "$ref": "#/definitions/remoteNameDefault"
             },
             "protocol": {
-              "$ref": "#/definitions/protocol"
+              "$ref": "#/definitions/protocolDefault"
             },
             "git": {
-              "$ref": "#/definitions/gitSettings"
+              "$ref": "#/definitions/gitSettingsDefault"
             }
           }
         }
