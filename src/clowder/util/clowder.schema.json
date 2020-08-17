@@ -716,7 +716,7 @@
         "$ref": "#/definitions/namedProjectsSection"
       },
       "propertyNames": {
-        "pattern": "^(?!defaults|sources$)[A-Za-z0-9_-]+"
+        "pattern": "^(?!defaults|sources|default|all$)[A-Za-z0-9_-]+"
       },
       "required": [
         "name"
@@ -737,7 +737,7 @@
         "$ref": "#/definitions/namedProjectsSection"
       },
       "propertyNames": {
-        "pattern": "^(?!sources$)[A-Za-z0-9_-]+"
+        "pattern": "^(?!sources|default|all$)[A-Za-z0-9_-]+"
       },
       "required": [
         "name",
@@ -762,7 +762,7 @@
         "$ref": "#/definitions/namedProjectsSection"
       },
       "propertyNames": {
-        "pattern": "^(?!defaults$)[A-Za-z0-9_-]+"
+        "pattern": "^(?!defaults|default|all$)[A-Za-z0-9_-]+"
       },
       "required": [
         "name",
@@ -787,7 +787,7 @@
         "$ref": "#/definitions/namedProjectsSection"
       },
       "propertyNames": {
-        "pattern": "[A-Za-z0-9_-]+"
+        "pattern": "^(?!default|all$)[A-Za-z0-9_-]+"
       },
       "required": [
         "name",
