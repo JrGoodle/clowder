@@ -64,6 +64,19 @@
         }
       ]
     },
+    "groups": {
+      "type": "array",
+      "uniqueItems": true,
+      "minItems": 1,
+      "items": {
+        "$ref": "#/definitions/group"
+      }
+    },
+    "group": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!default|all$)[a-zA-Z0-9-_]*$"
+    },
     "clowderName": {
       "description": "A name describing the projects. Must be a string containing any combination of letters, numbers, - or _",
       "type": "string",
@@ -520,19 +533,13 @@
         }
       ]
     },
-    "projectGroup": {
-      "type": "string",
-      "minLength": 1,
-      "pattern": "^(?!default|all$)[a-zA-Z0-9-_]*$"
-    },
     "projectGroups": {
       "description": "Groups project belongs to",
-      "type": "array",
-      "uniqueItems": true,
-      "minItems": 1,
-      "items": {
-        "$ref": "#/definitions/projectGroup"
-      }
+      "oneOf": [
+        {
+          "$ref": "#/definitions/groups"
+        }
+      ]
     },
     "projectPath": {
       "description": "Path to clone project on disk",
@@ -656,6 +663,9 @@
         "path": {
           "$ref": "#/definitions/sectionPath"
         },
+        "groups": {
+          "$ref": "#/definitions/sectionGroups"
+        },
         "projects": {
           "$ref": "#/definitions/projects"
         }
@@ -666,6 +676,14 @@
       "oneOf": [
         {
           "$ref": "#/definitions/relativePath"
+        }
+      ]
+    },
+    "sectionGroups": {
+      "description": "Groups projects in section belong to",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/groups"
         }
       ]
     },
