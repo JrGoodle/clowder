@@ -824,21 +824,9 @@
       }
     }
   },
-  "anyOf": [
+  "oneOf": [
     {
       "$ref": "#/definitions/basicClowder"
-    },
-    {
-      "$ref": "#/definitions/sectionedClowder"
-    },
-    {
-      "$ref": "#/definitions/sectionedClowderDefaults"
-    },
-    {
-      "$ref": "#/definitions/sectionedClowderSources"
-    },
-    {
-      "$ref": "#/definitions/sectionedClowderDefaultsSources"
     }
   ]
 }
