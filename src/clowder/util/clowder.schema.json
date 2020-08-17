@@ -32,6 +32,7 @@
       "pattern": "^(?!default|all$)[a-zA-Z0-9-_]*$"
     },
     "projectGroups": {
+      "description": "Groups project belongs to",
       "type": "array",
       "uniqueItems": true,
       "minItems": 1,
@@ -43,6 +44,26 @@
       "type": "string",
       "minLength": 1,
       "pattern": "^(?!\/.*$).*"
+    },
+    "projectPath": {
+      "description": "Path to clone project on disk",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/relativePath"
+        }
+      ]
+    },
+    "sectionPath": {
+      "description": "Prefix path for projects",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/relativePath"
+        }
+      ]
+    },
+    "gitSha1": {
+      "type": "string",
+      "pattern": "[a-fA-F0-9]{40}"
     },
     "gitConfigVariableName": {
       "description": "Fully qualified git config variable name",
@@ -193,37 +214,66 @@
         }
       ]
     },
-    "depthDefault": {
-      "description": "Default git clone depth",
+    "gitDepth": {
       "type": "integer",
       "minimum": 0,
       "default": 0
+    },
+    "depthDefault": {
+      "description": "Default git clone depth",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/gitDepth"
+        }
+      ]
     },
     "depthProject": {
       "description": "Project git clone depth",
-      "type": "integer",
-      "minimum": 0,
-      "default": 0
+      "oneOf": [
+        {
+          "$ref": "#/definitions/gitDepth"
+        }
+      ]
     },
-    "recursiveDefault": {
-      "description": "Default for whether to clone and fetch project and fork submodules recursively",
+    "gitRecursive": {
       "type": "boolean",
       "default": false
     },
+    "recursiveDefault": {
+      "description": "Default for whether to clone and fetch project and fork submodules recursively",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/gitRecursive"
+        }
+      ]
+    },
     "recursiveProject": {
       "description": "Whether to clone and fetch project and fork submodules recursively",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/gitRecursive"
+        }
+      ]
+    },
+    "gitLfs": {
       "type": "boolean",
       "default": false
     },
     "lfsDefault": {
       "description": "Default for whether projects and forks should install git lfs hooks and update lfs files",
-      "type": "boolean",
-      "default": false
+      "oneOf": [
+        {
+          "$ref": "#/definitions/gitLfs"
+        }
+      ]
     },
     "lfsProject": {
       "description": "Whether project and fork should install git lfs hooks and update lfs files",
-      "type": "boolean",
-      "default": false
+      "oneOf": [
+        {
+          "$ref": "#/definitions/gitLfs"
+        }
+      ]
     },
     "branchDefault": {
       "description": "Default name of the git branch to track for projects and forks. If not supplied the default branch 'master' is used.",
@@ -275,18 +325,27 @@
     },
     "commitDefault": {
       "description": "Default git commit SHA-1 to track for this projects and forks. Must be full 40 character SHA-1.",
-      "type": "string",
-      "pattern": "[a-fA-F0-9]{40}"
+      "oneOf": [
+        {
+          "$ref": "#/definitions/gitSha1"
+        }
+      ]
     },
     "commitProject": {
       "description": "Git commit SHA-1 to track for this project. Must be full 40 character SHA-1.",
-      "type": "string",
-      "pattern": "[a-fA-F0-9]{40}"
+      "oneOf": [
+        {
+          "$ref": "#/definitions/gitSha1"
+        }
+      ]
     },
     "commitFork": {
       "description": "Git commit SHA-1 to track for this fork. Must be full 40 character SHA-1.",
-      "type": "string",
-      "pattern": "[a-fA-F0-9]{40}"
+      "oneOf": [
+        {
+          "$ref": "#/definitions/gitSha1"
+        }
+      ]
     },
     "protocolDefault": {
       "description": "Default git URL protocol for git hosting provider sources. Accepted values are 'ssh' or 'https'. If not supplied, defaults to 'ssh'. The full URL gets formed as:\ngit@${source_url}:${project_name/fork_name}.git\nhttps://${source_url}/${project_name/fork_name}.git",
@@ -381,6 +440,22 @@
         "$ref": "#/definitions/source"
       }
     },
+    "sourceName": {
+      "description": "Unique identifier for git hosting provider source",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/nonEmptyStringNoSpaces"
+        }
+      ]
+    },
+    "sourceUrl": {
+      "description": "The base URL of the git hosting provider. The full URL gets formed as:\ngit@${source_url}:${project_name/fork_name}.git\nhttps://${source_url}/${project_name/fork_name}.git",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/nonEmptyStringNoSpaces"
+        }
+      ]
+    },
     "source": {
       "description": "Git repository hosting provider source",
       "type": "object",
@@ -391,20 +466,10 @@
       "additionalProperties": false,
       "properties": {
         "name": {
-          "description": "Unique identifier for git hosting provider source",
-          "oneOf": [
-            {
-              "$ref": "#/definitions/nonEmptyStringNoSpaces"
-            }
-          ]
+          "$ref": "#/definitions/sourceName"
         },
         "url": {
-          "description": "The base URL of the git hosting provider. The full URL gets formed as:\ngit@${source_url}:${project_name/fork_name}.git\nhttps://${source_url}/${project_name/fork_name}.git",
-          "oneOf": [
-            {
-              "$ref": "#/definitions/nonEmptyStringNoSpaces"
-            }
-          ]
+          "$ref": "#/definitions/sourceUrl"
         },
         "protocol": {
           "$ref": "#/definitions/protocolSource"
@@ -491,12 +556,7 @@
               "$ref": "#/definitions/projectName"
             },
             "path": {
-              "description": "Path to clone project on disk",
-              "oneOf": [
-                {
-                  "$ref": "#/definitions/relativePath"
-                }
-              ]
+              "$ref": "#/definitions/projectPath"
             },
             "source": {
               "$ref": "#/definitions/sourceNameProject"
@@ -508,12 +568,7 @@
               "$ref": "#/definitions/remoteNameProject"
             },
             "groups": {
-              "description": "Groups project belongs to",
-              "oneOf": [
-                {
-                  "$ref": "#/definitions/projectGroups"
-                }
-              ]
+              "$ref": "#/definitions/projectGroups"
             },
             "fork": {
               "$ref": "#/definitions/fork"
@@ -533,12 +588,7 @@
               "$ref": "#/definitions/projectName"
             },
             "path": {
-              "description": "Path to clone project on disk",
-              "oneOf": [
-                {
-                  "$ref": "#/definitions/relativePath"
-                }
-              ]
+              "$ref": "#/definitions/projectPath"
             },
             "source": {
               "$ref": "#/definitions/sourceNameProject"
@@ -550,12 +600,7 @@
               "$ref": "#/definitions/remoteNameProject"
             },
             "groups": {
-              "description": "Groups project belongs to",
-              "oneOf": [
-                {
-                  "$ref": "#/definitions/projectGroups"
-                }
-              ]
+              "$ref": "#/definitions/projectGroups"
             },
             "fork": {
               "$ref": "#/definitions/fork"
@@ -575,12 +620,7 @@
               "$ref": "#/definitions/projectName"
             },
             "path": {
-              "description": "Path to clone project on disk",
-              "oneOf": [
-                {
-                  "$ref": "#/definitions/relativePath"
-                }
-              ]
+              "$ref": "#/definitions/projectPath"
             },
             "source": {
               "$ref": "#/definitions/sourceNameProject"
@@ -592,12 +632,7 @@
               "$ref": "#/definitions/remoteNameProject"
             },
             "groups": {
-              "description": "Groups project belongs to",
-              "oneOf": [
-                {
-                  "$ref": "#/definitions/projectGroups"
-                }
-              ]
+              "$ref": "#/definitions/projectGroups"
             },
             "fork": {
               "$ref": "#/definitions/fork"
@@ -612,7 +647,7 @@
         }
       ]
     },
-    "namedProjectSection": {
+    "namedProjectsSection": {
       "description": "Named projects section",
       "type": "object",
       "required": [
@@ -621,19 +656,10 @@
       "additionalProperties": false,
       "properties": {
         "path": {
-          "description": "Relative path on disk",
-          "oneOf": [
-            {
-              "$ref": "#/definitions/relativePath"
-            }
-          ]
+          "$ref": "#/definitions/sectionPath"
         },
         "projects": {
-          "oneOf": [
-            {
-              "$ref": "#/definitions/projects"
-            }
-          ]
+          "$ref": "#/definitions/projects"
         }
       }
     },
@@ -646,32 +672,16 @@
       ],
       "properties": {
         "name": {
-          "oneOf": [
-            {
-              "$ref": "#/definitions/clowderName"
-            }
-          ]
+          "$ref": "#/definitions/clowderName"
         },
         "defaults": {
-          "oneOf": [
-            {
-              "$ref": "#/definitions/defaults"
-            }
-          ]
+          "$ref": "#/definitions/defaults"
         },
         "sources": {
-          "oneOf": [
-            {
-              "$ref": "#/definitions/sources"
-            }
-          ]
+          "$ref": "#/definitions/sources"
         },
         "projects": {
-          "oneOf": [
-            {
-              "$ref": "#/definitions/projects"
-            }
-          ]
+          "$ref": "#/definitions/projects"
         }
       }
     },
@@ -679,7 +689,7 @@
       "type": "object",
       "minProperties": 2,
       "additionalProperties": {
-        "$ref": "#/definitions/namedProjectSection"
+        "$ref": "#/definitions/namedProjectsSection"
       },
       "propertyNames": {
         "pattern": "^(?!defaults|sources$)[A-Za-z0-9_-]+"
@@ -689,18 +699,10 @@
       ],
       "properties": {
         "name": {
-          "oneOf": [
-            {
-              "$ref": "#/definitions/clowderName"
-            }
-          ]
+          "$ref": "#/definitions/clowderName"
         },
         "projects": {
-          "oneOf": [
-            {
-              "$ref": "#/definitions/projects"
-            }
-          ]
+          "$ref": "#/definitions/projects"
         }
       }
     },
@@ -708,7 +710,7 @@
       "type": "object",
       "minProperties": 3,
       "additionalProperties": {
-        "$ref": "#/definitions/namedProjectSection"
+        "$ref": "#/definitions/namedProjectsSection"
       },
       "propertyNames": {
         "pattern": "^(?!sources$)[A-Za-z0-9_-]+"
@@ -719,25 +721,13 @@
       ],
       "properties": {
         "name": {
-          "oneOf": [
-            {
-              "$ref": "#/definitions/clowderName"
-            }
-          ]
+          "$ref": "#/definitions/clowderName"
         },
         "projects": {
-          "oneOf": [
-            {
-              "$ref": "#/definitions/projects"
-            }
-          ]
+          "$ref": "#/definitions/projects"
         },
         "defaults": {
-          "oneOf": [
-            {
-              "$ref": "#/definitions/defaults"
-            }
-          ]
+          "$ref": "#/definitions/defaults"
         }
       }
     },
@@ -745,7 +735,7 @@
       "type": "object",
       "minProperties": 3,
       "additionalProperties": {
-        "$ref": "#/definitions/namedProjectSection"
+        "$ref": "#/definitions/namedProjectsSection"
       },
       "propertyNames": {
         "pattern": "^(?!defaults$)[A-Za-z0-9_-]+"
@@ -756,25 +746,13 @@
       ],
       "properties": {
         "name": {
-          "oneOf": [
-            {
-              "$ref": "#/definitions/clowderName"
-            }
-          ]
+          "$ref": "#/definitions/clowderName"
         },
         "projects": {
-          "oneOf": [
-            {
-              "$ref": "#/definitions/projects"
-            }
-          ]
+          "$ref": "#/definitions/projects"
         },
         "sources": {
-          "oneOf": [
-            {
-              "$ref": "#/definitions/sources"
-            }
-          ]
+          "$ref": "#/definitions/sources"
         }
       }
     },
@@ -782,7 +760,7 @@
       "type": "object",
       "minProperties": 4,
       "additionalProperties": {
-        "$ref": "#/definitions/namedProjectSection"
+        "$ref": "#/definitions/namedProjectsSection"
       },
       "propertyNames": {
         "pattern": "[A-Za-z0-9_-]+"
@@ -794,32 +772,16 @@
       ],
       "properties": {
         "name": {
-          "oneOf": [
-            {
-              "$ref": "#/definitions/clowderName"
-            }
-          ]
+          "$ref": "#/definitions/clowderName"
         },
         "projects": {
-          "oneOf": [
-            {
-              "$ref": "#/definitions/projects"
-            }
-          ]
+          "$ref": "#/definitions/projects"
         },
         "defaults": {
-          "oneOf": [
-            {
-              "$ref": "#/definitions/defaults"
-            }
-          ]
+          "$ref": "#/definitions/defaults"
         },
         "sources": {
-          "oneOf": [
-            {
-              "$ref": "#/definitions/sources"
-            }
-          ]
+          "$ref": "#/definitions/sources"
         }
       }
     }
