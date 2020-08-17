@@ -15,7 +15,15 @@
     "clowderName": {
       "type": "string",
       "minLength": 1,
-      "pattern": "[a-zA-Z0-9-_]+"
+      "pattern": "[A-Za-z0-9_-]+"
+    },
+    "projects": {
+      "description": "List of git projects",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/definitions/project"
+      }
     },
     "projectGroup": {
       "type": "string",
@@ -295,6 +303,75 @@
         "ssh"
       ]
     },
+    "defaults": {
+      "description": "Default values inherited by projects, sources, and forks",
+      "type": "object",
+      "anyOf": [
+        {
+          "minProperties": 1,
+          "additionalProperties": false,
+          "properties": {
+            "source": {
+              "$ref": "#/definitions/sourceNameDefault"
+            },
+            "branch": {
+              "$ref": "#/definitions/branchDefault"
+            },
+            "remote": {
+              "$ref": "#/definitions/remoteNameDefault"
+            },
+            "protocol": {
+              "$ref": "#/definitions/protocolDefault"
+            },
+            "git": {
+              "$ref": "#/definitions/gitSettingsDefault"
+            }
+          }
+        },
+        {
+          "minProperties": 1,
+          "additionalProperties": false,
+          "properties": {
+            "source": {
+              "$ref": "#/definitions/sourceNameDefault"
+            },
+            "tag": {
+              "$ref": "#/definitions/tagDefault"
+            },
+            "remote": {
+              "$ref": "#/definitions/remoteNameDefault"
+            },
+            "protocol": {
+              "$ref": "#/definitions/protocolDefault"
+            },
+            "git": {
+              "$ref": "#/definitions/gitSettingsDefault"
+            }
+          }
+        },
+        {
+          "minProperties": 1,
+          "additionalProperties": false,
+          "properties": {
+            "source": {
+              "$ref": "#/definitions/sourceNameDefault"
+            },
+            "commit": {
+              "$ref": "#/definitions/commitDefault"
+            },
+            "remote": {
+              "$ref": "#/definitions/remoteNameDefault"
+            },
+            "protocol": {
+              "$ref": "#/definitions/protocolDefault"
+            },
+            "git": {
+              "$ref": "#/definitions/gitSettingsDefault"
+            }
+          }
+        }
+      ]
+    },
     "source": {
       "description": "Git repository hosting provider source",
       "type": "object",
@@ -525,107 +602,162 @@
           }
         }
       ]
+    },
+    "namedProjectSection": {
+      "description": "Named projects section",
+      "type": "object",
+      "required": [
+        "projects"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "description": "Relative path on disk",
+          "oneOf": [
+            {
+              "$ref": "#/definitions/relativePath"
+            }
+          ]
+        },
+        "projects": {
+          "description": "List of git projects",
+          "oneOf": [
+            {
+              "$ref": "#/definitions/projects"
+            }
+          ]
+        }
+      }
+    },
+    "clowderProperties": {
+      "name": {
+        "description": "A name describing the projects. Must be a string containing any combination of letters, numbers, - or _",
+        "oneOf": [
+          {
+            "$ref": "#/definitions/clowderName"
+          }
+        ]
+      },
+      "defaults": {
+        "description": "Default values inherited by projects, sources, and forks",
+        "type": "array",
+        "minItems": 1,
+        "items": {
+          "$ref": "#/definitions/defaults"
+        }
+      },
+      "sources": {
+        "description": "List of git hosting provider sources",
+        "type": "array",
+        "minItems": 1,
+        "items": {
+          "$ref": "#/definitions/source"
+        }
+      },
+      "projects": {
+        "description": "List of git projects",
+        "oneOf": [
+          {
+            "$ref": "#/definitions/projects"
+          }
+        ]
+      }
+    },
+    "basicClowder": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "projects"
+      ],
+      "properties": {
+        "name": {
+          "description": "A name describing the projects. Must be a string containing any combination of letters, numbers, - or _",
+          "oneOf": [
+            {
+              "$ref": "#/definitions/clowderName"
+            }
+          ]
+        },
+        "defaults": {
+          "description": "Default values inherited by projects, sources, and forks",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/definitions/defaults"
+          }
+        },
+        "sources": {
+          "description": "List of git hosting provider sources",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/definitions/source"
+          }
+        },
+        "projects": {
+          "description": "List of git projects",
+          "oneOf": [
+            {
+              "$ref": "#/definitions/projects"
+            }
+          ]
+        }
+      }
+    },
+    "sectionedClowder": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/definitions/namedProjectSection"
+      },
+      "propertyNames": {
+        "pattern": "[A-Za-z0-9_-]+"
+      },
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "description": "A name describing the projects. Must be a string containing any combination of letters, numbers, - or _",
+          "oneOf": [
+            {
+              "$ref": "#/definitions/clowderName"
+            }
+          ]
+        },
+        "defaults": {
+          "description": "Default values inherited by projects, sources, and forks",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/definitions/defaults"
+          }
+        },
+        "sources": {
+          "description": "List of git hosting provider sources",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/definitions/source"
+          }
+        },
+        "projects": {
+          "description": "List of git projects",
+          "oneOf": [
+            {
+              "$ref": "#/definitions/projects"
+            }
+          ]
+        }
+      }
     }
   },
-  "type": "object",
-  "additionalProperties": false,
-  "required": [
-    "name",
-    "projects"
-  ],
-  "properties": {
-    "name": {
-      "description": "A name describing the projects. Must be a string containing any combination of letters, numbers, - or _",
-      "oneOf": [
-        {
-          "$ref": "#/definitions/clowderName"
-        }
-      ]
+  "anyOf": [
+    {
+      "$ref": "#/definitions/basicClowder"
     },
-    "defaults": {
-      "description": "Default values inherited by projects, sources, and forks",
-      "type": "object",
-      "anyOf": [
-        {
-          "minProperties": 1,
-          "additionalProperties": false,
-          "properties": {
-            "source": {
-              "$ref": "#/definitions/sourceNameDefault"
-            },
-            "branch": {
-              "$ref": "#/definitions/branchDefault"
-            },
-            "remote": {
-              "$ref": "#/definitions/remoteNameDefault"
-            },
-            "protocol": {
-              "$ref": "#/definitions/protocolDefault"
-            },
-            "git": {
-              "$ref": "#/definitions/gitSettingsDefault"
-            }
-          }
-        },
-        {
-          "minProperties": 1,
-          "additionalProperties": false,
-          "properties": {
-            "source": {
-              "$ref": "#/definitions/sourceNameDefault"
-            },
-            "tag": {
-              "$ref": "#/definitions/tagDefault"
-            },
-            "remote": {
-              "$ref": "#/definitions/remoteNameDefault"
-            },
-            "protocol": {
-              "$ref": "#/definitions/protocolDefault"
-            },
-            "git": {
-              "$ref": "#/definitions/gitSettingsDefault"
-            }
-          }
-        },
-        {
-          "minProperties": 1,
-          "additionalProperties": false,
-          "properties": {
-            "source": {
-              "$ref": "#/definitions/sourceNameDefault"
-            },
-            "commit": {
-              "$ref": "#/definitions/commitDefault"
-            },
-            "remote": {
-              "$ref": "#/definitions/remoteNameDefault"
-            },
-            "protocol": {
-              "$ref": "#/definitions/protocolDefault"
-            },
-            "git": {
-              "$ref": "#/definitions/gitSettingsDefault"
-            }
-          }
-        }
-      ]
-    },
-    "sources": {
-      "description": "List of git hosting provider sources",
-      "type": "array",
-      "minItems": 1,
-      "items": {
-        "$ref": "#/definitions/source"
-      }
-    },
-    "projects": {
-      "description": "List of git projects",
-      "type": "array",
-      "minItems": 1,
-      "items": {
-        "$ref": "#/definitions/project"
-      }
+    {
+      "$ref": "#/definitions/sectionedClowder"
     }
-  }
+  ]
 }
