@@ -111,7 +111,7 @@ defaults:
   recursive: true
 
 sources:
-  - name: github
+  github:
     url: github.com
 
 projects:
@@ -202,7 +202,7 @@ defaults:
   branch: swift-5.2-branch
 
 sources:
-  - name: github
+  github:
     url: github.com
 
 projects:

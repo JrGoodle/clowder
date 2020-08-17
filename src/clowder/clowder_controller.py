@@ -140,7 +140,7 @@ class ClowderController(object):
         if defaults:
             result['defaults'] = defaults
 
-        sources = [s.get_yaml() for s in self.sources if s.is_custom]
+        sources = {s.name: s.get_yaml() for s in self.sources if s.is_custom}
         if sources:
             result['sources'] = sources
 
@@ -277,11 +277,11 @@ class ClowderController(object):
             self.defaults = Defaults(yaml.get('defaults', {}))
 
             # Load sources
-            self.sources = [Source(s, self.defaults, True) for s in yaml.get('sources', [])]
+            self.sources = [Source(name, s, self.defaults, True) for name, s in yaml.get('sources', {}).items()]
             # Load default sources if not already specified
-            for ds in DEFAULT_SOURCES:
-                if not any([s.name == ds['name'] for s in self.sources]):
-                    self.sources.append(Source(ds, self.defaults, False))
+            for name, ds in DEFAULT_SOURCES.items():
+                if not any([s.name == name for s in self.sources]):
+                    self.sources.append(Source(name, ds, self.defaults, False))
             self.sources = tuple(sorted(self.sources, key=lambda source: source.name))
             # Check for unknown sources
             if not any([s.name == self.defaults.source for s in self.sources]):
