@@ -42,6 +42,13 @@ if [ "$1" == 'docs' ]; then
     exit
 fi
 
+if [ "$1" == 'schema' ]; then
+    cd ..
+    # TODO: Separate json schema descriptions into separate file
+    # Add script to generate local
+    exit
+fi
+
 ./clean 'clowder' || exit 1
 
 pushd '../src' || exit 1
