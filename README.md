@@ -71,9 +71,9 @@ defaults:
   protocol: ssh
 
 sources:
-  - name: github
+  github:
     url: github.com
-  - name: google
+  google:
     url: gerrit.googlesource.com
     protocol: https
 
@@ -86,12 +86,12 @@ projects:
     source: google
 ```
 
-The `name` is simply a descriptive label. The `defaults` section contains the protocol to use for cloning repositories, the git remote and branch, and the source to clone from. `clowder` assumes the following defaults:
+The `name` is simply a descriptive label. The `defaults` section contains the git branch and remote, the source to clone from, and the protocol to use for cloning repositories. `clowder` assumes the following defaults:
 
-* `remote`: `origin`
 * `branch`: `master`
-* `protocol`: `ssh`
+* `remote`: `origin`
 * `source`: `github`
+* `protocol`: `ssh`
 
 The `sources` section contains all the git hosting providers. The following sources are built in to `clowder`:
 
@@ -105,7 +105,7 @@ So the previous `clowder.yml` can be simplified to:
 name: cool-projects
 
 sources:
-  - name: google
+  google:
     url: gerrit.googlesource.com
     protocol: https
 
@@ -126,7 +126,7 @@ In order to be able to run commands for only certain sets of projects, there are
 name: cool-projects
 
 sources:
-  - name: google
+  google:
     url: gerrit.googlesource.com
     protocol: https
 

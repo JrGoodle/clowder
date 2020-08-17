@@ -243,25 +243,24 @@
       ]
     },
     "sources": {
-      "description": "List of git hosting provider sources",
-      "type": "array",
-      "minItems": 1,
-      "items": {
+      "description": "Git hosting provider sources",
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
         "$ref": "#/definitions/source"
+      },
+      "propertyNames": {
+        "pattern": "[A-Za-z0-9_-]+"
       }
     },
     "source": {
-      "description": "Git repository hosting provider source",
+      "description": "Name of git repository hosting provider source",
       "type": "object",
       "required": [
-        "name",
         "url"
       ],
       "additionalProperties": false,
       "properties": {
-        "name": {
-          "$ref": "#/definitions/sourceName"
-        },
         "url": {
           "$ref": "#/definitions/sourceUrl"
         },

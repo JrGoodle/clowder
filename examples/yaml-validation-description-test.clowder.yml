@@ -14,7 +14,7 @@ defaults:
       alias.cat: '!echo "😸"'
 
 sources:
-  - name: chromium
+  chromium:
     url: chromium.googlesource.com
     protocol: https
 

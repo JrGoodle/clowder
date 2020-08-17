@@ -20,7 +20,7 @@ Multiple `sources` can be specified. A `name` and `url` are required
 
 ```yaml
 sources:
-  - name: github
+  github:
     url: github.com
   - name: bitbucket
     url: bitbucket.org

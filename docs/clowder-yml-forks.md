@@ -10,10 +10,10 @@ defaults:
     recursive: true
 
 sources:
-  - name: chromium
+  chromium:
     url: chromium.googlesource.com
     protocol: https
-  - name: sourceforge
+  sourceforge:
     url: git.code.sf.net
     protocol: https
 
@@ -48,10 +48,10 @@ All projects will recursively init and update submodules by default.
 
 ```yaml
 sources:
-  - name: chromium
+  chromium:
     url: chromium.googlesource.com
     protocol: https
-  - name: sourceforge
+  sourceforge:
     url: git.code.sf.net
     protocol: https
 ```
