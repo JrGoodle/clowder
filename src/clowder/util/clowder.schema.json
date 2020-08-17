@@ -258,6 +258,14 @@
         }
       ]
     },
+    "projectRecursive": {
+      "description": "Whether to clone and fetch project and fork submodules recursively",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/gitRecursive"
+        }
+      ]
+    },
     "defaultLfs": {
       "description": "Default for whether projects and forks should install git lfs hooks and update lfs files",
       "oneOf": [
