@@ -23,7 +23,7 @@ setup(
     description='Utility for managing multiple git repositories',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    version='4.0b5',
+    version='4.0b6',
     url='https://github.com/JrGoodle/clowder',
     project_urls={
         "Documentation": "https://clowder.readthedocs.io/en/latest/"

@@ -12,6 +12,6 @@
 
 ### Environment
 
-- `clowder` version: `4.0b5`
+- `clowder` version: `4.0b6`
 - OS: macOS
 - Python version: 3.7
