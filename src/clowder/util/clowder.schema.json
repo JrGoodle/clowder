@@ -13,6 +13,7 @@
       "pattern": "^((?! ).)*$"
     },
     "clowderName": {
+      "description": "A name describing the projects. Must be a string containing any combination of letters, numbers, - or _",
       "type": "string",
       "minLength": 1,
       "pattern": "[A-Za-z0-9_-]+"
@@ -372,6 +373,14 @@
         }
       ]
     },
+    "sources": {
+      "description": "List of git hosting provider sources",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/definitions/source"
+      }
+    },
     "source": {
       "description": "Git repository hosting provider source",
       "type": "object",
@@ -620,47 +629,12 @@
           ]
         },
         "projects": {
-          "description": "List of git projects",
           "oneOf": [
             {
               "$ref": "#/definitions/projects"
             }
           ]
         }
-      }
-    },
-    "clowderProperties": {
-      "name": {
-        "description": "A name describing the projects. Must be a string containing any combination of letters, numbers, - or _",
-        "oneOf": [
-          {
-            "$ref": "#/definitions/clowderName"
-          }
-        ]
-      },
-      "defaults": {
-        "description": "Default values inherited by projects, sources, and forks",
-        "type": "array",
-        "minItems": 1,
-        "items": {
-          "$ref": "#/definitions/defaults"
-        }
-      },
-      "sources": {
-        "description": "List of git hosting provider sources",
-        "type": "array",
-        "minItems": 1,
-        "items": {
-          "$ref": "#/definitions/source"
-        }
-      },
-      "projects": {
-        "description": "List of git projects",
-        "oneOf": [
-          {
-            "$ref": "#/definitions/projects"
-          }
-        ]
       }
     },
     "basicClowder": {
@@ -672,7 +646,6 @@
       ],
       "properties": {
         "name": {
-          "description": "A name describing the projects. Must be a string containing any combination of letters, numbers, - or _",
           "oneOf": [
             {
               "$ref": "#/definitions/clowderName"
@@ -680,23 +653,20 @@
           ]
         },
         "defaults": {
-          "description": "Default values inherited by projects, sources, and forks",
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "$ref": "#/definitions/defaults"
-          }
+          "oneOf": [
+            {
+              "$ref": "#/definitions/defaults"
+            }
+          ]
         },
         "sources": {
-          "description": "List of git hosting provider sources",
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "$ref": "#/definitions/source"
-          }
+          "oneOf": [
+            {
+              "$ref": "#/definitions/sources"
+            }
+          ]
         },
         "projects": {
-          "description": "List of git projects",
           "oneOf": [
             {
               "$ref": "#/definitions/projects"
@@ -707,6 +677,110 @@
     },
     "sectionedClowder": {
       "type": "object",
+      "minProperties": 2,
+      "additionalProperties": {
+        "$ref": "#/definitions/namedProjectSection"
+      },
+      "propertyNames": {
+        "pattern": "^(?!defaults|sources$)[A-Za-z0-9_-]+"
+      },
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/clowderName"
+            }
+          ]
+        },
+        "projects": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/projects"
+            }
+          ]
+        }
+      }
+    },
+    "sectionedClowderDefaults": {
+      "type": "object",
+      "minProperties": 3,
+      "additionalProperties": {
+        "$ref": "#/definitions/namedProjectSection"
+      },
+      "propertyNames": {
+        "pattern": "^(?!sources$)[A-Za-z0-9_-]+"
+      },
+      "required": [
+        "name",
+        "defaults"
+      ],
+      "properties": {
+        "name": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/clowderName"
+            }
+          ]
+        },
+        "projects": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/projects"
+            }
+          ]
+        },
+        "defaults": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/defaults"
+            }
+          ]
+        }
+      }
+    },
+    "sectionedClowderSources": {
+      "type": "object",
+      "minProperties": 3,
+      "additionalProperties": {
+        "$ref": "#/definitions/namedProjectSection"
+      },
+      "propertyNames": {
+        "pattern": "^(?!defaults$)[A-Za-z0-9_-]+"
+      },
+      "required": [
+        "name",
+        "sources"
+      ],
+      "properties": {
+        "name": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/clowderName"
+            }
+          ]
+        },
+        "projects": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/projects"
+            }
+          ]
+        },
+        "sources": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/sources"
+            }
+          ]
+        }
+      }
+    },
+    "sectionedClowderDefaultsSources": {
+      "type": "object",
+      "minProperties": 4,
       "additionalProperties": {
         "$ref": "#/definitions/namedProjectSection"
       },
@@ -714,38 +788,36 @@
         "pattern": "[A-Za-z0-9_-]+"
       },
       "required": [
-        "name"
+        "name",
+        "defaults",
+        "sources"
       ],
       "properties": {
         "name": {
-          "description": "A name describing the projects. Must be a string containing any combination of letters, numbers, - or _",
           "oneOf": [
             {
               "$ref": "#/definitions/clowderName"
             }
           ]
         },
-        "defaults": {
-          "description": "Default values inherited by projects, sources, and forks",
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "$ref": "#/definitions/defaults"
-          }
-        },
-        "sources": {
-          "description": "List of git hosting provider sources",
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "$ref": "#/definitions/source"
-          }
-        },
         "projects": {
-          "description": "List of git projects",
           "oneOf": [
             {
               "$ref": "#/definitions/projects"
+            }
+          ]
+        },
+        "defaults": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/defaults"
+            }
+          ]
+        },
+        "sources": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/sources"
             }
           ]
         }
@@ -758,6 +830,15 @@
     },
     {
       "$ref": "#/definitions/sectionedClowder"
+    },
+    {
+      "$ref": "#/definitions/sectionedClowderDefaults"
+    },
+    {
+      "$ref": "#/definitions/sectionedClowderSources"
+    },
+    {
+      "$ref": "#/definitions/sectionedClowderDefaultsSources"
     }
   ]
 }
