@@ -687,6 +687,17 @@
         }
       ]
     },
+    "rootGroups": {
+      "description": "Root groups",
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "$ref": "#/definitions/namedProjectsSection"
+      },
+      "propertyNames": {
+        "pattern": "^(?!default|all$)[A-Za-z0-9_-]+"
+      }
+    },
     "basicClowder": {
       "type": "object",
       "additionalProperties": false,
@@ -709,119 +720,63 @@
         }
       }
     },
-    "sectionedClowder": {
+    "clowderWithProjects": {
       "type": "object",
-      "minProperties": 2,
-      "additionalProperties": {
-        "$ref": "#/definitions/namedProjectsSection"
-      },
-      "propertyNames": {
-        "pattern": "^(?!defaults|sources|default|all$)[A-Za-z0-9_-]+"
-      },
-      "required": [
-        "name"
-      ],
-      "properties": {
-        "name": {
-          "$ref": "#/definitions/clowderName"
-        },
-        "projects": {
-          "$ref": "#/definitions/projects"
-        }
-      }
-    },
-    "sectionedClowderDefaults": {
-      "type": "object",
-      "minProperties": 3,
-      "additionalProperties": {
-        "$ref": "#/definitions/namedProjectsSection"
-      },
-      "propertyNames": {
-        "pattern": "^(?!sources|default|all$)[A-Za-z0-9_-]+"
-      },
+      "additionalProperties": false,
       "required": [
         "name",
-        "defaults"
+        "projects"
       ],
       "properties": {
         "name": {
           "$ref": "#/definitions/clowderName"
-        },
-        "projects": {
-          "$ref": "#/definitions/projects"
-        },
-        "defaults": {
-          "$ref": "#/definitions/defaults"
-        }
-      }
-    },
-    "sectionedClowderSources": {
-      "type": "object",
-      "minProperties": 3,
-      "additionalProperties": {
-        "$ref": "#/definitions/namedProjectsSection"
-      },
-      "propertyNames": {
-        "pattern": "^(?!defaults|default|all$)[A-Za-z0-9_-]+"
-      },
-      "required": [
-        "name",
-        "sources"
-      ],
-      "properties": {
-        "name": {
-          "$ref": "#/definitions/clowderName"
-        },
-        "projects": {
-          "$ref": "#/definitions/projects"
-        },
-        "sources": {
-          "$ref": "#/definitions/sources"
-        }
-      }
-    },
-    "sectionedClowderDefaultsSources": {
-      "type": "object",
-      "minProperties": 4,
-      "additionalProperties": {
-        "$ref": "#/definitions/namedProjectsSection"
-      },
-      "propertyNames": {
-        "pattern": "^(?!default|all$)[A-Za-z0-9_-]+"
-      },
-      "required": [
-        "name",
-        "defaults",
-        "sources"
-      ],
-      "properties": {
-        "name": {
-          "$ref": "#/definitions/clowderName"
-        },
-        "projects": {
-          "$ref": "#/definitions/projects"
         },
         "defaults": {
           "$ref": "#/definitions/defaults"
         },
         "sources": {
           "$ref": "#/definitions/sources"
+        },
+        "projects": {
+          "$ref": "#/definitions/projects"
+        },
+        "groups": {
+          "$ref": "#/definitions/rootGroups"
+        }
+      }
+    },
+    "clowderWithGroups": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "groups"
+      ],
+      "properties": {
+        "name": {
+          "$ref": "#/definitions/clowderName"
+        },
+        "defaults": {
+          "$ref": "#/definitions/defaults"
+        },
+        "sources": {
+          "$ref": "#/definitions/sources"
+        },
+        "projects": {
+          "$ref": "#/definitions/projects"
+        },
+        "groups": {
+          "$ref": "#/definitions/rootGroups"
         }
       }
     }
   },
-  "oneOf": [
+  "anyOf": [
     {
-      "$ref": "#/definitions/sectionedClowder"
+      "$ref": "#/definitions/clowderWithProjects"
     },
     {
-      "$ref": "#/definitions/sectionedClowderDefaults"
-    },
-    {
-      "$ref": "#/definitions/sectionedClowderSources"
-    },
-    {
-      "$ref": "#/definitions/sectionedClowderDefaultsSources"
+      "$ref": "#/definitions/clowderWithGroups"
     }
   ]
 }

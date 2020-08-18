@@ -78,9 +78,9 @@ class ProjectImpl(object):
 
         fork = project.get('fork', None)
         if fork is not None:
-            self._fork = ForkImpl(fork)
+            self._fork: Optional[ForkImpl] = ForkImpl(fork)
         else:
-            self._fork = None
+            self._fork: Optional[ForkImpl] = None
 
     def get_yaml(self, resolved_sha: Optional[str] = None) -> dict:
         """Return python object representation for saving yaml
@@ -132,17 +132,26 @@ class Project(ProjectImpl):
     :ivar Optional[Fork] fork: Project's associated Fork
     """
 
-    def __init__(self, project: dict, defaults: Defaults, sources: Tuple[Source, ...]):
+    def __init__(self, project: dict, defaults: Defaults, sources: Tuple[Source, ...],
+                 path_prefix: Optional[str] = None, group: Optional[str] = None):
         """Project __init__
 
         :param dict project: Parsed YAML python object for project
         :param Defaults defaults: Defaults instance
         :param Tuple[Source, ...] sources: List of Source instances
+        :param Optional[str] path_prefix: Prefix for path from group
+        :param Optional[str] group: Group project was defined in
         """
 
         super().__init__(project)
 
-        self.path: Path = Path(project.get('path', Path(self.name).name))
+        # TODO: Should the postfix or full path be added as a group?
+        path_postfix = Path(project.get('path', Path(self.name).name))
+        temp_path = copy.deepcopy(path_postfix)
+        if path_prefix is not None:
+            temp_path = Path(path_prefix / path_postfix)
+        self.path: Path = temp_path
+
         self.remote: str = project.get('remote', defaults.remote)
         self.timestamp_author: Optional[str] = project.get('timestamp_author', defaults.timestamp_author)
 
@@ -181,7 +190,10 @@ class Project(ProjectImpl):
                 message = fmt.error_remote_dup(self.fork.name, self.name, self.remote, ENVIRONMENT.clowder_yaml)
                 raise ClowderError(ClowderErrorType.CLOWDER_YAML_DUPLICATE_REMOTE_NAME, message)
 
+        # TODO: Should the postfix or full path be added as a group?
         groups = ['all', self.name, str(self.path)]
+        if group is not None:
+            groups.append(group)
         if self._groups is not None:
             groups += copy.deepcopy(self._groups)
         if self.fork is not None:

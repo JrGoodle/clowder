@@ -12,7 +12,7 @@ import clowder.util.formatting as fmt
 from clowder.environment import ENVIRONMENT
 from clowder.error import ClowderError, ClowderErrorType
 from clowder.logging import LOG_DEBUG
-from clowder.model import Defaults, Project, Source, DEFAULT_SOURCES
+from clowder.model import Defaults, Project, Source, Group, DEFAULT_SOURCES
 from clowder.model.util import (
     print_parallel_projects_output,
     validate_project_statuses
@@ -25,8 +25,10 @@ class ClowderController(object):
 
     :ivar Optional[str] name: Name of clowder
     :ivar Optional[Defaults] defaults: Global clowder yaml defaults
-    :ivar Tuple[Group, ...] groups: List of all Groups
     :ivar Tuple[Source, ...] sources: List of all Sources
+    :ivar Tuple[Project, ...] projects: List of all Projects
+    :ivar Tuple[Groups, ...] groups: List of all Groups
+    :ivar Tuple[Project, ...] non_group_projects: List of all Projects not in a Group
     :ivar Tuple[str, ...] project_names: All possible project names
     :ivar Tuple[str, ...] fork_names: All possible fork names
     :ivar Tuple[str, ...] project_fork_names: All possible project and fork names
@@ -114,27 +116,26 @@ class ClowderController(object):
 
         return timestamp
 
-    def get_yaml(self, resolved: bool = False, projects: Optional[Tuple[Project, ...]] = None) -> dict:
+    def get_yaml(self, resolved: bool = False) -> dict:
         """Return python object representation of model objects
 
         :param bool resolved: Whether to return resolved yaml
-        :param Optional[Tuple[Project, ...]] projects: Projects to get yaml for
         :return: YAML python object
         :rtype: dict
         """
 
-        if projects is None:
-            projects = self.projects
+        result = {'name': self.name}
 
         if resolved:
-            projects_yaml = [p.get_yaml(resolved_sha=p.sha()) for p in projects]
+            projects_yaml = [p.get_yaml(resolved_sha=p.sha()) for p in self.non_group_projects]
         else:
-            projects_yaml = [p.get_yaml() for p in projects]
+            projects_yaml = [p.get_yaml() for p in self.non_group_projects]
+        if projects_yaml:
+            result['projects'] = projects_yaml
 
-        result = {
-            'name': self.name,
-            'projects': projects_yaml
-        }
+        groups = {g.name: g.get_yaml(resolved) for g in self.groups}
+        if groups:
+            result['groups'] = groups
 
         defaults = self.defaults.get_yaml()
         if defaults:
@@ -224,7 +225,7 @@ class ClowderController(object):
             return ()
 
     def _get_all_project_groups(self, project_fork_names, project_paths) -> Tuple[str, ...]:
-        """Returns all project paths for current clowder yaml file
+        """Returns all project group names for current clowder yaml file
 
         :return: All project paths
         :rtype: Tuple
@@ -288,9 +289,16 @@ class ClowderController(object):
                 message = fmt.error_source_default_not_found(self.defaults.source, ENVIRONMENT.clowder_yaml)
                 raise ClowderError(ClowderErrorType.CLOWDER_YAML_SOURCE_NOT_FOUND, message)
 
+            # Load groups
+            groups = [Group(n, g, self.defaults, self.sources) for n, g in yaml.get('groups', {}).items()]
+            self.groups = tuple(sorted(groups, key=lambda group: group.name))
+
             # Load projects
-            self.projects = tuple(sorted([Project(p, self.defaults, self.sources) for p in yaml['projects']],
-                                         key=lambda project: project.name))
+            non_group_projects = [Project(p, self.defaults, self.sources) for p in yaml.get('projects', [])]
+            self.non_group_projects = tuple(sorted(non_group_projects, key=lambda project: project.name))
+            all_projects = non_group_projects + [p for g in groups for p in g.projects]
+            self.projects = tuple(sorted(all_projects, key=lambda project: project.name))
+
             # Validate projects don't share share directories
             paths = [str(p.path.resolve()) for p in self.projects]
             duplicate = fmt.check_for_duplicates(paths)

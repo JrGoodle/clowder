@@ -41,9 +41,9 @@ class DefaultsImpl(object):
 
         git_settings = defaults.get("git", None)
         if git_settings is not None:
-            self._git_settings = GitSettingsImpl(git_settings)
+            self._git_settings: Optional[GitSettingsImpl] = GitSettingsImpl(git_settings)
         else:
-            self._git_settings = None
+            self._git_settings: Optional[GitSettingsImpl] = None
 
     def get_yaml(self) -> dict:
         """Return python object representation for saving yaml

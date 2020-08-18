@@ -7,13 +7,8 @@
 
 import argparse
 
-import clowder.util.formatting as fmt
 from clowder.clowder_controller import CLOWDER_CONTROLLER
-from clowder.config import Config
-from clowder.model.util import (
-    filter_projects,
-    validate_project_statuses
-)
+from clowder.model.util import validate_project_statuses
 from clowder.util.decorators import valid_clowder_yaml_required
 from clowder.util.yaml import print_clowder_yaml, yaml_string
 
@@ -27,9 +22,6 @@ def add_yaml_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
     """
 
     arguments = [
-        (['projects'], dict(metavar='<project|group>', default='default', nargs='*',
-                            choices=CLOWDER_CONTROLLER.project_choices_with_default,
-                            help=fmt.project_options_help_message('projects and groups to print resolved yaml for'))),
         (['--resolved', '-r'], dict(action='store_true', help='print resolved clowder yaml file')),
         (['--full', '-f'], dict(action='store_true', help='print full clowder yaml file')),
     ]
@@ -44,15 +36,10 @@ def add_yaml_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
 def yaml(args) -> None:
     """Clowder yaml command private implementation"""
 
-    config = Config(CLOWDER_CONTROLLER.name, CLOWDER_CONTROLLER.project_choices)
-
-    projects = config.process_projects_arg(args.projects)
-    projects = filter_projects(CLOWDER_CONTROLLER.projects, projects)
-
     if args.full:
         print_clowder_yaml()
     elif args.resolved:
-        validate_project_statuses(projects, allow_missing_repo=False)
-        print(yaml_string(CLOWDER_CONTROLLER.get_yaml(resolved=True, projects=projects)).rstrip())
+        validate_project_statuses(CLOWDER_CONTROLLER.projects, allow_missing_repo=False)
+        print(yaml_string(CLOWDER_CONTROLLER.get_yaml(resolved=True)).rstrip())
     else:
-        print(yaml_string(CLOWDER_CONTROLLER.get_yaml(projects=projects)).rstrip())
+        print(yaml_string(CLOWDER_CONTROLLER.get_yaml()).rstrip())

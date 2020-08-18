@@ -68,7 +68,7 @@ class Source(SourceImpl):
         """Source __init__
 
         :param str name: Source name
-        :param dict source: Parsed YAML python object for source
+        :param Dict[str, str] source: Parsed YAML python object for source
         :param Defaults defaults: Defaults instance
         :param bool is_custom: Whether this is a custom user-defined source
         """
