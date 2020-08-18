@@ -96,7 +96,7 @@ class Fork(ForkImpl):
 
         self.path = project.path
         self.recursive = project.git_settings.recursive
-        self.remote = fork.get('remote', defaults.remote)
+        self.remote = fork.get('remote', 'upstream')
 
         if self._branch is not None:
             self.ref = format_git_branch(self._branch)

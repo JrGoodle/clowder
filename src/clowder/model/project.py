@@ -101,7 +101,7 @@ class ProjectImpl(object):
         if self._groups is not None:
             project['groups'] = self._groups
         if self._fork is not None:
-            project['fork'] = self._fork.get_yaml(resolved_sha=resolved_sha)
+            project['upstream'] = self._fork.get_yaml(resolved_sha=resolved_sha)
         if self._git_settings is not None:
             project['git'] = self._git_settings.get_yaml()
         if self._timestamp_author is not None:
@@ -183,8 +183,8 @@ class Project(ProjectImpl):
             raise ClowderError(ClowderErrorType.CLOWDER_YAML_SOURCE_NOT_FOUND, message)
 
         self.fork = None
-        if 'fork' in project:
-            fork = project['fork']
+        if 'upstream' in project:
+            fork = project['upstream']
             self.fork = Fork(fork, self, sources, defaults)
             if self.remote == self.fork.remote:
                 message = fmt.error_remote_dup(self.fork.name, self.name, self.remote, ENVIRONMENT.clowder_yaml)

@@ -26,6 +26,10 @@
       "minimum": 0,
       "default": 0
     },
+    "gitSubmodules": {
+      "type": "boolean",
+      "default": false
+    },
     "gitRecursive": {
       "type": "boolean",
       "default": false
@@ -157,6 +161,9 @@
       "oneOf": [
         {
           "$ref": "#/definitions/nonEmptyStringNoSpaces"
+        },
+        {
+          "$ref": "#/definitions/source"
         }
       ]
     },
@@ -247,6 +254,14 @@
         }
       ]
     },
+    "defaultSubmodules": {
+      "description": "Default for whether to clone and fetch project and fork submodules recursively",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/gitSubmodules"
+        }
+      ]
+    },
     "defaultLfs": {
       "description": "Default for whether projects and forks should install git lfs hooks and update lfs files",
       "oneOf": [
@@ -308,9 +323,12 @@
     },
     "fork": {
       "description": "Git project fork",
-      "type": "object",
       "anyOf": [
         {
+          "$ref": "#/definitions/nonEmptyStringNoSpaces"
+        },
+        {
+          "type": "object",
           "additionalProperties": false,
           "required": [
             "name"
@@ -331,6 +349,7 @@
           }
         },
         {
+          "type": "object",
           "additionalProperties": false,
           "required": [
             "name"
@@ -351,6 +370,7 @@
           }
         },
         {
+          "type": "object",
           "additionalProperties": false,
           "required": [
             "name"
@@ -385,6 +405,9 @@
       "oneOf": [
         {
           "$ref": "#/definitions/nonEmptyStringNoSpaces"
+        },
+        {
+          "$ref": "#/definitions/source"
         }
       ]
     },
@@ -456,7 +479,7 @@
             "groups": {
               "$ref": "#/definitions/projectGroups"
             },
-            "fork": {
+            "upstream": {
               "$ref": "#/definitions/fork"
             },
             "git": {
@@ -488,7 +511,7 @@
             "groups": {
               "$ref": "#/definitions/projectGroups"
             },
-            "fork": {
+            "upstream": {
               "$ref": "#/definitions/fork"
             },
             "git": {
@@ -520,7 +543,7 @@
             "groups": {
               "$ref": "#/definitions/projectGroups"
             },
-            "fork": {
+            "upstream": {
               "$ref": "#/definitions/fork"
             },
             "depth": {
@@ -593,6 +616,9 @@
       "oneOf": [
         {
           "$ref": "#/definitions/nonEmptyStringNoSpaces"
+        },
+        {
+          "$ref": "#/definitions/source"
         }
       ]
     },
@@ -652,6 +678,25 @@
         }
       ]
     },
+    "projectSectionBranch": {
+      "description": "Name of the git branch to track for this project. If not supplied the ref specified in the defaults is used if applicable, else the default branch 'master' is used.",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/nonEmptyStringNoSpaces"
+        }
+      ]
+    },
+    "projectSectionSource": {
+      "description": "Project section git hosting provider source name",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/nonEmptyStringNoSpaces"
+        },
+        {
+          "$ref": "#/definitions/source"
+        }
+      ]
+    },
     "namedProjectsSection": {
       "description": "Named projects section",
       "type": "object",
@@ -668,6 +713,9 @@
         },
         "projects": {
           "$ref": "#/definitions/projects"
+        },
+        "branch": {
+          "$ref": "#/definitions/projectSectionBranch"
         }
       }
     },
@@ -695,7 +743,12 @@
         "$ref": "#/definitions/namedProjectsSection"
       },
       "propertyNames": {
-        "pattern": "^(?!default|all$)[A-Za-z0-9_-]+"
+        "pattern": "^(?!default|all|defaults|sources$)[A-Za-z0-9_-]+"
+      },
+      "properties": {
+        "projects": {
+          "$ref": "#/definitions/projects"
+        }
       }
     },
     "basicClowder": {
@@ -740,7 +793,7 @@
         "projects": {
           "$ref": "#/definitions/projects"
         },
-        "groups": {
+        "clowder": {
           "$ref": "#/definitions/rootGroups"
         }
       }
@@ -750,7 +803,7 @@
       "additionalProperties": false,
       "required": [
         "name",
-        "groups"
+        "clowder"
       ],
       "properties": {
         "name": {
@@ -762,19 +815,13 @@
         "sources": {
           "$ref": "#/definitions/sources"
         },
-        "projects": {
-          "$ref": "#/definitions/projects"
-        },
-        "groups": {
+        "clowder": {
           "$ref": "#/definitions/rootGroups"
         }
       }
     }
   },
   "anyOf": [
-    {
-      "$ref": "#/definitions/clowderWithProjects"
-    },
     {
       "$ref": "#/definitions/clowderWithGroups"
     }
