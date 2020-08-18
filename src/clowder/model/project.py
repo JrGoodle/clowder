@@ -133,23 +133,23 @@ class Project(ProjectImpl):
     """
 
     def __init__(self, project: dict, defaults: Defaults, sources: Tuple[Source, ...],
-                 path_prefix: Optional[str] = None, group: Optional[str] = None):
+                 path_prefix: Optional[str] = None, groups: Optional[List[str]] = None):
         """Project __init__
 
         :param dict project: Parsed YAML python object for project
         :param Defaults defaults: Defaults instance
         :param Tuple[Source, ...] sources: List of Source instances
         :param Optional[str] path_prefix: Prefix for path from group
-        :param Optional[str] group: Group project was defined in
+        :param Optional[List[str]] groups: Groups project was defined in
         """
 
         super().__init__(project)
 
         # TODO: Should the postfix or full path be added as a group?
-        path_postfix = Path(project.get('path', Path(self.name).name))
-        temp_path = copy.deepcopy(path_postfix)
+        last_path_component = Path(self.name).name
+        temp_path = Path(project.get('path', last_path_component))
         if path_prefix is not None:
-            temp_path = Path(path_prefix / path_postfix)
+            temp_path = path_prefix / temp_path
         self.path: Path = temp_path
 
         self.remote: str = project.get('remote', defaults.remote)
@@ -190,17 +190,21 @@ class Project(ProjectImpl):
                 message = fmt.error_remote_dup(self.fork.name, self.name, self.remote, ENVIRONMENT.clowder_yaml)
                 raise ClowderError(ClowderErrorType.CLOWDER_YAML_DUPLICATE_REMOTE_NAME, message)
 
-        # TODO: Should the postfix or full path be added as a group?
-        groups = ['all', self.name, str(self.path)]
-        if group is not None:
-            groups.append(group)
+        if groups is None:
+            groups = []
+        groups += ['all', self.name, str(self.path)]
+
         if self._groups is not None:
             groups += copy.deepcopy(self._groups)
+
         if self.fork is not None:
             groups += [self.fork.name]
+
+        # Remove `all` if 'notdefault` is present
         groups = list(set(groups))
         if 'notdefault' in groups:
             groups.remove('all')
+
         self.groups = groups
 
     @project_repo_exists

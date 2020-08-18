@@ -12,26 +12,46 @@ from .project import Project
 from .source import Source
 
 
-class Group:
+class GroupImpl(object):
+    """clowder yaml GroupImpl model class
+
+    :ivar str name: Source name
+    :ivar Optional[str] path: Group path prefix
+    """
+
+    def __init__(self, name: str, group: dict):
+        """Source __init__
+
+        :param str name: Group name
+        :param dict group: Parsed YAML python object for group
+        """
+
+        self.name = name
+        self.path = group.get('path', None)
+        self._groups = group.get('groups', None)
+
+
+class Group(GroupImpl):
     """clowder yaml Group model class
 
-    :ivar str name: Group name
-    :ivar Optional[str] path: Group path
     :ivar Optional[str] projects: Group projects
     """
 
     def __init__(self, name: str, group: dict, defaults: Defaults, sources: Tuple[Source, ...]):
         """Source __init__
 
-        :param str name: Source name
+        :param str name: Group name
         :param dict group: Parsed YAML python object for group
         :param Defaults defaults: Defaults instance
         :param Tuple[Source, ...] sources: List of Source instances
         """
 
-        self.name = name
-        self.path = group.get('path', None)
-        self.projects = [Project(p, defaults, sources, path_prefix=self.path, group=self.name) for p in group["projects"]]
+        super().__init__(name, group)
+
+        self.groups = group.get('groups', []) + [self.name]
+
+        self.projects = [Project(p, defaults, sources, path_prefix=self.path, groups=self.groups)
+                         for p in group["projects"]]
 
     def get_yaml(self, resolved: bool = False) -> dict:
         """Return python object representation for saving yaml
@@ -49,5 +69,8 @@ class Group:
 
         if self.path is not None:
             group['path'] = self.path
+
+        if self._groups is not None:
+            group['groups'] = self._groups
 
         return group
