@@ -5,12 +5,12 @@
   "definitions": {
     "nonEmptyString": {
       "type": "string",
-      "minLength": 1
+      "minLength": 1,
+      "pattern": "^((?! ).)*$"
     },
     "nonEmptyStringNoSpaces": {
       "type": "string",
-      "minLength": 1,
-      "pattern": "^((?! ).)*$"
+      "minLength": 1
     },
     "alphanumericDashUnderscore": {
       "pattern": "[A-Za-z0-9_-]+"
@@ -209,7 +209,7 @@
           "description": "Default git hosting provider source name",
           "oneOf": [
             {
-              "$ref": "#/definitions/nonEmptyStringNoSpaces"
+              "$ref": "#/definitions/sourceName"
             },
             {
               "$ref": "#/definitions/source"
@@ -290,42 +290,35 @@
     },
     "source": {
       "description": "Name of git repository hosting provider source",
-      "oneOf": [
-        {
-          "$ref": "#/definitions/sourceName"
-        },
-        {
-          "type": "object",
-          "required": [
-            "url"
-          ],
-          "additionalProperties": false,
-          "properties": {
-            "url": {
-              "description": "The base URL of the git hosting provider. The full URL gets formed as:\ngit@${source_url}:${project_name/upstream_name}.git\nhttps://${source_url}/${project_name/upstream_name}.git",
-              "oneOf": [
-                {
-                  "$ref": "#/definitions/nonEmptyStringNoSpaces"
-                }
-              ]
-            },
-            "protocol": {
-              "description": "The git URL protocol for the git hosting provider source. Accepted values are 'ssh' or 'https'. If not supplied, defaults to 'ssh'. The full URL gets formed as:\ngit@${source_url}:${project_name/upstream_name}.git\nhttps://${source_url}/${project_name/upstream_name}.git",
-              "oneOf": [
-                {
-                  "$ref": "#/definitions/gitProtocol"
-                }
-              ]
+      "type": "object",
+      "required": [
+        "url"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "url": {
+          "description": "The base URL of the git hosting provider. The full URL gets formed as:\ngit@${source_url}:${project_name/upstream_name}.git\nhttps://${source_url}/${project_name/upstream_name}.git",
+          "oneOf": [
+            {
+              "$ref": "#/definitions/url"
             }
-          }
+          ]
+        },
+        "protocol": {
+          "description": "The git URL protocol for the git hosting provider source. Accepted values are 'ssh' or 'https'. If not supplied, defaults to 'ssh'. The full URL gets formed as:\ngit@${source_url}:${project_name/upstream_name}.git\nhttps://${source_url}/${project_name/upstream_name}.git",
+          "oneOf": [
+            {
+              "$ref": "#/definitions/gitProtocol"
+            }
+          ]
         }
-      ]
+      }
     },
     "upstream": {
       "description": "Git project upstream",
-      "anyOf": [
+      "oneOf": [
         {
-          "$ref": "#/definitions/nonEmptyStringNoSpaces"
+          "$ref": "#/definitions/projectName"
         },
         {
           "type": "object",
@@ -338,7 +331,7 @@
               "description": "A unique name for this upstream. The upstream's name is appended onto its source's URL to generate the full URL to configure the Git remote with. The full URL gets formed as:\ngit@${source_url}:${project_name/upstream_name}.git\nhttps://${source_url}/${project_name/upstream_name}.git",
               "oneOf": [
                 {
-                  "$ref": "#/definitions/nonEmptyStringNoSpaces"
+                  "$ref": "#/definitions/projectName"
                 }
               ]
             },
@@ -346,7 +339,7 @@
               "description": "Upstream git hosting provider source name",
               "oneOf": [
                 {
-                  "$ref": "#/definitions/nonEmptyStringNoSpaces"
+                  "$ref": "#/definitions/sourceName"
                 },
                 {
                   "$ref": "#/definitions/source"
@@ -400,6 +393,14 @@
         "$ref": "#/definitions/project"
       }
     },
+    "projectName": {
+      "type": "string",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/nonEmptyStringNoSpaces"
+        }
+      ]
+    },
     "project": {
       "description": "Git project",
       "type": "object",
@@ -412,7 +413,7 @@
           "description": "A unique name for this project.\nThe project's name is appended onto its source's URL to generate the full URL to configure the Git remote with. The full URL gets formed as:\ngit@${source_url}:${project_name/upstream_name}.git\nhttps://${source_url}/${project_name/upstream_name}.git",
           "oneOf": [
             {
-              "$ref": "#/definitions/nonEmptyStringNoSpaces"
+              "$ref": "#/definitions/projectName"
             }
           ]
         },
@@ -428,7 +429,7 @@
           "description": "Project git hosting provider source name",
           "oneOf": [
             {
-              "$ref": "#/definitions/nonEmptyStringNoSpaces"
+              "$ref": "#/definitions/sourceName"
             },
             {
               "$ref": "#/definitions/source"
@@ -476,7 +477,15 @@
           ]
         },
         "upstream": {
-          "$ref": "#/definitions/upstream"
+          "description": "Upstream project name",
+          "oneOf": [
+            {
+              "$ref": "#/definitions/projectName"
+            },
+            {
+              "$ref": "#/definitions/upstream"
+            }
+          ]
         },
         "git": {
           "description": "Project git settings",
@@ -551,7 +560,7 @@
           "description": "Project section git hosting provider source name",
           "oneOf": [
             {
-              "$ref": "#/definitions/nonEmptyStringNoSpaces"
+              "$ref": "#/definitions/sourceName"
             },
             {
               "$ref": "#/definitions/source"
