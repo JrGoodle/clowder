@@ -1,6 +1,7 @@
 # `clowder.yml` Syntax Reference
 
 - [name](#name)
+
 - [defaults](#defaults)
   - [protocol](#defaultsprotocol)
   - [source](#defaultssource)
@@ -13,10 +14,12 @@
     - [recursive](#defaultsgitrecursive)
     - [depth](#defaultsgitdepth)
     - [config](#defaultsgitconfig)
+
 - [sources](#sources)
-  - [name](#sourcesname)
-  - [url](#sourcesurl)
-  - [protocol](#sourcesprotocol)
+  - [<source_name>](#sourcesname)
+    - [url](#sourcesurl)
+    - [protocol](#sourcesprotocol)
+
 - [projects](#projects)
   - [name](#projectsname)
   - [source](#projectssource)
@@ -26,20 +29,29 @@
   - [path](#projectspath)
   - [remote](#projectsremote)
   - [groups](#projectsgroups)
-  - [git](#projectsgit)
-    - [lfs](#projectsgitlfs)
-    - [recursive](#projectsgitrecursive)
-    - [depth](#projectsgitdepth)
-    - [config](#projectsgitconfig)
-  - [fork](#projectsfork)
-    - [name](#projectsforkname)
-    - [source](#projectsforksource)
-    - [remote](#projectsforkremote)
-    - [branch](#projectsforkbranch)
-    - [tag](#projectsforktag)
-    - [commit](#projectsforkcommit)
+  - [git](#git)
 
----
+- [git](#git)
+  - [lfs](#gitlfs)
+  - [recursive](#gitrecursive)
+  - [depth](#gitdepth)
+  - [config](#gitconfig)
+    - [<config_name>](#gitconfig_name)
+
+- [upstream](#projectsupstream)
+  - [name](#projectsupstreamname)
+  - [source](#projectsupstreamsource)
+  - [remote](#projectsupstreamremote)
+  - [branch](#projectsupstreambranch)
+  - [tag](#projectsupstreamtag)
+  - [commit](#projectsupstreamcommit)
+
+- [clowder](#clowder)
+  - [<group_name>](#clowdergroup_name)
+    - [path](#clowdergrouppath)
+    - [groups](#clowdergroupgroups)
+    - [defaults](#defaults)
+  - [projects](#clowderprojects)
 
 ## `name`
 
