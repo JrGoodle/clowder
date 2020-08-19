@@ -1,5 +1,14 @@
 # `clowder.yml` Syntax Reference
 
+- [clowder structure](#clowder-structure)
+- [defaults](#defaults)
+- [sources](#source)
+- [protocoll](#protocoll)
+- [git](#git)
+- [group](#group)
+- [project](#project)
+- [upstream](#upstream)
+
 ## clowder structure
 
 ```yaml
@@ -12,6 +21,59 @@ sources: { string: source}
 clowder: [ project ] | { string: group } # REQUIRED
 ```
 
+## defaults
+
+```yaml
+defaults:
+  protocol: protocol
+  source: string | source
+  remote: string
+  git: git
+  branch: string
+```
+
+```yaml
+defaults:
+  protocol: protocol
+  source: string | source
+  remote: string
+  git: git
+  tag: string
+```
+
+```yaml
+defaults:
+  protocol: protocol
+  source: string | source
+  remote: string
+  git: git
+  commit: string
+```
+
+## source
+
+```yaml
+source:
+  url: string # REQUIRED
+  protocol: enum
+```
+
+## protocol
+
+```yaml
+protocol: enum # "ssh" | "https"
+```
+
+## git
+
+```yaml
+git:
+  lfs: bool
+  submodules: bool | enum # "update" | "update recursive" | "recursive"
+  depth: integer # Must be >= 0, where 0 indicates full clone
+  config: { string: string | null }
+```
+
 ## group
 
 ```yaml
@@ -22,18 +84,42 @@ group:
   projects: [ project ] # REQUIRED
 ```
 
-## protocol
+## project
 
 ```yaml
-protocol: enum # "ssh" | "https"
+project:
+  name: string # REQUIRED
+  source: string | source
+  path: string
+  remote: string
+  groups: [ string ]
+  git: git
+  upstream: string | upstream
+  branch: string
 ```
 
-## source
+```yaml
+project:
+  name: string # REQUIRED
+  source: string | source
+  path: string
+  remote: string
+  groups: [ string ]
+  git: git
+  upstream: string | upstream
+  tag: string
+```
 
 ```yaml
-source:
-  url: string # REQUIRED
-  protocol: enum
+project:
+  name: string # REQUIRED
+  source: string | source
+  path: string
+  remote: string
+  groups: [ string ]
+  git: git
+  upstream: string | upstream
+  commit: string
 ```
 
 ## upstream
@@ -60,81 +146,4 @@ upstream:
   source: string | source
   remote: string
   commit: string
-```
-
-## git
-
-```yaml
-git:
-  lfs: bool
-  submodules: bool | enum # "update" | "update recursive" | "recursive"
-  depth: integer # Must be >= 0, where 0 indicates full clone
-  config: { string: string }
-```
-
-## defaults
-
-```yaml
-defaults:
-  protocol: protocol
-  source: string | source
-  remote: string
-  branch: string
-  git: git
-```
-
-```yaml
-defaults:
-  protocol: protocol
-  source: string | source
-  remote: string
-  tag: string
-  git: git
-```
-
-```yaml
-defaults:
-  protocol: protocol
-  source: string | source
-  remote: string
-  commit: string
-  git: git
-```
-
-## project
-
-```yaml
-project:
-  name: string # REQUIRED
-  source: string | source
-  branch: string
-  path: string
-  remote: string
-  groups: [ string ]
-  git: git
-  upstream: string | upstream
-```
-
-```yaml
-project:
-  name: string # REQUIRED
-  source: string | source
-  tag: string
-  path: string
-  remote: string
-  groups: [ string ]
-  git: git
-  upstream: string | upstream
-```
-
-```yaml
-project:
-  name: string # REQUIRED
-  source: string | source
-  commit: string
-  path: string
-  remote: string
-  groups: [ string ]
-  git: git
-  upstream: string | upstream
 ```
