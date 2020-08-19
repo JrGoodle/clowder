@@ -5,12 +5,15 @@
   "definitions": {
     "nonEmptyString": {
       "type": "string",
-      "minLength": 1,
-      "pattern": "^((?! ).)*$"
+      "minLength": 1
     },
     "nonEmptyStringNoSpaces": {
-      "type": "string",
-      "minLength": 1
+      "pattern": "^((?! ).)*$",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/nonEmptyString"
+        }
+      ]
     },
     "alphanumericDashUnderscore": {
       "pattern": "[A-Za-z0-9_-]+"
@@ -21,12 +24,7 @@
       "pattern": "^(?!\/.*$).*"
     },
     "url": {
-      "type": "string",
-      "oneOf": [
-        {
-          "$ref": "#/definitions/nonEmptyString"
-        }
-      ]
+      "$ref": "#/definitions/nonEmptyString"
     },
     "forbiddenGitRefCombinations": {
       "anyOf": [
@@ -51,28 +49,13 @@
       ]
     },
     "gitBranch": {
-      "type": "string",
-      "oneOf": [
-        {
-          "$ref": "#/definitions/nonEmptyStringNoSpaces"
-        }
-      ]
+      "$ref": "#/definitions/nonEmptyStringNoSpaces"
     },
     "gitTag": {
-      "type": "string",
-      "oneOf": [
-        {
-          "$ref": "#/definitions/nonEmptyStringNoSpaces"
-        }
-      ]
+      "$ref": "#/definitions/nonEmptyStringNoSpaces"
     },
     "gitRemote": {
-      "type": "string",
-      "oneOf": [
-        {
-          "$ref": "#/definitions/nonEmptyStringNoSpaces"
-        }
-      ]
+      "$ref": "#/definitions/nonEmptyStringNoSpaces"
     },
     "gitCommit": {
       "type": "string",
@@ -84,12 +67,18 @@
       "default": 0
     },
     "gitSubmodules": {
-      "type": "boolean",
-      "default": false
-    },
-    "gitRecursive": {
-      "type": "boolean",
-      "default": false
+      "oneOf": [
+        {
+          "type": "boolean",
+          "default": false
+        },
+        {
+          "enum": [
+            "update",
+            "update recursive"
+          ]
+        }
+      ]
     },
     "gitLfs": {
       "type": "boolean",
@@ -150,11 +139,11 @@
             }
           ]
         },
-        "recursive": {
+        "submodules": {
           "description": "Whether to clone and fetch project and upstream submodules recursively",
           "oneOf": [
             {
-              "$ref": "#/definitions/gitRecursive"
+              "$ref": "#/definitions/gitSubmodules"
             }
           ]
         },
