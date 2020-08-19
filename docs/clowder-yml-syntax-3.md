@@ -30,23 +30,7 @@ defaults:
   remote: string
   git: git
   branch: string
-```
-
-```yaml
-defaults:
-  protocol: protocol
-  source: string | source
-  remote: string
-  git: git
   tag: string
-```
-
-```yaml
-defaults:
-  protocol: protocol
-  source: string | source
-  remote: string
-  git: git
   commit: string
 ```
 
@@ -96,29 +80,7 @@ project:
   git: git
   upstream: string | upstream
   branch: string
-```
-
-```yaml
-project:
-  name: string # REQUIRED
-  source: string | source
-  path: string
-  remote: string
-  groups: [ string ]
-  git: git
-  upstream: string | upstream
   tag: string
-```
-
-```yaml
-project:
-  name: string # REQUIRED
-  source: string | source
-  path: string
-  remote: string
-  groups: [ string ]
-  git: git
-  upstream: string | upstream
   commit: string
 ```
 
@@ -130,20 +92,6 @@ upstream:
   source: string | source
   remote: string
   branch: string
-```
-
-```yaml
-upstream:
-  name: string # REQUIRED
-  source: string | source
-  remote: string
   tag: string
-```
-
-```yaml
-upstream:
-  name: string # REQUIRED
-  source: string | source
-  remote: string
   commit: string
 ```
