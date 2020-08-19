@@ -504,14 +504,6 @@
       "additionalProperties": false,
       "minProperties": 1,
       "properties": {
-        "groups": {
-          "description": "Groups projects in section belong to",
-          "allOf": [
-            {
-              "$ref": "#/definitions/groupNames"
-            }
-          ]
-        },
         "remote": {
           "description": "The name specified here is used as the remote name in the project .git/config, and is therefore automatically available to commands like git fetch, git remote, git pull and git push.",
           "allOf": [
@@ -567,40 +559,55 @@
     },
     "clowderGroup": {
       "description": "Project group",
-      "type": "object",
-      "required": [
-        "projects"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "path": {
-          "description": "Prefix path for projects",
-          "allOf": [
-            {
-              "$ref": "#/definitions/relativePath"
-            }
-          ]
+      "oneOf": [
+        {
+          "$ref": "#/definitions/projects"
         },
-        "projects": {
-          "description": "Group projects",
-          "allOf": [
-            {
-              "$ref": "#/definitions/projects"
+        {
+          "type": "object",
+          "required": [
+            "projects"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "path": {
+              "description": "Prefix path for projects",
+              "allOf": [
+                {
+                  "$ref": "#/definitions/relativePath"
+                }
+              ]
+            },
+            "projects": {
+              "description": "Group projects",
+              "allOf": [
+                {
+                  "$ref": "#/definitions/projects"
+                }
+              ]
+            },
+            "defaults": {
+              "description": "Group defaults",
+              "allOf": [
+                {
+                  "$ref": "#/definitions/clowderGroupDefaults"
+                }
+              ]
+            },
+            "groups": {
+              "description": "Additional group names to add projects to",
+              "allOf": [
+                {
+                  "$ref": "#/definitions/groupNames"
+                }
+              ]
             }
-          ]
-        },
-        "defaults": {
-          "description": "Group defaults",
-          "allOf": [
-            {
-              "$ref": "#/definitions/clowderGroupDefaults"
-            }
-          ]
+          },
+          "not": {
+            "$ref": "#/definitions/forbiddenGitRefCombinations"
+          }
         }
-      },
-      "not": {
-        "$ref": "#/definitions/forbiddenGitRefCombinations"
-      }
+      ]
     },
     "clowderGroups": {
       "description": "Project groups",
