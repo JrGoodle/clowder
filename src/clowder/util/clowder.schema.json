@@ -9,14 +9,19 @@
     },
     "nonEmptyStringNoSpaces": {
       "pattern": "^((?! ).)*$",
-      "oneOf": [
+      "allOf": [
         {
           "$ref": "#/definitions/nonEmptyString"
         }
       ]
     },
-    "alphanumericDashUnderscore": {
-      "pattern": "[A-Za-z0-9_-]+"
+    "alphanumericStringDashUnderscore": {
+      "pattern": "[A-Za-z0-9_-]+",
+      "allOf": [
+        {
+          "$ref": "#/definitions/nonEmptyString"
+        }
+      ]
     },
     "relativePath": {
       "type": "string",
@@ -24,7 +29,12 @@
       "pattern": "^(?!\/.*$).*"
     },
     "url": {
-      "$ref": "#/definitions/nonEmptyString"
+      "description": "Generic url",
+      "allOf": [
+        {
+          "$ref": "#/definitions/nonEmptyStringNoSpaces"
+        }
+      ]
     },
     "forbiddenGitRefCombinations": {
       "anyOf": [
@@ -73,9 +83,11 @@
           "default": false
         },
         {
+          "type": "string",
           "enum": [
             "update",
-            "update recursive"
+            "update recursive",
+            "recursive"
           ]
         }
       ]
@@ -133,7 +145,7 @@
       "properties": {
         "lfs": {
           "description": "Whether project and upstream should install git lfs hooks and update lfs files",
-          "oneOf": [
+          "allOf": [
             {
               "$ref": "#/definitions/gitLfs"
             }
@@ -141,7 +153,7 @@
         },
         "submodules": {
           "description": "Whether to clone and fetch project and upstream submodules recursively",
-          "oneOf": [
+          "allOf": [
             {
               "$ref": "#/definitions/gitSubmodules"
             }
@@ -149,7 +161,7 @@
         },
         "depth": {
           "description": "Project git clone depth",
-          "oneOf": [
+          "allOf": [
             {
               "$ref": "#/definitions/gitDepth"
             }
@@ -157,7 +169,7 @@
         },
         "config": {
           "description": "Project git config",
-          "oneOf": [
+          "allOf": [
             {
               "$ref": "#/definitions/gitConfig"
             }
@@ -174,17 +186,15 @@
       }
     },
     "groupName": {
-      "type": "string",
-      "minLength": 1,
       "not": {
         "enum": [
           "default",
           "all"
         ]
       },
-      "oneOf": [
+      "allOf": [
         {
-          "$ref": "#/definitions/alphanumericDashUnderscore"
+          "$ref": "#/definitions/alphanumericStringDashUnderscore"
         }
       ]
     },
@@ -207,7 +217,7 @@
         },
         "branch": {
           "description": "Default name of the git branch to track for projects and upstreams. If not supplied the default branch 'master' is used.",
-          "oneOf": [
+          "allOf": [
             {
               "$ref": "#/definitions/gitBranch"
             }
@@ -215,7 +225,7 @@
         },
         "tag": {
           "description": "Default name of the git tag to track for projects and upstreams.",
-          "oneOf": [
+          "allOf": [
             {
               "$ref": "#/definitions/gitTag"
             }
@@ -223,7 +233,7 @@
         },
         "commit": {
           "description": "Default git commit SHA-1 to track for this projects and upstreams. Must be full 40 character SHA-1.",
-          "oneOf": [
+          "allOf": [
             {
               "$ref": "#/definitions/gitCommit"
             }
@@ -231,7 +241,7 @@
         },
         "remote": {
           "description": "The name specified here is used as the default remote name in the project's .git/config, and is therefore automatically available to commands like git fetch, git remote, git pull and git push.",
-          "oneOf": [
+          "allOf": [
             {
               "$ref": "#/definitions/gitRemote"
             }
@@ -239,7 +249,7 @@
         },
         "protocol": {
           "description": "Default git URL protocol for git hosting provider sources. Accepted values are 'ssh' or 'https'. If not supplied, defaults to 'ssh'. The full URL gets formed as:\ngit@${source_url}:${project_name/upstream_name}.git\nhttps://${source_url}/${project_name/upstream_name}.git",
-          "oneOf": [
+          "allOf": [
             {
               "$ref": "#/definitions/gitProtocol"
             }
@@ -247,7 +257,7 @@
         },
         "git": {
           "description": "Default git settings",
-          "oneOf": [
+          "allOf": [
             {
               "$ref": "#/definitions/gitSettings"
             }
@@ -270,10 +280,10 @@
       }
     },
     "sourceName": {
-      "type": "string",
-      "oneOf": [
+      "description": "Source identifier",
+      "allOf": [
         {
-          "$ref": "#/definitions/alphanumericDashUnderscore"
+          "$ref": "#/definitions/alphanumericStringDashUnderscore"
         }
       ]
     },
@@ -287,7 +297,7 @@
       "properties": {
         "url": {
           "description": "The base URL of the git hosting provider. The full URL gets formed as:\ngit@${source_url}:${project_name/upstream_name}.git\nhttps://${source_url}/${project_name/upstream_name}.git",
-          "oneOf": [
+          "allOf": [
             {
               "$ref": "#/definitions/url"
             }
@@ -295,7 +305,7 @@
         },
         "protocol": {
           "description": "The git URL protocol for the git hosting provider source. Accepted values are 'ssh' or 'https'. If not supplied, defaults to 'ssh'. The full URL gets formed as:\ngit@${source_url}:${project_name/upstream_name}.git\nhttps://${source_url}/${project_name/upstream_name}.git",
-          "oneOf": [
+          "allOf": [
             {
               "$ref": "#/definitions/gitProtocol"
             }
@@ -318,7 +328,7 @@
           "properties": {
             "name": {
               "description": "A unique name for this upstream. The upstream's name is appended onto its source's URL to generate the full URL to configure the Git remote with. The full URL gets formed as:\ngit@${source_url}:${project_name/upstream_name}.git\nhttps://${source_url}/${project_name/upstream_name}.git",
-              "oneOf": [
+              "allOf": [
                 {
                   "$ref": "#/definitions/projectName"
                 }
@@ -337,7 +347,7 @@
             },
             "branch": {
               "description": "Name of the git branch to track for this upstream. If not supplied the ref specified in the defaults is used if applicable, else the default branch 'master' is used.",
-              "oneOf": [
+              "allOf": [
                 {
                   "$ref": "#/definitions/gitBranch"
                 }
@@ -345,7 +355,7 @@
             },
             "commit": {
               "description": "Git commit SHA-1 to track for this upstream. Must be full 40 character SHA-1.",
-              "oneOf": [
+              "allOf": [
                 {
                   "$ref": "#/definitions/gitCommit"
                 }
@@ -353,7 +363,7 @@
             },
             "tag": {
               "description": "Name of the git tag to track for this upstream.",
-              "oneOf": [
+              "allOf": [
                 {
                   "$ref": "#/definitions/gitTag"
                 }
@@ -361,7 +371,7 @@
             },
             "remote": {
               "description": "The name specified here is used as the remote name in the upstream's .git/config, and is therefore automatically available to commands like git fetch, git remote, git pull and git push.",
-              "oneOf": [
+              "allOf": [
                 {
                   "$ref": "#/definitions/gitRemote"
                 }
@@ -384,7 +394,7 @@
     },
     "projectName": {
       "type": "string",
-      "oneOf": [
+      "allOf": [
         {
           "$ref": "#/definitions/nonEmptyStringNoSpaces"
         }
@@ -400,7 +410,7 @@
       "properties": {
         "name": {
           "description": "A unique name for this project.\nThe project's name is appended onto its source's URL to generate the full URL to configure the Git remote with. The full URL gets formed as:\ngit@${source_url}:${project_name/upstream_name}.git\nhttps://${source_url}/${project_name/upstream_name}.git",
-          "oneOf": [
+          "allOf": [
             {
               "$ref": "#/definitions/projectName"
             }
@@ -408,7 +418,7 @@
         },
         "path": {
           "description": "Path to clone project on disk",
-          "oneOf": [
+          "allOf": [
             {
               "$ref": "#/definitions/relativePath"
             }
@@ -427,7 +437,7 @@
         },
         "branch": {
           "description": "Name of the git branch to track for this project. If not supplied the ref specified in the defaults is used if applicable, else the default branch 'master' is used.",
-          "oneOf": [
+          "allOf": [
             {
               "$ref": "#/definitions/gitBranch"
             }
@@ -435,7 +445,7 @@
         },
         "tag": {
           "description": "Name of the git tag to track for this project.",
-          "oneOf": [
+          "allOf": [
             {
               "$ref": "#/definitions/gitTag"
             }
@@ -443,7 +453,7 @@
         },
         "commit": {
           "description": "Git commit SHA-1 to track for this project. Must be full 40 character SHA-1.",
-          "oneOf": [
+          "allOf": [
             {
               "$ref": "#/definitions/gitCommit"
             }
@@ -451,7 +461,7 @@
         },
         "remote": {
           "description": "The name specified here is used as the remote name in the project .git/config, and is therefore automatically available to commands like git fetch, git remote, git pull and git push.",
-          "oneOf": [
+          "allOf": [
             {
               "$ref": "#/definitions/gitRemote"
             }
@@ -459,7 +469,7 @@
         },
         "groups": {
           "description": "Groups project belongs to",
-          "oneOf": [
+          "allOf": [
             {
               "$ref": "#/definitions/groupNames"
             }
@@ -478,7 +488,7 @@
         },
         "git": {
           "description": "Project git settings",
-          "oneOf": [
+          "allOf": [
             {
               "$ref": "#/definitions/gitSettings"
             }
@@ -489,41 +499,30 @@
         "$ref": "#/definitions/forbiddenGitRefCombinations"
       }
     },
-    "clowderGroup": {
+    "clowderGroupDefaults": {
       "description": "Named projects section",
-      "type": "object",
-      "required": [
-        "projects"
-      ],
       "additionalProperties": false,
+      "minProperties": 1,
       "properties": {
-        "path": {
-          "description": "Prefix path for projects",
-          "oneOf": [
-            {
-              "$ref": "#/definitions/relativePath"
-            }
-          ]
-        },
         "groups": {
           "description": "Groups projects in section belong to",
-          "oneOf": [
+          "allOf": [
             {
               "$ref": "#/definitions/groupNames"
             }
           ]
         },
-        "projects": {
-          "description": "Projects section",
-          "oneOf": [
+        "remote": {
+          "description": "The name specified here is used as the remote name in the project .git/config, and is therefore automatically available to commands like git fetch, git remote, git pull and git push.",
+          "allOf": [
             {
-              "$ref": "#/definitions/projects"
+              "$ref": "#/definitions/gitRemote"
             }
           ]
         },
         "branch": {
           "description": "Name of the git branch to track for this project. If not supplied the ref specified in the defaults is used if applicable, else the default branch 'master' is used.",
-          "oneOf": [
+          "allOf": [
             {
               "$ref": "#/definitions/gitBranch"
             }
@@ -531,7 +530,7 @@
         },
         "tag": {
           "description": "Name of the git tag to track for projects and upstreams.",
-          "oneOf": [
+          "allOf": [
             {
               "$ref": "#/definitions/gitTag"
             }
@@ -539,7 +538,7 @@
         },
         "commit": {
           "description": "Git commit SHA-1 to track for this projects and upstreams. Must be full 40 character SHA-1.",
-          "oneOf": [
+          "allOf": [
             {
               "$ref": "#/definitions/gitCommit"
             }
@@ -555,6 +554,48 @@
               "$ref": "#/definitions/source"
             }
           ]
+        },
+        "git": {
+          "description": "Project git settings",
+          "allOf": [
+            {
+              "$ref": "#/definitions/gitSettings"
+            }
+          ]
+        }
+      }
+    },
+    "clowderGroup": {
+      "description": "Project group",
+      "type": "object",
+      "required": [
+        "projects"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "description": "Prefix path for projects",
+          "allOf": [
+            {
+              "$ref": "#/definitions/relativePath"
+            }
+          ]
+        },
+        "projects": {
+          "description": "Group projects",
+          "allOf": [
+            {
+              "$ref": "#/definitions/projects"
+            }
+          ]
+        },
+        "defaults": {
+          "description": "Group defaults",
+          "allOf": [
+            {
+              "$ref": "#/definitions/clowderGroupDefaults"
+            }
+          ]
         }
       },
       "not": {
@@ -562,7 +603,7 @@
       }
     },
     "clowderGroups": {
-      "description": "Clowder groups",
+      "description": "Project groups",
       "type": "object",
       "minProperties": 1,
       "additionalProperties": {
@@ -571,15 +612,13 @@
       "propertyNames": {
         "not": {
           "enum": [
-            "default",
-            "all",
             "defaults",
             "sources"
           ]
         },
         "allOf": [
           {
-            "$ref": "#/definitions/alphanumericDashUnderscore"
+            "$ref": "#/definitions/groupName"
           }
         ]
       },
@@ -591,11 +630,9 @@
     },
     "clowderName": {
       "description": "A name describing the projects. Must be a string containing any combination of letters, numbers, - or _",
-      "type": "string",
-      "minLength": 1,
-      "oneOf": [
+      "allOf": [
         {
-          "$ref": "#/definitions/alphanumericDashUnderscore"
+          "$ref": "#/definitions/alphanumericStringDashUnderscore"
         }
       ]
     },
@@ -622,7 +659,7 @@
       }
     }
   },
-  "oneOf": [
+  "allOf": [
     {
       "$ref": "#/definitions/clowder"
     }
