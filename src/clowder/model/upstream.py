@@ -28,56 +28,10 @@ if TYPE_CHECKING:
     from .project import Project
 
 
-class ForkImpl(object):
-    """clowder yaml Fork model impl class
-
-    :ivar str name: Project name
-    """
-
-    def __init__(self, fork: dict):
-        """ForkImpl __init__
-
-        :param dict fork: Parsed YAML python object for fork
-        """
-
-        self.name: str = fork['name']
-        self._remote: Optional[str] = fork.get('remote', None)
-        self._branch: Optional[str] = fork.get("branch", None)
-        self._tag: Optional[str] = fork.get("tag", None)
-        self._commit: Optional[str] = fork.get("commit", None)
-        self._source: Optional[str] = fork.get('source', None)
-
-    def get_yaml(self, resolved_sha: Optional[str] = None) -> dict:
-        """Return python object representation for saving yaml
-
-        :param Optional[str] resolved_sha: Current commit sha
-        :return: YAML python object
-        :rtype: dict
-        """
-
-        fork = {'name': self.name}
-
-        if self._remote is not None:
-            fork['remote'] = self._remote
-        if self._source is not None:
-            fork['source'] = self._source
-
-        if resolved_sha is None:
-            if self._branch is not None:
-                fork['branch'] = self._branch
-            elif self._tag is not None:
-                fork['tag'] = self._tag
-            elif self._commit is not None:
-                fork['commit'] = self._commit
-        else:
-            fork['commit'] = resolved_sha
-
-        return fork
-
-
-class Fork(ForkImpl):
+class Fork:
     """clowder yaml Fork model class
 
+    :ivar str name: Project name
     :ivar str path: Project relative path
     :ivar str remote: Fork remote name
     :ivar str ref: Fork git ref
@@ -92,7 +46,12 @@ class Fork(ForkImpl):
         :param Defaults defaults: Defaults instance
         """
 
-        super().__init__(fork)
+        self.name: str = fork['name']
+        self._remote: Optional[str] = fork.get('remote', None)
+        self._branch: Optional[str] = fork.get("branch", None)
+        self._tag: Optional[str] = fork.get("tag", None)
+        self._commit: Optional[str] = fork.get("commit", None)
+        self._source: Optional[str] = fork.get('source', None)
 
         self.path = project.path
         self.recursive = project.git_settings.recursive
@@ -124,6 +83,33 @@ class Fork(ForkImpl):
         """
 
         return ENVIRONMENT.clowder_dir / self.path
+
+    def get_yaml(self, resolved_sha: Optional[str] = None) -> dict:
+        """Return python object representation for saving yaml
+
+        :param Optional[str] resolved_sha: Current commit sha
+        :return: YAML python object
+        :rtype: dict
+        """
+
+        fork = {'name': self.name}
+
+        if self._remote is not None:
+            fork['remote'] = self._remote
+        if self._source is not None:
+            fork['source'] = self._source
+
+        if resolved_sha is None:
+            if self._branch is not None:
+                fork['branch'] = self._branch
+            elif self._tag is not None:
+                fork['tag'] = self._tag
+            elif self._commit is not None:
+                fork['commit'] = self._commit
+        else:
+            fork['commit'] = resolved_sha
+
+        return fork
 
     def status(self) -> str:
         """Return formatted fork status

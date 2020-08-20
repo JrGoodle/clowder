@@ -24,23 +24,30 @@ DEFAULT_SOURCES: Dict[str, Dict[str, str]] = {
 }
 
 
-class SourceImpl(object):
-    """clowder yaml SourceImpl model class
+class Source:
+    """clowder yaml Source model class
 
     :ivar str name: Source name
     :ivar str url: Source url
+    :ivar GitProtocol protocol: Git protocol
+    :ivar bool is_custom: Whether this is a custom user-defined source
     """
 
-    def __init__(self, name: str, source: Dict[str, str]):
+    def __init__(self, name: str, source: Dict[str, str], defaults: Defaults, is_custom: bool):
         """Source __init__
 
         :param str name: Source name
         :param Dict[str, str] source: Parsed YAML python object for source
+        :param Defaults defaults: Defaults instance
+        :param bool is_custom: Whether this is a custom user-defined source
         """
 
         self.name = name
         self.url = source['url']
         self._protocol = source.get('protocol', None)
+
+        self.is_custom = is_custom
+        self.protocol = GitProtocol(source.get('protocol', defaults.protocol))
 
     def get_yaml(self) -> dict:
         """Return python object representation for saving yaml
@@ -55,28 +62,6 @@ class SourceImpl(object):
             source['protocol'] = self._protocol
 
         return source
-
-
-class Source(SourceImpl):
-    """clowder yaml Source model class
-
-    :ivar GitProtocol protocol: Git protocol
-    :ivar bool is_custom: Whether this is a custom user-defined source
-    """
-
-    def __init__(self, name: str, source: Dict[str, str], defaults: Defaults, is_custom: bool):
-        """Source __init__
-
-        :param str name: Source name
-        :param Dict[str, str] source: Parsed YAML python object for source
-        :param Defaults defaults: Defaults instance
-        :param bool is_custom: Whether this is a custom user-defined source
-        """
-
-        super().__init__(name, source)
-
-        self.is_custom = is_custom
-        self.protocol = GitProtocol(source.get('protocol', defaults.protocol))
 
     def update_protocol(self, protocol: Optional[str]):
         """Updates git protocol if it wasn't explicitly set for this source in the clowder yaml file

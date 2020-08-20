@@ -12,28 +12,11 @@ from .project import Project
 from .source import Source
 
 
-class GroupImpl(object):
-    """clowder yaml GroupImpl model class
+class Group:
+    """clowder yaml Group model class
 
     :ivar str name: Source name
     :ivar Optional[str] path: Group path prefix
-    """
-
-    def __init__(self, name: str, group: dict):
-        """Source __init__
-
-        :param str name: Group name
-        :param dict group: Parsed YAML python object for group
-        """
-
-        self.name = name
-        self.path = group.get('path', None)
-        self._groups = group.get('groups', None)
-
-
-class Group(GroupImpl):
-    """clowder yaml Group model class
-
     :ivar Optional[str] projects: Group projects
     """
 
@@ -46,7 +29,9 @@ class Group(GroupImpl):
         :param Tuple[Source, ...] sources: List of Source instances
         """
 
-        super().__init__(name, group)
+        self.name = name
+        self.path = group.get('path', None)
+        self._groups = group.get('groups', None)
 
         self.groups = group.get('groups', []) + [self.name]
 

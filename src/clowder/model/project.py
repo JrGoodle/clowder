@@ -48,16 +48,28 @@ def project_repo_exists(func):
     return wrapper
 
 
-class ProjectImpl(object):
-    """clowder yaml Project model impl class
+class Project:
+    """clowder yaml Project model class
 
     :ivar str name: Project name
+    :ivar Path path: Project relative path
+    :ivar List[str] groups: Groups project belongs to
+    :ivar str ref: Project git ref
+    :ivar str remote: Project remote name
+    :ivar Source source: Default source
+    :ivar GitSettings git_settings: Custom git settings
+    :ivar Optional[Fork] fork: Project's associated Fork
     """
 
-    def __init__(self, project: dict):
+    def __init__(self, project: dict, defaults: Defaults, sources: Tuple[Source, ...],
+                 path_prefix: Optional[str] = None, groups: Optional[List[str]] = None):
         """Project __init__
 
         :param dict project: Parsed YAML python object for project
+        :param Defaults defaults: Defaults instance
+        :param Tuple[Source, ...] sources: List of Source instances
+        :param Optional[str] path_prefix: Prefix for path from group
+        :param Optional[List[str]] groups: Groups project was defined in
         """
 
         self.name: str = project['name']
@@ -82,68 +94,6 @@ class ProjectImpl(object):
         else:
             self._fork: Optional[ForkImpl] = None
 
-    def get_yaml(self, resolved_sha: Optional[str] = None) -> dict:
-        """Return python object representation for saving yaml
-
-        :param Optional[str] resolved_sha: Current commit sha
-        :return: YAML python object
-        :rtype: dict
-        """
-
-        project = {'name': self.name}
-
-        if self._path is not None:
-            project['path'] = self._path
-        if self._remote is not None:
-            project['remote'] = self._remote
-        if self._source is not None:
-            project['source'] = self._source
-        if self._groups is not None:
-            project['groups'] = self._groups
-        if self._fork is not None:
-            project['upstream'] = self._fork.get_yaml(resolved_sha=resolved_sha)
-        if self._git_settings is not None:
-            project['git'] = self._git_settings.get_yaml()
-        if self._timestamp_author is not None:
-            project['timestamp_author'] = self._timestamp_author
-
-        if resolved_sha is None:
-            if self._branch is not None:
-                project['branch'] = self._branch
-            elif self._tag is not None:
-                project['tag'] = self._tag
-            elif self._commit is not None:
-                project['commit'] = self._commit
-        else:
-            project['commit'] = resolved_sha
-
-        return project
-
-
-class Project(ProjectImpl):
-    """clowder yaml Project model class
-
-    :ivar Path path: Project relative path
-    :ivar List[str] groups: Groups project belongs to
-    :ivar str ref: Project git ref
-    :ivar str remote: Project remote name
-    :ivar Source source: Default source
-    :ivar GitSettings git_settings: Custom git settings
-    :ivar Optional[Fork] fork: Project's associated Fork
-    """
-
-    def __init__(self, project: dict, defaults: Defaults, sources: Tuple[Source, ...],
-                 path_prefix: Optional[str] = None, groups: Optional[List[str]] = None):
-        """Project __init__
-
-        :param dict project: Parsed YAML python object for project
-        :param Defaults defaults: Defaults instance
-        :param Tuple[Source, ...] sources: List of Source instances
-        :param Optional[str] path_prefix: Prefix for path from group
-        :param Optional[List[str]] groups: Groups project was defined in
-        """
-
-        super().__init__(project)
 
         # TODO: Should the postfix or full path be added as a group?
         last_path_component = Path(self.name).name
@@ -360,6 +310,43 @@ class Project(ProjectImpl):
 
         repo = ProjectRepo(self.full_path(), self.remote, self.ref)
         return repo.get_current_timestamp()
+
+    def get_yaml(self, resolved_sha: Optional[str] = None) -> dict:
+        """Return python object representation for saving yaml
+
+        :param Optional[str] resolved_sha: Current commit sha
+        :return: YAML python object
+        :rtype: dict
+        """
+
+        project = {'name': self.name}
+
+        if self._path is not None:
+            project['path'] = self._path
+        if self._remote is not None:
+            project['remote'] = self._remote
+        if self._source is not None:
+            project['source'] = self._source
+        if self._groups is not None:
+            project['groups'] = self._groups
+        if self._fork is not None:
+            project['upstream'] = self._fork.get_yaml(resolved_sha=resolved_sha)
+        if self._git_settings is not None:
+            project['git'] = self._git_settings.get_yaml()
+        if self._timestamp_author is not None:
+            project['timestamp_author'] = self._timestamp_author
+
+        if resolved_sha is None:
+            if self._branch is not None:
+                project['branch'] = self._branch
+            elif self._tag is not None:
+                project['tag'] = self._tag
+            elif self._commit is not None:
+                project['commit'] = self._commit
+        else:
+            project['commit'] = resolved_sha
+
+        return project
 
     def herd(self, branch: Optional[str] = None, tag: Optional[str] = None, depth: Optional[int] = None,
              rebase: bool = False, parallel: bool = False) -> None:

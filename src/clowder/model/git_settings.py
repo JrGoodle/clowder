@@ -14,57 +14,13 @@ from clowder.error import ClowderError, ClowderErrorType
 GitConfig = Dict[str, Union[bool, str, int, float, None]]
 
 
-class GitSettingsImpl(object):
-    """clowder yaml GitSettingsImpl model class
+class GitSettings:
+    """clowder yaml GitSettings model class
 
     :cvar bool recursive: Default for whether to run git commands recursively
     :cvar bool lfs: Default for whether to set up lfs hooks and pull files
     :cvar int depth: Default depth to clone git repositories
     :cvar int jobs: Default number of jobs to use forr git clone and fetch
-    """
-
-    recursive = False
-    lfs = False
-    depth = 0
-    jobs = 1
-
-    def __init__(self, yaml: dict):
-        """Source __init__
-
-        :param dict yaml: Parsed YAML python object for GitSettings
-        """
-
-        self._recursive: Optional[bool] = yaml.get('recursive', None)
-        self._lfs: Optional[bool] = yaml.get('lfs', None)
-        self._depth: Optional[int] = yaml.get('depth', None)
-        self._jobs: Optional[int] = yaml.get('jobs', None)
-        self._config: Optional[GitConfig] = yaml.get('config', None)
-
-    def get_yaml(self) -> dict:
-        """Return python object representation for saving yaml
-
-        :return: YAML python object
-        :rtype: dict
-        """
-
-        git_settings = {}
-
-        if self._recursive is not None:
-            git_settings['recursive'] = self._recursive
-        if self._lfs is not None:
-            git_settings['lfs'] = self._lfs
-        if self._depth is not None:
-            git_settings['depth'] = self._depth
-        if self._jobs is not None:
-            git_settings['jobs'] = self._jobs
-        if self._config is not None:
-            git_settings['config'] = self._config
-
-        return git_settings
-
-
-class GitSettings(GitSettingsImpl):
-    """clowder yaml GitSettings model class
 
     :ivar Optional[bool] recursive: Whether to run git commands recursively
     :ivar Optional[bool] lfs: Whether to set up lfs hooks and pull files
@@ -72,6 +28,11 @@ class GitSettings(GitSettingsImpl):
     :ivar Optional[int] jobs: Number of jobs to use forr git clone and fetch
     :ivar Optional[GitConfig] config: Custom git config values to set
     """
+
+    recursive = False
+    lfs = False
+    depth = 0
+    jobs = 1
 
     def __init__(self, git_settings: Optional[dict] = None, default_git_settings: Optional['GitSettings'] = None):
         """Source __init__
@@ -87,7 +48,11 @@ class GitSettings(GitSettingsImpl):
         if git_settings is None:
             git_settings = {}
 
-        super().__init__(git_settings)
+        self._recursive: Optional[bool] = git_settings.get('recursive', None)
+        self._lfs: Optional[bool] = git_settings.get('lfs', None)
+        self._depth: Optional[int] = git_settings.get('depth', None)
+        self._jobs: Optional[int] = git_settings.get('jobs', None)
+        self._config: Optional[GitConfig] = git_settings.get('config', None)
 
         if default_git_settings is not None:
             self.recursive: bool = git_settings.get('recursive', default_git_settings.recursive)
@@ -127,6 +92,28 @@ class GitSettings(GitSettingsImpl):
                 raise ClowderError(ClowderErrorType.INVALID_GIT_CONFIG_VALUE,
                                    fmt.error_invalid_git_config_value(key, value))
         return config
+
+    def get_yaml(self) -> dict:
+        """Return python object representation for saving yaml
+
+        :return: YAML python object
+        :rtype: dict
+        """
+
+        git_settings = {}
+
+        if self._recursive is not None:
+            git_settings['recursive'] = self._recursive
+        if self._lfs is not None:
+            git_settings['lfs'] = self._lfs
+        if self._depth is not None:
+            git_settings['depth'] = self._depth
+        if self._jobs is not None:
+            git_settings['jobs'] = self._jobs
+        if self._config is not None:
+            git_settings['config'] = self._config
+
+        return git_settings
 
     @staticmethod
     def _combine_configs(current_config: Optional[GitConfig],

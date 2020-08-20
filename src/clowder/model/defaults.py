@@ -16,13 +16,19 @@ from clowder.git.util import (
 from .git_settings import GitSettings, GitSettingsImpl
 
 
-class DefaultsImpl(object):
-    """clowder yaml Defaults model impl class
+class Defaults:
+    """clowder yaml Defaults model class
 
     :ivar str source: Default source name
     :ivar GitProtocol protocol: Default git protocol
     :ivar GitSettings git_settings: Custom git settings
     :ivar str timestamp_author: Default timestamp author
+    :ivar str ref: Default ref
+    :ivar str remote: Default remote name
+    :ivar GitSettings git_settings: Custom git settings
+    :ivar Optional[str] branch: Default git branch
+    :ivar Optional[str] tag: Default git tag
+    :ivar Optional[str] commit: Default commit sha-1
     """
 
     def __init__(self, defaults: dict):
@@ -44,6 +50,20 @@ class DefaultsImpl(object):
             self._git_settings: Optional[GitSettingsImpl] = GitSettingsImpl(git_settings)
         else:
             self._git_settings: Optional[GitSettingsImpl] = None
+
+        self.protocol = GitProtocol(defaults.get("protocol", "ssh"))
+        self.source: str = defaults.get("source", "github")
+        self.remote: str = defaults.get("remote", "origin")
+        self.git_settings = GitSettings(git_settings=defaults.get("git", None))
+
+        if self._branch is not None:
+            self.ref = format_git_branch(self._branch)
+        elif self._tag is not None:
+            self.ref = format_git_tag(self._tag)
+        elif self._commit is not None:
+            self.ref = self._commit
+        else:
+            self.ref = format_git_branch('master')
 
     def get_yaml(self) -> dict:
         """Return python object representation for saving yaml
@@ -73,37 +93,3 @@ class DefaultsImpl(object):
             defaults['timestamp_author'] = self.timestamp_author
 
         return defaults
-
-
-class Defaults(DefaultsImpl):
-    """clowder yaml Defaults model class
-
-    :ivar str ref: Default ref
-    :ivar str remote: Default remote name
-    :ivar GitSettings git_settings: Custom git settings
-    :ivar Optional[str] branch: Default git branch
-    :ivar Optional[str] tag: Default git tag
-    :ivar Optional[str] commit: Default commit sha-1
-    """
-
-    def __init__(self, defaults: dict):
-        """Defaults __init__
-
-        :param dict defaults: Parsed YAML python object for defaults
-        """
-
-        super().__init__(defaults)
-
-        self.protocol = GitProtocol(defaults.get("protocol", "ssh"))
-        self.source: str = defaults.get("source", "github")
-        self.remote: str = defaults.get("remote", "origin")
-        self.git_settings = GitSettings(git_settings=defaults.get("git", None))
-
-        if self._branch is not None:
-            self.ref = format_git_branch(self._branch)
-        elif self._tag is not None:
-            self.ref = format_git_tag(self._tag)
-        elif self._commit is not None:
-            self.ref = self._commit
-        else:
-            self.ref = format_git_branch('master')
