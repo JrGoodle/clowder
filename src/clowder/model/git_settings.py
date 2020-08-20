@@ -14,13 +14,23 @@ from clowder.error import ClowderError, ClowderErrorType
 GitConfig = Dict[str, Union[bool, str, int, float, None]]
 
 
-class GitSettings:
-    """clowder yaml GitSettings model class
+class DefaultGitSettings:
+    """Default GitSettings class
 
     :cvar bool recursive: Default for whether to run git commands recursively
     :cvar bool lfs: Default for whether to set up lfs hooks and pull files
     :cvar int depth: Default depth to clone git repositories
     :cvar int jobs: Default number of jobs to use forr git clone and fetch
+    """
+
+    recursive = False
+    lfs = False
+    depth = 0
+    jobs = 1
+
+
+class GitSettings:
+    """clowder yaml GitSettings model class
 
     :ivar Optional[bool] recursive: Whether to run git commands recursively
     :ivar Optional[bool] lfs: Whether to set up lfs hooks and pull files
@@ -28,11 +38,6 @@ class GitSettings:
     :ivar Optional[int] jobs: Number of jobs to use forr git clone and fetch
     :ivar Optional[GitConfig] config: Custom git config values to set
     """
-
-    recursive = False
-    lfs = False
-    depth = 0
-    jobs = 1
 
     def __init__(self, git_settings: Optional[dict] = None, parent_git_settings: Optional['GitSettings'] = None):
         """Source __init__
@@ -62,10 +67,10 @@ class GitSettings:
             self.config: Optional[GitConfig] = self._combine_configs(git_settings.get('config', None),
                                                                      parent_git_settings.config)
         else:
-            self.recursive: bool = git_settings.get('recursive', GitSettings.recursive)
-            self.lfs: bool = git_settings.get('lfs', GitSettings.lfs)
-            self.depth: int = git_settings.get('depth', GitSettings.depth)
-            self.jobs: int = git_settings.get('jobs', GitSettings.jobs)
+            self.recursive: bool = git_settings.get('recursive', DefaultGitSettings.recursive)
+            self.lfs: bool = git_settings.get('lfs', DefaultGitSettings.lfs)
+            self.depth: int = git_settings.get('depth', DefaultGitSettings.depth)
+            self.jobs: int = git_settings.get('jobs', DefaultGitSettings.jobs)
             self.config: Optional[GitConfig] = git_settings.get('config', None)
 
     def get_processed_config(self) -> Optional[Dict[str, str]]:

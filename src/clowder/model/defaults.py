@@ -13,16 +13,14 @@ from clowder.git.util import (
     format_git_tag
 )
 
-from .git_settings import GitSettings, GitSettingsImpl
+from .git_settings import GitSettings
 
 
 class Defaults:
     """clowder yaml Defaults model class
 
-    :ivar Optional[str source: Default source name
+    :ivar Optional[str] source: Default source name
     :ivar Optional[GitProtocol] protocol: Default git protocol
-    :ivar Optional[str] timestamp_author: Default timestamp author
-    :ivar Optional[str] ref: Default ref
     :ivar Optional[str] remote: Default remote name
     :ivar Optional[GitSettings] git_settings: Custom git settings
     :ivar Optional[str] branch: Default git branch

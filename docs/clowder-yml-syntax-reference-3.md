@@ -68,7 +68,7 @@ upstream:
 ```yaml
 defaults:
   protocol: protocol
-  source: string | source
+  source: string
   remote: string
   git: git
   branch: string # Only one of 'branch', 'tag', or 'commit' is allowed
