@@ -1,9 +1,9 @@
 # `clowder.yml` Syntax Reference
 
 - [clowder structure](#clowder-structure)
-- [group](#group)
 - [project](#project)
 - [upstream](#upstream)
+- [group](#group)
 - [defaults](#defaults)
 - [sources](#source)
 - [protocol](#protocol)
@@ -21,16 +21,6 @@ sources: { string: source}
 clowder: [ project ] | { string: group } # REQUIRED
 ```
 
-## group
-
-```yaml
-group:
-  path: string
-  groups: [ string ]
-  defaults: defaults
-  projects: [ project ] # REQUIRED
-```
-
 ## project
 
 ```yaml
@@ -42,9 +32,9 @@ project:
   groups: [ string ]
   git: git
   upstream: string | upstream
-  branch: string
-  tag: string
-  commit: string
+  branch: string # Only one of 'branch', 'tag', or 'commit' is allowed
+  tag: string # Only one of 'branch', 'tag', or 'commit' is allowed
+  commit: string # Only one of 'branch', 'tag', or 'commit' is allowed
 ```
 
 ## upstream
@@ -54,9 +44,19 @@ upstream:
   name: string # REQUIRED
   source: string | source
   remote: string
-  branch: string
-  tag: string
-  commit: string
+  branch: string # Only one of 'branch', 'tag', or 'commit' is allowed
+  tag: string # Only one of 'branch', 'tag', or 'commit' is allowed
+  commit: string # Only one of 'branch', 'tag', or 'commit' is allowed
+```
+
+## group
+
+```yaml
+group:
+  path: string
+  groups: [ string ]
+  defaults: defaults
+  projects: [ project ] # REQUIRED
 ```
 
 ## defaults
@@ -67,9 +67,9 @@ defaults:
   source: string | source
   remote: string
   git: git
-  branch: string
-  tag: string
-  commit: string
+  branch: string # Only one of 'branch', 'tag', or 'commit' is allowed
+  tag: string # Only one of 'branch', 'tag', or 'commit' is allowed
+  commit: string # Only one of 'branch', 'tag', or 'commit' is allowed
 ```
 
 ## source
