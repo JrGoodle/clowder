@@ -12,6 +12,7 @@ import clowder.util.formatting as fmt
 from clowder.error import ClowderError, ClowderErrorType
 
 GitConfig = Dict[str, Union[bool, str, int, float, None]]
+GitSubmodules = Union[bool, str] # TODO: Replace str with enum for "update", "recursive", "update recursive"
 
 
 class DefaultGitSettings:
@@ -32,46 +33,24 @@ class DefaultGitSettings:
 class GitSettings:
     """clowder yaml GitSettings model class
 
-    :ivar Optional[bool] recursive: Whether to run git commands recursively
+    :ivar Optional[bool] submodules: Whether to fetch submodules
     :ivar Optional[bool] lfs: Whether to set up lfs hooks and pull files
     :ivar Optional[bool] depth: Depth to clone git repositories
     :ivar Optional[int] jobs: Number of jobs to use forr git clone and fetch
     :ivar Optional[GitConfig] config: Custom git config values to set
     """
 
-    def __init__(self, git_settings: Optional[dict] = None, parent_git_settings: Optional['GitSettings'] = None):
+    def __init__(self, yaml: dict):
         """Source __init__
 
-        :param Optional[dict] git_settings: Parsed YAML python object for GitSettings
-        :param Optional[dict] parent_git_settings: Parsed YAML python object for default GitSettings
+        :param dict yaml: Parsed YAML python object for GitSettings
         """
 
-        if git_settings is None and parent_git_settings is not None:
-            raise ClowderError(ClowderErrorType.INVALID_GIT_SETTINGS_INIT_PARAMETERS,
-                               'Invalid git settings init parameters')
-
-        if git_settings is None:
-            git_settings = {}
-
-        self._recursive: Optional[bool] = git_settings.get('recursive', None)
-        self._lfs: Optional[bool] = git_settings.get('lfs', None)
-        self._depth: Optional[int] = git_settings.get('depth', None)
-        self._jobs: Optional[int] = git_settings.get('jobs', None)
-        self._config: Optional[GitConfig] = git_settings.get('config', None)
-
-        if parent_git_settings is not None:
-            self.recursive: bool = git_settings.get('recursive', parent_git_settings.recursive)
-            self.lfs: bool = git_settings.get('lfs', parent_git_settings.lfs)
-            self.depth: int = git_settings.get('depth', parent_git_settings.depth)
-            self.jobs: int = git_settings.get('jobs', parent_git_settings.jobs)
-            self.config: Optional[GitConfig] = self._combine_configs(git_settings.get('config', None),
-                                                                     parent_git_settings.config)
-        else:
-            self.recursive: bool = git_settings.get('recursive', DefaultGitSettings.recursive)
-            self.lfs: bool = git_settings.get('lfs', DefaultGitSettings.lfs)
-            self.depth: int = git_settings.get('depth', DefaultGitSettings.depth)
-            self.jobs: int = git_settings.get('jobs', DefaultGitSettings.jobs)
-            self.config: Optional[GitConfig] = git_settings.get('config', None)
+        self.submodules: Optional[GitSubmodules] = yaml.get('recursive', None)
+        self.lfs: Optional[bool] = yaml.get('lfs', None)
+        self.depth: Optional[int] = yaml.get('depth', None)
+        self.jobs: Optional[int] = yaml.get('jobs', None)
+        self.config: Optional[GitConfig] = yaml.get('config', None)
 
     def get_processed_config(self) -> Optional[Dict[str, str]]:
         """Return version of config converted to strings

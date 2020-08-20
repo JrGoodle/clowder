@@ -28,41 +28,22 @@ class Defaults:
     :ivar Optional[str] commit: Default commit sha-1
     """
 
-    def __init__(self, defaults: dict):
+    def __init__(self, yaml: dict):
         """Defaults __init__
 
-        :param dict defaults: Parsed YAML python object for defaults
+        :param dict yaml: Parsed YAML python object for defaults
         """
 
-        self.protocol = GitProtocol(defaults.get("protocol", "ssh"))
-        self._protocol: str = defaults.get("protocol", None)
+        protocol = yaml.get("protocol", None)
+        self.protocol: Optional[GitProtocol] = GitProtocol(protocol) if protocol is not None else None
+        self.source: Optional[str] = yaml.get("source", None)
+        self.remote: Optional[str] = yaml.get("remote", None)
+        git = yaml.get("git", None)
+        self.git_settings = GitSettings(git) if git is not None else None
+        self.branch: Optional[str] = yaml.get("branch", None)
+        self.tag: Optional[str] = yaml.get("tag", None)
+        self.commit: Optional[str] = yaml.get("commit", None)
 
-        self.source: str = defaults.get("source", "github")
-        self._source: str = defaults.get("source", None)
-
-        self.remote: str = defaults.get("remote", "origin")
-        self._remote: Optional[str] = defaults.get("remote", None)
-
-        self.git_settings = GitSettings(git_settings=defaults.get("git", None))
-        git_settings = defaults.get("git", None)
-        if git_settings is not None:
-            self._git_settings: Optional[GitSettingsImpl] = GitSettingsImpl(git_settings)
-        else:
-            self._git_settings: Optional[GitSettingsImpl] = None
-
-        if self._branch is not None:
-            self.ref = format_git_branch(self._branch)
-            self._branch: Optional[str] = defaults.get("branch", None)
-        elif self._tag is not None:
-            self.ref = format_git_tag(self._tag)
-            self._tag: Optional[str] = defaults.get("tag", None)
-        elif self._commit is not None:
-            self.ref = self._commit
-            self._commit: Optional[str] = defaults.get("commit", None)
-        else:
-            self.ref = format_git_branch('master')
-
-        self.timestamp_author: Optional[str] = defaults.get("timestamp_author", None)
 
     def get_yaml(self) -> dict:
         """Return python object representation for saving yaml

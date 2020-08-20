@@ -12,6 +12,7 @@ from clowder.environment import ENVIRONMENT
 from clowder.error import ClowderError, ClowderErrorType
 from clowder.logging import LOG_DEBUG
 
+from .clowder import Clowder
 from .defaults import Defaults
 from .group import Group
 from .project import Project
@@ -33,7 +34,10 @@ class ClowderBase:
         :param dict yaml: Parsed yaml dict
         """
 
-        self._load_clowder_yaml(yaml)
+        self.name = yaml["name"]
+        self.defaults = Defaults(yaml["defaults"]) if "defaults" in yaml else None
+        self.sources = [Source(s) for s in yaml["sources"]] if "sources" in yaml else None
+        self.clowder = Clowder(yaml["clowder"])
 
     def _load_clowder_yaml(self, yaml: dict) -> None:
         """Load clowder yaml file

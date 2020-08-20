@@ -5,8 +5,8 @@
 
 """
 
-from typing import Tuple
-
+from typing import List, Optional, Union
+from clowder.error import ClowderError, ClowderErrorType
 from .defaults import Defaults
 from .project import Project
 from .source import Source
@@ -23,23 +23,26 @@ class Group:
     :ivar bool _has_projects_key: Whether the projects were listed under the 'projects' key in the yaml
     """
 
-    def __init__(self, name: str, group: dict, defaults: Defaults, sources: Tuple[Source, ...]):
-        """Source __init__
+    def __init__(self, name: str, yaml: Union[dict, List[Project]]):
+        """Group __init__
 
         :param str name: Group name
-        :param dict group: Parsed YAML python object for group
-        :param Defaults defaults: Defaults instance
-        :param Tuple[Source, ...] sources: List of Source instances
+        :param Union[dict, List[Project]] yaml: Parsed YAML python object for group
         """
 
-        self.name = name
-        self.path = group.get('path', None)
-        self._groups = group.get('groups', None)
+        self.name: str = name
 
-        self.groups = group.get('groups', []) + [self.name]
-
-        self.projects = [Project(p, defaults, sources, path_prefix=self.path, groups=self.groups)
-                         for p in group["projects"]]
+        if isinstance(yaml, dict):
+            self.path: Optional[str] = yaml.get('path', None)
+            self.groups: Optional[List[Group]] = yaml.get('groups', None)
+            self.projects = [Project(p) for p in yaml["projects"]]
+        elif isinstance(yaml, list):
+            self.path = None
+            self.groups = None
+            self.projects: List[Project] = [Project(p) for p in yaml]
+        else:
+            # TODO: Create new error type
+            raise ClowderError(ClowderErrorType.YAML_UNKNOWN, "Wrong instance type for group")
 
     def get_yaml(self, resolved: bool = False) -> dict:
         """Return python object representation for saving yaml

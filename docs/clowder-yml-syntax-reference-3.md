@@ -108,5 +108,5 @@ git:
   lfs: bool
   submodules: bool | enum # "update" | "update recursive" | "recursive"
   depth: integer # Must be >= 0, where 0 indicates full clone
-  config: { string: string | null }
+  config: { string: string | bool | number | null }
 ```

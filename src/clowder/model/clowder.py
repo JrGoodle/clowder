@@ -5,24 +5,12 @@
 
 """
 
-from pathlib import Path
-from typing import Optional, Tuple, TYPE_CHECKING
+from typing import List, Optional, Union
 
-from termcolor import colored
-
-import clowder.util.formatting as fmt
-from clowder.environment import ENVIRONMENT
 from clowder.error import ClowderError, ClowderErrorType
-from clowder.git import ProjectRepo
-from clowder.git.util import (
-    existing_git_repository,
-    format_git_branch,
-    format_git_tag,
-    git_url
-)
 
-from .defaults import Defaults
-from .source import Source
+from .group import Group
+from .project import Project
 
 
 class Clowder:
@@ -32,14 +20,21 @@ class Clowder:
     :ivar Optional[List[Group]] groups: Groups
     """
 
-    def __init__(self, upstream: dict, project: 'Project', sources: Tuple[Source, ...], defaults: Defaults):
+    def __init__(self, yaml: Union[dict, List[Project]]):
         """Upstream __init__
 
-        :param dict upstream: Parsed YAML python object for upstream
-        :param Project project: Parent project
-        :param Tuple[Source, ...] sources: List of Source instances
-        :param Defaults defaults: Defaults instance
+        :param Union[dict, List[Project]] yaml: Parsed YAML python object for clowder
         """
+
+        if isinstance(yaml, dict):
+            self.projects: Optional[List[Project]] = None
+            self.groups: Optional[List[Group]] = [Group(name, group) for name, group in yaml.items()]
+        elif isinstance(yaml, list):
+            self.projects: Optional[List[Project]] = [Project(p) for p in yaml]
+            self.groups: Optional[List[Group]] = None
+        else:
+            # TODO: Create new error type
+            raise ClowderError(ClowderErrorType.YAML_UNKNOWN, "Wrong instance type for group")
 
         # TODO: Implement
 

@@ -32,21 +32,16 @@ class Source:
     :ivar Optional[GitProtocol] protocol: Git protocol
     """
 
-    def __init__(self, name: str, source: Dict[str, str], defaults: Defaults, is_custom: bool):
+    def __init__(self, name: str, yaml: Optional[Dict[str, str]]):
         """Source __init__
 
         :param str name: Source name
-        :param Dict[str, str] source: Parsed YAML python object for source
-        :param Defaults defaults: Defaults instance
-        :param bool is_custom: Whether this is a custom user-defined source
+        :param Dict[str, str] yaml: Parsed YAML python object for source
         """
 
         self.name = name
-        self.url = source['url']
-        self._protocol = source.get('protocol', None)
-
-        self.is_custom = is_custom
-        self.protocol = GitProtocol(source.get('protocol', defaults.protocol))
+        self.url = yaml['url']
+        self.protocol = yaml.get(GitProtocol('protocol'), None)
 
     def get_yaml(self) -> dict:
         """Return python object representation for saving yaml
@@ -61,12 +56,3 @@ class Source:
             source['protocol'] = self._protocol
 
         return source
-
-    def update_protocol(self, protocol: Optional[str]):
-        """Updates git protocol if it wasn't explicitly set for this source in the clowder yaml file
-
-        :param Optional[str] protocol: Git protocol to use for cloning
-        """
-
-        if protocol is not None and self._protocol is None:
-            self.protocol = GitProtocol(protocol)
