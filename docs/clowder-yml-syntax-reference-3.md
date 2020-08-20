@@ -5,7 +5,7 @@
 - [upstream](#upstream)
 - [group](#group)
 - [defaults](#defaults)
-- [sources](#source)
+- [source](#source)
 - [protocol](#protocol)
 - [git](#git)
 

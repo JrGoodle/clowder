@@ -27,7 +27,7 @@ from clowder.util.connectivity import is_offline
 from clowder.util.execute import execute_forall_command
 
 from .defaults import Defaults
-from .fork import Fork, ForkImpl
+from .upstream import Fork, ForkImpl
 from .git_settings import GitSettings, GitSettingsImpl
 from .source import Source
 

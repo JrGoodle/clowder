@@ -4,7 +4,7 @@ import os
 import sys
 import unittest
 
-from clowder.model.fork import Fork
+from clowder.model.upstream import Fork
 from clowder.model import Source
 from unittests.shared import __github_source_yaml__
 
