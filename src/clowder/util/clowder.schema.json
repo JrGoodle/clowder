@@ -610,30 +610,33 @@
       ]
     },
     "clowderGroups": {
-      "description": "Project groups",
-      "type": "object",
-      "minProperties": 1,
-      "additionalProperties": {
-        "$ref": "#/definitions/clowderGroup"
-      },
-      "propertyNames": {
-        "not": {
-          "enum": [
-            "defaults",
-            "sources"
-          ]
-        },
-        "allOf": [
-          {
-            "$ref": "#/definitions/groupName"
-          }
-        ]
-      },
-      "properties": {
-        "projects": {
+      "description": "Groups or projects",
+      "oneOf": [
+        {
           "$ref": "#/definitions/projects"
+        },
+        {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "$ref": "#/definitions/clowderGroup"
+          },
+          "propertyNames": {
+            "not": {
+              "enum": [
+                "defaults",
+                "sources",
+                "projects"
+              ]
+            },
+            "allOf": [
+              {
+                "$ref": "#/definitions/groupName"
+              }
+            ]
+          }
         }
-      }
+      ]
     },
     "clowderName": {
       "description": "A name describing the projects. Must be a string containing any combination of letters, numbers, - or _",
