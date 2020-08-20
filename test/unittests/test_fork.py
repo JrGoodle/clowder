@@ -4,7 +4,7 @@ import os
 import sys
 import unittest
 
-from clowder.model.upstream import Fork
+from clowder.model.upstream import Upstream
 from clowder.model import Source
 from unittests.shared import __github_source_yaml__
 
@@ -22,7 +22,7 @@ class ForkTest(unittest.TestCase):
         self.fork_yaml = {'name': self.name, 'remote': self.remote}
         self.source = Source(__github_source_yaml__)
         self.path = 'fork/path'
-        self.fork = Fork(self.fork_yaml, self.path, self.source)
+        self.fork = Upstream(self.fork_yaml, self.path, self.source)
 
     def test_get_yaml(self):
         """Test get_yaml() method"""

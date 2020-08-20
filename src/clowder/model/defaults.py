@@ -19,13 +19,12 @@ from .git_settings import GitSettings, GitSettingsImpl
 class Defaults:
     """clowder yaml Defaults model class
 
-    :ivar str source: Default source name
-    :ivar GitProtocol protocol: Default git protocol
-    :ivar GitSettings git_settings: Custom git settings
-    :ivar str timestamp_author: Default timestamp author
-    :ivar str ref: Default ref
-    :ivar str remote: Default remote name
-    :ivar GitSettings git_settings: Custom git settings
+    :ivar Optional[str source: Default source name
+    :ivar Optional[GitProtocol] protocol: Default git protocol
+    :ivar Optional[str] timestamp_author: Default timestamp author
+    :ivar Optional[str] ref: Default ref
+    :ivar Optional[str] remote: Default remote name
+    :ivar Optional[GitSettings] git_settings: Custom git settings
     :ivar Optional[str] branch: Default git branch
     :ivar Optional[str] tag: Default git tag
     :ivar Optional[str] commit: Default commit sha-1
@@ -37,33 +36,35 @@ class Defaults:
         :param dict defaults: Parsed YAML python object for defaults
         """
 
+        self.protocol = GitProtocol(defaults.get("protocol", "ssh"))
         self._protocol: str = defaults.get("protocol", None)
-        self._source: str = defaults.get("source", None)
-        self._remote: Optional[str] = defaults.get("remote", None)
-        self._branch: Optional[str] = defaults.get("branch", None)
-        self._tag: Optional[str] = defaults.get("tag", None)
-        self._commit: Optional[str] = defaults.get("commit", None)
-        self.timestamp_author: Optional[str] = defaults.get("timestamp_author", None)
 
+        self.source: str = defaults.get("source", "github")
+        self._source: str = defaults.get("source", None)
+
+        self.remote: str = defaults.get("remote", "origin")
+        self._remote: Optional[str] = defaults.get("remote", None)
+
+        self.git_settings = GitSettings(git_settings=defaults.get("git", None))
         git_settings = defaults.get("git", None)
         if git_settings is not None:
             self._git_settings: Optional[GitSettingsImpl] = GitSettingsImpl(git_settings)
         else:
             self._git_settings: Optional[GitSettingsImpl] = None
 
-        self.protocol = GitProtocol(defaults.get("protocol", "ssh"))
-        self.source: str = defaults.get("source", "github")
-        self.remote: str = defaults.get("remote", "origin")
-        self.git_settings = GitSettings(git_settings=defaults.get("git", None))
-
         if self._branch is not None:
             self.ref = format_git_branch(self._branch)
+            self._branch: Optional[str] = defaults.get("branch", None)
         elif self._tag is not None:
             self.ref = format_git_tag(self._tag)
+            self._tag: Optional[str] = defaults.get("tag", None)
         elif self._commit is not None:
             self.ref = self._commit
+            self._commit: Optional[str] = defaults.get("commit", None)
         else:
             self.ref = format_git_branch('master')
+
+        self.timestamp_author: Optional[str] = defaults.get("timestamp_author", None)
 
     def get_yaml(self) -> dict:
         """Return python object representation for saving yaml

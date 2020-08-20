@@ -28,9 +28,8 @@ class Source:
     """clowder yaml Source model class
 
     :ivar str name: Source name
-    :ivar str url: Source url
-    :ivar GitProtocol protocol: Git protocol
-    :ivar bool is_custom: Whether this is a custom user-defined source
+    :ivar Optional[str] url: Source url
+    :ivar Optional[GitProtocol] protocol: Git protocol
     """
 
     def __init__(self, name: str, source: Dict[str, str], defaults: Defaults, is_custom: bool):

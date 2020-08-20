@@ -15,9 +15,11 @@ from .source import Source
 class Group:
     """clowder yaml Group model class
 
-    :ivar str name: Source name
+    :ivar str name: Group name
     :ivar Optional[str] path: Group path prefix
-    :ivar Optional[str] projects: Group projects
+    :ivar Optional[List[Group]] groups: Group names
+    :ivar Optional[Defaults] defaults: Group defaults
+    :ivar List[Project] projects: Group projects
     """
 
     def __init__(self, name: str, group: dict, defaults: Defaults, sources: Tuple[Source, ...]):

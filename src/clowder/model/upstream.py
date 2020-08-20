@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Representation of clowder yaml fork
+"""Representation of clowder yaml upstream
 
 .. codeauthor:: Joe Decapo <joe@polka.cat>
 
@@ -28,34 +28,36 @@ if TYPE_CHECKING:
     from .project import Project
 
 
-class Fork:
-    """clowder yaml Fork model class
+class Upstream:
+    """clowder yaml Upstream model class
 
-    :ivar str name: Project name
+    :ivar str name: Upstream name
+    :ivar Optional[Source] source: Upstream source
+    :ivar Optional[str] remote: Upstream remote name
+    :ivar str ref: Upstream git ref
+
     :ivar str path: Project relative path
-    :ivar str remote: Fork remote name
-    :ivar str ref: Fork git ref
     """
 
-    def __init__(self, fork: dict, project: 'Project', sources: Tuple[Source, ...], defaults: Defaults):
-        """Fork __init__
+    def __init__(self, upstream: dict, project: 'Project', sources: Tuple[Source, ...], defaults: Defaults):
+        """Upstream __init__
 
-        :param dict fork: Parsed YAML python object for fork
+        :param dict upstream: Parsed YAML python object for upstream
         :param Project project: Parent project
         :param Tuple[Source, ...] sources: List of Source instances
         :param Defaults defaults: Defaults instance
         """
 
-        self.name: str = fork['name']
-        self._remote: Optional[str] = fork.get('remote', None)
-        self._branch: Optional[str] = fork.get("branch", None)
-        self._tag: Optional[str] = fork.get("tag", None)
-        self._commit: Optional[str] = fork.get("commit", None)
-        self._source: Optional[str] = fork.get('source', None)
+        self.name: str = upstream['name']
+        self._remote: Optional[str] = upstream.get('remote', None)
+        self._branch: Optional[str] = upstream.get("branch", None)
+        self._tag: Optional[str] = upstream.get("tag", None)
+        self._commit: Optional[str] = upstream.get("commit", None)
+        self._source: Optional[str] = upstream.get('source', None)
 
         self.path = project.path
         self.recursive = project.git_settings.recursive
-        self.remote = fork.get('remote', 'upstream')
+        self.remote = upstream.get('remote', 'upstream')
 
         if self._branch is not None:
             self.ref = format_git_branch(self._branch)
@@ -67,7 +69,7 @@ class Fork:
             self.ref = defaults.ref
 
         self.source = None
-        source_name = fork.get('source', defaults.source)
+        source_name = upstream.get('source', defaults.source)
         for s in sources:
             if s.name == source_name:
                 self.source = s
@@ -92,29 +94,29 @@ class Fork:
         :rtype: dict
         """
 
-        fork = {'name': self.name}
+        upstream = {'name': self.name}
 
         if self._remote is not None:
-            fork['remote'] = self._remote
+            upstream['remote'] = self._remote
         if self._source is not None:
-            fork['source'] = self._source
+            upstream['source'] = self._source
 
         if resolved_sha is None:
             if self._branch is not None:
-                fork['branch'] = self._branch
+                upstream['branch'] = self._branch
             elif self._tag is not None:
-                fork['tag'] = self._tag
+                upstream['tag'] = self._tag
             elif self._commit is not None:
-                fork['commit'] = self._commit
+                upstream['commit'] = self._commit
         else:
-            fork['commit'] = resolved_sha
+            upstream['commit'] = resolved_sha
 
-        return fork
+        return upstream
 
     def status(self) -> str:
-        """Return formatted fork status
+        """Return formatted upstream status
 
-        :return: Formatted fork status
+        :return: Formatted upstream status
         :rtype: str
         """
 

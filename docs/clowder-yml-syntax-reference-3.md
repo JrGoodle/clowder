@@ -2,8 +2,8 @@
 
 - [clowder structure](#clowder-structure)
 - [project](#project)
-- [upstream](#upstream)
 - [group](#group)
+- [upstream](#upstream)
 - [defaults](#defaults)
 - [source](#source)
 - [protocol](#protocol)
@@ -26,24 +26,12 @@ clowder: [ project ] | { string: group } # REQUIRED
 ```yaml
 project:
   name: string # REQUIRED
-  source: string | source
   path: string
-  remote: string
   groups: [ string ]
+  remote: string
+  source: string | source
   git: git
   upstream: string | upstream
-  branch: string # Only one of 'branch', 'tag', or 'commit' is allowed
-  tag: string # Only one of 'branch', 'tag', or 'commit' is allowed
-  commit: string # Only one of 'branch', 'tag', or 'commit' is allowed
-```
-
-## upstream
-
-```yaml
-upstream:
-  name: string # REQUIRED
-  source: string | source
-  remote: string
   branch: string # Only one of 'branch', 'tag', or 'commit' is allowed
   tag: string # Only one of 'branch', 'tag', or 'commit' is allowed
   commit: string # Only one of 'branch', 'tag', or 'commit' is allowed
@@ -57,6 +45,18 @@ group:
   groups: [ string ]
   defaults: defaults
   projects: [ project ] # REQUIRED
+```
+
+## upstream
+
+```yaml
+upstream:
+  name: string # REQUIRED
+  source: string | source
+  remote: string
+  branch: string # Only one of 'branch', 'tag', or 'commit' is allowed
+  tag: string # Only one of 'branch', 'tag', or 'commit' is allowed
+  commit: string # Only one of 'branch', 'tag', or 'commit' is allowed
 ```
 
 ## defaults

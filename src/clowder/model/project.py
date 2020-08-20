@@ -27,8 +27,8 @@ from clowder.util.connectivity import is_offline
 from clowder.util.execute import execute_forall_command
 
 from .defaults import Defaults
-from .upstream import Fork, ForkImpl
-from .git_settings import GitSettings, GitSettingsImpl
+from .upstream import Upstream
+from .git_settings import GitSettings
 from .source import Source
 
 
@@ -52,13 +52,13 @@ class Project:
     """clowder yaml Project model class
 
     :ivar str name: Project name
-    :ivar Path path: Project relative path
-    :ivar List[str] groups: Groups project belongs to
-    :ivar str ref: Project git ref
-    :ivar str remote: Project remote name
-    :ivar Source source: Default source
-    :ivar GitSettings git_settings: Custom git settings
+    :ivar Optional[Path] path: Project relative path
+    :ivar Optional[List[str]] groups: Groups project belongs to
+    :ivar Optional[str] remote: Project remote name
+    :ivar Optional[Source] source: Project source
+    :ivar Optional[GitSettings] git_settings: Custom git settings
     :ivar Optional[Fork] fork: Project's associated Fork
+    :ivar str ref: Project git ref
     """
 
     def __init__(self, project: dict, defaults: Defaults, sources: Tuple[Source, ...],
@@ -84,18 +84,16 @@ class Project:
 
         git_settings = project.get("git", None)
         if git_settings is not None:
-            self._git_settings = GitSettingsImpl(git_settings)
+            self._git_settings = GitSettings(git_settings)
         else:
             self._git_settings = None
 
         fork = project.get('fork', None)
         if fork is not None:
-            self._fork: Optional[ForkImpl] = ForkImpl(fork)
+            self._fork: Optional[Upstream] = Upstream(fork)
         else:
-            self._fork: Optional[ForkImpl] = None
+            self._fork: Optional[Upstream] = None
 
-
-        # TODO: Should the postfix or full path be added as a group?
         last_path_component = Path(self.name).name
         temp_path = Path(project.get('path', last_path_component))
         if path_prefix is not None:
@@ -118,7 +116,7 @@ class Project:
 
         git_settings = project.get("git", None)
         if git_settings is not None:
-            self.git_settings = GitSettings(git_settings=git_settings, default_git_settings=defaults.git_settings)
+            self.git_settings = GitSettings(git_settings=git_settings, parent_git_settings=defaults.git_settings)
         else:
             self.git_settings = defaults.git_settings
 
@@ -135,7 +133,7 @@ class Project:
         self.fork = None
         if 'upstream' in project:
             fork = project['upstream']
-            self.fork = Fork(fork, self, sources, defaults)
+            self.fork = Upstream(fork, self, sources, defaults)
             if self.remote == self.fork.remote:
                 message = fmt.error_remote_dup(self.fork.name, self.name, self.remote, ENVIRONMENT.clowder_yaml)
                 raise ClowderError(ClowderErrorType.CLOWDER_YAML_DUPLICATE_REMOTE_NAME, message)

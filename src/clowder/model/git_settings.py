@@ -34,14 +34,14 @@ class GitSettings:
     depth = 0
     jobs = 1
 
-    def __init__(self, git_settings: Optional[dict] = None, default_git_settings: Optional['GitSettings'] = None):
+    def __init__(self, git_settings: Optional[dict] = None, parent_git_settings: Optional['GitSettings'] = None):
         """Source __init__
 
         :param Optional[dict] git_settings: Parsed YAML python object for GitSettings
-        :param Optional[dict] default_git_settings: Parsed YAML python object for default GitSettings
+        :param Optional[dict] parent_git_settings: Parsed YAML python object for default GitSettings
         """
 
-        if git_settings is None and default_git_settings is not None:
+        if git_settings is None and parent_git_settings is not None:
             raise ClowderError(ClowderErrorType.INVALID_GIT_SETTINGS_INIT_PARAMETERS,
                                'Invalid git settings init parameters')
 
@@ -54,13 +54,13 @@ class GitSettings:
         self._jobs: Optional[int] = git_settings.get('jobs', None)
         self._config: Optional[GitConfig] = git_settings.get('config', None)
 
-        if default_git_settings is not None:
-            self.recursive: bool = git_settings.get('recursive', default_git_settings.recursive)
-            self.lfs: bool = git_settings.get('lfs', default_git_settings.lfs)
-            self.depth: int = git_settings.get('depth', default_git_settings.depth)
-            self.jobs: int = git_settings.get('jobs', default_git_settings.jobs)
+        if parent_git_settings is not None:
+            self.recursive: bool = git_settings.get('recursive', parent_git_settings.recursive)
+            self.lfs: bool = git_settings.get('lfs', parent_git_settings.lfs)
+            self.depth: int = git_settings.get('depth', parent_git_settings.depth)
+            self.jobs: int = git_settings.get('jobs', parent_git_settings.jobs)
             self.config: Optional[GitConfig] = self._combine_configs(git_settings.get('config', None),
-                                                                     default_git_settings.config)
+                                                                     parent_git_settings.config)
         else:
             self.recursive: bool = git_settings.get('recursive', GitSettings.recursive)
             self.lfs: bool = git_settings.get('lfs', GitSettings.lfs)
