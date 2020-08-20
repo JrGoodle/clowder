@@ -20,6 +20,7 @@ class Group:
     :ivar Optional[List[Group]] groups: Group names
     :ivar Optional[Defaults] defaults: Group defaults
     :ivar List[Project] projects: Group projects
+    :ivar bool _has_projects_key: Whether the projects were listed under the 'projects' key in the yaml
     """
 
     def __init__(self, name: str, group: dict, defaults: Defaults, sources: Tuple[Source, ...]):

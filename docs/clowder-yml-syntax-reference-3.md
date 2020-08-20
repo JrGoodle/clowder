@@ -40,6 +40,10 @@ project:
 ## group
 
 ```yaml
+group: [ project ]
+```
+
+```yaml
 group:
   path: string
   groups: [ string ]

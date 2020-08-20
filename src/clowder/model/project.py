@@ -57,8 +57,7 @@ class Project:
     :ivar Optional[str] remote: Project remote name
     :ivar Optional[Source] source: Project source
     :ivar Optional[GitSettings] git_settings: Custom git settings
-    :ivar Optional[Fork] fork: Project's associated Fork
-    :ivar str ref: Project git ref
+    :ivar Optional[Upstream] upstream: Project's associated Upstream
     """
 
     def __init__(self, project: dict, defaults: Defaults, sources: Tuple[Source, ...],

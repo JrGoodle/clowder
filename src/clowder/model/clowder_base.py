@@ -18,8 +18,8 @@ from .project import Project
 from .source import Source, DEFAULT_SOURCES
 
 
-class ClowderLoader:
-    """clowder yaml loader class
+class ClowderBase:
+    """clowder yaml base class
 
     :ivar str name: Name of clowder
     :ivar Optional[Defaults] defaults: Name of clowder
