@@ -80,6 +80,17 @@ source:
   protocol: enum
 ```
 
+Default sources available:
+
+```yaml
+github:
+  url: github.com
+gitlab:
+  url: gitlab.com
+bitbucket:
+  url: bitbucket.org
+```
+
 ## protocol
 
 ```yaml
