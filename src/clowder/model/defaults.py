@@ -8,10 +8,6 @@
 from typing import Optional
 
 from clowder.git import GitProtocol
-from clowder.git.util import (
-    format_git_branch,
-    format_git_tag
-)
 
 from .git_settings import GitSettings
 
@@ -44,7 +40,6 @@ class Defaults:
         self.tag: Optional[str] = yaml.get("tag", None)
         self.commit: Optional[str] = yaml.get("commit", None)
 
-
     def get_yaml(self) -> dict:
         """Return python object representation for saving yaml
 
@@ -52,24 +47,21 @@ class Defaults:
         :rtype: dict
         """
 
-        defaults = {}
+        yaml = {}
 
-        if self._protocol is not None:
-            defaults['protocol'] = self._protocol
-        if self._source is not None:
-            defaults['source'] = self._source
-        if self._remote is not None:
-            defaults['remote'] = self._remote
-        if self._git_settings is not None:
-            defaults['git'] = self._git_settings.get_yaml()
-        if self._branch is not None:
-            defaults['branch'] = self._branch
-        elif self._tag is not None:
-            defaults['tag'] = self._tag
-        elif self._commit is not None:
-            defaults['commit'] = self._commit
+        if self.protocol is not None:
+            yaml['protocol'] = self.protocol
+        if self.source is not None:
+            yaml['source'] = self.source
+        if self.remote is not None:
+            yaml['remote'] = self.remote
+        if self.git_settings is not None:
+            yaml['git'] = self.git_settings.get_yaml()
+        if self.branch is not None:
+            yaml['branch'] = self.branch
+        elif self.tag is not None:
+            yaml['tag'] = self.tag
+        elif self.commit is not None:
+            yaml['commit'] = self.commit
 
-        if self.timestamp_author is not None:
-            defaults['timestamp_author'] = self.timestamp_author
-
-        return defaults
+        return yaml

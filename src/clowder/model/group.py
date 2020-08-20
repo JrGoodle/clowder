@@ -6,17 +6,19 @@
 """
 
 from typing import List, Optional, Union
+from pathlib import Path
+
 from clowder.error import ClowderError, ClowderErrorType
+
 from .defaults import Defaults
 from .project import Project
-from .source import Source
 
 
 class Group:
     """clowder yaml Group model class
 
     :ivar str name: Group name
-    :ivar Optional[str] path: Group path prefix
+    :ivar Optional[Path] path: Group path prefix
     :ivar Optional[List[Group]] groups: Group names
     :ivar Optional[Defaults] defaults: Group defaults
     :ivar List[Project] projects: Group projects
@@ -33,35 +35,41 @@ class Group:
         self.name: str = name
 
         if isinstance(yaml, dict):
-            self.path: Optional[str] = yaml.get('path', None)
+            path = yaml.get('path', None)
+            self.path: Optional[Path] = Path(path) if path is not None else None
             self.groups: Optional[List[Group]] = yaml.get('groups', None)
+            defaults = yaml.get("defaults", None)
+            self.defaults: Optional[Defaults] = Defaults(defaults) if defaults is not None else None
             self.projects = [Project(p) for p in yaml["projects"]]
+            self._has_projects_key = True
         elif isinstance(yaml, list):
             self.path = None
             self.groups = None
             self.projects: List[Project] = [Project(p) for p in yaml]
+            self._has_projects_key = False
         else:
             # TODO: Create new error type
             raise ClowderError(ClowderErrorType.YAML_UNKNOWN, "Wrong instance type for group")
 
-    def get_yaml(self, resolved: bool = False) -> dict:
+    def get_yaml(self, resolved: bool = False) -> Union[dict, list]:
         """Return python object representation for saving yaml
 
         :param bool resolved: Whether to return resolved yaml
         :return: YAML python object
-        :rtype: dict
+        :rtype: Union[dict, list]
         """
 
-        if resolved:
-            projects_yaml = [p.get_yaml(resolved_sha=p.sha()) for p in self.projects]
-        else:
-            projects_yaml = [p.get_yaml() for p in self.projects]
-        group = {'projects': projects_yaml}
+        if not self._has_projects_key:
+            return [p.get_yaml() for p in self.projects]
+
+        yaml = {"projects": [p.get_yaml() for p in self.projects]}
 
         if self.path is not None:
-            group['path'] = self.path
+            yaml['path'] = str(self.path)
+        if self.groups is not None:
+            yaml['groups'] = str(self.groups)
+        if self.defaults is not None:
+            yaml['defaults'] = self.defaults.get_yaml()
 
-        if self._groups is not None:
-            group['groups'] = self._groups
+        return yaml
 
-        return group

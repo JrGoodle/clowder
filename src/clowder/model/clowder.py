@@ -36,14 +36,16 @@ class Clowder:
             # TODO: Create new error type
             raise ClowderError(ClowderErrorType.YAML_UNKNOWN, "Wrong instance type for group")
 
-        # TODO: Implement
-
-    def get_yaml(self, resolved_sha: Optional[str] = None) -> dict:
+    def get_yaml(self) -> Union[dict, list]:
         """Return python object representation for saving yaml
 
-        :param Optional[str] resolved_sha: Current commit sha
         :return: YAML python object
-        :rtype: dict
+        :rtype: Union[dict, list]
         """
 
-        return {}
+        if self.projects is not None:
+            return [p.get_yaml() for p in self.projects]
+        if self.groups is not None:
+            return {g.name: g.get_yaml() for g in self.groups}
+
+        raise ClowderError(ClowderErrorType.CLOWDER_YAML_UNKNOWN, "Clowder model created without projects or groups")
