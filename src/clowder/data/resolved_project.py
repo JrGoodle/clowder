@@ -141,7 +141,7 @@ class ResolvedProject:
         if has_group and group.groups is not None:
             for g in group.groups:
                 self.groups.add(g)
-        if self.groups is not None:
+        if project.groups is not None:
             self.groups.update(project.groups)
         if 'notdefault' in self.groups:
             self.groups.remove('all')

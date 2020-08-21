@@ -33,7 +33,8 @@ class Source:
             return
 
         self.url = yaml['url']
-        self.protocol = yaml.get(GitProtocol('protocol'), None)
+        protocol = yaml.get('protocol', None)
+        self.protocol = GitProtocol(protocol) if protocol is not None else None
 
     def get_yaml(self) -> Union[dict, str]:
         """Return python object representation for saving yaml

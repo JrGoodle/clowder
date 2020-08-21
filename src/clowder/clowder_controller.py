@@ -55,7 +55,8 @@ class ClowderController(object):
             self.name = self._clowder.name
 
             defaults = self._clowder.defaults
-            SOURCE_CONTROLLER.add_source(defaults.source)
+            if defaults is not None and defaults.source is not None:
+                SOURCE_CONTROLLER.add_source(defaults.source)
 
             sources = self._clowder.sources
             if sources is not None:
@@ -88,13 +89,6 @@ class ClowderController(object):
             resolved_projects = [ResolvedProject(p, defaults, g) for g in groups for p in g.projects]
             self.projects = tuple(sorted(resolved_projects, key=lambda p: p.name))
             self._update_properties()
-
-            # Validate projects don't share share directories
-            paths = [str(p.path.resolve()) for p in self.projects]
-            duplicate = fmt.check_for_duplicates(paths)
-            if duplicate is not None:
-                message = fmt.error_duplicate_project_path(duplicate, ENVIRONMENT.clowder_yaml)
-                raise ClowderError(ClowderErrorType.CLOWDER_YAML_DUPLICATE_PATH, message)
 
         except ClowderError as err:
             LOG_DEBUG('Failed to init clowder controller', err)
@@ -295,6 +289,16 @@ class ClowderController(object):
         self.project_choices: Tuple[str, ...] = ()
         self.project_choices_with_default: Tuple[str, ...] = ('default',)
 
+    def _validate_project_paths(self) -> None:
+        """Validate projects don't share share directories"""
+
+        paths = [str(p.path.resolve()) for p in self.projects]
+        duplicate = fmt.check_for_duplicates(paths)
+        if duplicate is not None:
+            self._initialize_properties()
+            message = fmt.error_duplicate_project_path(duplicate, ENVIRONMENT.clowder_yaml)
+            raise ClowderError(ClowderErrorType.CLOWDER_YAML_DUPLICATE_PATH, message)
+
     def _update_properties(self) -> None:
         """Initialize all properties"""
 
@@ -307,6 +311,8 @@ class ClowderController(object):
                                                                             self.project_paths)
         self.project_choices: Tuple[str, ...] = self._get_all_project_choices()
         self.project_choices_with_default: Tuple[str, ...] = self._get_all_project_choices_with_default()
+
+        self._validate_project_paths()
 
 
 CLOWDER_CONTROLLER: ClowderController = ClowderController()

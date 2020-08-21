@@ -165,7 +165,7 @@ def error_duplicate_project_path(path: str, yml: Path) -> str:
 
     :param str path: Duplicate project path
     :param Path yml: Path to yaml file
-    :return: Formatted duplicate remote fork name error
+    :return: Formatted duplicate remote upstream name error
     :rtype: str
     """
 
@@ -489,20 +489,20 @@ def error_remote_already_exists(remote_name: str, remote_url: str, actual_url: s
            f"{url_string(actual_url)} should be {url_string(remote_url)}"
 
 
-def error_remote_dup(fork: str, project: str, remote: str, yml: Path) -> str:
-    """Return formatted error string for fork with same remote as project
+def error_remote_dup(upstream: str, project: str, remote: str, yml: Path) -> str:
+    """Return formatted error string for upstream with same remote as project
 
-    :param str fork: Fork name
+    :param str upstream: Upstream name
     :param str project: Project name
     :param str remote: Remote name
     :param Path yml: Path to yaml file
-    :return: Formatted duplicate remote fork name error
+    :return: Formatted duplicate remote upstream name error
     :rtype: str
     """
 
     messages = [error_invalid_yaml_file(yml.name),
                 f"{ERROR} {_yaml_path(yml)}",
-                f"{ERROR} fork '{fork}' and project '{project}' have same remote name '{remote}'"]
+                f"{ERROR} upstream '{upstream}' and project '{project}' have same remote name '{remote}'"]
     return "\n".join(messages)
 
 
@@ -558,24 +558,24 @@ def error_source_default_not_found(source: str, yml: Path) -> str:
     return "\n".join(messages)
 
 
-def error_source_not_found(source: str, yml: Path, project: str, fork: Optional[str] = None) -> str:
+def error_source_not_found(source: str, yml: Path, project: str, upstream: Optional[str] = None) -> str:
     """Return formatted error string for project with unknown source specified
 
     :param str source: Source name
     :param Path yml: Path to yaml file
     :param str project: Project name
-    :param Optional[str] fork: Fork name
+    :param Optional[str] upstream: Upstream name
     :return: Formatted source not found error
     :rtype: str
     """
 
-    fork_output = ""
-    if fork:
-        fork_output = f" for fork '{fork}'"
+    upstream_output = ""
+    if upstream:
+        upstream_output = f" for upstream '{upstream}'"
 
     messages = [error_invalid_yaml_file(yml.name),
                 f"{ERROR} {_yaml_path(yml)}",
-                f"{ERROR} source '{source}'{fork_output} specified in project '{project}' not found in 'sources'"]
+                f"{ERROR} source '{source}'{upstream_output} specified in project '{project}' not found in 'sources'"]
     return "\n".join(messages)
 
 
@@ -704,7 +704,7 @@ def project_options_help_message(message: str) -> str:
     from clowder.clowder_controller import CLOWDER_CONTROLLER
 
     project_names = CLOWDER_CONTROLLER.project_names
-    fork_names = CLOWDER_CONTROLLER.fork_names
+    upstream_names = CLOWDER_CONTROLLER.upstream_names
     project_paths = CLOWDER_CONTROLLER.project_paths
     project_groups = CLOWDER_CONTROLLER.project_groups
 
@@ -721,7 +721,7 @@ def project_options_help_message(message: str) -> str:
     project_groups_title = "Project Groups"
     project_groups_underline = "--------------"
 
-    if not fork_names:
+    if not upstream_names:
         project_names_column_width = three_column_width(project_names, project_names_title, spacing=2)
         project_paths_column_width = three_column_width(project_paths, project_paths_title, spacing=2)
         project_groups_column_width = three_column_width(project_groups, project_groups_title)
@@ -748,8 +748,8 @@ def project_options_help_message(message: str) -> str:
 
         return message
 
-    valid_fork_names = _validate_help_options(fork_names)
-    if not valid_fork_names:
+    valid_upstream_names = _validate_help_options(upstream_names)
+    if not valid_upstream_names:
         return message
 
     def two_column_width(choices_1, title_1, choices_2, title_2, spacing=0):
@@ -760,9 +760,10 @@ def project_options_help_message(message: str) -> str:
         length = len(max(options, key=len))
         return length + spacing
 
-    fork_names_title = "Fork Names"
-    fork_names_underline = "----------"
-    names_column_width = two_column_width(project_names, project_names_title, fork_names, fork_names_title, spacing=2)
+    upstream_names_title = "Upstream Names"
+    upstream_names_underline = "--------------"
+    names_column_width = two_column_width(project_names, project_names_title,
+                                          upstream_names, upstream_names_title, spacing=2)
     paths_groups_width = two_column_width(project_paths, project_paths_title, project_groups, project_groups_title)
 
     message = f'{message}:\n\n'
@@ -782,17 +783,17 @@ def project_options_help_message(message: str) -> str:
         column_line += 1
 
     message += "\n"
-    message += fork_names_title.ljust(names_column_width)
+    message += upstream_names_title.ljust(names_column_width)
     message += project_groups_title.ljust(paths_groups_width)
     message += "\n"
-    message += fork_names_underline.ljust(names_column_width)
+    message += upstream_names_underline.ljust(names_column_width)
     message += project_groups_underline.ljust(paths_groups_width)
     message += "\n"
 
-    max_column_length = max(len(fork_names), len(project_groups))
+    max_column_length = max(len(upstream_names), len(project_groups))
     column_line = 0
     while column_line < max_column_length:
-        message += column_entry(fork_names, names_column_width, column_line)
+        message += column_entry(upstream_names, names_column_width, column_line)
         message += column_entry(project_groups, paths_groups_width, column_line)
         message += "\n"
         column_line += 1

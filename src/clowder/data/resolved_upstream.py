@@ -51,7 +51,7 @@ class ResolvedUpstream:
         has_remote = upstream.remote is not None
         has_defaults_remote = has_defaults and defaults.remote is not None
         has_group_defaults_remote = has_group_defaults and group.defaults.remote is not None
-        self.remote: str = "origin"
+        self.remote: str = "upstream"
         if has_remote:
             self.remote = upstream.remote
         elif has_group_defaults_remote:

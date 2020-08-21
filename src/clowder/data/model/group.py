@@ -45,6 +45,7 @@ class Group:
         elif isinstance(yaml, list):
             self.path = None
             self.groups = None
+            self.defaults = None
             self.projects: List[Project] = [Project(p) for p in yaml]
             self._has_projects_key = False
         else:

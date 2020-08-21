@@ -56,7 +56,8 @@ def status(args) -> None:
     else:
         clowder_repo.print_status()
 
-    padding = len(max(CLOWDER_CONTROLLER.get_projects_output(projects), key=len))
+    # FIXME: Should get actual formatted output (with * if dirty) rather than clean formatted name
+    padding = len(max(CLOWDER_CONTROLLER.get_projects_output(projects), key=len)) + 1
 
     for project in projects:
         print(project.status(padding=padding))
