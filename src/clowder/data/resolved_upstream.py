@@ -35,29 +35,22 @@ class ResolvedUpstream:
     def __init__(self, path: Path, upstream: Upstream, defaults: Optional[Defaults], group: Optional[Group]):
         """Upstream __init__
 
-        :param dict upstream: Parsed YAML python object for upstream
-        :param Project project: Parent project
-        :param Tuple[Source, ...] sources: List of Source instances
-        :param Defaults defaults: Defaults instance
+        :param Path path: Parent project path
+        :param Upstream upstream: Upstream model instance
+        :param Optional[Defaults] defaults: Defaults model instance
+        :param Optional[Group] group: Group model instance
         """
 
-        has_remote = upstream.remote is not None
-        has_source = upstream.source is not None
-        has_ref = upstream.get_formatted_ref() is not None
-
         has_defaults = defaults is not None
-        has_defaults_remote = has_defaults and defaults.remote is not None
-        has_defaults_source = has_defaults and defaults.source is not None
-
         has_group = group is not None
         has_group_defaults = has_group and group.defaults is not None
-        has_group_defaults_source = has_group_defaults and group.defaults.source is not None
-        has_group_defaults_remote = has_group_defaults and group.defaults.remote is not None
-        has_group_defaults_ref = has_group_defaults and group.defaults.get_formatted_ref() is not None
 
         self.path: Path = path
         self.name: str = upstream.name
 
+        has_remote = upstream.remote is not None
+        has_defaults_remote = has_defaults and defaults.remote is not None
+        has_group_defaults_remote = has_group_defaults and group.defaults.remote is not None
         self.remote: str = "origin"
         if has_remote:
             self.remote = upstream.remote
@@ -66,6 +59,9 @@ class ResolvedUpstream:
         elif has_defaults_remote:
             self.remote = defaults.remote
 
+        has_source = upstream.source is not None
+        has_defaults_source = has_defaults and defaults.source is not None
+        has_group_defaults_source = has_group_defaults and group.defaults.source is not None
         self.source: Source = SOURCE_CONTROLLER.get_source(GITHUB)
         if has_source:
             self.source = SOURCE_CONTROLLER.get_source(upstream.source.name)
@@ -75,11 +71,16 @@ class ResolvedUpstream:
             self.source = SOURCE_CONTROLLER.get_source(defaults.source)
         SOURCE_CONTROLLER.add_source(self.source)
 
+        has_ref = upstream.get_formatted_ref() is not None
+        has_defaults_ref = has_defaults and defaults.get_formatted_ref() is not None
+        has_group_defaults_ref = has_group_defaults and group.defaults.get_formatted_ref() is not None
         self.ref: str = "refs/heads/master"
         if has_ref:
             self.ref = upstream.get_formatted_ref()
         elif has_group_defaults_ref:
             self.ref = group.defaults.get_formatted_ref()
+        elif has_defaults_ref:
+            self.ref = defaults.get_formatted_ref()
 
     def full_path(self) -> Path:
         """Return full path to project

@@ -5,7 +5,7 @@
 
 """
 
-from typing import Dict, Optional, Union
+from typing import Dict, Optional
 
 import clowder.util.formatting as fmt
 from clowder.error import ClowderError, ClowderErrorType
@@ -22,19 +22,8 @@ class ResolvedGitSettings:
     :ivar Optional[GitConfig] config: Custom git config values to set
     """
 
-    def __init__(self, git_settings: Optional[GitSettings] = None):
-        """Source __init__
-
-        :param dict yaml: Parsed YAML python object for GitSettings
-        """
-
-        if git_settings is not None:
-            self.submodules = git_settings.submodules
-            self.lfs = git_settings.lfs
-            self.depth = git_settings.depth
-            self.config = git_settings.config
-            self._clean_config()
-            return
+    def __init__(self):
+        """Source __init__"""
 
         self.submodules: GitSubmodules = False
         self.lfs: bool = False

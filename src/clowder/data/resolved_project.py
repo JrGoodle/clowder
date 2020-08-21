@@ -26,7 +26,7 @@ from clowder.util.execute import execute_forall_command
 from .resolved_git_settings import ResolvedGitSettings
 from .resolved_upstream import ResolvedUpstream
 from .source_controller import SOURCE_CONTROLLER, GITHUB
-from .model import Defaults, Project, Source, Group, Upstream
+from .model import Defaults, Project, Source, Group
 
 
 def project_repo_exists(func):
@@ -109,13 +109,17 @@ class ResolvedProject:
         SOURCE_CONTROLLER.add_source(self.source)
 
         has_ref = project.get_formatted_ref() is not None
+        has_defaults_ref = has_defaults and defaults.get_formatted_ref() is not None
         has_group_defaults_ref = has_group_defaults and group.defaults.get_formatted_ref() is not None
         self.ref: str = "refs/heads/master"
         if has_ref:
             self.ref = project.get_formatted_ref()
         elif has_group_defaults_ref:
             self.ref = group.defaults.get_formatted_ref()
+        elif has_defaults_ref:
+            self.ref = defaults.get_formatted_ref()
 
+        has_git = project.git_settings is not None
         has_defaults_git = has_defaults and defaults.git_settings is not None
         has_group_defaults_git = has_group_defaults and group.defaults.git_settings is not None
         self.git_settings: ResolvedGitSettings = ResolvedGitSettings()
@@ -123,10 +127,12 @@ class ResolvedProject:
             self.git_settings.update(defaults.git_settings)
         if has_group_defaults_git:
             self.git_settings.update(group.defaults.git_settings)
+        if has_git:
+            self.git_settings.update(project.git_settings)
 
-        self.upstream: Optional[Upstream] = None
+        self.upstream: Optional[ResolvedUpstream] = None
         if project.upstream is not None:
-            self.upstream = ResolvedUpstream(self.path, project.upstream, defaults, group)
+            self.upstream: Optional[ResolvedUpstream] = ResolvedUpstream(self.path, project.upstream, defaults, group)
             if self.remote == self.upstream.remote:
                 message = fmt.error_remote_dup(self.upstream.name,  self.name, self.remote, ENVIRONMENT.clowder_yaml)
                 raise ClowderError(ClowderErrorType.CLOWDER_YAML_DUPLICATE_REMOTE_NAME, message)

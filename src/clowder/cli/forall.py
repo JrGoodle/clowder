@@ -12,7 +12,7 @@ from typing import List, Optional
 import clowder.util.formatting as fmt
 from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.config import Config
-from clowder.model.util import filter_projects
+from clowder.data.util import filter_projects
 from clowder.util.decorators import (
     print_clowder_name,
     print_clowder_repo_status,

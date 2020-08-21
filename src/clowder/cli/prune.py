@@ -13,8 +13,8 @@ from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.config import Config
 from clowder.error import ClowderError, ClowderErrorType
 from clowder.logging import LOG_DEBUG
-from clowder.model import Project
-from clowder.model.util import (
+from clowder.data import ResolvedProject
+from clowder.data.util import (
     existing_branch_projects,
     filter_projects,
     validate_project_statuses
@@ -107,7 +107,7 @@ def _prune_impl(project_names: List[str], branch: str, force: bool = False,
     _prune_projects(projects, branch, force=force, local=local, remote=remote)
 
 
-def _prune_projects(projects: Tuple[Project, ...], branch: str, force: bool = False, local: bool = False,
+def _prune_projects(projects: Tuple[ResolvedProject, ...], branch: str, force: bool = False, local: bool = False,
                     remote: bool = False) -> None:
     """Prune project branches
 

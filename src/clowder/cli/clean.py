@@ -11,8 +11,8 @@ from typing import Tuple
 import clowder.util.formatting as fmt
 from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.config import Config
-from clowder.model import Project
-from clowder.model.util import filter_projects
+from clowder.data import ResolvedProject
+from clowder.data.util import filter_projects
 from clowder.util.decorators import (
     print_clowder_name,
     print_clowder_repo_status,
@@ -80,7 +80,7 @@ def clean(args) -> None:
     _clean_impl(projects, clean_args=clean_args, recursive=args.recursive)
 
 
-def _clean_impl(projects: Tuple[Project, ...], clean_args: str = '', recursive: bool = False) -> None:
+def _clean_impl(projects: Tuple[ResolvedProject, ...], clean_args: str = '', recursive: bool = False) -> None:
     """Discard changes
 
     :param Tuple[Project, ...] projects: Projects to clean

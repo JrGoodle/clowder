@@ -5,7 +5,6 @@
 
 """
 
-import copy
 from typing import Optional, Tuple
 
 import clowder.util.formatting as fmt
@@ -26,8 +25,8 @@ class ClowderController(object):
 
     :ivar Tuple[ResolvedProject, ...] projects: List of all ResolvedProjects
     :ivar Tuple[str, ...] project_names: All possible project names
-    :ivar Tuple[str, ...] fork_names: All possible fork names
-    :ivar Tuple[str, ...] project_fork_names: All possible project and fork names
+    :ivar Tuple[str, ...] upstream_names: All possible upstream names
+    :ivar Tuple[str, ...] project_upstream_names: All possible project and upstream names
     :ivar Tuple[str, ...] project_paths: All possible project paths
     :ivar Tuple[str, ...] project_groups: All possible project groups
     :ivar Tuple[str, ...] project_choices: All possible project and group choices
@@ -83,18 +82,19 @@ class ClowderController(object):
                 upstream = project.upstream
                 if upstream is not None:
                     SOURCE_CONTROLLER.add_source(upstream.source)
+            # Validate all source names have a defined source with url
             SOURCE_CONTROLLER.validate_sources()
 
             resolved_projects = [ResolvedProject(p, defaults, g) for g in groups for p in g.projects]
             self.projects = tuple(sorted(resolved_projects, key=lambda p: p.name))
             self._update_properties()
 
-            # # Validate projects don't share share directories
-            # paths = [str(p.path.resolve()) for p in self.projects]
-            # duplicate = fmt.check_for_duplicates(paths)
-            # if duplicate is not None:
-            #     message = fmt.error_duplicate_project_path(Path(duplicate), ENVIRONMENT.clowder_yaml)
-            #     raise ClowderError(ClowderErrorType.CLOWDER_YAML_DUPLICATE_PATH, message)
+            # Validate projects don't share share directories
+            paths = [str(p.path.resolve()) for p in self.projects]
+            duplicate = fmt.check_for_duplicates(paths)
+            if duplicate is not None:
+                message = fmt.error_duplicate_project_path(duplicate, ENVIRONMENT.clowder_yaml)
+                raise ClowderError(ClowderErrorType.CLOWDER_YAML_DUPLICATE_PATH, message)
 
         except ClowderError as err:
             LOG_DEBUG('Failed to init clowder controller', err)
@@ -105,17 +105,17 @@ class ClowderController(object):
             self.error = err
             self._initialize_properties()
 
-    def get_all_fork_project_names(self) -> Tuple[str, ...]:
-        """Returns all project names containing forks
+    def get_all_upstream_project_names(self) -> Tuple[str, ...]:
+        """Returns all project names containing upstreams
 
-        :return: All project names containing forks
+        :return: All project names containing upstreams
         :rtype: Tuple[str, ...]
         """
 
         try:
-            return tuple(sorted([p.name for p in self.projects if p.fork is not None]))
+            return tuple(sorted([p.name for p in self.projects if p.upstream is not None]))
         except TypeError as err:
-            LOG_DEBUG('Failed to get fork project names', err)
+            LOG_DEBUG('Failed to get upstream project names', err)
             return ()
 
     @staticmethod
@@ -187,29 +187,29 @@ class ClowderController(object):
         if not projects_exist:
             raise ClowderError(ClowderErrorType.INVALID_PROJECT_STATUS, fmt.error_clone_missing_projects())
 
-    def _get_all_fork_names(self) -> Tuple[str, ...]:
-        """Returns all fork names for current clowder yaml file
+    def _get_all_upstream_names(self) -> Tuple[str, ...]:
+        """Returns all upstream names for current clowder yaml file
 
-        :return: All fork names
+        :return: All upstream names
         :rtype: Tuple
         """
 
         try:
-            fork_names = [str(p.fork.name) for p in self.projects if p.fork is not None]
-            return tuple(sorted(set(fork_names)))
+            upstream_names = [str(p.upstream.name) for p in self.projects if p.upstream is not None]
+            return tuple(sorted(set(upstream_names)))
         except TypeError as err:
-            LOG_DEBUG('Failed to get fork names', err)
+            LOG_DEBUG('Failed to get upstream names', err)
             return ()
 
     @staticmethod
-    def _get_all_project_fork_names(project_names, fork_names) -> Tuple[str, ...]:
+    def _get_all_project_upstream_names(project_names, upstream_names) -> Tuple[str, ...]:
         """Returns all project names for current clowder yaml file
 
-        :return: All project and fork names
+        :return: All project and upstream names
         :rtype: Tuple
         """
 
-        return tuple(sorted(set(project_names + fork_names)))
+        return tuple(sorted(set(project_names + upstream_names)))
 
     def _get_all_project_names(self) -> Tuple[str, ...]:
         """Returns all project names for current clowder yaml file
@@ -239,7 +239,7 @@ class ClowderController(object):
             LOG_DEBUG('Failed to get project paths', err)
             return ()
 
-    def _get_all_project_groups(self, project_fork_names, project_paths) -> Tuple[str, ...]:
+    def _get_all_project_groups(self, project_upstream_names, project_paths) -> Tuple[str, ...]:
         """Returns all project group names for current clowder yaml file
 
         :return: All project paths
@@ -248,7 +248,7 @@ class ClowderController(object):
 
         try:
             groups = [g for p in self.projects for g in p.groups]
-            groups = [g for g in groups if g not in project_fork_names and g not in project_paths]
+            groups = [g for g in groups if g not in project_upstream_names and g not in project_paths]
             return tuple(sorted(set(groups)))
         except TypeError as err:
             LOG_DEBUG('Failed to get group names', err)
@@ -288,8 +288,8 @@ class ClowderController(object):
 
         self.projects: Tuple[ResolvedProject, ...] = ()
         self.project_names: Tuple[str, ...] = ()
-        self.fork_names: Tuple[str, ...] = ()
-        self.project_fork_names: Tuple[str, ...] = ()
+        self.upstream_names: Tuple[str, ...] = ()
+        self.project_upstream_names: Tuple[str, ...] = ()
         self.project_paths: Tuple[str, ...] = ()
         self.project_groups: Tuple[str, ...] = ()
         self.project_choices: Tuple[str, ...] = ()
@@ -299,11 +299,11 @@ class ClowderController(object):
         """Initialize all properties"""
 
         self.project_names: Tuple[str, ...] = self._get_all_project_names()
-        self.fork_names: Tuple[str, ...] = self._get_all_fork_names()
-        self.project_fork_names: Tuple[str, ...] = self._get_all_project_fork_names(self.project_names,
-                                                                                    self.fork_names)
+        self.upstream_names: Tuple[str, ...] = self._get_all_upstream_names()
+        self.project_upstream_names: Tuple[str, ...] = self._get_all_project_upstream_names(self.project_names,
+                                                                                            self.upstream_names)
         self.project_paths: Tuple[str, ...] = self._get_all_project_paths()
-        self.project_groups: Tuple[str, ...] = self._get_all_project_groups(self.project_fork_names,
+        self.project_groups: Tuple[str, ...] = self._get_all_project_groups(self.project_upstream_names,
                                                                             self.project_paths)
         self.project_choices: Tuple[str, ...] = self._get_all_project_choices()
         self.project_choices_with_default: Tuple[str, ...] = self._get_all_project_choices_with_default()

@@ -160,10 +160,10 @@ def error_duplicate_version(version: str) -> str:
     return f"{ERROR} Duplicate version found: {_yaml_file(Path(version))}"
 
 
-def error_duplicate_project_path(path: Path, yml: Path) -> str:
+def error_duplicate_project_path(path: str, yml: Path) -> str:
     """Return formatted error string for duplicate project path
 
-    :param Path path: Duplicate project path
+    :param str path: Duplicate project path
     :param Path yml: Path to yaml file
     :return: Formatted duplicate remote fork name error
     :rtype: str

@@ -10,13 +10,13 @@ from typing import Tuple
 import clowder.util.formatting as fmt
 from clowder.error import ClowderError, ClowderErrorType
 
-from .resolved_project import ResolvedProject as Project
+from .resolved_project import ResolvedProject
 
 
-def existing_branch_projects(projects: Tuple[Project, ...], branch: str, is_remote: bool) -> bool:
+def existing_branch_projects(projects: Tuple[ResolvedProject, ...], branch: str, is_remote: bool) -> bool:
     """Checks if given branch exists in any project
 
-    :param Tuple[Project, ...] projects: Projects to check
+    :param Tuple[ResolvedProject, ...] projects: Projects to check
     :param str branch: Branch to check for
     :param bool is_remote: Check for remote branch
     :return: True, if at least one branch exists
@@ -26,13 +26,13 @@ def existing_branch_projects(projects: Tuple[Project, ...], branch: str, is_remo
     return any([p.existing_branch(branch, is_remote=is_remote) for p in projects])
 
 
-def filter_projects(projects: Tuple[Project, ...], project_names: Tuple[str, ...]) -> Tuple[Project, ...]:
+def filter_projects(projects: Tuple[ResolvedProject, ...], project_names: Tuple[str, ...]) -> Tuple[ResolvedProject, ...]:
     """Filter projects based on given project or group names
 
-    :param Tuple[Project, ...] projects: Projects to filter
+    :param Tuple[ResolvedProject, ...] projects: Projects to filter
     :param Tuple[str, ...] project_names: Project names to match against
     :return: Projects in groups matching given names
-    :rtype: Tuple[Project, ...]
+    :rtype: Tuple[ResolvedProject, ...]
     """
 
     filtered_projects = []
@@ -41,21 +41,21 @@ def filter_projects(projects: Tuple[Project, ...], project_names: Tuple[str, ...
     return tuple(sorted(set(filtered_projects), key=lambda project: project.name))
 
 
-def print_parallel_projects_output(projects: Tuple[Project, ...]) -> None:
+def print_parallel_projects_output(projects: Tuple[ResolvedProject, ...]) -> None:
     """Print output for parallel project command
 
-    :param Tuple[Project, ...] projects: Projects to print output for
+    :param Tuple[ResolvedProject, ...] projects: Projects to print output for
     """
 
     for project in projects:
         print(project.status())
-        _print_fork_output(project)
+        _print_upstream_output(project)
 
 
-def validate_project_statuses(projects: Tuple[Project, ...], allow_missing_repo: bool = True) -> None:
+def validate_project_statuses(projects: Tuple[ResolvedProject, ...], allow_missing_repo: bool = True) -> None:
     """Validate status of all projects
 
-    :param Tuple[Project, ...] projects: Projects to validate
+    :param Tuple[ResolvedProject, ...] projects: Projects to validate
     :param bool allow_missing_repo: Whether to allow validation to succeed with missing repo
     :raise ClowderError:
     """
@@ -67,12 +67,12 @@ def validate_project_statuses(projects: Tuple[Project, ...], allow_missing_repo:
         raise ClowderError(ClowderErrorType.INVALID_PROJECT_STATUS, fmt.error_invalid_project_state())
 
 
-def _print_fork_output(project: Project) -> None:
-    """Print fork output if a fork exists
+def _print_upstream_output(project: ResolvedProject) -> None:
+    """Print upstream output if a upstream exists
 
-    :param Project project: Project to print fork status for
+    :param Project project: Project to print upstream status for
     """
 
-    if project.fork:
-        print('  ' + fmt.fork_string(project.name))
-        print('  ' + fmt.fork_string(project.fork.name))
+    if project.upstream:
+        print('  ' + fmt.upstream_string(project.name))
+        print('  ' + fmt.upstream_string(project.upstream.name))

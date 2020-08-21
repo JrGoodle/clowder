@@ -7,9 +7,6 @@
 
 from typing import Dict, Optional, Union
 
-import clowder.util.formatting as fmt
-from clowder.error import ClowderError, ClowderErrorType
-
 GitConfig = Dict[str, Union[bool, str, int, float, None]]
 GitSubmodules = Union[bool, str]  # TODO: Replace str with enum for "update", "recursive", "update recursive"
 

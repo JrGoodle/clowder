@@ -12,8 +12,8 @@ import clowder.clowder_repo as clowder_repo
 import clowder.util.formatting as fmt
 from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.config import Config
-from clowder.model import Project
-from clowder.model.util import filter_projects
+from clowder.data import ResolvedProject
+from clowder.data.util import filter_projects
 from clowder.util.connectivity import network_connection_required
 from clowder.util.decorators import (
     print_clowder_name,
@@ -63,10 +63,10 @@ def status(args) -> None:
 
 
 @network_connection_required
-def _fetch_projects(projects: Tuple[Project, ...]) -> None:
+def _fetch_projects(projects: Tuple[ResolvedProject, ...]) -> None:
     """fetch all projects
 
-    :param Tuple[Project, ...] projects: Projects to fetch
+    :param Tuple[ResolvedProject, ...] projects: Projects to fetch
     """
 
     clowder_repo.print_status(fetch=True)

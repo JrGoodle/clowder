@@ -12,7 +12,7 @@ import clowder.util.formatting as fmt
 from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.environment import ENVIRONMENT
 from clowder.error import ClowderError, ClowderErrorType
-from clowder.model.util import validate_project_statuses
+from clowder.data.util import validate_project_statuses
 from clowder.util.decorators import (
     clowder_repo_required,
     print_clowder_name,

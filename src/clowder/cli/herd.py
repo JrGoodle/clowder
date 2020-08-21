@@ -11,7 +11,7 @@ import os
 import clowder.util.formatting as fmt
 from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.config import Config
-from clowder.model.util import (
+from clowder.data.util import (
     filter_projects,
     validate_project_statuses
 )

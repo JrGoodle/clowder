@@ -8,7 +8,7 @@
 import argparse
 
 from clowder.clowder_controller import CLOWDER_CONTROLLER
-from clowder.model.util import validate_project_statuses
+from clowder.data.util import validate_project_statuses
 from clowder.util.decorators import valid_clowder_yaml_required
 from clowder.util.yaml import print_clowder_yaml, yaml_string
 
