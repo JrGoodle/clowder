@@ -6,39 +6,33 @@
 """
 
 from pathlib import Path
-from typing import Optional, Tuple, TYPE_CHECKING
+from typing import Optional
 
 from termcolor import colored
 
-import clowder.util.formatting as fmt
 from clowder.environment import ENVIRONMENT
-from clowder.error import ClowderError, ClowderErrorType
 from clowder.git import ProjectRepo
 from clowder.git.util import (
     existing_git_repository,
-    format_git_branch,
-    format_git_tag,
     git_url
 )
 
-from .model import Defaults, Source, Upstream
-
-if TYPE_CHECKING:
-    from .model import Project
+from .model import Defaults, Group, Source, Upstream
+from .source_controller import SOURCE_CONTROLLER, GITHUB
 
 
 class ResolvedUpstream:
     """clowder yaml Upstream model class
 
     :ivar str name: Upstream name
-    :ivar Optional[Source] source: Upstream source
-    :ivar Optional[str] remote: Upstream remote name
+    :ivar Source source: Upstream source
+    :ivar str remote: Upstream remote name
     :ivar str ref: Upstream git ref
 
     :ivar str path: Project relative path
     """
 
-    def __init__(self, upstream: Upstream, defaults: Optional[Defaults], group: Optional[Group]):
+    def __init__(self, path: Path, upstream: Upstream, defaults: Optional[Defaults], group: Optional[Group]):
         """Upstream __init__
 
         :param dict upstream: Parsed YAML python object for upstream
@@ -47,34 +41,45 @@ class ResolvedUpstream:
         :param Defaults defaults: Defaults instance
         """
 
-        self.name: str = upstream['name']
-        self._remote: str = upstream.get('remote', None)
-        self._branch: str = upstream.get("branch", None)
-        self._tag: str = upstream.get("tag", None)
-        self._commit: str = upstream.get("commit", None)
-        self._source: Source = upstream.get('source', None)
+        has_remote = upstream.remote is not None
+        has_source = upstream.source is not None
+        has_ref = upstream.get_formatted_ref() is not None
 
-        self.path = project.path
-        self.recursive = project.git_settings.recursive
-        self.remote = upstream.get('remote', 'upstream')
+        has_defaults = defaults is not None
+        has_defaults_remote = has_defaults and defaults.remote is not None
+        has_defaults_source = has_defaults and defaults.source is not None
 
-        if self._branch is not None:
-            self.ref = format_git_branch(self._branch)
-        elif self._tag is not None:
-            self.ref = format_git_tag(self._tag)
-        elif self._commit is not None:
-            self.ref = self._commit
-        else:
-            self.ref = defaults.ref
+        has_group = group is not None
+        has_group_defaults = has_group and group.defaults is not None
+        has_group_defaults_source = has_group_defaults and group.defaults.source is not None
+        has_group_defaults_remote = has_group_defaults and group.defaults.remote is not None
+        has_group_defaults_ref = has_group_defaults and group.defaults.get_formatted_ref() is not None
 
-        self.source = None
-        source_name = upstream.get('source', defaults.source)
-        for s in sources:
-            if s.name == source_name:
-                self.source = s
-        if self.source is None:
-            message = fmt.error_source_not_found(source_name, ENVIRONMENT.clowder_yaml, project.name, self.name)
-            raise ClowderError(ClowderErrorType.CLOWDER_YAML_SOURCE_NOT_FOUND, message)
+        self.path: Path = path
+        self.name: str = upstream.name
+
+        self.remote: str = "origin"
+        if has_remote:
+            self.remote = upstream.remote
+        elif has_group_defaults_remote:
+            self.remote = group.defaults.remote
+        elif has_defaults_remote:
+            self.remote = defaults.remote
+
+        self.source: Source = SOURCE_CONTROLLER.get_source(GITHUB)
+        if has_source:
+            self.source = SOURCE_CONTROLLER.get_source(upstream.source.name)
+        elif has_group_defaults_source:
+            self.source = SOURCE_CONTROLLER.get_source(group.defaults.source)
+        elif has_defaults_source:
+            self.source = SOURCE_CONTROLLER.get_source(defaults.source)
+        SOURCE_CONTROLLER.add_source(self.source)
+
+        self.ref: str = "refs/heads/master"
+        if has_ref:
+            self.ref = upstream.get_formatted_ref()
+        elif has_group_defaults_ref:
+            self.ref = group.defaults.get_formatted_ref()
 
     def full_path(self) -> Path:
         """Return full path to project
@@ -84,33 +89,6 @@ class ResolvedUpstream:
         """
 
         return ENVIRONMENT.clowder_dir / self.path
-
-    def get_yaml(self, resolved_sha: Optional[str] = None) -> dict:
-        """Return python object representation for saving yaml
-
-        :param Optional[str] resolved_sha: Current commit sha
-        :return: YAML python object
-        :rtype: dict
-        """
-
-        upstream = {'name': self.name}
-
-        if self._remote is not None:
-            upstream['remote'] = self._remote
-        if self._source is not None:
-            upstream['source'] = self._source
-
-        if resolved_sha is None:
-            if self._branch is not None:
-                upstream['branch'] = self._branch
-            elif self._tag is not None:
-                upstream['tag'] = self._tag
-            elif self._commit is not None:
-                upstream['commit'] = self._commit
-        else:
-            upstream['commit'] = resolved_sha
-
-        return upstream
 
     def status(self) -> str:
         """Return formatted upstream status

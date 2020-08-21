@@ -48,11 +48,11 @@ class ResolvedProject:
     """clowder yaml Project model class
 
     :ivar str name: Project name
-    :ivar Optional[Path] path: Project relative path
-    :ivar Optional[Set[str]] groups: Groups project belongs to
-    :ivar Optional[str] remote: Project remote name
-    :ivar Optional[Source] source: Project source
-    :ivar Optional[GitSettings] git_settings: Custom git settings
+    :ivar Path path: Project relative path
+    :ivar Set[str] groups: Groups project belongs to
+    :ivar str remote: Project remote name
+    :ivar Source source: Project source
+    :ivar GitSettings git_settings: Custom git settings
     :ivar Optional[Upstream] upstream: Project's associated upstream
     :ivar str ref: Project git ref
     """
@@ -105,7 +105,7 @@ class ResolvedProject:
 
         self.source: Source = SOURCE_CONTROLLER.get_source(GITHUB)
         if has_source:
-            self.source = project.source
+            self.source = SOURCE_CONTROLLER.get_source(project.source.name)
         elif has_group_defaults_source:
             self.source = SOURCE_CONTROLLER.get_source(group.defaults.source)
         elif has_defaults_source:
@@ -138,9 +138,9 @@ class ResolvedProject:
 
         self.upstream: Optional[Upstream] = None
         if project.upstream is not None:
-            self.upstream = ResolvedUpstream(project.upstream, defaults, group)
+            self.upstream = ResolvedUpstream(self.path, project.upstream, defaults, group)
             if self.remote == self.upstream.remote:
-                message = fmt.error_remote_dup(self.upstream.name, self.name, self.remote, ENVIRONMENT.clowder_yaml)
+                message = fmt.error_remote_dup(self.upstream.name,  self.name, self.remote, ENVIRONMENT.clowder_yaml)
                 raise ClowderError(ClowderErrorType.CLOWDER_YAML_DUPLICATE_REMOTE_NAME, message)
 
         self.groups: Set[str] = {"all", self.name, str(self.path)}
