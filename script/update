@@ -49,12 +49,15 @@ pushd '../src' || exit 1
 case "$(uname)" in
     Linux*) export PLATFORM="linux";
         pip install -r requirements.txt || exit 1
+        pip install -e . || exit 1
         ;;
     Darwin*) export PLATFORM="darwin";
         sudo -H pip install -r requirements.txt || exit 1
+        sudo -H pip install -e . || exit 1
         ;;
     CYGWIN*) export PLATFORM="windows";
         pip install -r requirements.txt || exit 1
+        pip install -e . || exit 1
         ;;
 esac
 

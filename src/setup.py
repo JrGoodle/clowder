@@ -47,7 +47,8 @@ setup(
               'clowder.cli',
               'clowder.config',
               'clowder.git',
-              'clowder.model',
+              'clowder.data',
+              'clowder.data.model',
               'clowder.util'],
     package_data={
         "clowder.util": ["clowder.schema.json", "clowder.config.schema.json"],
