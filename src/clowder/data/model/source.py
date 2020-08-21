@@ -9,18 +9,6 @@ from typing import Dict, Optional, Union
 
 from clowder.git import GitProtocol
 
-DEFAULT_SOURCES: Dict[str, Dict[str, str]] = {
-    'github': {
-        'url': 'github.com'
-    },
-    'gitlab': {
-        'url': 'gitlab.com'
-    },
-    'bitbucket': {
-        'url': 'bitbucket.org'
-    }
-}
-
 
 class Source:
     """clowder yaml Source model class
@@ -54,7 +42,7 @@ class Source:
         :rtype: Union[dict, str]
         """
 
-        if self.url is None and self.protocol is None:
+        if self.is_reference():
             return self.name
 
         source = {'url': self.url}
@@ -62,3 +50,12 @@ class Source:
             source['protocol'] = self.protocol
 
         return source
+
+    def is_reference(self) -> bool:
+        """
+
+        :return: YAML python object
+        :rtype: bool
+        """
+
+        return self.url is None and self.protocol is None

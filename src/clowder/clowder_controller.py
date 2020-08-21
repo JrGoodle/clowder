@@ -5,15 +5,16 @@
 
 """
 
-from pathlib import Path
+import copy
 from typing import Optional, Tuple
 
 import clowder.util.formatting as fmt
 from clowder.environment import ENVIRONMENT
 from clowder.error import ClowderError, ClowderErrorType
 from clowder.logging import LOG_DEBUG
-from clowder.model import Defaults, Project, Source, Group, DEFAULT_SOURCES
-from clowder.model.util import (
+from clowder.data import ResolvedProject, SOURCE_CONTROLLER
+from clowder.data.model import ClowderBase
+from clowder.data.util import (
     print_parallel_projects_output,
     validate_project_statuses
 )
@@ -23,12 +24,7 @@ from clowder.util.yaml import load_yaml_file, validate_yaml_file
 class ClowderController(object):
     """Class encapsulating project information from clowder yaml for controlling clowder
 
-    :ivar Optional[str] name: Name of clowder
-    :ivar Optional[Defaults] defaults: Global clowder yaml defaults
-    :ivar Tuple[Source, ...] sources: List of all Sources
-    :ivar Tuple[Project, ...] projects: List of all Projects
-    :ivar Tuple[Groups, ...] groups: List of all Groups
-    :ivar Tuple[Project, ...] non_group_projects: List of all Projects not in a Group
+    :ivar Tuple[ResolvedProject, ...] projects: List of all ResolvedProjects
     :ivar Tuple[str, ...] project_names: All possible project names
     :ivar Tuple[str, ...] fork_names: All possible fork names
     :ivar Tuple[str, ...] project_fork_names: All possible project and fork names
@@ -47,27 +43,67 @@ class ClowderController(object):
 
         self.error: Optional[Exception] = None
 
-        self.name: Optional[str] = None
-        self.defaults: Optional[Defaults] = None
-        self.sources: Tuple[Source, ...] = ()
-        self.projects: Tuple[Project, ...] = ()
-        self.project_names: Tuple[str, ...] = ()
-        self.fork_names: Tuple[str, ...] = ()
-        self.project_fork_names: Tuple[str, ...] = ()
-        self.project_paths: Tuple[str, ...] = ()
-        self.project_groups: Tuple[str, ...] = ()
-        self.project_choices: Tuple[str, ...] = ()
-        self.project_choices_with_default: Tuple[str, ...] = ('default',)
+        self._initialize_properties()
 
         try:
             if ENVIRONMENT.clowder_yaml is None:
                 raise ClowderError(ClowderErrorType.YAML_MISSING_FILE, fmt.error_missing_clowder_yaml())
             yaml = load_yaml_file(ENVIRONMENT.clowder_yaml, ENVIRONMENT.clowder_dir)
             validate_yaml_file(yaml, ENVIRONMENT.clowder_yaml)
-            self._load_clowder_yaml(yaml)
+
+            self._clowder = ClowderBase(yaml)
+
+            self.name = self._clowder.name
+
+            defaults = self._clowder.defaults
+            SOURCE_CONTROLLER.add_source(defaults.source)
+
+            sources = self._clowder.sources
+            if sources is not None:
+                for s in sources:
+                    SOURCE_CONTROLLER.add_source(s)
+
+            projects = self._clowder.clowder.projects
+            if projects is not None:
+                for project in projects:
+                    SOURCE_CONTROLLER.add_source(project.source)
+                    upstream = project.upstream
+                    if upstream is not None:
+                        SOURCE_CONTROLLER.add_source(upstream.source)
+                SOURCE_CONTROLLER.validate_sources()
+
+                self.projects = tuple(sorted(projects, key=lambda p: p.name))
+                self._update_properties()
+                return
+
+            groups = self._clowder.clowder.groups
+            projects = [p for g in groups for p in g.projects]
+            for project in projects:
+                SOURCE_CONTROLLER.add_source(project.source)
+                upstream = project.upstream
+                if upstream is not None:
+                    SOURCE_CONTROLLER.add_source(upstream.source)
+            SOURCE_CONTROLLER.validate_sources()
+
+            resolved_projects = [ResolvedProject(p, defaults, g) for g in groups for p in g.projects]
+            self.projects = tuple(sorted(resolved_projects, key=lambda p: p.name))
+            self._update_properties()
+
+            # # Validate projects don't share share directories
+            # paths = [str(p.path.resolve()) for p in self.projects]
+            # duplicate = fmt.check_for_duplicates(paths)
+            # if duplicate is not None:
+            #     message = fmt.error_duplicate_project_path(Path(duplicate), ENVIRONMENT.clowder_yaml)
+            #     raise ClowderError(ClowderErrorType.CLOWDER_YAML_DUPLICATE_PATH, message)
+
         except ClowderError as err:
             LOG_DEBUG('Failed to init clowder controller', err)
             self.error = err
+            self._initialize_properties()
+        except (AttributeError, KeyError, TypeError) as err:
+            LOG_DEBUG('Failed to load clowder yaml', err)
+            self.error = err
+            self._initialize_properties()
 
     def get_all_fork_project_names(self) -> Tuple[str, ...]:
         """Returns all project names containing forks
@@ -83,10 +119,10 @@ class ClowderController(object):
             return ()
 
     @staticmethod
-    def get_projects_output(projects: Tuple[Project, ...]) -> Tuple[str, ...]:
+    def get_projects_output(projects: Tuple[ResolvedProject, ...]) -> Tuple[str, ...]:
         """Returns all project paths/names output for specified projects
 
-        :param Tuple[Project, ...] projects: Projects to get paths/names output of
+        :param Tuple[ResolvedProject, ...] projects: Projects to get paths/names output of
         :return: All project paths
         :rtype: Tuple[str, ...]
         """
@@ -124,34 +160,13 @@ class ClowderController(object):
         :rtype: dict
         """
 
-        result = {'name': self.name}
-
-        if resolved:
-            projects_yaml = [p.get_yaml(resolved_sha=p.sha()) for p in self.non_group_projects]
-        else:
-            projects_yaml = [p.get_yaml() for p in self.non_group_projects]
-        if projects_yaml:
-            result['projects'] = projects_yaml
-
-        groups = {g.name: g.get_yaml(resolved) for g in self.groups}
-        if groups:
-            result['groups'] = groups
-
-        defaults = self.defaults.get_yaml()
-        if defaults:
-            result['defaults'] = defaults
-
-        sources = {s.name: s.get_yaml() for s in self.sources if s.is_custom}
-        if sources:
-            result['sources'] = sources
-
-        return result
+        return self._clowder.get_yaml()
 
     @staticmethod
-    def validate_print_output(projects: Tuple[Project, ...]) -> None:
+    def validate_print_output(projects: Tuple[ResolvedProject, ...]) -> None:
         """Validate projects/groups and print output
 
-        :param Tuple[Project, ...] projects: Projects to validate/print
+        :param Tuple[ResolvedProject, ...] projects: Projects to validate/print
         """
 
         validate_project_statuses(projects)
@@ -268,65 +283,30 @@ class ClowderController(object):
             LOG_DEBUG('Failed to get project choices with default', err)
             return ()
 
-    def _load_clowder_yaml(self, yaml: dict) -> None:
-        """Load clowder yaml file
+    def _initialize_properties(self) -> None:
+        """Initialize all properties"""
 
-        :param dict yaml: Parsed yaml dict
-        """
-        try:
-            self.name = yaml['name']
-            self.defaults = Defaults(yaml.get('defaults', {}))
+        self.projects: Tuple[ResolvedProject, ...] = ()
+        self.project_names: Tuple[str, ...] = ()
+        self.fork_names: Tuple[str, ...] = ()
+        self.project_fork_names: Tuple[str, ...] = ()
+        self.project_paths: Tuple[str, ...] = ()
+        self.project_groups: Tuple[str, ...] = ()
+        self.project_choices: Tuple[str, ...] = ()
+        self.project_choices_with_default: Tuple[str, ...] = ('default',)
 
-            # Load sources
-            self.sources = [Source(name, s, self.defaults, True) for name, s in yaml.get('sources', {}).items()]
-            # Load default sources if not already specified
-            for name, ds in DEFAULT_SOURCES.items():
-                if not any([s.name == name for s in self.sources]):
-                    self.sources.append(Source(name, ds, self.defaults, False))
-            self.sources = tuple(sorted(self.sources, key=lambda source: source.name))
-            # Check for unknown sources
-            if not any([s.name == self.defaults.source for s in self.sources]):
-                message = fmt.error_source_default_not_found(self.defaults.source, ENVIRONMENT.clowder_yaml)
-                raise ClowderError(ClowderErrorType.CLOWDER_YAML_SOURCE_NOT_FOUND, message)
+    def _update_properties(self) -> None:
+        """Initialize all properties"""
 
-            # Load groups
-            groups = [Group(n, g, self.defaults, self.sources) for n, g in yaml.get('groups', {}).items()]
-            self.groups = tuple(sorted(groups, key=lambda group: group.name))
-
-            # Load projects
-            non_group_projects = [Project(p, self.defaults, self.sources) for p in yaml.get('projects', [])]
-            self.non_group_projects = tuple(sorted(non_group_projects, key=lambda project: project.name))
-            all_projects = non_group_projects + [p for g in groups for p in g.projects]
-            self.projects = tuple(sorted(all_projects, key=lambda project: project.name))
-
-            # Validate projects don't share share directories
-            paths = [str(p.path.resolve()) for p in self.projects]
-            duplicate = fmt.check_for_duplicates(paths)
-            if duplicate is not None:
-                message = fmt.error_duplicate_project_path(Path(duplicate), ENVIRONMENT.clowder_yaml)
-                raise ClowderError(ClowderErrorType.CLOWDER_YAML_DUPLICATE_PATH, message)
-
-            self.project_names: Tuple[str, ...] = self._get_all_project_names()
-            self.fork_names: Tuple[str, ...] = self._get_all_fork_names()
-            self.project_fork_names: Tuple[str, ...] = self._get_all_project_fork_names(self.project_names,
-                                                                                        self.fork_names)
-            self.project_paths: Tuple[str, ...] = self._get_all_project_paths()
-            self.project_groups: Tuple[str, ...] = self._get_all_project_groups(self.project_fork_names,
-                                                                                self.project_paths)
-            self.project_choices = self._get_all_project_choices()
-            self.project_choices_with_default = self._get_all_project_choices_with_default()
-        except (AttributeError, KeyError, TypeError) as err:
-            LOG_DEBUG('Failed to load clowder yaml', err)
-            self.name = None
-            self.defaults = None
-            self.sources = ()
-            self.projects = ()
-            self.project_names = ()
-            self.fork_names = ()
-            self.project_fork_names = ()
-            self.project_choices = ()
-            self.project_choices_with_default = ('default',)
-            self.error = err
+        self.project_names: Tuple[str, ...] = self._get_all_project_names()
+        self.fork_names: Tuple[str, ...] = self._get_all_fork_names()
+        self.project_fork_names: Tuple[str, ...] = self._get_all_project_fork_names(self.project_names,
+                                                                                    self.fork_names)
+        self.project_paths: Tuple[str, ...] = self._get_all_project_paths()
+        self.project_groups: Tuple[str, ...] = self._get_all_project_groups(self.project_fork_names,
+                                                                            self.project_paths)
+        self.project_choices: Tuple[str, ...] = self._get_all_project_choices()
+        self.project_choices_with_default: Tuple[str, ...] = self._get_all_project_choices_with_default()
 
 
 CLOWDER_CONTROLLER: ClowderController = ClowderController()

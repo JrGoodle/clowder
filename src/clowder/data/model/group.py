@@ -51,10 +51,9 @@ class Group:
             # TODO: Create new error type
             raise ClowderError(ClowderErrorType.YAML_UNKNOWN, "Wrong instance type for group")
 
-    def get_yaml(self, resolved: bool = False) -> Union[dict, list]:
+    def get_yaml(self) -> Union[dict, list]:
         """Return python object representation for saving yaml
 
-        :param bool resolved: Whether to return resolved yaml
         :return: YAML python object
         :rtype: Union[dict, list]
         """
@@ -72,4 +71,3 @@ class Group:
             yaml['defaults'] = self.defaults.get_yaml()
 
         return yaml
-

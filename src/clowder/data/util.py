@@ -10,7 +10,7 @@ from typing import Tuple
 import clowder.util.formatting as fmt
 from clowder.error import ClowderError, ClowderErrorType
 
-from .project import Project
+from .resolved_project import ResolvedProject as Project
 
 
 def existing_branch_projects(projects: Tuple[Project, ...], branch: str, is_remote: bool) -> bool:

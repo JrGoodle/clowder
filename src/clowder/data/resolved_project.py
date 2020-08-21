@@ -26,10 +26,7 @@ from clowder.logging import LOG_DEBUG
 from clowder.util.connectivity import is_offline
 from clowder.util.execute import execute_forall_command
 
-from .defaults import Defaults
-from .upstream import Upstream
-from .git_settings import GitSettings
-from .source import Source
+from .model import Defaults, GitSettings, Project, Group, Upstream
 
 
 def project_repo_exists(func):
@@ -61,15 +58,12 @@ class ResolvedProject:
     :ivar str ref: Project git ref
     """
 
-    def __init__(self, project: dict, defaults: Defaults, sources: Tuple[Source, ...],
-                 path_prefix: Optional[str] = None, groups: Optional[List[str]] = None):
+    def __init__(self, project: Project, defaults: Optional[Defaults], group: Optional[Group]):
         """Project __init__
 
-        :param dict project: Parsed YAML python object for project
-        :param Defaults defaults: Defaults instance
-        :param Tuple[Source, ...] sources: List of Source instances
-        :param Optional[str] path_prefix: Prefix for path from group
-        :param Optional[List[str]] groups: Groups project was defined in
+        :param Project project: Project model instance
+        :param Optional[Defaults] defaults: Defaults instance
+        :param Optional[Group] group: Group instance
         """
 
         self.name: str = project['name']
@@ -130,12 +124,12 @@ class ResolvedProject:
             message = fmt.error_source_not_found(source_name, ENVIRONMENT.clowder_yaml, self.name)
             raise ClowderError(ClowderErrorType.CLOWDER_YAML_SOURCE_NOT_FOUND, message)
 
-        self.fork = None
+        self.upstream = None
         if 'upstream' in project:
             fork = project['upstream']
-            self.fork = Upstream(fork, self, sources, defaults)
-            if self.remote == self.fork.remote:
-                message = fmt.error_remote_dup(self.fork.name, self.name, self.remote, ENVIRONMENT.clowder_yaml)
+            self.upstream = Upstream(fork, self, sources, defaults)
+            if self.remote == self.upstream.remote:
+                message = fmt.error_remote_dup(self.upstream.name, self.name, self.remote, ENVIRONMENT.clowder_yaml)
                 raise ClowderError(ClowderErrorType.CLOWDER_YAML_DUPLICATE_REMOTE_NAME, message)
 
         if groups is None:

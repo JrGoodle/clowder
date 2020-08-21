@@ -36,10 +36,9 @@ class Upstream:
         source = yaml.get('source', None)
         self.source: Optional[Source] = Source(source) if source is not None else None
 
-    def get_yaml(self, resolved_sha: Optional[str] = None) -> dict:
+    def get_yaml(self) -> dict:
         """Return python object representation for saving yaml
 
-        :param Optional[str] resolved_sha: Current commit sha
         :return: YAML python object
         :rtype: dict
         """

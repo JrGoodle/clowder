@@ -50,10 +50,9 @@ class Project:
         upstream = yaml.get('upstream', None)
         self.upstream: Optional[Upstream] = Upstream(upstream) if upstream is not None else None
 
-    def get_yaml(self, resolved_sha: Optional[str] = None) -> dict:
+    def get_yaml(self) -> dict:
         """Return python object representation for saving yaml
 
-        :param Optional[str] resolved_sha: Current commit sha
         :return: YAML python object
         :rtype: dict
         """

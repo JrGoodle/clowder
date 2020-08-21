@@ -21,11 +21,10 @@ from clowder.git.util import (
     git_url
 )
 
-from .defaults import Defaults
-from .source import Source
+from .model import Defaults, Source
 
 if TYPE_CHECKING:
-    from .project import Project
+    from .model import Project
 
 
 class ResolvedUpstream:

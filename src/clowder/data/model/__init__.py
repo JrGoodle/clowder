@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
-"""clowder.model module __init__
+"""clowder.data.model module __init__
 
 .. codeauthor:: Joe Decapo <joe@polka.cat>
 
 """
 
+from .clowder_base import ClowderBase
+from .git_settings import GitSettings
 from .project import Project
 from .defaults import Defaults
 from .source import Source
 from .group import Group
-from .source import DEFAULT_SOURCES
+from .upstream import Upstream
