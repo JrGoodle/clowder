@@ -23,9 +23,10 @@ from clowder.logging import LOG_DEBUG
 from clowder.util.connectivity import is_offline
 from clowder.util.execute import execute_forall_command
 
+from .resolved_git_settings import ResolvedGitSettings
 from .resolved_upstream import ResolvedUpstream
 from .source_controller import SOURCE_CONTROLLER, GITHUB
-from .model import Defaults, GitSettings, Project, Source, Group, Upstream
+from .model import Defaults, Project, Source, Group, Upstream
 
 
 def project_repo_exists(func):
@@ -52,8 +53,8 @@ class ResolvedProject:
     :ivar Set[str] groups: Groups project belongs to
     :ivar str remote: Project remote name
     :ivar Source source: Project source
-    :ivar GitSettings git_settings: Custom git settings
-    :ivar Optional[Upstream] upstream: Project's associated upstream
+    :ivar ResolvedGitSettings git_settings: Custom git settings
+    :ivar Optional[ResolvedUpstream] upstream: Project's associated upstream
     :ivar str ref: Project git ref
     """
 
@@ -65,27 +66,16 @@ class ResolvedProject:
         :param Optional[Group] group: Group instance
         """
 
+        self._original_project_id = id(project)
         self.name: str = project.name
         self._print_output = True
 
         has_path = project.path is not None
-        has_remote = project.remote is not None
-        has_source = project.source is not None
-        has_ref = project.get_formatted_ref() is not None
-
         has_defaults = defaults is not None
-        has_defaults_remote = has_defaults and defaults.remote is not None
-        has_defaults_source = has_defaults and defaults.source is not None
-        has_defaults_git = has_defaults and defaults.git_settings is not None
-
         has_group = group is not None
-        has_group_path = has_group and group.path is not None
         has_group_defaults = has_group and group.defaults is not None
-        has_group_defaults_source = has_group_defaults and group.defaults.source is not None
-        has_group_defaults_remote = has_group_defaults and group.defaults.remote is not None
-        has_group_defaults_ref = has_group_defaults and group.defaults.get_formatted_ref() is not None
-        has_group_defaults_git = has_group_defaults and group.defaults.git_settings is not None
 
+        has_group_path = has_group and group.path is not None
         self.path: Path = Path()
         if has_group_path:
             self.path = self.path / group.path
@@ -95,6 +85,9 @@ class ResolvedProject:
             last_path_component = Path(self.name).name
             self.path = self.path / last_path_component
 
+        has_remote = project.remote is not None
+        has_defaults_remote = has_defaults and defaults.remote is not None
+        has_group_defaults_remote = has_group_defaults and group.defaults.remote is not None
         self.remote: str = "origin"
         if has_remote:
             self.remote = project.remote
@@ -103,6 +96,9 @@ class ResolvedProject:
         elif has_defaults_remote:
             self.remote = defaults.remote
 
+        has_source = project.source is not None
+        has_defaults_source = has_defaults and defaults.source is not None
+        has_group_defaults_source = has_group_defaults and group.defaults.source is not None
         self.source: Source = SOURCE_CONTROLLER.get_source(GITHUB)
         if has_source:
             self.source = SOURCE_CONTROLLER.get_source(project.source.name)
@@ -112,29 +108,21 @@ class ResolvedProject:
             self.source = SOURCE_CONTROLLER.get_source(defaults.source)
         SOURCE_CONTROLLER.add_source(self.source)
 
+        has_ref = project.get_formatted_ref() is not None
+        has_group_defaults_ref = has_group_defaults and group.defaults.get_formatted_ref() is not None
         self.ref: str = "refs/heads/master"
         if has_ref:
             self.ref = project.get_formatted_ref()
         elif has_group_defaults_ref:
             self.ref = group.defaults.get_formatted_ref()
 
-        default_git_settings = {
-            "submodules": False,
-            "lfs": False,
-            "depth": 0,
-            "config": {}
-        }
-        self.git_settings: GitSettings = GitSettings(default_git_settings)
-        if has_defaults_git and has_group_defaults_git:
-            settings = GitSettings.combine(defaults.git_settings, self.git_settings)
-            settings = GitSettings.combine(group.defaults.git_settings, settings)
-            self.git_settings = settings
-        elif has_defaults_git:
-            settings = GitSettings.combine(defaults.git_settings, self.git_settings)
-            self.git_settings = settings
-        elif has_group_defaults_git:
-            settings = GitSettings.combine(group.defaults.git_settings, self.git_settings)
-            self.git_settings = settings
+        has_defaults_git = has_defaults and defaults.git_settings is not None
+        has_group_defaults_git = has_group_defaults and group.defaults.git_settings is not None
+        self.git_settings: ResolvedGitSettings = ResolvedGitSettings()
+        if has_defaults_git:
+            self.git_settings.update(defaults.git_settings)
+        if has_group_defaults_git:
+            self.git_settings.update(group.defaults.git_settings)
 
         self.upstream: Optional[Upstream] = None
         if project.upstream is not None:
