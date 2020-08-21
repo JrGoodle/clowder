@@ -7,6 +7,8 @@
 
 from typing import Dict, Optional, Set
 
+import clowder.util.formatting as fmt
+from clowder.environment import ENVIRONMENT
 from clowder.error import ClowderError, ClowderErrorType
 
 from .model import Source
@@ -63,18 +65,17 @@ class SourceController(object):
 
         return self._sources[name]
 
-    def validate_sources(self) -> bool:
-        """Validate sources
+    def validate_sources(self) -> None:
+        """Validate sources: check for unknown names
 
-        :return: Source with supplied name
-        :rtype: Source
+        :raises
         """
 
-        if name not in self._sources:
-            # TODO: Rename error to SOURCE_NOT_DEFINED
-            raise ClowderError(ClowderErrorType.CLOWDER_YAML_SOURCE_NOT_FOUND, "No source defined")
-
-        return self._sources[name]
+        if not any([s.name == name for name, s in self._sources.items()]):
+            # TODO: Update error messages to be more generic so missing source applies to defaults, project, upstream
+            # message = fmt.error_source_not_found(self.defaults.source, ENVIRONMENT.clowder_yaml)
+            message = "SOURCE NOT FOUND"
+            raise ClowderError(ClowderErrorType.CLOWDER_YAML_SOURCE_NOT_FOUND, message)
 
 
 SOURCE_CONTROLLER: SourceController = SourceController()
