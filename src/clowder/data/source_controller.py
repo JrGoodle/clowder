@@ -7,8 +7,8 @@
 
 from typing import Dict, Optional, Set
 
-import clowder.util.formatting as fmt
-from clowder.environment import ENVIRONMENT
+# import clowder.util.formatting as fmt
+# from clowder.environment import ENVIRONMENT
 from clowder.error import ClowderError, ClowderErrorType
 
 from .model import Source

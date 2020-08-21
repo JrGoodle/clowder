@@ -8,6 +8,11 @@
 from pathlib import Path
 from typing import List, Optional
 
+from clowder.git.util import (
+    format_git_branch,
+    format_git_tag
+)
+
 from .upstream import Upstream
 from .git_settings import GitSettings
 from .source import Source
@@ -49,6 +54,22 @@ class Project:
 
         upstream = yaml.get('upstream', None)
         self.upstream: Optional[Upstream] = Upstream(upstream) if upstream is not None else None
+
+    def get_formatted_ref(self) -> Optional[str]:
+        """Return formatted git ref
+
+        :return: Formatted git ref
+        :rtype: str
+        """
+
+        if self.branch is not None:
+            return format_git_branch(self.branch)
+        elif self.tag is not None:
+            return format_git_tag(self.tag)
+        elif self.commit is not None:
+            return self.commit
+        else:
+            return None
 
     def get_yaml(self) -> dict:
         """Return python object representation for saving yaml

@@ -651,11 +651,11 @@ def error_user_interrupt() -> str:
     return f"{ERROR} User interruption"
 
 
-def fork_string(name: str) -> str:
-    """Return formatted fork name
+def upstream_string(name: str) -> str:
+    """Return formatted upstream name
 
-    :param str name: Fork name
-    :return: Formatted fork name
+    :param str name: Upstream name
+    :return: Formatted upstream name
     :rtype: str
     """
 

@@ -7,6 +7,11 @@
 
 from typing import Optional, Union
 
+from clowder.git.util import (
+    format_git_branch,
+    format_git_tag
+)
+
 from .source import Source
 
 
@@ -35,6 +40,22 @@ class Upstream:
 
         source = yaml.get('source', None)
         self.source: Optional[Source] = Source(source) if source is not None else None
+
+    def get_formatted_ref(self) -> Optional[str]:
+        """Return formatted git ref
+
+        :return: Formatted git ref
+        :rtype: str
+        """
+
+        if self.branch is not None:
+            return format_git_branch(self.branch)
+        elif self.tag is not None:
+            return format_git_tag(self.tag)
+        elif self.commit is not None:
+            return self.commit
+        else:
+            return None
 
     def get_yaml(self) -> dict:
         """Return python object representation for saving yaml

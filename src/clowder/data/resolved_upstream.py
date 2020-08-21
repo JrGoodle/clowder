@@ -21,7 +21,7 @@ from clowder.git.util import (
     git_url
 )
 
-from .model import Defaults, Source
+from .model import Defaults, Source, Upstream
 
 if TYPE_CHECKING:
     from .model import Project
@@ -38,7 +38,7 @@ class ResolvedUpstream:
     :ivar str path: Project relative path
     """
 
-    def __init__(self, upstream: dict, project: 'Project', sources: Tuple[Source, ...], defaults: Defaults):
+    def __init__(self, upstream: Upstream, defaults: Optional[Defaults], group: Optional[Group]):
         """Upstream __init__
 
         :param dict upstream: Parsed YAML python object for upstream
@@ -48,11 +48,11 @@ class ResolvedUpstream:
         """
 
         self.name: str = upstream['name']
-        self._remote: Optional[str] = upstream.get('remote', None)
-        self._branch: Optional[str] = upstream.get("branch", None)
-        self._tag: Optional[str] = upstream.get("tag", None)
-        self._commit: Optional[str] = upstream.get("commit", None)
-        self._source: Optional[str] = upstream.get('source', None)
+        self._remote: str = upstream.get('remote', None)
+        self._branch: str = upstream.get("branch", None)
+        self._tag: str = upstream.get("tag", None)
+        self._commit: str = upstream.get("commit", None)
+        self._source: Source = upstream.get('source', None)
 
         self.path = project.path
         self.recursive = project.git_settings.recursive

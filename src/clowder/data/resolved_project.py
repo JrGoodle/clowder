@@ -5,10 +5,9 @@
 
 """
 
-import copy
 from functools import wraps
 from pathlib import Path
-from typing import List, Optional, Tuple
+from typing import List, Optional, Set
 
 from termcolor import colored, cprint
 
@@ -18,15 +17,15 @@ from clowder.error import ClowderError, ClowderErrorType
 from clowder.git import ProjectRepo, ProjectRepoRecursive
 from clowder.git.util import (
     existing_git_repository,
-    format_git_branch,
-    format_git_tag,
     git_url
 )
 from clowder.logging import LOG_DEBUG
 from clowder.util.connectivity import is_offline
 from clowder.util.execute import execute_forall_command
 
-from .model import Defaults, GitSettings, Project, Group, Upstream
+from .resolved_upstream import ResolvedUpstream
+from .source_controller import SOURCE_CONTROLLER, GITHUB
+from .model import Defaults, GitSettings, Project, Source, Group, Upstream
 
 
 def project_repo_exists(func):
@@ -50,11 +49,11 @@ class ResolvedProject:
 
     :ivar str name: Project name
     :ivar Optional[Path] path: Project relative path
-    :ivar Optional[List[str]] groups: Groups project belongs to
+    :ivar Optional[Set[str]] groups: Groups project belongs to
     :ivar Optional[str] remote: Project remote name
     :ivar Optional[Source] source: Project source
     :ivar Optional[GitSettings] git_settings: Custom git settings
-    :ivar Optional[Fork] fork: Project's associated Fork
+    :ivar Optional[Upstream] upstream: Project's associated upstream
     :ivar str ref: Project git ref
     """
 
@@ -66,88 +65,92 @@ class ResolvedProject:
         :param Optional[Group] group: Group instance
         """
 
-        self.name: str = project['name']
-        self._path: Optional[str] = project.get('path', None)
-        self._remote: Optional[str] = project.get('remote', None)
-        self._source: Optional[str] = project.get('source', None)
-        self._branch: Optional[str] = project.get("branch", None)
-        self._tag: Optional[str] = project.get("tag", None)
-        self._commit: Optional[str] = project.get("commit", None)
-        self._groups: Optional[List[str]] = project.get('groups', None)
-        self._timestamp_author: Optional[str] = project.get('timestamp_author', None)
-
-        git_settings = project.get("git", None)
-        if git_settings is not None:
-            self._git_settings = GitSettings(git_settings)
-        else:
-            self._git_settings = None
-
-        fork = project.get('fork', None)
-        if fork is not None:
-            self._fork: Optional[Upstream] = Upstream(fork)
-        else:
-            self._fork: Optional[Upstream] = None
-
-        last_path_component = Path(self.name).name
-        temp_path = Path(project.get('path', last_path_component))
-        if path_prefix is not None:
-            temp_path = path_prefix / temp_path
-        self.path: Path = temp_path
-
-        self.remote: str = project.get('remote', defaults.remote)
-        self.timestamp_author: Optional[str] = project.get('timestamp_author', defaults.timestamp_author)
-
+        self.name: str = project.name
         self._print_output = True
 
-        if self._branch is not None:
-            self.ref = format_git_branch(self._branch)
-        elif self._tag is not None:
-            self.ref = format_git_tag(self._tag)
-        elif self._commit is not None:
-            self.ref = self._commit
+        has_path = project.path is not None
+        has_remote = project.remote is not None
+        has_source = project.source is not None
+        has_ref = project.get_formatted_ref() is not None
+
+        has_defaults = defaults is not None
+        has_defaults_remote = has_defaults and defaults.remote is not None
+        has_defaults_source = has_defaults and defaults.source is not None
+        has_defaults_git = has_defaults and defaults.git_settings is not None
+
+        has_group = group is not None
+        has_group_path = has_group and group.path is not None
+        has_group_defaults = has_group and group.defaults is not None
+        has_group_defaults_source = has_group_defaults and group.defaults.source is not None
+        has_group_defaults_remote = has_group_defaults and group.defaults.remote is not None
+        has_group_defaults_ref = has_group_defaults and group.defaults.get_formatted_ref() is not None
+        has_group_defaults_git = has_group_defaults and group.defaults.git_settings is not None
+
+        self.path: Path = Path()
+        if has_group_path:
+            self.path = self.path / group.path
+        if has_path:
+            self.path = self.path / project.path
         else:
-            self.ref = defaults.ref
+            last_path_component = Path(self.name).name
+            self.path = self.path / last_path_component
 
-        git_settings = project.get("git", None)
-        if git_settings is not None:
-            self.git_settings = GitSettings(git_settings=git_settings, parent_git_settings=defaults.git_settings)
-        else:
-            self.git_settings = defaults.git_settings
+        self.remote: str = "origin"
+        if has_remote:
+            self.remote = project.remote
+        elif has_group_defaults_remote:
+            self.remote = group.defaults.remote
+        elif has_defaults_remote:
+            self.remote = defaults.remote
 
-        self.source = None
-        source_name = project.get('source', defaults.source)
-        for source in sources:
-            if source.name == source_name:
-                self.source = source
-                break
-        if self.source is None:
-            message = fmt.error_source_not_found(source_name, ENVIRONMENT.clowder_yaml, self.name)
-            raise ClowderError(ClowderErrorType.CLOWDER_YAML_SOURCE_NOT_FOUND, message)
+        self.source: Source = SOURCE_CONTROLLER.get_source(GITHUB)
+        if has_source:
+            self.source = project.source
+        elif has_group_defaults_source:
+            self.source = SOURCE_CONTROLLER.get_source(group.defaults.source)
+        elif has_defaults_source:
+            self.source = SOURCE_CONTROLLER.get_source(defaults.source)
+        SOURCE_CONTROLLER.add_source(self.source)
 
-        self.upstream = None
-        if 'upstream' in project:
-            fork = project['upstream']
-            self.upstream = Upstream(fork, self, sources, defaults)
+        self.ref: str = "refs/heads/master"
+        if has_ref:
+            self.ref = project.get_formatted_ref()
+        elif has_group_defaults_ref:
+            self.ref = group.defaults.get_formatted_ref()
+
+        default_git_settings = {
+            "submodules": False,
+            "lfs": False,
+            "depth": 0,
+            "config": {}
+        }
+        self.git_settings: GitSettings = GitSettings(default_git_settings)
+        if has_defaults_git and has_group_defaults_git:
+            settings = GitSettings.combine(defaults.git_settings, self.git_settings)
+            settings = GitSettings.combine(group.defaults.git_settings, settings)
+            self.git_settings = settings
+        elif has_defaults_git:
+            settings = GitSettings.combine(defaults.git_settings, self.git_settings)
+            self.git_settings = settings
+        elif has_group_defaults_git:
+            settings = GitSettings.combine(group.defaults.git_settings, self.git_settings)
+            self.git_settings = settings
+
+        self.upstream: Optional[Upstream] = None
+        if project.upstream is not None:
+            self.upstream = ResolvedUpstream(project.upstream, defaults, group)
             if self.remote == self.upstream.remote:
                 message = fmt.error_remote_dup(self.upstream.name, self.name, self.remote, ENVIRONMENT.clowder_yaml)
                 raise ClowderError(ClowderErrorType.CLOWDER_YAML_DUPLICATE_REMOTE_NAME, message)
 
-        if groups is None:
-            groups = []
-        groups += ['all', self.name, str(self.path)]
-
-        if self._groups is not None:
-            groups += copy.deepcopy(self._groups)
-
-        if self.fork is not None:
-            groups += [self.fork.name]
-
-        # Remove `all` if 'notdefault` is present
-        groups = list(set(groups))
-        if 'notdefault' in groups:
-            groups.remove('all')
-
-        self.groups = groups
+        self.groups: Set[str] = {"all", self.name, str(self.path)}
+        if has_group and group.groups is not None:
+            for g in group.groups:
+                self.groups.add(g)
+        if self.groups is not None:
+            self.groups.update(project.groups)
+        if 'notdefault' in self.groups:
+            self.groups.remove('all')
 
     @project_repo_exists
     def branch(self, local: bool = False, remote: bool = False) -> None:
@@ -160,13 +163,13 @@ class ResolvedProject:
         repo = ProjectRepo(self.full_path(), self.remote, self.ref)
 
         if not is_offline() and remote:
-            if self.fork is None:
+            if self.upstream is None:
                 repo.fetch(self.remote, depth=self.git_settings.depth)
             else:
-                repo.fetch(self.fork.remote)
+                repo.fetch(self.upstream.remote)
                 repo.fetch(self.remote)
 
-        if self.fork is None:
+        if self.upstream is None:
             if local:
                 repo.print_local_branches()
             if remote:
@@ -176,13 +179,13 @@ class ResolvedProject:
         if local:
             repo.print_local_branches()
         if remote:
-            self._print(fmt.fork_string(self.fork.name))
-            # Modify repo to prefer fork
-            repo.default_ref = self.fork.ref
-            repo.remote = self.fork.remote
+            self._print(fmt.upstream_string(self.upstream.name))
+            # Modify repo to prefer upstream
+            repo.default_ref = self.upstream.ref
+            repo.remote = self.upstream.remote
             repo.print_remote_branches()
 
-            self._print(fmt.fork_string(self.name))
+            self._print(fmt.upstream_string(self.name))
             # Restore repo configuration
             repo.default_ref = self.ref
             repo.remote = self.remote
@@ -195,12 +198,12 @@ class ResolvedProject:
         :param str branch: Branch to check out
         """
 
-        repo = self._repo(self.git_settings.recursive)
+        repo = self._repo(self.git_settings.submodules)
         repo.checkout(branch, allow_failure=True)
         self._pull_lfs(repo)
 
     @project_repo_exists
-    def clean(self, args: str = '', recursive: bool = False) -> None:
+    def clean(self, args: str = '', submodules: bool = False) -> None:
         """Discard changes for project
 
         :param str args: Git clean options
@@ -208,10 +211,10 @@ class ResolvedProject:
             - ``f`` Delete directories with .git sub directory or file
             - ``X`` Remove only files ignored by git
             - ``x`` Remove all untracked files
-        :param bool recursive: Clean submodules recursively
+        :param bool submodules: Clean submodules recursively
         """
 
-        self._repo(self.git_settings.recursive or recursive).clean(args=args)
+        self._repo(self.git_settings.submodules or submodules).clean(args=args)
 
     @project_repo_exists
     def clean_all(self) -> None:
@@ -224,7 +227,7 @@ class ResolvedProject:
         ``git submodule update --checkout --recursive --force``
         """
 
-        self._repo(self.git_settings.recursive).clean(args='fdx')
+        self._repo(self.git_settings.submodules).clean(args='fdx')
 
     @project_repo_exists
     def diff(self) -> None:
@@ -233,7 +236,7 @@ class ResolvedProject:
         Equivalent to: ``git status -vv``
         """
 
-        self._repo(self.git_settings.recursive).status_verbose()
+        self._repo(self.git_settings.submodules).status_verbose()
 
     def existing_branch(self, branch: str, is_remote: bool) -> bool:
         """Check if branch exists
@@ -248,7 +251,7 @@ class ResolvedProject:
         if not is_remote:
             return repo.existing_local_branch(branch)
 
-        remote = self.remote if self.fork is None else self.fork.remote
+        remote = self.remote if self.upstream is None else self.upstream.remote
         return repo.existing_remote_branch(branch, remote)
 
     def exists(self) -> bool:
@@ -265,11 +268,11 @@ class ResolvedProject:
         """Fetch upstream changes if project exists on disk"""
 
         repo = ProjectRepo(self.full_path(), self.remote, self.ref)
-        if self.fork is None:
+        if self.upstream is None:
             repo.fetch(self.remote, depth=self.git_settings.depth)
             return
 
-        repo.fetch(self.fork.remote)
+        repo.fetch(self.upstream.remote)
         repo.fetch(self.remote)
 
     def formatted_project_output(self) -> str:
@@ -303,43 +306,6 @@ class ResolvedProject:
         repo = ProjectRepo(self.full_path(), self.remote, self.ref)
         return repo.get_current_timestamp()
 
-    def get_yaml(self, resolved_sha: Optional[str] = None) -> dict:
-        """Return python object representation for saving yaml
-
-        :param Optional[str] resolved_sha: Current commit sha
-        :return: YAML python object
-        :rtype: dict
-        """
-
-        project = {'name': self.name}
-
-        if self._path is not None:
-            project['path'] = self._path
-        if self._remote is not None:
-            project['remote'] = self._remote
-        if self._source is not None:
-            project['source'] = self._source
-        if self._groups is not None:
-            project['groups'] = self._groups
-        if self._fork is not None:
-            project['upstream'] = self._fork.get_yaml(resolved_sha=resolved_sha)
-        if self._git_settings is not None:
-            project['git'] = self._git_settings.get_yaml()
-        if self._timestamp_author is not None:
-            project['timestamp_author'] = self._timestamp_author
-
-        if resolved_sha is None:
-            if self._branch is not None:
-                project['branch'] = self._branch
-            elif self._tag is not None:
-                project['tag'] = self._tag
-            elif self._commit is not None:
-                project['commit'] = self._commit
-        else:
-            project['commit'] = resolved_sha
-
-        return project
-
     def herd(self, branch: Optional[str] = None, tag: Optional[str] = None, depth: Optional[int] = None,
              rebase: bool = False, parallel: bool = False) -> None:
         """Clone project or update latest from upstream
@@ -354,9 +320,9 @@ class ResolvedProject:
         self._print_output = not parallel
 
         herd_depth = self.git_settings.depth if depth is None else depth
-        repo = self._repo(self.git_settings.recursive, parallel=parallel)
+        repo = self._repo(self.git_settings.submodules, parallel=parallel)
 
-        if self.fork is None:
+        if self.upstream is None:
             self._print(self.status())
 
             if branch:
@@ -372,29 +338,32 @@ class ResolvedProject:
 
             return
 
-        self._print(self.fork.status())
-        repo.configure_remotes(self.remote, self._url(), self.fork.remote, self.fork.url())
+        self._print(self.upstream.status())
+        repo.configure_remotes(self.remote, self._url(), self.upstream.remote, self.upstream.url())
 
-        self._print(fmt.fork_string(self.fork.name))
-        # Modify repo to prefer fork
-        repo.default_ref = self.fork.ref
-        repo.remote = self.fork.remote
+        self._print(fmt.upstream_string(self.upstream.name))
         if branch:
-            repo.herd_branch(self.fork.url(), branch, depth=herd_depth, rebase=rebase,
+            repo.herd_branch(self.upstream.url(), branch, depth=herd_depth, rebase=rebase,
                              config=self.git_settings.get_processed_config())
         elif tag:
-            repo.herd_tag(self.fork.url(), tag, depth=herd_depth, rebase=rebase,
+            repo.herd_tag(self.upstream.url(), tag, depth=herd_depth, rebase=rebase,
                           config=self.git_settings.get_processed_config())
         else:
-            repo.herd(self.fork.url(), depth=herd_depth, rebase=rebase,
+            repo.herd(self.upstream.url(), depth=herd_depth, rebase=rebase,
                       config=self.git_settings.get_processed_config())
         self._pull_lfs(repo)
 
-        self._print(fmt.fork_string(self.name))
+        self._print(fmt.upstream_string(self.name))
+
+        # Modify repo to prefer upstream
+        repo.default_ref = self.upstream.ref
+        repo.remote = self.upstream.remote
+
+        repo.herd_remote(self._url(), self.remote, branch=branch)
+
         # Restore repo configuration
         repo.default_ref = self.ref
         repo.remote = self.remote
-        repo.herd_remote(self._url(), self.remote, branch=branch)
 
     def is_dirty(self) -> bool:
         """Check if project is dirty
@@ -403,7 +372,7 @@ class ResolvedProject:
         :rtype: bool
         """
 
-        return not self._repo(self.git_settings.recursive).validate_repo()
+        return not self._repo(self.git_settings.submodules).validate_repo()
 
     def is_valid(self, allow_missing_repo: bool = True) -> bool:
         """Validate status of project
@@ -446,14 +415,14 @@ class ResolvedProject:
         repo = ProjectRepo(self.full_path(), self.remote, self.ref)
 
         if local and repo.existing_local_branch(branch):
-            if self.fork:
-                # Modify repo to prefer fork
-                repo.default_ref = self.fork.ref
-                repo.remote = self.fork.remote
+            if self.upstream:
+                # Modify repo to prefer upstream
+                repo.default_ref = self.upstream.ref
+                repo.remote = self.upstream.remote
             repo.prune_branch_local(branch, force)
 
         if remote:
-            git_remote = self.remote if self.fork is None else self.fork.remote
+            git_remote = self.remote if self.upstream is None else self.upstream.remote
             if repo.existing_remote_branch(branch, git_remote):
                 repo.prune_branch_remote(branch, git_remote)
 
@@ -466,26 +435,29 @@ class ResolvedProject:
 
         self._print_output = not parallel
 
-        repo = self._repo(self.git_settings.recursive, parallel=parallel)
+        repo = self._repo(self.git_settings.submodules, parallel=parallel)
 
-        if self.fork is None:
-            if timestamp:
-                repo.reset_timestamp(timestamp, self.timestamp_author, self.ref)
-                self._pull_lfs(repo)
-                return
+        if self.upstream is None:
+            # TODO: Restore timestamp author
+            # if timestamp:
+            #     repo.reset_timestamp(timestamp, self.timestamp_author, self.ref)
+            #     self._pull_lfs(repo)
+            #     return
 
             repo.reset(depth=self.git_settings.depth)
             self._pull_lfs(repo)
             return
 
-        self._print(self.fork.status())
-        repo.configure_remotes(self.remote, self._url(), self.fork.remote, self.fork.url())
+        self._print(self.upstream.status())
+        repo.configure_remotes(self.remote, self._url(), self.upstream.remote, self.upstream.url())
 
-        self._print(fmt.fork_string(self.fork.name))
-        if timestamp:
-            repo.reset_timestamp(timestamp, self.timestamp_author, self.ref)
-            self._pull_lfs(repo)
-            return
+        self._print(fmt.upstream_string(self.upstream.name))
+
+        # TODO: Restore timestamp author
+        # if timestamp:
+        #     repo.reset_timestamp(timestamp, self.timestamp_author, self.ref)
+        #     self._pull_lfs(repo)
+        #     return
 
         repo.reset()
         self._pull_lfs(repo)
@@ -511,17 +483,17 @@ class ResolvedProject:
                       'PROJECT_REF': self.ref}
 
         # TODO: Add tests for presence of these variables in test scripts
-        if self._branch:
-            forall_env['PROJECT_BRANCH'] = self._branch
-        if self._tag:
-            forall_env['PROJECT_TAG'] = self._tag
-        if self._commit:
-            forall_env['PROJECT_COMMIT'] = self._commit
+        # if self.branch:
+        #     forall_env['PROJECT_BRANCH'] = self.branch
+        # if self.tag:
+        #     forall_env['PROJECT_TAG'] = self.tag
+        # if self.commit:
+        #     forall_env['PROJECT_COMMIT'] = self.commit
 
-        if self.fork:
-            forall_env['FORK_REMOTE'] = self.fork.remote
-            forall_env['FORK_NAME'] = self.fork.name
-            forall_env['FORK_REF'] = self.fork.ref
+        if self.upstream:
+            forall_env['UPSTREAM_REMOTE'] = self.upstream.remote
+            forall_env['UPSTREAM_NAME'] = self.upstream.name
+            forall_env['UPSTREAM_REF'] = self.upstream.ref
 
         for cmd in commands:
             self._run_forall_command(cmd, forall_env, ignore_errors)
@@ -545,8 +517,9 @@ class ResolvedProject:
         :param bool tracking: Whether to create a remote branch with tracking relationship
         """
 
-        remote = self.remote if self.fork is None else self.fork.remote
-        depth = self.git_settings.depth if self.fork is None else GitSettings.depth
+        remote = self.remote if self.upstream is None else self.upstream.remote
+        # TODO: Replace 0 with git default depth
+        depth = self.git_settings.depth if self.upstream is None else 0
         repo = ProjectRepo(self.full_path(), self.remote, self.ref)
         repo.start(remote, branch, depth, tracking)
 
@@ -606,17 +579,17 @@ class ResolvedProject:
         if self._print_output:
             print(val)
 
-    def _repo(self, recursive: bool, parallel: bool = False) -> ProjectRepo:
+    def _repo(self, submodules: bool, parallel: bool = False) -> ProjectRepo:
         """Return ProjectRepo or ProjectRepoRecursive instance
 
-        :param bool recursive: Whether to handle submodules
+        :param bool submodules: Whether to handle submodules
         :param bool parallel: Whether command is being run in parallel
 
         :return: Project repo instance
         :rtype: ProjectRepo
         """
 
-        if recursive:
+        if submodules:
             return ProjectRepoRecursive(self.full_path(), self.remote, self.ref, parallel=parallel)
         return ProjectRepo(self.full_path(), self.remote, self.ref, parallel=parallel)
 

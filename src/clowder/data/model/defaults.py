@@ -8,6 +8,10 @@
 from typing import Optional
 
 from clowder.git import GitProtocol
+from clowder.git.util import (
+    format_git_branch,
+    format_git_tag
+)
 
 from .git_settings import GitSettings
 
@@ -39,6 +43,22 @@ class Defaults:
         self.branch: Optional[str] = yaml.get("branch", None)
         self.tag: Optional[str] = yaml.get("tag", None)
         self.commit: Optional[str] = yaml.get("commit", None)
+
+    def get_formatted_ref(self) -> Optional[str]:
+        """Return formatted git ref
+
+        :return: Formatted git ref
+        :rtype: str
+        """
+
+        if self.branch is not None:
+            return format_git_branch(self.branch)
+        elif self.tag is not None:
+            return format_git_tag(self.tag)
+        elif self.commit is not None:
+            return self.commit
+        else:
+            return None
 
     def get_yaml(self) -> dict:
         """Return python object representation for saving yaml
