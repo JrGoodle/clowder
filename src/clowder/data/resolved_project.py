@@ -101,11 +101,18 @@ class ResolvedProject:
         has_group_defaults_source = has_group_defaults and group.defaults.source is not None
         self.source: Source = SOURCE_CONTROLLER.get_source(GITHUB)
         if has_source:
-            self.source = SOURCE_CONTROLLER.get_source(project.source.name)
+            if isinstance(project.source, str):
+                self.source: Source = SOURCE_CONTROLLER.get_source(project.source)
+            elif isinstance(project.source, dict):
+                self.source: Source = SOURCE_CONTROLLER.get_source(project.source)
+            else:
+                # TODO: ClowderError
+                raise Exception
+
         elif has_group_defaults_source:
-            self.source = SOURCE_CONTROLLER.get_source(group.defaults.source)
+            self.source: Source = SOURCE_CONTROLLER.get_source(group.defaults.source)
         elif has_defaults_source:
-            self.source = SOURCE_CONTROLLER.get_source(defaults.source)
+            self.source: Source = SOURCE_CONTROLLER.get_source(defaults.source)
         SOURCE_CONTROLLER.add_source(self.source)
 
         has_ref = project.get_formatted_ref() is not None

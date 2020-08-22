@@ -7,10 +7,12 @@
 
 from typing import Optional, Union
 
+from clowder.error import ClowderError, ClowderErrorType
 from clowder.git.util import (
     format_git_branch,
     format_git_tag
 )
+from clowder.logging import LOG_DEBUG
 
 from .source import Source
 
@@ -39,7 +41,16 @@ class Upstream:
         self.remote: Optional[str] = yaml.get('remote', None)
 
         source = yaml.get('source', None)
-        self.source: Optional[Source] = Source(source) if source is not None else None
+        if isinstance(source, str):
+            self.source: Optional[Source] = Source(source)
+        elif isinstance(source, dict):
+            # Use upstream instance id as source name
+            upstream_source_id = str(id(self))
+            self.source: Optional[Source] = Source(upstream_source_id, source)
+        else:
+            err = ClowderError(ClowderErrorType.CLOWDER_YAML_DUPLICATE_REMOTE_NAME, "Wrong source type")
+            LOG_DEBUG('Wrong source type', err)
+            raise err
 
     def get_formatted_ref(self) -> Optional[str]:
         """Return formatted git ref

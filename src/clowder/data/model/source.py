@@ -16,23 +16,23 @@ class Source:
     :ivar Optional[str] protocol: Git protocol
     """
 
-    def __init__(self, name: str, yaml: Optional[Dict[str, str]] = None):
+    def __init__(self, name: str, yaml: Union[str, Dict[str, str]] = None):
         """Source __init__
 
         :param str name: Source name
         :param Dict[str, str] yaml: Parsed YAML python object for source
         """
 
-        self.name = name
-
         if yaml is None:
-            self.url = None
-            self.protocol = None
+            self.name: str = name
+            self.url: Optional[str] = None
+            self.protocol: Optional[str] = None
             return
 
-        self.url = yaml['url']
+        self.name: str = name
+        self.url: Optional[str] = yaml['url']
         protocol = yaml.get('protocol', None)
-        self.protocol = protocol if protocol is not None else None
+        self.protocol: Optional[str] = protocol if protocol is not None else None
 
     def get_yaml(self) -> Union[dict, str]:
         """Return python object representation for saving yaml

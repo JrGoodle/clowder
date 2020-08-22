@@ -27,7 +27,7 @@ class ClowderBase:
 
         self.name = yaml["name"]
         self.defaults = Defaults(yaml["defaults"]) if "defaults" in yaml else None
-        self.sources = [Source(s) for s in yaml["sources"]] if "sources" in yaml else None
+        self.sources = [Source(name, source) for name, source in yaml["sources"].items()] if "sources" in yaml else None
         self.clowder = Clowder(yaml["clowder"])
 
     def get_yaml(self) -> dict:
