@@ -9,6 +9,7 @@ from typing import List, Optional, Union
 from pathlib import Path
 
 from clowder.error import ClowderError, ClowderErrorType
+from clowder.logging import LOG_DEBUG
 
 from .defaults import Defaults
 from .project import Project
@@ -40,17 +41,19 @@ class Group:
             self.groups: Optional[List[Group]] = yaml.get('groups', None)
             defaults = yaml.get("defaults", None)
             self.defaults: Optional[Defaults] = Defaults(defaults) if defaults is not None else None
-            self.projects = [Project(p) for p in yaml["projects"]]
-            self._has_projects_key = True
+            self.projects: List[Project] = [Project(p) for p in yaml["projects"]]
+            self._has_projects_key: bool = True
         elif isinstance(yaml, list):
-            self.path = None
-            self.groups = None
-            self.defaults = None
+            self.path: Optional[Path] = None
+            self.groups: Optional[List[Group]] = None
+            self.defaults: Optional[Defaults] = None
             self.projects: List[Project] = [Project(p) for p in yaml]
-            self._has_projects_key = False
+            self._has_projects_key: bool = False
         else:
             # TODO: Create new error type
-            raise ClowderError(ClowderErrorType.YAML_UNKNOWN, "Wrong instance type for group")
+            err = ClowderError(ClowderErrorType.YAML_UNKNOWN, "Wrong instance type for group")
+            LOG_DEBUG('Failed to initialize group', err)
+            raise err
 
     def get_yaml(self) -> Union[dict, list]:
         """Return python object representation for saving yaml

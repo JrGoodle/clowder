@@ -46,7 +46,9 @@ class ClowderController(object):
 
         try:
             if ENVIRONMENT.clowder_yaml is None:
-                raise ClowderError(ClowderErrorType.YAML_MISSING_FILE, fmt.error_missing_clowder_yaml())
+                err = ClowderError(ClowderErrorType.YAML_MISSING_FILE, fmt.error_missing_clowder_yaml())
+                LOG_DEBUG('Failed to initialize clowder controller', err)
+                raise err
             yaml = load_yaml_file(ENVIRONMENT.clowder_yaml, ENVIRONMENT.clowder_dir)
             validate_yaml_file(yaml, ENVIRONMENT.clowder_yaml)
 
@@ -186,7 +188,7 @@ class ClowderController(object):
         if not projects_exist:
             raise ClowderError(ClowderErrorType.INVALID_PROJECT_STATUS, fmt.error_clone_missing_projects())
 
-    def _get_all_upstream_names(self) -> Tuple[str, ...]:
+    def _get_upstream_names(self) -> Tuple[str, ...]:
         """Returns all upstream names for current clowder yaml file
 
         :return: All upstream names
@@ -201,7 +203,7 @@ class ClowderController(object):
             return ()
 
     @staticmethod
-    def _get_all_project_upstream_names(project_names, upstream_names) -> Tuple[str, ...]:
+    def _get_project_upstream_names(project_names, upstream_names) -> Tuple[str, ...]:
         """Returns all project names for current clowder yaml file
 
         :return: All project and upstream names
@@ -210,7 +212,7 @@ class ClowderController(object):
 
         return tuple(sorted(set(project_names + upstream_names)))
 
-    def _get_all_project_names(self) -> Tuple[str, ...]:
+    def _get_project_names(self) -> Tuple[str, ...]:
         """Returns all project names for current clowder yaml file
 
         :return: All project names
@@ -224,7 +226,7 @@ class ClowderController(object):
             LOG_DEBUG('Failed to get project names', err)
             return ()
 
-    def _get_all_project_paths(self) -> Tuple[str, ...]:
+    def _get_project_paths(self) -> Tuple[str, ...]:
         """Returns all project paths for current clowder yaml file
 
         :return: All project paths
@@ -238,7 +240,7 @@ class ClowderController(object):
             LOG_DEBUG('Failed to get project paths', err)
             return ()
 
-    def _get_all_project_groups(self, project_upstream_names, project_paths) -> Tuple[str, ...]:
+    def _get_project_groups(self, project_upstream_names, project_paths) -> Tuple[str, ...]:
         """Returns all project group names for current clowder yaml file
 
         :return: All project paths
@@ -253,7 +255,7 @@ class ClowderController(object):
             LOG_DEBUG('Failed to get group names', err)
             return ()
 
-    def _get_all_project_choices(self) -> Tuple[str, ...]:
+    def _get_project_choices(self) -> Tuple[str, ...]:
         """Returns all project choices current clowder yaml file
 
         :return: All project paths
@@ -267,7 +269,7 @@ class ClowderController(object):
             LOG_DEBUG('Failed to get project choices', err)
             return ()
 
-    def _get_all_project_choices_with_default(self) -> Tuple[str, ...]:
+    def _get_project_choices_with_default(self) -> Tuple[str, ...]:
         """Returns all project choices current clowder yaml file
 
         :return: All project paths
@@ -307,15 +309,15 @@ class ClowderController(object):
     def _update_properties(self) -> None:
         """Initialize all properties"""
 
-        self.project_names: Tuple[str, ...] = self._get_all_project_names()
-        self.upstream_names: Tuple[str, ...] = self._get_all_upstream_names()
-        self.project_upstream_names: Tuple[str, ...] = self._get_all_project_upstream_names(self.project_names,
-                                                                                            self.upstream_names)
-        self.project_paths: Tuple[str, ...] = self._get_all_project_paths()
-        self.project_groups: Tuple[str, ...] = self._get_all_project_groups(self.project_upstream_names,
-                                                                            self.project_paths)
-        self.project_choices: Tuple[str, ...] = self._get_all_project_choices()
-        self.project_choices_with_default: Tuple[str, ...] = self._get_all_project_choices_with_default()
+        self.project_names: Tuple[str, ...] = self._get_project_names()
+        self.upstream_names: Tuple[str, ...] = self._get_upstream_names()
+        self.project_upstream_names: Tuple[str, ...] = self._get_project_upstream_names(self.project_names,
+                                                                                        self.upstream_names)
+        self.project_paths: Tuple[str, ...] = self._get_project_paths()
+        self.project_groups: Tuple[str, ...] = self._get_project_groups(self.project_upstream_names,
+                                                                        self.project_paths)
+        self.project_choices: Tuple[str, ...] = self._get_project_choices()
+        self.project_choices_with_default: Tuple[str, ...] = self._get_project_choices_with_default()
 
         # Now that all the data is loaded, check that no projects share paths
         self._validate_project_paths()

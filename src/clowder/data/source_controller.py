@@ -7,6 +7,7 @@
 
 from typing import Dict, Optional, Set, Union
 
+from clowder.logging import LOG_DEBUG
 from clowder.error import ClowderError, ClowderErrorType
 
 from .model import Source
@@ -26,7 +27,7 @@ class SourceController(object):
         """SourceController __init__"""
 
         self.protocol_override = None
-        self._source_names: Set[str] = set()
+        self._source_names: Set[str] = {GITHUB, GITLAB, BITBUCKET}
 
         self._sources: Dict[str, Source] = {
             GITHUB: Source(GITHUB, GITHUB_YAML),
@@ -47,6 +48,7 @@ class SourceController(object):
             self._source_names.add(source)
             return
 
+        self._source_names.add(source.name)
         self._sources[source.name] = source
 
     def get_source(self, name: str) -> Source:
@@ -59,14 +61,15 @@ class SourceController(object):
 
         if name not in self._sources:
             # TODO: Rename error to SOURCE_NOT_DEFINED
-            raise ClowderError(ClowderErrorType.CLOWDER_YAML_SOURCE_NOT_FOUND, "No source defined")
+            err = ClowderError(ClowderErrorType.CLOWDER_YAML_SOURCE_NOT_FOUND, "No source defined")
+            LOG_DEBUG('Failed to get source', err)
+            raise err
 
         return self._sources[name]
 
     def get_default_protocol(self) -> str:
         """Returns Source by name
 
-        :param str name: Source name to return
         :return: Source with supplied name
         :rtype: Source
         """
@@ -86,7 +89,9 @@ class SourceController(object):
             # TODO: Update error messages to be more generic so missing source applies to defaults, project, upstream
             # message = fmt.error_source_not_found(self.defaults.source, ENVIRONMENT.clowder_yaml)
             message = "SOURCE NOT FOUND"
-            raise ClowderError(ClowderErrorType.CLOWDER_YAML_SOURCE_NOT_FOUND, message)
+            err = ClowderError(ClowderErrorType.CLOWDER_YAML_SOURCE_NOT_FOUND, message)
+            LOG_DEBUG('Failed to validate sources', err)
+            raise err
 
 
 SOURCE_CONTROLLER: SourceController = SourceController()

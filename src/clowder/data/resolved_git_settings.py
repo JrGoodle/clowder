@@ -5,6 +5,7 @@
 
 """
 
+import copy
 from typing import Dict, Optional
 
 import clowder.util.formatting as fmt
@@ -38,14 +39,14 @@ class ResolvedGitSettings:
         """
 
         if git_settings.submodules is not None:
-            self.submodules = git_settings.submodules
+            self.submodules = copy.deepcopy(git_settings.submodules)
         if git_settings.lfs is not None:
-            self.lfs = git_settings.lfs
+            self.lfs = copy.deepcopy(git_settings.lfs)
         if git_settings.depth is not None:
-            self.depth = git_settings.depth
+            self.depth = copy.deepcopy(git_settings.depth)
         if git_settings.config is not None:
             if self.config is None:
-                self.config = git_settings.config
+                self.config = copy.deepcopy(git_settings.config)
             else:
                 for (k, v) in git_settings.config:
                     self.config[k] = v

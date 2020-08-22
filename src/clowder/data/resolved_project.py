@@ -135,7 +135,9 @@ class ResolvedProject:
             self.upstream: Optional[ResolvedUpstream] = ResolvedUpstream(self.path, project.upstream, defaults, group)
             if self.remote == self.upstream.remote:
                 message = fmt.error_remote_dup(self.upstream.name,  self.name, self.remote, ENVIRONMENT.clowder_yaml)
-                raise ClowderError(ClowderErrorType.CLOWDER_YAML_DUPLICATE_REMOTE_NAME, message)
+                err = ClowderError(ClowderErrorType.CLOWDER_YAML_DUPLICATE_REMOTE_NAME, message)
+                LOG_DEBUG('Duplicate remote name found in clowder.yml', err)
+                raise err
 
         self.groups: Set[str] = {"all", self.name, str(self.path)}
         if has_group and group.groups is not None:
