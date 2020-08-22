@@ -51,6 +51,6 @@ class ClowderBase:
         if self.defaults is not None:
             yaml['defaults'] = self.defaults.get_yaml()
         if self.sources is not None:
-            yaml['sources'] = {s.name: s.get_yaml() for s in self.sources}
+            yaml['sources'] = {s.name.get_yaml(): s.get_yaml() for s in self.sources}
 
         return yaml

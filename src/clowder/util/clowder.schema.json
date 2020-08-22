@@ -499,64 +499,6 @@
         "$ref": "#/definitions/forbiddenGitRefCombinations"
       }
     },
-    "clowderGroupDefaults": {
-      "description": "Named projects section",
-      "additionalProperties": false,
-      "minProperties": 1,
-      "properties": {
-        "remote": {
-          "description": "The name specified here is used as the remote name in the project .git/config, and is therefore automatically available to commands like git fetch, git remote, git pull and git push.",
-          "allOf": [
-            {
-              "$ref": "#/definitions/gitRemote"
-            }
-          ]
-        },
-        "branch": {
-          "description": "Name of the git branch to track for this project. If not supplied the ref specified in the defaults is used if applicable, else the default branch 'master' is used.",
-          "allOf": [
-            {
-              "$ref": "#/definitions/gitBranch"
-            }
-          ]
-        },
-        "tag": {
-          "description": "Name of the git tag to track for projects and upstreams.",
-          "allOf": [
-            {
-              "$ref": "#/definitions/gitTag"
-            }
-          ]
-        },
-        "commit": {
-          "description": "Git commit SHA-1 to track for this projects and upstreams. Must be full 40 character SHA-1.",
-          "allOf": [
-            {
-              "$ref": "#/definitions/gitCommit"
-            }
-          ]
-        },
-        "source": {
-          "description": "Project section git hosting provider source name",
-          "oneOf": [
-            {
-              "$ref": "#/definitions/sourceName"
-            },
-            {
-              "$ref": "#/definitions/source"
-            }
-          ]
-        },
-        "git": {
-          "description": "Project git settings",
-          "allOf": [
-            {
-              "$ref": "#/definitions/gitSettings"
-            }
-          ]
-        }
-      }
-    },
     "clowderGroup": {
       "description": "Project group",
       "oneOf": [
@@ -590,7 +532,7 @@
               "description": "Group defaults",
               "allOf": [
                 {
-                  "$ref": "#/definitions/clowderGroupDefaults"
+                  "$ref": "#/definitions/defaults"
                 }
               ]
             },

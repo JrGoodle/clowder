@@ -55,6 +55,7 @@ class ResolvedProject:
     :ivar Source source: Project source
     :ivar ResolvedGitSettings git_settings: Custom git settings
     :ivar Optional[ResolvedUpstream] upstream: Project's associated upstream
+    :ivar Optional[str] default_protocol: Protocol defined in defaults
     :ivar str ref: Project git ref
     """
 
@@ -84,6 +85,14 @@ class ResolvedProject:
         else:
             last_path_component = Path(self.name).name
             self.path = self.path / last_path_component
+
+        has_defaults_protocol = has_defaults and defaults.protocol is not None
+        has_group_defaults_protocol = has_group_defaults and group.defaults.protocol is not None
+        self.default_protocol: Optional[str] = None
+        if has_group_defaults_protocol:
+            self.default_protocol: Optional[str] = group.defaults.protocol
+        elif has_defaults_protocol:
+            self.default_protocol: Optional[str] = defaults.protocol
 
         has_remote = project.remote is not None
         has_defaults_remote = has_defaults and defaults.remote is not None
@@ -610,6 +619,8 @@ class ResolvedProject:
 
         if self.source.protocol is not None:
             protocol = self.source.protocol
+        elif self.default_protocol is not None:
+            protocol = self.default_protocol
         else:
             protocol = SOURCE_CONTROLLER.get_default_protocol()
 

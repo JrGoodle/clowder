@@ -108,4 +108,9 @@ class ResolvedUpstream:
     def url(self) -> str:
         """Return project url"""
 
-        return git_url(self.source.protocol, self.source.url, self.name)
+        if self.source.protocol is not None:
+            protocol = self.source.protocol
+        else:
+            protocol = SOURCE_CONTROLLER.get_default_protocol()
+
+        return git_url(protocol, self.source.url, self.name)

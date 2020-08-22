@@ -24,13 +24,14 @@ BITBUCKET_YAML: Dict[str, str] = {'url': 'bitbucket.org'}
 class SourceController(object):
     """Class encapsulating project information from clowder yaml for controlling clowder
 
-    :ivar bool protocol_override: The protocol to override sources without an explicitly specified protcol
+    :ivar Optional[str] protocol_override: The protocol to override sources without an explicitly specified protcol
     """
 
     def __init__(self):
         """SourceController __init__"""
 
-        self.protocol_override = None
+        self._has_been_validated: bool = False
+        self.protocol_override: Optional[str] = None
         self._source_names: Set[SourceName] = {GITHUB, GITLAB, BITBUCKET}
 
         self._sources: Dict[SourceName, Source] = {
@@ -44,6 +45,13 @@ class SourceController(object):
 
         :param Optional[Source] source: Source to add
         """
+
+        if self._has_been_validated:
+            # TODO: Update error type
+            message = "Called add_source() but SOURCE_CONTROLLER has already been validated"
+            err = ClowderError(ClowderErrorType.CLOWDER_YAML_SOURCE_NOT_FOUND, message)
+            LOG_DEBUG(message, err)
+            raise err
 
         if source is None:
             return
@@ -66,6 +74,13 @@ class SourceController(object):
         :return: Source with supplied name
         :rtype: Source
         """
+
+        if not self._has_been_validated:
+            # TODO: Update error type
+            message = "Called get_source() but SOURCE_CONTROLLER has not been validated"
+            err = ClowderError(ClowderErrorType.CLOWDER_YAML_SOURCE_NOT_FOUND, message)
+            LOG_DEBUG(message, err)
+            raise err
 
         if isinstance(source, SourceName):
             name = source
@@ -92,6 +107,13 @@ class SourceController(object):
         :rtype: Source
         """
 
+        if not self._has_been_validated:
+            # TODO: Update error type
+            message = "Called get_default_protocol() but SOURCE_CONTROLLER has not been validated"
+            err = ClowderError(ClowderErrorType.CLOWDER_YAML_SOURCE_NOT_FOUND, message)
+            LOG_DEBUG(message, err)
+            raise err
+
         if self.protocol_override is not None:
             return self.protocol_override
         else:
@@ -103,6 +125,7 @@ class SourceController(object):
         :raises
         """
 
+        self._has_been_validated = True
         if not any([s.name == name for name, s in self._sources.items()]):
             # TODO: Update error messages to be more generic so missing source applies to defaults, project, upstream
             # message = fmt.error_source_not_found(self.defaults.source, ENVIRONMENT.clowder_yaml)
