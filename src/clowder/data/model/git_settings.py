@@ -26,7 +26,7 @@ class GitSettings:
         :param dict yaml: Parsed YAML python object for GitSettings
         """
 
-        self.submodules: Optional[GitSubmodules] = yaml.get('recursive', None)
+        self.submodules: Optional[GitSubmodules] = yaml.get('submodules', None)
         self.lfs: Optional[bool] = yaml.get('lfs', None)
         self.depth: Optional[int] = yaml.get('depth', None)
         self.config: Optional[GitConfig] = yaml.get('config', None)

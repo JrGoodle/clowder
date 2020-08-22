@@ -77,10 +77,10 @@ def clean(args) -> None:
         clean_args += 'X'
     if args.x:
         clean_args += 'x'
-    _clean_impl(projects, clean_args=clean_args, recursive=args.recursive)
+    _clean_impl(projects, clean_args=clean_args, submodules=args.recursive)
 
 
-def _clean_impl(projects: Tuple[ResolvedProject, ...], clean_args: str = '', recursive: bool = False) -> None:
+def _clean_impl(projects: Tuple[ResolvedProject, ...], clean_args: str = '', submodules: bool = False) -> None:
     """Discard changes
 
     :param Tuple[Project, ...] projects: Projects to clean
@@ -89,9 +89,9 @@ def _clean_impl(projects: Tuple[ResolvedProject, ...], clean_args: str = '', rec
         - ``f`` Delete directories with .git sub directory or file
         - ``X`` Remove only files ignored by git
         - ``x`` Remove all untracked files
-    :param bool recursive: Clean submodules recursively
+    :param bool submodules: Clean submodules recursively
     """
 
     for project in projects:
         print(project.status())
-        project.clean(args=clean_args, recursive=recursive)
+        project.clean(args=clean_args, submodules=submodules)

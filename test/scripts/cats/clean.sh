@@ -204,6 +204,7 @@ test_clean_abort_rebase() {
     pushd mu || exit 1
         touch newfile
         echo 'something' > newfile
+        echo "TEST: Create branch"
         git checkout -b something
         git add newfile || exit 1
         git commit -m 'Add newfile with something' || exit 1
@@ -387,6 +388,7 @@ test_clean_a() {
         touch newfile
         mkdir something
         touch something/something
+        echo "TEST: Create branch"
         git checkout -b something || exit 1
         git add newfile something || exit 1
         test_git_dirty
@@ -417,6 +419,8 @@ test_clean_a() {
         test_no_directory_exists 'something'
         test_no_file_exists 'something/something'
         test_no_file_exists 'newfile'
+        git checkout master || exit 1
+        echo "TEST: Delete branch"
         git branch -D something || exit 1
         popd || exit 1
     done
@@ -483,6 +487,7 @@ test_clean_submodules_dirty() {
         touch newfile
         mkdir something
         touch something/something
+        echo "TEST: Create branch"
         git checkout -b something || exit 1
         git add newfile something || exit 1
         test_git_dirty
@@ -503,6 +508,8 @@ test_clean_submodules_dirty() {
         test_no_directory_exists 'something'
         test_no_file_exists 'something/something'
         test_no_file_exists 'newfile'
+        git checkout master || exit 1
+        echo "TEST: Delete branch"
         git branch -D something || exit 1
         popd || exit 1
     done
