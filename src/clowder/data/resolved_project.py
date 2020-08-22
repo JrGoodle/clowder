@@ -58,7 +58,7 @@ class ResolvedProject:
     :ivar str ref: Project git ref
     """
 
-    def __init__(self, project: Project, defaults: Optional[Defaults], group: Optional[Group]):
+    def __init__(self, project: Project, defaults: Optional[Defaults] = None, group: Optional[Group] = None):
         """Project __init__
 
         :param Project project: Project model instance

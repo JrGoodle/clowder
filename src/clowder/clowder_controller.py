@@ -54,6 +54,7 @@ class ClowderController(object):
 
             self.name = self._clowder.name
 
+            # Register all sources as we come across them
             defaults = self._clowder.defaults
             if defaults is not None and defaults.source is not None:
                 SOURCE_CONTROLLER.add_source(defaults.source)
@@ -63,6 +64,7 @@ class ClowderController(object):
                 for s in sources:
                     SOURCE_CONTROLLER.add_source(s)
 
+            # Load from array
             projects = self._clowder.clowder.projects
             if projects is not None:
                 for project in projects:
@@ -72,10 +74,12 @@ class ClowderController(object):
                         SOURCE_CONTROLLER.add_source(upstream.source)
                 SOURCE_CONTROLLER.validate_sources()
 
-                self.projects = tuple(sorted(projects, key=lambda p: p.name))
+                resolved_projects = [ResolvedProject(p, defaults=defaults) for p in projects]
+                self.projects = tuple(sorted(resolved_projects, key=lambda p: p.name))
                 self._update_properties()
                 return
 
+            # Load from dict
             groups = self._clowder.clowder.groups
             projects = [p for g in groups for p in g.projects]
             for project in projects:
@@ -83,13 +87,14 @@ class ClowderController(object):
                 upstream = project.upstream
                 if upstream is not None:
                     SOURCE_CONTROLLER.add_source(upstream.source)
+
             # Validate all source names have a defined source with url
             SOURCE_CONTROLLER.validate_sources()
 
-            resolved_projects = [ResolvedProject(p, defaults, g) for g in groups for p in g.projects]
+            resolved_projects = [ResolvedProject(p, defaults=defaults, group=g)
+                                 for g in groups for p in g.projects]
             self.projects = tuple(sorted(resolved_projects, key=lambda p: p.name))
             self._update_properties()
-
         except ClowderError as err:
             LOG_DEBUG('Failed to init clowder controller', err)
             self.error = err
@@ -312,6 +317,7 @@ class ClowderController(object):
         self.project_choices: Tuple[str, ...] = self._get_all_project_choices()
         self.project_choices_with_default: Tuple[str, ...] = self._get_all_project_choices_with_default()
 
+        # Now that all the data is loaded, check that no projects share paths
         self._validate_project_paths()
 
 
