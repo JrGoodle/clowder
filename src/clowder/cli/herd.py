@@ -11,6 +11,7 @@ import os
 import clowder.util.formatting as fmt
 from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.config import Config
+from clowder.data.source_controller import SOURCE_CONTROLLER
 from clowder.data.util import (
     filter_projects,
     validate_project_statuses
@@ -78,8 +79,7 @@ def herd(args) -> None:
 
     protocol_config = config.current_clowder_config.protocol
     protocol = protocol_config if protocol_config is not None else protocol
-    for s in CLOWDER_CONTROLLER.sources:
-        s.update_protocol(protocol)
+    SOURCE_CONTROLLER.protocol_override = protocol
 
     jobs = None
     if args.jobs:

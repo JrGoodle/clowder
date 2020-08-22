@@ -12,7 +12,7 @@ defaults:
     config:
       alias.cat: '!echo "😸"'
 
-projects:
+clowder:
   - name: jrgoodle/mu
     branch: groom
     git:

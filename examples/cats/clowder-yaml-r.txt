@@ -2,7 +2,7 @@
 defaults:
   protocol: https
 name: cats-default-test
-projects:
+clowder:
 - commit: 43347045441d05c2dee745acf2a96f90643b8210
   groups:
   - cats

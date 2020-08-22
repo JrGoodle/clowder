@@ -7,9 +7,8 @@
 
 from typing import Dict, Optional, Set
 
-# import clowder.util.formatting as fmt
-# from clowder.environment import ENVIRONMENT
 from clowder.error import ClowderError, ClowderErrorType
+from clowder.git import GitProtocol
 
 from .model import Source
 
@@ -27,6 +26,7 @@ class SourceController(object):
     def __init__(self):
         """SourceController __init__"""
 
+        self.protocol_override = None
         self._source_names: Set[str] = set()
 
         self._sources: Dict[str, Source] = {
@@ -64,6 +64,19 @@ class SourceController(object):
             raise ClowderError(ClowderErrorType.CLOWDER_YAML_SOURCE_NOT_FOUND, "No source defined")
 
         return self._sources[name]
+
+    def get_default_protocol(self) -> GitProtocol:
+        """Returns Source by name
+
+        :param str name: Source name to return
+        :return: Source with supplied name
+        :rtype: Source
+        """
+
+        if self.protocol_override is not None:
+            return self.protocol_override
+        else:
+            return GitProtocol('ssh')
 
     def validate_sources(self) -> None:
         """Validate sources: check for unknown names

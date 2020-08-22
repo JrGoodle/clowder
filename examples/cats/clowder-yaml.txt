@@ -2,7 +2,7 @@
 defaults:
   protocol: https
 name: cats-default-test
-projects:
+clowder:
 - branch: purr
   groups:
   - cats
