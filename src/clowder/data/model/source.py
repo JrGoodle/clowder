@@ -43,7 +43,7 @@ class Source:
         :rtype: Union[dict, str]
         """
 
-        if self.is_reference():
+        if self._is_reference():
             return self.name
 
         source = {'url': self.url}
@@ -52,7 +52,7 @@ class Source:
 
         return source
 
-    def is_reference(self) -> bool:
+    def _is_reference(self) -> bool:
         """
 
         :return: YAML python object

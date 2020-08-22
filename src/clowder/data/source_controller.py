@@ -44,7 +44,7 @@ class SourceController(object):
         if source is None:
             return
 
-        if source.is_reference():
+        if isinstance(source, str):
             self._source_names.add(source)
             return
 
