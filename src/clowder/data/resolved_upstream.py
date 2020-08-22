@@ -109,4 +109,4 @@ class ResolvedUpstream:
     def url(self) -> str:
         """Return project url"""
 
-        return git_url(self.source.protocol.value, self.source.url, self.name)
+        return git_url(self.source.protocol, self.source.url, self.name)

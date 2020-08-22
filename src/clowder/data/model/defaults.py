@@ -7,7 +7,6 @@
 
 from typing import Optional
 
-from clowder.git import GitProtocol
 from clowder.git.util import (
     format_git_branch,
     format_git_tag
@@ -20,7 +19,7 @@ class Defaults:
     """clowder yaml Defaults model class
 
     :ivar Optional[str] source: Default source name
-    :ivar Optional[GitProtocol] protocol: Default git protocol
+    :ivar Optional[str] protocol: Default git protocol
     :ivar Optional[str] remote: Default remote name
     :ivar Optional[GitSettings] git_settings: Custom git settings
     :ivar Optional[str] branch: Default git branch
@@ -35,7 +34,7 @@ class Defaults:
         """
 
         protocol = yaml.get("protocol", None)
-        self.protocol: Optional[GitProtocol] = GitProtocol(protocol) if protocol is not None else None
+        self.protocol: Optional[str] = protocol if protocol is not None else None
         self.source: Optional[str] = yaml.get("source", None)
         self.remote: Optional[str] = yaml.get("remote", None)
         git = yaml.get("git", None)

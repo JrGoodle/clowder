@@ -7,15 +7,13 @@
 
 from typing import Dict, Optional, Union
 
-from clowder.git import GitProtocol
-
 
 class Source:
     """clowder yaml Source model class
 
     :ivar str name: Source name
     :ivar Optional[str] url: Source url
-    :ivar Optional[GitProtocol] protocol: Git protocol
+    :ivar Optional[str] protocol: Git protocol
     """
 
     def __init__(self, name: str, yaml: Optional[Dict[str, str]] = None):
@@ -34,7 +32,7 @@ class Source:
 
         self.url = yaml['url']
         protocol = yaml.get('protocol', None)
-        self.protocol = GitProtocol(protocol) if protocol is not None else None
+        self.protocol = protocol if protocol is not None else None
 
     def get_yaml(self) -> Union[dict, str]:
         """Return python object representation for saving yaml

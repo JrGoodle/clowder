@@ -612,4 +612,4 @@ class ResolvedProject:
         if self.source.protocol is not None:
             protocol = self.source.protocol
 
-        return git_url(protocol.value, self.source.url, self.name)
+        return git_url(protocol, self.source.url, self.name)

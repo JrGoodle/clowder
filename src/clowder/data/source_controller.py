@@ -8,7 +8,6 @@
 from typing import Dict, Optional, Set, Union
 
 from clowder.error import ClowderError, ClowderErrorType
-from clowder.git import GitProtocol
 
 from .model import Source
 
@@ -64,7 +63,7 @@ class SourceController(object):
 
         return self._sources[name]
 
-    def get_default_protocol(self) -> GitProtocol:
+    def get_default_protocol(self) -> str:
         """Returns Source by name
 
         :param str name: Source name to return
@@ -75,7 +74,7 @@ class SourceController(object):
         if self.protocol_override is not None:
             return self.protocol_override
         else:
-            return GitProtocol('ssh')
+            return 'ssh'
 
     def validate_sources(self) -> None:
         """Validate sources: check for unknown names
