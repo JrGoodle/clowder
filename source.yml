@@ -1,7 +1,0 @@
-sources: { string: source}
-source: string | source
-source: string
-
-source:
-  url: string # REQUIRED
-  protocol: enum

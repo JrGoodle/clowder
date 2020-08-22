@@ -23,6 +23,7 @@ from clowder.util.yaml import load_yaml_file, validate_yaml_file
 class ClowderController(object):
     """Class encapsulating project information from clowder yaml for controlling clowder
 
+    :ivar str Optional[name]: Clowder name
     :ivar Tuple[ResolvedProject, ...] projects: List of all ResolvedProjects
     :ivar Tuple[str, ...] project_names: All possible project names
     :ivar Tuple[str, ...] upstream_names: All possible upstream names
@@ -53,8 +54,6 @@ class ClowderController(object):
             validate_yaml_file(yaml, ENVIRONMENT.clowder_yaml)
 
             self._clowder = ClowderBase(yaml)
-
-            self.name = self._clowder.name
 
             # Register all sources as we come across them
             defaults = self._clowder.defaults
@@ -286,6 +285,7 @@ class ClowderController(object):
     def _initialize_properties(self) -> None:
         """Initialize all properties"""
 
+        self.name: Optional[str] = None
         self.projects: Tuple[ResolvedProject, ...] = ()
         self.project_names: Tuple[str, ...] = ()
         self.upstream_names: Tuple[str, ...] = ()
@@ -307,6 +307,8 @@ class ClowderController(object):
 
     def _update_properties(self) -> None:
         """Initialize all properties"""
+
+        self.name: Optional[str] = self._clowder.name
 
         self.project_names: Tuple[str, ...] = self._get_project_names()
         self.upstream_names: Tuple[str, ...] = self._get_upstream_names()
