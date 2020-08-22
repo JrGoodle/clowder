@@ -610,6 +610,6 @@ class ResolvedProject:
         protocol = SOURCE_CONTROLLER.get_default_protocol()
 
         if self.source.protocol is not None:
-            protocol = self.source.protocol.value
+            protocol = self.source.protocol
 
-        return git_url(protocol, self.source.url, self.name)
+        return git_url(protocol.value, self.source.url, self.name)
