@@ -26,7 +26,7 @@ from clowder.util.execute import execute_forall_command
 from .resolved_git_settings import ResolvedGitSettings
 from .resolved_upstream import ResolvedUpstream
 from .source_controller import SOURCE_CONTROLLER, GITHUB
-from .model import Defaults, Project, Source, Group
+from .model import Defaults, Project, Source, Group, SourceName
 
 
 def project_repo_exists(func):
@@ -101,19 +101,11 @@ class ResolvedProject:
         has_group_defaults_source = has_group_defaults and group.defaults.source is not None
         self.source: Source = SOURCE_CONTROLLER.get_source(GITHUB)
         if has_source:
-            if isinstance(project.source, str):
-                self.source: Source = SOURCE_CONTROLLER.get_source(project.source)
-            elif isinstance(project.source, dict):
-                self.source: Source = SOURCE_CONTROLLER.get_source(project.source)
-            else:
-                # TODO: ClowderError
-                raise Exception
-
+            self.source: Source = SOURCE_CONTROLLER.get_source(project.source)
         elif has_group_defaults_source:
             self.source: Source = SOURCE_CONTROLLER.get_source(group.defaults.source)
         elif has_defaults_source:
             self.source: Source = SOURCE_CONTROLLER.get_source(defaults.source)
-        SOURCE_CONTROLLER.add_source(self.source)
 
         has_ref = project.get_formatted_ref() is not None
         has_defaults_ref = has_defaults and defaults.get_formatted_ref() is not None

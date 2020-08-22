@@ -15,13 +15,14 @@ from clowder.git.util import (
 from clowder.logging import LOG_DEBUG
 
 from .source import Source
+from .source_name import SourceName
 
 
 class Upstream:
     """clowder yaml Upstream model class
 
     :ivar str name: Upstream name
-    :ivar Optional[Source] source: Upstream source
+    :ivar Optional[Union[Source, SourceName]] source: Upstream source
     :ivar Optional[str] remote: Upstream remote name
     :ivar str ref: Upstream git ref
 
@@ -40,17 +41,19 @@ class Upstream:
         self.commit: Optional[str] = yaml.get("commit", None)
         self.remote: Optional[str] = yaml.get('remote', None)
 
+        self.source: Optional[Union[Source, SourceName]] = None
         source = yaml.get('source', None)
-        if isinstance(source, str):
-            self.source: Optional[Source] = Source(source)
-        elif isinstance(source, dict):
-            # Use upstream instance id as source name
-            upstream_source_id = str(id(self))
-            self.source: Optional[Source] = Source(upstream_source_id, source)
-        else:
-            err = ClowderError(ClowderErrorType.CLOWDER_YAML_DUPLICATE_REMOTE_NAME, "Wrong source type")
-            LOG_DEBUG('Wrong source type', err)
-            raise err
+        if source is not None:
+            if isinstance(source, str):
+                self.source: Optional[Union[Source, SourceName]] = SourceName(source)
+            elif isinstance(source, dict):
+                # Use upstream instance id as source name
+                name = SourceName(str(id(self)))
+                self.source: Optional[Union[Source, SourceName]] = Source(name, source)
+            else:
+                err = ClowderError(ClowderErrorType.CLOWDER_YAML_DUPLICATE_REMOTE_NAME, "Wrong source type")
+                LOG_DEBUG('Wrong source type', err)
+                raise err
 
     def get_formatted_ref(self) -> Optional[str]:
         """Return formatted git ref

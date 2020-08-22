@@ -18,6 +18,7 @@ from clowder.logging import LOG_DEBUG
 from .upstream import Upstream
 from .git_settings import GitSettings
 from .source import Source
+from .source_name import SourceName
 
 
 class Project:
@@ -27,7 +28,7 @@ class Project:
     :ivar Optional[Path] path: Project relative path
     :ivar Optional[List[str]] groups: Groups project belongs to
     :ivar Optional[str] remote: Project remote name
-    :ivar Optional[Source] source: Project source
+    :ivar Optional[Union[Source, SourceName]] source: Project source
     :ivar Optional[GitSettings] git_settings: Custom git settings
     :ivar Optional[Upstream] upstream: Project's associated Upstream
     """
@@ -48,15 +49,15 @@ class Project:
         path = yaml.get('path', None)
         self.path: Optional[Path] = Path(path) if path is not None else None
 
-        self.source: Optional[Source] = None
+        self.source: Optional[Union[Source, SourceName]] = None
         source = yaml.get('source', None)
         if source is not None:
             if isinstance(source, str):
-                self.source: Optional[Source] = Source(source)
+                self.source: Optional[Union[Source, SourceName]] = SourceName(source)
             elif isinstance(source, dict):
                 # Use project instance id as source name
-                project_source_id = str(id(self))
-                self.source: Optional[Source] = Source(project_source_id, source)
+                name = SourceName(str(id(self)))
+                self.source: Optional[Union[Source, SourceName]] = Source(name, source)
             else:
                 err = ClowderError(ClowderErrorType.CLOWDER_YAML_DUPLICATE_REMOTE_NAME, "Wrong source type")
                 LOG_DEBUG('Wrong source type', err)

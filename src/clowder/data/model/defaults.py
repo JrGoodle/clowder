@@ -13,12 +13,13 @@ from clowder.git.util import (
 )
 
 from .git_settings import GitSettings
+from .source_name import SourceName
 
 
 class Defaults:
     """clowder yaml Defaults model class
 
-    :ivar Optional[str] source: Default source name
+    :ivar Optional[SourceName] source: Default source name
     :ivar Optional[str] protocol: Default git protocol
     :ivar Optional[str] remote: Default remote name
     :ivar Optional[GitSettings] git_settings: Custom git settings
@@ -35,7 +36,8 @@ class Defaults:
 
         protocol = yaml.get("protocol", None)
         self.protocol: Optional[str] = protocol if protocol is not None else None
-        self.source: Optional[str] = yaml.get("source", None)
+        source = yaml.get("source", None)
+        self.source: Optional[SourceName] = SourceName(source) if source is not None else None
         self.remote: Optional[str] = yaml.get("remote", None)
         git = yaml.get("git", None)
         self.git_settings = GitSettings(git) if git is not None else None

@@ -71,9 +71,9 @@ class ClowderController(object):
             if projects is not None:
                 for project in projects:
                     SOURCE_CONTROLLER.add_source(project.source)
-                    upstream = project.upstream
-                    if upstream is not None:
-                        SOURCE_CONTROLLER.add_source(upstream.source)
+                    if project.upstream is not None:
+                        SOURCE_CONTROLLER.add_source(project.upstream.source)
+                # Validate all source names have a defined source with url
                 SOURCE_CONTROLLER.validate_sources()
 
                 resolved_projects = [ResolvedProject(p, defaults=defaults) for p in projects]
@@ -89,7 +89,6 @@ class ClowderController(object):
                 upstream = project.upstream
                 if upstream is not None:
                     SOURCE_CONTROLLER.add_source(upstream.source)
-
             # Validate all source names have a defined source with url
             SOURCE_CONTROLLER.validate_sources()
 

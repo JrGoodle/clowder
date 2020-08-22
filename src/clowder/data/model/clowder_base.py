@@ -5,9 +5,12 @@
 
 """
 
+from typing import List, Optional
+
 from .clowder import Clowder
 from .defaults import Defaults
 from .source import Source
+from .source_name import SourceName
 
 
 class ClowderBase:
@@ -25,10 +28,13 @@ class ClowderBase:
         :param dict yaml: Parsed yaml dict
         """
 
-        self.name = yaml["name"]
-        self.defaults = Defaults(yaml["defaults"]) if "defaults" in yaml else None
-        self.sources = [Source(name, source) for name, source in yaml["sources"].items()] if "sources" in yaml else None
-        self.clowder = Clowder(yaml["clowder"])
+        self.name: str = yaml["name"]
+        self.defaults: Optional[Defaults] = Defaults(yaml["defaults"]) if "defaults" in yaml else None
+        self.sources: Optional[List[Source]] = None
+        if "sources" in yaml:
+            self.sources: Optional[List[Source]] = [Source(SourceName(name), source)
+                                                    for name, source in yaml["sources"].items()]
+        self.clowder: Clowder = Clowder(yaml["clowder"])
 
     def get_yaml(self) -> dict:
         """Return python object representation for saving yaml
@@ -45,6 +51,6 @@ class ClowderBase:
         if self.defaults is not None:
             yaml['defaults'] = self.defaults.get_yaml()
         if self.sources is not None:
-            yaml['source'] = self.sources = [s.get_yaml() for s in self.sources]
+            yaml['sources'] = {s.name: s.get_yaml() for s in self.sources}
 
         return yaml

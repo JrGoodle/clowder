@@ -11,31 +11,35 @@ from clowder.logging import LOG_DEBUG
 from clowder.error import ClowderError, ClowderErrorType
 
 from .model import Source
+from .model import SourceName
 
-GITHUB = "github"
-GITLAB = "gitlab"
-BITBUCKET = "bitbucket"
+GITHUB: SourceName = SourceName("github")
+GITLAB: SourceName = SourceName("gitlab")
+BITBUCKET: SourceName = SourceName("bitbucket")
 GITHUB_YAML: Dict[str, str] = {'url': 'github.com'}
 GITLAB_YAML: Dict[str, str] = {'url': 'gitlab.com'}
 BITBUCKET_YAML: Dict[str, str] = {'url': 'bitbucket.org'}
 
 
 class SourceController(object):
-    """Class encapsulating project information from clowder yaml for controlling clowder"""
+    """Class encapsulating project information from clowder yaml for controlling clowder
+
+    :ivar bool protocol_override: The protocol to override sources without an explicitly specified protcol
+    """
 
     def __init__(self):
         """SourceController __init__"""
 
         self.protocol_override = None
-        self._source_names: Set[str] = {GITHUB, GITLAB, BITBUCKET}
+        self._source_names: Set[SourceName] = {GITHUB, GITLAB, BITBUCKET}
 
-        self._sources: Dict[str, Source] = {
+        self._sources: Dict[SourceName, Source] = {
             GITHUB: Source(GITHUB, GITHUB_YAML),
             GITLAB: Source(GITLAB, GITLAB_YAML),
             BITBUCKET: Source(BITBUCKET, BITBUCKET_YAML)
         }
 
-    def add_source(self, source: Optional[Union[Source, str]]):
+    def add_source(self, source: Optional[Union[Source, SourceName]]):
         """Returns all project names containing forks
 
         :param Optional[Source] source: Source to add
@@ -44,20 +48,28 @@ class SourceController(object):
         if source is None:
             return
 
-        if isinstance(source, str):
+        if isinstance(source, SourceName):
             self._source_names.add(source)
-            return
+        elif isinstance(source, Source):
+            self._source_names.add(source.name)
+            self._sources[source.name] = source
 
-        self._source_names.add(source.name)
-        self._sources[source.name] = source
-
-    def get_source(self, name: str) -> Source:
+    def get_source(self, source: Union[SourceName, Source]) -> Source:
         """Returns Source by name
 
-        :param str name: Source name to return
+        :param SourceName source: Source name to return
         :return: Source with supplied name
         :rtype: Source
         """
+
+        if isinstance(source, SourceName):
+            name = source
+        elif isinstance(source, Source):
+            name = source.name
+        else:
+            err = ClowderError(ClowderErrorType.CLOWDER_YAML_DUPLICATE_REMOTE_NAME, "Wrong source type")
+            LOG_DEBUG('Wrong source type', err)
+            raise err
 
         if name not in self._sources:
             # TODO: Rename error to SOURCE_NOT_DEFINED
