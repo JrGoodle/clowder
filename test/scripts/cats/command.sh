@@ -14,9 +14,9 @@ test_command() {
     begin_command
     $COMMAND cat && exit 1
     end_command
-    echo "TEST: Fail with no arguments"
+    echo "TEST: Command with no arguments"
     begin_command
-    $COMMAND && exit 1
+    $COMMAND && exit 0
     end_command
     echo ''
 }

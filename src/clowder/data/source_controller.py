@@ -5,7 +5,7 @@
 
 """
 
-from typing import Dict, Optional, Set
+from typing import Dict, Optional, Set, Union
 
 from clowder.error import ClowderError, ClowderErrorType
 from clowder.git import GitProtocol
@@ -35,7 +35,7 @@ class SourceController(object):
             BITBUCKET: Source(BITBUCKET, BITBUCKET_YAML)
         }
 
-    def add_source(self, source: Optional[Source]):
+    def add_source(self, source: Optional[Union[Source, str]]):
         """Returns all project names containing forks
 
         :param Optional[Source] source: Source to add
@@ -44,9 +44,8 @@ class SourceController(object):
         if source is None:
             return
 
-        self._source_names.add(source.name)
-
         if source.is_reference():
+            self._source_names.add(source)
             return
 
         self._sources[source.name] = source
