@@ -53,6 +53,11 @@ class SourceController(object):
         elif isinstance(source, Source):
             self._source_names.add(source.name)
             self._sources[source.name] = source
+        else:
+            # TODO: Fix error type
+            err = ClowderError(ClowderErrorType.CLOWDER_YAML_DUPLICATE_REMOTE_NAME, "Wrong source type")
+            LOG_DEBUG('Wrong source type', err)
+            raise err
 
     def get_source(self, source: Union[SourceName, Source]) -> Source:
         """Returns Source by name
@@ -67,6 +72,7 @@ class SourceController(object):
         elif isinstance(source, Source):
             name = source.name
         else:
+            # TODO: Fix error type
             err = ClowderError(ClowderErrorType.CLOWDER_YAML_DUPLICATE_REMOTE_NAME, "Wrong source type")
             LOG_DEBUG('Wrong source type', err)
             raise err

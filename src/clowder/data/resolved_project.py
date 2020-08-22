@@ -608,9 +608,9 @@ class ResolvedProject:
     def _url(self) -> str:
         """Return project url"""
 
-        protocol = SOURCE_CONTROLLER.get_default_protocol()
-
         if self.source.protocol is not None:
             protocol = self.source.protocol
+        else:
+            protocol = SOURCE_CONTROLLER.get_default_protocol()
 
         return git_url(protocol, self.source.url, self.name)

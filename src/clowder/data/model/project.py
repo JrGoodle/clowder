@@ -59,6 +59,7 @@ class Project:
                 name = SourceName(str(id(self)))
                 self.source: Optional[Union[Source, SourceName]] = Source(name, source)
             else:
+                # TODO: Fix error type
                 err = ClowderError(ClowderErrorType.CLOWDER_YAML_DUPLICATE_REMOTE_NAME, "Wrong source type")
                 LOG_DEBUG('Wrong source type', err)
                 raise err
