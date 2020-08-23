@@ -76,11 +76,11 @@ class ResolvedUpstream:
         has_group_defaults_ref = has_group_defaults and group.defaults.get_formatted_ref() is not None
         self.ref: str = "refs/heads/master"
         if has_ref:
-            self.ref = upstream.get_formatted_ref()
+            self.ref: str = upstream.get_formatted_ref()
         elif has_group_defaults_ref:
-            self.ref = group.defaults.get_formatted_ref()
+            self.ref: str = group.defaults.get_formatted_ref()
         elif has_defaults_ref:
-            self.ref = defaults.get_formatted_ref()
+            self.ref: str = defaults.get_formatted_ref()
 
     def full_path(self) -> Path:
         """Return full path to project

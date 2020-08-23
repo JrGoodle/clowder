@@ -26,7 +26,7 @@ from clowder.util.execute import execute_forall_command
 from .resolved_git_settings import ResolvedGitSettings
 from .resolved_upstream import ResolvedUpstream
 from .source_controller import SOURCE_CONTROLLER, GITHUB
-from .model import Defaults, Project, Source, Group, SourceName
+from .model import Defaults, Project, Source, Group
 
 
 def project_repo_exists(func):
@@ -342,7 +342,7 @@ class ResolvedProject:
 
             return
 
-        self._print(self.upstream.status())
+        self._print(self.status())
         repo.configure_remotes(self.remote, self._url(), self.upstream.remote, self.upstream.url())
 
         self._print(fmt.upstream_string(self.upstream.name))
@@ -363,7 +363,7 @@ class ResolvedProject:
         repo.default_ref = self.upstream.ref
         repo.remote = self.upstream.remote
 
-        repo.herd_remote(self._url(), self.remote, branch=branch)
+        repo.herd_remote(self.upstream.url(), self.upstream.remote, branch=branch)
 
         # Restore repo configuration
         repo.default_ref = self.ref
