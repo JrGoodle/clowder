@@ -35,26 +35,42 @@ class Upstream:
         :param dict yaml: Parsed YAML python object for upstream
         """
 
-        self.name: str = yaml['name']
-        self.branch: Optional[str] = yaml.get("branch", None)
-        self.tag: Optional[str] = yaml.get("tag", None)
-        self.commit: Optional[str] = yaml.get("commit", None)
-        self.remote: Optional[str] = yaml.get('remote', None)
+        if isinstance(yaml, str):
+            self.name: str = yaml
+            self.branch: Optional[str] = None
+            self.tag: Optional[str] = None
+            self.commit: Optional[str] = None
+            self.remote: Optional[str] = None
+            self.source: Optional[Union[Source, SourceName]] = None
+            return
 
-        self.source: Optional[Union[Source, SourceName]] = None
-        source = yaml.get('source', None)
-        if source is not None:
-            if isinstance(source, str):
-                self.source: Optional[Union[Source, SourceName]] = SourceName(source)
-            elif isinstance(source, dict):
-                # Use upstream instance id as source name
-                name = SourceName(str(id(self)))
-                self.source: Optional[Union[Source, SourceName]] = Source(name, source)
-            else:
-                # TODO: Fix error type
-                err = ClowderError(ClowderErrorType.CLOWDER_YAML_DUPLICATE_REMOTE_NAME, "Wrong source type")
-                LOG_DEBUG('Wrong source type', err)
-                raise err
+        if isinstance(yaml, dict):
+            self.name: str = yaml['name']
+            self.branch: Optional[str] = yaml.get("branch", None)
+            self.tag: Optional[str] = yaml.get("tag", None)
+            self.commit: Optional[str] = yaml.get("commit", None)
+            self.remote: Optional[str] = yaml.get('remote', None)
+
+            self.source: Optional[Union[Source, SourceName]] = None
+            source = yaml.get('source', None)
+            if source is not None:
+                if isinstance(source, str):
+                    self.source: Optional[Union[Source, SourceName]] = SourceName(source)
+                elif isinstance(source, dict):
+                    # Use upstream instance id as source name
+                    name = SourceName(str(id(self)))
+                    self.source: Optional[Union[Source, SourceName]] = Source(name, source)
+                else:
+                    # TODO: Fix error type
+                    err = ClowderError(ClowderErrorType.CLOWDER_YAML_DUPLICATE_REMOTE_NAME, "Wrong source type")
+                    LOG_DEBUG('Wrong source type', err)
+                    raise err
+            return
+
+        # TODO: Fix error type
+        err = ClowderError(ClowderErrorType.CLOWDER_YAML_DUPLICATE_REMOTE_NAME, "Wrong upstream type")
+        LOG_DEBUG('Wrong upstream type', err)
+        raise err
 
     def get_formatted_ref(self) -> Optional[str]:
         """Return formatted git ref
@@ -78,6 +94,8 @@ class Upstream:
         :return: YAML python object
         :rtype: dict
         """
+
+        # FIXME: Figure out if yaml was str or dict to return correct yaml
 
         yaml = {"name": self.name}
 

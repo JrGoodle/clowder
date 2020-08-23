@@ -1,7 +1,7 @@
-@herd
+@all @herd
 Feature: Test clowder herd
 
-    @default
+    @default @succeed
     Scenario Outline: Test clowder herd default
         Given cats example is initialized
         And <directory> doesn't exist
@@ -22,7 +22,7 @@ Feature: Test clowder herd
         | black-cats/sasha  | master |
         | black-cats/june   | master |
 
-    @commits
+    @commits @succeed
     Scenario Outline: Test clowder herd commits
         Given cats example is initialized
         And <directory> doesn't exist
@@ -44,7 +44,7 @@ Feature: Test clowder herd
         | black-cats/june   | b6e1316cc62cb2ba18fa982fc3d67ef4408c8bfd |
         | black-cats/sasha  | 775979e0b1a7f753131bf16a4794c851c67108d8 |
 
-    @tags
+    @tags @succeed
     Scenario Outline: Test clowder herd tags
         Given cats example is initialized
         And <directory> doesn't exist
