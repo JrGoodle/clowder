@@ -1,8 +1,10 @@
 
-defaults:
-  protocol: https
-name: cats-default-test
 clowder:
+- branch: knead
+  groups:
+  - cats
+  name: jrgoodle/mu
+  path: mu
 - branch: purr
   groups:
   - cats
@@ -10,22 +12,20 @@ clowder:
   path: duke
 - groups:
   - black-cats
-  name: jrgoodle/june
-  path: black-cats/june
+  name: jrgoodle/kit
+  path: black-cats/kit
 - groups:
   - black-cats
   name: jrgoodle/kishka
   path: black-cats/kishka
 - groups:
   - black-cats
-  name: jrgoodle/kit
-  path: black-cats/kit
-- branch: knead
-  groups:
-  - cats
-  name: jrgoodle/mu
-  path: mu
+  name: jrgoodle/june
+  path: black-cats/june
 - groups:
   - black-cats
   name: jrgoodle/sasha
   path: black-cats/sasha
+defaults:
+  protocol: https
+name: cats-default-test

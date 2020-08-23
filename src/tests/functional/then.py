@@ -10,9 +10,10 @@ scenarios('../features')
 
 
 @then("project at <directory> exists")
-def has_directory(tmpdir, directory):
+def has_project_directory(tmpdir, directory):
     path = Path(tmpdir / directory)
     assert path.exists()
+    assert path.is_dir()
 
 
 @then("project at <directory> is a git repository")
@@ -38,6 +39,14 @@ def check_directory_tag(tmpdir, directory, tag):
     assert repo.head.is_detached
     assert tag in repo.tags
     assert repo.head.commit == repo.tags[tag].commit
+
+
+@then("project at <directory> is on <commit>")
+def check_directory_commit(tmpdir, directory, commit):
+    path = Path(tmpdir / directory)
+    repo = Repo(str(path))
+    assert repo.head.is_detached
+    assert repo.head.commit.hexsha == commit
 
 
 @then("project at <directory> is clean")

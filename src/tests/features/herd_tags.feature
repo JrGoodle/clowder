@@ -7,7 +7,6 @@ Feature: New Syntax
         And tags yaml version is linked
 
         When I run 'clowder herd'
-        And I run 'clowder status'
 
         Then project at <directory> exists
         And project at <directory> is a git repository

@@ -6,7 +6,6 @@ Feature: New Syntax
         And <directory> doesn't exist
 
         When I run 'clowder herd'
-        And I run 'clowder status'
 
         Then project at <directory> exists
         And project at <directory> is a git repository
