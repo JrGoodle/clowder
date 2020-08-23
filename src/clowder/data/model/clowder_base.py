@@ -45,7 +45,7 @@ class ClowderBase:
 
         yaml = {
             "name": self.name,
-            "clowder": self.clowder
+            "clowder": self.clowder.get_yaml()
         }
 
         if self.defaults is not None:

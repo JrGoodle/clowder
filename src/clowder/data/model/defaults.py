@@ -73,7 +73,7 @@ class Defaults:
         if self.protocol is not None:
             yaml['protocol'] = self.protocol
         if self.source is not None:
-            yaml['source'] = self.source
+            yaml['source'] = self.source.get_yaml()
         if self.remote is not None:
             yaml['remote'] = self.remote
         if self.git_settings is not None:

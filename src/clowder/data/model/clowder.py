@@ -8,6 +8,7 @@
 from typing import List, Optional, Union
 
 from clowder.error import ClowderError, ClowderErrorType
+from clowder.logging import LOG_DEBUG
 
 from .group import Group
 from .project import Project
@@ -48,4 +49,7 @@ class Clowder:
         if self.groups is not None:
             return {g.name: g.get_yaml() for g in self.groups}
 
-        raise ClowderError(ClowderErrorType.CLOWDER_YAML_UNKNOWN, "Clowder model created without projects or groups")
+        message = "Clowder model created without projects or groups"
+        err = ClowderError(ClowderErrorType.CLOWDER_YAML_UNKNOWN, message)
+        LOG_DEBUG(message, err)
+        raise err
