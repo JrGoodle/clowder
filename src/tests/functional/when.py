@@ -15,4 +15,5 @@ def when_run_clowder(tmpdir, command):
 
 @when(parsers.parse("I run 'clowder {command}' with exit code {code:d}"))
 def when_run_clowder(tmpdir, command, code):
-    run_command(f"clowder {command}", tmpdir, exit_code=code)
+    result = run_command(f"clowder {command}", tmpdir, check=False)
+    assert result.returncode == code

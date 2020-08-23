@@ -64,7 +64,7 @@ def has_git_directory(dir_name):
 
 
 def create_file(path):
-    with open(path, 'w') as f:
+    with open(path, 'w') as _:
         pass
     assert path.exists()
     assert path.is_file()
@@ -72,13 +72,55 @@ def create_file(path):
     assert not path.is_symlink()
 
 
-def run_command(command, path, exit_code=None):
+def local_branch_exists(path: Path, branch: str):
+    result = run_command(f'git rev-parse --quiet --verify "{branch}"', path, check=False)
+    assert result.returncode == 0
+
+
+def no_local_branch_exists(path: Path, branch: str):
+    assert not local_branch_exists(path, branch)
+
+
+def remote_branch_exists(path: Path, branch: str):
+    result = run_command(f"git ls-remote --heads origin {branch} | wc -l | tr -d '[:space:]'", path)
+    assert result.stdout != "0"
+
+
+def no_remote_branch_exists(path: Path, branch: str):
+    assert not remote_branch_exists(path, branch)
+
+
+def tracking_branch_exists(path: Path, branch: str):
+    result = run_command(f'git config --get branch.{branch}.merge', path, check=False)
+    assert result.returncode == 0
+
+
+def no_tracking_branch_exists(path: Path, branch: str):
+    assert not tracking_branch_exists(path, branch)
+
+
+def check_remote_url(path: Path, remote, url):
+    result = run_command(f"git remote get-url {remote}", path)
+    assert result.stdout == url
+
+
+def rebase_in_progress(path: Path):
+    rebase_merge = path / ".git/rebase-merge"
+    rebase_apply = path / ".git/rebase-apply"
+    assert rebase_merge.exists() or rebase_apply.exists()
+    assert rebase_merge.is_dir() or rebase_apply.is_dir()
+
+
+def no_rebase_in_progress(path: Path):
+    rebase_merge = path / ".git/rebase-merge"
+    rebase_apply = path / ".git/rebase-apply"
+    assert not rebase_merge.exists() and not rebase_apply.exists()
+    assert not rebase_merge.is_dir() and not rebase_apply.is_dir()
+
+
+def run_command(command, path, check=True):
     print(f"TEST: {command}")
-    if exit_code is None:
-        subprocess.run(command, shell=True, cwd=path, check=True)
-        return
-    result = subprocess.run(command, shell=True, cwd=path)
-    assert result.returncode == exit_code
+    return subprocess.run(command, shell=True, cwd=path, check=check)
 
 
 def get_url(example, protocol="ssh"):
