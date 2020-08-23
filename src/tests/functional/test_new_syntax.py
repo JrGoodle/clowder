@@ -45,6 +45,19 @@ def example_init_branch_protocol(tmpdir, example, branch, protocol):
     run_command(command, tmpdir)
 
 
+@given(parsers.parse("{version} yaml version is linked"))
+def link_yaml_version(tmpdir, version):
+    version_file = Path(tmpdir / ".clowder" / "versions" / f"{version}.clowder.yml")
+    assert version_file.exists()
+    command = f"clowder link {version}"
+    run_command(command, tmpdir)
+    path = Path(tmpdir / "clowder.yml")
+    assert path.exists()
+    assert path.is_file()
+    assert path.is_symlink()
+    assert version_file.samefile(path.resolve())
+
+
 @given("I'm in an empty directory")
 def is_empty_directory(tmpdir):
     print(f"tmpdir: {tmpdir}")
