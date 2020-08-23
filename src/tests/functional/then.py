@@ -1,10 +1,12 @@
 """New syntax test file"""
 
+from pathlib import Path
+
 from git import Repo
 # noinspection PyPackageRequirements
 from pytest_bdd import scenarios, then, parsers
 
-from .common import *
+import tests.functional.common as common
 
 scenarios('../features')
 
@@ -22,7 +24,7 @@ def then_has_project_directory(tmpdir, directory):
 def then_is_git_repo(tmpdir, directory):
     path = Path(tmpdir / directory)
     assert path.exists()
-    assert has_git_directory(path)
+    assert common.has_git_directory(path)
 
 
 @then("project at <directory> is on <branch>")
@@ -56,7 +58,7 @@ def then_check_directory_clean(tmpdir, directory):
     path = Path(tmpdir / directory)
     repo = Repo(str(path))
     print(f"TEST: Project at {directory} is clean")
-    assert not is_dirty(repo)
+    assert not common.is_dirty(repo)
 
 
 @then(parsers.parse("{directory} has untracked file {name}"))

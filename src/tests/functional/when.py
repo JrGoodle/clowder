@@ -3,17 +3,17 @@
 # noinspection PyPackageRequirements
 from pytest_bdd import scenarios, when, parsers
 
-from .common import *
+import tests.functional.common as common
 
 scenarios('../features')
 
 
 @when(parsers.parse("I run 'clowder {command}'"))
 def when_run_clowder(tmpdir, command):
-    run_command(f"clowder {command}", tmpdir)
+    common.run_command(f"clowder {command}", tmpdir)
 
 
 @when(parsers.parse("I run 'clowder {command}' with exit code {code:d}"))
 def when_run_clowder(tmpdir, command, code):
-    result = run_command(f"clowder {command}", tmpdir, check=False)
+    result = common.run_command(f"clowder {command}", tmpdir, check=False)
     assert result.returncode == code

@@ -63,6 +63,36 @@ def has_git_directory(dir_name):
     return path.is_dir()
 
 
+def lfs_hooks_installed(path):
+    result = run_command("grep -m 1 'git lfs pre-push' '.git/hooks/pre-push'", path)
+    assert result.returncode == 0
+    result = run_command("grep -m 1 'git lfs post-checkout' '.git/hooks/post-checkout'", path)
+    assert result.returncode == 0
+    result = run_command("grep -m 1 'git lfs post-commit' '.git/hooks/post-commit'", path)
+    assert result.returncode == 0
+    result = run_command("grep -m 1 'git lfs post-merge' '.git/hooks/post-merge'", path)
+    assert result.returncode == 0
+
+
+def lfs_filters_installed(path):
+    result = run_command("git config --get filter.lfs.smudge", path)
+    assert result.returncode == 0
+    result = run_command("git config --get filter.lfs.smudge", path)
+    assert result.returncode == 0
+    result = run_command("git config --get filter.lfs.smudge", path)
+    assert result.returncode == 0
+
+
+def is_lfs_file_pointer(path, file):
+    result = run_command(f'git lfs ls-files -I "{file}"', path, check=False)
+    assert result.stdout == '-'
+
+
+def is_lfs_file_not_pointer(path, file):
+    result = run_command(f'git lfs ls-files -I "{file}"', path, check=False)
+    assert result.stdout == '*'
+
+
 def create_file(path):
     with open(path, 'w') as _:
         pass
@@ -77,26 +107,14 @@ def local_branch_exists(path: Path, branch: str):
     assert result.returncode == 0
 
 
-def no_local_branch_exists(path: Path, branch: str):
-    assert not local_branch_exists(path, branch)
-
-
 def remote_branch_exists(path: Path, branch: str):
     result = run_command(f"git ls-remote --heads origin {branch} | wc -l | tr -d '[:space:]'", path)
     assert result.stdout != "0"
 
 
-def no_remote_branch_exists(path: Path, branch: str):
-    assert not remote_branch_exists(path, branch)
-
-
 def tracking_branch_exists(path: Path, branch: str):
     result = run_command(f'git config --get branch.{branch}.merge', path, check=False)
     assert result.returncode == 0
-
-
-def no_tracking_branch_exists(path: Path, branch: str):
-    assert not tracking_branch_exists(path, branch)
 
 
 def check_remote_url(path: Path, remote, url):
@@ -105,8 +123,8 @@ def check_remote_url(path: Path, remote, url):
 
 
 def rebase_in_progress(path: Path):
-    rebase_merge = path / ".git/rebase-merge"
-    rebase_apply = path / ".git/rebase-apply"
+    rebase_merge = path / ".git" / "rebase-merge"
+    rebase_apply = path / ".git" / "rebase-apply"
     assert rebase_merge.exists() or rebase_apply.exists()
     assert rebase_merge.is_dir() or rebase_apply.is_dir()
 
