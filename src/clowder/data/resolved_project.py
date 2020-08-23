@@ -345,19 +345,20 @@ class ResolvedProject:
         self._print(self.status())
         repo.configure_remotes(self.remote, self._url(), self.upstream.remote, self.upstream.url())
 
-        self._print(fmt.upstream_string(self.upstream.name))
+        self._print(fmt.upstream_string(self.name))
         if branch:
-            repo.herd_branch(self.upstream.url(), branch, depth=herd_depth, rebase=rebase,
+            repo.herd_branch(self._url(), branch, depth=herd_depth, rebase=rebase,
                              config=self.git_settings.get_processed_config())
         elif tag:
-            repo.herd_tag(self.upstream.url(), tag, depth=herd_depth, rebase=rebase,
+            repo.herd_tag(self._url(), tag, depth=herd_depth, rebase=rebase,
                           config=self.git_settings.get_processed_config())
         else:
-            repo.herd(self.upstream.url(), depth=herd_depth, rebase=rebase,
+            repo.herd(self._url(), depth=herd_depth, rebase=rebase,
                       config=self.git_settings.get_processed_config())
+
         self._pull_lfs(repo)
 
-        self._print(fmt.upstream_string(self.name))
+        self._print(fmt.upstream_string(self.upstream.name))
 
         # Modify repo to prefer upstream
         repo.default_ref = self.upstream.ref
