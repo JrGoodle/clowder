@@ -19,3 +19,4 @@ twine
 wheel
 pytest
 pytest-bdd
+pytest-xdist

@@ -60,5 +60,5 @@ setup(
     },
     install_requires=['argcomplete', 'colorama', 'jsonschema', 'GitPython',
                       'PyYAML', 'termcolor', 'psutil', 'tqdm'],
-    tests_require=['pytest', 'pytest-bdd']
+    tests_require=['pytest', 'pytest-bdd', 'pytest-xdist']
 )
