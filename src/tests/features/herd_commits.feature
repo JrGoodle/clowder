@@ -1,6 +1,7 @@
 Feature: New Syntax
     Run 'clowder init', 'clowder herd', and 'clowder status'
 
+    @herd
     Scenario Outline: Default init
         Given cats example is initialized
         And <directory> doesn't exist
@@ -21,4 +22,3 @@ Feature: New Syntax
         | black-cats/kishka | d185e3bff9eaaf6e146d4e09165276cd5c9f31c8 |
         | black-cats/june   | b6e1316cc62cb2ba18fa982fc3d67ef4408c8bfd |
         | black-cats/sasha  | 775979e0b1a7f753131bf16a4794c851c67108d8 |
-

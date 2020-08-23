@@ -1,6 +1,7 @@
 Feature: New Syntax
     Run 'clowder init', 'clowder herd', and 'clowder status'
 
+    @herd @tags
     Scenario Outline: Default init
         Given cats example is initialized
         And <directory> doesn't exist

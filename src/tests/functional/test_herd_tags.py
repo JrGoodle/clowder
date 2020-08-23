@@ -3,4 +3,4 @@
 # noinspection PyPackageRequirements
 from pytest_bdd import scenarios
 
-scenarios('../features/herd_commits.feature')
+scenarios('../features/herd_tags.feature')

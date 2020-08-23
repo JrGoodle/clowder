@@ -48,7 +48,7 @@ class ResolvedGitSettings:
             if self.config is None:
                 self.config = copy.deepcopy(git_settings.config)
             else:
-                for (k, v) in git_settings.config:
+                for (k, v) in git_settings.config.items():
                     self.config[k] = v
 
         self._clean_config()
@@ -59,9 +59,11 @@ class ResolvedGitSettings:
         if self.config is None:
             return
 
-        for (k, v) in self.config:
+        new_config = copy.deepcopy(self.config)
+        for (k, v) in self.config.items():
             if v is None:
-                del self.config[k]
+                del new_config[k]
+        self.config = new_config
 
     def get_processed_config(self) -> Optional[Dict[str, str]]:
         """Return version of config converted to strings
