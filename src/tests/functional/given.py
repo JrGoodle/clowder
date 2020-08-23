@@ -12,84 +12,67 @@ scenarios('../features')
 
 
 @given(parsers.parse("{example} example is initialized"))
-def given_example_init(tmpdir, example):
+def given_example_init(tmp_path: Path, example: str) -> None:
     url = common.get_url(example)
     command = f"clowder init {url}"
-    common.run_command(command, tmpdir)
+    common.run_command(command, tmp_path)
+
+
+@given(parsers.parse("{example} example is initialized and herded"))
+def given_example_init_herd(tmp_path: Path, example: str, cats_init_herd_default) -> None:
+    pass
 
 
 @given(parsers.parse("{example} example is initialized to {branch}"))
-def given_example_init_branch(tmpdir, example, branch):
+def given_example_init_branch(tmp_path: Path, example: str, branch: str) -> None:
     url = common.get_url(example)
     command = f"clowder init {url} -b {branch}"
-    common.run_command(command, tmpdir)
+    common.run_command(command, tmp_path)
 
 
 @given(parsers.parse("{example} example is initialized with {protocol}"))
-def given_example_init_branch_protocol(tmpdir, example, protocol):
+def given_example_init_protocol(tmp_path: Path, example: str, protocol: str) -> None:
     url = common.get_url(example, protocol=protocol)
     command = f"clowder init {url}"
-    common.run_command(command, tmpdir)
+    common.run_command(command, tmp_path)
 
 
 @given(parsers.parse("{example} example is initialized to {branch} with {protocol}"))
-def given_example_init_branch_protocol(tmpdir, example, branch, protocol):
+def given_example_init_branch_protocol(tmp_path: Path, example: str, branch, protocol: str) -> None:
     url = common.get_url(example, protocol=protocol)
     command = f"clowder init {url} -b {branch}"
-    common.run_command(command, tmpdir)
-
-
-@given(parsers.parse("{example} example is initialized to {branch} with {protocol}"))
-def given_example_init_branch_protocol(tmpdir, example, branch, protocol):
-    url = common.get_url(example, protocol=protocol)
-    command = f"clowder init {url} -b {branch}"
-    common.run_command(command, tmpdir)
+    common.run_command(command, tmp_path)
 
 
 @given(parsers.parse("'clowder {command}' has been run"))
-def given_run_clowder_command(tmpdir, command):
+def given_run_clowder_command(tmp_path: Path, command: str) -> None:
     command = f"clowder {command}"
-    common.run_command(command, tmpdir)
+    common.run_command(command, tmp_path)
 
 
 @given(parsers.parse("{version} yaml version is linked"))
-def given_link_yaml_version(tmpdir, version):
-    versions_dir = Path(tmpdir / ".clowder" / "versions")
-    yaml_version = versions_dir / f"{version}.clowder.yaml"
-    yml_version = versions_dir / f"{version}.clowder.yml"
-    if yaml_version.exists():
-        version_file = yaml_version
-        path = Path(tmpdir / "clowder.yaml")
-    elif yml_version.exists():
-        version_file = yml_version
-        path = Path(tmpdir / "clowder.yml")
-    else:
-        assert False
-
+def given_link_yaml_version(tmp_path: Path, version: str) -> None:
     command = f"clowder link {version}"
-    common.run_command(command, tmpdir)
-    assert path.exists()
-    assert path.is_file()
-    assert path.is_symlink()
-    assert version_file.samefile(path.resolve())
+    common.run_command(command, tmp_path)
+    assert common.has_valid_clowder_version_symlink(tmp_path, version)
 
 
 @given("I'm in an empty directory")
-def given_is_empty_directory(tmpdir):
-    print(f"tmpdir: {tmpdir}")
-    assert common.is_directory_empty(tmpdir)
+def given_is_empty_directory(tmp_path: Path) -> None:
+    print(f"tmp_path: {tmp_path}")
+    assert common.is_directory_empty(tmp_path)
 
 
 @given("<directory> doesn't exist")
-def given_has_no_directory(tmpdir, directory):
-    path = Path(tmpdir / directory)
+def given_has_no_directory(tmp_path: Path, directory: str) -> None:
+    path = tmp_path / directory
     assert not path.exists()
 
 
 @given(parsers.parse("{directory} has untracked file {name}"))
-def given_untracked_file(tmpdir, directory, name):
-    repo_path = Path(tmpdir / directory)
-    path = Path(tmpdir / directory / name)
+def given_untracked_file(tmp_path: Path, directory: str, name: str) -> None:
+    repo_path = tmp_path / directory
+    path = tmp_path / directory / name
     common.create_file(path)
     repo = Repo(repo_path)
     assert repo.untracked_files

@@ -1,7 +1,10 @@
 """New syntax test file"""
 
+from typing import Optional
+
 import os
 import subprocess
+from subprocess import CompletedProcess
 from pathlib import Path
 
 from git import Repo
@@ -12,18 +15,28 @@ TEST_REPOS = {
     "swift": {"url": "github.com", "name": "JrGoodle/swift-clowder"}
 }
 
+CATS_REPOS_DEFAULT = {
+    "mu": {"path": "mu", "branch": "knead"},
+    "duke": {"path": "duke", "branch": "purr"},
+    "kit": {"path": "black-cats/kit", "branch": "master"},
+    "kishka": {"path": "black-cats/kishka", "branch": "master"},
+    "sasha": {"path": "black-cats/sasha", "branch": "master"},
+    "june": {"path": "black-cats/june", "branch": "master"}
+}
 
-def is_dirty(repo: Repo) -> bool:
+
+def is_dirty(path: Path) -> bool:
     """Check whether repo is dirty
 
     :return: True, if repo is dirty
     :rtype: bool
     """
 
+    repo = Repo(str(path))
     return repo.is_dirty() or is_rebase_in_progress(repo.git_dir) or has_untracked_files(repo)
 
 
-def is_rebase_in_progress(git_dir) -> bool:
+def is_rebase_in_progress(git_dir: Path) -> bool:
     """Detect whether rebase is in progress
 
     :return: True, if rebase is in progress
@@ -45,9 +58,9 @@ def has_untracked_files(repo: Repo) -> bool:
     return True if repo.untracked_files else False
 
 
-def is_directory_empty(dir_name):
-    if os.path.exists(dir_name) and os.path.isdir(dir_name):
-        if not os.listdir(dir_name):
+def is_directory_empty(path: Path) -> bool:
+    if path.exists() and path.is_dir():
+        if not os.listdir(path):
             print("Directory is empty")
             return True
         else:
@@ -58,12 +71,11 @@ def is_directory_empty(dir_name):
         raise Exception
 
 
-def has_git_directory(dir_name):
-    path = Path(dir_name / ".git")
-    return path.is_dir()
+def has_git_directory(path: Path) -> bool:
+    return Path(path / ".git").is_dir()
 
 
-def lfs_hooks_installed(path):
+def lfs_hooks_installed(path: Path) -> None:
     result = run_command("grep -m 1 'git lfs pre-push' '.git/hooks/pre-push'", path)
     assert result.returncode == 0
     result = run_command("grep -m 1 'git lfs post-checkout' '.git/hooks/post-checkout'", path)
@@ -74,7 +86,7 @@ def lfs_hooks_installed(path):
     assert result.returncode == 0
 
 
-def lfs_filters_installed(path):
+def lfs_filters_installed(path: Path) -> None:
     result = run_command("git config --get filter.lfs.smudge", path)
     assert result.returncode == 0
     result = run_command("git config --get filter.lfs.smudge", path)
@@ -83,17 +95,17 @@ def lfs_filters_installed(path):
     assert result.returncode == 0
 
 
-def is_lfs_file_pointer(path, file):
+def is_lfs_file_pointer(path: Path, file: str) -> None:
     result = run_command(f'git lfs ls-files -I "{file}"', path, check=False)
     assert result.stdout == '-'
 
 
-def is_lfs_file_not_pointer(path, file):
+def is_lfs_file_not_pointer(path: Path, file: str) -> None:
     result = run_command(f'git lfs ls-files -I "{file}"', path, check=False)
     assert result.stdout == '*'
 
 
-def create_file(path):
+def create_file(path: Path) -> None:
     with open(path, 'w') as _:
         pass
     assert path.exists()
@@ -102,46 +114,39 @@ def create_file(path):
     assert not path.is_symlink()
 
 
-def local_branch_exists(path: Path, branch: str):
+def local_branch_exists(path: Path, branch: str) -> None:
     result = run_command(f'git rev-parse --quiet --verify "{branch}"', path, check=False)
     assert result.returncode == 0
 
 
-def remote_branch_exists(path: Path, branch: str):
+def remote_branch_exists(path: Path, branch: str) -> None:
     result = run_command(f"git ls-remote --heads origin {branch} | wc -l | tr -d '[:space:]'", path)
     assert result.stdout != "0"
 
 
-def tracking_branch_exists(path: Path, branch: str):
+def tracking_branch_exists(path: Path, branch: str) -> None:
     result = run_command(f'git config --get branch.{branch}.merge', path, check=False)
     assert result.returncode == 0
 
 
-def check_remote_url(path: Path, remote, url):
+def check_remote_url(path: Path, remote, url) -> None:
     result = run_command(f"git remote get-url {remote}", path)
     assert result.stdout == url
 
 
-def rebase_in_progress(path: Path):
+def rebase_in_progress(path: Path) -> None:
     rebase_merge = path / ".git" / "rebase-merge"
     rebase_apply = path / ".git" / "rebase-apply"
     assert rebase_merge.exists() or rebase_apply.exists()
     assert rebase_merge.is_dir() or rebase_apply.is_dir()
 
 
-def no_rebase_in_progress(path: Path):
-    rebase_merge = path / ".git/rebase-merge"
-    rebase_apply = path / ".git/rebase-apply"
-    assert not rebase_merge.exists() and not rebase_apply.exists()
-    assert not rebase_merge.is_dir() and not rebase_apply.is_dir()
-
-
-def run_command(command, path, check=True):
+def run_command(command: str, path: Path, check: bool = True) -> CompletedProcess:
     print(f"TEST: {command}")
     return subprocess.run(command, shell=True, cwd=path, check=check)
 
 
-def get_url(example, protocol="ssh"):
+def get_url(example: str, protocol: str = "ssh") -> str:
     source_url = TEST_REPOS[example]["url"]
     name = TEST_REPOS[example]["name"]
     if protocol == "ssh":
@@ -152,3 +157,50 @@ def get_url(example, protocol="ssh"):
         raise Exception
     print(f"TEST: {url}")
     return url
+
+
+def is_on_active_branch(path: Path, branch: str) -> bool:
+    repo = Repo(str(path))
+    active_branch = repo.active_branch.name
+    print(f"TEST: active branch '{active_branch}' is '{branch}'")
+    return active_branch == branch
+
+
+def is_detached_head_on_tag(path: Path, tag: str) -> bool:
+    repo = Repo(str(path))
+    has_tag = tag in repo.tags
+    on_correct_commit = repo.head.commit == repo.tags[tag].commit
+    return repo.head.is_detached and has_tag and on_correct_commit
+
+
+def is_detached_head_on_commit(path: Path, commit: str) -> bool:
+    repo = Repo(str(path))
+    on_correct_commit = repo.head.commit.hexsha == commit
+    return repo.head.is_detached and on_correct_commit
+
+
+def valid_clowder_symlink(path: Path) -> Optional[Path]:
+    yaml = path / "clowder.yaml"
+    yml = path / "clowder.yml"
+    if is_valid_symlink(yaml):
+        return yaml
+    if is_valid_symlink(yml):
+        return yml
+    return None
+
+
+def is_valid_symlink(path: Path) -> bool:
+    return path.is_symlink() and path.exists() and path.is_file()
+
+
+def is_symlink_from_to(symlink: Path, destination: Path) -> bool:
+    return is_valid_symlink(symlink) and destination.samefile(symlink.resolve())
+
+
+def has_valid_clowder_version_symlink(path: Path, version: str) -> bool:
+    symlink = valid_clowder_symlink(path)
+    if symlink is None:
+        return False
+
+    version_path = path / ".clowder" / "versions" / f"{version}.{symlink.stem}{symlink.suffix}"
+    return is_symlink_from_to(symlink, version_path)

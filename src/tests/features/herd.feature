@@ -8,8 +8,7 @@ Feature: Test clowder herd
 
         When I run 'clowder herd'
 
-        Then project at <directory> exists
-        And project at <directory> is a git repository
+        Then project at <directory> is a git repository
         And project at <directory> is on <branch>
         And project at <directory> is clean
 
@@ -30,8 +29,7 @@ Feature: Test clowder herd
 
         When I run 'clowder herd'
 
-        Then project at <directory> exists
-        And project at <directory> is a git repository
+        Then project at <directory> is a git repository
         And project at <directory> is on <commit>
         And project at <directory> is clean
 
@@ -52,8 +50,7 @@ Feature: Test clowder herd
 
         When I run 'clowder herd'
 
-        Then project at <directory> exists
-        And project at <directory> is a git repository
+        Then project at <directory> is a git repository
         And project at <directory> is on <tag>
         And project at <directory> is clean
 
@@ -68,12 +65,10 @@ Feature: Test clowder herd
 
     @default @fail
     Scenario: Test clowder herd dirty fail
-        Given cats example is initialized
-        And 'clowder herd' has been run
+        Given cats example is initialized and herded
         And mu has untracked file something.txt
 
-        When I run 'clowder herd' with exit code 7
+        When I run 'clowder herd' and it fails
 
-        Then project at mu exists
-        And project at mu is a git repository
+        Then project at mu is a git repository
         And mu has untracked file something.txt

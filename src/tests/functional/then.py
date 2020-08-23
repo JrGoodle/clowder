@@ -13,57 +13,49 @@ scenarios('../features')
 
 @then("project at <directory> exists")
 @then(parsers.parse("project at {directory} exists"))
-def then_has_project_directory(tmpdir, directory):
-    path = Path(tmpdir / directory)
+def then_has_project_directory(tmp_path: Path, directory: str) -> None:
+    path = tmp_path / directory
     assert path.exists()
     assert path.is_dir()
 
 
 @then("project at <directory> is a git repository")
 @then(parsers.parse("project at {directory} is a git repository"))
-def then_is_git_repo(tmpdir, directory):
-    path = Path(tmpdir / directory)
+def then_is_git_repo(tmp_path: Path, directory: str) -> None:
+    path = tmp_path / directory
     assert path.exists()
+    assert path.is_dir()
     assert common.has_git_directory(path)
 
 
 @then("project at <directory> is on <branch>")
-def then_check_directory_branch(tmpdir, directory, branch):
-    path = Path(tmpdir / directory)
-    repo = Repo(str(path))
-    active_branch = repo.active_branch.name
-    print(f"TEST: active brach '{active_branch}' is '{branch}'")
-    assert active_branch == branch
+def then_check_directory_branch(tmp_path: Path, directory: str, branch: str) -> None:
+    path = tmp_path / directory
+    assert common.is_on_active_branch(path, branch)
 
 
 @then("project at <directory> is on <tag>")
-def then_check_directory_tag(tmpdir, directory, tag):
-    path = Path(tmpdir / directory)
-    repo = Repo(str(path))
-    assert repo.head.is_detached
-    assert tag in repo.tags
-    assert repo.head.commit == repo.tags[tag].commit
+def then_check_directory_tag(tmp_path: Path, directory: str, tag: str) -> None:
+    path = tmp_path / directory
+    assert common.is_detached_head_on_tag(path, tag)
 
 
 @then("project at <directory> is on <commit>")
-def then_check_directory_commit(tmpdir, directory, commit):
-    path = Path(tmpdir / directory)
-    repo = Repo(str(path))
-    assert repo.head.is_detached
-    assert repo.head.commit.hexsha == commit
+def then_check_directory_commit(tmp_path: Path, directory: str, commit: str) -> None:
+    path = tmp_path / directory
+    assert common.is_detached_head_on_commit(path, commit)
 
 
 @then("project at <directory> is clean")
-def then_check_directory_clean(tmpdir, directory):
-    path = Path(tmpdir / directory)
-    repo = Repo(str(path))
+def then_check_directory_clean(tmp_path: Path, directory: str) -> None:
+    path = tmp_path / directory
     print(f"TEST: Project at {directory} is clean")
-    assert not common.is_dirty(repo)
+    assert not common.is_dirty(path)
 
 
 @then(parsers.parse("{directory} has untracked file {name}"))
-def then_has_untracked_file(tmpdir, directory, name):
-    repo_path = Path(tmpdir / directory)
-    path = Path(tmpdir / directory / name)
+def then_has_untracked_file(tmp_path: Path, directory: str, name: str) -> None:
+    repo_path = tmp_path / directory
+    path = tmp_path / directory / name
     repo = Repo(repo_path)
     assert f"{path.stem}{path.suffix}" in repo.untracked_files
