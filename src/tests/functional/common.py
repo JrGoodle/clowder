@@ -4,6 +4,8 @@ import os
 import subprocess
 from pathlib import Path
 
+from git import Repo
+
 TEST_REPOS = {
     "cats": {"url": "github.com", "name": "JrGoodle/cats"},
     "misc": {"url": "github.com", "name": "JrGoodle/misc-clowder-tests"},
@@ -11,17 +13,36 @@ TEST_REPOS = {
 }
 
 
-def is_dirty(repo) -> bool:
+def is_dirty(repo: Repo) -> bool:
     """Check whether repo is dirty
 
     :return: True, if repo is dirty
     :rtype: bool
     """
 
-    # if not self.repo_path.is_dir():
-    #     return False
+    return repo.is_dirty() or is_rebase_in_progress(repo.git_dir) or has_untracked_files(repo)
 
-    return repo.is_dirty()  # or self._is_rebase_in_progress() or self._has_untracked_files()
+
+def is_rebase_in_progress(git_dir) -> bool:
+    """Detect whether rebase is in progress
+
+    :return: True, if rebase is in progress
+    :rtype: bool
+    """
+
+    is_rebase_apply = Path(git_dir, 'rebase-apply').is_dir()
+    is_rebase_merge = Path(git_dir, 'rebase-merge').is_dir()
+    return is_rebase_apply or is_rebase_merge
+
+
+def has_untracked_files(repo: Repo) -> bool:
+    """Check whether untracked files exist
+
+    :return: True, if untracked files exist
+    :rtype: bool
+    """
+
+    return True if repo.untracked_files else False
 
 
 def is_directory_empty(dir_name):
