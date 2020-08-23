@@ -60,6 +60,14 @@ class ResolvedUpstream:
         # elif has_defaults_remote:
         #     self.remote = defaults.remote
 
+        has_defaults_protocol = has_defaults and defaults.protocol is not None
+        has_group_defaults_protocol = has_group_defaults and group.defaults.protocol is not None
+        self.default_protocol: Optional[str] = None
+        if has_group_defaults_protocol:
+            self.default_protocol: Optional[str] = group.defaults.protocol
+        elif has_defaults_protocol:
+            self.default_protocol: Optional[str] = defaults.protocol
+
         has_source = upstream.source is not None
         has_defaults_source = has_defaults and defaults.source is not None
         has_group_defaults_source = has_group_defaults and group.defaults.source is not None
@@ -111,6 +119,8 @@ class ResolvedUpstream:
 
         if self.source.protocol is not None:
             protocol = self.source.protocol
+        elif self.default_protocol is not None:
+            protocol = self.default_protocol
         else:
             protocol = SOURCE_CONTROLLER.get_default_protocol()
 
