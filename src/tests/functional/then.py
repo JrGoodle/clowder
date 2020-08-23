@@ -2,7 +2,7 @@
 
 from git import Repo
 # noinspection PyPackageRequirements
-from pytest_bdd import scenarios, then
+from pytest_bdd import scenarios, then, parsers
 
 from .common import *
 
@@ -10,21 +10,23 @@ scenarios('../features')
 
 
 @then("project at <directory> exists")
-def has_project_directory(tmpdir, directory):
+@then(parsers.parse("project at {directory} exists"))
+def then_has_project_directory(tmpdir, directory):
     path = Path(tmpdir / directory)
     assert path.exists()
     assert path.is_dir()
 
 
 @then("project at <directory> is a git repository")
-def is_git_repo(tmpdir, directory):
+@then(parsers.parse("project at {directory} is a git repository"))
+def then_is_git_repo(tmpdir, directory):
     path = Path(tmpdir / directory)
     assert path.exists()
     assert has_git_directory(path)
 
 
 @then("project at <directory> is on <branch>")
-def check_directory_branch(tmpdir, directory, branch):
+def then_check_directory_branch(tmpdir, directory, branch):
     path = Path(tmpdir / directory)
     repo = Repo(str(path))
     active_branch = repo.active_branch.name
@@ -33,7 +35,7 @@ def check_directory_branch(tmpdir, directory, branch):
 
 
 @then("project at <directory> is on <tag>")
-def check_directory_tag(tmpdir, directory, tag):
+def then_check_directory_tag(tmpdir, directory, tag):
     path = Path(tmpdir / directory)
     repo = Repo(str(path))
     assert repo.head.is_detached
@@ -42,7 +44,7 @@ def check_directory_tag(tmpdir, directory, tag):
 
 
 @then("project at <directory> is on <commit>")
-def check_directory_commit(tmpdir, directory, commit):
+def then_check_directory_commit(tmpdir, directory, commit):
     path = Path(tmpdir / directory)
     repo = Repo(str(path))
     assert repo.head.is_detached
@@ -50,8 +52,16 @@ def check_directory_commit(tmpdir, directory, commit):
 
 
 @then("project at <directory> is clean")
-def check_directory_clean(tmpdir, directory):
+def then_check_directory_clean(tmpdir, directory):
     path = Path(tmpdir / directory)
     repo = Repo(str(path))
     print(f"TEST: Project at {directory} is clean")
     assert not is_dirty(repo)
+
+
+@then(parsers.parse("{directory} has untracked file {name}"))
+def then_has_untracked_file(tmpdir, directory, name):
+    repo_path = Path(tmpdir / directory)
+    path = Path(tmpdir / directory / name)
+    repo = Repo(repo_path)
+    assert f"{path.stem}{path.suffix}" in repo.untracked_files

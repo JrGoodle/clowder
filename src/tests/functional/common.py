@@ -42,10 +42,22 @@ def has_git_directory(dir_name):
     return path.is_dir()
 
 
-def run_command(command, path):
+def create_file(path):
+    with open(path, 'w') as f:
+        pass
+    assert path.exists()
+    assert path.is_file()
+    assert not path.is_dir()
+    assert not path.is_symlink()
+
+
+def run_command(command, path, exit_code=None):
     print(f"TEST: {command}")
-    # pipe = None if print_output else subprocess.PIPE
-    subprocess.run(command, shell=True, cwd=path, check=True)
+    if exit_code is None:
+        subprocess.run(command, shell=True, cwd=path, check=True)
+        return
+    result = subprocess.run(command, shell=True, cwd=path)
+    assert result.returncode == exit_code
 
 
 def get_url(example, protocol="ssh"):

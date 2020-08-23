@@ -9,5 +9,10 @@ scenarios('../features')
 
 
 @when(parsers.parse("I run 'clowder {command}'"))
-def run_clowder(tmpdir, command):
+def when_run_clowder(tmpdir, command):
     run_command(f"clowder {command}", tmpdir)
+
+
+@when(parsers.parse("I run 'clowder {command}' with exit code {code:d}"))
+def when_run_clowder(tmpdir, command, code):
+    run_command(f"clowder {command}", tmpdir, exit_code=code)
