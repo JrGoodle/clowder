@@ -17,3 +17,5 @@ termcolor
 tqdm
 twine
 wheel
+pytest
+pytest-bdd
