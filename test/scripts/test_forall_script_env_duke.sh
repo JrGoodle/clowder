@@ -22,8 +22,8 @@ if [ $PROJECT_REMOTE != "origin" ]; then
     exit 1
 fi
 
-echo "FORK_REMOTE = $FORK_REMOTE"
-if [ -n "$FORK_REMOTE" ]; then
+echo "UPSTREAM_REMOTE = $UPSTREAM_REMOTE"
+if [ -n "$UPSTREAM_REMOTE" ]; then
     exit 1
 fi
 

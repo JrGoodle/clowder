@@ -65,10 +65,10 @@ test_forks_env() {
     end_command
     echo "TEST: Environment variables in command"
     begin_command
-    $COMMAND forall 'gyp' -c 'if [ $PROJECT_REMOTE != upstream ]; then exit 1; fi' $PARALLEL || exit 1
+    $COMMAND forall 'gyp' -c 'if [ $PROJECT_REMOTE != origin ]; then exit 1; fi' $PARALLEL || exit 1
     end_command
     begin_command
-    $COMMAND forall 'gyp' -c 'if [ $FORK_REMOTE != origin ]; then exit 1; fi' $PARALLEL || exit 1
+    $COMMAND forall 'gyp' -c 'if [ $UPSTREAM_REMOTE != upstream ]; then exit 1; fi' $PARALLEL || exit 1
     end_command
 }
 test_forks_env
@@ -88,7 +88,7 @@ test_fork_herd() {
     test_not_commit $fork_branch_commit
     popd || exit 1
 }
-test_fork_gyp
+test_fork_herd
 
 # TODO: Add tests for logic renaming remotes
 

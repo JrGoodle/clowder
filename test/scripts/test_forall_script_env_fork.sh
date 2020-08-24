@@ -13,41 +13,40 @@ if [ $PROJECT_PATH != "$MISC_DIR/gyp" ]; then
 fi
 
 echo "PROJECT_NAME = $PROJECT_NAME"
-if [ $PROJECT_NAME != "external/gyp" ]; then
+if [ $PROJECT_NAME != "JrGoodle/gyp" ]; then
     exit 1
 fi
 
 echo "PROJECT_REMOTE = $PROJECT_REMOTE"
-if [ $PROJECT_REMOTE != "upstream" ]; then
+if [ $PROJECT_REMOTE != "origin" ]; then
     exit 1
 fi
 
 echo "PROJECT_REF = $PROJECT_REF"
-if [ $PROJECT_REF != "refs/heads/master" ]; then
+if [ $PROJECT_REF != "refs/heads/fork-branch" ]; then
     exit 1
 fi
 
-echo "FORK_REMOTE = $FORK_REMOTE"
-if [ -z "$FORK_REMOTE" ]; then
+echo "UPSTREAM_REMOTE = $UPSTREAM_REMOTE"
+if [ -z "$UPSTREAM_REMOTE" ]; then
     exit 1
 fi
-if [ $FORK_REMOTE != "origin" ]; then
-    exit 1
-fi
-
-echo "FORK_NAME = $FORK_NAME"
-if [ -z "$FORK_NAME" ]; then
-    exit 1
-fi
-if [ $FORK_NAME != "JrGoodle/gyp" ]; then
+if [ $UPSTREAM_REMOTE != "upstream" ]; then
     exit 1
 fi
 
-echo "FORK_REF = $FORK_REF"
-if [ -z "$FORK_REF" ]; then
+echo "UPSTREAM_NAME = $UPSTREAM_NAME"
+if [ -z "$UPSTREAM_NAME" ]; then
     exit 1
 fi
-if [ $FORK_REF != "refs/heads/fork-branch" ]; then
+if [ $UPSTREAM_NAME != "external/gyp" ]; then
     exit 1
 fi
 
+echo "UPSTREAM_REF = $UPSTREAM_REF"
+if [ -z "$UPSTREAM_REF" ]; then
+    exit 1
+fi
+if [ $UPSTREAM_REF != "refs/heads/master" ]; then
+    exit 1
+fi
