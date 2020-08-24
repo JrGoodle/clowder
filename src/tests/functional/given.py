@@ -12,14 +12,12 @@ scenarios('../features')
 
 
 @given(parsers.parse("{example} example is initialized"))
-def given_example_init(tmp_path: Path, example: str) -> None:
-    url = common.get_url(example)
-    command = f"clowder init {url}"
-    common.run_command(command, tmp_path)
+def given_example_init(tmp_path: Path, example: str, init_default) -> None:
+    pass
 
 
 @given(parsers.parse("{example} example is initialized and herded"))
-def given_example_init_herd(tmp_path: Path, example: str, cats_init_herd_default) -> None:
+def given_example_init_herd(tmp_path: Path, example: str, init_herd_default) -> None:
     pass
 
 

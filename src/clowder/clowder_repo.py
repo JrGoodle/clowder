@@ -165,6 +165,7 @@ def print_status(fetch: bool = False) -> None:
     symlink_output: Optional[str] = None
     if ENVIRONMENT.clowder_yaml is not None and ENVIRONMENT.clowder_yaml.is_symlink():
         target_path = fmt.path_string(Path(ENVIRONMENT.clowder_yaml.name))
+        # FIXME: This can cause an error if symlink is pointing to existing file not relative to clowder dir
         source_path = fmt.path_string(ENVIRONMENT.clowder_yaml.resolve().relative_to(ENVIRONMENT.clowder_dir))
         symlink_output = f"{target_path} -> {source_path}"
 

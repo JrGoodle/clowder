@@ -389,10 +389,18 @@
       "type": "array",
       "minItems": 1,
       "items": {
-        "$ref": "#/definitions/project"
+        "oneOf": [
+          {
+            "$ref": "#/definitions/project"
+          },
+          {
+            "$ref": "#/definitions/projectName"
+          }
+        ]
       }
     },
     "projectName": {
+      "description": "A unique name for this project.\nThe project's name is appended onto its source's URL to generate the full URL to configure the Git remote with. The full URL gets formed as:\ngit@${source_url}:${project_name/upstream_name}.git\nhttps://${source_url}/${project_name/upstream_name}.git",
       "type": "string",
       "allOf": [
         {
@@ -409,7 +417,6 @@
       ],
       "properties": {
         "name": {
-          "description": "A unique name for this project.\nThe project's name is appended onto its source's URL to generate the full URL to configure the Git remote with. The full URL gets formed as:\ngit@${source_url}:${project_name/upstream_name}.git\nhttps://${source_url}/${project_name/upstream_name}.git",
           "allOf": [
             {
               "$ref": "#/definitions/projectName"

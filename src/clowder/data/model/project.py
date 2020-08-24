@@ -33,11 +33,27 @@ class Project:
     :ivar Optional[Upstream] upstream: Project's associated Upstream
     """
 
-    def __init__(self, yaml: dict):
+    def __init__(self, yaml: Union[dict, str]):
         """Project __init__
 
-        :param dict yaml: Parsed YAML python object for project
+        :param Union[dict, str] yaml: Parsed YAML python object for project
         """
+
+        self._is_string = False
+
+        if isinstance(yaml, str):
+            self._is_string = True
+            self.name: str = yaml
+            self.branch: Optional[str] = None
+            self.tag: Optional[str] = None
+            self.commit: Optional[str] = None
+            self.groups: Optional[List[str]] = None
+            self.remote: Optional[str] = None
+            self.path: Optional[Path] = None
+            self.source: Optional[Union[Source, SourceName]] = None
+            self.git_settings: Optional[GitSettings] = None
+            self.upstream: Optional[Upstream] = None
+            return
 
         self.name: str = yaml['name']
         self.branch: Optional[str] = yaml.get("branch", None)
@@ -86,12 +102,15 @@ class Project:
         else:
             return None
 
-    def get_yaml(self) -> dict:
+    def get_yaml(self) -> Union[dict, str]:
         """Return python object representation for saving yaml
 
         :return: YAML python object
-        :rtype: dict
+        :rtype: Union[dict, str]
         """
+
+        if self._is_string:
+            return self.name
 
         yaml = {"name": self.name}
 

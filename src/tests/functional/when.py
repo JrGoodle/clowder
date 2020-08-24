@@ -17,11 +17,11 @@ def when_run_clowder(tmp_path: Path, command: str) -> None:
 
 @when(parsers.parse("I run 'clowder {command}' with exit code {code:d}"))
 def when_run_clowder_exit_code(tmp_path: Path, command: str, code: int) -> None:
-    result = common.run_command(f"clowder {command}", tmp_path, check=False)
+    result = common.run_command(f"clowder {command}", tmp_path, exit_code=None)
     assert result.returncode == code
 
 
 @when(parsers.parse("I run 'clowder {command}' and it fails"))
 def when_run_clowder_exit_code(tmp_path: Path, command: str) -> None:
-    result = common.run_command(f"clowder {command}", tmp_path, check=False)
+    result = common.run_command(f"clowder {command}", tmp_path, exit_code=None)
     assert result.returncode != 0

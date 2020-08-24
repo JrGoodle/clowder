@@ -76,14 +76,10 @@ def has_git_directory(path: Path) -> bool:
 
 
 def lfs_hooks_installed(path: Path) -> None:
-    result = run_command("grep -m 1 'git lfs pre-push' '.git/hooks/pre-push'", path)
-    assert result.returncode == 0
-    result = run_command("grep -m 1 'git lfs post-checkout' '.git/hooks/post-checkout'", path)
-    assert result.returncode == 0
-    result = run_command("grep -m 1 'git lfs post-commit' '.git/hooks/post-commit'", path)
-    assert result.returncode == 0
-    result = run_command("grep -m 1 'git lfs post-merge' '.git/hooks/post-merge'", path)
-    assert result.returncode == 0
+    run_command("grep -m 1 'git lfs pre-push' '.git/hooks/pre-push'", path)
+    run_command("grep -m 1 'git lfs post-checkout' '.git/hooks/post-checkout'", path)
+    run_command("grep -m 1 'git lfs post-commit' '.git/hooks/post-commit'", path)
+    run_command("grep -m 1 'git lfs post-merge' '.git/hooks/post-merge'", path)
 
 
 def lfs_filters_installed(path: Path) -> None:
@@ -96,12 +92,12 @@ def lfs_filters_installed(path: Path) -> None:
 
 
 def is_lfs_file_pointer(path: Path, file: str) -> None:
-    result = run_command(f'git lfs ls-files -I "{file}"', path, check=False)
+    result = run_command(f'git lfs ls-files -I "{file}"', path, exit_code=None)
     assert result.stdout == '-'
 
 
 def is_lfs_file_not_pointer(path: Path, file: str) -> None:
-    result = run_command(f'git lfs ls-files -I "{file}"', path, check=False)
+    result = run_command(f'git lfs ls-files -I "{file}"', path, exit_code=None)
     assert result.stdout == '*'
 
 
@@ -115,8 +111,7 @@ def create_file(path: Path) -> None:
 
 
 def local_branch_exists(path: Path, branch: str) -> None:
-    result = run_command(f'git rev-parse --quiet --verify "{branch}"', path, check=False)
-    assert result.returncode == 0
+    run_command(f'git rev-parse --quiet --verify "{branch}"', path, exit_code=0)
 
 
 def remote_branch_exists(path: Path, branch: str) -> None:
@@ -125,8 +120,7 @@ def remote_branch_exists(path: Path, branch: str) -> None:
 
 
 def tracking_branch_exists(path: Path, branch: str) -> None:
-    result = run_command(f'git config --get branch.{branch}.merge', path, check=False)
-    assert result.returncode == 0
+    run_command(f'git config --get branch.{branch}.merge', path, exit_code=0)
 
 
 def check_remote_url(path: Path, remote, url) -> None:
@@ -141,9 +135,15 @@ def rebase_in_progress(path: Path) -> None:
     assert rebase_merge.is_dir() or rebase_apply.is_dir()
 
 
-def run_command(command: str, path: Path, check: bool = True) -> CompletedProcess:
+def run_command(command: str, path: Path, exit_code: Optional[int] = 0) -> CompletedProcess:
     print(f"TEST: {command}")
-    return subprocess.run(command, shell=True, cwd=path, check=check)
+    result = subprocess.run(command, shell=True, cwd=path)
+
+    if exit_code is None:
+        return result
+
+    assert result.returncode == exit_code
+    return result
 
 
 def get_url(example: str, protocol: str = "ssh") -> str:

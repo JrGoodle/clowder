@@ -16,9 +16,9 @@ name: string # REQUIRED
 
 defaults: defaults
 
-sources: { string: source}
+sources: { string: source } # key is a reusable alias
 
-clowder: [ project ] | { string: group } # REQUIRED
+clowder: [ project | string ] | { string: group } # REQUIRED
 ```
 
 ## project
@@ -40,7 +40,7 @@ project:
 ## group
 
 ```yaml
-group: [ project ]
+group: [ project | string ]
 ```
 
 ```yaml
@@ -48,7 +48,7 @@ group:
   path: string
   groups: [ string ]
   defaults: defaults
-  projects: [ project ] # REQUIRED
+  projects: [ project | string ] # REQUIRED
 ```
 
 ## upstream
