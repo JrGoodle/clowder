@@ -70,5 +70,4 @@ Feature: Test clowder herd
 
         When I run 'clowder herd' and it fails
 
-        Then project at mu is a git repository
-        And mu has untracked file something.txt
+        Then mu has untracked file something.txt
