@@ -6,9 +6,9 @@ from git import Repo
 # noinspection PyPackageRequirements
 from pytest_bdd import scenarios, then, parsers
 
-import tests.functional.common.util as test
+import tests.functional.util as util
 
-scenarios('../../features')
+scenarios('../features')
 
 
 @then("project at <directory> exists")
@@ -25,32 +25,32 @@ def then_is_git_repo(tmp_path: Path, directory: str) -> None:
     path = tmp_path / directory
     assert path.exists()
     assert path.is_dir()
-    assert test.has_git_directory(path)
+    assert util.has_git_directory(path)
 
 
 @then("project at <directory> is on <branch>")
 def then_check_directory_branch(tmp_path: Path, directory: str, branch: str) -> None:
     path = tmp_path / directory
-    assert test.is_on_active_branch(path, branch)
+    assert util.is_on_active_branch(path, branch)
 
 
 @then("project at <directory> is on <tag>")
 def then_check_directory_tag(tmp_path: Path, directory: str, tag: str) -> None:
     path = tmp_path / directory
-    assert test.is_detached_head_on_tag(path, tag)
+    assert util.is_detached_head_on_tag(path, tag)
 
 
 @then("project at <directory> is on <commit>")
 def then_check_directory_commit(tmp_path: Path, directory: str, commit: str) -> None:
     path = tmp_path / directory
-    assert test.is_detached_head_on_commit(path, commit)
+    assert util.is_detached_head_on_commit(path, commit)
 
 
 @then("project at <directory> is clean")
 def then_check_directory_clean(tmp_path: Path, directory: str) -> None:
     path = tmp_path / directory
     print(f"TEST: Project at {directory} is clean")
-    assert not test.is_dirty(path)
+    assert not util.is_dirty(path)
 
 
 @then(parsers.parse("{directory} has untracked file {name}"))
