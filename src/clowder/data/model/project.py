@@ -39,6 +39,7 @@ class Project:
         :param Union[dict, str] yaml: Parsed YAML python object for project
         """
 
+        self.resolved_project_id: Optional[int] = None
         self._is_string = False
 
         if isinstance(yaml, str):
@@ -109,19 +110,21 @@ class Project:
         :rtype: Union[dict, str]
         """
 
+        from clowder.clowder_controller import CLOWDER_CONTROLLER
+
         if self._is_string:
             if not resolved:
                 return self.name
 
             return {
                 "name": self.name,
-                "commit": "TODO"
+                "commit": CLOWDER_CONTROLLER.get_project_sha(self.resolved_project_id)
             }
 
         yaml = {"name": self.name}
 
         if resolved:
-            yaml['commit'] = "TODO"
+            yaml['commit'] = CLOWDER_CONTROLLER.get_project_sha(self.resolved_project_id)
         else:
             if self.branch is not None:
                 yaml['branch'] = self.branch

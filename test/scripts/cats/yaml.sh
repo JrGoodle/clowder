@@ -47,10 +47,9 @@ test_clowder_yaml_contents() {
     command_output=$($COMMAND yaml)
     test_strings_equal "$test_output" "$command_output"
 
-    # FIXME: Fix printing resolved yaml
-    # test_output=$(cat clowder-yaml-r.txt)
-    # command_output=$($COMMAND yaml -r)
-    # test_strings_equal "$test_output" "$command_output"
+    test_output=$(cat clowder-yaml-r.txt)
+    command_output=$($COMMAND yaml -r)
+    test_strings_equal "$test_output" "$command_output"
 
     test_output=$(cat clowder-yaml-f.txt)
     command_output=$($COMMAND yaml -f)

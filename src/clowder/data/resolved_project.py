@@ -67,7 +67,7 @@ class ResolvedProject:
         :param Optional[Group] group: Group instance
         """
 
-        self._original_project_id = id(project)
+        project.resolved_project_id = id(self)
         self.name: str = project.name
         self._print_output = True
 
@@ -195,7 +195,6 @@ class ResolvedProject:
             # Restore repo configuration
             repo.default_ref = self.ref
             repo.remote = self.remote
-
 
     @project_repo_exists
     def checkout(self, branch: str) -> None:

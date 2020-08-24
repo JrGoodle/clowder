@@ -151,6 +151,21 @@ class ClowderController(object):
 
         return timestamp
 
+    def get_project_sha(self, project_id: int, short: bool = False) -> str:
+        """Return timestamp for project
+
+        :return: Commit timestamp string
+        :rtype: str
+        :raise ClowderError:
+        """
+
+        for project in self.projects:
+            if project_id == id(project):
+                return project.sha(short=short)
+
+        # FIXME: Use correct error type
+        raise ClowderError(ClowderErrorType.INVALID_PROJECT_STATUS, fmt.error_clone_missing_projects())
+
     def get_yaml(self, resolved: bool = False) -> dict:
         """Return python object representation of model objects
 
