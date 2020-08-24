@@ -37,7 +37,7 @@ class Clowder:
             # TODO: Create new error type
             raise ClowderError(ClowderErrorType.YAML_UNKNOWN, "Wrong instance type for group")
 
-    def get_yaml(self) -> Union[dict, list]:
+    def get_yaml(self, resolved: bool = False) -> Union[dict, list]:
         """Return python object representation for saving yaml
 
         :return: YAML python object
@@ -45,9 +45,9 @@ class Clowder:
         """
 
         if self.projects is not None:
-            return [p.get_yaml() for p in self.projects]
+            return [p.get_yaml(resolved=resolved) for p in self.projects]
         if self.groups is not None:
-            return {g.name: g.get_yaml() for g in self.groups}
+            return {g.name: g.get_yaml(resolved=resolved) for g in self.groups}
 
         message = "Clowder model created without projects or groups"
         err = ClowderError(ClowderErrorType.CLOWDER_YAML_UNKNOWN, message)

@@ -55,7 +55,7 @@ class Group:
             LOG_DEBUG('Failed to initialize group', err)
             raise err
 
-    def get_yaml(self) -> Union[dict, list]:
+    def get_yaml(self, resolved: bool = False) -> Union[dict, list]:
         """Return python object representation for saving yaml
 
         :return: YAML python object
@@ -63,9 +63,9 @@ class Group:
         """
 
         if not self._has_projects_key:
-            return [p.get_yaml() for p in self.projects]
+            return [p.get_yaml(resolved=resolved) for p in self.projects]
 
-        yaml = {"projects": [p.get_yaml() for p in self.projects]}
+        yaml = {"projects": [p.get_yaml(resolved=resolved) for p in self.projects]}
 
         if self.path is not None:
             yaml['path'] = str(self.path)

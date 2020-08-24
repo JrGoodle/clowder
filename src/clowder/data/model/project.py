@@ -102,7 +102,7 @@ class Project:
         else:
             return None
 
-    def get_yaml(self) -> Union[dict, str]:
+    def get_yaml(self, resolved: bool = False) -> Union[dict, str]:
         """Return python object representation for saving yaml
 
         :return: YAML python object
@@ -110,16 +110,25 @@ class Project:
         """
 
         if self._is_string:
-            return self.name
+            if not resolved:
+                return self.name
+
+            return {
+                "name": self.name,
+                "commit": "TODO"
+            }
 
         yaml = {"name": self.name}
 
-        if self.branch is not None:
-            yaml['branch'] = self.branch
-        if self.tag is not None:
-            yaml['tag'] = self.tag
-        if self.commit is not None:
-            yaml['commit'] = self.commit
+        if resolved:
+            yaml['commit'] = "TODO"
+        else:
+            if self.branch is not None:
+                yaml['branch'] = self.branch
+            if self.tag is not None:
+                yaml['tag'] = self.tag
+            if self.commit is not None:
+                yaml['commit'] = self.commit
         if self.groups is not None:
             yaml['groups'] = self.groups
         if self.remote is not None:

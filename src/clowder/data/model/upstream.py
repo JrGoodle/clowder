@@ -35,7 +35,10 @@ class Upstream:
         :param dict yaml: Parsed YAML python object for upstream
         """
 
+        self._is_string = False
+
         if isinstance(yaml, str):
+            self._is_string = True
             self.name: str = yaml
             self.branch: Optional[str] = None
             self.tag: Optional[str] = None
@@ -88,14 +91,15 @@ class Upstream:
         else:
             return None
 
-    def get_yaml(self) -> dict:
+    def get_yaml(self) -> Union[str, dict]:
         """Return python object representation for saving yaml
 
         :return: YAML python object
-        :rtype: dict
+        :rtype: Union[str, dict]
         """
 
-        # FIXME: Figure out if yaml was str or dict to return correct yaml
+        if self._is_string:
+            return self.name
 
         yaml = {"name": self.name}
 

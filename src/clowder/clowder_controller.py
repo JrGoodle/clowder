@@ -159,7 +159,7 @@ class ClowderController(object):
         :rtype: dict
         """
 
-        return self._clowder.get_yaml()
+        return self._clowder.get_yaml(resolved=resolved)
 
     @staticmethod
     def validate_print_output(projects: Tuple[ResolvedProject, ...]) -> None:

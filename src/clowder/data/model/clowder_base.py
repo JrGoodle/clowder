@@ -36,7 +36,7 @@ class ClowderBase:
                                                     for name, source in yaml["sources"].items()]
         self.clowder: Clowder = Clowder(yaml["clowder"])
 
-    def get_yaml(self) -> dict:
+    def get_yaml(self, resolved: bool = False) -> dict:
         """Return python object representation for saving yaml
 
         :return: YAML python object
@@ -45,7 +45,7 @@ class ClowderBase:
 
         yaml = {
             "name": self.name,
-            "clowder": self.clowder.get_yaml()
+            "clowder": self.clowder.get_yaml(resolved=resolved)
         }
 
         if self.defaults is not None:
