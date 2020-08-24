@@ -31,7 +31,7 @@ class SourceController(object):
         """SourceController __init__"""
 
         self._has_been_validated: bool = False
-        self.protocol_override: Optional[str] = None
+        self.protocol_override: Optional[str] = None  # TODO: Make into @property method and check validation
         self._source_names: Set[SourceName] = {GITHUB, GITLAB, BITBUCKET}
 
         self._sources: Dict[SourceName, Source] = {

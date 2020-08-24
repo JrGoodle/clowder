@@ -346,7 +346,7 @@ class ResolvedProject:
         self._print(self.status())
         repo.configure_remotes(self.remote, self._url(), self.upstream.remote, self.upstream.url())
 
-        self._print(fmt.upstream_string(self.name))
+        # self._print(fmt.upstream_string(self.name))
         if branch:
             repo.herd_branch(self._url(), branch, depth=herd_depth, rebase=rebase,
                              config=self.git_settings.get_processed_config())
@@ -605,6 +605,8 @@ class ResolvedProject:
 
         if self.source.protocol is not None:
             protocol = self.source.protocol
+        elif SOURCE_CONTROLLER.protocol_override is not None:
+            protocol = SOURCE_CONTROLLER.protocol_override
         elif self.default_protocol is not None:
             protocol = self.default_protocol
         else:

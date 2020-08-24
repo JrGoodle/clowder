@@ -651,6 +651,8 @@ def error_user_interrupt() -> str:
     return f"{ERROR} User interruption"
 
 
+# FIXME: Only print project name using this where appropriate (now that project status and upstream_string
+# are printed back to back)
 def upstream_string(name: str) -> str:
     """Return formatted upstream name
 

@@ -119,6 +119,8 @@ class ResolvedUpstream:
 
         if self.source.protocol is not None:
             protocol = self.source.protocol
+        elif SOURCE_CONTROLLER.protocol_override is not None:
+            protocol = SOURCE_CONTROLLER.protocol_override
         elif self.default_protocol is not None:
             protocol = self.default_protocol
         else:
