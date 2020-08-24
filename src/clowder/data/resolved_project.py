@@ -184,17 +184,18 @@ class ResolvedProject:
         if local:
             repo.print_local_branches()
         if remote:
+            self._print(fmt.upstream_string(self.name))
+            repo.print_remote_branches()
+
             self._print(fmt.upstream_string(self.upstream.name))
             # Modify repo to prefer upstream
             repo.default_ref = self.upstream.ref
             repo.remote = self.upstream.remote
             repo.print_remote_branches()
-
-            self._print(fmt.upstream_string(self.name))
             # Restore repo configuration
             repo.default_ref = self.ref
             repo.remote = self.remote
-            repo.print_remote_branches()
+
 
     @project_repo_exists
     def checkout(self, branch: str) -> None:
@@ -256,8 +257,7 @@ class ResolvedProject:
         if not is_remote:
             return repo.existing_local_branch(branch)
 
-        remote = self.remote if self.upstream is None else self.upstream.remote
-        return repo.existing_remote_branch(branch, remote)
+        return repo.existing_remote_branch(branch, self.remote)
 
     def exists(self) -> bool:
         """Check if branch exists
@@ -364,9 +364,7 @@ class ResolvedProject:
         # Modify repo to prefer upstream
         repo.default_ref = self.upstream.ref
         repo.remote = self.upstream.remote
-
         repo.herd_remote(self.upstream.url(), self.upstream.remote, branch=branch)
-
         # Restore repo configuration
         repo.default_ref = self.ref
         repo.remote = self.remote
@@ -421,16 +419,11 @@ class ResolvedProject:
         repo = ProjectRepo(self.full_path(), self.remote, self.ref)
 
         if local and repo.existing_local_branch(branch):
-            if self.upstream:
-                # Modify repo to prefer upstream
-                repo.default_ref = self.upstream.ref
-                repo.remote = self.upstream.remote
             repo.prune_branch_local(branch, force)
 
         if remote:
-            git_remote = self.remote if self.upstream is None else self.upstream.remote
-            if repo.existing_remote_branch(branch, git_remote):
-                repo.prune_branch_remote(branch, git_remote)
+            if repo.existing_remote_branch(branch, self.remote):
+                repo.prune_branch_remote(branch, self.remote)
 
     def reset(self, timestamp: Optional[str] = None, parallel: bool = False) -> None:
         """Reset project branch to upstream or checkout tag/sha as detached HEAD
@@ -443,29 +436,20 @@ class ResolvedProject:
 
         repo = self._repo(self.git_settings.submodules, parallel=parallel)
 
-        if self.upstream is None:
-            # TODO: Restore timestamp author
-            # if timestamp:
-            #     repo.reset_timestamp(timestamp, self.timestamp_author, self.ref)
-            #     self._pull_lfs(repo)
-            #     return
-
-            repo.reset(depth=self.git_settings.depth)
-            self._pull_lfs(repo)
-            return
-
-        self._print(self.upstream.status())
-        repo.configure_remotes(self.remote, self._url(), self.upstream.remote, self.upstream.url())
-
-        self._print(fmt.upstream_string(self.upstream.name))
-
         # TODO: Restore timestamp author
         # if timestamp:
         #     repo.reset_timestamp(timestamp, self.timestamp_author, self.ref)
         #     self._pull_lfs(repo)
         #     return
 
-        repo.reset()
+        if self.upstream is None:
+            repo.reset(depth=self.git_settings.depth)
+        else:
+            self._print(self.upstream.status())
+            repo.configure_remotes(self.remote, self._url(), self.upstream.remote, self.upstream.url())
+            self._print(fmt.upstream_string(self.name))
+            repo.reset()
+
         self._pull_lfs(repo)
 
     def run(self, commands: List[str], ignore_errors: bool, parallel: bool = False) -> None:
@@ -523,11 +507,10 @@ class ResolvedProject:
         :param bool tracking: Whether to create a remote branch with tracking relationship
         """
 
-        remote = self.remote if self.upstream is None else self.upstream.remote
         # TODO: Replace 0 with git default depth
-        depth = self.git_settings.depth if self.upstream is None else 0
+        depth = self.git_settings.depth
         repo = ProjectRepo(self.full_path(), self.remote, self.ref)
-        repo.start(remote, branch, depth, tracking)
+        repo.start(self.remote, branch, depth, tracking)
 
     def status(self, padding: Optional[int] = None) -> str:
         """Return formatted status for project
@@ -585,6 +568,7 @@ class ResolvedProject:
         if self._print_output:
             print(val)
 
+    # FIXME: Turn this into a property
     def _repo(self, submodules: bool, parallel: bool = False) -> ProjectRepo:
         """Return ProjectRepo or ProjectRepoRecursive instance
 

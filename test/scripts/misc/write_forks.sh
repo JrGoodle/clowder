@@ -26,7 +26,7 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
 
     test_start_prune_forks() {
         print_single_separator
-        echo "TEST: Test start tracking branch"
+        echo "TEST: Test start prune upstream tracking branch"
 
         echo "TEST: No local or remote branches"
         begin_command
