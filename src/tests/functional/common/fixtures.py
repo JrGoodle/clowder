@@ -85,4 +85,5 @@ def validate_clowder_repo_with_symlink(clowder_repo: Path) -> None:
 
 
 def copy_directory(from_dir: Path, to: Path):
-    shutil.copytree(from_dir, to, symlinks=True, dirs_exist_ok=True)
+    to.rmdir()
+    shutil.copytree(from_dir, to, symlinks=True)
