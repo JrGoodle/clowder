@@ -8,11 +8,12 @@ from pathlib import Path
 
 # noinspection PyPackageRequirements
 import pytest
+from pytest import fixture
 
 import tests.functional.util as util
 
 
-@pytest.fixture
+@fixture
 def init_default(tmp_path: Path, example: str, cats_init_default: Path) -> None:
     if example == "cats":
         copy_directory(cats_init_default, to=tmp_path)
@@ -25,7 +26,7 @@ def init_default(tmp_path: Path, example: str, cats_init_default: Path) -> None:
     util.run_command(command, tmp_path)
 
 
-@pytest.fixture
+@fixture
 def init_herd_default(tmp_path: Path, example: str, cats_init_herd_default: Path) -> None:
     if example == "cats":
         copy_directory(cats_init_herd_default, to=tmp_path)
@@ -38,7 +39,7 @@ def init_herd_default(tmp_path: Path, example: str, cats_init_herd_default: Path
     util.run_command(command, tmp_path)
 
 
-@pytest.fixture(scope="session")
+@fixture(scope="session")
 def cats_init_herd_default(tmp_path_factory) -> Path:
     path = tmp_path_factory.mktemp(cats_init_herd_default.__name__)
 
@@ -61,7 +62,7 @@ def cats_init_herd_default(tmp_path_factory) -> Path:
     return path
 
 
-@pytest.fixture(scope="session")
+@fixture(scope="session")
 def cats_init_default(tmp_path_factory) -> Path:
     tmp_path = tmp_path_factory.mktemp(cats_init_default.__name__)
 

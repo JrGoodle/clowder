@@ -8,6 +8,8 @@ from subprocess import CompletedProcess
 from pathlib import Path
 
 from git import Repo
+from parse_type import TypeBuilder
+
 
 TEST_REPOS = {
     "cats": {"url": "github.com", "name": "JrGoodle/cats"},
@@ -23,6 +25,13 @@ CATS_REPOS_DEFAULT = {
     "sasha": {"path": "black-cats/sasha", "branch": "master"},
     "june": {"path": "black-cats/june", "branch": "master"}
 }
+
+
+def parse_string(text) -> str:
+    return str(text)
+
+
+parse_list_string = TypeBuilder.with_many(parse_string, listsep=",")
 
 
 def is_dirty(path: Path) -> bool:

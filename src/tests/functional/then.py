@@ -11,6 +11,12 @@ import tests.functional.util as util
 scenarios('../features')
 
 
+@then(parsers.parse("the command printed {branch_type} branches"))
+def then_has_project_directory(tmp_path: Path, branch_type: str) -> None:
+    # FIXME: Implement
+    pass
+
+
 @then("project at <directory> exists")
 @then(parsers.parse("project at {directory} exists"))
 def then_has_project_directory(tmp_path: Path, directory: str) -> None:
