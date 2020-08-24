@@ -146,7 +146,7 @@ def run_command(command: str, path: Path, exit_code: Optional[int] = 0) -> Compl
     return result
 
 
-def get_url(example: str, protocol: str = "ssh") -> str:
+def get_url(example: str, protocol: str = "https") -> str:
     source_url = TEST_REPOS[example]["url"]
     name = TEST_REPOS[example]["name"]
     if protocol == "ssh":
