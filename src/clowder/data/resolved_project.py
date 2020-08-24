@@ -148,11 +148,12 @@ class ResolvedProject:
                 raise err
 
         self.groups: Set[str] = {"all", self.name, str(self.path)}
-        if has_group and group.groups is not None:
-            for g in group.groups:
-                self.groups.add(g)
+        if has_group:
+            self.groups.add(group.name)
+            if group.groups is not None:
+                self.groups.update({g for g in group.groups})
         if project.groups is not None:
-            self.groups.update(project.groups)
+            self.groups.update(set(project.groups))
         if 'notdefault' in self.groups:
             self.groups.remove('all')
 
