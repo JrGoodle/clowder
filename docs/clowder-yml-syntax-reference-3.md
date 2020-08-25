@@ -5,6 +5,7 @@
 - [group](#group)
 - [upstream](#upstream)
 - [defaults](#defaults)
+- [upstream defaults](#upstream-defaults)
 - [source](#source)
 - [protocol](#protocol)
 - [git](#git)
@@ -13,13 +14,19 @@
 
 ```yaml
 name: string # REQUIRED
-
+protocol: protocol
 defaults: defaults
-
-sources: { string: source } # key is a reusable alias
-
+sources: { string: source | string } # key is a reusable alias
 clowder: [ project | string ] | { string: group } # REQUIRED
 ```
+
+<!-- ## sources
+
+```yaml
+sources:
+  protocol: protocol
+  <string>: source | string
+``` -->
 
 ## project
 
@@ -48,6 +55,8 @@ group:
   path: string
   groups: [ string ]
   defaults: defaults
+  protocol: protocol
+  sources: { string: source | string } # key is a reusable alias
   projects: [ project | string ] # REQUIRED
 ```
 
@@ -58,22 +67,27 @@ upstream:
   name: string # REQUIRED
   source: string | source
   remote: string
-  branch: string # Only one of 'branch', 'tag', or 'commit' is allowed
-  tag: string # Only one of 'branch', 'tag', or 'commit' is allowed
-  commit: string # Only one of 'branch', 'tag', or 'commit' is allowed
 ```
 
 ## defaults
 
 ```yaml
 defaults:
-  protocol: protocol
   source: string
   remote: string
   git: git
   branch: string # Only one of 'branch', 'tag', or 'commit' is allowed
   tag: string # Only one of 'branch', 'tag', or 'commit' is allowed
   commit: string # Only one of 'branch', 'tag', or 'commit' is allowed
+  upstream: upstream_defaults
+```
+
+## upstream defaults
+
+```yaml
+upstream_defaults:
+  source: string
+  remote: string
 ```
 
 ## source
