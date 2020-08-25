@@ -91,14 +91,6 @@ class CatsController(ArgparseController):
         self._execute_command('./git-config.sh', self.path)
 
     @expose(
-        help='Run cats help tests'
-    )
-    def help(self) -> None:
-        """clowder cats help tests"""
-
-        self._execute_command('./help.sh', self.path)
-
-    @expose(
         help='Run cats herd branch tests'
     )
     def herd_branch(self) -> None:

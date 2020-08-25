@@ -1,4 +1,4 @@
-@all @status @cats
+@status @cats
 Feature: Test clowder status
 
     @help @success

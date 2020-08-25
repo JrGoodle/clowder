@@ -1,4 +1,4 @@
-@all @diff @cats
+@diff @cats
 Feature: Test clowder diff
 
     @help @success

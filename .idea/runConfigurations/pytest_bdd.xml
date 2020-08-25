@@ -14,7 +14,7 @@
     <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
     <option name="_new_keywords" value="&quot;&quot;" />
     <option name="_new_parameters" value="&quot;&quot;" />
-    <option name="_new_additionalArguments" value="&quot;-m \&quot;base\&quot;&quot;" />
+    <option name="_new_additionalArguments" value="&quot;-m \&quot;fail\&quot;&quot;" />
     <option name="_new_target" value="&quot;$PROJECT_DIR$/src/tests&quot;" />
     <option name="_new_targetType" value="&quot;PATH&quot;" />
     <method v="2" />

@@ -1,4 +1,4 @@
-@all @herd @cats
+@herd @cats
 Feature: Test clowder herd
 
     @help @success

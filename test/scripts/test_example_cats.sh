@@ -11,8 +11,6 @@ echo 'TEST: cats example test script'
 print_double_separator
 
 "$TEST_SCRIPT_DIR/cats/subdirectory.sh" || exit 1
-"$TEST_SCRIPT_DIR/cats/version.sh" || exit 1
-"$TEST_SCRIPT_DIR/cats/command.sh" || exit 1
 "$TEST_SCRIPT_DIR/cats/init.sh" || exit 1
 "$TEST_SCRIPT_DIR/cats/checkout.sh" || exit 1
 "$TEST_SCRIPT_DIR/cats/groups.sh" || exit 1
@@ -31,5 +29,4 @@ print_double_separator
 "$TEST_SCRIPT_DIR/cats/repo.sh" || exit 1
 "$TEST_SCRIPT_DIR/cats/reset.sh" || exit 1
 "$TEST_SCRIPT_DIR/cats/yaml.sh" || exit 1
-"$TEST_SCRIPT_DIR/cats/help.sh" || exit 1
 # TODO: Add any missing scripts
