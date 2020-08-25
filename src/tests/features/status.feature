@@ -1,27 +1,28 @@
 @status @cats
-Feature: Test clowder status
+Feature: clowder status
 
     @help @success
-    Scenario: Test clowder status help in empty directory
+    Scenario: clowder status help in empty directory
         Given test directory is empty
-        When I run commands 'clowder status -h' and 'clowder status --help'
+        When I run 'clowder status -h' and 'clowder status --help'
         Then the commands succeed
 
     @help @success
-    Scenario: Test clowder status help with invalid clowder.yaml
+    Scenario: clowder status help with invalid clowder.yaml
+        # https://github.com/JrGoodle/cats/blob/master/versions/yaml-validation.clowder.yaml
         Given cats example is initialized to yaml-validation
         And test-empty-project yaml version is linked
-        When I run commands 'clowder status -h' and 'clowder status --help'
+        When I run 'clowder status -h' and 'clowder status --help'
         Then the commands succeed
 
     @help @success
-    Scenario: Test clowder status help with valid clowder.yaml
+    Scenario: clowder status help with valid clowder.yaml
         Given cats example is initialized
-        When I run commands 'clowder status -h' and 'clowder status --help'
+        When I run 'clowder status -h' and 'clowder status --help'
         Then the commands succeed
 
     @default @success
-    Scenario: Test clowder status
+    Scenario: clowder status
         Given cats example is initialized and herded
         And mu has untracked file catnip.txt
 
@@ -37,7 +38,7 @@ Feature: Test clowder status
 #        And TODO: check the output
 
     @default @success @internet
-    Scenario: Test clowder status fetch
+    Scenario: clowder status with fetch
         Given cats example is initialized and herded
         And mu has untracked file catnip.txt
 

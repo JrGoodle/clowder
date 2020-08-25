@@ -1,27 +1,27 @@
 @herd @cats
-Feature: Test clowder herd
+Feature: clowder herd
 
     @help @success
-    Scenario: Test clowder herd help in empty directory
+    Scenario: clowder herd help in empty directory
         Given test directory is empty
-        When I run commands 'clowder herd -h' and 'clowder herd --help'
+        When I run 'clowder herd -h' and 'clowder herd --help'
         Then the commands succeed
 
     @help @success
-    Scenario: Test clowder herd help with invalid clowder.yaml
+    Scenario: clowder herd help with invalid clowder.yaml
         Given cats example is initialized to yaml-validation
         And test-empty-project yaml version is linked
-        When I run commands 'clowder herd -h' and 'clowder herd --help'
+        When I run 'clowder herd -h' and 'clowder herd --help'
         Then the commands succeed
 
     @help @success
-    Scenario: Test clowder herd help with valid clowder.yaml
+    Scenario: clowder herd help with valid clowder.yaml
         Given cats example is initialized
-        When I run commands 'clowder herd -h' and 'clowder herd --help'
+        When I run 'clowder herd -h' and 'clowder herd --help'
         Then the commands succeed
 
     @default @success
-    Scenario Outline: Test clowder herd default
+    Scenario Outline: clowder herd default
         Given cats example is initialized
         And <directory> doesn't exist
 
@@ -42,7 +42,7 @@ Feature: Test clowder herd
         | black-cats/june   | master |
 
     @commits @success
-    Scenario Outline: Test clowder herd commits
+    Scenario Outline: clowder herd commits
         Given cats example is initialized
         And <directory> doesn't exist
         And static-refs yaml version is linked
@@ -64,7 +64,7 @@ Feature: Test clowder herd
         | black-cats/sasha  | 775979e0b1a7f753131bf16a4794c851c67108d8 |
 
     @tags @success
-    Scenario Outline: Test clowder herd tags
+    Scenario Outline: clowder herd tags
         Given cats example is initialized
         And <directory> doesn't exist
         And tags yaml version is linked

@@ -18,15 +18,17 @@ def when_run_command(tmp_path: Path, command: str, command_results: CommandResul
     command_results.completed_processes.append(result)
 
 
-@when(parsers.parse("I run commands '{command_1}' and '{command_2}'"))
+@when(parsers.parse("I run '{command_1}' and '{command_2}'"))
 def when_run_commands_and(tmp_path: Path, command_1: str, command_2: str, command_results: CommandResults) -> None:
     commands = [command_1, command_2]
     command_results.completed_processes += [util.run_command(c, tmp_path) for c in commands]
 
 
-# @when(parsers.parse("I run commands:{commands}"))
-# def when_run_commands(tmp_path: Path, commands: str) -> List[CompletedProcess]:
-#     return [util.run_command(c, tmp_path) for c in util.list_from_string(commands)]
+@when(parsers.parse("I run:\n{commands}"))
+def when_run_commands(tmp_path: Path, commands: str, command_results: CommandResults) -> None:
+    commands = util.list_from_string(commands, sep="\n")
+    results = [util.run_command(c, tmp_path) for c in commands]
+    command_results.completed_processes += results
 
 
 # Groups #
