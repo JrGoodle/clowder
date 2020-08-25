@@ -7,10 +7,15 @@ import shutil
 from pathlib import Path
 
 # noinspection PyPackageRequirements
-import pytest
 from pytest import fixture
 
 import tests.functional.util as util
+from tests.functional.util import CommandResults
+
+
+@fixture
+def command_results() -> CommandResults:
+    return CommandResults()
 
 
 @fixture

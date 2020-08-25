@@ -1,7 +1,26 @@
 @all @status @cats
 Feature: Test clowder status
 
-    @default @succeed
+    @help @success
+    Scenario: Test clowder status help in empty directory
+        Given test directory is empty
+        When I run commands 'clowder status -h' and 'clowder status --help'
+        Then the commands succeed
+
+    @help @success
+    Scenario: Test clowder status help with invalid clowder.yaml
+        Given cats example is initialized to yaml-validation
+        And test-empty-project yaml version is linked
+        When I run commands 'clowder status -h' and 'clowder status --help'
+        Then the commands succeed
+
+    @help @success
+    Scenario: Test clowder status help with valid clowder.yaml
+        Given cats example is initialized
+        When I run commands 'clowder status -h' and 'clowder status --help'
+        Then the commands succeed
+
+    @default @success
     Scenario: Test clowder status
         Given cats example is initialized and herded
         And mu has untracked file catnip.txt
@@ -17,7 +36,7 @@ Feature: Test clowder status
         Then mu has untracked file catnip.txt
 #        And TODO: check the output
 
-    @default @succeed @internet
+    @default @success @internet
     Scenario: Test clowder status fetch
         Given cats example is initialized and herded
         And mu has untracked file catnip.txt

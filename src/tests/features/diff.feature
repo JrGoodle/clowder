@@ -1,7 +1,26 @@
 @all @diff @cats
 Feature: Test clowder diff
 
-    @default @succeed
+    @help @success
+    Scenario: Test clowder diff help in empty directory
+        Given test directory is empty
+        When I run commands 'clowder diff -h' and 'clowder diff --help'
+        Then the commands succeed
+
+    @help @success
+    Scenario: Test clowder diff help with invalid clowder.yaml
+        Given cats example is initialized to yaml-validation
+        And test-empty-project yaml version is linked
+        When I run commands 'clowder diff -h' and 'clowder diff --help'
+        Then the commands succeed
+
+    @help @success
+    Scenario: Test clowder diff help with valid clowder.yaml
+        Given cats example is initialized
+        When I run commands 'clowder diff -h' and 'clowder diff --help'
+        Then the commands succeed
+
+    @default @success
     Scenario: Test clowder diff
         Given cats example is initialized and herded
         And mu has untracked file catnip.txt

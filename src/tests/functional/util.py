@@ -1,6 +1,6 @@
 """New syntax test file"""
 
-from typing import Optional
+from typing import List, Optional
 
 import os
 import subprocess
@@ -31,7 +31,17 @@ def parse_string(text) -> str:
     return str(text)
 
 
-list_str = TypeBuilder.with_many(parse_string, listsep=",")
+list_str_commas = TypeBuilder.with_many(parse_string, listsep=",")
+list_str_newlines = TypeBuilder.with_many(parse_string, listsep="\n")
+
+
+def list_from_string(text: str, sep: Optional[str] = None) -> List[str]:
+    return text.split(sep=sep)
+
+
+class CommandResults:
+    def __init__(self):
+        self.completed_processes: List[CompletedProcess] = []
 
 
 def is_dirty(path: Path) -> bool:
@@ -101,12 +111,12 @@ def lfs_filters_installed(path: Path) -> None:
 
 
 def is_lfs_file_pointer(path: Path, file: str) -> None:
-    result = run_command(f'git lfs ls-files -I "{file}"', path, exit_code=None)
+    result = run_command(f'git lfs ls-files -I "{file}"', path)
     assert result.stdout == '-'
 
 
 def is_lfs_file_not_pointer(path: Path, file: str) -> None:
-    result = run_command(f'git lfs ls-files -I "{file}"', path, exit_code=None)
+    result = run_command(f'git lfs ls-files -I "{file}"', path)
     assert result.stdout == '*'
 
 
@@ -120,7 +130,8 @@ def create_file(path: Path) -> None:
 
 
 def local_branch_exists(path: Path, branch: str) -> None:
-    run_command(f'git rev-parse --quiet --verify "{branch}"', path, exit_code=0)
+    result = run_command(f'git rev-parse --quiet --verify "{branch}"', path)
+    assert result.returncode == 0
 
 
 def remote_branch_exists(path: Path, branch: str) -> None:
@@ -129,7 +140,8 @@ def remote_branch_exists(path: Path, branch: str) -> None:
 
 
 def tracking_branch_exists(path: Path, branch: str) -> None:
-    run_command(f'git config --get branch.{branch}.merge', path, exit_code=0)
+    result = run_command(f'git config --get branch.{branch}.merge', path)
+    assert result.returncode == 0
 
 
 def check_remote_url(path: Path, remote, url) -> None:
@@ -144,15 +156,9 @@ def rebase_in_progress(path: Path) -> None:
     assert rebase_merge.is_dir() or rebase_apply.is_dir()
 
 
-def run_command(command: str, path: Path, exit_code: Optional[int] = 0) -> CompletedProcess:
+def run_command(command: str, path: Path) -> CompletedProcess:
     print(f"TEST: {command}")
-    result = subprocess.run(command, shell=True, cwd=path)
-
-    if exit_code is None:
-        return result
-
-    assert result.returncode == exit_code
-    return result
+    return subprocess.run(command, shell=True, cwd=path)
 
 
 def get_url(example: str, protocol: str = "https") -> str:

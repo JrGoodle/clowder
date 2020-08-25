@@ -7,8 +7,21 @@ from git import Repo
 from pytest_bdd import scenarios, then, parsers
 
 import tests.functional.util as util
+from .util import CommandResults
 
 scenarios('../features')
+
+
+@then("the command succeeds")
+@then("the commands succeed")
+def then_commands_succeeded(command_results: CommandResults) -> None:
+    assert all([result.returncode == 0 for result in command_results.completed_processes])
+
+
+@then("the command fails")
+@then("the commands fail")
+def then_commands_failed(command_results) -> None:
+    assert all([result.returncode != 0 for result in command_results.completed_processes])
 
 
 @then(parsers.parse("the command printed {branch_type} branches"))

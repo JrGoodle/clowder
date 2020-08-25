@@ -11,6 +11,11 @@ import tests.functional.util as util
 scenarios('../features')
 
 
+@given(parsers.parse("test directory is empty"))
+def given_test_dir_empty() -> None:
+    pass
+
+
 @given(parsers.parse("{example} example is initialized"))
 def given_example_init(tmp_path: Path, example: str, init_default) -> None:
     pass
@@ -48,6 +53,8 @@ def given_run_clowder_command(tmp_path: Path, command: str) -> None:
     util.run_command(command, tmp_path)
 
 
+@given(parsers.parse("{version} clowder.yaml version is linked"))
+@given(parsers.parse("{version} clowder.yml version is linked"))
 @given(parsers.parse("{version} yaml version is linked"))
 def given_link_yaml_version(tmp_path: Path, version: str) -> None:
     command = f"clowder link {version}"

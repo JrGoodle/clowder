@@ -7,26 +7,26 @@ from typing import List
 from pytest_bdd import scenarios, when, parsers
 
 import tests.functional.util as util
-from .util import list_str
+from .util import list_str_commas, CommandResults
 
 scenarios('../features')
 
 
 @when(parsers.parse("I run '{command}'"))
-def when_run_clowder(tmp_path: Path, command: str) -> None:
-    util.run_command(command, tmp_path)
+def when_run_command(tmp_path: Path, command: str, command_results: CommandResults) -> None:
+    result = util.run_command(command, tmp_path)
+    command_results.completed_processes.append(result)
 
 
-@when(parsers.parse("I run '{command}' with exit code {code:d}"))
-def when_run_clowder_exit_code(tmp_path: Path, command: str, code: int) -> None:
-    result = util.run_command(command, tmp_path, exit_code=None)
-    assert result.returncode == code
+@when(parsers.parse("I run commands '{command_1}' and '{command_2}'"))
+def when_run_commands_and(tmp_path: Path, command_1: str, command_2: str, command_results: CommandResults) -> None:
+    commands = [command_1, command_2]
+    command_results.completed_processes += [util.run_command(c, tmp_path) for c in commands]
 
 
-@when(parsers.parse("I run '{command}' and it fails"))
-def when_run_clowder_fails(tmp_path: Path, command: str) -> None:
-    result = util.run_command(command, tmp_path, exit_code=None)
-    assert result.returncode != 0
+# @when(parsers.parse("I run commands:{commands}"))
+# def when_run_commands(tmp_path: Path, commands: str) -> List[CompletedProcess]:
+#     return [util.run_command(c, tmp_path) for c in util.list_from_string(commands)]
 
 
 # Groups #
@@ -42,7 +42,7 @@ def when_run_clowder_groups_and(tmp_path: Path, command: str, group_1: str, grou
     util.run_command(f"{command} {group_1} {group_2}", tmp_path)
 
 
-@when(parsers.cfparse("I run '{command}' for groups {groups:Groups}", extra_types=dict(Groups=list_str)))
+@when(parsers.cfparse("I run '{command}' for groups {groups:Groups}", extra_types=dict(Groups=list_str_commas)))
 def when_run_clowder_groups(tmp_path: Path, command: str, groups: List[str]) -> None:
     groups_command = " ".join(g for g in groups)
     util.run_command(f"{command} {groups_command}", tmp_path)
@@ -61,7 +61,7 @@ def when_run_clowder_projects_and(tmp_path: Path, command: str, project_1: str, 
     util.run_command(f"{command} {project_1} {project_2}", tmp_path)
 
 
-@when(parsers.cfparse("I run '{command}' for projects {projects:Projects}", extra_types=dict(Projects=list_str)))
+@when(parsers.cfparse("I run '{command}' for projects {projects:Projects}", extra_types=dict(Projects=list_str_commas)))
 def when_run_clowder_projects(tmp_path: Path, command: str, projects: List[str]) -> None:
     project_command = " ".join(p for p in projects)
     util.run_command(f"{command} {project_command}", tmp_path)
