@@ -31,7 +31,7 @@ def parse_string(text) -> str:
     return str(text)
 
 
-parse_list_string = TypeBuilder.with_many(parse_string, listsep=",")
+list_str = TypeBuilder.with_many(parse_string, listsep=",")
 
 
 def is_dirty(path: Path) -> bool:

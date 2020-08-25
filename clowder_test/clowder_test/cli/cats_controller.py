@@ -35,14 +35,6 @@ class CatsController(ArgparseController):
         self._execute_command('./test_example_cats.sh', ROOT_DIR / 'test' / 'scripts')
 
     @expose(
-        help='Run cats branch tests'
-    )
-    def branch(self) -> None:
-        """clowder cats branch tests"""
-
-        self._execute_command('./branch.sh', self.path)
-
-    @expose(
         help='Run cats checkout tests'
     )
     def checkout(self) -> None:
@@ -73,14 +65,6 @@ class CatsController(ArgparseController):
         """clowder cats config tests"""
 
         self._execute_command('./config.sh', self.path)
-
-    @expose(
-        help='Run cats diff tests'
-    )
-    def diff(self) -> None:
-        """clowder cats diff tests"""
-
-        self._execute_command('./diff.sh', self.path)
 
     @expose(
         help='Run cats forall tests'
