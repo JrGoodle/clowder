@@ -1,8 +1,7 @@
 
 name: cats-default-test
 
-defaults:
-  protocol: https
+protocol: https
 
 clowder:
   - name: jrgoodle/mu

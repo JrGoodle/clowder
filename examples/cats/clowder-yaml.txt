@@ -26,6 +26,5 @@ clowder:
   - black-cats
   name: jrgoodle/sasha
   path: black-cats/sasha
-defaults:
-  protocol: https
 name: cats-default-test
+protocol: https
