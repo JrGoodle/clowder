@@ -370,10 +370,7 @@
             },
             "source": {
               "description": "Upstream git hosting provider source name",
-              "oneOf": [
-                {
-                  "$ref": "#/definitions/sourceName"
-                },
+              "allOf": [
                 {
                   "$ref": "#/definitions/source"
                 }

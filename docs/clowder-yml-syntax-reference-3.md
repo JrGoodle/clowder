@@ -16,17 +16,9 @@
 name: string # REQUIRED
 protocol: protocol
 defaults: defaults
-sources: { string: source | string } # key is a reusable alias
+sources: { string: source } # key is a reusable alias
 clowder: [ project | string ] | { string: group } # REQUIRED
 ```
-
-<!-- ## sources
-
-```yaml
-sources:
-  protocol: protocol
-  <string>: source | string
-``` -->
 
 ## project
 
@@ -36,7 +28,7 @@ project:
   path: string
   groups: [ string ]
   remote: string
-  source: string | source
+  source: source
   git: git
   upstream: string | upstream
   branch: string # Only one of 'branch', 'tag', or 'commit' is allowed
@@ -56,7 +48,7 @@ group:
   groups: [ string ]
   defaults: defaults
   protocol: protocol
-  sources: { string: source | string } # key is a reusable alias
+  sources: { string: source } # key is a reusable alias
   projects: [ project | string ] # REQUIRED
 ```
 
@@ -65,7 +57,7 @@ group:
 ```yaml
 upstream:
   name: string # REQUIRED
-  source: string | source
+  source: source
   remote: string
 ```
 
@@ -73,7 +65,7 @@ upstream:
 
 ```yaml
 defaults:
-  source: string
+  source: string # source identifier
   remote: string
   git: git
   branch: string # Only one of 'branch', 'tag', or 'commit' is allowed
@@ -91,6 +83,10 @@ upstream_defaults:
 ```
 
 ## source
+
+```yaml
+source: string # url
+```
 
 ```yaml
 source:
