@@ -85,11 +85,15 @@ upstream_defaults:
 ## source
 
 ```yaml
+source: string # id
+```
+
+```yaml
 source: string # url
 ```
 
 ```yaml
-source:
+source: # id
   url: string # REQUIRED
   protocol: enum
 ```

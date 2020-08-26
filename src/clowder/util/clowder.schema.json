@@ -300,7 +300,14 @@
       "type": "object",
       "minProperties": 1,
       "additionalProperties": {
-        "$ref": "#/definitions/source"
+        "oneOf": [
+          {
+            "$ref": "#/definitions/source"
+          },
+          {
+            "$ref": "#/definitions/url"
+          }
+        ]
       },
       "propertyNames": {
         "$ref": "#/definitions/sourceName"
@@ -316,36 +323,29 @@
     },
     "source": {
       "description": "Git repository hosting provider source",
-      "oneOf": [
-        {
-          "$ref": "#/definitions/url"
-        },
-        {
-          "type": "object",
-          "required": [
-            "url"
-          ],
-          "additionalProperties": false,
-          "properties": {
-            "url": {
-              "description": "The base URL of the git hosting provider. The full URL gets formed as:\ngit@${source_url}:${project_name/upstream_name}.git\nhttps://${source_url}/${project_name/upstream_name}.git",
-              "allOf": [
-                {
-                  "$ref": "#/definitions/url"
-                }
-              ]
-            },
-            "protocol": {
-              "description": "The git URL protocol for the git hosting provider source. Accepted values are 'ssh' or 'https'. If not supplied, defaults to 'ssh'. The full URL gets formed as:\ngit@${source_url}:${project_name/upstream_name}.git\nhttps://${source_url}/${project_name/upstream_name}.git",
-              "allOf": [
-                {
-                  "$ref": "#/definitions/gitProtocol"
-                }
-              ]
+      "type": "object",
+      "required": [
+        "url"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "url": {
+          "description": "The base URL of the git hosting provider. The full URL gets formed as:\ngit@${source_url}:${project_name/upstream_name}.git\nhttps://${source_url}/${project_name/upstream_name}.git",
+          "allOf": [
+            {
+              "$ref": "#/definitions/url"
             }
-          }
+          ]
+        },
+        "protocol": {
+          "description": "The git URL protocol for the git hosting provider source. Accepted values are 'ssh' or 'https'. If not supplied, defaults to 'ssh'. The full URL gets formed as:\ngit@${source_url}:${project_name/upstream_name}.git\nhttps://${source_url}/${project_name/upstream_name}.git",
+          "allOf": [
+            {
+              "$ref": "#/definitions/gitProtocol"
+            }
+          ]
         }
-      ]
+      }
     },
     "upstream": {
       "description": "Git project upstream",
@@ -370,7 +370,10 @@
             },
             "source": {
               "description": "Upstream git hosting provider source name",
-              "allOf": [
+              "oneOf": [
+                {
+                  "$ref": "#/definitions/sourceName"
+                },
                 {
                   "$ref": "#/definitions/source"
                 }
