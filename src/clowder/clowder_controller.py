@@ -75,7 +75,8 @@ class ClowderController(object):
                 # Validate all source names have a defined source with url
                 SOURCE_CONTROLLER.validate_sources()
 
-                resolved_projects = [ResolvedProject(p, defaults=defaults) for p in projects]
+                resolved_projects = [ResolvedProject(p, defaults=defaults, protocol=self._clowder.protocol)
+                                     for p in projects]
                 self.projects = tuple(sorted(resolved_projects, key=lambda p: p.name))
                 self._update_properties()
                 return
@@ -91,7 +92,7 @@ class ClowderController(object):
             # Validate all source names have a defined source with url
             SOURCE_CONTROLLER.validate_sources()
 
-            resolved_projects = [ResolvedProject(p, defaults=defaults, group=g)
+            resolved_projects = [ResolvedProject(p, defaults=defaults, group=g, protocol=self._clowder.protocol)
                                  for g in groups for p in g.projects]
             self.projects = tuple(sorted(resolved_projects, key=lambda p: p.name))
             self._update_properties()

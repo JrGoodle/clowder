@@ -32,7 +32,8 @@ class ResolvedUpstream:
     :ivar str path: Project relative path
     """
 
-    def __init__(self, path: Path, upstream: Upstream, defaults: Optional[Defaults], group: Optional[Group]):
+    def __init__(self, path: Path, upstream: Upstream, defaults: Optional[Defaults],
+                 group: Optional[Group], protocol: Optional[str]):
         """Upstream __init__
 
         :param Path path: Parent project path
@@ -60,13 +61,12 @@ class ResolvedUpstream:
         # elif has_defaults_remote:
         #     self.remote = defaults.remote
 
-        has_defaults_protocol = has_defaults and defaults.protocol is not None
-        has_group_defaults_protocol = has_group_defaults and group.defaults.protocol is not None
+        has_group_protocol = has_group and group.protocol is not None
         self.default_protocol: Optional[str] = None
-        if has_group_defaults_protocol:
-            self.default_protocol: Optional[str] = group.defaults.protocol
-        elif has_defaults_protocol:
-            self.default_protocol: Optional[str] = defaults.protocol
+        if has_group_protocol:
+            self.default_protocol: Optional[str] = group.protocol
+        elif protocol is not None:
+            self.default_protocol: Optional[str] = protocol
 
         has_source = upstream.source is not None
         has_defaults_source = has_defaults and defaults.source is not None

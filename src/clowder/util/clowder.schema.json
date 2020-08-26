@@ -206,12 +206,9 @@
       "properties": {
         "source": {
           "description": "Default git hosting provider source name",
-          "oneOf": [
+          "allOf": [
             {
               "$ref": "#/definitions/sourceName"
-            },
-            {
-              "$ref": "#/definitions/source"
             }
           ]
         },

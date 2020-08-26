@@ -5,7 +5,6 @@ name: yaml-validation-description-test
 defaults:
   branch: master
   source: github
-  protocol: ssh
   git:
     recursive: true
     lfs: true

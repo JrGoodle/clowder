@@ -59,7 +59,8 @@ class ResolvedProject:
     :ivar str ref: Project git ref
     """
 
-    def __init__(self, project: Project, defaults: Optional[Defaults] = None, group: Optional[Group] = None):
+    def __init__(self, project: Project, defaults: Optional[Defaults] = None,
+                 group: Optional[Group] = None, protocol: Optional[str] = None):
         """Project __init__
 
         :param Project project: Project model instance
@@ -86,13 +87,12 @@ class ResolvedProject:
             last_path_component = Path(self.name).name
             self.path = self.path / last_path_component
 
-        has_defaults_protocol = has_defaults and defaults.protocol is not None
-        has_group_defaults_protocol = has_group_defaults and group.defaults.protocol is not None
+        has_group_protocol = has_group and group.protocol is not None
         self.default_protocol: Optional[str] = None
-        if has_group_defaults_protocol:
-            self.default_protocol: Optional[str] = group.defaults.protocol
-        elif has_defaults_protocol:
-            self.default_protocol: Optional[str] = defaults.protocol
+        if has_group_protocol:
+            self.default_protocol: Optional[str] = group.protocol
+        elif protocol is not None:
+            self.default_protocol: Optional[str] = protocol
 
         has_remote = project.remote is not None
         has_defaults_remote = has_defaults and defaults.remote is not None
@@ -140,7 +140,8 @@ class ResolvedProject:
 
         self.upstream: Optional[ResolvedUpstream] = None
         if project.upstream is not None:
-            self.upstream: Optional[ResolvedUpstream] = ResolvedUpstream(self.path, project.upstream, defaults, group)
+            self.upstream: Optional[ResolvedUpstream] = ResolvedUpstream(self.path, project.upstream,
+                                                                         defaults, group, protocol)
             if self.remote == self.upstream.remote:
                 message = fmt.error_remote_dup(self.upstream.name,  self.name, self.remote, ENVIRONMENT.clowder_yaml)
                 err = ClowderError(ClowderErrorType.CLOWDER_YAML_DUPLICATE_REMOTE_NAME, message)

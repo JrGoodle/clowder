@@ -11,7 +11,6 @@ defaults:
   ref: refs/heads/master
   remote: origin
   source: github
-  protocol: ssh
 ```
 
 ## Sources

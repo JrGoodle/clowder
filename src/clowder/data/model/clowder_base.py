@@ -20,6 +20,7 @@ class ClowderBase:
     :ivar Optional[Defaults] defaults: Name of clowder
     :ivar Optional[List[Source]] sources: Sources
     :ivar Clowder clowder: Clowder model
+    :ivar Optional[str] protocol: Git protocol
     """
 
     def __init__(self, yaml: dict):
@@ -34,6 +35,7 @@ class ClowderBase:
         if "sources" in yaml:
             self.sources: Optional[List[Source]] = [Source(SourceName(name), source)
                                                     for name, source in yaml["sources"].items()]
+        self.protocol: Optional[str] = yaml.get("protocol", None)
         self.clowder: Clowder = Clowder(yaml["clowder"])
 
     def get_yaml(self, resolved: bool = False) -> dict:
@@ -48,6 +50,8 @@ class ClowderBase:
             "clowder": self.clowder.get_yaml(resolved=resolved)
         }
 
+        if self.protocol is not None:
+            yaml['protocol'] = self.protocol
         if self.defaults is not None:
             yaml['defaults'] = self.defaults.get_yaml()
         if self.sources is not None:

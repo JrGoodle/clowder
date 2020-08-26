@@ -23,6 +23,7 @@ class Group:
     :ivar Optional[List[Group]] groups: Group names
     :ivar Optional[Defaults] defaults: Group defaults
     :ivar List[Project] projects: Group projects
+    :ivar Optional[str] protocol: Git protocol
     :ivar bool _has_projects_key: Whether the projects were listed under the 'projects' key in the yaml
     """
 
@@ -41,12 +42,14 @@ class Group:
             self.groups: Optional[List[Group]] = yaml.get('groups', None)
             defaults = yaml.get("defaults", None)
             self.defaults: Optional[Defaults] = Defaults(defaults) if defaults is not None else None
+            self.protocol: Optional[str] = yaml.get('protocol', None)
             self.projects: List[Project] = [Project(p) for p in yaml["projects"]]
             self._has_projects_key: bool = True
         elif isinstance(yaml, list):
             self.path: Optional[Path] = None
             self.groups: Optional[List[Group]] = None
             self.defaults: Optional[Defaults] = None
+            self.protocol: Optional[str] = None
             self.projects: List[Project] = [Project(p) for p in yaml]
             self._has_projects_key: bool = False
         else:
@@ -73,5 +76,7 @@ class Group:
             yaml['groups'] = str(self.groups)
         if self.defaults is not None:
             yaml['defaults'] = self.defaults.get_yaml()
+        if self.protocol is not None:
+            yaml['protocol'] = self.protocol
 
         return yaml
