@@ -1,5 +1,7 @@
 """New syntax test file"""
 
+import os
+import shutil
 from pathlib import Path
 
 from git import Repo
@@ -7,6 +9,7 @@ from git import Repo
 from pytest_bdd import scenarios, given, parsers
 
 import tests.functional.util as util
+from .util import CATS_DEFAULT_DIRECTORIES
 
 scenarios('../features')
 
@@ -81,3 +84,52 @@ def given_untracked_file(tmp_path: Path, directory: str, name: str) -> None:
     util.create_file(path)
     repo = Repo(repo_path)
     assert repo.untracked_files
+
+
+@given("project at <directory> is on <start_branch>")
+def given_check_directory_start_branch(tmp_path: Path, directory: str, start_branch: str) -> None:
+    path = tmp_path / directory
+    assert util.is_on_active_branch(path, start_branch)
+
+
+@given("project at <directory> is on <branch>")
+def given_check_directory_branch(tmp_path: Path, directory: str, branch: str) -> None:
+    path = tmp_path / directory
+    assert util.is_on_active_branch(path, branch)
+
+
+@given("project at <directory> is on <tag>")
+def given_check_directory_tag(tmp_path: Path, directory: str, tag: str) -> None:
+    path = tmp_path / directory
+    assert util.is_detached_head_on_tag(path, tag)
+
+
+@given("project at <directory> is on <commit>")
+def given_check_directory_commit(tmp_path: Path, directory: str, commit: str) -> None:
+    path = tmp_path / directory
+    assert util.is_detached_head_on_commit(path, commit)
+
+
+@given("project at <directory> is clean")
+def given_check_directory_clean(tmp_path: Path, directory: str) -> None:
+    path = tmp_path / directory
+    assert not util.is_dirty(path)
+
+
+@given("forall test scripts are in the clowder directory")
+def forall_test_scripts_present(tmp_path: Path, shared_datadir: Path) -> None:
+    forall_dir = shared_datadir / "forall"
+    for cat_dir in CATS_DEFAULT_DIRECTORIES:
+        for script in os.listdir(forall_dir):
+            shutil.copy(forall_dir / script, tmp_path / cat_dir)
+    test_scripts = [
+        "test_forall_error",
+        "test_forall_args",
+        "test_forall",
+        "test_forall_env_duke",
+        "test_forall_env_kit",
+        "test_forall_env_upstream"
+    ]
+    for cat_dir in CATS_DEFAULT_DIRECTORIES:
+        for script in test_scripts:
+            assert Path(tmp_path / cat_dir / f"{script}.sh").exists()

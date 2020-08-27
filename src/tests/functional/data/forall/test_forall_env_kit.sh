@@ -1,16 +1,15 @@
 #!/usr/bin/env bash
 
-CATS_DIR="$(cd "${CATS_EXAMPLE_DIR}" || exit 1; pwd)"
-
-echo "CLOWDER_PATH = $CLOWDER_PATH"
-if [ $CLOWDER_PATH != "$CATS_DIR" ]; then
-    exit 1
-fi
-
-echo "PROJECT_PATH = $PROJECT_PATH"
-if [ $PROJECT_PATH != "$CATS_DIR/black-cats/kit" ]; then
-    exit 1
-fi
+# FIXME: Figure out tests for this
+# echo "CLOWDER_PATH = $CLOWDER_PATH"
+# if [ $CLOWDER_PATH != "$CATS_DIR" ]; then
+#     exit 1
+# fi
+#
+# echo "PROJECT_PATH = $PROJECT_PATH"
+# if [ $PROJECT_PATH != "$CATS_DIR/black-cats/kit" ]; then
+#     exit 1
+# fi
 
 echo "PROJECT_NAME = $PROJECT_NAME"
 if [ $PROJECT_NAME != "jrgoodle/kit" ]; then

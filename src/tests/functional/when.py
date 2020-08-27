@@ -18,6 +18,12 @@ def when_run_command(tmp_path: Path, command: str, command_results: CommandResul
     command_results.completed_processes.append(result)
 
 
+# @when("I run '<command>'")
+# def when_run_command_outline(tmp_path: Path, command: str, command_results: CommandResults) -> None:
+#     result = util.run_command(command, tmp_path)
+#     command_results.completed_processes.append(result)
+
+
 @when(parsers.parse("I run '{command_1}' and '{command_2}'"))
 def when_run_commands_and(tmp_path: Path, command_1: str, command_2: str, command_results: CommandResults) -> None:
     commands = [command_1, command_2]

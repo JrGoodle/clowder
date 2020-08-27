@@ -17,6 +17,15 @@ TEST_REPOS = {
     "swift": {"url": "github.com", "name": "JrGoodle/swift-clowder"}
 }
 
+CATS_DEFAULT_DIRECTORIES = [
+    "mu",
+    "duke",
+    "black-cats/kit",
+    "black-cats/kishka",
+    "black-cats/sasha",
+    "black-cats/june"
+]
+
 CATS_REPOS_DEFAULT = {
     "mu": {"path": "mu", "branch": "knead"},
     "duke": {"path": "duke", "branch": "purr"},

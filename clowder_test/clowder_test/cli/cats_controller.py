@@ -67,14 +67,6 @@ class CatsController(ArgparseController):
         self._execute_command('./config.sh', self.path)
 
     @expose(
-        help='Run cats forall tests'
-    )
-    def forall(self) -> None:
-        """clowder cats forall tests"""
-
-        self._execute_command('./forall.sh', self.path)
-
-    @expose(
         help='Run cats groups tests'
     )
     def groups(self) -> None:

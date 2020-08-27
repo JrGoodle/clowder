@@ -24,9 +24,7 @@ Feature: clowder herd
     Scenario Outline: clowder herd default
         Given cats example is initialized
         And <directory> doesn't exist
-
         When I run 'clowder herd'
-
         Then the command succeeds
         And project at <directory> is a git repository
         And project at <directory> is on <branch>
@@ -46,9 +44,7 @@ Feature: clowder herd
         Given cats example is initialized
         And <directory> doesn't exist
         And static-refs yaml version is linked
-
         When I run 'clowder herd'
-
         Then the command succeeds
         And project at <directory> is a git repository
         And project at <directory> is on <commit>
@@ -68,9 +64,7 @@ Feature: clowder herd
         Given cats example is initialized
         And <directory> doesn't exist
         And tags yaml version is linked
-
         When I run 'clowder herd'
-
         Then the command succeeds
         And project at <directory> is a git repository
         And project at <directory> is on <tag>

@@ -20,3 +20,4 @@ wheel
 pytest
 pytest-bdd
 pytest-xdist
+pytest-datadir

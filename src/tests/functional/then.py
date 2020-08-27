@@ -13,15 +13,33 @@ scenarios('../features')
 
 
 @then("the command succeeds")
+def then_command_succeeded(command_results: CommandResults) -> None:
+    assert len(command_results.completed_processes) == 1
+    assert all([result.returncode == 0 for result in command_results.completed_processes])
+
+
 @then("the commands succeed")
 def then_commands_succeeded(command_results: CommandResults) -> None:
+    assert len(command_results.completed_processes) > 1
     assert all([result.returncode == 0 for result in command_results.completed_processes])
 
 
 @then("the command fails")
-@then("the commands fail")
-def then_commands_failed(command_results) -> None:
+def then_command_failed(command_results: CommandResults) -> None:
+    assert len(command_results.completed_processes) == 1
     assert all([result.returncode != 0 for result in command_results.completed_processes])
+
+
+@then("the commands fail")
+def then_commands_failed(command_results: CommandResults) -> None:
+    assert len(command_results.completed_processes) > 1
+    assert all([result.returncode != 0 for result in command_results.completed_processes])
+
+
+@then(parsers.parse("the command exited with return code {code:d}"))
+def then_command_exit_return_code(command_results: CommandResults, code: int) -> None:
+    assert len(command_results.completed_processes) == 1
+    assert all([result.returncode == code for result in command_results.completed_processes])
 
 
 @then(parsers.parse("the command printed {branch_type} branches"))
@@ -47,6 +65,12 @@ def then_is_git_repo(tmp_path: Path, directory: str) -> None:
     assert util.has_git_directory(path)
 
 
+@then("project at <directory> is on <end_branch>")
+def given_check_directory_end_branch(tmp_path: Path, directory: str, end_branch: str) -> None:
+    path = tmp_path / directory
+    assert util.is_on_active_branch(path, end_branch)
+
+
 @then("project at <directory> is on <branch>")
 def then_check_directory_branch(tmp_path: Path, directory: str, branch: str) -> None:
     path = tmp_path / directory
@@ -68,7 +92,6 @@ def then_check_directory_commit(tmp_path: Path, directory: str, commit: str) -> 
 @then("project at <directory> is clean")
 def then_check_directory_clean(tmp_path: Path, directory: str) -> None:
     path = tmp_path / directory
-    print(f"TEST: Project at {directory} is clean")
     assert not util.is_dirty(path)
 
 
