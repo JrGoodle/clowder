@@ -474,11 +474,11 @@ class ResolvedProject:
 
         # TODO: Add tests for presence of these variables in test scripts
         # if self.branch:
-        #     forall_env['PROJECT_BRANCH'] = self.branch
+        #     forall_env['UPSTREAM_BRANCH'] = self.branch
         # if self.tag:
-        #     forall_env['PROJECT_TAG'] = self.tag
+        #     forall_env['UPSTREAM_TAG'] = self.tag
         # if self.commit:
-        #     forall_env['PROJECT_COMMIT'] = self.commit
+        #     forall_env['UPSTREAM_COMMIT'] = self.commit
 
         if self.upstream:
             forall_env['UPSTREAM_REMOTE'] = self.upstream.remote

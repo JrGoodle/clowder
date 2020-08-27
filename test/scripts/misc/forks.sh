@@ -49,30 +49,6 @@ test_fork_groups_2() {
 }
 test_fork_groups_2
 
-./clean.sh
-./init.sh || exit 1
-
-test_forks_env() {
-    begin_command
-    $COMMAND herd $PARALLEL || exit 1
-    end_command
-    echo "TEST: Environment variables in script"
-    begin_command
-    $COMMAND forall "gyp" -c "$TEST_SCRIPT_DIR/test_forall_script_env_fork.sh" $PARALLEL || exit 1
-    end_command
-    begin_command
-    $COMMAND forall "dropbox/djinni" -c "$TEST_SCRIPT_DIR/test_forall_script_env_fork.sh" $PARALLEL && exit 1
-    end_command
-    echo "TEST: Environment variables in command"
-    begin_command
-    $COMMAND forall 'gyp' -c 'if [ $PROJECT_REMOTE != origin ]; then exit 1; fi' $PARALLEL || exit 1
-    end_command
-    begin_command
-    $COMMAND forall 'gyp' -c 'if [ $UPSTREAM_REMOTE != upstream ]; then exit 1; fi' $PARALLEL || exit 1
-    end_command
-}
-test_forks_env
-
 test_fork_herd() {
     echo "TEST: Herd fork"
     ./clean.sh

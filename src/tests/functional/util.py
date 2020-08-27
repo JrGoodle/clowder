@@ -1,6 +1,6 @@
 """New syntax test file"""
 
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 import os
 import subprocess
@@ -10,23 +10,15 @@ from pathlib import Path
 from git import Repo
 from parse_type import TypeBuilder
 
+TestRepoInfo = Dict[str, Dict[str, str]]
 
-TEST_REPOS = {
+TEST_REPOS: TestRepoInfo = {
     "cats": {"url": "github.com", "name": "JrGoodle/cats"},
     "misc": {"url": "github.com", "name": "JrGoodle/misc-clowder-tests"},
     "swift": {"url": "github.com", "name": "JrGoodle/swift-clowder"}
 }
 
-CATS_DEFAULT_DIRECTORIES = [
-    "mu",
-    "duke",
-    "black-cats/kit",
-    "black-cats/kishka",
-    "black-cats/sasha",
-    "black-cats/june"
-]
-
-CATS_REPOS_DEFAULT = {
+CATS_REPOS_DEFAULT: TestRepoInfo = {
     "mu": {"path": "mu", "branch": "knead"},
     "duke": {"path": "duke", "branch": "purr"},
     "kit": {"path": "black-cats/kit", "branch": "master"},
@@ -34,6 +26,15 @@ CATS_REPOS_DEFAULT = {
     "sasha": {"path": "black-cats/sasha", "branch": "master"},
     "june": {"path": "black-cats/june", "branch": "master"}
 }
+
+MISC_REPOS_DEFAULT: TestRepoInfo = {
+    "djinni": {"path": "djinni", "branch": "master"},
+    "gyp": {"path": "gyp", "branch": "fork-branch"},
+    "sox": {"path": "sox", "branch": "master"}
+}
+
+# TODO: Add project info
+SWIFT_REPOS_DEFAULT: TestRepoInfo = {}
 
 
 def parse_string(text) -> str:
@@ -51,6 +52,11 @@ def list_from_string(text: str, sep: Optional[str] = None) -> List[str]:
 class CommandResults:
     def __init__(self):
         self.completed_processes: List[CompletedProcess] = []
+
+
+class TestInfo:
+    def __init__(self):
+        self.example: Optional[str] = None
 
 
 def is_dirty(path: Path) -> bool:
@@ -165,9 +171,9 @@ def rebase_in_progress(path: Path) -> None:
     assert rebase_merge.is_dir() or rebase_apply.is_dir()
 
 
-def run_command(command: str, path: Path) -> CompletedProcess:
+def run_command(command: str, path: Path, check: bool = False) -> CompletedProcess:
     print(f"TEST: {command}")
-    return subprocess.run(command, shell=True, cwd=path)
+    return subprocess.run(command, shell=True, cwd=path, check=check)
 
 
 def get_url(example: str, protocol: str = "https") -> str:

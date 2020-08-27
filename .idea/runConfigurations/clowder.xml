@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="clowder" type="PythonConfigurationType" factoryName="Python">
+  <configuration default="false" name="clowder" type="PythonConfigurationType" factoryName="Python" editBeforeRun="true">
     <module name="clowder" />
     <option name="INTERPRETER_OPTIONS" value="" />
     <option name="PARENT_ENVS" value="true" />
@@ -7,7 +7,7 @@
       <env name="PYTHONUNBUFFERED" value="1" />
     </envs>
     <option name="SDK_HOME" value="" />
-    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/.." />
+    <option name="WORKING_DIRECTORY" value="/private/var/folders/qg/10dstky52wbfxmt8q1gdlpwh0000gn/T/pytest-of-jrgoodle/pytest-8/misc_init_herd_default_session0" />
     <option name="IS_MODULE_SDK" value="true" />
     <option name="ADD_CONTENT_ROOTS" value="true" />
     <option name="ADD_SOURCE_ROOTS" value="true" />

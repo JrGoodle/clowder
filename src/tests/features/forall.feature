@@ -1,26 +1,26 @@
-@forall @cats
+@forall
 Feature: clowder forall
 
-    @help @success
+    @help @success @cats
     Scenario: clowder forall help in empty directory
         Given test directory is empty
         When I run 'clowder forall -h' and 'clowder forall --help'
         Then the commands succeed
 
-    @help @success
+    @help @success @cats
     Scenario: clowder forall help with invalid clowder.yaml
         Given cats example is initialized to yaml-validation
         And test-empty-project yaml version is linked
         When I run 'clowder forall -h' and 'clowder forall --help'
         Then the commands succeed
 
-    @help @success
+    @help @success @cats
     Scenario: clowder forall help with valid clowder.yaml
         Given cats example is initialized
         When I run 'clowder forall -h' and 'clowder forall --help'
         Then the commands succeed
 
-    @default @success
+    @default @success @cats
     Scenario Outline: clowder forall
         Given cats example is initialized and herded
         And project at <directory> is on <start_branch>
@@ -37,7 +37,7 @@ Feature: clowder forall
         | black-cats/sasha  | master       | v0.1       |
         | black-cats/june   | master       | v0.1       |
 
-    @default @success @parallel
+    @default @success @parallel @cats
     Scenario Outline: clowder forall parallel
         Given cats example is initialized and herded
         And project at <directory> is on <start_branch>
@@ -54,7 +54,7 @@ Feature: clowder forall
         | black-cats/sasha  | master       | v0.1       |
         | black-cats/june   | master       | v0.1       |
 
-    @default @success
+    @default @success @cats
     Scenario Outline: clowder forall group
         Given cats example is initialized and herded
         And project at <directory> is on <start_branch>
@@ -71,7 +71,7 @@ Feature: clowder forall
         | black-cats/sasha  | master       | v0.1       |
         | black-cats/june   | master       | v0.1       |
 
-    @default @success
+    @default @success @cats
     Scenario Outline: clowder forall projects
         Given cats example is initialized and herded
         And project at <directory> is on <start_branch>
@@ -88,7 +88,7 @@ Feature: clowder forall
         | black-cats/sasha  | master       | master     |
         | black-cats/june   | master       | master     |
 
-    @default @success
+    @default @success @cats
     Scenario: clowder forall environment variables
         Given cats example is initialized and herded
         When I run 'clowder forall jrgoodle/kit -c "if [ $PROJECT_NAME != jrgoodle/kit ]; then exit 1; fi"'
@@ -99,26 +99,26 @@ Feature: clowder forall
         And I run 'clowder forall jrgoodle/duke -c "if [ $PROJECT_REF != refs/heads/purr ]; then exit 1; fi"'
         Then the commands succeed
 
-    @default @fail
+    @default @fail @cats
     Scenario: clowder forall fail command
         Given cats example is initialized and herded
         When I run 'clowder forall -c "exit 1"'
         Then the command fails
 
-    @default @success
+    @default @success @cats
     Scenario: clowder forall ignore errors
         Given cats example is initialized and herded
         When I run 'clowder forall -ic "exit 1"'
         And I run 'clowder forall --ignore-error -c "exit 1"'
         Then the commands succeed
 
-    @default @fail
+    @default @fail @cats
     Scenario: clowder forall return code
         Given cats example is initialized and herded
         When I run 'clowder forall -c "exit 42"'
         Then the command exited with return code 42
 
-    @default @success
+    @default @success @cats
     Scenario: clowder forall script
         Given cats example is initialized and herded
         And forall test scripts are in the project directories
@@ -129,7 +129,7 @@ Feature: clowder forall
         And I run 'clowder forall -ic "./test_forall_error.sh"'
         Then the commands succeed
 
-    @default @fail
+    @default @fail @cats
     Scenario: clowder forall script fail
         Given cats example is initialized and herded
         And forall test scripts are in the project directories
@@ -137,7 +137,7 @@ Feature: clowder forall
         And I run 'clowder forall -c "./test_forall_error.sh"'
         Then the commands fail
 
-    @default @success
+    @default @success @cats
     Scenario: clowder forall script environment
         Given cats example is initialized and herded
         And forall test scripts are in the project directories
@@ -149,20 +149,45 @@ Feature: clowder forall
         And I run 'clowder forall jrgoodle/duke -c "./test_forall_env_duke.sh"' from directory black-cats/sasha
         Then the commands succeed
 
-    @default @fail
-    Scenario: clowder forall with non-existing script
+    @default @fail @cats
+    Scenario: clowder forall with failing script
         Given cats example is initialized and herded
         And forall test scripts are in the project directories
         When I run 'clowder forall -c "./test_forall_env_kit.sh"'
         And I run 'clowder forall -c "./test_forall_env_duke.sh"'
         Then the commands fail
 
-    @default @success
-    Scenario: clowder forall non-existing script with ignore errors
+    @default @success @cats
+    Scenario: clowder forall failing script with ignore errors
         Given cats example is initialized and herded
         And forall test scripts are in the project directories
         When I run 'clowder forall -ic "./test_forall_env_kit.sh"'
         When I run 'clowder forall -ic "./test_forall_env_duke.sh"'
         And I run 'clowder forall --ignore-error -c "./test_forall_env_kit.sh"'
         And I run 'clowder forall --ignore-error -c "./test_forall_env_duke.sh"'
+        Then the commands succeed
+
+    @default @success @misc @upstream
+    Scenario: clowder forall script environment upstream
+        Given misc example is initialized and herded
+        And forall test scripts are in the project directories
+        When I run 'clowder forall gyp -c "./test_forall_env_upstream.sh"'
+        Then the command succeeds
+
+    @default @fail @misc @upstream
+    Scenario: clowder forall script fail environment upstream
+        Given misc example is initialized and herded
+        And forall test scripts are in the project directories
+        When I run 'clowder forall djinni -c "./test_forall_env_upstream.sh"'
+        Then the command fails
+
+    @default @success @misc @upstream
+    Scenario: clowder forall environment variables upstream
+        Given misc example is initialized and herded
+        When I run 'clowder forall gyp -c "if [ $PROJECT_NAME != JrGoodle/gyp ]; then exit 1; fi"'
+        And I run 'clowder forall gyp -c "if [ $PROJECT_REMOTE != origin ]; then exit 1; fi"'
+        And I run 'clowder forall gyp -c "if [ $PROJECT_REF != refs/heads/fork-branch ]; then exit 1; fi"'
+        And I run 'clowder forall gyp -c "if [ $UPSTREAM_NAME != external/gyp ]; then exit 1; fi"'
+        And I run 'clowder forall gyp -c "if [ $UPSTREAM_REMOTE != upstream ]; then exit 1; fi"'
+        And I run 'clowder forall gyp -c "if [ $UPSTREAM_REF != refs/heads/master ]; then exit 1; fi"'
         Then the commands succeed

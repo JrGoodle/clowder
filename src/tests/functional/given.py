@@ -9,7 +9,7 @@ from git import Repo
 from pytest_bdd import scenarios, given, parsers
 
 import tests.functional.util as util
-from .util import CATS_DEFAULT_DIRECTORIES
+from .util import CATS_REPOS_DEFAULT, MISC_REPOS_DEFAULT, SWIFT_REPOS_DEFAULT, TestInfo
 
 scenarios('../features')
 
@@ -19,14 +19,24 @@ def given_test_dir_empty() -> None:
     pass
 
 
-@given(parsers.parse("{example} example is initialized"))
-def given_example_init(tmp_path: Path, example: str, init_default) -> None:
-    pass
+@given(parsers.parse("cats example is initialized"))
+def given_cats_example_init(tmp_path: Path, cats_init_default, test_info: TestInfo) -> None:
+    test_info.example = "cats"
 
 
-@given(parsers.parse("{example} example is initialized and herded"))
-def given_example_init_herd(tmp_path: Path, example: str, init_herd_default) -> None:
-    pass
+@given(parsers.parse("cats example is initialized and herded"))
+def given_cats_example_init_herd(tmp_path: Path, cats_init_herd_default, test_info: TestInfo) -> None:
+    test_info.example = "cats"
+
+
+@given(parsers.parse("misc example is initialized"))
+def given_misc_example_init(tmp_path: Path, misc_init_default, test_info: TestInfo) -> None:
+    test_info.example = "misc"
+
+
+@given(parsers.parse("misc example is initialized and herded"))
+def given_misc_example_init_herd(tmp_path: Path, misc_init_herd_default, test_info: TestInfo) -> None:
+    test_info.example = "misc"
 
 
 @given(parsers.parse("{example} example is initialized to {branch}"))
@@ -117,19 +127,18 @@ def given_check_directory_clean(tmp_path: Path, directory: str) -> None:
 
 
 @given("forall test scripts are in the project directories")
-def forall_test_scripts_present(tmp_path: Path, shared_datadir: Path) -> None:
+def forall_test_scripts_present(tmp_path: Path, shared_datadir: Path, test_info: TestInfo) -> None:
+    if test_info.example == "cats":
+        dirs = [info["path"] for name, info in CATS_REPOS_DEFAULT.items()]
+    elif test_info.example == "misc":
+        dirs = [info["path"] for name, info in MISC_REPOS_DEFAULT.items()]
+    elif test_info.example == "swift":
+        dirs = [info["path"] for name, info in SWIFT_REPOS_DEFAULT.items()]
+    else:
+        assert False
+
     forall_dir = shared_datadir / "forall"
-    for cat_dir in CATS_DEFAULT_DIRECTORIES:
+    for d in dirs:
         for script in os.listdir(forall_dir):
-            shutil.copy(forall_dir / script, tmp_path / cat_dir)
-    test_scripts = [
-        "test_forall_error",
-        "test_forall_args",
-        "test_forall",
-        "test_forall_env_duke",
-        "test_forall_env_kit",
-        "test_forall_env_upstream"
-    ]
-    for cat_dir in CATS_DEFAULT_DIRECTORIES:
-        for script in test_scripts:
-            assert Path(tmp_path / cat_dir / f"{script}.sh").exists()
+            shutil.copy(forall_dir / script, tmp_path / d)
+            assert Path(tmp_path / d / script).exists()
