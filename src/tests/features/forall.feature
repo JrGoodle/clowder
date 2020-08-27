@@ -37,6 +37,23 @@ Feature: clowder forall
         | black-cats/sasha  | master       | v0.1       |
         | black-cats/june   | master       | v0.1       |
 
+    @default @success @parallel
+    Scenario Outline: clowder forall parallel
+        Given cats example is initialized and herded
+        And project at <directory> is on <start_branch>
+        When I run 'clowder forall --jobs 4 -c "git checkout -b v0.1"'
+        Then the command succeeds
+        And project at <directory> is on <end_branch>
+
+        Examples:
+        | directory         | start_branch | end_branch |
+        | mu                | knead        | v0.1       |
+        | duke              | purr         | v0.1       |
+        | black-cats/kishka | master       | v0.1       |
+        | black-cats/kit    | master       | v0.1       |
+        | black-cats/sasha  | master       | v0.1       |
+        | black-cats/june   | master       | v0.1       |
+
     @default @success
     Scenario Outline: clowder forall group
         Given cats example is initialized and herded
@@ -104,7 +121,7 @@ Feature: clowder forall
     @default @success
     Scenario: clowder forall script
         Given cats example is initialized and herded
-        And forall test scripts are in the clowder directory
+        And forall test scripts are in the project directories
         When I run 'clowder forall -c "./test_forall.sh"'
         And I run 'clowder forall -c "./test_forall_args.sh" "one" "two"'
         And I run 'clowder forall -ic "./test_forall_args.sh" "one"'
@@ -115,7 +132,7 @@ Feature: clowder forall
     @default @fail
     Scenario: clowder forall script fail
         Given cats example is initialized and herded
-        And forall test scripts are in the clowder directory
+        And forall test scripts are in the project directories
         When I run 'clowder forall -c "./test_forall_args.sh" "one"'
         And I run 'clowder forall -c "./test_forall_error.sh"'
         Then the commands fail
@@ -123,7 +140,7 @@ Feature: clowder forall
     @default @success
     Scenario: clowder forall script environment
         Given cats example is initialized and herded
-        And forall test scripts are in the clowder directory
+        And forall test scripts are in the project directories
         When I run 'clowder forall jrgoodle/kit -c "./test_forall_env_kit.sh"'
         And I run 'clowder forall jrgoodle/duke -c "./test_forall_env_duke.sh"'
         And I run 'clowder forall jrgoodle/kit -c "./test_forall_env_kit.sh"' from directory mu
@@ -135,7 +152,7 @@ Feature: clowder forall
     @default @fail
     Scenario: clowder forall with non-existing script
         Given cats example is initialized and herded
-        And forall test scripts are in the clowder directory
+        And forall test scripts are in the project directories
         When I run 'clowder forall -c "./test_forall_env_kit.sh"'
         And I run 'clowder forall -c "./test_forall_env_duke.sh"'
         Then the commands fail
@@ -143,7 +160,7 @@ Feature: clowder forall
     @default @success
     Scenario: clowder forall non-existing script with ignore errors
         Given cats example is initialized and herded
-        And forall test scripts are in the clowder directory
+        And forall test scripts are in the project directories
         When I run 'clowder forall -ic "./test_forall_env_kit.sh"'
         When I run 'clowder forall -ic "./test_forall_env_duke.sh"'
         And I run 'clowder forall --ignore-error -c "./test_forall_env_kit.sh"'

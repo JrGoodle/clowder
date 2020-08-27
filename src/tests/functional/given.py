@@ -116,7 +116,7 @@ def given_check_directory_clean(tmp_path: Path, directory: str) -> None:
     assert not util.is_dirty(path)
 
 
-@given("forall test scripts are in the clowder directory")
+@given("forall test scripts are in the project directories")
 def forall_test_scripts_present(tmp_path: Path, shared_datadir: Path) -> None:
     forall_dir = shared_datadir / "forall"
     for cat_dir in CATS_DEFAULT_DIRECTORIES:
