@@ -126,6 +126,10 @@ Feature: clowder forall
         And forall test scripts are in the clowder directory
         When I run 'clowder forall jrgoodle/kit -c "./test_forall_env_kit.sh"'
         And I run 'clowder forall jrgoodle/duke -c "./test_forall_env_duke.sh"'
+        And I run 'clowder forall jrgoodle/kit -c "./test_forall_env_kit.sh"' from directory mu
+        And I run 'clowder forall jrgoodle/duke -c "./test_forall_env_duke.sh"' from directory duke
+        And I run 'clowder forall jrgoodle/kit -c "./test_forall_env_kit.sh"' from directory black-cats/june
+        And I run 'clowder forall jrgoodle/duke -c "./test_forall_env_duke.sh"' from directory black-cats/sasha
         Then the commands succeed
 
     @default @fail

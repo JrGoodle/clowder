@@ -77,36 +77,6 @@ begin_command
 $COMMAND herd $PARALLEL || exit 1
 end_command
 
-test_forall_environment_subdirectory() {
-    print_single_separator
-    echo "TEST: Check that forall environment variables are set correctly when invoked from subdirectory"
-    pushd mu || exit 1
-    begin_command
-    $COMMAND forall "jrgoodle/duke" -c "$TEST_SCRIPT_DIR/test_forall_script_env_duke.sh" $PARALLEL || exit 1
-    end_command
-    # !! Move coverage files to root and clean so further commands work
-    cp -a .coverage* ../
-    rm -rf .coverage*
-    # !!
-    popd || exit 1
-    pushd black-cats/kit || exit 1
-    begin_command
-    $COMMAND forall "jrgoodle/duke" -c "$TEST_SCRIPT_DIR/test_forall_script_env_duke.sh" $PARALLEL || exit 1
-    end_command
-    # !! Move coverage files to root and clean so further commands work
-    cp -a .coverage* ../../
-    rm -rf .coverage*
-    # !!
-    popd || exit 1
-}
-test_forall_environment_subdirectory
-
-./clean.sh
-./init.sh || exit 1
-begin_command
-$COMMAND herd $PARALLEL || exit 1
-end_command
-
 test_commands_subdirectory() {
     print_single_separator
     echo "TEST: Check that various commands work when invoked from subdirectory"
