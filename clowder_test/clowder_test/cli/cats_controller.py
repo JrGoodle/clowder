@@ -35,14 +35,6 @@ class CatsController(ArgparseController):
         self._execute_command('./test_example_cats.sh', ROOT_DIR / 'test' / 'scripts')
 
     @expose(
-        help='Run cats checkout tests'
-    )
-    def checkout(self) -> None:
-        """clowder cats checkout tests"""
-
-        self._execute_command('./checkout.sh', self.path)
-
-    @expose(
         help='Run cats clean tests'
     )
     def clean(self) -> None:

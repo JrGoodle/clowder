@@ -12,7 +12,6 @@ print_double_separator
 
 "$TEST_SCRIPT_DIR/cats/subdirectory.sh" || exit 1
 "$TEST_SCRIPT_DIR/cats/init.sh" || exit 1
-"$TEST_SCRIPT_DIR/cats/checkout.sh" || exit 1
 "$TEST_SCRIPT_DIR/cats/groups.sh" || exit 1
 "$TEST_SCRIPT_DIR/cats/clean.sh" || exit 1
 "$TEST_SCRIPT_DIR/cats/herd.sh" || exit 1

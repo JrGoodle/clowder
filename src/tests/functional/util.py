@@ -144,19 +144,19 @@ def create_file(path: Path) -> None:
     assert not path.is_symlink()
 
 
-def local_branch_exists(path: Path, branch: str) -> None:
+def local_branch_exists(path: Path, branch: str) -> bool:
     result = run_command(f'git rev-parse --quiet --verify "{branch}"', path)
-    assert result.returncode == 0
+    return result.returncode == 0
 
 
-def remote_branch_exists(path: Path, branch: str) -> None:
+def remote_branch_exists(path: Path, branch: str) -> bool:
     result = run_command(f"git ls-remote --heads origin {branch} | wc -l | tr -d '[:space:]'", path)
-    assert result.stdout != "0"
+    return result.stdout != "0"
 
 
-def tracking_branch_exists(path: Path, branch: str) -> None:
+def tracking_branch_exists(path: Path, branch: str) -> bool:
     result = run_command(f'git config --get branch.{branch}.merge', path)
-    assert result.returncode == 0
+    return result.returncode == 0
 
 
 def check_remote_url(path: Path, remote, url) -> None:

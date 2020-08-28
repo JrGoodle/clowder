@@ -102,6 +102,18 @@ def given_check_directory_start_branch(tmp_path: Path, directory: str, start_bra
     assert util.is_on_active_branch(path, start_branch)
 
 
+@given("project at <directory> has local branch <local_branch>")
+def given_check_directory_has_local_branch(tmp_path: Path, directory: str, local_branch: str) -> None:
+    result = util.run_command(f"git branch {local_branch} HEAD", tmp_path / directory)
+    assert result.returncode == 0
+    assert util.local_branch_exists(tmp_path / directory, local_branch)
+
+
+@given("project at <directory> has no local branch <local_branch>")
+def given_check_directory_has_no_local_branch(tmp_path: Path, directory: str, local_branch: str) -> None:
+    assert not util.local_branch_exists(tmp_path / directory, local_branch)
+
+
 @given("project at <directory> is on <branch>")
 def given_check_directory_branch(tmp_path: Path, directory: str, branch: str) -> None:
     path = tmp_path / directory
