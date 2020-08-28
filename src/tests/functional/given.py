@@ -46,6 +46,15 @@ def given_example_init_branch(tmp_path: Path, example: str, branch: str) -> None
     util.run_command(command, tmp_path)
 
 
+@given(parsers.parse("{example} example is initialized and herded to {branch}"))
+def given_example_init_branch_herd(tmp_path: Path, example: str, branch: str) -> None:
+    url = util.get_url(example)
+    command = f"clowder init {url} -b {branch}"
+    util.run_command(command, tmp_path, check=True)
+    command = f"clowder herd"
+    util.run_command(command, tmp_path, check=True)
+
+
 @given(parsers.parse("{example} example is initialized with {protocol}"))
 def given_example_init_protocol(tmp_path: Path, example: str, protocol: str) -> None:
     url = util.get_url(example, protocol=protocol)
@@ -67,7 +76,7 @@ def given_run_clowder_command(tmp_path: Path, command: str) -> None:
 
 
 @given(parsers.parse("{version} clowder version is linked"))
-def given_link_yaml_version(tmp_path: Path, version: str) -> None:
+def given_link_clowder_version(tmp_path: Path, version: str) -> None:
     if "default" == version:
         command = f"clowder link"
         util.run_command(command, tmp_path)
@@ -76,6 +85,16 @@ def given_link_yaml_version(tmp_path: Path, version: str) -> None:
         command = f"clowder link {version}"
         util.run_command(command, tmp_path)
         assert util.has_valid_clowder_symlink_version(tmp_path, version)
+
+
+@given(parsers.parse("{version} clowder version exists"))
+def given_clowder_version_present(tmp_path: Path, version: str) -> None:
+    assert util.has_clowder_version(tmp_path, version)
+
+
+@given(parsers.parse("{version} clowder version doesn't exist"))
+def given_clowder_version_not_present(tmp_path: Path, version: str) -> None:
+    assert not util.has_clowder_version(tmp_path, version)
 
 
 @given("I'm in an empty directory")
@@ -87,6 +106,12 @@ def given_is_empty_directory(tmp_path: Path) -> None:
 @given("<directory> doesn't exist")
 def given_has_no_directory(tmp_path: Path, directory: str) -> None:
     path = tmp_path / directory
+    assert not path.exists()
+
+
+@given("clowder versions directory doesn't exist")
+def given_has_no_clowder_versions_directory(tmp_path: Path) -> None:
+    path = tmp_path / ".clowder" / "versions"
     assert not path.exists()
 
 

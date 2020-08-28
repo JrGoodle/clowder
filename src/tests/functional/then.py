@@ -56,6 +56,18 @@ def then_has_project_directory(tmp_path: Path, directory: str) -> None:
     assert path.is_dir()
 
 
+@then(parsers.parse("clowder version {version} exists"))
+def then_clowder_version_exists(tmp_path: Path, version: str) -> None:
+    assert util.has_clowder_version(tmp_path, version)
+
+
+@then("clowder versions directory exists")
+def then_has_clowder_versions_directory(tmp_path: Path) -> None:
+    path = tmp_path / ".clowder" / "versions"
+    assert path.exists()
+    assert path.is_dir()
+
+
 @then("project at <directory> is a git repository")
 @then(parsers.parse("project at {directory} is a git repository"))
 def then_is_git_repo(tmp_path: Path, directory: str) -> None:
