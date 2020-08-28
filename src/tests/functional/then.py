@@ -78,31 +78,43 @@ def then_is_git_repo(tmp_path: Path, directory: str) -> None:
 
 
 @then("project at <directory> is on <end_branch>")
-def given_check_directory_end_branch(tmp_path: Path, directory: str, end_branch: str) -> None:
+def then_check_directory_end_branch(tmp_path: Path, directory: str, end_branch: str) -> None:
     path = tmp_path / directory
     assert util.is_on_active_branch(path, end_branch)
 
 
 @then("project at <directory> is on <branch>")
-def then_check_directory_branch(tmp_path: Path, directory: str, branch: str) -> None:
+def then_directory_on_branch(tmp_path: Path, directory: str, branch: str) -> None:
     path = tmp_path / directory
     assert util.is_on_active_branch(path, branch)
 
 
 @then("project at <directory> is on <tag>")
-def then_check_directory_tag(tmp_path: Path, directory: str, tag: str) -> None:
+def then_directory_on_tag(tmp_path: Path, directory: str, tag: str) -> None:
     path = tmp_path / directory
     assert util.is_detached_head_on_tag(path, tag)
 
 
 @then("project at <directory> is on <commit>")
-def then_check_directory_commit(tmp_path: Path, directory: str, commit: str) -> None:
+def then_directory_on_commit(tmp_path: Path, directory: str, commit: str) -> None:
     path = tmp_path / directory
     assert util.is_detached_head_on_commit(path, commit)
 
 
+@then("project at <directory> has no local branch <local_branch>")
+def then_directory_has_no_local_branch(tmp_path: Path, directory: str, local_branch: str) -> None:
+    path = tmp_path / directory
+    assert not util.local_branch_exists(path, local_branch)
+
+
+@then("project at <directory> has local branch <local_branch>")
+def then_directory_has_local_branch(tmp_path: Path, directory: str, local_branch: str) -> None:
+    path = tmp_path / directory
+    assert util.local_branch_exists(path, local_branch)
+
+
 @then("project at <directory> is clean")
-def then_check_directory_clean(tmp_path: Path, directory: str) -> None:
+def then_directory_clean(tmp_path: Path, directory: str) -> None:
     path = tmp_path / directory
     assert not util.is_dirty(path)
 

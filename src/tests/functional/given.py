@@ -124,50 +124,68 @@ def given_untracked_file(tmp_path: Path, directory: str, name: str) -> None:
     assert repo.untracked_files
 
 
+@given("project at <directory> created <local_branch>")
+def given_directory_created_local_branch(tmp_path: Path, directory: str, local_branch: str) -> None:
+    path = tmp_path / directory
+    util.create_branch(path, local_branch)
+    assert util.local_branch_exists(tmp_path / directory, local_branch)
+
+
+@given("project at <directory> checked out <local_branch>")
+def given_directory_checked_out_start_branch(tmp_path: Path, directory: str, local_branch: str) -> None:
+    path = tmp_path / directory
+    util.checkout_branch(path, local_branch)
+    assert util.is_on_active_branch(path, local_branch)
+
+
 @given("project at <directory> is on <start_branch>")
-def given_check_directory_start_branch(tmp_path: Path, directory: str, start_branch: str) -> None:
+def given_directory_on_start_branch(tmp_path: Path, directory: str, start_branch: str) -> None:
     path = tmp_path / directory
     assert util.is_on_active_branch(path, start_branch)
 
 
 @given("project at <directory> has local branch <local_branch>")
-def given_check_directory_has_local_branch(tmp_path: Path, directory: str, local_branch: str) -> None:
-    result = util.run_command(f"git branch {local_branch} HEAD", tmp_path / directory)
-    assert result.returncode == 0
+def given_directory_has_local_branch(tmp_path: Path, directory: str, local_branch: str) -> None:
     assert util.local_branch_exists(tmp_path / directory, local_branch)
 
 
 @given("project at <directory> has no local branch <local_branch>")
-def given_check_directory_has_no_local_branch(tmp_path: Path, directory: str, local_branch: str) -> None:
+def given_directory_has_no_local_branch(tmp_path: Path, directory: str, local_branch: str) -> None:
     assert not util.local_branch_exists(tmp_path / directory, local_branch)
 
 
 @given("project at <directory> is on <branch>")
-def given_check_directory_branch(tmp_path: Path, directory: str, branch: str) -> None:
+def given_directory_branch(tmp_path: Path, directory: str, branch: str) -> None:
     path = tmp_path / directory
     assert util.is_on_active_branch(path, branch)
 
 
 @given("project at <directory> is on <tag>")
-def given_check_directory_tag(tmp_path: Path, directory: str, tag: str) -> None:
+def given_directory_tag(tmp_path: Path, directory: str, tag: str) -> None:
     path = tmp_path / directory
     assert util.is_detached_head_on_tag(path, tag)
 
 
 @given("project at <directory> is on <commit>")
-def given_check_directory_commit(tmp_path: Path, directory: str, commit: str) -> None:
+def given_directory_commit(tmp_path: Path, directory: str, commit: str) -> None:
     path = tmp_path / directory
     assert util.is_detached_head_on_commit(path, commit)
 
 
 @given("project at <directory> is clean")
-def given_check_directory_clean(tmp_path: Path, directory: str) -> None:
+def given_directory_clean(tmp_path: Path, directory: str) -> None:
     path = tmp_path / directory
     assert not util.is_dirty(path)
 
 
+@given("project at <directory> created a new commit")
+def given_directory_created_new_commit(tmp_path: Path, directory: str) -> None:
+    path = tmp_path / directory
+    util.create_commit(path)
+
+
 @given("forall test scripts are in the project directories")
-def forall_test_scripts_present(tmp_path: Path, shared_datadir: Path, test_info: TestInfo) -> None:
+def given_forall_test_scripts_present(tmp_path: Path, shared_datadir: Path, test_info: TestInfo) -> None:
     if test_info.example == "cats":
         dirs = [info["path"] for name, info in CATS_REPOS_DEFAULT.items()]
     elif test_info.example == "misc":

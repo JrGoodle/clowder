@@ -135,6 +135,13 @@ def is_lfs_file_not_pointer(path: Path, file: str) -> None:
     assert result.stdout == '*'
 
 
+def current_head_commit_sha(path: Path) -> str:
+    result = run_command("git rev-parse HEAD", path)
+    assert result.returncode == 0
+    stdout: str = result.stdout
+    return stdout.strip()
+
+
 def create_file(path: Path) -> None:
     with open(path, 'w') as _:
         pass
@@ -142,6 +149,28 @@ def create_file(path: Path) -> None:
     assert path.is_file()
     assert not path.is_dir()
     assert not path.is_symlink()
+
+
+def create_commit(path: Path) -> List[CompletedProcess]:
+    previous_commit = current_head_commit_sha(path)
+    create_file(path / "something")
+    result_1 = run_command("git add something", path)
+    result_2 = run_command("git commit -m 'something'", path)
+    new_commit = current_head_commit_sha(path)
+    assert previous_commit != new_commit
+    return [result_1, result_2]
+
+
+def create_branch(path: Path, branch: str) -> CompletedProcess:
+    result = run_command(f"git branch {branch} HEAD", path)
+    assert local_branch_exists(path, branch)
+    return result
+
+
+def checkout_branch(path: Path, branch: str) -> CompletedProcess:
+    result = run_command(f"git checkout {branch}", path)
+    assert is_on_active_branch(path, branch)
+    return result
 
 
 def local_branch_exists(path: Path, branch: str) -> bool:
@@ -173,7 +202,7 @@ def rebase_in_progress(path: Path) -> None:
 
 def run_command(command: str, path: Path, check: bool = False) -> CompletedProcess:
     print(f"TEST: {command}")
-    return subprocess.run(command, shell=True, cwd=path, check=check)
+    return subprocess.run(command, shell=True, cwd=path, check=check, capture_output=True, text=True)
 
 
 def get_url(example: str, protocol: str = "https") -> str:
