@@ -115,14 +115,6 @@ class CatsController(ArgparseController):
         self._execute_command('./init.sh', self.path)
 
     @expose(
-        help='Run cats link tests'
-    )
-    def link(self) -> None:
-        """clowder cats link tests"""
-
-        self._execute_command('./link.sh', self.path)
-
-    @expose(
         help='Run cats lfs tests'
     )
     def lfs(self) -> None:

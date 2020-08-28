@@ -66,13 +66,16 @@ def given_run_clowder_command(tmp_path: Path, command: str) -> None:
     util.run_command(command, tmp_path)
 
 
-@given(parsers.parse("{version} clowder.yaml version is linked"))
-@given(parsers.parse("{version} clowder.yml version is linked"))
-@given(parsers.parse("{version} yaml version is linked"))
+@given(parsers.parse("{version} clowder version is linked"))
 def given_link_yaml_version(tmp_path: Path, version: str) -> None:
-    command = f"clowder link {version}"
-    util.run_command(command, tmp_path)
-    assert util.has_valid_clowder_version_symlink(tmp_path, version)
+    if "default" == version:
+        command = f"clowder link"
+        util.run_command(command, tmp_path)
+        assert util.has_valid_clowder_symlink_default(tmp_path)
+    else:
+        command = f"clowder link {version}"
+        util.run_command(command, tmp_path)
+        assert util.has_valid_clowder_symlink_version(tmp_path, version)
 
 
 @given("I'm in an empty directory")

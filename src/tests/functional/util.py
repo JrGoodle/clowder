@@ -227,10 +227,19 @@ def is_symlink_from_to(symlink: Path, destination: Path) -> bool:
     return is_valid_symlink(symlink) and destination.samefile(symlink.resolve())
 
 
-def has_valid_clowder_version_symlink(path: Path, version: str) -> bool:
+def has_valid_clowder_symlink_version(path: Path, version: str) -> bool:
     symlink = valid_clowder_symlink(path)
     if symlink is None:
         return False
 
     version_path = path / ".clowder" / "versions" / f"{version}.{symlink.stem}{symlink.suffix}"
     return is_symlink_from_to(symlink, version_path)
+
+
+def has_valid_clowder_symlink_default(path: Path) -> bool:
+    symlink = valid_clowder_symlink(path)
+    if symlink is None:
+        return False
+
+    destination_path = path / f"{symlink.stem}{symlink.suffix}"
+    return is_symlink_from_to(symlink, destination_path)

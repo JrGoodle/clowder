@@ -101,3 +101,11 @@ def then_has_untracked_file(tmp_path: Path, directory: str, name: str) -> None:
     path = tmp_path / directory / name
     repo = Repo(repo_path)
     assert f"{path.stem}{path.suffix}" in repo.untracked_files
+
+
+@then(parsers.parse("{version} clowder version is linked"))
+def then_link_yaml_version(tmp_path: Path, version: str) -> None:
+    if version == "default":
+        assert util.has_valid_clowder_symlink_default(tmp_path)
+    else:
+        assert util.has_valid_clowder_symlink_version(tmp_path, version)

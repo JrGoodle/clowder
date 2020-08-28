@@ -10,7 +10,7 @@ Feature: clowder forall
     @help @success @cats
     Scenario: clowder forall help with invalid clowder.yaml
         Given cats example is initialized to yaml-validation
-        And test-empty-project yaml version is linked
+        And test-empty-project clowder version is linked
         When I run 'clowder forall -h' and 'clowder forall --help'
         Then the commands succeed
 
