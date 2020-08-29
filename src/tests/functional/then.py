@@ -133,3 +133,10 @@ def then_link_yaml_version(tmp_path: Path, version: str) -> None:
         assert util.has_valid_clowder_symlink_default(tmp_path)
     else:
         assert util.has_valid_clowder_symlink_version(tmp_path, version)
+
+
+@then("project at <directory> is in sync with upstream <start_branch>")
+def then_directory_in_sync_with_upstream(tmp_path: Path, directory: str, start_branch: str) -> None:
+    path = tmp_path / directory
+    assert util.number_of_commits_between_refs(path, "HEAD", f"origin/{start_branch}") == 0
+    assert util.number_of_commits_between_refs(path, f"origin/{start_branch}", "HEAD") == 0

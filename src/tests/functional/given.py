@@ -181,7 +181,36 @@ def given_directory_clean(tmp_path: Path, directory: str) -> None:
 @given("project at <directory> created a new commit")
 def given_directory_created_new_commit(tmp_path: Path, directory: str) -> None:
     path = tmp_path / directory
-    util.create_commit(path)
+    util.create_commit(path, "something")
+
+
+@given("project at <directory> is behind upstream <start_branch> by <number_commits>")
+def given_directory_behind_upstream_num_commits(tmp_path: Path, directory: str, start_branch: str, number_commits: str) -> None:
+    path = tmp_path / directory
+    assert util.number_of_commits_between_refs(path, "HEAD", f"origin/{start_branch}") == 0
+    assert util.number_of_commits_between_refs(path, f"origin/{start_branch}", "HEAD") == 0
+    util.reset_back_by_number_of_commits(path, int(number_commits))
+    one = util.number_of_commits_between_refs(path, "HEAD", f"origin/{start_branch}")
+    # two = util.number_of_commits_between_refs(path, f"origin/{start_branch}", "HEAD")
+    assert one == int(number_commits)
+    # assert two == int(number_commits)
+
+
+@given("project at <directory> is ahead of upstream <start_branch> by <number_commits>")
+def given_directory_ahead_upstream_num_commits(tmp_path: Path, directory: str, start_branch: str,
+                                               number_commits: str) -> None:
+    path = tmp_path / directory
+    assert util.number_of_commits_between_refs(path, "HEAD", f"origin/{start_branch}") == 0
+    assert util.number_of_commits_between_refs(path, f"origin/{start_branch}", "HEAD") == 0
+    commits = int(number_commits)
+    while commits > 0:
+        results = util.create_commit(path, "something")
+        assert all([r.returncode == 0 for r in results])
+        commits -= 1
+    # one = util.number_of_commits_between_refs(path, "HEAD", f"origin/{start_branch}")
+    two = util.number_of_commits_between_refs(path, f"origin/{start_branch}", "HEAD")
+    # assert one == int(number_commits)
+    assert two == int(number_commits)
 
 
 @given("forall test scripts are in the project directories")

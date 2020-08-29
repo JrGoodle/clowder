@@ -151,11 +151,11 @@ def create_file(path: Path) -> None:
     assert not path.is_symlink()
 
 
-def create_commit(path: Path) -> List[CompletedProcess]:
+def create_commit(path: Path, filename: str) -> List[CompletedProcess]:
     previous_commit = current_head_commit_sha(path)
-    create_file(path / "something")
-    result_1 = run_command("git add something", path)
-    result_2 = run_command("git commit -m 'something'", path)
+    create_file(path / filename)
+    result_1 = run_command(f"git add {filename}", path)
+    result_2 = run_command(f"git commit -m 'Add {filename}'", path)
     new_commit = current_head_commit_sha(path)
     assert previous_commit != new_commit
     return [result_1, result_2]
@@ -308,3 +308,16 @@ def disable_network_connection() -> None:
         run_command("networksetup -setairportpower airport off", path)
     elif platform == "win32":
         assert False
+
+
+def number_of_commits_between_refs(path: Path, first: str, second: str) -> int:
+    result = run_command(f"git rev-list {first}..{second} --count", path)
+    stdout: str = result.stdout
+    return int(stdout.strip())
+
+
+def reset_back_by_number_of_commits(path: Path, number: int) -> CompletedProcess:
+    sha = current_head_commit_sha(path)
+    result = run_command(f"git reset --hard HEAD~{number}", path)
+    assert number_of_commits_between_refs(path, "HEAD", sha) == number
+    return result
