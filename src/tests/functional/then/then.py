@@ -6,8 +6,8 @@ from git import Repo
 # noinspection PyPackageRequirements
 from pytest_bdd import scenarios, then, parsers
 
-import tests.functional.util.util as util
-from tests.functional.util.util import CommandResults
+import tests.functional.util as util
+from tests.functional.util import CommandResults
 
 scenarios('../../features')
 
