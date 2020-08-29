@@ -3,6 +3,7 @@
 from typing import Dict, List, Optional
 
 import os
+import shutil
 import subprocess
 from subprocess import CompletedProcess, STDOUT, PIPE
 from pathlib import Path
@@ -57,6 +58,31 @@ class CommandResults:
 class TestInfo:
     def __init__(self):
         self.example: Optional[str] = None
+        self.branch: Optional[str] = None
+        self.protocol: str = "https"
+        self.version: Optional[str] = None
+
+
+def example_repo_dirs(example: str) -> List[str]:
+    if example == "cats":
+        return [info["path"] for name, info in CATS_REPOS_DEFAULT.items()]
+    elif example == "misc":
+        return [info["path"] for name, info in MISC_REPOS_DEFAULT.items()]
+    elif example == "swift":
+        return [info["path"] for name, info in SWIFT_REPOS_DEFAULT.items()]
+    else:
+        assert False
+
+
+def example_repo_projects(example: str) -> List[Dict[str, str]]:
+    if example == "cats":
+        return [info for name, info in CATS_REPOS_DEFAULT.items()]
+    elif example == "misc":
+        return [info for name, info in MISC_REPOS_DEFAULT.items()]
+    elif example == "swift":
+        return [info for name, info in SWIFT_REPOS_DEFAULT.items()]
+    else:
+        assert False
 
 
 def is_dirty(path: Path) -> bool:
@@ -266,6 +292,12 @@ def valid_clowder_symlink(path: Path) -> Optional[Path]:
     return None
 
 
+def has_clowder_yaml_file_or_symlink(path: Path) -> bool:
+    yaml = Path(path / "clowder.yaml").exists()
+    yml = Path(path / "clowder.yml").exists()
+    return yaml or yml
+
+
 def is_valid_symlink(path: Path) -> bool:
     return path.is_symlink() and path.exists() and path.is_file()
 
@@ -333,3 +365,69 @@ def reset_back_by_number_of_commits(path: Path, number: int) -> CompletedProcess
     result = run_command(f"git reset --hard HEAD~{number}", path)
     assert number_of_commits_between_refs(path, "HEAD", sha) == number
     return result
+
+
+def init_clowder(path: Path, example: str, protocol: str = "https",
+                 branch: Optional[str] = None, version: Optional[str] = None):
+
+    if branch is not None:
+        run_command(f"clowder init {get_url(example, protocol)} -b {branch}", path, check=True)
+    else:
+        run_command(f"clowder init {get_url(example, protocol)}", path, check=True)
+
+    if version is not None:
+        run_command(f"clowder link {version}", path, check=True)
+        assert has_valid_clowder_symlink_version(path, version)
+    else:
+        assert has_valid_clowder_symlink_default(path)
+
+    validate_clowder_repo_with_symlink(path / ".clowder")
+
+    repos = example_repo_projects(example)
+    for repo in repos:
+        repo_path = path / repo["path"]
+        assert not repo_path.exists()
+
+    return path
+
+
+def init_herd_clowder(path: Path, example: str, protocol: str = "https",
+                      branch: Optional[str] = None, version: Optional[str] = None):
+
+    if branch is not None:
+        run_command(f"clowder init {get_url(example, protocol)} -b {branch}", path, check=True)
+    else:
+        run_command(f"clowder init {get_url(example, protocol)}", path, check=True)
+
+    if version is not None:
+        run_command(f"clowder link {version}", path, check=True)
+        has_valid_clowder_symlink_version(path, version)
+
+    run_command("clowder herd", path, check=True)
+
+    validate_clowder_repo_with_symlink(path / ".clowder")
+
+    repos = example_repo_projects(example)
+    for repo in repos:
+        repo_path = path / repo["path"]
+        branch = repo["branch"]
+        assert repo_path.exists()
+        assert repo_path.is_dir()
+        assert has_git_directory(repo_path)
+        assert is_on_active_branch(repo_path, branch)
+        assert not is_dirty(repo_path)
+
+    return path
+
+
+def validate_clowder_repo_with_symlink(clowder_repo: Path) -> None:
+    assert clowder_repo.exists()
+    assert clowder_repo.is_dir()
+    assert has_git_directory(clowder_repo)
+    assert valid_clowder_symlink(clowder_repo.parent) is not None
+
+
+def copy_directory(from_dir: Path, to: Path):
+    # TODO: Replace rmdir() with copytree(dirs_exist_ok=True) when support for Python 3.7 is dropped
+    to.rmdir()
+    shutil.copytree(from_dir, to, symlinks=True)

@@ -10,7 +10,7 @@ Feature: clowder save command
     @help @success
     Scenario: clowder save help with invalid clowder.yaml
         Given cats example is initialized to yaml-validation
-        And test-empty-project clowder version is linked
+        And did link test-empty-project clowder version
         When I run 'clowder save -h' and 'clowder save --help'
         Then the commands succeed
 

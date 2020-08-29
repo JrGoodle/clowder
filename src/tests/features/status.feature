@@ -11,7 +11,7 @@ Feature: clowder status
     Scenario: clowder status help with invalid clowder.yaml
         # https://github.com/JrGoodle/cats/blob/master/versions/yaml-validation.clowder.yaml
         Given cats example is initialized to yaml-validation
-        And test-empty-project clowder version is linked
+        And did link test-empty-project clowder version
         When I run 'clowder status -h' and 'clowder status --help'
         Then the commands succeed
 

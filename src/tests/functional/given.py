@@ -9,39 +9,61 @@ from git import Repo
 from pytest_bdd import scenarios, given, parsers
 
 import tests.functional.util as util
-from .util import CATS_REPOS_DEFAULT, MISC_REPOS_DEFAULT, SWIFT_REPOS_DEFAULT, TestInfo
+from .util import TestInfo
 
 scenarios('../features')
 
 
 @given(parsers.parse("test directory is empty"))
-def given_test_dir_empty() -> None:
-    pass
+def given_test_dir_empty(tmp_path: Path) -> None:
+    assert util.is_directory_empty(tmp_path)
 
 
 @given(parsers.parse("cats example is initialized"))
-def given_cats_example_init(tmp_path: Path, cats_init_default, test_info: TestInfo) -> None:
+def given_cats_init(tmp_path: Path, cats_init, test_info: TestInfo) -> None:
     test_info.example = "cats"
 
 
 @given(parsers.parse("cats example is initialized and herded"))
-def given_cats_example_init_herd(tmp_path: Path, cats_init_herd_default, test_info: TestInfo) -> None:
+def given_cats_init_herd(tmp_path: Path, cats_init_herd, test_info: TestInfo) -> None:
     test_info.example = "cats"
 
 
 @given(parsers.parse("misc example is initialized"))
-def given_misc_example_init(tmp_path: Path, misc_init_default, test_info: TestInfo) -> None:
+def given_misc_init(tmp_path: Path, misc_init, test_info: TestInfo) -> None:
     test_info.example = "misc"
 
 
+@given(parsers.parse("cats example is initialized to yaml-validation"))
+def given_cats_init_branch_yaml_validation(tmp_path: Path, cats_init_yaml_validation, test_info: TestInfo) -> None:
+    test_info.example = "misc"
+    test_info.branch = "yaml-validation"
+
+
+# @given(parsers.parse("cats example is initialized to yaml-validation and herded to test-empty-project"))
+# def given_cats_init_yaml_validation_herd_test_empty_project(tmp_path: Path,
+#                                                             cats_init_yaml_validation_herd_test_empty_project,
+#                                                             test_info: TestInfo) -> None:
+#     test_info.example = "misc"
+#     test_info.branch = "yaml-validation"
+#     test_info.version = "test-empty-project"
+
+
+@given(parsers.parse("cats example is initialized to extension"))
+def given_cats_init_branch_extension(tmp_path: Path, cats_init_extension, test_info: TestInfo) -> None:
+    test_info.example = "misc"
+    test_info.branch = "extension"
+
+
 @given(parsers.parse("misc example is initialized and herded"))
-def given_misc_example_init_herd(tmp_path: Path, misc_init_herd_default, test_info: TestInfo) -> None:
+def given_misc_init_herd(tmp_path: Path, misc_init_herd, test_info: TestInfo) -> None:
     test_info.example = "misc"
 
 
 @given(parsers.parse("misc example is initialized and herded with https"))
-def given_misc_example_init_herd(tmp_path: Path, misc_init_herd_https, test_info: TestInfo) -> None:
+def given_misc_init_herd(tmp_path: Path, misc_init_herd_version_https, test_info: TestInfo) -> None:
     test_info.example = "misc"
+    test_info.version = "https"
 
 
 @given(parsers.parse("{example} example is initialized to {branch}"))
@@ -60,35 +82,29 @@ def given_example_init_branch_herd(tmp_path: Path, example: str, branch: str) ->
     util.run_command(command, tmp_path, check=True)
 
 
-@given(parsers.parse("{example} example is initialized with {protocol}"))
-def given_example_init_protocol(tmp_path: Path, example: str, protocol: str) -> None:
-    url = util.get_url(example, protocol=protocol)
-    command = f"clowder init {url}"
-    util.run_command(command, tmp_path)
-
-
-@given(parsers.parse("{example} example is initialized to {branch} with {protocol}"))
-def given_example_init_branch_protocol(tmp_path: Path, example: str, branch, protocol: str) -> None:
-    url = util.get_url(example, protocol=protocol)
-    command = f"clowder init {url} -b {branch}"
-    util.run_command(command, tmp_path)
-
-
-@given(parsers.parse("'clowder {command}' has been run"))
+@given(parsers.parse("'{command}' has been run"))
 def given_run_clowder_command(tmp_path: Path, command: str) -> None:
-    command = f"clowder {command}"
+    command = f"{command}"
     util.run_command(command, tmp_path)
 
 
 @given(parsers.parse("{version} clowder version is linked"))
-def given_link_clowder_version(tmp_path: Path, version: str) -> None:
+def given_is_clowder_version_linked(tmp_path: Path, version: str) -> None:
     if "default" == version:
-        command = f"clowder link"
-        util.run_command(command, tmp_path)
         assert util.has_valid_clowder_symlink_default(tmp_path)
     else:
-        command = f"clowder link {version}"
-        util.run_command(command, tmp_path)
+        assert util.has_valid_clowder_symlink_version(tmp_path, version)
+
+
+@given(parsers.parse("did link {version} clowder version"))
+def given_did_link_clowder_version(tmp_path: Path, version: str) -> None:
+    if "default" == version:
+        result = util.run_command("clowder link", tmp_path, check=True)
+        assert result.returncode == 0
+        assert util.has_valid_clowder_symlink_default(tmp_path)
+    else:
+        result = util.run_command(f"clowder link {version}", tmp_path)
+        assert result.returncode == 0
         assert util.has_valid_clowder_symlink_version(tmp_path, version)
 
 
@@ -301,15 +317,7 @@ def given_directory_behind_ahead_upstream_num_commits(tmp_path: Path, directory:
 
 @given("forall test scripts are in the project directories")
 def given_forall_test_scripts_present(tmp_path: Path, shared_datadir: Path, test_info: TestInfo) -> None:
-    if test_info.example == "cats":
-        dirs = [info["path"] for name, info in CATS_REPOS_DEFAULT.items()]
-    elif test_info.example == "misc":
-        dirs = [info["path"] for name, info in MISC_REPOS_DEFAULT.items()]
-    elif test_info.example == "swift":
-        dirs = [info["path"] for name, info in SWIFT_REPOS_DEFAULT.items()]
-    else:
-        assert False
-
+    dirs = util.example_repo_dirs(test_info.example)
     forall_dir = shared_datadir / "forall"
     for d in dirs:
         for script in os.listdir(forall_dir):

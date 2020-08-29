@@ -10,7 +10,7 @@ Feature: clowder link command
     @help @success
     Scenario: clowder link help with invalid clowder.yaml
         Given cats example is initialized to yaml-validation
-        And test-empty-project clowder version is linked
+        And did link test-empty-project clowder version
         When I run 'clowder link -h' and 'clowder link --help'
         Then the commands succeed
 
@@ -23,7 +23,7 @@ Feature: clowder link command
     @success
     Scenario: clowder link default version
         Given cats example is initialized
-        And tags clowder version is linked
+        And did link tags clowder version
         When I run 'clowder link'
         Then the command succeeds
         And default clowder version is linked
@@ -75,7 +75,7 @@ Feature: clowder link command
     @success
     Scenario: clowder link file extension yaml to yml
         Given cats example is initialized to extension
-        And tags clowder version is linked
+        And did link tags clowder version
         And symlink clowder.yaml exists
         And symlink clowder.yml doesn't exist
         When I run 'clowder link'

@@ -10,7 +10,7 @@ Feature: clowder prune
     @help @success
     Scenario: clowder prune help with invalid clowder.yaml
         Given cats example is initialized to yaml-validation
-        And test-empty-project clowder version is linked
+        And did link test-empty-project clowder version
         When I run 'clowder prune -h' and 'clowder prune --help'
         Then the commands succeed
 

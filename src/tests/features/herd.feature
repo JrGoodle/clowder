@@ -10,7 +10,7 @@ Feature: clowder herd
     @help @success
     Scenario: clowder herd help with invalid clowder.yaml
         Given cats example is initialized to yaml-validation
-        And test-empty-project clowder version is linked
+        And did link test-empty-project clowder version
         When I run 'clowder herd -h' and 'clowder herd --help'
         Then the commands succeed
 
@@ -43,7 +43,7 @@ Feature: clowder herd
     Scenario Outline: clowder herd commits
         Given cats example is initialized
         And <directory> doesn't exist
-        And static-refs clowder version is linked
+        And did link static-refs clowder version
         When I run 'clowder herd'
         Then the command succeeds
         And project at <directory> is a git repository
@@ -63,7 +63,7 @@ Feature: clowder herd
     Scenario Outline: clowder herd tags
         Given cats example is initialized
         And <directory> doesn't exist
-        And tags clowder version is linked
+        And did link tags clowder version
         When I run 'clowder herd'
         Then the command succeeds
         And project at <directory> is a git repository

@@ -10,7 +10,7 @@ Feature: clowder checkout command
     @help @success
     Scenario: clowder checkout help with invalid clowder.yaml
         Given cats example is initialized to yaml-validation
-        And test-empty-project clowder version is linked
+        And did link test-empty-project clowder version
         When I run 'clowder checkout -h' and 'clowder checkout --help'
         Then the commands succeed
 

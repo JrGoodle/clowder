@@ -24,16 +24,10 @@ def when_run_command(tmp_path: Path, command: str, command_results: CommandResul
     command_results.completed_processes.append(result)
 
 
-@when(parsers.parse("I run '{command}' from directory {directory}"))
+@when(parsers.parse("I run '{command}' in directory {directory}"))
 def when_run_command_directory(tmp_path: Path, command: str, directory: str, command_results: CommandResults) -> None:
     result = util.run_command(command, tmp_path / directory)
     command_results.completed_processes.append(result)
-
-
-# @when("I run '<command>'")
-# def when_run_command_outline(tmp_path: Path, command: str, command_results: CommandResults) -> None:
-#     result = util.run_command(command, tmp_path)
-#     command_results.completed_processes.append(result)
 
 
 @when(parsers.parse("I run '{command_1}' and '{command_2}'"))

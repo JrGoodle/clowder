@@ -10,7 +10,7 @@ Feature: clowder start
     @help @success
     Scenario: clowder start help with invalid clowder.yaml
         Given cats example is initialized to yaml-validation
-        And test-empty-project clowder version is linked
+        And did link test-empty-project clowder version
         When I run 'clowder start -h' and 'clowder start --help'
         Then the commands succeed
 
