@@ -8,10 +8,10 @@ from git import Repo
 # noinspection PyPackageRequirements
 from pytest_bdd import scenarios, given, parsers
 
-import tests.functional.util as util
-from .util import TestInfo
+import tests.functional.util.util as util
+from tests.functional.util.util import TestInfo
 
-scenarios('../features')
+scenarios('../../features')
 
 
 @given(parsers.parse("test directory is empty"))

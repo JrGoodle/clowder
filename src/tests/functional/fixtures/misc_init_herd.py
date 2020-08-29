@@ -8,8 +8,8 @@ from pathlib import Path
 # noinspection PyPackageRequirements
 from pytest import fixture
 
-import tests.functional.util as util
-from .util import TestInfo
+import tests.functional.util.util as util
+from tests.functional.util.util import TestInfo
 
 
 @fixture

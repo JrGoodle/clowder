@@ -5,7 +5,7 @@ This module contains fixtures
 # noinspection PyPackageRequirements
 from pytest import fixture
 
-from .util import CommandResults, TestInfo
+from tests.functional.util.util import CommandResults, TestInfo
 
 
 @fixture

@@ -6,10 +6,10 @@ from typing import List
 # noinspection PyPackageRequirements
 from pytest_bdd import scenarios, when, parsers
 
-import tests.functional.util as util
-from .util import list_str_commas, CommandResults
+import tests.functional.util.util as util
+from tests.functional.util.util import list_str_commas, CommandResults
 
-scenarios('../features')
+scenarios('../../features')
 
 
 @when(parsers.parse("I run '{command}'"))
