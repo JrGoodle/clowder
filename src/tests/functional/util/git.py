@@ -1,0 +1,164 @@
+"""New syntax test file"""
+
+from typing import List
+
+from subprocess import CompletedProcess
+from pathlib import Path
+
+from git import Repo
+from .command import run_command
+from .file_system import create_file
+
+
+def is_dirty(path: Path) -> bool:
+    """Check whether repo is dirty
+
+    :return: True, if repo is dirty
+    :rtype: bool
+    """
+
+    repo = Repo(str(path))
+    return repo.is_dirty() or is_rebase_in_progress(repo.git_dir) or has_untracked_files(repo)
+
+
+def is_rebase_in_progress(git_dir: Path) -> bool:
+    """Detect whether rebase is in progress
+
+    :return: True, if rebase is in progress
+    :rtype: bool
+    """
+
+    is_rebase_apply = Path(git_dir, 'rebase-apply').is_dir()
+    is_rebase_merge = Path(git_dir, 'rebase-merge').is_dir()
+    return is_rebase_apply or is_rebase_merge
+
+
+def has_untracked_files(repo: Repo) -> bool:
+    """Check whether untracked files exist
+
+    :return: True, if untracked files exist
+    :rtype: bool
+    """
+
+    return True if repo.untracked_files else False
+
+
+def has_git_directory(path: Path) -> bool:
+    return Path(path / ".git").is_dir()
+
+
+def lfs_hooks_installed(path: Path) -> None:
+    run_command("grep -m 1 'git lfs pre-push' '.git/hooks/pre-push'", path)
+    run_command("grep -m 1 'git lfs post-checkout' '.git/hooks/post-checkout'", path)
+    run_command("grep -m 1 'git lfs post-commit' '.git/hooks/post-commit'", path)
+    run_command("grep -m 1 'git lfs post-merge' '.git/hooks/post-merge'", path)
+
+
+def lfs_filters_installed(path: Path) -> None:
+    result = run_command("git config --get filter.lfs.smudge", path)
+    assert result.returncode == 0
+    result = run_command("git config --get filter.lfs.smudge", path)
+    assert result.returncode == 0
+    result = run_command("git config --get filter.lfs.smudge", path)
+    assert result.returncode == 0
+
+
+def is_lfs_file_pointer(path: Path, file: str) -> None:
+    result = run_command(f'git lfs ls-files -I "{file}"', path)
+    assert result.stdout == '-'
+
+
+def is_lfs_file_not_pointer(path: Path, file: str) -> None:
+    result = run_command(f'git lfs ls-files -I "{file}"', path)
+    assert result.stdout == '*'
+
+
+def current_head_commit_sha(path: Path) -> str:
+    result = run_command("git rev-parse HEAD", path)
+    assert result.returncode == 0
+    stdout: str = result.stdout
+    return stdout.strip()
+
+
+def create_commit(path: Path, filename: str) -> List[CompletedProcess]:
+    previous_commit = current_head_commit_sha(path)
+    create_file(path / filename)
+    result_1 = run_command(f"git add {filename}", path)
+    result_2 = run_command(f"git commit -m 'Add {filename}'", path)
+    new_commit = current_head_commit_sha(path)
+    assert previous_commit != new_commit
+    return [result_1, result_2]
+
+
+def create_branch(path: Path, branch: str) -> CompletedProcess:
+    result = run_command(f"git branch {branch} HEAD", path)
+    assert local_branch_exists(path, branch)
+    return result
+
+
+def checkout_branch(path: Path, branch: str) -> CompletedProcess:
+    result = run_command(f"git checkout {branch}", path)
+    assert is_on_active_branch(path, branch)
+    return result
+
+
+def local_branch_exists(path: Path, branch: str) -> bool:
+    result = run_command(f'git rev-parse --quiet --verify "{branch}"', path)
+    return result.returncode == 0
+
+
+def remote_branch_exists(path: Path, branch: str) -> bool:
+    git = Repo(path)
+    if branch in git.remote().refs:
+        return True
+    return False
+
+
+def tracking_branch_exists(path: Path, branch: str) -> bool:
+    result = run_command(f'git config --get branch.{branch}.merge', path)
+    return result.returncode == 0
+
+
+def check_remote_url(path: Path, remote, url) -> None:
+    result = run_command(f"git remote get-url {remote}", path)
+    assert result.stdout == url
+
+
+def rebase_in_progress(path: Path) -> None:
+    rebase_merge = path / ".git" / "rebase-merge"
+    rebase_apply = path / ".git" / "rebase-apply"
+    assert rebase_merge.exists() or rebase_apply.exists()
+    assert rebase_merge.is_dir() or rebase_apply.is_dir()
+
+
+def is_on_active_branch(path: Path, branch: str) -> bool:
+    repo = Repo(str(path))
+    active_branch = repo.active_branch.name
+    print(f"TEST: active branch '{active_branch}' is '{branch}'")
+    return active_branch == branch
+
+
+def is_detached_head_on_tag(path: Path, tag: str) -> bool:
+    repo = Repo(str(path))
+    has_tag = tag in repo.tags
+    on_correct_commit = repo.head.commit == repo.tags[tag].commit
+    return repo.head.is_detached and has_tag and on_correct_commit
+
+
+def is_detached_head_on_commit(path: Path, commit: str) -> bool:
+    repo = Repo(str(path))
+    on_correct_commit = repo.head.commit.hexsha == commit
+    return repo.head.is_detached and on_correct_commit
+
+
+def number_of_commits_between_refs(path: Path, first: str, second: str) -> int:
+    result = run_command(f"git rev-list {first}..{second} --count", path)
+    stdout: str = result.stdout
+    return int(stdout.strip())
+
+
+def reset_back_by_number_of_commits(path: Path, number: int) -> CompletedProcess:
+    sha = current_head_commit_sha(path)
+    result = run_command(f"git reset --hard HEAD~{number}", path)
+    assert number_of_commits_between_refs(path, "HEAD", sha) == number
+    return result
