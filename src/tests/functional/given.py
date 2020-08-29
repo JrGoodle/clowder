@@ -129,18 +129,18 @@ def given_untracked_file(tmp_path: Path, directory: str, name: str) -> None:
     assert repo.untracked_files
 
 
-@given("project at <directory> created <local_branch>")
-def given_directory_created_local_branch(tmp_path: Path, directory: str, local_branch: str) -> None:
+@given("project at <directory> created <test_branch>")
+def given_directory_created_local_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
     path = tmp_path / directory
-    util.create_branch(path, local_branch)
-    assert util.local_branch_exists(tmp_path / directory, local_branch)
+    util.create_branch(path, test_branch)
+    assert util.local_branch_exists(tmp_path / directory, test_branch)
 
 
-@given("project at <directory> checked out <local_branch>")
-def given_directory_checked_out_start_branch(tmp_path: Path, directory: str, local_branch: str) -> None:
+@given("project at <directory> checked out <test_branch>")
+def given_directory_checked_out_start_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
     path = tmp_path / directory
-    util.checkout_branch(path, local_branch)
-    assert util.is_on_active_branch(path, local_branch)
+    util.checkout_branch(path, test_branch)
+    assert util.is_on_active_branch(path, test_branch)
 
 
 @given("project at <directory> is on <start_branch>")
@@ -149,19 +149,19 @@ def given_directory_on_start_branch(tmp_path: Path, directory: str, start_branch
     assert util.is_on_active_branch(path, start_branch)
 
 
-@given("project at <directory> has local branch <local_branch>")
-def given_directory_has_local_branch(tmp_path: Path, directory: str, local_branch: str) -> None:
-    assert util.local_branch_exists(tmp_path / directory, local_branch)
+@given("project at <directory> has local branch <test_branch>")
+def given_directory_has_local_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
+    assert util.local_branch_exists(tmp_path / directory, test_branch)
 
 
-@given("project at <directory> has no local branch <local_branch>")
-def given_directory_has_no_local_branch(tmp_path: Path, directory: str, local_branch: str) -> None:
-    assert not util.local_branch_exists(tmp_path / directory, local_branch)
+@given("project at <directory> has no local branch <test_branch>")
+def given_directory_has_no_local_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
+    assert not util.local_branch_exists(tmp_path / directory, test_branch)
 
 
-@given("project at <directory> has no remote branch <local_branch>")
-def given_directory_has_no_remote_branch(tmp_path: Path, directory: str, local_branch: str) -> None:
-    assert not util.remote_branch_exists(tmp_path / directory, local_branch)
+@given("project at <directory> has no remote branch <test_branch>")
+def given_directory_has_no_remote_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
+    assert not util.remote_branch_exists(tmp_path / directory, test_branch)
 
 
 @given("project at <directory> is on <branch>")
@@ -195,7 +195,8 @@ def given_directory_created_new_commit(tmp_path: Path, directory: str) -> None:
 
 
 @given("project at <directory> is behind upstream <start_branch> by <number_commits>")
-def given_directory_behind_upstream_num_commits(tmp_path: Path, directory: str, start_branch: str, number_commits: str) -> None:
+def given_directory_behind_upstream_num_commits(tmp_path: Path, directory: str,
+                                                start_branch: str, number_commits: str) -> None:
     path = tmp_path / directory
     assert util.number_of_commits_between_refs(path, "HEAD", f"origin/{start_branch}") == 0
     assert util.number_of_commits_between_refs(path, f"origin/{start_branch}", "HEAD") == 0
@@ -207,7 +208,8 @@ def given_directory_behind_upstream_num_commits(tmp_path: Path, directory: str, 
 
 
 @given("project at <directory> is ahead of upstream <start_branch> by <number_commits>")
-def given_directory_ahead_upstream_num_commits(tmp_path: Path, directory: str, start_branch: str, number_commits: str) -> None:
+def given_directory_ahead_upstream_num_commits(tmp_path: Path, directory: str,
+                                               start_branch: str, number_commits: str) -> None:
     path = tmp_path / directory
     assert util.number_of_commits_between_refs(path, "HEAD", f"origin/{start_branch}") == 0
     assert util.number_of_commits_between_refs(path, f"origin/{start_branch}", "HEAD") == 0

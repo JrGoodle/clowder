@@ -101,26 +101,26 @@ def then_directory_on_commit(tmp_path: Path, directory: str, commit: str) -> Non
     assert util.is_detached_head_on_commit(path, commit)
 
 
-@then("project at <directory> has no local branch <local_branch>")
-def then_directory_has_no_local_branch(tmp_path: Path, directory: str, local_branch: str) -> None:
+@then("project at <directory> has no local branch <test_branch>")
+def then_directory_has_no_local_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
     path = tmp_path / directory
-    assert not util.local_branch_exists(path, local_branch)
+    assert not util.local_branch_exists(path, test_branch)
 
 
-@then("project at <directory> has local branch <local_branch>")
-def then_directory_has_local_branch(tmp_path: Path, directory: str, local_branch: str) -> None:
+@then("project at <directory> has local branch <test_branch>")
+def then_directory_has_local_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
     path = tmp_path / directory
-    assert util.local_branch_exists(path, local_branch)
+    assert util.local_branch_exists(path, test_branch)
 
 
-@then("project at <directory> has no remote branch <local_branch>")
-def then_directory_has_no_remote_branch(tmp_path: Path, directory: str, local_branch: str) -> None:
-    assert not util.remote_branch_exists(tmp_path / directory, local_branch)
+@then("project at <directory> has no remote branch <test_branch>")
+def then_directory_has_no_remote_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
+    assert not util.remote_branch_exists(tmp_path / directory, test_branch)
 
 
-@then("project at <directory> has remote branch <local_branch>")
-def then_directory_has_remote_branch(tmp_path: Path, directory: str, local_branch: str) -> None:
-    assert util.remote_branch_exists(tmp_path / directory, local_branch)
+@then("project at <directory> has remote branch <test_branch>")
+def then_directory_has_remote_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
+    assert util.remote_branch_exists(tmp_path / directory, test_branch)
 
 
 @then("project at <directory> is clean")
