@@ -195,27 +195,50 @@ def given_directory_behind_upstream_num_commits(tmp_path: Path, directory: str, 
     assert util.number_of_commits_between_refs(path, "HEAD", f"origin/{start_branch}") == 0
     assert util.number_of_commits_between_refs(path, f"origin/{start_branch}", "HEAD") == 0
     util.reset_back_by_number_of_commits(path, int(number_commits))
-    one = util.number_of_commits_between_refs(path, "HEAD", f"origin/{start_branch}")
-    # two = util.number_of_commits_between_refs(path, f"origin/{start_branch}", "HEAD")
-    assert one == int(number_commits)
-    # assert two == int(number_commits)
+    num = util.number_of_commits_between_refs(path, "HEAD", f"origin/{start_branch}")
+    assert num == int(number_commits)
+    num = util.number_of_commits_between_refs(path, f"origin/{start_branch}", "HEAD")
+    assert num == 0
 
 
 @given("project at <directory> is ahead of upstream <start_branch> by <number_commits>")
-def given_directory_ahead_upstream_num_commits(tmp_path: Path, directory: str, start_branch: str,
-                                               number_commits: str) -> None:
+def given_directory_ahead_upstream_num_commits(tmp_path: Path, directory: str, start_branch: str, number_commits: str) -> None:
     path = tmp_path / directory
     assert util.number_of_commits_between_refs(path, "HEAD", f"origin/{start_branch}") == 0
     assert util.number_of_commits_between_refs(path, f"origin/{start_branch}", "HEAD") == 0
-    commits = int(number_commits)
+    util.reset_back_by_number_of_commits(path, int(number_commits))
+    num = util.number_of_commits_between_refs(path, "HEAD", f"origin/{start_branch}")
+    assert num == int(number_commits)
+    num = util.number_of_commits_between_refs(path, f"origin/{start_branch}", "HEAD")
+    assert num == 0
+
+
+@given("project at <directory> is behind upstream <start_branch> by <number_behind> and ahead by <number_ahead>")
+def given_directory_behind_ahead_upstream_num_commits(tmp_path: Path, directory: str, start_branch: str,
+                                                      number_behind: str, number_ahead: str) -> None:
+    path = tmp_path / directory
+    num = util.number_of_commits_between_refs(path, "HEAD", f"origin/{start_branch}")
+    assert num == 0
+    num = util.number_of_commits_between_refs(path, f"origin/{start_branch}", "HEAD")
+    assert num == 0
+
+    util.reset_back_by_number_of_commits(path, int(number_behind))
+
+    num = util.number_of_commits_between_refs(path, "HEAD", f"origin/{start_branch}")
+    assert num == int(number_behind)
+    num = util.number_of_commits_between_refs(path, f"origin/{start_branch}", "HEAD")
+    assert num == 0
+
+    commits = int(number_ahead)
     while commits > 0:
-        results = util.create_commit(path, "something")
+        results = util.create_commit(path, f"something_{commits}")
         assert all([r.returncode == 0 for r in results])
         commits -= 1
-    # one = util.number_of_commits_between_refs(path, "HEAD", f"origin/{start_branch}")
-    two = util.number_of_commits_between_refs(path, f"origin/{start_branch}", "HEAD")
-    # assert one == int(number_commits)
-    assert two == int(number_commits)
+
+    num = util.number_of_commits_between_refs(path, "HEAD", f"origin/{start_branch}")
+    assert num == int(number_behind)
+    num = util.number_of_commits_between_refs(path, f"origin/{start_branch}", "HEAD")
+    assert num == int(number_ahead)
 
 
 @given("forall test scripts are in the project directories")
