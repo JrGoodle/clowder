@@ -145,5 +145,6 @@ def validate_clowder_repo_with_symlink(clowder_repo: Path) -> None:
 
 
 def copy_directory(from_dir: Path, to: Path):
+    # TODO: Replace rmdir() with copytree(dirs_exist_ok=True) when support for Python 3.7 is dropped
     to.rmdir()
     shutil.copytree(from_dir, to, symlinks=True)

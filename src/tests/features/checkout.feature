@@ -23,7 +23,7 @@ Feature: clowder checkout command
     @default @success
     Scenario Outline: clowder checkout default existing local branch
         Given cats example is initialized and herded
-        And project at <directory> checked out <local_branch>
+        And project at <directory> created <local_branch>
         And project at <directory> is on <start_branch>
         When I run 'clowder checkout other'
         Then the command succeeds
@@ -37,7 +37,7 @@ Feature: clowder checkout command
     @default @success
     Scenario Outline: clowder checkout default existing local branch for project
         Given cats example is initialized and herded
-        And project at <directory> has local branch <local_branch>
+        And project at <directory> created <local_branch>
         And project at <directory> is on <start_branch>
         When I run 'clowder checkout other mu'
         Then the command succeeds

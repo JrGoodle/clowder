@@ -4,7 +4,7 @@ from typing import Dict, List, Optional
 
 import os
 import subprocess
-from subprocess import CompletedProcess
+from subprocess import CompletedProcess, STDOUT, PIPE
 from pathlib import Path
 
 from git import Repo
@@ -202,7 +202,13 @@ def rebase_in_progress(path: Path) -> None:
 
 def run_command(command: str, path: Path, check: bool = False) -> CompletedProcess:
     print(f"TEST: {command}")
-    return subprocess.run(command, shell=True, cwd=path, check=check, capture_output=True, text=True)
+    cmd_env = os.environ.copy()
+    cmd_env.update({"CLOWDER_DEBUG": "true"})
+    # TODO: Replace universal_newlines with text when Python 3.6 support is dropped
+    result = subprocess.run(command, cwd=path, shell=True, check=check,
+                            stdout=PIPE, stderr=STDOUT, universal_newlines=True, env=cmd_env)
+    print(result.stdout)
+    return result
 
 
 def get_url(example: str, protocol: str = "https") -> str:
