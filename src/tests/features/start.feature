@@ -20,7 +20,7 @@ Feature: clowder start
         When I run 'clowder start -h' and 'clowder start --help'
         Then the commands succeed
 
-    @default @success
+    @success
     Scenario Outline: clowder start local
         Given cats example is initialized and herded
         And project at <directory> has no local branch <test_branch>
@@ -41,7 +41,7 @@ Feature: clowder start
         | black-cats/sasha  | master       | new-branch | new-branch  |
         | black-cats/june   | master       | new-branch | new-branch  |
 
-    @default @success
+    @success
     Scenario Outline: clowder start local group excluded
         Given cats example is initialized and herded
         And project at <directory> has no local branch <test_branch>
@@ -58,7 +58,7 @@ Feature: clowder start
         | mu                | knead        | knead      | new-branch  |
         | duke              | purr         | purr       | new-branch  |
 
-    @default @success
+    @success
     Scenario Outline: clowder start local group included
         Given cats example is initialized and herded
         And project at <directory> has no local branch <test_branch>

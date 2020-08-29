@@ -108,6 +108,46 @@ def given_is_empty_directory(tmp_path: Path) -> None:
     assert util.is_directory_empty(tmp_path)
 
 
+@given(parsers.parse("file {file_name} doesn't exist"))
+def given_has_no_file(tmp_path: Path, file_name: str) -> None:
+    path = tmp_path / file_name
+    assert not path.exists()
+
+
+@given(parsers.parse("file {file_name} exists"))
+def given_has_file(tmp_path: Path, file_name: str) -> None:
+    path = tmp_path / file_name
+    assert path.exists()
+    assert not path.is_dir()
+
+
+@given(parsers.parse("symlink {file_name} doesn't exist"))
+def given_has_no_symlink(tmp_path: Path, file_name: str) -> None:
+    path = tmp_path / file_name
+    assert not path.exists()
+
+
+@given(parsers.parse("symlink {file_name} exists"))
+def given_has_symlink(tmp_path: Path, file_name: str) -> None:
+    path = tmp_path / file_name
+    assert util.is_valid_symlink(path)
+
+
+@given(parsers.parse("symlinks {file_name_1} and {file_name_2} exist"))
+def given_has_two_symlinks(tmp_path: Path, file_name_1: str, file_name_2: str) -> None:
+    path = tmp_path / file_name_1
+    assert util.is_valid_symlink(path)
+    path = tmp_path / file_name_2
+    assert util.is_valid_symlink(path)
+
+
+@given(parsers.parse("symlink {target} was created pointing to {source}"))
+def given_created_symlink(tmp_path: Path, target: str, source: str) -> None:
+    target_path = tmp_path / target
+    source_path = tmp_path / source
+    util.create_symlink(source_path, target_path)
+
+
 @given("<directory> doesn't exist")
 def given_has_no_directory(tmp_path: Path, directory: str) -> None:
     path = tmp_path / directory
@@ -275,3 +315,11 @@ def given_forall_test_scripts_present(tmp_path: Path, shared_datadir: Path, test
         for script in os.listdir(forall_dir):
             shutil.copy(forall_dir / script, tmp_path / d)
             assert Path(tmp_path / d / script).exists()
+
+
+@given("yaml test files are in clowder directory")
+def given_yaml_test_files_present(tmp_path: Path, shared_datadir: Path) -> None:
+    yaml_dir = shared_datadir / "yaml"
+    for file in os.listdir(yaml_dir):
+        shutil.copy(yaml_dir / file, tmp_path)
+        assert Path(tmp_path / file).exists()

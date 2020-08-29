@@ -21,7 +21,7 @@ Feature: clowder status
         When I run 'clowder status -h' and 'clowder status --help'
         Then the commands succeed
 
-    @default @success
+    @success
     Scenario: clowder status
         Given cats example is initialized and herded
         And mu has untracked file catnip.txt
@@ -35,7 +35,7 @@ Feature: clowder status
         Then mu has untracked file catnip.txt
 #        And TODO: check the output
 
-    @default @success @internet
+    @success @internet
     Scenario: clowder status with fetch
         Given cats example is initialized and herded
         And mu has untracked file catnip.txt

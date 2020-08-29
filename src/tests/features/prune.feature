@@ -20,7 +20,7 @@ Feature: clowder prune
         When I run 'clowder prune -h' and 'clowder prune --help'
         Then the commands succeed
 
-    @default @success
+    @success
     Scenario Outline: clowder prune default existing local branch checked out
         Given cats example is initialized and herded
         And project at <directory> created <test_branch>
@@ -40,7 +40,7 @@ Feature: clowder prune
         | black-cats/sasha  | shrubs       | master     | shrubs      |
         | black-cats/june   | shrubs       | master     | shrubs      |
 
-    @default @success
+    @success
     Scenario Outline: clowder prune default existing local branch checked out group selected
         Given cats example is initialized and herded
         And project at <directory> created <test_branch>
@@ -56,7 +56,7 @@ Feature: clowder prune
         | mu        | shrubs       | knead      | shrubs      |
         | duke      | shrubs       | purr       | shrubs      |
 
-    @default @success
+    @success
     Scenario Outline: clowder prune default existing local branch checked out group not selected
         Given cats example is initialized and herded
         And project at <directory> created <test_branch>
@@ -74,7 +74,7 @@ Feature: clowder prune
         | black-cats/sasha  | shrubs       | shrubs     | shrubs      |
         | black-cats/june   | shrubs       | shrubs     | shrubs      |
 
-    @default @fail
+    @fail
     Scenario Outline: clowder prune default existing local branch checked out fail not fully merged
         Given cats example is initialized and herded
         And project at <directory> created <test_branch>
@@ -95,7 +95,7 @@ Feature: clowder prune
         | black-cats/sasha  | shrubs       | master     | shrubs      |
         | black-cats/june   | shrubs       | master     | shrubs      |
 
-    @default @success
+    @success
     Scenario Outline: clowder prune force default existing local branch checked out not fully merged
         Given cats example is initialized and herded
         And project at <directory> created <test_branch>

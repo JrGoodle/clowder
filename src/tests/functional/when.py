@@ -18,6 +18,12 @@ def when_run_command(tmp_path: Path, command: str, command_results: CommandResul
     command_results.completed_processes.append(result)
 
 
+@when(parsers.parse("I run '{command}' without debug output"))
+def when_run_command(tmp_path: Path, command: str, command_results: CommandResults) -> None:
+    result = util.run_command(command, tmp_path, clowder_debug=False)
+    command_results.completed_processes.append(result)
+
+
 @when(parsers.parse("I run '{command}' from directory {directory}"))
 def when_run_command_directory(tmp_path: Path, command: str, directory: str, command_results: CommandResults) -> None:
     result = util.run_command(command, tmp_path / directory)

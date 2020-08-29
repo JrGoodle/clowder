@@ -20,7 +20,7 @@ Feature: clowder forall
         When I run 'clowder forall -h' and 'clowder forall --help'
         Then the commands succeed
 
-    @default @success @cats
+    @success @cats
     Scenario Outline: clowder forall
         Given cats example is initialized and herded
         And project at <directory> is on <start_branch>
@@ -37,7 +37,7 @@ Feature: clowder forall
         | black-cats/sasha  | master       | v0.1       |
         | black-cats/june   | master       | v0.1       |
 
-    @default @success @parallel @cats
+    @success @parallel @cats
     Scenario Outline: clowder forall parallel
         Given cats example is initialized and herded
         And project at <directory> is on <start_branch>
@@ -54,7 +54,7 @@ Feature: clowder forall
         | black-cats/sasha  | master       | v0.1       |
         | black-cats/june   | master       | v0.1       |
 
-    @default @success @cats
+    @success @cats
     Scenario Outline: clowder forall group
         Given cats example is initialized and herded
         And project at <directory> is on <start_branch>
@@ -71,7 +71,7 @@ Feature: clowder forall
         | black-cats/sasha  | master       | v0.1       |
         | black-cats/june   | master       | v0.1       |
 
-    @default @success @cats
+    @success @cats
     Scenario Outline: clowder forall projects
         Given cats example is initialized and herded
         And project at <directory> is on <start_branch>
@@ -88,7 +88,7 @@ Feature: clowder forall
         | black-cats/sasha  | master       | master     |
         | black-cats/june   | master       | master     |
 
-    @default @success @cats
+    @success @cats
     Scenario: clowder forall environment variables
         Given cats example is initialized and herded
         When I run 'clowder forall jrgoodle/kit -c "if [ $PROJECT_NAME != jrgoodle/kit ]; then exit 1; fi"'
@@ -99,26 +99,26 @@ Feature: clowder forall
         And I run 'clowder forall jrgoodle/duke -c "if [ $PROJECT_REF != refs/heads/purr ]; then exit 1; fi"'
         Then the commands succeed
 
-    @default @fail @cats
+    @fail @cats
     Scenario: clowder forall fail command
         Given cats example is initialized and herded
         When I run 'clowder forall -c "exit 1"'
         Then the command fails
 
-    @default @success @cats
+    @success @cats
     Scenario: clowder forall ignore errors
         Given cats example is initialized and herded
         When I run 'clowder forall -ic "exit 1"'
         And I run 'clowder forall --ignore-error -c "exit 1"'
         Then the commands succeed
 
-    @default @fail @cats
+    @fail @cats
     Scenario: clowder forall return code
         Given cats example is initialized and herded
         When I run 'clowder forall -c "exit 42"'
         Then the command exited with return code 42
 
-    @default @success @cats
+    @success @cats
     Scenario: clowder forall script
         Given cats example is initialized and herded
         And forall test scripts are in the project directories
@@ -129,7 +129,7 @@ Feature: clowder forall
         And I run 'clowder forall -ic "./test_forall_error.sh"'
         Then the commands succeed
 
-    @default @fail @cats
+    @fail @cats
     Scenario: clowder forall script fail
         Given cats example is initialized and herded
         And forall test scripts are in the project directories
@@ -137,7 +137,7 @@ Feature: clowder forall
         And I run 'clowder forall -c "./test_forall_error.sh"'
         Then the commands fail
 
-    @default @success @cats
+    @success @cats
     Scenario: clowder forall script environment
         Given cats example is initialized and herded
         And forall test scripts are in the project directories
@@ -149,7 +149,7 @@ Feature: clowder forall
         And I run 'clowder forall jrgoodle/duke -c "./test_forall_env_duke.sh"' from directory black-cats/sasha
         Then the commands succeed
 
-    @default @fail @cats
+    @fail @cats
     Scenario: clowder forall with failing script
         Given cats example is initialized and herded
         And forall test scripts are in the project directories
@@ -157,7 +157,7 @@ Feature: clowder forall
         And I run 'clowder forall -c "./test_forall_env_duke.sh"'
         Then the commands fail
 
-    @default @success @cats
+    @success @cats
     Scenario: clowder forall failing script with ignore errors
         Given cats example is initialized and herded
         And forall test scripts are in the project directories

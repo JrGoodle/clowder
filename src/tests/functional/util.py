@@ -151,6 +151,13 @@ def create_file(path: Path) -> None:
     assert not path.is_symlink()
 
 
+def create_symlink(source: Path, target: Path) -> None:
+    assert source.exists()
+    assert not target.exists()
+    os.symlink(source, target)
+    assert is_symlink_from_to(target, source)
+
+
 def create_commit(path: Path, filename: str) -> List[CompletedProcess]:
     previous_commit = current_head_commit_sha(path)
     create_file(path / filename)
@@ -202,10 +209,13 @@ def rebase_in_progress(path: Path) -> None:
     assert rebase_merge.is_dir() or rebase_apply.is_dir()
 
 
-def run_command(command: str, path: Path, check: bool = False) -> CompletedProcess:
+def run_command(command: str, path: Path, check: bool = False, clowder_debug: bool = True) -> CompletedProcess:
     print(f"TEST: {command}")
     cmd_env = os.environ.copy()
-    cmd_env.update({"CLOWDER_DEBUG": "true"})
+    if clowder_debug:
+        cmd_env.update({"CLOWDER_DEBUG": "true"})
+    else:
+        cmd_env.pop('CLOWDER_DEBUG', None)
     # TODO: Replace universal_newlines with text when Python 3.6 support is dropped
     result = subprocess.run(command, cwd=path, shell=True, check=check,
                             stdout=PIPE, stderr=STDOUT, universal_newlines=True, env=cmd_env)

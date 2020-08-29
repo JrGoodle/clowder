@@ -20,7 +20,7 @@ Feature: clowder stash
         When I run 'clowder stash -h' and 'clowder stash --help'
         Then the commands succeed
 
-    @default @success
+    @success
     Scenario Outline: clowder stash
         Given cats example is initialized and herded
         And <directory> has new staged file <test_file>
@@ -37,7 +37,7 @@ Feature: clowder stash
         | black-cats/sasha  | secret    |
         | black-cats/june   | secret    |
 
-    @default @success
+    @success
     Scenario Outline: clowder stash groups included
         Given cats example is initialized and herded
         And <directory> has new staged file <test_file>
@@ -50,7 +50,7 @@ Feature: clowder stash
         | mu                | secret    |
         | duke              | secret    |
 
-    @default @success
+    @success
     Scenario Outline: clowder stash groups excluded
         Given cats example is initialized and herded
         And <directory> has new staged file <test_file>

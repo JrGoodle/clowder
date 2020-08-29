@@ -20,7 +20,7 @@ Feature: clowder checkout command
         When I run 'clowder checkout -h' and 'clowder checkout --help'
         Then the commands succeed
 
-    @default @success
+    @success
     Scenario Outline: clowder checkout default existing local branch
         Given cats example is initialized and herded
         And project at <directory> created <test_branch>
@@ -34,7 +34,7 @@ Feature: clowder checkout command
         | mu                | knead        | other      | other       |
         | duke              | purr         | other      | other       |
 
-    @default @success
+    @success
     Scenario Outline: clowder checkout default existing local branch for project
         Given cats example is initialized and herded
         And project at <directory> created <test_branch>
@@ -48,7 +48,7 @@ Feature: clowder checkout command
         | mu                | knead        | other      | other       |
         | duke              | purr         | purr       | other       |
 
-    @default @success
+    @success
     Scenario Outline: clowder checkout default no local branch
         Given cats example is initialized and herded
         And project at <directory> is on <start_branch>

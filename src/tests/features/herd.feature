@@ -20,7 +20,7 @@ Feature: clowder herd
         When I run 'clowder herd -h' and 'clowder herd --help'
         Then the commands succeed
 
-    @default @success
+    @success
     Scenario Outline: clowder herd default
         Given cats example is initialized
         And <directory> doesn't exist
@@ -79,7 +79,7 @@ Feature: clowder herd
         | black-cats/sasha  | v0.01                 |
         | black-cats/june   | v0.01                 |
 
-    @default @fail
+    @fail
     Scenario: Test clowder herd dirty fail
         Given cats example is initialized and herded
         And mu has untracked file something.txt

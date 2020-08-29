@@ -20,7 +20,7 @@ Feature: clowder reset
         When I run 'clowder reset -h' and 'clowder reset --help'
         Then the commands succeed
 
-    @default @success
+    @success
     Scenario Outline: clowder reset behind
         Given cats example is initialized and herded
         And project at <directory> is behind upstream <start_branch> by <number_commits>
@@ -39,7 +39,7 @@ Feature: clowder reset
         | black-cats/sasha  | master       | master     | 1              |
         | black-cats/june   | master       | master     | 1              |
 
-    @default @success
+    @success
     Scenario Outline: clowder reset ahead
         Given cats example is initialized and herded
         And project at <directory> is ahead of upstream <start_branch> by <number_commits>
@@ -58,7 +58,7 @@ Feature: clowder reset
         | black-cats/sasha  | master       | master     | 2              |
         | black-cats/june   | master       | master     | 5              |
 
-    @default @success
+    @success
     Scenario Outline: clowder reset behind ahead
         Given cats example is initialized and herded
         And project at <directory> is behind upstream <start_branch> by <number_behind> and ahead by <number_ahead>
@@ -77,7 +77,7 @@ Feature: clowder reset
         | black-cats/sasha  | master       | master     | 2             | 4            |
         | black-cats/june   | master       | master     | 5             | 1            |
 
-    @default @success @parallel
+    @success @parallel
     Scenario Outline: clowder reset behind parallel
         Given cats example is initialized and herded
         And project at <directory> is behind upstream <start_branch> by <number_commits>
@@ -96,7 +96,7 @@ Feature: clowder reset
         | black-cats/sasha  | master       | master     | 1              |
         | black-cats/june   | master       | master     | 1              |
 
-    @default @success @parallel
+    @success @parallel
     Scenario Outline: clowder reset ahead parallel
         Given cats example is initialized and herded
         And project at <directory> is ahead of upstream <start_branch> by <number_commits>
@@ -115,7 +115,7 @@ Feature: clowder reset
         | black-cats/sasha  | master       | master     | 2              |
         | black-cats/june   | master       | master     | 5              |
 
-    @default @success @parallel
+    @success @parallel
     Scenario Outline: clowder reset behind ahead parallel
         Given cats example is initialized and herded
         And project at <directory> is behind upstream <start_branch> by <number_behind> and ahead by <number_ahead>

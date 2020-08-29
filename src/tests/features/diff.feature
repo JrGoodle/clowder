@@ -22,7 +22,7 @@ Feature: clowder diff
             clowder diff --help
         Then the commands succeed
 
-    @default @success
+    @success
     Scenario: clowder diff
         Given cats example is initialized and herded
         And mu has untracked file catnip.txt

@@ -139,14 +139,6 @@ class CatsController(ArgparseController):
         self._execute_command('./subdirectory.sh', self.path)
 
     @expose(
-        help='Run cats yaml tests'
-    )
-    def yaml(self) -> None:
-        """clowder cats yaml tests"""
-
-        self._execute_command('./yaml.sh', self.path)
-
-    @expose(
         help='Run cats yaml validation tests'
     )
     def yaml_validation(self) -> None:
