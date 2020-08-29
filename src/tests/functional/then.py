@@ -113,6 +113,16 @@ def then_directory_has_local_branch(tmp_path: Path, directory: str, local_branch
     assert util.local_branch_exists(path, local_branch)
 
 
+@then("project at <directory> has no remote branch <local_branch>")
+def then_directory_has_no_remote_branch(tmp_path: Path, directory: str, local_branch: str) -> None:
+    assert not util.remote_branch_exists(tmp_path / directory, local_branch)
+
+
+@then("project at <directory> has remote branch <local_branch>")
+def then_directory_has_remote_branch(tmp_path: Path, directory: str, local_branch: str) -> None:
+    assert util.remote_branch_exists(tmp_path / directory, local_branch)
+
+
 @then("project at <directory> is clean")
 def then_directory_clean(tmp_path: Path, directory: str) -> None:
     path = tmp_path / directory

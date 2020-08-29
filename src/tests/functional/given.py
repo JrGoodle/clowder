@@ -159,6 +159,11 @@ def given_directory_has_no_local_branch(tmp_path: Path, directory: str, local_br
     assert not util.local_branch_exists(tmp_path / directory, local_branch)
 
 
+@given("project at <directory> has no remote branch <local_branch>")
+def given_directory_has_no_remote_branch(tmp_path: Path, directory: str, local_branch: str) -> None:
+    assert not util.remote_branch_exists(tmp_path / directory, local_branch)
+
+
 @given("project at <directory> is on <branch>")
 def given_directory_branch(tmp_path: Path, directory: str, branch: str) -> None:
     path = tmp_path / directory

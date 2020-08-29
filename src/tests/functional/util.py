@@ -179,8 +179,10 @@ def local_branch_exists(path: Path, branch: str) -> bool:
 
 
 def remote_branch_exists(path: Path, branch: str) -> bool:
-    result = run_command(f"git ls-remote --heads origin {branch} | wc -l | tr -d '[:space:]'", path)
-    return result.stdout != "0"
+    git = Repo(path)
+    if branch in git.remote().refs:
+        return True
+    return False
 
 
 def tracking_branch_exists(path: Path, branch: str) -> bool:
