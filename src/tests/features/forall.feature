@@ -9,7 +9,7 @@ Feature: clowder forall
 
     @help @success @cats
     Scenario: clowder forall help with invalid clowder.yaml
-        Given cats example is initialized to yaml-validation
+        Given cats example is initialized to branch yaml-validation
         And did link test-empty-project clowder version
         When I run 'clowder forall -h' and 'clowder forall --help'
         Then the commands succeed
@@ -23,10 +23,10 @@ Feature: clowder forall
     @success @cats
     Scenario Outline: clowder forall
         Given cats example is initialized and herded
-        And project at <directory> is on <start_branch>
+        And project at <directory> is on branch <start_branch>
         When I run 'clowder forall -c "git checkout -b v0.1"'
         Then the command succeeds
-        And project at <directory> is on <end_branch>
+        And project at <directory> is on branch <end_branch>
 
         Examples:
         | directory         | start_branch | end_branch |
@@ -40,10 +40,10 @@ Feature: clowder forall
     @success @parallel @cats
     Scenario Outline: clowder forall parallel
         Given cats example is initialized and herded
-        And project at <directory> is on <start_branch>
+        And project at <directory> is on branch <start_branch>
         When I run 'clowder forall --jobs 4 -c "git checkout -b v0.1"'
         Then the command succeeds
-        And project at <directory> is on <end_branch>
+        And project at <directory> is on branch <end_branch>
 
         Examples:
         | directory         | start_branch | end_branch |
@@ -57,10 +57,10 @@ Feature: clowder forall
     @success @cats
     Scenario Outline: clowder forall group
         Given cats example is initialized and herded
-        And project at <directory> is on <start_branch>
+        And project at <directory> is on branch <start_branch>
         When I run 'clowder forall black-cats -c "git checkout -b v0.1"'
         Then the command succeeds
-        And project at <directory> is on <end_branch>
+        And project at <directory> is on branch <end_branch>
 
         Examples:
         | directory         | start_branch | end_branch |
@@ -74,10 +74,10 @@ Feature: clowder forall
     @success @cats
     Scenario Outline: clowder forall projects
         Given cats example is initialized and herded
-        And project at <directory> is on <start_branch>
+        And project at <directory> is on branch <start_branch>
         When I run 'clowder forall jrgoodle/mu jrgoodle/duke -c "git checkout -b v0.1"'
         Then the command succeeds
-        And project at <directory> is on <end_branch>
+        And project at <directory> is on branch <end_branch>
 
         Examples:
         | directory         | start_branch | end_branch |

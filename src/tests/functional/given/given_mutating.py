@@ -14,15 +14,15 @@ from tests.functional.util import TestInfo
 scenarios('../../features')
 
 
-@given(parsers.parse("{example} example is initialized to {branch}"))
+@given(parsers.parse("{example} example is initialized to branch {branch}"))
 def given_example_init_branch(tmp_path: Path, example: str, branch: str) -> None:
     url = util.get_url(example)
     result = util.run_command(f"clowder init {url} -b {branch}", tmp_path)
     assert result.returncode == 0
 
 
-@given(parsers.parse("{example} example is initialized and herded to {branch}"))
-def given_example_init_branch_herd(tmp_path: Path, example: str, branch: str) -> None:
+@given(parsers.parse("{example} example is initialized and herded to branch {branch}"))
+def given_example_init_herd_branch(tmp_path: Path, example: str, branch: str) -> None:
     url = util.get_url(example)
     result = util.run_command(f"clowder init {url} -b {branch}", tmp_path)
     assert result.returncode == 0
@@ -65,6 +65,7 @@ def given_untracked_file(tmp_path: Path, directory: str, name: str) -> None:
     assert repo.untracked_files
 
 
+@given(parsers.parse("{directory} has new staged file {test_file}"))
 @given("<directory> has new staged file <test_file>")
 def given_new_staged_file(tmp_path: Path, directory: str, test_file: str) -> None:
     repo_path = tmp_path / directory
@@ -77,14 +78,14 @@ def given_new_staged_file(tmp_path: Path, directory: str, test_file: str) -> Non
     assert repo.index.diff("HEAD")
 
 
-@given("project at <directory> created <test_branch>")
+@given("project at <directory> created branch <test_branch>")
 def given_directory_created_local_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
     path = tmp_path / directory
     util.create_branch(path, test_branch)
     assert util.local_branch_exists(tmp_path / directory, test_branch)
 
 
-@given("project at <directory> checked out <test_branch>")
+@given("project at <directory> checked out branch <test_branch>")
 def given_directory_checked_out_start_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
     path = tmp_path / directory
     util.checkout_branch(path, test_branch)
@@ -111,7 +112,7 @@ def given_directory_behind_upstream_num_commits(tmp_path: Path, directory: str,
     assert num == 0
 
 
-@given("project at <directory> is ahead of upstream <start_branch> by <number_commits>")
+@given("project at <directory> is ahead of upstream branch <start_branch> by <number_commits>")
 def given_directory_ahead_upstream_num_commits(tmp_path: Path, directory: str,
                                                start_branch: str, number_commits: str) -> None:
     path = tmp_path / directory
@@ -125,7 +126,7 @@ def given_directory_ahead_upstream_num_commits(tmp_path: Path, directory: str,
     assert num == 0
 
 
-@given("project at <directory> is behind upstream <start_branch> by <number_behind> and ahead by <number_ahead>")
+@given("project at <directory> is behind upstream branch <start_branch> by <number_behind> and ahead by <number_ahead>")
 def given_directory_behind_ahead_upstream_num_commits(tmp_path: Path, directory: str, start_branch: str,
                                                       number_behind: str, number_ahead: str) -> None:
     path = tmp_path / directory

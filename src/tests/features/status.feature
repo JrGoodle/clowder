@@ -10,7 +10,7 @@ Feature: clowder status
     @help @success
     Scenario: clowder status help with invalid clowder.yaml
         # https://github.com/JrGoodle/cats/blob/master/versions/yaml-validation.clowder.yaml
-        Given cats example is initialized to yaml-validation
+        Given cats example is initialized to branch yaml-validation
         And did link test-empty-project clowder version
         When I run 'clowder status -h' and 'clowder status --help'
         Then the commands succeed
@@ -32,7 +32,8 @@ Feature: clowder status
         And I run 'clowder status black-cats'
         And I run 'clowder status black-cats cats'
         And I run 'clowder status black-cats cats all'
-        Then mu has untracked file catnip.txt
+        Then the commands succeed
+        And mu has untracked file catnip.txt
 #        And TODO: check the output
 
     @success @internet
@@ -46,5 +47,6 @@ Feature: clowder status
         And I run 'clowder status -f black-cats'
         And I run 'clowder status -f black-cats cats'
         And I run 'clowder status -f black-cats cats all'
-        Then mu has untracked file catnip.txt
+        Then the commands succeed
+        And mu has untracked file catnip.txt
 #        And TODO: check the output

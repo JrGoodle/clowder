@@ -123,14 +123,6 @@ class CatsController(ArgparseController):
         self._execute_command('./lfs.sh', self.path)
 
     @expose(
-        help='Run cats repo tests'
-    )
-    def repo(self) -> None:
-        """clowder cats repo tests"""
-
-        self._execute_command('./repo.sh', self.path)
-
-    @expose(
         help='Run cats subdirectory tests'
     )
     def subdirectory(self) -> None:

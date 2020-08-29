@@ -9,7 +9,7 @@ Feature: clowder start
 
     @help @success
     Scenario: clowder start help with invalid clowder.yaml
-        Given cats example is initialized to yaml-validation
+        Given cats example is initialized to branch yaml-validation
         And did link test-empty-project clowder version
         When I run 'clowder start -h' and 'clowder start --help'
         Then the commands succeed
@@ -25,11 +25,11 @@ Feature: clowder start
         Given cats example is initialized and herded
         And project at <directory> has no local branch <test_branch>
         And project at <directory> has no remote branch <test_branch>
-        And project at <directory> is on <start_branch>
+        And project at <directory> is on branch <start_branch>
         When I run 'clowder start new-branch'
         Then the command succeeds
         And project at <directory> has local branch <test_branch>
-        And project at <directory> is on <end_branch>
+        And project at <directory> is on branch <end_branch>
         And project at <directory> has no remote branch <test_branch>
 
         Examples:
@@ -46,10 +46,10 @@ Feature: clowder start
         Given cats example is initialized and herded
         And project at <directory> has no local branch <test_branch>
         And project at <directory> has no remote branch <test_branch>
-        And project at <directory> is on <start_branch>
+        And project at <directory> is on branch <start_branch>
         When I run 'clowder start new-branch black-cats'
         Then the command succeeds
-        And project at <directory> is on <end_branch>
+        And project at <directory> is on branch <end_branch>
         And project at <directory> has no local branch <test_branch>
         And project at <directory> has no remote branch <test_branch>
 
@@ -63,11 +63,11 @@ Feature: clowder start
         Given cats example is initialized and herded
         And project at <directory> has no local branch <test_branch>
         And project at <directory> has no remote branch <test_branch>
-        And project at <directory> is on <start_branch>
+        And project at <directory> is on branch <start_branch>
         When I run 'clowder start new-branch black-cats'
         Then the command succeeds
         And project at <directory> has local branch <test_branch>
-        And project at <directory> is on <end_branch>
+        And project at <directory> is on branch <end_branch>
         And project at <directory> has no remote branch <test_branch>
 
         Examples:

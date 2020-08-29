@@ -9,7 +9,7 @@ Feature: clowder reset
 
     @help @success
     Scenario: clowder reset help with invalid clowder.yaml
-        Given cats example is initialized to yaml-validation
+        Given cats example is initialized to branch yaml-validation
         And did link test-empty-project clowder version
         When I run 'clowder reset -h' and 'clowder reset --help'
         Then the commands succeed
@@ -24,10 +24,10 @@ Feature: clowder reset
     Scenario Outline: clowder reset behind
         Given cats example is initialized and herded
         And project at <directory> is behind upstream <start_branch> by <number_commits>
-        And project at <directory> is on <start_branch>
+        And project at <directory> is on branch <start_branch>
         When I run 'clowder reset'
         Then the command succeeds
-        And project at <directory> is on <end_branch>
+        And project at <directory> is on branch <end_branch>
         And project at <directory> is in sync with upstream <start_branch>
 
         Examples:
@@ -42,11 +42,11 @@ Feature: clowder reset
     @success
     Scenario Outline: clowder reset ahead
         Given cats example is initialized and herded
-        And project at <directory> is ahead of upstream <start_branch> by <number_commits>
-        And project at <directory> is on <start_branch>
+        And project at <directory> is ahead of upstream branch <start_branch> by <number_commits>
+        And project at <directory> is on branch <start_branch>
         When I run 'clowder reset'
         Then the command succeeds
-        And project at <directory> is on <end_branch>
+        And project at <directory> is on branch <end_branch>
         And project at <directory> is in sync with upstream <start_branch>
 
         Examples:
@@ -61,11 +61,11 @@ Feature: clowder reset
     @success
     Scenario Outline: clowder reset behind ahead
         Given cats example is initialized and herded
-        And project at <directory> is behind upstream <start_branch> by <number_behind> and ahead by <number_ahead>
-        And project at <directory> is on <start_branch>
+        And project at <directory> is behind upstream branch <start_branch> by <number_behind> and ahead by <number_ahead>
+        And project at <directory> is on branch <start_branch>
         When I run 'clowder reset'
         Then the command succeeds
-        And project at <directory> is on <end_branch>
+        And project at <directory> is on branch <end_branch>
         And project at <directory> is in sync with upstream <start_branch>
 
         Examples:
@@ -81,10 +81,10 @@ Feature: clowder reset
     Scenario Outline: clowder reset behind parallel
         Given cats example is initialized and herded
         And project at <directory> is behind upstream <start_branch> by <number_commits>
-        And project at <directory> is on <start_branch>
+        And project at <directory> is on branch <start_branch>
         When I run 'clowder reset --jobs 4'
         Then the command succeeds
-        And project at <directory> is on <end_branch>
+        And project at <directory> is on branch <end_branch>
         And project at <directory> is in sync with upstream <start_branch>
 
         Examples:
@@ -99,11 +99,11 @@ Feature: clowder reset
     @success @parallel
     Scenario Outline: clowder reset ahead parallel
         Given cats example is initialized and herded
-        And project at <directory> is ahead of upstream <start_branch> by <number_commits>
-        And project at <directory> is on <start_branch>
+        And project at <directory> is ahead of upstream branch <start_branch> by <number_commits>
+        And project at <directory> is on branch <start_branch>
         When I run 'clowder reset --jobs 4'
         Then the command succeeds
-        And project at <directory> is on <end_branch>
+        And project at <directory> is on branch <end_branch>
         And project at <directory> is in sync with upstream <start_branch>
 
         Examples:
@@ -118,11 +118,11 @@ Feature: clowder reset
     @success @parallel
     Scenario Outline: clowder reset behind ahead parallel
         Given cats example is initialized and herded
-        And project at <directory> is behind upstream <start_branch> by <number_behind> and ahead by <number_ahead>
-        And project at <directory> is on <start_branch>
+        And project at <directory> is behind upstream branch <start_branch> by <number_behind> and ahead by <number_ahead>
+        And project at <directory> is on branch <start_branch>
         When I run 'clowder reset --jobs 4'
         Then the command succeeds
-        And project at <directory> is on <end_branch>
+        And project at <directory> is on branch <end_branch>
         And project at <directory> is in sync with upstream <start_branch>
 
         Examples:

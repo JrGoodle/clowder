@@ -9,7 +9,7 @@ Feature: clowder stash
 
     @help @success
     Scenario: clowder stash help with invalid clowder.yaml
-        Given cats example is initialized to yaml-validation
+        Given cats example is initialized to branch yaml-validation
         And did link test-empty-project clowder version
         When I run 'clowder stash -h' and 'clowder stash --help'
         Then the commands succeed

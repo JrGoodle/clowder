@@ -9,7 +9,7 @@ Feature: clowder save command
 
     @help @success
     Scenario: clowder save help with invalid clowder.yaml
-        Given cats example is initialized to yaml-validation
+        Given cats example is initialized to branch yaml-validation
         And did link test-empty-project clowder version
         When I run 'clowder save -h' and 'clowder save --help'
         Then the commands succeed
@@ -43,7 +43,7 @@ Feature: clowder save command
 
     @success
     Scenario: clowder save new version with no existing versions directory
-        Given cats example is initialized and herded to no-versions
+        Given cats example is initialized and herded to branch no-versions
         And default clowder version is linked
         And my-new-version clowder version doesn't exist
         And clowder versions directory doesn't exist

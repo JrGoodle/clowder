@@ -20,58 +20,65 @@ def then_is_git_repo(tmp_path: Path, directory: str) -> None:
     assert util.has_git_directory(path)
 
 
-@then("project at <directory> is on <end_branch>")
+@then("project at <directory> is on branch <end_branch>")
 def then_check_directory_end_branch(tmp_path: Path, directory: str, end_branch: str) -> None:
     path = tmp_path / directory
     assert util.is_on_active_branch(path, end_branch)
 
 
-@then("project at <directory> is on <branch>")
+@then(parsers.parse("project at {directory} is on branch {branch}"))
+@then("project at <directory> is on branch <branch>")
 def then_directory_on_branch(tmp_path: Path, directory: str, branch: str) -> None:
     path = tmp_path / directory
     assert util.is_on_active_branch(path, branch)
 
 
-@then("project at <directory> is on <tag>")
+@then("project at <directory> is on tag <tag>")
 def then_directory_on_tag(tmp_path: Path, directory: str, tag: str) -> None:
     path = tmp_path / directory
     assert util.is_detached_head_on_tag(path, tag)
 
 
-@then("project at <directory> is on <commit>")
+@then("project at <directory> is on commit <commit>")
 def then_directory_on_commit(tmp_path: Path, directory: str, commit: str) -> None:
     path = tmp_path / directory
     assert util.is_detached_head_on_commit(path, commit)
 
 
+@then(parsers.parse("project at {directory} has no local branch {test_branch}"))
 @then("project at <directory> has no local branch <test_branch>")
 def then_directory_has_no_local_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
     path = tmp_path / directory
     assert not util.local_branch_exists(path, test_branch)
 
 
+@then(parsers.parse("project at {directory} has local branch {test_branch}"))
 @then("project at <directory> has local branch <test_branch>")
 def then_directory_has_local_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
     path = tmp_path / directory
     assert util.local_branch_exists(path, test_branch)
 
 
+@then(parsers.parse("project at {directory} has no remote branch {test_branch}"))
 @then("project at <directory> has no remote branch <test_branch>")
 def then_directory_has_no_remote_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
     assert not util.remote_branch_exists(tmp_path / directory, test_branch)
 
 
+@then(parsers.parse("project at {directory} has remote branch {test_branch}"))
 @then("project at <directory> has remote branch <test_branch>")
 def then_directory_has_remote_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
     assert util.remote_branch_exists(tmp_path / directory, test_branch)
 
 
+@then(parsers.parse("project at {directory} is clean"))
 @then("project at <directory> is clean")
 def then_directory_clean(tmp_path: Path, directory: str) -> None:
     path = tmp_path / directory
     assert not util.is_dirty(path)
 
 
+@then(parsers.parse("project at {directory} is dirty"))
 @then("project at <directory> is dirty")
 def then_directory_dirty(tmp_path: Path, directory: str) -> None:
     path = tmp_path / directory
@@ -81,7 +88,29 @@ def then_directory_dirty(tmp_path: Path, directory: str) -> None:
 @then(parsers.parse("{directory} has untracked file {name}"))
 def then_has_untracked_file(tmp_path: Path, directory: str, name: str) -> None:
     repo_path = tmp_path / directory
-    path = tmp_path / directory / name
+    path = repo_path / name
+    # TODO: Move to utils
+    repo = Repo(repo_path)
+    assert f"{path.stem}{path.suffix}" in repo.untracked_files
+
+
+@then("clowder repo is clean")
+def then_clowder_repo_clean(tmp_path: Path) -> None:
+    path = tmp_path / ".clowder"
+    assert not util.is_dirty(path)
+
+
+@then("clowder repo is dirty")
+def then_clowder_repo_dirty(tmp_path: Path) -> None:
+    path = tmp_path / ".clowder"
+    assert util.is_dirty(path)
+
+
+@then(parsers.parse("clowder repo has untracked file {name}"))
+def then_clowder_repo_has_untracked_file(tmp_path: Path, name: str) -> None:
+    repo_path = tmp_path / ".clowder"
+    path = repo_path / name
+    # TODO: Move to utils
     repo = Repo(repo_path)
     assert f"{path.stem}{path.suffix}" in repo.untracked_files
 

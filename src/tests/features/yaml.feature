@@ -9,7 +9,7 @@ Feature: clowder yaml
 
     @help @success
     Scenario: clowder yaml help with invalid clowder.yaml
-        Given cats example is initialized to yaml-validation
+        Given cats example is initialized to branch yaml-validation
         And did link test-empty-project clowder version
         When I run 'clowder yaml -h' and 'clowder yaml --help'
         Then the commands succeed

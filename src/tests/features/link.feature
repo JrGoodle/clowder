@@ -9,7 +9,7 @@ Feature: clowder link command
 
     @help @success
     Scenario: clowder link help with invalid clowder.yaml
-        Given cats example is initialized to yaml-validation
+        Given cats example is initialized to branch yaml-validation
         And did link test-empty-project clowder version
         When I run 'clowder link -h' and 'clowder link --help'
         Then the commands succeed
@@ -38,7 +38,7 @@ Feature: clowder link command
 
     @fail
     Scenario: clowder link no versions
-        Given cats example is initialized to no-versions
+        Given cats example is initialized to branch no-versions
         And default clowder version is linked
         When I run 'clowder link missing-version'
         Then the command fails
@@ -54,7 +54,7 @@ Feature: clowder link command
 
     @fail
     Scenario: clowder link duplicate versions
-        Given cats example is initialized to duplicate-versions
+        Given cats example is initialized to branch duplicate-versions
         And default clowder version is linked
         When I run 'clowder link duplicate-version'
         Then the command fails
@@ -62,7 +62,7 @@ Feature: clowder link command
 
     @success
     Scenario: clowder link file extension yml to yaml
-        Given cats example is initialized to extension
+        Given cats example is initialized to branch extension
         And default clowder version is linked
         And symlink clowder.yml exists
         And symlink clowder.yaml doesn't exist
@@ -74,7 +74,7 @@ Feature: clowder link command
 
     @success
     Scenario: clowder link file extension yaml to yml
-        Given cats example is initialized to extension
+        Given cats example is initialized to branch extension
         And did link tags clowder version
         And symlink clowder.yaml exists
         And symlink clowder.yml doesn't exist
@@ -86,7 +86,7 @@ Feature: clowder link command
 
     @fail
     Scenario: clowder has duplicate symlinks
-        Given cats example is initialized to extension
+        Given cats example is initialized to branch extension
         And default clowder version is linked
         And symlink clowder.yaml was created pointing to .clowder/versions/tags.clowder.yaml
         And symlinks clowder.yml and clowder.yaml exist
@@ -98,7 +98,7 @@ Feature: clowder link command
 
     @success
     Scenario: clowder link with duplicate symlinks
-        Given cats example is initialized to extension
+        Given cats example is initialized to branch extension
         And default clowder version is linked
         And symlink clowder.yaml was created pointing to .clowder/versions/tags.clowder.yaml
         And symlinks clowder.yml and clowder.yaml exist

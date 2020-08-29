@@ -9,7 +9,7 @@ Feature: clowder herd
 
     @help @success
     Scenario: clowder herd help with invalid clowder.yaml
-        Given cats example is initialized to yaml-validation
+        Given cats example is initialized to branch yaml-validation
         And did link test-empty-project clowder version
         When I run 'clowder herd -h' and 'clowder herd --help'
         Then the commands succeed
@@ -27,7 +27,7 @@ Feature: clowder herd
         When I run 'clowder herd'
         Then the command succeeds
         And project at <directory> is a git repository
-        And project at <directory> is on <branch>
+        And project at <directory> is on branch <branch>
         And project at <directory> is clean
 
         Examples:
@@ -47,7 +47,7 @@ Feature: clowder herd
         When I run 'clowder herd'
         Then the command succeeds
         And project at <directory> is a git repository
-        And project at <directory> is on <commit>
+        And project at <directory> is on commit <commit>
         And project at <directory> is clean
 
         Examples:
@@ -67,7 +67,7 @@ Feature: clowder herd
         When I run 'clowder herd'
         Then the command succeeds
         And project at <directory> is a git repository
-        And project at <directory> is on <tag>
+        And project at <directory> is on tag <tag>
         And project at <directory> is clean
 
         Examples:
