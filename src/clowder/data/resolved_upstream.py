@@ -61,34 +61,39 @@ class ResolvedUpstream:
         # elif has_defaults_remote:
         #     self.remote = defaults.remote
 
-        has_group_protocol = has_group and group.protocol is not None
-        self.default_protocol: Optional[str] = None
-        if has_group_protocol:
-            self.default_protocol: Optional[str] = group.protocol
-        elif protocol is not None:
-            self.default_protocol: Optional[str] = protocol
-
         has_source = upstream.source is not None
         has_defaults_source = has_defaults and defaults.source is not None
         has_group_defaults_source = has_group_defaults and group.defaults.source is not None
-        self.source: Source = SOURCE_CONTROLLER.get_source(GITHUB)
         if has_source:
             self.source: Source = SOURCE_CONTROLLER.get_source(upstream.source)
         elif has_group_defaults_source:
             self.source: Source = SOURCE_CONTROLLER.get_source(group.defaults.source)
         elif has_defaults_source:
             self.source: Source = SOURCE_CONTROLLER.get_source(defaults.source)
+        else:
+            self.source: Source = SOURCE_CONTROLLER.get_source(GITHUB)
+
+        has_group_protocol = has_group and group.protocol is not None
+        if self.source.protocol is not None:
+            self.default_protocol: Optional[str] = self.source.protocol
+        elif has_group_protocol:
+            self.default_protocol: Optional[str] = group.protocol
+        elif protocol is not None:
+            self.default_protocol: Optional[str] = protocol
+        else:
+            self.default_protocol: Optional[str] = None
 
         has_ref = upstream.get_formatted_ref() is not None
         has_defaults_ref = has_defaults and defaults.get_formatted_ref() is not None
         has_group_defaults_ref = has_group_defaults and group.defaults.get_formatted_ref() is not None
-        self.ref: str = "refs/heads/master"
         if has_ref:
             self.ref: str = upstream.get_formatted_ref()
         elif has_group_defaults_ref:
             self.ref: str = group.defaults.get_formatted_ref()
         elif has_defaults_ref:
             self.ref: str = defaults.get_formatted_ref()
+        else:
+            self.ref: str = "refs/heads/master"
 
     def full_path(self) -> Path:
         """Return full path to project

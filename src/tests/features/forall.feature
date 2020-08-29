@@ -169,24 +169,21 @@ Feature: clowder forall
 
     @success @misc @upstream
     Scenario: clowder forall script environment upstream
-        Given misc example is initialized and herded
-        And https clowder version is linked
+        Given misc example is initialized and herded with https
         And forall test scripts are in the project directories
         When I run 'clowder forall gyp -c "./test_forall_env_upstream.sh"'
         Then the command succeeds
 
     @fail @misc @upstream
     Scenario: clowder forall script fail environment upstream
-        Given misc example is initialized and herded
+        Given misc example is initialized and herded with https
         And forall test scripts are in the project directories
-        And https clowder version is linked
         When I run 'clowder forall djinni -c "./test_forall_env_upstream.sh"'
         Then the command fails
 
     @success @misc @upstream
     Scenario: clowder forall environment variables upstream
-        Given misc example is initialized and herded
-        And https clowder version is linked
+        Given misc example is initialized and herded with https
         When I run 'clowder forall gyp -c "if [ $PROJECT_NAME != JrGoodle/gyp ]; then exit 1; fi"'
         And I run 'clowder forall gyp -c "if [ $PROJECT_REMOTE != origin ]; then exit 1; fi"'
         And I run 'clowder forall gyp -c "if [ $PROJECT_REF != refs/heads/fork-branch ]; then exit 1; fi"'

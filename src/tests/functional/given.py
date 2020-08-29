@@ -39,6 +39,11 @@ def given_misc_example_init_herd(tmp_path: Path, misc_init_herd_default, test_in
     test_info.example = "misc"
 
 
+@given(parsers.parse("misc example is initialized and herded with https"))
+def given_misc_example_init_herd(tmp_path: Path, misc_init_herd_https, test_info: TestInfo) -> None:
+    test_info.example = "misc"
+
+
 @given(parsers.parse("{example} example is initialized to {branch}"))
 def given_example_init_branch(tmp_path: Path, example: str, branch: str) -> None:
     url = util.get_url(example)

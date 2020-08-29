@@ -20,7 +20,7 @@ Feature: clowder reset
         When I run 'clowder reset -h' and 'clowder reset --help'
         Then the commands succeed
 
-    @default @success @debug
+    @default @success
     Scenario Outline: clowder reset
         Given cats example is initialized and herded
         And project at <directory> is behind upstream <start_branch> by <number_commits>
