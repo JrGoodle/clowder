@@ -17,23 +17,23 @@ scenarios('../../features')
 @given(parsers.parse("{example} example is initialized to {branch}"))
 def given_example_init_branch(tmp_path: Path, example: str, branch: str) -> None:
     url = util.get_url(example)
-    command = f"clowder init {url} -b {branch}"
-    util.run_command(command, tmp_path)
+    result = util.run_command(f"clowder init {url} -b {branch}", tmp_path)
+    assert result.returncode == 0
 
 
 @given(parsers.parse("{example} example is initialized and herded to {branch}"))
 def given_example_init_branch_herd(tmp_path: Path, example: str, branch: str) -> None:
     url = util.get_url(example)
-    command = f"clowder init {url} -b {branch}"
-    util.run_command(command, tmp_path, check=True)
-    command = f"clowder herd"
-    util.run_command(command, tmp_path, check=True)
+    result = util.run_command(f"clowder init {url} -b {branch}", tmp_path)
+    assert result.returncode == 0
+    result = util.run_command(f"clowder herd", tmp_path)
+    assert result.returncode == 0
 
 
 @given(parsers.parse("'{command}' has been run"))
 def given_run_clowder_command(tmp_path: Path, command: str) -> None:
-    command = f"{command}"
-    util.run_command(command, tmp_path)
+    result = util.run_command(command, tmp_path)
+    assert result.returncode == 0
 
 
 @given(parsers.parse("did link {version} clowder version"))
@@ -60,6 +60,7 @@ def given_untracked_file(tmp_path: Path, directory: str, name: str) -> None:
     repo_path = tmp_path / directory
     path = tmp_path / directory / name
     util.create_file(path)
+    # TODO: Move most of this logic into utils
     repo = Repo(repo_path)
     assert repo.untracked_files
 
@@ -68,6 +69,7 @@ def given_untracked_file(tmp_path: Path, directory: str, name: str) -> None:
 def given_new_staged_file(tmp_path: Path, directory: str, test_file: str) -> None:
     repo_path = tmp_path / directory
     path = tmp_path / directory / test_file
+    # TODO: Move most of this logic into utils
     util.create_file(path)
     repo = Repo(repo_path)
     assert repo.untracked_files
@@ -99,6 +101,7 @@ def given_directory_created_new_commit(tmp_path: Path, directory: str) -> None:
 def given_directory_behind_upstream_num_commits(tmp_path: Path, directory: str,
                                                 start_branch: str, number_commits: str) -> None:
     path = tmp_path / directory
+    # TODO: Move most of this logic into utils
     assert util.number_of_commits_between_refs(path, "HEAD", f"origin/{start_branch}") == 0
     assert util.number_of_commits_between_refs(path, f"origin/{start_branch}", "HEAD") == 0
     util.reset_back_by_number_of_commits(path, int(number_commits))
@@ -112,6 +115,7 @@ def given_directory_behind_upstream_num_commits(tmp_path: Path, directory: str,
 def given_directory_ahead_upstream_num_commits(tmp_path: Path, directory: str,
                                                start_branch: str, number_commits: str) -> None:
     path = tmp_path / directory
+    # TODO: Move most of this logic into utils
     assert util.number_of_commits_between_refs(path, "HEAD", f"origin/{start_branch}") == 0
     assert util.number_of_commits_between_refs(path, f"origin/{start_branch}", "HEAD") == 0
     util.reset_back_by_number_of_commits(path, int(number_commits))
@@ -125,6 +129,7 @@ def given_directory_ahead_upstream_num_commits(tmp_path: Path, directory: str,
 def given_directory_behind_ahead_upstream_num_commits(tmp_path: Path, directory: str, start_branch: str,
                                                       number_behind: str, number_ahead: str) -> None:
     path = tmp_path / directory
+    # TODO: Move most of this logic into utils
     num = util.number_of_commits_between_refs(path, "HEAD", f"origin/{start_branch}")
     assert num == 0
     num = util.number_of_commits_between_refs(path, f"origin/{start_branch}", "HEAD")
