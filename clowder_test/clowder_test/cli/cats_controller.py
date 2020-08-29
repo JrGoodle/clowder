@@ -131,14 +131,6 @@ class CatsController(ArgparseController):
         self._execute_command('./repo.sh', self.path)
 
     @expose(
-        help='Run cats stash tests'
-    )
-    def stash(self) -> None:
-        """clowder cats stash tests"""
-
-        self._execute_command('./stash.sh', self.path)
-
-    @expose(
         help='Run cats subdirectory tests'
     )
     def subdirectory(self) -> None:

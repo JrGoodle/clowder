@@ -129,6 +129,17 @@ def given_untracked_file(tmp_path: Path, directory: str, name: str) -> None:
     assert repo.untracked_files
 
 
+@given("<directory> has new staged file <test_file>")
+def given_new_staged_file(tmp_path: Path, directory: str, test_file: str) -> None:
+    repo_path = tmp_path / directory
+    path = tmp_path / directory / test_file
+    util.create_file(path)
+    repo = Repo(repo_path)
+    assert repo.untracked_files
+    repo.git.add(path)
+    assert repo.index.diff("HEAD")
+
+
 @given("project at <directory> created <test_branch>")
 def given_directory_created_local_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
     path = tmp_path / directory

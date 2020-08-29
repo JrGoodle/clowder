@@ -129,6 +129,12 @@ def then_directory_clean(tmp_path: Path, directory: str) -> None:
     assert not util.is_dirty(path)
 
 
+@then("project at <directory> is dirty")
+def then_directory_dirty(tmp_path: Path, directory: str) -> None:
+    path = tmp_path / directory
+    assert util.is_dirty(path)
+
+
 @then(parsers.parse("{directory} has untracked file {name}"))
 def then_has_untracked_file(tmp_path: Path, directory: str, name: str) -> None:
     repo_path = tmp_path / directory

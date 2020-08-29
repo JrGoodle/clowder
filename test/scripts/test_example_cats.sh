@@ -18,7 +18,6 @@ print_double_separator
 "$TEST_SCRIPT_DIR/cats/herd_branch.sh" || exit 1
 "$TEST_SCRIPT_DIR/cats/herd_tag.sh" || exit 1
 "$TEST_SCRIPT_DIR/cats/herd_submodules.sh" || exit 1
-"$TEST_SCRIPT_DIR/cats/stash.sh" || exit 1
 "$TEST_SCRIPT_DIR/cats/yaml_validation.sh" || exit 1
 "$TEST_SCRIPT_DIR/cats/repo.sh" || exit 1
 "$TEST_SCRIPT_DIR/cats/yaml.sh" || exit 1
