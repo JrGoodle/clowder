@@ -55,7 +55,13 @@ jobs:
           name: run pytest-bdd functional tests
           command: |
             cd src
-            pytest -n auto -m "ssh"
+            pytest -v -n auto -m "ssh and not serial"
+
+      - run:
+          name: run pytest-bdd functional tests
+          command: |
+            cd src
+            pytest -v -m "serial"
 
       - run:
           name: upload code coverage results
