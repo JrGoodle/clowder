@@ -127,3 +127,25 @@ Feature: clowder init
         And clowder.yml file exists
         And clowder.yml is not a symlink
         And clowder.yaml is a symlink pointing to .clowder/clowder.yaml
+
+    @fail @cats
+    Scenario: clowder init existing ambiguous yaml symlink, yml symlink, no .clowder directory
+        Given cats example non-symlink yml file exists
+        And .clowder directory doesn't exist
+        And created clowder.yaml and clowder.yml symlinks pointing to .clowder/versions/something.clowder.yaml
+        When I run 'clowder init https://github.com/jrgoodle/cats.git'
+        Then the command fails
+        And .clowder directory exists
+        And .clowder directory is a git repository
+        And clowder.yml symlink doesn't exist
+        And clowder.yaml is a symlink pointing to .clowder/clowder.yaml
+
+    @fail @cats
+    Scenario: clowder init existing .clowder file
+        Given test directory is empty
+        And created file .clowder in directory .
+        When I run 'clowder init https://github.com/jrgoodle/cats.git'
+        Then the command fails
+        And .clowder file exists
+        And .clowder is not a directory
+        And clowder.yaml and clowder.yml symlinks don't exist

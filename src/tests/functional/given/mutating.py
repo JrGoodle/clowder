@@ -54,6 +54,15 @@ def given_created_symlink(tmp_path: Path, target: str, source: str) -> None:
     util.create_symlink(source_path, target_path)
 
 
+@given(parsers.parse("created {target_1} and {target_2} symlinks pointing to {source}"))
+def given_created_symlinks(tmp_path: Path, target_1: str, target_2: str, source: str) -> None:
+    source_path = tmp_path / source
+    target_path = tmp_path / target_1
+    util.create_symlink(source_path, target_path)
+    target_path = tmp_path / target_2
+    util.create_symlink(source_path, target_path)
+
+
 @given(parsers.parse("repo at {directory} staged file {file_name}"))
 @given(parsers.parse("project at {directory} staged file {file_name}"))
 @given("project at <directory> staged <file_name>")

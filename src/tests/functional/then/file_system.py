@@ -35,6 +35,7 @@ def then_has_no_file(tmp_path: Path, file_name: str) -> None:
     assert not path.exists()
 
 
+@then(parsers.parse("{file_name} is not a directory"))
 @then(parsers.parse("{file_name} file exists"))
 def then_has_file(tmp_path: Path, file_name: str) -> None:
     path = tmp_path / file_name
@@ -91,6 +92,15 @@ def then_has_two_files(tmp_path: Path, file_name_1: str, file_name_2: str) -> No
     path = tmp_path / file_name_2
     assert path.is_file()
     assert not path.is_symlink()
+
+
+@then(parsers.parse("{file_name_1} and {file_name_2} symlinks don't exist"))
+@then(parsers.parse("{file_name_1} and {file_name_2} files don't exist"))
+def then_has_two_files(tmp_path: Path, file_name_1: str, file_name_2: str) -> None:
+    path = tmp_path / file_name_1
+    assert not path.exists()
+    path = tmp_path / file_name_2
+    assert not path.exists()
 
 
 @then(parsers.parse("{file_name_1} and {file_name_2} are not symlinks"))
