@@ -76,6 +76,31 @@ def then_has_symlink(tmp_path: Path, file_name: str) -> None:
     assert path.is_symlink()
 
 
+@then(parsers.parse("{file_name} is a symlink pointing to {destination}"))
+def then_has_symlink(tmp_path: Path, file_name: str, destination: str) -> None:
+    path = tmp_path / file_name
+    destination = Path(destination)
+    assert util.is_symlink_from_to(path, destination)
+
+
+@then(parsers.parse("{file_name_1} and {file_name_2} files exist"))
+def then_has_two_files(tmp_path: Path, file_name_1: str, file_name_2: str) -> None:
+    path = tmp_path / file_name_1
+    assert path.is_file()
+    assert not path.is_symlink()
+    path = tmp_path / file_name_2
+    assert path.is_file()
+    assert not path.is_symlink()
+
+
+@then(parsers.parse("{file_name_1} and {file_name_2} are not symlinks"))
+def then_two_files_not_symlinks(tmp_path: Path, file_name_1: str, file_name_2: str) -> None:
+    path = tmp_path / file_name_1
+    assert not path.is_symlink()
+    path = tmp_path / file_name_2
+    assert not path.is_symlink()
+
+
 @then(parsers.parse("{version} clowder version exists"))
 def then_clowder_version_exists(tmp_path: Path, version: str) -> None:
     assert util.has_clowder_version(tmp_path, version)

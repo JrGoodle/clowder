@@ -340,3 +340,22 @@ Feature: clowder herd
 #        | black-cats/kishka | d185e3bff9eaaf6e146d4e09165276cd5c9f31c8 |
 #        | black-cats/june   | b6e1316cc62cb2ba18fa982fc3d67ef4408c8bfd |
 #        | black-cats/sasha  | 775979e0b1a7f753131bf16a4794c851c67108d8 |
+
+    @success @cats
+    Scenario Outline: clowder herd non-symlink yaml file
+        Given cats example non-symlink yaml file exists
+        And <directory> directory doesn't exist
+        When I run 'clowder herd'
+        Then the command succeeds
+        And project at <directory> is a git repository
+        And project at <directory> is on <branch>
+        And project at <directory> is clean
+
+        Examples:
+        | directory         | branch |
+        | mu                | knead  |
+        | duke              | purr   |
+        | black-cats/kishka | master |
+        | black-cats/kit    | master |
+        | black-cats/sasha  | master |
+        | black-cats/june   | master |

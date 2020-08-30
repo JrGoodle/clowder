@@ -44,3 +44,14 @@ def given_cats_init_branch_extension(tmp_path: Path, cats_init_extension, test_i
 @given(parsers.parse("cats example non-symlink yaml file exists"))
 def given_cats_non_symlink_yaml(tmp_path: Path, cats_non_symlink_yaml, test_info: ScenarioInfo) -> None:
     test_info.example = "cats"
+
+
+@given(parsers.parse("cats example non-symlink yml file exists"))
+def given_cats_non_symlink_yml(tmp_path: Path, cats_non_symlink_yml, test_info: ScenarioInfo) -> None:
+    test_info.example = "cats"
+
+
+@given(parsers.parse("cats example ambiguous non-symlink yaml and yml files exist"))
+def given_cats_ambiguous_non_symlink_yaml_files(tmp_path: Path, cats_ambiguous_non_symlink_yaml_files,
+                                                test_info: ScenarioInfo) -> None:
+    test_info.example = "cats"

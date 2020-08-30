@@ -70,3 +70,47 @@ def cats_non_symlink_yaml(tmp_path: Path, cats_non_symlink_yaml_session: Path) -
 def cats_non_symlink_yaml_session(tmp_path_factory) -> Path:
     path = tmp_path_factory.mktemp(cats_non_symlink_yaml_session.__name__)
     return util.create_non_symlink_clowder_yaml(path, "cats")
+
+
+@fixture
+def cats_non_symlink_yml(tmp_path: Path, cats_non_symlink_yaml_session: Path) -> None:
+    util.copy_directory(cats_non_symlink_yaml_session, to=tmp_path)
+    clowder_repo = tmp_path / ".clowder"
+    assert not clowder_repo.exists()
+    clowder_yaml = tmp_path / "clowder.yaml"
+    assert clowder_yaml.is_file()
+    assert not clowder_yaml.is_symlink()
+    clowder_yml = tmp_path / "clowder.yml"
+    assert clowder_yml.is_file()
+    assert not clowder_yml.is_symlink()
+
+
+@fixture(scope="session")
+def cats_non_symlink_yml_session(tmp_path_factory) -> Path:
+    path = tmp_path_factory.mktemp(cats_non_symlink_yml_session.__name__)
+    util.create_non_symlink_clowder_yaml(path, "cats")
+    util.copy_file_to_file(path / "clowder.yaml", path / "clowder.yml")
+    util.remove_file(path / "clowder.yaml")
+    return path
+
+
+@fixture
+def cats_ambiguous_non_symlink_yaml_files(tmp_path: Path, cats_ambiguous_non_symlink_yaml_files_session: Path) -> None:
+    util.copy_directory(cats_ambiguous_non_symlink_yaml_files_session, to=tmp_path)
+    clowder_repo = tmp_path / ".clowder"
+    assert not clowder_repo.exists()
+    clowder_yml = tmp_path / "clowder.yml"
+    assert clowder_yml.exists()
+    assert not clowder_yml.is_symlink()
+    clowder_yaml = tmp_path / "clowder.yaml"
+    assert clowder_yaml.exists()
+    assert not clowder_yaml.is_symlink()
+
+
+@fixture(scope="session")
+def cats_ambiguous_non_symlink_yaml_files_session(tmp_path_factory) -> Path:
+    path = tmp_path_factory.mktemp(cats_ambiguous_non_symlink_yaml_files_session.__name__)
+    util.create_non_symlink_clowder_yaml(path, "cats")
+    util.copy_file_to_file(path / "clowder.yaml", path / "clowder.yml")
+    return path
+

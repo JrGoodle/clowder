@@ -27,6 +27,20 @@ def create_file(path: Path) -> None:
     assert not path.is_symlink()
 
 
+def remove_file(path: Path) -> None:
+    assert path.exists()
+    os.remove(path)
+    assert not path.exists()
+
+
+def copy_file_to_file(path: Path, destination: Path) -> None:
+    shutil.copyfile(path, destination)
+    assert destination.exists()
+    assert destination.is_file()
+    assert not destination.is_dir()
+    assert not destination.is_symlink()
+
+
 def create_symlink(source: Path, target: Path) -> None:
     assert source.exists()
     assert not target.exists()

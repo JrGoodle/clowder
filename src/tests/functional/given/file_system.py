@@ -79,3 +79,21 @@ def given_has_directory(tmp_path: Path, directory: str) -> None:
 def given_has_no_directory(tmp_path: Path, directory: str) -> None:
     path = tmp_path / directory
     assert not path.exists()
+
+
+@given(parsers.parse("{file_name_1} and {file_name_2} files exist"))
+def given_has_two_files(tmp_path: Path, file_name_1: str, file_name_2: str) -> None:
+    path = tmp_path / file_name_1
+    assert path.is_file()
+    assert not path.is_symlink()
+    path = tmp_path / file_name_2
+    assert path.is_file()
+    assert not path.is_symlink()
+
+
+@given(parsers.parse("{file_name_1} and {file_name_2} are not symlinks"))
+def given_two_files_not_symlinks(tmp_path: Path, file_name_1: str, file_name_2: str) -> None:
+    path = tmp_path / file_name_1
+    assert not path.is_symlink()
+    path = tmp_path / file_name_2
+    assert not path.is_symlink()
