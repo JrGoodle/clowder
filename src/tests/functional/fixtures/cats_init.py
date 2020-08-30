@@ -56,3 +56,17 @@ def cats_init_extension(tmp_path: Path, cats_init_extension_session: Path) -> No
 def cats_init_extension_session(tmp_path_factory) -> Path:
     path = tmp_path_factory.mktemp(cats_init_extension_session.__name__)
     return util.init_clowder(path, "cats", branch="extension")
+
+
+@fixture
+def cats_non_symlink_yaml(tmp_path: Path, cats_non_symlink_yaml_session: Path) -> None:
+    util.copy_directory(cats_init_session, to=tmp_path)
+    clowder_repo = tmp_path / ".clowder"
+    assert not clowder_repo.exists()
+    assert util.has_clowder_yaml_file(tmp_path)
+
+
+@fixture(scope="session")
+def cats_non_symlink_yaml_session(tmp_path_factory) -> Path:
+    path = tmp_path_factory.mktemp(cats_non_symlink_yaml_session.__name__)
+    return util.create_non_symlink_clowder_yaml(path, "cats")

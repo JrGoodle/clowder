@@ -171,3 +171,21 @@ def given_yaml_test_files_present(tmp_path: Path, shared_datadir: Path) -> None:
     for file in os.listdir(yaml_dir):
         shutil.copy(yaml_dir / file, tmp_path)
         assert Path(tmp_path / file).exists()
+
+
+@given(parsers.parse("did create directory {directory}"))
+def given_run_clowder_command(tmp_path: Path, directory: str) -> None:
+    path = tmp_path / directory
+    assert not path.exists()
+    path.mkdir()
+    assert path.exists()
+    assert path.is_dir()
+
+
+@given(parsers.parse("did create file {file}"))
+@given("did create file <file>")
+def given_has_no_directory(tmp_path: Path, file: str) -> None:
+    path = tmp_path / file
+    assert not path.exists()
+    path.touch()
+    assert path.exists()

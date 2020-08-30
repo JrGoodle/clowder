@@ -72,6 +72,13 @@ def given_has_two_symlinks(tmp_path: Path, file_name_1: str, file_name_2: str) -
     assert util.is_valid_symlink(path)
 
 
+@given(parsers.parse("{directory} directory exists"))
+@given("<directory> directory exists")
+def given_has_no_directory(tmp_path: Path, directory: str) -> None:
+    path = tmp_path / directory
+    assert not path.exists()
+
+
 @given("<directory> doesn't exist")
 def given_has_no_directory(tmp_path: Path, directory: str) -> None:
     path = tmp_path / directory

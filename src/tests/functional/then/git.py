@@ -20,6 +20,15 @@ def then_is_git_repo(tmp_path: Path, directory: str) -> None:
     assert util.has_git_directory(path)
 
 
+@then("project at <directory> is not a git repository")
+@then(parsers.parse("project at {directory} is not a git repository"))
+def then_is_not_git_repo(tmp_path: Path, directory: str) -> None:
+    path = tmp_path / directory
+    assert path.exists()
+    assert path.is_dir()
+    assert not util.has_git_directory(path)
+
+
 @then("project at <directory> is on branch <end_branch>")
 def then_check_directory_end_branch(tmp_path: Path, directory: str, end_branch: str) -> None:
     path = tmp_path / directory
