@@ -35,14 +35,6 @@ class MiscController(ArgparseController):
         self._execute_command('./test_example_misc.sh', ROOT_DIR / 'test' / 'scripts')
 
     @expose(
-        help='Run misc defaults tests'
-    )
-    def defaults(self) -> None:
-        """clowder misc defaults tests"""
-
-        self._execute_command('./defaults.sh', self.path)
-
-    @expose(
         help='Run misc forks tests'
     )
     def forks(self) -> None:

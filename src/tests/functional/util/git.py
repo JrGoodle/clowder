@@ -180,3 +180,11 @@ def reset_back_by_number_of_commits(path: Path, number: int) -> CompletedProcess
     result = run_command(f"git reset --hard HEAD~{number}", path)
     assert number_of_commits_between_refs(path, "HEAD", sha) == number
     return result
+
+
+def has_git_remote_with_url(path: Path, remote: str, url: str) -> bool:
+    repo = Repo(path)
+    if remote not in repo.remotes:
+        return False
+    remote_url = repo.remotes[remote].url
+    return remote_url == url

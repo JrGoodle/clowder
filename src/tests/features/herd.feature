@@ -1,26 +1,26 @@
-@herd @cats
+@herd
 Feature: clowder herd
 
-    @help @success
+    @help @success @cats
     Scenario: clowder herd help in empty directory
         Given test directory is empty
         When I run 'clowder herd -h' and 'clowder herd --help'
         Then the commands succeed
 
-    @help @success
+    @help @success @cats
     Scenario: clowder herd help with invalid clowder.yaml
         Given cats example is initialized to branch yaml-validation
         And did link test-empty-project clowder version
         When I run 'clowder herd -h' and 'clowder herd --help'
         Then the commands succeed
 
-    @help @success
+    @help @success @cats
     Scenario: clowder herd help with valid clowder.yaml
         Given cats example is initialized
         When I run 'clowder herd -h' and 'clowder herd --help'
         Then the commands succeed
 
-    @success
+    @success @cats
     Scenario Outline: clowder herd default
         Given cats example is initialized
         And <directory> doesn't exist
@@ -39,7 +39,7 @@ Feature: clowder herd
         | black-cats/sasha  | master |
         | black-cats/june   | master |
 
-    @commits @success
+    @commits @success @cats
     Scenario Outline: clowder herd commits
         Given cats example is initialized
         And <directory> doesn't exist
@@ -59,7 +59,7 @@ Feature: clowder herd
         | black-cats/june   | b6e1316cc62cb2ba18fa982fc3d67ef4408c8bfd |
         | black-cats/sasha  | 775979e0b1a7f753131bf16a4794c851c67108d8 |
 
-    @tags @success
+    @tags @success @cats
     Scenario Outline: clowder herd tags
         Given cats example is initialized
         And <directory> doesn't exist
@@ -79,7 +79,7 @@ Feature: clowder herd
         | black-cats/sasha  | v0.01                 |
         | black-cats/june   | v0.01                 |
 
-    @fail
+    @fail @cats
     Scenario: Test clowder herd dirty fail
         Given cats example is initialized and herded
         And mu has untracked file something.txt
@@ -87,7 +87,7 @@ Feature: clowder herd
         Then the command fails
         And mu has untracked file something.txt
 
-    @success @submodules
+    @success @submodules @cats
     Scenario Outline: clowder herd submodules recursive enabled check projects
         Given cats example is initialized
         And <directory> doesn't exist
@@ -107,7 +107,7 @@ Feature: clowder herd
         | black-cats/sasha  |
         | black-cats/june   |
 
-    @success @submodules
+    @success @submodules @cats
     Scenario Outline: clowder herd submodules recursive enabled check submodules
         Given cats example is initialized
         And <directory> doesn't exist
@@ -123,7 +123,7 @@ Feature: clowder herd
         | directory     | submodule_path |
         | mu            | ash            |
 
-    @success @submodules
+    @success @submodules @cats
     Scenario Outline: clowder herd submodules recursive enabled check recursive submodules
         Given cats example is initialized
         And <directory> doesn't exist
@@ -139,7 +139,7 @@ Feature: clowder herd
         | directory     | submodule_path |
         | mu            | ash/duffy      |
 
-    @success @submodules
+    @success @submodules @cats
     Scenario Outline: clowder herd submodules disabled check non-submodules exist
         Given cats example is initialized
         And <directory> doesn't exist
@@ -159,7 +159,7 @@ Feature: clowder herd
         | black-cats/sasha  |
         | black-cats/june   |
 
-    @success @submodules
+    @success @submodules @cats
     Scenario Outline: clowder herd submodules disabled check submodules don't exist
         Given cats example is initialized
         And <directory> doesn't exist
@@ -172,3 +172,66 @@ Feature: clowder herd
         Examples:
         | directory | submodule_path |
         | mu        | ash            |
+
+    @success @misc @upstream @ssh
+    Scenario Outline: clowder herd upstream remote urls
+        Given misc example is initialized
+        And <directory> doesn't exist
+        When I run 'clowder herd'
+        Then the command succeeds
+        And project at <directory> exists
+        And project at <directory> is a git repository
+        And project at <directory> is on branch <branch>
+        And project at <directory> has remote <remote> with url <url>
+
+        Examples:
+        | directory | branch      | remote   | url                                                |
+        | djinni    | master      | origin   | git@github.com:JrGoodle/djinni.git                 |
+        | djinni    | master      | upstream | git@github.com:dropbox/djinni.git                  |
+        | gyp       | fork-branch | origin   | git@github.com:JrGoodle/gyp.git                    |
+        | gyp       | fork-branch | upstream | https://chromium.googlesource.com/external/gyp.git |
+        | sox       | master      | origin   | git@github.com:JrGoodle/sox.git                    |
+        | sox       | master      | upstream | https://git.code.sf.net/p/sox/code.git             |
+
+    @success @misc @upstream
+    Scenario Outline: clowder herd upstream remote urls override https
+        Given misc example is initialized
+        And did link https clowder version
+        And <directory> doesn't exist
+        When I run 'clowder herd'
+        Then the command succeeds
+        And project at <directory> exists
+        And project at <directory> is a git repository
+        And project at <directory> is on branch <branch>
+        And project at <directory> has remote <remote> with url <url>
+
+        Examples:
+        | directory | branch      | remote   | url                                                |
+        | djinni    | master      | origin   | https://github.com/JrGoodle/djinni.git             |
+        | djinni    | master      | upstream | https://github.com/dropbox/djinni.git              |
+        | gyp       | fork-branch | origin   | https://github.com/JrGoodle/gyp.git                |
+        | gyp       | fork-branch | upstream | https://chromium.googlesource.com/external/gyp.git |
+        | sox       | master      | origin   | https://github.com/JrGoodle/sox.git                |
+        | sox       | master      | upstream | https://git.code.sf.net/p/sox/code.git             |
+
+    @success @misc @upstream @config
+    Scenario Outline: clowder herd upstream remote urls config https
+        Given misc example is initialized
+        And did link https clowder version
+        And <directory> doesn't exist
+        And 'clowder config set protocol https' has been run
+        When I run 'clowder herd'
+        Then the command succeeds
+        And project at <directory> exists
+        And project at <directory> is a git repository
+        And project at <directory> is on branch <branch>
+        And project at <directory> has remote <remote> with url <url>
+
+        Examples:
+        | directory | branch      | remote   | url                                                |
+        | djinni    | master      | origin   | https://github.com/JrGoodle/djinni.git             |
+        | djinni    | master      | upstream | https://github.com/dropbox/djinni.git              |
+        | gyp       | fork-branch | origin   | https://github.com/JrGoodle/gyp.git                |
+        | gyp       | fork-branch | upstream | https://chromium.googlesource.com/external/gyp.git |
+        | sox       | master      | origin   | https://github.com/JrGoodle/sox.git                |
+        | sox       | master      | upstream | https://git.code.sf.net/p/sox/code.git             |

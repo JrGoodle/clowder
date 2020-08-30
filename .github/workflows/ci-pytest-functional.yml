@@ -51,7 +51,7 @@ jobs:
     - name: Run pytest functional tests
       run: |
         cd src
-        pytest -n auto
+        pytest -n auto -m "not ssh"
     # TODO: Gather coverage data and such
     # - name: CI after script
     #   run: script/ci_after

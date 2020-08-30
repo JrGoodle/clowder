@@ -56,6 +56,12 @@ jobs:
           command: clowder-test -c misc all
 
       - run:
+          name: run pytest-bdd functional tests
+          command: |
+            cd src
+            pytest -n auto -m "ssh"
+
+      - run:
           name: upload code coverage results
           command: |
             script/ci_after

@@ -150,3 +150,9 @@ def then_directory_in_sync_with_upstream(tmp_path: Path, directory: str, start_b
     path = tmp_path / directory
     assert util.number_of_commits_between_refs(path, "HEAD", f"origin/{start_branch}") == 0
     assert util.number_of_commits_between_refs(path, f"origin/{start_branch}", "HEAD") == 0
+
+
+@then("project at <directory> has remote <remote> with url <url>")
+def then_directory_in_sync_with_upstream(tmp_path: Path, directory: str, remote: str, url: str) -> None:
+    path = tmp_path / directory
+    assert util.has_git_remote_with_url(path, remote, url)

@@ -11,7 +11,7 @@ scenarios('../../features')
 
 
 @then(parsers.parse("the command printed {branch_type} branches"))
-def then_has_project_directory(tmp_path: Path, branch_type: str) -> None:
+def then_command_printed_branch_type(tmp_path: Path, branch_type: str) -> None:
     # FIXME: Implement
     pass
 
