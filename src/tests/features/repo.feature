@@ -10,7 +10,7 @@ Feature: clowder repo command
     @help @success
     Scenario: clowder repo help with invalid clowder.yaml
         Given cats example is initialized to branch yaml-validation
-        And did link test-empty-project clowder version
+        And linked test-empty-project clowder version
         When I run 'clowder repo -h' and 'clowder repo --help'
         Then the commands succeed
 
@@ -23,77 +23,78 @@ Feature: clowder repo command
     @fail
     Scenario: clowder repo add non-existing file
         Given cats example is initialized
-        And file .clowder/my-file doesn't exist
-        And clowder repo is clean
+        And .clowder/my-file file doesn't exist
+        And repo at .clowder is clean
         When I run 'clowder repo add my-file'
         Then the command fails
-        And file .clowder/my-file doesn't exist
-        And clowder repo is clean
+        And .clowder/my-file file doesn't exist
+        And repo at .clowder is clean
 
     @success
     Scenario: clowder repo run create file
         Given cats example is initialized
-        And file .clowder/my-file doesn't exist
-        And clowder repo is clean
+        And .clowder/my-file file doesn't exist
+        And repo at .clowder is clean
         When I run 'clowder repo run "touch my-file"'
         Then the command succeeds
-        And file .clowder/my-file exists
-        And clowder repo is dirty
+        And .clowder/my-file file exists
+        And repo at .clowder is dirty
 
     @success
     Scenario: clowder repo run delete file
         Given cats example is initialized
-        And .clowder has untracked file my-file
-        And file .clowder/my-file exists
-        And clowder repo is dirty
+        And created file my-file in directory .clowder
+        And repo at .clowder has untracked file my-file
+        And repo at .clowder is dirty
         When I run 'clowder repo run "rm my-file"'
         Then the command succeeds
-        And file .clowder/my-file doesn't exist
-        And clowder repo is clean
+        And my-file file doesn't exist in directory .clowder
+        And repo at .clowder is clean
 
     @success
     Scenario: clowder repo checkout
         Given cats example is initialized
-        And project at .clowder is on branch master
-        And project at .clowder has no local branch repo-test
-        And project at .clowder has remote branch repo-test
+        And repo at .clowder is on branch master
+        And repo at .clowder has no local branch repo-test
+        And repo at .clowder has remote branch repo-test
         When I run 'clowder repo checkout repo-test'
         Then the command succeeds
-        And project at .clowder has local branch repo-test
-        And project at .clowder is on branch repo-test
+        And repo at .clowder has local branch repo-test
+        And repo at .clowder is on branch repo-test
 
     @fail
     Scenario: clowder repo checkout unknown branch
         Given cats example is initialized
-        And project at .clowder is on branch master
-        And project at .clowder has no local branch i-dont-exist
-        And project at .clowder has no remote branch i-dont-exist
+        And repo at .clowder is on branch master
+        And repo at .clowder has no local branch i-dont-exist
+        And repo at .clowder has no remote branch i-dont-exist
         When I run 'clowder repo checkout i-dont-exist'
         Then the command fails
-        And project at .clowder has no local branch i-dont-exist
-        And project at .clowder has no remote branch i-dont-exist
-        And project at .clowder is on branch master
+        And repo at .clowder has no local branch i-dont-exist
+        And repo at .clowder has no remote branch i-dont-exist
+        And repo at .clowder is on branch master
 
     @success
     Scenario: clowder repo clean
         Given cats example is initialized
-        And project at .clowder is on branch master
-        And .clowder has new staged file my-staged-file
-        And file .clowder/my-staged-file exists
-        And project at .clowder is dirty
+        And repo at .clowder is on branch master
+        And created file my-staged-file in directory .clowder
+        And repo at .clowder staged file my-staged-file
+        And repo at .clowder is dirty
         When I run 'clowder repo clean'
         Then the command succeeds
-        And project at .clowder is clean
-        And file .clowder/my-staged-file doesn't exist
-        And project at .clowder is on branch master
+        And repo at .clowder is clean
+        And my-staged-file file doesn't exist in directory .clowder
+        And repo at .clowder is on branch master
 
     @success
     Scenario: clowder repo status
         Given cats example is initialized
-        And .clowder has new staged file my-staged-file
-        And project at .clowder is dirty
+        And created file my-staged-file in directory .clowder
+        And repo at .clowder staged file my-staged-file
+        And repo at .clowder is dirty
         When I run 'clowder repo status'
         Then the command succeeds
-        And project at .clowder is dirty
-        And file .clowder/my-staged-file exists
+        And repo at .clowder is dirty
+        And my-staged-file file exists in directory .clowder
         # TODO: check command output

@@ -10,7 +10,7 @@ Feature: clowder diff
     @help @success
     Scenario: clowder diff help with invalid clowder.yaml
         Given cats example is initialized to branch yaml-validation
-        And did link test-empty-project clowder version
+        And linked test-empty-project clowder version
         When I run 'clowder diff -h' and 'clowder diff --help'
         Then the commands succeed
 
@@ -27,7 +27,8 @@ Feature: clowder diff
     @success
     Scenario: clowder diff
         Given cats example is initialized and herded
-        And mu has untracked file catnip.txt
+        And created file catnip.txt in directory mu
+        And project at mu has untracked file catnip.txt
         When I run 'clowder diff'
         And I run 'clowder diff jrgoodle/kishka'
         And I run 'clowder diff jrgoodle/mu jrgoodle/duke'
@@ -35,5 +36,5 @@ Feature: clowder diff
         And I run 'clowder diff black-cats'
         And I run 'clowder diff black-cats cats'
         And I run 'clowder diff black-cats cats all'
-        Then mu has untracked file catnip.txt
+        Then project at mu has untracked file catnip.txt
 #        And TODO: check the output

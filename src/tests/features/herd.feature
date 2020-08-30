@@ -10,7 +10,7 @@ Feature: clowder herd
     @help @success @cats
     Scenario: clowder herd help with invalid clowder.yaml
         Given cats example is initialized to branch yaml-validation
-        And did link test-empty-project clowder version
+        And linked test-empty-project clowder version
         When I run 'clowder herd -h' and 'clowder herd --help'
         Then the commands succeed
 
@@ -27,7 +27,7 @@ Feature: clowder herd
         When I run 'clowder herd'
         Then the command succeeds
         And project at <directory> is a git repository
-        And project at <directory> is on branch <branch>
+        And project at <directory> is on <branch>
         And project at <directory> is clean
 
         Examples:
@@ -43,11 +43,11 @@ Feature: clowder herd
     Scenario Outline: clowder herd commits
         Given cats example is initialized
         And <directory> doesn't exist
-        And did link static-refs clowder version
+        And linked static-refs clowder version
         When I run 'clowder herd'
         Then the command succeeds
         And project at <directory> is a git repository
-        And project at <directory> is on commit <commit>
+        And project at <directory> is on <commit>
         And project at <directory> has detached HEAD
         And project at <directory> is clean
 
@@ -64,11 +64,11 @@ Feature: clowder herd
     Scenario Outline: clowder herd tags
         Given cats example is initialized
         And <directory> doesn't exist
-        And did link tags clowder version
+        And linked tags clowder version
         When I run 'clowder herd'
         Then the command succeeds
         And project at <directory> is a git repository
-        And project at <directory> is on tag <tag>
+        And project at <directory> is on <tag>
         And project at <directory> has detached HEAD
         And project at <directory> is clean
 
@@ -84,16 +84,17 @@ Feature: clowder herd
     @fail @cats
     Scenario: Test clowder herd dirty fail
         Given cats example is initialized and herded
-        And mu has untracked file something.txt
+        And created file something.txt in directory mu
+        And project at mu has untracked file something.txt
         When I run 'clowder herd'
         Then the command fails
-        And mu has untracked file something.txt
+        And project at mu has untracked file something.txt
 
     @success @submodules @cats
     Scenario Outline: clowder herd submodules recursive enabled check projects
         Given cats example is initialized
         And <directory> doesn't exist
-        And did link submodules clowder version
+        And linked submodules clowder version
         When I run 'clowder herd'
         Then the command succeeds
         And project at <directory> exists
@@ -113,7 +114,7 @@ Feature: clowder herd
     Scenario Outline: clowder herd submodules recursive enabled check submodules
         Given cats example is initialized
         And <directory> doesn't exist
-        And did link submodules clowder version
+        And linked submodules clowder version
         When I run 'clowder herd'
         Then the command succeeds
         And project at <directory> exists
@@ -129,7 +130,7 @@ Feature: clowder herd
     Scenario Outline: clowder herd submodules recursive enabled check recursive submodules
         Given cats example is initialized
         And <directory> doesn't exist
-        And did link submodules clowder version
+        And linked submodules clowder version
         When I run 'clowder herd'
         Then the command succeeds
         And project at <directory> exists
@@ -145,7 +146,7 @@ Feature: clowder herd
     Scenario Outline: clowder herd submodules disabled check non-submodules exist
         Given cats example is initialized
         And <directory> doesn't exist
-        And did link submodules-no-recurse clowder version
+        And linked submodules-no-recurse clowder version
         When I run 'clowder herd'
         Then the command succeeds
         And project at <directory> exists
@@ -165,7 +166,7 @@ Feature: clowder herd
     Scenario Outline: clowder herd submodules disabled check submodules don't exist
         Given cats example is initialized
         And <directory> doesn't exist
-        And did link submodules-no-recurse clowder version
+        And linked submodules-no-recurse clowder version
         When I run 'clowder herd'
         Then the command succeeds
         And project at <directory> has submodule at <submodule_path>
@@ -184,8 +185,8 @@ Feature: clowder herd
         Then the command succeeds
         And project at <directory> exists
         And project at <directory> is a git repository
-        And project at <directory> is on branch <branch>
-        And project at <directory> has remote <remote> with url <url>
+        And project at <directory> is on <branch>
+        And project at <directory> has <remote> with <url>
 
         Examples:
         | directory | branch      | remote   | url                                                |
@@ -200,14 +201,14 @@ Feature: clowder herd
     @success @misc @upstream
     Scenario Outline: clowder herd upstream remote urls https defaults
         Given misc example is initialized
-        And did link https clowder version
+        And linked https clowder version
         And <directory> doesn't exist
         When I run 'clowder herd'
         Then the command succeeds
         And project at <directory> exists
         And project at <directory> is a git repository
-        And project at <directory> is on branch <branch>
-        And project at <directory> has remote <remote> with url <url>
+        And project at <directory> is on <branch>
+        And project at <directory> has <remote> with <url>
 
         Examples:
         | directory | branch      | remote   | url                                                |
@@ -222,14 +223,14 @@ Feature: clowder herd
     @success @misc @upstream @ssh
     Scenario Outline: clowder herd upstream remote urls override ssh command line
         Given misc example is initialized
-        And did link https clowder version
+        And linked https clowder version
         And <directory> doesn't exist
         When I run 'clowder herd -p ssh'
         Then the command succeeds
         And project at <directory> exists
         And project at <directory> is a git repository
-        And project at <directory> is on branch <branch>
-        And project at <directory> has remote <remote> with url <url>
+        And project at <directory> is on <branch>
+        And project at <directory> has <remote> with <url>
 
         Examples:
         | directory | branch      | remote   | url                                                |
@@ -249,8 +250,8 @@ Feature: clowder herd
         Then the command succeeds
         And project at <directory> exists
         And project at <directory> is a git repository
-        And project at <directory> is on branch <branch>
-        And project at <directory> has remote <remote> with url <url>
+        And project at <directory> is on <branch>
+        And project at <directory> has <remote> with <url>
 
         Examples:
         | directory | branch      | remote   | url                                                |
@@ -266,13 +267,13 @@ Feature: clowder herd
     Scenario Outline: clowder herd upstream remote urls override https config
         Given misc example is initialized
         And <directory> doesn't exist
-        And 'clowder config set protocol https' has been run
+        And 'clowder config set protocol https' was run
         When I run 'clowder herd'
         Then the command succeeds
         And project at <directory> exists
         And project at <directory> is a git repository
-        And project at <directory> is on branch <branch>
-        And project at <directory> has remote <remote> with url <url>
+        And project at <directory> is on <branch>
+        And project at <directory> has <remote> with <url>
 
         Examples:
         | directory | branch      | remote   | url                                                |
@@ -287,15 +288,15 @@ Feature: clowder herd
     @success @misc @upstream @config @ssh @serial
     Scenario Outline: clowder herd upstream remote urls override ssh config
         Given misc example is initialized
-        And did link https clowder version
+        And linked https clowder version
         And <directory> doesn't exist
-        And 'clowder config set protocol ssh' has been run
+        And 'clowder config set protocol ssh' was run
         When I run 'clowder herd'
         Then the command succeeds
         And project at <directory> exists
         And project at <directory> is a git repository
-        And project at <directory> is on branch <branch>
-        And project at <directory> has remote <remote> with url <url>
+        And project at <directory> is on <branch>
+        And project at <directory> has <remote> with <url>
 
         Examples:
         | directory | branch      | remote   | url                                                |
@@ -322,7 +323,7 @@ Feature: clowder herd
 #    @commits @success @cats
 #    Scenario Outline: clowder herd saved version after init
 #        Given cats example is initialized
-#        And did link v0.1 clowder version
+#        And linked v0.1 clowder version
 #        And <directory> doesn't exist
 #        When I run 'clowder herd'
 #        Then the command succeeds

@@ -1,5 +1,6 @@
 """New syntax test file"""
 
+import copy
 from typing import List
 
 from subprocess import CompletedProcess
@@ -41,6 +42,18 @@ def has_untracked_files(repo: Repo) -> bool:
     """
 
     return True if repo.untracked_files else False
+
+
+def git_add_file(path: Path, file: str) -> None:
+    repo = Repo(path)
+    assert repo.untracked_files
+    repo.git.add(file)
+    assert repo.index.diff("HEAD")
+
+
+def has_untracked_file(path: Path, file_name: str) -> bool:
+    repo = Repo(path)
+    return file_name in repo.untracked_files
 
 
 def has_git_directory(path: Path) -> bool:
@@ -98,14 +111,29 @@ def current_head_commit_sha(path: Path) -> str:
     return stdout.strip()
 
 
+def create_number_commits(path: Path, filename: str, count: int) -> List[CompletedProcess]:
+    commits = copy.copy(count)
+    results = []
+    while commits > 0:
+        result = create_commit(path, f"{commits}_{filename}")
+        results += result
+        commits -= 1
+    assert all([r.returncode == 0 for r in results])
+    return results
+
+
 def create_commit(path: Path, filename: str) -> List[CompletedProcess]:
     previous_commit = current_head_commit_sha(path)
     create_file(path / filename)
-    result_1 = run_command(f"git add {filename}", path)
-    result_2 = run_command(f"git commit -m 'Add {filename}'", path)
+    results = []
+    result = run_command(f"git add {filename}", path)
+    results.append(result)
+    result = run_command(f"git commit -m 'Add {filename}'", path)
+    results.append(result)
     new_commit = current_head_commit_sha(path)
     assert previous_commit != new_commit
-    return [result_1, result_2]
+    assert all([r.returncode == 0 for r in results])
+    return results
 
 
 def create_branch(path: Path, branch: str) -> CompletedProcess:
@@ -195,3 +223,28 @@ def has_git_remote_with_url(path: Path, remote: str, url: str) -> bool:
         return False
     remote_url = repo.remotes[remote].url
     return remote_url == url
+
+
+def has_no_commits_between_refs(path: Path, start: str, end: str) -> bool:
+    result_1 = number_of_commits_between_refs(path, start, end) == 0
+    result_2 = number_of_commits_between_refs(path, end, start) == 0
+    return result_1 and result_2
+
+
+def is_ahead_by_number_commits(path: Path, start: str, end: str, number_commits: int) -> bool:
+    result_1 = number_of_commits_between_refs(path, start, end) == 0
+    result_2 = number_of_commits_between_refs(path, end, start) == number_commits
+    return result_1 and result_2
+
+
+def is_behind_by_number_commits(path: Path, start: str, end: str, number_commits: int) -> bool:
+    result_1 = number_of_commits_between_refs(path, start, end) == number_commits
+    result_2 = number_of_commits_between_refs(path, end, start) == 0
+    return result_1 and result_2
+
+
+def is_behind_ahead_by_number_commits(path: Path, start: str, end: str,
+                                      number_commits_behind: int, number_commits_ahead: int) -> bool:
+    result_1 = number_of_commits_between_refs(path, start, end) == number_commits_behind
+    result_2 = number_of_commits_between_refs(path, end, start) == number_commits_ahead
+    return result_1 and result_2

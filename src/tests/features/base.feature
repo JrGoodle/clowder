@@ -10,7 +10,7 @@ Feature: clowder base command
     @help @success
     Scenario: clowder help with invalid clowder.yaml
         Given cats example is initialized to branch yaml-validation
-        And did link test-empty-project clowder version
+        And linked test-empty-project clowder version
         When I run 'clowder -h' and 'clowder --help'
         Then the commands succeed
 
@@ -29,7 +29,7 @@ Feature: clowder base command
     @success
     Scenario: clowder with no arguments with invalid clowder.yaml
         Given cats example is initialized to branch yaml-validation
-        And did link test-empty-project clowder version
+        And linked test-empty-project clowder version
         When I run 'clowder'
         Then the command succeeds
 
@@ -48,7 +48,7 @@ Feature: clowder base command
     @success
     Scenario: clowder version with invalid clowder.yaml
         Given cats example is initialized to branch yaml-validation
-        And did link test-empty-project clowder version
+        And linked test-empty-project clowder version
         When I run 'clowder -v' and 'clowder --version'
         Then the commands succeed
 

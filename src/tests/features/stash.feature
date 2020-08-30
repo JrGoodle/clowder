@@ -10,7 +10,7 @@ Feature: clowder stash
     @help @success
     Scenario: clowder stash help with invalid clowder.yaml
         Given cats example is initialized to branch yaml-validation
-        And did link test-empty-project clowder version
+        And linked test-empty-project clowder version
         When I run 'clowder stash -h' and 'clowder stash --help'
         Then the commands succeed
 
@@ -23,13 +23,14 @@ Feature: clowder stash
     @success
     Scenario Outline: clowder stash
         Given cats example is initialized and herded
-        And <directory> has new staged file <test_file>
+        And created <file_name> in <directory>
+        And project at <directory> staged <file_name>
         When I run 'clowder stash'
         Then the command succeeds
         And project at <directory> is clean
 
         Examples:
-        | directory         | test_file |
+        | directory         | file_name |
         | mu                | secret    |
         | duke              | secret    |
         | black-cats/kishka | secret    |
@@ -40,26 +41,28 @@ Feature: clowder stash
     @success
     Scenario Outline: clowder stash groups included
         Given cats example is initialized and herded
-        And <directory> has new staged file <test_file>
+        And created <file_name> in <directory>
+        And project at <directory> staged <file_name>
         When I run 'clowder stash cats'
         Then the command succeeds
         And project at <directory> is clean
 
         Examples:
-        | directory         | test_file |
+        | directory         | file_name |
         | mu                | secret    |
         | duke              | secret    |
 
     @success
     Scenario Outline: clowder stash groups excluded
         Given cats example is initialized and herded
-        And <directory> has new staged file <test_file>
+        And created <file_name> in <directory>
+        And project at <directory> staged <file_name>
         When I run 'clowder stash cats'
         Then the command succeeds
         And project at <directory> is dirty
 
         Examples:
-        | directory         | test_file |
+        | directory         | file_name |
         | black-cats/kishka | secret    |
         | black-cats/kit    | secret    |
         | black-cats/sasha  | secret    |

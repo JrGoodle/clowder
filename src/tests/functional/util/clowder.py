@@ -117,7 +117,7 @@ def init_clowder(path: Path, example: str, protocol: str = "https",
 
 
 def init_herd_clowder(path: Path, example: str, protocol: str = "https",
-                      branch: Optional[str] = None, version: Optional[str] = None):
+                      branch: Optional[str] = None, version: Optional[str] = None) -> Path:
 
     if branch is not None:
         run_command(f"clowder init {get_url(example, protocol)} -b {branch}", path, check=True)

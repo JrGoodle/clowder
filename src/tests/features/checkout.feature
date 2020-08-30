@@ -10,7 +10,7 @@ Feature: clowder checkout command
     @help @success
     Scenario: clowder checkout help with invalid clowder.yaml
         Given cats example is initialized to branch yaml-validation
-        And did link test-empty-project clowder version
+        And linked test-empty-project clowder version
         When I run 'clowder checkout -h' and 'clowder checkout --help'
         Then the commands succeed
 
@@ -23,11 +23,11 @@ Feature: clowder checkout command
     @success
     Scenario Outline: clowder checkout default existing local branch
         Given cats example is initialized and herded
-        And project at <directory> created branch <test_branch>
-        And project at <directory> is on branch <start_branch>
+        And project at <directory> created <test_branch>
+        And project at <directory> is on <start_branch>
         When I run 'clowder checkout other'
         Then the command succeeds
-        And project at <directory> is on branch <end_branch>
+        And project at <directory> is on <end_branch>
 
         Examples:
         | directory         | start_branch | end_branch | test_branch |
@@ -37,11 +37,11 @@ Feature: clowder checkout command
     @success
     Scenario Outline: clowder checkout default existing local branch for project
         Given cats example is initialized and herded
-        And project at <directory> created branch <test_branch>
-        And project at <directory> is on branch <start_branch>
+        And project at <directory> created <test_branch>
+        And project at <directory> is on <start_branch>
         When I run 'clowder checkout other mu'
         Then the command succeeds
-        And project at <directory> is on branch <end_branch>
+        And project at <directory> is on <end_branch>
 
         Examples:
         | directory         | start_branch | end_branch | test_branch |
@@ -51,11 +51,11 @@ Feature: clowder checkout command
     @success
     Scenario Outline: clowder checkout default no local branch
         Given cats example is initialized and herded
-        And project at <directory> is on branch <start_branch>
+        And project at <directory> is on <start_branch>
         And project at <directory> has no local branch <test_branch>
         When I run 'clowder checkout other'
         Then the command succeeds
-        And project at <directory> is on branch <end_branch>
+        And project at <directory> is on <end_branch>
 
         Examples:
         | directory         | start_branch | end_branch | test_branch |

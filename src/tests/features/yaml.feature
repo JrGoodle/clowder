@@ -10,7 +10,7 @@ Feature: clowder yaml
     @help @success
     Scenario: clowder yaml help with invalid clowder.yaml
         Given cats example is initialized to branch yaml-validation
-        And did link test-empty-project clowder version
+        And linked test-empty-project clowder version
         When I run 'clowder yaml -h' and 'clowder yaml --help'
         Then the commands succeed
 
@@ -23,7 +23,7 @@ Feature: clowder yaml
     @success
     Scenario: clowder yaml
         Given cats example is initialized and herded
-        And yaml test files are in clowder directory
+        And yaml test files were copied to clowder directory
         When I run 'clowder yaml' without debug output
         Then the command succeeds
         And output matches contents of clowder-yaml.txt
@@ -31,7 +31,7 @@ Feature: clowder yaml
     @success
     Scenario: clowder yaml file
         Given cats example is initialized and herded
-        And yaml test files are in clowder directory
+        And yaml test files were copied to clowder directory
         When I run 'clowder yaml -f' without debug output
         Then the command succeeds
         And output matches contents of clowder-yaml-f.txt
@@ -39,7 +39,7 @@ Feature: clowder yaml
     @success
     Scenario: clowder yaml resolved
         Given cats example is initialized and herded
-        And yaml test files are in clowder directory
+        And yaml test files were copied to clowder directory
         When I run 'clowder yaml -r' without debug output
         Then the command succeeds
         And output matches contents of clowder-yaml-r.txt
