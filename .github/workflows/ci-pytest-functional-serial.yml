@@ -1,4 +1,4 @@
-name: 'CI - pytest functional tests'
+name: 'CI - pytest functional serial tests'
 
 on:
   push:
@@ -17,7 +17,7 @@ defaults:
     shell: bash
 
 jobs:
-  pytest_functional:
+  pytest_functional_serial:
     env:
       PYTHON_VERSION: ${{ matrix.python-version }}
       OS_NAME: ${{ matrix.os }}
@@ -48,10 +48,10 @@ jobs:
       run: script/ci_before
     - name: Install clowder
       run: script/update
-    - name: Run pytest functional tests
+    - name: Run pytest functional serial tests
       run: |
         cd src
-        pytest -n auto -m "not ssh and not serial"
+        pytest -n auto -m "serial and not ssh"
     # TODO: Gather coverage data and such
     # - name: CI after script
     #   run: script/ci_after
