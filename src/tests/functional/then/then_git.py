@@ -36,13 +36,26 @@ def then_directory_on_branch(tmp_path: Path, directory: str, branch: str) -> Non
 @then("project at <directory> is on tag <tag>")
 def then_directory_on_tag(tmp_path: Path, directory: str, tag: str) -> None:
     path = tmp_path / directory
-    assert util.is_detached_head_on_tag(path, tag)
+    assert util.is_on_tag(path, tag)
 
 
 @then("project at <directory> is on commit <commit>")
 def then_directory_on_commit(tmp_path: Path, directory: str, commit: str) -> None:
     path = tmp_path / directory
-    assert util.is_detached_head_on_commit(path, commit)
+    assert util.is_on_commit(path, commit)
+
+
+@then(parsers.parse("project at {directory} is not on commit {commit}"))
+@then("project at <directory> is not on commit <commit>")
+def then_directory_not_on_commit(tmp_path: Path, directory: str, commit: str) -> None:
+    path = tmp_path / directory
+    assert not util.is_on_commit(path, commit)
+
+
+@then("project at <directory> has detached HEAD")
+def then_directory_detached_head(tmp_path: Path, directory: str) -> None:
+    path = tmp_path / directory
+    assert util.is_detached_head(path)
 
 
 @then(parsers.parse("project at {directory} has no local branch {test_branch}"))

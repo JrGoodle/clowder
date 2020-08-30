@@ -13,7 +13,6 @@ from cement import App
 from clowder_test import ROOT_DIR
 from clowder_test.cli.base_controller import BaseController
 from clowder_test.cli.cats_controller import CatsController
-from clowder_test.cli.misc_controller import MiscController
 from clowder_test.cli.swift_controller import SwiftController
 from clowder_test.execute import execute_command
 
@@ -36,7 +35,6 @@ class ClowderTestApp(App):
         handlers = [
             BaseController,
             CatsController,
-            MiscController,
             SwiftController
         ]
 

@@ -48,6 +48,7 @@ Feature: clowder herd
         Then the command succeeds
         And project at <directory> is a git repository
         And project at <directory> is on commit <commit>
+        And project at <directory> has detached HEAD
         And project at <directory> is clean
 
         Examples:
@@ -68,6 +69,7 @@ Feature: clowder herd
         Then the command succeeds
         And project at <directory> is a git repository
         And project at <directory> is on tag <tag>
+        And project at <directory> has detached HEAD
         And project at <directory> is clean
 
         Examples:
@@ -173,8 +175,9 @@ Feature: clowder herd
         | directory | submodule_path |
         | mu        | ash            |
 
+    # TODO: Add tests for groups/projects
     @success @misc @upstream @ssh
-    Scenario Outline: clowder herd upstream remote urls
+    Scenario Outline: clowder herd upstream remote urls ssh defaults
         Given misc example is initialized
         And <directory> doesn't exist
         When I run 'clowder herd'
@@ -193,8 +196,9 @@ Feature: clowder herd
         | sox       | master      | origin   | git@github.com:JrGoodle/sox.git                    |
         | sox       | master      | upstream | https://git.code.sf.net/p/sox/code.git             |
 
+    # TODO: Add tests for groups/projects
     @success @misc @upstream
-    Scenario Outline: clowder herd upstream remote urls override https
+    Scenario Outline: clowder herd upstream remote urls https defaults
         Given misc example is initialized
         And did link https clowder version
         And <directory> doesn't exist
@@ -214,10 +218,53 @@ Feature: clowder herd
         | sox       | master      | origin   | https://github.com/JrGoodle/sox.git                |
         | sox       | master      | upstream | https://git.code.sf.net/p/sox/code.git             |
 
-    @success @misc @upstream @config
-    Scenario Outline: clowder herd upstream remote urls config https
+    # TODO: Add tests for groups/projects
+    @success @misc @upstream @ssh
+    Scenario Outline: clowder herd upstream remote urls override ssh command line
         Given misc example is initialized
         And did link https clowder version
+        And <directory> doesn't exist
+        When I run 'clowder herd -p ssh'
+        Then the command succeeds
+        And project at <directory> exists
+        And project at <directory> is a git repository
+        And project at <directory> is on branch <branch>
+        And project at <directory> has remote <remote> with url <url>
+
+        Examples:
+        | directory | branch      | remote   | url                                                |
+        | djinni    | master      | origin   | git@github.com:JrGoodle/djinni.git                 |
+        | djinni    | master      | upstream | git@github.com:dropbox/djinni.git                  |
+        | gyp       | fork-branch | origin   | git@github.com:JrGoodle/gyp.git                    |
+        | gyp       | fork-branch | upstream | https://chromium.googlesource.com/external/gyp.git |
+        | sox       | master      | origin   | git@github.com:JrGoodle/sox.git                    |
+        | sox       | master      | upstream | https://git.code.sf.net/p/sox/code.git             |
+
+    # TODO: Add tests for groups/projects
+    @success @misc @upstream
+    Scenario Outline: clowder herd upstream remote urls override https command line
+        Given misc example is initialized
+        And <directory> doesn't exist
+        When I run 'clowder herd -p https'
+        Then the command succeeds
+        And project at <directory> exists
+        And project at <directory> is a git repository
+        And project at <directory> is on branch <branch>
+        And project at <directory> has remote <remote> with url <url>
+
+        Examples:
+        | directory | branch      | remote   | url                                                |
+        | djinni    | master      | origin   | https://github.com/JrGoodle/djinni.git             |
+        | djinni    | master      | upstream | https://github.com/dropbox/djinni.git              |
+        | gyp       | fork-branch | origin   | https://github.com/JrGoodle/gyp.git                |
+        | gyp       | fork-branch | upstream | https://chromium.googlesource.com/external/gyp.git |
+        | sox       | master      | origin   | https://github.com/JrGoodle/sox.git                |
+        | sox       | master      | upstream | https://git.code.sf.net/p/sox/code.git             |
+
+    # TODO: Add tests for groups/projects
+    @success @misc @upstream @config
+    Scenario Outline: clowder herd upstream remote urls override https config
+        Given misc example is initialized
         And <directory> doesn't exist
         And 'clowder config set protocol https' has been run
         When I run 'clowder herd'
@@ -235,3 +282,39 @@ Feature: clowder herd
         | gyp       | fork-branch | upstream | https://chromium.googlesource.com/external/gyp.git |
         | sox       | master      | origin   | https://github.com/JrGoodle/sox.git                |
         | sox       | master      | upstream | https://git.code.sf.net/p/sox/code.git             |
+
+    # TODO: Add tests for groups/projects
+    @success @misc @upstream @config @ssh
+    Scenario Outline: clowder herd upstream remote urls override ssh config
+        Given misc example is initialized
+        And did link https clowder version
+        And <directory> doesn't exist
+        And 'clowder config set protocol ssh' has been run
+        When I run 'clowder herd'
+        Then the command succeeds
+        And project at <directory> exists
+        And project at <directory> is a git repository
+        And project at <directory> is on branch <branch>
+        And project at <directory> has remote <remote> with url <url>
+
+        Examples:
+        | directory | branch      | remote   | url                                                |
+        | djinni    | master      | origin   | git@github.com:JrGoodle/djinni.git                 |
+        | djinni    | master      | upstream | git@github.com:dropbox/djinni.git                  |
+        | gyp       | fork-branch | origin   | git@github.com:JrGoodle/gyp.git                    |
+        | gyp       | fork-branch | upstream | https://chromium.googlesource.com/external/gyp.git |
+        | sox       | master      | origin   | git@github.com:JrGoodle/sox.git                    |
+        | sox       | master      | upstream | https://git.code.sf.net/p/sox/code.git             |
+
+    # TODO: Add tests for logic renaming remotes
+
+    @success @misc @upstream
+    Scenario: clowder herd project with branch behind upstream
+        Given misc example is initialized and herded with https
+        And project at gyp is on branch fork-branch
+        And project at gyp is on commit bd11dd1c51ef17592384df927c47023071639f96
+        When I run 'git pull upstream master' in directory gyp
+        Then the command succeeds
+        And project at gyp is not on commit bd11dd1c51ef17592384df927c47023071639f96
+        And project at gyp is on branch fork-branch
+

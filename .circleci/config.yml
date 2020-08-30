@@ -52,10 +52,6 @@ jobs:
           command: clowder-test -c write
 
       - run:
-          name: run misc tests
-          command: clowder-test -c misc all
-
-      - run:
           name: run pytest-bdd functional tests
           command: |
             cd src

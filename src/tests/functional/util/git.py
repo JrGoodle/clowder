@@ -156,17 +156,24 @@ def is_on_active_branch(path: Path, branch: str) -> bool:
     return active_branch == branch
 
 
-def is_detached_head_on_tag(path: Path, tag: str) -> bool:
+def is_detached_head(path) -> bool:
+    repo = Repo(str(path))
+    return repo.head.is_detached
+
+
+def is_on_tag(path: Path, tag: str) -> bool:
     repo = Repo(str(path))
     has_tag = tag in repo.tags
+    if not has_tag:
+        return False
     on_correct_commit = repo.head.commit == repo.tags[tag].commit
-    return repo.head.is_detached and has_tag and on_correct_commit
+    return on_correct_commit
 
 
-def is_detached_head_on_commit(path: Path, commit: str) -> bool:
+def is_on_commit(path: Path, commit: str) -> bool:
     repo = Repo(str(path))
     on_correct_commit = repo.head.commit.hexsha == commit
-    return repo.head.is_detached and on_correct_commit
+    return on_correct_commit
 
 
 def number_of_commits_between_refs(path: Path, first: str, second: str) -> int:

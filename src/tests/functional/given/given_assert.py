@@ -121,18 +121,23 @@ def given_directory_branch(tmp_path: Path, directory: str, branch: str) -> None:
     assert util.is_on_active_branch(path, branch)
 
 
-# TODO: Create separate given step for detached HEAD
 @given("project at <directory> is on tag <tag>")
 def given_directory_tag(tmp_path: Path, directory: str, tag: str) -> None:
     path = tmp_path / directory
-    assert util.is_detached_head_on_tag(path, tag)
+    assert util.is_on_tag(path, tag)
 
 
-# TODO: Create separate given step for detached HEAD
+@given(parsers.parse("project at {directory} is on commit {commit}"))
 @given("project at <directory> is on commit <commit>")
 def given_directory_commit(tmp_path: Path, directory: str, commit: str) -> None:
     path = tmp_path / directory
-    assert util.is_detached_head_on_commit(path, commit)
+    assert util.is_on_commit(path, commit)
+
+
+@given("project at <directory> has detached HEAD")
+def given_directory_detached_head(tmp_path: Path, directory: str) -> None:
+    path = tmp_path / directory
+    assert util.is_detached_head(path)
 
 
 @given(parsers.parse("project at {directory} is clean"))
