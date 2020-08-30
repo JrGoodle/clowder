@@ -83,14 +83,6 @@ class CatsController(ArgparseController):
         self._execute_command('./herd_branch.sh', self.path)
 
     @expose(
-        help='Run cats herd submodules tests'
-    )
-    def herd_submodules(self) -> None:
-        """clowder cats herd submodules tests"""
-
-        self._execute_command('./herd_submodules.sh', self.path)
-
-    @expose(
         help='Run cats herd tag tests'
     )
     def herd_tag(self) -> None:

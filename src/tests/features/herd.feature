@@ -86,3 +86,89 @@ Feature: clowder herd
         When I run 'clowder herd'
         Then the command fails
         And mu has untracked file something.txt
+
+    @success @submodules
+    Scenario Outline: clowder herd submodules recursive enabled check projects
+        Given cats example is initialized
+        And <directory> doesn't exist
+        And did link submodules clowder version
+        When I run 'clowder herd'
+        Then the command succeeds
+        And project at <directory> exists
+        And project at <directory> is a git repository
+        And project at <directory> is clean
+
+        Examples:
+        | directory         |
+        | mu                |
+        | duke              |
+        | black-cats/kishka |
+        | black-cats/kit    |
+        | black-cats/sasha  |
+        | black-cats/june   |
+
+    @success @submodules
+    Scenario Outline: clowder herd submodules recursive enabled check submodules
+        Given cats example is initialized
+        And <directory> doesn't exist
+        And did link submodules clowder version
+        When I run 'clowder herd'
+        Then the command succeeds
+        And project at <directory> exists
+        And project at <directory> is clean
+        And project at <directory> has submodule at <submodule_path>
+        And submodule in <directory> at <submodule_path> has been initialized
+
+        Examples:
+        | directory     | submodule_path |
+        | mu            | ash            |
+
+    @success @submodules
+    Scenario Outline: clowder herd submodules recursive enabled check recursive submodules
+        Given cats example is initialized
+        And <directory> doesn't exist
+        And did link submodules clowder version
+        When I run 'clowder herd'
+        Then the command succeeds
+        And project at <directory> exists
+        And project at <directory> is clean
+        And project at <directory> has no submodule at <submodule_path>
+        And submodule in <directory> at <submodule_path> has been initialized
+
+        Examples:
+        | directory     | submodule_path |
+        | mu            | ash/duffy      |
+
+    @success @submodules
+    Scenario Outline: clowder herd submodules disabled check non-submodules exist
+        Given cats example is initialized
+        And <directory> doesn't exist
+        And did link submodules-no-recurse clowder version
+        When I run 'clowder herd'
+        Then the command succeeds
+        And project at <directory> exists
+        And project at <directory> is a git repository
+        And project at <directory> is clean
+
+        Examples:
+        | directory         |
+        | mu                |
+        | duke              |
+        | black-cats/kishka |
+        | black-cats/kit    |
+        | black-cats/sasha  |
+        | black-cats/june   |
+
+    @success @submodules
+    Scenario Outline: clowder herd submodules disabled check submodules don't exist
+        Given cats example is initialized
+        And <directory> doesn't exist
+        And did link submodules-no-recurse clowder version
+        When I run 'clowder herd'
+        Then the command succeeds
+        And project at <directory> has submodule at <submodule_path>
+        And submodule in <directory> at <submodule_path> hasn't been initialized
+
+        Examples:
+        | directory | submodule_path |
+        | mu        | ash            |

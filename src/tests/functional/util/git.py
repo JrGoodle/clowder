@@ -7,7 +7,7 @@ from pathlib import Path
 
 from git import Repo
 from .command import run_command
-from .file_system import create_file
+from .file_system import create_file, is_directory_empty
 
 
 def is_dirty(path: Path) -> bool:
@@ -45,6 +45,24 @@ def has_untracked_files(repo: Repo) -> bool:
 
 def has_git_directory(path: Path) -> bool:
     return Path(path / ".git").is_dir()
+
+
+def is_submodule_initialized(path: Path) -> bool:
+    git_path = Path(path / ".git")
+    return path.is_dir() and git_path.exists() and git_path.is_file()
+
+
+def is_submodule_placeholder(path: Path) -> bool:
+    return path.is_dir() and is_directory_empty(path)
+
+
+def has_submodule(repo_path: Path, submodule_path: Path) -> bool:
+    repo = Repo(repo_path)
+    submodules = repo.submodules
+    for submodule in submodules:
+        if submodule.name == submodule_path.stem and submodule.path == str(submodule_path):
+            return True
+    return False
 
 
 def lfs_hooks_installed(path: Path) -> None:

@@ -51,7 +51,6 @@ class BaseController(ArgparseController):
                                  debug=self.app.debug)
 
         self.offline()
-        self.parallel()
 
     @expose(
         help='Run config yaml validation tests'
@@ -76,32 +75,6 @@ class BaseController(ArgparseController):
                              write=self.app.pargs.write,
                              coverage=self.app.pargs.coverage,
                              debug=self.app.debug)
-
-    @expose(
-        help='Run parallel tests'
-    )
-    def parallel(self) -> None:
-        """clowder parallel tests"""
-
-        execute_test_command('./test_parallel.sh', self.path,
-                             parallel=True,
-                             write=self.app.pargs.write,
-                             coverage=self.app.pargs.coverage,
-                             debug=self.app.debug)
-
-    # @expose(
-    #     help='Run unit tests'
-    # )
-    # def unittests(self) -> None:
-    #     """clowder unit tests"""
-    #
-    #     execute_test_command('./unittests.sh', self.path,
-    #                          parallel=self.app.pargs.parallel,
-    #                          write=self.app.pargs.write,
-    #                          coverage=self.app.pargs.coverage,
-    #                          test_env=test_env,
-    #                          debug=self.app.debug,
-    #                          quiet=self.app.pargs.silent)
 
     @expose(
         help='Run tests requiring remote write permissions'

@@ -94,6 +94,36 @@ def then_has_untracked_file(tmp_path: Path, directory: str, name: str) -> None:
     assert f"{path.stem}{path.suffix}" in repo.untracked_files
 
 
+@then(parsers.parse("project at {directory} has submodule at {submodule_path}"))
+@then("project at <directory> has submodule at <submodule_path>")
+def then_has_submodule(tmp_path: Path, directory: str, submodule_path: str) -> None:
+    repo_path = tmp_path / directory
+    assert util.has_submodule(repo_path, Path(submodule_path))
+
+
+@then(parsers.parse("project at {directory} has no submodule at {submodule_path}"))
+@then("project at <directory> has no submodule at <submodule_path>")
+def then_has_no_submodule(tmp_path: Path, directory: str, submodule_path: str) -> None:
+    repo_path = tmp_path / directory
+    assert not util.has_submodule(repo_path, Path(submodule_path))
+
+
+@then(parsers.parse("submodule in {directory} at {submodule_path} hasn't been initialized"))
+@then("submodule in <directory> at <submodule_path> hasn't been initialized")
+def then_submodule_not_initialized(tmp_path: Path,  directory: str, submodule_path: str) -> None:
+    path = tmp_path / directory / submodule_path
+    assert util.is_submodule_placeholder(path)
+    assert not util.is_submodule_initialized(path)
+
+
+@then(parsers.parse("submodule in {directory} at {submodule_path} has been initialized"))
+@then("submodule in <directory> at <submodule_path> has been initialized")
+def then_submodule_initialized(tmp_path: Path, directory: str, submodule_path: str) -> None:
+    path = tmp_path / directory / submodule_path
+    assert not util.is_submodule_placeholder(path)
+    assert util.is_submodule_initialized(path)
+
+
 @then("clowder repo is clean")
 def then_clowder_repo_clean(tmp_path: Path) -> None:
     path = tmp_path / ".clowder"
