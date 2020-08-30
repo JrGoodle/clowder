@@ -8,7 +8,7 @@ from pathlib import Path
 from pytest_bdd import scenarios, given, parsers
 
 import tests.functional.util as util
-from tests.functional.util import TestInfo
+from tests.functional.util import ScenarioInfo
 
 scenarios('../../features')
 
@@ -77,7 +77,7 @@ def given_directory_checked_out_start_branch(tmp_path: Path, directory: str, tes
 
 
 @given("forall test scripts were copied to the project directories")
-def given_forall_test_scripts_present(tmp_path: Path, shared_datadir: Path, test_info: TestInfo) -> None:
+def given_forall_test_scripts_present(tmp_path: Path, shared_datadir: Path, test_info: ScenarioInfo) -> None:
     dirs = util.example_repo_dirs(test_info.example)
     forall_dir = shared_datadir / "forall"
     for d in dirs:

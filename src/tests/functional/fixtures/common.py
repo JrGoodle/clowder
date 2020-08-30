@@ -5,7 +5,7 @@ This module contains fixtures
 # noinspection PyPackageRequirements
 from pytest import fixture
 
-from tests.functional.util import CommandResults, TestInfo
+from tests.functional.util import CommandResults, ScenarioInfo
 
 
 @fixture
@@ -14,5 +14,5 @@ def command_results() -> CommandResults:
 
 
 @fixture
-def test_info() -> TestInfo:
-    return TestInfo()
+def test_info() -> ScenarioInfo:
+    return ScenarioInfo()

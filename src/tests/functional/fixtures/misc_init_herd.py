@@ -9,11 +9,11 @@ from pathlib import Path
 from pytest import fixture
 
 import tests.functional.util as util
-from tests.functional.util import TestInfo
+from tests.functional.util import ScenarioInfo
 
 
 @fixture
-def misc_init_herd(tmp_path: Path, misc_init_herd_session: Path, test_info: TestInfo) -> None:
+def misc_init_herd(tmp_path: Path, misc_init_herd_session: Path, test_info: ScenarioInfo) -> None:
     util.copy_directory(misc_init_herd_session, to=tmp_path)
     # TODO: Remove once clowder.yml is relative symlink
     symlink = util.valid_clowder_symlink(tmp_path)

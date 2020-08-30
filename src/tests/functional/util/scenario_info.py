@@ -3,7 +3,7 @@
 from typing import Optional
 
 
-class TestInfo:
+class ScenarioInfo:
     def __init__(self):
         self.example: Optional[str] = None
         self.branch: Optional[str] = None
