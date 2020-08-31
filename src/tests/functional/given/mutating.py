@@ -47,20 +47,22 @@ def given_did_link_clowder_version(tmp_path: Path, version: str) -> None:
         assert util.has_valid_clowder_symlink_version(tmp_path, version)
 
 
-@given(parsers.parse("created {target} symlink pointing to {source}"))
-def given_created_symlink(tmp_path: Path, target: str, source: str) -> None:
+@given(parsers.parse("created {name} symlink pointing to {target}"))
+def given_created_symlink(tmp_path: Path, name: str, target: str) -> None:
+    name_path = tmp_path / name
     target_path = tmp_path / target
-    source_path = tmp_path / source
-    util.create_symlink(source_path, target_path)
+    assert target_path.exists()
+    resolved = target_path.resolve()
+    util.link_to(name_path, resolved)
 
 
-@given(parsers.parse("created {target_1} and {target_2} symlinks pointing to {source}"))
-def given_created_symlinks(tmp_path: Path, target_1: str, target_2: str, source: str) -> None:
-    source_path = tmp_path / source
-    target_path = tmp_path / target_1
-    util.create_symlink(source_path, target_path)
-    target_path = tmp_path / target_2
-    util.create_symlink(source_path, target_path)
+@given(parsers.parse("created {name_1} and {name_2} symlinks pointing to {target}"))
+def given_created_symlinks(tmp_path: Path, name_1: str, name_2: str, target: str) -> None:
+    target_path = tmp_path / target
+    name_path = tmp_path / name_1
+    util.link_to(name_path, target_path)
+    name_path = tmp_path / name_2
+    util.link_to(name_path, target_path)
 
 
 @given(parsers.parse("repo at {directory} staged file {file_name}"))

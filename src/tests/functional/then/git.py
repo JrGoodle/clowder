@@ -11,8 +11,7 @@ scenarios('../../features')
 
 
 @then("project at <directory> is a git repository")
-@then(parsers.parse("project at {directory} is a git repository"))
-@then(parsers.parse("{directory} directory is a git repository"))
+@then(parsers.parse("directory at {directory} is a git repository"))
 def then_is_git_repo(tmp_path: Path, directory: str) -> None:
     path = tmp_path / directory
     assert path.exists()
@@ -21,8 +20,7 @@ def then_is_git_repo(tmp_path: Path, directory: str) -> None:
 
 
 @then("project at <directory> is not a git repository")
-@then(parsers.parse("project at {directory} is not a git repository"))
-@then(parsers.parse("{directory} directory is not a git repository"))
+@then(parsers.parse("directory at {directory} is not a git repository"))
 def then_is_not_git_repo(tmp_path: Path, directory: str) -> None:
     path = tmp_path / directory
     assert path.exists()

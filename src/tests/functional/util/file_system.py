@@ -21,39 +21,22 @@ def is_directory_empty(path: Path) -> bool:
 def create_file(path: Path) -> None:
     with open(path, 'w') as _:
         pass
-    assert path.exists()
     assert path.is_file()
-    assert not path.is_dir()
     assert not path.is_symlink()
 
 
-def remove_file(path: Path) -> None:
-    assert path.exists()
-    os.remove(path)
-    assert not path.exists()
+def link_to(path: Path, target: Path) -> None:
+    os.symlink(target, path)
 
 
-def copy_file_to_file(path: Path, destination: Path) -> None:
+def copy_file(path: Path, destination: Path) -> None:
     shutil.copyfile(path, destination)
-    assert destination.exists()
     assert destination.is_file()
-    assert not destination.is_dir()
     assert not destination.is_symlink()
 
 
-def create_symlink(source: Path, target: Path) -> None:
-    assert source.exists()
-    assert not target.exists()
-    os.symlink(source, target)
-    assert is_symlink_from_to(target, source)
-
-
-def is_valid_symlink(path: Path) -> bool:
-    return path.is_symlink() and path.exists() and path.is_file()
-
-
 def is_symlink_from_to(symlink: Path, destination: Path) -> bool:
-    return is_valid_symlink(symlink) and destination.samefile(symlink.resolve())
+    return symlink.is_symlink() and destination.samefile(symlink.resolve())
 
 
 def copy_directory(from_dir: Path, to: Path):

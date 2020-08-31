@@ -73,14 +73,13 @@ def then_has_no_symlink(tmp_path: Path, file_name: str) -> None:
 def then_has_symlink(tmp_path: Path, file_name: str) -> None:
     path = tmp_path / file_name
     assert path.exists()
-    assert not path.is_dir()
     assert path.is_symlink()
 
 
 @then(parsers.parse("{file_name} is a symlink pointing to {destination}"))
-def then_has_symlink(tmp_path: Path, file_name: str, destination: str) -> None:
+def then_is_symlink_pointing_to(tmp_path: Path, file_name: str, destination: str) -> None:
     path = tmp_path / file_name
-    destination = Path(destination)
+    destination = tmp_path / destination
     assert util.is_symlink_from_to(path, destination)
 
 
@@ -96,7 +95,7 @@ def then_has_two_files(tmp_path: Path, file_name_1: str, file_name_2: str) -> No
 
 @then(parsers.parse("{file_name_1} and {file_name_2} symlinks don't exist"))
 @then(parsers.parse("{file_name_1} and {file_name_2} files don't exist"))
-def then_has_two_files(tmp_path: Path, file_name_1: str, file_name_2: str) -> None:
+def then_two_files_do_not_exist(tmp_path: Path, file_name_1: str, file_name_2: str) -> None:
     path = tmp_path / file_name_1
     assert not path.exists()
     path = tmp_path / file_name_2

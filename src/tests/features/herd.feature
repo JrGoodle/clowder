@@ -344,7 +344,7 @@ Feature: clowder herd
     @success @cats
     Scenario Outline: clowder herd non-symlink yaml file
         Given cats example non-symlink yaml file exists
-        And <directory> directory doesn't exist
+        And <directory> doesn't exist
         When I run 'clowder herd'
         Then the command succeeds
         And project at <directory> is a git repository

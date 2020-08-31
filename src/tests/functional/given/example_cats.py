@@ -55,3 +55,9 @@ def given_cats_non_symlink_yml(tmp_path: Path, cats_non_symlink_yml, test_info: 
 def given_cats_ambiguous_non_symlink_yaml_files(tmp_path: Path, cats_ambiguous_non_symlink_yaml_files,
                                                 test_info: ScenarioInfo) -> None:
     test_info.example = "cats"
+
+
+@given(parsers.parse("cats example clowder repo symlink exists"))
+def given_cats_clowder_repo_symlink(tmp_path: Path, cats_clowder_repo_symlink,
+                                    test_info: ScenarioInfo) -> None:
+    test_info.example = "cats"

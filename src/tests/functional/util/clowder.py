@@ -1,12 +1,11 @@
 """New syntax test file"""
 
-import os
 import shutil
 from pathlib import Path
 from typing import Dict, List, Optional
 
 from .command import run_command
-from .file_system import is_valid_symlink, is_symlink_from_to
+from .file_system import is_symlink_from_to
 from .git import has_git_directory, is_dirty, is_on_active_branch
 
 
@@ -84,7 +83,7 @@ def create_non_symlink_clowder_yaml(path: Path, example: str, protocol: str = "h
     path = init_clowder(path, example, protocol=protocol, branch=branch, version=version)
     symlink = valid_clowder_symlink(path)
     file = symlink.resolve()
-    os.unlink(symlink)
+    symlink.unlink()
     shutil.copy(file, path)
     clowder_repo = path / ".clowder"
     shutil.rmtree(clowder_repo)
@@ -172,11 +171,25 @@ def has_clowder_version(path: Path, version: str) -> bool:
 
 
 def valid_clowder_symlink(path: Path) -> Optional[Path]:
-    yaml = path / "clowder.yaml"
-    yml = path / "clowder.yml"
-    if is_valid_symlink(yaml):
+    yaml = valid_clowder_yaml_symlink(path)
+    yml = valid_clowder_yml_symlink(path)
+    if yaml is not None:
         return yaml
-    if is_valid_symlink(yml):
+    if yml is not None:
+        return yml
+    return None
+
+
+def valid_clowder_yaml_symlink(path: Path) -> Optional[Path]:
+    yaml = path / "clowder.yaml"
+    if yaml.is_symlink() and yaml.exists():
+        return yaml
+    return None
+
+
+def valid_clowder_yml_symlink(path: Path) -> Optional[Path]:
+    yml = path / "clowder.yml"
+    if yml.is_symlink() and yml.exists():
         return yml
     return None
 

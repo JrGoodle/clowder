@@ -108,3 +108,14 @@ Feature: clowder link command
         And default clowder version is linked
         And clowder.yml symlink exists
         And clowder.yaml symlink doesn't exist
+
+    @success @cats
+    Scenario: clowder link existing .clowder symlink
+        Given cats example clowder repo symlink exists
+        And .clowder is a symlink
+        And clowder.yaml and clowder.yml symlinks don't exist
+        When I run 'clowder link'
+        Then the command succeeds
+        And .clowder symlink exists
+        And clowder.yml symlink doesn't exist
+        And clowder.yaml is a symlink pointing to .clowder/clowder.yaml
