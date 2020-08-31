@@ -11,7 +11,6 @@ echo 'TEST: cats example test script'
 print_double_separator
 
 "$TEST_SCRIPT_DIR/cats/subdirectory.sh" || exit 1
-"$TEST_SCRIPT_DIR/cats/groups.sh" || exit 1
 "$TEST_SCRIPT_DIR/cats/clean.sh" || exit 1
 "$TEST_SCRIPT_DIR/cats/herd.sh" || exit 1
 "$TEST_SCRIPT_DIR/cats/herd_branch.sh" || exit 1

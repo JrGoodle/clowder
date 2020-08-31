@@ -359,3 +359,243 @@ Feature: clowder herd
         | black-cats/kit    | master |
         | black-cats/sasha  | master |
         | black-cats/june   | master |
+
+    @success @cats @debug
+    Scenario Outline: clowder herd groups default included
+        Given cats example is initialized
+        And linked groups clowder version
+        And <directory> doesn't exist
+        When I run 'clowder herd'
+        Then the command succeeds
+        And project at <directory> is a git repository
+        And project at <directory> is on <branch>
+        And project at <directory> is clean
+
+        Examples:
+        | directory         | branch |
+        | mu-cat            | knead  |
+        | black-cats/kishka | master |
+        | black-cats/kit    | master |
+        | black-cats/sasha  | master |
+        | black-cats/june   | master |
+
+    @success @cats @debug
+    Scenario Outline: clowder herd groups default excluded
+        Given cats example is initialized
+        And linked groups clowder version
+        And <directory> doesn't exist
+        When I run 'clowder herd'
+        Then the command succeeds
+        And <directory> doesn't exist
+
+        Examples:
+        | directory |
+        | mu        |
+        | duke      |
+
+    @success @cats @debug
+    Scenario Outline: clowder herd group black-cats included
+        Given cats example is initialized
+        And linked groups clowder version
+        And <directory> doesn't exist
+        When I run 'clowder herd black-cats'
+        Then the command succeeds
+        And project at <directory> is a git repository
+        And project at <directory> is on <branch>
+        And project at <directory> is clean
+
+        Examples:
+        | directory         | branch |
+        | black-cats/kishka | master |
+        | black-cats/kit    | master |
+        | black-cats/sasha  | master |
+        | black-cats/june   | master |
+
+    @success @cats @debug
+    Scenario Outline: clowder herd group black-cats excluded
+        Given cats example is initialized
+        And linked groups clowder version
+        And <directory> doesn't exist
+        When I run 'clowder herd black-cats'
+        Then the command succeeds
+        And <directory> doesn't exist
+
+        Examples:
+        | directory |
+        | mu        |
+        | duke      |
+        | mu-cat    |
+
+    @success @cats @debug
+    Scenario Outline: clowder herd group cats included
+        Given cats example is initialized
+        And linked groups clowder version
+        And <directory> doesn't exist
+        When I run 'clowder herd cats'
+        Then the command succeeds
+        And project at <directory> is a git repository
+        And project at <directory> is on <branch>
+        And project at <directory> is clean
+
+        Examples:
+        | directory | branch |
+        | mu        | knead  |
+        | duke      | purr   |
+        | mu-cat    | knead  |
+
+    @success @cats @debug
+    Scenario Outline: clowder herd group cats excluded
+        Given cats example is initialized
+        And linked groups clowder version
+        And <directory> doesn't exist
+        When I run 'clowder herd cats'
+        Then the command succeeds
+        And <directory> doesn't exist
+
+        Examples:
+        | directory         |
+        | black-cats/kishka |
+        | black-cats/kit    |
+        | black-cats/sasha  |
+        | black-cats/june   |
+
+    @success @cats @debug
+    Scenario Outline: clowder herd groups "cats black-cats"
+        Given cats example is initialized
+        And linked groups clowder version
+        And <directory> doesn't exist
+        When I run 'clowder herd cats black-cats'
+        Then the command succeeds
+        And project at <directory> is a git repository
+        And project at <directory> is on <branch>
+        And project at <directory> is clean
+
+        Examples:
+        | directory         | branch |
+        | mu                | knead  |
+        | duke              | purr   |
+        | mu-cat            | knead  |
+        | black-cats/kishka | master |
+        | black-cats/kit    | master |
+        | black-cats/sasha  | master |
+        | black-cats/june   | master |
+
+    @success @cats @debug
+    Scenario Outline: clowder herd project name jrgoodle/mu included
+        Given cats example is initialized
+        And linked groups clowder version
+        And <directory> doesn't exist
+        When I run 'clowder herd jrgoodle/mu'
+        Then the command succeeds
+        And project at <directory> is a git repository
+        And project at <directory> is on <branch>
+        And project at <directory> is clean
+
+        Examples:
+        | directory | branch |
+        | mu        | knead  |
+        | mu-cat    | knead  |
+
+    @success @cats @debug
+    Scenario Outline: clowder herd project name jrgoodle/mu excluded
+        Given cats example is initialized
+        And linked groups clowder version
+        And <directory> doesn't exist
+        When I run 'clowder herd jrgoodle/mu'
+        Then the command succeeds
+        And <directory> doesn't exist
+
+        Examples:
+        | directory         |
+        | duke              |
+        | black-cats/kishka |
+        | black-cats/kit    |
+        | black-cats/sasha  |
+        | black-cats/june   |
+
+    @success @cats @debug
+    Scenario Outline: clowder herd project path mu included
+        Given cats example is initialized
+        And linked groups clowder version
+        And <directory> doesn't exist
+        When I run 'clowder herd mu'
+        Then the command succeeds
+        And project at <directory> is a git repository
+        And project at <directory> is on <branch>
+        And project at <directory> is clean
+
+        Examples:
+        | directory | branch |
+        | mu        | knead  |
+
+    @success @cats @debug
+    Scenario Outline: clowder herd project path mu excluded
+        Given cats example is initialized
+        And linked groups clowder version
+        And <directory> doesn't exist
+        When I run 'clowder herd mu'
+        Then the command succeeds
+        And <directory> doesn't exist
+
+        Examples:
+        | directory         |
+        | mu-cat            |
+        | duke              |
+        | black-cats/kishka |
+        | black-cats/kit    |
+        | black-cats/sasha  |
+        | black-cats/june   |
+
+    @success @cats @debug
+    Scenario Outline: clowder herd groups "all notdefault"
+        Given cats example is initialized
+        And linked groups clowder version
+        And <directory> doesn't exist
+        When I run 'clowder herd all notdefault'
+        Then the command succeeds
+        And project at <directory> is a git repository
+        And project at <directory> is on <branch>
+        And project at <directory> is clean
+
+        Examples:
+        | directory         | branch |
+        | mu                | knead  |
+        | duke              | purr   |
+        | mu-cat            | knead  |
+        | black-cats/kishka | master |
+        | black-cats/kit    | master |
+        | black-cats/sasha  | master |
+        | black-cats/june   | master |
+
+    @success @cats @debug
+    Scenario Outline: clowder herd groups "notdefault" included
+        Given cats example is initialized
+        And linked groups clowder version
+        And <directory> doesn't exist
+        When I run 'clowder herd notdefault'
+        Then the command succeeds
+        And project at <directory> is a git repository
+        And project at <directory> is on <branch>
+        And project at <directory> is clean
+
+        Examples:
+        | directory | branch |
+        | mu        | knead  |
+        | duke      | purr   |
+
+    @success @cats @debug
+    Scenario Outline: clowder herd groups "notdefault" excluded
+        Given cats example is initialized
+        And linked groups clowder version
+        And <directory> doesn't exist
+        When I run 'clowder herd notdefault'
+        Then the command succeeds
+        And <directory> doesn't exist
+
+        Examples:
+        | directory         |
+        | mu-cat            |
+        | black-cats/kishka |
+        | black-cats/kit    |
+        | black-cats/sasha  |
+        | black-cats/june   |
