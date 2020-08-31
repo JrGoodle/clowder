@@ -99,14 +99,6 @@ class CatsController(ArgparseController):
         self._execute_command('./herd.sh', self.path)
 
     @expose(
-        help='Run cats init tests'
-    )
-    def init(self) -> None:
-        """clowder cats init tests"""
-
-        self._execute_command('./init.sh', self.path)
-
-    @expose(
         help='Run cats lfs tests'
     )
     def lfs(self) -> None:
