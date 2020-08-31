@@ -51,7 +51,7 @@ jobs:
     - name: Run pytest functional serial tests
       run: |
         cd src
-        pytest -v -n auto -m "serial and not ssh"
+        pytest -v -m "serial and not ssh"
     # TODO: Gather coverage data and such
     # - name: CI after script
     #   run: script/ci_after
