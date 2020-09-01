@@ -11,16 +11,16 @@ scenarios('../../features')
 
 
 @given(parsers.parse("misc example is initialized"))
-def given_misc_init(tmp_path: Path, misc_init, test_info: ScenarioInfo) -> None:
-    test_info.example = "misc"
+def given_misc_init(tmp_path: Path, misc_init, scenario_info) -> None:
+    scenario_info.example = "misc"
 
 
 @given(parsers.parse("misc example is initialized and herded"))
-def given_misc_init_herd(tmp_path: Path, misc_init_herd, test_info: ScenarioInfo) -> None:
-    test_info.example = "misc"
+def given_misc_init_herd(tmp_path: Path, misc_init_herd, scenario_info) -> None:
+    scenario_info.example = "misc"
 
 
 @given(parsers.parse("misc example is initialized and herded with https"))
-def given_misc_init_herd(tmp_path: Path, misc_init_herd_version_https, test_info: ScenarioInfo) -> None:
-    test_info.example = "misc"
-    test_info.version = "https"
+def given_misc_init_herd(tmp_path: Path, misc_init_herd_version_https, scenario_info) -> None:
+    scenario_info.example = "misc"
+    scenario_info.version = "https"

@@ -45,8 +45,8 @@ Feature: clowder stash
         And created <file_name> in <directory>
         And project at <directory> staged <file_name>
         And project at <directory> is dirty
-        And the network connection is disabled
-        When I run 'clowder stash'
+        When the network connection is disabled
+        And I run 'clowder stash'
         Then the command succeeds
         And project at <directory> is clean
 

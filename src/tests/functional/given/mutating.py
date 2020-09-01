@@ -76,7 +76,7 @@ def given_did_stage_file(tmp_path: Path, directory: str, file_name: str) -> None
 @given("project at <directory> created <test_branch>")
 def given_directory_created_local_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
     path = tmp_path / directory
-    util.create_branch(path, test_branch)
+    util.create_local_branch(path, test_branch)
     assert util.local_branch_exists(tmp_path / directory, test_branch)
 
 
@@ -88,8 +88,8 @@ def given_directory_checked_out_start_branch(tmp_path: Path, directory: str, tes
 
 
 @given("forall test scripts were copied to the project directories")
-def given_forall_test_scripts_present(tmp_path: Path, shared_datadir: Path, test_info: ScenarioInfo) -> None:
-    dirs = util.example_repo_dirs(test_info.example)
+def given_forall_test_scripts_present(tmp_path: Path, shared_datadir: Path, scenario_info) -> None:
+    dirs = util.example_repo_dirs(scenario_info.example)
     forall_dir = shared_datadir / "forall"
     for d in dirs:
         for script in os.listdir(forall_dir):

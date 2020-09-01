@@ -166,7 +166,8 @@ Feature: clowder init
     Scenario: init offline
         Given .clowder directory doesn't exist
         And test directory is empty
-        When I run 'clowder init https://github.com/jrgoodle/cats.git'
+        When the network connection is disabled
+        And I run 'clowder init https://github.com/jrgoodle/cats.git'
         Then the command fails
         And .clowder directory doesn't exist
         And clowder.yaml and clowder.yml symlinks don't exist

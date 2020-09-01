@@ -124,8 +124,8 @@ Feature: clowder link command
     Scenario: link default version offline
         Given cats example is initialized
         And linked tags clowder version
-        And the network connection is disabled
-        When I run 'clowder link'
+        When the network connection is disabled
+        And I run 'clowder link'
         Then the command succeeds
         And default clowder version is linked
 
@@ -133,7 +133,7 @@ Feature: clowder link command
     Scenario: link version offline
         Given cats example is initialized
         And default clowder version is linked
-        And the network connection is disabled
-        When I run 'clowder link tags'
+        When the network connection is disabled
+        And I run 'clowder link tags'
         Then the command succeeds
         And tags clowder version is linked

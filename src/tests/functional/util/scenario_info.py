@@ -9,3 +9,4 @@ class ScenarioInfo:
         self.branch: Optional[str] = None
         self.protocol: str = "https"
         self.version: Optional[str] = None
+        self.offline: bool = False

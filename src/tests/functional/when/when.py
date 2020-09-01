@@ -6,9 +6,15 @@ from pathlib import Path
 from pytest_bdd import scenarios, when, parsers
 
 import tests.functional.util as util
-from tests.functional.util import CommandResults
+from tests.functional.util import CommandResults, ScenarioInfo
 
 scenarios('../../features')
+
+
+@when("the network connection is disabled")
+def when_network_connection_disabled(scenario_info: ScenarioInfo) -> None:
+    scenario_info.offline = True
+    util.disable_network_connection()
 
 
 @when(parsers.parse("I run '{command}'"))

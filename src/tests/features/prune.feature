@@ -119,11 +119,11 @@ Feature: clowder prune
     @success @offline
     Scenario Outline: prune offline
         Given cats example is initialized and herded
-        And the network connection is disabled
         And project at <directory> created <test_branch>
         And project at <directory> checked out <test_branch>
         And project at <directory> is on <start_branch>
-        When I run 'clowder prune shrubs'
+        When the network connection is disabled
+        And I run 'clowder prune shrubs'
         Then the command succeeds
         And project at <directory> has no local branch <test_branch>
         And project at <directory> is on <end_branch>
@@ -137,43 +137,40 @@ Feature: clowder prune
         | black-cats/sasha  | shrubs       | master     | shrubs      |
         | black-cats/june   | shrubs       | master     | shrubs      |
 
-    @fail @offline
+    @fail @offline @debug
     Scenario Outline: prune remote offline
         Given cats example is initialized and herded
-        And project at <directory> has remote branch <test_branch>
-        And the network connection is disabled
-        When I run 'clowder prune -r tracking_branch'
+        And project at <directory> created remote branch <test_branch>
+        When the network connection is disabled
+        And I run 'clowder prune -r  pytest-prune-remote-offline'
         Then the command fails
-        And the network connection is re-enabled
         And project at <directory> has remote branch <test_branch>
 
 
         Examples:
-        | directory         | test_branch     |
-        | mu                | tracking_branch |
-        | duke              | tracking_branch |
-        | black-cats/kishka | tracking_branch |
-        | black-cats/kit    | tracking_branch |
-        | black-cats/sasha  | tracking_branch |
-        | black-cats/june   | tracking_branch |
+        | directory         | test_branch                 |
+        | mu                | pytest-prune-remote-offline |
+        | duke              | pytest-prune-remote-offline |
+        | black-cats/kishka | pytest-prune-remote-offline |
+        | black-cats/kit    | pytest-prune-remote-offline |
+        | black-cats/sasha  | pytest-prune-remote-offline |
+        | black-cats/june   | pytest-prune-remote-offline |
 
-    @fail @offline
+    @fail @offline @debug
     Scenario Outline: prune all offline
         Given cats example is initialized and herded
-        And project at <directory> has remote branch <test_branch>
-        And project at <directory> has local branch <test_branch>
-        And the network connection is disabled
-        When I run 'clowder prune -a tracking_branch'
+        And project at <directory> created remote branch <test_branch>
+        When the network connection is disabled
+        And I run 'clowder prune -a pytest-prune-remote-offline'
         Then the command fails
-        And project at <directory> has local branch <test_branch>
-        And the network connection is re-enabled
+        And project at <directory> has no local branch <test_branch>
         And project at <directory> has remote branch <test_branch>
 
         Examples:
-        | directory         | test_branch     |
-        | mu                | tracking_branch |
-        | duke              | tracking_branch |
-        | black-cats/kishka | tracking_branch |
-        | black-cats/kit    | tracking_branch |
-        | black-cats/sasha  | tracking_branch |
-        | black-cats/june   | tracking_branch |
+        | directory         | test_branch                 |
+        | mu                | pytest-prune-remote-offline |
+        | duke              | pytest-prune-remote-offline |
+        | black-cats/kishka | pytest-prune-remote-offline |
+        | black-cats/kit    | pytest-prune-remote-offline |
+        | black-cats/sasha  | pytest-prune-remote-offline |
+        | black-cats/june   | pytest-prune-remote-offline |

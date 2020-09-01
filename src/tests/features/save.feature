@@ -76,12 +76,11 @@ Feature: clowder save command
 
     @success @offline
     Scenario: save new version offline
-        Given cats example was initialized and herded to branch no-versions
+        Given cats example is initialized
         And default clowder version is linked
         And my-new-version clowder version doesn't exist
-        And .clowder/versions directory doesn't exist
-        When I run 'clowder save my-new-version'
+        When the network connection is disabled
+        And I run 'clowder save my-new-version'
         Then the command succeeds
-        And .clowder/versions directory exists
         And my-new-version clowder version exists
         And default clowder version is linked

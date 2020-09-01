@@ -23,8 +23,8 @@ Feature: clowder branch
     @success @offline
     Scenario: branch offline
         Given cats example is initialized and herded
-        And the network connection is disabled
-        When I run 'clowder branch'
+        When the network connection is disabled
+        And I run 'clowder branch'
         And I run 'clowder branch -a'
         And I run 'clowder branch -r'
         Then the commands succeed

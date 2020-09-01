@@ -59,8 +59,8 @@ Feature: clowder status
         Given cats example is initialized and herded
         And created file catnip.txt in directory mu
         And project at mu has untracked file catnip.txt
-        And the network connection is disabled
-        When I run 'clowder status'
+        When the network connection is disabled
+        And I run 'clowder status'
         And I run 'clowder status jrgoodle/kishka'
         And I run 'clowder status jrgoodle/mu jrgoodle/duke'
         And I run 'clowder status jrgoodle/mu jrgoodle/duke jrgoodle/kit'
@@ -76,8 +76,8 @@ Feature: clowder status
         Given cats example is initialized and herded
         And created file catnip.txt in directory mu
         And project at mu has untracked file catnip.txt
-        And the network connection is disabled
-        When I run 'clowder status -f'
+        When the network connection is disabled
+        And I run 'clowder status -f'
         And I run 'clowder status -f jrgoodle/kishka'
         And I run 'clowder status -f jrgoodle/mu jrgoodle/duke'
         And I run 'clowder status -f jrgoodle/mu jrgoodle/duke jrgoodle/kit'

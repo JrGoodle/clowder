@@ -41,9 +41,11 @@ Feature: clowder start
         | black-cats/sasha  | master       | new-branch | new-branch  |
         | black-cats/june   | master       | new-branch | new-branch  |
 
-    @success @offline @internet @write
+    # FIXME: Probably need to create a fixture that sets up remote branches
+    @success @internet @write
     Scenario Outline: start tracking
         Given cats example is initialized and herded
+        And project at <directory> deleted remote branch <test_branch>
         And project at <directory> has no local branch <test_branch>
         And project at <directory> has no remote branch <test_branch>
         And project at <directory> is on <start_branch>
@@ -66,15 +68,15 @@ Feature: clowder start
     @success @offline
     Scenario Outline: start local offline
         Given cats example is initialized and herded
+        And project at <directory> deleted remote branch <test_branch>
         And project at <directory> has no local branch <test_branch>
         And project at <directory> has no remote branch <test_branch>
         And project at <directory> is on <start_branch>
-        And the network connection is disabled
-        When I run 'clowder start new-branch'
+        When the network connection is disabled
+        And I run 'clowder start new-branch'
         Then the command succeeds
         And project at <directory> has local branch <test_branch>
         And project at <directory> is on <end_branch>
-        And the network connection is re-enabled
         And project at <directory> has no remote branch <test_branch>
 
         Examples:
@@ -89,15 +91,15 @@ Feature: clowder start
     @fail @offline
     Scenario Outline: start tracking offline
         Given cats example is initialized and herded
+        And project at <directory> deleted remote branch <test_branch>
         And project at <directory> has no local branch <test_branch>
         And project at <directory> has no remote branch <test_branch>
         And project at <directory> is on <start_branch>
-        And the network connection is disabled
-        When I run 'clowder start -t new-branch'
+        When the network connection is disabled
+        And I run 'clowder start -t new-branch'
         Then the command fails
         And project at <directory> has no local branch <test_branch>
         And project at <directory> is on <end_branch>
-        And the network connection is re-enabled
         And project at <directory> has no remote branch <test_branch>
 
         Examples:
@@ -112,6 +114,7 @@ Feature: clowder start
     @success
     Scenario Outline: start local group excluded
         Given cats example is initialized and herded
+        And project at <directory> deleted remote branch <test_branch>
         And project at <directory> has no local branch <test_branch>
         And project at <directory> has no remote branch <test_branch>
         And project at <directory> is on <start_branch>
@@ -129,6 +132,7 @@ Feature: clowder start
     @success
     Scenario Outline: start local group included
         Given cats example is initialized and herded
+        And project at <directory> deleted remote branch <test_branch>
         And project at <directory> has no local branch <test_branch>
         And project at <directory> has no remote branch <test_branch>
         And project at <directory> is on <start_branch>

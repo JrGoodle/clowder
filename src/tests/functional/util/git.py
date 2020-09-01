@@ -136,10 +136,47 @@ def create_commit(path: Path, filename: str) -> List[CompletedProcess]:
     return results
 
 
-def create_branch(path: Path, branch: str) -> CompletedProcess:
+def create_local_branch(path: Path, branch: str) -> CompletedProcess:
     result = run_command(f"git branch {branch} HEAD", path)
     assert local_branch_exists(path, branch)
     return result
+
+
+def delete_local_branch(path: Path, branch: str) -> CompletedProcess:
+    result = run_command(f"git branch -d {branch}", path)
+    assert not local_branch_exists(path, branch)
+    return result
+
+
+def create_remote_branch(path: Path, branch: str, remote: str = "origin") -> List[CompletedProcess]:
+    results = []
+    result = create_local_branch(path, branch)
+    results.append(result)
+    result = run_command(f"git push {remote} {branch}", path)
+    results.append(result)
+    result = delete_local_branch(path, branch)
+    results.append(result)
+    assert not local_branch_exists(path, branch)
+    assert remote_branch_exists(path, branch, remote)
+    return results
+
+
+def delete_remote_branch(path: Path, branch: str, remote: str = "origin") -> CompletedProcess:
+    result = run_command(f"git push {remote} --delete {branch}", path)
+    assert not remote_branch_exists(path, branch)
+    return result
+
+
+def create_tracking_branch(path: Path, branch: str, remote: str = "origin") -> List[CompletedProcess]:
+    results = []
+    result = run_command(f"git checkout -b {branch}", path)
+    results.append(result)
+    result = run_command(f"git push -u {remote} {branch}", path)
+    results.append(result)
+    assert local_branch_exists(path, branch)
+    assert remote_branch_exists(path, branch)
+    assert tracking_branch_exists(path, branch)
+    return results
 
 
 def checkout_branch(path: Path, branch: str) -> CompletedProcess:
@@ -153,9 +190,9 @@ def local_branch_exists(path: Path, branch: str) -> bool:
     return result.returncode == 0
 
 
-def remote_branch_exists(path: Path, branch: str) -> bool:
+def remote_branch_exists(path: Path, branch: str, remote: str = "origin") -> bool:
     git = Repo(path)
-    if branch in git.remote().refs:
+    if branch in git.remote(remote).refs:
         return True
     return False
 

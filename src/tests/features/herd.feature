@@ -604,8 +604,8 @@ Feature: clowder herd
     Scenario Outline: herd default offline
         Given cats example is initialized
         And <directory> doesn't exist
-        And the network connection is disabled
-        When I run 'clowder herd'
+        When the network connection is disabled
+        And I run 'clowder herd'
         Then the command fails
         And <directory> doesn't exist
 

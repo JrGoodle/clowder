@@ -42,10 +42,10 @@ Feature: clowder diff
     @success @offline
     Scenario: diff
         Given cats example is initialized and herded
-        And the network connection is disabled
         And created file catnip.txt in directory mu
         And project at mu has untracked file catnip.txt
-        When I run 'clowder diff'
+        When the network connection is disabled
+        And I run 'clowder diff'
         And I run 'clowder diff jrgoodle/kishka'
         And I run 'clowder diff jrgoodle/mu jrgoodle/duke'
         And I run 'clowder diff' jrgoodle/mu jrgoodle/duke jrgoodle/kit'

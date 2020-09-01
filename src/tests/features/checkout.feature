@@ -64,13 +64,13 @@ Feature: clowder checkout command
         | black-cats/sasha  | master       | master     | other       |
         | black-cats/june   | master       | master     | other       |
 
-    @success @offline
+    @success @offline @debug
     Scenario Outline: checkout offline
         Given cats example is initialized and herded
-        And the network connection is disabled
         And project at <directory> is on <start_branch>
         And project at <directory> has no local branch <test_branch>
-        When I run 'clowder checkout new-branch'
+        When the network connection is disabled
+        And I run 'clowder checkout new-branch'
         Then the command succeeds
         And project at <directory> has local branch <test_branch>
         And project at <directory> is on <end_branch>
