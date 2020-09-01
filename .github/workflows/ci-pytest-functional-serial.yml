@@ -48,10 +48,10 @@ jobs:
       run: script/ci_before
     - name: Install clowder
       run: script/update
-    - name: Run pytest functional serial tests
+    - name: Run pytest config tests
       run: |
         cd src
-        pytest -v -m "serial and not ssh and not write"
+        pytest -v -m "config and not ssh and not write"
     # TODO: Gather coverage data and such
     # - name: CI after script
     #   run: script/ci_after

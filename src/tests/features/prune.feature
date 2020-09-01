@@ -137,7 +137,7 @@ Feature: clowder prune
         | black-cats/sasha  | shrubs       | master     | shrubs      |
         | black-cats/june   | shrubs       | master     | shrubs      |
 
-    @fail @offline @debug
+    @fail @offline
     Scenario Outline: prune remote offline
         Given cats example is initialized and herded
 #        And project at <directory> created remote branch <test_branch>
@@ -156,7 +156,7 @@ Feature: clowder prune
         | black-cats/sasha  | pytest-prune-remote-offline |
         | black-cats/june   | pytest-prune-remote-offline |
 
-    @fail @offline @debug
+    @fail @offline
     Scenario Outline: prune all offline
         Given cats example is initialized and herded
 #        And project at <directory> created remote branch <test_branch>

@@ -11,7 +11,7 @@
     <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
     <option name="_new_keywords" value="&quot;&quot;" />
     <option name="_new_parameters" value="&quot;&quot;" />
-    <option name="_new_additionalArguments" value="&quot;-v -n auto -m \&quot;not serial and not offline and not write\&quot;&quot;" />
+    <option name="_new_additionalArguments" value="&quot;-v -n auto -m \&quot;not config and not offline and not write\&quot;&quot;" />
     <option name="_new_target" value="&quot;$PROJECT_DIR$/src/tests&quot;" />
     <option name="_new_targetType" value="&quot;PATH&quot;" />
     <method v="2" />

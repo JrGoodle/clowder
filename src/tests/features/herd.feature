@@ -263,7 +263,7 @@ Feature: clowder herd
         | sox       | master      | upstream | https://git.code.sf.net/p/sox/code.git             |
 
     # TODO: Add tests for groups/projects
-    @success @misc @upstream @config @serial
+    @success @misc @upstream @config
     Scenario Outline: herd upstream remote urls override https config
         Given misc example is initialized
         And <directory> doesn't exist
@@ -285,7 +285,7 @@ Feature: clowder herd
         | sox       | master      | upstream | https://git.code.sf.net/p/sox/code.git             |
 
     # TODO: Add tests for groups/projects
-    @success @misc @upstream @config @ssh @serial
+    @success @misc @upstream @config @ssh
     Scenario Outline: herd upstream remote urls override ssh config
         Given misc example is initialized
         And linked https clowder version

@@ -192,7 +192,7 @@ Feature: clowder forall
         And I run 'clowder forall gyp -c "if [ $UPSTREAM_REF != refs/heads/master ]; then exit 1; fi"'
         Then the commands succeed
 
-    @success @cats @offline @debug
+    @success @cats @offline
     Scenario: forall offline
         Given cats example is initialized and herded
         When the network connection is disabled

@@ -55,13 +55,13 @@ jobs:
           name: run pytest ssh tests
           command: |
             cd src
-            pytest -v -n auto -m "ssh and not serial and not offline"
+            pytest -v -n auto -m "ssh and not config and not offline"
 
       - run:
-          name: run pytest serial tests
+          name: run pytest config tests
           command: |
             cd src
-            pytest -v -m "serial"
+            pytest -v -m "config"
 
       - run:
           name: upload code coverage results

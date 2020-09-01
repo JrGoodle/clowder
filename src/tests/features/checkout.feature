@@ -64,7 +64,7 @@ Feature: clowder checkout command
         | black-cats/sasha  | master       | master     | other       |
         | black-cats/june   | master       | master     | other       |
 
-    @success @offline @debug
+    @success @offline
     Scenario Outline: checkout offline
         Given cats example is initialized and herded
         And project at <directory> is on <start_branch>
