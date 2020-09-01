@@ -50,8 +50,6 @@ class BaseController(ArgparseController):
                                  coverage=self.app.pargs.coverage,
                                  debug=self.app.debug)
 
-        self.offline()
-
     @expose(
         help='Run config yaml validation tests'
     )
@@ -60,18 +58,6 @@ class BaseController(ArgparseController):
 
         execute_test_command('./test_config_yaml_validation.sh', self.path,
                              parallel=True,
-                             write=self.app.pargs.write,
-                             coverage=self.app.pargs.coverage,
-                             debug=self.app.debug)
-
-    @expose(
-        help='Run offline tests'
-    )
-    def offline(self) -> None:
-        """clowder offline tests"""
-
-        execute_test_command('./offline.sh', self.path / 'cats',
-                             parallel=self.app.pargs.parallel,
                              write=self.app.pargs.write,
                              coverage=self.app.pargs.coverage,
                              debug=self.app.debug)

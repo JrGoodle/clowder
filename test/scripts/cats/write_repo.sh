@@ -86,3 +86,53 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
     }
     test_clowder_repo_commit_pull_push
 fi
+
+# TODO: Adapt these tests along with the write ones
+# echo 'TEST: clowder repo add'
+# begin_command
+# $COMMAND repo add . || enable_connection_exit
+# end_command
+# print_single_separator
+# echo 'TEST: clowder repo checkout'
+# begin_command
+# $COMMAND repo checkout repo-test || enable_connection_exit
+# end_command
+# begin_command
+# $COMMAND repo checkout master || enable_connection_exit
+# end_command
+# print_single_separator
+# echo 'TEST: clowder repo clean'
+# begin_command
+# $COMMAND repo clean || enable_connection_exit
+# end_command
+# print_single_separator
+# echo 'TEST: clowder repo commit'
+# pushd .clowder || exit 1
+# touch newfile || enable_connection_exit
+# # git add newfile || enable_connection_exit
+# popd || exit 1
+# begin_command
+# $COMMAND repo add newfile || enable_connection_exit
+# end_command
+# begin_command
+# $COMMAND repo commit 'Add newfile' || enable_connection_exit
+# end_command
+# pushd .clowder || exit 1
+# git reset --hard HEAD~1 || enable_connection_exit
+# popd || exit 1
+# print_single_separator
+# echo 'TEST: clowder repo pull'
+# begin_command
+# $COMMAND repo pull && enable_connection_exit
+# end_command
+# print_single_separator
+# echo 'TEST: clowder repo push'
+# begin_command
+# $COMMAND repo push && enable_connection_exit
+# end_command
+# print_single_separator
+# echo 'TEST: clowder repo run'
+# begin_command
+# $COMMAND repo run 'git status' || enable_connection_exit
+# end_command
+# print_single_separator

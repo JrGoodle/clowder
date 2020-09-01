@@ -39,7 +39,7 @@ Feature: clowder stash
         | black-cats/sasha  | secret    |
         | black-cats/june   | secret    |
 
-    @success
+    @success @offline
     Scenario Outline: stash offline
         Given cats example is initialized and herded
         And created <file_name> in <directory>
