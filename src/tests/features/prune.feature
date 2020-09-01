@@ -115,3 +115,65 @@ Feature: clowder prune
         | black-cats/kit    | shrubs       | master     | shrubs      |
         | black-cats/sasha  | shrubs       | master     | shrubs      |
         | black-cats/june   | shrubs       | master     | shrubs      |
+
+    @success @offline
+    Scenario Outline: clowder prune offline
+        Given cats example is initialized and herded
+        And the network connection is disabled
+        And project at <directory> created <test_branch>
+        And project at <directory> checked out <test_branch>
+        And project at <directory> is on <start_branch>
+        When I run 'clowder prune shrubs'
+        Then the command succeeds
+        And project at <directory> has no local branch <test_branch>
+        And project at <directory> is on <end_branch>
+
+        Examples:
+        | directory         | start_branch | end_branch | test_branch |
+        | mu                | shrubs       | knead      | shrubs      |
+        | duke              | shrubs       | purr       | shrubs      |
+        | black-cats/kishka | shrubs       | master     | shrubs      |
+        | black-cats/kit    | shrubs       | master     | shrubs      |
+        | black-cats/sasha  | shrubs       | master     | shrubs      |
+        | black-cats/june   | shrubs       | master     | shrubs      |
+
+    @fail @offline
+    Scenario Outline: clowder prune remote offline
+        Given cats example is initialized and herded
+        And project at <directory> has remote branch <test_branch>
+        And the network connection is disabled
+        When I run 'clowder prune -r tracking_branch'
+        Then the command fails
+        And the network connection is re-enabled
+        And project at <directory> has remote branch <test_branch>
+
+
+        Examples:
+        | directory         | test_branch     |
+        | mu                | tracking_branch |
+        | duke              | tracking_branch |
+        | black-cats/kishka | tracking_branch |
+        | black-cats/kit    | tracking_branch |
+        | black-cats/sasha  | tracking_branch |
+        | black-cats/june   | tracking_branch |
+
+    @fail @offline
+    Scenario Outline: clowder prune all offline
+        Given cats example is initialized and herded
+        And project at <directory> has remote branch <test_branch>
+        And project at <directory> has local branch <test_branch>
+        And the network connection is disabled
+        When I run 'clowder prune -a tracking_branch'
+        Then the command fails
+        And project at <directory> has local branch <test_branch>
+        And the network connection is re-enabled
+        And project at <directory> has remote branch <test_branch>
+
+        Examples:
+        | directory         | test_branch     |
+        | mu                | tracking_branch |
+        | duke              | tracking_branch |
+        | black-cats/kishka | tracking_branch |
+        | black-cats/kit    | tracking_branch |
+        | black-cats/sasha  | tracking_branch |
+        | black-cats/june   | tracking_branch |

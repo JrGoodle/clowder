@@ -112,10 +112,10 @@ disable_network_connection
 # $COMMAND diff || enable_connection_exit
 # end_command
 # print_single_separator
-echo 'TEST: clowder forall'
-begin_command
-$COMMAND forall $PARALLEL -c 'git status' || enable_connection_exit
-end_command
+# echo 'TEST: clowder forall'
+# begin_command
+# $COMMAND forall $PARALLEL -c 'git status' || enable_connection_exit
+# end_command
 # print_single_separator
 # echo 'TEST: clowder herd'
 # begin_command
@@ -130,21 +130,21 @@ end_command
 # $COMMAND link || enable_connection_exit
 # end_command
 # print_single_separator
-echo 'TEST: clowder prune'
-begin_command
-$COMMAND prune branch || enable_connection_exit
-end_command
-print_single_separator
-echo 'TEST: clowder prune -r'
-begin_command
-$COMMAND prune -r branch && enable_connection_exit
-end_command
-print_single_separator
-echo 'TEST: clowder prune -a'
-begin_command
-$COMMAND prune -a branch && enable_connection_exit
-end_command
-print_single_separator
+# echo 'TEST: clowder prune'
+# begin_command
+# $COMMAND prune branch || enable_connection_exit
+# end_command
+# print_single_separator
+# echo 'TEST: clowder prune -r'
+# begin_command
+# $COMMAND prune -r branch && enable_connection_exit
+# end_command
+# print_single_separator
+# echo 'TEST: clowder prune -a'
+# begin_command
+# $COMMAND prune -a branch && enable_connection_exit
+# end_command
+# print_single_separator
 echo 'TEST: clowder repo add'
 begin_command
 $COMMAND repo add . || enable_connection_exit

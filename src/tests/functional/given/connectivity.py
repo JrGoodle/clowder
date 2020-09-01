@@ -1,7 +1,5 @@
 """New syntax test file"""
 
-from pathlib import Path
-
 # noinspection PyPackageRequirements
 from pytest_bdd import scenarios, given
 
@@ -11,6 +9,6 @@ scenarios('../../features')
 
 
 @given("the network connection is disabled")
-def given_network_connection_disabled(tmp_path: Path) -> None:
+def given_network_connection_disabled() -> None:
     result = util.disable_network_connection()
     assert result.returncode == 0
