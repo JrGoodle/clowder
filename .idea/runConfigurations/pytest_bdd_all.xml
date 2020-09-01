@@ -1,7 +1,0 @@
-<component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="pytest-bdd all" type="CompoundRunConfigurationType">
-    <toRun name="pytest-bdd all serial" type="tests" />
-    <toRun name="pytest-bdd parallel" type="tests" />
-    <method v="2" />
-  </configuration>
-</component>

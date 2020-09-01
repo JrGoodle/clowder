@@ -2,20 +2,20 @@
 Feature: clowder diff
 
     @help @success
-    Scenario: clowder diff help in empty directory
+    Scenario: diff help in empty directory
         Given test directory is empty
         When I run 'clowder diff -h' and 'clowder diff --help'
         Then the commands succeed
 
     @help @success
-    Scenario: clowder diff help with invalid clowder.yaml
+    Scenario: diff help with invalid clowder.yaml
         Given cats example is initialized to branch yaml-validation
         And linked test-empty-project clowder version
         When I run 'clowder diff -h' and 'clowder diff --help'
         Then the commands succeed
 
     @help @success @multiline
-    Scenario: clowder diff help with valid clowder.yaml
+    Scenario: diff help with valid clowder.yaml
         Given cats example is initialized
         When I run 'clowder diff -h' and 'clowder diff --help'
         # NOTE: This works, but PyCharm can't parse it
@@ -25,7 +25,7 @@ Feature: clowder diff
         Then the commands succeed
 
     @success
-    Scenario: clowder diff
+    Scenario: diff
         Given cats example is initialized and herded
         And created file catnip.txt in directory mu
         And project at mu has untracked file catnip.txt
@@ -40,7 +40,7 @@ Feature: clowder diff
 #        And TODO: check the output
 
     @success @offline
-    Scenario: clowder diff
+    Scenario: diff
         Given cats example is initialized and herded
         And the network connection is disabled
         And created file catnip.txt in directory mu

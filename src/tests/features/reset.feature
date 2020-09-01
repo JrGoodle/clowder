@@ -2,26 +2,26 @@
 Feature: clowder reset
 
     @help @success
-    Scenario: clowder reset help in empty directory
+    Scenario: reset help in empty directory
         Given test directory is empty
         When I run 'clowder reset -h' and 'clowder reset --help'
         Then the commands succeed
 
     @help @success
-    Scenario: clowder reset help with invalid clowder.yaml
+    Scenario: reset help with invalid clowder.yaml
         Given cats example is initialized to branch yaml-validation
         And linked test-empty-project clowder version
         When I run 'clowder reset -h' and 'clowder reset --help'
         Then the commands succeed
 
     @help @success
-    Scenario: clowder reset help with valid clowder.yaml
+    Scenario: reset help with valid clowder.yaml
         Given cats example is initialized
         When I run 'clowder reset -h' and 'clowder reset --help'
         Then the commands succeed
 
     @success
-    Scenario Outline: clowder reset behind
+    Scenario Outline: reset behind
         Given cats example is initialized and herded
         And project at <directory> is behind upstream <start_branch> by <number_commits>
         And project at <directory> is on <start_branch>
@@ -40,7 +40,7 @@ Feature: clowder reset
         | black-cats/june   | master       | master     | 1              |
 
     @success
-    Scenario Outline: clowder reset ahead
+    Scenario Outline: reset ahead
         Given cats example is initialized and herded
         And project at <directory> is ahead of upstream <start_branch> by <number_commits>
         And project at <directory> is on <start_branch>
@@ -59,7 +59,7 @@ Feature: clowder reset
         | black-cats/june   | master       | master     | 5              |
 
     @success
-    Scenario Outline: clowder reset behind ahead
+    Scenario Outline: reset behind ahead
         Given cats example is initialized and herded
         And project at <directory> is behind upstream <start_branch> by <number_behind> and ahead by <number_ahead>
         And project at <directory> is on <start_branch>
@@ -78,7 +78,7 @@ Feature: clowder reset
         | black-cats/june   | master       | master     | 5             | 1            |
 
     @success @parallel
-    Scenario Outline: clowder reset behind parallel
+    Scenario Outline: reset behind parallel
         Given cats example is initialized and herded
         And project at <directory> is behind upstream <start_branch> by <number_commits>
         And project at <directory> is on <start_branch>
@@ -97,7 +97,7 @@ Feature: clowder reset
         | black-cats/june   | master       | master     | 1              |
 
     @success @parallel
-    Scenario Outline: clowder reset ahead parallel
+    Scenario Outline: reset ahead parallel
         Given cats example is initialized and herded
         And project at <directory> is ahead of upstream <start_branch> by <number_commits>
         And project at <directory> is on <start_branch>
@@ -116,7 +116,7 @@ Feature: clowder reset
         | black-cats/june   | master       | master     | 5              |
 
     @success @parallel
-    Scenario Outline: clowder reset behind ahead parallel
+    Scenario Outline: reset behind ahead parallel
         Given cats example is initialized and herded
         And project at <directory> is behind upstream <start_branch> by <number_behind> and ahead by <number_ahead>
         And project at <directory> is on <start_branch>

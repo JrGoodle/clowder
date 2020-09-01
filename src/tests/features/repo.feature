@@ -2,26 +2,26 @@
 Feature: clowder repo command
 
     @help @success
-    Scenario: clowder repo help in empty directory
+    Scenario: repo help in empty directory
         Given test directory is empty
         When I run 'clowder repo -h' and 'clowder repo --help'
         Then the commands succeed
 
     @help @success
-    Scenario: clowder repo help with invalid clowder.yaml
+    Scenario: repo help with invalid clowder.yaml
         Given cats example is initialized to branch yaml-validation
         And linked test-empty-project clowder version
         When I run 'clowder repo -h' and 'clowder repo --help'
         Then the commands succeed
 
     @help @success
-    Scenario: clowder repo help with valid clowder.yaml
+    Scenario: repo help with valid clowder.yaml
         Given cats example is initialized
         When I run 'clowder repo -h' and 'clowder repo --help'
         Then the commands succeed
 
     @fail
-    Scenario: clowder repo add non-existing file
+    Scenario: repo add non-existing file
         Given cats example is initialized
         And .clowder/my-file file doesn't exist
         And repo at .clowder is clean
@@ -31,7 +31,7 @@ Feature: clowder repo command
         And repo at .clowder is clean
 
     @success
-    Scenario: clowder repo run create file
+    Scenario: repo run create file
         Given cats example is initialized
         And .clowder/my-file file doesn't exist
         And repo at .clowder is clean
@@ -41,7 +41,7 @@ Feature: clowder repo command
         And repo at .clowder is dirty
 
     @success
-    Scenario: clowder repo run delete file
+    Scenario: repo run delete file
         Given cats example is initialized
         And created file my-file in directory .clowder
         And repo at .clowder has untracked file my-file
@@ -52,7 +52,7 @@ Feature: clowder repo command
         And repo at .clowder is clean
 
     @success
-    Scenario: clowder repo checkout
+    Scenario: repo checkout
         Given cats example is initialized
         And repo at .clowder is on branch master
         And repo at .clowder has no local branch repo-test
@@ -63,7 +63,7 @@ Feature: clowder repo command
         And repo at .clowder is on branch repo-test
 
     @fail
-    Scenario: clowder repo checkout unknown branch
+    Scenario: repo checkout unknown branch
         Given cats example is initialized
         And repo at .clowder is on branch master
         And repo at .clowder has no local branch i-dont-exist
@@ -75,7 +75,7 @@ Feature: clowder repo command
         And repo at .clowder is on branch master
 
     @success
-    Scenario: clowder repo clean
+    Scenario: repo clean
         Given cats example is initialized
         And repo at .clowder is on branch master
         And created file my-staged-file in directory .clowder
@@ -88,7 +88,7 @@ Feature: clowder repo command
         And repo at .clowder is on branch master
 
     @success
-    Scenario: clowder repo status
+    Scenario: repo status
         Given cats example is initialized
         And created file my-staged-file in directory .clowder
         And repo at .clowder staged file my-staged-file

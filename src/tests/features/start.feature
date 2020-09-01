@@ -2,26 +2,26 @@
 Feature: clowder start
 
     @help @success
-    Scenario: clowder start help in empty directory
+    Scenario: start help in empty directory
         Given test directory is empty
         When I run 'clowder start -h' and 'clowder start --help'
         Then the commands succeed
 
     @help @success
-    Scenario: clowder start help with invalid clowder.yaml
+    Scenario: start help with invalid clowder.yaml
         Given cats example is initialized to branch yaml-validation
         And linked test-empty-project clowder version
         When I run 'clowder start -h' and 'clowder start --help'
         Then the commands succeed
 
     @help @success
-    Scenario: clowder start help with valid clowder.yaml
+    Scenario: start help with valid clowder.yaml
         Given cats example is initialized
         When I run 'clowder start -h' and 'clowder start --help'
         Then the commands succeed
 
     @success
-    Scenario Outline: clowder start local
+    Scenario Outline: start local
         Given cats example is initialized and herded
         And project at <directory> has no local branch <test_branch>
         And project at <directory> has no remote branch <test_branch>
@@ -42,7 +42,7 @@ Feature: clowder start
         | black-cats/june   | master       | new-branch | new-branch  |
 
     @success
-    Scenario Outline: clowder start local group excluded
+    Scenario Outline: start local group excluded
         Given cats example is initialized and herded
         And project at <directory> has no local branch <test_branch>
         And project at <directory> has no remote branch <test_branch>
@@ -59,7 +59,7 @@ Feature: clowder start
         | duke              | purr         | purr       | new-branch  |
 
     @success
-    Scenario Outline: clowder start local group included
+    Scenario Outline: start local group included
         Given cats example is initialized and herded
         And project at <directory> has no local branch <test_branch>
         And project at <directory> has no remote branch <test_branch>

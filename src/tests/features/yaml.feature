@@ -2,26 +2,26 @@
 Feature: clowder yaml
 
     @help @success
-    Scenario: clowder yaml help in empty directory
+    Scenario: yaml help in empty directory
         Given test directory is empty
         When I run 'clowder yaml -h' and 'clowder yaml --help'
         Then the commands succeed
 
     @help @success
-    Scenario: clowder yaml help with invalid clowder.yaml
+    Scenario: yaml help with invalid clowder.yaml
         Given cats example is initialized to branch yaml-validation
         And linked test-empty-project clowder version
         When I run 'clowder yaml -h' and 'clowder yaml --help'
         Then the commands succeed
 
     @help @success
-    Scenario: clowder yaml help with valid clowder.yaml
+    Scenario: yaml help with valid clowder.yaml
         Given cats example is initialized
         When I run 'clowder yaml -h' and 'clowder yaml --help'
         Then the commands succeed
 
     @success
-    Scenario: clowder yaml
+    Scenario: yaml
         Given cats example is initialized and herded
         And yaml test files were copied to clowder directory
         When I run 'clowder yaml' without debug output
@@ -29,7 +29,7 @@ Feature: clowder yaml
         And output matches contents of clowder-yaml.txt
 
     @success
-    Scenario: clowder yaml file
+    Scenario: yaml file
         Given cats example is initialized and herded
         And yaml test files were copied to clowder directory
         When I run 'clowder yaml -f' without debug output
@@ -37,7 +37,7 @@ Feature: clowder yaml
         And output matches contents of clowder-yaml-f.txt
 
     @success
-    Scenario: clowder yaml resolved
+    Scenario: yaml resolved
         Given cats example is initialized and herded
         And yaml test files were copied to clowder directory
         When I run 'clowder yaml -r' without debug output
@@ -45,7 +45,7 @@ Feature: clowder yaml
         And output matches contents of clowder-yaml-r.txt
 
     @fail
-    Scenario Outline: clowder yaml resolved with missing repos
+    Scenario Outline: yaml resolved with missing repos
         Given cats example is initialized
         And <directory> doesn't exist
         When I run 'clowder yaml -r'

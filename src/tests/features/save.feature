@@ -2,39 +2,39 @@
 Feature: clowder save command
 
     @help @success
-    Scenario: clowder save help in empty directory
+    Scenario: save help in empty directory
         Given test directory is empty
         When I run 'clowder save -h' and 'clowder save --help'
         Then the commands succeed
 
     @help @success
-    Scenario: clowder save help with invalid clowder.yaml
+    Scenario: save help with invalid clowder.yaml
         Given cats example is initialized to branch yaml-validation
         And linked test-empty-project clowder version
         When I run 'clowder save -h' and 'clowder save --help'
         Then the commands succeed
 
     @help @success
-    Scenario: clowder save help with valid clowder.yaml
+    Scenario: save help with valid clowder.yaml
         Given cats example is initialized
         When I run 'clowder save -h' and 'clowder save --help'
         Then the commands succeed
 
     @fail
-    Scenario: clowder save with missing directories
+    Scenario: save with missing directories
         Given cats example is initialized
         When I run 'clowder save my-new-version'
         Then the command fails
 
     @fail
-    Scenario: clowder save existing version
+    Scenario: save existing version
         Given cats example is initialized and herded
         And tags clowder version exists
         When I run 'clowder save tags'
         Then the command fails
 
     @fail
-    Scenario: clowder save default version
+    Scenario: save default version
         Given cats example is initialized and herded
         And default clowder version doesn't exist
         When I run 'clowder save default'
@@ -42,7 +42,7 @@ Feature: clowder save command
         Then the commands fail
 
     @success
-    Scenario: clowder save new version with no existing versions directory
+    Scenario: save new version with no existing versions directory
         Given cats example was initialized and herded to branch no-versions
         And default clowder version is linked
         And my-new-version clowder version doesn't exist
@@ -54,7 +54,7 @@ Feature: clowder save command
         And default clowder version is linked
 
     @success
-    Scenario: clowder save new version with existing versions directory
+    Scenario: save new version with existing versions directory
         Given cats example is initialized and herded
         And default clowder version is linked
         And my-new-version clowder version doesn't exist
@@ -65,7 +65,7 @@ Feature: clowder save command
 
     # FIXME: Should probably only allow [A-Za-z0-9-_]+
     @success
-    Scenario: clowder save new version with path separator in name
+    Scenario: save new version with path separator in name
         Given cats example is initialized and herded
         And default clowder version is linked
         And my-new-version clowder version doesn't exist

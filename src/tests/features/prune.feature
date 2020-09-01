@@ -2,26 +2,26 @@
 Feature: clowder prune
 
     @help @success
-    Scenario: clowder prune help in empty directory
+    Scenario: prune help in empty directory
         Given test directory is empty
         When I run 'clowder prune -h' and 'clowder prune --help'
         Then the commands succeed
 
     @help @success
-    Scenario: clowder prune help with invalid clowder.yaml
+    Scenario: prune help with invalid clowder.yaml
         Given cats example is initialized to branch yaml-validation
         And linked test-empty-project clowder version
         When I run 'clowder prune -h' and 'clowder prune --help'
         Then the commands succeed
 
     @help @success
-    Scenario: clowder prune help with valid clowder.yaml
+    Scenario: prune help with valid clowder.yaml
         Given cats example is initialized
         When I run 'clowder prune -h' and 'clowder prune --help'
         Then the commands succeed
 
     @success
-    Scenario Outline: clowder prune default existing local branch checked out
+    Scenario Outline: prune default existing local branch checked out
         Given cats example is initialized and herded
         And project at <directory> created <test_branch>
         And project at <directory> checked out <test_branch>
@@ -41,7 +41,7 @@ Feature: clowder prune
         | black-cats/june   | shrubs       | master     | shrubs      |
 
     @success
-    Scenario Outline: clowder prune default existing local branch checked out group selected
+    Scenario Outline: prune default existing local branch checked out group selected
         Given cats example is initialized and herded
         And project at <directory> created <test_branch>
         And project at <directory> checked out <test_branch>
@@ -57,7 +57,7 @@ Feature: clowder prune
         | duke      | shrubs       | purr       | shrubs      |
 
     @success
-    Scenario Outline: clowder prune default existing local branch checked out group not selected
+    Scenario Outline: prune default existing local branch checked out group not selected
         Given cats example is initialized and herded
         And project at <directory> created <test_branch>
         And project at <directory> checked out <test_branch>
@@ -75,7 +75,7 @@ Feature: clowder prune
         | black-cats/june   | shrubs       | shrubs     | shrubs      |
 
     @fail
-    Scenario Outline: clowder prune default existing local branch checked out fail not fully merged
+    Scenario Outline: prune default existing local branch checked out fail not fully merged
         Given cats example is initialized and herded
         And project at <directory> created <test_branch>
         And project at <directory> checked out <test_branch>
@@ -96,7 +96,7 @@ Feature: clowder prune
         | black-cats/june   | shrubs       | master     | shrubs      |
 
     @success
-    Scenario Outline: clowder prune force default existing local branch checked out not fully merged
+    Scenario Outline: prune force default existing local branch checked out not fully merged
         Given cats example is initialized and herded
         And project at <directory> created <test_branch>
         And project at <directory> checked out <test_branch>
@@ -117,7 +117,7 @@ Feature: clowder prune
         | black-cats/june   | shrubs       | master     | shrubs      |
 
     @success @offline
-    Scenario Outline: clowder prune offline
+    Scenario Outline: prune offline
         Given cats example is initialized and herded
         And the network connection is disabled
         And project at <directory> created <test_branch>
@@ -138,7 +138,7 @@ Feature: clowder prune
         | black-cats/june   | shrubs       | master     | shrubs      |
 
     @fail @offline
-    Scenario Outline: clowder prune remote offline
+    Scenario Outline: prune remote offline
         Given cats example is initialized and herded
         And project at <directory> has remote branch <test_branch>
         And the network connection is disabled
@@ -158,7 +158,7 @@ Feature: clowder prune
         | black-cats/june   | tracking_branch |
 
     @fail @offline
-    Scenario Outline: clowder prune all offline
+    Scenario Outline: prune all offline
         Given cats example is initialized and herded
         And project at <directory> has remote branch <test_branch>
         And project at <directory> has local branch <test_branch>

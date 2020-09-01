@@ -2,26 +2,26 @@
 Feature: clowder clean
 
     @help @success
-    Scenario: clowder clean help in empty directory
+    Scenario: clean help in empty directory
         Given test directory is empty
         When I run 'clowder clean -h' and 'clowder clean --help'
         Then the commands succeed
 
     @help @success
-    Scenario: clowder clean help with invalid clowder.yaml
+    Scenario: clean help with invalid clowder.yaml
         Given cats example is initialized to branch yaml-validation
         And linked test-empty-project clowder version
         When I run 'clowder clean -h' and 'clowder clean --help'
         Then the commands succeed
 
     @help @success
-    Scenario: clowder clean help with valid clowder.yaml
+    Scenario: clean help with valid clowder.yaml
         Given cats example is initialized
         When I run 'clowder clean -h' and 'clowder clean --help'
         Then the commands succeed
 
     @success @offline
-    Scenario: clowder clean offline
+    Scenario: clean offline
         Given cats example is initialized and herded
         And the network connection is disabled
         And created file something.txt in directory mu

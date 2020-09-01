@@ -2,26 +2,26 @@
 Feature: clowder checkout command
 
     @help @success
-    Scenario: clowder checkout help in empty directory
+    Scenario: checkout help in empty directory
         Given test directory is empty
         When I run 'clowder checkout -h' and 'clowder checkout --help'
         Then the commands succeed
 
     @help @success
-    Scenario: clowder checkout help with invalid clowder.yaml
+    Scenario: checkout help with invalid clowder.yaml
         Given cats example is initialized to branch yaml-validation
         And linked test-empty-project clowder version
         When I run 'clowder checkout -h' and 'clowder checkout --help'
         Then the commands succeed
 
     @help @success
-    Scenario: clowder checkout help with valid clowder.yaml
+    Scenario: checkout help with valid clowder.yaml
         Given cats example is initialized
         When I run 'clowder checkout -h' and 'clowder checkout --help'
         Then the commands succeed
 
     @success
-    Scenario Outline: clowder checkout default existing local branch
+    Scenario Outline: checkout default existing local branch
         Given cats example is initialized and herded
         And project at <directory> created <test_branch>
         And project at <directory> is on <start_branch>
@@ -35,7 +35,7 @@ Feature: clowder checkout command
         | duke              | purr         | other      | other       |
 
     @success
-    Scenario Outline: clowder checkout default existing local branch for project
+    Scenario Outline: checkout default existing local branch for project
         Given cats example is initialized and herded
         And project at <directory> created <test_branch>
         And project at <directory> is on <start_branch>
@@ -49,7 +49,7 @@ Feature: clowder checkout command
         | duke              | purr         | purr       | other       |
 
     @success
-    Scenario Outline: clowder checkout default no local branch
+    Scenario Outline: checkout default no local branch
         Given cats example is initialized and herded
         And project at <directory> is on <start_branch>
         And project at <directory> has no local branch <test_branch>
@@ -65,7 +65,7 @@ Feature: clowder checkout command
         | black-cats/june   | master       | master     | other       |
 
     @success @offline
-    Scenario Outline: clowder checkout offline
+    Scenario Outline: checkout offline
         Given cats example is initialized and herded
         And the network connection is disabled
         And project at <directory> is on <start_branch>

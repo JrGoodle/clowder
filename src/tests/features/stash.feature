@@ -2,26 +2,26 @@
 Feature: clowder stash
 
     @help @success
-    Scenario: clowder stash help in empty directory
+    Scenario: stash help in empty directory
         Given test directory is empty
         When I run 'clowder stash -h' and 'clowder stash --help'
         Then the commands succeed
 
     @help @success
-    Scenario: clowder stash help with invalid clowder.yaml
+    Scenario: stash help with invalid clowder.yaml
         Given cats example is initialized to branch yaml-validation
         And linked test-empty-project clowder version
         When I run 'clowder stash -h' and 'clowder stash --help'
         Then the commands succeed
 
     @help @success
-    Scenario: clowder stash help with valid clowder.yaml
+    Scenario: stash help with valid clowder.yaml
         Given cats example is initialized
         When I run 'clowder stash -h' and 'clowder stash --help'
         Then the commands succeed
 
     @success
-    Scenario Outline: clowder stash
+    Scenario Outline: stash
         Given cats example is initialized and herded
         And created <file_name> in <directory>
         And project at <directory> staged <file_name>
@@ -39,7 +39,7 @@ Feature: clowder stash
         | black-cats/june   | secret    |
 
     @success
-    Scenario Outline: clowder stash groups included
+    Scenario Outline: stash groups included
         Given cats example is initialized and herded
         And created <file_name> in <directory>
         And project at <directory> staged <file_name>
@@ -53,7 +53,7 @@ Feature: clowder stash
         | duke              | secret    |
 
     @success
-    Scenario Outline: clowder stash groups excluded
+    Scenario Outline: stash groups excluded
         Given cats example is initialized and herded
         And created <file_name> in <directory>
         And project at <directory> staged <file_name>

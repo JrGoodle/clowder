@@ -2,26 +2,26 @@
 Feature: clowder herd
 
     @help @success @cats
-    Scenario: clowder herd help in empty directory
+    Scenario: herd help in empty directory
         Given test directory is empty
         When I run 'clowder herd -h' and 'clowder herd --help'
         Then the commands succeed
 
     @help @success @cats
-    Scenario: clowder herd help with invalid clowder.yaml
+    Scenario: herd help with invalid clowder.yaml
         Given cats example is initialized to branch yaml-validation
         And linked test-empty-project clowder version
         When I run 'clowder herd -h' and 'clowder herd --help'
         Then the commands succeed
 
     @help @success @cats
-    Scenario: clowder herd help with valid clowder.yaml
+    Scenario: herd help with valid clowder.yaml
         Given cats example is initialized
         When I run 'clowder herd -h' and 'clowder herd --help'
         Then the commands succeed
 
     @success @cats
-    Scenario Outline: clowder herd default
+    Scenario Outline: herd default
         Given cats example is initialized
         And <directory> doesn't exist
         When I run 'clowder herd'
@@ -40,7 +40,7 @@ Feature: clowder herd
         | black-cats/june   | master |
 
     @commits @success @cats
-    Scenario Outline: clowder herd commits
+    Scenario Outline: herd commits
         Given cats example is initialized
         And <directory> doesn't exist
         And linked static-refs clowder version
@@ -61,7 +61,7 @@ Feature: clowder herd
         | black-cats/sasha  | 775979e0b1a7f753131bf16a4794c851c67108d8 |
 
     @tags @success @cats
-    Scenario Outline: clowder herd tags
+    Scenario Outline: herd tags
         Given cats example is initialized
         And <directory> doesn't exist
         And linked tags clowder version
@@ -91,7 +91,7 @@ Feature: clowder herd
         And project at mu has untracked file something.txt
 
     @success @submodules @cats
-    Scenario Outline: clowder herd submodules recursive enabled check projects
+    Scenario Outline: herd submodules recursive enabled check projects
         Given cats example is initialized
         And <directory> doesn't exist
         And linked submodules clowder version
@@ -111,7 +111,7 @@ Feature: clowder herd
         | black-cats/june   |
 
     @success @submodules @cats
-    Scenario Outline: clowder herd submodules recursive enabled check submodules
+    Scenario Outline: herd submodules recursive enabled check submodules
         Given cats example is initialized
         And <directory> doesn't exist
         And linked submodules clowder version
@@ -127,7 +127,7 @@ Feature: clowder herd
         | mu            | ash            |
 
     @success @submodules @cats
-    Scenario Outline: clowder herd submodules recursive enabled check recursive submodules
+    Scenario Outline: herd submodules recursive enabled check recursive submodules
         Given cats example is initialized
         And <directory> doesn't exist
         And linked submodules clowder version
@@ -143,7 +143,7 @@ Feature: clowder herd
         | mu            | ash/duffy      |
 
     @success @submodules @cats
-    Scenario Outline: clowder herd submodules disabled check non-submodules exist
+    Scenario Outline: herd submodules disabled check non-submodules exist
         Given cats example is initialized
         And <directory> doesn't exist
         And linked submodules-no-recurse clowder version
@@ -163,7 +163,7 @@ Feature: clowder herd
         | black-cats/june   |
 
     @success @submodules @cats
-    Scenario Outline: clowder herd submodules disabled check submodules don't exist
+    Scenario Outline: herd submodules disabled check submodules don't exist
         Given cats example is initialized
         And <directory> doesn't exist
         And linked submodules-no-recurse clowder version
@@ -178,7 +178,7 @@ Feature: clowder herd
 
     # TODO: Add tests for groups/projects
     @success @misc @upstream @ssh
-    Scenario Outline: clowder herd upstream remote urls ssh defaults
+    Scenario Outline: herd upstream remote urls ssh defaults
         Given misc example is initialized
         And <directory> doesn't exist
         When I run 'clowder herd'
@@ -199,7 +199,7 @@ Feature: clowder herd
 
     # TODO: Add tests for groups/projects
     @success @misc @upstream
-    Scenario Outline: clowder herd upstream remote urls https defaults
+    Scenario Outline: herd upstream remote urls https defaults
         Given misc example is initialized
         And linked https clowder version
         And <directory> doesn't exist
@@ -221,7 +221,7 @@ Feature: clowder herd
 
     # TODO: Add tests for groups/projects
     @success @misc @upstream @ssh
-    Scenario Outline: clowder herd upstream remote urls override ssh command line
+    Scenario Outline: herd upstream remote urls override ssh command line
         Given misc example is initialized
         And linked https clowder version
         And <directory> doesn't exist
@@ -243,7 +243,7 @@ Feature: clowder herd
 
     # TODO: Add tests for groups/projects
     @success @misc @upstream
-    Scenario Outline: clowder herd upstream remote urls override https command line
+    Scenario Outline: herd upstream remote urls override https command line
         Given misc example is initialized
         And <directory> doesn't exist
         When I run 'clowder herd -p https'
@@ -264,7 +264,7 @@ Feature: clowder herd
 
     # TODO: Add tests for groups/projects
     @success @misc @upstream @config @serial
-    Scenario Outline: clowder herd upstream remote urls override https config
+    Scenario Outline: herd upstream remote urls override https config
         Given misc example is initialized
         And <directory> doesn't exist
         And 'clowder config set protocol https' was run
@@ -286,7 +286,7 @@ Feature: clowder herd
 
     # TODO: Add tests for groups/projects
     @success @misc @upstream @config @ssh @serial
-    Scenario Outline: clowder herd upstream remote urls override ssh config
+    Scenario Outline: herd upstream remote urls override ssh config
         Given misc example is initialized
         And linked https clowder version
         And <directory> doesn't exist
@@ -310,7 +310,7 @@ Feature: clowder herd
     # TODO: Add tests for logic renaming remotes
 
     @success @misc @upstream
-    Scenario: clowder herd project with branch behind upstream
+    Scenario: herd project with branch behind upstream
         Given misc example is initialized and herded with https
         And project at gyp is on branch fork-branch
         And project at gyp is on commit bd11dd1c51ef17592384df927c47023071639f96
@@ -321,7 +321,7 @@ Feature: clowder herd
 
 #    FIXME: Figure out correct commits
 #    @commits @success @cats
-#    Scenario Outline: clowder herd saved version after init
+#    Scenario Outline: herd saved version after init
 #        Given cats example is initialized
 #        And linked v0.1 clowder version
 #        And <directory> doesn't exist
@@ -342,7 +342,7 @@ Feature: clowder herd
 #        | black-cats/sasha  | 775979e0b1a7f753131bf16a4794c851c67108d8 |
 
     @success @cats
-    Scenario Outline: clowder herd non-symlink yaml file
+    Scenario Outline: herd non-symlink yaml file
         Given cats example non-symlink yaml file exists
         And <directory> doesn't exist
         When I run 'clowder herd'
@@ -361,7 +361,7 @@ Feature: clowder herd
         | black-cats/june   | master |
 
     @success @cats @debug
-    Scenario Outline: clowder herd groups default included
+    Scenario Outline: herd groups default included
         Given cats example is initialized
         And linked groups clowder version
         And <directory> doesn't exist
@@ -380,7 +380,7 @@ Feature: clowder herd
         | black-cats/june   | master |
 
     @success @cats @debug
-    Scenario Outline: clowder herd groups default excluded
+    Scenario Outline: herd groups default excluded
         Given cats example is initialized
         And linked groups clowder version
         And <directory> doesn't exist
@@ -394,7 +394,7 @@ Feature: clowder herd
         | duke      |
 
     @success @cats @debug
-    Scenario Outline: clowder herd group black-cats included
+    Scenario Outline: herd group black-cats included
         Given cats example is initialized
         And linked groups clowder version
         And <directory> doesn't exist
@@ -412,7 +412,7 @@ Feature: clowder herd
         | black-cats/june   | master |
 
     @success @cats @debug
-    Scenario Outline: clowder herd group black-cats excluded
+    Scenario Outline: herd group black-cats excluded
         Given cats example is initialized
         And linked groups clowder version
         And <directory> doesn't exist
@@ -427,7 +427,7 @@ Feature: clowder herd
         | mu-cat    |
 
     @success @cats @debug
-    Scenario Outline: clowder herd group cats included
+    Scenario Outline: herd group cats included
         Given cats example is initialized
         And linked groups clowder version
         And <directory> doesn't exist
@@ -444,7 +444,7 @@ Feature: clowder herd
         | mu-cat    | knead  |
 
     @success @cats @debug
-    Scenario Outline: clowder herd group cats excluded
+    Scenario Outline: herd group cats excluded
         Given cats example is initialized
         And linked groups clowder version
         And <directory> doesn't exist
@@ -460,7 +460,7 @@ Feature: clowder herd
         | black-cats/june   |
 
     @success @cats @debug
-    Scenario Outline: clowder herd groups "cats black-cats"
+    Scenario Outline: herd groups "cats black-cats"
         Given cats example is initialized
         And linked groups clowder version
         And <directory> doesn't exist
@@ -481,7 +481,7 @@ Feature: clowder herd
         | black-cats/june   | master |
 
     @success @cats @debug
-    Scenario Outline: clowder herd project name jrgoodle/mu included
+    Scenario Outline: herd project name jrgoodle/mu included
         Given cats example is initialized
         And linked groups clowder version
         And <directory> doesn't exist
@@ -497,7 +497,7 @@ Feature: clowder herd
         | mu-cat    | knead  |
 
     @success @cats @debug
-    Scenario Outline: clowder herd project name jrgoodle/mu excluded
+    Scenario Outline: herd project name jrgoodle/mu excluded
         Given cats example is initialized
         And linked groups clowder version
         And <directory> doesn't exist
@@ -514,7 +514,7 @@ Feature: clowder herd
         | black-cats/june   |
 
     @success @cats @debug
-    Scenario Outline: clowder herd project path mu included
+    Scenario Outline: herd project path mu included
         Given cats example is initialized
         And linked groups clowder version
         And <directory> doesn't exist
@@ -529,7 +529,7 @@ Feature: clowder herd
         | mu        | knead  |
 
     @success @cats @debug
-    Scenario Outline: clowder herd project path mu excluded
+    Scenario Outline: herd project path mu excluded
         Given cats example is initialized
         And linked groups clowder version
         And <directory> doesn't exist
@@ -547,7 +547,7 @@ Feature: clowder herd
         | black-cats/june   |
 
     @success @cats @debug
-    Scenario Outline: clowder herd groups "all notdefault"
+    Scenario Outline: herd groups "all notdefault"
         Given cats example is initialized
         And linked groups clowder version
         And <directory> doesn't exist
@@ -568,7 +568,7 @@ Feature: clowder herd
         | black-cats/june   | master |
 
     @success @cats @debug
-    Scenario Outline: clowder herd groups "notdefault" included
+    Scenario Outline: herd groups "notdefault" included
         Given cats example is initialized
         And linked groups clowder version
         And <directory> doesn't exist
@@ -584,7 +584,7 @@ Feature: clowder herd
         | duke      | purr   |
 
     @success @cats @debug
-    Scenario Outline: clowder herd groups "notdefault" excluded
+    Scenario Outline: herd groups "notdefault" excluded
         Given cats example is initialized
         And linked groups clowder version
         And <directory> doesn't exist
@@ -601,7 +601,7 @@ Feature: clowder herd
         | black-cats/june   |
 
     @fail @cats @offline
-    Scenario Outline: clowder herd default offline
+    Scenario Outline: herd default offline
         Given cats example is initialized
         And <directory> doesn't exist
         And the network connection is disabled
