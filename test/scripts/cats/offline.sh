@@ -198,11 +198,11 @@ print_single_separator
 # $COMMAND repo status || enable_connection_exit
 # end_command
 # print_single_separator
-echo 'TEST: clowder save'
-begin_command
-$COMMAND save offline_version || enable_connection_exit
-end_command
-print_single_separator
+# echo 'TEST: clowder save'
+# begin_command
+# $COMMAND save offline_version || enable_connection_exit
+# end_command
+# print_single_separator
 echo 'TEST: clowder start'
 begin_command
 $COMMAND start local_branch || enable_connection_exit
@@ -218,11 +218,11 @@ begin_command
 $COMMAND start -t tracking_branch && enable_connection_exit
 end_command
 print_single_separator
-echo 'TEST: clowder stash'
-begin_command
-$COMMAND stash || enable_connection_exit
-end_command
-print_single_separator
+# echo 'TEST: clowder stash'
+# begin_command
+# $COMMAND stash || enable_connection_exit
+# end_command
+# print_single_separator
 echo 'TEST: clowder status'
 begin_command
 $COMMAND status || enable_connection_exit

@@ -360,7 +360,7 @@ Feature: clowder herd
         | black-cats/sasha  | master |
         | black-cats/june   | master |
 
-    @success @cats @debug
+    @success @cats
     Scenario Outline: herd groups default included
         Given cats example is initialized
         And linked groups clowder version
@@ -379,7 +379,7 @@ Feature: clowder herd
         | black-cats/sasha  | master |
         | black-cats/june   | master |
 
-    @success @cats @debug
+    @success @cats
     Scenario Outline: herd groups default excluded
         Given cats example is initialized
         And linked groups clowder version
@@ -393,7 +393,7 @@ Feature: clowder herd
         | mu        |
         | duke      |
 
-    @success @cats @debug
+    @success @cats
     Scenario Outline: herd group black-cats included
         Given cats example is initialized
         And linked groups clowder version
@@ -411,7 +411,7 @@ Feature: clowder herd
         | black-cats/sasha  | master |
         | black-cats/june   | master |
 
-    @success @cats @debug
+    @success @cats
     Scenario Outline: herd group black-cats excluded
         Given cats example is initialized
         And linked groups clowder version
@@ -426,7 +426,7 @@ Feature: clowder herd
         | duke      |
         | mu-cat    |
 
-    @success @cats @debug
+    @success @cats
     Scenario Outline: herd group cats included
         Given cats example is initialized
         And linked groups clowder version
@@ -443,7 +443,7 @@ Feature: clowder herd
         | duke      | purr   |
         | mu-cat    | knead  |
 
-    @success @cats @debug
+    @success @cats
     Scenario Outline: herd group cats excluded
         Given cats example is initialized
         And linked groups clowder version
@@ -459,7 +459,7 @@ Feature: clowder herd
         | black-cats/sasha  |
         | black-cats/june   |
 
-    @success @cats @debug
+    @success @cats
     Scenario Outline: herd groups "cats black-cats"
         Given cats example is initialized
         And linked groups clowder version
@@ -480,7 +480,7 @@ Feature: clowder herd
         | black-cats/sasha  | master |
         | black-cats/june   | master |
 
-    @success @cats @debug
+    @success @cats
     Scenario Outline: herd project name jrgoodle/mu included
         Given cats example is initialized
         And linked groups clowder version
@@ -496,7 +496,7 @@ Feature: clowder herd
         | mu        | knead  |
         | mu-cat    | knead  |
 
-    @success @cats @debug
+    @success @cats
     Scenario Outline: herd project name jrgoodle/mu excluded
         Given cats example is initialized
         And linked groups clowder version
@@ -513,7 +513,7 @@ Feature: clowder herd
         | black-cats/sasha  |
         | black-cats/june   |
 
-    @success @cats @debug
+    @success @cats
     Scenario Outline: herd project path mu included
         Given cats example is initialized
         And linked groups clowder version
@@ -528,7 +528,7 @@ Feature: clowder herd
         | directory | branch |
         | mu        | knead  |
 
-    @success @cats @debug
+    @success @cats
     Scenario Outline: herd project path mu excluded
         Given cats example is initialized
         And linked groups clowder version
@@ -546,7 +546,7 @@ Feature: clowder herd
         | black-cats/sasha  |
         | black-cats/june   |
 
-    @success @cats @debug
+    @success @cats
     Scenario Outline: herd groups "all notdefault"
         Given cats example is initialized
         And linked groups clowder version
@@ -567,7 +567,7 @@ Feature: clowder herd
         | black-cats/sasha  | master |
         | black-cats/june   | master |
 
-    @success @cats @debug
+    @success @cats
     Scenario Outline: herd groups "notdefault" included
         Given cats example is initialized
         And linked groups clowder version
@@ -583,7 +583,7 @@ Feature: clowder herd
         | mu        | knead  |
         | duke      | purr   |
 
-    @success @cats @debug
+    @success @cats
     Scenario Outline: herd groups "notdefault" excluded
         Given cats example is initialized
         And linked groups clowder version
