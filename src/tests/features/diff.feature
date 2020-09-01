@@ -38,3 +38,18 @@ Feature: clowder diff
         And I run 'clowder diff black-cats cats all'
         Then project at mu has untracked file catnip.txt
 #        And TODO: check the output
+
+    @success @offline
+    Scenario: clowder diff
+        Given cats example is initialized and herded
+        And the network connection is disabled
+        And created file catnip.txt in directory mu
+        And project at mu has untracked file catnip.txt
+        When I run 'clowder diff'
+        And I run 'clowder diff jrgoodle/kishka'
+        And I run 'clowder diff jrgoodle/mu jrgoodle/duke'
+        And I run 'clowder diff' jrgoodle/mu jrgoodle/duke jrgoodle/kit'
+        And I run 'clowder diff black-cats'
+        And I run 'clowder diff black-cats cats'
+        And I run 'clowder diff black-cats cats all'
+        Then project at mu has untracked file catnip.txt

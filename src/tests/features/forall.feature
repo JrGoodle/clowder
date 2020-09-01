@@ -191,3 +191,10 @@ Feature: clowder forall
         And I run 'clowder forall gyp -c "if [ $UPSTREAM_REMOTE != upstream ]; then exit 1; fi"'
         And I run 'clowder forall gyp -c "if [ $UPSTREAM_REF != refs/heads/master ]; then exit 1; fi"'
         Then the commands succeed
+
+    @success @cats @offline
+    Scenario: clowder forall offline
+        Given cats example is initialized and herded
+        And the network connection is disabled
+        When I run 'clowder forall -c "git status"'
+        Then the commands succeed

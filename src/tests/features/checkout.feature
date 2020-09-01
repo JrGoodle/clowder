@@ -63,3 +63,19 @@ Feature: clowder checkout command
         | black-cats/kit    | master       | master     | other       |
         | black-cats/sasha  | master       | master     | other       |
         | black-cats/june   | master       | master     | other       |
+
+    @success @offline
+    Scenario Outline: clowder checkout offline
+        Given cats example is initialized and herded
+        And the network connection is disabled
+        And project at <directory> is on <start_branch>
+        And project at <directory> has no local branch <test_branch>
+        When I run 'clowder checkout new-branch'
+        Then the command succeeds
+        And project at <directory> has local branch <test_branch>
+        And project at <directory> is on <end_branch>
+
+                Examples:
+        | directory         | start_branch | end_branch | test_branch |
+        | mu                | knead        | new-branch | new-branch  |
+        | duke              | purr         | new-branch | new-branch  |

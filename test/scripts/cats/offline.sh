@@ -81,55 +81,55 @@ end_command
 # echo ''
 disable_network_connection
 
-print_single_separator
-echo 'TEST: clowder branch'
-begin_command
-$COMMAND branch || enable_connection_exit
-end_command
-print_single_separator
-echo 'TEST: clowder branch -r'
-begin_command
-$COMMAND branch -r || enable_connection_exit
-end_command
-print_single_separator
-echo 'TEST: clowder branch -a'
-begin_command
-$COMMAND branch -a || enable_connection_exit
-end_command
-print_single_separator
-echo 'TEST: clowder checkout'
-begin_command
-$COMMAND checkout branch_name || enable_connection_exit
-end_command
-print_single_separator
-echo 'TEST: clowder clean'
-begin_command
-$COMMAND clean || enable_connection_exit
-end_command
-print_single_separator
-echo 'TEST: clowder diff'
-begin_command
-$COMMAND diff || enable_connection_exit
-end_command
-print_single_separator
+# print_single_separator
+# echo 'TEST: clowder branch'
+# begin_command
+# $COMMAND branch || enable_connection_exit
+# end_command
+# print_single_separator
+# echo 'TEST: clowder branch -r'
+# begin_command
+# $COMMAND branch -r || enable_connection_exit
+# end_command
+# print_single_separator
+# echo 'TEST: clowder branch -a'
+# begin_command
+# $COMMAND branch -a || enable_connection_exit
+# end_command
+# print_single_separator
+# echo 'TEST: clowder checkout'
+# begin_command
+# $COMMAND checkout branch_name || enable_connection_exit
+# end_command
+# print_single_separator
+# echo 'TEST: clowder clean'
+# begin_command
+# $COMMAND clean || enable_connection_exit
+# end_command
+# print_single_separator
+# echo 'TEST: clowder diff'
+# begin_command
+# $COMMAND diff || enable_connection_exit
+# end_command
+# print_single_separator
 echo 'TEST: clowder forall'
 begin_command
 $COMMAND forall $PARALLEL -c 'git status' || enable_connection_exit
 end_command
-print_single_separator
-echo 'TEST: clowder herd'
-begin_command
-$COMMAND herd && enable_connection_exit
-end_command
-print_single_separator
-echo 'TEST: clowder link'
-begin_command
-$COMMAND link v0.1 || enable_connection_exit
-end_command
-begin_command
-$COMMAND link || enable_connection_exit
-end_command
-print_single_separator
+# print_single_separator
+# echo 'TEST: clowder herd'
+# begin_command
+# $COMMAND herd && enable_connection_exit
+# end_command
+# print_single_separator
+# echo 'TEST: clowder link'
+# begin_command
+# $COMMAND link v0.1 || enable_connection_exit
+# end_command
+# begin_command
+# $COMMAND link || enable_connection_exit
+# end_command
+# print_single_separator
 echo 'TEST: clowder prune'
 begin_command
 $COMMAND prune branch || enable_connection_exit

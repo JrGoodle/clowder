@@ -119,3 +119,21 @@ Feature: clowder link command
         And .clowder symlink exists
         And clowder.yml symlink doesn't exist
         And clowder.yaml is a symlink pointing to .clowder/clowder.yaml
+
+    @success @offline
+    Scenario: clowder link default version offline
+        Given cats example is initialized
+        And linked tags clowder version
+        And the network connection is disabled
+        When I run 'clowder link'
+        Then the command succeeds
+        And default clowder version is linked
+
+    @success @offline
+    Scenario: clowder link version offline
+        Given cats example is initialized
+        And default clowder version is linked
+        And the network connection is disabled
+        When I run 'clowder link tags'
+        Then the command succeeds
+        And tags clowder version is linked
