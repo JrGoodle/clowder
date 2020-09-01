@@ -28,9 +28,9 @@ Feature: clowder status
         And created file catnip.txt in directory mu
         And project at mu has untracked file catnip.txt
         When I run 'clowder status'
-        And I run 'clowder status jrgoodle/kishka'
-        And I run 'clowder status jrgoodle/mu jrgoodle/duke'
-        And I run 'clowder status jrgoodle/mu jrgoodle/duke jrgoodle/kit'
+        And I run 'clowder status JrGoodle/kishka'
+        And I run 'clowder status JrGoodle/mu JrGoodle/duke'
+        And I run 'clowder status JrGoodle/mu JrGoodle/duke JrGoodle/kit'
         And I run 'clowder status black-cats'
         And I run 'clowder status black-cats cats'
         And I run 'clowder status black-cats cats all'
@@ -44,9 +44,9 @@ Feature: clowder status
         And created file catnip.txt in directory mu
         And project at mu has untracked file catnip.txt
         When I run 'clowder status -f'
-        And I run 'clowder status -f jrgoodle/kishka'
-        And I run 'clowder status -f jrgoodle/mu jrgoodle/duke'
-        And I run 'clowder status -f jrgoodle/mu jrgoodle/duke jrgoodle/kit'
+        And I run 'clowder status -f JrGoodle/kishka'
+        And I run 'clowder status -f JrGoodle/mu JrGoodle/duke'
+        And I run 'clowder status -f JrGoodle/mu JrGoodle/duke JrGoodle/kit'
         And I run 'clowder status -f black-cats'
         And I run 'clowder status -f black-cats cats'
         And I run 'clowder status -f black-cats cats all'
@@ -61,9 +61,9 @@ Feature: clowder status
         And project at mu has untracked file catnip.txt
         When the network connection is disabled
         And I run 'clowder status'
-        And I run 'clowder status jrgoodle/kishka'
-        And I run 'clowder status jrgoodle/mu jrgoodle/duke'
-        And I run 'clowder status jrgoodle/mu jrgoodle/duke jrgoodle/kit'
+        And I run 'clowder status JrGoodle/kishka'
+        And I run 'clowder status JrGoodle/mu JrGoodle/duke'
+        And I run 'clowder status JrGoodle/mu JrGoodle/duke JrGoodle/kit'
         And I run 'clowder status black-cats'
         And I run 'clowder status black-cats cats'
         And I run 'clowder status black-cats cats all'
@@ -78,9 +78,9 @@ Feature: clowder status
         And project at mu has untracked file catnip.txt
         When the network connection is disabled
         And I run 'clowder status -f'
-        And I run 'clowder status -f jrgoodle/kishka'
-        And I run 'clowder status -f jrgoodle/mu jrgoodle/duke'
-        And I run 'clowder status -f jrgoodle/mu jrgoodle/duke jrgoodle/kit'
+        And I run 'clowder status -f JrGoodle/kishka'
+        And I run 'clowder status -f JrGoodle/mu JrGoodle/duke'
+        And I run 'clowder status -f JrGoodle/mu JrGoodle/duke JrGoodle/kit'
         And I run 'clowder status -f black-cats'
         And I run 'clowder status -f black-cats cats'
         And I run 'clowder status -f black-cats cats all'

@@ -481,11 +481,11 @@ Feature: clowder herd
         | black-cats/june   | master |
 
     @success @cats
-    Scenario Outline: herd project name jrgoodle/mu included
+    Scenario Outline: herd project name JrGoodle/mu included
         Given cats example is initialized
         And linked groups clowder version
         And <directory> doesn't exist
-        When I run 'clowder herd jrgoodle/mu'
+        When I run 'clowder herd JrGoodle/mu'
         Then the command succeeds
         And project at <directory> is a git repository
         And project at <directory> is on <branch>
@@ -497,11 +497,11 @@ Feature: clowder herd
         | mu-cat    | knead  |
 
     @success @cats
-    Scenario Outline: herd project name jrgoodle/mu excluded
+    Scenario Outline: herd project name JrGoodle/mu excluded
         Given cats example is initialized
         And linked groups clowder version
         And <directory> doesn't exist
-        When I run 'clowder herd jrgoodle/mu'
+        When I run 'clowder herd JrGoodle/mu'
         Then the command succeeds
         And <directory> doesn't exist
 

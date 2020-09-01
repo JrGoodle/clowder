@@ -75,7 +75,7 @@ Feature: clowder forall
     Scenario Outline: forall projects
         Given cats example is initialized and herded
         And project at <directory> is on <start_branch>
-        When I run 'clowder forall jrgoodle/mu jrgoodle/duke -c "git checkout -b v0.1"'
+        When I run 'clowder forall JrGoodle/mu JrGoodle/duke -c "git checkout -b v0.1"'
         Then the command succeeds
         And project at <directory> is on <end_branch>
 
@@ -91,12 +91,12 @@ Feature: clowder forall
     @success @cats
     Scenario: forall environment variables
         Given cats example is initialized and herded
-        When I run 'clowder forall jrgoodle/kit -c "if [ $PROJECT_NAME != jrgoodle/kit ]; then exit 1; fi"'
-        And I run 'clowder forall jrgoodle/kit -c "if [ $PROJECT_REMOTE != origin ]; then exit 1; fi"'
-        And I run 'clowder forall jrgoodle/kit -c "if [ $PROJECT_REF != refs/heads/master ]; then exit 1; fi"'
-        And I run 'clowder forall jrgoodle/duke -c "if [ $PROJECT_NAME != jrgoodle/duke ]; then exit 1; fi"'
-        And I run 'clowder forall jrgoodle/duke -c "if [ $PROJECT_REMOTE != origin ]; then exit 1; fi"'
-        And I run 'clowder forall jrgoodle/duke -c "if [ $PROJECT_REF != refs/heads/purr ]; then exit 1; fi"'
+        When I run 'clowder forall JrGoodle/kit -c "if [ $PROJECT_NAME != JrGoodle/kit ]; then exit 1; fi"'
+        And I run 'clowder forall JrGoodle/kit -c "if [ $PROJECT_REMOTE != origin ]; then exit 1; fi"'
+        And I run 'clowder forall JrGoodle/kit -c "if [ $PROJECT_REF != refs/heads/master ]; then exit 1; fi"'
+        And I run 'clowder forall JrGoodle/duke -c "if [ $PROJECT_NAME != JrGoodle/duke ]; then exit 1; fi"'
+        And I run 'clowder forall JrGoodle/duke -c "if [ $PROJECT_REMOTE != origin ]; then exit 1; fi"'
+        And I run 'clowder forall JrGoodle/duke -c "if [ $PROJECT_REF != refs/heads/purr ]; then exit 1; fi"'
         Then the commands succeed
 
     @fail @cats
@@ -141,12 +141,12 @@ Feature: clowder forall
     Scenario: forall script environment
         Given cats example is initialized and herded
         And forall test scripts were copied to the project directories
-        When I run 'clowder forall jrgoodle/kit -c "./test_forall_env_kit.sh"'
-        And I run 'clowder forall jrgoodle/duke -c "./test_forall_env_duke.sh"'
-        And I run 'clowder forall jrgoodle/kit -c "./test_forall_env_kit.sh"' in directory mu
-        And I run 'clowder forall jrgoodle/duke -c "./test_forall_env_duke.sh"' in directory duke
-        And I run 'clowder forall jrgoodle/kit -c "./test_forall_env_kit.sh"' in directory black-cats/june
-        And I run 'clowder forall jrgoodle/duke -c "./test_forall_env_duke.sh"' in directory black-cats/sasha
+        When I run 'clowder forall JrGoodle/kit -c "./test_forall_env_kit.sh"'
+        And I run 'clowder forall JrGoodle/duke -c "./test_forall_env_duke.sh"'
+        And I run 'clowder forall JrGoodle/kit -c "./test_forall_env_kit.sh"' in directory mu
+        And I run 'clowder forall JrGoodle/duke -c "./test_forall_env_duke.sh"' in directory duke
+        And I run 'clowder forall JrGoodle/kit -c "./test_forall_env_kit.sh"' in directory black-cats/june
+        And I run 'clowder forall JrGoodle/duke -c "./test_forall_env_duke.sh"' in directory black-cats/sasha
         Then the commands succeed
 
     @fail @cats

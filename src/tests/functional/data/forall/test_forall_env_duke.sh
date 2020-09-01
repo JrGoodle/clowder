@@ -12,7 +12,7 @@
 # fi
 
 echo "PROJECT_NAME = $PROJECT_NAME"
-if [ $PROJECT_NAME != "jrgoodle/duke" ]; then
+if [ $PROJECT_NAME != "JrGoodle/duke" ]; then
     exit 1
 fi
 

@@ -59,16 +59,16 @@ class ProjectTest(unittest.TestCase):
     def test_member_variables(self):
         """Test the state of all project member variables initialized"""
 
-        self.assertEqual(self.kit_project.name, 'jrgoodle/kit')
+        self.assertEqual(self.kit_project.name, 'JrGoodle/kit')
         self.assertEqual(self.kit_project.path, 'black-cats/kit')
         self.assertEqual(self.kit_project.ref, 'f2e20031ddce5cb097105f4d8ccbc77f4ac20709')
         self.assertEqual(self.kit_project.remote, 'origin')
-        self.assertEqual(self.kit_project._url(), 'git@github.com:jrgoodle/kit.git')
+        self.assertEqual(self.kit_project._url(), 'git@github.com:JrGoodle/kit.git')
 
     def test_get_yaml(self):
         """Test get_yaml() method"""
 
-        project_yaml = {'name': 'jrgoodle/kit',
+        project_yaml = {'name': 'JrGoodle/kit',
                         'path': 'black-cats/kit',
                         'depth': 0,
                         'recursive': False,

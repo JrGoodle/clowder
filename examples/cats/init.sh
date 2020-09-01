@@ -8,8 +8,8 @@ fi
 
 declare -f begin_command > /dev/null && begin_command
 if [ -n "$CIRCLECI" ]; then
-    $COMMAND init git@github.com:jrgoodle/cats.git || exit 1
+    $COMMAND init git@github.com:JrGoodle/cats.git || exit 1
 else
-    $COMMAND init https://github.com/jrgoodle/cats.git || exit 1
+    $COMMAND init https://github.com/JrGoodle/cats.git || exit 1
 fi
 declare -f end_command > /dev/null && end_command

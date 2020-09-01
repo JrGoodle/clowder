@@ -34,7 +34,7 @@ test_script:
   # to put the Python version you want to use on PATH.
   # - "build.cmd %PYTHON%\\python.exe src\\setup.py"
   - cd examples\cats
-  - coverage run --rcfile=%APPVEYOR_BUILD_FOLDER%\.coveragerc -m clowder.clowder_app init https://github.com/jrgoodle/cats.git
+  - coverage run --rcfile=%APPVEYOR_BUILD_FOLDER%\.coveragerc -m clowder.clowder_app init https://github.com/JrGoodle/cats.git
   - coverage run --rcfile=%APPVEYOR_BUILD_FOLDER%\.coveragerc -m clowder.clowder_app herd
   - coverage run --rcfile=%APPVEYOR_BUILD_FOLDER%\.coveragerc -m clowder.clowder_app herd --parallel
   - coverage run --rcfile=%APPVEYOR_BUILD_FOLDER%\.coveragerc -m clowder.clowder_app status

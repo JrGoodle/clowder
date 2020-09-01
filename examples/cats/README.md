@@ -1,6 +1,6 @@
 # cats Example
 
-Run [init.sh](init.sh) script to set up clowder directory for cat repos. Clones from https://github.com/jrgoodle/cats.git
+Run [init.sh](init.sh) script to set up clowder directory for cat repos. Clones from https://github.com/JrGoodle/cats.git
 
 [clean.sh](clean.sh) will clean up cloned files
 

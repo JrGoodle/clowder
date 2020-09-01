@@ -30,9 +30,9 @@ Feature: clowder diff
         And created file catnip.txt in directory mu
         And project at mu has untracked file catnip.txt
         When I run 'clowder diff'
-        And I run 'clowder diff jrgoodle/kishka'
-        And I run 'clowder diff jrgoodle/mu jrgoodle/duke'
-        And I run 'clowder diff' jrgoodle/mu jrgoodle/duke jrgoodle/kit'
+        And I run 'clowder diff JrGoodle/kishka'
+        And I run 'clowder diff JrGoodle/mu JrGoodle/duke'
+        And I run 'clowder diff' JrGoodle/mu JrGoodle/duke JrGoodle/kit'
         And I run 'clowder diff black-cats'
         And I run 'clowder diff black-cats cats'
         And I run 'clowder diff black-cats cats all'
@@ -47,9 +47,9 @@ Feature: clowder diff
         And project at mu has untracked file catnip.txt
         When the network connection is disabled
         And I run 'clowder diff'
-        And I run 'clowder diff jrgoodle/kishka'
-        And I run 'clowder diff jrgoodle/mu jrgoodle/duke'
-        And I run 'clowder diff jrgoodle/mu jrgoodle/duke jrgoodle/kit'
+        And I run 'clowder diff JrGoodle/kishka'
+        And I run 'clowder diff JrGoodle/mu JrGoodle/duke'
+        And I run 'clowder diff JrGoodle/mu JrGoodle/duke JrGoodle/kit'
         And I run 'clowder diff black-cats'
         And I run 'clowder diff black-cats cats'
         And I run 'clowder diff black-cats cats all'

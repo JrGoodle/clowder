@@ -97,16 +97,16 @@ test_herd_implicit_defaults() {
         pushd $project || exit 1
         test_branch master
         local name=${project#"black-cats/"}
-        test_remote_url 'origin' "https://github.com/jrgoodle/$name.git"
+        test_remote_url 'origin' "https://github.com/JrGoodle/$name.git"
         popd || exit 1
     done
     pushd mu || exit 1
     test_branch knead
-    test_remote_url 'origin' "https://github.com/jrgoodle/mu.git"
+    test_remote_url 'origin' "https://github.com/JrGoodle/mu.git"
     popd || exit 1
     pushd duke || exit 1
     test_branch heads/purr
-    test_remote_url 'origin' "https://github.com/jrgoodle/duke.git"
+    test_remote_url 'origin' "https://github.com/JrGoodle/duke.git"
     popd || exit 1
 
 }
@@ -331,7 +331,7 @@ test_herd_projects() {
     $COMMAND herd "$@" $PARALLEL || exit 1
     end_command
 }
-test_herd_projects 'jrgoodle/kit' 'jrgoodle/kishka'
+test_herd_projects 'JrGoodle/kit' 'JrGoodle/kishka'
 
 begin_command
 $COMMAND repo checkout master || exit 1

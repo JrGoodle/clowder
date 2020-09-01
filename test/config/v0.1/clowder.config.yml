@@ -5,7 +5,6 @@ clowder_configs:
     clowder_dir: DIRECTORY_PLACEHOLDER
     defaults:
       jobs: 4
-      projects: [jrgoodle/kit, jrgoodle/kishka]
+      projects: [JrGoodle/kit, JrGoodle/kishka]
       protocol: https
       rebase: true
-

@@ -118,7 +118,7 @@ test_clean_projects() {
         popd || exit 1
     done
 }
-test_clean_projects 'jrgoodle/duke' 'jrgoodle/mu'
+test_clean_projects 'JrGoodle/duke' 'JrGoodle/mu'
 
 test_clean_all() {
     print_single_separator

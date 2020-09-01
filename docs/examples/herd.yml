@@ -149,9 +149,9 @@ records:
   - delay: 175
     content: "\e[36mclowder.yml\e[0m -> \e[36m.clowder/clowder.yml\e[0m\r\n\r\n"
   - delay: 175
-    content: "\e[32mjrgoodle/duke\e[0m\r\n"
+    content: "\e[32mJrGoodle/duke\e[0m\r\n"
   - delay: 175
-    content: " - Initialize repo at \e[36m/Users/jrgoodle/duke\e[0m\r\n"
+    content: " - Initialize repo at \e[36m/Users/JrGoodle/duke\e[0m\r\n"
   - delay: 23
     content: " - Create remote \e[33morigin\e[0m\r\n"
   - delay: 8
@@ -181,7 +181,7 @@ records:
   - delay: 7
     content: "Unpacking objects: 100% (9/9), 742 bytes | 148.00 KiB/s, done.\r\n"
   - delay: 10
-    content: "From github.com:jrgoodle/duke\r\n"
+    content: "From github.com:JrGoodle/duke\r\n"
   - delay: 23
     content: " * [new branch]      alt-branch                       -> origin/alt-branch\r\n"
   - delay: 23
@@ -205,9 +205,9 @@ records:
   - delay: 10
     content: " - Update git herd alias\r\n"
   - delay: 14
-    content: "\e[32mjrgoodle/kishka\e[0m\r\n"
+    content: "\e[32mJrGoodle/kishka\e[0m\r\n"
   - delay: 23
-    content: " - Initialize repo at \e[36m/Users/jrgoodle/kishka\e[0m\r\n"
+    content: " - Initialize repo at \e[36m/Users/JrGoodle/kishka\e[0m\r\n"
   - delay: 15
     content: " - Create remote \e[33morigin\e[0m\r\n"
   - delay: 8
@@ -249,7 +249,7 @@ records:
   - delay: 7
     content: "Unpacking objects: 100% (15/15), 1.17 KiB | 133.00 KiB/s, done.\r\n"
   - delay: 12
-    content: "From github.com:jrgoodle/kishka\r\n"
+    content: "From github.com:JrGoodle/kishka\r\n"
   - delay: 23
     content: " * [new branch]      alt-branch                       -> origin/alt-branch\r\n"
   - delay: 23
@@ -285,9 +285,9 @@ records:
   - delay: 11
     content: " - Update git herd alias\r\n"
   - delay: 15
-    content: "\e[32mjrgoodle/kit\e[0m\r\n"
+    content: "\e[32mJrGoodle/kit\e[0m\r\n"
   - delay: 23
-    content: " - Initialize repo at \e[36m/Users/jrgoodle/kit\e[0m\r\n"
+    content: " - Initialize repo at \e[36m/Users/JrGoodle/kit\e[0m\r\n"
   - delay: 16
     content: " - Create remote \e[33morigin\e[0m\r\n"
   - delay: 9
@@ -333,7 +333,7 @@ records:
   - delay: 7
     content: "Unpacking objects: 100% (17/17), 1.64 KiB | 168.00 KiB/s, done.\r\n"
   - delay: 11
-    content: "From github.com:jrgoodle/kit\r\n"
+    content: "From github.com:JrGoodle/kit\r\n"
   - delay: 23
     content: " * [new branch]      alt-branch                       -> origin/alt-branch\r\n"
   - delay: 23
@@ -369,9 +369,9 @@ records:
   - delay: 10
     content: " - Update git herd alias\r\n"
   - delay: 15
-    content: "\e[32mjrgoodle/mu\e[0m\r\n"
+    content: "\e[32mJrGoodle/mu\e[0m\r\n"
   - delay: 23
-    content: " - Initialize repo at \e[36m/Users/jrgoodle/mu\e[0m\r\n"
+    content: " - Initialize repo at \e[36m/Users/JrGoodle/mu\e[0m\r\n"
   - delay: 15
     content: " - Create remote \e[33morigin\e[0m\r\n"
   - delay: 8
@@ -445,7 +445,7 @@ records:
   - delay: 7
     content: "Unpacking objects: 100% (31/31), 3.84 KiB | 206.00 KiB/s, done.\r\n"
   - delay: 12
-    content: "From github.com:jrgoodle/mu\r\n"
+    content: "From github.com:JrGoodle/mu\r\n"
   - delay: 23
     content: " * [new branch]      alt-branch                       -> origin/alt-branch\r\n"
   - delay: 23

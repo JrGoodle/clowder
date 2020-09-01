@@ -47,7 +47,7 @@ test_init_existing_clowder() {
     print_single_separator
     echo "TEST: Fail init with existing .clowder directory in current working directory"
     begin_command
-    $COMMAND init https://github.com/jrgoodle/cats.git && exit 1
+    $COMMAND init https://github.com/JrGoodle/cats.git && exit 1
     end_command
 }
 test_init_existing_clowder
@@ -57,7 +57,7 @@ test_init_existing_clowder_parent() {
     echo "TEST: Successfully init with existing .clowder directory in parent directory"
     pushd mu || exit 1
     begin_command
-    $COMMAND init https://github.com/jrgoodle/cats.git || exit 1
+    $COMMAND init https://github.com/JrGoodle/cats.git || exit 1
     end_command
     begin_command
     $COMMAND herd $PARALLEL || exit 1
@@ -99,7 +99,7 @@ test_commands_subdirectory() {
     rm -rf .coverage*
     # !!
     begin_command
-    $COMMAND start 'subdir-branch' 'jrgoodle/mu' || exit 1
+    $COMMAND start 'subdir-branch' 'JrGoodle/mu' || exit 1
     end_command
     test_local_branch_exists 'subdir-branch'
     # !! Move coverage files to root and clean so further commands work
@@ -107,7 +107,7 @@ test_commands_subdirectory() {
     rm -rf .coverage*
     # !!
     begin_command
-    $COMMAND prune 'subdir-branch' 'jrgoodle/mu' || exit 1
+    $COMMAND prune 'subdir-branch' 'JrGoodle/mu' || exit 1
     end_command
     test_no_local_branch_exists 'subdir-branch'
     # !! Move coverage files to root and clean so further commands work

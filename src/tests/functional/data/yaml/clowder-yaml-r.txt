@@ -3,32 +3,32 @@ clowder:
 - commit: 60044a0c5489872c1b793d9dbd8b3e4b19f66fb3
   groups:
   - cats
-  name: jrgoodle/mu
+  name: JrGoodle/mu
   path: mu
 - commit: 43347045441d05c2dee745acf2a96f90643b8210
   groups:
   - cats
-  name: jrgoodle/duke
+  name: JrGoodle/duke
   path: duke
 - commit: f2e20031ddce5cb097105f4d8ccbc77f4ac20709
   groups:
   - black-cats
-  name: jrgoodle/kit
+  name: JrGoodle/kit
   path: black-cats/kit
 - commit: 9777b550e4b586b71b33d5f703d8c37d2b477b1a
   groups:
   - black-cats
-  name: jrgoodle/kishka
+  name: JrGoodle/kishka
   path: black-cats/kishka
 - commit: 858cbea9bdef3809382681cf2b7c01817ca50b2d
   groups:
   - black-cats
-  name: jrgoodle/june
+  name: JrGoodle/june
   path: black-cats/june
 - commit: b2c8e63d65aba4375b8ea5b84ad2a0e8487ec196
   groups:
   - black-cats
-  name: jrgoodle/sasha
+  name: JrGoodle/sasha
   path: black-cats/sasha
 name: cats-default-test
 protocol: https

@@ -1,6 +1,6 @@
 # swift-projects Example
 
-Run [init.sh](init.sh) script to set up clowder directory for Swift project repos. Clones from https://github.com/jrgoodle/swift-clowder.git
+Run [init.sh](init.sh) script to set up clowder directory for Swift project repos. Clones from https://github.com/JrGoodle/swift-clowder.git
 
 [clean.sh](clean.sh) will clean up cloned files
 

@@ -33,7 +33,7 @@ class GroupTest(unittest.TestCase):
         """Test get_yaml() method"""
 
         group_yaml = {'name': 'cats',
-                      'projects': [{'name': 'jrgoodle/kit',
+                      'projects': [{'name': 'JrGoodle/kit',
                                     'path': 'black-cats/kit',
                                     'depth': 0,
                                     'recursive': False,
