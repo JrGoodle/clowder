@@ -12,9 +12,9 @@ scenarios('../../features')
 
 
 @when("the network connection is disabled")
-def when_network_connection_disabled(scenario_info: ScenarioInfo) -> None:
+def when_network_connection_disabled(scenario_info: ScenarioInfo, offline) -> None:
     scenario_info.offline = True
-    util.disable_network_connection()
+    # util.disable_network_connection()
 
 
 @when(parsers.parse("I run '{command}'"))

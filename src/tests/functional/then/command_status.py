@@ -13,37 +13,37 @@ scenarios('../../features')
 def then_command_succeeded(command_results: CommandResults, scenario_info: ScenarioInfo) -> None:
     assert len(command_results.completed_processes) == 1
     assert all([result.returncode == 0 for result in command_results.completed_processes])
-    if scenario_info.offline:
-        util.enable_network_connection()
+    # if scenario_info.offline:
+    #     util.enable_network_connection()
 
 
 @then("the commands succeed")
 def then_commands_succeeded(command_results: CommandResults, scenario_info: ScenarioInfo) -> None:
     assert len(command_results.completed_processes) > 1
     assert all([result.returncode == 0 for result in command_results.completed_processes])
-    if scenario_info.offline:
-        util.enable_network_connection()
+    # if scenario_info.offline:
+    #     util.enable_network_connection()
 
 
 @then("the command fails")
 def then_command_failed(command_results: CommandResults, scenario_info: ScenarioInfo) -> None:
     assert len(command_results.completed_processes) == 1
     assert all([result.returncode != 0 for result in command_results.completed_processes])
-    if scenario_info.offline:
-        util.enable_network_connection()
+    # if scenario_info.offline:
+    #     util.enable_network_connection()
 
 
 @then("the commands fail")
 def then_commands_failed(command_results: CommandResults, scenario_info: ScenarioInfo) -> None:
     assert len(command_results.completed_processes) > 1
     assert all([result.returncode != 0 for result in command_results.completed_processes])
-    if scenario_info.offline:
-        util.enable_network_connection()
+    # if scenario_info.offline:
+    #     util.enable_network_connection()
 
 
 @then(parsers.parse("the command exited with return code {code:d}"))
 def then_command_exit_return_code(command_results: CommandResults, code: int, scenario_info: ScenarioInfo) -> None:
     assert len(command_results.completed_processes) == 1
     assert all([result.returncode == code for result in command_results.completed_processes])
-    if scenario_info.offline:
-        util.enable_network_connection()
+    # if scenario_info.offline:
+    #     util.enable_network_connection()

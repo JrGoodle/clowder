@@ -46,44 +46,12 @@ def given_directory_has_remote_branch(tmp_path: Path, directory: str, test_branc
     assert util.remote_branch_exists(tmp_path / directory, test_branch)
 
 
-@given(parsers.parse("repo at {directory} created remote branch {test_branch}"))
-@given(parsers.parse("project at {directory} created remote branch {test_branch}"))
-@given("project at <directory> created remote branch <test_branch>")
-def given_directory_created_remote_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
-    path = tmp_path / directory
-    assert util.create_remote_branch(path, test_branch)
-
-
-@given(parsers.parse("repo at {directory} deleted remote branch {test_branch}"))
-@given(parsers.parse("project at {directory} deleted remote branch {test_branch}"))
-@given("project at <directory> deleted remote branch <test_branch>")
-def given_directory_deleted_remote_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
-    path = tmp_path / directory
-    assert util.delete_remote_branch(path, test_branch)
-
-
 @given(parsers.parse("repo at {directory} is on branch {branch}"))
 @given(parsers.parse("project at {directory} is on branch {branch}"))
 @given("project at <directory> is on <branch>")
 def given_directory_branch(tmp_path: Path, directory: str, branch: str) -> None:
     path = tmp_path / directory
     assert util.is_on_active_branch(path, branch)
-
-
-@given(parsers.parse("repo at {directory} created tracking branch {branch}"))
-@given(parsers.parse("project at {directory} created tracking branch {branch}"))
-@given("project at <directory> created tracking branch <branch>")
-def given_created_tracking_branch(tmp_path: Path, directory: str, branch: str) -> None:
-    path = tmp_path / directory
-    assert util.create_tracking_branch(path, branch)
-
-
-@given(parsers.parse("repo at {directory} created tracking branch {branch} on remote {remote}"))
-@given(parsers.parse("project at {directory} created tracking branch {branch} on remote {remote}"))
-@given("project at <directory> created tracking branch <branch> on remote <remote>")
-def given_created_tracking_branch_remote(tmp_path: Path, directory: str, branch: str, remote: str) -> None:
-    path = tmp_path / directory
-    assert util.create_tracking_branch(path, branch, remote)
 
 
 @given(parsers.parse("repo at {directory} is on tag {tag}"))

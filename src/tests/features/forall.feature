@@ -197,4 +197,4 @@ Feature: clowder forall
         Given cats example is initialized and herded
         When the network connection is disabled
         And I run 'clowder forall -c "git status"'
-        Then the commands succeed
+        Then the command succeeds

@@ -23,7 +23,7 @@ Feature: clowder checkout command
     @success
     Scenario Outline: checkout default existing local branch
         Given cats example is initialized and herded
-        And project at <directory> created <test_branch>
+        And project at <directory> created local branch <test_branch>
         And project at <directory> is on <start_branch>
         When I run 'clowder checkout other'
         Then the command succeeds
@@ -37,7 +37,7 @@ Feature: clowder checkout command
     @success
     Scenario Outline: checkout default existing local branch for project
         Given cats example is initialized and herded
-        And project at <directory> created <test_branch>
+        And project at <directory> created local branch <test_branch>
         And project at <directory> is on <start_branch>
         When I run 'clowder checkout other mu'
         Then the command succeeds
@@ -68,14 +68,14 @@ Feature: clowder checkout command
     Scenario Outline: checkout offline
         Given cats example is initialized and herded
         And project at <directory> is on <start_branch>
-        And project at <directory> has no local branch <test_branch>
+        And project at <directory> created local branch <test_branch>
         When the network connection is disabled
         And I run 'clowder checkout new-branch'
         Then the command succeeds
         And project at <directory> has local branch <test_branch>
         And project at <directory> is on <end_branch>
 
-                Examples:
+        Examples:
         | directory         | start_branch | end_branch | test_branch |
         | mu                | knead        | new-branch | new-branch  |
         | duke              | purr         | new-branch | new-branch  |

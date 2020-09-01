@@ -23,7 +23,7 @@ Feature: clowder prune
     @success
     Scenario Outline: prune default existing local branch checked out
         Given cats example is initialized and herded
-        And project at <directory> created <test_branch>
+        And project at <directory> created local branch <test_branch>
         And project at <directory> checked out <test_branch>
         And project at <directory> is on <start_branch>
         When I run 'clowder prune shrubs'
@@ -43,7 +43,7 @@ Feature: clowder prune
     @success
     Scenario Outline: prune default existing local branch checked out group selected
         Given cats example is initialized and herded
-        And project at <directory> created <test_branch>
+        And project at <directory> created local branch <test_branch>
         And project at <directory> checked out <test_branch>
         And project at <directory> is on <start_branch>
         When I run 'clowder prune shrubs cats'
@@ -59,7 +59,7 @@ Feature: clowder prune
     @success
     Scenario Outline: prune default existing local branch checked out group not selected
         Given cats example is initialized and herded
-        And project at <directory> created <test_branch>
+        And project at <directory> created local branch <test_branch>
         And project at <directory> checked out <test_branch>
         And project at <directory> is on <start_branch>
         When I run 'clowder prune shrubs cats'
@@ -77,7 +77,7 @@ Feature: clowder prune
     @fail
     Scenario Outline: prune default existing local branch checked out fail not fully merged
         Given cats example is initialized and herded
-        And project at <directory> created <test_branch>
+        And project at <directory> created local branch <test_branch>
         And project at <directory> checked out <test_branch>
         And project at <directory> created a new commit
         And project at <directory> is on <start_branch>
@@ -98,7 +98,7 @@ Feature: clowder prune
     @success
     Scenario Outline: prune force default existing local branch checked out not fully merged
         Given cats example is initialized and herded
-        And project at <directory> created <test_branch>
+        And project at <directory> created local branch <test_branch>
         And project at <directory> checked out <test_branch>
         And project at <directory> created a new commit
         And project at <directory> is on <start_branch>
@@ -119,7 +119,7 @@ Feature: clowder prune
     @success @offline
     Scenario Outline: prune offline
         Given cats example is initialized and herded
-        And project at <directory> created <test_branch>
+        And project at <directory> created local branch <test_branch>
         And project at <directory> checked out <test_branch>
         And project at <directory> is on <start_branch>
         When the network connection is disabled
@@ -140,11 +140,11 @@ Feature: clowder prune
     @fail @offline @debug
     Scenario Outline: prune remote offline
         Given cats example is initialized and herded
-        And project at <directory> created remote branch <test_branch>
+#        And project at <directory> created remote branch <test_branch>
         When the network connection is disabled
         And I run 'clowder prune -r  pytest-prune-remote-offline'
         Then the command fails
-        And project at <directory> has remote branch <test_branch>
+#        And project at <directory> has remote branch <test_branch>
 
 
         Examples:
@@ -159,12 +159,12 @@ Feature: clowder prune
     @fail @offline @debug
     Scenario Outline: prune all offline
         Given cats example is initialized and herded
-        And project at <directory> created remote branch <test_branch>
+#        And project at <directory> created remote branch <test_branch>
         When the network connection is disabled
         And I run 'clowder prune -a pytest-prune-remote-offline'
         Then the command fails
         And project at <directory> has no local branch <test_branch>
-        And project at <directory> has remote branch <test_branch>
+#        And project at <directory> has remote branch <test_branch>
 
         Examples:
         | directory         | test_branch                 |

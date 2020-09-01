@@ -76,7 +76,7 @@ Feature: clowder save command
 
     @success @offline
     Scenario: save new version offline
-        Given cats example is initialized
+        Given cats example is initialized and herded
         And default clowder version is linked
         And my-new-version clowder version doesn't exist
         When the network connection is disabled

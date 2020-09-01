@@ -186,8 +186,13 @@ def checkout_branch(path: Path, branch: str) -> CompletedProcess:
 
 
 def local_branch_exists(path: Path, branch: str) -> bool:
-    result = run_command(f'git rev-parse --quiet --verify "{branch}"', path)
-    return result.returncode == 0
+    git = Repo(path)
+    if branch in git.branches:
+        return True
+    return False
+
+    # result = run_command(f'git rev-parse --quiet --verify "{branch}"', path)
+    # return result.returncode == 0
 
 
 def remote_branch_exists(path: Path, branch: str, remote: str = "origin") -> bool:

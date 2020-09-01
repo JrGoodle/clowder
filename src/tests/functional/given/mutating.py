@@ -73,7 +73,9 @@ def given_did_stage_file(tmp_path: Path, directory: str, file_name: str) -> None
     util.git_add_file(path, file_name)
 
 
-@given("project at <directory> created <test_branch>")
+@given(parsers.parse("repo at {directory} created local branch {test_branch}"))
+@given(parsers.parse("project at {directory} created local branch {test_branch}"))
+@given("project at <directory> created local branch <test_branch>")
 def given_directory_created_local_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
     path = tmp_path / directory
     util.create_local_branch(path, test_branch)
@@ -196,3 +198,35 @@ def given_directory_behind_ahead_upstream_num_commits(tmp_path: Path, directory:
     assert util.is_behind_by_number_commits(path, local, remote, number_behind)
     util.create_number_commits(path, "something.txt", number_ahead)
     assert util.is_behind_ahead_by_number_commits(path, local, remote, number_behind, number_ahead)
+
+
+@given(parsers.parse("repo at {directory} created remote branch {test_branch}"))
+@given(parsers.parse("project at {directory} created remote branch {test_branch}"))
+@given("project at <directory> created remote branch <test_branch>")
+def given_directory_created_remote_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
+    path = tmp_path / directory
+    assert util.create_remote_branch(path, test_branch)
+
+
+@given(parsers.parse("repo at {directory} deleted remote branch {test_branch}"))
+@given(parsers.parse("project at {directory} deleted remote branch {test_branch}"))
+@given("project at <directory> deleted remote branch <test_branch>")
+def given_directory_deleted_remote_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
+    path = tmp_path / directory
+    assert util.delete_remote_branch(path, test_branch)
+
+
+@given(parsers.parse("repo at {directory} created tracking branch {branch}"))
+@given(parsers.parse("project at {directory} created tracking branch {branch}"))
+@given("project at <directory> created tracking branch <branch>")
+def given_created_tracking_branch(tmp_path: Path, directory: str, branch: str) -> None:
+    path = tmp_path / directory
+    assert util.create_tracking_branch(path, branch)
+
+
+@given(parsers.parse("repo at {directory} created tracking branch {branch} on remote {remote}"))
+@given(parsers.parse("project at {directory} created tracking branch {branch} on remote {remote}"))
+@given("project at <directory> created tracking branch <branch> on remote <remote>")
+def given_created_tracking_branch_remote(tmp_path: Path, directory: str, branch: str, remote: str) -> None:
+    path = tmp_path / directory
+    assert util.create_tracking_branch(path, branch, remote)
