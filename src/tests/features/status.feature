@@ -55,7 +55,24 @@ Feature: clowder status
 #        And TODO: check the output
 
     @success @offline
-    Scenario: status with fetch
+    Scenario: status offline
+        Given cats example is initialized and herded
+        And created file catnip.txt in directory mu
+        And project at mu has untracked file catnip.txt
+        And the network connection is disabled
+        When I run 'clowder status'
+        And I run 'clowder status jrgoodle/kishka'
+        And I run 'clowder status jrgoodle/mu jrgoodle/duke'
+        And I run 'clowder status jrgoodle/mu jrgoodle/duke jrgoodle/kit'
+        And I run 'clowder status black-cats'
+        And I run 'clowder status black-cats cats'
+        And I run 'clowder status black-cats cats all'
+        Then the commands succeed
+        And project at mu has untracked file catnip.txt
+#        And TODO: check the output
+
+    @fail @offline
+    Scenario: status with fetch offline
         Given cats example is initialized and herded
         And created file catnip.txt in directory mu
         And project at mu has untracked file catnip.txt
@@ -67,6 +84,6 @@ Feature: clowder status
         And I run 'clowder status -f black-cats'
         And I run 'clowder status -f black-cats cats'
         And I run 'clowder status -f black-cats cats all'
-        Then the commands succeed
+        Then the commands fail
         And project at mu has untracked file catnip.txt
 #        And TODO: check the output

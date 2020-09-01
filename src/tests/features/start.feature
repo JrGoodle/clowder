@@ -41,6 +41,74 @@ Feature: clowder start
         | black-cats/sasha  | master       | new-branch | new-branch  |
         | black-cats/june   | master       | new-branch | new-branch  |
 
+    @success @offline @internet @write
+    Scenario Outline: start tracking
+        Given cats example is initialized and herded
+        And project at <directory> has no local branch <test_branch>
+        And project at <directory> has no remote branch <test_branch>
+        And project at <directory> is on <start_branch>
+        When I run 'clowder start -t new-branch'
+        Then the command succeeds
+        And project at <directory> has local branch <test_branch>
+        And project at <directory> has remote branch <test_branch>
+        And project at <directory> is on <end_branch>
+        And project at <directory> has tracking branch <test_branch>
+
+        Examples:
+        | directory         | start_branch | end_branch | test_branch |
+        | mu                | knead        | knead      | new-branch  |
+        | duke              | purr         | purr       | new-branch  |
+        | black-cats/kishka | master       | master     | new-branch  |
+        | black-cats/kit    | master       | master     | new-branch  |
+        | black-cats/sasha  | master       | master     | new-branch  |
+        | black-cats/june   | master       | master     | new-branch  |
+
+    @success @offline
+    Scenario Outline: start local offline
+        Given cats example is initialized and herded
+        And project at <directory> has no local branch <test_branch>
+        And project at <directory> has no remote branch <test_branch>
+        And project at <directory> is on <start_branch>
+        And the network connection is disabled
+        When I run 'clowder start new-branch'
+        Then the command succeeds
+        And project at <directory> has local branch <test_branch>
+        And project at <directory> is on <end_branch>
+        And the network connection is re-enabled
+        And project at <directory> has no remote branch <test_branch>
+
+        Examples:
+        | directory         | start_branch | end_branch | test_branch |
+        | mu                | knead        | new-branch | new-branch  |
+        | duke              | purr         | new-branch | new-branch  |
+        | black-cats/kishka | master       | new-branch | new-branch  |
+        | black-cats/kit    | master       | new-branch | new-branch  |
+        | black-cats/sasha  | master       | new-branch | new-branch  |
+        | black-cats/june   | master       | new-branch | new-branch  |
+
+    @fail @offline
+    Scenario Outline: start tracking offline
+        Given cats example is initialized and herded
+        And project at <directory> has no local branch <test_branch>
+        And project at <directory> has no remote branch <test_branch>
+        And project at <directory> is on <start_branch>
+        And the network connection is disabled
+        When I run 'clowder start -t new-branch'
+        Then the command fails
+        And project at <directory> has no local branch <test_branch>
+        And project at <directory> is on <end_branch>
+        And the network connection is re-enabled
+        And project at <directory> has no remote branch <test_branch>
+
+        Examples:
+        | directory         | start_branch | end_branch | test_branch |
+        | mu                | knead        | knead      | new-branch  |
+        | duke              | purr         | purr       | new-branch  |
+        | black-cats/kishka | master       | master     | new-branch  |
+        | black-cats/kit    | master       | master     | new-branch  |
+        | black-cats/sasha  | master       | master     | new-branch  |
+        | black-cats/june   | master       | master     | new-branch  |
+
     @success
     Scenario Outline: start local group excluded
         Given cats example is initialized and herded

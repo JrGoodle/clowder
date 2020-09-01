@@ -10,6 +10,11 @@ import tests.functional.util as util
 scenarios('../../features')
 
 
+@then(parsers.parse("test directory is empty"))
+def then_test_dir_empty(tmp_path: Path) -> None:
+    assert util.is_directory_empty(tmp_path)
+
+
 @then(parsers.parse("{directory} directory exists"))
 @then("<directory> exists")
 @then(parsers.parse("project at {directory} exists"))

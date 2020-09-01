@@ -161,3 +161,13 @@ Feature: clowder init
         Then the command fails
         And .clowder symlink exists
         And clowder.yaml and clowder.yml symlinks don't exist
+
+    @fail @cats @offline
+    Scenario: init offline
+        Given .clowder directory doesn't exist
+        And test directory is empty
+        When I run 'clowder init https://github.com/jrgoodle/cats.git'
+        Then the command fails
+        And .clowder directory doesn't exist
+        And clowder.yaml and clowder.yml symlinks don't exist
+        And test directory is empty

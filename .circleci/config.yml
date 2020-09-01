@@ -52,13 +52,13 @@ jobs:
           command: clowder-test -c write
 
       - run:
-          name: run pytest-bdd functional tests
+          name: run pytest ssh tests
           command: |
             cd src
-            pytest -v -n auto -m "ssh and not serial"
+            pytest -v -n auto -m "ssh and not serial and not offline"
 
       - run:
-          name: run pytest-bdd functional tests
+          name: run pytest serial tests
           command: |
             cd src
             pytest -v -m "serial"

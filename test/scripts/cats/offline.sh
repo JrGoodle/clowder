@@ -223,22 +223,22 @@ print_single_separator
 # $COMMAND stash || enable_connection_exit
 # end_command
 # print_single_separator
-echo 'TEST: clowder status'
-begin_command
-$COMMAND status || enable_connection_exit
-end_command
-print_single_separator
-echo 'TEST: clowder status -f'
-begin_command
-$COMMAND status -f && enable_connection_exit
-end_command
-print_single_separator
-echo 'TEST: clowder init'
-rm -rf .clowder || enable_connection_exit
-begin_command
-$COMMAND init git@github.com:JrGoodle/cats.git && enable_connection_exit
-end_command
-print_single_separator
+# echo 'TEST: clowder status'
+# begin_command
+# $COMMAND status || enable_connection_exit
+# end_command
+# print_single_separator
+# echo 'TEST: clowder status -f'
+# begin_command
+# $COMMAND status -f && enable_connection_exit
+# end_command
+# print_single_separator
+# echo 'TEST: clowder init'
+# rm -rf .clowder || enable_connection_exit
+# begin_command
+# $COMMAND init git@github.com:JrGoodle/cats.git && enable_connection_exit
+# end_command
+# print_single_separator
 
 # echo 'You can enable your network connection again'
 # echo ''
