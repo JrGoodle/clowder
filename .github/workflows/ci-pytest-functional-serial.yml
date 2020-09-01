@@ -51,7 +51,7 @@ jobs:
     - name: Run pytest config tests
       run: |
         cd src
-        pytest -v -m "config and not ssh and not write"
+        pytest -v -m "config and not ssh and not write and not offline"
     # TODO: Gather coverage data and such
     # - name: CI after script
     #   run: script/ci_after
