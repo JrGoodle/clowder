@@ -3,7 +3,6 @@
 # noinspection PyPackageRequirements
 from pytest_bdd import scenarios, then, parsers
 
-import tests.functional.util as util
 from tests.functional.util import CommandResults, ScenarioInfo
 
 scenarios('../../features')

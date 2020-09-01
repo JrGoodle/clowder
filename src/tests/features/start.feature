@@ -58,12 +58,12 @@ Feature: clowder start
 
         Examples:
         | directory         | start_branch | end_branch | test_branch |
-        | mu                | knead        | knead      | new-branch  |
-        | duke              | purr         | purr       | new-branch  |
-        | black-cats/kishka | master       | master     | new-branch  |
-        | black-cats/kit    | master       | master     | new-branch  |
-        | black-cats/sasha  | master       | master     | new-branch  |
-        | black-cats/june   | master       | master     | new-branch  |
+        | mu                | knead        | new-branch | new-branch  |
+        | duke              | purr         | new-branch | new-branch  |
+        | black-cats/kishka | master       | new-branch | new-branch  |
+        | black-cats/kit    | master       | new-branch | new-branch  |
+        | black-cats/sasha  | master       | new-branch | new-branch  |
+        | black-cats/june   | master       | new-branch | new-branch  |
 
     @success @offline
     Scenario Outline: start local offline

@@ -27,6 +27,9 @@ def create_file(path: Path) -> None:
 
 def link_to(path: Path, target: Path) -> None:
     os.symlink(target, path)
+    assert path.exists()
+    assert path.is_symlink()
+    assert is_symlink_from_to(path, target)
 
 
 def copy_file(path: Path, destination: Path) -> None:

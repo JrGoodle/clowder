@@ -8,7 +8,6 @@ from pathlib import Path
 from pytest_bdd import scenarios, given, parsers
 
 import tests.functional.util as util
-from tests.functional.util import ScenarioInfo
 
 scenarios('../../features')
 
@@ -143,7 +142,8 @@ def given_did_create_file_in_directory(tmp_path: Path, file_name: str, directory
 @given("project at <directory> created a new commit")
 def given_directory_created_new_commit(tmp_path: Path, directory: str) -> None:
     path = tmp_path / directory
-    util.create_commit(path, "something")
+    results = util.create_commit(path, "something")
+    assert all([r.returncode == 0 for r in results])
 
 
 @given(parsers.parse("repo at {directory} created {number_commits} new commits"))
@@ -205,7 +205,8 @@ def given_directory_behind_ahead_upstream_num_commits(tmp_path: Path, directory:
 @given("project at <directory> created remote branch <test_branch>")
 def given_directory_created_remote_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
     path = tmp_path / directory
-    assert util.create_remote_branch(path, test_branch)
+    results = util.create_remote_branch(path, test_branch)
+    assert all([r.returncode == 0 for r in results])
 
 
 @given(parsers.parse("repo at {directory} deleted remote branch {test_branch}"))
@@ -213,7 +214,9 @@ def given_directory_created_remote_branch(tmp_path: Path, directory: str, test_b
 @given("project at <directory> deleted remote branch <test_branch>")
 def given_directory_deleted_remote_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
     path = tmp_path / directory
-    assert util.delete_remote_branch(path, test_branch)
+    if util.remote_branch_exists(path, test_branch):
+        result = util.delete_remote_branch(path, test_branch)
+        assert result.returncode == 0
 
 
 @given(parsers.parse("repo at {directory} created tracking branch {branch}"))
@@ -221,7 +224,8 @@ def given_directory_deleted_remote_branch(tmp_path: Path, directory: str, test_b
 @given("project at <directory> created tracking branch <branch>")
 def given_created_tracking_branch(tmp_path: Path, directory: str, branch: str) -> None:
     path = tmp_path / directory
-    assert util.create_tracking_branch(path, branch)
+    results = util.create_tracking_branch(path, branch)
+    assert all([r.returncode == 0 for r in results])
 
 
 @given(parsers.parse("repo at {directory} created tracking branch {branch} on remote {remote}"))
@@ -229,4 +233,5 @@ def given_created_tracking_branch(tmp_path: Path, directory: str, branch: str) -
 @given("project at <directory> created tracking branch <branch> on remote <remote>")
 def given_created_tracking_branch_remote(tmp_path: Path, directory: str, branch: str, remote: str) -> None:
     path = tmp_path / directory
-    assert util.create_tracking_branch(path, branch, remote)
+    results = util.create_tracking_branch(path, branch, remote)
+    assert all([r.returncode == 0 for r in results])
