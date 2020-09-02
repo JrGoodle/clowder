@@ -82,13 +82,36 @@ Feature: clowder herd
         | black-cats/june   | v0.01                 |
 
     @fail @cats
-    Scenario: Test clowder herd dirty fail
+    Scenario: Test clowder herd untracked file
         Given cats example is initialized and herded
         And created file something.txt in directory mu
         And project at mu has untracked file something.txt
         When I run 'clowder herd'
         Then the command fails
         And project at mu has untracked file something.txt
+
+    @fail @cats
+    Scenario: Test clowder herd staged file
+        Given cats example is initialized and herded
+        And created file something.txt in directory mu
+        And project at mu staged file something.txt
+        When I run 'clowder herd'
+        Then the command fails
+#        And project at mu has staged file something.txt
+        And project at mu is dirty
+
+
+#    FIXME: Implement this
+#    @fail @cats
+#    Scenario: Test clowder herd rebase in progress
+#        Given cats example is initialized and herded
+#        And created file something.txt in directory mu
+#        And project at mu staged file something.txt
+#        When I run 'clowder herd'
+#        Then the command fails
+##        And project at mu has staged file something.txt
+#        And project at mu is dirty
+
 
     @success @submodules @cats
     Scenario Outline: herd submodules recursive enabled check projects

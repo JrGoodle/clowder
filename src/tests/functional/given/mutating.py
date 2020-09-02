@@ -157,8 +157,8 @@ def given_directory_created_new_commits(tmp_path: Path, directory: str, number_c
 
 # TODO: Split this up into past tense mutating steps and git assertion steps
 @given("project at <directory> is behind upstream <start_branch> by <number_commits>")
-def given_directory_behind_upstream_num_commits(tmp_path: Path, directory: str,
-                                                start_branch: str, number_commits: str) -> None:
+def given_directory_behind_upstream_num_commits_start_branch(tmp_path: Path, directory: str,
+                                                             start_branch: str, number_commits: str) -> None:
     number_commits = int(number_commits)
     path = tmp_path / directory
     local = "HEAD"
@@ -170,8 +170,8 @@ def given_directory_behind_upstream_num_commits(tmp_path: Path, directory: str,
 
 # TODO: Split this up into past tense mutating steps and git assertion steps
 @given("project at <directory> is behind upstream <test_branch> by <number_commits>")
-def given_directory_behind_upstream_num_commits(tmp_path: Path, directory: str,
-                                                test_branch: str, number_commits: str) -> None:
+def given_directory_behind_upstream_num_commits_test_branch(tmp_path: Path, directory: str,
+                                                            test_branch: str, number_commits: str) -> None:
     number_commits = int(number_commits)
     path = tmp_path / directory
     local = "HEAD"
@@ -183,8 +183,8 @@ def given_directory_behind_upstream_num_commits(tmp_path: Path, directory: str,
 
 # TODO: Split this up into past tense mutating steps and git assertion steps
 @given("project at <directory> is ahead of upstream <start_branch> by <number_commits>")
-def given_directory_ahead_upstream_num_commits(tmp_path: Path, directory: str,
-                                               start_branch: str, number_commits: str) -> None:
+def given_directory_ahead_upstream_num_commits_start_branch(tmp_path: Path, directory: str,
+                                                            start_branch: str, number_commits: str) -> None:
     number_commits = int(number_commits)
     path = tmp_path / directory
     local = "HEAD"
@@ -195,14 +195,43 @@ def given_directory_ahead_upstream_num_commits(tmp_path: Path, directory: str,
 
 
 # TODO: Split this up into past tense mutating steps and git assertion steps
+@given("project at <directory> is ahead of upstream <test_branch> by <number_commits>")
+def given_directory_ahead_upstream_num_commits_test_branch(tmp_path: Path, directory: str,
+                                                           test_branch: str, number_commits: str) -> None:
+    number_commits = int(number_commits)
+    path = tmp_path / directory
+    local = "HEAD"
+    remote = f"origin/{test_branch}"
+    assert util.has_no_commits_between_refs(path, local, remote)
+    util.create_number_commits(path, number_commits, "something.txt", "something")
+    assert util.is_ahead_by_number_commits(path, local, remote, number_commits)
+
+
+# TODO: Split this up into past tense mutating steps and git assertion steps
 @given("project at <directory> is behind upstream <start_branch> by <number_behind> and ahead by <number_ahead>")
-def given_directory_behind_ahead_upstream_num_commits(tmp_path: Path, directory: str, start_branch: str,
-                                                      number_behind: str, number_ahead: str) -> None:
+def given_directory_behind_ahead_upstream_num_commits_start_branch(tmp_path: Path, directory: str, start_branch: str,
+                                                                   number_behind: str, number_ahead: str) -> None:
     number_behind = int(number_behind)
     number_ahead = int(number_ahead)
     path = tmp_path / directory
     local = "HEAD"
     remote = f"origin/{start_branch}"
+    assert util.has_no_commits_between_refs(path, local, remote)
+    util.reset_back_by_number_of_commits(path, number_behind)
+    assert util.is_behind_by_number_commits(path, local, remote, number_behind)
+    util.create_number_commits(path, number_ahead, "something.txt", "something")
+    assert util.is_behind_ahead_by_number_commits(path, local, remote, number_behind, number_ahead)
+
+
+# TODO: Split this up into past tense mutating steps and git assertion steps
+@given("project at <directory> is behind upstream <test_branch> by <number_behind> and ahead by <number_ahead>")
+def given_directory_behind_ahead_upstream_num_commits_test_branch(tmp_path: Path, directory: str, test_branch: str,
+                                                                  number_behind: str, number_ahead: str) -> None:
+    number_behind = int(number_behind)
+    number_ahead = int(number_ahead)
+    path = tmp_path / directory
+    local = "HEAD"
+    remote = f"origin/{test_branch}"
     assert util.has_no_commits_between_refs(path, local, remote)
     util.reset_back_by_number_of_commits(path, number_behind)
     assert util.is_behind_by_number_commits(path, local, remote, number_behind)
@@ -235,6 +264,13 @@ def given_directory_deleted_remote_branch(tmp_path: Path, directory: str, test_b
 def given_created_tracking_branch(tmp_path: Path, directory: str, branch: str) -> None:
     path = tmp_path / directory
     results = util.create_tracking_branch(path, branch)
+    assert all([r.returncode == 0 for r in results])
+
+
+@given("project at <directory> created tracking branch <test_branch>")
+def given_created_tracking_branch_test_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
+    path = tmp_path / directory
+    results = util.create_tracking_branch(path, test_branch)
     assert all([r.returncode == 0 for r in results])
 
 

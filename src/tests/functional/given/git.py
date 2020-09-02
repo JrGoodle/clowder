@@ -19,7 +19,7 @@ def given_directory_on_start_branch(tmp_path: Path, directory: str, start_branch
 
 
 @given("project at <directory> is on <test_branch>")
-def given_directory_on_start_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
+def given_directory_on_test_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
     path = tmp_path / directory
     assert util.is_on_active_branch(path, test_branch)
 

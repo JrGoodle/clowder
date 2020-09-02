@@ -179,7 +179,7 @@ Feature: clowder prune
         | black-cats/sasha  | pytest-prune-remote-offline |
         | black-cats/june   | pytest-prune-remote-offline |
 
-    @success @internet @write @debug
+    @success @internet @write
     Scenario Outline: prune remote no local branch
         Given cats example is initialized and herded
         And project at <directory> created remote branch <test_branch>
@@ -200,7 +200,7 @@ Feature: clowder prune
         | black-cats/sasha  | pytest-prune-remote |
         | black-cats/june   | pytest-prune-remote |
 
-    @success @internet @write @debug
+    @success @internet @write
     Scenario Outline: prune remote tracking branch
         Given cats example is initialized and herded
         And project at <directory> created tracking branch <test_branch>
@@ -224,7 +224,7 @@ Feature: clowder prune
         | black-cats/sasha  | pytest-prune-remote |
         | black-cats/june   | pytest-prune-remote |
 
-    @success @internet @write @debug
+    @success @internet @write
     Scenario Outline: prune all
         Given cats example is initialized and herded
         And project at <directory> created tracking branch <test_branch>
@@ -232,7 +232,7 @@ Feature: clowder prune
         And project at <directory> has remote branch <test_branch>
         And project at <directory> checked out <test_branch>
         And project at <directory> is on <test_branch>
-        When I run 'clowder prune -r  pytest-prune-all'
+        When I run 'clowder prune -a  pytest-prune-all'
         Then the command succeeds
         And project at <directory> has no remote branch <test_branch>
         And project at <directory> has no local branch <test_branch>
