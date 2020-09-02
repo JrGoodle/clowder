@@ -65,19 +65,21 @@ Feature: clowder start
         | black-cats/sasha  | master       | new-branch | new-branch  |
         | black-cats/june   | master       | new-branch | new-branch  |
 
-    @success @offline
+    @success @offline @debug
     Scenario Outline: start local offline
-        Given cats example is initialized and herded
-#        And project at <directory> deleted remote branch <test_branch>
+        Given the network connection is enabled
+        And cats example is initialized and herded
+        And cats example projects have no remote branch <test_branch>
         And project at <directory> has no local branch <test_branch>
-#        And project at <directory> has no remote branch <test_branch>
+        And project at <directory> has no remote branch <test_branch>
         And project at <directory> is on <start_branch>
         When the network connection is disabled
         And I run 'clowder start new-branch'
         Then the command succeeds
         And project at <directory> has local branch <test_branch>
         And project at <directory> is on <end_branch>
-#        And project at <directory> has no remote branch <test_branch>
+        And the network connection is enabled
+        And project at <directory> has no remote branch <test_branch>
 
         Examples:
         | directory         | start_branch | end_branch | test_branch |
