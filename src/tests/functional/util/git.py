@@ -187,7 +187,8 @@ def checkout_branch(path: Path, branch: str) -> CompletedProcess:
 
 def local_branch_exists(path: Path, branch: str) -> bool:
     git = Repo(path)
-    if branch in git.branches:
+    branches = git.branches
+    if branch in branches:
         return True
     return False
 
@@ -197,7 +198,9 @@ def local_branch_exists(path: Path, branch: str) -> bool:
 
 def remote_branch_exists(path: Path, branch: str, remote: str = "origin") -> bool:
     git = Repo(path)
-    if branch in git.remote(remote).refs:
+    git_remote = git.remote(remote)
+    refs = git_remote.repo.refs
+    if branch in refs:
         return True
     return False
 

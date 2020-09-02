@@ -45,7 +45,7 @@ Feature: clowder start
     @success @internet @write
     Scenario Outline: start tracking
         Given cats example is initialized and herded
-        And project at <directory> deleted remote branch <test_branch>
+        And cats example projects have no remote branch <test_branch>
         And project at <directory> has no local branch <test_branch>
         And project at <directory> has no remote branch <test_branch>
         And project at <directory> is on <start_branch>
