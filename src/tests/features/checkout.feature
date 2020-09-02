@@ -27,12 +27,12 @@ Feature: clowder checkout command
         And project at <directory> is on <start_branch>
         When I run 'clowder checkout other'
         Then the command succeeds
-        And project at <directory> is on <end_branch>
+        And project at <directory> is on <test_branch>
 
         Examples:
-        | directory         | start_branch | end_branch | test_branch |
-        | mu                | knead        | other      | other       |
-        | duke              | purr         | other      | other       |
+        | directory         | start_branch | test_branch |
+        | mu                | knead        | other       |
+        | duke              | purr         | other       |
 
     @success
     Scenario Outline: checkout default existing local branch for project
@@ -55,14 +55,14 @@ Feature: clowder checkout command
         And project at <directory> has no local branch <test_branch>
         When I run 'clowder checkout other'
         Then the command succeeds
-        And project at <directory> is on <end_branch>
+        And project at <directory> is on <start_branch>
 
         Examples:
-        | directory         | start_branch | end_branch | test_branch |
-        | black-cats/kishka | master       | master     | other       |
-        | black-cats/kit    | master       | master     | other       |
-        | black-cats/sasha  | master       | master     | other       |
-        | black-cats/june   | master       | master     | other       |
+        | directory         | start_branch | test_branch |
+        | black-cats/kishka | master       | other       |
+        | black-cats/kit    | master       | other       |
+        | black-cats/sasha  | master       | other       |
+        | black-cats/june   | master       | other       |
 
     @success @offline
     Scenario Outline: checkout offline
@@ -73,9 +73,9 @@ Feature: clowder checkout command
         And I run 'clowder checkout new-branch'
         Then the command succeeds
         And project at <directory> has local branch <test_branch>
-        And project at <directory> is on <end_branch>
+        And project at <directory> is on <test_branch>
 
         Examples:
-        | directory         | start_branch | end_branch | test_branch |
-        | mu                | knead        | new-branch | new-branch  |
-        | duke              | purr         | new-branch | new-branch  |
+        | directory         | start_branch | test_branch |
+        | mu                | knead        | new-branch  |
+        | duke              | purr         | new-branch  |

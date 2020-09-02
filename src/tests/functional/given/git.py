@@ -18,6 +18,12 @@ def given_directory_on_start_branch(tmp_path: Path, directory: str, start_branch
     assert util.is_on_active_branch(path, start_branch)
 
 
+@given("project at <directory> is on <test_branch>")
+def given_directory_on_start_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
+    path = tmp_path / directory
+    assert util.is_on_active_branch(path, test_branch)
+
+
 @given(parsers.parse("repo at {directory} has local branch {test_branch}"))
 @given(parsers.parse("project at {directory} has local branch {test_branch}"))
 @given("project at <directory> has local branch <test_branch>")

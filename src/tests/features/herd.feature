@@ -618,7 +618,7 @@ Feature: clowder herd
         | black-cats/sasha  |
         | black-cats/june   |
 
-    @success @cats @internet @write @debug
+    @success @cats @internet @write
     Scenario Outline: herd rebase with conflict
         Given cats example is initialized and herded
         And project at <directory> has local commits and is behind remote branch <test_branch>

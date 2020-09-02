@@ -34,6 +34,18 @@ def then_check_directory_end_branch(tmp_path: Path, directory: str, end_branch: 
     assert util.is_on_active_branch(path, end_branch)
 
 
+@then("project at <directory> is on <test_branch>")
+def then_check_directory_test_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
+    path = tmp_path / directory
+    assert util.is_on_active_branch(path, test_branch)
+
+
+@then("project at <directory> is on <start_branch>")
+def then_check_directory_test_branch(tmp_path: Path, directory: str, start_branch: str) -> None:
+    path = tmp_path / directory
+    assert util.is_on_active_branch(path, start_branch)
+
+
 @then(parsers.parse("repo at {directory} is on branch {branch}"))
 @then(parsers.parse("project at {directory} is on branch {branch}"))
 @then("project at <directory> is on <branch>")
@@ -171,8 +183,13 @@ def then_submodule_initialized(tmp_path: Path, directory: str, submodule_path: s
 @then("project at <directory> is in sync with upstream <start_branch>")
 def then_directory_in_sync_with_upstream(tmp_path: Path, directory: str, start_branch: str) -> None:
     path = tmp_path / directory
-    assert util.number_of_commits_between_refs(path, "HEAD", f"origin/{start_branch}") == 0
-    assert util.number_of_commits_between_refs(path, f"origin/{start_branch}", "HEAD") == 0
+    assert util.has_no_commits_between_refs(path, "HEAD", f"origin/{start_branch}")
+
+
+@then("project at <directory> is in sync with upstream <test_branch>")
+def then_directory_in_sync_with_upstream(tmp_path: Path, directory: str, test_branch: str) -> None:
+    path = tmp_path / directory
+    assert util.has_no_commits_between_refs(path, "HEAD", f"origin/{test_branch}")
 
 
 @then(parsers.parse("repo at {directory} has remote {remote} with url {url}"))
