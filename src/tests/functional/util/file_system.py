@@ -18,11 +18,12 @@ def is_directory_empty(path: Path) -> bool:
         raise Exception
 
 
-def create_file(path: Path) -> None:
-    with open(path, 'w') as _:
-        pass
+def create_file(path: Path, contents: str) -> None:
+    with open(path, 'w') as f:
+        f.write(contents)
     assert path.is_file()
     assert not path.is_symlink()
+    assert path.read_text().strip() == contents.strip()
 
 
 def link_to(path: Path, target: Path) -> None:

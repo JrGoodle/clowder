@@ -617,3 +617,20 @@ Feature: clowder herd
         | black-cats/kit    |
         | black-cats/sasha  |
         | black-cats/june   |
+
+    @success @cats @internet @write @debug
+    Scenario Outline: herd rebase with conflict
+        Given cats example is initialized and herded
+        And project at <directory> has local commits and is behind remote branch <test_branch>
+        When I run 'clowder herd -r'
+        Then the command fails
+        And project at <directory> has rebase in progress
+
+        Examples:
+        | directory         | test_branch |
+        | mu                | knead       |
+        | duke              | purr        |
+        | black-cats/kishka | master      |
+        | black-cats/kit    | master      |
+        | black-cats/sasha  | master      |
+        | black-cats/june   | master      |

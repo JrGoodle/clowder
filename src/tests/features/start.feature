@@ -65,7 +65,7 @@ Feature: clowder start
         | black-cats/sasha  | master       | new-branch | new-branch  |
         | black-cats/june   | master       | new-branch | new-branch  |
 
-    @success @offline @debug
+    @success @offline
     Scenario Outline: start local offline
         Given the network connection is enabled
         And cats example is initialized and herded

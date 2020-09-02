@@ -542,7 +542,8 @@ class ProjectRepoImpl(GitRepo):
         remote_output = fmt.remote_string(remote)
         self._print(f' - Rebase onto {remote_output} {branch_output}')
         try:
-            execute_command(f"git pull {remote} {branch} --rebase", self.repo_path, print_output=self._print_output)
+            execute_command(f"git pull --rebase {remote} refs/heads/{branch}:refs/remotes/{remote}/heads/{branch}",
+                            self.repo_path, print_output=self._print_output)
         except ClowderError as err:
             LOG_DEBUG('Failed pull with rebase', err)
             message = f'{fmt.ERROR} Failed to rebase onto {remote_output} {branch_output}'

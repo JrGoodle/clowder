@@ -181,3 +181,11 @@ def then_directory_in_sync_with_upstream(tmp_path: Path, directory: str, start_b
 def then_directory_in_sync_with_upstream(tmp_path: Path, directory: str, remote: str, url: str) -> None:
     path = tmp_path / directory
     assert util.has_git_remote_with_url(path, remote, url)
+
+
+@then(parsers.parse("repo at {directory} has rebase in progress"))
+@then(parsers.parse("project at {directory} has rebase in progress"))
+@then("project at <directory> has rebase in progress")
+def then_directory_has_rebase_in_progress(tmp_path: Path, directory: str) -> None:
+    path = tmp_path / directory
+    assert util.is_rebase_in_progress(path)

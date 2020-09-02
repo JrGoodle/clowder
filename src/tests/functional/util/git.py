@@ -1,7 +1,7 @@
 """New syntax test file"""
 
 import copy
-from typing import List
+from typing import List, Optional
 
 from subprocess import CompletedProcess
 from pathlib import Path
@@ -18,8 +18,8 @@ def is_dirty(path: Path) -> bool:
     :rtype: bool
     """
 
-    repo = Repo(str(path))
-    return repo.is_dirty() or is_rebase_in_progress(repo.git_dir) or has_untracked_files(repo)
+    repo = Repo(path)
+    return repo.is_dirty() or is_rebase_in_progress(path) or has_untracked_files(path)
 
 
 def is_rebase_in_progress(git_dir: Path) -> bool:
@@ -34,13 +34,13 @@ def is_rebase_in_progress(git_dir: Path) -> bool:
     return is_rebase_apply or is_rebase_merge
 
 
-def has_untracked_files(repo: Repo) -> bool:
+def has_untracked_files(path: Path) -> bool:
     """Check whether untracked files exist
 
     :return: True, if untracked files exist
     :rtype: bool
     """
-
+    repo = Repo(path)
     return True if repo.untracked_files else False
 
 
@@ -111,20 +111,30 @@ def current_head_commit_sha(path: Path) -> str:
     return stdout.strip()
 
 
-def create_number_commits(path: Path, filename: str, count: int) -> List[CompletedProcess]:
+def get_branch_commit_sha(path: Path, branch: str, remote: Optional[str] = None) -> str:
+    if remote is not None:
+        result = run_command(f"git rev-parse {remote}/{branch}", path)
+    else:
+        result = run_command(f"git rev-parse {branch}", path)
+    assert result.returncode == 0
+    stdout: str = result.stdout
+    return stdout.strip()
+
+
+def create_number_commits(path: Path, count: int, filename: str, contents: str) -> List[CompletedProcess]:
     commits = copy.copy(count)
     results = []
     while commits > 0:
-        result = create_commit(path, f"{commits}_{filename}")
+        result = create_commit(path, f"{commits}_{filename}", contents)
         results += result
         commits -= 1
     assert all([r.returncode == 0 for r in results])
     return results
 
 
-def create_commit(path: Path, filename: str) -> List[CompletedProcess]:
+def create_commit(path: Path, filename: str, contents: str) -> List[CompletedProcess]:
     previous_commit = current_head_commit_sha(path)
-    create_file(path / filename)
+    create_file(path / filename, contents)
     results = []
     result = run_command(f"git add {filename}", path)
     results.append(result)
@@ -211,11 +221,12 @@ def check_remote_url(path: Path, remote, url) -> None:
     assert result.stdout == url
 
 
-def rebase_in_progress(path: Path) -> None:
+def is_rebase_in_progress(path: Path) -> bool:
     rebase_merge = path / ".git" / "rebase-merge"
     rebase_apply = path / ".git" / "rebase-apply"
-    assert rebase_merge.exists() or rebase_apply.exists()
-    assert rebase_merge.is_dir() or rebase_apply.is_dir()
+    rebase_merge_exists = rebase_merge.exists() and rebase_merge.is_dir()
+    rebase_apply_exists = rebase_apply.exists() and rebase_apply.is_dir()
+    return rebase_merge_exists or rebase_apply_exists
 
 
 def is_on_active_branch(path: Path, branch: str) -> bool:
@@ -289,3 +300,18 @@ def is_behind_ahead_by_number_commits(path: Path, start: str, end: str,
     result_1 = number_of_commits_between_refs(path, start, end) == number_commits_behind
     result_2 = number_of_commits_between_refs(path, end, start) == number_commits_ahead
     return result_1 and result_2
+
+
+def push_to_remote_branch(path: Path, branch: str, remote: str = "origin") -> None:
+    repo = Repo(path)
+    repo.git.push(remote, f"refs/heads/{branch}:refs/heads/{branch}")
+
+
+def force_push_to_remote_branch(path: Path, branch: str, remote: str = "origin") -> None:
+    repo = Repo(path)
+    repo.git.push(remote, f"refs/heads/{branch}:refs/heads/{branch}", force=True)
+
+
+def abort_rebase(path: Path) -> None:
+    repo = Repo(path)
+    repo.git.rebase(abort=True)
