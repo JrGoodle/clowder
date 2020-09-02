@@ -3,11 +3,9 @@
 from pathlib import Path
 
 # noinspection PyPackageRequirements
-from pytest_bdd import scenarios, given, parsers
+from pytest_bdd import given, parsers
 
 import tests.functional.util as util
-
-scenarios('../../features')
 
 
 @given("I'm in an empty directory")

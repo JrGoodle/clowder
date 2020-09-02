@@ -3,11 +3,9 @@
 from pathlib import Path
 
 # noinspection PyPackageRequirements
-from pytest_bdd import scenarios, given, parsers
+from pytest_bdd import given, parsers
 
 import tests.functional.util as util
-
-scenarios('../../features')
 
 
 @given(parsers.parse("repo at {directory} is on {start_branch}"))

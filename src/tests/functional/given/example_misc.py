@@ -3,11 +3,9 @@
 from pathlib import Path
 
 # noinspection PyPackageRequirements
-from pytest_bdd import scenarios, given, parsers
+from pytest_bdd import given, parsers
 
 from tests.functional.util import ScenarioInfo
-
-scenarios('../../features')
 
 
 @given(parsers.parse("misc example is initialized"))

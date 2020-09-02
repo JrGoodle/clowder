@@ -5,11 +5,10 @@ import shutil
 from pathlib import Path
 
 # noinspection PyPackageRequirements
-from pytest_bdd import scenarios, given, parsers
+from pytest_bdd import given, parsers
 
 import tests.functional.util as util
-
-scenarios('../../features')
+from tests.functional.util import ScenarioInfo
 
 
 @given(parsers.parse("{example} example was initialized to branch {branch}"))
@@ -89,7 +88,7 @@ def given_directory_checked_out_start_branch(tmp_path: Path, directory: str, tes
 
 
 @given("forall test scripts were copied to the project directories")
-def given_forall_test_scripts_present(tmp_path: Path, shared_datadir: Path, scenario_info) -> None:
+def given_forall_test_scripts_present(tmp_path: Path, shared_datadir: Path, scenario_info: ScenarioInfo) -> None:
     dirs = util.example_repo_dirs(scenario_info.example)
     forall_dir = shared_datadir / "forall"
     for d in dirs:
@@ -149,17 +148,16 @@ def given_directory_created_new_commit(tmp_path: Path, directory: str) -> None:
 @given(parsers.parse("repo at {directory} created {number_commits} new commits"))
 @given(parsers.parse("project at {directory} created {number_commits} new commits"))
 @given("project at <directory> created <number_commits> new commits")
-def given_directory_created_new_commits(tmp_path: Path, directory: str, number_commits: str) -> None:
+def given_directory_created_new_commits(tmp_path: Path, directory: str, number_commits: int) -> None:
     path = tmp_path / directory
-    results = util.create_number_commits(path, int(number_commits), "something.txt", "something")
+    results = util.create_number_commits(path, number_commits, "something.txt", "something")
     assert all([r.returncode == 0 for r in results])
 
 
 # TODO: Split this up into past tense mutating steps and git assertion steps
 @given("project at <directory> is behind upstream <start_branch> by <number_commits>")
 def given_directory_behind_upstream_num_commits_start_branch(tmp_path: Path, directory: str,
-                                                             start_branch: str, number_commits: str) -> None:
-    number_commits = int(number_commits)
+                                                             start_branch: str, number_commits: int) -> None:
     path = tmp_path / directory
     local = "HEAD"
     remote = f"origin/{start_branch}"
@@ -171,8 +169,7 @@ def given_directory_behind_upstream_num_commits_start_branch(tmp_path: Path, dir
 # TODO: Split this up into past tense mutating steps and git assertion steps
 @given("project at <directory> is behind upstream <test_branch> by <number_commits>")
 def given_directory_behind_upstream_num_commits_test_branch(tmp_path: Path, directory: str,
-                                                            test_branch: str, number_commits: str) -> None:
-    number_commits = int(number_commits)
+                                                            test_branch: str, number_commits: int) -> None:
     path = tmp_path / directory
     local = "HEAD"
     remote = f"origin/{test_branch}"
@@ -184,8 +181,7 @@ def given_directory_behind_upstream_num_commits_test_branch(tmp_path: Path, dire
 # TODO: Split this up into past tense mutating steps and git assertion steps
 @given("project at <directory> is ahead of upstream <start_branch> by <number_commits>")
 def given_directory_ahead_upstream_num_commits_start_branch(tmp_path: Path, directory: str,
-                                                            start_branch: str, number_commits: str) -> None:
-    number_commits = int(number_commits)
+                                                            start_branch: str, number_commits: int) -> None:
     path = tmp_path / directory
     local = "HEAD"
     remote = f"origin/{start_branch}"
@@ -197,8 +193,7 @@ def given_directory_ahead_upstream_num_commits_start_branch(tmp_path: Path, dire
 # TODO: Split this up into past tense mutating steps and git assertion steps
 @given("project at <directory> is ahead of upstream <test_branch> by <number_commits>")
 def given_directory_ahead_upstream_num_commits_test_branch(tmp_path: Path, directory: str,
-                                                           test_branch: str, number_commits: str) -> None:
-    number_commits = int(number_commits)
+                                                           test_branch: str, number_commits: int) -> None:
     path = tmp_path / directory
     local = "HEAD"
     remote = f"origin/{test_branch}"
@@ -210,9 +205,7 @@ def given_directory_ahead_upstream_num_commits_test_branch(tmp_path: Path, direc
 # TODO: Split this up into past tense mutating steps and git assertion steps
 @given("project at <directory> is behind upstream <start_branch> by <number_behind> and ahead by <number_ahead>")
 def given_directory_behind_ahead_upstream_num_commits_start_branch(tmp_path: Path, directory: str, start_branch: str,
-                                                                   number_behind: str, number_ahead: str) -> None:
-    number_behind = int(number_behind)
-    number_ahead = int(number_ahead)
+                                                                   number_behind: int, number_ahead: int) -> None:
     path = tmp_path / directory
     local = "HEAD"
     remote = f"origin/{start_branch}"
@@ -226,9 +219,7 @@ def given_directory_behind_ahead_upstream_num_commits_start_branch(tmp_path: Pat
 # TODO: Split this up into past tense mutating steps and git assertion steps
 @given("project at <directory> is behind upstream <test_branch> by <number_behind> and ahead by <number_ahead>")
 def given_directory_behind_ahead_upstream_num_commits_test_branch(tmp_path: Path, directory: str, test_branch: str,
-                                                                  number_behind: str, number_ahead: str) -> None:
-    number_behind = int(number_behind)
-    number_ahead = int(number_ahead)
+                                                                  number_behind: int, number_ahead: int) -> None:
     path = tmp_path / directory
     local = "HEAD"
     remote = f"origin/{test_branch}"

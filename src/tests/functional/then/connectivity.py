@@ -3,11 +3,9 @@
 from pathlib import Path
 
 # noinspection PyPackageRequirements
-from pytest_bdd import scenarios, then
+from pytest_bdd import then
 
 import tests.functional.util as util
-
-scenarios('../../features')
 
 
 @then("the network connection is enabled")

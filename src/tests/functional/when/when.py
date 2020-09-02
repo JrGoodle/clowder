@@ -3,12 +3,10 @@
 from pathlib import Path
 
 # noinspection PyPackageRequirements
-from pytest_bdd import scenarios, when, parsers
+from pytest_bdd import when, parsers
 
 import tests.functional.util as util
 from tests.functional.util import CommandResults, ScenarioInfo
-
-scenarios('../../features')
 
 
 @when("the network connection is disabled")
