@@ -1,26 +1,26 @@
 @herd
 Feature: clowder herd
 
-    @help @success @cats
+    @help @cats
     Scenario: herd help in empty directory
         Given test directory is empty
         When I run 'clowder herd -h' and 'clowder herd --help'
         Then the commands succeed
 
-    @help @success @cats
+    @help @cats
     Scenario: herd help with invalid clowder.yaml
         Given cats example is initialized to branch yaml-validation
         And linked test-empty-project clowder version
         When I run 'clowder herd -h' and 'clowder herd --help'
         Then the commands succeed
 
-    @help @success @cats
+    @help @cats
     Scenario: herd help with valid clowder.yaml
         Given cats example is initialized
         When I run 'clowder herd -h' and 'clowder herd --help'
         Then the commands succeed
 
-    @success @cats
+    @cats
     Scenario Outline: herd default
         Given cats example is initialized
         And <directory> doesn't exist
@@ -39,7 +39,7 @@ Feature: clowder herd
         | black-cats/sasha  | master |
         | black-cats/june   | master |
 
-    @commits @success @cats
+    @commits @cats
     Scenario Outline: herd commits
         Given cats example is initialized
         And <directory> doesn't exist
@@ -60,7 +60,7 @@ Feature: clowder herd
         | black-cats/june   | b6e1316cc62cb2ba18fa982fc3d67ef4408c8bfd |
         | black-cats/sasha  | 775979e0b1a7f753131bf16a4794c851c67108d8 |
 
-    @tags @success @cats
+    @tags @cats
     Scenario Outline: herd tags
         Given cats example is initialized
         And <directory> doesn't exist
@@ -100,7 +100,6 @@ Feature: clowder herd
 #        And project at mu has staged file something.txt
         And project at mu is dirty
 
-
 #    FIXME: Implement this
 #    @fail @cats
 #    Scenario: Test clowder herd rebase in progress
@@ -112,8 +111,7 @@ Feature: clowder herd
 ##        And project at mu has staged file something.txt
 #        And project at mu is dirty
 
-
-    @success @submodules @cats
+    @submodules @cats
     Scenario Outline: herd submodules recursive enabled check projects
         Given cats example is initialized
         And <directory> doesn't exist
@@ -133,7 +131,7 @@ Feature: clowder herd
         | black-cats/sasha  |
         | black-cats/june   |
 
-    @success @submodules @cats
+    @submodules @cats
     Scenario Outline: herd submodules recursive enabled check submodules
         Given cats example is initialized
         And <directory> doesn't exist
@@ -149,7 +147,7 @@ Feature: clowder herd
         | directory     | submodule_path |
         | mu            | ash            |
 
-    @success @submodules @cats
+    @submodules @cats
     Scenario Outline: herd submodules recursive enabled check recursive submodules
         Given cats example is initialized
         And <directory> doesn't exist
@@ -165,7 +163,7 @@ Feature: clowder herd
         | directory     | submodule_path |
         | mu            | ash/duffy      |
 
-    @success @submodules @cats
+    @submodules @cats
     Scenario Outline: herd submodules disabled check non-submodules exist
         Given cats example is initialized
         And <directory> doesn't exist
@@ -185,7 +183,7 @@ Feature: clowder herd
         | black-cats/sasha  |
         | black-cats/june   |
 
-    @success @submodules @cats
+    @submodules @cats
     Scenario Outline: herd submodules disabled check submodules don't exist
         Given cats example is initialized
         And <directory> doesn't exist
@@ -200,7 +198,7 @@ Feature: clowder herd
         | mu        | ash            |
 
     # TODO: Add tests for groups/projects
-    @success @misc @upstream @ssh
+    @misc @upstream @ssh
     Scenario Outline: herd upstream remote urls ssh defaults
         Given misc example is initialized
         And <directory> doesn't exist
@@ -221,7 +219,7 @@ Feature: clowder herd
         | sox       | master      | upstream | https://git.code.sf.net/p/sox/code.git             |
 
     # TODO: Add tests for groups/projects
-    @success @misc @upstream
+    @misc @upstream
     Scenario Outline: herd upstream remote urls https defaults
         Given misc example is initialized
         And linked https clowder version
@@ -243,7 +241,7 @@ Feature: clowder herd
         | sox       | master      | upstream | https://git.code.sf.net/p/sox/code.git             |
 
     # TODO: Add tests for groups/projects
-    @success @misc @upstream @ssh
+    @misc @upstream @ssh
     Scenario Outline: herd upstream remote urls override ssh command line
         Given misc example is initialized
         And linked https clowder version
@@ -265,7 +263,7 @@ Feature: clowder herd
         | sox       | master      | upstream | https://git.code.sf.net/p/sox/code.git             |
 
     # TODO: Add tests for groups/projects
-    @success @misc @upstream
+    @misc @upstream
     Scenario Outline: herd upstream remote urls override https command line
         Given misc example is initialized
         And <directory> doesn't exist
@@ -286,7 +284,7 @@ Feature: clowder herd
         | sox       | master      | upstream | https://git.code.sf.net/p/sox/code.git             |
 
     # TODO: Add tests for groups/projects
-    @success @misc @upstream @config
+    @misc @upstream @config
     Scenario Outline: herd upstream remote urls override https config
         Given misc example is initialized
         And <directory> doesn't exist
@@ -308,7 +306,7 @@ Feature: clowder herd
         | sox       | master      | upstream | https://git.code.sf.net/p/sox/code.git             |
 
     # TODO: Add tests for groups/projects
-    @success @misc @upstream @config @ssh
+    @misc @upstream @config @ssh
     Scenario Outline: herd upstream remote urls override ssh config
         Given misc example is initialized
         And linked https clowder version
@@ -332,7 +330,7 @@ Feature: clowder herd
 
     # TODO: Add tests for logic renaming remotes
 
-    @success @misc @upstream
+    @misc @upstream
     Scenario: herd project with branch behind upstream
         Given misc example is initialized and herded with https
         And project at gyp is on branch fork-branch
@@ -343,7 +341,7 @@ Feature: clowder herd
         And project at gyp is on branch fork-branch
 
 #    FIXME: Figure out correct commits
-#    @commits @success @cats
+#    @commits @cats
 #    Scenario Outline: herd saved version after init
 #        Given cats example is initialized
 #        And linked v0.1 clowder version
@@ -364,7 +362,7 @@ Feature: clowder herd
 #        | black-cats/june   | b6e1316cc62cb2ba18fa982fc3d67ef4408c8bfd |
 #        | black-cats/sasha  | 775979e0b1a7f753131bf16a4794c851c67108d8 |
 
-    @success @cats
+    @cats
     Scenario Outline: herd non-symlink yaml file
         Given cats example non-symlink yaml file exists
         And <directory> doesn't exist
@@ -383,7 +381,7 @@ Feature: clowder herd
         | black-cats/sasha  | master |
         | black-cats/june   | master |
 
-    @success @cats
+    @cats
     Scenario Outline: herd groups default included
         Given cats example is initialized
         And linked groups clowder version
@@ -402,7 +400,7 @@ Feature: clowder herd
         | black-cats/sasha  | master |
         | black-cats/june   | master |
 
-    @success @cats
+    @cats
     Scenario Outline: herd groups default excluded
         Given cats example is initialized
         And linked groups clowder version
@@ -416,7 +414,7 @@ Feature: clowder herd
         | mu        |
         | duke      |
 
-    @success @cats
+    @cats
     Scenario Outline: herd group black-cats included
         Given cats example is initialized
         And linked groups clowder version
@@ -434,7 +432,7 @@ Feature: clowder herd
         | black-cats/sasha  | master |
         | black-cats/june   | master |
 
-    @success @cats
+    @cats
     Scenario Outline: herd group black-cats excluded
         Given cats example is initialized
         And linked groups clowder version
@@ -449,7 +447,7 @@ Feature: clowder herd
         | duke      |
         | mu-cat    |
 
-    @success @cats
+    @cats
     Scenario Outline: herd group cats included
         Given cats example is initialized
         And linked groups clowder version
@@ -466,7 +464,7 @@ Feature: clowder herd
         | duke      | purr   |
         | mu-cat    | knead  |
 
-    @success @cats
+    @cats
     Scenario Outline: herd group cats excluded
         Given cats example is initialized
         And linked groups clowder version
@@ -482,7 +480,7 @@ Feature: clowder herd
         | black-cats/sasha  |
         | black-cats/june   |
 
-    @success @cats
+    @cats
     Scenario Outline: herd groups "cats black-cats"
         Given cats example is initialized
         And linked groups clowder version
@@ -503,7 +501,7 @@ Feature: clowder herd
         | black-cats/sasha  | master |
         | black-cats/june   | master |
 
-    @success @cats
+    @cats
     Scenario Outline: herd project name JrGoodle/mu included
         Given cats example is initialized
         And linked groups clowder version
@@ -519,7 +517,7 @@ Feature: clowder herd
         | mu        | knead  |
         | mu-cat    | knead  |
 
-    @success @cats
+    @cats
     Scenario Outline: herd project name JrGoodle/mu excluded
         Given cats example is initialized
         And linked groups clowder version
@@ -536,7 +534,7 @@ Feature: clowder herd
         | black-cats/sasha  |
         | black-cats/june   |
 
-    @success @cats
+    @cats
     Scenario Outline: herd project path mu included
         Given cats example is initialized
         And linked groups clowder version
@@ -551,7 +549,7 @@ Feature: clowder herd
         | directory | branch |
         | mu        | knead  |
 
-    @success @cats
+    @cats
     Scenario Outline: herd project path mu excluded
         Given cats example is initialized
         And linked groups clowder version
@@ -569,7 +567,7 @@ Feature: clowder herd
         | black-cats/sasha  |
         | black-cats/june   |
 
-    @success @cats
+    @cats
     Scenario Outline: herd groups "all notdefault"
         Given cats example is initialized
         And linked groups clowder version
@@ -590,7 +588,7 @@ Feature: clowder herd
         | black-cats/sasha  | master |
         | black-cats/june   | master |
 
-    @success @cats
+    @cats
     Scenario Outline: herd groups "notdefault" included
         Given cats example is initialized
         And linked groups clowder version
@@ -606,7 +604,7 @@ Feature: clowder herd
         | mu        | knead  |
         | duke      | purr   |
 
-    @success @cats
+    @cats
     Scenario Outline: herd groups "notdefault" excluded
         Given cats example is initialized
         And linked groups clowder version
@@ -641,7 +639,7 @@ Feature: clowder herd
         | black-cats/sasha  |
         | black-cats/june   |
 
-    @success @cats @internet @write
+    @cats @internet @write
     Scenario Outline: herd rebase with conflict
         Given cats example is initialized and herded
         And project at <directory> has local commits and is behind remote branch <test_branch>

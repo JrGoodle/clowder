@@ -1,26 +1,25 @@
 @start @cats
 Feature: clowder start
 
-    @help @success
+    @help
     Scenario: start help in empty directory
         Given test directory is empty
         When I run 'clowder start -h' and 'clowder start --help'
         Then the commands succeed
 
-    @help @success
+    @help
     Scenario: start help with invalid clowder.yaml
         Given cats example is initialized to branch yaml-validation
         And linked test-empty-project clowder version
         When I run 'clowder start -h' and 'clowder start --help'
         Then the commands succeed
 
-    @help @success
+    @help
     Scenario: start help with valid clowder.yaml
         Given cats example is initialized
         When I run 'clowder start -h' and 'clowder start --help'
         Then the commands succeed
 
-    @success
     Scenario Outline: start local
         Given cats example is initialized and herded
         And project at <directory> has no local branch <test_branch>
@@ -42,7 +41,7 @@ Feature: clowder start
         | black-cats/june   | master       | new-branch | new-branch  |
 
     # FIXME: Probably need to create a fixture that sets up remote branches
-    @success @internet @write
+    @internet @write
     Scenario Outline: start tracking
         Given cats example is initialized and herded
         And cats example projects have no remote branch <test_branch>
@@ -65,7 +64,7 @@ Feature: clowder start
         | black-cats/sasha  | master       | new-branch | new-branch  |
         | black-cats/june   | master       | new-branch | new-branch  |
 
-    @success @offline
+    @offline
     Scenario Outline: start local offline
         Given the network connection is enabled
         And cats example is initialized and herded
@@ -113,7 +112,6 @@ Feature: clowder start
         | black-cats/sasha  | master       | master     | new-branch  |
         | black-cats/june   | master       | master     | new-branch  |
 
-    @success
     Scenario Outline: start local group excluded
         Given cats example is initialized and herded
         And project at <directory> deleted remote branch <test_branch>
@@ -131,7 +129,6 @@ Feature: clowder start
         | mu                | knead        | knead      | new-branch  |
         | duke              | purr         | purr       | new-branch  |
 
-    @success
     Scenario Outline: start local group included
         Given cats example is initialized and herded
         And project at <directory> deleted remote branch <test_branch>

@@ -1,26 +1,25 @@
 @yaml @cats
 Feature: clowder yaml
 
-    @help @success
+    @help
     Scenario: yaml help in empty directory
         Given test directory is empty
         When I run 'clowder yaml -h' and 'clowder yaml --help'
         Then the commands succeed
 
-    @help @success
+    @help
     Scenario: yaml help with invalid clowder.yaml
         Given cats example is initialized to branch yaml-validation
         And linked test-empty-project clowder version
         When I run 'clowder yaml -h' and 'clowder yaml --help'
         Then the commands succeed
 
-    @help @success
+    @help
     Scenario: yaml help with valid clowder.yaml
         Given cats example is initialized
         When I run 'clowder yaml -h' and 'clowder yaml --help'
         Then the commands succeed
 
-    @success
     Scenario: yaml
         Given cats example is initialized and herded
         And yaml test files were copied to clowder directory
@@ -28,7 +27,6 @@ Feature: clowder yaml
         Then the command succeeds
         And output matches contents of clowder-yaml.txt
 
-    @success
     Scenario: yaml file
         Given cats example is initialized and herded
         And yaml test files were copied to clowder directory
@@ -36,7 +34,6 @@ Feature: clowder yaml
         Then the command succeeds
         And output matches contents of clowder-yaml-f.txt
 
-    @success
     Scenario: yaml resolved
         Given cats example is initialized and herded
         And yaml test files were copied to clowder directory

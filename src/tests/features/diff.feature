@@ -1,20 +1,20 @@
 @diff @cats
 Feature: clowder diff
 
-    @help @success
+    @help
     Scenario: diff help in empty directory
         Given test directory is empty
         When I run 'clowder diff -h' and 'clowder diff --help'
         Then the commands succeed
 
-    @help @success
+    @help
     Scenario: diff help with invalid clowder.yaml
         Given cats example is initialized to branch yaml-validation
         And linked test-empty-project clowder version
         When I run 'clowder diff -h' and 'clowder diff --help'
         Then the commands succeed
 
-    @help @success @multiline
+    @help @multiline
     Scenario: diff help with valid clowder.yaml
         Given cats example is initialized
         When I run 'clowder diff -h' and 'clowder diff --help'
@@ -24,7 +24,6 @@ Feature: clowder diff
 #            clowder diff --help
         Then the commands succeed
 
-    @success
     Scenario: diff
         Given cats example is initialized and herded
         And created file catnip.txt in directory mu
@@ -40,7 +39,7 @@ Feature: clowder diff
         And project at mu has untracked file catnip.txt
 #        And TODO: check the output
 
-    @success @offline
+    @offline
     Scenario: diff
         Given cats example is initialized and herded
         And created file catnip.txt in directory mu

@@ -1,7 +1,7 @@
 @status @cats
 Feature: clowder status
 
-    @help @success
+    @help
     Scenario: status help in empty directory
         Given test directory is empty
         When I run 'clowder status -h' and 'clowder status --help'
@@ -9,20 +9,19 @@ Feature: clowder status
 
     # TODO: Add links for yaml files used in tests
     # https://github.com/JrGoodle/cats/blob/master/versions/yaml-validation.clowder.yaml
-    @help @success
+    @help
     Scenario: status help with invalid clowder.yaml
         Given cats example is initialized to branch yaml-validation
         And linked test-empty-project clowder version
         When I run 'clowder status -h' and 'clowder status --help'
         Then the commands succeed
 
-    @help @success
+    @help
     Scenario: status help with valid clowder.yaml
         Given cats example is initialized
         When I run 'clowder status -h' and 'clowder status --help'
         Then the commands succeed
 
-    @success
     Scenario: status
         Given cats example is initialized and herded
         And created file catnip.txt in directory mu
@@ -38,7 +37,7 @@ Feature: clowder status
         And project at mu has untracked file catnip.txt
 #        And TODO: check the output
 
-    @success @internet
+    @internet
     Scenario: status with fetch
         Given cats example is initialized and herded
         And created file catnip.txt in directory mu
@@ -54,7 +53,7 @@ Feature: clowder status
         And project at mu has untracked file catnip.txt
 #        And TODO: check the output
 
-    @success @offline
+    @offline
     Scenario: status offline
         Given cats example is initialized and herded
         And created file catnip.txt in directory mu

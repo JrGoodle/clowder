@@ -1,20 +1,20 @@
 @cats @repo
 Feature: clowder repo command
 
-    @help @success
+    @help
     Scenario: repo help in empty directory
         Given test directory is empty
         When I run 'clowder repo -h' and 'clowder repo --help'
         Then the commands succeed
 
-    @help @success
+    @help
     Scenario: repo help with invalid clowder.yaml
         Given cats example is initialized to branch yaml-validation
         And linked test-empty-project clowder version
         When I run 'clowder repo -h' and 'clowder repo --help'
         Then the commands succeed
 
-    @help @success
+    @help
     Scenario: repo help with valid clowder.yaml
         Given cats example is initialized
         When I run 'clowder repo -h' and 'clowder repo --help'
@@ -30,7 +30,6 @@ Feature: clowder repo command
         And .clowder/my-file file doesn't exist
         And repo at .clowder is clean
 
-    @success
     Scenario: repo run create file
         Given cats example is initialized
         And .clowder/my-file file doesn't exist
@@ -40,7 +39,6 @@ Feature: clowder repo command
         And .clowder/my-file file exists
         And repo at .clowder is dirty
 
-    @success
     Scenario: repo run delete file
         Given cats example is initialized
         And created file my-file in directory .clowder
@@ -51,7 +49,6 @@ Feature: clowder repo command
         And my-file file doesn't exist in directory .clowder
         And repo at .clowder is clean
 
-    @success
     Scenario: repo checkout
         Given cats example is initialized
         And repo at .clowder is on branch master
@@ -74,7 +71,6 @@ Feature: clowder repo command
         And repo at .clowder has no remote branch i-dont-exist
         And repo at .clowder is on branch master
 
-    @success
     Scenario: repo clean
         Given cats example is initialized
         And repo at .clowder is on branch master
@@ -87,7 +83,6 @@ Feature: clowder repo command
         And my-staged-file file doesn't exist in directory .clowder
         And repo at .clowder is on branch master
 
-    @success
     Scenario: repo status
         Given cats example is initialized
         And created file my-staged-file in directory .clowder

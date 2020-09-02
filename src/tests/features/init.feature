@@ -1,26 +1,26 @@
 @init
 Feature: clowder init
 
-    @help @success @cats
+    @help @cats
     Scenario: init help in empty directory
         Given test directory is empty
         When I run 'clowder init -h' and 'clowder init --help'
         Then the commands succeed
 
-    @help @success @cats
+    @help @cats
     Scenario: init help with invalid clowder.yaml
         Given cats example is initialized to branch yaml-validation
         And linked test-empty-project clowder version
         When I run 'clowder init -h' and 'clowder init --help'
         Then the commands succeed
 
-    @help @success @cats
+    @help @cats
     Scenario: init help with valid clowder.yaml
         Given cats example is initialized
         When I run 'clowder init -h' and 'clowder init --help'
         Then the commands succeed
 
-    @success @cats
+    @cats
     Scenario: init default
         Given .clowder directory doesn't exist
         And test directory is empty
@@ -32,7 +32,7 @@ Feature: clowder init
         And repo at .clowder has remote origin with url https://github.com/JrGoodle/cats.git
         And default clowder version is linked
 
-    @success @cats @ssh
+    @cats @ssh
     Scenario: init default
         Given .clowder directory doesn't exist
         And test directory is empty
@@ -44,7 +44,7 @@ Feature: clowder init
         And repo at .clowder has remote origin with url git@github.com:JrGoodle/cats.git
         And default clowder version is linked
 
-    @success @cats
+    @cats
     Scenario: init branch
         Given .clowder directory doesn't exist
         And test directory is empty
@@ -55,7 +55,7 @@ Feature: clowder init
         And repo at .clowder is clean
         And default clowder version is linked
 
-    @success @cats
+    @cats
     Scenario: init existing empty directory
         Given test directory is empty
         And created directory .clowder
@@ -88,7 +88,7 @@ Feature: clowder init
         And clowder.yaml file exists
         And clowder.yaml is not a symlink
 
-    @success @cats
+    @cats
     Scenario: init existing symlink yaml file no .clowder directory
         Given .clowder directory doesn't exist
         And created file something-to-link-to in directory .
@@ -129,7 +129,7 @@ Feature: clowder init
         And clowder.yml is not a symlink
         And clowder.yaml is a symlink pointing to .clowder/clowder.yaml
 
-    @success @cats
+    @cats
     Scenario: init existing ambiguous yaml symlink, yml symlink, no .clowder directory
         Given .clowder directory doesn't exist
         And created file something-to-link-to in directory .

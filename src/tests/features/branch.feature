@@ -1,26 +1,26 @@
 @branch @cats
 Feature: clowder branch
 
-    @help @success
+    @help
     Scenario: branch help in empty directory
         Given test directory is empty
         When I run 'clowder branch -h' and 'clowder branch --help'
         Then the commands succeed
 
-    @help @success
+    @help
     Scenario: branch help with invalid clowder.yaml
         Given cats example is initialized to branch yaml-validation
         And linked test-empty-project clowder version
         When I run 'clowder branch -h' and 'clowder branch --help'
         Then the commands succeed
 
-    @help @success
+    @help
     Scenario: branch help with valid clowder.yaml
         Given cats example is initialized
         When I run 'clowder branch -h' and 'clowder branch --help'
         Then the commands succeed
 
-    @success @offline
+    @offline
     Scenario: branch offline
         Given cats example is initialized and herded
         When the network connection is disabled

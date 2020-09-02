@@ -1,26 +1,25 @@
 @prune @cats
 Feature: clowder prune
 
-    @help @success
+    @help
     Scenario: prune help in empty directory
         Given test directory is empty
         When I run 'clowder prune -h' and 'clowder prune --help'
         Then the commands succeed
 
-    @help @success
+    @help
     Scenario: prune help with invalid clowder.yaml
         Given cats example is initialized to branch yaml-validation
         And linked test-empty-project clowder version
         When I run 'clowder prune -h' and 'clowder prune --help'
         Then the commands succeed
 
-    @help @success
+    @help
     Scenario: prune help with valid clowder.yaml
         Given cats example is initialized
         When I run 'clowder prune -h' and 'clowder prune --help'
         Then the commands succeed
 
-    @success
     Scenario Outline: prune default existing local branch checked out
         Given cats example is initialized and herded
         And project at <directory> created local branch <test_branch>
@@ -32,15 +31,14 @@ Feature: clowder prune
         And project at <directory> is on <end_branch>
 
         Examples:
-        | directory         | end_branch | test_branch |
-        | mu                | knead      | shrubs      |
-        | duke              | purr       | shrubs      |
-        | black-cats/kishka | master     | shrubs      |
-        | black-cats/kit    | master     | shrubs      |
-        | black-cats/sasha  | master     | shrubs      |
-        | black-cats/june   | master     | shrubs      |
+        | directory         | test_branch | end_branch |
+        | mu                | shrubs      | knead      |
+        | duke              | shrubs      | purr       |
+        | black-cats/kishka | shrubs      | master     |
+        | black-cats/kit    | shrubs      | master     |
+        | black-cats/sasha  | shrubs      | master     |
+        | black-cats/june   | shrubs      | master     |
 
-    @success
     Scenario Outline: prune default existing local branch checked out group selected
         Given cats example is initialized and herded
         And project at <directory> created local branch <test_branch>
@@ -52,11 +50,10 @@ Feature: clowder prune
         And project at <directory> is on <end_branch>
 
         Examples:
-        | directory | end_branch | test_branch |
-        | mu        | knead      | shrubs      |
-        | duke      | purr       | shrubs      |
+        | directory | test_branch | end_branch |
+        | mu        | shrubs      | knead      |
+        | duke      | shrubs      | purr       |
 
-    @success
     Scenario Outline: prune default existing local branch checked out group not selected
         Given cats example is initialized and herded
         And project at <directory> created local branch <test_branch>
@@ -87,15 +84,14 @@ Feature: clowder prune
         And project at <directory> is on <end_branch>
 
         Examples:
-        | directory         | end_branch | test_branch |
-        | mu                | knead      | shrubs      |
-        | duke              | purr       | shrubs      |
-        | black-cats/kishka | master     | shrubs      |
-        | black-cats/kit    | master     | shrubs      |
-        | black-cats/sasha  | master     | shrubs      |
-        | black-cats/june   | master     | shrubs      |
+        | directory         | test_branch | end_branch |
+        | mu                | shrubs      | knead      |
+        | duke              | shrubs      | purr       |
+        | black-cats/kishka | shrubs      | master     |
+        | black-cats/kit    | shrubs      | master     |
+        | black-cats/sasha  | shrubs      | master     |
+        | black-cats/june   | shrubs      | master     |
 
-    @success
     Scenario Outline: prune force default existing local branch checked out not fully merged
         Given cats example is initialized and herded
         And project at <directory> created local branch <test_branch>
@@ -108,15 +104,15 @@ Feature: clowder prune
         And project at <directory> is on <end_branch>
 
         Examples:
-        | directory         | end_branch | test_branch |
-        | mu                | knead      | shrubs      |
-        | duke              | purr       | shrubs      |
-        | black-cats/kishka | master     | shrubs      |
-        | black-cats/kit    | master     | shrubs      |
-        | black-cats/sasha  | master     | shrubs      |
-        | black-cats/june   | master     | shrubs      |
+        | directory         | test_branch | end_branch |
+        | mu                | shrubs      | knead      |
+        | duke              | shrubs      | purr       |
+        | black-cats/kishka | shrubs      | master     |
+        | black-cats/kit    | shrubs      | master     |
+        | black-cats/sasha  | shrubs      | master     |
+        | black-cats/june   | shrubs      | master     |
 
-    @success @offline
+    @offline
     Scenario Outline: prune offline
         Given cats example is initialized and herded
         And project at <directory> created local branch <test_branch>
@@ -129,13 +125,13 @@ Feature: clowder prune
         And project at <directory> is on <end_branch>
 
         Examples:
-        | directory         | end_branch | test_branch |
-        | mu                | knead      | shrubs      |
-        | duke              | purr       | shrubs      |
-        | black-cats/kishka | master     | shrubs      |
-        | black-cats/kit    | master     | shrubs      |
-        | black-cats/sasha  | master     | shrubs      |
-        | black-cats/june   | master     | shrubs      |
+        | directory         | test_branch | end_branch |
+        | mu                | shrubs      | knead      |
+        | duke              | shrubs      | purr       |
+        | black-cats/kishka | shrubs      | master     |
+        | black-cats/kit    | shrubs      | master     |
+        | black-cats/sasha  | shrubs      | master     |
+        | black-cats/june   | shrubs      | master     |
 
     @fail @offline
     Scenario Outline: prune remote offline
@@ -147,7 +143,6 @@ Feature: clowder prune
         Then the command fails
         And the network connection is enabled
         And project at <directory> has remote branch <test_branch>
-
 
         Examples:
         | directory         | test_branch                 |
@@ -164,22 +159,22 @@ Feature: clowder prune
         And cats example is initialized and herded
         And project at <directory> created remote branch <test_branch>
         When the network connection is disabled
-        And I run 'clowder prune -a pytest-prune-remote-offline'
+        And I run 'clowder prune -a pytest-prune-all-offline'
         Then the command fails
         And the network connection is enabled
         And project at <directory> has no local branch <test_branch>
         And project at <directory> has remote branch <test_branch>
 
         Examples:
-        | directory         | test_branch                 |
-        | mu                | pytest-prune-remote-offline |
-        | duke              | pytest-prune-remote-offline |
-        | black-cats/kishka | pytest-prune-remote-offline |
-        | black-cats/kit    | pytest-prune-remote-offline |
-        | black-cats/sasha  | pytest-prune-remote-offline |
-        | black-cats/june   | pytest-prune-remote-offline |
+        | directory         | test_branch              |
+        | mu                | pytest-prune-all-offline |
+        | duke              | pytest-prune-all-offline |
+        | black-cats/kishka | pytest-prune-all-offline |
+        | black-cats/kit    | pytest-prune-all-offline |
+        | black-cats/sasha  | pytest-prune-all-offline |
+        | black-cats/june   | pytest-prune-all-offline |
 
-    @success @internet @write
+    @internet @write
     Scenario Outline: prune remote no local branch
         Given cats example is initialized and herded
         And project at <directory> created remote branch <test_branch>
@@ -190,7 +185,6 @@ Feature: clowder prune
         And project at <directory> has no remote branch <test_branch>
         And project at <directory> has no local branch <test_branch>
 
-
         Examples:
         | directory         | test_branch         |
         | mu                | pytest-prune-remote |
@@ -200,7 +194,7 @@ Feature: clowder prune
         | black-cats/sasha  | pytest-prune-remote |
         | black-cats/june   | pytest-prune-remote |
 
-    @success @internet @write
+    @internet @write
     Scenario Outline: prune remote tracking branch
         Given cats example is initialized and herded
         And project at <directory> created tracking branch <test_branch>
@@ -214,7 +208,6 @@ Feature: clowder prune
         And project at <directory> has local branch <test_branch>
         And project at <directory> is on <test_branch>
 
-
         Examples:
         | directory         | test_branch         |
         | mu                | pytest-prune-remote |
@@ -224,7 +217,7 @@ Feature: clowder prune
         | black-cats/sasha  | pytest-prune-remote |
         | black-cats/june   | pytest-prune-remote |
 
-    @success @internet @write
+    @internet @write
     Scenario Outline: prune all
         Given cats example is initialized and herded
         And project at <directory> created tracking branch <test_branch>
@@ -237,7 +230,6 @@ Feature: clowder prune
         And project at <directory> has no remote branch <test_branch>
         And project at <directory> has no local branch <test_branch>
         And project at <directory> is on <end_branch>
-
 
         Examples:
         | directory         | test_branch      | end_branch |
