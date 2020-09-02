@@ -68,7 +68,7 @@ class BaseController(ArgparseController):
     def write(self) -> None:
         """clowder write tests"""
 
-        cats_scripts = ['./write_herd.sh', './write_prune.sh', './write_repo.sh', './write_start.sh']
+        cats_scripts = ['./write_prune.sh', './write_repo.sh', './write_start.sh']
         for script in cats_scripts:
             execute_test_command(script, self.path / 'cats',
                                  parallel=self.app.pargs.parallel,
