@@ -5,7 +5,7 @@ REPO_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
 clean_clowder_repo() {
     echo "Cleaning clowder command files"
     echo "Removing clowder_repo.egg-info"
-    local clowder_path=$REPO_PATH/src
+    local clowder_path=$REPO_PATH
     sudo -H rm -rf $clowder_path/clowder_repo.egg-info
     echo "Removing dist"
     sudo -H rm -rf $clowder_path/dist
@@ -20,50 +20,4 @@ clean_clowder_repo() {
     sudo -H pip3 uninstall clowder-repo
     popd || exit 1
 }
-
-clean_clowder_test() {
-    echo "Cleaning clowder test files"
-    echo "Removing clowder_test.egg-info"
-    sudo -H rm -rf $REPO_PATH/clowder_test/clowder_test.egg-info
-    echo "Removing clowder_test .pyc and __pycache__"
-    local path=$REPO_PATH/clowder_test/clowder_test
-    sudo -H rm -rf $path/*.pyc $path/*/*.pyc
-    sudo -H rm -rf $path/__pycache__ $path/*/__pycache__
-    echo "Removing unitests .pyc and __pycache__"
-    local path=$REPO_PATH/test/unittests
-    sudo -H rm -rf $path/*.pyc
-    sudo -H rm -rf $path/__pycache__
-    echo "pip3 uninstall clowder-test"
-    pushd $REPO_PATH || exit 1
-    sudo -H pip3 uninstall clowder_test
-    popd || exit 1
-    sudo -H rm -rf $REPO_PATH/test/config/*/invalid/*.json
-    sudo -H rm -rf $REPO_PATH/test/config/*/*.json
-}
-
-clean_examples() {
-    echo "Removing existing example files"
-    local examples_path=$REPO_PATH/examples
-    echo 'Clean repo examples...'
-    "$examples_path/cats/clean.sh"
-    "$examples_path/swift-projects/clean.sh"
-    "$examples_path/misc/clean.sh"
-    if [ -z "$CI" ]; then
-        echo 'Clean home directory examples...'
-        rm -rf "$HOME/.clowder_tests"
-    fi
-}
-
-if [ "$1" = 'all' ]; then
-    clean_clowder_repo
-    clean_clowder_test
-    clean_examples
-elif [ "$1" = 'clowder' ]; then
-    clean_clowder_repo
-elif [ "$1" = 'examples' ]; then
-    clean_examples
-elif [ "$1" = 'test' ]; then
-    clean_clowder_test
-else
-    echo 'Requires parameter "all", "clowder", "examples", or "test"'
-fi
+clean_clowder_repo

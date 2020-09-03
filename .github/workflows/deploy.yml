@@ -25,7 +25,7 @@ jobs:
     - name: Install homebrew dependencies
       run: brew install github-release
     - name: Install clowder requirements
-      run: pip3 install -r src/requirements.txt
+      run: pip3 install -r requirements.txt
     - name: Install clowder
       run: script/update
     - name: Install clowder test

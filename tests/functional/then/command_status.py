@@ -2,7 +2,6 @@
 
 from pathlib import Path
 
-# noinspection PyPackageRequirements
 from pytest_bdd import then, parsers
 
 from tests.functional.util import CommandResults, ScenarioInfo

@@ -9,7 +9,7 @@ omit =
 
 [paths]
 source =
-    src/clowder
+    clowder
 
 [report]
 # Regexes for lines to exclude from consideration

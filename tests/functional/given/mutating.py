@@ -4,7 +4,6 @@ import os
 import shutil
 from pathlib import Path
 
-# noinspection PyPackageRequirements
 from pytest_bdd import given, parsers
 
 import tests.functional.util as util

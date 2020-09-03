@@ -5,7 +5,6 @@
 
 """
 
-# noinspection PyPackageRequirements
 from tqdm import tqdm
 
 

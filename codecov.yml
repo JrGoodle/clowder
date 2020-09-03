@@ -7,9 +7,9 @@ coverage:
       default: off
       clowder:
         paths:
-          - 'src/'
-          - '!src/clowder/util/clowder.schema.json'
-          - '!src/clowder/util/clowder.config.schema.json'
+          - 'clowder'
+          - '!clowder/util/clowder.schema.json'
+          - '!clowder/util/clowder.config.schema.json'
         target: 70
         threshold: 20
     patch:
@@ -40,4 +40,4 @@ ignore:
   - "clowder_test/**/*"
   - "docs/**/*"
   - "script/**/*"
-  - "test/**/*"
+  - "tests/**/*"

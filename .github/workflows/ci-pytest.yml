@@ -38,19 +38,15 @@ jobs:
         git config --global user.email "joe@polka.cat";
         git config --global user.name "GitHub Actions Workflow"
     - name: Install clowder requirements
-      run: pip3 install -r src/requirements.txt
+      run: pip3 install -r requirements.txt
     - name: CI before script
       run: script/ci_before
     - name: Install clowder
       run: script/update
     - name: Run pytest functional tests
-      run: |
-        cd src
-        pytest -n auto -m "not ssh and not config and not write and not offline"
+      run: pytest -n auto -m "not ssh and not config and not write and not offline"
     - name: Run pytest config tests
-      run: |
-        cd src
-        pytest -v -m "config and not ssh and not write and not offline"
+      run: pytest -v -m "config and not ssh and not write and not offline"
     # FIXME: Gather coverage data and such
     # - name: CI after script
     #   run: script/ci_after

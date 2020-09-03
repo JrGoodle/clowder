@@ -24,7 +24,7 @@ _test_invalid_yaml() {
     do
         print_single_separator
         echo "TEST: Validate $test"
-        jsonschema -i "$test" src/clowder/util/clowder.config.schema.json && exit 1
+        jsonschema -i "$test" clowder/util/clowder.config.schema.json && exit 1
         print_single_separator
     done
 }
@@ -36,7 +36,7 @@ _test_valid_yaml() {
     do
         print_single_separator
         echo "TEST: Validate $test"
-        jsonschema -i "$test" src/clowder/util/clowder.config.schema.json || exit 1
+        jsonschema -i "$test" clowder/util/clowder.config.schema.json || exit 1
         print_single_separator
     done
 }

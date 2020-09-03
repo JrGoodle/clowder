@@ -10,7 +10,6 @@ import pkg_resources
 from multiprocessing import freeze_support
 from typing import Optional
 
-# noinspection PyPackageRequirements
 import argcomplete
 import colorama
 

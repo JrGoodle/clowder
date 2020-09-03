@@ -12,7 +12,7 @@ from setuptools import setup
 if 'READTHEDOCS' in os.environ:
     long_description = 'Utility for managing multiple git repositories'
 else:
-    repo_dir = Path(__file__).resolve().parent.parent.resolve()
+    repo_dir = Path(__file__).resolve().parent.resolve()
     process_readme_script = repo_dir / 'script' / 'process_readme.py'
     exec(process_readme_script.read_text(), {'SETUP_PY': True, 'REPO_DIR': str(repo_dir)})
     processed_readme = repo_dir / 'README-processed.md'

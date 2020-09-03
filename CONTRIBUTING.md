@@ -12,7 +12,7 @@ cd clowder
 Add the directory you cloned the repo into to `PYTHONPATH` in your shell profile. For example, if cloned into `$HOME/clowder`
 
 ```bash
-export PYTHONPATH=$PYTHONPATH:$HOME/clowder/src/clowder
+export PYTHONPATH=$PYTHONPATH:$HOME/clowder/clowder
 ```
 
 ## Building
