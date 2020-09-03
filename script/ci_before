@@ -8,7 +8,7 @@ case "$(uname)" in
     CYGWIN*) export PLATFORM="windows";;
 esac
 
-# Requires CC_TEST_REPORTER_ID
+# Requires CC_TEST_REPORTER_ID is set
 echo 'Download Code Climate test reporter'
 curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-$PLATFORM-amd64 > ./cc-test-reporter
 chmod +x ./cc-test-reporter

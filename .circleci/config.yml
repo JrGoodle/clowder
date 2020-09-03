@@ -32,7 +32,6 @@ jobs:
           command: |
             script/ci_before
             script/update
-            script/test
 
       - save_cache:
           paths:
@@ -48,12 +47,13 @@ jobs:
             git config --global --unset url.ssh://git@github.com.insteadOf
 
       - run:
-          name: run pytest ssh tests
+          name: run pytest parallel tests
           command: pytest -v -n auto -m "ssh and not config and not offline and not write"
 
-      - run:
-          name: run pytest ssh tests
-          command: pytest -v -m "write and not config and not offline"
+      # FIXME: Set up ssh in tests
+      # - run:
+      #     name: run pytest ssh tests
+      #     command: pytest -v -m "write and not config and not offline"
 
       - run:
           name: run pytest config tests

@@ -37,12 +37,10 @@ jobs:
       run:
         git config --global user.email "joe@polka.cat";
         git config --global user.name "GitHub Actions Workflow"
-    - name: Install clowder requirements
-      run: pip3 install -r requirements.txt
-    - name: CI before script
-      run: script/ci_before
     - name: Install clowder
       run: script/update
+    - name: CI before script
+      run: script/ci_before
     - name: Run pytest functional tests
       run: pytest -n auto -m "not ssh and not config and not write and not offline"
     - name: Run pytest config tests

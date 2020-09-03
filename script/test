@@ -2,8 +2,6 @@
 
 cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
 
-script/clean || exit 1
-
 # TODO: Call pytest
 # case "$(uname)" in
 #     Linux*) export PLATFORM="linux";

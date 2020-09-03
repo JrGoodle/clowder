@@ -24,11 +24,7 @@ jobs:
         git config --global user.name "GitHub Actions Workflow"
     - name: Install homebrew dependencies
       run: brew install github-release
-    - name: Install clowder requirements
-      run: pip3 install -r requirements.txt
     - name: Install clowder
       run: script/update
-    - name: Install clowder test
-      run: script/test
     # - name: Deploy script
     #   run: script/deploy
