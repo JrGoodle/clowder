@@ -30,3 +30,25 @@ Feature: clowder clean
         Then the command succeeds
         And something.txt file doesn't exist in directory mu
         And project at mu is clean
+
+    @offline
+    Scenario: clean offline
+        Given cats example is initialized and herded
+        And created file something.txt in directory mu
+        And project at mu staged file something.txt
+        When the network connection is disabled
+        And I run 'clowder clean'
+        Then the command succeeds
+        And something.txt file doesn't exist in directory mu
+        And project at mu is clean
+
+    @subdirectory
+    Scenario: clean subdirectory
+        Given cats example is initialized and herded
+        And created file something.txt in directory mu
+        And project at mu staged file something.txt
+        When I change to directory duke
+        And I run 'clowder clean'
+        Then the command succeeds
+        And something.txt file doesn't exist in directory mu
+        And project at mu is clean

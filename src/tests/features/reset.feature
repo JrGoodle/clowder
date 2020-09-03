@@ -74,6 +74,26 @@ Feature: clowder reset
         | black-cats/sasha  | master      | 2             | 4            |
         | black-cats/june   | master      | 5             | 1            |
 
+    @subdirectory
+    Scenario Outline: reset subdirectory behind ahead
+        Given cats example is initialized and herded
+        And project at <directory> is behind upstream <test_branch> by <number_behind> and ahead by <number_ahead>
+        And project at <directory> is on <test_branch>
+        When I change to directory black-cats
+        And I run 'clowder reset'
+        Then the command succeeds
+        And project at <directory> is on <test_branch>
+        And project at <directory> is in sync with upstream <test_branch>
+
+        Examples:
+        | directory         | test_branch | number_behind | number_ahead |
+        | mu                | knead       | 3             | 2            |
+        | duke              | purr        | 2             | 1            |
+        | black-cats/kishka | master      | 3             | 1            |
+        | black-cats/kit    | master      | 1             | 3            |
+        | black-cats/sasha  | master      | 2             | 4            |
+        | black-cats/june   | master      | 5             | 1            |
+
     @parallel
     Scenario Outline: reset behind parallel
         Given cats example is initialized and herded

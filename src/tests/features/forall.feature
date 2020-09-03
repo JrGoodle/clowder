@@ -37,6 +37,24 @@ Feature: clowder forall
         | black-cats/sasha  | master       | v0.1       |
         | black-cats/june   | master       | v0.1       |
 
+    @cats @subdirectory
+    Scenario Outline: forall subdirectory
+        Given cats example is initialized and herded
+        And project at <directory> is on <start_branch>
+        When I change to directory black-cats/sasha
+        And I run 'clowder forall -c "git checkout -b v0.1"'
+        Then the command succeeds
+        And project at <directory> is on <end_branch>
+
+        Examples:
+        | directory         | start_branch | end_branch |
+        | mu                | knead        | v0.1       |
+        | duke              | purr         | v0.1       |
+        | black-cats/kishka | master       | v0.1       |
+        | black-cats/kit    | master       | v0.1       |
+        | black-cats/sasha  | master       | v0.1       |
+        | black-cats/june   | master       | v0.1       |
+
     @parallel @cats
     Scenario Outline: forall parallel
         Given cats example is initialized and herded
@@ -143,10 +161,15 @@ Feature: clowder forall
         And forall test scripts were copied to the project directories
         When I run 'clowder forall JrGoodle/kit -c "./test_forall_env_kit.sh"'
         And I run 'clowder forall JrGoodle/duke -c "./test_forall_env_duke.sh"'
-        And I run 'clowder forall JrGoodle/kit -c "./test_forall_env_kit.sh"' in directory mu
-        And I run 'clowder forall JrGoodle/duke -c "./test_forall_env_duke.sh"' in directory duke
-        And I run 'clowder forall JrGoodle/kit -c "./test_forall_env_kit.sh"' in directory black-cats/june
-        And I run 'clowder forall JrGoodle/duke -c "./test_forall_env_duke.sh"' in directory black-cats/sasha
+        Then the commands succeed
+
+    @cats @subdirectory
+    Scenario: forall script environment subdirectory
+        Given cats example is initialized and herded
+        And forall test scripts were copied to the project directories
+        And I change to directory mu
+        And I run 'clowder forall JrGoodle/kit -c "./test_forall_env_kit.sh"'
+        And I run 'clowder forall JrGoodle/duke -c "./test_forall_env_duke.sh"'
         Then the commands succeed
 
     @fail @cats

@@ -61,8 +61,31 @@ Feature: clowder save command
         And my-new-version clowder version exists
         And default clowder version is linked
 
-    # FIXME: Should probably only allow [A-Za-z0-9-_]+
+    @subdirectory
+    Scenario: save from subdirectory new version with no existing versions directory
+        Given cats example was initialized and herded to branch no-versions
+        And default clowder version is linked
+        And my-new-version clowder version doesn't exist
+        And .clowder/versions directory doesn't exist
+        When I change to directory black-cats/june
+        And I run 'clowder save my-new-version'
+        Then the command succeeds
+        And .clowder/versions directory exists
+        And my-new-version clowder version exists
+        And default clowder version is linked
 
+    @subdirectory
+    Scenario: save from subdirectory new version with existing versions directory
+        Given cats example is initialized and herded
+        And default clowder version is linked
+        And my-new-version clowder version doesn't exist
+        When I change to directory black-cats/june
+        And I run 'clowder save my-new-version'
+        Then the command succeeds
+        And my-new-version clowder version exists
+        And default clowder version is linked
+
+    # FIXME: Should probably only allow [A-Za-z0-9-_]+
     Scenario: save new version with path separator in name
         Given cats example is initialized and herded
         And default clowder version is linked

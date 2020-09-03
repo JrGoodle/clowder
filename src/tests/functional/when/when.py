@@ -1,7 +1,5 @@
 """New syntax test file"""
 
-from pathlib import Path
-
 # noinspection PyPackageRequirements
 from pytest_bdd import when, parsers
 
@@ -15,28 +13,29 @@ def when_network_connection_disabled(scenario_info: ScenarioInfo, offline) -> No
     util.disable_network_connection()
 
 
+@when(parsers.parse("I change to directory {test_directory}"))
+@when("I change to directory <test_directory>")
+def when_change_directory(test_directory: str, scenario_info: ScenarioInfo) -> None:
+    scenario_info.relative_dir = test_directory
+
+
 @when(parsers.parse("I run '{command}'"))
-def when_run_command(tmp_path: Path, command: str, command_results: CommandResults) -> None:
-    result = util.run_command(command, tmp_path)
+def when_run_command(command: str, command_results: CommandResults, scenario_info: ScenarioInfo) -> None:
+    result = util.run_command(command, scenario_info.cmd_dir)
     command_results.completed_processes.append(result)
 
 
 @when(parsers.parse("I run '{command}' without debug output"))
-def when_run_command(tmp_path: Path, command: str, command_results: CommandResults) -> None:
-    result = util.run_command(command, tmp_path, clowder_debug=False)
-    command_results.completed_processes.append(result)
-
-
-@when(parsers.parse("I run '{command}' in directory {directory}"))
-def when_run_command_directory(tmp_path: Path, command: str, directory: str, command_results: CommandResults) -> None:
-    result = util.run_command(command, tmp_path / directory)
+def when_run_command(command: str, command_results: CommandResults, scenario_info: ScenarioInfo) -> None:
+    result = util.run_command(command, scenario_info.cmd_dir, clowder_debug=False)
     command_results.completed_processes.append(result)
 
 
 @when(parsers.parse("I run '{command_1}' and '{command_2}'"))
-def when_run_commands_and(tmp_path: Path, command_1: str, command_2: str, command_results: CommandResults) -> None:
+def when_run_commands_and(command_1: str, command_2: str,
+                          command_results: CommandResults, scenario_info: ScenarioInfo) -> None:
     commands = [command_1, command_2]
-    command_results.completed_processes += [util.run_command(c, tmp_path) for c in commands]
+    command_results.completed_processes += [util.run_command(c, scenario_info.cmd_dir) for c in commands]
 
 
 # NOTE: This works, but PyCharm doesn't support parsing it

@@ -34,6 +34,24 @@ Feature: clowder link command
         Then the command succeeds
         And tags clowder version is linked
 
+    @subdirectory
+    Scenario: link default version subdirectory
+        Given cats example is initialized and herded
+        And linked tags clowder version
+        When I change to directory black-cats/kit
+        And I run 'clowder link'
+        Then the command succeeds
+        And default clowder version is linked
+
+    @subdirectory
+    Scenario: link version subdirectory
+        Given cats example is initialized and herded
+        And default clowder version is linked
+        When I change to directory duke
+        And I run 'clowder link tags'
+        Then the command succeeds
+        And tags clowder version is linked
+
     @fail
     Scenario: link no versions
         Given cats example was initialized to branch no-versions

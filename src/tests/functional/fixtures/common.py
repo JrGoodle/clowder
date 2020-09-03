@@ -14,5 +14,5 @@ def command_results() -> CommandResults:
 
 
 @fixture
-def scenario_info() -> ScenarioInfo:
-    return ScenarioInfo()
+def scenario_info(tmp_path) -> ScenarioInfo:
+    return ScenarioInfo(tmp_path)

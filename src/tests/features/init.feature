@@ -172,3 +172,17 @@ Feature: clowder init
         And .clowder directory doesn't exist
         And clowder.yaml and clowder.yml symlinks don't exist
         And test directory is empty
+
+    @cats @subdirectory @debug
+    Scenario: init subdirectory
+        Given cats example is initialized and herded
+        And mu/.clowder directory doesn't exist
+        When I change to directory mu
+        And I run 'clowder init https://github.com/JrGoodle/cats.git'
+        Then the command succeeds
+        And directory at mu/.clowder is a git repository
+        And repo at mu/.clowder is on branch master
+        And repo at mu/.clowder is clean
+        And repo at mu/.clowder has remote origin with url https://github.com/JrGoodle/cats.git
+#        FIXME: Allow checking this in other directories
+#        And default clowder version is linked

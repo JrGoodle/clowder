@@ -39,6 +39,26 @@ Feature: clowder herd
         | black-cats/sasha  | master |
         | black-cats/june   | master |
 
+    @cats @subdirectory
+    Scenario Outline: herd subdirectory
+        Given cats example is initialized and herded
+        And project at <directory> created local branch <test_branch>
+        And project at <directory> checked out <test_branch>
+        And project at <directory> is on <test_branch>
+        When I change to directory black-cats
+        And I run 'clowder herd'
+        Then the command succeeds
+        And project at <directory> is on <end_branch>
+
+        Examples:
+        | directory         | test_branch | end_branch |
+        | mu                | sub         | knead      |
+        | duke              | sub         | purr       |
+        | black-cats/kishka | sub         | master     |
+        | black-cats/kit    | sub         | master     |
+        | black-cats/sasha  | sub         | master     |
+        | black-cats/june   | sub         | master     |
+
     @commits @cats
     Scenario Outline: herd commits
         Given cats example is initialized
@@ -335,7 +355,8 @@ Feature: clowder herd
         Given misc example is initialized and herded with https
         And project at gyp is on branch fork-branch
         And project at gyp is on commit bd11dd1c51ef17592384df927c47023071639f96
-        When I run 'git pull upstream master' in directory gyp
+        When I change to directory gyp
+        And I run 'git pull upstream master'
         Then the command succeeds
         And project at gyp is not on commit bd11dd1c51ef17592384df927c47023071639f96
         And project at gyp is on branch fork-branch

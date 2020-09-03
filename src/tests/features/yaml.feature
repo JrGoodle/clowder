@@ -41,6 +41,15 @@ Feature: clowder yaml
         Then the command succeeds
         And output matches contents of clowder-yaml-r.txt
 
+    @subdirectory
+    Scenario: yaml subdirectory
+        Given cats example is initialized and herded
+        And yaml test files were copied to clowder directory
+        When I change to directory black-cats/kishka
+        And I run 'clowder yaml' without debug output
+        Then the command succeeds
+        And output matches contents of clowder-yaml.txt
+
     @fail
     Scenario Outline: yaml resolved with missing repos
         Given cats example is initialized

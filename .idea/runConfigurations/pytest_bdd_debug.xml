@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="pytest-bdd debug" type="tests" factoryName="py.test">
+  <configuration default="false" name="pytest-bdd debug" type="tests" factoryName="py.test" editBeforeRun="true">
     <module name="clowder" />
     <option name="INTERPRETER_OPTIONS" value="" />
     <option name="PARENT_ENVS" value="true" />

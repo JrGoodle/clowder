@@ -28,3 +28,12 @@ Feature: clowder branch
         And I run 'clowder branch -a'
         And I run 'clowder branch -r'
         Then the commands succeed
+
+    @subdirectory
+    Scenario: branch subdirectory
+        Given cats example is initialized and herded
+        When I change to directory mu
+        And I run 'clowder branch'
+        And I run 'clowder branch -a'
+        And I run 'clowder branch -r'
+        Then the commands succeed

@@ -40,6 +40,28 @@ Feature: clowder start
         | black-cats/sasha  | master       | new-branch | new-branch  |
         | black-cats/june   | master       | new-branch | new-branch  |
 
+    @subdirectory
+    Scenario Outline: start local subdirectory
+        Given cats example is initialized and herded
+        And project at <directory> has no local branch <test_branch>
+        And project at <directory> has no remote branch <test_branch>
+        And project at <directory> is on <start_branch>
+        When I change to directory black-cats/sasha
+        And I run 'clowder start new-branch'
+        Then the command succeeds
+        And project at <directory> has local branch <test_branch>
+        And project at <directory> is on <end_branch>
+        And project at <directory> has no remote branch <test_branch>
+
+        Examples:
+        | directory         | start_branch | end_branch | test_branch |
+        | mu                | knead        | new-branch | new-branch  |
+        | duke              | purr         | new-branch | new-branch  |
+        | black-cats/kishka | master       | new-branch | new-branch  |
+        | black-cats/kit    | master       | new-branch | new-branch  |
+        | black-cats/sasha  | master       | new-branch | new-branch  |
+        | black-cats/june   | master       | new-branch | new-branch  |
+
     # FIXME: Probably need to create a fixture that sets up remote branches
     @internet @write
     Scenario Outline: start tracking

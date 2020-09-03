@@ -38,6 +38,26 @@ Feature: clowder stash
         | black-cats/sasha  | secret    |
         | black-cats/june   | secret    |
 
+    @subdirectory
+    Scenario Outline: stash subdirectory
+        Given cats example is initialized and herded
+        And created <file_name> in <directory>
+        And project at <directory> staged <file_name>
+        And project at <directory> is dirty
+        When I change to directory mu
+        And I run 'clowder stash'
+        Then the command succeeds
+        And project at <directory> is clean
+
+        Examples:
+        | directory         | file_name |
+        | mu                | secret    |
+        | duke              | secret    |
+        | black-cats/kishka | secret    |
+        | black-cats/kit    | secret    |
+        | black-cats/sasha  | secret    |
+        | black-cats/june   | secret    |
+
     @offline
     Scenario Outline: stash offline
         Given cats example is initialized and herded

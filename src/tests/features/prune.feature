@@ -39,6 +39,27 @@ Feature: clowder prune
         | black-cats/sasha  | shrubs      | master     |
         | black-cats/june   | shrubs      | master     |
 
+    @subdirectory
+    Scenario Outline: prune default from subdirectory with existing local branch checked out
+        Given cats example is initialized and herded
+        And project at <directory> created local branch <test_branch>
+        And project at <directory> checked out <test_branch>
+        And project at <directory> is on <test_branch>
+        When I change to directory mu
+        And I run 'clowder prune shrubs'
+        Then the command succeeds
+        And project at <directory> has no local branch <test_branch>
+        And project at <directory> is on <end_branch>
+
+        Examples:
+        | directory         | test_branch | end_branch |
+        | mu                | shrubs      | knead      |
+        | duke              | shrubs      | purr       |
+        | black-cats/kishka | shrubs      | master     |
+        | black-cats/kit    | shrubs      | master     |
+        | black-cats/sasha  | shrubs      | master     |
+        | black-cats/june   | shrubs      | master     |
+
     Scenario Outline: prune default existing local branch checked out group selected
         Given cats example is initialized and herded
         And project at <directory> created local branch <test_branch>
