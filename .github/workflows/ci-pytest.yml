@@ -1,4 +1,4 @@
-name: 'CI - pytest functional tests'
+name: 'CI - pytest'
 
 on:
   push:
@@ -17,7 +17,7 @@ defaults:
     shell: bash
 
 jobs:
-  pytest_functional:
+  pytest:
     env:
       PYTHON_VERSION: ${{ matrix.python-version }}
       OS_NAME: ${{ matrix.os }}
@@ -51,6 +51,6 @@ jobs:
       run: |
         cd src
         pytest -v -m "config and not ssh and not write and not offline"
-    # TODO: Gather coverage data and such
+    # FIXME: Gather coverage data and such
     # - name: CI after script
     #   run: script/ci_after
