@@ -173,7 +173,7 @@ Feature: clowder init
         And clowder.yaml and clowder.yml symlinks don't exist
         And test directory is empty
 
-    @cats @subdirectory @debug
+    @cats @subdirectory
     Scenario: init subdirectory
         Given cats example is initialized and herded
         And mu/.clowder directory doesn't exist

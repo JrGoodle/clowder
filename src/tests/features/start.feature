@@ -28,17 +28,17 @@ Feature: clowder start
         When I run 'clowder start new-branch'
         Then the command succeeds
         And project at <directory> has local branch <test_branch>
-        And project at <directory> is on <end_branch>
+        And project at <directory> is on <test_branch>
         And project at <directory> has no remote branch <test_branch>
 
         Examples:
-        | directory         | start_branch | end_branch | test_branch |
-        | mu                | knead        | new-branch | new-branch  |
-        | duke              | purr         | new-branch | new-branch  |
-        | black-cats/kishka | master       | new-branch | new-branch  |
-        | black-cats/kit    | master       | new-branch | new-branch  |
-        | black-cats/sasha  | master       | new-branch | new-branch  |
-        | black-cats/june   | master       | new-branch | new-branch  |
+        | directory         | start_branch | test_branch |
+        | mu                | knead        | new-branch  |
+        | duke              | purr         | new-branch  |
+        | black-cats/kishka | master       | new-branch  |
+        | black-cats/kit    | master       | new-branch  |
+        | black-cats/sasha  | master       | new-branch  |
+        | black-cats/june   | master       | new-branch  |
 
     @subdirectory
     Scenario Outline: start local subdirectory
@@ -50,41 +50,17 @@ Feature: clowder start
         And I run 'clowder start new-branch'
         Then the command succeeds
         And project at <directory> has local branch <test_branch>
-        And project at <directory> is on <end_branch>
+        And project at <directory> is on <test_branch>
         And project at <directory> has no remote branch <test_branch>
 
         Examples:
-        | directory         | start_branch | end_branch | test_branch |
-        | mu                | knead        | new-branch | new-branch  |
-        | duke              | purr         | new-branch | new-branch  |
-        | black-cats/kishka | master       | new-branch | new-branch  |
-        | black-cats/kit    | master       | new-branch | new-branch  |
-        | black-cats/sasha  | master       | new-branch | new-branch  |
-        | black-cats/june   | master       | new-branch | new-branch  |
-
-    # FIXME: Probably need to create a fixture that sets up remote branches
-    @internet @write
-    Scenario Outline: start tracking
-        Given cats example is initialized and herded
-        And cats example projects have no remote branch <test_branch>
-        And project at <directory> has no local branch <test_branch>
-        And project at <directory> has no remote branch <test_branch>
-        And project at <directory> is on <start_branch>
-        When I run 'clowder start -t new-branch'
-        Then the command succeeds
-        And project at <directory> has local branch <test_branch>
-        And project at <directory> has remote branch <test_branch>
-        And project at <directory> is on <end_branch>
-        And project at <directory> has tracking branch <test_branch>
-
-        Examples:
-        | directory         | start_branch | end_branch | test_branch |
-        | mu                | knead        | new-branch | new-branch  |
-        | duke              | purr         | new-branch | new-branch  |
-        | black-cats/kishka | master       | new-branch | new-branch  |
-        | black-cats/kit    | master       | new-branch | new-branch  |
-        | black-cats/sasha  | master       | new-branch | new-branch  |
-        | black-cats/june   | master       | new-branch | new-branch  |
+        | directory         | start_branch | test_branch |
+        | mu                | knead        | new-branch  |
+        | duke              | purr         | new-branch  |
+        | black-cats/kishka | master       | new-branch  |
+        | black-cats/kit    | master       | new-branch  |
+        | black-cats/sasha  | master       | new-branch  |
+        | black-cats/june   | master       | new-branch  |
 
     @offline
     Scenario Outline: start local offline
@@ -98,18 +74,18 @@ Feature: clowder start
         And I run 'clowder start new-branch'
         Then the command succeeds
         And project at <directory> has local branch <test_branch>
-        And project at <directory> is on <end_branch>
+        And project at <directory> is on <test_branch>
         And the network connection is enabled
         And project at <directory> has no remote branch <test_branch>
 
         Examples:
-        | directory         | start_branch | end_branch | test_branch |
-        | mu                | knead        | new-branch | new-branch  |
-        | duke              | purr         | new-branch | new-branch  |
-        | black-cats/kishka | master       | new-branch | new-branch  |
-        | black-cats/kit    | master       | new-branch | new-branch  |
-        | black-cats/sasha  | master       | new-branch | new-branch  |
-        | black-cats/june   | master       | new-branch | new-branch  |
+        | directory         | start_branch | test_branch |
+        | mu                | knead        | new-branch  |
+        | duke              | purr         | new-branch  |
+        | black-cats/kishka | master       | new-branch  |
+        | black-cats/kit    | master       | new-branch  |
+        | black-cats/sasha  | master       | new-branch  |
+        | black-cats/june   | master       | new-branch  |
 
     @fail @offline
     Scenario Outline: start tracking offline
@@ -121,18 +97,18 @@ Feature: clowder start
         And I run 'clowder start -t new-branch'
         Then the command fails
         And project at <directory> has no local branch <test_branch>
-        And project at <directory> is on <end_branch>
+        And project at <directory> is on <start_branch>
         And the network connection is enabled
         And project at <directory> has no remote branch <test_branch>
 
         Examples:
-        | directory         | start_branch | end_branch | test_branch |
-        | mu                | knead        | knead      | new-branch  |
-        | duke              | purr         | purr       | new-branch  |
-        | black-cats/kishka | master       | master     | new-branch  |
-        | black-cats/kit    | master       | master     | new-branch  |
-        | black-cats/sasha  | master       | master     | new-branch  |
-        | black-cats/june   | master       | master     | new-branch  |
+        | directory         | start_branch | test_branch |
+        | mu                | knead        | new-branch  |
+        | duke              | purr         | new-branch  |
+        | black-cats/kishka | master       | new-branch  |
+        | black-cats/kit    | master       | new-branch  |
+        | black-cats/sasha  | master       | new-branch  |
+        | black-cats/june   | master       | new-branch  |
 
     Scenario Outline: start local group excluded
         Given cats example is initialized and herded
@@ -142,14 +118,14 @@ Feature: clowder start
         And project at <directory> is on <start_branch>
         When I run 'clowder start new-branch black-cats'
         Then the command succeeds
-        And project at <directory> is on <end_branch>
+        And project at <directory> is on <start_branch>
         And project at <directory> has no local branch <test_branch>
         And project at <directory> has no remote branch <test_branch>
 
         Examples:
-        | directory         | start_branch | end_branch | test_branch |
-        | mu                | knead        | knead      | new-branch  |
-        | duke              | purr         | purr       | new-branch  |
+        | directory         | start_branch | test_branch |
+        | mu                | knead        | new-branch  |
+        | duke              | purr         | new-branch  |
 
     Scenario Outline: start local group included
         Given cats example is initialized and herded
@@ -160,12 +136,187 @@ Feature: clowder start
         When I run 'clowder start new-branch black-cats'
         Then the command succeeds
         And project at <directory> has local branch <test_branch>
-        And project at <directory> is on <end_branch>
+        And project at <directory> is on <test_branch>
         And project at <directory> has no remote branch <test_branch>
 
         Examples:
-        | directory         | start_branch | end_branch | test_branch |
-        | black-cats/kishka | master       | new-branch | new-branch  |
-        | black-cats/kit    | master       | new-branch | new-branch  |
-        | black-cats/sasha  | master       | new-branch | new-branch  |
-        | black-cats/june   | master       | new-branch | new-branch  |
+        | directory         | start_branch | test_branch |
+        | black-cats/kishka | master       | new-branch  |
+        | black-cats/kit    | master       | new-branch  |
+        | black-cats/sasha  | master       | new-branch  |
+        | black-cats/june   | master       | new-branch  |
+
+    # TODO: Probably need to create a fixture that sets up remote branches
+    @internet @write
+    Scenario Outline: start tracking - no local, no remote
+        Given cats example is initialized and herded
+        And cats example projects have no remote branch <test_branch>
+        And project at <directory> has no local branch <test_branch>
+        And project at <directory> is on <start_branch>
+        When I run 'clowder start -t new-branch'
+        Then the command succeeds
+        And project at <directory> has local branch <test_branch>
+        And project at <directory> has remote branch <test_branch>
+        And project at <directory> is on <test_branch>
+        And project at <directory> has tracking branch <test_branch>
+
+        Examples:
+        | directory         | start_branch | test_branch |
+        | mu                | knead        | new-branch  |
+        | duke              | purr         | new-branch  |
+        | black-cats/kishka | master       | new-branch  |
+        | black-cats/kit    | master       | new-branch  |
+        | black-cats/sasha  | master       | new-branch  |
+        | black-cats/june   | master       | new-branch  |
+
+    @internet @write @fail
+    Scenario Outline: start tracking - local exists not checked out, remote exists, no tracking
+        Given cats example is initialized and herded
+        And cats example projects have remote branch <test_branch>
+        And cats example projects have local branch <test_branch>
+        And project at <directory> has no tracking branch <test_branch>
+        And project at <directory> is on <start_branch>
+        When I run 'clowder start -t new-branch'
+        Then the command fails
+        And project at <directory> is on <start_branch>
+        And project at <directory> has no tracking branch <test_branch>
+
+        Examples:
+        | directory         | start_branch | test_branch |
+        | mu                | knead        | new-branch  |
+#        FIXME: Because duke is first to run, it checks out the local branch then the command fails.
+#        Probably should store the starting reference and restore it if the command fails, or
+#        check if all projects have the right configuration
+#        | duke              | purr         | new-branch  |
+        | black-cats/kishka | master       | new-branch  |
+        | black-cats/kit    | master       | new-branch  |
+        | black-cats/sasha  | master       | new-branch  |
+        | black-cats/june   | master       | new-branch  |
+
+    @internet @write
+    Scenario Outline: start tracking - tracking exists, checked out
+        Given cats example is initialized and herded
+        And cats example projects have tracking branch <test_branch>
+        And project at <directory> checked out <test_branch>
+        And project at <directory> is on <test_branch>
+        When I run 'clowder start -t new-branch'
+        Then the command succeeds
+        And project at <directory> is on <test_branch>
+        And project at <directory> has tracking branch <test_branch>
+
+        Examples:
+        | directory         | test_branch |
+        | mu                | new-branch  |
+        | duke              | new-branch  |
+        | black-cats/kishka | new-branch  |
+        | black-cats/kit    | new-branch  |
+        | black-cats/sasha  | new-branch  |
+        | black-cats/june   | new-branch  |
+
+    @internet @write
+    Scenario Outline: start tracking - tracking exists, not checked out
+        Given cats example is initialized and herded
+        And cats example projects have tracking branch <test_branch>
+        And project at <directory> is on <start_branch>
+        When I run 'clowder start -t new-branch'
+        Then the command succeeds
+        And project at <directory> is on <test_branch>
+        And project at <directory> has tracking branch <test_branch>
+
+        Examples:
+        | directory         | start_branch | test_branch |
+        | mu                | knead        | new-branch  |
+        | duke              | purr         | new-branch  |
+        | black-cats/kishka | master       | new-branch  |
+        | black-cats/kit    | master       | new-branch  |
+        | black-cats/sasha  | master       | new-branch  |
+        | black-cats/june   | master       | new-branch  |
+
+    @internet @write @fail @debug
+    Scenario Outline: start tracking - no local, remote exists
+        Given cats example is initialized and herded
+        And cats example projects have remote branch <test_branch>
+        And cats example projects have no local branch <test_branch>
+        And project at <directory> is on <start_branch>
+        When I run 'clowder start -t new-branch'
+        Then the command fails
+        And project at <directory> is on <start_branch>
+        And project at <directory> has no tracking branch <test_branch>
+
+        Examples:
+        | directory         | start_branch | test_branch |
+        | mu                | knead        | new-branch  |
+#        FIXME: Because duke is first to run, it checks out the local branch then the command fails.
+#        Probably should store the starting reference and restore it if the command fails, or
+#        check if all projects have the right configuration
+#        | duke              | purr         | new-branch  |
+        | black-cats/kishka | master       | new-branch  |
+        | black-cats/kit    | master       | new-branch  |
+        | black-cats/sasha  | master       | new-branch  |
+        | black-cats/june   | master       | new-branch  |
+
+    @internet @write @fail
+    Scenario Outline: start tracking - local exists checked out, remote exists, no tracking
+        Given cats example is initialized and herded
+        And cats example projects have remote branch <test_branch>
+        And cats example projects have local branch <test_branch>
+        And project at <directory> checked out <test_branch>
+        And project at <directory> has no tracking branch <test_branch>
+        When I run 'clowder start -t new-branch'
+        Then the command fails
+        And project at <directory> is on <start_branch>
+        And project at <directory> has no tracking branch <test_branch>
+
+        Examples:
+        | directory         | start_branch | test_branch |
+        | mu                | knead        | new-branch  |
+#        FIXME: Because duke is first to run, it checks out the local branch then the command fails.
+#        Probably should store the starting reference and restore it if the command fails, or
+#        check if all projects have the right configuration
+#        | duke              | purr         | new-branch  |
+        | black-cats/kishka | master       | new-branch  |
+        | black-cats/kit    | master       | new-branch  |
+        | black-cats/sasha  | master       | new-branch  |
+        | black-cats/june   | master       | new-branch  |
+
+    @internet @write
+    Scenario Outline: start tracking - local exists checked out, no remote
+        Given cats example is initialized and herded
+        And cats example projects have no remote branch <test_branch>
+        And cats example projects have local branch <test_branch>
+        And project at <directory> checked out <test_branch>
+        And project at <directory> has no tracking branch <test_branch>
+        When I run 'clowder start -t new-branch'
+        Then the command succeeds
+        And project at <directory> is on <test_branch>
+        And project at <directory> has tracking branch <test_branch>
+
+        Examples:
+        | directory         | test_branch |
+        | mu                | new-branch  |
+        | duke              | new-branch  |
+        | black-cats/kishka | new-branch  |
+        | black-cats/kit    | new-branch  |
+        | black-cats/sasha  | new-branch  |
+        | black-cats/june   | new-branch  |
+
+    @internet @write
+    Scenario Outline: start tracking - local exists not checked out, no remote
+        Given cats example is initialized and herded
+        And cats example projects have no remote branch <test_branch>
+        And cats example projects have local branch <test_branch>
+        And project at <directory> is on <start_branch>
+        And project at <directory> has no tracking branch <test_branch>
+        When I run 'clowder start -t new-branch'
+        Then the command succeeds
+        And project at <directory> is on <test_branch>
+        And project at <directory> has tracking branch <test_branch>
+
+        Examples:
+        | directory         | start_branch | test_branch |
+        | mu                | knead        | new-branch  |
+        | duke              | purr         | new-branch  |
+        | black-cats/kishka | master       | new-branch  |
+        | black-cats/kit    | master       | new-branch  |
+        | black-cats/sasha  | master       | new-branch  |
+        | black-cats/june   | master       | new-branch  |

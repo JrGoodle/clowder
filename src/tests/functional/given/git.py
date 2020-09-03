@@ -104,3 +104,19 @@ def given_directory_dirty(tmp_path: Path, directory: str) -> None:
 def given_has_untracked_file(tmp_path: Path, directory: str, file_name: str) -> None:
     path = tmp_path / directory
     assert util.has_untracked_file(path, file_name)
+
+
+@given(parsers.parse("repo at {directory} has tracking branch {test_branch}"))
+@given(parsers.parse("project at {directory} has tracking branch {test_branch}"))
+@given("project at <directory> has tracking branch <test_branch>")
+def given_directory_has_tracking_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
+    path = tmp_path / directory
+    assert util.tracking_branch_exists(path, test_branch)
+
+
+@given(parsers.parse("repo at {directory} has no tracking branch {test_branch}"))
+@given(parsers.parse("project at {directory} has no tracking branch {test_branch}"))
+@given("project at <directory> has no tracking branch <test_branch>")
+def given_directory_has_no_tracking_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
+    path = tmp_path / directory
+    assert not util.tracking_branch_exists(path, test_branch)

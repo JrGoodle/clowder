@@ -76,10 +76,20 @@ def then_directory_not_on_commit(tmp_path: Path, directory: str, commit: str) ->
     assert not util.is_on_commit(path, commit)
 
 
+@then(parsers.parse("repo at {directory} has tracking branch {test_branch}"))
+@then(parsers.parse("project at {directory} has tracking branch {test_branch}"))
 @then("project at <directory> has tracking branch <test_branch>")
-def then_tracking_branch_from_to(tmp_path: Path, directory: str, test_branch: str) -> None:
+def then_directory_has_tracking_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
     path = tmp_path / directory
     assert util.tracking_branch_exists(path, test_branch)
+
+
+@then(parsers.parse("repo at {directory} has no tracking branch {test_branch}"))
+@then(parsers.parse("project at {directory} has no tracking branch {test_branch}"))
+@then("project at <directory> has no tracking branch <test_branch>")
+def then_directory_has_no_tracking_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
+    path = tmp_path / directory
+    assert not util.tracking_branch_exists(path, test_branch)
 
 
 @then(parsers.parse("repo at {directory} has detached HEAD"))

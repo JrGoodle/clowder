@@ -71,3 +71,43 @@ def given_cats_no_remote_branch(tmp_path: Path, scenario_info: ScenarioInfo, tes
         path = tmp_path / repo["path"]
         util.delete_remote_branch(path, test_branch)
         assert not util.remote_branch_exists(path, test_branch)
+
+
+@given(parsers.parse("cats example projects have remote branch {test_branch}"))
+@given("cats example projects have remote branch <test_branch>")
+def given_cats_remote_branch(tmp_path: Path, scenario_info: ScenarioInfo, test_branch: str) -> None:
+    scenario_info.example = "cats"
+    for name, repo in CATS_REPOS_DEFAULT.items():
+        path = tmp_path / repo["path"]
+        util.create_remote_branch(path, test_branch)
+        assert util.remote_branch_exists(path, test_branch)
+
+
+@given(parsers.parse("cats example projects have tracking branch {test_branch}"))
+@given("cats example projects have tracking branch <test_branch>")
+def given_cats_tracking_branch(tmp_path: Path, scenario_info: ScenarioInfo, test_branch: str) -> None:
+    scenario_info.example = "cats"
+    for name, repo in CATS_REPOS_DEFAULT.items():
+        path = tmp_path / repo["path"]
+        util.create_tracking_branch(path, test_branch)
+        assert util.tracking_branch_exists(path, test_branch)
+
+
+@given(parsers.parse("cats example projects have local branch {test_branch}"))
+@given("cats example projects have local branch <test_branch>")
+def given_cats_local_branch(tmp_path: Path, scenario_info: ScenarioInfo, test_branch: str) -> None:
+    scenario_info.example = "cats"
+    for name, repo in CATS_REPOS_DEFAULT.items():
+        path = tmp_path / repo["path"]
+        util.create_local_branch(path, test_branch)
+        assert util.local_branch_exists(path, test_branch)
+
+
+@given(parsers.parse("cats example projects have no local branch {test_branch}"))
+@given("cats example projects have no local branch <test_branch>")
+def given_cats_no_local_branch(tmp_path: Path, scenario_info: ScenarioInfo, test_branch: str) -> None:
+    scenario_info.example = "cats"
+    for name, repo in CATS_REPOS_DEFAULT.items():
+        path = tmp_path / repo["path"]
+        util.delete_local_branch(path, test_branch)
+        assert not util.local_branch_exists(path, test_branch)
