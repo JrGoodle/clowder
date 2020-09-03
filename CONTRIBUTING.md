@@ -23,25 +23,15 @@ Install `clowder` for local development
 script/update
 ```
 
-Remove `clowder` and clean test directories
+Remove `clowder`
 
 ```bash
-script/clean all
+script/clean
 ```
 
 ## Testing
 
-Install [clowder-test](clowder_test/README.md) command runner
-
-```bash
-script/test
-```
-
-Run test scripts
-
-```bash
-clowder-test cats <option>
-```
+<!-- TODO: Add pytest bdd info -->
 
 ## Pull requests
 

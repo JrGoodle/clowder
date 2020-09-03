@@ -32,7 +32,7 @@ else
 
     echo 'Clean any existing build artifacts'
     echo '----------------------------------'
-    script/clean all || exit 1
+    script/clean || exit 1
     echo ''
 
     echo 'Create source distribution'

@@ -39,7 +39,7 @@ if [ "$1" == 'docs' ]; then
     exit
 fi
 
-script/clean 'clowder' || exit 1
+script/clean || exit 1
 
 case "$(uname)" in
     Linux*) export PLATFORM="linux";
