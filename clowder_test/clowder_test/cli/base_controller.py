@@ -33,24 +33,6 @@ class BaseController(ArgparseController):
         ]
 
     @expose(
-        help='Run all tests'
-    )
-    def all(self) -> None:
-        """clowder test all command"""
-
-        scripts = [
-            './test_example_cats.sh',
-            './test_example_swift.sh',
-            './test_example_misc.sh'
-        ]
-        for script in scripts:
-            execute_test_command(script, self.path,
-                                 parallel=self.app.pargs.parallel,
-                                 write=self.app.pargs.write,
-                                 coverage=self.app.pargs.coverage,
-                                 debug=self.app.debug)
-
-    @expose(
         help='Run config yaml validation tests'
     )
     def config_yaml_validation(self) -> None:
@@ -61,25 +43,3 @@ class BaseController(ArgparseController):
                              write=self.app.pargs.write,
                              coverage=self.app.pargs.coverage,
                              debug=self.app.debug)
-
-    @expose(
-        help='Run tests requiring remote write permissions'
-    )
-    def write(self) -> None:
-        """clowder write tests"""
-
-        cats_scripts = ['./write_repo.sh', './write_start.sh']
-        for script in cats_scripts:
-            execute_test_command(script, self.path / 'cats',
-                                 parallel=self.app.pargs.parallel,
-                                 write=True,
-                                 coverage=self.app.pargs.coverage,
-                                 debug=self.app.debug)
-
-        misc_scripts = ['./write_forks.sh']
-        for script in misc_scripts:
-            execute_test_command(script, self.path / 'misc',
-                                 parallel=self.app.pargs.parallel,
-                                 write=True,
-                                 coverage=self.app.pargs.coverage,
-                                 debug=self.app.debug)

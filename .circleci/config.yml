@@ -48,10 +48,6 @@ jobs:
             git config --global --unset url.ssh://git@github.com.insteadOf
 
       - run:
-          name: run write tests
-          command: clowder-test -c write
-
-      - run:
           name: run pytest ssh tests
           command: |
             cd src

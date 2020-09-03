@@ -179,7 +179,7 @@ def delete_remote_branch(path: Path, branch: str, remote: str = "origin") -> Com
 
 def create_tracking_branch(path: Path, branch: str, remote: str = "origin") -> List[CompletedProcess]:
     results = []
-    result = run_command(f"git checkout -b {branch}", path)
+    result = create_local_branch(path, branch)
     results.append(result)
     result = run_command(f"git push -u {remote} {branch}", path)
     results.append(result)

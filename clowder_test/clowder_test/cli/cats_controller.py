@@ -27,14 +27,6 @@ class CatsController(ArgparseController):
         description = 'Run cats tests'
 
     @expose(
-        help='Run all cats tests'
-    )
-    def all(self) -> None:
-        """clowder cats tests"""
-
-        self._execute_command('./test_example_cats.sh', ROOT_DIR / 'test' / 'scripts')
-
-    @expose(
         help='Run cats clean tests'
     )
     def clean(self) -> None:

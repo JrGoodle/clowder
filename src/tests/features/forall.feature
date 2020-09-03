@@ -163,11 +163,11 @@ Feature: clowder forall
         And I run 'clowder forall JrGoodle/duke -c "./test_forall_env_duke.sh"'
         Then the commands succeed
 
-    @cats @subdirectory
+    @cats @subdirectory @debug
     Scenario: forall script environment subdirectory
         Given cats example is initialized and herded
         And forall test scripts were copied to the project directories
-        And I change to directory mu
+        When I change to directory mu
         And I run 'clowder forall JrGoodle/kit -c "./test_forall_env_kit.sh"'
         And I run 'clowder forall JrGoodle/duke -c "./test_forall_env_duke.sh"'
         Then the commands succeed
