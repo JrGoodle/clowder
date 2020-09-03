@@ -2,7 +2,6 @@
 
 from pathlib import Path
 
-# noinspection PyPackageRequirements
 from pytest_bdd import then, parsers
 
 import tests.functional.util as util

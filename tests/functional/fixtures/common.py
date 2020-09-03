@@ -2,7 +2,6 @@
 This module contains fixtures
 """
 
-# noinspection PyPackageRequirements
 from pytest import fixture
 
 from tests.functional.util import CommandResults, ScenarioInfo

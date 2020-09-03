@@ -5,7 +5,6 @@ This module contains fixtures
 import os
 from pathlib import Path
 
-# noinspection PyPackageRequirements
 from pytest import fixture
 
 import tests.functional.util as util
@@ -13,7 +12,7 @@ from tests.functional.util import ScenarioInfo
 
 
 @fixture
-def misc_init_herd(tmp_path: Path, misc_init_herd_session: Path, scenario_info) -> None:
+def misc_init_herd(tmp_path: Path, misc_init_herd_session: Path, scenario_info: ScenarioInfo) -> None:
     util.copy_directory(misc_init_herd_session, to=tmp_path)
     # TODO: Remove once clowder.yml is relative symlink
     symlink = util.valid_clowder_symlink(tmp_path)

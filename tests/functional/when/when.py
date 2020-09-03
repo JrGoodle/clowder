@@ -1,6 +1,5 @@
 """New syntax test file"""
 
-# noinspection PyPackageRequirements
 from pytest_bdd import when, parsers
 
 import tests.functional.util as util

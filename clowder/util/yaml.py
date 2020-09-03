@@ -8,9 +8,7 @@
 import pkg_resources
 from pathlib import Path
 
-# noinspection PyPackageRequirements
 import jsonschema
-# noinspection PyPackageRequirements
 import yaml as pyyaml
 
 import clowder.util.formatting as fmt
