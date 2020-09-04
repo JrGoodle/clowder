@@ -14,23 +14,38 @@ def run_command(cwd: Path, command: str) -> CompletedProcess:
 
 
 path = Path(__file__).resolve().parent.parent.resolve()
+coverage_dir = path / "coverage"
 
 run_command(path, "coverage erase")
 
 base_command = "pytest --cov-config=.coveragerc --basetemp=build --cov-append --cov=clowder -vv"
 
-# parallel
-test_cmd = f'{base_command} -n auto -m "not config and not offline and not write"'
-run_command(path, test_cmd)
-# offline
-test_cmd = f'{base_command} -m "offline and not config"'
-run_command(path, test_cmd)
-# write
-test_cmd = f'{base_command} -m "write and not config"'
-run_command(path, test_cmd)
-# config
-test_cmd = f'{base_command} -m "config"'
+# Reporting
+html_dir = coverage_dir / "html"
+xml_file = coverage_dir / "cov.xml"
+annotate_dir = coverage_dir / "annotate"
+reporting_options = f" --cov-report html:{html_dir} --cov-report xml:{xml_file} --cov-report annotate:{annotate_dir}"
+
+base_command += reporting_options
+
+# Clean old test coverage results
+run_command(path, "coverage erase")
+
+test_cmd = f'{base_command} -n auto -m "herd and not config and not offline and not write"'
 run_command(path, test_cmd)
 
-config_file = Path.home() / ".config/clowder/clowder.config.yml"
-config_file.unlink()
+# # parallel
+# test_cmd = f'{base_command} -n auto -m "not config and not offline and not write"'
+# run_command(path, test_cmd)
+# # offline
+# test_cmd = f'{base_command} -m "offline and not config"'
+# run_command(path, test_cmd)
+# # write
+# test_cmd = f'{base_command} -m "write and not config"'
+# run_command(path, test_cmd)
+# # config
+# test_cmd = f'{base_command} -m "config"'
+# run_command(path, test_cmd)
+
+# config_file = Path.home() / ".config/clowder/clowder.config.yml"
+# config_file.unlink()
