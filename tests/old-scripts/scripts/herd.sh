@@ -47,110 +47,110 @@ test_herd_missing_clowder() {
 }
 test_herd_missing_clowder
 
-./clean.sh
-./init.sh || exit 1
+# ./clean.sh
+# ./init.sh || exit 1
 
-test_herd_implicit_project_paths() {
-    print_single_separator
-    echo "TEST: Check projects are on correct branches with implicit project paths"
-    begin_command
-    $COMMAND link implicit-paths || exit 1
-    end_command
-    begin_command
-    $COMMAND herd $PARALLEL || exit 1
-    end_command
-    pushd mu || exit 1
-    test_branch knead
-    popd || exit 1
-    pushd duke || exit 1
-    test_branch heads/purr
-    popd || exit 1
-    pushd kit || exit 1
-    test_branch master
-    popd || exit 1
-    pushd kishka || exit 1
-    test_branch master
-    popd || exit 1
-    pushd sasha || exit 1
-    test_branch master
-    popd || exit 1
-    pushd june || exit 1
-    test_branch master
-    popd || exit 1
-}
-test_herd_implicit_project_paths
+# test_herd_implicit_project_paths() {
+#     print_single_separator
+#     echo "TEST: Check projects are on correct branches with implicit project paths"
+#     begin_command
+#     $COMMAND link implicit-paths || exit 1
+#     end_command
+#     begin_command
+#     $COMMAND herd $PARALLEL || exit 1
+#     end_command
+#     pushd mu || exit 1
+#     test_branch knead
+#     popd || exit 1
+#     pushd duke || exit 1
+#     test_branch heads/purr
+#     popd || exit 1
+#     pushd kit || exit 1
+#     test_branch master
+#     popd || exit 1
+#     pushd kishka || exit 1
+#     test_branch master
+#     popd || exit 1
+#     pushd sasha || exit 1
+#     test_branch master
+#     popd || exit 1
+#     pushd june || exit 1
+#     test_branch master
+#     popd || exit 1
+# }
+# test_herd_implicit_project_paths
 
-./clean.sh
-./init.sh || exit 1
+# ./clean.sh
+# ./init.sh || exit 1
 
-test_herd_implicit_defaults() {
-    print_single_separator
-    echo "TEST: Check projects are on correct branches with implicit defaults"
-    begin_command
-    $COMMAND link implicit-defaults || exit 1
-    end_command
-    begin_command
-    $COMMAND herd $PARALLEL || exit 1
-    end_command
-    echo "TEST: cats projects on default branches with implicit defaults"
-    for project in "${black_cats_projects[@]}"; do
-        pushd $project || exit 1
-        test_branch master
-        local name=${project#"black-cats/"}
-        test_remote_url 'origin' "https://github.com/JrGoodle/$name.git"
-        popd || exit 1
-    done
-    pushd mu || exit 1
-    test_branch knead
-    test_remote_url 'origin' "https://github.com/JrGoodle/mu.git"
-    popd || exit 1
-    pushd duke || exit 1
-    test_branch heads/purr
-    test_remote_url 'origin' "https://github.com/JrGoodle/duke.git"
-    popd || exit 1
+# test_herd_implicit_defaults() {
+#     print_single_separator
+#     echo "TEST: Check projects are on correct branches with implicit defaults"
+#     begin_command
+#     $COMMAND link implicit-defaults || exit 1
+#     end_command
+#     begin_command
+#     $COMMAND herd $PARALLEL || exit 1
+#     end_command
+#     echo "TEST: cats projects on default branches with implicit defaults"
+#     for project in "${black_cats_projects[@]}"; do
+#         pushd $project || exit 1
+#         test_branch master
+#         local name=${project#"black-cats/"}
+#         test_remote_url 'origin' "https://github.com/JrGoodle/$name.git"
+#         popd || exit 1
+#     done
+#     pushd mu || exit 1
+#     test_branch knead
+#     test_remote_url 'origin' "https://github.com/JrGoodle/mu.git"
+#     popd || exit 1
+#     pushd duke || exit 1
+#     test_branch heads/purr
+#     test_remote_url 'origin' "https://github.com/JrGoodle/duke.git"
+#     popd || exit 1
 
-}
-test_herd_implicit_defaults
+# }
+# test_herd_implicit_defaults
 
-./clean.sh
-./init.sh || exit 1
+# ./clean.sh
+# ./init.sh || exit 1
 
-test_herd() {
-    print_single_separator
-    echo "TEST: Check projects are on correct branches"
-    begin_command
-    $COMMAND herd $PARALLEL || exit 1
-    end_command
-    test_cats_default_herd_branches
-}
-test_herd
+# test_herd() {
+#     print_single_separator
+#     echo "TEST: Check projects are on correct branches"
+#     begin_command
+#     $COMMAND herd $PARALLEL || exit 1
+#     end_command
+#     test_cats_default_herd_branches
+# }
+# test_herd
 
-test_herd_dirty_repos() {
-    print_single_separator
-    make_dirty_repos "$@"
-    echo "TEST: Fail herd with dirty repos"
-    begin_command
-    $COMMAND herd $PARALLEL && exit 1
-    end_command
-    echo "TEST: Discard changes with clean"
-    begin_command
-    $COMMAND clean || exit 1
-    end_command
-    begin_command
-    $COMMAND status || exit 1
-    end_command
-    echo "TEST: Successfully herd after clean"
-    begin_command
-    $COMMAND herd $PARALLEL || exit 1
-    end_command
-    test_cats_default_herd_branches
-    echo "TEST: Successfully herd twice"
-    begin_command
-    $COMMAND herd $PARALLEL || exit 1
-    end_command
-    test_cats_default_herd_branches
-}
-test_herd_dirty_repos "${black_cats_projects[@]}"
+# test_herd_dirty_repos() {
+#     print_single_separator
+#     make_dirty_repos "$@"
+#     echo "TEST: Fail herd with dirty repos"
+#     begin_command
+#     $COMMAND herd $PARALLEL && exit 1
+#     end_command
+#     echo "TEST: Discard changes with clean"
+#     begin_command
+#     $COMMAND clean || exit 1
+#     end_command
+#     begin_command
+#     $COMMAND status || exit 1
+#     end_command
+#     echo "TEST: Successfully herd after clean"
+#     begin_command
+#     $COMMAND herd $PARALLEL || exit 1
+#     end_command
+#     test_cats_default_herd_branches
+#     echo "TEST: Successfully herd twice"
+#     begin_command
+#     $COMMAND herd $PARALLEL || exit 1
+#     end_command
+#     test_cats_default_herd_branches
+# }
+# test_herd_dirty_repos "${black_cats_projects[@]}"
 
 test_herd_detached_heads() {
     print_single_separator
@@ -291,38 +291,38 @@ test_herd_sha() {
 }
 test_herd_sha
 
-test_herd_tag() {
-    print_single_separator
-    echo 'TEST: Test herd of tag refs'
-    begin_command
-    $COMMAND link tags || exit 1
-    end_command
-    begin_command
-    $COMMAND herd $PARALLEL || exit 1
-    end_command
-    echo 'TEST: Check actual tag commit refs are correct'
-    pushd mu || exit 1
-    test_head_detached
-    test_tag_commit 'test-clowder-yaml-tag'
-    popd || exit 1
-    pushd duke || exit 1
-    test_head_detached
-    test_tag_commit 'purr'
-    popd || exit 1
-    for project in "${black_cats_projects[@]}"; do
-        pushd $project || exit 1
-        test_head_detached
-        test_tag_commit 'v0.01'
-        popd || exit 1
-    done
-    begin_command
-    $COMMAND status || exit 1
-    end_command
-    begin_command
-    $COMMAND link || exit 1
-    end_command
-}
-test_herd_tag
+# test_herd_tag() {
+#     print_single_separator
+#     echo 'TEST: Test herd of tag refs'
+#     begin_command
+#     $COMMAND link tags || exit 1
+#     end_command
+#     begin_command
+#     $COMMAND herd $PARALLEL || exit 1
+#     end_command
+#     echo 'TEST: Check actual tag commit refs are correct'
+#     pushd mu || exit 1
+#     test_head_detached
+#     test_tag_commit 'test-clowder-yaml-tag'
+#     popd || exit 1
+#     pushd duke || exit 1
+#     test_head_detached
+#     test_tag_commit 'purr'
+#     popd || exit 1
+#     for project in "${black_cats_projects[@]}"; do
+#         pushd $project || exit 1
+#         test_head_detached
+#         test_tag_commit 'v0.01'
+#         popd || exit 1
+#     done
+#     begin_command
+#     $COMMAND status || exit 1
+#     end_command
+#     begin_command
+#     $COMMAND link || exit 1
+#     end_command
+# }
+# test_herd_tag
 
 test_herd_projects() {
     print_single_separator
@@ -616,22 +616,22 @@ test_herd_rebase() {
 }
 test_herd_rebase
 
-test_herd_infer_default_source() {
-    print_single_separator
-    echo "TEST: clowder herd infer default source"
-    ./clean.sh
-    ./init.sh || exit 1
-    begin_command
-    $COMMAND link infer-default-source || exit 1
-    end_command
-    test_symlink_path 'clowder.yaml' "$(pwd)/.clowder/versions/infer-default-source.clowder.yaml"
-    begin_command
-    $COMMAND herd $PARALLEL || exit 1
-    end_command
-    test_cats_default_herd_branches
-}
-test_herd_infer_default_source
+# test_herd_infer_default_source() {
+#     print_single_separator
+#     echo "TEST: clowder herd infer default source"
+#     ./clean.sh
+#     ./init.sh || exit 1
+#     begin_command
+#     $COMMAND link infer-default-source || exit 1
+#     end_command
+#     test_symlink_path 'clowder.yaml' "$(pwd)/.clowder/versions/infer-default-source.clowder.yaml"
+#     begin_command
+#     $COMMAND herd $PARALLEL || exit 1
+#     end_command
+#     test_cats_default_herd_branches
+# }
+# test_herd_infer_default_source
 
-if [ "$ACCESS_LEVEL" == "write" ]; then
-    "$TEST_SCRIPT_DIR/cats/write_herd.sh" $1
-fi
+# if [ "$ACCESS_LEVEL" == "write" ]; then
+#     "$TEST_SCRIPT_DIR/cats/write_herd.sh" $1
+# fi

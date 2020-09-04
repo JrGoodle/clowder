@@ -59,23 +59,23 @@ test_clean_groups() {
 
     make_dirty_repos "${black_cats_projects[@]}"
 
-    echo "TEST: Clean all when dirty"
+    # echo "TEST: Clean all when dirty"
 
-    for project in "${all_projects[@]}"; do
-        pushd $project || exit 1
-        test_git_dirty
-        popd || exit 1
-    done
+    # for project in "${all_projects[@]}"; do
+    #     pushd $project || exit 1
+    #     test_git_dirty
+    #     popd || exit 1
+    # done
 
-    begin_command
-    $COMMAND clean || exit 1
-    end_command
+    # begin_command
+    # $COMMAND clean || exit 1
+    # end_command
 
-    for project in "${all_projects[@]}"; do
-        pushd $project || exit 1
-        test_git_clean
-        popd || exit 1
-    done
+    # for project in "${all_projects[@]}"; do
+    #     pushd $project || exit 1
+    #     test_git_clean
+    #     popd || exit 1
+    # done
 }
 test_clean_groups
 
@@ -107,52 +107,52 @@ test_clean_projects() {
     test_git_clean
     popd || exit 1
 
-    echo "TEST: Clean all when dirty"
-    begin_command
-    $COMMAND clean || exit 1
-    end_command
+    # echo "TEST: Clean all when dirty"
+    # begin_command
+    # $COMMAND clean || exit 1
+    # end_command
 
-    for project in "${all_projects[@]}"; do
-        pushd $project || exit 1
-        test_git_clean
-        popd || exit 1
-    done
+    # for project in "${all_projects[@]}"; do
+    #     pushd $project || exit 1
+    #     test_git_clean
+    #     popd || exit 1
+    # done
 }
 test_clean_projects 'JrGoodle/duke' 'JrGoodle/mu'
 
-test_clean_all() {
-    print_single_separator
-    make_dirty_repos "${all_projects[@]}"
-    echo "TEST: Clean all when dirty"
+# test_clean_all() {
+#     print_single_separator
+#     make_dirty_repos "${all_projects[@]}"
+#     echo "TEST: Clean all when dirty"
 
-    for project in "${all_projects[@]}"; do
-        pushd $project || exit 1
-        test_git_dirty
-        popd || exit 1
-    done
+#     for project in "${all_projects[@]}"; do
+#         pushd $project || exit 1
+#         test_git_dirty
+#         popd || exit 1
+#     done
 
-    begin_command
-    $COMMAND clean || exit 1
-    end_command
+#     begin_command
+#     $COMMAND clean || exit 1
+#     end_command
 
-    for project in "${all_projects[@]}"; do
-        pushd $project || exit 1
-        test_git_clean
-        popd || exit 1
-    done
+#     for project in "${all_projects[@]}"; do
+#         pushd $project || exit 1
+#         test_git_clean
+#         popd || exit 1
+#     done
 
-    echo "TEST: Clean when clean"
-    begin_command
-    $COMMAND clean || exit 1
-    end_command
+#     echo "TEST: Clean when clean"
+#     begin_command
+#     $COMMAND clean || exit 1
+#     end_command
 
-    for project in "${all_projects[@]}"; do
-        pushd $project || exit 1
-        test_git_clean
-        popd || exit 1
-    done
-}
-test_clean_all 'black-cats'
+#     for project in "${all_projects[@]}"; do
+#         pushd $project || exit 1
+#         test_git_clean
+#         popd || exit 1
+#     done
+# }
+# test_clean_all 'black-cats'
 
 test_clean_missing_directories() {
     print_single_separator
@@ -169,25 +169,25 @@ test_clean_missing_directories() {
         popd || exit 1
     done
 
-    echo "TEST: Clean when directories are missing"
-    begin_command
-    $COMMAND clean || exit 1
-    end_command
+    # echo "TEST: Clean when directories are missing"
+    # begin_command
+    # $COMMAND clean || exit 1
+    # end_command
 
-    for project in "${cats_projects[@]}"; do
-        test_no_directory_exists "$project"
-    done
+    # for project in "${cats_projects[@]}"; do
+    #     test_no_directory_exists "$project"
+    # done
 
-    for project in "${black_cats_projects[@]}"; do
-        pushd $project || exit 1
-        test_git_clean
-        test_no_untracked_files
-        popd || exit 1
-    done
+    # for project in "${black_cats_projects[@]}"; do
+    #     pushd $project || exit 1
+    #     test_git_clean
+    #     test_no_untracked_files
+    #     popd || exit 1
+    # done
 
-    begin_command
-    $COMMAND herd $PARALLEL || exit 1
-    end_command
+    # begin_command
+    # $COMMAND herd $PARALLEL || exit 1
+    # end_command
 }
 test_clean_missing_directories 'mu' 'duke'
 

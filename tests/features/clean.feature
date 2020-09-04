@@ -20,44 +20,68 @@ Feature: clowder clean
         When I run 'clowder clean -h' and 'clowder clean --help'
         Then the commands succeed
 
-    @offline
-    Scenario: clean offline
+    Scenario Outline: clean
         Given cats example is initialized and herded
-        And created file something.txt in directory mu
-        And project at mu staged file something.txt
-        When the network connection is disabled
-        And I run 'clowder clean'
+        And created <filename> in <directory>
+        And project at <directory> staged <filename>
+        And project at <directory> is on <branch>
+        When I run 'clowder clean'
         Then the command succeeds
-        And something.txt file doesn't exist in directory mu
-        And project at mu is clean
+        And <filename> doesn't exist in <directory>
+        And project at <directory> is clean
+        And project at <directory> is on <branch>
+
+        Examples:
+        | directory         | branch | filename      |
+        | mu                | knead  | something.txt |
+        | duke              | purr   | something.txt |
+        | black-cats/kishka | master | something.txt |
+        | black-cats/kit    | master | something.txt |
+        | black-cats/sasha  | master | something.txt |
+        | black-cats/june   | master | something.txt |
 
     @offline
     Scenario Outline: clean offline
         Given cats example is initialized and herded
-        And created file something.txt in directory mu
-        And project at mu staged file something.txt
+        And created <filename> in <directory>
+        And project at <directory> staged <filename>
+        And project at <directory> is on <branch>
         When the network connection is disabled
         And I run 'clowder clean'
         Then the command succeeds
-        And something.txt file doesn't exist in directory mu
-        And project at mu is clean
+        And <filename> doesn't exist in <directory>
+        And project at <directory> is clean
+        And project at <directory> is on <branch>
 
         Examples:
-        | directory         | branch | filename |
-        | mu                | knead  |
-        | duke              | purr   |
-        | black-cats/kishka | master |
-        | black-cats/kit    | master |
-        | black-cats/sasha  | master |
-        | black-cats/june   | master |
+        | directory         | branch | filename      |
+        | mu                | knead  | something.txt |
+        | duke              | purr   | something.txt |
+        | black-cats/kishka | master | something.txt |
+        | black-cats/kit    | master | something.txt |
+        | black-cats/sasha  | master | something.txt |
+        | black-cats/june   | master | something.txt |
 
     @subdirectory
-    Scenario: clean subdirectory
+    Scenario Outline: clean subdirectory
         Given cats example is initialized and herded
-        And created file something.txt in directory mu
-        And project at mu staged file something.txt
+        And created <filename> in <directory>
+        And project at <directory> staged <filename>
+        And project at <directory> is on <branch>
         When I change to directory duke
         And I run 'clowder clean'
         Then the command succeeds
-        And something.txt file doesn't exist in directory mu
-        And project at mu is clean
+        And <filename> doesn't exist in <directory>
+        And project at <directory> is clean
+        And project at <directory> is on <branch>
+
+        Examples:
+        | directory         | branch | filename      |
+        | mu                | knead  | something.txt |
+        | duke              | purr   | something.txt |
+        | black-cats/kishka | master | something.txt |
+        | black-cats/kit    | master | something.txt |
+        | black-cats/sasha  | master | something.txt |
+        | black-cats/june   | master | something.txt |
+
+#        TODO: Add test for clean when directories are missing

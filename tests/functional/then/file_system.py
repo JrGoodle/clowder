@@ -46,6 +46,7 @@ def then_has_file(tmp_path: Path, filename: str) -> None:
 
 
 @then(parsers.parse("{filename} file exists in directory {directory}"))
+@then("<filename> exists in <directory>")
 def then_has_file_in_directory(tmp_path: Path, filename: str, directory: str) -> None:
     path = tmp_path / directory / filename
     assert path.exists()
@@ -53,6 +54,7 @@ def then_has_file_in_directory(tmp_path: Path, filename: str, directory: str) ->
 
 
 @then(parsers.parse("{filename} file doesn't exist in directory {directory}"))
+@then("<filename> doesn't exist in <directory>")
 def then_has_no_file_in_directory(tmp_path: Path, filename: str, directory: str) -> None:
     path = tmp_path / directory / filename
     assert not path.exists()
