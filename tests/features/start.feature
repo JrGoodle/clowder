@@ -20,6 +20,7 @@ Feature: clowder start
         When I run 'clowder start -h' and 'clowder start --help'
         Then the commands succeed
 
+    @write
     Scenario Outline: start local
         Given cats example is initialized and herded
         And cats example projects have no local branch <test_branch>
@@ -40,7 +41,7 @@ Feature: clowder start
         | black-cats/sasha  | master       | new-branch  |
         | black-cats/june   | master       | new-branch  |
 
-    @subdirectory
+    @subdirectory @write
     Scenario Outline: start local subdirectory
         Given cats example is initialized and herded
         And cats example projects have no local branch <test_branch>
@@ -67,8 +68,7 @@ Feature: clowder start
         Given the network connection is enabled
         And cats example is initialized and herded
         And cats example projects have no remote branch <test_branch>
-        And project at <directory> has no local branch <test_branch>
-        And project at <directory> has no remote branch <test_branch>
+        And cats example projects have no local branch <test_branch>
         And project at <directory> is on <start_branch>
         When the network connection is disabled
         And I run 'clowder start new-branch'
@@ -91,7 +91,7 @@ Feature: clowder start
     Scenario Outline: start tracking offline
         Given cats example is initialized and herded
         And cats example projects have no remote branch <test_branch>
-        And project at <directory> has no local branch <test_branch>
+        And cats example projects have no local branch <test_branch>
         And project at <directory> is on <start_branch>
         When the network connection is disabled
         And I run 'clowder start -t new-branch'
@@ -110,11 +110,11 @@ Feature: clowder start
         | black-cats/sasha  | master       | new-branch  |
         | black-cats/june   | master       | new-branch  |
 
+    @write
     Scenario Outline: start local group excluded
         Given cats example is initialized and herded
-        And project at <directory> deleted remote branch <test_branch>
-        And project at <directory> has no local branch <test_branch>
-        And project at <directory> has no remote branch <test_branch>
+        And cats example projects have no remote branch <test_branch>
+        And cats example projects have no local branch <test_branch>
         And project at <directory> is on <start_branch>
         When I run 'clowder start new-branch black-cats'
         Then the command succeeds
@@ -127,11 +127,11 @@ Feature: clowder start
         | mu                | knead        | new-branch  |
         | duke              | purr         | new-branch  |
 
+    @write
     Scenario Outline: start local group included
         Given cats example is initialized and herded
-        And project at <directory> deleted remote branch <test_branch>
-        And project at <directory> has no local branch <test_branch>
-        And project at <directory> has no remote branch <test_branch>
+        And cats example projects have no remote branch <test_branch>
+        And cats example projects have no local branch <test_branch>
         And project at <directory> is on <start_branch>
         When I run 'clowder start new-branch black-cats'
         Then the command succeeds
@@ -151,7 +151,7 @@ Feature: clowder start
     Scenario Outline: start tracking - no local, no remote
         Given cats example is initialized and herded
         And cats example projects have no remote branch <test_branch>
-        And project at <directory> has no local branch <test_branch>
+        And cats example projects have no local branch <test_branch>
         And project at <directory> is on <start_branch>
         When I run 'clowder start -t new-branch'
         Then the command succeeds
@@ -248,7 +248,7 @@ Feature: clowder start
         | mu                | knead        | new-branch  |
 #        FIXME: Because duke is first to run, it checks out the local branch then the command fails.
 #        Probably should store the starting reference and restore it if the command fails, or
-#        check if all projects have the right configuration
+#        check if all projects have the right configuration before modifying branches
 #        | duke              | purr         | new-branch  |
         | black-cats/kishka | master       | new-branch  |
         | black-cats/kit    | master       | new-branch  |

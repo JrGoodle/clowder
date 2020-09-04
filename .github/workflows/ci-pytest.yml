@@ -45,4 +45,4 @@ jobs:
       run: pytest --cov-config=.coveragerc --basetemp=build --cov-append --cov=clowder -vv -m "config and not ssh and not write and not offline"
     - uses: codecov/codecov-action@v1
       with:
-        directory: coverage
+        file: coverage/.coverage
