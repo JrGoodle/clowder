@@ -31,55 +31,55 @@ def given_clowder_version_not_present(tmp_path: Path, version: str) -> None:
     assert not util.has_clowder_version(tmp_path, version)
 
 
-@given(parsers.parse("{file_name} file doesn't exist"))
-def given_has_no_file(tmp_path: Path, file_name: str) -> None:
-    path = tmp_path / file_name
+@given(parsers.parse("{filename} file doesn't exist"))
+def given_has_no_file(tmp_path: Path, filename: str) -> None:
+    path = tmp_path / filename
     assert not path.is_symlink()
     assert not path.exists()
 
 
-@given(parsers.parse("{file_name} file exists"))
-def given_has_file(tmp_path: Path, file_name: str) -> None:
-    path = tmp_path / file_name
+@given(parsers.parse("{filename} file exists"))
+def given_has_file(tmp_path: Path, filename: str) -> None:
+    path = tmp_path / filename
     assert path.exists()
     assert path.is_file()
     assert not path.is_symlink()
 
 
-@given(parsers.parse("{file_name} is not a symlink"))
-def given_is_not_symlink(tmp_path: Path, file_name: str) -> None:
-    path = tmp_path / file_name
+@given(parsers.parse("{filename} is not a symlink"))
+def given_is_not_symlink(tmp_path: Path, filename: str) -> None:
+    path = tmp_path / filename
     assert not path.is_symlink()
 
 
-@given(parsers.parse("{file_name} symlink doesn't exist"))
-def given_has_no_symlink(tmp_path: Path, file_name: str) -> None:
-    path = tmp_path / file_name
+@given(parsers.parse("{filename} symlink doesn't exist"))
+def given_has_no_symlink(tmp_path: Path, filename: str) -> None:
+    path = tmp_path / filename
     assert not path.is_symlink()
     assert not path.exists()
 
 
-@given(parsers.parse("{file_name} is a symlink"))
-@given(parsers.parse("{file_name} symlink exists"))
-def given_has_symlink(tmp_path: Path, file_name: str) -> None:
-    path = tmp_path / file_name
+@given(parsers.parse("{filename} is a symlink"))
+@given(parsers.parse("{filename} symlink exists"))
+def given_has_symlink(tmp_path: Path, filename: str) -> None:
+    path = tmp_path / filename
     assert path.is_symlink()
 
 
-@given(parsers.parse("{file_name_1} and {file_name_2} symlinks exist"))
-def given_has_two_symlinks(tmp_path: Path, file_name_1: str, file_name_2: str) -> None:
-    path = tmp_path / file_name_1
+@given(parsers.parse("{filename_1} and {filename_2} symlinks exist"))
+def given_has_two_symlinks(tmp_path: Path, filename_1: str, filename_2: str) -> None:
+    path = tmp_path / filename_1
     assert path.is_symlink()
-    path = tmp_path / file_name_2
+    path = tmp_path / filename_2
     assert path.is_symlink()
 
 
-@given(parsers.parse("{file_name_1} and {file_name_2} symlinks don't exist"))
-@given(parsers.parse("{file_name_1} and {file_name_2} files don't exist"))
-def given_two_files_do_not_exist(tmp_path: Path, file_name_1: str, file_name_2: str) -> None:
-    path = tmp_path / file_name_1
+@given(parsers.parse("{filename_1} and {filename_2} symlinks don't exist"))
+@given(parsers.parse("{filename_1} and {filename_2} files don't exist"))
+def given_two_files_do_not_exist(tmp_path: Path, filename_1: str, filename_2: str) -> None:
+    path = tmp_path / filename_1
     assert not path.exists()
-    path = tmp_path / file_name_2
+    path = tmp_path / filename_2
     assert not path.exists()
 
 
@@ -97,26 +97,26 @@ def given_has_no_directory(tmp_path: Path, directory: str) -> None:
     assert not path.exists()
 
 
-@given(parsers.parse("{file_name_1} and {file_name_2} files exist"))
-def given_has_two_files(tmp_path: Path, file_name_1: str, file_name_2: str) -> None:
-    path = tmp_path / file_name_1
+@given(parsers.parse("{filename_1} and {filename_2} files exist"))
+def given_has_two_files(tmp_path: Path, filename_1: str, filename_2: str) -> None:
+    path = tmp_path / filename_1
     assert path.is_file()
     assert not path.is_symlink()
-    path = tmp_path / file_name_2
+    path = tmp_path / filename_2
     assert path.is_file()
     assert not path.is_symlink()
 
 
-@given(parsers.parse("{file_name_1} and {file_name_2} are not symlinks"))
-def given_two_files_not_symlinks(tmp_path: Path, file_name_1: str, file_name_2: str) -> None:
-    path = tmp_path / file_name_1
+@given(parsers.parse("{filename_1} and {filename_2} are not symlinks"))
+def given_two_files_not_symlinks(tmp_path: Path, filename_1: str, filename_2: str) -> None:
+    path = tmp_path / filename_1
     assert not path.is_symlink()
-    path = tmp_path / file_name_2
+    path = tmp_path / filename_2
     assert not path.is_symlink()
 
 
-@given(parsers.parse("{file_name} is a symlink pointing to {destination}"))
-def given_has_symlink_to(tmp_path: Path, file_name: str, destination: str) -> None:
-    path = tmp_path / file_name
+@given(parsers.parse("{filename} is a symlink pointing to {destination}"))
+def given_has_symlink_to(tmp_path: Path, filename: str, destination: str) -> None:
+    path = tmp_path / filename
     destination = Path(destination)
     assert util.is_symlink_from_to(path, destination)

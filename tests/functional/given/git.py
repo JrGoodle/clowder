@@ -97,12 +97,12 @@ def given_directory_dirty(tmp_path: Path, directory: str) -> None:
     assert util.is_dirty(path)
 
 
-@given(parsers.parse("repo at {directory} has untracked file {file_name}"))
-@given(parsers.parse("project at {directory} has untracked file {file_name}"))
-@given("project at <directory> has untracked file <file_name>")
-def given_has_untracked_file(tmp_path: Path, directory: str, file_name: str) -> None:
+@given(parsers.parse("repo at {directory} has untracked file {filename}"))
+@given(parsers.parse("project at {directory} has untracked file {filename}"))
+@given("project at <directory> has untracked file <filename>")
+def given_has_untracked_file(tmp_path: Path, directory: str, filename: str) -> None:
     path = tmp_path / directory
-    assert util.has_untracked_file(path, file_name)
+    assert util.has_untracked_file(path, filename)
 
 
 @given(parsers.parse("repo at {directory} has tracking branch {test_branch}"))

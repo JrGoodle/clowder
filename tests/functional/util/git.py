@@ -51,9 +51,9 @@ def git_add_file(path: Path, file: str) -> None:
     assert repo.index.diff("HEAD")
 
 
-def has_untracked_file(path: Path, file_name: str) -> bool:
+def has_untracked_file(path: Path, filename: str) -> bool:
     repo = Repo(path)
-    return file_name in repo.untracked_files
+    return filename in repo.untracked_files
 
 
 def has_git_directory(path: Path) -> bool:

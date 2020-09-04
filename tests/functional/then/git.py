@@ -145,12 +145,12 @@ def then_directory_dirty(tmp_path: Path, directory: str) -> None:
     assert util.is_dirty(path)
 
 
-@then(parsers.parse("repo at {directory} has untracked file {file_name}"))
-@then(parsers.parse("project at {directory} has untracked file {file_name}"))
-@then("project at <directory> has untracked file <file_name>")
-def then_has_untracked_file(tmp_path: Path, directory: str, file_name: str) -> None:
+@then(parsers.parse("repo at {directory} has untracked file {filename}"))
+@then(parsers.parse("project at {directory} has untracked file {filename}"))
+@then("project at <directory> has untracked file <filename>")
+def then_has_untracked_file(tmp_path: Path, directory: str, filename: str) -> None:
     path = tmp_path / directory
-    assert util.has_untracked_file(path, file_name)
+    assert util.has_untracked_file(path, filename)
 
 
 @then(parsers.parse("repo at {directory} has submodule at {submodule_path}"))

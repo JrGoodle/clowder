@@ -32,7 +32,7 @@ Feature: clowder clean
         And project at mu is clean
 
     @offline
-    Scenario: clean offline
+    Scenario Outline: clean offline
         Given cats example is initialized and herded
         And created file something.txt in directory mu
         And project at mu staged file something.txt
@@ -41,6 +41,15 @@ Feature: clowder clean
         Then the command succeeds
         And something.txt file doesn't exist in directory mu
         And project at mu is clean
+
+        Examples:
+        | directory         | branch | filename |
+        | mu                | knead  |
+        | duke              | purr   |
+        | black-cats/kishka | master |
+        | black-cats/kit    | master |
+        | black-cats/sasha  | master |
+        | black-cats/june   | master |
 
     @subdirectory
     Scenario: clean subdirectory

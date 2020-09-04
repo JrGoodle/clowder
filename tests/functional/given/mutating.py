@@ -62,12 +62,12 @@ def given_created_symlinks(tmp_path: Path, name_1: str, name_2: str, target: str
     util.link_to(name_path, target_path)
 
 
-@given(parsers.parse("repo at {directory} staged file {file_name}"))
-@given(parsers.parse("project at {directory} staged file {file_name}"))
-@given("project at <directory> staged <file_name>")
-def given_did_stage_file(tmp_path: Path, directory: str, file_name: str) -> None:
+@given(parsers.parse("repo at {directory} staged file {filename}"))
+@given(parsers.parse("project at {directory} staged file {filename}"))
+@given("project at <directory> staged <filename>")
+def given_did_stage_file(tmp_path: Path, directory: str, filename: str) -> None:
     path = tmp_path / directory
-    util.git_add_file(path, file_name)
+    util.git_add_file(path, filename)
 
 
 @given(parsers.parse("repo at {directory} created local branch {test_branch}"))
@@ -117,19 +117,19 @@ def given_did_create_directory(tmp_path: Path, directory: str) -> None:
     assert path.is_dir()
 
 
-# @given(parsers.parse("created file {file_name}"))
-# @given("created <file_name>")
-# def given_did_create_file(tmp_path: Path, file_name: str) -> None:
-#     path = tmp_path / file_name
+# @given(parsers.parse("created file {filename}"))
+# @given("created <filename>")
+# def given_did_create_file(tmp_path: Path, filename: str) -> None:
+#     path = tmp_path / filename
 #     assert not path.exists()
 #     path.touch()
 #     assert path.exists()
 
 
-@given(parsers.parse("created file {file_name} in directory {directory}"))
-@given("created <file_name> in <directory>")
-def given_did_create_file_in_directory(tmp_path: Path, file_name: str, directory: str) -> None:
-    path = tmp_path / directory / file_name
+@given(parsers.parse("created file {filename} in directory {directory}"))
+@given("created <filename> in <directory>")
+def given_did_create_file_in_directory(tmp_path: Path, filename: str, directory: str) -> None:
+    path = tmp_path / directory / filename
     assert not path.exists()
     path.touch()
     assert path.exists()
