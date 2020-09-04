@@ -8,8 +8,9 @@ omit = tests/*
 source = clowder/*
 # debug = config
 
-# [paths]
-# source = clowder/
+[paths]
+source =
+    clowder
 
 [report]
 # Regexes for lines to exclude from consideration

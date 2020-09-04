@@ -45,6 +45,12 @@ jobs:
             git config --global --unset url.ssh://git@github.com.insteadOf
 
       - run:
+          name: Print environment info
+          command: |
+            pwd
+            ls -al
+
+      - run:
           name: run pytest parallel tests
           command: pytest --cov-config=.coveragerc --basetemp=build --cov-append --cov=clowder -vv -n auto -m "ssh and not config and not offline and not write"
 

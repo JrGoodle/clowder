@@ -39,6 +39,10 @@ jobs:
         git config --global user.name "GitHub Actions Workflow"
     - name: Install clowder
       run: script/update
+    - name: Print environment info
+      run:
+        pwd
+        ls -al
     - name: Run pytest functional tests
       run: pytest --cov-config=.coveragerc --basetemp=build --cov-append --cov=clowder -vv -n auto -m "not ssh and not config and not write and not offline"
     - name: Run pytest config tests
