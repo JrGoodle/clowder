@@ -58,4 +58,4 @@ jobs:
           command: pytest --cov-config=.coveragerc --basetemp=build --cov-append --cov=clowder -vv -m "config and not offline and not write"
 
       - codecov/upload:
-          file: {{ "coverage/.coverage" }}
+          file: coverage/.coverage
