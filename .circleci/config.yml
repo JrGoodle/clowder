@@ -29,9 +29,7 @@ jobs:
 
       - run:
           name: run setup scripts
-          command: |
-            script/ci_before
-            script/update
+          command: script/update
 
       - save_cache:
           paths:
@@ -48,20 +46,16 @@ jobs:
 
       - run:
           name: run pytest parallel tests
-          command: pytest -v -n auto -m "ssh and not config and not offline and not write"
+          command: pytest --cov-config=.coveragerc --basetemp=build --cov-append --cov=clowder -vv -n auto -m "ssh and not config and not offline and not write"
 
       # FIXME: Set up ssh in tests
       # - run:
       #     name: run pytest ssh tests
-      #     command: pytest -v -m "write and not config and not offline"
+      #     command: pytest --cov-config=.coveragerc --basetemp=build --cov-append --cov=clowder -vv -m "write and not config and not offline"
 
       - run:
           name: run pytest config tests
-          command: pytest -v -m "config and not offline and not write"
-
-      # - run:
-      #     name: upload code coverage results
-      #     command: script/ci_after
+          command: pytest --cov-config=.coveragerc --basetemp=build --cov-append --cov=clowder -vv -m "config and not offline and not write"
 
       - codecov/upload:
-          file: {{ coverage/.coverage }}
+          file: {{ "coverage/.coverage" }}
