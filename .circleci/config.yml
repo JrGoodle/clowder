@@ -65,3 +65,7 @@ jobs:
 
       - codecov/upload:
           file: coverage/.coverage
+
+      - store_artifacts:
+          path: coverage/.coverage
+          destination: coverage-circleci
