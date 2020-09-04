@@ -11,6 +11,8 @@ source = clowder/*
 [paths]
 source =
     clowder
+    /Users/runner/work/clowder/clowder
+    /home/circleci/project/clowder
 
 [report]
 # Regexes for lines to exclude from consideration
