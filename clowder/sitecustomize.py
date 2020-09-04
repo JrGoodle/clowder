@@ -1,5 +1,6 @@
 """sitecustomize.py"""
 
+# noinspection PyPackageRequirements
 import coverage
 
 

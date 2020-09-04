@@ -20,7 +20,6 @@ Feature: clowder start
         When I run 'clowder start -h' and 'clowder start --help'
         Then the commands succeed
 
-    @debug
     Scenario Outline: start local
         Given cats example is initialized and herded
         And cats example projects have no local branch <test_branch>
@@ -41,7 +40,7 @@ Feature: clowder start
         | black-cats/sasha  | master       | new-branch  |
         | black-cats/june   | master       | new-branch  |
 
-    @subdirectory @debug
+    @subdirectory
     Scenario Outline: start local subdirectory
         Given cats example is initialized and herded
         And cats example projects have no local branch <test_branch>

@@ -2,14 +2,14 @@
 branch = True
 concurrency = multiprocessing
 parallel = True
-# data_file = coverage/.coverage
-omit =
-    # omit everything in /usr
-    /usr/*
+dynamic_context = test_function
+data_file = coverage/.coverage
+omit = tests/*
+source = clowder/*
+# debug = config
 
-[paths]
-source =
-    clowder
+# [paths]
+# source = clowder/
 
 [report]
 # Regexes for lines to exclude from consideration
