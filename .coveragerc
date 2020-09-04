@@ -8,13 +8,13 @@ omit = tests/*
 source = clowder/*
 # debug = config
 
-[paths]
-source =
-    clowder
-    /Users/runner/work/clowder/clowder/clowder/clowder
-    /Users/runner/work/clowder/clowder/clowder
-    /home/circleci/project/clowder
-    /Users/jrgoodle/projects/clowder-projects/clowder/clowder
+# [paths]
+# source =
+#     clowder
+#     /Users/runner/work/clowder/clowder/clowder/clowder
+#     /Users/runner/work/clowder/clowder/clowder
+#     /home/circleci/project/clowder
+#     /Users/jrgoodle/projects/clowder-projects/clowder/clowder
 
 [report]
 # Regexes for lines to exclude from consideration

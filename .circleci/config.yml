@@ -68,4 +68,4 @@ jobs:
 
       - store_artifacts:
           path: coverage/.coverage
-          destination: coverage-circleci
+          destination: .coverage-circleci
