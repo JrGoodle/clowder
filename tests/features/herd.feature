@@ -769,19 +769,59 @@ Feature: clowder herd
     @fail
     Scenario Outline: herd yaml configured with non-existent remote branch
         Given cats example is initialized
-        And project at <directory> deleted local branch <branch>
-        And project at <directory> checked out detached HEAD behind <branch>
-        And project at <directory> is on <commit>
+        And linked non-existent-branch clowder version
+        And project at <directory> doesn't exist
         When I run 'clowder herd'
-        Then the command succeeds
-        And project at <directory> is on <branch>
-        And project at <directory> is clean
+        Then the command fails
+        And project at <directory> doesn't exist
 
         Examples:
-        | directory         | branch | commit                                   |
-        | mu                | knead  | cddce39214a1ae20266d9ee36966de67438625d1 |
-        | duke              | purr   | 7083e8840e1bb972b7664cfa20bbd7a25f004018 |
-        | black-cats/kit    | master | da5c3d32ec2c00aba4a9f7d822cce2c727f7f5dd |
-        | black-cats/kishka | master | d185e3bff9eaaf6e146d4e09165276cd5c9f31c8 |
-        | black-cats/june   | master | b6e1316cc62cb2ba18fa982fc3d67ef4408c8bfd |
-        | black-cats/sasha  | master | 775979e0b1a7f753131bf16a4794c851c67108d8 |
+        | directory         |
+        | mu                |
+        | duke              |
+        | black-cats/kit    |
+        | black-cats/kishka |
+        | black-cats/june   |
+        | black-cats/sasha  |
+
+    @write
+    Scenario Outline: herd yaml configured with non-existent remote branch, but local branch exists
+        Given cats example is initialized and herded
+        And cats example projects have no remote branch <test_branch>
+        And project at <directory> created local branch <test_branch>
+        And linked non-existent-branch clowder version
+        And project at <directory> is on <start_branch>
+        When I run 'clowder herd'
+        Then the command succeeds
+        And project at <directory> is on <start_branch>
+        And project at <directory> has no remote branch <test_branch>
+
+        Examples:
+        | directory         | start_branch | test_branch  |
+        | mu                | knead        | i-dont-exist |
+        | duke              | purr         | i-dont-exist |
+        | black-cats/kit    | master       | i-dont-exist |
+        | black-cats/kishka | master       | i-dont-exist |
+        | black-cats/june   | master       | i-dont-exist |
+        | black-cats/sasha  | master       | i-dont-exist |
+
+    @write
+    Scenario Outline: herd local exists, remote exists, no tracking
+        Given cats example is initialized and herded
+        And linked non-existent-branch clowder version
+        And cats example projects have remote branch <test_branch>
+        And project at <directory> created local branch <test_branch>
+        And project at <directory> has no tracking branch <test_branch>
+        When I run 'clowder herd'
+        Then the command succeeds
+        And project at <directory> is on <test_branch>
+        And project at <directory> has tracking branch <test_branch>
+
+        Examples:
+        | directory         | test_branch  |
+        | mu                | i-dont-exist |
+        | duke              | i-dont-exist |
+        | black-cats/kit    | i-dont-exist |
+        | black-cats/kishka | i-dont-exist |
+        | black-cats/june   | i-dont-exist |
+        | black-cats/sasha  | i-dont-exist |

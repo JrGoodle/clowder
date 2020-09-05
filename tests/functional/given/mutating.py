@@ -73,10 +73,17 @@ def given_did_stage_file(tmp_path: Path, directory: str, filename: str) -> None:
 @given(parsers.parse("repo at {directory} created local branch {test_branch}"))
 @given(parsers.parse("project at {directory} created local branch {test_branch}"))
 @given("project at <directory> created local branch <test_branch>")
-def given_directory_created_local_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
+def given_directory_created_local_test_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
     path = tmp_path / directory
     util.create_local_branch(path, test_branch)
     assert util.local_branch_exists(tmp_path / directory, test_branch)
+
+
+@given("project at <directory> created local <branch>")
+def given_directory_created_local_branch(tmp_path: Path, directory: str, branch: str) -> None:
+    path = tmp_path / directory
+    util.create_local_branch(path, branch)
+    assert util.local_branch_exists(tmp_path / directory, branch)
 
 
 @given("project at <directory> checked out <test_branch>")
