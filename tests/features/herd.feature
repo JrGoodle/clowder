@@ -825,3 +825,22 @@ Feature: clowder herd
         | black-cats/kishka | i-dont-exist |
         | black-cats/june   | i-dont-exist |
         | black-cats/sasha  | i-dont-exist |
+
+    @cats
+    Scenario Outline: herd after clean herd
+        Given cats example is initialized and herded
+        And project at <directory> is on <branch>
+        And project at <directory> is clean
+        When I run 'clowder herd'
+        Then the command succeeds
+        And project at <directory> is on <branch>
+        And project at <directory> is clean
+
+        Examples:
+        | directory         | branch |
+        | mu                | knead  |
+        | duke              | purr   |
+        | black-cats/kishka | master |
+        | black-cats/kit    | master |
+        | black-cats/sasha  | master |
+        | black-cats/june   | master |

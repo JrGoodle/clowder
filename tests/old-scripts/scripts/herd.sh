@@ -324,46 +324,46 @@ export all_projects=( 'mu' 'duke' \
 # }
 # test_herd_tag
 
-test_herd_projects() {
-    print_single_separator
-    echo "TEST: Successfully herd specific projects"
-    begin_command
-    $COMMAND herd "$@" $PARALLEL || exit 1
-    end_command
-}
-test_herd_projects 'JrGoodle/kit' 'JrGoodle/kishka'
+# test_herd_projects() {
+#     print_single_separator
+#     echo "TEST: Successfully herd specific projects"
+#     begin_command
+#     $COMMAND herd "$@" $PARALLEL || exit 1
+#     end_command
+# }
+# test_herd_projects 'JrGoodle/kit' 'JrGoodle/kishka'
 
-begin_command
-$COMMAND repo checkout master || exit 1
-end_command
+# begin_command
+# $COMMAND repo checkout master || exit 1
+# end_command
 
-EXISTING_REMOTE_BRANCH='test-herd-existing-remote-branch'
-NO_REMOTE_BRANCH='test-herd-no-remote-branch'
+# EXISTING_REMOTE_BRANCH='test-herd-existing-remote-branch'
+# NO_REMOTE_BRANCH='test-herd-no-remote-branch'
 
-test_herd_no_repo_existing_remote() {
-    print_single_separator
-    echo "TEST: Herd - No repo, existing remote branch"
-    for project in "${all_projects[@]}"; do
-        rm -rf $project
-    done
-    begin_command
-    $COMMAND link 'herd-existing-remote-branch' || exit 1
-    end_command
-    for project in "${all_projects[@]}"; do
-        test_no_directory_exists "$project"
-    done
-    begin_command
-    $COMMAND herd $PARALLEL || exit 1
-    end_command
-    for project in "${all_projects[@]}"; do
-        pushd $project || exit 1
-        test_branch $EXISTING_REMOTE_BRANCH
-        test_remote_branch_exists $EXISTING_REMOTE_BRANCH
-        test_tracking_branch_exists $EXISTING_REMOTE_BRANCH
-        popd || exit 1
-    done
-}
-test_herd_no_repo_existing_remote
+# test_herd_no_repo_existing_remote() {
+#     print_single_separator
+#     echo "TEST: Herd - No repo, existing remote branch"
+#     for project in "${all_projects[@]}"; do
+#         rm -rf $project
+#     done
+#     begin_command
+#     $COMMAND link 'herd-existing-remote-branch' || exit 1
+#     end_command
+#     for project in "${all_projects[@]}"; do
+#         test_no_directory_exists "$project"
+#     done
+#     begin_command
+#     $COMMAND herd $PARALLEL || exit 1
+#     end_command
+#     for project in "${all_projects[@]}"; do
+#         pushd $project || exit 1
+#         test_branch $EXISTING_REMOTE_BRANCH
+#         test_remote_branch_exists $EXISTING_REMOTE_BRANCH
+#         test_tracking_branch_exists $EXISTING_REMOTE_BRANCH
+#         popd || exit 1
+#     done
+# }
+# test_herd_no_repo_existing_remote
 
 # test_herd_no_repo_no_remote() {
 #     print_single_separator
@@ -539,43 +539,43 @@ test_herd_no_repo_existing_remote
     #     test_no_tracking_branch_exists $EXISTING_REMOTE_BRANCH
     #     popd || exit 1
     # done
-}
-test_herd_existing_local_existing_remote_no_tracking
+# }
+# test_herd_existing_local_existing_remote_no_tracking
 
-test_herd_existing_local_existing_remote_tracking() {
-    print_single_separator
-    echo "TEST: Herd - Existing local branch, existing remote branch, tracking"
-    begin_command
-    $COMMAND link || exit 1
-    end_command
-    begin_command
-    $COMMAND prune $EXISTING_REMOTE_BRANCH || exit 1
-    end_command
-    begin_command
-    $COMMAND link 'herd-existing-remote-branch' || exit 1
-    end_command
-    begin_command
-    $COMMAND forall $PARALLEL -c "git checkout $EXISTING_REMOTE_BRANCH" || exit 1
-    end_command
-    for project in "${all_projects[@]}"; do
-        pushd $project || exit 1
-        test_local_branch_exists $EXISTING_REMOTE_BRANCH
-        test_remote_branch_exists $EXISTING_REMOTE_BRANCH
-        test_tracking_branch_exists $EXISTING_REMOTE_BRANCH
-        popd || exit 1
-    done
-    begin_command
-    $COMMAND herd $PARALLEL || exit 1
-    end_command
-    for project in "${all_projects[@]}"; do
-        pushd $project || exit 1
-        test_branch $EXISTING_REMOTE_BRANCH
-        test_remote_branch_exists $EXISTING_REMOTE_BRANCH
-        test_tracking_branch_exists $EXISTING_REMOTE_BRANCH
-        popd || exit 1
-    done
-}
-test_herd_existing_local_existing_remote_tracking
+# test_herd_existing_local_existing_remote_tracking() {
+#     print_single_separator
+#     echo "TEST: Herd - Existing local branch, existing remote branch, tracking"
+#     begin_command
+#     $COMMAND link || exit 1
+#     end_command
+#     begin_command
+#     $COMMAND prune $EXISTING_REMOTE_BRANCH || exit 1
+#     end_command
+#     begin_command
+#     $COMMAND link 'herd-existing-remote-branch' || exit 1
+#     end_command
+#     begin_command
+#     $COMMAND forall $PARALLEL -c "git checkout $EXISTING_REMOTE_BRANCH" || exit 1
+#     end_command
+#     for project in "${all_projects[@]}"; do
+#         pushd $project || exit 1
+#         test_local_branch_exists $EXISTING_REMOTE_BRANCH
+#         test_remote_branch_exists $EXISTING_REMOTE_BRANCH
+#         test_tracking_branch_exists $EXISTING_REMOTE_BRANCH
+#         popd || exit 1
+#     done
+#     begin_command
+#     $COMMAND herd $PARALLEL || exit 1
+#     end_command
+#     for project in "${all_projects[@]}"; do
+#         pushd $project || exit 1
+#         test_branch $EXISTING_REMOTE_BRANCH
+#         test_remote_branch_exists $EXISTING_REMOTE_BRANCH
+#         test_tracking_branch_exists $EXISTING_REMOTE_BRANCH
+#         popd || exit 1
+#     done
+# }
+# test_herd_existing_local_existing_remote_tracking
 
 test_herd_rebase() {
     print_single_separator
