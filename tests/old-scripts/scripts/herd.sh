@@ -17,35 +17,35 @@ export all_projects=( 'mu' 'duke' \
                       'black-cats/sasha' \
                       'black-cats/june' )
 
-test_cats_default_herd_branches() {
-    echo "TEST: cats projects on default branches"
-    for project in "${black_cats_projects[@]}"; do
-        pushd $project || exit 1
-        test_branch master
-        popd || exit 1
-    done
-    pushd mu || exit 1
-    test_branch knead
-    popd || exit 1
-    pushd duke || exit 1
-    test_branch heads/purr
-    popd || exit 1
-}
+# test_cats_default_herd_branches() {
+#     echo "TEST: cats projects on default branches"
+#     for project in "${black_cats_projects[@]}"; do
+#         pushd $project || exit 1
+#         test_branch master
+#         popd || exit 1
+#     done
+#     pushd mu || exit 1
+#     test_branch knead
+#     popd || exit 1
+#     pushd duke || exit 1
+#     test_branch heads/purr
+#     popd || exit 1
+# }
 
-print_double_separator
-echo "TEST: Test clowder herd"
+# print_double_separator
+# echo "TEST: Test clowder herd"
 
-cd "$CATS_EXAMPLE_DIR" || exit 1
-./clean.sh
+# cd "$CATS_EXAMPLE_DIR" || exit 1
+# ./clean.sh
 
-test_herd_missing_clowder() {
-    print_single_separator
-    echo "TEST: Fail herd with missing clowder.yaml"
-    begin_command
-    $COMMAND herd $PARALLEL && exit 1
-    end_command
-}
-test_herd_missing_clowder
+# test_herd_missing_clowder() {
+#     print_single_separator
+#     echo "TEST: Fail herd with missing clowder.yaml"
+#     begin_command
+#     $COMMAND herd $PARALLEL && exit 1
+#     end_command
+# }
+# test_herd_missing_clowder
 
 # ./clean.sh
 # ./init.sh || exit 1
@@ -152,144 +152,144 @@ test_herd_missing_clowder
 # }
 # test_herd_dirty_repos "${black_cats_projects[@]}"
 
-test_herd_detached_heads() {
-    print_single_separator
-    echo "TEST: Create detached HEADs"
-    for project in "$@"
-    do
-        pushd $project || exit 1
-        git checkout master~2 || exit 1
-        popd || exit 1
-    done
-    begin_command
-    $COMMAND status || exit 1
-    end_command
-    echo "TEST: Successfully herd with detached HEADs"
-    begin_command
-    $COMMAND herd $PARALLEL || exit 1
-    end_command
-    test_cats_default_herd_branches
-}
-test_herd_detached_heads "${black_cats_projects[@]}"
+# test_herd_detached_heads() {
+#     print_single_separator
+#     echo "TEST: Create detached HEADs"
+#     for project in "$@"
+#     do
+#         pushd $project || exit 1
+#         git checkout master~2 || exit 1
+#         popd || exit 1
+#     done
+#     begin_command
+#     $COMMAND status || exit 1
+#     end_command
+#     echo "TEST: Successfully herd with detached HEADs"
+#     begin_command
+#     $COMMAND herd $PARALLEL || exit 1
+#     end_command
+#     test_cats_default_herd_branches
+# }
+# test_herd_detached_heads "${black_cats_projects[@]}"
 
-test_herd_version() {
-    print_single_separator
-    echo "TEST: Successfully herd a previously saved version"
-    begin_command
-    $COMMAND link v0.1 || exit 1
-    end_command
-    begin_command
-    $COMMAND herd $PARALLEL || exit 1
-    end_command
-    echo "TEST: Successfully herd after herding a previously saved version"
-    begin_command
-    $COMMAND link || exit 1
-    end_command
-    begin_command
-    $COMMAND herd $PARALLEL || exit 1
-    end_command
-    echo "TEST: Remove directories"
-    rm -rf "$@"
-    for project in "${cats_projects[@]}"; do
-        test_no_directory_exists "$project"
-    done
-    echo "TEST: Successfully herd with missing directories"
-    begin_command
-    $COMMAND herd $PARALLEL || exit 1
-    end_command
-    test_cats_default_herd_branches
-}
-test_herd_version 'duke' 'mu'
+# test_herd_version() {
+#     print_single_separator
+#     echo "TEST: Successfully herd a previously saved version"
+#     begin_command
+#     $COMMAND link v0.1 || exit 1
+#     end_command
+#     begin_command
+#     $COMMAND herd $PARALLEL || exit 1
+#     end_command
+#     echo "TEST: Successfully herd after herding a previously saved version"
+#     begin_command
+#     $COMMAND link || exit 1
+#     end_command
+#     begin_command
+#     $COMMAND herd $PARALLEL || exit 1
+#     end_command
+#     echo "TEST: Remove directories"
+#     rm -rf "$@"
+#     for project in "${cats_projects[@]}"; do
+#         test_no_directory_exists "$project"
+#     done
+#     echo "TEST: Successfully herd with missing directories"
+#     begin_command
+#     $COMMAND herd $PARALLEL || exit 1
+#     end_command
+#     test_cats_default_herd_branches
+# }
+# test_herd_version 'duke' 'mu'
 
-test_herd_groups() {
-    print_single_separator
-    echo "TEST: Herd saved version to test herding select groups"
-    begin_command
-    $COMMAND link v0.1 || exit 1
-    end_command
-    begin_command
-    $COMMAND herd $PARALLEL || exit 1
-    end_command
+# test_herd_groups() {
+#     print_single_separator
+#     echo "TEST: Herd saved version to test herding select groups"
+#     begin_command
+#     $COMMAND link v0.1 || exit 1
+#     end_command
+#     begin_command
+#     $COMMAND herd $PARALLEL || exit 1
+#     end_command
 
-    echo "TEST: Herd only specific groups"
-    begin_command
-    $COMMAND herd "$@" $PARALLEL || exit 1
-    end_command
-    begin_command
-    $COMMAND status || exit 1
-    end_command
-}
-test_herd_groups 'cats'
+#     echo "TEST: Herd only specific groups"
+#     begin_command
+#     $COMMAND herd "$@" $PARALLEL || exit 1
+#     end_command
+#     begin_command
+#     $COMMAND status || exit 1
+#     end_command
+# }
+# test_herd_groups 'cats'
 
-test_herd_missing_branches() {
-    print_single_separator
-    echo "TEST: Herd v0.1 to test missing default branches"
-    begin_command
-    $COMMAND link v0.1 || exit 1
-    end_command
-    begin_command
-    $COMMAND herd $PARALLEL || exit 1
-    end_command
-    echo "TEST: Delete default branches locally"
-    pushd mu || exit 1
-    git branch -D knead || exit 1
-    popd || exit 1
-    pushd duke || exit 1
-    git branch -D purr || exit 1
-    popd || exit 1
-    echo "TEST: Herd existing repo's with no default branch locally"
-    begin_command
-    $COMMAND link || exit 1
-    end_command
-    begin_command
-    $COMMAND herd $PARALLEL || exit 1
-    end_command
-    test_cats_default_herd_branches
-}
-test_herd_missing_branches
+# test_herd_missing_branches() {
+#     print_single_separator
+#     echo "TEST: Herd v0.1 to test missing default branches"
+#     begin_command
+#     $COMMAND link v0.1 || exit 1
+#     end_command
+#     begin_command
+#     $COMMAND herd $PARALLEL || exit 1
+#     end_command
+#     echo "TEST: Delete default branches locally"
+#     pushd mu || exit 1
+#     git branch -D knead || exit 1
+#     popd || exit 1
+#     pushd duke || exit 1
+#     git branch -D purr || exit 1
+#     popd || exit 1
+#     echo "TEST: Herd existing repo's with no default branch locally"
+#     begin_command
+#     $COMMAND link || exit 1
+#     end_command
+#     begin_command
+#     $COMMAND herd $PARALLEL || exit 1
+#     end_command
+#     test_cats_default_herd_branches
+# }
+# test_herd_missing_branches
 
-test_herd_sha() {
-    print_single_separator
-    echo 'TEST: Test herd of static commit hash refs'
-    begin_command
-    $COMMAND link static-refs || exit 1
-    end_command
-    begin_command
-    $COMMAND herd $PARALLEL || exit 1
-    end_command
-    echo 'TEST: Check actual commit refs are correct'
-    pushd mu || exit 1
-    test_head_detached
-    test_commit 'cddce39214a1ae20266d9ee36966de67438625d1'
-    popd || exit 1
-    pushd duke || exit 1
-    test_head_detached
-    test_commit '7083e8840e1bb972b7664cfa20bbd7a25f004018'
-    popd || exit 1
-    pushd black-cats/kit || exit 1
-    test_head_detached
-    test_commit 'da5c3d32ec2c00aba4a9f7d822cce2c727f7f5dd'
-    popd || exit 1
-    pushd black-cats/kishka || exit 1
-    test_head_detached
-    test_commit 'd185e3bff9eaaf6e146d4e09165276cd5c9f31c8'
-    popd || exit 1
-    pushd black-cats/june || exit 1
-    test_head_detached
-    test_commit 'b6e1316cc62cb2ba18fa982fc3d67ef4408c8bfd'
-    popd || exit 1
-    pushd black-cats/sasha || exit 1
-    test_head_detached
-    test_commit '775979e0b1a7f753131bf16a4794c851c67108d8'
-    popd || exit 1
-    begin_command
-    $COMMAND status || exit 1
-    end_command
-    begin_command
-    $COMMAND link || exit 1
-    end_command
-}
-test_herd_sha
+# test_herd_sha() {
+#     print_single_separator
+#     echo 'TEST: Test herd of static commit hash refs'
+#     begin_command
+#     $COMMAND link static-refs || exit 1
+#     end_command
+#     begin_command
+#     $COMMAND herd $PARALLEL || exit 1
+#     end_command
+#     echo 'TEST: Check actual commit refs are correct'
+#     pushd mu || exit 1
+#     test_head_detached
+#     test_commit 'cddce39214a1ae20266d9ee36966de67438625d1'
+#     popd || exit 1
+#     pushd duke || exit 1
+#     test_head_detached
+#     test_commit '7083e8840e1bb972b7664cfa20bbd7a25f004018'
+#     popd || exit 1
+#     pushd black-cats/kit || exit 1
+#     test_head_detached
+#     test_commit 'da5c3d32ec2c00aba4a9f7d822cce2c727f7f5dd'
+#     popd || exit 1
+#     pushd black-cats/kishka || exit 1
+#     test_head_detached
+#     test_commit 'd185e3bff9eaaf6e146d4e09165276cd5c9f31c8'
+#     popd || exit 1
+#     pushd black-cats/june || exit 1
+#     test_head_detached
+#     test_commit 'b6e1316cc62cb2ba18fa982fc3d67ef4408c8bfd'
+#     popd || exit 1
+#     pushd black-cats/sasha || exit 1
+#     test_head_detached
+#     test_commit '775979e0b1a7f753131bf16a4794c851c67108d8'
+#     popd || exit 1
+#     begin_command
+#     $COMMAND status || exit 1
+#     end_command
+#     begin_command
+#     $COMMAND link || exit 1
+#     end_command
+# }
+# test_herd_sha
 
 # test_herd_tag() {
 #     print_single_separator

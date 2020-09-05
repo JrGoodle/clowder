@@ -20,6 +20,13 @@ Feature: clowder herd
         When I run 'clowder herd -h' and 'clowder herd --help'
         Then the commands succeed
 
+    @cats @fail
+    Scenario: herd missing clowder.yml
+        Given test directory is empty
+        When I run 'clowder herd'
+        Then the command fails
+        And test directory is empty
+
     @cats
     Scenario Outline: herd default
         Given cats example is initialized
@@ -60,7 +67,7 @@ Feature: clowder herd
         | black-cats/sasha  | sub         | master     |
         | black-cats/june   | sub         | master     |
 
-    @commits @cats
+    @cats
     Scenario Outline: herd commits
         Given cats example is initialized
         And <directory> doesn't exist
@@ -81,7 +88,7 @@ Feature: clowder herd
         | black-cats/june   | b6e1316cc62cb2ba18fa982fc3d67ef4408c8bfd |
         | black-cats/sasha  | 775979e0b1a7f753131bf16a4794c851c67108d8 |
 
-    @tags @cats
+    @cats
     Scenario Outline: herd tags
         Given cats example is initialized
         And <directory> doesn't exist
@@ -103,23 +110,63 @@ Feature: clowder herd
         | black-cats/june   | v0.01                 |
 
     @fail @cats
-    Scenario: Test clowder herd untracked file
+    Scenario Outline: Test clowder herd untracked file
         Given cats example is initialized and herded
-        And created file something.txt in directory mu
-        And project at mu has untracked file something.txt
+        And created file <filename> in directory <directory>
+        And project at <directory> has untracked file <filename>
+        And project at <directory> is on <branch>
         When I run 'clowder herd'
         Then the command fails
-        And project at mu has untracked file something.txt
+        And project at <directory> has untracked file <filename>
+        And project at <directory> is on <branch>
+
+        Examples:
+        | directory         | branch | filename      |
+        | mu                | knead  | something.txt |
+        | duke              | purr   | something.txt |
+        | black-cats/kishka | master | something.txt |
+        | black-cats/kit    | master | something.txt |
+        | black-cats/sasha  | master | something.txt |
+        | black-cats/june   | master | something.txt |
 
     @fail @cats
-    Scenario: Test clowder herd staged file
+    Scenario Outline: Test clowder herd staged file
         Given cats example is initialized and herded
-        And created file something.txt in directory mu
-        And project at mu staged file something.txt
+        And created file <filename> in directory <directory>
+        And project at <directory> staged file <filename>
+        And project at <directory> is on <branch>
         When I run 'clowder herd'
         Then the command fails
 #        And project at mu has staged file something.txt
-        And project at mu is dirty
+        And project at <directory> is dirty
+        And project at <directory> is on <branch>
+
+        Examples:
+        | directory         | branch | filename      |
+        | mu                | knead  | something.txt |
+        | duke              | purr   | something.txt |
+        | black-cats/kishka | master | something.txt |
+        | black-cats/kit    | master | something.txt |
+        | black-cats/sasha  | master | something.txt |
+        | black-cats/june   | master | something.txt |
+
+    @cats
+    Scenario Outline: herd from detached HEAD
+        Given cats example is initialized and herded
+        And project at <directory> checked out detached HEAD behind <branch>
+        When I run 'clowder herd'
+        Then the command succeeds
+        And project at <directory> is on <branch>
+        And project at <directory> is clean
+
+        Examples:
+        | directory         | branch |
+        | mu                | knead  |
+        | duke              | purr   |
+        | black-cats/kishka | master |
+        | black-cats/kit    | master |
+        | black-cats/sasha  | master |
+        | black-cats/june   | master |
 
 #    FIXME: Implement this
 #    @fail @cats
@@ -131,6 +178,29 @@ Feature: clowder herd
 #        Then the command fails
 ##        And project at mu has staged file something.txt
 #        And project at mu is dirty
+
+#    TODO: Probably should come up with a better test for this (i.e. save a new version and its commit hashes
+#    and then herd and check them in the Then section
+    @cats
+    Scenario Outline: herd previously saved version
+        Given cats example is initialized
+        And <directory> doesn't exist
+        And linked v0.1 clowder version
+        When I run 'clowder herd'
+        Then the command succeeds
+        And project at <directory> is a git repository
+        And project at <directory> is on <commit>
+        And project at <directory> has detached HEAD
+        And project at <directory> is clean
+
+        Examples:
+        | directory         | commit                                   |
+        | mu                | cddce39214a1ae20266d9ee36966de67438625d1 |
+        | duke              | 7083e8840e1bb972b7664cfa20bbd7a25f004018 |
+        | black-cats/kit    | da5c3d32ec2c00aba4a9f7d822cce2c727f7f5dd |
+        | black-cats/kishka | d185e3bff9eaaf6e146d4e09165276cd5c9f31c8 |
+        | black-cats/june   | b6e1316cc62cb2ba18fa982fc3d67ef4408c8bfd |
+        | black-cats/sasha  | 775979e0b1a7f753131bf16a4794c851c67108d8 |
 
     @submodules @cats
     Scenario Outline: herd submodules recursive enabled check projects
@@ -656,25 +726,62 @@ Feature: clowder herd
         | black-cats/sasha  | master      |
         | black-cats/june   | master      |
 
-#    FIXME: Figure out correct commits
-#    @commits @cats
-#    Scenario Outline: herd saved version after init
-#        Given cats example is initialized
-#        And linked v0.1 clowder version
-#        And <directory> doesn't exist
-#        When I run 'clowder herd'
-#        Then the command succeeds
-#        And project at <directory> is a git repository
-#        And project at <directory> is on commit <commit>
-#        And project at <directory> has detached HEAD
-#        And project at <directory> is clean
-#
-#        Examples:
-#        | directory         | commit                                   |
-#        | mu                | cddce39214a1ae20266d9ee36966de67438625d1 |
-#        | duke              | 7083e8840e1bb972b7664cfa20bbd7a25f004018 |
-#        | black-cats/kit    | da5c3d32ec2c00aba4a9f7d822cce2c727f7f5dd |
-#        | black-cats/kishka | d185e3bff9eaaf6e146d4e09165276cd5c9f31c8 |
-#        | black-cats/june   | b6e1316cc62cb2ba18fa982fc3d67ef4408c8bfd |
-#        | black-cats/sasha  | 775979e0b1a7f753131bf16a4794c851c67108d8 |
+    @cats
+    Scenario Outline: herd saved version after init
+        Given cats example is initialized
+        And linked v0.1 clowder version
+        And <directory> doesn't exist
+        When I run 'clowder herd'
+        Then the command succeeds
+        And project at <directory> is a git repository
+        And project at <directory> is on commit <commit>
+        And project at <directory> has detached HEAD
+        And project at <directory> is clean
 
+        Examples:
+        | directory         | commit                                   |
+        | mu                | cddce39214a1ae20266d9ee36966de67438625d1 |
+        | duke              | 7083e8840e1bb972b7664cfa20bbd7a25f004018 |
+        | black-cats/kit    | da5c3d32ec2c00aba4a9f7d822cce2c727f7f5dd |
+        | black-cats/kishka | d185e3bff9eaaf6e146d4e09165276cd5c9f31c8 |
+        | black-cats/june   | b6e1316cc62cb2ba18fa982fc3d67ef4408c8bfd |
+        | black-cats/sasha  | 775979e0b1a7f753131bf16a4794c851c67108d8 |
+
+    Scenario Outline: herd with missing default branch
+        Given cats example is initialized and herded
+        And project at <directory> deleted local branch <branch>
+        And project at <directory> checked out detached HEAD behind <branch>
+        And project at <directory> is on <commit>
+        When I run 'clowder herd'
+        Then the command succeeds
+        And project at <directory> is on <branch>
+        And project at <directory> is clean
+
+        Examples:
+        | directory         | branch | commit                                   |
+        | mu                | knead  | cddce39214a1ae20266d9ee36966de67438625d1 |
+        | duke              | purr   | 7083e8840e1bb972b7664cfa20bbd7a25f004018 |
+        | black-cats/kit    | master | da5c3d32ec2c00aba4a9f7d822cce2c727f7f5dd |
+        | black-cats/kishka | master | d185e3bff9eaaf6e146d4e09165276cd5c9f31c8 |
+        | black-cats/june   | master | b6e1316cc62cb2ba18fa982fc3d67ef4408c8bfd |
+        | black-cats/sasha  | master | 775979e0b1a7f753131bf16a4794c851c67108d8 |
+
+    @fail
+    Scenario Outline: herd yaml configured with non-existent remote branch
+        Given cats example is initialized
+        And project at <directory> deleted local branch <branch>
+        And project at <directory> checked out detached HEAD behind <branch>
+        And project at <directory> is on <commit>
+        When I run 'clowder herd'
+        Then the command succeeds
+        And project at <directory> is on <branch>
+        And project at <directory> is clean
+
+        Examples:
+        | directory         | branch | commit                                   |
+        | mu                | knead  | cddce39214a1ae20266d9ee36966de67438625d1 |
+        | duke              | purr   | 7083e8840e1bb972b7664cfa20bbd7a25f004018 |
+        | black-cats/kit    | master | da5c3d32ec2c00aba4a9f7d822cce2c727f7f5dd |
+        | black-cats/kishka | master | d185e3bff9eaaf6e146d4e09165276cd5c9f31c8 |
+        | black-cats/june   | master | b6e1316cc62cb2ba18fa982fc3d67ef4408c8bfd |
+        | black-cats/sasha  | master | 775979e0b1a7f753131bf16a4794c851c67108d8 |

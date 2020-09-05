@@ -86,6 +86,21 @@ def given_directory_checked_out_start_branch(tmp_path: Path, directory: str, tes
     assert util.is_on_active_branch(path, test_branch)
 
 
+@given("project at <directory> checked out detached HEAD behind <test_branch>")
+def given_directory_checked_out_detached_head_behind_test_branch(tmp_path: Path, directory: str,
+                                                                 test_branch: str) -> None:
+    path = tmp_path / directory
+    util.create_detached_head(path, test_branch)
+    assert util.is_detached_head(path)
+
+
+@given("project at <directory> checked out detached HEAD behind <branch>")
+def given_directory_checked_out_detached_head_behind_branch(tmp_path: Path, directory: str, branch: str) -> None:
+    path = tmp_path / directory
+    util.create_detached_head(path, branch)
+    assert util.is_detached_head(path)
+
+
 @given("forall test scripts were copied to the project directories")
 def given_forall_test_scripts_present(tmp_path: Path, shared_datadir: Path, scenario_info: ScenarioInfo) -> None:
     dirs = util.example_repo_dirs(scenario_info.example)
@@ -246,6 +261,27 @@ def given_directory_deleted_remote_branch(tmp_path: Path, directory: str, test_b
     if util.remote_branch_exists(path, test_branch):
         result = util.delete_remote_branch(path, test_branch)
         assert result.returncode == 0
+    assert not util.remote_branch_exists(path, test_branch)
+
+
+@given(parsers.parse("repo at {directory} deleted local branch {test_branch}"))
+@given(parsers.parse("project at {directory} deleted local branch {test_branch}"))
+@given("project at <directory> deleted local branch <test_branch>")
+def given_directory_deleted_local_test_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
+    path = tmp_path / directory
+    if util.local_branch_exists(path, test_branch):
+        result = util.delete_local_branch(path, test_branch)
+        assert result.returncode == 0
+    assert not util.local_branch_exists(path, test_branch)
+
+
+@given("project at <directory> deleted local branch <branch>")
+def given_directory_deleted_local_branch(tmp_path: Path, directory: str, branch: str) -> None:
+    path = tmp_path / directory
+    if util.local_branch_exists(path, branch):
+        result = util.delete_local_branch(path, branch)
+        assert result.returncode == 0
+    assert not util.local_branch_exists(path, branch)
 
 
 @given(parsers.parse("repo at {directory} created tracking branch {branch}"))

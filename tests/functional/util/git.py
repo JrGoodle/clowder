@@ -22,16 +22,12 @@ def is_dirty(path: Path) -> bool:
     return repo.is_dirty() or is_rebase_in_progress(path) or has_untracked_files(path)
 
 
-def is_rebase_in_progress(git_dir: Path) -> bool:
-    """Detect whether rebase is in progress
-
-    :return: True, if rebase is in progress
-    :rtype: bool
-    """
-
-    is_rebase_apply = Path(git_dir, 'rebase-apply').is_dir()
-    is_rebase_merge = Path(git_dir, 'rebase-merge').is_dir()
-    return is_rebase_apply or is_rebase_merge
+def is_rebase_in_progress(path: Path) -> bool:
+    rebase_merge = path / ".git" / "rebase-merge"
+    rebase_apply = path / ".git" / "rebase-apply"
+    rebase_merge_exists = rebase_merge.exists() and rebase_merge.is_dir()
+    rebase_apply_exists = rebase_apply.exists() and rebase_apply.is_dir()
+    return rebase_merge_exists or rebase_apply_exists
 
 
 def has_untracked_files(path: Path) -> bool:
@@ -221,28 +217,26 @@ def check_remote_url(path: Path, remote, url) -> None:
     assert result.stdout == url
 
 
-def is_rebase_in_progress(path: Path) -> bool:
-    rebase_merge = path / ".git" / "rebase-merge"
-    rebase_apply = path / ".git" / "rebase-apply"
-    rebase_merge_exists = rebase_merge.exists() and rebase_merge.is_dir()
-    rebase_apply_exists = rebase_apply.exists() and rebase_apply.is_dir()
-    return rebase_merge_exists or rebase_apply_exists
-
-
 def is_on_active_branch(path: Path, branch: str) -> bool:
-    repo = Repo(str(path))
+    repo = Repo(path)
     active_branch = repo.active_branch.name
     print(f"TEST: active branch '{active_branch}' is '{branch}'")
     return active_branch == branch
 
 
-def is_detached_head(path) -> bool:
-    repo = Repo(str(path))
+def is_detached_head(path: Path) -> bool:
+    repo = Repo(path)
     return repo.head.is_detached
 
 
+def create_detached_head(path: Path, branch: str) -> None:
+    repo = Repo(path)
+    repo.git.checkout(f"{branch}~1")
+    assert is_detached_head(path)
+
+
 def is_on_tag(path: Path, tag: str) -> bool:
-    repo = Repo(str(path))
+    repo = Repo(path)
     has_tag = tag in repo.tags
     if not has_tag:
         return False
@@ -251,7 +245,7 @@ def is_on_tag(path: Path, tag: str) -> bool:
 
 
 def is_on_commit(path: Path, commit: str) -> bool:
-    repo = Repo(str(path))
+    repo = Repo(path)
     on_correct_commit = repo.head.commit.hexsha == commit
     return on_correct_commit
 
