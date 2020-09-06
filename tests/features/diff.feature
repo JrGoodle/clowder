@@ -65,5 +65,6 @@ Feature: clowder diff
         And I run 'clowder diff black-cats'
         And I run 'clowder diff black-cats cats'
         And I run 'clowder diff black-cats cats all'
+        And the network connection is enabled
         Then the commands succeed
         And project at mu has untracked file catnip.txt

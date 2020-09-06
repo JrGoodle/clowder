@@ -83,6 +83,7 @@ Feature: clowder status
         And I run 'clowder status black-cats'
         And I run 'clowder status black-cats cats'
         And I run 'clowder status black-cats cats all'
+        And the network connection is enabled
         Then the commands succeed
         And project at mu has untracked file catnip.txt
 #        And TODO: check the output
@@ -100,6 +101,7 @@ Feature: clowder status
         And I run 'clowder status -f black-cats'
         And I run 'clowder status -f black-cats cats'
         And I run 'clowder status -f black-cats cats all'
+        And the network connection is enabled
         Then the commands fail
         And project at mu has untracked file catnip.txt
 #        And TODO: check the output

@@ -168,6 +168,7 @@ Feature: clowder init
         And test directory is empty
         When the network connection is disabled
         And I run 'clowder init https://github.com/JrGoodle/cats.git'
+        And the network connection is enabled
         Then the command fails
         And .clowder directory doesn't exist
         And clowder.yaml and clowder.yml symlinks don't exist

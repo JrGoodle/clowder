@@ -102,6 +102,7 @@ Feature: clowder save command
         And my-new-version clowder version doesn't exist
         When the network connection is disabled
         And I run 'clowder save my-new-version'
+        And the network connection is enabled
         Then the command succeeds
         And my-new-version clowder version exists
         And default clowder version is linked

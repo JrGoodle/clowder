@@ -192,19 +192,14 @@ def checkout_branch(path: Path, branch: str) -> CompletedProcess:
 
 
 def local_branch_exists(path: Path, branch: str) -> bool:
-    git = Repo(path)
-    refs = git.refs
-    if branch in refs:
-        return True
-    return False
+    result = run_command(f"git rev-parse --quiet --verify refs/heads/{branch}", path)
+    return result.returncode == 0
 
 
 def remote_branch_exists(path: Path, branch: str, remote: str = "origin") -> bool:
-    git = Repo(path)
-    refs = git.refs
-    if f"{remote}/{branch}" in refs:
-        return True
-    return False
+    result = run_command(f"git ls-remote --heads {remote} {branch} | wc -l | tr -d '[:space:]'", path)
+    output: str = result.stdout
+    return output.strip() == "1"
 
 
 def tracking_branch_exists(path: Path, branch: str) -> bool:

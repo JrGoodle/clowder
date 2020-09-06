@@ -65,17 +65,16 @@ Feature: clowder start
 
     @offline
     Scenario Outline: start local offline
-        Given the network connection is enabled
-        And cats example is initialized and herded
+        Given cats example is initialized and herded
         And cats example projects have no remote branch <test_branch>
         And cats example projects have no local branch <test_branch>
         And project at <directory> is on <start_branch>
         When the network connection is disabled
         And I run 'clowder start new-branch'
+        And the network connection is enabled
         Then the command succeeds
         And project at <directory> has local branch <test_branch>
         And project at <directory> is on <test_branch>
-        And the network connection is enabled
         And project at <directory> has no remote branch <test_branch>
 
         Examples:
@@ -95,10 +94,10 @@ Feature: clowder start
         And project at <directory> is on <start_branch>
         When the network connection is disabled
         And I run 'clowder start -t new-branch'
+        And the network connection is enabled
         Then the command fails
         And project at <directory> has no local branch <test_branch>
         And project at <directory> is on <start_branch>
-        And the network connection is enabled
         And project at <directory> has no remote branch <test_branch>
 
         Examples:

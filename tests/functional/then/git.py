@@ -237,3 +237,10 @@ def then_check_directory_rebased_commit_messages_correct_order(tmp_path: Path, d
         else:
             assert commit_messages_behind[current_message - number_ahead] == message
         current_message += 1
+
+
+@then("project at <directory> has staged <filename>")
+def then_has_stage_file(tmp_path: Path, directory: str, filename: str) -> None:
+    path = tmp_path / directory
+    assert util.is_dirty(path)
+#     TODO: Add check for specific staged file

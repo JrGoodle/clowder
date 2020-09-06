@@ -48,6 +48,7 @@ Feature: clowder clean
         And project at <directory> is on <branch>
         When the network connection is disabled
         And I run 'clowder clean'
+        And the network connection is enabled
         Then the command succeeds
         And <filename> doesn't exist in <directory>
         And project at <directory> is clean

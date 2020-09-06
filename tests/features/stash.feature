@@ -66,6 +66,7 @@ Feature: clowder stash
         And project at <directory> is dirty
         When the network connection is disabled
         And I run 'clowder stash'
+        And the network connection is enabled
         Then the command succeeds
         And project at <directory> is clean
 

@@ -7,9 +7,14 @@ from tests.functional.util import CommandResults, ScenarioInfo
 
 
 @when("the network connection is disabled")
-def when_network_connection_disabled(scenario_info: ScenarioInfo, offline) -> None:
+def when_network_connection_disabled(scenario_info: ScenarioInfo) -> None:
     scenario_info.offline = True
     util.disable_network_connection()
+
+
+@when("the network connection is enabled")
+def when_network_connection_enabled() -> None:
+    util.enable_network_connection()
 
 
 @when(parsers.parse("I change to directory {test_directory}"))
@@ -25,27 +30,19 @@ def when_run_command(command: str, command_results: CommandResults, scenario_inf
 
 
 @when(parsers.parse("I run '{command}' without debug output"))
-def when_run_command(command: str, command_results: CommandResults, scenario_info: ScenarioInfo) -> None:
+def when_run_command_no_debug(command: str, command_results: CommandResults, scenario_info: ScenarioInfo) -> None:
     result = util.run_command(command, scenario_info.cmd_dir, clowder_debug=False)
     command_results.completed_processes.append(result)
 
 
 @when(parsers.parse("I run '{command_1}' and '{command_2}'"))
-def when_run_commands_and(command_1: str, command_2: str,
-                          command_results: CommandResults, scenario_info: ScenarioInfo) -> None:
+def when_run_command_and_command(command_1: str, command_2: str,
+                                 command_results: CommandResults, scenario_info: ScenarioInfo) -> None:
     commands = [command_1, command_2]
     command_results.completed_processes += [util.run_command(c, scenario_info.cmd_dir) for c in commands]
 
 
-# NOTE: This works, but PyCharm doesn't support parsing it
-# @when(parsers.parse("I run:\n{commands}"))
-# def when_run_commands(tmp_path: Path, commands: str, command_results: CommandResults) -> None:
-#     commands = util.list_from_string(commands, sep="\n")
-#     results = [util.run_command(c, tmp_path) for c in commands]
-#     command_results.completed_processes += results
-
-
-# Comma separated list example:
+# NOTE: Comma separated list example
 # @when(parsers.cfparse("I run '{command}' for groups {groups:Groups}", extra_types=dict(Groups=list_str_commas)))
 # def when_run_clowder_groups(tmp_path: Path, command: str, groups: List[str]) -> None:
 #     groups_command = " ".join(g for g in groups)

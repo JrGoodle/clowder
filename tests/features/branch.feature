@@ -27,6 +27,7 @@ Feature: clowder branch
         And I run 'clowder branch'
         And I run 'clowder branch -a'
         And I run 'clowder branch -r'
+        And the network connection is enabled
         Then the commands succeed
 
     @subdirectory

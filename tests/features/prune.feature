@@ -141,6 +141,7 @@ Feature: clowder prune
         And project at <directory> is on <test_branch>
         When the network connection is disabled
         And I run 'clowder prune shrubs'
+        And the network connection is enabled
         Then the command succeeds
         And project at <directory> has no local branch <test_branch>
         And project at <directory> is on <end_branch>
@@ -156,13 +157,12 @@ Feature: clowder prune
 
     @fail @offline
     Scenario Outline: prune remote offline
-        Given the network connection is enabled
-        And cats example is initialized and herded
+        Given cats example is initialized and herded
         And project at <directory> created remote branch <test_branch>
         When the network connection is disabled
         And I run 'clowder prune -r  pytest-prune-remote-offline'
-        Then the command fails
         And the network connection is enabled
+        Then the command fails
         And project at <directory> has remote branch <test_branch>
 
         Examples:
@@ -176,13 +176,12 @@ Feature: clowder prune
 
     @fail @offline
     Scenario Outline: prune all offline
-        Given the network connection is enabled
-        And cats example is initialized and herded
+        Given cats example is initialized and herded
         And project at <directory> created remote branch <test_branch>
         When the network connection is disabled
         And I run 'clowder prune -a pytest-prune-all-offline'
-        Then the command fails
         And the network connection is enabled
+        Then the command fails
         And project at <directory> has no local branch <test_branch>
         And project at <directory> has remote branch <test_branch>
 

@@ -140,6 +140,7 @@ Feature: clowder link command
         And linked tags clowder version
         When the network connection is disabled
         And I run 'clowder link'
+        And the network connection is enabled
         Then the command succeeds
         And default clowder version is linked
 
@@ -149,5 +150,6 @@ Feature: clowder link command
         And default clowder version is linked
         When the network connection is disabled
         And I run 'clowder link tags'
+        And the network connection is enabled
         Then the command succeeds
         And tags clowder version is linked

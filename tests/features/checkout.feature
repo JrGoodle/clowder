@@ -97,6 +97,7 @@ Feature: clowder checkout command
         And project at <directory> created local branch <test_branch>
         When the network connection is disabled
         And I run 'clowder checkout new-branch'
+        And the network connection is enabled
         Then the command succeeds
         And project at <directory> has local branch <test_branch>
         And project at <directory> is on <test_branch>

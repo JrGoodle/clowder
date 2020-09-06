@@ -220,4 +220,5 @@ Feature: clowder forall
         Given cats example is initialized and herded
         When the network connection is disabled
         And I run 'clowder forall -c "git status"'
+        And the network connection is enabled
         Then the command succeeds
