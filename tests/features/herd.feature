@@ -844,3 +844,23 @@ Feature: clowder herd
         | black-cats/kit    | master |
         | black-cats/sasha  | master |
         | black-cats/june   | master |
+
+    @cats
+    Scenario Outline: herd with rebase - check commit messages before and after
+        Given cats example is initialized and herded
+        And project at <directory> is on <branch>
+        And project at <directory> is behind upstream <branch> by <number_behind> and ahead by <number_ahead>
+        When I run 'clowder herd -r'
+        Then the command succeeds
+        And project at <directory> has rebased commits in <branch> in the correct order
+        And project at <directory> is on <branch>
+        And project at <directory> is clean
+
+        Examples:
+        | directory         | branch | number_behind | number_ahead |
+        | mu                | knead  | 2             | 1            |
+        | duke              | purr   | 1             | 2            |
+        | black-cats/kishka | master | 2             | 1            |
+        | black-cats/kit    | master | 1             | 2            |
+        | black-cats/sasha  | master | 2             | 1            |
+        | black-cats/june   | master | 1             | 2            |

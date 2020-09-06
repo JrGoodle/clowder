@@ -5,6 +5,7 @@ from pathlib import Path
 from pytest_bdd import then, parsers
 
 import tests.functional.util as util
+from tests.functional.util import ScenarioInfo
 
 
 @then("project at <directory> is a git repository")
@@ -213,3 +214,26 @@ def then_directory_in_sync_with_upstream(tmp_path: Path, directory: str, remote:
 def then_directory_has_rebase_in_progress(tmp_path: Path, directory: str) -> None:
     path = tmp_path / directory
     assert util.is_rebase_in_progress(path)
+
+
+@then("project at <directory> has rebased commits in <branch> in the correct order")
+def then_check_directory_rebased_commit_messages_correct_order(tmp_path: Path, directory: str, branch: str,
+                                                               scenario_info: ScenarioInfo) -> None:
+    path = tmp_path / directory
+    number_behind = scenario_info.number_commit_messages_behind
+    number_ahead = scenario_info.number_commit_messages_ahead
+    assert number_behind is not None
+    assert number_ahead is not None
+    commit_messages_behind = scenario_info.commit_messages_behind
+    commit_messages_ahead = scenario_info.commit_messages_ahead
+    assert commit_messages_behind is not None
+    assert commit_messages_ahead is not None
+
+    messages = util.get_commit_messages_behind(path, f"refs/heads/{branch}", number_behind + number_ahead)
+    current_message = 0
+    for message in messages:
+        if current_message < number_ahead:
+            assert commit_messages_ahead[current_message] == message
+        else:
+            assert commit_messages_behind[current_message - number_ahead] == message
+        current_message += 1

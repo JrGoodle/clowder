@@ -577,44 +577,44 @@ export all_projects=( 'mu' 'duke' \
 # }
 # test_herd_existing_local_existing_remote_tracking
 
-test_herd_rebase() {
-    print_single_separator
-    echo "TEST: clowder herd rebase"
-    begin_command
-    $COMMAND link || exit 1
-    end_command
-    begin_command
-    $COMMAND herd $PARALLEL || exit 1
-    end_command
+# test_herd_rebase() {
+#     print_single_separator
+#     echo "TEST: clowder herd rebase"
+#     begin_command
+#     $COMMAND link || exit 1
+#     end_command
+#     begin_command
+#     $COMMAND herd $PARALLEL || exit 1
+#     end_command
 
-    local rebase_message='Add rebase file'
-    pushd mu || exit 1
-    local commit_message_1
-    commit_message_1="$(git log --format=%B -n 1 HEAD)"
-    echo "$commit_message_1"
-    local commit_message_2
-    commit_message_2="$(git log --format=%B -n 1 HEAD~1)"
-    echo "$commit_message_2"
-    git reset --hard HEAD~1 || exit 1
-    touch rebasefile || exit 1
-    git add rebasefile || exit 1
-    git commit -m "$rebase_message" || exit 1
-    test_commit_messages "$(git log --format=%B -n 1 HEAD)" "$rebase_message"
-    test_commit_messages "$(git log --format=%B -n 1 HEAD~1)" "$commit_message_2"
-    popd || exit 1
+#     local rebase_message='Add rebase file'
+#     pushd mu || exit 1
+#     local commit_message_1
+#     commit_message_1="$(git log --format=%B -n 1 HEAD)"
+#     echo "$commit_message_1"
+#     local commit_message_2
+#     commit_message_2="$(git log --format=%B -n 1 HEAD~1)"
+#     echo "$commit_message_2"
+#     git reset --hard HEAD~1 || exit 1
+#     touch rebasefile || exit 1
+#     git add rebasefile || exit 1
+#     git commit -m "$rebase_message" || exit 1
+#     test_commit_messages "$(git log --format=%B -n 1 HEAD)" "$rebase_message"
+#     test_commit_messages "$(git log --format=%B -n 1 HEAD~1)" "$commit_message_2"
+#     popd || exit 1
 
-    begin_command
-    $COMMAND herd $PARALLEL -r || exit 1
-    end_command
+#     begin_command
+#     $COMMAND herd $PARALLEL -r || exit 1
+#     end_command
 
-    pushd mu || exit 1
-    test_commit_messages "$(git log --format=%B -n 1 HEAD)" "$rebase_message"
-    test_commit_messages "$(git log --format=%B -n 1 HEAD~1)" "$commit_message_1"
-    test_commit_messages "$(git log --format=%B -n 1 HEAD~2)" "$commit_message_2"
-    git reset --hard HEAD~1 || exit 1
-    popd || exit 1
-}
-test_herd_rebase
+#     pushd mu || exit 1
+#     test_commit_messages "$(git log --format=%B -n 1 HEAD)" "$rebase_message"
+#     test_commit_messages "$(git log --format=%B -n 1 HEAD~1)" "$commit_message_1"
+#     test_commit_messages "$(git log --format=%B -n 1 HEAD~2)" "$commit_message_2"
+#     git reset --hard HEAD~1 || exit 1
+#     popd || exit 1
+# }
+# test_herd_rebase
 
 # test_herd_infer_default_source() {
 #     print_single_separator

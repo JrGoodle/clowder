@@ -1,7 +1,7 @@
 """New syntax test file"""
 
 from pathlib import Path
-from typing import Optional
+from typing import List, Optional
 
 
 class ScenarioInfo:
@@ -14,6 +14,10 @@ class ScenarioInfo:
         self.version: Optional[str] = None
         self.offline: bool = False
         self.relative_dir: Optional[str] = None
+        self.commit_messages_ahead: Optional[List[str]] = None
+        self.commit_messages_behind: Optional[List[str]] = None
+        self.number_commit_messages_ahead: Optional[int] = None
+        self.number_commit_messages_behind: Optional[int] = None
 
     @property
     def cmd_dir(self) -> Path:

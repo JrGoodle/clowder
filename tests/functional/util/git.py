@@ -278,22 +278,19 @@ def has_no_commits_between_refs(path: Path, start: str, end: str) -> bool:
 
 
 def is_ahead_by_number_commits(path: Path, start: str, end: str, number_commits: int) -> bool:
-    result_1 = number_of_commits_between_refs(path, start, end) == 0
-    result_2 = number_of_commits_between_refs(path, end, start) == number_commits
-    return result_1 and result_2
+    return number_commits_ahead(path, start, end) == number_commits
 
 
 def is_behind_by_number_commits(path: Path, start: str, end: str, number_commits: int) -> bool:
-    result_1 = number_of_commits_between_refs(path, start, end) == number_commits
-    result_2 = number_of_commits_between_refs(path, end, start) == 0
-    return result_1 and result_2
+    return number_commits_behind(path, start, end) == number_commits
 
 
-def is_behind_ahead_by_number_commits(path: Path, start: str, end: str,
-                                      number_commits_behind: int, number_commits_ahead: int) -> bool:
-    result_1 = number_of_commits_between_refs(path, start, end) == number_commits_behind
-    result_2 = number_of_commits_between_refs(path, end, start) == number_commits_ahead
-    return result_1 and result_2
+def number_commits_ahead(path: Path, start: str, end: str) -> int:
+    return number_of_commits_between_refs(path, end, start)
+
+
+def number_commits_behind(path: Path, start: str, end: str) -> int:
+    return number_of_commits_between_refs(path, start, end)
 
 
 def push_to_remote_branch(path: Path, branch: str, remote: str = "origin") -> None:
@@ -309,3 +306,19 @@ def force_push_to_remote_branch(path: Path, branch: str, remote: str = "origin")
 def abort_rebase(path: Path) -> None:
     repo = Repo(path)
     repo.git.rebase(abort=True)
+
+
+def get_commit_messages_behind(path: Path, ref: str, count: int = 1) -> List[str]:
+    results = []
+    commit = 0
+    while commit < count:
+        result = get_commit_message(path, f"{ref}~{commit}")
+        results.append(result)
+        commit += 1
+    return results
+
+
+def get_commit_message(path: Path, ref: str) -> str:
+    result = run_command(f"git log --format=%B -n 1 {ref}", path)
+    assert result.returncode == 0
+    return result.stdout
