@@ -38,18 +38,17 @@ base_command = f"pytest --cov-config=.coveragerc --basetemp={temp_dir} --cov-app
 # Coverage Reporting
 coverage_dir = reports_dir / "coverage"
 coverage_dir.mkdir(parents=True, exist_ok=True)
-html_dir = coverage_dir / "html"
-xml_file = coverage_dir / "cov.xml"
-annotate_dir = coverage_dir / "annotate"
-coverage_reporting_options = f" --cov-report html:{html_dir} " \
-                             f"--cov-report xml:{xml_file} " \
-                             f"--cov-report annotate:{annotate_dir}"
-base_command += coverage_reporting_options
+xml_file = coverage_dir / "results.xml"
+base_command += f" --cov-report xml:{xml_file}"
+# html_dir = coverage_dir / "html"
+# base_command += f" --cov-report html:{html_dir}"
+# annotate_dir = coverage_dir / "annotate"
+# base_command += f" --cov-report annotate:{annotate_dir}"
 
 # BDD Reporting
 functional_dir = reports_dir / "functional"
 functional_dir.mkdir(parents=True, exist_ok=True)
-cucumber_file = functional_dir / "cucumber.json"
+cucumber_file = functional_dir / "results.json"
 bdd_reporting_options = f" --cucumberjson={cucumber_file} --cucumberjson-expanded"
 base_command += bdd_reporting_options
 
