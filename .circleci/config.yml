@@ -51,21 +51,9 @@ jobs:
             ls -al
 
       - run:
-          name: run pytest parallel tests
-          command: script/test "-n auto -m 'ssh and not config and not offline and not write'" "parallel"
-      - store_test_results:
-          path: build/reports
+          name: run pytest functional tests
+          command: script/test "-m 'not config and not offline and not write'"
 
-      # FIXME: Set up ssh in tests
-      # - run:
-      #     name: run pytest ssh tests
-      #     command: script/test "-m 'write and not config and not offline'"
-      # - store_test_results:
-      #     path: build/reports
-
-      - run:
-          name: run pytest config tests
-          command: script/test "-m 'config and not offline and not write'" "config"
       - store_test_results:
           path: build/reports
 
