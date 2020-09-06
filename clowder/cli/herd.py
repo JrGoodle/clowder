@@ -73,23 +73,21 @@ def herd(args) -> None:
     tag = None
     depth = None if args.depth is None else args.depth[0]
     protocol = None if args.protocol is None else args.protocol[0]
+    jobs = None if args.jobs is None else args.jobs[0]
     rebase = args.rebase
 
     config = Config(CLOWDER_CONTROLLER.name, CLOWDER_CONTROLLER.project_choices)
 
-    rebase_config = config.current_clowder_config.rebase
-    rebase = rebase_config if rebase_config is not None else rebase
+    if config.current_clowder_config is not None:
+        rebase_config = config.current_clowder_config.rebase
+        rebase = rebase_config if rebase_config is not None else rebase
 
-    protocol_config = config.current_clowder_config.protocol
-    protocol = protocol_config if protocol_config is not None else protocol
-    SOURCE_CONTROLLER.protocol_override = protocol
+        protocol_config = config.current_clowder_config.protocol
+        protocol = protocol_config if protocol_config is not None else protocol
+        SOURCE_CONTROLLER.protocol_override = protocol
 
-    jobs = None
-    if args.jobs:
-        jobs = args.jobs[0]
-
-    jobs_config = config.current_clowder_config.jobs
-    jobs = jobs_config if jobs_config is not None else jobs
+        jobs_config = config.current_clowder_config.jobs
+        jobs = jobs_config if jobs_config is not None else jobs
 
     projects = config.process_projects_arg(args.projects)
     projects = filter_projects(CLOWDER_CONTROLLER.projects, projects)

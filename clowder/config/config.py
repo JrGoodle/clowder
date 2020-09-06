@@ -112,6 +112,9 @@ class Config(object):
         if projects != ['default']:
             return tuple(sorted(projects))
 
+        if self.current_clowder_config is None:
+            return ('all',)  # noqa
+
         if self.current_clowder_config.projects is None:
             return ('all',) # noqa
 

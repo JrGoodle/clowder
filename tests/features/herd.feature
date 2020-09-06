@@ -432,7 +432,7 @@ Feature: clowder herd
         And project at gyp is not on commit bd11dd1c51ef17592384df927c47023071639f96
         And project at gyp is on branch fork-branch
 
-    @cats
+    @cats @debug
     Scenario Outline: herd non-symlink yaml file
         Given cats example non-symlink yaml file exists
         And <directory> doesn't exist
@@ -851,7 +851,7 @@ Feature: clowder herd
         | black-cats/sasha  | master |
         | black-cats/june   | master |
 
-    @cats @debug
+    @cats
     Scenario Outline: herd with rebase - check commit messages before and after
         Given cats example is initialized and herded
         And project at <directory> is on <branch>
