@@ -50,14 +50,21 @@ class Config(object):
         self.error: Optional[Exception] = None
         self.current_clowder_config: Optional[ClowderConfig] = None
         self.clowder_configs: Tuple[ClowderConfig, ...] = ()
-        self._project_options = project_options
+        self._project_options: Tuple[str, ...] = project_options
+
+        if ENVIRONMENT.clowder_repo_dir is None:
+            message = "Failed to load clowder config file - .clowder directory doesn't exist"
+            err = ClowderError(ClowderErrorType.UNKNOWN, message)
+            LOG_DEBUG(message, err)
+            self.error: Optional[Exception] = err
+            return
 
         # Config file doesn't currently exist
-        if not ENVIRONMENT.clowder_config_yaml.is_file():
-            self.version = CONFIG_VERSION
+        if ENVIRONMENT.clowder_config_yaml is None or not ENVIRONMENT.clowder_config_yaml.exists():
+            self.version: float = CONFIG_VERSION
             current_clowder_config = ClowderConfig(current_clowder_name=current_clowder_name)
-            self.clowder_configs = (current_clowder_config,)
-            self.current_clowder_config = current_clowder_config
+            self.clowder_configs: Tuple[ClowderConfig, ...] = (current_clowder_config,)
+            self.current_clowder_config: Optional[ClowderConfig] = current_clowder_config
             return
 
         try:
@@ -67,14 +74,14 @@ class Config(object):
             if raise_exceptions:
                 raise err
             LOG_DEBUG('Failed to load clowder config file', err)
-            self.error = err
+            self.error: Optional[Exception] = err
             print(fmt.warning_invalid_config_file(ENVIRONMENT.clowder_config_yaml))
             print()
         except Exception as err:
             if raise_exceptions:
                 raise err
             LOG_DEBUG('Failed to load clowder config file', err)
-            self.error = err
+            self.error: Optional[Exception] = err
             print(fmt.warning_invalid_config_file(ENVIRONMENT.clowder_config_yaml))
             print()
         except (KeyboardInterrupt, SystemExit):
@@ -85,13 +92,14 @@ class Config(object):
                 return
 
             # If current clowder config doesn't exist, create empty one
-            self.current_clowder_config = ClowderConfig(current_clowder_name=current_clowder_name)
+            self.current_clowder_config: Optional[ClowderConfig] = ClowderConfig(
+                current_clowder_name=current_clowder_name)
             if not self.clowder_configs:
-                self.clowder_configs = (self.current_clowder_config,)
+                self.clowder_configs: Tuple[ClowderConfig, ...] = (self.current_clowder_config,)
             else:
                 configs = list(self.clowder_configs)
                 configs.append(self.current_clowder_config)
-                self.clowder_configs = tuple(configs)
+                self.clowder_configs: Tuple[ClowderConfig, ...] = tuple(configs)
 
     def process_projects_arg(self, projects: List[str]) -> Tuple[str, ...]:
         """Process project args based on parameters and config
@@ -105,7 +113,7 @@ class Config(object):
             return tuple(sorted(projects))
 
         if self.current_clowder_config.projects is None:
-            return ('all',)
+            return ('all',) # noqa
 
         return self.current_clowder_config.projects
 
@@ -113,7 +121,8 @@ class Config(object):
         """Save configuration to file"""
 
         # If directory doesn't exist, create it
-        make_dir(ENVIRONMENT.clowder_config_dir)
+        if not ENVIRONMENT.clowder_config_dir.exists():
+            make_dir(ENVIRONMENT.clowder_config_dir)
 
         # If file doesn't exist, save it
         if not ENVIRONMENT.clowder_config_yaml.is_file():
@@ -161,24 +170,24 @@ class Config(object):
             parsed_yaml = load_yaml_file(ENVIRONMENT.clowder_config_yaml, ENVIRONMENT.clowder_config_dir)
             validate_yaml_file(parsed_yaml, ENVIRONMENT.clowder_config_yaml)
 
-            self.version = parsed_yaml['version']
+            self.version: float = parsed_yaml['version']
 
             configs = parsed_yaml['clowder_configs']
             clowder_configs = []
             for config in configs:
                 clowder_configs.append(ClowderConfig(clowder_config=config))
-            self.clowder_configs = tuple(clowder_configs)
+            self.clowder_configs: Tuple[ClowderConfig, ...] = tuple(clowder_configs)
 
             if ENVIRONMENT.clowder_dir is not None:
                 for config in self.clowder_configs:
                     if config.clowder_dir.resolve() == ENVIRONMENT.clowder_dir.resolve():
-                        self.current_clowder_config = config
+                        self.current_clowder_config: Optional[ClowderConfig] = config
                         self.current_clowder_config.validate_config_projects_defined(self._project_options)
                         break
         except (AttributeError, KeyError, TypeError) as err:
-            self.version = CONFIG_VERSION
-            self.clowder_configs = ()
-            self.current_clowder_config = None
+            self.version: float = CONFIG_VERSION
+            self.clowder_configs: Tuple[ClowderConfig, ...] = ()
+            self.current_clowder_config: Optional[ClowderConfig] = None
             LOG_DEBUG('Failed to load clowder config', err)
             raise ClowderError(ClowderErrorType.CONFIG_YAML_UNKNOWN,
                                fmt.error_invalid_config_file(ENVIRONMENT.clowder_config_yaml))

@@ -28,9 +28,9 @@ class ClowderEnvironment(object):
     :cvar Optional[ClowderError] clowder_repo_existing_file_error: Possible error due to existing .clowder file
     """
 
-    current_dir = Path.cwd()
-    clowder_config_dir = Path.home() / '.config' / 'clowder'
-    clowder_config_yaml = clowder_config_dir / 'clowder.config.yml'
+    current_dir: Path = Path.cwd()
+    clowder_config_dir: Optional[Path] = None
+    clowder_config_yaml: Optional[Path] = None
     clowder_dir: Optional[Path] = None
     clowder_repo_dir: Optional[Path] = None
     clowder_git_repo_dir: Optional[Path] = None
@@ -97,27 +97,28 @@ class ClowderEnvironment(object):
             clowder_yaml_exists = clowder_yaml.is_file() or clowder_yaml.is_symlink()
             clowder_repo_file_exists = clowder_repo_dir.is_symlink() or clowder_repo_dir.is_file()
             if clowder_repo_dir.is_dir() and existing_git_repository(clowder_repo_dir):
-                self.clowder_dir = path
-                self.clowder_repo_dir = clowder_repo_dir.resolve()
-                self.clowder_git_repo_dir = clowder_repo_dir
+                self.clowder_dir: Optional[Path] = path
+                self.clowder_repo_dir: Optional[Path] = clowder_repo_dir.resolve()
+                self.clowder_git_repo_dir: Optional[Path] = clowder_repo_dir
                 break
             elif clowder_repo_dir.is_dir():
-                self.clowder_dir = path
-                self.clowder_repo_dir = clowder_repo_dir.resolve()
+                self.clowder_dir: Optional[Path] = path
+                self.clowder_repo_dir: Optional[Path] = clowder_repo_dir.resolve()
                 break
             elif clowder_yml_exists or clowder_yaml_exists or clowder_repo_file_exists:
+                # FIXME: Is this right?
                 if clowder_repo_file_exists:
-                    self.clowder_repo_existing_file_error = ClowderError(ClowderErrorType.CLOWDER_REPO_EXISTING_FILE,
-                                                                         fmt.error_existing_file_at_clowder_repo_path(
-                                                                             clowder_repo_dir))
-                self.clowder_dir = path
+                    self.clowder_repo_existing_file_error: Optional[ClowderError] = ClowderError(
+                        ClowderErrorType.CLOWDER_REPO_EXISTING_FILE,
+                        fmt.error_existing_file_at_clowder_repo_path(clowder_repo_dir))
+                self.clowder_dir: Optional[Path] = path
                 break
             path = path.parent
 
         if self.clowder_repo_dir is not None:
-            clowder_versions = self.clowder_repo_dir / 'versions'
-            if clowder_versions.is_dir():
-                self.clowder_repo_versions_dir = clowder_versions
+            self.clowder_repo_versions_dir: Optional[Path] = self.clowder_repo_dir / 'versions'
+            self.clowder_config_dir: Optional[Path] = self.clowder_repo_dir / "config"
+            self.clowder_config_yaml: Optional[Path] = self.clowder_config_dir / 'clowder.config.yml'
 
     def _get_possible_yaml_path(self, name: str) -> Path:
         """Get possible yaml path based on other environment variables
@@ -140,19 +141,19 @@ class ClowderEnvironment(object):
 
         # Symlink pointing to existing source
         if yaml_file.is_symlink() and yaml_file.exists():
-            self.clowder_yaml = yaml_file
+            self.clowder_yaml: Optional[Path] = yaml_file
             return
 
         # Broken symlink pointing to missing source
         if yaml_file.is_symlink() and not yaml_file.exists():
             message = fmt.error_clowder_symlink_source_missing(yaml_file)
-            self.clowder_yaml_missing_source_error = ClowderError(ClowderErrorType.CLOWDER_SYMLINK_SOURCE_MISSING,
-                                                                  message)
+            self.clowder_yaml_missing_source_error: Optional[ClowderError] = ClowderError(
+                ClowderErrorType.CLOWDER_SYMLINK_SOURCE_MISSING, message)
             return
 
         # Existing non-symlink file
         if not yaml_file.is_symlink() and yaml_file.is_file():
-            self.clowder_yaml = yaml_file
+            self.clowder_yaml: Optional[Path] = yaml_file
             return
 
 

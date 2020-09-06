@@ -56,8 +56,9 @@ def save(args) -> None:
     # Replace path separators with dashes to avoid creating directories
     version_name = args.version.lower().replace('/', '-')
 
-    versions_dir = ENVIRONMENT.clowder_repo_dir / 'versions'
-    make_dir(versions_dir)
+    versions_dir = ENVIRONMENT.clowder_repo_versions_dir
+    if not versions_dir.exists():
+        make_dir(versions_dir)
 
     yml_file = versions_dir / f"{version_name}.clowder.yml"
     yaml_file = versions_dir / f"{version_name}.clowder.yaml"

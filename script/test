@@ -89,6 +89,3 @@ run_command(path, test_cmd)
 # # config
 # test_cmd = f'{base_command} -m "config"'
 # run_command(path, test_cmd)
-
-# config_file = Path.home() / ".config/clowder/clowder.config.yml"
-# config_file.unlink()

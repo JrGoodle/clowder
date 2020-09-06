@@ -56,7 +56,7 @@ jobs:
 
       - run:
           name: run pytest functional tests
-          command: script/test "-m 'not config and not offline'"
+          command: script/test "-m 'not offline'"
 
       - run:
           name: Code climate reporting

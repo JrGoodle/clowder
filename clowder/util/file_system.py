@@ -72,6 +72,7 @@ def restore_from_backup_file(file: Path) -> None:
     shutil.copyfile(f"{file}.backup", file)
 
 
+# TODO: Remove this in favor of standard Path methods
 def make_dir(directory: Path) -> None:
     """Make directory if it doesn't exist
 

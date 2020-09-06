@@ -95,6 +95,9 @@ def get_saved_version_names() -> Optional[Tuple[str, ...]]:
     if ENVIRONMENT.clowder_repo_versions_dir is None:
         return None
 
+    if not ENVIRONMENT.clowder_repo_versions_dir.exists():
+        return None
+
     versions = [Path(Path(v).stem).stem for v in os.listdir(str(ENVIRONMENT.clowder_repo_versions_dir))
                 if v.endswith('.clowder.yml') or v.endswith('.clowder.yaml')]
 
