@@ -52,7 +52,7 @@ jobs:
 
       - run:
           name: run pytest functional tests
-          command: script/test "-m 'not config and not offline and not write'"
+          command: script/test "-m 'not config and not offline'"
 
       - store_test_results:
           path: build/reports

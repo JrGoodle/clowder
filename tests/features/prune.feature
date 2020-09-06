@@ -194,12 +194,11 @@ Feature: clowder prune
         | black-cats/sasha  | pytest-prune-all-offline |
         | black-cats/june   | pytest-prune-all-offline |
 
-    @internet @write
+    @internet @write @ssh
     Scenario Outline: prune remote no local branch
-        Given cats example is initialized and herded
-        And project at <directory> created remote branch <test_branch>
-        And project at <directory> has remote branch <test_branch>
-        And project at <directory> has no local branch <test_branch>
+        Given cats example is initialized and herded with ssh
+        And cats example projects have remote branch <test_branch>
+        And cats example projects have no local branch <test_branch>
         When I run 'clowder prune -r  pytest-prune-remote'
         Then the command succeeds
         And project at <directory> has no remote branch <test_branch>
@@ -214,10 +213,10 @@ Feature: clowder prune
         | black-cats/sasha  | pytest-prune-remote |
         | black-cats/june   | pytest-prune-remote |
 
-    @internet @write
+    @internet @write @ssh
     Scenario Outline: prune remote tracking branch
-        Given cats example is initialized and herded
-        And project at <directory> created tracking branch <test_branch>
+        Given cats example is initialized and herded with ssh
+        And cats example projects have tracking branch <test_branch>
         And project at <directory> has local branch <test_branch>
         And project at <directory> has remote branch <test_branch>
         And project at <directory> checked out <test_branch>
@@ -237,10 +236,10 @@ Feature: clowder prune
         | black-cats/sasha  | pytest-prune-remote |
         | black-cats/june   | pytest-prune-remote |
 
-    @internet @write
+    @internet @write @ssh
     Scenario Outline: prune all
-        Given cats example is initialized and herded
-        And project at <directory> created tracking branch <test_branch>
+        Given cats example is initialized and herded with ssh
+        And cats example projects have tracking branch <test_branch>
         And project at <directory> has local branch <test_branch>
         And project at <directory> has remote branch <test_branch>
         And project at <directory> checked out <test_branch>

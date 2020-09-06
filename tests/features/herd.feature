@@ -710,9 +710,9 @@ Feature: clowder herd
         | black-cats/sasha  |
         | black-cats/june   |
 
-    @cats @internet @write
+    @cats @internet @write @ssh
     Scenario Outline: herd rebase with conflict
-        Given cats example is initialized and herded
+        Given cats example is initialized and herded with ssh
         And project at <directory> has local commits and is behind remote branch <test_branch>
         When I run 'clowder herd -r'
         Then the command fails
@@ -785,17 +785,40 @@ Feature: clowder herd
         | black-cats/june   |
         | black-cats/sasha  |
 
-    @cats @write
-    Scenario Outline: herd yaml configured with non-existent remote branch, but local branch exists
-        Given cats example is initialized and herded
-        And cats example projects have no remote branch <test_branch>
-        And cats example projects have local branch <test_branch>
+#    # FIXME: Need to fetch before anything else to update remote branches that don't exist anymore
+#    @cats @write @ssh
+#    Scenario Outline: herd yaml configured with non-existent remote branch, but local branch exists
+#        Given cats example is initialized and herded with ssh
+#        And cats example projects have no remote branch <test_branch>
+#        And cats example projects have local branch <test_branch>
+#        And linked test-branch clowder version
+#        And project at <directory> is on <start_branch>
+#        When I run 'clowder herd'
+#        Then the command succeeds
+#        And project at <directory> is on <test_branch>
+#        And project at <directory> has no remote branch <test_branch>
+#
+#        Examples:
+#        | directory         | start_branch | test_branch  |
+#        | mu                | knead        | pytest       |
+#        | duke              | purr         | pytest       |
+#        | black-cats/kit    | master       | pytest       |
+#        | black-cats/kishka | master       | pytest       |
+#        | black-cats/june   | master       | pytest       |
+#        | black-cats/sasha  | master       | pytest       |
+
+    @cats @write @ssh
+    Scenario Outline: herd local exists, remote exists, no tracking
+        Given cats example is initialized and herded with ssh
         And linked test-branch clowder version
+        And cats example projects have remote branch <test_branch>
+        And cats example projects have local branch <test_branch>
+        And project at <directory> has no tracking branch <test_branch>
         And project at <directory> is on <start_branch>
         When I run 'clowder herd'
         Then the command succeeds
         And project at <directory> is on <test_branch>
-        And project at <directory> has no remote branch <test_branch>
+        And project at <directory> has tracking branch <test_branch>
 
         Examples:
         | directory         | start_branch | test_branch  |
@@ -805,27 +828,6 @@ Feature: clowder herd
         | black-cats/kishka | master       | pytest       |
         | black-cats/june   | master       | pytest       |
         | black-cats/sasha  | master       | pytest       |
-
-    @cats @write
-    Scenario Outline: herd local exists, remote exists, no tracking
-        Given cats example is initialized and herded
-        And linked test-branch clowder version
-        And cats example projects have remote branch <test_branch>
-        And project at <directory> created local branch <test_branch>
-        And project at <directory> has no tracking branch <test_branch>
-        When I run 'clowder herd'
-        Then the command succeeds
-        And project at <directory> is on <test_branch>
-        And project at <directory> has tracking branch <test_branch>
-
-        Examples:
-        | directory         | test_branch  |
-        | mu                | pytest       |
-        | duke              | pytest       |
-        | black-cats/kit    | pytest       |
-        | black-cats/kishka | pytest       |
-        | black-cats/june   | pytest       |
-        | black-cats/sasha  | pytest       |
 
     @cats
     Scenario Outline: herd after clean herd

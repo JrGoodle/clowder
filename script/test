@@ -61,10 +61,10 @@ junit_file = junit_dir / "results.xml"
 command += f" --junitxml={junit_file}"
 
 # BDD reports
-functional_dir = reports_dir / f"functional{name}"
-functional_dir.mkdir(parents=True, exist_ok=True)
-cucumber_file = functional_dir / "results.json"
-bdd_reporting_options = f" --cucumberjson={cucumber_file}"  # --cucumberjson-expanded"
+cucumber_dir = reports_dir / f"cucumber{name}"
+cucumber_dir.mkdir(parents=True, exist_ok=True)
+cucumber_file = cucumber_dir / "results.json"
+bdd_reporting_options = f" --cucumberjson={cucumber_file} --cucumberjson-expanded"
 command += bdd_reporting_options
 
 # Run command with script argument

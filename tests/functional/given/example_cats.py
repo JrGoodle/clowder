@@ -13,9 +13,22 @@ def given_cats_init(tmp_path: Path, cats_init, scenario_info: ScenarioInfo) -> N
     scenario_info.example = "cats"
 
 
+@given(parsers.parse("cats example is initialized with ssh"))
+def given_cats_init_ssh(tmp_path: Path, cats_init_ssh, scenario_info: ScenarioInfo) -> None:
+    scenario_info.example = "cats"
+    scenario_info.protocol = "ssh"
+
+
 @given(parsers.parse("cats example is initialized and herded"))
 def given_cats_init_herd(tmp_path: Path, cats_init_herd, scenario_info: ScenarioInfo) -> None:
     scenario_info.example = "cats"
+
+
+@given(parsers.parse("cats example is initialized and herded with ssh"))
+def given_cats_init_herd_ssh(tmp_path: Path, cats_init_herd_ssh, scenario_info: ScenarioInfo) -> None:
+    scenario_info.example = "cats"
+    scenario_info.version = "ssh"
+    scenario_info.protocol = "ssh"
 
 
 @given(parsers.parse("cats example is initialized to branch yaml-validation"))

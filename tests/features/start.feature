@@ -20,9 +20,9 @@ Feature: clowder start
         When I run 'clowder start -h' and 'clowder start --help'
         Then the commands succeed
 
-    @write
+    @write @ssh
     Scenario Outline: start local
-        Given cats example is initialized and herded
+        Given cats example is initialized and herded with ssh
         And cats example projects have no local branch <test_branch>
         And cats example projects have no remote branch <test_branch>
         And project at <directory> is on <start_branch>
@@ -41,9 +41,9 @@ Feature: clowder start
         | black-cats/sasha  | master       | new-branch  |
         | black-cats/june   | master       | new-branch  |
 
-    @subdirectory @write
+    @subdirectory @write @ssh
     Scenario Outline: start local subdirectory
-        Given cats example is initialized and herded
+        Given cats example is initialized and herded with ssh
         And cats example projects have no local branch <test_branch>
         And cats example projects have no remote branch <test_branch>
         And project at <directory> is on <start_branch>
@@ -109,9 +109,9 @@ Feature: clowder start
         | black-cats/sasha  | master       | new-branch  |
         | black-cats/june   | master       | new-branch  |
 
-    @write
+    @write @ssh
     Scenario Outline: start local group excluded
-        Given cats example is initialized and herded
+        Given cats example is initialized and herded with ssh
         And cats example projects have no remote branch <test_branch>
         And cats example projects have no local branch <test_branch>
         And project at <directory> is on <start_branch>
@@ -126,9 +126,9 @@ Feature: clowder start
         | mu                | knead        | new-branch  |
         | duke              | purr         | new-branch  |
 
-    @write
+    @write @ssh
     Scenario Outline: start local group included
-        Given cats example is initialized and herded
+        Given cats example is initialized and herded with ssh
         And cats example projects have no remote branch <test_branch>
         And cats example projects have no local branch <test_branch>
         And project at <directory> is on <start_branch>
@@ -146,9 +146,9 @@ Feature: clowder start
         | black-cats/june   | master       | new-branch  |
 
     # TODO: Probably need to create a fixture that sets up remote branches
-    @internet @write
+    @internet @write @ssh
     Scenario Outline: start tracking - no local, no remote
-        Given cats example is initialized and herded
+        Given cats example is initialized and herded with ssh
         And cats example projects have no remote branch <test_branch>
         And cats example projects have no local branch <test_branch>
         And project at <directory> is on <start_branch>
@@ -168,9 +168,9 @@ Feature: clowder start
         | black-cats/sasha  | master       | new-branch  |
         | black-cats/june   | master       | new-branch  |
 
-    @internet @write @fail
+    @internet @write @fail @ssh
     Scenario Outline: start tracking - local exists not checked out, remote exists, no tracking
-        Given cats example is initialized and herded
+        Given cats example is initialized and herded with ssh
         And cats example projects have remote branch <test_branch>
         And cats example projects have local branch <test_branch>
         And project at <directory> has no tracking branch <test_branch>
@@ -192,9 +192,9 @@ Feature: clowder start
         | black-cats/sasha  | master       | new-branch  |
         | black-cats/june   | master       | new-branch  |
 
-    @internet @write
+    @internet @write @ssh
     Scenario Outline: start tracking - tracking exists, checked out
-        Given cats example is initialized and herded
+        Given cats example is initialized and herded with ssh
         And cats example projects have tracking branch <test_branch>
         And project at <directory> checked out <test_branch>
         And project at <directory> is on <test_branch>
@@ -212,9 +212,9 @@ Feature: clowder start
         | black-cats/sasha  | new-branch  |
         | black-cats/june   | new-branch  |
 
-    @internet @write
+    @internet @write @ssh
     Scenario Outline: start tracking - tracking exists, not checked out
-        Given cats example is initialized and herded
+        Given cats example is initialized and herded with ssh
         And cats example projects have tracking branch <test_branch>
         And project at <directory> is on <start_branch>
         When I run 'clowder start -t new-branch'
@@ -231,9 +231,9 @@ Feature: clowder start
         | black-cats/sasha  | master       | new-branch  |
         | black-cats/june   | master       | new-branch  |
 
-    @internet @write @fail
+    @internet @write @fail @ssh
     Scenario Outline: start tracking - no local, remote exists
-        Given cats example is initialized and herded
+        Given cats example is initialized and herded with ssh
         And cats example projects have remote branch <test_branch>
         And cats example projects have no local branch <test_branch>
         And project at <directory> is on <start_branch>
@@ -254,9 +254,9 @@ Feature: clowder start
         | black-cats/sasha  | master       | new-branch  |
         | black-cats/june   | master       | new-branch  |
 
-    @internet @write @fail
+    @internet @write @fail @ssh
     Scenario Outline: start tracking - local exists checked out, remote exists, no tracking
-        Given cats example is initialized and herded
+        Given cats example is initialized and herded with ssh
         And cats example projects have remote branch <test_branch>
         And cats example projects have local branch <test_branch>
         And project at <directory> checked out <test_branch>
@@ -275,9 +275,9 @@ Feature: clowder start
         | black-cats/sasha  | new-branch  |
         | black-cats/june   | new-branch  |
 
-    @internet @write
+    @internet @write @ssh
     Scenario Outline: start tracking - local exists checked out, no remote
-        Given cats example is initialized and herded
+        Given cats example is initialized and herded with ssh
         And cats example projects have no remote branch <test_branch>
         And cats example projects have local branch <test_branch>
         And project at <directory> checked out <test_branch>
@@ -296,9 +296,9 @@ Feature: clowder start
         | black-cats/sasha  | new-branch  |
         | black-cats/june   | new-branch  |
 
-    @internet @write
+    @internet @write @ssh
     Scenario Outline: start tracking - local exists not checked out, no remote
-        Given cats example is initialized and herded
+        Given cats example is initialized and herded with ssh
         And cats example projects have no remote branch <test_branch>
         And cats example projects have local branch <test_branch>
         And project at <directory> is on <start_branch>

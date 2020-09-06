@@ -56,3 +56,12 @@ jobs:
         path: |
           build/reports
           build/coverage
+    - uses: deblockt/cucumber-report-annotations-action@v1.6
+      with:
+        access-token: ${{ secrets.GITHUB_TOKEN }}
+        path: build/reports/cucumber*/results.json
+    - uses: ashley-taylor/junit-report-annotations-action@1.3
+      if: always()
+      with:
+        access-token: ${{ secrets.GITHUB_TOKEN }}
+        path: build/reports/junit*/results.xml
