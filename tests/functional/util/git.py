@@ -9,6 +9,7 @@ from pathlib import Path
 from git import Repo
 from .command import run_command
 from .file_system import create_file, is_directory_empty
+from .scenario_info import ScenarioInfo
 
 
 def is_dirty(path: Path) -> bool:
@@ -317,3 +318,42 @@ def get_commit_message(path: Path, ref: str) -> str:
     result = run_command(f"git log --format=%B -n 1 {ref}", path)
     assert result.returncode == 0
     return result.stdout
+
+
+def set_up_behind_ahead_no_confilct(path: Path, local: str, remote: str, number_behind: int, number_ahead: int,
+                                    scenario_info: ScenarioInfo) -> None:
+    assert has_no_commits_between_refs(path, local, remote)
+    reset_back_by_number_of_commits(path, number_behind)
+    assert is_behind_by_number_commits(path, local, remote, number_behind)
+    create_number_commits(path, number_ahead, "something.txt", "something")
+    assert is_ahead_by_number_commits(path, local, remote, number_ahead)
+
+    behind_messages = get_commit_messages_behind(path, remote, number_behind)
+    scenario_info.commit_messages_behind = behind_messages
+    scenario_info.number_commit_messages_behind = number_behind
+    ahead_messages = get_commit_messages_behind(path, local, number_ahead)
+    scenario_info.commit_messages_ahead = ahead_messages
+    scenario_info.number_commit_messages_ahead = number_ahead
+
+
+def set_up_behind_ahead_confilct(path: Path, branch: str, number_behind: int, number_ahead: int) -> None:
+    beginning_remote_sha = get_branch_commit_sha(path, branch, "origin")
+    beginning_sha = current_head_commit_sha(path)
+    create_number_commits(path, number_behind, "something", "something")
+    push_to_remote_branch(path, branch)
+    reset_back_by_number_of_commits(path, number_behind)
+    create_number_commits(path, number_ahead, "something", "something else")
+    end_remote_sha = get_branch_commit_sha(path, branch, "origin")
+    end_sha = current_head_commit_sha(path)
+    assert beginning_sha != end_sha
+    assert beginning_remote_sha != end_remote_sha
+
+
+def set_up_behind(path: Path, local: str, remote: str, number_commits: int, ) -> None:
+    create_number_commits(path, number_commits, "something.txt", "something")
+    assert is_ahead_by_number_commits(path, local, remote, number_commits)
+
+
+def set_up_ahead(path: Path, local: str, remote: str, number_commits: int, ) -> None:
+    reset_back_by_number_of_commits(path, number_commits)
+    assert is_behind_by_number_commits(path, local, remote, number_commits)

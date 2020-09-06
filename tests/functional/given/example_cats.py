@@ -101,6 +101,8 @@ def given_cats_tracking_branch(tmp_path: Path, scenario_info: ScenarioInfo, test
     scenario_info.example = "cats"
     for name, repo in CATS_REPOS_DEFAULT.items():
         path = tmp_path / repo["path"]
+        if util.remote_branch_exists(path, test_branch):
+            util.delete_remote_branch(path, test_branch)
         util.create_tracking_branch(path, test_branch)
         assert util.tracking_branch_exists(path, test_branch)
 

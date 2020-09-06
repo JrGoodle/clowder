@@ -713,19 +713,22 @@ Feature: clowder herd
     @cats @internet @write @ssh
     Scenario Outline: herd rebase with conflict
         Given cats example is initialized and herded with ssh
-        And project at <directory> has local commits and is behind remote branch <test_branch>
+        And linked test-branch clowder version
+        And cats example projects have tracking branch <test_branch>
+        And project at <directory> checked out <test_branch>
+        And project at <directory> is behind upstream <test_branch> by <number_behind> and ahead by <number_ahead> with conflict
         When I run 'clowder herd -r'
         Then the command fails
         And project at <directory> has rebase in progress
 
         Examples:
-        | directory         | test_branch |
-        | mu                | knead       |
-        | duke              | purr        |
-        | black-cats/kishka | master      |
-        | black-cats/kit    | master      |
-        | black-cats/sasha  | master      |
-        | black-cats/june   | master      |
+        | directory         | test_branch | number_behind | number_ahead |
+        | mu                | pytest      | 1             | 3            |
+        | duke              | pytest      | 2             | 3            |
+        | black-cats/kishka | pytest      | 1             | 3            |
+        | black-cats/kit    | pytest      | 2             | 3            |
+        | black-cats/sasha  | pytest      | 1             | 3            |
+        | black-cats/june   | pytest      | 2             | 3            |
 
     @cats
     Scenario Outline: herd saved version after init

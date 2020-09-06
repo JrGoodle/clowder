@@ -185,11 +185,9 @@ def given_directory_behind_upstream_num_commits_start_branch(tmp_path: Path, dir
     local = "HEAD"
     remote = f"origin/{start_branch}"
     assert util.has_no_commits_between_refs(path, local, remote)
-    util.reset_back_by_number_of_commits(path, number_commits)
-    assert util.is_behind_by_number_commits(path, local, remote, number_commits)
+    util.set_up_behind(path, local, remote, number_commits)
 
 
-# TODO: Split this up into past tense mutating steps and git assertion steps
 @given("project at <directory> is behind upstream <test_branch> by <number_commits>")
 def given_directory_behind_upstream_num_commits_test_branch(tmp_path: Path, directory: str,
                                                             test_branch: str, number_commits: str) -> None:
@@ -198,11 +196,9 @@ def given_directory_behind_upstream_num_commits_test_branch(tmp_path: Path, dire
     local = "HEAD"
     remote = f"origin/{test_branch}"
     assert util.has_no_commits_between_refs(path, local, remote)
-    util.reset_back_by_number_of_commits(path, number_commits)
-    assert util.is_behind_by_number_commits(path, local, remote, number_commits)
+    util.set_up_behind(path, local, remote, number_commits)
 
 
-# TODO: Split this up into past tense mutating steps and git assertion steps
 @given("project at <directory> is ahead of upstream <start_branch> by <number_commits>")
 def given_directory_ahead_upstream_num_commits_start_branch(tmp_path: Path, directory: str,
                                                             start_branch: str, number_commits: str) -> None:
@@ -211,11 +207,9 @@ def given_directory_ahead_upstream_num_commits_start_branch(tmp_path: Path, dire
     local = "HEAD"
     remote = f"origin/{start_branch}"
     assert util.has_no_commits_between_refs(path, local, remote)
-    util.create_number_commits(path, number_commits, "something.txt", "something")
-    assert util.is_ahead_by_number_commits(path, local, remote, number_commits)
+    util.set_up_ahead(path, local, remote, number_commits)
 
 
-# TODO: Split this up into past tense mutating steps and git assertion steps
 @given("project at <directory> is ahead of upstream <test_branch> by <number_commits>")
 def given_directory_ahead_upstream_num_commits_test_branch(tmp_path: Path, directory: str,
                                                            test_branch: str, number_commits: str) -> None:
@@ -224,11 +218,9 @@ def given_directory_ahead_upstream_num_commits_test_branch(tmp_path: Path, direc
     local = "HEAD"
     remote = f"origin/{test_branch}"
     assert util.has_no_commits_between_refs(path, local, remote)
-    util.create_number_commits(path, number_commits, "something.txt", "something")
-    assert util.is_ahead_by_number_commits(path, local, remote, number_commits)
+    util.set_up_ahead(path, local, remote, number_commits)
 
 
-# TODO: Split this up into past tense mutating steps and git assertion steps
 @given("project at <directory> is behind upstream <start_branch> by <number_behind> and ahead by <number_ahead>")
 def given_directory_behind_ahead_upstream_num_commits_start_branch(tmp_path: Path, directory: str, start_branch: str,
                                                                    number_behind: str, number_ahead: str,
@@ -238,21 +230,9 @@ def given_directory_behind_ahead_upstream_num_commits_start_branch(tmp_path: Pat
     path = tmp_path / directory
     local = "HEAD"
     remote = f"origin/{start_branch}"
-    assert util.has_no_commits_between_refs(path, local, remote)
-    util.reset_back_by_number_of_commits(path, number_behind)
-    assert util.is_behind_by_number_commits(path, local, remote, number_behind)
-    util.create_number_commits(path, number_ahead, "something.txt", "something")
-    assert util.is_ahead_by_number_commits(path, local, remote, number_ahead)
-
-    behind_messages = util.get_commit_messages_behind(path, remote, number_behind)
-    scenario_info.commit_messages_behind = behind_messages
-    scenario_info.number_commit_messages_behind = number_behind
-    ahead_messages = util.get_commit_messages_behind(path, local, number_ahead)
-    scenario_info.commit_messages_ahead = ahead_messages
-    scenario_info.number_commit_messages_ahead = number_ahead
+    util.set_up_behind_ahead_no_confilct(path, local, remote, number_behind, number_ahead, scenario_info)
 
 
-# TODO: Split this up into past tense mutating steps and git assertion steps
 @given("project at <directory> is behind upstream <branch> by <number_behind> and ahead by <number_ahead>")
 def given_directory_behind_ahead_upstream_num_commits_branch(tmp_path: Path, directory: str, branch: str,
                                                              number_behind: str, number_ahead: str,
@@ -262,21 +242,9 @@ def given_directory_behind_ahead_upstream_num_commits_branch(tmp_path: Path, dir
     path = tmp_path / directory
     local = "HEAD"
     remote = f"origin/{branch}"
-    assert util.has_no_commits_between_refs(path, local, remote)
-    util.reset_back_by_number_of_commits(path, number_behind)
-    assert util.is_behind_by_number_commits(path, local, remote, number_behind)
-    util.create_number_commits(path, number_ahead, "something.txt", "something")
-    assert util.is_ahead_by_number_commits(path, local, remote, number_ahead)
-
-    behind_messages = util.get_commit_messages_behind(path, remote, number_behind)
-    scenario_info.commit_messages_behind = behind_messages
-    scenario_info.number_commit_messages_behind = number_behind
-    ahead_messages = util.get_commit_messages_behind(path, local, number_ahead)
-    scenario_info.commit_messages_ahead = ahead_messages
-    scenario_info.number_commit_messages_ahead = number_ahead
+    util.set_up_behind_ahead_no_confilct(path, local, remote, number_behind, number_ahead, scenario_info)
 
 
-# TODO: Split this up into past tense mutating steps and git assertion steps
 @given("project at <directory> is behind upstream <test_branch> by <number_behind> and ahead by <number_ahead>")
 def given_directory_behind_ahead_upstream_num_commits_test_branch(tmp_path: Path, directory: str, test_branch: str,
                                                                   number_behind: str, number_ahead: str,
@@ -286,18 +254,18 @@ def given_directory_behind_ahead_upstream_num_commits_test_branch(tmp_path: Path
     path = tmp_path / directory
     local = "HEAD"
     remote = f"origin/{test_branch}"
-    assert util.has_no_commits_between_refs(path, local, remote)
-    util.reset_back_by_number_of_commits(path, number_behind)
-    assert util.is_behind_by_number_commits(path, local, remote, number_behind)
-    util.create_number_commits(path, number_ahead, "something.txt", "something")
-    assert util.is_ahead_by_number_commits(path, local, remote, number_ahead)
+    util.set_up_behind_ahead_no_confilct(path, local, remote, number_behind, number_ahead, scenario_info)
 
-    behind_messages = util.get_commit_messages_behind(path, remote, number_behind)
-    scenario_info.commit_messages_behind = behind_messages
-    scenario_info.number_commit_messages_behind = number_behind
-    ahead_messages = util.get_commit_messages_behind(path, local, number_ahead)
-    scenario_info.commit_messages_ahead = ahead_messages
-    scenario_info.number_commit_messages_ahead = number_ahead
+
+@given("project at <directory> is behind upstream <test_branch> by <number_behind> and ahead by <number_ahead> with conflict") # noqa
+def given_directory_behind_ahead_upstream_num_commits_test_branch_conflict(tmp_path: Path, directory: str,
+                                                                           test_branch: str, number_behind: str,
+                                                                           number_ahead: str,
+                                                                           scenario_info: ScenarioInfo) -> None:
+    number_behind = int(number_behind)
+    number_ahead = int(number_ahead)
+    path = tmp_path / directory
+    util.set_up_behind_ahead_confilct(path, test_branch, number_behind, number_ahead)
 
 
 @given(parsers.parse("repo at {directory} created remote branch {test_branch}"))
@@ -340,45 +308,26 @@ def given_directory_deleted_local_branch(tmp_path: Path, directory: str, branch:
     assert not util.local_branch_exists(path, branch)
 
 
-@given(parsers.parse("repo at {directory} created tracking branch {branch}"))
-@given(parsers.parse("project at {directory} created tracking branch {branch}"))
-@given("project at <directory> created tracking branch <branch>")
-def given_created_tracking_branch(tmp_path: Path, directory: str, branch: str) -> None:
-    path = tmp_path / directory
-    results = util.create_tracking_branch(path, branch)
-    assert all([r.returncode == 0 for r in results])
-
-
-@given("project at <directory> created tracking branch <test_branch>")
-def given_created_tracking_branch_test_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
-    path = tmp_path / directory
-    results = util.create_tracking_branch(path, test_branch)
-    assert all([r.returncode == 0 for r in results])
-
-
-@given(parsers.parse("repo at {directory} created tracking branch {branch} on remote {remote}"))
-@given(parsers.parse("project at {directory} created tracking branch {branch} on remote {remote}"))
-@given("project at <directory> created tracking branch <branch> on remote <remote>")
-def given_created_tracking_branch_remote(tmp_path: Path, directory: str, branch: str, remote: str) -> None:
-    path = tmp_path / directory
-    results = util.create_tracking_branch(path, branch, remote)
-    assert all([r.returncode == 0 for r in results])
-
-
-@given(parsers.parse("repo at {directory} has local commits and is behind remote branch {test_branch}"))
-@given(parsers.parse("project at {directory} has local commits and is behind remote branch {test_branch}"))
-@given("project at <directory> has local commits and is behind remote branch <test_branch>")
-def given_directory_local_commits_behind_upstream(tmp_path: Path, directory: str, test_branch: str) -> None:
-    path = tmp_path / directory
-    beginning_sha = util.get_branch_commit_sha(path, test_branch, "origin")
-    num_commits = 3
-    util.create_number_commits(path, num_commits, "something", "something")
-    util.push_to_remote_branch(path, test_branch)
-    util.reset_back_by_number_of_commits(path, num_commits)
-    util.create_number_commits(path, num_commits, "something", "something else")
-    yield
-    util.abort_rebase(path)
-    util.reset_back_by_number_of_commits(path, num_commits)
-    util.force_push_to_remote_branch(path, test_branch)
-    end_sha = util.get_branch_commit_sha(path, test_branch, "origin")
-    assert beginning_sha == end_sha
+# @given(parsers.parse("repo at {directory} created tracking branch {branch}"))
+# @given(parsers.parse("project at {directory} created tracking branch {branch}"))
+# @given("project at <directory> created tracking branch <branch>")
+# def given_created_tracking_branch(tmp_path: Path, directory: str, branch: str) -> None:
+#     path = tmp_path / directory
+#     results = util.create_tracking_branch(path, branch)
+#     assert all([r.returncode == 0 for r in results])
+#
+#
+# @given("project at <directory> created tracking branch <test_branch>")
+# def given_created_tracking_branch_test_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
+#     path = tmp_path / directory
+#     results = util.create_tracking_branch(path, test_branch)
+#     assert all([r.returncode == 0 for r in results])
+#
+#
+# @given(parsers.parse("repo at {directory} created tracking branch {branch} on remote {remote}"))
+# @given(parsers.parse("project at {directory} created tracking branch {branch} on remote {remote}"))
+# @given("project at <directory> created tracking branch <branch> on remote <remote>")
+# def given_created_tracking_branch_remote(tmp_path: Path, directory: str, branch: str, remote: str) -> None:
+#     path = tmp_path / directory
+#     results = util.create_tracking_branch(path, branch, remote)
+#     assert all([r.returncode == 0 for r in results])
