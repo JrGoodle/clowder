@@ -691,7 +691,7 @@ Feature: clowder herd
         | black-cats/sasha  |
         | black-cats/june   |
 
-    @fail @cats @offline @debug
+    @fail @cats @offline
     Scenario Outline: herd default offline
         Given cats example is initialized
         And <directory> doesn't exist
@@ -848,7 +848,7 @@ Feature: clowder herd
         | black-cats/sasha  | master |
         | black-cats/june   | master |
 
-    @cats
+    @cats @debug
     Scenario Outline: herd with rebase - check commit messages before and after
         Given cats example is initialized and herded
         And project at <directory> is on <branch>
