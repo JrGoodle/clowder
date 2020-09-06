@@ -9,9 +9,9 @@ from subprocess import CompletedProcess
 from typing import Optional
 
 
-def run_command(cwd: Path, command: str) -> CompletedProcess:
+def run_command(cwd: Path, cmd: str) -> CompletedProcess:
     cmd_env = os.environ.copy()
-    completed_process = subprocess.run(command, cwd=cwd, shell=True, env=cmd_env)
+    completed_process = subprocess.run(cmd, cwd=cwd, shell=True, env=cmd_env)
     return completed_process
 
 
@@ -27,38 +27,48 @@ run_command(path, "coverage erase")
 
 # Create build dir
 build_dir = path / "build"
-reports_dir = build_dir / "reports"
-reports_dir.mkdir(parents=True, exist_ok=True)
 
 # Base command
 temp_dir = build_dir / "temp"
 temp_dir.mkdir(parents=True, exist_ok=True)
-base_command = f"pytest --cov-config=.coveragerc --basetemp={temp_dir} --cov-append --cov=clowder -vv"
+command = f"pytest --basetemp={temp_dir} -vv"
 
-# Coverage Reporting
-coverage_dir = reports_dir / "coverage"
+# Coverage
+command += " --cov-config=.coveragerc --cov-append --cov=clowder"
+coverage_dir = build_dir / "coverage"
 coverage_dir.mkdir(parents=True, exist_ok=True)
 xml_file = coverage_dir / "results.xml"
-base_command += f" --cov-report xml:{xml_file}"
+command += f" --cov-report xml:{xml_file}"
 # html_dir = coverage_dir / "html"
 # base_command += f" --cov-report html:{html_dir}"
 # annotate_dir = coverage_dir / "annotate"
 # base_command += f" --cov-report annotate:{annotate_dir}"
 
+# Create reports dir
+reports_dir = build_dir / "reports"
+reports_dir.mkdir(parents=True, exist_ok=True)
+
+# JUnit reporting
+junit_dir = reports_dir / "junit"
+junit_dir.mkdir(parents=True, exist_ok=True)
+junit_file = junit_dir / "results.xml"
+command += f" --junitxml={junit_file}"
+
 # BDD Reporting
 functional_dir = reports_dir / "functional"
 functional_dir.mkdir(parents=True, exist_ok=True)
 cucumber_file = functional_dir / "results.json"
-bdd_reporting_options = f" --cucumberjson={cucumber_file} --cucumberjson-expanded"
-base_command += bdd_reporting_options
+bdd_reporting_options = f" --cucumberjson={cucumber_file}"  # --cucumberjson-expanded"
+command += bdd_reporting_options
 
+# Run command with script argument
 if command_arg is not None:
-    test_cmd = f'{base_command} {command_arg}'
+    test_cmd = f'{command} {command_arg}'
     result = run_command(path, test_cmd)
     exit(result.returncode)
 
 # Run tests
-test_cmd = f'{base_command} -n auto -m "status and not config and not offline and not write"'
+test_cmd = f'{command} -n auto -m "status and not config and not offline and not write"'
 run_command(path, test_cmd)
 
 # # parallel
