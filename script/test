@@ -11,8 +11,8 @@ from typing import Optional
 
 def run_command(cwd: Path, command: str) -> CompletedProcess:
     cmd_env = os.environ.copy()
-    result = subprocess.run(command, cwd=cwd, shell=True, env=cmd_env)
-    return result
+    completed_process = subprocess.run(command, cwd=cwd, shell=True, env=cmd_env)
+    return completed_process
 
 
 command_arg: Optional[str] = None

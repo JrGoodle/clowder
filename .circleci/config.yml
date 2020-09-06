@@ -53,15 +53,21 @@ jobs:
       - run:
           name: run pytest parallel tests
           command: script/test "-n auto -m 'ssh and not config and not offline and not write'"
+      - store_test_results:
+          path: build/reports
 
       # FIXME: Set up ssh in tests
       # - run:
       #     name: run pytest ssh tests
       #     command: script/test "-m 'write and not config and not offline'"
+      # - store_test_results:
+      #     path: build/reports
 
       - run:
           name: run pytest config tests
           command: script/test "-m 'config and not offline and not write'"
+      - store_test_results:
+          path: build/reports
 
       - codecov/upload:
           file: build/reports/coverage/.coverage
@@ -69,6 +75,3 @@ jobs:
       - store_artifacts:
           path: build/reports/coverage/.coverage
           destination: .coverage-circleci
-
-      - store_test_results:
-          path: build/reports
