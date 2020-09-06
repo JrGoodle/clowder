@@ -3,13 +3,18 @@
 cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
 
 ## Codecov ##
-echo 'Upload codecov results'
-bash <(curl -s https://codecov.io/bash) -X gcov || echo "Codecov did not collect coverage reports"
+# NOTE: Handled by CI configurations
+# echo 'Upload codecov results'
+# bash <(curl -s https://codecov.io/bash) -X gcov || echo "Codecov did not collect coverage reports"
+
+## Code Climate ##
+./cc-test-reporter after-build || echo "Failed to report Code Climate coverage"
+
+## S3 ##
 # echo 'Upload workflow coverage results to s3'
 # cp .coverage "coverage/codecov/${COVERAGE_FILE}"
 # aws s3 sync coverage/codecov/ "${S3_PATH}/codecov"
-
-
+#
 # if [ -n "$CIRCLECI" ]; then
 #     echo 'Circle CI'
 #     IDENTIFIER="$CIRCLE_JOB.$CIRCLE_BUILD_NUM"

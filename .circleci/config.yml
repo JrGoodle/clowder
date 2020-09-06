@@ -51,8 +51,16 @@ jobs:
             ls -al
 
       - run:
+          name: Code climate setup
+          command: script/ci_before
+
+      - run:
           name: run pytest functional tests
           command: script/test "-m 'not config and not offline'"
+
+      - run:
+          name: Code climate reporting
+          command: script/ci_after
 
       - store_test_results:
           path: build/reports
