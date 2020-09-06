@@ -44,13 +44,13 @@ jobs:
         pwd
         ls -al
     - name: Run pytest functional tests
-      run: pytest --cov-config=.coveragerc --basetemp=build --cov-append --cov=clowder -vv -n auto -m "not ssh and not config and not write and not offline"
+      run: script/test "-n auto -m 'not ssh and not config and not write and not offline'"
     - name: Run pytest config tests
-      run: pytest --cov-config=.coveragerc --basetemp=build --cov-append --cov=clowder -vv -m "config and not ssh and not write and not offline"
+      run: script/test "-m 'config and not ssh and not write and not offline'"
     - uses: codecov/codecov-action@v1
       with:
-        file: coverage/.coverage
+        file: build/reports/coverage/.coverage
     - uses: actions/upload-artifact@v2
       with:
         name: coverage-ghworkflow-${{ matrix.os }}-${{ matrix.python-version }}
-        path: coverage/.coverage
+        path: build/reports/coverage/.coverage

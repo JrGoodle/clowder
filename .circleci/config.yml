@@ -52,20 +52,23 @@ jobs:
 
       - run:
           name: run pytest parallel tests
-          command: pytest --cov-config=.coveragerc --basetemp=build --cov-append --cov=clowder -vv -n auto -m "ssh and not config and not offline and not write"
+          command: script/test "-n auto -m 'ssh and not config and not offline and not write'"
 
       # FIXME: Set up ssh in tests
       # - run:
       #     name: run pytest ssh tests
-      #     command: pytest --cov-config=.coveragerc --basetemp=build --cov-append --cov=clowder -vv -m "write and not config and not offline"
+      #     command: script/test "-m 'write and not config and not offline'"
 
       - run:
           name: run pytest config tests
-          command: pytest --cov-config=.coveragerc --basetemp=build --cov-append --cov=clowder -vv -m "config and not offline and not write"
+          command: script/test "-m 'config and not offline and not write'"
 
       - codecov/upload:
-          file: coverage/.coverage
+          file: build/reports/coverage/.coverage
 
       - store_artifacts:
-          path: coverage/.coverage
+          path: build/reports/coverage/.coverage
           destination: .coverage-circleci
+
+      - store_test_results:
+          path: build/reports

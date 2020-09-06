@@ -3,8 +3,10 @@
 import os
 import shutil
 import subprocess
+import sys
 from pathlib import Path
 from subprocess import CompletedProcess
+from typing import Optional
 
 
 def run_command(cwd: Path, command: str) -> CompletedProcess:
@@ -13,25 +15,51 @@ def run_command(cwd: Path, command: str) -> CompletedProcess:
     return result
 
 
+command_arg: Optional[str] = None
+if len(sys.argv) > 1:
+    command_arg = sys.argv[1]
+
+# Repo path
 path = Path(__file__).resolve().parent.parent.resolve()
-coverage_dir = path / "coverage"
-
-run_command(path, "coverage erase")
-
-base_command = "pytest --cov-config=.coveragerc --basetemp=build --cov-append --cov=clowder -vv"
-
-# Reporting
-html_dir = coverage_dir / "html"
-xml_file = coverage_dir / "cov.xml"
-annotate_dir = coverage_dir / "annotate"
-reporting_options = f" --cov-report html:{html_dir} --cov-report xml:{xml_file} --cov-report annotate:{annotate_dir}"
-
-base_command += reporting_options
 
 # Clean old test coverage results
 run_command(path, "coverage erase")
 
-test_cmd = f'{base_command} -n auto -m "herd and not config and not offline and not write"'
+# Create build dir
+build_dir = path / "build"
+reports_dir = build_dir / "reports"
+reports_dir.mkdir(parents=True, exist_ok=True)
+
+# Base command
+temp_dir = build_dir / "temp"
+temp_dir.mkdir(parents=True, exist_ok=True)
+base_command = f"pytest --cov-config=.coveragerc --basetemp={temp_dir} --cov-append --cov=clowder -vv"
+
+# Coverage Reporting
+coverage_dir = reports_dir / "coverage"
+coverage_dir.mkdir(parents=True, exist_ok=True)
+html_dir = coverage_dir / "html"
+xml_file = coverage_dir / "cov.xml"
+annotate_dir = coverage_dir / "annotate"
+coverage_reporting_options = f" --cov-report html:{html_dir} " \
+                             f"--cov-report xml:{xml_file} " \
+                             f"--cov-report annotate:{annotate_dir}"
+base_command += coverage_reporting_options
+
+# BDD Reporting
+functional_dir = reports_dir / "functional"
+functional_dir.mkdir(parents=True, exist_ok=True)
+cucumber_file = functional_dir / "cucumber.json"
+bdd_reporting_options = f" --cucumberjson={cucumber_file} --cucumberjson-expanded"
+base_command += bdd_reporting_options
+
+if command_arg is not None:
+    test_cmd = f'{base_command} {command_arg}'
+    result = run_command(path, test_cmd)
+    exit(result.returncode)
+
+# Run tests
+test_cmd = f'{base_command} -n auto -m "status and not config and not offline and not write"'
 run_command(path, test_cmd)
 
 # # parallel
