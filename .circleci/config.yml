@@ -52,7 +52,7 @@ jobs:
 
       - run:
           name: run pytest parallel tests
-          command: script/test "-n auto -m 'ssh and not config and not offline and not write'"
+          command: script/test "-n auto -m 'ssh and not config and not offline and not write'" "parallel"
       - store_test_results:
           path: build/reports
 
@@ -65,13 +65,15 @@ jobs:
 
       - run:
           name: run pytest config tests
-          command: script/test "-m 'config and not offline and not write'"
+          command: script/test "-m 'config and not offline and not write'" "config"
       - store_test_results:
           path: build/reports
 
       - codecov/upload:
-          file: build/reports/coverage/.coverage
+          file: build/coverage/.coverage
 
       - store_artifacts:
-          path: build/reports/coverage/.coverage
-          destination: .coverage-circleci
+          path: build/coverage
+
+      - store_artifacts:
+          path: build/reports

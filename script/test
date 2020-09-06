@@ -19,6 +19,10 @@ command_arg: Optional[str] = None
 if len(sys.argv) > 1:
     command_arg = sys.argv[1]
 
+name = ""
+if len(sys.argv) > 2:
+    name = f"-{sys.argv[2]}"
+
 # Repo path
 path = Path(__file__).resolve().parent.parent.resolve()
 
@@ -35,27 +39,29 @@ command = f"pytest --basetemp={temp_dir} -vv"
 
 # Coverage
 command += " --cov-config=.coveragerc --cov-append --cov=clowder"
-coverage_dir = build_dir / "coverage"
-coverage_dir.mkdir(parents=True, exist_ok=True)
-xml_file = coverage_dir / "results.xml"
-command += f" --cov-report xml:{xml_file}"
-# html_dir = coverage_dir / "html"
-# base_command += f" --cov-report html:{html_dir}"
-# annotate_dir = coverage_dir / "annotate"
-# base_command += f" --cov-report annotate:{annotate_dir}"
 
 # Create reports dir
 reports_dir = build_dir / "reports"
 reports_dir.mkdir(parents=True, exist_ok=True)
 
-# JUnit reporting
-junit_dir = reports_dir / "junit"
+# Coverage reports
+coverage_dir = reports_dir / f"coverage{name}"
+coverage_dir.mkdir(parents=True, exist_ok=True)
+xml_file = coverage_dir / "results.xml"
+command += f" --cov-report xml:{xml_file}"
+html_dir = coverage_dir / "html"
+command += f" --cov-report html:{html_dir}"
+annotate_dir = coverage_dir / "annotate"
+command += f" --cov-report annotate:{annotate_dir}"
+
+# JUnit reports
+junit_dir = reports_dir / f"junit{name}"
 junit_dir.mkdir(parents=True, exist_ok=True)
 junit_file = junit_dir / "results.xml"
 command += f" --junitxml={junit_file}"
 
-# BDD Reporting
-functional_dir = reports_dir / "functional"
+# BDD reports
+functional_dir = reports_dir / f"functional{name}"
 functional_dir.mkdir(parents=True, exist_ok=True)
 cucumber_file = functional_dir / "results.json"
 bdd_reporting_options = f" --cucumberjson={cucumber_file}"  # --cucumberjson-expanded"

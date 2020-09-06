@@ -34,23 +34,25 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - name: Setup git config
-      run:
+      run: |
         git config --global user.email "joe@polka.cat";
         git config --global user.name "GitHub Actions Workflow"
     - name: Install clowder
       run: script/update
     - name: Print environment info
-      run:
+      run: |
         pwd
         ls -al
     - name: Run pytest functional tests
-      run: script/test "-n auto -m 'not ssh and not config and not write and not offline'"
+      run: script/test "-n auto -m 'not ssh and not config and not write and not offline'" "parallel"
     - name: Run pytest config tests
-      run: script/test "-m 'config and not ssh and not write and not offline'"
+      run: script/test "-m 'config and not ssh and not write and not offline'" "config"
     - uses: codecov/codecov-action@v1
       with:
-        file: build/reports/coverage/.coverage
+        file: build/coverage/.coverage
     - uses: actions/upload-artifact@v2
       with:
         name: coverage-ghworkflow-${{ matrix.os }}-${{ matrix.python-version }}
-        path: build/reports/coverage/.coverage
+        path: |
+          build/reports
+          build/coverage
