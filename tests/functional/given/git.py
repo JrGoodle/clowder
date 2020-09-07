@@ -131,9 +131,9 @@ def given_test_dir_is_git_repo(tmp_path: Path, test_directory: str) -> None:
 
 @given("project at <directory> doesn't have lfs installed")
 def given_has_no_lfs_installed(tmp_path: Path, directory: str) -> None:
-    path = tmp_path / directory
-    result = util.run_command("git lfs uninstall --skip-repo", path)
+    result = util.run_command("git lfs uninstall --skip-repo", tmp_path)
     assert result.returncode == 0
+    path = tmp_path / directory
     assert not util.lfs_hooks_installed(path)
     assert not util.lfs_filters_installed(path)
 
