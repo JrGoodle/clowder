@@ -31,6 +31,7 @@ def given_clowder_version_not_present(tmp_path: Path, version: str) -> None:
     assert not util.has_clowder_version(tmp_path, version)
 
 
+@given("<filename> doesn't exist")
 @given(parsers.parse("{filename} file doesn't exist"))
 def given_has_no_file(tmp_path: Path, filename: str) -> None:
     path = tmp_path / filename
@@ -38,6 +39,7 @@ def given_has_no_file(tmp_path: Path, filename: str) -> None:
     assert not path.exists()
 
 
+@given("<filename> exists")
 @given(parsers.parse("{filename} file exists"))
 def given_has_file(tmp_path: Path, filename: str) -> None:
     path = tmp_path / filename

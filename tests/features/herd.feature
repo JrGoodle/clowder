@@ -913,3 +913,38 @@ Feature: clowder herd
         | black-cats/kit    | master | 1             | 2            |
         | black-cats/sasha  | master | 2             | 1            |
         | black-cats/june   | master | 1             | 2            |
+
+    @cats @lfs
+    Scenario Outline: herd lfs initial
+        Given cats example is initialized
+        And linked lfs clowder version
+        And <directory> doesn't exist
+        When I run 'clowder herd'
+        Then the command succeeds
+        And project at <directory> is a git repository
+        And project at <directory> is on <branch>
+        And project at <directory> is clean
+        And project at <directory> has lfs installed
+        And <filename> exists in <directory>
+
+        Examples:
+        | directory         | branch | filename     |
+        | mu                | lfs    | jrgoodle.png |
+
+    @cats @lfs
+    Scenario Outline: herd lfs
+        Given cats example is initialized and herded
+        And linked lfs clowder version
+        And project at <directory> is on <start_branch>
+        And project at <directory> doesn't have lfs installed
+        And <filename> doesn't exist in <directory>
+        When I run 'clowder herd'
+        Then the command succeeds
+        And project at <directory> is on <end_branch>
+        And project at <directory> is clean
+        And project at <directory> has lfs installed
+        And <filename> exists in <directory>
+
+        Examples:
+        | directory         | start_branch | end_branch | filename     |
+        | mu                | knead        | lfs        | jrgoodle.png |

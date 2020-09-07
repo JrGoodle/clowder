@@ -75,30 +75,38 @@ def has_submodule(repo_path: Path, submodule_path: Path) -> bool:
     return False
 
 
-def lfs_hooks_installed(path: Path) -> None:
-    run_command("grep -m 1 'git lfs pre-push' '.git/hooks/pre-push'", path)
-    run_command("grep -m 1 'git lfs post-checkout' '.git/hooks/post-checkout'", path)
-    run_command("grep -m 1 'git lfs post-commit' '.git/hooks/post-commit'", path)
-    run_command("grep -m 1 'git lfs post-merge' '.git/hooks/post-merge'", path)
+def lfs_hooks_installed(path: Path) -> bool:
+    results = []
+    result = run_command("grep -m 1 'git lfs pre-push' '.git/hooks/pre-push'", path)
+    results.append(result)
+    result = run_command("grep -m 1 'git lfs post-checkout' '.git/hooks/post-checkout'", path)
+    results.append(result)
+    result = run_command("grep -m 1 'git lfs post-commit' '.git/hooks/post-commit'", path)
+    results.append(result)
+    result = run_command("grep -m 1 'git lfs post-merge' '.git/hooks/post-merge'", path)
+    results.append(result)
+    return all([r.returncode == 0 for r in results])
 
 
-def lfs_filters_installed(path: Path) -> None:
+def lfs_filters_installed(path: Path) -> bool:
+    results = []
     result = run_command("git config --get filter.lfs.smudge", path)
-    assert result.returncode == 0
+    results.append(result)
     result = run_command("git config --get filter.lfs.smudge", path)
-    assert result.returncode == 0
+    results.append(result)
     result = run_command("git config --get filter.lfs.smudge", path)
-    assert result.returncode == 0
+    results.append(result)
+    return all([r.returncode == 0 for r in results])
 
 
-def is_lfs_file_pointer(path: Path, file: str) -> None:
+def is_lfs_file_pointer(path: Path, file: str) -> bool:
     result = run_command(f'git lfs ls-files -I "{file}"', path)
-    assert result.stdout == '-'
+    return result.stdout == '-'
 
 
-def is_lfs_file_not_pointer(path: Path, file: str) -> None:
+def is_lfs_file_not_pointer(path: Path, file: str) -> bool:
     result = run_command(f'git lfs ls-files -I "{file}"', path)
-    assert result.stdout == '*'
+    return result.stdout == '*'
 
 
 def current_head_commit_sha(path: Path) -> str:

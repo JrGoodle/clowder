@@ -268,3 +268,10 @@ def then_has_stage_file(tmp_path: Path, directory: str, filename: str) -> None:
     path = tmp_path / directory
     assert util.is_dirty(path)
 #     TODO: Add check for specific staged file
+
+
+@then("project at <directory> has lfs installed")
+def then_has_lfs_installed(tmp_path: Path, directory: str) -> None:
+    path = tmp_path / directory
+    assert util.lfs_hooks_installed(path)
+    assert util.lfs_filters_installed(path)
