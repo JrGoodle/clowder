@@ -918,6 +918,7 @@ Feature: clowder herd
     Scenario Outline: herd lfs initial
         Given cats example is initialized
         And linked lfs clowder version
+        And lfs is not installed
         And <directory> doesn't exist
         When I run 'clowder herd'
         Then the command succeeds
@@ -926,13 +927,14 @@ Feature: clowder herd
         And project at <directory> is clean
         And project at <directory> has lfs installed
         And <filename> exists in <directory>
+        And <filename> in <directory> is not an lfs pointer
 
         Examples:
         | directory         | branch | filename     |
         | mu                | lfs    | jrgoodle.png |
 
     @cats @lfs @debug
-    Scenario Outline: herd lfs
+    Scenario Outline: herd lfs different branch
         Given cats example is initialized and herded
         And linked lfs clowder version
         And project at <directory> is on <start_branch>
@@ -944,7 +946,27 @@ Feature: clowder herd
         And project at <directory> is clean
         And project at <directory> has lfs installed
         And <filename> exists in <directory>
+        And <filename> in <directory> is not an lfs pointer
 
         Examples:
         | directory         | start_branch | end_branch | filename     |
         | mu                | knead        | lfs        | jrgoodle.png |
+
+    @cats @lfs @debug
+    Scenario Outline: herd lfs same branch
+        Given cats example is initialized and herded
+        And linked lfs clowder version
+        And project at <directory> doesn't have lfs installed
+        And project at <directory> checked out <branch>
+        And <filename> in <directory> is an lfs pointer
+        When I run 'clowder herd'
+        Then the command succeeds
+        And project at <directory> is on <branch>
+        And project at <directory> is clean
+        And project at <directory> has lfs installed
+        And <filename> exists in <directory>
+        And <filename> in <directory> is not an lfs pointer
+
+        Examples:
+        | directory         | branch     | filename     |
+        | mu                | lfs        | jrgoodle.png |

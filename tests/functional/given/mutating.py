@@ -87,10 +87,17 @@ def given_directory_created_local_branch(tmp_path: Path, directory: str, branch:
 
 
 @given("project at <directory> checked out <test_branch>")
-def given_directory_checked_out_start_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
+def given_directory_checked_out_test_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
     path = tmp_path / directory
     util.checkout_branch(path, test_branch)
     assert util.is_on_active_branch(path, test_branch)
+
+
+@given("project at <directory> checked out <branch>")
+def given_directory_checked_out_branch(tmp_path: Path, directory: str, branch: str) -> None:
+    path = tmp_path / directory
+    util.checkout_branch(path, branch)
+    assert util.is_on_active_branch(path, branch)
 
 
 @given("project at <directory> checked out detached HEAD behind <test_branch>")

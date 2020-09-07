@@ -275,3 +275,15 @@ def then_has_lfs_installed(tmp_path: Path, directory: str) -> None:
     path = tmp_path / directory
     assert util.lfs_hooks_installed(path)
     assert util.lfs_filters_installed(path)
+
+
+@then("<filename> in <directory> is an lfs pointer")
+def then_file_is_lfs_pointer(tmp_path: Path, filename: str, directory: str) -> None:
+    path = tmp_path / directory
+    assert util.is_lfs_file_pointer(path, filename)
+
+
+@then("<filename> in <directory> is not an lfs pointer")
+def then_file_is_not_lfs_pointer(tmp_path: Path, filename: str, directory: str) -> None:
+    path = tmp_path / directory
+    assert util.is_lfs_file_not_pointer(path, filename)

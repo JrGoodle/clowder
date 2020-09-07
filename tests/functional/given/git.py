@@ -139,8 +139,30 @@ def given_has_no_lfs_installed(tmp_path: Path, directory: str) -> None:
     assert not util.lfs_filters_installed(path)
 
 
+@given("lfs is not installed")
+def given_has_no_lfs_installed(tmp_path: Path) -> None:
+    path = tmp_path
+    util.run_command("git lfs uninstall --local", path)
+    util.run_command("git lfs uninstall --system", path)
+    util.run_command("git lfs uninstall", path)
+    assert not util.lfs_hooks_installed(path)
+    assert not util.lfs_filters_installed(path)
+
+
 @given(parsers.parse("{filename} file doesn't exist in directory {directory}"))
 @given("<filename> doesn't exist in <directory>")
 def given_has_no_file_in_directory(tmp_path: Path, filename: str, directory: str) -> None:
     path = tmp_path / directory / filename
     assert not path.exists()
+
+
+@given("<filename> in <directory> is an lfs pointer")
+def given_file_is_lfs_pointer(tmp_path: Path, filename: str, directory: str) -> None:
+    path = tmp_path / directory
+    assert util.is_lfs_file_pointer(path, filename)
+
+
+@given("<filename> in <directory> is not an lfs pointer")
+def given_file_is_not_lfs_pointer(tmp_path: Path, filename: str, directory: str) -> None:
+    path = tmp_path / directory
+    assert util.is_lfs_file_not_pointer(path, filename)

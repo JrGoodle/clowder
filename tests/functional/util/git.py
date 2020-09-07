@@ -89,24 +89,34 @@ def lfs_hooks_installed(path: Path) -> bool:
 
 
 def lfs_filters_installed(path: Path) -> bool:
+    list_git_config(path)
     results = []
     result = run_command("git config --get filter.lfs.smudge", path)
     results.append(result)
-    result = run_command("git config --get filter.lfs.smudge", path)
+    result = run_command("git config --get filter.lfs.clean", path)
     results.append(result)
-    result = run_command("git config --get filter.lfs.smudge", path)
+    result = run_command("git config --get filter.lfs.process", path)
     results.append(result)
     return all([r.returncode == 0 for r in results])
 
 
 def is_lfs_file_pointer(path: Path, file: str) -> bool:
     result = run_command(f'git lfs ls-files -I "{file}"', path)
-    return result.stdout == '-'
+    output: str = result.stdout
+    components = output.split()
+    return components[1] == '-'
 
 
 def is_lfs_file_not_pointer(path: Path, file: str) -> bool:
     result = run_command(f'git lfs ls-files -I "{file}"', path)
-    return result.stdout == '*'
+    output: str = result.stdout
+    components = output.split()
+    return components[1] == '*'
+
+
+def list_git_config(path: Path) -> None:
+    result = run_command("git config --list --show-origin" ,path)
+    print(result.stdout)
 
 
 def current_head_commit_sha(path: Path) -> str:
