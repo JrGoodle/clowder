@@ -177,7 +177,7 @@ def create_remote_branch(path: Path, branch: str, remote: str = "origin") -> Lis
 
 
 def delete_remote_branch(path: Path, branch: str, remote: str = "origin") -> CompletedProcess:
-    result = run_command(f"git push {remote} --delete {branch}", path)
+    result = run_command(f"git push {remote} -D {branch}", path)
     assert not remote_branch_exists(path, branch)
     return result
 
