@@ -89,7 +89,6 @@ def lfs_hooks_installed(path: Path) -> bool:
 
 
 def lfs_filters_installed(path: Path) -> bool:
-    list_git_config(path)
     results = []
     result = run_command("git config --get filter.lfs.smudge", path)
     results.append(result)
