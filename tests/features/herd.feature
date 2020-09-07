@@ -432,7 +432,7 @@ Feature: clowder herd
         And project at gyp is not on commit bd11dd1c51ef17592384df927c47023071639f96
         And project at gyp is on branch fork-branch
 
-    @cats @debug
+    @cats
     Scenario Outline: herd non-symlink yaml file
         Given cats example non-symlink yaml file exists
         And <directory> doesn't exist
@@ -811,7 +811,7 @@ Feature: clowder herd
 #        | black-cats/sasha  | master       | pytest       |
 
     @cats @write @ssh
-    Scenario Outline: herd local exists, remote exists, no tracking
+    Scenario Outline: herd local exists, remote exists, no tracking, same commit
         Given cats example is initialized and herded with ssh
         And linked test-branch-ssh clowder version
         And cats example projects have remote branch <test_branch>
@@ -831,6 +831,29 @@ Feature: clowder herd
         | black-cats/kishka | master       | pytest       |
         | black-cats/june   | master       | pytest       |
         | black-cats/sasha  | master       | pytest       |
+
+#    FIXME: Needs correct implementation
+#    @cats @fail @write @ssh @debug
+#    Scenario Outline: herd local exists, remote exists, no tracking, different commits
+#        Given cats example is initialized and herded with ssh
+#        And linked test-branch-ssh clowder version
+#        And cats example projects have remote branch <test_branch>
+#        And cats example projects have local branch <test_branch>
+#        And project at <directory> has no tracking branch <test_branch>
+#        And project at <directory> is on <start_branch>
+#        When I run 'clowder herd'
+#        Then the command succeeds
+#        And project at <directory> is on <test_branch>
+#        And project at <directory> has tracking branch <test_branch>
+#
+#        Examples:
+#        | directory         | start_branch | test_branch  |
+#        | mu                | knead        | pytest       |
+#        | duke              | purr         | pytest       |
+#        | black-cats/kit    | master       | pytest       |
+#        | black-cats/kishka | master       | pytest       |
+#        | black-cats/june   | master       | pytest       |
+#        | black-cats/sasha  | master       | pytest       |
 
     @cats
     Scenario Outline: herd after clean herd

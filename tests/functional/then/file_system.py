@@ -31,6 +31,12 @@ def then_has_no_directory(tmp_path: Path, directory: str) -> None:
     assert not path.exists()
 
 
+@then("<test_directory> doesn't exist")
+def then_has_no_test_directory(tmp_path: Path, test_directory: str) -> None:
+    path = tmp_path / test_directory
+    assert not path.exists()
+
+
 @then(parsers.parse("{filename} file doesn't exist"))
 def then_has_no_file(tmp_path: Path, filename: str) -> None:
     path = tmp_path / filename
@@ -49,6 +55,13 @@ def then_has_file(tmp_path: Path, filename: str) -> None:
 @then("<filename> exists in <directory>")
 def then_has_file_in_directory(tmp_path: Path, filename: str, directory: str) -> None:
     path = tmp_path / directory / filename
+    assert path.exists()
+    assert not path.is_dir()
+
+
+@then("<filename> exists in <test_directory>")
+def then_has_file_in_test_directory(tmp_path: Path, filename: str, test_directory: str) -> None:
+    path = tmp_path / test_directory / filename
     assert path.exists()
     assert not path.is_dir()
 

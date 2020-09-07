@@ -86,3 +86,113 @@ Feature: clowder clean
         | black-cats/june   | master | something.txt |
 
 #        TODO: Add test for clean when directories are missing
+
+    Scenario Outline: clean group included
+        Given cats example is initialized and herded
+        And created <filename> in <directory>
+        And project at <directory> staged <filename>
+        And project at <directory> is on <branch>
+        When I run 'clowder clean black-cats'
+        Then the command succeeds
+        And <filename> doesn't exist in <directory>
+        And project at <directory> is clean
+        And project at <directory> is on <branch>
+
+        Examples:
+        | directory         | branch | filename      |
+        | black-cats/kishka | master | something.txt |
+        | black-cats/kit    | master | something.txt |
+        | black-cats/sasha  | master | something.txt |
+        | black-cats/june   | master | something.txt |
+
+    Scenario Outline: clean group excluded
+        Given cats example is initialized and herded
+        And created <filename> in <directory>
+        And project at <directory> staged <filename>
+        And project at <directory> is on <branch>
+        When I run 'clowder clean black-cats'
+        Then the command succeeds
+        And <filename> exists in <directory>
+        And project at <directory> is dirty
+        And project at <directory> is on <branch>
+
+        Examples:
+        | directory | branch | filename      |
+        | mu        | knead  | something.txt |
+        | duke      | purr   | something.txt |
+
+    Scenario Outline: clean projects included
+        Given cats example is initialized and herded
+        And created <filename> in <directory>
+        And project at <directory> staged <filename>
+        And project at <directory> is on <branch>
+        When I run 'clowder clean mu duke'
+        Then the command succeeds
+        And <filename> doesn't exist in <directory>
+        And project at <directory> is clean
+        And project at <directory> is on <branch>
+
+        Examples:
+        | directory | branch | filename      |
+        | mu        | knead  | something.txt |
+        | duke      | purr   | something.txt |
+
+    Scenario Outline: clean projects excluded
+        Given cats example is initialized and herded
+        And created <filename> in <directory>
+        And project at <directory> staged <filename>
+        And project at <directory> is on <branch>
+        When I run 'clowder clean mu duke'
+        Then the command succeeds
+        And <filename> exists in <directory>
+        And project at <directory> is dirty
+        And project at <directory> is on <branch>
+
+        Examples:
+        | directory         | branch | filename      |
+        | black-cats/kishka | master | something.txt |
+        | black-cats/kit    | master | something.txt |
+        | black-cats/sasha  | master | something.txt |
+        | black-cats/june   | master | something.txt |
+
+    Scenario Outline: clean untracked directory
+        Given cats example is initialized and herded
+        And created <test_directory>
+        And created <filename> in <test_directory>
+        And project at <directory> is on <branch>
+        And project at <directory> is dirty
+        When I run 'clowder clean'
+        Then the command succeeds
+        And <filename> exists in <test_directory>
+        And project at <directory> is dirty
+        And project at <directory> is on <branch>
+
+        Examples:
+        | directory         | branch | filename      | test_directory              |
+        | mu                | knead  | something.txt | mu/something                |
+        | duke              | purr   | something.txt | duke/something              |
+        | black-cats/kishka | master | something.txt | black-cats/kishka/something |
+        | black-cats/kit    | master | something.txt | black-cats/kit/something    |
+        | black-cats/sasha  | master | something.txt | black-cats/sasha/something  |
+        | black-cats/june   | master | something.txt | black-cats/june/something   |
+
+    Scenario Outline: clean -d untracked directory
+        Given cats example is initialized and herded
+        And created <test_directory>
+        And created <filename> in <test_directory>
+        And project at <directory> is on <branch>
+        And project at <directory> is dirty
+        When I run 'clowder clean -d'
+        Then the command succeeds
+        And <test_directory> doesn't exist
+        And project at <directory> is clean
+        And project at <directory> is on <branch>
+
+        Examples:
+        | directory         | branch | filename      | test_directory              |
+        | mu                | knead  | something.txt | mu/something                |
+        | duke              | purr   | something.txt | duke/something              |
+        | black-cats/kishka | master | something.txt | black-cats/kishka/something |
+        | black-cats/kit    | master | something.txt | black-cats/kit/something    |
+        | black-cats/sasha  | master | something.txt | black-cats/sasha/something  |
+        | black-cats/june   | master | something.txt | black-cats/june/something   |

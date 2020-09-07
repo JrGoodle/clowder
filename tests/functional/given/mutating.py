@@ -139,6 +139,16 @@ def given_did_create_directory(tmp_path: Path, directory: str) -> None:
     assert path.is_dir()
 
 
+@given(parsers.parse("created directory {test_directory}"))
+@given("created <test_directory>")
+def given_did_create_test_directory(tmp_path: Path, test_directory: str) -> None:
+    path = tmp_path / test_directory
+    assert not path.exists()
+    path.mkdir()
+    assert path.exists()
+    assert path.is_dir()
+
+
 # @given(parsers.parse("created file {filename}"))
 # @given("created <filename>")
 # def given_did_create_file(tmp_path: Path, filename: str) -> None:
@@ -152,6 +162,15 @@ def given_did_create_directory(tmp_path: Path, directory: str) -> None:
 @given("created <filename> in <directory>")
 def given_did_create_file_in_directory(tmp_path: Path, filename: str, directory: str) -> None:
     path = tmp_path / directory / filename
+    assert not path.exists()
+    path.touch()
+    assert path.exists()
+
+
+@given(parsers.parse("created file {filename} in directory {test_directory}"))
+@given("created <filename> in <test_directory>")
+def given_did_create_file_in_test_directory(tmp_path: Path, filename: str, test_directory: str) -> None:
+    path = tmp_path / test_directory / filename
     assert not path.exists()
     path.touch()
     assert path.exists()
