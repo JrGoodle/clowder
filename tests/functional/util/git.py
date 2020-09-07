@@ -100,6 +100,19 @@ def lfs_filters_installed(path: Path) -> bool:
     return all([r.returncode == 0 for r in results])
 
 
+def uninstall_lfs_hooks_filters(path: Path) -> [CompletedProcess]:
+    run_command("git lfs uninstall --local", path)
+    run_command("git lfs uninstall --system", path)
+    run_command("git lfs uninstall", path)
+    run_command("git config --global --unset filter.lfs.clean", path)
+    run_command("git config --global --unset filter.lfs.smudge", path)
+    run_command("git config --global --unset filter.lfs.process", path)
+    # TODO: Should this be installed or checked in main command?
+    # run_command("git config --global --unset filter.lfs.required", path)
+    assert not lfs_hooks_installed(path)
+    assert not lfs_filters_installed(path)
+
+
 def is_lfs_file_pointer(path: Path, file: str) -> bool:
     result = run_command(f'git lfs ls-files -I "{file}"', path)
     output: str = result.stdout

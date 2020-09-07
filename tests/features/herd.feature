@@ -937,8 +937,8 @@ Feature: clowder herd
     Scenario Outline: herd lfs different branch
         Given cats example is initialized and herded
         And linked lfs clowder version
-        And project at <directory> is on <start_branch>
         And project at <directory> doesn't have lfs installed
+        And project at <directory> is on <start_branch>
         And <filename> doesn't exist in <directory>
         When I run 'clowder herd'
         Then the command succeeds
