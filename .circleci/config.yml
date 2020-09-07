@@ -44,9 +44,9 @@ jobs:
             git config --global user.name "CircleCI"
             git config --global push.default simple
             git config --global --unset url.ssh://git@github.com.insteadOf
-            sudo git config --global --unset filter.lfs.clean
-            sudo git config --global --unset filter.lfs.smudge
-            sudo git config --global --unset filter.lfs.process
+            git config --global --unset-all filter.lfs.clean || true
+            git config --global --unset-all filter.lfs.smudge || true
+            git config --global --unset-all filter.lfs.process || true
 
       - run:
           name: Print environment info
