@@ -305,7 +305,7 @@ class GitRepo(object):
 
         self._print(" - Update git lfs hooks")
         try:
-            self.repo.git.lfs('install')
+            self.repo.git.lfs('install', local=True)
         except GitError as err:
             LOG_DEBUG('Git error', err)
             message = f'{fmt.ERROR} Failed to update git lfs hooks'
