@@ -26,6 +26,7 @@ jobs:
             python3 -m venv venv
             . venv/bin/activate
             sudo pip3 install -r requirements.txt
+            sudo apt-get install git-lfs
 
       - run:
           name: run setup scripts

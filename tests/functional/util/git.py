@@ -176,10 +176,16 @@ def create_remote_branch(path: Path, branch: str, remote: str = "origin") -> Lis
     return results
 
 
-def delete_remote_branch(path: Path, branch: str, remote: str = "origin") -> CompletedProcess:
+def delete_remote_branch(path: Path, branch: str, remote: str = "origin") -> [CompletedProcess]:
+    results = []
+    result = run_command(f"git fetch --prune", path)
+    results.append(result)
+    if not remote_branch_exists(path, branch, remote):
+        return results
     result = run_command(f"git push {remote} -D {branch}", path)
+    results.append(result)
     assert not remote_branch_exists(path, branch)
-    return result
+    return results
 
 
 def create_tracking_branch(path: Path, branch: str, remote: str = "origin") -> List[CompletedProcess]:

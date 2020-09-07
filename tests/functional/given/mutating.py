@@ -312,8 +312,8 @@ def given_directory_created_remote_branch(tmp_path: Path, directory: str, test_b
 def given_directory_deleted_remote_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
     path = tmp_path / directory
     if util.remote_branch_exists(path, test_branch):
-        result = util.delete_remote_branch(path, test_branch)
-        assert result.returncode == 0
+        results = util.delete_remote_branch(path, test_branch)
+        assert all([r.returncode == 0 for r in results])
     assert not util.remote_branch_exists(path, test_branch)
 
 
