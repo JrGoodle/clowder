@@ -914,7 +914,7 @@ Feature: clowder herd
         | black-cats/sasha  | master | 2             | 1            |
         | black-cats/june   | master | 1             | 2            |
 
-    @cats @lfs
+    @cats @lfs @debug
     Scenario Outline: herd lfs initial
         Given cats example is initialized
         And linked lfs clowder version
@@ -931,7 +931,7 @@ Feature: clowder herd
         | directory         | branch | filename     |
         | mu                | lfs    | jrgoodle.png |
 
-    @cats @lfs
+    @cats @lfs @debug
     Scenario Outline: herd lfs
         Given cats example is initialized and herded
         And linked lfs clowder version

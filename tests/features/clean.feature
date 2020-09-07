@@ -470,7 +470,7 @@ Feature: clowder clean
         | black-cats/sasha  | master | something.txt | black-cats/sasha/something  |
         | black-cats/june   | master | something.txt | black-cats/june/something   |
 
-    @write @ssh
+    @write @ssh @debug
     Scenario Outline: clean abort rebase in progress
         Given cats example is initialized and herded with ssh
         And cats example projects have tracking branch <test_branch>
