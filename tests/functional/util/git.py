@@ -104,11 +104,11 @@ def uninstall_lfs_hooks_filters(path: Path) -> [CompletedProcess]:
     run_command("git lfs uninstall --local", path)
     run_command("git lfs uninstall --system", path)
     run_command("git lfs uninstall", path)
-    # run_command("git config --global --unset filter.lfs.clean", path)
-    # run_command("git config --global --unset filter.lfs.smudge", path)
-    # run_command("git config --global --unset filter.lfs.process", path)
+    # run_command("git config --system --unset filter.lfs.clean", path)
+    # run_command("git config --system --unset filter.lfs.smudge", path)
+    # run_command("git config --system --unset filter.lfs.process", path)
     # TODO: Should this be installed or checked in main command?
-    # run_command("git config --global --unset filter.lfs.required", path)
+    # run_command("git config --system --unset filter.lfs.required", path)
     assert not lfs_hooks_installed(path)
     assert not lfs_filters_installed(path)
 
