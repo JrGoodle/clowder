@@ -21,7 +21,7 @@ from clowder.util.decorators import (
 from .util import add_parser_arguments
 
 
-def add_repo_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
+def add_repo_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
     """Add clowder repo parser
 
     :param argparse._SubParsersAction subparsers: Subparsers action to add parser to
@@ -40,7 +40,7 @@ def add_repo_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
     add_repo_status_parser(repo_subparsers)
 
 
-def add_repo_add_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
+def add_repo_add_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
     """Add clowder repo add parser
 
     :param argparse._SubParsersAction subparsers: Subparsers action to add parser to
@@ -55,7 +55,7 @@ def add_repo_add_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
     parser.set_defaults(func=add)
 
 
-def add_repo_checkout_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
+def add_repo_checkout_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
     """Add clowder repo checkout parser
 
     :param argparse._SubParsersAction subparsers: Subparsers action to add parser to
@@ -70,7 +70,7 @@ def add_repo_checkout_parser(subparsers: argparse._SubParsersAction) -> None: # 
     parser.set_defaults(func=checkout)
 
 
-def add_repo_clean_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
+def add_repo_clean_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
     """Add clowder repo clean parser
 
     :param argparse._SubParsersAction subparsers: Subparsers action to add parser to
@@ -80,7 +80,7 @@ def add_repo_clean_parser(subparsers: argparse._SubParsersAction) -> None: # noq
     parser.set_defaults(func=clean)
 
 
-def add_repo_commit_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
+def add_repo_commit_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
     """Add clowder repo commit parser
 
     :param argparse._SubParsersAction subparsers: Subparsers action to add parser to
@@ -95,7 +95,7 @@ def add_repo_commit_parser(subparsers: argparse._SubParsersAction) -> None: # no
     parser.set_defaults(func=commit)
 
 
-def add_repo_pull_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
+def add_repo_pull_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
     """Add clowder repo pull parser
 
     :param argparse._SubParsersAction subparsers: Subparsers action to add parser to
@@ -105,7 +105,7 @@ def add_repo_pull_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
     parser.set_defaults(func=pull)
 
 
-def add_repo_push_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
+def add_repo_push_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
     """Add clowder repo push parser
 
     :param argparse._SubParsersAction subparsers: Subparsers action to add parser to
@@ -115,7 +115,7 @@ def add_repo_push_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
     parser.set_defaults(func=push)
 
 
-def add_repo_run_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
+def add_repo_run_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
     """Add clowder repo run parser
 
     :param argparse._SubParsersAction subparsers: Subparsers action to add parser to
@@ -130,7 +130,7 @@ def add_repo_run_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
     parser.set_defaults(func=run)
 
 
-def add_repo_status_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
+def add_repo_status_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
     """Add clowder repo status parser
 
     :param argparse._SubParsersAction subparsers: Subparsers action to add parser to
@@ -161,7 +161,7 @@ def checkout(args) -> None:
 @print_clowder_name
 @clowder_git_repo_required
 @print_clowder_repo_status
-def clean(args) -> None: # noqa
+def clean(args) -> None:  # noqa
     """Clowder repo clean command private implementation"""
 
     clowder_repo.clean()
@@ -180,7 +180,7 @@ def commit(args) -> None:
 @clowder_git_repo_required
 @network_connection_required
 @print_clowder_repo_status_fetch
-def pull(args) -> None: # noqa
+def pull(args) -> None:  # noqa
     """Clowder repo pull command private implementation"""
 
     clowder_repo.pull()
@@ -190,7 +190,7 @@ def pull(args) -> None: # noqa
 @clowder_git_repo_required
 @network_connection_required
 @print_clowder_repo_status_fetch
-def push(args) -> None: # noqa
+def push(args) -> None:  # noqa
     """Clowder repo push command private implementation"""
 
     clowder_repo.push()
@@ -208,7 +208,7 @@ def run(args) -> None:
 @print_clowder_name
 @clowder_repo_required
 @print_clowder_repo_status
-def status(args) -> None: # noqa
+def status(args) -> None:  # noqa
     """Clowder repo status command entry point"""
 
     if ENVIRONMENT.clowder_git_repo_dir is not None:

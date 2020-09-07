@@ -116,7 +116,7 @@ class Config(object):
             return ('all',)  # noqa
 
         if self.current_clowder_config.projects is None:
-            return ('all',) # noqa
+            return ('all',)  # noqa
 
         return self.current_clowder_config.projects
 

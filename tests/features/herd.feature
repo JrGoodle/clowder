@@ -833,7 +833,7 @@ Feature: clowder herd
         | black-cats/sasha  | master       | pytest       |
 
 #    FIXME: Needs correct implementation
-#    @cats @fail @write @ssh @debug
+#    @cats @fail @write @ssh
 #    Scenario Outline: herd local exists, remote exists, no tracking, different commits
 #        Given cats example is initialized and herded with ssh
 #        And linked test-branch-ssh clowder version

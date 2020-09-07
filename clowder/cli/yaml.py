@@ -15,7 +15,7 @@ from clowder.util.yaml import print_clowder_yaml, yaml_string
 from .util import add_parser_arguments
 
 
-def add_yaml_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
+def add_yaml_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
     """Add clowder yaml parser
 
     :param argparse._SubParsersAction subparsers: Subparsers action to add parser to

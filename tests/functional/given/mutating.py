@@ -286,7 +286,7 @@ def given_directory_behind_ahead_upstream_num_commits_test_branch(tmp_path: Path
     util.set_up_behind_ahead_no_confilct(path, local, remote, number_behind, number_ahead, scenario_info)
 
 
-@given("project at <directory> is behind upstream <test_branch> by <number_behind> and ahead by <number_ahead> with conflict") # noqa
+@given("project at <directory> is behind upstream <test_branch> by <number_behind> and ahead by <number_ahead> with conflict")  # noqa
 def given_directory_behind_ahead_upstream_num_commits_test_branch_conflict(tmp_path: Path, directory: str,
                                                                            test_branch: str, number_behind: str,
                                                                            number_ahead: str,

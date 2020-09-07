@@ -36,7 +36,7 @@ from clowder.logging import LOG_DEBUG
 clowder_parser: Optional[argparse.ArgumentParser] = None
 
 
-def clowder_help(args): # noqa
+def clowder_help(args):  # noqa
     """Clowder help handler"""
 
     clowder_parser.print_help()

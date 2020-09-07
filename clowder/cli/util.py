@@ -10,7 +10,7 @@ import argparse
 from typing import List, Tuple, Union
 
 
-Parser = Union[argparse.ArgumentParser, argparse._MutuallyExclusiveGroup, argparse._ArgumentGroup] # noqa
+Parser = Union[argparse.ArgumentParser, argparse._MutuallyExclusiveGroup, argparse._ArgumentGroup]  # noqa
 Arguments = List[Tuple[list, dict]]
 
 

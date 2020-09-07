@@ -19,7 +19,7 @@ from clowder.util.connectivity import network_connection_required
 from .util import add_parser_arguments
 
 
-def add_init_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
+def add_init_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
 
     arguments = [
         (['url'], dict(metavar='<url>', help='url of repo containing clowder yaml file')),

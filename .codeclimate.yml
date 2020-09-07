@@ -28,13 +28,13 @@ checks:
       threshold: 5
   complex-logic:
     config:
-      threshold: 10
+      threshold: 25
   file-lines:
     config:
       threshold: 1000
   method-complexity:
     config:
-      threshold: 10
+      threshold: 20
   method-count:
     config:
       threshold: 30
@@ -49,10 +49,10 @@ checks:
       threshold: 4
   similar-code:
     config:
-      threshold: 4 # language-specific defaults. an override will affect all languages.
+      threshold: 10 # language-specific defaults. an override will affect all languages.
   identical-code:
     config:
-      threshold: 4 # language-specific defaults. an override will affect all languages.
+      threshold: 10 # language-specific defaults. an override will affect all languages.
 
 # exclude_patterns:
 #   - "tests/"

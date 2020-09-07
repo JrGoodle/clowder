@@ -20,7 +20,7 @@ from clowder.util.decorators import (
 from .util import add_parser_arguments
 
 
-def add_diff_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
+def add_diff_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
     """Add clowder diff parser
 
     :param argparse._SubParsersAction subparsers: Subparsers action to add parser to

@@ -23,7 +23,7 @@ config_parser: Optional[argparse.ArgumentParser] = None
 config_set_parser: Optional[argparse.ArgumentParser] = None
 
 
-def add_config_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
+def add_config_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
     """Add clowder config parser
 
     :param argparse._SubParsersAction subparsers: Subparsers action to add parser to
@@ -39,7 +39,7 @@ def add_config_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
     add_config_set_parser(config_subparsers)
 
 
-def add_config_clear_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
+def add_config_clear_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
     """Add clowder config clear parser
 
     :param argparse._SubParsersAction subparsers: Subparsers action to add parser to
@@ -68,7 +68,7 @@ def add_config_clear_parser(subparsers: argparse._SubParsersAction) -> None: # n
     protocol_parser.set_defaults(func=config_clear_protocol)
 
 
-def add_config_get_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
+def add_config_get_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
     """Add clowder config get parser
 
     :param argparse._SubParsersAction subparsers: Subparsers action to add parser to
@@ -79,7 +79,7 @@ def add_config_get_parser(subparsers: argparse._SubParsersAction) -> None: # noq
     config_get_parser.set_defaults(func=config_get_all)
 
 
-def add_config_set_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
+def add_config_set_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
     """Add clowder config set parser
 
     :param argparse._SubParsersAction subparsers: Subparsers action to add parser to
@@ -126,7 +126,7 @@ def add_config_set_parser(subparsers: argparse._SubParsersAction) -> None: # noq
 
 @valid_clowder_yaml_required
 @print_clowder_name
-def config_clear_all(args) -> None: # noqa
+def config_clear_all(args) -> None:  # noqa
     """Clowder config clear all command entry point"""
 
     print(' - Clear all config values')
@@ -139,7 +139,7 @@ def config_clear_all(args) -> None: # noqa
 
 @valid_clowder_yaml_required
 @print_clowder_name
-def config_clear_jobs(args) -> None: # noqa
+def config_clear_jobs(args) -> None:  # noqa
     """Clowder config clear jobs command entry point"""
 
     print(' - Clear jobs config value')
@@ -152,7 +152,7 @@ def config_clear_jobs(args) -> None: # noqa
 
 @valid_clowder_yaml_required
 @print_clowder_name
-def config_clear_projects(args) -> None: # noqa
+def config_clear_projects(args) -> None:  # noqa
     """Clowder config clear projects command entry point"""
 
     print(' - Clear projects config value')
@@ -165,7 +165,7 @@ def config_clear_projects(args) -> None: # noqa
 
 @valid_clowder_yaml_required
 @print_clowder_name
-def config_clear_protocol(args) -> None: # noqa
+def config_clear_protocol(args) -> None:  # noqa
     """Clowder config clear protocol command entry point"""
 
     print(' - Clear protocol config value')
@@ -178,7 +178,7 @@ def config_clear_protocol(args) -> None: # noqa
 
 @valid_clowder_yaml_required
 @print_clowder_name
-def config_clear_rebase(args) -> None: # noqa
+def config_clear_rebase(args) -> None:  # noqa
     """Clowder config clear rebase command entry point"""
 
     print(' - Clear rebase config value')
@@ -191,20 +191,20 @@ def config_clear_rebase(args) -> None: # noqa
 
 @valid_clowder_yaml_required
 @print_clowder_name
-def config_get_all(args) -> None: # noqa
+def config_get_all(args) -> None:  # noqa
     """Clowder config get all command entry point"""
 
     config = _config(print_newline=False)
     config.current_clowder_config.print_configuration()
 
 
-def config_help(args): # noqa
+def config_help(args):  # noqa
     """Clowder config help handler"""
 
     config_parser.print_help()
 
 
-def config_help_set(args): # noqa
+def config_help_set(args):  # noqa
     """Clowder config set help handler"""
 
     config_set_parser.print_help()
@@ -212,7 +212,7 @@ def config_help_set(args): # noqa
 
 @valid_clowder_yaml_required
 @print_clowder_name
-def config_set_jobs(args) -> None: # noqa
+def config_set_jobs(args) -> None:  # noqa
     """Clowder config set jobs command entry point"""
 
     print(' - Set jobs config value')
@@ -251,7 +251,7 @@ def config_set_protocol(args) -> None:
 
 @valid_clowder_yaml_required
 @print_clowder_name
-def config_set_rebase(args) -> None: # noqa
+def config_set_rebase(args) -> None:  # noqa
     """Clowder config set rebase command entry point"""
 
     print(' - Set rebase config value')
@@ -273,7 +273,7 @@ def _config(print_newline: bool = True) -> Config:
 
     try:
         return Config(CLOWDER_CONTROLLER.name, CLOWDER_CONTROLLER.project_choices, raise_exceptions=True)
-    except: # noqa
+    except:  # noqa
         if print_newline:
             print()
         raise

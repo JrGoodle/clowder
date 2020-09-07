@@ -20,7 +20,7 @@ from clowder.util.decorators import (
 from .util import add_parser_arguments
 
 
-def add_branch_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
+def add_branch_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
     """Add clowder branch parser
 
     :param argparse._SubParsersAction subparsers: Subparsers action to add parser to

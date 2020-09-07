@@ -29,7 +29,7 @@ from clowder.util.decorators import (
 from .util import add_parser_arguments
 
 
-def add_prune_parser(subparsers: argparse._SubParsersAction): # noqa
+def add_prune_parser(subparsers: argparse._SubParsersAction):  # noqa
     """Add clowder prune parser
 
     :param argparse._SubParsersAction subparsers: Subparsers action to add parser to

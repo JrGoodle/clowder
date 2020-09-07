@@ -24,7 +24,7 @@ from clowder.util.yaml import save_yaml_file
 from .util import add_parser_arguments
 
 
-def add_save_parser(subparsers: argparse._SubParsersAction) -> None: # noqa
+def add_save_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
 
     arguments = [
         (['version'], dict(help='version to save', metavar='<version>'))

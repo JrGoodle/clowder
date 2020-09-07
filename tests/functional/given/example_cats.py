@@ -38,7 +38,7 @@ def given_cats_init_branch_yaml_validation(tmp_path: Path, cats_init_yaml_valida
     scenario_info.branch = "yaml-validation"
 
 
-# @given(parsers.parse("cats example is initialized and herded to branch yaml-validation and version test-empty-project")) # noqa
+# @given(parsers.parse("cats example is initialized and herded to branch yaml-validation and version test-empty-project"))  # noqa
 # def given_cats_init_yaml_validation_herd_test_empty_project(tmp_path: Path,
 #                                                             cats_init_yaml_validation_herd_test_empty_project,
 #                                                             test_info: TestInfo) -> None:

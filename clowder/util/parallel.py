@@ -59,7 +59,7 @@ if os.name == "posix":
 
         project.run(commands, ignore_errors, parallel=True)
 
-    def async_callback(val) -> None: # noqa
+    def async_callback(val) -> None:  # noqa
         """Increment async progress bar
 
         :param val: Dummy parameter to satisfy callback interface
@@ -75,7 +75,7 @@ if os.name == "posix":
         .. note:: Implementation source https://stackoverflow.com/a/45259908
         """
 
-        def sig_int(signal_num, frame) -> None: # noqa
+        def sig_int(signal_num, frame) -> None:  # noqa
             """Signal handler
 
             :param signal_num: Dummy parameter to satisfy callback interface
@@ -216,21 +216,21 @@ if os.name == "posix":
             clowder_pool.close()
             clowder_pool.join()
 else:
-    def forall_parallel(commands: List[str], projects: Tuple[Project, ...], # noqa
-                        jobs: int, ignore_errors: bool) -> None: # noqa
+    def forall_parallel(commands: List[str], projects: Tuple[Project, ...],  # noqa
+                        jobs: int, ignore_errors: bool) -> None:  # noqa
         """Stub for non-posix forall parallel command"""
 
         ClowderError(ClowderErrorType.PARALLEL_COMMAND_UNAVAILABLE, fmt.error_parallel_commands_unavailable())
 
 
-    def herd_parallel(projects: Tuple[Project, ...], jobs: int, branch: Optional[str] = None, # noqa
-                      tag: Optional[str] = None, depth: Optional[int] = None, rebase: bool = False) -> None: # noqa
+    def herd_parallel(projects: Tuple[Project, ...], jobs: int, branch: Optional[str] = None,  # noqa
+                      tag: Optional[str] = None, depth: Optional[int] = None, rebase: bool = False) -> None:  # noqa
         """Stub for non-posix herd parallel command"""
 
         ClowderError(ClowderErrorType.PARALLEL_COMMAND_UNAVAILABLE, fmt.error_parallel_commands_unavailable())
 
-    def reset_parallel(projects: Tuple[Project, ...], jobs: int, # noqa
-                       timestamp_project: Optional[str] = None) -> None: # noqa
+    def reset_parallel(projects: Tuple[Project, ...], jobs: int,  # noqa
+                       timestamp_project: Optional[str] = None) -> None:  # noqa
         """Stub for non-posix reset parallel command"""
 
         ClowderError(ClowderErrorType.PARALLEL_COMMAND_UNAVAILABLE, fmt.error_parallel_commands_unavailable())

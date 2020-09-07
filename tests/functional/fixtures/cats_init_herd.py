@@ -41,7 +41,7 @@ def cats_init_herd_ssh_session(tmp_path_factory) -> Path:
 
 
 # @fixture
-# def cats_init_yaml_validation_herd_test_empty_project(tmp_path: Path, cats_init_yaml_validation_herd_test_empty_project_session: Path) -> None: # noqa
+# def cats_init_yaml_validation_herd_test_empty_project(tmp_path: Path, cats_init_yaml_validation_herd_test_empty_project_session: Path) -> None:  # noqa
 #     util.copy_directory(cats_init_yaml_validation_herd_test_empty_project_session, to=tmp_path)
 #     # TODO: Remove once clowder.yml is relative symlink
 #     symlink = util.valid_clowder_symlink(tmp_path)

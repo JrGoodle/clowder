@@ -27,7 +27,7 @@ from clowder.util.parallel import reset_parallel
 from .util import add_parser_arguments
 
 
-def add_reset_parser(subparsers: argparse._SubParsersAction): # noqa
+def add_reset_parser(subparsers: argparse._SubParsersAction):  # noqa
     """Add clowder reset parser
 
     :param argparse._SubParsersAction subparsers: Subparsers action to add parser to
