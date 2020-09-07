@@ -1,12 +1,12 @@
 version: "2"
 
-engines:
-  pep8:
-    enabled: true
-  shellcheck:
-    enabled: true
-  sonar-python:
-    enabled: true
+# engines:
+#   pep8:
+#     enabled: true
+#   shellcheck:
+#     enabled: true
+#   sonar-python:
+#     enabled: true
   # fixme:
   #   enabled: true
   # TODO: https://docs.codeclimate.com/docs/radon
