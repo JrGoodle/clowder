@@ -182,7 +182,7 @@ def delete_remote_branch(path: Path, branch: str, remote: str = "origin") -> [Co
     results.append(result)
     if not remote_branch_exists(path, branch, remote):
         return results
-    result = run_command(f"git push {remote} -D {branch}", path)
+    result = run_command(f"git push {remote} --delete {branch}", path)
     results.append(result)
     assert not remote_branch_exists(path, branch)
     return results
