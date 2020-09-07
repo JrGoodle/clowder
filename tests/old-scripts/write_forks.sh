@@ -299,3 +299,86 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
     }
     test_start_prune_forks
 fi
+
+test_clean_submodules_untracked() {
+    print_single_separator
+    echo "TEST: Clean untracked files in submodules"
+    begin_command
+    $COMMAND link submodules || exit 1
+    end_command
+    begin_command
+    $COMMAND herd $PARALLEL || exit 1
+    end_command
+    for project in "${submodule_projects[@]}"; do
+        pushd $project || exit 1
+        touch newfile
+        mkdir something
+        touch something/something
+        test_directory_exists 'something'
+        test_file_exists 'something/something'
+        test_file_exists 'newfile'
+        popd || exit 1
+    done
+
+    begin_command
+    $COMMAND clean -r || exit 1
+    end_command
+
+    for project in "${submodule_projects[@]}"; do
+        pushd $project || exit 1
+        test_no_directory_exists 'something'
+        test_no_file_exists 'something/something'
+        test_no_file_exists 'newfile'
+        popd || exit 1
+    done
+
+    clowder link || exit 1
+}
+test_clean_submodules_untracked
+
+test_clean_submodules_dirty() {
+    print_single_separator
+    echo "TEST: Clean dirty submodules"
+    begin_command
+    $COMMAND link submodules || exit 1
+    end_command
+    begin_command
+    $COMMAND herd $PARALLEL || exit 1
+    end_command
+    for project in "${submodule_projects[@]}"; do
+        pushd $project || exit 1
+        touch newfile
+        mkdir something
+        touch something/something
+        echo "TEST: Create branch"
+        git checkout -b something || exit 1
+        git add newfile something || exit 1
+        test_git_dirty
+        test_branch something
+        test_directory_exists 'something'
+        test_file_exists 'something/something'
+        test_file_exists 'newfile'
+        popd || exit 1
+    done
+
+    begin_command
+    $COMMAND clean -r || exit 1
+    end_command
+
+    for project in "${submodule_projects[@]}"; do
+        pushd $project || exit 1
+        test_head_detached
+        test_no_directory_exists 'something'
+        test_no_file_exists 'something/something'
+        test_no_file_exists 'newfile'
+        git checkout master || exit 1
+        echo "TEST: Delete branch"
+        git branch -D something || exit 1
+        popd || exit 1
+    done
+
+    begin_command
+    $COMMAND link || exit 1
+    end_command
+}
+test_clean_submodules_dirty

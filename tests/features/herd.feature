@@ -203,7 +203,27 @@ Feature: clowder herd
         | black-cats/sasha  | 775979e0b1a7f753131bf16a4794c851c67108d8 |
 
     @submodules @cats
-    Scenario Outline: herd submodules recursive enabled check projects
+    Scenario Outline: herd submodules recursive enabled directories
+        Given cats example is initialized
+        And <directory> doesn't exist
+        And linked submodules clowder version
+        When I run 'clowder herd'
+        Then the command succeeds
+        And project at <directory> exists
+
+        Examples:
+        | directory         |
+        | mu                |
+        | mu/ash            |
+        | mu/ash/duffy      |
+        | duke              |
+        | black-cats/kishka |
+        | black-cats/kit    |
+        | black-cats/sasha  |
+        | black-cats/june   |
+
+    @submodules @cats
+    Scenario Outline: herd submodules recursive enabled git projects
         Given cats example is initialized
         And <directory> doesn't exist
         And linked submodules clowder version

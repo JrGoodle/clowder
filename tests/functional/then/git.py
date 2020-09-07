@@ -232,6 +232,14 @@ def then_directory_has_rebase_in_progress(tmp_path: Path, directory: str) -> Non
     assert util.is_rebase_in_progress(path)
 
 
+@then(parsers.parse("repo at {directory} has no rebase in progress"))
+@then(parsers.parse("project at {directory} has no rebase in progress"))
+@then("project at <directory> has no rebase in progress")
+def then_directory_has_no_rebase_in_progress(tmp_path: Path, directory: str) -> None:
+    path = tmp_path / directory
+    assert not util.is_rebase_in_progress(path)
+
+
 @then("project at <directory> has rebased commits in <branch> in the correct order")
 def then_check_directory_rebased_commit_messages_correct_order(tmp_path: Path, directory: str, branch: str,
                                                                scenario_info: ScenarioInfo) -> None:

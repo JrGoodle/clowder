@@ -469,3 +469,24 @@ Feature: clowder clean
         | black-cats/kit    | master | something.txt | black-cats/kit/something    |
         | black-cats/sasha  | master | something.txt | black-cats/sasha/something  |
         | black-cats/june   | master | something.txt | black-cats/june/something   |
+
+    Scenario Outline: clean abort rebase in progress
+        Given cats example is initialized and herded
+        And cats example projects have tracking branch <test_branch>
+        And project at <directory> checked out <test_branch>
+        And project at <directory> on <test_branch> has rebase in progress
+        And project at <directory> is dirty
+        When I run 'clowder clean'
+        Then the command succeeds
+        And project at <directory> has no rebase in progress
+        And project at <directory> is clean
+        And project at <directory> is on <test_branch>
+
+        Examples:
+        | directory         | test_branch |
+        | mu                | pytest      |
+        | duke              | pytest      |
+        | black-cats/kishka | pytest      |
+        | black-cats/kit    | pytest      |
+        | black-cats/sasha  | pytest      |
+        | black-cats/june   | pytest      |
