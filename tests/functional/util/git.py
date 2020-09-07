@@ -89,6 +89,7 @@ def lfs_hooks_installed(path: Path) -> bool:
 
 
 def lfs_filters_installed(path: Path) -> bool:
+    list_git_config(path)  # DEBUG
     results = []
     result = run_command("git config --get filter.lfs.smudge", path)
     results.append(result)
@@ -127,7 +128,7 @@ def is_lfs_file_not_pointer(path: Path, file: str) -> bool:
 
 
 def list_git_config(path: Path) -> None:
-    result = run_command("git config --list --show-origin" ,path)
+    result = run_command("git config --list --show-origin", path)
     print(result.stdout)
 
 
