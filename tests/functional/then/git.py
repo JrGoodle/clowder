@@ -10,8 +10,16 @@ from tests.functional.util import ScenarioInfo
 
 @then("project at <directory> is a git repository")
 @then(parsers.parse("directory at {directory} is a git repository"))
-def then_is_git_repo(tmp_path: Path, directory: str) -> None:
+def then_project_dir_is_git_repo(tmp_path: Path, directory: str) -> None:
     path = tmp_path / directory
+    assert path.exists()
+    assert path.is_dir()
+    assert util.has_git_directory(path)
+
+
+@then("<test_directory> is a git repository")
+def then_test_dir_is_git_repo(tmp_path: Path, test_directory: str) -> None:
+    path = tmp_path / test_directory
     assert path.exists()
     assert path.is_dir()
     assert util.has_git_directory(path)
@@ -19,8 +27,16 @@ def then_is_git_repo(tmp_path: Path, directory: str) -> None:
 
 @then("project at <directory> is not a git repository")
 @then(parsers.parse("directory at {directory} is not a git repository"))
-def then_is_not_git_repo(tmp_path: Path, directory: str) -> None:
+def then_project_dir_is_not_git_repo(tmp_path: Path, directory: str) -> None:
     path = tmp_path / directory
+    assert path.exists()
+    assert path.is_dir()
+    assert not util.has_git_directory(path)
+
+
+@then("<test_directory> is not a git repository")
+def then_test_dir_is_not_git_repo(tmp_path: Path, test_directory: str) -> None:
+    path = tmp_path / test_directory
     assert path.exists()
     assert path.is_dir()
     assert not util.has_git_directory(path)

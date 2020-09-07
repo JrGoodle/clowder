@@ -196,3 +196,48 @@ Feature: clowder clean
         | black-cats/kit    | master | something.txt | black-cats/kit/something    |
         | black-cats/sasha  | master | something.txt | black-cats/sasha/something  |
         | black-cats/june   | master | something.txt | black-cats/june/something   |
+
+    Scenario Outline: clean untracked git directory
+        Given cats example is initialized and herded
+        And cloned cats repo in <directory>
+        And <test_directory> exists
+        And <test_directory> is a git repository
+        And project at <directory> is on <branch>
+        And project at <directory> is dirty
+        When I run 'clowder clean'
+        Then the command succeeds
+        And <test_directory> exists
+        And <test_directory> is a git repository
+        And project at <directory> is dirty
+        And project at <directory> is on <branch>
+
+        Examples:
+        | directory         | branch | test_directory         |
+        | mu                | knead  | mu/cats                |
+        | duke              | purr   | duke/cats              |
+        | black-cats/kishka | master | black-cats/kishka/cats |
+        | black-cats/kit    | master | black-cats/kit/cats    |
+        | black-cats/sasha  | master | black-cats/sasha/cats  |
+        | black-cats/june   | master | black-cats/june/cats   |
+
+    Scenario Outline: clean -df untracked git directory
+        Given cats example is initialized and herded
+        And cloned cats repo in <directory>
+        And <test_directory> exists
+        And <test_directory> is a git repository
+        And project at <directory> is on <branch>
+        And project at <directory> is dirty
+        When I run 'clowder clean -fd'
+        Then the command succeeds
+        And <test_directory> doesn't exist
+        And project at <directory> is clean
+        And project at <directory> is on <branch>
+
+        Examples:
+        | directory         | branch | test_directory         |
+        | mu                | knead  | mu/cats                |
+        | duke              | purr   | duke/cats              |
+        | black-cats/kishka | master | black-cats/kishka/cats |
+        | black-cats/kit    | master | black-cats/kit/cats    |
+        | black-cats/sasha  | master | black-cats/sasha/cats  |
+        | black-cats/june   | master | black-cats/june/cats   |

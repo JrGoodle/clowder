@@ -119,3 +119,11 @@ def given_directory_has_tracking_branch(tmp_path: Path, directory: str, test_bra
 def given_directory_has_no_tracking_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
     path = tmp_path / directory
     assert not util.tracking_branch_exists(path, test_branch)
+
+
+@given("<test_directory> is a git repository")
+def given_test_dir_is_git_repo(tmp_path: Path, test_directory: str) -> None:
+    path = tmp_path / test_directory
+    assert path.exists()
+    assert path.is_dir()
+    assert util.has_git_directory(path)

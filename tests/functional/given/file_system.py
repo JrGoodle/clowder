@@ -87,7 +87,15 @@ def given_two_files_do_not_exist(tmp_path: Path, filename_1: str, filename_2: st
 @given("<directory> exists")
 def given_has_directory(tmp_path: Path, directory: str) -> None:
     path = tmp_path / directory
-    assert not path.exists()
+    assert path.exists()
+    assert path.is_dir()
+
+
+@given("<test_directory> exists")
+def given_has_test_directory(tmp_path: Path, test_directory: str) -> None:
+    path = tmp_path / test_directory
+    assert path.exists()
+    assert path.is_dir()
 
 
 @given(parsers.parse("{directory} directory doesn't exist"))

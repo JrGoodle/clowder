@@ -284,39 +284,39 @@ test_clean_abort_rebase
 # }
 # test_clean_d
 
-test_clean_f() {
-    print_single_separator
-    echo "TEST: Clean git directories"
+# test_clean_f() {
+#     print_single_separator
+#     echo "TEST: Clean git directories"
 
-    begin_command
-    $COMMAND link || exit 1
-    end_command
-    begin_command
-    $COMMAND herd $PARALLEL || exit 1
-    end_command
+#     begin_command
+#     $COMMAND link || exit 1
+#     end_command
+#     begin_command
+#     $COMMAND herd $PARALLEL || exit 1
+#     end_command
 
-    pushd mu || exit 1
-    git clone https://github.com/JrGoodle/cats.git
-    test_directory_exists 'cats'
-    popd || exit 1
+#     pushd mu || exit 1
+#     git clone https://github.com/JrGoodle/cats.git
+#     test_directory_exists 'cats'
+#     popd || exit 1
 
-    begin_command
-    $COMMAND clean || exit 1
-    end_command
+#     begin_command
+#     $COMMAND clean || exit 1
+#     end_command
 
-    pushd mu || exit 1
-    test_directory_exists 'cats'
-    popd || exit 1
+#     pushd mu || exit 1
+#     test_directory_exists 'cats'
+#     popd || exit 1
 
-    begin_command
-    $COMMAND clean -fd || exit 1
-    end_command
+#     begin_command
+#     $COMMAND clean -fd || exit 1
+#     end_command
 
-    pushd mu || exit 1
-    test_no_directory_exists 'cats'
-    popd || exit 1
-}
-test_clean_f
+#     pushd mu || exit 1
+#     test_no_directory_exists 'cats'
+#     popd || exit 1
+# }
+# test_clean_f
 
 test_clean_X() {
     print_single_separator

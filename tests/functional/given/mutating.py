@@ -176,6 +176,16 @@ def given_did_create_file_in_test_directory(tmp_path: Path, filename: str, test_
     assert path.exists()
 
 
+@given("cloned cats repo in <directory>")
+def given_created_git_dir_in_dir(tmp_path: Path, directory: str) -> None:
+    path = tmp_path / directory
+    util.run_command("git clone https://github.com/JrGoodle/cats.git", path)
+    cats_dir = path / "cats"
+    assert cats_dir.exists()
+    assert cats_dir.is_dir()
+    assert util.has_git_directory(cats_dir)
+
+
 @given(parsers.parse("repo at {directory} created a new commit"))
 @given(parsers.parse("project at {directory} created a new commit"))
 @given("project at <directory> created a new commit")
