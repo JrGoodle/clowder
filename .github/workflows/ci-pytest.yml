@@ -44,7 +44,7 @@ jobs:
         pwd
         ls -al
     - name: Run pytest functional tests
-      run: script/test "-n auto -m 'not ssh and not write and not offline and not lfs'"
+      run: script/test "-n auto -m 'not ssh and not write and not offline'"
     - uses: codecov/codecov-action@v1
       with:
         file: build/coverage/.coverage
