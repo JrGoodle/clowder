@@ -188,24 +188,34 @@ def delete_local_branch(path: Path, branch: str) -> CompletedProcess:
 
 def create_remote_branch(path: Path, branch: str, remote: str = "origin") -> List[CompletedProcess]:
     results = []
+    if remote_branch_exists(path, branch, remote):
+        results += delete_remote_branch(path, branch, remote)
     result = create_local_branch(path, branch)
     results.append(result)
     result = run_command(f"git push {remote} {branch}", path)
     results.append(result)
     result = delete_local_branch(path, branch)
     results.append(result)
+    result = fetch_prune(path)
+    results.append(result)
     assert not local_branch_exists(path, branch)
     assert remote_branch_exists(path, branch, remote)
     return results
 
 
+def fetch_prune(path: Path) -> CompletedProcess:
+    return run_command(f"git fetch --prune", path)
+
+
 def delete_remote_branch(path: Path, branch: str, remote: str = "origin") -> [CompletedProcess]:
     results = []
-    result = run_command(f"git fetch --prune", path)
+    result = fetch_prune(path)
     results.append(result)
     if not remote_branch_exists(path, branch, remote):
         return results
-    result = run_command(f"git push {remote} --delete {branch}", path)
+    result = run_command(f"git push {remote} --force --delete {branch}", path)
+    results.append(result)
+    result = fetch_prune(path)
     results.append(result)
     assert not remote_branch_exists(path, branch)
     return results
@@ -216,6 +226,8 @@ def create_tracking_branch(path: Path, branch: str, remote: str = "origin") -> L
     result = create_local_branch(path, branch)
     results.append(result)
     result = run_command(f"git push -u {remote} {branch}", path)
+    results.append(result)
+    result = fetch_prune(path)
     results.append(result)
     assert local_branch_exists(path, branch)
     assert remote_branch_exists(path, branch)
@@ -235,9 +247,14 @@ def local_branch_exists(path: Path, branch: str) -> bool:
 
 
 def remote_branch_exists(path: Path, branch: str, remote: str = "origin") -> bool:
-    result = run_command(f"git ls-remote --heads {remote} {branch} | wc -l | tr -d '[:space:]'", path)
-    output: str = result.stdout
-    return output.strip() == "1"
+    # result = run_command(f"git ls-remote --heads {remote} {branch} | wc -l | tr -d '[:space:]'", path)
+    # output: str = result.stdout
+    # return output.strip() == "1"
+    fetch_prune(path)
+    repo = Repo(path)
+    origin = repo.remotes[remote]
+    refs = origin.refs
+    return any(r.remote_head == branch for r in refs)
 
 
 def tracking_branch_exists(path: Path, branch: str) -> bool:
@@ -326,14 +343,16 @@ def number_commits_behind(path: Path, start: str, end: str) -> int:
     return number_of_commits_between_refs(path, start, end)
 
 
-def push_to_remote_branch(path: Path, branch: str, remote: str = "origin") -> None:
+def push_to_remote_branch(path: Path, branch: str, remote: str = "origin") -> CompletedProcess:
     repo = Repo(path)
     repo.git.push(remote, f"refs/heads/{branch}:refs/heads/{branch}")
+    return fetch_prune(path)
 
 
-def force_push_to_remote_branch(path: Path, branch: str, remote: str = "origin") -> None:
+def force_push_to_remote_branch(path: Path, branch: str, remote: str = "origin") -> CompletedProcess:
     repo = Repo(path)
     repo.git.push(remote, f"refs/heads/{branch}:refs/heads/{branch}", force=True)
+    return fetch_prune(path)
 
 
 def abort_rebase(path: Path) -> None:
