@@ -301,7 +301,7 @@ def given_directory_behind_ahead_upstream_num_commits_test_branch_conflict(tmp_p
     number_behind = int(number_behind)
     number_ahead = int(number_ahead)
     path = tmp_path / directory
-    util.set_up_behind_ahead_confilct(path, test_branch, number_behind, number_ahead)
+    util.set_up_behind_ahead_conflict(path, test_branch, number_behind, number_ahead)
 
 
 @given(parsers.parse("repo at {directory} created remote branch {test_branch}"))
@@ -374,7 +374,7 @@ def given_directory_deleted_local_branch(tmp_path: Path, directory: str, branch:
 @given("project at <directory> on <test_branch> has rebase in progress")
 def given_directory_has_rebase_in_progress(tmp_path: Path, directory: str, test_branch: str) -> None:
     path = tmp_path / directory
-    util.set_up_behind_ahead_confilct(path, test_branch, 1, 3)
+    util.set_up_behind_ahead_conflict(path, test_branch, 1, 3)
     result = util.run_command("git pull -r", path)
     assert result.returncode != 0
     assert util.is_rebase_in_progress(path)

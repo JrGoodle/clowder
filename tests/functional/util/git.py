@@ -373,7 +373,7 @@ def set_up_behind_ahead_no_confilct(path: Path, local: str, remote: str, number_
     scenario_info.number_commit_messages_ahead = number_ahead
 
 
-def set_up_behind_ahead_confilct(path: Path, branch: str, number_behind: int, number_ahead: int) -> None:
+def set_up_behind_ahead_conflict(path: Path, branch: str, number_behind: int, number_ahead: int) -> None:
     beginning_remote_sha = get_branch_commit_sha(path, branch, "origin")
     beginning_sha = current_head_commit_sha(path)
     create_number_commits(path, number_behind, "something", "something")
