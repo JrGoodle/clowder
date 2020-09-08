@@ -37,12 +37,12 @@ jobs:
       run: |
         git config --global user.email "joe@polka.cat";
         git config --global user.name "GitHub Actions Workflow"
+        sudo git config --system --unset-all filter.lfs.clean
+        sudo git config --system --unset-all filter.lfs.smudge
+        sudo git config --system --unset-all filter.lfs.process
+        sudo git config --system --unset-all filter.lfs.required
     - name: Install clowder
       run: script/update
-    - name: Print environment info
-      run: |
-        pwd
-        ls -al
     - name: Run pytest functional tests
       run: script/test "-n auto -m 'not ssh and not write and not offline'"
     - uses: codecov/codecov-action@v1
