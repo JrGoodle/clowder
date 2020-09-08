@@ -4,9 +4,11 @@ import shutil
 from pathlib import Path
 from typing import Dict, List, Optional
 
+from git import Repo
+
 from .command import run_command
 from .file_system import is_symlink_from_to
-from .git import has_git_directory, is_dirty, is_on_active_branch
+from .git import has_git_directory, is_dirty, is_on_active_branch, delete_remote_branch
 
 
 TestRepoInfo = Dict[str, Dict[str, str]]
@@ -140,6 +142,13 @@ def init_herd_clowder(path: Path, example: str, protocol: str = "https",
         assert has_git_directory(repo_path)
         assert is_on_active_branch(repo_path, branch)
         assert not is_dirty(repo_path)
+        git_repo = Repo(repo_path)
+        origin = git_repo.remotes.origin
+        refs = origin.refs
+        for r in refs:
+            head: str = r.remote_head.strip()
+            if head.startswith("pytest"):
+                origin.push(refspec=f':{head}')
 
     return path
 
