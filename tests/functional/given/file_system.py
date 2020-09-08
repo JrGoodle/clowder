@@ -48,6 +48,23 @@ def given_has_file(tmp_path: Path, filename: str) -> None:
     assert not path.is_symlink()
 
 
+@given("<filename> doesn't exist in <directory>")
+@given(parsers.parse("{filename} file doesn't exist in directory {directory}"))
+def given_has_no_file(tmp_path: Path, filename: str, directory: str) -> None:
+    path = tmp_path / directory / filename
+    assert not path.is_symlink()
+    assert not path.exists()
+
+
+@given("<filename> exists in <directory>")
+@given(parsers.parse("{filename} file exists in directory {directory}"))
+def given_has_file(tmp_path: Path, filename: str, directory: str) -> None:
+    path = tmp_path / directory / filename
+    assert path.exists()
+    assert path.is_file()
+    assert not path.is_symlink()
+
+
 @given(parsers.parse("{filename} is not a symlink"))
 def given_is_not_symlink(tmp_path: Path, filename: str) -> None:
     path = tmp_path / filename

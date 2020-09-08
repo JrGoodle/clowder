@@ -394,51 +394,6 @@ Feature: clowder herd
         | sox       | master      | origin   | https://github.com/JrGoodle/sox.git                |
         | sox       | master      | upstream | https://git.code.sf.net/p/sox/code.git             |
 
-    # TODO: Add tests for groups/projects
-    @misc @upstream @config
-    Scenario Outline: herd upstream remote urls override https config
-        Given misc example is initialized
-        And <directory> doesn't exist
-        And 'clowder config set protocol https' was run
-        When I run 'clowder herd'
-        Then the command succeeds
-        And project at <directory> exists
-        And project at <directory> is a git repository
-        And project at <directory> is on <branch>
-        And project at <directory> has <remote> with <url>
-
-        Examples:
-        | directory | branch      | remote   | url                                                |
-        | djinni    | master      | origin   | https://github.com/JrGoodle/djinni.git             |
-        | djinni    | master      | upstream | https://github.com/dropbox/djinni.git              |
-        | gyp       | fork-branch | origin   | https://github.com/JrGoodle/gyp.git                |
-        | gyp       | fork-branch | upstream | https://chromium.googlesource.com/external/gyp.git |
-        | sox       | master      | origin   | https://github.com/JrGoodle/sox.git                |
-        | sox       | master      | upstream | https://git.code.sf.net/p/sox/code.git             |
-
-    # TODO: Add tests for groups/projects
-    @misc @upstream @config @ssh
-    Scenario Outline: herd upstream remote urls override ssh config
-        Given misc example is initialized
-        And linked https clowder version
-        And <directory> doesn't exist
-        And 'clowder config set protocol ssh' was run
-        When I run 'clowder herd'
-        Then the command succeeds
-        And project at <directory> exists
-        And project at <directory> is a git repository
-        And project at <directory> is on <branch>
-        And project at <directory> has <remote> with <url>
-
-        Examples:
-        | directory | branch      | remote   | url                                                |
-        | djinni    | master      | origin   | git@github.com:JrGoodle/djinni.git                 |
-        | djinni    | master      | upstream | git@github.com:dropbox/djinni.git                  |
-        | gyp       | fork-branch | origin   | git@github.com:JrGoodle/gyp.git                    |
-        | gyp       | fork-branch | upstream | https://chromium.googlesource.com/external/gyp.git |
-        | sox       | master      | origin   | git@github.com:JrGoodle/sox.git                    |
-        | sox       | master      | upstream | https://git.code.sf.net/p/sox/code.git             |
-
     # TODO: Add tests for logic renaming remotes
 
     @misc @upstream

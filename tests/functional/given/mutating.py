@@ -378,3 +378,19 @@ def given_directory_has_rebase_in_progress(tmp_path: Path, directory: str, test_
     result = util.run_command("git pull -r", path)
     assert result.returncode != 0
     assert util.is_rebase_in_progress(path)
+
+
+@given("test config was copied to clowder repo")
+def given_test_config_copied_to_clowder_repo(shared_datadir: Path, tmp_path: Path) -> None:
+    version = "v0.1"
+    filename = "clowder.config.yml"
+    test_file = shared_datadir / "config" / version / filename
+    path = tmp_path / ".clowder" / "config"
+    new_file = path / filename
+    contents = test_file.read_text()
+    contents = contents.replace("DIRECTORY_PLACEHOLDER", str(tmp_path))
+    if not path.exists():
+        path.mkdir(parents=True)
+    with open(new_file, 'w') as f:
+        f.write(contents)
+    assert new_file.exists()
