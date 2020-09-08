@@ -24,18 +24,18 @@ Feature: clowder checkout command
         Given cats example is initialized and herded
         And project at <directory> created local branch <test_branch>
         And project at <directory> is on <start_branch>
-        When I run 'clowder checkout other'
+        When I run 'clowder checkout pytest-checkout'
         Then the command succeeds
         And project at <directory> is on <test_branch>
 
         Examples:
-        | directory         | start_branch | test_branch |
-        | mu                | knead        | other       |
-        | duke              | purr         | other       |
-        | black-cats/kishka | master       | other       |
-        | black-cats/kit    | master       | other       |
-        | black-cats/sasha  | master       | other       |
-        | black-cats/june   | master       | other       |
+        | directory         | start_branch | test_branch     |
+        | mu                | knead        | pytest-checkout |
+        | duke              | purr         | pytest-checkout |
+        | black-cats/kishka | master       | pytest-checkout |
+        | black-cats/kit    | master       | pytest-checkout |
+        | black-cats/sasha  | master       | pytest-checkout |
+        | black-cats/june   | master       | pytest-checkout |
 
     @subdirectory
     Scenario Outline: checkout default existing local branch from subdirectory
@@ -43,52 +43,52 @@ Feature: clowder checkout command
         And project at <directory> created local branch <test_branch>
         And project at <directory> is on <start_branch>
         When I change to directory black-cats
-        And I run 'clowder checkout other'
+        And I run 'clowder checkout pytest-checkout'
         Then the command succeeds
         And project at <directory> is on <test_branch>
 
         Examples:
-        | directory         | start_branch | test_branch |
-        | mu                | knead        | other       |
-        | duke              | purr         | other       |
-        | black-cats/kishka | master       | other       |
-        | black-cats/kit    | master       | other       |
-        | black-cats/sasha  | master       | other       |
-        | black-cats/june   | master       | other       |
+        | directory         | start_branch | test_branch     |
+        | mu                | knead        | pytest-checkout |
+        | duke              | purr         | pytest-checkout |
+        | black-cats/kishka | master       | pytest-checkout |
+        | black-cats/kit    | master       | pytest-checkout |
+        | black-cats/sasha  | master       | pytest-checkout |
+        | black-cats/june   | master       | pytest-checkout |
 
     Scenario Outline: checkout default existing local branch for project
         Given cats example is initialized and herded
         And project at <directory> created local branch <test_branch>
         And project at <directory> is on <start_branch>
-        When I run 'clowder checkout other mu black-cats/june'
+        When I run 'clowder checkout pytest-checkout mu black-cats/june'
         Then the command succeeds
         And project at <directory> is on <end_branch>
 
         Examples:
-        | directory         | start_branch | end_branch | test_branch |
-        | mu                | knead        | other      | other       |
-        | duke              | purr         | purr       | other       |
-        | black-cats/kishka | master       | master     | other       |
-        | black-cats/kit    | master       | master     | other       |
-        | black-cats/sasha  | master       | master     | other       |
-        | black-cats/june   | master       | other      | other       |
+        | directory         | start_branch | end_branch      | test_branch     |
+        | mu                | knead        | pytest-checkout | pytest-checkout |
+        | duke              | purr         | purr            | pytest-checkout |
+        | black-cats/kishka | master       | master          | pytest-checkout |
+        | black-cats/kit    | master       | master          | pytest-checkout |
+        | black-cats/sasha  | master       | master          | pytest-checkout |
+        | black-cats/june   | master       | pytest-checkout | pytest-checkout |
 
     Scenario Outline: checkout default no local branch
         Given cats example is initialized and herded
         And project at <directory> is on <start_branch>
         And project at <directory> has no local branch <test_branch>
-        When I run 'clowder checkout other'
+        When I run 'clowder checkout pytest-checkout'
         Then the command succeeds
         And project at <directory> is on <start_branch>
 
         Examples:
-        | directory         | start_branch | test_branch |
-        | mu                | knead        | other       |
-        | duke              | purr         | other       |
-        | black-cats/kishka | master       | other       |
-        | black-cats/kit    | master       | other       |
-        | black-cats/sasha  | master       | other       |
-        | black-cats/june   | master       | other       |
+        | directory         | start_branch | test_branch     |
+        | mu                | knead        | pytest-checkout |
+        | duke              | purr         | pytest-checkout |
+        | black-cats/kishka | master       | pytest-checkout |
+        | black-cats/kit    | master       | pytest-checkout |
+        | black-cats/sasha  | master       | pytest-checkout |
+        | black-cats/june   | master       | pytest-checkout |
 
     @offline
     Scenario Outline: checkout offline
@@ -96,17 +96,17 @@ Feature: clowder checkout command
         And project at <directory> is on <start_branch>
         And project at <directory> created local branch <test_branch>
         When the network connection is disabled
-        And I run 'clowder checkout new-branch'
+        And I run 'clowder checkout pytest-checkout'
         And the network connection is enabled
         Then the command succeeds
         And project at <directory> has local branch <test_branch>
         And project at <directory> is on <test_branch>
 
         Examples:
-        | directory         | start_branch | test_branch |
-        | mu                | knead        | new-branch  |
-        | duke              | purr         | new-branch  |
-        | black-cats/kishka | master       | new-branch  |
-        | black-cats/kit    | master       | new-branch  |
-        | black-cats/sasha  | master       | new-branch  |
-        | black-cats/june   | master       | new-branch  |
+        | directory         | start_branch | test_branch     |
+        | mu                | knead        | pytest-checkout |
+        | duke              | purr         | pytest-checkout |
+        | black-cats/kishka | master       | pytest-checkout |
+        | black-cats/kit    | master       | pytest-checkout |
+        | black-cats/sasha  | master       | pytest-checkout |
+        | black-cats/june   | master       | pytest-checkout |
