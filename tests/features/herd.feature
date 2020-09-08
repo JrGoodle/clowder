@@ -685,7 +685,7 @@ Feature: clowder herd
         | black-cats/sasha  |
         | black-cats/june   |
 
-    @cats @internet @write @ssh
+    @cats @internet @write @ssh @debug
     Scenario Outline: herd rebase with conflict
         Given cats example is initialized and herded with ssh
         And linked test-branch-ssh clowder version
