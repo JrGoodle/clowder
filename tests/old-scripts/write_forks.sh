@@ -2,27 +2,27 @@
 
 # set -xv
 
-cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
+# cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
 
-. test_utilities.sh
+# . test_utilities.sh
 
-export all_projects=( 'djinni' \
-                      'gyp' \
-                      'sox' )
+# export all_projects=( 'djinni' \
+#                       'gyp' \
+#                       'sox' )
 
-export master_projects=( 'djinni' \
-                         'sox' )
+# export master_projects=( 'djinni' \
+#                          'sox' )
 
-if [ "$ACCESS_LEVEL" == "write" ]; then
-    print_double_separator
-    echo "TEST: Test clowder start/prune for forks"
+# if [ "$ACCESS_LEVEL" == "write" ]; then
+#     print_double_separator
+#     echo "TEST: Test clowder start/prune for forks"
 
-    cd "$MISC_EXAMPLE_DIR" || exit 1
-    ./clean.sh
-    ./init.sh || exit 1
-    begin_command
-    $COMMAND herd $PARALLEL || exit 1
-    end_command
+#     cd "$MISC_EXAMPLE_DIR" || exit 1
+#     ./clean.sh
+#     ./init.sh || exit 1
+#     begin_command
+#     $COMMAND herd $PARALLEL || exit 1
+#     end_command
 
     test_start_prune_forks() {
         print_single_separator
@@ -377,8 +377,8 @@ test_clean_submodules_dirty() {
         popd || exit 1
     done
 
-    begin_command
-    $COMMAND link || exit 1
-    end_command
-}
-test_clean_submodules_dirty
+#     begin_command
+#     $COMMAND link || exit 1
+#     end_command
+# }
+# test_clean_submodules_dirty

@@ -88,3 +88,34 @@ print_single_separator
 
 _test_valid_yaml 'ls -d test/config/v0.1/*.json'
 _restore_config_file_placeholders 'ls -d test/config/v0.1/*.yml'
+
+test_invalid_config() {
+    echo 'TEST: cats invalid config'
+
+    create_backup_config
+
+    local test_cases
+    test_cases=( $(ls -d $CLOWDER_PROJECT_DIR/test/config/v0.1/invalid/test-*.clowder.config.yml || exit 1) )
+    for test in "${test_cases[@]}"
+    do
+        print_single_separator
+        echo "TEST: Invalid config file $test"
+        copy_invalid_config_file "$test"
+
+        begin_command
+        $COMMAND herd $PARALLEL || exit 1
+        end_command
+        begin_command
+        $COMMAND config get && exit 1
+        end_command
+        begin_command
+        $COMMAND config set rebase && exit 1
+        end_command
+        begin_command
+        $COMMAND config clear && exit 1
+        end_command
+    done
+
+    restore_config_file
+}
+test_invalid_config

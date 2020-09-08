@@ -1,19 +1,19 @@
 #!/usr/bin/env bash
 
-cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
+# cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
 
-. test_utilities.sh
+# . test_utilities.sh
 
-if [ "$ACCESS_LEVEL" == "write" ]; then
-    print_double_separator
-    echo "TEST: Test clowder repo write"
+# if [ "$ACCESS_LEVEL" == "write" ]; then
+#     print_double_separator
+#     echo "TEST: Test clowder repo write"
 
-    cd "$CATS_EXAMPLE_DIR" || exit 1
-    ./clean.sh
-    ./init.sh || exit 1
-    begin_command
-    $COMMAND link ssh || exit 1
-    end_command
+#     cd "$CATS_EXAMPLE_DIR" || exit 1
+#     ./clean.sh
+#     ./init.sh || exit 1
+#     begin_command
+#     $COMMAND link ssh || exit 1
+#     end_command
 
     begin_command
     $COMMAND repo checkout repo-test || exit 1
@@ -85,7 +85,7 @@ if [ "$ACCESS_LEVEL" == "write" ]; then
         popd || exit 1
     }
     test_clowder_repo_commit_pull_push
-fi
+# fi
 
 # TODO: Adapt these tests along with the write ones
 # echo 'TEST: clowder repo add'
