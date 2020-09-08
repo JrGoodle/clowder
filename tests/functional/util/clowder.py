@@ -142,13 +142,15 @@ def init_herd_clowder(path: Path, example: str, protocol: str = "https",
         assert has_git_directory(repo_path)
         assert is_on_active_branch(repo_path, branch)
         assert not is_dirty(repo_path)
-        git_repo = Repo(repo_path)
-        origin = git_repo.remotes.origin
-        refs = origin.refs
-        for r in refs:
-            head: str = r.remote_head.strip()
-            if head.startswith("pytest"):
-                origin.push(refspec=f':{head}')
+        ssh_version = True if version is not None and "ssh" in version else False
+        if protocol == "ssh" or ssh_version:
+            git_repo = Repo(repo_path)
+            origin = git_repo.remotes.origin
+            refs = origin.refs
+            for r in refs:
+                head: str = r.remote_head.strip()
+                if head.startswith("pytest"):
+                    origin.push(refspec=f':{head}')
 
     return path
 
