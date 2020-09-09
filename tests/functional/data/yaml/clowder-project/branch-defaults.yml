@@ -1,7 +1,9 @@
-name: cats
+name: branch-defaults
 
 protocol: https
 
+defaults:
+  branch: knead
+
 clowder:
   - name: JrGoodle/mu
-    branch: knead

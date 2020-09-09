@@ -1,0 +1,11 @@
+name: commit-project
+
+sources:
+  somewhere:
+    url: something
+
+defaults:
+  source: somewhere
+
+clowder:
+  - name: JrGoodle/mu

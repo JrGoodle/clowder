@@ -1,23 +1,7 @@
-name: cats
-
-protocol: https
+name: commit-project
 
 clowder:
   - name: JrGoodle/mu
-    branch: knead
-    groups: [cats]
-  - name: JrGoodle/duke
-    branch: purr
-    groups: [cats]
-  - name: JrGoodle/kit
-    path: black-cats/kit
-    groups: [black-cats]
-  - name: JrGoodle/kishka
-    path: black-cats/kishka
-    groups: [black-cats]
-  - name: JrGoodle/june
-    path: black-cats/june
-    groups: [black-cats]
-  - name: JrGoodle/sasha
-    path: black-cats/sasha
-    groups: [black-cats]
+    source:
+      url: something
+      protocol: https

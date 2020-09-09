@@ -1,0 +1,10 @@
+name: commit-project
+
+sources:
+  somewhere:
+    url: something
+    protocol: https
+
+clowder:
+  - name: JrGoodle/mu
+    source: somewhere
