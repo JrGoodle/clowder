@@ -153,9 +153,9 @@ class ClowderController(object):
         return timestamp
 
     def get_project_sha(self, project_id: int, short: bool = False) -> str:
-        """Return timestamp for project
+        """Return current project commit sha
 
-        :return: Commit timestamp string
+        :return: Current active commit sha
         :rtype: str
         :raise ClowderError:
         """
@@ -164,8 +164,9 @@ class ClowderController(object):
             if project_id == id(project):
                 return project.sha(short=short)
 
-        # FIXME: Use correct error type
-        raise ClowderError(ClowderErrorType.INVALID_PROJECT_STATUS, fmt.error_clone_missing_projects())
+        err = ClowderError(ClowderErrorType.PROJECT_NOT_FOUND, fmt.error_project_not_found())
+        LOG_DEBUG(f"Project with id {project_id} not found", err)
+        raise err
 
     def get_yaml(self, resolved: bool = False) -> dict:
         """Return python object representation of model objects

@@ -7,6 +7,7 @@
 
 from typing import Optional, Union
 
+import clowder.util.formatting as fmt
 from clowder.error import ClowderError, ClowderErrorType
 from clowder.git.util import (
     format_git_branch,
@@ -65,14 +66,12 @@ class Upstream:
                     name = SourceName(str(id(self)))
                     self.source: Optional[Union[Source, SourceName]] = Source(name, source)
                 else:
-                    # TODO: Fix error type
-                    err = ClowderError(ClowderErrorType.CLOWDER_YAML_DUPLICATE_REMOTE_NAME, "Wrong source type")
+                    err = ClowderError(ClowderErrorType.WRONG_SOURCE_TYPE, fmt.error_wrong_source_type())
                     LOG_DEBUG('Wrong source type', err)
                     raise err
             return
 
-        # TODO: Fix error type
-        err = ClowderError(ClowderErrorType.CLOWDER_YAML_DUPLICATE_REMOTE_NAME, "Wrong upstream type")
+        err = ClowderError(ClowderErrorType.WRONG_UPSTREAM_TYPE, fmt.error_wrong_upstream_type())
         LOG_DEBUG('Wrong upstream type', err)
         raise err
 

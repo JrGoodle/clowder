@@ -7,6 +7,7 @@
 
 from typing import List, Optional, Union
 
+import clowder.util.formatting as fmt
 from clowder.error import ClowderError, ClowderErrorType
 from clowder.logging import LOG_DEBUG
 
@@ -34,8 +35,9 @@ class Clowder:
             self.projects: Optional[List[Project]] = [Project(p) for p in yaml]
             self.groups: Optional[List[Group]] = None
         else:
-            # TODO: Create new error type
-            raise ClowderError(ClowderErrorType.YAML_UNKNOWN, "Wrong instance type for group")
+            err = ClowderError(ClowderErrorType.WRONG_GROUP_TYPE, fmt.error_wrong_group_type())
+            LOG_DEBUG("Wrong instance type for group", err)
+            raise err
 
     def get_yaml(self, resolved: bool = False) -> Union[dict, list]:
         """Return python object representation for saving yaml

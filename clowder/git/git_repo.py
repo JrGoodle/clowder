@@ -348,10 +348,10 @@ class GitRepo(object):
         """
 
         try:
-            # FIXME: Probably need to inspect .git hooks
             self.repo.git.config('--get', 'filter.lfs.smudge')
             self.repo.git.config('--get', 'filter.lfs.clean')
             self.repo.git.config('--get', 'filter.lfs.process')
+            self.repo.git.config('--get', 'filter.lfs.required')
         except GitError:
             return False
         else:

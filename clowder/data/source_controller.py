@@ -7,6 +7,7 @@
 
 from typing import Dict, Optional, Set, Union
 
+import clowder.util.formatting as fmt
 from clowder.logging import LOG_DEBUG
 from clowder.error import ClowderError, ClowderErrorType
 
@@ -47,10 +48,8 @@ class SourceController(object):
         """
 
         if self._has_been_validated:
-            # TODO: Update error type
-            message = "Called add_source() but SOURCE_CONTROLLER has already been validated"
-            err = ClowderError(ClowderErrorType.CLOWDER_YAML_SOURCE_NOT_FOUND, message)
-            LOG_DEBUG(message, err)
+            err = ClowderError(ClowderErrorType.SOURCES_ALREADY_VALIDATED, fmt.error_sources_already_validated())
+            LOG_DEBUG("Called add_source() but SOURCE_CONTROLLER has already been validated", err)
             raise err
 
         if source is None:
@@ -62,8 +61,7 @@ class SourceController(object):
             self._source_names.add(source.name)
             self._sources[source.name] = source
         else:
-            # TODO: Fix error type
-            err = ClowderError(ClowderErrorType.CLOWDER_YAML_DUPLICATE_REMOTE_NAME, "Wrong source type")
+            err = ClowderError(ClowderErrorType.WRONG_SOURCE_TYPE, fmt.error_wrong_source_type())
             LOG_DEBUG('Wrong source type', err)
             raise err
 
@@ -76,29 +74,26 @@ class SourceController(object):
         """
 
         if not self._has_been_validated:
-            # TODO: Update error type
-            message = "Called get_source() but SOURCE_CONTROLLER has not been validated"
-            err = ClowderError(ClowderErrorType.CLOWDER_YAML_SOURCE_NOT_FOUND, message)
-            LOG_DEBUG(message, err)
+            err = ClowderError(ClowderErrorType.SOURCES_NOT_VALIDATED, fmt.error_source_not_validated())
+            LOG_DEBUG("Called get_source() but SOURCE_CONTROLLER has not been validated", err)
             raise err
 
         if isinstance(source, SourceName):
-            name = source
+            source_name = source
         elif isinstance(source, Source):
-            name = source.name
+            source_name = source.name
         else:
-            # TODO: Fix error type
-            err = ClowderError(ClowderErrorType.CLOWDER_YAML_DUPLICATE_REMOTE_NAME, "Wrong source type")
+            err = ClowderError(ClowderErrorType.WRONG_SOURCE_TYPE, fmt.error_wrong_source_type())
             LOG_DEBUG('Wrong source type', err)
             raise err
 
-        if name not in self._sources:
-            # TODO: Rename error to SOURCE_NOT_DEFINED
-            err = ClowderError(ClowderErrorType.CLOWDER_YAML_SOURCE_NOT_FOUND, "No source defined")
+        if source_name not in self._sources:
+            err = ClowderError(ClowderErrorType.CLOWDER_YAML_SOURCE_NOT_FOUND,
+                               fmt.error_source_not_defined(source_name.name))
             LOG_DEBUG('Failed to get source', err)
             raise err
 
-        return self._sources[name]
+        return self._sources[source_name]
 
     def get_default_protocol(self) -> str:
         """Returns Source by name
@@ -108,10 +103,8 @@ class SourceController(object):
         """
 
         if not self._has_been_validated:
-            # TODO: Update error type
-            message = "Called get_default_protocol() but SOURCE_CONTROLLER has not been validated"
-            err = ClowderError(ClowderErrorType.CLOWDER_YAML_SOURCE_NOT_FOUND, message)
-            LOG_DEBUG(message, err)
+            err = ClowderError(ClowderErrorType.SOURCES_NOT_VALIDATED, fmt.error_source_not_validated())
+            LOG_DEBUG("Called get_default_protocol() but SOURCE_CONTROLLER has not been validated", err)
             raise err
 
         if self.protocol_override is not None:
@@ -127,10 +120,7 @@ class SourceController(object):
 
         self._has_been_validated = True
         if not any([s.name == name for name, s in self._sources.items()]):
-            # TODO: Update error messages to be more generic so missing source applies to defaults, project, upstream
-            # message = fmt.error_source_not_found(self.defaults.source, ENVIRONMENT.clowder_yaml)
-            message = "SOURCE NOT FOUND"
-            err = ClowderError(ClowderErrorType.CLOWDER_YAML_SOURCE_NOT_FOUND, message)
+            err = ClowderError(ClowderErrorType.CLOWDER_YAML_SOURCE_NOT_FOUND, fmt.error_source_not_defined())
             LOG_DEBUG('Failed to validate sources', err)
             raise err
 

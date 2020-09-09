@@ -8,6 +8,7 @@
 from typing import List, Optional, Union
 from pathlib import Path
 
+import clowder.util.formatting as fmt
 from clowder.error import ClowderError, ClowderErrorType
 from clowder.logging import LOG_DEBUG
 
@@ -53,9 +54,8 @@ class Group:
             self.projects: List[Project] = [Project(p) for p in yaml]
             self._has_projects_key: bool = False
         else:
-            # TODO: Create new error type
-            err = ClowderError(ClowderErrorType.YAML_UNKNOWN, "Wrong instance type for group")
-            LOG_DEBUG('Failed to initialize group', err)
+            err = ClowderError(ClowderErrorType.WRONG_GROUP_TYPE, fmt.error_wrong_group_type())
+            LOG_DEBUG("Wrong instance type for group", err)
             raise err
 
     def get_yaml(self, resolved: bool = False) -> Union[dict, list]:

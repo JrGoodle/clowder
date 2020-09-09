@@ -558,6 +558,54 @@ def error_source_default_not_found(source: str, yml: Path) -> str:
     return "\n".join(messages)
 
 
+def error_project_not_found() -> str:
+    """Format error message for project not found
+
+    :return: Formatted error message for clone missing projects
+    :rtype: str
+    """
+
+    return f"{ERROR} Project not found"
+
+
+def error_wrong_source_type() -> str:
+    """Format error message for wrong source type
+
+    :return: Formatted error message for wrong source type
+    :rtype: str
+    """
+
+    return f"{ERROR} Wrong source type"
+
+
+def error_wrong_group_type() -> str:
+    return f"{ERROR} Wrong group type"
+
+
+def error_sources_already_validated() -> str:
+    return f"{ERROR} Sources have already been validated"
+
+
+def error_source_not_validated() -> str:
+    return f"{ERROR} Sources have not been validated"
+
+
+def error_wrong_upstream_type() -> str:
+    """Format error message for wrong upstream type
+
+    :return: Formatted error message for wrong upstream type
+    :rtype: str
+    """
+
+    return f"{ERROR} Wrong upstream type"
+
+
+def error_source_not_defined(name: Optional[str] = None) -> str:
+    if name is not None:
+        return f"{ERROR} Source {name} not defined"
+    return f"{ERROR} Source not defined"
+
+
 def error_source_not_found(source: str, yml: Path, project: str, upstream: Optional[str] = None) -> str:
     """Return formatted error string for project with unknown source specified
 
