@@ -125,17 +125,6 @@ def given_forall_test_scripts_present(tmp_path: Path, shared_datadir: Path, scen
             assert Path(tmp_path / d / script).exists()
 
 
-@given("yaml test files were copied to clowder directory")
-def given_yaml_test_files_present(shared_datadir: Path, tmp_path: Path) -> None:
-    yaml_dir = shared_datadir / "yaml"
-    path = tmp_path
-    for file in os.listdir(yaml_dir):
-        existing_file = yaml_dir / file
-        shutil.copy(existing_file, path)
-        new_file = path / file
-        assert new_file.exists()
-
-
 @given(parsers.parse("created directory {directory}"))
 @given("created <directory>")
 def given_did_create_directory(tmp_path: Path, directory: str) -> None:

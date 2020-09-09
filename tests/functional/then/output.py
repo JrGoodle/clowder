@@ -14,11 +14,12 @@ def then_command_printed_branch_type(tmp_path: Path, branch_type: str) -> None:
     pass
 
 
-@then(parsers.parse("output matches contents of {filename}"))
-def then_output_matches_contents_of_file(tmp_path: Path, command_results: CommandResults, filename: str) -> None:
+@then(parsers.parse("output matches contents of {filename} test file"))
+def then_output_matches_contents_of_file(shared_datadir: Path, tmp_path: Path,
+                                         command_results: CommandResults, filename: str) -> None:
     assert len(command_results.completed_processes) == 1
     result = command_results.completed_processes[0]
     output: str = util.clean_escape_sequences(result.stdout)
-    test_file = tmp_path / filename
+    test_file = shared_datadir / "yaml" / "command_output" / filename
     test_content = test_file.read_text()
     assert output.strip() == test_content.strip()
