@@ -1,0 +1,7 @@
+name: cats
+
+protocol: https
+
+clowder:
+  - name: JrGoodle/mu
+    branch: knead
