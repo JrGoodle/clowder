@@ -34,7 +34,7 @@ Feature: clowder herd
         When I run 'clowder herd'
         Then the command succeeds
         And project at <directory> is a git repository
-        And project at <directory> has tracking branch <branch>
+        And project at <directory> has tracking <branch>
         And project at <directory> is on <branch>
         And project at <directory> is clean
         And project at <directory> has <remote> with <url>
