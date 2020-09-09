@@ -23,28 +23,28 @@ def given_directory_on_test_branch(tmp_path: Path, directory: str, test_branch: 
 
 @given(parsers.parse("repo at {directory} has local branch {test_branch}"))
 @given(parsers.parse("project at {directory} has local branch {test_branch}"))
-@given("project at <directory> has local branch <test_branch>")
+@given("project at <directory> has local <test_branch>")
 def given_directory_has_local_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
     assert util.local_branch_exists(tmp_path / directory, test_branch)
 
 
 @given(parsers.parse("repo at {directory} has no local branch {test_branch}"))
 @given(parsers.parse("project at {directory} has no local branch {test_branch}"))
-@given("project at <directory> has no local branch <test_branch>")
+@given("project at <directory> has no local <test_branch>")
 def given_directory_has_no_local_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
     assert not util.local_branch_exists(tmp_path / directory, test_branch)
 
 
 @given(parsers.parse("repo at {directory} has no remote branch {test_branch}"))
 @given(parsers.parse("project at {directory} has no remote branch {test_branch}"))
-@given("project at <directory> has no remote branch <test_branch>")
+@given("project at <directory> has no remote <test_branch>")
 def given_directory_has_no_remote_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
     assert not util.remote_branch_exists(tmp_path / directory, test_branch)
 
 
 @given(parsers.parse("repo at {directory} has remote branch {test_branch}"))
 @given(parsers.parse("project at {directory} has remote branch {test_branch}"))
-@given("project at <directory> has remote branch <test_branch>")
+@given("project at <directory> has remote <test_branch>")
 def given_directory_has_remote_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
     assert util.remote_branch_exists(tmp_path / directory, test_branch)
 
@@ -107,7 +107,7 @@ def given_has_untracked_file(tmp_path: Path, directory: str, filename: str) -> N
 
 @given(parsers.parse("repo at {directory} has tracking branch {test_branch}"))
 @given(parsers.parse("project at {directory} has tracking branch {test_branch}"))
-@given("project at <directory> has tracking branch <test_branch>")
+@given("project at <directory> has tracking <test_branch>")
 def given_directory_has_tracking_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
     path = tmp_path / directory
     assert util.tracking_branch_exists(path, test_branch)
@@ -115,7 +115,7 @@ def given_directory_has_tracking_branch(tmp_path: Path, directory: str, test_bra
 
 @given(parsers.parse("repo at {directory} has no tracking branch {test_branch}"))
 @given(parsers.parse("project at {directory} has no tracking branch {test_branch}"))
-@given("project at <directory> has no tracking branch <test_branch>")
+@given("project at <directory> has no tracking <test_branch>")
 def given_directory_has_no_tracking_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
     path = tmp_path / directory
     assert not util.tracking_branch_exists(path, test_branch)

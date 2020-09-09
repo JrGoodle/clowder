@@ -22,7 +22,7 @@ Feature: clowder checkout command
 
     Scenario Outline: checkout default existing local branch
         Given cats example is initialized and herded
-        And project at <directory> created local branch <test_branch>
+        And project at <directory> created local <test_branch>
         And project at <directory> is on <start_branch>
         When I run 'clowder checkout pytest-checkout'
         Then the command succeeds
@@ -40,7 +40,7 @@ Feature: clowder checkout command
     @subdirectory
     Scenario Outline: checkout default existing local branch from subdirectory
         Given cats example is initialized and herded
-        And project at <directory> created local branch <test_branch>
+        And project at <directory> created local <test_branch>
         And project at <directory> is on <start_branch>
         When I change to directory black-cats
         And I run 'clowder checkout pytest-checkout'
@@ -58,7 +58,7 @@ Feature: clowder checkout command
 
     Scenario Outline: checkout default existing local branch for project
         Given cats example is initialized and herded
-        And project at <directory> created local branch <test_branch>
+        And project at <directory> created local <test_branch>
         And project at <directory> is on <start_branch>
         When I run 'clowder checkout pytest-checkout mu black-cats/june'
         Then the command succeeds
@@ -76,7 +76,7 @@ Feature: clowder checkout command
     Scenario Outline: checkout default no local branch
         Given cats example is initialized and herded
         And project at <directory> is on <start_branch>
-        And project at <directory> has no local branch <test_branch>
+        And project at <directory> has no local <test_branch>
         When I run 'clowder checkout pytest-checkout'
         Then the command succeeds
         And project at <directory> is on <start_branch>
@@ -94,12 +94,12 @@ Feature: clowder checkout command
     Scenario Outline: checkout offline
         Given cats example is initialized and herded
         And project at <directory> is on <start_branch>
-        And project at <directory> created local branch <test_branch>
+        And project at <directory> created local <test_branch>
         When the network connection is disabled
         And I run 'clowder checkout pytest-checkout'
         And the network connection is enabled
         Then the command succeeds
-        And project at <directory> has local branch <test_branch>
+        And project at <directory> has local <test_branch>
         And project at <directory> is on <test_branch>
 
         Examples:

@@ -49,13 +49,12 @@ def add_herd_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
     parser.formatter_class = argparse.RawTextHelpFormatter
     add_parser_arguments(parser, arguments)
 
-    # TODO: Restore this with better tests
-    # mutually_exclusive_arguments = [
-    #     (['--branch', '-b'], dict(nargs=1, default=None, metavar='<branch>', help='branch to herd if present')),
-    #     (['--tag', '-t'], dict(nargs=1, default=None, metavar='<tag>', help='tag to herd if present'))
-    # ]
-    # mutually_exclusive_group = parser.add_mutually_exclusive_group()
-    # add_parser_arguments(mutually_exclusive_group, mutually_exclusive_arguments)
+    mutually_exclusive_arguments = [
+        (['--branch', '-b'], dict(nargs=1, default=None, metavar='<branch>', help='branch to herd if present')),
+        (['--tag', '-t'], dict(nargs=1, default=None, metavar='<tag>', help='tag to herd if present'))
+    ]
+    mutually_exclusive_group = parser.add_mutually_exclusive_group()
+    add_parser_arguments(mutually_exclusive_group, mutually_exclusive_arguments)
 
     parser.set_defaults(func=herd)
 
@@ -67,10 +66,8 @@ def add_herd_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
 def herd(args) -> None:
     """Clowder herd command private implementation"""
 
-    # branch = None if args.branch is None else args.branch[0]
-    # tag = None if args.tag is None else args.tag[0]
-    branch = None
-    tag = None
+    branch = None if args.branch is None else args.branch[0]
+    tag = None if args.tag is None else args.tag[0]
     depth = None if args.depth is None else args.depth[0]
     protocol = None if args.protocol is None else args.protocol[0]
     jobs = None if args.jobs is None else args.jobs[0]

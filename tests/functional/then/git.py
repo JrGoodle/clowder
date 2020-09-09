@@ -94,18 +94,30 @@ def then_directory_not_on_commit(tmp_path: Path, directory: str, commit: str) ->
 
 @then(parsers.parse("repo at {directory} has tracking branch {test_branch}"))
 @then(parsers.parse("project at {directory} has tracking branch {test_branch}"))
-@then("project at <directory> has tracking branch <test_branch>")
-def then_directory_has_tracking_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
+@then("project at <directory> has tracking <test_branch>")
+def then_directory_has_tracking_test_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
     path = tmp_path / directory
     assert util.tracking_branch_exists(path, test_branch)
 
 
+@then("project at <directory> has tracking <branch>")
+def then_directory_has_tracking_branch(tmp_path: Path, directory: str, branch: str) -> None:
+    path = tmp_path / directory
+    assert util.tracking_branch_exists(path, branch)
+
+
 @then(parsers.parse("repo at {directory} has no tracking branch {test_branch}"))
 @then(parsers.parse("project at {directory} has no tracking branch {test_branch}"))
-@then("project at <directory> has no tracking branch <test_branch>")
-def then_directory_has_no_tracking_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
+@then("project at <directory> has no tracking <test_branch>")
+def then_directory_has_no_tracking_test_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
     path = tmp_path / directory
     assert not util.tracking_branch_exists(path, test_branch)
+
+
+@then("project at <directory> has no tracking branch <branch>")
+def then_directory_has_no_tracking_branch(tmp_path: Path, directory: str, branch: str) -> None:
+    path = tmp_path / directory
+    assert not util.tracking_branch_exists(path, branch)
 
 
 @then(parsers.parse("repo at {directory} has detached HEAD"))
@@ -118,32 +130,54 @@ def then_directory_detached_head(tmp_path: Path, directory: str) -> None:
 
 @then(parsers.parse("repo at {directory} has no local branch {test_branch}"))
 @then(parsers.parse("project at {directory} has no local branch {test_branch}"))
-@then("project at <directory> has no local branch <test_branch>")
-def then_directory_has_no_local_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
+@then("project at <directory> has no local <test_branch>")
+def then_directory_has_no_local_test_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
     path = tmp_path / directory
     assert not util.local_branch_exists(path, test_branch)
 
 
+@then("project at <directory> has no local <branch>")
+def then_directory_has_no_local_branch(tmp_path: Path, directory: str, branch: str) -> None:
+    path = tmp_path / directory
+    assert not util.local_branch_exists(path, branch)
+
+
 @then(parsers.parse("repo at {directory} has local branch {test_branch}"))
 @then(parsers.parse("project at {directory} has local branch {test_branch}"))
-@then("project at <directory> has local branch <test_branch>")
-def then_directory_has_local_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
+@then("project at <directory> has local <test_branch>")
+def then_directory_has_local_test_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
     path = tmp_path / directory
     assert util.local_branch_exists(path, test_branch)
 
 
+@then("project at <directory> has local <branch>")
+def then_directory_has_local_branch(tmp_path: Path, directory: str, branch: str) -> None:
+    path = tmp_path / directory
+    assert util.local_branch_exists(path, branch)
+
+
 @then(parsers.parse("repo at {directory} has no remote branch {test_branch}"))
 @then(parsers.parse("project at {directory} has no remote branch {test_branch}"))
-@then("project at <directory> has no remote branch <test_branch>")
-def then_directory_has_no_remote_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
+@then("project at <directory> has no remote <test_branch>")
+def then_directory_has_no_remote_test_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
     assert not util.remote_branch_exists(tmp_path / directory, test_branch)
+
+
+@then("project at <directory> has no remote <branch>")
+def then_directory_has_no_remote_branch(tmp_path: Path, directory: str, branch: str) -> None:
+    assert not util.remote_branch_exists(tmp_path / directory, branch)
 
 
 @then(parsers.parse("repo at {directory} has remote branch {test_branch}"))
 @then(parsers.parse("project at {directory} has remote branch {test_branch}"))
-@then("project at <directory> has remote branch <test_branch>")
-def then_directory_has_remote_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
+@then("project at <directory> has remote <test_branch>")
+def then_directory_has_remote_test_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
     assert util.remote_branch_exists(tmp_path / directory, test_branch)
+
+
+@then("project at <directory> has remote <branch>")
+def then_directory_has_remote_branch(tmp_path: Path, directory: str, branch: str) -> None:
+    assert util.remote_branch_exists(tmp_path / directory, branch)
 
 
 @then(parsers.parse("repo at {directory} is clean"))

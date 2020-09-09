@@ -34,6 +34,7 @@ Feature: clowder herd
         When I run 'clowder herd'
         Then the command succeeds
         And project at <directory> is a git repository
+        And project at <directory> has tracking branch <branch>
         And project at <directory> is on <branch>
         And project at <directory> is clean
         And project at <directory> has <remote> with <url>
@@ -50,7 +51,7 @@ Feature: clowder herd
     @cats @subdirectory
     Scenario Outline: herd subdirectory
         Given cats example is initialized and herded
-        And project at <directory> created local branch <test_branch>
+        And project at <directory> created local <test_branch>
         And project at <directory> checked out <test_branch>
         And project at <directory> is on <test_branch>
         When I change to directory black-cats
@@ -774,7 +775,7 @@ Feature: clowder herd
 #        When I run 'clowder herd'
 #        Then the command succeeds
 #        And project at <directory> is on <test_branch>
-#        And project at <directory> has no remote branch <test_branch>
+#        And project at <directory> has no remote <test_branch>
 #
 #        Examples:
 #        | directory         | start_branch | test_branch  |
@@ -791,12 +792,12 @@ Feature: clowder herd
         And linked test-branch-ssh clowder version
         And cats example projects have remote branch <test_branch>
         And cats example projects have local branch <test_branch>
-        And project at <directory> has no tracking branch <test_branch>
+        And project at <directory> has no tracking <test_branch>
         And project at <directory> is on <start_branch>
         When I run 'clowder herd'
         Then the command succeeds
         And project at <directory> is on <test_branch>
-        And project at <directory> has tracking branch <test_branch>
+        And project at <directory> has tracking <test_branch>
 
         Examples:
         | directory         | start_branch | test_branch  |
@@ -814,12 +815,12 @@ Feature: clowder herd
 #        And linked test-branch-ssh clowder version
 #        And cats example projects have remote branch <test_branch>
 #        And cats example projects have local branch <test_branch>
-#        And project at <directory> has no tracking branch <test_branch>
+#        And project at <directory> has no tracking <test_branch>
 #        And project at <directory> is on <start_branch>
 #        When I run 'clowder herd'
 #        Then the command succeeds
 #        And project at <directory> is on <test_branch>
-#        And project at <directory> has tracking branch <test_branch>
+#        And project at <directory> has tracking <test_branch>
 #
 #        Examples:
 #        | directory         | start_branch | test_branch  |
@@ -1036,3 +1037,151 @@ Feature: clowder herd
         | black-cats/kit    | master |
         | black-cats/june   | master |
         | black-cats/sasha  | master |
+
+    @cats
+    Scenario Outline: herd branch - no repo, existing remote branch
+        Given cats example is initialized
+        And <directory> doesn't exist
+        When I run 'clowder herd -b herd-branch'
+        Then the command succeeds
+        And project at <directory> is a git repository
+        And project at <directory> has tracking <test_branch>
+        And project at <directory> is on <test_branch>
+        And project at <directory> is clean
+        And project at <directory> has no local <branch>
+        And project at <directory> has remote <branch>
+
+        Examples:
+        | directory         | branch | test_branch |
+        | mu                | knead  | herd-branch |
+        | duke              | purr   | herd-branch |
+        | black-cats/kit    | master | herd-branch |
+        | black-cats/june   | master | herd-branch |
+        | black-cats/sasha  | master | herd-branch |
+
+    @cats
+    Scenario Outline: herd branch - no repo, no existing remote branch
+        Given cats example is initialized
+        And <directory> doesn't exist
+        When I run 'clowder herd -b herd-missing-branch'
+        Then the command succeeds
+        And project at <directory> is a git repository
+        And project at <directory> has tracking <branch>
+        And project at <directory> is on <branch>
+        And project at <directory> is clean
+        And project at <directory> has no local <test_branch>
+        And project at <directory> has no remote <test_branch>
+
+        Examples:
+        | directory         | branch | test_branch         |
+        | mu                | knead  | herd-missing-branch |
+        | duke              | purr   | herd-missing-branch |
+        | black-cats/kit    | master | herd-missing-branch |
+        | black-cats/june   | master | herd-missing-branch |
+        | black-cats/sasha  | master | herd-missing-branch |
+
+    @cats
+    Scenario Outline: herd branch - no local branch, existing remote branch
+        Given cats example is initialized and herded
+        And project at <directory> is on <branch>
+        And project at <directory> has no local <test_branch>
+        And project at <directory> has remote <test_branch>
+        When I run 'clowder herd -b herd-branch'
+        Then the command succeeds
+        And project at <directory> has tracking <test_branch>
+        And project at <directory> is on <test_branch>
+        And project at <directory> is clean
+
+        Examples:
+        | directory         | branch | test_branch |
+        | mu                | knead  | herd-branch |
+        | duke              | purr   | herd-branch |
+        | black-cats/kit    | master | herd-branch |
+        | black-cats/june   | master | herd-branch |
+        | black-cats/sasha  | master | herd-branch |
+
+    @cats
+    Scenario Outline: herd branch - no local branch, no remote branch
+        Given cats example is initialized and herded
+        And project at <directory> is on <branch>
+        And project at <directory> has no local <test_branch>
+        And project at <directory> has no remote <test_branch>
+        When I run 'clowder herd -b herd-missing-branch'
+        Then the command succeeds
+        And project at <directory> is on <branch>
+        And project at <directory> has no local <test_branch>
+        And project at <directory> has no remote <test_branch>
+        And project at <directory> is clean
+
+        Examples:
+        | directory         | branch | test_branch         |
+        | mu                | knead  | herd-missing-branch |
+        | duke              | purr   | herd-missing-branch |
+        | black-cats/kit    | master | herd-missing-branch |
+        | black-cats/june   | master | herd-missing-branch |
+        | black-cats/sasha  | master | herd-missing-branch |
+
+    @cats
+    Scenario Outline: herd branch - existing local branch, no remote branch
+        Given cats example is initialized and herded
+        And project at <directory> created local <test_branch>
+        And project at <directory> is on <branch>
+        And project at <directory> has local <test_branch>
+        And project at <directory> has no remote <test_branch>
+        When I run 'clowder herd -b herd-missing-branch'
+        Then the command succeeds
+        And project at <directory> is on <test_branch>
+        And project at <directory> has no remote <test_branch>
+        And project at <directory> is clean
+
+        Examples:
+        | directory         | branch | test_branch         |
+        | mu                | knead  | herd-missing-branch |
+        | duke              | purr   | herd-missing-branch |
+        | black-cats/kit    | master | herd-missing-branch |
+        | black-cats/june   | master | herd-missing-branch |
+        | black-cats/sasha  | master | herd-missing-branch |
+
+#   TODO: Add actual check for same commit
+    @cats @write @ssh
+    Scenario Outline: herd branch - local exists, remote exists, no tracking, same commit
+        Given cats example is initialized and herded with ssh
+        And linked test-branch-ssh clowder version
+        And cats example projects have remote branch <test_branch>
+        And cats example projects have local branch <test_branch>
+        And project at <directory> has no tracking <test_branch>
+        And project at <directory> is on <branch>
+        When I run 'clowder herd -b pytest'
+        Then the command succeeds
+        And project at <directory> is on <test_branch>
+        And project at <directory> has tracking <test_branch>
+
+        Examples:
+        | directory         | branch | test_branch         |
+        | mu                | knead  | pytest              |
+        | duke              | purr   | pytest              |
+        | black-cats/kit    | master | pytest              |
+        | black-cats/june   | master | pytest              |
+        | black-cats/sasha  | master | pytest              |
+
+#    TODO: Implement this and add tests for behind, ahead, behind/ahead
+#    @cats @write @ssh
+#    Scenario Outline: herd branch - local exists, remote exists, no tracking, different commits
+#        Given cats example is initialized and herded with ssh
+#        And linked test-branch-ssh clowder version
+#        And cats example projects have remote branch <test_branch>
+#        And cats example projects have local branch <test_branch>
+#        And project at <directory> has no tracking <test_branch>
+#        And project at <directory> is on <branch>
+#        When I run 'clowder herd -b pytest'
+#        Then the command succeeds
+#        And project at <directory> is on <test_branch>
+#        And project at <directory> has tracking <test_branch>
+#
+#        Examples:
+#        | directory         | branch | test_branch         |
+#        | mu                | knead  | pytest              |
+#        | duke              | purr   | pytest              |
+#        | black-cats/kit    | master | pytest              |
+#        | black-cats/june   | master | pytest              |
+#        | black-cats/sasha  | master | pytest              |

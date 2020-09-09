@@ -22,12 +22,12 @@ Feature: clowder prune
 
     Scenario Outline: prune default existing local branch checked out
         Given cats example is initialized and herded
-        And project at <directory> created local branch <test_branch>
+        And project at <directory> created local <test_branch>
         And project at <directory> checked out <test_branch>
         And project at <directory> is on <test_branch>
         When I run 'clowder prune pytest-prune'
         Then the command succeeds
-        And project at <directory> has no local branch <test_branch>
+        And project at <directory> has no local <test_branch>
         And project at <directory> is on <end_branch>
 
         Examples:
@@ -42,13 +42,13 @@ Feature: clowder prune
     @subdirectory
     Scenario Outline: prune default from subdirectory with existing local branch checked out
         Given cats example is initialized and herded
-        And project at <directory> created local branch <test_branch>
+        And project at <directory> created local <test_branch>
         And project at <directory> checked out <test_branch>
         And project at <directory> is on <test_branch>
         When I change to directory mu
         And I run 'clowder prune pytest-prune'
         Then the command succeeds
-        And project at <directory> has no local branch <test_branch>
+        And project at <directory> has no local <test_branch>
         And project at <directory> is on <end_branch>
 
         Examples:
@@ -62,12 +62,12 @@ Feature: clowder prune
 
     Scenario Outline: prune default existing local branch checked out group selected
         Given cats example is initialized and herded
-        And project at <directory> created local branch <test_branch>
+        And project at <directory> created local <test_branch>
         And project at <directory> checked out <test_branch>
         And project at <directory> is on <test_branch>
         When I run 'clowder prune pytest-prune cats'
         Then the command succeeds
-        And project at <directory> has no local branch <test_branch>
+        And project at <directory> has no local <test_branch>
         And project at <directory> is on <end_branch>
 
         Examples:
@@ -77,12 +77,12 @@ Feature: clowder prune
 
     Scenario Outline: prune default existing local branch checked out group not selected
         Given cats example is initialized and herded
-        And project at <directory> created local branch <test_branch>
+        And project at <directory> created local <test_branch>
         And project at <directory> checked out <test_branch>
         And project at <directory> is on <test_branch>
         When I run 'clowder prune pytest-prune cats'
         Then the command succeeds
-        And project at <directory> has local branch <test_branch>
+        And project at <directory> has local <test_branch>
         And project at <directory> is on <test_branch>
 
         Examples:
@@ -95,13 +95,13 @@ Feature: clowder prune
     @fail
     Scenario Outline: prune default existing local branch checked out fail not fully merged
         Given cats example is initialized and herded
-        And project at <directory> created local branch <test_branch>
+        And project at <directory> created local <test_branch>
         And project at <directory> checked out <test_branch>
         And project at <directory> created a new commit
         And project at <directory> is on <test_branch>
         When I run 'clowder prune pytest-prune'
         Then the command fails
-        And project at <directory> has local branch <test_branch>
+        And project at <directory> has local <test_branch>
         And project at <directory> is on <end_branch>
 
         Examples:
@@ -115,13 +115,13 @@ Feature: clowder prune
 
     Scenario Outline: prune force default existing local branch checked out not fully merged
         Given cats example is initialized and herded
-        And project at <directory> created local branch <test_branch>
+        And project at <directory> created local <test_branch>
         And project at <directory> checked out <test_branch>
         And project at <directory> created a new commit
         And project at <directory> is on <test_branch>
         When I run 'clowder prune -f pytest-prune'
         Then the command succeeds
-        And project at <directory> has no local branch <test_branch>
+        And project at <directory> has no local <test_branch>
         And project at <directory> is on <end_branch>
 
         Examples:
@@ -136,14 +136,14 @@ Feature: clowder prune
     @offline
     Scenario Outline: prune offline
         Given cats example is initialized and herded
-        And project at <directory> created local branch <test_branch>
+        And project at <directory> created local <test_branch>
         And project at <directory> checked out <test_branch>
         And project at <directory> is on <test_branch>
         When the network connection is disabled
         And I run 'clowder prune pytest-prune'
         And the network connection is enabled
         Then the command succeeds
-        And project at <directory> has no local branch <test_branch>
+        And project at <directory> has no local <test_branch>
         And project at <directory> is on <end_branch>
 
         Examples:
@@ -163,7 +163,7 @@ Feature: clowder prune
         And I run 'clowder prune -r  pytest-prune-remote-offline'
         And the network connection is enabled
         Then the command fails
-        And project at <directory> has remote branch <test_branch>
+        And project at <directory> has remote <test_branch>
 
         Examples:
         | directory         | test_branch                 |
@@ -182,8 +182,8 @@ Feature: clowder prune
         And I run 'clowder prune -a pytest-prune-all-offline'
         And the network connection is enabled
         Then the command fails
-        And project at <directory> has no local branch <test_branch>
-        And project at <directory> has remote branch <test_branch>
+        And project at <directory> has no local <test_branch>
+        And project at <directory> has remote <test_branch>
 
         Examples:
         | directory         | test_branch              |
@@ -201,8 +201,8 @@ Feature: clowder prune
         And cats example projects have no local branch <test_branch>
         When I run 'clowder prune -r  pytest-prune-remote'
         Then the command succeeds
-        And project at <directory> has no remote branch <test_branch>
-        And project at <directory> has no local branch <test_branch>
+        And project at <directory> has no remote <test_branch>
+        And project at <directory> has no local <test_branch>
 
         Examples:
         | directory         | test_branch         |
@@ -217,14 +217,14 @@ Feature: clowder prune
     Scenario Outline: prune remote tracking branch
         Given cats example is initialized and herded with ssh
         And cats example projects have tracking branch <test_branch>
-        And project at <directory> has local branch <test_branch>
-        And project at <directory> has remote branch <test_branch>
+        And project at <directory> has local <test_branch>
+        And project at <directory> has remote <test_branch>
         And project at <directory> checked out <test_branch>
         And project at <directory> is on <test_branch>
         When I run 'clowder prune -r  pytest-prune-remote'
         Then the command succeeds
-        And project at <directory> has no remote branch <test_branch>
-        And project at <directory> has local branch <test_branch>
+        And project at <directory> has no remote <test_branch>
+        And project at <directory> has local <test_branch>
         And project at <directory> is on <test_branch>
 
         Examples:
@@ -240,14 +240,14 @@ Feature: clowder prune
     Scenario Outline: prune all
         Given cats example is initialized and herded with ssh
         And cats example projects have tracking branch <test_branch>
-        And project at <directory> has local branch <test_branch>
-        And project at <directory> has remote branch <test_branch>
+        And project at <directory> has local <test_branch>
+        And project at <directory> has remote <test_branch>
         And project at <directory> checked out <test_branch>
         And project at <directory> is on <test_branch>
         When I run 'clowder prune -a  pytest-prune-all'
         Then the command succeeds
-        And project at <directory> has no remote branch <test_branch>
-        And project at <directory> has no local branch <test_branch>
+        And project at <directory> has no remote <test_branch>
+        And project at <directory> has no local <test_branch>
         And project at <directory> is on <end_branch>
 
         Examples:

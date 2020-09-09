@@ -28,9 +28,9 @@ Feature: clowder start
         And project at <directory> is on <start_branch>
         When I run 'clowder start pytest-start-branch'
         Then the command succeeds
-        And project at <directory> has local branch <test_branch>
+        And project at <directory> has local <test_branch>
         And project at <directory> is on <test_branch>
-        And project at <directory> has no remote branch <test_branch>
+        And project at <directory> has no remote <test_branch>
 
         Examples:
         | directory         | start_branch | test_branch         |
@@ -50,9 +50,9 @@ Feature: clowder start
         When I change to directory black-cats/sasha
         And I run 'clowder start pytest-start-branch'
         Then the command succeeds
-        And project at <directory> has local branch <test_branch>
+        And project at <directory> has local <test_branch>
         And project at <directory> is on <test_branch>
-        And project at <directory> has no remote branch <test_branch>
+        And project at <directory> has no remote <test_branch>
 
         Examples:
         | directory         | start_branch | test_branch         |
@@ -73,9 +73,9 @@ Feature: clowder start
         And I run 'clowder start pytest-start-branch'
         And the network connection is enabled
         Then the command succeeds
-        And project at <directory> has local branch <test_branch>
+        And project at <directory> has local <test_branch>
         And project at <directory> is on <test_branch>
-        And project at <directory> has no remote branch <test_branch>
+        And project at <directory> has no remote <test_branch>
 
         Examples:
         | directory         | start_branch | test_branch         |
@@ -96,9 +96,9 @@ Feature: clowder start
         And I run 'clowder start -t new-branch'
         And the network connection is enabled
         Then the command fails
-        And project at <directory> has no local branch <test_branch>
+        And project at <directory> has no local <test_branch>
         And project at <directory> is on <start_branch>
-        And project at <directory> has no remote branch <test_branch>
+        And project at <directory> has no remote <test_branch>
 
         Examples:
         | directory         | start_branch | test_branch         |
@@ -118,8 +118,8 @@ Feature: clowder start
         When I run 'clowder start new-branch black-cats'
         Then the command succeeds
         And project at <directory> is on <start_branch>
-        And project at <directory> has no local branch <test_branch>
-        And project at <directory> has no remote branch <test_branch>
+        And project at <directory> has no local <test_branch>
+        And project at <directory> has no remote <test_branch>
 
         Examples:
         | directory         | start_branch | test_branch         |
@@ -134,9 +134,9 @@ Feature: clowder start
         And project at <directory> is on <start_branch>
         When I run 'clowder start pytest-start-branch black-cats'
         Then the command succeeds
-        And project at <directory> has local branch <test_branch>
+        And project at <directory> has local <test_branch>
         And project at <directory> is on <test_branch>
-        And project at <directory> has no remote branch <test_branch>
+        And project at <directory> has no remote <test_branch>
 
         Examples:
         | directory         | start_branch | test_branch         |
@@ -154,10 +154,10 @@ Feature: clowder start
         And project at <directory> is on <start_branch>
         When I run 'clowder start -t pytest-start-branch'
         Then the command succeeds
-        And project at <directory> has local branch <test_branch>
-        And project at <directory> has remote branch <test_branch>
+        And project at <directory> has local <test_branch>
+        And project at <directory> has remote <test_branch>
         And project at <directory> is on <test_branch>
-        And project at <directory> has tracking branch <test_branch>
+        And project at <directory> has tracking <test_branch>
 
         Examples:
         | directory         | start_branch | test_branch         |
@@ -173,12 +173,12 @@ Feature: clowder start
         Given cats example is initialized and herded with ssh
         And cats example projects have remote branch <test_branch>
         And cats example projects have local branch <test_branch>
-        And project at <directory> has no tracking branch <test_branch>
+        And project at <directory> has no tracking <test_branch>
         And project at <directory> is on <start_branch>
         When I run 'clowder start -t pytest-start-branch'
         Then the command fails
         And project at <directory> is on <start_branch>
-        And project at <directory> has no tracking branch <test_branch>
+        And project at <directory> has no tracking <test_branch>
 
         Examples:
         | directory         | start_branch | test_branch         |
@@ -201,7 +201,7 @@ Feature: clowder start
         When I run 'clowder start -t pytest-start-branch'
         Then the command succeeds
         And project at <directory> is on <test_branch>
-        And project at <directory> has tracking branch <test_branch>
+        And project at <directory> has tracking <test_branch>
 
         Examples:
         | directory         | test_branch         |
@@ -220,7 +220,7 @@ Feature: clowder start
         When I run 'clowder start -t pytest-start-branch'
         Then the command succeeds
         And project at <directory> is on <test_branch>
-        And project at <directory> has tracking branch <test_branch>
+        And project at <directory> has tracking <test_branch>
 
         Examples:
         | directory         | start_branch | test_branch         |
@@ -240,7 +240,7 @@ Feature: clowder start
         When I run 'clowder start -t pytest-start-branch'
         Then the command fails
         And project at <directory> is on <start_branch>
-        And project at <directory> has no tracking branch <test_branch>
+        And project at <directory> has no tracking <test_branch>
 
         Examples:
         | directory         | start_branch | test_branch         |
@@ -260,11 +260,11 @@ Feature: clowder start
         And cats example projects have remote branch <test_branch>
         And cats example projects have local branch <test_branch>
         And project at <directory> checked out <test_branch>
-        And project at <directory> has no tracking branch <test_branch>
+        And project at <directory> has no tracking <test_branch>
         When I run 'clowder start -t pytest-start-branch'
         Then the command fails
         And project at <directory> is on <test_branch>
-        And project at <directory> has no tracking branch <test_branch>
+        And project at <directory> has no tracking <test_branch>
 
         Examples:
         | directory         | test_branch         |
@@ -281,11 +281,11 @@ Feature: clowder start
         And cats example projects have no remote branch <test_branch>
         And cats example projects have local branch <test_branch>
         And project at <directory> checked out <test_branch>
-        And project at <directory> has no tracking branch <test_branch>
+        And project at <directory> has no tracking <test_branch>
         When I run 'clowder start -t pytest-start-branch'
         Then the command succeeds
         And project at <directory> is on <test_branch>
-        And project at <directory> has tracking branch <test_branch>
+        And project at <directory> has tracking <test_branch>
 
         Examples:
         | directory         | test_branch         |
@@ -302,11 +302,11 @@ Feature: clowder start
         And cats example projects have no remote branch <test_branch>
         And cats example projects have local branch <test_branch>
         And project at <directory> is on <start_branch>
-        And project at <directory> has no tracking branch <test_branch>
+        And project at <directory> has no tracking <test_branch>
         When I run 'clowder start -t pytest-start-branch'
         Then the command succeeds
         And project at <directory> is on <test_branch>
-        And project at <directory> has tracking branch <test_branch>
+        And project at <directory> has tracking <test_branch>
 
         Examples:
         | directory         | start_branch | test_branch         |
