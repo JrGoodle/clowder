@@ -1,24 +1,5 @@
 #!/usr/bin/env bash
 
-CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-
-export EXAMPLES_DIR
-EXAMPLES_DIR="$( cd $CURRENT_DIR/../../examples && pwd)"
-export TEST_SCRIPT_DIR
-TEST_SCRIPT_DIR="$( cd $CURRENT_DIR && pwd)"
-export CLOWDER_PROJECT_DIR
-CLOWDER_PROJECT_DIR="$( cd $CURRENT_DIR/../.. && pwd)"
-
-if [ -n "$CI" ]; then
-    export CATS_EXAMPLE_DIR="$CURRENT_DIR/../../examples/cats"
-    export SWIFT_EXAMPLE_DIR="$CURRENT_DIR/../../examples/swift-projects"
-    export MISC_EXAMPLE_DIR="$CURRENT_DIR/../../examples/misc"
-else
-    export CATS_EXAMPLE_DIR="$HOME/.clowder_tests/cats"
-    export SWIFT_EXAMPLE_DIR="$HOME/.clowder_tests/swift-projects"
-    export MISC_EXAMPLE_DIR="$HOME/.clowder_tests/misc"
-fi
-
 make_dirty_repos() {
     echo "TEST: Make dirty repos"
     for project in "$@"
@@ -323,21 +304,3 @@ test_strings_equal() {
         exit 1
     fi
 }
-
-print_single_separator() {
-    echo '--------------------------------------------------------------------------------'
-}
-
-print_double_separator() {
-    echo '================================================================================'
-}
-
-begin_command() {
-    echo '====================================**BEGIN**===================================='
-}
-export -f begin_command
-
-end_command() {
-    echo '=====================================**END**====================================='
-}
-export -f end_command

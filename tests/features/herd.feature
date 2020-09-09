@@ -685,7 +685,7 @@ Feature: clowder herd
         | black-cats/sasha  |
         | black-cats/june   |
 
-    @cats @internet @write @ssh @debug
+    @cats @internet @write @ssh
     Scenario Outline: herd rebase with conflict
         Given cats example is initialized and herded with ssh
         And linked test-branch-ssh clowder version
@@ -885,8 +885,8 @@ Feature: clowder herd
         And <filename> in <directory> is not an lfs pointer
 
         Examples:
-        | directory         | branch | filename     |
-        | mu                | lfs    | jrgoodle.png |
+        | directory | branch | filename     |
+        | mu        | lfs    | jrgoodle.png |
 
     @cats @lfs
     Scenario Outline: herd lfs different branch
@@ -904,8 +904,8 @@ Feature: clowder herd
         And <filename> in <directory> is not an lfs pointer
 
         Examples:
-        | directory         | start_branch | end_branch | filename     |
-        | mu                | knead        | lfs        | jrgoodle.png |
+        | directory | start_branch | end_branch | filename     |
+        | mu        | knead        | lfs        | jrgoodle.png |
 
     @cats @lfs
     Scenario Outline: herd lfs same branch
@@ -923,5 +923,116 @@ Feature: clowder herd
         And <filename> in <directory> is not an lfs pointer
 
         Examples:
-        | directory         | branch     | filename     |
-        | mu                | lfs        | jrgoodle.png |
+        | directory | branch     | filename     |
+        | mu        | lfs        | jrgoodle.png |
+
+    @cats
+    Scenario Outline: herd install custom git config alias
+        Given cats example is initialized and herded
+        And linked git-config clowder version
+        And project at <directory> is on <branch>
+        And project at <directory> is clean
+        And <filename> doesn't exist in <directory>
+        When I run 'clowder herd'
+        And I change to <directory>
+        And I run 'git something'
+        Then the commands succeed
+        And project at <directory> is on <branch>
+        And project at <directory> is dirty
+        And <filename> exists in <directory>
+
+        Examples:
+        | directory | branch | filename  |
+        | mu        | knead  | something |
+
+#   TODO: Check that 'git herd' only herds a single repo
+    @cats
+    Scenario Outline: herd with git herd alias
+        Given cats example is initialized and herded
+        And project at <directory> is on <branch>
+        And linked static-refs clowder version
+        When I change to <directory>
+        And I run 'git herd'
+        Then the command succeeds
+        And project at <directory> is on <commit>
+        And project at <directory> has detached HEAD
+        And project at <directory> is clean
+
+        Examples:
+        | directory         | branch | commit                                   |
+        | mu                | knead  | cddce39214a1ae20266d9ee36966de67438625d1 |
+        | duke              | purr   | 7083e8840e1bb972b7664cfa20bbd7a25f004018 |
+        | black-cats/kit    | master | da5c3d32ec2c00aba4a9f7d822cce2c727f7f5dd |
+        | black-cats/kishka | master | d185e3bff9eaaf6e146d4e09165276cd5c9f31c8 |
+        | black-cats/june   | master | b6e1316cc62cb2ba18fa982fc3d67ef4408c8bfd |
+        | black-cats/sasha  | master | 775979e0b1a7f753131bf16a4794c851c67108d8 |
+
+    @cats
+    Scenario Outline: herd with git herd alias only applies to one repo - included - mu
+        Given cats example is initialized and herded
+        And project at <directory> is on <branch>
+        And linked static-refs clowder version
+        When I change to directory mu
+        And I run 'git herd'
+        Then the command succeeds
+        And project at <directory> is on <commit>
+        And project at <directory> has detached HEAD
+        And project at <directory> is clean
+
+        Examples:
+        | directory         | branch | commit                                   |
+        | mu                | knead  | cddce39214a1ae20266d9ee36966de67438625d1 |
+
+    @cats
+    Scenario Outline: herd with git herd alias only applies to one repo - excluded - mu
+        Given cats example is initialized and herded
+        And project at <directory> is on <branch>
+        And linked static-refs clowder version
+        When I change to directory mu
+        And I run 'git herd'
+        Then the command succeeds
+        And project at <directory> is on <branch>
+        And project at <directory> is clean
+
+        Examples:
+        | directory         | branch |
+        | duke              | purr   |
+        | black-cats/kit    | master |
+        | black-cats/kishka | master |
+        | black-cats/june   | master |
+        | black-cats/sasha  | master |
+
+    @cats
+    Scenario Outline: herd with git herd alias only applies to one repo - included - kishka
+        Given cats example is initialized and herded
+        And project at <directory> is on <branch>
+        And linked static-refs clowder version
+        When I change to directory black-cats/kishka
+        And I run 'git herd'
+        Then the command succeeds
+        And project at <directory> is on <commit>
+        And project at <directory> has detached HEAD
+        And project at <directory> is clean
+
+        Examples:
+        | directory         | branch | commit                                   |
+        | black-cats/kishka | master | d185e3bff9eaaf6e146d4e09165276cd5c9f31c8 |
+
+    @cats
+    Scenario Outline: herd with git herd alias only applies to one repo - excluded - kishka
+        Given cats example is initialized and herded
+        And project at <directory> is on <branch>
+        And linked static-refs clowder version
+        When I change to directory black-cats/kishka
+        And I run 'git herd'
+        Then the command succeeds
+        And project at <directory> is on <branch>
+        And project at <directory> is clean
+
+        Examples:
+        | directory         | branch |
+        | mu                | knead  |
+        | duke              | purr   |
+        | black-cats/kit    | master |
+        | black-cats/june   | master |
+        | black-cats/sasha  | master |
