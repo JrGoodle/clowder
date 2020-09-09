@@ -57,6 +57,7 @@ class ResolvedProject:
     :ivar Optional[ResolvedUpstream] upstream: Project's associated upstream
     :ivar Optional[str] default_protocol: Protocol defined in defaults
     :ivar str ref: Project git ref
+    :ivar Optional[str] default_protocol: Default git protocol to use
     """
 
     def __init__(self, project: Project, defaults: Optional[Defaults] = None,

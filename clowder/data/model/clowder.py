@@ -40,6 +40,7 @@ class Clowder:
     def get_yaml(self, resolved: bool = False) -> Union[dict, list]:
         """Return python object representation for saving yaml
 
+        :param bool resolved: Whether to get resolved commit hashes
         :return: YAML python object
         :rtype: Union[dict, list]
         """

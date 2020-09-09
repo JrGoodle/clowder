@@ -70,7 +70,7 @@ def validate_project_statuses(projects: Tuple[ResolvedProject, ...], allow_missi
 def _print_upstream_output(project: ResolvedProject) -> None:
     """Print upstream output if a upstream exists
 
-    :param Project project: Project to print upstream status for
+    :param ResolvedProject project: Project to print upstream status for
     """
 
     if project.upstream:

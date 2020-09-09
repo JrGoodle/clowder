@@ -24,7 +24,7 @@ class Group:
     :ivar Optional[Defaults] defaults: Group defaults
     :ivar List[Project] projects: Group projects
     :ivar Optional[str] protocol: Git protocol
-    :ivar bool _has_projects_key: Whether the projects were listed under the 'projects' key in the yaml
+    :ivar bool _has_projects_key: Whether the projects were listed under the 'projects' key in the yaml file
     """
 
     def __init__(self, name: str, yaml: Union[dict, List[Project]]):

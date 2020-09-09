@@ -25,11 +25,11 @@ class ResolvedUpstream:
     """clowder yaml Upstream model class
 
     :ivar str name: Upstream name
+    :ivar str path: Project relative path
     :ivar Source source: Upstream source
     :ivar str remote: Upstream remote name
     :ivar str ref: Upstream git ref
-
-    :ivar str path: Project relative path
+    :ivar Optional[str] default_protocol: Default git protocol to use
     """
 
     def __init__(self, path: Path, upstream: Upstream, defaults: Optional[Defaults],

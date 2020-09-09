@@ -43,7 +43,7 @@ class SourceController(object):
     def add_source(self, source: Optional[Union[Source, SourceName]]):
         """Returns all project names containing forks
 
-        :param Optional[Source] source: Source to add
+        :param Optional[Union[Source, SourceName]] source: Source to add
         """
 
         if self._has_been_validated:
@@ -70,7 +70,7 @@ class SourceController(object):
     def get_source(self, source: Union[SourceName, Source]) -> Source:
         """Returns Source by name
 
-        :param SourceName source: Source name to return
+        :param Union[SourceName, Source] source: Source to return
         :return: Source with supplied name
         :rtype: Source
         """
@@ -103,8 +103,8 @@ class SourceController(object):
     def get_default_protocol(self) -> str:
         """Returns Source by name
 
-        :return: Source with supplied name
-        :rtype: Source
+        :return: Default git protocol
+        :rtype: str
         """
 
         if not self._has_been_validated:

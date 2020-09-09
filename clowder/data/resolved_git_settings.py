@@ -69,7 +69,7 @@ class ResolvedGitSettings:
         """Return version of config converted to strings
 
         :return: Config processed to create strings
-        :rtype: dict
+        :rtype: Optional[Dict[str, str]]
         """
 
         if self.config is None:

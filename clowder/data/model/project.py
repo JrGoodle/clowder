@@ -24,8 +24,12 @@ from .source_name import SourceName
 class Project:
     """clowder yaml Project model class
 
+    :ivar Optional[int] resolved_project_id: Identifier for ResolvedProject instance created from this Project
     :ivar str name: Project name
     :ivar Optional[Path] path: Project relative path
+    :ivar Optional[str] branch: Git branch
+    :ivar Optional[str] tag: Git tag
+    :ivar Optional[str] commit: Git commit
     :ivar Optional[List[str]] groups: Groups project belongs to
     :ivar Optional[str] remote: Project remote name
     :ivar Optional[Union[Source, SourceName]] source: Project source
@@ -91,7 +95,7 @@ class Project:
         """Return formatted git ref
 
         :return: Formatted git ref
-        :rtype: str
+        :rtype: Optional[str]
         """
 
         if self.branch is not None:
@@ -106,6 +110,7 @@ class Project:
     def get_yaml(self, resolved: bool = False) -> Union[dict, str]:
         """Return python object representation for saving yaml
 
+        :param bool resolved: Whether to get resolved commit hashes
         :return: YAML python object
         :rtype: Union[dict, str]
         """

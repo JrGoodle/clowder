@@ -14,7 +14,7 @@ class Source:
     """clowder yaml Source model class
 
     :ivar SourceName name: Source name
-    :ivar str url: Source url
+    :ivar str url: Git project url
     :ivar Optional[str] protocol: Git protocol
     """
 

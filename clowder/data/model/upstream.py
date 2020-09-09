@@ -22,17 +22,18 @@ class Upstream:
     """clowder yaml Upstream model class
 
     :ivar str name: Upstream name
+    :ivar str path: Project relative path
     :ivar Optional[Union[Source, SourceName]] source: Upstream source
     :ivar Optional[str] remote: Upstream remote name
-    :ivar str ref: Upstream git ref
-
-    :ivar str path: Project relative path
+    :ivar Optional[str] branch: Git branch
+    :ivar Optional[str] tag: Git tag
+    :ivar Optional[str] commit: Git commit
     """
 
     def __init__(self, yaml: Union[str, dict]):
         """Upstream __init__
 
-        :param dict yaml: Parsed YAML python object for upstream
+        :param Union[str, dict] yaml: Parsed YAML python object for upstream
         """
 
         self._is_string = False
@@ -79,7 +80,7 @@ class Upstream:
         """Return formatted git ref
 
         :return: Formatted git ref
-        :rtype: str
+        :rtype: Optional[str]
         """
 
         if self.branch is not None:

@@ -13,12 +13,6 @@ from .scenario_info import ScenarioInfo
 
 
 def is_dirty(path: Path) -> bool:
-    """Check whether repo is dirty
-
-    :return: True, if repo is dirty
-    :rtype: bool
-    """
-
     repo = Repo(path)
     return repo.is_dirty() or is_rebase_in_progress(path) or has_untracked_files(path)
 
@@ -32,11 +26,6 @@ def is_rebase_in_progress(path: Path) -> bool:
 
 
 def has_untracked_files(path: Path) -> bool:
-    """Check whether untracked files exist
-
-    :return: True, if untracked files exist
-    :rtype: bool
-    """
     repo = Repo(path)
     return True if repo.untracked_files else False
 

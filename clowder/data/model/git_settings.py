@@ -16,7 +16,7 @@ class GitSettings:
 
     :ivar Optional[bool] submodules: Whether to fetch submodules
     :ivar Optional[bool] lfs: Whether to set up lfs hooks and pull files
-    :ivar Optional[bool] depth: Depth to clone git repositories
+    :ivar Optional[int] depth: Depth to clone git repositories
     :ivar Optional[GitConfig] config: Custom git config values to set
     """
 
