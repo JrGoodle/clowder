@@ -1,9 +1,0 @@
-name: source.url-sources-project
-
-sources:
-  somewhere:
-    url: something
-
-clowder:
-  - name: JrGoodle/mu
-    source: somewhere

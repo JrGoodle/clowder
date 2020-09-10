@@ -1,7 +1,7 @@
-name: tag-defaults-name
+name: branch-defaults
 
 defaults:
-  tag: knead
+  branch: knead
 
 clowder:
   - name: JrGoodle/mu

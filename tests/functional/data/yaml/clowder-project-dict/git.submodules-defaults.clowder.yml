@@ -1,4 +1,4 @@
-name: git.submodules-defaults-name
+name: git.submodules-defaults
 
 defaults:
   git:

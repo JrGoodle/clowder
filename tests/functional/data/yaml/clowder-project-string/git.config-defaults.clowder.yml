@@ -1,4 +1,4 @@
-name: git.config-defaults-name
+name: git.config-defaults
 
 defaults:
   git:
@@ -6,4 +6,4 @@ defaults:
       alias.cat: '!echo "😸"'
 
 clowder:
-  - name: JrGoodle/mu
+  - JrGoodle/mu

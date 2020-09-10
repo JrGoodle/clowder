@@ -1,4 +1,4 @@
-name: remote-defaults-name
+name: remote-defaults
 
 defaults:
   remote: source

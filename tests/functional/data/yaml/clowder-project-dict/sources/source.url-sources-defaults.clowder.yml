@@ -1,4 +1,4 @@
-name: source-defaults-name
+name: source.url-sources-defaults
 
 sources:
   chromium:
@@ -8,4 +8,4 @@ defaults:
   source: chromium
 
 clowder:
-  - name: external/gyprGoodle/mu
+  - name: external/gyp

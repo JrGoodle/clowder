@@ -1,8 +1,8 @@
-name: git.depth-defaults-name
+name: git.lfs-defaults
 
 defaults:
   git:
-    depth: 1
+    lfs: true
 
 clowder:
   - name: JrGoodle/mu

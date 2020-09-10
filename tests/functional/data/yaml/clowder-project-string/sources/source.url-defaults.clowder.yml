@@ -1,4 +1,4 @@
-name: source-defaults
+name: source.url-sources-defaults
 
 sources:
   chromium:
