@@ -1,7 +1,7 @@
 """New syntax test file"""
 
 import copy
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from subprocess import CompletedProcess
 from pathlib import Path
@@ -9,6 +9,7 @@ from pathlib import Path
 from git import Repo
 from .command import run_command
 from .file_system import create_file, is_directory_empty
+from .formatting import remove_prefix
 from .scenario_info import ScenarioInfo
 
 
@@ -23,6 +24,43 @@ def is_rebase_in_progress(path: Path) -> bool:
     rebase_merge_exists = rebase_merge.exists() and rebase_merge.is_dir()
     rebase_apply_exists = rebase_apply.exists() and rebase_apply.is_dir()
     return rebase_merge_exists or rebase_apply_exists
+
+
+def has_local_tag(path: Path, tag: str) -> bool:
+    tags = get_local_tags(path)
+    return tag in tags.keys()
+
+
+def has_remote_tag(path: Path, tag: str, remote: str = "origin") -> bool:
+    tags = get_remote_tags(path, remote)
+    return tag in tags.keys()
+
+
+def get_local_tags(path: Path) -> Dict[str, str]:
+    result = run_command("git show-ref --tags", path)
+    return process_git_tags_output(result.stdout)
+
+
+def get_remote_tags(path: Path, remote: str = "origin") -> Dict[str, str]:
+    result = run_command(f"git ls-remote --tags {remote}", path)
+    return process_git_tags_output(result.stdout)
+
+
+def process_git_tags_output(output: str) -> Dict[str, str]:
+    components = output.split()
+    assert is_even(len(components))
+    i = 0
+    tags = {}
+    while i < len(components):
+        sha = components[i]
+        tag_name = remove_prefix(components[i + 1], "refs/tags/")
+        tags[tag_name] = sha
+        i += 2
+    return tags
+
+
+def is_even(number: int) -> bool:
+    return (number % 2) == 0
 
 
 def has_untracked_files(path: Path) -> bool:

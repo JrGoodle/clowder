@@ -1035,6 +1035,7 @@ Feature: clowder herd
         | mu                | knead  |
         | duke              | purr   |
         | black-cats/kit    | master |
+        | black-cats/kishka | master |
         | black-cats/june   | master |
         | black-cats/sasha  | master |
 
@@ -1056,6 +1057,7 @@ Feature: clowder herd
         | mu                | knead  | herd-branch |
         | duke              | purr   | herd-branch |
         | black-cats/kit    | master | herd-branch |
+        | black-cats/kishka | master | herd-branch |
         | black-cats/june   | master | herd-branch |
         | black-cats/sasha  | master | herd-branch |
 
@@ -1077,6 +1079,7 @@ Feature: clowder herd
         | mu                | knead  | herd-missing-branch |
         | duke              | purr   | herd-missing-branch |
         | black-cats/kit    | master | herd-missing-branch |
+        | black-cats/kishka | master | herd-missing-branch |
         | black-cats/june   | master | herd-missing-branch |
         | black-cats/sasha  | master | herd-missing-branch |
 
@@ -1097,6 +1100,7 @@ Feature: clowder herd
         | mu                | knead  | herd-branch |
         | duke              | purr   | herd-branch |
         | black-cats/kit    | master | herd-branch |
+        | black-cats/kishka | master | herd-branch |
         | black-cats/june   | master | herd-branch |
         | black-cats/sasha  | master | herd-branch |
 
@@ -1118,6 +1122,7 @@ Feature: clowder herd
         | mu                | knead  | herd-missing-branch |
         | duke              | purr   | herd-missing-branch |
         | black-cats/kit    | master | herd-missing-branch |
+        | black-cats/kishka | master | herd-missing-branch |
         | black-cats/june   | master | herd-missing-branch |
         | black-cats/sasha  | master | herd-missing-branch |
 
@@ -1139,6 +1144,7 @@ Feature: clowder herd
         | mu                | knead  | herd-missing-branch |
         | duke              | purr   | herd-missing-branch |
         | black-cats/kit    | master | herd-missing-branch |
+        | black-cats/kishka | master | herd-missing-branch |
         | black-cats/june   | master | herd-missing-branch |
         | black-cats/sasha  | master | herd-missing-branch |
 
@@ -1161,6 +1167,7 @@ Feature: clowder herd
         | mu                | knead  | pytest              |
         | duke              | purr   | pytest              |
         | black-cats/kit    | master | pytest              |
+        | black-cats/kishka | master | pytest              |
         | black-cats/june   | master | pytest              |
         | black-cats/sasha  | master | pytest              |
 
@@ -1183,5 +1190,87 @@ Feature: clowder herd
 #        | mu                | knead  | pytest              |
 #        | duke              | purr   | pytest              |
 #        | black-cats/kit    | master | pytest              |
+#        | black-cats/kishka | master | pytest              |
 #        | black-cats/june   | master | pytest              |
 #        | black-cats/sasha  | master | pytest              |
+
+    @cats @internet
+    Scenario Outline: herd tag - no repo, existing tag
+        Given cats example is initialized
+        And GitHub <repo> has remote <tag>
+        And <directory> doesn't exist
+        When I run 'clowder herd -t pytest-tag'
+        Then the command succeeds
+        And <directory> exists
+        And project at <directory> is a git repository
+        And project at <directory> is on <tag>
+        And project at <directory> has detached HEAD
+        And project at <directory> has no local <branch>
+
+        Examples:
+        | directory         | branch | tag        | repo            |
+        | mu                | knead  | pytest-tag | JrGoodle/mu     |
+        | duke              | purr   | pytest-tag | JrGoodle/duke   |
+        | black-cats/kit    | master | pytest-tag | JrGoodle/kit    |
+        | black-cats/kishka | master | pytest-tag | JrGoodle/kishka |
+        | black-cats/june   | master | pytest-tag | JrGoodle/june   |
+        | black-cats/sasha  | master | pytest-tag | JrGoodle/sasha  |
+
+    @cats @internet
+    Scenario Outline: herd tag - no repo, no tag
+        Given cats example is initialized
+        And GitHub <repo> has no remote <tag>
+        And <directory> doesn't exist
+        When I run 'clowder herd -t pytest-tag-missing'
+        Then the command succeeds
+        And <directory> exists
+        And project at <directory> is a git repository
+        And project at <directory> is on <branch>
+
+        Examples:
+        | directory         | branch | tag                | repo            |
+        | mu                | knead  | pytest-tag-missing | JrGoodle/mu     |
+        | duke              | purr   | pytest-tag-missing | JrGoodle/duke   |
+        | black-cats/kit    | master | pytest-tag-missing | JrGoodle/kit    |
+        | black-cats/kishka | master | pytest-tag-missing | JrGoodle/kishka |
+        | black-cats/june   | master | pytest-tag-missing | JrGoodle/june   |
+        | black-cats/sasha  | master | pytest-tag-missing | JrGoodle/sasha  |
+
+    @cats @internet
+    Scenario Outline: herd tag - existing repo, existing tag
+        Given cats example is initialized and herded
+        And GitHub <repo> has remote <tag>
+        And project at <directory> is on <branch>
+        When I run 'clowder herd -t pytest-tag'
+        Then the command succeeds
+        And project at <directory> is on <tag>
+        And project at <directory> has detached HEAD
+
+        Examples:
+        | directory         | branch | tag        | repo            |
+        | mu                | knead  | pytest-tag | JrGoodle/mu     |
+        | duke              | purr   | pytest-tag | JrGoodle/duke   |
+        | black-cats/kit    | master | pytest-tag | JrGoodle/kit    |
+        | black-cats/kishka | master | pytest-tag | JrGoodle/kishka |
+        | black-cats/june   | master | pytest-tag | JrGoodle/june   |
+        | black-cats/sasha  | master | pytest-tag | JrGoodle/sasha  |
+
+    @cats @internet
+    Scenario Outline: herd tag - existing repo, no existing tag
+        Given cats example is initialized and herded
+        And GitHub <repo> has no remote <tag>
+        And project at <directory> is on <branch>
+        When I run 'clowder herd -t pytest-tag-missing'
+        Then the command succeeds
+        And project at <directory> is on <branch>
+
+        Examples:
+        | directory         | branch | tag                | repo            |
+        | mu                | knead  | pytest-tag-missing | JrGoodle/mu     |
+        | duke              | purr   | pytest-tag-missing | JrGoodle/duke   |
+        | black-cats/kit    | master | pytest-tag-missing | JrGoodle/kit    |
+        | black-cats/kishka | master | pytest-tag-missing | JrGoodle/kishka |
+        | black-cats/june   | master | pytest-tag-missing | JrGoodle/june   |
+        | black-cats/sasha  | master | pytest-tag-missing | JrGoodle/sasha  |
+
+# TODO: Add more tests for local vs remote tags and annotated vs lightweight

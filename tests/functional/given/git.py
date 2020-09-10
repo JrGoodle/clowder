@@ -81,6 +81,14 @@ def given_directory_detached_head(tmp_path: Path, directory: str) -> None:
     assert util.is_detached_head(path)
 
 
+@given(parsers.parse("repo at {directory} has remote tag {tag}"))
+@given(parsers.parse("project at {directory} has remote tag {tag}"))
+@given("project at <directory> has remote <tag>")
+def given_directory_tag(tmp_path: Path, directory: str, tag: str) -> None:
+    path = tmp_path / directory
+    assert util.is_on_tag(path, tag)
+
+
 @given(parsers.parse("repo at {directory} is clean"))
 @given(parsers.parse("project at {directory} is clean"))
 @given("project at <directory> is clean")
@@ -119,6 +127,22 @@ def given_directory_has_tracking_branch(tmp_path: Path, directory: str, test_bra
 def given_directory_has_no_tracking_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
     path = tmp_path / directory
     assert not util.tracking_branch_exists(path, test_branch)
+
+
+@given(parsers.parse("GitHub {repo} has remote tag {tag}"))
+@given("GitHub <repo> has remote <tag>")
+def given_github_repo_has_remote_tag(tmp_path: Path, repo: str, tag: str) -> None:
+    path = tmp_path
+    url = f"https://github.com/{repo}"
+    assert util.has_remote_tag(path, tag, url)
+
+
+@given(parsers.parse("GitHub {repo} has no remote tag {tag}"))
+@given("GitHub <repo> has no remote <tag>")
+def given_github_repo_has_no_remote_tag(tmp_path: Path, repo: str, tag: str) -> None:
+    path = tmp_path
+    url = f"https://github.com/{repo}"
+    assert not util.has_remote_tag(path, tag, url)
 
 
 @given("<test_directory> is a git repository")

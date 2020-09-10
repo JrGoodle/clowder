@@ -21,3 +21,9 @@ def list_from_string(text: str, sep: Optional[str] = None) -> List[str]:
 def clean_escape_sequences(string: str) -> str:
     reaesc = re.compile(r'\x1b[^m]*m')
     return reaesc.sub('', string)
+
+
+def remove_prefix(text: str, prefix: str) -> str:
+    if text.startswith(prefix):
+        return text[len(prefix):]
+    return text
