@@ -1,6 +1,8 @@
 @herd
 Feature: clowder herd
 
+# TODO: Add parallel tests
+
     @help @cats
     Scenario: herd help in empty directory
         Given test directory is empty

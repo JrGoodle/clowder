@@ -1,6 +1,8 @@
 @forall
 Feature: clowder forall
 
+# TODO: Add parallel tests
+
     @help @cats
     Scenario: forall help in empty directory
         Given test directory is empty

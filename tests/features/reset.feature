@@ -1,6 +1,8 @@
 @reset @cats
 Feature: clowder reset
 
+# TODO: Add parallel tests
+
     @help
     Scenario: reset help in empty directory
         Given test directory is empty
