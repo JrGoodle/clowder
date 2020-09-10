@@ -1,0 +1,6 @@
+name: source.url-project
+
+clowder:
+  - name: JrGoodle/mu
+    source:
+      url: something

@@ -1,0 +1,11 @@
+name: source.url-sources-defaults-name
+
+sources:
+  somewhere:
+    url: something
+
+defaults:
+  source: somewhere
+
+clowder:
+  - name: JrGoodle/mu

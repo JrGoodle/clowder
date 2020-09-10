@@ -1,0 +1,5 @@
+name: commit-project
+
+clowder:
+  - name: JrGoodle/mu
+    commit: 60044a0c5489872c1b793d9dbd8b3e4b19f66fb3

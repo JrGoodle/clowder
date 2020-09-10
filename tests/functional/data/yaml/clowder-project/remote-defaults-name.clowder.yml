@@ -1,0 +1,7 @@
+name: remote-defaults-name
+
+defaults:
+  remote: source
+
+clowder:
+  - name: JrGoodle/mu

@@ -1,0 +1,11 @@
+name: source-defaults
+
+sources:
+  chromium:
+    url: chromium.googlesource.com
+
+defaults:
+  source: chromium
+
+clowder:
+  - external/gyp

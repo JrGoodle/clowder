@@ -1,0 +1,7 @@
+name: branch-defaults-name
+
+defaults:
+  branch: knead
+
+clowder:
+  - name: JrGoodle/mu

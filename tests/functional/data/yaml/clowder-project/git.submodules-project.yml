@@ -1,8 +1,0 @@
-name: commit-project
-
-protocol: https
-
-clowder:
-  - name: JrGoodle/mu
-    git:
-      submodules: true

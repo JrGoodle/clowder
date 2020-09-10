@@ -1,0 +1,8 @@
+name: git.lfs-defaults-name
+
+defaults:
+  git:
+    lfs: true
+
+clowder:
+  - name: JrGoodle/mu

@@ -1,0 +1,6 @@
+name: git.depth-project
+
+clowder:
+  - name: JrGoodle/mu
+    git:
+      depth: 1

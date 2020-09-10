@@ -1,0 +1,11 @@
+name: source-defaults-name
+
+sources:
+  chromium:
+    url: chromium.googlesource.com
+
+defaults:
+  source: chromium
+
+clowder:
+  - name: external/gyprGoodle/mu

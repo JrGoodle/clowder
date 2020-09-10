@@ -1,9 +1,0 @@
-name: commit-project
-
-protocol: https
-
-clowder:
-  - name: JrGoodle/mu
-    git:
-      config:
-        alias.cat: '!echo "😸"'

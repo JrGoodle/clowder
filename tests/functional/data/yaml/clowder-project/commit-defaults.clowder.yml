@@ -1,0 +1,7 @@
+name: commit-defaults
+
+defaults:
+  commit: 60044a0c5489872c1b793d9dbd8b3e4b19f66fb3
+
+clowder:
+  - JrGoodle/mu

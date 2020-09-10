@@ -1,9 +1,0 @@
-name: commit-project
-
-protocol: https
-
-defaults:
-  tag: knead
-
-clowder:
-  - name: JrGoodle/mu
