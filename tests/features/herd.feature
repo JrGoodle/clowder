@@ -1035,7 +1035,6 @@ Feature: clowder herd
         | mu                | knead  |
         | duke              | purr   |
         | black-cats/kit    | master |
-        | black-cats/kishka | master |
         | black-cats/june   | master |
         | black-cats/sasha  | master |
 
