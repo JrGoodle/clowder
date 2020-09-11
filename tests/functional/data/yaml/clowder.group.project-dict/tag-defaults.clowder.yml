@@ -1,0 +1,8 @@
+name: tag-defaults
+
+defaults:
+  tag: knead
+
+clowder:
+  cats:
+    - name: JrGoodle/mu

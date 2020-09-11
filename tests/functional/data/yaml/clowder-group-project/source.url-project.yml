@@ -1,6 +1,0 @@
-name: commit-project
-
-clowder:
-  - name: JrGoodle/mu
-    source:
-      url: something

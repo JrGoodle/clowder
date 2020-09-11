@@ -1,0 +1,12 @@
+name: source.url-sources-defaults
+
+sources:
+  chromium:
+    url: chromium.googlesource.com
+
+defaults:
+  source: chromium
+
+clowder:
+  cats:
+    - external/gyp

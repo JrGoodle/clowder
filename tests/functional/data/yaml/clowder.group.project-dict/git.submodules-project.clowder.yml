@@ -1,0 +1,7 @@
+name: git.submodules-project
+
+clowder:
+  cats:
+    - name: JrGoodle/mu
+      git:
+        submodules: true

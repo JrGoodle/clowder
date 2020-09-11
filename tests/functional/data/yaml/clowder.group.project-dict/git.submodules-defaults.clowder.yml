@@ -1,0 +1,9 @@
+name: git.submodules-defaults
+
+defaults:
+  git:
+    submodules: true
+
+clowder:
+  cats:
+    - name: JrGoodle/mu

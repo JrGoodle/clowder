@@ -1,0 +1,6 @@
+name: path-project
+
+clowder:
+  cats:
+    - name: JrGoodle/mu
+      path: cat/mu

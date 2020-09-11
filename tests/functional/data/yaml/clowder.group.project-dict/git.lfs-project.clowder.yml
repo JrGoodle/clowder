@@ -1,0 +1,7 @@
+name: git.lfs-project
+
+clowder:
+  cats:
+    - name: JrGoodle/mu
+      git:
+        lfs: true

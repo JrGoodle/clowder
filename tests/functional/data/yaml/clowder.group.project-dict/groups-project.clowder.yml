@@ -1,0 +1,6 @@
+name: groups-project
+
+clowder:
+  cats:
+    - name: JrGoodle/mu
+      groups: [cats]

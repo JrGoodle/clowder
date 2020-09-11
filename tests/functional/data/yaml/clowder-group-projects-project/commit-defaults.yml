@@ -1,9 +1,0 @@
-name: commit-project
-
-protocol: https
-
-defaults:
-  commit: something
-
-clowder:
-  - name: JrGoodle/mu
