@@ -2,6 +2,6 @@ name: git.lfs-project
 
 clowder:
   cats:
-    - name: JrGoodle/mu
+    - name: JrGoodle/felidae
       git:
         lfs: true

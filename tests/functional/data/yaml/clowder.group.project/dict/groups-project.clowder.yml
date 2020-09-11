@@ -2,5 +2,5 @@ name: groups-project
 
 clowder:
   cats:
-    - name: JrGoodle/mu
-      groups: [cats]
+    - name: JrGoodle/felidae
+      groups: [cats-group]

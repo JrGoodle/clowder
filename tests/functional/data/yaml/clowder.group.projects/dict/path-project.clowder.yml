@@ -3,5 +3,5 @@ name: path-project
 clowder:
   cats:
     projects:
-      - name: JrGoodle/mu
-        path: cat/mu
+      - name: JrGoodle/felidae
+        path: feliforma/felidae

@@ -1,5 +1,5 @@
 name: path-project
 
 clowder:
-  - name: JrGoodle/mu
-    path: cat/mu
+  - name: JrGoodle/felidae
+    path: feliforma/felidae

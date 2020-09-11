@@ -5,4 +5,4 @@ clowder:
     defaults:
       tag: v0.01
     projects:
-      - name: JrGoodle/mu
+      - name: JrGoodle/felidae

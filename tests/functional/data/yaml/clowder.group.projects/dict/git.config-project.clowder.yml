@@ -3,7 +3,7 @@ name: git.config-project
 clowder:
   cats:
     projects:
-      - name: JrGoodle/mu
+      - name: JrGoodle/felidae
         git:
           config:
             alias.cat: '!echo "😸"'

@@ -1,7 +1,7 @@
 name: branch-defaults
 
 defaults:
-  branch: knead
+  branch: felid
 
 clowder:
-  - JrGoodle/mu
+  - JrGoodle/felidae

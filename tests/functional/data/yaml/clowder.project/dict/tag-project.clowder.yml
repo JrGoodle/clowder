@@ -1,5 +1,5 @@
 name: tag-project
 
 clowder:
-  - name: JrGoodle/mu
+  - name: JrGoodle/felidae
     tag: v0.01

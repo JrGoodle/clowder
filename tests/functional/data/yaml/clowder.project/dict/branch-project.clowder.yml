@@ -1,5 +1,5 @@
 name: branch-project
 
 clowder:
-  - name: JrGoodle/mu
-    branch: knead
+  - name: JrGoodle/felidae
+    branch: felid

@@ -5,4 +5,4 @@ clowder:
     defaults:
       remote: source
     projects:
-      - JrGoodle/mu
+      - JrGoodle/felidae

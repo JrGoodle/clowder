@@ -2,5 +2,5 @@ name: commit-project
 
 clowder:
   cats:
-    - name: JrGoodle/mu
-      commit: 60044a0c5489872c1b793d9dbd8b3e4b19f66fb3
+    - name: JrGoodle/felidae
+      commit: e61b2495a3fe903f43a8c2be3d58b6b01bdbf664

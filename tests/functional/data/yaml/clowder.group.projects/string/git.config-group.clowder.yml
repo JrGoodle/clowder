@@ -7,4 +7,4 @@ clowder:
         config:
           alias.cat: '!echo "😸"'
     projects:
-      - JrGoodle/mu
+      - JrGoodle/felidae

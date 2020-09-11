@@ -3,4 +3,4 @@ name: implicit
 clowder:
   cats:
     projects:
-      - JrGoodle/mu
+      - JrGoodle/felidae

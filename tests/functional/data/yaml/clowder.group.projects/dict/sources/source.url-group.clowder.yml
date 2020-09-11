@@ -1,12 +1,12 @@
 name: source.url-group
 
 sources:
-  chromium:
-    url: chromium.googlesource.com
+  beanstalk:
+    url: polka-dot-cat.git.beanstalkapp.com
 
 clowder:
   cats:
     defaults:
-      source: chromium
+      source: beanstalk
     projects:
-      - name: external/gyp
+      - name: felidae

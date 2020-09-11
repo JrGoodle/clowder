@@ -5,4 +5,4 @@ defaults:
     lfs: true
 
 clowder:
-  - JrGoodle/mu
+  - JrGoodle/felidae

@@ -6,4 +6,4 @@ clowder:
       git:
         lfs: true
     projects:
-      - JrGoodle/mu
+      - JrGoodle/felidae

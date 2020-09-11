@@ -6,4 +6,4 @@ defaults:
       alias.cat: '!echo "😸"'
 
 clowder:
-  - name: JrGoodle/mu
+  - name: JrGoodle/felidae

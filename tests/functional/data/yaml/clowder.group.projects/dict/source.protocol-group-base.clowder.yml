@@ -5,9 +5,9 @@ protocol: https
 clowder:
   cats:
     sources:
-      chromium:
-        url: chromium.googlesource.com
+      beanstalk:
+        url: polka-dot-cat.git.beanstalkapp.com
     defaults:
-      source: chromium
+      source: beanstalk
     projects:
-      - name: external/gyp
+      - name: felidae

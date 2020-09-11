@@ -1,9 +1,9 @@
 
 clowder:
-- branch: knead
+- branch: felid
   groups:
   - cats
-  name: JrGoodle/mu
+  name: JrGoodle/felidae
   path: mu
 - branch: purr
   groups:

@@ -2,6 +2,6 @@ name: path-group
 
 clowder:
   cats:
-    path: somewhere
+    path: feliforma
     projects:
-      - name: JrGoodle/mu
+      - name: JrGoodle/felidae

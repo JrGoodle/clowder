@@ -1,9 +1,9 @@
 name: branch-defaults
 
 defaults:
-  branch: knead
+  branch: felid
 
 clowder:
   cats:
     projects:
-      - JrGoodle/mu
+      - JrGoodle/felidae

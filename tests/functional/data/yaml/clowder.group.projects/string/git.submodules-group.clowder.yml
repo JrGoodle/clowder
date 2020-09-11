@@ -6,4 +6,4 @@ clowder:
       git:
         submodules: true
     projects:
-      - JrGoodle/mu
+      - JrGoodle/felidae

@@ -4,4 +4,4 @@ defaults:
   tag: v0.01
 
 clowder:
-  - name: JrGoodle/mu
+  - name: JrGoodle/felidae

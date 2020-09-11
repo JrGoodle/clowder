@@ -4,4 +4,4 @@ defaults:
   remote: source
 
 clowder:
-  - name: JrGoodle/mu
+  - name: JrGoodle/felidae

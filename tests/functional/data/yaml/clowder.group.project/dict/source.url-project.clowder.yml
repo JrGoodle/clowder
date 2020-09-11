@@ -2,6 +2,6 @@ name: source.url-project
 
 clowder:
   cats:
-    - name: JrGoodle/mu
+    - name: JrGoodle/felidae
       source:
         url: something

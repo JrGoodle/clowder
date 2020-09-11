@@ -8,4 +8,4 @@ defaults:
 clowder:
   cats:
     projects:
-      - JrGoodle/mu
+      - JrGoodle/felidae

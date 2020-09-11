@@ -1,12 +1,12 @@
 name: source.protocol-defaults
 
 sources:
-  chromium:
-    url: chromium.googlesource.com
+  beanstalk:
+    url: polka-dot-cat.git.beanstalkapp.com
     protocol: https
 
 defaults:
-  source: chromium
+  source: beanstalk
 
 clowder:
-  - name: external/gyp
+  - name: felidae

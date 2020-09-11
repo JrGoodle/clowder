@@ -3,8 +3,8 @@ name: source.url-group
 clowder:
   cats:
     sources:
-      chromium:
+      beanstalk:
         url: something
     projects:
-      - name: JrGoodle/mu
-        source: chromium
+      - name: JrGoodle/felidae
+        source: beanstalk

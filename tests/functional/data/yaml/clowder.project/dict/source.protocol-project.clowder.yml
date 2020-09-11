@@ -1,7 +1,7 @@
 name: source.protocol-project
 
 clowder:
-  - name: external/gyp
+  - name: felidae
     source:
-      url: chromium.googlesource.com
+      url: polka-dot-cat.git.beanstalkapp.com
       protocol: https

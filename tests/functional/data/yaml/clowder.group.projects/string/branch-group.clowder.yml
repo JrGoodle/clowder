@@ -3,6 +3,6 @@ name: branch-group
 clowder:
   cats:
     defaults:
-      branch: knead
+      branch: felid
     projects:
-      - JrGoodle/mu
+      - JrGoodle/felidae

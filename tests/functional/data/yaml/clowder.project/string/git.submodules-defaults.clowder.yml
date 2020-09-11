@@ -5,4 +5,4 @@ defaults:
     submodules: true
 
 clowder:
-  - JrGoodle/mu
+  - JrGoodle/felidae

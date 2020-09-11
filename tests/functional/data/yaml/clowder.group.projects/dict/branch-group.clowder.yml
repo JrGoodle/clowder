@@ -1,11 +1,8 @@
 name: branch-group
 
-defaults:
-  branch: knead
-
 clowder:
   cats:
     defaults:
-      source: chromium
+      branch: felid
     projects:
-      - name: JrGoodle/mu
+      - name: JrGoodle/felidae

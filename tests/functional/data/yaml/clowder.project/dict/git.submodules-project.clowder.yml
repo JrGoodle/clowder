@@ -1,6 +1,6 @@
 name: git.submodules-project
 
 clowder:
-  - name: JrGoodle/mu
+  - name: JrGoodle/felidae
     git:
       submodules: true

@@ -3,6 +3,6 @@ name: git.depth-project
 clowder:
   cats:
     projects:
-      - name: JrGoodle/mu
+      - name: JrGoodle/felidae
         git:
           depth: 1

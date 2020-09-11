@@ -6,4 +6,4 @@ clowder:
       git:
         depth: 1
     projects:
-      - name: JrGoodle/mu
+      - name: JrGoodle/felidae

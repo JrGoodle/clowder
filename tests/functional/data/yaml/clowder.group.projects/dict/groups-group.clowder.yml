@@ -4,4 +4,4 @@ clowder:
   cats:
     groups: [cats-group]
     projects:
-      - name: JrGoodle/mu
+      - name: JrGoodle/felidae
