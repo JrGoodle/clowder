@@ -1,7 +1,7 @@
 name: tag-defaults
 
 defaults:
-  tag: v0.01
+  tag: cat
 
 clowder:
   cats:

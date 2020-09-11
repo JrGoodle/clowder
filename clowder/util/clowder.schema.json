@@ -584,17 +584,6 @@
                   "$ref": "#/definitions/groupNames"
                 }
               ]
-            },
-            "protocol": {
-              "description": "Default git URL protocol for git hosting provider sources. Accepted values are 'ssh' or 'https'. If not supplied, defaults to 'ssh'. The full URL gets formed as:\ngit@${source_url}:${project_name/upstream_name}.git\nhttps://${source_url}/${project_name/upstream_name}.git",
-              "allOf": [
-                {
-                  "$ref": "#/definitions/gitProtocol"
-                }
-              ]
-            },
-            "sources": {
-              "$ref": "#/definitions/sources"
             }
           },
           "not": {

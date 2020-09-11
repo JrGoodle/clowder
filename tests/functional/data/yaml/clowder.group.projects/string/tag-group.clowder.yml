@@ -3,6 +3,6 @@ name: tag-group
 clowder:
   cats:
     defaults:
-      tag: v0.01
+      tag: cat
     projects:
       - JrGoodle/felidae

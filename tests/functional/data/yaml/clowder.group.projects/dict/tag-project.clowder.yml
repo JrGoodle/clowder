@@ -4,4 +4,4 @@ clowder:
   cats:
     projects:
       - name: JrGoodle/felidae
-        tag: v0.01
+        tag: cat

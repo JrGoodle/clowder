@@ -11,5 +11,4 @@ defaults:
 
 clowder:
   cats:
-    projects:
-      - felidae
+    - name: felidae
