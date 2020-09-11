@@ -1,0 +1,12 @@
+name: source.url-group
+
+sources:
+  chromium:
+    url: chromium.googlesource.com
+
+clowder:
+  cats:
+    defaults:
+      source: chromium
+    projects:
+      - name: external/gyp

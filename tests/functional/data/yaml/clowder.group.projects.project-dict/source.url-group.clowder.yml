@@ -1,0 +1,10 @@
+name: source.url-group
+
+clowder:
+  cats:
+    sources:
+      chromium:
+        url: something
+    projects:
+      - name: JrGoodle/mu
+        source: chromium

@@ -1,4 +1,6 @@
-name: source.url-sources-defaults
+name: source.protocol-defaults-base
+
+protocol: https
 
 sources:
   chromium:
@@ -8,5 +10,4 @@ defaults:
   source: chromium
 
 clowder:
-  cats:
-    - name: external/gyp
+  - external/gyp

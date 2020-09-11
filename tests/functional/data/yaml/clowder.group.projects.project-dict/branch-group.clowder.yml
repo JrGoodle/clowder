@@ -1,0 +1,11 @@
+name: branch-group
+
+defaults:
+  branch: knead
+
+clowder:
+  cats:
+    defaults:
+      source: chromium
+    projects:
+      - name: JrGoodle/mu

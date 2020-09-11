@@ -1,0 +1,7 @@
+name: branch-project
+
+clowder:
+  cats:
+    projects:
+      - name: JrGoodle/mu
+        branch: knead

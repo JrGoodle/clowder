@@ -1,7 +1,7 @@
 name: tag-defaults
 
 defaults:
-  tag: knead
+  tag: v0.01
 
 clowder:
   cats:

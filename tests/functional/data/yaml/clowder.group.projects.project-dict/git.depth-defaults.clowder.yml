@@ -1,0 +1,10 @@
+name: git.depth-defaults
+
+defaults:
+  git:
+    depth: 1
+
+clowder:
+  cats:
+    projects:
+      - name: JrGoodle/mu

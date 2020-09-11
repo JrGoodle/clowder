@@ -5,4 +5,5 @@ defaults:
 
 clowder:
   cats:
-    - name: JrGoodle/mu
+    projects:
+      - name: JrGoodle/mu

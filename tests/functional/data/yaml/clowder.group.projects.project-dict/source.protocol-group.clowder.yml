@@ -1,0 +1,12 @@
+name: source.protocol-group
+
+clowder:
+  cats:
+    sources:
+      chromium:
+        url: chromium.googlesource.com
+        protocol: https
+    defaults:
+      source: chromium
+    projects:
+      - name: external/gyp

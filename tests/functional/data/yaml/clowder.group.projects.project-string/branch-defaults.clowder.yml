@@ -1,0 +1,9 @@
+name: branch-defaults
+
+defaults:
+  branch: knead
+
+clowder:
+  cats:
+    projects:
+      - JrGoodle/mu

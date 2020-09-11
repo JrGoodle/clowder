@@ -1,0 +1,9 @@
+name: git.config-project
+
+clowder:
+  cats:
+    projects:
+      - name: JrGoodle/mu
+        git:
+          config:
+            alias.cat: '!echo "😸"'

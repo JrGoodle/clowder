@@ -1,0 +1,11 @@
+name: git.config-defaults
+
+defaults:
+  git:
+    config:
+      alias.cat: '!echo "😸"'
+
+clowder:
+  cats:
+    projects:
+      - name: JrGoodle/mu

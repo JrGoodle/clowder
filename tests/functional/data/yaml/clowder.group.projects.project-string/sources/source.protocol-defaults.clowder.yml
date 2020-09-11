@@ -10,4 +10,5 @@ defaults:
 
 clowder:
   cats:
-    - external/gyp
+    projects:
+      - external/gyp

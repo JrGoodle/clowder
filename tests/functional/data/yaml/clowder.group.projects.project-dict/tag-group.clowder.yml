@@ -1,0 +1,8 @@
+name: tag-group
+
+clowder:
+  cats:
+    defaults:
+      tag: v0.01
+    projects:
+      - name: JrGoodle/mu

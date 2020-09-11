@@ -1,0 +1,8 @@
+name: source.url-project
+
+clowder:
+  cats:
+    projects:
+      - name: JrGoodle/mu
+        source:
+          url: something

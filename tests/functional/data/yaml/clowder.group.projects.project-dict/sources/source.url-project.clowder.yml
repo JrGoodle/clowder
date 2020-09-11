@@ -1,0 +1,11 @@
+name: source.url-project
+
+sources:
+  chromium:
+    url: chromium.googlesource.com
+
+clowder:
+  cats:
+    projects:
+      - name: external/gyp
+        source: chromium

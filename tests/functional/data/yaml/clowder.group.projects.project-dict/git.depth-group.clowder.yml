@@ -1,0 +1,9 @@
+name: git.depth-group
+
+clowder:
+  cats:
+    defaults:
+      git:
+        depth: 1
+    projects:
+      - name: JrGoodle/mu

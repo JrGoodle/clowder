@@ -2,4 +2,4 @@ name: tag-project
 
 clowder:
   - name: JrGoodle/mu
-    tag: knead
+    tag: v0.01

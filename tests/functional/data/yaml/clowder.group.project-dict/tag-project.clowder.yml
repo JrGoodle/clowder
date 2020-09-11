@@ -3,4 +3,4 @@ name: tag-project
 clowder:
   cats:
     - name: JrGoodle/mu
-      tag: knead
+      tag: v0.01

@@ -1,4 +1,4 @@
-name: source.protocol-sources-defaults
+name: source.protocol-defaults
 
 sources:
   chromium:
