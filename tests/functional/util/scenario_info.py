@@ -18,6 +18,8 @@ class ScenarioInfo:
         self.commit_messages_behind: Optional[List[str]] = None
         self.number_commit_messages_ahead: Optional[int] = None
         self.number_commit_messages_behind: Optional[int] = None
+        self.validation_tests: Optional[List[str]] = None
+        self.current_validation_test: Optional[str] = None
 
     @property
     def cmd_dir(self) -> Path:

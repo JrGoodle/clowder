@@ -53,10 +53,3 @@ def when_run_command_and_command(command_1: str, command_2: str,
 #     groups_command = " ".join(g for g in groups)
 #     util.run_command(f"{command} {groups_command}", tmp_path)
 
-
-@when(parsers.parse("I run '{command}' for validation clowders"))
-def when_run_command_validation(command: str, command_results: CommandResults,
-                                scenario_info: ScenarioInfo) -> None:
-    assert False
-    result = util.run_command(command, scenario_info.cmd_dir)
-    command_results.completed_processes.append(result)

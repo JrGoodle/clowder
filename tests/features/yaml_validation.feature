@@ -17,17 +17,12 @@ Feature: clowder yaml validation
 #        | felidae   | felid  | origin | git@polka-dot-cat.git.beanstalkapp.com:polka-dot-cat/felidae.git |
 #        | felidae   | felid  | origin | git@github.com:JrGoodle/felidae.git                              |
 
-
-    Scenario Outline: validate project.branch
-        Given <project_property> validation clowders are initialized
-        And for validation clowders: <directory> doesn't exist
-        When I run 'clowder herd' for validation clowders
+    @debug
+    Scenario: validate project.branch
+        Given validation clowders are initialized
+        And for validation clowders: directory felidae doesn't exist
+        When I run 'clowder herd' for <branch_test_file>
         Then the validation commands succeed
-        And for validation clowders: project at <directory> is a git repository
-        And for validation clowders: project at <directory> has tracking <branch>
-        And for validation clowders: project at <directory> is on <branch>
-
-        Examples:
-        | project_property | directory | branch |
-        | branch           | felidae   | felid  |
-
+        And for validation clowders: project at felidae is a git repository
+        And for validation clowders: project at felidae has tracking branch felid
+        And for validation clowders: project at felidae is on branch felid

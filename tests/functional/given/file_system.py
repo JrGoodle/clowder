@@ -124,12 +124,6 @@ def given_has_no_directory(tmp_path: Path, directory: str) -> None:
     assert not path.exists()
 
 
-@given("for validation clowders: <directory> doesn't exist")
-def given_validation_has_no_directory(tmp_path: Path, directory: str) -> None:
-    path = tmp_path / directory
-    assert not path.exists()
-
-
 @given(parsers.parse("{filename_1} and {filename_2} files exist"))
 def given_has_two_files(tmp_path: Path, filename_1: str, filename_2: str) -> None:
     path = tmp_path / filename_1
