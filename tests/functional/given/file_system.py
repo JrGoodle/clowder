@@ -5,6 +5,7 @@ from pathlib import Path
 from pytest_bdd import given, parsers
 
 import tests.functional.util as util
+from tests.functional.util import ScenarioInfo
 
 
 @given("I'm in an empty directory")

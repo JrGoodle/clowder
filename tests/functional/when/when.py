@@ -1,5 +1,6 @@
 """New syntax test file"""
 
+from pathlib import Path
 from pytest_bdd import when, parsers
 
 import tests.functional.util as util
@@ -29,22 +30,26 @@ def when_change_directory(directory: str, scenario_info: ScenarioInfo) -> None:
 
 
 @when(parsers.parse("I run '{command}'"))
-def when_run_command(command: str, command_results: CommandResults, scenario_info: ScenarioInfo) -> None:
-    result = util.run_command(command, scenario_info.cmd_dir)
+def when_run_command(tmp_path: Path, command: str, command_results: CommandResults,
+                     scenario_info: ScenarioInfo) -> None:
+    path = scenario_info.cmd_dir
+    result = util.run_command(command, path)
     command_results.completed_processes.append(result)
 
 
 @when(parsers.parse("I run '{command}' without debug output"))
 def when_run_command_no_debug(command: str, command_results: CommandResults, scenario_info: ScenarioInfo) -> None:
-    result = util.run_command(command, scenario_info.cmd_dir, clowder_debug=False)
+    path = scenario_info.cmd_dir
+    result = util.run_command(command, path, clowder_debug=False)
     command_results.completed_processes.append(result)
 
 
 @when(parsers.parse("I run '{command_1}' and '{command_2}'"))
 def when_run_command_and_command(command_1: str, command_2: str,
                                  command_results: CommandResults, scenario_info: ScenarioInfo) -> None:
+    path = scenario_info.cmd_dir
     commands = [command_1, command_2]
-    command_results.completed_processes += [util.run_command(c, scenario_info.cmd_dir) for c in commands]
+    command_results.completed_processes += [util.run_command(c, path) for c in commands]
 
 
 # NOTE: Comma separated list example
@@ -52,4 +57,3 @@ def when_run_command_and_command(command_1: str, command_2: str,
 # def when_run_clowder_groups(tmp_path: Path, command: str, groups: List[str]) -> None:
 #     groups_command = " ".join(g for g in groups)
 #     util.run_command(f"{command} {groups_command}", tmp_path)
-

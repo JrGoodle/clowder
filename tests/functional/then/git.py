@@ -9,8 +9,9 @@ from tests.functional.util import ScenarioInfo
 
 
 @then("project at <directory> is a git repository")
+@then(parsers.parse("project at {directory} is a git repository"))
 @then(parsers.parse("directory at {directory} is a git repository"))
-def then_project_dir_is_git_repo(tmp_path: Path, directory: str) -> None:
+def then_project_dir_is_git_repo(tmp_path: Path, directory: str):
     path = tmp_path / directory
     assert path.exists()
     assert path.is_dir()

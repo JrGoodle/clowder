@@ -19,10 +19,11 @@ Feature: clowder yaml validation
 
     @debug
     Scenario: validate project.branch
-        Given validation clowders are initialized
-        And for validation clowders: directory felidae doesn't exist
-        When I run 'clowder herd' for <branch_test_file>
-        Then the validation commands succeed
-        And for validation clowders: project at felidae is a git repository
-        And for validation clowders: project at felidae has tracking branch felid
-        And for validation clowders: project at felidae is on branch felid
+        Given validating property <project_branch>
+        And validation clowder is initialized
+        And felidae directory doesn't exist
+        When I run 'clowder herd'
+        Then the command succeeds
+        And project at felidae is a git repository
+        And project at felidae has tracking branch felid
+        And project at felidae is on branch felid

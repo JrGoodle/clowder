@@ -18,11 +18,11 @@ class ScenarioInfo:
         self.commit_messages_behind: Optional[List[str]] = None
         self.number_commit_messages_ahead: Optional[int] = None
         self.number_commit_messages_behind: Optional[int] = None
-        self.validation_tests: Optional[List[str]] = None
         self.current_validation_test: Optional[str] = None
 
     @property
     def cmd_dir(self) -> Path:
-        if self.relative_dir is None:
-            return self._tmp_path
-        return self._tmp_path / self.relative_dir
+        if self.relative_dir is not None:
+            return self._tmp_path / self.relative_dir
+        return self._tmp_path
+
