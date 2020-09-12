@@ -36,3 +36,10 @@ def then_command_exit_return_code(command_results: CommandResults, code: int, sc
                                   tmp_path: Path) -> None:
     assert len(command_results.completed_processes) == 1
     assert all([result.returncode == code for result in command_results.completed_processes])
+
+
+@then("the validation commands succeed")
+def then_validation_commands_succeeded(command_results: CommandResults, scenario_info: ScenarioInfo,
+                                       tmp_path: Path) -> None:
+    assert len(command_results.completed_processes) >= 1
+    assert all([result.returncode == 0 for result in command_results.completed_processes])

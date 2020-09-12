@@ -17,6 +17,14 @@ def then_project_dir_is_git_repo(tmp_path: Path, directory: str) -> None:
     assert util.has_git_directory(path)
 
 
+@then("for validation clowders: project at <directory> is a git repository")
+def then_validation_project_dir_is_git_repo(tmp_path: Path, directory: str) -> None:
+    path = tmp_path / directory
+    assert path.exists()
+    assert path.is_dir()
+    assert util.has_git_directory(path)
+
+
 @then("<test_directory> is a git repository")
 def then_test_dir_is_git_repo(tmp_path: Path, test_directory: str) -> None:
     path = tmp_path / test_directory
@@ -68,6 +76,12 @@ def then_directory_on_branch(tmp_path: Path, directory: str, branch: str) -> Non
     assert util.is_on_active_branch(path, branch)
 
 
+@then("for validation clowders: project at <directory> is on <branch>")
+def then_validation_directory_on_branch(tmp_path: Path, directory: str, branch: str) -> None:
+    path = tmp_path / directory
+    assert util.is_on_active_branch(path, branch)
+
+
 @then(parsers.parse("repo at {directory} is on tag {tag}"))
 @then(parsers.parse("project at {directory} is on tag {tag}"))
 @then("project at <directory> is on <tag>")
@@ -102,6 +116,12 @@ def then_directory_has_tracking_test_branch(tmp_path: Path, directory: str, test
 
 @then("project at <directory> has tracking <branch>")
 def then_directory_has_tracking_branch(tmp_path: Path, directory: str, branch: str) -> None:
+    path = tmp_path / directory
+    assert util.tracking_branch_exists(path, branch)
+
+
+@then("for validation clowders: project at <directory> has tracking <branch>")
+def then_validation_directory_has_tracking_branch(tmp_path: Path, directory: str, branch: str) -> None:
     path = tmp_path / directory
     assert util.tracking_branch_exists(path, branch)
 
