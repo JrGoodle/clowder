@@ -4,4 +4,4 @@ clowder:
   cats:
     path: carnivora/feliforma
     projects:
-      - name: JrGoodle/felidae
+      - JrGoodle/felidae

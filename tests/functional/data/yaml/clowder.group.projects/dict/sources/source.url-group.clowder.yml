@@ -9,4 +9,4 @@ clowder:
     defaults:
       source: beanstalk
     projects:
-      - name: felidae
+      - name: polka-dot-cat/felidae

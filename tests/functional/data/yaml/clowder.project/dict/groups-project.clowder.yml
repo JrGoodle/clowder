@@ -2,4 +2,4 @@ name: groups-project
 
 clowder:
   - name: JrGoodle/felidae
-    groups: [cats-group]
+    groups: [cats-group, cats]

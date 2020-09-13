@@ -8,4 +8,4 @@ defaults:
   source: beanstalk
 
 clowder:
-  - name: felidae
+  - name: polka-dot-cat/felidae

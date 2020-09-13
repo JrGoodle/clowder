@@ -9,4 +9,4 @@ defaults:
 
 clowder:
   cats:
-    - name: felidae
+    - name: polka-dot-cat/felidae

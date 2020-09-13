@@ -10,4 +10,4 @@ defaults:
 clowder:
   cats:
     projects:
-      - felidae
+      - polka-dot-cat/felidae

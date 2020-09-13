@@ -7,5 +7,5 @@ sources:
 clowder:
   cats:
     projects:
-      - name: felidae
+      - name: polka-dot-cat/felidae
         source: beanstalk

@@ -3,6 +3,6 @@ name: source.url-project
 clowder:
   cats:
     projects:
-      - name: felidae
+      - name: polka-dot-cat/felidae
         source:
           url: polka-dot-cat.git.beanstalkapp.com

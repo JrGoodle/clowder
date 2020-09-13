@@ -1,11 +1,6 @@
 @yaml_validation
 Feature: clowder yaml validation
 
-#        Examples:
-#        | directory | branch | remote | url                                                              |
-#        | felidae   | felid  | origin | git@polka-dot-cat.git.beanstalkapp.com:polka-dot-cat/felidae.git |
-#        | felidae   | felid  | origin | git@github.com:JrGoodle/felidae.git                              |
-
     Scenario: validate project.branch
         Given validating property <project_branch>
         And validation clowder is initialized
@@ -47,7 +42,7 @@ Feature: clowder yaml validation
         And validation clowder is initialized and herded
         And project at felidae is clean
         And something file doesn't exist in directory felidae
-        When I change to felidae
+        When I change to directory felidae
         And I run 'git something'
         Then the command succeeds
         And project at felidae is dirty
@@ -58,7 +53,7 @@ Feature: clowder yaml validation
         And validation clowder is initialized and herded
         And project at felidae is clean
         And something file doesn't exist in directory felidae
-        When I change to felidae
+        When I change to directory felidae
         And I run 'git something'
         Then the command fails
         And project at felidae is clean
@@ -130,71 +125,92 @@ Feature: clowder yaml validation
         Given validating property <project_groups>
         And validation clowder is initialized
         And felidae directory doesn't exist
-        When I run 'clowder herd'
-        Then the command fails
+        When I run 'clowder herd cats'
+        And I run 'clowder herd cats-group'
+        Then the commands succeed
+        And project at felidae is a git repository
+        And project at felidae has tracking branch master
+        And project at felidae is on branch master
 
     Scenario: validate implicit project.groups
         Given validating property <project_implicit>
         And validation clowder is initialized
         And felidae directory doesn't exist
-        When I run 'clowder herd'
-        Then the command fails
+        When I run 'clowder herd cats'
+        And I run 'clowder herd cats-group'
+        Then the commands succeed
+        And project at felidae is a git repository
+        And project at felidae has tracking branch master
+        And project at felidae is on branch master
 
     Scenario: validate project.path
         Given validating property <project_path>
         And validation clowder is initialized
         And felidae directory doesn't exist
         When I run 'clowder herd'
-        Then the command fails
+        Then the command succeeds
+        And project at carnivora/feliforma/felidae is a git repository
+        And project at carnivora/feliforma/felidae has tracking branch master
+        And project at carnivora/feliforma/felidae is on branch master
 
     Scenario: validate implicit project.path
         Given validating property <project_implicit>
         And validation clowder is initialized
         And felidae directory doesn't exist
         When I run 'clowder herd'
-        Then the command fails
+        Then the command succeeds
+        And project at felidae is a git repository
+        And project at felidae has tracking branch master
+        And project at felidae is on branch master
 
     Scenario: validate project.remote
         Given validating property <project_remote>
         And validation clowder is initialized
         And felidae directory doesn't exist
         When I run 'clowder herd'
-        Then the command fails
+        Then the command succeeds
+        And project at felidae has remote source with url git@github.com:JrGoodle/felidae.git
 
     Scenario: validate implicit project.remote
         Given validating property <project_implicit>
         And validation clowder is initialized
         And felidae directory doesn't exist
         When I run 'clowder herd'
-        Then the command fails
+        Then the command succeeds
+        And project at felidae has remote oigin with url git@github.com:JrGoodle/felidae.git
 
     Scenario: validate project.source.protocol
         Given validating property <project_source_protocol>
         And validation clowder is initialized
         And felidae directory doesn't exist
         When I run 'clowder herd'
-        Then the command fails
+        Then the command succeeds
+        And project at felidae has remote origin with url https://polka-dot-cat.git.beanstalkapp.com/felidae.git
 
     Scenario: validate implicit project.source.protocol
         Given validating property <project_implicit>
         And validation clowder is initialized
         And felidae directory doesn't exist
         When I run 'clowder herd'
-        Then the command fails
+        Then the command succeeds
+        And project at felidae has remote origin with url git@github.com:JrGoodle/felidae.git
 
     Scenario: validate project.source.url
         Given validating property <project_source_url>
         And validation clowder is initialized
         And felidae directory doesn't exist
         When I run 'clowder herd'
-        Then the command fails
+        Then the command succeeds
+        And project at felidae has remote origin with url git@polka-dot-cat.git.beanstalkapp.com:polka-dot-cat/felidae.git
+#        And project at felidae has remote origin with url git@polka-dot-cat.git.beanstalkapp.com:/polka-dot-cat/felidae.git
 
     Scenario: validate implicit project.source.url
         Given validating property <project_implicit>
         And validation clowder is initialized
         And felidae directory doesn't exist
         When I run 'clowder herd'
-        Then the command fails
+        Then the command succeeds
+        And project at felidae has remote origin with url git@github.com:JrGoodle/felidae.git
 
     Scenario: validate project.tag
         Given validating property <project_tag>
