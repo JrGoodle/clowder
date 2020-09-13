@@ -61,8 +61,7 @@ jobs:
 
       - run:
           name: run pytest functional tests
-          command: script/test "-m 'debug'"
-          # command: script/test "-m 'not offline'"
+          command: script/test "-m 'not offline'"
 # TODO: Enable offline tests
 # https://discuss.circleci.com/t/running-tests-without-internet-access/1427
 
