@@ -10,22 +10,6 @@ import tests.functional.util as util
 from tests.functional.util import ScenarioInfo
 
 
-@given(parsers.parse("{example} example was initialized to branch {branch}"))
-def given_example_init_branch(tmp_path: Path, example: str, branch: str) -> None:
-    url = util.get_url(example)
-    result = util.run_command(f"clowder init {url} -b {branch}", tmp_path)
-    assert result.returncode == 0
-
-
-@given(parsers.parse("{example} example was initialized and herded to branch {branch}"))
-def given_example_init_herd_branch(tmp_path: Path, example: str, branch: str) -> None:
-    url = util.get_url(example)
-    result = util.run_command(f"clowder init {url} -b {branch}", tmp_path)
-    assert result.returncode == 0
-    result = util.run_command(f"clowder herd", tmp_path)
-    assert result.returncode == 0
-
-
 @given(parsers.parse("'{command}' was run"))
 def given_run_clowder_command(tmp_path: Path, command: str) -> None:
     result = util.run_command(command, tmp_path)
