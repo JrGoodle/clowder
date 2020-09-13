@@ -81,7 +81,7 @@ Feature: clowder link command
         And default clowder version is linked
 
     Scenario: link file extension yml to yaml
-        Given cats example is initialized to branch extension
+        Given cats example is initialized
         And default clowder version is linked
         And clowder.yml symlink exists
         And clowder.yaml symlink doesn't exist
@@ -92,7 +92,7 @@ Feature: clowder link command
         And clowder.yml symlink doesn't exist
 
     Scenario: link file extension yaml to yml
-        Given cats example is initialized to branch extension
+        Given cats example is initialized
         And linked tags clowder version
         And clowder.yaml symlink exists
         And clowder.yml symlink doesn't exist
@@ -104,7 +104,7 @@ Feature: clowder link command
 
     @fail
     Scenario: has duplicate symlinks
-        Given cats example is initialized to branch extension
+        Given cats example is initialized
         And default clowder version is linked
         And created clowder.yaml symlink pointing to .clowder/versions/tags.clowder.yaml
         And clowder.yml and clowder.yaml symlinks exist
@@ -116,7 +116,7 @@ Feature: clowder link command
 
 
     Scenario: link with duplicate symlinks
-        Given cats example is initialized to branch extension
+        Given cats example is initialized
         And default clowder version is linked
         And created clowder.yaml symlink pointing to .clowder/versions/tags.clowder.yaml
         And clowder.yml and clowder.yaml symlinks exist

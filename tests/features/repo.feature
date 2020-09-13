@@ -52,12 +52,12 @@ Feature: clowder repo command
     Scenario: repo checkout
         Given cats example is initialized
         And repo at .clowder is on branch master
-        And repo at .clowder has no local branch repo-test
-        And repo at .clowder has remote branch repo-test
-        When I run 'clowder repo checkout repo-test'
+        And repo at .clowder has no local branch alt-branch
+        And repo at .clowder has remote branch alt-branch
+        When I run 'clowder repo checkout alt-branch'
         Then the command succeeds
-        And repo at .clowder has local branch repo-test
-        And repo at .clowder is on branch repo-test
+        And repo at .clowder has local branch alt-branch
+        And repo at .clowder is on branch alt-branch
 
     @fail
     Scenario: repo checkout unknown branch

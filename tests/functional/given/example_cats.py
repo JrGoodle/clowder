@@ -31,12 +31,6 @@ def given_cats_init_herd_ssh(tmp_path: Path, cats_init_herd_ssh, scenario_info: 
     scenario_info.protocol = "ssh"
 
 
-@given(parsers.parse("cats example is initialized to branch extension"))
-def given_cats_init_branch_extension(tmp_path: Path, cats_init_extension, scenario_info: ScenarioInfo) -> None:
-    scenario_info.example = "cats"
-    scenario_info.branch = "extension"
-
-
 @given(parsers.parse("cats example non-symlink yaml file exists"))
 def given_cats_non_symlink_yaml(tmp_path: Path, cats_non_symlink_yaml, scenario_info: ScenarioInfo) -> None:
     scenario_info.example = "cats"
