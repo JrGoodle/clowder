@@ -1,0 +1,34 @@
+name: test-unknown-arg-project-git
+
+defaults:
+  branch: master
+  remote: origin
+  source: github
+
+sources:
+  github:
+    url: github.com
+
+clowder:
+  - name: JrGoodle/mu
+    path: mu
+    branch: knead
+    groups: [cats]
+    git:
+      unknown_project_git_arg: value # ERROR
+  - name: JrGoodle/duke
+    path: duke
+    branch: purr
+    groups: [cats]
+  - name: JrGoodle/kit
+    path: black-cats/kit
+    groups: [black-cats]
+  - name: JrGoodle/kishka
+    path: black-cats/kishka
+    groups: [black-cats]
+  - name: JrGoodle/june
+    path: black-cats/june
+    groups: [black-cats]
+  - name: JrGoodle/sasha
+    path: black-cats/sasha
+    groups: [black-cats]

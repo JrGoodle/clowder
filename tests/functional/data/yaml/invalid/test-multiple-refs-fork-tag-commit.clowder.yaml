@@ -1,0 +1,35 @@
+name: test-multiple-refs-fork-tag-commit
+
+defaults:
+  source: github
+
+sources:
+  github:
+    url: github.com
+
+clowder:
+  - name: JrGoodle/mu
+    path: mu
+    branch: knead
+    groups: [cats]
+    remote: upstream
+    upstream:
+      name: JrGoodle/mu
+      tag: tag
+      commit: 4d322b0400530ebbacca4e45908b27807572d2d3 # ERROR
+  - name: JrGoodle/duke
+    path: duke
+    branch: purr
+    groups: [cats]
+  - name: JrGoodle/kit
+    path: black-cats/kit
+    groups: [black-cats]
+  - name: JrGoodle/kishka
+    path: black-cats/kishka
+    groups: [black-cats]
+  - name: JrGoodle/june
+    path: black-cats/june
+    groups: [black-cats]
+  - name: JrGoodle/sasha
+    path: black-cats/sasha
+    groups: [black-cats]
