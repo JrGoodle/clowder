@@ -4,14 +4,14 @@ name: cats-default-test
 protocol: https
 
 clowder:
-  - name: JrGoodle/felidae
+  - name: JrGoodle/mu
     path: mu
-    branch: felid
-    groups: [cats-group]
+    branch: knead
+    groups: [cats]
   - name: JrGoodle/duke
     path: duke
     branch: purr
-    groups: [cats-group]
+    groups: [cats]
   - name: JrGoodle/kit
     path: black-cats/kit
     groups: [black-cats]

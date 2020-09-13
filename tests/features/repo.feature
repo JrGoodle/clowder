@@ -23,11 +23,11 @@ Feature: clowder repo command
     @fail
     Scenario: repo add non-existing file
         Given cats example is initialized
-        And .clowder/my-file file doesn't exist
+        And my-file file doesn't exist in directory .clowder
         And repo at .clowder is clean
         When I run 'clowder repo add my-file'
         Then the command fails
-        And .clowder/my-file file doesn't exist
+        And my-file file doesn't exist in directory .clowder
         And repo at .clowder is clean
 
     Scenario: repo run create file

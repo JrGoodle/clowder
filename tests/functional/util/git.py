@@ -440,3 +440,10 @@ def set_up_behind(path: Path, local: str, remote: str, number_commits: int, ) ->
 def set_up_ahead(path: Path, local: str, remote: str, number_commits: int, ) -> None:
     reset_back_by_number_of_commits(path, number_commits)
     assert is_behind_by_number_commits(path, local, remote, number_commits)
+
+
+def is_shallow_repo(path: Path) -> bool:
+    result = run_command("git rev-parse --is-shallow-repository", path)
+    assert result.returncode == 0
+    output: str = result.stdout
+    return output.strip() == "true"

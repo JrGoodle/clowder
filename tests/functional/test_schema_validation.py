@@ -67,22 +67,22 @@ def test_validate_project_git_config_implicit(project_implicit: Path):
     pass
 
 
-# @pytest.mark.parametrize(["project_git_depth"], get_test_params("project.git.depth"))
-# @scenario(
-#     "../features/yaml_validation.feature",
-#     "validate project.git.depth",
-# )
-# def test_validate_project_git_depth(project_git_depth: Path):
-#     pass
-#
-#
-# @pytest.mark.parametrize(["project_implicit"], get_test_params("project.implicit"))
-# @scenario(
-#     "../features/yaml_validation.feature",
-#     "validate implicit project.git.depth",
-# )
-# def test_validate_project_git_depth_implicit(project_implicit: Path):
-#     pass
+@pytest.mark.parametrize(["project_git_depth"], get_test_params("project.git.depth"))
+@scenario(
+    "../features/yaml_validation.feature",
+    "validate project.git.depth",
+)
+def test_validate_project_git_depth(project_git_depth: Path):
+    pass
+
+
+@pytest.mark.parametrize(["project_implicit"], get_test_params("project.implicit"))
+@scenario(
+    "../features/yaml_validation.feature",
+    "validate implicit project.git.depth",
+)
+def test_validate_project_git_depth_implicit(project_implicit: Path):
+    pass
 
 
 @pytest.mark.parametrize(["project_git_lfs"], get_test_params("project.git.lfs"))

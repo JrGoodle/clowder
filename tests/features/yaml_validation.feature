@@ -65,21 +65,25 @@ Feature: clowder yaml validation
         And project at felidae is clean
         And something file doesn't exist in directory felidae
 
-#    @ssh
-#    Scenario: validate project.git.depth
-#        Given validating property <project_git_depth>
-#        And validation clowder is initialized
-#        And felidae directory doesn't exist
-#        When I run 'clowder herd'
-#        Then the command fails
-#
-#    @ssh
-#    Scenario: validate implicit project.git.depth
-#        Given validating property <project_implicit>
-#        And validation clowder is initialized
-#        And felidae directory doesn't exist
-#        When I run 'clowder herd'
-#        Then the command fails
+    @ssh
+    Scenario: validate project.git.depth
+        Given validating property <project_git_depth>
+        And validation clowder is initialized
+        And felidae directory doesn't exist
+        When I run 'clowder herd'
+        Then the command succeeds
+        And project at felidae is a git repository
+        And project at felidae is a shallow clone
+
+    @ssh
+    Scenario: validate implicit project.git.depth
+        Given validating property <project_implicit>
+        And validation clowder is initialized
+        And felidae directory doesn't exist
+        When I run 'clowder herd'
+        Then the command succeeds
+        And project at felidae is a git repository
+        And project at felidae is not a shallow clone
 
     @ssh @lfs
     Scenario: validate project.git.lfs

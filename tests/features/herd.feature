@@ -987,8 +987,8 @@ Feature: clowder herd
         And project at <directory> is clean
 
         Examples:
-        | directory         | branch | commit                                   |
-        | mu                | knead  | cddce39214a1ae20266d9ee36966de67438625d1 |
+        | directory | branch | commit                                   |
+        | mu        | knead  | cddce39214a1ae20266d9ee36966de67438625d1 |
 
     @cats
     Scenario Outline: herd with git herd alias only applies to one repo - excluded - mu

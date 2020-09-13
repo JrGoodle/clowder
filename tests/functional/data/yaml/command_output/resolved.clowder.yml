@@ -1,9 +1,9 @@
 
 clowder:
-- commit: e61b2495a3fe903f43a8c2be3d58b6b01bdbf664
+- commit: 60044a0c5489872c1b793d9dbd8b3e4b19f66fb3
   groups:
   - cats
-  name: JrGoodle/felidae
+  name: JrGoodle/mu
   path: mu
 - commit: 43347045441d05c2dee745acf2a96f90643b8210
   groups:

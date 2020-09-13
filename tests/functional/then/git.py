@@ -333,3 +333,17 @@ def then_has_no_lfs_installed(tmp_path: Path, directory: str) -> None:
     path = tmp_path / directory
     assert not util.lfs_hooks_installed(path)
     assert not util.lfs_filters_installed(path)
+
+
+@then(parsers.parse("project at {directory} is a shallow clone"))
+@then("project at <directory> is a shallow clone")
+def then_is_shallow_clone(tmp_path: Path, directory: str) -> None:
+    path = tmp_path / directory
+    assert util.is_shallow_repo(path)
+
+
+@then(parsers.parse("project at {directory} is not a shallow clone"))
+@then("project at <directory> is not a shallow clone")
+def then_is_not_shallow_clone(tmp_path: Path, directory: str) -> None:
+    path = tmp_path / directory
+    assert not util.is_shallow_repo(path)
