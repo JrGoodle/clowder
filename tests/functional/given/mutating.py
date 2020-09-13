@@ -383,3 +383,10 @@ def given_test_config_copied_to_clowder_repo(shared_datadir: Path, tmp_path: Pat
     with open(new_file, 'w') as f:
         f.write(contents)
     assert new_file.exists()
+
+
+@given("clower repo has no saved versions")
+def given_clowder_repo_has_no_saved_versions(tmp_path: Path) -> None:
+    path = tmp_path / ".clowder" / "versions"
+    shutil.rmtree(path)
+    assert not path.exists()

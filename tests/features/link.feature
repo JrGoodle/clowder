@@ -54,11 +54,14 @@ Feature: clowder link command
 
     @fail
     Scenario: link no versions
-        Given cats example was initialized to branch no-versions
+        Given cats example is initialized
+        And clower repo has no saved versions
         And default clowder version is linked
+        And .clowder/versions directory doesn't exist
         When I run 'clowder link missing-version'
         Then the command fails
         And default clowder version is linked
+        And .clowder/versions directory doesn't exist
 
     @fail
     Scenario: link missing version

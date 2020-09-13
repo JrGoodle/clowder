@@ -48,10 +48,10 @@ Feature: clowder init
     Scenario: init branch
         Given .clowder directory doesn't exist
         And test directory is empty
-        When I run 'clowder init https://github.com/JrGoodle/cats.git -b no-versions'
+        When I run 'clowder init https://github.com/JrGoodle/cats.git -b alt-branch'
         Then the command succeeds
         And directory at .clowder is a git repository
-        And repo at .clowder is on branch no-versions
+        And repo at .clowder is on branch alt-branch
         And repo at .clowder is clean
         And default clowder version is linked
 

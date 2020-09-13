@@ -42,7 +42,8 @@ Feature: clowder save command
         Then the commands fail
 
     Scenario: save new version with no existing versions directory
-        Given cats example was initialized and herded to branch no-versions
+        Given cats example is initialized and herded
+        And clower repo has no saved versions
         And default clowder version is linked
         And my-new-version clowder version doesn't exist
         And .clowder/versions directory doesn't exist
@@ -55,6 +56,7 @@ Feature: clowder save command
     Scenario: save new version with existing versions directory
         Given cats example is initialized and herded
         And default clowder version is linked
+        And .clowder/versions directory exists
         And my-new-version clowder version doesn't exist
         When I run 'clowder save my-new-version'
         Then the command succeeds
@@ -63,10 +65,11 @@ Feature: clowder save command
 
     @subdirectory
     Scenario: save from subdirectory new version with no existing versions directory
-        Given cats example was initialized and herded to branch no-versions
+        Given cats example is initialized and herded
+        And clower repo has no saved versions
         And default clowder version is linked
-        And my-new-version clowder version doesn't exist
         And .clowder/versions directory doesn't exist
+        And my-new-version clowder version doesn't exist
         When I change to directory black-cats/june
         And I run 'clowder save my-new-version'
         Then the command succeeds
@@ -78,6 +81,7 @@ Feature: clowder save command
     Scenario: save from subdirectory new version with existing versions directory
         Given cats example is initialized and herded
         And default clowder version is linked
+        And .clowder/versions directory exists
         And my-new-version clowder version doesn't exist
         When I change to directory black-cats/june
         And I run 'clowder save my-new-version'
