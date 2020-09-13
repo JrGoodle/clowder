@@ -71,9 +71,10 @@ Feature: clowder link command
         Then the command fails
         And default clowder version is linked
 
-    @fail
+    @fail @debug
     Scenario: link duplicate versions
-        Given cats example was initialized to branch duplicate-versions
+        Given cats example is initialized
+        And has duplicate clowder versions
         And default clowder version is linked
         When I run 'clowder link duplicate-version'
         Then the command fails

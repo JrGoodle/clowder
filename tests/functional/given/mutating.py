@@ -390,3 +390,18 @@ def given_clowder_repo_has_no_saved_versions(tmp_path: Path) -> None:
     path = tmp_path / ".clowder" / "versions"
     shutil.rmtree(path)
     assert not path.exists()
+
+
+@given("has duplicate clowder versions")
+def given_clowder_repo_has_duplicate_versions(tmp_path: Path) -> None:
+    symlink = util.valid_clowder_symlink(tmp_path)
+    default = symlink.resolve()
+
+    versions_dir = tmp_path / ".clowder" / "versions"
+    version_name = "duplicate-version.clowder"
+    for version in [f"{version_name}.yml", f"{version_name}.yaml"]:
+        version_file = versions_dir / version
+        util.copy_file(default, version_file)
+        assert version_file.exists()
+        assert version_file.is_file()
+        assert not version_file.is_symlink()
