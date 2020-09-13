@@ -28,7 +28,7 @@ project:
   path: string
   groups: [ string ]
   remote: string
-  source: source
+  source: string | source
   git: git
   upstream: string | upstream
   branch: string # Only one of 'branch', 'tag', or 'commit' is allowed
@@ -47,8 +47,6 @@ group:
   path: string
   groups: [ string ]
   defaults: defaults
-  protocol: protocol
-  sources: { string: source } # key is a reusable alias
   projects: [ project | string ] # REQUIRED
 ```
 
@@ -57,7 +55,7 @@ group:
 ```yaml
 upstream:
   name: string # REQUIRED
-  source: source
+  source: string | source
   remote: string
 ```
 
@@ -65,7 +63,7 @@ upstream:
 
 ```yaml
 defaults:
-  source: source_name
+  source: string
   remote: string
   git: git
   branch: string # Only one of 'branch', 'tag', or 'commit' is allowed
@@ -78,26 +76,15 @@ defaults:
 
 ```yaml
 upstream_defaults:
-  source: source_name
+  source: string
   remote: string
-```
-
-## source_name
-
-```yaml
-source_name: string # source identifier
 ```
 
 ## source
 
 ```yaml
-source: string # url
-```
-
-```yaml
-source: # source_name
-  url: string # REQUIRED
-  protocol: protocol
+url: string # REQUIRED
+protocol: protocol
 ```
 
 Default sources available:

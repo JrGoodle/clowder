@@ -578,6 +578,10 @@ def error_wrong_source_type() -> str:
     return f"{ERROR} Wrong source type"
 
 
+def error_wrong_submodules_type() -> str:
+    return f"{ERROR} Wrong group type"
+
+
 def error_wrong_group_type() -> str:
     return f"{ERROR} Wrong group type"
 

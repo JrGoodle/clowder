@@ -4,6 +4,6 @@ clowder:
   cats:
     defaults:
       git:
-        submodules: true
+        submodules: update recursive
     projects:
       - name: JrGoodle/felidae

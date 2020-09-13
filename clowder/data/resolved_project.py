@@ -205,7 +205,7 @@ class ResolvedProject:
         :param str branch: Branch to check out
         """
 
-        repo = self._repo(self.git_settings.submodules)
+        repo = self._repo(self.git_settings.recursive)
         repo.checkout(branch, allow_failure=True)
         self._pull_lfs(repo)
 
@@ -221,7 +221,7 @@ class ResolvedProject:
         :param bool submodules: Clean submodules recursively
         """
 
-        self._repo(self.git_settings.submodules or submodules).clean(args=args)
+        self._repo(self.git_settings.recursive or submodules).clean(args=args)
 
     @project_repo_exists
     def clean_all(self) -> None:
@@ -234,7 +234,7 @@ class ResolvedProject:
         ``git submodule update --checkout --recursive --force``
         """
 
-        self._repo(self.git_settings.submodules).clean(args='fdx')
+        self._repo(self.git_settings.recursive).clean(args='fdx')
 
     @project_repo_exists
     def diff(self) -> None:
@@ -243,7 +243,7 @@ class ResolvedProject:
         Equivalent to: ``git status -vv``
         """
 
-        self._repo(self.git_settings.submodules).status_verbose()
+        self._repo(self.git_settings.recursive).status_verbose()
 
     def existing_branch(self, branch: str, is_remote: bool) -> bool:
         """Check if branch exists
@@ -326,7 +326,7 @@ class ResolvedProject:
         self._print_output = not parallel
 
         herd_depth = self.git_settings.depth if depth is None else depth
-        repo = self._repo(self.git_settings.submodules, parallel=parallel)
+        repo = self._repo(self.git_settings.recursive, parallel=parallel)
 
         if self.upstream is None:
             self._print(self.status())
@@ -377,7 +377,7 @@ class ResolvedProject:
         :rtype: bool
         """
 
-        return not self._repo(self.git_settings.submodules).validate_repo()
+        return not self._repo(self.git_settings.recursive).validate_repo()
 
     def is_valid(self, allow_missing_repo: bool = True) -> bool:
         """Validate status of project
@@ -435,7 +435,7 @@ class ResolvedProject:
 
         self._print_output = not parallel
 
-        repo = self._repo(self.git_settings.submodules, parallel=parallel)
+        repo = self._repo(self.git_settings.recursive, parallel=parallel)
 
         # TODO: Restore timestamp author
         # if timestamp:

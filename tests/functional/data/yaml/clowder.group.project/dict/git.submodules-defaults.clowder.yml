@@ -2,7 +2,7 @@ name: git.submodules-defaults
 
 defaults:
   git:
-    submodules: true
+    submodules: update recursive
 
 clowder:
   cats:

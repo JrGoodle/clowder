@@ -4,4 +4,4 @@ clowder:
   cats:
     - name: JrGoodle/felidae
       git:
-        submodules: true
+        submodules: update recursive

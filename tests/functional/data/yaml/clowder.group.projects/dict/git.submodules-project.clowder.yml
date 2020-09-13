@@ -5,4 +5,4 @@ clowder:
     projects:
       - name: JrGoodle/felidae
         git:
-          submodules: true
+          submodules: update recursive

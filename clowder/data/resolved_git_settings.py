@@ -10,14 +10,16 @@ from typing import Dict, Optional
 
 import clowder.util.formatting as fmt
 from clowder.error import ClowderError, ClowderErrorType
+from clowder.logging import LOG_DEBUG
 
-from .model.git_settings import GitSettings, GitConfig, GitSubmodules
+from .model.git_settings import GitSettings, GitConfig
 
 
 class ResolvedGitSettings:
     """clowder yaml GitSettings model class
 
     :ivar bool submodules: Whether to fetch submodules
+    :ivar bool recursive: Whether to fetch submodules recursively
     :ivar bool lfs: Whether to set up lfs hooks and pull files
     :ivar bool depth: Depth to clone git repositories
     :ivar Optional[GitConfig] config: Custom git config values to set
@@ -26,7 +28,8 @@ class ResolvedGitSettings:
     def __init__(self):
         """Source __init__"""
 
-        self.submodules: GitSubmodules = False
+        self.submodules: bool = False
+        self.recursive: bool = False
         self.lfs: bool = False
         self.depth: int = 0
         self.config: Optional[GitConfig] = None
@@ -39,7 +42,25 @@ class ResolvedGitSettings:
         """
 
         if git_settings.submodules is not None:
-            self.submodules = copy.deepcopy(git_settings.submodules)
+            submodules = copy.deepcopy(git_settings.submodules)
+            if isinstance(submodules, bool):
+                self.submodules = submodules
+                self.recursive = False
+            elif isinstance(submodules, str):
+                if submodules == "update":
+                    self.submodules = True
+                    self.recursive = False
+                elif submodules == "recursive" or submodules == "update recursive":
+                    self.submodules = True
+                    self.recursive = True
+                else:
+                    err = ClowderError(ClowderErrorType.WRONG_SUBMODULES_TYPE, fmt.error_wrong_submodules_type())
+                    LOG_DEBUG("Wrong submodules type", err)
+                    raise err
+            else:
+                err = ClowderError(ClowderErrorType.WRONG_SUBMODULES_TYPE, fmt.error_wrong_submodules_type())
+                LOG_DEBUG("Wrong submodules type", err)
+                raise err
         if git_settings.lfs is not None:
             self.lfs = copy.deepcopy(git_settings.lfs)
         if git_settings.depth is not None:
@@ -89,23 +110,3 @@ class ResolvedGitSettings:
                 raise ClowderError(ClowderErrorType.INVALID_GIT_CONFIG_VALUE,
                                    fmt.error_invalid_git_config_value(key, value))
         return config
-
-    def get_yaml(self) -> dict:
-        """Return python object representation for saving yaml
-
-        :return: YAML python object
-        :rtype: dict
-        """
-
-        yaml = {}
-
-        if self.submodules is not None:
-            yaml['submodules'] = self.submodules
-        if self.lfs is not None:
-            yaml['lfs'] = self.lfs
-        if self.depth is not None:
-            yaml['depth'] = self.depth
-        if self.config is not None:
-            yaml['config'] = self.config
-
-        return yaml
