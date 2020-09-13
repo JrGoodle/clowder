@@ -5,6 +5,6 @@ protocol: https
 clowder:
   cats:
     projects:
-      - name: felidae
+      - name: external/gyp
         source:
-          url: polka-dot-cat.git.beanstalkapp.com
+          url: chromium.googlesource.com

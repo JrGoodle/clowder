@@ -256,6 +256,7 @@ Feature: clowder herd
         And project at <directory> is clean
         And project at <directory> has submodule at <submodule_path>
         And submodule in <directory> at <submodule_path> has been initialized
+#       TODO: Check submodule url
 
         Examples:
         | directory     | submodule_path |
@@ -270,8 +271,10 @@ Feature: clowder herd
         Then the command succeeds
         And project at <directory> exists
         And project at <directory> is clean
+#       TODO: Better recursize submodule check
         And project at <directory> has no submodule at <submodule_path>
         And submodule in <directory> at <submodule_path> has been initialized
+#       TODO: Check submodule url
 
         Examples:
         | directory     | submodule_path |
@@ -305,6 +308,7 @@ Feature: clowder herd
         When I run 'clowder herd'
         Then the command succeeds
         And project at <directory> has submodule at <submodule_path>
+#       TODO: Check submodule url
         And submodule in <directory> at <submodule_path> hasn't been initialized
 
         Examples:

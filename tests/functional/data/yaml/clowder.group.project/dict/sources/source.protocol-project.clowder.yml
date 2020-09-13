@@ -1,11 +1,11 @@
 name: source.protocol-project
 
 sources:
-  beanstalk:
-    url: polka-dot-cat.git.beanstalkapp.com
+  chromium:
+    url: chromium.googlesource.com
     protocol: https
 
 clowder:
   cats:
-    - name: felidae
-      source: beanstalk
+    - name: external/gyp
+      source: chromium

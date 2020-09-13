@@ -254,7 +254,7 @@ def then_directory_in_sync_with_upstream_test_branch(tmp_path: Path, directory: 
 @then(parsers.parse("repo at {directory} has remote {remote} with url {url}"))
 @then(parsers.parse("project at {directory} has remote {remote} with url {url}"))
 @then("project at <directory> has <remote> with <url>")
-def then_directory_in_sync_with_upstream(tmp_path: Path, directory: str, remote: str, url: str) -> None:
+def then_directory_has_remote_with_url(tmp_path: Path, directory: str, remote: str, url: str) -> None:
     path = tmp_path / directory
     assert util.has_git_remote_with_url(path, remote, url)
 
@@ -305,6 +305,7 @@ def then_has_stage_file(tmp_path: Path, directory: str, filename: str) -> None:
 #     TODO: Add check for specific staged file
 
 
+@then(parsers.parse("project at {directory} has lfs installed"))
 @then("project at <directory> has lfs installed")
 def then_has_lfs_installed(tmp_path: Path, directory: str) -> None:
     path = tmp_path / directory
@@ -312,12 +313,14 @@ def then_has_lfs_installed(tmp_path: Path, directory: str) -> None:
     assert util.lfs_filters_installed(path)
 
 
+@then(parsers.parse("{filename} file in directory {directory} is an lfs pointer"))
 @then("<filename> in <directory> is an lfs pointer")
 def then_file_is_lfs_pointer(tmp_path: Path, filename: str, directory: str) -> None:
     path = tmp_path / directory
     assert util.is_lfs_file_pointer(path, filename)
 
 
+@then(parsers.parse("{filename} file in directory {directory} is not an lfs pointer"))
 @then("<filename> in <directory> is not an lfs pointer")
 def then_file_is_not_lfs_pointer(tmp_path: Path, filename: str, directory: str) -> None:
     path = tmp_path / directory

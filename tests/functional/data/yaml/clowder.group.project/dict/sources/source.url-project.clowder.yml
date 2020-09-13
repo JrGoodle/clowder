@@ -3,7 +3,6 @@ name: source.url-sources-project
 sources:
   beanstalk:
     url: polka-dot-cat.git.beanstalkapp.com
-    protocol: https
 
 clowder:
   cats:
