@@ -31,22 +31,6 @@ def given_cats_init_herd_ssh(tmp_path: Path, cats_init_herd_ssh, scenario_info: 
     scenario_info.protocol = "ssh"
 
 
-@given(parsers.parse("cats example is initialized to branch yaml-validation"))
-def given_cats_init_branch_yaml_validation(tmp_path: Path, cats_init_yaml_validation,
-                                           scenario_info: ScenarioInfo) -> None:
-    scenario_info.example = "cats"
-    scenario_info.branch = "yaml-validation"
-
-
-# @given(parsers.parse("cats example is initialized and herded to branch yaml-validation and version test-empty-project"))  # noqa
-# def given_cats_init_yaml_validation_herd_test_empty_project(tmp_path: Path,
-#                                                             cats_init_yaml_validation_herd_test_empty_project,
-#                                                             test_info: TestInfo) -> None:
-#     test_info.example = "misc"
-#     test_info.branch = "yaml-validation"
-#     test_info.version = "test-empty-project"
-
-
 @given(parsers.parse("cats example is initialized to branch extension"))
 def given_cats_init_branch_extension(tmp_path: Path, cats_init_extension, scenario_info: ScenarioInfo) -> None:
     scenario_info.example = "cats"

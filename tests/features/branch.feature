@@ -9,8 +9,8 @@ Feature: clowder branch
 
     @help
     Scenario: branch help with invalid clowder.yaml
-        Given cats example is initialized to branch yaml-validation
-        And linked test-empty-project clowder version
+        Given cats example is initialized
+        And has invalid clowder.yml
         When I run 'clowder branch -h' and 'clowder branch --help'
         Then the commands succeed
 

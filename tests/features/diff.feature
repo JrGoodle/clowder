@@ -9,8 +9,8 @@ Feature: clowder diff
 
     @help
     Scenario: diff help with invalid clowder.yaml
-        Given cats example is initialized to branch yaml-validation
-        And linked test-empty-project clowder version
+        Given cats example is initialized
+        And has invalid clowder.yml
         When I run 'clowder diff -h' and 'clowder diff --help'
         Then the commands succeed
 

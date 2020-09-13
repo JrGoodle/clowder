@@ -26,22 +26,6 @@ def cats_init_session(tmp_path_factory) -> Path:
 
 
 @fixture
-def cats_init_yaml_validation(tmp_path: Path, cats_init_yaml_validation_session: Path) -> None:
-    util.copy_directory(cats_init_yaml_validation_session, to=tmp_path)
-    # TODO: Remove once clowder.yml is relative symlink
-    symlink = util.valid_clowder_symlink(tmp_path)
-    os.unlink(symlink)
-    result = util.run_command("clowder link", tmp_path)
-    assert result.returncode == 0
-
-
-@fixture(scope="session")
-def cats_init_yaml_validation_session(tmp_path_factory) -> Path:
-    path = tmp_path_factory.mktemp(cats_init_yaml_validation_session.__name__)
-    return util.init_clowder(path, "cats", branch="yaml-validation")
-
-
-@fixture
 def cats_init_extension(tmp_path: Path, cats_init_extension_session: Path) -> None:
     util.copy_directory(cats_init_extension_session, to=tmp_path)
     # TODO: Remove once clowder.yml is relative symlink

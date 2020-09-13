@@ -405,3 +405,27 @@ def given_clowder_repo_has_duplicate_versions(tmp_path: Path) -> None:
         assert version_file.exists()
         assert version_file.is_file()
         assert not version_file.is_symlink()
+
+
+@given("has invalid clowder.yml")
+def given_clowder_repo_invalid_clowder_yml(tmp_path: Path) -> None:
+    clowder_repo = tmp_path / ".clowder"
+    versions_dir = clowder_repo / "versions"
+    shutil.rmtree(versions_dir)
+    assert not versions_dir.exists()
+
+    symlink = util.valid_clowder_symlink(tmp_path)
+    default = symlink.resolve()
+    default.unlink()
+    symlink.unlink()
+    assert not default.exists()
+    assert not symlink.exists()
+    assert not symlink.is_symlink()
+
+    invalid_file = clowder_repo / "clowder.yml"
+    util.create_file(invalid_file, "this is invalid")
+    result = util.run_command("clowder link", tmp_path)
+    assert result.returncode == 0
+    symlink = util.valid_clowder_symlink(tmp_path)
+    assert symlink.is_symlink()
+    assert symlink.exists()

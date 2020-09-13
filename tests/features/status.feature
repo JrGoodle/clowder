@@ -7,12 +7,10 @@ Feature: clowder status
         When I run 'clowder status -h' and 'clowder status --help'
         Then the commands succeed
 
-    # TODO: Add links for yaml files used in tests
-    # https://github.com/JrGoodle/cats/blob/master/versions/yaml-validation.clowder.yaml
     @help
     Scenario: status help with invalid clowder.yaml
-        Given cats example is initialized to branch yaml-validation
-        And linked test-empty-project clowder version
+        Given cats example is initialized
+        And has invalid clowder.yml
         When I run 'clowder status -h' and 'clowder status --help'
         Then the commands succeed
 
