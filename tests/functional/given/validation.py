@@ -17,3 +17,9 @@ def given_validate_project_branch(tmp_path: Path, project_branch: str, scenario_
 def given_validation_initialized(tmp_path: Path, scenario_info: ScenarioInfo,
                                  validate_projects_init: Tuple[Path]) -> None:
     pass
+
+
+@given("validation clowder is initialized and herded")
+def given_validation_initialized(tmp_path: Path, scenario_info: ScenarioInfo,
+                                 validate_projects_init_herd: Tuple[Path]) -> None:
+    pass

@@ -6,4 +6,4 @@ clowder:
       - name: JrGoodle/felidae
         git:
           config:
-            alias.cat: '!echo "😸"'
+            alias.something: "!echo \"Run 'git something' alias installed via clowder\"; touch something"

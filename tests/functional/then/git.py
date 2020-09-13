@@ -322,3 +322,11 @@ def then_file_is_lfs_pointer(tmp_path: Path, filename: str, directory: str) -> N
 def then_file_is_not_lfs_pointer(tmp_path: Path, filename: str, directory: str) -> None:
     path = tmp_path / directory
     assert util.is_lfs_file_not_pointer(path, filename)
+
+
+@then(parsers.parse("project at {directory} doesn't have lfs installed"))
+@then("project at <directory> doesn't have lfs installed")
+def then_has_no_lfs_installed(tmp_path: Path, directory: str) -> None:
+    path = tmp_path / directory
+    assert not util.lfs_hooks_installed(path)
+    assert not util.lfs_filters_installed(path)

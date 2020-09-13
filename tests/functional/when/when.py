@@ -24,6 +24,7 @@ def when_change_test_directory(test_directory: str, scenario_info: ScenarioInfo)
     scenario_info.relative_dir = test_directory
 
 
+@when(parsers.parse("I change to directory {directory}"))
 @when("I change to <directory>")
 def when_change_directory(directory: str, scenario_info: ScenarioInfo) -> None:
     scenario_info.relative_dir = directory

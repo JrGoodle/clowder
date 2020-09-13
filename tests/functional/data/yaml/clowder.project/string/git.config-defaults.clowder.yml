@@ -3,7 +3,7 @@ name: git.config-defaults
 defaults:
   git:
     config:
-      alias.cat: '!echo "😸"'
+      alias.something: "!echo \"Run 'git something' alias installed via clowder\"; touch something"
 
 clowder:
   - JrGoodle/felidae
