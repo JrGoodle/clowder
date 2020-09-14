@@ -135,8 +135,8 @@ Feature: clowder link command
         When I run 'clowder link'
         Then the command succeeds
         And .clowder symlink exists
-        And clowder.yml symlink doesn't exist
-        And clowder.yaml is a symlink pointing to .clowder/clowder.yaml
+        And clowder.yaml symlink doesn't exist
+        And clowder.yml is a symlink pointing to .clowder/clowder.yml
 
     @offline
     Scenario: link default version offline
