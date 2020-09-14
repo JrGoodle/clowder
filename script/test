@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 
 import os
+import random
 import shutil
+import string
 import subprocess
 import sys
 from pathlib import Path
@@ -15,13 +17,20 @@ def run_command(cwd: Path, cmd: str) -> CompletedProcess:
     return completed_process
 
 
+def get_random_alphanumeric_string(length: int) -> str:
+    letters_and_digits = string.ascii_letters + string.digits
+    result_str = ''.join((random.choice(letters_and_digits) for _ in range(length)))
+    print("Random alphanumeric String is:", result_str)
+    return result_str
+
 command_arg: Optional[str] = None
 if len(sys.argv) > 1:
     command_arg = sys.argv[1]
 
-name = ""
 if len(sys.argv) > 2:
     name = f"-{sys.argv[2]}"
+else:
+    name = f"-{get_random_alphanumeric_string(12)}"
 
 # Repo path
 path = Path(__file__).resolve().parent.parent.resolve()
@@ -42,7 +51,7 @@ reports_dir = build_dir / "reports"
 reports_dir.mkdir(parents=True, exist_ok=True)
 
 # Coverage reports
-coverage_dir = reports_dir / f"coverage{name}"
+coverage_dir = reports_dir / f"coverage"
 coverage_dir.mkdir(parents=True, exist_ok=True)
 xml_file = coverage_dir / "results.xml"
 command += f" --cov-report xml:{xml_file}"
@@ -52,15 +61,15 @@ annotate_dir = coverage_dir / "annotate"
 command += f" --cov-report annotate:{annotate_dir}"
 
 # JUnit reports
-junit_dir = reports_dir / f"junit{name}"
+junit_dir = reports_dir / f"junit"
 junit_dir.mkdir(parents=True, exist_ok=True)
-junit_file = junit_dir / "results.xml"
+junit_file = junit_dir / f"results{name}.xml"
 command += f" --junitxml={junit_file}"
 
 # BDD reports
-cucumber_dir = reports_dir / f"cucumber{name}"
+cucumber_dir = reports_dir / f"cucumber"
 cucumber_dir.mkdir(parents=True, exist_ok=True)
-cucumber_file = cucumber_dir / "results.json"
+cucumber_file = cucumber_dir / f"results{name}.json"
 bdd_reporting_options = f" --cucumberjson={cucumber_file} --cucumberjson-expanded"
 command += bdd_reporting_options
 
