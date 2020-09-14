@@ -11,6 +11,8 @@ clean_clowder_repo() {
     sudo -H rm -rf $clowder_path/dist
     echo "Removing build"
     sudo -H rm -rf $clowder_path/build
+    echo "Removing temp"
+    sudo -H rm -rf $clowder_path/temp
     echo "Removing __pycache__"
     local path=$clowder_path/clowder
     # sudo -H rm -rf $path/*.pyc $path/*/*.pyc $path/*/*/*.pyc

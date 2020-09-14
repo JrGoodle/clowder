@@ -26,9 +26,6 @@ if len(sys.argv) > 2:
 # Repo path
 path = Path(__file__).resolve().parent.parent.resolve()
 
-# Clean old test coverage results
-run_command(path, "coverage erase")
-
 # Create build dir
 build_dir = path / "build"
 
@@ -73,19 +70,14 @@ if command_arg is not None:
     result = run_command(path, test_cmd)
     exit(result.returncode)
 
-# Run tests
-test_cmd = f'{command} -n auto -m "status and not config and not offline and not write"'
+# Run parallel tests
+test_cmd = f'{command} -n auto -m "not offline and not write"'
 run_command(path, test_cmd)
 
-# # parallel
-# test_cmd = f'{base_command} -n auto -m "not config and not offline and not write"'
-# run_command(path, test_cmd)
-# # offline
-# test_cmd = f'{base_command} -m "offline and not config"'
-# run_command(path, test_cmd)
-# # write
-# test_cmd = f'{base_command} -m "write and not config"'
-# run_command(path, test_cmd)
-# # config
-# test_cmd = f'{base_command} -m "config"'
-# run_command(path, test_cmd)
+# Run offline tests
+test_cmd = f'{base_command} -m "offline and not config"'
+run_command(path, test_cmd)
+
+# Run write tests
+test_cmd = f'{base_command} -m "write and not offline"'
+run_command(path, test_cmd)
