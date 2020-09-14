@@ -1,30 +1,16 @@
 
 clowder:
-- branch: knead
-  groups:
-  - cats
-  name: JrGoodle/mu
-  path: mu
-- branch: purr
-  groups:
-  - cats
-  name: JrGoodle/duke
-  path: duke
-- groups:
-  - black-cats
-  name: JrGoodle/kit
-  path: black-cats/kit
-- groups:
-  - black-cats
-  name: JrGoodle/kishka
-  path: black-cats/kishka
-- groups:
-  - black-cats
-  name: JrGoodle/june
-  path: black-cats/june
-- groups:
-  - black-cats
-  name: JrGoodle/sasha
-  path: black-cats/sasha
+  black-cats:
+    path: black-cats
+    projects:
+    - JrGoodle/kit
+    - JrGoodle/kishka
+    - JrGoodle/june
+    - JrGoodle/sasha
+  cats:
+  - branch: knead
+    name: JrGoodle/mu
+  - branch: purr
+    name: JrGoodle/duke
 name: cats-default-test
 protocol: https
