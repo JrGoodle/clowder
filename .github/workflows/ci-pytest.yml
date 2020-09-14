@@ -44,7 +44,7 @@ jobs:
     - name: Install clowder
       run: script/update
     - name: Run pytest functional tests
-      run: script/test "-n auto -m 'not ssh and not write and not offline'"
+      run: script/test "-n auto -m 'not ssh and not offline'"
     - uses: codecov/codecov-action@v1
       with:
         file: build/coverage/.coverage
