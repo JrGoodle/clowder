@@ -49,6 +49,10 @@ jobs:
             sudo git config --system --unset-all filter.lfs.process
             sudo git config --system --unset-all filter.lfs.required
 
+      - add_ssh_keys:
+          fingerprints:
+            - "e9:7d:20:a0:51:b2:9c:22:f6:b9:5b:55:47:c4:7c:20"
+
       - run:
           name: Print environment info
           command: |
@@ -61,7 +65,8 @@ jobs:
 
       - run:
           name: run pytest functional tests
-          command: script/test "-m 'not offline'"
+          command: script/test "-m 'yaml_validation'"
+          # command: script/test "-m 'not offline'"
 # TODO: Enable offline tests
 # https://discuss.circleci.com/t/running-tests-without-internet-access/1427
 
