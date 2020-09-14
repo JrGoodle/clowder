@@ -26,12 +26,6 @@ Feature: clowder yaml
         Then the command succeeds
         And output matches contents of clowder.yml test file
 
-    Scenario: yaml file
-        Given cats example is initialized and herded
-        When I run 'clowder yaml -f' without debug output
-        Then the command succeeds
-        And output matches contents of file.clowder.yml test file
-
     Scenario: yaml resolved
         Given cats example is initialized and herded
         When I run 'clowder yaml -r' without debug output

@@ -22,8 +22,7 @@ def add_yaml_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
     """
 
     arguments = [
-        (['--resolved', '-r'], dict(action='store_true', help='print resolved clowder yaml file')),
-        (['--full', '-f'], dict(action='store_true', help='print full clowder yaml file')),
+        (['--resolved', '-r'], dict(action='store_true', help='print resolved clowder yaml file'))
     ]
 
     parser = subparsers.add_parser('yaml', help='Print clowder yaml file information')
@@ -36,9 +35,7 @@ def add_yaml_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
 def yaml(args) -> None:
     """Clowder yaml command private implementation"""
 
-    if args.full:
-        print_clowder_yaml()
-    elif args.resolved:
+    if args.resolved:
         validate_project_statuses(CLOWDER_CONTROLLER.projects, allow_missing_repo=False)
         output = yaml_string(CLOWDER_CONTROLLER.get_yaml(resolved=True)).rstrip()
         print(output)
