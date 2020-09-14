@@ -52,6 +52,7 @@ jobs:
       - add_ssh_keys:
           fingerprints:
             - "e9:7d:20:a0:51:b2:9c:22:f6:b9:5b:55:47:c4:7c:20"
+            - "pmFiLpVdAFqGS5dsrE1Wrk5U/wKoPJKg+M7+grPQwNw"
 
       - run:
           name: Print environment info
