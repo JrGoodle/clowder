@@ -78,27 +78,27 @@ Feature: clowder init
         And something file exists in directory .clowder
 
     @fail @cats
-    Scenario: init existing non-symlink yaml file
-        Given cats example non-symlink yaml file exists
+    Scenario: init existing non-symlink yml file
+        Given cats example non-symlink yml file exists
         And .clowder directory doesn't exist
         When I run 'clowder init https://github.com/JrGoodle/cats.git'
         Then the command fails
         And .clowder directory exists
         And directory at .clowder is a git repository
-        And clowder.yaml file exists
-        And clowder.yaml is not a symlink
+        And clowder.yml file exists
+        And clowder.yml is not a symlink
 
     @cats
     Scenario: init existing symlink yaml file no .clowder directory
         Given .clowder directory doesn't exist
         And created file something-to-link-to in directory .
-        And created clowder.yaml symlink pointing to something-to-link-to
+        And created clowder.yml symlink pointing to something-to-link-to
         When I run 'clowder init https://github.com/JrGoodle/cats.git'
         Then the command succeeds
         And .clowder directory exists
         And directory at .clowder is a git repository
-        And clowder.yaml file exists
-        And clowder.yaml is a symlink pointing to .clowder/clowder.yaml
+        And clowder.yml file exists
+        And clowder.yml is a symlink pointing to .clowder/clowder.yml
 
     @fail @cats
     Scenario: init existing ambiguous non-symlink yaml file, non-symlink yml file, no .clowder directory
@@ -115,19 +115,19 @@ Feature: clowder init
 
     @fail @cats
     Scenario: init existing ambiguous yaml symlink, non-symlink yml file, no .clowder directory
-        Given cats example non-symlink yml file exists
+        Given cats example non-symlink yaml file exists
         And .clowder directory doesn't exist
         And created file something-to-link-to in directory .
-        And created clowder.yaml symlink pointing to something-to-link-to
-        And clowder.yml file exists
-        And clowder.yml is not a symlink
+        And created clowder.yml symlink pointing to something-to-link-to
+        And clowder.yaml file exists
+        And clowder.yaml is not a symlink
         When I run 'clowder init https://github.com/JrGoodle/cats.git'
         Then the command fails
         And .clowder directory exists
         And directory at .clowder is a git repository
-        And clowder.yml file exists
-        And clowder.yml is not a symlink
-        And clowder.yaml is a symlink pointing to .clowder/clowder.yaml
+        And clowder.yaml file exists
+        And clowder.yaml is not a symlink
+        And clowder.yml is a symlink pointing to .clowder/clowder.yml
 
     @cats
     Scenario: init existing ambiguous yaml symlink, yml symlink, no .clowder directory
@@ -139,8 +139,8 @@ Feature: clowder init
         Then the command succeeds
         And .clowder directory exists
         And directory at .clowder is a git repository
-        And clowder.yml symlink doesn't exist
-        And clowder.yaml is a symlink pointing to .clowder/clowder.yaml
+        And clowder.yaml symlink doesn't exist
+        And clowder.yml is a symlink pointing to .clowder/clowder.yml
 
     @fail @cats
     Scenario: init existing .clowder file

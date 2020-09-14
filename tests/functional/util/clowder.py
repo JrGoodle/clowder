@@ -80,8 +80,8 @@ def validate_clowder_repo_with_symlink(clowder_repo: Path) -> None:
     assert valid_clowder_symlink(clowder_repo.parent) is not None
 
 
-def create_non_symlink_clowder_yaml(path: Path, example: str, protocol: str = "https",
-                                    branch: Optional[str] = None, version: Optional[str] = None) -> Path:
+def create_non_symlink_clowder_yml(path: Path, example: str, protocol: str = "https",
+                                   branch: Optional[str] = None, version: Optional[str] = None) -> Path:
     path = init_clowder(path, example, protocol=protocol, branch=branch, version=version)
     symlink = valid_clowder_symlink(path)
     file = symlink.resolve()
