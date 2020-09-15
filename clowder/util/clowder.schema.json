@@ -379,30 +379,6 @@
                 }
               ]
             },
-            "branch": {
-              "description": "Name of the git branch to track for this upstream. If not supplied the ref specified in the defaults is used if applicable, else the default branch 'master' is used.",
-              "allOf": [
-                {
-                  "$ref": "#/definitions/gitBranch"
-                }
-              ]
-            },
-            "commit": {
-              "description": "Git commit SHA-1 to track for this upstream. Must be full 40 character SHA-1.",
-              "allOf": [
-                {
-                  "$ref": "#/definitions/gitCommit"
-                }
-              ]
-            },
-            "tag": {
-              "description": "Name of the git tag to track for this upstream.",
-              "allOf": [
-                {
-                  "$ref": "#/definitions/gitTag"
-                }
-              ]
-            },
             "remote": {
               "description": "The name specified here is used as the remote name in the upstream's .git/config, and is therefore automatically available to commands like git fetch, git remote, git pull and git push.",
               "allOf": [
