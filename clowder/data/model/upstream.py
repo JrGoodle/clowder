@@ -9,10 +9,6 @@ from typing import Optional, Union
 
 import clowder.util.formatting as fmt
 from clowder.error import ClowderError, ClowderErrorType
-from clowder.git.util import (
-    format_git_branch,
-    format_git_tag
-)
 from clowder.logging import LOG_DEBUG
 
 from .source import Source
@@ -26,9 +22,6 @@ class Upstream:
     :ivar str path: Project relative path
     :ivar Optional[Union[Source, SourceName]] source: Upstream source
     :ivar Optional[str] remote: Upstream remote name
-    :ivar Optional[str] branch: Git branch
-    :ivar Optional[str] tag: Git tag
-    :ivar Optional[str] commit: Git commit
     """
 
     def __init__(self, yaml: Union[str, dict]):
@@ -42,18 +35,12 @@ class Upstream:
         if isinstance(yaml, str):
             self._is_string = True
             self.name: str = yaml
-            self.branch: Optional[str] = None
-            self.tag: Optional[str] = None
-            self.commit: Optional[str] = None
             self.remote: Optional[str] = None
             self.source: Optional[Union[Source, SourceName]] = None
             return
 
         if isinstance(yaml, dict):
             self.name: str = yaml['name']
-            self.branch: Optional[str] = yaml.get("branch", None)
-            self.tag: Optional[str] = yaml.get("tag", None)
-            self.commit: Optional[str] = yaml.get("commit", None)
             self.remote: Optional[str] = yaml.get('remote', None)
 
             self.source: Optional[Union[Source, SourceName]] = None
@@ -75,22 +62,6 @@ class Upstream:
         LOG_DEBUG('Wrong upstream type', err)
         raise err
 
-    def get_formatted_ref(self) -> Optional[str]:
-        """Return formatted git ref
-
-        :return: Formatted git ref
-        :rtype: Optional[str]
-        """
-
-        if self.branch is not None:
-            return format_git_branch(self.branch)
-        elif self.tag is not None:
-            return format_git_tag(self.tag)
-        elif self.commit is not None:
-            return self.commit
-        else:
-            return None
-
     def get_yaml(self) -> Union[str, dict]:
         """Return python object representation for saving yaml
 
@@ -103,12 +74,6 @@ class Upstream:
 
         yaml = {"name": self.name}
 
-        if self.branch is not None:
-            yaml['branch'] = self.branch
-        if self.tag is not None:
-            yaml['tag'] = self.tag
-        if self.commit is not None:
-            yaml['commit'] = self.commit
         if self.remote is not None:
             yaml['remote'] = self.remote
         if self.source is not None:

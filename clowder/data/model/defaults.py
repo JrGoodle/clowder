@@ -14,6 +14,7 @@ from clowder.git.util import (
 
 from .git_settings import GitSettings
 from .source_name import SourceName
+from .upstream_defaults import UpstreamDefaults
 
 
 class Defaults:
@@ -25,6 +26,7 @@ class Defaults:
     :ivar Optional[str] branch: Default git branch
     :ivar Optional[str] tag: Default git tag
     :ivar Optional[str] commit: Default commit sha-1
+    :ivar Optional[UpstreamDefaults] upstream_defaults: Upstream defaults
     """
 
     def __init__(self, yaml: dict):
@@ -37,10 +39,13 @@ class Defaults:
         self.source: Optional[SourceName] = SourceName(source) if source is not None else None
         self.remote: Optional[str] = yaml.get("remote", None)
         git = yaml.get("git", None)
-        self.git_settings = GitSettings(git) if git is not None else None
+        self.git_settings: Optional[GitSettings] = GitSettings(git) if git is not None else None
         self.branch: Optional[str] = yaml.get("branch", None)
         self.tag: Optional[str] = yaml.get("tag", None)
         self.commit: Optional[str] = yaml.get("commit", None)
+        upstream = yaml.get("upstream", None)
+        upstream_defaults = UpstreamDefaults(upstream) if upstream is not None else None
+        self.upstream_defaults: Optional[UpstreamDefaults] = upstream_defaults
 
     def get_formatted_ref(self) -> Optional[str]:
         """Return formatted git ref
@@ -79,5 +84,7 @@ class Defaults:
             yaml['tag'] = self.tag
         elif self.commit is not None:
             yaml['commit'] = self.commit
+        if self.upstream_defaults is not None:
+            yaml['upstream'] = self.upstream_defaults.get_yaml()
 
         return yaml

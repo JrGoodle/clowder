@@ -13,3 +13,4 @@ from .source import Source
 from .source_name import SourceName
 from .group import Group
 from .upstream import Upstream
+from .upstream_defaults import UpstreamDefaults
