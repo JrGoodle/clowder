@@ -1,0 +1,6 @@
+name: git.depth-project
+
+clowder:
+  - name: JrGoodle/felidae
+    git:
+      depth: 1

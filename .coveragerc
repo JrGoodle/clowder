@@ -2,14 +2,20 @@
 branch = True
 concurrency = multiprocessing
 parallel = True
-# data_file = coverage/.coverage
+dynamic_context = test_function
+data_file = build/coverage/.coverage
 omit =
-    # omit everything in /usr
-    /usr/*
+    tests/*
+    clowder/sitecustomize.py
+source = clowder/*
+# debug = config
 
 [paths]
 source =
-    src/clowder
+    clowder/
+    /Users/runner/work/clowder/clowder/clowder/
+    /home/circleci/project/clowder/
+    /Users/jrgoodle/projects/clowder-projects/clowder/clowder/
 
 [report]
 # Regexes for lines to exclude from consideration

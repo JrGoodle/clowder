@@ -1,0 +1,6 @@
+name: branch-project
+
+clowder:
+  cats:
+    - name: JrGoodle/felidae
+      branch: felid

@@ -1,28 +1,92 @@
-#!/usr/bin/env bash
+#!/usr/bin/env python
 
-cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
+import os
+import random
+import shutil
+import string
+import subprocess
+import sys
+from pathlib import Path
+from subprocess import CompletedProcess
+from typing import Optional
 
-if [ "$1" == 'plugins' ]; then
-    plugin_dir="$( cd examples/plugins && pwd )"
-    ln -s "$plugin_dir" "$HOME/.clowder"
-    exit
-fi
 
-script/clean 'test' || exit 1
+def run_command(cwd: Path, cmd: str) -> CompletedProcess:
+    cmd_env = os.environ.copy()
+    completed_process = subprocess.run(cmd, cwd=cwd, shell=True, env=cmd_env)
+    return completed_process
 
-pushd clowder_test || exit 1
 
-case "$(uname)" in
-    Linux*) export PLATFORM="linux";
-        pip3 install -e . || exit 1
-        ;;
-    Darwin*) export PLATFORM="darwin";
-        sudo -H pip3 install -e . || exit 1
-        ;;
-    CYGWIN*) export PLATFORM="windows";
-        pip3 install -e . || exit 1
-        ;;
-esac
+def get_random_alphanumeric_string(length: int) -> str:
+    letters_and_digits = string.ascii_letters + string.digits
+    result_str = ''.join((random.choice(letters_and_digits) for _ in range(length)))
+    print("Random alphanumeric String is:", result_str)
+    return result_str
 
-echo "Installed clowder-test for $PLATFORM"
-popd || exit 1
+command_arg: Optional[str] = None
+if len(sys.argv) > 1:
+    command_arg = sys.argv[1]
+
+if len(sys.argv) > 2:
+    name = f"-{sys.argv[2]}"
+else:
+    name = f"-{get_random_alphanumeric_string(12)}"
+
+# Repo path
+path = Path(__file__).resolve().parent.parent.resolve()
+
+# Create build dir
+build_dir = path / "build"
+
+# Base command
+temp_dir = build_dir / "temp"
+temp_dir.mkdir(parents=True, exist_ok=True)
+command = f"pytest --basetemp={temp_dir} -vv"
+
+# Coverage
+command += " --cov-config=.coveragerc --cov-append --cov=clowder"
+
+# Create reports dir
+reports_dir = build_dir / "reports"
+reports_dir.mkdir(parents=True, exist_ok=True)
+
+# Coverage reports
+coverage_dir = reports_dir / f"coverage"
+coverage_dir.mkdir(parents=True, exist_ok=True)
+xml_file = coverage_dir / "results.xml"
+command += f" --cov-report xml:{xml_file}"
+html_dir = coverage_dir / "html"
+command += f" --cov-report html:{html_dir}"
+annotate_dir = coverage_dir / "annotate"
+command += f" --cov-report annotate:{annotate_dir}"
+
+# JUnit reports
+junit_dir = reports_dir / f"junit"
+junit_dir.mkdir(parents=True, exist_ok=True)
+junit_file = junit_dir / f"results{name}.xml"
+command += f" --junitxml={junit_file}"
+
+# BDD reports
+cucumber_dir = reports_dir / f"cucumber"
+cucumber_dir.mkdir(parents=True, exist_ok=True)
+cucumber_file = cucumber_dir / f"results{name}.json"
+bdd_reporting_options = f" --cucumberjson={cucumber_file} --cucumberjson-expanded"
+command += bdd_reporting_options
+
+# Run command with script argument
+if command_arg is not None:
+    test_cmd = f'{command} {command_arg}'
+    result = run_command(path, test_cmd)
+    exit(result.returncode)
+
+# Run parallel tests
+test_cmd = f'{command} -n auto -m "not offline and not write"'
+run_command(path, test_cmd)
+
+# Run offline tests
+test_cmd = f'{base_command} -m "offline and not config"'
+run_command(path, test_cmd)
+
+# Run write tests
+test_cmd = f'{base_command} -m "write and not offline"'
+run_command(path, test_cmd)

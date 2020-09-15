@@ -1,0 +1,65 @@
+name: 'CI - pytest'
+
+on:
+  push:
+    branches:
+      - master
+    paths-ignore:
+      - 'docs/**'
+  pull_request:
+    branches:
+      - master
+    paths-ignore:
+      - 'docs/**'
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  pytest:
+    env:
+      PYTHON_VERSION: ${{ matrix.python-version }}
+      OS_NAME: ${{ matrix.os }}
+      CLOWDER_DEBUG: true
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest] # TODO: windows-latest
+        python-version: ['3.6', '3.7', '3.8']
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup python
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Setup git config
+      run: |
+        git config --global user.email "joe@polka.cat";
+        git config --global user.name "GitHub Actions Workflow"
+        sudo git config --system --unset-all filter.lfs.clean
+        sudo git config --system --unset-all filter.lfs.smudge
+        sudo git config --system --unset-all filter.lfs.process
+        sudo git config --system --unset-all filter.lfs.required
+    - name: Install clowder
+      run: script/update
+    - name: Run pytest functional tests
+      run: script/test "-n auto -m 'not ssh and not offline'"
+    - uses: codecov/codecov-action@v1
+      with:
+        file: build/coverage/.coverage
+    - uses: actions/upload-artifact@v2
+      with:
+        name: coverage-ghworkflow-${{ matrix.os }}-${{ matrix.python-version }}
+        path: |
+          build/reports
+          build/coverage
+    - uses: deblockt/cucumber-report-annotations-action@v1.6
+      with:
+        access-token: ${{ secrets.GITHUB_TOKEN }}
+        path: build/reports/cucumber/results*.json
+    - uses: ashley-taylor/junit-report-annotations-action@1.3
+      if: always()
+      with:
+        access-token: ${{ secrets.GITHUB_TOKEN }}
+        path: build/reports/junit/results*.xml

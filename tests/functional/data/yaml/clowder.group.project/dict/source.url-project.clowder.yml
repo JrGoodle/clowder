@@ -1,0 +1,7 @@
+name: source.url-project
+
+clowder:
+  cats:
+    - name: polka-dot-cat/felidae
+      source:
+        url: polka-dot-cat.git.beanstalkapp.com

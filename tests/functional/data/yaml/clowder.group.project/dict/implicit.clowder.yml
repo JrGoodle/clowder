@@ -1,0 +1,5 @@
+name: implicit
+
+clowder:
+  cats:
+    - name: JrGoodle/felidae

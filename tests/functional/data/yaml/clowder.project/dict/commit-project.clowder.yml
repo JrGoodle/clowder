@@ -1,0 +1,5 @@
+name: commit-project
+
+clowder:
+  - name: JrGoodle/felidae
+    commit: e61b2495a3fe903f43a8c2be3d58b6b01bdbf664

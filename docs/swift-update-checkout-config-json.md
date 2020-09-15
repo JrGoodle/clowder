@@ -107,7 +107,6 @@ An equivalent [default clowder.yaml](https://github.com/JrGoodle/swift-clowder/b
 ```yaml
 defaults:
   source: github
-  protocol: ssh
   recursive: true
 
 sources:
@@ -197,7 +196,6 @@ An equivalent [swift-5.2-branch clowder.yaml](https://github.com/JrGoodle/swift-
 ```yaml
 defaults:
   source: github
-  protocol: ssh
   recursive: true
   branch: swift-5.2-branch
 

@@ -7,15 +7,19 @@ coverage:
       default: off
       clowder:
         paths:
-          - 'src/'
-          - '!src/clowder/util/clowder.schema.json'
-          - '!src/clowder/util/clowder.config.schema.json'
+          - 'clowder'
+          - '!clowder/util/clowder.schema.json'
+          - '!clowder/util/clowder.config.schema.json'
         target: 70
         threshold: 20
     patch:
        default: off
         #  enabled: no
         #  target: '50'
+
+fixes:
+  - "/home/circleci/project/::"
+  - "/home/runner/work/clowder/clowder/::"
 
 parsers:
   gcov:
@@ -37,7 +41,6 @@ ignore:
   - ".circleci/**/*"
   - ".idea/**/*"
   - ".vscode/**/*"
-  - "clowder_test/**/*"
   - "docs/**/*"
   - "script/**/*"
-  - "test/**/*"
+  - "tests/**/*"

@@ -19,8 +19,8 @@ environment:
 
 install:
   - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
-  - pip3 install -r src\requirements.txt
-  - pip3 install -e src
+  - pip3 install -r requirements.txt
+  - pip3 install -e
 
 build: off
 
@@ -32,9 +32,9 @@ test_script:
   # Note that you must use the environment variable %PYTHON% to refer to
   # the interpreter you're using - Appveyor does not do anything special
   # to put the Python version you want to use on PATH.
-  # - "build.cmd %PYTHON%\\python.exe src\\setup.py"
+  # - "build.cmd %PYTHON%\\python.exe setup.py"
   - cd examples\cats
-  - coverage run --rcfile=%APPVEYOR_BUILD_FOLDER%\.coveragerc -m clowder.clowder_app init https://github.com/jrgoodle/cats.git
+  - coverage run --rcfile=%APPVEYOR_BUILD_FOLDER%\.coveragerc -m clowder.clowder_app init https://github.com/JrGoodle/cats.git
   - coverage run --rcfile=%APPVEYOR_BUILD_FOLDER%\.coveragerc -m clowder.clowder_app herd
   - coverage run --rcfile=%APPVEYOR_BUILD_FOLDER%\.coveragerc -m clowder.clowder_app herd --parallel
   - coverage run --rcfile=%APPVEYOR_BUILD_FOLDER%\.coveragerc -m clowder.clowder_app status

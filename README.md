@@ -68,7 +68,6 @@ defaults:
   branch: master
   remote: origin
   source: github
-  protocol: ssh
 
 sources:
   github:

@@ -1,0 +1,7 @@
+name: branch-defaults
+
+defaults:
+  branch: felid
+
+clowder:
+  - name: JrGoodle/felidae

@@ -1,0 +1,6 @@
+name: remote-project
+
+clowder:
+  cats:
+    - name: JrGoodle/felidae
+      remote: source

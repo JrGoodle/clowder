@@ -1,0 +1,8 @@
+name: git.depth-defaults
+
+defaults:
+  git:
+    depth: 1
+
+clowder:
+  - name: JrGoodle/felidae

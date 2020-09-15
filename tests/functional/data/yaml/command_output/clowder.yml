@@ -1,0 +1,16 @@
+
+clowder:
+  black-cats:
+    path: black-cats
+    projects:
+    - JrGoodle/kit
+    - JrGoodle/kishka
+    - JrGoodle/june
+    - JrGoodle/sasha
+  cats:
+  - branch: knead
+    name: JrGoodle/mu
+  - branch: purr
+    name: JrGoodle/duke
+name: cats-default-test
+protocol: https

@@ -1,0 +1,7 @@
+name: groups-group
+
+clowder:
+  cats:
+    groups: [cats-group]
+    projects:
+      - JrGoodle/felidae

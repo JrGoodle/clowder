@@ -1,0 +1,9 @@
+name: git.lfs-defaults
+
+defaults:
+  git:
+    lfs: true
+
+clowder:
+  cats:
+    - name: JrGoodle/felidae

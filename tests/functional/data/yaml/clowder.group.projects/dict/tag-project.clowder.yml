@@ -1,0 +1,7 @@
+name: tag-project
+
+clowder:
+  cats:
+    projects:
+      - name: JrGoodle/felidae
+        tag: cat

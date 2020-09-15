@@ -1,0 +1,8 @@
+name: path-group-project
+
+clowder:
+  cats:
+    path: carnivora
+    projects:
+      - name: JrGoodle/felidae
+        path: feliforma/felidae

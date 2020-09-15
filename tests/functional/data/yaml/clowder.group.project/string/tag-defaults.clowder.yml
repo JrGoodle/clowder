@@ -1,0 +1,8 @@
+name: tag-defaults
+
+defaults:
+  tag: cat
+
+clowder:
+  cats:
+    - JrGoodle/felidae

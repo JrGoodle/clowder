@@ -1,0 +1,24 @@
+argcomplete
+awscli
+codecov
+colorama
+coverage
+jsonschema
+GitPython
+psutil
+PyYAML
+recommonmark
+remarshal
+sphinx
+sphinx-autobuild
+sphinx-rtd-theme
+# sphinx_rtd_theme
+termcolor
+tqdm
+twine
+wheel
+pytest
+pytest-bdd
+pytest-xdist
+pytest-datadir
+pytest-cov

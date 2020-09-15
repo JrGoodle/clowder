@@ -1,0 +1,10 @@
+name: git.config-defaults
+
+defaults:
+  git:
+    config:
+      alias.something: "!echo \"Run 'git something' alias installed via clowder\"; touch something"
+
+clowder:
+  cats:
+    - name: JrGoodle/felidae

@@ -1,0 +1,8 @@
+name: tag-group
+
+clowder:
+  cats:
+    defaults:
+      tag: cat
+    projects:
+      - name: JrGoodle/felidae
