@@ -1,0 +1,10 @@
+name: source.protocol-project
+
+sources:
+  chromium:
+    url: chromium.googlesource.com
+    protocol: https
+
+clowder:
+  - name: external/gyp
+    source: chromium

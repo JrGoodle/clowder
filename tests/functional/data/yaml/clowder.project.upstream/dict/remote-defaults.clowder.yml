@@ -1,0 +1,7 @@
+name: remote-defaults
+
+defaults:
+  remote: source
+
+clowder:
+  - name: JrGoodle/felidae

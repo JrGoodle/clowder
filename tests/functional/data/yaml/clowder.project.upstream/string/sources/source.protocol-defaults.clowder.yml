@@ -1,0 +1,12 @@
+name: source.protocol-defaults
+
+sources:
+  chromium:
+    url: chromium.googlesource.com
+    protocol: https
+
+defaults:
+  source: chromium
+
+clowder:
+  - external/gyp

@@ -11,7 +11,7 @@ from .formatting import remove_prefix
 tests_dir = Path(__file__).resolve().parent.parent.resolve()
 clowder_projects = [
     "clowder.group.project",
-    "clowder.group.projects",
+    "clowder.group.projects.project",
     "clowder.project"
 ]
 project_prefix = "project."
