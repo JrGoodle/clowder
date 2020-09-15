@@ -63,9 +63,9 @@ Feature: clowder start
         | black-cats/sasha  | master       | pytest-start-branch |
         | black-cats/june   | master       | pytest-start-branch |
 
-    @offline
+    @offline @ssh @write
     Scenario Outline: start local offline
-        Given cats example is initialized and herded
+        Given cats example is initialized and herded with ssh
         And cats example projects have no remote branch <test_branch>
         And cats example projects have no local branch <test_branch>
         And project at <directory> is on <start_branch>
@@ -86,9 +86,9 @@ Feature: clowder start
         | black-cats/sasha  | master       | pytest-start-branch |
         | black-cats/june   | master       | pytest-start-branch |
 
-    @fail @offline
+    @fail @offline @ssh @write
     Scenario Outline: start tracking offline
-        Given cats example is initialized and herded
+        Given cats example is initialized and herded with ssh
         And cats example projects have no remote branch <test_branch>
         And cats example projects have no local branch <test_branch>
         And project at <directory> is on <start_branch>

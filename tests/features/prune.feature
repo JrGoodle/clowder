@@ -155,9 +155,9 @@ Feature: clowder prune
         | black-cats/sasha  | pytest-prune | master     |
         | black-cats/june   | pytest-prune | master     |
 
-    @fail @offline
+    @fail @offline @ssh @write
     Scenario Outline: prune remote offline
-        Given cats example is initialized and herded
+        Given cats example is initialized and herded with ssh
         And project at <directory> created remote branch <test_branch>
         When the network connection is disabled
         And I run 'clowder prune -r  pytest-prune-remote-offline'
@@ -174,9 +174,9 @@ Feature: clowder prune
         | black-cats/sasha  | pytest-prune-remote-offline |
         | black-cats/june   | pytest-prune-remote-offline |
 
-    @fail @offline
+    @fail @offline @ssh @write
     Scenario Outline: prune all offline
-        Given cats example is initialized and herded
+        Given cats example is initialized and herded with ssh
         And project at <directory> created remote branch <test_branch>
         When the network connection is disabled
         And I run 'clowder prune -a pytest-prune-all-offline'
