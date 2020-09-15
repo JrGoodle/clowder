@@ -67,19 +67,19 @@ jobs:
           name: Code climate setup
           command: script/ci_before
 
-      - run:
-          name: run pytest functional tests - parallel
-          command: script/test "-n auto -m 'not write and not offline'"
+      # - run:
+      #     name: run pytest functional tests - parallel
+      #     command: script/test "-n auto -m 'not write and not offline'"
 
-      - run:
-          name: run pytest functional tests - write
-          command: script/test "-m 'write and not offline'"
+      # - run:
+      #     name: run pytest functional tests - write
+      #     command: script/test "-m 'write and not offline'"
 
 # TODO: Enable offline tests
 # https://discuss.circleci.com/t/running-tests-without-internet-access/1427
-      # - run:
-      #     name: run pytest functional tests - offline
-      #     command: script/test "-m 'offline'"
+      - run:
+          name: run pytest functional tests - offline
+          command: script/test "-m 'offline'"
 
       - run:
           name: Code climate reporting
