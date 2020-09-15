@@ -1,4 +1,5 @@
 name: implicit
 
 clowder:
-  - JrGoodle/felidae
+  - name: JrGoodle/djinni
+    upstream: dropbox/djinni

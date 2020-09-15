@@ -1,4 +1,4 @@
-name: implicit
+name: remote-upstream
 
 clowder:
   cats:
@@ -6,3 +6,4 @@ clowder:
       - name: JrGoodle/djinni
         upstream:
           name: dropbox/djinni
+          remote: source

@@ -1,5 +1,0 @@
-name: path-project
-
-clowder:
-  - name: JrGoodle/felidae
-    path: carnivora/feliforma/felidae

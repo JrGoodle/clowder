@@ -7,8 +7,10 @@ sources:
     url: chromium.googlesource.com
 
 defaults:
-  source: chromium
+  upstream:
+    source: chromium
 
 clowder:
   cats:
-    - external/gyp
+    - name: JrGoodle/gyp
+      upstream: external/gyp

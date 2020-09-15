@@ -6,7 +6,10 @@ sources:
     protocol: https
 
 defaults:
-  source: chromium
+  upstream:
+    source: chromium
 
 clowder:
-  - name: external/gyp
+  - name: JrGoodle/gyp
+    upstream:
+      name: external/gyp

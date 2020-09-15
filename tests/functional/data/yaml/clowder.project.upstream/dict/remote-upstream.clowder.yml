@@ -1,6 +1,7 @@
-name: implicit
+name: remote-project
 
 clowder:
   - name: JrGoodle/djinni
     upstream:
       name: dropbox/djinni
+      remote: source

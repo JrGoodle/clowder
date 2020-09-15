@@ -1,10 +1,11 @@
-name: source.url-sources-project
+name: source.url-upstream
 
 sources:
   beanstalk:
     url: polka-dot-cat.git.beanstalkapp.com
 
 clowder:
-  cats:
-    - name: polka-dot-cat/felidae
+  - name: JrGoodle/felidae
+    upstream:
+      name: polka-dot-cat/felidae
       source: beanstalk

@@ -1,0 +1,11 @@
+name: source.protocol-upstream
+
+clowder:
+  cats:
+    projects:
+      - name: JrGoodle/gyp
+        upstream:
+          name: external/gyp
+          source:
+            url: chromium.googlesource.com
+            protocol: https
