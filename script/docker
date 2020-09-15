@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
+
+start_docker() {
+    # Build docker image
+    # docker build --tag clowder .
+
+    # Run docker image
+    # docker run --detach --name clowder clowder
+    # docker run --rm -it \
+    #     --mount type=bind,source="$(pwd)",target=/clowder \
+    #     --name clowder clowder
+    docker-compose up -d
+    # docker-compose exec -e "PATH=$PATH" clowder "pip install -r requirements.txt"
+    # docker-compose exec -e "PATH=$PATH" clowder "pip install -e ."
+    docker-compose exec -it clowder 'echo $PATH'
+}
+
+stop_docker() {
+    # Stop running docker container
+    docker-compose rm -fs clowder
+}
+
+if [ "$1" = 'start' ]; then
+    start_docker
+elif [ "$1" = 'stop' ]; then
+    stop_docker
+else
+    echo 'Requires parameter "start" or "stop"'
+fi

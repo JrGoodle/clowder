@@ -1,0 +1,16 @@
+version: "3.8"
+services:
+  clowder:
+    build:
+      context: .
+    environment:
+      PATH: /usr/local/bin:${PATH}
+    image: clowder:clowder
+    working_dir: /clowder
+    stdin_open: true
+    tty: true
+    entrypoint: /usr/bin/env bash
+    volumes:
+      - type: bind
+        source: .
+        target: /clowder
