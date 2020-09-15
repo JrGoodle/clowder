@@ -1,8 +1,10 @@
-name: remote-group
+name: remote-defaults
 
 clowder:
   cats:
     defaults:
-      remote: source
+      upstream:
+        remote: source
     projects:
-      - JrGoodle/felidae
+      - name: JrGoodle/djinni
+        upstream: dropbox/djinni

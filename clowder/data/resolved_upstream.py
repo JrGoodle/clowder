@@ -60,9 +60,9 @@ class ResolvedUpstream:
         if has_remote:
             self.remote = upstream.remote
         elif has_group_defaults_remote:
-            self.remote = group.defaults.remote
+            self.remote = group.defaults.upstream_defaults.remote
         elif has_defaults_remote:
-            self.remote = defaults.remote
+            self.remote = defaults.upstream_defaults.remote
 
         has_source = upstream.source is not None
         has_defaults_source = has_upstream_defaults and defaults.upstream_defaults.source is not None
@@ -70,9 +70,9 @@ class ResolvedUpstream:
         if has_source:
             self.source: Source = SOURCE_CONTROLLER.get_source(upstream.source)
         elif has_group_defaults_source:
-            self.source: Source = SOURCE_CONTROLLER.get_source(group.defaults.source)
+            self.source: Source = SOURCE_CONTROLLER.get_source(group.defaults.upstream_defaults.source)
         elif has_defaults_source:
-            self.source: Source = SOURCE_CONTROLLER.get_source(defaults.source)
+            self.source: Source = SOURCE_CONTROLLER.get_source(defaults.upstream_defaults.source)
         else:
             self.source: Source = SOURCE_CONTROLLER.get_source(GITHUB)
 

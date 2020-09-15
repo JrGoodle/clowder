@@ -8,6 +8,8 @@ sources:
 clowder:
   cats:
     defaults:
-      source: chromium
+      upstream:
+        source: chromium
     projects:
-      - external/gyp
+      - name: JrGoodle/gyp
+        upstream: external/gyp

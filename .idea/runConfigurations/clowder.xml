@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="clowder-test" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+  <configuration default="false" name="clowder" type="PythonConfigurationType" factoryName="Python" editBeforeRun="true">
     <module name="clowder" />
     <option name="INTERPRETER_OPTIONS" value="" />
     <option name="PARENT_ENVS" value="true" />
@@ -7,13 +7,13 @@
       <env name="PYTHONUNBUFFERED" value="1" />
     </envs>
     <option name="SDK_HOME" value="" />
-    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+    <option name="WORKING_DIRECTORY" value="/private/var/folders/qg/10dstky52wbfxmt8q1gdlpwh0000gn/T/pytest-of-jrgoodle/pytest-743/test_validate_upstream_remote_0" />
     <option name="IS_MODULE_SDK" value="true" />
     <option name="ADD_CONTENT_ROOTS" value="true" />
     <option name="ADD_SOURCE_ROOTS" value="true" />
     <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-    <option name="SCRIPT_NAME" value="/usr/local/bin/clowder-test" />
-    <option name="PARAMETERS" value="parallel" />
+    <option name="SCRIPT_NAME" value="/usr/local/bin/clowder" />
+    <option name="PARAMETERS" value="herd" />
     <option name="SHOW_COMMAND_LINE" value="false" />
     <option name="EMULATE_TERMINAL" value="true" />
     <option name="MODULE_MODE" value="false" />

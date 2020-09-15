@@ -1,8 +1,8 @@
 name: source.url-upstream
 
 clowder:
-  - name: JrGoodle/gyp
+  - name: JrGoodle/felidae
     upstream:
-      name: external/gyp
+      name: polka-dot-cat/felidae
       source:
-        url: chromium.googlesource.com
+        url: polka-dot-cat.git.beanstalkapp.com

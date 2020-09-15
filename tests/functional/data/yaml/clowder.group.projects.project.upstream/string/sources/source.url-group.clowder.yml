@@ -1,4 +1,4 @@
-name: source.url-group
+name: source.url-defaults
 
 sources:
   beanstalk:
@@ -7,6 +7,8 @@ sources:
 clowder:
   cats:
     defaults:
-      source: beanstalk
+      upstream:
+        source: beanstalk
     projects:
-      - polka-dot-cat/felidae
+      - name: JrGoodle/felidae
+        upstream: polka-dot-cat/felidae

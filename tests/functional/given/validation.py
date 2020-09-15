@@ -10,13 +10,13 @@ from tests.functional.util import ScenarioInfo
 
 @given("validation clowder is initialized")
 def given_validation_initialized(tmp_path: Path, scenario_info: ScenarioInfo,
-                                 validate_projects_init: Tuple[Path]) -> None:
+                                 validation_init: Tuple[Path]) -> None:
     pass
 
 
 @given("validation clowder is initialized and herded")
 def given_validation_initialized_herded(tmp_path: Path, scenario_info: ScenarioInfo,
-                                        validate_projects_init_herd: Tuple[Path]) -> None:
+                                        validation_init_herd: Tuple[Path]) -> None:
     pass
 
 
@@ -86,3 +86,31 @@ def given_validate_project_source_url(tmp_path: Path, project_source_url: str,
 @given("validating property <project_tag>")
 def given_validate_project_tag(tmp_path: Path, project_tag: str, scenario_info: ScenarioInfo) -> None:
     scenario_info.current_validation_test = project_tag
+
+
+@given("validating property <upstream_implicit>")
+def given_validate_upstream_implicit(tmp_path: Path, upstream_implicit: str, scenario_info: ScenarioInfo) -> None:
+    scenario_info.current_validation_test = upstream_implicit
+
+
+@given("validating property <upstream_remote>")
+def given_validate_upstream_remote(tmp_path: Path, upstream_remote: str, scenario_info: ScenarioInfo) -> None:
+    scenario_info.current_validation_test = upstream_remote
+
+
+@given("validating property <upstream_source_protocol>")
+def given_validate_upstream_source_protocol(tmp_path: Path, upstream_source_protocol: str,
+                                            scenario_info: ScenarioInfo) -> None:
+    scenario_info.current_validation_test = upstream_source_protocol
+
+
+@given("validating property <upstream_source_protocol_base>")
+def given_validate_upstream_source_protoco_basel(tmp_path: Path, upstream_source_protocol_base: str,
+                                                 scenario_info: ScenarioInfo) -> None:
+    scenario_info.current_validation_test = upstream_source_protocol_base
+
+
+@given("validating property <upstream_source_url>")
+def given_validate_upstream_source_url(tmp_path: Path, upstream_source_url: str,
+                                       scenario_info: ScenarioInfo) -> None:
+    scenario_info.current_validation_test = upstream_source_url
