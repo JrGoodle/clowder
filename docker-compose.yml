@@ -2,12 +2,7 @@ version: "3.8"
 services:
   clowder:
     build: .
-      # context: .
-    # environment:
-    #   PATH: /usr/local/bin:${PATH}
-    #   PYTHONPATH: ${PYTHONPATH}:/clowder
     image: clowder:clowder
-    # working_dir: /clowder
     stdin_open: true
     tty: true
     entrypoint: /usr/bin/env bash
@@ -15,3 +10,4 @@ services:
       - type: bind
         source: .
         target: /clowder
+      - ~/.ssh:/root/.ssh:ro

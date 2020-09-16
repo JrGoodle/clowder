@@ -54,6 +54,8 @@ jobs:
           name: Add ssh key to known_hosts
           command:  ssh-keyscan polka-dot-cat.git.beanstalkapp.com >> ~/.ssh/known_hosts
 
+      - setup_remote_docker
+
       - run:
           name: Code climate setup
           command: script/ci_before
@@ -66,16 +68,16 @@ jobs:
       #     name: run pytest functional tests - write
       #     command: script/test "-m 'write and not offline'"
 
-      # - run:
-      #     name: run pytest functional tests - offline
-      #     command: |
-      #       script/docker start
-      #       docker-compose exec --privileged clowder script/test "-m offline"
-      #       script/docker stop
-
       - run:
           name: run pytest functional tests - offline
-          command: sudo script/test "-m offline"
+          command: |
+            script/docker start
+            docker-compose exec --privileged clowder script/test "-m offline"
+            script/docker stop
+
+      # - run:
+      #     name: run pytest functional tests - offline
+      #     command: sudo script/test "-m offline"
 
       - run:
           name: Code climate reporting
