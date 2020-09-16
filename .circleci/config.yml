@@ -7,8 +7,8 @@ orbs:
   codecov: codecov/codecov@1.0.2
 jobs:
   build:
-    docker:
-      - image: circleci/python:3.7.7
+    machine:
+      image: ubuntu-1604:201903-01
 
     steps:
       - checkout
@@ -23,6 +23,7 @@ jobs:
       - run:
           name: install dependencies
           command: |
+            curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
             sudo apt-get install git-lfs
             python3 -m venv venv
             . venv/bin/activate
@@ -53,8 +54,6 @@ jobs:
       - run:
           name: Add ssh key to known_hosts
           command:  ssh-keyscan polka-dot-cat.git.beanstalkapp.com >> ~/.ssh/known_hosts
-
-      - setup_remote_docker
 
       - run:
           name: Code climate setup
