@@ -8,7 +8,7 @@ orbs:
 jobs:
   build:
     machine:
-      image: ubuntu-1604:201903-01
+      image: python:3.8.5
 
     steps:
       - checkout
