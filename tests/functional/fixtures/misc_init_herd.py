@@ -17,7 +17,8 @@ def misc_init_herd(tmp_path: Path, misc_init_herd_session: Path, scenario_info: 
     # TODO: Remove once clowder.yml is relative symlink
     symlink = util.valid_clowder_symlink(tmp_path)
     os.unlink(symlink)
-    util.run_command("clowder link", tmp_path, check=True)
+    result = util.run_command("clowder link", tmp_path)
+    assert result.returncode == 0
 
 
 @fixture(scope="session")
@@ -32,7 +33,8 @@ def misc_init_herd_version_https(tmp_path: Path, misc_init_herd_version_https_se
     # TODO: Remove once clowder.yml is relative symlink
     symlink = util.valid_clowder_symlink(tmp_path)
     os.unlink(symlink)
-    util.run_command("clowder link https", tmp_path, check=True)
+    result = util.run_command("clowder link https", tmp_path)
+    assert result.returncode == 0
 
 
 @fixture(scope="session")

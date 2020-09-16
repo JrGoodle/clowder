@@ -27,7 +27,7 @@ def enable_network_connection(gateway_address: Optional[str]) -> [CompletedProce
         assert False
     else:
         assert False
-    time.sleep(5)
+    # time.sleep(1)
     return result
 
 
@@ -44,7 +44,7 @@ def disable_network_connection() -> CompletedProcess:
         assert False
     else:
         assert False
-    time.sleep(5)
+    # time.sleep(1)
     return result
 
 
