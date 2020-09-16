@@ -18,11 +18,11 @@ ENV LANG C.UTF-8
 
 ############################################################
 
-VOLUME /clowder
-COPY $HOME/.ssh /root/.ssh
+COPY build/ssh /root/.ssh
 
 ############################################################
 
+VOLUME /clowder
 WORKDIR /clowder
 
 ############################################################
@@ -44,7 +44,6 @@ RUN apt-get install git-lfs
 RUN git config --global user.email "joe@polka.cat"
 RUN git config --global user.name "Clowder Docker"
 RUN git config --global push.default simple
-# RUN git config --global --unset url.ssh://git@github.com.insteadOf
 RUN git config --system --unset-all filter.lfs.clean
 RUN git config --system --unset-all filter.lfs.smudge
 RUN git config --system --unset-all filter.lfs.process
