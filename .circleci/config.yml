@@ -7,8 +7,8 @@ orbs:
   codecov: codecov/codecov@1.0.2
 jobs:
   build:
-    machine:
-      image: circleci/python:3.8.5
+    docker:
+      - image: circleci/python:3.8.5
 
     steps:
       - checkout
@@ -68,16 +68,16 @@ jobs:
       #     name: run pytest functional tests - write
       #     command: script/test "-m 'write and not offline'"
 
-      - run:
-          name: run pytest functional tests - offline
-          command: |
-            script/docker start
-            docker-compose exec --privileged clowder script/test "-m offline"
-            script/docker stop
-
       # - run:
       #     name: run pytest functional tests - offline
-      #     command: sudo script/test "-m offline"
+      #     command: |
+      #       script/docker start
+      #       docker-compose exec --privileged clowder script/test "-m offline"
+      #       script/docker stop
+
+      - run:
+          name: run pytest functional tests - offline
+          command: sudo script/test "-m offline"
 
       - run:
           name: Code climate reporting
