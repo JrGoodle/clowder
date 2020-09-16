@@ -5,14 +5,14 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
 start_docker() {
     # Run docker image
     script/clean
-    docker-compose up -d
-    docker-compose exec --privileged clowder pip install -r requirements.txt
-    docker-compose exec --privileged clowder pip install -e .
+    docker-compose up --detach --build
+    docker-compose exec --privileged clowder pip install --requirement requirements.txt
+    docker-compose exec --privileged clowder pip install --editable .
 }
 
 stop_docker() {
     # Stop running docker container
-    docker-compose rm -fs clowder
+    docker-compose rm --force --stop clowder
 }
 
 if [ "$1" = 'start' ]; then
