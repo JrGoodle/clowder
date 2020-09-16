@@ -27,8 +27,28 @@ WORKDIR /clowder
 
 ############################################################
 
-# Install GIT
-RUN apt-get update -y && apt-get install python-dev -y
+# Update package list
+RUN apt-get update -y
+
+# Install netstat and route
+RUN apt-get install net-tools -y
+
+# Install git
+RUN apt-get install python-dev -y
+
+# Install git-lfs
+RUN curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash
+RUN apt-get install git-lfs
+
+# Set up git config
+RUN git config --global user.email "joe@polka.cat"
+RUN git config --global user.name "Clowder Docker"
+RUN git config --global push.default simple
+# RUN git config --global --unset url.ssh://git@github.com.insteadOf
+RUN git config --system --unset-all filter.lfs.clean
+RUN git config --system --unset-all filter.lfs.smudge
+RUN git config --system --unset-all filter.lfs.process
+RUN git config --system --unset-all filter.lfs.required
 
 ############################################################
 

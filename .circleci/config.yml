@@ -7,34 +7,33 @@ orbs:
   codecov: codecov/codecov@1.0.2
 jobs:
   build:
-    docker:
-      - image: circleci/python:3.8.5
+    machine: true
 
     steps:
       - checkout
 
-      # Download and cache dependencies
-      - restore_cache:
-          keys:
-          - v1-dependencies-{{ checksum "requirements.txt" }}
-          # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
+      # # Download and cache dependencies
+      # - restore_cache:
+      #     keys:
+      #     - v1-dependencies-{{ checksum "requirements.txt" }}
+      #     # fallback to using the latest cache if no exact match is found
+      #     - v1-dependencies-
 
-      - run:
-          name: install dependencies
-          command: |
-            curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
-            sudo apt-get install git-lfs
-            python --version
-            python -m venv venv
-            . venv/bin/activate
-            sudo pip install -r requirements.txt
-            sudo -H pip install -e .
+      # - run:
+      #     name: install dependencies
+      #     command: |
+      #       curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
+      #       sudo apt-get install git-lfs
+      #       python --version
+      #       python -m venv venv
+      #       . venv/bin/activate
+      #       sudo pip install -r requirements.txt
+      #       sudo -H pip install -e .
 
-      - save_cache:
-          paths:
-            - ./venv
-          key: v1-dependencies-{{ checksum "requirements.txt" }}
+      # - save_cache:
+      #     paths:
+      #       - ./venv
+      #     key: v1-dependencies-{{ checksum "requirements.txt" }}
 
       - run:
           name: setup git config
@@ -68,16 +67,20 @@ jobs:
       #     name: run pytest functional tests - write
       #     command: script/test "-m 'write and not offline'"
 
-      # - run:
-      #     name: run pytest functional tests - offline
-      #     command: |
-      #       script/docker start
-      #       docker-compose exec --privileged clowder script/test "-m offline"
-      #       script/docker stop
+      - run:
+          name: Start clowder tests docker container
+          command: script/docker start
 
       - run:
           name: run pytest functional tests - offline
-          command: sudo script/test "-m offline"
+          command: docker-compose exec clowder script/test "-m offline"
+
+      - run:
+          name: Stop clowder tests docker container
+          command: script/docker stop
+      # - run:
+      #     name: run pytest functional tests - offline
+      #     command: sudo script/test "-m offline"
 
       - run:
           name: Code climate reporting

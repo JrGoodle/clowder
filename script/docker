@@ -6,8 +6,8 @@ start_docker() {
     # Run docker image
     script/clean
     docker-compose up --detach --build
-    docker-compose exec --privileged clowder pip install --requirement requirements.txt
-    docker-compose exec --privileged clowder pip install --editable .
+    docker-compose exec clowder pip install --requirement requirements.txt
+    docker-compose exec clowder pip install --editable .
 }
 
 stop_docker() {
