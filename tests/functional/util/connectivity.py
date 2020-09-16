@@ -11,7 +11,7 @@ def enable_network_connection() -> CompletedProcess:
     path = Path()
     from sys import platform
     if platform == "linux":
-        result = run_command("nmcli nm enable true", path)
+        result = run_command("ip link set eth0 up", path)
     elif platform == "darwin":
         result = run_command("networksetup -setairportpower airport on", path)
     elif platform == "win32":
@@ -26,7 +26,7 @@ def disable_network_connection() -> CompletedProcess:
     path = Path()
     from sys import platform
     if platform == "linux":
-        result = run_command("nmcli nm enable false", path)
+        result = run_command("ip link set eth0 down", path)
     elif platform == "darwin":
         result = run_command("networksetup -setairportpower airport off", path)
     elif platform == "win32":

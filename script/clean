@@ -11,17 +11,12 @@ clean_clowder_repo() {
     sudo -H rm -rf $clowder_path/dist
     echo "Removing build"
     sudo -H rm -rf $clowder_path/build
-    echo "Removing temp"
-    sudo -H rm -rf $clowder_path/temp
     echo "Removing __pycache__"
     local path=$clowder_path/clowder
-    # sudo -H rm -rf $path/*.pyc $path/*/*.pyc $path/*/*/*.pyc
     sudo -H rm -rf $path/__pycache__ $path/*/__pycache__ $path/*/*/__pycache__
     local path=$clowder_path/tests
     sudo -H rm -rf $path/__pycache__ $path/*/__pycache__ $path/*/*/__pycache__
     echo "pip3 uninstall clowder"
-    pushd $REPO_PATH || exit 1
     sudo -H pip3 uninstall clowder-repo
-    popd || exit 1
 }
 clean_clowder_repo

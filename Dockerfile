@@ -9,7 +9,8 @@ LABEL maintainer "Joe DeCapo <joe@polka.cat>"
 ############################################################
 
 # ensure local python is preferred over distribution python
-ENV PATH /usr/local/bin:${PATH}
+ENV PATH /usr/local/bin:$PATH
+ENV PYTHONPATH $PYTHONPATH:/clowder
 
 # http://bugs.python.org/issue19846
 # > At the moment, setting "LANG=C" on a Linux system *fundamentally breaks Python 3*, and that's not OK.
@@ -27,6 +28,4 @@ RUN apt-get update -y && apt-get install python-dev -y
 ############################################################
 
 WORKDIR /clowder
-# RUN pip install -r requirements.txt
-# RUN pip install -e .
-CMD ["/bin/bash"]
+CMD ["/usr/bin/env bash"]
