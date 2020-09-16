@@ -75,11 +75,12 @@ jobs:
       #     name: run pytest functional tests - write
       #     command: script/test "-m 'write and not offline'"
 
-# TODO: Enable offline tests
-# https://discuss.circleci.com/t/running-tests-without-internet-access/1427
       - run:
           name: run pytest functional tests - offline
-          command: script/test "-m 'offline'"
+          command: |
+            script/docker start
+            docker-compose exec --privileged clowder script/test "-m offline"
+            script/docker stop
 
       - run:
           name: Code climate reporting

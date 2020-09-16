@@ -9,8 +9,8 @@ clean_clowder_repo() {
     sudo -H rm -rf $clowder_path/clowder_repo.egg-info
     echo "Removing dist"
     sudo -H rm -rf $clowder_path/dist
-    echo "Removing build"
-    sudo -H rm -rf $clowder_path/build
+    # echo "Removing build"
+    # sudo -H rm -rf $clowder_path/build
     echo "Removing __pycache__"
     local path=$clowder_path/clowder
     sudo -H rm -rf $path/__pycache__ $path/*/__pycache__ $path/*/*/__pycache__

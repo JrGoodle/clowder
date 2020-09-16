@@ -673,7 +673,7 @@ Feature: clowder herd
         | black-cats/sasha  |
         | black-cats/june   |
 
-    @fail @cats @offline @debug
+    @fail @cats @offline
     Scenario Outline: herd default offline
         Given cats example is initialized
         And <directory> doesn't exist
