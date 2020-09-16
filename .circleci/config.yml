@@ -23,14 +23,11 @@ jobs:
       - run:
           name: install dependencies
           command: |
+            sudo apt-get install git-lfs
             python3 -m venv venv
             . venv/bin/activate
             sudo pip3 install -r requirements.txt
-            sudo apt-get install git-lfs
-
-      - run:
-          name: run setup scripts
-          command: script/update
+            sudo -H pip install -e .
 
       - save_cache:
           paths:
@@ -56,12 +53,6 @@ jobs:
       - run:
           name: Add ssh key to known_hosts
           command:  ssh-keyscan polka-dot-cat.git.beanstalkapp.com >> ~/.ssh/known_hosts
-
-      - run:
-          name: Print environment info
-          command: |
-            pwd
-            ls -al
 
       - run:
           name: Code climate setup
