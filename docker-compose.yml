@@ -12,4 +12,4 @@ services:
       - type: bind
         source: .
         target: /clowder
-      - ${HOME}/.ssh:/root/.ssh:ro
+      # - ${HOME}/.ssh:/root/.ssh:ro
