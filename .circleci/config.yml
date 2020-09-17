@@ -12,31 +12,8 @@ jobs:
     steps:
       - checkout
 
-      # # Download and cache dependencies
-      # - restore_cache:
-      #     keys:
-      #     - v1-dependencies-{{ checksum "requirements.txt" }}
-      #     # fallback to using the latest cache if no exact match is found
-      #     - v1-dependencies-
-
-      # - run:
-      #     name: install dependencies
-      #     command: |
-      #       curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
-      #       sudo apt-get install git-lfs
-      #       python --version
-      #       python -m venv venv
-      #       . venv/bin/activate
-      #       sudo pip install -r requirements.txt
-      #       sudo -H pip install -e .
-
-      # - save_cache:
-      #     paths:
-      #       - ./venv
-      #     key: v1-dependencies-{{ checksum "requirements.txt" }}
-
       - run:
-          name: install
+          name: Install Python 3.7
           command: |
             sudo apt-get install software-properties-common
             sudo add-apt-repository ppa:deadsnakes/ppa
@@ -44,7 +21,7 @@ jobs:
             sudo apt-get install python3.7
 
       - run:
-          name: setup git config
+          name: Setup git config
           command: |
             git config --global user.email "circle@circleci.org"
             git config --global user.name "CircleCI"
@@ -55,32 +32,10 @@ jobs:
           fingerprints:
             - "e9:7d:20:a0:51:b2:9c:22:f6:b9:5b:55:47:c4:7c:20"
 
-      - run: cat ~/.ssh/known_hosts
-
       - run:
           name: Add ssh key to known_hosts
           command:  |
             ssh-keyscan -H polka-dot-cat.git.beanstalkapp.com >> ~/.ssh/known_hosts
-# echo 'e9:7d:20:a0:51:b2:9c:22:f6:b9:5b:55:47:c4:7c:20' >> ~/.ssh/known_hosts
-
-      - run: cat ~/.ssh/known_hosts
-
-      # - run:
-      #     name: run pytest functional tests - parallel
-      #     command: script/test "-n auto -m 'not write and not offline'"
-
-      # - run:
-      #     name: run pytest functional tests - write
-      #     command: script/test "-m 'write and not offline'"
-
-      # - run:
-      #     name: test ssh
-      #     # command: docker-compose exec clowder script/test "-m offline"
-      #     command: |
-      #       git clone git@github.com:JrGoodle/felidae.git
-      #       rm -rf felidae
-      #       git clone git@polka-dot-cat.git.beanstalkapp.com:polka-dot-cat/felidae.git
-      #       rm -rf felidae
 
       - run:
           name: Start clowder tests docker container
@@ -91,12 +46,12 @@ jobs:
             script/docker.py start
 
       - run:
-          name: run pytest functional tests - offline
-          command: docker-compose exec --privileged clowder script/test "-m offline"
+          name: Pytest functional tests - parallel
+          command: docker-compose exec --privileged clowder script/test "-n auto -m 'not write and not offline'"
 
-      # - run:
-      #     name: Stop clowder tests docker container
-      #     command: script/docker stop
+      - run:
+          name: Pytest functional tests - write and offline
+          command: docker-compose exec --privileged clowder script/test "-m 'write and offline'"
 
       - run:
           name: Code climate reporting
