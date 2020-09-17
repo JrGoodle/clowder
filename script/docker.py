@@ -1,14 +1,11 @@
 #!/usr/bin/env python
 
 import os
-import random
 import shutil
-import string
 import subprocess
 import sys
 from pathlib import Path
 from subprocess import CompletedProcess
-from typing import Optional
 
 
 def run_command(cwd: Path, cmd: str) -> CompletedProcess:
@@ -19,7 +16,7 @@ def run_command(cwd: Path, cmd: str) -> CompletedProcess:
 
 def start_docker() -> None:
     build_ssh_dir = path / "build" / "ssh"
-    shutil.rmtree(build_dir, ignore_errors=True)
+    shutil.rmtree(build_ssh_dir, ignore_errors=True)
     home_ssh_dir = Path.home() / ".ssh"
     shutil.copytree(home_ssh_dir, build_ssh_dir)
 
