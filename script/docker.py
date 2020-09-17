@@ -23,11 +23,14 @@ def start_docker() -> None:
     home_ssh_dir = Path.home() / ".ssh"
     shutil.copytree(home_ssh_dir, build_ssh_dir)
 
-    run_command(path, "docker-compose up --build -d")
-    run_command(path, "docker-compose exec --privileged clowder pip install --requirement requirements.txt")
-    run_command(path, "docker-compose exec --privileged clowder pip install --editable .")
+    result = run_command(path, "docker-compose up --build -d")
+    print(result.stdout)
+    result = run_command(path, "docker-compose exec --privileged clowder pip install --requirement requirements.txt")
+    print(result.stdout)
+    result = run_command(path, "docker-compose exec --privileged clowder pip install --editable .")
+    print(result.stdout)
 
-    shutil.rmtree(build_dir, ignore_errors=True)
+    shutil.rmtree(build_ssh_dir, ignore_errors=True)
 
 
 def stop_docker() -> None:
