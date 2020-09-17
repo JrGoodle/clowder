@@ -6,8 +6,8 @@ services:
     stdin_open: true
     tty: true
     entrypoint: /usr/bin/env bash
-    # cap_add:
-    #   - NET_ADMIN
+    cap_add:
+      - NET_ADMIN
     volumes:
       - type: bind
         source: .

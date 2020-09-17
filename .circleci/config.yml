@@ -43,15 +43,23 @@ jobs:
             pyenv install 3.6.3
             pyenv global 3.6.3
             python --version
-            script/docker.py start
+            script/docker start
 
       - run:
-          name: Pytest functional tests - parallel
-          command: docker-compose exec --privileged clowder script/test "-n auto -m 'not write and not offline'"
+          name: Code climate setup
+          command: script/ci_before
 
       - run:
-          name: Pytest functional tests - write and offline
-          command: docker-compose exec --privileged clowder script/test "-m 'write or offline'"
+          name: Pytest functional tests - not write and not offline - parallel
+          command: docker-compose exec clowder script/test "-n auto -m 'not write and not offline'"
+
+      - run:
+          name: Pytest functional tests - write and not offline
+          command: docker-compose exec clowder script/test "-m 'write and not offline'"
+
+      - run:
+          name: Pytest functional tests - offline
+          command: docker-compose exec clowder script/test "-m 'offline'"
 
       - run:
           name: Code climate reporting

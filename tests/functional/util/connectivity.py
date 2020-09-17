@@ -1,6 +1,5 @@
 """New syntax test file"""
 
-import time
 from pathlib import Path
 from subprocess import CompletedProcess
 from typing import Optional
@@ -13,7 +12,6 @@ def enable_network_connection(gateway_address: Optional[str]) -> [CompletedProce
     from sys import platform
     results = []
     if platform == "linux":
-        # result = run_command("nmcli nm enable true", path)
         result = run_command("ip link set eth0 up", path)
         results.append(result)
         print(result.stdout)
@@ -27,7 +25,6 @@ def enable_network_connection(gateway_address: Optional[str]) -> [CompletedProce
         assert False
     else:
         assert False
-    # time.sleep(1)
     return result
 
 
@@ -35,7 +32,6 @@ def disable_network_connection() -> CompletedProcess:
     path = Path()
     from sys import platform
     if platform == "linux":
-        # result = run_command("nmcli nm enable false", path)
         result = run_command("ip link set eth0 down", path)
         print(result.stdout)
     elif platform == "darwin":
@@ -44,7 +40,6 @@ def disable_network_connection() -> CompletedProcess:
         assert False
     else:
         assert False
-    # time.sleep(1)
     return result
 
 

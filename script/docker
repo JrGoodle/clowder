@@ -1,27 +1,62 @@
-#!/usr/bin/env bash
+#!/usr/bin/env python
 
-cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
+import os
+import shutil
+import subprocess
+import sys
+from pathlib import Path
+from subprocess import CompletedProcess
 
-start_docker() {
-    # Run docker image
-    rm -rf build/ssh
-    mkdir -p build
-    cp -R "${HOME}/.ssh" build/ssh
-    docker-compose up --build -d
-    docker-compose exec --privileged clowder pip install --requirement requirements.txt
-    docker-compose exec --privileged clowder pip install --editable .
-    rm -rf build/ssh
-}
 
-stop_docker() {
-    # Stop running docker container
-    docker-compose rm --force --stop clowder
-}
+def run_command(cwd: Path, cmd: str) -> CompletedProcess:
+    cmd_env = os.environ.copy()
+    completed_process = subprocess.run(cmd, cwd=cwd, shell=True, env=cmd_env)
+    return completed_process
 
-if [ "$1" = 'start' ]; then
-    start_docker
-elif [ "$1" = 'stop' ]; then
-    stop_docker
-else
-    echo 'Requires parameter "start" or "stop"'
-fi
+
+def start_docker() -> None:
+    build_ssh_dir = path / "build" / "ssh"
+    shutil.rmtree(build_ssh_dir, ignore_errors=True)
+    home_ssh_dir = Path.home() / ".ssh"
+    shutil.copytree(str(home_ssh_dir), str(build_ssh_dir))
+
+    # Fix paths for Circle CI
+    config_file = build_ssh_dir / "config"
+    if config_file.exists():
+        config_contents = config_file.read_text().replace("/home/circleci", "/root")
+        config_file.unlink()
+        with open(config_file, 'w') as f:
+            f.write(config_contents)
+
+    result = run_command(path, "docker-compose up --build -d")
+    assert result.returncode == 0
+    result = run_command(path, "docker-compose exec clowder pip install --requirement requirements.txt")
+    assert result.returncode == 0
+    result = run_command(path, "docker-compose exec clowder pip install --editable .")
+    assert result.returncode == 0
+
+    shutil.rmtree(build_ssh_dir, ignore_errors=True)
+
+
+def stop_docker() -> None:
+    result = run_command(path, "docker-compose rm --force --stop clowder")
+    assert result.returncode == 0
+
+
+command_arg = ""
+if len(sys.argv) == 2:
+    command_arg = sys.argv[1]
+else:
+    print("Wrong number of arguments")
+    exit(1)
+
+# Repo path
+path = Path(__file__).resolve().parent.parent.resolve()
+
+if command_arg == "start":
+    start_docker()
+elif command_arg == "stop":
+    stop_docker()
+else:
+    print("Unknown argument")
+    exit(1)
