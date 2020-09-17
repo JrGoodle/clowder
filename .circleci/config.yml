@@ -92,7 +92,7 @@ jobs:
 
       - run:
           name: run pytest functional tests - offline
-          command: docker-compose exec clowder script/test "-m offline"
+          command: docker-compose exec --privileged clowder script/test "-m offline"
 
       # - run:
       #     name: Stop clowder tests docker container
