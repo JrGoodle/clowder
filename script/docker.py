@@ -34,7 +34,7 @@ def stop_docker() -> None:
     run_command(path, "docker-compose rm --force --stop clowder")
 
 
-command_arg: str = ""
+command_arg = ""
 if len(sys.argv) == 2:
     command_arg = sys.argv[1]
 else:
