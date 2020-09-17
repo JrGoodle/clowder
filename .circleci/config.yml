@@ -84,7 +84,10 @@ jobs:
 
       - run:
           name: Start clowder tests docker container
-          command: script/docker.py start
+          command: |
+            pyenv global 3.5.2
+            python --version
+            script/docker.py start
 
       - run:
           name: run pytest functional tests - offline
