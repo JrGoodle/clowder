@@ -14,10 +14,13 @@ class CommandResults:
         self.completed_processes: List[CompletedProcess] = []
 
 
-def run_command(command: str, path: Path) -> CompletedProcess:
+def run_command(command: str, path: Path, clowder_debug: bool = True) -> CompletedProcess:
     print(f"TEST: {command}")
     cmd_env = os.environ.copy()
-    cmd_env.update({"CLOWDER_DEBUG": "true"})
+    if clowder_debug:
+        cmd_env.update({"CLOWDER_DEBUG": "true"})
+    else:
+        cmd_env.pop('CLOWDER_DEBUG', None)
 
     processed_cmd = _process_clowder_commands(command)
 
