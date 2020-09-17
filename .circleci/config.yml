@@ -73,14 +73,14 @@ jobs:
       #     name: run pytest functional tests - write
       #     command: script/test "-m 'write and not offline'"
 
-      - run:
-          name: test ssh
-          # command: docker-compose exec clowder script/test "-m offline"
-          command: |
-            git clone git@github.com:JrGoodle/felidae.git
-            rm -rf felidae
-            git clone git@polka-dot-cat.git.beanstalkapp.com:polka-dot-cat/felidae.git
-            rm -rf felidae
+      # - run:
+      #     name: test ssh
+      #     # command: docker-compose exec clowder script/test "-m offline"
+      #     command: |
+      #       git clone git@github.com:JrGoodle/felidae.git
+      #       rm -rf felidae
+      #       git clone git@polka-dot-cat.git.beanstalkapp.com:polka-dot-cat/felidae.git
+      #       rm -rf felidae
 
       - run:
           name: Start clowder tests docker container
@@ -92,11 +92,7 @@ jobs:
 
       - run:
           name: run pytest functional tests - offline
-          # command: docker-compose exec clowder script/test "-m offline"
-          command: |
-            docker-compose exec clowder git clone git@github.com:JrGoodle/felidae.git
-            docker-compose exec clowder rm -rf felidae
-            docker-compose exec clowder git clone git@polka-dot-cat.git.beanstalkapp.com:polka-dot-cat/felidae.git
+          command: docker-compose exec clowder script/test "-m offline"
 
       # - run:
       #     name: Stop clowder tests docker container
