@@ -8,8 +8,8 @@ start_docker() {
     mkdir -p build
     cp -R "${HOME}/.ssh" build/ssh
     docker-compose up --build -d
-    docker-compose exec clowder pip install --requirement requirements.txt
-    docker-compose exec clowder pip install --editable .
+    docker-compose exec --privileged clowder pip install --requirement requirements.txt
+    docker-compose exec --privileged clowder pip install --editable .
     rm -rf build/ssh
 }
 
