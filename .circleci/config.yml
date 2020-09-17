@@ -12,13 +12,19 @@ jobs:
     steps:
       - checkout
 
+      # - run:
+      #     name: Install Python 3.7
+      #     command: |
+      #       sudo apt-get install software-properties-common
+      #       sudo add-apt-repository ppa:deadsnakes/ppa
+      #       sudo apt-get update
+      #       sudo apt-get install python3.7
+
       - run:
-          name: Install Python 3.7
+          name: Install python via pyenv
           command: |
-            sudo apt-get install software-properties-common
-            sudo add-apt-repository ppa:deadsnakes/ppa
-            sudo apt-get update
-            sudo apt-get install python3.7
+            pyenv install
+            python --version
 
       - run:
           name: Setup git config
@@ -34,16 +40,11 @@ jobs:
 
       - run:
           name: Add ssh key to known_hosts
-          command:  |
-            ssh-keyscan -H polka-dot-cat.git.beanstalkapp.com >> ~/.ssh/known_hosts
+          command: ssh-keyscan -H polka-dot-cat.git.beanstalkapp.com >> ~/.ssh/known_hosts
 
       - run:
           name: Start clowder tests docker container
-          command: |
-            pyenv install 3.6.3
-            pyenv global 3.6.3
-            python --version
-            script/docker start
+          command: script/docker start
 
       - run:
           name: Code climate setup
