@@ -4,6 +4,13 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
 
 case "$(uname)" in
     Linux*) export PLATFORM="linux";
+        sudo apt-get update -y
+        echo "Install git"
+        sudo apt-get install python-dev -y
+        echo "Install git-lfs"
+        curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash
+        sudo apt-get install git-lfs
+        echo "Install pyenv"
         if ! which -s pyenv; then
             curl https://pyenv.run | bash
         fi
