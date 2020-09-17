@@ -51,7 +51,7 @@ jobs:
 
       - run:
           name: Pytest functional tests - write and offline
-          command: docker-compose exec --privileged clowder script/test "-m 'write and offline'"
+          command: docker-compose exec --privileged clowder script/test "-m 'write or offline'"
 
       - run:
           name: Code climate reporting
