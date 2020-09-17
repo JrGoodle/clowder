@@ -19,6 +19,11 @@ def start_docker() -> None:
     shutil.rmtree(build_ssh_dir, ignore_errors=True)
     home_ssh_dir = Path.home() / ".ssh"
     shutil.copytree(str(home_ssh_dir), str(build_ssh_dir))
+    config_file = build_ssh_dir / "config"
+    config_contents = config_file.read_text().replace("/home/circleci", "/root")
+    config_file.unlink()
+    with open(config_file, 'w') as f:
+        f.write(config_contents)
 
     result = run_command(path, "docker-compose up --build -d")
     print(result.stdout)
