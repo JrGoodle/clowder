@@ -23,6 +23,7 @@ def get_random_alphanumeric_string(length: int) -> str:
     print("Random alphanumeric String is:", result_str)
     return result_str
 
+
 command_arg: Optional[str] = None
 if len(sys.argv) > 1:
     command_arg = sys.argv[1]

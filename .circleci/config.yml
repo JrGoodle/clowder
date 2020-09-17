@@ -36,6 +36,14 @@ jobs:
       #     key: v1-dependencies-{{ checksum "requirements.txt" }}
 
       - run:
+          name: install
+          command: |
+            sudo apt-get install software-properties-common
+            sudo add-apt-repository ppa:deadsnakes/ppa
+            sudo apt-get update
+            sudo apt-get install python3.7
+
+      - run:
           name: setup git config
           command: |
             git config --global user.email "circle@circleci.org"
@@ -76,7 +84,7 @@ jobs:
 
       - run:
           name: Start clowder tests docker container
-          command: script/docker start
+          command: script/docker.py start
 
       - run:
           name: run pytest functional tests - offline

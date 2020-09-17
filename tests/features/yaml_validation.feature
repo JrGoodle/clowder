@@ -216,7 +216,7 @@ Feature: clowder yaml validation
         Then the command succeeds
         And project at felidae has remote origin with url git@github.com:JrGoodle/felidae.git
 
-    @ssh
+    @ssh @debug
     Scenario: validate project.source.url
         Given validating property <project_source_url>
         And validation clowder is initialized
