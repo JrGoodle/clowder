@@ -18,7 +18,9 @@ jobs:
 
       - run:
           name: List available pyenv install versions
-          command: pyenv install --list
+          command: |
+            pyenv --version
+            pyenv install --list
 
       - run:
           name: Install python via pyenv
