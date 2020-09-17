@@ -18,7 +18,7 @@ def start_docker() -> None:
     build_ssh_dir = path / "build" / "ssh"
     shutil.rmtree(build_ssh_dir, ignore_errors=True)
     home_ssh_dir = Path.home() / ".ssh"
-    shutil.copytree(home_ssh_dir, build_ssh_dir)
+    shutil.copytree(str(home_ssh_dir), str(build_ssh_dir))
 
     result = run_command(path, "docker-compose up --build -d")
     print(result.stdout)
