@@ -4,13 +4,13 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
 
 start_docker() {
     # Run docker image
-    rm -rf build/ssh
-    mkdir -p build
-    cp -R "${HOME}/.ssh" build/ssh
+    # rm -rf build/ssh
+    # mkdir -p build
+    # cp -R "${HOME}/.ssh" build/ssh
     docker-compose up --build -d
     docker-compose exec clowder pip install --requirement requirements.txt
     docker-compose exec clowder pip install --editable .
-    rm -rf build/ssh
+    # rm -rf build/ssh
 }
 
 stop_docker() {
