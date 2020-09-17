@@ -51,7 +51,7 @@ jobs:
           name: Add ssh key to known_hosts
           command:  |
             cat ~/.ssh/known_hosts
-            ssh-keyscan -H beanstalkapp.com >> ~/.ssh/known_hosts
+            ssh-keyscan -H polka-dot-cat.git.beanstalkapp.com >> ~/.ssh/known_hosts
             cat ~/.ssh/known_hosts
 # echo 'e9:7d:20:a0:51:b2:9c:22:f6:b9:5b:55:47:c4:7c:20' >> ~/.ssh/known_hosts
 
