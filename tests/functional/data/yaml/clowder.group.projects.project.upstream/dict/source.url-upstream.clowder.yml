@@ -1,0 +1,10 @@
+name: source.url-upstream
+
+clowder:
+  cats:
+    projects:
+      - name: JrGoodle/felidae
+        upstream:
+          name: polka-dot-cat/felidae
+          source:
+            url: polka-dot-cat.git.beanstalkapp.com

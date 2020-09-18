@@ -1,0 +1,7 @@
+name: implicit
+
+clowder:
+  cats:
+    projects:
+      - name: JrGoodle/djinni
+        upstream: dropbox/djinni

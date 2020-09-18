@@ -1,0 +1,15 @@
+name: source.protocol-defaults
+
+sources:
+  chromium:
+    url: chromium.googlesource.com
+    protocol: https
+
+defaults:
+  upstream:
+    source: chromium
+
+clowder:
+  cats:
+    - name: JrGoodle/gyp
+      upstream: external/gyp

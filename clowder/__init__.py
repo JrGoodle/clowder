@@ -4,3 +4,5 @@
 .. codeauthor:: Joe Decapo <joe@polka.cat>
 
 """
+
+__version__ = '4.0b6'

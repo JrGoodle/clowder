@@ -1,0 +1,6 @@
+name: implicit
+
+clowder:
+  - name: JrGoodle/djinni
+    upstream:
+      name: dropbox/djinni

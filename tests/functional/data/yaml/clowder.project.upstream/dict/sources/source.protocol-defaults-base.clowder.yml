@@ -1,0 +1,16 @@
+name: source.protocol-defaults-base
+
+protocol: https
+
+sources:
+  chromium:
+    url: chromium.googlesource.com
+
+defaults:
+  upstream:
+    source: chromium
+
+clowder:
+  - name: JrGoodle/gyp
+    upstream:
+      name: external/gyp

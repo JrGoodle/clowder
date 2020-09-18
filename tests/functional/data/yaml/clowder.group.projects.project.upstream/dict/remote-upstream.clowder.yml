@@ -1,0 +1,9 @@
+name: remote-upstream
+
+clowder:
+  cats:
+    projects:
+      - name: JrGoodle/djinni
+        upstream:
+          name: dropbox/djinni
+          remote: source

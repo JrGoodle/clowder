@@ -1,53 +1,26 @@
-# Python CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-python/ for more details
-#
 version: 2.1
 orbs:
   codecov: codecov/codecov@1.0.2
 jobs:
   build:
-    docker:
-      - image: circleci/python:3.7.7
+    machine: true
 
     steps:
       - checkout
 
-      # Download and cache dependencies
-      - restore_cache:
-          keys:
-          - v1-dependencies-{{ checksum "requirements.txt" }}
-          # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
-
       - run:
-          name: install dependencies
+          name: Install python via pyenv
           command: |
-            python3 -m venv venv
-            . venv/bin/activate
-            sudo pip3 install -r requirements.txt
-            sudo apt-get install git-lfs
+            pyenv install
+            python --version
 
       - run:
-          name: run setup scripts
-          command: script/update
-
-      - save_cache:
-          paths:
-            - ./venv
-          key: v1-dependencies-{{ checksum "requirements.txt" }}
-
-      - run:
-          name: setup git config
+          name: Setup git config
           command: |
             git config --global user.email "circle@circleci.org"
             git config --global user.name "CircleCI"
             git config --global push.default simple
             git config --global --unset url.ssh://git@github.com.insteadOf
-            sudo git config --system --unset-all filter.lfs.clean
-            sudo git config --system --unset-all filter.lfs.smudge
-            sudo git config --system --unset-all filter.lfs.process
-            sudo git config --system --unset-all filter.lfs.required
 
       - add_ssh_keys:
           fingerprints:
@@ -55,31 +28,27 @@ jobs:
 
       - run:
           name: Add ssh key to known_hosts
-          command:  ssh-keyscan polka-dot-cat.git.beanstalkapp.com >> ~/.ssh/known_hosts
+          command: ssh-keyscan -H polka-dot-cat.git.beanstalkapp.com >> ~/.ssh/known_hosts
 
       - run:
-          name: Print environment info
-          command: |
-            pwd
-            ls -al
+          name: Start clowder tests docker container
+          command: script/docker start
 
       - run:
           name: Code climate setup
           command: script/ci_before
 
       - run:
-          name: run pytest functional tests - parallel
-          command: script/test "-n auto -m 'not write and not offline'"
+          name: Pytest functional tests - not write and not offline - parallel
+          command: docker-compose exec clowder script/test "-n auto -m 'not write and not offline'"
 
       - run:
-          name: run pytest functional tests - write
-          command: script/test "-m 'write and not offline'"
+          name: Pytest functional tests - write and not offline
+          command: docker-compose exec clowder script/test "-m 'write and not offline'"
 
-# TODO: Enable offline tests
-# https://discuss.circleci.com/t/running-tests-without-internet-access/1427
-      # - run:
-      #     name: run pytest functional tests - offline
-      #     command: script/test "-m 'offline'"
+      - run:
+          name: Pytest functional tests - offline
+          command: docker-compose exec clowder script/test "-m 'offline'"
 
       - run:
           name: Code climate reporting

@@ -11,8 +11,8 @@ from typing import Optional
 from termcolor import colored
 
 from clowder.environment import ENVIRONMENT
-from clowder.git import ProjectRepo
-from clowder.git.util import (
+from clowder.git_project import ProjectRepo
+from clowder.git_project.util import (
     existing_git_repository,
     git_url
 )
@@ -43,33 +43,36 @@ class ResolvedUpstream:
         """
 
         has_defaults = defaults is not None
+        has_upstream_defaults = has_defaults and defaults.upstream_defaults is not None
         has_group = group is not None
         has_group_defaults = has_group and group.defaults is not None
+        has_group_upstream_defaults = has_group_defaults and group.defaults.upstream_defaults is not None
 
         self.path: Path = path
         self.name: str = upstream.name
+        # TODO: Remove dependence on hardcoded branch. Defer to origin/HEAD
+        self.ref: str = "refs/heads/master"
 
         has_remote = upstream.remote is not None
-        # TODO: Add defaults section for specifying upstream defaults
-        # has_defaults_remote = has_defaults and defaults.remote is not None
-        # has_group_defaults_remote = has_group_defaults and group.defaults.remote is not None
+        has_defaults_remote = has_upstream_defaults and defaults.upstream_defaults.remote is not None
+        has_group_defaults_remote = has_group_upstream_defaults and group.defaults.upstream_defaults.remote is not None
         self.remote: str = "upstream"
         if has_remote:
             self.remote = upstream.remote
-        # elif has_group_defaults_remote:
-        #     self.remote = group.defaults.remote
-        # elif has_defaults_remote:
-        #     self.remote = defaults.remote
+        elif has_group_defaults_remote:
+            self.remote = group.defaults.upstream_defaults.remote
+        elif has_defaults_remote:
+            self.remote = defaults.upstream_defaults.remote
 
         has_source = upstream.source is not None
-        has_defaults_source = has_defaults and defaults.source is not None
-        has_group_defaults_source = has_group_defaults and group.defaults.source is not None
+        has_defaults_source = has_upstream_defaults and defaults.upstream_defaults.source is not None
+        has_group_defaults_source = has_group_upstream_defaults and group.defaults.upstream_defaults.source is not None
         if has_source:
             self.source: Source = SOURCE_CONTROLLER.get_source(upstream.source)
         elif has_group_defaults_source:
-            self.source: Source = SOURCE_CONTROLLER.get_source(group.defaults.source)
+            self.source: Source = SOURCE_CONTROLLER.get_source(group.defaults.upstream_defaults.source)
         elif has_defaults_source:
-            self.source: Source = SOURCE_CONTROLLER.get_source(defaults.source)
+            self.source: Source = SOURCE_CONTROLLER.get_source(defaults.upstream_defaults.source)
         else:
             self.source: Source = SOURCE_CONTROLLER.get_source(GITHUB)
 
@@ -82,18 +85,6 @@ class ResolvedUpstream:
             self.default_protocol: Optional[str] = protocol
         else:
             self.default_protocol: Optional[str] = None
-
-        has_ref = upstream.get_formatted_ref() is not None
-        has_defaults_ref = has_defaults and defaults.get_formatted_ref() is not None
-        has_group_defaults_ref = has_group_defaults and group.defaults.get_formatted_ref() is not None
-        if has_ref:
-            self.ref: str = upstream.get_formatted_ref()
-        elif has_group_defaults_ref:
-            self.ref: str = group.defaults.get_formatted_ref()
-        elif has_defaults_ref:
-            self.ref: str = defaults.get_formatted_ref()
-        else:
-            self.ref: str = "refs/heads/master"
 
     def full_path(self) -> Path:
         """Return full path to project

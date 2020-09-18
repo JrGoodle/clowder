@@ -42,7 +42,7 @@ jobs:
         sudo git config --system --unset-all filter.lfs.process
         sudo git config --system --unset-all filter.lfs.required
     - name: Install clowder
-      run: script/update
+      run: script/cibuild
     - name: Run pytest functional tests
       run: script/test "-n auto -m 'not ssh and not offline'"
     - uses: codecov/codecov-action@v1

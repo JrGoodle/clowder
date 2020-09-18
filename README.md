@@ -32,7 +32,7 @@
 
 There are many ways to organize projects with git. Monorepos, submodules, subtrees, or [some](https://github.com/cristibalan/braid) [other](https://github.com/mixu/gr) [tool](https://github.com/ingydotnet/git-subrepo). `clowder` is one of the other tools. Its approach is heavily influeced by the [repo tool](https://gerrit.googlesource.com/git-repo) Google uses to manage the Android Open Source Project.
 
-Projects are listed in a `clowder.yml` file that can be checked into its own repo, allowing it to be shared across teams. `clowder` essentially makes this file executable, allowing commands to be run across projects. `clowder` can update submodules, lfs files, and custom git config entries. Projects can track branches, or be tied to specific tags or commits. Forks can be configured along with their upstream source, wherever they may live. Snapshots of project states can be saved for later restoration. And more...
+Projects are listed in a `clowder.yml` file that can be checked into its own repo, allowing it to be shared across teams. `clowder` essentially makes this file executable, allowing commands to be run across projects. `clowder` can update submodules, lfs files, and custom git config entries. Projects can track branches, or be tied to specific tags or commits. Upstreams can be configured along with their upstream source, wherever they may live. Snapshots of project states can be saved for later restoration. And more...
 
 Daily development still takes place in individual repos, with normal `git` commands. But `clowder` is there if you need to synchronize or run commands on multiple repos.
 
@@ -57,32 +57,40 @@ sudo pip3 install clowder-repo --force-reinstall --pre
 
 ## The clowder.yml file
 
-For the full specification, see [the clowder.yml syntax reference](docs/clowder-yml-syntax-reference.md)
+For more inforrmation:
 
-An example `clowder.yml` for [some](https://github.com/llvm/llvm-project) [well](https://github.com/apple/swift)-[known](https://github.com/tensorflow/tensorflow) [projects](https://gerrit.googlesource.com/git-repo):
+* [clowder.yml syntax reference](docs/clowder-yml-syntax-reference.md)
+* [clowder.yml inheritance reference](docs/clowder-yml-syntax-reference-inheritance.md)
+
+Example `clowder.yml` for [some](https://github.com/llvm/llvm-project) [well](https://github.com/apple/swift)-[known](https://github.com/tensorflow/tensorflow) [projects](https://gerrit.googlesource.com/git-repo):
 
 ```yaml
 name: cool-projects
 
-defaults:
-  branch: master
-  remote: origin
-  source: github
+clowder:
+  - llvm/llvm-project
+  - apple/swift
+  - tensorflow/tensorflow
+```
+
+Although terse, this is enough to enable `clowder`. With the ommitted default settings:
+
+```yaml
+name: cool-projects
 
 sources:
   github:
     url: github.com
-  google:
-    url: gerrit.googlesource.com
-    protocol: https
 
-projects:
-  - name: llvm/llvm-project
-  - name: apple/swift
-  - name: tensorflow/tensorflow
-  - name: git-repo
-    path: repo
-    source: google
+defaults:
+  remote: origin
+  source: github
+  branch: master
+
+clowder:
+  - llvm/llvm-project
+  - apple/swift
+  - tensorflow/tensorflow
 ```
 
 The `name` is simply a descriptive label. The `defaults` section contains the git branch and remote, the source to clone from, and the protocol to use for cloning repositories. `clowder` assumes the following defaults:
@@ -98,7 +106,7 @@ The `sources` section contains all the git hosting providers. The following sour
 * `gitlab`: `gitlab.com`
 * `bitbucket`: `bitbucket.org`
 
-So the previous `clowder.yml` can be simplified to:
+If we wanted to add a project at another hosting site:
 
 ```yaml
 name: cool-projects
@@ -108,10 +116,10 @@ sources:
     url: gerrit.googlesource.com
     protocol: https
 
-projects:
-  - name: llvm/llvm-project
-  - name: apple/swift
-  - name: tensorflow/tensorflow
+clowder:
+  - llvm/llvm-project
+  - apple/swift
+  - tensorflow/tensorflow
   - name: git-repo
     path: repo
     source: google
@@ -129,7 +137,7 @@ sources:
     url: gerrit.googlesource.com
     protocol: https
 
-projects:
+clowder:
   - name: llvm/llvm-project
     groups: [notdefault, clattner]
   - name: apple/swift
@@ -142,12 +150,30 @@ projects:
     groups: [google]
 ```
 
+```yaml
+name: cool-projects
+
+clowder:
+  clattner:
+    - name: llvm/llvm-project
+      groups: [notdefault]
+    - apple/swift
+    - name: tensorflow/tensorflow
+      groups: [google]
+  google:
+    - name: git-repo
+      path: repo
+      source:
+        url: gerrit.googlesource.com
+        protocol: https
+```
+
 Projects are automatically added to the `all` group, a group of their `name`, and a group of their `path`. If `notdefault` is specified, the project will not be included in commands unless another group argument is given that it belongs to.
 
 For some more custom examples, see:
 
 * [Cats clowder.yml example](docs/clowder-yml-cats.md)
-* [Forks clowder.yml example](docs/clowder-yml-forks.md)
+* [Upstreams clowder.yml example](docs/clowder-yml-upstreams.md)
 
 ## Command Usage
 

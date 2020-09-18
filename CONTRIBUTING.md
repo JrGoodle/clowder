@@ -12,7 +12,7 @@ cd clowder
 Add the directory you cloned the repo into to `PYTHONPATH` in your shell profile. For example, if cloned into `$HOME/clowder`
 
 ```bash
-export PYTHONPATH=$PYTHONPATH:$HOME/clowder/clowder
+export PYTHONPATH="$PYTHONPATH:$HOME/clowder/clowder"
 ```
 
 ## Building
@@ -31,8 +31,8 @@ script/clean
 
 ## Testing
 
-<!-- TODO: Add pytest bdd info -->
+The existing tests are all pytest-bdd functional tests located in [tests/features](tests/features).
 
 ## Pull requests
 
-Any new functionality or bug fixes must have associated tests, in order to prevent future regressions. As of now, the tests are all functional tests located in bash scripts in [test/scripts](test/scripts)
+Any new functionality or bug fixes must have associated tests, in order to prevent future regressions.

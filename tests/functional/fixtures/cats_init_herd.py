@@ -16,7 +16,8 @@ def cats_init_herd(tmp_path: Path, cats_init_herd_session: Path) -> None:
     # TODO: Remove once clowder.yml is relative symlink
     symlink = util.valid_clowder_symlink(tmp_path)
     os.unlink(symlink)
-    util.run_command("clowder link", tmp_path, check=True)
+    result = util.run_command("clowder link", tmp_path)
+    assert result.returncode == 0
 
 
 @fixture(scope="session")
@@ -31,7 +32,8 @@ def cats_init_herd_ssh(tmp_path: Path, cats_init_herd_ssh_session: Path) -> None
     # TODO: Remove once clowder.yml is relative symlink
     symlink = util.valid_clowder_symlink(tmp_path)
     os.unlink(symlink)
-    util.run_command("clowder link ssh", tmp_path, check=True)
+    result = util.run_command("clowder link ssh", tmp_path)
+    assert result.returncode == 0
 
 
 @fixture(scope="session")
@@ -46,8 +48,8 @@ def cats_init_herd_ssh_session(tmp_path_factory) -> Path:
 #     # TODO: Remove once clowder.yml is relative symlink
 #     symlink = util.valid_clowder_symlink(tmp_path)
 #     os.unlink(symlink)
-#     util.run_command("clowder link test-empty-project", tmp_path, check=True)
-#
+#     result = util.run_command("clowder link test-empty-project", tmp_path)
+#     assert result.returncode == 0
 #
 # @fixture(scope="session")
 # def cats_init_yaml_validation_herd_test_empty_project_session(tmp_path_factory) -> Path:

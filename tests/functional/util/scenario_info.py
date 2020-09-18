@@ -13,6 +13,7 @@ class ScenarioInfo:
         self.protocol: str = "https"
         self.version: Optional[str] = None
         self.offline: bool = False
+        self.gateway_address: Optional[str] = None
         self.relative_dir: Optional[str] = None
         self.commit_messages_ahead: Optional[List[str]] = None
         self.commit_messages_behind: Optional[List[str]] = None

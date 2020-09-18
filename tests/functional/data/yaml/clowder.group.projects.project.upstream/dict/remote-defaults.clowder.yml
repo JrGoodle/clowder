@@ -1,0 +1,12 @@
+name: remote-defaults
+
+defaults:
+  upstream:
+    remote: source
+
+clowder:
+  cats:
+    projects:
+      - name: JrGoodle/djinni
+        upstream:
+          name: dropbox/djinni

@@ -227,3 +227,67 @@ def test_validate_project_tag(project_tag: Path):
 )
 def test_validate_project_tag_implicit(project_implicit: Path):
     pass
+
+
+@pytest.mark.parametrize(["upstream_remote"], get_test_params("upstream.remote"))
+@scenario(
+    "../features/yaml_validation.feature",
+    "validate upstream.remote",
+)
+def test_validate_upstream_remote(upstream_remote: Path):
+    pass
+
+
+@pytest.mark.parametrize(["upstream_implicit"], get_test_params("upstream.implicit"))
+@scenario(
+    "../features/yaml_validation.feature",
+    "validate implicit upstream.remote",
+)
+def test_validate_upstream_remote_implicit(upstream_implicit: Path):
+    pass
+
+
+@pytest.mark.parametrize(["upstream_source_protocol"], get_test_params("upstream.source.protocol"))
+@scenario(
+    "../features/yaml_validation.feature",
+    "validate upstream.source.protocol",
+)
+def test_validate_upstream_source_protocol(upstream_source_protocol: Path):
+    pass
+
+
+@pytest.mark.parametrize(["upstream_source_protocol_base"], get_test_params("upstream.source.protocol-base"))
+@scenario(
+    "../features/yaml_validation.feature",
+    "validate upstream.source.protocol base",
+)
+def test_validate_upstream_source_protocol_base(upstream_source_protocol_base: Path):
+    pass
+
+
+@pytest.mark.parametrize(["upstream_implicit"], get_test_params("upstream.implicit"))
+@scenario(
+    "../features/yaml_validation.feature",
+    "validate implicit upstream.source.protocol",
+)
+def test_validate_upstream_source_protocol_implicit(upstream_implicit: Path):
+    pass
+
+
+@pytest.mark.parametrize(["upstream_source_url"], get_test_params("upstream.source.url"))
+@scenario(
+    "../features/yaml_validation.feature",
+    "validate upstream.source.url",
+)
+def test_validate_upstream_source_url(upstream_source_url: Path):
+    pass
+
+
+@pytest.mark.parametrize(["upstream_implicit"], get_test_params("upstream.implicit"))
+@scenario(
+    "../features/yaml_validation.feature",
+    "validate implicit upstream.source.url",
+)
+def test_validate_upstream_source_url_implicit(upstream_implicit: Path):
+    pass
+

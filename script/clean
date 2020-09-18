@@ -1,27 +1,19 @@
 #!/usr/bin/env bash
 
-REPO_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
+cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
 
 clean_clowder_repo() {
-    echo "Cleaning clowder command files"
+    echo "Cleaning clowder build files"
     echo "Removing clowder_repo.egg-info"
-    local clowder_path=$REPO_PATH
-    sudo -H rm -rf $clowder_path/clowder_repo.egg-info
+    sudo -H rm -rf clowder_repo.egg-info
     echo "Removing dist"
-    sudo -H rm -rf $clowder_path/dist
+    sudo -H rm -rf dist
     echo "Removing build"
-    sudo -H rm -rf $clowder_path/build
-    echo "Removing temp"
-    sudo -H rm -rf $clowder_path/temp
+    sudo -H rm -rf build
     echo "Removing __pycache__"
-    local path=$clowder_path/clowder
-    # sudo -H rm -rf $path/*.pyc $path/*/*.pyc $path/*/*/*.pyc
-    sudo -H rm -rf $path/__pycache__ $path/*/__pycache__ $path/*/*/__pycache__
-    local path=$clowder_path/tests
-    sudo -H rm -rf $path/__pycache__ $path/*/__pycache__ $path/*/*/__pycache__
+    sudo -H rm -rf clowder/__pycache__ clowder/*/__pycache__ clowder/*/*/__pycache__
+    sudo -H rm -rf tests/__pycache__ tests/*/__pycache__ tests/*/*/__pycache__
     echo "pip3 uninstall clowder"
-    pushd $REPO_PATH || exit 1
-    sudo -H pip3 uninstall clowder-repo
-    popd || exit 1
+    sudo -H pip3 uninstall clowder-repo || true
 }
 clean_clowder_repo

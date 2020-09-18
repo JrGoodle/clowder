@@ -19,7 +19,7 @@ def given_run_clowder_command(tmp_path: Path, command: str) -> None:
 @given(parsers.parse("linked {version} clowder version"))
 def given_did_link_clowder_version(tmp_path: Path, version: str) -> None:
     if "default" == version:
-        result = util.run_command("clowder link", tmp_path, check=True)
+        result = util.run_command("clowder link", tmp_path)
         assert result.returncode == 0
         assert util.has_valid_clowder_symlink_default(tmp_path)
     else:

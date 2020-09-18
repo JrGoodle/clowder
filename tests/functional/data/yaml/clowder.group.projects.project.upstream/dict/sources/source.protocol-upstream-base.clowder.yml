@@ -1,0 +1,15 @@
+name: source.protocol-upstream-base
+
+protocol: https
+
+sources:
+  chromium:
+    url: chromium.googlesource.com
+
+clowder:
+  cats:
+    projects:
+      - name: JrGoodle/gyp
+        upstream:
+          name: external/gyp
+          source: chromium

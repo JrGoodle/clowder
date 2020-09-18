@@ -1,0 +1,9 @@
+name: remote-defaults
+
+defaults:
+  upstream:
+    remote: source
+
+clowder:
+  - name: JrGoodle/djinni
+    upstream: dropbox/djinni

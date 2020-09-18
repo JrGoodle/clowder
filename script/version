@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
+
+OLD_VERSION=$(awk "/version='/" setup.py | sed -n -e "s/^.*version='//p" | tr -d "',")
+NEW_VERSION=$2
+
+perl -pi -e "s/$OLD_VERSION/$NEW_VERSION/g" setup.py || exit 1
+perl -pi -e "s/$OLD_VERSION/$NEW_VERSION/g" .github/issue_template.md || exit 1
+perl -pi -e "s/$OLD_VERSION/$NEW_VERSION/g" docs/conf.py || exit 1

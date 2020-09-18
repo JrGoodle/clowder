@@ -35,10 +35,10 @@ clowder
    :maxdepth: 2
 
    Command Reference <commands>
-   Command behavior with forks <forks>
+   Command behavior with upstreams <upstreams>
    clowder.yml Syntax Reference <clowder-yml-syntax-reference>
    Cats clowder.yml Example <clowder-yml-cats>
-   Forks clowder.yml Example <clowder-yml-forks>
+   Upstreams clowder.yml Example <clowder-yml-upstreams>
    The clowder repo <clowder-repo>
    API Reference <rst/api_reference>
 

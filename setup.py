@@ -6,6 +6,8 @@ import os
 from pathlib import Path
 from setuptools import setup
 
+from clowder import __version__
+
 # Written according to the docs at
 # https://packaging.python.org/en/latest/distributing.html
 
@@ -23,7 +25,7 @@ setup(
     description='Utility for managing multiple git repositories',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    version='4.0b6',
+    version=__version__,
     url='https://github.com/JrGoodle/clowder',
     project_urls={
         "Documentation": "https://clowder.readthedocs.io/en/latest/"
@@ -46,7 +48,7 @@ setup(
     packages=['clowder',
               'clowder.cli',
               'clowder.config',
-              'clowder.git',
+              'clowder.git_project',
               'clowder.data',
               'clowder.data.model',
               'clowder.util'],

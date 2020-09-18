@@ -14,7 +14,7 @@ class CommandResults:
         self.completed_processes: List[CompletedProcess] = []
 
 
-def run_command(command: str, path: Path, check: bool = False, clowder_debug: bool = True) -> CompletedProcess:
+def run_command(command: str, path: Path, clowder_debug: bool = True) -> CompletedProcess:
     print(f"TEST: {command}")
     cmd_env = os.environ.copy()
     if clowder_debug:
@@ -25,7 +25,7 @@ def run_command(command: str, path: Path, check: bool = False, clowder_debug: bo
     processed_cmd = _process_clowder_commands(command)
 
     # TODO: Replace universal_newlines with text when Python 3.6 support is dropped
-    result = subprocess.run(processed_cmd, cwd=path, shell=True, check=check,
+    result = subprocess.run(processed_cmd, cwd=path, shell=True,
                             stdout=PIPE, stderr=STDOUT, universal_newlines=True, env=cmd_env)
     print(result.stdout)
     return result

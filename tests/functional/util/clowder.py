@@ -97,12 +97,15 @@ def init_clowder(path: Path, example: str, protocol: str = "https",
                  branch: Optional[str] = None, version: Optional[str] = None) -> Path:
 
     if branch is not None:
-        run_command(f"clowder init {get_url(example, protocol)} -b {branch}", path, check=True)
+        result = run_command(f"clowder init {get_url(example, protocol)} -b {branch}", path)
+        assert result.returncode == 0
     else:
-        run_command(f"clowder init {get_url(example, protocol)}", path, check=True)
+        result = run_command(f"clowder init {get_url(example, protocol)}", path)
+        assert result.returncode == 0
 
     if version is not None:
-        run_command(f"clowder link {version}", path, check=True)
+        result = run_command(f"clowder link {version}", path)
+        assert result.returncode == 0
         assert has_valid_clowder_symlink_version(path, version)
     else:
         assert has_valid_clowder_symlink_default(path)
@@ -121,15 +124,19 @@ def init_herd_clowder(path: Path, example: str, protocol: str = "https",
                       branch: Optional[str] = None, version: Optional[str] = None) -> Path:
 
     if branch is not None:
-        run_command(f"clowder init {get_url(example, protocol)} -b {branch}", path, check=True)
+        result = run_command(f"clowder init {get_url(example, protocol)} -b {branch}", path)
+        assert result.returncode == 0
     else:
-        run_command(f"clowder init {get_url(example, protocol)}", path, check=True)
+        result = run_command(f"clowder init {get_url(example, protocol)}", path)
+        assert result.returncode == 0
 
     if version is not None:
-        run_command(f"clowder link {version}", path, check=True)
+        result = run_command(f"clowder link {version}", path)
+        assert result.returncode == 0
         has_valid_clowder_symlink_version(path, version)
 
-    run_command("clowder herd", path, check=True)
+    result = run_command("clowder herd", path)
+    assert result.returncode == 0
 
     validate_clowder_repo_with_symlink(path / ".clowder")
 
