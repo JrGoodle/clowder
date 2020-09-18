@@ -26,7 +26,8 @@ def existing_branch_projects(projects: Tuple[ResolvedProject, ...], branch: str,
     return any([p.existing_branch(branch, is_remote=is_remote) for p in projects])
 
 
-def filter_projects(projects: Tuple[ResolvedProject, ...], project_names: Tuple[str, ...]) -> Tuple[ResolvedProject, ...]:
+def filter_projects(projects: Tuple[ResolvedProject, ...],
+                    project_names: Tuple[str, ...]) -> Tuple[ResolvedProject, ...]:
     """Filter projects based on given project or group names
 
     :param Tuple[ResolvedProject, ...] projects: Projects to filter

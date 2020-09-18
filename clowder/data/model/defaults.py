@@ -7,7 +7,7 @@
 
 from typing import Optional
 
-from clowder.git.util import (
+from clowder.git_project.util import (
     format_git_branch,
     format_git_tag
 )

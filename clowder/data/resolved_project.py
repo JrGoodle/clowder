@@ -14,8 +14,8 @@ from termcolor import colored, cprint
 import clowder.util.formatting as fmt
 from clowder.environment import ENVIRONMENT
 from clowder.error import ClowderError, ClowderErrorType
-from clowder.git import ProjectRepo, ProjectRepoRecursive
-from clowder.git.util import (
+from clowder.git_project import ProjectRepo, ProjectRepoRecursive
+from clowder.git_project.util import (
     existing_git_repository,
     git_url
 )

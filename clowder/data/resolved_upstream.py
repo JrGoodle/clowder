@@ -11,8 +11,8 @@ from typing import Optional
 from termcolor import colored
 
 from clowder.environment import ENVIRONMENT
-from clowder.git import ProjectRepo
-from clowder.git.util import (
+from clowder.git_project import ProjectRepo
+from clowder.git_project.util import (
     existing_git_repository,
     git_url
 )

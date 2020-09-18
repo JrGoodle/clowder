@@ -14,7 +14,7 @@ from termcolor import colored
 import clowder.util.formatting as fmt
 from clowder.environment import ENVIRONMENT
 from clowder.error import ClowderError, ClowderErrorType
-from clowder.git import ProjectRepo
+from clowder.git_project import ProjectRepo
 from clowder.logging import LOG_DEBUG
 from clowder.util.connectivity import is_offline
 from clowder.util.execute import execute_command
