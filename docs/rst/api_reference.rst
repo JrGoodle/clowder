@@ -9,5 +9,5 @@ API Reference
    CLI API Reference <clowder.cli>
    Config API Reference <clowder.config>
    Data Models API Reference <clowder.data>
-   Git Utilities API Reference <clowder.git>
+   Git Projects API Reference <clowder.git_project>
    General Utils API Reference <clowder.util>

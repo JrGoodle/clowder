@@ -48,7 +48,7 @@ setup(
     packages=['clowder',
               'clowder.cli',
               'clowder.config',
-              'clowder.git',
+              'clowder.git_project',
               'clowder.data',
               'clowder.data.model',
               'clowder.util'],

@@ -4,16 +4,16 @@ clowder.config package
 Submodules
 ----------
 
-clowder\.config\.clowder\_config module
----------------------------------------
+clowder.config.clowder\_config module
+-------------------------------------
 
 .. automodule:: clowder.config.clowder_config
    :members:
    :undoc-members:
    :show-inheritance:
 
-clowder\.config\.config module
-------------------------------
+clowder.config.config module
+----------------------------
 
 .. automodule:: clowder.config.config
    :members:

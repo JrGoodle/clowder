@@ -32,7 +32,7 @@
 
 There are many ways to organize projects with git. Monorepos, submodules, subtrees, or [some](https://github.com/cristibalan/braid) [other](https://github.com/mixu/gr) [tool](https://github.com/ingydotnet/git-subrepo). `clowder` is one of the other tools. Its approach is heavily influeced by the [repo tool](https://gerrit.googlesource.com/git-repo) Google uses to manage the Android Open Source Project.
 
-Projects are listed in a `clowder.yml` file that can be checked into its own repo, allowing it to be shared across teams. `clowder` essentially makes this file executable, allowing commands to be run across projects. `clowder` can update submodules, lfs files, and custom git config entries. Projects can track branches, or be tied to specific tags or commits. Forks can be configured along with their upstream source, wherever they may live. Snapshots of project states can be saved for later restoration. And more...
+Projects are listed in a `clowder.yml` file that can be checked into its own repo, allowing it to be shared across teams. `clowder` essentially makes this file executable, allowing commands to be run across projects. `clowder` can update submodules, lfs files, and custom git config entries. Projects can track branches, or be tied to specific tags or commits. Upstreams can be configured along with their upstream source, wherever they may live. Snapshots of project states can be saved for later restoration. And more...
 
 Daily development still takes place in individual repos, with normal `git` commands. But `clowder` is there if you need to synchronize or run commands on multiple repos.
 
@@ -173,7 +173,7 @@ Projects are automatically added to the `all` group, a group of their `name`, an
 For some more custom examples, see:
 
 * [Cats clowder.yml example](docs/clowder-yml-cats.md)
-* [Forks clowder.yml example](docs/clowder-yml-forks.md)
+* [Upstreams clowder.yml example](docs/clowder-yml-upstreams.md)
 
 ## Command Usage
 

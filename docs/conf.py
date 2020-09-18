@@ -6,13 +6,15 @@
 # This file is execfile()d with the current directory set to its
 # containing dir.
 
-import os
 import sys
 from pathlib import Path
 
 from recommonmark.transform import AutoStructify  # noqa
 
-import clowder  # noqa
+from clowder import __version__
+
+
+ds_store = ".DS_Store"
 
 
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -20,6 +22,7 @@ import clowder  # noqa
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 CLOWDER_DIR = str(Path('../clowder').resolve())
 sys.path.insert(0, CLOWDER_DIR)
+
 
 # -- Fix header links in markdown files -----------------------------------
 
@@ -41,35 +44,6 @@ sys.path.insert(0, CLOWDER_DIR)
 # with syntax_reference.open("w", encoding="utf-8") as f:
 #     f.write(syntax_reference_contents)
 
-
-def escape_rst_file(contents: str) -> str:
-    lines = contents.splitlines()
-    formatted_lines = []
-    for line in lines:
-        if not line. startswith("---"):
-            formatted_lines.append(line)
-            continue
-        previous_line = formatted_lines.pop()
-        formatted_line = previous_line.replace(".", r"\.")
-        formatted_lines.append(formatted_line)
-        formatted_lines.append("-" * len(formatted_line))
-    return "\n".join(formatted_lines)
-
-
-def process_rst_files():
-    rst_dir = Path("rst").resolve()
-    rst_files = os.listdir(rst_dir)
-    for rst_file in rst_files:
-        path = rst_dir / rst_file
-        content = path.read_text()
-        output = escape_rst_file(content)
-        with path.open("w", encoding="utf-8") as f:
-            f.write(output)
-
-
-# Escape spaces and underscores in generated rst
-process_rst_files()
-
 # -- General configuration ------------------------------------------------
 
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.napoleon', 'recommonmark']
@@ -85,9 +59,9 @@ copyright = u'2017, Joe DeCapo'  # noqa
 author = u'Joe DeCapo'
 
 # The short X.Y version.
-version = clowder.__version__
+version = __version__
 # The full version, including alpha/beta/rc tags.
-release = clowder.__version__
+release = __version__
 
 language = None
 
@@ -187,6 +161,6 @@ def setup(app):
         'enable_math': False,
         'enable_inline_math': False,
         'enable_eval_rst': True,
-        'enable_auto_doc_ref': True,
+        'enable_auto_toc_tree': True
     }, True)
     app.add_transform(AutoStructify)

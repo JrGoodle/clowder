@@ -42,7 +42,7 @@ class SourceController(object):
         }
 
     def add_source(self, source: Optional[Union[Source, SourceName]]):
-        """Returns all project names containing forks
+        """Register source with controller
 
         :param Optional[Union[Source, SourceName]] source: Source to add
         """

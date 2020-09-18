@@ -12,40 +12,40 @@ Subpackages
 Submodules
 ----------
 
-clowder\.data\.resolved\_git\_settings module
----------------------------------------------
+clowder.data.resolved\_git\_settings module
+-------------------------------------------
 
 .. automodule:: clowder.data.resolved_git_settings
    :members:
    :undoc-members:
    :show-inheritance:
 
-clowder\.data\.resolved\_project module
----------------------------------------
+clowder.data.resolved\_project module
+-------------------------------------
 
 .. automodule:: clowder.data.resolved_project
    :members:
    :undoc-members:
    :show-inheritance:
 
-clowder\.data\.resolved\_upstream module
-----------------------------------------
+clowder.data.resolved\_upstream module
+--------------------------------------
 
 .. automodule:: clowder.data.resolved_upstream
    :members:
    :undoc-members:
    :show-inheritance:
 
-clowder\.data\.source\_controller module
-----------------------------------------
+clowder.data.source\_controller module
+--------------------------------------
 
 .. automodule:: clowder.data.source_controller
    :members:
    :undoc-members:
    :show-inheritance:
 
-clowder\.data\.util module
---------------------------
+clowder.data.util module
+------------------------
 
 .. automodule:: clowder.data.util
    :members:

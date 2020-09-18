@@ -11,5 +11,5 @@ fi
 BUILD_DIR='build/docs'
 HTML_DIR="$BUILD_DIR/html"
 
-sphinx-apidoc --no-toc -d 2 -o docs/rst . tests
+sphinx-apidoc --no-toc -d 2 -o docs/rst clowder setup
 sphinx-build docs "$HTML_DIR"

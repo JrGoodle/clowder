@@ -8,6 +8,6 @@ For more information, see [the docs](http://clowder.readthedocs.io/en/latest/)
 - [clowder.yml Syntax Reference](clowder-yml-syntax-reference.md)
   - Description of the `clowder.yaml` file
 - [cats example](clowder-yml-cats.md)
-- [forks example](clowder-yml-forks.md)
+- [upstreams example](clowder-yml-upstreams.md)
 - [clowder repo](clowder-repo.md)
   - Description of the clowder repo cloned into the `.clowder` directory with `clowder init`

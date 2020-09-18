@@ -14,7 +14,7 @@ case "$(uname)" in
         if ! which -s pyenv; then
             curl https://pyenv.run | bash
         fi
-        pyenv install || exit 1
+        pyenv --skip-existing install || exit 1
         ;;
     Darwin*) export PLATFORM="darwin";
         echo 'Install Hombrew if necessary'
@@ -29,7 +29,7 @@ case "$(uname)" in
         echo 'Install Homebrew formulas'
         brew bundle || exit 1
         echo 'Install pyenv versions'
-        pyenv install || exit 1
+        pyenv install --skip-existing || exit 1
         ;;
     CYGWIN*) export PLATFORM="windows";
         echo "Windows is not currently supported"

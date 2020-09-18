@@ -1,8 +1,6 @@
 # Upstreams
 
-`clowder` simplifies some common fork workflows. Currently, it's only possible to add one fork for a project. Forks are handled specially by certain commands.
-
----
+`clowder` simplifies some common fork workflows. Currently, it's only possible to add one fork for a project. Upstreams are handled specially by certain commands.
 
 ## `clowder herd`
 
@@ -47,8 +45,6 @@ $ clowder herd -t my_tag
 - If a tag exists, it's checked out into a detached `HEAD` state
 - If no tag exists, the default ref will be checked out like a normal `herd`
 
----
-
 ## `clowder prune`
 
 Prune local or remote branches
@@ -66,8 +62,6 @@ $ clowder prune -af stale_branch
 
 Remote branches are pruned form the fork remote, on the assumption that the user doesn't have write access to the upstream remote
 
----
-
 ## `clowder reset`
 
 Reset branches to upstream state
@@ -82,8 +76,6 @@ $ clowder reset
 - Each project fetches the latest changes from upstream
 - Branches are reset to the upstream remote branch's latest commit. Otherwise, projects are checked out into a detached `HEAD` state for tags and shas
 
----
-
 ## `clowder start`
 
 Start a new feature branch or check out if it already exists
@@ -94,5 +86,3 @@ $ clowder start -t my_feature
 ```
 
 New tracking branches are created on the fork remote, on the assumption that the user doesn't have write access to the upstream remote
-
----

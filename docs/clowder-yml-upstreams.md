@@ -1,9 +1,9 @@
-# Forks `clowder.yml` example
+# Upstreams `clowder.yml` example
 
 See also: [clowder.yml syntax reference](clowder-yml-syntax-reference.md)
 
 ```yaml
-name: forks-clowder
+name: upstreams-clowder
 
 defaults:
   git:

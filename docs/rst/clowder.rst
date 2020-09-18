@@ -10,62 +10,62 @@ Subpackages
    clowder.cli
    clowder.config
    clowder.data
-   clowder.git
+   clowder.git_project
    clowder.util
 
 Submodules
 ----------
 
-clowder\.clowder\_app module
-----------------------------
+clowder.clowder\_app module
+---------------------------
 
 .. automodule:: clowder.clowder_app
    :members:
    :undoc-members:
    :show-inheritance:
 
-clowder\.clowder\_controller module
------------------------------------
+clowder.clowder\_controller module
+----------------------------------
 
 .. automodule:: clowder.clowder_controller
    :members:
    :undoc-members:
    :show-inheritance:
 
-clowder\.clowder\_repo module
------------------------------
+clowder.clowder\_repo module
+----------------------------
 
 .. automodule:: clowder.clowder_repo
    :members:
    :undoc-members:
    :show-inheritance:
 
-clowder\.environment module
----------------------------
+clowder.environment module
+--------------------------
 
 .. automodule:: clowder.environment
    :members:
    :undoc-members:
    :show-inheritance:
 
-clowder\.error module
----------------------
+clowder.error module
+--------------------
 
 .. automodule:: clowder.error
    :members:
    :undoc-members:
    :show-inheritance:
 
-clowder\.logging module
------------------------
+clowder.logging module
+----------------------
 
 .. automodule:: clowder.logging
    :members:
    :undoc-members:
    :show-inheritance:
 
-clowder\.sitecustomize module
------------------------------
+clowder.sitecustomize module
+----------------------------
 
 .. automodule:: clowder.sitecustomize
    :members:

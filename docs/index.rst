@@ -35,7 +35,7 @@ clowder
    :maxdepth: 2
 
    Command Reference <commands>
-   Command behavior with forks <forks>
+   Command behavior with upstreams <upstreams>
    clowder.yml Syntax Reference <clowder-yml-syntax-reference>
    Cats clowder.yml Example <clowder-yml-cats>
    Upstreams clowder.yml Example <clowder-yml-upstreams>
