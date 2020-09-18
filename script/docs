@@ -2,14 +2,14 @@
 
 cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
 
-if [ "$1" == 'server' ]; then
-    osascript -e 'tell application "Safari" to open location "127.0.0.1:8000"'
-    sphinx-build docs build/docs/html
-    exit
-fi
-
 BUILD_DIR='build/docs'
 HTML_DIR="$BUILD_DIR/html"
 
-sphinx-apidoc --no-toc -d 2 -o docs/rst clowder setup
+rm -rf "$BUILD_DIR"
+sphinx-apidoc --force --no-toc -d 1 -o docs/rst clowder setup
 sphinx-build docs "$HTML_DIR"
+
+if [ "$1" == 'server' ]; then
+    osascript -e 'tell application "Safari" to open location "127.0.0.1:8000"'
+    sphinx-autobuild docs "$HTML_DIR"
+fi
