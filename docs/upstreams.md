@@ -1,4 +1,4 @@
-# Forks
+# Upstreams
 
 `clowder` simplifies some common fork workflows. Currently, it's only possible to add one fork for a project. Forks are handled specially by certain commands.
 

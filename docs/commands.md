@@ -115,11 +115,10 @@ The following environment variables are available for use in commands and script
 * `PROJECT_REMOTE` is the name of the project's remote
 * `PROJECT_REF` is the project ref as written in the `clowder.yml` file
 
-If a fork is specified, the following environment variables are also available for use in commands and scripts:
+If an upstream is specified, the following environment variables are also available for use in commands and scripts:
 
-* `FORK_REMOTE` is the name of the fork's remote
-* `FORK_NAME` is the unique name of the fork
-* `FORK_REF` is the project ref as written in the `clowder.yml` file
+* `UPSTREAM_REMOTE` is the name of the upstream's remote
+* `UPSTREAM_NAME` is the unique name of the upstream
 
 ## git commands
 

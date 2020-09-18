@@ -9,7 +9,7 @@ Subpackages
     clowder.cli
     clowder.config
     clowder.git
-    clowder.model
+    clowder.data
     clowder.util
 
 Submodules

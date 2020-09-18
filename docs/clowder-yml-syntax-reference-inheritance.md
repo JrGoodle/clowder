@@ -19,10 +19,6 @@
 - [upstream](#upstream)
   - [upstream.name](#upstreamname)
   - [upstream.remote](#upstreamremote)
-  - [project.(ref)](#projectref)
-    - [upstream.branch](#upstreambranch)
-    - [upstream.tag](#upstreamtag)
-    - [upstream.commit](#upstreamcommit)
   - [upstream.source.url](#upstreamsourceurl)
   - [upstream.source.protocol](#upstreamsourceprotocol)
 
@@ -162,39 +158,6 @@ Upstreams can be located at:
 - `defaults.remote`
 - `clowder.<group_name>.defaults.remote`
 - `..upstream.remote`
-
-### upstream.(ref)
-
-- Default: `origin` branch
-- `defaults.branch`
-- `defaults.tag`
-- `defaults.commit`
-- `clowder.<group_name>.defaults.branch`
-- `clowder.<group_name>.defaults.tag`
-- `clowder.<group_name>.defaults.commit`
-- `..upstream.branch`
-- `..upstream.tag`
-- `..upstream.commit`
-- Command line argument
-
-#### upstream.branch
-
-- Default: `master`
-- `defaults.branch`
-- `clowder.<group_name>.defaults.branch`
-- `..upstream.branch`
-
-#### upstream.tag
-
-- `defaults.tag`
-- `clowder.<group_name>.defaults.tag`
-- `..upstream.tag`
-
-#### upstream.commit
-
-- `defaults.commit`
-- `clowder.<group_name>.defaults.commit`
-- `..upstream.commit`
 
 ### upstream.source.url
 
