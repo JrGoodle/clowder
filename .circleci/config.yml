@@ -74,7 +74,7 @@ jobs:
           name: Code climate upload-coverage
           command: |
             sudo ./cc-test-reporter upload-coverage \
-              --id 0d65c853b3d393bbd714e04dfef5a0ea6718b8e6c12d294ae8d59e7e01b13bc5 \
+              --id ${CC_TEST_REPORTER_ID} \
               --debug
 
       - store_test_results:
