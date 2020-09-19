@@ -63,9 +63,13 @@ jobs:
           command: docker-compose exec clowder script/test "-m 'status'"
 
       - run:
+          name: Update build files ownership
+          command: sudo chown --recursive ${USER} build coverage
+
+      - run:
           name: Code climate format-coverage
           command: |
-            sudo ./cc-test-reporter format-coverage \
+            ./cc-test-reporter format-coverage \
               --input-type coverage.py \
               --debug \
               coverage/coverage.xml
@@ -73,7 +77,7 @@ jobs:
       - run:
           name: Code climate upload-coverage
           command: |
-            sudo ./cc-test-reporter upload-coverage \
+            ./cc-test-reporter upload-coverage \
               --id ${CC_TEST_REPORTER_ID} \
               --debug
 

@@ -45,6 +45,8 @@ jobs:
       run: script/cibuild
     - name: Run pytest functional tests
       run: script/test "-n auto -m 'not ssh and not offline'"
+    - name: Update build files ownership
+      run: sudo chown --recursive ${USER} build coverage
     - uses: actions/upload-artifact@v2
       with:
         name: coverage-ghworkflow-${{ matrix.os }}-${{ matrix.python-version }}
