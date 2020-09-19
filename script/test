@@ -2,7 +2,6 @@
 
 import os
 import random
-import shutil
 import string
 import subprocess
 import sys
@@ -45,7 +44,8 @@ temp_dir.mkdir(parents=True, exist_ok=True)
 command = f"pytest --basetemp={temp_dir} -vv"
 
 # Coverage
-command += " --cov-config=.coveragerc --cov-append --cov=clowder"
+command += " --cov-config=.coveragerc --cov=clowder"
+# command += " --cov-config=.coveragerc --cov-append --cov=clowder"
 
 # Create reports dir
 reports_dir = build_dir / "reports"
@@ -85,9 +85,9 @@ test_cmd = f'{command} -n auto -m "not offline and not write"'
 run_command(path, test_cmd)
 
 # Run offline tests
-test_cmd = f'{base_command} -m "offline and not config"'
+test_cmd = f'{command} -m "offline and not config"'
 run_command(path, test_cmd)
 
 # Run write tests
-test_cmd = f'{base_command} -m "write and not offline"'
+test_cmd = f'{command} -m "write and not offline"'
 run_command(path, test_cmd)
