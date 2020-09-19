@@ -45,9 +45,6 @@ jobs:
       run: script/cibuild
     - name: Run pytest functional tests
       run: script/test "-n auto -m 'not ssh and not offline'"
-    - uses: codecov/codecov-action@v1
-      with:
-        file: coverage/coverage.xml
     - uses: actions/upload-artifact@v2
       with:
         name: coverage-ghworkflow-${{ matrix.os }}-${{ matrix.python-version }}

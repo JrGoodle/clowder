@@ -42,6 +42,18 @@ jobs:
           name: Initialize Code Climate test reporter
           command: ./cc-test-reporter before-build --debug
 
+      # - run:
+      #     name: Pytest functional tests - not write and not offline - parallel
+      #     command: docker-compose exec clowder script/test "-n auto -m 'not write and not offline'"
+
+      # - run:
+      #     name: Pytest functional tests - write and not offline
+      #     command: docker-compose exec clowder script/test "-m 'write and not offline'"
+
+      # - run:
+      #     name: Pytest functional tests - offline
+      #     command: docker-compose exec clowder script/test "-m 'offline'"
+
       - run:
           name: Pytest functional tests - not write and not offline - parallel
           command: docker-compose exec clowder script/test "-n auto -m 'branch'"
@@ -50,26 +62,6 @@ jobs:
           name: Pytest functional tests - write and not offline
           command: docker-compose exec clowder script/test "-m 'status'"
 
-      # - run:
-      #     name: Pytest functional tests - offline
-      #     command: docker-compose exec clowder script/test "-m 'offline'"
-
-      # - run:
-      #     name: Code Climate after-build
-      #     command: |
-      #       ./cc-test-reporter after-build \
-      #         --coverage-input-type coverage.py \
-      #         --prefix "/clowder/" --debug \
-      #         || echo "Failed to report Code Climate coverage"
-
-      # - run:
-      #     name: Code Climate after-build
-      #     command: |
-      #       ./cc-test-reporter after-build --debug \
-      #         || echo "Failed to report Code Climate coverage"
-
-      # --prefix /clowder/clowder \
-      # --add-prefix clowder/ \
       - run:
           name: Code climate format-coverage
           command: |
