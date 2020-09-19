@@ -35,8 +35,12 @@ jobs:
           command: script/docker start
 
       - run:
-          name: Code Climate install and before-build
-          command: script/ci_before
+          name: Install Code Climate test reporter
+          command: script/install_cc_test_reporter
+
+      - run:
+          name: Initialize Code Climate test reporter
+          command: ./cc-test-reporter before-build
 
       - run:
           name: Pytest functional tests - not write and not offline - parallel
@@ -58,32 +62,38 @@ jobs:
               --prefix "/clowder/" --debug \
               || echo "Failed to report Code Climate coverage"
 
+      # - run:
+      #     name: Code Climate after-build
+      #     command: |
+      #       ./cc-test-reporter after-build \
+      #         || echo "Failed to report Code Climate coverage"
+
       # ./cc-test-reporter sum-coverage \
-      #   build/codeclimate/codeclimate.json \
+      #   coverage/codeclimate.json \
       #   --parts 1 \
-      #   --output build/codeclimate.total.json
+      #   --output coverage.total.json
       # - run:
       #     name: Code climate reporting
       #     command: |
       #       ./cc-test-reporter format-coverage \
       #         --prefix "$(pwd)" \
       #         --input-type coverage.py \
-      #         --output build/codeclimate/codeclimate.json \
-      #         build/coverage/.coverage
+      #         --output coverage/codeclimate.json \
+      #         coverage/.coverage
 
-      #       ./cc-test-reporter upload-coverage --input build/codeclimate/codeclimate.json
+      #       ./cc-test-reporter upload-coverage --input coverage/codeclimate.json
 
       - store_test_results:
-          path: build/reports
+          path: build/cucumber
+      - store_test_results:
+          path: build/junit
 
       - codecov/upload:
-          file: build/coverage/.coverage
+          file: coverage/.coverage
 
       - store_artifacts:
-          path: build/coverage
-
+          path: coverage
       - store_artifacts:
-          path: build/codeclimate
-
+          path: build/cucumber
       - store_artifacts:
-          path: build/reports
+          path: build/junit

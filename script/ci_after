@@ -9,15 +9,15 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
 
 ## Code Climate ##
 
-./cc-test-reporter format-coverage build/coverage/.coverage \
+./cc-test-reporter format-coverage coverage/.coverage \
     --input-type coverage.py \
-    --output build/codeclimate/codeclimate.json
+    --output coverage/codeclimate.json
 
-./cc-test-reporter sum-coverage build/codeclimate/codeclimate.json \
-    --parts 1 \
-    --output build/codeclimate.total.json
+# ./cc-test-reporter sum-coverage coverage/codeclimate.json \
+#     --parts 1 \
+#     --output coverage/codeclimate.total.json
 
-./cc-test-reporter upload-coverage --input build/codeclimate.total.json
+./cc-test-reporter upload-coverage --input coverage/codeclimate.json
 
 
 # ./cc-test-reporter after-build --debug || echo "Failed to report Code Climate coverage"

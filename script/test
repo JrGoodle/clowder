@@ -37,24 +37,20 @@ path = Path(__file__).resolve().parent.parent.resolve()
 
 # Create build dir
 build_dir = path / "build"
+build_dir.mkdir(parents=True, exist_ok=True)
 
 # Base command
 temp_dir = build_dir / "temp"
 temp_dir.mkdir(parents=True, exist_ok=True)
 command = f"pytest --basetemp={temp_dir} -vv"
 
-# Coverage
-# command += " --cov-config=.coveragerc --cov=clowder"
+# Coverage command
 command += " --cov-config=.coveragerc --cov-append --cov=clowder"
 
-# Create reports dir
-reports_dir = build_dir / "reports"
-reports_dir.mkdir(parents=True, exist_ok=True)
-
 # Coverage reports
-coverage_dir = reports_dir / f"coverage"
+coverage_dir = path / "coverage"
 coverage_dir.mkdir(parents=True, exist_ok=True)
-xml_file = coverage_dir / "results.xml"
+xml_file = coverage_dir / f"results.xml"
 command += f" --cov-report xml:{xml_file}"
 html_dir = coverage_dir / "html"
 command += f" --cov-report html:{html_dir}"
@@ -62,13 +58,13 @@ annotate_dir = coverage_dir / "annotate"
 command += f" --cov-report annotate:{annotate_dir}"
 
 # JUnit reports
-junit_dir = reports_dir / f"junit"
+junit_dir = build_dir / f"junit"
 junit_dir.mkdir(parents=True, exist_ok=True)
 junit_file = junit_dir / f"results{name}.xml"
 command += f" --junitxml={junit_file}"
 
 # BDD reports
-cucumber_dir = reports_dir / f"cucumber"
+cucumber_dir = build_dir / f"cucumber"
 cucumber_dir.mkdir(parents=True, exist_ok=True)
 cucumber_file = cucumber_dir / f"results{name}.json"
 bdd_reporting_options = f" --cucumberjson={cucumber_file} --cucumberjson-expanded"
