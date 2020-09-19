@@ -8,14 +8,16 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
 # bash <(curl -s https://codecov.io/bash) -X gcov || echo "Codecov did not collect coverage reports"
 
 ## Code Climate ##
-./cc-test-reporter format-coverage --input-type coverage.py \
-    --output build/codeclimate/codeclimate.json \
-    build/coverage/.coverage
 
-./tmp/cc-test-reporter sum-coverage build/codeclimate/codeclimate.json \
+./cc-test-reporter format-coverage build/coverage/.coverage \
+    --input-type coverage.py \
+    --output build/codeclimate/codeclimate.json
+
+./cc-test-reporter sum-coverage build/codeclimate/codeclimate.json \
     --parts 1 \
     --output build/codeclimate.total.json
-./tmp/cc-test-reporter upload-coverage --input build/codeclimate.total.json
+
+./cc-test-reporter upload-coverage --input build/codeclimate.total.json
 
 
 # ./cc-test-reporter after-build --debug || echo "Failed to report Code Climate coverage"

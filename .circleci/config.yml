@@ -40,15 +40,15 @@ jobs:
 
       - run:
           name: Pytest functional tests - not write and not offline - parallel
-          command: docker-compose exec clowder script/test "-n auto -m 'not write and not offline'"
+          command: docker-compose exec clowder script/test "-n auto -m 'branch'"
 
       - run:
           name: Pytest functional tests - write and not offline
-          command: docker-compose exec clowder script/test "-m 'write and not offline'"
+          command: docker-compose exec clowder script/test "-m 'status'"
 
-      - run:
-          name: Pytest functional tests - offline
-          command: docker-compose exec clowder script/test "-m 'offline'"
+      # - run:
+      #     name: Pytest functional tests - offline
+      #     command: docker-compose exec clowder script/test "-m 'offline'"
 
       - run:
           name: Code climate reporting
