@@ -73,8 +73,8 @@ jobs:
       - run:
           name: Code climate format-coverage
           command: |
-            ./cc-test-reporter format-coverage \
-              --prefix /clowder \
+            sudo ./cc-test-reporter format-coverage \
+              --prefix /clowder/ \
               --input-type coverage.py \
               --debug \
               coverage/coverage.xml
@@ -82,7 +82,7 @@ jobs:
       - run:
           name: Code climate upload-coverage
           command: |
-            ./cc-test-reporter upload-coverage \
+            sudo ./cc-test-reporter upload-coverage \
               --debug \
               --input coverage/codeclimate.json
 
