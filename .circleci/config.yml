@@ -81,6 +81,8 @@ jobs:
       - run:
           name: Code climate upload-coverage
           command: |
+            echo CC_TEST_REPORTER_ID:
+            echo ${CC_TEST_REPORTER_ID}
             sudo ./cc-test-reporter upload-coverage --debug
 
       - store_test_results:
