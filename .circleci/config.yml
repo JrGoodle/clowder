@@ -35,7 +35,7 @@ jobs:
           command: script/docker start
 
       - run:
-          name: Code climate setup
+          name: Code Climate install and before-build
           command: script/ci_before
 
       - run:
@@ -51,7 +51,7 @@ jobs:
       #     command: docker-compose exec clowder script/test "-m 'offline'"
 
       - run:
-          name: store_artifacts
+          name: Code Climate after-build
           command: |
             ./cc-test-reporter after-build \
               --coverage-input-type coverage.py \
