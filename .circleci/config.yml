@@ -43,38 +43,27 @@ jobs:
           command: docker-compose exec clowder script/test "-n auto -m 'branch'"
 
       - run:
-          name: Code climate reporting
-          command: |
-            ./cc-test-reporter format-coverage \
-              --input-type coverage.py \
-              --output build/codeclimate/codeclimate.branch.json
-              build/coverage/.coverage
-
-      - run:
           name: Pytest functional tests - write and not offline
           command: docker-compose exec clowder script/test "-m 'status'"
-
-      - run:
-          name: Code climate reporting
-          command: |
-            ./cc-test-reporter format-coverage \
-              --input-type coverage.py \
-              --output build/codeclimate/codeclimate.status.json \
-              build/coverage/.coverage
 
       # - run:
       #     name: Pytest functional tests - offline
       #     command: docker-compose exec clowder script/test "-m 'offline'"
 
+      # ./cc-test-reporter sum-coverage \
+      #   build/codeclimate/codeclimate.json \
+      #   --parts 1 \
+      #   --output build/codeclimate.total.json
       - run:
           name: Code climate reporting
           command: |
-            ./cc-test-reporter sum-coverage \
-              build/codeclimate/codeclimate.json \
-              --parts 1 \
-              --output build/codeclimate.total.json
+            ./cc-test-reporter format-coverage \
+              --prefix "$(pwd)" \
+              --input-type coverage.py \
+              --output build/codeclimate/codeclimate.json \
+              build/coverage/.coverage
 
-            ./cc-test-reporter upload-coverage --input build/codeclimate.total.json
+            ./cc-test-reporter upload-coverage --input build/codeclimate.json
 
       - store_test_results:
           path: build/reports

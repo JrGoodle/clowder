@@ -44,8 +44,8 @@ temp_dir.mkdir(parents=True, exist_ok=True)
 command = f"pytest --basetemp={temp_dir} -vv"
 
 # Coverage
-command += " --cov-config=.coveragerc --cov=clowder"
-# command += " --cov-config=.coveragerc --cov-append --cov=clowder"
+# command += " --cov-config=.coveragerc --cov=clowder"
+command += " --cov-config=.coveragerc --cov-append --cov=clowder"
 
 # Create reports dir
 reports_dir = build_dir / "reports"
