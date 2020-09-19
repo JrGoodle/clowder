@@ -18,8 +18,8 @@ coverage:
         #  target: '50'
 
 fixes:
-  - "/home/circleci/project/::"
-  - "/home/runner/work/clowder/clowder/::"
+  - "/clowder/::"
+  # - "/home/runner/work/clowder/clowder/::"
 
 parsers:
   gcov:

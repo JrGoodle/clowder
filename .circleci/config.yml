@@ -63,7 +63,7 @@ jobs:
               --output build/codeclimate/codeclimate.json \
               build/coverage/.coverage
 
-            ./cc-test-reporter upload-coverage --input build/codeclimate.json
+            ./cc-test-reporter upload-coverage --input build/codeclimate/codeclimate.json
 
       - store_test_results:
           path: build/reports
