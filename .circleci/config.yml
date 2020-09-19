@@ -68,11 +68,12 @@ jobs:
       #       ./cc-test-reporter after-build --debug \
       #         || echo "Failed to report Code Climate coverage"
 
+      # --prefix /clowder/clowder \
+      # --add-prefix clowder/ \
       - run:
           name: Code climate reporting
           command: |
             ./cc-test-reporter format-coverage \
-              --prefix /clowder/ \
               --input-type coverage.py \
               --output coverage/codeclimate.json \
               --debug \
