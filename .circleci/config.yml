@@ -71,14 +71,17 @@ jobs:
       # --prefix /clowder/clowder \
       # --add-prefix clowder/ \
       - run:
-          name: Code climate reporting
+          name: Code climate format-coverage
           command: |
             ./cc-test-reporter format-coverage \
+              --prefix /clowder \
               --input-type coverage.py \
-              --output coverage/codeclimate.json \
               --debug \
               coverage/coverage.xml
 
+      - run:
+          name: Code climate upload-coverage
+          command: |
             ./cc-test-reporter upload-coverage \
               --debug \
               --input coverage/codeclimate.json
