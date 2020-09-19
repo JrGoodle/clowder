@@ -13,6 +13,7 @@ source = clowder/*
 [paths]
 source =
     clowder/
+    /clowder/
     /Users/runner/work/clowder/clowder/clowder/
     /home/circleci/project/clowder/
     /Users/jrgoodle/projects/clowder-projects/clowder/clowder/
