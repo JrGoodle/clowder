@@ -50,7 +50,7 @@ command += " --cov-config=.coveragerc --cov-append --cov=clowder"
 # Coverage reports
 coverage_dir = path / "coverage"
 coverage_dir.mkdir(parents=True, exist_ok=True)
-xml_file = coverage_dir / f"results.xml"
+xml_file = coverage_dir / f"coverage.xml"
 command += f" --cov-report xml:{xml_file}"
 html_dir = coverage_dir / "html"
 command += f" --cov-report html:{html_dir}"

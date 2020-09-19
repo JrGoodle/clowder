@@ -62,26 +62,25 @@ jobs:
       #         --prefix "/clowder/" --debug \
       #         || echo "Failed to report Code Climate coverage"
 
-      - run:
-          name: Code Climate after-build
-          command: |
-            ./cc-test-reporter after-build --debug \
-              || echo "Failed to report Code Climate coverage"
-
-      # ./cc-test-reporter sum-coverage \
-      #   coverage/codeclimate.json \
-      #   --parts 1 \
-      #   --output coverage.total.json
       # - run:
-      #     name: Code climate reporting
+      #     name: Code Climate after-build
       #     command: |
-      #       ./cc-test-reporter format-coverage \
-      #         --prefix "$(pwd)" \
-      #         --input-type coverage.py \
-      #         --output coverage/codeclimate.json \
-      #         coverage/.coverage
+      #       ./cc-test-reporter after-build --debug \
+      #         || echo "Failed to report Code Climate coverage"
 
-      #       ./cc-test-reporter upload-coverage --input coverage/codeclimate.json
+      - run:
+          name: Code climate reporting
+          command: |
+            ./cc-test-reporter format-coverage \
+              --prefix /clowder/ \
+              --input-type coverage.py \
+              --output coverage/codeclimate.json \
+              --debug \
+              coverage/coverage.xml
+
+            ./cc-test-reporter upload-coverage \
+              --debug \
+              --input coverage/codeclimate.json
 
       - store_test_results:
           path: build/cucumber
@@ -89,7 +88,7 @@ jobs:
           path: build/junit
 
       - codecov/upload:
-          file: coverage/.coverage
+          file: coverage/coverage.xml
 
       - store_artifacts:
           path: coverage

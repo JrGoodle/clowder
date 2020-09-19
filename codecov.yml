@@ -19,7 +19,7 @@ coverage:
 
 fixes:
   - "/clowder/::"
-  # - "/home/runner/work/clowder/clowder/::"
+  - "/home/runner/work/clowder/clowder/::"
 
 parsers:
   gcov:
