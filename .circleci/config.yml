@@ -81,9 +81,9 @@ jobs:
       - run:
           name: Code climate upload-coverage
           command: |
-            echo CC_TEST_REPORTER_ID:
-            echo ${CC_TEST_REPORTER_ID}
-            sudo ./cc-test-reporter upload-coverage --debug
+            sudo ./cc-test-reporter upload-coverage \
+              --id 0d65c853b3d393bbd714e04dfef5a0ea6718b8e6c12d294ae8d59e7e01b13bc5 \
+              --debug
 
       - store_test_results:
           path: build/cucumber
