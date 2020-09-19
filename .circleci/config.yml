@@ -75,4 +75,7 @@ jobs:
           path: build/coverage
 
       - store_artifacts:
+          path: build/codeclimate
+
+      - store_artifacts:
           path: build/reports
