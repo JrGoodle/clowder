@@ -40,7 +40,7 @@ jobs:
 
       - run:
           name: Initialize Code Climate test reporter
-          command: ./cc-test-reporter before-build --debug
+          command: ./cc-test-reporter before-build
 
       # - run:
       #     name: Pytest functional tests - not write and not offline - parallel
@@ -67,19 +67,10 @@ jobs:
           command: sudo chown --recursive ${USER} build coverage
 
       - run:
-          name: Code climate format-coverage
+          name: Upload coverage to Code climate
           command: |
-            ./cc-test-reporter format-coverage \
-              --input-type coverage.py \
-              --debug \
-              coverage/coverage.xml
-
-      - run:
-          name: Code climate upload-coverage
-          command: |
-            ./cc-test-reporter upload-coverage \
-              --id ${CC_TEST_REPORTER_ID} \
-              --debug
+            ./cc-test-reporter format-coverage --input-type coverage.py --output - coverage/coverage.xml \
+              | ./cc-test-reporter upload-coverage --id ${CC_TEST_REPORTER_ID} --input -
 
       - store_test_results:
           path: build/cucumber
