@@ -1,6 +1,5 @@
 """New syntax test file"""
 
-import os
 import shutil
 from pathlib import Path
 
@@ -104,7 +103,7 @@ def given_forall_test_scripts_present(tmp_path: Path, shared_datadir: Path, scen
     dirs = util.example_repo_dirs(scenario_info.example)
     forall_dir = shared_datadir / "forall"
     for d in dirs:
-        for script in os.listdir(forall_dir):
+        for script in forall_dir.iterdir():
             shutil.copy(forall_dir / script, tmp_path / d)
             assert Path(tmp_path / d / script).exists()
 

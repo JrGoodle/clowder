@@ -5,7 +5,6 @@
 
 """
 
-import os
 from pathlib import Path
 from typing import Optional, Tuple
 
@@ -98,8 +97,8 @@ def get_saved_version_names() -> Optional[Tuple[str, ...]]:
     if not ENVIRONMENT.clowder_repo_versions_dir.exists():
         return None
 
-    versions = [Path(Path(v).stem).stem for v in os.listdir(str(ENVIRONMENT.clowder_repo_versions_dir))
-                if v.endswith('.clowder.yml') or v.endswith('.clowder.yaml')]
+    versions = [Path(v.stem).stem for v in ENVIRONMENT.clowder_repo_versions_dir.iterdir()
+                if str(v).endswith('.clowder.yml') or str(v).endswith('.clowder.yaml')]
 
     duplicate = fmt.check_for_duplicates(versions)
     if duplicate is not None:
