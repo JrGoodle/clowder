@@ -12,5 +12,3 @@ esac
 echo 'Download Code Climate test reporter'
 curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-$PLATFORM-amd64 > ./cc-test-reporter
 chmod +x ./cc-test-reporter
-echo 'Initialize Code Climate test reporter'
-./cc-test-reporter before-build

@@ -1,6 +1,7 @@
 [run]
 branch = True
 concurrency = multiprocessing
+relative_files=True
 parallel = True
 dynamic_context = test_function
 data_file = build/coverage/.coverage
@@ -8,13 +9,13 @@ omit =
     tests/*
     clowder/sitecustomize.py
 source = clowder/*
-# debug = config
 
 [paths]
 source =
     clowder/
+    /clowder/clowder/
     /Users/runner/work/clowder/clowder/clowder/
-    /home/circleci/project/clowder/
+    /Users/runner/work/clowder/clowder/
     /Users/jrgoodle/projects/clowder-projects/clowder/clowder/
 
 [report]
