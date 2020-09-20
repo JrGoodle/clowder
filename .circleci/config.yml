@@ -4,45 +4,21 @@ orbs:
   codecov: codecov/codecov@1.0.2
 
 commands:
-  fix_build_permissions:
-    steps:
-      - run:
-          name: Update build files ownership
-          command: sudo chown -R ${USER} build
-  store_results:
-    steps:
-      - store_test_results:
-          path: build/cucumber
-      - store_test_results:
-          path: build/junit
-      - store_artifacts:
-          path: build/coverage
-      - store_artifacts:
-          path: build/cucumber
-      - store_artifacts:
-          path: build/junit
-  upload_codecov:
-    steps:
-      - codecov/upload: build/coverage/coverage.xml
-  upload_code_climate:
-    steps:
-      - run:
-          name: Upload coverage to Code climate
-          command: |
-            ./cc-test-reporter format-coverage --input-type coverage.py --output - build/coverage/coverage.xml \
-              | ./cc-test-reporter upload-coverage --id ${CC_TEST_REPORTER_ID} --input -
   init_code_climate:
     steps:
-        - run:
-            name: Initialize Code Climate test reporter
-            command: |
-              script/install_cc_test_reporter
-              ./cc-test-reporter before-build
-  start_docker:
-    steps:
       - run:
-          name: Start clowder tests docker container
-          command: script/docker start
+          name: Initialize Code Climate test reporter
+          command: |
+            script/install_cc_test_reporter
+            ./cc-test-reporter before-build
+  setup_ssh:
+    steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "e9:7d:20:a0:51:b2:9c:22:f6:b9:5b:55:47:c4:7c:20"
+      - run:
+          name: Add ssh key to known_hosts
+          command: ssh-keyscan -H polka-dot-cat.git.beanstalkapp.com >> ~/.ssh/known_hosts
   setup_git_config:
     steps:
       - run:
@@ -52,42 +28,115 @@ commands:
             git config --global user.name "CircleCI"
             git config --global push.default simple
             git config --global --unset url.ssh://git@github.com.insteadOf
-  setup_ssh:
+  store_results:
     steps:
-      - add_ssh_keys:
-          fingerprints:
-            - "e9:7d:20:a0:51:b2:9c:22:f6:b9:5b:55:47:c4:7c:20"
+      - attach_workspace:
+          at: .
       - run:
-          name: Add ssh key to known_hosts
-          command: ssh-keyscan -H polka-dot-cat.git.beanstalkapp.com >> ~/.ssh/known_hosts
+          name: Generate test reports
+          command: script/test report
+      - codecov/upload:
+          file: build/coverage/coverage.xml
+      - run:
+          name: Sum coverage for Code climate
+          command: |
+            ./cc-test-reporter sum-coverage \
+              --parts 3 \
+              --output build/codeclimate/codeclimate.json \
+              build/codeclimate/codeclimate.*.json
+      - run:
+          name: Upload coverage to Code climate
+          command: |
+            ./cc-test-reporter upload-coverage \
+            --id ${CC_TEST_REPORTER_ID} \
+            --input build/codeclimate/codeclimate.json
+      - store_test_results:
+          path: build/cucumber
+      - store_artifacts:
+          path: build/cucumber
+      - store_artifacts:
+          path: build/json
+      - store_artifacts:
+          path: build/xml
+      - store_artifacts:
+          path: build/coverage
   test:
     description: "Pytest functional tests"
     parameters:
-        cmd:
-          type: string
+      cmd:
+        type: string
+      label:
+        type: string
     steps:
+      - run:
+          name: Start clowder tests docker container
+          command: script/docker start
       - run: docker-compose exec clowder script/test "<<parameters.cmd>>"
+      - run:
+          name: Update build files ownership
+          command: sudo chown -R ${USER} build
+      - run:
+          name: Forrmat coverage for Code climate
+          command: |
+            ./cc-test-reporter format-coverage \
+              --input-type coverage.py \
+              --output build/codeclimate/codeclimate.<<parameters.label>>.json \
+              build/coverage/coverage*.xml
+      - persist_to_workspace:
+          root: .
+          paths:
+            - build/
 
 jobs:
   test_parallel:
     machine: true
-
     steps:
       - checkout
-      - run: pyenv install
-      - setup_git_config
       - setup_ssh
-      - start_docker
+      - setup_git_config
+      - run: pyenv install
       - init_code_climate
-      - test: -n auto -m 'not write and not offline'
-      - test: -m 'write and not offline'
-      - test: -m 'offline'
-      - fix_build_permissions
-      - upload_code_climate
-      - upload_codecov
+      - test:
+          cmd: -n auto -m 'not write and not offline'
+          label: parallel
+  test_write:
+    machine: true
+    steps:
+      - checkout
+      - setup_ssh
+      - setup_git_config
+      - run: pyenv install
+      - init_code_climate
+      - test:
+          cmd: -m 'write'
+          label: write
+  test_offline:
+    machine: true
+    steps:
+      - checkout
+      - setup_ssh
+      - setup_git_config
+      - run: pyenv install
+      - init_code_climate
+      - test:
+          cmd: -m 'offline and not write'
+          label: offline
+  report:
+    docker:
+      - image: circleci/python:3.7.7
+    steps:
+      - checkout
+      - setup_git_config
       - store_results
 
 workflows:
   pytest:
     jobs:
-      - test
+      - test_parallel
+      - test_write
+      - test_offline
+      - report:
+          requires:
+            - test_parallel
+            - test_write
+            - test_offline
