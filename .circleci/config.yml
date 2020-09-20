@@ -67,12 +67,6 @@ commands:
         type: string
       label:
         type: string
-      groups:
-        type: integer
-        default: 1
-      group:
-        type: integer
-        default: 1
     steps:
       - run:
           name: Start clowder tests docker container
@@ -80,9 +74,7 @@ commands:
       - run: |
           docker-compose exec clowder script/test \
             --markers "<<parameters.markers>>" \
-            --label <<parameters.label>>.<<parameters.group>> \
-            --groups <<parameters.groups>> \
-            --group <<parameters.group>>
+            --label <<parameters.label>>
       - run:
           name: Update build files ownership
           command: sudo chown -R ${USER} build
@@ -91,8 +83,8 @@ commands:
           command: |
             ./cc-test-reporter format-coverage \
               --input-type coverage.py \
-              --output build/codeclimate/codeclimate.<<parameters.label>>.<<parameters.group>>.json \
-              build/coverage/coverage.<<parameters.label>>.<<parameters.group>>.xml
+              --output build/codeclimate/codeclimate.<<parameters.label>>.json \
+              build/coverage/coverage.<<parameters.label>>.xml
       - persist_to_workspace:
           root: .
           paths:
@@ -104,12 +96,6 @@ commands:
         type: string
       label:
         type: string
-      groups:
-        type: integer
-        default: 1
-      group:
-        type: integer
-        default: 1
     steps:
       - run:
           name: Start clowder tests docker container
@@ -117,9 +103,7 @@ commands:
       - run: |
           docker-compose exec clowder script/test \
             --markers "<<parameters.markers>>" \
-            --label <<parameters.label>>.<<parameters.group>> \
-            --groups <<parameters.groups>> \
-            --group <<parameters.group>> \
+            --label <<parameters.label>> \
             --parallel
       - run:
           name: Update build files ownership
@@ -129,8 +113,8 @@ commands:
           command: |
             ./cc-test-reporter format-coverage \
               --input-type coverage.py \
-              --output build/codeclimate/codeclimate.<<parameters.label>>.<<parameters.group>>.json \
-              build/coverage/coverage.<<parameters.label>>..<<parameters.group>>.xml
+              --output build/codeclimate/codeclimate.<<parameters.label>>.json \
+              build/coverage/coverage.<<parameters.label>>.xml
       - persist_to_workspace:
           root: .
           paths:
@@ -139,11 +123,6 @@ commands:
 jobs:
   test_parallel:
     machine: true
-    parameters:
-      groups:
-        type: integer
-      group:
-        type: integer
     steps:
       - checkout
       - setup_ssh
@@ -153,8 +132,6 @@ jobs:
       - test_parallel:
           markers: not write and not offline
           label: parallel
-          groups: <<parameters.groups>>
-          group: <<parameters.group>>
       - store_results
   test_write:
     machine: true
@@ -170,11 +147,6 @@ jobs:
       - store_results
   test_offline:
     machine: true
-    parameters:
-      groups:
-        type: integer
-      group:
-        type: integer
     steps:
       - checkout
       - setup_ssh
@@ -184,8 +156,6 @@ jobs:
       - test:
           markers: offline and not write
           label: offline
-          groups: <<parameters.groups>>
-          group: <<parameters.group>>
       - store_results
   report:
     docker:
@@ -199,16 +169,8 @@ workflows:
   pytest:
     jobs:
       - test_write
-      - test_parallel:
-          matrix:
-            parameters:
-              group: [1, 2, 3, 4]
-              groups: [4]
-      - test_offline:
-          matrix:
-            parameters:
-              group: [1, 2, 3, 4]
-              groups: [4]
+      - test_parallel
+      - test_offline
       - report:
           requires:
             - test_parallel

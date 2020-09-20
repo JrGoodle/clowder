@@ -74,13 +74,14 @@ def test(label: str, options: str) -> None:
 
     # Run command
     result = run_command(path, command)
-    if result.returncode != 0:
-        exit(result.returncode)
 
     # Rename coverage
     old_coverage_file = coverage_dir / ".coverage"
     new_coverage_file = coverage_dir / f".coverage.{label}"
     old_coverage_file.rename(new_coverage_file)
+
+    if result.returncode != 0:
+        exit(result.returncode)
 
 
 def add_parser_arguments(parser: Parser, arguments: Arguments) -> None:
