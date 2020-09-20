@@ -42,7 +42,7 @@ commands:
           name: Sum coverage for Code climate
           command: |
             ./cc-test-reporter sum-coverage \
-              --parts 9 \
+              --parts 3 \
               --output build/codeclimate/codeclimate.json \
               build/codeclimate/codeclimate.*.json
       - run:
@@ -82,7 +82,7 @@ commands:
               --output build/codeclimate/codeclimate.<<parameters.label>>.json \
               build/coverage/coverage.<<parameters.label>>.xml
       - store_test_results:
-          path: build/cucumber
+          path: build/cucumber/results.<<parameters.label>>.json
       - store_artifacts:
           path: build
       - persist_to_workspace:
@@ -119,7 +119,7 @@ commands:
               --output build/codeclimate/codeclimate.<<parameters.label>>.json \
               build/coverage/coverage.<<parameters.label>>.xml
       - store_test_results:
-          path: build/cucumber
+          path: build/cucumber/results.<<parameters.label>>.json
       - store_artifacts:
           path: build
       - persist_to_workspace:
