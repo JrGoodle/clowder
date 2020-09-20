@@ -78,7 +78,9 @@ commands:
       - run: |
           docker-compose exec clowder script/test \
             --modules "<<parameters.modules>>"" \
-            --label <<parameters.label>>.<<parameters.group>>
+            --label <<parameters.label>>.<<parameters.group>> \
+            --groups <<parameters.groups>> \
+            --group <<parameters.group>>
       - run:
           name: Update build files ownership
           command: sudo chown -R ${USER} build
@@ -94,7 +96,7 @@ commands:
           paths:
             - build/
   test_parallel:
-    description: "Pytest functional tests"
+    description: "Pytest functional tests - parallel"
     parameters:
       modules:
         type: string
@@ -112,6 +114,8 @@ commands:
           docker-compose exec clowder script/test \
             --modules "<<parameters.modules>>"" \
             --label <<parameters.label>>.<<parameters.group>> \
+            --groups <<parameters.groups>> \
+            --group <<parameters.group>> \
             --parallel
       - run:
           name: Update build files ownership
@@ -131,10 +135,11 @@ commands:
 jobs:
   test_parallel:
     machine: true
+    environment:
+      groups: "4"
     matrix:
       parameters:
         group: [1, 2, 3, 4]
-        groups: 4
     steps:
       - checkout
       - setup_ssh
@@ -148,6 +153,8 @@ jobs:
           group: <<matrix.group>>
   test_write:
     machine: true
+    environment:
+      groups: "4"
     matrix:
       parameters:
         group: [1, 2, 3, 4]
@@ -165,6 +172,8 @@ jobs:
           group: <<matrix.group>>
   test_offline:
     machine: true
+    environment:
+      groups: "4"
     matrix:
       parameters:
         group: [1, 2, 3, 4]
@@ -191,7 +200,11 @@ jobs:
 workflows:
   pytest:
     jobs:
-      - test_parallel
+      - test_parallel:
+          matrix:
+            parameters:
+              group: [1, 2, 3, 4]
+              groups: 4
       - test_write
       - test_offline
       - report:
