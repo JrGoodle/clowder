@@ -41,7 +41,7 @@ commands:
           name: Sum coverage for Code climate
           command: |
             ./cc-test-reporter sum-coverage \
-              --parts 3 \
+              --parts 9 \
               --output build/codeclimate/codeclimate.json \
               build/codeclimate/codeclimate.*.json
       - run:
@@ -63,21 +63,23 @@ commands:
   test:
     description: "Pytest functional tests"
     parameters:
-      modules:
+      markers:
         type: string
       label:
         type: string
       groups:
         type: integer
+        default: 1
       group:
         type: integer
+        default: 1
     steps:
       - run:
           name: Start clowder tests docker container
           command: script/docker start
       - run: |
           docker-compose exec clowder script/test \
-            --modules "<<parameters.modules>>"" \
+            --markers "<<parameters.markers>>" \
             --label <<parameters.label>>.<<parameters.group>> \
             --groups <<parameters.groups>> \
             --group <<parameters.group>>
@@ -98,21 +100,23 @@ commands:
   test_parallel:
     description: "Pytest functional tests - parallel"
     parameters:
-      modules:
+      markers:
         type: string
       label:
         type: string
       groups:
         type: integer
+        default: 1
       group:
         type: integer
+        default: 1
     steps:
       - run:
           name: Start clowder tests docker container
           command: script/docker start
       - run: |
           docker-compose exec clowder script/test \
-            --modules "<<parameters.modules>>"" \
+            --markers "<<parameters.markers>>" \
             --label <<parameters.label>>.<<parameters.group>> \
             --groups <<parameters.groups>> \
             --group <<parameters.group>> \
@@ -147,17 +151,12 @@ jobs:
       - run: pyenv install
       - init_code_climate
       - test_parallel:
-          modules: not write and not offline
+          markers: not write and not offline
           label: parallel
           groups: <<parameters.groups>>
           group: <<parameters.group>>
   test_write:
     machine: true
-    parameters:
-      groups:
-        type: integer
-      group:
-        type: integer
     steps:
       - checkout
       - setup_ssh
@@ -165,10 +164,8 @@ jobs:
       - run: pyenv install
       - init_code_climate
       - test:
-          modules: write
+          markers: write
           label: write
-          groups: <<parameters.groups>>
-          group: <<parameters.group>>
   test_offline:
     machine: true
     parameters:
@@ -183,7 +180,7 @@ jobs:
       - run: pyenv install
       - init_code_climate
       - test:
-          modules: offline and not write
+          markers: offline and not write
           label: offline
           groups: <<parameters.groups>>
           group: <<parameters.group>>
@@ -198,12 +195,8 @@ jobs:
 workflows:
   pytest:
     jobs:
+      - test_write
       - test_parallel:
-          matrix:
-            parameters:
-              group: [1, 2, 3, 4]
-              groups: [4]
-      - test_write:
           matrix:
             parameters:
               group: [1, 2, 3, 4]

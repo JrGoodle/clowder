@@ -7,7 +7,7 @@ import string
 import subprocess
 from pathlib import Path
 from subprocess import CompletedProcess
-from typing import List, Tuple
+from typing import List, Tuple, Union
 
 Parser = Union[argparse.ArgumentParser, argparse._MutuallyExclusiveGroup, argparse._ArgumentGroup]  # noqa
 Arguments = List[Tuple[list, dict]]
@@ -26,6 +26,7 @@ temp_dir.mkdir(parents=True, exist_ok=True)
 
 def run_command(cwd: Path, cmd: str) -> CompletedProcess:
     cmd_env = os.environ.copy()
+    print(f"TEST: {cmd}")
     completed_process = subprocess.run(cmd, cwd=cwd, shell=True, env=cmd_env)
     return completed_process
 
@@ -39,13 +40,13 @@ def get_random_alphanumeric_string(length: int) -> str:
 
 def report() -> None:
     # Coverage reports
-    result = run_command(path, "coverage combine build/coverage/")
+    result = run_command(path, f"coverage combine {coverage_dir}")
     assert result.returncode == 0
-    result = run_command(path, "coverage report xml -o build/coverage/xml")
+    result = run_command(path, f"coverage report xml -o {coverage_dir}/xml")
     assert result.returncode == 0
-    result = run_command(path, "coverage report html --directory build/coverage/html")
+    result = run_command(path, f"coverage report html --directory {coverage_dir}/html")
     assert result.returncode == 0
-    result = run_command(path, "coverage report json -o build/coverage/json")
+    result = run_command(path, f"coverage report json -o {coverage_dir}/json")
     assert result.returncode == 0
     exit()
 
@@ -55,38 +56,31 @@ def test(label: str, options: str) -> None:
     command = f"pytest --basetemp={temp_dir} -vv"
     # Coverage command
     command += " --cov-config=.coveragerc --cov-append --cov=clowder"
-    # Test group
-    command += " --test-group-count 10 --test-group=2"
     # Add extra arguments
     command += options
 
     # JUnit reports
     junit_dir = build_dir / f"junit"
     junit_dir.mkdir(parents=True, exist_ok=True)
-    junit_file = junit_dir / f"results-{label}.xml"
+    junit_file = junit_dir / f"results.{label}.xml"
     command += f" --junitxml={junit_file}"
 
     # BDD reports
     cucumber_dir = build_dir / f"cucumber"
     cucumber_dir.mkdir(parents=True, exist_ok=True)
-    cucumber_file = cucumber_dir / f"results-{label}.json"
+    cucumber_file = cucumber_dir / f"results.{label}.json"
     bdd_reporting_options = f" --cucumberjson={cucumber_file} --cucumberjson-expanded"
     command += bdd_reporting_options
 
     # Run command
-    test_cmd = f'{command} {options}'
-    result = run_command(path, test_cmd)
-
-    # Rename test reports
-    junit_file.rename(f"results.{label}.xml")
-    cucumber_file.rename(f"cucumber.{label}.json")
+    result = run_command(path, command)
+    if result.returncode != 0:
+        exit(result.returncode)
 
     # Rename coverage
     old_coverage_file = coverage_dir / ".coverage"
     new_coverage_file = coverage_dir / f".coverage.{label}"
     old_coverage_file.rename(new_coverage_file)
-
-    exit(result.returncode)
 
 
 def add_parser_arguments(parser: Parser, arguments: Arguments) -> None:
@@ -111,7 +105,7 @@ def main() -> None:
         group = parser.add_mutually_exclusive_group(required=True)
         mutually_exclusive_arguments = [
             (['--report', '-r'], dict(action='store_true', help='generate test reports')),
-            (['--modules', '-m'], dict(nargs=1, metavar='<modules>', help='test modules to run'))
+            (['--markers', '-m'], dict(nargs=1, metavar='<markers>', help='test markers to run'))
         ]
         add_parser_arguments(group, mutually_exclusive_arguments)
         args = parser.parse_args()
@@ -120,13 +114,13 @@ def main() -> None:
             report()
             exit()
 
-        options = f" -m '{args.modules}'"
+        options = f" -m '{args.markers[0]}'"
         if args.parallel:
             options += " -n auto"
         if args.groups or args.group:
-            options += f" --test-group-count {args.groups} --test-group={args.group}"
+            options += f" --test-group-count {args.groups[0]} --test-group={args.group[0]}"
 
-        test(args.label, options)
+        test(args.label[0], options)
     except Exception as err:
         print(err)
         exit(1)
