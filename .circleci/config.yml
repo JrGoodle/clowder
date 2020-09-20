@@ -42,7 +42,7 @@ commands:
           name: Sum coverage for Code climate
           command: |
             ./cc-test-reporter sum-coverage \
-              --parts 3 \
+              --parts 5 \
               --output build/codeclimate/codeclimate.json \
               build/codeclimate/codeclimate.*.json
       - run:
@@ -63,6 +63,12 @@ commands:
       parallel:
         type: boolean
         default: false
+      groups:
+        type: integer
+        default: 0
+      group:
+        type: integer
+        default: 0
     steps:
       - run:
           name: Initialize Code Climate test coverage reporter
@@ -73,18 +79,43 @@ commands:
       - when:
           condition: <<parameters.parallel>>
           steps:
-            - run: |
-                docker-compose exec clowder script/test \
-                  --markers "<<parameters.markers>>" \
-                  --label <<parameters.label>> \
-                  --parallel
+            - when:
+                condition: <<parameters.group>>
+                steps:
+                  - run: |
+                      docker-compose exec clowder script/test \
+                        --markers "<<parameters.markers>>" \
+                        --label <<parameters.label>>.<<parameters.group>> \
+                        --groups <<parameters.groups>> \
+                        --group <<parameters.group>> \
+                        --parallel
+            - unless:
+                condition: <<parameters.group>>
+                steps:
+                  - run: |
+                      docker-compose exec clowder script/test \
+                        --markers "<<parameters.markers>>" \
+                        --label <<parameters.label>> \
+                        --parallel
       - unless:
           condition: <<parameters.parallel>>
           steps:
-            - run: |
-                docker-compose exec clowder script/test \
-                  --markers "<<parameters.markers>>" \
-                  --label <<parameters.label>>
+            - when:
+                condition: <<parameters.group>>
+                steps:
+                  - run: |
+                      docker-compose exec clowder script/test \
+                        --markers "<<parameters.markers>>" \
+                        --label <<parameters.label>>.<<parameters.group>> \
+                        --groups <<parameters.groups>> \
+                        --group <<parameters.group>>
+            - unless:
+                condition: <<parameters.group>>
+                steps:
+                  - run: |
+                      docker-compose exec clowder script/test \
+                        --markers "<<parameters.markers>>" \
+                        --label <<parameters.label>>
       - run:
           name: Update build files ownership
           command: sudo chown -R ${USER} build
@@ -107,6 +138,11 @@ commands:
 jobs:
   test_parallel:
     machine: true
+    parameters:
+      groups:
+        type: integer
+      group:
+        type: integer
     steps:
       - checkout
       - setup_ssh
@@ -117,6 +153,8 @@ jobs:
           markers: not write and not offline
           label: parallel
           parallel: true
+          groups: <<parameters.groups>>
+          group: <<parameters.group>>
   test_write:
     machine: true
     steps:
@@ -152,10 +190,14 @@ workflows:
   pytest:
     jobs:
       - test_write
-      - test_parallel
       - test_offline
+      - test_parallel:
+          matrix:
+            parameters:
+              groups: [3]
+              group: [1, 2, 3]
       - report_coverage:
           requires:
-            - test_parallel
             - test_write
             - test_offline
+            - test_parallel
