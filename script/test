@@ -54,10 +54,20 @@ def report() -> None:
 def test(label: str, options: str) -> None:
     # Base command
     command = f"pytest --basetemp={temp_dir} -vv"
-    # Coverage command
-    command += " --cov-config=.coveragerc --cov-append --cov=clowder"
+
     # Add extra arguments
     command += options
+
+    # Coverage command
+    command += " --cov-config=.coveragerc --cov-append --cov=clowder"
+
+    # Coverage reports
+    xml_file = coverage_dir / f"coverage.{label}.xml"
+    command += f" --cov-report xml:{xml_file}"
+    html_dir = coverage_dir / f"html.{label}"
+    command += f" --cov-report html:{html_dir}"
+    annotate_dir = coverage_dir / f"annotate.{label}"
+    command += f" --cov-report annotate:{annotate_dir}"
 
     # JUnit reports
     junit_dir = build_dir / f"junit"
