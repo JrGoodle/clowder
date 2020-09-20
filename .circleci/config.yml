@@ -150,7 +150,8 @@ jobs:
       - run: pyenv install
       - install_code_climate
       - test:
-          markers: not write and not offline
+          markers: herd and not write and not offline
+          # markers: not write and not offline
           label: parallel
           parallel: true
           groups: <<parameters.groups>>
@@ -164,7 +165,8 @@ jobs:
       - run: pyenv install
       - install_code_climate
       - test:
-          markers: write
+          markers: clean and write
+          # markers: write
           label: write
   test_offline:
     machine: true
@@ -175,7 +177,8 @@ jobs:
       - run: pyenv install
       - install_code_climate
       - test:
-          markers: offline and not write
+          markers: diff and offline
+          # markers: offline and not write
           label: offline
   report_coverage:
     docker:
