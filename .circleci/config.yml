@@ -4,13 +4,11 @@ orbs:
   codecov: codecov/codecov@1.0.2
 
 commands:
-  init_code_climate:
+  install_code_climate:
     steps:
       - run:
-          name: Initialize Code Climate test reporter
-          command: |
-            script/install_cc_test_reporter
-            ./cc-test-reporter before-build
+          name: Install Code Climate test coverage reporter
+          command: script/install_cc_test_reporter
   setup_ssh:
     steps:
       - add_ssh_keys:
@@ -28,7 +26,7 @@ commands:
             git config --global user.name "CircleCI"
             git config --global push.default simple
             git config --global --unset url.ssh://git@github.com.insteadOf
-  store_results:
+  report_coverage:
     steps:
       - attach_workspace:
           at: .
@@ -36,7 +34,7 @@ commands:
           name: Install coverage.py
           command: pip install coverage
       - run:
-          name: Generate test reports
+          name: Generate test coverage reports
           command: script/test --report-coverage
       - codecov/upload:
           file: build/coverage/coverage.xml
@@ -53,16 +51,8 @@ commands:
             ./cc-test-reporter upload-coverage \
             --id ${CC_TEST_REPORTER_ID} \
             --input build/codeclimate/codeclimate.json
-      - store_test_results:
-          path: build/cucumber
       - store_artifacts:
-          path: build/cucumber
-      - store_artifacts:
-          path: build/json
-      - store_artifacts:
-          path: build/xml
-      - store_artifacts:
-          path: build/coverage
+          path: build
   test:
     description: "Pytest functional tests"
     parameters:
@@ -71,6 +61,9 @@ commands:
       label:
         type: string
     steps:
+      - run:
+          name: Initialize Code Climate test coverage reporter
+          command: ./cc-test-reporter before-build
       - run:
           name: Start clowder tests docker container
           command: script/docker start
@@ -82,12 +75,16 @@ commands:
           name: Update build files ownership
           command: sudo chown -R ${USER} build
       - run:
-          name: Forrmat coverage for Code climate
+          name: Format coverage for Code climate
           command: |
             ./cc-test-reporter format-coverage \
               --input-type coverage.py \
               --output build/codeclimate/codeclimate.<<parameters.label>>.json \
               build/coverage/coverage.<<parameters.label>>.xml
+      - store_test_results:
+          path: build/cucumber
+      - store_artifacts:
+          path: build
       - persist_to_workspace:
           root: .
           paths:
@@ -101,6 +98,9 @@ commands:
         type: string
     steps:
       - run:
+          name: Initialize Code Climate test coverage reporter
+          command: ./cc-test-reporter before-build
+      - run:
           name: Start clowder tests docker container
           command: script/docker start
       - run: |
@@ -112,12 +112,16 @@ commands:
           name: Update build files ownership
           command: sudo chown -R ${USER} build
       - run:
-          name: Forrmat coverage for Code climate
+          name: Format coverage for Code climate
           command: |
             ./cc-test-reporter format-coverage \
               --input-type coverage.py \
               --output build/codeclimate/codeclimate.<<parameters.label>>.json \
               build/coverage/coverage.<<parameters.label>>.xml
+      - store_test_results:
+          path: build/cucumber
+      - store_artifacts:
+          path: build
       - persist_to_workspace:
           root: .
           paths:
@@ -131,11 +135,10 @@ jobs:
       - setup_ssh
       - setup_git_config
       - run: pyenv install
-      - init_code_climate
+      - install_code_climate
       - test_parallel:
           markers: not write and not offline
           label: parallel
-      - store_results
   test_write:
     machine: true
     steps:
@@ -143,11 +146,10 @@ jobs:
       - setup_ssh
       - setup_git_config
       - run: pyenv install
-      - init_code_climate
+      - install_code_climate
       - test:
           markers: write
           label: write
-      - store_results
   test_offline:
     machine: true
     steps:
@@ -155,18 +157,18 @@ jobs:
       - setup_ssh
       - setup_git_config
       - run: pyenv install
-      - init_code_climate
+      - install_code_climate
       - test:
           markers: offline and not write
           label: offline
-      - store_results
-  report:
+  report_coverage:
     docker:
       - image: circleci/python:3.7.7
     steps:
       - checkout
       - setup_git_config
-      - store_results
+      - install_code_climate
+      - report_coverage
 
 workflows:
   pytest:
@@ -174,7 +176,7 @@ workflows:
       - test_write
       - test_parallel
       - test_offline
-      - report:
+      - report_coverage:
           requires:
             - test_parallel
             - test_write
