@@ -1,19 +1,50 @@
 version: 2.1
+
 orbs:
   codecov: codecov/codecov@1.0.2
-jobs:
-  build:
-    machine: true
 
+commands:
+  fix_build_permissions:
     steps:
-      - checkout
-
       - run:
-          name: Install python via pyenv
+          name: Update build files ownership
+          command: sudo chown -R ${USER} build
+  store_results:
+    steps:
+      - store_test_results:
+          path: build/cucumber
+      - store_test_results:
+          path: build/junit
+      - store_artifacts:
+          path: build/coverage
+      - store_artifacts:
+          path: build/cucumber
+      - store_artifacts:
+          path: build/junit
+  upload_codecov:
+    steps:
+      - codecov/upload: build/coverage/coverage.xml
+  upload_code_climate:
+    steps:
+      - run:
+          name: Upload coverage to Code climate
           command: |
-            pyenv install
-            python --version
-
+            ./cc-test-reporter format-coverage --input-type coverage.py --output - build/coverage/coverage.xml \
+              | ./cc-test-reporter upload-coverage --id ${CC_TEST_REPORTER_ID} --input -
+  init_code_climate:
+    steps:
+        - run:
+            name: Initialize Code Climate test reporter
+            command: |
+              script/install_cc_test_reporter
+              ./cc-test-reporter before-build
+  start_docker:
+    steps:
+      - run:
+          name: Start clowder tests docker container
+          command: script/docker start
+  setup_git_config:
+    steps:
       - run:
           name: Setup git config
           command: |
@@ -21,58 +52,42 @@ jobs:
             git config --global user.name "CircleCI"
             git config --global push.default simple
             git config --global --unset url.ssh://git@github.com.insteadOf
-
+  setup_ssh:
+    steps:
       - add_ssh_keys:
           fingerprints:
             - "e9:7d:20:a0:51:b2:9c:22:f6:b9:5b:55:47:c4:7c:20"
-
       - run:
           name: Add ssh key to known_hosts
           command: ssh-keyscan -H polka-dot-cat.git.beanstalkapp.com >> ~/.ssh/known_hosts
+  test:
+    description: "Pytest functional tests"
+    parameters:
+        cmd:
+          type: string
+    steps:
+      - run: docker-compose exec clowder script/test "<<parameters.cmd>>"
 
-      - run:
-          name: Start clowder tests docker container
-          command: script/docker start
+jobs:
+  test_parallel:
+    machine: true
 
-      - run:
-          name: Initialize Code Climate test reporter
-          command: |
-            script/install_cc_test_reporter
-            ./cc-test-reporter before-build
+    steps:
+      - checkout
+      - run: pyenv install
+      - setup_git_config
+      - setup_ssh
+      - start_docker
+      - init_code_climate
+      - test: -n auto -m 'not write and not offline'
+      - test: -m 'write and not offline'
+      - test: -m 'offline'
+      - fix_build_permissions
+      - upload_code_climate
+      - upload_codecov
+      - store_results
 
-      - run:
-          name: Pytest functional tests - not write and not offline - parallel
-          command: docker-compose exec clowder script/test "-n auto -m 'not write and not offline'"
-
-      - run:
-          name: Pytest functional tests - write and not offline
-          command: docker-compose exec clowder script/test "-m 'write and not offline'"
-
-      - run:
-          name: Pytest functional tests - offline
-          command: docker-compose exec clowder script/test "-m 'offline'"
-
-      - run:
-          name: Update build files ownership
-          command: sudo chown -R ${USER} build
-
-      - run:
-          name: Upload coverage to Code climate
-          command: |
-            ./cc-test-reporter format-coverage --input-type coverage.py --output - build/coverage/coverage.xml \
-              | ./cc-test-reporter upload-coverage --id ${CC_TEST_REPORTER_ID} --input -
-
-      - store_test_results:
-          path: build/cucumber
-      - store_test_results:
-          path: build/junit
-
-      - codecov/upload:
-          file: build/coverage/coverage.xml
-
-      - store_artifacts:
-          path: build/coverage
-      - store_artifacts:
-          path: build/cucumber
-      - store_artifacts:
-          path: build/junit
+workflows:
+  pytest:
+    jobs:
+      - test
