@@ -47,13 +47,15 @@ def get_random_alphanumeric_string(length: int) -> str:
 
 
 def report_coverage() -> None:
-    result = run_command(path, f"coverage combine {coverage_dir}/")
+    result = run_command(path, f"coverage combine")
     assert result.returncode == 0
-    result = run_command(path, f"coverage report xml -o {coverage_dir}/xml")
+    result = run_command(path, f"coverage xml -o {coverage_dir}/results.xml")
     assert result.returncode == 0
-    result = run_command(path, f"coverage report html --directory {coverage_dir}/html")
+    result = run_command(path, f"coverage html --directory {coverage_dir}/html")
     assert result.returncode == 0
-    result = run_command(path, f"coverage report json -o {coverage_dir}/json")
+    result = run_command(path, f"coverage json -o {coverage_dir}/results.json")
+    assert result.returncode == 0
+    result = run_command(path, f"coverage annotate --directory {coverage_dir}/annotate")
     assert result.returncode == 0
     exit()
 
