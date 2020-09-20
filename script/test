@@ -19,7 +19,7 @@ def run_command(cwd: Path, cmd: str) -> CompletedProcess:
 def get_random_alphanumeric_string(length: int) -> str:
     letters_and_digits = string.ascii_letters + string.digits
     result_str = ''.join((random.choice(letters_and_digits) for _ in range(length)))
-    print("Random alphanumeric String is:", result_str)
+    print(f"Random alphanumeric String is: {result_str}")
     return result_str
 
 
@@ -35,20 +35,22 @@ else:
 # Repo path
 path = Path(__file__).resolve().parent.parent.resolve()
 
+# Create temp dir
+temp_dir = path / "temp"
+temp_dir.mkdir(parents=True, exist_ok=True)
+
 # Create build dir
 build_dir = path / "build"
 build_dir.mkdir(parents=True, exist_ok=True)
 
 # Base command
-temp_dir = build_dir / "temp"
-temp_dir.mkdir(parents=True, exist_ok=True)
 command = f"pytest --basetemp={temp_dir} -vv"
 
 # Coverage command
 command += " --cov-config=.coveragerc --cov-append --cov=clowder"
 
 # Coverage reports
-coverage_dir = path / "coverage"
+coverage_dir = build_dir / "coverage"
 coverage_dir.mkdir(parents=True, exist_ok=True)
 xml_file = coverage_dir / f"coverage.xml"
 command += f" --cov-report xml:{xml_file}"

@@ -18,21 +18,26 @@ defaults:
 
 jobs:
   pytest:
+
     env:
       PYTHON_VERSION: ${{ matrix.python-version }}
       OS_NAME: ${{ matrix.os }}
       CLOWDER_DEBUG: true
+
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [macos-latest, ubuntu-latest] # TODO: windows-latest
         python-version: ['3.6', '3.7', '3.8']
+
     steps:
     - uses: actions/checkout@v2
+
     - name: Setup python
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
+
     - name: Setup git config
       run: |
         git config --global user.email "joe@polka.cat";
@@ -41,23 +46,29 @@ jobs:
         sudo git config --system --unset-all filter.lfs.smudge
         sudo git config --system --unset-all filter.lfs.process
         sudo git config --system --unset-all filter.lfs.required
+
     - name: Install clowder
       run: script/cibuild
+
     - name: Run pytest functional tests
       run: script/test "-n auto -m 'not ssh and not offline'"
+
     - name: Update build files ownership
-      run: sudo chown --recursive ${USER} build coverage
+      run: sudo chown --recursive ${USER} build
+
     - uses: actions/upload-artifact@v2
       with:
         name: coverage-ghworkflow-${{ matrix.os }}-${{ matrix.python-version }}
         path: |
           build/cucumber
           build/junit
-          coverage
+          build/coverage
+
     - uses: deblockt/cucumber-report-annotations-action@v1.6
       with:
         access-token: ${{ secrets.GITHUB_TOKEN }}
         path: build/cucumber/results*.json
+
     - uses: ashley-taylor/junit-report-annotations-action@1.3
       if: always()
       with:

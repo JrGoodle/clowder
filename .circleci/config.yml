@@ -35,12 +35,10 @@ jobs:
           command: script/docker start
 
       - run:
-          name: Install Code Climate test reporter
-          command: script/install_cc_test_reporter
-
-      - run:
           name: Initialize Code Climate test reporter
-          command: ./cc-test-reporter before-build
+          command: |
+            script/install_cc_test_reporter
+            ./cc-test-reporter before-build
 
       # - run:
       #     name: Pytest functional tests - not write and not offline - parallel
@@ -64,12 +62,12 @@ jobs:
 
       - run:
           name: Update build files ownership
-          command: sudo chown --recursive ${USER} build coverage
+          command: sudo chown --recursive ${USER} build
 
       - run:
           name: Upload coverage to Code climate
           command: |
-            ./cc-test-reporter format-coverage --input-type coverage.py --output - coverage/coverage.xml \
+            ./cc-test-reporter format-coverage --input-type coverage.py --output - build/coverage/coverage.xml \
               | ./cc-test-reporter upload-coverage --id ${CC_TEST_REPORTER_ID} --input -
 
       - store_test_results:
@@ -78,10 +76,10 @@ jobs:
           path: build/junit
 
       - codecov/upload:
-          file: coverage/coverage.xml
+          file: build/coverage/coverage.xml
 
       - store_artifacts:
-          path: coverage
+          path: build/coverage
       - store_artifacts:
           path: build/cucumber
       - store_artifacts:
