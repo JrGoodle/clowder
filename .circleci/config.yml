@@ -34,7 +34,7 @@ commands:
           at: .
       - run:
           name: Generate test reports
-          command: script/test report
+          command: script/test --report
       - codecov/upload:
           file: build/coverage/coverage.xml
       - run:

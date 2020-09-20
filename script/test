@@ -7,21 +7,26 @@ import string
 import subprocess
 from pathlib import Path
 from subprocess import CompletedProcess
-from typing import List, Tuple, Union
+from typing import List, Tuple, Optional, Union
 
 Parser = Union[argparse.ArgumentParser, argparse._MutuallyExclusiveGroup, argparse._ArgumentGroup]  # noqa
 Arguments = List[Tuple[list, dict]]
 
 # Repo path
-path = Path(__file__).resolve().parent.parent.resolve()
+path: Path = Path(__file__).resolve().parent.parent.resolve()
+
+
+def make_dir(dir_path: Path) -> Path:
+    build_dir.mkdir(parents=True, exist_ok=True)
+    return dir_path
+
 
 # Create build dirs
-build_dir = path / "build"
-build_dir.mkdir(parents=True, exist_ok=True)
-coverage_dir = build_dir / "coverage"
-coverage_dir.mkdir(parents=True, exist_ok=True)
-temp_dir = path / "temp"
-temp_dir.mkdir(parents=True, exist_ok=True)
+build_dir: Path = make_dir(path / "build")
+temp_dir: Path = make_dir(path / "temp")
+coverage_dir: Path = make_dir(build_dir / "coverage")
+junit_dir: Path = make_dir(build_dir / f"junit")
+cucumber_dir: Path = make_dir(build_dir / f"cucumber")
 
 
 def run_command(cwd: Path, cmd: str) -> CompletedProcess:
@@ -31,10 +36,15 @@ def run_command(cwd: Path, cmd: str) -> CompletedProcess:
     return completed_process
 
 
+generated_random_string: bool = False
+
+
 def get_random_alphanumeric_string(length: int) -> str:
     letters_and_digits = string.ascii_letters + string.digits
     result_str = ''.join((random.choice(letters_and_digits) for _ in range(length)))
     print(f"Random alphanumeric String is: {result_str}")
+    global generated_random_string
+    generated_random_string = True
     return result_str
 
 
@@ -51,34 +61,32 @@ def report() -> None:
     exit()
 
 
-def test(label: str, options: str) -> None:
+def test(command_options: str, label: Optional[str] = None) -> None:
+    file_label = "" if label is None else f".{label}"
+
     # Base command
     command = f"pytest --basetemp={temp_dir} -vv"
 
     # Add extra arguments
-    command += options
+    command += command_options
 
     # Coverage command
     command += " --cov-config=.coveragerc --cov-append --cov=clowder"
 
     # Coverage reports
-    xml_file = coverage_dir / f"coverage.{label}.xml"
+    xml_file = coverage_dir / f"coverage{file_label}.xml"
     command += f" --cov-report xml:{xml_file}"
-    html_dir = coverage_dir / f"html.{label}"
+    html_dir = coverage_dir / f"html{file_label}"
     command += f" --cov-report html:{html_dir}"
-    annotate_dir = coverage_dir / f"annotate.{label}"
+    annotate_dir = coverage_dir / f"annotate{file_label}"
     command += f" --cov-report annotate:{annotate_dir}"
 
     # JUnit reports
-    junit_dir = build_dir / f"junit"
-    junit_dir.mkdir(parents=True, exist_ok=True)
-    junit_file = junit_dir / f"results.{label}.xml"
+    junit_file = junit_dir / f"results{file_label}.xml"
     command += f" --junitxml={junit_file}"
 
     # BDD reports
-    cucumber_dir = build_dir / f"cucumber"
-    cucumber_dir.mkdir(parents=True, exist_ok=True)
-    cucumber_file = cucumber_dir / f"results.{label}.json"
+    cucumber_file = cucumber_dir / f"results{file_label}.json"
     bdd_reporting_options = f" --cucumberjson={cucumber_file} --cucumberjson-expanded"
     command += bdd_reporting_options
 
@@ -86,9 +94,10 @@ def test(label: str, options: str) -> None:
     result = run_command(path, command)
 
     # Rename coverage
-    old_coverage_file = coverage_dir / ".coverage"
-    new_coverage_file = coverage_dir / f".coverage.{label}"
-    old_coverage_file.rename(new_coverage_file)
+    if file_label:
+        old_coverage_file = coverage_dir / ".coverage"
+        new_coverage_file = coverage_dir / f".coverage{file_label}"
+        old_coverage_file.rename(new_coverage_file)
 
     if result.returncode != 0:
         exit(result.returncode)
@@ -107,7 +116,7 @@ def main() -> None:
                                 help='number of groups to split tests into')),
             (['--group', "-g"], dict(metavar='<n>', nargs=1, default=None, type=int,
                                      help='number of groups to split tests into')),
-            (['--label', '-l'], dict(nargs=1, metavar='<label>', default=get_random_alphanumeric_string(12),
+            (['--label', '-l'], dict(nargs=1, metavar='<label>', default=None,
                                      help='label to append to results')),
             (['--parallel', '-p'], dict(action='store_true', help='run tests in parallel'))
         ]
@@ -131,7 +140,7 @@ def main() -> None:
         if args.groups or args.group:
             options += f" --test-group-count {args.groups[0]} --test-group={args.group[0]}"
 
-        test(args.label[0], options)
+        test(options, None if args.label is None else args.label[0])
     except Exception as err:
         print(err)
         exit(1)
