@@ -152,8 +152,7 @@ jobs:
       - run: pyenv install
       - install_code_climate
       - test:
-          markers: herd and not write and not offline
-          # markers: not write and not offline
+          markers: not write and not offline
           label: parallel
           parallel: true
           groups: <<parameters.groups>>
