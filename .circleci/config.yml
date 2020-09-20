@@ -155,6 +155,7 @@ jobs:
           label: parallel
           groups: <<parameters.groups>>
           group: <<parameters.group>>
+      - store_results
   test_write:
     machine: true
     steps:
@@ -166,6 +167,7 @@ jobs:
       - test:
           markers: write
           label: write
+      - store_results
   test_offline:
     machine: true
     parameters:
@@ -184,6 +186,7 @@ jobs:
           label: offline
           groups: <<parameters.groups>>
           group: <<parameters.group>>
+      - store_results
   report:
     docker:
       - image: circleci/python:3.7.7
