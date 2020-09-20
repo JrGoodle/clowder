@@ -1,19 +1,80 @@
-#!/usr/bin/env bash
+#!/usr/bin/env python
 
-cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
+import argparse
+import os
+import shutil
+import subprocess
+from pathlib import Path
+from subprocess import CompletedProcess
+from typing import List, Tuple, Union
 
-clean_clowder_repo() {
-    echo "Cleaning clowder build files"
-    echo "Removing clowder_repo.egg-info"
-    sudo -H rm -rf clowder_repo.egg-info
-    echo "Removing dist"
-    sudo -H rm -rf dist
-    echo "Removing build"
-    sudo -H rm -rf build
-    echo "Removing __pycache__"
-    sudo -H rm -rf clowder/__pycache__ clowder/*/__pycache__ clowder/*/*/__pycache__
-    sudo -H rm -rf tests/__pycache__ tests/*/__pycache__ tests/*/*/__pycache__
-    echo "pip3 uninstall clowder"
-    sudo -H pip3 uninstall clowder-repo || true
-}
-clean_clowder_repo
+Parser = Union[argparse.ArgumentParser, argparse._MutuallyExclusiveGroup, argparse._ArgumentGroup]  # noqa
+Arguments = List[Tuple[list, dict]]
+
+
+def rm_dir(dir_path: Path) -> None:
+    print(f"remove {dir_path}")
+    shutil.rmtree(dir_path, ignore_errors=True)
+
+
+# Paths
+path: Path = Path(__file__).resolve().parent.parent.resolve()
+build_dir: Path = path / "build"
+temp_dir: Path = path / "temp"
+dist_dir: Path = path / "dist"
+clowder_repo_egg_dir: Path = path / "clowder_repo.egg-info"
+clowder_dir: Path = path / "clowder"
+pycache = "__pycache__"
+
+
+def clean_build() -> None:
+    rm_dir(dist_dir)
+    rm_dir(build_dir)
+    rm_dir(temp_dir)
+
+
+def clean_all() -> None:
+    clean_build()
+    rm_dir(clowder_repo_egg_dir)
+    run_command(path, "sudo -H pip3 uninstall --yes clowder-repo")
+    shutil.rmtree(clowder_repo_egg_dir, ignore_errors=True)
+    for root, dirs, files in os.walk(path, topdown=False):
+        for name in dirs:
+            if name == pycache:
+                dir_path = Path(root) / name
+                shutil.rmtree(dir_path, ignore_errors=True)
+
+
+def run_command(cwd: Path, cmd: str) -> CompletedProcess:
+    cmd_env = os.environ.copy()
+    print(f"command: {cmd}")
+    completed_process = subprocess.run(cmd, cwd=cwd, shell=True, env=cmd_env)
+    return completed_process
+
+
+def add_parser_arguments(parser: Parser, arguments: Arguments) -> None:
+    for argument in arguments:
+        parser.add_argument(*argument[0], **argument[1])
+
+
+def main() -> None:
+    try:
+        parser = argparse.ArgumentParser()
+        group = parser.add_mutually_exclusive_group()
+        mutually_exclusive_arguments = [
+            (['--build', '-b'], dict(action='store_true', help='clean build files'))
+        ]
+        add_parser_arguments(group, mutually_exclusive_arguments)
+        args = parser.parse_args()
+        if args.build:
+            clean_build()
+        else:
+            clean_all()
+
+    except Exception as err:
+        print(err)
+        exit(1)
+
+
+if __name__ == '__main__':
+    main()

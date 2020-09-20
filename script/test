@@ -12,16 +12,14 @@ from typing import List, Tuple, Optional, Union
 Parser = Union[argparse.ArgumentParser, argparse._MutuallyExclusiveGroup, argparse._ArgumentGroup]  # noqa
 Arguments = List[Tuple[list, dict]]
 
-# Repo path
-path: Path = Path(__file__).resolve().parent.parent.resolve()
-
 
 def make_dir(dir_path: Path) -> Path:
-    build_dir.mkdir(parents=True, exist_ok=True)
+    dir_path.mkdir(parents=True, exist_ok=True)
     return dir_path
 
 
-# Create build dirs
+# Paths
+path: Path = Path(__file__).resolve().parent.parent.resolve()
 build_dir: Path = make_dir(path / "build")
 temp_dir: Path = make_dir(path / "temp")
 coverage_dir: Path = make_dir(build_dir / "coverage")
@@ -31,7 +29,7 @@ cucumber_dir: Path = make_dir(build_dir / f"cucumber")
 
 def run_command(cwd: Path, cmd: str) -> CompletedProcess:
     cmd_env = os.environ.copy()
-    print(f"TEST: {cmd}")
+    print(f"command: {cmd}")
     completed_process = subprocess.run(cmd, cwd=cwd, shell=True, env=cmd_env)
     return completed_process
 
@@ -48,9 +46,8 @@ def get_random_alphanumeric_string(length: int) -> str:
     return result_str
 
 
-def report() -> None:
-    # Coverage reports
-    result = run_command(path, f"coverage combine {coverage_dir}")
+def report_coverage() -> None:
+    result = run_command(path, f"coverage combine {coverage_dir}/")
     assert result.returncode == 0
     result = run_command(path, f"coverage report xml -o {coverage_dir}/xml")
     assert result.returncode == 0
@@ -124,14 +121,14 @@ def main() -> None:
 
         group = parser.add_mutually_exclusive_group(required=True)
         mutually_exclusive_arguments = [
-            (['--report', '-r'], dict(action='store_true', help='generate test reports')),
+            (['--report-coverage', '-r'], dict(action='store_true', help='generate test coverage reports')),
             (['--markers', '-m'], dict(nargs=1, metavar='<markers>', help='test markers to run'))
         ]
         add_parser_arguments(group, mutually_exclusive_arguments)
         args = parser.parse_args()
 
-        if args.report:
-            report()
+        if args.report_coverage:
+            report_coverage()
             exit()
 
         options = f" -m '{args.markers[0]}'"

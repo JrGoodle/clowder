@@ -17,6 +17,7 @@ termcolor
 tqdm
 twine
 wheel
+coverage
 pytest
 pytest-bdd
 pytest-xdist
