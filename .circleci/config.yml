@@ -60,6 +60,9 @@ commands:
         type: string
       label:
         type: string
+      parallel:
+        type: boolean
+        default: false
     steps:
       - run:
           name: Initialize Code Climate test coverage reporter
@@ -67,47 +70,21 @@ commands:
       - run:
           name: Start clowder tests docker container
           command: script/docker start
-      - run: |
-          docker-compose exec clowder script/test \
-            --markers "<<parameters.markers>>" \
-            --label <<parameters.label>>
-      - run:
-          name: Update build files ownership
-          command: sudo chown -R ${USER} build
-      - run:
-          name: Format coverage for Code climate
-          command: |
-            ./cc-test-reporter format-coverage \
-              --input-type coverage.py \
-              --output build/codeclimate/codeclimate.<<parameters.label>>.json \
-              build/coverage/coverage.<<parameters.label>>.xml
-      - store_test_results:
-          path: build/junit/
-      - store_artifacts:
-          path: build
-      - persist_to_workspace:
-          root: .
-          paths:
-            - build/
-  test_parallel:
-    description: "Pytest functional tests - parallel"
-    parameters:
-      markers:
-        type: string
-      label:
-        type: string
-    steps:
-      - run:
-          name: Initialize Code Climate test coverage reporter
-          command: ./cc-test-reporter before-build
-      - run:
-          name: Start clowder tests docker container
-          command: script/docker start
-      - run: |
-          docker-compose exec clowder script/test \
-            --markers "<<parameters.markers>>" \
-            --label <<parameters.label>> \
-            --parallel
+      - when:
+          condition: <<parameters.parallel>>
+          steps:
+            - run: |
+                docker-compose exec clowder script/test \
+                  --markers "<<parameters.markers>>" \
+                  --label <<parameters.label>> \
+                  --parallel
+      - unless:
+          condition: <<parameters.parallel>>
+          steps:
+            - run: |
+                docker-compose exec clowder script/test \
+                  --markers "<<parameters.markers>>" \
+                  --label <<parameters.label>>
       - run:
           name: Update build files ownership
           command: sudo chown -R ${USER} build
@@ -136,9 +113,10 @@ jobs:
       - setup_git_config
       - run: pyenv install
       - install_code_climate
-      - test_parallel:
+      - test:
           markers: not write and not offline
           label: parallel
+          parallel: true
   test_write:
     machine: true
     steps:
