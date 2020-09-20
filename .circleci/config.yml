@@ -135,11 +135,11 @@ commands:
 jobs:
   test_parallel:
     machine: true
-    environment:
-      groups: "4"
-    matrix:
-      parameters:
-        group: [1, 2, 3, 4]
+    parameters:
+      groups:
+        type: integer
+      group:
+        type: integer
     steps:
       - checkout
       - setup_ssh
@@ -149,16 +149,15 @@ jobs:
       - test_parallel:
           modules: not write and not offline
           label: parallel
-          groups: <<matrix.groups>>
-          group: <<matrix.group>>
+          groups: <<parameters.groups>>
+          group: <<parameters.group>>
   test_write:
     machine: true
-    environment:
-      groups: "4"
-    matrix:
-      parameters:
-        group: [1, 2, 3, 4]
-        groups: 4
+    parameters:
+      groups:
+        type: integer
+      group:
+        type: integer
     steps:
       - checkout
       - setup_ssh
@@ -168,16 +167,15 @@ jobs:
       - test:
           modules: write
           label: write
-          groups: <<matrix.groups>>
-          group: <<matrix.group>>
+          groups: <<parameters.groups>>
+          group: <<parameters.group>>
   test_offline:
     machine: true
-    environment:
-      groups: "4"
-    matrix:
-      parameters:
-        group: [1, 2, 3, 4]
-        groups: 4
+    parameters:
+      groups:
+        type: integer
+      group:
+        type: integer
     steps:
       - checkout
       - setup_ssh
@@ -187,8 +185,8 @@ jobs:
       - test:
           modules: offline and not write
           label: offline
-          groups: <<matrix.groups>>
-          group: <<matrix.group>>
+          groups: <<parameters.groups>>
+          group: <<parameters.group>>
   report:
     docker:
       - image: circleci/python:3.7.7
@@ -204,9 +202,17 @@ workflows:
           matrix:
             parameters:
               group: [1, 2, 3, 4]
-              groups: 4
-      - test_write
-      - test_offline
+              groups: [4]
+      - test_write:
+          matrix:
+            parameters:
+              group: [1, 2, 3, 4]
+              groups: [4]
+      - test_offline:
+          matrix:
+            parameters:
+              group: [1, 2, 3, 4]
+              groups: [4]
       - report:
           requires:
             - test_parallel
