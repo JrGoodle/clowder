@@ -33,6 +33,9 @@ commands:
       - attach_workspace:
           at: .
       - run:
+          name: Install coverage.py
+          command: pip install coverage
+      - run:
           name: Generate test reports
           command: script/test --report-coverage
       - codecov/upload:
