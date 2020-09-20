@@ -63,15 +63,22 @@ commands:
   test:
     description: "Pytest functional tests"
     parameters:
-      cmd:
+      modules:
         type: string
       label:
         type: string
+      groups:
+        type: integer
+      group:
+        type: integer
     steps:
       - run:
           name: Start clowder tests docker container
           command: script/docker start
-      - run: docker-compose exec clowder script/test "<<parameters.cmd>>"
+      - run: |
+          docker-compose exec clowder script/test \
+            --modules "<<parameters.modules>>"" \
+            --label <<parameters.label>>.<<parameters.group>>
       - run:
           name: Update build files ownership
           command: sudo chown -R ${USER} build
@@ -80,8 +87,42 @@ commands:
           command: |
             ./cc-test-reporter format-coverage \
               --input-type coverage.py \
-              --output build/codeclimate/codeclimate.<<parameters.label>>.json \
-              build/coverage/coverage*.xml
+              --output build/codeclimate/codeclimate.<<parameters.label>>.<<parameters.group>>.json \
+              build/coverage/coverage.<<parameters.label>>.<<parameters.group>>.xml
+      - persist_to_workspace:
+          root: .
+          paths:
+            - build/
+  test_parallel:
+    description: "Pytest functional tests"
+    parameters:
+      modules:
+        type: string
+      label:
+        type: string
+      groups:
+        type: integer
+      group:
+        type: integer
+    steps:
+      - run:
+          name: Start clowder tests docker container
+          command: script/docker start
+      - run: |
+          docker-compose exec clowder script/test \
+            --modules "<<parameters.modules>>"" \
+            --label <<parameters.label>>.<<parameters.group>> \
+            --parallel
+      - run:
+          name: Update build files ownership
+          command: sudo chown -R ${USER} build
+      - run:
+          name: Forrmat coverage for Code climate
+          command: |
+            ./cc-test-reporter format-coverage \
+              --input-type coverage.py \
+              --output build/codeclimate/codeclimate.<<parameters.label>>.<<parameters.group>>.json \
+              build/coverage/coverage.<<parameters.label>>..<<parameters.group>>.xml
       - persist_to_workspace:
           root: .
           paths:
@@ -90,17 +131,27 @@ commands:
 jobs:
   test_parallel:
     machine: true
+    matrix:
+      parameters:
+        group: [1, 2, 3, 4]
+        groups: 4
     steps:
       - checkout
       - setup_ssh
       - setup_git_config
       - run: pyenv install
       - init_code_climate
-      - test:
-          cmd: -n auto -m 'not write and not offline'
+      - test_parallel:
+          modules: not write and not offline
           label: parallel
+          groups: <<matrix.groups>>
+          group: <<matrix.group>>
   test_write:
     machine: true
+    matrix:
+      parameters:
+        group: [1, 2, 3, 4]
+        groups: 4
     steps:
       - checkout
       - setup_ssh
@@ -108,10 +159,16 @@ jobs:
       - run: pyenv install
       - init_code_climate
       - test:
-          cmd: -m 'write'
+          modules: write
           label: write
+          groups: <<matrix.groups>>
+          group: <<matrix.group>>
   test_offline:
     machine: true
+    matrix:
+      parameters:
+        group: [1, 2, 3, 4]
+        groups: 4
     steps:
       - checkout
       - setup_ssh
@@ -119,8 +176,10 @@ jobs:
       - run: pyenv install
       - init_code_climate
       - test:
-          cmd: -m 'offline and not write'
+          modules: offline and not write
           label: offline
+          groups: <<matrix.groups>>
+          group: <<matrix.group>>
   report:
     docker:
       - image: circleci/python:3.7.7

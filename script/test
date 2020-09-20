@@ -1,13 +1,27 @@
 #!/usr/bin/env python
 
+import argparse
 import os
 import random
 import string
 import subprocess
-import sys
 from pathlib import Path
 from subprocess import CompletedProcess
-from typing import Optional
+from typing import List, Tuple
+
+Parser = Union[argparse.ArgumentParser, argparse._MutuallyExclusiveGroup, argparse._ArgumentGroup]  # noqa
+Arguments = List[Tuple[list, dict]]
+
+# Repo path
+path = Path(__file__).resolve().parent.parent.resolve()
+
+# Create build dirs
+build_dir = path / "build"
+build_dir.mkdir(parents=True, exist_ok=True)
+coverage_dir = build_dir / "coverage"
+coverage_dir.mkdir(parents=True, exist_ok=True)
+temp_dir = path / "temp"
+temp_dir.mkdir(parents=True, exist_ok=True)
 
 
 def run_command(cwd: Path, cmd: str) -> CompletedProcess:
@@ -23,25 +37,7 @@ def get_random_alphanumeric_string(length: int) -> str:
     return result_str
 
 
-command_arg: Optional[str] = None
-if len(sys.argv) > 1:
-    command_arg = sys.argv[1]
-
-if len(sys.argv) > 2:
-    name = f"-{sys.argv[2]}"
-else:
-    name = f"-{get_random_alphanumeric_string(12)}"
-
-# Repo path
-path = Path(__file__).resolve().parent.parent.resolve()
-
-# Create build dir
-build_dir = path / "build"
-build_dir.mkdir(parents=True, exist_ok=True)
-coverage_dir = build_dir / "coverage"
-coverage_dir.mkdir(parents=True, exist_ok=True)
-
-if command_arg == "report":
+def report() -> None:
     # Coverage reports
     result = run_command(path, "coverage combine build/coverage/")
     assert result.returncode == 0
@@ -53,45 +49,88 @@ if command_arg == "report":
     assert result.returncode == 0
     exit()
 
-# Create temp dir
-temp_dir = path / "temp"
-temp_dir.mkdir(parents=True, exist_ok=True)
 
-# Base command
-command = f"pytest --basetemp={temp_dir} -vv"
+def test(label: str, options: str) -> None:
+    # Base command
+    command = f"pytest --basetemp={temp_dir} -vv"
+    # Coverage command
+    command += " --cov-config=.coveragerc --cov-append --cov=clowder"
+    # Test group
+    command += " --test-group-count 10 --test-group=2"
+    # Add extra arguments
+    command += options
 
-# Coverage command
-command += " --cov-config=.coveragerc --cov-append --cov=clowder"
+    # JUnit reports
+    junit_dir = build_dir / f"junit"
+    junit_dir.mkdir(parents=True, exist_ok=True)
+    junit_file = junit_dir / f"results-{label}.xml"
+    command += f" --junitxml={junit_file}"
 
-# JUnit reports
-junit_dir = build_dir / f"junit"
-junit_dir.mkdir(parents=True, exist_ok=True)
-junit_file = junit_dir / f"results{name}.xml"
-command += f" --junitxml={junit_file}"
+    # BDD reports
+    cucumber_dir = build_dir / f"cucumber"
+    cucumber_dir.mkdir(parents=True, exist_ok=True)
+    cucumber_file = cucumber_dir / f"results-{label}.json"
+    bdd_reporting_options = f" --cucumberjson={cucumber_file} --cucumberjson-expanded"
+    command += bdd_reporting_options
 
-# BDD reports
-cucumber_dir = build_dir / f"cucumber"
-cucumber_dir.mkdir(parents=True, exist_ok=True)
-cucumber_file = cucumber_dir / f"results{name}.json"
-bdd_reporting_options = f" --cucumberjson={cucumber_file} --cucumberjson-expanded"
-command += bdd_reporting_options
-
-# Run command with script argument
-if command_arg is not None:
-    test_cmd = f'{command} {command_arg}'
+    # Run command
+    test_cmd = f'{command} {options}'
     result = run_command(path, test_cmd)
-    junit_file.rename(f"results{name}.xml")
-    cucumber_file.rename(f"cucumber{name}.json")
+
+    # Rename test reports
+    junit_file.rename(f"results.{label}.xml")
+    cucumber_file.rename(f"cucumber.{label}.json")
+
+    # Rename coverage
+    old_coverage_file = coverage_dir / ".coverage"
+    new_coverage_file = coverage_dir / f".coverage.{label}"
+    old_coverage_file.rename(new_coverage_file)
+
     exit(result.returncode)
 
-# Run parallel tests
-test_cmd = f'{command} -n auto -m "not offline and not write"'
-run_command(path, test_cmd)
 
-# Run offline tests
-test_cmd = f'{command} -m "offline and not config"'
-run_command(path, test_cmd)
+def add_parser_arguments(parser: Parser, arguments: Arguments) -> None:
+    for argument in arguments:
+        parser.add_argument(*argument[0], **argument[1])
 
-# Run write tests
-test_cmd = f'{command} -m "write and not offline"'
-run_command(path, test_cmd)
+
+def main() -> None:
+    try:
+        parser = argparse.ArgumentParser()
+        arguments = [
+            (['--groups'], dict(metavar='<n>', nargs=1, default=None, type=int,
+                                help='number of groups to split tests into')),
+            (['--group', "-g"], dict(metavar='<n>', nargs=1, default=None, type=int,
+                                     help='number of groups to split tests into')),
+            (['--label', '-l'], dict(nargs=1, metavar='<label>', default=get_random_alphanumeric_string(12),
+                                     help='label to append to results')),
+            (['--parallel', '-p'], dict(action='store_true', help='run tests in parallel'))
+        ]
+        add_parser_arguments(parser, arguments)
+
+        group = parser.add_mutually_exclusive_group(required=True)
+        mutually_exclusive_arguments = [
+            (['--report', '-r'], dict(action='store_true', help='generate test reports')),
+            (['--modules', '-m'], dict(nargs=1, metavar='<modules>', help='test modules to run'))
+        ]
+        add_parser_arguments(group, mutually_exclusive_arguments)
+        args = parser.parse_args()
+
+        if args.report:
+            report()
+            exit()
+
+        options = f" -m '{args.modules}'"
+        if args.parallel:
+            options += " -n auto"
+        if args.groups or args.group:
+            options += f" --test-group-count {args.groups} --test-group={args.group}"
+
+        test(args.label, options)
+    except Exception as err:
+        print(err)
+        exit(1)
+
+
+if __name__ == '__main__':
+    main()
