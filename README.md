@@ -98,17 +98,24 @@ clowder:
   - tensorflow/tensorflow
 ```
 
-The `name` is simply a descriptive label. The `defaults` section contains the git branch and remote, the source to clone from, and the protocol to use for cloning repositories.
+The name is simply a descriptive label. The defaults section contains the git branch and remote, the source to clone from, and the protocol to use for cloning repositories.
 
-The `sources` section contains all the git hosting providers. The following sources are built in to `clowder`:
+A project requires at minimum a name (the last components of the git clone url). Depending on the protocol, this is combined with the source url to form the full git clone url:
 
-| `source.name` | `source.url`    |
+| protocol |                   git url                   |
+| -------- | ------------------------------------------- |
+| ssh      | `git@${source.url}:${project.name}.git`     |
+| https    | `https://${source.url}/${project.name}.git` |
+
+The sources section is where custom git hosting providers are specified. The following sources are built in:
+
+| `source.name` |  `source.url`   |
 | ------------- | --------------- |
 | `github`      | `github.com`    |
 | `gitlab`      | `gitlab.com`    |
 | `bitbucket`   | `bitbucket.org` |
 
-If we wanted to add a project at another hosting site:
+To add a project from another hosting site:
 
 ```yaml
 name: cool-projects
@@ -127,17 +134,28 @@ clowder:
     source: google
 ```
 
-A project requires a `name`, the project's unique components of the git clone url. This is combined with `defaults.protocol` or `sources.protocol` to form the full git clone url, taking the form of  `git@${sources.url}:${projects.name}.git` or `https://${sources.url}/${projects.name}.git`. If `path` is not specified, the last component of the name is used for the local directory.
+Or equivalently:
+
+```yaml
+name: cool-projects
+
+clowder:
+  - llvm/llvm-project
+  - apple/swift
+  - tensorflow/tensorflow
+  - name: git-repo
+    path: repo
+    source:
+      url: gerrit.googlesource.com
+      protocol: https
+```
+
+If `path` is not specified, the last component of the project name is used for the local directory.
 
 In order to be able to run commands for only certain sets of projects, there are groups:
 
 ```yaml
 name: cool-projects
-
-sources:
-  google:
-    url: gerrit.googlesource.com
-    protocol: https
 
 clowder:
   - name: llvm/llvm-project
@@ -148,11 +166,13 @@ clowder:
     groups: [google, clattner]
   - name: git-repo
     path: repo
-    source: google
     groups: [google, notdefault]
+    source:
+      url: gerrit.googlesource.com
+      protocol: https
 ```
 
-An equivalent way of specifying groups and custom sources:
+Or equivalently:
 
 ```yaml
 name: cool-projects
@@ -172,7 +192,7 @@ clowder:
         protocol: https
 ```
 
-Another equivalent with settings applied to a group:
+Or equivalently:
 
 ```yaml
 name: cool-projects
@@ -197,9 +217,9 @@ clowder:
         path: repo
 ```
 
-Projects are automatically added to the `all` group, a group of their `name`, and a group of their `path`. If `notdefault` is specified, the project will not be included in commands unless it belongs to another group argument supplied.
+Projects are automatically added to the group `all` and groups of their name and path. If `notdefault` is specified, the project will not be included in commands unless it belongs to another group argument supplied.
 
-If you'd like a group's projects to all be in a subdirectory:
+To save projects to a subdirectory:
 
 ```yaml
 name: cool-projects
@@ -245,7 +265,6 @@ clowder:
         url: gerrit.googlesource.com
         protocol: https
 ```
-
 
 For some more custom examples, see:
 
@@ -299,7 +318,8 @@ The `clowder status` command prints the current state of all projects.
 ### clowder forall
 
 ```bash
-clowder forall -c 'git status' # Run command in all project directories
+# Run command in all project directories
+clowder forall -c 'git status'
 ```
 
 ### git commands
@@ -307,13 +327,26 @@ clowder forall -c 'git status' # Run command in all project directories
 For more information, see [the commands doc](docs/commands.md#git-commands)
 
 ```bash
-clowder branch # Print all local branches
-clowder checkout 'my_branch' # Checkout 'my_branch' in projects if it exists
-clowder clean # Discard any changes in projects
-clowder diff # Print git diff for all projects
-clowder start 'my_feature' # Create new branch 'my_feature' for all projects
-clowder stash # Stash changes in all projects
-clowder prune 'stale_branch' # Prune branch 'stale_branch' for all projects
+# Print all local branches
+clowder branch
+
+# Checkout 'my_branch' in projects if it exists
+clowder checkout 'my_branch'
+
+# Discard any changes in projects
+clowder clean
+
+# Print git diff for all projects
+clowder diff
+
+# Create new branch 'my_feature' for all projects
+clowder start 'my_feature'
+
+# Stash changes in all projects
+clowder stash
+
+# Prune branch 'stale_branch' for all projects
+clowder prune 'stale_branch'
 ```
 
 ### clowder repo commands
@@ -321,9 +354,14 @@ clowder prune 'stale_branch' # Prune branch 'stale_branch' for all projects
 For more information, see [the commands doc](docs/commands.md#clowder-repo-commands)
 
 ```bash
-clowder link 'v0.1' # Set clowder.yml symlink to a previously saved version
-clowder repo run 'git status' # Run command in .clowder directory
-clowder save 'v0.1' # Save a version of clowder.yml with current commit sha's
+# Set clowder.yml symlink to a previously saved version
+clowder link 'v0.1'
+
+# Run command in .clowder directory
+clowder repo run 'git status'
+
+# Save a version of clowder.yml with current commit sha's
+clowder save 'v0.1'
 ```
 
 ### config commands
@@ -333,11 +371,16 @@ clowder save 'v0.1' # Save a version of clowder.yml with current commit sha's
 For more information, see [the commands doc](docs/commands.md#clowder-config)
 
 ```bash
-clowder config get # Get config values
-clowder config set projects 'my_group' # Set config values
-clowder config clear projects # Clear config values
+# Get config values
+clowder config get
+
+# Set config values
+clowder config set projects 'my_group'
+
+# Clear config values
+clowder config clear projects
 ```
 
 ## Development
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for information on setting up your environment for development and contribution guidelines
+See [CONTRIBUTING.md](CONTRIBUTING.md)
