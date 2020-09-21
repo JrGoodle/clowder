@@ -54,6 +54,22 @@ checks:
   #   config:
   #     threshold: 20
 
-# exclude_patterns:
-#   - "tests/"
-#   - "script/"
+exclude_patterns:
+  - "tests/"
+  - "script/"
+  - "docs/"
+  - ".*"
+  - "**/*.json"
+  - "**/*.yml"
+  - "**/*.ini"
+  - "**/*.txt"
+  - "**/*.cfg"
+  - "**/*.yaml"
+  - "Brew*"
+  - "Docker*"
+  - "CHANGELOG.md"
+  - "CONTRIBUTING.md"
+  - "LICENSE"
+  - "README.md"
+  - "clowder/sitecustomize.py"
+  - "setup.py"
