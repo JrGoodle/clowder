@@ -7,14 +7,14 @@
 |  |  |
 |:-|:-|
 | docs | [![Documentation Status](https://readthedocs.org/projects/clowder/badge/?version=latest)](http://clowder.readthedocs.io) |
-| tests | [![GitHub Actions Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2FJrGoodle%2Fclowder%2Fbadge&style=flat)](https://actions-badge.atrox.dev/JrGoodle/clowder/goto) [![CircleCI](https://circleci.com/gh/JrGoodle/clowder.svg?style=shield)](https://circleci.com/gh/JrGoodle/clowder) [![Code Climate Maintainability](https://api.codeclimate.com/v1/badges/56c92799de08f9ef9258/maintainability)](https://codeclimate.com/github/JrGoodle/clowder/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/a99a88d28ad37a79dbf6/test_coverage)](https://codeclimate.com/github/codeclimate/codeclimate/test_coverage) |
+| tests | [![GitHub Actions Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2FJrGoodle%2Fclowder%2Fbadge&style=flat)](https://actions-badge.atrox.dev/JrGoodle/clowder/goto) [![CircleCI](https://circleci.com/gh/JrGoodle/clowder.svg?style=shield)](https://circleci.com/gh/JrGoodle/clowder) [![Code Climate Maintainability](https://api.codeclimate.com/v1/badges/56c92799de08f9ef9258/maintainability)](https://codeclimate.com/github/JrGoodle/clowder/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/56c92799de08f9ef9258/test_coverage)](https://codeclimate.com/github/JrGoodle/clowder/test_coverage) |
 | package | [![PyPI version](https://badge.fury.io/py/clowder-repo.svg)](https://badge.fury.io/py/clowder-repo) [![Python versions](https://img.shields.io/pypi/pyversions/clowder-repo.svg)](https://pypi.python.org/pypi/clowder-repo) [![License](https://img.shields.io/pypi/l/clowder-repo.svg)](https://pypi.python.org/pypi/clowder-repo) [![Status](https://img.shields.io/pypi/status/clowder-repo.svg)](https://pypi.python.org/pypi/clowder-repo) [![Requirements Status](https://requires.io/github/JrGoodle/clowder/requirements.svg?branch=master)](https://requires.io/github/JrGoodle/clowder/requirements/?branch=master) |
 
 ## Table of Contents
 
 * [Why clowder](#why-clowder)
 * [Installation](#installation)
-* [The clowder.yml file](#the-clowderyml-file)
+* [clowder.yml](#clowderyml)
 * [Command Usage](#command-usage)
   * [clowder init](#clowder-init)
   * [clowder herd](#clowder-herd)
@@ -29,7 +29,7 @@
 
 There are many ways to organize projects with git. Monorepos, submodules, subtrees, or [some](https://github.com/cristibalan/braid) [other](https://github.com/mixu/gr) [tool](https://github.com/ingydotnet/git-subrepo). `clowder` is one of the other tools. Its approach is heavily influeced by the [repo tool](https://gerrit.googlesource.com/git-repo) Google uses to manage the Android Open Source Project.
 
-Projects are listed in a `clowder.yml` file that can be checked into its own repo, allowing it to be shared across teams. `clowder` essentially makes this file executable, allowing commands to be run across projects. `clowder` can update submodules, lfs files, and custom git config entries. Projects can track branches, or be tied to specific tags or commits. Upstreams can be configured along with their upstream source, wherever they may live. Snapshots of project states can be saved for later restoration. And more...
+Projects information is stored in a `clowder.yml` file. If checked into its own repo, it can be shared among users. `clowder` essentially makes this file executable, allowing commands to be run across projects. `clowder` can update submodules, lfs files, and custom git config entries. Projects can track branches, or be tied to specific tags or commits. Upstreams can be configured along with their upstream source, wherever they may live. Snapshots of project states can be saved for later restoration. And more...
 
 Daily development still takes place in individual repos, with normal `git` commands. But `clowder` is there if you need to synchronize or run commands on multiple repos.
 
@@ -52,7 +52,13 @@ To install the latest pre-release version:
 sudo pip3 install clowder-repo --force-reinstall --pre
 ```
 
-## The clowder.yml file
+For command autocompletion, add to your shell profile:
+
+```bash
+command -v clowder >/dev/null 2>&1 && eval "$(register-python-argcomplete clowder)"
+```
+
+## clowder.yml
 
 For more inforrmation:
 
@@ -70,10 +76,12 @@ clowder:
   - tensorflow/tensorflow
 ```
 
-Although terse, this is enough to enable `clowder`. With the ommitted default settings:
+Although terse, this is enough information for `clowder` to work with. If the ommitted default settings are included:
 
 ```yaml
 name: cool-projects
+
+protocol: ssh
 
 sources:
   github:
@@ -90,18 +98,15 @@ clowder:
   - tensorflow/tensorflow
 ```
 
-The `name` is simply a descriptive label. The `defaults` section contains the git branch and remote, the source to clone from, and the protocol to use for cloning repositories. `clowder` assumes the following defaults:
-
-* `branch`: `master`
-* `remote`: `origin`
-* `source`: `github`
-* `protocol`: `ssh`
+The `name` is simply a descriptive label. The `defaults` section contains the git branch and remote, the source to clone from, and the protocol to use for cloning repositories.
 
 The `sources` section contains all the git hosting providers. The following sources are built in to `clowder`:
 
-* `github`: `github.com`
-* `gitlab`: `gitlab.com`
-* `bitbucket`: `bitbucket.org`
+| `source.name` | `source.url`    |
+| ------------- | --------------- |
+| `github`      | `github.com`    |
+| `gitlab`      | `gitlab.com`    |
+| `bitbucket`   | `bitbucket.org` |
 
 If we wanted to add a project at another hosting site:
 
@@ -122,7 +127,7 @@ clowder:
     source: google
 ```
 
-A project requires a `name`, the path component of the git clone url. This is combined with `defaults.protocol` or `sources.protocol` to form the full git clone url, taking the form of  `git@${sources.url}:${projects.name}.git` or `https://${sources.url}/${projects.name}.git`. If `path` is not specified, the last component of the name is used for the local directory.
+A project requires a `name`, the project's unique components of the git clone url. This is combined with `defaults.protocol` or `sources.protocol` to form the full git clone url, taking the form of  `git@${sources.url}:${projects.name}.git` or `https://${sources.url}/${projects.name}.git`. If `path` is not specified, the last component of the name is used for the local directory.
 
 In order to be able to run commands for only certain sets of projects, there are groups:
 
@@ -136,7 +141,7 @@ sources:
 
 clowder:
   - name: llvm/llvm-project
-    groups: [notdefault, clattner]
+    groups: [clattner]
   - name: apple/swift
     groups: [clattner]
   - name: tensorflow/tensorflow
@@ -144,8 +149,81 @@ clowder:
   - name: git-repo
     path: repo
     source: google
-    groups: [google]
+    groups: [google, notdefault]
 ```
+
+An equivalent way of specifying groups and custom sources:
+
+```yaml
+name: cool-projects
+
+clowder:
+  clattner:
+    - llvm/llvm-project
+    - apple/swift
+    - name: tensorflow/tensorflow
+      groups: [google]
+  google:
+    - name: git-repo
+      path: repo
+      groups: [notdefault]
+      source:
+        url: gerrit.googlesource.com
+        protocol: https
+```
+
+Another equivalent with settings applied to a group:
+
+```yaml
+name: cool-projects
+
+sources:
+  google:
+    url: gerrit.googlesource.com
+    protocol: https
+
+clowder:
+  clattner:
+    - llvm/llvm-project
+    - apple/swift
+    - name: tensorflow/tensorflow
+      groups: [google]
+  google:
+    defaults:
+      source: google
+    groups: [notdefault]
+    projects:
+      - name: git-repo
+        path: repo
+```
+
+Projects are automatically added to the `all` group, a group of their `name`, and a group of their `path`. If `notdefault` is specified, the project will not be included in commands unless it belongs to another group argument supplied.
+
+If you'd like a group's projects to all be in a subdirectory:
+
+```yaml
+name: cool-projects
+
+clowder:
+  clattner:
+    path: clattner
+    projects:
+      - llvm/llvm-project
+      - apple/swift
+      - name: tensorflow/tensorflow
+        groups: [google]
+  google:
+    path: google
+    projects:
+      - name: git-repo
+        path: repo
+        groups: [notdefault]
+        source:
+          url: gerrit.googlesource.com
+          protocol: https
+```
+
+Which is equivalent to:
 
 ```yaml
 name: cool-projects
@@ -153,19 +231,21 @@ name: cool-projects
 clowder:
   clattner:
     - name: llvm/llvm-project
-      groups: [notdefault]
-    - apple/swift
+      path: clattner/llvm-project
+    - name: apple/swift
+      path: clattner/swift
     - name: tensorflow/tensorflow
+      path: clattner/tensorflow
       groups: [google]
   google:
     - name: git-repo
-      path: repo
+      path: google/repo
+      groups: [notdefault]
       source:
         url: gerrit.googlesource.com
         protocol: https
 ```
 
-Projects are automatically added to the `all` group, a group of their `name`, and a group of their `path`. If `notdefault` is specified, the project will not be included in commands unless another group argument is given that it belongs to.
 
 For some more custom examples, see:
 
