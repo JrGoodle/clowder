@@ -40,7 +40,7 @@ Feature: clowder start
         | black-cats/sasha  | master       | i-dont-exist |
         | black-cats/june   | master       | i-dont-exist |
 
-    @subdirectory @debug
+    @subdirectory
     Scenario Outline: start local subdirectory
         Given cats example is initialized and herded
         And project at <directory> has no local <test_branch>
@@ -124,7 +124,6 @@ Feature: clowder start
         | mu                | knead        | i-dont-exist |
         | duke              | purr         | i-dont-exist |
 
-    @debug
     Scenario Outline: start local group included
         Given cats example is initialized and herded
         And project at <directory> has no remote <test_branch>
