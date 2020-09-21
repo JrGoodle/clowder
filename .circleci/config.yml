@@ -51,7 +51,7 @@ commands:
           name: Sum coverage for Code climate
           command: |
             ./cc-test-reporter sum-coverage \
-              --parts 5 \
+              --parts 4 \
               --output build/codeclimate/codeclimate.json \
               build/codeclimate/codeclimate.*.json
       - run:
@@ -281,10 +281,10 @@ workflows:
       - test_write
       - test_offline
       - test_parallel:
-          groups: 3
+          groups: 2
           matrix:
             parameters:
-              group: [1, 2, 3]
+              group: [1, 2]
       - report_coverage:
           requires:
             - test_write

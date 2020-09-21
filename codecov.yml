@@ -17,6 +17,9 @@ coverage:
         #  enabled: no
         #  target: '50'
 
+fixes:
+  - "/home/circleci/project/::"
+
 parsers:
   gcov:
     branch_detection:
