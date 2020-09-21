@@ -64,7 +64,28 @@
           }
         }
       },
-      "python": null
+      "python": null,
+      "github-release": {
+        "version": "0.8.1",
+        "bottle": {
+          "cellar": ":any_skip_relocation",
+          "prefix": "/usr/local",
+          "files": {
+            "catalina": {
+              "url": "https://homebrew.bintray.com/bottles/github-release-0.8.1.catalina.bottle.tar.gz",
+              "sha256": "67399d81e62c8b1fb7d5b26ebea79de5d806757cd194d2055dcd5dc8935167e2"
+            },
+            "mojave": {
+              "url": "https://homebrew.bintray.com/bottles/github-release-0.8.1.mojave.bottle.tar.gz",
+              "sha256": "3640960eb97bed10dfe75237cc61b3e8fb36f526c9d50c6820cd07c841432842"
+            },
+            "high_sierra": {
+              "url": "https://homebrew.bintray.com/bottles/github-release-0.8.1.high_sierra.bottle.tar.gz",
+              "sha256": "53b5ef103a6190a891f53a5c52019ab2e12e31f15f4f97775cb2cb169befefa1"
+            }
+          }
+        }
+      }
     }
   },
   "system": {
@@ -72,7 +93,7 @@
       "catalina": {
         "HOMEBREW_VERSION": "2.5.1",
         "HOMEBREW_PREFIX": "/usr/local",
-        "Homebrew/homebrew-core": "d6866a9f3bfe965d6435b23b2f481e358739cc93",
+        "Homebrew/homebrew-core": "d3b600db126c41f1ee73c6fc4c807d15293def6d",
         "CLT": "",
         "Xcode": "11.6",
         "macOS": "10.15.6"

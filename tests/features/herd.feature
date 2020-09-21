@@ -737,7 +737,7 @@ Feature: clowder herd
     Scenario Outline: herd with missing default branch
         Given cats example is initialized and herded
         And project at <directory> checked out detached HEAD behind <branch>
-        And project at <directory> deleted local branch <branch>
+        And project at <directory> deleted local <branch>
         When I run 'clowder herd'
         Then the command succeeds
         And project at <directory> is on <branch>

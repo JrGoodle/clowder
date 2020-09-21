@@ -1,78 +1,290 @@
 version: 2.1
+
 orbs:
   codecov: codecov/codecov@1.0.2
-jobs:
-  build:
-    machine: true
 
+commands:
+  install_code_climate:
     steps:
-      - checkout
-
       - run:
-          name: Install python via pyenv
-          command: |
-            pyenv install
-            python --version
-
-      - run:
-          name: Setup git config
-          command: |
-            git config --global user.email "circle@circleci.org"
-            git config --global user.name "CircleCI"
-            git config --global push.default simple
-            git config --global --unset url.ssh://git@github.com.insteadOf
-
+          name: Install Code Climate test coverage reporter
+          command: script/install_cc_test_reporter
+  setup_ssh:
+    steps:
       - add_ssh_keys:
           fingerprints:
             - "e9:7d:20:a0:51:b2:9c:22:f6:b9:5b:55:47:c4:7c:20"
-
       - run:
           name: Add ssh key to known_hosts
           command: ssh-keyscan -H polka-dot-cat.git.beanstalkapp.com >> ~/.ssh/known_hosts
-
+  setup_git_config:
+    steps:
       - run:
-          name: Start clowder tests docker container
-          command: script/docker start
-
-      - run:
-          name: Initialize Code Climate test reporter
+          name: Setup git config
           command: |
-            script/install_cc_test_reporter
-            ./cc-test-reporter before-build
-
+            git config --global user.email "joe@polka.cat"
+            git config --global user.name "CircleCI"
+            git config --global push.default simple
+            git config --global --unset url.ssh://git@github.com.insteadOf
+            sudo git config --system --unset-all filter.lfs.clean || true
+            sudo git config --system --unset-all filter.lfs.smudge || true
+            sudo git config --system --unset-all filter.lfs.process || true
+            sudo git config --system --unset-all filter.lfs.required || true
+  install_git_lfs:
+    steps:
       - run:
-          name: Pytest functional tests - not write and not offline - parallel
-          command: docker-compose exec clowder script/test "-n auto -m 'not write and not offline'"
-
+          name: Install git lfs
+          command: sudo apt-get install git-lfs
+  report_coverage:
+    steps:
+      - attach_workspace:
+          at: .
       - run:
-          name: Pytest functional tests - write and not offline
-          command: docker-compose exec clowder script/test "-m 'write and not offline'"
-
+          name: Install coverage.py
+          command: pip install coverage
       - run:
-          name: Pytest functional tests - offline
-          command: docker-compose exec clowder script/test "-m 'offline'"
-
+          name: Generate test coverage reports
+          command: script/test --report-coverage
+      - codecov/upload:
+          file: build/coverage/coverage.xml
       - run:
-          name: Update build files ownership
-          command: sudo chown -R ${USER} build
-
+          name: Sum coverage for Code climate
+          command: |
+            ./cc-test-reporter sum-coverage \
+              --parts 4 \
+              --output build/codeclimate/codeclimate.json \
+              build/codeclimate/codeclimate.*.json
       - run:
           name: Upload coverage to Code climate
           command: |
-            ./cc-test-reporter format-coverage --input-type coverage.py --output - build/coverage/coverage.xml \
-              | ./cc-test-reporter upload-coverage --id ${CC_TEST_REPORTER_ID} --input -
-
+            ./cc-test-reporter upload-coverage \
+            --id ${CC_TEST_REPORTER_ID} \
+            --input build/codeclimate/codeclimate.json
       - store_test_results:
-          path: build/cucumber
+          path: build/junit/
+      - store_artifacts:
+          path: build
+  test_with_docker:
+    description: "Pytest functional tests in docker image"
+    parameters:
+      markers:
+        type: string
+      label:
+        type: string
+      parallel:
+        type: boolean
+        default: false
+      groups:
+        type: integer
+        default: 0
+      group:
+        type: integer
+        default: 0
+    steps:
+      - run:
+          name: Initialize Code Climate test coverage reporter
+          command: ./cc-test-reporter before-build
+      - run:
+          name: Start clowder tests docker container
+          command: script/docker start
+      - when:
+          condition: <<parameters.parallel>>
+          steps:
+            - run: |
+                docker-compose exec clowder script/test \
+                  --markers "<<parameters.markers>>" \
+                  --label <<parameters.label>> \
+                  --groups <<parameters.groups>> \
+                  --group <<parameters.group>> \
+                  --parallel
+      - unless:
+          condition: <<parameters.parallel>>
+          steps:
+            - run: |
+                docker-compose exec clowder script/test \
+                  --markers "<<parameters.markers>>" \
+                  --label <<parameters.label>> \
+                  --groups <<parameters.groups>> \
+                  --group <<parameters.group>>
+      - run:
+          name: Update build files ownership
+          command: sudo chown -R ${USER} .
+      - when:
+          condition: <<parameters.group>>
+          steps:
+            - run:
+                name: Format coverage for Code climate
+                command: |
+                  ./cc-test-reporter format-coverage \
+                    --input-type coverage.py \
+                    --output build/codeclimate/codeclimate.<<parameters.label>>.<<parameters.group>>.json \
+                    build/coverage/coverage.<<parameters.label>>.<<parameters.group>>.xml
+      - unless:
+          condition: <<parameters.group>>
+          steps:
+            - run:
+                name: Format coverage for Code climate
+                command: |
+                  ./cc-test-reporter format-coverage \
+                    --input-type coverage.py \
+                    --output build/codeclimate/codeclimate.<<parameters.label>>.json \
+                    build/coverage/coverage.<<parameters.label>>.xml
       - store_test_results:
-          path: build/junit
+          path: build/junit/
+      - store_artifacts:
+          path: build
+      - persist_to_workspace:
+          root: .
+          paths:
+            - build/
 
-      - codecov/upload:
-          file: build/coverage/coverage.xml
+  test:
+    description: "Pytest functional tests"
+    parameters:
+      markers:
+        type: string
+      label:
+        type: string
+      parallel:
+        type: boolean
+        default: false
+      groups:
+        type: integer
+        default: 0
+      group:
+        type: integer
+        default: 0
+    steps:
+      - run:
+          name: Initialize Code Climate test coverage reporter
+          command: ./cc-test-reporter before-build
+      - when:
+          condition: <<parameters.parallel>>
+          steps:
+            - run: |
+                script/test \
+                  --markers "<<parameters.markers>>" \
+                  --label <<parameters.label>> \
+                  --groups <<parameters.groups>> \
+                  --group <<parameters.group>> \
+                  --parallel
+      - unless:
+          condition: <<parameters.parallel>>
+          steps:
+            - run: |
+                script/test \
+                  --markers "<<parameters.markers>>" \
+                  --label <<parameters.label>> \
+                  --groups <<parameters.groups>> \
+                  --group <<parameters.group>>
+      - when:
+          condition: <<parameters.groups>>
+          steps:
+            - run:
+                name: Format coverage for Code climate
+                command: |
+                  ./cc-test-reporter format-coverage \
+                    --input-type coverage.py \
+                    --output build/codeclimate/codeclimate.<<parameters.label>>.<<parameters.group>>.json \
+                    build/coverage/coverage.<<parameters.label>>.<<parameters.group>>.xml
+      - unless:
+          condition: <<parameters.groups>>
+          steps:
+            - run:
+                name: Format coverage for Code climate
+                command: |
+                  ./cc-test-reporter format-coverage \
+                    --input-type coverage.py \
+                    --output build/codeclimate/codeclimate.<<parameters.label>>.json \
+                    build/coverage/coverage.<<parameters.label>>.xml
+      - store_test_results:
+          path: build/junit/
+      - store_artifacts:
+          path: build
+      - persist_to_workspace:
+          root: .
+          paths:
+            - build/
 
-      - store_artifacts:
-          path: build/coverage
-      - store_artifacts:
-          path: build/cucumber
-      - store_artifacts:
-          path: build/junit
+jobs:
+  test_parallel:
+    docker:
+      - image: circleci/python:3.7.7
+    parameters:
+      groups:
+        type: integer
+      group:
+        type: integer
+    steps:
+      - checkout
+      - setup_ssh
+      - install_git_lfs
+      - setup_git_config
+      - run: script/cibuild
+      - install_code_climate
+      - test:
+          markers: not write and not offline
+          label: parallel
+          parallel: true
+          groups: <<parameters.groups>>
+          group: <<parameters.group>>
+  test_write:
+    docker:
+      - image: circleci/python:3.7.7
+    steps:
+      - checkout
+      - setup_ssh
+      - install_git_lfs
+      - setup_git_config
+      - run: script/cibuild
+      - install_code_climate
+      - test:
+          markers: write and not offline
+          label: write
+  test_offline:
+    machine: true
+    steps:
+      - checkout
+      - setup_ssh
+      - setup_git_config
+      - run: pyenv install
+      - install_code_climate
+      - test_with_docker:
+          markers: offline
+          label: offline
+  report_coverage:
+    docker:
+      - image: circleci/python:3.7.7
+    steps:
+      - checkout
+      - setup_git_config
+      - install_code_climate
+      - report_coverage
+  # deploy:
+  #   macos:
+  #     xcode: "12.0.0"
+  #   steps:
+  #     - checkout
+  #     - setup_git_config
+  #     - run:
+  #         name: Install clowder and dependencies
+  #         command: script/update
+  #     - run:
+  #         name: Deploy
+  #         command: script/deploy
+
+workflows:
+  pytest:
+    jobs:
+      - test_write
+      - test_offline
+      - test_parallel:
+          groups: 2
+          matrix:
+            parameters:
+              group: [1, 2]
+      - report_coverage:
+          requires:
+            - test_write
+            - test_offline
+            - test_parallel

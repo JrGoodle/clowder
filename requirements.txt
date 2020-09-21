@@ -17,9 +17,11 @@ termcolor
 tqdm
 twine
 wheel
+coverage
 pytest
 pytest-bdd
 pytest-xdist
 pytest-datadir
 pytest-cov
+pytest-test-groups
 virtualenv

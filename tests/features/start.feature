@@ -20,57 +20,56 @@ Feature: clowder start
         When I run 'clowder start -h' and 'clowder start --help'
         Then the commands succeed
 
-    @write @ssh
     Scenario Outline: start local
-        Given cats example is initialized and herded with ssh
-        And cats example projects have no local branch <test_branch>
-        And cats example projects have no remote branch <test_branch>
+        Given cats example is initialized and herded
+        And project at <directory> has no local <test_branch>
+        And project at <directory> has no remote <test_branch>
         And project at <directory> is on <start_branch>
-        When I run 'clowder start pytest-start-branch'
+        When I run 'clowder start i-dont-exist'
         Then the command succeeds
         And project at <directory> has local <test_branch>
         And project at <directory> is on <test_branch>
         And project at <directory> has no remote <test_branch>
 
         Examples:
-        | directory         | start_branch | test_branch         |
-        | mu                | knead        | pytest-start-branch |
-        | duke              | purr         | pytest-start-branch |
-        | black-cats/kishka | master       | pytest-start-branch |
-        | black-cats/kit    | master       | pytest-start-branch |
-        | black-cats/sasha  | master       | pytest-start-branch |
-        | black-cats/june   | master       | pytest-start-branch |
+        | directory         | start_branch | test_branch  |
+        | mu                | knead        | i-dont-exist |
+        | duke              | purr         | i-dont-exist |
+        | black-cats/kishka | master       | i-dont-exist |
+        | black-cats/kit    | master       | i-dont-exist |
+        | black-cats/sasha  | master       | i-dont-exist |
+        | black-cats/june   | master       | i-dont-exist |
 
-    @subdirectory @write @ssh
+    @subdirectory
     Scenario Outline: start local subdirectory
-        Given cats example is initialized and herded with ssh
-        And cats example projects have no local branch <test_branch>
-        And cats example projects have no remote branch <test_branch>
+        Given cats example is initialized and herded
+        And project at <directory> has no local <test_branch>
+        And project at <directory> has no remote <test_branch>
         And project at <directory> is on <start_branch>
         When I change to directory black-cats/sasha
-        And I run 'clowder start pytest-start-branch'
+        And I run 'clowder start i-dont-exist'
         Then the command succeeds
         And project at <directory> has local <test_branch>
         And project at <directory> is on <test_branch>
         And project at <directory> has no remote <test_branch>
 
         Examples:
-        | directory         | start_branch | test_branch         |
-        | mu                | knead        | pytest-start-branch |
-        | duke              | purr         | pytest-start-branch |
-        | black-cats/kishka | master       | pytest-start-branch |
-        | black-cats/kit    | master       | pytest-start-branch |
-        | black-cats/sasha  | master       | pytest-start-branch |
-        | black-cats/june   | master       | pytest-start-branch |
+        | directory         | start_branch | test_branch  |
+        | mu                | knead        | i-dont-exist |
+        | duke              | purr         | i-dont-exist |
+        | black-cats/kishka | master       | i-dont-exist |
+        | black-cats/kit    | master       | i-dont-exist |
+        | black-cats/sasha  | master       | i-dont-exist |
+        | black-cats/june   | master       | i-dont-exist |
 
-    @offline @ssh @write
+    @offline
     Scenario Outline: start local offline
-        Given cats example is initialized and herded with ssh
-        And cats example projects have no remote branch <test_branch>
-        And cats example projects have no local branch <test_branch>
+        Given cats example is initialized and herded
+        And project at <directory> has no remote <test_branch>
+        And project at <directory> has no local <test_branch>
         And project at <directory> is on <start_branch>
         When the network connection is disabled
-        And I run 'clowder start pytest-start-branch'
+        And I run 'clowder start i-dont-exist'
         And the network connection is enabled
         Then the command succeeds
         And project at <directory> has local <test_branch>
@@ -78,22 +77,22 @@ Feature: clowder start
         And project at <directory> has no remote <test_branch>
 
         Examples:
-        | directory         | start_branch | test_branch         |
-        | mu                | knead        | pytest-start-branch |
-        | duke              | purr         | pytest-start-branch |
-        | black-cats/kishka | master       | pytest-start-branch |
-        | black-cats/kit    | master       | pytest-start-branch |
-        | black-cats/sasha  | master       | pytest-start-branch |
-        | black-cats/june   | master       | pytest-start-branch |
+        | directory         | start_branch | test_branch  |
+        | mu                | knead        | i-dont-exist |
+        | duke              | purr         | i-dont-exist |
+        | black-cats/kishka | master       | i-dont-exist |
+        | black-cats/kit    | master       | i-dont-exist |
+        | black-cats/sasha  | master       | i-dont-exist |
+        | black-cats/june   | master       | i-dont-exist |
 
-    @fail @offline @ssh @write
+    @fail @offline
     Scenario Outline: start tracking offline
-        Given cats example is initialized and herded with ssh
-        And cats example projects have no remote branch <test_branch>
-        And cats example projects have no local branch <test_branch>
+        Given cats example is initialized and herded
+        And project at <directory> has no remote <test_branch>
+        And project at <directory> has no local <test_branch>
         And project at <directory> is on <start_branch>
         When the network connection is disabled
-        And I run 'clowder start -t new-branch'
+        And I run 'clowder start -t i-dont-exist'
         And the network connection is enabled
         Then the command fails
         And project at <directory> has no local <test_branch>
@@ -101,49 +100,47 @@ Feature: clowder start
         And project at <directory> has no remote <test_branch>
 
         Examples:
-        | directory         | start_branch | test_branch         |
-        | mu                | knead        | pytest-start-branch |
-        | duke              | purr         | pytest-start-branch |
-        | black-cats/kishka | master       | pytest-start-branch |
-        | black-cats/kit    | master       | pytest-start-branch |
-        | black-cats/sasha  | master       | pytest-start-branch |
-        | black-cats/june   | master       | pytest-start-branch |
+        | directory         | start_branch | test_branch  |
+        | mu                | knead        | i-dont-exist |
+        | duke              | purr         | i-dont-exist |
+        | black-cats/kishka | master       | i-dont-exist |
+        | black-cats/kit    | master       | i-dont-exist |
+        | black-cats/sasha  | master       | i-dont-exist |
+        | black-cats/june   | master       | i-dont-exist |
 
-    @write @ssh
     Scenario Outline: start local group excluded
-        Given cats example is initialized and herded with ssh
-        And cats example projects have no remote branch <test_branch>
-        And cats example projects have no local branch <test_branch>
+        Given cats example is initialized and herded
+        And project at <directory> has no remote <test_branch>
+        And project at <directory> has no local <test_branch>
         And project at <directory> is on <start_branch>
-        When I run 'clowder start new-branch black-cats'
+        When I run 'clowder start i-dont-exist black-cats'
         Then the command succeeds
         And project at <directory> is on <start_branch>
         And project at <directory> has no local <test_branch>
         And project at <directory> has no remote <test_branch>
 
         Examples:
-        | directory         | start_branch | test_branch         |
-        | mu                | knead        | pytest-start-branch |
-        | duke              | purr         | pytest-start-branch |
+        | directory         | start_branch | test_branch  |
+        | mu                | knead        | i-dont-exist |
+        | duke              | purr         | i-dont-exist |
 
-    @write @ssh
     Scenario Outline: start local group included
-        Given cats example is initialized and herded with ssh
-        And cats example projects have no remote branch <test_branch>
-        And cats example projects have no local branch <test_branch>
+        Given cats example is initialized and herded
+        And project at <directory> has no remote <test_branch>
+        And project at <directory> has no local <test_branch>
         And project at <directory> is on <start_branch>
-        When I run 'clowder start pytest-start-branch black-cats'
+        When I run 'clowder start i-dont-exist black-cats'
         Then the command succeeds
         And project at <directory> has local <test_branch>
         And project at <directory> is on <test_branch>
         And project at <directory> has no remote <test_branch>
 
         Examples:
-        | directory         | start_branch | test_branch         |
-        | black-cats/kishka | master       | pytest-start-branch |
-        | black-cats/kit    | master       | pytest-start-branch |
-        | black-cats/sasha  | master       | pytest-start-branch |
-        | black-cats/june   | master       | pytest-start-branch |
+        | directory         | start_branch | test_branch  |
+        | black-cats/kishka | master       | i-dont-exist |
+        | black-cats/kit    | master       | i-dont-exist |
+        | black-cats/sasha  | master       | i-dont-exist |
+        | black-cats/june   | master       | i-dont-exist |
 
     # TODO: Probably need to create a fixture that sets up remote branches
     @internet @write @ssh

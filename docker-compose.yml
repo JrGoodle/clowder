@@ -6,12 +6,13 @@ services:
     stdin_open: true
     tty: true
     entrypoint: /usr/bin/env bash
+    working_dir: ${PWD}
     cap_add:
       - NET_ADMIN
     volumes:
       - type: bind
         source: .
-        target: /clowder
+        target: ${PWD}
       - type: bind
         source: /run/host-services/ssh-auth.sock
         target: /run/host-services/ssh-auth.sock

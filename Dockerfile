@@ -22,11 +22,6 @@ COPY build/ssh /root/.ssh
 
 ############################################################
 
-VOLUME /clowder
-WORKDIR /clowder
-
-############################################################
-
 # Update package list
 RUN apt-get update -y
 

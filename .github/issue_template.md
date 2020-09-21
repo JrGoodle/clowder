@@ -1,14 +1,16 @@
-### Expected behavior
+# Issue
 
+## Expected
 
+`<description>`
 
-### Actual behavior
+## Actual
 
+`<description>`
 
+### Steps to reproduce
 
-### Steps to reproduce the behavior
-
-
+`<steps>`
 
 ### Environment
 

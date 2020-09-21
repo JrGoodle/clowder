@@ -158,7 +158,7 @@ Feature: clowder prune
     @fail @offline @ssh @write
     Scenario Outline: prune remote offline
         Given cats example is initialized and herded with ssh
-        And project at <directory> created remote branch <test_branch>
+        And project at <directory> created remote <test_branch>
         When the network connection is disabled
         And I run 'clowder prune -r  pytest-prune-remote-offline'
         And the network connection is enabled
@@ -177,7 +177,7 @@ Feature: clowder prune
     @fail @offline @ssh @write
     Scenario Outline: prune all offline
         Given cats example is initialized and herded with ssh
-        And project at <directory> created remote branch <test_branch>
+        And project at <directory> created remote <test_branch>
         When the network connection is disabled
         And I run 'clowder prune -a pytest-prune-all-offline'
         And the network connection is enabled

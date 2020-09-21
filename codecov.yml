@@ -18,7 +18,7 @@ coverage:
         #  target: '50'
 
 fixes:
-  - "/clowder/::"
+  - "/home/circleci/project/::"
 
 parsers:
   gcov:
