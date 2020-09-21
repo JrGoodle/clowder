@@ -16,6 +16,7 @@ source =
     /clowder/clowder/
     /Users/runner/work/clowder/clowder/clowder/
     /Users/runner/work/clowder/clowder/
+    /home/circleci/project/clowder/
     /Users/jrgoodle/projects/clowder-projects/clowder/clowder/
 
 [report]

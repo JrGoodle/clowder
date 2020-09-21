@@ -22,10 +22,19 @@ commands:
       - run:
           name: Setup git config
           command: |
-            git config --global user.email "circle@circleci.org"
+            git config --global user.email "joe@polka.cat"
             git config --global user.name "CircleCI"
             git config --global push.default simple
             git config --global --unset url.ssh://git@github.com.insteadOf
+            git config --system --unset-all filter.lfs.clean || true
+            git config --system --unset-all filter.lfs.smudge || true
+            git config --system --unset-all filter.lfs.process || true
+            git config --system --unset-all filter.lfs.required || true
+  install_git_lfs:
+    steps:
+      - run:
+          name: Install git lfs
+          command: sudo apt-get install git-lfs
   report_coverage:
     steps:
       - attach_workspace:
@@ -55,8 +64,8 @@ commands:
           path: build/junit/
       - store_artifacts:
           path: build
-  test:
-    description: "Pytest functional tests"
+  test_with_docker:
+    description: "Pytest functional tests in docker image"
     parameters:
       markers:
         type: string
@@ -81,43 +90,22 @@ commands:
       - when:
           condition: <<parameters.parallel>>
           steps:
-            - when:
-                condition: <<parameters.group>>
-                steps:
-                  - run: |
-                      docker-compose exec clowder script/test \
-                        --markers "<<parameters.markers>>" \
-                        --label <<parameters.label>>.<<parameters.group>> \
-                        --groups <<parameters.groups>> \
-                        --group <<parameters.group>> \
-                        --parallel
-            - unless:
-                condition: <<parameters.group>>
-                steps:
-                  - run: |
-                      docker-compose exec clowder script/test \
-                        --markers "<<parameters.markers>>" \
-                        --label <<parameters.label>> \
-                        --parallel
+            - run: |
+                docker-compose exec clowder script/test \
+                  --markers "<<parameters.markers>>" \
+                  --label <<parameters.label>> \
+                  --groups <<parameters.groups>> \
+                  --group <<parameters.group>> \
+                  --parallel
       - unless:
           condition: <<parameters.parallel>>
           steps:
-            - when:
-                condition: <<parameters.group>>
-                steps:
-                  - run: |
-                      docker-compose exec clowder script/test \
-                        --markers "<<parameters.markers>>" \
-                        --label <<parameters.label>>.<<parameters.group>> \
-                        --groups <<parameters.groups>> \
-                        --group <<parameters.group>>
-            - unless:
-                condition: <<parameters.group>>
-                steps:
-                  - run: |
-                      docker-compose exec clowder script/test \
-                        --markers "<<parameters.markers>>" \
-                        --label <<parameters.label>>
+            - run: |
+                docker-compose exec clowder script/test \
+                  --markers "<<parameters.markers>>" \
+                  --label <<parameters.label>> \
+                  --groups <<parameters.groups>> \
+                  --group <<parameters.group>>
       - run:
           name: Update build files ownership
           command: sudo chown -R ${USER} build
@@ -150,9 +138,78 @@ commands:
           paths:
             - build/
 
+  test:
+    description: "Pytest functional tests"
+    parameters:
+      markers:
+        type: string
+      label:
+        type: string
+      parallel:
+        type: boolean
+        default: false
+      groups:
+        type: integer
+        default: 0
+      group:
+        type: integer
+        default: 0
+    steps:
+      - run:
+          name: Initialize Code Climate test coverage reporter
+          command: ./cc-test-reporter before-build
+      - when:
+          condition: <<parameters.parallel>>
+          steps:
+            - run: |
+                script/test \
+                  --markers "<<parameters.markers>>" \
+                  --label <<parameters.label>> \
+                  --groups <<parameters.groups>> \
+                  --group <<parameters.group>> \
+                  --parallel
+      - unless:
+          condition: <<parameters.parallel>>
+          steps:
+            - run: |
+                script/test \
+                  --markers "<<parameters.markers>>" \
+                  --label <<parameters.label>> \
+                  --groups <<parameters.groups>> \
+                  --group <<parameters.group>>
+      - when:
+          condition: <<parameters.group>>
+          steps:
+            - run:
+                name: Format coverage for Code climate
+                command: |
+                  ./cc-test-reporter format-coverage \
+                    --input-type coverage.py \
+                    --output build/codeclimate/codeclimate.<<parameters.label>>.<<parameters.group>>.json \
+                    build/coverage/coverage.<<parameters.label>>.<<parameters.group>>.xml
+      - unless:
+          condition: <<parameters.group>>
+          steps:
+            - run:
+                name: Format coverage for Code climate
+                command: |
+                  ./cc-test-reporter format-coverage \
+                    --input-type coverage.py \
+                    --output build/codeclimate/codeclimate.<<parameters.label>>.json \
+                    build/coverage/coverage.<<parameters.label>>.xml
+      - store_test_results:
+          path: build/junit/
+      - store_artifacts:
+          path: build
+      - persist_to_workspace:
+          root: .
+          paths:
+            - build/
+
 jobs:
   test_parallel:
-    machine: true
+    docker:
+      - image: circleci/python:3.7.7
     parameters:
       groups:
         type: integer
@@ -162,7 +219,8 @@ jobs:
       - checkout
       - setup_ssh
       - setup_git_config
-      - run: pyenv install
+      - install_git_lfs
+      - run: script/cibuild
       - install_code_climate
       - test:
           markers: not write and not offline
@@ -171,12 +229,14 @@ jobs:
           groups: <<parameters.groups>>
           group: <<parameters.group>>
   test_write:
-    machine: true
+    docker:
+      - image: circleci/python:3.7.7
     steps:
       - checkout
       - setup_ssh
       - setup_git_config
-      - run: pyenv install
+      - install_git_lfs
+      - run: script/cibuild
       - install_code_climate
       - test:
           markers: clean and write
@@ -190,7 +250,7 @@ jobs:
       - setup_git_config
       - run: pyenv install
       - install_code_climate
-      - test:
+      - test_with_docker:
           markers: diff and offline
           # markers: offline and not write
           label: offline
