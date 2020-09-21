@@ -153,9 +153,8 @@ def main() -> None:
         groups = None if args.groups is None else args.groups[0]
         group = None if args.group is None else args.group[0]
         if groups is not None and group is not None:
-            if label is not None:
-                label = f"{label}.{group}"
-            if groups > 1:
+            if groups > 0:
+                label = group if label is None else f"{label}.{group}"
                 options += f" --test-group-count {groups} --test-group={group}"
         elif group is not None or groups is not None:
             print("--groups and --group are both required if one is used")

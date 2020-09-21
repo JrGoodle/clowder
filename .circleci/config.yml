@@ -26,15 +26,10 @@ commands:
             git config --global user.name "CircleCI"
             git config --global push.default simple
             git config --global --unset url.ssh://git@github.com.insteadOf
-            git config --system --unset-all filter.lfs.clean || true
-            git config --system --unset-all filter.lfs.smudge || true
-            git config --system --unset-all filter.lfs.process || true
-            git config --system --unset-all filter.lfs.required || true
-            git config --global --unset-all filter.lfs.clean || true
-            git config --global --unset-all filter.lfs.smudge || true
-            git config --global --unset-all filter.lfs.process || true
-            git config --global --unset-all filter.lfs.required || true
-            git config --list --show-origin
+            sudo git config --system --unset-all filter.lfs.clean || true
+            sudo git config --system --unset-all filter.lfs.smudge || true
+            sudo git config --system --unset-all filter.lfs.process || true
+            sudo git config --system --unset-all filter.lfs.required || true
   install_git_lfs:
     steps:
       - run:
@@ -183,7 +178,7 @@ commands:
                   --groups <<parameters.groups>> \
                   --group <<parameters.group>>
       - when:
-          condition: <<parameters.group>>
+          condition: <<parameters.groups>>
           steps:
             - run:
                 name: Format coverage for Code climate
@@ -193,7 +188,7 @@ commands:
                     --output build/codeclimate/codeclimate.<<parameters.label>>.<<parameters.group>>.json \
                     build/coverage/coverage.<<parameters.label>>.<<parameters.group>>.xml
       - unless:
-          condition: <<parameters.group>>
+          condition: <<parameters.groups>>
           steps:
             - run:
                 name: Format coverage for Code climate
