@@ -239,8 +239,7 @@ jobs:
       - run: script/cibuild
       - install_code_climate
       - test:
-          markers: clean and write
-          # markers: write
+          markers: write
           label: write
   test_offline:
     machine: true
@@ -251,8 +250,7 @@ jobs:
       - run: pyenv install
       - install_code_climate
       - test_with_docker:
-          markers: diff and offline
-          # markers: offline and not write
+          markers: offline and not write
           label: offline
   report_coverage:
     docker:
