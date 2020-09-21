@@ -117,6 +117,7 @@ commands:
                 command: |
                   ./cc-test-reporter format-coverage \
                     --input-type coverage.py \
+                    --prefix /clowder/ \
                     --output build/codeclimate/codeclimate.<<parameters.label>>.<<parameters.group>>.json \
                     build/coverage/coverage.<<parameters.label>>.<<parameters.group>>.xml
       - unless:
@@ -127,6 +128,7 @@ commands:
                 command: |
                   ./cc-test-reporter format-coverage \
                     --input-type coverage.py \
+                    --prefix /clowder/ \
                     --output build/codeclimate/codeclimate.<<parameters.label>>.json \
                     build/coverage/coverage.<<parameters.label>>.xml
       - store_test_results:
@@ -186,6 +188,7 @@ commands:
                   ./cc-test-reporter format-coverage \
                     --input-type coverage.py \
                     --output build/codeclimate/codeclimate.<<parameters.label>>.<<parameters.group>>.json \
+                    --prefix /home/circleci/project/ \
                     build/coverage/coverage.<<parameters.label>>.<<parameters.group>>.xml
       - unless:
           condition: <<parameters.groups>>
@@ -196,6 +199,7 @@ commands:
                   ./cc-test-reporter format-coverage \
                     --input-type coverage.py \
                     --output build/codeclimate/codeclimate.<<parameters.label>>.json \
+                    --prefix /home/circleci/project/ \
                     build/coverage/coverage.<<parameters.label>>.xml
       - store_test_results:
           path: build/junit/

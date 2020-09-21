@@ -1,7 +1,6 @@
 [run]
 branch = True
 concurrency = multiprocessing
-relative_files=True
 parallel = True
 dynamic_context = test_function
 data_file = build/coverage/.coverage
@@ -14,8 +13,6 @@ source = clowder/*
 source =
     clowder/
     /clowder/clowder/
-    /Users/runner/work/clowder/clowder/clowder/
-    /Users/runner/work/clowder/clowder/
     /home/circleci/project/clowder/
     /Users/jrgoodle/projects/clowder-projects/clowder/clowder/
 

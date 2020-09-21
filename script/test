@@ -93,7 +93,7 @@ def test(command_options: str, label: Optional[str] = None) -> None:
     bdd_reporting_options = f" --cucumberjson={cucumber_file} --cucumberjson-expanded"
     command += bdd_reporting_options
 
-    # Run command
+    # Run test command
     result = run_command(path, command)
 
     # Rename coverage
