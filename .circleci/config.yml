@@ -108,7 +108,7 @@ commands:
                   --group <<parameters.group>>
       - run:
           name: Update build files ownership
-          command: sudo chown -R ${USER} build
+          command: sudo chown -R ${USER} .
       - when:
           condition: <<parameters.group>>
           steps:
@@ -117,7 +117,7 @@ commands:
                 command: |
                   ./cc-test-reporter format-coverage \
                     --input-type coverage.py \
-                    --prefix /clowder/ \
+                    --prefix /home/circleci/project \
                     --output build/codeclimate/codeclimate.<<parameters.label>>.<<parameters.group>>.json \
                     build/coverage/coverage.<<parameters.label>>.<<parameters.group>>.xml
       - unless:
@@ -128,7 +128,7 @@ commands:
                 command: |
                   ./cc-test-reporter format-coverage \
                     --input-type coverage.py \
-                    --prefix /clowder/ \
+                    --prefix /home/circleci/project \
                     --output build/codeclimate/codeclimate.<<parameters.label>>.json \
                     build/coverage/coverage.<<parameters.label>>.xml
       - store_test_results:
@@ -188,7 +188,7 @@ commands:
                   ./cc-test-reporter format-coverage \
                     --input-type coverage.py \
                     --output build/codeclimate/codeclimate.<<parameters.label>>.<<parameters.group>>.json \
-                    --prefix /home/circleci/project/ \
+                    --prefix /home/circleci/project \
                     build/coverage/coverage.<<parameters.label>>.<<parameters.group>>.xml
       - unless:
           condition: <<parameters.groups>>
@@ -199,7 +199,7 @@ commands:
                   ./cc-test-reporter format-coverage \
                     --input-type coverage.py \
                     --output build/codeclimate/codeclimate.<<parameters.label>>.json \
-                    --prefix /home/circleci/project/ \
+                    --prefix /home/circleci/project \
                     build/coverage/coverage.<<parameters.label>>.xml
       - store_test_results:
           path: build/junit/
