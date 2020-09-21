@@ -162,9 +162,7 @@ jobs:
       - checkout
       - setup_ssh
       - setup_git_config
-      - run: |
-          pyenv local 3.6.3
-          pyenv install
+      - run: pyenv install
       - install_code_climate
       - test:
           markers: not write and not offline
@@ -178,9 +176,7 @@ jobs:
       - checkout
       - setup_ssh
       - setup_git_config
-      - run: |
-          pyenv local 3.6.3
-          pyenv install
+      - run: pyenv install
       - install_code_climate
       - test:
           markers: clean and write
@@ -192,9 +188,7 @@ jobs:
       - checkout
       - setup_ssh
       - setup_git_config
-      - run: |
-          pyenv local 3.6.3
-          pyenv install
+      - run: pyenv install
       - install_code_climate
       - test:
           markers: diff and offline
