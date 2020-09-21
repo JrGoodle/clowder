@@ -30,6 +30,11 @@ commands:
             git config --system --unset-all filter.lfs.smudge || true
             git config --system --unset-all filter.lfs.process || true
             git config --system --unset-all filter.lfs.required || true
+            git config --global --unset-all filter.lfs.clean || true
+            git config --global --unset-all filter.lfs.smudge || true
+            git config --global --unset-all filter.lfs.process || true
+            git config --global --unset-all filter.lfs.required || true
+            git config --list --show-origin
   install_git_lfs:
     steps:
       - run:
