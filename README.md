@@ -76,7 +76,11 @@ clowder:
   - tensorflow/tensorflow
 ```
 
-Although terse, this is enough information for `clowder` to work with. If the ommitted default settings are included:
+Although terse, this is enough information for `clowder` to work with.
+
+The name is simply a descriptive label.
+
+If the ommitted default settings are included:
 
 ```yaml
 name: cool-projects
@@ -93,12 +97,15 @@ defaults:
   branch: master
 
 clowder:
-  - llvm/llvm-project
-  - apple/swift
-  - tensorflow/tensorflow
+  - name: llvm/llvm-project
+    path: llvm-project
+  - name: apple/swift
+    path: swift
+  - name: tensorflow/tensorflow
+    path: tensorflow
 ```
 
-The name is simply a descriptive label. The defaults section contains the git branch and remote, the source to clone from, and the protocol to use for cloning repositories.
+The defaults section contains the git branch and remote, the source to clone from, and the protocol to use for cloning repositories.
 
 A project requires at minimum a name (the last components of the git clone url). Depending on the protocol, this is combined with the source url to form the full git clone url:
 
@@ -106,6 +113,8 @@ A project requires at minimum a name (the last components of the git clone url).
 | -------- | ------------------------------------------- |
 | ssh      | `git@${source.url}:${project.name}.git`     |
 | https    | `https://${source.url}/${project.name}.git` |
+
+If the path is not specified, the last component of the project name is used for the local directory.
 
 The sources section is where custom git hosting providers are specified. The following sources are built in:
 
@@ -115,7 +124,7 @@ The sources section is where custom git hosting providers are specified. The fol
 | `gitlab`      | `gitlab.com`    |
 | `bitbucket`   | `bitbucket.org` |
 
-To add a project from another hosting site:
+To add a project from a custom hosting site:
 
 ```yaml
 name: cool-projects
@@ -150,8 +159,6 @@ clowder:
       protocol: https
 ```
 
-If `path` is not specified, the last component of the project name is used for the local directory.
-
 In order to be able to run commands for only certain sets of projects, there are groups:
 
 ```yaml
@@ -172,7 +179,7 @@ clowder:
       protocol: https
 ```
 
-Or equivalently:
+Or equivalently with grouped sections:
 
 ```yaml
 name: cool-projects
@@ -192,7 +199,7 @@ clowder:
         protocol: https
 ```
 
-Or equivalently:
+Or equivalently using grouped section settings:
 
 ```yaml
 name: cool-projects
@@ -217,7 +224,7 @@ clowder:
         path: repo
 ```
 
-Projects are automatically added to the group `all` and groups of their name and path. If `notdefault` is specified, the project will not be included in commands unless it belongs to another group argument supplied.
+Projects are automatically added to the `all` group, and to groups of their name and path. If `notdefault` is specified, the project will not be included in commands unless it belongs to another supplied group argument.
 
 To save projects to a subdirectory:
 
