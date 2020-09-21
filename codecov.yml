@@ -19,6 +19,7 @@ coverage:
 
 fixes:
   - "/clowder/::"
+  - "/home/circleci/project/::"
 
 parsers:
   gcov:
