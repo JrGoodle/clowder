@@ -22,10 +22,10 @@ Feature: clowder start
 
     Scenario Outline: start local
         Given cats example is initialized and herded
-        And project at <directory> has no local branch <test_branch>
-        And project at <directory> has no remote branch <test_branch>
+        And project at <directory> has no local <test_branch>
+        And project at <directory> has no remote <test_branch>
         And project at <directory> is on <start_branch>
-        When I run 'clowder start pytest-start-branch'
+        When I run 'clowder start i-dont-exist'
         Then the command succeeds
         And project at <directory> has local <test_branch>
         And project at <directory> is on <test_branch>
@@ -40,14 +40,14 @@ Feature: clowder start
         | black-cats/sasha  | master       | i-dont-exist |
         | black-cats/june   | master       | i-dont-exist |
 
-    @subdirectory
+    @subdirectory @debug
     Scenario Outline: start local subdirectory
         Given cats example is initialized and herded
-        And project at <directory> has no local branch <test_branch>
-        And project at <directory> has no remote branch <test_branch>
+        And project at <directory> has no local <test_branch>
+        And project at <directory> has no remote <test_branch>
         And project at <directory> is on <start_branch>
         When I change to directory black-cats/sasha
-        And I run 'clowder start pytest-start-branch'
+        And I run 'clowder start i-dont-exist'
         Then the command succeeds
         And project at <directory> has local <test_branch>
         And project at <directory> is on <test_branch>
@@ -65,11 +65,11 @@ Feature: clowder start
     @offline
     Scenario Outline: start local offline
         Given cats example is initialized and herded
-        And project at <directory> has no remote branch <test_branch>
-        And project at <directory> has no local branch <test_branch>
+        And project at <directory> has no remote <test_branch>
+        And project at <directory> has no local <test_branch>
         And project at <directory> is on <start_branch>
         When the network connection is disabled
-        And I run 'clowder start pytest-start-branch'
+        And I run 'clowder start i-dont-exist'
         And the network connection is enabled
         Then the command succeeds
         And project at <directory> has local <test_branch>
@@ -88,11 +88,11 @@ Feature: clowder start
     @fail @offline
     Scenario Outline: start tracking offline
         Given cats example is initialized and herded
-        And project at <directory> has no remote branch <test_branch>
-        And project at <directory> has no local branch <test_branch>
+        And project at <directory> has no remote <test_branch>
+        And project at <directory> has no local <test_branch>
         And project at <directory> is on <start_branch>
         When the network connection is disabled
-        And I run 'clowder start -t new-branch'
+        And I run 'clowder start -t i-dont-exist'
         And the network connection is enabled
         Then the command fails
         And project at <directory> has no local <test_branch>
@@ -110,10 +110,10 @@ Feature: clowder start
 
     Scenario Outline: start local group excluded
         Given cats example is initialized and herded
-        And project at <directory> has no remote branch <test_branch>
-        And project at <directory> has no local branch <test_branch>
+        And project at <directory> has no remote <test_branch>
+        And project at <directory> has no local <test_branch>
         And project at <directory> is on <start_branch>
-        When I run 'clowder start new-branch black-cats'
+        When I run 'clowder start i-dont-exist black-cats'
         Then the command succeeds
         And project at <directory> is on <start_branch>
         And project at <directory> has no local <test_branch>
@@ -124,12 +124,13 @@ Feature: clowder start
         | mu                | knead        | i-dont-exist |
         | duke              | purr         | i-dont-exist |
 
+    @debug
     Scenario Outline: start local group included
         Given cats example is initialized and herded
-        And project at <directory> has no remote branch <test_branch>
-        And project at <directory> has no local branch <test_branch>
+        And project at <directory> has no remote <test_branch>
+        And project at <directory> has no local <test_branch>
         And project at <directory> is on <start_branch>
-        When I run 'clowder start pytest-start-branch black-cats'
+        When I run 'clowder start i-dont-exist black-cats'
         Then the command succeeds
         And project at <directory> has local <test_branch>
         And project at <directory> is on <test_branch>
