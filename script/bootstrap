@@ -28,8 +28,8 @@ case "$(uname)" in
         fi
         echo 'Install Homebrew formulas'
         brew bundle || exit 1
-        echo 'Install pyenv versions'
-        pyenv install --skip-existing || exit 1
+        # echo 'Install pyenv versions'
+        # pyenv install --skip-existing || exit 1
         ;;
     CYGWIN*) export PLATFORM="windows";
         echo "Windows is not currently supported"
