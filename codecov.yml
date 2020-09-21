@@ -17,10 +17,6 @@ coverage:
         #  enabled: no
         #  target: '50'
 
-fixes:
-  - "/clowder/::"
-  - "/home/circleci/project/::"
-
 parsers:
   gcov:
     branch_detection:
