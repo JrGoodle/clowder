@@ -121,13 +121,26 @@ commands:
       - run:
           name: Update build files ownership
           command: sudo chown -R ${USER} build
-      - run:
-          name: Format coverage for Code climate
-          command: |
-            ./cc-test-reporter format-coverage \
-              --input-type coverage.py \
-              --output build/codeclimate/codeclimate.<<parameters.label>>.json \
-              build/coverage/coverage.<<parameters.label>>.xml
+      - when:
+          condition: <<parameters.group>>
+          steps:
+            - run:
+                name: Format coverage for Code climate
+                command: |
+                  ./cc-test-reporter format-coverage \
+                    --input-type coverage.py \
+                    --output build/codeclimate/codeclimate.<<parameters.label>>.<<parameters.group>>.json \
+                    build/coverage/coverage.<<parameters.label>>.<<parameters.group>>.xml
+      - unless:
+          condition: <<parameters.group>>
+          steps:
+            - run:
+                name: Format coverage for Code climate
+                command: |
+                  ./cc-test-reporter format-coverage \
+                    --input-type coverage.py \
+                    --output build/codeclimate/codeclimate.<<parameters.label>>.json \
+                    build/coverage/coverage.<<parameters.label>>.xml
       - store_test_results:
           path: build/junit/
       - store_artifacts:
@@ -208,16 +221,15 @@ jobs:
   #         name: Deploy
   #         command: script/deploy
 
-
 workflows:
   pytest:
     jobs:
       - test_write
       - test_offline
       - test_parallel:
+          groups: 3
           matrix:
             parameters:
-              groups: [3]
               group: [1, 2, 3]
       - report_coverage:
           requires:
