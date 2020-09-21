@@ -279,16 +279,15 @@ def given_directory_behind_ahead_upstream_num_commits_test_branch_conflict(tmp_p
 
 @given(parsers.parse("repo at {directory} created remote branch {test_branch}"))
 @given(parsers.parse("project at {directory} created remote branch {test_branch}"))
-@given("project at <directory> created remote branch <test_branch>")
+@given("project at <directory> created remote <test_branch>")
 def given_directory_created_remote_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
     path = tmp_path / directory
-    results = util.create_remote_branch(path, test_branch)
-    assert all([r.returncode == 0 for r in results])
+    util.create_remote_branch(path, test_branch)
 
 
 @given(parsers.parse("repo at {directory} deleted remote branch {test_branch}"))
 @given(parsers.parse("project at {directory} deleted remote branch {test_branch}"))
-@given("project at <directory> deleted remote branch <test_branch>")
+@given("project at <directory> deleted remote <test_branch>")
 def given_directory_deleted_remote_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
     path = tmp_path / directory
     if util.remote_branch_exists(path, test_branch):
@@ -299,7 +298,7 @@ def given_directory_deleted_remote_branch(tmp_path: Path, directory: str, test_b
 
 @given(parsers.parse("repo at {directory} deleted local branch {test_branch}"))
 @given(parsers.parse("project at {directory} deleted local branch {test_branch}"))
-@given("project at <directory> deleted local branch <test_branch>")
+@given("project at <directory> deleted local <test_branch>")
 def given_directory_deleted_local_test_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
     path = tmp_path / directory
     if util.local_branch_exists(path, test_branch):
@@ -308,7 +307,7 @@ def given_directory_deleted_local_test_branch(tmp_path: Path, directory: str, te
     assert not util.local_branch_exists(path, test_branch)
 
 
-@given("project at <directory> deleted local branch <branch>")
+@given("project at <directory> deleted local <branch>")
 def given_directory_deleted_local_branch(tmp_path: Path, directory: str, branch: str) -> None:
     path = tmp_path / directory
     if util.local_branch_exists(path, branch):
