@@ -141,7 +141,7 @@ clowder:
     source: google
 ```
 
-Or equivalently:
+or equivalently:
 
 ```yaml
 name: cool-projects
@@ -177,7 +177,7 @@ clowder:
       protocol: https
 ```
 
-Or equivalently with grouped sections:
+or equivalently with grouped sections:
 
 ```yaml
 name: cool-projects
@@ -197,7 +197,7 @@ clowder:
         protocol: https
 ```
 
-Or equivalently using grouped section settings:
+or equivalently using grouped section settings:
 
 ```yaml
 name: cool-projects
@@ -248,7 +248,7 @@ clowder:
           protocol: https
 ```
 
-Which is equivalent to:
+which is equivalent to:
 
 ```yaml
 name: cool-projects
@@ -271,7 +271,7 @@ clowder:
         protocol: https
 ```
 
-For some more custom examples, see:
+For more examples, see:
 
 * [Cats clowder.yml example](docs/clowder-yml-cats.md)
 * [Upstreams clowder.yml example](docs/clowder-yml-upstreams.md)
@@ -282,7 +282,7 @@ For the full command reference, see [the commands doc](docs/commands.md)
 
 The following examples use an [existing repo](https://github.com/JrGoodle/clowder-examples) containing a [clowder.yml](https://github.com/JrGoodle/clowder-examples/blob/master/clowder.yml) file.
 
-First, create a directory where all the projects will be cloned:
+To follow along, create a directory where all the projects will be cloned:
 
 ```bash
 mkdir cats
