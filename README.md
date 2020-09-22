@@ -107,14 +107,7 @@ clowder:
 
 The defaults section contains the git branch and remote, the source to clone from, and the protocol to use for cloning repositories.
 
-A project requires at minimum a name (the last components of the git clone url). Depending on the protocol, this is combined with the source url to form the full git clone url:
-
-| protocol |                   git url                   |
-| -------- | ------------------------------------------- |
-| ssh      | `git@${source.url}:${project.name}.git`     |
-| https    | `https://${source.url}/${project.name}.git` |
-
-If the path is not specified, the last component of the project name is used for the local directory.
+A project requires at minimum a name (the last components of the git clone url). If the path is not specified, the last component of the project name is used for the local directory.
 
 The sources section is where custom git hosting providers are specified. The following sources are built in:
 
@@ -123,6 +116,13 @@ The sources section is where custom git hosting providers are specified. The fol
 | `github`      | `github.com`    |
 | `gitlab`      | `gitlab.com`    |
 | `bitbucket`   | `bitbucket.org` |
+
+Depending on the protocol, the project name is combined with the source url to form the full git clone url:
+
+| protocol |                   git url                   |
+| -------- | ------------------------------------------- |
+| ssh      | `git@${source.url}:${project.name}.git`     |
+| https    | `https://${source.url}/${project.name}.git` |
 
 To add a project from a custom hosting site:
 
