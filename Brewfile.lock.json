@@ -91,11 +91,11 @@
   "system": {
     "macos": {
       "catalina": {
-        "HOMEBREW_VERSION": "2.5.1",
+        "HOMEBREW_VERSION": "2.5.2",
         "HOMEBREW_PREFIX": "/usr/local",
-        "Homebrew/homebrew-core": "d3b600db126c41f1ee73c6fc4c807d15293def6d",
+        "Homebrew/homebrew-core": "dac0b0c88e15d19e39b53f105b975d6f14811085",
         "CLT": "",
-        "Xcode": "11.6",
+        "Xcode": "12.0",
         "macOS": "10.15.6"
       }
     }

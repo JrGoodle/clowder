@@ -1,4 +1,5 @@
 argcomplete
+argparse-manpage
 awscli
 codecov
 colorama
