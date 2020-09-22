@@ -54,6 +54,11 @@ checks:
   #   config:
   #     threshold: 20
 
-# exclude_patterns:
-#   - "tests/"
-#   - "script/"
+exclude_patterns:
+  - "tests/"
+  - "script/"
+  - ".circleci/"
+  - ".github/"
+  - ".idea/"
+  - ".vscode/"
+  - "docs/"
