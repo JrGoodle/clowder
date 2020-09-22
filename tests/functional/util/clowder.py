@@ -157,7 +157,11 @@ def init_herd_clowder(path: Path, example: str, protocol: str = "https",
             for r in refs:
                 head: str = r.remote_head.strip()
                 if head.startswith("pytest"):
-                    origin.push(refspec=f':{head}', force=True)
+                    try:
+                        origin.push(refspec=f':{head}', force=True)
+                    except Exception as err:
+                        print(err)
+                        pass
 
     return path
 
