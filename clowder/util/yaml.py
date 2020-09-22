@@ -43,12 +43,11 @@ def link_clowder_yaml_default(clowder_dir: Path) -> None:
         raise ClowderError(ClowderErrorType.YAML_MISSING_FILE,
                            fmt.error_missing_file(yml_relative_path))
 
-    source_file = clowder_dir / relative_source_file
-    target_file = clowder_dir / source_file.name
+    target_file = clowder_dir / relative_source_file.name
 
     print(f" - Symlink {fmt.path_string(Path(target_file.name))} -> {fmt.path_string(relative_source_file)}")
 
-    force_symlink(source_file, clowder_dir / target_file)
+    force_symlink(relative_source_file, target_file)
 
     existing_file = None
     if target_file.suffix == '.yaml':
@@ -92,12 +91,11 @@ def link_clowder_yaml_version(clowder_dir: Path, version: str) -> None:
         raise ClowderError(ClowderErrorType.YAML_MISSING_FILE,
                            fmt.error_missing_file(yml_relative_path))
 
-    source_file = clowder_dir / relative_source_file
-    target_file = clowder_dir / fmt.remove_prefix(source_file.name, f"{version}.")
+    target_file = clowder_dir / fmt.remove_prefix(relative_source_file.name, f"{version}.")
 
     print(f" - Symlink {fmt.path_string(Path(target_file.name))} -> {fmt.path_string(relative_source_file)}")
 
-    force_symlink(source_file, target_file)
+    force_symlink(relative_source_file, target_file)
 
     existing_file = None
     if target_file.suffix == '.yaml':
