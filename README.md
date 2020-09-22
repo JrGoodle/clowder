@@ -76,9 +76,7 @@ clowder:
   - tensorflow/tensorflow
 ```
 
-Although terse, this is enough information for `clowder` to work with.
-
-The name is simply a descriptive label.
+The name is simply a descriptive label. Projects are specified by the last components of the git clone url.
 
 If the ommitted default settings are included:
 
@@ -107,7 +105,7 @@ clowder:
 
 The defaults section contains the git branch and remote, the source to clone from, and the protocol to use for cloning repositories.
 
-A project requires at minimum a name (the last components of the git clone url). If the path is not specified, the last component of the project name is used for the local directory.
+A project requires at minimum a name (the last components of the git clone url). If the project path is not specified, the last component of the project name is used for the local directory.
 
 The sources section is where custom git hosting providers are specified. The following sources are built in:
 
@@ -124,7 +122,7 @@ Depending on the protocol, the project name is combined with the source url to f
 | ssh      | `git@${source.url}:${project.name}.git`     |
 | https    | `https://${source.url}/${project.name}.git` |
 
-To add a project from a custom hosting site:
+To add a project from a custom hosting location:
 
 ```yaml
 name: cool-projects
