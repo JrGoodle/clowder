@@ -15,7 +15,7 @@ from clowder.error import ClowderError, ClowderErrorType
 from clowder.logging import LOG_DEBUG
 
 
-def force_symlink(source: Path, target: Path) -> None:
+def symlink_clowder_yaml(source: Path, target: Path) -> None:
     """Force symlink creation
 
     :param Path source: File to create symlink pointing to
@@ -26,7 +26,7 @@ def force_symlink(source: Path, target: Path) -> None:
     if not target.is_symlink() and target.is_file():
         raise ClowderError(ClowderErrorType.EXISTING_FILE_AT_SYMLINK_TARGET_PATH,
                            fmt.error_existing_file_at_symlink_target_path(str(target)))
-    if not source.exists():
+    if not Path(target.parent / source).exists():
         raise ClowderError(ClowderErrorType.SYMLINK_SOURCE_NOT_FOUND,
                            fmt.error_symlink_source_missing(source))
     if target.is_symlink():

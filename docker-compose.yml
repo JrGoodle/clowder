@@ -1,6 +1,7 @@
 version: "3.2"
 services:
   clowder:
+    container_name: clowder
     build: .
     image: clowder:clowder
     stdin_open: true

@@ -17,7 +17,7 @@ from clowder.error import ClowderError, ClowderErrorType
 from clowder.logging import LOG_DEBUG
 
 from .file_system import (
-    force_symlink,
+    symlink_clowder_yaml,
     remove_file
 )
 
@@ -47,7 +47,7 @@ def link_clowder_yaml_default(clowder_dir: Path) -> None:
 
     print(f" - Symlink {fmt.path_string(Path(target_file.name))} -> {fmt.path_string(relative_source_file)}")
 
-    force_symlink(relative_source_file, target_file)
+    symlink_clowder_yaml(relative_source_file, target_file)
 
     existing_file = None
     if target_file.suffix == '.yaml':
@@ -95,7 +95,7 @@ def link_clowder_yaml_version(clowder_dir: Path, version: str) -> None:
 
     print(f" - Symlink {fmt.path_string(Path(target_file.name))} -> {fmt.path_string(relative_source_file)}")
 
-    force_symlink(relative_source_file, target_file)
+    symlink_clowder_yaml(relative_source_file, target_file)
 
     existing_file = None
     if target_file.suffix == '.yaml':
