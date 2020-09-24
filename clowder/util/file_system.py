@@ -32,7 +32,10 @@ def symlink_clowder_yaml(source: Path, target: Path) -> None:
     if target.is_symlink():
         remove_file(target)
     try:
-        os.symlink(str(source), str(target))
+        path = target.parent
+        fd = os.open(path, os.O_DIRECTORY)
+        os.symlink(source, target, dir_fd=fd)
+        os.close(fd)
     except OSError as err:
         LOG_DEBUG('Failed symlink file', err)
         raise ClowderError(ClowderErrorType.FAILED_SYMLINK_FILE,
