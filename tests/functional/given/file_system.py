@@ -146,5 +146,4 @@ def given_two_files_not_symlinks(tmp_path: Path, filename_1: str, filename_2: st
 @given(parsers.parse("{filename} is a symlink pointing to {destination}"))
 def given_has_symlink_to(tmp_path: Path, filename: str, destination: str) -> None:
     path = tmp_path / filename
-    destination = Path(destination)
-    assert util.is_symlink_from_to(path, destination)
+    assert util.is_relative_symlink_from_to(path, destination)

@@ -129,7 +129,7 @@ def load_yaml_file(yaml_file: Path, relative_dir: Path) -> dict:
     """
 
     try:
-        with open(str(yaml_file)) as raw_file:
+        with yaml_file.open() as raw_file:
             parsed_yaml = pyyaml.safe_load(raw_file)
             if parsed_yaml is None:
                 config_yaml = yaml_file.relative_to(relative_dir)

@@ -19,18 +19,21 @@ def is_directory_empty(path: Path) -> bool:
 
 
 def create_file(path: Path, contents: str) -> None:
-    with open(path, 'w') as f:
+    with path.open('w') as f:
         f.write(contents)
     assert path.is_file()
     assert not path.is_symlink()
     assert path.read_text().strip() == contents.strip()
 
 
-def link_to(path: Path, target: Path) -> None:
-    os.symlink(target, path)
+def symlink_to(path: Path, target: Path) -> None:
+    parent = path.parent
+    fd = os.open(parent, os.O_DIRECTORY)
+    os.symlink(target, path, dir_fd=fd)
+    os.close(fd)
     assert path.exists()
     assert path.is_symlink()
-    assert is_symlink_from_to(path, target)
+    assert is_relative_symlink_from_to(path, str(target))
 
 
 def copy_file(path: Path, destination: Path) -> None:
@@ -39,8 +42,18 @@ def copy_file(path: Path, destination: Path) -> None:
     assert not destination.is_symlink()
 
 
-def is_symlink_from_to(symlink: Path, destination: Path) -> bool:
-    return symlink.is_symlink() and destination.samefile(symlink.resolve())
+def is_relative_symlink_from_to(symlink: Path, destination: str) -> bool:
+    if not symlink.is_symlink():
+        return False
+    path = symlink.parent
+    resolved_symlink = symlink.resolve()
+    if not resolved_symlink.samefile(path / destination):
+        return False
+    link = os.readlink(symlink)
+    is_relative = not Path(link).is_absolute()
+    if not is_relative:
+        return False
+    return True
 
 
 def copy_directory(from_dir: Path, to: Path):
