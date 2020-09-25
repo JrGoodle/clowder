@@ -7,7 +7,7 @@ from typing import Dict, List, Optional
 from git import Repo
 
 from .command import run_command
-from .file_system import is_symlink_from_to
+from .file_system import is_relative_symlink_from_to
 from .git import has_git_directory, is_dirty, is_on_active_branch
 
 
@@ -157,7 +157,11 @@ def init_herd_clowder(path: Path, example: str, protocol: str = "https",
             for r in refs:
                 head: str = r.remote_head.strip()
                 if head.startswith("pytest"):
-                    origin.push(refspec=f':{head}', force=True)
+                    try:
+                        origin.push(refspec=f':{head}', force=True)
+                    except Exception as err:
+                        print(err)
+                        pass
 
     return path
 
@@ -167,8 +171,8 @@ def has_valid_clowder_symlink_version(path: Path, version: str) -> bool:
     if symlink is None:
         return False
 
-    version_path = path / ".clowder" / "versions" / f"{version}.{symlink.stem}{symlink.suffix}"
-    return is_symlink_from_to(symlink, version_path)
+    version_path = f".clowder/versions/{version}.{symlink.stem}{symlink.suffix}"
+    return is_relative_symlink_from_to(symlink, version_path)
 
 
 def has_valid_clowder_symlink_default(path: Path) -> bool:
@@ -176,8 +180,8 @@ def has_valid_clowder_symlink_default(path: Path) -> bool:
     if symlink is None:
         return False
 
-    destination_path = path / f"{symlink.stem}{symlink.suffix}"
-    return is_symlink_from_to(symlink, destination_path)
+    destination_path = f"{symlink.stem}{symlink.suffix}"
+    return is_relative_symlink_from_to(symlink, destination_path)
 
 
 def has_clowder_version(path: Path, version: str) -> bool:

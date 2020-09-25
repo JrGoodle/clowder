@@ -30,20 +30,18 @@ def given_did_link_clowder_version(tmp_path: Path, version: str) -> None:
 
 @given(parsers.parse("created {name} symlink pointing to {target}"))
 def given_created_symlink(tmp_path: Path, name: str, target: str) -> None:
-    name_path = tmp_path / name
+    symlink_path = tmp_path / name
     target_path = tmp_path / target
     assert target_path.exists()
-    resolved = target_path.resolve()
-    util.link_to(name_path, resolved)
+    util.symlink_to(symlink_path, Path(target))
 
 
 @given(parsers.parse("created {name_1} and {name_2} symlinks pointing to {target}"))
 def given_created_symlinks(tmp_path: Path, name_1: str, name_2: str, target: str) -> None:
-    target_path = tmp_path / target
     name_path = tmp_path / name_1
-    util.link_to(name_path, target_path)
+    util.symlink_to(name_path, Path(target))
     name_path = tmp_path / name_2
-    util.link_to(name_path, target_path)
+    util.symlink_to(name_path, Path(target))
 
 
 @given(parsers.parse("repo at {directory} staged file {filename}"))
@@ -363,7 +361,7 @@ def given_test_config_copied_to_clowder_repo(shared_datadir: Path, tmp_path: Pat
     contents = contents.replace("DIRECTORY_PLACEHOLDER", str(tmp_path))
     if not path.exists():
         path.mkdir(parents=True)
-    with open(new_file, 'w') as f:
+    with new_file.open('w') as f:
         f.write(contents)
     assert new_file.exists()
 

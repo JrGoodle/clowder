@@ -25,7 +25,7 @@ def start_docker() -> None:
     if config_file.exists():
         config_contents = config_file.read_text().replace("/home/circleci", "/root")
         config_file.unlink()
-        with open(config_file, 'w') as f:
+        with config_file.open('w') as f:
             f.write(config_contents)
 
     result = run_command(path, "docker-compose up --build -d")

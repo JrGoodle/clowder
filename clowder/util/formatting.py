@@ -124,7 +124,7 @@ def error_clowder_symlink_source_missing(symlink_path: Path) -> str:
 
     target = _yaml_file(str(symlink_path))
     source = _yaml_file(str(symlink_path.resolve()))
-    return f"{ERROR} Found symink {target} but source {source} appears to be missing"
+    return f"{ERROR} Found symlink {target} but source {source} appears to be missing"
 
 
 def error_command_failed(cmd: Union[str, List[str]]) -> str:

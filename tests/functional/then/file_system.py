@@ -103,8 +103,7 @@ def then_has_symlink(tmp_path: Path, filename: str) -> None:
 @then(parsers.parse("{filename} is a symlink pointing to {destination}"))
 def then_is_symlink_pointing_to(tmp_path: Path, filename: str, destination: str) -> None:
     path = tmp_path / filename
-    destination = tmp_path / destination
-    assert util.is_symlink_from_to(path, destination)
+    assert util.is_relative_symlink_from_to(path, destination)
 
 
 @then(parsers.parse("{filename_1} and {filename_2} files exist"))

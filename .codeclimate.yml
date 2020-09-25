@@ -21,7 +21,6 @@ ratings:
   - "**.py"
   - "**.sh"
 
-
 checks:
   argument-count:
     config:

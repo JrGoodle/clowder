@@ -34,7 +34,7 @@ def main():
     if processed_readme_path.exists():
         os.remove(str(processed_readme_path))
 
-    with open(str(processed_readme_path), "w") as output_file:
+    with processed_readme_path.open('w') as output_file:
         output_file.write(f"{output}\n")
 
 

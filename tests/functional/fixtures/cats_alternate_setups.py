@@ -81,9 +81,9 @@ def cats_clowder_repo_symlink(tmp_path: Path, cats_clowder_repo_symlink_session:
     clowder_repo = tmp_path / ".clowder"
     clowder_yaml = tmp_path / "clowder.yaml"
     clowder_yml = tmp_path / "clowder.yml"
-    target = tmp_path / "clowder-symlink-source-dir"
-    assert target.exists()
-    util.link_to(clowder_repo, target)
+    target = Path("clowder-symlink-source-dir")
+    assert (tmp_path / target).exists()
+    util.symlink_to(clowder_repo, target)
     assert clowder_repo.is_symlink()
     assert clowder_repo.exists()
     assert not clowder_yml.is_symlink()

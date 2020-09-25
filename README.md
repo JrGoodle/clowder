@@ -60,12 +60,9 @@ command -v clowder >/dev/null 2>&1 && eval "$(register-python-argcomplete clowde
 
 ## clowder.yml
 
-For more inforrmation:
+[Full clowder.yml syntax reference](docs/clowder-yml-syntax-reference.md)
 
-* [clowder.yml syntax reference](docs/clowder-yml-syntax-reference.md)
-* [clowder.yml inheritance reference](docs/clowder-yml-syntax-reference-inheritance.md)
-
-Example `clowder.yml` for [some](https://github.com/llvm/llvm-project) [well](https://github.com/apple/swift)-[known](https://github.com/tensorflow/tensorflow) [projects](https://gerrit.googlesource.com/git-repo):
+An example `clowder.yml` for [some](https://github.com/llvm/llvm-project) [well](https://github.com/apple/swift)-[known](https://github.com/tensorflow/tensorflow) [projects](https://gerrit.googlesource.com/git-repo):
 
 ```yaml
 name: cool-projects

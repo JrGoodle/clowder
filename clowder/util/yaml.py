@@ -17,7 +17,7 @@ from clowder.error import ClowderError, ClowderErrorType
 from clowder.logging import LOG_DEBUG
 
 from .file_system import (
-    force_symlink,
+    symlink_clowder_yaml,
     remove_file
 )
 
@@ -43,12 +43,11 @@ def link_clowder_yaml_default(clowder_dir: Path) -> None:
         raise ClowderError(ClowderErrorType.YAML_MISSING_FILE,
                            fmt.error_missing_file(yml_relative_path))
 
-    source_file = clowder_dir / relative_source_file
-    target_file = clowder_dir / source_file.name
+    target_file = clowder_dir / relative_source_file.name
 
     print(f" - Symlink {fmt.path_string(Path(target_file.name))} -> {fmt.path_string(relative_source_file)}")
 
-    force_symlink(source_file, clowder_dir / target_file)
+    symlink_clowder_yaml(relative_source_file, target_file)
 
     existing_file = None
     if target_file.suffix == '.yaml':
@@ -92,12 +91,11 @@ def link_clowder_yaml_version(clowder_dir: Path, version: str) -> None:
         raise ClowderError(ClowderErrorType.YAML_MISSING_FILE,
                            fmt.error_missing_file(yml_relative_path))
 
-    source_file = clowder_dir / relative_source_file
-    target_file = clowder_dir / fmt.remove_prefix(source_file.name, f"{version}.")
+    target_file = clowder_dir / fmt.remove_prefix(relative_source_file.name, f"{version}.")
 
     print(f" - Symlink {fmt.path_string(Path(target_file.name))} -> {fmt.path_string(relative_source_file)}")
 
-    force_symlink(source_file, target_file)
+    symlink_clowder_yaml(relative_source_file, target_file)
 
     existing_file = None
     if target_file.suffix == '.yaml':
@@ -131,7 +129,7 @@ def load_yaml_file(yaml_file: Path, relative_dir: Path) -> dict:
     """
 
     try:
-        with open(str(yaml_file)) as raw_file:
+        with yaml_file.open() as raw_file:
             parsed_yaml = pyyaml.safe_load(raw_file)
             if parsed_yaml is None:
                 config_yaml = yaml_file.relative_to(relative_dir)

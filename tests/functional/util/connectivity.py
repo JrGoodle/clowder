@@ -2,6 +2,7 @@
 
 from pathlib import Path
 from subprocess import CompletedProcess
+from time import sleep
 from typing import Optional
 
 from .command import run_command
@@ -21,6 +22,7 @@ def enable_network_connection(gateway_address: Optional[str]) -> [CompletedProce
             print(result.stdout)
     elif platform == "darwin":
         result = run_command("networksetup -setairportpower airport on", path)
+        sleep(2)
     elif platform == "win32":
         assert False
     else:
@@ -36,6 +38,7 @@ def disable_network_connection() -> CompletedProcess:
         print(result.stdout)
     elif platform == "darwin":
         result = run_command("networksetup -setairportpower airport off", path)
+        sleep(1)
     elif platform == "win32":
         assert False
     else:
