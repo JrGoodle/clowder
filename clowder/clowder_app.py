@@ -57,7 +57,7 @@ def create_parsers() -> argparse.ArgumentParser:
             (['-v', '--version'], dict(action='version', version=version_message))
         ]
         cmd.add_parser_arguments(clowder_parser, arguments)
-        subparsers = clowder_parser.add_subparsers(help='sub-command help')
+        subparsers = clowder_parser.add_subparsers(dest='subcommand', help='sub-command help')
 
         cmd.add_branch_parser(subparsers)
         cmd.add_checkout_parser(subparsers)
@@ -68,6 +68,7 @@ def create_parsers() -> argparse.ArgumentParser:
         cmd.add_herd_parser(subparsers)
         cmd.add_init_parser(subparsers)
         cmd.add_link_parser(subparsers)
+        cmd.add_plugins_parser(subparsers)
         cmd.add_prune_parser(subparsers)
         cmd.add_repo_parser(subparsers)
         cmd.add_reset_parser(subparsers)

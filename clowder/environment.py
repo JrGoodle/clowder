@@ -22,6 +22,7 @@ class ClowderEnvironment(object):
     :cvar Optional[Path] clowder_dir: Path to clowder directory if it exists
     :cvar Optional[Path] clowder_repo_dir: Path to clowder repo directory if it exists
     :cvar Optional[Path] clowder_repo_versaions_dir: Path to clowder repo versions directory
+    :cvar Optional[Path] clowder_repo_plugins_dir: Path to clowder repo plugins directory
     :cvar Optional[Path] clowder_yaml: Path to clowder yaml file if it exists
     :cvar Optional[ClowderError] clowder_yaml_missing_source_error: Possible error for broken clowder yaml symlink
     :cvar Optional[ClowderError] ambiguous_clowder_yaml_error: Possible error due to ambiguous clowder yaml
@@ -35,6 +36,7 @@ class ClowderEnvironment(object):
     clowder_repo_dir: Optional[Path] = None
     clowder_git_repo_dir: Optional[Path] = None
     clowder_repo_versions_dir: Optional[Path] = None
+    clowder_repo_plugins_dir: Optional[Path] = None
     clowder_yaml: Optional[Path] = None
 
     clowder_yaml_missing_source_error: Optional[ClowderError] = None
@@ -119,6 +121,7 @@ class ClowderEnvironment(object):
             self.clowder_repo_versions_dir: Optional[Path] = self.clowder_repo_dir / 'versions'
             self.clowder_config_dir: Optional[Path] = self.clowder_repo_dir / "config"
             self.clowder_config_yaml: Optional[Path] = self.clowder_config_dir / 'clowder.config.yml'
+            self.clowder_repo_plugins_dir: Optional[Path] = self.clowder_repo_dir / "plugins"
 
     def _get_possible_yaml_path(self, name: str) -> Path:
         """Get possible yaml path based on other environment variables
