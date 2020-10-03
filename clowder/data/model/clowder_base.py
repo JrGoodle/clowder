@@ -47,15 +47,16 @@ class ClowderBase:
         """
 
         yaml = {
-            "name": self.name,
-            "clowder": self.clowder.get_yaml(resolved=resolved)
+            "name": self.name
         }
 
         if self.protocol is not None:
             yaml['protocol'] = self.protocol
-        if self.defaults is not None:
-            yaml['defaults'] = self.defaults.get_yaml()
         if self.sources is not None:
             yaml['sources'] = {s.name.get_yaml(): s.get_yaml() for s in self.sources}
+        if self.defaults is not None:
+            yaml['defaults'] = self.defaults.get_yaml()
+
+        yaml["clowder"] = self.clowder.get_yaml(resolved=resolved)
 
         return yaml

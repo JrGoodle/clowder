@@ -36,9 +36,9 @@ class UpstreamDefaults:
 
         yaml = {}
 
-        if self.source is not None:
-            yaml['source'] = self.source.get_yaml()
         if self.remote is not None:
             yaml['remote'] = self.remote
+        if self.source is not None:
+            yaml['source'] = self.source.get_yaml()
 
         return yaml
