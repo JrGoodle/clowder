@@ -165,7 +165,7 @@ def save_yaml_file(yaml_output: dict, yaml_file: Path) -> None:
     print(f" - Save yaml to file at {fmt.path_string(str(yaml_file))}")
     try:
         with yaml_file.open(mode="w") as raw_file:
-            pyyaml.safe_dump(yaml_output, raw_file, default_flow_style=False, indent=2)
+            pyyaml.safe_dump(yaml_output, raw_file, default_flow_style=False, indent=2, sort_keys=False)
     except pyyaml.YAMLError as err:
         LOG_DEBUG('Failed to save yaml file', err)
         raise ClowderError(ClowderErrorType.FAILED_SAVE_FILE,
@@ -201,7 +201,7 @@ def yaml_string(yaml_output: dict) -> str:
     """
 
     try:
-        return pyyaml.safe_dump(yaml_output, default_flow_style=False, indent=2)
+        return pyyaml.safe_dump(yaml_output, default_flow_style=False, indent=2, sort_keys=False)
     except pyyaml.YAMLError as err:
         LOG_DEBUG('Failed to dump yaml file contents', err)
         raise ClowderError(ClowderErrorType.FAILED_YAML_DUMP,

@@ -68,15 +68,17 @@ class Group:
         if not self._has_projects_key:
             return [p.get_yaml(resolved=resolved) for p in self.projects]
 
-        yaml = {"projects": [p.get_yaml(resolved=resolved) for p in self.projects]}
+        yaml = {}
 
         if self.path is not None:
             yaml['path'] = str(self.path)
+        if self.protocol is not None:
+            yaml['protocol'] = self.protocol
         if self.groups is not None:
             yaml['groups'] = str(self.groups)
         if self.defaults is not None:
             yaml['defaults'] = self.defaults.get_yaml()
-        if self.protocol is not None:
-            yaml['protocol'] = self.protocol
+
+        yaml["projects"] = [p.get_yaml(resolved=resolved) for p in self.projects]
 
         return yaml

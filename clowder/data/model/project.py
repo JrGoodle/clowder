@@ -128,6 +128,8 @@ class Project:
 
         yaml = {"name": self.name}
 
+        if self.path is not None:
+            yaml['path'] = str(self.path)
         if resolved:
             yaml['commit'] = CLOWDER_CONTROLLER.get_project_sha(self.resolved_project_id)
         else:
@@ -141,8 +143,6 @@ class Project:
             yaml['groups'] = self.groups
         if self.remote is not None:
             yaml['remote'] = self.remote
-        if self.path is not None:
-            yaml['path'] = str(self.path)
         if self.source is not None:
             yaml['source'] = self.source.get_yaml()
         if self.git_settings is not None:

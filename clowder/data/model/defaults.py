@@ -72,18 +72,19 @@ class Defaults:
 
         yaml = {}
 
-        if self.source is not None:
-            yaml['source'] = self.source.get_yaml()
-        if self.remote is not None:
-            yaml['remote'] = self.remote
-        if self.git_settings is not None:
-            yaml['git'] = self.git_settings.get_yaml()
         if self.branch is not None:
             yaml['branch'] = self.branch
         elif self.tag is not None:
             yaml['tag'] = self.tag
         elif self.commit is not None:
             yaml['commit'] = self.commit
+
+        if self.remote is not None:
+            yaml['remote'] = self.remote
+        if self.source is not None:
+            yaml['source'] = self.source.get_yaml()
+        if self.git_settings is not None:
+            yaml['git'] = self.git_settings.get_yaml()
         if self.upstream_defaults is not None:
             yaml['upstream'] = self.upstream_defaults.get_yaml()
 
