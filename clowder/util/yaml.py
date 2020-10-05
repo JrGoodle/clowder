@@ -201,7 +201,7 @@ def yaml_string(yaml_output: dict) -> str:
     """
 
     try:
-        return pyyaml.safe_dump(yaml_output, default_flow_style=False, indent=2)
+        return pyyaml.safe_dump(yaml_output, default_flow_style=False, indent=2, sort_keys=False)
     except pyyaml.YAMLError as err:
         LOG_DEBUG('Failed to dump yaml file contents', err)
         raise ClowderError(ClowderErrorType.FAILED_YAML_DUMP,
