@@ -1,4 +1,4 @@
-# `clowder`
+# ![clowder](docs/resources/clowder.png)
 
 > **clowder** - A group of cats
 >

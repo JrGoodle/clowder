@@ -2,7 +2,7 @@ name: git.submodules-defaults
 
 defaults:
   git:
-    submodules: update recursive
+    submodules: recursive
 
 clowder:
   - name: JrGoodle/felidae

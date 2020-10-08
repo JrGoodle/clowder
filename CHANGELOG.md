@@ -12,15 +12,13 @@
 - Add `clowder config` experimental command
 - Add `git herd` alias in projects
 - Allow clowder to be called from subdirectories
-
 - Replace Travis CI tests with GitHub Action workflow tests
 - Remove imported `clowder.yaml` files
 - Remove `sync` command
 - Remove `--groups/-g` command option
 - Remove `--skip/-s` command option
-
 - Schema changes:
-  - `groups` is now an array of strrings in a project, rather than a top level item
+  - `groups` is now an array of strings in a project, rather than a top level item
   - Add `protocol` option to `source`
   - Add `source` option to `fork`
   - Add `git.config` to `defaults` and `projects`
