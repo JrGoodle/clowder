@@ -85,8 +85,6 @@
         {
           "type": "string",
           "enum": [
-            "update",
-            "update recursive",
             "recursive"
           ]
         }

@@ -47,10 +47,7 @@ class ResolvedGitSettings:
                 self.submodules = submodules
                 self.recursive = False
             elif isinstance(submodules, str):
-                if submodules == "update":
-                    self.submodules = True
-                    self.recursive = False
-                elif submodules == "recursive" or submodules == "update recursive":
+                if submodules == "recursive":
                     self.submodules = True
                     self.recursive = True
                 else:

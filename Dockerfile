@@ -1,12 +1,5 @@
-############################################################
-# Dockerfile for clowder project
-############################################################
+# Dockerfile for clowder project tests
 FROM python:3.8.5
-
-# File Author / Maintainer
-LABEL maintainer "Joe DeCapo <joe@polka.cat>"
-
-############################################################
 
 # ensure local python is preferred over distribution python
 ENV PATH /usr/local/bin:$PATH
@@ -16,11 +9,7 @@ ENV PYTHONPATH $PYTHONPATH:/clowder
 # > At the moment, setting "LANG=C" on a Linux system *fundamentally breaks Python 3*, and that's not OK.
 ENV LANG C.UTF-8
 
-############################################################
-
 COPY build/ssh /root/.ssh
-
-############################################################
 
 # Update package list
 RUN apt-get update -y
@@ -43,7 +32,5 @@ RUN git config --system --unset-all filter.lfs.clean
 RUN git config --system --unset-all filter.lfs.smudge
 RUN git config --system --unset-all filter.lfs.process
 RUN git config --system --unset-all filter.lfs.required
-
-############################################################
 
 CMD ["/usr/bin/env bash"]

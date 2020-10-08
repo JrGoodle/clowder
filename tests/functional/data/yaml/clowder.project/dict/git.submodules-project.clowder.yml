@@ -3,4 +3,4 @@ name: git.submodules-project
 clowder:
   - name: JrGoodle/felidae
     git:
-      submodules: update recursive
+      submodules: recursive

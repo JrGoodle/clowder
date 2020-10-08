@@ -4,6 +4,6 @@ clowder:
   cats:
     defaults:
       git:
-        submodules: update recursive
+        submodules: recursive
     projects:
       - JrGoodle/felidae

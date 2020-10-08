@@ -109,7 +109,7 @@ protocol: enum # "ssh" | "https"
 ```yaml
 git:
   lfs: bool
-  submodules: bool | enum # "update" | "update recursive" | "recursive"
+  submodules: bool | string # "recursive"
   depth: integer # Must be >= 0, where 0 indicates full clone
   config: { string: string | bool | number | null }
 ```

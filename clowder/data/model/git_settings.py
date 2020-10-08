@@ -8,7 +8,7 @@
 from typing import Dict, Optional, Union
 
 GitConfig = Dict[str, Union[bool, str, int, float, None]]
-GitSubmodules = Union[bool, str]  # TODO: Replace str with enum for "update", "recursive", "update recursive"
+GitSubmodules = Union[bool, str]
 
 
 class GitSettings:
