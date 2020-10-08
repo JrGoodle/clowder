@@ -1,0 +1,76 @@
+defaults:
+  ref: refs/heads/master
+  remote: origin
+  source: github
+  protocol: https
+  depth: 10
+
+sources:
+  - name: github
+    url: github.com
+
+groups:
+  - name: llvm
+    projects:
+    - name: llvm-mirror/llvm
+      path: llvm
+  - name: clang
+    projects:
+    - name: llvm-mirror/clang
+      path: llvm/tools/clang
+      remote: upstream
+      fork:
+        name: jrgoodle/clang
+        remote: origin
+    - name: llvm-mirror/clang-tools-extra
+      path: llvm/tools/clang/tools/extra
+      remote: upstream
+      fork:
+        name: jrgoodle/clang-tools-extra
+        remote: origin
+  - name: projects
+    projects:
+    - name: llvm-mirror/compiler-rt
+      path: llvm/projects/compiler-rt
+      remote: upstream
+      fork:
+        name: jrgoodle/compiler-rt
+        remote: origin
+    - name: llvm-mirror/libunwind
+      path: llvm/projects/libunwind
+    - name: llvm-mirror/dragonegg
+      path: llvm/projects/dragonegg
+    - name: llvm-mirror/libclc
+      path: libclc
+    - name: llvm-mirror/openmp
+      path: openmp
+    - name: llvm-mirror/polly
+      path: polly
+    - name: llvm-mirror/poolalloc
+      path: poolalloc
+    - name: llvm-mirror/zorg
+      path: zorg
+    - name: llvm-mirror/klee
+      path: klee
+    - name: llvm-mirror/vmkit
+      path: vmkit
+  - name: lldb
+    projects:
+    - name: llvm-mirror/lldb
+      path: lldb
+  - name: lld
+    projects:
+    - name: llvm-mirror/lld
+      path: llvm/tools/lld
+  - name: libcxx
+    projects:
+    - name: llvm-mirror/libcxx
+      path: llvm/projects/libcxx
+    - name: llvm-mirror/libcxxabi
+      path: llvm/projects/libcxxabi
+  - name: tests
+    projects:
+    - name: llvm-mirror/lnt
+      path: lnt
+    - name: llvm-mirror/test-suite
+      path: test-suite

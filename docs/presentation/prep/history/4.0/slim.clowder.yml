@@ -1,0 +1,30 @@
+name: llvm-projects
+
+protocol: https
+
+defaults:
+  git:
+    depth: 10
+
+clowder:
+  llvm:
+    - llvm-mirror/llvm
+  clang:
+    path: llvm/tools
+    projects:
+      - name: jrgoodle/clang
+        upstream: llvm-mirror/clang
+      - name: jrgoodle/clang-tools-extra
+        path: clang/tools/extra
+        upstream: llvm-mirror/clang-tools-extra
+  llvm-projects:
+    path: llvm/projects
+    projects:
+      - name: jrgoodle/compiler-rt
+        upstream: llvm-mirror/compiler-rt
+  lldb:
+    - llvm-mirror/lldb
+  lld:
+    path: llvm/tools
+    projects:
+      - llvm-mirror/lld

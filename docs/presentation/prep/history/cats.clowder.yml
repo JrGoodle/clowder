@@ -1,0 +1,39 @@
+name: cats-example
+
+protocol: https
+
+defaults:
+  branch: tracking_branch
+  git:
+    config:
+      alias.cat: '!echo "😸"'
+
+clowder:
+  carnivora/feliforma:
+    - name: JrGoodle/felidae
+      branch: felid
+      git:
+        lfs: true
+        submodules: recursive
+  cats:
+    - name: JrGoodle/mu
+      branch: knead
+      git:
+        depth: 1
+    - name: JrGoodle/duke
+      tag: v0.01
+  black-cats:
+    path: black-cats
+    projects:
+      - name: JrGoodle/kit
+        commit: f2e20031ddce5cb097105f4d8ccbc77f4ac20709
+      - name: JrGoodle/kishka
+        git:
+          config:
+            alias.cat: '!echo "😸😸😸"'
+      - name: JrGoodle/june
+        git:
+          config:
+            alias.cat: null
+      - name: JrGoodle/sasha
+        remote: catnip

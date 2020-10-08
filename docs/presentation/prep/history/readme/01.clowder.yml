@@ -1,0 +1,6 @@
+name: cool-projects
+
+clowder:
+  - llvm/llvm-project
+  - apple/swift
+  - tensorflow/tensorflow

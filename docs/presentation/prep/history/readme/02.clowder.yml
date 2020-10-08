@@ -1,0 +1,20 @@
+name: cool-projects
+
+protocol: ssh
+
+sources:
+  github:
+    url: github.com
+
+defaults:
+  remote: origin
+  source: github
+  branch: master
+
+clowder:
+  - name: llvm/llvm-project
+    path: llvm-project
+  - name: apple/swift
+    path: swift
+  - name: tensorflow/tensorflow
+    path: tensorflow

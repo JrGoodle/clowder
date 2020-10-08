@@ -1,0 +1,17 @@
+name: aosp
+
+protocol: https
+
+sources:
+  gerrit:
+    url: gerrit.googlesource.com
+  android:
+    url: android.googlesource.com
+
+clowder:
+  - name: platform/manifest
+    source: android
+  - name: tools/repo
+    source: android
+  - name: git-repo
+    source: gerrit

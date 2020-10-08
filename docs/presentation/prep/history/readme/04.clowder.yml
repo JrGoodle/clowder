@@ -1,0 +1,11 @@
+name: cool-projects
+
+clowder:
+  - llvm/llvm-project
+  - apple/swift
+  - tensorflow/tensorflow
+  - name: git-repo
+    path: repo
+    source:
+      url: gerrit.googlesource.com
+      protocol: https

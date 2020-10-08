@@ -1,0 +1,22 @@
+name: groups
+
+sources:
+  android:
+    url: android.googlesource.com
+    protocol: https
+
+clowder:
+  clattner:
+    - apple/swift
+    - name: llvm/llvm-project
+      groups: [notdefault]
+    - name: tensorflow/tensorflow
+      groups: [google]
+  android:
+    path: android
+    groups: [google]
+    defaults:
+      source: android
+    projects:
+      - tools/repo
+      - platform/manifest

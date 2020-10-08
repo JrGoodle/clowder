@@ -1,0 +1,48 @@
+name: llvm-projects
+
+protocol: https
+
+defaults:
+  git:
+    depth: 10
+
+clowder:
+  llvm:
+    - llvm-mirror/llvm
+  clang:
+    path: llvm/tools
+    projects:
+      - name: jrgoodle/clang
+        upstream: llvm-mirror/clang
+      - name: jrgoodle/clang-tools-extra
+        path: clang/tools/extra
+        upstream: llvm-mirror/clang-tools-extra
+  llvm-projects:
+    path: llvm/projects
+    projects:
+      - name: jrgoodle/compiler-rt
+        upstream: llvm-mirror/compiler-rt
+      - llvm-mirror/libunwind
+      - llvm-mirror/dragonegg
+  lldb:
+    - llvm-mirror/lldb
+  lld:
+    path: llvm/tools
+    projects:
+      - llvm-mirror/lld
+  libcxx:
+    path: llvm/projects
+    projects:
+      - llvm-mirror/libcxx
+      - llvm-mirror/libcxxabi
+  tests:
+    - llvm-mirror/lnt
+    - llvm-mirror/test-suite
+  other:
+    - llvm-mirror/libclc
+    - llvm-mirror/openmp
+    - llvm-mirror/polly
+    - llvm-mirror/poolalloc
+    - llvm-mirror/zorg
+    - llvm-mirror/klee
+    - llvm-mirror/vmkit

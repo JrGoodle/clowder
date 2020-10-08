@@ -1,0 +1,27 @@
+name: forks-example
+
+defaults:
+  git:
+    submodules: recursive
+
+sources:
+  chromium:
+    url: chromium.googlesource.com
+    protocol: https
+
+clowder:
+  - name: JrGoodle/djinni
+    upstream: dropbox/djinni
+  - name: JrGoodle/gyp
+    branch: fork-branch
+    upstream:
+      name: external/gyp
+      source: chromium
+  - name: aosp
+    source: chromium
+  - name: JrGoodle/sox
+    upstream:
+      name: p/sox/code
+      source:
+        url: git.code.sf.net
+        protocol: https

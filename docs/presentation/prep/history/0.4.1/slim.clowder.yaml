@@ -1,0 +1,45 @@
+defaults:
+  ref: refs/heads/master
+  remote: origin
+  source: github
+
+sources:
+  - name: github-ssh
+    url: ssh://git@github.com
+  - name: github
+    url: https://github.com
+
+groups:
+  - name: llvm
+    projects:
+    - name: llvm-mirror/llvm
+      path: llvm
+  - name: clang
+    projects:
+    - name: llvm-mirror/clang
+      path: llvm/tools/clang
+      remote: upstream
+    - name: llvm-mirror/clang-tools-extra
+      path: llvm/tools/clang/tools/extra
+      remote: upstream
+  - name: forks
+    projects:
+    - name: jrgoodle/clang
+      path: llvm/tools/clang
+    - name: jrgoodle/clang-tools-extra
+      path: llvm/tools/clang/tools/extra
+    - name: jrgoodle/compiler-rt
+      path: llvm/projects/compiler-rt
+  - name: projects
+    projects:
+    - name: llvm-mirror/compiler-rt
+      path: llvm/projects/compiler-rt
+      remote: upstream
+  - name: lldb
+    projects:
+    - name: llvm-mirror/lldb
+      path: lldb
+  - name: lld
+    projects:
+    - name: llvm-mirror/lld
+      path: llvm/tools/lld
