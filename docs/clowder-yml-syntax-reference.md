@@ -16,7 +16,7 @@
 name: string # REQUIRED
 protocol: protocol
 defaults: defaults
-sources: { source_name: source } # key is a reusable alias
+sources: { string: source } # key is a reusable alias
 clowder: [ project | string ] | { string: group } # REQUIRED
 ```
 
