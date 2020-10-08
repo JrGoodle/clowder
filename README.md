@@ -268,10 +268,7 @@ clowder:
         protocol: https
 ```
 
-For more examples, see:
-
-* [Cats clowder.yml example](docs/clowder-yml-cats.md)
-* [Upstreams clowder.yml example](docs/clowder-yml-upstreams.md)
+For more examples, see the [clowder-examples repo](https://github.com/JrGoodle/clowder-examples/tree/master/versions)
 
 ## Command Usage
 
