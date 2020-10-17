@@ -11,13 +11,6 @@ from typing import List, Tuple, Union
 Parser = Union[argparse.ArgumentParser, argparse._MutuallyExclusiveGroup, argparse._ArgumentGroup]  # noqa
 Arguments = List[Tuple[list, dict]]
 
-
-def rm_dir(dir_path: Path) -> None:
-    print(f"remove {dir_path}")
-    shutil.rmtree(dir_path, ignore_errors=True)
-
-
-# Paths
 path: Path = Path(__file__).resolve().parent.parent.resolve()
 build_dir: Path = path / "build"
 temp_dir: Path = path / "temp"
@@ -25,30 +18,60 @@ dist_dir: Path = path / "dist"
 clowder_repo_egg_dir: Path = path / "clowder_repo.egg-info"
 clowder_dir: Path = path / "clowder"
 pycache = "__pycache__"
+pytest_cache: Path = path / '.pytest_cache'
+
+
+def rm_dir(dir_path: Path) -> None:
+    h3(f"Remove {dir_path.relative_to(path)}")
+    shutil.rmtree(dir_path, ignore_errors=True)
+
+
+def separator(message: str, character: str) -> None:
+    print(character * len(message))
+    print()
+
+
+def h1(message: str) -> None:
+    print(message)
+    separator(message, '=')
+
+
+def h2(message: str) -> None:
+    print(message)
+    separator(message, '-')
+
+
+def h3(message: str) -> None:
+    print(f'* {message}')
 
 
 def clean_build() -> None:
+    h2('Clean build files')
     rm_dir(dist_dir)
     rm_dir(build_dir)
     rm_dir(temp_dir)
 
 
 def clean_all() -> None:
-    clean_build()
+    h1('Clean all files')
     rm_dir(clowder_repo_egg_dir)
-    run_command(path, "sudo -H pip3 uninstall --yes clowder-repo")
+    # run_command(path, "pipenv --rm")
+    run_command(path, "pip uninstall --yes clowder-repo")
     shutil.rmtree(clowder_repo_egg_dir, ignore_errors=True)
+    shutil.rmtree(pytest_cache, ignore_errors=True)
     for root, dirs, files in os.walk(path, topdown=False):
         for name in dirs:
             if name == pycache:
                 dir_path = Path(root) / name
                 shutil.rmtree(dir_path, ignore_errors=True)
+    clean_build()
 
 
 def run_command(cwd: Path, cmd: str) -> CompletedProcess:
     cmd_env = os.environ.copy()
-    print(f"command: {cmd}")
+    print(f"> {cmd}")
     completed_process = subprocess.run(cmd, cwd=cwd, shell=True, env=cmd_env)
+    print()
     return completed_process
 
 
@@ -70,7 +93,6 @@ def main() -> None:
             clean_build()
         else:
             clean_all()
-
     except Exception as err:
         print(err)
         exit(1)

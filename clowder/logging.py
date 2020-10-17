@@ -15,7 +15,8 @@ PRINT_DEBUG_OUTPUT = "CLOWDER_DEBUG" in os.environ
 
 logging.basicConfig()
 logging.raiseExceptions = True
-logger = logging.getLogger("CLOWDER")
+logger_name: str = 'CLOWDER'
+logger = logging.getLogger(logger_name)
 
 if PRINT_DEBUG_OUTPUT:
     logger.setLevel(logging.DEBUG)
@@ -25,9 +26,10 @@ else:
 
 def LOG_DEBUG(message: str, exception: Optional[BaseException] = None) -> None:  # noqa
     if PRINT_DEBUG_OUTPUT:
-        print('=================== CLOWDER DEBUG - BEGIN ===================')
-        logger.log(logging.DEBUG, f" {message}")
+        separator = '='
+        output = f' BEGIN {separator * 78}\n'
+        output += f'{message.strip()}\n'
         if exception is not None:
-            # TODO: Format the output for clowder debug
-            traceback.print_exc()
-        print('==================== CLOWDER DEBUG - END ====================')
+            output += traceback.format_exc()
+        output += f'DEBUG:{logger_name}: END {separator * 80}\n'
+        logger.log(logging.DEBUG, output)

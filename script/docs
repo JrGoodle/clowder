@@ -1,15 +1,19 @@
 #!/usr/bin/env bash
 
-cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
+set -euo pipefail
+cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.."
+
+# shellcheck disable=SC1091
+. 'script/utils.sh'
 
 DOCS_BUILD_DIR='build/docs'
 HTML_DIR="$DOCS_BUILD_DIR/html"
 
-rm -rf "$DOCS_BUILD_DIR"
-sphinx-apidoc --force --no-toc -d 1 -o docs/rst clowder setup
-sphinx-build docs "$HTML_DIR"
+run rm -rf "$DOCS_BUILD_DIR"
+run sphinx-apidoc --force --no-toc -d 1 -o docs/rst clowder setup
+run sphinx-build docs "$HTML_DIR"
 
 if [ "$1" == 'server' ]; then
-    osascript -e 'tell application "Safari" to open location "127.0.0.1:8000"'
-    sphinx-autobuild docs "$HTML_DIR"
+    run osascript -e 'tell application "Safari" to open location "127.0.0.1:8000"'
+    run sphinx-autobuild docs "$HTML_DIR"
 fi

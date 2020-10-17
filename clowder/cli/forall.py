@@ -46,6 +46,7 @@ def add_forall_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
     parser.set_defaults(func=forall)
 
 
+# TODO: Split out forall_handler() to parse args, then call typed forall() function
 @valid_clowder_yaml_required
 @print_clowder_name
 @print_clowder_repo_status

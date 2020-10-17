@@ -1,40 +1,41 @@
 #!/usr/bin/env bash
 
-cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
+set -euo pipefail
+cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.."
 
-case "$(uname)" in
-    Linux*) export PLATFORM="linux";
-        sudo apt-get update -y
-        echo "Install git"
-        sudo apt-get install python-dev -y
-        echo "Install git-lfs"
-        curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash
-        sudo apt-get install git-lfs
-        echo "Install pyenv"
-        if ! which -s pyenv; then
-            curl https://pyenv.run | bash
-        fi
-        pyenv --skip-existing install || exit 1
+# shellcheck disable=SC1091
+. 'script/utils.sh'
+
+h1 "Running bootstrap script for ${PLATFORM}"
+
+case "$PLATFORM" in
+    linux)
+        h2 'Update apt-get'
+        run sudo apt-get update -y
+        h2 'Install git'
+        run sudo apt-get install python-dev -y
+        h2 'Install git-lfs'
+        run sudo curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
+        run sudo apt-get install git-lfs
+        h2 'Install pipenv'
+        run pip install -U pipenv
         ;;
-    Darwin*) export PLATFORM="darwin";
-        echo 'Install Hombrew if necessary'
-        echo "Checking for homebrew installation"
+    darwin)
+        h2 'Install Hombrew if necessary'
         if which -s brew; then
-            echo "Homebrew already installed! Updating..."
-            brew update || exit 1
+            o '* Homebrew already installed! Updating...'
+            run brew update
         else
-            echo "Homebrew not found. Installing..."
-            ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" || exit 1
+            o '* Homebrew not found. Installing...'
+            run ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
         fi
-        echo 'Install Homebrew formulas'
-        brew bundle || exit 1
-        # echo 'Install pyenv versions'
-        # pyenv install --skip-existing || exit 1
+        h2 'Install Homebrew formulas'
+        run brew bundle
         ;;
-    CYGWIN*) export PLATFORM="windows";
-        echo "Windows is not currently supported"
-        exit 1
+    windows)
+        exit_failure 'Windows is not currently supported'
         ;;
 esac
 
-echo " Ran bootstrap script for $PLATFORM"
+h2 'Upgrade pip'
+run pip install --upgrade pip

@@ -1,81 +1,55 @@
 #!/usr/bin/env bash
 
-cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
+set -euo pipefail
+cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.."
 
-echo "deploy"
+# shellcheck disable=SC1091
+. 'script/utils.sh'
 
-# FIXME: Update for GitHub Actions workflow
-exit 1
+assert_git_branch 'master'
+assert_git_clean
 
-if [[ "$TRAVIS_PULL_REQUEST" != "false" ]]; then
-  echo "This is a pull request. No deployment will be done."
-  exit 0
+VERSION_FILE='clowder/__init__.py'
+VERSION_MATCH_PATTERN="__version__ = '"
+VERSION=$(awk "/${VERSION_MATCH_PATTERN}/" "${VERSION_FILE}" | sed -n -e "s/^.*${VERSION_MATCH_PATTERN}//p" | tr -d "',")
+o "VERSION: ${VERSION}"
+
+run git fetch --tags
+
+if git rev-list "${VERSION}" >/dev/null 2>&1; then
+    exit_failure "${VERSION} tag exists. No deployment will be done"
 fi
-if [[ "$TRAVIS_BRANCH" != "master" ]]; then
-  echo "Testing on a branch other than master. No deployment will be done."
-  exit 0
-fi
 
-export GITHUB_USER='JrGoodle'
-export GITHUB_REPO='clowder'
+h1 "${VERSION} tag not found. Deploying..."
 
-SETUP_PY="$(pwd)/setup.py"
-VERSION=$(awk "/version='/" "${SETUP_PY}" | sed -n -e "s/^.*version='//p" | tr -d "',")
-echo "VERSION=${VERSION}"
-TAG="${VERSION}"
+h2 'Clean existing build artifacts'
+run script/clean
 
-git fetch --tags || exit 1
-if git rev-list "${TAG}" >/dev/null; then
-    echo "${TAG} tag exists. No deployment will be done."
-else
-    echo "${TAG} tag not found. Deploying..."
+h2 'Install dependencies'
+run script/bootstrap
+run pipenv install --deploy --dev
 
-    echo 'Clean any existing build artifacts'
-    echo '----------------------------------'
-    script/clean || exit 1
-    echo ''
+h2 "Build distributions for ${VERSION}"
+DIST_WHEEL="$(pwd)/dist/clowder_repo-${VERSION}-py3-none-any.whl"
+DIST_ARCHIVE="$(pwd)/dist/clowder-repo-${VERSION}.tar.gz"
 
-    echo 'Create source distribution'
-    echo '--------------------------'
-    sudo -H python3 setup.py sdist || exit 1
-    echo ''
+h3 "Create source distribution for ${VERSION}"
+run pipenv run python setup.py sdist
+assert_file_exists "$DIST_ARCHIVE"
 
-    echo 'Create wheel'
-    echo '------------'
-    sudo -H python3 setup.py bdist_wheel || exit 1
-    echo ''
+h3 "Build wheel distribution for ${VERSION}"
+run pipenv run python setup.py bdist_wheel
+assert_file_exists "$DIST_WHEEL"
 
-    echo 'Create tag and push to GitHub'
-    echo '-----------------------------'
-    git tag "${TAG}" -a -m "${TAG}" || exit 1
-    git push origin "${TAG}" || exit 1
-    echo ''
+h2 "Upload ${VERSION} to PyPI"
+run pipenv run twine upload dist/*
 
-    echo "Create new GitHub Release"
-    echo '-------------------------'
-    github-release release \
-        --tag "${TAG}" \
-        --name "${TAG}" \
-        --description "[${TAG} on PyPI](https://pypi.org/project/clowder-repo/${TAG}/)" || exit 1
-    echo ''
-
-    echo "Upload artifacts to GitHub Releases"
-    echo '-----------------------------------'
-    pushd "dist" || exit 1
-    artifacts=( "clowder_repo-${VERSION}-py3-none-any.whl" \
-                 "clowder-repo-${VERSION}.tar.gz" )
-    for artifact in "${artifacts[@]}"; do
-        echo "Upload ${artifact} to GitHub Release"
-        github-release upload \
-            --tag "${TAG}" \
-            --name "${artifact}" \
-            --file "${artifact}" || exit 1
-    done
-    popd || exit 1
-    echo ''
-
-    echo 'Upload to PyPI'
-    echo '--------------'
-    twine upload dist/* || exit 1
-    echo ''
-fi
+h2 "Create new GitHub Release ${VERSION}"
+# TODO: Load release notes from file
+run gh release create "$VERSION" \
+    "$DIST_WHEEL" \
+    "$DIST_ARCHIVE" \
+    --title "$VERSION" \
+    --notes "[${VERSION} on PyPI](https://pypi.org/project/clowder-repo/${VERSION}/)" \
+    --target "$(current_commit)" \
+    --prerelease
