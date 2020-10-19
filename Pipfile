@@ -23,9 +23,9 @@ clowder-repo = {editable = true, path = "."}
 argcomplete = "*"
 colorama = "*"
 jsonschema = "*"
-psutil = "*"
 termcolor = "*"
 tqdm = "*"
+trio = "*"
 GitPython = "*"
 PyYAML = "*"
 #[requires]

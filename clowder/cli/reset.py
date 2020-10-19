@@ -22,7 +22,7 @@ from clowder.util.decorators import (
     print_clowder_repo_status_fetch,
     valid_clowder_yaml_required
 )
-from clowder.util.parallel import reset_parallel
+import clowder.util.parallel as parallel
 
 from .util import add_parser_arguments
 
@@ -88,7 +88,7 @@ def _reset_impl(project_names: List[str], timestamp_project: Optional[str] = Non
     if jobs is not None and jobs != 1 and os.name == "posix":
         if jobs <= 0:
             jobs = 4
-        reset_parallel(projects, jobs, timestamp_project=timestamp_project)
+        parallel.reset(projects, jobs, timestamp_project)
         return
 
     timestamp = None

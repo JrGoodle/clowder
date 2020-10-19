@@ -22,7 +22,7 @@ from clowder.util.decorators import (
     print_clowder_repo_status_fetch,
     valid_clowder_yaml_required
 )
-from clowder.util.parallel import herd_parallel
+import clowder.util.parallel as parallel
 
 from .util import add_parser_arguments
 
@@ -93,7 +93,7 @@ def herd(args) -> None:
     if jobs is not None and jobs != 1 and os.name == "posix":
         if jobs <= 0:
             jobs = 4
-        herd_parallel(projects, jobs, branch=branch, tag=tag, depth=depth, rebase=rebase)
+        parallel.herd(projects, jobs, branch, tag, depth, rebase)
         return
 
     validate_project_statuses(projects)

@@ -64,8 +64,8 @@ setup(
         'GitPython',
         'PyYAML',
         'termcolor',
-        'psutil',
-        'tqdm'
+        'tqdm',
+        'trio'
     ],
     tests_require=[
         'autopep8',
