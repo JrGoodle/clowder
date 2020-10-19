@@ -37,7 +37,7 @@ def project_repo_exists(func):
         """Wrapper"""
 
         instance = args[0]
-        if not Path(instance.full_path() / '.git').is_dir():
+        if not Path(instance.full_path / '.git').is_dir():
             cprint(" - Project missing", 'red')
             return
         return func(*args, **kwargs)
@@ -159,6 +159,16 @@ class ResolvedProject:
         if 'notdefault' in self.groups:
             self.groups.remove('all')
 
+    @property
+    def full_path(self) -> Path:
+        """Return full path to project
+
+        :return: Project's full file path
+        :rtype: str
+        """
+
+        return ENVIRONMENT.clowder_dir / self.path
+
     @project_repo_exists
     def branch(self, local: bool = False, remote: bool = False) -> None:
         """Print branches for project
@@ -167,7 +177,7 @@ class ResolvedProject:
         :param bool remote: Print remote branches
         """
 
-        repo = ProjectRepo(self.full_path(), self.remote, self.ref)
+        repo = ProjectRepo(self.full_path, self.remote, self.ref)
 
         if not is_offline() and remote:
             if self.upstream is None:
@@ -254,26 +264,26 @@ class ResolvedProject:
         :rtype: bool
         """
 
-        repo = ProjectRepo(self.full_path(), self.remote, self.ref)
+        repo = ProjectRepo(self.full_path, self.remote, self.ref)
         if not is_remote:
             return repo.existing_local_branch(branch)
 
         return repo.existing_remote_branch(branch, self.remote)
 
     def exists(self) -> bool:
-        """Check if branch exists
+        """Check if project exists
 
         :return: True, if repo exists
         :rtype: bool
         """
 
-        return existing_git_repository(self.full_path())
+        return existing_git_repository(self.full_path)
 
     @project_repo_exists
     def fetch_all(self) -> None:
         """Fetch upstream changes if project exists on disk"""
 
-        repo = ProjectRepo(self.full_path(), self.remote, self.ref)
+        repo = ProjectRepo(self.full_path, self.remote, self.ref)
         if self.upstream is None:
             repo.fetch(self.remote, depth=self.git_settings.depth)
             return
@@ -288,19 +298,10 @@ class ResolvedProject:
         :rtype: str
         """
 
-        if existing_git_repository(self.full_path()):
+        if existing_git_repository(self.full_path):
             return colored(str(self.path), 'green')
 
         return colored(self.name, 'green')
-
-    def full_path(self) -> Path:
-        """Return full path to project
-
-        :return: Project's full file path
-        :rtype: str
-        """
-
-        return ENVIRONMENT.clowder_dir / self.path
 
     def get_current_timestamp(self) -> str:
         """Return timestamp of current HEAD commit
@@ -309,7 +310,7 @@ class ResolvedProject:
         :rtype: str
         """
 
-        repo = ProjectRepo(self.full_path(), self.remote, self.ref)
+        repo = ProjectRepo(self.full_path, self.remote, self.ref)
         return repo.get_current_timestamp()
 
     def herd(self, branch: Optional[str] = None, tag: Optional[str] = None, depth: Optional[int] = None,
@@ -387,12 +388,12 @@ class ResolvedProject:
         :rtype: bool
         """
 
-        return ProjectRepo(self.full_path(), self.remote, self.ref).validate_repo(allow_missing_repo=allow_missing_repo)
+        return ProjectRepo(self.full_path, self.remote, self.ref).validate_repo(allow_missing_repo=allow_missing_repo)
 
     def print_existence_message(self) -> None:
         """Print existence validation message for project"""
 
-        if not existing_git_repository(self.full_path()):
+        if not existing_git_repository(self.full_path):
             print(self.status())
 
     def print_validation(self, allow_missing_repo: bool = True) -> None:
@@ -403,7 +404,7 @@ class ResolvedProject:
 
         if not self.is_valid(allow_missing_repo=allow_missing_repo):
             print(self.status())
-            repo = ProjectRepo(self.full_path(), self.remote, self.ref)
+            repo = ProjectRepo(self.full_path, self.remote, self.ref)
             repo.print_validation()
 
     @project_repo_exists
@@ -417,7 +418,7 @@ class ResolvedProject:
         :param bool remote: Delete remote branch
         """
 
-        repo = ProjectRepo(self.full_path(), self.remote, self.ref)
+        repo = ProjectRepo(self.full_path, self.remote, self.ref)
 
         if local and repo.existing_local_branch(branch):
             repo.prune_branch_local(branch, force)
@@ -453,22 +454,22 @@ class ResolvedProject:
 
         self._pull_lfs(repo)
 
-    def run(self, commands: List[str], ignore_errors: bool, parallel: bool = False) -> None:
+    def run(self, command: str, ignore_errors: bool, parallel: bool = False) -> None:
         """Run commands or script in project directory
 
-        :param list[str] commands: Commands to run
+        :param str command: Commands to run
         :param bool ignore_errors: Whether to exit if command returns a non-zero exit code
         :param bool parallel: Whether commands are being run in parallel, affects output
         """
 
-        if not parallel and not existing_git_repository(self.full_path()):
+        if not parallel and not existing_git_repository(self.full_path):
             print(colored(" - Project missing\n", 'red'))
             return
 
         self._print_output = not parallel
 
         forall_env = {'CLOWDER_PATH': ENVIRONMENT.clowder_dir,
-                      'PROJECT_PATH': self.full_path(),
+                      'PROJECT_PATH': self.full_path,
                       'PROJECT_NAME': self.name,
                       'PROJECT_REMOTE': self.remote,
                       'PROJECT_REF': self.ref}
@@ -486,8 +487,7 @@ class ResolvedProject:
             forall_env['UPSTREAM_NAME'] = self.upstream.name
             forall_env['UPSTREAM_REF'] = self.upstream.ref
 
-        for cmd in commands:
-            self._run_forall_command(cmd, forall_env, ignore_errors)
+        self._run_forall_command(command, forall_env, ignore_errors)
 
     def sha(self, short: bool = False) -> str:
         """Return sha for currently checked out commit
@@ -497,7 +497,7 @@ class ResolvedProject:
         :rtype: str
         """
 
-        repo = ProjectRepo(self.full_path(), self.remote, self.ref)
+        repo = ProjectRepo(self.full_path, self.remote, self.ref)
         return repo.sha(short=short)
 
     @project_repo_exists
@@ -510,7 +510,7 @@ class ResolvedProject:
 
         # TODO: Replace 0 with git default depth
         depth = self.git_settings.depth
-        repo = ProjectRepo(self.full_path(), self.remote, self.ref)
+        repo = ProjectRepo(self.full_path, self.remote, self.ref)
         repo.start(self.remote, branch, depth, tracking)
 
     def status(self, padding: Optional[int] = None) -> str:
@@ -521,7 +521,7 @@ class ResolvedProject:
         :rtype: str
         """
 
-        if not existing_git_repository(self.full_path()):
+        if not existing_git_repository(self.full_path):
             project_output = colored(self.name, 'green')
             if padding:
                 project_output = project_output.ljust(padding)
@@ -529,7 +529,7 @@ class ResolvedProject:
                 return f'{project_output} {missing_output}'
             return project_output
 
-        repo = ProjectRepo(self.full_path(), self.remote, self.ref)
+        repo = ProjectRepo(self.full_path, self.remote, self.ref)
         project_output = repo.format_project_string(self.path)
         current_ref_output = repo.format_project_ref_string()
 
@@ -543,7 +543,7 @@ class ResolvedProject:
         """Stash changes for project if dirty"""
 
         if self.is_dirty():
-            repo = ProjectRepo(self.full_path(), self.remote, self.ref)
+            repo = ProjectRepo(self.full_path, self.remote, self.ref)
             repo.stash()
         else:
             print(" - No changes to stash")
@@ -581,8 +581,8 @@ class ResolvedProject:
         """
 
         if submodules:
-            return ProjectRepoRecursive(self.full_path(), self.remote, self.ref, parallel=parallel)
-        return ProjectRepo(self.full_path(), self.remote, self.ref, parallel=parallel)
+            return ProjectRepoRecursive(self.full_path, self.remote, self.ref, parallel=parallel)
+        return ProjectRepo(self.full_path, self.remote, self.ref, parallel=parallel)
 
     def _run_forall_command(self, command: str, env: dict, ignore_errors: bool) -> None:
         """Run command or script in project directory
@@ -595,7 +595,7 @@ class ResolvedProject:
 
         self._print(fmt.command(command))
         try:
-            execute_forall_command(command, self.full_path(), env, self._print_output)
+            execute_forall_command(command, self.full_path, env, self._print_output)
         except ClowderError as err:
             LOG_DEBUG('Execute command failed', err)
             if not ignore_errors:

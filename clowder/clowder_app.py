@@ -7,7 +7,6 @@
 
 import argparse
 import pkg_resources
-from multiprocessing import freeze_support
 from typing import Optional
 
 import argcomplete
@@ -123,6 +122,5 @@ def main() -> None:
 
 
 if __name__ == '__main__':
-    freeze_support()
     colorama.init()
     main()

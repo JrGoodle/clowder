@@ -186,7 +186,7 @@ class ClowderController(object):
         """
 
         validate_project_statuses(projects)
-        print_parallel_projects_output(projects)
+        # print_parallel_projects_output(projects)
 
     def validate_projects_exist(self) -> None:
         """Validate all projects exist on disk
