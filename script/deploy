@@ -41,15 +41,15 @@ h3 "Build wheel distribution for ${VERSION}"
 run pipenv run python setup.py bdist_wheel
 assert_file_exists "$DIST_WHEEL"
 
-h2 "Upload ${VERSION} to PyPI"
-run pipenv run twine upload dist/*
-
 h2 "Create new GitHub Release ${VERSION}"
 # TODO: Load release notes from file
-run gh release create "$VERSION" \
+gh release create "$VERSION" \
     "$DIST_WHEEL" \
     "$DIST_ARCHIVE" \
     --title "$VERSION" \
     --notes "[${VERSION} on PyPI](https://pypi.org/project/clowder-repo/${VERSION}/)" \
     --target "$(current_commit)" \
     --prerelease
+
+h2 "Upload ${VERSION} to PyPI"
+pipenv run twine upload dist/*
