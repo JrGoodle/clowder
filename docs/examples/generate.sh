@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" || exit 1
+set -euo pipefail
+cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 export examples=( \
     # 'init' \
@@ -9,7 +10,7 @@ export examples=( \
 )
 
 for example in "${examples[@]}"; do
-    terminalizer render $example -o "clowder-${example}.gif" || exit 1
-    # imageoptim --imagealpha "clowder-${example}.gif" || exit 1
-    imageoptim "clowder-${example}.gif" || exit 1
+    terminalizer render $example -o "clowder-${example}.gif"
+    # imageoptim --imagealpha "clowder-${example}.gif"
+    imageoptim "clowder-${example}.gif"
 done

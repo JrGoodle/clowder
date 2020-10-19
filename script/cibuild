@@ -1,28 +1,21 @@
 #!/usr/bin/env bash
 
-cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
+set -euo pipefail
+cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.."
 
-if [ -z ${CI+x} ]; then
-    echo "Not a CI environment"
-    exit 1
-fi
+# shellcheck disable=SC1091
+. 'script/utils.sh'
 
-# CIRCLECI
-# GITHUB_WORKFLOW
+run script/bootstrap
 
-case "$(uname)" in
-    Linux*) export PLATFORM="linux";
-        pip install -r requirements.txt || exit 1
-        pip install -e . || exit 1
-        ;;
-    Darwin*) export PLATFORM="darwin";
-        sudo -H pip install -r requirements.txt || exit 1
-        sudo -H pip install -e . || exit 1
-        ;;
-    CYGWIN*) export PLATFORM="windows";
-        pip install -r requirements.txt || exit 1
-        pip install -e . || exit 1
-        ;;
-esac
+# h1 'Install pyenv versions'
+# run pyenv install --skip-existing
 
-echo "Installed clowder for $PLATFORM"
+h1 'Install pipenv dependencies'
+run pipenv install --dev -e .
+
+h1 'Uninstall system git lfs filters'
+sudo git config --system --unset-all filter.lfs.clean || true
+sudo git config --system --unset-all filter.lfs.smudge || true
+sudo git config --system --unset-all filter.lfs.process || true
+sudo git config --system --unset-all filter.lfs.required || true

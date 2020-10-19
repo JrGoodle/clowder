@@ -4,7 +4,7 @@ Setup file for clowder
 
 import os
 from pathlib import Path
-from setuptools import setup
+from setuptools import find_packages, setup
 
 from clowder import __version__
 
@@ -45,22 +45,42 @@ setup(
         'Topic :: Software Development :: Build Tools',
         'Topic :: Software Development :: Version Control :: Git'
     ],
-    packages=['clowder',
-              'clowder.cli',
-              'clowder.config',
-              'clowder.git_project',
-              'clowder.data',
-              'clowder.data.model',
-              'clowder.util'],
+    packages=find_packages(exclude=['tests.*']),
     package_data={
-        "clowder.util": ["clowder.schema.json", "clowder.config.schema.json"],
+        "clowder.util": [
+            "clowder.schema.json",
+            "clowder.config.schema.json"
+        ],
     },
     entry_points={
         'console_scripts': [
             'clowder=clowder.clowder_app:main',
         ]
     },
-    install_requires=['argcomplete', 'colorama', 'jsonschema', 'GitPython',
-                      'PyYAML', 'termcolor', 'psutil', 'tqdm'],
-    tests_require=['pytest', 'pytest-bdd', 'pytest-xdist']
+    install_requires=[
+        'argcomplete',
+        'colorama',
+        'jsonschema',
+        'GitPython',
+        'PyYAML',
+        'termcolor',
+        'psutil',
+        'tqdm'
+    ],
+    tests_require=[
+        'autopep8',
+        'coverage',
+        'pytest',
+        'pytest-bdd',
+        'pytest-xdist',
+        'pytest-datadir',
+        'pytest-cov',
+        'pytest-test-groups',
+        'recommonmark',
+        'sphinx-autobuild',
+        'sphinx-rtd-theme',
+        'Sphinx',
+        'twine',
+        'virtualenv'
+    ]
 )

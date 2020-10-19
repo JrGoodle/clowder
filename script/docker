@@ -30,9 +30,7 @@ def start_docker() -> None:
 
     result = run_command(path, "docker-compose up --build -d")
     assert result.returncode == 0
-    result = run_command(path, "docker-compose exec clowder pip install --requirement requirements.txt")
-    assert result.returncode == 0
-    result = run_command(path, "docker-compose exec clowder pip install --editable .")
+    result = run_command(path, "docker-compose exec clowder pipenv install --dev -e .")
     assert result.returncode == 0
 
     shutil.rmtree(build_ssh_dir, ignore_errors=True)

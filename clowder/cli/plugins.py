@@ -55,9 +55,6 @@ def run(args) -> None:
     module = f"{plugin_name}.{plugin_name}"
     module_file = plugins_dir / plugin_name / f"{plugin_name}.py"
 
-    # module = importlib.import_module(f"{plugin_name}.{plugin_name}")
-    # module.main()  # noqa
-
     spec = importlib.util.spec_from_file_location(module, module_file)
     plugin = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(plugin)  # noqa

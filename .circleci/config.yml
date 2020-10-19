@@ -26,10 +26,6 @@ commands:
             git config --global user.name "CircleCI"
             git config --global push.default simple
             git config --global --unset url.ssh://git@github.com.insteadOf
-            sudo git config --system --unset-all filter.lfs.clean || true
-            sudo git config --system --unset-all filter.lfs.smudge || true
-            sudo git config --system --unset-all filter.lfs.process || true
-            sudo git config --system --unset-all filter.lfs.required || true
   install_git_lfs:
     steps:
       - run:
@@ -38,7 +34,7 @@ commands:
   report_coverage:
     steps:
       - attach_workspace:
-          at: .
+          at: build
       - run:
           name: Install coverage.py
           command: pip install coverage
@@ -134,9 +130,12 @@ commands:
       - store_artifacts:
           path: build
       - persist_to_workspace:
-          root: .
+          root: build
           paths:
-            - build/
+            - codeclimate
+            - coverage
+            - cucumber
+            - junit
 
   test:
     description: "Pytest functional tests"
@@ -202,9 +201,12 @@ commands:
       - store_artifacts:
           path: build
       - persist_to_workspace:
-          root: .
+          root: build
           paths:
-            - build/
+            - codeclimate
+            - coverage
+            - cucumber
+            - junit
 
 jobs:
   test_parallel:

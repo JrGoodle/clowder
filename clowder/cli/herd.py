@@ -59,6 +59,7 @@ def add_herd_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
     parser.set_defaults(func=herd)
 
 
+# TODO: Split out herd_handler() to parse args, then call typed herd() function
 @valid_clowder_yaml_required
 @print_clowder_name
 @network_connection_required

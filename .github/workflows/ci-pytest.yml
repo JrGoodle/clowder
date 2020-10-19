@@ -23,6 +23,7 @@ jobs:
       PYTHON_VERSION: ${{ matrix.python-version }}
       OS_NAME: ${{ matrix.os }}
       CLOWDER_DEBUG: true
+      PYTHONPATH: ${{ github.workspace }}
 
     runs-on: ${{ matrix.os }}
     strategy:
@@ -38,6 +39,15 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
+    - name: Install python version
+      uses: gabrielfalcao/pyenv-action@v5
+      with:
+        default: "${{ matrix.python-version }}"
+        command: pip install -U pip  # upgrade pip after installing python
+
+    - name: Install pipenv
+      uses: dschep/install-pipenv-action@v1
+
     - name: Setup git config
       run: |
         git config --global user.email "joe@polka.cat";
@@ -46,6 +56,9 @@ jobs:
         sudo git config --system --unset-all filter.lfs.smudge
         sudo git config --system --unset-all filter.lfs.process
         sudo git config --system --unset-all filter.lfs.required
+
+    - name: Install pyenv
+      run: pyenv install --skip-existing
 
     - name: Install clowder
       run: script/cibuild

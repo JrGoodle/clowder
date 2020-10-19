@@ -33,4 +33,7 @@ RUN git config --system --unset-all filter.lfs.smudge
 RUN git config --system --unset-all filter.lfs.process
 RUN git config --system --unset-all filter.lfs.required
 
+# Install pipenv
+RUN pip install -U pipenv
+
 CMD ["/usr/bin/env bash"]

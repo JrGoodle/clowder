@@ -112,7 +112,12 @@ def lfs_hooks_installed(path: Path) -> bool:
     results.append(result)
     result = run_command("grep -m 1 'git lfs post-merge' '.git/hooks/post-merge'", path)
     results.append(result)
-    return all([r.returncode == 0 for r in results])
+    success = all([r.returncode == 0 for r in results])
+    if not success:
+        for r in results:
+            print(f'Return code: {r.returncode}')
+            print(r.stdout)
+    return success
 
 
 def lfs_filters_installed(path: Path) -> bool:
@@ -124,7 +129,12 @@ def lfs_filters_installed(path: Path) -> bool:
     results.append(result)
     result = run_command("git config --get filter.lfs.process", path)
     results.append(result)
-    return all([r.returncode == 0 for r in results])
+    success = all([r.returncode == 0 for r in results])
+    if not success:
+        for r in results:
+            print(f'Return code: {r.returncode}')
+            print(r.stdout)
+    return success
 
 
 def uninstall_lfs_hooks_filters(path: Path) -> [CompletedProcess]:
@@ -134,7 +144,6 @@ def uninstall_lfs_hooks_filters(path: Path) -> [CompletedProcess]:
     # run_command("git config --system --unset filter.lfs.clean", path)
     # run_command("git config --system --unset filter.lfs.smudge", path)
     # run_command("git config --system --unset filter.lfs.process", path)
-    # TODO: Should this be installed or checked in main command?
     # run_command("git config --system --unset filter.lfs.required", path)
     assert not lfs_hooks_installed(path)
     assert not lfs_filters_installed(path)

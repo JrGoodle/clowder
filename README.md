@@ -100,7 +100,9 @@ clowder:
     path: tensorflow
 ```
 
-The defaults section contains the git branch and remote, the source to clone from, and the protocol to use for cloning repositories.
+The protocol specifies whether to use ssh or https for cloning repositories.
+
+The defaults section contains the git branch, git remote name, and the source to clone from.
 
 A project requires at minimum a name (the last components of the git clone url). If the project path is not specified, the last component of the project name is used for the local directory.
 
@@ -174,7 +176,7 @@ clowder:
       protocol: https
 ```
 
-or equivalently with grouped sections:
+or equivalently with group sections:
 
 ```yaml
 name: cool-projects
@@ -194,7 +196,7 @@ clowder:
         protocol: https
 ```
 
-or equivalently using grouped section settings:
+or equivalently using group section settings:
 
 ```yaml
 name: cool-projects

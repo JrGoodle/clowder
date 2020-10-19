@@ -1,0 +1,32 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+coverage = "*"
+pytest = "*"
+pytest-bdd = "*"
+pytest-xdist = "*"
+pytest-datadir = "*"
+pytest-cov = "*"
+pytest-test-groups = "*"
+recommonmark = "*"
+sphinx-autobuild = "*"
+sphinx-rtd-theme = "*"
+Sphinx = "*"
+twine = "*"
+virtualenv = "*"
+clowder-repo = {editable = true, path = "."}
+
+[packages]
+argcomplete = "*"
+colorama = "*"
+jsonschema = "*"
+psutil = "*"
+termcolor = "*"
+tqdm = "*"
+GitPython = "*"
+PyYAML = "*"
+#[requires]
+#python_version = "3.6.3"

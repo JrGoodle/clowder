@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
-cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.." || exit 1
+set -euo pipefail
+cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.."
 
-script/setup || exit 1
+# shellcheck disable=SC1091
+. 'script/utils.sh'
+
+run script/setup
