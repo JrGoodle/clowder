@@ -104,7 +104,7 @@ assert_git_branch() {
         exit_failure "Current branch: $(current_branch)"
     fi
 }
-export -f assert_git_clean
+export -f assert_git_branch
 
 if [ -z ${PLATFORM+x} ]; then
     case "$(uname)" in
