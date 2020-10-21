@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Clowder command line app
 
 .. codeauthor:: Joe Decapo <joe@polka.cat>

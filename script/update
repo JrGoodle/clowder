@@ -9,4 +9,4 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.."
 run script/setup
 
 h1 'Generate requirements.txt'
-pipenv run pip freeze > requirements.txt
+run 'pipenv run pip freeze > requirements.txt'

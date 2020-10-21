@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Project Git utility class with submodules
 
 .. codeauthor:: Joe Decapo <joe@polka.cat>

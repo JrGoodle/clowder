@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Config handler class
 
 .. codeauthor:: Joe Decapo <joe@polka.cat>

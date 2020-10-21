@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """clowder.data.model module __init__
 
 .. codeauthor:: Joe Decapo <joe@polka.cat>

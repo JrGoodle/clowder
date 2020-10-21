@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Source controller class
 
 .. codeauthor:: Joe Decapo <joe@polka.cat>

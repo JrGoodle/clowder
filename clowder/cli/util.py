@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Clowder model utilities
 
 .. codeauthor:: Joe Decapo <joe@polka.cat>
