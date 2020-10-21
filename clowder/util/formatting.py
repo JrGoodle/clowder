@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """String formatting utilities
 
 .. codeauthor:: Joe Decapo <joe@polka.cat>

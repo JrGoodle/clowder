@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Representation of clowder yaml git settings
 
 .. codeauthor:: Joe Decapo <joe@polka.cat>

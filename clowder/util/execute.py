@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Subprocess execution utilities
 
 .. codeauthor:: Joe Decapo <joe@polka.cat>

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Clowder command controller class
 
 .. codeauthor:: Joe Decapo <joe@polka.cat>

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # clowder documentation build configuration file, created by
 # sphinx-quickstart on Thu Oct 26 14:08:07 2017.
