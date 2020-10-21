@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Clowder parallel command
 
 .. codeauthor:: Joe Decapo <joe@polka.cat>

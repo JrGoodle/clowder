@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Base Git utility class
 
 .. codeauthor:: Joe Decapo <joe@polka.cat>

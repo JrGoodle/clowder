@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Project Git utility class
 
 .. codeauthor:: Joe Decapo <joe@polka.cat>

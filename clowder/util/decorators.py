@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Decorators
 
 .. codeauthor:: Joe Decapo <joe@polka.cat>

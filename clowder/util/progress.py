@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Progress bar wrapper class
 
 .. codeauthor:: Joe Decapo <joe@polka.cat>

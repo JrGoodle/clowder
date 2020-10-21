@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Network connectivity
 
 .. codeauthor:: Joe Decapo <joe@polka.cat>

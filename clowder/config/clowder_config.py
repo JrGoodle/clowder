@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Clowder config class
 
 .. codeauthor:: Joe Decapo <joe@polka.cat>

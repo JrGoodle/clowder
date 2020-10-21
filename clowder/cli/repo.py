@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Clowder command line repo controller
 
 .. codeauthor:: Joe Decapo <joe@polka.cat>
