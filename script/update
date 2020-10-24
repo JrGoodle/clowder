@@ -7,3 +7,6 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.."
 . 'script/utils.sh'
 
 run script/setup
+
+h1 'Generate requirements.txt'
+pipenv run pip freeze > requirements.txt
