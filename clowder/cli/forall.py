@@ -30,11 +30,11 @@ def add_forall_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
     """
 
     arguments = [
+        (['command'], dict(metavar='<command>', nargs=1, default=None,
+                           help='command to run in project directories')),
         (['projects'], dict(metavar='<project|group>', default='default', nargs='*',
                             choices=CLOWDER_CONTROLLER.project_choices_with_default,
                             help=fmt.project_options_help_message('projects and groups to run command for'))),
-        (['--command', '-c'], dict(nargs=1, metavar='<command>', default=None,
-                                   help='command to run in project directories')),
         (['--ignore-errors', '-i'], dict(action='store_true', help='ignore errors in command or script')),
         (['--jobs', '-j'], dict(metavar='<n>', nargs=1, default=None, type=int,
                                 help='number of jobs to use runnning commands in parallel')),
