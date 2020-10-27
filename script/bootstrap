@@ -21,13 +21,17 @@ case "$PLATFORM" in
         run pip install -U pipenv
         ;;
     darwin)
-        h2 'Install Hombrew if necessary'
-        if which -s brew; then
-            o '* Homebrew already installed! Updating...'
-            run brew update
+        if [ -z ${CI+x} ]; then
+            h2 'Install Hombrew if necessary'
+            if which -s brew; then
+                o '* Homebrew already installed! Updating...'
+                run brew update
+            else
+                o '* Homebrew not found. Installing...'
+                run ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+            fi
         else
-            o '* Homebrew not found. Installing...'
-            run ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+            h2 'Skipping homebrew update on CI'
         fi
         h2 'Install Homebrew formulas'
         run brew bundle
