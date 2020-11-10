@@ -1,83 +1,120 @@
-#!/usr/bin/env bash
+# shellcheck shell=bash
+
+bold() {
+    if [ -n "$TERM" ] && [ "$TERM" != 'dumb' ]; then
+        tput bold
+    fi
+}
+
+underline() {
+    if [ -n "$TERM" ] && [ "$TERM" != 'dumb' ]; then
+        tput smul
+    fi
+}
+
+normal() {
+    if [ -n "$TERM" ] && [ "$TERM" != 'dumb' ]; then
+        tput sgr0
+    fi
+}
 
 exit_failure() {
-    echo "$1"
-    echo ''
+    o ''
+    bold
+    o "$1"
+    normal
+    o ''
     exit 1
 }
 export -f exit_failure
 
 h1() {
     local message="$1"
-    echo ''
+    o ''
+    bold
     o "$message"
     separator "$message" '='
+    normal
 }
 export -f h1
 
 h2() {
     local message="$1"
-    echo ''
+    o ''
+    bold
     o "$message"
     separator "$message" '-'
+    normal
 }
 export -f h2
 
 h3() {
-    echo ''
-    o "* $1"
+    o ''
+    bold
+    underline
+    o "# $1"
+    normal
 }
 export -f h3
 
 h4() {
-    echo ''
-    o "** $1"
+    o ''
+    bold
+    underline
+    o "## $1"
+    normal
 }
 export -f h4
 
 h5() {
-    echo ''
-    o "*** $1"
+    o ''
+    bold
+    underline
+    o "### $1"
+    normal
 }
 export -f h5
 
 o() {
-    echo "$1"
+    printf '%s\n' "$*"
 }
 export -f o
+
+b() {
+    bold
+    printf '%s\n' "$*"
+    normal
+}
+export -f b
 
 separator() {
     local message="$1"
     local separator_character="$2"
     local count="${#message}"
     eval printf -- "${separator_character}%.s" "{1..${count}}"
-    echo ''
+    o ''
 }
 export -f separator
 
 run() {
     local components=("$@")
     local run_command="${components[*]}"
-    echo "> ${run_command}"
+    bold
+    o "> ${run_command}"
+    normal
     eval "$run_command"
 }
 export -f run
 
-current_commit() {
-    git rev-parse --verify HEAD
+run_ignore_errors() {
+    local components=("$@")
+    local run_command="${components[*]}"
+    bold
+    o "> ${run_command}"
+    normal
+    eval "$run_command" || true
 }
-export -f current_commit
-
-tag_commit() {
-    local tag="$1"
-    git rev-parse "$tag"^0
-}
-export -f tag_commit
-
-current_branch() {
-    git branch --show-current
-}
-export -f current_branch
+export -f run_ignore_errors
 
 assert_file_exists() {
     local test_file="$1"
@@ -88,23 +125,41 @@ assert_file_exists() {
 }
 export -f assert_file_exists
 
-assert_git_clean() {
-    o "Assert git repo is clean"
-    if [[ ! "$(git diff --cached --quiet)" ]]; then
-        exit_failure "Dirty git repo"
-    fi
+append_to_file() {
+    local contents="$1"
+    local output_file="$2"
+    bold
+    echo "> echo '${contents}' >> ${output_file}"
+    normal
+    echo "$contents" >> "$output_file"
 }
-export -f assert_git_clean
+export -f append_to_file
 
-assert_git_branch() {
-    local expected_branch="$1"
-    o "Assert current branch is ${expected_branch}"
-    if [[ "$expected_branch" != "$(current_branch)" ]]; then
-        o "Expected branch: ${expected_branch}"
-        exit_failure "Current branch: $(current_branch)"
-    fi
+write_to_file() {
+    local contents="$1"
+    local output_file="$2"
+    bold
+    echo "> echo '${contents}' > ${output_file}"
+    normal
+    echo "$contents" > "$output_file"
 }
-export -f assert_git_branch
+export -f write_to_file
+
+sudo_append_to_file() {
+    local contents="$1"
+    local output_file="$2"
+    bold
+    echo "> echo '${contents}' | sudo tee -a ${output_file}"
+    normal
+    echo "$contents" | sudo tee -a "$output_file"
+}
+export -f sudo_append_to_file
+
+file_contains_string() {
+    local match="$1"
+    local input_file="$2"
+    grep -q "$match" "$input_file" || return $?
+}
 
 if [ -z ${PLATFORM+x} ]; then
     case "$(uname)" in
@@ -112,5 +167,4 @@ if [ -z ${PLATFORM+x} ]; then
         Darwin*) export PLATFORM="darwin";;
         CYGWIN*) export PLATFORM="windows";;
     esac
-    o "PLATFORM: $PLATFORM"
 fi

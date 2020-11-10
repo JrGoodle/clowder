@@ -1,6 +1,6 @@
 """Clowder command line start controller
 
-.. codeauthor:: Joe Decapo <joe@polka.cat>
+.. codeauthor:: Joe DeCapo <joe@polka.cat>
 
 """
 

@@ -1,6 +1,6 @@
 """Clowder command line repo controller
 
-.. codeauthor:: Joe Decapo <joe@polka.cat>
+.. codeauthor:: Joe DeCapo <joe@polka.cat>
 
 """
 

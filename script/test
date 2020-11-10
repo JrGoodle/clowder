@@ -18,7 +18,6 @@ def make_dir(dir_path: Path) -> Path:
     return dir_path
 
 
-# Paths
 path: Path = Path(__file__).resolve().parent.parent.resolve()
 build_dir: Path = make_dir(path / "build")
 temp_dir: Path = make_dir(path / "temp")
@@ -27,10 +26,11 @@ junit_dir: Path = make_dir(build_dir / f"junit")
 cucumber_dir: Path = make_dir(build_dir / f"cucumber")
 
 
-def run_command(cwd: Path, cmd: str) -> CompletedProcess:
+def run_command(cmd: str, cwd: Path = path) -> CompletedProcess:
     cmd_env = os.environ.copy()
     print(f"command: {cmd}")
-    completed_process = subprocess.run(cmd, cwd=cwd, shell=True, env=cmd_env)
+    command = f'. script/import.sh; {cmd}'
+    completed_process = subprocess.run(command, cwd=cwd, shell=True, env=cmd_env)
     return completed_process
 
 
@@ -47,19 +47,19 @@ def get_random_alphanumeric_string(length: int) -> str:
 
 
 def report_coverage() -> None:
-    result = run_command(path, f"coverage combine")
+    result = run_command(f"coverage combine")
     assert result.returncode == 0
     xml_file = coverage_dir / "coverage.xml"
-    result = run_command(path, f"coverage xml -o {xml_file}")
+    result = run_command(f"coverage xml -o {xml_file}")
     assert result.returncode == 0
     html_dir = coverage_dir / "html"
-    result = run_command(path, f"coverage html --directory {html_dir}")
+    result = run_command(f"coverage html --directory {html_dir}")
     assert result.returncode == 0
     json_file = coverage_dir / "coverage.json"
-    result = run_command(path, f"coverage json -o {json_file}")
+    result = run_command(f"coverage json -o {json_file}")
     assert result.returncode == 0
     annotate_dir = coverage_dir / "annotate"
-    result = run_command(path, f"coverage annotate --directory {annotate_dir}")
+    result = run_command(f"coverage annotate --directory {annotate_dir}")
     assert result.returncode == 0
     exit()
 
@@ -94,7 +94,7 @@ def test(command_options: str, label: Optional[str] = None) -> None:
     command += bdd_reporting_options
 
     # Run test command
-    result = run_command(path, command)
+    result = run_command(command)
 
     # Rename coverage
     if file_label:

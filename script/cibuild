@@ -1,18 +1,11 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC1091
 
 set -euo pipefail
 cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.."
-
-# shellcheck disable=SC1091
 . 'script/utils.sh'
 
-run script/bootstrap
-
-# h1 'Install pyenv versions'
-# run pyenv install --skip-existing
-
-h1 'Install pipenv dependencies'
-run pipenv install --dev -e .
+run "${PWD}/script/setup"
 
 h1 'Uninstall system git lfs filters'
 sudo git config --system --unset-all filter.lfs.clean || true

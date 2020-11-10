@@ -1,6 +1,5 @@
 brew 'gh'
 brew 'git'
 brew 'git-lfs'
-brew 'pipenv'
 brew 'pyenv'
 brew 'python'

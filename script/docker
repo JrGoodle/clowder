@@ -7,15 +7,17 @@ import sys
 from pathlib import Path
 from subprocess import CompletedProcess
 
+repo_path = Path(__file__).resolve().parent.parent.resolve()
 
-def run_command(cwd: Path, cmd: str) -> CompletedProcess:
+
+def run_command(cmd: str, cwd: Path = repo_path) -> CompletedProcess:
     cmd_env = os.environ.copy()
     completed_process = subprocess.run(cmd, cwd=cwd, shell=True, env=cmd_env)
     return completed_process
 
 
 def start_docker() -> None:
-    build_ssh_dir = path / "build" / "ssh"
+    build_ssh_dir = repo_path / "build" / "ssh"
     shutil.rmtree(build_ssh_dir, ignore_errors=True)
     home_ssh_dir = Path.home() / ".ssh"
     shutil.copytree(str(home_ssh_dir), str(build_ssh_dir))
@@ -28,33 +30,36 @@ def start_docker() -> None:
         with config_file.open('w') as f:
             f.write(config_contents)
 
-    result = run_command(path, "docker-compose up --build -d")
+    result = run_command("docker-compose up --build -d")
     assert result.returncode == 0
-    result = run_command(path, "docker-compose exec clowder pipenv install --dev -e .")
+    result = run_command("docker-compose exec clowder pipenv install --dev -e .")
     assert result.returncode == 0
 
     shutil.rmtree(build_ssh_dir, ignore_errors=True)
 
 
 def stop_docker() -> None:
-    result = run_command(path, "docker-compose rm --force --stop clowder")
+    result = run_command("docker-compose rm --force --stop clowder")
     assert result.returncode == 0
 
 
-command_arg = ""
-if len(sys.argv) == 2:
-    command_arg = sys.argv[1]
-else:
-    print("Wrong number of arguments")
-    exit(1)
+def main() -> None:
+    try:
+        if len(sys.argv) == 2:
+            command_arg = sys.argv[1]
+        else:
+            raise Exception("Wrong number of arguments")
 
-# Repo path
-path = Path(__file__).resolve().parent.parent.resolve()
+        if command_arg == "start":
+            start_docker()
+        elif command_arg == "stop":
+            stop_docker()
+        else:
+            raise Exception("Unknown argument")
+    except Exception as err:
+        print(err)
+        exit(1)
 
-if command_arg == "start":
-    start_docker()
-elif command_arg == "stop":
-    stop_docker()
-else:
-    print("Unknown argument")
-    exit(1)
+
+if __name__ == '__main__':
+    main()
