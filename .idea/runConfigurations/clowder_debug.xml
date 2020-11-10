@@ -7,13 +7,13 @@
       <env name="PYTHONUNBUFFERED" value="1 CLOWDER_DEBUG=true" />
     </envs>
     <option name="SDK_HOME" value="" />
-    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/joya" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/cats" />
     <option name="IS_MODULE_SDK" value="true" />
     <option name="ADD_CONTENT_ROOTS" value="true" />
     <option name="ADD_SOURCE_ROOTS" value="true" />
     <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
     <option name="SCRIPT_NAME" value="/usr/local/bin/clowder" />
-    <option name="PARAMETERS" value="herd --jobs 4" />
+    <option name="PARAMETERS" value="herd" />
     <option name="SHOW_COMMAND_LINE" value="false" />
     <option name="EMULATE_TERMINAL" value="true" />
     <option name="MODULE_MODE" value="false" />

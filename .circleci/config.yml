@@ -54,8 +54,8 @@ commands:
           name: Upload coverage to Code climate
           command: |
             ./cc-test-reporter upload-coverage \
-            --id ${CC_TEST_REPORTER_ID} \
-            --input build/codeclimate/codeclimate.json
+              --id ${CC_TEST_REPORTER_ID} \
+              --input build/codeclimate/codeclimate.json
       - store_test_results:
           path: build/junit/
       - store_artifacts:

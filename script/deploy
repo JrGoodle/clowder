@@ -1,11 +1,8 @@
 #!/usr/bin/env bash
-
+# shellcheck disable=SC1091
 # set -o xtrace
-
 set -euo pipefail
 cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.."
-
-# shellcheck disable=SC1091
 . 'script/utils.sh'
 
 # FIXME: Get these asserts to work!
@@ -29,12 +26,12 @@ h2 'Clean existing build artifacts'
 run script/clean
 
 h2 'Install dependencies'
-run script/bootstrap
+run "${PWD}/script/bootstrap"
 run pipenv install --deploy --dev
 
 h2 "Build distributions for ${VERSION}"
-DIST_WHEEL="$(pwd)/dist/clowder_repo-${VERSION}-py3-none-any.whl"
-DIST_ARCHIVE="$(pwd)/dist/clowder-repo-${VERSION}.tar.gz"
+DIST_WHEEL="${PWD}/dist/clowder_repo-${VERSION}-py3-none-any.whl"
+DIST_ARCHIVE="${PWD}/dist/clowder-repo-${VERSION}.tar.gz"
 
 h3 "Create source distribution for ${VERSION}"
 run pipenv run python setup.py sdist

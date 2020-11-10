@@ -1,5 +1,5 @@
 """clowder.util module __init__
 
-.. codeauthor:: Joe Decapo <joe@polka.cat>
+.. codeauthor:: Joe DeCapo <joe@polka.cat>
 
 """

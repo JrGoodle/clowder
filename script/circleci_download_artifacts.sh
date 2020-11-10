@@ -4,7 +4,6 @@
 
 set -euo pipefail
 cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.."
-
 # shellcheck disable=SC1091
 . 'script/utils.sh'
 
@@ -12,7 +11,7 @@ if [ -z ${CIRCLE_TOKEN+x} ]; then
     exit_failure 'Requires CIRCLE_TOKEN is set'
 fi
 
-OUTPUT_DIR="$(pwd)/build/artifacts/circleci"
+OUTPUT_DIR="${PWD}/build/artifacts/circleci"
 run rm -rf "$OUTPUT_DIR"
 run mkdir -p "$OUTPUT_DIR"
 run pushd "$OUTPUT_DIR"

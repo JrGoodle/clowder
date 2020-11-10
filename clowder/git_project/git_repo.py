@@ -1,6 +1,6 @@
 """Base Git utility class
 
-.. codeauthor:: Joe Decapo <joe@polka.cat>
+.. codeauthor:: Joe DeCapo <joe@polka.cat>
 
 """
 

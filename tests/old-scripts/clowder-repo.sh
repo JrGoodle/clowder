@@ -600,7 +600,7 @@ test_commands_with_yaml_symlink_clowder_repo_missing_git_dir() {
     ./init.sh || exit 1
     rm -rf .clowder/.git || exit 1
     test_file_is_symlink 'clowder.yaml'
-    test_symlink_path 'clowder.yaml' "$(pwd)/.clowder/clowder.yaml"
+    test_symlink_path 'clowder.yaml' "${PWD}/.clowder/clowder.yaml"
     test_directory_exists '.clowder'
     test_no_directory_exists '.clowder/.git'
 
@@ -740,7 +740,7 @@ test_commands_with_yaml_symlink_clowder_repo_missing_git_dir() {
 
     test_file_exists 'clowder.yaml'
     test_file_is_symlink 'clowder.yaml'
-    test_symlink_path 'clowder.yaml' "$(pwd)/.clowder/clowder.yaml"
+    test_symlink_path 'clowder.yaml' "${PWD}/.clowder/clowder.yaml"
     test_no_file_exists 'clowder.yml'
     test_no_file_exists '.clowder/versions/new-version.clowder.yml'
     begin_command
@@ -749,14 +749,14 @@ test_commands_with_yaml_symlink_clowder_repo_missing_git_dir() {
     test_file_exists '.clowder/versions/new-version.clowder.yml'
     test_file_exists 'clowder.yaml'
     test_file_is_symlink 'clowder.yaml'
-    test_symlink_path 'clowder.yaml' "$(pwd)/.clowder/clowder.yaml"
+    test_symlink_path 'clowder.yaml' "${PWD}/.clowder/clowder.yaml"
     test_no_file_exists 'clowder.yml'
     begin_command
     $COMMAND link new-version || exit 1
     end_command
     test_file_exists 'clowder.yml'
     test_file_is_symlink 'clowder.yml'
-    test_symlink_path 'clowder.yml' "$(pwd)/.clowder/versions/new-version.clowder.yml"
+    test_symlink_path 'clowder.yml' "${PWD}/.clowder/versions/new-version.clowder.yml"
     test_no_file_exists 'clowder.yaml'
 }
 test_commands_with_yaml_symlink_clowder_repo_missing_git_dir
@@ -767,13 +767,13 @@ test_commands_with_clowder_repo_symlink() {
     ./clean.sh
     ./init.sh || exit 1
     mv '.clowder' 'clowder-symlink-source-dir'  || exit
-    ln -s "$(pwd)/clowder-symlink-source-dir" '.clowder'
+    ln -s "${PWD}/clowder-symlink-source-dir" '.clowder'
     test_file_is_symlink '.clowder'
-    test_symlink_path '.clowder' "$(pwd)/clowder-symlink-source-dir"
+    test_symlink_path '.clowder' "${PWD}/clowder-symlink-source-dir"
     test_directory_exists 'clowder-symlink-source-dir'
     test_file_exists 'clowder.yaml'
     test_file_is_symlink 'clowder.yaml'
-    test_symlink_path 'clowder.yaml' "$(pwd)/.clowder/clowder.yaml"
+    test_symlink_path 'clowder.yaml' "${PWD}/.clowder/clowder.yaml"
 
     begin_command
     $COMMAND herd $PARALLEL || exit 1
@@ -949,9 +949,9 @@ test_commands_with_clowder_repo_symlink() {
 
     test_file_exists 'clowder.yaml'
     test_file_is_symlink 'clowder.yaml'
-    test_symlink_path 'clowder.yaml' "$(pwd)/.clowder/clowder.yaml"
+    test_symlink_path 'clowder.yaml' "${PWD}/.clowder/clowder.yaml"
     test_file_is_symlink '.clowder'
-    test_symlink_path '.clowder' "$(pwd)/clowder-symlink-source-dir"
+    test_symlink_path '.clowder' "${PWD}/clowder-symlink-source-dir"
     test_directory_exists '.clowder'
     test_directory_exists 'clowder-symlink-source-dir'
     begin_command
@@ -960,9 +960,9 @@ test_commands_with_clowder_repo_symlink() {
     test_file_exists 'clowder-symlink-source-dir/versions/new-version.clowder.yml'
     test_file_exists 'clowder.yaml'
     test_file_is_symlink 'clowder.yaml'
-    test_symlink_path 'clowder.yaml' "$(pwd)/.clowder/clowder.yaml"
+    test_symlink_path 'clowder.yaml' "${PWD}/.clowder/clowder.yaml"
     test_file_is_symlink '.clowder'
-    test_symlink_path '.clowder' "$(pwd)/clowder-symlink-source-dir"
+    test_symlink_path '.clowder' "${PWD}/clowder-symlink-source-dir"
     test_directory_exists '.clowder'
     test_directory_exists 'clowder-symlink-source-dir'
     begin_command
@@ -970,10 +970,10 @@ test_commands_with_clowder_repo_symlink() {
     end_command
     test_file_exists 'clowder.yml'
     test_file_is_symlink 'clowder.yml'
-    test_symlink_path 'clowder.yml' "$(pwd)/.clowder/versions/new-version.clowder.yml"
+    test_symlink_path 'clowder.yml' "${PWD}/.clowder/versions/new-version.clowder.yml"
     test_no_file_exists 'clowder.yaml'
     test_file_is_symlink '.clowder'
-    test_symlink_path '.clowder' "$(pwd)/clowder-symlink-source-dir"
+    test_symlink_path '.clowder' "${PWD}/clowder-symlink-source-dir"
     test_directory_exists '.clowder'
     test_directory_exists 'clowder-symlink-source-dir'
 }

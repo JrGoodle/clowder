@@ -1,6 +1,6 @@
 """Clowder command line forall controller
 
-.. codeauthor:: Joe Decapo <joe@polka.cat>
+.. codeauthor:: Joe DeCapo <joe@polka.cat>
 
 """
 

@@ -1,6 +1,6 @@
 """Project Git utility class with submodules
 
-.. codeauthor:: Joe Decapo <joe@polka.cat>
+.. codeauthor:: Joe DeCapo <joe@polka.cat>
 
 """
 

@@ -1,6 +1,6 @@
 """Representation of clowder yaml clowder
 
-.. codeauthor:: Joe Decapo <joe@polka.cat>
+.. codeauthor:: Joe DeCapo <joe@polka.cat>
 
 """
 
