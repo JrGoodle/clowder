@@ -64,6 +64,7 @@ setup(
         'jsonschema',
         'GitPython',
         'PyYAML',
+        'rich',
         'termcolor',
         'tqdm',
         'trio'

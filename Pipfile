@@ -23,6 +23,7 @@ clowder-repo = {editable = true, path = "."}
 argcomplete = "*"
 colorama = "*"
 jsonschema = "*"
+rich = "*"
 termcolor = "*"
 tqdm = "*"
 trio = "*"
