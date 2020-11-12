@@ -296,9 +296,9 @@ class ResolvedProject:
         """
 
         if existing_git_repository(self.full_path):
-            return fmt.green(self.path)
+            return str(self.path)
 
-        return fmt.green(self.name)
+        return self.name
 
     def get_current_timestamp(self) -> str:
         """Return timestamp of current HEAD commit
@@ -513,19 +513,21 @@ class ResolvedProject:
         """
 
         if not existing_git_repository(self.full_path):
-            project_output = fmt.green(self.name)
+            project_output = self.name
             if padding:
                 project_output = project_output.ljust(padding)
+                project_output = fmt.green(project_output)
                 missing_output = fmt.red('-')
                 return f'{project_output} {missing_output}'
+            project_output = fmt.green(project_output)
             return project_output
 
         repo = ProjectRepo(self.full_path, self.remote, self.ref)
         project_output = repo.format_project_string(self.path)
-        current_ref_output = repo.format_project_ref_string()
-
         if padding:
             project_output = project_output.ljust(padding)
+        project_output = repo.color_project_string(project_output)
+        current_ref_output = repo.format_project_ref_string()
 
         return f'{project_output} {current_ref_output}'
 

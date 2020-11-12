@@ -221,9 +221,9 @@ class GitRepo(object):
 
         if self.is_detached():
             current_ref = self.sha()
-            return fmt.magenta(f'[HEAD @ {current_ref}]')
+            return fmt.magenta(fmt.escape(f'[HEAD @ {current_ref}]'))
         current_branch = self.current_branch()
-        return fmt.magenta(f'[{current_branch}]') + status
+        return fmt.magenta(fmt.escape(f'[{current_branch}]')) + status
 
     def format_project_string(self, path: Path) -> str:
         """Return formatted project name
@@ -234,12 +234,26 @@ class GitRepo(object):
         """
 
         if not existing_git_repository(self.repo_path):
-            return fmt.green(path)
+            return str(path)
 
         if not self.validate_repo():
-            return fmt.red(f'{path}*')
+            return f'{path}*'
         else:
-            return fmt.green(path)
+            return str(path)
+
+    @staticmethod
+    def color_project_string(project: str) -> str:
+        """Return formatted colored project name
+
+        :param str project: Relative project path
+        :return: Formatted project name
+        :rtype: str
+        """
+
+        if '*' in project:
+            return fmt.red(project)
+
+        return fmt.green(project)
 
     def get_current_timestamp(self) -> str:
         """Get current timestamp of HEAD commit

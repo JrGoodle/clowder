@@ -7,9 +7,7 @@
 import math
 import os
 from pathlib import Path
-from typing import Optional, Tuple
-
-from typing import List, Union
+from typing import List, Optional, Tuple, Union
 
 from clowder.logging import LOG_DEBUG
 
@@ -39,6 +37,11 @@ def magenta(output: Output) -> str:
 
 def yellow(output: Output) -> str:
     return f'[yellow]{output}[/yellow]'
+
+
+def escape(output: Output) -> str:
+    import rich.markup as markup
+    return f'[yellow]{markup.escape(output)}[/yellow]'
 
 
 ERROR = red(' - Error:')
