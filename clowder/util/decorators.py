@@ -9,6 +9,7 @@ from functools import wraps
 import clowder.clowder_repo as clowder_repo
 import clowder.util.formatting as fmt
 from clowder.clowder_controller import CLOWDER_CONTROLLER
+from clowder.console import CONSOLE
 from clowder.error import ClowderError, ClowderErrorType
 from clowder.environment import ENVIRONMENT
 
@@ -52,8 +53,8 @@ def print_clowder_name(func):
         """Wrapper"""
 
         if CLOWDER_CONTROLLER.name is not None:
-            print(fmt.clowder_name(CLOWDER_CONTROLLER.name))
-            print()
+            CONSOLE.print(fmt.clowder_name(CLOWDER_CONTROLLER.name))
+            CONSOLE.print()
         return func(*args, **kwargs)
 
     return wrapper

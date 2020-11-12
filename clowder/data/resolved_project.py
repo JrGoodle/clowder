@@ -6,11 +6,12 @@
 
 from functools import wraps
 from pathlib import Path
-from typing import List, Optional, Set
+from typing import Optional, Set
 
-from termcolor import colored, cprint
+from termcolor import colored
 
 import clowder.util.formatting as fmt
+from clowder.console import CONSOLE
 from clowder.environment import ENVIRONMENT
 from clowder.error import ClowderError, ClowderErrorType
 from clowder.git_project import ProjectRepo, ProjectRepoRecursive
@@ -37,7 +38,7 @@ def project_repo_exists(func):
 
         instance = args[0]
         if not Path(instance.full_path / '.git').is_dir():
-            cprint(" - Project missing", 'red')
+            CONSOLE.print("[red] - Project missing[/red]")
             return
         return func(*args, **kwargs)
 
@@ -70,7 +71,6 @@ class ResolvedProject:
 
         project.resolved_project_id = id(self)
         self.name: str = project.name
-        self._print_output = True
 
         has_path = project.path is not None
         has_defaults = defaults is not None
@@ -195,10 +195,10 @@ class ResolvedProject:
         if local:
             repo.print_local_branches()
         if remote:
-            self._print(fmt.upstream_string(self.name))
+            CONSOLE.print(fmt.upstream_string(self.name))
             repo.print_remote_branches()
 
-            self._print(fmt.upstream_string(self.upstream.name))
+            CONSOLE.print(fmt.upstream_string(self.upstream.name))
             # Modify repo to prefer upstream
             repo.default_ref = self.upstream.ref
             repo.remote = self.upstream.remote
@@ -323,13 +323,11 @@ class ResolvedProject:
         :param bool parallel: Whether command is being run in parallel, affects output
         """
 
-        self._print_output = not parallel
-
         herd_depth = self.git_settings.depth if depth is None else depth
         repo = self._repo(self.git_settings.recursive, parallel=parallel)
 
         if self.upstream is None:
-            self._print(self.status())
+            CONSOLE.print(self.status())
 
             if branch:
                 repo.herd_branch(self._url(), branch, depth=herd_depth,
@@ -344,10 +342,10 @@ class ResolvedProject:
 
             return
 
-        self._print(self.status())
+        CONSOLE.print(self.status())
         repo.configure_remotes(self.remote, self._url(), self.upstream.remote, self.upstream.url())
 
-        # self._print(fmt.upstream_string(self.name))
+        # CONSOLE.print(fmt.upstream_string(self.name))
         if branch:
             repo.herd_branch(self._url(), branch, depth=herd_depth, rebase=rebase,
                              config=self.git_settings.get_processed_config())
@@ -360,7 +358,7 @@ class ResolvedProject:
 
         self._pull_lfs(repo)
 
-        self._print(fmt.upstream_string(self.upstream.name))
+        CONSOLE.print(fmt.upstream_string(self.upstream.name))
 
         # Modify repo to prefer upstream
         repo.default_ref = self.upstream.ref
@@ -393,7 +391,7 @@ class ResolvedProject:
         """Print existence validation message for project"""
 
         if not existing_git_repository(self.full_path):
-            print(self.status())
+            CONSOLE.print(self.status())
 
     def print_validation(self, allow_missing_repo: bool = True) -> None:
         """Print validation message for project
@@ -402,7 +400,7 @@ class ResolvedProject:
         """
 
         if not self.is_valid(allow_missing_repo=allow_missing_repo):
-            print(self.status())
+            CONSOLE.print(self.status())
             repo = ProjectRepo(self.full_path, self.remote, self.ref)
             repo.print_validation()
 
@@ -433,8 +431,6 @@ class ResolvedProject:
         :param bool parallel: Whether command is being run in parallel, affects output
         """
 
-        self._print_output = not parallel
-
         repo = self._repo(self.git_settings.recursive, parallel=parallel)
 
         # TODO: Restore timestamp author
@@ -446,9 +442,9 @@ class ResolvedProject:
         if self.upstream is None:
             repo.reset(depth=self.git_settings.depth)
         else:
-            self._print(self.upstream.status())
+            CONSOLE.print(self.upstream.status())
             repo.configure_remotes(self.remote, self._url(), self.upstream.remote, self.upstream.url())
-            self._print(fmt.upstream_string(self.name))
+            CONSOLE.print(fmt.upstream_string(self.name))
             repo.reset()
 
         self._pull_lfs(repo)
@@ -462,10 +458,8 @@ class ResolvedProject:
         """
 
         if not parallel and not existing_git_repository(self.full_path):
-            print(colored(" - Project missing\n", 'red'))
+            CONSOLE.print(colored(" - Project missing\n", 'red'))
             return
-
-        self._print_output = not parallel
 
         forall_env = {'CLOWDER_PATH': ENVIRONMENT.clowder_dir,
                       'PROJECT_PATH': self.full_path,
@@ -545,7 +539,7 @@ class ResolvedProject:
             repo = ProjectRepo(self.full_path, self.remote, self.ref)
             repo.stash()
         else:
-            print(" - No changes to stash")
+            CONSOLE.print(" - No changes to stash")
 
     def _pull_lfs(self, repo: ProjectRepo) -> None:
         """Check if git lfs is installed and if not install them
@@ -558,15 +552,6 @@ class ResolvedProject:
 
         repo.install_lfs_hooks()
         repo.pull_lfs()
-
-    def _print(self, val: str) -> None:
-        """Print output if self._print_output is True
-
-        :param str val: String to print
-        """
-
-        if self._print_output:
-            print(val)
 
     # FIXME: Turn this into a property
     def _repo(self, submodules: bool, parallel: bool = False) -> ProjectRepo:
@@ -592,9 +577,9 @@ class ResolvedProject:
         :raise ClowderError:
         """
 
-        self._print(fmt.command(command))
+        CONSOLE.print(fmt.command(command))
         try:
-            execute_forall_command(command, self.full_path, env, self._print_output)
+            execute_forall_command(command, self.full_path, env)
         except ClowderError as err:
             LOG_DEBUG('Execute command failed', err)
             if not ignore_errors:

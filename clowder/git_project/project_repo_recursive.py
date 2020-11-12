@@ -10,6 +10,7 @@ from typing import Optional
 from git import GitError
 
 import clowder.util.formatting as fmt
+from clowder.console import CONSOLE
 from clowder.error import ClowderError, ClowderErrorType
 from clowder.logging import LOG_DEBUG
 from clowder.util.execute import execute_command
@@ -50,13 +51,13 @@ class ProjectRepoRecursive(ProjectRepo):
 
         super().clean(args=args)
 
-        self._print(' - Clean submodules recursively')
+        CONSOLE.print(' - Clean submodules recursively')
         self._submodules_clean()
 
-        self._print(' - Reset submodules recursively')
+        CONSOLE.print(' - Reset submodules recursively')
         self._submodules_reset()
 
-        self._print(' - Update submodules recursively')
+        CONSOLE.print(' - Update submodules recursively')
         self._submodules_update()
 
     def has_submodules(self) -> bool:
@@ -127,7 +128,7 @@ class ProjectRepoRecursive(ProjectRepo):
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
         """
 
-        self._print(' - Recursively update and init submodules')
+        CONSOLE.print(' - Recursively update and init submodules')
 
         if depth == 0:
             command = f"git submodule update --init --recursive"

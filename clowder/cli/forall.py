@@ -11,6 +11,7 @@ from typing import List, Optional
 import clowder.util.formatting as fmt
 from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.config import Config
+from clowder.console import CONSOLE
 from clowder.data.util import filter_projects
 from clowder.util.decorators import (
     print_clowder_name,
@@ -86,5 +87,5 @@ def _forall_impl(command: str, ignore_errors: bool, projects: List[str], jobs: O
         return
 
     for project in projects:
-        print(project.status())
+        CONSOLE.print(project.status())
         project.run(command, ignore_errors=ignore_errors)

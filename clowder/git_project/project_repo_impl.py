@@ -12,6 +12,7 @@ from typing import Dict, Optional
 from git import GitError, Remote, Repo, Tag
 
 import clowder.util.formatting as fmt
+from clowder.console import CONSOLE
 from clowder.error import ClowderError, ClowderErrorType
 from clowder.logging import LOG_DEBUG
 from clowder.util.execute import execute_command
@@ -54,7 +55,7 @@ class ProjectRepoImpl(GitRepo):
         """
 
         if self._is_branch_checked_out(branch):
-            self._print(' - Branch ' + fmt.ref_string(branch) + ' already checked out')
+            CONSOLE.print(' - Branch ' + fmt.ref_string(branch) + ' already checked out')
         else:
             self._checkout_branch_local(branch)
 
@@ -68,7 +69,7 @@ class ProjectRepoImpl(GitRepo):
 
         branch_output = fmt.ref_string(branch)
         try:
-            self._print(f' - Checkout branch {branch_output}')
+            CONSOLE.print(f' - Checkout branch {branch_output}')
             default_branch = self.repo.heads[branch]
             default_branch.checkout()
         except GitError as err:
@@ -121,7 +122,7 @@ class ProjectRepoImpl(GitRepo):
         self._remote(remote, remove_dir=True)
         self.fetch(remote, depth=depth, ref=commit, remove_dir=True)
 
-        self._print(' - Checkout commit ' + commit_output)
+        CONSOLE.print(' - Checkout commit ' + commit_output)
         try:
             self.repo.git.checkout(commit)
         except GitError as err:
@@ -153,7 +154,7 @@ class ProjectRepoImpl(GitRepo):
 
         tag_output = fmt.ref_string(tag)
         try:
-            self._print(' - Checkout tag ' + tag_output)
+            CONSOLE.print(' - Checkout tag ' + tag_output)
             self.repo.git.checkout(remote_tag)
         except GitError as err:
             LOG_DEBUG('Git error', err)
@@ -180,9 +181,9 @@ class ProjectRepoImpl(GitRepo):
         commit_output = fmt.ref_string(sha)
         try:
             if self.repo.head.commit.hexsha == sha:
-                self._print(' - On correct commit')
+                CONSOLE.print(' - On correct commit')
                 return
-            self._print(f' - Checkout commit {commit_output}')
+            CONSOLE.print(f' - Checkout commit {commit_output}')
             self.repo.git.checkout(sha)
         except GitError as err:
             LOG_DEBUG('Git error', err)
@@ -207,9 +208,9 @@ class ProjectRepoImpl(GitRepo):
             same_commit = self.repo.head.commit == self.repo.tags[tag].commit
             is_detached = self.repo.head.is_detached
             if same_commit and is_detached:
-                self._print(' - On correct commit for tag')
+                CONSOLE.print(' - On correct commit for tag')
                 return
-            self._print(f' - Checkout tag {tag_output}')
+            CONSOLE.print(f' - Checkout tag {tag_output}')
             self.repo.git.checkout(f'refs/tags/{tag}')
         except (GitError, ValueError) as err:
             LOG_DEBUG('Git error', err)
@@ -242,7 +243,7 @@ class ProjectRepoImpl(GitRepo):
 
         branch_output = fmt.ref_string(branch)
         try:
-            self._print(f' - Create branch {branch_output}')
+            CONSOLE.print(f' - Create branch {branch_output}')
             self.repo.create_head(branch)
         except GitError as err:
             LOG_DEBUG('Git error', err)
@@ -268,7 +269,7 @@ class ProjectRepoImpl(GitRepo):
             self.fetch(remote, depth=depth, ref=branch, remove_dir=remove_dir)
 
         try:
-            self._print(f' - Create branch {branch_output}')
+            CONSOLE.print(f' - Create branch {branch_output}')
             self.repo.create_head(branch, origin.refs[branch])
         except (GitError, IndexError) as err:
             LOG_DEBUG('Git error', err)
@@ -304,7 +305,7 @@ class ProjectRepoImpl(GitRepo):
             return
 
         try:
-            self._print(f' - Push remote branch {branch_output}')
+            CONSOLE.print(f' - Push remote branch {branch_output}')
             self.repo.git.push(remote, branch)
             self._set_tracking_branch(remote, branch)
         except GitError as err:
@@ -328,7 +329,7 @@ class ProjectRepoImpl(GitRepo):
 
         remote_output = fmt.remote_string(remote)
         try:
-            self._print(f' - Create remote {remote_output}')
+            CONSOLE.print(f' - Create remote {remote_output}')
             self.repo.create_remote(remote, url)
             return
         except GitError as err:
@@ -410,7 +411,7 @@ class ProjectRepoImpl(GitRepo):
                 message = self._format_error_message(message)
                 raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
             if self._print_output:
-                self._print(message)
+                CONSOLE.print(message)
             return None
         except Exception as err:
             LOG_DEBUG('Failed to get tag', err)
@@ -432,7 +433,7 @@ class ProjectRepoImpl(GitRepo):
             return
 
         try:
-            self._print(f' - Initialize repo at {fmt.path_string(str(self.repo_path))}')
+            CONSOLE.print(f' - Initialize repo at {fmt.path_string(str(self.repo_path))}')
             if not self.repo_path.is_dir():
                 try:
                     os.makedirs(str(self.repo_path))
@@ -506,7 +507,7 @@ class ProjectRepoImpl(GitRepo):
             message = self._format_error_message(message)
             raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
         else:
-            self._print(f' - Tracking branch {branch_output} already exists')
+            CONSOLE.print(f' - Tracking branch {branch_output} already exists')
 
     @not_detached
     def _pull(self, remote: str, branch: str) -> None:
@@ -519,7 +520,7 @@ class ProjectRepoImpl(GitRepo):
 
         branch_output = fmt.ref_string(branch)
         remote_output = fmt.remote_string(remote)
-        self._print(f' - Pull from {remote_output} {branch_output}')
+        CONSOLE.print(f' - Pull from {remote_output} {branch_output}')
         try:
             execute_command(f"git pull {remote} {branch}", self.repo_path, print_output=self._print_output)
         except ClowderError as err:
@@ -539,7 +540,7 @@ class ProjectRepoImpl(GitRepo):
 
         branch_output = fmt.ref_string(branch)
         remote_output = fmt.remote_string(remote)
-        self._print(f' - Rebase onto {remote_output} {branch_output}')
+        CONSOLE.print(f' - Rebase onto {remote_output} {branch_output}')
         try:
             execute_command(f"git pull --rebase {remote} refs/heads/{branch}:refs/remotes/{remote}/heads/{branch}",
                             self.repo_path, print_output=self._print_output)
@@ -591,7 +592,7 @@ class ProjectRepoImpl(GitRepo):
 
         remote_output_f = fmt.remote_string(remote_from)
         remote_output_t = fmt.remote_string(remote_to)
-        self._print(f' - Rename remote {remote_output_f} to {remote_output_t}')
+        CONSOLE.print(f' - Rename remote {remote_output_f} to {remote_output_t}')
         try:
             self.repo.git.remote('rename', remote_from, remote_to)
         except GitError as err:
@@ -615,7 +616,7 @@ class ProjectRepoImpl(GitRepo):
         try:
             local_branch = self.repo.heads[branch]
             remote_branch = origin.refs[branch]
-            self._print(f' - Set tracking branch {branch_output} -> {remote_output} {branch_output}')
+            CONSOLE.print(f' - Set tracking branch {branch_output} -> {remote_output} {branch_output}')
             local_branch.set_tracking_branch(remote_branch)
         except GitError as err:
             LOG_DEBUG('Git error', err)
@@ -670,7 +671,7 @@ class ProjectRepoImpl(GitRepo):
         :raise ClowderError:
         """
 
-        self._print(" - Update git config")
+        CONSOLE.print(" - Update git config")
         for key, value in config.items():
             self.git_config_unset_all_local(key)
             self.git_config_add_local(key, value)

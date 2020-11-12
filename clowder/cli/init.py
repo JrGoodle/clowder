@@ -10,6 +10,7 @@ from termcolor import colored
 
 import clowder.clowder_repo as clowder_repo
 import clowder.util.formatting as fmt
+from clowder.console import CONSOLE
 from clowder.environment import ENVIRONMENT
 from clowder.error import ClowderError, ClowderErrorType
 from clowder.logging import LOG_DEBUG
@@ -46,7 +47,7 @@ def init(args) -> None:
             raise ClowderError(ClowderErrorType.CLOWDER_ALREADY_INITIALIZED, fmt.error_clowder_already_initialized())
 
     url_output = colored(args.url, 'green')
-    print(f"Create clowder repo from {url_output}\n")
+    CONSOLE.print(f"Create clowder repo from {url_output}\n")
     if args.branch is None:
         branch = 'master'
     else:

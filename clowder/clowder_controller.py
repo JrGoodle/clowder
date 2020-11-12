@@ -12,10 +12,7 @@ from clowder.error import ClowderError, ClowderErrorType
 from clowder.logging import LOG_DEBUG
 from clowder.data import ResolvedProject, SOURCE_CONTROLLER
 from clowder.data.model import ClowderBase
-from clowder.data.util import (
-    print_parallel_projects_output,
-    validate_project_statuses
-)
+from clowder.data.util import validate_project_statuses
 from clowder.util.yaml import load_yaml_file, validate_yaml_file
 
 

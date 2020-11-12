@@ -85,6 +85,7 @@ class ResolvedUpstream:
         else:
             self.default_protocol: Optional[str] = None
 
+    @property
     def full_path(self) -> Path:
         """Return full path to project
 

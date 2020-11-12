@@ -7,6 +7,7 @@
 from typing import List, Optional, Tuple
 
 import clowder.util.formatting as fmt
+from clowder.console import CONSOLE
 from clowder.environment import ENVIRONMENT
 from clowder.error import ClowderError, ClowderErrorType
 from clowder.logging import LOG_DEBUG
@@ -74,15 +75,15 @@ class Config(object):
                 raise err
             LOG_DEBUG('Failed to load clowder config file', err)
             self.error: Optional[Exception] = err
-            print(fmt.warning_invalid_config_file(ENVIRONMENT.clowder_config_yaml))
-            print()
+            CONSOLE.print(fmt.warning_invalid_config_file(ENVIRONMENT.clowder_config_yaml))
+            CONSOLE.print()
         except Exception as err:
             if raise_exceptions:
                 raise err
             LOG_DEBUG('Failed to load clowder config file', err)
             self.error: Optional[Exception] = err
-            print(fmt.warning_invalid_config_file(ENVIRONMENT.clowder_config_yaml))
-            print()
+            CONSOLE.print(fmt.warning_invalid_config_file(ENVIRONMENT.clowder_config_yaml))
+            CONSOLE.print()
         except (KeyboardInterrupt, SystemExit):
             raise ClowderError(ClowderErrorType.USER_INTERRUPT, fmt.error_user_interrupt())
         finally:

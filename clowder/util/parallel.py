@@ -12,6 +12,7 @@ from tqdm import tqdm
 import trio
 
 from clowder.clowder_controller import CLOWDER_CONTROLLER
+from clowder.console import CONSOLE
 from clowder.data import ResolvedProject
 from clowder.logging import LOG_DEBUG
 
@@ -25,9 +26,9 @@ def forall(projects: Tuple[ResolvedProject, ...], jobs: int, command: str, ignor
     :param bool ignore_errors: Whether to exit if command returns a non-zero exit code
     """
 
-    print(' - Run forall commands in parallel\n')
+    CONSOLE.print(' - Run forall commands in parallel\n')
     for project in projects:
-        print(project.status())
+        CONSOLE.print(project.status())
         if not project.full_path.is_dir():
             cprint(" - Project missing", 'red')
 
@@ -47,7 +48,7 @@ def herd(projects: Tuple[ResolvedProject, ...], jobs: int, branch: Optional[str]
     :param bool rebase: Whether to use rebase instead of pulling latest changes
     """
 
-    print(' - Herd projects in parallel\n')
+    CONSOLE.print(' - Herd projects in parallel\n')
     CLOWDER_CONTROLLER.validate_print_output(projects)
 
     run_func = partial(run_parallel, jobs, projects, 'herd', branch=branch, tag=tag, depth=depth, rebase=rebase)
@@ -62,7 +63,7 @@ def reset(projects: Tuple[ResolvedProject, ...], jobs: int, timestamp_project: O
     :param Optional[str] timestamp_project: Reference project to checkout other project timestamps relative to
     """
 
-    print(' - Reset projects in parallel\n')
+    CONSOLE.print(' - Reset projects in parallel\n')
     CLOWDER_CONTROLLER.validate_print_output(projects)
 
     timestamp = None
@@ -74,6 +75,7 @@ def reset(projects: Tuple[ResolvedProject, ...], jobs: int, timestamp_project: O
 
 
 async def run_parallel(jobs: int, projects: Tuple[ResolvedProject, ...], func_name: str, **kwargs) -> None:
+    CONSOLE.print_output = False
     limit = trio.CapacityLimiter(jobs)
     unit = 'projects'
     base_bar_format = '{desc} {percentage:3.0f}%|{bar}| {n_fmt}/{total_fmt}'
@@ -85,6 +87,7 @@ async def run_parallel(jobs: int, projects: Tuple[ResolvedProject, ...], func_na
                 func = getattr(project, func_name)
                 project_func = partial(func, **kwargs, parallel=True)
                 nursery.start_soon(run_sync, project_func, limit, project, progress)
+    CONSOLE.print_output = True
 
 
 async def run_sync(func: Callable, limit: trio.CapacityLimiter, project: ResolvedProject, progress: tqdm) -> None:

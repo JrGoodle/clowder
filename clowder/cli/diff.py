@@ -9,6 +9,7 @@ import argparse
 import clowder.util.formatting as fmt
 from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.config import Config
+from clowder.console import CONSOLE
 from clowder.data.util import filter_projects
 from clowder.util.decorators import (
     print_clowder_name,
@@ -48,5 +49,5 @@ def diff(args) -> None:
     projects = filter_projects(CLOWDER_CONTROLLER.projects, projects)
 
     for project in projects:
-        print(project.status())
+        CONSOLE.print(project.status())
         project.diff()

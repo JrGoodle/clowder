@@ -9,6 +9,7 @@ import argparse
 import clowder.clowder_repo as clowder_repo
 import clowder.util.formatting as fmt
 from clowder.clowder_controller import CLOWDER_CONTROLLER
+from clowder.console import CONSOLE
 from clowder.environment import ENVIRONMENT
 from clowder.error import ClowderError, ClowderErrorType
 from clowder.data.util import validate_project_statuses
@@ -68,5 +69,5 @@ def save(args) -> None:
         raise ClowderError(ClowderErrorType.VERSION_ALREADY_EXISTS,
                            fmt.error_save_version_exists(version_name, yaml_file))
 
-    print(fmt.save_version_message(version_name, yml_file))
+    CONSOLE.print(fmt.save_version_message(version_name, yml_file))
     save_yaml_file(CLOWDER_CONTROLLER.get_yaml(resolved=True), yml_file)

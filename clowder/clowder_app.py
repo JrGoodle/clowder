@@ -13,6 +13,7 @@ import colorama
 
 import clowder.cli as cmd
 import clowder.util.formatting as fmt
+from clowder.console import CONSOLE
 from clowder.error import ClowderError, ClowderErrorType
 from clowder.logging import LOG_DEBUG
 
@@ -27,7 +28,7 @@ from clowder.logging import LOG_DEBUG
 #         if message is not None:
 #             message = f"{message}\n"
 #         else:
-#             print()
+#             CONSOLE.print()
 #         argparse.ArgumentParser.exit(self, status, message)
 
 
@@ -85,7 +86,7 @@ def create_parsers() -> argparse.ArgumentParser:
 def main() -> None:
     """Clowder command CLI main function"""
 
-    print()
+    CONSOLE.print()
     try:
         parser = create_parsers()
         argcomplete.autocomplete(parser)
@@ -96,28 +97,28 @@ def main() -> None:
         args.func(args)
     except ClowderError as err:
         LOG_DEBUG('** ClowderError **', err)
-        print(err)
-        print()
+        CONSOLE.print(err)
+        CONSOLE.print()
         if err.exit_code is not None:
             exit(err.exit_code)
         else:
             exit(err.error_type.value)
     except SystemExit as err:
         LOG_DEBUG('** SystemExit **', err)
-        print()
+        CONSOLE.print()
         exit(err.code)
     except KeyboardInterrupt as err:
         LOG_DEBUG('** KeyboardInterrupt **', err)
-        print(fmt.error_user_interrupt())
-        print()
+        CONSOLE.print(fmt.error_user_interrupt())
+        CONSOLE.print()
         exit(ClowderErrorType.USER_INTERRUPT.value)
     except Exception as err:
         LOG_DEBUG('** Unhandled exception **', err)
-        print(fmt.error_unknown_error())
-        print()
+        CONSOLE.print(fmt.error_unknown_error())
+        CONSOLE.print()
         exit(ClowderErrorType.UNKNOWN.value)
     else:
-        print()
+        CONSOLE.print()
 
 
 if __name__ == '__main__':

@@ -7,6 +7,7 @@
 from typing import Tuple
 
 import clowder.util.formatting as fmt
+from clowder.console import CONSOLE
 from clowder.error import ClowderError, ClowderErrorType
 
 from .resolved_project import ResolvedProject
@@ -48,7 +49,7 @@ def print_parallel_projects_output(projects: Tuple[ResolvedProject, ...]) -> Non
     """
 
     for project in projects:
-        print(project.status())
+        CONSOLE.print(project.status())
         _print_upstream_output(project)
 
 
@@ -63,7 +64,7 @@ def validate_project_statuses(projects: Tuple[ResolvedProject, ...], allow_missi
     for p in projects:
         p.print_validation(allow_missing_repo=allow_missing_repo)
     if not all([p.is_valid(allow_missing_repo=allow_missing_repo) for p in projects]):
-        print()
+        CONSOLE.print()
         raise ClowderError(ClowderErrorType.INVALID_PROJECT_STATUS, fmt.error_invalid_project_state())
 
 
@@ -74,5 +75,5 @@ def _print_upstream_output(project: ResolvedProject) -> None:
     """
 
     if project.upstream:
-        print('  ' + fmt.upstream_string(project.name))
-        print('  ' + fmt.upstream_string(project.upstream.name))
+        CONSOLE.print('  ' + fmt.upstream_string(project.name))
+        CONSOLE.print('  ' + fmt.upstream_string(project.upstream.name))

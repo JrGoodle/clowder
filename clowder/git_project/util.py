@@ -22,8 +22,7 @@ def check_ref_format(ref: str) -> bool:
     """
     try:
         Repo().git.check_ref_format('--normalize', ref)
-    except GitError as err:
-        print(err)
+    except GitError:
         return False
     else:
         return True

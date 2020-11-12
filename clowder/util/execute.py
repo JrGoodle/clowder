@@ -10,12 +10,13 @@ from pathlib import Path
 from typing import List, Optional, Union
 
 import clowder.util.formatting as fmt
+from clowder.console import CONSOLE
 from clowder.error import ClowderError, ClowderErrorType
 from clowder.logging import LOG_DEBUG
 
 
 def execute_command(command: Union[str, List[str]], path: Path,
-                    env: Optional[dict] = None, print_output: bool = True) -> None:
+                    env: Optional[dict] = None, print_output: Optional[bool] = None) -> None:
     """Execute command via subprocess
 
     :param Union[str, List[str]] command: Command to run
@@ -25,6 +26,8 @@ def execute_command(command: Union[str, List[str]], path: Path,
     :raise ClowderError:
     """
 
+    if print_output is None:
+        print_output = CONSOLE.print_output
     if isinstance(command, list):
         cmd = ' '.join(command)
     else:
@@ -46,14 +49,13 @@ def execute_command(command: Union[str, List[str]], path: Path,
                            exit_code=err.returncode)
 
 
-def execute_forall_command(command: Union[str, List[str]], path: Path, forall_env: dict, print_output: bool) -> None:
+def execute_forall_command(command: Union[str, List[str]], path: Path, forall_env: dict) -> None:
     """Execute forall command with additional environment variables and display continuous output
 
     :param Union[str, List[str]] command: Command to run
     :param Path path: Path to set as ``cwd``
     :param dict forall_env: Enviroment to set as ``env``
-    :param bool print_output: Whether to print output
     :raise ClowderError:
     """
 
-    execute_command(command, path, env=forall_env, print_output=print_output)
+    execute_command(command, path, env=forall_env)

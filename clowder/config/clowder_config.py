@@ -8,9 +8,8 @@ from enum import auto, Enum, unique
 from pathlib import Path
 from typing import Optional, Tuple
 
-from termcolor import cprint
-
 import clowder.util.formatting as fmt
+from clowder.console import CONSOLE
 from clowder.environment import ENVIRONMENT
 from clowder.error import ClowderError, ClowderErrorType
 
@@ -137,34 +136,34 @@ class ClowderConfig(object):
 
         if value is ClowderConfigType.JOBS:
             if self.jobs is None:
-                print(" - jobs not set")
+                CONSOLE.print(" - jobs not set")
             else:
-                print(f" - jobs: {self.jobs}")
+                CONSOLE.print(f" - jobs: {self.jobs}")
         elif value is ClowderConfigType.PROJECTS:
             if self.projects is None:
-                print(" - projects not set")
+                CONSOLE.print(" - projects not set")
             else:
-                print(f" - projects: {', '.join(self.projects)}")
+                CONSOLE.print(f" - projects: {', '.join(self.projects)}")
         elif value is ClowderConfigType.PROTOCOL:
             if self.protocol is None:
-                print(" - protocol not set")
+                CONSOLE.print(" - protocol not set")
             else:
-                print(f" - protocol: {self.protocol}")
+                CONSOLE.print(f" - protocol: {self.protocol}")
         elif value is ClowderConfigType.REBASE:
             if self.rebase is None:
-                print(" - rebase not set")
+                CONSOLE.print(" - rebase not set")
             else:
-                print(f" - rebase: {self.rebase}")
+                CONSOLE.print(f" - rebase: {self.rebase}")
         else:
             raise ClowderError(ClowderErrorType.UNKNOWN_CONFIG_TYPE, fmt.error_unknown_config_type())
 
     def print_configuration(self) -> None:
         """Print current configuration"""
 
-        cprint('Current config', attrs=['bold'])
-        print()
+        CONSOLE.print('[bold]Current config[/bold]')
+        CONSOLE.print()
         if self.is_empty():
-            print(' - No config values set')
+            CONSOLE.print(' - No config values set')
             return
 
         output = ''
@@ -177,7 +176,7 @@ class ClowderConfig(object):
         if self.rebase is not None:
             output += f" - rebase: {self.rebase}\n"
 
-        print(output, end='')
+        CONSOLE.print(output)
 
     def validate_config_projects_defined(self, project_options: Tuple[str, ...]) -> None:
         """Validate all projects were defined in clowder yaml file

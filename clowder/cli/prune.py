@@ -10,6 +10,7 @@ from typing import List, Tuple
 import clowder.util.formatting as fmt
 from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.config import Config
+from clowder.console import CONSOLE
 from clowder.error import ClowderError, ClowderErrorType
 from clowder.logging import LOG_DEBUG
 from clowder.data import ResolvedProject
@@ -124,10 +125,10 @@ def _prune_projects(projects: Tuple[ResolvedProject, ...], branch: str, force: b
         _validate_branches(local, remote, local_branch_exists, remote_branch_exists)
     except ClowderError as err:
         LOG_DEBUG('Invalid projects branch state', err)
-        print(err)
+        CONSOLE.print(err)
     else:
         for project in projects:
-            print(project.status())
+            CONSOLE.print(project.status())
             project.prune(branch, force=force, local=local, remote=remote)
 
 
@@ -145,15 +146,15 @@ def _validate_branches(local: bool, remote: bool, local_branch_exists: bool, rem
         branch_exists = local_branch_exists or remote_branch_exists
         if not branch_exists:
             raise ClowderError(ClowderErrorType.PRUNE_NO_BRANCHES, f' - No local or remote branches to prune')
-        print(' - Prune local and remote branches\n')
+        CONSOLE.print(' - Prune local and remote branches\n')
         return
 
     if remote:
         if not remote_branch_exists:
             raise ClowderError(ClowderErrorType.PRUNE_NO_BRANCHES, f' - No remote branches to prune')
-        print(' - Prune remote branches\n')
+        CONSOLE.print(' - Prune remote branches\n')
         return
 
     if not local_branch_exists:
         raise ClowderError(ClowderErrorType.PRUNE_NO_BRANCHES, f' - No local branches to prune')
-    print(' - Prune local branches\n')
+    CONSOLE.print(' - Prune local branches\n')

@@ -10,6 +10,7 @@ from typing import Optional
 from git import GitError
 
 import clowder.util.formatting as fmt
+from clowder.console import CONSOLE
 from clowder.error import ClowderError, ClowderErrorType
 from clowder.util.file_system import remove_file
 from clowder.logging import LOG_DEBUG
@@ -153,6 +154,7 @@ class ProjectRepo(ProjectRepoImpl):
             self._update_git_config(config)
 
         branch_output = fmt.ref_string(branch)
+        # FIXME: Replace with origin/HEAD
         branch_ref = f'refs/heads/{branch}'
         if self.existing_local_branch(branch):
             self._herd_branch_existing_local(branch, depth=depth, rebase=rebase, fork_remote=fork_remote)
@@ -164,7 +166,7 @@ class ProjectRepo(ProjectRepoImpl):
             return
 
         remote_output = fmt.remote_string(self.remote)
-        self._print(f' - No existing remote branch {remote_output} {branch_output}')
+        CONSOLE.print(f' - No existing remote branch {remote_output} {branch_output}')
         if fork_remote:
             self.fetch(fork_remote, depth=depth, ref=branch_ref)
             if self.existing_remote_branch(branch, fork_remote):
@@ -172,7 +174,7 @@ class ProjectRepo(ProjectRepoImpl):
                 return
 
             remote_output = fmt.remote_string(fork_remote)
-            self._print(f' - No existing remote branch {remote_output} {branch_output}')
+            CONSOLE.print(f' - No existing remote branch {remote_output} {branch_output}')
 
         fetch = depth != 0
         self.herd(url, depth=depth, fetch=fetch, rebase=rebase)
@@ -240,7 +242,7 @@ class ProjectRepo(ProjectRepoImpl):
         from clowder.environment import ENVIRONMENT
         config_variable = 'alias.herd'
         config_value = f'!clowder herd {self.repo_path.relative_to(ENVIRONMENT.clowder_dir)}'
-        self._print(" - Update git herd alias")
+        CONSOLE.print(" - Update git herd alias")
         self.git_config_unset_all_local(config_variable)
         self.git_config_add_local(config_variable, config_value)
 
@@ -254,14 +256,14 @@ class ProjectRepo(ProjectRepoImpl):
 
         branch_output = fmt.ref_string(branch)
         if branch not in self.repo.heads:
-            self._print(f" - Local branch {branch_output} doesn't exist")
+            CONSOLE.print(f" - Local branch {branch_output} doesn't exist")
             return
 
         prune_branch = self.repo.heads[branch]
         if self.repo.head.ref == prune_branch:
             ref_output = fmt.ref_string(truncate_ref(self.default_ref))
             try:
-                self._print(f' - Checkout ref {ref_output}')
+                CONSOLE.print(f' - Checkout ref {ref_output}')
                 self.repo.git.checkout(truncate_ref(self.default_ref))
             except GitError as err:
                 LOG_DEBUG('Git error', err)
@@ -270,7 +272,7 @@ class ProjectRepo(ProjectRepoImpl):
                 raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
 
         try:
-            self._print(f' - Delete local branch {branch_output}')
+            CONSOLE.print(f' - Delete local branch {branch_output}')
             self.repo.delete_head(branch, force=force)
         except GitError as err:
             LOG_DEBUG('Git error', err)
@@ -288,11 +290,11 @@ class ProjectRepo(ProjectRepoImpl):
 
         branch_output = fmt.ref_string(branch)
         if not self.existing_remote_branch(branch, remote):
-            self._print(f" - Remote branch {branch_output} doesn't exist")
+            CONSOLE.print(f" - Remote branch {branch_output} doesn't exist")
             return
 
         try:
-            self._print(f' - Delete remote branch {branch_output}')
+            CONSOLE.print(f' - Delete remote branch {branch_output}')
             self.repo.git.push(remote, '--delete', branch)
         except GitError as err:
             LOG_DEBUG('Git error', err)
@@ -332,7 +334,7 @@ class ProjectRepo(ProjectRepoImpl):
             raise ClowderError(ClowderErrorType.GIT_ERROR, message)
 
         self.fetch(self.remote, ref=self.default_ref, depth=depth)
-        self._print(f' - Reset branch {branch_output} to {remote_output} {branch_output}')
+        CONSOLE.print(f' - Reset branch {branch_output} to {remote_output} {branch_output}')
         remote_branch = f'{self.remote}/{branch}'
         self._reset_head(branch=remote_branch)
 
@@ -377,9 +379,9 @@ class ProjectRepo(ProjectRepoImpl):
                 LOG_DEBUG('Failed to create and checkout branch', err)
                 raise
         else:
-            self._print(f' - {fmt.ref_string(branch)} already exists')
+            CONSOLE.print(f' - {fmt.ref_string(branch)} already exists')
             if self._is_branch_checked_out(branch):
-                self._print(' - On correct branch')
+                CONSOLE.print(' - On correct branch')
             else:
                 try:
                     self._checkout_branch_local(branch)
@@ -469,7 +471,7 @@ class ProjectRepo(ProjectRepoImpl):
         self.fetch(self.remote, depth=depth, ref=branch)
         if not self.existing_remote_branch(branch, self.remote):
             remote_output = fmt.remote_string(self.remote)
-            self._print(f' - No existing remote branch {remote_output} {fmt.ref_string(branch)}')
+            CONSOLE.print(f' - No existing remote branch {remote_output} {fmt.ref_string(branch)}')
             self._herd_initial(url, depth=depth)
             return
         self._create_branch_local_tracking(branch, self.remote, depth=depth, fetch=False, remove_dir=True)

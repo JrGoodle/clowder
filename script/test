@@ -148,7 +148,9 @@ def main() -> None:
         options = f" -m '{args.markers[0]}'"
 
         if args.parallel:
-            options += " -n auto"
+            options += ' -n auto'
+        else:
+            options += ' -s'
 
         groups = None if args.groups is None else args.groups[0]
         group = None if args.group is None else args.group[0]

@@ -9,6 +9,7 @@ import argparse
 import clowder.util.formatting as fmt
 from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.config import Config
+from clowder.console import CONSOLE
 from clowder.data.util import (
     filter_projects,
     validate_project_statuses
@@ -75,5 +76,5 @@ def _start_branches(args, tracking: bool) -> None:
 
     validate_project_statuses(projects)
     for project in projects:
-        print(project.status())
+        CONSOLE.print(project.status())
         project.start(args.branch[0], tracking)
