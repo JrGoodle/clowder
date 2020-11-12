@@ -7,10 +7,10 @@
 from functools import partial
 from typing import Callable, Optional, Tuple
 
-from termcolor import cprint
 from tqdm import tqdm
 import trio
 
+import clowder.util.formatting as fmt
 from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.console import CONSOLE
 from clowder.data import ResolvedProject
@@ -30,7 +30,7 @@ def forall(projects: Tuple[ResolvedProject, ...], jobs: int, command: str, ignor
     for project in projects:
         CONSOLE.print(project.status())
         if not project.full_path.is_dir():
-            cprint(" - Project missing", 'red')
+            CONSOLE.print(fmt.red(" - Project missing"))
 
     forall_func = partial(run_parallel, jobs, projects, 'run', command=command, ignore_errors=ignore_errors)
     trio.run(forall_func)

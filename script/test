@@ -146,6 +146,7 @@ def main() -> None:
         label = None if args.label is None else args.label[0]
 
         options = f" -m '{args.markers[0]}'"
+        options += ' --color=yes'
 
         if args.parallel:
             options += ' -n auto'

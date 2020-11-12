@@ -8,8 +8,6 @@ import os
 from pathlib import Path
 from typing import Optional, Tuple
 
-from termcolor import colored
-
 import clowder.util.formatting as fmt
 from clowder.console import CONSOLE
 from clowder.environment import ENVIRONMENT
@@ -159,7 +157,7 @@ def print_status(fetch: bool = False) -> None:
     if ENVIRONMENT.clowder_repo_dir is None:
         return
 
-    clowder_repo_output = colored(ENVIRONMENT.clowder_repo_dir.name, 'green')
+    clowder_repo_output = fmt.green(ENVIRONMENT.clowder_repo_dir.name)
 
     if ENVIRONMENT.clowder_yaml is not None and not ENVIRONMENT.clowder_yaml.is_symlink():
         CONSOLE.print(fmt.warning_clowder_yaml_not_symlink_with_clowder_repo(ENVIRONMENT.clowder_yaml.name))

@@ -8,8 +8,6 @@ from functools import wraps
 from pathlib import Path
 from typing import Optional, Set
 
-from termcolor import colored
-
 import clowder.util.formatting as fmt
 from clowder.console import CONSOLE
 from clowder.environment import ENVIRONMENT
@@ -298,9 +296,9 @@ class ResolvedProject:
         """
 
         if existing_git_repository(self.full_path):
-            return colored(str(self.path), 'green')
+            return fmt.green(self.path)
 
-        return colored(self.name, 'green')
+        return fmt.green(self.name)
 
     def get_current_timestamp(self) -> str:
         """Return timestamp of current HEAD commit
@@ -458,7 +456,7 @@ class ResolvedProject:
         """
 
         if not parallel and not existing_git_repository(self.full_path):
-            CONSOLE.print(colored(" - Project missing\n", 'red'))
+            CONSOLE.print(fmt.red(" - Project missing\n"))
             return
 
         forall_env = {'CLOWDER_PATH': ENVIRONMENT.clowder_dir,
@@ -515,10 +513,10 @@ class ResolvedProject:
         """
 
         if not existing_git_repository(self.full_path):
-            project_output = colored(self.name, 'green')
+            project_output = fmt.green(self.name)
             if padding:
                 project_output = project_output.ljust(padding)
-                missing_output = colored('-', 'red')
+                missing_output = fmt.red('-')
                 return f'{project_output} {missing_output}'
             return project_output
 

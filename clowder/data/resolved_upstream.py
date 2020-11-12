@@ -7,14 +7,13 @@
 from pathlib import Path
 from typing import Optional
 
-from termcolor import colored
-
 from clowder.environment import ENVIRONMENT
 from clowder.git_project import ProjectRepo
 from clowder.git_project.util import (
     existing_git_repository,
     git_url
 )
+import clowder.util.formatting as fmt
 
 from .model import Defaults, Group, Source, Upstream
 from .source_controller import SOURCE_CONTROLLER, GITHUB
@@ -103,7 +102,7 @@ class ResolvedUpstream:
         """
 
         if not existing_git_repository(self.path):
-            return colored(self.path, 'green')
+            return fmt.green(self.path)
 
         repo = ProjectRepo(self.full_path, self.remote, self.ref)
         project_output = repo.format_project_string(self.path)

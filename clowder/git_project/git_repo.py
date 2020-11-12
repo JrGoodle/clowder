@@ -8,7 +8,6 @@ from pathlib import Path
 from typing import Optional
 
 from git import Repo, GitCommandError, GitError
-from termcolor import colored
 
 import clowder.util.formatting as fmt
 from clowder.console import CONSOLE
@@ -216,15 +215,15 @@ class GitRepo(object):
         if no_local_commits and no_upstream_commits:
             status = ''
         else:
-            local_commits_output = colored(f'+{local_commits}', 'yellow')
-            upstream_commits_output = colored(f'-{upstream_commits}', 'red')
+            local_commits_output = fmt.yellow(f'+{local_commits}')
+            upstream_commits_output = fmt.red(f'-{upstream_commits}')
             status = f'({local_commits_output}/{upstream_commits_output})'
 
         if self.is_detached():
             current_ref = self.sha()
-            return colored(f'[HEAD @ {current_ref}]', 'magenta')
+            return fmt.magenta(f'[HEAD @ {current_ref}]')
         current_branch = self.current_branch()
-        return colored(f'[{current_branch}]', 'magenta') + status
+        return fmt.magenta(f'[{current_branch}]') + status
 
     def format_project_string(self, path: Path) -> str:
         """Return formatted project name
@@ -235,14 +234,12 @@ class GitRepo(object):
         """
 
         if not existing_git_repository(self.repo_path):
-            return colored(path, 'green')
+            return fmt.green(path)
+
         if not self.validate_repo():
-            color = 'red'
-            symbol = '*'
+            return fmt.red(f'{path}*')
         else:
-            color = 'green'
-            symbol = ''
-        return colored(str(path) + symbol, color)
+            return fmt.green(path)
 
     def get_current_timestamp(self) -> str:
         """Get current timestamp of HEAD commit
@@ -388,7 +385,8 @@ class GitRepo(object):
 
         for branch in self.repo.git.branch().split('\n'):
             if branch.startswith('* '):
-                CONSOLE.print(f"* {colored(branch[2:], 'green')}")
+                branch_name = fmt.green(branch[2:])
+                CONSOLE.print(f"* {branch_name}")
             else:
                 CONSOLE.print(branch)
 
@@ -398,9 +396,11 @@ class GitRepo(object):
         for branch in self.repo.git.branch('-r', '-l', f"{self.remote}*").split('\n'):
             if ' -> ' in branch:
                 components = branch.split(' -> ')
-                CONSOLE.print(f"  {colored(components[0], 'red')} -> {components[1]}")
+                local_branch = components[0]
+                remote_branch = components[1]
+                CONSOLE.print(f"  {fmt.red(local_branch)} -> {remote_branch}")
             else:
-                CONSOLE.print(colored(branch, 'red'))
+                CONSOLE.print(fmt.red(branch))
 
     def print_validation(self) -> None:
         """Print validation messages"""

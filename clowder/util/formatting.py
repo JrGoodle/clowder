@@ -9,13 +9,40 @@ import os
 from pathlib import Path
 from typing import Optional, Tuple
 
-from termcolor import colored
 from typing import List, Union
 
 from clowder.logging import LOG_DEBUG
 
-ERROR = colored(' - Error:', 'red')
-WARNING = colored(' - Warning:', 'yellow')
+
+Output = Union[str, Path]
+
+
+def bold(output: Output) -> str:
+    return f'[bold]{output}[/bold]'
+
+
+def cyan(output: Output) -> str:
+    return f'[cyan]{output}[/cyan]'
+
+
+def green(output: Output) -> str:
+    return f'[green]{output}[/green]'
+
+
+def red(output: Output) -> str:
+    return f'[red]{output}[/red]'
+
+
+def magenta(output: Output) -> str:
+    return f'[magenta]{output}[/magenta]'
+
+
+def yellow(output: Output) -> str:
+    return f'[yellow]{output}[/yellow]'
+
+
+ERROR = red(' - Error:')
+WARNING = yellow(' - Warning:')
 
 
 # TODO: Update to return list of all duplicates found
@@ -44,7 +71,7 @@ def clowder_command(cmd: str) -> str:
     :rtype: str
     """
 
-    return colored(cmd, attrs=['bold'])
+    return bold(cmd)
 
 
 def clowder_name(name: str) -> str:
@@ -55,7 +82,7 @@ def clowder_name(name: str) -> str:
     :rtype: str
     """
 
-    return colored(name, attrs=['bold'])
+    return bold(name)
 
 
 def command(cmd: Union[str, List[str]]) -> str:
@@ -67,7 +94,7 @@ def command(cmd: Union[str, List[str]]) -> str:
     """
 
     command_output = " ".join(cmd) if isinstance(cmd, list) else cmd
-    return colored(f"$ {command_output}", attrs=['bold'])
+    return bold(f"$ {command_output}")
 
 
 def error(err: Exception) -> str:
@@ -712,7 +739,7 @@ def upstream_string(name: str) -> str:
     :rtype: str
     """
 
-    return colored(name, 'cyan')
+    return cyan(name)
 
 
 def options_help_message(options: Tuple[str, ...], message: str) -> str:
@@ -862,7 +889,7 @@ def path_string(path: str) -> str:
     :rtype: str
     """
 
-    return colored(path, 'cyan')
+    return cyan(path)
 
 
 def ref_string(ref: str) -> str:
@@ -873,7 +900,7 @@ def ref_string(ref: str) -> str:
     :rtype: str
     """
 
-    return colored(f"[{ref}]", 'magenta')
+    return magenta(f"[{ref}]")
 
 
 def remote_string(remote: str) -> str:
@@ -884,7 +911,7 @@ def remote_string(remote: str) -> str:
     :rtype: str
     """
 
-    return colored(remote, 'yellow')
+    return yellow(remote)
 
 
 def remove_prefix(text: str, prefix: str) -> str:
@@ -923,7 +950,7 @@ def url_string(url: str) -> str:
     :rtype: str
     """
 
-    return colored(url, 'cyan')
+    return cyan(url)
 
 
 def version_options_help_message(message: str, versions: Tuple[str, ...]) -> str:
@@ -1016,7 +1043,7 @@ def version_string(version_name: str) -> str:
     :rtype: str
     """
 
-    return colored(version_name, attrs=['bold'])
+    return bold(version_name)
 
 
 def warning_clowder_repo_missing_git_dir() -> str:
@@ -1060,7 +1087,7 @@ def _project_name(name: str) -> str:
     :rtype: str
     """
 
-    return colored(name, 'green')
+    return green(name)
 
 
 def _validate_help_options(options: Optional[Union[str, list, tuple]]) -> bool:
@@ -1101,4 +1128,4 @@ def _yaml_file(yml: str) -> str:
     :rtype: str
     """
 
-    return colored(yml, 'cyan')
+    return cyan(yml)

@@ -65,7 +65,6 @@ setup(
         'GitPython',
         'PyYAML',
         'rich',
-        'termcolor',
         'tqdm',
         'trio'
     ],

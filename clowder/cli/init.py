@@ -6,8 +6,6 @@
 
 import argparse
 
-from termcolor import colored
-
 import clowder.clowder_repo as clowder_repo
 import clowder.util.formatting as fmt
 from clowder.console import CONSOLE
@@ -46,7 +44,7 @@ def init(args) -> None:
             LOG_DEBUG('Failed to remove existing .clowder directory', err)
             raise ClowderError(ClowderErrorType.CLOWDER_ALREADY_INITIALIZED, fmt.error_clowder_already_initialized())
 
-    url_output = colored(args.url, 'green')
+    url_output = fmt.green(args.url)
     CONSOLE.print(f"Create clowder repo from {url_output}\n")
     if args.branch is None:
         branch = 'master'
