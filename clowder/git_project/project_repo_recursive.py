@@ -12,7 +12,7 @@ from git import GitError
 import clowder.util.formatting as fmt
 from clowder.console import CONSOLE
 from clowder.error import ClowderError, ClowderErrorType
-from clowder.logging import LOG_DEBUG
+from clowder.logging import LOG
 from clowder.util.execute import execute_command
 
 from .project_repo import GitConfig, ProjectRepo
@@ -138,10 +138,11 @@ class ProjectRepoRecursive(ProjectRepo):
         try:
             execute_command(command, self.repo_path, print_output=self._print_output)
         except ClowderError as err:
-            LOG_DEBUG('Failed to update submodules', err)
+            LOG.debug('Failed to update submodules', err)
             message = f'{fmt.ERROR} Failed to update submodules'
             message = self._format_error_message(message)
-            raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
+            CONSOLE.print(message)
+            raise
 
     def validate_repo(self, allow_missing_repo: bool = True) -> bool:
         """Validate repo state
@@ -175,9 +176,10 @@ class ProjectRepoRecursive(ProjectRepo):
         try:
             self.repo.git.submodule(*args)
         except (GitError, ValueError) as err:
-            LOG_DEBUG('Git error', err)
+            LOG.debug('Git error', err)
             message = self._format_error_message(error_msg)
-            raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
+            CONSOLE.print(message)
+            raise
 
     def _submodules_reset(self) -> None:
         """Reset all submodules

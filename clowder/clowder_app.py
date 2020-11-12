@@ -15,7 +15,7 @@ import clowder.cli as cmd
 import clowder.util.formatting as fmt
 from clowder.console import CONSOLE
 from clowder.error import ClowderError, ClowderErrorType
-from clowder.logging import LOG_DEBUG
+from clowder.logging import LOG
 
 
 # class ClowderArgumentParser(argparse.ArgumentParser):
@@ -77,8 +77,9 @@ def create_parsers() -> argparse.ArgumentParser:
         cmd.add_status_parser(subparsers)
         cmd.add_yaml_parser(subparsers)
     except Exception as err:
-        LOG_DEBUG('Failed to create parser', err)
-        raise ClowderError(ClowderErrorType.PARSER_CREATION_FAILED, fmt.error_failed_create_parser())
+        LOG.debug('Failed to create parser', err)
+        CONSOLE.print(fmt.error_failed_create_parser())
+        raise
     else:
         return clowder_parser
 
@@ -96,7 +97,7 @@ def main() -> None:
                 args.projects = [args.projects]
         args.func(args)
     except ClowderError as err:
-        LOG_DEBUG('** ClowderError **', err)
+        LOG.debug('** ClowderError **', err)
         CONSOLE.print(err)
         CONSOLE.print()
         if err.exit_code is not None:
@@ -104,16 +105,19 @@ def main() -> None:
         else:
             exit(err.error_type.value)
     except SystemExit as err:
-        LOG_DEBUG('** SystemExit **', err)
+        if err.code == 0:
+            print()
+            exit()
+        LOG.debug('** SystemExit **', err)
         CONSOLE.print()
         exit(err.code)
     except KeyboardInterrupt as err:
-        LOG_DEBUG('** KeyboardInterrupt **', err)
+        LOG.debug('** KeyboardInterrupt **', err)
         CONSOLE.print(fmt.error_user_interrupt())
         CONSOLE.print()
         exit(ClowderErrorType.USER_INTERRUPT.value)
     except Exception as err:
-        LOG_DEBUG('** Unhandled exception **', err)
+        LOG.debug('** Unhandled exception **', err)
         CONSOLE.print(fmt.error_unknown_error())
         CONSOLE.print()
         exit(ClowderErrorType.UNKNOWN.value)

@@ -14,7 +14,7 @@ import clowder.util.formatting as fmt
 from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.console import CONSOLE
 from clowder.data import ResolvedProject
-from clowder.logging import LOG_DEBUG
+from clowder.logging import LOG
 
 
 def forall(projects: Tuple[ResolvedProject, ...], jobs: int, command: str, ignore_errors: bool) -> None:
@@ -91,8 +91,8 @@ async def run_parallel(jobs: int, projects: Tuple[ResolvedProject, ...], func_na
 
 
 async def run_sync(func: Callable, limit: trio.CapacityLimiter, project: ResolvedProject, progress: tqdm) -> None:
-    LOG_DEBUG(f'START PARALLEL {project.name}')
+    LOG.debug(f'START PARALLEL {project.name}')
     await trio.to_thread.run_sync(func, limiter=limit)
     limit.release_on_behalf_of(project)
     progress.update()
-    LOG_DEBUG(f'END PARALLEL {project.name}')
+    LOG.debug(f'END PARALLEL {project.name}')

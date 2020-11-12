@@ -12,7 +12,7 @@ from git import Repo, GitCommandError, GitError
 import clowder.util.formatting as fmt
 from clowder.console import CONSOLE
 from clowder.error import ClowderError, ClowderErrorType
-from clowder.logging import LOG_DEBUG
+from clowder.logging import LOG
 from clowder.util.execute import execute_command
 from clowder.util.file_system import remove_directory
 
@@ -60,10 +60,11 @@ class GitRepo(object):
         try:
             CONSOLE.print(self.repo.git.add(files))
         except GitError as err:
-            LOG_DEBUG('Git error', err)
+            LOG.debug('Git error', err)
             message = f"{fmt.ERROR} Failed to add files to git index"
             message = self._format_error_message(message)
-            raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
+            CONSOLE.print(message)
+            raise
         else:
             self.status_verbose()
 
@@ -84,13 +85,14 @@ class GitRepo(object):
 
             self.repo.git.checkout(truncated_ref)
         except GitError as err:
-            LOG_DEBUG('Git error', err)
+            LOG.debug('Git error', err)
             message = f'{fmt.ERROR} Failed to checkout {ref_output}'
             if allow_failure:
                 CONSOLE.print(message)
                 return
             message = self._format_error_message(message)
-            raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
+            CONSOLE.print(message)
+            raise
 
     def clean(self, args: str = '') -> None:
         """Discard changes for repo
@@ -122,10 +124,11 @@ class GitRepo(object):
             CONSOLE.print(' - Commit current changes')
             CONSOLE.print(self.repo.git.commit(message=message))
         except GitError as err:
-            LOG_DEBUG('Git error', err)
+            LOG.debug('Git error', err)
             message = f'{fmt.ERROR} Failed to commit current changes'
             message = self._format_error_message(message)
-            raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
+            CONSOLE.print(message)
+            raise
 
     def current_branch(self) -> str:
         """Return currently checked out branch of project
@@ -193,13 +196,14 @@ class GitRepo(object):
                 command = f'git fetch {remote} {truncate_ref(ref)} --depth {depth} --prune --tags'
                 execute_command(command, self.repo_path, print_output=self._print_output)
         except ClowderError as err:
-            LOG_DEBUG('Failed to fetch', err)
+            LOG.debug('Failed to fetch', err)
             if remove_dir:
                 # TODO: Handle possible exceptions
                 remove_directory(self.repo_path)
             if not allow_failure:
                 message = self._format_error_message(error_message)
-                raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
+                CONSOLE.print(message)
+                raise
 
     def format_project_ref_string(self) -> str:
         """Return formatted project ref string
@@ -266,10 +270,11 @@ class GitRepo(object):
         try:
             return self.repo.git.log('-1', '--format=%cI')
         except GitError as err:
-            LOG_DEBUG('Git error', err)
+            LOG.debug('Git error', err)
             message = f'{fmt.ERROR} Failed to find current timestamp'
             message = self._format_error_message(message)
-            raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
+            CONSOLE.print(message)
+            raise
 
     def git_config_unset_all_local(self, variable: str) -> None:
         """Unset all local git config values for given variable key
@@ -281,16 +286,18 @@ class GitRepo(object):
         try:
             self.repo.git.config('--local', '--unset-all', variable)
         except GitCommandError as err:
-            LOG_DEBUG('Git command error', err)
+            LOG.verbose('Git command error', err)
             if err.status != 5:  # git returns error code 5 when trying to unset variable that doesn't exist
                 message = f'{fmt.ERROR} Failed to unset all local git config values for {variable}'
                 message = self._format_error_message(message)
-                raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
+                CONSOLE.print(message)
+                raise
         except GitError as err:
-            LOG_DEBUG('Git error', err)
+            LOG.debug('Git error', err)
             message = f'{fmt.ERROR} Failed to unset all local git config values for {variable}'
             message = self._format_error_message(message)
-            raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
+            CONSOLE.print(message)
+            raise
 
     def git_config_add_local(self, variable: str, value: str) -> None:
         """Add local git config value for given variable key
@@ -303,10 +310,11 @@ class GitRepo(object):
         try:
             self.repo.git.config('--local', '--add', variable, value)
         except GitError as err:
-            LOG_DEBUG('Git error', err)
+            LOG.debug('Git error', err)
             message = f'{fmt.ERROR} Failed to add local git config value {value} for variable {variable}'
             message = self._format_error_message(message)
-            raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
+            CONSOLE.print(message)
+            raise
 
     def install_lfs_hooks(self) -> None:
         """Install git lfs hooks
@@ -318,10 +326,11 @@ class GitRepo(object):
         try:
             self.repo.git.lfs('install', '--local')
         except GitError as err:
-            LOG_DEBUG('Git error', err)
+            LOG.debug('Git error', err)
             message = f'{fmt.ERROR} Failed to update git lfs hooks'
             message = self._format_error_message(message)
-            raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
+            CONSOLE.print(message)
+            raise
 
     def is_detached(self, print_output: bool = False) -> bool:
         """Check if HEAD is detached
@@ -437,10 +446,11 @@ class GitRepo(object):
             CONSOLE.print(' - Pull latest changes')
             CONSOLE.print(self.repo.git.pull())
         except GitError as err:
-            LOG_DEBUG('Git error', err)
+            LOG.debug('Git error', err)
             message = f'{fmt.ERROR} Failed to pull latest changes'
             message = self._format_error_message(message)
-            raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
+            CONSOLE.print(message)
+            raise
 
     def pull_lfs(self) -> None:
         """Pull lfs files
@@ -452,10 +462,11 @@ class GitRepo(object):
             CONSOLE.print(' - Pull git lfs files')
             self.repo.git.lfs('pull')
         except GitError as err:
-            LOG_DEBUG('Git error', err)
+            LOG.debug('Git error', err)
             message = f'{fmt.ERROR} Failed to pull git lfs files'
             message = self._format_error_message(message)
-            raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
+            CONSOLE.print(message)
+            raise
 
     @not_detached
     def push(self) -> None:
@@ -468,10 +479,11 @@ class GitRepo(object):
             CONSOLE.print(' - Push local changes')
             CONSOLE.print(self.repo.git.push())
         except GitError as err:
-            LOG_DEBUG('Git error', err)
+            LOG.debug('Git error', err)
             message = f'{fmt.ERROR} Failed to push local changes'
             message = self._format_error_message(message)
-            raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
+            CONSOLE.print(message)
+            raise
 
     def sha(self, short: bool = False) -> str:
         """Return sha for currently checked out commit
@@ -517,10 +529,11 @@ class GitRepo(object):
         try:
             execute_command(command, self.repo_path)
         except ClowderError as err:
-            LOG_DEBUG('Failed to print git status verbase', err)
+            LOG.debug('Failed to print git status verbase', err)
             message = f'{fmt.ERROR} Failed to print verbose status'
             message = self._format_error_message(message)
-            raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
+            CONSOLE.print(message)
+            raise
 
     def validate_repo(self, allow_missing_repo: bool = True) -> bool:
         """Validate repo state
@@ -551,10 +564,11 @@ class GitRepo(object):
         try:
             self.repo.git.rebase('--abort')
         except GitError as err:
-            LOG_DEBUG('Git error', err)
+            LOG.debug('Git error', err)
             message = f'{fmt.ERROR} Failed to abort rebase'
             message = self._format_error_message(message)
-            raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
+            CONSOLE.print(message)
+            raise
 
     def _clean(self, args: str) -> None:
         """Clean git directory
@@ -566,10 +580,11 @@ class GitRepo(object):
         try:
             self.repo.git.clean(args)
         except GitError as err:
-            LOG_DEBUG('Git error', err)
+            LOG.debug('Git error', err)
             message = f'{fmt.ERROR} Failed to clean git repo'
             message = self._format_error_message(message)
-            raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
+            CONSOLE.print(message)
+            raise
 
     # def _existing_remote_tag(self, tag, remote, depth=0):
     #     """Check if remote tag exists
@@ -619,11 +634,12 @@ class GitRepo(object):
         try:
             repo = Repo(self.repo_path)
         except GitError as err:
-            LOG_DEBUG('Git error', err)
+            LOG.debug('Git error', err)
             repo_path_output = fmt.path_string(str(self.repo_path))
             message = f"{fmt.ERROR} Failed to create Repo instance for {repo_path_output}"
             message = self._format_error_message(message)
-            raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
+            CONSOLE.print(message)
+            raise
         else:
             return repo
 
@@ -638,22 +654,24 @@ class GitRepo(object):
             try:
                 self.repo.head.reset(index=True, working_tree=True)
             except GitError as err:
-                LOG_DEBUG('Git error', err)
+                LOG.debug('Git error', err)
                 ref_output = fmt.ref_string('HEAD')
                 message = f'{fmt.ERROR} Failed to reset {ref_output}'
                 message = self._format_error_message(message)
-                raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
+                CONSOLE.print(message)
+                raise
             else:
                 return
 
         try:
             self.repo.git.reset('--hard', branch)
         except GitError as err:
-            LOG_DEBUG('Git error', err)
+            LOG.debug('Git error', err)
             branch_output = fmt.ref_string(branch)
             message = f'{fmt.ERROR} Failed to reset to {branch_output}'
             message = self._format_error_message(message)
-            raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
+            CONSOLE.print(message)
+            raise
 
     def _has_untracked_files(self) -> bool:
         """Check whether untracked files exist

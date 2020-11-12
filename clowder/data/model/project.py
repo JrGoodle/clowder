@@ -13,7 +13,7 @@ from clowder.git_project.util import (
     format_git_branch,
     format_git_tag
 )
-from clowder.logging import LOG_DEBUG
+from clowder.logging import LOG
 
 from .upstream import Upstream
 from .git_settings import GitSettings
@@ -81,7 +81,7 @@ class Project:
                 self.source: Optional[Union[Source, SourceName]] = Source(name, source)
             else:
                 err = ClowderError(ClowderErrorType.WRONG_SOURCE_TYPE, fmt.error_wrong_source_type())
-                LOG_DEBUG('Wrong source type', err)
+                LOG.debug('Wrong source type', err)
                 raise err
 
         git = yaml.get('git', None)

@@ -12,7 +12,7 @@ from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.config import Config
 from clowder.console import CONSOLE
 from clowder.error import ClowderError, ClowderErrorType
-from clowder.logging import LOG_DEBUG
+from clowder.logging import LOG
 from clowder.data import ResolvedProject
 from clowder.data.util import (
     existing_branch_projects,
@@ -124,7 +124,7 @@ def _prune_projects(projects: Tuple[ResolvedProject, ...], branch: str, force: b
     try:
         _validate_branches(local, remote, local_branch_exists, remote_branch_exists)
     except ClowderError as err:
-        LOG_DEBUG('Invalid projects branch state', err)
+        LOG.debug('Invalid projects branch state', err)
         CONSOLE.print(err)
     else:
         for project in projects:

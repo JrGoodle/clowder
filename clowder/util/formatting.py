@@ -9,7 +9,7 @@ import os
 from pathlib import Path
 from typing import List, Optional, Tuple, Union
 
-from clowder.logging import LOG_DEBUG
+from clowder.logging import LOG
 
 
 Output = Union[str, Path]
@@ -978,7 +978,7 @@ def version_options_help_message(message: str, versions: Tuple[str, ...]) -> str
         size = os.get_terminal_size()
         terminal_width = size.columns
     except OSError as err:
-        LOG_DEBUG('Failed to get terminal size', err)
+        LOG.verbose('Failed to get terminal size', err)
         terminal_width = 80
 
     def column_entry(choices, length, line):

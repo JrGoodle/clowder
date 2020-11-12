@@ -10,8 +10,9 @@ import shutil
 from pathlib import Path
 
 import clowder.util.formatting as fmt
+from clowder.console import CONSOLE
 from clowder.error import ClowderError, ClowderErrorType
-from clowder.logging import LOG_DEBUG
+from clowder.logging import LOG
 
 
 def symlink_clowder_yaml(source: Path, target: Path) -> None:
@@ -36,9 +37,9 @@ def symlink_clowder_yaml(source: Path, target: Path) -> None:
         os.symlink(source, target, dir_fd=fd)
         os.close(fd)
     except OSError as err:
-        LOG_DEBUG('Failed symlink file', err)
-        raise ClowderError(ClowderErrorType.FAILED_SYMLINK_FILE,
-                           fmt.error_failed_symlink_file(str(target), str(source)), err)
+        LOG.debug('Failed symlink file', err)
+        CONSOLE.print(fmt.error_failed_symlink_file(str(target), str(source)))
+        raise
 
 
 def remove_file(file: Path) -> None:
@@ -86,15 +87,12 @@ def make_dir(directory: Path) -> None:
         try:
             os.makedirs(str(directory))
         except OSError as err:
-            LOG_DEBUG('Failed to create directory', err)
+            LOG.debug('Failed to create directory', err)
             if err.errno == errno.EEXIST:
-                raise ClowderError(ClowderErrorType.DIRECTORY_EXISTS,
-                                   fmt.error_directory_exists(str(directory)),
-                                   error=err)
+                CONSOLE.print(fmt.error_directory_exists(str(directory)))
             else:
-                raise ClowderError(ClowderErrorType.FAILED_CREATE_DIRECTORY,
-                                   fmt.error_failed_create_directory(str(directory)),
-                                   error=err)
+                CONSOLE.print(fmt.error_failed_create_directory(str(directory)))
+            raise
 
 
 def remove_directory(dir_path: Path) -> None:
@@ -107,7 +105,6 @@ def remove_directory(dir_path: Path) -> None:
     try:
         shutil.rmtree(dir_path)
     except shutil.Error as err:
-        LOG_DEBUG('Failed to remove directory', err)
-        raise ClowderError(ClowderErrorType.FAILED_REMOVE_DIRECTORY,
-                           fmt.error_failed_remove_directory(str(dir_path)),
-                           error=err)
+        LOG.debug('Failed to remove directory', err)
+        CONSOLE.print(fmt.error_failed_remove_directory(str(dir_path)))
+        raise

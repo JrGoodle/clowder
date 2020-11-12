@@ -9,7 +9,7 @@ from typing import Dict, Optional
 
 import clowder.util.formatting as fmt
 from clowder.error import ClowderError, ClowderErrorType
-from clowder.logging import LOG_DEBUG
+from clowder.logging import LOG
 
 from .model.git_settings import GitSettings, GitConfig
 
@@ -51,11 +51,11 @@ class ResolvedGitSettings:
                     self.recursive = True
                 else:
                     err = ClowderError(ClowderErrorType.WRONG_SUBMODULES_TYPE, fmt.error_wrong_submodules_type())
-                    LOG_DEBUG("Wrong submodules type", err)
+                    LOG.debug("Wrong submodules type", err)
                     raise err
             else:
                 err = ClowderError(ClowderErrorType.WRONG_SUBMODULES_TYPE, fmt.error_wrong_submodules_type())
-                LOG_DEBUG("Wrong submodules type", err)
+                LOG.debug("Wrong submodules type", err)
                 raise err
         if git_settings.lfs is not None:
             self.lfs = copy.deepcopy(git_settings.lfs)

@@ -17,7 +17,7 @@ from clowder.git_project.util import (
     existing_git_repository,
     git_url
 )
-from clowder.logging import LOG_DEBUG
+from clowder.logging import LOG
 from clowder.util.connectivity import is_offline
 from clowder.util.execute import execute_forall_command
 
@@ -143,7 +143,7 @@ class ResolvedProject:
             if self.remote == self.upstream.remote:
                 message = fmt.error_remote_dup(self.upstream.name,  self.name, self.remote, ENVIRONMENT.clowder_yaml)
                 err = ClowderError(ClowderErrorType.CLOWDER_YAML_DUPLICATE_REMOTE_NAME, message)
-                LOG_DEBUG('Duplicate remote name found in clowder.yml', err)
+                LOG.debug('Duplicate remote name found in clowder.yml', err)
                 raise err
 
         self.groups: Set[str] = {"all", self.name, str(self.path)}
@@ -581,7 +581,7 @@ class ResolvedProject:
         try:
             execute_forall_command(command, self.full_path, env)
         except ClowderError as err:
-            LOG_DEBUG('Execute command failed', err)
+            LOG.debug('Execute command failed', err)
             if not ignore_errors:
                 raise
 

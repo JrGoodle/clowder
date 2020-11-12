@@ -12,7 +12,7 @@ from typing import List, Optional, Union
 import clowder.util.formatting as fmt
 from clowder.console import CONSOLE
 from clowder.error import ClowderError, ClowderErrorType
-from clowder.logging import LOG_DEBUG
+from clowder.logging import LOG
 
 
 def execute_command(command: Union[str, List[str]], path: Path,
@@ -42,11 +42,9 @@ def execute_command(command: Union[str, List[str]], path: Path,
     try:
         subprocess.run(cmd, shell=True, env=cmd_env, cwd=str(path), stdout=pipe, stderr=pipe, check=True)
     except subprocess.CalledProcessError as err:
-        LOG_DEBUG('Subprocess run failed', err)
-        raise ClowderError(ClowderErrorType.FAILED_EXECUTE_COMMAND,
-                           fmt.error_command_failed(cmd),
-                           error=err,
-                           exit_code=err.returncode)
+        LOG.debug('Subprocess run failed', err)
+        CONSOLE.print(fmt.error_command_failed(cmd))
+        raise
 
 
 def execute_forall_command(command: Union[str, List[str]], path: Path, forall_env: dict) -> None:

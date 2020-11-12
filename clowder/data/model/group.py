@@ -9,7 +9,7 @@ from pathlib import Path
 
 import clowder.util.formatting as fmt
 from clowder.error import ClowderError, ClowderErrorType
-from clowder.logging import LOG_DEBUG
+from clowder.logging import LOG
 
 from .defaults import Defaults
 from .project import Project
@@ -54,7 +54,7 @@ class Group:
             self._has_projects_key: bool = False
         else:
             err = ClowderError(ClowderErrorType.WRONG_GROUP_TYPE, fmt.error_wrong_group_type())
-            LOG_DEBUG("Wrong instance type for group", err)
+            LOG.debug("Wrong instance type for group", err)
             raise err
 
     def get_yaml(self, resolved: bool = False) -> Union[dict, list]:

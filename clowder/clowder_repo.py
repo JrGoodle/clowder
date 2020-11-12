@@ -13,7 +13,7 @@ from clowder.console import CONSOLE
 from clowder.environment import ENVIRONMENT
 from clowder.error import ClowderError, ClowderErrorType
 from clowder.git_project import ProjectRepo
-from clowder.logging import LOG_DEBUG
+from clowder.logging import LOG
 from clowder.util.connectivity import is_offline
 from clowder.util.execute import execute_command
 from clowder.util.file_system import remove_directory
@@ -128,20 +128,22 @@ def init(url: str, branch: str) -> None:
         repo = ProjectRepo(clowder_repo_dir, clowder_repo_remote, clowder_repo_ref)
         repo.create_clowder_repo(url, branch)
     except ClowderError as err:
-        LOG_DEBUG('Failed to init clowder repo', err)
+        LOG.debug('Failed to init clowder repo', err)
         if clowder_repo_dir.is_dir():
             remove_directory(clowder_repo_dir)
-        raise ClowderError(ClowderErrorType.FAILED_INIT, fmt.error_failed_clowder_init(), err)
+        CONSOLE.print(fmt.error_failed_clowder_init())
+        raise
     except Exception as err:
-        LOG_DEBUG('Failed to init clowder repo', err)
+        LOG.debug('Failed to init clowder repo', err)
         if clowder_repo_dir.is_dir():
             remove_directory(clowder_repo_dir)
-        raise ClowderError(ClowderErrorType.FAILED_INIT, fmt.error_failed_clowder_init(), err)
+        CONSOLE.print(fmt.error_failed_clowder_init())
+        raise
     else:
         try:
             link_clowder_yaml_default(ENVIRONMENT.current_dir)
         except ClowderError as err:
-            LOG_DEBUG('Failed to link yaml file after clowder repo init', err)
+            LOG.debug('Failed to link yaml file after clowder repo init', err)
             raise
         else:
             if ENVIRONMENT.has_ambiguous_clowder_yaml_files():
