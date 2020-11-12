@@ -722,16 +722,6 @@ def error_unknown_project(name: str) -> str:
     return f"{ERROR} Unknown project {_project_name(name)}"
 
 
-def error_user_interrupt() -> str:
-    """Format error message for user interrupt
-
-    :return: Formatted user interrupt error
-    :rtype: str
-    """
-
-    return f"{ERROR} User interruption"
-
-
 # FIXME: Only print project name using this where appropriate (now that project status and upstream_string
 # are printed back to back)
 def upstream_string(name: str) -> str:

@@ -77,7 +77,7 @@ def create_parsers() -> argparse.ArgumentParser:
         cmd.add_status_parser(subparsers)
         cmd.add_yaml_parser(subparsers)
     except Exception as err:
-        LOG.debug('Failed to create parser', err)
+        LOG.error('Failed to create parser', err)
         CONSOLE.print(fmt.error_failed_create_parser())
         raise
     else:
@@ -98,33 +98,31 @@ def main() -> None:
         args.func(args)
     except ClowderError as err:
         LOG.debug('** ClowderError **', err)
-        CONSOLE.print(err)
-        CONSOLE.print()
+        CONSOLE.print_exception()
         if err.exit_code is not None:
             exit(err.exit_code)
-        else:
-            exit(err.error_type.value)
+        exit(err.error_type.value)
     except SystemExit as err:
         if err.code == 0:
             print()
             exit()
         LOG.debug('** SystemExit **', err)
-        CONSOLE.print()
+        CONSOLE.print_exception()
         exit(err.code)
     except KeyboardInterrupt as err:
         LOG.debug('** KeyboardInterrupt **', err)
-        CONSOLE.print(fmt.error_user_interrupt())
         CONSOLE.print()
         exit(ClowderErrorType.USER_INTERRUPT.value)
     except Exception as err:
         LOG.debug('** Unhandled exception **', err)
-        CONSOLE.print(fmt.error_unknown_error())
-        CONSOLE.print()
+        CONSOLE.print_exception()
         exit(ClowderErrorType.UNKNOWN.value)
     else:
         CONSOLE.print()
 
 
 if __name__ == '__main__':
+    from rich.traceback import install
+    install()
     colorama.init()
     main()
