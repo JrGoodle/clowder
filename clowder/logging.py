@@ -26,7 +26,7 @@ class Log:
         logging.addLevelName(Log.VERBOSE, 'VERBOSE')
         self.logger = logging.getLogger(self.logger_name)
 
-        self.level = logging.DEBUG
+        self.level = logging.ERROR
         # environment = os.environ
         # if PRINT_DEBUG_OUTPUT:
         #     self.level = logging.DEBUG
@@ -41,7 +41,7 @@ class Log:
     def level(self, level: int):
         self.logger.setLevel(level)
 
-    def error(self, message: Optional[str], error: Optional[BaseException] = None) -> None:  # noqa
+    def error(self, message: Optional[str] = None, error: Optional[BaseException] = None) -> None:  # noqa
         if self.logger.level <= logging.ERROR:
             self._log(logging.ERROR, message, error)
 
@@ -49,11 +49,11 @@ class Log:
         if self.logger.level <= logging.DEBUG:
             self._log(logging.DEBUG, message, error)
 
-    def verbose(self, message: Optional[str], error: Optional[BaseException] = None) -> None:  # noqa
+    def verbose(self, message: Optional[str] = None, error: Optional[BaseException] = None) -> None:  # noqa
         if self.logger.level <= self.VERBOSE:
             self._log(self.VERBOSE, message, error)
 
-    def _log(self, level: int, message: Optional[str], error: Optional[BaseException] = None) -> None:  # noqa
+    def _log(self, level: int, message: Optional[str], error: Optional[BaseException]) -> None:  # noqa
         if message is not None:
             CONSOLE.log(message.strip())
         if error is not None:
