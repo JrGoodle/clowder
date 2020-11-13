@@ -8,6 +8,8 @@ import logging
 import os
 from typing import Optional
 
+from clowder.console import CONSOLE
+
 
 PRINT_DEBUG_OUTPUT = "CLOWDER_DEBUG" in os.environ
 
@@ -24,10 +26,12 @@ class Log:
         logging.addLevelName(Log.VERBOSE, 'VERBOSE')
         self.logger = logging.getLogger(self.logger_name)
 
-        if PRINT_DEBUG_OUTPUT:
-            self.level = logging.DEBUG
-        else:
-            self.level = logging.ERROR
+        self.level = logging.DEBUG
+        # environment = os.environ
+        # if PRINT_DEBUG_OUTPUT:
+        #     self.level = logging.DEBUG
+        # else:
+        #     self.level = logging.ERROR
 
     @property
     def level(self) -> int:
@@ -47,30 +51,17 @@ class Log:
 
     def verbose(self, message: str, exception: Optional[BaseException] = None) -> None:  # noqa
         if self.logger.level <= self.VERBOSE:
-            self._log(self.VERBOSE, message, exception)
+            self._log(self.VERBOSE, message)
 
     def _log(self, level: int, message: str, exception: Optional[BaseException] = None) -> None:  # noqa
-        if PRINT_DEBUG_OUTPUT:
-            separator = '='
-            output = f' BEGIN {separator * 78}\n'
-            output += f'{message.strip()}\n'
-            if exception is not None:
-                output += self.pretty_traceback()
-            output += f'{logging.getLevelName(level)}:{self.logger_name}: END {separator * 80}\n'
-            self.logger.log(level, output)
-
-    @staticmethod
-    def pretty_traceback() -> str:
-        # https://stackoverflow.com/a/57859075
-        import contextlib, io
-        from rich.console import Console
-        console = Console()
-
-        f = io.StringIO()
-        with contextlib.redirect_stdout(f):
-            console.print_exception()
-        output = f.getvalue()
-        return output
+        separator = '='
+        output = f' BEGIN {separator * 78}\n'
+        output += f'{message.strip()}\n'
+        if exception is not None:
+            output += CONSOLE.pretty_traceback()
+        output += f'{logging.getLevelName(level)}:{self.logger_name}: END {separator * 80}\n'
+        CONSOLE.log(output)
+        # self.logger.log(level, output)
 
 
 LOG: Log = Log()

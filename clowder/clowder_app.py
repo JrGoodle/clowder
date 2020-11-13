@@ -98,24 +98,18 @@ def main() -> None:
         args.func(args)
     except ClowderError as err:
         LOG.debug('** ClowderError **', err)
-        CONSOLE.print_exception()
-        if err.exit_code is not None:
-            exit(err.exit_code)
         exit(err.error_type.value)
     except SystemExit as err:
         if err.code == 0:
             print()
             exit()
         LOG.debug('** SystemExit **', err)
-        CONSOLE.print_exception()
         exit(err.code)
     except KeyboardInterrupt as err:
         LOG.debug('** KeyboardInterrupt **', err)
-        CONSOLE.print()
         exit(ClowderErrorType.USER_INTERRUPT.value)
     except Exception as err:
         LOG.debug('** Unhandled exception **', err)
-        CONSOLE.print_exception()
         exit(ClowderErrorType.UNKNOWN.value)
     else:
         CONSOLE.print()
