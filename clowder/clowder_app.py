@@ -97,19 +97,19 @@ def main() -> None:
                 args.projects = [args.projects]
         args.func(args)
     except ClowderError as err:
-        LOG.debug('** ClowderError **', err)
+        LOG.debug(error=err)
         exit(err.error_type.value)
     except SystemExit as err:
         if err.code == 0:
             print()
             exit()
-        LOG.debug('** SystemExit **', err)
+        LOG.debug(error=err)
         exit(err.code)
     except KeyboardInterrupt as err:
-        LOG.debug('** KeyboardInterrupt **', err)
+        LOG.debug('** KeyboardInterrupt **')
         exit(ClowderErrorType.USER_INTERRUPT.value)
     except Exception as err:
-        LOG.debug('** Unhandled exception **', err)
+        LOG.debug(error=err)
         exit(ClowderErrorType.UNKNOWN.value)
     else:
         CONSOLE.print()

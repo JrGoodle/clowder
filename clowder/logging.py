@@ -41,27 +41,23 @@ class Log:
     def level(self, level: int):
         self.logger.setLevel(level)
 
-    def error(self, message: str, exception: Optional[BaseException] = None) -> None:  # noqa
+    def error(self, message: Optional[str], error: Optional[BaseException] = None) -> None:  # noqa
         if self.logger.level <= logging.ERROR:
-            self._log(logging.ERROR, message, exception)
+            self._log(logging.ERROR, message, error)
 
-    def debug(self, message: str, exception: Optional[BaseException] = None) -> None:  # noqa
+    def debug(self, message: Optional[str] = None, error: Optional[BaseException] = None) -> None:  # noqa
         if self.logger.level <= logging.DEBUG:
-            self._log(logging.DEBUG, message, exception)
+            self._log(logging.DEBUG, message, error)
 
-    def verbose(self, message: str, exception: Optional[BaseException] = None) -> None:  # noqa
+    def verbose(self, message: Optional[str], error: Optional[BaseException] = None) -> None:  # noqa
         if self.logger.level <= self.VERBOSE:
-            self._log(self.VERBOSE, message)
+            self._log(self.VERBOSE, message, error)
 
-    def _log(self, level: int, message: str, exception: Optional[BaseException] = None) -> None:  # noqa
-        separator = '='
-        output = f' BEGIN {separator * 78}\n'
-        output += f'{message.strip()}\n'
-        if exception is not None:
-            output += CONSOLE.pretty_traceback()
-        output += f'{logging.getLevelName(level)}:{self.logger_name}: END {separator * 80}\n'
-        CONSOLE.log(output)
-        # self.logger.log(level, output)
+    def _log(self, level: int, message: Optional[str], error: Optional[BaseException] = None) -> None:  # noqa
+        if message is not None:
+            CONSOLE.log(message.strip())
+        if error is not None:
+            CONSOLE.log(CONSOLE.pretty_traceback)
 
 
 LOG: Log = Log()

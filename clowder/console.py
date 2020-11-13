@@ -9,7 +9,7 @@ from io import StringIO
 from rich import print
 import rich.console
 
-from typing import Any
+from typing import Any, Optional
 
 
 class Console:
@@ -30,13 +30,18 @@ class Console:
     def print_exception(self) -> None:
         self._rich_console.print_exception()
 
+    @property
     def pretty_log_message(self, output: Any) -> str:
         self._rich_string_io_console.print(output)
         output = self._rich_string_io_console.file.getvalue()
         return output
 
-    def pretty_traceback(self) -> str:
-        self._rich_string_io_console.print_exception()
+    @property
+    def pretty_traceback(self, error: Optional[BaseException] = None) -> str:
+        if error is not None:
+            self._rich_string_io_console.print(error)
+        else:
+            self._rich_string_io_console.print_exception()
         output = self._rich_string_io_console.file.getvalue()
         return output
 

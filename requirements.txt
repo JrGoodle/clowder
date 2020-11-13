@@ -9,7 +9,7 @@ Babel==2.8.1
 bleach==3.2.1
 certifi==2020.11.8
 chardet==3.0.4
--e git+git@github.com:JrGoodle/clowder.git@15d423982d90113fad3276340437d3f4cc367af0#egg=clowder_repo
+-e git+git@github.com:JrGoodle/clowder.git@adb804d0b248a3c740b38fd7d72a392e0d8d57e1#egg=clowder_repo
 colorama==0.4.4
 commonmark==0.9.1
 coverage==5.3
