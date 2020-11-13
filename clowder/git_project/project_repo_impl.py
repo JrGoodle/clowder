@@ -320,7 +320,8 @@ class ProjectRepoImpl(GitRepo):
             LOG.debug('Git error', err)
             message = f'{fmt.ERROR} Failed to push remote branch {branch_output}'
             message = self._format_error_message(message)
-            raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
+            CONSOLE.print(message)
+            raise
 
     def _create_remote(self, remote: str, url: str, remove_dir: bool = False) -> None:
         """Create new remote
@@ -346,7 +347,8 @@ class ProjectRepoImpl(GitRepo):
                 remove_directory(self.repo_path)
             message = f'{fmt.ERROR} Failed to create remote {remote_output}'
             message = self._format_error_message(message)
-            raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
+            CONSOLE.print(message)
+            raise
         except Exception as err:
             LOG.debug('Failed to create remote', err)
             if remove_dir:
@@ -370,7 +372,8 @@ class ProjectRepoImpl(GitRepo):
             LOG.debug('Git error', err)
             message = f'{fmt.ERROR} Failed to find revision from timestamp'
             message = self._format_error_message(message)
-            raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
+            CONSOLE.print(message)
+            raise
 
     def _find_rev_by_timestamp_author(self, timestamp: str, author: str, ref: str) -> str:
         """Find rev by timestamp and author
@@ -389,7 +392,8 @@ class ProjectRepoImpl(GitRepo):
             LOG.debug('Git error', err)
             message = f'{fmt.ERROR} Failed to find revision from timestamp by author'
             message = self._format_error_message(message)
-            raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
+            CONSOLE.print(message)
+            raise
 
     def _get_remote_tag(self, tag: str, remote: str, depth: int = 0,
                         remove_dir: bool = False) -> Optional[Tag]:
@@ -417,7 +421,8 @@ class ProjectRepoImpl(GitRepo):
                 # TODO: Handle possible exceptions raised here
                 remove_directory(self.repo_path)
                 message = self._format_error_message(message)
-                raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
+                CONSOLE.print(message)
+                raise
             if self._print_output:
                 CONSOLE.print(message)
             return None
@@ -456,7 +461,8 @@ class ProjectRepoImpl(GitRepo):
             remove_directory(self.repo_path)
             message = f'{fmt.ERROR} Failed to initialize repository'
             message = self._format_error_message(message)
-            raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
+            CONSOLE.print(message)
+            raise
         except Exception as err:
             LOG.debug('Failed to initialize repository', err)
             remove_directory(self.repo_path)
@@ -497,7 +503,8 @@ class ProjectRepoImpl(GitRepo):
             LOG.debug('Git error', err)
             message = f'{fmt.ERROR} No existing branch {branch_output}'
             message = self._format_error_message(message)
-            raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
+            CONSOLE.print(message)
+            raise
 
     def _print_existing_remote_branch_message(self, branch: str) -> None:
         """Print output message for existing remote branch
@@ -513,7 +520,8 @@ class ProjectRepoImpl(GitRepo):
             LOG.debug('Git error', err)
             message = f'{fmt.ERROR} Remote branch {branch_output} already exists'
             message = self._format_error_message(message)
-            raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
+            CONSOLE.print(message)
+            raise
         else:
             CONSOLE.print(f' - Tracking branch {branch_output} already exists')
 
@@ -535,7 +543,8 @@ class ProjectRepoImpl(GitRepo):
             LOG.debug('Failed to pull', err)
             message = f'{fmt.ERROR} Failed to pull from {remote_output} {branch_output}'
             message = self._format_error_message(message)
-            raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
+            CONSOLE.print(message)
+            raise
 
     @not_detached
     def _rebase_remote_branch(self, remote: str, branch: str) -> None:
@@ -556,7 +565,8 @@ class ProjectRepoImpl(GitRepo):
             LOG.debug('Failed pull with rebase', err)
             message = f'{fmt.ERROR} Failed to rebase onto {remote_output} {branch_output}'
             message = self._format_error_message(message)
-            raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
+            CONSOLE.print(message)
+            raise
 
     def _remote(self, remote: str, remove_dir: bool = False) -> Remote:
         """Get GitPython Remote instance
@@ -578,7 +588,8 @@ class ProjectRepoImpl(GitRepo):
                 remove_directory(self.repo_path)
             message = f'{fmt.ERROR} No existing remote {remote_output}'
             message = self._format_error_message(message)
-            raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
+            CONSOLE.print(message)
+            raise
 
     def _remote_get_url(self, remote: str) -> str:
         """Get url of remote
@@ -607,7 +618,8 @@ class ProjectRepoImpl(GitRepo):
             LOG.debug('Git error', err)
             message = f'{fmt.ERROR} Failed to rename remote from {remote_output_f} to {remote_output_t}'
             message = self._format_error_message(message)
-            raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
+            CONSOLE.print(message)
+            raise
 
     def _set_tracking_branch(self, remote: str, branch: str, remove_dir: bool = False) -> None:
         """Set tracking branch
@@ -633,7 +645,8 @@ class ProjectRepoImpl(GitRepo):
                 remove_directory(self.repo_path)
             message = f' - Failed to set tracking branch {branch_output}'
             message = self._format_error_message(message)
-            raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
+            CONSOLE.print(message)
+            raise
         except Exception as err:
             LOG.debug('Failed to set tracking branch', err)
             if remove_dir:

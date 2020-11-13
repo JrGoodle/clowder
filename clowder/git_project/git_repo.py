@@ -53,7 +53,7 @@ class GitRepo(object):
         """Add files to git index
 
         :param str files: Files to git add
-        :raise ClowderError:
+        :raise:
         """
 
         CONSOLE.print(' - Add files to git index')
@@ -73,7 +73,7 @@ class GitRepo(object):
 
         :param str truncated_ref: Ref to git checkout
         :param bool allow_failure: Whether to allow failing to checkout branch
-        :raise ClowderError:
+        :raise GitError:
         """
 
         ref_output = fmt.ref_string(truncated_ref)

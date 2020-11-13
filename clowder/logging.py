@@ -6,7 +6,6 @@
 
 import logging
 import os
-import traceback
 from typing import Optional
 
 
@@ -26,7 +25,7 @@ class Log:
         self.logger = logging.getLogger(self.logger_name)
 
         if PRINT_DEBUG_OUTPUT:
-            self.level = logging.ERROR
+            self.level = logging.DEBUG
         else:
             self.level = logging.ERROR
 
@@ -56,16 +55,22 @@ class Log:
             output = f' BEGIN {separator * 78}\n'
             output += f'{message.strip()}\n'
             if exception is not None:
-                output += traceback.format_exc()
+                output += self.pretty_traceback()
             output += f'{logging.getLevelName(level)}:{self.logger_name}: END {separator * 80}\n'
-            # https://stackoverflow.com/a/57859075
-            import contextlib, io
-
-            # f = io.StringIO()
-            # with contextlib.redirect_stdout(f):
-            #     module1.test()
-            # output = f.getvalue()
             self.logger.log(level, output)
+
+    @staticmethod
+    def pretty_traceback() -> str:
+        # https://stackoverflow.com/a/57859075
+        import contextlib, io
+        from rich.console import Console
+        console = Console()
+
+        f = io.StringIO()
+        with contextlib.redirect_stdout(f):
+            console.print_exception()
+        output = f.getvalue()
+        return output
 
 
 LOG: Log = Log()

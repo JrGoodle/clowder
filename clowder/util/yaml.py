@@ -65,9 +65,8 @@ def link_clowder_yaml_default(clowder_dir: Path) -> None:
             remove_file(existing_file)
         except OSError as err:
             LOG.debug('Failed to remove file', err)
-            ClowderError(ClowderErrorType.FAILED_REMOVE_FILE,
-                         fmt.error_failed_remove_file(str(existing_file)),
-                         error=err)
+            CONSOLE.print(fmt.error_failed_remove_file(str(existing_file)))
+            raise
 
 
 def link_clowder_yaml_version(clowder_dir: Path, version: str) -> None:
@@ -113,9 +112,8 @@ def link_clowder_yaml_version(clowder_dir: Path, version: str) -> None:
             remove_file(existing_file)
         except OSError as err:
             LOG.debug('Failed to remove file', err)
-            raise ClowderError(ClowderErrorType.FAILED_REMOVE_FILE,
-                               fmt.error_failed_remove_file(str(existing_file)),
-                               error=err)
+            CONSOLE.print(fmt.error_failed_remove_file(str(existing_file)))
+            raise
 
 
 def load_yaml_file(yaml_file: Path, relative_dir: Path) -> dict:
@@ -138,9 +136,8 @@ def load_yaml_file(yaml_file: Path, relative_dir: Path) -> dict:
             return parsed_yaml
     except pyyaml.YAMLError as err:
         LOG.debug('Failed to load yaml file', err)
-        raise ClowderError(ClowderErrorType.OPEN_FILE,
-                           fmt.error_open_file(str(yaml_file)),
-                           error=err)
+        CONSOLE.print(fmt.error_open_file(str(yaml_file)))
+        raise
 
 
 def print_clowder_yaml() -> None:
@@ -168,9 +165,8 @@ def save_yaml_file(yaml_output: dict, yaml_file: Path) -> None:
             pyyaml.safe_dump(yaml_output, raw_file, default_flow_style=False, indent=2, sort_keys=False)
     except pyyaml.YAMLError as err:
         LOG.debug('Failed to save yaml file', err)
-        raise ClowderError(ClowderErrorType.FAILED_SAVE_FILE,
-                           fmt.error_save_file(str(yaml_file)),
-                           error=err)
+        CONSOLE.print(fmt.error_save_file(str(yaml_file)))
+        raise
 
 
 def validate_yaml_file(parsed_yaml: dict, file_path: Path) -> None:
@@ -186,9 +182,10 @@ def validate_yaml_file(parsed_yaml: dict, file_path: Path) -> None:
         jsonschema.validate(parsed_yaml, json_schema)
     except jsonschema.exceptions.ValidationError as err:
         LOG.debug('Yaml json schema validation failed', err)
-        messages = [f"{fmt.error_invalid_yaml_file(file_path.name)}",
-                    f"{fmt.ERROR} {err.message}"]
-        raise ClowderError(ClowderErrorType.YAML_JSONSCHEMA_VALIDATION_FAILED, messages)
+        message = f"{fmt.error_invalid_yaml_file(file_path.name)}\n" \
+                  f"{fmt.ERROR} {err.message}"
+        CONSOLE.print(message)
+        raise
 
 
 def yaml_string(yaml_output: dict) -> str:
@@ -204,9 +201,8 @@ def yaml_string(yaml_output: dict) -> str:
         return pyyaml.safe_dump(yaml_output, default_flow_style=False, indent=2, sort_keys=False)
     except pyyaml.YAMLError as err:
         LOG.debug('Failed to dump yaml file contents', err)
-        raise ClowderError(ClowderErrorType.FAILED_YAML_DUMP,
-                           f"{fmt.ERROR} Failed to dump yaml file contents",
-                           error=err)
+        CONSOLE.print(f"{fmt.ERROR} Failed to dump yaml file contents",)
+        raise
 
 
 def _format_yaml_symlink(yaml_symlink: Path, yaml_file: Path) -> str:
@@ -258,9 +254,8 @@ def _print_yaml(yaml_file: Path) -> None:
             CONSOLE.print(contents.rstrip())
     except IOError as err:
         LOG.debug('Failed to open file', err)
-        raise ClowderError(ClowderErrorType.FAILED_OPEN_FILE,
-                           fmt.error_open_file(str(yaml_file)),
-                           error=err)
+        CONSOLE.print(fmt.error_open_file(str(yaml_file)))
+        raise
 
 
 def _print_yaml_path(yaml_file: Path) -> None:

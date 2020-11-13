@@ -122,7 +122,7 @@ def main() -> None:
 
 
 if __name__ == '__main__':
-    from rich.traceback import install
-    install()
+    # from rich.traceback import install
+    # install()
     colorama.init()
     main()

@@ -8,7 +8,6 @@ from typing import Dict, Optional, Set, Union
 
 import clowder.util.formatting as fmt
 from clowder.logging import LOG
-from clowder.error import ClowderError, ClowderErrorType
 
 from .model import Source
 from .model import SourceName
