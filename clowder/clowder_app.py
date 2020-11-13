@@ -101,7 +101,7 @@ def main() -> None:
         exit(err.error_type.value)
     except SystemExit as err:
         if err.code == 0:
-            print()
+            CONSOLE.print()
             exit()
         LOG.debug(error=err)
         exit(err.code)
@@ -116,7 +116,7 @@ def main() -> None:
 
 
 if __name__ == '__main__':
-    # from rich.traceback import install
-    # install()
+    from rich.traceback import install
+    install()
     colorama.init()
     main()
