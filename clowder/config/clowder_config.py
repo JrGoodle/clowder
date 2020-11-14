@@ -56,7 +56,7 @@ class ClowderConfig(object):
         # Validate path is a valid clowder directory
         if not self.clowder_dir.is_dir():
             raise ClowderError(ClowderErrorType.CONFIG_YAML_INVALID_CLOWDER_PATH,
-                               fmt.error_no_clowder_found(self.clowder_dir))
+                               f"No clowder found at {self.clowder_dir}")
 
         self.name: str = clowder_config['name']
         defaults = clowder_config.get('defaults', None)
@@ -190,7 +190,7 @@ class ClowderConfig(object):
         for project in self.projects:
             if project not in project_options:
                 messages = [f"{fmt.error_invalid_config_file(ENVIRONMENT.clowder_config_yaml)}",
-                            f"{fmt.error_unknown_project(project)}"]
+                            f"Unknown project {fmt.project_name(project)}"]
                 raise ClowderError(ClowderErrorType.CONFIG_YAML_UNKNOWN_PROJECT, messages)
 
         # FIXME: Assemble all undefined projects in message rather than raising on first instance not found

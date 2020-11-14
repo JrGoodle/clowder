@@ -136,7 +136,7 @@ class ClowderController(object):
                 timestamp = project.current_timestamp
 
         if timestamp is None:
-            raise ClowderError(ClowderErrorType.GIT_ERROR, fmt.error_timestamp_not_found())
+            raise ClowderError(ClowderErrorType.GIT_ERROR, "Failed to find timestamp\n")
 
         return timestamp
 
@@ -152,7 +152,7 @@ class ClowderController(object):
             if project_id == id(project):
                 return project.sha(short=short)
 
-        err = ClowderError(ClowderErrorType.PROJECT_NOT_FOUND, fmt.error_project_not_found())
+        err = ClowderError(ClowderErrorType.PROJECT_NOT_FOUND, "Project not found")
         LOG.debug(f"Project with id {project_id} not found")
         raise err
 

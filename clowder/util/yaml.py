@@ -160,7 +160,7 @@ def save_yaml_file(yaml_output: dict, yaml_file: Path) -> None:
         with yaml_file.open(mode="w") as raw_file:
             pyyaml.safe_dump(yaml_output, raw_file, default_flow_style=False, indent=2, sort_keys=False)
     except pyyaml.YAMLError:
-        CONSOLE.stderr(fmt.error_save_file(str(yaml_file)))
+        CONSOLE.stderr(f"Failed to save file {fmt.path(str(yaml_file))}")
         raise
 
 

@@ -64,8 +64,10 @@ class ClowderEnvironment(object):
         has_ambiguous_clowder_yaml_files = clowder_yml_exists and clowder_yaml_exists
 
         if has_ambiguous_clowder_yaml_files:
-            self.ambiguous_clowder_yaml_error = ClowderError(ClowderErrorType.AMBIGUOUS_CLOWDER_YAML,
-                                                             fmt.error_ambiguous_clowder_yaml())
+            yml_file = fmt.yaml_file(Path('clowder.yml'))
+            yaml_file = fmt.yaml_file(Path('clowder.yaml'))
+            message = f"Found {yml_file} and {yaml_file} files in same directory"
+            self.ambiguous_clowder_yaml_error = ClowderError(ClowderErrorType.AMBIGUOUS_CLOWDER_YAML, message)
         else:
             self.ambiguous_clowder_yaml_error = None
 

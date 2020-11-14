@@ -159,7 +159,9 @@ def print_status(fetch: bool = False) -> None:
     clowder_repo_output = fmt.green(ENVIRONMENT.clowder_repo_dir.name)
 
     if ENVIRONMENT.clowder_yaml is not None and not ENVIRONMENT.clowder_yaml.is_symlink():
-        CONSOLE.stderr(fmt.warning_clowder_yaml_not_symlink_with_clowder_repo(ENVIRONMENT.clowder_yaml.name))
+        message = f"Found a {fmt.yaml_file(ENVIRONMENT.clowder_yaml.name)} file but it is not a symlink " \
+                  f"to a file stored in the existing {fmt.path(Path('.clowder'))} repo"
+        CONSOLE.stderr(message)
         CONSOLE.stderr()
 
     symlink_output: Optional[str] = None

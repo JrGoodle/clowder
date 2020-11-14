@@ -26,8 +26,8 @@ def symlink_clowder_yaml(source: Path, target: Path) -> None:
         raise ClowderError(ClowderErrorType.EXISTING_FILE_AT_SYMLINK_TARGET_PATH,
                            fmt.error_existing_file_at_symlink_target_path(str(target)))
     if not Path(target.parent / source).exists():
-        raise ClowderError(ClowderErrorType.SYMLINK_SOURCE_NOT_FOUND,
-                           fmt.error_symlink_source_missing(source))
+        message = f"Symlink source {fmt.yaml_file(str(source))} appears to be missing"
+        raise ClowderError(ClowderErrorType.SYMLINK_SOURCE_NOT_FOUND, message)
     if target.is_symlink():
         remove_file(target)
     try:
