@@ -67,6 +67,7 @@ class Config(object):
             self.current_clowder_config: Optional[ClowderConfig] = current_clowder_config
             return
 
+        error_message = f"Clowder config file at {fmt.yaml_file(ENVIRONMENT.clowder_config_yaml)} appears to be invalid"
         try:
             # Config file does exist, try to load
             self._load_clowder_config_yaml()
@@ -75,13 +76,13 @@ class Config(object):
                 raise err
             CONSOLE.stderr('Failed to load clowder config file')
             self.error: Optional[Exception] = err
-            CONSOLE.stderr(fmt.warning_invalid_config_file(ENVIRONMENT.clowder_config_yaml))
+            CONSOLE.stderr(error_message)
         except Exception as err:
             if raise_exceptions:
                 raise err
             CONSOLE.stderr('Failed to load clowder config file')
             self.error: Optional[Exception] = err
-            CONSOLE.stderr(fmt.warning_invalid_config_file(ENVIRONMENT.clowder_config_yaml))
+            CONSOLE.stderr(error_message)
         finally:
             # If current clowder exists, return
             if self.current_clowder_config is not None:

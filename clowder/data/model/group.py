@@ -53,7 +53,7 @@ class Group:
             self.projects: List[Project] = [Project(p) for p in yaml]
             self._has_projects_key: bool = False
         else:
-            err = ClowderError(ClowderErrorType.WRONG_GROUP_TYPE, fmt.error_wrong_group_type())
+            err = ClowderError(ClowderErrorType.WRONG_GROUP_TYPE, "Wrong group type")
             LOG.debug("Wrong instance type for group", err)
             raise err
 

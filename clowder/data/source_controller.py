@@ -47,7 +47,7 @@ class SourceController(object):
         """
 
         if self._has_been_validated:
-            err = ClowderError(ClowderErrorType.SOURCES_ALREADY_VALIDATED, fmt.error_sources_already_validated())
+            err = ClowderError(ClowderErrorType.SOURCES_ALREADY_VALIDATED, "Sources have already been validated")
             LOG.debug("Called add_source() but SOURCE_CONTROLLER has already been validated", err)
             raise err
 
@@ -60,7 +60,7 @@ class SourceController(object):
             self._source_names.add(source.name)
             self._sources[source.name] = source
         else:
-            err = ClowderError(ClowderErrorType.WRONG_SOURCE_TYPE, fmt.error_wrong_source_type())
+            err = ClowderError(ClowderErrorType.WRONG_SOURCE_TYPE, "Wrong source type")
             LOG.debug('Wrong source type', err)
             raise err
 
@@ -73,7 +73,7 @@ class SourceController(object):
         """
 
         if not self._has_been_validated:
-            err = ClowderError(ClowderErrorType.SOURCES_NOT_VALIDATED, fmt.error_source_not_validated())
+            err = ClowderError(ClowderErrorType.SOURCES_NOT_VALIDATED, "Sources have not been validated")
             LOG.debug("Called get_source() but SOURCE_CONTROLLER has not been validated", err)
             raise err
 
@@ -82,13 +82,13 @@ class SourceController(object):
         elif isinstance(source, Source):
             source_name = source.name
         else:
-            err = ClowderError(ClowderErrorType.WRONG_SOURCE_TYPE, fmt.error_wrong_source_type())
+            err = ClowderError(ClowderErrorType.WRONG_SOURCE_TYPE, "Wrong source type")
             LOG.debug('Wrong source type', err)
             raise err
 
         if source_name not in self._sources:
-            err = ClowderError(ClowderErrorType.CLOWDER_YAML_SOURCE_NOT_FOUND,
-                               fmt.error_source_not_defined(source_name.name))
+            message = f"Source {source_name.name} not defined"
+            err = ClowderError(ClowderErrorType.CLOWDER_YAML_SOURCE_NOT_FOUND, message)
             LOG.debug('Failed to get source', err)
             raise err
 
@@ -102,7 +102,7 @@ class SourceController(object):
         """
 
         if not self._has_been_validated:
-            err = ClowderError(ClowderErrorType.SOURCES_NOT_VALIDATED, fmt.error_source_not_validated())
+            err = ClowderError(ClowderErrorType.SOURCES_NOT_VALIDATED, "Sources have not been validated")
             LOG.debug("Called get_default_protocol() but SOURCE_CONTROLLER has not been validated", err)
             raise err
 
@@ -119,7 +119,7 @@ class SourceController(object):
 
         self._has_been_validated = True
         if not any([s.name == name for name, s in self._sources.items()]):
-            err = ClowderError(ClowderErrorType.CLOWDER_YAML_SOURCE_NOT_FOUND, fmt.error_source_not_defined())
+            err = ClowderError(ClowderErrorType.CLOWDER_YAML_SOURCE_NOT_FOUND, "Source not defined")
             LOG.debug('Failed to validate sources', err)
             raise err
 

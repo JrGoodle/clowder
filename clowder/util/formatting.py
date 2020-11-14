@@ -268,48 +268,6 @@ def error_source_default_not_found(source: str, yml: Path) -> str:
     return "\n".join(messages)
 
 
-def error_wrong_source_type() -> str:
-    """Format error message for wrong source type
-
-    :return: Formatted error message for wrong source type
-    :rtype: str
-    """
-
-    return f"Wrong source type"
-
-
-def error_wrong_submodules_type() -> str:
-    return f"Wrong group type"
-
-
-def error_wrong_group_type() -> str:
-    return f"Wrong group type"
-
-
-def error_sources_already_validated() -> str:
-    return f"Sources have already been validated"
-
-
-def error_source_not_validated() -> str:
-    return f"Sources have not been validated"
-
-
-def error_wrong_upstream_type() -> str:
-    """Format error message for wrong upstream type
-
-    :return: Formatted error message for wrong upstream type
-    :rtype: str
-    """
-
-    return f"Wrong upstream type"
-
-
-def error_source_not_defined(name: Optional[str] = None) -> str:
-    if name is not None:
-        return f"Source {name} not defined"
-    return f"Source not defined"
-
-
 def error_source_not_found(source: str, yml: Path, project: str, upstream_name: Optional[str] = None) -> str:
     """Return formatted error string for project with unknown source specified
 
@@ -642,17 +600,6 @@ def version(version_name: str) -> str:
     """
 
     return bold(version_name)
-
-
-def warning_invalid_config_file(file_path: str) -> str:
-    """Return warning message for invalid config file
-
-    :param Path file_path: Invalid config file path
-    :return: Formatted invalid config file warning
-    :rtype: str
-    """
-
-    return f"Clowder config file at {yaml_file(file_path)} appears to be invalid"
 
 
 def project_name(name: str) -> str:

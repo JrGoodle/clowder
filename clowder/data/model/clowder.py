@@ -34,7 +34,7 @@ class Clowder:
             self.projects: Optional[List[Project]] = [Project(p) for p in yaml]
             self.groups: Optional[List[Group]] = None
         else:
-            err = ClowderError(ClowderErrorType.WRONG_GROUP_TYPE, fmt.error_wrong_group_type())
+            err = ClowderError(ClowderErrorType.WRONG_GROUP_TYPE, "Wrong group type")
             LOG.debug("Wrong instance type for group", err)
             raise err
 

@@ -50,12 +50,10 @@ class ResolvedGitSettings:
                     self.submodules = True
                     self.recursive = True
                 else:
-                    err = ClowderError(ClowderErrorType.WRONG_SUBMODULES_TYPE, fmt.error_wrong_submodules_type())
-                    LOG.debug("Wrong submodules type", err)
+                    err = ClowderError(ClowderErrorType.WRONG_SUBMODULES_TYPE, "Wrong submodules type")
                     raise err
             else:
-                err = ClowderError(ClowderErrorType.WRONG_SUBMODULES_TYPE, fmt.error_wrong_submodules_type())
-                LOG.debug("Wrong submodules type", err)
+                err = ClowderError(ClowderErrorType.WRONG_SUBMODULES_TYPE, "Wrong submodules type")
                 raise err
         if git_settings.lfs is not None:
             self.lfs = copy.deepcopy(git_settings.lfs)
