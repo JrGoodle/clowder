@@ -26,9 +26,9 @@ class Log:
         logging.addLevelName(Log.VERBOSE, 'VERBOSE')
         self.logger = logging.getLogger(self.logger_name)
 
-        if LOG_LEVEL is None or LOG_LEVEL is 'VERBOSE':
+        if LOG_LEVEL is None or LOG_LEVEL == 'VERBOSE':
             self.level = self.VERBOSE
-        elif LOG_LEVEL is 'DEBUG':
+        elif LOG_LEVEL == 'DEBUG':
             self.level = logging.DEBUG
         else:
             self.level = logging.ERROR

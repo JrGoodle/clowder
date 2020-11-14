@@ -6,7 +6,8 @@
 
 import argparse
 import pkg_resources
-from typing import Optional
+import sys
+from subprocess import CalledProcessError
 
 import argcomplete
 import colorama
@@ -31,23 +32,19 @@ from clowder.logging import LOG
 #         argparse.ArgumentParser.exit(self, status, message)
 
 
-clowder_parser: Optional[argparse.ArgumentParser] = None
-
-
-def clowder_help(args):  # noqa
-    """Clowder help handler"""
-
-    clowder_parser.print_help()
-
-
 def create_parsers() -> argparse.ArgumentParser:
     """Configure clowder CLI parsers
 
     :return: Configured argument parser for clowder command
     :rtype: argparse.ArgumentParser
     """
+
+    def clowder_help(args):  # noqa
+        """Clowder help handler"""
+
+        clowder_parser.print_help(file=sys.stderr)
+
     try:
-        global clowder_parser
         clowder_parser = argparse.ArgumentParser(prog='clowder')
         clowder_parser.set_defaults(func=clowder_help)
         version_message = f"clowder version {pkg_resources.require('clowder-repo')[0].version}"
@@ -97,6 +94,9 @@ def main() -> None:
     except ClowderError as err:
         LOG.error(error=err)
         exit(err.error_type.value)
+    except CalledProcessError as err:
+        LOG.error(error=err)
+        exit(err.returncode)
     except SystemExit as err:
         if err.code == 0:
             CONSOLE.stdout()
@@ -104,9 +104,9 @@ def main() -> None:
         LOG.error(error=err)
         exit(err.code)
     except KeyboardInterrupt:
-        LOG.error('** KeyboardInterrupt **')
+        LOG.error('** KeyboardInterrupt **\n')
         exit(ClowderErrorType.USER_INTERRUPT.value)
-    except Exception as err:
+    except BaseException as err:
         LOG.error(error=err)
         exit(ClowderErrorType.UNKNOWN.value)
     else:

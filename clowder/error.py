@@ -5,7 +5,6 @@
 """
 
 from enum import IntEnum, unique
-from typing import List, Union
 
 
 # Reserve range 3-30
@@ -79,21 +78,18 @@ class ClowderError(Exception):
     """Clowder error type
 
     :ivar ClowderErrorType error_type: Clowder error type
-    :ivar List[str] messages: List of messages to print
+    :ivar str message: Message to print
     """
 
-    def __init__(self, error_type: ClowderErrorType, messages: Union[str, List[str]]):
+    def __init__(self, error_type: ClowderErrorType, message: str):
         """ClowderError __init__
 
         :param ClowderErrorType error_type: Clowder error type
-        :param Union[str, List[str]] messages: Error message(s)
+        :param str message: Error message
         """
 
-        if isinstance(messages, str):
-            self.messages: List[str] = [messages]
-        else:
-            self.messages: List[str] = messages
+        self.message: str = message
         self.error_type: ClowderErrorType = error_type
 
     def __str__(self):
-        return "\n".join(self.messages)
+        return self.message
