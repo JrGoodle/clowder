@@ -26,6 +26,7 @@ Feature: clowder yaml
         Then the command succeeds
         And output matches contents of clowder.yml test file
 
+    @debug
     Scenario: yaml resolved
         Given cats example is initialized and herded
         When I run 'clowder yaml -r' without debug output
