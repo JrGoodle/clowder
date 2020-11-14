@@ -107,26 +107,6 @@ def error(err: Exception) -> str:
     return f"{err}"
 
 
-def error_clone_missing_projects() -> str:
-    """Format error message for clone missing projects
-
-    :return: Formatted error message for clone missing projects
-    :rtype: str
-    """
-
-    return f"First run {clowder_command('clowder herd')} to clone missing projects"
-
-
-def error_clowder_already_initialized() -> str:
-    """Format error message for clowder already initialized
-
-    :return: Formatted message for clowder already initialized error
-    :rtype: str
-    """
-
-    return f"Clowder already initialized in this directory"
-
-
 def error_clowder_symlink_source_missing(symlink_path: Path) -> str:
     """Return formatted error string for clowder symlink source not found
 
@@ -140,17 +120,6 @@ def error_clowder_symlink_source_missing(symlink_path: Path) -> str:
     return f"Found symlink {target} but source {source} appears to be missing"
 
 
-def error_command_failed(cmd: Union[str, List[str]]) -> str:
-    """Format error message for failed command
-
-    :param Union[str, List[str]] cmd: Clowder command name
-    :return: Formatted clowder command name
-    :rtype: str
-    """
-
-    return f"Failed to run command {command(cmd)}"
-
-
 def error_directory_exists(dir_path: str) -> str:
     """Format error message for already existing directory
 
@@ -160,17 +129,6 @@ def error_directory_exists(dir_path: str) -> str:
     """
 
     return f"Directory already exists at {path(dir_path)}"
-
-
-def error_duplicate_version(v: str) -> str:
-    """Format error message for duplicate clowder version
-
-    :param str v: Clowder version name
-    :return: Formatted duplicate clowder version error
-    :rtype: str
-    """
-
-    return f"Duplicate version found: {yaml_file(Path(v))}"
 
 
 def error_duplicate_project_path(project_path: str, yml: Path) -> str:
@@ -213,10 +171,10 @@ def error_existing_file_at_clowder_repo_path(file_path: str) -> str:
     return f"Found non-directory file {path(file_path)} where clowder repo directory should be"
 
 
-def error_existing_file_at_symlink_target_path(name: str) -> str:
+def error_existing_file_at_symlink_target_path(name: Path) -> str:
     """Format error message for existing non-symlink file at symlink target path
 
-    :param str name: Path to use in error message
+    :param Path name: Path to use in error message
     :return: Formatted existing non-symlink file at symlink target path error
     :rtype: str
     """
@@ -290,17 +248,6 @@ def error_file_exists(file_path: str) -> str:
     return f"File already exists {path(file_path)}"
 
 
-def error_groups_contains_all(yml: Path) -> str:
-    """Return formatted error string for invalid 'all' entry in groups list
-
-    :param Path yml: Path to yaml file
-    :return: Formatted error for groups containing all
-    :rtype: str
-    """
-
-    return f"{yaml_path(yml)}\n'groups' cannot contain 'all'"
-
-
 def error_invalid_config_file(file_path: str) -> str:
     """Return error message for invalid config file
 
@@ -310,16 +257,6 @@ def error_invalid_config_file(file_path: str) -> str:
     """
 
     return f"{yaml_file(file_path)}\nClowder config file appears to be invalid"
-
-
-def error_failed_create_parser() -> str:
-    """Format error message for failing to create cli parsers
-
-    :return: Formatted failed to create parsers error
-    :rtype: str
-    """
-
-    return f"Failed to create command line parsers"
 
 
 def error_invalid_git_config_value(key: str, value: str) -> str:
@@ -332,16 +269,6 @@ def error_invalid_git_config_value(key: str, value: str) -> str:
     """
 
     return f"Invalid git config value - {key}: {value}"
-
-
-def error_invalid_project_state() -> str:
-    """Format error message for invalid project state
-
-    :return: Formatted error message for invalid project state
-    :rtype: str
-    """
-
-    return f"Invalid project state"
 
 
 def error_invalid_ref(git_ref: str, yml: Path) -> str:
@@ -367,26 +294,6 @@ def error_invalid_yaml_file(name: str) -> str:
 
     file = yaml_file(Path(name))
     return f"{file} appears to be invalid"
-
-
-def error_missing_clowder_repo() -> str:
-    """Format error message for missing clowder repo
-
-    :return: Formatted missing clowder repo error
-    :rtype: str
-    """
-
-    return f"No {path(Path('.clowder'))} directory found"
-
-
-def error_missing_clowder_git_repo() -> str:
-    """Format error message for missing clowder git repo
-
-    :return: Formatted missing clowder git repo error
-    :rtype: str
-    """
-
-    return f"No {path(Path('.clowder'))} git repository found"
 
 
 def error_missing_clowder_yaml() -> str:
@@ -707,7 +614,7 @@ def project_options_help_message(message: str) -> str:
     return message
 
 
-def path(text: str) -> str:
+def path(text: Path) -> str:
     """Return formatted path
 
     :param Path text: Path name

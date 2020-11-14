@@ -5,6 +5,7 @@
 """
 
 from functools import wraps
+from pathlib import Path
 
 import clowder.clowder_repo as clowder_repo
 import clowder.util.formatting as fmt
@@ -24,7 +25,7 @@ def clowder_repo_required(func):
         if ENVIRONMENT.clowder_repo_existing_file_error is not None:
             raise ENVIRONMENT.clowder_repo_existing_file_error
         if ENVIRONMENT.clowder_repo_dir is None:
-            raise ClowderError(ClowderErrorType.MISSING_CLOWDER_REPO, fmt.error_missing_clowder_repo())
+            raise ClowderError(ClowderErrorType.MISSING_CLOWDER_REPO, f"No {fmt.path(Path('.clowder'))} directory found")
 
         return func(*args, **kwargs)
 
@@ -39,7 +40,8 @@ def clowder_git_repo_required(func):
         """Wrapper"""
 
         if ENVIRONMENT.clowder_git_repo_dir is None:
-            raise ClowderError(ClowderErrorType.MISSING_CLOWDER_GIT_REPO, fmt.error_missing_clowder_git_repo())
+            message = f"No {fmt.path(Path('.clowder'))} git repository found"
+            raise ClowderError(ClowderErrorType.MISSING_CLOWDER_GIT_REPO, message)
         return func(*args, **kwargs)
 
     return wrapper

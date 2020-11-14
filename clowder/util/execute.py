@@ -40,7 +40,8 @@ def execute_command(command: Union[str, List[str]], path: Path,
     try:
         subprocess.run(cmd, shell=True, env=cmd_env, cwd=str(path), stdout=pipe, stderr=pipe, check=True)
     except subprocess.CalledProcessError:
-        CONSOLE.stderr(fmt.error_command_failed(cmd))
+        message = f"Failed to run command {fmt.command(cmd)}"
+        CONSOLE.stderr(message)
         raise
 
 

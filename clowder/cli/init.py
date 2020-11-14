@@ -41,7 +41,7 @@ def init(args) -> None:
             clowder_repo_dir.rmdir()
         except OSError as err:
             LOG.debug('Failed to remove existing .clowder directory', err)
-            CONSOLE.stderr(fmt.error_clowder_already_initialized())
+            CONSOLE.stderr("Clowder already initialized in this directory")
             raise
 
     url_output = fmt.green(args.url)

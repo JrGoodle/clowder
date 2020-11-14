@@ -77,7 +77,7 @@ def create_parsers() -> argparse.ArgumentParser:
         cmd.add_status_parser(subparsers)
         cmd.add_yaml_parser(subparsers)
     except Exception:
-        LOG.error(fmt.error_failed_create_parser())
+        LOG.error("Failed to create command line parsers")
         raise
     else:
         return clowder_parser

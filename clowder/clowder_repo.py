@@ -100,7 +100,8 @@ def get_saved_version_names() -> Optional[Tuple[str, ...]]:
 
     duplicate = fmt.check_for_duplicates(versions)
     if duplicate is not None:
-        raise ClowderError(ClowderErrorType.DUPLICATE_SAVED_VERSIONS, fmt.error_duplicate_version(duplicate))
+        message = f"Duplicate version found: {fmt.yaml_file(Path(duplicate))}"
+        raise ClowderError(ClowderErrorType.DUPLICATE_SAVED_VERSIONS, message)
 
     return tuple(sorted(versions))
 

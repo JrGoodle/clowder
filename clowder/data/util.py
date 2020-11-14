@@ -65,7 +65,7 @@ def validate_project_statuses(projects: Tuple[ResolvedProject, ...], allow_missi
         p.print_validation(allow_missing_repo=allow_missing_repo)
     if not all([p.is_valid(allow_missing_repo=allow_missing_repo) for p in projects]):
         CONSOLE.stdout()
-        raise ClowderError(ClowderErrorType.INVALID_PROJECT_STATUS, fmt.error_invalid_project_state())
+        raise ClowderError(ClowderErrorType.INVALID_PROJECT_STATUS, "Invalid project state")
 
 
 def _print_upstream_output(project: ResolvedProject) -> None:

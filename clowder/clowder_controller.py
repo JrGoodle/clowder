@@ -189,7 +189,8 @@ class ClowderController(object):
                 projects_exist = False
 
         if not projects_exist:
-            raise ClowderError(ClowderErrorType.INVALID_PROJECT_STATUS, fmt.error_clone_missing_projects())
+            message = f"First run {fmt.clowder_command('clowder herd')} to clone missing projects"
+            raise ClowderError(ClowderErrorType.INVALID_PROJECT_STATUS, message)
 
     def _get_upstream_names(self) -> Tuple[str, ...]:
         """Returns all upstream names for current clowder yaml file
