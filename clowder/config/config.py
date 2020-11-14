@@ -54,8 +54,8 @@ class Config(object):
 
         if ENVIRONMENT.clowder_repo_dir is None:
             message = "Failed to load clowder config file - .clowder directory doesn't exist"
+            LOG.debug(message)
             err = ClowderError(ClowderErrorType.UNKNOWN, message)
-            LOG.debug(message, err)
             self.error: Optional[Exception] = err
             return
 
