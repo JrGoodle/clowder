@@ -48,7 +48,7 @@ def checkout(ref: str) -> None:
     """
 
     repo = ProjectRepo(ENVIRONMENT.clowder_git_repo_dir, clowder_repo_remote, clowder_repo_ref)
-    if repo.is_dirty():
+    if repo.is_dirty:
         CONSOLE.stdout(' - Dirty repo. Please stash, commit, or discard your changes')
         repo.status_verbose()
         return
@@ -62,7 +62,7 @@ def clean() -> None:
     """
 
     repo = ProjectRepo(ENVIRONMENT.clowder_git_repo_dir, clowder_repo_remote, clowder_repo_ref)
-    if repo.is_dirty():
+    if repo.is_dirty:
         CONSOLE.stdout(' - Discard current changes')
         repo = ProjectRepo(ENVIRONMENT.clowder_git_repo_dir, clowder_repo_remote, clowder_repo_ref)
         repo.clean(args='fdx')
@@ -183,9 +183,7 @@ def print_status(fetch: bool = False) -> None:
         repo.fetch(clowder_repo_remote)
 
     clowder_git_repo_output = repo.format_project_string(ENVIRONMENT.clowder_git_repo_dir.name)
-    current_ref_output = repo.format_project_ref_string()
-
-    CONSOLE.stdout(f"{clowder_git_repo_output} {current_ref_output}")
+    CONSOLE.stdout(f"{clowder_git_repo_output} {repo.formatted_ref}")
     if symlink_output is not None:
         CONSOLE.stdout(symlink_output)
     CONSOLE.stdout()

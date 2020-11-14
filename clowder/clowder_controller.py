@@ -133,7 +133,7 @@ class ClowderController(object):
         timestamp = None
         for project in self.projects:
             if project.name == timestamp_project:
-                timestamp = project.get_current_timestamp()
+                timestamp = project.current_timestamp
 
         if timestamp is None:
             raise ClowderError(ClowderErrorType.GIT_ERROR, fmt.error_timestamp_not_found())

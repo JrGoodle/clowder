@@ -93,7 +93,7 @@ class ProjectRepo(ProjectRepoImpl):
         try:
             remotes = self.repo.remotes
         except GitError as err:
-            LOG.debug('Git error', err)
+            LOG.debug('No remotes', err)
             return
         else:
             for remote in remotes:
@@ -154,12 +154,12 @@ class ProjectRepo(ProjectRepoImpl):
         branch_output = fmt.ref_string(branch)
         # FIXME: Replace with origin/HEAD
         branch_ref = f'refs/heads/{branch}'
-        if self.existing_local_branch(branch):
+        if self.has_local_branch(branch):
             self._herd_branch_existing_local(branch, depth=depth, rebase=rebase, fork_remote=fork_remote)
             return
 
         self.fetch(self.remote, depth=depth, ref=branch_ref, allow_failure=True)
-        if self.existing_remote_branch(branch, self.remote):
+        if self.has_remote_branch(branch, self.remote):
             self._herd(self.remote, branch_ref, depth=depth, fetch=False, rebase=rebase)
             return
 
@@ -167,7 +167,7 @@ class ProjectRepo(ProjectRepoImpl):
         CONSOLE.stdout(f' - No existing remote branch {remote_output} {branch_output}')
         if fork_remote:
             self.fetch(fork_remote, depth=depth, ref=branch_ref)
-            if self.existing_remote_branch(branch, fork_remote):
+            if self.has_remote_branch(branch, fork_remote):
                 self._herd(fork_remote, branch_ref, depth=depth, fetch=False, rebase=rebase)
                 return
 
@@ -287,7 +287,7 @@ class ProjectRepo(ProjectRepoImpl):
         """
 
         branch_output = fmt.ref_string(branch)
-        if not self.existing_remote_branch(branch, remote):
+        if not self.has_remote_branch(branch, remote):
             CONSOLE.stdout(f" - Remote branch {branch_output} doesn't exist")
             return
 
@@ -318,7 +318,7 @@ class ProjectRepo(ProjectRepoImpl):
             return
 
         branch = truncate_ref(self.default_ref)
-        if not self.existing_local_branch(branch):
+        if not self.has_local_branch(branch):
             self._create_branch_local_tracking(branch, self.remote, depth=depth, fetch=True)
             return
 
@@ -326,7 +326,7 @@ class ProjectRepo(ProjectRepoImpl):
 
         branch_output = fmt.ref_string(branch)
         remote_output = fmt.remote_string(self.remote)
-        if not self.existing_remote_branch(branch, self.remote):
+        if not self.has_remote_branch(branch, self.remote):
             message = f'{fmt.ERROR} No existing remote branch {remote_output} {branch_output}'
             message = self._format_error_message(message)
             CONSOLE.stderr(message)
@@ -425,7 +425,7 @@ class ProjectRepo(ProjectRepoImpl):
             return
 
         branch = truncate_ref(ref)
-        if not self.existing_local_branch(branch):
+        if not self.has_local_branch(branch):
             self._create_branch_local_tracking(branch, remote, depth=depth, fetch=fetch)
             return
 
@@ -445,13 +445,13 @@ class ProjectRepo(ProjectRepoImpl):
 
         branch_ref = f'refs/heads/{branch}'
         self.fetch(self.remote, depth=depth, ref=branch_ref)
-        if self.existing_remote_branch(branch, self.remote):
+        if self.has_remote_branch(branch, self.remote):
             self._herd_remote_branch(self.remote, branch, depth=depth, rebase=rebase)
             return
 
         if fork_remote:
             self.fetch(fork_remote, depth=depth, ref=branch_ref)
-            if self.existing_remote_branch(branch, fork_remote):
+            if self.has_remote_branch(branch, fork_remote):
                 self._herd_remote_branch(fork_remote, branch, depth=depth, rebase=rebase)
 
     def _herd_branch_initial(self, url: str, branch: str, depth: int = 0) -> None:
@@ -465,7 +465,7 @@ class ProjectRepo(ProjectRepoImpl):
         self._init_repo()
         self._create_remote(self.remote, url, remove_dir=True)
         self.fetch(self.remote, depth=depth, ref=branch)
-        if not self.existing_remote_branch(branch, self.remote):
+        if not self.has_remote_branch(branch, self.remote):
             remote_output = fmt.remote_string(self.remote)
             CONSOLE.stdout(f' - No existing remote branch {remote_output} {fmt.ref_string(branch)}')
             self._herd_initial(url, depth=depth)
@@ -483,7 +483,7 @@ class ProjectRepo(ProjectRepoImpl):
 
         self._checkout_branch(branch)
 
-        if not self.existing_remote_branch(branch, remote):
+        if not self.has_remote_branch(branch, remote):
             return
 
         if not self._is_tracking_branch(branch):

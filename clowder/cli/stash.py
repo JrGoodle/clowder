@@ -44,7 +44,7 @@ def add_stash_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
 def stash(args) -> None:
     """Clowder stash command private implementation"""
 
-    if not any([p.is_dirty() for p in CLOWDER_CONTROLLER.projects]):
+    if not any([p.is_dirty for p in CLOWDER_CONTROLLER.projects]):
         CONSOLE.stdout(' - No changes to stash')
         return
 

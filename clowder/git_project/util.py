@@ -10,6 +10,7 @@ from pathlib import Path
 from git import Repo, GitError
 
 import clowder.util.formatting as fmt
+from clowder.console import CONSOLE
 from clowder.error import ClowderError, ClowderErrorType
 
 
@@ -58,7 +59,8 @@ def not_detached(func):
         """Wrapper"""
 
         instance = args[0]
-        if instance.is_detached(print_output=True):
+        if instance.is_detached:
+            CONSOLE.stdout(' - HEAD is detached')
             return
         return func(*args, **kwargs)
 

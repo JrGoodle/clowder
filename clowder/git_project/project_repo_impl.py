@@ -100,7 +100,7 @@ class ProjectRepoImpl(GitRepo):
         self._remote(self.remote, remove_dir=True)
         self.fetch(self.remote, depth=depth, ref=branch, remove_dir=True)
 
-        if not self.existing_remote_branch(branch, self.remote):
+        if not self.has_remote_branch(branch, self.remote):
             # TODO: Handle possible exceptions
             remove_directory(self.repo_path)
             message = f'{fmt.ERROR} No existing remote branch {remote_output} {branch_output}'
@@ -303,7 +303,7 @@ class ProjectRepoImpl(GitRepo):
         self.fetch(remote, depth=depth, ref=branch)
 
         if branch in self._remote(remote).refs:
-            self._print_existing_remote_branch_message(branch)
+            self._print_has_remote_branch_message(branch)
             return
 
         try:
@@ -491,7 +491,7 @@ class ProjectRepoImpl(GitRepo):
             CONSOLE.stderr(message)
             raise
 
-    def _print_existing_remote_branch_message(self, branch: str) -> None:
+    def _print_has_remote_branch_message(self, branch: str) -> None:
         """Print output message for existing remote branch
 
         :param str branch: Branch name
@@ -645,12 +645,12 @@ class ProjectRepoImpl(GitRepo):
         origin = self._remote(remote)
         self.fetch(remote, depth=depth, ref=branch)
 
-        if not self.existing_local_branch(branch):
+        if not self.has_local_branch(branch):
             message = f'{fmt.ERROR} No local branch {branch_output}'
             message = self._format_error_message(message)
             raise ClowderError(ClowderErrorType.GIT_ERROR, message)
 
-        if not self.existing_remote_branch(branch, remote):
+        if not self.has_remote_branch(branch, remote):
             message = f'{fmt.ERROR} No remote branch {branch_output}'
             message = self._format_error_message(message)
             raise ClowderError(ClowderErrorType.GIT_ERROR, message)

@@ -102,7 +102,7 @@ class GitRepo(object):
         self._clean(args=clean_args)
         CONSOLE.stdout(' - Reset project')
         self._reset_head()
-        if self._is_rebase_in_progress():
+        if self._is_rebase_in_progress:
             CONSOLE.stdout(' - Abort rebase in progress')
             self._abort_rebase()
 
@@ -122,6 +122,7 @@ class GitRepo(object):
             CONSOLE.stderr(message)
             raise
 
+    @property
     def current_branch(self) -> str:
         """Return currently checked out branch of project
 
@@ -131,7 +132,7 @@ class GitRepo(object):
 
         return self.repo.head.ref.name
 
-    def existing_remote_branch(self, branch: str, remote: str) -> bool:
+    def has_remote_branch(self, branch: str, remote: str) -> bool:
         """Check if remote branch exists
 
         :param str branch: Branch name
@@ -146,7 +147,7 @@ class GitRepo(object):
             return False
         return branch in origin.refs
 
-    def existing_local_branch(self, branch: str) -> bool:
+    def has_local_branch(self, branch: str) -> bool:
         """Check if local branch exists
 
         :param str branch: Branch name
@@ -196,7 +197,8 @@ class GitRepo(object):
                 CONSOLE.stderr(message)
                 raise
 
-    def format_project_ref_string(self) -> str:
+    @property
+    def formatted_ref(self) -> str:
         """Return formatted project ref string
 
         :return: Formmatted repo ref
@@ -214,10 +216,10 @@ class GitRepo(object):
             upstream_commits_output = fmt.red(f'-{upstream_commits}')
             status = f'({local_commits_output}/{upstream_commits_output})'
 
-        if self.is_detached():
+        if self.is_detached:
             current_ref = self.sha()
             return fmt.magenta(fmt.escape(f'[HEAD @ {current_ref}]'))
-        current_branch = self.current_branch()
+        current_branch = self.current_branch
         return fmt.magenta(fmt.escape(f'[{current_branch}]')) + status
 
     def format_project_string(self, path: Path) -> str:
@@ -250,7 +252,8 @@ class GitRepo(object):
 
         return fmt.green(project)
 
-    def get_current_timestamp(self) -> str:
+    @property
+    def current_timestamp(self) -> str:
         """Get current timestamp of HEAD commit
 
         :return: HEAD commit timestamp
@@ -318,10 +321,10 @@ class GitRepo(object):
             CONSOLE.stderr(message)
             raise
 
-    def is_detached(self, print_output: bool = False) -> bool:
+    @property
+    def is_detached(self) -> bool:
         """Check if HEAD is detached
 
-        :param bool print_output: Whether to print output
         :return: True, if HEAD is detached
         :rtype: bool
         """
@@ -329,11 +332,10 @@ class GitRepo(object):
         if not self.repo_path.is_dir():
             return False
         if self.repo.head.is_detached:
-            if print_output:
-                CONSOLE.stdout(' - HEAD is detached')
             return True
         return False
 
+    @property
     def is_dirty(self) -> bool:
         """Check whether repo is dirty
 
@@ -344,7 +346,7 @@ class GitRepo(object):
         if not self.repo_path.is_dir():
             return False
 
-        return self.repo.is_dirty() or self._is_rebase_in_progress() or self._has_untracked_files()
+        return self.repo.is_dirty or self._is_rebase_in_progress or self._has_untracked_files
 
     def is_lfs_installed(self) -> bool:
         """Check whether git lfs hooks are installed
@@ -484,7 +486,7 @@ class GitRepo(object):
     def stash(self) -> None:
         """Stash current changes in repository"""
 
-        if not self.repo.is_dirty():
+        if not self.repo.is_dirty:
             CONSOLE.stdout(' - No changes to stash')
             return
 
@@ -532,7 +534,7 @@ class GitRepo(object):
             if not existing_git_repository(self.repo_path):
                 return False
 
-        return not self.is_dirty()
+        return not self.is_dirty
 
     def _abort_rebase(self) -> None:
         """Abort rebase
@@ -540,7 +542,7 @@ class GitRepo(object):
         :raise ClowderError:
         """
 
-        if not self._is_rebase_in_progress():
+        if not self._is_rebase_in_progress:
             return
 
         try:
@@ -592,6 +594,7 @@ class GitRepo(object):
         else:
             return message
 
+    @property
     def _is_rebase_in_progress(self) -> bool:
         """Detect whether rebase is in progress
 
@@ -650,6 +653,7 @@ class GitRepo(object):
             CONSOLE.stderr(message)
             raise
 
+    @property
     def _has_untracked_files(self) -> bool:
         """Check whether untracked files exist
 

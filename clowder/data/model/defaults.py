@@ -46,7 +46,8 @@ class Defaults:
         upstream_defaults = UpstreamDefaults(upstream) if upstream is not None else None
         self.upstream_defaults: Optional[UpstreamDefaults] = upstream_defaults
 
-    def get_formatted_ref(self) -> Optional[str]:
+    @property
+    def formatted_ref(self) -> Optional[str]:
         """Return formatted git ref
 
         :return: Formatted git ref

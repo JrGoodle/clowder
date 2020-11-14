@@ -106,8 +106,7 @@ class ResolvedUpstream:
 
         repo = ProjectRepo(self.full_path, self.remote, self.ref)
         project_output = repo.format_project_string(self.path)
-        current_ref_output = repo.format_project_ref_string()
-        return f"{project_output} {current_ref_output}"
+        return f"{project_output} {repo.formatted_ref}"
 
     def url(self) -> str:
         """Return project url"""

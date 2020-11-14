@@ -90,7 +90,8 @@ class Project:
         upstream = yaml.get('upstream', None)
         self.upstream: Optional[Upstream] = Upstream(upstream) if upstream is not None else None
 
-    def get_formatted_ref(self) -> Optional[str]:
+    @property
+    def formatted_ref(self) -> Optional[str]:
         """Return formatted git ref
 
         :return: Formatted git ref

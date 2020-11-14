@@ -36,7 +36,7 @@ def project_repo_exists(func):
 
         instance = args[0]
         if not Path(instance.full_path / '.git').is_dir():
-            CONSOLE.stdout("[red] - Project missing[/red]")
+            CONSOLE.stdout(fmt.red("- Project missing"))
             return
         return func(*args, **kwargs)
 
@@ -114,16 +114,16 @@ class ResolvedProject:
         elif has_defaults_source:
             self.source: Source = SOURCE_CONTROLLER.get_source(defaults.source)
 
-        has_ref = project.get_formatted_ref() is not None
-        has_defaults_ref = has_defaults and defaults.get_formatted_ref() is not None
-        has_group_defaults_ref = has_group_defaults and group.defaults.get_formatted_ref() is not None
+        has_ref = project.formatted_ref is not None
+        has_defaults_ref = has_defaults and defaults.formatted_ref is not None
+        has_group_defaults_ref = has_group_defaults and group.defaults.formatted_ref is not None
         self.ref: str = "refs/heads/master"
         if has_ref:
-            self.ref = project.get_formatted_ref()
+            self.ref = project.formatted_ref
         elif has_group_defaults_ref:
-            self.ref = group.defaults.get_formatted_ref()
+            self.ref = group.defaults.formatted_ref
         elif has_defaults_ref:
-            self.ref = defaults.get_formatted_ref()
+            self.ref = defaults.formatted_ref
 
         has_git = project.git_settings is not None
         has_defaults_git = has_defaults and defaults.git_settings is not None
@@ -263,9 +263,9 @@ class ResolvedProject:
 
         repo = ProjectRepo(self.full_path, self.remote, self.ref)
         if not is_remote:
-            return repo.existing_local_branch(branch)
+            return repo.has_local_branch(branch)
 
-        return repo.existing_remote_branch(branch, self.remote)
+        return repo.has_remote_branch(branch, self.remote)
 
     def exists(self) -> bool:
         """Check if project exists
@@ -300,7 +300,8 @@ class ResolvedProject:
 
         return self.name
 
-    def get_current_timestamp(self) -> str:
+    @property
+    def current_timestamp(self) -> str:
         """Return timestamp of current HEAD commit
 
         :return: HEAD commit timestamp
@@ -308,7 +309,7 @@ class ResolvedProject:
         """
 
         repo = ProjectRepo(self.full_path, self.remote, self.ref)
-        return repo.get_current_timestamp()
+        return repo.current_timestamp
 
     def herd(self, branch: Optional[str] = None, tag: Optional[str] = None, depth: Optional[int] = None,
              rebase: bool = False, parallel: bool = False) -> None:
@@ -326,7 +327,6 @@ class ResolvedProject:
 
         if self.upstream is None:
             CONSOLE.stdout(self.status())
-
             if branch:
                 repo.herd_branch(self._url(), branch, depth=herd_depth,
                                  rebase=rebase, config=self.git_settings.get_processed_config())
@@ -337,13 +337,10 @@ class ResolvedProject:
                 repo.herd(self._url(), depth=herd_depth, rebase=rebase,
                           config=self.git_settings.get_processed_config())
             self._pull_lfs(repo)
-
             return
 
         CONSOLE.stdout(self.status())
         repo.configure_remotes(self.remote, self._url(), self.upstream.remote, self.upstream.url())
-
-        # CONSOLE.stdout(fmt.upstream_string(self.name))
         if branch:
             repo.herd_branch(self._url(), branch, depth=herd_depth, rebase=rebase,
                              config=self.git_settings.get_processed_config())
@@ -353,9 +350,7 @@ class ResolvedProject:
         else:
             repo.herd(self._url(), depth=herd_depth, rebase=rebase,
                       config=self.git_settings.get_processed_config())
-
         self._pull_lfs(repo)
-
         CONSOLE.stdout(fmt.upstream_string(self.upstream.name))
 
         # Modify repo to prefer upstream
@@ -366,6 +361,7 @@ class ResolvedProject:
         repo.default_ref = self.ref
         repo.remote = self.remote
 
+    @property
     def is_dirty(self) -> bool:
         """Check if project is dirty
 
@@ -415,11 +411,11 @@ class ResolvedProject:
 
         repo = ProjectRepo(self.full_path, self.remote, self.ref)
 
-        if local and repo.existing_local_branch(branch):
+        if local and repo.has_local_branch(branch):
             repo.prune_branch_local(branch, force)
 
         if remote:
-            if repo.existing_remote_branch(branch, self.remote):
+            if repo.has_remote_branch(branch, self.remote):
                 repo.prune_branch_remote(branch, self.remote)
 
     def reset(self, timestamp: Optional[str] = None, parallel: bool = False) -> None:  # noqa
@@ -527,15 +523,13 @@ class ResolvedProject:
         if padding:
             project_output = project_output.ljust(padding)
         project_output = repo.color_project_string(project_output)
-        current_ref_output = repo.format_project_ref_string()
-
-        return f'{project_output} {current_ref_output}'
+        return f'{project_output} {repo.formatted_ref}'
 
     @project_repo_exists
     def stash(self) -> None:
         """Stash changes for project if dirty"""
 
-        if self.is_dirty():
+        if self.is_dirty:
             repo = ProjectRepo(self.full_path, self.remote, self.ref)
             repo.stash()
         else:

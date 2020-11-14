@@ -59,6 +59,7 @@ class ProjectRepoRecursive(ProjectRepo):
         CONSOLE.stdout(' - Update submodules recursively')
         self._submodules_update()
 
+    @property
     def has_submodules(self) -> bool:
         """Repo has submodules
 
