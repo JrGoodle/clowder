@@ -335,7 +335,7 @@ class GitRepo(object):
         if not self.repo_path.is_dir():
             return False
 
-        return self.repo.is_dirty or self._is_rebase_in_progress or self._has_untracked_files
+        return self.repo.is_dirty() or self._is_rebase_in_progress or self._has_untracked_files
 
     def is_lfs_installed(self) -> bool:
         """Check whether git lfs hooks are installed

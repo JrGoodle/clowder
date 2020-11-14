@@ -447,12 +447,13 @@ class ProjectRepoImpl(GitRepo):
         :raise ClowderError:
         """
 
-        default_branch = self.repo.heads.get(branch, None)
-        if default_branch is None:
+        try:
+            default_branch = self.repo.heads[branch]
+            is_detached = self.repo.head.is_detached
+            same_branch = self.repo.head.ref == default_branch
+            return not is_detached and same_branch
+        except (GitError, TypeError):
             return False
-        is_detached = self.repo.head.is_detached
-        same_branch = self.repo.head.ref == default_branch
-        return not is_detached and same_branch
 
     def _is_tracking_branch(self, branch: str) -> bool:
         """Check if branch is a tracking branch

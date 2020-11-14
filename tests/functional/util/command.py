@@ -25,6 +25,7 @@ def run_command(command: str, path: Path, clowder_debug: bool = True) -> Complet
     processed_cmd = _process_clowder_commands(command)
 
     # TODO: Replace universal_newlines with text when Python 3.6 support is dropped
+    print(processed_cmd)
     result = subprocess.run(processed_cmd, cwd=path, shell=True,
                             stdout=PIPE, stderr=STDOUT, universal_newlines=True, env=cmd_env)
     print(result.stdout)
