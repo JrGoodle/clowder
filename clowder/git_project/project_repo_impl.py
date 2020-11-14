@@ -222,7 +222,8 @@ class ProjectRepoImpl(GitRepo):
 
         if url != self._remote_get_url(remote):
             actual_url = self._remote_get_url(remote)
-            message = fmt.error_remote_already_exists(remote, url, actual_url)
+            message = f"Remote {fmt.remote(remote)} already exists with a different url\n" \
+                      f"{fmt.url_string(actual_url)} should be {fmt.url_string(url)}"
             CONSOLE.stderr(message)
             raise ClowderError(ClowderErrorType.UNKNOWN, message)
 

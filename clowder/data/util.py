@@ -75,5 +75,5 @@ def _print_upstream_output(project: ResolvedProject) -> None:
     """
 
     if project.upstream:
-        CONSOLE.stdout('  ' + fmt.upstream_string(project.name))
-        CONSOLE.stdout('  ' + fmt.upstream_string(project.upstream.name))
+        CONSOLE.stdout('  ' + fmt.upstream(project.name))
+        CONSOLE.stdout('  ' + fmt.upstream(project.upstream.name))

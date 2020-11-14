@@ -111,9 +111,10 @@ class ClowderEnvironment(object):
             elif clowder_yml_exists or clowder_yaml_exists or clowder_repo_file_exists:
                 # FIXME: Is this right?
                 if clowder_repo_file_exists:
+                    message = f"Found non-directory file {fmt.path(clowder_repo_dir)} " \
+                              f"where clowder repo directory should be"
                     self.clowder_repo_existing_file_error: Optional[ClowderError] = ClowderError(
-                        ClowderErrorType.CLOWDER_REPO_EXISTING_FILE,
-                        fmt.error_existing_file_at_clowder_repo_path(clowder_repo_dir))
+                        ClowderErrorType.CLOWDER_REPO_EXISTING_FILE, message)
                 self.clowder_dir: Optional[Path] = path
                 break
             path = path.parent
@@ -150,7 +151,9 @@ class ClowderEnvironment(object):
 
         # Broken symlink pointing to missing source
         if yaml_file.is_symlink() and not yaml_file.exists():
-            message = fmt.error_clowder_symlink_source_missing(yaml_file)
+            target = fmt.yaml_file(str(yaml_file))
+            source = fmt.yaml_file(str(yaml_file.resolve()))
+            message = f"Found symlink {target} but source {source} appears to be missing"
             self.clowder_yaml_missing_source_error: Optional[ClowderError] = ClowderError(
                 ClowderErrorType.CLOWDER_SYMLINK_SOURCE_MISSING, message)
             return

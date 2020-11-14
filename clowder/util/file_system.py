@@ -89,7 +89,8 @@ def make_dir(directory: Path) -> None:
             if err.errno == errno.EEXIST:
                 CONSOLE.stderr(fmt.error_directory_exists(str(directory)))
             else:
-                CONSOLE.stderr(fmt.error_failed_create_directory(str(directory)))
+                message = f"Failed to create directory {fmt.path(directory)}"
+                CONSOLE.stderr(message)
             raise
 
 

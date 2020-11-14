@@ -107,20 +107,7 @@ def error(err: Exception) -> str:
     return f"{err}"
 
 
-def error_clowder_symlink_source_missing(symlink_path: Path) -> str:
-    """Return formatted error string for clowder symlink source not found
-
-    :param Path symlink_path: Clowder yaml symlink path
-    :return: Formatted clowder symlink source not found warning
-    :rtype: str
-    """
-
-    target = yaml_file(str(symlink_path))
-    source = yaml_file(str(symlink_path.resolve()))
-    return f"Found symlink {target} but source {source} appears to be missing"
-
-
-def error_directory_exists(dir_path: str) -> str:
+def error_directory_exists(dir_path: Path) -> str:
     """Format error message for already existing directory
 
     :param Path dir_path: Directory path
@@ -146,31 +133,6 @@ def error_duplicate_project_path(project_path: str, yml: Path) -> str:
     return "\n".join(messages)
 
 
-def error_empty_yaml(yml: Path, name: Path) -> str:
-    """Return formatted error string for empty clowder yaml file
-
-    :param Path yml: Path to yaml file
-    :param Path name: Path to use in error message
-    :return: Formatted empty yaml error
-    :rtype: str
-    """
-
-    output = yaml_path(yml)
-    file = yaml_file(str(name))
-    return f"{output}\nNo entries in {file}"
-
-
-def error_existing_file_at_clowder_repo_path(file_path: str) -> str:
-    """Format error message for existing file at .clowder path
-
-    :param str file_path: Path to existing .clowder file
-    :return: Formatted existing file at .clowder path error
-    :rtype: str
-    """
-
-    return f"Found non-directory file {path(file_path)} where clowder repo directory should be"
-
-
 def error_existing_file_at_symlink_target_path(name: Path) -> str:
     """Format error message for existing non-symlink file at symlink target path
 
@@ -192,18 +154,7 @@ def error_failed_clowder_init() -> str:
     return f"Failed to initialize clowder repo"
 
 
-def error_failed_create_directory(dir_path: str) -> str:
-    """Format error message for failing to create directory
-
-    :param str dir_path: Directory path to create
-    :return: Formatted create directory error
-    :rtype: str
-    """
-
-    return f"Failed to create directory {path(dir_path)}"
-
-
-def error_failed_remove_directory(dir_path: str) -> str:
+def error_failed_remove_directory(dir_path: Path) -> str:
     """Format error message for failing to remove directory
 
     :param str dir_path: Directory path to remove
@@ -214,7 +165,7 @@ def error_failed_remove_directory(dir_path: str) -> str:
     return f"Failed to remove directory {path(dir_path)}"
 
 
-def error_failed_remove_file(file_path: str) -> str:
+def error_failed_remove_file(file_path: Path) -> str:
     """Format error message for failing to remove file
 
     :param str file_path: File path
@@ -223,29 +174,6 @@ def error_failed_remove_file(file_path: str) -> str:
     """
 
     return f"Failed to remove file {path(file_path)}"
-
-
-def error_failed_symlink_file(target: str, source: str) -> str:
-    """Format error message for failing to symlink file
-
-    :param str target: Target file path
-    :param str source: Source file path
-    :return: Formatted remove file error
-    :rtype: str
-    """
-
-    return f"Failed to symlink file {path(target)} -> {path(source)}"
-
-
-def error_file_exists(file_path: str) -> str:
-    """Format error message for already existing file
-
-    :param str file_path: File path name
-    :return: Formatted file exists error
-    :rtype: str
-    """
-
-    return f"File already exists {path(file_path)}"
 
 
 def error_invalid_config_file(file_path: str) -> str:
@@ -271,19 +199,6 @@ def error_invalid_git_config_value(key: str, value: str) -> str:
     return f"Invalid git config value - {key}: {value}"
 
 
-def error_invalid_ref(git_ref: str, yml: Path) -> str:
-    """Return formatted error string for incorrect ref
-
-    :param str git_ref: Git reference
-    :param Path yml: Path to yaml file
-    :return: Formatted invalid ref error
-    :rtype: str
-    """
-
-    output = yaml_path(yml)
-    return f"{output}\n'ref' value '{git_ref}' is not formatted correctly"
-
-
 def error_invalid_yaml_file(name: str) -> str:
     """Return error message for invalid yaml file
 
@@ -294,17 +209,6 @@ def error_invalid_yaml_file(name: str) -> str:
 
     file = yaml_file(Path(name))
     return f"{file} appears to be invalid"
-
-
-def error_missing_clowder_yaml() -> str:
-    """Format error message for missing clowder yaml file
-
-    :return: Formatted missing YAML error
-    :rtype: str
-    """
-
-    clowder_file = Path('clowder.yml')
-    return error_missing_file(clowder_file)
 
 
 def error_missing_file(file: str) -> str:
@@ -319,25 +223,10 @@ def error_missing_file(file: str) -> str:
     return f"{file} appears to be missing"
 
 
-def error_remote_already_exists(remote_name: str, remote_url: str, actual_url: str) -> str:
-    """Format error message when remote already exists with different url
-
-    :param str remote_name: Remote name
-    :param str remote_url: Remote URL
-    :param str actual_url: Actual URL
-    :return: Formatted remote exists error
-    :rtype: str
-    """
-
-    output = remote(remote_name)
-    return f"Remote {output} already exists with a different url\n" \
-           f"{url_string(actual_url)} should be {url_string(remote_url)}"
-
-
-def error_remote_dup(upstream: str, project: str, remote_name: str, yml: Path) -> str:
+def error_remote_dup(upstream_name: str, project: str, remote_name: str, yml: Path) -> str:
     """Return formatted error string for upstream with same remote as project
 
-    :param str upstream: Upstream name
+    :param str upstream_name: Upstream name
     :param str project: Project name
     :param str remote_name: Remote name
     :param Path yml: Path to yaml file
@@ -347,7 +236,7 @@ def error_remote_dup(upstream: str, project: str, remote_name: str, yml: Path) -
 
     messages = [error_invalid_yaml_file(yml.name),
                 f"{yaml_path(yml)}",
-                f"upstream '{upstream}' and project '{project}' have same remote name '{remote_name}'"]
+                f"upstream '{upstream_name}' and project '{project}' have same remote name '{remote_name}'"]
     return "\n".join(messages)
 
 
@@ -421,20 +310,20 @@ def error_source_not_defined(name: Optional[str] = None) -> str:
     return f"Source not defined"
 
 
-def error_source_not_found(source: str, yml: Path, project: str, upstream: Optional[str] = None) -> str:
+def error_source_not_found(source: str, yml: Path, project: str, upstream_name: Optional[str] = None) -> str:
     """Return formatted error string for project with unknown source specified
 
     :param str source: Source name
     :param Path yml: Path to yaml file
     :param str project: Project name
-    :param Optional[str] upstream: Upstream name
+    :param Optional[str] upstream_name: Upstream name
     :return: Formatted source not found error
     :rtype: str
     """
 
     upstream_output = ""
-    if upstream:
-        upstream_output = f" for upstream '{upstream}'"
+    if upstream_name:
+        upstream_output = f" for upstream '{upstream_name}'"
 
     messages = [error_invalid_yaml_file(yml.name),
                 f"{yaml_path(yml)}",
@@ -452,19 +341,9 @@ def error_unknown_config_type() -> str:
     return f"Unknown config type"
 
 
-def error_unknown_error() -> str:
-    """Format error message for unknown error
-
-    :return: Formatted unknown error message
-    :rtype: str
-    """
-
-    return f"Unknown error occurred"
-
-
 # FIXME: Only print project name using this where appropriate (now that project status and upstream_string
 # are printed back to back)
-def upstream_string(name: str) -> str:
+def upstream(name: str) -> str:
     """Return formatted upstream name
 
     :param str name: Upstream name
@@ -814,7 +693,7 @@ def yaml_path(yml: Path) -> str:
     :rtype: str
     """
 
-    return path(str(yml.resolve()))
+    return path(yml.resolve())
 
 
 def yaml_file(yml: str) -> str:

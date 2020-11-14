@@ -128,8 +128,8 @@ def load_yaml_file(yaml_file: Path, relative_dir: Path) -> dict:
             parsed_yaml = pyyaml.safe_load(raw_file)
             if parsed_yaml is None:
                 config_yaml = yaml_file.relative_to(relative_dir)
-                raise ClowderError(ClowderErrorType.YAML_EMPTY_FILE,
-                                   fmt.error_empty_yaml(yaml_file, config_yaml))
+                message = f"{fmt.yaml_path(yaml_file)}\nNo entries in {fmt.yaml_file(str(config_yaml))}"
+                raise ClowderError(ClowderErrorType.YAML_EMPTY_FILE, message)
             return parsed_yaml
     except pyyaml.YAMLError:
         CONSOLE.stderr(f"Failed to open file '{yaml_file}'")
@@ -152,15 +152,15 @@ def save_yaml_file(yaml_output: dict, yaml_file: Path) -> None:
     """
 
     if yaml_file.is_file():
-        raise ClowderError(ClowderErrorType.FILE_EXISTS,
-                           fmt.error_file_exists(str(yaml_file)))
+        message = f"File already exists {fmt.path(yaml_file)}"
+        raise ClowderError(ClowderErrorType.FILE_EXISTS, message)
 
-    CONSOLE.stdout(f" - Save yaml to file at {fmt.path(str(yaml_file))}")
+    CONSOLE.stdout(f" - Save yaml to file at {fmt.path(yaml_file)}")
     try:
         with yaml_file.open(mode="w") as raw_file:
             pyyaml.safe_dump(yaml_output, raw_file, default_flow_style=False, indent=2, sort_keys=False)
     except pyyaml.YAMLError:
-        CONSOLE.stderr(f"Failed to save file {fmt.path(str(yaml_file))}")
+        CONSOLE.stderr(f"Failed to save file {fmt.path(yaml_file)}")
         raise
 
 

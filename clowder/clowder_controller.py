@@ -4,6 +4,7 @@
 
 """
 
+from pathlib import Path
 from typing import Optional, Tuple
 
 import clowder.util.formatting as fmt
@@ -43,7 +44,7 @@ class ClowderController(object):
 
         try:
             if ENVIRONMENT.clowder_yaml is None:
-                err = ClowderError(ClowderErrorType.YAML_MISSING_FILE, fmt.error_missing_clowder_yaml())
+                err = ClowderError(ClowderErrorType.YAML_MISSING_FILE, fmt.error_missing_file(Path('clowder.yml')))
                 LOG.debug('Failed to initialize clowder controller')
                 raise err
             yaml = load_yaml_file(ENVIRONMENT.clowder_yaml, ENVIRONMENT.clowder_dir)

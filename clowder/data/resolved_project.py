@@ -193,10 +193,10 @@ class ResolvedProject:
         if local:
             repo.print_local_branches()
         if remote:
-            CONSOLE.stdout(fmt.upstream_string(self.name))
+            CONSOLE.stdout(fmt.upstream(self.name))
             repo.print_remote_branches()
 
-            CONSOLE.stdout(fmt.upstream_string(self.upstream.name))
+            CONSOLE.stdout(fmt.upstream(self.upstream.name))
             # Modify repo to prefer upstream
             repo.default_ref = self.upstream.ref
             repo.remote = self.upstream.remote
@@ -350,7 +350,7 @@ class ResolvedProject:
             repo.herd(self._url(), depth=herd_depth, rebase=rebase,
                       config=self.git_settings.get_processed_config())
         self._pull_lfs(repo)
-        CONSOLE.stdout(fmt.upstream_string(self.upstream.name))
+        CONSOLE.stdout(fmt.upstream(self.upstream.name))
 
         # Modify repo to prefer upstream
         repo.default_ref = self.upstream.ref
@@ -436,7 +436,7 @@ class ResolvedProject:
         else:
             CONSOLE.stdout(self.upstream.status())
             repo.configure_remotes(self.remote, self._url(), self.upstream.remote, self.upstream.url())
-            CONSOLE.stdout(fmt.upstream_string(self.name))
+            CONSOLE.stdout(fmt.upstream(self.name))
             repo.reset()
 
         self._pull_lfs(repo)
