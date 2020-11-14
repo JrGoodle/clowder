@@ -70,6 +70,8 @@ def test(command_options: str, label: Optional[str] = None) -> None:
     # Base command
     command = f"pipenv run pytest --basetemp={temp_dir} -vv"
 
+    command += ' --exitfirst'
+
     # Add extra arguments
     command += command_options
 

@@ -512,12 +512,8 @@ class GitRepo(object):
         :rtype: bool
         """
 
-        if allow_missing_repo:
-            if not existing_git_repository(self.repo_path):
-                return True
-        else:
-            if not existing_git_repository(self.repo_path):
-                return False
+        if not existing_git_repository(self.repo_path):
+            return allow_missing_repo
 
         return not self.is_dirty
 
