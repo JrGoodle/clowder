@@ -286,7 +286,9 @@ class ClowderController(object):
         duplicate = fmt.check_for_duplicates(paths)
         if duplicate is not None:
             self._initialize_properties()
-            message = fmt.error_duplicate_project_path(duplicate, ENVIRONMENT.clowder_yaml)
+            message = f"{fmt.invalid_yaml(ENVIRONMENT.clowder_yaml.name)}\n" \
+                      f"{fmt.yaml_path(ENVIRONMENT.clowder_yaml)}\n" \
+                      f"Multiple projects with path '{duplicate}'"
             raise ClowderError(ClowderErrorType.CLOWDER_YAML_DUPLICATE_PATH, message)
 
     def _update_properties(self) -> None:

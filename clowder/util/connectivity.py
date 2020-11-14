@@ -7,7 +7,6 @@
 import socket
 from functools import wraps
 
-import clowder.util.formatting as fmt
 from clowder.error import ClowderError, ClowderErrorType
 
 

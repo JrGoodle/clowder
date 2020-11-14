@@ -87,7 +87,8 @@ def make_dir(directory: Path) -> None:
             os.makedirs(str(directory))
         except OSError as err:
             if err.errno == errno.EEXIST:
-                CONSOLE.stderr(fmt.error_directory_exists(str(directory)))
+                message = f"Directory already exists at {fmt.path(directory)}"
+                CONSOLE.stderr(message)
             else:
                 message = f"Failed to create directory {fmt.path(directory)}"
                 CONSOLE.stderr(message)

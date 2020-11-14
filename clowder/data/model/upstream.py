@@ -6,7 +6,6 @@
 
 from typing import Optional, Union
 
-import clowder.util.formatting as fmt
 from clowder.error import ClowderError, ClowderErrorType
 from clowder.logging import LOG
 

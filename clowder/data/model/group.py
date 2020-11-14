@@ -7,7 +7,6 @@
 from typing import List, Optional, Union
 from pathlib import Path
 
-import clowder.util.formatting as fmt
 from clowder.error import ClowderError, ClowderErrorType
 from clowder.logging import LOG
 

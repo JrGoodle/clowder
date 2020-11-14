@@ -106,7 +106,7 @@ def link_clowder_yaml_version(clowder_dir: Path, version: str) -> None:
             existing_file = file
 
     if existing_file is not None and existing_file.is_symlink():
-        CONSOLE.stdout(f" - Remove previously existing file {fmt.path(str(existing_file))}")
+        CONSOLE.stdout(f" - Remove previously existing file {fmt.path(existing_file)}")
         try:
             remove_file(existing_file)
         except OSError:
@@ -179,7 +179,7 @@ def validate_yaml_file(parsed_yaml: dict, file_path: Path) -> None:
         jsonschema.validate(parsed_yaml, json_schema)
     except jsonschema.exceptions.ValidationError:
         message = 'Yaml json schema validation failed' \
-                  f"{fmt.error_invalid_yaml_file(file_path.name)}\n"
+                  f"{fmt.invalid_yaml(file_path.name)}\n"
         CONSOLE.stderr(message)
         raise
 
@@ -209,7 +209,7 @@ def _format_yaml_symlink(yaml_symlink: Path, yaml_file: Path) -> str:
     :rtype: str
     """
 
-    return f"\n{fmt.path(str(yaml_symlink))} -> {fmt.path(str(yaml_file))}\n"
+    return f"\n{fmt.path(yaml_symlink)} -> {fmt.path(yaml_file)}\n"
 
 
 def _format_yaml_file(yaml_file: Path) -> str:

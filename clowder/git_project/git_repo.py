@@ -56,7 +56,7 @@ class GitRepo(object):
         try:
             CONSOLE.stdout(self.repo.git.add(files))
         except GitError:
-            message = f"{fmt.ERROR} Failed to add files to git index"
+            message = f"Failed to add files to git index"
             CONSOLE.stderr(message)
             raise
         else:
@@ -75,7 +75,7 @@ class GitRepo(object):
             CONSOLE.stdout(f' - Check out {ref_output}')
             CONSOLE.stdout(self.repo.git.checkout(truncated_ref))
         except GitError:
-            message = f'{fmt.ERROR} Failed to checkout {ref_output}'
+            message = f'Failed to checkout {ref_output}'
             if allow_failure:
                 CONSOLE.stderr(message)
                 return
@@ -112,7 +112,7 @@ class GitRepo(object):
             CONSOLE.stdout(' - Commit current changes')
             CONSOLE.stdout(self.repo.git.commit(message=message))
         except GitError:
-            message = f'{fmt.ERROR} Failed to commit current changes'
+            message = f'Failed to commit current changes'
             CONSOLE.stderr(message)
             raise
 
@@ -167,11 +167,11 @@ class GitRepo(object):
         remote_output = fmt.remote(remote)
         if depth == 0 or ref is None:
             CONSOLE.stdout(f' - Fetch from {remote_output}')
-            error_message = f'{fmt.ERROR} Failed to fetch from remote {remote_output}'
+            error_message = f'Failed to fetch from remote {remote_output}'
         else:
             ref_output = fmt.ref(truncate_ref(ref))
             CONSOLE.stdout(f' - Fetch from {remote_output} {ref_output}')
-            error_message = f'{fmt.ERROR} Failed to fetch from {remote_output} {ref_output}'
+            error_message = f'Failed to fetch from {remote_output} {ref_output}'
 
         try:
             if depth == 0:
@@ -258,7 +258,7 @@ class GitRepo(object):
         try:
             return self.repo.git.log('-1', '--format=%cI')
         except GitError:
-            message = f'{fmt.ERROR} Failed to find current timestamp'
+            message = f'Failed to find current timestamp'
             CONSOLE.stderr(message)
             raise
 
@@ -273,11 +273,11 @@ class GitRepo(object):
             self.repo.git.config('--local', '--unset-all', variable)
         except GitCommandError as err:
             if err.status != 5:  # git returns error code 5 when trying to unset variable that doesn't exist
-                message = f'{fmt.ERROR} Failed to unset all local git config values for {variable}'
+                message = f'Failed to unset all local git config values for {variable}'
                 CONSOLE.stderr(message)
                 raise
         except GitError:
-            message = f'{fmt.ERROR} Failed to unset all local git config values for {variable}'
+            message = f'Failed to unset all local git config values for {variable}'
             CONSOLE.stderr(message)
             raise
 
@@ -292,7 +292,7 @@ class GitRepo(object):
         try:
             self.repo.git.config('--local', '--add', variable, value)
         except GitError:
-            message = f'{fmt.ERROR} Failed to add local git config value {value} for variable {variable}'
+            message = f'Failed to add local git config value {value} for variable {variable}'
             CONSOLE.stderr(message)
             raise
 
@@ -306,7 +306,7 @@ class GitRepo(object):
         try:
             self.repo.git.lfs('install', '--local')
         except GitError:
-            message = f'{fmt.ERROR} Failed to update git lfs hooks'
+            message = f'Failed to update git lfs hooks'
             CONSOLE.stderr(message)
             raise
 
@@ -409,7 +409,7 @@ class GitRepo(object):
             return
 
         if not self.validate_repo():
-            CONSOLE.stdout(f'{fmt.ERROR} Dirty repo. Please stash, commit, or discard your changes')
+            CONSOLE.stdout(f'Dirty repo. Please stash, commit, or discard your changes')
             self.status_verbose()
 
     @not_detached
@@ -423,7 +423,7 @@ class GitRepo(object):
             CONSOLE.stdout(' - Pull latest changes')
             CONSOLE.stdout(self.repo.git.pull())
         except GitError:
-            message = f'{fmt.ERROR} Failed to pull latest changes'
+            message = f'Failed to pull latest changes'
             CONSOLE.stderr(message)
             raise
 
@@ -437,7 +437,7 @@ class GitRepo(object):
             CONSOLE.stdout(' - Pull git lfs files')
             self.repo.git.lfs('pull')
         except GitError:
-            message = f'{fmt.ERROR} Failed to pull git lfs files'
+            message = f'Failed to pull git lfs files'
             CONSOLE.stderr(message)
             raise
 
@@ -452,7 +452,7 @@ class GitRepo(object):
             CONSOLE.stdout(' - Push local changes')
             CONSOLE.stdout(self.repo.git.push())
         except GitError:
-            message = f'{fmt.ERROR} Failed to push local changes'
+            message = f'Failed to push local changes'
             CONSOLE.stderr(message)
             raise
 
@@ -500,7 +500,7 @@ class GitRepo(object):
         try:
             execute_command(command, self.repo_path)
         except ClowderError:
-            message = f'{fmt.ERROR} Failed to print verbose status'
+            message = f'Failed to print verbose status'
             CONSOLE.stderr(message)
             raise
 
@@ -533,7 +533,7 @@ class GitRepo(object):
         try:
             self.repo.git.rebase('--abort')
         except GitError:
-            message = f'{fmt.ERROR} Failed to abort rebase'
+            message = f'Failed to abort rebase'
             CONSOLE.stderr(message)
             raise
 
@@ -547,7 +547,7 @@ class GitRepo(object):
         try:
             self.repo.git.clean(args)
         except GitError:
-            message = f'{fmt.ERROR} Failed to clean git repo'
+            message = f'Failed to clean git repo'
             CONSOLE.stderr(message)
             raise
 
@@ -589,8 +589,8 @@ class GitRepo(object):
         try:
             repo = Repo(self.repo_path)
         except GitError:
-            repo_path_output = fmt.path(str(self.repo_path))
-            message = f"{fmt.ERROR} Failed to create Repo instance for {repo_path_output}"
+            repo_path_output = fmt.path(self.repo_path)
+            message = f"Failed to create Repo instance for {repo_path_output}"
             CONSOLE.stderr(message)
             raise
         else:
@@ -618,7 +618,7 @@ class GitRepo(object):
             self.repo.git.reset('--hard', branch)
         except GitError:
             branch_output = fmt.ref(branch)
-            message = f'{fmt.ERROR} Failed to reset to {branch_output}'
+            message = f'Failed to reset to {branch_output}'
             CONSOLE.stderr(message)
             raise
 

@@ -7,9 +7,7 @@
 import copy
 from typing import Dict, Optional
 
-import clowder.util.formatting as fmt
 from clowder.error import ClowderError, ClowderErrorType
-from clowder.logging import LOG
 
 from .model.git_settings import GitSettings, GitConfig
 

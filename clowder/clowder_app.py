@@ -12,7 +12,6 @@ import argcomplete
 import colorama
 
 import clowder.cli as cmd
-import clowder.util.formatting as fmt
 from clowder.console import CONSOLE
 from clowder.error import ClowderError, ClowderErrorType
 from clowder.logging import LOG

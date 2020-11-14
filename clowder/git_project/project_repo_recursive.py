@@ -10,7 +10,6 @@ from typing import Optional
 
 from git import GitError
 
-import clowder.util.formatting as fmt
 from clowder.console import CONSOLE
 from clowder.util.execute import execute_command
 
@@ -136,7 +135,7 @@ class ProjectRepoRecursive(ProjectRepo):
         try:
             execute_command(command, self.repo_path)
         except CalledProcessError:
-            message = f'{fmt.ERROR} Failed to update submodules'
+            message = f'Failed to update submodules'
             CONSOLE.stderr(message)
             raise
 
@@ -160,7 +159,7 @@ class ProjectRepoRecursive(ProjectRepo):
         """
 
         self._submodule_command('foreach', '--recursive', 'git', 'clean', '-ffdx',
-                                error_msg=f'{fmt.ERROR} Failed to clean submodules')
+                                error_msg=f'Failed to clean submodules')
 
     def _submodule_command(self, *args, error_msg: str) -> None:
         """Base submodule command
@@ -182,7 +181,7 @@ class ProjectRepoRecursive(ProjectRepo):
         """
 
         self._submodule_command('foreach', '--recursive', 'git', 'reset', '--hard',
-                                error_msg=f'{fmt.ERROR} Failed to reset submodules')
+                                error_msg=f'Failed to reset submodules')
 
     def _submodules_update(self) -> None:
         """Update all submodules
@@ -191,4 +190,4 @@ class ProjectRepoRecursive(ProjectRepo):
         """
 
         self._submodule_command('update', '--checkout', '--recursive', '--force',
-                                error_msg=f'{fmt.ERROR} Failed to update submodules')
+                                error_msg=f'Failed to update submodules')

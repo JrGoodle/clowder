@@ -141,7 +141,10 @@ class ResolvedProject:
             self.upstream: Optional[ResolvedUpstream] = ResolvedUpstream(self.path, project.upstream,
                                                                          defaults, group, protocol)
             if self.remote == self.upstream.remote:
-                message = fmt.error_remote_dup(self.upstream.name,  self.name, self.remote, ENVIRONMENT.clowder_yaml)
+                message = f"{fmt.invalid_yaml(ENVIRONMENT.clowder_yaml.name)}\n" \
+                          f"{fmt.yaml_path(ENVIRONMENT.clowder_yaml)}\n" \
+                          f"upstream '{self.upstream.name}' and project '{self.name}' " \
+                          f"have same remote name '{self.remote}'"
                 err = ClowderError(ClowderErrorType.CLOWDER_YAML_DUPLICATE_REMOTE_NAME, message)
                 LOG.debug('Duplicate remote name found in clowder.yml', err)
                 raise err

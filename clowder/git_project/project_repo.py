@@ -60,7 +60,8 @@ class ProjectRepo(ProjectRepoImpl):
             try:
                 self.repo_path.rmdir()
             except OSError:
-                CONSOLE.stderr(fmt.error_directory_exists(str(self.repo_path)))
+                message = f"Directory already exists at {fmt.path(self.repo_path)}"
+                CONSOLE.stderr(message)
                 raise
 
         if self.repo_path.is_symlink():
@@ -262,7 +263,7 @@ class ProjectRepo(ProjectRepoImpl):
                 CONSOLE.stdout(f' - Checkout ref {ref_output}')
                 self.repo.git.checkout(truncate_ref(self.default_ref))
             except GitError:
-                message = f'{fmt.ERROR} Failed to checkout ref {ref_output}'
+                message = f'Failed to checkout ref {ref_output}'
                 CONSOLE.stderr(message)
                 raise
 
@@ -270,7 +271,7 @@ class ProjectRepo(ProjectRepoImpl):
             CONSOLE.stdout(f' - Delete local branch {branch_output}')
             self.repo.delete_head(branch, force=force)
         except GitError:
-            message = f'{fmt.ERROR} Failed to delete local branch {branch_output}'
+            message = f'Failed to delete local branch {branch_output}'
             CONSOLE.stderr(message)
             raise
 
@@ -291,7 +292,7 @@ class ProjectRepo(ProjectRepoImpl):
             CONSOLE.stdout(f' - Delete remote branch {branch_output}')
             self.repo.git.push(remote, '--delete', branch)
         except GitError:
-            message = f'{fmt.ERROR} Failed to delete remote branch {branch_output}'
+            message = f'Failed to delete remote branch {branch_output}'
             CONSOLE.stderr(message)
             raise
 
@@ -322,7 +323,7 @@ class ProjectRepo(ProjectRepoImpl):
         branch_output = fmt.ref(branch)
         remote_output = fmt.remote(self.remote)
         if not self.has_remote_branch(branch, self.remote):
-            message = f'{fmt.ERROR} No existing remote branch {remote_output} {branch_output}'
+            message = f'No existing remote branch {remote_output} {branch_output}'
             CONSOLE.stderr(message)
             raise ClowderError(ClowderErrorType.UNKNOWN, message)
 
@@ -346,7 +347,7 @@ class ProjectRepo(ProjectRepoImpl):
         if not rev:
             rev = self._find_rev_by_timestamp(timestamp, ref)
         if not rev:
-            message = f'{fmt.ERROR} Failed to find revision'
+            message = f'Failed to find revision'
             CONSOLE.stderr(message)
             raise ClowderError(ClowderErrorType.UNKNOWN, message)
 

@@ -25,7 +25,8 @@ def clowder_repo_required(func):
         if ENVIRONMENT.clowder_repo_existing_file_error is not None:
             raise ENVIRONMENT.clowder_repo_existing_file_error
         if ENVIRONMENT.clowder_repo_dir is None:
-            raise ClowderError(ClowderErrorType.MISSING_CLOWDER_REPO, f"No {fmt.path(Path('.clowder'))} directory found")
+            message = f"No {fmt.path(Path('.clowder'))} directory found"
+            raise ClowderError(ClowderErrorType.MISSING_CLOWDER_REPO, message)
 
         return func(*args, **kwargs)
 

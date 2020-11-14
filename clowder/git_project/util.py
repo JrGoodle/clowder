@@ -9,7 +9,6 @@ from pathlib import Path
 
 from git import Repo, GitError
 
-import clowder.util.formatting as fmt
 from clowder.console import CONSOLE
 from clowder.error import ClowderError, ClowderErrorType
 
@@ -108,7 +107,7 @@ def git_url(protocol: str, url: str, name: str) -> str:
     if protocol == 'https':
         return f"https://{url}/{name}.git"
 
-    raise ClowderError(ClowderErrorType.INVALID_GIT_URL, f"{fmt.ERROR} Invalid git protocol")
+    raise ClowderError(ClowderErrorType.INVALID_GIT_URL, f"Invalid git protocol")
 
 
 def ref_type(ref: str) -> str:

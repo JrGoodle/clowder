@@ -96,44 +96,7 @@ def command(cmd: Union[str, List[str]]) -> str:
     return bold(f"$ {command_output}")
 
 
-def error(err: Exception) -> str:
-    """Return error message for generic error
-
-    :param Exception err: Generic error
-    :return: Formatted generic error
-    :rtype: str
-    """
-
-    return f"{err}"
-
-
-def error_directory_exists(dir_path: Path) -> str:
-    """Format error message for already existing directory
-
-    :param Path dir_path: Directory path
-    :return: Formatted directory exists error
-    :rtype: str
-    """
-
-    return f"Directory already exists at {path(dir_path)}"
-
-
-def error_duplicate_project_path(project_path: str, yml: Path) -> str:
-    """Return formatted error string for duplicate project path
-
-    :param str project_path: Duplicate project path
-    :param Path yml: Path to yaml file
-    :return: Formatted duplicate remote upstream name error
-    :rtype: str
-    """
-
-    messages = [error_invalid_yaml_file(yml.name),
-                f"{yaml_path(yml)}",
-                f"Multiple projects with path '{project_path}'"]
-    return "\n".join(messages)
-
-
-def error_invalid_yaml_file(name: str) -> str:
+def invalid_yaml(name: str) -> str:
     """Return error message for invalid yaml file
 
     :param str name: Invalid file's name
@@ -142,23 +105,6 @@ def error_invalid_yaml_file(name: str) -> str:
     """
 
     return f"{yaml_file(Path(name))} appears to be invalid"
-
-
-def error_remote_dup(upstream_name: str, project: str, remote_name: str, yml: Path) -> str:
-    """Return formatted error string for upstream with same remote as project
-
-    :param str upstream_name: Upstream name
-    :param str project: Project name
-    :param str remote_name: Remote name
-    :param Path yml: Path to yaml file
-    :return: Formatted duplicate remote upstream name error
-    :rtype: str
-    """
-
-    messages = [error_invalid_yaml_file(yml.name),
-                f"{yaml_path(yml)}",
-                f"upstream '{upstream_name}' and project '{project}' have same remote name '{remote_name}'"]
-    return "\n".join(messages)
 
 
 # def error_source_not_found(source: str, yml: Path, project: str, upstream_name: Optional[str] = None) -> str:
@@ -176,7 +122,7 @@ def error_remote_dup(upstream_name: str, project: str, remote_name: str, yml: Pa
 #     if upstream_name:
 #         upstream_output = f" for upstream '{upstream_name}'"
 #
-#     messages = [error_invalid_yaml_file(yml.name),
+#     messages = [invalid_yaml(yml.name),
 #                 f"{yaml_path(yml)}",
 #                 f"source '{source}'{upstream_output} specified in project '{project}' not found in 'sources'"]
 #     return "\n".join(messages)
