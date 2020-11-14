@@ -85,7 +85,7 @@ async def run_parallel(jobs: int, projects: Tuple[ResolvedProject, ...], func_na
             for project in projects:
                 await limit.acquire_on_behalf_of(project)
                 func = getattr(project, func_name)
-                project_func = partial(func, **kwargs, parallel=True)
+                project_func = partial(func, **kwargs)
                 nursery.start_soon(run_sync, project_func, limit, project, progress)
     CONSOLE.print_output = True
 

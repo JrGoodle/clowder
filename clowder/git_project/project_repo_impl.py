@@ -75,8 +75,7 @@ class ProjectRepoImpl(GitRepo):
             if remove_dir:
                 # TODO: Handle possible exceptions
                 remove_directory(self.repo_path)
-            message = f'{fmt.ERROR} Failed to checkout branch {branch_output}'
-            CONSOLE.stderr(self._format_error_message(message))
+            CONSOLE.stderr(f'{fmt.ERROR} Failed to checkout branch {branch_output}')
             raise
         except BaseException:
             CONSOLE.stderr('Failed to checkout branch')
@@ -102,7 +101,6 @@ class ProjectRepoImpl(GitRepo):
             # TODO: Handle possible exceptions
             remove_directory(self.repo_path)
             message = f'{fmt.ERROR} No existing remote branch {remote_output} {branch_output}'
-            message = self._format_error_message(message)
             raise ClowderError(ClowderErrorType.GIT_ERROR, message)
 
         self._create_branch_local_tracking(branch, self.remote, depth=depth, fetch=False, remove_dir=True)
@@ -127,7 +125,6 @@ class ProjectRepoImpl(GitRepo):
             # TODO: Handle possible exceptions
             remove_directory(self.repo_path)
             message = f'{fmt.ERROR} Failed to checkout commit {commit_output}'
-            message = self._format_error_message(message)
             CONSOLE.stderr(message)
             raise
         except BaseException:
@@ -159,7 +156,6 @@ class ProjectRepoImpl(GitRepo):
                 # TODO: Handle possible exceptions
                 remove_directory(self.repo_path)
             message = f'{fmt.ERROR} Failed to checkout tag {tag_output}'
-            message = self._format_error_message(message)
             CONSOLE.stderr(message)
             raise
         except BaseException:
@@ -185,7 +181,6 @@ class ProjectRepoImpl(GitRepo):
             self.repo.git.checkout(sha)
         except GitError:
             message = f'{fmt.ERROR} Failed to checkout commit {commit_output}'
-            message = self._format_error_message(message)
             CONSOLE.stderr(message)
             raise
 
@@ -199,7 +194,6 @@ class ProjectRepoImpl(GitRepo):
         tag_output = fmt.ref_string(tag)
         if tag not in self.repo.tags:
             message = f'{fmt.ERROR} No existing tag {tag_output}'
-            message = self._format_error_message(message)
             CONSOLE.stderr(message)
             raise ClowderError(ClowderErrorType.UNKNOWN, message)
 
@@ -213,7 +207,6 @@ class ProjectRepoImpl(GitRepo):
             self.repo.git.checkout(f'refs/tags/{tag}')
         except (GitError, ValueError):
             message = f'{fmt.ERROR} Failed to checkout tag {tag_output}'
-            message = self._format_error_message(message)
             CONSOLE.stderr(message)
             raise
 
@@ -230,7 +223,6 @@ class ProjectRepoImpl(GitRepo):
         if url != self._remote_get_url(remote):
             actual_url = self._remote_get_url(remote)
             message = fmt.error_remote_already_exists(remote, url, actual_url)
-            message = self._format_error_message(message)
             CONSOLE.stderr(message)
             raise ClowderError(ClowderErrorType.UNKNOWN, message)
 
@@ -247,7 +239,6 @@ class ProjectRepoImpl(GitRepo):
             self.repo.create_head(branch)
         except GitError:
             message = f'{fmt.ERROR} Failed to create branch {branch_output}'
-            message = self._format_error_message(message)
             CONSOLE.stderr(message)
             raise
 
@@ -275,7 +266,6 @@ class ProjectRepoImpl(GitRepo):
             if remove_dir:
                 remove_directory(self.repo_path)
             message = f'{fmt.ERROR} Failed to create branch {branch_output}'
-            message = self._format_error_message(message)
             CONSOLE.stderr(message)
             raise
         except BaseException:
@@ -310,7 +300,6 @@ class ProjectRepoImpl(GitRepo):
             self._set_tracking_branch(remote, branch)
         except GitError:
             message = f'{fmt.ERROR} Failed to push remote branch {branch_output}'
-            message = self._format_error_message(message)
             CONSOLE.stderr(message)
             raise
 
@@ -336,7 +325,6 @@ class ProjectRepoImpl(GitRepo):
             if remove_dir:
                 remove_directory(self.repo_path)
             message = f'{fmt.ERROR} Failed to create remote {remote_output}'
-            message = self._format_error_message(message)
             CONSOLE.stderr(message)
             raise
         except BaseException:
@@ -360,7 +348,6 @@ class ProjectRepoImpl(GitRepo):
             return self.repo.git.log('-1', '--format=%H', '--before=' + timestamp, ref)
         except GitError:
             message = f'{fmt.ERROR} Failed to find revision from timestamp'
-            message = self._format_error_message(message)
             CONSOLE.stderr(message)
             raise
 
@@ -379,7 +366,6 @@ class ProjectRepoImpl(GitRepo):
             return self.repo.git.log('-1', '--format=%H', '--before=' + timestamp, '--author', author, ref)
         except GitError:
             message = f'{fmt.ERROR} Failed to find revision from timestamp by author'
-            message = self._format_error_message(message)
             CONSOLE.stderr(message)
             raise
 
@@ -407,7 +393,6 @@ class ProjectRepoImpl(GitRepo):
             if remove_dir:
                 # TODO: Handle possible exceptions raised here
                 remove_directory(self.repo_path)
-                message = self._format_error_message(message)
                 CONSOLE.stderr(message)
                 raise
             CONSOLE.stderr(message)
@@ -445,7 +430,6 @@ class ProjectRepoImpl(GitRepo):
             # TODO: Handle possible exceptions
             remove_directory(self.repo_path)
             message = f'{fmt.ERROR} Failed to initialize repository'
-            message = self._format_error_message(message)
             CONSOLE.stderr(message)
             raise
         except BaseException:
@@ -485,7 +469,6 @@ class ProjectRepoImpl(GitRepo):
             return True if tracking_branch else False
         except GitError:
             message = f'{fmt.ERROR} No existing branch {branch_output}'
-            message = self._format_error_message(message)
             CONSOLE.stderr(message)
             raise
 
@@ -501,7 +484,6 @@ class ProjectRepoImpl(GitRepo):
             self.repo.git.config('--get', 'branch.' + branch + '.merge')
         except GitError:
             message = f'{fmt.ERROR} Remote branch {branch_output} already exists'
-            message = self._format_error_message(message)
             CONSOLE.stderr(message)
             raise
         else:
@@ -523,7 +505,6 @@ class ProjectRepoImpl(GitRepo):
             execute_command(f"git pull {remote} {branch}", self.repo_path)
         except ClowderError:
             message = f'{fmt.ERROR} Failed to pull from {remote_output} {branch_output}'
-            message = self._format_error_message(message)
             CONSOLE.stderr(message)
             raise
 
@@ -544,7 +525,6 @@ class ProjectRepoImpl(GitRepo):
             execute_command(command, self.repo_path)
         except CalledProcessError:
             message = f'{fmt.ERROR} Failed to rebase onto {remote_output} {branch_output}'
-            message = self._format_error_message(message)
             CONSOLE.stderr(message)
             raise
 
@@ -566,7 +546,6 @@ class ProjectRepoImpl(GitRepo):
                 # TODO: Handle possible exceptions raised here
                 remove_directory(self.repo_path)
             message = f'{fmt.ERROR} No existing remote {remote_output}'
-            message = self._format_error_message(message)
             CONSOLE.stderr(message)
             raise
 
@@ -595,7 +574,6 @@ class ProjectRepoImpl(GitRepo):
             self.repo.git.remote('rename', remote_from, remote_to)
         except GitError:
             message = f'{fmt.ERROR} Failed to rename remote from {remote_output_f} to {remote_output_t}'
-            message = self._format_error_message(message)
             CONSOLE.stderr(message)
             raise
 
@@ -621,7 +599,6 @@ class ProjectRepoImpl(GitRepo):
                 # TODO: Handle possible exceptions raised here
                 remove_directory(self.repo_path)
             message = f' - Failed to set tracking branch {branch_output}'
-            message = self._format_error_message(message)
             CONSOLE.stderr(message)
             raise
         except BaseException:
@@ -645,19 +622,16 @@ class ProjectRepoImpl(GitRepo):
 
         if not self.has_local_branch(branch):
             message = f'{fmt.ERROR} No local branch {branch_output}'
-            message = self._format_error_message(message)
             raise ClowderError(ClowderErrorType.GIT_ERROR, message)
 
         if not self.has_remote_branch(branch, remote):
             message = f'{fmt.ERROR} No remote branch {branch_output}'
-            message = self._format_error_message(message)
             raise ClowderError(ClowderErrorType.GIT_ERROR, message)
 
         local_branch = self.repo.heads[branch]
         remote_branch = origin.refs[branch]
         if local_branch.commit != remote_branch.commit:
             message = f' - Existing remote branch {branch_output} on different commit'
-            message = self._format_error_message(message)
             raise ClowderError(ClowderErrorType.GIT_ERROR, message)
 
         self._set_tracking_branch(remote, branch)

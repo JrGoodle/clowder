@@ -312,18 +312,17 @@ class ResolvedProject:
         return repo.current_timestamp
 
     def herd(self, branch: Optional[str] = None, tag: Optional[str] = None, depth: Optional[int] = None,
-             rebase: bool = False, parallel: bool = False) -> None:
+             rebase: bool = False) -> None:
         """Clone project or update latest from upstream
 
         :param Optional[str] branch: Branch to attempt to herd
         :param Optional[str] tag: Tag to attempt to herd
         :param Optional[int] depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
         :param bool rebase: Whether to use rebase instead of pulling latest changes
-        :param bool parallel: Whether command is being run in parallel, affects output
         """
 
         herd_depth = self.git_settings.depth if depth is None else depth
-        repo = self._repo(self.git_settings.recursive, parallel=parallel)
+        repo = self._repo(self.git_settings.recursive)
 
         if self.upstream is None:
             CONSOLE.stdout(self.status())
@@ -418,14 +417,13 @@ class ResolvedProject:
             if repo.has_remote_branch(branch, self.remote):
                 repo.prune_branch_remote(branch, self.remote)
 
-    def reset(self, timestamp: Optional[str] = None, parallel: bool = False) -> None:  # noqa
+    def reset(self, timestamp: Optional[str] = None) -> None:  # noqa
         """Reset project branch to upstream or checkout tag/sha as detached HEAD
 
         :param Optional[str] timestamp: Reset to commit at timestamp, or closest previous commit
-        :param bool parallel: Whether command is being run in parallel, affects output
         """
 
-        repo = self._repo(self.git_settings.recursive, parallel=parallel)
+        repo = self._repo(self.git_settings.recursive)
 
         # TODO: Restore timestamp author
         # if timestamp:
@@ -443,15 +441,14 @@ class ResolvedProject:
 
         self._pull_lfs(repo)
 
-    def run(self, command: str, ignore_errors: bool, parallel: bool = False) -> None:
+    def run(self, command: str, ignore_errors: bool) -> None:
         """Run commands or script in project directory
 
         :param str command: Commands to run
         :param bool ignore_errors: Whether to exit if command returns a non-zero exit code
-        :param bool parallel: Whether commands are being run in parallel, affects output
         """
 
-        if not parallel and not existing_git_repository(self.full_path):
+        if not existing_git_repository(self.full_path):
             CONSOLE.stdout(fmt.red(" - Project missing\n"))
             return
 
@@ -548,19 +545,18 @@ class ResolvedProject:
         repo.pull_lfs()
 
     # FIXME: Turn this into a property
-    def _repo(self, submodules: bool, parallel: bool = False) -> ProjectRepo:
+    def _repo(self, submodules: bool) -> ProjectRepo:
         """Return ProjectRepo or ProjectRepoRecursive instance
 
         :param bool submodules: Whether to handle submodules
-        :param bool parallel: Whether command is being run in parallel
 
         :return: Project repo instance
         :rtype: ProjectRepo
         """
 
         if submodules:
-            return ProjectRepoRecursive(self.full_path, self.remote, self.ref, parallel=parallel)
-        return ProjectRepo(self.full_path, self.remote, self.ref, parallel=parallel)
+            return ProjectRepoRecursive(self.full_path, self.remote, self.ref)
+        return ProjectRepo(self.full_path, self.remote, self.ref)
 
     def _run_forall_command(self, command: str, env: dict, ignore_errors: bool) -> None:
         """Run command or script in project directory

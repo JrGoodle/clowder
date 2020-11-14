@@ -263,7 +263,6 @@ class ProjectRepo(ProjectRepoImpl):
                 self.repo.git.checkout(truncate_ref(self.default_ref))
             except GitError:
                 message = f'{fmt.ERROR} Failed to checkout ref {ref_output}'
-                message = self._format_error_message(message)
                 CONSOLE.stderr(message)
                 raise
 
@@ -272,7 +271,6 @@ class ProjectRepo(ProjectRepoImpl):
             self.repo.delete_head(branch, force=force)
         except GitError:
             message = f'{fmt.ERROR} Failed to delete local branch {branch_output}'
-            message = self._format_error_message(message)
             CONSOLE.stderr(message)
             raise
 
@@ -294,7 +292,6 @@ class ProjectRepo(ProjectRepoImpl):
             self.repo.git.push(remote, '--delete', branch)
         except GitError:
             message = f'{fmt.ERROR} Failed to delete remote branch {branch_output}'
-            message = self._format_error_message(message)
             CONSOLE.stderr(message)
             raise
 
@@ -326,7 +323,6 @@ class ProjectRepo(ProjectRepoImpl):
         remote_output = fmt.remote_string(self.remote)
         if not self.has_remote_branch(branch, self.remote):
             message = f'{fmt.ERROR} No existing remote branch {remote_output} {branch_output}'
-            message = self._format_error_message(message)
             CONSOLE.stderr(message)
             raise ClowderError(ClowderErrorType.UNKNOWN, message)
 
@@ -351,7 +347,6 @@ class ProjectRepo(ProjectRepoImpl):
             rev = self._find_rev_by_timestamp(timestamp, ref)
         if not rev:
             message = f'{fmt.ERROR} Failed to find revision'
-            message = self._format_error_message(message)
             CONSOLE.stderr(message)
             raise ClowderError(ClowderErrorType.UNKNOWN, message)
 

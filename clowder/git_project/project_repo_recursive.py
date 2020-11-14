@@ -23,7 +23,6 @@ class ProjectRepoRecursive(ProjectRepo):
     :ivar strt repo_path: Absolute path to repo
     :ivar strt default_ref: Default ref
     :ivar strt remote: Default remote name
-    :ivar bool parallel: Whether command is being run in parallel, affects output
     :ivar Repo Optional[repo]: Repo instance
     """
 
@@ -138,7 +137,6 @@ class ProjectRepoRecursive(ProjectRepo):
             execute_command(command, self.repo_path)
         except CalledProcessError:
             message = f'{fmt.ERROR} Failed to update submodules'
-            message = self._format_error_message(message)
             CONSOLE.stderr(message)
             raise
 
@@ -174,8 +172,7 @@ class ProjectRepoRecursive(ProjectRepo):
         try:
             self.repo.git.submodule(*args)
         except (GitError, ValueError):
-            message = self._format_error_message(error_msg)
-            CONSOLE.stderr(message)
+            CONSOLE.stderr(error_msg)
             raise
 
     def _submodules_reset(self) -> None:

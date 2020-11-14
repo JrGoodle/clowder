@@ -471,38 +471,6 @@ def error_open_file(path: str) -> str:
     return f"{ERROR} Failed to open file '{path}'"
 
 
-def error_parallel_command_failed() -> str:
-    """Return formatted error string for parallel command failed
-
-    :return: Formatted parallel command failed error
-    :rtype: str
-    """
-
-    return f"{ERROR} Parallel command failed"
-
-
-def error_parallel_commands_unavailable() -> str:
-    """Return formatted error string for parallel command unavailable
-
-    :return: Formatted parallel command unavailable error
-    :rtype: str
-    """
-
-    return f'{ERROR} Parallel commands are only available on posix operating systems'
-
-
-def error_parallel_exception(file_path: str, *args) -> str:
-    """Return formatted error string for parallel error
-
-    :param str file_path: Clowder file path
-    :param args: Method arguments
-    :return: Formatted parallel exception error
-    :rtype: str
-    """
-
-    return f"{ERROR} {path_string(file_path)}\n{ERROR} {''.join(args)}"
-
-
 def error_remote_already_exists(remote_name: str, remote_url: str, actual_url: str) -> str:
     """Format error message when remote already exists with different url
 

@@ -32,19 +32,17 @@ class GitRepo(object):
     :ivar Repo Optional[repo]: Repo instance
     """
 
-    def __init__(self, repo_path: Path, remote: str, default_ref: str, parallel: bool = False):
+    def __init__(self, repo_path: Path, remote: str, default_ref: str):
         """GitRepo __init__
 
         :param Path repo_path: Absolute path to repo
         :param str remote: Default remote name
         :param str default_ref: Default ref
-        :param bool parallel: Whether command is being run in parallel, affects output. Defaults to False
         """
 
         self.repo_path = repo_path
         self.default_ref = default_ref
         self.remote = remote
-        self.parallel = parallel
         self.repo = self._create_repo() if existing_git_repository(repo_path) else None
 
     def add(self, files: str) -> None:
@@ -59,7 +57,6 @@ class GitRepo(object):
             CONSOLE.stdout(self.repo.git.add(files))
         except GitError:
             message = f"{fmt.ERROR} Failed to add files to git index"
-            message = self._format_error_message(message)
             CONSOLE.stderr(message)
             raise
         else:
@@ -82,7 +79,6 @@ class GitRepo(object):
             if allow_failure:
                 CONSOLE.stderr(message)
                 return
-            message = self._format_error_message(message)
             CONSOLE.stderr(message)
             raise
 
@@ -117,7 +113,6 @@ class GitRepo(object):
             CONSOLE.stdout(self.repo.git.commit(message=message))
         except GitError:
             message = f'{fmt.ERROR} Failed to commit current changes'
-            message = self._format_error_message(message)
             CONSOLE.stderr(message)
             raise
 
@@ -193,8 +188,7 @@ class GitRepo(object):
                 # TODO: Handle possible exceptions
                 remove_directory(self.repo_path)
             if not allow_failure:
-                message = self._format_error_message(error_message)
-                CONSOLE.stderr(message)
+                CONSOLE.stderr(error_message)
                 raise
 
     @property
@@ -265,7 +259,6 @@ class GitRepo(object):
             return self.repo.git.log('-1', '--format=%cI')
         except GitError:
             message = f'{fmt.ERROR} Failed to find current timestamp'
-            message = self._format_error_message(message)
             CONSOLE.stderr(message)
             raise
 
@@ -281,12 +274,10 @@ class GitRepo(object):
         except GitCommandError as err:
             if err.status != 5:  # git returns error code 5 when trying to unset variable that doesn't exist
                 message = f'{fmt.ERROR} Failed to unset all local git config values for {variable}'
-                message = self._format_error_message(message)
                 CONSOLE.stderr(message)
                 raise
         except GitError:
             message = f'{fmt.ERROR} Failed to unset all local git config values for {variable}'
-            message = self._format_error_message(message)
             CONSOLE.stderr(message)
             raise
 
@@ -302,7 +293,6 @@ class GitRepo(object):
             self.repo.git.config('--local', '--add', variable, value)
         except GitError:
             message = f'{fmt.ERROR} Failed to add local git config value {value} for variable {variable}'
-            message = self._format_error_message(message)
             CONSOLE.stderr(message)
             raise
 
@@ -317,7 +307,6 @@ class GitRepo(object):
             self.repo.git.lfs('install', '--local')
         except GitError:
             message = f'{fmt.ERROR} Failed to update git lfs hooks'
-            message = self._format_error_message(message)
             CONSOLE.stderr(message)
             raise
 
@@ -435,7 +424,6 @@ class GitRepo(object):
             CONSOLE.stdout(self.repo.git.pull())
         except GitError:
             message = f'{fmt.ERROR} Failed to pull latest changes'
-            message = self._format_error_message(message)
             CONSOLE.stderr(message)
             raise
 
@@ -450,7 +438,6 @@ class GitRepo(object):
             self.repo.git.lfs('pull')
         except GitError:
             message = f'{fmt.ERROR} Failed to pull git lfs files'
-            message = self._format_error_message(message)
             CONSOLE.stderr(message)
             raise
 
@@ -466,7 +453,6 @@ class GitRepo(object):
             CONSOLE.stdout(self.repo.git.push())
         except GitError:
             message = f'{fmt.ERROR} Failed to push local changes'
-            message = self._format_error_message(message)
             CONSOLE.stderr(message)
             raise
 
@@ -515,7 +501,6 @@ class GitRepo(object):
             execute_command(command, self.repo_path)
         except ClowderError:
             message = f'{fmt.ERROR} Failed to print verbose status'
-            message = self._format_error_message(message)
             CONSOLE.stderr(message)
             raise
 
@@ -549,7 +534,6 @@ class GitRepo(object):
             self.repo.git.rebase('--abort')
         except GitError:
             message = f'{fmt.ERROR} Failed to abort rebase'
-            message = self._format_error_message(message)
             CONSOLE.stderr(message)
             raise
 
@@ -564,7 +548,6 @@ class GitRepo(object):
             self.repo.git.clean(args)
         except GitError:
             message = f'{fmt.ERROR} Failed to clean git repo'
-            message = self._format_error_message(message)
             CONSOLE.stderr(message)
             raise
 
@@ -582,17 +565,6 @@ class GitRepo(object):
     #     origin = self._remote(remote, remove_dir=True)
     #     self.fetch(remote, depth=depth, ref=tag, remove_dir=True)
     #     return tag in origin.tags
-
-    def _format_error_message(self, message: str) -> str:
-        """Format message based on whether clowder command was run serial or parallel
-
-        :param str message: Error message
-        """
-
-        if self.parallel:
-            fmt.error_parallel_exception(str(self.repo_path), message)
-        else:
-            return message
 
     @property
     def _is_rebase_in_progress(self) -> bool:
@@ -619,7 +591,6 @@ class GitRepo(object):
         except GitError:
             repo_path_output = fmt.path_string(str(self.repo_path))
             message = f"{fmt.ERROR} Failed to create Repo instance for {repo_path_output}"
-            message = self._format_error_message(message)
             CONSOLE.stderr(message)
             raise
         else:
@@ -638,7 +609,6 @@ class GitRepo(object):
             except GitError:
                 ref_output = fmt.ref_string('HEAD')
                 message = f'Failed to reset {ref_output}'
-                message = self._format_error_message(message)
                 CONSOLE.stderr(message)
                 raise
             else:
@@ -649,7 +619,6 @@ class GitRepo(object):
         except GitError:
             branch_output = fmt.ref_string(branch)
             message = f'{fmt.ERROR} Failed to reset to {branch_output}'
-            message = self._format_error_message(message)
             CONSOLE.stderr(message)
             raise
 
