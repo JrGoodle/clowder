@@ -54,7 +54,7 @@ class ProjectRepoImpl(GitRepo):
         """
 
         if self._is_branch_checked_out(branch):
-            CONSOLE.stdout(' - Branch ' + fmt.ref_string(branch) + ' already checked out')
+            CONSOLE.stdout(' - Branch ' + fmt.ref(branch) + ' already checked out')
         else:
             self._checkout_branch_local(branch)
 
@@ -66,7 +66,7 @@ class ProjectRepoImpl(GitRepo):
         :raise:
         """
 
-        branch_output = fmt.ref_string(branch)
+        branch_output = fmt.ref(branch)
         try:
             CONSOLE.stdout(f' - Checkout branch {branch_output}')
             default_branch = self.repo.heads[branch]
@@ -92,8 +92,8 @@ class ProjectRepoImpl(GitRepo):
         :raise ClowderError:
         """
 
-        branch_output = fmt.ref_string(branch)
-        remote_output = fmt.remote_string(self.remote)
+        branch_output = fmt.ref(branch)
+        remote_output = fmt.remote(self.remote)
         self._remote(self.remote, remove_dir=True)
         self.fetch(self.remote, depth=depth, ref=branch, remove_dir=True)
 
@@ -114,7 +114,7 @@ class ProjectRepoImpl(GitRepo):
         :raise ClowderError:
         """
 
-        commit_output = fmt.ref_string(commit)
+        commit_output = fmt.ref(commit)
         self._remote(remote, remove_dir=True)
         self.fetch(remote, depth=depth, ref=commit, remove_dir=True)
 
@@ -147,7 +147,7 @@ class ProjectRepoImpl(GitRepo):
         if remote_tag is None:
             return
 
-        tag_output = fmt.ref_string(tag)
+        tag_output = fmt.ref(tag)
         try:
             CONSOLE.stdout(' - Checkout tag ' + tag_output)
             self.repo.git.checkout(remote_tag)
@@ -172,7 +172,7 @@ class ProjectRepoImpl(GitRepo):
         :raise ClowderError:
         """
 
-        commit_output = fmt.ref_string(sha)
+        commit_output = fmt.ref(sha)
         try:
             if self.repo.head.commit.hexsha == sha:
                 CONSOLE.stdout(' - On correct commit')
@@ -191,7 +191,7 @@ class ProjectRepoImpl(GitRepo):
         :raise ClowderError:
         """
 
-        tag_output = fmt.ref_string(tag)
+        tag_output = fmt.ref(tag)
         if tag not in self.repo.tags:
             message = f'{fmt.ERROR} No existing tag {tag_output}'
             CONSOLE.stderr(message)
@@ -233,7 +233,7 @@ class ProjectRepoImpl(GitRepo):
         :raise ClowderError:
         """
 
-        branch_output = fmt.ref_string(branch)
+        branch_output = fmt.ref(branch)
         try:
             CONSOLE.stdout(f' - Create branch {branch_output}')
             self.repo.create_head(branch)
@@ -254,7 +254,7 @@ class ProjectRepoImpl(GitRepo):
         :raise ClowderError:
         """
 
-        branch_output = fmt.ref_string(branch)
+        branch_output = fmt.ref(branch)
         origin = self._remote(remote, remove_dir=remove_dir)
         if fetch:
             self.fetch(remote, depth=depth, ref=branch, remove_dir=remove_dir)
@@ -287,7 +287,7 @@ class ProjectRepoImpl(GitRepo):
         :raise ClowderError:
         """
 
-        branch_output = fmt.ref_string(branch)
+        branch_output = fmt.ref(branch)
         self.fetch(remote, depth=depth, ref=branch)
 
         if branch in self._remote(remote).refs:
@@ -316,7 +316,7 @@ class ProjectRepoImpl(GitRepo):
         if remote in remote_names:
             return
 
-        remote_output = fmt.remote_string(remote)
+        remote_output = fmt.remote(remote)
         try:
             CONSOLE.stdout(f' - Create remote {remote_output}')
             self.repo.create_remote(remote, url)
@@ -382,7 +382,7 @@ class ProjectRepoImpl(GitRepo):
         :raise ClowderError:
         """
 
-        tag_output = fmt.ref_string(tag)
+        tag_output = fmt.ref(tag)
         self._remote(remote, remove_dir=remove_dir)
         self.fetch(remote, depth=depth, ref=f'refs/tags/{tag}', remove_dir=remove_dir)
 
@@ -417,7 +417,7 @@ class ProjectRepoImpl(GitRepo):
             return
 
         try:
-            CONSOLE.stdout(f' - Initialize repo at {fmt.path_string(str(self.repo_path))}')
+            CONSOLE.stdout(f' - Initialize repo at {fmt.path(str(self.repo_path))}')
             if not self.repo_path.is_dir():
                 try:
                     os.makedirs(str(self.repo_path))
@@ -462,7 +462,7 @@ class ProjectRepoImpl(GitRepo):
         :raise ClowderError:
         """
 
-        branch_output = fmt.ref_string(branch)
+        branch_output = fmt.ref(branch)
         try:
             local_branch = self.repo.heads[branch]
             tracking_branch = local_branch.tracking_branch()
@@ -479,7 +479,7 @@ class ProjectRepoImpl(GitRepo):
         :raise ClowderError:
         """
 
-        branch_output = fmt.ref_string(branch)
+        branch_output = fmt.ref(branch)
         try:
             self.repo.git.config('--get', 'branch.' + branch + '.merge')
         except GitError:
@@ -498,8 +498,8 @@ class ProjectRepoImpl(GitRepo):
         :raise ClowderError:
         """
 
-        branch_output = fmt.ref_string(branch)
-        remote_output = fmt.remote_string(remote)
+        branch_output = fmt.ref(branch)
+        remote_output = fmt.remote(remote)
         CONSOLE.stdout(f' - Pull from {remote_output} {branch_output}')
         try:
             execute_command(f"git pull {remote} {branch}", self.repo_path)
@@ -517,8 +517,8 @@ class ProjectRepoImpl(GitRepo):
         :raise ClowderError:
         """
 
-        branch_output = fmt.ref_string(branch)
-        remote_output = fmt.remote_string(remote)
+        branch_output = fmt.ref(branch)
+        remote_output = fmt.remote(remote)
         CONSOLE.stdout(f' - Rebase onto {remote_output} {branch_output}')
         try:
             command = f"git pull --rebase {remote} refs/heads/{branch}:refs/remotes/{remote}/heads/{branch}"
@@ -538,7 +538,7 @@ class ProjectRepoImpl(GitRepo):
         :raise ClowderError:
         """
 
-        remote_output = fmt.remote_string(remote)
+        remote_output = fmt.remote(remote)
         try:
             return self.repo.remotes[remote]
         except GitError:
@@ -567,8 +567,8 @@ class ProjectRepoImpl(GitRepo):
         :raise ClowderError:
         """
 
-        remote_output_f = fmt.remote_string(remote_from)
-        remote_output_t = fmt.remote_string(remote_to)
+        remote_output_f = fmt.remote(remote_from)
+        remote_output_t = fmt.remote(remote_to)
         CONSOLE.stdout(f' - Rename remote {remote_output_f} to {remote_output_t}')
         try:
             self.repo.git.remote('rename', remote_from, remote_to)
@@ -586,8 +586,8 @@ class ProjectRepoImpl(GitRepo):
         :raise ClowderError:
         """
 
-        branch_output = fmt.ref_string(branch)
-        remote_output = fmt.remote_string(remote)
+        branch_output = fmt.ref(branch)
+        remote_output = fmt.remote(remote)
         origin = self._remote(remote)
         try:
             local_branch = self.repo.heads[branch]
@@ -616,7 +616,7 @@ class ProjectRepoImpl(GitRepo):
         :raise ClowderError:
         """
 
-        branch_output = fmt.ref_string(branch)
+        branch_output = fmt.ref(branch)
         origin = self._remote(remote)
         self.fetch(remote, depth=depth, ref=branch)
 

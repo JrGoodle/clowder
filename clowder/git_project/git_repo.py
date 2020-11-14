@@ -70,7 +70,7 @@ class GitRepo(object):
         :raise GitError:
         """
 
-        ref_output = fmt.ref_string(truncated_ref)
+        ref_output = fmt.ref(truncated_ref)
         try:
             CONSOLE.stdout(f' - Check out {ref_output}')
             CONSOLE.stdout(self.repo.git.checkout(truncated_ref))
@@ -164,12 +164,12 @@ class GitRepo(object):
         :raise ClowderError:
         """
 
-        remote_output = fmt.remote_string(remote)
+        remote_output = fmt.remote(remote)
         if depth == 0 or ref is None:
             CONSOLE.stdout(f' - Fetch from {remote_output}')
             error_message = f'{fmt.ERROR} Failed to fetch from remote {remote_output}'
         else:
-            ref_output = fmt.ref_string(truncate_ref(ref))
+            ref_output = fmt.ref(truncate_ref(ref))
             CONSOLE.stdout(f' - Fetch from {remote_output} {ref_output}')
             error_message = f'{fmt.ERROR} Failed to fetch from {remote_output} {ref_output}'
 
@@ -589,7 +589,7 @@ class GitRepo(object):
         try:
             repo = Repo(self.repo_path)
         except GitError:
-            repo_path_output = fmt.path_string(str(self.repo_path))
+            repo_path_output = fmt.path(str(self.repo_path))
             message = f"{fmt.ERROR} Failed to create Repo instance for {repo_path_output}"
             CONSOLE.stderr(message)
             raise
@@ -607,7 +607,7 @@ class GitRepo(object):
             try:
                 self.repo.head.reset(index=True, working_tree=True)
             except GitError:
-                ref_output = fmt.ref_string('HEAD')
+                ref_output = fmt.ref('HEAD')
                 message = f'Failed to reset {ref_output}'
                 CONSOLE.stderr(message)
                 raise
@@ -617,7 +617,7 @@ class GitRepo(object):
         try:
             self.repo.git.reset('--hard', branch)
         except GitError:
-            branch_output = fmt.ref_string(branch)
+            branch_output = fmt.ref(branch)
             message = f'{fmt.ERROR} Failed to reset to {branch_output}'
             CONSOLE.stderr(message)
             raise
