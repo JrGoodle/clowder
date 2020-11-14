@@ -6,6 +6,7 @@
 
 from functools import wraps
 from pathlib import Path
+from subprocess import CalledProcessError
 from typing import Optional, Set
 
 import clowder.util.formatting as fmt
@@ -573,9 +574,11 @@ class ResolvedProject:
         CONSOLE.stdout(fmt.command(command))
         try:
             execute_forall_command(command, self.full_path, env)
-        except ClowderError as err:
-            LOG.debug('Execute command failed', err)
-            if not ignore_errors:
+        except CalledProcessError as err:
+            if ignore_errors:
+                LOG.debug(f'Command failed: {command}', err)
+            else:
+                CONSOLE.stderr(f'Command failed: {command}')
                 raise
 
     def _url(self) -> str:

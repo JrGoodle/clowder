@@ -9,10 +9,12 @@ Babel==2.8.1
 bleach==3.2.1
 certifi==2020.11.8
 chardet==3.0.4
--e git+git@github.com:JrGoodle/clowder.git@cb02872c99dadd5d54c69719ca9805fa174d9a51#egg=clowder_repo
+-e git+git@github.com:JrGoodle/clowder.git@53e0f355c585a91a7015d887007faefae4a27fd3#egg=clowder_repo
 colorama==0.4.4
 commonmark==0.9.1
+contextvars==2.4
 coverage==5.3
+dataclasses==0.7
 distlib==0.3.1
 docutils==0.16
 execnet==1.7.1
@@ -22,6 +24,8 @@ GitPython==3.1.11
 glob2==0.7
 idna==2.10
 imagesize==1.2.0
+immutables==0.14
+importlib-metadata==2.0.0
 iniconfig==1.1.1
 Jinja2==2.11.2
 jsonschema==3.2.0
@@ -68,7 +72,6 @@ sphinxcontrib-htmlhelp==1.0.3
 sphinxcontrib-jsmath==1.0.1
 sphinxcontrib-qthelp==1.0.3
 sphinxcontrib-serializinghtml==1.1.4
-termcolor==1.1.0
 toml==0.10.2
 tornado==6.1
 tqdm==4.51.0
@@ -78,3 +81,4 @@ typing-extensions==3.7.4.3
 urllib3==1.26.1
 virtualenv==20.1.0
 webencodings==0.5.1
+zipp==3.4.0
