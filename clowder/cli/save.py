@@ -63,11 +63,11 @@ def save(args) -> None:
     yml_file = versions_dir / f"{version_name}.clowder.yml"
     yaml_file = versions_dir / f"{version_name}.clowder.yaml"
     if yml_file.exists():
-        raise ClowderError(ClowderErrorType.VERSION_ALREADY_EXISTS,
-                           fmt.error_save_version_exists(version_name, yml_file))
+        message = f"{fmt.yaml_file(str(yml_file))}\nVersion '{fmt.version(version_name)}' already exists"
+        raise ClowderError(ClowderErrorType.VERSION_ALREADY_EXISTS, message)
     elif yaml_file.exists():
-        raise ClowderError(ClowderErrorType.VERSION_ALREADY_EXISTS,
-                           fmt.error_save_version_exists(version_name, yaml_file))
+        message = f"{fmt.yaml_file(str(yaml_file))}\nVersion '{fmt.version(version_name)}' already exists"
+        raise ClowderError(ClowderErrorType.VERSION_ALREADY_EXISTS, message)
 
     CONSOLE.stdout(f" - Save version '{fmt.version(version_name)}'\n{fmt.path(yml_file)}")
     save_yaml_file(CLOWDER_CONTROLLER.get_yaml(resolved=True), yml_file)

@@ -49,8 +49,8 @@ def link(args) -> None:
     """Clowder link command private implementation"""
 
     if ENVIRONMENT.clowder_yaml is not None and not ENVIRONMENT.clowder_yaml.is_symlink():
-        raise ClowderError(ClowderErrorType.EXISTING_FILE_AT_SYMLINK_TARGET_PATH,
-                           fmt.error_existing_file_at_symlink_target_path(ENVIRONMENT.clowder_yaml))
+        message = f"Found non-symlink file {fmt.path(ENVIRONMENT.clowder_yaml)} at target path"
+        raise ClowderError(ClowderErrorType.EXISTING_FILE_AT_SYMLINK_TARGET_PATH, message)
 
     if args.version is None:
         link_clowder_yaml_default(ENVIRONMENT.clowder_dir)

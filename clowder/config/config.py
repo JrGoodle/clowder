@@ -189,5 +189,7 @@ class Config(object):
             self.clowder_configs: Tuple[ClowderConfig, ...] = ()
             self.current_clowder_config: Optional[ClowderConfig] = None
             LOG.debug('Failed to load clowder config', err)
-            LOG.debug(fmt.error_invalid_config_file(ENVIRONMENT.clowder_config_yaml))
+            message = f"{fmt.yaml_file(ENVIRONMENT.clowder_config_yaml)}\n" \
+                      f"Clowder config file appears to be invalid"
+            LOG.debug(message)
             raise

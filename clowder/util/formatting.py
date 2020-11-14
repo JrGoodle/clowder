@@ -133,72 +133,6 @@ def error_duplicate_project_path(project_path: str, yml: Path) -> str:
     return "\n".join(messages)
 
 
-def error_existing_file_at_symlink_target_path(name: Path) -> str:
-    """Format error message for existing non-symlink file at symlink target path
-
-    :param Path name: Path to use in error message
-    :return: Formatted existing non-symlink file at symlink target path error
-    :rtype: str
-    """
-
-    return f"Found non-symlink file {path(name)} at target path"
-
-
-def error_failed_clowder_init() -> str:
-    """Format error message for failed clowder init
-
-    :return: Formatted failed clowder init error
-    :rtype: str
-    """
-
-    return f"Failed to initialize clowder repo"
-
-
-def error_failed_remove_directory(dir_path: Path) -> str:
-    """Format error message for failing to remove directory
-
-    :param str dir_path: Directory path to remove
-    :return: Formatted remove directory error
-    :rtype: str
-    """
-
-    return f"Failed to remove directory {path(dir_path)}"
-
-
-def error_failed_remove_file(file_path: Path) -> str:
-    """Format error message for failing to remove file
-
-    :param str file_path: File path
-    :return: Formatted remove file error
-    :rtype: str
-    """
-
-    return f"Failed to remove file {path(file_path)}"
-
-
-def error_invalid_config_file(file_path: str) -> str:
-    """Return error message for invalid config file
-
-    :param str file_path: Invalid config file path
-    :return: Formatted invalid config file error
-    :rtype: str
-    """
-
-    return f"{yaml_file(file_path)}\nClowder config file appears to be invalid"
-
-
-def error_invalid_git_config_value(key: str, value: str) -> str:
-    """Format error message for invalid git config value
-
-    :param str key: Key for value with invalid git type
-    :param str value: Value with invalid git type
-    :return: Formatted error message for invalid git config value
-    :rtype: str
-    """
-
-    return f"Invalid git config value - {key}: {value}"
-
-
 def error_invalid_yaml_file(name: str) -> str:
     """Return error message for invalid yaml file
 
@@ -207,20 +141,7 @@ def error_invalid_yaml_file(name: str) -> str:
     :rtype: str
     """
 
-    file = yaml_file(Path(name))
-    return f"{file} appears to be invalid"
-
-
-def error_missing_file(file: str) -> str:
-    """Format error message for missing linked clowder yaml file
-
-    :param str file: Path to missing yaml file
-    :return: Formatted missing YAML error
-    :rtype: str
-    """
-
-    file = yaml_file(file)
-    return f"{file} appears to be missing"
+    return f"{yaml_file(Path(name))} appears to be invalid"
 
 
 def error_remote_dup(upstream_name: str, project: str, remote_name: str, yml: Path) -> str:
@@ -240,63 +161,25 @@ def error_remote_dup(upstream_name: str, project: str, remote_name: str, yml: Pa
     return "\n".join(messages)
 
 
-def error_save_version_exists(version_name: str, yml: Path) -> str:
-    """Format error message previous existing saved version
-
-    :param str version_name: Version name
-    :param Path yml: Path to yaml file
-    :return: Formatted version exists error
-    :rtype: str
-    """
-
-    return f"{yaml_file(str(yml))}\nVersion '{version(version_name)}' already exists"
-
-
-def error_source_default_not_found(source: str, yml: Path) -> str:
-    """Return formatted error string for unknown default source specified
-
-    :param str source: Source name
-    :param Path yml: Path to yaml file
-    :return: Formatted source not found error
-    :rtype: str
-    """
-
-    error_invalid_yaml_file(yml.name)
-    messages = [error_invalid_yaml_file(yml.name),
-                f"{yaml_path(yml)}",
-                f"source '{source}' not found in 'defaults'"]
-    return "\n".join(messages)
-
-
-def error_source_not_found(source: str, yml: Path, project: str, upstream_name: Optional[str] = None) -> str:
-    """Return formatted error string for project with unknown source specified
-
-    :param str source: Source name
-    :param Path yml: Path to yaml file
-    :param str project: Project name
-    :param Optional[str] upstream_name: Upstream name
-    :return: Formatted source not found error
-    :rtype: str
-    """
-
-    upstream_output = ""
-    if upstream_name:
-        upstream_output = f" for upstream '{upstream_name}'"
-
-    messages = [error_invalid_yaml_file(yml.name),
-                f"{yaml_path(yml)}",
-                f"source '{source}'{upstream_output} specified in project '{project}' not found in 'sources'"]
-    return "\n".join(messages)
-
-
-def error_unknown_config_type() -> str:
-    """Format error message for unknown config type
-
-    :return: Formatted error message for unknown config type
-    :rtype: str
-    """
-
-    return f"Unknown config type"
+# def error_source_not_found(source: str, yml: Path, project: str, upstream_name: Optional[str] = None) -> str:
+#     """Return formatted error string for project with unknown source specified
+#
+#     :param str source: Source name
+#     :param Path yml: Path to yaml file
+#     :param str project: Project name
+#     :param Optional[str] upstream_name: Upstream name
+#     :return: Formatted source not found error
+#     :rtype: str
+#     """
+#
+#     upstream_output = ""
+#     if upstream_name:
+#         upstream_output = f" for upstream '{upstream_name}'"
+#
+#     messages = [error_invalid_yaml_file(yml.name),
+#                 f"{yaml_path(yml)}",
+#                 f"source '{source}'{upstream_output} specified in project '{project}' not found in 'sources'"]
+#     return "\n".join(messages)
 
 
 # FIXME: Only print project name using this where appropriate (now that project status and upstream_string

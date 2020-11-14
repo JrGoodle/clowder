@@ -44,7 +44,8 @@ class ClowderController(object):
 
         try:
             if ENVIRONMENT.clowder_yaml is None:
-                err = ClowderError(ClowderErrorType.YAML_MISSING_FILE, fmt.error_missing_file(Path('clowder.yml')))
+                message = f"{Path('clowder.yml')} appears to be missing"
+                err = ClowderError(ClowderErrorType.YAML_MISSING_FILE, message)
                 LOG.debug('Failed to initialize clowder controller')
                 raise err
             yaml = load_yaml_file(ENVIRONMENT.clowder_yaml, ENVIRONMENT.clowder_dir)

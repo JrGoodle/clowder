@@ -101,6 +101,6 @@ class ResolvedGitSettings:
             elif self.config[key] is None:
                 pass
             else:
-                raise ClowderError(ClowderErrorType.INVALID_GIT_CONFIG_VALUE,
-                                   fmt.error_invalid_git_config_value(key, value))
+                message = f"Invalid git config value - {key}: {value}"
+                raise ClowderError(ClowderErrorType.INVALID_GIT_CONFIG_VALUE, message)
         return config

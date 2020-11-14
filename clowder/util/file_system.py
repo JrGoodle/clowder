@@ -23,8 +23,8 @@ def symlink_clowder_yaml(source: Path, target: Path) -> None:
     """
 
     if not target.is_symlink() and target.is_file():
-        raise ClowderError(ClowderErrorType.EXISTING_FILE_AT_SYMLINK_TARGET_PATH,
-                           fmt.error_existing_file_at_symlink_target_path(target))
+        message = f"Found non-symlink file {fmt.path(target)} at target path"
+        raise ClowderError(ClowderErrorType.EXISTING_FILE_AT_SYMLINK_TARGET_PATH, message)
     if not Path(target.parent / source).exists():
         message = f"Symlink source {fmt.yaml_file(str(source))} appears to be missing"
         raise ClowderError(ClowderErrorType.SYMLINK_SOURCE_NOT_FOUND, message)
@@ -104,5 +104,6 @@ def remove_directory(dir_path: Path) -> None:
     try:
         shutil.rmtree(dir_path)
     except shutil.Error:
-        CONSOLE.stderr(fmt.error_failed_remove_directory(str(dir_path)))
+        message = f"Failed to remove directory {fmt.path(dir_path)}"
+        CONSOLE.stderr(message)
         raise

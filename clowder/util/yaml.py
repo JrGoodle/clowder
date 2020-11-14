@@ -39,8 +39,8 @@ def link_clowder_yaml_default(clowder_dir: Path) -> None:
     elif yaml_absolute_path.is_file():
         relative_source_file = yaml_relative_path
     else:
-        raise ClowderError(ClowderErrorType.YAML_MISSING_FILE,
-                           fmt.error_missing_file(yml_relative_path))
+        message = f"{yml_relative_path} appears to be missing"
+        raise ClowderError(ClowderErrorType.YAML_MISSING_FILE, message)
 
     target_file = clowder_dir / relative_source_file.name
 
@@ -59,11 +59,12 @@ def link_clowder_yaml_default(clowder_dir: Path) -> None:
             existing_file = file
 
     if existing_file is not None and existing_file.is_symlink():
-        CONSOLE.stdout(f" - Remove previously existing file {fmt.path(str(existing_file))}")
+        CONSOLE.stdout(f" - Remove previously existing file {fmt.path(existing_file)}")
         try:
             remove_file(existing_file)
         except OSError:
-            CONSOLE.stderr(fmt.error_failed_remove_file(str(existing_file)))
+            message = f"Failed to remove file {fmt.path(existing_file)}"
+            CONSOLE.stderr(message)
             raise
 
 
@@ -85,8 +86,8 @@ def link_clowder_yaml_version(clowder_dir: Path, version: str) -> None:
     elif yaml_absolute_path.is_file():
         relative_source_file = yaml_relative_path
     else:
-        raise ClowderError(ClowderErrorType.YAML_MISSING_FILE,
-                           fmt.error_missing_file(yml_relative_path))
+        message = f"{yml_relative_path} appears to be missing"
+        raise ClowderError(ClowderErrorType.YAML_MISSING_FILE, message)
 
     target_file = clowder_dir / fmt.remove_prefix(relative_source_file.name, f"{version}.")
 
@@ -109,7 +110,8 @@ def link_clowder_yaml_version(clowder_dir: Path, version: str) -> None:
         try:
             remove_file(existing_file)
         except OSError:
-            CONSOLE.stderr(fmt.error_failed_remove_file(str(existing_file)))
+            message = f"Failed to remove file {fmt.path(existing_file)}"
+            CONSOLE.stderr(message)
             raise
 
 

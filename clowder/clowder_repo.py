@@ -124,18 +124,19 @@ def init(url: str, branch: str) -> None:
     """
 
     clowder_repo_dir = ENVIRONMENT.current_dir / '.clowder'
+    error_message = "Failed to initialize clowder repo"
     try:
         repo = ProjectRepo(clowder_repo_dir, clowder_repo_remote, clowder_repo_ref)
         repo.create_clowder_repo(url, branch)
     except ClowderError:
         if clowder_repo_dir.is_dir():
             remove_directory(clowder_repo_dir)
-        CONSOLE.stderr(fmt.error_failed_clowder_init())
+        CONSOLE.stderr(error_message)
         raise
     except Exception:
         if clowder_repo_dir.is_dir():
             remove_directory(clowder_repo_dir)
-        CONSOLE.stderr(fmt.error_failed_clowder_init())
+        CONSOLE.stderr(error_message)
         raise
     else:
         try:

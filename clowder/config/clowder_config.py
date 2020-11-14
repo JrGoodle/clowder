@@ -125,7 +125,7 @@ class ClowderConfig(object):
         elif value is ClowderConfigType.REBASE:
             return self.rebase is not None
         else:
-            raise ClowderError(ClowderErrorType.UNKNOWN_CONFIG_TYPE, fmt.error_unknown_config_type())
+            raise ClowderError(ClowderErrorType.UNKNOWN_CONFIG_TYPE, "Unknown config type")
 
     def print_config_value(self, value: ClowderConfigType) -> None:
         """Print current configuration
@@ -155,7 +155,7 @@ class ClowderConfig(object):
             else:
                 CONSOLE.stdout(f" - rebase: {self.rebase}")
         else:
-            raise ClowderError(ClowderErrorType.UNKNOWN_CONFIG_TYPE, fmt.error_unknown_config_type())
+            raise ClowderError(ClowderErrorType.UNKNOWN_CONFIG_TYPE, "Unknown config type")
 
     def print_configuration(self) -> None:
         """Print current configuration"""
@@ -189,8 +189,9 @@ class ClowderConfig(object):
 
         for project in self.projects:
             if project not in project_options:
-                messages = [f"{fmt.error_invalid_config_file(ENVIRONMENT.clowder_config_yaml)}",
-                            f"Unknown project {fmt.project_name(project)}"]
-                raise ClowderError(ClowderErrorType.CONFIG_YAML_UNKNOWN_PROJECT, messages)
+                message = f"{fmt.yaml_file(ENVIRONMENT.clowder_config_yaml)}\n" \
+                          f"Clowder config file appears to be invalid" \
+                          f"Unknown project {fmt.project_name(project)}"
+                raise ClowderError(ClowderErrorType.CONFIG_YAML_UNKNOWN_PROJECT, message)
 
         # FIXME: Assemble all undefined projects in message rather than raising on first instance not found
