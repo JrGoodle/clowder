@@ -34,20 +34,18 @@ class ProjectRepoImpl(GitRepo):
     :ivar str repo_path: Absolute path to repo
     :ivar str default_ref: Default ref
     :ivar str remote: Default remote name
-    :ivar bool parallel: Whether command is being run in parallel, affects output
     :ivar Repo Optional[repo]: Repo instance
     """
 
-    def __init__(self, repo_path: Path, remote: str, default_ref: str, parallel: bool = False):
+    def __init__(self, repo_path: Path, remote: str, default_ref: str):
         """ProjectRepo __init__
 
         :param Path repo_path: Absolute path to repo
         :param str remote: Default remote name
         :param str default_ref: Default ref
-        :param bool parallel: Whether command is being run in parallel, affects output. Defaults to False
         """
 
-        super().__init__(repo_path, remote, default_ref, parallel=parallel)
+        super().__init__(repo_path, remote, default_ref)
 
     def _checkout_branch(self, branch: str) -> None:
         """Checkout local branch or print message if already checked out

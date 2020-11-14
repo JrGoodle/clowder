@@ -29,7 +29,6 @@ class GitRepo(object):
     :ivar str repo_path: Absolute path to repo
     :ivar str default_ref: Default ref
     :ivar str remote: Default remote name
-    :ivar bool parallel: Whether command is being run in parallel, affects output
     :ivar Repo Optional[repo]: Repo instance
     """
 
@@ -46,7 +45,7 @@ class GitRepo(object):
         self.default_ref = default_ref
         self.remote = remote
         self.parallel = parallel
-        self.repo = self._repo() if existing_git_repository(repo_path) else None
+        self.repo = self._create_repo() if existing_git_repository(repo_path) else None
 
     def add(self, files: str) -> None:
         """Add files to git index
@@ -606,7 +605,7 @@ class GitRepo(object):
         is_rebase_merge = Path(self.repo_path / '.git' / 'rebase-merge').is_dir()
         return is_rebase_apply or is_rebase_merge
 
-    def _repo(self) -> Repo:
+    def _create_repo(self) -> Repo:
         """Create Repo instance for self.repo_path
 
         :return: GitPython Repo instance

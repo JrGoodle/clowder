@@ -2,7 +2,6 @@
 This module contains fixtures
 """
 
-import os
 from pathlib import Path
 
 from pytest import fixture
