@@ -64,7 +64,7 @@ def clean(args) -> None:
 
     if args.all:
         for project in projects:
-            CONSOLE.print(project.status())
+            CONSOLE.stdout(project.status())
             project.clean_all()
         return
 
@@ -93,5 +93,5 @@ def _clean_impl(projects: Tuple[ResolvedProject, ...], clean_args: str = '', sub
     """
 
     for project in projects:
-        CONSOLE.print(project.status())
+        CONSOLE.stdout(project.status())
         project.clean(args=clean_args, submodules=submodules)

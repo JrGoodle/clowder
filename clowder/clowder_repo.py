@@ -13,7 +13,6 @@ from clowder.console import CONSOLE
 from clowder.environment import ENVIRONMENT
 from clowder.error import ClowderError, ClowderErrorType
 from clowder.git_project import ProjectRepo
-from clowder.logging import LOG
 from clowder.util.connectivity import is_offline
 from clowder.util.execute import execute_command
 from clowder.util.file_system import remove_directory
@@ -50,7 +49,7 @@ def checkout(ref: str) -> None:
 
     repo = ProjectRepo(ENVIRONMENT.clowder_git_repo_dir, clowder_repo_remote, clowder_repo_ref)
     if repo.is_dirty():
-        CONSOLE.print(' - Dirty repo. Please stash, commit, or discard your changes')
+        CONSOLE.stdout(' - Dirty repo. Please stash, commit, or discard your changes')
         repo.status_verbose()
         return
     repo.checkout(ref)
@@ -64,12 +63,12 @@ def clean() -> None:
 
     repo = ProjectRepo(ENVIRONMENT.clowder_git_repo_dir, clowder_repo_remote, clowder_repo_ref)
     if repo.is_dirty():
-        CONSOLE.print(' - Discard current changes')
+        CONSOLE.stdout(' - Discard current changes')
         repo = ProjectRepo(ENVIRONMENT.clowder_git_repo_dir, clowder_repo_remote, clowder_repo_ref)
         repo.clean(args='fdx')
         return
 
-    CONSOLE.print(' - No changes to discard')
+    CONSOLE.stdout(' - No changes to discard')
 
 
 def commit(message: str) -> None:
@@ -127,23 +126,21 @@ def init(url: str, branch: str) -> None:
     try:
         repo = ProjectRepo(clowder_repo_dir, clowder_repo_remote, clowder_repo_ref)
         repo.create_clowder_repo(url, branch)
-    except ClowderError as err:
-        LOG.debug('Failed to init clowder repo', err)
+    except ClowderError:
         if clowder_repo_dir.is_dir():
             remove_directory(clowder_repo_dir)
-        CONSOLE.print(fmt.error_failed_clowder_init())
+        CONSOLE.stderr(fmt.error_failed_clowder_init())
         raise
-    except Exception as err:
-        LOG.debug('Failed to init clowder repo', err)
+    except Exception:
         if clowder_repo_dir.is_dir():
             remove_directory(clowder_repo_dir)
-        CONSOLE.print(fmt.error_failed_clowder_init())
+        CONSOLE.stderr(fmt.error_failed_clowder_init())
         raise
     else:
         try:
             link_clowder_yaml_default(ENVIRONMENT.current_dir)
-        except ClowderError as err:
-            LOG.debug('Failed to link yaml file after clowder repo init', err)
+        except ClowderError:
+            CONSOLE.stderr('Failed to link yaml file after clowder repo init')
             raise
         else:
             if ENVIRONMENT.has_ambiguous_clowder_yaml_files():
@@ -162,8 +159,8 @@ def print_status(fetch: bool = False) -> None:
     clowder_repo_output = fmt.green(ENVIRONMENT.clowder_repo_dir.name)
 
     if ENVIRONMENT.clowder_yaml is not None and not ENVIRONMENT.clowder_yaml.is_symlink():
-        CONSOLE.print(fmt.warning_clowder_yaml_not_symlink_with_clowder_repo(ENVIRONMENT.clowder_yaml.name))
-        CONSOLE.print()
+        CONSOLE.stderr(fmt.warning_clowder_yaml_not_symlink_with_clowder_repo(ENVIRONMENT.clowder_yaml.name))
+        CONSOLE.stderr()
 
     symlink_output: Optional[str] = None
     if ENVIRONMENT.clowder_yaml is not None and ENVIRONMENT.clowder_yaml.is_symlink():
@@ -173,25 +170,25 @@ def print_status(fetch: bool = False) -> None:
         symlink_output = f"{target_path} -> {source_path}"
 
     if ENVIRONMENT.clowder_git_repo_dir is None:
-        CONSOLE.print(clowder_repo_output)
+        CONSOLE.stdout(clowder_repo_output)
         if symlink_output is not None:
-            CONSOLE.print(symlink_output)
-        CONSOLE.print()
+            CONSOLE.stdout(symlink_output)
+        CONSOLE.stdout()
         return
 
     repo = ProjectRepo(ENVIRONMENT.clowder_git_repo_dir, clowder_repo_remote, clowder_repo_ref)
 
     if fetch and not is_offline():
-        CONSOLE.print(' - Fetch upstream changes for clowder repo')
+        CONSOLE.stdout(' - Fetch upstream changes for clowder repo')
         repo.fetch(clowder_repo_remote)
 
     clowder_git_repo_output = repo.format_project_string(ENVIRONMENT.clowder_git_repo_dir.name)
     current_ref_output = repo.format_project_ref_string()
 
-    CONSOLE.print(f"{clowder_git_repo_output} {current_ref_output}")
+    CONSOLE.stdout(f"{clowder_git_repo_output} {current_ref_output}")
     if symlink_output is not None:
-        CONSOLE.print(symlink_output)
-    CONSOLE.print()
+        CONSOLE.stdout(symlink_output)
+    CONSOLE.stdout()
 
 
 def pull() -> None:
@@ -212,5 +209,5 @@ def run_command(command: str) -> None:
     :param str command: Command to run
     """
 
-    CONSOLE.print(fmt.command(command))
+    CONSOLE.stdout(fmt.command(command))
     execute_command(command.split(), ENVIRONMENT.clowder_repo_dir)

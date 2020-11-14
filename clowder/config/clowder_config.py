@@ -136,34 +136,33 @@ class ClowderConfig(object):
 
         if value is ClowderConfigType.JOBS:
             if self.jobs is None:
-                CONSOLE.print(" - jobs not set")
+                CONSOLE.stdout(" - jobs not set")
             else:
-                CONSOLE.print(f" - jobs: {self.jobs}")
+                CONSOLE.stdout(f" - jobs: {self.jobs}")
         elif value is ClowderConfigType.PROJECTS:
             if self.projects is None:
-                CONSOLE.print(" - projects not set")
+                CONSOLE.stdout(" - projects not set")
             else:
-                CONSOLE.print(f" - projects: {', '.join(self.projects)}")
+                CONSOLE.stdout(f" - projects: {', '.join(self.projects)}")
         elif value is ClowderConfigType.PROTOCOL:
             if self.protocol is None:
-                CONSOLE.print(" - protocol not set")
+                CONSOLE.stdout(" - protocol not set")
             else:
-                CONSOLE.print(f" - protocol: {self.protocol}")
+                CONSOLE.stdout(f" - protocol: {self.protocol}")
         elif value is ClowderConfigType.REBASE:
             if self.rebase is None:
-                CONSOLE.print(" - rebase not set")
+                CONSOLE.stdout(" - rebase not set")
             else:
-                CONSOLE.print(f" - rebase: {self.rebase}")
+                CONSOLE.stdout(f" - rebase: {self.rebase}")
         else:
             raise ClowderError(ClowderErrorType.UNKNOWN_CONFIG_TYPE, fmt.error_unknown_config_type())
 
     def print_configuration(self) -> None:
         """Print current configuration"""
 
-        CONSOLE.print('[bold]Current config[/bold]')
-        CONSOLE.print()
+        CONSOLE.stdout('[bold]Current config[/bold]\n')
         if self.is_empty():
-            CONSOLE.print(' - No config values set')
+            CONSOLE.stdout(' - No config values set')
             return
 
         output = ''
@@ -176,7 +175,7 @@ class ClowderConfig(object):
         if self.rebase is not None:
             output += f" - rebase: {self.rebase}\n"
 
-        CONSOLE.print(output)
+        CONSOLE.stdout(output)
 
     def validate_config_projects_defined(self, project_options: Tuple[str, ...]) -> None:
         """Validate all projects were defined in clowder yaml file

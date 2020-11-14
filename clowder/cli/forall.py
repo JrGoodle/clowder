@@ -87,5 +87,5 @@ def _forall_impl(command: str, ignore_errors: bool, projects: List[str], jobs: O
         return
 
     for project in projects:
-        CONSOLE.print(project.status())
+        CONSOLE.stdout(project.status())
         project.run(command, ignore_errors=ignore_errors)

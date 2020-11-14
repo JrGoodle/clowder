@@ -11,7 +11,7 @@ from git import Repo, GitCommandError, GitError
 
 import clowder.util.formatting as fmt
 from clowder.console import CONSOLE
-from clowder.error import ClowderError, ClowderErrorType
+from clowder.error import ClowderError
 from clowder.logging import LOG
 from clowder.util.execute import execute_command
 from clowder.util.file_system import remove_directory
@@ -47,7 +47,6 @@ class GitRepo(object):
         self.remote = remote
         self.parallel = parallel
         self.repo = self._repo() if existing_git_repository(repo_path) else None
-        self._print_output = not parallel
 
     def add(self, files: str) -> None:
         """Add files to git index
@@ -56,14 +55,13 @@ class GitRepo(object):
         :raise:
         """
 
-        CONSOLE.print(' - Add files to git index')
+        CONSOLE.stdout(' - Add files to git index')
         try:
-            CONSOLE.print(self.repo.git.add(files))
-        except GitError as err:
-            LOG.debug('Git error', err)
+            CONSOLE.stdout(self.repo.git.add(files))
+        except GitError:
             message = f"{fmt.ERROR} Failed to add files to git index"
             message = self._format_error_message(message)
-            CONSOLE.print(message)
+            CONSOLE.stderr(message)
             raise
         else:
             self.status_verbose()
@@ -78,20 +76,15 @@ class GitRepo(object):
 
         ref_output = fmt.ref_string(truncated_ref)
         try:
-            CONSOLE.print(f' - Check out {ref_output}')
-            if self._print_output:
-                CONSOLE.print(self.repo.git.checkout(truncated_ref))
-                return
-
-            self.repo.git.checkout(truncated_ref)
-        except GitError as err:
-            LOG.debug('Git error', err)
+            CONSOLE.stdout(f' - Check out {ref_output}')
+            CONSOLE.stdout(self.repo.git.checkout(truncated_ref))
+        except GitError:
             message = f'{fmt.ERROR} Failed to checkout {ref_output}'
             if allow_failure:
-                CONSOLE.print(message)
+                CONSOLE.stderr(message)
                 return
             message = self._format_error_message(message)
-            CONSOLE.print(message)
+            CONSOLE.stderr(message)
             raise
 
     def clean(self, args: str = '') -> None:
@@ -104,13 +97,13 @@ class GitRepo(object):
             - ``x`` Remove all untracked files
         """
 
-        CONSOLE.print(' - Clean project')
+        CONSOLE.stdout(' - Clean project')
         clean_args = '-f' if args == '' else '-f' + args
         self._clean(args=clean_args)
-        CONSOLE.print(' - Reset project')
+        CONSOLE.stdout(' - Reset project')
         self._reset_head()
         if self._is_rebase_in_progress():
-            CONSOLE.print(' - Abort rebase in progress')
+            CONSOLE.stdout(' - Abort rebase in progress')
             self._abort_rebase()
 
     def commit(self, message: str) -> None:
@@ -121,13 +114,12 @@ class GitRepo(object):
         """
 
         try:
-            CONSOLE.print(' - Commit current changes')
-            CONSOLE.print(self.repo.git.commit(message=message))
-        except GitError as err:
-            LOG.debug('Git error', err)
+            CONSOLE.stdout(' - Commit current changes')
+            CONSOLE.stdout(self.repo.git.commit(message=message))
+        except GitError:
             message = f'{fmt.ERROR} Failed to commit current changes'
             message = self._format_error_message(message)
-            CONSOLE.print(message)
+            CONSOLE.stderr(message)
             raise
 
     def current_branch(self) -> str:
@@ -149,11 +141,10 @@ class GitRepo(object):
         :raise ClowderError:
         """
 
-        try:
-            origin = self.repo.remotes[remote]
-            return branch in origin.refs
-        except (GitError, IndexError):
+        origin = self.repo.remotes.get(remote, None)
+        if origin is None:
             return False
+        return branch in origin.refs
 
     def existing_local_branch(self, branch: str) -> bool:
         """Check if local branch exists
@@ -179,22 +170,22 @@ class GitRepo(object):
 
         remote_output = fmt.remote_string(remote)
         if depth == 0 or ref is None:
-            CONSOLE.print(f' - Fetch from {remote_output}')
+            CONSOLE.stdout(f' - Fetch from {remote_output}')
             error_message = f'{fmt.ERROR} Failed to fetch from remote {remote_output}'
         else:
             ref_output = fmt.ref_string(truncate_ref(ref))
-            CONSOLE.print(f' - Fetch from {remote_output} {ref_output}')
+            CONSOLE.stdout(f' - Fetch from {remote_output} {ref_output}')
             error_message = f'{fmt.ERROR} Failed to fetch from {remote_output} {ref_output}'
 
         try:
             if depth == 0:
-                execute_command(f'git fetch {remote} --prune --tags', self.repo_path, print_output=self._print_output)
+                execute_command(f'git fetch {remote} --prune --tags', self.repo_path)
             elif ref is None:
                 command = f'git fetch {remote} --depth {depth} --prune --tags'
-                execute_command(command, self.repo_path, print_output=self._print_output)
+                execute_command(command, self.repo_path)
             else:
                 command = f'git fetch {remote} {truncate_ref(ref)} --depth {depth} --prune --tags'
-                execute_command(command, self.repo_path, print_output=self._print_output)
+                execute_command(command, self.repo_path)
         except ClowderError as err:
             LOG.debug('Failed to fetch', err)
             if remove_dir:
@@ -202,7 +193,7 @@ class GitRepo(object):
                 remove_directory(self.repo_path)
             if not allow_failure:
                 message = self._format_error_message(error_message)
-                CONSOLE.print(message)
+                CONSOLE.stderr(message)
                 raise
 
     def format_project_ref_string(self) -> str:
@@ -269,11 +260,10 @@ class GitRepo(object):
 
         try:
             return self.repo.git.log('-1', '--format=%cI')
-        except GitError as err:
-            LOG.debug('Git error', err)
+        except GitError:
             message = f'{fmt.ERROR} Failed to find current timestamp'
             message = self._format_error_message(message)
-            CONSOLE.print(message)
+            CONSOLE.stderr(message)
             raise
 
     def git_config_unset_all_local(self, variable: str) -> None:
@@ -286,17 +276,15 @@ class GitRepo(object):
         try:
             self.repo.git.config('--local', '--unset-all', variable)
         except GitCommandError as err:
-            LOG.verbose('Git command error', err)
             if err.status != 5:  # git returns error code 5 when trying to unset variable that doesn't exist
                 message = f'{fmt.ERROR} Failed to unset all local git config values for {variable}'
                 message = self._format_error_message(message)
-                CONSOLE.print(message)
+                CONSOLE.stderr(message)
                 raise
-        except GitError as err:
-            LOG.debug('Git error', err)
+        except GitError:
             message = f'{fmt.ERROR} Failed to unset all local git config values for {variable}'
             message = self._format_error_message(message)
-            CONSOLE.print(message)
+            CONSOLE.stderr(message)
             raise
 
     def git_config_add_local(self, variable: str, value: str) -> None:
@@ -309,11 +297,10 @@ class GitRepo(object):
 
         try:
             self.repo.git.config('--local', '--add', variable, value)
-        except GitError as err:
-            LOG.debug('Git error', err)
+        except GitError:
             message = f'{fmt.ERROR} Failed to add local git config value {value} for variable {variable}'
             message = self._format_error_message(message)
-            CONSOLE.print(message)
+            CONSOLE.stderr(message)
             raise
 
     def install_lfs_hooks(self) -> None:
@@ -322,14 +309,13 @@ class GitRepo(object):
         :raise ClowderError:
         """
 
-        CONSOLE.print(" - Update git lfs hooks")
+        CONSOLE.stdout(" - Update git lfs hooks")
         try:
             self.repo.git.lfs('install', '--local')
-        except GitError as err:
-            LOG.debug('Git error', err)
+        except GitError:
             message = f'{fmt.ERROR} Failed to update git lfs hooks'
             message = self._format_error_message(message)
-            CONSOLE.print(message)
+            CONSOLE.stderr(message)
             raise
 
     def is_detached(self, print_output: bool = False) -> bool:
@@ -344,7 +330,7 @@ class GitRepo(object):
             return False
         if self.repo.head.is_detached:
             if print_output:
-                CONSOLE.print(' - HEAD is detached')
+                CONSOLE.stdout(' - HEAD is detached')
             return True
         return False
 
@@ -409,9 +395,9 @@ class GitRepo(object):
         for branch in self.repo.git.branch().split('\n'):
             if branch.startswith('* '):
                 branch_name = fmt.green(branch[2:])
-                CONSOLE.print(f"* {branch_name}")
+                CONSOLE.stdout(f"* {branch_name}")
             else:
-                CONSOLE.print(branch)
+                CONSOLE.stdout(branch)
 
     def print_remote_branches(self) -> None:
         """Print output if self._print_output is True"""
@@ -421,9 +407,9 @@ class GitRepo(object):
                 components = branch.split(' -> ')
                 local_branch = components[0]
                 remote_branch = components[1]
-                CONSOLE.print(f"  {fmt.red(local_branch)} -> {remote_branch}")
+                CONSOLE.stdout(f"  {fmt.red(local_branch)} -> {remote_branch}")
             else:
-                CONSOLE.print(fmt.red(branch))
+                CONSOLE.stdout(fmt.red(branch))
 
     def print_validation(self) -> None:
         """Print validation messages"""
@@ -432,7 +418,7 @@ class GitRepo(object):
             return
 
         if not self.validate_repo():
-            CONSOLE.print(f'{fmt.ERROR} Dirty repo. Please stash, commit, or discard your changes')
+            CONSOLE.stdout(f'{fmt.ERROR} Dirty repo. Please stash, commit, or discard your changes')
             self.status_verbose()
 
     @not_detached
@@ -443,13 +429,12 @@ class GitRepo(object):
         """
 
         try:
-            CONSOLE.print(' - Pull latest changes')
-            CONSOLE.print(self.repo.git.pull())
-        except GitError as err:
-            LOG.debug('Git error', err)
+            CONSOLE.stdout(' - Pull latest changes')
+            CONSOLE.stdout(self.repo.git.pull())
+        except GitError:
             message = f'{fmt.ERROR} Failed to pull latest changes'
             message = self._format_error_message(message)
-            CONSOLE.print(message)
+            CONSOLE.stderr(message)
             raise
 
     def pull_lfs(self) -> None:
@@ -459,13 +444,12 @@ class GitRepo(object):
         """
 
         try:
-            CONSOLE.print(' - Pull git lfs files')
+            CONSOLE.stdout(' - Pull git lfs files')
             self.repo.git.lfs('pull')
-        except GitError as err:
-            LOG.debug('Git error', err)
+        except GitError:
             message = f'{fmt.ERROR} Failed to pull git lfs files'
             message = self._format_error_message(message)
-            CONSOLE.print(message)
+            CONSOLE.stderr(message)
             raise
 
     @not_detached
@@ -476,13 +460,12 @@ class GitRepo(object):
         """
 
         try:
-            CONSOLE.print(' - Push local changes')
-            CONSOLE.print(self.repo.git.push())
-        except GitError as err:
-            LOG.debug('Git error', err)
+            CONSOLE.stdout(' - Push local changes')
+            CONSOLE.stdout(self.repo.git.push())
+        except GitError:
             message = f'{fmt.ERROR} Failed to push local changes'
             message = self._format_error_message(message)
-            CONSOLE.print(message)
+            CONSOLE.stderr(message)
             raise
 
     def sha(self, short: bool = False) -> str:
@@ -502,10 +485,10 @@ class GitRepo(object):
         """Stash current changes in repository"""
 
         if not self.repo.is_dirty():
-            CONSOLE.print(' - No changes to stash')
+            CONSOLE.stdout(' - No changes to stash')
             return
 
-        CONSOLE.print(' - Stash current changes')
+        CONSOLE.stdout(' - Stash current changes')
         self.repo.git.stash()
 
     def status(self) -> None:
@@ -514,7 +497,7 @@ class GitRepo(object):
         Equivalent to: ``git status``
         """
 
-        CONSOLE.print(self.repo.git.status())
+        CONSOLE.stdout(self.repo.git.status())
 
     def status_verbose(self) -> None:
         """Print git status
@@ -525,14 +508,13 @@ class GitRepo(object):
         """
 
         command = 'git status -vv'
-        CONSOLE.print(fmt.command(command))
+        CONSOLE.stdout(fmt.command(command))
         try:
             execute_command(command, self.repo_path)
-        except ClowderError as err:
-            LOG.debug('Failed to print git status verbase', err)
+        except ClowderError:
             message = f'{fmt.ERROR} Failed to print verbose status'
             message = self._format_error_message(message)
-            CONSOLE.print(message)
+            CONSOLE.stderr(message)
             raise
 
     def validate_repo(self, allow_missing_repo: bool = True) -> bool:
@@ -563,11 +545,10 @@ class GitRepo(object):
 
         try:
             self.repo.git.rebase('--abort')
-        except GitError as err:
-            LOG.debug('Git error', err)
+        except GitError:
             message = f'{fmt.ERROR} Failed to abort rebase'
             message = self._format_error_message(message)
-            CONSOLE.print(message)
+            CONSOLE.stderr(message)
             raise
 
     def _clean(self, args: str) -> None:
@@ -579,11 +560,10 @@ class GitRepo(object):
 
         try:
             self.repo.git.clean(args)
-        except GitError as err:
-            LOG.debug('Git error', err)
+        except GitError:
             message = f'{fmt.ERROR} Failed to clean git repo'
             message = self._format_error_message(message)
-            CONSOLE.print(message)
+            CONSOLE.stderr(message)
             raise
 
     # def _existing_remote_tag(self, tag, remote, depth=0):
@@ -633,12 +613,11 @@ class GitRepo(object):
 
         try:
             repo = Repo(self.repo_path)
-        except GitError as err:
-            LOG.debug('Git error', err)
+        except GitError:
             repo_path_output = fmt.path_string(str(self.repo_path))
             message = f"{fmt.ERROR} Failed to create Repo instance for {repo_path_output}"
             message = self._format_error_message(message)
-            CONSOLE.print(message)
+            CONSOLE.stderr(message)
             raise
         else:
             return repo
@@ -653,24 +632,22 @@ class GitRepo(object):
         if branch is None:
             try:
                 self.repo.head.reset(index=True, working_tree=True)
-            except GitError as err:
-                LOG.debug('Git error', err)
+            except GitError:
                 ref_output = fmt.ref_string('HEAD')
-                message = f'{fmt.ERROR} Failed to reset {ref_output}'
+                message = f'Failed to reset {ref_output}'
                 message = self._format_error_message(message)
-                CONSOLE.print(message)
+                CONSOLE.stderr(message)
                 raise
             else:
                 return
 
         try:
             self.repo.git.reset('--hard', branch)
-        except GitError as err:
-            LOG.debug('Git error', err)
+        except GitError:
             branch_output = fmt.ref_string(branch)
             message = f'{fmt.ERROR} Failed to reset to {branch_output}'
             message = self._format_error_message(message)
-            CONSOLE.print(message)
+            CONSOLE.stderr(message)
             raise
 
     def _has_untracked_files(self) -> bool:

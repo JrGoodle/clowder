@@ -11,7 +11,7 @@ from typing import Optional
 from clowder.console import CONSOLE
 
 
-PRINT_DEBUG_OUTPUT = "CLOWDER_DEBUG" in os.environ
+LOG_LEVEL = os.environ.get("CLOWDER_LOG", None)
 
 
 class Log:
@@ -26,12 +26,12 @@ class Log:
         logging.addLevelName(Log.VERBOSE, 'VERBOSE')
         self.logger = logging.getLogger(self.logger_name)
 
-        self.level = logging.ERROR
-        # environment = os.environ
-        # if PRINT_DEBUG_OUTPUT:
-        #     self.level = logging.DEBUG
-        # else:
-        #     self.level = logging.ERROR
+        if LOG_LEVEL is None or LOG_LEVEL is 'VERBOSE':
+            self.level = self.VERBOSE
+        elif LOG_LEVEL is 'DEBUG':
+            self.level = logging.DEBUG
+        else:
+            self.level = logging.ERROR
 
     @property
     def level(self) -> int:
@@ -53,11 +53,11 @@ class Log:
         if self.logger.level <= self.VERBOSE:
             self._log(self.VERBOSE, message, error)
 
-    def _log(self, level: int, message: Optional[str], error: Optional[BaseException]) -> None:  # noqa
+    def _log(self, level: int, message: Optional[str], error: Optional[BaseException] = None) -> None:  # noqa
         if message is not None:
-            CONSOLE.log(message.strip())
+            CONSOLE.stderr(message.strip())
         if error is not None:
-            CONSOLE.log(CONSOLE.pretty_traceback)
+            CONSOLE.stderr(CONSOLE.pretty_traceback)
 
 
 LOG: Log = Log()

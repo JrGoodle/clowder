@@ -12,7 +12,6 @@ from pathlib import Path
 import clowder.util.formatting as fmt
 from clowder.console import CONSOLE
 from clowder.error import ClowderError, ClowderErrorType
-from clowder.logging import LOG
 
 
 def symlink_clowder_yaml(source: Path, target: Path) -> None:
@@ -36,9 +35,8 @@ def symlink_clowder_yaml(source: Path, target: Path) -> None:
         fd = os.open(path, os.O_DIRECTORY)
         os.symlink(source, target, dir_fd=fd)
         os.close(fd)
-    except OSError as err:
-        LOG.debug('Failed symlink file', err)
-        CONSOLE.print(fmt.error_failed_symlink_file(str(target), str(source)))
+    except OSError:
+        CONSOLE.stderr(fmt.error_failed_symlink_file(str(target), str(source)))
         raise
 
 
@@ -87,11 +85,10 @@ def make_dir(directory: Path) -> None:
         try:
             os.makedirs(str(directory))
         except OSError as err:
-            LOG.debug('Failed to create directory', err)
             if err.errno == errno.EEXIST:
-                CONSOLE.print(fmt.error_directory_exists(str(directory)))
+                CONSOLE.stderr(fmt.error_directory_exists(str(directory)))
             else:
-                CONSOLE.print(fmt.error_failed_create_directory(str(directory)))
+                CONSOLE.stderr(fmt.error_failed_create_directory(str(directory)))
             raise
 
 
@@ -104,7 +101,6 @@ def remove_directory(dir_path: Path) -> None:
 
     try:
         shutil.rmtree(dir_path)
-    except shutil.Error as err:
-        LOG.debug('Failed to remove directory', err)
-        CONSOLE.print(fmt.error_failed_remove_directory(str(dir_path)))
+    except shutil.Error:
+        CONSOLE.stderr(fmt.error_failed_remove_directory(str(dir_path)))
         raise

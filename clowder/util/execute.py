@@ -11,8 +11,6 @@ from typing import List, Optional, Union
 
 import clowder.util.formatting as fmt
 from clowder.console import CONSOLE
-from clowder.error import ClowderError, ClowderErrorType
-from clowder.logging import LOG
 
 
 def execute_command(command: Union[str, List[str]], path: Path,
@@ -41,9 +39,8 @@ def execute_command(command: Union[str, List[str]], path: Path,
 
     try:
         subprocess.run(cmd, shell=True, env=cmd_env, cwd=str(path), stdout=pipe, stderr=pipe, check=True)
-    except subprocess.CalledProcessError as err:
-        LOG.debug('Subprocess run failed', err)
-        CONSOLE.print(fmt.error_command_failed(cmd))
+    except subprocess.CalledProcessError:
+        CONSOLE.stderr(fmt.error_command_failed(cmd))
         raise
 
 

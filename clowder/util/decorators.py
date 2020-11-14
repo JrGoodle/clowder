@@ -53,8 +53,7 @@ def print_clowder_name(func):
         """Wrapper"""
 
         if CLOWDER_CONTROLLER.name is not None:
-            CONSOLE.print(fmt.clowder_name(CLOWDER_CONTROLLER.name))
-            CONSOLE.print()
+            CONSOLE.stdout(f'{fmt.clowder_name(CLOWDER_CONTROLLER.name)}\n')
         return func(*args, **kwargs)
 
     return wrapper

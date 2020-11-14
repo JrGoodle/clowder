@@ -45,7 +45,7 @@ def stash(args) -> None:
     """Clowder stash command private implementation"""
 
     if not any([p.is_dirty() for p in CLOWDER_CONTROLLER.projects]):
-        CONSOLE.print(' - No changes to stash')
+        CONSOLE.stdout(' - No changes to stash')
         return
 
     config = Config(CLOWDER_CONTROLLER.name, CLOWDER_CONTROLLER.project_choices)
@@ -53,5 +53,5 @@ def stash(args) -> None:
     projects = filter_projects(CLOWDER_CONTROLLER.projects, projects)
 
     for project in projects:
-        CONSOLE.print(project.status())
+        CONSOLE.stdout(project.status())
         project.stash()

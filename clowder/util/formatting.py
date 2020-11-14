@@ -968,7 +968,7 @@ def version_options_help_message(message: str, versions: Tuple[str, ...]) -> str
         size = os.get_terminal_size()
         terminal_width = size.columns
     except OSError as err:
-        LOG.verbose('Failed to get terminal size', err)
+        LOG.debug('Failed to get terminal size', err)
         terminal_width = 80
 
     def column_entry(choices, length, line):

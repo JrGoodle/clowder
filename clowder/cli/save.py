@@ -69,5 +69,5 @@ def save(args) -> None:
         raise ClowderError(ClowderErrorType.VERSION_ALREADY_EXISTS,
                            fmt.error_save_version_exists(version_name, yaml_file))
 
-    CONSOLE.print(fmt.save_version_message(version_name, yml_file))
+    CONSOLE.stdout(fmt.save_version_message(version_name, yml_file))
     save_yaml_file(CLOWDER_CONTROLLER.get_yaml(resolved=True), yml_file)

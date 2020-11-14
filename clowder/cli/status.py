@@ -60,7 +60,7 @@ def status(args) -> None:
     padding = len(max(projects_output, key=len))
 
     for project in projects:
-        CONSOLE.print(project.status(padding=padding))
+        CONSOLE.stdout(project.status(padding=padding))
 
 
 @network_connection_required
@@ -72,8 +72,8 @@ def _fetch_projects(projects: Tuple[ResolvedProject, ...]) -> None:
 
     clowder_repo.print_status(fetch=True)
 
-    CONSOLE.print(' - Fetch upstream changes for projects\n')
+    CONSOLE.stdout(' - Fetch upstream changes for projects\n')
     for project in projects:
-        CONSOLE.print(project.status())
+        CONSOLE.stdout(project.status())
         project.fetch_all()
-    CONSOLE.print()
+    CONSOLE.stdout()

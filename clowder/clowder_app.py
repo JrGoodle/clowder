@@ -28,7 +28,7 @@ from clowder.logging import LOG
 #         if message is not None:
 #             message = f"{message}\n"
 #         else:
-#             CONSOLE.print()
+#             CONSOLE.stdout()
 #         argparse.ArgumentParser.exit(self, status, message)
 
 
@@ -76,9 +76,8 @@ def create_parsers() -> argparse.ArgumentParser:
         cmd.add_stash_parser(subparsers)
         cmd.add_status_parser(subparsers)
         cmd.add_yaml_parser(subparsers)
-    except Exception as err:
-        LOG.error('Failed to create parser', err)
-        CONSOLE.print(fmt.error_failed_create_parser())
+    except Exception:
+        LOG.error(fmt.error_failed_create_parser())
         raise
     else:
         return clowder_parser
@@ -87,7 +86,7 @@ def create_parsers() -> argparse.ArgumentParser:
 def main() -> None:
     """Clowder command CLI main function"""
 
-    CONSOLE.print()
+    CONSOLE.stdout()
     try:
         parser = create_parsers()
         argcomplete.autocomplete(parser)
@@ -101,18 +100,18 @@ def main() -> None:
         exit(err.error_type.value)
     except SystemExit as err:
         if err.code == 0:
-            CONSOLE.print()
+            CONSOLE.stdout()
             exit()
         LOG.error(error=err)
         exit(err.code)
-    except KeyboardInterrupt as err:
+    except KeyboardInterrupt:
         LOG.error('** KeyboardInterrupt **')
         exit(ClowderErrorType.USER_INTERRUPT.value)
     except Exception as err:
         LOG.error(error=err)
         exit(ClowderErrorType.UNKNOWN.value)
     else:
-        CONSOLE.print()
+        CONSOLE.stdout()
 
 
 if __name__ == '__main__':

@@ -73,17 +73,15 @@ class Config(object):
         except ClowderError as err:
             if raise_exceptions:
                 raise err
-            LOG.debug('Failed to load clowder config file', err)
+            CONSOLE.stderr('Failed to load clowder config file')
             self.error: Optional[Exception] = err
-            CONSOLE.print(fmt.warning_invalid_config_file(ENVIRONMENT.clowder_config_yaml))
-            CONSOLE.print()
+            CONSOLE.stderr(fmt.warning_invalid_config_file(ENVIRONMENT.clowder_config_yaml))
         except Exception as err:
             if raise_exceptions:
                 raise err
-            LOG.debug('Failed to load clowder config file', err)
+            CONSOLE.stderr('Failed to load clowder config file')
             self.error: Optional[Exception] = err
-            CONSOLE.print(fmt.warning_invalid_config_file(ENVIRONMENT.clowder_config_yaml))
-            CONSOLE.print()
+            CONSOLE.stderr(fmt.warning_invalid_config_file(ENVIRONMENT.clowder_config_yaml))
         finally:
             # If current clowder exists, return
             if self.current_clowder_config is not None:
@@ -190,5 +188,5 @@ class Config(object):
             self.clowder_configs: Tuple[ClowderConfig, ...] = ()
             self.current_clowder_config: Optional[ClowderConfig] = None
             LOG.debug('Failed to load clowder config', err)
-            CONSOLE.print(fmt.error_invalid_config_file(ENVIRONMENT.clowder_config_yaml))
+            LOG.debug(fmt.error_invalid_config_file(ENVIRONMENT.clowder_config_yaml))
             raise

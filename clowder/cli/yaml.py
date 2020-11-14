@@ -38,7 +38,7 @@ def yaml(args) -> None:
     if args.resolved:
         validate_project_statuses(CLOWDER_CONTROLLER.projects, allow_missing_repo=False)
         output = yaml_string(CLOWDER_CONTROLLER.get_yaml(resolved=True)).rstrip()
-        CONSOLE.print(output)
+        CONSOLE.stdout(output)
     else:
         output = yaml_string(CLOWDER_CONTROLLER.get_yaml()).rstrip()
-        CONSOLE.print(output)
+        CONSOLE.stdout(output)

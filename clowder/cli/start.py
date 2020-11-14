@@ -76,5 +76,5 @@ def _start_branches(args, tracking: bool) -> None:
 
     validate_project_statuses(projects)
     for project in projects:
-        CONSOLE.print(project.status())
+        CONSOLE.stdout(project.status())
         project.start(args.branch[0], tracking)

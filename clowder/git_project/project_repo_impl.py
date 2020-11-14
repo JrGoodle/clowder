@@ -7,6 +7,7 @@
 import errno
 import os
 from pathlib import Path
+from subprocess import CalledProcessError
 from typing import Dict, Optional
 
 from git import GitError, Remote, Repo, Tag
@@ -55,7 +56,7 @@ class ProjectRepoImpl(GitRepo):
         """
 
         if self._is_branch_checked_out(branch):
-            CONSOLE.print(' - Branch ' + fmt.ref_string(branch) + ' already checked out')
+            CONSOLE.stdout(' - Branch ' + fmt.ref_string(branch) + ' already checked out')
         else:
             self._checkout_branch_local(branch)
 
@@ -69,19 +70,18 @@ class ProjectRepoImpl(GitRepo):
 
         branch_output = fmt.ref_string(branch)
         try:
-            CONSOLE.print(f' - Checkout branch {branch_output}')
+            CONSOLE.stdout(f' - Checkout branch {branch_output}')
             default_branch = self.repo.heads[branch]
             default_branch.checkout()
-        except GitError as err:
-            LOG.debug('Git error', err)
+        except GitError:
             if remove_dir:
                 # TODO: Handle possible exceptions
                 remove_directory(self.repo_path)
             message = f'{fmt.ERROR} Failed to checkout branch {branch_output}'
-            CONSOLE.print(self._format_error_message(message))
+            CONSOLE.stderr(self._format_error_message(message))
             raise
-        except Exception as err:
-            LOG.debug('Failed to checkout branch', err)
+        except BaseException:
+            CONSOLE.stderr('Failed to checkout branch')
             if remove_dir:
                 # TODO: Handle possible exceptions
                 remove_directory(self.repo_path)
@@ -122,19 +122,18 @@ class ProjectRepoImpl(GitRepo):
         self._remote(remote, remove_dir=True)
         self.fetch(remote, depth=depth, ref=commit, remove_dir=True)
 
-        CONSOLE.print(' - Checkout commit ' + commit_output)
+        CONSOLE.stdout(' - Checkout commit ' + commit_output)
         try:
             self.repo.git.checkout(commit)
-        except GitError as err:
-            LOG.debug('Git error', err)
+        except GitError:
             # TODO: Handle possible exceptions
             remove_directory(self.repo_path)
             message = f'{fmt.ERROR} Failed to checkout commit {commit_output}'
             message = self._format_error_message(message)
-            CONSOLE.print(message)
+            CONSOLE.stderr(message)
             raise
-        except Exception as err:
-            LOG.debug('Failed to checkout commit', err)
+        except BaseException:
+            CONSOLE.stderr('Failed to checkout commit')
             # TODO: Handle possible exceptions
             remove_directory(self.repo_path)
             raise
@@ -155,19 +154,18 @@ class ProjectRepoImpl(GitRepo):
 
         tag_output = fmt.ref_string(tag)
         try:
-            CONSOLE.print(' - Checkout tag ' + tag_output)
+            CONSOLE.stdout(' - Checkout tag ' + tag_output)
             self.repo.git.checkout(remote_tag)
-        except GitError as err:
-            LOG.debug('Git error', err)
+        except GitError:
             if remove_dir:
                 # TODO: Handle possible exceptions
                 remove_directory(self.repo_path)
             message = f'{fmt.ERROR} Failed to checkout tag {tag_output}'
             message = self._format_error_message(message)
-            CONSOLE.print(message)
+            CONSOLE.stderr(message)
             raise
-        except Exception as err:
-            LOG.debug('Failed to checkout tag', err)
+        except BaseException:
+            CONSOLE.stderr('Failed to checkout tag')
             if remove_dir:
                 # TODO: Handle possible exceptions
                 remove_directory(self.repo_path)
@@ -183,15 +181,14 @@ class ProjectRepoImpl(GitRepo):
         commit_output = fmt.ref_string(sha)
         try:
             if self.repo.head.commit.hexsha == sha:
-                CONSOLE.print(' - On correct commit')
+                CONSOLE.stdout(' - On correct commit')
                 return
-            CONSOLE.print(f' - Checkout commit {commit_output}')
+            CONSOLE.stdout(f' - Checkout commit {commit_output}')
             self.repo.git.checkout(sha)
-        except GitError as err:
-            LOG.debug('Git error', err)
+        except GitError:
             message = f'{fmt.ERROR} Failed to checkout commit {commit_output}'
             message = self._format_error_message(message)
-            CONSOLE.print(message)
+            CONSOLE.stderr(message)
             raise
 
     def _checkout_tag(self, tag: str) -> None:
@@ -205,22 +202,21 @@ class ProjectRepoImpl(GitRepo):
         if tag not in self.repo.tags:
             message = f'{fmt.ERROR} No existing tag {tag_output}'
             message = self._format_error_message(message)
-            CONSOLE.print(message)
-            raise
+            CONSOLE.stderr(message)
+            raise ClowderError(ClowderErrorType.UNKNOWN, message)
 
         try:
             same_commit = self.repo.head.commit == self.repo.tags[tag].commit
             is_detached = self.repo.head.is_detached
             if same_commit and is_detached:
-                CONSOLE.print(' - On correct commit for tag')
+                CONSOLE.stdout(' - On correct commit for tag')
                 return
-            CONSOLE.print(f' - Checkout tag {tag_output}')
+            CONSOLE.stdout(f' - Checkout tag {tag_output}')
             self.repo.git.checkout(f'refs/tags/{tag}')
-        except (GitError, ValueError) as err:
-            LOG.debug('Git error', err)
+        except (GitError, ValueError):
             message = f'{fmt.ERROR} Failed to checkout tag {tag_output}'
             message = self._format_error_message(message)
-            CONSOLE.print(message)
+            CONSOLE.stderr(message)
             raise
 
     def _compare_remote_url(self, remote: str, url: str) -> None:
@@ -237,8 +233,8 @@ class ProjectRepoImpl(GitRepo):
             actual_url = self._remote_get_url(remote)
             message = fmt.error_remote_already_exists(remote, url, actual_url)
             message = self._format_error_message(message)
-            CONSOLE.print(message)
-            raise
+            CONSOLE.stderr(message)
+            raise ClowderError(ClowderErrorType.UNKNOWN, message)
 
     def _create_branch_local(self, branch: str) -> None:
         """Create local branch
@@ -249,13 +245,12 @@ class ProjectRepoImpl(GitRepo):
 
         branch_output = fmt.ref_string(branch)
         try:
-            CONSOLE.print(f' - Create branch {branch_output}')
+            CONSOLE.stdout(f' - Create branch {branch_output}')
             self.repo.create_head(branch)
-        except GitError as err:
-            LOG.debug('Git error', err)
+        except GitError:
             message = f'{fmt.ERROR} Failed to create branch {branch_output}'
             message = self._format_error_message(message)
-            CONSOLE.print(message)
+            CONSOLE.stderr(message)
             raise
 
     def _create_branch_local_tracking(self, branch: str, remote: str, depth: int,
@@ -276,18 +271,17 @@ class ProjectRepoImpl(GitRepo):
             self.fetch(remote, depth=depth, ref=branch, remove_dir=remove_dir)
 
         try:
-            CONSOLE.print(f' - Create branch {branch_output}')
+            CONSOLE.stdout(f' - Create branch {branch_output}')
             self.repo.create_head(branch, origin.refs[branch])
-        except (GitError, IndexError) as err:
-            LOG.debug('Git error', err)
+        except (GitError, IndexError):
             if remove_dir:
                 remove_directory(self.repo_path)
             message = f'{fmt.ERROR} Failed to create branch {branch_output}'
             message = self._format_error_message(message)
-            CONSOLE.print(message)
+            CONSOLE.stderr(message)
             raise
-        except Exception as err:
-            LOG.debug('Failed to create branch', err)
+        except BaseException:
+            CONSOLE.stderr('Failed to create branch')
             if remove_dir:
                 # TODO: Handle possible exceptions
                 remove_directory(self.repo_path)
@@ -313,14 +307,13 @@ class ProjectRepoImpl(GitRepo):
             return
 
         try:
-            CONSOLE.print(f' - Push remote branch {branch_output}')
+            CONSOLE.stdout(f' - Push remote branch {branch_output}')
             self.repo.git.push(remote, branch)
             self._set_tracking_branch(remote, branch)
-        except GitError as err:
-            LOG.debug('Git error', err)
+        except GitError:
             message = f'{fmt.ERROR} Failed to push remote branch {branch_output}'
             message = self._format_error_message(message)
-            CONSOLE.print(message)
+            CONSOLE.stderr(message)
             raise
 
     def _create_remote(self, remote: str, url: str, remove_dir: bool = False) -> None:
@@ -338,19 +331,18 @@ class ProjectRepoImpl(GitRepo):
 
         remote_output = fmt.remote_string(remote)
         try:
-            CONSOLE.print(f' - Create remote {remote_output}')
+            CONSOLE.stdout(f' - Create remote {remote_output}')
             self.repo.create_remote(remote, url)
             return
-        except GitError as err:
-            LOG.debug('Git error', err)
+        except GitError:
             if remove_dir:
                 remove_directory(self.repo_path)
             message = f'{fmt.ERROR} Failed to create remote {remote_output}'
             message = self._format_error_message(message)
-            CONSOLE.print(message)
+            CONSOLE.stderr(message)
             raise
-        except Exception as err:
-            LOG.debug('Failed to create remote', err)
+        except BaseException:
+            CONSOLE.stderr('Failed to create remote')
             if remove_dir:
                 # TODO: Handle possible exceptions
                 remove_directory(self.repo_path)
@@ -368,11 +360,10 @@ class ProjectRepoImpl(GitRepo):
 
         try:
             return self.repo.git.log('-1', '--format=%H', '--before=' + timestamp, ref)
-        except GitError as err:
-            LOG.debug('Git error', err)
+        except GitError:
             message = f'{fmt.ERROR} Failed to find revision from timestamp'
             message = self._format_error_message(message)
-            CONSOLE.print(message)
+            CONSOLE.stderr(message)
             raise
 
     def _find_rev_by_timestamp_author(self, timestamp: str, author: str, ref: str) -> str:
@@ -388,11 +379,10 @@ class ProjectRepoImpl(GitRepo):
 
         try:
             return self.repo.git.log('-1', '--format=%H', '--before=' + timestamp, '--author', author, ref)
-        except GitError as err:
-            LOG.debug('Git error', err)
+        except GitError:
             message = f'{fmt.ERROR} Failed to find revision from timestamp by author'
             message = self._format_error_message(message)
-            CONSOLE.print(message)
+            CONSOLE.stderr(message)
             raise
 
     def _get_remote_tag(self, tag: str, remote: str, depth: int = 0,
@@ -414,20 +404,18 @@ class ProjectRepoImpl(GitRepo):
 
         try:
             return self.repo.tags[tag]
-        except (GitError, IndexError) as err:
-            LOG.debug('Git error', err)
+        except (GitError, IndexError):
             message = f'{fmt.ERROR} No existing tag {tag_output}'
             if remove_dir:
                 # TODO: Handle possible exceptions raised here
                 remove_directory(self.repo_path)
                 message = self._format_error_message(message)
-                CONSOLE.print(message)
+                CONSOLE.stderr(message)
                 raise
-            if self._print_output:
-                CONSOLE.print(message)
+            CONSOLE.stderr(message)
             return None
-        except Exception as err:
-            LOG.debug('Failed to get tag', err)
+        except BaseException:
+            CONSOLE.stderr('Failed to get tag')
             if remove_dir:
                 # TODO: Handle possible exceptions raised here
                 remove_directory(self.repo_path)
@@ -446,7 +434,7 @@ class ProjectRepoImpl(GitRepo):
             return
 
         try:
-            CONSOLE.print(f' - Initialize repo at {fmt.path_string(str(self.repo_path))}')
+            CONSOLE.stdout(f' - Initialize repo at {fmt.path_string(str(self.repo_path))}')
             if not self.repo_path.is_dir():
                 try:
                     os.makedirs(str(self.repo_path))
@@ -455,16 +443,15 @@ class ProjectRepoImpl(GitRepo):
                     if err.errno != errno.EEXIST:
                         raise
             self.repo = Repo.init(self.repo_path)
-        except GitError as err:
-            LOG.debug('Git error', err)
+        except GitError:
             # TODO: Handle possible exceptions
             remove_directory(self.repo_path)
             message = f'{fmt.ERROR} Failed to initialize repository'
             message = self._format_error_message(message)
-            CONSOLE.print(message)
+            CONSOLE.stderr(message)
             raise
-        except Exception as err:
-            LOG.debug('Failed to initialize repository', err)
+        except BaseException:
+            CONSOLE.stderr('Failed to initialize repository')
             remove_directory(self.repo_path)
             raise
 
@@ -477,13 +464,12 @@ class ProjectRepoImpl(GitRepo):
         :raise ClowderError:
         """
 
-        try:
-            default_branch = self.repo.heads[branch]
-            is_detached = self.repo.head.is_detached
-            same_branch = self.repo.head.ref == default_branch
-            return not is_detached and same_branch
-        except (GitError, TypeError):
+        default_branch = self.repo.heads.get(branch, None)
+        if default_branch is None:
             return False
+        is_detached = self.repo.head.is_detached
+        same_branch = self.repo.head.ref == default_branch
+        return not is_detached and same_branch
 
     def _is_tracking_branch(self, branch: str) -> bool:
         """Check if branch is a tracking branch
@@ -499,11 +485,10 @@ class ProjectRepoImpl(GitRepo):
             local_branch = self.repo.heads[branch]
             tracking_branch = local_branch.tracking_branch()
             return True if tracking_branch else False
-        except GitError as err:
-            LOG.debug('Git error', err)
+        except GitError:
             message = f'{fmt.ERROR} No existing branch {branch_output}'
             message = self._format_error_message(message)
-            CONSOLE.print(message)
+            CONSOLE.stderr(message)
             raise
 
     def _print_existing_remote_branch_message(self, branch: str) -> None:
@@ -516,14 +501,13 @@ class ProjectRepoImpl(GitRepo):
         branch_output = fmt.ref_string(branch)
         try:
             self.repo.git.config('--get', 'branch.' + branch + '.merge')
-        except GitError as err:
-            LOG.debug('Git error', err)
+        except GitError:
             message = f'{fmt.ERROR} Remote branch {branch_output} already exists'
             message = self._format_error_message(message)
-            CONSOLE.print(message)
+            CONSOLE.stderr(message)
             raise
         else:
-            CONSOLE.print(f' - Tracking branch {branch_output} already exists')
+            CONSOLE.stdout(f' - Tracking branch {branch_output} already exists')
 
     @not_detached
     def _pull(self, remote: str, branch: str) -> None:
@@ -536,14 +520,13 @@ class ProjectRepoImpl(GitRepo):
 
         branch_output = fmt.ref_string(branch)
         remote_output = fmt.remote_string(remote)
-        CONSOLE.print(f' - Pull from {remote_output} {branch_output}')
+        CONSOLE.stdout(f' - Pull from {remote_output} {branch_output}')
         try:
-            execute_command(f"git pull {remote} {branch}", self.repo_path, print_output=self._print_output)
-        except ClowderError as err:
-            LOG.debug('Failed to pull', err)
+            execute_command(f"git pull {remote} {branch}", self.repo_path)
+        except ClowderError:
             message = f'{fmt.ERROR} Failed to pull from {remote_output} {branch_output}'
             message = self._format_error_message(message)
-            CONSOLE.print(message)
+            CONSOLE.stderr(message)
             raise
 
     @not_detached
@@ -557,15 +540,14 @@ class ProjectRepoImpl(GitRepo):
 
         branch_output = fmt.ref_string(branch)
         remote_output = fmt.remote_string(remote)
-        CONSOLE.print(f' - Rebase onto {remote_output} {branch_output}')
+        CONSOLE.stdout(f' - Rebase onto {remote_output} {branch_output}')
         try:
-            execute_command(f"git pull --rebase {remote} refs/heads/{branch}:refs/remotes/{remote}/heads/{branch}",
-                            self.repo_path, print_output=self._print_output)
-        except ClowderError as err:
-            LOG.debug('Failed pull with rebase', err)
+            command = f"git pull --rebase {remote} refs/heads/{branch}:refs/remotes/{remote}/heads/{branch}"
+            execute_command(command, self.repo_path)
+        except CalledProcessError:
             message = f'{fmt.ERROR} Failed to rebase onto {remote_output} {branch_output}'
             message = self._format_error_message(message)
-            CONSOLE.print(message)
+            CONSOLE.stderr(message)
             raise
 
     def _remote(self, remote: str, remove_dir: bool = False) -> Remote:
@@ -581,14 +563,13 @@ class ProjectRepoImpl(GitRepo):
         remote_output = fmt.remote_string(remote)
         try:
             return self.repo.remotes[remote]
-        except GitError as err:
-            LOG.debug('Git error', err)
+        except GitError:
             if remove_dir:
                 # TODO: Handle possible exceptions raised here
                 remove_directory(self.repo_path)
             message = f'{fmt.ERROR} No existing remote {remote_output}'
             message = self._format_error_message(message)
-            CONSOLE.print(message)
+            CONSOLE.stderr(message)
             raise
 
     def _remote_get_url(self, remote: str) -> str:
@@ -611,14 +592,13 @@ class ProjectRepoImpl(GitRepo):
 
         remote_output_f = fmt.remote_string(remote_from)
         remote_output_t = fmt.remote_string(remote_to)
-        CONSOLE.print(f' - Rename remote {remote_output_f} to {remote_output_t}')
+        CONSOLE.stdout(f' - Rename remote {remote_output_f} to {remote_output_t}')
         try:
             self.repo.git.remote('rename', remote_from, remote_to)
-        except GitError as err:
-            LOG.debug('Git error', err)
+        except GitError:
             message = f'{fmt.ERROR} Failed to rename remote from {remote_output_f} to {remote_output_t}'
             message = self._format_error_message(message)
-            CONSOLE.print(message)
+            CONSOLE.stderr(message)
             raise
 
     def _set_tracking_branch(self, remote: str, branch: str, remove_dir: bool = False) -> None:
@@ -636,19 +616,18 @@ class ProjectRepoImpl(GitRepo):
         try:
             local_branch = self.repo.heads[branch]
             remote_branch = origin.refs[branch]
-            CONSOLE.print(f' - Set tracking branch {branch_output} -> {remote_output} {branch_output}')
+            CONSOLE.stdout(f' - Set tracking branch {branch_output} -> {remote_output} {branch_output}')
             local_branch.set_tracking_branch(remote_branch)
-        except GitError as err:
-            LOG.debug('Git error', err)
+        except GitError:
             if remove_dir:
                 # TODO: Handle possible exceptions raised here
                 remove_directory(self.repo_path)
             message = f' - Failed to set tracking branch {branch_output}'
             message = self._format_error_message(message)
-            CONSOLE.print(message)
+            CONSOLE.stderr(message)
             raise
-        except Exception as err:
-            LOG.debug('Failed to set tracking branch', err)
+        except BaseException:
+            CONSOLE.stderr('Failed to set tracking branch')
             if remove_dir:
                 remove_directory(self.repo_path)
             raise
@@ -692,7 +671,7 @@ class ProjectRepoImpl(GitRepo):
         :raise ClowderError:
         """
 
-        CONSOLE.print(" - Update git config")
+        CONSOLE.stdout(" - Update git config")
         for key, value in config.items():
             self.git_config_unset_all_local(key)
             self.git_config_add_local(key, value)

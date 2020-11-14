@@ -26,11 +26,11 @@ def forall(projects: Tuple[ResolvedProject, ...], jobs: int, command: str, ignor
     :param bool ignore_errors: Whether to exit if command returns a non-zero exit code
     """
 
-    CONSOLE.print(' - Run forall commands in parallel\n')
+    CONSOLE.stdout(' - Run forall commands in parallel\n')
     for project in projects:
-        CONSOLE.print(project.status())
+        CONSOLE.stdout(project.status())
         if not project.full_path.is_dir():
-            CONSOLE.print(fmt.red(" - Project missing"))
+            CONSOLE.stdout(fmt.red(" - Project missing"))
 
     forall_func = partial(run_parallel, jobs, projects, 'run', command=command, ignore_errors=ignore_errors)
     trio.run(forall_func)
@@ -48,7 +48,7 @@ def herd(projects: Tuple[ResolvedProject, ...], jobs: int, branch: Optional[str]
     :param bool rebase: Whether to use rebase instead of pulling latest changes
     """
 
-    CONSOLE.print(' - Herd projects in parallel\n')
+    CONSOLE.stdout(' - Herd projects in parallel\n')
     CLOWDER_CONTROLLER.validate_print_output(projects)
 
     run_func = partial(run_parallel, jobs, projects, 'herd', branch=branch, tag=tag, depth=depth, rebase=rebase)
@@ -63,7 +63,7 @@ def reset(projects: Tuple[ResolvedProject, ...], jobs: int, timestamp_project: O
     :param Optional[str] timestamp_project: Reference project to checkout other project timestamps relative to
     """
 
-    CONSOLE.print(' - Reset projects in parallel\n')
+    CONSOLE.stdout(' - Reset projects in parallel\n')
     CLOWDER_CONTROLLER.validate_print_output(projects)
 
     timestamp = None

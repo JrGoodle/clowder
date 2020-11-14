@@ -5,14 +5,13 @@
 """
 
 from pathlib import Path
+from subprocess import CalledProcessError
 from typing import Optional
 
 from git import GitError
 
 import clowder.util.formatting as fmt
 from clowder.console import CONSOLE
-from clowder.error import ClowderError, ClowderErrorType
-from clowder.logging import LOG
 from clowder.util.execute import execute_command
 
 from .project_repo import GitConfig, ProjectRepo
@@ -51,13 +50,13 @@ class ProjectRepoRecursive(ProjectRepo):
 
         super().clean(args=args)
 
-        CONSOLE.print(' - Clean submodules recursively')
+        CONSOLE.stdout(' - Clean submodules recursively')
         self._submodules_clean()
 
-        CONSOLE.print(' - Reset submodules recursively')
+        CONSOLE.stdout(' - Reset submodules recursively')
         self._submodules_reset()
 
-        CONSOLE.print(' - Update submodules recursively')
+        CONSOLE.stdout(' - Update submodules recursively')
         self._submodules_update()
 
     def has_submodules(self) -> bool:
@@ -128,7 +127,7 @@ class ProjectRepoRecursive(ProjectRepo):
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
         """
 
-        CONSOLE.print(' - Recursively update and init submodules')
+        CONSOLE.stdout(' - Recursively update and init submodules')
 
         if depth == 0:
             command = f"git submodule update --init --recursive"
@@ -136,12 +135,11 @@ class ProjectRepoRecursive(ProjectRepo):
             command = f"git submodule update --init --recursive --depth {depth}"
 
         try:
-            execute_command(command, self.repo_path, print_output=self._print_output)
-        except ClowderError as err:
-            LOG.debug('Failed to update submodules', err)
+            execute_command(command, self.repo_path)
+        except CalledProcessError:
             message = f'{fmt.ERROR} Failed to update submodules'
             message = self._format_error_message(message)
-            CONSOLE.print(message)
+            CONSOLE.stderr(message)
             raise
 
     def validate_repo(self, allow_missing_repo: bool = True) -> bool:
@@ -175,10 +173,9 @@ class ProjectRepoRecursive(ProjectRepo):
 
         try:
             self.repo.git.submodule(*args)
-        except (GitError, ValueError) as err:
-            LOG.debug('Git error', err)
+        except (GitError, ValueError):
             message = self._format_error_message(error_msg)
-            CONSOLE.print(message)
+            CONSOLE.stderr(message)
             raise
 
     def _submodules_reset(self) -> None:

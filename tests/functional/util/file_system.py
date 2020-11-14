@@ -4,19 +4,15 @@ import os
 import shutil
 from pathlib import Path
 
-from clowder.console import CONSOLE
 
 def is_directory_empty(path: Path) -> bool:
     if path.exists() and path.is_dir():
         if not os.listdir(path):
-            CONSOLE.print("Directory is empty")
             return True
         else:
-            CONSOLE.print("Directory is not empty")
             return False
     else:
-        CONSOLE.print("Given Directory don't exists")
-        raise Exception
+        raise Exception(f"Directory at {path} doesn't exist")
 
 
 def create_file(path: Path, contents: str) -> None:

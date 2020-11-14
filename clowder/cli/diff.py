@@ -49,5 +49,5 @@ def diff(args) -> None:
     projects = filter_projects(CLOWDER_CONTROLLER.projects, projects)
 
     for project in projects:
-        CONSOLE.print(project.status())
+        CONSOLE.stdout(project.status())
         project.diff()

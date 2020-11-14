@@ -10,7 +10,6 @@ import clowder.clowder_repo as clowder_repo
 import clowder.util.formatting as fmt
 from clowder.console import CONSOLE
 from clowder.environment import ENVIRONMENT
-from clowder.error import ClowderError, ClowderErrorType
 from clowder.logging import LOG
 from clowder.util.connectivity import network_connection_required
 
@@ -42,11 +41,11 @@ def init(args) -> None:
             clowder_repo_dir.rmdir()
         except OSError as err:
             LOG.debug('Failed to remove existing .clowder directory', err)
-            CONSOLE.print(fmt.error_clowder_already_initialized())
+            CONSOLE.stderr(fmt.error_clowder_already_initialized())
             raise
 
     url_output = fmt.green(args.url)
-    CONSOLE.print(f"Create clowder repo from {url_output}\n")
+    CONSOLE.stdout(f"Create clowder repo from {url_output}\n")
     if args.branch is None:
         branch = 'master'
     else:

@@ -36,7 +36,7 @@ def project_repo_exists(func):
 
         instance = args[0]
         if not Path(instance.full_path / '.git').is_dir():
-            CONSOLE.print("[red] - Project missing[/red]")
+            CONSOLE.stdout("[red] - Project missing[/red]")
             return
         return func(*args, **kwargs)
 
@@ -193,10 +193,10 @@ class ResolvedProject:
         if local:
             repo.print_local_branches()
         if remote:
-            CONSOLE.print(fmt.upstream_string(self.name))
+            CONSOLE.stdout(fmt.upstream_string(self.name))
             repo.print_remote_branches()
 
-            CONSOLE.print(fmt.upstream_string(self.upstream.name))
+            CONSOLE.stdout(fmt.upstream_string(self.upstream.name))
             # Modify repo to prefer upstream
             repo.default_ref = self.upstream.ref
             repo.remote = self.upstream.remote
@@ -325,7 +325,7 @@ class ResolvedProject:
         repo = self._repo(self.git_settings.recursive, parallel=parallel)
 
         if self.upstream is None:
-            CONSOLE.print(self.status())
+            CONSOLE.stdout(self.status())
 
             if branch:
                 repo.herd_branch(self._url(), branch, depth=herd_depth,
@@ -340,10 +340,10 @@ class ResolvedProject:
 
             return
 
-        CONSOLE.print(self.status())
+        CONSOLE.stdout(self.status())
         repo.configure_remotes(self.remote, self._url(), self.upstream.remote, self.upstream.url())
 
-        # CONSOLE.print(fmt.upstream_string(self.name))
+        # CONSOLE.stdout(fmt.upstream_string(self.name))
         if branch:
             repo.herd_branch(self._url(), branch, depth=herd_depth, rebase=rebase,
                              config=self.git_settings.get_processed_config())
@@ -356,7 +356,7 @@ class ResolvedProject:
 
         self._pull_lfs(repo)
 
-        CONSOLE.print(fmt.upstream_string(self.upstream.name))
+        CONSOLE.stdout(fmt.upstream_string(self.upstream.name))
 
         # Modify repo to prefer upstream
         repo.default_ref = self.upstream.ref
@@ -389,7 +389,7 @@ class ResolvedProject:
         """Print existence validation message for project"""
 
         if not existing_git_repository(self.full_path):
-            CONSOLE.print(self.status())
+            CONSOLE.stdout(self.status())
 
     def print_validation(self, allow_missing_repo: bool = True) -> None:
         """Print validation message for project
@@ -398,7 +398,7 @@ class ResolvedProject:
         """
 
         if not self.is_valid(allow_missing_repo=allow_missing_repo):
-            CONSOLE.print(self.status())
+            CONSOLE.stdout(self.status())
             repo = ProjectRepo(self.full_path, self.remote, self.ref)
             repo.print_validation()
 
@@ -422,7 +422,7 @@ class ResolvedProject:
             if repo.existing_remote_branch(branch, self.remote):
                 repo.prune_branch_remote(branch, self.remote)
 
-    def reset(self, timestamp: Optional[str] = None, parallel: bool = False) -> None:
+    def reset(self, timestamp: Optional[str] = None, parallel: bool = False) -> None:  # noqa
         """Reset project branch to upstream or checkout tag/sha as detached HEAD
 
         :param Optional[str] timestamp: Reset to commit at timestamp, or closest previous commit
@@ -440,9 +440,9 @@ class ResolvedProject:
         if self.upstream is None:
             repo.reset(depth=self.git_settings.depth)
         else:
-            CONSOLE.print(self.upstream.status())
+            CONSOLE.stdout(self.upstream.status())
             repo.configure_remotes(self.remote, self._url(), self.upstream.remote, self.upstream.url())
-            CONSOLE.print(fmt.upstream_string(self.name))
+            CONSOLE.stdout(fmt.upstream_string(self.name))
             repo.reset()
 
         self._pull_lfs(repo)
@@ -456,7 +456,7 @@ class ResolvedProject:
         """
 
         if not parallel and not existing_git_repository(self.full_path):
-            CONSOLE.print(fmt.red(" - Project missing\n"))
+            CONSOLE.stdout(fmt.red(" - Project missing\n"))
             return
 
         forall_env = {'CLOWDER_PATH': ENVIRONMENT.clowder_dir,
@@ -539,7 +539,7 @@ class ResolvedProject:
             repo = ProjectRepo(self.full_path, self.remote, self.ref)
             repo.stash()
         else:
-            CONSOLE.print(" - No changes to stash")
+            CONSOLE.stdout(" - No changes to stash")
 
     def _pull_lfs(self, repo: ProjectRepo) -> None:
         """Check if git lfs is installed and if not install them
@@ -577,7 +577,7 @@ class ResolvedProject:
         :raise ClowderError:
         """
 
-        CONSOLE.print(fmt.command(command))
+        CONSOLE.stdout(fmt.command(command))
         try:
             execute_forall_command(command, self.full_path, env)
         except ClowderError as err:

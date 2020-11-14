@@ -14,7 +14,6 @@ import clowder.util.formatting as fmt
 from clowder.console import CONSOLE
 from clowder.environment import ENVIRONMENT
 from clowder.error import ClowderError, ClowderErrorType
-from clowder.logging import LOG
 
 from .file_system import (
     symlink_clowder_yaml,
@@ -45,7 +44,7 @@ def link_clowder_yaml_default(clowder_dir: Path) -> None:
 
     target_file = clowder_dir / relative_source_file.name
 
-    CONSOLE.print(f" - Symlink {fmt.path_string(Path(target_file.name))} -> {fmt.path_string(relative_source_file)}")
+    CONSOLE.stdout(f" - Symlink {fmt.path_string(Path(target_file.name))} -> {fmt.path_string(relative_source_file)}")
 
     symlink_clowder_yaml(relative_source_file, target_file)
 
@@ -60,12 +59,11 @@ def link_clowder_yaml_default(clowder_dir: Path) -> None:
             existing_file = file
 
     if existing_file is not None and existing_file.is_symlink():
-        CONSOLE.print(f" - Remove previously existing file {fmt.path_string(str(existing_file))}")
+        CONSOLE.stdout(f" - Remove previously existing file {fmt.path_string(str(existing_file))}")
         try:
             remove_file(existing_file)
-        except OSError as err:
-            LOG.debug('Failed to remove file', err)
-            CONSOLE.print(fmt.error_failed_remove_file(str(existing_file)))
+        except OSError:
+            CONSOLE.stderr(fmt.error_failed_remove_file(str(existing_file)))
             raise
 
 
@@ -92,7 +90,7 @@ def link_clowder_yaml_version(clowder_dir: Path, version: str) -> None:
 
     target_file = clowder_dir / fmt.remove_prefix(relative_source_file.name, f"{version}.")
 
-    CONSOLE.print(f" - Symlink {fmt.path_string(Path(target_file.name))} -> {fmt.path_string(relative_source_file)}")
+    CONSOLE.stdout(f" - Symlink {fmt.path_string(Path(target_file.name))} -> {fmt.path_string(relative_source_file)}")
 
     symlink_clowder_yaml(relative_source_file, target_file)
 
@@ -107,12 +105,11 @@ def link_clowder_yaml_version(clowder_dir: Path, version: str) -> None:
             existing_file = file
 
     if existing_file is not None and existing_file.is_symlink():
-        CONSOLE.print(f" - Remove previously existing file {fmt.path_string(str(existing_file))}")
+        CONSOLE.stdout(f" - Remove previously existing file {fmt.path_string(str(existing_file))}")
         try:
             remove_file(existing_file)
-        except OSError as err:
-            LOG.debug('Failed to remove file', err)
-            CONSOLE.print(fmt.error_failed_remove_file(str(existing_file)))
+        except OSError:
+            CONSOLE.stderr(fmt.error_failed_remove_file(str(existing_file)))
             raise
 
 
@@ -134,9 +131,8 @@ def load_yaml_file(yaml_file: Path, relative_dir: Path) -> dict:
                 raise ClowderError(ClowderErrorType.YAML_EMPTY_FILE,
                                    fmt.error_empty_yaml(yaml_file, config_yaml))
             return parsed_yaml
-    except pyyaml.YAMLError as err:
-        LOG.debug('Failed to load yaml file', err)
-        CONSOLE.print(fmt.error_open_file(str(yaml_file)))
+    except pyyaml.YAMLError:
+        CONSOLE.stderr(fmt.error_open_file(str(yaml_file)))
         raise
 
 
@@ -159,13 +155,12 @@ def save_yaml_file(yaml_output: dict, yaml_file: Path) -> None:
         raise ClowderError(ClowderErrorType.FILE_EXISTS,
                            fmt.error_file_exists(str(yaml_file)))
 
-    CONSOLE.print(f" - Save yaml to file at {fmt.path_string(str(yaml_file))}")
+    CONSOLE.stdout(f" - Save yaml to file at {fmt.path_string(str(yaml_file))}")
     try:
         with yaml_file.open(mode="w") as raw_file:
             pyyaml.safe_dump(yaml_output, raw_file, default_flow_style=False, indent=2, sort_keys=False)
-    except pyyaml.YAMLError as err:
-        LOG.debug('Failed to save yaml file', err)
-        CONSOLE.print(fmt.error_save_file(str(yaml_file)))
+    except pyyaml.YAMLError:
+        CONSOLE.stderr(fmt.error_save_file(str(yaml_file)))
         raise
 
 
@@ -180,11 +175,10 @@ def validate_yaml_file(parsed_yaml: dict, file_path: Path) -> None:
     json_schema = _load_json_schema(file_path.stem)
     try:
         jsonschema.validate(parsed_yaml, json_schema)
-    except jsonschema.exceptions.ValidationError as err:
-        LOG.debug('Yaml json schema validation failed', err)
-        message = f"{fmt.error_invalid_yaml_file(file_path.name)}\n" \
-                  f"{fmt.ERROR} {err.message}"
-        CONSOLE.print(message)
+    except jsonschema.exceptions.ValidationError:
+        message = 'Yaml json schema validation failed' \
+                  f"{fmt.error_invalid_yaml_file(file_path.name)}\n"
+        CONSOLE.stderr(message)
         raise
 
 
@@ -199,9 +193,8 @@ def yaml_string(yaml_output: dict) -> str:
 
     try:
         return pyyaml.safe_dump(yaml_output, default_flow_style=False, indent=2, sort_keys=False)
-    except pyyaml.YAMLError as err:
-        LOG.debug('Failed to dump yaml file contents', err)
-        CONSOLE.print(f"{fmt.ERROR} Failed to dump yaml file contents",)
+    except pyyaml.YAMLError:
+        CONSOLE.stderr(f"Failed to dump yaml file contents",)
         raise
 
 
@@ -251,10 +244,9 @@ def _print_yaml(yaml_file: Path) -> None:
     try:
         with yaml_file.open() as raw_file:
             contents = raw_file.read()
-            CONSOLE.print(contents.rstrip())
-    except IOError as err:
-        LOG.debug('Failed to open file', err)
-        CONSOLE.print(fmt.error_open_file(str(yaml_file)))
+            CONSOLE.stdout(contents.rstrip())
+    except IOError:
+        CONSOLE.stderr(fmt.error_open_file(str(yaml_file)))
         raise
 
 
@@ -266,6 +258,6 @@ def _print_yaml_path(yaml_file: Path) -> None:
 
     if yaml_file.is_symlink():
         path = yaml_file.resolve().relative_to(ENVIRONMENT.clowder_dir)
-        CONSOLE.print(_format_yaml_symlink(Path(yaml_file.name), path))
+        CONSOLE.stdout(_format_yaml_symlink(Path(yaml_file.name), path))
     else:
-        CONSOLE.print(_format_yaml_file(yaml_file))
+        CONSOLE.stdout(_format_yaml_file(yaml_file))

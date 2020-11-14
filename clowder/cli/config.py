@@ -129,11 +129,11 @@ def add_config_set_parser(subparsers: argparse._SubParsersAction) -> None:  # no
 def config_clear_all(args) -> None:  # noqa
     """Clowder config clear all command entry point"""
 
-    CONSOLE.print(' - Clear all config values')
+    CONSOLE.stdout(' - Clear all config values')
     config = _config()
     config.current_clowder_config.clear()
     config.save()
-    CONSOLE.print()
+    CONSOLE.stdout()
     config.current_clowder_config.print_configuration()
 
 
@@ -142,11 +142,11 @@ def config_clear_all(args) -> None:  # noqa
 def config_clear_jobs(args) -> None:  # noqa
     """Clowder config clear jobs command entry point"""
 
-    CONSOLE.print(' - Clear jobs config value')
+    CONSOLE.stdout(' - Clear jobs config value')
     config = _config()
     config.current_clowder_config.jobs = None
     config.save()
-    CONSOLE.print()
+    CONSOLE.stdout()
     config.current_clowder_config.print_configuration()
 
 
@@ -155,11 +155,11 @@ def config_clear_jobs(args) -> None:  # noqa
 def config_clear_projects(args) -> None:  # noqa
     """Clowder config clear projects command entry point"""
 
-    CONSOLE.print(' - Clear projects config value')
+    CONSOLE.stdout(' - Clear projects config value')
     config = _config()
     config.current_clowder_config.projects = None
     config.save()
-    CONSOLE.print()
+    CONSOLE.stdout()
     config.current_clowder_config.print_configuration()
 
 
@@ -168,11 +168,11 @@ def config_clear_projects(args) -> None:  # noqa
 def config_clear_protocol(args) -> None:  # noqa
     """Clowder config clear protocol command entry point"""
 
-    CONSOLE.print(' - Clear protocol config value')
+    CONSOLE.stdout(' - Clear protocol config value')
     config = _config()
     config.current_clowder_config.protocol = None
     config.save()
-    CONSOLE.print()
+    CONSOLE.stdout()
     config.current_clowder_config.print_configuration()
 
 
@@ -181,11 +181,11 @@ def config_clear_protocol(args) -> None:  # noqa
 def config_clear_rebase(args) -> None:  # noqa
     """Clowder config clear rebase command entry point"""
 
-    CONSOLE.print(' - Clear rebase config value')
+    CONSOLE.stdout(' - Clear rebase config value')
     config = _config()
     config.current_clowder_config.rebase = None
     config.save()
-    CONSOLE.print()
+    CONSOLE.stdout()
     config.current_clowder_config.print_configuration()
 
 
@@ -215,11 +215,11 @@ def config_help_set(args):  # noqa
 def config_set_jobs(args) -> None:  # noqa
     """Clowder config set jobs command entry point"""
 
-    CONSOLE.print(' - Set jobs config value')
+    CONSOLE.stdout(' - Set jobs config value')
     config = _config()
     config.current_clowder_config.jobs = args.jobs[0]
     config.save()
-    CONSOLE.print()
+    CONSOLE.stdout()
     config.current_clowder_config.print_configuration()
 
 
@@ -228,11 +228,11 @@ def config_set_jobs(args) -> None:  # noqa
 def config_set_projects(args) -> None:
     """Clowder config set projects command entry point"""
 
-    CONSOLE.print(' - Set projects config value')
+    CONSOLE.stdout(' - Set projects config value')
     config = _config()
     config.current_clowder_config.projects = tuple(args.projects)
     config.save()
-    CONSOLE.print()
+    CONSOLE.stdout()
     config.current_clowder_config.print_configuration()
 
 
@@ -241,11 +241,11 @@ def config_set_projects(args) -> None:
 def config_set_protocol(args) -> None:
     """Clowder config set protocol command entry point"""
 
-    CONSOLE.print(' - Set protocol config value')
+    CONSOLE.stdout(' - Set protocol config value')
     config = _config()
     config.current_clowder_config.protocol = args.protocol[0]
     config.save()
-    CONSOLE.print()
+    CONSOLE.stdout()
     config.current_clowder_config.print_configuration()
 
 
@@ -254,11 +254,11 @@ def config_set_protocol(args) -> None:
 def config_set_rebase(args) -> None:  # noqa
     """Clowder config set rebase command entry point"""
 
-    CONSOLE.print(' - Set rebase config value')
+    CONSOLE.stdout(' - Set rebase config value')
     config = _config()
     config.current_clowder_config.rebase = True
     config.save()
-    CONSOLE.print()
+    CONSOLE.stdout()
     config.current_clowder_config.print_configuration()
 
 
@@ -275,5 +275,5 @@ def _config(print_newline: bool = True) -> Config:
         return Config(CLOWDER_CONTROLLER.name, CLOWDER_CONTROLLER.project_choices, raise_exceptions=True)
     except:  # noqa
         if print_newline:
-            CONSOLE.print()
+            CONSOLE.stderr()
         raise

@@ -44,7 +44,7 @@ class ClowderController(object):
         try:
             if ENVIRONMENT.clowder_yaml is None:
                 err = ClowderError(ClowderErrorType.YAML_MISSING_FILE, fmt.error_missing_clowder_yaml())
-                LOG.debug('Failed to initialize clowder controller', err)
+                LOG.debug('Failed to initialize clowder controller')
                 raise err
             yaml = load_yaml_file(ENVIRONMENT.clowder_yaml, ENVIRONMENT.clowder_dir)
             validate_yaml_file(yaml, ENVIRONMENT.clowder_yaml)
@@ -93,11 +93,11 @@ class ClowderController(object):
             self.projects = tuple(sorted(resolved_projects, key=lambda p: p.name))
             self._update_properties()
         except ClowderError as err:
-            LOG.debug('Failed to init clowder controller', err)
+            LOG.debug('Failed to init clowder controller')
             self.error = err
             self._initialize_properties()
         except (AttributeError, KeyError, TypeError) as err:
-            LOG.debug('Failed to load clowder yaml', err)
+            LOG.debug('Failed to load clowder yaml')
             self.error = err
             self._initialize_properties()
 
@@ -108,11 +108,7 @@ class ClowderController(object):
         :rtype: Tuple[str, ...]
         """
 
-        try:
-            return tuple(sorted([p.name for p in self.projects if p.upstream is not None]))
-        except TypeError as err:
-            LOG.debug('Failed to get upstream project names', err)
-            return ()
+        return tuple(sorted([p.name for p in self.projects if p.upstream is not None]))
 
     @staticmethod
     def get_projects_output(projects: Tuple[ResolvedProject, ...]) -> Tuple[str, ...]:
@@ -123,11 +119,7 @@ class ClowderController(object):
         :rtype: Tuple[str, ...]
         """
 
-        try:
-            return tuple(sorted([p.formatted_project_output() for p in projects]))
-        except TypeError as err:
-            LOG.debug('Failed to get projects output', err)
-            return ()
+        return tuple(sorted([p.formatted_project_output() for p in projects]))
 
     def get_timestamp(self, timestamp_project: str) -> str:
         """Return timestamp for project
@@ -161,7 +153,7 @@ class ClowderController(object):
                 return project.sha(short=short)
 
         err = ClowderError(ClowderErrorType.PROJECT_NOT_FOUND, fmt.error_project_not_found())
-        LOG.debug(f"Project with id {project_id} not found", err)
+        LOG.debug(f"Project with id {project_id} not found")
         raise err
 
     def get_yaml(self, resolved: bool = False) -> dict:
@@ -206,12 +198,8 @@ class ClowderController(object):
         :rtype: Tuple
         """
 
-        try:
-            upstream_names = [str(p.upstream.name) for p in self.projects if p.upstream is not None]
-            return tuple(sorted(set(upstream_names)))
-        except TypeError as err:
-            LOG.debug('Failed to get upstream names', err)
-            return ()
+        upstream_names = [str(p.upstream.name) for p in self.projects if p.upstream is not None]
+        return tuple(sorted(set(upstream_names)))
 
     @staticmethod
     def _get_project_upstream_names(project_names, upstream_names) -> Tuple[str, ...]:
@@ -230,12 +218,8 @@ class ClowderController(object):
         :rtype: Tuple
         """
 
-        try:
-            project_names = [str(p.name) for p in self.projects]
-            return tuple(sorted(set(project_names)))
-        except TypeError as err:
-            LOG.debug('Failed to get project names', err)
-            return ()
+        project_names = [str(p.name) for p in self.projects]
+        return tuple(sorted(set(project_names)))
 
     def _get_project_paths(self) -> Tuple[str, ...]:
         """Returns all project paths for current clowder yaml file
@@ -244,12 +228,8 @@ class ClowderController(object):
         :rtype: Tuple
         """
 
-        try:
-            paths = [str(p.path) for p in self.projects]
-            return tuple(sorted(set(paths)))
-        except TypeError as err:
-            LOG.debug('Failed to get project paths', err)
-            return ()
+        paths = [str(p.path) for p in self.projects]
+        return tuple(sorted(set(paths)))
 
     def _get_project_groups(self, project_upstream_names, project_paths) -> Tuple[str, ...]:
         """Returns all project group names for current clowder yaml file
@@ -258,13 +238,9 @@ class ClowderController(object):
         :rtype: Tuple
         """
 
-        try:
-            groups = [g for p in self.projects for g in p.groups]
-            groups = [g for g in groups if g not in project_upstream_names and g not in project_paths]
-            return tuple(sorted(set(groups)))
-        except TypeError as err:
-            LOG.debug('Failed to get group names', err)
-            return ()
+        groups = [g for p in self.projects for g in p.groups]
+        groups = [g for g in groups if g not in project_upstream_names and g not in project_paths]
+        return tuple(sorted(set(groups)))
 
     def _get_project_choices(self) -> Tuple[str, ...]:
         """Returns all project choices current clowder yaml file
@@ -273,12 +249,8 @@ class ClowderController(object):
         :rtype: Tuple
         """
 
-        try:
-            names = [g for p in self.projects for g in p.groups]
-            return tuple(sorted(set(names)))
-        except TypeError as err:
-            LOG.debug('Failed to get project choices', err)
-            return ()
+        names = [g for p in self.projects for g in p.groups]
+        return tuple(sorted(set(names)))
 
     def _get_project_choices_with_default(self) -> Tuple[str, ...]:
         """Returns all project choices current clowder yaml file
@@ -287,13 +259,9 @@ class ClowderController(object):
         :rtype: Tuple
         """
 
-        try:
-            names = [g for p in self.projects for g in p.groups]
-            names.append('default')
-            return tuple(sorted(set(names)))
-        except TypeError as err:
-            LOG.debug('Failed to get project choices with default', err)
-            return ()
+        names = [g for p in self.projects for g in p.groups]
+        names.append('default')
+        return tuple(sorted(set(names)))
 
     def _initialize_properties(self) -> None:
         """Initialize all properties"""
