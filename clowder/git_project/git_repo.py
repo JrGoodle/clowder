@@ -141,10 +141,11 @@ class GitRepo(object):
         :raise ClowderError:
         """
 
-        origin = self.repo.remotes.get(remote, None)
-        if origin is None:
+        try:
+            origin = self.repo.remotes[remote]
+            return branch in origin.refs
+        except (GitError, IndexError):
             return False
-        return branch in origin.refs
 
     def has_local_branch(self, branch: str) -> bool:
         """Check if local branch exists
