@@ -29,8 +29,8 @@ cucumber_dir: Path = make_dir(build_dir / f"cucumber")
 def run_command(cmd: str, cwd: Path = path, check: bool = True) -> CompletedProcess:
     cmd_env = os.environ.copy()
     print(f"command: {cmd}")
-    command = f'. script/import.sh && {cmd}'
-    completed_process = subprocess.run(command, cwd=cwd, shell=True, env=cmd_env)
+    # command = f'. script/import.sh && {cmd}'
+    completed_process = subprocess.run(cmd, cwd=cwd, shell=True, env=cmd_env)
     if check:
         assert completed_process.returncode == 0
     return completed_process
