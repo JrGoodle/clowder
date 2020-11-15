@@ -70,8 +70,6 @@ def test(command_options: str, label: Optional[str] = None) -> None:
     # Base command
     command = f"pipenv run pytest --basetemp={temp_dir} -vv"
 
-    # command += ' --exitfirst'
-
     # Add extra arguments
     command += command_options
 
@@ -122,7 +120,9 @@ def create_parser() -> argparse.ArgumentParser:
                                  help='number of groups to split tests into')),
         (['--label', '-l'], dict(nargs=1, metavar='<label>', default=None,
                                  help='label to append to results')),
-        (['--parallel', '-p'], dict(action='store_true', help='run tests in parallel'))
+        (['--parallel', '-p'], dict(action='store_true', help='run tests in parallel')),
+        (['--exitfirst', '-x'], dict(action='store_true', help='exit on first failure')),
+        (['--verbose', '-v'], dict(action='store_true', help='Print all output'))
     ]
     add_parser_arguments(parser, arguments)
 
@@ -152,8 +152,12 @@ def main() -> None:
 
         if args.parallel:
             options += ' -n auto'
-        # else:
-        #     options += ' -s'
+
+        if args.verbose:
+            options += ' -s'
+
+        if args.exitfirst:
+            options += ' --exitfirst'
 
         groups = None if args.groups is None else args.groups[0]
         group = None if args.group is None else args.group[0]
