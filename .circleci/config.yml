@@ -101,7 +101,8 @@ commands:
                   --markers "<<parameters.markers>>" \
                   --label <<parameters.label>> \
                   --groups <<parameters.groups>> \
-                  --group <<parameters.group>>
+                  --group <<parameters.group>> \
+                  --verbose
       - run:
           name: Update build files ownership
           command: sudo chown -R ${USER} .
@@ -175,7 +176,8 @@ commands:
                   --markers "<<parameters.markers>>" \
                   --label <<parameters.label>> \
                   --groups <<parameters.groups>> \
-                  --group <<parameters.group>>
+                  --group <<parameters.group>> \
+                  --verbose
       - when:
           condition: <<parameters.groups>>
           steps:
