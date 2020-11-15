@@ -8,24 +8,29 @@ import subprocess
 from subprocess import CompletedProcess, STDOUT, PIPE
 from pathlib import Path
 
+import clowder.util.formatting as fmt
+from clowder.console import CONSOLE
+
 
 class CommandResults:
     def __init__(self):
         self.completed_processes: List[CompletedProcess] = []
 
 
-def run_command(command: str, path: Path) -> CompletedProcess:
-    print(f"TEST: {command}")
+def run_command(command: str, path: Path, check: bool = False) -> CompletedProcess:
     cmd_env = os.environ.copy()
     cmd_env.update({"CLOWDER_DEBUG": "true"})
-
     processed_cmd = _process_clowder_commands(command)
+    CONSOLE.stdout(fmt.bold(f'> {processed_cmd}'))
 
     # TODO: Replace universal_newlines with text when Python 3.6 support is dropped
-    print(processed_cmd)
-    result = subprocess.run(processed_cmd, cwd=path, shell=True,
-                            stdout=PIPE, stderr=STDOUT, universal_newlines=True, env=cmd_env)
+    result = subprocess.run(processed_cmd, cwd=path, shell=True, stdout=PIPE, stderr=STDOUT,
+                            universal_newlines=True, env=cmd_env)
+
     print(result.stdout)
+    CONSOLE.stdout(f'Return code: {result.returncode}\n')
+    if check:
+        assert result.returncode == 0
     return result
 
 

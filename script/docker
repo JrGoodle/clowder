@@ -10,9 +10,11 @@ from subprocess import CompletedProcess
 repo_path = Path(__file__).resolve().parent.parent.resolve()
 
 
-def run_command(cmd: str, cwd: Path = repo_path) -> CompletedProcess:
+def run_command(cmd: str, cwd: Path = repo_path, check: bool = True) -> CompletedProcess:
     cmd_env = os.environ.copy()
     completed_process = subprocess.run(cmd, cwd=cwd, shell=True, env=cmd_env)
+    if check:
+        assert completed_process.returncode == 0
     return completed_process
 
 
@@ -30,17 +32,14 @@ def start_docker() -> None:
         with config_file.open('w') as f:
             f.write(config_contents)
 
-    result = run_command("docker-compose up --build -d")
-    assert result.returncode == 0
-    result = run_command("docker-compose exec clowder pipenv install --dev -e .")
-    assert result.returncode == 0
+    run_command("docker-compose up --build -d")
+    run_command("docker-compose exec clowder pipenv install --dev -e .")
 
     shutil.rmtree(build_ssh_dir, ignore_errors=True)
 
 
 def stop_docker() -> None:
-    result = run_command("docker-compose rm --force --stop clowder")
-    assert result.returncode == 0
+    run_command("docker-compose rm --force --stop clowder")
 
 
 def main() -> None:

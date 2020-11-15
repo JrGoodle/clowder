@@ -40,7 +40,11 @@ def yellow(output: Output) -> str:
 
 def escape(output: Output) -> str:
     import rich.markup as markup
-    return f'[yellow]{markup.escape(output)}[/yellow]'
+    return markup.escape(output)
+
+
+def underline(output: Output) -> str:
+    return f'[underline]{output}[/underline]'
 
 
 # TODO: Update to return list of all duplicates found

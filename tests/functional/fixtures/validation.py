@@ -14,8 +14,7 @@ from tests.functional.util import ScenarioInfo
 def validation_init(tmp_path: Path, validation_init_session: Path, scenario_info: ScenarioInfo) -> None:
     path = validation_init_session / scenario_info.current_validation_test
     util.copy_directory(path, to=tmp_path)
-    result = util.run_command("clowder link", tmp_path)
-    assert result.returncode == 0
+    util.run_command("clowder link", tmp_path, check=True)
 
 
 @fixture(scope="session")
@@ -29,7 +28,5 @@ def validation_init_herd(tmp_path: Path, validation_init_session: Path,
                          scenario_info: ScenarioInfo) -> None:
     path = validation_init_session / scenario_info.current_validation_test
     util.copy_directory(path, to=tmp_path)
-    result = util.run_command("clowder link", tmp_path)
-    assert result.returncode == 0
-    result = util.run_command("clowder herd", tmp_path)
-    assert result.returncode == 0
+    util.run_command("clowder link", tmp_path, check=True)
+    util.run_command("clowder herd", tmp_path, check=True)

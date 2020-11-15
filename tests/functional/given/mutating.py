@@ -12,19 +12,16 @@ from tests.functional.util import ScenarioInfo
 
 @given(parsers.parse("'{command}' was run"))
 def given_run_clowder_command(tmp_path: Path, command: str) -> None:
-    result = util.run_command(command, tmp_path)
-    assert result.returncode == 0
+    util.run_command(command, tmp_path, check=True)
 
 
 @given(parsers.parse("linked {version} clowder version"))
 def given_did_link_clowder_version(tmp_path: Path, version: str) -> None:
     if "default" == version:
-        result = util.run_command("clowder link", tmp_path)
-        assert result.returncode == 0
+        util.run_command("clowder link", tmp_path, check=True)
         assert util.has_valid_clowder_symlink_default(tmp_path)
     else:
-        result = util.run_command(f"clowder link {version}", tmp_path)
-        assert result.returncode == 0
+        result = util.run_command(f"clowder link {version}", tmp_path, check=True)
         assert util.has_valid_clowder_symlink_version(tmp_path, version)
 
 
@@ -300,8 +297,7 @@ def given_directory_deleted_remote_branch(tmp_path: Path, directory: str, test_b
 def given_directory_deleted_local_test_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
     path = tmp_path / directory
     if util.local_branch_exists(path, test_branch):
-        result = util.delete_local_branch(path, test_branch)
-        assert result.returncode == 0
+        util.delete_local_branch(path, test_branch, check=True)
     assert not util.local_branch_exists(path, test_branch)
 
 
@@ -309,8 +305,7 @@ def given_directory_deleted_local_test_branch(tmp_path: Path, directory: str, te
 def given_directory_deleted_local_branch(tmp_path: Path, directory: str, branch: str) -> None:
     path = tmp_path / directory
     if util.local_branch_exists(path, branch):
-        result = util.delete_local_branch(path, branch)
-        assert result.returncode == 0
+        util.delete_local_branch(path, branch, check=True)
     assert not util.local_branch_exists(path, branch)
 
 
@@ -405,8 +400,7 @@ def given_clowder_repo_invalid_clowder_yml(tmp_path: Path) -> None:
 
     invalid_file = clowder_repo / "clowder.yml"
     util.create_file(invalid_file, "this is invalid")
-    result = util.run_command("clowder link", tmp_path)
-    assert result.returncode == 0
+    util.run_command("clowder link", tmp_path, check=True)
     symlink = util.valid_clowder_symlink(tmp_path)
     assert symlink.is_symlink()
     assert symlink.exists()

@@ -26,11 +26,13 @@ junit_dir: Path = make_dir(build_dir / f"junit")
 cucumber_dir: Path = make_dir(build_dir / f"cucumber")
 
 
-def run_command(cmd: str, cwd: Path = path) -> CompletedProcess:
+def run_command(cmd: str, cwd: Path = path, check: bool = True) -> CompletedProcess:
     cmd_env = os.environ.copy()
     print(f"command: {cmd}")
-    command = f'. script/import.sh; {cmd}'
+    command = f'. script/import.sh && {cmd}'
     completed_process = subprocess.run(command, cwd=cwd, shell=True, env=cmd_env)
+    if check:
+        assert completed_process.returncode == 0
     return completed_process
 
 
@@ -47,20 +49,15 @@ def get_random_alphanumeric_string(length: int) -> str:
 
 
 def report_coverage() -> None:
-    result = run_command(f"coverage combine")
-    assert result.returncode == 0
+    run_command(f"coverage combine")
     xml_file = coverage_dir / "coverage.xml"
-    result = run_command(f"coverage xml -o {xml_file}")
-    assert result.returncode == 0
+    run_command(f"coverage xml -o {xml_file}")
     html_dir = coverage_dir / "html"
-    result = run_command(f"coverage html --directory {html_dir}")
-    assert result.returncode == 0
+    run_command(f"coverage html --directory {html_dir}")
     json_file = coverage_dir / "coverage.json"
-    result = run_command(f"coverage json -o {json_file}")
-    assert result.returncode == 0
+    run_command(f"coverage json -o {json_file}")
     annotate_dir = coverage_dir / "annotate"
-    result = run_command(f"coverage annotate --directory {annotate_dir}")
-    assert result.returncode == 0
+    run_command(f"coverage annotate --directory {annotate_dir}")
     exit()
 
 

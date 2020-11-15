@@ -1,12 +1,12 @@
 """New syntax test file"""
 
 import copy
+from pathlib import Path
+from subprocess import CompletedProcess
 from typing import Dict, List, Optional
 
-from subprocess import CompletedProcess
-from pathlib import Path
-
 from git import Repo
+
 from .command import run_command
 from .file_system import create_file, is_directory_empty
 from .formatting import remove_prefix
@@ -113,10 +113,6 @@ def lfs_hooks_installed(path: Path) -> bool:
     result = run_command("grep -m 1 'git lfs post-merge' '.git/hooks/post-merge'", path)
     results.append(result)
     success = all([r.returncode == 0 for r in results])
-    if not success:
-        for r in results:
-            print(f'Return code: {r.returncode}')
-            print(r.stdout)
     return success
 
 
@@ -169,18 +165,16 @@ def list_git_config(path: Path) -> None:
 
 
 def current_head_commit_sha(path: Path) -> str:
-    result = run_command("git rev-parse HEAD", path)
-    assert result.returncode == 0
+    result = run_command("git rev-parse HEAD", path, check=True)
     stdout: str = result.stdout
     return stdout.strip()
 
 
 def get_branch_commit_sha(path: Path, branch: str, remote: Optional[str] = None) -> str:
     if remote is not None:
-        result = run_command(f"git rev-parse {remote}/{branch}", path)
+        result = run_command(f"git rev-parse {remote}/{branch}", path, check=True)
     else:
-        result = run_command(f"git rev-parse {branch}", path)
-    assert result.returncode == 0
+        result = run_command(f"git rev-parse {branch}", path, check=True)
     stdout: str = result.stdout
     return stdout.strip()
 
@@ -216,8 +210,8 @@ def create_local_branch(path: Path, branch: str) -> CompletedProcess:
     return result
 
 
-def delete_local_branch(path: Path, branch: str) -> CompletedProcess:
-    result = run_command(f"git branch -d {branch}", path)
+def delete_local_branch(path: Path, branch: str, check: bool = False) -> CompletedProcess:
+    result = run_command(f"git branch -d {branch}", path, check=check)
     assert not local_branch_exists(path, branch)
     return result
 
@@ -407,8 +401,7 @@ def get_commit_messages_behind(path: Path, ref: str, count: int = 1) -> List[str
 
 
 def get_commit_message(path: Path, ref: str) -> str:
-    result = run_command(f"git log --format=%B -n 1 {ref}", path)
-    assert result.returncode == 0
+    result = run_command(f"git log --format=%B -n 1 {ref}", path, check=True)
     return result.stdout
 
 
@@ -452,7 +445,6 @@ def set_up_ahead(path: Path, local: str, remote: str, number_commits: int, ) -> 
 
 
 def is_shallow_repo(path: Path) -> bool:
-    result = run_command("git rev-parse --is-shallow-repository", path)
-    assert result.returncode == 0
+    result = run_command("git rev-parse --is-shallow-repository", path, check=True)
     output: str = result.stdout
     return output.strip() == "true"

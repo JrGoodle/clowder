@@ -8,6 +8,7 @@ import sys
 from io import StringIO
 
 import rich.console
+# import rich.markup as markup
 
 from typing import Any, List, Optional
 
@@ -63,6 +64,7 @@ class Console:
         else:
             self._stringio.print_exception()
         output = self._stringio.file.getvalue()
+        # return markup.escape(output)
         return output
 
     @property
