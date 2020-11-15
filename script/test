@@ -150,9 +150,8 @@ def main() -> None:
         options = f" -m '{args.markers[0]}'"
         options += ' --color=yes'
 
-        options += ' -n auto'
-        # if args.parallel:
-        #     options += ' -n auto'
+        if args.parallel:
+            options += ' -n auto'
         # else:
         #     options += ' -s'
 

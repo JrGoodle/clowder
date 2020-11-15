@@ -11,7 +11,6 @@ import clowder.util.formatting as fmt
 from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.config import Config
 from clowder.console import CONSOLE
-from clowder.error import ClowderError
 from clowder.data import ResolvedProject
 from clowder.data.util import (
     project_has_branch,
@@ -120,27 +119,25 @@ def _prune_projects(projects: Tuple[ResolvedProject, ...], branch: str, force: b
     local_branch_exists = project_has_branch(projects, branch, is_remote=False)
     remote_branch_exists = project_has_branch(projects, branch, is_remote=True)
 
-    try:
-        if local and remote:
-            branch_exists = local_branch_exists or remote_branch_exists
-            if not branch_exists:
-                CONSOLE.stdout(' - No local or remote branches to prune')
-            CONSOLE.stdout(' - Prune local and remote branches\n')
+    if local and remote:
+        branch_exists = local_branch_exists or remote_branch_exists
+        if not branch_exists:
+            CONSOLE.stdout(' - No local or remote branches to prune')
             return
-
-        if remote:
-            if not remote_branch_exists:
-                CONSOLE.stdout(' - No remote branches to prune')
-            CONSOLE.stdout(' - Prune remote branches\n')
+        CONSOLE.stdout(' - Prune local and remote branches\n')
+    elif remote:
+        if not remote_branch_exists:
+            CONSOLE.stdout(' - No remote branches to prune')
             return
-
+        CONSOLE.stdout(' - Prune remote branches\n')
+    elif local:
         if not local_branch_exists:
             CONSOLE.stdout(' - No local branches to prune')
+            return
         CONSOLE.stdout(' - Prune local branches\n')
-    except ClowderError:
-        CONSOLE.stderr('Invalid state of project branches')
-        raise
     else:
-        for project in projects:
-            CONSOLE.stdout(project.status())
-            project.prune(branch, force=force, local=local, remote=remote)
+        raise Exception('local and remote are both false, but at least one should be true')
+
+    for project in projects:
+        CONSOLE.stdout(project.status())
+        project.prune(branch, force=force, local=local, remote=remote)
