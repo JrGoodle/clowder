@@ -1,4 +1,4 @@
-@prune @cats @debug
+@prune @cats
 Feature: clowder prune
 
     @help
@@ -75,6 +75,7 @@ Feature: clowder prune
         | mu        | pytest-prune | knead      |
         | duke      | pytest-prune | purr       |
 
+    @debug
     Scenario Outline: prune default existing local branch checked out group not selected
         Given cats example is initialized and herded
         And project at <directory> created local <test_branch>
