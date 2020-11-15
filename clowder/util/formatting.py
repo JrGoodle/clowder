@@ -5,11 +5,10 @@
 """
 
 import math
-import os
 from pathlib import Path
 from typing import List, Optional, Tuple, Union
 
-from clowder.logging import LOG
+from clowder.console import CONSOLE
 
 
 Output = Union[str, Path]
@@ -356,12 +355,7 @@ def version_options_help_message(message: str, versions: Tuple[str, ...]) -> str
             message += f"{v}\n"
         return message
 
-    try:
-        size = os.get_terminal_size()
-        terminal_width = size.columns
-    except OSError as err:
-        LOG.debug('Failed to get terminal size', err)
-        terminal_width = 80
+    terminal_width = CONSOLE.width
 
     def column_entry(choices, length, line):
         if len(choices) > 0 and line < len(choices):

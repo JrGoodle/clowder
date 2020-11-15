@@ -32,17 +32,17 @@ class Console:
         #     print(console.is_dumb_terminal)
         self._error_messages: List[Any] = []
 
-    def stderr(self, output: Any = '') -> None:
-        if self.print_output:
-            self._stderr.log(output)
-        else:
-            self._error_messages.append(output)
-
     def flush_errors(self, quiet: bool = False) -> None:
         if not quiet:
             for message in self._error_messages:
                 self._stderr.log(message)
         self._error_messages = []
+
+    def stderr(self, output: Any = '') -> None:
+        if self.print_output:
+            self._stderr.log(output)
+        else:
+            self._error_messages.append(output)
 
     def stdout(self, output: Any = '') -> None:
         if self.print_output:
@@ -64,6 +64,11 @@ class Console:
             self._stringio.print_exception()
         output = self._stringio.file.getvalue()
         return output
+
+    @property
+    def width(self) -> int:
+        width = self._stdout.width
+        return width
 
 
 CONSOLE: Console = Console()
