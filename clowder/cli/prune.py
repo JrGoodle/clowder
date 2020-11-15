@@ -14,7 +14,7 @@ from clowder.console import CONSOLE
 from clowder.error import ClowderError
 from clowder.data import ResolvedProject
 from clowder.data.util import (
-    existing_branch_projects,
+    project_has_branch,
     filter_projects,
     validate_project_statuses
 )
@@ -117,43 +117,30 @@ def _prune_projects(projects: Tuple[ResolvedProject, ...], branch: str, force: b
     :param bool remote: Delete remote branch
     """
 
-    local_branch_exists = existing_branch_projects(projects, branch, is_remote=False)
-    remote_branch_exists = existing_branch_projects(projects, branch, is_remote=True)
+    local_branch_exists = project_has_branch(projects, branch, is_remote=False)
+    remote_branch_exists = project_has_branch(projects, branch, is_remote=True)
 
     try:
-        _validate_branches(local, remote, local_branch_exists, remote_branch_exists)
+        if local and remote:
+            branch_exists = local_branch_exists or remote_branch_exists
+            if not branch_exists:
+                CONSOLE.stdout(' - No local or remote branches to prune')
+            CONSOLE.stdout(' - Prune local and remote branches\n')
+            return
+
+        if remote:
+            if not remote_branch_exists:
+                CONSOLE.stdout(' - No remote branches to prune')
+            CONSOLE.stdout(' - Prune remote branches\n')
+            return
+
+        if not local_branch_exists:
+            CONSOLE.stdout(' - No local branches to prune')
+        CONSOLE.stdout(' - Prune local branches\n')
     except ClowderError:
-        CONSOLE.stderr('Invalid projects branch state')
+        CONSOLE.stderr('Invalid state of project branches')
         raise
     else:
         for project in projects:
             CONSOLE.stdout(project.status())
             project.prune(branch, force=force, local=local, remote=remote)
-
-
-def _validate_branches(local: bool, remote: bool, local_branch_exists: bool, remote_branch_exists: bool) -> None:
-    """Prune project branches
-
-    :param bool local: Delete local branch
-    :param bool remote: Delete remote branch
-    :param bool local_branch_exists: Whether a local branch exists
-    :param bool remote_branch_exists: Whether a remote branch exists
-    :raise ClowderError:
-    """
-
-    if local and remote:
-        branch_exists = local_branch_exists or remote_branch_exists
-        if not branch_exists:
-            CONSOLE.stdout(' - No local or remote branches to prune')
-        CONSOLE.stdout(' - Prune local and remote branches\n')
-        return
-
-    if remote:
-        if not remote_branch_exists:
-            CONSOLE.stdout(' - No remote branches to prune')
-        CONSOLE.stdout(' - Prune remote branches\n')
-        return
-
-    if not local_branch_exists:
-        CONSOLE.stdout(' - No local branches to prune')
-    CONSOLE.stdout(' - Prune local branches\n')

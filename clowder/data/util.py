@@ -13,7 +13,7 @@ from clowder.error import ClowderError, ClowderErrorType
 from .resolved_project import ResolvedProject
 
 
-def existing_branch_projects(projects: Tuple[ResolvedProject, ...], branch: str, is_remote: bool) -> bool:
+def project_has_branch(projects: Tuple[ResolvedProject, ...], branch: str, is_remote: bool) -> bool:
     """Checks if given branch exists in any project
 
     :param Tuple[ResolvedProject, ...] projects: Projects to check
@@ -23,7 +23,7 @@ def existing_branch_projects(projects: Tuple[ResolvedProject, ...], branch: str,
     :rtype: bool
     """
 
-    return any([p.existing_branch(branch, is_remote=is_remote) for p in projects])
+    return any([p.has_branch(branch, is_remote=is_remote) for p in projects])
 
 
 def filter_projects(projects: Tuple[ResolvedProject, ...],
@@ -40,17 +40,6 @@ def filter_projects(projects: Tuple[ResolvedProject, ...],
     for name in project_names:
         filtered_projects += [p for p in projects if name in p.groups]
     return tuple(sorted(set(filtered_projects), key=lambda project: project.name))
-
-
-def print_parallel_projects_output(projects: Tuple[ResolvedProject, ...]) -> None:
-    """Print output for parallel project command
-
-    :param Tuple[ResolvedProject, ...] projects: Projects to print output for
-    """
-
-    for project in projects:
-        CONSOLE.stdout(project.status())
-        _print_upstream_output(project)
 
 
 def validate_project_statuses(projects: Tuple[ResolvedProject, ...], allow_missing_repo: bool = True) -> None:

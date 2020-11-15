@@ -256,7 +256,7 @@ class ResolvedProject:
 
         self._repo(self.git_settings.recursive).status_verbose()
 
-    def existing_branch(self, branch: str, is_remote: bool) -> bool:
+    def has_branch(self, branch: str, is_remote: bool) -> bool:
         """Check if branch exists
 
         :param str branch: Branch to check for
