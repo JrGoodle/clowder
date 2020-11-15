@@ -18,11 +18,11 @@ class Console:
     def __init__(self):
         self.print_output: bool = True
         self._stdout: rich.console.Console = rich.console.Console(force_terminal=True,
-                                                                  color_system='256',
+                                                                  # color_system='256',
                                                                   width=160)
         self._stderr: rich.console.Console = rich.console.Console(file=sys.stderr,
                                                                   force_terminal=True,
-                                                                  color_system='256',
+                                                                  # color_system='256',
                                                                   width=160)
         self._stringio: rich.console.Console = rich.console.Console(file=StringIO(),
                                                                     width=160)
