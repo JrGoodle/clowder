@@ -92,7 +92,8 @@ commands:
                   --label <<parameters.label>> \
                   --groups <<parameters.groups>> \
                   --group <<parameters.group>> \
-                  --parallel
+                  --parallel \
+                  --exitfirst
       - unless:
           condition: <<parameters.parallel>>
           steps:
@@ -102,7 +103,8 @@ commands:
                   --label <<parameters.label>> \
                   --groups <<parameters.groups>> \
                   --group <<parameters.group>> \
-                  --verbose
+                  --verbose \
+                  --exitfirst
       - run:
           name: Update build files ownership
           command: sudo chown -R ${USER} .
@@ -167,7 +169,8 @@ commands:
                   --label <<parameters.label>> \
                   --groups <<parameters.groups>> \
                   --group <<parameters.group>> \
-                  --parallel
+                  --parallel \
+                  --exitfirst
       - unless:
           condition: <<parameters.parallel>>
           steps:
@@ -177,7 +180,8 @@ commands:
                   --label <<parameters.label>> \
                   --groups <<parameters.groups>> \
                   --group <<parameters.group>> \
-                  --verbose
+                  --verbose \
+                  --exitfirst
       - when:
           condition: <<parameters.groups>>
           steps:

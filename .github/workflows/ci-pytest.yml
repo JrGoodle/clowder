@@ -64,7 +64,7 @@ jobs:
       run: script/cibuild
 
     - name: Run pytest functional tests
-      run: script/test --parallel -m 'not ssh and not offline'
+      run: script/test --parallel --markers 'not ssh and not offline' --exitfirst
 
     - uses: actions/upload-artifact@v2
       with:
