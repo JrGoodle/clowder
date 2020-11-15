@@ -1,4 +1,4 @@
-@prune @cats
+@prune @cats @debug
 Feature: clowder prune
 
     @help

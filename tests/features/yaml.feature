@@ -1,4 +1,4 @@
-@yaml @cats @debug
+@yaml @cats
 Feature: clowder yaml
 
     @help
