@@ -26,8 +26,8 @@ def then_output_matches_contents_of_file(shared_datadir: Path, tmp_path: Path,
 
 
 @then(parsers.parse("file {output_file} matches contents of {test_file} test file"))
-def then_output_matches_contents_of_file(shared_datadir: Path, tmp_path: Path,
-                                         command_results: CommandResults, output_file: str, test_file: str) -> None:
+def then_output_file_matches_contents_of_file(shared_datadir: Path, tmp_path: Path,
+                                              command_results: CommandResults, output_file: str, test_file: str) -> None:
     assert len(command_results.completed_processes) == 1
     result = command_results.completed_processes[0]
     assert result.returncode == 0

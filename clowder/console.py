@@ -23,17 +23,13 @@ class Console:
                                                                   force_terminal=True,
                                                                   color_system='256')
         self._stringio: rich.console.Console = rich.console.Console(file=StringIO())
-        for console in [self._stdout, self._stderr, self._stringio]:
-            print(console)
-            print(console.encoding)
-            print(console.color_system)
-            # if console.color_system is None:
-            #     console.color_system = '256'
-            print(console.width)
-            print(console.is_terminal)
-            # if console.is_terminal is False:
-            #     console.is_terminal = True
-            print(console.is_dumb_terminal)
+        # for console in [self._stdout, self._stderr, self._stringio]:
+        #     CONSOLE.stderr(console)
+        #     print(console.encoding)
+        #     print(console.color_system)
+        #     print(console.width)
+        #     print(console.is_terminal)
+        #     print(console.is_dumb_terminal)
         self._error_messages: List[Any] = []
 
     def stderr(self, output: Any = '') -> None:
