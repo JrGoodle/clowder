@@ -302,7 +302,7 @@ def ref(text: str) -> str:
     :rtype: str
     """
 
-    return magenta(f"[{text}]")
+    return magenta(text)
 
 
 def remote(text: str) -> str:

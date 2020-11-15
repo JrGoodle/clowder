@@ -76,7 +76,7 @@ class GitRepo(object):
         except GitError:
             message = f'Failed to checkout {ref_output}'
             if allow_failure:
-                CONSOLE.stderr(message)
+                CONSOLE.stdout(f' - {message}')
                 return
             CONSOLE.stderr(message)
             raise

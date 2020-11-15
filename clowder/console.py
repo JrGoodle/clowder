@@ -8,7 +8,6 @@ import sys
 from io import StringIO
 
 import rich.console
-# import rich.markup as markup
 
 from typing import Any, List, Optional
 
@@ -19,11 +18,14 @@ class Console:
     def __init__(self):
         self.print_output: bool = True
         self._stdout: rich.console.Console = rich.console.Console(force_terminal=True,
-                                                                  color_system='256')
+                                                                  color_system='256',
+                                                                  width=160)
         self._stderr: rich.console.Console = rich.console.Console(file=sys.stderr,
                                                                   force_terminal=True,
-                                                                  color_system='256')
-        self._stringio: rich.console.Console = rich.console.Console(file=StringIO())
+                                                                  color_system='256',
+                                                                  width=160)
+        self._stringio: rich.console.Console = rich.console.Console(file=StringIO(),
+                                                                    width=160)
         # for console in [self._stdout, self._stderr, self._stringio]:
         #     CONSOLE.stderr(console)
         #     print(console.encoding)
@@ -64,7 +66,6 @@ class Console:
         else:
             self._stringio.print_exception()
         output = self._stringio.file.getvalue()
-        # return markup.escape(output)
         return output
 
     @property

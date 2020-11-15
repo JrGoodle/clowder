@@ -27,8 +27,10 @@ def run_command(command: str, path: Path, check: bool = False) -> CompletedProce
     result = subprocess.run(processed_cmd, cwd=path, shell=True, stdout=PIPE, stderr=STDOUT,
                             universal_newlines=True, env=cmd_env)
 
-    print(result.stdout)
-    CONSOLE.stdout(f'Return code: {result.returncode}\n')
+    output = result.stdout.strip()
+    if output:
+        print(output)
+    CONSOLE.stdout(f'Return code: {result.returncode}')
     if check:
         assert result.returncode == 0
     return result
