@@ -60,8 +60,7 @@ class ProjectRepo(ProjectRepoImpl):
             try:
                 self.repo_path.rmdir()
             except OSError:
-                message = f"Directory already exists at {fmt.path(self.repo_path)}"
-                CONSOLE.stderr(message)
+                CONSOLE.stderr(f"Directory already exists at {fmt.path(self.repo_path)}")
                 raise
 
         if self.repo_path.is_symlink():
@@ -263,16 +262,14 @@ class ProjectRepo(ProjectRepoImpl):
                 CONSOLE.stdout(f' - Checkout ref {ref_output}')
                 self.repo.git.checkout(truncate_ref(self.default_ref))
             except GitError:
-                message = f'Failed to checkout ref {ref_output}'
-                CONSOLE.stderr(message)
+                CONSOLE.stderr(f'Failed to checkout ref {ref_output}')
                 raise
 
         try:
             CONSOLE.stdout(f' - Delete local branch {branch_output}')
             self.repo.delete_head(branch, force=force)
         except GitError:
-            message = f'Failed to delete local branch {branch_output}'
-            CONSOLE.stderr(message)
+            CONSOLE.stderr(f'Failed to delete local branch {branch_output}')
             raise
 
     def prune_branch_remote(self, branch: str, remote: str) -> None:
@@ -292,8 +289,7 @@ class ProjectRepo(ProjectRepoImpl):
             CONSOLE.stdout(f' - Delete remote branch {branch_output}')
             self.repo.git.push(remote, '--delete', branch)
         except GitError:
-            message = f'Failed to delete remote branch {branch_output}'
-            CONSOLE.stderr(message)
+            CONSOLE.stderr(f'Failed to delete remote branch {branch_output}')
             raise
 
     def reset(self, depth: int = 0) -> None:

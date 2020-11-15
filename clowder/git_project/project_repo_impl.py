@@ -124,8 +124,7 @@ class ProjectRepoImpl(GitRepo):
         except GitError:
             # TODO: Handle possible exceptions
             remove_directory(self.repo_path)
-            message = f'Failed to checkout commit {commit_output}'
-            CONSOLE.stderr(message)
+            CONSOLE.stderr(f'Failed to checkout commit {commit_output}')
             raise
         except BaseException:
             CONSOLE.stderr('Failed to checkout commit')
@@ -155,8 +154,7 @@ class ProjectRepoImpl(GitRepo):
             if remove_dir:
                 # TODO: Handle possible exceptions
                 remove_directory(self.repo_path)
-            message = f'Failed to checkout tag {tag_output}'
-            CONSOLE.stderr(message)
+            CONSOLE.stderr(f'Failed to checkout tag {tag_output}')
             raise
         except BaseException:
             CONSOLE.stderr('Failed to checkout tag')
@@ -180,8 +178,7 @@ class ProjectRepoImpl(GitRepo):
             CONSOLE.stdout(f' - Checkout commit {commit_output}')
             self.repo.git.checkout(sha)
         except GitError:
-            message = f'Failed to checkout commit {commit_output}'
-            CONSOLE.stderr(message)
+            CONSOLE.stderr(f'Failed to checkout commit {commit_output}')
             raise
 
     def _checkout_tag(self, tag: str) -> None:
@@ -206,8 +203,7 @@ class ProjectRepoImpl(GitRepo):
             CONSOLE.stdout(f' - Checkout tag {tag_output}')
             self.repo.git.checkout(f'refs/tags/{tag}')
         except (GitError, ValueError):
-            message = f'Failed to checkout tag {tag_output}'
-            CONSOLE.stderr(message)
+            CONSOLE.stderr(f'Failed to checkout tag {tag_output}')
             raise
 
     def _compare_remote_url(self, remote: str, url: str) -> None:
@@ -239,8 +235,7 @@ class ProjectRepoImpl(GitRepo):
             CONSOLE.stdout(f' - Create branch {branch_output}')
             self.repo.create_head(branch)
         except GitError:
-            message = f'Failed to create branch {branch_output}'
-            CONSOLE.stderr(message)
+            CONSOLE.stderr(f'Failed to create branch {branch_output}')
             raise
 
     def _create_branch_local_tracking(self, branch: str, remote: str, depth: int,
@@ -266,8 +261,7 @@ class ProjectRepoImpl(GitRepo):
         except (GitError, IndexError):
             if remove_dir:
                 remove_directory(self.repo_path)
-            message = f'Failed to create branch {branch_output}'
-            CONSOLE.stderr(message)
+            CONSOLE.stderr(f'Failed to create branch {branch_output}')
             raise
         except BaseException:
             CONSOLE.stderr('Failed to create branch')
@@ -300,8 +294,7 @@ class ProjectRepoImpl(GitRepo):
             self.repo.git.push(remote, branch)
             self._set_tracking_branch(remote, branch)
         except GitError:
-            message = f'Failed to push remote branch {branch_output}'
-            CONSOLE.stderr(message)
+            CONSOLE.stderr(f'Failed to push remote branch {branch_output}')
             raise
 
     def _create_remote(self, remote: str, url: str, remove_dir: bool = False) -> None:
@@ -325,8 +318,7 @@ class ProjectRepoImpl(GitRepo):
         except GitError:
             if remove_dir:
                 remove_directory(self.repo_path)
-            message = f'Failed to create remote {remote_output}'
-            CONSOLE.stderr(message)
+            CONSOLE.stderr(f'Failed to create remote {remote_output}')
             raise
         except BaseException:
             CONSOLE.stderr('Failed to create remote')
@@ -348,8 +340,7 @@ class ProjectRepoImpl(GitRepo):
         try:
             return self.repo.git.log('-1', '--format=%H', '--before=' + timestamp, ref)
         except GitError:
-            message = f'Failed to find revision from timestamp'
-            CONSOLE.stderr(message)
+            CONSOLE.stderr('Failed to find revision from timestamp')
             raise
 
     def _find_rev_by_timestamp_author(self, timestamp: str, author: str, ref: str) -> str:
@@ -366,8 +357,7 @@ class ProjectRepoImpl(GitRepo):
         try:
             return self.repo.git.log('-1', '--format=%H', '--before=' + timestamp, '--author', author, ref)
         except GitError:
-            message = f'Failed to find revision from timestamp by author'
-            CONSOLE.stderr(message)
+            CONSOLE.stderr('Failed to find revision from timestamp by author')
             raise
 
     def _get_remote_tag(self, tag: str, remote: str, depth: int = 0,
@@ -430,8 +420,7 @@ class ProjectRepoImpl(GitRepo):
         except GitError:
             # TODO: Handle possible exceptions
             remove_directory(self.repo_path)
-            message = f'Failed to initialize repository'
-            CONSOLE.stderr(message)
+            CONSOLE.stderr('Failed to initialize repository')
             raise
         except BaseException:
             CONSOLE.stderr('Failed to initialize repository')
@@ -470,8 +459,7 @@ class ProjectRepoImpl(GitRepo):
             tracking_branch = local_branch.tracking_branch()
             return True if tracking_branch else False
         except GitError:
-            message = f'No existing branch {branch_output}'
-            CONSOLE.stderr(message)
+            CONSOLE.stderr(f'No existing branch {branch_output}')
             raise
 
     def _print_has_remote_branch_message(self, branch: str) -> None:
@@ -485,8 +473,7 @@ class ProjectRepoImpl(GitRepo):
         try:
             self.repo.git.config('--get', 'branch.' + branch + '.merge')
         except GitError:
-            message = f'Remote branch {branch_output} already exists'
-            CONSOLE.stderr(message)
+            CONSOLE.stderr(f'Remote branch {branch_output} already exists')
             raise
         else:
             CONSOLE.stdout(f' - Tracking branch {branch_output} already exists')
@@ -506,8 +493,7 @@ class ProjectRepoImpl(GitRepo):
         try:
             execute_command(f"git pull {remote} {branch}", self.repo_path)
         except ClowderError:
-            message = f'Failed to pull from {remote_output} {branch_output}'
-            CONSOLE.stderr(message)
+            CONSOLE.stderr(f'Failed to pull from {remote_output} {branch_output}')
             raise
 
     @not_detached
@@ -526,8 +512,7 @@ class ProjectRepoImpl(GitRepo):
             command = f"git pull --rebase {remote} refs/heads/{branch}:refs/remotes/{remote}/heads/{branch}"
             execute_command(command, self.repo_path)
         except CalledProcessError:
-            message = f'Failed to rebase onto {remote_output} {branch_output}'
-            CONSOLE.stderr(message)
+            CONSOLE.stderr(f'Failed to rebase onto {remote_output} {branch_output}')
             raise
 
     def _remote(self, remote: str, remove_dir: bool = False) -> Remote:
@@ -547,8 +532,7 @@ class ProjectRepoImpl(GitRepo):
             if remove_dir:
                 # TODO: Handle possible exceptions raised here
                 remove_directory(self.repo_path)
-            message = f'No existing remote {remote_output}'
-            CONSOLE.stderr(message)
+            CONSOLE.stderr(f'No existing remote {remote_output}')
             raise
 
     def _remote_get_url(self, remote: str) -> str:
@@ -575,8 +559,7 @@ class ProjectRepoImpl(GitRepo):
         try:
             self.repo.git.remote('rename', remote_from, remote_to)
         except GitError:
-            message = f'Failed to rename remote from {remote_output_f} to {remote_output_t}'
-            CONSOLE.stderr(message)
+            CONSOLE.stderr(f'Failed to rename remote from {remote_output_f} to {remote_output_t}')
             raise
 
     def _set_tracking_branch(self, remote: str, branch: str, remove_dir: bool = False) -> None:
@@ -600,8 +583,7 @@ class ProjectRepoImpl(GitRepo):
             if remove_dir:
                 # TODO: Handle possible exceptions raised here
                 remove_directory(self.repo_path)
-            message = f' - Failed to set tracking branch {branch_output}'
-            CONSOLE.stderr(message)
+            CONSOLE.stderr(f' - Failed to set tracking branch {branch_output}')
             raise
         except BaseException:
             CONSOLE.stderr('Failed to set tracking branch')

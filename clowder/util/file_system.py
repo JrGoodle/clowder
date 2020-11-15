@@ -36,8 +36,7 @@ def symlink_clowder_yaml(source: Path, target: Path) -> None:
         os.symlink(source, target, dir_fd=fd)
         os.close(fd)
     except OSError:
-        message = f"Failed to symlink file {fmt.path(target)} -> {fmt.path(source)}"
-        CONSOLE.stderr(message)
+        CONSOLE.stderr(f"Failed to symlink file {fmt.path(target)} -> {fmt.path(source)}")
         raise
 
 
@@ -87,11 +86,9 @@ def make_dir(directory: Path) -> None:
             os.makedirs(str(directory))
         except OSError as err:
             if err.errno == errno.EEXIST:
-                message = f"Directory already exists at {fmt.path(directory)}"
-                CONSOLE.stderr(message)
+                CONSOLE.stderr(f"Directory already exists at {fmt.path(directory)}")
             else:
-                message = f"Failed to create directory {fmt.path(directory)}"
-                CONSOLE.stderr(message)
+                CONSOLE.stderr(f"Failed to create directory {fmt.path(directory)}")
             raise
 
 
@@ -105,6 +102,5 @@ def remove_directory(dir_path: Path) -> None:
     try:
         shutil.rmtree(dir_path)
     except shutil.Error:
-        message = f"Failed to remove directory {fmt.path(dir_path)}"
-        CONSOLE.stderr(message)
+        CONSOLE.stderr(f"Failed to remove directory {fmt.path(dir_path)}")
         raise

@@ -63,8 +63,7 @@ def link_clowder_yaml_default(clowder_dir: Path) -> None:
         try:
             remove_file(existing_file)
         except OSError:
-            message = f"Failed to remove file {fmt.path(existing_file)}"
-            CONSOLE.stderr(message)
+            CONSOLE.stderr(f"Failed to remove file {fmt.path(existing_file)}")
             raise
 
 
@@ -110,8 +109,7 @@ def link_clowder_yaml_version(clowder_dir: Path, version: str) -> None:
         try:
             remove_file(existing_file)
         except OSError:
-            message = f"Failed to remove file {fmt.path(existing_file)}"
-            CONSOLE.stderr(message)
+            CONSOLE.stderr(f"Failed to remove file {fmt.path(existing_file)}")
             raise
 
 
@@ -178,9 +176,7 @@ def validate_yaml_file(parsed_yaml: dict, file_path: Path) -> None:
     try:
         jsonschema.validate(parsed_yaml, json_schema)
     except jsonschema.exceptions.ValidationError:
-        message = 'Yaml json schema validation failed' \
-                  f"{fmt.invalid_yaml(file_path.name)}\n"
-        CONSOLE.stderr(message)
+        CONSOLE.stderr(f'Yaml json schema validation failed {fmt.invalid_yaml(file_path.name)}\n')
         raise
 
 

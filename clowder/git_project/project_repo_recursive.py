@@ -135,8 +135,7 @@ class ProjectRepoRecursive(ProjectRepo):
         try:
             execute_command(command, self.repo_path)
         except CalledProcessError:
-            message = f'Failed to update submodules'
-            CONSOLE.stderr(message)
+            CONSOLE.stderr('Failed to update submodules')
             raise
 
     def validate_repo(self, allow_missing_repo: bool = True) -> bool:
