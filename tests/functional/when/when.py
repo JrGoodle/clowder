@@ -37,13 +37,6 @@ def when_run_command(tmp_path: Path, command: str, command_results: CommandResul
     command_results.completed_processes.append(result)
 
 
-@when(parsers.parse("I run '{command}' without debug output"))
-def when_run_command_no_debug(command: str, command_results: CommandResults, scenario_info: ScenarioInfo) -> None:
-    path = scenario_info.cmd_dir
-    result = util.run_command(command, path, clowder_debug=False)
-    command_results.completed_processes.append(result)
-
-
 @when(parsers.parse("I run '{command_1}' and '{command_2}'"))
 def when_run_command_and_command(command_1: str, command_2: str,
                                  command_results: CommandResults, scenario_info: ScenarioInfo) -> None:

@@ -1,4 +1,4 @@
-@yaml @cats
+@yaml @cats @debug
 Feature: clowder yaml
 
     @help
@@ -22,24 +22,23 @@ Feature: clowder yaml
 
     Scenario: yaml
         Given cats example is initialized and herded
-        When I run 'clowder yaml' without debug output
+        When I run 'clowder yaml | tee output.txt'
         Then the command succeeds
-        And output matches contents of clowder.yml test file
+        And file output.txt matches contents of clowder.yml test file
 
-    @debug
     Scenario: yaml resolved
         Given cats example is initialized and herded
-        When I run 'clowder yaml -r' without debug output
+        When I run 'clowder yaml -r | tee output.txt'
         Then the command succeeds
-        And output matches contents of resolved.clowder.yml test file
+        And file output.txt matches contents of resolved.clowder.yml test file
 
     @subdirectory
     Scenario: yaml subdirectory
         Given cats example is initialized and herded
         When I change to directory black-cats/kishka
-        And I run 'clowder yaml' without debug output
+        And I run 'clowder yaml | tee output.txt'
         Then the command succeeds
-        And output matches contents of clowder.yml test file
+        And file black-cats/kishka/output.txt matches contents of clowder.yml test file
 
     @fail
     Scenario Outline: yaml resolved with missing repos

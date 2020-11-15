@@ -23,3 +23,17 @@ def then_output_matches_contents_of_file(shared_datadir: Path, tmp_path: Path,
     test_file = shared_datadir / "yaml" / "command_output" / filename
     test_content = test_file.read_text()
     assert output.strip() == test_content.strip()
+
+
+@then(parsers.parse("file {output_file} matches contents of {test_file} test file"))
+def then_output_matches_contents_of_file(shared_datadir: Path, tmp_path: Path,
+                                         command_results: CommandResults, output_file: str, test_file: str) -> None:
+    assert len(command_results.completed_processes) == 1
+    result = command_results.completed_processes[0]
+    assert result.returncode == 0
+    output_file = tmp_path / output_file
+    output_contents = output_file.read_text()
+    output = util.clean_escape_sequences(output_contents)
+    test_file = shared_datadir / "yaml" / "command_output" / test_file
+    test_content = test_file.read_text()
+    assert output.strip() == test_content.strip()
