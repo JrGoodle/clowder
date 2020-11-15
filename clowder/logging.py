@@ -19,6 +19,8 @@ class Log:
 
     logger_name: str = 'CLOWDER'
     VERBOSE: int = 5
+    DEBUG: int = logging.DEBUG
+    ERROR: int = logging.ERROR
 
     def __init__(self):
         logging.basicConfig()
@@ -29,9 +31,9 @@ class Log:
         if LOG_LEVEL is None or LOG_LEVEL == 'VERBOSE':
             self.level = self.VERBOSE
         elif LOG_LEVEL == 'DEBUG':
-            self.level = logging.DEBUG
+            self.level = self.DEBUG
         else:
-            self.level = logging.ERROR
+            self.level = self.ERROR
 
     @property
     def level(self) -> int:

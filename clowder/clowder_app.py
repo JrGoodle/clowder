@@ -49,7 +49,8 @@ def create_parsers() -> argparse.ArgumentParser:
         clowder_parser.set_defaults(func=clowder_help)
         version_message = f"clowder version {pkg_resources.require('clowder-repo')[0].version}"
         arguments = [
-            (['-v', '--version'], dict(action='version', version=version_message))
+            (['-v', '--version'], dict(action='version', version=version_message)),
+            (['--debug', '-d'], dict(action='store_true', help='print debug output')),
         ]
         cmd.add_parser_arguments(clowder_parser, arguments)
         subparsers = clowder_parser.add_subparsers(dest='subcommand', help='sub-command help')
@@ -90,6 +91,8 @@ def main() -> None:
         if 'projects' in args:
             if isinstance(args.projects, str):
                 args.projects = [args.projects]
+        if args.debug:
+            LOG.level = LOG.DEBUG
         args.func(args)
     except ClowderError as err:
         LOG.error(error=err)
