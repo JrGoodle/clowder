@@ -7,13 +7,12 @@
 from pathlib import Path
 from typing import List, Optional, Union
 
-import clowder.util.formatting as fmt
 from clowder.error import ClowderError, ClowderErrorType
 from clowder.git_project.util import (
     format_git_branch,
     format_git_tag
 )
-from clowder.logging import LOG_DEBUG
+from clowder.logging import LOG
 
 from .upstream import Upstream
 from .git_settings import GitSettings
@@ -80,8 +79,8 @@ class Project:
                 name = SourceName(str(id(self)))
                 self.source: Optional[Union[Source, SourceName]] = Source(name, source)
             else:
-                err = ClowderError(ClowderErrorType.WRONG_SOURCE_TYPE, fmt.error_wrong_source_type())
-                LOG_DEBUG('Wrong source type', err)
+                err = ClowderError(ClowderErrorType.WRONG_SOURCE_TYPE, "Wrong source type")
+                LOG.debug('Wrong source type', err)
                 raise err
 
         git = yaml.get('git', None)
@@ -90,7 +89,8 @@ class Project:
         upstream = yaml.get('upstream', None)
         self.upstream: Optional[Upstream] = Upstream(upstream) if upstream is not None else None
 
-    def get_formatted_ref(self) -> Optional[str]:
+    @property
+    def formatted_ref(self) -> Optional[str]:
         """Return formatted git ref
 
         :return: Formatted git ref

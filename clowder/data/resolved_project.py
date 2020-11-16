@@ -6,11 +6,11 @@
 
 from functools import wraps
 from pathlib import Path
-from typing import List, Optional, Set
-
-from termcolor import colored, cprint
+from subprocess import CalledProcessError
+from typing import Optional, Set
 
 import clowder.util.formatting as fmt
+from clowder.console import CONSOLE
 from clowder.environment import ENVIRONMENT
 from clowder.error import ClowderError, ClowderErrorType
 from clowder.git_project import ProjectRepo, ProjectRepoRecursive
@@ -18,7 +18,7 @@ from clowder.git_project.util import (
     existing_git_repository,
     git_url
 )
-from clowder.logging import LOG_DEBUG
+from clowder.logging import LOG
 from clowder.util.connectivity import is_offline
 from clowder.util.execute import execute_forall_command
 
@@ -37,7 +37,7 @@ def project_repo_exists(func):
 
         instance = args[0]
         if not Path(instance.full_path / '.git').is_dir():
-            cprint(" - Project missing", 'red')
+            CONSOLE.stdout(fmt.red("- Project missing"))
             return
         return func(*args, **kwargs)
 
@@ -70,7 +70,6 @@ class ResolvedProject:
 
         project.resolved_project_id = id(self)
         self.name: str = project.name
-        self._print_output = True
 
         has_path = project.path is not None
         has_defaults = defaults is not None
@@ -116,16 +115,16 @@ class ResolvedProject:
         elif has_defaults_source:
             self.source: Source = SOURCE_CONTROLLER.get_source(defaults.source)
 
-        has_ref = project.get_formatted_ref() is not None
-        has_defaults_ref = has_defaults and defaults.get_formatted_ref() is not None
-        has_group_defaults_ref = has_group_defaults and group.defaults.get_formatted_ref() is not None
+        has_ref = project.formatted_ref is not None
+        has_defaults_ref = has_defaults and defaults.formatted_ref is not None
+        has_group_defaults_ref = has_group_defaults and group.defaults.formatted_ref is not None
         self.ref: str = "refs/heads/master"
         if has_ref:
-            self.ref = project.get_formatted_ref()
+            self.ref = project.formatted_ref
         elif has_group_defaults_ref:
-            self.ref = group.defaults.get_formatted_ref()
+            self.ref = group.defaults.formatted_ref
         elif has_defaults_ref:
-            self.ref = defaults.get_formatted_ref()
+            self.ref = defaults.formatted_ref
 
         has_git = project.git_settings is not None
         has_defaults_git = has_defaults and defaults.git_settings is not None
@@ -143,9 +142,12 @@ class ResolvedProject:
             self.upstream: Optional[ResolvedUpstream] = ResolvedUpstream(self.path, project.upstream,
                                                                          defaults, group, protocol)
             if self.remote == self.upstream.remote:
-                message = fmt.error_remote_dup(self.upstream.name,  self.name, self.remote, ENVIRONMENT.clowder_yaml)
+                message = f"{fmt.invalid_yaml(ENVIRONMENT.clowder_yaml.name)}\n" \
+                          f"{fmt.yaml_path(ENVIRONMENT.clowder_yaml)}\n" \
+                          f"upstream '{self.upstream.name}' and project '{self.name}' " \
+                          f"have same remote name '{self.remote}'"
                 err = ClowderError(ClowderErrorType.CLOWDER_YAML_DUPLICATE_REMOTE_NAME, message)
-                LOG_DEBUG('Duplicate remote name found in clowder.yml', err)
+                LOG.debug('Duplicate remote name found in clowder.yml', err)
                 raise err
 
         self.groups: Set[str] = {"all", self.name, str(self.path)}
@@ -195,10 +197,10 @@ class ResolvedProject:
         if local:
             repo.print_local_branches()
         if remote:
-            self._print(fmt.upstream_string(self.name))
+            CONSOLE.stdout(fmt.upstream(self.name))
             repo.print_remote_branches()
 
-            self._print(fmt.upstream_string(self.upstream.name))
+            CONSOLE.stdout(fmt.upstream(self.upstream.name))
             # Modify repo to prefer upstream
             repo.default_ref = self.upstream.ref
             repo.remote = self.upstream.remote
@@ -254,7 +256,7 @@ class ResolvedProject:
 
         self._repo(self.git_settings.recursive).status_verbose()
 
-    def existing_branch(self, branch: str, is_remote: bool) -> bool:
+    def has_branch(self, branch: str, is_remote: bool) -> bool:
         """Check if branch exists
 
         :param str branch: Branch to check for
@@ -265,9 +267,9 @@ class ResolvedProject:
 
         repo = ProjectRepo(self.full_path, self.remote, self.ref)
         if not is_remote:
-            return repo.existing_local_branch(branch)
+            return repo.has_local_branch(branch)
 
-        return repo.existing_remote_branch(branch, self.remote)
+        return repo.has_remote_branch(branch, self.remote)
 
     def exists(self) -> bool:
         """Check if project exists
@@ -298,11 +300,12 @@ class ResolvedProject:
         """
 
         if existing_git_repository(self.full_path):
-            return colored(str(self.path), 'green')
+            return str(self.path)
 
-        return colored(self.name, 'green')
+        return self.name
 
-    def get_current_timestamp(self) -> str:
+    @property
+    def current_timestamp(self) -> str:
         """Return timestamp of current HEAD commit
 
         :return: HEAD commit timestamp
@@ -310,27 +313,23 @@ class ResolvedProject:
         """
 
         repo = ProjectRepo(self.full_path, self.remote, self.ref)
-        return repo.get_current_timestamp()
+        return repo.current_timestamp
 
     def herd(self, branch: Optional[str] = None, tag: Optional[str] = None, depth: Optional[int] = None,
-             rebase: bool = False, parallel: bool = False) -> None:
+             rebase: bool = False) -> None:
         """Clone project or update latest from upstream
 
         :param Optional[str] branch: Branch to attempt to herd
         :param Optional[str] tag: Tag to attempt to herd
         :param Optional[int] depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
         :param bool rebase: Whether to use rebase instead of pulling latest changes
-        :param bool parallel: Whether command is being run in parallel, affects output
         """
 
-        self._print_output = not parallel
-
         herd_depth = self.git_settings.depth if depth is None else depth
-        repo = self._repo(self.git_settings.recursive, parallel=parallel)
+        repo = self._repo(self.git_settings.recursive)
 
         if self.upstream is None:
-            self._print(self.status())
-
+            CONSOLE.stdout(self.status())
             if branch:
                 repo.herd_branch(self._url(), branch, depth=herd_depth,
                                  rebase=rebase, config=self.git_settings.get_processed_config())
@@ -341,13 +340,10 @@ class ResolvedProject:
                 repo.herd(self._url(), depth=herd_depth, rebase=rebase,
                           config=self.git_settings.get_processed_config())
             self._pull_lfs(repo)
-
             return
 
-        self._print(self.status())
+        CONSOLE.stdout(self.status())
         repo.configure_remotes(self.remote, self._url(), self.upstream.remote, self.upstream.url())
-
-        # self._print(fmt.upstream_string(self.name))
         if branch:
             repo.herd_branch(self._url(), branch, depth=herd_depth, rebase=rebase,
                              config=self.git_settings.get_processed_config())
@@ -357,10 +353,8 @@ class ResolvedProject:
         else:
             repo.herd(self._url(), depth=herd_depth, rebase=rebase,
                       config=self.git_settings.get_processed_config())
-
         self._pull_lfs(repo)
-
-        self._print(fmt.upstream_string(self.upstream.name))
+        CONSOLE.stdout(fmt.upstream(self.upstream.name))
 
         # Modify repo to prefer upstream
         repo.default_ref = self.upstream.ref
@@ -370,6 +364,7 @@ class ResolvedProject:
         repo.default_ref = self.ref
         repo.remote = self.remote
 
+    @property
     def is_dirty(self) -> bool:
         """Check if project is dirty
 
@@ -393,7 +388,7 @@ class ResolvedProject:
         """Print existence validation message for project"""
 
         if not existing_git_repository(self.full_path):
-            print(self.status())
+            CONSOLE.stdout(self.status())
 
     def print_validation(self, allow_missing_repo: bool = True) -> None:
         """Print validation message for project
@@ -402,7 +397,7 @@ class ResolvedProject:
         """
 
         if not self.is_valid(allow_missing_repo=allow_missing_repo):
-            print(self.status())
+            CONSOLE.stdout(self.status())
             repo = ProjectRepo(self.full_path, self.remote, self.ref)
             repo.print_validation()
 
@@ -419,23 +414,20 @@ class ResolvedProject:
 
         repo = ProjectRepo(self.full_path, self.remote, self.ref)
 
-        if local and repo.existing_local_branch(branch):
+        if local and repo.has_local_branch(branch):
             repo.prune_branch_local(branch, force)
 
         if remote:
-            if repo.existing_remote_branch(branch, self.remote):
+            if repo.has_remote_branch(branch, self.remote):
                 repo.prune_branch_remote(branch, self.remote)
 
-    def reset(self, timestamp: Optional[str] = None, parallel: bool = False) -> None:
+    def reset(self, timestamp: Optional[str] = None) -> None:  # noqa
         """Reset project branch to upstream or checkout tag/sha as detached HEAD
 
         :param Optional[str] timestamp: Reset to commit at timestamp, or closest previous commit
-        :param bool parallel: Whether command is being run in parallel, affects output
         """
 
-        self._print_output = not parallel
-
-        repo = self._repo(self.git_settings.recursive, parallel=parallel)
+        repo = self._repo(self.git_settings.recursive)
 
         # TODO: Restore timestamp author
         # if timestamp:
@@ -446,26 +438,23 @@ class ResolvedProject:
         if self.upstream is None:
             repo.reset(depth=self.git_settings.depth)
         else:
-            self._print(self.upstream.status())
+            CONSOLE.stdout(self.upstream.status())
             repo.configure_remotes(self.remote, self._url(), self.upstream.remote, self.upstream.url())
-            self._print(fmt.upstream_string(self.name))
+            CONSOLE.stdout(fmt.upstream(self.name))
             repo.reset()
 
         self._pull_lfs(repo)
 
-    def run(self, command: str, ignore_errors: bool, parallel: bool = False) -> None:
+    def run(self, command: str, ignore_errors: bool) -> None:
         """Run commands or script in project directory
 
         :param str command: Commands to run
         :param bool ignore_errors: Whether to exit if command returns a non-zero exit code
-        :param bool parallel: Whether commands are being run in parallel, affects output
         """
 
-        if not parallel and not existing_git_repository(self.full_path):
-            print(colored(" - Project missing\n", 'red'))
+        if not existing_git_repository(self.full_path):
+            CONSOLE.stdout(fmt.red(" - Project missing\n"))
             return
-
-        self._print_output = not parallel
 
         forall_env = {'CLOWDER_PATH': ENVIRONMENT.clowder_dir,
                       'PROJECT_PATH': self.full_path,
@@ -521,31 +510,31 @@ class ResolvedProject:
         """
 
         if not existing_git_repository(self.full_path):
-            project_output = colored(self.name, 'green')
+            project_output = self.name
             if padding:
                 project_output = project_output.ljust(padding)
-                missing_output = colored('-', 'red')
+                project_output = fmt.green(project_output)
+                missing_output = fmt.red('-')
                 return f'{project_output} {missing_output}'
+            project_output = fmt.green(project_output)
             return project_output
 
         repo = ProjectRepo(self.full_path, self.remote, self.ref)
         project_output = repo.format_project_string(self.path)
-        current_ref_output = repo.format_project_ref_string()
-
         if padding:
             project_output = project_output.ljust(padding)
-
-        return f'{project_output} {current_ref_output}'
+        project_output = repo.color_project_string(project_output)
+        return f'{project_output} {repo.formatted_ref}'
 
     @project_repo_exists
     def stash(self) -> None:
         """Stash changes for project if dirty"""
 
-        if self.is_dirty():
+        if self.is_dirty:
             repo = ProjectRepo(self.full_path, self.remote, self.ref)
             repo.stash()
         else:
-            print(" - No changes to stash")
+            CONSOLE.stdout(" - No changes to stash")
 
     def _pull_lfs(self, repo: ProjectRepo) -> None:
         """Check if git lfs is installed and if not install them
@@ -559,29 +548,19 @@ class ResolvedProject:
         repo.install_lfs_hooks()
         repo.pull_lfs()
 
-    def _print(self, val: str) -> None:
-        """Print output if self._print_output is True
-
-        :param str val: String to print
-        """
-
-        if self._print_output:
-            print(val)
-
     # FIXME: Turn this into a property
-    def _repo(self, submodules: bool, parallel: bool = False) -> ProjectRepo:
+    def _repo(self, submodules: bool) -> ProjectRepo:
         """Return ProjectRepo or ProjectRepoRecursive instance
 
         :param bool submodules: Whether to handle submodules
-        :param bool parallel: Whether command is being run in parallel
 
         :return: Project repo instance
         :rtype: ProjectRepo
         """
 
         if submodules:
-            return ProjectRepoRecursive(self.full_path, self.remote, self.ref, parallel=parallel)
-        return ProjectRepo(self.full_path, self.remote, self.ref, parallel=parallel)
+            return ProjectRepoRecursive(self.full_path, self.remote, self.ref)
+        return ProjectRepo(self.full_path, self.remote, self.ref)
 
     def _run_forall_command(self, command: str, env: dict, ignore_errors: bool) -> None:
         """Run command or script in project directory
@@ -592,12 +571,14 @@ class ResolvedProject:
         :raise ClowderError:
         """
 
-        self._print(fmt.command(command))
+        CONSOLE.stdout(fmt.command(command))
         try:
-            execute_forall_command(command, self.full_path, env, self._print_output)
-        except ClowderError as err:
-            LOG_DEBUG('Execute command failed', err)
-            if not ignore_errors:
+            execute_forall_command(command, self.full_path, env)
+        except CalledProcessError as err:
+            if ignore_errors:
+                LOG.debug(f'Command failed: {command}', err)
+            else:
+                CONSOLE.stderr(f'Command failed: {command}')
                 raise
 
     def _url(self) -> str:

@@ -11,6 +11,7 @@ import clowder.clowder_repo as clowder_repo
 import clowder.util.formatting as fmt
 from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.config import Config
+from clowder.console import CONSOLE
 from clowder.data import ResolvedProject
 from clowder.data.util import filter_projects
 from clowder.util.connectivity import network_connection_required
@@ -55,11 +56,11 @@ def status(args) -> None:
     else:
         clowder_repo.print_status()
 
-    # FIXME: Should get actual formatted output (with * if dirty) rather than clean formatted name
-    padding = len(max(CLOWDER_CONTROLLER.get_projects_output(projects), key=len)) + 1
+    projects_output = CLOWDER_CONTROLLER.get_projects_output(projects)
+    padding = len(max(projects_output, key=len))
 
     for project in projects:
-        print(project.status(padding=padding))
+        CONSOLE.stdout(project.status(padding=padding))
 
 
 @network_connection_required
@@ -71,8 +72,8 @@ def _fetch_projects(projects: Tuple[ResolvedProject, ...]) -> None:
 
     clowder_repo.print_status(fetch=True)
 
-    print(' - Fetch upstream changes for projects\n')
+    CONSOLE.stdout(' - Fetch upstream changes for projects\n')
     for project in projects:
-        print(project.status())
+        CONSOLE.stdout(project.status())
         project.fetch_all()
-    print()
+    CONSOLE.stdout()

@@ -5,13 +5,12 @@
 """
 
 from pathlib import Path
+from subprocess import CalledProcessError
 from typing import Optional
 
 from git import GitError
 
-import clowder.util.formatting as fmt
-from clowder.error import ClowderError, ClowderErrorType
-from clowder.logging import LOG_DEBUG
+from clowder.console import CONSOLE
 from clowder.util.execute import execute_command
 
 from .project_repo import GitConfig, ProjectRepo
@@ -23,20 +22,18 @@ class ProjectRepoRecursive(ProjectRepo):
     :ivar strt repo_path: Absolute path to repo
     :ivar strt default_ref: Default ref
     :ivar strt remote: Default remote name
-    :ivar bool parallel: Whether command is being run in parallel, affects output
     :ivar Repo Optional[repo]: Repo instance
     """
 
-    def __init__(self, repo_path: Path, remote: str, default_ref: str, parallel: bool = False):
+    def __init__(self, repo_path: Path, remote: str, default_ref: str):
         """ProjectRepoRecursive __init__
 
         :param Path repo_path: Absolute path to repo
         :param str remote: Default remote name
         :param str default_ref: Default ref
-        :param bool parallel: Whether command is being run in parallel, affects output. Defaults to False
         """
 
-        super().__init__(repo_path, remote, default_ref, parallel=parallel)
+        super().__init__(repo_path, remote, default_ref)
 
     def clean(self, args: str = '') -> None:
         """Discard changes for repo and submodules
@@ -50,15 +47,16 @@ class ProjectRepoRecursive(ProjectRepo):
 
         super().clean(args=args)
 
-        self._print(' - Clean submodules recursively')
+        CONSOLE.stdout(' - Clean submodules recursively')
         self._submodules_clean()
 
-        self._print(' - Reset submodules recursively')
+        CONSOLE.stdout(' - Reset submodules recursively')
         self._submodules_reset()
 
-        self._print(' - Update submodules recursively')
+        CONSOLE.stdout(' - Update submodules recursively')
         self._submodules_update()
 
+    @property
     def has_submodules(self) -> bool:
         """Repo has submodules
 
@@ -127,7 +125,7 @@ class ProjectRepoRecursive(ProjectRepo):
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
         """
 
-        self._print(' - Recursively update and init submodules')
+        CONSOLE.stdout(' - Recursively update and init submodules')
 
         if depth == 0:
             command = f"git submodule update --init --recursive"
@@ -135,12 +133,10 @@ class ProjectRepoRecursive(ProjectRepo):
             command = f"git submodule update --init --recursive --depth {depth}"
 
         try:
-            execute_command(command, self.repo_path, print_output=self._print_output)
-        except ClowderError as err:
-            LOG_DEBUG('Failed to update submodules', err)
-            message = f'{fmt.ERROR} Failed to update submodules'
-            message = self._format_error_message(message)
-            raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
+            execute_command(command, self.repo_path)
+        except CalledProcessError:
+            CONSOLE.stderr('Failed to update submodules')
+            raise
 
     def validate_repo(self, allow_missing_repo: bool = True) -> bool:
         """Validate repo state
@@ -162,7 +158,7 @@ class ProjectRepoRecursive(ProjectRepo):
         """
 
         self._submodule_command('foreach', '--recursive', 'git', 'clean', '-ffdx',
-                                error_msg=f'{fmt.ERROR} Failed to clean submodules')
+                                error_msg=f'Failed to clean submodules')
 
     def _submodule_command(self, *args, error_msg: str) -> None:
         """Base submodule command
@@ -173,10 +169,9 @@ class ProjectRepoRecursive(ProjectRepo):
 
         try:
             self.repo.git.submodule(*args)
-        except (GitError, ValueError) as err:
-            LOG_DEBUG('Git error', err)
-            message = self._format_error_message(error_msg)
-            raise ClowderError(ClowderErrorType.GIT_ERROR, message, error=err)
+        except (GitError, ValueError):
+            CONSOLE.stderr(error_msg)
+            raise
 
     def _submodules_reset(self) -> None:
         """Reset all submodules
@@ -185,7 +180,7 @@ class ProjectRepoRecursive(ProjectRepo):
         """
 
         self._submodule_command('foreach', '--recursive', 'git', 'reset', '--hard',
-                                error_msg=f'{fmt.ERROR} Failed to reset submodules')
+                                error_msg=f'Failed to reset submodules')
 
     def _submodules_update(self) -> None:
         """Update all submodules
@@ -194,4 +189,4 @@ class ProjectRepoRecursive(ProjectRepo):
         """
 
         self._submodule_command('update', '--checkout', '--recursive', '--force',
-                                error_msg=f'{fmt.ERROR} Failed to update submodules')
+                                error_msg=f'Failed to update submodules')

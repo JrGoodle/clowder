@@ -6,13 +6,11 @@
 
 import argparse
 
-from termcolor import colored
-
 import clowder.clowder_repo as clowder_repo
 import clowder.util.formatting as fmt
+from clowder.console import CONSOLE
 from clowder.environment import ENVIRONMENT
-from clowder.error import ClowderError, ClowderErrorType
-from clowder.logging import LOG_DEBUG
+from clowder.logging import LOG
 from clowder.util.connectivity import network_connection_required
 
 from .util import add_parser_arguments
@@ -42,11 +40,12 @@ def init(args) -> None:
         try:
             clowder_repo_dir.rmdir()
         except OSError as err:
-            LOG_DEBUG('Failed to remove existing .clowder directory', err)
-            raise ClowderError(ClowderErrorType.CLOWDER_ALREADY_INITIALIZED, fmt.error_clowder_already_initialized())
+            LOG.debug('Failed to remove existing .clowder directory', err)
+            CONSOLE.stderr("Clowder already initialized in this directory")
+            raise
 
-    url_output = colored(args.url, 'green')
-    print(f"Create clowder repo from {url_output}\n")
+    url_output = fmt.green(args.url)
+    CONSOLE.stdout(f"Create clowder repo from {url_output}\n")
     if args.branch is None:
         branch = 'master'
     else:

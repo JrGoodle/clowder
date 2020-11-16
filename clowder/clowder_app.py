@@ -6,15 +6,16 @@
 
 import argparse
 import pkg_resources
-from typing import Optional
+import sys
+from subprocess import CalledProcessError
 
 import argcomplete
 import colorama
 
 import clowder.cli as cmd
-import clowder.util.formatting as fmt
+from clowder.console import CONSOLE
 from clowder.error import ClowderError, ClowderErrorType
-from clowder.logging import LOG_DEBUG
+from clowder.logging import LOG
 
 
 # class ClowderArgumentParser(argparse.ArgumentParser):
@@ -27,17 +28,8 @@ from clowder.logging import LOG_DEBUG
 #         if message is not None:
 #             message = f"{message}\n"
 #         else:
-#             print()
+#             CONSOLE.stdout()
 #         argparse.ArgumentParser.exit(self, status, message)
-
-
-clowder_parser: Optional[argparse.ArgumentParser] = None
-
-
-def clowder_help(args):  # noqa
-    """Clowder help handler"""
-
-    clowder_parser.print_help()
 
 
 def create_parsers() -> argparse.ArgumentParser:
@@ -46,13 +38,19 @@ def create_parsers() -> argparse.ArgumentParser:
     :return: Configured argument parser for clowder command
     :rtype: argparse.ArgumentParser
     """
+
+    def clowder_help(args):  # noqa
+        """Clowder help handler"""
+
+        clowder_parser.print_help(file=sys.stderr)
+
     try:
-        global clowder_parser
         clowder_parser = argparse.ArgumentParser(prog='clowder')
         clowder_parser.set_defaults(func=clowder_help)
         version_message = f"clowder version {pkg_resources.require('clowder-repo')[0].version}"
         arguments = [
-            (['-v', '--version'], dict(action='version', version=version_message))
+            (['-v', '--version'], dict(action='version', version=version_message)),
+            (['--debug', '-d'], dict(action='store_true', help='print debug output')),
         ]
         cmd.add_parser_arguments(clowder_parser, arguments)
         subparsers = clowder_parser.add_subparsers(dest='subcommand', help='sub-command help')
@@ -75,9 +73,9 @@ def create_parsers() -> argparse.ArgumentParser:
         cmd.add_stash_parser(subparsers)
         cmd.add_status_parser(subparsers)
         cmd.add_yaml_parser(subparsers)
-    except Exception as err:
-        LOG_DEBUG('Failed to create parser', err)
-        raise ClowderError(ClowderErrorType.PARSER_CREATION_FAILED, fmt.error_failed_create_parser())
+    except Exception:
+        LOG.error("Failed to create command line parsers")
+        raise
     else:
         return clowder_parser
 
@@ -85,7 +83,7 @@ def create_parsers() -> argparse.ArgumentParser:
 def main() -> None:
     """Clowder command CLI main function"""
 
-    print()
+    CONSOLE.stdout()
     try:
         parser = create_parsers()
         argcomplete.autocomplete(parser)
@@ -93,33 +91,33 @@ def main() -> None:
         if 'projects' in args:
             if isinstance(args.projects, str):
                 args.projects = [args.projects]
+        if args.debug:
+            LOG.level = LOG.DEBUG
         args.func(args)
     except ClowderError as err:
-        LOG_DEBUG('** ClowderError **', err)
-        print(err)
-        print()
-        if err.exit_code is not None:
-            exit(err.exit_code)
-        else:
-            exit(err.error_type.value)
+        LOG.error(error=err)
+        exit(err.error_type.value)
+    except CalledProcessError as err:
+        LOG.error(error=err)
+        exit(err.returncode)
     except SystemExit as err:
-        LOG_DEBUG('** SystemExit **', err)
-        print()
+        if err.code == 0:
+            CONSOLE.stdout()
+            exit()
+        LOG.error(error=err)
         exit(err.code)
-    except KeyboardInterrupt as err:
-        LOG_DEBUG('** KeyboardInterrupt **', err)
-        print(fmt.error_user_interrupt())
-        print()
+    except KeyboardInterrupt:
+        LOG.error('** KeyboardInterrupt **\n')
         exit(ClowderErrorType.USER_INTERRUPT.value)
-    except Exception as err:
-        LOG_DEBUG('** Unhandled exception **', err)
-        print(fmt.error_unknown_error())
-        print()
+    except BaseException as err:
+        LOG.error(error=err)
         exit(ClowderErrorType.UNKNOWN.value)
     else:
-        print()
+        CONSOLE.stdout()
 
 
 if __name__ == '__main__':
+    from rich.traceback import install
+    install()
     colorama.init()
     main()

@@ -10,11 +10,10 @@ from typing import List, Tuple
 import clowder.util.formatting as fmt
 from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.config import Config
-from clowder.error import ClowderError, ClowderErrorType
-from clowder.logging import LOG_DEBUG
+from clowder.console import CONSOLE
 from clowder.data import ResolvedProject
 from clowder.data.util import (
-    existing_branch_projects,
+    project_has_branch,
     filter_projects,
     validate_project_statuses
 )
@@ -117,43 +116,28 @@ def _prune_projects(projects: Tuple[ResolvedProject, ...], branch: str, force: b
     :param bool remote: Delete remote branch
     """
 
-    local_branch_exists = existing_branch_projects(projects, branch, is_remote=False)
-    remote_branch_exists = existing_branch_projects(projects, branch, is_remote=True)
-
-    try:
-        _validate_branches(local, remote, local_branch_exists, remote_branch_exists)
-    except ClowderError as err:
-        LOG_DEBUG('Invalid projects branch state', err)
-        print(err)
-    else:
-        for project in projects:
-            print(project.status())
-            project.prune(branch, force=force, local=local, remote=remote)
-
-
-def _validate_branches(local: bool, remote: bool, local_branch_exists: bool, remote_branch_exists: bool) -> None:
-    """Prune project branches
-
-    :param bool local: Delete local branch
-    :param bool remote: Delete remote branch
-    :param bool local_branch_exists: Whether a local branch exists
-    :param bool remote_branch_exists: Whether a remote branch exists
-    :raise ClowderError:
-    """
+    local_branch_exists = project_has_branch(projects, branch, is_remote=False)
+    remote_branch_exists = project_has_branch(projects, branch, is_remote=True)
 
     if local and remote:
         branch_exists = local_branch_exists or remote_branch_exists
         if not branch_exists:
-            raise ClowderError(ClowderErrorType.PRUNE_NO_BRANCHES, f' - No local or remote branches to prune')
-        print(' - Prune local and remote branches\n')
-        return
-
-    if remote:
+            CONSOLE.stdout(' - No local or remote branches to prune')
+            return
+        CONSOLE.stdout(' - Prune local and remote branches\n')
+    elif remote:
         if not remote_branch_exists:
-            raise ClowderError(ClowderErrorType.PRUNE_NO_BRANCHES, f' - No remote branches to prune')
-        print(' - Prune remote branches\n')
-        return
+            CONSOLE.stdout(' - No remote branches to prune')
+            return
+        CONSOLE.stdout(' - Prune remote branches\n')
+    elif local:
+        if not local_branch_exists:
+            CONSOLE.stdout(' - No local branches to prune')
+            return
+        CONSOLE.stdout(' - Prune local branches\n')
+    else:
+        raise Exception('local and remote are both false, but at least one should be true')
 
-    if not local_branch_exists:
-        raise ClowderError(ClowderErrorType.PRUNE_NO_BRANCHES, f' - No local branches to prune')
-    print(' - Prune local branches\n')
+    for project in projects:
+        CONSOLE.stdout(project.status())
+        project.prune(branch, force=force, local=local, remote=remote)

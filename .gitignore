@@ -16,6 +16,8 @@ docs/examples/june
 docs/examples/black-cats
 docs/examples/render*.gif
 
+Brewfile.lock.json
+
 # Created by https://www.gitignore.io/api/macos,swift,xcode,vapor,python,swiftpm,pycharm
 
 ### macOS ###

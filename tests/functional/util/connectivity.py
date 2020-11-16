@@ -15,11 +15,9 @@ def enable_network_connection(gateway_address: Optional[str]) -> [CompletedProce
     if platform == "linux":
         result = run_command("ip link set eth0 up", path)
         results.append(result)
-        print(result.stdout)
         if gateway_address is not None:
             result = run_command(f"route add default gw {gateway_address}", path)
             results.append(result)
-            print(result.stdout)
     elif platform == "darwin":
         result = run_command("networksetup -setairportpower airport on", path)
         sleep(2)
@@ -35,7 +33,6 @@ def disable_network_connection() -> CompletedProcess:
     from sys import platform
     if platform == "linux":
         result = run_command("ip link set eth0 down", path)
-        print(result.stdout)
     elif platform == "darwin":
         result = run_command("networksetup -setairportpower airport off", path)
         sleep(1)
@@ -51,7 +48,6 @@ def get_gateway_ip_address() -> Optional[str]:
     from sys import platform
     if platform == "linux":
         result = run_command("netstat -nr | awk '{print $2}' | head -n3 | tail -n1", path)
-        print(result.stdout)
         return result.stdout.strip()
     elif platform == "darwin":
         return None

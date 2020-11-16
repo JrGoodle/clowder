@@ -9,6 +9,7 @@ import argparse
 import clowder.clowder_repo as clowder_repo
 import clowder.util.formatting as fmt
 from clowder.clowder_controller import CLOWDER_CONTROLLER
+from clowder.console import CONSOLE
 from clowder.environment import ENVIRONMENT
 from clowder.error import ClowderError, ClowderErrorType
 from clowder.data.util import validate_project_statuses
@@ -45,7 +46,7 @@ def save(args) -> None:
     """
 
     if args.version.lower() == 'default':
-        raise ClowderError(ClowderErrorType.SAVE_DEFAULT_VERSION, fmt.error_save_default(args.version))
+        raise ClowderError(ClowderErrorType.SAVE_DEFAULT_VERSION, f"Version name '{args.version}' is not allowed")
 
     clowder_repo.print_status()
     CLOWDER_CONTROLLER.validate_projects_exist()
@@ -62,11 +63,11 @@ def save(args) -> None:
     yml_file = versions_dir / f"{version_name}.clowder.yml"
     yaml_file = versions_dir / f"{version_name}.clowder.yaml"
     if yml_file.exists():
-        raise ClowderError(ClowderErrorType.VERSION_ALREADY_EXISTS,
-                           fmt.error_save_version_exists(version_name, yml_file))
+        message = f"{fmt.yaml_file(str(yml_file))}\nVersion '{fmt.version(version_name)}' already exists"
+        raise ClowderError(ClowderErrorType.VERSION_ALREADY_EXISTS, message)
     elif yaml_file.exists():
-        raise ClowderError(ClowderErrorType.VERSION_ALREADY_EXISTS,
-                           fmt.error_save_version_exists(version_name, yaml_file))
+        message = f"{fmt.yaml_file(str(yaml_file))}\nVersion '{fmt.version(version_name)}' already exists"
+        raise ClowderError(ClowderErrorType.VERSION_ALREADY_EXISTS, message)
 
-    print(fmt.save_version_message(version_name, yml_file))
+    CONSOLE.stdout(f" - Save version '{fmt.version(version_name)}'\n{fmt.path(yml_file)}")
     save_yaml_file(CLOWDER_CONTROLLER.get_yaml(resolved=True), yml_file)

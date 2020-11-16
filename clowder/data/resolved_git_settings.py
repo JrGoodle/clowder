@@ -7,9 +7,7 @@
 import copy
 from typing import Dict, Optional
 
-import clowder.util.formatting as fmt
 from clowder.error import ClowderError, ClowderErrorType
-from clowder.logging import LOG_DEBUG
 
 from .model.git_settings import GitSettings, GitConfig
 
@@ -50,12 +48,10 @@ class ResolvedGitSettings:
                     self.submodules = True
                     self.recursive = True
                 else:
-                    err = ClowderError(ClowderErrorType.WRONG_SUBMODULES_TYPE, fmt.error_wrong_submodules_type())
-                    LOG_DEBUG("Wrong submodules type", err)
+                    err = ClowderError(ClowderErrorType.WRONG_SUBMODULES_TYPE, "Wrong submodules type")
                     raise err
             else:
-                err = ClowderError(ClowderErrorType.WRONG_SUBMODULES_TYPE, fmt.error_wrong_submodules_type())
-                LOG_DEBUG("Wrong submodules type", err)
+                err = ClowderError(ClowderErrorType.WRONG_SUBMODULES_TYPE, "Wrong submodules type")
                 raise err
         if git_settings.lfs is not None:
             self.lfs = copy.deepcopy(git_settings.lfs)
@@ -103,6 +99,6 @@ class ResolvedGitSettings:
             elif self.config[key] is None:
                 pass
             else:
-                raise ClowderError(ClowderErrorType.INVALID_GIT_CONFIG_VALUE,
-                                   fmt.error_invalid_git_config_value(key, value))
+                message = f"Invalid git config value - {key}: {value}"
+                raise ClowderError(ClowderErrorType.INVALID_GIT_CONFIG_VALUE, message)
         return config

@@ -10,8 +10,8 @@ import shutil
 from pathlib import Path
 
 import clowder.util.formatting as fmt
+from clowder.console import CONSOLE
 from clowder.error import ClowderError, ClowderErrorType
-from clowder.logging import LOG_DEBUG
 
 
 def symlink_clowder_yaml(source: Path, target: Path) -> None:
@@ -23,11 +23,11 @@ def symlink_clowder_yaml(source: Path, target: Path) -> None:
     """
 
     if not target.is_symlink() and target.is_file():
-        raise ClowderError(ClowderErrorType.EXISTING_FILE_AT_SYMLINK_TARGET_PATH,
-                           fmt.error_existing_file_at_symlink_target_path(str(target)))
+        message = f"Found non-symlink file {fmt.path(target)} at target path"
+        raise ClowderError(ClowderErrorType.EXISTING_FILE_AT_SYMLINK_TARGET_PATH, message)
     if not Path(target.parent / source).exists():
-        raise ClowderError(ClowderErrorType.SYMLINK_SOURCE_NOT_FOUND,
-                           fmt.error_symlink_source_missing(source))
+        message = f"Symlink source {fmt.yaml_file(str(source))} appears to be missing"
+        raise ClowderError(ClowderErrorType.SYMLINK_SOURCE_NOT_FOUND, message)
     if target.is_symlink():
         remove_file(target)
     try:
@@ -35,10 +35,9 @@ def symlink_clowder_yaml(source: Path, target: Path) -> None:
         fd = os.open(path, os.O_DIRECTORY)
         os.symlink(source, target, dir_fd=fd)
         os.close(fd)
-    except OSError as err:
-        LOG_DEBUG('Failed symlink file', err)
-        raise ClowderError(ClowderErrorType.FAILED_SYMLINK_FILE,
-                           fmt.error_failed_symlink_file(str(target), str(source)), err)
+    except OSError:
+        CONSOLE.stderr(f"Failed to symlink file {fmt.path(target)} -> {fmt.path(source)}")
+        raise
 
 
 def remove_file(file: Path) -> None:
@@ -86,15 +85,11 @@ def make_dir(directory: Path) -> None:
         try:
             os.makedirs(str(directory))
         except OSError as err:
-            LOG_DEBUG('Failed to create directory', err)
             if err.errno == errno.EEXIST:
-                raise ClowderError(ClowderErrorType.DIRECTORY_EXISTS,
-                                   fmt.error_directory_exists(str(directory)),
-                                   error=err)
+                CONSOLE.stderr(f"Directory already exists at {fmt.path(directory)}")
             else:
-                raise ClowderError(ClowderErrorType.FAILED_CREATE_DIRECTORY,
-                                   fmt.error_failed_create_directory(str(directory)),
-                                   error=err)
+                CONSOLE.stderr(f"Failed to create directory {fmt.path(directory)}")
+            raise
 
 
 def remove_directory(dir_path: Path) -> None:
@@ -106,8 +101,6 @@ def remove_directory(dir_path: Path) -> None:
 
     try:
         shutil.rmtree(dir_path)
-    except shutil.Error as err:
-        LOG_DEBUG('Failed to remove directory', err)
-        raise ClowderError(ClowderErrorType.FAILED_REMOVE_DIRECTORY,
-                           fmt.error_failed_remove_directory(str(dir_path)),
-                           error=err)
+    except shutil.Error:
+        CONSOLE.stderr(f"Failed to remove directory {fmt.path(dir_path)}")
+        raise

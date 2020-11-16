@@ -6,9 +6,8 @@
 
 from typing import Optional, Union
 
-import clowder.util.formatting as fmt
 from clowder.error import ClowderError, ClowderErrorType
-from clowder.logging import LOG_DEBUG
+from clowder.logging import LOG
 
 from .source import Source
 from .source_name import SourceName
@@ -52,13 +51,13 @@ class Upstream:
                     name = SourceName(str(id(self)))
                     self.source: Optional[Union[Source, SourceName]] = Source(name, source)
                 else:
-                    err = ClowderError(ClowderErrorType.WRONG_SOURCE_TYPE, fmt.error_wrong_source_type())
-                    LOG_DEBUG('Wrong source type', err)
+                    err = ClowderError(ClowderErrorType.WRONG_SOURCE_TYPE, "Wrong source type")
+                    LOG.debug('Wrong source type', err)
                     raise err
             return
 
-        err = ClowderError(ClowderErrorType.WRONG_UPSTREAM_TYPE, fmt.error_wrong_upstream_type())
-        LOG_DEBUG('Wrong upstream type', err)
+        err = ClowderError(ClowderErrorType.WRONG_UPSTREAM_TYPE, "Wrong upstream type")
+        LOG.debug('Wrong upstream type', err)
         raise err
 
     def get_yaml(self) -> Union[str, dict]:

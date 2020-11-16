@@ -6,9 +6,8 @@
 
 from typing import Dict, Optional, Set, Union
 
-import clowder.util.formatting as fmt
-from clowder.logging import LOG_DEBUG
 from clowder.error import ClowderError, ClowderErrorType
+from clowder.logging import LOG
 
 from .model import Source
 from .model import SourceName
@@ -47,8 +46,8 @@ class SourceController(object):
         """
 
         if self._has_been_validated:
-            err = ClowderError(ClowderErrorType.SOURCES_ALREADY_VALIDATED, fmt.error_sources_already_validated())
-            LOG_DEBUG("Called add_source() but SOURCE_CONTROLLER has already been validated", err)
+            err = ClowderError(ClowderErrorType.SOURCES_ALREADY_VALIDATED, "Sources have already been validated")
+            LOG.debug("Called add_source() but SOURCE_CONTROLLER has already been validated", err)
             raise err
 
         if source is None:
@@ -60,8 +59,8 @@ class SourceController(object):
             self._source_names.add(source.name)
             self._sources[source.name] = source
         else:
-            err = ClowderError(ClowderErrorType.WRONG_SOURCE_TYPE, fmt.error_wrong_source_type())
-            LOG_DEBUG('Wrong source type', err)
+            err = ClowderError(ClowderErrorType.WRONG_SOURCE_TYPE, "Wrong source type")
+            LOG.debug('Wrong source type', err)
             raise err
 
     def get_source(self, source: Union[SourceName, Source]) -> Source:
@@ -73,8 +72,8 @@ class SourceController(object):
         """
 
         if not self._has_been_validated:
-            err = ClowderError(ClowderErrorType.SOURCES_NOT_VALIDATED, fmt.error_source_not_validated())
-            LOG_DEBUG("Called get_source() but SOURCE_CONTROLLER has not been validated", err)
+            err = ClowderError(ClowderErrorType.SOURCES_NOT_VALIDATED, "Sources have not been validated")
+            LOG.debug("Called get_source() but SOURCE_CONTROLLER has not been validated", err)
             raise err
 
         if isinstance(source, SourceName):
@@ -82,14 +81,14 @@ class SourceController(object):
         elif isinstance(source, Source):
             source_name = source.name
         else:
-            err = ClowderError(ClowderErrorType.WRONG_SOURCE_TYPE, fmt.error_wrong_source_type())
-            LOG_DEBUG('Wrong source type', err)
+            err = ClowderError(ClowderErrorType.WRONG_SOURCE_TYPE, "Wrong source type")
+            LOG.debug('Wrong source type', err)
             raise err
 
         if source_name not in self._sources:
-            err = ClowderError(ClowderErrorType.CLOWDER_YAML_SOURCE_NOT_FOUND,
-                               fmt.error_source_not_defined(source_name.name))
-            LOG_DEBUG('Failed to get source', err)
+            message = f"Source {source_name.name} not defined"
+            err = ClowderError(ClowderErrorType.CLOWDER_YAML_SOURCE_NOT_FOUND, message)
+            LOG.debug('Failed to get source', err)
             raise err
 
         return self._sources[source_name]
@@ -102,8 +101,8 @@ class SourceController(object):
         """
 
         if not self._has_been_validated:
-            err = ClowderError(ClowderErrorType.SOURCES_NOT_VALIDATED, fmt.error_source_not_validated())
-            LOG_DEBUG("Called get_default_protocol() but SOURCE_CONTROLLER has not been validated", err)
+            err = ClowderError(ClowderErrorType.SOURCES_NOT_VALIDATED, "Sources have not been validated")
+            LOG.debug("Called get_default_protocol() but SOURCE_CONTROLLER has not been validated", err)
             raise err
 
         if self.protocol_override is not None:
@@ -119,8 +118,8 @@ class SourceController(object):
 
         self._has_been_validated = True
         if not any([s.name == name for name, s in self._sources.items()]):
-            err = ClowderError(ClowderErrorType.CLOWDER_YAML_SOURCE_NOT_FOUND, fmt.error_source_not_defined())
-            LOG_DEBUG('Failed to validate sources', err)
+            err = ClowderError(ClowderErrorType.CLOWDER_YAML_SOURCE_NOT_FOUND, "Source not defined")
+            LOG.debug('Failed to validate sources', err)
             raise err
 
 

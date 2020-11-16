@@ -6,9 +6,8 @@
 
 from typing import List, Optional, Union
 
-import clowder.util.formatting as fmt
 from clowder.error import ClowderError, ClowderErrorType
-from clowder.logging import LOG_DEBUG
+from clowder.logging import LOG
 
 from .group import Group
 from .project import Project
@@ -34,8 +33,8 @@ class Clowder:
             self.projects: Optional[List[Project]] = [Project(p) for p in yaml]
             self.groups: Optional[List[Group]] = None
         else:
-            err = ClowderError(ClowderErrorType.WRONG_GROUP_TYPE, fmt.error_wrong_group_type())
-            LOG_DEBUG("Wrong instance type for group", err)
+            err = ClowderError(ClowderErrorType.WRONG_GROUP_TYPE, "Wrong group type")
+            LOG.debug("Wrong instance type for group", err)
             raise err
 
     def get_yaml(self, resolved: bool = False) -> Union[dict, list]:
@@ -53,5 +52,5 @@ class Clowder:
 
         message = "Clowder model created without projects or groups"
         err = ClowderError(ClowderErrorType.CLOWDER_YAML_UNKNOWN, message)
-        LOG_DEBUG(message, err)
+        LOG.debug(message, err)
         raise err

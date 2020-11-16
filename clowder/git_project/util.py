@@ -9,7 +9,7 @@ from pathlib import Path
 
 from git import Repo, GitError
 
-import clowder.util.formatting as fmt
+from clowder.console import CONSOLE
 from clowder.error import ClowderError, ClowderErrorType
 
 
@@ -22,8 +22,7 @@ def check_ref_format(ref: str) -> bool:
     """
     try:
         Repo().git.check_ref_format('--normalize', ref)
-    except GitError as err:
-        print(err)
+    except GitError:
         return False
     else:
         return True
@@ -59,7 +58,8 @@ def not_detached(func):
         """Wrapper"""
 
         instance = args[0]
-        if instance.is_detached(print_output=True):
+        if instance.is_detached:
+            CONSOLE.stdout(' - HEAD is detached')
             return
         return func(*args, **kwargs)
 
@@ -107,7 +107,7 @@ def git_url(protocol: str, url: str, name: str) -> str:
     if protocol == 'https':
         return f"https://{url}/{name}.git"
 
-    raise ClowderError(ClowderErrorType.INVALID_GIT_URL, f"{fmt.ERROR} Invalid git protocol")
+    raise ClowderError(ClowderErrorType.INVALID_GIT_URL, f"Invalid git protocol")
 
 
 def ref_type(ref: str) -> str:

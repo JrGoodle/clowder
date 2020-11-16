@@ -8,14 +8,11 @@ from pathlib import Path
 def is_directory_empty(path: Path) -> bool:
     if path.exists() and path.is_dir():
         if not os.listdir(path):
-            print("Directory is empty")
             return True
         else:
-            print("Directory is not empty")
             return False
     else:
-        print("Given Directory don't exists")
-        raise Exception
+        raise Exception(f"Directory at {path} doesn't exist")
 
 
 def create_file(path: Path, contents: str) -> None:

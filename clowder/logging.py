@@ -6,29 +6,60 @@
 
 import logging
 import os
-import traceback
 from typing import Optional
 
-
-PRINT_DEBUG_OUTPUT = "CLOWDER_DEBUG" in os.environ
-
-logging.basicConfig()
-logging.raiseExceptions = True
-logger_name: str = 'CLOWDER'
-logger = logging.getLogger(logger_name)
-
-if PRINT_DEBUG_OUTPUT:
-    logger.setLevel(logging.DEBUG)
-else:
-    logger.setLevel(logging.ERROR)
+from clowder.console import CONSOLE
 
 
-def LOG_DEBUG(message: str, exception: Optional[BaseException] = None) -> None:  # noqa
-    if PRINT_DEBUG_OUTPUT:
-        separator = '='
-        output = f' BEGIN {separator * 78}\n'
-        output += f'{message.strip()}\n'
-        if exception is not None:
-            output += traceback.format_exc()
-        output += f'DEBUG:{logger_name}: END {separator * 80}\n'
-        logger.log(logging.DEBUG, output)
+LOG_LEVEL = os.environ.get("CLOWDER_LOG", None)
+
+
+class Log:
+    """clowder log class"""
+
+    logger_name: str = 'CLOWDER'
+    VERBOSE: int = 5
+    DEBUG: int = logging.DEBUG
+    ERROR: int = logging.ERROR
+
+    def __init__(self):
+        logging.basicConfig()
+        logging.raiseExceptions = True
+        logging.addLevelName(Log.VERBOSE, 'VERBOSE')
+        self.logger = logging.getLogger(self.logger_name)
+
+        if LOG_LEVEL is None or LOG_LEVEL == 'VERBOSE':
+            self.level = self.VERBOSE
+        elif LOG_LEVEL == 'DEBUG':
+            self.level = self.DEBUG
+        else:
+            self.level = self.ERROR
+
+    @property
+    def level(self) -> int:
+        return self.logger.level
+
+    @level.setter
+    def level(self, level: int):
+        self.logger.setLevel(level)
+
+    def error(self, message: Optional[str] = None, error: Optional[BaseException] = None) -> None:  # noqa
+        if self.logger.level <= logging.ERROR:
+            self._log(logging.ERROR, message, error)
+
+    def debug(self, message: Optional[str] = None, error: Optional[BaseException] = None) -> None:  # noqa
+        if self.logger.level <= logging.DEBUG:
+            self._log(logging.DEBUG, message, error)
+
+    def verbose(self, message: Optional[str] = None, error: Optional[BaseException] = None) -> None:  # noqa
+        if self.logger.level <= self.VERBOSE:
+            self._log(self.VERBOSE, message, error)
+
+    def _log(self, level: int, message: Optional[str], error: Optional[BaseException] = None) -> None:  # noqa
+        if message is not None:
+            CONSOLE.stderr(message.strip())
+        if error is not None:
+            CONSOLE.stderr(CONSOLE.pretty_traceback)
+
+
+LOG: Log = Log()

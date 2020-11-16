@@ -7,7 +7,6 @@
 import socket
 from functools import wraps
 
-import clowder.util.formatting as fmt
 from clowder.error import ClowderError, ClowderErrorType
 
 
@@ -45,7 +44,7 @@ def network_connection_required(func):
         """
 
         if is_offline():
-            raise ClowderError(ClowderErrorType.OFFLINE, fmt.error_offline())
+            raise ClowderError(ClowderErrorType.OFFLINE, "No available internet connection")
         return func(*args, **kwargs)
 
     return wrapper

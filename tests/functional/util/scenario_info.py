@@ -26,4 +26,3 @@ class ScenarioInfo:
         if self.relative_dir is not None:
             return self._tmp_path / self.relative_dir
         return self._tmp_path
-

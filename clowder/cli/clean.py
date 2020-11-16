@@ -10,6 +10,7 @@ from typing import Tuple
 import clowder.util.formatting as fmt
 from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.config import Config
+from clowder.console import CONSOLE
 from clowder.data import ResolvedProject
 from clowder.data.util import filter_projects
 from clowder.util.decorators import (
@@ -63,7 +64,7 @@ def clean(args) -> None:
 
     if args.all:
         for project in projects:
-            print(project.status())
+            CONSOLE.stdout(project.status())
             project.clean_all()
         return
 
@@ -92,5 +93,5 @@ def _clean_impl(projects: Tuple[ResolvedProject, ...], clean_args: str = '', sub
     """
 
     for project in projects:
-        print(project.status())
+        CONSOLE.stdout(project.status())
         project.clean(args=clean_args, submodules=submodules)
