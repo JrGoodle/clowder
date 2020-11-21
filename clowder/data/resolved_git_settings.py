@@ -7,7 +7,7 @@
 import copy
 from typing import Dict, Optional
 
-from clowder.error import ClowderError, ClowderErrorType
+from clowder.error import *
 
 from .model.git_settings import GitSettings, GitConfig
 
@@ -35,7 +35,8 @@ class ResolvedGitSettings:
         """Update with overrides from given GitSettings
 
         :return: Config processed to create strings
-        :rtype: dict
+        :raise UnknownArgumentError:
+        :raise UnknownTypeError:
         """
 
         if git_settings.submodules is not None:
@@ -48,11 +49,9 @@ class ResolvedGitSettings:
                     self.submodules = True
                     self.recursive = True
                 else:
-                    err = ClowderError(ClowderErrorType.WRONG_SUBMODULES_TYPE, "Wrong submodules type")
-                    raise err
+                    raise UnknownArgumentError(f"Unknown submodules argument: {submodules}")
             else:
-                err = ClowderError(ClowderErrorType.WRONG_SUBMODULES_TYPE, "Wrong submodules type")
-                raise err
+                raise UnknownTypeError("Unknown submodules type")
         if git_settings.lfs is not None:
             self.lfs = copy.deepcopy(git_settings.lfs)
         if git_settings.depth is not None:
@@ -82,7 +81,7 @@ class ResolvedGitSettings:
         """Return version of config converted to strings
 
         :return: Config processed to create strings
-        :rtype: Optional[Dict[str, str]]
+        :raise ClowderError:
         """
 
         if self.config is None:
@@ -99,6 +98,5 @@ class ResolvedGitSettings:
             elif self.config[key] is None:
                 pass
             else:
-                message = f"Invalid git config value - {key}: {value}"
-                raise ClowderError(ClowderErrorType.INVALID_GIT_CONFIG_VALUE, message)
+                raise ClowderError(f"Invalid git config value - {key}: {value}")
         return config

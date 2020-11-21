@@ -13,24 +13,25 @@ from git import GitError
 from clowder.console import CONSOLE
 from clowder.util.execute import execute_command
 
+from .git_ref import GitRef
 from .project_repo import GitConfig, ProjectRepo
 
 
 class ProjectRepoRecursive(ProjectRepo):
     """Class encapsulating git utilities for projects with submodules
 
-    :ivar strt repo_path: Absolute path to repo
-    :ivar strt default_ref: Default ref
-    :ivar strt remote: Default remote name
+    :ivar str repo_path: Absolute path to repo
+    :ivar GitRef default_ref: Default ref
+    :ivar str remote: Default remote name
     :ivar Repo Optional[repo]: Repo instance
     """
 
-    def __init__(self, repo_path: Path, remote: str, default_ref: str):
+    def __init__(self, repo_path: Path, remote: str, default_ref: GitRef):
         """ProjectRepoRecursive __init__
 
         :param Path repo_path: Absolute path to repo
         :param str remote: Default remote name
-        :param str default_ref: Default ref
+        :param GitRef default_ref: Default ref
         """
 
         super().__init__(repo_path, remote, default_ref)
@@ -61,7 +62,6 @@ class ProjectRepoRecursive(ProjectRepo):
         """Repo has submodules
 
         :return: True, if repo has submodules
-        :rtype: bool
         """
 
         return len(self.repo.submodules) > 0
@@ -81,18 +81,18 @@ class ProjectRepoRecursive(ProjectRepo):
         self.submodule_update_recursive(depth)
 
     def herd_branch(self, url: str, branch: str, depth: int = 0, rebase: bool = False,
-                    fork_remote: Optional[str] = None, config: Optional[GitConfig] = None) -> None:
+                    upstream_remote: Optional[str] = None, config: Optional[GitConfig] = None) -> None:
         """Herd branch
 
         :param str url: URL of repo
         :param str branch: Branch name
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
         :param bool rebase: Whether to use rebase instead of pulling latest changes
-        :param Optional[str] fork_remote: Fork remote name
+        :param Optional[str] upstream_remote: Upstream remote name
         :param Optional[GitConfig] config: Custom git config
         """
 
-        super().herd_branch(url, branch, depth=depth, rebase=rebase, fork_remote=fork_remote, config=config)
+        super().herd_branch(url, branch, depth=depth, rebase=rebase, upstream_remote=upstream_remote, config=config)
         self.submodule_update_recursive(depth)
 
     def herd_tag(self, url: str, tag: str, depth: int = 0,
@@ -114,7 +114,6 @@ class ProjectRepoRecursive(ProjectRepo):
 
         :param str path: Submodule path
         :return: True, if submodule at path is dirty
-        :rtype: bool
         """
 
         return self.repo.is_dirty(path)
@@ -143,11 +142,13 @@ class ProjectRepoRecursive(ProjectRepo):
 
         :param bool allow_missing_repo: Whether to allow validation to succeed with missing repo
         :return: True, if repo and submodules not dirty or repo doesn't exist on disk
-        :rtype: bool
         """
 
         if not super().validate_repo(allow_missing_repo=allow_missing_repo):
             return False
+
+        if self.repo is None:
+            return True
 
         return not any([self.is_dirty_submodule(s.path) for s in self.repo.submodules])
 
@@ -164,7 +165,6 @@ class ProjectRepoRecursive(ProjectRepo):
         """Base submodule command
 
         :param str error_msg: Error message
-        :raise ClowderError:
         """
 
         try:

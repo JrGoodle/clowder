@@ -6,26 +6,14 @@
 
 from functools import wraps
 from pathlib import Path
-
-from git import Repo, GitError
+from subprocess import CalledProcessError
+from typing import Optional
 
 from clowder.console import CONSOLE
-from clowder.error import ClowderError, ClowderErrorType
-
-
-def check_ref_format(ref: str) -> bool:
-    """Check if git ref is correctly formatted
-
-    :param str ref: Git ref
-    :return: True, if git ref is a valid format
-    :rtype: bool
-    """
-    try:
-        Repo().git.check_ref_format('--normalize', ref)
-    except GitError:
-        return False
-    else:
-        return True
+from clowder.logging import LOG
+from clowder.util.execute import execute_command
+from clowder.util.formatting import remove_prefix
+from clowder.util.file_system import make_dir
 
 
 def existing_git_repository(path: Path) -> bool:
@@ -33,7 +21,6 @@ def existing_git_repository(path: Path) -> bool:
 
     :param Path path: Repo path
     :return: True, if .git directory exists inside path
-    :rtype: bool
     """
 
     return path.is_dir() and Path(path / '.git').is_dir()
@@ -44,7 +31,6 @@ def existing_git_submodule(path: Path) -> bool:
 
     :param Path path: Submodule path
     :return: True, if .git file exists inside path
-    :rtype: bool
     """
 
     return Path(path / '.git').is_file()
@@ -66,83 +52,62 @@ def not_detached(func):
     return wrapper
 
 
-def format_git_branch(branch: str) -> str:
-    """Returns properly formatted git branch
+def get_default_branch(repo_path: Path, remote: str, url: str) -> str:
+    """Get default branch"""
 
-    :param str branch: Git branch name
-    :return: Branch prefixed with 'refs/heads/'
-    :rtype: str
-    """
+    if existing_git_repository(repo_path):
+        default_branch = get_default_branch_from_local(repo_path, remote)
+        if default_branch is not None:
+            return default_branch
 
-    prefix = "refs/heads/"
-    return branch if branch.startswith(prefix) else f"{prefix}{branch}"
+    default_branch = get_default_branch_from_remote(url)
+    if default_branch is not None:
+        save_default_branch(repo_path, remote, url)
+        return default_branch
 
-
-def format_git_tag(tag: str) -> str:
-    """Returns properly formatted git tag
-
-    :param str tag: Git tag name
-    :return: Tag prefixed with 'refs/heads/'
-    :rtype: str
-    """
-
-    prefix = "refs/tags/"
-    return tag if tag.startswith(prefix) else f"{prefix}{tag}"
+    return 'master'
 
 
-def git_url(protocol: str, url: str, name: str) -> str:
-    """Return git url
+def save_default_branch(repo_path: Path, remote: str, branch: str) -> None:
+    """Save default branch"""
 
-    :param str protocol: Git protocol ('ssh' or 'https')
-    :param str url: Repo url
-    :param str name: Repo name
-    :return: Full git repo url for specified protocol
-    :rtype: str
-    :raise ClowderError:
-    """
-
-    if protocol == 'ssh':
-        return f"git@{url}:{name}.git"
-
-    if protocol == 'https':
-        return f"https://{url}/{name}.git"
-
-    raise ClowderError(ClowderErrorType.INVALID_GIT_URL, f"Invalid git protocol")
+    git_dir = repo_path / '.git'
+    if not git_dir.exists():
+        return
+    remote_head_ref = git_dir / 'refs' / 'remotes' / remote / 'HEAD'
+    if not remote_head_ref.exists():
+        make_dir(remote_head_ref.parent, check=False)
+        contents = f'ref: refs/remotes/{remote}/{branch}'
+        remote_head_ref.touch()
+        remote_head_ref.write_text(contents)
 
 
-def ref_type(ref: str) -> str:
-    """Return branch, tag, sha, or unknown ref type
+def get_default_branch_from_local(repo_path: Path, remote: str) -> Optional[str]:
+    """Get default branch from local repo"""
 
-    :param str ref: Full pathspec
-    :return: 'branch', 'tag', 'sha', or 'unknown'
-    :rtype: str
-    """
-
-    git_branch = "refs/heads/"
-    git_tag = "refs/tags/"
-    if ref.startswith(git_branch):
-        return 'branch'
-    elif ref.startswith(git_tag):
-        return 'tag'
-    elif len(ref) == 40:
-        return 'sha'
-    return 'unknown'
+    try:
+        command = ['git', 'symbolic-ref', f'refs/remotes/{remote}/HEAD']
+        result = execute_command(command, repo_path, print_output=False)
+        output: str = result.stdout
+        output_list = output.split()
+        branch = [remove_prefix(chunk, f'refs/remotes/{remote}/') for chunk in output_list
+                  if chunk.startswith(f'refs/remotes/{remote}/')]
+        return branch[0]
+    except CalledProcessError as err:
+        LOG.debug('Failed to get default branch from local git repo', err)
+        return None
 
 
-def truncate_ref(ref: str) -> str:
-    """Return bare branch, tag, or sha
+def get_default_branch_from_remote(url: str) -> Optional[str]:
+    """Get default branch from remote repo"""
 
-    :param str ref: Full pathspec or short ref
-    :return: Ref with 'refs/heads/' and 'refs/tags/' prefix removed
-    :rtype: str
-    """
-
-    git_branch = "refs/heads/"
-    git_tag = "refs/tags/"
-    if ref.startswith(git_branch):
-        length = len(git_branch)
-    elif ref.startswith(git_tag):
-        length = len(git_tag)
-    else:
-        length = 0
-    return ref[length:]
+    try:
+        command = ['git', 'ls-remote', '--symref', url, 'HEAD']
+        result = execute_command(command, Path.cwd(), print_output=False)
+        output: str = result.stdout
+        output_list = output.split()
+        branch = [remove_prefix(chunk, 'refs/heads/') for chunk in output_list if chunk.startswith('refs/heads/')]
+        return branch[0]
+    except CalledProcessError as err:
+        LOG.debug('Failed to get default branch from remote git repo', err)
+        return None

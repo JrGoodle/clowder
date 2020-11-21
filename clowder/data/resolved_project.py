@@ -12,12 +12,14 @@ from typing import Optional, Set
 import clowder.util.formatting as fmt
 from clowder.console import CONSOLE
 from clowder.environment import ENVIRONMENT
-from clowder.error import ClowderError, ClowderErrorType
-from clowder.git_project import ProjectRepo, ProjectRepoRecursive
-from clowder.git_project.util import (
-    existing_git_repository,
-    git_url
+from clowder.error import *
+from clowder.git_project import (
+    GitProtocol,
+    GitRef,
+    ProjectRepo,
+    ProjectRepoRecursive
 )
+from clowder.git_project.util import existing_git_repository
 from clowder.logging import LOG
 from clowder.util.connectivity import is_offline
 from clowder.util.execute import execute_forall_command
@@ -54,20 +56,21 @@ class ResolvedProject:
     :ivar Source source: Project source
     :ivar ResolvedGitSettings git_settings: Custom git settings
     :ivar Optional[ResolvedUpstream] upstream: Project's associated upstream
-    :ivar Optional[str] default_protocol: Protocol defined in defaults
-    :ivar str ref: Project git ref
-    :ivar Optional[str] default_protocol: Default git protocol to use
+    :ivar Optional[str] ref: Project git ref
+    :ivar Optional[GitProtocol] default_protocol: Default git protocol to use
     """
 
     def __init__(self, project: Project, defaults: Optional[Defaults] = None,
-                 group: Optional[Group] = None, protocol: Optional[str] = None):
+                 group: Optional[Group] = None, protocol: Optional[GitProtocol] = None):
         """Project __init__
 
         :param Project project: Project model instance
         :param Optional[Defaults] defaults: Defaults instance
         :param Optional[Group] group: Group instance
+        :raise DuplicateRemoteError:
         """
 
+        self._repo: Optional[ProjectRepo] = None
         project.resolved_project_id = id(self)
         self.name: str = project.name
 
@@ -86,12 +89,9 @@ class ResolvedProject:
             last_path_component = Path(self.name).name
             self.path = self.path / last_path_component
 
-        has_group_protocol = has_group and group.protocol is not None
-        self.default_protocol: Optional[str] = None
-        if has_group_protocol:
-            self.default_protocol: Optional[str] = group.protocol
-        elif protocol is not None:
-            self.default_protocol: Optional[str] = protocol
+        self.default_protocol: Optional[GitProtocol] = None
+        if protocol is not None:
+            self.default_protocol: Optional[GitProtocol] = protocol
 
         has_remote = project.remote is not None
         has_defaults_remote = has_defaults and defaults.remote is not None
@@ -115,16 +115,16 @@ class ResolvedProject:
         elif has_defaults_source:
             self.source: Source = SOURCE_CONTROLLER.get_source(defaults.source)
 
-        has_ref = project.formatted_ref is not None
-        has_defaults_ref = has_defaults and defaults.formatted_ref is not None
-        has_group_defaults_ref = has_group_defaults and group.defaults.formatted_ref is not None
-        self.ref: str = "refs/heads/master"
+        has_ref = project.git_ref is not None
+        has_defaults_ref = has_defaults and defaults.git_ref is not None
+        has_group_defaults_ref = has_group_defaults and group.defaults.git_ref is not None
+        self.ref: Optional[GitRef] = None
         if has_ref:
-            self.ref = project.formatted_ref
+            self.ref = project.git_ref
         elif has_group_defaults_ref:
-            self.ref = group.defaults.formatted_ref
+            self.ref = group.defaults.git_ref
         elif has_defaults_ref:
-            self.ref = defaults.formatted_ref
+            self.ref = defaults.git_ref
 
         has_git = project.git_settings is not None
         has_defaults_git = has_defaults and defaults.git_settings is not None
@@ -143,12 +143,10 @@ class ResolvedProject:
                                                                          defaults, group, protocol)
             if self.remote == self.upstream.remote:
                 message = f"{fmt.invalid_yaml(ENVIRONMENT.clowder_yaml.name)}\n" \
-                          f"{fmt.yaml_path(ENVIRONMENT.clowder_yaml)}\n" \
+                          f"{fmt.path(ENVIRONMENT.clowder_yaml)}\n" \
                           f"upstream '{self.upstream.name}' and project '{self.name}' " \
                           f"have same remote name '{self.remote}'"
-                err = ClowderError(ClowderErrorType.CLOWDER_YAML_DUPLICATE_REMOTE_NAME, message)
-                LOG.debug('Duplicate remote name found in clowder.yml', err)
-                raise err
+                raise DuplicateRemoteError(message)
 
         self.groups: Set[str] = {"all", self.name, str(self.path)}
         if has_group:
@@ -165,7 +163,6 @@ class ResolvedProject:
         """Return full path to project
 
         :return: Project's full file path
-        :rtype: str
         """
 
         return ENVIRONMENT.clowder_dir / self.path
@@ -178,36 +175,23 @@ class ResolvedProject:
         :param bool remote: Print remote branches
         """
 
-        repo = ProjectRepo(self.full_path, self.remote, self.ref)
-
         if not is_offline() and remote:
-            if self.upstream is None:
-                repo.fetch(self.remote, depth=self.git_settings.depth)
-            else:
-                repo.fetch(self.upstream.remote)
-                repo.fetch(self.remote)
-
-        if self.upstream is None:
-            if local:
-                repo.print_local_branches()
-            if remote:
-                repo.print_remote_branches()
-            return
+            self.repo.fetch(self.remote, depth=self.git_settings.depth)
+            if self.upstream:
+                self.repo.fetch(self.upstream.remote)
 
         if local:
-            repo.print_local_branches()
-        if remote:
-            CONSOLE.stdout(fmt.upstream(self.name))
-            repo.print_remote_branches()
+            self.repo.print_local_branches()
 
-            CONSOLE.stdout(fmt.upstream(self.upstream.name))
-            # Modify repo to prefer upstream
-            repo.default_ref = self.upstream.ref
-            repo.remote = self.upstream.remote
-            repo.print_remote_branches()
-            # Restore repo configuration
-            repo.default_ref = self.ref
-            repo.remote = self.remote
+        if remote:
+            if self.upstream:
+                CONSOLE.stdout(fmt.upstream(self.name))
+
+            self.repo.print_remote_branches()
+
+            if self.upstream:
+                CONSOLE.stdout(fmt.upstream(self.upstream.name))
+                self.upstream.repo.print_remote_branches()
 
     @project_repo_exists
     def checkout(self, branch: str) -> None:
@@ -216,12 +200,11 @@ class ResolvedProject:
         :param str branch: Branch to check out
         """
 
-        repo = self._repo(self.git_settings.recursive)
-        repo.checkout(branch, allow_failure=True)
-        self._pull_lfs(repo)
+        self.repo.checkout(branch, allow_failure=True)
+        self._pull_lfs()
 
     @project_repo_exists
-    def clean(self, args: str = '', submodules: bool = False) -> None:
+    def clean(self, args: str = '', submodules: bool = False) -> None:  # noqa
         """Discard changes for project
 
         :param str args: Git clean options
@@ -232,7 +215,9 @@ class ResolvedProject:
         :param bool submodules: Clean submodules recursively
         """
 
-        self._repo(self.git_settings.recursive or submodules).clean(args=args)
+        # FIXME: Need to honor submodules parameter even if recursive is not true
+        # self.repo(self.git_settings.recursive or submodules).clean(args=args)
+        self.repo.clean(args=args)
 
     @project_repo_exists
     def clean_all(self) -> None:
@@ -245,7 +230,7 @@ class ResolvedProject:
         ``git submodule update --checkout --recursive --force``
         """
 
-        self._repo(self.git_settings.recursive).clean(args='fdx')
+        self.repo.clean(args='fdx')
 
     @project_repo_exists
     def diff(self) -> None:
@@ -254,7 +239,7 @@ class ResolvedProject:
         Equivalent to: ``git status -vv``
         """
 
-        self._repo(self.git_settings.recursive).status_verbose()
+        self.repo.status_verbose()
 
     def has_branch(self, branch: str, is_remote: bool) -> bool:
         """Check if branch exists
@@ -262,20 +247,17 @@ class ResolvedProject:
         :param str branch: Branch to check for
         :param bool is_remote: Check for remote branch
         :return: True, if branch exists
-        :rtype: bool
         """
 
-        repo = ProjectRepo(self.full_path, self.remote, self.ref)
         if not is_remote:
-            return repo.has_local_branch(branch)
+            return self.repo.has_local_branch(branch)
 
-        return repo.has_remote_branch(branch, self.remote)
+        return self.repo.has_remote_branch(branch, self.remote)
 
     def exists(self) -> bool:
         """Check if project exists
 
         :return: True, if repo exists
-        :rtype: bool
         """
 
         return existing_git_repository(self.full_path)
@@ -284,19 +266,17 @@ class ResolvedProject:
     def fetch_all(self) -> None:
         """Fetch upstream changes if project exists on disk"""
 
-        repo = ProjectRepo(self.full_path, self.remote, self.ref)
         if self.upstream is None:
-            repo.fetch(self.remote, depth=self.git_settings.depth)
+            self.repo.fetch(self.remote, depth=self.git_settings.depth)
             return
 
-        repo.fetch(self.upstream.remote)
-        repo.fetch(self.remote)
+        self.repo.fetch(self.upstream.remote)
+        self.repo.fetch(self.remote)
 
     def formatted_project_output(self) -> str:
         """Return formatted project path/name
 
         :return: Formatted string of full file path if cloned, otherwise project name
-        :rtype: str
         """
 
         if existing_git_repository(self.full_path):
@@ -309,11 +289,9 @@ class ResolvedProject:
         """Return timestamp of current HEAD commit
 
         :return: HEAD commit timestamp
-        :rtype: str
         """
 
-        repo = ProjectRepo(self.full_path, self.remote, self.ref)
-        return repo.current_timestamp
+        return self.repo.current_timestamp
 
     def herd(self, branch: Optional[str] = None, tag: Optional[str] = None, depth: Optional[int] = None,
              rebase: bool = False) -> None:
@@ -326,63 +304,46 @@ class ResolvedProject:
         """
 
         herd_depth = self.git_settings.depth if depth is None else depth
-        repo = self._repo(self.git_settings.recursive)
-
-        if self.upstream is None:
-            CONSOLE.stdout(self.status())
-            if branch:
-                repo.herd_branch(self._url(), branch, depth=herd_depth,
-                                 rebase=rebase, config=self.git_settings.get_processed_config())
-            elif tag:
-                repo.herd_tag(self._url(), tag, depth=herd_depth, rebase=rebase,
-                              config=self.git_settings.get_processed_config())
-            else:
-                repo.herd(self._url(), depth=herd_depth, rebase=rebase,
-                          config=self.git_settings.get_processed_config())
-            self._pull_lfs(repo)
-            return
 
         CONSOLE.stdout(self.status())
-        repo.configure_remotes(self.remote, self._url(), self.upstream.remote, self.upstream.url())
-        if branch:
-            repo.herd_branch(self._url(), branch, depth=herd_depth, rebase=rebase,
-                             config=self.git_settings.get_processed_config())
-        elif tag:
-            repo.herd_tag(self._url(), tag, depth=herd_depth, rebase=rebase,
-                          config=self.git_settings.get_processed_config())
-        else:
-            repo.herd(self._url(), depth=herd_depth, rebase=rebase,
-                      config=self.git_settings.get_processed_config())
-        self._pull_lfs(repo)
-        CONSOLE.stdout(fmt.upstream(self.upstream.name))
 
-        # Modify repo to prefer upstream
-        repo.default_ref = self.upstream.ref
-        repo.remote = self.upstream.remote
-        repo.herd_remote(self.upstream.url(), self.upstream.remote, branch=branch)
-        # Restore repo configuration
-        repo.default_ref = self.ref
-        repo.remote = self.remote
+        if self.upstream:
+            self.repo.configure_remotes(self.remote, self.url,
+                                        self.upstream.remote, self.upstream.url)
+
+        if branch:
+            self.repo.herd_branch(self.url, branch, depth=herd_depth, rebase=rebase,
+                                  config=self.git_settings.get_processed_config())
+        elif tag:
+            self.repo.herd_tag(self.url, tag, depth=herd_depth, rebase=rebase,
+                               config=self.git_settings.get_processed_config())
+        else:
+            self.repo.herd(self.url, depth=herd_depth, rebase=rebase,
+                           config=self.git_settings.get_processed_config())
+
+        self._pull_lfs()
+
+        if self.upstream:
+            CONSOLE.stdout(fmt.upstream(self.upstream.name))
+            self.upstream.repo.herd_remote(self.upstream.url, self.upstream.remote, branch=branch)
 
     @property
     def is_dirty(self) -> bool:
         """Check if project is dirty
 
         :return: True, if dirty
-        :rtype: bool
         """
 
-        return not self._repo(self.git_settings.recursive).validate_repo()
+        return not self.repo.validate_repo()
 
     def is_valid(self, allow_missing_repo: bool = True) -> bool:
         """Validate status of project
 
         :param bool allow_missing_repo: Whether to allow validation to succeed with missing repo
         :return: True, if not dirty or if the project doesn't exist on disk
-        :rtype: bool
         """
 
-        return ProjectRepo(self.full_path, self.remote, self.ref).validate_repo(allow_missing_repo=allow_missing_repo)
+        return self.repo.validate_repo(allow_missing_repo=allow_missing_repo)
 
     def print_existence_message(self) -> None:
         """Print existence validation message for project"""
@@ -398,8 +359,7 @@ class ResolvedProject:
 
         if not self.is_valid(allow_missing_repo=allow_missing_repo):
             CONSOLE.stdout(self.status())
-            repo = ProjectRepo(self.full_path, self.remote, self.ref)
-            repo.print_validation()
+            self.repo.print_validation()
 
     @project_repo_exists
     def prune(self, branch: str, force: bool = False,
@@ -412,22 +372,35 @@ class ResolvedProject:
         :param bool remote: Delete remote branch
         """
 
-        repo = ProjectRepo(self.full_path, self.remote, self.ref)
-
-        if local and repo.has_local_branch(branch):
-            repo.prune_branch_local(branch, force)
+        if local and self.repo.has_local_branch(branch):
+            self.repo.prune_branch_local(branch, force)
 
         if remote:
-            if repo.has_remote_branch(branch, self.remote):
-                repo.prune_branch_remote(branch, self.remote)
+            if self.repo.has_remote_branch(branch, self.remote):
+                self.repo.prune_branch_remote(branch, self.remote)
+
+    @property
+    def repo(self) -> ProjectRepo:
+        """Return ProjectRepo or ProjectRepoRecursive instance
+
+        :return: Project repo instance
+        """
+
+        if self._repo is not None:
+            return self._repo
+
+        if self.git_settings.recursive:
+            self._repo = ProjectRepoRecursive(self.full_path, self.remote, self.ref)
+        else:
+            self._repo = ProjectRepo(self.full_path, self.remote, self.ref)
+
+        return self._repo
 
     def reset(self, timestamp: Optional[str] = None) -> None:  # noqa
         """Reset project branch to upstream or checkout tag/sha as detached HEAD
 
         :param Optional[str] timestamp: Reset to commit at timestamp, or closest previous commit
         """
-
-        repo = self._repo(self.git_settings.recursive)
 
         # TODO: Restore timestamp author
         # if timestamp:
@@ -436,14 +409,14 @@ class ResolvedProject:
         #     return
 
         if self.upstream is None:
-            repo.reset(depth=self.git_settings.depth)
+            self.repo.reset(depth=self.git_settings.depth)
         else:
             CONSOLE.stdout(self.upstream.status())
-            repo.configure_remotes(self.remote, self._url(), self.upstream.remote, self.upstream.url())
+            self.repo.configure_remotes(self.remote, self.url, self.upstream.remote, self.upstream.url)
             CONSOLE.stdout(fmt.upstream(self.name))
-            repo.reset()
+            self.repo.reset()
 
-        self._pull_lfs(repo)
+        self._pull_lfs()
 
     def run(self, command: str, ignore_errors: bool) -> None:
         """Run commands or script in project directory
@@ -460,7 +433,7 @@ class ResolvedProject:
                       'PROJECT_PATH': self.full_path,
                       'PROJECT_NAME': self.name,
                       'PROJECT_REMOTE': self.remote,
-                      'PROJECT_REF': self.ref}
+                      'PROJECT_REF': self.ref.formatted_ref}
 
         # TODO: Add tests for presence of these variables in test scripts
         # if self.branch:
@@ -473,7 +446,7 @@ class ResolvedProject:
         if self.upstream:
             forall_env['UPSTREAM_REMOTE'] = self.upstream.remote
             forall_env['UPSTREAM_NAME'] = self.upstream.name
-            forall_env['UPSTREAM_REF'] = self.upstream.ref
+            forall_env['UPSTREAM_REF'] = self.upstream.ref.formatted_ref
 
         self._run_forall_command(command, forall_env, ignore_errors)
 
@@ -482,11 +455,9 @@ class ResolvedProject:
 
         :param bool short: Whether to return short or long commit sha
         :return: Commit sha
-        :rtype: str
         """
 
-        repo = ProjectRepo(self.full_path, self.remote, self.ref)
-        return repo.sha(short=short)
+        return self.repo.sha(short=short)
 
     @project_repo_exists
     def start(self, branch: str, tracking: bool) -> None:
@@ -498,15 +469,13 @@ class ResolvedProject:
 
         # TODO: Replace 0 with git default depth
         depth = self.git_settings.depth
-        repo = ProjectRepo(self.full_path, self.remote, self.ref)
-        repo.start(self.remote, branch, depth, tracking)
+        self.repo.start(self.remote, branch, depth, tracking)
 
     def status(self, padding: Optional[int] = None) -> str:
         """Return formatted status for project
 
         :param Optional[int] padding: Amount of padding to use for printing project on left and current ref on right
         :return: Formatting project name and status
-        :rtype: str
         """
 
         if not existing_git_repository(self.full_path):
@@ -519,69 +488,29 @@ class ResolvedProject:
             project_output = fmt.green(project_output)
             return project_output
 
-        repo = ProjectRepo(self.full_path, self.remote, self.ref)
-        project_output = repo.format_project_string(self.path)
+        project_output = self.repo.format_project_string(self.path)
         if padding:
             project_output = project_output.ljust(padding)
-        project_output = repo.color_project_string(project_output)
-        return f'{project_output} {repo.formatted_ref}'
+        project_output = self.repo.color_project_string(project_output)
+        return f'{project_output} {self.repo.formatted_ref}'
 
     @project_repo_exists
     def stash(self) -> None:
         """Stash changes for project if dirty"""
 
         if self.is_dirty:
-            repo = ProjectRepo(self.full_path, self.remote, self.ref)
-            repo.stash()
+            self.repo.stash()
         else:
             CONSOLE.stdout(" - No changes to stash")
 
-    def _pull_lfs(self, repo: ProjectRepo) -> None:
-        """Check if git lfs is installed and if not install them
+    def update_default_branch(self, branch: str) -> None:
+        """Update ref with default branch if none set"""
 
-        :param ProjectRepo repo: Repo object
-        """
+        if self.ref is None:
+            self.ref = GitRef(branch=branch)
 
-        if not self.git_settings.lfs:
-            return
-
-        repo.install_lfs_hooks()
-        repo.pull_lfs()
-
-    # FIXME: Turn this into a property
-    def _repo(self, submodules: bool) -> ProjectRepo:
-        """Return ProjectRepo or ProjectRepoRecursive instance
-
-        :param bool submodules: Whether to handle submodules
-
-        :return: Project repo instance
-        :rtype: ProjectRepo
-        """
-
-        if submodules:
-            return ProjectRepoRecursive(self.full_path, self.remote, self.ref)
-        return ProjectRepo(self.full_path, self.remote, self.ref)
-
-    def _run_forall_command(self, command: str, env: dict, ignore_errors: bool) -> None:
-        """Run command or script in project directory
-
-        :param str command: Command to run
-        :param dict env: Environment variables
-        :param bool ignore_errors: Whether to exit if command returns a non-zero exit code
-        :raise ClowderError:
-        """
-
-        CONSOLE.stdout(fmt.command(command))
-        try:
-            execute_forall_command(command, self.full_path, env)
-        except CalledProcessError as err:
-            if ignore_errors:
-                LOG.debug(f'Command failed: {command}', err)
-            else:
-                CONSOLE.stderr(f'Command failed: {command}')
-                raise
-
-    def _url(self) -> str:
+    @property
+    def url(self) -> str:
         """Return project url"""
 
         if self.source.protocol is not None:
@@ -593,4 +522,31 @@ class ResolvedProject:
         else:
             protocol = SOURCE_CONTROLLER.get_default_protocol()
 
-        return git_url(protocol, self.source.url, self.name)
+        return protocol.format_url(self.source.url, self.name)
+
+    def _pull_lfs(self) -> None:
+        """Pull lfs files"""
+
+        if not self.git_settings.lfs:
+            return
+
+        self.repo.install_lfs_hooks()
+        self.repo.pull_lfs()
+
+    def _run_forall_command(self, command: str, env: dict, ignore_errors: bool) -> None:
+        """Run command or script in project directory
+
+        :param str command: Command to run
+        :param dict env: Environment variables
+        :param bool ignore_errors: Whether to exit if command returns a non-zero exit code
+        """
+
+        CONSOLE.stdout(fmt.command(command))
+        try:
+            execute_forall_command(command, self.full_path, env)
+        except CalledProcessError as err:
+            if ignore_errors:
+                LOG.debug(f'Command failed: {command}', err)
+            else:
+                CONSOLE.stderr(f'Command failed: {command}')
+                raise

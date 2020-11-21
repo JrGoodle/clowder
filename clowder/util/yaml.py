@@ -13,7 +13,7 @@ import yaml as pyyaml
 import clowder.util.formatting as fmt
 from clowder.console import CONSOLE
 from clowder.environment import ENVIRONMENT
-from clowder.error import ClowderError, ClowderErrorType
+from clowder.error import *
 
 from .file_system import (
     symlink_clowder_yaml,
@@ -26,7 +26,7 @@ def link_clowder_yaml_default(clowder_dir: Path) -> None:
     """Create symlink pointing to clowder yaml file
 
     :param Path clowder_dir: Directory to create symlink in
-    :raise ClowderError:
+    :raise MissingFileError:
     """
 
     yml_relative_path = Path('.clowder', 'clowder.yml')
@@ -40,7 +40,7 @@ def link_clowder_yaml_default(clowder_dir: Path) -> None:
         relative_source_file = yaml_relative_path
     else:
         message = f"{yml_relative_path} appears to be missing"
-        raise ClowderError(ClowderErrorType.YAML_MISSING_FILE, message)
+        raise MissingFileError(message)
 
     target_file = clowder_dir / relative_source_file.name
 
@@ -72,7 +72,7 @@ def link_clowder_yaml_version(clowder_dir: Path, version: str) -> None:
 
     :param Path clowder_dir: Directory to create symlink in
     :param str version: Version name of clowder yaml file to link
-    :raise ClowderError:
+    :raise MissingFileError:
     """
 
     yml_relative_path = Path('.clowder', 'versions', f'{version}.clowder.yml')
@@ -85,8 +85,7 @@ def link_clowder_yaml_version(clowder_dir: Path, version: str) -> None:
     elif yaml_absolute_path.is_file():
         relative_source_file = yaml_relative_path
     else:
-        message = f"{yml_relative_path} appears to be missing"
-        raise ClowderError(ClowderErrorType.YAML_MISSING_FILE, message)
+        raise MissingFileError(f"{yml_relative_path} appears to be missing")
 
     target_file = clowder_dir / fmt.remove_prefix(relative_source_file.name, f"{version}.")
 
@@ -119,8 +118,6 @@ def load_yaml_file(yaml_file: Path, relative_dir: Path) -> dict:
     :param Path yaml_file: Path of yaml file to load
     :param Path relative_dir: Directory yaml file is relative to
     :return: YAML python object
-    :rtype: dict
-    :raise ClowderError:
     """
 
     try:
@@ -128,8 +125,7 @@ def load_yaml_file(yaml_file: Path, relative_dir: Path) -> dict:
             parsed_yaml = pyyaml.safe_load(raw_file)
             if parsed_yaml is None:
                 config_yaml = yaml_file.relative_to(relative_dir)
-                message = f"{fmt.yaml_path(yaml_file)}\nNo entries in {fmt.yaml_file(str(config_yaml))}"
-                raise ClowderError(ClowderErrorType.YAML_EMPTY_FILE, message)
+                raise InvalidYamlError(f"{fmt.path(yaml_file)}\nNo entries in {fmt.path(config_yaml)}")
             return parsed_yaml
     except pyyaml.YAMLError:
         CONSOLE.stderr(f"Failed to open file '{yaml_file}'")
@@ -148,12 +144,11 @@ def save_yaml_file(yaml_output: dict, yaml_file: Path) -> None:
 
     :param dict yaml_output: Parsed YAML python object
     :param Path yaml_file: Path to save yaml file
-    :raise ClowderError:
+    :raise ExistingFileError:
     """
 
     if yaml_file.is_file():
-        message = f"File already exists {fmt.path(yaml_file)}"
-        raise ClowderError(ClowderErrorType.FILE_EXISTS, message)
+        raise ExistingFileError(f"File already exists: {fmt.path(yaml_file)}")
 
     CONSOLE.stdout(f" - Save yaml to file at {fmt.path(yaml_file)}")
     try:
@@ -169,7 +164,6 @@ def validate_yaml_file(parsed_yaml: dict, file_path: Path) -> None:
 
     :param dict parsed_yaml: Parsed yaml dictionary
     :param Path file_path: Path to yaml file
-    :raise ClowderError:
     """
 
     json_schema = _load_json_schema(file_path.stem)
@@ -185,8 +179,6 @@ def yaml_string(yaml_output: dict) -> str:
 
     :param dict yaml_output: YAML python object
     :return: YAML as a string
-    :rtype: str
-    :raise ClowderError:
     """
 
     try:
@@ -202,7 +194,6 @@ def _format_yaml_symlink(yaml_symlink: Path, yaml_file: Path) -> str:
     :param Path yaml_symlink: Yaml symlink
     :param Path yaml_file: File pointed to by yaml symlink
     :return: Formatted string for yaml symlink
-    :rtype: str
     """
 
     return f"\n{fmt.path(yaml_symlink)} -> {fmt.path(yaml_file)}\n"
@@ -213,7 +204,6 @@ def _format_yaml_file(yaml_file: Path) -> str:
 
     :param Path yaml_file: Yaml file path
     :return: Formatted string for yaml file
-    :rtype: str
     """
 
     path = yaml_file.resolve().relative_to(ENVIRONMENT.clowder_dir)
@@ -225,7 +215,6 @@ def _load_json_schema(file_prefix: str) -> dict:
 
     :param str file_prefix: File prefix for json schema
     :return: Loaded json dict
-    :rtype: dict
     """
 
     clowder_config_schema = pkg_resources.resource_string(__name__, f"{file_prefix}.schema.json")
@@ -236,7 +225,6 @@ def _print_yaml(yaml_file: Path) -> None:
     """Private print current clowder yaml file
 
     :param Path yaml_file: Path to yaml file
-    :raise ClowderError:
     """
 
     try:

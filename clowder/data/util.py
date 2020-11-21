@@ -8,7 +8,7 @@ from typing import Tuple
 
 import clowder.util.formatting as fmt
 from clowder.console import CONSOLE
-from clowder.error import ClowderError, ClowderErrorType
+from clowder.error import *
 
 from .resolved_project import ResolvedProject
 
@@ -20,7 +20,6 @@ def project_has_branch(projects: Tuple[ResolvedProject, ...], branch: str, is_re
     :param str branch: Branch to check for
     :param bool is_remote: Check for remote branch
     :return: True, if at least one branch exists
-    :rtype: bool
     """
 
     return any([p.has_branch(branch, is_remote=is_remote) for p in projects])
@@ -33,7 +32,6 @@ def filter_projects(projects: Tuple[ResolvedProject, ...],
     :param Tuple[ResolvedProject, ...] projects: Projects to filter
     :param Tuple[str, ...] project_names: Project names to match against
     :return: Projects in groups matching given names
-    :rtype: Tuple[ResolvedProject, ...]
     """
 
     filtered_projects = []
@@ -47,14 +45,14 @@ def validate_project_statuses(projects: Tuple[ResolvedProject, ...], allow_missi
 
     :param Tuple[ResolvedProject, ...] projects: Projects to validate
     :param bool allow_missing_repo: Whether to allow validation to succeed with missing repo
-    :raise ClowderError:
+    :raise ProjectStatusError:
     """
 
     for p in projects:
         p.print_validation(allow_missing_repo=allow_missing_repo)
     if not all([p.is_valid(allow_missing_repo=allow_missing_repo) for p in projects]):
         CONSOLE.stdout()
-        raise ClowderError(ClowderErrorType.INVALID_PROJECT_STATUS, "Invalid project state")
+        raise ProjectStatusError("Invalid project state")
 
 
 def _print_upstream_output(project: ResolvedProject) -> None:

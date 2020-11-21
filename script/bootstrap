@@ -18,11 +18,11 @@ case "$PLATFORM" in
                 h2 'Install Homebrew'
                 /usr/bin/env bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
             fi
+            h2 'Install Homebrew formulas'
+            run brew bundle
         else
             h2 'Skipping homebrew update on CI'
         fi
-        h2 'Install Homebrew formulas'
-        run brew bundle
         ;;
     linux)
         h1 'Update apt-get'

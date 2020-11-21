@@ -15,6 +15,7 @@ from clowder.data.util import (
     filter_projects,
     validate_project_statuses
 )
+from clowder.git_project import GitProtocol
 from clowder.util.connectivity import network_connection_required
 from clowder.util.decorators import (
     print_clowder_name,
@@ -69,7 +70,7 @@ def herd(args) -> None:
     branch = None if args.branch is None else args.branch[0]
     tag = None if args.tag is None else args.tag[0]
     depth = None if args.depth is None else args.depth[0]
-    protocol = None if args.protocol is None else args.protocol[0]
+    protocol = None if args.protocol is None else GitProtocol(args.protocol[0])
     jobs = None if args.jobs is None else args.jobs[0]
     rebase = args.rebase
 

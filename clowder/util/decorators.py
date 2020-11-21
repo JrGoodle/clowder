@@ -7,16 +7,20 @@
 from functools import wraps
 from pathlib import Path
 
-import clowder.clowder_repo as clowder_repo
 import clowder.util.formatting as fmt
 from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.console import CONSOLE
-from clowder.error import ClowderError, ClowderErrorType
+from clowder.error import *
 from clowder.environment import ENVIRONMENT
+from clowder.git_project.clowder_repo import ClowderRepo
 
 
 def clowder_repo_required(func):
-    """If no clowder repo exists, print clowder repo not found message and exit"""
+    """If no clowder repo exists, print clowder repo not found message and exit
+
+    :raise ExistingFileError:
+    :raise MissingClowderGitRepo:
+    """
 
     @wraps(func)
     def wrapper(*args, **kwargs):
@@ -25,8 +29,7 @@ def clowder_repo_required(func):
         if ENVIRONMENT.clowder_repo_existing_file_error is not None:
             raise ENVIRONMENT.clowder_repo_existing_file_error
         if ENVIRONMENT.clowder_repo_dir is None:
-            message = f"No {fmt.path(Path('.clowder'))} directory found"
-            raise ClowderError(ClowderErrorType.MISSING_CLOWDER_REPO, message)
+            raise MissingClowderRepo(f"No {fmt.path(Path('.clowder'))} directory found")
 
         return func(*args, **kwargs)
 
@@ -34,15 +37,17 @@ def clowder_repo_required(func):
 
 
 def clowder_git_repo_required(func):
-    """If no clowder git repo exists, print clowder git repo not found message and exit"""
+    """If no clowder git repo exists, print clowder git repo not found message and exit
+
+    :raise MissingClowderGitRepo:
+    """
 
     @wraps(func)
     def wrapper(*args, **kwargs):
         """Wrapper"""
 
         if ENVIRONMENT.clowder_git_repo_dir is None:
-            message = f"No {fmt.path(Path('.clowder'))} git repository found"
-            raise ClowderError(ClowderErrorType.MISSING_CLOWDER_GIT_REPO, message)
+            raise MissingClowderGitRepo(f"No {fmt.path(Path('.clowder'))} git repository found")
         return func(*args, **kwargs)
 
     return wrapper
@@ -69,7 +74,8 @@ def print_clowder_repo_status(func):
     def wrapper(*args, **kwargs):
         """Wrapper"""
 
-        clowder_repo.print_status()
+        if ENVIRONMENT.clowder_repo_dir.is_dir():
+            ClowderRepo(ENVIRONMENT.clowder_repo_dir).print_status()
         return func(*args, **kwargs)
 
     return wrapper
@@ -82,14 +88,20 @@ def print_clowder_repo_status_fetch(func):
     def wrapper(*args, **kwargs):
         """Wrapper"""
 
-        clowder_repo.print_status(fetch=True)
+        if ENVIRONMENT.clowder_git_repo_dir:
+            ClowderRepo(ENVIRONMENT.clowder_git_repo_dir).print_status(fetch=True)
         return func(*args, **kwargs)
 
     return wrapper
 
 
 def valid_clowder_yaml_required(func):
-    """If clowder yaml file is invalid, print invalid yaml message and exit"""
+    """If clowder yaml file is invalid, print invalid yaml message and exit
+
+    :raise AmbiguousYamlError:
+    :raise MissingSourceError:
+    :raise Exception:
+    """
 
     @wraps(func)
     def wrapper(*args, **kwargs):

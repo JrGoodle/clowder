@@ -18,18 +18,18 @@ def make_dir(dir_path: Path) -> Path:
     return dir_path
 
 
-path: Path = Path(__file__).resolve().parent.parent.resolve()
-build_dir: Path = make_dir(path / "build")
-temp_dir: Path = make_dir(path / "temp")
+repo_path: Path = Path(__file__).resolve().parent.parent.resolve()
+build_dir: Path = make_dir(repo_path / "build")
+temp_dir: Path = make_dir(repo_path / "temp")
 coverage_dir: Path = make_dir(build_dir / "coverage")
 junit_dir: Path = make_dir(build_dir / f"junit")
 cucumber_dir: Path = make_dir(build_dir / f"cucumber")
 
 
-def run_command(cmd: str, cwd: Path = path, check: bool = True) -> CompletedProcess:
+def run_command(cmd: str, cwd: Path = repo_path, check: bool = True) -> CompletedProcess:
     cmd_env = os.environ.copy()
-    print(f"command: {cmd}")
-    # command = f'. script/import.sh && {cmd}'
+    # print(f"command: {cmd}")
+    cmd = f'. script/import.sh && {cmd}'
     completed_process = subprocess.run(cmd, cwd=cwd, shell=True, env=cmd_env)
     if check:
         assert completed_process.returncode == 0

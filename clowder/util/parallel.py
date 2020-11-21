@@ -75,18 +75,22 @@ def reset(projects: Tuple[ResolvedProject, ...], jobs: int, timestamp_project: O
 
 
 async def run_parallel(jobs: int, projects: Tuple[ResolvedProject, ...], func_name: str, **kwargs) -> None:
-    CONSOLE.print_output = False
     limit = trio.CapacityLimiter(jobs)
     unit = 'projects'
     base_bar_format = '{desc} {percentage:3.0f}%|{bar}| {n_fmt}/{total_fmt}'
     bar_format = f'{base_bar_format} {unit}'
-    with tqdm(total=len(projects), desc=unit, unit=unit, bar_format=bar_format) as progress:
-        async with trio.open_nursery() as nursery:
-            for project in projects:
-                await limit.acquire_on_behalf_of(project)
-                func = getattr(project, func_name)
-                project_func = partial(func, **kwargs)
-                nursery.start_soon(run_sync, project_func, limit, project, progress)
+    CONSOLE.print_output = False
+    try:
+        with tqdm(total=len(projects), desc=unit, unit=unit, bar_format=bar_format) as progress:
+            async with trio.open_nursery() as nursery:
+                for project in projects:
+                    await limit.acquire_on_behalf_of(project)
+                    func = getattr(project, func_name)
+                    project_func = partial(func, **kwargs)
+                    nursery.start_soon(run_sync, project_func, limit, project, progress)
+    except:  # noqa
+        CONSOLE.print_output = True
+        raise
     CONSOLE.print_output = True
 
 

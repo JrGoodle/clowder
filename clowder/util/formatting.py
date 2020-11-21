@@ -53,7 +53,6 @@ def check_for_duplicates(list_of_elements: List[str]) -> Optional[str]:
 
     :param List[str] list_of_elements: List of strings to check for duplicates
     :return: First duplicate encountered, or None if no duplicates found
-    :rtype: Optional[str]
     """
 
     set_of_elements = set()
@@ -70,7 +69,6 @@ def clowder_command(cmd: str) -> str:
 
     :param str cmd: Clowder command name
     :return: Formatted clowder command name
-    :rtype: str
     """
 
     return bold(cmd)
@@ -81,7 +79,6 @@ def clowder_name(name: str) -> str:
 
     :param str name: Clowder name
     :return: Formatted clowder name
-    :rtype: str
     """
 
     return bold(name)
@@ -92,7 +89,6 @@ def command(cmd: Union[str, List[str]]) -> str:
 
     :param Union[str, List[str]] cmd: Clowder command name
     :return: Formatted clowder command name
-    :rtype: str
     """
 
     command_output = " ".join(cmd) if isinstance(cmd, list) else cmd
@@ -104,10 +100,9 @@ def invalid_yaml(name: str) -> str:
 
     :param str name: Invalid file's name
     :return: Formatted yaml error
-    :rtype: str
     """
 
-    return f"{yaml_file(Path(name))} appears to be invalid"
+    return f"{path(Path(name))} appears to be invalid"
 
 
 # def error_source_not_found(source: str, yml: Path, project: str, upstream_name: Optional[str] = None) -> str:
@@ -118,7 +113,6 @@ def invalid_yaml(name: str) -> str:
 #     :param str project: Project name
 #     :param Optional[str] upstream_name: Upstream name
 #     :return: Formatted source not found error
-#     :rtype: str
 #     """
 #
 #     upstream_output = ""
@@ -138,7 +132,6 @@ def upstream(name: str) -> str:
 
     :param str name: Upstream name
     :return: Formatted upstream name
-    :rtype: str
     """
 
     return cyan(name)
@@ -150,7 +143,6 @@ def options_help_message(options: Tuple[str, ...], message: str) -> str:
     :param Tuple[str, ...] options: List of options
     :param str message: Help message
     :return: Formatted options help message
-    :rtype: str
     """
 
     if options == [''] or options is None or options == [] or not all(isinstance(n, str) for n in options):
@@ -169,7 +161,6 @@ def project_options_help_message(message: str) -> str:
 
     :param str message: Help message
     :return: Formatted options help message
-    :rtype: str
     """
 
     def column_entry(choices, length, line):
@@ -288,10 +279,9 @@ def path(text: Path) -> str:
 
     :param Path text: Path name
     :return: Formatted path name
-    :rtype: str
     """
 
-    return cyan(text)
+    return cyan(text.resolve())
 
 
 def ref(text: str) -> str:
@@ -299,7 +289,6 @@ def ref(text: str) -> str:
 
     :param str text: Git reference
     :return: Formatted ref name
-    :rtype: str
     """
 
     return magenta(text)
@@ -310,7 +299,6 @@ def remote(text: str) -> str:
 
     :param str text: Remote name
     :return: Formmatted remote name
-    :rtype: str
     """
 
     return yellow(text)
@@ -322,7 +310,6 @@ def remove_prefix(text: str, prefix: str) -> str:
     :param str text: Text to remove prefix from
     :param str prefix: Prefix to remoe
     :return: Text with prefix removed if present
-    :rtype: str
     """
 
     if text.startswith(prefix):
@@ -335,7 +322,6 @@ def url_string(url: str) -> str:
 
     :param str url: URL
     :return: Formatted URL
-    :rtype: str
     """
 
     return cyan(url)
@@ -347,7 +333,6 @@ def version_options_help_message(message: str, versions: Tuple[str, ...]) -> str
     :param str message: Help message
     :param Tuple[str, ...] versions: Version choices
     :return: Formatted options help message
-    :rtype: str
     """
 
     if not _validate_help_options(versions):
@@ -423,7 +408,6 @@ def version(version_name: str) -> str:
 
     :param str version_name: Clowder version name
     :return: Formatted clowder version name
-    :rtype: str
     """
 
     return bold(version_name)
@@ -434,7 +418,6 @@ def project_name(name: str) -> str:
 
     :param str name: Project name
     :return: Formatted project name
-    :rtype: str
     """
 
     return green(name)
@@ -445,7 +428,6 @@ def _validate_help_options(options: Optional[Union[str, list, tuple]]) -> bool:
 
     :param str options: Possible options
     :return: Whether options is valid
-    :rtype: bool
     """
 
     if options is None:
@@ -457,25 +439,3 @@ def _validate_help_options(options: Optional[Union[str, list, tuple]]) -> bool:
     if not all(isinstance(n, str) for n in options):
         return False
     return True
-
-
-def yaml_path(yml: Path) -> str:
-    """Returns formatted yaml path
-
-    :param Path yml: Path to yaml file
-    :return: Formatted YAML path
-    :rtype: str
-    """
-
-    return path(yml.resolve())
-
-
-def yaml_file(yml: str) -> str:
-    """Return formatted string for clowder yaml file
-
-    :param str yml: Path to yaml file
-    :return: Formatted YAML string
-    :rtype: str
-    """
-
-    return cyan(yml)

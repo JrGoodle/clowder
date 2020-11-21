@@ -6,8 +6,7 @@
 
 from typing import List, Optional, Union
 
-from clowder.error import ClowderError, ClowderErrorType
-from clowder.logging import LOG
+from clowder.error import *
 
 from .group import Group
 from .project import Project
@@ -33,16 +32,14 @@ class Clowder:
             self.projects: Optional[List[Project]] = [Project(p) for p in yaml]
             self.groups: Optional[List[Group]] = None
         else:
-            err = ClowderError(ClowderErrorType.WRONG_GROUP_TYPE, "Wrong group type")
-            LOG.debug("Wrong instance type for group", err)
-            raise err
+            raise UnknownTypeError("Unknown group type")
 
     def get_yaml(self, resolved: bool = False) -> Union[dict, list]:
         """Return python object representation for saving yaml
 
         :param bool resolved: Whether to get resolved commit hashes
         :return: YAML python object
-        :rtype: Union[dict, list]
+        :raise ClowderError:
         """
 
         if self.projects is not None:
@@ -50,7 +47,4 @@ class Clowder:
         if self.groups is not None:
             return {g.name: g.get_yaml(resolved=resolved) for g in self.groups}
 
-        message = "Clowder model created without projects or groups"
-        err = ClowderError(ClowderErrorType.CLOWDER_YAML_UNKNOWN, message)
-        LOG.debug(message, err)
-        raise err
+        raise ClowderError('Clowder model created without projects or groups')

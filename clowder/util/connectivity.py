@@ -7,7 +7,7 @@
 import socket
 from functools import wraps
 
-from clowder.error import ClowderError, ClowderErrorType
+from clowder.error import *
 
 
 def is_offline(host: str = '8.8.8.8', port: int = 53, timeout: int = 3) -> bool:
@@ -21,8 +21,6 @@ def is_offline(host: str = '8.8.8.8', port: int = 53, timeout: int = 3) -> bool:
     :param int port: Port number. Default is 53/tcp
     :param int timeout: Seconds to wait until timeout
     :return: True, if offline
-    :rtype: bool
-    :raise ClowderError:
     """
 
     try:
@@ -34,17 +32,17 @@ def is_offline(host: str = '8.8.8.8', port: int = 53, timeout: int = 3) -> bool:
 
 
 def network_connection_required(func):
-    """If no network connection, print offline message and exit"""
+    """If no network connection, print offline message and exit
+
+    :raise NetworkConnectionError:
+    """
 
     @wraps(func)
     def wrapper(*args, **kwargs):
-        """Wrapper
-
-        :raise ClowderError:
-        """
+        """Wrapper"""
 
         if is_offline():
-            raise ClowderError(ClowderErrorType.OFFLINE, "No available internet connection")
+            raise NetworkConnectionError('No available internet connection')
         return func(*args, **kwargs)
 
     return wrapper

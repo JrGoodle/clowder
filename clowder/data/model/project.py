@@ -7,17 +7,12 @@
 from pathlib import Path
 from typing import List, Optional, Union
 
-from clowder.error import ClowderError, ClowderErrorType
-from clowder.git_project.util import (
-    format_git_branch,
-    format_git_tag
-)
-from clowder.logging import LOG
+from clowder.error import *
+from clowder.git_project import GitRef
 
 from .upstream import Upstream
 from .git_settings import GitSettings
-from .source import Source
-from .source_name import SourceName
+from .source import Source, SourceName
 
 
 class Project:
@@ -40,6 +35,7 @@ class Project:
         """Project __init__
 
         :param Union[dict, str] yaml: Parsed YAML python object for project
+        :raise UnknownTypeError:
         """
 
         self.resolved_project_id: Optional[int] = None
@@ -72,16 +68,14 @@ class Project:
         self.source: Optional[Union[Source, SourceName]] = None
         source = yaml.get('source', None)
         if source is not None:
-            if isinstance(source, str):
+            if isinstance(source, SourceName):
                 self.source: Optional[Union[Source, SourceName]] = SourceName(source)
             elif isinstance(source, dict):
                 # Use project instance id as source name
-                name = SourceName(str(id(self)))
+                name = SourceName(id(self))
                 self.source: Optional[Union[Source, SourceName]] = Source(name, source)
             else:
-                err = ClowderError(ClowderErrorType.WRONG_SOURCE_TYPE, "Wrong source type")
-                LOG.debug('Wrong source type', err)
-                raise err
+                raise UnknownTypeError("Unknown source type")
 
         git = yaml.get('git', None)
         self.git_settings: Optional[GitSettings] = GitSettings(git) if git is not None else None
@@ -90,19 +84,18 @@ class Project:
         self.upstream: Optional[Upstream] = Upstream(upstream) if upstream is not None else None
 
     @property
-    def formatted_ref(self) -> Optional[str]:
-        """Return formatted git ref
+    def git_ref(self) -> Optional[GitRef]:
+        """Return git ref
 
-        :return: Formatted git ref
-        :rtype: Optional[str]
+        :return: git ref
         """
 
         if self.branch is not None:
-            return format_git_branch(self.branch)
+            return GitRef(branch=self.branch)
         elif self.tag is not None:
-            return format_git_tag(self.tag)
+            return GitRef(tag=self.tag)
         elif self.commit is not None:
-            return self.commit
+            return GitRef(commit=self.commit)
         else:
             return None
 
@@ -111,7 +104,7 @@ class Project:
 
         :param bool resolved: Whether to get resolved commit hashes
         :return: YAML python object
-        :rtype: Union[dict, str]
+        :raise UnknownTypeError:
         """
 
         from clowder.clowder_controller import CLOWDER_CONTROLLER
@@ -143,7 +136,12 @@ class Project:
         if self.remote is not None:
             yaml['remote'] = self.remote
         if self.source is not None:
-            yaml['source'] = self.source.get_yaml()
+            if isinstance(self.source, SourceName):
+                yaml['source'] = self.source
+            elif isinstance(self.source, Source):
+                yaml['source'] = self.source.get_yaml()
+            else:
+                raise UnknownTypeError('Unknown source type')
         if self.git_settings is not None:
             yaml['git'] = self.git_settings.get_yaml()
         if self.upstream is not None:

@@ -6,7 +6,8 @@
 
 from typing import Dict, Optional, Set, Union
 
-from clowder.error import ClowderError, ClowderErrorType
+from clowder.error import *
+from clowder.git_project import GitProtocol
 from clowder.logging import LOG
 
 from .model import Source
@@ -30,8 +31,9 @@ class SourceController(object):
         """SourceController __init__"""
 
         self._has_been_validated: bool = False
-        self.protocol_override: Optional[str] = None  # TODO: Make into @property method and check validation
         self._source_names: Set[SourceName] = {GITHUB, GITLAB, BITBUCKET}
+        # TODO: Make into @property method and check validation
+        self.protocol_override: Optional[GitProtocol] = None
 
         self._sources: Dict[SourceName, Source] = {
             GITHUB: Source(GITHUB, GITHUB_YAML),
@@ -43,12 +45,12 @@ class SourceController(object):
         """Register source with controller
 
         :param Optional[Union[Source, SourceName]] source: Source to add
+        :raise SourcesValidatedError:
+        :raise UnknownTypeError:
         """
 
         if self._has_been_validated:
-            err = ClowderError(ClowderErrorType.SOURCES_ALREADY_VALIDATED, "Sources have already been validated")
-            LOG.debug("Called add_source() but SOURCE_CONTROLLER has already been validated", err)
-            raise err
+            raise SourcesValidatedError('Called add_source() but SOURCE_CONTROLLER has already been validated')
 
         if source is None:
             return
@@ -59,68 +61,58 @@ class SourceController(object):
             self._source_names.add(source.name)
             self._sources[source.name] = source
         else:
-            err = ClowderError(ClowderErrorType.WRONG_SOURCE_TYPE, "Wrong source type")
-            LOG.debug('Wrong source type', err)
-            raise err
+            raise UnknownTypeError('Unknown source type')
 
     def get_source(self, source: Union[SourceName, Source]) -> Source:
         """Returns Source by name
 
         :param Union[SourceName, Source] source: Source to return
         :return: Source with supplied name
-        :rtype: Source
+        :raise SourcesValidatedError:
+        :raise UnknownTypeError:
+        :raise UnknownSourceError:
         """
 
         if not self._has_been_validated:
-            err = ClowderError(ClowderErrorType.SOURCES_NOT_VALIDATED, "Sources have not been validated")
-            LOG.debug("Called get_source() but SOURCE_CONTROLLER has not been validated", err)
-            raise err
+            raise SourcesValidatedError("Called get_source() but SOURCE_CONTROLLER has not been validated")
 
         if isinstance(source, SourceName):
             source_name = source
         elif isinstance(source, Source):
             source_name = source.name
         else:
-            err = ClowderError(ClowderErrorType.WRONG_SOURCE_TYPE, "Wrong source type")
-            LOG.debug('Wrong source type', err)
-            raise err
+            raise UnknownTypeError("Unknown source type")
 
         if source_name not in self._sources:
-            message = f"Source {source_name.name} not defined"
-            err = ClowderError(ClowderErrorType.CLOWDER_YAML_SOURCE_NOT_FOUND, message)
-            LOG.debug('Failed to get source', err)
-            raise err
+            raise UnknownSourceError(f"Unknown source: {source_name}")
 
         return self._sources[source_name]
 
-    def get_default_protocol(self) -> str:
-        """Returns Source by name
+    def get_default_protocol(self) -> GitProtocol:
+        """Returns default protocol
 
         :return: Default git protocol
-        :rtype: str
+        :raise SourcesValidatedError:
         """
 
         if not self._has_been_validated:
-            err = ClowderError(ClowderErrorType.SOURCES_NOT_VALIDATED, "Sources have not been validated")
-            LOG.debug("Called get_default_protocol() but SOURCE_CONTROLLER has not been validated", err)
-            raise err
+            raise SourcesValidatedError("Called get_default_protocol() but SOURCE_CONTROLLER has not been validated")
 
         if self.protocol_override is not None:
             return self.protocol_override
         else:
-            return 'ssh'
+            return GitProtocol.SSH
 
     def validate_sources(self) -> None:
         """Validate sources: check for unknown names
 
-        :raises
+        :raise UnknownSourceError:
         """
 
         self._has_been_validated = True
         if not any([s.name == name for name, s in self._sources.items()]):
-            err = ClowderError(ClowderErrorType.CLOWDER_YAML_SOURCE_NOT_FOUND, "Source not defined")
-            LOG.debug('Failed to validate sources', err)
-            raise err
+            LOG.debug('Failed to validate sources')
+            raise UnknownSourceError("Source not defined")
 
 
 SOURCE_CONTROLLER: SourceController = SourceController()

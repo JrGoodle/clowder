@@ -6,13 +6,10 @@
 
 from typing import Optional
 
-from clowder.git_project.util import (
-    format_git_branch,
-    format_git_tag
-)
+from clowder.git_project import GitRef
 
 from .git_settings import GitSettings
-from .source_name import SourceName
+from .source import SourceName
 from .upstream_defaults import UpstreamDefaults
 
 
@@ -35,31 +32,30 @@ class Defaults:
         """
 
         source = yaml.get("source", None)
-        self.source: Optional[SourceName] = SourceName(source) if source is not None else None
+        self.source: Optional[SourceName] = None if source is None else SourceName(source)
         self.remote: Optional[str] = yaml.get("remote", None)
         git = yaml.get("git", None)
-        self.git_settings: Optional[GitSettings] = GitSettings(git) if git is not None else None
+        self.git_settings: Optional[GitSettings] = None if git is None else GitSettings(git)
         self.branch: Optional[str] = yaml.get("branch", None)
         self.tag: Optional[str] = yaml.get("tag", None)
         self.commit: Optional[str] = yaml.get("commit", None)
         upstream = yaml.get("upstream", None)
-        upstream_defaults = UpstreamDefaults(upstream) if upstream is not None else None
+        upstream_defaults = None if upstream is None else UpstreamDefaults(upstream)
         self.upstream_defaults: Optional[UpstreamDefaults] = upstream_defaults
 
     @property
-    def formatted_ref(self) -> Optional[str]:
-        """Return formatted git ref
+    def git_ref(self) -> Optional[GitRef]:
+        """Return git ref
 
-        :return: Formatted git ref
-        :rtype: str
+        :return: git ref
         """
 
         if self.branch is not None:
-            return format_git_branch(self.branch)
+            return GitRef(branch=self.branch)
         elif self.tag is not None:
-            return format_git_tag(self.tag)
+            return GitRef(tag=self.tag)
         elif self.commit is not None:
-            return self.commit
+            return GitRef(commit=self.commit)
         else:
             return None
 
@@ -67,7 +63,6 @@ class Defaults:
         """Return python object representation for saving yaml
 
         :return: YAML python object
-        :rtype: dict
         """
 
         yaml = {}
@@ -82,7 +77,7 @@ class Defaults:
         if self.remote is not None:
             yaml['remote'] = self.remote
         if self.source is not None:
-            yaml['source'] = self.source.get_yaml()
+            yaml['source'] = self.source
         if self.git_settings is not None:
             yaml['git'] = self.git_settings.get_yaml()
         if self.upstream_defaults is not None:

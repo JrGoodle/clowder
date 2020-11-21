@@ -4,9 +4,11 @@
 
 """
 
-from typing import Dict, Optional, Union
+from typing import Dict, Optional
 
-from .source_name import SourceName
+from clowder.git_project import GitProtocol
+
+SourceName = str
 
 
 class Source:
@@ -14,7 +16,7 @@ class Source:
 
     :ivar SourceName name: Source name
     :ivar str url: Git project url
-    :ivar Optional[str] protocol: Git protocol
+    :ivar Optional[GitProtocol] protocol: Git protocol
     """
 
     def __init__(self, name: SourceName, yaml: Dict[str, str]):
@@ -26,19 +28,18 @@ class Source:
 
         self.name: SourceName = name
         self.url: str = yaml['url']
-        protocol = yaml.get('protocol', None)
-        self.protocol: Optional[str] = protocol if protocol is not None else None
+        protocol = yaml.get("protocol", None)
+        self.protocol: Optional[GitProtocol] = None if protocol is None else GitProtocol(protocol)
 
     def get_yaml(self) -> Dict[str, str]:
         """Return python object representation for saving yaml
 
         :return: YAML python object
-        :rtype: Union[dict, str]
         """
 
         source = {"url": self.url}
 
         if self.protocol is not None:
-            source['protocol'] = self.protocol
+            source['protocol'] = self.protocol.value
 
         return source

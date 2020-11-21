@@ -7,8 +7,7 @@
 from typing import List, Optional, Union
 from pathlib import Path
 
-from clowder.error import ClowderError, ClowderErrorType
-from clowder.logging import LOG
+from clowder.error import *
 
 from .defaults import Defaults
 from .project import Project
@@ -22,7 +21,6 @@ class Group:
     :ivar Optional[List[Group]] groups: Group names
     :ivar Optional[Defaults] defaults: Group defaults
     :ivar List[Project] projects: Group projects
-    :ivar Optional[str] protocol: Git protocol
     :ivar bool _has_projects_key: Whether the projects were listed under the 'projects' key in the yaml file
     """
 
@@ -31,6 +29,7 @@ class Group:
 
         :param str name: Group name
         :param Union[dict, List[Project]] yaml: Parsed YAML python object for group
+        :raise UnknownTypeError:
         """
 
         self.name: str = name
@@ -41,26 +40,21 @@ class Group:
             self.groups: Optional[List[Group]] = yaml.get('groups', None)
             defaults = yaml.get("defaults", None)
             self.defaults: Optional[Defaults] = Defaults(defaults) if defaults is not None else None
-            self.protocol: Optional[str] = yaml.get('protocol', None)
             self.projects: List[Project] = [Project(p) for p in yaml["projects"]]
             self._has_projects_key: bool = True
         elif isinstance(yaml, list):
             self.path: Optional[Path] = None
             self.groups: Optional[List[Group]] = None
             self.defaults: Optional[Defaults] = None
-            self.protocol: Optional[str] = None
             self.projects: List[Project] = [Project(p) for p in yaml]
             self._has_projects_key: bool = False
         else:
-            err = ClowderError(ClowderErrorType.WRONG_GROUP_TYPE, "Wrong group type")
-            LOG.debug("Wrong instance type for group", err)
-            raise err
+            raise UnknownTypeError("Unknown group type")
 
     def get_yaml(self, resolved: bool = False) -> Union[dict, list]:
         """Return python object representation for saving yaml
 
         :return: YAML python object
-        :rtype: Union[dict, list]
         """
 
         if not self._has_projects_key:
@@ -70,8 +64,6 @@ class Group:
 
         if self.path is not None:
             yaml['path'] = str(self.path)
-        if self.protocol is not None:
-            yaml['protocol'] = self.protocol
         if self.groups is not None:
             yaml['groups'] = str(self.groups)
         if self.defaults is not None:

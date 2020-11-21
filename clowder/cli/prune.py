@@ -17,6 +17,7 @@ from clowder.data.util import (
     filter_projects,
     validate_project_statuses
 )
+from clowder.error import *
 from clowder.util.connectivity import network_connection_required
 from clowder.util.decorators import (
     print_clowder_name,
@@ -114,6 +115,7 @@ def _prune_projects(projects: Tuple[ResolvedProject, ...], branch: str, force: b
     :param bool force: Force delete branch
     :param bool local: Delete local branch
     :param bool remote: Delete remote branch
+    :raise ClowderError:
     """
 
     local_branch_exists = project_has_branch(projects, branch, is_remote=False)
@@ -136,7 +138,7 @@ def _prune_projects(projects: Tuple[ResolvedProject, ...], branch: str, force: b
             return
         CONSOLE.stdout(' - Prune local branches\n')
     else:
-        raise Exception('local and remote are both false, but at least one should be true')
+        raise ClowderError('local and remote are both false, but at least one should be true')
 
     for project in projects:
         CONSOLE.stdout(project.status())

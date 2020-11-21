@@ -6,10 +6,10 @@
 
 import argparse
 
-import clowder.clowder_repo as clowder_repo
 import clowder.util.formatting as fmt
 from clowder.console import CONSOLE
 from clowder.environment import ENVIRONMENT
+from clowder.git_project.clowder_repo import ClowderRepo
 from clowder.logging import LOG
 from clowder.util.connectivity import network_connection_required
 
@@ -30,10 +30,7 @@ def add_init_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
 
 @network_connection_required
 def init(args) -> None:
-    """Clowder init command private implementation
-
-    :raise ClowderError:
-    """
+    """Clowder init command private implementation"""
 
     clowder_repo_dir = ENVIRONMENT.current_dir / '.clowder'
     if clowder_repo_dir.is_dir():
@@ -44,10 +41,11 @@ def init(args) -> None:
             CONSOLE.stderr("Clowder already initialized in this directory")
             raise
 
-    url_output = fmt.green(args.url)
-    CONSOLE.stdout(f"Create clowder repo from {url_output}\n")
+    CONSOLE.stdout(f"Create clowder repo from {fmt.green(args.url)}\n")
     if args.branch is None:
         branch = 'master'
     else:
         branch = str(args.branch[0])
-    clowder_repo.init(args.url, branch)
+    clowder_repo_dir = ENVIRONMENT.current_dir / '.clowder'
+    repo = ClowderRepo(clowder_repo_dir)
+    repo.init(args.url, branch)

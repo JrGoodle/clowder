@@ -4,9 +4,8 @@
 
 """
 
-from .git_repo import GitRepo
-from .project_repo import ProjectRepo
-from .project_repo_recursive import ProjectRepoRecursive
-
-SSH = "ssh"
-HTTPS = "https"
+from clowder.git_project.git_ref import GitRef, GitRefEnum
+from clowder.git_project.git_protocol import GitProtocol
+from clowder.git_project.git_repo import GitRepo
+from clowder.git_project.project_repo import ProjectRepo
+from clowder.git_project.project_repo_recursive import ProjectRepoRecursive

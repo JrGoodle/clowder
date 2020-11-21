@@ -13,6 +13,7 @@ from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.config import Config
 from clowder.console import CONSOLE
 from clowder.data.util import filter_projects
+from clowder.error import *
 from clowder.util.decorators import (
     print_clowder_name,
     print_clowder_repo_status,
@@ -51,14 +52,17 @@ def add_forall_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
 @print_clowder_name
 @print_clowder_repo_status
 def forall(args) -> None:
-    """Clowder forall command private implementation"""
+    """Clowder forall command private implementation
+
+    :raise ClowderError:
+    """
 
     jobs = None
     if args.jobs:
         jobs = args.jobs[0]
 
     if not args.command:
-        raise Exception('Missing command')
+        raise ClowderError('Missing command')
     command = args.command[0]
 
     _forall_impl(command, args.ignore_errors, projects=args.projects, jobs=jobs)

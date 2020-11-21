@@ -7,9 +7,9 @@
 import argparse
 
 import clowder.util.formatting as fmt
-from clowder.clowder_repo import get_saved_version_names
+from clowder.git_project.clowder_repo import ClowderRepo
 from clowder.environment import ENVIRONMENT
-from clowder.error import ClowderError, ClowderErrorType
+from clowder.error import *
 from clowder.util.yaml import (
     link_clowder_yaml_default,
     link_clowder_yaml_version
@@ -29,7 +29,9 @@ def add_link_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
     :param argparse._SubParsersAction subparsers: Subparsers action to add parser to
     """
 
-    versions = get_saved_version_names()
+    versions = None
+    if ENVIRONMENT.clowder_repo_dir is not None:
+        versions = ClowderRepo(ENVIRONMENT.clowder_repo_dir).get_saved_version_names()
 
     arguments = [
         (['version'], dict(metavar='<version>', choices=versions, nargs='?', default=None,
@@ -46,11 +48,13 @@ def add_link_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
 @clowder_repo_required
 @print_clowder_repo_status
 def link(args) -> None:
-    """Clowder link command private implementation"""
+    """Clowder link command private implementation
+
+    :raise ExistingSymlinkError:
+    """
 
     if ENVIRONMENT.clowder_yaml is not None and not ENVIRONMENT.clowder_yaml.is_symlink():
-        message = f"Found non-symlink file {fmt.path(ENVIRONMENT.clowder_yaml)} at target path"
-        raise ClowderError(ClowderErrorType.EXISTING_FILE_AT_SYMLINK_TARGET_PATH, message)
+        raise ExistingSymlinkError(f"Found non-symlink file {fmt.path(ENVIRONMENT.clowder_yaml)} at target path")
 
     if args.version is None:
         link_clowder_yaml_default(ENVIRONMENT.clowder_dir)

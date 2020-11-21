@@ -34,7 +34,6 @@ class GitSettings:
         """Return python object representation for saving yaml
 
         :return: YAML python object
-        :rtype: dict
         """
 
         yaml = {}
