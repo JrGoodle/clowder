@@ -186,7 +186,7 @@ class ProjectRepo(ProjectRepoImpl):
             self._create_remote(self.remote, url, remove_dir=True)
             try:
                 self._checkout_new_repo_tag(tag, self.remote, depth)
-            except ClowderError as err:
+            except Exception as err:
                 LOG.debug('Failed checkout new repo tag', err)
                 fetch = depth != 0
                 self.herd(url, depth=depth, fetch=fetch, rebase=rebase)
@@ -202,7 +202,7 @@ class ProjectRepo(ProjectRepoImpl):
         try:
             self.fetch(self.remote, ref=GitRef(tag=tag), depth=depth)
             self._checkout_tag(tag)
-        except ClowderError as err:
+        except Exception as err:
             LOG.debug('Failed fetch and checkout tag', err)
             fetch = depth != 0
             self.herd(url, depth=depth, fetch=fetch, rebase=rebase)
@@ -223,7 +223,7 @@ class ProjectRepo(ProjectRepoImpl):
 
         try:
             self.fetch(remote, ref=GitRef(branch=branch))
-        except ClowderError as err:
+        except Exception as err:
             LOG.debug('Failed fetch', err)
             self.fetch(remote, ref=self.default_ref)
 

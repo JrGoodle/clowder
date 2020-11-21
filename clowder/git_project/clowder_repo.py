@@ -132,7 +132,7 @@ class ClowderRepo(ProjectRepo):
         else:
             try:
                 link_clowder_yaml_default(ENVIRONMENT.current_dir)
-            except ClowderError:
+            except Exception:
                 CONSOLE.stderr('Failed to link yaml file after clowder repo init')
                 raise
             else:
