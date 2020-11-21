@@ -114,7 +114,7 @@ class ClowderController(object):
 
         :param str timestamp_project: Project to get timestamp of current HEAD commit
         :return: Commit timestamp string
-        :raise ClowderError:
+        :raise ClowderGitError:
         """
 
         timestamp = None
@@ -123,7 +123,7 @@ class ClowderController(object):
                 timestamp = project.current_timestamp
 
         if timestamp is None:
-            raise ClowderError("Failed to find timestamp")
+            raise ClowderGitError("Failed to find timestamp")
 
         return timestamp
 

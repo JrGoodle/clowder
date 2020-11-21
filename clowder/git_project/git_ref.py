@@ -28,7 +28,6 @@ class GitRef(object):
     :ivar Optional[str] tag: Tag
     :ivar Optional[str] commit: Commit
     :ivar str formatted_ref: Formatted ref
-    :raise ClowderError:
     """
 
     def __init__(self, branch: Optional[str] = None, tag: Optional[str] = None, commit: Optional[str] = None):
@@ -43,9 +42,9 @@ class GitRef(object):
 
         arguments_count = len([ref for ref in [branch, tag, commit] if ref is not None])
         if arguments_count == 0:
-            raise ClowderError('GitRef init requires one argument')
+            raise CommandArgumentError('GitRef init requires one argument')
         elif arguments_count > 1:
-            raise ClowderError('GitRef init only allows one argument')
+            raise CommandArgumentError('GitRef init only allows one argument')
 
         self.branch: Optional[str] = branch
         self.tag: Optional[str] = tag

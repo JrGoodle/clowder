@@ -12,6 +12,7 @@ from git import Repo, GitCommandError, GitError
 
 import clowder.util.formatting as fmt
 from clowder.console import CONSOLE
+from clowder.logging import LOG
 from clowder.util.execute import execute_command
 from clowder.util.file_system import remove_directory
 
@@ -124,7 +125,8 @@ class GitRepo(object):
         try:
             origin = self.repo.remotes[remote]
             return branch in origin.refs
-        except (GitError, IndexError):
+        except (GitError, IndexError) as err:
+            LOG.debug(error=err)
             return False
 
     def has_local_branch(self, branch: str) -> bool:
@@ -163,11 +165,12 @@ class GitRepo(object):
             else:
                 command = f'git fetch {remote} {ref.short_ref} --depth {depth} --prune --tags'
                 execute_command(command, self.repo_path)
-        except BaseException:
+        except BaseException as err:
             CONSOLE.stderr(error_message)
             if remove_dir:
                 remove_directory(self.repo_path, check=False)
             if allow_failure:
+                LOG.debug(error=err)
                 return
             raise
 
@@ -295,7 +298,8 @@ class GitRepo(object):
             self.repo.git.config('--get', 'filter.lfs.clean')
             self.repo.git.config('--get', 'filter.lfs.process')
             self.repo.git.config('--get', 'filter.lfs.required')
-        except GitError:
+        except GitError as err:
+            LOG.debug(error=err)
             return False
         else:
             return True
@@ -309,7 +313,8 @@ class GitRepo(object):
 
         try:
             local_branch = self.repo.active_branch
-        except (GitError, TypeError):
+        except (GitError, TypeError) as err:
+            LOG.debug(error=err)
             return 0
         else:
             tracking_branch = local_branch.tracking_branch()
@@ -319,7 +324,8 @@ class GitRepo(object):
             try:
                 commits = f'{local_branch.commit.hexsha}...{tracking_branch.commit.hexsha}'
                 rev_list_count = self.repo.git.rev_list('--count', '--left-right', commits)
-            except (GitError, ValueError):
+            except (GitError, ValueError) as err:
+                LOG.debug(error=err)
                 return 0
             else:
                 index = 1 if upstream else 0

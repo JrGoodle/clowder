@@ -81,7 +81,7 @@ class ResolvedGitSettings:
         """Return version of config converted to strings
 
         :return: Config processed to create strings
-        :raise ClowderError:
+        :raise ClowderGitError:
         """
 
         if self.config is None:
@@ -98,5 +98,5 @@ class ResolvedGitSettings:
             elif self.config[key] is None:
                 pass
             else:
-                raise ClowderError(f"Invalid git config value - {key}: {value}")
+                raise ClowderGitError(f"Invalid git config value - {key}: {value}")
         return config

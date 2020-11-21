@@ -111,8 +111,7 @@ class SourceController(object):
 
         self._has_been_validated = True
         if not any([s.name == name for name, s in self._sources.items()]):
-            LOG.debug('Failed to validate sources')
-            raise UnknownSourceError("Source not defined")
+            raise UnknownSourceError('Failed to validate sources - source not defined')
 
 
 SOURCE_CONTROLLER: SourceController = SourceController()

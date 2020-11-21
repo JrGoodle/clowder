@@ -181,6 +181,8 @@ class ProjectRepo(ProjectRepoImpl):
         :param Optional[GitConfig] config: Custom git config
         """
 
+        fetch = depth != 0
+
         if not existing_git_repository(self.repo_path):
             self._init_repo()
             self._create_remote(self.remote, url, remove_dir=True)
@@ -188,13 +190,8 @@ class ProjectRepo(ProjectRepoImpl):
                 self._checkout_new_repo_tag(tag, self.remote, depth)
             except Exception as err:
                 LOG.debug('Failed checkout new repo tag', err)
-                fetch = depth != 0
                 self.herd(url, depth=depth, fetch=fetch, rebase=rebase)
                 return
-            else:
-                self.install_project_git_herd_alias()
-                if config is not None:
-                    self._update_git_config(config)
 
         self.install_project_git_herd_alias()
         if config is not None:
@@ -204,7 +201,6 @@ class ProjectRepo(ProjectRepoImpl):
             self._checkout_tag(tag)
         except Exception as err:
             LOG.debug('Failed fetch and checkout tag', err)
-            fetch = depth != 0
             self.herd(url, depth=depth, fetch=fetch, rebase=rebase)
 
     def herd_remote(self, url: str, remote: str, branch: Optional[str] = None) -> None:
@@ -231,6 +227,7 @@ class ProjectRepo(ProjectRepoImpl):
         """Install 'git herd' alias for project"""
 
         from clowder.environment import ENVIRONMENT
+
         config_variable = 'alias.herd'
         config_value = f'!clowder herd {self.repo_path.relative_to(ENVIRONMENT.clowder_dir)}'
         CONSOLE.stdout(" - Update git herd alias")
@@ -286,7 +283,7 @@ class ProjectRepo(ProjectRepoImpl):
         """Reset branch to upstream or checkout tag/sha as detached HEAD
 
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-        :raise ClowderError:
+        :raise ClowderGitError:
         :raise UnknownTypeError:
         """
 
@@ -303,7 +300,7 @@ class ProjectRepo(ProjectRepoImpl):
                 return
             self._checkout_branch(branch)
             if not self.has_remote_branch(branch, self.remote):
-                raise ClowderError(f'No existing remote branch {fmt.remote(self.remote)} {fmt.ref(branch)}')
+                raise ClowderGitError(f'No existing remote branch {fmt.remote(self.remote)} {fmt.ref(branch)}')
             self.fetch(self.remote, ref=self.default_ref, depth=depth)
             CONSOLE.stdout(f' - Reset branch {fmt.ref(branch)} to {fmt.remote(self.remote)} {fmt.ref(branch)}')
             self._reset_head(branch=f'{self.remote}/{branch}')
@@ -316,7 +313,7 @@ class ProjectRepo(ProjectRepoImpl):
         :param str timestamp: Commit ref timestamp
         :param str author: Commit author
         :param str ref: Reference ref
-        :raise ClowderError:
+        :raise ClowderGitError:
         """
 
         rev = None
@@ -325,7 +322,7 @@ class ProjectRepo(ProjectRepoImpl):
         if not rev:
             rev = self._find_rev_by_timestamp(timestamp, ref)
         if not rev:
-            raise ClowderError(f'Failed to find revision')
+            raise ClowderGitError(f'Failed to find revision')
 
         self._checkout_sha(rev)
 

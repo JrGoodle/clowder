@@ -54,7 +54,7 @@ def add_forall_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
 def forall(args) -> None:
     """Clowder forall command private implementation
 
-    :raise ClowderError:
+    :raise CommandArgumentError:
     """
 
     jobs = None
@@ -62,7 +62,7 @@ def forall(args) -> None:
         jobs = args.jobs[0]
 
     if not args.command:
-        raise ClowderError('Missing command')
+        raise CommandArgumentError('Missing command')
     command = args.command[0]
 
     _forall_impl(command, args.ignore_errors, projects=args.projects, jobs=jobs)

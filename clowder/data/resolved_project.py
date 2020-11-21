@@ -82,12 +82,11 @@ class ResolvedProject:
         has_group_path = has_group and group.path is not None
         self.path: Path = Path()
         if has_group_path:
-            self.path = self.path / group.path
+            self.path: Path = self.path / group.path
         if has_path:
-            self.path = self.path / project.path
+            self.path: Path = self.path / project.path
         else:
-            last_path_component = Path(self.name).name
-            self.path = self.path / last_path_component
+            self.path: Path = self.path / Path(self.name).name
 
         self.default_protocol: Optional[GitProtocol] = None
         if protocol is not None:
@@ -98,11 +97,11 @@ class ResolvedProject:
         has_group_defaults_remote = has_group_defaults and group.defaults.remote is not None
         self.remote: str = "origin"
         if has_remote:
-            self.remote = project.remote
+            self.remote: str = project.remote
         elif has_group_defaults_remote:
-            self.remote = group.defaults.remote
+            self.remote: str = group.defaults.remote
         elif has_defaults_remote:
-            self.remote = defaults.remote
+            self.remote: str = defaults.remote
 
         has_source = project.source is not None
         has_defaults_source = has_defaults and defaults.source is not None
@@ -120,11 +119,11 @@ class ResolvedProject:
         has_group_defaults_ref = has_group_defaults and group.defaults.git_ref is not None
         self.ref: Optional[GitRef] = None
         if has_ref:
-            self.ref = project.git_ref
+            self.ref: Optional[GitRef] = project.git_ref
         elif has_group_defaults_ref:
-            self.ref = group.defaults.git_ref
+            self.ref: Optional[GitRef] = group.defaults.git_ref
         elif has_defaults_ref:
-            self.ref = defaults.git_ref
+            self.ref: Optional[GitRef] = defaults.git_ref
 
         has_git = project.git_settings is not None
         has_defaults_git = has_defaults and defaults.git_settings is not None
@@ -455,7 +454,6 @@ class ResolvedProject:
         :param bool tracking: Whether to create a remote branch with tracking relationship
         """
 
-        # TODO: Replace 0 with git default depth
         depth = self.git_settings.depth
         self.repo.start(self.remote, branch, depth, tracking)
 

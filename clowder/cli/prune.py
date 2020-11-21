@@ -115,7 +115,7 @@ def _prune_projects(projects: Tuple[ResolvedProject, ...], branch: str, force: b
     :param bool force: Force delete branch
     :param bool local: Delete local branch
     :param bool remote: Delete remote branch
-    :raise ClowderError:
+    :raise CommandArgumentError:
     """
 
     local_branch_exists = project_has_branch(projects, branch, is_remote=False)
@@ -138,7 +138,7 @@ def _prune_projects(projects: Tuple[ResolvedProject, ...], branch: str, force: b
             return
         CONSOLE.stdout(' - Prune local branches\n')
     else:
-        raise ClowderError('local and remote are both false, but at least one should be true')
+        raise CommandArgumentError('local and remote are both false, but at least one should be true')
 
     for project in projects:
         CONSOLE.stdout(project.status())

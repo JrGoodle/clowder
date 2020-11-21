@@ -11,11 +11,8 @@ from subprocess import CalledProcessError
 
 import argcomplete
 import colorama
-from git import GitError
 
 import clowder.cli as cmd
-from clowder.console import CONSOLE
-from clowder.error import *
 from clowder.logging import LOG
 
 
@@ -83,7 +80,6 @@ def create_parsers() -> argparse.ArgumentParser:
 def main() -> None:
     """Clowder command CLI main function"""
 
-    CONSOLE.stdout()
     try:
         parser = create_parsers()
         argcomplete.autocomplete(parser)
@@ -94,29 +90,23 @@ def main() -> None:
         if args.debug:
             LOG.level = LOG.DEBUG
         args.func(args)
-    except ClowderError as err:
-        LOG.error(error=err)
-        exit(1)
-    except GitError as err:
-        LOG.error(error=err)
-        exit(1)
     except CalledProcessError as err:
         LOG.error(error=err)
         exit(err.returncode)
+    except OSError as err:
+        LOG.error(error=err)
+        exit(err.errno)
     except SystemExit as err:
         if err.code == 0:
-            CONSOLE.stdout()
             exit()
         LOG.error(error=err)
         exit(err.code)
     except KeyboardInterrupt:
-        LOG.error('** KeyboardInterrupt **\n')
+        LOG.error('** KeyboardInterrupt **')
         exit(1)
     except BaseException as err:
         LOG.error(error=err)
         exit(1)
-    else:
-        CONSOLE.stdout()
 
 
 if __name__ == '__main__':

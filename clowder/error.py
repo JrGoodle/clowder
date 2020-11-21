@@ -95,3 +95,11 @@ class AmbiguousYamlError(ClowderError):
 
 class DuplicatePathError(ClowderError):
     pass
+
+
+class ClowderGitError(ClowderError):
+    pass
+
+
+class CommandArgumentError(ClowderError):
+    pass

@@ -44,7 +44,7 @@ class Clowder:
 
         if self.projects is not None:
             return [p.get_yaml(resolved=resolved) for p in self.projects]
-        if self.groups is not None:
+        elif self.groups is not None:
             return {g.name: g.get_yaml(resolved=resolved) for g in self.groups}
-
-        raise ClowderError('Clowder model created without projects or groups')
+        else:
+            raise ClowderError('Clowder model created without projects or groups')

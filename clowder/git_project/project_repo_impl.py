@@ -13,6 +13,7 @@ from git import GitError, Remote, Repo, Tag
 import clowder.util.formatting as fmt
 from clowder.console import CONSOLE
 from clowder.error import *
+from clowder.logging import LOG
 from clowder.util.execute import execute_command
 from clowder.util.file_system import remove_directory, make_dir
 
@@ -77,7 +78,7 @@ class ProjectRepoImpl(GitRepo):
 
         :param str branch: Branch name
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-        :raise ClowderError:
+        :raise ClowderGitError:
         """
 
         self._remote(self.remote, remove_dir=True)
@@ -85,7 +86,7 @@ class ProjectRepoImpl(GitRepo):
 
         if not self.has_remote_branch(branch, self.remote):
             remove_directory(self.repo_path, check=False)
-            raise ClowderError(f'No existing remote branch {fmt.remote(self.remote)} {fmt.ref(branch)}')
+            raise ClowderGitError(f'No existing remote branch {fmt.remote(self.remote)} {fmt.ref(branch)}')
 
         self._create_branch_local_tracking(branch, self.remote, depth=depth, fetch=False, remove_dir=True)
 
@@ -150,11 +151,11 @@ class ProjectRepoImpl(GitRepo):
         """Checkout commit tag is pointing to
 
         :param str tag: Tag name
-        :raise ClowderError:
+        :raise ClowderGitError:
         """
 
         if tag not in self.repo.tags:
-            raise ClowderError(f'No existing tag {fmt.ref(tag)}')
+            raise ClowderGitError(f'No existing tag {fmt.ref(tag)}')
 
         try:
             same_commit = self.repo.head.commit == self.repo.tags[tag].commit
@@ -175,14 +176,14 @@ class ProjectRepoImpl(GitRepo):
 
         :param str remote: Remote name
         :param str url: URL to compare with remote's URL
-        :raise ClowderError:
+        :raise ClowderGitError:
         """
 
         if url != self._remote_get_url(remote):
             actual_url = self._remote_get_url(remote)
             message = f"Remote {fmt.remote(remote)} already exists with a different url\n" \
                       f"{fmt.url_string(actual_url)} should be {fmt.url_string(url)}"
-            raise ClowderError(message)
+            raise ClowderGitError(message)
 
     def _create_branch_local(self, branch: str) -> None:
         """Create local branch
@@ -311,11 +312,12 @@ class ProjectRepoImpl(GitRepo):
 
         try:
             return self.repo.tags[tag]
-        except (GitError, IndexError):
+        except (GitError, IndexError) as err:
             CONSOLE.stderr(f'No existing tag {fmt.ref(tag)}')
             if remove_dir:
                 remove_directory(self.repo_path, check=False)
                 raise
+            LOG.debug(error=err)
             return None
         except BaseException:
             CONSOLE.stderr('Failed to get tag')
@@ -352,7 +354,8 @@ class ProjectRepoImpl(GitRepo):
             is_detached = self.repo.head.is_detached
             same_branch = self.repo.head.ref == default_branch
             return not is_detached and same_branch
-        except (GitError, TypeError):
+        except (GitError, TypeError) as err:
+            LOG.debug(error=err)
             return False
 
     def _is_tracking_branch(self, branch: str) -> bool:
@@ -479,22 +482,22 @@ class ProjectRepoImpl(GitRepo):
         :param str branch: Branch name
         :param str remote: Remote name
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-        :raise ClowderError:
+        :raise ClowderGitError:
         """
 
         origin = self._remote(remote)
         self.fetch(remote, depth=depth, ref=GitRef(branch=branch))
 
         if not self.has_local_branch(branch):
-            raise ClowderError(f'No local branch {fmt.ref(branch)}')
+            raise ClowderGitError(f'No local branch {fmt.ref(branch)}')
 
         if not self.has_remote_branch(branch, remote):
-            raise ClowderError(f'No remote branch {fmt.ref(branch)}')
+            raise ClowderGitError(f'No remote branch {fmt.ref(branch)}')
 
         local_branch = self.repo.heads[branch]
         remote_branch = origin.refs[branch]
         if local_branch.commit != remote_branch.commit:
-            raise ClowderError(f' - Existing remote branch {fmt.ref(branch)} on different commit')
+            raise ClowderGitError(f' - Existing remote branch {fmt.ref(branch)} on different commit')
 
         self._set_tracking_branch(remote, branch)
 
