@@ -59,10 +59,7 @@ class ProjectRepoRecursive(ProjectRepo):
 
     @property
     def has_submodules(self) -> bool:
-        """Repo has submodules
-
-        :return: True, if repo has submodules
-        """
+        """Check whether repo has submodules"""
 
         return len(self.repo.submodules) > 0
 

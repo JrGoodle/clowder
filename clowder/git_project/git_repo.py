@@ -109,10 +109,7 @@ class GitRepo(object):
 
     @property
     def current_branch(self) -> str:
-        """Return currently checked out branch of project
-
-        :return: Name of currently checked out branch
-        """
+        """Name of currently checked out project branch"""
 
         return self.repo.head.ref.name
 
@@ -176,10 +173,7 @@ class GitRepo(object):
 
     @property
     def formatted_ref(self) -> str:
-        """Return formatted project ref string
-
-        :return: Formmatted repo ref
-        """
+        """Formatted project repo ref"""
 
         local_commits_count = self.new_commits_count()
         upstream_commits_count = self.new_commits_count(upstream=True)
@@ -226,10 +220,7 @@ class GitRepo(object):
 
     @property
     def current_timestamp(self) -> str:
-        """Get current timestamp of HEAD commit
-
-        :return: HEAD commit timestamp
-        """
+        """Current timestamp of HEAD commit"""
 
         try:
             return self.repo.git.log('-1', '--format=%cI')
@@ -278,10 +269,7 @@ class GitRepo(object):
 
     @property
     def is_detached(self) -> bool:
-        """Check if HEAD is detached
-
-        :return: True, if HEAD is detached
-        """
+        """Check if HEAD is detached"""
 
         if not self.repo_path.is_dir():
             return False
@@ -291,10 +279,7 @@ class GitRepo(object):
 
     @property
     def is_dirty(self) -> bool:
-        """Check whether repo is dirty
-
-        :return: True, if repo is dirty
-        """
+        """Check whether repo is dirty"""
 
         if not self.repo_path.is_dir():
             return False
@@ -303,10 +288,7 @@ class GitRepo(object):
 
     @property
     def is_lfs_installed(self) -> bool:
-        """Check whether git lfs hooks are installed
-
-        :return: True, if lfs hooks are installed
-        """
+        """Check whether git lfs hooks are installed"""
 
         try:
             self.repo.git.config('--get', 'filter.lfs.smudge')
@@ -489,10 +471,7 @@ class GitRepo(object):
 
     @property
     def _is_rebase_in_progress(self) -> bool:
-        """Detect whether rebase is in progress
-
-        :return: True, if rebase is in progress
-        """
+        """Check whether rebase is in progress"""
 
         is_rebase_apply = Path(self.repo_path / '.git' / 'rebase-apply').is_dir()
         is_rebase_merge = Path(self.repo_path / '.git' / 'rebase-merge').is_dir()
@@ -533,9 +512,6 @@ class GitRepo(object):
 
     @property
     def _has_untracked_files(self) -> bool:
-        """Check whether untracked files exist
-
-        :return: True, if untracked files exist
-        """
+        """Check whether untracked files exist"""
 
         return True if self.repo.untracked_files else False

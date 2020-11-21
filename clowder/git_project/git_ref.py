@@ -64,9 +64,8 @@ class GitRef(object):
 
     @property
     def short_ref(self) -> str:
-        """GitRepo __init__
+        """Short git ref
 
-        :return: Short git ref
         :raise UnknownTypeError:
         """
         if self.ref_type is GitRefEnum.BRANCH:
@@ -82,7 +81,6 @@ class GitRef(object):
     def formatted_ref(self) -> str:
         """Formatted git ref
 
-        :return: Formatted git ref
         :raise UnknownTypeError:
         """
 

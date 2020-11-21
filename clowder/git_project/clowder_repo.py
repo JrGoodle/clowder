@@ -137,7 +137,7 @@ class ClowderRepo(ProjectRepo):
                 raise
             else:
                 if ENVIRONMENT.has_ambiguous_clowder_yaml_files():
-                    raise ENVIRONMENT.ambiguous_clowder_yaml_error
+                    raise ENVIRONMENT.ambiguous_yaml_error
 
     def print_status(self, fetch: bool = False) -> None:
         """Print clowder repo status

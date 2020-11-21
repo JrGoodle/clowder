@@ -45,10 +45,7 @@ class Defaults:
 
     @property
     def git_ref(self) -> Optional[GitRef]:
-        """Return git ref
-
-        :return: git ref
-        """
+        """git ref"""
 
         if self.branch is not None:
             return GitRef(branch=self.branch)

@@ -84,19 +84,13 @@ class ResolvedUpstream:
 
     @property
     def full_path(self) -> Path:
-        """Return full path to project
-
-        :return: Project's full file path
-        """
+        """Full path to project"""
 
         return ENVIRONMENT.clowder_dir / self.path
 
     @property
     def repo(self) -> ProjectRepo:
-        """Return ProjectRepo instance
-
-        :return: Project repo instance
-        """
+        """ProjectRepo instance"""
 
         if self._repo is not None:
             return self._repo

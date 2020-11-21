@@ -23,9 +23,10 @@ class ClowderEnvironment(object):
     :cvar Optional[Path] clowder_repo_versaions_dir: Path to clowder repo versions directory
     :cvar Optional[Path] clowder_repo_plugins_dir: Path to clowder repo plugins directory
     :cvar Optional[Path] clowder_yaml: Path to clowder yaml file if it exists
-    :cvar Optional[MissingSourceError] clowder_yaml_missing_source_error: Possible error for broken clowder yaml symlink
-    :cvar Optional[AmbiguousYamlError] ambiguous_clowder_yaml_error: Possible error due to ambiguous clowder yaml
-    :cvar Optional[ExistingFileError] clowder_repo_existing_file_error: Possible error due to existing .clowder file
+
+    :cvar Optional[MissingSourceError] missing_source_error: Possible error for broken clowder yaml symlink
+    :cvar Optional[AmbiguousYamlError] ambiguous_yaml_error: Possible error due to ambiguous clowder yaml
+    :cvar Optional[ExistingFileError] existing_clowder_repo_file_error: Possible error due to existing .clowder file
     """
 
     current_dir: Path = Path.cwd()
@@ -38,9 +39,9 @@ class ClowderEnvironment(object):
     clowder_repo_plugins_dir: Optional[Path] = None
     clowder_yaml: Optional[Path] = None
 
-    clowder_yaml_missing_source_error: Optional[MissingSourceError] = None
-    ambiguous_clowder_yaml_error: Optional[AmbiguousYamlError] = None
-    clowder_repo_existing_file_error: Optional[ExistingFileError] = None
+    missing_source_error: Optional[MissingSourceError] = None
+    ambiguous_yaml_error: Optional[AmbiguousYamlError] = None
+    existing_clowder_repo_file_error: Optional[ExistingFileError] = None
 
     def __init__(self):
         """ClowderEnvironment __init__"""
@@ -65,9 +66,9 @@ class ClowderEnvironment(object):
             yml_file = fmt.path(Path('clowder.yml'))
             yaml_file = fmt.path(Path('clowder.yaml'))
             message = f"Found {yml_file} and {yaml_file} files in same directory"
-            self.ambiguous_clowder_yaml_error = AmbiguousYamlError(message)
+            self.ambiguous_yaml_error = AmbiguousYamlError(message)
         else:
-            self.ambiguous_clowder_yaml_error = None
+            self.ambiguous_yaml_error = None
 
         return has_ambiguous_clowder_yaml_files
 
@@ -111,7 +112,7 @@ class ClowderEnvironment(object):
                 if clowder_repo_file_exists:
                     message = f"Found non-directory file {fmt.path(clowder_repo_dir)} " \
                               f"where clowder repo directory should be"
-                    self.clowder_repo_existing_file_error: Optional[ExistingFileError] = ExistingFileError(message)
+                    self.existing_clowder_repo_file_error: Optional[ExistingFileError] = ExistingFileError(message)
                 self.clowder_dir: Optional[Path] = path
                 break
             path = path.parent
@@ -150,7 +151,7 @@ class ClowderEnvironment(object):
             target = fmt.path(yaml_file)
             source = fmt.path((yaml_file.resolve()))
             message = f"Found symlink {target} but source {source} appears to be missing"
-            self.clowder_yaml_missing_source_error: Optional[MissingSourceError] = MissingSourceError(message)
+            self.missing_source_error: Optional[MissingSourceError] = MissingSourceError(message)
             return
 
         # Existing non-symlink file

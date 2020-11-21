@@ -68,8 +68,8 @@ class ProjectRepo(ProjectRepoImpl):
             remove_file(self.repo_path)
         else:
             from clowder.environment import ENVIRONMENT
-            if ENVIRONMENT.clowder_repo_existing_file_error:
-                raise ENVIRONMENT.clowder_repo_existing_file_error
+            if ENVIRONMENT.existing_clowder_repo_file_error:
+                raise ENVIRONMENT.existing_clowder_repo_file_error
 
         self._init_repo()
         self._create_remote(self.remote, url, remove_dir=True)

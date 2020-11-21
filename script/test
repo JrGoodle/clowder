@@ -30,7 +30,7 @@ def run_command(cmd: str, cwd: Path = repo_path, check: bool = True) -> Complete
     cmd_env = os.environ.copy()
     # print(f"command: {cmd}")
     cmd = f'. script/import.sh && {cmd}'
-    completed_process = subprocess.run(cmd, cwd=cwd, shell=True, env=cmd_env)
+    completed_process = subprocess.run(cmd, cwd=cwd, shell=True, env=cmd_env, executable='/bin/bash')
     if check:
         assert completed_process.returncode == 0
     return completed_process

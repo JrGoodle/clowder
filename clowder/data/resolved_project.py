@@ -160,10 +160,7 @@ class ResolvedProject:
 
     @property
     def full_path(self) -> Path:
-        """Return full path to project
-
-        :return: Project's full file path
-        """
+        """Full path to project"""
 
         return ENVIRONMENT.clowder_dir / self.path
 
@@ -286,10 +283,7 @@ class ResolvedProject:
 
     @property
     def current_timestamp(self) -> str:
-        """Return timestamp of current HEAD commit
-
-        :return: HEAD commit timestamp
-        """
+        """Timestamp of current HEAD commit"""
 
         return self.repo.current_timestamp
 
@@ -329,10 +323,7 @@ class ResolvedProject:
 
     @property
     def is_dirty(self) -> bool:
-        """Check if project is dirty
-
-        :return: True, if dirty
-        """
+        """Check if project is dirty"""
 
         return not self.repo.validate_repo()
 
@@ -381,10 +372,7 @@ class ResolvedProject:
 
     @property
     def repo(self) -> ProjectRepo:
-        """Return ProjectRepo or ProjectRepoRecursive instance
-
-        :return: Project repo instance
-        """
+        """ProjectRepo or ProjectRepoRecursive instance"""
 
         if self._repo is not None:
             return self._repo
@@ -511,7 +499,7 @@ class ResolvedProject:
 
     @property
     def url(self) -> str:
-        """Return project url"""
+        """Project url"""
 
         if self.source.protocol is not None:
             protocol = self.source.protocol
