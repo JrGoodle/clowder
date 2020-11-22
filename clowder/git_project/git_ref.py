@@ -36,7 +36,7 @@ class GitRef(object):
         :param Optional[str] branch: Branch
         :param Optional[str] tag: Tag
         :param Optional[str] commit: Commit
-        :raise ClowderError:
+        :raise CommandArgumentError:
         :raise UnknownTypeError:
         """
 

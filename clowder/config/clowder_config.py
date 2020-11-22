@@ -11,7 +11,7 @@ from typing import Optional, Tuple
 import clowder.util.formatting as fmt
 from clowder.console import CONSOLE
 from clowder.environment import ENVIRONMENT
-from clowder.error import ClowderError, UnknownProjectError, UnknownTypeError
+from clowder.error import MissingClowderRepoError, UnknownProjectError, UnknownTypeError
 from clowder.git_project import GitProtocol
 
 
@@ -40,7 +40,7 @@ class ClowderConfig(object):
 
         :param Optional[dict] clowder_config: Parsed YAML python object for clowder config
         :param Optional[str] current_clowder_name: Name of current clowder
-        :raise ClowderError:
+        :raise MissingClowderRepo:
         """
 
         if clowder_config is None:
@@ -56,7 +56,7 @@ class ClowderConfig(object):
 
         # Validate path is a valid clowder directory
         if not self.clowder_dir.is_dir():
-            raise ClowderError(f"No clowder found at {self.clowder_dir}")
+            raise MissingClowderRepoError(f"No clowder repo found at {fmt.path(self.clowder_dir)} to load config from")
 
         self.name: str = clowder_config['name']
         defaults = clowder_config.get('defaults', None)

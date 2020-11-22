@@ -6,7 +6,7 @@
 
 from typing import List, Optional, Union
 
-from clowder.error import UnknownTypeError
+from clowder.error import InvalidYamlError, UnknownTypeError
 
 from .group import Group
 from .project import Project
@@ -39,7 +39,7 @@ class Clowder:
 
         :param bool resolved: Whether to get resolved commit hashes
         :return: YAML python object
-        :raise ClowderError:
+        :raise InvalidYamlError:
         """
 
         if self.projects is not None:
@@ -47,4 +47,4 @@ class Clowder:
         elif self.groups is not None:
             return {g.name: g.get_yaml(resolved=resolved) for g in self.groups}
         else:
-            raise ClowderError('Clowder model created without projects or groups')
+            raise InvalidYamlError('Clowder model created without projects or groups')

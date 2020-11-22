@@ -45,7 +45,6 @@ def remove_file(file: Path) -> None:
     :param Path file: File path to remove
     """
 
-    # TODO: Add error logging and handling to throw ClowderError
     os.remove(str(file))
 
 
@@ -55,7 +54,6 @@ def create_backup_file(file: Path) -> None:
     :param Path file: File path to copy
     """
 
-    # TODO: Add error logging and handling to throw ClowderError
     shutil.copyfile(str(file), f"{str(file)}.backup")
 
 
@@ -65,7 +63,6 @@ def restore_from_backup_file(file: Path) -> None:
     :param Path file: File path to copy
     """
 
-    # TODO: Add error logging and handling to throw ClowderError
     shutil.copyfile(f"{file}.backup", file)
 
 

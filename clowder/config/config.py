@@ -9,7 +9,7 @@ from typing import List, Optional, Tuple
 import clowder.util.formatting as fmt
 from clowder.console import CONSOLE
 from clowder.environment import ENVIRONMENT
-from clowder.error import ClowderError
+from clowder.error import MissingClowderRepoError
 from clowder.logging import LOG
 from clowder.util.file_system import (
     create_backup_file,
@@ -34,7 +34,8 @@ class Config(object):
     :ivar float version: Version number of config file
     :ivar Tuple[ClowderConfig, ...] clowder_configs: Configs for clowders
     :ivar Optional[ClowderConfig] current_clowder_config: Config for current clowder
-    :ivar Optional[Exception] error: Exception from failing to load clowder config yaml file
+    :ivar Optional[MissingClowderRepo] missing_clowder_repo_error: Missing clowder repo error
+    :ivar Optional[Exception] load_clowder_config_error: Error from failing to load clowder config yaml file
     """
 
     def __init__(self, current_clowder_name: Optional[str],
@@ -46,14 +47,15 @@ class Config(object):
         :param bool raise_exceptions: Whether to raise exception when from initializing invalid config file
         """
 
-        self.error: Optional[Exception] = None
+        self.load_clowder_config_error: Optional[Exception] = None
+        self.missing_clowder_repo_error: Optional[MissingClowderRepoError] = None
         self.current_clowder_config: Optional[ClowderConfig] = None
         self.clowder_configs: Tuple[ClowderConfig, ...] = ()
         self._project_options: Tuple[str, ...] = project_options
 
         if ENVIRONMENT.clowder_repo_dir is None:
-            err = ClowderError("Failed to load clowder config file - .clowder directory doesn't exist")
-            self.error: Optional[Exception] = err
+            err = MissingClowderRepoError("Failed to load clowder config file - .clowder directory doesn't exist")
+            self.missing_clowder_repo_error: Optional[MissingClowderRepoError] = err
             return
 
         # Config file doesn't currently exist
@@ -69,10 +71,10 @@ class Config(object):
             # Config file does exist, try to load
             self._load_clowder_config_yaml()
         except Exception as err:
+            CONSOLE.stderr('Failed to load clowder config file')
             if raise_exceptions:
                 raise
-            CONSOLE.stderr('Failed to load clowder config file')
-            self.error: Optional[Exception] = err
+            self.load_clowder_config_error: Optional[Exception] = err
             CONSOLE.stderr(error_message)
         finally:
             # If current clowder exists, return
