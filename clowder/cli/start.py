@@ -10,10 +10,6 @@ import clowder.util.formatting as fmt
 from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.config import Config
 from clowder.console import CONSOLE
-from clowder.data.util import (
-    filter_projects,
-    validate_project_statuses
-)
 from clowder.util.connectivity import network_connection_required
 from clowder.util.decorators import (
     print_clowder_name,
@@ -72,9 +68,9 @@ def _start_branches(args, tracking: bool) -> None:
 
     config = Config(CLOWDER_CONTROLLER.name, CLOWDER_CONTROLLER.project_choices)
     projects = config.process_projects_arg(args.projects)
-    projects = filter_projects(CLOWDER_CONTROLLER.projects, projects)
+    projects = CLOWDER_CONTROLLER.filter_projects(CLOWDER_CONTROLLER.projects, projects)
 
-    validate_project_statuses(projects)
+    CLOWDER_CONTROLLER.validate_project_statuses(projects)
     for project in projects:
         CONSOLE.stdout(project.status())
         project.start(args.branch[0], tracking)

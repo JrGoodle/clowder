@@ -11,10 +11,6 @@ import clowder.util.formatting as fmt
 from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.config import Config
 from clowder.data.source_controller import SOURCE_CONTROLLER
-from clowder.data.util import (
-    filter_projects,
-    validate_project_statuses
-)
 from clowder.git import GitProtocol
 from clowder.util.connectivity import network_connection_required
 from clowder.util.decorators import (
@@ -88,7 +84,7 @@ def herd(args) -> None:
         jobs = jobs_config if jobs_config is not None else jobs
 
     projects = config.process_projects_arg(args.projects)
-    projects = filter_projects(CLOWDER_CONTROLLER.projects, projects)
+    projects = CLOWDER_CONTROLLER.filter_projects(CLOWDER_CONTROLLER.projects, projects)
 
     if jobs is not None and jobs != 1 and os.name == "posix":
         if jobs <= 0:
@@ -96,6 +92,6 @@ def herd(args) -> None:
         parallel.herd(projects, jobs, branch, tag, depth, rebase)
         return
 
-    validate_project_statuses(projects)
+    CLOWDER_CONTROLLER.validate_project_statuses(projects)
     for project in projects:
         project.herd(branch=branch, tag=tag, depth=depth, rebase=rebase)

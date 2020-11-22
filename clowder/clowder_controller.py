@@ -23,7 +23,6 @@ from clowder.git.util import get_default_branch
 from clowder.logging import LOG
 from clowder.data import ResolvedProject, ResolvedUpstream, SOURCE_CONTROLLER
 from clowder.data.model import ClowderBase
-from clowder.data.util import validate_project_statuses
 from clowder.util.yaml import load_yaml_file, validate_yaml_file
 
 
@@ -97,6 +96,21 @@ class ClowderController(object):
             self.error = err
             self._initialize_properties()
 
+    @staticmethod
+    def filter_projects(projects: Tuple[ResolvedProject, ...],
+                        project_names: Tuple[str, ...]) -> Tuple[ResolvedProject, ...]:
+        """Filter projects based on given project or group names
+
+        :param Tuple[ResolvedProject, ...] projects: Projects to filter
+        :param Tuple[str, ...] project_names: Project names to match against
+        :return: Projects in groups matching given names
+        """
+
+        filtered_projects = []
+        for name in project_names:
+            filtered_projects += [p for p in projects if name in p.groups]
+        return tuple(sorted(set(filtered_projects), key=lambda project: project.name))
+
     def get_all_upstream_project_names(self) -> Tuple[str, ...]:
         """Returns all project names containing upstreams
 
@@ -156,13 +170,40 @@ class ClowderController(object):
         return self._clowder.get_yaml(resolved=resolved)
 
     @staticmethod
+    def project_has_branch(projects: Tuple[ResolvedProject, ...], branch: str, is_remote: bool) -> bool:
+        """Checks if given branch exists in any project
+
+        :param Tuple[ResolvedProject, ...] projects: Projects to check
+        :param str branch: Branch to check for
+        :param bool is_remote: Check for remote branch
+        :return: True, if at least one branch exists
+        """
+
+        return any([p.has_branch(branch, is_remote=is_remote) for p in projects])
+
+    @staticmethod
+    def validate_project_statuses(projects: Tuple[ResolvedProject, ...], allow_missing_repo: bool = True) -> None:
+        """Validate status of all projects
+
+        :param Tuple[ResolvedProject, ...] projects: Projects to validate
+        :param bool allow_missing_repo: Whether to allow validation to succeed with missing repo
+        :raise ProjectStatusError:
+        """
+
+        for p in projects:
+            p.print_validation(allow_missing_repo=allow_missing_repo)
+        if not all([p.is_valid(allow_missing_repo=allow_missing_repo) for p in projects]):
+            CONSOLE.stdout()
+            raise ProjectStatusError("Invalid project state")
+
+    @staticmethod
     def validate_print_output(projects: Tuple[ResolvedProject, ...]) -> None:
         """Validate projects/groups and print output
 
         :param Tuple[ResolvedProject, ...] projects: Projects to validate/print
         """
 
-        validate_project_statuses(projects)
+        CLOWDER_CONTROLLER.validate_project_statuses(projects)
 
     def validate_projects_exist(self) -> None:
         """Validate all projects exist on disk

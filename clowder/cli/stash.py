@@ -10,7 +10,6 @@ import clowder.util.formatting as fmt
 from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.config import Config
 from clowder.console import CONSOLE
-from clowder.data.util import filter_projects
 from clowder.util.decorators import (
     print_clowder_name,
     print_clowder_repo_status,
@@ -50,7 +49,7 @@ def stash(args) -> None:
 
     config = Config(CLOWDER_CONTROLLER.name, CLOWDER_CONTROLLER.project_choices)
     projects = config.process_projects_arg(args.projects)
-    projects = filter_projects(CLOWDER_CONTROLLER.projects, projects)
+    projects = CLOWDER_CONTROLLER.filter_projects(CLOWDER_CONTROLLER.projects, projects)
 
     for project in projects:
         CONSOLE.stdout(project.status())

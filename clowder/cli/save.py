@@ -11,7 +11,6 @@ from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.console import CONSOLE
 from clowder.environment import ENVIRONMENT
 from clowder.error import DefaultVersionError, ExistingVersionError
-from clowder.data.util import validate_project_statuses
 from clowder.git.clowder_repo import ClowderRepo
 from clowder.util.decorators import (
     clowder_repo_required,
@@ -52,7 +51,7 @@ def save(args) -> None:
     if ENVIRONMENT.clowder_repo_dir is not None:
         ClowderRepo(ENVIRONMENT.clowder_repo_dir).print_status()
     CLOWDER_CONTROLLER.validate_projects_exist()
-    validate_project_statuses(CLOWDER_CONTROLLER.projects)
+    CLOWDER_CONTROLLER.validate_project_statuses(CLOWDER_CONTROLLER.projects)
 
     # TODO: Better validate version name (no spaces, no ~, etc.)
     # Replace path separators with dashes to avoid creating directories

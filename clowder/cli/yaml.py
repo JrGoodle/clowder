@@ -8,7 +8,6 @@ import argparse
 
 from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.console import CONSOLE
-from clowder.data.util import validate_project_statuses
 from clowder.util.decorators import valid_clowder_yaml_required
 from clowder.util.yaml import yaml_string
 
@@ -36,7 +35,7 @@ def yaml(args) -> None:
     """Clowder yaml command private implementation"""
 
     if args.resolved:
-        validate_project_statuses(CLOWDER_CONTROLLER.projects, allow_missing_repo=False)
+        CLOWDER_CONTROLLER.validate_project_statuses(CLOWDER_CONTROLLER.projects, allow_missing_repo=False)
         output = yaml_string(CLOWDER_CONTROLLER.get_yaml(resolved=True)).rstrip()
         CONSOLE.stdout(output)
     else:

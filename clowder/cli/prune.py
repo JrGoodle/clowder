@@ -12,11 +12,6 @@ from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.config import Config
 from clowder.console import CONSOLE
 from clowder.data import ResolvedProject
-from clowder.data.util import (
-    project_has_branch,
-    filter_projects,
-    validate_project_statuses
-)
 from clowder.error import CommandArgumentError
 from clowder.util.connectivity import network_connection_required
 from clowder.util.decorators import (
@@ -100,9 +95,9 @@ def _prune_impl(project_names: List[str], branch: str, force: bool = False,
 
     config = Config(CLOWDER_CONTROLLER.name, CLOWDER_CONTROLLER.project_choices)
     projects = config.process_projects_arg(project_names)
-    projects = filter_projects(CLOWDER_CONTROLLER.projects, projects)
+    projects = CLOWDER_CONTROLLER.filter_projects(CLOWDER_CONTROLLER.projects, projects)
 
-    validate_project_statuses(projects)
+    CLOWDER_CONTROLLER.validate_project_statuses(projects)
     _prune_projects(projects, branch, force=force, local=local, remote=remote)
 
 
@@ -118,8 +113,8 @@ def _prune_projects(projects: Tuple[ResolvedProject, ...], branch: str, force: b
     :raise CommandArgumentError:
     """
 
-    local_branch_exists = project_has_branch(projects, branch, is_remote=False)
-    remote_branch_exists = project_has_branch(projects, branch, is_remote=True)
+    local_branch_exists = CLOWDER_CONTROLLER.project_has_branch(projects, branch, is_remote=False)
+    remote_branch_exists = CLOWDER_CONTROLLER.project_has_branch(projects, branch, is_remote=True)
 
     if local and remote:
         branch_exists = local_branch_exists or remote_branch_exists

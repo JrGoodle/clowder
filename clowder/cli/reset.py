@@ -11,10 +11,6 @@ from typing import List, Optional
 import clowder.util.formatting as fmt
 from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.config import Config
-from clowder.data.util import (
-    filter_projects,
-    validate_project_statuses
-)
 from clowder.util.connectivity import network_connection_required
 from clowder.util.decorators import (
     print_clowder_name,
@@ -82,7 +78,7 @@ def _reset_impl(project_names: List[str], timestamp_project: Optional[str] = Non
     jobs = jobs_config if jobs_config is not None else jobs
 
     projects = config.process_projects_arg(project_names)
-    projects = filter_projects(CLOWDER_CONTROLLER.projects, projects)
+    projects = CLOWDER_CONTROLLER.filter_projects(CLOWDER_CONTROLLER.projects, projects)
 
     if jobs is not None and jobs != 1 and os.name == "posix":
         if jobs <= 0:
@@ -94,6 +90,6 @@ def _reset_impl(project_names: List[str], timestamp_project: Optional[str] = Non
     if timestamp_project:
         timestamp = CLOWDER_CONTROLLER.get_timestamp(timestamp_project)
 
-    validate_project_statuses(projects)
+    CLOWDER_CONTROLLER.validate_project_statuses(projects)
     for project in projects:
         project.reset(timestamp=timestamp)

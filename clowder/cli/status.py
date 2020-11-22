@@ -12,7 +12,6 @@ from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.config import Config
 from clowder.console import CONSOLE
 from clowder.data import ResolvedProject
-from clowder.data.util import filter_projects
 from clowder.environment import ENVIRONMENT
 from clowder.git.clowder_repo import ClowderRepo
 from clowder.util.connectivity import network_connection_required
@@ -50,7 +49,7 @@ def status(args) -> None:
 
     config = Config(CLOWDER_CONTROLLER.name, CLOWDER_CONTROLLER.project_choices)
     projects = config.process_projects_arg(args.projects)
-    projects = filter_projects(CLOWDER_CONTROLLER.projects, projects)
+    projects = CLOWDER_CONTROLLER.filter_projects(CLOWDER_CONTROLLER.projects, projects)
 
     if args.fetch:
         _fetch_projects(projects)

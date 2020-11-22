@@ -12,7 +12,6 @@ import clowder.util.formatting as fmt
 from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.config import Config
 from clowder.console import CONSOLE
-from clowder.data.util import filter_projects
 from clowder.error import CommandArgumentError
 from clowder.util.decorators import (
     print_clowder_name,
@@ -79,7 +78,7 @@ def _forall_impl(command: str, ignore_errors: bool, projects: List[str], jobs: O
 
     config = Config(CLOWDER_CONTROLLER.name, CLOWDER_CONTROLLER.project_choices)
     projects = config.process_projects_arg(projects)
-    projects = filter_projects(CLOWDER_CONTROLLER.projects, projects)
+    projects = CLOWDER_CONTROLLER.filter_projects(CLOWDER_CONTROLLER.projects, projects)
 
     jobs_config = config.current_clowder_config.jobs
     jobs = jobs_config if jobs_config is not None else jobs
