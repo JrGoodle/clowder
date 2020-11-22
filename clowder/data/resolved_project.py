@@ -7,7 +7,7 @@
 from functools import wraps
 from pathlib import Path
 from subprocess import CalledProcessError
-from typing import Optional, Set
+from typing import Any, Optional, Set
 
 import clowder.util.formatting as fmt
 from clowder.environment import ENVIRONMENT
@@ -80,26 +80,18 @@ class ResolvedProject:
         has_group_defaults = has_group and group.defaults is not None
 
         has_group_path = has_group and group.path is not None
-        self.path: Path = self.path / Path(self.name).name
+        self.path: Path = group.path if has_group_path else Path()
         if has_path:
             self.path: Path = self.path / project.path
-        elif has_group_path:
-            self.path: Path = self.path / group.path
+        else:
+            self.path: Path = self.path / Path(self.name).name
 
         self.default_protocol: Optional[GitProtocol] = None
         if protocol is not None:
             self.default_protocol: Optional[GitProtocol] = protocol
 
-        has_remote = project.remote is not None
-        has_defaults_remote = has_defaults and defaults.remote is not None
-        has_group_defaults_remote = has_group_defaults and group.defaults.remote is not None
-        self.remote: str = "origin"
-        if has_remote:
-            self.remote: str = project.remote
-        elif has_group_defaults_remote:
-            self.remote: str = group.defaults.remote
-        elif has_defaults_remote:
-            self.remote: str = defaults.remote
+        self.remote: str = self._get_property('remote', project, defaults, group, default='origin')
+        self.ref: Optional[GitRef] = self._get_property('git_ref', project, defaults, group)
 
         has_source = project.source is not None
         has_defaults_source = has_defaults and defaults.source is not None
@@ -111,17 +103,6 @@ class ResolvedProject:
             self.source: Source = SOURCE_CONTROLLER.get_source(group.defaults.source)
         elif has_defaults_source:
             self.source: Source = SOURCE_CONTROLLER.get_source(defaults.source)
-
-        has_ref = project.git_ref is not None
-        has_defaults_ref = has_defaults and defaults.git_ref is not None
-        has_group_defaults_ref = has_group_defaults and group.defaults.git_ref is not None
-        self.ref: Optional[GitRef] = None
-        if has_ref:
-            self.ref: Optional[GitRef] = project.git_ref
-        elif has_group_defaults_ref:
-            self.ref: Optional[GitRef] = group.defaults.git_ref
-        elif has_defaults_ref:
-            self.ref: Optional[GitRef] = defaults.git_ref
 
         has_git = project.git_settings is not None
         has_defaults_git = has_defaults and defaults.git_settings is not None
@@ -536,7 +517,8 @@ class ResolvedProject:
                 raise
 
     @staticmethod
-    def _get_property(name: str, project: Project, defaults: Defaults, group: Group, default: Optional = None) -> None:
+    def _get_property(name: str, project: Project, defaults: Optional[Defaults],
+                      group: Optional[Group], default: Optional[Any] = None) -> Any:
         has_project_value = getattr(project, name)
         has_defaults = defaults is not None
         has_defaults_value = has_defaults and getattr(defaults, name) is not None
