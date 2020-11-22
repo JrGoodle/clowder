@@ -29,10 +29,7 @@ def add_link_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
     :param argparse._SubParsersAction subparsers: Subparsers action to add parser to
     """
 
-    versions = None
-    if ENVIRONMENT.clowder_repo_dir is not None:
-        versions = ClowderRepo(ENVIRONMENT.clowder_repo_dir).get_saved_version_names()
-
+    versions = ClowderRepo.get_saved_version_names()
     arguments = [
         (['version'], dict(metavar='<version>', choices=versions, nargs='?', default=None,
                            help=fmt.version_options_help_message('version to symlink', versions)))

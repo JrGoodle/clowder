@@ -262,7 +262,7 @@ def _config(print_newline: bool = True) -> Config:
 
     try:
         return Config(CLOWDER_CONTROLLER.name, CLOWDER_CONTROLLER.project_choices, raise_exceptions=True)
-    except:  # noqa
+    except BaseException:
         if print_newline:
             CONSOLE.stderr()
         raise

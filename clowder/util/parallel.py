@@ -88,7 +88,7 @@ async def run_parallel(jobs: int, projects: Tuple[ResolvedProject, ...], func_na
                     func = getattr(project, func_name)
                     project_func = partial(func, **kwargs)
                     nursery.start_soon(run_sync, project_func, limit, project, progress)
-    except:  # noqa
+    except BaseException:
         CONSOLE.print_output = True
         raise
     CONSOLE.print_output = True

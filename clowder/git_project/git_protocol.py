@@ -21,13 +21,12 @@ class GitProtocol(AutoLowerName):
         :param str url: Repo url
         :param str name: Repo name
         :return: Full git repo url for specified protocol
-        :raise ClowderGitError:
+        :raise UnknownTypeError:
         """
 
         if self is GitProtocol.SSH:
             return f"git@{url}:{name}.git"
-
-        if self is GitProtocol.HTTPS:
+        elif self is GitProtocol.HTTPS:
             return f"https://{url}/{name}.git"
-
-        raise ClowderGitError(f"Invalid git protocol")
+        else:
+            raise UnknownTypeError('Invalid git protocol')

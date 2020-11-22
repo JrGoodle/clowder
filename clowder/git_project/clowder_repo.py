@@ -83,18 +83,15 @@ class ClowderRepo(ProjectRepo):
 
         super().commit(message)
 
-    @staticmethod
-    def get_saved_version_names() -> Optional[Tuple[str, ...]]:
+    @classmethod
+    def get_saved_version_names(cls) -> Optional[Tuple[str, ...]]:
         """Return list of all saved versions
 
         :return: All saved version names
         :raise DuplicateVersionsError:
         """
 
-        if ENVIRONMENT.clowder_repo_versions_dir is None:
-            return None
-
-        if not ENVIRONMENT.clowder_repo_versions_dir.exists():
+        if ENVIRONMENT.clowder_repo_versions_dir is None or not ENVIRONMENT.clowder_repo_versions_dir.exists():
             return None
 
         versions = [Path(Path(v).stem).stem for v in os.listdir(str(ENVIRONMENT.clowder_repo_versions_dir))
