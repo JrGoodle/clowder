@@ -7,7 +7,7 @@
 from typing import Dict, Optional, Set, Union
 
 from clowder.error import SourcesValidatedError, UnknownSourceError, UnknownTypeError
-from clowder.git_project import GitProtocol
+from clowder.git import GitProtocol
 # from clowder.logging import LOG
 
 from .model import Source

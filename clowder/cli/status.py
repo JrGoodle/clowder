@@ -14,7 +14,7 @@ from clowder.console import CONSOLE
 from clowder.data import ResolvedProject
 from clowder.data.util import filter_projects
 from clowder.environment import ENVIRONMENT
-from clowder.git_project.clowder_repo import ClowderRepo
+from clowder.git.clowder_repo import ClowderRepo
 from clowder.util.connectivity import network_connection_required
 from clowder.util.decorators import (
     print_clowder_name,

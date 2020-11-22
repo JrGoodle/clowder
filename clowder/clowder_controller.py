@@ -19,7 +19,7 @@ from clowder.error import (
     ProjectNotFoundError,
     ProjectStatusError
 )
-from clowder.git_project.util import get_default_branch
+from clowder.git.util import get_default_branch
 from clowder.logging import LOG
 from clowder.data import ResolvedProject, ResolvedUpstream, SOURCE_CONTROLLER
 from clowder.data.model import ClowderBase

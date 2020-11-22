@@ -13,13 +13,13 @@ import clowder.util.formatting as fmt
 from clowder.console import CONSOLE
 from clowder.environment import ENVIRONMENT
 from clowder.error import DuplicateRemoteError
-from clowder.git_project import (
+from clowder.git import (
     GitProtocol,
     GitRef,
     ProjectRepo,
     ProjectRepoRecursive
 )
-from clowder.git_project.util import existing_git_repository
+from clowder.git.util import existing_git_repository
 from clowder.logging import LOG
 from clowder.util.connectivity import is_offline
 from clowder.util.execute import execute_forall_command

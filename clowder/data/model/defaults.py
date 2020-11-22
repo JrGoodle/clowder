@@ -6,7 +6,7 @@
 
 from typing import Optional
 
-from clowder.git_project import GitRef
+from clowder.git import GitRef
 
 from .git_settings import GitSettings
 from .source import SourceName

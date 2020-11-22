@@ -9,7 +9,7 @@ from typing import Optional
 
 import clowder.util.formatting as fmt
 from clowder.error import AmbiguousYamlError, ExistingFileError, MissingSourceError
-from clowder.git_project.util import existing_git_repository
+from clowder.git.util import existing_git_repository
 
 
 class ClowderEnvironment(object):

@@ -12,7 +12,7 @@ from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.console import CONSOLE
 from clowder.error import MissingClowderGitRepoError, MissingClowderRepoError
 from clowder.environment import ENVIRONMENT
-from clowder.git_project.clowder_repo import ClowderRepo
+from clowder.git.clowder_repo import ClowderRepo
 
 
 def clowder_repo_required(func):

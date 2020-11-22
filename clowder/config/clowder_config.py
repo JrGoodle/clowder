@@ -12,7 +12,7 @@ import clowder.util.formatting as fmt
 from clowder.console import CONSOLE
 from clowder.environment import ENVIRONMENT
 from clowder.error import MissingClowderRepoError, UnknownProjectError, UnknownTypeError
-from clowder.git_project import GitProtocol
+from clowder.git import GitProtocol
 
 
 @unique

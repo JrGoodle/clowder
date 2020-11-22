@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import List, Optional, Union
 
 from clowder.error import UnknownTypeError
-from clowder.git_project import GitRef
+from clowder.git import GitRef
 
 from .upstream import Upstream
 from .git_settings import GitSettings

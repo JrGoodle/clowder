@@ -12,7 +12,7 @@ from clowder.console import CONSOLE
 from clowder.environment import ENVIRONMENT
 from clowder.error import DefaultVersionError, ExistingVersionError
 from clowder.data.util import validate_project_statuses
-from clowder.git_project.clowder_repo import ClowderRepo
+from clowder.git.clowder_repo import ClowderRepo
 from clowder.util.decorators import (
     clowder_repo_required,
     print_clowder_name,

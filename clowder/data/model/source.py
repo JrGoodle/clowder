@@ -6,7 +6,7 @@
 
 from typing import Dict, Optional
 
-from clowder.git_project import GitProtocol
+from clowder.git import GitProtocol
 
 SourceName = str
 

@@ -9,7 +9,7 @@ import argparse
 import clowder.util.formatting as fmt
 from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.console import CONSOLE
-from clowder.git_project import GitProtocol
+from clowder.git import GitProtocol
 from clowder.util.decorators import (
     print_clowder_name,
     valid_clowder_yaml_required

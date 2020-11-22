@@ -14,7 +14,6 @@ from clowder.environment import ENVIRONMENT
 from clowder.error import DuplicateVersionsError
 from clowder.util.connectivity import is_offline
 from clowder.util.execute import execute_command
-# from clowder.util.file_system import remove_directory
 from clowder.util.yaml import link_clowder_yaml_default
 
 

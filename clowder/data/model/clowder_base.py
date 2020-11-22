@@ -6,7 +6,7 @@
 
 from typing import List, Optional
 
-from clowder.git_project import GitProtocol
+from clowder.git import GitProtocol
 
 from .clowder import Clowder
 from .defaults import Defaults

@@ -15,7 +15,7 @@ from clowder.data.util import (
     filter_projects,
     validate_project_statuses
 )
-from clowder.git_project import GitProtocol
+from clowder.git import GitProtocol
 from clowder.util.connectivity import network_connection_required
 from clowder.util.decorators import (
     print_clowder_name,
