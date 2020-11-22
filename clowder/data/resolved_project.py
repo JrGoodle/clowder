@@ -12,7 +12,7 @@ from typing import Optional, Set
 import clowder.util.formatting as fmt
 from clowder.console import CONSOLE
 from clowder.environment import ENVIRONMENT
-from clowder.error import *
+from clowder.error import DuplicateRemoteError
 from clowder.git_project import (
     GitProtocol,
     GitRef,

@@ -12,7 +12,7 @@ from git import GitError, Remote, Repo, Tag
 
 import clowder.util.formatting as fmt
 from clowder.console import CONSOLE
-from clowder.error import *
+from clowder.error import ClowderGitError
 from clowder.logging import LOG
 from clowder.util.execute import execute_command
 from clowder.util.file_system import remove_directory, make_dir

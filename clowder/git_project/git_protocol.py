@@ -6,7 +6,7 @@
 
 from enum import auto, unique
 
-from clowder.error import *
+from clowder.error import UnknownTypeError
 from clowder.util.enum import AutoLowerName
 
 

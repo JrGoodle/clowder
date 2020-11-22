@@ -13,7 +13,11 @@ import yaml as pyyaml
 import clowder.util.formatting as fmt
 from clowder.console import CONSOLE
 from clowder.environment import ENVIRONMENT
-from clowder.error import *
+from clowder.error import (
+    ExistingFileError,
+    InvalidYamlError,
+    MissingFileError
+)
 
 from .file_system import (
     symlink_clowder_yaml,
@@ -118,6 +122,7 @@ def load_yaml_file(yaml_file: Path, relative_dir: Path) -> dict:
     :param Path yaml_file: Path of yaml file to load
     :param Path relative_dir: Directory yaml file is relative to
     :return: YAML python object
+    :raise InvalidYamlError:
     """
 
     try:

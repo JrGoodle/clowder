@@ -13,7 +13,7 @@ from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.config import Config
 from clowder.console import CONSOLE
 from clowder.data.util import filter_projects
-from clowder.error import *
+from clowder.error import CommandArgumentError
 from clowder.util.decorators import (
     print_clowder_name,
     print_clowder_repo_status,

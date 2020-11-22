@@ -8,7 +8,7 @@ from typing import Tuple
 
 import clowder.util.formatting as fmt
 from clowder.console import CONSOLE
-from clowder.error import *
+from clowder.error import ProjectStatusError
 
 from .resolved_project import ResolvedProject
 

@@ -9,7 +9,7 @@ from typing import Optional
 
 from git import Repo, GitError
 
-from clowder.error import *
+from clowder.error import CommandArgumentError, UnknownTypeError
 from clowder.util.enum import AutoLowerName
 
 

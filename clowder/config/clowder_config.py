@@ -11,7 +11,7 @@ from typing import Optional, Tuple
 import clowder.util.formatting as fmt
 from clowder.console import CONSOLE
 from clowder.environment import ENVIRONMENT
-from clowder.error import *
+from clowder.error import ClowderError, UnknownProjectError, UnknownTypeError
 from clowder.git_project import GitProtocol
 
 

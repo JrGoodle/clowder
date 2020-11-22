@@ -6,7 +6,7 @@
 
 from typing import Optional, Union
 
-from clowder.error import *
+from clowder.error import UnknownSourceError, UnknownTypeError
 
 from .source import Source, SourceName
 

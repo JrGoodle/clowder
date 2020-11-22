@@ -6,7 +6,7 @@
 
 from typing import List, Optional, Union
 
-from clowder.error import *
+from clowder.error import UnknownTypeError
 
 from .group import Group
 from .project import Project

@@ -7,7 +7,7 @@
 from pathlib import Path
 from typing import List, Optional, Union
 
-from clowder.error import *
+from clowder.error import UnknownTypeError
 from clowder.git_project import GitRef
 
 from .upstream import Upstream

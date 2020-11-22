@@ -12,7 +12,13 @@ import trio
 import clowder.util.formatting as fmt
 from clowder.console import CONSOLE
 from clowder.environment import ENVIRONMENT
-from clowder.error import *
+from clowder.error import (
+    ClowderGitError,
+    DuplicatePathError,
+    MissingYamlError,
+    ProjectNotFoundError,
+    ProjectStatusError
+)
 from clowder.git_project.util import get_default_branch
 from clowder.logging import LOG
 from clowder.data import ResolvedProject, ResolvedUpstream, SOURCE_CONTROLLER

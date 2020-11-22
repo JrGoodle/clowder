@@ -10,7 +10,7 @@ import clowder.util.formatting as fmt
 from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.console import CONSOLE
 from clowder.environment import ENVIRONMENT
-from clowder.error import *
+from clowder.error import DefaultVersionError, ExistingVersionError
 from clowder.data.util import validate_project_statuses
 from clowder.git_project.clowder_repo import ClowderRepo
 from clowder.util.decorators import (
