@@ -495,18 +495,18 @@ class ResolvedProject:
     @staticmethod
     def _get_property(name: str, project: Project, defaults: Optional[Defaults], group: Optional[Group],
                       default: Optional[Any] = None) -> Optional[Any]:
-        has_project_value = hasattr(project, name)
+        project_value = getattr(project, name)
         has_defaults = defaults is not None
-        has_defaults_value = has_defaults and hasattr(defaults, name)
+        defaults_value = getattr(defaults, name) if has_defaults else None
         has_group = group is not None
         has_group_defaults = has_group and group.defaults is not None
-        has_group_defaults_value = has_group_defaults and hasattr(group.defaults, name)
-        if has_project_value:
-            return getattr(project, name)
-        elif has_group_defaults_value:
-            return getattr(defaults, name)
-        elif has_defaults_value:
-            return getattr(group.defaults, name)
+        group_defaults_value = getattr(group.defaults, name) if has_group_defaults else None
+        if project_value is not None:
+            return project_value
+        elif group_defaults_value is not None:
+            return group_defaults_value
+        elif defaults_value is not None:
+            return defaults_value
         elif default is not None:
             return default
         else:
