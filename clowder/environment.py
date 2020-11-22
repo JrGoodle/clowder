@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Optional
 
 import clowder.util.formatting as fmt
-from clowder.error import (
+from clowder.util.error import (
     AmbiguousYamlError,
     ExistingFileError,
     MissingSourceError,

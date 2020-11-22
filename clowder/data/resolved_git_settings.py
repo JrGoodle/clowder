@@ -7,7 +7,7 @@
 import copy
 from typing import Dict, Optional
 
-from clowder.error import ClowderGitError, UnknownArgumentError, UnknownTypeError
+from clowder.util.error import ClowderGitError, UnknownArgumentError, UnknownTypeError
 
 from .model.git_settings import GitSettings, GitConfig
 

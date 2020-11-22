@@ -7,7 +7,7 @@
 from typing import List, Optional, Union
 from pathlib import Path
 
-from clowder.error import UnknownTypeError
+from clowder.util.error import UnknownTypeError
 
 from .defaults import Defaults
 from .project import Project

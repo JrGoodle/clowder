@@ -9,7 +9,7 @@ from typing import List, Optional, Tuple
 import clowder.util.formatting as fmt
 from clowder.console import CONSOLE
 from clowder.environment import ENVIRONMENT
-from clowder.error import MissingClowderRepoError
+from clowder.util.error import MissingClowderRepoError
 from clowder.util.logging import LOG
 from clowder.util.file_system import (
     create_backup_file,

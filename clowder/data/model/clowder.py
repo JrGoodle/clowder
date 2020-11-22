@@ -6,7 +6,7 @@
 
 from typing import List, Optional, Union
 
-from clowder.error import InvalidYamlError, UnknownTypeError
+from clowder.util.error import InvalidYamlError, UnknownTypeError
 
 from .group import Group
 from .project import Project

@@ -13,7 +13,7 @@ import trio
 import clowder.util.formatting as fmt
 from clowder.console import CONSOLE
 from clowder.environment import ENVIRONMENT
-from clowder.error import (
+from clowder.util.error import (
     ClowderGitError,
     DuplicatePathError,
     MissingYamlError,

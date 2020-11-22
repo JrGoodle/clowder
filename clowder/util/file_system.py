@@ -11,7 +11,7 @@ from pathlib import Path
 
 import clowder.util.formatting as fmt
 from clowder.console import CONSOLE
-from clowder.error import ExistingFileError, MissingSourceError
+from clowder.util.error import ExistingFileError, MissingSourceError
 
 
 def symlink_clowder_yaml(source: Path, target: Path) -> None:

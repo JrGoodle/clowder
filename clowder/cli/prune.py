@@ -12,7 +12,7 @@ from clowder.clowder_controller import CLOWDER_CONTROLLER, print_clowder_name, v
 from clowder.config import Config
 from clowder.console import CONSOLE
 from clowder.data import ResolvedProject
-from clowder.error import CommandArgumentError
+from clowder.util.error import CommandArgumentError
 from clowder.git.clowder_repo import print_clowder_repo_status
 from clowder.util.connectivity import network_connection_required
 

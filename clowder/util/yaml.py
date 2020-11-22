@@ -13,7 +13,7 @@ import yaml as pyyaml
 import clowder.util.formatting as fmt
 from clowder.console import CONSOLE
 from clowder.environment import ENVIRONMENT
-from clowder.error import ExistingFileError, InvalidYamlError, MissingFileError
+from clowder.util.error import ExistingFileError, InvalidYamlError, MissingFileError
 
 from .file_system import (
     symlink_clowder_yaml,

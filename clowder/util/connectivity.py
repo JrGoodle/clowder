@@ -7,7 +7,7 @@
 import socket
 from functools import wraps
 
-from clowder.error import NetworkConnectionError
+from clowder.util.error import NetworkConnectionError
 
 
 def is_offline(host: str = '8.8.8.8', port: int = 53, timeout: int = 3) -> bool:
