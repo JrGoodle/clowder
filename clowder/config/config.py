@@ -7,7 +7,6 @@
 from typing import List, Optional, Tuple
 
 import clowder.util.formatting as fmt
-from clowder.util.console import CONSOLE
 from clowder.environment import ENVIRONMENT
 from clowder.util.error import MissingClowderRepoError
 from clowder.util.logging import LOG
@@ -71,11 +70,11 @@ class Config(object):
             # Config file does exist, try to load
             self._load_clowder_config_yaml()
         except Exception as err:
-            CONSOLE.stderr('Failed to load clowder config file')
+            LOG.error('Failed to load clowder config file')
             if raise_exceptions:
                 raise
             self.load_clowder_config_error: Optional[Exception] = err
-            CONSOLE.stderr(error_message)
+            LOG.error(error_message)
         finally:
             # If current clowder exists, return
             if self.current_clowder_config is not None:

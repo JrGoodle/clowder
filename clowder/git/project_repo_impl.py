@@ -68,7 +68,7 @@ class ProjectRepoImpl(GitRepo):
             default_branch = self.repo.heads[branch]
             default_branch.checkout()
         except BaseException:
-            CONSOLE.stderr(f'Failed to checkout branch {fmt.ref(branch)}')
+            LOG.error(f'Failed to checkout branch {fmt.ref(branch)}')
             if remove_dir:
                 remove_directory(self.repo_path, check=False)
             raise
@@ -105,7 +105,7 @@ class ProjectRepoImpl(GitRepo):
         try:
             self.repo.git.checkout(commit)
         except BaseException:
-            CONSOLE.stderr(f'Failed to checkout commit {fmt.ref(commit)}')
+            LOG.error(f'Failed to checkout commit {fmt.ref(commit)}')
             remove_directory(self.repo_path, check=False)
             raise
 
@@ -126,7 +126,7 @@ class ProjectRepoImpl(GitRepo):
             CONSOLE.stdout(f' - Checkout tag {fmt.ref(tag)}')
             self.repo.git.checkout(remote_tag)
         except BaseException:
-            CONSOLE.stderr(f'Failed to checkout tag {fmt.ref(tag)}')
+            LOG.error(f'Failed to checkout tag {fmt.ref(tag)}')
             if remove_dir:
                 remove_directory(self.repo_path, check=False)
             raise
@@ -144,7 +144,7 @@ class ProjectRepoImpl(GitRepo):
             CONSOLE.stdout(f' - Checkout commit {fmt.ref(sha)}')
             self.repo.git.checkout(sha)
         except GitError:
-            CONSOLE.stderr(f'Failed to checkout commit {fmt.ref(sha)}')
+            LOG.error(f'Failed to checkout commit {fmt.ref(sha)}')
             raise
 
     def _checkout_tag(self, tag: str) -> None:
@@ -166,7 +166,7 @@ class ProjectRepoImpl(GitRepo):
             CONSOLE.stdout(f' - Checkout tag {fmt.ref(tag)}')
             self.repo.git.checkout(f'refs/tags/{tag}')
         except (GitError, ValueError):
-            CONSOLE.stderr(f'Failed to checkout tag {fmt.ref(tag)}')
+            LOG.error(f'Failed to checkout tag {fmt.ref(tag)}')
             raise
 
     def _compare_remote_url(self, remote: str, url: str) -> None:
@@ -195,7 +195,7 @@ class ProjectRepoImpl(GitRepo):
             CONSOLE.stdout(f' - Create branch {fmt.ref(branch)}')
             self.repo.create_head(branch)
         except GitError:
-            CONSOLE.stderr(f'Failed to create branch {fmt.ref(branch)}')
+            LOG.error(f'Failed to create branch {fmt.ref(branch)}')
             raise
 
     def _create_branch_local_tracking(self, branch: str, remote: str, depth: int,
@@ -217,7 +217,7 @@ class ProjectRepoImpl(GitRepo):
             CONSOLE.stdout(f' - Create branch {fmt.ref(branch)}')
             self.repo.create_head(branch, origin.refs[branch])
         except BaseException:
-            CONSOLE.stderr(f'Failed to create branch {fmt.ref(branch)}')
+            LOG.error(f'Failed to create branch {fmt.ref(branch)}')
             if remove_dir:
                 remove_directory(self.repo_path, check=False)
             raise
@@ -244,7 +244,7 @@ class ProjectRepoImpl(GitRepo):
             self.repo.git.push(remote, branch)
             self._set_tracking_branch(remote, branch)
         except GitError:
-            CONSOLE.stderr(f'Failed to push remote branch {fmt.ref(branch)}')
+            LOG.error(f'Failed to push remote branch {fmt.ref(branch)}')
             raise
 
     def _create_remote(self, remote: str, url: str, remove_dir: bool = False) -> None:
@@ -263,7 +263,7 @@ class ProjectRepoImpl(GitRepo):
             CONSOLE.stdout(f' - Create remote {fmt.remote(remote)}')
             self.repo.create_remote(remote, url)
         except BaseException:
-            CONSOLE.stderr(f'Failed to create remote {fmt.remote(remote)}')
+            LOG.error(f'Failed to create remote {fmt.remote(remote)}')
             if remove_dir:
                 remove_directory(self.repo_path, check=False)
             raise
@@ -279,7 +279,7 @@ class ProjectRepoImpl(GitRepo):
         try:
             return self.repo.git.log('-1', '--format=%H', '--before=' + timestamp, ref)
         except GitError:
-            CONSOLE.stderr('Failed to find revision from timestamp')
+            LOG.error('Failed to find revision from timestamp')
             raise
 
     def _find_rev_by_timestamp_author(self, timestamp: str, author: str, ref: str) -> str:
@@ -294,7 +294,7 @@ class ProjectRepoImpl(GitRepo):
         try:
             return self.repo.git.log('-1', '--format=%H', '--before=' + timestamp, '--author', author, ref)
         except GitError:
-            CONSOLE.stderr('Failed to find revision from timestamp by author')
+            LOG.error('Failed to find revision from timestamp by author')
             raise
 
     def _get_remote_tag(self, tag: str, remote: str, depth: int = 0, remove_dir: bool = False) -> Optional[Tag]:
@@ -313,14 +313,14 @@ class ProjectRepoImpl(GitRepo):
         try:
             return self.repo.tags[tag]
         except (GitError, IndexError) as err:
-            CONSOLE.stderr(f'No existing tag {fmt.ref(tag)}')
+            LOG.error(f'No existing tag {fmt.ref(tag)}')
             if remove_dir:
                 remove_directory(self.repo_path, check=False)
                 raise
             LOG.debug(error=err)
             return None
         except BaseException:
-            CONSOLE.stderr('Failed to get tag')
+            LOG.error('Failed to get tag')
             if remove_dir:
                 remove_directory(self.repo_path, check=False)
             raise
@@ -338,7 +338,7 @@ class ProjectRepoImpl(GitRepo):
                 make_dir(self.repo_path)
             self.repo = Repo.init(self.repo_path)
         except BaseException:
-            CONSOLE.stderr('Failed to initialize repository')
+            LOG.error('Failed to initialize repository')
             remove_directory(self.repo_path, check=False)
             raise
 
@@ -370,7 +370,7 @@ class ProjectRepoImpl(GitRepo):
             tracking_branch = local_branch.tracking_branch()
             return True if tracking_branch else False
         except GitError:
-            CONSOLE.stderr(f'No existing branch {fmt.ref(branch)}')
+            LOG.error(f'No existing branch {fmt.ref(branch)}')
             raise
 
     def _print_has_remote_branch_message(self, branch: str) -> None:
@@ -383,7 +383,7 @@ class ProjectRepoImpl(GitRepo):
             self.repo.git.config('--get', 'branch.' + branch + '.merge')
             CONSOLE.stdout(f' - Tracking branch {fmt.ref(branch)} already exists')
         except GitError:
-            CONSOLE.stderr(f'Remote branch {fmt.ref(branch)} already exists')
+            LOG.error(f'Remote branch {fmt.ref(branch)} already exists')
             raise
 
     @not_detached
@@ -398,7 +398,7 @@ class ProjectRepoImpl(GitRepo):
         try:
             execute_command(f"git pull {remote} {branch}", self.repo_path)
         except CalledProcessError:
-            CONSOLE.stderr(f'Failed to pull from {fmt.remote(remote)} {fmt.ref(branch)}')
+            LOG.error(f'Failed to pull from {fmt.remote(remote)} {fmt.ref(branch)}')
             raise
 
     @not_detached
@@ -414,7 +414,7 @@ class ProjectRepoImpl(GitRepo):
             command = f"git pull --rebase {remote} refs/heads/{branch}:refs/remotes/{remote}/heads/{branch}"
             execute_command(command, self.repo_path)
         except CalledProcessError:
-            CONSOLE.stderr(f'Failed to rebase onto {fmt.remote(remote)} {fmt.ref(branch)}')
+            LOG.error(f'Failed to rebase onto {fmt.remote(remote)} {fmt.ref(branch)}')
             raise
 
     def _remote(self, remote: str, remove_dir: bool = False) -> Remote:
@@ -428,7 +428,7 @@ class ProjectRepoImpl(GitRepo):
         try:
             return self.repo.remotes[remote]
         except GitError:
-            CONSOLE.stderr(f'No existing remote {fmt.remote(remote)}')
+            LOG.error(f'No existing remote {fmt.remote(remote)}')
             if remove_dir:
                 remove_directory(self.repo_path, check=False)
             raise
@@ -453,7 +453,7 @@ class ProjectRepoImpl(GitRepo):
         try:
             self.repo.git.remote('rename', remote_from, remote_to)
         except GitError:
-            CONSOLE.stderr(f'Failed to rename remote from {fmt.remote(remote_from)} to {fmt.remote(remote_to)}')
+            LOG.error(f'Failed to rename remote from {fmt.remote(remote_from)} to {fmt.remote(remote_to)}')
             raise
 
     def _set_tracking_branch(self, remote: str, branch: str, remove_dir: bool = False) -> None:
@@ -471,7 +471,7 @@ class ProjectRepoImpl(GitRepo):
             CONSOLE.stdout(f' - Set tracking branch {fmt.ref(branch)} -> {fmt.remote(remote)} {fmt.ref(branch)}')
             local_branch.set_tracking_branch(remote_branch)
         except BaseException:
-            CONSOLE.stderr(f' - Failed to set tracking branch {fmt.ref(branch)}')
+            LOG.error(f' - Failed to set tracking branch {fmt.ref(branch)}')
             if remove_dir:
                 remove_directory(self.repo_path, check=False)
             raise

@@ -26,7 +26,7 @@ class Console:
         self._stringio: RichConsole = RichConsole(file=StringIO(),
                                                   width=160)
         # for console in [self._stdout, self._stderr, self._stringio]:
-        #     CONSOLE.stderr(console)
+        #     LOG.error(console)
         #     print(console.encoding)
         #     print(console.color_system)
         #     print(console.width)

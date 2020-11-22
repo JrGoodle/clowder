@@ -36,9 +36,8 @@ def init(args) -> None:
     if clowder_repo_dir.is_dir():
         try:
             clowder_repo_dir.rmdir()
-        except OSError as err:
-            LOG.debug('Failed to remove existing .clowder directory', err)
-            CONSOLE.stderr("Clowder already initialized in this directory")
+        except OSError:
+            LOG.error("Clowder already initialized in this directory")
             raise
 
     CONSOLE.stdout(f"Create clowder repo from {fmt.green(args.url)}\n")

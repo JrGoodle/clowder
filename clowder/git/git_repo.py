@@ -53,7 +53,7 @@ class GitRepo(object):
         try:
             CONSOLE.stdout(self.repo.git.add(files))
         except GitError:
-            CONSOLE.stderr("Failed to add files to git index")
+            LOG.error("Failed to add files to git index")
             raise
         else:
             self.status_verbose()
@@ -73,7 +73,7 @@ class GitRepo(object):
             if allow_failure:
                 CONSOLE.stdout(f' - {message}')
                 return
-            CONSOLE.stderr(message)
+            LOG.error(message)
             raise
 
     def clean(self, args: str = '') -> None:
@@ -105,7 +105,7 @@ class GitRepo(object):
             CONSOLE.stdout(' - Commit current changes')
             CONSOLE.stdout(self.repo.git.commit(message=message))
         except GitError:
-            CONSOLE.stderr('Failed to commit current changes')
+            LOG.error('Failed to commit current changes')
             raise
 
     @property
@@ -166,7 +166,7 @@ class GitRepo(object):
                 command = f'git fetch {remote} {ref.short_ref} --depth {depth} --prune --tags'
                 execute_command(command, self.repo_path)
         except BaseException as err:
-            CONSOLE.stderr(error_message)
+            LOG.error(error_message)
             if remove_dir:
                 remove_directory(self.repo_path, check=False)
             if allow_failure:
@@ -228,7 +228,7 @@ class GitRepo(object):
         try:
             return self.repo.git.log('-1', '--format=%cI')
         except GitError:
-            CONSOLE.stderr('Failed to find current timestamp')
+            LOG.error('Failed to find current timestamp')
             raise
 
     def git_config_unset_all_local(self, variable: str) -> None:
@@ -241,10 +241,10 @@ class GitRepo(object):
             self.repo.git.config('--local', '--unset-all', variable)
         except GitCommandError as err:
             if err.status != 5:  # git returns error code 5 when trying to unset variable that doesn't exist
-                CONSOLE.stderr(f'Failed to unset all local git config values for {variable}')
+                LOG.error(f'Failed to unset all local git config values for {variable}')
                 raise
         except GitError:
-            CONSOLE.stderr(f'Failed to unset all local git config values for {variable}')
+            LOG.error(f'Failed to unset all local git config values for {variable}')
             raise
 
     def git_config_add_local(self, variable: str, value: str) -> None:
@@ -257,7 +257,7 @@ class GitRepo(object):
         try:
             self.repo.git.config('--local', '--add', variable, value)
         except GitError:
-            CONSOLE.stderr(f'Failed to add local git config value {value} for variable {variable}')
+            LOG.error(f'Failed to add local git config value {value} for variable {variable}')
             raise
 
     def install_lfs_hooks(self) -> None:
@@ -267,7 +267,7 @@ class GitRepo(object):
         try:
             self.repo.git.lfs('install', '--local')
         except GitError:
-            CONSOLE.stderr('Failed to update git lfs hooks')
+            LOG.error('Failed to update git lfs hooks')
             raise
 
     @property
@@ -371,7 +371,7 @@ class GitRepo(object):
             CONSOLE.stdout(' - Pull latest changes')
             CONSOLE.stdout(self.repo.git.pull())
         except GitError:
-            CONSOLE.stderr('Failed to pull latest changes')
+            LOG.error('Failed to pull latest changes')
             raise
 
     def pull_lfs(self) -> None:
@@ -381,7 +381,7 @@ class GitRepo(object):
             CONSOLE.stdout(' - Pull git lfs files')
             self.repo.git.lfs('pull')
         except GitError:
-            CONSOLE.stderr('Failed to pull git lfs files')
+            LOG.error('Failed to pull git lfs files')
             raise
 
     @not_detached
@@ -392,7 +392,7 @@ class GitRepo(object):
             CONSOLE.stdout(' - Push local changes')
             CONSOLE.stdout(self.repo.git.push())
         except GitError:
-            CONSOLE.stderr('Failed to push local changes')
+            LOG.error('Failed to push local changes')
             raise
 
     def sha(self, short: bool = False) -> str:
@@ -436,7 +436,7 @@ class GitRepo(object):
         try:
             execute_command(command, self.repo_path)
         except CalledProcessError:
-            CONSOLE.stderr('Failed to print verbose status')
+            LOG.error('Failed to print verbose status')
             raise
 
     def validate_repo(self, allow_missing_repo: bool = True) -> bool:
@@ -460,7 +460,7 @@ class GitRepo(object):
         try:
             self.repo.git.rebase('--abort')
         except GitError:
-            CONSOLE.stderr('Failed to abort rebase')
+            LOG.error('Failed to abort rebase')
             raise
 
     def _clean(self, args: str) -> None:
@@ -472,7 +472,7 @@ class GitRepo(object):
         try:
             self.repo.git.clean(args)
         except GitError:
-            CONSOLE.stderr('Failed to clean git repo')
+            LOG.error('Failed to clean git repo')
             raise
 
     @property
@@ -492,7 +492,7 @@ class GitRepo(object):
         try:
             return Repo(self.repo_path)
         except GitError:
-            CONSOLE.stderr(f"Failed to create Repo instance for {fmt.path(self.repo_path)}")
+            LOG.error(f"Failed to create Repo instance for {fmt.path(self.repo_path)}")
             raise
 
     def _reset_head(self, branch: Optional[str] = None) -> None:
@@ -505,7 +505,7 @@ class GitRepo(object):
             try:
                 self.repo.head.reset(index=True, working_tree=True)
             except GitError:
-                CONSOLE.stderr(f"Failed to reset {fmt.ref('HEAD')}")
+                LOG.error(f"Failed to reset {fmt.ref('HEAD')}")
                 raise
             else:
                 return
@@ -513,7 +513,7 @@ class GitRepo(object):
         try:
             self.repo.git.reset('--hard', branch)
         except GitError:
-            CONSOLE.stderr(f'Failed to reset to {fmt.ref(branch)}')
+            LOG.error(f'Failed to reset to {fmt.ref(branch)}')
             raise
 
     @property

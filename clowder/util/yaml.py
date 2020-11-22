@@ -11,9 +11,10 @@ import jsonschema
 import yaml as pyyaml
 
 import clowder.util.formatting as fmt
-from clowder.util.console import CONSOLE
 from clowder.environment import ENVIRONMENT
+from clowder.util.console import CONSOLE
 from clowder.util.error import ExistingFileError, InvalidYamlError, MissingFileError
+from clowder.util.logging import LOG
 
 from .file_system import (
     symlink_clowder_yaml,
@@ -63,7 +64,7 @@ def link_clowder_yaml_default(clowder_dir: Path) -> None:
         try:
             remove_file(existing_file)
         except OSError:
-            CONSOLE.stderr(f"Failed to remove file {fmt.path(existing_file)}")
+            LOG.error(f"Failed to remove file {fmt.path(existing_file)}")
             raise
 
 
@@ -108,7 +109,7 @@ def link_clowder_yaml_version(clowder_dir: Path, version: str) -> None:
         try:
             remove_file(existing_file)
         except OSError:
-            CONSOLE.stderr(f"Failed to remove file {fmt.path(existing_file)}")
+            LOG.error(f"Failed to remove file {fmt.path(existing_file)}")
             raise
 
 
@@ -129,7 +130,7 @@ def load_yaml_file(yaml_file: Path, relative_dir: Path) -> dict:
                 raise InvalidYamlError(f"{fmt.path(yaml_file)}\nNo entries in {fmt.path(config_yaml)}")
             return parsed_yaml
     except pyyaml.YAMLError:
-        CONSOLE.stderr(f"Failed to open file '{yaml_file}'")
+        LOG.error(f"Failed to open file '{yaml_file}'")
         raise
 
 
@@ -156,7 +157,7 @@ def save_yaml_file(yaml_output: dict, yaml_file: Path) -> None:
         with yaml_file.open(mode="w") as raw_file:
             pyyaml.safe_dump(yaml_output, raw_file, default_flow_style=False, indent=2, sort_keys=False)
     except pyyaml.YAMLError:
-        CONSOLE.stderr(f"Failed to save file {fmt.path(yaml_file)}")
+        LOG.error(f"Failed to save file {fmt.path(yaml_file)}")
         raise
 
 
@@ -171,7 +172,7 @@ def validate_yaml_file(parsed_yaml: dict, file_path: Path) -> None:
     try:
         jsonschema.validate(parsed_yaml, json_schema)
     except jsonschema.exceptions.ValidationError:
-        CONSOLE.stderr(f'Yaml json schema validation failed {fmt.invalid_yaml(file_path.name)}\n')
+        LOG.error(f'Yaml json schema validation failed {fmt.invalid_yaml(file_path.name)}\n')
         raise
 
 
@@ -185,7 +186,7 @@ def yaml_string(yaml_output: dict) -> str:
     try:
         return pyyaml.safe_dump(yaml_output, default_flow_style=False, indent=2, sort_keys=False)
     except pyyaml.YAMLError:
-        CONSOLE.stderr(f"Failed to dump yaml file contents",)
+        LOG.error(f"Failed to dump yaml file contents",)
         raise
 
 
@@ -233,7 +234,7 @@ def _print_yaml(yaml_file: Path) -> None:
             contents = raw_file.read()
             CONSOLE.stdout(contents.rstrip())
     except IOError:
-        CONSOLE.stderr(f"Failed to open file '{yaml_file}'")
+        LOG.error(f"Failed to open file '{yaml_file}'")
         raise
 
 

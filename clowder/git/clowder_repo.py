@@ -151,13 +151,13 @@ class ClowderRepo(ProjectRepo):
         except BaseException:
             # if self.repo_path.is_dir():
             #     remove_directory(self.repo_path, check=False)
-            CONSOLE.stderr("Failed to initialize clowder repo")
+            LOG.error("Failed to initialize clowder repo")
             raise
         else:
             try:
                 link_clowder_yaml_default(ENVIRONMENT.current_dir)
             except Exception:
-                CONSOLE.stderr('Failed to link yaml file after clowder repo init')
+                LOG.error('Failed to link yaml file after clowder repo init')
                 raise
             else:
                 if ENVIRONMENT.has_ambiguous_clowder_yaml_files():
@@ -175,8 +175,8 @@ class ClowderRepo(ProjectRepo):
         if ENVIRONMENT.clowder_yaml is not None and not ENVIRONMENT.clowder_yaml.is_symlink():
             message = f"Found a {fmt.path(ENVIRONMENT.clowder_yaml.name)} file but it is not a symlink " \
                       f"to a file stored in the existing {fmt.path(Path('.clowder'))} repo"
-            CONSOLE.stderr(message)
-            CONSOLE.stderr()
+            LOG.error(message)
+            LOG.error()
 
         symlink_output: Optional[str] = None
         if ENVIRONMENT.clowder_yaml is not None and ENVIRONMENT.clowder_yaml.is_symlink():

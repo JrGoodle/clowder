@@ -534,5 +534,5 @@ class ResolvedProject:
             if ignore_errors:
                 LOG.debug(f'Command failed: {command}', err)
             else:
-                CONSOLE.stderr(f'Command failed: {command}')
+                LOG.error(f'Command failed: {command}')
                 raise
