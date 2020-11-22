@@ -13,7 +13,7 @@ import argcomplete
 import colorama
 
 import clowder.cli as cmd
-from clowder.logging import LOG
+from clowder.util.logging import LOG
 
 
 # class ClowderArgumentParser(argparse.ArgumentParser):

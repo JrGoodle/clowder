@@ -13,7 +13,7 @@ import clowder.util.formatting as fmt
 from clowder.console import CONSOLE
 from clowder.error import ClowderGitError, UnknownTypeError
 from clowder.util.file_system import remove_file
-from clowder.logging import LOG
+from clowder.util.logging import LOG
 from clowder.util.connectivity import is_offline
 
 from .git_ref import GitRef, GitRefEnum

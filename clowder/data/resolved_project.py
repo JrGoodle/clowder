@@ -20,7 +20,7 @@ from clowder.git import (
     ProjectRepoRecursive
 )
 from clowder.git.util import existing_git_repo
-from clowder.logging import LOG
+from clowder.util.logging import LOG
 from clowder.util.connectivity import is_offline
 from clowder.util.execute import execute_forall_command
 

@@ -10,7 +10,7 @@ import clowder.util.formatting as fmt
 from clowder.console import CONSOLE
 from clowder.environment import ENVIRONMENT
 from clowder.git.clowder_repo import ClowderRepo
-from clowder.logging import LOG
+from clowder.util.logging import LOG
 from clowder.util.connectivity import network_connection_required
 
 from .util import add_parser_arguments

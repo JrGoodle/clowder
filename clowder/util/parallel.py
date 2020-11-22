@@ -14,7 +14,7 @@ import clowder.util.formatting as fmt
 from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.console import CONSOLE
 from clowder.data import ResolvedProject
-from clowder.logging import LOG
+from clowder.util.logging import LOG
 
 
 def forall(projects: Tuple[ResolvedProject, ...], jobs: int, command: str, ignore_errors: bool) -> None:

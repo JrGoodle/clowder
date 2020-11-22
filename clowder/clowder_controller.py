@@ -21,7 +21,7 @@ from clowder.error import (
     ProjectStatusError
 )
 from clowder.git.util import get_default_branch
-from clowder.logging import LOG
+from clowder.util.logging import LOG
 from clowder.data import ResolvedProject, ResolvedUpstream, SOURCE_CONTROLLER
 from clowder.data.model import ClowderBase
 from clowder.util.yaml import load_yaml_file, validate_yaml_file
