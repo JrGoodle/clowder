@@ -19,7 +19,7 @@ from clowder.git import (
     ProjectRepo,
     ProjectRepoRecursive
 )
-from clowder.git.util import existing_git_repository
+from clowder.git.util import existing_git_repo
 from clowder.logging import LOG
 from clowder.util.connectivity import is_offline
 from clowder.util.execute import execute_forall_command
@@ -256,7 +256,7 @@ class ResolvedProject:
         :return: True, if repo exists
         """
 
-        return existing_git_repository(self.full_path)
+        return existing_git_repo(self.full_path)
 
     @project_repo_exists
     def fetch_all(self) -> None:
@@ -275,7 +275,7 @@ class ResolvedProject:
         :return: Formatted string of full file path if cloned, otherwise project name
         """
 
-        if existing_git_repository(self.full_path):
+        if existing_git_repo(self.full_path):
             return str(self.path)
 
         return self.name
@@ -338,7 +338,7 @@ class ResolvedProject:
     def print_existence_message(self) -> None:
         """Print existence validation message for project"""
 
-        if not existing_git_repository(self.full_path):
+        if not existing_git_repo(self.full_path):
             CONSOLE.stdout(self.status())
 
     def print_validation(self, allow_missing_repo: bool = True) -> None:
@@ -412,7 +412,7 @@ class ResolvedProject:
         :param bool ignore_errors: Whether to exit if command returns a non-zero exit code
         """
 
-        if not existing_git_repository(self.full_path):
+        if not existing_git_repo(self.full_path):
             CONSOLE.stdout(fmt.red(" - Project missing\n"))
             return
 
@@ -464,7 +464,7 @@ class ResolvedProject:
         :return: Formatting project name and status
         """
 
-        if not existing_git_repository(self.full_path):
+        if not existing_git_repo(self.full_path):
             project_output = self.name
             if padding:
                 project_output = project_output.ljust(padding)

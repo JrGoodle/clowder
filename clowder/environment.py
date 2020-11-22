@@ -9,7 +9,7 @@ from typing import Optional
 
 import clowder.util.formatting as fmt
 from clowder.error import AmbiguousYamlError, ExistingFileError, MissingSourceError
-from clowder.git.util import existing_git_repository
+from clowder.git.util import existing_git_repo
 
 
 class ClowderEnvironment(object):
@@ -98,7 +98,7 @@ class ClowderEnvironment(object):
             clowder_yml_exists = clowder_yml.is_file() or clowder_yml.is_symlink()
             clowder_yaml_exists = clowder_yaml.is_file() or clowder_yaml.is_symlink()
             clowder_repo_file_exists = clowder_repo_dir.is_symlink() or clowder_repo_dir.is_file()
-            if clowder_repo_dir.is_dir() and existing_git_repository(clowder_repo_dir):
+            if clowder_repo_dir.is_dir() and existing_git_repo(clowder_repo_dir):
                 self.clowder_dir: Optional[Path] = path
                 self.clowder_repo_dir: Optional[Path] = clowder_repo_dir.resolve()
                 self.clowder_git_repo_dir: Optional[Path] = clowder_repo_dir

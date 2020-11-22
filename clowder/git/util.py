@@ -16,7 +16,7 @@ from clowder.util.formatting import remove_prefix
 from clowder.util.file_system import make_dir
 
 
-def existing_git_repository(path: Path) -> bool:
+def existing_git_repo(path: Path) -> bool:
     """Check if a git repository exists
 
     :param Path path: Repo path
@@ -55,7 +55,7 @@ def not_detached(func):
 def get_default_branch(repo_path: Path, remote: str, url: str) -> str:
     """Get default branch"""
 
-    if existing_git_repository(repo_path):
+    if existing_git_repo(repo_path):
         default_branch = get_default_branch_from_local(repo_path, remote)
         if default_branch is not None:
             return default_branch

@@ -16,7 +16,6 @@ from clowder.util.connectivity import is_offline
 from clowder.util.execute import execute_command
 from clowder.util.yaml import link_clowder_yaml_default
 
-
 from .git_ref import GitRef
 from .project_repo import ProjectRepo
 

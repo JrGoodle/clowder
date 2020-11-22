@@ -18,7 +18,7 @@ from clowder.util.file_system import remove_directory
 
 from .git_ref import GitRef
 from .util import (
-    existing_git_repository,
+    existing_git_repo,
     not_detached
 )
 
@@ -40,7 +40,7 @@ class GitRepo(object):
 
         self.repo_path = repo_path
         self.remote = remote
-        self.repo = self._create_repo() if existing_git_repository(repo_path) else None
+        self.repo = self._create_repo() if existing_git_repo(repo_path) else None
 
     def add(self, files: str) -> None:
         """Add files to git index
@@ -200,7 +200,7 @@ class GitRepo(object):
         :return: Formatted project name
         """
 
-        if not existing_git_repository(self.repo_path):
+        if not existing_git_repo(self.repo_path):
             return str(path)
 
         if not self.validate_repo():
@@ -356,7 +356,7 @@ class GitRepo(object):
     def print_validation(self) -> None:
         """Print validation messages"""
 
-        if not existing_git_repository(self.repo_path):
+        if not existing_git_repo(self.repo_path):
             return
 
         if not self.validate_repo():
@@ -446,7 +446,7 @@ class GitRepo(object):
         :return: True, if repo not dirty or doesn't exist on disk
         """
 
-        if not existing_git_repository(self.repo_path):
+        if not existing_git_repo(self.repo_path):
             return allow_missing_repo
 
         return not self.is_dirty

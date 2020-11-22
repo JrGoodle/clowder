@@ -20,7 +20,7 @@ from clowder.util.file_system import remove_directory, make_dir
 from .git_ref import GitRef
 from .git_repo import GitRepo
 from .util import (
-    existing_git_repository,
+    existing_git_repo,
     not_detached
 )
 
@@ -328,7 +328,7 @@ class ProjectRepoImpl(GitRepo):
     def _init_repo(self) -> None:
         """Initialize repository"""
 
-        if existing_git_repository(self.repo_path):
+        if existing_git_repo(self.repo_path):
             # TODO: Raise exception here?
             return
 

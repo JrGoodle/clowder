@@ -18,7 +18,7 @@ from clowder.util.connectivity import is_offline
 
 from .git_ref import GitRef, GitRefEnum
 from .project_repo_impl import GitConfig, ProjectRepoImpl
-from .util import existing_git_repository
+from .util import existing_git_repo
 
 
 class ProjectRepo(ProjectRepoImpl):
@@ -51,7 +51,7 @@ class ProjectRepo(ProjectRepoImpl):
         :raise ExistingFileError:
         """
 
-        if existing_git_repository(self.repo_path):
+        if existing_git_repo(self.repo_path):
             # TODO: Throw error if repo doesn't match one trying to create
             return
 
@@ -83,7 +83,7 @@ class ProjectRepo(ProjectRepoImpl):
         :param str upstream_remote_url: Upstream remote url
         """
 
-        if not existing_git_repository(self.repo_path):
+        if not existing_git_repo(self.repo_path):
             return
 
         try:
@@ -111,7 +111,7 @@ class ProjectRepo(ProjectRepoImpl):
         :param Optional[GitConfig] config: Custom git config
         """
 
-        if not existing_git_repository(self.repo_path):
+        if not existing_git_repo(self.repo_path):
             self._herd_initial(url, depth=depth)
             self.install_project_git_herd_alias()
             if config is not None:
@@ -136,7 +136,7 @@ class ProjectRepo(ProjectRepoImpl):
         :param Optional[GitConfig] config: Custom git config
         """
 
-        if not existing_git_repository(self.repo_path):
+        if not existing_git_repo(self.repo_path):
             self._herd_branch_initial(url, branch, depth=depth)
             self.install_project_git_herd_alias()
             if config is not None:
@@ -181,7 +181,7 @@ class ProjectRepo(ProjectRepoImpl):
 
         fetch = depth != 0
 
-        if not existing_git_repository(self.repo_path):
+        if not existing_git_repo(self.repo_path):
             self._init_repo()
             self._create_remote(self.remote, url, remove_dir=True)
             try:

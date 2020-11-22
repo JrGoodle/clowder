@@ -9,7 +9,7 @@ from typing import Optional
 
 from clowder.environment import ENVIRONMENT
 from clowder.git import GitProtocol, GitRef, ProjectRepo
-from clowder.git.util import existing_git_repository
+from clowder.git.util import existing_git_repo
 import clowder.util.formatting as fmt
 
 from .model import Defaults, Group, Source, Upstream
@@ -100,7 +100,7 @@ class ResolvedUpstream:
         :return: Formatted upstream status
         """
 
-        if not existing_git_repository(self.path):
+        if not existing_git_repo(self.path):
             return fmt.green(self.path)
 
         repo = ProjectRepo(self.full_path, self.remote, self.ref)
