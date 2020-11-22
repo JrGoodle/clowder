@@ -10,7 +10,7 @@ from typing import Optional
 
 from git import GitError
 
-from clowder.console import CONSOLE
+from clowder.util.console import CONSOLE
 from clowder.util.execute import execute_command
 
 from .git_ref import GitRef

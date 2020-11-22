@@ -8,7 +8,7 @@ import logging
 import os
 from typing import Optional
 
-from clowder.console import CONSOLE
+from clowder.util.console import CONSOLE
 
 
 LOG_LEVEL: Optional[str] = os.environ.get("CLOWDER_LOG", None)

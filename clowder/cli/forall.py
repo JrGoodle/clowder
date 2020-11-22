@@ -11,7 +11,7 @@ from typing import List, Optional
 import clowder.util.formatting as fmt
 from clowder.clowder_controller import CLOWDER_CONTROLLER, print_clowder_name, valid_clowder_yaml_required
 from clowder.config import Config
-from clowder.console import CONSOLE
+from clowder.util.console import CONSOLE
 from clowder.util.error import CommandArgumentError
 from clowder.git.clowder_repo import print_clowder_repo_status
 import clowder.util.parallel as parallel

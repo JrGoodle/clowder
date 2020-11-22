@@ -11,7 +11,7 @@ from typing import Dict, Optional
 from git import GitError, Remote, Repo, Tag
 
 import clowder.util.formatting as fmt
-from clowder.console import CONSOLE
+from clowder.util.console import CONSOLE
 from clowder.util.error import ClowderGitError
 from clowder.util.logging import LOG
 from clowder.util.execute import execute_command

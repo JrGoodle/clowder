@@ -10,7 +10,7 @@ from subprocess import CalledProcessError
 from typing import Optional, Set
 
 import clowder.util.formatting as fmt
-from clowder.console import CONSOLE
+from clowder.util.console import CONSOLE
 from clowder.environment import ENVIRONMENT
 from clowder.util.error import DuplicateRemoteError
 from clowder.git import (

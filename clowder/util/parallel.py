@@ -12,7 +12,7 @@ import trio
 
 import clowder.util.formatting as fmt
 from clowder.clowder_controller import CLOWDER_CONTROLLER
-from clowder.console import CONSOLE
+from clowder.util.console import CONSOLE
 from clowder.data import ResolvedProject
 from clowder.util.logging import LOG
 

@@ -8,7 +8,7 @@ import math
 from pathlib import Path
 from typing import List, Optional, Tuple, Union
 
-from clowder.console import CONSOLE
+from clowder.util.console import CONSOLE
 
 
 Output = Union[str, Path]

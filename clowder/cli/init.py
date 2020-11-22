@@ -7,7 +7,7 @@
 import argparse
 
 import clowder.util.formatting as fmt
-from clowder.console import CONSOLE
+from clowder.util.console import CONSOLE
 from clowder.environment import ENVIRONMENT
 from clowder.git.clowder_repo import ClowderRepo
 from clowder.util.logging import LOG

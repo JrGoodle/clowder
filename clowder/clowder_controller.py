@@ -11,7 +11,7 @@ from typing import Optional, Tuple
 import trio
 
 import clowder.util.formatting as fmt
-from clowder.console import CONSOLE
+from clowder.util.console import CONSOLE
 from clowder.environment import ENVIRONMENT
 from clowder.util.error import (
     ClowderGitError,

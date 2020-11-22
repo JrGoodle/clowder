@@ -9,7 +9,7 @@ from pathlib import Path
 from subprocess import CalledProcessError
 from typing import Optional
 
-from clowder.console import CONSOLE
+from clowder.util.console import CONSOLE
 from clowder.util.logging import LOG
 from clowder.util.execute import execute_command
 from clowder.util.formatting import remove_prefix

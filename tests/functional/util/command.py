@@ -9,7 +9,7 @@ from subprocess import CompletedProcess, STDOUT, PIPE
 from pathlib import Path
 
 import clowder.util.formatting as fmt
-from clowder.console import CONSOLE
+from clowder.util.console import CONSOLE
 
 
 class CommandResults:

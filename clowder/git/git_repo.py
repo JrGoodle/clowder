@@ -11,7 +11,7 @@ from typing import Optional
 from git import Repo, GitCommandError, GitError
 
 import clowder.util.formatting as fmt
-from clowder.console import CONSOLE
+from clowder.util.console import CONSOLE
 from clowder.util.logging import LOG
 from clowder.util.execute import execute_command
 from clowder.util.file_system import remove_directory

@@ -10,7 +10,7 @@ from typing import Optional
 from git import GitError
 
 import clowder.util.formatting as fmt
-from clowder.console import CONSOLE
+from clowder.util.console import CONSOLE
 from clowder.util.error import ClowderGitError, UnknownTypeError
 from clowder.util.file_system import remove_file
 from clowder.util.logging import LOG
