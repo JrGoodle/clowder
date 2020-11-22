@@ -8,11 +8,7 @@ from pathlib import Path
 from typing import Optional
 
 from clowder.environment import ENVIRONMENT
-from clowder.git_project import (
-    GitProtocol,
-    GitRef,
-    ProjectRepo
-)
+from clowder.git_project import GitProtocol, GitRef, ProjectRepo
 from clowder.git_project.util import existing_git_repository
 import clowder.util.formatting as fmt
 

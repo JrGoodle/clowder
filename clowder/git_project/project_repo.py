@@ -18,9 +18,7 @@ from clowder.util.connectivity import is_offline
 
 from .git_ref import GitRef, GitRefEnum
 from .project_repo_impl import GitConfig, ProjectRepoImpl
-from .util import (
-    existing_git_repository
-)
+from .util import existing_git_repository
 
 
 class ProjectRepo(ProjectRepoImpl):
