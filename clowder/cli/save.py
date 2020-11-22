@@ -7,12 +7,11 @@
 import argparse
 
 import clowder.util.formatting as fmt
-from clowder.clowder_controller import CLOWDER_CONTROLLER, valid_clowder_yaml_required
+from clowder.clowder_controller import CLOWDER_CONTROLLER, print_clowder_name, valid_clowder_yaml_required
 from clowder.console import CONSOLE
 from clowder.environment import clowder_repo_required, ENVIRONMENT
 from clowder.error import DefaultVersionError, ExistingVersionError
 from clowder.git.clowder_repo import ClowderRepo
-from clowder.util.decorators import print_clowder_name
 from clowder.util.file_system import make_dir
 from clowder.util.yaml import save_yaml_file
 

@@ -5,6 +5,7 @@
 """
 
 import os
+from functools import wraps
 from pathlib import Path
 from typing import Optional, Tuple
 
@@ -18,6 +19,34 @@ from clowder.util.yaml import link_clowder_yaml_default
 
 from .git_ref import GitRef
 from .project_repo import ProjectRepo
+
+
+def print_clowder_repo_status(func):
+    """Print clowder repo status"""
+
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        """Wrapper"""
+
+        if ENVIRONMENT.clowder_repo_dir.is_dir():
+            ClowderRepo(ENVIRONMENT.clowder_repo_dir).print_status()
+        return func(*args, **kwargs)
+
+    return wrapper
+
+
+def print_clowder_repo_status_fetch(func):
+    """Print clowder repo status"""
+
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        """Wrapper"""
+
+        if ENVIRONMENT.clowder_git_repo_dir:
+            ClowderRepo(ENVIRONMENT.clowder_git_repo_dir).print_status(fetch=True)
+        return func(*args, **kwargs)
+
+    return wrapper
 
 
 class ClowderRepo(ProjectRepo):

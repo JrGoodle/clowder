@@ -4,6 +4,7 @@
 
 """
 
+from functools import wraps
 from pathlib import Path
 from typing import Optional, Tuple
 
@@ -24,6 +25,20 @@ from clowder.logging import LOG
 from clowder.data import ResolvedProject, ResolvedUpstream, SOURCE_CONTROLLER
 from clowder.data.model import ClowderBase
 from clowder.util.yaml import load_yaml_file, validate_yaml_file
+
+
+def print_clowder_name(func):
+    """Print clowder name"""
+
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        """Wrapper"""
+
+        if CLOWDER_CONTROLLER.name is not None:
+            CONSOLE.stdout(f'{fmt.clowder_name(CLOWDER_CONTROLLER.name)}\n')
+        return func(*args, **kwargs)
+
+    return wrapper
 
 
 def valid_clowder_yaml_required(func):

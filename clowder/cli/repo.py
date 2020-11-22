@@ -6,14 +6,10 @@
 
 import argparse
 
+from clowder.clowder_controller import print_clowder_name
 from clowder.environment import clowder_git_repo_required, clowder_repo_required, ENVIRONMENT
-from clowder.git.clowder_repo import ClowderRepo
+from clowder.git.clowder_repo import ClowderRepo, print_clowder_repo_status, print_clowder_repo_status_fetch
 from clowder.util.connectivity import network_connection_required
-from clowder.util.decorators import (
-    print_clowder_name,
-    print_clowder_repo_status,
-    print_clowder_repo_status_fetch
-)
 
 from .util import add_parser_arguments
 
