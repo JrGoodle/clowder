@@ -8,10 +8,10 @@ import argparse
 
 import clowder.util.formatting as fmt
 from clowder.clowder_controller import CLOWDER_CONTROLLER, print_clowder_name, valid_clowder_yaml_required
-from clowder.util.console import CONSOLE
 from clowder.environment import clowder_repo_required, ENVIRONMENT
-from clowder.util.error import DefaultVersionError, ExistingVersionError
 from clowder.git.clowder_repo import ClowderRepo
+from clowder.util.console import CONSOLE
+from clowder.util.error import DefaultVersionError, ExistingVersionError
 from clowder.util.file_system import make_dir
 from clowder.util.yaml import save_yaml_file
 

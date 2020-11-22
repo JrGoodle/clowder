@@ -6,9 +6,9 @@
 
 from typing import Dict, Optional, Set, Union
 
-from clowder.util.error import SourcesValidatedError, UnknownSourceError, UnknownTypeError
 from clowder.git import GitProtocol
 # from clowder.logging import LOG
+from clowder.util.error import SourcesValidatedError, UnknownSourceError, UnknownTypeError
 
 from .model import Source
 from .model import SourceName

@@ -12,8 +12,8 @@ from typing import Optional
 from clowder.util.console import CONSOLE
 from clowder.util.logging import LOG
 from clowder.util.execute import execute_command
-from clowder.util.formatting import remove_prefix
 from clowder.util.file_system import make_dir
+from clowder.util.formatting import remove_prefix
 
 
 def existing_git_repo(path: Path) -> bool:

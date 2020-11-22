@@ -10,9 +10,7 @@ from subprocess import CalledProcessError
 from typing import Optional, Set
 
 import clowder.util.formatting as fmt
-from clowder.util.console import CONSOLE
 from clowder.environment import ENVIRONMENT
-from clowder.util.error import DuplicateRemoteError
 from clowder.git import (
     GitProtocol,
     GitRef,
@@ -20,9 +18,11 @@ from clowder.git import (
     ProjectRepoRecursive
 )
 from clowder.git.util import existing_git_repo
-from clowder.util.logging import LOG
 from clowder.util.connectivity import is_offline
+from clowder.util.console import CONSOLE
+from clowder.util.error import DuplicateRemoteError
 from clowder.util.execute import execute_forall_command
+from clowder.util.logging import LOG
 
 from .resolved_git_settings import ResolvedGitSettings
 from .resolved_upstream import ResolvedUpstream
@@ -80,13 +80,11 @@ class ResolvedProject:
         has_group_defaults = has_group and group.defaults is not None
 
         has_group_path = has_group and group.path is not None
-        self.path: Path = Path()
-        if has_group_path:
-            self.path: Path = self.path / group.path
+        self.path: Path = self.path / Path(self.name).name
         if has_path:
             self.path: Path = self.path / project.path
-        else:
-            self.path: Path = self.path / Path(self.name).name
+        elif has_group_path:
+            self.path: Path = self.path / group.path
 
         self.default_protocol: Optional[GitProtocol] = None
         if protocol is not None:
@@ -536,3 +534,20 @@ class ResolvedProject:
             else:
                 LOG.error(f'Command failed: {command}')
                 raise
+
+    @staticmethod
+    def _get_property(name: str, project: Project, defaults: Defaults, group: Group, default: Optional = None) -> None:
+        has_project_value = getattr(project, name)
+        has_defaults = defaults is not None
+        has_defaults_value = has_defaults and getattr(defaults, name) is not None
+        has_group = group is not None
+        has_group_defaults = has_group and group.defaults is not None
+        has_group_defaults_value = has_group_defaults and getattr(group.defaults, name) is not None
+        if has_project_value:
+            return getattr(project, name)
+        elif has_defaults_value:
+            return getattr(defaults, name)
+        elif has_group_defaults_value:
+            return getattr(group.defaults, name)
+        elif default is not None:
+            return default

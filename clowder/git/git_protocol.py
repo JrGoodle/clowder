@@ -6,8 +6,8 @@
 
 from enum import auto, unique
 
-from clowder.util.error import UnknownTypeError
 from clowder.util.enum import AutoLowerName
+from clowder.util.error import UnknownTypeError
 
 
 @unique

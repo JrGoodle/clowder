@@ -8,13 +8,13 @@ import argparse
 import os
 
 import clowder.util.formatting as fmt
+import clowder.util.parallel as parallel
 from clowder.clowder_controller import CLOWDER_CONTROLLER, print_clowder_name, valid_clowder_yaml_required
 from clowder.config import Config
 from clowder.data.source_controller import SOURCE_CONTROLLER
 from clowder.git import GitProtocol
-from clowder.util.connectivity import network_connection_required
 from clowder.git.clowder_repo import print_clowder_repo_status_fetch
-import clowder.util.parallel as parallel
+from clowder.util.connectivity import network_connection_required
 
 from .util import add_parser_arguments
 

@@ -10,10 +10,10 @@ from pathlib import Path
 from typing import Optional, Tuple
 
 import clowder.util.formatting as fmt
-from clowder.util.console import CONSOLE
 from clowder.environment import ENVIRONMENT
-from clowder.util.error import DuplicateVersionsError
 from clowder.util.connectivity import is_offline
+from clowder.util.console import CONSOLE
+from clowder.util.error import DuplicateVersionsError
 from clowder.util.execute import execute_command
 from clowder.util.yaml import link_clowder_yaml_default
 

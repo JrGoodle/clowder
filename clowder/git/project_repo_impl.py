@@ -13,9 +13,9 @@ from git import GitError, Remote, Repo, Tag
 import clowder.util.formatting as fmt
 from clowder.util.console import CONSOLE
 from clowder.util.error import ClowderGitError
-from clowder.util.logging import LOG
 from clowder.util.execute import execute_command
 from clowder.util.file_system import remove_directory, make_dir
+from clowder.util.logging import LOG
 
 from .git_ref import GitRef
 from .git_repo import GitRepo

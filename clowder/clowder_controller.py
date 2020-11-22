@@ -11,8 +11,11 @@ from typing import Optional, Tuple
 import trio
 
 import clowder.util.formatting as fmt
-from clowder.util.console import CONSOLE
 from clowder.environment import ENVIRONMENT
+from clowder.git.util import get_default_branch
+from clowder.data import ResolvedProject, ResolvedUpstream, SOURCE_CONTROLLER
+from clowder.data.model import ClowderBase
+from clowder.util.console import CONSOLE
 from clowder.util.error import (
     ClowderGitError,
     DuplicatePathError,
@@ -20,10 +23,7 @@ from clowder.util.error import (
     ProjectNotFoundError,
     ProjectStatusError
 )
-from clowder.git.util import get_default_branch
 from clowder.util.logging import LOG
-from clowder.data import ResolvedProject, ResolvedUpstream, SOURCE_CONTROLLER
-from clowder.data.model import ClowderBase
 from clowder.util.yaml import load_yaml_file, validate_yaml_file
 
 

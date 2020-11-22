@@ -9,13 +9,13 @@ from typing import List, Optional, Tuple
 import clowder.util.formatting as fmt
 from clowder.environment import ENVIRONMENT
 from clowder.util.error import MissingClowderRepoError
-from clowder.util.logging import LOG
 from clowder.util.file_system import (
     create_backup_file,
     make_dir,
     remove_file,
     restore_from_backup_file
 )
+from clowder.util.logging import LOG
 from clowder.util.yaml import (
     load_yaml_file,
     save_yaml_file,
