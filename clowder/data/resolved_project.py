@@ -75,10 +75,7 @@ class ResolvedProject:
         self.name: str = project.name
 
         has_path = project.path is not None
-        has_defaults = defaults is not None
         has_group = group is not None
-        has_group_defaults = has_group and group.defaults is not None
-
         has_group_path = has_group and group.path is not None
         self.path: Path = group.path if has_group_path else Path()
         if has_path:
@@ -86,34 +83,13 @@ class ResolvedProject:
         else:
             self.path: Path = self.path / Path(self.name).name
 
-        self.default_protocol: Optional[GitProtocol] = None
-        if protocol is not None:
-            self.default_protocol: Optional[GitProtocol] = protocol
-
+        self.default_protocol: Optional[GitProtocol] = None if protocol is None else protocol
         self.remote: str = self._get_property('remote', project, defaults, group, default='origin')
         self.ref: Optional[GitRef] = self._get_property('git_ref', project, defaults, group)
 
-        has_source = project.source is not None
-        has_defaults_source = has_defaults and defaults.source is not None
-        has_group_defaults_source = has_group_defaults and group.defaults.source is not None
-        self.source: Source = SOURCE_CONTROLLER.get_source(GITHUB)
-        if has_source:
-            self.source: Source = SOURCE_CONTROLLER.get_source(project.source)
-        elif has_group_defaults_source:
-            self.source: Source = SOURCE_CONTROLLER.get_source(group.defaults.source)
-        elif has_defaults_source:
-            self.source: Source = SOURCE_CONTROLLER.get_source(defaults.source)
-
-        has_git = project.git_settings is not None
-        has_defaults_git = has_defaults and defaults.git_settings is not None
-        has_group_defaults_git = has_group_defaults and group.defaults.git_settings is not None
-        self.git_settings: ResolvedGitSettings = ResolvedGitSettings()
-        if has_defaults_git:
-            self.git_settings.update(defaults.git_settings)
-        if has_group_defaults_git:
-            self.git_settings.update(group.defaults.git_settings)
-        if has_git:
-            self.git_settings.update(project.git_settings)
+        source = self._get_property('source', project, defaults, group, default=GITHUB)
+        self.source: Source = SOURCE_CONTROLLER.get_source(source)
+        self.git_settings: ResolvedGitSettings = ResolvedGitSettings.combine_settings(project, group, defaults)
 
         self.upstream: Optional[ResolvedUpstream] = None
         if project.upstream is not None:
@@ -126,7 +102,7 @@ class ResolvedProject:
                           f"have same remote name '{self.remote}'"
                 raise DuplicateRemoteError(message)
 
-        self.groups: Set[str] = {"all", self.name, str(self.path)}
+        self.groups: Set[str] = {'all', self.name, str(self.path)}
         if has_group:
             self.groups.add(group.name)
             if group.groups is not None:
@@ -517,19 +493,21 @@ class ResolvedProject:
                 raise
 
     @staticmethod
-    def _get_property(name: str, project: Project, defaults: Optional[Defaults],
-                      group: Optional[Group], default: Optional[Any] = None) -> Any:
-        has_project_value = getattr(project, name)
+    def _get_property(name: str, project: Project, defaults: Optional[Defaults], group: Optional[Group],
+                      default: Optional[Any] = None) -> Optional[Any]:
+        has_project_value = hasattr(project, name)
         has_defaults = defaults is not None
-        has_defaults_value = has_defaults and getattr(defaults, name) is not None
+        has_defaults_value = has_defaults and hasattr(defaults, name)
         has_group = group is not None
         has_group_defaults = has_group and group.defaults is not None
-        has_group_defaults_value = has_group_defaults and getattr(group.defaults, name) is not None
+        has_group_defaults_value = has_group_defaults and hasattr(group.defaults, name)
         if has_project_value:
             return getattr(project, name)
-        elif has_defaults_value:
-            return getattr(defaults, name)
         elif has_group_defaults_value:
+            return getattr(defaults, name)
+        elif has_defaults_value:
             return getattr(group.defaults, name)
         elif default is not None:
             return default
+        else:
+            return None
