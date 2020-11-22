@@ -8,8 +8,8 @@ import argparse
 import os
 import importlib.util
 
-from clowder.environment import ENVIRONMENT
-from clowder.util.decorators import clowder_repo_required, valid_clowder_yaml_required
+from clowder.environment import clowder_repo_required, ENVIRONMENT
+from clowder.clowder_controller import valid_clowder_yaml_required
 
 from .util import add_parser_arguments
 

@@ -8,7 +8,7 @@ import argparse
 
 import clowder.util.formatting as fmt
 from clowder.git.clowder_repo import ClowderRepo
-from clowder.environment import ENVIRONMENT
+from clowder.environment import clowder_repo_required, ENVIRONMENT
 from clowder.error import ExistingSymlinkError
 from clowder.util.yaml import (
     link_clowder_yaml_default,
@@ -16,7 +16,6 @@ from clowder.util.yaml import (
 )
 from clowder.util.decorators import (
     print_clowder_name,
-    clowder_repo_required,
     print_clowder_repo_status
 )
 

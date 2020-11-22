@@ -8,15 +8,14 @@ import argparse
 import os
 
 import clowder.util.formatting as fmt
-from clowder.clowder_controller import CLOWDER_CONTROLLER
+from clowder.clowder_controller import CLOWDER_CONTROLLER, valid_clowder_yaml_required
 from clowder.config import Config
 from clowder.data.source_controller import SOURCE_CONTROLLER
 from clowder.git import GitProtocol
 from clowder.util.connectivity import network_connection_required
 from clowder.util.decorators import (
     print_clowder_name,
-    print_clowder_repo_status_fetch,
-    valid_clowder_yaml_required
+    print_clowder_repo_status_fetch
 )
 import clowder.util.parallel as parallel
 

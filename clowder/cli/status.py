@@ -8,17 +8,14 @@ import argparse
 from typing import Tuple
 
 import clowder.util.formatting as fmt
-from clowder.clowder_controller import CLOWDER_CONTROLLER
+from clowder.clowder_controller import CLOWDER_CONTROLLER, valid_clowder_yaml_required
 from clowder.config import Config
 from clowder.console import CONSOLE
 from clowder.data import ResolvedProject
 from clowder.environment import ENVIRONMENT
 from clowder.git.clowder_repo import ClowderRepo
 from clowder.util.connectivity import network_connection_required
-from clowder.util.decorators import (
-    print_clowder_name,
-    valid_clowder_yaml_required
-)
+from clowder.util.decorators import print_clowder_name
 
 from .util import add_parser_arguments
 

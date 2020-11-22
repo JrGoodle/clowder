@@ -4,12 +4,57 @@
 
 """
 
+from functools import wraps
 from pathlib import Path
 from typing import Optional
 
 import clowder.util.formatting as fmt
-from clowder.error import AmbiguousYamlError, ExistingFileError, MissingSourceError
+from clowder.error import (
+    AmbiguousYamlError,
+    ExistingFileError,
+    MissingSourceError,
+    MissingClowderRepoError,
+    MissingClowderGitRepoError
+)
 from clowder.git.util import existing_git_repo
+
+
+def clowder_repo_required(func):
+    """If no clowder repo exists, print clowder repo not found message and exit
+
+    :raise ExistingFileError:
+    :raise MissingClowderGitRepo:
+    """
+
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        """Wrapper"""
+
+        if ENVIRONMENT.existing_clowder_repo_file_error is not None:
+            raise ENVIRONMENT.existing_clowder_repo_file_error
+        if ENVIRONMENT.clowder_repo_dir is None:
+            raise MissingClowderRepoError(f"No {fmt.path(Path('.clowder'))} directory found")
+
+        return func(*args, **kwargs)
+
+    return wrapper
+
+
+def clowder_git_repo_required(func):
+    """If no clowder git repo exists, print clowder git repo not found message and exit
+
+    :raise MissingClowderGitRepo:
+    """
+
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        """Wrapper"""
+
+        if ENVIRONMENT.clowder_git_repo_dir is None:
+            raise MissingClowderGitRepoError(f"No {fmt.path(Path('.clowder'))} git repository found")
+        return func(*args, **kwargs)
+
+    return wrapper
 
 
 class ClowderEnvironment(object):

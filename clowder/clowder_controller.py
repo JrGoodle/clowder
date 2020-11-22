@@ -26,6 +26,29 @@ from clowder.data.model import ClowderBase
 from clowder.util.yaml import load_yaml_file, validate_yaml_file
 
 
+def valid_clowder_yaml_required(func):
+    """If clowder yaml file is invalid, print invalid yaml message and exit
+
+    :raise AmbiguousYamlError:
+    :raise MissingSourceError:
+    :raise Exception:
+    """
+
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        """Wrapper"""
+
+        if ENVIRONMENT.ambiguous_yaml_error is not None:
+            raise ENVIRONMENT.ambiguous_yaml_error
+        if ENVIRONMENT.missing_source_error is not None:
+            raise ENVIRONMENT.missing_source_error
+        if CLOWDER_CONTROLLER.error is not None:
+            raise CLOWDER_CONTROLLER.error
+        return func(*args, **kwargs)
+
+    return wrapper
+
+
 class ClowderController(object):
     """Class encapsulating project information from clowder yaml for controlling clowder
 

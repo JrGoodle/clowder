@@ -6,9 +6,8 @@
 
 import argparse
 
-from clowder.clowder_controller import CLOWDER_CONTROLLER
+from clowder.clowder_controller import CLOWDER_CONTROLLER, valid_clowder_yaml_required
 from clowder.console import CONSOLE
-from clowder.util.decorators import valid_clowder_yaml_required
 from clowder.util.yaml import yaml_string
 
 from .util import add_parser_arguments
