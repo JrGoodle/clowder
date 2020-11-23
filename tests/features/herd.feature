@@ -1279,3 +1279,20 @@ Feature: clowder herd
         | black-cats/sasha  | master | pytest-tag-missing | JrGoodle/sasha  |
 
 # TODO: Add more tests for local vs remote tags and annotated vs lightweight
+
+    @cats @internet @debug
+    Scenario Outline: herd non-standard default branch implicitly
+        Given cats example is initialized
+        And linked default-branch clowder version
+        And <directory> doesn't exist
+        When I run 'clowder herd'
+        Then the command succeeds
+        And project at <directory> is a git repository
+        And project at <directory> is on <branch>
+        And project at <directory> is clean
+
+        Examples:
+        | directory | branch          |
+        | duffy     | default-branch  |
+
+# TODO: Add tests for creating .git/refs/remotes/remote/HEAD file
