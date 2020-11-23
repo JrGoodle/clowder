@@ -86,10 +86,10 @@ class ResolvedProject:
         self.default_protocol: Optional[GitProtocol] = None if protocol is None else protocol
         self.remote: str = self._get_property('remote', project, defaults, group, default='origin')
         self.ref: Optional[GitRef] = self._get_property('git_ref', project, defaults, group)
+        self.git_settings: ResolvedGitSettings = ResolvedGitSettings.combine_settings(project, group, defaults)
 
         source = self._get_property('source', project, defaults, group, default=GITHUB)
         self.source: Source = SOURCE_CONTROLLER.get_source(source)
-        self.git_settings: ResolvedGitSettings = ResolvedGitSettings.combine_settings(project, group, defaults)
 
         self.upstream: Optional[ResolvedUpstream] = None
         if project.upstream is not None:
