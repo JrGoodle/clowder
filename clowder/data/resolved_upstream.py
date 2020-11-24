@@ -5,7 +5,7 @@
 """
 
 from pathlib import Path
-from typing import Optional
+from typing import Any, Optional
 
 from clowder.environment import ENVIRONMENT
 from clowder.git import GitProtocol, GitRef, ProjectRepo
@@ -40,37 +40,13 @@ class ResolvedUpstream:
 
         self._repo: Optional[ProjectRepo] = None
 
-        has_defaults = defaults is not None
-        has_upstream_defaults = has_defaults and defaults.upstream_defaults is not None
-        has_section = section is not None
-        has_section_defaults = has_section and section.defaults is not None
-        has_section_upstream_defaults = has_section_defaults and section.defaults.upstream_defaults is not None
-
         self.path: Path = path
         self.name: str = upstream.name
         self.ref: Optional[GitRef] = None
+        self.remote: str = self._get_property('remote', upstream, defaults, section, default='upstream')
 
-        has_remote = upstream.remote is not None
-        has_defaults_remote = has_upstream_defaults and defaults.upstream_defaults.remote is not None
-        has_section_defaults_remote = has_section_upstream_defaults and section.defaults.upstream_defaults.remote is not None
-        self.remote: str = "upstream"
-        if has_remote:
-            self.remote: str = upstream.remote
-        elif has_section_defaults_remote:
-            self.remote: str = section.defaults.upstream_defaults.remote
-        elif has_defaults_remote:
-            self.remote: str = defaults.upstream_defaults.remote
-
-        has_source = upstream.source is not None
-        has_defaults_source = has_upstream_defaults and defaults.upstream_defaults.source is not None
-        has_section_defaults_source = has_section_upstream_defaults and section.defaults.upstream_defaults.source is not None
-        self.source: Source = SOURCE_CONTROLLER.get_source(GITHUB)
-        if has_source:
-            self.source: Source = SOURCE_CONTROLLER.get_source(upstream.source)
-        elif has_section_defaults_source:
-            self.source: Source = SOURCE_CONTROLLER.get_source(section.defaults.upstream_defaults.source)
-        elif has_defaults_source:
-            self.source: Source = SOURCE_CONTROLLER.get_source(defaults.upstream_defaults.source)
+        source = self._get_property('source', upstream, defaults, section, default=GITHUB)
+        self.source: Source = SOURCE_CONTROLLER.get_source(source)
 
         self.default_protocol: Optional[GitProtocol] = None
         if self.source.protocol is not None:
@@ -127,3 +103,25 @@ class ResolvedUpstream:
             protocol = SOURCE_CONTROLLER.get_default_protocol()
 
         return protocol.format_url(self.source.url, self.name)
+
+    @staticmethod
+    def _get_property(name: str, upstream: Upstream, defaults: Optional[Defaults], section: Optional[Section],
+                      default: Optional[Any] = None) -> Optional[Any]:
+        upstream_value = getattr(upstream, name)
+        has_defaults = defaults is not None
+        has_upstream_defaults = has_defaults and defaults.upstream_defaults is not None
+        defaults_value = getattr(defaults.upstream_defaults, name) if has_upstream_defaults else None
+        has_section = section is not None
+        has_section_defaults = has_section and section.defaults is not None
+        has_section_upstream_defaults = has_section_defaults and section.defaults.upstream_defaults is not None
+        section_defaults_value = getattr(section.defaults.upstream_defaults, name) if has_section_upstream_defaults else None  # noqa
+        if upstream_value is not None:
+            return upstream_value
+        elif section_defaults_value is not None:
+            return section_defaults_value
+        elif defaults_value is not None:
+            return defaults_value
+        elif default is not None:
+            return default
+        else:
+            return None
