@@ -7,7 +7,7 @@
 import copy
 from typing import Dict, Optional
 
-from clowder.data.model import Defaults, Group, Project
+from clowder.data.model import Defaults, Section, Project
 from clowder.util.error import ClowderGitError, UnknownArgumentError, UnknownTypeError
 
 from .model.git_settings import GitSettings, GitConfig
@@ -33,12 +33,12 @@ class ResolvedGitSettings:
         self.config: Optional[GitConfig] = None
 
     @classmethod
-    def combine_settings(cls, project: Project, group: Optional[Group],
+    def combine_settings(cls, project: Project, section: Optional[Section],
                          defaults: Optional[Defaults]) -> 'ResolvedGitSettings':
         """Create instance updated with overrides from given GitSettings
 
         :param Project project: Project data model
-        :param Optional[Group] group: Group data model
+        :param Optional[Section] section: Section data model
         :param Optional[Defaults] defaults: Defaults data model
         :return: Combined git settings
         """
@@ -49,10 +49,10 @@ class ResolvedGitSettings:
         if has_defaults_git:
             git_settings._update(defaults.git_settings)
 
-        has_group_defaults = group is not None and group.defaults is not None
-        has_group_defaults_git = has_group_defaults and group.defaults.git_settings is not None
-        if has_group_defaults_git:
-            git_settings._update(group.defaults.git_settings)
+        has_section_defaults = section is not None and section.defaults is not None
+        has_section_defaults_git = has_section_defaults and section.defaults.git_settings is not None
+        if has_section_defaults_git:
+            git_settings._update(section.defaults.git_settings)
 
         has_git = project.git_settings is not None
         if has_git:

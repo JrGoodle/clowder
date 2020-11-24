@@ -9,13 +9,8 @@ run "${PWD}/script/setup"
 
 . 'script/import.sh'
 
-generate_requirements() {
-    run 'pipenv run pip freeze > requirements.txt'
-    sed -i '' '/-e git+git@github.com/d'  'requirements.txt'
-}
-
 h1 'Generate requirements.txt'
-generate_requirements
+run 'pipenv run pip freeze > requirements.txt'
 
 h3 'Install clowder at user level'
 run pip install --user -e .

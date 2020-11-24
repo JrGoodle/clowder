@@ -108,9 +108,9 @@ class ClowderController(object):
                     SOURCE_CONTROLLER.add_source(s)
 
             projects = self._clowder.clowder.projects
-            groups = self._clowder.clowder.groups
+            sections = self._clowder.clowder.sections
             if projects is None:
-                projects = [p for g in groups for p in g.projects]
+                projects = [p for s in sections for p in s.projects]
 
             for project in projects:
                 SOURCE_CONTROLLER.add_source(project.source)
@@ -119,12 +119,12 @@ class ClowderController(object):
             # Validate all source names have a defined source with url
             SOURCE_CONTROLLER.validate_sources()
 
-            if groups is None:
+            if sections is None:
                 resolved_projects = [ResolvedProject(p, defaults=defaults, protocol=self._clowder.protocol)
                                      for p in projects]
             else:
-                resolved_projects = [ResolvedProject(p, defaults=defaults, group=g, protocol=self._clowder.protocol)
-                                     for g in groups for p in g.projects]
+                resolved_projects = [ResolvedProject(p, defaults=defaults, section=s, protocol=self._clowder.protocol)
+                                     for s in sections for p in s.projects]
 
             self.projects = tuple(sorted(resolved_projects, key=lambda p: p.name))
             self._update_properties()

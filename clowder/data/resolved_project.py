@@ -27,7 +27,7 @@ from clowder.util.logging import LOG
 from .resolved_git_settings import ResolvedGitSettings
 from .resolved_upstream import ResolvedUpstream
 from .source_controller import SOURCE_CONTROLLER, GITHUB
-from .model import Defaults, Project, Source, Group
+from .model import Defaults, Project, Source, Section
 
 
 def project_repo_exists(func):
@@ -61,12 +61,12 @@ class ResolvedProject:
     """
 
     def __init__(self, project: Project, defaults: Optional[Defaults] = None,
-                 group: Optional[Group] = None, protocol: Optional[GitProtocol] = None):
+                 section: Optional[Section] = None, protocol: Optional[GitProtocol] = None):
         """Project __init__
 
         :param Project project: Project model instance
         :param Optional[Defaults] defaults: Defaults instance
-        :param Optional[Group] group: Group instance
+        :param Optional[Section] section: Section instance
         :raise DuplicateRemoteError:
         """
 
@@ -75,26 +75,26 @@ class ResolvedProject:
         self.name: str = project.name
 
         has_path = project.path is not None
-        has_group = group is not None
-        has_group_path = has_group and group.path is not None
-        self.path: Path = group.path if has_group_path else Path()
+        has_section = section is not None
+        has_group_path = has_section and section.path is not None
+        self.path: Path = section.path if has_group_path else Path()
         if has_path:
             self.path: Path = self.path / project.path
         else:
             self.path: Path = self.path / Path(self.name).name
 
         self.default_protocol: Optional[GitProtocol] = None if protocol is None else protocol
-        self.remote: str = self._get_property('remote', project, defaults, group, default='origin')
-        self.ref: Optional[GitRef] = self._get_property('git_ref', project, defaults, group)
-        self.git_settings: ResolvedGitSettings = ResolvedGitSettings.combine_settings(project, group, defaults)
+        self.remote: str = self._get_property('remote', project, defaults, section, default='origin')
+        self.ref: Optional[GitRef] = self._get_property('git_ref', project, defaults, section)
+        self.git_settings: ResolvedGitSettings = ResolvedGitSettings.combine_settings(project, section, defaults)
 
-        source = self._get_property('source', project, defaults, group, default=GITHUB)
+        source = self._get_property('source', project, defaults, section, default=GITHUB)
         self.source: Source = SOURCE_CONTROLLER.get_source(source)
 
         self.upstream: Optional[ResolvedUpstream] = None
         if project.upstream is not None:
             self.upstream: Optional[ResolvedUpstream] = ResolvedUpstream(self.path, project.upstream,
-                                                                         defaults, group, protocol)
+                                                                         defaults, section, protocol)
             if self.remote == self.upstream.remote:
                 message = f"{fmt.invalid_yaml(ENVIRONMENT.clowder_yaml.name)}\n" \
                           f"{fmt.path(ENVIRONMENT.clowder_yaml)}\n" \
@@ -103,10 +103,10 @@ class ResolvedProject:
                 raise DuplicateRemoteError(message)
 
         self.groups: Set[str] = {'all', self.name, str(self.path)}
-        if has_group:
-            self.groups.add(group.name)
-            if group.groups is not None:
-                self.groups.update({g for g in group.groups})
+        if has_section:
+            self.groups.add(section.name)
+            if section.groups is not None:
+                self.groups.update({g for g in section.groups})
         if project.groups is not None:
             self.groups.update(set(project.groups))
         if 'notdefault' in self.groups:
@@ -332,11 +332,9 @@ class ResolvedProject:
             return self._repo
 
         if self.git_settings.recursive:
-            self._repo = ProjectRepoRecursive(self.full_path, self.remote, self.ref)
+            return ProjectRepoRecursive(self.full_path, self.remote, self.ref)
         else:
-            self._repo = ProjectRepo(self.full_path, self.remote, self.ref)
-
-        return self._repo
+            return ProjectRepo(self.full_path, self.remote, self.ref)
 
     def reset(self, timestamp: Optional[str] = None) -> None:  # noqa
         """Reset project branch to upstream or checkout tag/sha as detached HEAD
@@ -493,18 +491,18 @@ class ResolvedProject:
                 raise
 
     @staticmethod
-    def _get_property(name: str, project: Project, defaults: Optional[Defaults], group: Optional[Group],
+    def _get_property(name: str, project: Project, defaults: Optional[Defaults], section: Optional[Section],
                       default: Optional[Any] = None) -> Optional[Any]:
         project_value = getattr(project, name)
         has_defaults = defaults is not None
         defaults_value = getattr(defaults, name) if has_defaults else None
-        has_group = group is not None
-        has_group_defaults = has_group and group.defaults is not None
-        group_defaults_value = getattr(group.defaults, name) if has_group_defaults else None
+        has_section = section is not None
+        has_section_defaults = has_section and section.defaults is not None
+        section_defaults_value = getattr(section.defaults, name) if has_section_defaults else None
         if project_value is not None:
             return project_value
-        elif group_defaults_value is not None:
-            return group_defaults_value
+        elif section_defaults_value is not None:
+            return section_defaults_value
         elif defaults_value is not None:
             return defaults_value
         elif default is not None:

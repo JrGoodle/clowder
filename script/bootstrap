@@ -11,7 +11,7 @@ case "$PLATFORM" in
     darwin)
         h1 'Homebrew'
         if [ -z ${CI+x} ]; then
-            if which -s brew; then
+            if command -v brew; then
                 h2 'Update Homebrew'
                 run brew update
             else

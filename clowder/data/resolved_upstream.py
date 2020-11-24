@@ -12,7 +12,7 @@ from clowder.git import GitProtocol, GitRef, ProjectRepo
 from clowder.git.util import existing_git_repo
 import clowder.util.formatting as fmt
 
-from .model import Defaults, Group, Source, Upstream
+from .model import Defaults, Section, Source, Upstream
 from .source_controller import SOURCE_CONTROLLER, GITHUB
 
 
@@ -28,13 +28,13 @@ class ResolvedUpstream:
     """
 
     def __init__(self, path: Path, upstream: Upstream, defaults: Optional[Defaults],
-                 group: Optional[Group], protocol: Optional[GitProtocol]):
+                 section: Optional[Section], protocol: Optional[GitProtocol]):
         """Upstream __init__
 
         :param Path path: Parent project path
         :param Upstream upstream: Upstream model instance
         :param Optional[Defaults] defaults: Defaults model instance
-        :param Optional[Group] group: Group model instance
+        :param Optional[Section] section: Section model instance
         :param Optional[GitProtocol] protocol: Git protocol
         """
 
@@ -42,9 +42,9 @@ class ResolvedUpstream:
 
         has_defaults = defaults is not None
         has_upstream_defaults = has_defaults and defaults.upstream_defaults is not None
-        has_group = group is not None
-        has_group_defaults = has_group and group.defaults is not None
-        has_group_upstream_defaults = has_group_defaults and group.defaults.upstream_defaults is not None
+        has_section = section is not None
+        has_section_defaults = has_section and section.defaults is not None
+        has_section_upstream_defaults = has_section_defaults and section.defaults.upstream_defaults is not None
 
         self.path: Path = path
         self.name: str = upstream.name
@@ -52,23 +52,23 @@ class ResolvedUpstream:
 
         has_remote = upstream.remote is not None
         has_defaults_remote = has_upstream_defaults and defaults.upstream_defaults.remote is not None
-        has_group_defaults_remote = has_group_upstream_defaults and group.defaults.upstream_defaults.remote is not None
+        has_section_defaults_remote = has_section_upstream_defaults and section.defaults.upstream_defaults.remote is not None
         self.remote: str = "upstream"
         if has_remote:
             self.remote: str = upstream.remote
-        elif has_group_defaults_remote:
-            self.remote: str = group.defaults.upstream_defaults.remote
+        elif has_section_defaults_remote:
+            self.remote: str = section.defaults.upstream_defaults.remote
         elif has_defaults_remote:
             self.remote: str = defaults.upstream_defaults.remote
 
         has_source = upstream.source is not None
         has_defaults_source = has_upstream_defaults and defaults.upstream_defaults.source is not None
-        has_group_defaults_source = has_group_upstream_defaults and group.defaults.upstream_defaults.source is not None
+        has_section_defaults_source = has_section_upstream_defaults and section.defaults.upstream_defaults.source is not None
         self.source: Source = SOURCE_CONTROLLER.get_source(GITHUB)
         if has_source:
             self.source: Source = SOURCE_CONTROLLER.get_source(upstream.source)
-        elif has_group_defaults_source:
-            self.source: Source = SOURCE_CONTROLLER.get_source(group.defaults.upstream_defaults.source)
+        elif has_section_defaults_source:
+            self.source: Source = SOURCE_CONTROLLER.get_source(section.defaults.upstream_defaults.source)
         elif has_defaults_source:
             self.source: Source = SOURCE_CONTROLLER.get_source(defaults.upstream_defaults.source)
 

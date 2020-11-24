@@ -8,7 +8,7 @@ from typing import List, Optional, Union
 
 from clowder.util.error import InvalidYamlError, UnknownTypeError
 
-from .group import Group
+from .section import Section
 from .project import Project
 
 
@@ -16,7 +16,7 @@ class Clowder:
     """clowder yaml Clowder model class
 
     :ivar Optional[List[Project]] projects: Projects
-    :ivar Optional[List[Group]] groups: Groups
+    :ivar Optional[List[Group]] sections: Groups
     """
 
     def __init__(self, yaml: Union[dict, List[Project]]):
@@ -27,10 +27,10 @@ class Clowder:
 
         if isinstance(yaml, dict):
             self.projects: Optional[List[Project]] = None
-            self.groups: Optional[List[Group]] = [Group(name, group) for name, group in yaml.items()]
+            self.sections: Optional[List[Section]] = [Section(name, section) for name, section in yaml.items()]
         elif isinstance(yaml, list):
             self.projects: Optional[List[Project]] = [Project(p) for p in yaml]
-            self.groups: Optional[List[Group]] = None
+            self.sections: Optional[List[Section]] = None
         else:
             raise UnknownTypeError("Unknown group type")
 
@@ -44,7 +44,7 @@ class Clowder:
 
         if self.projects is not None:
             return [p.get_yaml(resolved=resolved) for p in self.projects]
-        elif self.groups is not None:
-            return {g.name: g.get_yaml(resolved=resolved) for g in self.groups}
+        elif self.sections is not None:
+            return {s.name: s.get_yaml(resolved=resolved) for s in self.sections}
         else:
             raise InvalidYamlError('Clowder model created without projects or groups')

@@ -1280,7 +1280,7 @@ Feature: clowder herd
 
 # TODO: Add more tests for local vs remote tags and annotated vs lightweight
 
-    @cats @internet @debug
+    @cats @internet
     Scenario Outline: herd non-standard default branch implicitly
         Given cats example is initialized
         And linked default-branch clowder version
