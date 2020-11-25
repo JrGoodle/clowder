@@ -7,16 +7,15 @@
 from typing import List, Optional, Tuple
 
 import clowder.util.formatting as fmt
-from clowder.console import CONSOLE
 from clowder.environment import ENVIRONMENT
-from clowder.error import ClowderError, ClowderErrorType
-from clowder.logging import LOG
+from clowder.util.error import MissingClowderRepoError
 from clowder.util.file_system import (
     create_backup_file,
     make_dir,
     remove_file,
     restore_from_backup_file
 )
+from clowder.util.logging import LOG
 from clowder.util.yaml import (
     load_yaml_file,
     save_yaml_file,
@@ -34,7 +33,8 @@ class Config(object):
     :ivar float version: Version number of config file
     :ivar Tuple[ClowderConfig, ...] clowder_configs: Configs for clowders
     :ivar Optional[ClowderConfig] current_clowder_config: Config for current clowder
-    :ivar Optional[Exception] error: Exception from failing to load clowder config yaml file
+    :ivar Optional[MissingClowderRepo] missing_clowder_repo_error: Missing clowder repo error
+    :ivar Optional[Exception] load_clowder_config_error: Error from failing to load clowder config yaml file
     """
 
     def __init__(self, current_clowder_name: Optional[str],
@@ -44,19 +44,17 @@ class Config(object):
         :param Optional[str] current_clowder_name: Name of currently loaded clowder if present
         :param Tuple[str, ...] project_options: Name of current clowder project options
         :param bool raise_exceptions: Whether to raise exception when from initializing invalid config file
-        :raise ClowderError:
         """
 
-        self.error: Optional[Exception] = None
+        self.load_clowder_config_error: Optional[Exception] = None
+        self.missing_clowder_repo_error: Optional[MissingClowderRepoError] = None
         self.current_clowder_config: Optional[ClowderConfig] = None
         self.clowder_configs: Tuple[ClowderConfig, ...] = ()
         self._project_options: Tuple[str, ...] = project_options
 
         if ENVIRONMENT.clowder_repo_dir is None:
-            message = "Failed to load clowder config file - .clowder directory doesn't exist"
-            LOG.debug(message)
-            err = ClowderError(ClowderErrorType.UNKNOWN, message)
-            self.error: Optional[Exception] = err
+            err = MissingClowderRepoError("Failed to load clowder config file - .clowder directory doesn't exist")
+            self.missing_clowder_repo_error: Optional[MissingClowderRepoError] = err
             return
 
         # Config file doesn't currently exist
@@ -67,22 +65,16 @@ class Config(object):
             self.current_clowder_config: Optional[ClowderConfig] = current_clowder_config
             return
 
-        error_message = f"Clowder config file at {fmt.yaml_file(ENVIRONMENT.clowder_config_yaml)} appears to be invalid"
+        error_message = f"Clowder config file at {fmt.path(ENVIRONMENT.clowder_config_yaml)} appears to be invalid"
         try:
             # Config file does exist, try to load
             self._load_clowder_config_yaml()
-        except ClowderError as err:
-            if raise_exceptions:
-                raise err
-            CONSOLE.stderr('Failed to load clowder config file')
-            self.error: Optional[Exception] = err
-            CONSOLE.stderr(error_message)
         except Exception as err:
+            LOG.error('Failed to load clowder config file')
             if raise_exceptions:
-                raise err
-            CONSOLE.stderr('Failed to load clowder config file')
-            self.error: Optional[Exception] = err
-            CONSOLE.stderr(error_message)
+                raise
+            self.load_clowder_config_error: Optional[Exception] = err
+            LOG.error(error_message)
         finally:
             # If current clowder exists, return
             if self.current_clowder_config is not None:
@@ -103,7 +95,6 @@ class Config(object):
 
         :param List[str] projects: Projects to filter
         :return: Projects in groups matching given names
-        :rtype: Tuple[str, ...]
         """
 
         if projects != ['default']:
@@ -136,12 +127,6 @@ class Config(object):
             # Save new file
             remove_file(ENVIRONMENT.clowder_config_yaml)
             save_yaml_file(self._get_yaml(), ENVIRONMENT.clowder_config_yaml)
-        except ClowderError as err:
-            LOG.debug('Failed to save configuration file', err)
-            # If failed, restore backup
-            # TODO: Handle possible exception
-            restore_from_backup_file(ENVIRONMENT.clowder_config_yaml)
-            raise
         except Exception as err:
             LOG.debug('Failed to save configuration file', err)
             # If failed, restore backup
@@ -153,7 +138,6 @@ class Config(object):
         """Get yaml representation of config
 
         :return: YAML python object
-        :rtype: dict
         """
 
         clowder_configs = [c.get_yaml() for c in self.clowder_configs if not c.is_empty()]
@@ -161,10 +145,7 @@ class Config(object):
         return config
 
     def _load_clowder_config_yaml(self) -> None:
-        """Load clowder config yaml file
-
-        :raise ClowderError:
-        """
+        """Load clowder config yaml file"""
 
         try:
             parsed_yaml = load_yaml_file(ENVIRONMENT.clowder_config_yaml, ENVIRONMENT.clowder_config_dir)
@@ -189,7 +170,7 @@ class Config(object):
             self.clowder_configs: Tuple[ClowderConfig, ...] = ()
             self.current_clowder_config: Optional[ClowderConfig] = None
             LOG.debug('Failed to load clowder config', err)
-            message = f"{fmt.yaml_file(ENVIRONMENT.clowder_config_yaml)}\n" \
+            message = f"{fmt.path(ENVIRONMENT.clowder_config_yaml)}\n" \
                       f"Clowder config file appears to be invalid"
             LOG.debug(message)
             raise

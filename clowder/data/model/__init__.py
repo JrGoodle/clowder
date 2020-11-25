@@ -8,8 +8,7 @@ from .clowder_base import ClowderBase
 from .git_settings import GitSettings
 from .project import Project
 from .defaults import Defaults
-from .source import Source
-from .source_name import SourceName
-from .group import Group
+from .source import Source, SourceName
+from .section import Section
 from .upstream import Upstream
 from .upstream_defaults import UpstreamDefaults

@@ -12,3 +12,6 @@ sudo git config --system --unset-all filter.lfs.clean || true
 sudo git config --system --unset-all filter.lfs.smudge || true
 sudo git config --system --unset-all filter.lfs.process || true
 sudo git config --system --unset-all filter.lfs.required || true
+
+h3 'Update pipenv'
+run pip install --upgrade pipenv

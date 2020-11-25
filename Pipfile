@@ -17,7 +17,6 @@ sphinx-rtd-theme = "*"
 Sphinx = "*"
 twine = "*"
 virtualenv = "*"
-clowder-repo = {editable = true, path = "."}
 
 [packages]
 argcomplete = "*"
@@ -28,5 +27,3 @@ tqdm = "*"
 trio = "*"
 GitPython = "*"
 PyYAML = "*"
-#[requires]
-#python_version = "3.6.3"

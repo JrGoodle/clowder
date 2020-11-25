@@ -102,10 +102,6 @@ clowder:
 
 The protocol specifies whether to use ssh or https for cloning repositories.
 
-The defaults section contains the git branch, git remote name, and the source to clone from.
-
-A project requires at minimum a name (the last components of the git clone url). If the project path is not specified, the last component of the project name is used for the local directory.
-
 The sources section is where custom git hosting providers are specified. The following sources are built in:
 
 | `source.name` |  `source.url`   |
@@ -113,6 +109,10 @@ The sources section is where custom git hosting providers are specified. The fol
 | `github`      | `github.com`    |
 | `gitlab`      | `gitlab.com`    |
 | `bitbucket`   | `bitbucket.org` |
+
+The defaults section contains the git branch, git remote name, and the source to clone from. If no branch is specified, the default remote branch is used. If no source is specified, the default is github.
+
+A project requires at minimum a name (the last components of the git clone url). If the project path is not specified, the last component of the project name is used for the local directory.
 
 Depending on the protocol, the project name is combined with the source url to form the full git clone url:
 
@@ -176,7 +176,7 @@ clowder:
       protocol: https
 ```
 
-or equivalently with group sections:
+or equivalently with sections:
 
 ```yaml
 name: cool-projects
@@ -196,7 +196,7 @@ clowder:
         protocol: https
 ```
 
-or equivalently using group section settings:
+or equivalently:
 
 ```yaml
 name: cool-projects

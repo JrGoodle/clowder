@@ -13,9 +13,7 @@ import argcomplete
 import colorama
 
 import clowder.cli as cmd
-from clowder.console import CONSOLE
-from clowder.error import ClowderError, ClowderErrorType
-from clowder.logging import LOG
+from clowder.util.logging import LOG
 
 
 # class ClowderArgumentParser(argparse.ArgumentParser):
@@ -36,7 +34,6 @@ def create_parsers() -> argparse.ArgumentParser:
     """Configure clowder CLI parsers
 
     :return: Configured argument parser for clowder command
-    :rtype: argparse.ArgumentParser
     """
 
     def clowder_help(args):  # noqa
@@ -83,7 +80,6 @@ def create_parsers() -> argparse.ArgumentParser:
 def main() -> None:
     """Clowder command CLI main function"""
 
-    CONSOLE.stdout()
     try:
         parser = create_parsers()
         argcomplete.autocomplete(parser)
@@ -94,26 +90,23 @@ def main() -> None:
         if args.debug:
             LOG.level = LOG.DEBUG
         args.func(args)
-    except ClowderError as err:
-        LOG.error(error=err)
-        exit(err.error_type.value)
     except CalledProcessError as err:
         LOG.error(error=err)
         exit(err.returncode)
+    except OSError as err:
+        LOG.error(error=err)
+        exit(err.errno)
     except SystemExit as err:
         if err.code == 0:
-            CONSOLE.stdout()
             exit()
         LOG.error(error=err)
         exit(err.code)
     except KeyboardInterrupt:
-        LOG.error('** KeyboardInterrupt **\n')
-        exit(ClowderErrorType.USER_INTERRUPT.value)
+        LOG.error('** KeyboardInterrupt **')
+        exit(1)
     except BaseException as err:
         LOG.error(error=err)
-        exit(ClowderErrorType.UNKNOWN.value)
-    else:
-        CONSOLE.stdout()
+        exit(1)
 
 
 if __name__ == '__main__':

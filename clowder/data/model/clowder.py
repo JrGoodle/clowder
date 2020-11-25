@@ -6,10 +6,9 @@
 
 from typing import List, Optional, Union
 
-from clowder.error import ClowderError, ClowderErrorType
-from clowder.logging import LOG
+from clowder.util.error import InvalidYamlError, UnknownTypeError
 
-from .group import Group
+from .section import Section
 from .project import Project
 
 
@@ -17,7 +16,7 @@ class Clowder:
     """clowder yaml Clowder model class
 
     :ivar Optional[List[Project]] projects: Projects
-    :ivar Optional[List[Group]] groups: Groups
+    :ivar Optional[List[Group]] sections: Groups
     """
 
     def __init__(self, yaml: Union[dict, List[Project]]):
@@ -28,29 +27,24 @@ class Clowder:
 
         if isinstance(yaml, dict):
             self.projects: Optional[List[Project]] = None
-            self.groups: Optional[List[Group]] = [Group(name, group) for name, group in yaml.items()]
+            self.sections: Optional[List[Section]] = [Section(name, section) for name, section in yaml.items()]
         elif isinstance(yaml, list):
             self.projects: Optional[List[Project]] = [Project(p) for p in yaml]
-            self.groups: Optional[List[Group]] = None
+            self.sections: Optional[List[Section]] = None
         else:
-            err = ClowderError(ClowderErrorType.WRONG_GROUP_TYPE, "Wrong group type")
-            LOG.debug("Wrong instance type for group", err)
-            raise err
+            raise UnknownTypeError("Unknown group type")
 
     def get_yaml(self, resolved: bool = False) -> Union[dict, list]:
         """Return python object representation for saving yaml
 
         :param bool resolved: Whether to get resolved commit hashes
         :return: YAML python object
-        :rtype: Union[dict, list]
+        :raise InvalidYamlError:
         """
 
         if self.projects is not None:
             return [p.get_yaml(resolved=resolved) for p in self.projects]
-        if self.groups is not None:
-            return {g.name: g.get_yaml(resolved=resolved) for g in self.groups}
-
-        message = "Clowder model created without projects or groups"
-        err = ClowderError(ClowderErrorType.CLOWDER_YAML_UNKNOWN, message)
-        LOG.debug(message, err)
-        raise err
+        elif self.sections is not None:
+            return {s.name: s.get_yaml(resolved=resolved) for s in self.sections}
+        else:
+            raise InvalidYamlError('Clowder model created without projects or groups')

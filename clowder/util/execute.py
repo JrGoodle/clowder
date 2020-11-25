@@ -6,26 +6,26 @@
 
 import os
 import subprocess
+from subprocess import CompletedProcess
 from pathlib import Path
 from typing import List, Optional, Union
 
-import clowder.util.formatting as fmt
-from clowder.console import CONSOLE
+from clowder.util.console import CONSOLE
 
 
 def execute_command(command: Union[str, List[str]], path: Path,
-                    env: Optional[dict] = None, print_output: Optional[bool] = None) -> None:
+                    env: Optional[dict] = None, print_output: Optional[bool] = None) -> CompletedProcess:
     """Execute command via subprocess
 
     :param Union[str, List[str]] command: Command to run
     :param Path path: Path to set as ``cwd``
     :param Optional[dict] env: Enviroment to set as ``env``
     :param bool print_output: Whether to print output
-    :raise ClowderError:
     """
 
     if print_output is None:
         print_output = CONSOLE.print_output
+
     if isinstance(command, list):
         cmd = ' '.join(command)
     else:
@@ -35,13 +35,12 @@ def execute_command(command: Union[str, List[str]], path: Path,
     if env:
         cmd_env.update(env)
 
-    pipe = None if print_output else subprocess.PIPE
+    stdout = None if print_output else subprocess.PIPE
+    stderr = None if print_output else subprocess.STDOUT
 
-    try:
-        subprocess.run(cmd, shell=True, env=cmd_env, cwd=str(path), stdout=pipe, stderr=pipe, check=True)
-    except subprocess.CalledProcessError:
-        CONSOLE.stderr(f"Failed to run command {fmt.command(cmd)}")
-        raise
+    result = subprocess.run(cmd, shell=True, env=cmd_env, cwd=str(path),
+                            stdout=stdout, stderr=stderr, universal_newlines=True, check=True)
+    return result
 
 
 def execute_forall_command(command: Union[str, List[str]], path: Path, forall_env: dict) -> None:
@@ -50,7 +49,6 @@ def execute_forall_command(command: Union[str, List[str]], path: Path, forall_en
     :param Union[str, List[str]] command: Command to run
     :param Path path: Path to set as ``cwd``
     :param dict forall_env: Enviroment to set as ``env``
-    :raise ClowderError:
     """
 
     execute_command(command, path, env=forall_env)

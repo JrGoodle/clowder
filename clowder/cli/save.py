@@ -6,18 +6,12 @@
 
 import argparse
 
-import clowder.clowder_repo as clowder_repo
 import clowder.util.formatting as fmt
-from clowder.clowder_controller import CLOWDER_CONTROLLER
-from clowder.console import CONSOLE
-from clowder.environment import ENVIRONMENT
-from clowder.error import ClowderError, ClowderErrorType
-from clowder.data.util import validate_project_statuses
-from clowder.util.decorators import (
-    clowder_repo_required,
-    print_clowder_name,
-    valid_clowder_yaml_required
-)
+from clowder.clowder_controller import CLOWDER_CONTROLLER, print_clowder_name, valid_clowder_yaml_required
+from clowder.environment import clowder_repo_required, ENVIRONMENT
+from clowder.git.clowder_repo import ClowderRepo
+from clowder.util.console import CONSOLE
+from clowder.util.error import DefaultVersionError, ExistingVersionError
 from clowder.util.file_system import make_dir
 from clowder.util.yaml import save_yaml_file
 
@@ -42,15 +36,17 @@ def add_save_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
 def save(args) -> None:
     """Clowder save command private implementation
 
-    :raise ClowderError:
+    :raise DefaultVersionError:
+    :raise ExistingVersionError:
     """
 
     if args.version.lower() == 'default':
-        raise ClowderError(ClowderErrorType.SAVE_DEFAULT_VERSION, f"Version name '{args.version}' is not allowed")
+        raise DefaultVersionError(f"Version name '{args.version}' is not allowed")
 
-    clowder_repo.print_status()
+    if ENVIRONMENT.clowder_repo_dir is not None:
+        ClowderRepo(ENVIRONMENT.clowder_repo_dir).print_status()
     CLOWDER_CONTROLLER.validate_projects_exist()
-    validate_project_statuses(CLOWDER_CONTROLLER.projects)
+    CLOWDER_CONTROLLER.validate_project_statuses(CLOWDER_CONTROLLER.projects)
 
     # TODO: Better validate version name (no spaces, no ~, etc.)
     # Replace path separators with dashes to avoid creating directories
@@ -62,12 +58,11 @@ def save(args) -> None:
 
     yml_file = versions_dir / f"{version_name}.clowder.yml"
     yaml_file = versions_dir / f"{version_name}.clowder.yaml"
+    version_exists_message = f"Version '{fmt.version(version_name)}' already exists"
     if yml_file.exists():
-        message = f"{fmt.yaml_file(str(yml_file))}\nVersion '{fmt.version(version_name)}' already exists"
-        raise ClowderError(ClowderErrorType.VERSION_ALREADY_EXISTS, message)
+        raise ExistingVersionError(f"{fmt.path(yml_file)}\n{version_exists_message}")
     elif yaml_file.exists():
-        message = f"{fmt.yaml_file(str(yaml_file))}\nVersion '{fmt.version(version_name)}' already exists"
-        raise ClowderError(ClowderErrorType.VERSION_ALREADY_EXISTS, message)
+        raise ExistingVersionError(f"{fmt.path(yaml_file)}\n{version_exists_message}")
 
     CONSOLE.stdout(f" - Save version '{fmt.version(version_name)}'\n{fmt.path(yml_file)}")
     save_yaml_file(CLOWDER_CONTROLLER.get_yaml(resolved=True), yml_file)

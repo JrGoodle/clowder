@@ -5,21 +5,21 @@
 """
 
 from pathlib import Path
+from subprocess import CalledProcessError
 from typing import Optional
 
 from git import Repo, GitCommandError, GitError
 
 import clowder.util.formatting as fmt
-from clowder.console import CONSOLE
-from clowder.error import ClowderError
-from clowder.logging import LOG
+from clowder.util.console import CONSOLE
 from clowder.util.execute import execute_command
 from clowder.util.file_system import remove_directory
+from clowder.util.logging import LOG
 
+from .git_ref import GitRef
 from .util import (
-    existing_git_repository,
-    not_detached,
-    truncate_ref,
+    existing_git_repo,
+    not_detached
 )
 
 
@@ -27,23 +27,20 @@ class GitRepo(object):
     """Class encapsulating base git utilities
 
     :ivar str repo_path: Absolute path to repo
-    :ivar str default_ref: Default ref
     :ivar str remote: Default remote name
     :ivar Repo Optional[repo]: Repo instance
     """
 
-    def __init__(self, repo_path: Path, remote: str, default_ref: str):
+    def __init__(self, repo_path: Path, remote: str):
         """GitRepo __init__
 
         :param Path repo_path: Absolute path to repo
         :param str remote: Default remote name
-        :param str default_ref: Default ref
         """
 
         self.repo_path = repo_path
-        self.default_ref = default_ref
         self.remote = remote
-        self.repo = self._create_repo() if existing_git_repository(repo_path) else None
+        self.repo = self._create_repo() if existing_git_repo(repo_path) else None
 
     def add(self, files: str) -> None:
         """Add files to git index
@@ -56,29 +53,27 @@ class GitRepo(object):
         try:
             CONSOLE.stdout(self.repo.git.add(files))
         except GitError:
-            CONSOLE.stderr("Failed to add files to git index")
+            LOG.error("Failed to add files to git index")
             raise
         else:
             self.status_verbose()
 
-    def checkout(self, truncated_ref: str, allow_failure: bool = False) -> None:
+    def checkout(self, ref: str, allow_failure: bool = False) -> None:
         """Checkout git ref
 
-        :param str truncated_ref: Ref to git checkout
+        :param str ref: Ref to git checkout
         :param bool allow_failure: Whether to allow failing to checkout branch
-        :raise GitError:
         """
 
-        ref_output = fmt.ref(truncated_ref)
         try:
-            CONSOLE.stdout(f' - Check out {ref_output}')
-            CONSOLE.stdout(self.repo.git.checkout(truncated_ref))
+            CONSOLE.stdout(f' - Check out {fmt.ref(ref)}')
+            CONSOLE.stdout(self.repo.git.checkout(ref))
         except GitError:
-            message = f'Failed to checkout {ref_output}'
+            message = f'Failed to checkout {fmt.ref(ref)}'
             if allow_failure:
                 CONSOLE.stdout(f' - {message}')
                 return
-            CONSOLE.stderr(message)
+            LOG.error(message)
             raise
 
     def clean(self, args: str = '') -> None:
@@ -104,23 +99,18 @@ class GitRepo(object):
         """Commit current changes
 
         :param str message: Git commit message
-        :raise ClowderError:
         """
 
         try:
             CONSOLE.stdout(' - Commit current changes')
             CONSOLE.stdout(self.repo.git.commit(message=message))
         except GitError:
-            CONSOLE.stderr('Failed to commit current changes')
+            LOG.error('Failed to commit current changes')
             raise
 
     @property
     def current_branch(self) -> str:
-        """Return currently checked out branch of project
-
-        :return: Name of currently checked out branch
-        :rtype: str
-        """
+        """Name of currently checked out project branch"""
 
         return self.repo.head.ref.name
 
@@ -130,14 +120,13 @@ class GitRepo(object):
         :param str branch: Branch name
         :param str remote: Remote name
         :return: True, if remote branch exists
-        :rtype: bool
-        :raise ClowderError:
         """
 
         try:
             origin = self.repo.remotes[remote]
             return branch in origin.refs
-        except (GitError, IndexError):
+        except (GitError, IndexError) as err:
+            LOG.debug(error=err)
             return False
 
     def has_local_branch(self, branch: str) -> bool:
@@ -145,31 +134,27 @@ class GitRepo(object):
 
         :param str branch: Branch name
         :return: True, if local branch exists
-        :rtype: bool
         """
 
         return branch in self.repo.heads
 
-    def fetch(self, remote: str, ref: Optional[str] = None, depth: int = 0,
+    def fetch(self, remote: str, ref: Optional[GitRef] = None, depth: int = 0,
               remove_dir: bool = False, allow_failure: bool = False) -> None:
         """Fetch from a specific remote ref
 
         :param str remote: Remote name
-        :param Optional[str] ref: Ref to fetch
+        :param Optional[GitRef] ref: Ref to fetch
         :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
         :param bool remove_dir: Whether to remove the directory if commands fail
         :param bool allow_failure: Whether to allow failure
-        :raise ClowderError:
         """
 
-        remote_output = fmt.remote(remote)
         if depth == 0 or ref is None:
-            CONSOLE.stdout(f' - Fetch from {remote_output}')
-            error_message = f'Failed to fetch from remote {remote_output}'
+            CONSOLE.stdout(f' - Fetch from {fmt.remote(remote)}')
+            error_message = f'Failed to fetch from remote {fmt.remote(remote)}'
         else:
-            ref_output = fmt.ref(truncate_ref(ref))
-            CONSOLE.stdout(f' - Fetch from {remote_output} {ref_output}')
-            error_message = f'Failed to fetch from {remote_output} {ref_output}'
+            CONSOLE.stdout(f' - Fetch from {fmt.remote(remote)} {fmt.ref(ref.short_ref)}')
+            error_message = f'Failed to fetch from {fmt.remote(remote)} {fmt.ref(ref.short_ref)}'
 
         try:
             if depth == 0:
@@ -178,51 +163,44 @@ class GitRepo(object):
                 command = f'git fetch {remote} --depth {depth} --prune --tags'
                 execute_command(command, self.repo_path)
             else:
-                command = f'git fetch {remote} {truncate_ref(ref)} --depth {depth} --prune --tags'
+                command = f'git fetch {remote} {ref.short_ref} --depth {depth} --prune --tags'
                 execute_command(command, self.repo_path)
-        except ClowderError as err:
-            LOG.debug('Failed to fetch', err)
+        except BaseException as err:
+            LOG.error(error_message)
             if remove_dir:
-                # TODO: Handle possible exceptions
-                remove_directory(self.repo_path)
-            if not allow_failure:
-                CONSOLE.stderr(error_message)
-                raise
+                remove_directory(self.repo_path, check=False)
+            if allow_failure:
+                LOG.debug(error=err)
+                return
+            raise
 
     @property
     def formatted_ref(self) -> str:
-        """Return formatted project ref string
+        """Formatted project repo ref"""
 
-        :return: Formmatted repo ref
-        :rtype: str
-        """
-
-        local_commits = self.new_commits()
-        upstream_commits = self.new_commits(upstream=True)
-        no_local_commits = local_commits == 0 or local_commits == '0'
-        no_upstream_commits = upstream_commits == 0 or upstream_commits == '0'
+        local_commits_count = self.new_commits_count()
+        upstream_commits_count = self.new_commits_count(upstream=True)
+        no_local_commits = local_commits_count == 0 or local_commits_count == '0'
+        no_upstream_commits = upstream_commits_count == 0 or upstream_commits_count == '0'
         if no_local_commits and no_upstream_commits:
             status = ''
         else:
-            local_commits_output = fmt.yellow(f'+{local_commits}')
-            upstream_commits_output = fmt.red(f'-{upstream_commits}')
+            local_commits_output = fmt.yellow(f'+{local_commits_count}')
+            upstream_commits_output = fmt.red(f'-{upstream_commits_count}')
             status = f'({local_commits_output}/{upstream_commits_output})'
 
         if self.is_detached:
-            current_ref = self.sha()
-            return fmt.magenta(fmt.escape(f'[HEAD @ {current_ref}]'))
-        current_branch = self.current_branch
-        return fmt.magenta(fmt.escape(f'[{current_branch}]')) + status
+            return fmt.magenta(fmt.escape(f'[HEAD @ {self.sha()}]'))
+        return fmt.magenta(fmt.escape(f'[{self.current_branch}]')) + status
 
     def format_project_string(self, path: Path) -> str:
         """Return formatted project name
 
         :param Path path: Relative project path
         :return: Formatted project name
-        :rtype: str
         """
 
-        if not existing_git_repository(self.repo_path):
+        if not existing_git_repo(self.repo_path):
             return str(path)
 
         if not self.validate_repo():
@@ -236,7 +214,6 @@ class GitRepo(object):
 
         :param str project: Relative project path
         :return: Formatted project name
-        :rtype: str
         """
 
         if '*' in project:
@@ -246,34 +223,28 @@ class GitRepo(object):
 
     @property
     def current_timestamp(self) -> str:
-        """Get current timestamp of HEAD commit
-
-        :return: HEAD commit timestamp
-        :rtype: str
-        :raise ClowderError:
-        """
+        """Current timestamp of HEAD commit"""
 
         try:
             return self.repo.git.log('-1', '--format=%cI')
         except GitError:
-            CONSOLE.stderr('Failed to find current timestamp')
+            LOG.error('Failed to find current timestamp')
             raise
 
     def git_config_unset_all_local(self, variable: str) -> None:
         """Unset all local git config values for given variable key
 
         :param str variable: Fully qualified git config variable
-        :raise ClowderError:
         """
 
         try:
             self.repo.git.config('--local', '--unset-all', variable)
         except GitCommandError as err:
             if err.status != 5:  # git returns error code 5 when trying to unset variable that doesn't exist
-                CONSOLE.stderr(f'Failed to unset all local git config values for {variable}')
+                LOG.error(f'Failed to unset all local git config values for {variable}')
                 raise
         except GitError:
-            CONSOLE.stderr(f'Failed to unset all local git config values for {variable}')
+            LOG.error(f'Failed to unset all local git config values for {variable}')
             raise
 
     def git_config_add_local(self, variable: str, value: str) -> None:
@@ -281,35 +252,27 @@ class GitRepo(object):
 
         :param str variable: Fully qualified git config variable
         :param str value: Git config value
-        :raise ClowderError:
         """
 
         try:
             self.repo.git.config('--local', '--add', variable, value)
         except GitError:
-            CONSOLE.stderr(f'Failed to add local git config value {value} for variable {variable}')
+            LOG.error(f'Failed to add local git config value {value} for variable {variable}')
             raise
 
     def install_lfs_hooks(self) -> None:
-        """Install git lfs hooks
-
-        :raise ClowderError:
-        """
+        """Install git lfs hooks"""
 
         CONSOLE.stdout(" - Update git lfs hooks")
         try:
             self.repo.git.lfs('install', '--local')
         except GitError:
-            CONSOLE.stderr('Failed to update git lfs hooks')
+            LOG.error('Failed to update git lfs hooks')
             raise
 
     @property
     def is_detached(self) -> bool:
-        """Check if HEAD is detached
-
-        :return: True, if HEAD is detached
-        :rtype: bool
-        """
+        """Check if HEAD is detached"""
 
         if not self.repo_path.is_dir():
             return False
@@ -319,45 +282,39 @@ class GitRepo(object):
 
     @property
     def is_dirty(self) -> bool:
-        """Check whether repo is dirty
-
-        :return: True, if repo is dirty
-        :rtype: bool
-        """
+        """Check whether repo is dirty"""
 
         if not self.repo_path.is_dir():
             return False
 
         return self.repo.is_dirty() or self._is_rebase_in_progress or self._has_untracked_files
 
+    @property
     def is_lfs_installed(self) -> bool:
-        """Check whether git lfs hooks are installed
-
-        :return: True, if lfs hooks are installed
-        :rtype: bool
-        """
+        """Check whether git lfs hooks are installed"""
 
         try:
             self.repo.git.config('--get', 'filter.lfs.smudge')
             self.repo.git.config('--get', 'filter.lfs.clean')
             self.repo.git.config('--get', 'filter.lfs.process')
             self.repo.git.config('--get', 'filter.lfs.required')
-        except GitError:
+        except GitError as err:
+            LOG.debug(error=err)
             return False
         else:
             return True
 
-    def new_commits(self, upstream: bool = False) -> int:
+    def new_commits_count(self, upstream: bool = False) -> int:
         """Returns the number of new commits
 
         :param bool upstream: Whether to find number of new upstream or local commits
         :return: Int number of new commits
-        :rtype: int
         """
 
         try:
             local_branch = self.repo.active_branch
-        except (GitError, TypeError):
+        except (GitError, TypeError) as err:
+            LOG.debug(error=err)
             return 0
         else:
             tracking_branch = local_branch.tracking_branch()
@@ -367,7 +324,8 @@ class GitRepo(object):
             try:
                 commits = f'{local_branch.commit.hexsha}...{tracking_branch.commit.hexsha}'
                 rev_list_count = self.repo.git.rev_list('--count', '--left-right', commits)
-            except (GitError, ValueError):
+            except (GitError, ValueError) as err:
+                LOG.debug(error=err)
                 return 0
             else:
                 index = 1 if upstream else 0
@@ -384,7 +342,7 @@ class GitRepo(object):
                 CONSOLE.stdout(branch)
 
     def print_remote_branches(self) -> None:
-        """Print output if self._print_output is True"""
+        """Print remote git branches"""
 
         for branch in self.repo.git.branch('-r', '-l', f"{self.remote}*").split('\n'):
             if ' -> ' in branch:
@@ -398,7 +356,7 @@ class GitRepo(object):
     def print_validation(self) -> None:
         """Print validation messages"""
 
-        if not existing_git_repository(self.repo_path):
+        if not existing_git_repo(self.repo_path):
             return
 
         if not self.validate_repo():
@@ -407,43 +365,34 @@ class GitRepo(object):
 
     @not_detached
     def pull(self) -> None:
-        """Pull upstream changes
-
-        :raise ClowderError:
-        """
+        """Pull upstream changes"""
 
         try:
             CONSOLE.stdout(' - Pull latest changes')
             CONSOLE.stdout(self.repo.git.pull())
         except GitError:
-            CONSOLE.stderr('Failed to pull latest changes')
+            LOG.error('Failed to pull latest changes')
             raise
 
     def pull_lfs(self) -> None:
-        """Pull lfs files
-
-        :raise ClowderError:
-        """
+        """Pull lfs files"""
 
         try:
             CONSOLE.stdout(' - Pull git lfs files')
             self.repo.git.lfs('pull')
         except GitError:
-            CONSOLE.stderr('Failed to pull git lfs files')
+            LOG.error('Failed to pull git lfs files')
             raise
 
     @not_detached
     def push(self) -> None:
-        """Push changes
-
-        :raise ClowderError:
-        """
+        """Push changes"""
 
         try:
             CONSOLE.stdout(' - Push local changes')
             CONSOLE.stdout(self.repo.git.push())
         except GitError:
-            CONSOLE.stderr('Failed to push local changes')
+            LOG.error('Failed to push local changes')
             raise
 
     def sha(self, short: bool = False) -> str:
@@ -451,7 +400,6 @@ class GitRepo(object):
 
         :param bool short: Whether to return short or long commit sha
         :return: Commit sha
-        :rtype: str
         """
 
         if short:
@@ -462,7 +410,7 @@ class GitRepo(object):
     def stash(self) -> None:
         """Stash current changes in repository"""
 
-        if not self.repo.is_dirty:
+        if not self.repo.is_dirty():
             CONSOLE.stdout(' - No changes to stash')
             return
 
@@ -481,16 +429,14 @@ class GitRepo(object):
         """Print git status
 
         Equivalent to: ``git status -vv``
-
-        :raise ClowderError:
         """
 
         command = 'git status -vv'
         CONSOLE.stdout(fmt.command(command))
         try:
             execute_command(command, self.repo_path)
-        except ClowderError:
-            CONSOLE.stderr('Failed to print verbose status')
+        except CalledProcessError:
+            LOG.error('Failed to print verbose status')
             raise
 
     def validate_repo(self, allow_missing_repo: bool = True) -> bool:
@@ -498,19 +444,15 @@ class GitRepo(object):
 
         :param bool allow_missing_repo: Whether to allow validation to succeed with missing repo
         :return: True, if repo not dirty or doesn't exist on disk
-        :rtype: bool
         """
 
-        if not existing_git_repository(self.repo_path):
+        if not existing_git_repo(self.repo_path):
             return allow_missing_repo
 
         return not self.is_dirty
 
     def _abort_rebase(self) -> None:
-        """Abort rebase
-
-        :raise ClowderError:
-        """
+        """Abort rebase"""
 
         if not self._is_rebase_in_progress:
             return
@@ -518,44 +460,24 @@ class GitRepo(object):
         try:
             self.repo.git.rebase('--abort')
         except GitError:
-            CONSOLE.stderr('Failed to abort rebase')
+            LOG.error('Failed to abort rebase')
             raise
 
     def _clean(self, args: str) -> None:
         """Clean git directory
 
         :param str args: Git clean args
-        :raise ClowderError:
         """
 
         try:
             self.repo.git.clean(args)
         except GitError:
-            CONSOLE.stderr('Failed to clean git repo')
+            LOG.error('Failed to clean git repo')
             raise
-
-    # def _existing_remote_tag(self, tag, remote, depth=0):
-    #     """Check if remote tag exists
-    #
-    #     :param str tag: Tag name
-    #     :param str remote: Remote name
-    #     :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-    #         Defaults to 0
-    #     :return: True, if remote tag exists
-    #     :rtype: bool
-    #     """
-    #
-    #     origin = self._remote(remote, remove_dir=True)
-    #     self.fetch(remote, depth=depth, ref=tag, remove_dir=True)
-    #     return tag in origin.tags
 
     @property
     def _is_rebase_in_progress(self) -> bool:
-        """Detect whether rebase is in progress
-
-        :return: True, if rebase is in progress
-        :rtype: bool
-        """
+        """Check whether rebase is in progress"""
 
         is_rebase_apply = Path(self.repo_path / '.git' / 'rebase-apply').is_dir()
         is_rebase_merge = Path(self.repo_path / '.git' / 'rebase-merge').is_dir()
@@ -565,31 +487,25 @@ class GitRepo(object):
         """Create Repo instance for self.repo_path
 
         :return: GitPython Repo instance
-        :rtype: Repo
-        :raise ClowderError:
         """
 
         try:
-            repo = Repo(self.repo_path)
+            return Repo(self.repo_path)
         except GitError:
-            repo_path_output = fmt.path(self.repo_path)
-            CONSOLE.stderr(f"Failed to create Repo instance for {repo_path_output}")
+            LOG.error(f"Failed to create Repo instance for {fmt.path(self.repo_path)}")
             raise
-        else:
-            return repo
 
     def _reset_head(self, branch: Optional[str] = None) -> None:
         """Reset head of repo, discarding changes
 
         :param Optional[str] branch: Branch to reset head to
-        :raise ClowderError:
         """
 
         if branch is None:
             try:
                 self.repo.head.reset(index=True, working_tree=True)
             except GitError:
-                CONSOLE.stderr(f"Failed to reset {fmt.ref('HEAD')}")
+                LOG.error(f"Failed to reset {fmt.ref('HEAD')}")
                 raise
             else:
                 return
@@ -597,15 +513,11 @@ class GitRepo(object):
         try:
             self.repo.git.reset('--hard', branch)
         except GitError:
-            CONSOLE.stderr(f'Failed to reset to {fmt.ref(branch)}')
+            LOG.error(f'Failed to reset to {fmt.ref(branch)}')
             raise
 
     @property
     def _has_untracked_files(self) -> bool:
-        """Check whether untracked files exist
-
-        :return: True, if untracked files exist
-        :rtype: bool
-        """
+        """Check whether untracked files exist"""
 
         return True if self.repo.untracked_files else False

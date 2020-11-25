@@ -6,7 +6,7 @@
 
 from typing import Optional
 
-from .source_name import SourceName
+from .source import SourceName
 
 
 class UpstreamDefaults:
@@ -23,14 +23,13 @@ class UpstreamDefaults:
         """
 
         source = yaml.get("source", None)
-        self.source: Optional[SourceName] = SourceName(source) if source is not None else None
+        self.source: Optional[SourceName] = None if source is None else SourceName(source)
         self.remote: Optional[str] = yaml.get("remote", None)
 
     def get_yaml(self) -> dict:
         """Return python object representation for saving yaml
 
         :return: YAML python object
-        :rtype: dict
         """
 
         yaml = {}
@@ -38,6 +37,6 @@ class UpstreamDefaults:
         if self.remote is not None:
             yaml['remote'] = self.remote
         if self.source is not None:
-            yaml['source'] = self.source.get_yaml()
+            yaml['source'] = self.source
 
         return yaml

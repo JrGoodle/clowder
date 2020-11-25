@@ -6,10 +6,11 @@
 
 from typing import List, Optional
 
+from clowder.git import GitProtocol
+
 from .clowder import Clowder
 from .defaults import Defaults
-from .source import Source
-from .source_name import SourceName
+from .source import Source, SourceName
 
 
 class ClowderBase:
@@ -19,7 +20,7 @@ class ClowderBase:
     :ivar Optional[Defaults] defaults: Name of clowder
     :ivar Optional[List[Source]] sources: Sources
     :ivar Clowder clowder: Clowder model
-    :ivar Optional[str] protocol: Git protocol
+    :ivar Optional[GitProtocol] protocol: Git protocol
     """
 
     def __init__(self, yaml: dict):
@@ -34,7 +35,8 @@ class ClowderBase:
         if "sources" in yaml:
             self.sources: Optional[List[Source]] = [Source(SourceName(name), source)
                                                     for name, source in yaml["sources"].items()]
-        self.protocol: Optional[str] = yaml.get("protocol", None)
+        protocol = yaml.get("protocol", None)
+        self.protocol: Optional[GitProtocol] = None if protocol is None else GitProtocol(protocol)
         self.clowder: Clowder = Clowder(yaml["clowder"])
 
     def get_yaml(self, resolved: bool = False) -> dict:
@@ -42,7 +44,6 @@ class ClowderBase:
 
         :param bool resolved: Whether to get resolved commit hashes
         :return: YAML python object
-        :rtype: dict
         """
 
         yaml = {
@@ -50,9 +51,9 @@ class ClowderBase:
         }
 
         if self.protocol is not None:
-            yaml['protocol'] = self.protocol
+            yaml['protocol'] = self.protocol.value
         if self.sources is not None:
-            yaml['sources'] = {s.name.get_yaml(): s.get_yaml() for s in self.sources}
+            yaml['sources'] = {s.name: s.get_yaml() for s in self.sources}
         if self.defaults is not None:
             yaml['defaults'] = self.defaults.get_yaml()
 

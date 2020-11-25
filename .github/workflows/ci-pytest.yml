@@ -18,54 +18,43 @@ defaults:
 
 jobs:
   pytest:
-
     env:
       PYTHON_VERSION: ${{ matrix.python-version }}
       OS_NAME: ${{ matrix.os }}
       CLOWDER_DEBUG: true
       PYTHONPATH: ${{ github.workspace }}
-
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-latest, ubuntu-latest] # TODO: windows-latest
-        python-version: ['3.6', '3.7', '3.8', '3.9']
-
+        os: [
+          macos-latest,
+          ubuntu-latest,
+          # TODO: windows-latest
+        ]
+        python-version: [
+          '3.6',
+          '3.7',
+          '3.8',
+          '3.9'
+        ]
     steps:
     - uses: actions/checkout@v2
-
     - name: Setup python
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
-
-    - name: Install python version
-      uses: gabrielfalcao/pyenv-action@v5
-      with:
-        default: "${{ matrix.python-version }}"
-        command: pip install -U pip  # upgrade pip after installing python
-
-    - name: Install pipenv
-      uses: dschep/install-pipenv-action@v1
-
     - name: Setup git config
       run: |
         git config --global user.email "joe@polka.cat";
         git config --global user.name "GitHub Actions Workflow"
-        sudo git config --system --unset-all filter.lfs.clean
-        sudo git config --system --unset-all filter.lfs.smudge
-        sudo git config --system --unset-all filter.lfs.process
-        sudo git config --system --unset-all filter.lfs.required
-
-    - name: Install pyenv
-      run: pyenv install --skip-existing
-
     - name: Install clowder
       run: script/cibuild
-
     - name: Run pytest functional tests
-      run: script/test --parallel --markers 'not ssh and not offline' --exitfirst
-
+      run: |
+        script/test \
+          --markers 'not ssh and not offline' \
+          --parallel \
+          --exitfirst
     - uses: actions/upload-artifact@v2
       with:
         name: coverage-ghworkflow-${{ matrix.os }}-${{ matrix.python-version }}
@@ -73,12 +62,10 @@ jobs:
           build/cucumber
           build/junit
           build/coverage
-
     - uses: deblockt/cucumber-report-annotations-action@v1.6
       with:
         access-token: ${{ secrets.GITHUB_TOKEN }}
         path: build/cucumber/results.json
-
     - uses: ashley-taylor/junit-report-annotations-action@1.3
       if: always()
       with:

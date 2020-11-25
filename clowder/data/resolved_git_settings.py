@@ -7,7 +7,8 @@
 import copy
 from typing import Dict, Optional
 
-from clowder.error import ClowderError, ClowderErrorType
+from clowder.data.model import Defaults, Section, Project
+from clowder.util.error import ClowderGitError, UnknownArgumentError, UnknownTypeError
 
 from .model.git_settings import GitSettings, GitConfig
 
@@ -31,40 +32,33 @@ class ResolvedGitSettings:
         self.depth: int = 0
         self.config: Optional[GitConfig] = None
 
-    def update(self, git_settings: GitSettings) -> None:
-        """Update with overrides from given GitSettings
+    @classmethod
+    def combine_settings(cls, project: Project, section: Optional[Section],
+                         defaults: Optional[Defaults]) -> 'ResolvedGitSettings':
+        """Create instance updated with overrides from given GitSettings
 
-        :return: Config processed to create strings
-        :rtype: dict
+        :param Project project: Project data model
+        :param Optional[Section] section: Section data model
+        :param Optional[Defaults] defaults: Defaults data model
+        :return: Combined git settings
         """
 
-        if git_settings.submodules is not None:
-            submodules = copy.deepcopy(git_settings.submodules)
-            if isinstance(submodules, bool):
-                self.submodules = submodules
-                self.recursive = False
-            elif isinstance(submodules, str):
-                if submodules == "recursive":
-                    self.submodules = True
-                    self.recursive = True
-                else:
-                    err = ClowderError(ClowderErrorType.WRONG_SUBMODULES_TYPE, "Wrong submodules type")
-                    raise err
-            else:
-                err = ClowderError(ClowderErrorType.WRONG_SUBMODULES_TYPE, "Wrong submodules type")
-                raise err
-        if git_settings.lfs is not None:
-            self.lfs = copy.deepcopy(git_settings.lfs)
-        if git_settings.depth is not None:
-            self.depth = copy.deepcopy(git_settings.depth)
-        if git_settings.config is not None:
-            if self.config is None:
-                self.config = copy.deepcopy(git_settings.config)
-            else:
-                for (k, v) in git_settings.config.items():
-                    self.config[k] = v
+        git_settings: ResolvedGitSettings = ResolvedGitSettings()
 
-        self._clean_config()
+        has_defaults_git = defaults is not None and defaults.git_settings is not None
+        if has_defaults_git:
+            git_settings._update(defaults.git_settings)
+
+        has_section_defaults = section is not None and section.defaults is not None
+        has_section_defaults_git = has_section_defaults and section.defaults.git_settings is not None
+        if has_section_defaults_git:
+            git_settings._update(section.defaults.git_settings)
+
+        has_git = project.git_settings is not None
+        if has_git:
+            git_settings._update(project.git_settings)
+
+        return git_settings
 
     def _clean_config(self) -> None:
         """Remove any null value entries from config"""
@@ -82,7 +76,7 @@ class ResolvedGitSettings:
         """Return version of config converted to strings
 
         :return: Config processed to create strings
-        :rtype: Optional[Dict[str, str]]
+        :raise ClowderGitError:
         """
 
         if self.config is None:
@@ -99,6 +93,39 @@ class ResolvedGitSettings:
             elif self.config[key] is None:
                 pass
             else:
-                message = f"Invalid git config value - {key}: {value}"
-                raise ClowderError(ClowderErrorType.INVALID_GIT_CONFIG_VALUE, message)
+                raise ClowderGitError(f"Invalid git config value - {key}: {value}")
         return config
+
+    def _update(self, git_settings: GitSettings) -> None:
+        """Update with overrides from given GitSettings
+
+        :return: Config processed to create strings
+        :raise UnknownArgumentError:
+        :raise UnknownTypeError:
+        """
+
+        if git_settings.submodules is not None:
+            submodules = copy.deepcopy(git_settings.submodules)
+            if isinstance(submodules, bool):
+                self.submodules = submodules
+                self.recursive = False
+            elif isinstance(submodules, str):
+                if submodules == "recursive":
+                    self.submodules = True
+                    self.recursive = True
+                else:
+                    raise UnknownArgumentError(f"Unknown submodules argument: {submodules}")
+            else:
+                raise UnknownTypeError("Unknown submodules type")
+        if git_settings.lfs is not None:
+            self.lfs = copy.deepcopy(git_settings.lfs)
+        if git_settings.depth is not None:
+            self.depth = copy.deepcopy(git_settings.depth)
+        if git_settings.config is not None:
+            if self.config is None:
+                self.config = copy.deepcopy(git_settings.config)
+            else:
+                for (k, v) in git_settings.config.items():
+                    self.config[k] = v
+
+        self._clean_config()

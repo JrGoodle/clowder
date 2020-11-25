@@ -6,11 +6,9 @@
 
 from typing import Optional, Union
 
-from clowder.error import ClowderError, ClowderErrorType
-from clowder.logging import LOG
+from clowder.util.error import UnknownSourceError, UnknownTypeError
 
-from .source import Source
-from .source_name import SourceName
+from .source import Source, SourceName
 
 
 class Upstream:
@@ -26,6 +24,7 @@ class Upstream:
         """Upstream __init__
 
         :param Union[str, dict] yaml: Parsed YAML python object for upstream
+        :raise UnknownTypeError:
         """
 
         self._is_string = False
@@ -44,27 +43,23 @@ class Upstream:
             self.source: Optional[Union[Source, SourceName]] = None
             source = yaml.get('source', None)
             if source is not None:
-                if isinstance(source, str):
+                if isinstance(source, SourceName):
                     self.source: Optional[Union[Source, SourceName]] = SourceName(source)
                 elif isinstance(source, dict):
                     # Use upstream instance id as source name
-                    name = SourceName(str(id(self)))
+                    name = SourceName(id(self))
                     self.source: Optional[Union[Source, SourceName]] = Source(name, source)
                 else:
-                    err = ClowderError(ClowderErrorType.WRONG_SOURCE_TYPE, "Wrong source type")
-                    LOG.debug('Wrong source type', err)
-                    raise err
+                    raise UnknownTypeError("Unknown source type")
             return
 
-        err = ClowderError(ClowderErrorType.WRONG_UPSTREAM_TYPE, "Wrong upstream type")
-        LOG.debug('Wrong upstream type', err)
-        raise err
+        raise UnknownTypeError("Unknown upstream type")
 
     def get_yaml(self) -> Union[str, dict]:
         """Return python object representation for saving yaml
 
         :return: YAML python object
-        :rtype: Union[str, dict]
+        :raise UnknownSourceError:
         """
 
         if self._is_string:
@@ -75,6 +70,11 @@ class Upstream:
         if self.remote is not None:
             yaml['remote'] = self.remote
         if self.source is not None:
-            yaml['source'] = self.source.get_yaml()
+            if isinstance(self.source, SourceName):
+                yaml['source'] = self.source
+            elif isinstance(self.source, Source):
+                yaml['source'] = self.source.get_yaml()
+            else:
+                raise UnknownSourceError('Unknown source type')
 
         return yaml

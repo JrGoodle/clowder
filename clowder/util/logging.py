@@ -8,10 +8,11 @@ import logging
 import os
 from typing import Optional
 
-from clowder.console import CONSOLE
+from clowder.util.console import CONSOLE
 
 
-LOG_LEVEL = os.environ.get("CLOWDER_LOG", None)
+LOG_LEVEL: Optional[str] = os.environ.get("CLOWDER_LOG", None)
+CLOWDER_DEBUG: bool = 'CLOWDER_DEBUG' in os.environ
 
 
 class Log:
@@ -28,9 +29,9 @@ class Log:
         logging.addLevelName(Log.VERBOSE, 'VERBOSE')
         self.logger = logging.getLogger(self.logger_name)
 
-        if LOG_LEVEL is None or LOG_LEVEL == 'VERBOSE':
+        if LOG_LEVEL == 'VERBOSE':
             self.level = self.VERBOSE
-        elif LOG_LEVEL == 'DEBUG':
+        elif LOG_LEVEL == 'DEBUG' or CLOWDER_DEBUG:
             self.level = self.DEBUG
         else:
             self.level = self.ERROR
@@ -59,7 +60,7 @@ class Log:
         if message is not None:
             CONSOLE.stderr(message.strip())
         if error is not None:
-            CONSOLE.stderr(CONSOLE.pretty_traceback)
+            CONSOLE.print_exception()
 
 
 LOG: Log = Log()

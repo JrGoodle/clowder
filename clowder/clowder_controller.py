@@ -4,17 +4,64 @@
 
 """
 
+from functools import wraps
 from pathlib import Path
 from typing import Optional, Tuple
 
+import trio
+
 import clowder.util.formatting as fmt
 from clowder.environment import ENVIRONMENT
-from clowder.error import ClowderError, ClowderErrorType
-from clowder.logging import LOG
-from clowder.data import ResolvedProject, SOURCE_CONTROLLER
+from clowder.git.util import get_default_branch
+from clowder.data import ResolvedProject, ResolvedUpstream, SOURCE_CONTROLLER
 from clowder.data.model import ClowderBase
-from clowder.data.util import validate_project_statuses
+from clowder.util.console import CONSOLE
+from clowder.util.error import (
+    ClowderGitError,
+    DuplicatePathError,
+    MissingYamlError,
+    ProjectNotFoundError,
+    ProjectStatusError
+)
+from clowder.util.logging import LOG
 from clowder.util.yaml import load_yaml_file, validate_yaml_file
+
+
+def print_clowder_name(func):
+    """Print clowder name"""
+
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        """Wrapper"""
+
+        if CLOWDER_CONTROLLER.name is not None:
+            CONSOLE.stdout(f'{fmt.clowder_name(CLOWDER_CONTROLLER.name)}\n')
+        return func(*args, **kwargs)
+
+    return wrapper
+
+
+def valid_clowder_yaml_required(func):
+    """If clowder yaml file is invalid, print invalid yaml message and exit
+
+    :raise AmbiguousYamlError:
+    :raise MissingSourceError:
+    :raise Exception:
+    """
+
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        """Wrapper"""
+
+        if ENVIRONMENT.ambiguous_yaml_error is not None:
+            raise ENVIRONMENT.ambiguous_yaml_error
+        if ENVIRONMENT.missing_source_error is not None:
+            raise ENVIRONMENT.missing_source_error
+        if CLOWDER_CONTROLLER.error is not None:
+            raise CLOWDER_CONTROLLER.error
+        return func(*args, **kwargs)
+
+    return wrapper
 
 
 class ClowderController(object):
@@ -35,7 +82,7 @@ class ClowderController(object):
     def __init__(self):
         """ClowderController __init__
 
-        :raise ClowderError:
+        :raise MissingYamlError:
         """
 
         self.error: Optional[Exception] = None
@@ -44,9 +91,7 @@ class ClowderController(object):
 
         try:
             if ENVIRONMENT.clowder_yaml is None:
-                message = f"{Path('clowder.yml')} appears to be missing"
-                err = ClowderError(ClowderErrorType.YAML_MISSING_FILE, message)
-                raise err
+                raise MissingYamlError(f"{Path('clowder.yml')} appears to be missing")
             yaml = load_yaml_file(ENVIRONMENT.clowder_yaml, ENVIRONMENT.clowder_dir)
             validate_yaml_file(yaml, ENVIRONMENT.clowder_yaml)
 
@@ -62,51 +107,52 @@ class ClowderController(object):
                 for s in sources:
                     SOURCE_CONTROLLER.add_source(s)
 
-            # Load from array
             projects = self._clowder.clowder.projects
-            if projects is not None:
-                for project in projects:
-                    SOURCE_CONTROLLER.add_source(project.source)
-                    if project.upstream is not None:
-                        SOURCE_CONTROLLER.add_source(project.upstream.source)
-                # Validate all source names have a defined source with url
-                SOURCE_CONTROLLER.validate_sources()
+            sections = self._clowder.clowder.sections
+            if projects is None:
+                projects = [p for s in sections for p in s.projects]
 
-                resolved_projects = [ResolvedProject(p, defaults=defaults, protocol=self._clowder.protocol)
-                                     for p in projects]
-                self.projects = tuple(sorted(resolved_projects, key=lambda p: p.name))
-                self._update_properties()
-                return
-
-            # Load from dict
-            groups = self._clowder.clowder.groups
-            projects = [p for g in groups for p in g.projects]
             for project in projects:
                 SOURCE_CONTROLLER.add_source(project.source)
-                upstream = project.upstream
-                if upstream is not None:
-                    SOURCE_CONTROLLER.add_source(upstream.source)
+                if project.upstream is not None:
+                    SOURCE_CONTROLLER.add_source(project.upstream.source)
             # Validate all source names have a defined source with url
             SOURCE_CONTROLLER.validate_sources()
 
-            resolved_projects = [ResolvedProject(p, defaults=defaults, group=g, protocol=self._clowder.protocol)
-                                 for g in groups for p in g.projects]
+            if sections is None:
+                resolved_projects = [ResolvedProject(p, defaults=defaults, protocol=self._clowder.protocol)
+                                     for p in projects]
+            else:
+                resolved_projects = [ResolvedProject(p, defaults=defaults, section=s, protocol=self._clowder.protocol)
+                                     for s in sections for p in s.projects]
+
             self.projects = tuple(sorted(resolved_projects, key=lambda p: p.name))
             self._update_properties()
-        except ClowderError as err:
+            self._populate_default_branches()
+        except Exception as err:
             LOG.debug('Failed to init clowder controller')
             self.error = err
             self._initialize_properties()
-        except Exception as err:
-            LOG.debug('Failed to load clowder yaml')
-            self.error = err
-            self._initialize_properties()
+
+    @staticmethod
+    def filter_projects(projects: Tuple[ResolvedProject, ...],
+                        project_names: Tuple[str, ...]) -> Tuple[ResolvedProject, ...]:
+        """Filter projects based on given project or group names
+
+        :param Tuple[ResolvedProject, ...] projects: Projects to filter
+        :param Tuple[str, ...] project_names: Project names to match against
+        :return: Projects in groups matching given names
+        """
+
+        filtered_projects = []
+        for name in project_names:
+            filtered_projects += [p for p in projects if name in p.groups]
+        return tuple(sorted(set(filtered_projects), key=lambda project: project.name))
 
     def get_all_upstream_project_names(self) -> Tuple[str, ...]:
         """Returns all project names containing upstreams
 
         :return: All project names containing upstreams
-        :rtype: Tuple[str, ...]
         """
 
         return tuple(sorted([p.name for p in self.projects if p.upstream is not None]))
@@ -117,7 +163,6 @@ class ClowderController(object):
 
         :param Tuple[ResolvedProject, ...] projects: Projects to get paths/names output of
         :return: All project paths
-        :rtype: Tuple[str, ...]
         """
 
         return tuple(sorted([p.formatted_project_output() for p in projects]))
@@ -127,8 +172,7 @@ class ClowderController(object):
 
         :param str timestamp_project: Project to get timestamp of current HEAD commit
         :return: Commit timestamp string
-        :rtype: str
-        :raise ClowderError:
+        :raise ClowderGitError:
         """
 
         timestamp = None
@@ -137,7 +181,7 @@ class ClowderController(object):
                 timestamp = project.current_timestamp
 
         if timestamp is None:
-            raise ClowderError(ClowderErrorType.GIT_ERROR, "Failed to find timestamp\n")
+            raise ClowderGitError("Failed to find timestamp")
 
         return timestamp
 
@@ -145,27 +189,50 @@ class ClowderController(object):
         """Return current project commit sha
 
         :return: Current active commit sha
-        :rtype: str
-        :raise ClowderError:
+        :raise ProjectNotFoundError:
         """
 
         for project in self.projects:
             if project_id == id(project):
                 return project.sha(short=short)
 
-        err = ClowderError(ClowderErrorType.PROJECT_NOT_FOUND, "Project not found")
-        LOG.debug(f"Project with id {project_id} not found")
-        raise err
+        raise ProjectNotFoundError(f"Project with id {project_id} not found")
 
     def get_yaml(self, resolved: bool = False) -> dict:
         """Return python object representation of model objects
 
         :param bool resolved: Whether to return resolved yaml
         :return: YAML python object
-        :rtype: dict
         """
 
         return self._clowder.get_yaml(resolved=resolved)
+
+    @staticmethod
+    def project_has_branch(projects: Tuple[ResolvedProject, ...], branch: str, is_remote: bool) -> bool:
+        """Checks if given branch exists in any project
+
+        :param Tuple[ResolvedProject, ...] projects: Projects to check
+        :param str branch: Branch to check for
+        :param bool is_remote: Check for remote branch
+        :return: True, if at least one branch exists
+        """
+
+        return any([p.has_branch(branch, is_remote=is_remote) for p in projects])
+
+    @staticmethod
+    def validate_project_statuses(projects: Tuple[ResolvedProject, ...], allow_missing_repo: bool = True) -> None:
+        """Validate status of all projects
+
+        :param Tuple[ResolvedProject, ...] projects: Projects to validate
+        :param bool allow_missing_repo: Whether to allow validation to succeed with missing repo
+        :raise ProjectStatusError:
+        """
+
+        for p in projects:
+            p.print_validation(allow_missing_repo=allow_missing_repo)
+        if not all([p.is_valid(allow_missing_repo=allow_missing_repo) for p in projects]):
+            CONSOLE.stdout()
+            raise ProjectStatusError("Invalid project state")
 
     @staticmethod
     def validate_print_output(projects: Tuple[ResolvedProject, ...]) -> None:
@@ -174,12 +241,12 @@ class ClowderController(object):
         :param Tuple[ResolvedProject, ...] projects: Projects to validate/print
         """
 
-        validate_project_statuses(projects)
+        CLOWDER_CONTROLLER.validate_project_statuses(projects)
 
     def validate_projects_exist(self) -> None:
         """Validate all projects exist on disk
 
-        :raise ClowderError:
+        :raise ProjectStatusError:
         """
 
         projects_exist = True
@@ -189,14 +256,12 @@ class ClowderController(object):
                 projects_exist = False
 
         if not projects_exist:
-            message = f"First run {fmt.clowder_command('clowder herd')} to clone missing projects"
-            raise ClowderError(ClowderErrorType.INVALID_PROJECT_STATUS, message)
+            raise ProjectStatusError(f"First run {fmt.clowder_command('clowder herd')} to clone missing projects")
 
     def _get_upstream_names(self) -> Tuple[str, ...]:
         """Returns all upstream names for current clowder yaml file
 
         :return: All upstream names
-        :rtype: Tuple
         """
 
         upstream_names = [str(p.upstream.name) for p in self.projects if p.upstream is not None]
@@ -207,7 +272,6 @@ class ClowderController(object):
         """Returns all project names for current clowder yaml file
 
         :return: All project and upstream names
-        :rtype: Tuple
         """
 
         return tuple(sorted(set(project_names + upstream_names)))
@@ -216,7 +280,6 @@ class ClowderController(object):
         """Returns all project names for current clowder yaml file
 
         :return: All project names
-        :rtype: Tuple
         """
 
         project_names = [str(p.name) for p in self.projects]
@@ -226,7 +289,6 @@ class ClowderController(object):
         """Returns all project paths for current clowder yaml file
 
         :return: All project paths
-        :rtype: Tuple
         """
 
         paths = [str(p.path) for p in self.projects]
@@ -236,7 +298,6 @@ class ClowderController(object):
         """Returns all project group names for current clowder yaml file
 
         :return: All project paths
-        :rtype: Tuple
         """
 
         groups = [g for p in self.projects for g in p.groups]
@@ -247,7 +308,6 @@ class ClowderController(object):
         """Returns all project choices current clowder yaml file
 
         :return: All project paths
-        :rtype: Tuple
         """
 
         names = [g for p in self.projects for g in p.groups]
@@ -257,7 +317,6 @@ class ClowderController(object):
         """Returns all project choices current clowder yaml file
 
         :return: All project paths
-        :rtype: Tuple
         """
 
         names = [g for p in self.projects for g in p.groups]
@@ -278,16 +337,19 @@ class ClowderController(object):
         self.project_choices_with_default: Tuple[str, ...] = ('default',)
 
     def _validate_project_paths(self) -> None:
-        """Validate projects don't share share directories"""
+        """Validate projects don't share share directories
+
+        :raise DuplicatePathError:
+        """
 
         paths = [str(p.path.resolve()) for p in self.projects]
         duplicate = fmt.check_for_duplicates(paths)
         if duplicate is not None:
             self._initialize_properties()
             message = f"{fmt.invalid_yaml(ENVIRONMENT.clowder_yaml.name)}\n" \
-                      f"{fmt.yaml_path(ENVIRONMENT.clowder_yaml)}\n" \
+                      f"{fmt.path(ENVIRONMENT.clowder_yaml)}\n" \
                       f"Multiple projects with path '{duplicate}'"
-            raise ClowderError(ClowderErrorType.CLOWDER_YAML_DUPLICATE_PATH, message)
+            raise DuplicatePathError(message)
 
     def _update_properties(self) -> None:
         """Initialize all properties"""
@@ -306,6 +368,35 @@ class ClowderController(object):
 
         # Now that all the data is loaded, check that no projects share paths
         self._validate_project_paths()
+
+    def _populate_default_branches(self) -> None:
+        """Get default branch"""
+
+        trio.run(_populate_default_branches, self.projects)
+
+
+async def _populate_default_branches(projects: Tuple[ResolvedProject, ...]) -> None:
+    CONSOLE.print_output = False
+    async with trio.open_nursery() as nursery:
+        for project in projects:
+            if project.ref is None:
+                nursery.start_soon(_populate_default_project_branch, project)
+            if project.upstream is not None and project.upstream.ref is None:
+                nursery.start_soon(_populate_default_upstream_branch, project.upstream)
+    CONSOLE.print_output = True
+
+
+async def _populate_default_project_branch(project: ResolvedProject) -> None:
+    default_branch = await trio.to_thread.run_sync(get_default_branch, project.full_path, project.remote, project.url)
+    project.update_default_branch(default_branch)
+
+
+async def _populate_default_upstream_branch(upstream: ResolvedUpstream) -> None:
+    default_branch = await trio.to_thread.run_sync(get_default_branch,
+                                                   upstream.full_path,
+                                                   upstream.remote,
+                                                   upstream.url)
+    upstream.update_default_branch(default_branch)
 
 
 CLOWDER_CONTROLLER: ClowderController = ClowderController()
