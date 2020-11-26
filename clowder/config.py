@@ -72,12 +72,14 @@ class Config(object):
             return
 
         git_section = GitConfigType.section_name()
-        if git_section in self._config:
-            self._git_config = self._config[git_section]
+        if git_section not in self._config:
+            self._config[git_section] = {}
+        self._git_config = self._config[git_section]
 
         command_section = CommandConfigType.section_name()
-        if command_section in self._config:
-            self._command_config = self._config[command_section]
+        if command_section not in self._config:
+            self._config[command_section] = {}
+        self._command_config = self._config[command_section]
 
         self._validate_config_projects_defined(self.projects)
 
@@ -101,6 +103,8 @@ class Config(object):
     @property
     def projects(self) -> Optional[Tuple[str, ...]]:
         projects = self._command_config.get(str(CommandConfigType.PROJECTS.value))
+        if projects is None:
+            return None
         projects = [p for p in projects.strip().split(", ")]
         return tuple(sorted(projects))
 
@@ -115,6 +119,8 @@ class Config(object):
     def protocol(self) -> Optional[GitProtocol]:
         protocol = str(GitConfigType.PROTOCOL.value)
         protocol = self._git_config.get(protocol)
+        if protocol is None:
+            return None
         return GitProtocol(protocol)
 
     @protocol.setter
