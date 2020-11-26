@@ -89,8 +89,7 @@ def _prune_impl(project_names: List[str], branch: str, force: bool = False,
     :param bool remote: Delete remote branch
     """
 
-    config = Config(CLOWDER_CONTROLLER.name, CLOWDER_CONTROLLER.project_choices)
-    projects = config.process_projects_arg(project_names)
+    projects = Config().process_projects_arg(project_names)
     projects = CLOWDER_CONTROLLER.filter_projects(CLOWDER_CONTROLLER.projects, projects)
 
     CLOWDER_CONTROLLER.validate_project_statuses(projects)

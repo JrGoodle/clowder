@@ -62,8 +62,7 @@ def _start_branches(args, tracking: bool) -> None:
     :param bool tracking: Whether to create tracking branches
     """
 
-    config = Config(CLOWDER_CONTROLLER.name, CLOWDER_CONTROLLER.project_choices)
-    projects = config.process_projects_arg(args.projects)
+    projects = Config().process_projects_arg(args.projects)
     projects = CLOWDER_CONTROLLER.filter_projects(CLOWDER_CONTROLLER.projects, projects)
 
     CLOWDER_CONTROLLER.validate_project_statuses(projects)

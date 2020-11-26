@@ -43,8 +43,7 @@ def stash(args) -> None:
         CONSOLE.stdout(' - No changes to stash')
         return
 
-    config = Config(CLOWDER_CONTROLLER.name, CLOWDER_CONTROLLER.project_choices)
-    projects = config.process_projects_arg(args.projects)
+    projects = Config().process_projects_arg(args.projects)
     projects = CLOWDER_CONTROLLER.filter_projects(CLOWDER_CONTROLLER.projects, projects)
 
     for project in projects:

@@ -62,7 +62,7 @@ class ClowderEnvironment(object):
 
     :cvar Path current_dir: Current directory command was run in
     :cvar Path clowder_config_dir: Path to clowder config directory
-    :cvar Path clowder_config_yaml: Path to clowder config yaml file
+    :cvar Path clowder_config: Path to clowder config yaml file
     :cvar Optional[Path] clowder_dir: Path to clowder directory if it exists
     :cvar Optional[Path] clowder_repo_dir: Path to clowder repo directory if it exists
     :cvar Optional[Path] clowder_repo_versaions_dir: Path to clowder repo versions directory
@@ -76,7 +76,7 @@ class ClowderEnvironment(object):
 
     current_dir: Path = Path.cwd()
     clowder_config_dir: Optional[Path] = None
-    clowder_config_yaml: Optional[Path] = None
+    clowder_config: Optional[Path] = None
     clowder_dir: Optional[Path] = None
     clowder_repo_dir: Optional[Path] = None
     clowder_git_repo_dir: Optional[Path] = None
@@ -165,7 +165,7 @@ class ClowderEnvironment(object):
         if self.clowder_repo_dir is not None:
             self.clowder_repo_versions_dir: Optional[Path] = self.clowder_repo_dir / 'versions'
             self.clowder_config_dir: Optional[Path] = self.clowder_repo_dir / "config"
-            self.clowder_config_yaml: Optional[Path] = self.clowder_config_dir / 'clowder.config.yml'
+            self.clowder_config: Optional[Path] = self.clowder_config_dir / 'clowder.config.yml'
             self.clowder_repo_plugins_dir: Optional[Path] = self.clowder_repo_dir / "plugins"
 
     def _get_possible_yaml_path(self, name: str) -> Path:

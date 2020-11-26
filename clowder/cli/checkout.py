@@ -40,8 +40,7 @@ def add_checkout_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
 def checkout(args) -> None:
     """Clowder checkout command private implementation"""
 
-    config = Config(CLOWDER_CONTROLLER.name, CLOWDER_CONTROLLER.project_choices)
-    projects = config.process_projects_arg(args.projects)
+    projects = Config().process_projects_arg(args.projects)
     projects = CLOWDER_CONTROLLER.filter_projects(CLOWDER_CONTROLLER.projects, projects)
 
     for project in projects:

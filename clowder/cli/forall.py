@@ -72,11 +72,10 @@ def _forall_impl(command: str, ignore_errors: bool, projects: List[str], jobs: O
     :param Optional[int] jobs: Number of jobs to use running parallel commands
     """
 
-    config = Config(CLOWDER_CONTROLLER.name, CLOWDER_CONTROLLER.project_choices)
-    projects = config.process_projects_arg(projects)
+    projects = Config().process_projects_arg(projects)
     projects = CLOWDER_CONTROLLER.filter_projects(CLOWDER_CONTROLLER.projects, projects)
 
-    jobs_config = config.current_clowder_config.jobs
+    jobs_config = Config().jobs
     jobs = jobs_config if jobs_config is not None else jobs
 
     if jobs is not None and jobs != 1 and os.name == "posix":

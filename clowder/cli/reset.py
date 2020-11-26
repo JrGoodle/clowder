@@ -68,9 +68,9 @@ def _reset_impl(project_names: List[str], timestamp_project: Optional[str] = Non
     :param Optional[int] jobs: Number of jobs to use runnning commands in parallel
     """
 
-    config = Config(CLOWDER_CONTROLLER.name, CLOWDER_CONTROLLER.project_choices)
+    config = Config()
 
-    jobs_config = config.current_clowder_config.jobs
+    jobs_config = config.jobs
     jobs = jobs_config if jobs_config is not None else jobs
 
     projects = config.process_projects_arg(project_names)
