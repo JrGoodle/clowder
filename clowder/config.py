@@ -14,8 +14,8 @@ from clowder.util.enum import AutoLowerName
 from clowder.environment import ENVIRONMENT
 from clowder.git import GitProtocol
 from clowder.util.console import CONSOLE
-from clowder.util.error import UnknownProjectError
-from clowder.util.file_system import make_dir
+from clowder.util.error import MissingFileError, UnknownProjectError
+from clowder.util.file_system import remove_file
 
 
 def print_config(func):
@@ -67,13 +67,17 @@ class Config(object):
 
         self._config: ConfigParser = ConfigParser()
 
-        if ENVIRONMENT.clowder_config is not None:
+        if ENVIRONMENT.clowder_config is not None and ENVIRONMENT.clowder_config.exists():
             self._config.read_file(ENVIRONMENT.clowder_config)
             return
 
-        self._default_config = self._config['DEFAULT']
-        self._git_config = self._config[GitConfigType.section_name()]
-        self._command_config = self._config[CommandConfigType.section_name()]
+        git_section = GitConfigType.section_name()
+        if git_section in self._config:
+            self._git_config = self._config[git_section]
+
+        command_section = CommandConfigType.section_name()
+        if command_section in self._config:
+            self._command_config = self._config[command_section]
 
         self._validate_config_projects_defined(self.projects)
 
@@ -126,10 +130,12 @@ class Config(object):
     def rebase(self, rebase: Optional[bool]):
         self._set_git_option(GitConfigType.REBASE, rebase)
 
-    def clear(self) -> None:
+    @staticmethod
+    def clear() -> None:
         """Clear all config settings"""
 
-        raise NotImplemented
+        if ENVIRONMENT.clowder_config is not None and ENVIRONMENT.clowder_config.exists():
+            remove_file(ENVIRONMENT.clowder_config)
 
     @staticmethod
     def print_config() -> None:
@@ -160,8 +166,11 @@ class Config(object):
     def save(self) -> None:
         """Save configuration to file"""
 
-        if not ENVIRONMENT.clowder_config_dir.exists():
-            make_dir(ENVIRONMENT.clowder_config_dir)
+        # if not ENVIRONMENT.clowder_config_dir.exists():
+        #     make_dir(ENVIRONMENT.clowder_config_dir)
+
+        if ENVIRONMENT.clowder_config is None:
+            raise MissingFileError('No clowder config file path found')
 
         with open(ENVIRONMENT.clowder_config, 'w') as configfile:
             self._config.write(configfile)

@@ -162,10 +162,12 @@ class ClowderEnvironment(object):
                 break
             path = path.parent
 
+        if self.clowder_dir is not None:
+            self.clowder_config: Optional[Path] = self.clowder_dir / 'clowder.config'
+
         if self.clowder_repo_dir is not None:
             self.clowder_repo_versions_dir: Optional[Path] = self.clowder_repo_dir / 'versions'
             self.clowder_config_dir: Optional[Path] = self.clowder_repo_dir / "config"
-            self.clowder_config: Optional[Path] = self.clowder_config_dir / 'clowder.config.yml'
             self.clowder_repo_plugins_dir: Optional[Path] = self.clowder_repo_dir / "plugins"
 
     def _get_possible_yaml_path(self, name: str) -> Path:

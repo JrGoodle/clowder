@@ -1,4 +1,4 @@
-@cats @checkout
+@cats @checkout @debug
 Feature: clowder checkout command
 
     @help
