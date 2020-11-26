@@ -24,9 +24,9 @@ def print_config(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         """Wrapper"""
-
-        yield func(*args, **kwargs)
+        retval = func(*args, **kwargs)
         Config().print_config()
+        return retval
 
     return wrapper
 
@@ -68,8 +68,7 @@ class Config(object):
         self._config: ConfigParser = ConfigParser()
 
         if ENVIRONMENT.clowder_config is not None and ENVIRONMENT.clowder_config.exists():
-            self._config.read_file(ENVIRONMENT.clowder_config)
-            return
+            self._config.read(ENVIRONMENT.clowder_config)
 
         git_section = GitConfigType.section_name()
         if git_section not in self._config:
