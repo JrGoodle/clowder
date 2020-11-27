@@ -146,12 +146,13 @@ class Config(object):
     def print_config() -> None:
         """Print current config file contents"""
 
-        if ENVIRONMENT.clowder_config is None:
+        if ENVIRONMENT.clowder_config is None or not ENVIRONMENT.clowder_config.exists():
             CONSOLE.stdout(' - No config file found')
             return
 
         CONSOLE.stdout(fmt.bold('Current config\n'))
-        CONSOLE.stdout(ENVIRONMENT.clowder_config.read_text())
+        text = ENVIRONMENT.clowder_config.read_text()
+        CONSOLE.stdout(fmt.escape(f"{text.strip()}\n"))
 
     def process_projects_arg(self, projects: List[str]) -> Tuple[str, ...]:
         """Process project args based on parameters and config
