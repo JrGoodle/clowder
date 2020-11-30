@@ -25,7 +25,11 @@ def add_forall_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
     :param argparse._SubParsersAction subparsers: Subparsers action to add parser to
     """
 
-    arguments = [
+    parser = subparsers.add_parser('forall', help='Run command or script in project directories')
+    parser.formatter_class = argparse.RawTextHelpFormatter
+    parser.set_defaults(func=forall)
+
+    add_parser_arguments(parser, [
         (['command'], dict(metavar='<command>', nargs=1, default=None,
                            help='command to run in project directories')),
         (['projects'], dict(metavar='<project|group>', default='default', nargs='*',
@@ -33,13 +37,8 @@ def add_forall_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
                             help=fmt.project_options_help_message('projects and groups to run command for'))),
         (['--ignore-errors', '-i'], dict(action='store_true', help='ignore errors in command or script')),
         (['--jobs', '-j'], dict(metavar='<n>', nargs=1, default=None, type=int,
-                                help='number of jobs to use runnning commands in parallel')),
-    ]
-
-    parser = subparsers.add_parser('forall', help='Run command or script in project directories')
-    parser.formatter_class = argparse.RawTextHelpFormatter
-    add_parser_arguments(parser, arguments)
-    parser.set_defaults(func=forall)
+                                help='number of jobs to use running commands in parallel')),
+    ])
 
 
 # TODO: Split out forall_handler() to parse args, then call typed forall() function

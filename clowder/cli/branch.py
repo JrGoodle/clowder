@@ -21,24 +21,20 @@ def add_branch_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
     :param argparse._SubParsersAction subparsers: Subparsers action to add parser to
     """
 
-    arguments = [
+    parser = subparsers.add_parser('branch', help='Display current branches')
+    parser.formatter_class = argparse.RawTextHelpFormatter
+    parser.set_defaults(func=branch)
+
+    add_parser_arguments(parser, [
         (['projects'], dict(metavar='<project|group>', default='default', nargs='*',
                             choices=CLOWDER_CONTROLLER.project_choices_with_default,
                             help=fmt.project_options_help_message('projects and groups to show branches for')))
-    ]
+    ])
 
-    parser = subparsers.add_parser('branch', help='Display current branches')
-    parser.formatter_class = argparse.RawTextHelpFormatter
-    add_parser_arguments(parser, arguments)
-
-    mutually_exclusive_arguments = [
+    add_parser_arguments(parser.add_mutually_exclusive_group(), [
         (['--all', '-a'], dict(action='store_true', help='show local and remote branches')),
         (['--remote', '-r'], dict(action='store_true', help='show remote branches'))
-    ]
-    mutually_exclusive_group = parser.add_mutually_exclusive_group()
-    add_parser_arguments(mutually_exclusive_group, mutually_exclusive_arguments)
-
-    parser.set_defaults(func=branch)
+    ])
 
 
 @valid_clowder_yaml_required

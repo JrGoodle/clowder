@@ -20,14 +20,13 @@ from .util import add_parser_arguments
 
 def add_save_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
 
-    arguments = [
-        (['version'], dict(help='version to save', metavar='<version>'))
-    ]
-
     parser = subparsers.add_parser('save', help='Create clowder yaml version for current repos')
     parser.formatter_class = argparse.RawTextHelpFormatter
-    add_parser_arguments(parser, arguments)
     parser.set_defaults(func=save)
+
+    add_parser_arguments(parser, [
+        (['version'], dict(help='version to save', metavar='<version>'))
+    ])
 
 
 @valid_clowder_yaml_required

@@ -24,22 +24,21 @@ def add_reset_parser(subparsers: argparse._SubParsersAction):  # noqa
     :param argparse._SubParsersAction subparsers: Subparsers action to add parser to
     """
 
-    arguments = [
+    parser = subparsers.add_parser('reset', help='Reset branches to upstream commits or '
+                                                 'check out detached HEADs for tags and shas')
+    parser.formatter_class = argparse.RawTextHelpFormatter
+    parser.set_defaults(func=reset)
+
+    add_parser_arguments(parser, [
         (['projects'], dict(metavar='<project|group>', default='default', nargs='*',
                             choices=CLOWDER_CONTROLLER.project_choices_with_default,
                             help=fmt.project_options_help_message('projects and groups to reset'))),
         (['--jobs', '-j'], dict(metavar='<n>', nargs=1, default=None, type=int,
-                                help='number of jobs to use runnning commands in parallel')),
+                                help='number of jobs to use running commands in parallel')),
         # (['--timestamp', '-t'], dict(choices=CLOWDER_CONTROLLER.project_names,
         #                              default=None, nargs=1, metavar='<timestamp>',
         #                              help='project to reset timestamps relative to'))
-    ]
-
-    parser = subparsers.add_parser('reset', help='Reset branches to upstream commits or '
-                                                 'check out detached HEADs for tags and shas')
-    parser.formatter_class = argparse.RawTextHelpFormatter
-    add_parser_arguments(parser, arguments)
-    parser.set_defaults(func=reset)
+    ])
 
 
 @network_connection_required
@@ -65,7 +64,7 @@ def _reset_impl(project_names: List[str], timestamp_project: Optional[str] = Non
 
     :param List[str] project_names: Project names to reset
     :param Optional[str] timestamp_project: Reference project to checkout other project commit timestamps relative to
-    :param Optional[int] jobs: Number of jobs to use runnning commands in parallel
+    :param Optional[int] jobs: Number of jobs to use running commands in parallel
     """
 
     config = Config()

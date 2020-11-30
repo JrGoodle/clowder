@@ -22,16 +22,15 @@ def add_link_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
     :param argparse._SubParsersAction subparsers: Subparsers action to add parser to
     """
 
-    versions = ClowderRepo.get_saved_version_names()
-    arguments = [
-        (['version'], dict(metavar='<version>', choices=versions, nargs='?', default=None,
-                           help=fmt.version_options_help_message('version to symlink', versions)))
-    ]
-
     parser = subparsers.add_parser('link', help='Symlink clowder yaml version')
     parser.formatter_class = argparse.RawTextHelpFormatter
-    add_parser_arguments(parser, arguments)
     parser.set_defaults(func=link)
+
+    versions = ClowderRepo.get_saved_version_names()
+    add_parser_arguments(parser, [
+        (['version'], dict(metavar='<version>', choices=versions, nargs='?', default=None,
+                           help=fmt.version_options_help_message('version to symlink', versions)))
+    ])
 
 
 @print_clowder_name

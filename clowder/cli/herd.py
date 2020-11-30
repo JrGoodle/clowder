@@ -25,30 +25,26 @@ def add_herd_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
     :param argparse._SubParsersAction subparsers: Subparsers action to add parser to
     """
 
-    arguments = [
+    parser = subparsers.add_parser('herd', help='Clone and update projects with latest changes')
+    parser.formatter_class = argparse.RawTextHelpFormatter
+    parser.set_defaults(func=herd)
+
+    add_parser_arguments(parser, [
         (['projects'], dict(metavar='<project|group>', default='default', nargs='*',
                             choices=CLOWDER_CONTROLLER.project_choices_with_default,
                             help=fmt.project_options_help_message('projects and groups to show branches for'))),
         (['--jobs', '-j'], dict(metavar='<n>', nargs=1, default=None, type=int,
-                                help='number of jobs to use runnning commands in parallel')),
+                                help='number of jobs to use running commands in parallel')),
         (['--rebase', '-r'], dict(action='store_true', help='use rebase instead of pull')),
         (['--depth', '-d'], dict(default=None, type=int, nargs=1, metavar='<n>', help='depth to herd')),
         (['--protocol', '-p'], dict(default=None, nargs=1, metavar='<protocol>', choices=('ssh', 'https'),
                                     help='git protocol to use for cloning'))
-    ]
+    ])
 
-    parser = subparsers.add_parser('herd', help='Clone and update projects with latest changes')
-    parser.formatter_class = argparse.RawTextHelpFormatter
-    add_parser_arguments(parser, arguments)
-
-    mutually_exclusive_arguments = [
+    add_parser_arguments(parser.add_mutually_exclusive_group(), [
         (['--branch', '-b'], dict(nargs=1, default=None, metavar='<branch>', help='branch to herd if present')),
         (['--tag', '-t'], dict(nargs=1, default=None, metavar='<tag>', help='tag to herd if present'))
-    ]
-    mutually_exclusive_group = parser.add_mutually_exclusive_group()
-    add_parser_arguments(mutually_exclusive_group, mutually_exclusive_arguments)
-
-    parser.set_defaults(func=herd)
+    ])
 
 
 # TODO: Split out herd_handler() to parse args, then call typed herd() function

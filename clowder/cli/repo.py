@@ -39,13 +39,12 @@ def add_repo_add_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
     :param argparse._SubParsersAction subparsers: Subparsers action to add parser to
     """
 
-    arguments = [
-        (['files'], dict(nargs='+', metavar='<file>', help='files to add'))
-    ]
-
     parser = subparsers.add_parser('add', help='Add files in clowder repo')
-    add_parser_arguments(parser, arguments)
     parser.set_defaults(func=add)
+
+    add_parser_arguments(parser, [
+        (['files'], dict(nargs='+', metavar='<file>', help='files to add'))
+    ])
 
 
 def add_repo_checkout_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
@@ -54,13 +53,12 @@ def add_repo_checkout_parser(subparsers: argparse._SubParsersAction) -> None:  #
     :param argparse._SubParsersAction subparsers: Subparsers action to add parser to
     """
 
-    arguments = [
-        (['ref'], dict(nargs=1, metavar='<ref>', help='git ref to checkout'))
-    ]
-
     parser = subparsers.add_parser('checkout', help='Checkout ref in clowder repo')
-    add_parser_arguments(parser, arguments)
     parser.set_defaults(func=checkout)
+
+    add_parser_arguments(parser, [
+        (['ref'], dict(nargs=1, metavar='<ref>', help='git ref to checkout'))
+    ])
 
 
 def add_repo_clean_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
@@ -79,13 +77,12 @@ def add_repo_commit_parser(subparsers: argparse._SubParsersAction) -> None:  # n
     :param argparse._SubParsersAction subparsers: Subparsers action to add parser to
     """
 
-    arguments = [
-        (['message'], dict(nargs=1, metavar='<message>', help='commit message'))
-    ]
-
     parser = subparsers.add_parser('commit', help='Commit current changes in clowder repo yaml files')
-    add_parser_arguments(parser, arguments)
     parser.set_defaults(func=commit)
+
+    add_parser_arguments(parser, [
+        (['message'], dict(nargs=1, metavar='<message>', help='commit message'))
+    ])
 
 
 def add_repo_pull_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
@@ -114,13 +111,12 @@ def add_repo_run_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
     :param argparse._SubParsersAction subparsers: Subparsers action to add parser to
     """
 
-    arguments = [
-        (['command'], dict(nargs=1, metavar='<command>', help='command to run in clowder repo directory'))
-    ]
-
     parser = subparsers.add_parser('run', help='Run command in clowder repo')
-    add_parser_arguments(parser, arguments)
     parser.set_defaults(func=run)
+
+    add_parser_arguments(parser, [
+        (['command'], dict(nargs=1, metavar='<command>', help='command to run in clowder repo directory'))
+    ])
 
 
 def add_repo_status_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa

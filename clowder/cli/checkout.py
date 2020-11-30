@@ -21,17 +21,16 @@ def add_checkout_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
     :param argparse._SubParsersAction subparsers: Subparsers action to add parser to
     """
 
-    arguments = [
+    parser = subparsers.add_parser('checkout', help='Checkout local branch in projects')
+    parser.formatter_class = argparse.RawTextHelpFormatter
+    parser.set_defaults(func=checkout)
+
+    add_parser_arguments(parser, [
         (['branch'], dict(nargs=1, action='store', help='branch to checkout', metavar='<branch>')),
         (['projects'], dict(metavar='<project|group>', default='default', nargs='*',
                             choices=CLOWDER_CONTROLLER.project_choices_with_default,
                             help=fmt.project_options_help_message('projects and groups to checkout branches for')))
-    ]
-
-    parser = subparsers.add_parser('checkout', help='Checkout local branch in projects')
-    parser.formatter_class = argparse.RawTextHelpFormatter
-    add_parser_arguments(parser, arguments)
-    parser.set_defaults(func=checkout)
+    ])
 
 
 @valid_clowder_yaml_required

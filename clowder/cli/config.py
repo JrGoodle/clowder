@@ -97,7 +97,7 @@ def add_config_set_parser(subparsers: argparse._SubParsersAction) -> None:  # no
     # clowder config set jobs
     jobs_arguments = [
         (['jobs'], dict(metavar='<n>', nargs=1, default=None, type=int,
-                                help='Set default number of jobs to use runnning commands in parallel'))
+                                help='Set default number of jobs to use running commands in parallel'))
     ]
     jobs_parser = config_set_subparsers.add_parser('jobs', help='Set default number of jobs for relevant commands')
     add_parser_arguments(jobs_parser, jobs_arguments)

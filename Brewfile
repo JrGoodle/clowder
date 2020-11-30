@@ -2,4 +2,4 @@ brew 'gh'
 brew 'git'
 brew 'git-lfs'
 brew 'pyenv'
-brew 'python'
+brew 'python', link: true
