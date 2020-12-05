@@ -25,26 +25,26 @@ def add_prune_parser(subparsers: argparse._SubParsersAction):  # noqa
     :param argparse._SubParsersAction subparsers: Subparsers action to add parser to
     """
 
-    arguments = [
+    parser = subparsers.add_parser('prune', help='Prune branches')
+    parser.formatter_class = argparse.RawTextHelpFormatter
+    parser.set_defaults(func=prune)
+
+    add_parser_arguments(parser, [
         (['branch'], dict(help='name of branch to remove', metavar='<branch>')),
         (['projects'], dict(metavar='<project|group>', default='default', nargs='*',
                             choices=CLOWDER_CONTROLLER.project_choices_with_default,
                             help=fmt.project_options_help_message('projects and groups to prune'))),
         (['--force', '-f'], dict(action='store_true', help='force prune branches'))
-    ]
-
-    parser = subparsers.add_parser('prune', help='Prune branches')
-    parser.formatter_class = argparse.RawTextHelpFormatter
-    add_parser_arguments(parser, arguments)
+    ])
 
     mutually_exclusive_arguments = [
         (['--all', '-a'], dict(action='store_true', help='prune local and remote branches')),
         (['--remote', '-r'], dict(action='store_true', help='prune remote branches'))
     ]
-    mutually_exclusive_group = parser.add_mutually_exclusive_group()
-    add_parser_arguments(mutually_exclusive_group, mutually_exclusive_arguments)
-
-    parser.set_defaults(func=prune)
+    add_parser_arguments(parser.add_mutually_exclusive_group(), [
+        (['--all', '-a'], dict(action='store_true', help='prune local and remote branches')),
+        (['--remote', '-r'], dict(action='store_true', help='prune remote branches'))
+    ])
 
 
 @valid_clowder_yaml_required
@@ -89,8 +89,7 @@ def _prune_impl(project_names: List[str], branch: str, force: bool = False,
     :param bool remote: Delete remote branch
     """
 
-    config = Config(CLOWDER_CONTROLLER.name, CLOWDER_CONTROLLER.project_choices)
-    projects = config.process_projects_arg(project_names)
+    projects = Config().process_projects_arg(project_names)
     projects = CLOWDER_CONTROLLER.filter_projects(CLOWDER_CONTROLLER.projects, projects)
 
     CLOWDER_CONTROLLER.validate_project_statuses(projects)

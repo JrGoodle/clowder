@@ -18,14 +18,13 @@ from .util import add_parser_arguments
 
 def add_init_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
 
-    arguments = [
+    parser = subparsers.add_parser('init', help='Clone repository to clowder directory and create clowder yaml symlink')
+    parser.set_defaults(func=init)
+
+    add_parser_arguments(parser, [
         (['url'], dict(metavar='<url>', help='url of repo containing clowder yaml file')),
         (['--branch', '-b'], dict(nargs=1, metavar='<branch>', help='branch of repo containing clowder yaml file'))
-    ]
-
-    parser = subparsers.add_parser('init', help='Clone repository to clowder directory and create clowder yaml symlink')
-    add_parser_arguments(parser, arguments)
-    parser.set_defaults(func=init)
+    ])
 
 
 @network_connection_required

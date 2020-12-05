@@ -19,14 +19,13 @@ def add_yaml_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
     :param argparse._SubParsersAction subparsers: Subparsers action to add parser to
     """
 
-    arguments = [
-        (['--resolved', '-r'], dict(action='store_true', help='print resolved clowder yaml file'))
-    ]
-
     parser = subparsers.add_parser('yaml', help='Print clowder yaml file information')
     parser.formatter_class = argparse.RawTextHelpFormatter
-    add_parser_arguments(parser, arguments)
     parser.set_defaults(func=yaml)
+
+    add_parser_arguments(parser, [
+        (['--resolved', '-r'], dict(action='store_true', help='print resolved clowder yaml file'))
+    ])
 
 
 @valid_clowder_yaml_required

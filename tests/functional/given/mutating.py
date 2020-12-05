@@ -21,7 +21,7 @@ def given_did_link_clowder_version(tmp_path: Path, version: str) -> None:
         util.run_command("clowder link", tmp_path, check=True)
         assert util.has_valid_clowder_symlink_default(tmp_path)
     else:
-        result = util.run_command(f"clowder link {version}", tmp_path, check=True)
+        util.run_command(f"clowder link {version}", tmp_path, check=True)
         assert util.has_valid_clowder_symlink_version(tmp_path, version)
 
 

@@ -45,13 +45,12 @@ def create_parsers() -> argparse.ArgumentParser:
         clowder_parser = argparse.ArgumentParser(prog='clowder')
         clowder_parser.set_defaults(func=clowder_help)
         version_message = f"clowder version {pkg_resources.require('clowder-repo')[0].version}"
-        arguments = [
+        cmd.add_parser_arguments(clowder_parser, [
             (['-v', '--version'], dict(action='version', version=version_message)),
             (['--debug', '-d'], dict(action='store_true', help='print debug output')),
-        ]
-        cmd.add_parser_arguments(clowder_parser, arguments)
-        subparsers = clowder_parser.add_subparsers(dest='subcommand', help='sub-command help')
+        ])
 
+        subparsers = clowder_parser.add_subparsers(dest='subcommand', help='sub-command help')
         cmd.add_branch_parser(subparsers)
         cmd.add_checkout_parser(subparsers)
         cmd.add_clean_parser(subparsers)

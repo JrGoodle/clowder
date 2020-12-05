@@ -25,17 +25,16 @@ def add_status_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
     :param argparse._SubParsersAction subparsers: Subparsers action to add parser to
     """
 
-    arguments = [
+    parser = subparsers.add_parser('status', help='Print project status')
+    parser.formatter_class = argparse.RawTextHelpFormatter
+    parser.set_defaults(func=status)
+
+    add_parser_arguments(parser, [
         (['projects'], dict(metavar='<project|group>', default='default', nargs='*',
                             choices=CLOWDER_CONTROLLER.project_choices_with_default,
                             help=fmt.project_options_help_message('projects and groups to print status of'))),
         (['--fetch', '-f'], dict(action='store_true', help='fetch projects before printing status'))
-    ]
-
-    parser = subparsers.add_parser('status', help='Print project status')
-    parser.formatter_class = argparse.RawTextHelpFormatter
-    add_parser_arguments(parser, arguments)
-    parser.set_defaults(func=status)
+    ])
 
 
 @valid_clowder_yaml_required
@@ -43,8 +42,7 @@ def add_status_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
 def status(args) -> None:
     """Clowder status command private implementation"""
 
-    config = Config(CLOWDER_CONTROLLER.name, CLOWDER_CONTROLLER.project_choices)
-    projects = config.process_projects_arg(args.projects)
+    projects = Config().process_projects_arg(args.projects)
     projects = CLOWDER_CONTROLLER.filter_projects(CLOWDER_CONTROLLER.projects, projects)
 
     if args.fetch:

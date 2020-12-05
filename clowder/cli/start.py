@@ -22,18 +22,17 @@ def add_start_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
     :param argparse._SubParsersAction subparsers: Subparsers action to add parser to
     """
 
-    arguments = [
+    parser = subparsers.add_parser('start', help='Start a new branch')
+    parser.formatter_class = argparse.RawTextHelpFormatter
+    parser.set_defaults(func=start)
+
+    add_parser_arguments(parser, [
         (['branch'], dict(help='name of branch to create', nargs=1, default=None, metavar='<branch>')),
         (['projects'], dict(metavar='<project|group>', default='default', nargs='*',
                             choices=CLOWDER_CONTROLLER.project_choices_with_default,
                             help=fmt.project_options_help_message('projects and groups to start branches for'))),
         (['--tracking', '-t'], dict(action='store_true', help='create remote tracking branch'))
-    ]
-
-    parser = subparsers.add_parser('start', help='Start a new branch')
-    parser.formatter_class = argparse.RawTextHelpFormatter
-    add_parser_arguments(parser, arguments)
-    parser.set_defaults(func=start)
+    ])
 
 
 @valid_clowder_yaml_required
@@ -62,8 +61,7 @@ def _start_branches(args, tracking: bool) -> None:
     :param bool tracking: Whether to create tracking branches
     """
 
-    config = Config(CLOWDER_CONTROLLER.name, CLOWDER_CONTROLLER.project_choices)
-    projects = config.process_projects_arg(args.projects)
+    projects = Config().process_projects_arg(args.projects)
     projects = CLOWDER_CONTROLLER.filter_projects(CLOWDER_CONTROLLER.projects, projects)
 
     CLOWDER_CONTROLLER.validate_project_statuses(projects)

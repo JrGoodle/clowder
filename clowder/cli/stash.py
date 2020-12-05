@@ -21,16 +21,15 @@ def add_stash_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
     :param argparse._SubParsersAction subparsers: Subparsers action to add parser to
     """
 
-    arguments = [
+    parser = subparsers.add_parser('stash', help='Stash current changes')
+    parser.formatter_class = argparse.RawTextHelpFormatter
+    parser.set_defaults(func=stash)
+
+    add_parser_arguments(parser, [
         (['projects'], dict(metavar='<project|group>', default='default', nargs='*',
                             choices=CLOWDER_CONTROLLER.project_choices_with_default,
                             help=fmt.project_options_help_message('projects and groups to stash changes for'))),
-    ]
-
-    parser = subparsers.add_parser('stash', help='Stash current changes')
-    parser.formatter_class = argparse.RawTextHelpFormatter
-    add_parser_arguments(parser, arguments)
-    parser.set_defaults(func=stash)
+    ])
 
 
 @valid_clowder_yaml_required
@@ -43,8 +42,7 @@ def stash(args) -> None:
         CONSOLE.stdout(' - No changes to stash')
         return
 
-    config = Config(CLOWDER_CONTROLLER.name, CLOWDER_CONTROLLER.project_choices)
-    projects = config.process_projects_arg(args.projects)
+    projects = Config().process_projects_arg(args.projects)
     projects = CLOWDER_CONTROLLER.filter_projects(CLOWDER_CONTROLLER.projects, projects)
 
     for project in projects:

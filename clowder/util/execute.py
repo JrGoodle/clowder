@@ -6,7 +6,7 @@
 
 import os
 import subprocess
-from subprocess import CompletedProcess
+from subprocess import CompletedProcess, PIPE, STDOUT
 from pathlib import Path
 from typing import List, Optional, Union
 
@@ -26,6 +26,13 @@ def execute_command(command: Union[str, List[str]], path: Path,
     if print_output is None:
         print_output = CONSOLE.print_output
 
+    if print_output:
+        stdout = None
+        stderr = None
+    else:
+        stdout = PIPE
+        stderr = STDOUT
+
     if isinstance(command, list):
         cmd = ' '.join(command)
     else:
@@ -34,9 +41,6 @@ def execute_command(command: Union[str, List[str]], path: Path,
     cmd_env = os.environ.copy()
     if env:
         cmd_env.update(env)
-
-    stdout = None if print_output else subprocess.PIPE
-    stderr = None if print_output else subprocess.STDOUT
 
     result = subprocess.run(cmd, shell=True, env=cmd_env, cwd=str(path),
                             stdout=stdout, stderr=stderr, universal_newlines=True, check=True)
