@@ -8,13 +8,14 @@ from pathlib import Path
 from subprocess import CalledProcessError
 from typing import Optional
 
+import pygoodle.filesystem as fs
 from git import Repo, GitCommandError, GitError
+from pygoodle.console import CONSOLE
+from pygoodle.formatting import Format
 
+from clowder.app import LOG
 import clowder.util.formatting as fmt
-from clowder.util.console import CONSOLE
 from clowder.util.execute import execute_command
-from clowder.util.file_system import remove_directory
-from clowder.util.logging import LOG
 
 from .git_ref import GitRef
 from .util import (
@@ -168,7 +169,7 @@ class GitRepo(object):
         except BaseException as err:
             LOG.error(error_message)
             if remove_dir:
-                remove_directory(self.repo_path, check=False)
+                fs.remove_dir(self.repo_path, ignore_errors=True)
             if allow_failure:
                 LOG.debug(error=err)
                 return
@@ -185,13 +186,13 @@ class GitRepo(object):
         if no_local_commits and no_upstream_commits:
             status = ''
         else:
-            local_commits_output = fmt.yellow(f'+{local_commits_count}')
-            upstream_commits_output = fmt.red(f'-{upstream_commits_count}')
+            local_commits_output = Format.yellow(f'+{local_commits_count}')
+            upstream_commits_output = Format.red(f'-{upstream_commits_count}')
             status = f'({local_commits_output}/{upstream_commits_output})'
 
         if self.is_detached:
-            return fmt.magenta(fmt.escape(f'[HEAD @ {self.sha()}]'))
-        return fmt.magenta(fmt.escape(f'[{self.current_branch}]')) + status
+            return Format.magenta(Format.escape(f'[HEAD @ {self.sha()}]'))
+        return Format.magenta(Format.escape(f'[{self.current_branch}]')) + status
 
     def format_project_string(self, path: Path) -> str:
         """Return formatted project name
@@ -217,9 +218,9 @@ class GitRepo(object):
         """
 
         if '*' in project:
-            return fmt.red(project)
+            return Format.red(project)
 
-        return fmt.green(project)
+        return Format.green(project)
 
     @property
     def current_timestamp(self) -> str:
@@ -336,7 +337,7 @@ class GitRepo(object):
 
         for branch in self.repo.git.branch().split('\n'):
             if branch.startswith('* '):
-                branch_name = fmt.green(branch[2:])
+                branch_name = Format.green(branch[2:])
                 CONSOLE.stdout(f"* {branch_name}")
             else:
                 CONSOLE.stdout(branch)
@@ -349,9 +350,9 @@ class GitRepo(object):
                 components = branch.split(' -> ')
                 local_branch = components[0]
                 remote_branch = components[1]
-                CONSOLE.stdout(f"  {fmt.red(local_branch)} -> {remote_branch}")
+                CONSOLE.stdout(f"  {Format.red(local_branch)} -> {remote_branch}")
             else:
-                CONSOLE.stdout(fmt.red(branch))
+                CONSOLE.stdout(Format.red(branch))
 
     def print_validation(self) -> None:
         """Print validation messages"""
@@ -492,7 +493,7 @@ class GitRepo(object):
         try:
             return Repo(self.repo_path)
         except GitError:
-            LOG.error(f"Failed to create Repo instance for {fmt.path(self.repo_path)}")
+            LOG.error(f"Failed to create Repo instance for {Format.path(self.repo_path)}")
             raise
 
     def _reset_head(self, branch: Optional[str] = None) -> None:

@@ -8,14 +8,14 @@ from functools import wraps
 from pathlib import Path
 from typing import Optional, Tuple
 
-import trio
+from pygoodle.console import CONSOLE
 
 import clowder.util.formatting as fmt
+from clowder.app import LOG
 from clowder.environment import ENVIRONMENT
 from clowder.git.util import get_default_branch
 from clowder.data import ResolvedProject, ResolvedUpstream, SOURCE_CONTROLLER
 from clowder.data.model import ClowderBase
-from clowder.util.console import CONSOLE
 from clowder.util.error import (
     ClowderGitError,
     DuplicatePathError,
@@ -23,7 +23,6 @@ from clowder.util.error import (
     ProjectNotFoundError,
     ProjectStatusError
 )
-from clowder.util.logging import LOG
 from clowder.util.yaml import load_yaml_file, validate_yaml_file
 
 

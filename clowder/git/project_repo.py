@@ -8,13 +8,13 @@ from pathlib import Path
 from typing import Optional
 
 from git import GitError
+import pygoodle.filesystem as fs
+from pygoodle.connectivity import is_offline
+from pygoodle.console import CONSOLE
 
 import clowder.util.formatting as fmt
-from clowder.util.connectivity import is_offline
-from clowder.util.console import CONSOLE
+from clowder.app import LOG
 from clowder.util.error import ClowderGitError, UnknownTypeError
-from clowder.util.file_system import remove_file
-from clowder.util.logging import LOG
 
 from .git_ref import GitRef, GitRefEnum
 from .project_repo_impl import GitConfig, ProjectRepoImpl
@@ -63,7 +63,7 @@ class ProjectRepo(ProjectRepoImpl):
                 raise
 
         if self.repo_path.is_symlink():
-            remove_file(self.repo_path)
+            fs.remove_file(self.repo_path)
         else:
             from clowder.environment import ENVIRONMENT
             if ENVIRONMENT.existing_clowder_repo_file_error:

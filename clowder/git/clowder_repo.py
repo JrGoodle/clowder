@@ -9,10 +9,13 @@ from functools import wraps
 from pathlib import Path
 from typing import Optional, Tuple
 
+from pygoodle.connectivity import is_offline
+from pygoodle.console import CONSOLE
+from pygoodle.formatting import Format
+
 import clowder.util.formatting as fmt
+from clowder.app import LOG
 from clowder.environment import ENVIRONMENT
-from clowder.util.connectivity import is_offline
-from clowder.util.console import CONSOLE
 from clowder.util.error import DuplicateVersionsError
 from clowder.util.execute import execute_command
 from clowder.util.yaml import link_clowder_yaml_default
@@ -126,7 +129,7 @@ class ClowderRepo(ProjectRepo):
 
         duplicate = fmt.check_for_duplicates(versions)
         if duplicate is not None:
-            raise DuplicateVersionsError(f"Duplicate version found: {fmt.path(Path(duplicate))}")
+            raise DuplicateVersionsError(f"Duplicate version found: {Format.path(Path(duplicate))}")
 
         return tuple(sorted(versions))
 
@@ -173,20 +176,20 @@ class ClowderRepo(ProjectRepo):
             return
 
         if ENVIRONMENT.clowder_yaml is not None and not ENVIRONMENT.clowder_yaml.is_symlink():
-            message = f"Found a {fmt.path(ENVIRONMENT.clowder_yaml.name)} file but it is not a symlink " \
-                      f"to a file stored in the existing {fmt.path(Path('.clowder'))} repo"
+            message = f"Found a {Format.path(ENVIRONMENT.clowder_yaml.name)} file but it is not a symlink " \
+                      f"to a file stored in the existing {Format.path(Path('.clowder'))} repo"
             LOG.error(message)
             LOG.error()
 
         symlink_output: Optional[str] = None
         if ENVIRONMENT.clowder_yaml is not None and ENVIRONMENT.clowder_yaml.is_symlink():
-            target_path = fmt.path(Path(ENVIRONMENT.clowder_yaml.name))
+            target_path = Format.path(Path(ENVIRONMENT.clowder_yaml.name))
             # FIXME: This can cause an error if symlink is pointing to existing file not relative to clowder dir
-            source_path = fmt.path(ENVIRONMENT.clowder_yaml.resolve().relative_to(ENVIRONMENT.clowder_dir))
+            source_path = Format.path(ENVIRONMENT.clowder_yaml.resolve().relative_to(ENVIRONMENT.clowder_dir))
             symlink_output = f"{target_path} -> {source_path}"
 
         if ENVIRONMENT.clowder_git_repo_dir is None:
-            CONSOLE.stdout(fmt.green(ENVIRONMENT.clowder_repo_dir.name))
+            CONSOLE.stdout(Format.green(ENVIRONMENT.clowder_repo_dir.name))
             if symlink_output is not None:
                 CONSOLE.stdout(symlink_output)
             CONSOLE.stdout()

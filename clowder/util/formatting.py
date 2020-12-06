@@ -8,43 +8,8 @@ import math
 from pathlib import Path
 from typing import List, Optional, Tuple, Union
 
-from clowder.util.console import CONSOLE
-
-
-Output = Union[str, Path]
-
-
-def bold(output: Output) -> str:
-    return f'[bold]{output}[/bold]'
-
-
-def cyan(output: Output) -> str:
-    return f'[cyan]{output}[/cyan]'
-
-
-def green(output: Output) -> str:
-    return f'[green]{output}[/green]'
-
-
-def red(output: Output) -> str:
-    return f'[red]{output}[/red]'
-
-
-def magenta(output: Output) -> str:
-    return f'[magenta]{output}[/magenta]'
-
-
-def yellow(output: Output) -> str:
-    return f'[yellow]{output}[/yellow]'
-
-
-def escape(output: Output) -> str:
-    import rich.markup as markup
-    return markup.escape(output)
-
-
-def underline(output: Output) -> str:
-    return f'[underline]{output}[/underline]'
+from pygoodle.console import CONSOLE
+from pygoodle.formatting import Format
 
 
 # TODO: Update to return list of all duplicates found
@@ -71,7 +36,7 @@ def clowder_command(cmd: str) -> str:
     :return: Formatted clowder command name
     """
 
-    return bold(cmd)
+    return Format.bold(cmd)
 
 
 def clowder_name(name: str) -> str:
@@ -81,7 +46,7 @@ def clowder_name(name: str) -> str:
     :return: Formatted clowder name
     """
 
-    return bold(name)
+    return Format.bold(name)
 
 
 def command(cmd: Union[str, List[str]]) -> str:
@@ -92,7 +57,7 @@ def command(cmd: Union[str, List[str]]) -> str:
     """
 
     command_output = " ".join(cmd) if isinstance(cmd, list) else cmd
-    return bold(f"$ {command_output}")
+    return Format.bold(f"$ {command_output}")
 
 
 def invalid_yaml(name: str) -> str:
@@ -134,7 +99,7 @@ def upstream(name: str) -> str:
     :return: Formatted upstream name
     """
 
-    return cyan(name)
+    return Format.cyan(name)
 
 
 def options_help_message(options: Tuple[str, ...], message: str) -> str:
@@ -281,7 +246,7 @@ def path(text: Path) -> str:
     :return: Formatted path name
     """
 
-    return cyan(text.resolve())
+    return Format.cyan(text.resolve())
 
 
 def ref(text: str) -> str:
@@ -291,7 +256,7 @@ def ref(text: str) -> str:
     :return: Formatted ref name
     """
 
-    return magenta(text)
+    return Format.magenta(text)
 
 
 def remote(text: str) -> str:
@@ -301,20 +266,7 @@ def remote(text: str) -> str:
     :return: Formmatted remote name
     """
 
-    return yellow(text)
-
-
-def remove_prefix(text: str, prefix: str) -> str:
-    """Remove prefix from string
-
-    :param str text: Text to remove prefix from
-    :param str prefix: Prefix to remoe
-    :return: Text with prefix removed if present
-    """
-
-    if text.startswith(prefix):
-        return text[len(prefix):]
-    return text
+    return Format.yellow(text)
 
 
 def url_string(url: str) -> str:
@@ -324,7 +276,7 @@ def url_string(url: str) -> str:
     :return: Formatted URL
     """
 
-    return cyan(url)
+    return Format.cyan(url)
 
 
 def version_options_help_message(message: str, versions: Tuple[str, ...]) -> str:
@@ -410,7 +362,7 @@ def version(version_name: str) -> str:
     :return: Formatted clowder version name
     """
 
-    return bold(version_name)
+    return Format.bold(version_name)
 
 
 def project_name(name: str) -> str:
@@ -420,7 +372,7 @@ def project_name(name: str) -> str:
     :return: Formatted project name
     """
 
-    return green(name)
+    return Format.green(name)
 
 
 def _validate_help_options(options: Optional[Union[str, list, tuple]]) -> bool:

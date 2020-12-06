@@ -6,8 +6,7 @@
 
 from enum import auto, unique
 
-from clowder.util.enum import AutoLowerName
-from clowder.util.error import UnknownTypeError
+from pygoodle.enum import AutoLowerName, UnknownEnumCaseError
 
 
 @unique
@@ -29,4 +28,4 @@ class GitProtocol(AutoLowerName):
         elif self is GitProtocol.HTTPS:
             return f"https://{url}/{name}.git"
         else:
-            raise UnknownTypeError('Invalid git protocol')
+            raise UnknownEnumCaseError('Invalid git protocol')

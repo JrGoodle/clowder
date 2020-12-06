@@ -49,10 +49,6 @@ class ExistingSymlinkError(ClowderError):
     pass
 
 
-class InvalidYamlError(ClowderError):
-    pass
-
-
 class MissingClowderGitRepoError(ClowderError):
     pass
 
@@ -66,14 +62,6 @@ class MissingFileError(ClowderError):
 
 
 class MissingSourceError(ClowderError):
-    pass
-
-
-class MissingYamlError(ClowderError):
-    pass
-
-
-class NetworkConnectionError(ClowderError):
     pass
 
 

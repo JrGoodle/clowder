@@ -10,7 +10,7 @@ from subprocess import CompletedProcess, PIPE, STDOUT
 from pathlib import Path
 from typing import List, Optional, Union
 
-from clowder.util.console import CONSOLE
+from pygoodle.console import CONSOLE
 
 
 def execute_command(command: Union[str, List[str]], path: Path,

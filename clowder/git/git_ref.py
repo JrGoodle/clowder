@@ -8,8 +8,8 @@ from enum import auto, unique
 from typing import Optional
 
 from git import Repo, GitError
+from pygoodle.enum import AutoLowerName
 
-from clowder.util.enum import AutoLowerName
 from clowder.util.error import CommandArgumentError, UnknownTypeError
 
 

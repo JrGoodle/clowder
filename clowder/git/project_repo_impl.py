@@ -8,14 +8,14 @@ from pathlib import Path
 from subprocess import CalledProcessError
 from typing import Dict, Optional
 
+import pygoodle.filesystem as fs
 from git import GitError, Remote, Repo, Tag
+from pygoodle.console import CONSOLE
 
 import clowder.util.formatting as fmt
-from clowder.util.console import CONSOLE
+from clowder.app import LOG
 from clowder.util.error import ClowderGitError
 from clowder.util.execute import execute_command
-from clowder.util.file_system import remove_directory, make_dir
-from clowder.util.logging import LOG
 
 from .git_ref import GitRef
 from .git_repo import GitRepo
@@ -70,7 +70,7 @@ class ProjectRepoImpl(GitRepo):
         except BaseException:
             LOG.error(f'Failed to checkout branch {fmt.ref(branch)}')
             if remove_dir:
-                remove_directory(self.repo_path, check=False)
+                fs.remove_dir(self.repo_path, ignore_errors=True)
             raise
 
     def _checkout_new_repo_branch(self, branch: str, depth: int) -> None:
@@ -85,7 +85,7 @@ class ProjectRepoImpl(GitRepo):
         self.fetch(self.remote, depth=depth, ref=GitRef(branch=branch), remove_dir=True)
 
         if not self.has_remote_branch(branch, self.remote):
-            remove_directory(self.repo_path, check=False)
+            fs.remove_dir(self.repo_path, ignore_errors=True)
             raise ClowderGitError(f'No existing remote branch {fmt.remote(self.remote)} {fmt.ref(branch)}')
 
         self._create_branch_local_tracking(branch, self.remote, depth=depth, fetch=False, remove_dir=True)
@@ -106,7 +106,7 @@ class ProjectRepoImpl(GitRepo):
             self.repo.git.checkout(commit)
         except BaseException:
             LOG.error(f'Failed to checkout commit {fmt.ref(commit)}')
-            remove_directory(self.repo_path, check=False)
+            fs.remove_dir(self.repo_path, ignore_errors=True)
             raise
 
     def _checkout_new_repo_tag(self, tag: str, remote: str, depth: int, remove_dir: bool = False) -> None:
@@ -128,7 +128,7 @@ class ProjectRepoImpl(GitRepo):
         except BaseException:
             LOG.error(f'Failed to checkout tag {fmt.ref(tag)}')
             if remove_dir:
-                remove_directory(self.repo_path, check=False)
+                fs.remove_dir(self.repo_path, ignore_errors=True)
             raise
 
     def _checkout_sha(self, sha: str) -> None:
@@ -219,7 +219,7 @@ class ProjectRepoImpl(GitRepo):
         except BaseException:
             LOG.error(f'Failed to create branch {fmt.ref(branch)}')
             if remove_dir:
-                remove_directory(self.repo_path, check=False)
+                fs.remove_dir(self.repo_path, ignore_errors=True)
             raise
         else:
             self._set_tracking_branch(remote, branch, remove_dir=remove_dir)
@@ -265,7 +265,7 @@ class ProjectRepoImpl(GitRepo):
         except BaseException:
             LOG.error(f'Failed to create remote {fmt.remote(remote)}')
             if remove_dir:
-                remove_directory(self.repo_path, check=False)
+                fs.remove_dir(self.repo_path, ignore_errors=True)
             raise
 
     def _find_rev_by_timestamp(self, timestamp: str, ref: str) -> str:
@@ -315,14 +315,14 @@ class ProjectRepoImpl(GitRepo):
         except (GitError, IndexError) as err:
             LOG.error(f'No existing tag {fmt.ref(tag)}')
             if remove_dir:
-                remove_directory(self.repo_path, check=False)
+                fs.remove_dir(self.repo_path, ignore_errors=True)
                 raise
             LOG.debug(error=err)
             return None
         except BaseException:
             LOG.error('Failed to get tag')
             if remove_dir:
-                remove_directory(self.repo_path, check=False)
+                fs.remove_dir(self.repo_path, ignore_errors=True)
             raise
 
     def _init_repo(self) -> None:
@@ -335,11 +335,11 @@ class ProjectRepoImpl(GitRepo):
         try:
             CONSOLE.stdout(f' - Initialize repo at {fmt.path(self.repo_path)}')
             if not self.repo_path.is_dir():
-                make_dir(self.repo_path)
+                fs.make_dir(self.repo_path)
             self.repo = Repo.init(self.repo_path)
         except BaseException:
             LOG.error('Failed to initialize repository')
-            remove_directory(self.repo_path, check=False)
+            fs.remove_dir(self.repo_path, ignore_errors=True)
             raise
 
     def _is_branch_checked_out(self, branch: str) -> bool:
@@ -430,7 +430,7 @@ class ProjectRepoImpl(GitRepo):
         except GitError:
             LOG.error(f'No existing remote {fmt.remote(remote)}')
             if remove_dir:
-                remove_directory(self.repo_path, check=False)
+                fs.remove_dir(self.repo_path, ignore_errors=True)
             raise
 
     def _remote_get_url(self, remote: str) -> str:
@@ -473,7 +473,7 @@ class ProjectRepoImpl(GitRepo):
         except BaseException:
             LOG.error(f' - Failed to set tracking branch {fmt.ref(branch)}')
             if remove_dir:
-                remove_directory(self.repo_path, check=False)
+                fs.remove_dir(self.repo_path, ignore_errors=True)
             raise
 
     def _set_tracking_branch_commit(self, branch: str, remote: str, depth: int) -> None:

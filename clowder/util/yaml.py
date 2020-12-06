@@ -9,17 +9,17 @@ from pathlib import Path
 
 import jsonschema
 import yaml as pyyaml
+import pygoodle.filesystem as fs
+from pygoodle.console import CONSOLE
+from pygoodle.formatting import Format
+from pygoodle.yaml import InvalidYamlError
 
 import clowder.util.formatting as fmt
+from clowder.app import LOG
 from clowder.environment import ENVIRONMENT
-from clowder.util.console import CONSOLE
-from clowder.util.error import ExistingFileError, InvalidYamlError, MissingFileError
-from clowder.util.logging import LOG
+from clowder.util.error import ExistingFileError, MissingFileError
 
-from .file_system import (
-    symlink_clowder_yaml,
-    remove_file
-)
+from .file_system import symlink_clowder_yaml
 
 
 # TODO: Combine this function with link_clowder_yaml_version()
@@ -62,7 +62,7 @@ def link_clowder_yaml_default(clowder_dir: Path) -> None:
     if existing_file is not None and existing_file.is_symlink():
         CONSOLE.stdout(f" - Remove previously existing file {fmt.path(existing_file)}")
         try:
-            remove_file(existing_file)
+            fs.remove_file(existing_file)
         except OSError:
             LOG.error(f"Failed to remove file {fmt.path(existing_file)}")
             raise
@@ -88,7 +88,7 @@ def link_clowder_yaml_version(clowder_dir: Path, version: str) -> None:
     else:
         raise MissingFileError(f"{yml_relative_path} appears to be missing")
 
-    target_file = clowder_dir / fmt.remove_prefix(relative_source_file.name, f"{version}.")
+    target_file = clowder_dir / Format.remove_prefix(relative_source_file.name, f"{version}.")
 
     CONSOLE.stdout(f" - Symlink {fmt.path(Path(target_file.name))} -> {fmt.path(relative_source_file)}")
 
@@ -107,7 +107,7 @@ def link_clowder_yaml_version(clowder_dir: Path, version: str) -> None:
     if existing_file is not None and existing_file.is_symlink():
         CONSOLE.stdout(f" - Remove previously existing file {fmt.path(existing_file)}")
         try:
-            remove_file(existing_file)
+            fs.remove_file(existing_file)
         except OSError:
             LOG.error(f"Failed to remove file {fmt.path(existing_file)}")
             raise

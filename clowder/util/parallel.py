@@ -7,14 +7,12 @@
 from functools import partial
 from typing import Callable, Optional, Tuple
 
-from tqdm import tqdm
-import trio
+from pygoodle.console import CONSOLE
 
 import clowder.util.formatting as fmt
+from clowder.app import LOG
 from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.data import ResolvedProject
-from clowder.util.console import CONSOLE
-from clowder.util.logging import LOG
 
 
 def forall(projects: Tuple[ResolvedProject, ...], jobs: int, command: str, ignore_errors: bool) -> None:

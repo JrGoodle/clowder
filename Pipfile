@@ -19,11 +19,5 @@ twine = "*"
 virtualenv = "*"
 
 [packages]
-argcomplete = "*"
-colorama = "*"
-jsonschema = "*"
-rich = "*"
-tqdm = "*"
-trio = "*"
+pygoodle = {editable = true, path = "/Users/jrgoodle/projects/pygoodle"}
 GitPython = "*"
-PyYAML = "*"
