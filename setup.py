@@ -63,10 +63,14 @@ setup(
         'colorama',
         'jsonschema',
         'GitPython',
+        'pygoodle',
         'PyYAML',
         'rich',
         'tqdm',
         'trio'
+    ],
+    dependency_links=[
+        os.environ['PYGOODLE_PATH']
     ],
     tests_require=[
         'autopep8',
