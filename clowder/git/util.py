@@ -90,7 +90,7 @@ def get_default_branch_from_local(repo_path: Path, remote: str) -> Optional[str]
 
     try:
         command = ['git', 'symbolic-ref', f'refs/remotes/{remote}/HEAD']
-        result = run_commandcommand, repo_path, print_output=False)
+        result = run_command(command, repo_path, print_output=False)
         output: str = result.stdout
         output_list = output.split()
         branch = [Format.remove_prefix(chunk, f'refs/remotes/{remote}/') for chunk in output_list
@@ -106,7 +106,7 @@ def get_default_branch_from_remote(url: str) -> Optional[str]:
 
     try:
         command = ['git', 'ls-remote', '--symref', url, 'HEAD']
-        result = run_commandcommand, Path.cwd(), print_output=False)
+        result = run_command(command, Path.cwd(), print_output=False)
         output: str = result.stdout
         output_list = output.split()
         branch = [Format.remove_prefix(chunk, 'refs/heads/')

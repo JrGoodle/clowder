@@ -130,7 +130,7 @@ class ProjectRepoRecursive(ProjectRepo):
             command = f"git submodule update --init --recursive --depth {depth}"
 
         try:
-            run_commandcommand, self.repo_path)
+            run_command(command, self.repo_path)
         except CalledProcessError:
             LOG.error('Failed to update submodules')
             raise

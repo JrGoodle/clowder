@@ -5,11 +5,15 @@ set -euo pipefail
 cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.."
 . 'script/utils.sh'
 
+entry_point='clowder'
+package_name='clowder-repo'
+wheel_name="${package_name//-/_}"
+
 # FIXME: Get these asserts to work!
 # assert_git_branch 'master'
 # assert_git_clean
 
-VERSION_FILE='clowder/__init__.py'
+VERSION_FILE="${entry_point}/__init__.py"
 VERSION_MATCH_PATTERN="__version__ = '"
 VERSION=$(awk "/${VERSION_MATCH_PATTERN}/" "${VERSION_FILE}" | sed -n -e "s/^.*${VERSION_MATCH_PATTERN}//p" | tr -d "',")
 o "VERSION: ${VERSION}"
@@ -30,8 +34,8 @@ run "${PWD}/script/bootstrap"
 run pipenv install --deploy --dev
 
 h2 "Build distributions for ${VERSION}"
-DIST_WHEEL="${PWD}/dist/clowder_repo-${VERSION}-py3-none-any.whl"
-DIST_ARCHIVE="${PWD}/dist/clowder-repo-${VERSION}.tar.gz"
+DIST_WHEEL="${PWD}/dist/${wheel_name}-${VERSION}-py3-none-any.whl"
+DIST_ARCHIVE="${PWD}/dist/${package_name}-${VERSION}.tar.gz"
 
 h3 "Create source distribution for ${VERSION}"
 run pipenv run python setup.py sdist
@@ -47,7 +51,7 @@ gh release create "$VERSION" \
     "$DIST_WHEEL" \
     "$DIST_ARCHIVE" \
     --title "$VERSION" \
-    --notes "[${VERSION} on PyPI](https://pypi.org/project/clowder-repo/${VERSION}/)" \
+    --notes "[${VERSION} on PyPI](https://pypi.org/project/${package_name}/${VERSION}/)" \
     --target "$(current_commit)" \
     --prerelease
 

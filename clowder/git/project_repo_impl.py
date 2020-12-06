@@ -396,7 +396,7 @@ class ProjectRepoImpl(GitRepo):
 
         CONSOLE.stdout(f' - Pull from {fmt.remote(remote)} {fmt.ref(branch)}')
         try:
-            run_commandf"git pull {remote} {branch}", self.repo_path)
+            run_command(f"git pull {remote} {branch}", self.repo_path)
         except CalledProcessError:
             LOG.error(f'Failed to pull from {fmt.remote(remote)} {fmt.ref(branch)}')
             raise
@@ -412,7 +412,7 @@ class ProjectRepoImpl(GitRepo):
         CONSOLE.stdout(f' - Rebase onto {fmt.remote(remote)} {fmt.ref(branch)}')
         try:
             command = f"git pull --rebase {remote} refs/heads/{branch}:refs/remotes/{remote}/heads/{branch}"
-            run_commandcommand, self.repo_path)
+            run_command(command, self.repo_path)
         except CalledProcessError:
             LOG.error(f'Failed to rebase onto {fmt.remote(remote)} {fmt.ref(branch)}')
             raise

@@ -159,13 +159,13 @@ class GitRepo(object):
 
         try:
             if depth == 0:
-                run_commandf'git fetch {remote} --prune --tags', self.repo_path)
+                run_command(f'git fetch {remote} --prune --tags', self.repo_path)
             elif ref is None:
                 command = f'git fetch {remote} --depth {depth} --prune --tags'
-                run_commandcommand, self.repo_path)
+                run_command(command, self.repo_path)
             else:
                 command = f'git fetch {remote} {ref.short_ref} --depth {depth} --prune --tags'
-                run_commandcommand, self.repo_path)
+                run_command(command, self.repo_path)
         except BaseException as err:
             LOG.error(error_message)
             if remove_dir:
@@ -435,7 +435,7 @@ class GitRepo(object):
         command = 'git status -vv'
         CONSOLE.stdout(fmt.command(command))
         try:
-            run_commandcommand, self.repo_path)
+            run_command(command, self.repo_path)
         except CalledProcessError:
             LOG.error('Failed to print verbose status')
             raise
