@@ -26,14 +26,24 @@ def add_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
     parser.set_defaults(func=branch)
 
     add_parser_arguments(parser, [
-        (['projects'], dict(metavar='<project|group>', default='default', nargs='*',
-                            choices=CLOWDER_CONTROLLER.project_choices_with_default,
-                            help=fmt.project_options_help_message('projects and groups to show branches for')))
+        (['projects'], dict(
+            metavar='<project|group>',
+            default='default',
+            nargs='*',
+            choices=CLOWDER_CONTROLLER.project_choices_with_default,
+            help=fmt.project_options_help_message('projects and groups to show branches for')))
     ])
 
     add_parser_arguments(parser.add_mutually_exclusive_group(), [
-        (['--all', '-a'], dict(action='store_true', help='show local and remote branches')),
-        (['--remote', '-r'], dict(action='store_true', help='show remote branches'))
+        (['--all', '-a'], dict(
+            action='store_true',
+            help='show local and remote branches'
+        )),
+        (['--remote', '-r'], dict(
+            action='store_true',
+            help='show remote branches'
+
+        ))
     ])
 
 

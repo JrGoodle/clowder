@@ -1,4 +1,4 @@
-@init
+@init @debug
 Feature: clowder init
 
     @help @cats
@@ -66,7 +66,7 @@ Feature: clowder init
         And repo at .clowder is clean
         And default clowder version is linked
 
-    @fail @cats @debug
+    @fail @cats
     Scenario: init existing directory with contents
         Given test directory is empty
         And created directory .clowder

@@ -12,24 +12,24 @@ from clowder.log import LOG
 
 def main() -> None:
     subcommands = [
-        cmd.branch.add_parser,
-        cmd.checkout.add_parser,
-        cmd.clean.add_parser,
-        cmd.config.add_parser,
-        cmd.diff.add_parser,
-        cmd.forall.add_parser,
-        cmd.herd.add_parser,
-        cmd.init.add_parser,
-        cmd.link.add_parser,
-        cmd.plugins.add_parser,
-        cmd.prune.add_parser,
-        cmd.repo.add_parser,
-        cmd.reset.add_parser,
-        cmd.save.add_parser,
-        cmd.start.add_parser,
-        cmd.stash.add_parser,
-        cmd.status.add_parser,
-        cmd.yaml.add_parser
+        cmd.branch,
+        cmd.checkout,
+        cmd.clean,
+        cmd.config,
+        cmd.diff,
+        cmd.forall,
+        cmd.herd,
+        cmd.init,
+        cmd.link,
+        cmd.plugins,
+        cmd.prune,
+        cmd.repo,
+        cmd.reset,
+        cmd.save,
+        cmd.start,
+        cmd.stash,
+        cmd.status,
+        cmd.yaml
     ]
     arguments = [
         (['--debug', '-d'], dict(action='store_true', help='print debug output'))
