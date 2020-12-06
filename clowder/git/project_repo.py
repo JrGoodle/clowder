@@ -13,7 +13,7 @@ from pygoodle.connectivity import is_offline
 from pygoodle.console import CONSOLE
 
 import clowder.util.formatting as fmt
-from clowder.app import LOG
+from clowder.log import LOG
 from clowder.util.error import ClowderGitError, UnknownTypeError
 
 from .git_ref import GitRef, GitRefEnum

@@ -11,7 +11,7 @@ from pygoodle.connectivity import network_connection_required
 from pygoodle.console import CONSOLE
 from pygoodle.formatting import Format
 
-from clowder.app import LOG
+from clowder.log import LOG
 from clowder.environment import ENVIRONMENT
 from clowder.git.clowder_repo import ClowderRepo
 

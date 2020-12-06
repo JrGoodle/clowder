@@ -15,7 +15,7 @@ from pygoodle.formatting import Format
 from pygoodle.yaml import InvalidYamlError
 
 import clowder.util.formatting as fmt
-from clowder.app import LOG
+from clowder.log import LOG
 from clowder.environment import ENVIRONMENT
 from clowder.util.error import ExistingFileError, MissingFileError
 

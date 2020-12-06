@@ -13,7 +13,7 @@ from git import GitError, Remote, Repo, Tag
 from pygoodle.console import CONSOLE
 
 import clowder.util.formatting as fmt
-from clowder.app import LOG
+from clowder.log import LOG
 from clowder.util.error import ClowderGitError
 from clowder.util.execute import execute_command
 

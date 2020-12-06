@@ -14,7 +14,7 @@ from pygoodle.console import CONSOLE
 from pygoodle.formatting import Format
 
 import clowder.util.formatting as fmt
-from clowder.app import LOG
+from clowder.log import LOG
 from clowder.environment import ENVIRONMENT
 from clowder.util.error import DuplicateVersionsError
 from clowder.util.execute import execute_command

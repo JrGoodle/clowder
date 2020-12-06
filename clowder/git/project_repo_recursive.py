@@ -11,7 +11,7 @@ from typing import Optional
 from git import GitError
 from pygoodle.console import CONSOLE
 
-from clowder.app import LOG
+from clowder.log import LOG
 from clowder.util.execute import execute_command
 
 from .git_ref import GitRef

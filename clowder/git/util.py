@@ -13,7 +13,7 @@ import pygoodle.filesystem as fs
 from pygoodle.console import CONSOLE
 from pygoodle.formatting import Format
 
-from clowder.app import LOG
+from clowder.log import LOG
 from clowder.util.execute import execute_command
 
 

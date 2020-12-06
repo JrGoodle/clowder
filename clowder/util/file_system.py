@@ -10,7 +10,7 @@ from pathlib import Path
 import pygoodle.filesystem as fs
 
 import clowder.util.formatting as fmt
-from clowder.app import LOG
+from clowder.log import LOG
 from clowder.util.error import ExistingFileError, MissingSourceError
 
 

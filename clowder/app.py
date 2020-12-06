@@ -5,15 +5,13 @@
 """
 
 from pygoodle.app import App
-from pygoodle.logging import Log
 
 import clowder.cli as cmd
-
-LOG = Log('CLOWDER')
+from clowder.log import LOG
 
 
 def main() -> None:
-    app = App('clowder-repo', entry_point='clowder', subcommands=[
+    subcommands = [
         cmd.add_branch_parser,
         cmd.add_checkout_parser,
         cmd.add_clean_parser,
@@ -32,7 +30,11 @@ def main() -> None:
         cmd.add_stash_parser,
         cmd.add_status_parser,
         cmd.add_yaml_parser
-    ])
+    ]
+    arguments = [
+        (['--debug', '-d'], dict(action='store_true', help='print debug output'))
+    ]
+    app = App('clowder-repo', entry_point='clowder', arguments=arguments, subcommands=subcommands)
 
     def process_args(args) -> None:
         if 'projects' in args:

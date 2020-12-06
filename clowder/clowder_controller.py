@@ -13,7 +13,7 @@ from pygoodle.tasks import Task, TaskPool
 from pygoodle.yaml import MissingYamlError
 
 import clowder.util.formatting as fmt
-from clowder.app import LOG
+from clowder.log import LOG
 from clowder.environment import ENVIRONMENT
 from clowder.git.util import get_default_branch
 from clowder.data import ResolvedProject, SOURCE_CONTROLLER
