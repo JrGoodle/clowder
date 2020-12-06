@@ -8,8 +8,8 @@ import subprocess
 from subprocess import CompletedProcess, STDOUT, PIPE
 from pathlib import Path
 
-import clowder.util.formatting as fmt
-from clowder.util.console import CONSOLE
+from pygoodle.console import CONSOLE
+from pygoodle.formatting import Format
 
 
 class CommandResults:
@@ -21,7 +21,7 @@ def run_command(command: str, path: Path, check: bool = False) -> CompletedProce
     cmd_env = os.environ.copy()
     cmd_env.update({"CLOWDER_DEBUG": "true"})
     processed_cmd = _process_clowder_commands(command)
-    CONSOLE.stdout(fmt.bold(f'> {processed_cmd}'))
+    CONSOLE.stdout(Format.bold(f'> {processed_cmd}'))
 
     # TODO: Replace universal_newlines with text when Python 3.6 support is dropped
     result = subprocess.run(processed_cmd, cwd=path, shell=True, stdout=PIPE, stderr=STDOUT,
