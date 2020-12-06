@@ -8,11 +8,20 @@ from functools import partial
 from typing import Callable, Optional, Tuple
 
 from pygoodle.console import CONSOLE
-
-import clowder.util.formatting as fmt
-from clowder.app import LOG
+from pygoodle.formatting import Format
+from pygoodle.tasks import ProgressTask, ProgressTaskPool
 from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.data import ResolvedProject
+
+
+class ForallTask(ProgressTask):
+    def __init__(self, project: ResolvedProject, func: str, **kwargs):
+        project_func = getattr(project, func)
+        self._func: Callable = partial(project_func, **kwargs)
+        super().__init__(str(project.path))
+
+    def run(self) -> None:
+        self._func()
 
 
 def forall(projects: Tuple[ResolvedProject, ...], jobs: int, command: str, ignore_errors: bool) -> None:
@@ -28,10 +37,11 @@ def forall(projects: Tuple[ResolvedProject, ...], jobs: int, command: str, ignor
     for project in projects:
         CONSOLE.stdout(project.status())
         if not project.full_path.is_dir():
-            CONSOLE.stdout(fmt.red(" - Project missing"))
+            CONSOLE.stdout(Format.red(" - Project missing"))
 
-    forall_func = partial(run_parallel, jobs, projects, 'run', command=command, ignore_errors=ignore_errors)
-    trio.run(forall_func)
+    tasks = [ForallTask(p, 'run', command=command, ignore_errors=ignore_errors) for p in projects]
+    pool = ProgressTaskPool(jobs=jobs, title='Projects')
+    pool.run(tasks)
 
 
 def herd(projects: Tuple[ResolvedProject, ...], jobs: int, branch: Optional[str] = None,
@@ -49,8 +59,9 @@ def herd(projects: Tuple[ResolvedProject, ...], jobs: int, branch: Optional[str]
     CONSOLE.stdout(' - Herd projects in parallel\n')
     CLOWDER_CONTROLLER.validate_print_output(projects)
 
-    run_func = partial(run_parallel, jobs, projects, 'herd', branch=branch, tag=tag, depth=depth, rebase=rebase)
-    trio.run(run_func)
+    tasks = [ForallTask(p, 'herd', branch=branch, tag=tag, depth=depth, rebase=rebase) for p in projects]
+    pool = ProgressTaskPool(jobs=jobs, title='Projects')
+    pool.run(tasks)
 
 
 def reset(projects: Tuple[ResolvedProject, ...], jobs: int, timestamp_project: Optional[str] = None) -> None:
@@ -68,33 +79,6 @@ def reset(projects: Tuple[ResolvedProject, ...], jobs: int, timestamp_project: O
     if timestamp_project:
         timestamp = CLOWDER_CONTROLLER.get_timestamp(timestamp_project)
 
-    reset_func = partial(run_parallel, jobs, projects, 'reset', timestamp=timestamp)
-    trio.run(reset_func)
-
-
-async def run_parallel(jobs: int, projects: Tuple[ResolvedProject, ...], func_name: str, **kwargs) -> None:
-    limit = trio.CapacityLimiter(jobs)
-    unit = 'projects'
-    base_bar_format = '{desc} {percentage:3.0f}%|{bar}| {n_fmt}/{total_fmt}'
-    bar_format = f'{base_bar_format} {unit}'
-    CONSOLE.print_output = False
-    try:
-        with tqdm(total=len(projects), desc=unit, unit=unit, bar_format=bar_format) as progress:
-            async with trio.open_nursery() as nursery:
-                for project in projects:
-                    await limit.acquire_on_behalf_of(project)
-                    func = getattr(project, func_name)
-                    project_func = partial(func, **kwargs)
-                    nursery.start_soon(run_sync, project_func, limit, project, progress)
-    except BaseException:
-        CONSOLE.print_output = True
-        raise
-    CONSOLE.print_output = True
-
-
-async def run_sync(func: Callable, limit: trio.CapacityLimiter, project: ResolvedProject, progress: tqdm) -> None:
-    LOG.debug(f'START PARALLEL {project.name}')
-    await trio.to_thread.run_sync(func, limiter=limit)
-    limit.release_on_behalf_of(project)
-    progress.update()
-    LOG.debug(f'END PARALLEL {project.name}')
+    tasks = [ForallTask(p, 'reset', timestamp=timestamp) for p in projects]
+    pool = ProgressTaskPool(jobs=jobs, title='Projects')
+    pool.run(tasks)

@@ -56,6 +56,8 @@ def not_detached(func):
 def get_default_branch(repo_path: Path, remote: str, url: str) -> str:
     """Get default branch"""
 
+    # FIXME: Need to distinguish between project and upstream
+    # Upstream shouldn't save to disk, unless there's a convention for that
     if existing_git_repo(repo_path):
         default_branch = get_default_branch_from_local(repo_path, remote)
         if default_branch is not None:

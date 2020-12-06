@@ -9,17 +9,18 @@ from pathlib import Path
 from typing import Optional, Tuple
 
 from pygoodle.console import CONSOLE
+from pygoodle.tasks import Task, TaskPool
+from pygoodle.yaml import MissingYamlError
 
 import clowder.util.formatting as fmt
 from clowder.app import LOG
 from clowder.environment import ENVIRONMENT
 from clowder.git.util import get_default_branch
-from clowder.data import ResolvedProject, ResolvedUpstream, SOURCE_CONTROLLER
+from clowder.data import ResolvedProject, SOURCE_CONTROLLER
 from clowder.data.model import ClowderBase
 from clowder.util.error import (
     ClowderGitError,
     DuplicatePathError,
-    MissingYamlError,
     ProjectNotFoundError,
     ProjectStatusError
 )
@@ -371,31 +372,25 @@ class ClowderController(object):
     def _populate_default_branches(self) -> None:
         """Get default branch"""
 
-        trio.run(_populate_default_branches, self.projects)
+        class DefaultBranchTask(Task):
+            def __init__(self, project: ResolvedProject):
+                self._project: ResolvedProject = project
+                super().__init__(str(self._project.path))
 
+            def run(self) -> None:
+                if self._project.ref is None:
+                    default_branch = get_default_branch(self._project.full_path,
+                                                        self._project.remote,
+                                                        self._project.url)
+                    self._project.update_default_branch(default_branch)
+                if self._project.upstream is not None and self._project.upstream.ref is None:
+                    upstream = self._project.upstream
+                    default_branch = get_default_branch(upstream.full_path, upstream.remote, upstream.url)
+                    upstream.update_default_branch(default_branch)
 
-async def _populate_default_branches(projects: Tuple[ResolvedProject, ...]) -> None:
-    CONSOLE.print_output = False
-    async with trio.open_nursery() as nursery:
-        for project in projects:
-            if project.ref is None:
-                nursery.start_soon(_populate_default_project_branch, project)
-            if project.upstream is not None and project.upstream.ref is None:
-                nursery.start_soon(_populate_default_upstream_branch, project.upstream)
-    CONSOLE.print_output = True
-
-
-async def _populate_default_project_branch(project: ResolvedProject) -> None:
-    default_branch = await trio.to_thread.run_sync(get_default_branch, project.full_path, project.remote, project.url)
-    project.update_default_branch(default_branch)
-
-
-async def _populate_default_upstream_branch(upstream: ResolvedUpstream) -> None:
-    default_branch = await trio.to_thread.run_sync(get_default_branch,
-                                                   upstream.full_path,
-                                                   upstream.remote,
-                                                   upstream.url)
-    upstream.update_default_branch(default_branch)
+        pool = TaskPool(jobs=5)
+        tasks = [DefaultBranchTask(project) for project in self.projects]
+        pool.run(tasks)
 
 
 CLOWDER_CONTROLLER: ClowderController = ClowderController()

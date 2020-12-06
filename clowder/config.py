@@ -9,14 +9,15 @@ from enum import auto, unique
 from functools import wraps
 from typing import Any, List, Optional, Tuple
 
+import pygoodle.filesystem as fs
 from pygoodle.console import CONSOLE
 from pygoodle.enum import AutoLowerName
+from pygoodle.formatting import Format
 
 import clowder.util.formatting as fmt
 from clowder.environment import ENVIRONMENT
 from clowder.git import GitProtocol
 from clowder.util.error import MissingFileError, UnknownProjectError
-from clowder.util.file_system import remove_file
 
 
 def print_config(func):
@@ -141,7 +142,7 @@ class Config(object):
         """Clear all config settings"""
 
         if ENVIRONMENT.clowder_config is not None and ENVIRONMENT.clowder_config.exists():
-            remove_file(ENVIRONMENT.clowder_config)
+            fs.remove_file(ENVIRONMENT.clowder_config)
 
     @staticmethod
     def print_config() -> None:
@@ -151,9 +152,9 @@ class Config(object):
             CONSOLE.stdout(' - No config file found')
             return
 
-        CONSOLE.stdout(fmt.bold('Current config\n'))
+        CONSOLE.stdout(Format.bold('Current config\n'))
         text = ENVIRONMENT.clowder_config.read_text()
-        CONSOLE.stdout(fmt.escape(f"{text.strip()}\n"))
+        CONSOLE.stdout(Format.escape(f"{text.strip()}\n"))
 
     def process_projects_arg(self, projects: List[str]) -> Tuple[str, ...]:
         """Process project args based on parameters and config
