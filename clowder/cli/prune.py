@@ -19,7 +19,7 @@ from clowder.git.clowder_repo import print_clowder_repo_status
 from clowder.util.error import CommandArgumentError
 
 
-def add_prune_parser(subparsers: argparse._SubParsersAction):  # noqa
+def add_parser(subparsers: argparse._SubParsersAction):  # noqa
     """Add clowder prune parser
 
     :param argparse._SubParsersAction subparsers: Subparsers action to add parser to

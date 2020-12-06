@@ -14,7 +14,7 @@ from clowder.environment import clowder_repo_required, ENVIRONMENT
 from clowder.clowder_controller import valid_clowder_yaml_required
 
 
-def add_plugins_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
+def add_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
     """Add clowder plugins parser
 
     :param argparse._SubParsersAction subparsers: Subparsers action to add parser to

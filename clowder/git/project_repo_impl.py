@@ -334,8 +334,7 @@ class ProjectRepoImpl(GitRepo):
 
         try:
             CONSOLE.stdout(f' - Initialize repo at {fmt.path(self.repo_path)}')
-            if not self.repo_path.is_dir():
-                fs.make_dir(self.repo_path)
+            fs.make_dir(self.repo_path, exist_ok=True)
             self.repo = Repo.init(self.repo_path)
         except BaseException:
             LOG.error('Failed to initialize repository')

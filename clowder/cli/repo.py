@@ -14,7 +14,7 @@ from clowder.environment import clowder_git_repo_required, clowder_repo_required
 from clowder.git.clowder_repo import ClowderRepo, print_clowder_repo_status, print_clowder_repo_status_fetch
 
 
-def add_repo_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
+def add_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
     """Add clowder repo parser
 
     :param argparse._SubParsersAction subparsers: Subparsers action to add parser to

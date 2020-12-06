@@ -79,7 +79,7 @@ def save_default_branch(repo_path: Path, remote: str, branch: str) -> None:
         return
     remote_head_ref = git_dir / 'refs' / 'remotes' / remote / 'HEAD'
     if not remote_head_ref.exists():
-        fs.make_dir(remote_head_ref.parent)
+        fs.make_dir(remote_head_ref.parent, exist_ok=True)
         contents = f'ref: refs/remotes/{remote}/{branch}'
         remote_head_ref.touch()
         remote_head_ref.write_text(contents)

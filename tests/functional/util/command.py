@@ -1,15 +1,12 @@
 """New syntax test file"""
 
+import re
+from pathlib import Path
+from subprocess import CompletedProcess
 from typing import List
 
-import os
-import re
-import subprocess
-from subprocess import CompletedProcess, STDOUT, PIPE
-from pathlib import Path
-
+import pygoodle.command as cmd
 from pygoodle.console import CONSOLE
-from pygoodle.format import Format
 
 
 class CommandResults:
@@ -17,15 +14,10 @@ class CommandResults:
         self.completed_processes: List[CompletedProcess] = []
 
 
-def run_command(command: str, path: Path, check: bool = False) -> CompletedProcess:
-    cmd_env = os.environ.copy()
-    cmd_env.update({"CLOWDER_DEBUG": "true"})
-    processed_cmd = _process_clowder_commands(command)
-    CONSOLE.stdout(Format.bold(f'> {processed_cmd}'))
-
-    # TODO: Replace universal_newlines with text when Python 3.6 support is dropped
-    result = subprocess.run(processed_cmd, cwd=path, shell=True, stdout=PIPE, stderr=STDOUT,
-                            universal_newlines=True, env=cmd_env)
+def run_command(command: str, cwd: Path, check: bool = False) -> CompletedProcess:
+    env = {"DEBUG": "true"}
+    processed_command = _process_clowder_commands(command)
+    result = cmd.run_command(processed_command, cwd=cwd, check=check, print_output=False, print_command=True, env=env)
 
     output = result.stdout.strip()
     if output:

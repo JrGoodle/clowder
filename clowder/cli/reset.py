@@ -18,7 +18,7 @@ from clowder.config import Config
 from clowder.git.clowder_repo import print_clowder_repo_status_fetch
 
 
-def add_reset_parser(subparsers: argparse._SubParsersAction):  # noqa
+def add_parser(subparsers: argparse._SubParsersAction):  # noqa
     """Add clowder reset parser
 
     :param argparse._SubParsersAction subparsers: Subparsers action to add parser to

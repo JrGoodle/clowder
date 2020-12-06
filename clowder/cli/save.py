@@ -18,7 +18,11 @@ from clowder.util.error import DefaultVersionError, ExistingVersionError
 from clowder.util.yaml import save_yaml_file
 
 
-def add_save_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
+def add_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
+    """Add clowder save parser
+
+    :param argparse._SubParsersAction subparsers: Subparsers action to add parser to
+    """
 
     parser = subparsers.add_parser('save', help='Create clowder yaml version for current repos')
     parser.formatter_class = argparse.RawTextHelpFormatter
@@ -52,8 +56,7 @@ def save(args) -> None:
     version_name = args.version.lower().replace('/', '-')
 
     versions_dir = ENVIRONMENT.clowder_repo_versions_dir
-    if not versions_dir.exists():
-        fs.make_dir(versions_dir)
+    fs.make_dir(versions_dir, exist_ok=True)
 
     yml_file = versions_dir / f"{version_name}.clowder.yml"
     yaml_file = versions_dir / f"{version_name}.clowder.yaml"

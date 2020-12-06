@@ -19,7 +19,7 @@ from clowder.git import GitProtocol
 from clowder.git.clowder_repo import print_clowder_repo_status_fetch
 
 
-def add_herd_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
+def add_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
     """Add clowder herd parser
 
     :param argparse._SubParsersAction subparsers: Subparsers action to add parser to

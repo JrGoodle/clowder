@@ -7,9 +7,9 @@ from typing import Dict, List, Optional
 
 import pygoodle.filesystem as fs
 from git import Repo
-from pygoodle.command import run_command
 from pygoodle.format import Format
 
+from .command import run_command
 from .scenario_info import ScenarioInfo
 
 

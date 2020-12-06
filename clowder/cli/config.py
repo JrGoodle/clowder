@@ -15,7 +15,7 @@ from clowder.config import Config, print_config
 from clowder.git import GitProtocol
 
 
-def add_config_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
+def add_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
     """Add clowder config parser
 
     :param argparse._SubParsersAction subparsers: Subparsers action to add parser to

@@ -15,7 +15,7 @@ from clowder.config import Config
 from clowder.git.clowder_repo import print_clowder_repo_status
 
 
-def add_diff_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
+def add_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
     """Add clowder diff parser
 
     :param argparse._SubParsersAction subparsers: Subparsers action to add parser to

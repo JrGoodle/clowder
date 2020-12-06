@@ -16,7 +16,11 @@ from clowder.environment import ENVIRONMENT
 from clowder.git.clowder_repo import ClowderRepo
 
 
-def add_init_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
+def add_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
+    """Add clowder init parser
+
+    :param argparse._SubParsersAction subparsers: Subparsers action to add parser to
+    """
 
     parser = subparsers.add_parser('init', help='Clone repository to clowder directory and create clowder yaml symlink')
     parser.set_defaults(func=init)

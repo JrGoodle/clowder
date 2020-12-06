@@ -16,7 +16,7 @@ from clowder.util.error import ExistingSymlinkError
 from clowder.util.yaml import link_clowder_yaml_default, link_clowder_yaml_version
 
 
-def add_link_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
+def add_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
     """Add clowder link parser
 
     :param argparse._SubParsersAction subparsers: Subparsers action to add parser to

@@ -1,4 +1,4 @@
-@herd @debug
+@herd
 Feature: clowder herd
 
 # TODO: Add parallel tests
