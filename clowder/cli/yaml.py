@@ -6,11 +6,11 @@
 
 import argparse
 
-from clowder.clowder_controller import CLOWDER_CONTROLLER, valid_clowder_yaml_required
-from clowder.util.console import CONSOLE
-from clowder.util.yaml import yaml_string
+from pygoodle.cli import add_parser_arguments
+from pygoodle.console import CONSOLE
 
-from .util import add_parser_arguments
+from clowder.clowder_controller import CLOWDER_CONTROLLER, valid_clowder_yaml_required
+from clowder.util.yaml import yaml_string
 
 
 def add_yaml_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa

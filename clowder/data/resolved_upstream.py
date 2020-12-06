@@ -7,10 +7,11 @@
 from pathlib import Path
 from typing import Any, Optional
 
+from pygoodle.formatting import Format
+
 from clowder.environment import ENVIRONMENT
 from clowder.git import GitProtocol, GitRef, ProjectRepo
 from clowder.git.util import existing_git_repo
-import clowder.util.formatting as fmt
 
 from .model import Defaults, Section, Source, Upstream
 from .source_controller import SOURCE_CONTROLLER, GITHUB
@@ -77,7 +78,7 @@ class ResolvedUpstream:
         """
 
         if not existing_git_repo(self.path):
-            return fmt.green(self.path)
+            return Format.green(self.path)
 
         repo = ProjectRepo(self.full_path, self.remote, self.ref)
         project_output = repo.format_project_string(self.path)

@@ -6,16 +6,16 @@
 
 import argparse
 
+import pygoodle.filesystem as fs
+from pygoodle.cli import add_parser_arguments
+from pygoodle.console import CONSOLE
+
 import clowder.util.formatting as fmt
 from clowder.clowder_controller import CLOWDER_CONTROLLER, print_clowder_name, valid_clowder_yaml_required
 from clowder.environment import clowder_repo_required, ENVIRONMENT
 from clowder.git.clowder_repo import ClowderRepo
-from clowder.util.console import CONSOLE
 from clowder.util.error import DefaultVersionError, ExistingVersionError
-from clowder.util.file_system import make_dir
 from clowder.util.yaml import save_yaml_file
-
-from .util import add_parser_arguments
 
 
 def add_save_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
@@ -53,7 +53,7 @@ def save(args) -> None:
 
     versions_dir = ENVIRONMENT.clowder_repo_versions_dir
     if not versions_dir.exists():
-        make_dir(versions_dir)
+        fs.make_dir(versions_dir)
 
     yml_file = versions_dir / f"{version_name}.clowder.yml"
     yaml_file = versions_dir / f"{version_name}.clowder.yaml"

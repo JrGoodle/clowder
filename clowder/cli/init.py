@@ -6,14 +6,14 @@
 
 import argparse
 
-import clowder.util.formatting as fmt
+from pygoodle.cli import add_parser_arguments
+from pygoodle.connectivity import network_connection_required
+from pygoodle.console import CONSOLE
+from pygoodle.formatting import Format
+
+from clowder.app import LOG
 from clowder.environment import ENVIRONMENT
 from clowder.git.clowder_repo import ClowderRepo
-from clowder.util.console import CONSOLE
-from clowder.util.logging import LOG
-from clowder.util.connectivity import network_connection_required
-
-from .util import add_parser_arguments
 
 
 def add_init_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
@@ -39,7 +39,7 @@ def init(args) -> None:
             LOG.error("Clowder already initialized in this directory")
             raise
 
-    CONSOLE.stdout(f"Create clowder repo from {fmt.green(args.url)}\n")
+    CONSOLE.stdout(f"Create clowder repo from {Format.green(args.url)}\n")
     if args.branch is None:
         branch = 'master'
     else:

@@ -9,7 +9,12 @@ from pathlib import Path
 from subprocess import CalledProcessError
 from typing import Any, Optional, Set
 
+from pygoodle.connectivity import is_offline
+from pygoodle.console import CONSOLE
+from pygoodle.formatting import Format
+
 import clowder.util.formatting as fmt
+from clowder.app import LOG
 from clowder.environment import ENVIRONMENT
 from clowder.git import (
     GitProtocol,
@@ -18,11 +23,8 @@ from clowder.git import (
     ProjectRepoRecursive
 )
 from clowder.git.util import existing_git_repo
-from clowder.util.connectivity import is_offline
-from clowder.util.console import CONSOLE
 from clowder.util.error import DuplicateRemoteError
 from clowder.util.execute import execute_forall_command
-from clowder.util.logging import LOG
 
 from .resolved_git_settings import ResolvedGitSettings
 from .resolved_upstream import ResolvedUpstream
@@ -39,7 +41,7 @@ def project_repo_exists(func):
 
         instance = args[0]
         if not Path(instance.full_path / '.git').is_dir():
-            CONSOLE.stdout(fmt.red("- Project missing"))
+            CONSOLE.stdout(Format.red("- Project missing"))
             return
         return func(*args, **kwargs)
 
@@ -371,7 +373,7 @@ class ResolvedProject:
         """
 
         if not existing_git_repo(self.full_path):
-            CONSOLE.stdout(fmt.red(" - Project missing\n"))
+            CONSOLE.stdout(Format.red(" - Project missing\n"))
             return
 
         forall_env = {'CLOWDER_PATH': ENVIRONMENT.clowder_dir,
@@ -426,10 +428,10 @@ class ResolvedProject:
             project_output = self.name
             if padding:
                 project_output = project_output.ljust(padding)
-                project_output = fmt.green(project_output)
-                missing_output = fmt.red('-')
+                project_output = Format.green(project_output)
+                missing_output = Format.red('-')
                 return f'{project_output} {missing_output}'
-            project_output = fmt.green(project_output)
+            project_output = Format.green(project_output)
             return project_output
 
         project_output = self.repo.format_project_string(self.path)

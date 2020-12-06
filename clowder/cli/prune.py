@@ -7,16 +7,16 @@
 import argparse
 from typing import List, Tuple
 
+from pygoodle.cli import add_parser_arguments
+from pygoodle.connectivity import network_connection_required
+from pygoodle.console import CONSOLE
+
 import clowder.util.formatting as fmt
 from clowder.clowder_controller import CLOWDER_CONTROLLER, print_clowder_name, valid_clowder_yaml_required
 from clowder.config import Config
 from clowder.data import ResolvedProject
 from clowder.git.clowder_repo import print_clowder_repo_status
-from clowder.util.connectivity import network_connection_required
-from clowder.util.console import CONSOLE
 from clowder.util.error import CommandArgumentError
-
-from .util import add_parser_arguments
 
 
 def add_prune_parser(subparsers: argparse._SubParsersAction):  # noqa
@@ -37,10 +37,6 @@ def add_prune_parser(subparsers: argparse._SubParsersAction):  # noqa
         (['--force', '-f'], dict(action='store_true', help='force prune branches'))
     ])
 
-    mutually_exclusive_arguments = [
-        (['--all', '-a'], dict(action='store_true', help='prune local and remote branches')),
-        (['--remote', '-r'], dict(action='store_true', help='prune remote branches'))
-    ]
     add_parser_arguments(parser.add_mutually_exclusive_group(), [
         (['--all', '-a'], dict(action='store_true', help='prune local and remote branches')),
         (['--remote', '-r'], dict(action='store_true', help='prune remote branches'))

@@ -6,7 +6,9 @@
 
 from typing import List, Optional, Union
 
-from clowder.util.error import InvalidYamlError, UnknownTypeError
+from pygoodle.yaml import InvalidYamlError
+
+from clowder.util.error import UnknownTypeError
 
 from .section import Section
 from .project import Project

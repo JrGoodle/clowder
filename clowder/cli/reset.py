@@ -8,14 +8,14 @@ import argparse
 import os
 from typing import List, Optional
 
+from pygoodle.cli import add_parser_arguments
+from pygoodle.connectivity import network_connection_required
+
 import clowder.util.formatting as fmt
 import clowder.util.parallel as parallel
 from clowder.clowder_controller import CLOWDER_CONTROLLER, print_clowder_name, valid_clowder_yaml_required
 from clowder.config import Config
 from clowder.git.clowder_repo import print_clowder_repo_status_fetch
-from clowder.util.connectivity import network_connection_required
-
-from .util import add_parser_arguments
 
 
 def add_reset_parser(subparsers: argparse._SubParsersAction):  # noqa
