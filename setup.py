@@ -68,9 +68,6 @@ setup(
         'tqdm',
         'trio'
     ],
-    # dependency_links=[
-    #     os.environ['PYGOODLE_PATH']
-    # ],
     tests_require=[
         'autopep8',
         'coverage',

@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "9966c9eb03e004235f7f67b19e12db565ecdf407bc5815fd21819aea4af775e5"
+            "sha256": "9d534249887800541fa5ae34461db910cb46e82c37d25e568ef2c7a6a942c1fb"
         },
         "pipfile-spec": 6,
         "requires": {},
@@ -247,15 +247,15 @@
         },
         "pygments": {
             "hashes": [
-                "sha256:381985fcc551eb9d37c52088a32914e00517e57f4a21609f48141ba08e193fa0",
-                "sha256:88a0bbcd659fcb9573703957c6b9cff9fab7295e6e76db54c9d00ae42df32773"
+                "sha256:ccf3acacf3782cbed4a989426012f1c535c9a90d3a7fc3f16d231b9372d2b716",
+                "sha256:f275b6c0909e5dafd2d6269a656aa90fa58ebf4a74f8fcf9053195d226b24a08"
             ],
             "markers": "python_version >= '3.5'",
-            "version": "==2.7.2"
+            "version": "==2.7.3"
         },
         "pygoodle": {
-            "editable": true,
-            "path": "/Users/jrgoodle/projects/pygoodle"
+            "git": "ssh://git@github.com/JrGoodle/pygoodle",
+            "ref": "de1bf957edd18f6f54c9cdd9889b18b9e1dfade9"
         },
         "pynacl": {
             "hashes": [
@@ -685,11 +685,11 @@
         },
         "pygments": {
             "hashes": [
-                "sha256:381985fcc551eb9d37c52088a32914e00517e57f4a21609f48141ba08e193fa0",
-                "sha256:88a0bbcd659fcb9573703957c6b9cff9fab7295e6e76db54c9d00ae42df32773"
+                "sha256:ccf3acacf3782cbed4a989426012f1c535c9a90d3a7fc3f16d231b9372d2b716",
+                "sha256:f275b6c0909e5dafd2d6269a656aa90fa58ebf4a74f8fcf9053195d226b24a08"
             ],
             "markers": "python_version >= '3.5'",
-            "version": "==2.7.2"
+            "version": "==2.7.3"
         },
         "pyparsing": {
             "hashes": [
