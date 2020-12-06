@@ -9,7 +9,7 @@ import argparse
 from pygoodle.cli import add_parser_arguments
 from pygoodle.connectivity import network_connection_required
 from pygoodle.console import CONSOLE
-from pygoodle.formatting import Format
+from pygoodle.format import Format
 
 from clowder.log import LOG
 from clowder.environment import ENVIRONMENT

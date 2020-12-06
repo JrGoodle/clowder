@@ -11,7 +11,7 @@ import jsonschema
 import yaml as pyyaml
 import pygoodle.filesystem as fs
 from pygoodle.console import CONSOLE
-from pygoodle.formatting import Format
+from pygoodle.format import Format
 from pygoodle.yaml import InvalidYamlError
 
 import clowder.util.formatting as fmt

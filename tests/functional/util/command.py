@@ -9,7 +9,7 @@ from subprocess import CompletedProcess, STDOUT, PIPE
 from pathlib import Path
 
 from pygoodle.console import CONSOLE
-from pygoodle.formatting import Format
+from pygoodle.format import Format
 
 
 class CommandResults:

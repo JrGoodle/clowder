@@ -4,10 +4,10 @@ import shutil
 from pathlib import Path
 from typing import Dict, List, Optional
 
+import pygoodle.filesystem as fs
 from git import Repo
 
 from .command import run_command
-from .file_system import is_relative_symlink_from_to
 from .git import has_git_directory, is_dirty, is_on_active_branch
 
 
@@ -165,7 +165,7 @@ def has_valid_clowder_symlink_version(path: Path, version: str) -> bool:
         return False
 
     version_path = f".clowder/versions/{version}.{symlink.stem}{symlink.suffix}"
-    return is_relative_symlink_from_to(symlink, version_path)
+    return fs.is_relative_symlink_from_to(symlink, version_path)
 
 
 def has_valid_clowder_symlink_default(path: Path) -> bool:
@@ -174,7 +174,7 @@ def has_valid_clowder_symlink_default(path: Path) -> bool:
         return False
 
     destination_path = f"{symlink.stem}{symlink.suffix}"
-    return is_relative_symlink_from_to(symlink, destination_path)
+    return fs.is_relative_symlink_from_to(symlink, destination_path)
 
 
 def has_clowder_version(path: Path, version: str) -> bool:

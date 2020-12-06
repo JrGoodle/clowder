@@ -8,7 +8,7 @@ from functools import partial
 from typing import Callable, Optional, Tuple
 
 from pygoodle.console import CONSOLE
-from pygoodle.formatting import Format
+from pygoodle.format import Format
 from pygoodle.tasks import ProgressTask, ProgressTaskPool
 from clowder.clowder_controller import CLOWDER_CONTROLLER
 from clowder.data import ResolvedProject
@@ -18,7 +18,7 @@ class ForallTask(ProgressTask):
     def __init__(self, project: ResolvedProject, func: str, **kwargs):
         project_func = getattr(project, func)
         self._func: Callable = partial(project_func, **kwargs)
-        super().__init__(str(project.path))
+        super().__init__(str(project.path), start=False)
 
     def run(self) -> None:
         self._func()

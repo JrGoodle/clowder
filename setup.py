@@ -49,8 +49,7 @@ setup(
     packages=find_packages(exclude=['tests.*']),
     package_data={
         "clowder.util": [
-            "clowder.schema.json",
-            "clowder.config.schema.json"
+            "clowder.schema.json"
         ],
     },
     entry_points={
@@ -63,15 +62,15 @@ setup(
         'colorama',
         'jsonschema',
         'GitPython',
-        'pygoodle',
+        'pygoodle @ git+ssh://git@github.com/JrGoodle/pygoodle#egg=pygoodle'
         'PyYAML',
         'rich',
         'tqdm',
         'trio'
     ],
-    dependency_links=[
-        os.environ['PYGOODLE_PATH']
-    ],
+    # dependency_links=[
+    #     os.environ['PYGOODLE_PATH']
+    # ],
     tests_require=[
         'autopep8',
         'coverage',

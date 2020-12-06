@@ -3,20 +3,21 @@
 from pathlib import Path
 from pytest_bdd import when, parsers
 
+from pygoodle.connectivity import get_gateway_ip_address, disable_network_connection, enable_network_connection
 import tests.functional.util as util
 from tests.functional.util import CommandResults, ScenarioInfo
 
 
 @when("the network connection is disabled")
 def when_network_connection_disabled(scenario_info: ScenarioInfo) -> None:
-    scenario_info.gateway_address = util.get_gateway_ip_address()
+    scenario_info.gateway_address = get_gateway_ip_address()
     scenario_info.offline = True
-    util.disable_network_connection()
+    disable_network_connection()
 
 
 @when("the network connection is enabled")
 def when_network_connection_enabled(scenario_info: ScenarioInfo) -> None:
-    util.enable_network_connection(scenario_info.gateway_address)
+    enable_network_connection(scenario_info.gateway_address)
 
 
 @when(parsers.parse("I change to directory {subdirectory}"))

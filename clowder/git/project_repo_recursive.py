@@ -9,10 +9,10 @@ from subprocess import CalledProcessError
 from typing import Optional
 
 from git import GitError
+from pygoodle.command import run_command
 from pygoodle.console import CONSOLE
 
 from clowder.log import LOG
-from clowder.util.execute import execute_command
 
 from .git_ref import GitRef
 from .project_repo import GitConfig, ProjectRepo
@@ -130,7 +130,7 @@ class ProjectRepoRecursive(ProjectRepo):
             command = f"git submodule update --init --recursive --depth {depth}"
 
         try:
-            execute_command(command, self.repo_path)
+            run_commandcommand, self.repo_path)
         except CalledProcessError:
             LOG.error('Failed to update submodules')
             raise

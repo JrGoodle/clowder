@@ -2,10 +2,11 @@
 This module contains fixtures
 """
 
-import os
 from pathlib import Path
 
 from pytest import fixture
+
+import pygoodle.filesystem as fs
 
 import tests.functional.util as util
 from tests.functional.util import ScenarioInfo
@@ -13,7 +14,7 @@ from tests.functional.util import ScenarioInfo
 
 @fixture
 def misc_init_herd(tmp_path: Path, misc_init_herd_session: Path, scenario_info: ScenarioInfo) -> None:
-    util.copy_directory(misc_init_herd_session, to=tmp_path)
+    fs.copy_directory(misc_init_herd_session, to=tmp_path)
 
 
 @fixture(scope="session")
@@ -24,7 +25,7 @@ def misc_init_herd_session(tmp_path_factory) -> Path:
 
 @fixture
 def misc_init_herd_version_https(tmp_path: Path, misc_init_herd_version_https_session: Path) -> None:
-    util.copy_directory(misc_init_herd_version_https_session, to=tmp_path)
+    fs.copy_directory(misc_init_herd_version_https_session, to=tmp_path)
 
 
 @fixture(scope="session")

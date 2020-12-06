@@ -9,9 +9,10 @@ from pathlib import Path
 from subprocess import CalledProcessError
 from typing import Any, Optional, Set
 
+from pygoodle.command import run_command
 from pygoodle.connectivity import is_offline
 from pygoodle.console import CONSOLE
-from pygoodle.formatting import Format
+from pygoodle.format import Format
 
 import clowder.util.formatting as fmt
 from clowder.log import LOG
@@ -24,7 +25,6 @@ from clowder.git import (
 )
 from clowder.git.util import existing_git_repo
 from clowder.util.error import DuplicateRemoteError
-from clowder.util.execute import execute_forall_command
 
 from .resolved_git_settings import ResolvedGitSettings
 from .resolved_upstream import ResolvedUpstream
@@ -489,7 +489,7 @@ class ResolvedProject:
 
         CONSOLE.stdout(fmt.command(command))
         try:
-            execute_forall_command(command, self.full_path, env)
+            run_command(command, self.full_path, env=env)
         except CalledProcessError as err:
             if ignore_errors:
                 LOG.debug(f'Command failed: {command}', err)

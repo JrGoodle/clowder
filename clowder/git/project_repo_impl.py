@@ -10,12 +10,12 @@ from typing import Dict, Optional
 
 import pygoodle.filesystem as fs
 from git import GitError, Remote, Repo, Tag
+from pygoodle.command import run_command
 from pygoodle.console import CONSOLE
 
 import clowder.util.formatting as fmt
 from clowder.log import LOG
 from clowder.util.error import ClowderGitError
-from clowder.util.execute import execute_command
 
 from .git_ref import GitRef
 from .git_repo import GitRepo
@@ -396,7 +396,7 @@ class ProjectRepoImpl(GitRepo):
 
         CONSOLE.stdout(f' - Pull from {fmt.remote(remote)} {fmt.ref(branch)}')
         try:
-            execute_command(f"git pull {remote} {branch}", self.repo_path)
+            run_commandf"git pull {remote} {branch}", self.repo_path)
         except CalledProcessError:
             LOG.error(f'Failed to pull from {fmt.remote(remote)} {fmt.ref(branch)}')
             raise
@@ -412,7 +412,7 @@ class ProjectRepoImpl(GitRepo):
         CONSOLE.stdout(f' - Rebase onto {fmt.remote(remote)} {fmt.ref(branch)}')
         try:
             command = f"git pull --rebase {remote} refs/heads/{branch}:refs/remotes/{remote}/heads/{branch}"
-            execute_command(command, self.repo_path)
+            run_commandcommand, self.repo_path)
         except CalledProcessError:
             LOG.error(f'Failed to rebase onto {fmt.remote(remote)} {fmt.ref(branch)}')
             raise

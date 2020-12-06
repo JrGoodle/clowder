@@ -4,14 +4,15 @@ from pathlib import Path
 
 from pytest_bdd import given, parsers
 
+import pygoodle.filesystem as fs
+
 import tests.functional.util as util
-from tests.functional.util import ScenarioInfo
 
 
 @given("I'm in an empty directory")
 @given(parsers.parse("test directory is empty"))
 def given_test_dir_empty(tmp_path: Path) -> None:
-    assert util.is_directory_empty(tmp_path)
+    assert fs.is_directory_empty(tmp_path)
 
 
 @given(parsers.parse("{version} clowder version is linked"))
@@ -146,4 +147,4 @@ def given_two_files_not_symlinks(tmp_path: Path, filename_1: str, filename_2: st
 @given(parsers.parse("{filename} is a symlink pointing to {destination}"))
 def given_has_symlink_to(tmp_path: Path, filename: str, destination: str) -> None:
     path = tmp_path / filename
-    assert util.is_relative_symlink_from_to(path, destination)
+    assert fs.is_relative_symlink_from_to(path, destination)

@@ -7,7 +7,7 @@
 from pathlib import Path
 from typing import Any, Optional
 
-from pygoodle.formatting import Format
+from pygoodle.format import Format
 
 from clowder.environment import ENVIRONMENT
 from clowder.git import GitProtocol, GitRef, ProjectRepo

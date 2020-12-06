@@ -12,7 +12,7 @@ from typing import Any, List, Optional, Tuple
 import pygoodle.filesystem as fs
 from pygoodle.console import CONSOLE
 from pygoodle.enum import AutoLowerName
-from pygoodle.formatting import Format
+from pygoodle.format import Format
 
 import clowder.util.formatting as fmt
 from clowder.environment import ENVIRONMENT

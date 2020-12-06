@@ -6,6 +6,8 @@ from pathlib import Path
 
 from pytest_bdd import given, parsers
 
+import pygoodle.filesystem as fs
+
 import tests.functional.util as util
 from tests.functional.util import ScenarioInfo
 
@@ -30,15 +32,15 @@ def given_created_symlink(tmp_path: Path, name: str, target: str) -> None:
     symlink_path = tmp_path / name
     target_path = tmp_path / target
     assert target_path.exists()
-    util.symlink_to(symlink_path, Path(target))
+    fs.symlink_to(symlink_path, Path(target))
 
 
 @given(parsers.parse("created {name_1} and {name_2} symlinks pointing to {target}"))
 def given_created_symlinks(tmp_path: Path, name_1: str, name_2: str, target: str) -> None:
     name_path = tmp_path / name_1
-    util.symlink_to(name_path, Path(target))
+    fs.symlink_to(name_path, Path(target))
     name_path = tmp_path / name_2
-    util.symlink_to(name_path, Path(target))
+    fs.symlink_to(name_path, Path(target))
 
 
 @given(parsers.parse("repo at {directory} staged file {filename}"))
@@ -377,7 +379,7 @@ def given_clowder_repo_has_duplicate_versions(tmp_path: Path) -> None:
     version_name = "duplicate-version.clowder"
     for version in [f"{version_name}.yml", f"{version_name}.yaml"]:
         version_file = versions_dir / version
-        util.copy_file(default, version_file)
+        fs.copy_file(default, version_file)
         assert version_file.exists()
         assert version_file.is_file()
         assert not version_file.is_symlink()
@@ -399,7 +401,7 @@ def given_clowder_repo_invalid_clowder_yml(tmp_path: Path) -> None:
     assert not symlink.is_symlink()
 
     invalid_file = clowder_repo / "clowder.yml"
-    util.create_file(invalid_file, "this is invalid")
+    fs.create_file(invalid_file, "this is invalid")
     util.run_command("clowder link", tmp_path, check=True)
     symlink = util.valid_clowder_symlink(tmp_path)
     assert symlink.is_symlink()

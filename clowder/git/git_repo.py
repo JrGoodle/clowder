@@ -10,12 +10,12 @@ from typing import Optional
 
 import pygoodle.filesystem as fs
 from git import Repo, GitCommandError, GitError
+from pygoodle.command import run_command
 from pygoodle.console import CONSOLE
-from pygoodle.formatting import Format
+from pygoodle.format import Format
 
 from clowder.log import LOG
 import clowder.util.formatting as fmt
-from clowder.util.execute import execute_command
 
 from .git_ref import GitRef
 from .util import (
@@ -159,13 +159,13 @@ class GitRepo(object):
 
         try:
             if depth == 0:
-                execute_command(f'git fetch {remote} --prune --tags', self.repo_path)
+                run_commandf'git fetch {remote} --prune --tags', self.repo_path)
             elif ref is None:
                 command = f'git fetch {remote} --depth {depth} --prune --tags'
-                execute_command(command, self.repo_path)
+                run_commandcommand, self.repo_path)
             else:
                 command = f'git fetch {remote} {ref.short_ref} --depth {depth} --prune --tags'
-                execute_command(command, self.repo_path)
+                run_commandcommand, self.repo_path)
         except BaseException as err:
             LOG.error(error_message)
             if remove_dir:
@@ -435,7 +435,7 @@ class GitRepo(object):
         command = 'git status -vv'
         CONSOLE.stdout(fmt.command(command))
         try:
-            execute_command(command, self.repo_path)
+            run_commandcommand, self.repo_path)
         except CalledProcessError:
             LOG.error('Failed to print verbose status')
             raise

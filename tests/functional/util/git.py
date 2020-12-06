@@ -5,11 +5,11 @@ from pathlib import Path
 from subprocess import CompletedProcess
 from typing import Dict, List, Optional
 
+import pygoodle.filesystem as fs
 from git import Repo
+from pygoodle.command import run_command
+from pygoodle.format import Format
 
-from .command import run_command
-from .file_system import create_file, is_directory_empty
-from .formatting import remove_prefix
 from .scenario_info import ScenarioInfo
 
 
@@ -53,7 +53,7 @@ def process_git_tags_output(output: str) -> Dict[str, str]:
     tags = {}
     while i < len(components):
         sha = components[i]
-        tag_name = remove_prefix(components[i + 1], "refs/tags/")
+        tag_name = Format.remove_prefix(components[i + 1], "refs/tags/")
         tags[tag_name] = sha
         i += 2
     return tags
@@ -90,7 +90,7 @@ def is_submodule_initialized(path: Path) -> bool:
 
 
 def is_submodule_placeholder(path: Path) -> bool:
-    return path.is_dir() and is_directory_empty(path)
+    return path.is_dir() and fs.is_directory_empty(path)
 
 
 def has_submodule(repo_path: Path, submodule_path: Path) -> bool:
@@ -192,7 +192,7 @@ def create_number_commits(path: Path, count: int, filename: str, contents: str) 
 
 def create_commit(path: Path, filename: str, contents: str) -> List[CompletedProcess]:
     previous_commit = current_head_commit_sha(path)
-    create_file(path / filename, contents)
+    fs.create_file(path / filename, contents)
     results = []
     result = run_command(f"git add {filename}", path)
     results.append(result)

@@ -4,7 +4,8 @@ from pathlib import Path
 
 from pytest_bdd import then, parsers
 
-import tests.functional.util as util
+from pygoodle.format import Format
+
 from tests.functional.util import CommandResults
 
 
@@ -19,7 +20,7 @@ def then_output_matches_contents_of_file(shared_datadir: Path, tmp_path: Path,
                                          command_results: CommandResults, filename: str) -> None:
     assert len(command_results.completed_processes) == 1
     result = command_results.completed_processes[0]
-    output: str = util.clean_escape_sequences(result.stdout)
+    output: str = Format.clean_escape_sequences(result.stdout)
     test_file = shared_datadir / "yaml" / "command_output" / filename
     test_content = test_file.read_text()
     assert output.strip() == test_content.strip()
@@ -30,7 +31,7 @@ def then_output_file_matches_contents_of_file(shared_datadir: Path, tmp_path: Pa
                                               output_file: str, test_file: str) -> None:
     output_file = tmp_path / output_file
     output_contents = output_file.read_text()
-    output = util.clean_escape_sequences(output_contents)
+    output = Format.clean_escape_sequences(output_contents)
     test_file = shared_datadir / "yaml" / "command_output" / test_file
     test_content = test_file.read_text()
     assert output.strip() == test_content.strip()

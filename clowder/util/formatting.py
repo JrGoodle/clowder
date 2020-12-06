@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import List, Optional, Tuple, Union
 
 from pygoodle.console import CONSOLE
-from pygoodle.formatting import Format
+from pygoodle.format import Format
 
 
 # TODO: Update to return list of all duplicates found

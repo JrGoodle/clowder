@@ -9,15 +9,15 @@ from functools import wraps
 from pathlib import Path
 from typing import Optional, Tuple
 
+from pygoodle.command import run_command
 from pygoodle.connectivity import is_offline
 from pygoodle.console import CONSOLE
-from pygoodle.formatting import Format
+from pygoodle.format import Format
 
 import clowder.util.formatting as fmt
 from clowder.log import LOG
 from clowder.environment import ENVIRONMENT
 from clowder.util.error import DuplicateVersionsError
-from clowder.util.execute import execute_command
 from clowder.util.yaml import link_clowder_yaml_default
 
 from .git_ref import GitRef
@@ -222,4 +222,4 @@ class ClowderRepo(ProjectRepo):
         """
 
         CONSOLE.stdout(fmt.command(command))
-        execute_command(command.split(), self.repo_path)
+        run_commandcommand.split(), self.repo_path)
