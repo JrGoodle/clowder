@@ -39,7 +39,7 @@ def run_command(command: str, path: Path, check: bool = False) -> CompletedProce
 def _process_clowder_commands(command: str) -> str:
 
     pattern = r'^(clowder(.+?))'
-    replace = r'python -m clowder.clowder_app '
+    replace = r'python -m clowder.app '
     output = re.sub(pattern, replace, command)
 
     return output

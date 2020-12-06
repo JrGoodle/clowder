@@ -16,10 +16,10 @@ Subpackages
 Submodules
 ----------
 
-clowder.clowder\_app module
+clowder.app module
 ---------------------------
 
-.. automodule:: clowder.clowder_app
+.. automodule:: clowder.app
    :members:
    :undoc-members:
    :show-inheritance:

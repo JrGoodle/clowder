@@ -55,7 +55,7 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'clowder=clowder.clowder_app:main',
+            'clowder=clowder.app:main',
         ]
     },
     install_requires=[

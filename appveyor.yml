@@ -19,7 +19,7 @@ build: off
 test_script:
   # - "%PYTHON%\\python.exe setup.py"
   - cd examples\cats
-  - coverage run --rcfile=%APPVEYOR_BUILD_FOLDER%\.coveragerc -m clowder.clowder_app init https://github.com/JrGoodle/cats.git
+  - coverage run --rcfile=%APPVEYOR_BUILD_FOLDER%\.coveragerc -m clowder.app init https://github.com/JrGoodle/cats.git
 
 after_test:
   # Combine and submit test coverage results
