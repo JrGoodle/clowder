@@ -4,7 +4,7 @@
 
 """
 
-from pygoodle.app import App
+from pygoodle.app import App, Argument
 
 import clowder.cli as cmd
 from clowder.log import LOG
@@ -32,7 +32,7 @@ def main() -> None:
         cmd.yaml
     ]
     arguments = [
-        (['--debug', '-d'], dict(action='store_true', help='print debug output'))
+        Argument('--debug', '-d', action='store_true', help='print debug output')
     ]
     app = App('clowder-repo', entry_point='clowder', arguments=arguments, subcommands=subcommands)
 
