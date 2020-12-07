@@ -15,7 +15,7 @@ from clowder.config import Config
 from clowder.git.clowder_repo import print_clowder_repo_status
 from clowder.util.error import CommandArgumentError
 
-from .util import ProjectsArgument
+from .util import JobsArgument, ProjectsArgument
 
 
 class ForallCommand(Subcommand):
@@ -31,13 +31,7 @@ class ForallCommand(Subcommand):
         ),
         ProjectsArgument('projects and groups to run command for'),
         Argument('--ignore-errors', '-i', action='store_true', help='ignore errors in command or script'),
-        Argument(
-            '--jobs', '-j',
-            metavar='<n>',
-            nargs=1,
-            default=None,
-            type=int,
-            help='number of jobs to use running commands in parallel')
+        JobsArgument()
     ]
 
     @valid_clowder_yaml_required

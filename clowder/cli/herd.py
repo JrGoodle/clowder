@@ -16,7 +16,7 @@ from clowder.data.source_controller import SOURCE_CONTROLLER
 from clowder.git import GitProtocol
 from clowder.git.clowder_repo import print_clowder_repo_status_fetch
 
-from .util import ProjectsArgument
+from .util import JobsArgument, ProjectsArgument
 
 
 class HerdCommand(Subcommand):
@@ -25,14 +25,7 @@ class HerdCommand(Subcommand):
     help = 'Clone and update projects with latest changes'
     args = [
         ProjectsArgument('projects and groups to herd'),
-        Argument(
-            '--jobs', '-j',
-            metavar='<n>',
-            nargs=1,
-            default=None,
-            type=int,
-            help='number of jobs to use running commands in parallel'
-        ),
+        JobsArgument(),
         Argument('--rebase', '-r', action='store_true', help='use rebase instead of pull'),
         Argument('--depth', '-d', default=None, type=int, nargs=1, metavar='<n>', help='depth to herd'),
         Argument(

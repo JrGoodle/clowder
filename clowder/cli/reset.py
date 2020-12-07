@@ -15,7 +15,7 @@ from clowder.clowder_controller import CLOWDER_CONTROLLER, print_clowder_name, v
 from clowder.config import Config
 from clowder.git.clowder_repo import print_clowder_repo_status_fetch
 
-from .util import ProjectsArgument
+from .util import JobsArgument, ProjectsArgument
 
 
 class ResetCommand(Subcommand):
@@ -24,13 +24,7 @@ class ResetCommand(Subcommand):
     help = 'Reset branches to upstream commits or check out detached HEADs for tags and shas'
     args = [
         ProjectsArgument('projects and groups to reset'),
-        Argument(
-            '--jobs', '-j',
-            metavar='<n>',
-            nargs=1,
-            default=None,
-            type=int,
-            help='number of jobs to use running commands in parallel')
+        JobsArgument()
         # Argument('--timestamp', '-t', choices=CLOWDER_CONTROLLER.project_names,
         #                              default=None, nargs=1, metavar='<timestamp>',
         #                              help='project to reset timestamps relative to')
