@@ -4,25 +4,13 @@
 
 """
 
-from pygoodle.app import Argument
+from pygoodle.app import Argument, CountArgument
 
 import clowder.util.formatting as fmt
 from clowder.clowder_controller import CLOWDER_CONTROLLER
 
 
-class CountArgument(Argument):
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(
-            metavar='<n>',
-            nargs=1,
-            default=None,
-            type=int,
-            *args, **kwargs
-        )
-
-
-class JobsArgument(Argument):
+class JobsArgument(CountArgument):
 
     def __init__(self, positional: bool = False, *args, **kwargs):
         if positional:

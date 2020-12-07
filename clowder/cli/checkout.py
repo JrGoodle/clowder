@@ -22,7 +22,6 @@ class CheckoutCommand(Subcommand):
         Argument(
             'branch',
             nargs=1,
-            action='store',
             help='branch to checkout',
         ),
         ProjectsArgument('projects and groups to checkout branches for')

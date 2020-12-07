@@ -1,15 +1,13 @@
 #!/usr/bin/env python
 
-import argparse
-import os
-import shutil
-import subprocess
 from pathlib import Path
 from subprocess import CompletedProcess
-from typing import List, Tuple, Union
 
-Parser = Union[argparse.ArgumentParser, argparse._MutuallyExclusiveGroup, argparse._ArgumentGroup]  # noqa
-Arguments = List[Tuple[list, dict]]
+import pygoodle.command as cmd
+import pygoodle.filesystem as fs
+from pygoodle.app import App, BoolArgument
+from pygoodle.console import CONSOLE
+from pygoodle.format import Format
 
 repo_path: Path = Path(__file__).resolve().parent.parent.resolve()
 build_dir: Path = repo_path / "build"
@@ -22,80 +20,49 @@ pytest_cache: Path = repo_path / '.pytest_cache'
 
 
 def rm_dir(dir_path: Path) -> None:
-    h3(f"Remove {dir_path.relative_to(repo_path)}")
-    shutil.rmtree(dir_path, ignore_errors=True)
+    CONSOLE.stdout(Format.h3(f"Remove {dir_path.relative_to(repo_path)}"))
+    fs.remove_dir(repo_path, ignore_errors=True)
 
 
-def separator(message: str, character: str) -> None:
-    print(character * len(message))
-    print()
-
-
-def h1(message: str) -> None:
-    print(message)
-    separator(message, '=')
-
-
-def h2(message: str) -> None:
-    print(message)
-    separator(message, '-')
-
-
-def h3(message: str) -> None:
-    print(f'* {message}')
+def run_command(command: str) -> CompletedProcess:
+    return cmd.run_command(command, cwd=repo_path, print_command=True)
 
 
 def clean_build() -> None:
-    h2('Clean build files')
+    CONSOLE.stdout(Format.h2('Clean build files'))
     rm_dir(dist_dir)
     rm_dir(build_dir)
     rm_dir(temp_dir)
 
 
 def clean_all() -> None:
-    h1('Clean all files')
+    CONSOLE.stdout(Format.h1('Clean all files'))
     rm_dir(clowder_repo_egg_dir)
     # run_command(path, "pipenv --rm")
     run_command("pip uninstall --yes clowder-repo")
-    shutil.rmtree(clowder_repo_egg_dir, ignore_errors=True)
-    shutil.rmtree(pytest_cache, ignore_errors=True)
-    for root, dirs, files in os.walk(repo_path, topdown=False):
-        for name in dirs:
-            if name == pycache:
-                dir_path = Path(root) / name
-                shutil.rmtree(dir_path, ignore_errors=True)
+    rm_dir(clowder_repo_egg_dir)
+    rm_dir(pytest_cache)
+    dirs = [d for d in fs.list_subdirectories(repo_path, recursive=True) if d.name == pycache]
+    for directory in dirs:
+        rm_dir(directory)
     clean_build()
 
 
-def run_command(cmd: str, cwd: Path = repo_path) -> CompletedProcess:
-    cmd_env = os.environ.copy()
-    print(f"> {cmd}")
-    completed_process = subprocess.run(cmd, cwd=cwd, shell=True, env=cmd_env)
-    print()
-    return completed_process
-
-
-def add_parser_arguments(parser: Parser, arguments: Arguments) -> None:
-    for argument in arguments:
-        parser.add_argument(*argument[0], **argument[1])
-
-
 def main() -> None:
-    try:
-        parser = argparse.ArgumentParser()
-        group = parser.add_mutually_exclusive_group()
-        mutually_exclusive_arguments = [
-            (['--build', '-b'], dict(action='store_true', help='clean build files'))
-        ]
-        add_parser_arguments(group, mutually_exclusive_arguments)
-        args = parser.parse_args()
+    def action(args) -> None:
         if args.build:
             clean_build()
         else:
             clean_all()
-    except Exception as err:
-        print(err)
-        exit(1)
+
+    app = App(
+        'clean',
+        arguments=[
+            BoolArgument('--build', '-b', help='clean build files')
+        ],
+        action=action
+    )
+    app.run()
 
 
 if __name__ == '__main__':
