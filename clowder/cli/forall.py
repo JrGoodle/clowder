@@ -24,7 +24,6 @@ class ForallCommand(Subcommand):
     args = [
         Argument(
             'command',
-            metavar='<command>',
             nargs=1,
             default=None,
             help='command to run in project directories'

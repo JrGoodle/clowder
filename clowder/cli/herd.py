@@ -45,7 +45,6 @@ class HerdCommand(Subcommand):
             '--protocol', '-p',
             default=None,
             nargs=1,
-            metavar='<protocol>',
             choices=('ssh', 'https'),
             help='git protocol to use for cloning')
     ]

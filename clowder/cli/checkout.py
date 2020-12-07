@@ -23,7 +23,6 @@ class CheckoutCommand(Subcommand):
             nargs=1,
             action='store',
             help='branch to checkout',
-            metavar='<branch>'
         ),
         Argument(
             'projects',

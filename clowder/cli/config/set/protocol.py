@@ -21,7 +21,6 @@ class ConfigSetProtocolCommand(Subcommand):
     args = [
         Argument(
             'protocol',
-            metavar='<protocol>"',
             nargs=1,
             choices=protocol_choices,
             help=fmt.options_help_message(protocol_choices, 'Default git protocol to use'))

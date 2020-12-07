@@ -11,29 +11,32 @@ from clowder.log import LOG
 
 
 def main() -> None:
-    subcommands = [
-        cli.BranchCommand(),
-        cli.CheckoutCommand(),
-        cli.CleanCommand(),
-        cli.ConfigCommand(),
-        cli.DiffCommand(),
-        cli.ForallCommand(),
-        cli.HerdCommand(),
-        cli.InitCommand(),
-        cli.LinkCommand(),
-        cli.PruneCommand(),
-        cli.RepoCommand(),
-        cli.ResetCommand(),
-        cli.SaveCommand(),
-        cli.StartCommand(),
-        cli.StashCommand(),
-        cli.StatusCommand(),
-        cli.YamlCommand()
-    ]
-    arguments = [
-        Argument('--debug', '-d', action='store_true', help='print debug output')
-    ]
-    app = App('clowder-repo', entry_point='clowder', arguments=arguments, subcommands=subcommands)
+    app = App(
+        'clowder-repo',
+        entry_point='clowder',
+        arguments=[
+            Argument('--debug', '-d', action='store_true', help='print debug output')
+        ],
+        subcommands=[
+            cli.BranchCommand(),
+            cli.CheckoutCommand(),
+            cli.CleanCommand(),
+            cli.ConfigCommand(),
+            cli.DiffCommand(),
+            cli.ForallCommand(),
+            cli.HerdCommand(),
+            cli.InitCommand(),
+            cli.LinkCommand(),
+            cli.PruneCommand(),
+            cli.RepoCommand(),
+            cli.ResetCommand(),
+            cli.SaveCommand(),
+            cli.StartCommand(),
+            cli.StashCommand(),
+            cli.StatusCommand(),
+            cli.YamlCommand()
+        ]
+    )
 
     def process_args(args) -> None:
         if 'projects' in args:

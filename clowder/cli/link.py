@@ -22,7 +22,6 @@ class LinkCommand(Subcommand):
     args = [
         Argument(
             'version',
-            metavar='<version>',
             choices=versions,
             nargs='?',
             default=None,

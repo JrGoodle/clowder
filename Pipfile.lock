@@ -214,7 +214,7 @@
         },
         "pygoodle": {
             "git": "ssh://git@github.com/JrGoodle/pygoodle",
-            "ref": "b2915e8f3f6024542a66f6abce1ea2627388deb6"
+            "ref": "c3a60796a24e918724f4cf4f731d4cfcd8ab28de"
         },
         "pynacl": {
             "hashes": [
