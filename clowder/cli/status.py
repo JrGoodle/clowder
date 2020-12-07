@@ -6,7 +6,7 @@
 
 from typing import Tuple
 
-from pygoodle.app import Argument, Subcommand
+from pygoodle.app import BoolArgument, Subcommand
 from pygoodle.connectivity import network_connection_required
 from pygoodle.console import CONSOLE
 
@@ -25,7 +25,7 @@ class StatusCommand(Subcommand):
     help = 'projects and groups to print status of'
     args = [
         ProjectsArgument('projects and groups to show diff for'),
-        Argument('--fetch', '-f', action='store_true', help='fetch projects before printing status')
+        BoolArgument('--fetch', '-f', help='fetch projects before printing status')
     ]
 
     @valid_clowder_yaml_required

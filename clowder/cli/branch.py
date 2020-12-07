@@ -4,7 +4,7 @@
 
 """
 
-from pygoodle.app import Argument, Subcommand
+from pygoodle.app import BoolArgument, Subcommand
 from pygoodle.console import CONSOLE
 
 from clowder.clowder_controller import CLOWDER_CONTROLLER, print_clowder_name, valid_clowder_yaml_required
@@ -23,8 +23,8 @@ class BranchCommand(Subcommand):
     ]
     mutually_exclusive_args = [
         [
-            Argument('--all', '-a', action='store_true', help='show local and remote branches'),
-            Argument('--remote', '-r', action='store_true', help='show local and remote branches')
+            BoolArgument('--all', '-a', help='show local and remote branches'),
+            BoolArgument('--remote', '-r', help='show local and remote branches')
         ]
     ]
 

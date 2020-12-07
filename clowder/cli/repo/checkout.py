@@ -16,7 +16,7 @@ class RepoCheckoutCommand(Subcommand):
     name = 'checkout'
     help = 'Checkout ref in clowder repo'
     args = [
-        Argument('ref', nargs=1, metavar='<ref>', help='git ref to checkout')
+        Argument('ref', nargs=1, help='git ref to checkout')
     ]
 
     @print_clowder_name

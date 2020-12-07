@@ -6,7 +6,7 @@
 
 import os
 
-from pygoodle.app import Argument, Subcommand
+from pygoodle.app import Argument, BoolArgument, Subcommand
 from pygoodle.connectivity import network_connection_required
 
 import clowder.util.parallel as parallel
@@ -16,7 +16,7 @@ from clowder.data.source_controller import SOURCE_CONTROLLER
 from clowder.git import GitProtocol
 from clowder.git.clowder_repo import print_clowder_repo_status_fetch
 
-from .util import JobsArgument, ProjectsArgument
+from .util import CountArgument, JobsArgument, ProjectsArgument
 
 
 class HerdCommand(Subcommand):
@@ -26,19 +26,20 @@ class HerdCommand(Subcommand):
     args = [
         ProjectsArgument('projects and groups to herd'),
         JobsArgument(),
-        Argument('--rebase', '-r', action='store_true', help='use rebase instead of pull'),
-        Argument('--depth', '-d', default=None, type=int, nargs=1, metavar='<n>', help='depth to herd'),
+        BoolArgument('--rebase', '-r', help='use rebase instead of pull'),
+        CountArgument('--depth', '-d', help='depth to herd'),
         Argument(
             '--protocol', '-p',
             default=None,
             nargs=1,
             choices=('ssh', 'https'),
-            help='git protocol to use for cloning')
+            help='git protocol to use for cloning'
+        )
     ]
     mutually_exclusive_args = [
         [
-            Argument('--branch', '-b', nargs=1, default=None, metavar='<branch>', help='branch to herd if present'),
-            Argument('--tag', '-t', nargs=1, default=None, metavar='<tag>', help='tag to herd if present')
+            Argument('--branch', '-b', nargs=1, default=None, help='branch to herd if present'),
+            Argument('--tag', '-t', nargs=1, default=None, help='tag to herd if present')
         ]
     ]
 

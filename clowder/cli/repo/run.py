@@ -16,7 +16,7 @@ class RepoRunCommand(Subcommand):
     name = 'run'
     help = 'Run command in clowder repo'
     args = [
-        Argument('command', nargs=1, metavar='<command>', help='command to run in clowder repo directory')
+        Argument('command', nargs=1, help='command to run in clowder repo directory')
     ]
 
     @print_clowder_name

@@ -10,15 +10,27 @@ import clowder.util.formatting as fmt
 from clowder.clowder_controller import CLOWDER_CONTROLLER
 
 
-class JobsArgument(Argument):
+class CountArgument(Argument):
 
     def __init__(self, *args, **kwargs):
         super().__init__(
-            '--jobs', '-j',
             metavar='<n>',
             nargs=1,
             default=None,
             type=int,
+            *args, **kwargs
+        )
+
+
+class JobsArgument(Argument):
+
+    def __init__(self, positional: bool = False, *args, **kwargs):
+        if positional:
+            command_args = ['jobs']
+        else:
+            command_args = ['--jobs', '-j']
+        super().__init__(
+            *command_args,
             help='number of jobs to use running command in parallel',
             *args, **kwargs
         )

@@ -6,7 +6,7 @@
 
 from typing import List, Tuple
 
-from pygoodle.app import Argument, Subcommand
+from pygoodle.app import Argument, BoolArgument, Subcommand
 from pygoodle.connectivity import network_connection_required
 from pygoodle.console import CONSOLE
 
@@ -24,14 +24,14 @@ class PruneCommand(Subcommand):
     name = 'prune'
     help = 'Prune branches'
     args = [
-        Argument('branch', help='name of branch to remove', metavar='<branch>'),
+        Argument('branch', help='name of branch to remove'),
         ProjectsArgument('projects and groups to prune'),
-        Argument('--force', '-f', action='store_true', help='force prune branches')
+        BoolArgument('--force', '-f', help='force prune branches')
     ]
     mutually_exclusive_args = [
         [
-            Argument('--all', '-a', action='store_true', help='prune local and remote branches'),
-            Argument('--remote', '-r', action='store_true', help='prune remote branches')
+            BoolArgument('--all', '-a', help='prune local and remote branches'),
+            BoolArgument('--remote', '-r', help='prune remote branches')
         ]
     ]
 

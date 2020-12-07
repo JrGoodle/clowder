@@ -4,7 +4,7 @@
 
 """
 
-from pygoodle.app import Argument, Subcommand
+from pygoodle.app import Argument, BoolArgument, Subcommand
 from pygoodle.connectivity import network_connection_required
 from pygoodle.console import CONSOLE
 
@@ -20,9 +20,9 @@ class StartCommand(Subcommand):
     name = 'start'
     help = 'Start a new branch'
     args = [
-        Argument('branch', help='name of branch to create', nargs=1, default=None, metavar='<branch>'),
+        Argument('branch', help='name of branch to create', nargs=1, default=None),
         ProjectsArgument('projects and groups to start branches for'),
-        Argument('--tracking', '-t', action='store_true', help='create remote tracking branch')
+        BoolArgument('--tracking', '-t', help='create remote tracking branch')
     ]
 
     @valid_clowder_yaml_required

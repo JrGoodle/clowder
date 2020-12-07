@@ -4,7 +4,7 @@
 
 """
 
-from pygoodle.app import Argument, Subcommand
+from pygoodle.app import BoolArgument, Subcommand
 from pygoodle.console import CONSOLE
 
 from clowder.clowder_controller import CLOWDER_CONTROLLER, print_clowder_name, valid_clowder_yaml_required
@@ -20,15 +20,15 @@ class CleanCommand(Subcommand):
     help = 'Discard current changes in projects'
     args = [
         ProjectsArgument('projects and groups to clean'),
-        Argument('--recursive', '-r', action='store_true', help='clean submodules recursively')
+        BoolArgument('--recursive', '-r', help='clean submodules recursively')
     ]
     argument_groups = {
         'clean options': [
-            Argument('--all', '-a', action='store_true', help='clean all the things'),
-            Argument('-d', action='store_true', help='remove untracked directories'),
-            Argument('-f', action='store_true', help='remove directories with .git subdirectory or file'),
-            Argument('-X', action='store_true', help='remove only files ignored by git'),
-            Argument('-x', action='store_true', help='remove all untracked files')
+            BoolArgument('--all', '-a', help='clean all the things'),
+            BoolArgument('-d', help='remove untracked directories'),
+            BoolArgument('-f', help='remove directories with .git subdirectory or file'),
+            BoolArgument('-X', help='remove only files ignored by git'),
+            BoolArgument('-x', help='remove all untracked files')
         ]
     }
 

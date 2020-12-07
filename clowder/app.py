@@ -4,7 +4,7 @@
 
 """
 
-from pygoodle.app import App, Argument
+from pygoodle.app import App, BoolArgument
 
 import clowder.cli as cli
 from clowder.log import LOG
@@ -15,7 +15,7 @@ def main() -> None:
         'clowder-repo',
         entry_point='clowder',
         arguments=[
-            Argument('--debug', '-d', action='store_true', help='print debug output')
+            BoolArgument('--debug', '-d', help='print debug output')
         ],
         subcommands=[
             cli.BranchCommand(),

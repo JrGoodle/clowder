@@ -6,7 +6,7 @@
 
 import os
 
-from pygoodle.app import Argument, Subcommand
+from pygoodle.app import Argument, BoolArgument, Subcommand
 from pygoodle.console import CONSOLE
 
 import clowder.util.parallel as parallel
@@ -30,7 +30,7 @@ class ForallCommand(Subcommand):
             help='command to run in project directories'
         ),
         ProjectsArgument('projects and groups to run command for'),
-        Argument('--ignore-errors', '-i', action='store_true', help='ignore errors in command or script'),
+        BoolArgument('--ignore-errors', '-i', help='ignore errors in command or script'),
         JobsArgument()
     ]
 

@@ -21,7 +21,7 @@ class SaveCommand(Subcommand):
     name = 'save'
     help = 'Create clowder yaml version for current repos'
     args = [
-        Argument('version', help='version to save', metavar='<version>')
+        Argument('version', help='version to save')
     ]
 
     @valid_clowder_yaml_required

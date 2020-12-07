@@ -4,7 +4,7 @@
 
 """
 
-from pygoodle.app import Argument, Subcommand
+from pygoodle.app import BoolArgument, Subcommand
 from pygoodle.console import CONSOLE
 
 from clowder.clowder_controller import CLOWDER_CONTROLLER, valid_clowder_yaml_required
@@ -16,7 +16,7 @@ class YamlCommand(Subcommand):
     name = 'yaml'
     help = 'Print clowder yaml file information'
     args = [
-        Argument('--resolved', '-r', action='store_true', help='print resolved clowder yaml file')
+        BoolArgument('--resolved', '-r', help='print resolved clowder yaml file')
     ]
 
     @valid_clowder_yaml_required

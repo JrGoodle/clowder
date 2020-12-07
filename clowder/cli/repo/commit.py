@@ -16,7 +16,7 @@ class RepoCommitCommand(Subcommand):
     name = 'commit'
     help = 'Commit current changes in clowder repo yaml files'
     args = [
-        Argument('message', nargs=1, metavar='<message>', help='commit message')
+        Argument('message', nargs=1, help='commit message')
     ]
 
     @print_clowder_name

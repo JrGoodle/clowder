@@ -16,7 +16,7 @@ class RepoStatusCommand(Subcommand):
     name = 'status'
     help = 'Print clowder repo git status'
     args = [
-        Argument('files', nargs='+', metavar='<file>', help='files to add')
+        Argument('files', nargs='+', help='files to add')
     ]
 
     @print_clowder_name

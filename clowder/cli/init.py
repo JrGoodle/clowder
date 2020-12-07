@@ -19,8 +19,8 @@ class InitCommand(Subcommand):
     name = 'init'
     help = 'Clone repository to clowder directory and create clowder yaml symlink'
     args = [
-        Argument('url', metavar='<url>', help='url of repo containing clowder yaml file'),
-        Argument('--branch', '-b', nargs=1, metavar='<branch>', help='branch of repo containing clowder yaml file')
+        Argument('url', help='url of repo containing clowder yaml file'),
+        Argument('--branch', '-b', nargs=1, help='branch of repo containing clowder yaml file')
     ]
 
     @network_connection_required
