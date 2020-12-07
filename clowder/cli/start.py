@@ -4,9 +4,7 @@
 
 """
 
-import argparse
-
-from pygoodle.cli import add_parser_arguments
+from pygoodle.app import Argument, Subcommand
 from pygoodle.connectivity import network_connection_required
 from pygoodle.console import CONSOLE
 
@@ -16,55 +14,50 @@ from clowder.config import Config
 from clowder.git.clowder_repo import print_clowder_repo_status
 
 
-def add_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
-    """Add clowder start parser
+class StartCommand(Subcommand):
 
-    :param argparse._SubParsersAction subparsers: Subparsers action to add parser to
-    """
+    name = 'start'
+    help = 'Start a new branch'
+    args = [
+        Argument('branch', help='name of branch to create', nargs=1, default=None, metavar='<branch>'),
+        Argument(
+            'projects',
+            metavar='<project|group>',
+            default='default',
+            nargs='*',
+            choices=CLOWDER_CONTROLLER.project_choices_with_default,
+            help=fmt.project_options_help_message('projects and groups to start branches for')
+        ),
+        Argument('--tracking', '-t', action='store_true', help='create remote tracking branch')
+    ]
 
-    parser = subparsers.add_parser('start', help='Start a new branch')
-    parser.formatter_class = argparse.RawTextHelpFormatter
-    parser.set_defaults(func=start)
+    @valid_clowder_yaml_required
+    @print_clowder_name
+    @print_clowder_repo_status
+    def run(self, args) -> None:
+        if args.tracking:
+            self._start_tracking(args)
+            return
 
-    add_parser_arguments(parser, [
-        (['branch'], dict(help='name of branch to create', nargs=1, default=None, metavar='<branch>')),
-        (['projects'], dict(metavar='<project|group>', default='default', nargs='*',
-                            choices=CLOWDER_CONTROLLER.project_choices_with_default,
-                            help=fmt.project_options_help_message('projects and groups to start branches for'))),
-        (['--tracking', '-t'], dict(action='store_true', help='create remote tracking branch'))
-    ])
+        self._start_branches(args, False)
 
+    @network_connection_required
+    def _start_tracking(self, args) -> None:
+        """clowder start tracking command"""
 
-@valid_clowder_yaml_required
-@print_clowder_name
-@print_clowder_repo_status
-def start(args) -> None:
-    """Clowder start command private implementation"""
+        self._start_branches(args, True)
 
-    if args.tracking:
-        _start_tracking(args)
-        return
+    @staticmethod
+    def _start_branches(args, tracking: bool) -> None:
+        """clowder start branches command
 
-    _start_branches(args, False)
+        :param bool tracking: Whether to create tracking branches
+        """
 
+        projects = Config().process_projects_arg(args.projects)
+        projects = CLOWDER_CONTROLLER.filter_projects(CLOWDER_CONTROLLER.projects, projects)
 
-@network_connection_required
-def _start_tracking(args) -> None:
-    """clowder start tracking command"""
-
-    _start_branches(args, True)
-
-
-def _start_branches(args, tracking: bool) -> None:
-    """clowder start branches command
-
-    :param bool tracking: Whether to create tracking branches
-    """
-
-    projects = Config().process_projects_arg(args.projects)
-    projects = CLOWDER_CONTROLLER.filter_projects(CLOWDER_CONTROLLER.projects, projects)
-
-    CLOWDER_CONTROLLER.validate_project_statuses(projects)
-    for project in projects:
-        CONSOLE.stdout(project.status())
-        project.start(args.branch[0], tracking)
+        CLOWDER_CONTROLLER.validate_project_statuses(projects)
+        for project in projects:
+            CONSOLE.stdout(project.status())
+            project.start(args.branch[0], tracking)

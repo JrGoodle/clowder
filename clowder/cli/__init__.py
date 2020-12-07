@@ -13,7 +13,7 @@ import clowder.cli.forall
 import clowder.cli.herd
 import clowder.cli.init
 import clowder.cli.link
-import clowder.cli.plugins
+# import clowder.cli.plugins
 import clowder.cli.prune
 import clowder.cli.repo
 import clowder.cli.reset

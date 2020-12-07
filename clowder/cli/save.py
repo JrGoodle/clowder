@@ -4,10 +4,8 @@
 
 """
 
-import argparse
-
 import pygoodle.filesystem as fs
-from pygoodle.cli import add_parser_arguments
+from pygoodle.app import Argument, Subcommand
 from pygoodle.console import CONSOLE
 
 import clowder.util.formatting as fmt
@@ -18,53 +16,40 @@ from clowder.util.error import DefaultVersionError, ExistingVersionError
 from clowder.util.yaml import save_yaml_file
 
 
-def add_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
-    """Add clowder save parser
+class SaveCommand(Subcommand):
 
-    :param argparse._SubParsersAction subparsers: Subparsers action to add parser to
-    """
+    name = 'save'
+    help = 'Create clowder yaml version for current repos'
+    args = [
+        Argument('version', help='version to save', metavar='<version>')
+    ]
 
-    parser = subparsers.add_parser('save', help='Create clowder yaml version for current repos')
-    parser.formatter_class = argparse.RawTextHelpFormatter
-    parser.set_defaults(func=save)
+    @valid_clowder_yaml_required
+    @print_clowder_name
+    @clowder_repo_required
+    def run(self, args) -> None:
+        if args.version.lower() == 'default':
+            raise DefaultVersionError(f"Version name '{args.version}' is not allowed")
 
-    add_parser_arguments(parser, [
-        (['version'], dict(help='version to save', metavar='<version>'))
-    ])
+        if ENVIRONMENT.clowder_repo_dir is not None:
+            ClowderRepo(ENVIRONMENT.clowder_repo_dir).print_status()
+        CLOWDER_CONTROLLER.validate_projects_exist()
+        CLOWDER_CONTROLLER.validate_project_statuses(CLOWDER_CONTROLLER.projects)
 
+        # TODO: Better validate version name (no spaces, no ~, etc.)
+        # Replace path separators with dashes to avoid creating directories
+        version_name = args.version.lower().replace('/', '-')
 
-@valid_clowder_yaml_required
-@print_clowder_name
-@clowder_repo_required
-def save(args) -> None:
-    """Clowder save command private implementation
+        versions_dir = ENVIRONMENT.clowder_repo_versions_dir
+        fs.make_dir(versions_dir, exist_ok=True)
 
-    :raise DefaultVersionError:
-    :raise ExistingVersionError:
-    """
+        yml_file = versions_dir / f"{version_name}.clowder.yml"
+        yaml_file = versions_dir / f"{version_name}.clowder.yaml"
+        version_exists_message = f"Version '{fmt.version(version_name)}' already exists"
+        if yml_file.exists():
+            raise ExistingVersionError(f"{fmt.path(yml_file)}\n{version_exists_message}")
+        elif yaml_file.exists():
+            raise ExistingVersionError(f"{fmt.path(yaml_file)}\n{version_exists_message}")
 
-    if args.version.lower() == 'default':
-        raise DefaultVersionError(f"Version name '{args.version}' is not allowed")
-
-    if ENVIRONMENT.clowder_repo_dir is not None:
-        ClowderRepo(ENVIRONMENT.clowder_repo_dir).print_status()
-    CLOWDER_CONTROLLER.validate_projects_exist()
-    CLOWDER_CONTROLLER.validate_project_statuses(CLOWDER_CONTROLLER.projects)
-
-    # TODO: Better validate version name (no spaces, no ~, etc.)
-    # Replace path separators with dashes to avoid creating directories
-    version_name = args.version.lower().replace('/', '-')
-
-    versions_dir = ENVIRONMENT.clowder_repo_versions_dir
-    fs.make_dir(versions_dir, exist_ok=True)
-
-    yml_file = versions_dir / f"{version_name}.clowder.yml"
-    yaml_file = versions_dir / f"{version_name}.clowder.yaml"
-    version_exists_message = f"Version '{fmt.version(version_name)}' already exists"
-    if yml_file.exists():
-        raise ExistingVersionError(f"{fmt.path(yml_file)}\n{version_exists_message}")
-    elif yaml_file.exists():
-        raise ExistingVersionError(f"{fmt.path(yaml_file)}\n{version_exists_message}")
-
-    CONSOLE.stdout(f" - Save version '{fmt.version(version_name)}'\n{fmt.path(yml_file)}")
-    save_yaml_file(CLOWDER_CONTROLLER.get_yaml(resolved=True), yml_file)
+        CONSOLE.stdout(f" - Save version '{fmt.version(version_name)}'\n{fmt.path(yml_file)}")
+        save_yaml_file(CLOWDER_CONTROLLER.get_yaml(resolved=True), yml_file)
