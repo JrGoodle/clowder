@@ -4,9 +4,7 @@
 
 """
 
-import argparse
-
-from pygoodle.cli import add_parser_arguments
+from pygoodle.app import Argument, Subcommand
 from pygoodle.console import CONSOLE
 
 import clowder.util.formatting as fmt
@@ -15,36 +13,32 @@ from clowder.config import Config
 from clowder.git.clowder_repo import print_clowder_repo_status
 
 
-def add_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
-    """Add clowder stash parser
+class StashCommand(Subcommand):
 
-    :param argparse._SubParsersAction subparsers: Subparsers action to add parser to
-    """
+    name = 'stash'
+    help = 'Stash current changes'
+    args = [
+        Argument(
+            'projects',
+            metavar='<project|group>',
+            default='default',
+            nargs='*',
+            choices=CLOWDER_CONTROLLER.project_choices_with_default,
+            help=fmt.project_options_help_message('projects and groups to stash changes for')
+        )
+    ]
 
-    parser = subparsers.add_parser('stash', help='Stash current changes')
-    parser.formatter_class = argparse.RawTextHelpFormatter
-    parser.set_defaults(func=stash)
+    @valid_clowder_yaml_required
+    @print_clowder_name
+    @print_clowder_repo_status
+    def run(self, args) -> None:
+        if not any([p.is_dirty for p in CLOWDER_CONTROLLER.projects]):
+            CONSOLE.stdout(' - No changes to stash')
+            return
 
-    add_parser_arguments(parser, [
-        (['projects'], dict(metavar='<project|group>', default='default', nargs='*',
-                            choices=CLOWDER_CONTROLLER.project_choices_with_default,
-                            help=fmt.project_options_help_message('projects and groups to stash changes for'))),
-    ])
+        projects = Config().process_projects_arg(args.projects)
+        projects = CLOWDER_CONTROLLER.filter_projects(CLOWDER_CONTROLLER.projects, projects)
 
-
-@valid_clowder_yaml_required
-@print_clowder_name
-@print_clowder_repo_status
-def stash(args) -> None:
-    """Clowder stash command private implementation"""
-
-    if not any([p.is_dirty for p in CLOWDER_CONTROLLER.projects]):
-        CONSOLE.stdout(' - No changes to stash')
-        return
-
-    projects = Config().process_projects_arg(args.projects)
-    projects = CLOWDER_CONTROLLER.filter_projects(CLOWDER_CONTROLLER.projects, projects)
-
-    for project in projects:
-        CONSOLE.stdout(project.status())
-        project.stash()
+        for project in projects:
+            CONSOLE.stdout(project.status())
+            project.stash()

@@ -4,10 +4,9 @@
 
 """
 
-import argparse
 from typing import Tuple
 
-from pygoodle.cli import add_parser_arguments
+from pygoodle.app import Argument, Subcommand
 from pygoodle.connectivity import network_connection_required
 from pygoodle.console import CONSOLE
 
@@ -19,57 +18,53 @@ from clowder.environment import ENVIRONMENT
 from clowder.git.clowder_repo import ClowderRepo
 
 
-def add_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
-    """Add clowder status parser
+class StatusCommand(Subcommand):
 
-    :param argparse._SubParsersAction subparsers: Subparsers action to add parser to
-    """
+    name = 'status'
+    help = 'projects and groups to print status of'
+    args = [
+        Argument(
+            'projects',
+            metavar='<project|group>',
+            default='default',
+            nargs='*',
+            choices=CLOWDER_CONTROLLER.project_choices_with_default,
+            help=fmt.project_options_help_message('projects and groups to show diff for')
+        ),
+        Argument('--fetch', '-f', action='store_true', help='fetch projects before printing status')
+    ]
 
-    parser = subparsers.add_parser('status', help='Print project status')
-    parser.formatter_class = argparse.RawTextHelpFormatter
-    parser.set_defaults(func=status)
+    @valid_clowder_yaml_required
+    @print_clowder_name
+    def run(self, args) -> None:
+        projects = Config().process_projects_arg(args.projects)
+        projects = CLOWDER_CONTROLLER.filter_projects(CLOWDER_CONTROLLER.projects, projects)
 
-    add_parser_arguments(parser, [
-        (['projects'], dict(metavar='<project|group>', default='default', nargs='*',
-                            choices=CLOWDER_CONTROLLER.project_choices_with_default,
-                            help=fmt.project_options_help_message('projects and groups to print status of'))),
-        (['--fetch', '-f'], dict(action='store_true', help='fetch projects before printing status'))
-    ])
+        if args.fetch:
+            self._fetch_projects(projects)
+        else:
+            if ENVIRONMENT.clowder_repo_dir is not None:
+                ClowderRepo(ENVIRONMENT.clowder_repo_dir).print_status()
 
+        projects_output = CLOWDER_CONTROLLER.get_projects_output(projects)
+        padding = len(max(projects_output, key=len))
 
-@valid_clowder_yaml_required
-@print_clowder_name
-def status(args) -> None:
-    """Clowder status command private implementation"""
+        for project in projects:
+            CONSOLE.stdout(project.status(padding=padding))
 
-    projects = Config().process_projects_arg(args.projects)
-    projects = CLOWDER_CONTROLLER.filter_projects(CLOWDER_CONTROLLER.projects, projects)
+    @staticmethod
+    @network_connection_required
+    def _fetch_projects(projects: Tuple[ResolvedProject, ...]) -> None:
+        """fetch all projects
 
-    if args.fetch:
-        _fetch_projects(projects)
-    else:
+        :param Tuple[ResolvedProject, ...] projects: Projects to fetch
+        """
+
         if ENVIRONMENT.clowder_repo_dir is not None:
-            ClowderRepo(ENVIRONMENT.clowder_repo_dir).print_status()
+            ClowderRepo(ENVIRONMENT.clowder_repo_dir).print_status(fetch=True)
 
-    projects_output = CLOWDER_CONTROLLER.get_projects_output(projects)
-    padding = len(max(projects_output, key=len))
-
-    for project in projects:
-        CONSOLE.stdout(project.status(padding=padding))
-
-
-@network_connection_required
-def _fetch_projects(projects: Tuple[ResolvedProject, ...]) -> None:
-    """fetch all projects
-
-    :param Tuple[ResolvedProject, ...] projects: Projects to fetch
-    """
-
-    if ENVIRONMENT.clowder_repo_dir is not None:
-        ClowderRepo(ENVIRONMENT.clowder_repo_dir).print_status(fetch=True)
-
-    CONSOLE.stdout(' - Fetch upstream changes for projects\n')
-    for project in projects:
-        CONSOLE.stdout(project.status())
-        project.fetch_all()
-    CONSOLE.stdout()
+        CONSOLE.stdout(' - Fetch upstream changes for projects\n')
+        for project in projects:
+            CONSOLE.stdout(project.status())
+            project.fetch_all()
+        CONSOLE.stdout()
