@@ -6,30 +6,29 @@
 
 from pygoodle.app import App, Argument
 
-import clowder.cli as cmd
+import clowder.cli as cli
 from clowder.log import LOG
 
 
 def main() -> None:
     subcommands = [
-        cmd.branch,
-        cmd.checkout,
-        cmd.clean,
-        cmd.config,
-        cmd.diff,
-        cmd.forall,
-        cmd.herd,
-        cmd.init,
-        cmd.link,
-        cmd.plugins,
-        cmd.prune,
-        cmd.repo,
-        cmd.reset,
-        cmd.save,
-        cmd.start,
-        cmd.stash,
-        cmd.status,
-        cmd.yaml
+        cli.BranchCommand(),
+        cli.CheckoutCommand(),
+        cli.CleanCommand(),
+        cli.ConfigCommand(),
+        cli.DiffCommand(),
+        cli.ForallCommand(),
+        cli.HerdCommand(),
+        cli.InitCommand(),
+        cli.LinkCommand(),
+        cli.PruneCommand(),
+        cli.RepoCommand(),
+        cli.ResetCommand(),
+        cli.SaveCommand(),
+        cli.StartCommand(),
+        cli.StashCommand(),
+        cli.StatusCommand(),
+        cli.YamlCommand()
     ]
     arguments = [
         Argument('--debug', '-d', action='store_true', help='print debug output')
