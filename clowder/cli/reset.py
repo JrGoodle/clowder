@@ -10,11 +10,12 @@ from typing import Optional
 from pygoodle.app import Argument, Subcommand
 from pygoodle.connectivity import network_connection_required
 
-import clowder.util.formatting as fmt
 import clowder.util.parallel as parallel
 from clowder.clowder_controller import CLOWDER_CONTROLLER, print_clowder_name, valid_clowder_yaml_required
 from clowder.config import Config
 from clowder.git.clowder_repo import print_clowder_repo_status_fetch
+
+from .util import ProjectsArgument
 
 
 class ResetCommand(Subcommand):
@@ -22,14 +23,7 @@ class ResetCommand(Subcommand):
     name = 'reset'
     help = 'Reset branches to upstream commits or check out detached HEADs for tags and shas'
     args = [
-        Argument(
-            'projects',
-            metavar='<project|group>',
-            default='default',
-            nargs='*',
-            choices=CLOWDER_CONTROLLER.project_choices_with_default,
-            help=fmt.project_options_help_message('projects and groups to reset')
-        ),
+        ProjectsArgument('projects and groups to reset'),
         Argument(
             '--jobs', '-j',
             metavar='<n>',

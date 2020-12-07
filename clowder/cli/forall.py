@@ -9,12 +9,13 @@ import os
 from pygoodle.app import Argument, Subcommand
 from pygoodle.console import CONSOLE
 
-import clowder.util.formatting as fmt
 import clowder.util.parallel as parallel
 from clowder.clowder_controller import CLOWDER_CONTROLLER, print_clowder_name, valid_clowder_yaml_required
 from clowder.config import Config
 from clowder.git.clowder_repo import print_clowder_repo_status
 from clowder.util.error import CommandArgumentError
+
+from .util import ProjectsArgument
 
 
 class ForallCommand(Subcommand):
@@ -28,14 +29,7 @@ class ForallCommand(Subcommand):
             default=None,
             help='command to run in project directories'
         ),
-        Argument(
-            'projects',
-            metavar='<project|group>',
-            default='default',
-            nargs='*',
-            choices=CLOWDER_CONTROLLER.project_choices_with_default,
-            help=fmt.project_options_help_message('projects and groups to run command for')
-        ),
+        ProjectsArgument('projects and groups to run command for'),
         Argument('--ignore-errors', '-i', action='store_true', help='ignore errors in command or script'),
         Argument(
             '--jobs', '-j',

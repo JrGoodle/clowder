@@ -10,12 +10,13 @@ from pygoodle.app import Argument, Subcommand
 from pygoodle.connectivity import network_connection_required
 from pygoodle.console import CONSOLE
 
-import clowder.util.formatting as fmt
 from clowder.clowder_controller import CLOWDER_CONTROLLER, print_clowder_name, valid_clowder_yaml_required
 from clowder.config import Config
 from clowder.data import ResolvedProject
 from clowder.environment import ENVIRONMENT
 from clowder.git.clowder_repo import ClowderRepo
+
+from .util import ProjectsArgument
 
 
 class StatusCommand(Subcommand):
@@ -23,14 +24,7 @@ class StatusCommand(Subcommand):
     name = 'status'
     help = 'projects and groups to print status of'
     args = [
-        Argument(
-            'projects',
-            metavar='<project|group>',
-            default='default',
-            nargs='*',
-            choices=CLOWDER_CONTROLLER.project_choices_with_default,
-            help=fmt.project_options_help_message('projects and groups to show diff for')
-        ),
+        ProjectsArgument('projects and groups to show diff for'),
         Argument('--fetch', '-f', action='store_true', help='fetch projects before printing status')
     ]
 

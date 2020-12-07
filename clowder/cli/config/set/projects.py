@@ -4,12 +4,13 @@
 
 """
 
-from pygoodle.app import Argument, Subcommand
+from pygoodle.app import Subcommand
 from pygoodle.console import CONSOLE
 
-import clowder.util.formatting as fmt
-from clowder.clowder_controller import CLOWDER_CONTROLLER, print_clowder_name, valid_clowder_yaml_required
+from clowder.clowder_controller import print_clowder_name, valid_clowder_yaml_required
 from clowder.config import Config, print_config
+
+from ...util import ProjectsArgument
 
 
 class ConfigSetProjectsCommand(Subcommand):
@@ -17,13 +18,7 @@ class ConfigSetProjectsCommand(Subcommand):
     name = 'projects'
     help = 'Set default projects and groups'
     args = [
-        Argument(
-            'projects',
-            metavar='<project|group>',
-            nargs='+',
-            choices=CLOWDER_CONTROLLER.project_choices,
-            help=fmt.project_options_help_message('Default projects and groups to run commands for')
-        )
+        ProjectsArgument('Default projects and groups to run commands for', requires_arg=True)
     ]
 
     @valid_clowder_yaml_required
