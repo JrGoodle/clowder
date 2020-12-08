@@ -20,4 +20,4 @@ virtualenv = "*"
 
 [packages]
 GitPython = "*"
-pygoodle = {editable = true, git = "ssh://git@github.com/JrGoodle/pygoodle"}
+pygoodle = {git = "ssh://git@github.com/JrGoodle/pygoodle"}

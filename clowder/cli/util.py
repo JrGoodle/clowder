@@ -13,25 +13,41 @@ from clowder.clowder_controller import CLOWDER_CONTROLLER
 class JobsArgument(CountArgument):
 
     def __init__(self, positional: bool = False, *args, **kwargs):
+        new_args = list(args)
         if positional:
-            command_args = ['jobs']
+            new_args = ['jobs'] + new_args
         else:
-            command_args = ['--jobs', '-j']
+            new_args = ['--jobs', '-j'] + new_args
+        new_kwargs = dict(
+            kwargs,
+            help='number of jobs to use running command in parallel'
+        )
         super().__init__(
-            *command_args,
-            help='number of jobs to use running command in parallel',
-            *args, **kwargs
+            *new_args,
+            **new_kwargs
         )
 
 
 class ProjectsArgument(Argument):
 
     def __init__(self, help_msg: str, requires_arg: bool = False, *args, **kwargs):
-        kwargs['metavar'] = '<project|group>'
-        kwargs['choices'] = CLOWDER_CONTROLLER.project_choices_with_default,
-        kwargs['help'] = fmt.project_options_help_message(help_msg)
-        projects = 'projects'
+        new_kwargs = dict(
+            kwargs,
+            metavar='<project|group>',
+            choices=CLOWDER_CONTROLLER.project_choices_with_default,
+            help=fmt.project_options_help_message(help_msg)
+        )
+        new_args = ['projects'] + list(args)
         if requires_arg:
-            super().__init__(projects, nargs='+', *args, **kwargs)
+            new_kwargs = dict(
+                new_kwargs,
+                nargs='+'
+            )
+            super().__init__(*new_args, **new_kwargs)
         else:
-            super().__init__(projects, default='default', nargs='*', *args, **kwargs)
+            new_kwargs = dict(
+                new_kwargs,
+                default='default',
+                nargs='*'
+            )
+            super().__init__(*new_args, **new_kwargs)
