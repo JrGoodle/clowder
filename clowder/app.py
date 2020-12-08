@@ -10,14 +10,14 @@ import clowder.cli as cli
 from clowder.log import LOG
 
 
-def main() -> None:
-    app = App(
-        'clowder-repo',
-        entry_point='clowder',
-        arguments=[
+class ClowderApp(App):
+    class Meta:
+        name = 'clowder-repo'
+        entry_point = 'clowder'
+        arguments = [
             BoolArgument('--debug', '-d', help='print debug output')
-        ],
-        subcommands=[
+        ]
+        subcommands = [
             cli.BranchCommand(),
             cli.CheckoutCommand(),
             cli.CleanCommand(),
@@ -36,17 +36,14 @@ def main() -> None:
             cli.StatusCommand(),
             cli.YamlCommand()
         ]
-    )
 
-    def process_args(args) -> None:
-        if 'projects' in args:
-            if isinstance(args.projects, str):
-                args.projects = [args.projects]
-        if args.debug:
+    def process_args(self) -> None:
+        if 'projects' in self.parsed_args:
+            if isinstance(self.parsed_args.projects, str):
+                self.parsed_args.projects = [self.parsed_args.projects]
+        if self.parsed_args.debug:
             LOG.level = LOG.DEBUG
-
-    app.run(process_args)
 
 
 if __name__ == '__main__':
-    main()
+    ClowderApp().main()

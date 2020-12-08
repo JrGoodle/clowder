@@ -48,22 +48,19 @@ def clean_all() -> None:
     clean_build()
 
 
-def main() -> None:
-    def action(args) -> None:
-        if args.build:
+class CleanApp(App):
+    class Meta:
+        name = 'clean'
+        arguments = [
+            BoolArgument('--build', '-b', help='clean build files')
+        ]
+
+    def run(self, _) -> None:
+        if self.parsed_args.args.build:
             clean_build()
         else:
             clean_all()
 
-    app = App(
-        'clean',
-        arguments=[
-            BoolArgument('--build', '-b', help='clean build files')
-        ],
-        action=action
-    )
-    app.run()
-
 
 if __name__ == '__main__':
-    main()
+    CleanApp().main()
