@@ -16,14 +16,14 @@ from .util import ProjectsArgument
 
 
 class StartCommand(Subcommand):
-
-    name = 'start'
-    help = 'Start a new branch'
-    args = [
-        Argument('branch', help='name of branch to create', nargs=1, default=None),
-        ProjectsArgument('projects and groups to start branches for'),
-        BoolArgument('--tracking', '-t', help='create remote tracking branch')
-    ]
+    class Meta:
+        name = 'start'
+        help = 'Start a new branch'
+        args = [
+            Argument('branch', help='name of branch to create', nargs=1, default=None),
+            ProjectsArgument('projects and groups to start branches for'),
+            BoolArgument('--tracking', '-t', help='create remote tracking branch')
+        ]
 
     @valid_clowder_yaml_required
     @print_clowder_name

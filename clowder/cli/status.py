@@ -20,13 +20,13 @@ from .util import ProjectsArgument
 
 
 class StatusCommand(Subcommand):
-
-    name = 'status'
-    help = 'projects and groups to print status of'
-    args = [
-        ProjectsArgument('projects and groups to show diff for'),
-        BoolArgument('--fetch', '-f', help='fetch projects before printing status')
-    ]
+    class Meta:
+        name = 'status'
+        help = 'projects and groups to print status of'
+        args = [
+            ProjectsArgument('projects and groups to show diff for'),
+            BoolArgument('--fetch', '-f', help='fetch projects before printing status')
+        ]
 
     @valid_clowder_yaml_required
     @print_clowder_name

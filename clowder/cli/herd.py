@@ -20,31 +20,30 @@ from .util import CountArgument, JobsArgument, ProjectsArgument
 
 
 class HerdCommand(Subcommand):
-
-    name = 'herd'
-    help = 'Clone and update projects with latest changes'
-    args = [
-        ProjectsArgument('projects and groups to herd'),
-        JobsArgument(),
-        BoolArgument('--rebase', '-r', help='use rebase instead of pull'),
-        CountArgument('--depth', '-d', help='depth to herd'),
-        Argument(
-            '--protocol', '-p',
-            default=None,
-            nargs=1,
-            choices=('ssh', 'https'),
-            help='git protocol to use for cloning'
-        )
-    ]
-    mutually_exclusive_args = [
-        MutuallyExclusiveArgumentGroup(
-            title='',
-            args=[
-                Argument('--branch', '-b', nargs=1, default=None, help='branch to herd if present'),
-                Argument('--tag', '-t', nargs=1, default=None, help='tag to herd if present')
-            ]
-        )
-    ]
+    class Meta:
+        name = 'herd'
+        help = 'Clone and update projects with latest changes'
+        args = [
+            ProjectsArgument('projects and groups to herd'),
+            JobsArgument(),
+            BoolArgument('--rebase', '-r', help='use rebase instead of pull'),
+            CountArgument('--depth', '-d', help='depth to herd'),
+            Argument(
+                '--protocol', '-p',
+                default=None,
+                nargs=1,
+                choices=('ssh', 'https'),
+                help='git protocol to use for cloning'
+            )
+        ]
+        mutually_exclusive_args = [
+            MutuallyExclusiveArgumentGroup(
+                args=[
+                    Argument('--branch', '-b', nargs=1, default=None, help='branch to herd if present'),
+                    Argument('--tag', '-t', nargs=1, default=None, help='tag to herd if present')
+                ]
+            )
+        ]
 
     @valid_clowder_yaml_required
     @print_clowder_name

@@ -15,25 +15,25 @@ from .util import ProjectsArgument
 
 
 class CleanCommand(Subcommand):
-
-    name = 'clean'
-    help = 'Discard current changes in projects'
-    args = [
-        ProjectsArgument('projects and groups to clean'),
-        BoolArgument('--recursive', '-r', help='clean submodules recursively')
-    ]
-    argument_groups = [
-        ArgumentGroup(
-            title='clean options',
-            args=[
-                BoolArgument('--all', '-a', help='clean all the things'),
-                BoolArgument('-d', help='remove untracked directories'),
-                BoolArgument('-f', help='remove directories with .git subdirectory or file'),
-                BoolArgument('-X', help='remove only files ignored by git'),
-                BoolArgument('-x', help='remove all untracked files')
-            ]
-        )
-    ]
+    class Meta:
+        name = 'clean'
+        help = 'Discard current changes in projects'
+        args = [
+            ProjectsArgument('projects and groups to clean'),
+            BoolArgument('--recursive', '-r', help='clean submodules recursively')
+        ]
+        argument_groups = [
+            ArgumentGroup(
+                title='clean options',
+                args=[
+                    BoolArgument('--all', '-a', help='clean all the things'),
+                    BoolArgument('-d', help='remove untracked directories'),
+                    BoolArgument('-f', help='remove directories with .git subdirectory or file'),
+                    BoolArgument('-X', help='remove only files ignored by git'),
+                    BoolArgument('-x', help='remove all untracked files')
+                ]
+            )
+        ]
 
     @valid_clowder_yaml_required
     @print_clowder_name

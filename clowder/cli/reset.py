@@ -19,16 +19,16 @@ from .util import JobsArgument, ProjectsArgument
 
 
 class ResetCommand(Subcommand):
-
-    name = 'reset'
-    help = 'Reset branches to upstream commits or check out detached HEADs for tags and shas'
-    args = [
-        ProjectsArgument('projects and groups to reset'),
-        JobsArgument()
-        # Argument('--timestamp', '-t', choices=CLOWDER_CONTROLLER.project_names,
-        #                              default=None, nargs=1, metavar='<timestamp>',
-        #                              help='project to reset timestamps relative to')
-    ]
+    class Meta:
+        name = 'reset'
+        help = 'Reset branches to upstream commits or check out detached HEADs for tags and shas'
+        args = [
+            ProjectsArgument('projects and groups to reset'),
+            JobsArgument()
+            # Argument('--timestamp', '-t', choices=CLOWDER_CONTROLLER.project_names,
+            #                              default=None, nargs=1, metavar='<timestamp>',
+            #                              help='project to reset timestamps relative to')
+        ]
 
     @network_connection_required
     @valid_clowder_yaml_required

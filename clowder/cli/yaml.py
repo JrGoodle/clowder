@@ -12,12 +12,12 @@ from clowder.util.yaml import yaml_string
 
 
 class YamlCommand(Subcommand):
-
-    name = 'yaml'
-    help = 'Print clowder yaml file information'
-    args = [
-        BoolArgument('--resolved', '-r', help='print resolved clowder yaml file')
-    ]
+    class Meta:
+        name = 'yaml'
+        help = 'Print clowder yaml file information'
+        args = [
+            BoolArgument('--resolved', '-r', help='print resolved clowder yaml file')
+        ]
 
     @valid_clowder_yaml_required
     def run(self, args) -> None:

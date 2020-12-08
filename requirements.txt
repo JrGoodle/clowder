@@ -11,11 +11,13 @@ bleach==3.2.1
 certifi==2020.12.5
 cffi==1.14.4
 chardet==3.0.4
--e git+git@github.com:JrGoodle/clowder.git@607f4c9f530ce7731598b7f437fa5aec840c734c#egg=clowder_repo
+-e git+git@github.com:JrGoodle/clowder.git@f15bcb93c00311d29fadb2d89ebba345f52da61a#egg=clowder_repo
 colorama==0.4.4
 commonmark==0.9.1
+contextvars==2.4
 coverage==5.3
 cryptography==3.2.1
+dataclasses==0.8
 distlib==0.3.1
 docutils==0.16
 execnet==1.7.1
@@ -27,6 +29,8 @@ humanize==3.1.0
 idna==2.10
 imagesize==1.2.0
 immutables==0.14
+importlib-metadata==3.1.1
+importlib-resources==3.3.0
 iniconfig==1.1.1
 Jinja2==2.11.2
 jsonschema==3.2.0
@@ -45,7 +49,7 @@ pluggy==0.13.1
 py==1.9.0
 pycparser==2.20
 Pygments==2.7.3
--e git+git@github.com:JrGoodle/pygoodle.git@22297e0b384887e53b93cbf4a9ca6a6e47a71125#egg=pygoodle
+pygoodle==0.1
 PyNaCl==1.4.0
 pyparsing==2.4.7
 pyrsistent==0.17.3

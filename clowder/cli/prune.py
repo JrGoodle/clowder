@@ -20,23 +20,22 @@ from .util import ProjectsArgument
 
 
 class PruneCommand(Subcommand):
-
-    name = 'prune'
-    help = 'Prune branches'
-    args = [
-        Argument('branch', help='name of branch to remove'),
-        ProjectsArgument('projects and groups to prune'),
-        BoolArgument('--force', '-f', help='force prune branches')
-    ]
-    mutually_exclusive_args = [
-        MutuallyExclusiveArgumentGroup(
-            title='',
-            args=[
-                BoolArgument('--all', '-a', help='prune local and remote branches'),
-                BoolArgument('--remote', '-r', help='prune remote branches')
-            ]
-        )
-    ]
+    class Meta:
+        name = 'prune'
+        help = 'Prune branches'
+        args = [
+            Argument('branch', help='name of branch to remove'),
+            ProjectsArgument('projects and groups to prune'),
+            BoolArgument('--force', '-f', help='force prune branches')
+        ]
+        mutually_exclusive_args = [
+            MutuallyExclusiveArgumentGroup(
+                args=[
+                    BoolArgument('--all', '-a', help='prune local and remote branches'),
+                    BoolArgument('--remote', '-r', help='prune remote branches')
+                ]
+            )
+        ]
 
     @valid_clowder_yaml_required
     @print_clowder_name

@@ -91,7 +91,6 @@ class TestApp(App):
 
         mutually_exclusive_args = [
             MutuallyExclusiveArgumentGroup(
-                title='',
                 required=True,
                 args=[
                     BoolArgument('--report-coverage', '-r', help='generate test coverage reports'),

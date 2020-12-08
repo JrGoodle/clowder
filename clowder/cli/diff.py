@@ -15,12 +15,12 @@ from .util import ProjectsArgument
 
 
 class DiffCommand(Subcommand):
-
-    name = 'diff'
-    help = 'Show git diff for projects'
-    args = [
-        ProjectsArgument('projects and groups to show diff for')
-    ]
+    class Meta:
+        name = 'diff'
+        help = 'Show git diff for projects'
+        args = [
+            ProjectsArgument('projects and groups to show diff for')
+        ]
 
     @valid_clowder_yaml_required
     @print_clowder_name

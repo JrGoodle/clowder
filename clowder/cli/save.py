@@ -17,12 +17,12 @@ from clowder.util.yaml import save_yaml_file
 
 
 class SaveCommand(Subcommand):
-
-    name = 'save'
-    help = 'Create clowder yaml version for current repos'
-    args = [
-        Argument('version', help='version to save')
-    ]
+    class Meta:
+        name = 'save'
+        help = 'Create clowder yaml version for current repos'
+        args = [
+            Argument('version', help='version to save')
+        ]
 
     @valid_clowder_yaml_required
     @print_clowder_name

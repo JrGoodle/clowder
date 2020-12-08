@@ -19,20 +19,20 @@ from .util import JobsArgument, ProjectsArgument
 
 
 class ForallCommand(Subcommand):
-
-    name = 'forall'
-    help = 'Run command or script in project directories'
-    args = [
-        Argument(
-            'command',
-            nargs=1,
-            default=None,
-            help='command to run in project directories'
-        ),
-        ProjectsArgument('projects and groups to run command for'),
-        BoolArgument('--ignore-errors', '-i', help='ignore errors in command or script'),
-        JobsArgument()
-    ]
+    class Meta:
+        name = 'forall'
+        help = 'Run command or script in project directories'
+        args = [
+            Argument(
+                'command',
+                nargs=1,
+                default=None,
+                help='command to run in project directories'
+            ),
+            ProjectsArgument('projects and groups to run command for'),
+            BoolArgument('--ignore-errors', '-i', help='ignore errors in command or script'),
+            JobsArgument()
+        ]
 
     @valid_clowder_yaml_required
     @print_clowder_name

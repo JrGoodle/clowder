@@ -15,12 +15,12 @@ from .util import ProjectsArgument
 
 
 class StashCommand(Subcommand):
-
-    name = 'stash'
-    help = 'Stash current changes'
-    args = [
-        ProjectsArgument('projects and groups to stash changes for')
-    ]
+    class Meta:
+        name = 'stash'
+        help = 'Stash current changes'
+        args = [
+            ProjectsArgument('projects and groups to stash changes for')
+        ]
 
     @valid_clowder_yaml_required
     @print_clowder_name

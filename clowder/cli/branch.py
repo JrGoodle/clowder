@@ -15,21 +15,20 @@ from .util import ProjectsArgument
 
 
 class BranchCommand(Subcommand):
-
-    name = 'branch'
-    help = 'Display current branches'
-    args = [
-        ProjectsArgument('projects and groups to show branches for')
-    ]
-    mutually_exclusive_args = [
-        MutuallyExclusiveArgumentGroup(
-            title='',
-            args=[
-                BoolArgument('--all', '-a', help='show local and remote branches'),
-                BoolArgument('--remote', '-r', help='show local and remote branches')
-            ]
-        )
-    ]
+    class Meta:
+        name = 'branch'
+        help = 'Display current branches'
+        args = [
+            ProjectsArgument('projects and groups to show branches for')
+        ]
+        mutually_exclusive_args = [
+            MutuallyExclusiveArgumentGroup(
+                args=[
+                    BoolArgument('--all', '-a', help='show local and remote branches'),
+                    BoolArgument('--remote', '-r', help='show local and remote branches')
+                ]
+            )
+        ]
 
     @valid_clowder_yaml_required
     @print_clowder_name
