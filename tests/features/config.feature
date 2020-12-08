@@ -119,9 +119,9 @@ Feature: clowder config
         | black-cats/june   | pytest      | 2             | 3            |
 
     @cats
-    Scenario: config get
+    Scenario: config - print current config
         Given cats example is initialized
-        When I run 'clowder config get'
+        When I run 'clowder config'
         Then the command succeeds
 #        TODO: Add check for output
 

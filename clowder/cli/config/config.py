@@ -26,4 +26,4 @@ class ConfigCommand(Subcommand):
     @print_clowder_name
     @print_config
     def run(self, args) -> None:
-        self.print_help()
+        pass
