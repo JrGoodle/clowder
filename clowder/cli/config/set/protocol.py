@@ -4,7 +4,7 @@
 
 """
 
-from pygoodle.app import Argument, Subcommand
+from pygoodle.app import SingleArgument, Subcommand
 from pygoodle.console import CONSOLE
 
 import clowder.util.formatting as fmt
@@ -19,9 +19,8 @@ class ConfigSetProtocolCommand(Subcommand):
         help = 'Set default git protocol'
         protocol_choices = ('https', 'ssh')
         args = [
-            Argument(
-                'protocol', nargs=1, choices=protocol_choices,
-                help=fmt.options_help_message(protocol_choices, 'Default git protocol to use'))
+            SingleArgument('protocol', choices=protocol_choices,
+                           help=fmt.options_help_message(protocol_choices, 'Default git protocol to use'))
         ]
 
     @valid_clowder_yaml_required

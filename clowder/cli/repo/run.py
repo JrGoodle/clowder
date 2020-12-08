@@ -4,7 +4,7 @@
 
 """
 
-from pygoodle.app import Argument, Subcommand
+from pygoodle.app import SingleArgument, Subcommand
 
 from clowder.clowder_controller import print_clowder_name
 from clowder.environment import clowder_git_repo_required, ENVIRONMENT
@@ -16,7 +16,7 @@ class RepoRunCommand(Subcommand):
         name = 'run'
         help = 'Run command in clowder repo'
         args = [
-            Argument('command', nargs=1, help='command to run in clowder repo directory')
+            SingleArgument('command', help='command to run in clowder repo directory')
         ]
 
     @print_clowder_name

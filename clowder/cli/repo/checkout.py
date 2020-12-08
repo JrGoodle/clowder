@@ -4,7 +4,7 @@
 
 """
 
-from pygoodle.app import Argument, Subcommand
+from pygoodle.app import SingleArgument, Subcommand
 
 from clowder.clowder_controller import print_clowder_name
 from clowder.environment import clowder_git_repo_required, ENVIRONMENT
@@ -16,7 +16,7 @@ class RepoCheckoutCommand(Subcommand):
         name = 'checkout'
         help = 'Checkout ref in clowder repo'
         args = [
-            Argument('ref', nargs=1, help='git ref to checkout')
+            SingleArgument('ref', help='git ref to checkout')
         ]
 
     @print_clowder_name

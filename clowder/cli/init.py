@@ -4,7 +4,7 @@
 
 """
 
-from pygoodle.app import Argument, Subcommand
+from pygoodle.app import Argument, SingleArgument, Subcommand
 from pygoodle.connectivity import network_connection_required
 from pygoodle.console import CONSOLE
 from pygoodle.format import Format
@@ -20,7 +20,7 @@ class InitCommand(Subcommand):
         help = 'Clone repository to clowder directory and create clowder yaml symlink'
         args = [
             Argument('url', help='url of repo containing clowder yaml file'),
-            Argument('--branch', '-b', nargs=1, help='branch of repo containing clowder yaml file')
+            SingleArgument('--branch', '-b', help='branch of repo containing clowder yaml file')
         ]
 
     @network_connection_required

@@ -4,7 +4,7 @@
 
 """
 
-from pygoodle.app import Argument, Subcommand
+from pygoodle.app import SingleArgument, Subcommand
 from pygoodle.console import CONSOLE
 
 from clowder.clowder_controller import CLOWDER_CONTROLLER, print_clowder_name, valid_clowder_yaml_required
@@ -19,7 +19,7 @@ class CheckoutCommand(Subcommand):
         name = 'checkout'
         help = 'Checkout local branch in projects'
         args = [
-            Argument('branch', nargs=1, help='branch to checkout'),
+            SingleArgument('branch', help='branch to checkout'),
             ProjectsArgument('projects and groups to checkout branches for')
         ]
 

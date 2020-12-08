@@ -6,7 +6,7 @@ from typing import Optional
 
 import pygoodle.filesystem as fs
 import pygoodle.command as cmd
-from pygoodle.app import App, Argument, BoolArgument, CountArgument, MutuallyExclusiveArgumentGroup
+from pygoodle.app import App, BoolArgument, CountArgument, MutuallyExclusiveArgumentGroup, SingleArgument
 
 
 repo_path: Path = Path(__file__).resolve().parent.parent.resolve()
@@ -83,7 +83,7 @@ class TestApp(App):
         arguments = [
             CountArgument('--groups', help='number of groups to split tests into'),
             CountArgument('--group', "-g", help='group number to run tests for'),
-            Argument('--label', '-l', nargs=1, default=None, help='label to append to results'),
+            SingleArgument('--label', '-l', default=None, help='label to append to results'),
             BoolArgument('--parallel', '-p', help='run tests in parallel'),
             BoolArgument('--exitfirst', '-x', help='exit on first failure'),
             BoolArgument('--verbose', '-v', help='Print all output')
@@ -94,7 +94,7 @@ class TestApp(App):
                 required=True,
                 args=[
                     BoolArgument('--report-coverage', '-r', help='generate test coverage reports'),
-                    Argument('--markers', '-m', nargs=1, help='test markers to run')
+                    SingleArgument('--markers', '-m', help='test markers to run')
                 ]
             )
         ]

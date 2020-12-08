@@ -6,7 +6,7 @@
 
 import os
 
-from pygoodle.app import Argument, BoolArgument, MutuallyExclusiveArgumentGroup, Subcommand
+from pygoodle.app import Argument, BoolArgument, MutuallyExclusiveArgumentGroup, SingleArgument, Subcommand
 from pygoodle.connectivity import network_connection_required
 
 import clowder.util.parallel as parallel
@@ -28,14 +28,14 @@ class HerdCommand(Subcommand):
             JobsArgument(),
             BoolArgument('--rebase', '-r', help='use rebase instead of pull'),
             CountArgument('--depth', '-d', help='depth to herd'),
-            Argument('--protocol', '-p', default=None, nargs=1, choices=('ssh', 'https'),
-                     help='git protocol to use for cloning')
+            SingleArgument('--protocol', '-p', default=None, choices=('ssh', 'https'),
+                           help='git protocol to use for cloning')
         ]
         mutually_exclusive_args = [
             MutuallyExclusiveArgumentGroup(
                 args=[
-                    Argument('--branch', '-b', nargs=1, default=None, help='branch to herd if present'),
-                    Argument('--tag', '-t', nargs=1, default=None, help='tag to herd if present')
+                    SingleArgument('--branch', '-b', default=None, help='branch to herd if present'),
+                    SingleArgument('--tag', '-t', default=None, help='tag to herd if present')
                 ]
             )
         ]
