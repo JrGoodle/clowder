@@ -18,23 +18,23 @@ class ClowderApp(App):
             BoolArgument('--debug', '-d', help='print debug output')
         ]
         subcommands = [
-            cli.BranchCommand(),
-            cli.CheckoutCommand(),
-            cli.CleanCommand(),
-            cli.ConfigCommand(),
-            cli.DiffCommand(),
-            cli.ForallCommand(),
-            cli.HerdCommand(),
-            cli.InitCommand(),
-            cli.LinkCommand(),
-            cli.PruneCommand(),
-            cli.RepoCommand(),
-            cli.ResetCommand(),
-            cli.SaveCommand(),
-            cli.StartCommand(),
-            cli.StashCommand(),
-            cli.StatusCommand(),
-            cli.YamlCommand()
+            cli.BranchCommand,
+            cli.CheckoutCommand,
+            cli.CleanCommand,
+            cli.ConfigCommand,
+            cli.DiffCommand,
+            cli.ForallCommand,
+            cli.HerdCommand,
+            cli.InitCommand,
+            cli.LinkCommand,
+            cli.PruneCommand,
+            cli.RepoCommand,
+            cli.ResetCommand,
+            cli.SaveCommand,
+            cli.StartCommand,
+            cli.StashCommand,
+            cli.StatusCommand,
+            cli.YamlCommand
         ]
 
     def process_args(self) -> None:

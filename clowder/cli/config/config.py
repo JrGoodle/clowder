@@ -18,8 +18,8 @@ class ConfigCommand(Subcommand):
         name = 'config'
         help = 'Manage clowder config (EXPERIMENTAL)'
         subcommands = [
-            ConfigClearCommand(),
-            ConfigSetCommand()
+            ConfigClearCommand,
+            ConfigSetCommand
         ]
 
     @valid_clowder_yaml_required

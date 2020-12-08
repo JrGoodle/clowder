@@ -17,10 +17,10 @@ class ConfigSetCommand(Subcommand):
         name = 'set'
         help = 'Set clowder config options'
         subcommands = [
-            ConfigSetJobsCommand(),
-            ConfigSetRebaseCommand(),
-            ConfigSetProjectsCommand(),
-            ConfigSetProtocolCommand()
+            ConfigSetJobsCommand,
+            ConfigSetRebaseCommand,
+            ConfigSetProjectsCommand,
+            ConfigSetProtocolCommand
         ]
 
     def run(self, args) -> None:

@@ -21,10 +21,10 @@ class ConfigClearCommand(Subcommand):
         name = 'clear'
         help = 'Clear clowder config options'
         subcommands = [
-            ConfigClearJobsCommand(),
-            ConfigClearProjectsCommand(),
-            ConfigClearProtocolCommand(),
-            ConfigClearRebaseCommand()
+            ConfigClearJobsCommand,
+            ConfigClearProjectsCommand,
+            ConfigClearProtocolCommand,
+            ConfigClearRebaseCommand
         ]
 
     @valid_clowder_yaml_required
