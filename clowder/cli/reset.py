@@ -26,8 +26,7 @@ class ResetCommand(Subcommand):
             ProjectsArgument('projects and groups to reset'),
             JobsArgument()
             # Argument('--timestamp', '-t', choices=CLOWDER_CONTROLLER.project_names,
-            #                              default=None, nargs=1, metavar='<timestamp>',
-            #                              help='project to reset timestamps relative to')
+            # default=None, nargs=1, help='project to reset timestamps relative to')
         ]
 
     @network_connection_required

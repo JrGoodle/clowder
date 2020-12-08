@@ -16,7 +16,7 @@ class RepoAddCommand(Subcommand):
         name = 'add'
         help = 'Add files in clowder repo'
         args = [
-            Argument('files', nargs='+', metavar='<file>', help='files to add')
+            Argument('files', nargs='+', help='files to add')
         ]
 
     @print_clowder_name

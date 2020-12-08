@@ -28,13 +28,8 @@ class HerdCommand(Subcommand):
             JobsArgument(),
             BoolArgument('--rebase', '-r', help='use rebase instead of pull'),
             CountArgument('--depth', '-d', help='depth to herd'),
-            Argument(
-                '--protocol', '-p',
-                default=None,
-                nargs=1,
-                choices=('ssh', 'https'),
-                help='git protocol to use for cloning'
-            )
+            Argument('--protocol', '-p', default=None, nargs=1, choices=('ssh', 'https'),
+                     help='git protocol to use for cloning')
         ]
         mutually_exclusive_args = [
             MutuallyExclusiveArgumentGroup(

@@ -20,9 +20,7 @@ class ConfigSetProtocolCommand(Subcommand):
         protocol_choices = ('https', 'ssh')
         args = [
             Argument(
-                'protocol',
-                nargs=1,
-                choices=protocol_choices,
+                'protocol', nargs=1, choices=protocol_choices,
                 help=fmt.options_help_message(protocol_choices, 'Default git protocol to use'))
         ]
 

@@ -20,12 +20,8 @@ class LinkCommand(Subcommand):
         help = 'Symlink clowder yaml version'
         versions = ClowderRepo.get_saved_version_names()
         args = [
-            Argument(
-                'version',
-                choices=versions,
-                nargs='?',
-                default=None,
-                help=fmt.version_options_help_message('version to symlink', versions))
+            Argument('version', choices=versions, nargs='?', default=None,
+                     help=fmt.version_options_help_message('version to symlink', versions))
         ]
 
     @print_clowder_name

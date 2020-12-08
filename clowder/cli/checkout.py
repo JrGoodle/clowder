@@ -19,11 +19,7 @@ class CheckoutCommand(Subcommand):
         name = 'checkout'
         help = 'Checkout local branch in projects'
         args = [
-            Argument(
-                'branch',
-                nargs=1,
-                help='branch to checkout',
-            ),
+            Argument('branch', nargs=1, help='branch to checkout'),
             ProjectsArgument('projects and groups to checkout branches for')
         ]
 
