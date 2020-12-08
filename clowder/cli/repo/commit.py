@@ -12,12 +12,12 @@ from clowder.git.clowder_repo import ClowderRepo, print_clowder_repo_status
 
 
 class RepoCommitCommand(Subcommand):
-
-    name = 'commit'
-    help = 'Commit current changes in clowder repo yaml files'
-    args = [
-        Argument('message', nargs=1, help='commit message')
-    ]
+    class Meta:
+        name = 'commit'
+        help = 'Commit current changes in clowder repo yaml files'
+        args = [
+            Argument('message', nargs=1, help='commit message')
+        ]
 
     @print_clowder_name
     @clowder_git_repo_required

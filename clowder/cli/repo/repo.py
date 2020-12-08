@@ -17,19 +17,19 @@ from .status import RepoStatusCommand
 
 
 class RepoCommand(Subcommand):
-
-    name = 'repo'
-    help = 'Manage clowder repo'
-    subcommands = [
-        RepoAddCommand(),
-        RepoCheckoutCommand(),
-        RepoCleanCommand(),
-        RepoCommitCommand(),
-        RepoPullCommand(),
-        RepoPushCommand(),
-        RepoRunCommand(),
-        RepoStatusCommand()
-    ]
+    class Meta:
+        name = 'repo'
+        help = 'Manage clowder repo'
+        subcommands = [
+            RepoAddCommand(),
+            RepoCheckoutCommand(),
+            RepoCleanCommand(),
+            RepoCommitCommand(),
+            RepoPullCommand(),
+            RepoPushCommand(),
+            RepoRunCommand(),
+            RepoStatusCommand()
+        ]
 
     def run(self, args) -> None:
         self.print_help()

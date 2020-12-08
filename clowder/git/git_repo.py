@@ -24,7 +24,7 @@ from .util import (
 )
 
 
-class GitRepo(object):
+class GitRepo:
     """Class encapsulating base git utilities
 
     :ivar str repo_path: Absolute path to repo

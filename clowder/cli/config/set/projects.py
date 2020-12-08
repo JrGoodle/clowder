@@ -14,12 +14,12 @@ from ...util import ProjectsArgument
 
 
 class ConfigSetProjectsCommand(Subcommand):
-
-    name = 'projects'
-    help = 'Set default projects and groups'
-    args = [
-        ProjectsArgument('Default projects and groups to run commands for', requires_arg=True)
-    ]
+    class Meta:
+        name = 'projects'
+        help = 'Set default projects and groups'
+        args = [
+            ProjectsArgument('Default projects and groups to run commands for', requires_arg=True)
+        ]
 
     @valid_clowder_yaml_required
     @print_clowder_name

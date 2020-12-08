@@ -12,9 +12,9 @@ from clowder.config import Config, print_config
 
 
 class ConfigClearProtocolCommand(Subcommand):
-
-    name = 'protocol'
-    help = 'Clear default git protocol'
+    class Meta:
+        name = 'protocol'
+        help = 'Clear default git protocol'
 
     @valid_clowder_yaml_required
     @print_clowder_name

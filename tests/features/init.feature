@@ -1,4 +1,4 @@
-@init @debug
+@init
 Feature: clowder init
 
     @help @cats

@@ -14,7 +14,7 @@ class ClowderApp(App):
     class Meta:
         name = 'clowder-repo'
         entry_point = 'clowder'
-        arguments = [
+        args = [
             BoolArgument('--debug', '-d', help='print debug output')
         ]
         subcommands = [

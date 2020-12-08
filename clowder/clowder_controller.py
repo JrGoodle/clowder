@@ -64,7 +64,7 @@ def valid_clowder_yaml_required(func):
     return wrapper
 
 
-class ClowderController(object):
+class ClowderController:
     """Class encapsulating project information from clowder yaml for controlling clowder
 
     :ivar str Optional[name]: Clowder name

@@ -12,10 +12,10 @@ def get_all_subclasses(cls) -> List[Any]:
 
     return all_subclasses
 
-class A(object):
+class A:
     d = 1
     e = 5
-    class Meta(object):
+    class Meta:
         f = 1
     def __init__(self):
         self.c = 1
@@ -33,7 +33,7 @@ class A(object):
         # print(dir(self))
 
 class B(A):
-    class Meta(object):
+    class Meta:
         f = 1
 
     d = 42
@@ -44,7 +44,7 @@ class B(A):
 
 
 class C(B):
-    class Meta(object):
+    class Meta:
         f = 1
 
     d = 42

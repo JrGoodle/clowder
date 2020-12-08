@@ -12,9 +12,9 @@ from clowder.config import Config, print_config
 
 
 class ConfigClearJobsCommand(Subcommand):
-
-    name = 'jobs'
-    help = 'Clear default jobs count'
+    class Meta:
+        name = 'jobs'
+        help = 'Clear default jobs count'
 
     @valid_clowder_yaml_required
     @print_clowder_name

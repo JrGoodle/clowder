@@ -14,15 +14,15 @@ from ...util import JobsArgument
 
 
 class ConfigSetJobsCommand(Subcommand):
-
-    name = 'jobs'
-    help = 'Set default number of jobs for relevant commands'
-    args = [
-        JobsArgument(
-            positional=True,
-            # help='Set default number of jobs to use running commands in parallel'
-        )
-    ]
+    class Meta:
+        name = 'jobs'
+        help = 'Set default number of jobs for relevant commands'
+        args = [
+            JobsArgument(
+                positional=True,
+                # help='Set default number of jobs to use running commands in parallel'
+            )
+        ]
 
     @valid_clowder_yaml_required
     @print_clowder_name

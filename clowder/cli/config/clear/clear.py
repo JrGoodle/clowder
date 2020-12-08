@@ -17,15 +17,15 @@ from .rebase import ConfigClearRebaseCommand
 
 
 class ConfigClearCommand(Subcommand):
-
-    name = 'clear'
-    help = 'Clear clowder config options'
-    subcommands = [
-        ConfigClearJobsCommand(),
-        ConfigClearProjectsCommand(),
-        ConfigClearProtocolCommand(),
-        ConfigClearRebaseCommand()
-    ]
+    class Meta:
+        name = 'clear'
+        help = 'Clear clowder config options'
+        subcommands = [
+            ConfigClearJobsCommand(),
+            ConfigClearProjectsCommand(),
+            ConfigClearProtocolCommand(),
+            ConfigClearRebaseCommand()
+        ]
 
     @valid_clowder_yaml_required
     @print_clowder_name

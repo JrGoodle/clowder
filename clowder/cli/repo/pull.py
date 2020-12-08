@@ -15,9 +15,9 @@ from clowder.git.clowder_repo import ClowderRepo, print_clowder_repo_status, pri
 
 
 class RepoPullCommand(Subcommand):
-
-    name = 'pull'
-    help = 'Pull upstream changes in clowder repo'
+    class Meta:
+        name = 'pull'
+        help = 'Pull upstream changes in clowder repo'
 
     @print_clowder_name
     @clowder_git_repo_required

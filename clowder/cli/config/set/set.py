@@ -13,15 +13,15 @@ from .rebase import ConfigSetRebaseCommand
 
 
 class ConfigSetCommand(Subcommand):
-
-    name = 'set'
-    help = 'Set clowder config options'
-    subcommands = [
-        ConfigSetJobsCommand(),
-        ConfigSetRebaseCommand(),
-        ConfigSetProjectsCommand(),
-        ConfigSetProtocolCommand()
-    ]
+    class Meta:
+        name = 'set'
+        help = 'Set clowder config options'
+        subcommands = [
+            ConfigSetJobsCommand(),
+            ConfigSetRebaseCommand(),
+            ConfigSetProjectsCommand(),
+            ConfigSetProtocolCommand()
+        ]
 
     def run(self, args) -> None:
         self.print_help()

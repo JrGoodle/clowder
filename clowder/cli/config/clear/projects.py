@@ -12,9 +12,9 @@ from clowder.config import Config, print_config
 
 
 class ConfigClearProjectsCommand(Subcommand):
-
-    name = 'projects'
-    help = 'Clear default projects and groups'
+    class Meta:
+        name = 'projects'
+        help = 'Clear default projects and groups'
 
     @valid_clowder_yaml_required
     @print_clowder_name

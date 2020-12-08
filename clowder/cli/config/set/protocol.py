@@ -14,17 +14,17 @@ from clowder.git import GitProtocol
 
 
 class ConfigSetProtocolCommand(Subcommand):
-
-    name = 'protocol'
-    help = 'Set default git protocol'
-    protocol_choices = ('https', 'ssh')
-    args = [
-        Argument(
-            'protocol',
-            nargs=1,
-            choices=protocol_choices,
-            help=fmt.options_help_message(protocol_choices, 'Default git protocol to use'))
-    ]
+    class Meta:
+        name = 'protocol'
+        help = 'Set default git protocol'
+        protocol_choices = ('https', 'ssh')
+        args = [
+            Argument(
+                'protocol',
+                nargs=1,
+                choices=protocol_choices,
+                help=fmt.options_help_message(protocol_choices, 'Default git protocol to use'))
+        ]
 
     @valid_clowder_yaml_required
     @print_clowder_name

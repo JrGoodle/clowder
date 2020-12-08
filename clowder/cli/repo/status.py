@@ -12,12 +12,12 @@ from clowder.git.clowder_repo import ClowderRepo, print_clowder_repo_status
 
 
 class RepoStatusCommand(Subcommand):
-
-    name = 'status'
-    help = 'Print clowder repo git status'
-    args = [
-        Argument('files', nargs='+', help='files to add')
-    ]
+    class Meta:
+        name = 'status'
+        help = 'Print clowder repo git status'
+        args = [
+            Argument('files', nargs='+', help='files to add')
+        ]
 
     @print_clowder_name
     @clowder_repo_required

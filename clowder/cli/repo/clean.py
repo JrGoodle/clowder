@@ -12,9 +12,9 @@ from clowder.git.clowder_repo import ClowderRepo, print_clowder_repo_status
 
 
 class RepoCleanCommand(Subcommand):
-
-    name = 'clean'
-    help = 'Discard changes in clowder repo'
+    class Meta:
+        name = 'clean'
+        help = 'Discard changes in clowder repo'
 
     @print_clowder_name
     @clowder_git_repo_required

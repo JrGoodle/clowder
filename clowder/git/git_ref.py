@@ -20,7 +20,7 @@ class GitRefEnum(AutoLowerName):
     COMMIT = auto()
 
 
-class GitRef(object):
+class GitRef:
     """Class encapsulating git ref
 
     :ivar GitRefEnum ref_type: Ref type

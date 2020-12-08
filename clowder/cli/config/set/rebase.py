@@ -14,9 +14,9 @@ from clowder.git import GitProtocol
 
 
 class ConfigSetRebaseCommand(Subcommand):
-
-    name = 'rebase'
-    help = 'Set use rebase with herd command'
+    class Meta:
+        name = 'rebase'
+        help = 'Set use rebase with herd command'
 
     @valid_clowder_yaml_required
     @print_clowder_name

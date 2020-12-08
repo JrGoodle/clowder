@@ -54,7 +54,7 @@ class GitConfigType(AutoLowerName):
         return 'git'
 
 
-class Config(object):
+class Config:
     """Config class
 
     :ivar str name: Name of clowder

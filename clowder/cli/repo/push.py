@@ -13,9 +13,9 @@ from clowder.git.clowder_repo import ClowderRepo, print_clowder_repo_status_fetc
 
 
 class RepoPushCommand(Subcommand):
-
-    name = 'push'
-    help = 'Push changes in clowder repo'
+    class Meta:
+        name = 'push'
+        help = 'Push changes in clowder repo'
 
     @print_clowder_name
     @clowder_git_repo_required

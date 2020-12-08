@@ -12,12 +12,12 @@ from clowder.git.clowder_repo import ClowderRepo, print_clowder_repo_status_fetc
 
 
 class RepoCheckoutCommand(Subcommand):
-
-    name = 'checkout'
-    help = 'Checkout ref in clowder repo'
-    args = [
-        Argument('ref', nargs=1, help='git ref to checkout')
-    ]
+    class Meta:
+        name = 'checkout'
+        help = 'Checkout ref in clowder repo'
+        args = [
+            Argument('ref', nargs=1, help='git ref to checkout')
+        ]
 
     @print_clowder_name
     @clowder_git_repo_required

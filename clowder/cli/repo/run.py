@@ -12,12 +12,12 @@ from clowder.git.clowder_repo import ClowderRepo, print_clowder_repo_status
 
 
 class RepoRunCommand(Subcommand):
-
-    name = 'run'
-    help = 'Run command in clowder repo'
-    args = [
-        Argument('command', nargs=1, help='command to run in clowder repo directory')
-    ]
+    class Meta:
+        name = 'run'
+        help = 'Run command in clowder repo'
+        args = [
+            Argument('command', nargs=1, help='command to run in clowder repo directory')
+        ]
 
     @print_clowder_name
     @clowder_git_repo_required

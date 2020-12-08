@@ -20,7 +20,7 @@ GITLAB_YAML: Dict[str, str] = {'url': 'gitlab.com'}
 BITBUCKET_YAML: Dict[str, str] = {'url': 'bitbucket.org'}
 
 
-class SourceController(object):
+class SourceController:
     """Class encapsulating project information from clowder yaml for controlling clowder
 
     :ivar Optional[str] protocol_override: The protocol to override sources without an explicitly specified protcol

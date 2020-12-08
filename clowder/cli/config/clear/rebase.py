@@ -12,9 +12,9 @@ from clowder.config import Config, print_config
 
 
 class ConfigClearRebaseCommand(Subcommand):
-
-    name = 'rebase'
-    help = 'Clear use rebase with herd command'
+    class Meta:
+        name = 'rebase'
+        help = 'Clear use rebase with herd command'
 
     @valid_clowder_yaml_required
     @print_clowder_name

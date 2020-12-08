@@ -57,7 +57,7 @@ def clowder_git_repo_required(func):
     return wrapper
 
 
-class ClowderEnvironment(object):
+class ClowderEnvironment:
     """clowder paths class
 
     :cvar Path current_dir: Current directory command was run in

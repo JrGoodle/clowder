@@ -14,13 +14,13 @@ from .set import ConfigSetCommand
 
 
 class ConfigCommand(Subcommand):
-
-    name = 'config'
-    help = 'Manage clowder config (EXPERIMENTAL)'
-    subcommands = [
-        ConfigClearCommand(),
-        ConfigSetCommand()
-    ]
+    class Meta:
+        name = 'config'
+        help = 'Manage clowder config (EXPERIMENTAL)'
+        subcommands = [
+            ConfigClearCommand(),
+            ConfigSetCommand()
+        ]
 
     @valid_clowder_yaml_required
     @print_clowder_name
