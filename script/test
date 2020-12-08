@@ -6,7 +6,7 @@ from typing import Optional
 
 import pygoodle.filesystem as fs
 import pygoodle.command as cmd
-from pygoodle.app import App, Argument, BoolArgument, CountArgument
+from pygoodle.app import App, Argument, BoolArgument, CountArgument, MutuallyExclusiveArgumentGroup
 
 
 repo_path: Path = Path(__file__).resolve().parent.parent.resolve()
@@ -89,12 +89,15 @@ class TestApp(App):
             BoolArgument('--verbose', '-v', help='Print all output')
         ]
 
-        # group = parser.add_mutually_exclusive_group(required=True)
-        mutually_exclusive_arguments = [
-            [
-                BoolArgument('--report-coverage', '-r', help='generate test coverage reports'),
-                Argument('--markers', '-m', nargs=1, help='test markers to run')
-            ]
+        mutually_exclusive_args = [
+            MutuallyExclusiveArgumentGroup(
+                title='',
+                required=True,
+                args=[
+                    BoolArgument('--report-coverage', '-r', help='generate test coverage reports'),
+                    Argument('--markers', '-m', nargs=1, help='test markers to run')
+                ]
+            )
         ]
 
     def run(self, _) -> None:

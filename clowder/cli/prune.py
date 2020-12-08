@@ -6,7 +6,7 @@
 
 from typing import List, Tuple
 
-from pygoodle.app import Argument, BoolArgument, Subcommand
+from pygoodle.app import Argument, BoolArgument, MutuallyExclusiveArgumentGroup, Subcommand
 from pygoodle.connectivity import network_connection_required
 from pygoodle.console import CONSOLE
 
@@ -29,10 +29,13 @@ class PruneCommand(Subcommand):
         BoolArgument('--force', '-f', help='force prune branches')
     ]
     mutually_exclusive_args = [
-        [
-            BoolArgument('--all', '-a', help='prune local and remote branches'),
-            BoolArgument('--remote', '-r', help='prune remote branches')
-        ]
+        MutuallyExclusiveArgumentGroup(
+            title='',
+            args=[
+                BoolArgument('--all', '-a', help='prune local and remote branches'),
+                BoolArgument('--remote', '-r', help='prune remote branches')
+            ]
+        )
     ]
 
     @valid_clowder_yaml_required

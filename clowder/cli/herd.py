@@ -6,7 +6,7 @@
 
 import os
 
-from pygoodle.app import Argument, BoolArgument, Subcommand
+from pygoodle.app import Argument, BoolArgument, MutuallyExclusiveArgumentGroup, Subcommand
 from pygoodle.connectivity import network_connection_required
 
 import clowder.util.parallel as parallel
@@ -37,10 +37,13 @@ class HerdCommand(Subcommand):
         )
     ]
     mutually_exclusive_args = [
-        [
-            Argument('--branch', '-b', nargs=1, default=None, help='branch to herd if present'),
-            Argument('--tag', '-t', nargs=1, default=None, help='tag to herd if present')
-        ]
+        MutuallyExclusiveArgumentGroup(
+            title='',
+            args=[
+                Argument('--branch', '-b', nargs=1, default=None, help='branch to herd if present'),
+                Argument('--tag', '-t', nargs=1, default=None, help='tag to herd if present')
+            ]
+        )
     ]
 
     @valid_clowder_yaml_required

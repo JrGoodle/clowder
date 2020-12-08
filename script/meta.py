@@ -29,7 +29,8 @@ class A(object):
         mro = type.mro(type(self))
         mro.reverse()
         print(mro)
-        print(self.__class__.__dict__)
+        # print(self.__class__.__dict__)
+        # print(dir(self))
 
 class B(A):
     class Meta(object):

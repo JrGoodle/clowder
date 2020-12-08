@@ -45,5 +45,10 @@ class ClowderApp(App):
             LOG.level = LOG.DEBUG
 
 
+def main() -> None:
+    app = ClowderApp()
+    app.main()
+
+
 if __name__ == '__main__':
-    ClowderApp().main()
+    main()
