@@ -4,13 +4,11 @@
 
 """
 
-from pygoodle.app import Argument, Subcommand
+from pygoodle.app import Subcommand
 from pygoodle.console import CONSOLE
 
-import clowder.util.formatting as fmt
-from clowder.clowder_controller import CLOWDER_CONTROLLER, print_clowder_name, valid_clowder_yaml_required
+from clowder.clowder_controller import print_clowder_name, valid_clowder_yaml_required
 from clowder.config import Config, print_config
-from clowder.git import GitProtocol
 
 
 class ConfigSetRebaseCommand(Subcommand):

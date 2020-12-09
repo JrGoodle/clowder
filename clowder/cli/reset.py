@@ -7,7 +7,7 @@
 import os
 from typing import Optional
 
-from pygoodle.app import Argument, Subcommand
+from pygoodle.app import Subcommand
 from pygoodle.connectivity import network_connection_required
 
 import clowder.util.parallel as parallel

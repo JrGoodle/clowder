@@ -7,17 +7,15 @@
 import pkg_resources
 from pathlib import Path
 
-import jsonschema
 import yaml as pyyaml
 import pygoodle.filesystem as fs
 from pygoodle.console import CONSOLE
 from pygoodle.format import Format
-from pygoodle.yaml import InvalidYamlError
 
 import clowder.util.formatting as fmt
 from clowder.log import LOG
 from clowder.environment import ENVIRONMENT
-from clowder.util.error import ExistingFileError, MissingFileError
+from clowder.util.error import MissingFileError
 
 from .file_system import symlink_clowder_yaml
 
@@ -113,67 +111,11 @@ def link_clowder_yaml_version(clowder_dir: Path, version: str) -> None:
             raise
 
 
-def load_yaml_file(yaml_file: Path, relative_dir: Path) -> dict:
-    """Load clowder config from yaml file
-
-    :param Path yaml_file: Path of yaml file to load
-    :param Path relative_dir: Directory yaml file is relative to
-    :return: YAML python object
-    :raise InvalidYamlError:
-    """
-
-    try:
-        with yaml_file.open() as raw_file:
-            parsed_yaml = pyyaml.safe_load(raw_file)
-            if parsed_yaml is None:
-                config_yaml = yaml_file.relative_to(relative_dir)
-                raise InvalidYamlError(f"{fmt.path(yaml_file)}\nNo entries in {fmt.path(config_yaml)}")
-            return parsed_yaml
-    except pyyaml.YAMLError:
-        LOG.error(f"Failed to open file '{yaml_file}'")
-        raise
-
-
 def print_clowder_yaml() -> None:
     """Print current clowder yaml"""
 
     if ENVIRONMENT.clowder_yaml.is_file():
         _print_yaml(ENVIRONMENT.clowder_yaml)
-
-
-def save_yaml_file(yaml_output: dict, yaml_file: Path) -> None:
-    """Save yaml file to disk
-
-    :param dict yaml_output: Parsed YAML python object
-    :param Path yaml_file: Path to save yaml file
-    :raise ExistingFileError:
-    """
-
-    if yaml_file.is_file():
-        raise ExistingFileError(f"File already exists: {fmt.path(yaml_file)}")
-
-    CONSOLE.stdout(f" - Save yaml to file at {fmt.path(yaml_file)}")
-    try:
-        with yaml_file.open(mode="w") as raw_file:
-            pyyaml.safe_dump(yaml_output, raw_file, default_flow_style=False, indent=2, sort_keys=False)
-    except pyyaml.YAMLError:
-        LOG.error(f"Failed to save file {fmt.path(yaml_file)}")
-        raise
-
-
-def validate_yaml_file(parsed_yaml: dict, file_path: Path) -> None:
-    """Validate yaml file
-
-    :param dict parsed_yaml: Parsed yaml dictionary
-    :param Path file_path: Path to yaml file
-    """
-
-    json_schema = _load_json_schema(file_path.stem)
-    try:
-        jsonschema.validate(parsed_yaml, json_schema)
-    except jsonschema.exceptions.ValidationError:
-        LOG.error(f'Yaml json schema validation failed {fmt.invalid_yaml(file_path.name)}\n')
-        raise
 
 
 def yaml_string(yaml_output: dict) -> str:

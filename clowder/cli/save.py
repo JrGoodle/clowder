@@ -7,13 +7,13 @@
 import pygoodle.filesystem as fs
 from pygoodle.app import Argument, Subcommand
 from pygoodle.console import CONSOLE
+from pygoodle.yaml import save_yaml_file
 
 import clowder.util.formatting as fmt
 from clowder.clowder_controller import CLOWDER_CONTROLLER, print_clowder_name, valid_clowder_yaml_required
 from clowder.environment import clowder_repo_required, ENVIRONMENT
 from clowder.git.clowder_repo import ClowderRepo
 from clowder.util.error import DefaultVersionError, ExistingVersionError
-from clowder.util.yaml import save_yaml_file
 
 
 class SaveCommand(Subcommand):

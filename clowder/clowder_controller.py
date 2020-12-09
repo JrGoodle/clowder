@@ -10,7 +10,7 @@ from typing import Optional, Tuple
 
 from pygoodle.console import CONSOLE
 from pygoodle.tasks import Task, TaskPool
-from pygoodle.yaml import MissingYamlError
+from pygoodle.yaml import load_yaml_file, validate_yaml_file, MissingYamlError
 
 import clowder.util.formatting as fmt
 from clowder.log import LOG
@@ -24,7 +24,6 @@ from clowder.util.error import (
     ProjectNotFoundError,
     ProjectStatusError
 )
-from clowder.util.yaml import load_yaml_file, validate_yaml_file
 
 
 def print_clowder_name(func):

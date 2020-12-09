@@ -4,14 +4,12 @@
 
 """
 
-import argparse
-
-from pygoodle.app import Argument, Subcommand
+from pygoodle.app import Subcommand
 from pygoodle.connectivity import network_connection_required
 
 from clowder.clowder_controller import print_clowder_name
 from clowder.environment import clowder_git_repo_required, ENVIRONMENT
-from clowder.git.clowder_repo import ClowderRepo, print_clowder_repo_status, print_clowder_repo_status_fetch
+from clowder.git.clowder_repo import ClowderRepo, print_clowder_repo_status_fetch
 
 
 class RepoPullCommand(Subcommand):

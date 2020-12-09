@@ -44,10 +44,3 @@ def when_run_command_and_command(command_1: str, command_2: str,
     path = scenario_info.cmd_dir
     commands = [command_1, command_2]
     command_results.completed_processes += [util.run_command(c, path) for c in commands]
-
-
-# NOTE: Comma separated list example
-# @when(parsers.cfparse("I run '{command}' for groups {groups:Groups}", extra_types=dict(Groups=list_str_commas)))
-# def when_run_clowder_groups(tmp_path: Path, command: str, groups: List[str]) -> None:
-#     groups_command = " ".join(g for g in groups)
-#     util.run_command(f"{command} {groups_command}", tmp_path)
