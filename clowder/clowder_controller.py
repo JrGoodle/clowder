@@ -15,7 +15,7 @@ from pygoodle.yaml import MissingYamlError
 import clowder.util.formatting as fmt
 from clowder.log import LOG
 from clowder.environment import ENVIRONMENT
-from clowder.git.util import get_default_branch
+from clowder.git.util import get_default_project_branch, get_default_upstream_branch
 from clowder.data import ResolvedProject, SOURCE_CONTROLLER
 from clowder.data.model import ClowderBase
 from clowder.util.error import (
@@ -379,13 +379,15 @@ class ClowderController:
 
             def run(self) -> None:
                 if self._project.ref is None:
-                    default_branch = get_default_branch(self._project.full_path,
-                                                        self._project.remote,
-                                                        self._project.url)
+                    default_branch = get_default_project_branch(self._project.full_path,
+                                                                self._project.remote,
+                                                                self._project.url)
                     self._project.update_default_branch(default_branch)
                 if self._project.upstream is not None and self._project.upstream.ref is None:
                     upstream = self._project.upstream
-                    default_branch = get_default_branch(upstream.full_path, upstream.remote, upstream.url)
+                    default_branch = get_default_upstream_branch(upstream.full_path,
+                                                                 upstream.remote,
+                                                                 upstream.url)
                     upstream.update_default_branch(default_branch)
 
         pool = TaskPool(jobs=5)

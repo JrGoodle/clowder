@@ -4,7 +4,7 @@
 
 """
 
-from pygoodle.app import Argument, Subcommand
+from pygoodle.app import Subcommand
 
 from clowder.clowder_controller import print_clowder_name
 from clowder.environment import clowder_repo_required, ENVIRONMENT
@@ -15,9 +15,6 @@ class RepoStatusCommand(Subcommand):
     class Meta:
         name = 'status'
         help = 'Print clowder repo git status'
-        args = [
-            Argument('files', nargs='+', help='files to add')
-        ]
 
     @print_clowder_name
     @clowder_repo_required

@@ -53,16 +53,26 @@ def not_detached(func):
     return wrapper
 
 
-def get_default_branch(repo_path: Path, remote: str, url: str) -> str:
-    """Get default branch"""
+def get_default_project_branch(repo_path: Path, remote: str, url: str) -> str:
+    """Get default project branch"""
 
-    # FIXME: Need to distinguish between project and upstream
-    # Upstream shouldn't save to disk, unless there's a convention for that
     if existing_git_repo(repo_path):
         default_branch = get_default_branch_from_local(repo_path, remote)
         if default_branch is not None:
             return default_branch
 
+    default_branch = get_default_branch_from_remote(url)
+    if default_branch is not None:
+        save_default_branch(repo_path, remote, url)
+        return default_branch
+
+    return 'master'
+
+
+def get_default_upstream_branch(repo_path: Path, remote: str, url: str) -> str:
+    """Get default upstream branch"""
+
+    # FIXME: Figure out if it's worthwhile to save to disk, and if there's a convention for doing so
     default_branch = get_default_branch_from_remote(url)
     if default_branch is not None:
         save_default_branch(repo_path, remote, url)
@@ -89,7 +99,7 @@ def get_default_branch_from_local(repo_path: Path, remote: str) -> Optional[str]
     """Get default branch from local repo"""
 
     try:
-        command = ['git', 'symbolic-ref', f'refs/remotes/{remote}/HEAD']
+        command = f'git symbolic-ref refs/remotes/{remote}/HEAD'
         result = run_command(command, repo_path, print_output=False)
         output: str = result.stdout
         output_list = output.split()
@@ -105,7 +115,7 @@ def get_default_branch_from_remote(url: str) -> Optional[str]:
     """Get default branch from remote repo"""
 
     try:
-        command = ['git', 'ls-remote', '--symref', url, 'HEAD']
+        command = f'git ls-remote --symref {url} HEAD'
         result = run_command(command, Path.cwd(), print_output=False)
         output: str = result.stdout
         output_list = output.split()

@@ -1,4 +1,4 @@
-@config @debug
+@config
 Feature: clowder config
 
     @help
