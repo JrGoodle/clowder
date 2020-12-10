@@ -4,6 +4,7 @@
 
 """
 
+import pkg_resources
 from functools import wraps
 from pathlib import Path
 from typing import Optional, Tuple
@@ -92,7 +93,8 @@ class ClowderController:
             if ENVIRONMENT.clowder_yaml is None:
                 raise MissingYamlError(f"{Path('clowder.yml')} appears to be missing")
             yaml = load_yaml_file(ENVIRONMENT.clowder_yaml, ENVIRONMENT.clowder_dir)
-            validate_yaml_file(yaml, ENVIRONMENT.clowder_yaml)
+            clowder_schema = pkg_resources.resource_string(__name__, f"{ENVIRONMENT.clowder_yaml.stem}.schema.json")
+            validate_yaml_file(yaml, clowder_schema)
 
             self._clowder = ClowderBase(yaml)
 
