@@ -29,16 +29,6 @@ def check_for_duplicates(list_of_elements: List[str]) -> Optional[str]:
     return None
 
 
-def clowder_command(cmd: str) -> str:
-    """Return formatted clowder command name
-
-    :param str cmd: Clowder command name
-    :return: Formatted clowder command name
-    """
-
-    return Format.bold(cmd)
-
-
 def clowder_name(name: str) -> str:
     """Return formatted clowder name
 
@@ -47,27 +37,6 @@ def clowder_name(name: str) -> str:
     """
 
     return Format.bold(name)
-
-
-def command(cmd: Union[str, List[str]]) -> str:
-    """Return formatted command name
-
-    :param Union[str, List[str]] cmd: Clowder command name
-    :return: Formatted clowder command name
-    """
-
-    command_output = " ".join(cmd) if isinstance(cmd, list) else cmd
-    return Format.bold(f"$ {command_output}")
-
-
-def invalid_yaml(name: str) -> str:
-    """Return error message for invalid yaml file
-
-    :param str name: Invalid file's name
-    :return: Formatted yaml error
-    """
-
-    return f"{path(Path(name))} appears to be invalid"
 
 
 # def error_source_not_found(source: str, yml: Path, project: str, upstream_name: Optional[str] = None) -> str:
@@ -88,18 +57,6 @@ def invalid_yaml(name: str) -> str:
 #                 f"{yaml_path(yml)}",
 #                 f"source '{source}'{upstream_output} specified in project '{project}' not found in 'sources'"]
 #     return "\n".join(messages)
-
-
-# FIXME: Only print project name using this where appropriate (now that project status and upstream_string
-# are printed back to back)
-def upstream(name: str) -> str:
-    """Return formatted upstream name
-
-    :param str name: Upstream name
-    :return: Formatted upstream name
-    """
-
-    return Format.cyan(name)
 
 
 def options_help_message(options: Tuple[str, ...], message: str) -> str:
@@ -247,36 +204,6 @@ def path(text: Path) -> str:
     """
 
     return Format.cyan(text.resolve())
-
-
-def ref(text: str) -> str:
-    """Return formatted ref name
-
-    :param str text: Git reference
-    :return: Formatted ref name
-    """
-
-    return Format.magenta(text)
-
-
-def remote(text: str) -> str:
-    """Return formatted remote name
-
-    :param str text: Remote name
-    :return: Formmatted remote name
-    """
-
-    return Format.yellow(text)
-
-
-def url_string(url: str) -> str:
-    """Return formatted url
-
-    :param str url: URL
-    :return: Formatted URL
-    """
-
-    return Format.cyan(url)
 
 
 def version_options_help_message(message: str, versions: Tuple[str, ...]) -> str:

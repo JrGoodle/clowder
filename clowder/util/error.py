@@ -13,10 +13,6 @@ class AmbiguousYamlError(ClowderError):
     pass
 
 
-class ClowderGitError(ClowderError):
-    pass
-
-
 class CommandArgumentError(ClowderError):
     pass
 

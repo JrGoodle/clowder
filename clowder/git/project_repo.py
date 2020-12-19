@@ -100,6 +100,34 @@ class ProjectRepo(ProjectRepoImpl):
                     self._rename_remote(remote.name, upstream_remote_name)
             self._compare_remotes(remote_name, remote_url, upstream_remote_name, upstream_remote_url)
 
+    def format_project_string(self, path: Path) -> str:
+        """Return formatted project name
+
+        :param Path path: Relative project path
+        :return: Formatted project name
+        """
+
+        if not existing_git_repo(self.repo_path):
+            return str(path)
+
+        if not self.validate_repo():
+            return f'{path}*'
+        else:
+            return str(path)
+
+    @staticmethod
+    def color_project_string(project: str) -> str:
+        """Return formatted colored project name
+
+        :param str project: Relative project path
+        :return: Formatted project name
+        """
+
+        if '*' in project:
+            return Format.red(project)
+
+        return Format.green(project)
+
     def herd(self, url: str, depth: int = 0, fetch: bool = True,
              rebase: bool = False, config: Optional[GitConfig] = None) -> None:
         """Herd ref
