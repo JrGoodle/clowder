@@ -7,21 +7,19 @@
 from pathlib import Path
 from typing import Optional
 
-from git import GitError
 import pygoodle.filesystem as fs
+import pygoodle.git as git
+from pygoodle.format import Format
+from pygoodle.git import GitConfig, Ref, Remote, Repo
 from pygoodle.connectivity import is_offline
 from pygoodle.console import CONSOLE
 
 import clowder.util.formatting as fmt
 from clowder.log import LOG
-from clowder.util.error import ClowderGitError, UnknownTypeError
-
-from .git_ref import GitRef, GitRefEnum
-from .project_repo_impl import GitConfig, ProjectRepoImpl
-from .util import existing_git_repo
+from clowder.util.error import UnknownTypeError
 
 
-class ProjectRepo(ProjectRepoImpl):
+class ProjectRepo:
     """Class encapsulating git utilities for projects
 
     :ivar str repo_path: Absolute path to repo
@@ -30,48 +28,47 @@ class ProjectRepo(ProjectRepoImpl):
     :ivar Repo Optional[repo]: Repo instance
     """
 
-    def __init__(self, repo_path: Path, remote: str, default_ref: GitRef):
+    def __init__(self, path: Path, default_remote: Remote, default_ref: Ref):
         """ProjectRepo __init__
 
-        :param Path repo_path: Absolute path to repo
-        :param str remote: Default remote name
-        :param GitRef default_ref: Default ref
+        :param Path path: Absolute path to repo
+        :param Remote default_remote: Default remote name
+        :param Ref default_ref: Default ref
         """
 
-        super().__init__(repo_path, remote)
+        self.repo: Repo = Repo(path, default_remote=default_remote)
+        self.default_ref: Ref = default_ref
 
-        self.default_ref: GitRef = default_ref
-
-    def create_clowder_repo(self, url: str, branch: str, depth: int = 0) -> None:
-        """Clone clowder git repo from url at path
-
-        :param str url: URL of repo
-        :param str branch: Branch name
-        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-        :raise ExistingFileError:
-        """
-
-        if existing_git_repo(self.repo_path):
-            # TODO: Throw error if repo doesn't match one trying to create
-            return
-
-        if self.repo_path.is_dir():
-            try:
-                self.repo_path.rmdir()
-            except OSError:
-                LOG.error(f"Directory already exists at {fmt.path(self.repo_path)}")
-                raise
-
-        if self.repo_path.is_symlink():
-            fs.remove_file(self.repo_path)
-        else:
-            from clowder.environment import ENVIRONMENT
-            if ENVIRONMENT.existing_clowder_repo_file_error:
-                raise ENVIRONMENT.existing_clowder_repo_file_error
-
-        self._init_repo()
-        self._create_remote(self.remote, url, remove_dir=True)
-        self._checkout_new_repo_branch(branch, depth)
+    # def create_clowder_repo(self, url: str, branch: str, depth: int = 0) -> None:
+    #     """Clone clowder git repo from url at path
+    #
+    #     :param str url: URL of repo
+    #     :param str branch: Branch name
+    #     :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+    #     :raise ExistingFileError:
+    #     """
+    #
+    #     if self.repo.exists:
+    #         # TODO: Throw error if repo doesn't match one trying to create
+    #         return
+    #
+    #     if self.repo_path.is_dir():
+    #         try:
+    #             self.repo_path.rmdir()
+    #         except OSError:
+    #             LOG.error(f"Directory already exists at {fmt.path(self.repo_path)}")
+    #             raise
+    #
+    #     if self.repo_path.is_symlink():
+    #         fs.remove_file(self.repo_path)
+    #     else:
+    #         from clowder.environment import ENVIRONMENT
+    #         if ENVIRONMENT.existing_clowder_repo_file_error:
+    #             raise ENVIRONMENT.existing_clowder_repo_file_error
+    #
+    #     self._init_repo()
+    #     self._create_remote(self.remote, url, remove_dir=True)
+    #     self._checkout_new_repo_branch(branch, depth)
 
     def configure_remotes(self, remote_name: str, remote_url: str,
                           upstream_remote_name: str, upstream_remote_url: str) -> None:
@@ -83,22 +80,16 @@ class ProjectRepo(ProjectRepoImpl):
         :param str upstream_remote_url: Upstream remote url
         """
 
-        if not existing_git_repo(self.repo_path):
+        if not self.repo.exists:
             return
 
-        try:
-            remotes = self.repo.remotes
-        except GitError as err:
-            LOG.debug('No remotes', err)
-            return
-        else:
-            for remote in remotes:
-                if remote_url == self._remote_get_url(remote.name) and remote.name != remote_name:
-                    self._rename_remote(remote.name, remote_name)
-                    continue
-                if upstream_remote_url == self._remote_get_url(remote.name) and remote.name != upstream_remote_name:
-                    self._rename_remote(remote.name, upstream_remote_name)
-            self._compare_remotes(remote_name, remote_url, upstream_remote_name, upstream_remote_url)
+        for remote in self.repo.remotes:
+            if remote_url == remote.fetch_url and remote.name != remote_name:
+                remote.rename(remote_name)
+                continue
+            if upstream_remote_url == remote.fetch_url and remote.name != upstream_remote_name:
+                remote.rename(upstream_remote_name)
+        self._compare_remotes(remote_name, remote_url, upstream_remote_name, upstream_remote_url)
 
     def format_project_string(self, path: Path) -> str:
         """Return formatted project name
@@ -107,10 +98,10 @@ class ProjectRepo(ProjectRepoImpl):
         :return: Formatted project name
         """
 
-        if not existing_git_repo(self.repo_path):
+        if not self.repo.exists:
             return str(path)
 
-        if not self.validate_repo():
+        if not self.repo.is_valid():
             return f'{path}*'
         else:
             return str(path)
@@ -139,17 +130,17 @@ class ProjectRepo(ProjectRepoImpl):
         :param Optional[GitConfig] config: Custom git config
         """
 
-        if not existing_git_repo(self.repo_path):
+        if not self.repo.exists:
             self._herd_initial(url, depth=depth)
             self.install_project_git_herd_alias()
             if config is not None:
-                self._update_git_config(config)
+                self.repo.update_git_config(config)
             return
 
         self.install_project_git_herd_alias()
         if config is not None:
-            self._update_git_config(config)
-        self._create_remote(self.remote, url)
+            self.repo.update_git_config(config)
+        self.repo.default_remote.create()
         self._herd(self.remote, self.default_ref, depth=depth, fetch=fetch, rebase=rebase)
 
     def herd_branch(self, url: str, branch: str, depth: int = 0, rebase: bool = False,
@@ -164,16 +155,16 @@ class ProjectRepo(ProjectRepoImpl):
         :param Optional[GitConfig] config: Custom git config
         """
 
-        if not existing_git_repo(self.repo_path):
+        if not self.repo.exists:
             self._herd_branch_initial(url, branch, depth=depth)
             self.install_project_git_herd_alias()
             if config is not None:
-                self._update_git_config(config)
+                self.repo.update_git_config(config)
             return
 
         if config is not None:
             self.install_project_git_herd_alias()
-            self._update_git_config(config)
+            self.repo.update_git_config(config)
 
         if self.has_local_branch(branch):
             self._herd_branch_existing_local(branch, depth=depth, rebase=rebase, upstream_remote=upstream_remote)
