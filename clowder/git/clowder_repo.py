@@ -9,7 +9,7 @@ from functools import wraps
 from pathlib import Path
 from typing import Optional, Tuple
 
-from pygoodle.command import run_command
+import pygoodle.command as cmd
 from pygoodle.connectivity import is_offline
 from pygoodle.console import CONSOLE
 from pygoodle.format import Format
@@ -20,7 +20,6 @@ from clowder.environment import ENVIRONMENT
 from clowder.util.error import DuplicateVersionsError
 from clowder.util.yaml import link_clowder_yaml_default
 
-from .git_ref import GitRef
 from .project_repo import ProjectRepo
 
 
@@ -60,7 +59,7 @@ class ClowderRepo(ProjectRepo):
     :ivar Repo Optional[repo]: Repo instance
     """
 
-    def __init__(self, repo_path: Path, remote: str = 'origin', default_ref: GitRef = GitRef(branch='master')):
+    def __init__(self, repo_path: Path, remote: str = 'origin', default_ref: Ref = GitRef(branch='master')):
         """ProjectRepo __init__"""
 
         super().__init__(repo_path, remote, default_ref)

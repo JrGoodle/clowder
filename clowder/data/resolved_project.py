@@ -9,7 +9,7 @@ from pathlib import Path
 from subprocess import CalledProcessError
 from typing import Any, Optional, Set
 
-from pygoodle.command import run_command
+import pygoodle.command as cmd
 from pygoodle.connectivity import is_offline
 from pygoodle.console import CONSOLE
 from pygoodle.format import Format
@@ -18,12 +18,9 @@ import clowder.util.formatting as fmt
 from clowder.log import LOG
 from clowder.environment import ENVIRONMENT
 from clowder.git import (
-    GitProtocol,
-    GitRef,
     ProjectRepo,
     ProjectRepoRecursive
 )
-from clowder.git.util import existing_git_repo
 from clowder.util.error import DuplicateRemoteError
 
 from .resolved_git_settings import ResolvedGitSettings
@@ -248,8 +245,8 @@ class ResolvedProject:
 
         return self.repo.current_timestamp
 
-    def herd(self, branch: Optional[str] = None, tag: Optional[str] = None, depth: Optional[int] = None,
-             rebase: bool = False) -> None:
+    def herd(self, branch: Optional[str] = None, tag: Optional[str] = None,
+             depth: Optional[int] = None, rebase: bool = False) -> None:
         """Clone project or update latest from upstream
 
         :param Optional[str] branch: Branch to attempt to herd

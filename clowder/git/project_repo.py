@@ -7,8 +7,8 @@
 from pathlib import Path
 from typing import Optional
 
-import pygoodle.filesystem as fs
-import pygoodle.git as git
+# import pygoodle.filesystem as fs
+# import pygoodle.git as git
 from pygoodle.format import Format
 from pygoodle.git import GitConfig, Ref, Remote, Repo
 from pygoodle.connectivity import is_offline
@@ -28,7 +28,9 @@ class ProjectRepo:
     :ivar Repo Optional[repo]: Repo instance
     """
 
-    def __init__(self, path: Path, default_remote: Remote, default_ref: Ref):
+    def __init__(self, path: Path, default_remote: Remote, default_ref: Ref, depth: Optional[int] = None,
+                 recursive: bool = False, rebase: bool = False, upstream_remote: Optional[Remote] = None,
+                 fetch: bool = False, config: Optional[GitConfig] = None):
         """ProjectRepo __init__
 
         :param Path path: Absolute path to repo
@@ -36,8 +38,15 @@ class ProjectRepo:
         :param Ref default_ref: Default ref
         """
 
+        self.path: Path = path
         self.repo: Repo = Repo(path, default_remote=default_remote)
         self.default_ref: Ref = default_ref
+        self.depth: Optional[int] = depth
+        self.recursive: bool = recursive
+        self.rebase: bool = rebase
+        self.upstream_remote: Optional[Remote] = upstream_remote
+        self.fetch: bool = fetch
+        self.config: Optional[GitConfig] = config
 
     # def create_clowder_repo(self, url: str, branch: str, depth: int = 0) -> None:
     #     """Clone clowder git repo from url at path
@@ -91,23 +100,20 @@ class ProjectRepo:
                 remote.rename(upstream_remote_name)
         self._compare_remotes(remote_name, remote_url, upstream_remote_name, upstream_remote_url)
 
-    def format_project_string(self, path: Path) -> str:
-        """Return formatted project name
-
-        :param Path path: Relative project path
-        :return: Formatted project name
-        """
+    @property
+    def formatted_name(self) -> str:
+        """Formatted project name"""
 
         if not self.repo.exists:
-            return str(path)
+            return str(self.path)
 
         if not self.repo.is_valid():
-            return f'{path}*'
+            return f'{self.path}*'
         else:
-            return str(path)
+            return str(self.path)
 
     @staticmethod
-    def color_project_string(project: str) -> str:
+    def colored_name(project: str) -> str:
         """Return formatted colored project name
 
         :param str project: Relative project path
@@ -119,40 +125,26 @@ class ProjectRepo:
 
         return Format.green(project)
 
-    def herd(self, url: str, depth: int = 0, fetch: bool = True,
-             rebase: bool = False, config: Optional[GitConfig] = None) -> None:
+    def herd(self,  url: str, ref: Optional[Ref]) -> None:
         """Herd ref
 
         :param str url: URL of repo
-        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-        :param bool fetch: Whether to fetch
-        :param bool rebase: Whether to use rebase instead of pulling latest changes
-        :param Optional[GitConfig] config: Custom git config
+        :param Optional[Ref] ref: Ref to attempt to herd
         """
 
-        if not self.repo.exists:
-            self._herd_initial(url, depth=depth)
-            self.install_project_git_herd_alias()
-            if config is not None:
-                self.repo.update_git_config(config)
-            return
-
+        is_initial = not self.repo.exists
+        if is_initial:
+            self.repo.clone(self.path, url, depth=self.depth, ref=ref)
         self.install_project_git_herd_alias()
-        if config is not None:
-            self.repo.update_git_config(config)
-        self.repo.default_remote.create()
-        self._herd(self.remote, self.default_ref, depth=depth, fetch=fetch, rebase=rebase)
+        if self.config is not None:
+            self.repo.update_git_config(self.config)
+        if not is_initial:
+            self._herd(self.remote, self.default_ref, depth=depth, fetch=fetch, rebase=rebase)
 
-    def herd_branch(self, url: str, branch: str, depth: int = 0, rebase: bool = False,
-                    upstream_remote: Optional[str] = None, config: Optional[GitConfig] = None) -> None:
+    def herd_branch(self, branch: str) -> None:
         """Herd branch
 
-        :param str url: URL of repo
         :param str branch: Branch name
-        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-        :param bool rebase: Whether to use rebase instead of pulling latest changes
-        :param Optional[str] upstream_remote: Upstream remote name
-        :param Optional[GitConfig] config: Custom git config
         """
 
         if not self.repo.exists:
@@ -166,11 +158,11 @@ class ProjectRepo:
             self.install_project_git_herd_alias()
             self.repo.update_git_config(config)
 
-        if self.has_local_branch(branch):
+        if self.repo.has_local_branch(branch):
             self._herd_branch_existing_local(branch, depth=depth, rebase=rebase, upstream_remote=upstream_remote)
             return
 
-        branch_ref = GitRef(branch=branch)
+        branch_ref = Ref(branch=branch)
         self.fetch(self.remote, depth=depth, ref=branch_ref, allow_failure=True)
         if self.has_remote_branch(branch, self.remote):
             self._herd(self.remote, branch_ref, depth=depth, fetch=False, rebase=rebase)
@@ -187,15 +179,10 @@ class ProjectRepo:
         fetch = depth != 0
         self.herd(url, depth=depth, fetch=fetch, rebase=rebase)
 
-    def herd_tag(self, url: str, tag: str, depth: int = 0,
-                 rebase: bool = False, config: Optional[GitConfig] = None) -> None:
+    def herd_tag(self, tag: str) -> None:
         """Herd tag
 
-        :param str url: URL of repo
         :param str tag: Tag name
-        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-        :param bool rebase: Whether to use rebase instead of pulling latest changes
-        :param Optional[GitConfig] config: Custom git config
         """
 
         fetch = depth != 0
@@ -220,13 +207,8 @@ class ProjectRepo:
             LOG.debug('Failed fetch and checkout tag', err)
             self.herd(url, depth=depth, fetch=fetch, rebase=rebase)
 
-    def herd_remote(self, url: str, remote: str, branch: Optional[str] = None) -> None:
-        """Herd remote repo
-
-        :param str url: URL of repo
-        :param str remote: Remote name
-        :param Optional[str] branch: Branch name
-        """
+    def herd_upstream(self) -> None:
+        """Herd upstream repo"""
 
         self._create_remote(remote, url)
 
@@ -245,11 +227,11 @@ class ProjectRepo:
 
         from clowder.environment import ENVIRONMENT
 
-        config_variable = 'alias.herd'
-        config_value = f'!clowder herd {self.repo_path.relative_to(ENVIRONMENT.clowder_dir)}'
+        config = {
+            'alias.herd': f'!clowder herd {self.repo.path.relative_to(ENVIRONMENT.clowder_dir)}'
+        }
         CONSOLE.stdout(" - Update git herd alias")
-        self.git_config_unset_all_local(config_variable)
-        self.git_config_add_local(config_variable, config_value)
+        self.repo.update_git_config(config)
 
     def prune_branch_local(self, branch: str, force: bool) -> None:
         """Prune local branch
@@ -324,25 +306,6 @@ class ProjectRepo:
         else:
             raise UnknownTypeError('Unknown GitRefEnum type')
 
-    def reset_timestamp(self, timestamp: str, author: str, ref: str) -> None:
-        """Reset branch to upstream or checkout tag/sha as detached HEAD
-
-        :param str timestamp: Commit ref timestamp
-        :param str author: Commit author
-        :param str ref: Reference ref
-        :raise ClowderGitError:
-        """
-
-        rev = None
-        if author:
-            rev = self._find_rev_by_timestamp_author(timestamp, author, ref)
-        if not rev:
-            rev = self._find_rev_by_timestamp(timestamp, ref)
-        if not rev:
-            raise ClowderGitError(f'Failed to find revision')
-
-        self._checkout_sha(rev)
-
     def start(self, remote: str, branch: str, depth: int, tracking: bool) -> None:
         """Start new branch in repository and checkout
 
@@ -387,7 +350,7 @@ class ProjectRepo:
         if upstream_remote_name in remote_names:
             self._compare_remote_url(upstream_remote_name, upstream_remote_url)
 
-    def _herd(self, remote: str, ref: GitRef, depth: int = 0, fetch: bool = True, rebase: bool = False) -> None:
+    def _herd(self, remote: str, ref: GitRef, fetch: bool = True, rebase: bool = False) -> None:
         """Herd ref
 
         :param str remote: Remote name
@@ -436,22 +399,22 @@ class ProjectRepo:
             if self.has_remote_branch(branch, upstream_remote):
                 self._herd_remote_branch(upstream_remote, branch, depth=depth, rebase=rebase)
 
-    def _herd_branch_initial(self, url: str, branch: str, depth: int = 0) -> None:
-        """Herd branch initial
-
-        :param str url: URL of repo
-        :param str branch: Branch name to attempt to herd
-        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-        """
-
-        self._init_repo()
-        self._create_remote(self.remote, url, remove_dir=True)
-        self.fetch(self.remote, depth=depth, ref=GitRef(branch=branch))
-        if not self.has_remote_branch(branch, self.remote):
-            CONSOLE.stdout(f' - No existing remote branch {fmt.remote(self.remote)} {fmt.ref(branch)}')
-            self._herd_initial(url, depth=depth)
-            return
-        self._create_branch_local_tracking(branch, self.remote, depth=depth, fetch=False, remove_dir=True)
+    # def _herd_branch_initial(self, url: str, branch: str, depth: int = 0) -> None:
+    #     """Herd branch initial
+    #
+    #     :param str url: URL of repo
+    #     :param str branch: Branch name to attempt to herd
+    #     :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+    #     """
+    #
+    #     self._init_repo()
+    #     self._create_remote(self.remote, url, remove_dir=True)
+    #     self.fetch(self.remote, depth=depth, ref=GitRef(branch=branch))
+    #     if not self.has_remote_branch(branch, self.remote):
+    #         CONSOLE.stdout(f' - No existing remote branch {fmt.remote(self.remote)} {fmt.ref(branch)}')
+    #         self._herd_initial(url, depth=depth)
+    #         return
+    #     self._create_branch_local_tracking(branch, self.remote, depth=depth, fetch=False, remove_dir=True)
 
     def _herd_existing_local(self, remote: str, branch: str, depth: int = 0, rebase: bool = False) -> None:
         """Herd ref
@@ -477,24 +440,24 @@ class ProjectRepo:
 
         self._pull(remote, branch)
 
-    def _herd_initial(self, url: str, depth: int = 0) -> None:
-        """Herd ref initial
-
-        :param str url: URL of repo
-        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-        :raise UnknownTypeError:
-        """
-
-        self._init_repo()
-        self._create_remote(self.remote, url, remove_dir=True)
-        if self.default_ref.ref_type is GitRefEnum.BRANCH:
-            self._checkout_new_repo_branch(self.default_ref.short_ref, depth)
-        elif self.default_ref.ref_type is GitRefEnum.TAG:
-            self._checkout_new_repo_tag(self.default_ref.short_ref, self.remote, depth, remove_dir=True)
-        elif self.default_ref.ref_type is GitRefEnum.COMMIT:
-            self._checkout_new_repo_commit(self.default_ref.short_ref, self.remote, depth)
-        else:
-            raise UnknownTypeError('Unknown GitRefEnum type')
+    # def _herd_initial(self, url: str, depth: int = 0) -> None:
+    #     """Herd ref initial
+    #
+    #     :param str url: URL of repo
+    #     :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+    #     :raise UnknownTypeError:
+    #     """
+    #
+    #     self._init_repo()
+    #     self._create_remote(self.remote, url, remove_dir=True)
+    #     if self.default_ref.ref_type is GitRefEnum.BRANCH:
+    #         self._checkout_new_repo_branch(self.default_ref.short_ref, depth)
+    #     elif self.default_ref.ref_type is GitRefEnum.TAG:
+    #         self._checkout_new_repo_tag(self.default_ref.short_ref, self.remote, depth, remove_dir=True)
+    #     elif self.default_ref.ref_type is GitRefEnum.COMMIT:
+    #         self._checkout_new_repo_commit(self.default_ref.short_ref, self.remote, depth)
+    #     else:
+    #         raise UnknownTypeError('Unknown GitRefEnum type')
 
     def _herd_remote_branch(self, remote: str, branch: str, depth: int = 0, rebase: bool = False) -> None:
         """Herd remote branch
